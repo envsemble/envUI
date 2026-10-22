@@ -50,6 +50,7 @@ export const aliases = {
   ChoiceControls: ['Checkbox', 'Radio', 'Switch'],
   Toolbar: ['Primitives'],
   ResizeHandle: ['Primitives', 'Panes'],
+  Editor: ['MarkdownEditor', 'RichTextEditor'],
   useResize: ['Panes', 'PanelDock'],
   TopBar: ['Scaffold'],
   useScrollKeys: ['Scaffold'],
@@ -118,6 +119,12 @@ export const exceptions = [
   ],
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
   [/^apps\/catalogue\/src\//, ['LiveDevelopment']],
+  // The layout check measures every example the pages place, on the catalogue's stage, with dev
+  // mode's checks; the affected tier runs it.
+  [
+    /^apps\/catalogue\/src\/(?:examples\/|styles\/Stage\.css$)|^docs\/(?:components|patterns)\/|^packages\/ui\/src\/dev(?:\.ts$|\/)/,
+    ['LayoutCheck'],
+  ],
 ];
 
 /** More specs than this importing a changed helper leaves it to `npm run verify`. */
@@ -137,6 +144,8 @@ export function specNeeds(name, root = repositoryRoot) {
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
     live: name === 'LiveDevelopment',
+    // Renders every catalogue example at four widths: minutes, so the affected tier runs it.
+    whole: name === 'LayoutCheck',
   };
 }
 

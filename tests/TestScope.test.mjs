@@ -118,6 +118,13 @@ test('the catalogue runs its specs and live development, with the builds they op
   assert.equal(selectScope(['tests/browser/Hydration.spec.ts']).build.library, true);
 });
 
+test('the examples, the pages that place them and dev mode run the layout check', () => {
+  assert.deepEqual(specs('docs/components/card.md'), ['LayoutCheck']);
+  assert.ok(specs('apps/catalogue/src/examples/card/ProjectSummary.tsx').includes('LayoutCheck'));
+  assert.ok(specs('packages/ui/src/dev/measure.ts').includes('LayoutCheck'));
+  assert.equal(specNeeds('LayoutCheck').whole, true);
+});
+
 test('static checks cover the changed files, and configuration the whole of its check', () => {
   const scope = selectScope(['packages/ui/src/forms/Checkbox.tsx', 'docs/setup.md']);
   assert.deepEqual(scope.lint, ['packages/ui/src/forms/Checkbox.tsx']);

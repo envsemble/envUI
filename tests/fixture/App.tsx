@@ -81,6 +81,7 @@ import { PortalContainersFixture } from './PortalContainers.js';
 import { ListsFixture } from './Lists.js';
 import { DevModeFixture } from './DevMode.js';
 import { SkeletonsFixture } from './Skeletons.js';
+import { LayoutCheckFixture } from './LayoutCheck.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -121,6 +122,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'time-pickers': TimePickersFixture,
   'month-pickers': MonthPickersFixture,
   'dev-mode': DevModeFixture,
+  'layout-check': LayoutCheckFixture,
   skeletons: SkeletonsFixture,
   accordions: AccordionsFixture,
 };
