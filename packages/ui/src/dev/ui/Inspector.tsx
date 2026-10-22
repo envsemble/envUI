@@ -1,14 +1,20 @@
 'use client';
 
-// The inspector beside the 3D view: the nodes as a tree, the selected node in detail, and the
-// readout an agent reads.
+// Dev mode's two sidebars: the nodes as a tree on one side of the 3D view, and on the other the
+// inspector, with the selected node in detail and the readout an agent reads.
 
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState, type ReactNode } from 'react';
+import { Button, IconButton } from '../../actions/Button.js';
 import { Badge } from '../../content/Badge.js';
+import * as DescriptionList from '../../content/DescriptionList.js';
+import { Tooltip } from '../../feedback/Tooltip.js';
+import { Column, Grid, Row } from '../../foundations/Layout.js';
+import { Surface } from '../../foundations/Surface.js';
 import { Text } from '../../foundations/Text.js';
-import { Tabs } from '../../navigation/Tabs.js';
+import { LeftPanelClose } from '../../icons/LeftPanelClose.js';
+import { RightPanelClose } from '../../icons/RightPanelClose.js';
+import { DocumentTabs } from '../../navigation/DocumentTabs.js';
 import { Tree, type TreeItem } from '../../navigation/Tree.js';
-import { Button } from '../../actions/Button.js';
 import type { NodeData, Snapshot } from '../model.js';
 import { knownParts } from '../parts.js';
 import { conditionHolds, queriesFor, thresholdsFor } from '../queries.js';
@@ -17,71 +23,163 @@ import { tokensUsedBy } from '../usedTokens.js';
 import { toRem, windowClassOf } from '../units.js';
 import type { LivePage } from './useLivePage.js';
 
-export interface InspectorProps {
+/** A sidebar: a flush, square pane on the navigation's color, as a Drawer is. */
+function Sidebar({
+  side,
+  label,
+  children,
+}: {
+  side: 'tree' | 'inspector';
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <Surface
+      background="default"
+      radius="none"
+      padding={0}
+      render={<Column gap={2} render={<aside aria-label={label} />} />}
+      className="env-dev-sidebar"
+      data-side={side}
+    >
+      {children}
+    </Surface>
+  );
+}
+
+export interface NodeTreeProps {
   live: LivePage;
   selected: number | null;
   onSelect: (key: number | null) => void;
   onTreeHover: (key: number | null) => void;
-  onClose: () => void;
+  /** Hides the tree; the toolbar shows it again. */
+  onHide: () => void;
 }
 
-export function Inspector({ live, selected, onSelect, onTreeHover, onClose }: InspectorProps) {
-  const [tab, setTab] = useState<string | null>('nodes');
+/** The nodes as a tree, in a sidebar of their own. */
+export function NodeTree({ live, selected, onSelect, onTreeHover, onHide }: NodeTreeProps) {
   const full = live.full;
   const problemCount = full?.reading.problems.length ?? 0;
   return (
-    <aside className="env-dev-inspector" aria-label="Dev mode inspector">
-      <Tabs
+    <Sidebar side="tree" label="Layout nodes">
+      <Row gap={2} align="center" className="env-dev-sidebar-head">
+        <Text variant="body-sm" emphasis="default" render={<h2 />} className="env-dev-heading">
+          Nodes
+        </Text>
+        {problemCount ? (
+          <Text variant="body-sm" render={<span />}>
+            {problemCount} {problemCount === 1 ? 'problem' : 'problems'}
+          </Text>
+        ) : null}
+        <Tooltip content="Hide the nodes">
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<LeftPanelClose />}
+            aria-label="Hide the nodes"
+            onClick={onHide}
+            className="env-dev-hide"
+          />
+        </Tooltip>
+      </Row>
+      {full ? (
+        <Nodes
+          snapshot={full.snapshot}
+          live={live}
+          selected={selected}
+          onSelect={onSelect}
+          onTreeHover={onTreeHover}
+        />
+      ) : (
+        <Text variant="body-sm" className="env-dev-sidebar-note">
+          Measuring…
+        </Text>
+      )}
+    </Sidebar>
+  );
+}
+
+export interface InspectorProps {
+  live: LivePage;
+  selected: number | null;
+  /** Hides the inspector; the toolbar shows it again. */
+  onHide: () => void;
+}
+
+const inspectorTabs = [
+  { id: 'details', label: 'Details' },
+  { id: 'readout', label: 'Readout' },
+];
+
+/**
+ * The selected node in detail, and the readout, in the sidebar across the view from the tree: two
+ * documents in DocumentTabs. Closing one leaves the other; closing both hides the inspector, and
+ * showing it again opens both.
+ */
+export function Inspector({ live, selected, onHide }: InspectorProps) {
+  const [open, setOpen] = useState(inspectorTabs);
+  const [tab, setTab] = useState<string | null>('details');
+  const panelId = useId();
+  const full = live.full;
+  const current =
+    full && selected !== null
+      ? full.snapshot.nodes.find((node) => node.key === selected)
+      : undefined;
+  const active = open.find((item) => item.id === tab) ?? open[0];
+  return (
+    <Sidebar side="inspector" label="Dev mode inspector">
+      <DocumentTabs
         aria-label="Inspector"
-        className="env-dev-tabs"
-        panelClassName="env-dev-tab-panel"
-        value={tab}
+        items={open}
+        value={active.id}
         onValueChange={setTab}
-        size="sm"
-        renderList={(list) => (
-          <div className="env-dev-inspector-head">
-            {list}
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              Close
-            </Button>
-          </div>
-        )}
-        items={[
-          {
-            value: 'nodes',
-            button: <Button>Nodes{problemCount ? ` · ${problemCount} problems` : ''}</Button>,
-            content: full ? (
-              <Nodes
-                snapshot={full.snapshot}
-                live={live}
-                selected={selected}
-                onSelect={onSelect}
-                onTreeHover={onTreeHover}
-              />
-            ) : (
-              <Text emphasis="muted">Measuring…</Text>
-            ),
-          },
-          {
-            value: 'readout',
-            button: <Button>Readout</Button>,
-            content: full ? (
-              <>
-                <Text variant="body-sm" emphasis="muted">
-                  What <code className="env-dev-code">envui.layout.describe()</code> returns. Try{' '}
-                  <code className="env-dev-code">
-                    envui.layout.at(['22rem', '40rem', '60rem', '80rem'])
-                  </code>{' '}
-                  in the console.
-                </Text>
-                <CopyReadout text={full.reading.text} />
-                <pre className="env-dev-readout">{full.reading.text}</pre>
-              </>
-            ) : null,
-          },
-        ]}
+        panelId={panelId}
+        onClose={(id) => {
+          const remaining = open.filter((item) => item.id !== id);
+          if (!remaining.length) return onHide();
+          setOpen(remaining);
+          if (id === active.id) setTab(remaining[0].id);
+        }}
+        end={
+          <Tooltip content="Hide the inspector">
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={<RightPanelClose />}
+              aria-label="Hide the inspector"
+              onClick={onHide}
+            />
+          </Tooltip>
+        }
       />
-    </aside>
+      <Column
+        gap={3}
+        id={panelId}
+        role="tabpanel"
+        aria-label={active.label}
+        className="env-dev-tab-panel"
+      >
+        {active.id === 'details' ? (
+          current && full ? (
+            <Details key={current.key} snapshot={full.snapshot} node={current} live={live} />
+          ) : (
+            <Text variant="body-sm">Select a node in the tree or click its plane.</Text>
+          )
+        ) : full ? (
+          <>
+            <Text variant="body-sm">
+              What <code className="env-dev-code">envui.layout.describe()</code> returns. Try{' '}
+              <code className="env-dev-code">
+                envui.layout.at(['22rem', '40rem', '60rem', '80rem'])
+              </code>{' '}
+              in the console.
+            </Text>
+            <CopyReadout text={full.reading.text} />
+            <pre className="env-dev-readout">{full.reading.text}</pre>
+          </>
+        ) : null}
+      </Column>
+    </Sidebar>
   );
 }
 
@@ -110,6 +208,7 @@ function Nodes({ snapshot, live, selected, onSelect, onTreeHover }: NodesProps) 
         expandable: node.hidden === null && node.children.length > 0,
         expanded: open,
         description: node.hidden ?? undefined,
+        title: node.hidden ?? undefined,
         end: problems ? (
           <Badge tone="danger" variant="soft">
             {problems}
@@ -124,52 +223,48 @@ function Nodes({ snapshot, live, selected, onSelect, onTreeHover }: NodesProps) 
     for (const index of snapshot.tops) visit(snapshot.nodes[index], 0);
     return rows;
   }, [snapshot, collapsed, problemsByKey]);
-  const current =
-    selected === null ? undefined : snapshot.nodes.find((node) => node.key === selected);
+  if (!items.length)
+    return (
+      <Text variant="body-sm" className="env-dev-sidebar-note">
+        No layout nodes: no element under the root has a data-env-layout attribute, and no overlay
+        is open.
+      </Text>
+    );
   return (
-    <>
-      {items.length ? (
-        // Hovering a row shows its node in the 3D view.
-        <div
-          onPointerOver={(event) => {
-            const row = (event.target as Element).closest<HTMLElement>('[data-id]');
-            onTreeHover(row ? Number(row.dataset.id) : null);
-          }}
-          onPointerLeave={() => onTreeHover(null)}
-        >
-          <Tree
-            aria-label="Layout nodes"
-            className="env-dev-tree"
-            density="xs"
-            items={items}
-            value={selected === null ? null : String(selected)}
-            onAction={(item) => onSelect(Number(item.id) === selected ? null : Number(item.id))}
-            onExpandedChange={(item, expanded) =>
-              setCollapsed((keys) => {
-                const next = new Set(keys);
-                if (expanded) next.delete(Number(item.id));
-                else next.add(Number(item.id));
-                return next;
-              })
-            }
-          />
-        </div>
-      ) : (
-        <Text emphasis="muted">
-          No layout nodes: no element under the root has a data-env-layout attribute, and no overlay
-          is open.
-        </Text>
-      )}
-      {current ? (
-        <Details key={current.key} snapshot={snapshot} node={current} live={live} />
-      ) : (
-        <Text variant="body-sm" emphasis="muted">
-          Select a node in the tree or click its plane.
-        </Text>
-      )}
-    </>
+    // Hovering a row shows its node in the 3D view.
+    <div
+      className="env-dev-tree"
+      onPointerOver={(event) => {
+        const row = (event.target as Element).closest<HTMLElement>('[data-id]');
+        onTreeHover(row ? Number(row.dataset.id) : null);
+      }}
+      onPointerLeave={() => onTreeHover(null)}
+    >
+      <Tree
+        aria-label="Layout nodes"
+        density="xs"
+        items={items}
+        value={selected === null ? null : String(selected)}
+        onAction={(item) => onSelect(Number(item.id) === selected ? null : Number(item.id))}
+        onExpandedChange={(item, expanded) =>
+          setCollapsed((keys) => {
+            const next = new Set(keys);
+            if (expanded) next.delete(Number(item.id));
+            else next.add(Number(item.id));
+            return next;
+          })
+        }
+      />
+    </div>
   );
 }
+
+/** A heading of the details, quiet and small, as a side column's section headings are. */
+const Heading = ({ children }: { children: ReactNode }) => (
+  <Text variant="body-sm" emphasis="default" render={<h3 />} className="env-dev-heading">
+    {children}
+  </Text>
+);
 
 function Details({ snapshot, node, live }: { snapshot: Snapshot; node: NodeData; live: LivePage }) {
   const element = snapshot.elements?.[node.index];
@@ -189,100 +284,89 @@ function Details({ snapshot, node, live }: { snapshot: Snapshot; node: NodeData;
     : [];
   const line = live.full?.reading.lines[node.index];
   return (
-    <section className="env-dev-details" aria-label={`Details of ${labelOf(node)}`}>
-      <Text variant="title" render={<h2 />}>
+    <Column gap={4} render={<section aria-label={`Details of ${labelOf(node)}`} />}>
+      <Text variant="body-sm" emphasis="default" render={<h2 />} className="env-dev-heading">
         {labelOf(node)}
       </Text>
-      <dl>
-        <dt>Part</dt>
-        <dd>
+      <DescriptionList.Root layout="inline">
+        <DescriptionList.Item label="Part">
           {node.part ? <code className="env-dev-code">{node.part}</code> : 'none'}
           {part ? ` · ${part.component}${part.root ? ' (root)' : ''}` : null}
-        </dd>
+        </DescriptionList.Item>
         {part?.description ? (
-          <>
-            <dt>What it is</dt>
-            <dd>{part.description}</dd>
-          </>
+          <DescriptionList.Item label="What it is">{part.description}</DescriptionList.Item>
         ) : null}
-        <dt>Size</dt>
-        <dd>
+        <DescriptionList.Item label="Size">
           {node.hidden ??
             `${width}×${toRem(node.size.h, snapshot.rootPx)}rem · ${windowClassOf(width)}`}
-        </dd>
+        </DescriptionList.Item>
         {states.length ? (
-          <>
-            <dt>State</dt>
-            <dd>{states.map((attribute) => `${attribute.name}="${attribute.value}"`).join(' ')}</dd>
-          </>
+          <DescriptionList.Item label="State">
+            <Column gap={0}>
+              {states.map((attribute) => (
+                <code key={attribute.name} className="env-dev-code">
+                  {attribute.name}=&quot;{attribute.value}&quot;
+                </code>
+              ))}
+            </Column>
+          </DescriptionList.Item>
         ) : null}
-        <dt>Container</dt>
-        <dd>
+        <DescriptionList.Item label="Container">
           {node.container
             ? `${node.container.name || '(no name)'} (${node.container.type}); ${thresholds.length ? `queried at ${thresholds.join(', ')}rem` : 'nothing queries it'}`
             : 'not a container'}
-        </dd>
-      </dl>
-      {queries.length ? (
-        <>
-          <Text variant="body-sm" render={<h3 />}>
-            Queries that ask about it
-          </Text>
-          <ul>
-            {queries.map((query) => {
-              const holds = conditionHolds(query.condition, width, snapshot.rootPx);
-              return (
-                <li key={`${query.container}${query.condition}`}>
-                  <code className="env-dev-code">
-                    {query.container ? `${query.container} ` : ''}
-                    {query.condition}
-                  </code>{' '}
-                  · {query.rules} {query.rules === 1 ? 'rule' : 'rules'}
-                  {holds === null ? '' : holds ? ' · holds now' : ''}
-                </li>
-              );
-            })}
-          </ul>
-        </>
-      ) : null}
+        </DescriptionList.Item>
+      </DescriptionList.Root>
       {problems.length ? (
-        <>
-          <Text variant="body-sm" render={<h3 />}>
-            Problems
-          </Text>
-          <ul>
-            {problems.map((problem) => (
-              <li key={problem.message} className="env-dev-problem">
-                {problem.message}
-              </li>
-            ))}
-          </ul>
-        </>
+        <Column gap={1}>
+          <Heading>Problems</Heading>
+          {problems.map((problem) => (
+            <Text key={problem.message} variant="body-sm" className="env-dev-problem">
+              {problem.message}
+            </Text>
+          ))}
+        </Column>
+      ) : null}
+      {queries.length ? (
+        <Column gap={1}>
+          <Heading>Queries that ask about it</Heading>
+          {queries.map((query) => {
+            const holds = conditionHolds(query.condition, width, snapshot.rootPx);
+            return (
+              <Text key={`${query.container}${query.condition}`} variant="body-sm">
+                <code className="env-dev-code">
+                  {query.container ? `${query.container} ` : ''}
+                  {query.condition}
+                </code>{' '}
+                · {query.rules} {query.rules === 1 ? 'rule' : 'rules'}
+                {holds === null ? '' : holds ? ' · holds now' : ''}
+              </Text>
+            );
+          })}
+        </Column>
       ) : null}
       {tokens.length ? (
-        <>
-          <Text variant="body-sm" render={<h3 />}>
-            Tokens its styles use
-          </Text>
-          <div className="env-dev-tokens">
+        <Column gap={1}>
+          <Heading>Tokens its styles use</Heading>
+          <Grid columns="minmax(0, 1fr) auto" gap={1} className="env-dev-tokens">
             {tokens.map((token) => (
               <span key={token.name} style={{ display: 'contents' }}>
                 <code className="env-dev-code">{token.name}</code>
-                <span>{token.value || '(not set)'}</span>
+                <span className="env-dev-quiet">{token.value || '(not set)'}</span>
               </span>
             ))}
-          </div>
-        </>
+          </Grid>
+        </Column>
       ) : null}
       {line ? (
-        <>
-          <Text variant="body-sm" render={<h3 />}>
-            Readout line
-          </Text>
-          <pre className="env-dev-readout">{line}</pre>
-        </>
+        <Column gap={1}>
+          <Heading>Readout line</Heading>
+          <pre className="env-dev-readout" data-wrap="">
+            {line}
+          </pre>
+        </Column>
       ) : null}
-    </section>
+    </Column>
   );
 }
 

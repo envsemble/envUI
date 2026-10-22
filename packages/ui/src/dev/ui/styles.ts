@@ -27,8 +27,7 @@ export const devStyles = /* css */ `
   .env-dev-panel {
     position: fixed;
     inset: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) min(28rem, 42vw);
+    display: flex;
     background: var(--env-color-bg-page);
     color: var(--env-color-fg-default);
     pointer-events: auto;
@@ -39,8 +38,9 @@ export const devStyles = /* css */ `
   }
   .env-dev-view {
     position: relative;
+    flex: 1 1 auto;
+    min-inline-size: 0;
     overflow: hidden;
-    background: var(--env-color-bg-muted);
     perspective: 125rem;
     cursor: grab;
     touch-action: none;
@@ -64,6 +64,81 @@ export const devStyles = /* css */ `
     inset: 0;
     border: 1px dashed var(--env-color-border-default);
     border-radius: var(--env-radius-sm);
+  }
+  /* The responsive frame: the rectangle the page is laid out in, above the planes, a quiet outline
+     at the page's real width and the focus color at a width it sets. Its line, handles and label
+     keep their size on screen at any zoom. */
+  .env-dev-frame {
+    --env-dev-unzoom: calc(1 / var(--env-dev-zoom, 1));
+    position: absolute;
+    inset: 0;
+    border: calc(1px * var(--env-dev-unzoom)) solid var(--env-color-border-default);
+    border-radius: var(--env-radius-sm);
+    pointer-events: none;
+  }
+  .env-dev-frame[data-set] {
+    border: calc(1.5px * var(--env-dev-unzoom)) solid var(--env-color-border-focus);
+  }
+  .env-dev-frame-label {
+    position: absolute;
+    inset-block-end: 100%;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    scale: var(--env-dev-unzoom);
+    transform-origin: 50% 100%;
+    padding-block-end: var(--env-space-2);
+    white-space: nowrap;
+    pointer-events: auto;
+  }
+  .env-dev-frame-handle {
+    position: absolute;
+    inset-block-start: 50%;
+    inline-size: 0.5rem;
+    block-size: 2.5rem;
+    translate: -50% -50%;
+    scale: var(--env-dev-unzoom);
+    border-radius: var(--env-radius-full);
+    background: var(--env-color-fg-muted);
+    cursor: ew-resize;
+    touch-action: none;
+    pointer-events: auto;
+  }
+  .env-dev-frame-handle[data-edge='start'] {
+    inset-inline-start: 0;
+  }
+  .env-dev-frame-handle[data-edge='end'] {
+    inset-inline-start: 100%;
+  }
+  .env-dev-frame-handle[data-edge^='bottom'] {
+    inset-block-start: 100%;
+  }
+  .env-dev-frame-handle[data-edge='bottom'] {
+    inset-inline-start: 50%;
+    inline-size: 2.5rem;
+    block-size: 0.5rem;
+    cursor: ns-resize;
+  }
+  /* A corner's handle is a small square, which moves both edges. */
+  .env-dev-frame-handle:is([data-edge='bottom-start'], [data-edge='bottom-end']) {
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    border-radius: 0.1875rem;
+  }
+  .env-dev-frame-handle[data-edge='bottom-start'] {
+    inset-inline-start: 0;
+    cursor: nesw-resize;
+  }
+  .env-dev-frame-handle[data-edge='bottom-end'] {
+    inset-inline-start: 100%;
+    cursor: nwse-resize;
+  }
+  .env-dev-frame-handle:hover,
+  .env-dev-frame[data-set] .env-dev-frame-handle {
+    background: var(--env-color-border-focus);
+  }
+  .env-dev-frame-handle:focus-visible {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: 0.125rem;
   }
   .env-dev-plane {
     --env-dev-tint: var(--env-color-avatar-bg-slate);
@@ -142,62 +217,78 @@ export const devStyles = /* css */ `
     border-end-end-radius: 2px;
     pointer-events: none;
   }
-  .env-dev-controls {
-    position: absolute;
-    inset-block-start: var(--env-space-3);
-    inset-inline-start: var(--env-space-3);
-    display: flex;
-    flex-direction: column;
-    gap: var(--env-space-3);
-    inline-size: min(22rem, calc(100% - 1.5rem));
-    max-block-size: calc(100% - 1.5rem);
-    overflow: auto;
-    padding: var(--env-space-4);
-    background: var(--env-color-bg-raised);
-    border: 1px solid var(--env-color-border-muted);
-    border-radius: var(--env-radius-lg);
-    cursor: auto;
-  }
-  .env-dev-controls[data-collapsed] > :not(.env-dev-controls-head) {
-    display: none;
-  }
-  .env-dev-controls-head,
-  .env-dev-presets,
-  .env-dev-switches,
-  .env-dev-legend {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--env-space-2);
-  }
-  .env-dev-controls-head {
-    justify-content: space-between;
-  }
-  .env-dev-legend span {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--env-space-1);
-    font: var(--env-type-caption, 0.75rem/1rem sans-serif);
-  }
-  .env-dev-legend i {
-    inline-size: 0.75rem;
-    block-size: 0.75rem;
-    border-radius: 2px;
-    background: var(--env-dev-tint);
-  }
   .env-dev-card {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     gap: var(--env-space-1);
     max-inline-size: 24rem;
-    padding: var(--env-space-3);
+    padding: var(--env-space-2) var(--env-space-3);
     background: var(--env-color-bg-popup);
-    border: 1px solid var(--env-color-border-muted);
+    border: var(--env-control-border-width) solid var(--env-elevation-2-border);
     border-radius: var(--env-radius-md);
     pointer-events: none;
-    font: var(--env-type-body-small, 0.8125rem/1.25rem sans-serif);
+    font: var(--env-type-body-small);
+  }
+  .env-dev-card strong,
+  .env-dev-heading {
+    font-weight: var(--env-font-weight-medium);
+  }
+  /* The view's floating controls: popup surfaces, set apart by their fill and edge, no shadow. */
+  .env-dev-float {
+    position: absolute;
+    z-index: 1;
+    box-sizing: border-box;
+    max-inline-size: calc(100% - 2 * var(--env-space-3));
+    padding: var(--env-space-1);
+    background: var(--env-color-bg-popup);
+    border: var(--env-control-border-width) solid var(--env-elevation-2-border);
+    border-radius: var(--env-radius-surface);
+    cursor: auto;
+  }
+  /* One row; a view too narrow for it wraps it rather than cutting it off. */
+  .env-dev-toolbar {
+    inset-block-start: var(--env-space-3);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    inline-size: max-content;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  /* The legend floats over the view with no pane: quiet small text in a corner, where the planes
+     seldom reach. The frame's label is small text too. */
+  .env-dev-legend,
+  .env-dev-frame-label {
+    font: var(--env-type-body-small);
+    font-size: var(--env-font-size-caption);
+  }
+  /* Dev mode's popovers sit closer around their content than an application's. */
+  .env-dev-popover {
+    gap: var(--env-space-2);
+    padding: var(--env-space-3);
+  }
+  .env-dev-legend {
+    position: absolute;
+    inset-block-end: var(--env-space-3);
+    inset-inline-start: var(--env-space-4);
+    inset-inline-end: var(--env-space-4);
+    color: var(--env-color-fg-muted);
+    pointer-events: none;
+  }
+  .env-dev-swatch {
+    position: static;
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    outline-width: 1.5px;
+    background: color-mix(in oklab, var(--env-dev-tint) 45%, transparent);
+  }
+  /* The outline entries show an outline alone: solid for a container, dotted for the rest. */
+  .env-dev-swatch[data-window='none'] {
+    background: none;
+  }
+  .env-dev-quiet {
+    color: var(--env-color-fg-muted);
   }
   .env-dev-problem {
     color: var(--env-color-fg-danger);
@@ -254,77 +345,52 @@ export const devStyles = /* css */ `
     font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
     font-size: 0.9em;
   }
-  /* The inspector stands apart from the view by its background, with no line between them. */
-  .env-dev-inspector {
-    display: grid;
-    grid-template-rows: minmax(0, 1fr);
+  /* The sidebars: flush, square panes on the navigation's color. Their heads line up with the
+     tree's rows and the tabs' panel. */
+  .env-dev-sidebar {
+    flex: none;
     min-block-size: 0;
-    background: var(--env-color-bg-page);
+    padding-block: var(--env-space-3);
   }
-  .env-dev-inspector > * {
-    min-block-size: 0;
+  .env-dev-sidebar[data-side='tree'] {
+    inline-size: min(15rem, 20vw);
   }
-  .env-dev-inspector-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--env-space-2);
-    padding: var(--env-space-3) var(--env-space-4) 0;
+  .env-dev-sidebar[data-side='inspector'] {
+    inline-size: min(21rem, 27vw);
+    padding-block-start: var(--env-space-1);
   }
-  .env-dev-tabs {
-    display: flex;
-    flex-direction: column;
-    min-block-size: 0;
-    block-size: 100%;
+  .env-dev-hide {
+    margin-inline-start: auto;
   }
-  .env-dev-tab-panel {
-    display: flex;
-    flex-direction: column;
-    gap: var(--env-space-3);
-    min-block-size: 0;
-    block-size: 100%;
-    padding: var(--env-space-3) var(--env-space-4) var(--env-space-4);
-    overflow: auto;
+  .env-dev-sidebar-head,
+  .env-dev-sidebar-note {
+    padding-inline: var(--env-space-3);
   }
   .env-dev-tree {
-    flex: 0 0 auto;
-    block-size: min(40vh, 22rem);
-    border: 1px solid var(--env-color-border-muted);
-    border-radius: var(--env-radius-md);
+    flex: 1 1 auto;
+    min-block-size: 0;
   }
-  .env-dev-details {
-    display: flex;
-    flex-direction: column;
-    gap: var(--env-space-2);
-  }
-  .env-dev-details dl {
-    display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
-    gap: var(--env-space-1) var(--env-space-3);
-    margin: 0;
-  }
-  .env-dev-details dd {
-    margin: 0;
-    overflow-wrap: anywhere;
-  }
-  .env-dev-details ul {
-    margin: 0;
-    padding-inline-start: 1.25rem;
+  .env-dev-tab-panel {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    padding: var(--env-space-3);
+    overflow: auto;
   }
   .env-dev-tokens {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) max-content;
-    gap: var(--env-space-1) var(--env-space-3);
-    font: var(--env-type-body-small, 0.8125rem/1.25rem sans-serif);
+    font: var(--env-type-body-small);
   }
   .env-dev-readout {
     margin: 0;
-    padding: var(--env-space-3);
+    padding: var(--env-space-2) var(--env-space-3);
     overflow: auto;
     white-space: pre;
     font: 0.75rem/1.125rem var(--env-font-family-mono, ui-monospace, monospace);
     background: var(--env-color-bg-muted);
     border-radius: var(--env-radius-md);
+  }
+  .env-dev-readout[data-wrap] {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 }
 `;

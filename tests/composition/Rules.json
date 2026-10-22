@@ -174,6 +174,7 @@
       "internal/FileInput.tsx": ["input"],
       "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
       "forms/internal/ColorPlane.tsx": ["role=\"slider\""],
+      "dev/ui/FrameHandle.tsx": ["role=\"slider\""],
       "feedback/Tooltip.tsx": [
         "role=\"button\"",
         "role=\"link\"",
@@ -215,6 +216,7 @@
           "dev/queries.ts",
           "dev/readout.ts",
           "dev/ui/DevMode.tsx",
+          "dev/ui/FrameHandle.tsx",
           "dev/ui/Inspector.tsx",
           "dev/ui/View3D.tsx",
           "dev/ui/styles.ts",

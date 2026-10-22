@@ -4,6 +4,9 @@
 // reads as what is above what. Sticky and floating nodes sit half a level higher, open overlays
 // above the whole page. Each plane carries the node's surfaces. The planes are drawn from the
 // measured boxes: the page itself can't be tilted, since scroll containers flatten 3D.
+//
+// Over the view float a toolbar, with the view directions and what the planes show, and a panel
+// with the colors and the levels.
 
 import {
   memo,
@@ -13,17 +16,39 @@ import {
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
   type RefObject,
 } from 'react';
-import { Button } from '../../actions/Button.js';
-import { SegmentedControl } from '../../actions/SegmentedControl.js';
+import { IconButton } from '../../actions/Button.js';
+import * as Toolbar from '../../actions/Toolbar.js';
+import { Popover } from '../../feedback/Popover.js';
 import { Slider } from '../../forms/Slider.js';
-import { Switch } from '../../forms/Switch.js';
+import { Row } from '../../foundations/Layout.js';
 import { Text } from '../../foundations/Text.js';
+import * as Menu from '../../navigation/Menu.js';
+import { Tooltip } from '../../feedback/Tooltip.js';
+import { Close } from '../../icons/Close.js';
+import { Contrast } from '../../icons/Contrast.js';
+import { DarkMode } from '../../icons/DarkMode.js';
+import { Devices } from '../../icons/Devices.js';
+import { FilterAlt } from '../../icons/FilterAlt.js';
+import { Info } from '../../icons/Info.js';
+import { Label } from '../../icons/Label.js';
+import { LeftPanelOpen } from '../../icons/LeftPanelOpen.js';
+import { LightMode } from '../../icons/LightMode.js';
+import { Padding } from '../../icons/Padding.js';
+import { Palette } from '../../icons/Palette.js';
+import { RightPanelOpen } from '../../icons/RightPanelOpen.js';
+import { ScreenRotation } from '../../icons/ScreenRotation.js';
+import { Tune } from '../../icons/Tune.js';
 import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
 import { queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
 import { round, toRem, windowClasses, windowClassOf } from '../units.js';
+import { ViewFit, ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './icons.js';
+import { deviceGroups } from './devices.js';
+import { FrameHandle, realSize, type FrameEdge, type FrameSize } from './FrameHandle.js';
+import type { EditorTheme } from './editorTheme.js';
 import { surfaceOf } from './surfaces.js';
 import type { LivePage } from './useLivePage.js';
 
@@ -36,17 +61,13 @@ interface Camera {
 }
 
 const tilted = { rx: 38, ry: -22 };
-const presets: [string, number, number][] = [
-  ['Tilted', tilted.rx, tilted.ry],
-  ['Straight on', 0, 0],
-  ['From the top', -70, 0],
-  ['From the left', 0, 70],
-  ['From the right', 0, -70],
+const presets: { label: string; icon: ReactNode; rx: number; ry: number }[] = [
+  { label: 'Tilted', icon: <ViewTilted />, ...tilted },
+  { label: 'Straight on', icon: <ViewFront />, rx: 0, ry: 0 },
+  { label: 'From the top', icon: <ViewTop />, rx: -70, ry: 0 },
+  { label: 'From the left', icon: <ViewLeft />, rx: 0, ry: 70 },
+  { label: 'From the right', icon: <ViewRight />, rx: 0, ry: -70 },
 ];
-/** Resting on a plane this long, with "only the hovered" on, shows only it and what is in it. */
-const focusAfter = 250;
-/** Off every plane this long, everything shows again. */
-const unfocusAfter = 400;
 
 type CachedSurface = { signature: string; element: HTMLElement; restore: () => void };
 
@@ -54,8 +75,18 @@ export interface View3DProps {
   live: LivePage;
   selected: number | null;
   onSelect: (key: number | null) => void;
-  /** The node hovered in the inspector's tree. */
+  /** The node hovered in the tree. */
   treeHover: number | null;
+  /** Which side columns show, which the toolbar hides and shows. */
+  sides: { tree: boolean; inspector: boolean };
+  onSidesChange: (sides: { tree: boolean; inspector: boolean }) => void;
+  /** The width the responsive frame lays the page out at, in px, or null for its real width. */
+  /** The size the responsive frame lays the page out at. */
+  frame: FrameSize;
+  onFrameChange: (frame: FrameSize) => void;
+  /** The theme of dev mode's own UI, which its toolbar switches; the page keeps its own. */
+  editorTheme: { value: EditorTheme; onChange: (theme: EditorTheme) => void };
+  onClose: () => void;
 }
 
 /** The nodes in a node, itself included, by key. */
@@ -88,7 +119,28 @@ function scrollerAt(element: HTMLElement, dx: number, dy: number): HTMLElement |
   return page instanceof HTMLElement && can(page) ? page : null;
 }
 
-export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
+/** A secondary label, quiet and small. */
+const Quiet = ({ children }: { children: ReactNode }) => (
+  <Text variant="body-sm" render={<span />}>
+    {children}
+  </Text>
+);
+
+/** The floating controls take the pointer and the wheel for themselves, not for the view. */
+const keepPointer = (event: ReactPointerEvent) => event.stopPropagation();
+
+export function View3D({
+  live,
+  selected,
+  onSelect,
+  treeHover,
+  sides,
+  onSidesChange,
+  frame,
+  onFrameChange,
+  editorTheme,
+  onClose,
+}: View3DProps) {
   const snapshot = live.geometry;
   const problemsByKey = live.full?.problemsByKey;
   const [spacing, setSpacing] = useState(48);
@@ -97,14 +149,14 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
   const [colorBy, setColorBy] = useState<'kind' | 'window'>('kind');
   const [names, setNames] = useState(true);
   const [showSpacing, setShowSpacing] = useState(true);
-  const [onlyHovered, setOnlyHovered] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [onlySelected, setOnlySelected] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
-  const [focus, setFocus] = useState<number | null>(null);
   const [dragging, setDragging] = useState(false);
   const view = useRef<HTMLDivElement>(null);
   const scene = useRef<HTMLDivElement>(null);
   const card = useRef<HTMLDivElement>(null);
+  // Where the pointer is in the view, where the hover card goes.
+  const pointer = useRef({ x: 0, y: 0 });
   const camera = useRef<Camera>({ ...tilted, zoom: 0.6, px: 0, py: 0 });
   const fitted = useRef(false);
   const surfaces = useRef(new Map<number, CachedSurface>()).current;
@@ -112,7 +164,6 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
   hoveredRef.current = hovered;
   const snapshotRef = useRef(snapshot);
   snapshotRef.current = snapshot;
-  const timers = useRef({ focus: 0, unfocus: 0 });
 
   const maxLevel = Math.ceil(Math.max(0, ...(snapshot?.nodes ?? []).map((node) => node.level)));
   const top = Math.min(to ?? maxLevel, maxLevel);
@@ -121,8 +172,10 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
   /** Moves the scene to the camera, without a render: dragging stays smooth. */
   const applyCamera = () => {
     const { rx, ry, zoom, px, py } = camera.current;
-    if (scene.current)
-      scene.current.style.transform = `translate(-50%, -50%) translate(${px}px, ${py}px) scale(${zoom}) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${-lift / 2}px)`;
+    if (!scene.current) return;
+    scene.current.style.transform = `translate(-50%, -50%) translate(${px}px, ${py}px) scale(${zoom}) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${-lift / 2}px)`;
+    // The frame's handles and label keep their size on screen at any zoom.
+    scene.current.style.setProperty('--env-dev-zoom', String(zoom));
   };
   useLayoutEffect(applyCamera);
 
@@ -171,7 +224,7 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
       applyCamera();
     };
     const wheel = (event: WheelEvent) => {
-      if ((event.target as Element).closest('.env-dev-controls')) return;
+      if ((event.target as Element).closest('.env-dev-float')) return;
       event.preventDefault();
       const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 400 : 1;
       const dx = (event.shiftKey ? event.deltaY : event.deltaX) * unit;
@@ -192,15 +245,8 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const current = timers.current;
-    return () => {
-      window.clearTimeout(current.focus);
-      window.clearTimeout(current.unfocus);
-    };
-  }, []);
-
-  const focused = onlyHovered ? (treeHover ?? focus) : null;
+  // With "only the selected" on, the view shows the selected node and what is inside it.
+  const focused = onlySelected ? selected : null;
   const shownKeys = useMemo(
     () => (snapshot && focused !== null ? subtreeOf(snapshot, focused) : null),
     [snapshot, focused],
@@ -223,20 +269,6 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
   const hoveredNode =
     hovered === null ? undefined : snapshot.nodes.find((node) => node.key === hovered);
 
-  const hoverPlane = (key: number | null) => {
-    if (key === hoveredRef.current) return;
-    setHovered(key);
-    const current = timers.current;
-    window.clearTimeout(current.focus);
-    if (!onlyHovered) return;
-    if (key === null) {
-      current.unfocus = window.setTimeout(() => setFocus(null), unfocusAfter);
-      return;
-    }
-    window.clearTimeout(current.unfocus);
-    if (key !== focus) current.focus = window.setTimeout(() => setFocus(key), focusAfter);
-  };
-
   return (
     <div
       ref={view}
@@ -246,18 +278,20 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
       onPointerDown={drag.down}
       onPointerMove={(event) => {
         drag.move(event);
+        const room = event.currentTarget.getBoundingClientRect();
+        pointer.current = { x: event.clientX - room.left + 14, y: event.clientY - room.top + 14 };
         if (card.current) {
-          const room = event.currentTarget.getBoundingClientRect();
-          card.current.style.left = `${event.clientX - room.left + 14}px`;
-          card.current.style.top = `${event.clientY - room.top + 14}px`;
+          card.current.style.left = `${pointer.current.x}px`;
+          card.current.style.top = `${pointer.current.y}px`;
         }
         if (drag.active()) return;
         const plane = (event.target as Element).closest<HTMLElement>('[data-plane]');
-        hoverPlane(plane ? Number(plane.dataset.plane) : null);
+        const key = plane ? Number(plane.dataset.plane) : null;
+        if (key !== hoveredRef.current) setHovered(key);
       }}
       onPointerUp={drag.up}
       onPointerCancel={drag.up}
-      onPointerLeave={() => hoverPlane(null)}
+      onPointerLeave={() => setHovered(null)}
     >
       <svg aria-hidden="true" width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
@@ -313,103 +347,354 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
             z={(top - from + 0.75) * spacing + 2}
           />
         ) : null}
+        <Frame
+          width={origin.w}
+          height={origin.h}
+          size={frame}
+          rootPx={snapshot.rootPx}
+          z={(top - from) * spacing + 4}
+          onSizeChange={onFrameChange}
+        />
       </div>
 
-      <div
-        className="env-dev-controls"
-        data-collapsed={collapsed ? '' : undefined}
-        onPointerDown={(event) => event.stopPropagation()}
+      <Toolbar.Root
+        aria-label="3D view"
+        size="sm"
+        className="env-dev-float env-dev-toolbar"
+        onPointerDown={keepPointer}
       >
-        <div className="env-dev-controls-head">
-          <Text variant="title">3D view</Text>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setCollapsed((value) => !value)}
-            aria-expanded={!collapsed}
-          >
-            {collapsed ? 'Show controls' : 'Hide controls'}
-          </Button>
-        </div>
-        <div className="env-dev-presets">
-          {presets.map(([label, rx, ry]) => (
-            <Button
+        <Toolbar.Group aria-label="Views">
+          {presets.map(({ label, icon, rx, ry }) => (
+            <Toolbar.Button
               key={label}
-              variant="outline"
-              size="sm"
+              icon={icon}
+              label={label}
               onClick={() => {
                 camera.current = { ...camera.current, rx, ry };
                 applyCamera();
               }}
-            >
-              {label}
-            </Button>
+            />
           ))}
-          <Button variant="outline" size="sm" onClick={fit}>
-            Fit
-          </Button>
-        </div>
-        <SegmentedControl
-          aria-label="Color by"
-          size="sm"
-          fullWidth
-          value={colorBy}
-          onValueChange={(value) => setColorBy(value as 'kind' | 'window')}
-          items={[
-            { value: 'kind', label: 'Color by kind' },
-            { value: 'window', label: 'By window class' },
-          ]}
+          <Toolbar.Button icon={<ViewFit />} label="Fit" onClick={fit} />
+        </Toolbar.Group>
+        <Toolbar.Separator />
+        <Toolbar.Group aria-label="Show">
+          <Toolbar.Button
+            icon={<Label />}
+            label="Names"
+            pressed={names}
+            onClick={() => setNames((value) => !value)}
+          />
+          <Toolbar.Button
+            icon={<Padding />}
+            label="Padding and gaps"
+            pressed={showSpacing}
+            onClick={() => setShowSpacing((value) => !value)}
+          />
+          <Toolbar.Button
+            icon={<FilterAlt />}
+            label="Only the selected"
+            pressed={onlySelected}
+            onClick={() => setOnlySelected((value) => !value)}
+          />
+          <Toolbar.Button
+            icon={<Palette />}
+            label="Color by window class"
+            pressed={colorBy === 'window'}
+            onClick={() => setColorBy((value) => (value === 'window' ? 'kind' : 'window'))}
+          />
+        </Toolbar.Group>
+        <Toolbar.Separator />
+        <DeviceMenu
+          frame={frame}
+          width={origin.w}
+          height={origin.h}
+          onFrameChange={onFrameChange}
         />
-        {colorBy === 'window' ? <WindowLegend rootPx={snapshot.rootPx} /> : <KindLegend />}
-        <Slider
-          label="Spacing between levels"
-          min={0}
-          max={160}
-          value={spacing}
-          onValueChange={setSpacing}
-          formatValue={(value) => `${value} px`}
+        <Toolbar.Button
+          icon={<ScreenRotation />}
+          label="Rotate"
+          onClick={() =>
+            onFrameChange({
+              width: frame.height ?? Math.round(origin.h),
+              height: frame.width ?? Math.round(origin.w),
+              device: frame.device,
+            })
+          }
         />
-        <Slider
-          label="From level"
-          min={0}
-          max={Math.max(1, maxLevel)}
-          value={Math.min(from, maxLevel)}
-          onValueChange={(value) => {
-            setFrom(value);
-            if (value > top) setTo(value);
-          }}
-        />
-        <Slider
-          label="To level"
-          min={0}
-          max={Math.max(1, maxLevel)}
-          value={top}
-          onValueChange={(value) => {
-            setTo(value);
-            if (value < from) setFrom(value);
-          }}
-        />
-        <div className="env-dev-switches">
-          <Switch label="Names" checked={names} onCheckedChange={setNames} />
-          <Switch label="Padding and gaps" checked={showSpacing} onCheckedChange={setShowSpacing} />
-          <Switch label="Only the hovered" checked={onlyHovered} onCheckedChange={setOnlyHovered} />
-        </div>
-        <Text variant="caption" emphasis="muted">
-          Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer; Ctrl+wheel
-          zooms. Click a plane to select it.
-        </Text>
-      </div>
+        <EditorThemeMenu {...editorTheme} />
+        <Toolbar.Separator />
+        <Popover
+          title="View settings"
+          side="bottom"
+          className="env-dev-popover"
+          trigger={<IconButton icon={<Tune />} aria-label="View settings" />}
+        >
+          <Slider
+            label={<Quiet>Spacing between levels</Quiet>}
+            min={0}
+            max={160}
+            value={spacing}
+            onValueChange={setSpacing}
+            formatValue={(value) => `${value} px`}
+          />
+          <Slider
+            label={<Quiet>From level</Quiet>}
+            min={0}
+            max={Math.max(1, maxLevel)}
+            value={Math.min(from, maxLevel)}
+            onValueChange={(value) => {
+              setFrom(value);
+              if (value > top) setTo(value);
+            }}
+          />
+          <Slider
+            label={<Quiet>To level</Quiet>}
+            min={0}
+            max={Math.max(1, maxLevel)}
+            value={top}
+            onValueChange={(value) => {
+              setTo(value);
+              if (value < from) setFrom(value);
+            }}
+          />
+        </Popover>
+        <Popover
+          title="Moving around"
+          side="bottom"
+          className="env-dev-popover"
+          trigger={<IconButton icon={<Info />} aria-label="How to move around" />}
+        >
+          <Text variant="body-sm" emphasis="default">
+            Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer; Ctrl+wheel
+            zooms. Click a plane, or a node in the tree, to select it; Only the selected shows it
+            and what is inside it. Drag a handle of the frame, or use the arrow keys on an
+            edge&apos;s, to lay the page out at another size; double-click one for the page&apos;s
+            own size.
+          </Text>
+        </Popover>
+        <Toolbar.Separator />
+        <Toolbar.Group aria-label="Panels">
+          <Toolbar.Button
+            icon={<LeftPanelOpen />}
+            label="Nodes"
+            pressed={sides.tree}
+            onClick={() => onSidesChange({ ...sides, tree: !sides.tree })}
+          />
+          <Toolbar.Button
+            icon={<RightPanelOpen />}
+            label="Inspector"
+            pressed={sides.inspector}
+            onClick={() => onSidesChange({ ...sides, inspector: !sides.inspector })}
+          />
+          <Toolbar.Button icon={<Close />} label="Close dev mode" onClick={onClose} />
+        </Toolbar.Group>
+      </Toolbar.Root>
 
-      <div ref={card} className="env-dev-card" hidden={!hoveredNode || dragging}>
-        {hoveredNode ? (
+      {/* The legend floats over the view, with no pane behind it. */}
+      {colorBy === 'window' ? <WindowLegend rootPx={snapshot.rootPx} /> : <KindLegend />}
+
+      {hoveredNode && !dragging ? (
+        <div
+          ref={card}
+          className="env-dev-card"
+          style={{ left: pointer.current.x, top: pointer.current.y }}
+        >
           <HoverCard
             snapshot={snapshot}
             node={hoveredNode}
             problems={problemsByKey?.get(hoveredNode.key) ?? []}
           />
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </div>
+  );
+}
+
+interface FrameProps {
+  /** The page's size now, in px. */
+  width: number;
+  height: number;
+  /** How high it floats: above every plane, where its handles and label are never covered. */
+  z: number;
+  /** The size the frame sets. */
+  size: FrameSize;
+  rootPx: number;
+  onSizeChange: (size: FrameSize) => void;
+}
+
+const frameEdges: FrameEdge[] = ['start', 'end', 'bottom', 'bottom-start', 'bottom-end'];
+
+/**
+ * The responsive frame: the rectangle the page is laid out in, floating above the planes, with
+ * handles on its side and bottom edges and its bottom corners. Dragging a handle, or the arrow
+ * keys on an edge's, sets the size the page is laid out at; the label above says it in px and rem
+ * with its window class, and the device it came from.
+ */
+function Frame({ width, height, z, size, rootPx, onSizeChange }: FrameProps) {
+  const windowClass = windowClassOf(width / rootPx);
+  const text = [
+    size.device,
+    `${Math.round(width)}×${Math.round(height)}px`,
+    `${round(width / rootPx)}×${round(height / rootPx)}rem`,
+    windowClass,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const set = size.width !== null || size.height !== null;
+  return (
+    <div
+      className="env-dev-frame"
+      data-set={set ? '' : undefined}
+      style={{ transform: `translateZ(${z}px)` }}
+    >
+      <Row
+        gap={1}
+        align="center"
+        className="env-dev-frame-label"
+        onPointerDown={keepPointer}
+        data-window={windowClass}
+      >
+        <Text variant="body-sm" emphasis="default" render={<span />}>
+          {text}
+        </Text>
+        {set ? (
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<Close />}
+            aria-label="Back to the page's own size"
+            title="Back to the page's own size"
+            onClick={() => onSizeChange(realSize)}
+          />
+        ) : null}
+      </Row>
+      {frameEdges.map((edge) => (
+        <FrameHandle
+          key={edge}
+          edge={edge}
+          width={width}
+          height={height}
+          size={size}
+          rootPx={rootPx}
+          text={text}
+          onSizeChange={onSizeChange}
+        />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * The devices the frame can take, as a browser's responsive mode lists them: the page's own size,
+ * a free frame, then phones, tablets, laptops and screens at their CSS viewport sizes.
+ */
+function DeviceMenu({
+  frame,
+  width,
+  height,
+  onFrameChange,
+}: {
+  frame: FrameSize;
+  width: number;
+  height: number;
+  onFrameChange: (frame: FrameSize) => void;
+}) {
+  const own = frame.width === null && frame.height === null;
+  const value = own ? 'own' : (frame.device ?? 'responsive');
+  return (
+    <Menu.Root
+      aria-label="Device"
+      trigger={
+        <Tooltip content="Device">
+          <IconButton icon={<Devices />} aria-label="Device" />
+        </Tooltip>
+      }
+    >
+      <Menu.RadioGroup
+        value={value}
+        onValueChange={(next) => {
+          if (next === 'own') onFrameChange(realSize);
+          else if (next === 'responsive')
+            onFrameChange({
+              width: frame.width ?? Math.round(width),
+              height: frame.height ?? Math.round(height),
+              device: null,
+            });
+        }}
+      >
+        <Menu.RadioItem value="own" description="As the page is laid out">
+          The page&apos;s own size
+        </Menu.RadioItem>
+        <Menu.RadioItem value="responsive" description="A frame of any size">
+          Responsive
+        </Menu.RadioItem>
+      </Menu.RadioGroup>
+      {deviceGroups.map((group) => (
+        <Menu.RadioGroup
+          key={group.label}
+          label={group.label}
+          value={value}
+          onValueChange={(next) => {
+            const device = group.devices.find((candidate) => candidate.name === next);
+            if (device) onFrameChange({ ...device, device: device.name });
+          }}
+        >
+          {group.devices.map((device) => (
+            <Menu.RadioItem
+              key={device.name}
+              value={device.name}
+              description={`${device.width}×${device.height}`}
+            >
+              {device.name}
+            </Menu.RadioItem>
+          ))}
+        </Menu.RadioGroup>
+      ))}
+    </Menu.Root>
+  );
+}
+
+/** The theme of dev mode's own UI: the page's, light or dark, with or without high contrast. */
+function EditorThemeMenu({
+  value,
+  onChange,
+}: {
+  value: EditorTheme;
+  onChange: (theme: EditorTheme) => void;
+}) {
+  return (
+    <Menu.Root
+      aria-label="Dev mode theme"
+      trigger={
+        <Tooltip content="Dev mode theme">
+          <IconButton icon={<Contrast />} aria-label="Dev mode theme" />
+        </Tooltip>
+      }
+    >
+      <Menu.RadioGroup
+        label="Dev mode theme"
+        value={value.theme}
+        onValueChange={(theme) => onChange({ ...value, theme: theme as EditorTheme['theme'] })}
+      >
+        <Menu.RadioItem value="page" description="As the page is now">
+          Same as the page
+        </Menu.RadioItem>
+        <Menu.RadioItem value="light" icon={<LightMode />}>
+          Light
+        </Menu.RadioItem>
+        <Menu.RadioItem value="dark" icon={<DarkMode />}>
+          Dark
+        </Menu.RadioItem>
+      </Menu.RadioGroup>
+      <Menu.Separator />
+      <Menu.CheckboxItem
+        checked={value.contrast === 'high'}
+        onCheckedChange={(high) => onChange({ ...value, contrast: high ? 'high' : 'standard' })}
+      >
+        High contrast
+      </Menu.CheckboxItem>
+    </Menu.Root>
   );
 }
 
@@ -633,7 +918,7 @@ function HoverCard({
   const thresholds = thresholdsFor(queries);
   return (
     <>
-      <Text variant="title">{labelOf(node)}</Text>
+      <strong>{labelOf(node)}</strong>
       <span>
         {width}×{toRem(node.size.h, snapshot.rootPx)}rem · {windowClassOf(width)} · level{' '}
         {node.level}
@@ -652,49 +937,61 @@ function HoverCard({
   );
 }
 
+/** One entry of a legend: a swatch drawn as a plane is, and its name. */
+function Swatch({
+  plane,
+  title,
+  children,
+}: {
+  plane: Record<`data-${string}`, string>;
+  title?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Row gap={1} align="center" render={<span title={title} />}>
+      <i className="env-dev-plane env-dev-swatch" {...plane} />
+      {children}
+    </Row>
+  );
+}
+
 function KindLegend() {
   const kinds = ['box', 'row', 'column', 'grid', 'scaffold', 'page', 'overlay'];
   return (
-    <div className="env-dev-legend">
+    <Row gap={2} wrap className="env-dev-legend" role="group" aria-label="Legend">
       {kinds.map((kind) => (
-        <span key={kind} className="env-dev-plane-swatch" data-kind={kind}>
-          <i
-            className="env-dev-plane"
-            data-kind={kind}
-            data-overlay={kind === 'overlay' ? '' : undefined}
-            style={{ position: 'static' }}
-          />
+        <Swatch
+          key={kind}
+          plane={{ 'data-kind': kind, ...(kind === 'overlay' && { 'data-overlay': '' }) }}
+        >
           {kind}
-        </span>
+        </Swatch>
       ))}
-    </div>
+    </Row>
   );
 }
 
 function WindowLegend({ rootPx }: { rootPx: number }) {
   return (
-    <div className="env-dev-legend">
+    <Row gap={2} wrap className="env-dev-legend" role="group" aria-label="Legend">
       {windowClasses.map((windowClass, index) => {
         const next = windowClasses[index + 1];
         const range = next
-          ? `${windowClass.from ? `${windowClass.from}–` : '< '}${next.from}rem`
-          : `≥ ${windowClass.from}rem`;
+          ? `${windowClass.from ? `${windowClass.from}–` : '< '}${next.from}`
+          : `≥ ${windowClass.from}`;
         return (
-          <span
+          <Swatch
             key={windowClass.name}
-            className="env-dev-ruler-band"
-            data-window={windowClass.name}
-            style={{ position: 'static' }}
-            title={`${round((next?.from ?? windowClass.from) * rootPx)}px`}
+            plane={{ 'data-window': windowClass.name, 'data-container': '' }}
+            title={`${range}rem, ${round((next?.from ?? windowClass.from) * rootPx)}px`}
           >
-            {windowClass.name} {range}
-          </span>
+            {windowClass.name} <span className="env-dev-quiet">{range}</span>
+          </Swatch>
         );
       })}
-      <Text variant="caption" emphasis="muted">
-        A solid outline is a container; a dotted one is not, and its width decides nothing.
-      </Text>
-    </div>
+      <Swatch plane={{ 'data-window': 'none', 'data-container': '' }}>container</Swatch>
+      <Swatch plane={{ 'data-window': 'none' }}>not a container</Swatch>
+    </Row>
   );
 }
 

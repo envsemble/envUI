@@ -4,6 +4,12 @@
 // imports it; load it behind a development check, as docs/dev-mode.md shows.
 export { installDevMode, type DevModeHandle, type DevModeOptions } from './dev/install.js';
 export type { PartsFile } from './dev/parts.js';
-export { layout, type LayoutApi, type LayoutAtResult, type LayoutOptions } from './dev/api.js';
+export {
+  layout,
+  type LayoutApi,
+  type LayoutAtResult,
+  type LayoutOptions,
+  type LayoutSize,
+} from './dev/api.js';
 export type { SkeletonShiftOptions } from './dev/skeletonShift.js';
 export type { LayoutProblem, ProblemRule } from './dev/model.js';

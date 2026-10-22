@@ -1,15 +1,19 @@
 'use client';
 
-// Dev mode's UI: a toggle in the corner and, while open, the 3D view and the inspector over the
-// page. It is made of envUI's components, inside its own Theme, and the readout leaves it out.
+// Dev mode's UI: a toggle in the corner and, while open, over the page, the node tree, the 3D view
+// and the inspector side by side. It is made of envUI's components, inside its own Theme at the
+// compact scale of a desktop tool, and the readout leaves it out.
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { IconButton } from '../../actions/Button.js';
 import { PortalContainer } from '../../foundations/PortalContainer.js';
 import { Theme, type ThemeValue } from '../../foundations/Theme.js';
 import { ViewInAr } from '../../icons/ViewInAr.js';
+import { resizeRoot } from '../api.js';
 import { resolveRoot } from '../measure.js';
-import { Inspector } from './Inspector.js';
+import { Inspector, NodeTree } from './Inspector.js';
+import { realSize, type FrameSize } from './FrameHandle.js';
+import { loadEditorTheme, saveEditorTheme, type EditorTheme } from './editorTheme.js';
 import { useLivePage } from './useLivePage.js';
 import { View3D } from './View3D.js';
 
@@ -40,11 +44,35 @@ function pageTheme(): ThemeValue {
 
 export function DevMode({ controller }: { controller: DevModeController }) {
   const [open, setOpen] = useState(controller.open);
-  useEffect(() => controller.subscribe(setOpen), [controller]);
+  // Dev mode's own UI takes the theme chosen in its toolbar, or by default the page's theme as it
+  // opens. The page keeps its own.
+  const [editor, setEditor] = useState(loadEditorTheme);
+  const [page, setPage] = useState(pageTheme);
+  useEffect(
+    () =>
+      controller.subscribe((next) => {
+        if (next) setPage(pageTheme());
+        setOpen(next);
+      }),
+    [controller],
+  );
+  const editorTheme = {
+    value: editor,
+    onChange: (next: EditorTheme) => {
+      if (next.theme === 'page') setPage(pageTheme());
+      setEditor(next);
+      saveEditorTheme(next);
+    },
+  };
   return (
     <PortalContainer container={controller.host}>
-      <Theme theme={pageTheme()} className="env-dev">
-        {open ? <Panel controller={controller} /> : null}
+      <Theme
+        theme={editor.theme === 'page' ? page : editor.theme}
+        contrast={editor.contrast}
+        scale="compact"
+        className="env-dev"
+      >
+        {open ? <Panel controller={controller} editorTheme={editorTheme} /> : null}
         {controller.button ? (
           <IconButton
             className="env-dev-toggle"
@@ -76,7 +104,13 @@ function cover(root: HTMLElement, element: HTMLElement | null, returnFocus: HTML
   };
 }
 
-function Panel({ controller }: { controller: DevModeController }) {
+function Panel({
+  controller,
+  editorTheme,
+}: {
+  controller: DevModeController;
+  editorTheme: { value: EditorTheme; onChange: (theme: EditorTheme) => void };
+}) {
   const [root] = useState(() => resolveRoot(controller.root));
   // Where focus was as it opened, to give it back as it closes.
   const [returnFocus] = useState(() =>
@@ -85,9 +119,21 @@ function Panel({ controller }: { controller: DevModeController }) {
   const live = useLivePage(root);
   const [selected, setSelected] = useState<number | null>(null);
   const [treeHover, setTreeHover] = useState<number | null>(null);
+  const [sides, setSides] = useState({ tree: true, inspector: true });
+  // The size the responsive frame lays the page out at.
+  const [frame, setFrame] = useState<FrameSize>(realSize);
   const panel = useRef<HTMLDivElement>(null);
   // While the panel covers the page, the page is inert and focus is in the panel.
   useLayoutEffect(() => cover(root, panel.current, returnFocus), [root, returnFocus]);
+  // The frame resizes the root as at() does, and puts its style back on a reset and as dev mode
+  // closes; the page re-lays out under the panel and the live page measures it again.
+  useLayoutEffect(
+    () =>
+      frame.width === null && frame.height === null
+        ? undefined
+        : resizeRoot(root, frame.width, frame.height),
+    [root, frame.width, frame.height],
+  );
   return (
     <div
       ref={panel}
@@ -101,14 +147,34 @@ function Panel({ controller }: { controller: DevModeController }) {
         controller.setOpen(false);
       }}
     >
-      <View3D live={live} selected={selected} onSelect={setSelected} treeHover={treeHover} />
-      <Inspector
+      {sides.tree ? (
+        <NodeTree
+          live={live}
+          selected={selected}
+          onSelect={setSelected}
+          onTreeHover={setTreeHover}
+          onHide={() => setSides((current) => ({ ...current, tree: false }))}
+        />
+      ) : null}
+      <View3D
         live={live}
         selected={selected}
         onSelect={setSelected}
-        onTreeHover={setTreeHover}
+        treeHover={treeHover}
+        sides={sides}
+        onSidesChange={setSides}
+        frame={frame}
+        onFrameChange={setFrame}
+        editorTheme={editorTheme}
         onClose={() => controller.setOpen(false)}
       />
+      {sides.inspector ? (
+        <Inspector
+          live={live}
+          selected={selected}
+          onHide={() => setSides((current) => ({ ...current, inspector: false }))}
+        />
+      ) : null}
     </div>
   );
 }
