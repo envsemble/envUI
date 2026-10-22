@@ -115,6 +115,9 @@ export function Bar({
                     align="center"
                     gap={1}
                   >
+                    {/* The label, then the count, as the name reads them. */}
+                    <span className="env-bar-text">{messages.more}</span>
+                    {restShown !== undefined && ' '}
                     <span className="env-bar-icon">
                       <DecorativeIcon>
                         <MoreHoriz />
@@ -125,7 +128,6 @@ export function Bar({
                         </span>
                       )}
                     </span>
-                    <span className="env-bar-text">{messages.more}</span>
                   </Column>
                 }
               >

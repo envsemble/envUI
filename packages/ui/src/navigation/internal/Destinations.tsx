@@ -174,19 +174,24 @@ export function DestinationItem({
     'aria-current': current ? ('page' as const) : undefined,
     'aria-label': countedName(label, count, messages),
   };
+  // The item's text is its label, then its count, apart, in the order its name gives them, such as
+  // Inbox 3 for Inbox, 3 new; Bar and Rail draw the indicator above the label with CSS order.
+  const apart = badge && ' ';
   return classes.indicator === undefined ? (
     <Row {...shared} align="center" gap={3}>
       {icons}
       <span className={classes.label}>{label}</span>
+      {apart}
       {badge}
     </Row>
   ) : (
     <Column {...shared} align="center" gap={1}>
+      <span className={classes.label}>{label}</span>
+      {apart}
       <span className={classes.indicator}>
         {icons}
         {badge}
       </span>
-      <span className={classes.label}>{label}</span>
     </Column>
   );
 }

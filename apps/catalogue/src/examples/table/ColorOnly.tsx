@@ -3,7 +3,7 @@ import { Badge, Table } from '@envsemble/envui';
 export default function ColorOnly() {
   return (
     // States told apart by color alone: without color vision, or in print, they read the same.
-    <Table.Root aria-label="Projects">
+    <Table.Root aria-label="Projects, states in color only">
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Project</Table.HeaderCell>

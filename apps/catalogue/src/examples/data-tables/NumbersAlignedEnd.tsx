@@ -9,7 +9,10 @@ const files = [
 export default function NumbersAlignedEnd() {
   return (
     // Numbers align to the end, in tabular figures, so they compare down the column.
-    <Table.Root aria-label="Files" style={{ inlineSize: 'min(100%, 20rem)' }}>
+    <Table.Root
+      aria-label="Files, sizes aligned at the end"
+      style={{ inlineSize: 'min(100%, 20rem)' }}
+    >
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Name</Table.HeaderCell>

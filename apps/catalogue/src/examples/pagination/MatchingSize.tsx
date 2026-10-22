@@ -13,7 +13,7 @@ export default function MatchingSize() {
     >
       <SearchField label="Search invoices" size="sm" />
       <Pagination
-        aria-label="Invoice pages"
+        aria-label="Invoice pages, matching size"
         page={page}
         pageSize={25}
         total={112}

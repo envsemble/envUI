@@ -85,6 +85,9 @@
   border-color: transparent;
   box-shadow: none;
   background: var(--env-skeleton-color);
+  /* The shape takes the pulse's color as it is: the control's own color transition would start
+     again on every frame of the pulse and lag behind it. */
+  transition: none;
   /* A loaded image moves out of its box, which keeps its size. */
   object-fit: none;
   object-position: -100vw 0;

@@ -15,7 +15,7 @@ export default function TwoCurrent() {
   return (
     // As wide as a phone. Two destinations marked current: which page is this?
     <div style={{ inlineSize: 'min(100%, 22rem)' }}>
-      <Bar destinations={destinations} />
+      <Bar aria-label="Main, two current pages" destinations={destinations} />
     </div>
   );
 }

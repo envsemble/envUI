@@ -8,5 +8,5 @@ const destinations: DrawerDestination[] = [
 ];
 
 export default function GroupsTogether() {
-  return <Drawer aria-label="Help" destinations={destinations} />;
+  return <Drawer aria-label="Help, groups together" destinations={destinations} />;
 }

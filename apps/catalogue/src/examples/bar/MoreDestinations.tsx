@@ -22,7 +22,7 @@ export default function MoreDestinations() {
   return (
     // As wide as a phone.
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
-      <Bar destinations={destinations} />
+      <Bar aria-label="Main, seven destinations" destinations={destinations} />
     </div>
   );
 }

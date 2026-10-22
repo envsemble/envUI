@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, type CSSProperties } from 'react';
+import { createContext, useContext, useLayoutEffect, type CSSProperties } from 'react';
 
 /** What PortalContainer gives the overlays inside it. */
 export interface PortalContainerValue {
@@ -50,6 +50,41 @@ export function keepsOpen(
   if (!isNode(origin)) return details.reason !== 'imperative-action';
   const own = [container, trigger, details.trigger].filter((element) => element instanceof Node);
   return !own.some((element) => element!.contains(origin));
+}
+
+/**
+ * Keeps the page around a contained popup in reach of assistive technology while it is open. Base UI
+ * hides the rest of the page from it as some popups open, such as a combobox's list, modal or not;
+ * in a contained PortalContainer the page stays in use, so what it hides there shows again: the
+ * elements beside the popup's and its control's ancestors, as Base UI picks them. Only what is
+ * hidden while the popup is open shows again, never what was hidden before it opened.
+ */
+export function useKeepPageVisible(
+  { contained }: PortalContainerValue,
+  open: boolean,
+  parts: () => readonly (Element | null | undefined)[],
+) {
+  useLayoutEffect(() => {
+    if (!contained || !open || typeof MutationObserver === 'undefined') return;
+    const observer = new MutationObserver((records) => {
+      const inside = parts().filter((part): part is Element => part != null);
+      for (const { target, oldValue } of records) {
+        if (!(target instanceof Element) || target.getAttribute('aria-hidden') !== 'true') continue;
+        if (oldValue !== null && oldValue !== 'false') continue;
+        const parent = target.parentElement;
+        if (!parent || !inside.some((part) => parent.contains(part))) continue;
+        if (inside.some((part) => target.contains(part))) continue;
+        target.removeAttribute('aria-hidden');
+      }
+    });
+    observer.observe(document.body, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['aria-hidden'],
+      attributeOldValue: true,
+    });
+    return () => observer.disconnect();
+  }, [contained, open, parts]);
 }
 
 /**

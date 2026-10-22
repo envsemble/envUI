@@ -14,7 +14,7 @@ const destinations: Destination[] = [
 export default function OneWordLabels() {
   return (
     <div style={{ blockSize: '22rem' }}>
-      <Rail destinations={destinations} />
+      <Rail aria-label="Main, one-word labels" destinations={destinations} />
     </div>
   );
 }

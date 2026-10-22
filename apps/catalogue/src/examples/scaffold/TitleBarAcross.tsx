@@ -25,7 +25,9 @@ export default function TitleBarAcross() {
       forms={{ compact: 'none', medium: 'drawer' }}
       style={{ blockSize: '16rem' }}
       topBar={<TopBar title="Northwind" />}
-      navigation={{ drawer: <Drawer destinations={destinations} /> }}
+      navigation={{
+        drawer: <Drawer aria-label="Main, title bar across" destinations={destinations} />,
+      }}
     >
       <Page header={<PageHeader title="Documents" headingLevel={3} />}>
         <Text emphasis="muted">Twelve documents.</Text>

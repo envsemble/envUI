@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Column, Link, List, Panes, Text } from '@envsemble/envui';
 
 const messages = [
-  { id: 'launch', from: 'Priya Shah', subject: 'Launch checklist', body: 'The venue is booked.' },
   { id: 'budget', from: 'Sam Lee', subject: 'Budget review', body: 'Numbers are in the sheet.' },
+  { id: 'launch', from: 'Priya Shah', subject: 'Launch checklist', body: 'The venue is booked.' },
 ];
 
 export default function ListDetailByWidth() {
@@ -16,10 +16,10 @@ export default function ListDetailByWidth() {
       behavior="list-detail"
       open={open}
       onOpenChange={setOpen}
-      backLabel="Inbox"
+      backLabel="Team inbox"
       style={{ blockSize: '16rem' }}
     >
-      <Panes.List label="Inbox">
+      <Panes.List label="Team inbox">
         <List.Root aria-label="Messages">
           {messages.map((message) => (
             <List.Item

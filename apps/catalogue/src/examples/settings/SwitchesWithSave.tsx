@@ -11,7 +11,7 @@ export default function SwitchesWithSave() {
       style={{ inlineSize: 'min(100%, 22rem)' }}
     >
       <Text render={<h3 id="saved-heading" />} variant="title">
-        Email notifications
+        Desktop notifications
       </Text>
       <List.Root aria-labelledby="saved-heading">
         <List.Item

@@ -500,13 +500,13 @@
         "$description": "Text and indicators on bg.selected and its states.",
         "$value": "{palette.blue.65}"
       },
-      "success": { "$description": "Success text and icons.", "$value": "{palette.green.60}" },
-      "warning": { "$description": "Warning text and icons.", "$value": "{palette.amber.60}" },
+      "success": { "$description": "Success text and icons.", "$value": "{palette.green.65}" },
+      "warning": { "$description": "Warning text and icons.", "$value": "{palette.amber.65}" },
       "danger": {
         "$description": "Danger text and icons, and field errors.",
-        "$value": "{palette.red.60}"
+        "$value": "{palette.red.65}"
       },
-      "done": { "$description": "Done text and icons.", "$value": "{palette.violet.60}" },
+      "done": { "$description": "Done text and icons.", "$value": "{palette.violet.65}" },
       "on-emphasis": {
         "$description": "Text and icons on the emphasis fills: white in light, dark in dark.",
         "$value": "{palette.neutral.0}"

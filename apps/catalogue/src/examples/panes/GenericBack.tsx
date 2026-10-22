@@ -10,15 +10,15 @@ export default function GenericBack() {
     >
       <Panes.List label="Inbox">
         <List.Root aria-label="Messages">
-          <List.Item label="Launch checklist" description="Priya Shah" selected />
+          <List.Item label="Press release" description="Priya Shah" selected />
         </List.Root>
       </Panes.List>
-      <Panes.Detail label="Launch checklist">
+      <Panes.Detail label="Press release">
         <Column gap={2} padding={4}>
           <Text variant="title" render={<h3 />}>
-            Launch checklist
+            Press release
           </Text>
-          <Text>The venue is booked.</Text>
+          <Text>The draft is ready for review.</Text>
         </Column>
       </Panes.Detail>
     </Panes.Root>

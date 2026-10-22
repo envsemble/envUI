@@ -13,7 +13,7 @@ export default function SupportingByWidth() {
       onOpenChange={setOpen}
       style={{ blockSize: '18rem' }}
     >
-      <Panes.Main label="Document">
+      <Panes.Main label="Quarterly report">
         <Column gap={3} padding={4} align="start">
           <Text variant="title" render={<h3 />}>
             Quarterly report
@@ -24,7 +24,7 @@ export default function SupportingByWidth() {
           </Panes.Trigger>
         </Column>
       </Panes.Main>
-      <Panes.Supporting label="Details">
+      <Panes.Supporting label="Report details">
         <Column padding={4}>
           <DescriptionList.Root aria-label="About the report">
             <DescriptionList.Item label="Owner">Sam Lee</DescriptionList.Item>

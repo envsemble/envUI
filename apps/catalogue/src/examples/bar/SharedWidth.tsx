@@ -12,5 +12,5 @@ const destinations: Destination[] = [
 ];
 
 export default function SharedWidth() {
-  return <Bar destinations={destinations} />;
+  return <Bar aria-label="Main, shared width" destinations={destinations} />;
 }

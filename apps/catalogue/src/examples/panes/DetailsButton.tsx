@@ -12,17 +12,17 @@ export default function DetailsButton() {
       onOpenChange={setOpen}
       style={{ blockSize: '12rem', inlineSize: 'min(100%, 20rem)' }}
     >
-      <Panes.Main label="Document">
+      <Panes.Main label="Budget">
         <Column gap={3} padding={4} align="start">
           <Text variant="title" render={<h3 />}>
-            Quarterly report
+            Budget
           </Text>
           <Panes.Trigger variant="secondary" startIcon={<Info />}>
             Details
           </Panes.Trigger>
         </Column>
       </Panes.Main>
-      <Panes.Supporting label="Details">
+      <Panes.Supporting label="Budget details">
         <Column padding={4}>
           <Text>Owned by Sam Lee, due 31 March.</Text>
         </Column>

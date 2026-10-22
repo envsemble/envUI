@@ -11,13 +11,13 @@ export default function BackToInbox() {
     >
       <Panes.List label="Inbox">
         <List.Root aria-label="Messages">
-          <List.Item label="Launch checklist" description="Priya Shah" selected />
+          <List.Item label="Seating plan" description="Priya Shah" selected />
         </List.Root>
       </Panes.List>
-      <Panes.Detail label="Launch checklist">
+      <Panes.Detail label="Seating plan">
         <Column gap={2} padding={4}>
           <Text variant="title" render={<h3 />}>
-            Launch checklist
+            Seating plan
           </Text>
           <Text>The venue is booked.</Text>
         </Column>

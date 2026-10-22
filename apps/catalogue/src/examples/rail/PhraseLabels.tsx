@@ -14,7 +14,7 @@ const destinations: Destination[] = [
 export default function PhraseLabels() {
   return (
     <div style={{ blockSize: '22rem' }}>
-      <Rail destinations={destinations} />
+      <Rail aria-label="Main, phrase labels" destinations={destinations} />
     </div>
   );
 }

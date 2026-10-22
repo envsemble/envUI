@@ -4,6 +4,7 @@ export default function AddressAsTrail() {
   // The trail follows the address, from the domain, instead of what people know as the top.
   return (
     <Breadcrumbs
+      aria-label="Breadcrumb, from the address"
       items={[
         { label: 'example.com', href: '/' },
         { label: 'app', href: '/app' },

@@ -15,7 +15,7 @@ export default function OneCurrent() {
   return (
     // As wide as a phone.
     <div style={{ inlineSize: 'min(100%, 22rem)' }}>
-      <Bar destinations={destinations} />
+      <Bar aria-label="Main, one current page" destinations={destinations} />
     </div>
   );
 }

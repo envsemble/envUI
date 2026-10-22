@@ -1308,7 +1308,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-danger',
     type: 'color',
     values: {
-      light: '#b72b20',
+      light: '#ac190f',
       dark: '#f8aca6',
       'light-high-contrast': '#7a0200',
       'dark-high-contrast': '#ffe4e2',
@@ -1330,7 +1330,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-done',
     type: 'color',
     values: {
-      light: '#7a3fc8',
+      light: '#7032bf',
       dark: '#d2b2f7',
       'light-high-contrast': '#53009a',
       'dark-high-contrast': '#f1e6ff',
@@ -1473,7 +1473,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-success',
     type: 'color',
     values: {
-      light: '#176f35',
+      light: '#02652b',
       dark: '#7ad197',
       'light-high-contrast': '#00441a',
       'dark-high-contrast': '#a5fdc1',
@@ -1484,7 +1484,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-warning',
     type: 'color',
     values: {
-      light: '#8a5504',
+      light: '#7e4b00',
       dark: '#ebb750',
       'light-high-contrast': '#553200',
       'dark-high-contrast': '#ffe8be',

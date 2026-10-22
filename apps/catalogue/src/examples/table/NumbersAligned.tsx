@@ -8,7 +8,7 @@ const invoices = [
 
 export default function NumbersAligned() {
   return (
-    <Table.Root aria-label="Invoices">
+    <Table.Root aria-label="Invoices, amounts aligned">
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Invoice</Table.HeaderCell>

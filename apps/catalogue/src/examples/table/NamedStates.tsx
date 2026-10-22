@@ -2,7 +2,7 @@ import { Badge, Table } from '@envsemble/envui';
 
 export default function NamedStates() {
   return (
-    <Table.Root aria-label="Projects">
+    <Table.Root aria-label="Projects, states named">
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Project</Table.HeaderCell>

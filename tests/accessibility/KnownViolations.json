@@ -1,8 +1,80 @@
 {
+  "components/bar/overview": {
+    "light": {
+      "landmark-unique": {
+        "article :: nav.env-bar": 1
+      }
+    }
+  },
+  "components/breadcrumbs/overview": {
+    "light": {
+      "landmark-unique": {
+        "article :: nav.env-breadcrumbs": 1
+      }
+    }
+  },
+  "components/pager/overview": {
+    "light": {
+      "landmark-unique": {
+        "article :: nav.env-pager": 1
+      }
+    }
+  },
+  "components/pagination/overview": {
+    "light": {
+      "landmark-unique": {
+        "article :: nav.env-pagination": 1
+      }
+    }
+  },
+  "components/panel-dock/overview": {
+    "light": {
+      "landmark-unique": {
+        "article :: section.env-panel-dock-panel": 1
+      }
+    }
+  },
+  "components/panes/overview": {
+    "light": {
+      "landmark-unique": {
+        "article :: div.env-panes-list": 1,
+        "article :: div.env-panes-main": 1
+      }
+    }
+  },
   "components/rich-text/overview": {
     "light": {
       "target-size": {
         "article :: input.env-checkbox-input": 2
+      }
+    }
+  },
+  "components/scaffold/overview": {
+    "light": {
+      "landmark-unique": {
+        "article :: nav.env-bar": 1
+      }
+    }
+  },
+  "components/table/overview": {
+    "dark": {
+      "landmark-unique": {
+        "article :: div.env-table-region": 1
+      }
+    },
+    "dark-hc": {
+      "landmark-unique": {
+        "article :: div.env-table-region": 1
+      }
+    },
+    "light": {
+      "landmark-unique": {
+        "article :: div.env-table-region": 1
+      }
+    },
+    "light-hc": {
+      "landmark-unique": {
+        "article :: div.env-table-region": 1
       }
     }
   },
@@ -53,7 +125,6 @@
     "light": {
       "color-contrast": {
         "Buttons :: button.env-button.docs-swatch code": 1,
-        "Feedback :: button.env-button.docs-swatch code": 1,
         "Text fields :: button.env-button.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
@@ -74,9 +145,6 @@
       }
     },
     "light-hc": {
-      "color-contrast": {
-        "Feedback :: button.env-button.docs-swatch code": 1
-      },
       "color-contrast-enhanced": {
         "Buttons :: button.env-button.docs-swatch code": 1,
         "Content & loading :: button.env-button.docs-swatch code": 1,
@@ -99,6 +167,13 @@
         "Switches :: button.env-button.docs-swatch": 5,
         "Text & focus :: button.env-button.docs-swatch": 7,
         "Text fields :: button.env-button.docs-swatch": 8
+      }
+    }
+  },
+  "patterns/app-frame": {
+    "light": {
+      "landmark-unique": {
+        "article :: nav.env-bar": 1
       }
     }
   }

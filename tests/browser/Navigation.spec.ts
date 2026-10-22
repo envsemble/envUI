@@ -57,6 +57,14 @@ test('a count shows on its destination, capped at 999+, and its name says it', a
     const inbox = nav.getByRole('button', { name: 'Inbox, 3 new', exact: true });
     await expect(inbox.locator(`.env-${form}-count`)).toHaveText('3');
     await expect(inbox.locator(`.env-${form}-count`)).toHaveAttribute('aria-hidden', 'true');
+    // Its text is the label, then the count, apart, in the order its name gives them; the rail
+    // draws its indicator, with the count, above the label all the same.
+    expect(await inbox.evaluate((element) => element.textContent)).toBe('Inbox 3');
+    if (form === 'rail') {
+      const indicator = (await inbox.locator('.env-rail-indicator').boundingBox())!;
+      const label = (await inbox.locator('.env-rail-label').boundingBox())!;
+      expect(indicator.y + indicator.height).toBeLessThanOrEqual(label.y + 0.5);
+    }
     const sent = nav.getByRole('button', { name: 'Sent, 999+ new', exact: true });
     await expect(sent.locator(`.env-${form}-count`)).toHaveText('999+');
     // A count of 0 shows nothing, and the label alone names the destination.
@@ -122,6 +130,12 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
   });
   await expect(more).toHaveAttribute('data-current', '');
   await expect(more).not.toHaveAttribute('aria-current');
+  // Its text is its label, then its count, as its name reads them, with its icon drawn above.
+  expect(await more.evaluate((element) => element.textContent)).toBe('More 5');
+  const icon = (await more.locator('.env-bar-icon').boundingBox())!;
+  expect(icon.y + icon.height).toBeLessThanOrEqual(
+    (await more.locator('.env-bar-text').boundingBox())!.y + 0.5,
+  );
   await more.click();
   const menu = page.getByRole('menu', { name: 'More' });
   await expect(menu.getByRole('menuitem')).toHaveCount(3);

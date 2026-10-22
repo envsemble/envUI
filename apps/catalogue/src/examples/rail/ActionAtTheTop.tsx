@@ -15,6 +15,7 @@ export default function ActionAtTheTop() {
     // As tall as a short window; in an app, Scaffold gives the rail the window's height.
     <div style={{ blockSize: '22rem' }}>
       <Rail
+        aria-label="Main, action at the top"
         destinations={destinations}
         header={<IconButton variant="primary" icon={<Edit />} aria-label="New message" />}
       />

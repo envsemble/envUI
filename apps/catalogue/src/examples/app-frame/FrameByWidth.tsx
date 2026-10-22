@@ -33,9 +33,9 @@ export default function FrameByWidth() {
       style={{ blockSize: '16rem' }}
       topBar={<TopBar title="Northwind" actions={<SearchTrigger iconOnly />} />}
       navigation={{
-        bar: <Bar destinations={destinations} />,
-        rail: <Rail destinations={destinations} />,
-        drawer: <Drawer destinations={destinations} />,
+        bar: <Bar aria-label="Main, by width" destinations={destinations} />,
+        rail: <Rail aria-label="Main, by width" destinations={destinations} />,
+        drawer: <Drawer aria-label="Main, by width" destinations={destinations} />,
       }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />} />

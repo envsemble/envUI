@@ -3,6 +3,7 @@
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
+  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -18,7 +19,11 @@ import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { PopupSurface } from '../internal/PopupSurface.js';
-import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import {
+  keepsOpen,
+  useKeepPageVisible,
+  usePortalContainer,
+} from '../internal/PortalContainerContext.js';
 import { Column, Grid } from '../foundations/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { type ControlSize } from '../foundations/Theme.js';
@@ -257,6 +262,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const selectionId = `${id}-selection`;
   const inputRef = useRef<HTMLInputElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
   const pressFocus = useRef(false);
   // The query onInputValueChange reported last.
   const reportedQuery = useRef('');
@@ -321,6 +327,12 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
   const popupOpen = open ?? uncontrolledOpen;
   const portal = usePortalContainer();
+  // Base UI hides the rest of the page while the list is open; a contained one leaves it in reach.
+  useKeepPageVisible(
+    portal,
+    popupOpen,
+    useCallback(() => [popupRef.current, inputRef.current], []),
+  );
   // The chips' arrow keys and the popup follow the text direction, read as the popup opens or
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
@@ -594,6 +606,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           dir={direction}
           className="env-combobox-popup"
           layout={<Column padding={1} />}
+          popupProps={{ ref: popupRef }}
         >
           <BaseCombobox.Status className="env-combobox-status">
             {loading ? (

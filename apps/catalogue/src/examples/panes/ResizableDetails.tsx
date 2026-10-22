@@ -20,7 +20,7 @@ export default function ResizableDetails() {
         </Surface>
       </Panes.Main>
       <Panes.Divider label="Resize details" />
-      <Panes.Supporting label="Details">
+      <Panes.Supporting label="Canvas details">
         <Surface padding={4} render={<Column />} style={{ minBlockSize: '100%' }}>
           <Text emphasis="muted">Drag the gap, or focus it and press the arrow keys.</Text>
         </Surface>

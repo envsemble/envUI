@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   Button,
+  Combobox,
   Dialog,
   IconButton,
   Menu,
@@ -25,11 +26,13 @@ function SavedNotice() {
 /**
  * Preview regions of a page, not inert, whose overlays render into a layer of each through a
  * contained PortalContainer, open as the page loads: a menu, a tooltip and a toast in one, a dialog
- * in the other. The page is taller than the window, so its scroll can be checked.
+ * in another, a combobox's list in the third. The page is taller than the window, so its scroll can
+ * be checked.
  */
 export function PortalContainersFixture() {
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   const [dialogLayer, setDialogLayer] = useState<HTMLDivElement | null>(null);
+  const [comboboxLayer, setComboboxLayer] = useState<HTMLDivElement | null>(null);
   const region = {
     position: 'relative',
     contain: 'layout',
@@ -67,6 +70,19 @@ export function PortalContainersFixture() {
           <Dialog defaultOpen title="Rename project" closeLabel="Cancel" />
         </PortalContainer>
         <div ref={setDialogLayer} data-testid="dialog-layer" />
+      </div>
+      <div data-testid="combobox-preview" style={region}>
+        <PortalContainer container={comboboxLayer} contained>
+          <Combobox
+            label="Owner"
+            items={[
+              { value: 'alex', label: 'Alex Morgan' },
+              { value: 'sam', label: 'Sam Lee' },
+            ]}
+            defaultOpen
+          />
+        </PortalContainer>
+        <div ref={setComboboxLayer} data-testid="combobox-layer" />
       </div>
       {/* Taller than the window, so the page scrolls. */}
       <div style={{ blockSize: '150vh' }} />

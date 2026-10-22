@@ -36,7 +36,9 @@ export default function DestinationsInTopBar() {
           }
         />
       }
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{
+        rail: <Rail aria-label="Main, destinations in the top bar" destinations={destinations} />,
+      }}
     >
       <Page header={<PageHeader title="Projects" headingLevel={3} />} />
     </Scaffold>
