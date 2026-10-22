@@ -739,7 +739,7 @@
         {
           "name": "ResizableDetails",
           "title": "Resizable",
-          "description": "Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line: give each pane a Surface so they stand apart across it. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.",
+          "description": "Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line. Panes keeps the same gap without a divider, so give each pane a Surface and they stand apart across it. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.",
           "file": "docs/examples/panes/ResizableDetails.tsx"
         },
         {

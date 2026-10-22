@@ -1,7 +1,7 @@
 /* Menus are the desktop dropdown: a raised popup, a PopupSurface like Popover's and Select's, with
    small corners and concentric rows of the scale's row height that highlight on hover and keyboard
-   focus, full-width hairline separators, small muted group labels, and shortcuts as small muted keys at the
-   end. env-popup gives the popup its fill, edge, shadow and motion. */
+   focus, full-width hairline separators, small muted group labels, and shortcuts as small muted
+   keys at the end. env-popup gives the popup its fill, edge, shadow and motion. */
 .env-menu-positioner {
   z-index: var(--env-z-popover);
   outline: none;

@@ -131,6 +131,11 @@ test(
     await expect(notifications).toHaveAttribute('aria-expanded', 'false');
     await page.keyboard.press('Tab');
     await expect(privacy).toBeFocused();
+    // The arrow keys, Home and End don't move between headings: Tab does.
+    for (const key of ['ArrowUp', 'Home', 'End']) {
+      await page.keyboard.press(key);
+      await expect(privacy).toBeFocused();
+    }
     await expect(privacy).toHaveCSS('outline-style', 'solid');
     await page.keyboard.press('Space');
     await expect(privacy).toHaveAttribute('aria-expanded', 'true');

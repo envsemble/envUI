@@ -9,11 +9,12 @@ const projects = ['Northwind launch', 'Website refresh', 'Annual report'];
  * Panes in a frame whose width the test sets, mounted with ?fixture=panes: supporting Panes with a
  * divider and a button that opens the supporting pane, and list-detail Panes whose list opens a
  * project. ?split= sets splitAt, ?persist= the cookie, ?kept= the width the server read from it,
- * ?size= the default size and ?dir=rtl mirrors them.
+ * ?size= the default size, ?divider=none leaves out both dividers and ?dir=rtl mirrors them.
  */
 export function PanesFixture() {
   const query = params();
   const splitAt = (query.get('split') ?? undefined) as PanesSplitAt | undefined;
+  const divider = query.get('divider') !== 'none';
   const [width, setWidth] = useState(query.get('width') ?? '60rem');
   const [open, setOpen] = useState(false);
   const [chosen, setChosen] = useState<string | null>(null);
@@ -54,7 +55,7 @@ export function PanesFixture() {
             <Text>The document, which scrolls on its own.</Text>
             <div style={{ blockSize: '40rem' }} />
           </Panes.Main>
-          <Panes.Divider label="Resize details" />
+          {divider && <Panes.Divider label="Resize details" />}
           <Panes.Supporting label="Details">
             <Text>Owner: Ada</Text>
             <Button variant="secondary">Edit details</Button>
@@ -89,7 +90,7 @@ export function PanesFixture() {
               ))}
             </ul>
           </Panes.List>
-          <Panes.Divider />
+          {divider && <Panes.Divider />}
           <Panes.Detail label={chosen ?? 'No project'}>
             <Text>{chosen ? `About ${chosen}` : 'Choose a project.'}</Text>
           </Panes.Detail>

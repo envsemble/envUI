@@ -92,6 +92,7 @@ Each item, `env-accordion-item`, draws the line under it; its heading's button i
 ### envUI provides
 
 - Each title is a button inside a heading, which reports whether its section is expanded and controls its panel.
+- Tab reaches every heading. The arrow keys, Home and End don't move between them, as the current ARIA accordion pattern advises, so they stay with the page and the panels' content.
 - A focus outline, and headings at least 2.75 rem tall on touch screens.
 
 ### You provide

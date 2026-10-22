@@ -1,6 +1,6 @@
 /* Toolbar: a row, or a column, of controls one tab stop apart from the page. The buttons inside take
-   the ghost variant; groups sit side by side, a separator apart. A separator is space alone, with no
-   line: envUI separates by space and background. */
+   the ghost variant; groups sit side by side, a separator apart. A separator is space alone, with
+   no line. */
 .env-toolbar-separator {
   flex: 0 0 auto;
   align-self: stretch;

@@ -40,26 +40,42 @@ test.describe('Panes, supporting', () => {
     const divider = root.getByRole('separator', { name: 'Resize details' });
     const paint = () =>
       divider.evaluate((element) => {
-        const grip = getComputedStyle(element, '::before');
+        const style = getComputedStyle(element);
         return {
-          line: getComputedStyle(element, '::after').content,
-          border: getComputedStyle(element).borderInlineStartWidth,
-          grip: grip.backgroundImage,
-          gripHeight: Number.parseFloat(grip.blockSize),
+          line: getComputedStyle(element, '::after').display,
+          border: style.borderInlineStartWidth,
+          grip: style.backgroundImage,
+          repeat: style.backgroundRepeat,
           gap: element.getBoundingClientRect().width,
         };
       });
     const resting = await paint();
     expect(resting.line).toBe('none');
     expect(resting.border).toBe('0px');
-    expect(resting.grip).toMatch(/^radial-gradient/);
-    // A short grip in the middle, not a line along the panes.
-    expect(resting.gripHeight).toBeLessThan(20);
-    expect(resting.gap).toBeCloseTo(8, 0);
+    // Three dots in the middle, each drawn once, not a line along the panes.
+    expect(resting.grip.match(/radial-gradient/g)).toHaveLength(3);
+    expect(resting.repeat).not.toContain('repeat-y');
+    expect(resting.gap).toBeCloseTo(16, 0);
     await divider.focus();
     await expect(divider).toHaveCSS('outline-style', 'solid');
     expect((await paint()).grip).not.toBe(resting.grip);
   });
+
+  for (const divider of ['with', 'without'])
+    test(`side by side, the panes keep the same gap ${divider} a divider`, async ({ page }) => {
+      await page.goto(panes(`&width=60rem${divider === 'without' ? '&divider=none' : ''}`));
+      const supporting = page.getByTestId('supporting');
+      await expect(supporting.getByRole('separator')).toHaveCount(divider === 'with' ? 1 : 0);
+      const main = await box(supporting.getByRole('region', { name: 'Document' }));
+      const side = await box(supporting.getByRole('region', { name: 'Details' }));
+      expect(side.x - (main.x + main.width)).toBeCloseTo(16, 0);
+      const listDetail = page.getByTestId('list-detail');
+      const list = await box(listDetail.getByRole('region', { name: 'Projects' }));
+      const detail = await box(listDetail.getByRole('region', { name: 'No project' }));
+      expect(detail.x - (list.x + list.width)).toBeCloseTo(16, 0);
+      // The resized pane keeps its size; the gap comes out of the other pane.
+      expect(side.width).toBeCloseTo(22.5 * 16, 0);
+    });
 
   test(
     'below splitAt it is a modal sheet while open, which Escape, its button and the scrim close',

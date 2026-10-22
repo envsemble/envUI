@@ -225,8 +225,8 @@
   min-inline-size: 0;
   margin-block-start: var(--env-space-1);
 }
-/* Once the content scrolls beneath it, the header takes the muted fill, which sets it apart without a
-   line, so text its edge cuts reads as scrolled away rather than broken. */
+/* Once the content scrolls beneath it, the header takes the muted fill, which sets it apart without
+   a line, so text its edge cuts reads as scrolled away rather than broken. */
 .env-panel-dock-header {
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }

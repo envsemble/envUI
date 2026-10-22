@@ -4,9 +4,9 @@
 .env-document-tabs-root {
   display: contents;
 }
-/* The bar holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem in
-   the compact scale. No line runs under it: the active tab's fill and indicator mark it. It takes the width it is given; its tabs never widen a
-   grid or flex parent. */
+/* The bar holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem
+   in the compact scale. No line runs under it: the active tab's fill and indicator mark it. It
+   takes the width it is given; its tabs never widen a grid or flex parent. */
 .env-document-tabs-bar {
   /* The close button's size, and the room a tab leaves for it as it scrolls into view. */
   --env-document-tabs-close-size: 1.5rem;

@@ -35,9 +35,11 @@
   cursor: pointer;
   outline: none;
 }
+/* The ring stands clear outside the heading, so it never touches the indicator or the title, which
+   sit at the heading's edges. */
 .env-accordion-trigger:focus-visible {
   outline: 2px solid var(--env-color-border-focus);
-  outline-offset: -2px;
+  outline-offset: 4px;
 }
 .env-accordion-trigger[data-disabled] {
   opacity: var(--env-state-disabled-opacity);
