@@ -43,22 +43,42 @@
 .env-panes-main {
   grid-column: 1;
 }
-/* The divider shows only while the panes sit side by side. At rest it draws no line between them, only
-   a short grip at its middle that says it moves; its line shows on hover, focus and while dragging. */
+/* The divider shows only while the panes sit side by side. It is the gap between them, never a line:
+   panes that hold surfaces, such as a Surface each, stand apart across it. Three small dots at its
+   middle are the grip that says it moves. Under the pointer they darken; with keyboard focus or
+   while dragging they take the focus color, and focus rings the gap. */
 .env-panes-divider {
+  --env-panes-grip-dot: 0.1875rem;
+  --env-panes-grip-color: var(--env-color-border-default);
   display: none;
   grid-column: 2;
   grid-row: 1;
+  border-radius: var(--env-radius-full);
 }
 .env-panes-divider::before {
   content: '';
   position: absolute;
   inset: 0;
-  inline-size: var(--env-space-1);
-  block-size: min(var(--env-space-7), 100%);
+  inline-size: var(--env-panes-grip-dot);
+  block-size: calc(5 * var(--env-panes-grip-dot));
   margin: auto;
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-border-muted);
+  background: radial-gradient(closest-side, var(--env-panes-grip-color) 85%, transparent) 0 0 /
+    var(--env-panes-grip-dot) calc(2 * var(--env-panes-grip-dot)) repeat-y;
+}
+/* The resize handle's own line doesn't show: the grip stands for it. */
+.env-panes > .env-panes-divider::after {
+  content: none;
+}
+.env-panes-divider:not([aria-disabled='true']):hover {
+  --env-panes-grip-color: var(--env-color-fg-muted);
+}
+.env-panes-divider:focus-visible,
+.env-panes-divider[data-dragging] {
+  --env-panes-grip-color: var(--env-color-border-focus);
+}
+.env-panes-divider:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
 }
 
 /* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
@@ -254,11 +274,18 @@
     display: none;
   }
 }
-/* Forced colors: the divider's grip and the sheet's edge take the system's text color. */
+/* Forced colors: the divider's grip and the sheet's edge take the system's text color, and a focused
+   or dragged grip the selection color. */
 @media (forced-colors: active) {
+  .env-panes-divider {
+    --env-panes-grip-color: CanvasText;
+  }
+  .env-panes-divider:focus-visible,
+  .env-panes-divider[data-dragging] {
+    --env-panes-grip-color: Highlight;
+  }
   .env-panes-divider::before {
     forced-color-adjust: none;
-    background: CanvasText;
   }
   .env-panes-supporting {
     border-color: CanvasText;

@@ -34,6 +34,33 @@ test.describe('Panes, supporting', () => {
     expect((await box(main)).height).toBeCloseTo(24 * 16 - 2, 0);
   });
 
+  test('the divider is a gap with a grip, never a line, and focus shows it', async ({ page }) => {
+    await page.goto(panes('&width=60rem'));
+    const root = page.getByTestId('supporting');
+    const divider = root.getByRole('separator', { name: 'Resize details' });
+    const paint = () =>
+      divider.evaluate((element) => {
+        const grip = getComputedStyle(element, '::before');
+        return {
+          line: getComputedStyle(element, '::after').content,
+          border: getComputedStyle(element).borderInlineStartWidth,
+          grip: grip.backgroundImage,
+          gripHeight: Number.parseFloat(grip.blockSize),
+          gap: element.getBoundingClientRect().width,
+        };
+      });
+    const resting = await paint();
+    expect(resting.line).toBe('none');
+    expect(resting.border).toBe('0px');
+    expect(resting.grip).toMatch(/^radial-gradient/);
+    // A short grip in the middle, not a line along the panes.
+    expect(resting.gripHeight).toBeLessThan(20);
+    expect(resting.gap).toBeCloseTo(8, 0);
+    await divider.focus();
+    await expect(divider).toHaveCSS('outline-style', 'solid');
+    expect((await paint()).grip).not.toBe(resting.grip);
+  });
+
   test(
     'below splitAt it is a modal sheet while open, which Escape, its button and the scrim close',
     { tag: '@engines' },

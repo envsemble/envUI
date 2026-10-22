@@ -739,7 +739,7 @@
         {
           "name": "ResizableDetails",
           "title": "Resizable",
-          "description": "Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.",
+          "description": "Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line: give each pane a Surface so they stand apart across it. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.",
           "file": "docs/examples/panes/ResizableDetails.tsx"
         },
         {
@@ -807,7 +807,7 @@
             },
             {
               "class": "env-panes-divider",
-              "description": "The divider that resizes the panes."
+              "description": "The gap between the panes, with its grip, that resizes them."
             },
             {
               "class": "env-panes-list",
@@ -835,6 +835,13 @@
               ],
               "parts": [
                 "env-panes"
+              ]
+            },
+            {
+              "attribute": "data-dragging",
+              "values": [],
+              "parts": [
+                "env-panes-divider"
               ]
             },
             {
@@ -1219,6 +1226,13 @@
             }
           ],
           "states": [
+            {
+              "attribute": "data-scrolled",
+              "values": [],
+              "parts": [
+                "env-page-header"
+              ]
+            },
             {
               "attribute": "data-sticky",
               "values": [
@@ -21305,7 +21319,7 @@
     "Menu.Root": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. The popup is raised above the page, with rows of the scale's row height, separators of space and small keys for shortcuts.",
+      "description": "A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. The popup is raised above the page, with rows of the scale's row height, full-width hairline separators and small keys for shortcuts.",
       "props": [
         {
           "name": "trigger",
@@ -22578,7 +22592,7 @@
     "Panes.Divider": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "The divider between the panes, which resizes the supporting pane or the list: a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged.",
+      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged.",
       "props": [
         {
           "name": "label",

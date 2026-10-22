@@ -65,7 +65,7 @@ Each pane scrolls on its own when Panes has a height, as in a [Scaffold](scaffol
 
 ### Resizable
 
-Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.
+Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line: give each pane a [Surface](surface.md) so they stand apart across it. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.
 
 ```tsx example=ResizableDetails
 

@@ -86,8 +86,8 @@ export interface RootProps
 
 /**
  * A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu
- * pattern. The popup is raised above the page, with rows of the scale's row height, separators of
- * space and small keys for shortcuts.
+ * pattern. The popup is raised above the page, with rows of the scale's row height, full-width
+ * hairline separators and small keys for shortcuts.
  */
 function Root({
   trigger,

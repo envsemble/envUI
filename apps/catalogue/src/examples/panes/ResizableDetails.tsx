@@ -1,8 +1,9 @@
-import { Column, Panes, Text } from '@envsemble/envui';
+import { Column, Panes, Surface, Text } from '@envsemble/envui';
 
 export default function ResizableDetails() {
   return (
-    // The divider resizes the supporting pane, by pointer and the arrow keys, and the width people
+    // Each pane holds a surface, and the divider is the gap between them, with its grip in the
+    // middle. It resizes the supporting pane, by pointer and the arrow keys, and the width people
     // choose is kept on this device.
     <Panes.Root
       behavior="supporting"
@@ -14,15 +15,15 @@ export default function ResizableDetails() {
       style={{ blockSize: '14rem' }}
     >
       <Panes.Main label="Canvas">
-        <Column padding={4}>
+        <Surface padding={4} render={<Column />} style={{ minBlockSize: '100%' }}>
           <Text>The canvas takes the room the details leave.</Text>
-        </Column>
+        </Surface>
       </Panes.Main>
       <Panes.Divider label="Resize details" />
       <Panes.Supporting label="Details">
-        <Column padding={4}>
-          <Text emphasis="muted">Drag the divider, or focus it and press the arrow keys.</Text>
-        </Column>
+        <Surface padding={4} render={<Column />} style={{ minBlockSize: '100%' }}>
+          <Text emphasis="muted">Drag the gap, or focus it and press the arrow keys.</Text>
+        </Surface>
       </Panes.Supporting>
     </Panes.Root>
   );

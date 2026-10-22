@@ -2820,6 +2820,13 @@
       ],
       "states": [
         {
+          "attribute": "data-scrolled",
+          "values": [],
+          "parts": [
+            "env-page-header"
+          ]
+        },
+        {
           "attribute": "data-sticky",
           "values": [
             ""
@@ -3140,7 +3147,7 @@
         },
         {
           "class": "env-panes-divider",
-          "description": "The divider that resizes the panes."
+          "description": "The gap between the panes, with its grip, that resizes them."
         },
         {
           "class": "env-panes-list",
@@ -3168,6 +3175,13 @@
           ],
           "parts": [
             "env-panes"
+          ]
+        },
+        {
+          "attribute": "data-dragging",
+          "values": [],
+          "parts": [
+            "env-panes-divider"
           ]
         },
         {

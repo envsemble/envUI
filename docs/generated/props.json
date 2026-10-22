@@ -4196,7 +4196,7 @@
     "Menu.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Menu.tsx",
-      "description": "A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. The popup is raised above the page, with rows of the scale's row height, separators of space and small keys for shortcuts.",
+      "description": "A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. The popup is raised above the page, with rows of the scale's row height, full-width hairline separators and small keys for shortcuts.",
       "props": [
         {
           "name": "trigger",
@@ -5469,7 +5469,7 @@
     "Panes.Divider": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The divider between the panes, which resizes the supporting pane or the list: a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged.",
+      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged.",
       "props": [
         {
           "name": "label",

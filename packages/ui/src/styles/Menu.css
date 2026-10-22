@@ -1,6 +1,6 @@
 /* Menus are the desktop dropdown: a raised popup, a PopupSurface like Popover's and Select's, with
    small corners and concentric rows of the scale's row height that highlight on hover and keyboard
-   focus, separators of space, small muted group labels, and shortcuts as small muted keys at the
+   focus, full-width hairline separators, small muted group labels, and shortcuts as small muted keys at the
    end. env-popup gives the popup its fill, edge, shadow and motion. */
 .env-menu-positioner {
   z-index: var(--env-z-popover);
@@ -138,12 +138,14 @@
   opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
-/* A separator splits sets of items by space alone, with no line: envUI separates by space and
-   background. It keeps its separator role for assistive technology. */
+/* A separator is a hairline across the popup's whole width, edge to edge as a table's row lines,
+   reaching through the popup's padding (MenuPopup's padding={1}), with space above and below. */
 .env-menu-separator {
-  block-size: var(--env-space-3);
+  block-size: 0;
+  margin-block: var(--env-space-1);
+  margin-inline: calc(-1 * var(--env-space-1));
   border: 0;
-  margin: 0;
+  border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
 }
 /* A group is its own set of rows below a small muted heading. */
 .env-menu > .env-menu-group:not(:first-child),

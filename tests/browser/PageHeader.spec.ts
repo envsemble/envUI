@@ -97,6 +97,32 @@ test.describe('PageHeader', () => {
         .toBeGreaterThanOrEqual(wrapped.y + wrapped.height);
     },
   );
+
+  test('takes the muted fill, not a line, once content scrolls beneath it', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(fixture);
+    const body = page.locator('.env-scaffold-body');
+    const sticky = page.getByTestId('sticky');
+    const [pageColor, muted] = await sticky.evaluate((element) =>
+      ['var(--env-color-bg-page)', 'var(--env-color-bg-muted)'].map((value) => {
+        const probe = document.createElement('span');
+        probe.style.backgroundColor = value;
+        element.append(probe);
+        const color = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return color;
+      }),
+    );
+    await expect(sticky).not.toHaveAttribute('data-scrolled');
+    await expect(sticky).toHaveCSS('background-color', pageColor);
+    await body.evaluate((element) => element.scrollTo(0, 600));
+    await expect(sticky).toHaveAttribute('data-scrolled');
+    await expect(sticky).toHaveCSS('background-color', muted);
+    await expect(sticky).toHaveCSS('border-bottom-width', '0px');
+    await body.evaluate((element) => element.scrollTo(0, 0));
+    await expect(sticky).not.toHaveAttribute('data-scrolled');
+    await expect(sticky).toHaveCSS('background-color', pageColor);
+  });
 });
 
 test.describe('Page', () => {
