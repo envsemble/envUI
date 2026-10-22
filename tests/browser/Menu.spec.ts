@@ -105,6 +105,26 @@ test.describe('Submenus', () => {
     return menu;
   }
 
+  test('a separator is a hairline across the popup from edge to edge', async ({ page }) => {
+    const menu = await openCompactOptions(page);
+    const separator = menu.getByRole('separator').first();
+    await expect(separator).toHaveCSS('border-top-width', '1px');
+    await expect(separator).toHaveCSS('border-top-style', 'solid');
+    // As wide as the popup inside its edge: no inset from its sides.
+    const [line, popup] = await separator.evaluate((element) => {
+      const own = element.getBoundingClientRect();
+      const surface = element.closest('.env-menu')!;
+      const box = surface.getBoundingClientRect();
+      const edge = surface.clientLeft;
+      return [
+        { left: own.left, width: own.width },
+        { left: box.left + edge, width: surface.clientWidth },
+      ];
+    });
+    expect(line.width).toBeCloseTo(popup.width, 0);
+    expect(line.left).toBeCloseTo(popup.left, 0);
+  });
+
   test('a submenu opens beside its row on hover, with the rows of its menu', async ({ page }) => {
     const errors = collectErrors(page);
     const menu = await openCompactOptions(page);

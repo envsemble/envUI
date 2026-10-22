@@ -33,6 +33,8 @@ Each component's CSS is a file of `src/styles`, which `index.css` imports into a
 
 A component's style sheet draws no drop shadows: a popup, dialog, sheet, toast or tooltip separates by its fill, its edge, `--env-elevation-{level}-border`, and for a modal the scrim. Rings drawn with `box-shadow` stay: focus rings and halos with no offset or blur, inset edges and selection bars, and a hairline one pixel beside a box. `tests/NoShadows.test.mjs` rejects any other shadow in the shipped style sheet, dev mode's and the catalogue's.
 
+Hairlines separate the items of one list, never regions. A Markdown rule, a menu separator, a table row and an accordion item take a hairline, `--env-color-border-muted`, across the full width of their container, edge to edge, never inset from a popup's sides. Regions, such as a top bar, a footer, a sticky header, a tab bar or two panes, separate by space and background: a header that content scrolls beneath takes the muted fill, and two panes stand apart across a gap. Lines that say what something is stay: the outlines of fields, outline buttons and other controls, quote bars, keys and the edges of floating layers. In forced colors, where fills are gone, a part may keep a line where nothing else would set it apart.
+
 A component's style sheet also holds its motion and its forced-colors rules:
 
 - **Motion:** transitions and animations use the motion tokens. Fades always apply; movement, such as a press that settles or a popup that grows, only under `@media (prefers-reduced-motion: no-preference)`. Motion.css holds only the keyframes several components share.

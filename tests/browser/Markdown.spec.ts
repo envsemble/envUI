@@ -26,6 +26,19 @@ test('table regions are named after their heading, numbered where they share a n
   await expect(tasks.first()).toHaveClass(/env-checkbox-input/);
 });
 
+test('a rule is a hairline across the whole text column', async ({ page }) => {
+  await page.goto(fixture);
+  const rule = page.getByTestId('english').locator('hr');
+  await expect(rule).toHaveCSS('border-top-width', '1px');
+  await expect(rule).toHaveCSS('border-top-style', 'solid');
+  await expect(rule).toHaveCSS('border-bottom-width', '0px');
+  const [own, column] = await rule.evaluate((element) => [
+    element.getBoundingClientRect().width,
+    element.closest('.env-prose')!.clientWidth,
+  ]);
+  expect(own).toBeCloseTo(column, 0);
+});
+
 test(
   'inline code in a table cell breaks only where it would overflow, not inside its word',
   { tag: '@engines' },

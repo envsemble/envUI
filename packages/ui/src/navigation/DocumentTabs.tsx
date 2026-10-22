@@ -59,7 +59,7 @@ export interface DocumentTabsProps {
    */
   onReorder?: (ids: string[]) => void;
   /**
-   * Content after the tabs, outside the strip that scrolls and on its hairline, such as a button
+   * Content after the tabs, outside the strip that scrolls and in line with it, such as a button
    * that closes every tab or opens a new one.
    */
   end?: ReactNode;

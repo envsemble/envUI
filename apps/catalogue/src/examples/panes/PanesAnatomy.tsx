@@ -1,8 +1,9 @@
-import { Column, List, Panes, Text } from '@envsemble/envui';
+import { Column, List, Panes, Surface, Text } from '@envsemble/envui';
 
 export default function PanesAnatomy() {
   return (
-    // Side by side from a medium width, so the figure shows both panes on most pages.
+    // Side by side from a medium width, so the figure shows both panes on most pages. Each pane
+    // holds a surface; the divider is the gap between them.
     <Panes.Root
       behavior="list-detail"
       splitAt="medium"
@@ -10,19 +11,21 @@ export default function PanesAnatomy() {
       style={{ blockSize: '12rem' }}
     >
       <Panes.List label="Inbox">
-        <List.Root aria-label="Messages">
-          <List.Item label="Launch checklist" description="Priya Shah" selected />
-          <List.Item label="Budget review" description="Sam Lee" />
-        </List.Root>
+        <Surface padding={2} style={{ minBlockSize: '100%' }}>
+          <List.Root aria-label="Messages">
+            <List.Item label="Launch checklist" description="Priya Shah" selected />
+            <List.Item label="Budget review" description="Sam Lee" />
+          </List.Root>
+        </Surface>
       </Panes.List>
       <Panes.Divider label="Resize the inbox" />
       <Panes.Detail label="Launch checklist">
-        <Column gap={2} padding={4}>
+        <Surface padding={4} render={<Column gap={2} />} style={{ minBlockSize: '100%' }}>
           <Text variant="title" render={<h3 />}>
             Launch checklist
           </Text>
           <Text>The venue is booked.</Text>
-        </Column>
+        </Surface>
       </Panes.Detail>
     </Panes.Root>
   );

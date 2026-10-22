@@ -6,7 +6,9 @@
   container: env-page-header / inline-size;
 }
 /* A sticky header stays at the top of the area that scrolls, over the content that scrolls under it,
-   across the page's gutters: under a Scaffold's top bar where the document scrolls. */
+   across the page's gutters: under a Scaffold's top bar where the document scrolls. Once content
+   scrolls beneath it, it takes the muted fill, which sets it apart without a line, as a docked
+   panel's header does. */
 .env-page-header[data-sticky] {
   /* Inside a Page it reaches across the page's gutters, so content never shows beside it. */
   --env-page-header-inset: var(--env-page-gutter, 0rem);
@@ -19,8 +21,11 @@
   margin-inline: calc(-1 * var(--env-page-header-inset));
   padding-block: var(--env-space-4);
   padding-inline: var(--env-page-header-inset);
-  border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
   background: var(--env-color-bg-page);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-page-header[data-sticky][data-scrolled] {
+  background-color: var(--env-color-bg-muted);
 }
 .env-page-header-start {
   flex: none;
@@ -48,9 +53,17 @@
     justify-content: flex-end;
   }
 }
-/* Forced colors: the sticky header's edge stays visible. */
-@media (forced-colors: active) {
+/* Without motion the fill changes at once. */
+@media (prefers-reduced-motion: reduce) {
   .env-page-header[data-sticky] {
-    border-block-end-color: CanvasText;
+    transition: none;
+  }
+}
+/* Forced colors: the system paints no fills, so a line under the header stands in for its fill once
+   content scrolls beneath it, overlapping the content so nothing moves. */
+@media (forced-colors: active) {
+  .env-page-header[data-sticky][data-scrolled] {
+    margin-block-end: calc(-1 * var(--env-control-border-width));
+    border-block-end: var(--env-control-border-width) solid CanvasText;
   }
 }

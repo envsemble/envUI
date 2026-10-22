@@ -55,6 +55,16 @@
     "env-overlay-theme": "Dialog"
   },
   "descriptions": {
+    "Accordion": {
+      "env-accordion": "The accordion: sections separated by full-width hairlines.",
+      "env-accordion-content": "The panel's content, in muted text lined up with the title.",
+      "env-accordion-header": "An item's heading, which holds its button.",
+      "env-accordion-indicator": "The plus that becomes a minus while the item is open.",
+      "env-accordion-item": "One section, with the hairline under it.",
+      "env-accordion-label": "An item's title.",
+      "env-accordion-panel": "The panel that opens below the heading.",
+      "env-accordion-trigger": "The button that opens and closes the item."
+    },
     "Alert": {
       "env-alert": "The alert: an icon and a message in its tone.",
       "env-alert-action": "The alert's action, such as a button.",
@@ -509,7 +519,7 @@
       "env-panes-supporting": "The supporting pane, a sheet over the main pane in less room.",
       "env-panes-list": "The list pane of list-detail panes.",
       "env-panes-detail": "The detail pane of list-detail panes.",
-      "env-panes-divider": "The divider that resizes the panes.",
+      "env-panes-divider": "The gap between the panes, with its grip, that resizes them.",
       "env-panes-back": "The button back to the list, when one pane shows at a time.",
       "env-panes-close": "The supporting sheet's close button, which shows only while the pane is a sheet.",
       "env-panes-scrim": "The scrim behind the supporting sheet."

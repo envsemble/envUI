@@ -59,7 +59,7 @@
   },
   "packages/ui/src/styles/CommandPalette.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 9
+      "count": 8
     }
   },
   "packages/ui/src/styles/Composer.css": {
@@ -137,7 +137,7 @@
   },
   "packages/ui/src/styles/Menu.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 8
+      "count": 7
     }
   },
   "packages/ui/src/styles/Menubar.css": {
@@ -160,7 +160,7 @@
   },
   "packages/ui/src/styles/PanelDock.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 31
+      "count": 30
     },
     "no-duplicate-selectors": {
       "count": 1

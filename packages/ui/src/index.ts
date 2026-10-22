@@ -95,6 +95,7 @@ export {
 export * from './content/Rating.js';
 export * from './content/ColorSwatch.js';
 export * from './content/Message.js';
+export * as Accordion from './content/Accordion.js';
 export * as DescriptionList from './content/DescriptionList.js';
 export * from './content/CalendarHeatmap.js';
 export * from './foundations/ThemePreference.js';

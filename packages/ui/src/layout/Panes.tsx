@@ -562,10 +562,11 @@ function Detail({ label, className, children, ref, ...props }: PaneProps) {
 }
 
 /**
- * The divider between the panes, which resizes the supporting pane or the list: a focusable
- * separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names
- * the pane it resizes in aria-controls. A double click returns it to the default width. It shows
- * only while the panes sit side by side, and measures nothing until it is dragged.
+ * The divider between the panes, which resizes the supporting pane or the list: the gap between
+ * them, with a small grip and no line. It is a focusable separator that the pointer drags and the
+ * arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls.
+ * A double click returns it to the default width. It shows only while the panes sit side by side,
+ * and measures nothing until it is dragged.
  */
 function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
   const { behavior, size, min, max, change, reset, resizedId } = usePanes('Divider');

@@ -12,14 +12,14 @@ aliases:
   - summary
   - expander
   - expandable section
-  - accordion
   - show more
   - toggle details
 useWhen:
   - Optional guidance or details that most people don't need, such as how a setting works.
   - Settings that most people leave alone, such as advanced options in a form.
-  - A list of questions whose answers people open one at a time.
 avoidWhen:
+  - text: A list of questions or sections whose answers people open one at a time.
+    use: Accordion
   - text: Instructions or errors people need to complete a task, which must stay visible.
     use: TextField
   - text: Switching between views of the same content.
@@ -29,6 +29,7 @@ avoidWhen:
   - text: Details beside a control that close when people move on.
     use: Popover
 related:
+  - accordion
   - tree
   - tabs
   - popover

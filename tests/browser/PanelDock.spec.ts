@@ -1099,22 +1099,23 @@ test('content that scrolls itself back to its start as panels reorder stays ther
   expect(await list.evaluate((element) => element.scrollTop)).toBe(60);
 });
 
-test('a hairline sets apart a header that a form in the content holds', async ({ page }) => {
+test('the muted fill sets apart a header that a form in the content holds', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(dockFixture);
   const panel = page.getByTestId('passive-dock-light').locator('section[data-panel-id="first"]');
   const content = panel.locator(':scope > .env-panel-dock-content');
   const header = content.locator(':scope > form > .env-panel-dock-header');
-  await expect(header).toHaveCSS('box-shadow', 'none');
+  const resting = await header.evaluate((element) => getComputedStyle(element).backgroundColor);
   await content.evaluate((element) => (element.scrollTop = 40));
+  await expect(header).toHaveAttribute('data-scrolled');
   await expect
-    .poll(() => header.evaluate((element) => getComputedStyle(element).boxShadow))
-    .toMatch(/ 0px 1px 0px 0px$/);
+    .poll(() => header.evaluate((element) => getComputedStyle(element).backgroundColor))
+    .not.toBe(resting);
   // The header still sticks to the top of the content.
   const [contentBox, headerBox] = await Promise.all([box(content), box(header)]);
   expect(Math.abs(headerBox.y - contentBox.y)).toBeLessThan(1);
   await content.evaluate((element) => (element.scrollTop = 0));
-  await expect(header).toHaveCSS('box-shadow', 'none');
+  await expect(header).toHaveCSS('background-color', resting);
 });
 
 test('a stacked dock shows the panel of a tab pressed, also without onActivate', async ({
@@ -1228,7 +1229,7 @@ test('a narrow panel puts its actions and window controls above a title that kee
   await expect(title).toHaveCSS('overflow-wrap', 'break-word');
 });
 
-test('a hairline sets the header apart once the content scrolls beneath it, in both themes', async ({
+test('the muted fill, not a line, sets the header apart once the content scrolls beneath it, in both themes', async ({
   page,
 }) => {
   await page.goto(dockFixture);
@@ -1236,23 +1237,26 @@ test('a hairline sets the header apart once the content scrolls beneath it, in b
     const panel = dockOf(page, theme).panel('report');
     const content = panel.locator(':scope > .env-panel-dock-content');
     const header = panel.locator('.env-panel-dock-header');
-    const border = await panel.evaluate((element) => {
-      const probe = document.createElement('span');
-      probe.style.color = 'var(--env-color-border-muted)';
-      element.append(probe);
-      const color = getComputedStyle(probe).color;
-      probe.remove();
-      return color;
-    });
-    await expect(header).toHaveCSS('box-shadow', 'none');
+    const [panelColor, muted] = await panel.evaluate((element) =>
+      ['var(--env-color-bg-raised)', 'var(--env-color-bg-muted)'].map((value) => {
+        const probe = document.createElement('span');
+        probe.style.backgroundColor = value;
+        element.append(probe);
+        const color = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return color;
+      }),
+    );
+    expect(muted).not.toBe(panelColor);
+    await expect(header).toHaveCSS('background-color', panelColor);
     await content.evaluate((element) => (element.scrollTop = 40));
-    await expect
-      .poll(() => header.evaluate((element) => getComputedStyle(element).boxShadow))
-      .toBe(`${border} 0px 1px 0px 0px`);
-    await content.evaluate((element) => (element.scrollTop = 0));
+    await expect(header).toHaveCSS('background-color', muted);
     await expect(header).toHaveCSS('box-shadow', 'none');
+    await expect(header).toHaveCSS('border-bottom-width', '0px');
+    await content.evaluate((element) => (element.scrollTop = 0));
+    await expect(header).toHaveCSS('background-color', panelColor);
   }
-  // The hairline fades in, and with reduced motion appears at once.
+  // The fill fades in, and with reduced motion appears at once.
   const header = dockOf(page).panel('report').locator('.env-panel-dock-header');
   await expect(header).toHaveCSS('transition-duration', '0.12s');
   await page.emulateMedia({ reducedMotion: 'reduce' });

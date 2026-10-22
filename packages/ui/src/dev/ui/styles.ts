@@ -250,12 +250,12 @@ export const devStyles = /* css */ `
     font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
     font-size: 0.9em;
   }
+  /* The inspector stands apart from the view by its background, with no line between them. */
   .env-dev-inspector {
     display: grid;
     grid-template-rows: minmax(0, 1fr);
     min-block-size: 0;
     background: var(--env-color-bg-page);
-    border-inline-start: 1px solid var(--env-color-border-muted);
   }
   .env-dev-inspector > * {
     min-block-size: 0;

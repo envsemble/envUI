@@ -64,6 +64,7 @@ import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
 import { DisclosuresFixture } from './Disclosures.js';
+import { AccordionsFixture } from './Accordions.js';
 import { DensityFixture } from './Density.js';
 import { ChoiceControlsFixture } from './ChoiceControls.js';
 import { StackingFixture } from './Stacking.js';
@@ -121,6 +122,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'month-pickers': MonthPickersFixture,
   'dev-mode': DevModeFixture,
   skeletons: SkeletonsFixture,
+  accordions: AccordionsFixture,
 };
 
 export default function App() {

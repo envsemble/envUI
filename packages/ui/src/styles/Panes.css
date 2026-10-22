@@ -5,13 +5,15 @@
    show the supporting pane as a sheet over the main one while data-open, a bottom sheet in a
    compact width and a side sheet from a medium one, and list-detail Panes show one pane at a time:
    the detail while data-open, else the list. From data-split-at the panes sit side by side, the
-   resized one --env-panes-size wide, and the other never under 16 rem. Every edge is logical, so it
+   resized one --env-panes-size wide, and the other never under 16 rem beside the gap. Every edge is logical, so it
    mirrors in right-to-left text. */
 .env-panes {
   --env-panes-size: 22.5rem;
   /* The room the other pane keeps beside the resized one, and the page left beside a side sheet. */
   --env-panes-other-min: 16rem;
   --env-panes-sheet-room: 3.5rem;
+  /* The gap between panes side by side: the divider's width, or empty space without one. */
+  --env-panes-gap: var(--env-space-4);
   container: env-panes / inline-size;
   box-sizing: border-box;
   position: relative;
@@ -43,19 +45,57 @@
 .env-panes-main {
   grid-column: 1;
 }
-/* The divider shows only while the panes sit side by side. */
+/* The divider shows only while the panes sit side by side. It is the gap between them, never a
+   line: panes that hold surfaces, such as a Surface each, stand apart across it. Three small dots
+   at its middle are the grip that says it moves. Under the pointer they darken; with keyboard
+   focus or while dragging they take the focus color, and focus rings the gap. It is exactly the
+   gap, under a coarse pointer too, and leaves out the resize handle's line. */
 .env-panes-divider {
+  --env-panes-grip-dot: 0.1875rem;
+  --env-panes-grip-color: var(--env-color-border-default);
+  --env-resize-handle-size: var(--env-panes-gap);
+  --env-resize-handle-line: none;
   display: none;
   grid-column: 2;
   grid-row: 1;
+  border-radius: var(--env-radius-full);
+  background:
+    radial-gradient(closest-side, var(--env-panes-grip-color) 80%, transparent) 50%
+      calc(50% - 2 * var(--env-panes-grip-dot)) / var(--env-panes-grip-dot)
+      var(--env-panes-grip-dot) no-repeat,
+    radial-gradient(closest-side, var(--env-panes-grip-color) 80%, transparent) 50% 50% /
+      var(--env-panes-grip-dot) var(--env-panes-grip-dot) no-repeat,
+    radial-gradient(closest-side, var(--env-panes-grip-color) 80%, transparent) 50%
+      calc(50% + 2 * var(--env-panes-grip-dot)) / var(--env-panes-grip-dot)
+      var(--env-panes-grip-dot) no-repeat;
 }
-/* Its resting line, under the line it shows on hover, focus and while dragging. */
-.env-panes-divider::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 50%;
-  border-inline-start: var(--env-control-border-width) solid var(--env-color-border-muted);
+/* Under a coarse pointer its hit area reaches the touch size across the gap without widening it. */
+@media (pointer: coarse) {
+  .env-panes-divider::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline: calc((var(--env-panes-gap) - var(--env-control-height-touch)) / 2);
+  }
+}
+/* Without a divider the panes keep the same gap, so adding one moves nothing: the resized pane
+   holds it as a margin while the panes sit side by side, which --env-panes-split says. */
+.env-panes[data-behavior='supporting']:not(:has(> .env-panes-divider)) > .env-panes-supporting {
+  margin-inline-start: calc(var(--env-panes-split, 0) * var(--env-panes-gap));
+}
+.env-panes[data-behavior='list-detail']:not(:has(> .env-panes-divider)) > .env-panes-list {
+  margin-inline-end: calc(var(--env-panes-split, 0) * var(--env-panes-gap));
+}
+.env-panes-divider:not([aria-disabled='true']):hover {
+  --env-panes-grip-color: var(--env-color-fg-muted);
+}
+.env-panes-divider:focus-visible,
+.env-panes-divider[data-dragging] {
+  --env-panes-grip-color: var(--env-color-border-focus);
+}
+.env-panes-divider:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
 }
 
 /* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
@@ -137,11 +177,18 @@
   .env-panes:is([data-split-at='medium'])[data-behavior] > .env-panes-divider {
     display: block;
   }
+  .env-panes:is([data-split-at='medium'])[data-behavior]
+    > :is(.env-panes-supporting, .env-panes-list) {
+    --env-panes-split: 1;
+  }
   .env-panes:is([data-split-at='medium'])[data-behavior='supporting'] > .env-panes-supporting {
     position: static;
     display: block;
     grid-column: 3;
-    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+    inline-size: min(
+      var(--env-panes-size),
+      100cqi - var(--env-panes-other-min) - var(--env-panes-gap)
+    );
     max-block-size: none;
     border: 0;
     border-radius: 0;
@@ -158,7 +205,10 @@
   .env-panes:is([data-split-at='medium'])[data-behavior='list-detail'] > .env-panes-list {
     display: block;
     grid-column: 1;
-    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+    inline-size: min(
+      var(--env-panes-size),
+      100cqi - var(--env-panes-other-min) - var(--env-panes-gap)
+    );
   }
   .env-panes:is([data-split-at='medium'])[data-behavior='list-detail'] > .env-panes-detail {
     display: block;
@@ -176,12 +226,19 @@
     > .env-panes-divider {
     display: block;
   }
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior]
+    > :is(.env-panes-supporting, .env-panes-list) {
+    --env-panes-split: 1;
+  }
   .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='supporting']
     > .env-panes-supporting {
     position: static;
     display: block;
     grid-column: 3;
-    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+    inline-size: min(
+      var(--env-panes-size),
+      100cqi - var(--env-panes-other-min) - var(--env-panes-gap)
+    );
     max-block-size: none;
     border: 0;
     border-radius: 0;
@@ -200,7 +257,10 @@
     > .env-panes-list {
     display: block;
     grid-column: 1;
-    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+    inline-size: min(
+      var(--env-panes-size),
+      100cqi - var(--env-panes-other-min) - var(--env-panes-gap)
+    );
   }
   .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='list-detail']
     > .env-panes-detail {
@@ -218,11 +278,17 @@
   .env-panes:is([data-split-at])[data-behavior] > .env-panes-divider {
     display: block;
   }
+  .env-panes:is([data-split-at])[data-behavior] > :is(.env-panes-supporting, .env-panes-list) {
+    --env-panes-split: 1;
+  }
   .env-panes:is([data-split-at])[data-behavior='supporting'] > .env-panes-supporting {
     position: static;
     display: block;
     grid-column: 3;
-    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+    inline-size: min(
+      var(--env-panes-size),
+      100cqi - var(--env-panes-other-min) - var(--env-panes-gap)
+    );
     max-block-size: none;
     border: 0;
     border-radius: 0;
@@ -239,7 +305,10 @@
   .env-panes:is([data-split-at])[data-behavior='list-detail'] > .env-panes-list {
     display: block;
     grid-column: 1;
-    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+    inline-size: min(
+      var(--env-panes-size),
+      100cqi - var(--env-panes-other-min) - var(--env-panes-gap)
+    );
   }
   .env-panes:is([data-split-at])[data-behavior='list-detail'] > .env-panes-detail {
     display: block;
@@ -251,10 +320,16 @@
     display: none;
   }
 }
-/* Forced colors: the divider's resting line and the sheet's edge take the system's text color. */
+/* Forced colors: the divider's grip and the sheet's edge take the system's text color, and a
+   focused or dragged grip the selection color. */
 @media (forced-colors: active) {
-  .env-panes-divider::before {
-    border-color: CanvasText;
+  .env-panes-divider {
+    --env-panes-grip-color: CanvasText;
+    forced-color-adjust: none;
+  }
+  .env-panes-divider:focus-visible,
+  .env-panes-divider[data-dragging] {
+    --env-panes-grip-color: Highlight;
   }
   .env-panes-supporting {
     border-color: CanvasText;

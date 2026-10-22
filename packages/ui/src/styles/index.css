@@ -26,6 +26,7 @@
 @import './Drawer.css' layer(env.components);
 @import './Card.css' layer(env.components);
 @import './Disclosure.css' layer(env.components);
+@import './Accordion.css' layer(env.components);
 @import './Badge.css' layer(env.components);
 @import './Table.css' layer(env.components);
 @import './Breadcrumbs.css' layer(env.components);

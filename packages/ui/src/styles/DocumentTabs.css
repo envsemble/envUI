@@ -4,9 +4,9 @@
 .env-document-tabs-root {
   display: contents;
 }
-/* The bar holds the strip and the content after it, on one hairline, as tall as a medium control:
-   2.5rem, and 2rem in the compact scale. It takes the width it is given; its tabs never widen a
-   grid or flex parent. */
+/* The bar holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem
+   in the compact scale. No line runs under it: the active tab's fill and indicator mark it. It
+   takes the width it is given; its tabs never widen a grid or flex parent. */
 .env-document-tabs-bar {
   /* The close button's size, and the room a tab leaves for it as it scrolls into view. */
   --env-document-tabs-close-size: 1.5rem;
@@ -15,7 +15,6 @@
   box-sizing: border-box;
   max-inline-size: 100%;
   block-size: var(--env-control-height-md);
-  border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
   contain: inline-size;
 }
 /* Content after the tabs, such as a button that closes them all, keeps its size at the end. */
@@ -215,12 +214,12 @@
   .env-document-tabs-close {
   visibility: visible;
 }
-/* Under a coarse pointer the tabs are the touch height above the strip's hairline, and each close
-   button always shows, as tall and wide as its tab. */
+/* Under a coarse pointer the tabs are the touch height, and each close button always shows, as tall
+   and wide as its tab. */
 @media (pointer: coarse) {
   .env-document-tabs-bar {
     --env-document-tabs-close-size: var(--env-control-height-touch);
-    block-size: calc(var(--env-control-height-touch) + var(--env-control-border-width));
+    block-size: var(--env-control-height-touch);
   }
   .env-document-tabs-item .env-document-tabs-close {
     visibility: visible;

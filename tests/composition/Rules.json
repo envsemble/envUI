@@ -45,6 +45,7 @@
       "actions/Link.tsx": "composites",
       "actions/SegmentedControl.tsx": "base",
       "actions/Toolbar.tsx": "composites",
+      "content/Accordion.tsx": "base",
       "content/AnimatedNumber.tsx": "base",
       "content/Avatar.tsx": "base",
       "content/AvatarGroup.tsx": "composites",

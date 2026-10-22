@@ -15,6 +15,8 @@ const document = `## Prices
 | --- | ------ |
 | Tab | Next   |
 
+---
+
 - [x] Draft the brief
 - [ ] Send it to Sam Lee
 `;
