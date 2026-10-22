@@ -88,11 +88,16 @@ test('the toggle opens the 3D view and the inspector, which Escape and the short
   await expect(panel.locator('.env-dev-plane[data-plane]')).toHaveCount(14);
   await expect(panel.locator('.env-dev-plane[data-problems]')).toHaveCount(2);
   await expect(panel.locator('.env-dev-surface').filter({ hasText: 'Painted' })).toHaveCount(1);
-  // The inspector lists the nodes and shows the selected one.
-  await panel.getByRole('treeitem', { name: /row "painted"/ }).click();
-  await expect(panel.getByRole('region', { name: 'Details of row "painted"' })).toContainText(
-    'Layout never paints',
-  );
+  // The tree, in its sidebar, lists the nodes; the inspector shows the selected one.
+  await panel
+    .getByRole('complementary', { name: 'Layout nodes' })
+    .getByRole('treeitem', { name: /row "painted"/ })
+    .click();
+  await expect(
+    panel
+      .getByRole('complementary', { name: 'Dev mode inspector' })
+      .getByRole('region', { name: 'Details of row "painted"' }),
+  ).toContainText('Layout never paints');
   await panel.getByRole('tab', { name: 'Readout' }).click();
   await expect(panel.getByRole('tabpanel', { name: 'Readout' }).locator('pre')).toContainText(
     'scaffold "app"',
@@ -109,6 +114,71 @@ test('the toggle opens the 3D view and the inspector, which Escape and the short
   await page.keyboard.press('Alt+Shift+D');
   await expect(panel).toBeHidden();
   await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+});
+
+test(
+  'the toolbar turns the view to each direction, and fits it',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await open(page);
+    await page.getByRole('button', { name: 'Dev mode' }).click();
+    const panel = page.getByRole('region', { name: 'Dev mode' });
+    const toolbar = panel.getByRole('toolbar', { name: '3D view' });
+    const scene = panel.locator('.env-dev-scene');
+    await expect(panel.locator('.env-dev-plane[data-plane]')).toHaveCount(14);
+    const turn = (rx: number, ry: number) => `rotateX(${rx}deg) rotateY(${ry}deg)`;
+    // Each view is an icon button named by its label, which its tooltip shows.
+    const views: [string, string][] = [
+      ['Tilted', turn(38, -22)],
+      ['Straight on', turn(0, 0)],
+      ['From the top', turn(-70, 0)],
+      ['From the left', turn(0, 70)],
+      ['From the right', turn(0, -70)],
+    ];
+    for (const [name, rotation] of views) {
+      await toolbar.getByRole('button', { name, exact: true }).click();
+      await expect.poll(() => scene.getAttribute('style')).toContain(rotation);
+    }
+    await toolbar.getByRole('button', { name: 'Straight on' }).hover();
+    await expect(page.getByRole('tooltip')).toHaveText('Straight on');
+    // Fit turns it back to the tilted view, the whole page in view.
+    await toolbar.getByRole('button', { name: 'Fit' }).click();
+    await expect(scene).toHaveAttribute('style', /rotateX\(38deg\) rotateY\(-22deg\)/);
+    // The arrow keys move between the toolbar's buttons.
+    await toolbar.getByRole('button', { name: 'Straight on' }).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(toolbar.getByRole('button', { name: 'From the top' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(scene).toHaveAttribute('style', /rotateX\(-70deg\) rotateY\(0deg\)/);
+  },
+);
+
+test('"only the selected" shows the selected node and what is inside it', async ({ page }) => {
+  await open(page);
+  await page.getByRole('button', { name: 'Dev mode' }).click();
+  const panel = page.getByRole('region', { name: 'Dev mode' });
+  const planes = panel.locator('.env-dev-plane[data-plane]');
+  const only = panel.getByRole('button', { name: 'Only the selected' });
+  await expect(planes).toHaveCount(14);
+  // On, with nothing selected, every plane shows, also under the pointer.
+  await only.click();
+  await expect(only).toHaveAttribute('aria-pressed', 'true');
+  await planes.first().hover({ force: true });
+  await expect(planes).toHaveCount(14);
+  // Selecting the cards' row shows it and its three cards; another node, that one alone.
+  await panel.getByRole('treeitem', { name: /row "cards"/ }).click();
+  await expect(planes).toHaveCount(4);
+  await expect(panel.locator('.env-dev-plane[data-selected]')).toHaveCount(1);
+  await panel.getByRole('treeitem', { name: /row "painted"/ }).click();
+  await expect(planes).toHaveCount(1);
+  // Clicking the selected row again clears the selection, and everything shows.
+  await panel.getByRole('treeitem', { name: /row "painted"/ }).click();
+  await expect(planes).toHaveCount(14);
+  // Off, the selection no longer filters.
+  await panel.getByRole('treeitem', { name: /row "cards"/ }).click();
+  await only.click();
+  await expect(only).toHaveAttribute('aria-pressed', 'false');
+  await expect(planes).toHaveCount(14);
 });
 
 test('the readout counts rem from the root font size, also when it is not 16px', async ({
