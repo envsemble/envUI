@@ -69,7 +69,7 @@ export default function SortableColumns() {
       <Table.Body>
         {rows.map((file) => (
           <Table.Row key={file.id}>
-            <Table.Cell>{file.name}</Table.Cell>
+            <Table.Cell nowrap>{file.name}</Table.Cell>
             <Table.Cell nowrap>{file.owner}</Table.Cell>
             <Table.Cell nowrap>{date.format(new Date(file.modified))}</Table.Cell>
             <Table.Cell numeric>{file.size.toFixed(1)}</Table.Cell>
