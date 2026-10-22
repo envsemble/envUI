@@ -114,7 +114,7 @@ Under every figure the catalogue shows a closed Code toggle with the file's sour
 | ` ```tsx example=Name `          | The example, live on the dotted stage.                                    | `caption`: a sentence below it. `widths`: see below.          |
 | ` ```tsx do=Name caption="…" `   | The example on the stage joined to a green Do bar, and the caption below. | `caption`, required: what to do, as one sentence.             |
 | ` ```tsx dont=Name caption="…" ` | The same with a red Don't bar.                                            | `caption`, required: what not to do and why, as one sentence. |
-| ` ```tsx anatomy=Name `          | The example in the reader's theme, with numbered callouts on its parts.   | `of`: see below. `caption`: a sentence below it.              |
+| ` ```tsx anatomy=Name `          | The example in the reader's theme, with numbered callouts on its parts.   | `of`, `enlarge`: see below. `caption`: a sentence below it.   |
 
 Each kind also takes the flag `open`, written alone, such as ` ```tsx do=OneMenu open caption="…" `: see [open overlays](#open-overlays).
 
@@ -158,7 +158,7 @@ An ordered list right after an anatomy fence is its legend. Each item names its 
 - An item that holds only the code span takes its description from `docs/generated/parts.json`. A fence without a list numbers every part `parts.json` lists for the page's component, or for the one `of="Name"` names.
 - `docs/generated/parts.json` is generated from the library: under `components`, each component by its export name, with its `root` class, its `parts` (`class` and `description`) and its `states` (`attribute`, `values` and the `parts` that carry it); under `shared`, the groups of parts several components share, such as `ConnectedRows`. Read a component's entry there before writing its legend.
 - The build fails on a legend class that neither packages/ui's CSS nor `parts.json` has, and on a fence without a legend whose component has no parts there. A part the example doesn't render leaves its number off the figure, which the catalogue's browser test that counts every anatomy figure's callouts catches.
-- The catalogue shows a small subject, such as a badge or a checkbox, half as large again where its stage has room, so its callouts don't crowd.
+- The catalogue shows a small subject, such as a badge or a checkbox, half as large again where its stage has room, so its callouts don't crowd. The flag `enlarge` on an anatomy fence does the same for a larger subject whose parts sit close together, such as a bar's item or a table's header cells.
 - Make the anatomy example small and complete, with every part the legend names present once: the root first, then the parts in reading order. Name parts the figure can't show in one sentence below it, such as "Not shown: the spinner, `env-button-spinner`."
 
 ## Pages on the section template

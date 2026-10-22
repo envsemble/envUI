@@ -103,6 +103,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
         legend={block.legend}
         of={block.of ?? page.title}
         open={block.open}
+        enlarge={block.enlarge}
         stage={block.stage}
       />
     );

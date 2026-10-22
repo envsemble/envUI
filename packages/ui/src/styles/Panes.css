@@ -163,9 +163,11 @@
 .env-panes[data-behavior='list-detail']:not([data-open]) > .env-panes-detail {
   display: none;
 }
+/* The back button keeps clear of the pane's corner: its label lines up 1 rem in, where a pane's
+   content usually starts, as a text button's label sits on its text's edge. */
 .env-panes-back {
-  padding-block: var(--env-space-2);
-  padding-inline: var(--env-space-3);
+  padding-block: var(--env-space-3) var(--env-space-2);
+  padding-inline: var(--env-space-4);
 }
 /* The back arrow points toward the inline start, so it turns in right-to-left text. */
 .env-panes-back .env-icon:dir(rtl) {

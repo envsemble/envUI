@@ -194,9 +194,10 @@ const smallSubject = { width: 240, height: 48 };
 
 /**
  * Shows a small subject, such as a badge or a checkbox, half as large again, as far as its stage
- * has room, so the callouts on its parts don't crowd. The callouts measure the enlarged parts.
+ * has room, so the callouts on its parts don't crowd; so too any subject its fence marks `enlarge`,
+ * whose parts sit close together, such as a bar's item. The callouts measure the enlarged parts.
  */
-function enlarge(subject: HTMLElement) {
+function enlarge(subject: HTMLElement, always: boolean) {
   // The example's root, which sizes to its content when it is small.
   const scaled = subject.firstElementChild;
   if (!(scaled instanceof HTMLElement)) return;
@@ -204,7 +205,8 @@ function enlarge(subject: HTMLElement) {
   const box = scaled.getBoundingClientRect();
   const width = box.width / current;
   const height = box.height / current;
-  const small = width > 0 && width <= smallSubject.width && height <= smallSubject.height;
+  const small =
+    width > 0 && (always || (width <= smallSubject.width && height <= smallSubject.height));
   const zoom = small ? Math.max(1, Math.min(1.5, subject.clientWidth / width)) : 1;
   if (Math.abs(zoom - current) < 0.01) return;
   if (zoom === 1) scaled.style.removeProperty('zoom');
@@ -220,12 +222,15 @@ function AnatomyStage({
   name,
   legend,
   open,
+  enlarged,
   stage: fill,
 }: {
   page: string;
   name: string;
   legend: AnatomyLegendItem[];
   open: boolean;
+  /** Whether the subject shows half as large again, though it isn't small. */
+  enlarged: boolean;
   stage?: StageFill;
 }) {
   const theme = useTheme();
@@ -242,7 +247,7 @@ function AnatomyStage({
       // Only a change of place re-renders the callouts.
       frame = requestAnimationFrame(() => {
         // Open overlays take the room they need; they are never small.
-        if (!open) enlarge(subjectElement);
+        if (!open) enlarge(subjectElement, enlarged);
         const next = measure(stageElement, subjectElement, legend);
         setCallouts((current) =>
           JSON.stringify(current) === JSON.stringify(next) ? current : next,
@@ -266,7 +271,7 @@ function AnatomyStage({
       resize.disconnect();
       mutation.disconnect();
     };
-  }, [legend, open]);
+  }, [legend, open, enlarged]);
   return (
     <Theme
       {...theme}
@@ -336,6 +341,7 @@ export function AnatomyFigure({
   legend,
   of,
   open = false,
+  enlarge: enlarged = false,
   stage,
 }: {
   page: string;
@@ -346,13 +352,22 @@ export function AnatomyFigure({
   of?: string;
   /** Whether the example's overlays are shown open, their parts numbered too. */
   open?: boolean;
+  /** Whether the subject shows half as large again where its stage has room, as a small one does. */
+  enlarge?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
 }) {
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   return (
     <figure className="docs-anatomy" aria-label={title}>
-      <AnatomyStage page={page} name={name} legend={items} open={open} stage={stage} />
+      <AnatomyStage
+        page={page}
+        name={name}
+        legend={items}
+        open={open}
+        enlarged={enlarged}
+        stage={stage}
+      />
       <figcaption className="docs-anatomy-caption">
         {caption && <p className="docs-figure-caption">{caption}</p>}
         {items.length > 0 && (

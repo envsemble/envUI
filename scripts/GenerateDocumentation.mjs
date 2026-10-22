@@ -553,7 +553,7 @@ const figureAttributes = {
   example: { allowed: ['caption', 'widths', 'open', 'stage'], required: [] },
   do: { allowed: ['caption', 'open', 'stage'], required: ['caption'] },
   dont: { allowed: ['caption', 'open', 'stage'], required: ['caption'] },
-  anatomy: { allowed: ['caption', 'of', 'open', 'stage'], required: [] },
+  anatomy: { allowed: ['caption', 'of', 'open', 'stage', 'enlarge'], required: [] },
 };
 /**
  * The fills a figure's stage takes besides the default, the page's: `stage="raised"` where the
@@ -564,9 +564,10 @@ const figureAttributes = {
 const stageFills = ['raised', 'shaded'];
 /**
  * The attributes that are flags, written without a value: `open` shows the example's overlays
- * open on its stage, contained.
+ * open on its stage, contained, and `enlarge` shows an anatomy figure's subject half as large
+ * again where its stage has room, so the callouts on its close-set parts don't crowd.
  */
-const figureFlags = new Set(['open']);
+const figureFlags = new Set(['open', 'enlarge']);
 /** A file name as words: ConnectedButtons is "Connected buttons". */
 const fileWords = (name) =>
   name
@@ -771,6 +772,7 @@ function readFigures(document, body, { examples, specimens, partNames }) {
           );
       }
       if (attributes.open === true) block.open = true;
+      if (attributes.enlarge === true) block.enlarge = true;
       blocks.push(block);
       if (role === 'anatomy') legendOf = block;
       continue;
@@ -1313,6 +1315,7 @@ export function compileDocument(document, documents, { props, examples = example
           `${block.role ?? 'example'}=${block.name}`,
           block.of && `of=${block.of}`,
           block.open && 'open',
+          block.enlarge && 'enlarge',
           block.stage && `stage=${block.stage}`,
           block.widths && `widths="${block.widths.join(' ')}"`,
           block.caption && `caption="${block.caption}"`,
