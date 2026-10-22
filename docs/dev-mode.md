@@ -16,7 +16,7 @@ This page runs the real dev mode, with `root` set to the application below. Its 
 
 ## Opening it
 
-The Dev mode button in the corner of the page, or Alt+Shift+D outside a field, opens the 3D view with the inspector beside it, over the page. Escape closes it and gives focus back. The handle `installDevMode()` returns opens it from code too, with `open()`, `close()` and `toggle()`.
+The Dev mode button in the corner of the page, or Alt+Shift+D outside a field, opens dev mode over the page: the node tree on one side, the 3D view in the middle and the inspector on the other side. Escape closes it and gives focus back. The handle `installDevMode()` returns opens it from code too, with `open()`, `close()` and `toggle()`.
 
 ## The readout, for agents
 
@@ -109,21 +109,26 @@ Open dev mode on the application at the top of this page to try it.
 
 Every visible layout node is a plane, lifted one level per step of nesting; sticky, absolute and fixed nodes sit half a level higher, and open overlays float above the page. Each plane carries a picture of what its node holds, with padding and gaps hatched and each child outlined.
 
-| Do this                       | To                                                                   |
-| ----------------------------- | -------------------------------------------------------------------- |
-| Drag, Shift+drag, Ctrl+wheel  | Turn, pan and zoom; the wheel scrolls the page under the pointer.    |
-| Choose a preset, or Fit       | Look tilted, straight on, from the top or a side; bring it all back. |
-| Color by kind or window class | See what each node is, or which window class its width falls in.     |
-| Set From level and To level   | Show a range of levels, with the spacing between them.               |
-| Rest on a plane               | Show only it and what is inside it, with a ruler of its thresholds.  |
-| Click a plane                 | Select its node in the inspector.                                    |
+The toolbar over the view turns it and chooses what the planes show; the panel under it sets their colors and levels.
+
+| Do this                              | To                                                                         |
+| ------------------------------------ | -------------------------------------------------------------------------- |
+| Drag, Shift+drag, Ctrl+wheel         | Turn, pan and zoom; the wheel scrolls the page under the pointer.          |
+| A view in the toolbar, or Fit        | Look tilted, straight on, from the top or a side; bring it all back.       |
+| Names, Padding and gaps              | Show or hide the planes' names, and the hatching of padding and gaps.      |
+| Click a plane, or a node in the tree | Select the node; the inspector shows it.                                   |
+| Only the selected                    | Show only the selected node and what is inside it.                         |
+| Rest on a plane                      | See its size and container; colored by window class, a ruler of its width. |
+| Color by kind or window class        | See what each node is, or which window class its width falls in.           |
+| Set Spacing, From level and To level | Show a range of levels, with the spacing between them.                     |
 
 A red outline marks a node with problems; coloured by window class, a solid outline is a size container.
 
-## The inspector
+## The node tree and the inspector
 
-- **Nodes**: the nodes as a tree, with problems counted and containers marked. A chosen node shows its part, component and description, its size, window class and `data-*` states, its container and which queries hold, its problems, the `--env-*` tokens its styles use with their values, and its line of the readout.
-- **Readout**: the text of `describe()`, kept current, with a copy button.
+- **Nodes**, the sidebar beside the view: the nodes as a tree, with problems counted and containers marked. Hovering a node lights up its plane; clicking it selects it.
+- **Details**, in the inspector across the view: the selected node's part, component and description, its size, window class and `data-*` states, its container and which queries hold, its problems, the `--env-*` tokens its styles use with their values, and its line of the readout.
+- **Readout**, beside Details: the text of `describe()`, kept current, with a copy button.
 
 ## Skeleton shift
 
