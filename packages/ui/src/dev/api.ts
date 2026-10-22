@@ -58,9 +58,11 @@ export interface LayoutApi {
   skeletonShift(root?: Element | string, options?: SkeletonShiftOptions): LayoutProblem[];
 }
 
-/** Resizes the root for one synchronous measurement, and puts it back. */
-function atWidth<T>(root: HTMLElement, width: number | string | undefined, run: () => T): T {
-  if (width === undefined) return run();
+/**
+ * Lays the root out at a width in px, as `at()` measures it, until the function it returns puts
+ * its inline style back as it was. Dev mode's responsive frame holds it for as long as it is set.
+ */
+export function resizeRoot(root: HTMLElement, px: number): () => void {
   const style = root.style;
   const hadStyle = root.hasAttribute('style');
   const saved = [
@@ -71,20 +73,28 @@ function atWidth<T>(root: HTMLElement, width: number | string | undefined, run: 
     'flex',
     'box-sizing',
   ].map((name) => [name, style.getPropertyValue(name), style.getPropertyPriority(name)] as const);
-  const px = toPx(width, rootFontPx());
   style.setProperty('box-sizing', 'border-box', 'important');
   style.setProperty('flex', 'none', 'important');
   style.setProperty('min-inline-size', '0', 'important');
   style.setProperty('max-inline-size', 'none', 'important');
   style.setProperty('inline-size', `${px}px`, 'important');
-  try {
-    return run();
-  } finally {
+  return () => {
     for (const [name, value, priority] of saved) {
       if (value) style.setProperty(name, value, priority);
       else style.removeProperty(name);
     }
     if (!hadStyle && !root.getAttribute('style')) root.removeAttribute('style');
+  };
+}
+
+/** Resizes the root for one synchronous measurement, and puts it back. */
+function atWidth<T>(root: HTMLElement, width: number | string | undefined, run: () => T): T {
+  if (width === undefined) return run();
+  const restore = resizeRoot(root, toPx(width, rootFontPx()));
+  try {
+    return run();
+  } finally {
+    restore();
   }
 }
 

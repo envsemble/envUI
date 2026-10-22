@@ -3,7 +3,7 @@
 // Dev mode's two sidebars: the nodes as a tree on one side of the 3D view, and on the other the
 // inspector, with the selected node in detail and the readout an agent reads.
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useId, useMemo, useState, type ReactNode } from 'react';
 import { Button, IconButton } from '../../actions/Button.js';
 import { Badge } from '../../content/Badge.js';
 import * as DescriptionList from '../../content/DescriptionList.js';
@@ -11,8 +11,9 @@ import { Tooltip } from '../../feedback/Tooltip.js';
 import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface } from '../../foundations/Surface.js';
 import { Text } from '../../foundations/Text.js';
-import { Close } from '../../icons/Close.js';
-import { Tabs } from '../../navigation/Tabs.js';
+import { LeftPanelClose } from '../../icons/LeftPanelClose.js';
+import { RightPanelClose } from '../../icons/RightPanelClose.js';
+import { DocumentTabs } from '../../navigation/DocumentTabs.js';
 import { Tree, type TreeItem } from '../../navigation/Tree.js';
 import type { NodeData, Snapshot } from '../model.js';
 import { knownParts } from '../parts.js';
@@ -23,7 +24,15 @@ import { toRem, windowClassOf } from '../units.js';
 import type { LivePage } from './useLivePage.js';
 
 /** A sidebar: a flush, square pane on the navigation's color, as a Drawer is. */
-function Sidebar({ label, children }: { label: string; children: ReactNode }) {
+function Sidebar({
+  side,
+  label,
+  children,
+}: {
+  side: 'tree' | 'inspector';
+  label: string;
+  children: ReactNode;
+}) {
   return (
     <Surface
       background="default"
@@ -31,6 +40,7 @@ function Sidebar({ label, children }: { label: string; children: ReactNode }) {
       padding={0}
       render={<Column gap={2} render={<aside aria-label={label} />} />}
       className="env-dev-sidebar"
+      data-side={side}
     >
       {children}
     </Surface>
@@ -42,14 +52,16 @@ export interface NodeTreeProps {
   selected: number | null;
   onSelect: (key: number | null) => void;
   onTreeHover: (key: number | null) => void;
+  /** Hides the tree; the toolbar shows it again. */
+  onHide: () => void;
 }
 
 /** The nodes as a tree, in a sidebar of their own. */
-export function NodeTree({ live, selected, onSelect, onTreeHover }: NodeTreeProps) {
+export function NodeTree({ live, selected, onSelect, onTreeHover, onHide }: NodeTreeProps) {
   const full = live.full;
   const problemCount = full?.reading.problems.length ?? 0;
   return (
-    <Sidebar label="Layout nodes">
+    <Sidebar side="tree" label="Layout nodes">
       <Row gap={2} align="center" className="env-dev-sidebar-head">
         <Text variant="body-sm" emphasis="default" render={<h2 />} className="env-dev-heading">
           Nodes
@@ -59,6 +71,16 @@ export function NodeTree({ live, selected, onSelect, onTreeHover }: NodeTreeProp
             {problemCount} {problemCount === 1 ? 'problem' : 'problems'}
           </Text>
         ) : null}
+        <Tooltip content="Hide the nodes">
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<LeftPanelClose />}
+            aria-label="Hide the nodes"
+            onClick={onHide}
+            className="env-dev-hide"
+          />
+        </Tooltip>
       </Row>
       {full ? (
         <Nodes
@@ -80,70 +102,83 @@ export function NodeTree({ live, selected, onSelect, onTreeHover }: NodeTreeProp
 export interface InspectorProps {
   live: LivePage;
   selected: number | null;
-  onClose: () => void;
+  /** Hides the inspector; the toolbar shows it again. */
+  onHide: () => void;
 }
 
-/** The selected node in detail, and the readout, in the sidebar across the view from the tree. */
-export function Inspector({ live, selected, onClose }: InspectorProps) {
+const inspectorTabs = [
+  { id: 'details', label: 'Details' },
+  { id: 'readout', label: 'Readout' },
+];
+
+/**
+ * The selected node in detail, and the readout, in the sidebar across the view from the tree: two
+ * documents in DocumentTabs. Closing one leaves the other; closing both hides the inspector, and
+ * showing it again opens both.
+ */
+export function Inspector({ live, selected, onHide }: InspectorProps) {
+  const [open, setOpen] = useState(inspectorTabs);
   const [tab, setTab] = useState<string | null>('details');
+  const panelId = useId();
   const full = live.full;
   const current =
     full && selected !== null
       ? full.snapshot.nodes.find((node) => node.key === selected)
       : undefined;
+  const active = open.find((item) => item.id === tab) ?? open[0];
   return (
-    <Sidebar label="Dev mode inspector">
-      <Tabs
+    <Sidebar side="inspector" label="Dev mode inspector">
+      <DocumentTabs
         aria-label="Inspector"
-        className="env-dev-tabs"
-        panelClassName="env-dev-tab-panel"
-        value={tab}
+        items={open}
+        value={active.id}
         onValueChange={setTab}
-        size="sm"
-        renderList={(list) => (
-          <Row gap={2} align="center" justify="between" className="env-dev-sidebar-head">
-            {list}
-            <Tooltip content="Close dev mode (Esc)">
-              <IconButton
-                variant="ghost"
-                size="sm"
-                icon={<Close />}
-                aria-label="Close"
-                onClick={onClose}
-              />
-            </Tooltip>
-          </Row>
-        )}
-        items={[
-          {
-            value: 'details',
-            button: <Button>Details</Button>,
-            content:
-              current && full ? (
-                <Details key={current.key} snapshot={full.snapshot} node={current} live={live} />
-              ) : (
-                <Text variant="body-sm">Select a node in the tree or click its plane.</Text>
-              ),
-          },
-          {
-            value: 'readout',
-            button: <Button>Readout</Button>,
-            content: full ? (
-              <>
-                <Text variant="body-sm">
-                  What <code className="env-dev-code">envui.layout.describe()</code> returns. Try{' '}
-                  <code className="env-dev-code">
-                    envui.layout.at(['22rem', '40rem', '60rem', '80rem'])
-                  </code>{' '}
-                  in the console.
-                </Text>
-                <CopyReadout text={full.reading.text} />
-                <pre className="env-dev-readout">{full.reading.text}</pre>
-              </>
-            ) : null,
-          },
-        ]}
+        panelId={panelId}
+        onClose={(id) => {
+          const remaining = open.filter((item) => item.id !== id);
+          if (!remaining.length) return onHide();
+          setOpen(remaining);
+          if (id === active.id) setTab(remaining[0].id);
+        }}
+        end={
+          <Tooltip content="Hide the inspector">
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={<RightPanelClose />}
+              aria-label="Hide the inspector"
+              onClick={onHide}
+            />
+          </Tooltip>
+        }
       />
+      <Column
+        gap={3}
+        id={panelId}
+        role="tabpanel"
+        aria-label={active.label}
+        className="env-dev-tab-panel"
+      >
+        {active.id === 'details' ? (
+          current && full ? (
+            <Details key={current.key} snapshot={full.snapshot} node={current} live={live} />
+          ) : (
+            <Text variant="body-sm">Select a node in the tree or click its plane.</Text>
+          )
+        ) : full ? (
+          <>
+            <Text variant="body-sm">
+              What <code className="env-dev-code">envui.layout.describe()</code> returns. Try{' '}
+              <code className="env-dev-code">
+                envui.layout.at(['22rem', '40rem', '60rem', '80rem'])
+              </code>{' '}
+              in the console.
+            </Text>
+            <CopyReadout text={full.reading.text} />
+            <pre className="env-dev-readout">{full.reading.text}</pre>
+          </>
+        ) : null}
+      </Column>
     </Sidebar>
   );
 }

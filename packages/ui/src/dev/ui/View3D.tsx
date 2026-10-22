@@ -19,22 +19,27 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { IconButton } from '../../actions/Button.js';
-import { SegmentedControl } from '../../actions/SegmentedControl.js';
+import { Button, IconButton } from '../../actions/Button.js';
 import * as Toolbar from '../../actions/Toolbar.js';
 import { Popover } from '../../feedback/Popover.js';
 import { Slider } from '../../forms/Slider.js';
-import { Column, Grid, Row } from '../../foundations/Layout.js';
+import { Column, Row } from '../../foundations/Layout.js';
 import { Text } from '../../foundations/Text.js';
+import { Close } from '../../icons/Close.js';
+import { Devices } from '../../icons/Devices.js';
 import { FilterAlt } from '../../icons/FilterAlt.js';
 import { Info } from '../../icons/Info.js';
 import { Label } from '../../icons/Label.js';
+import { LeftPanelOpen } from '../../icons/LeftPanelOpen.js';
 import { Padding } from '../../icons/Padding.js';
+import { RightPanelOpen } from '../../icons/RightPanelOpen.js';
+import { Tune } from '../../icons/Tune.js';
 import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
 import { queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
 import { round, toRem, windowClasses, windowClassOf } from '../units.js';
 import { ViewFit, ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './icons.js';
+import { FrameHandle } from './FrameHandle.js';
 import { surfaceOf } from './surfaces.js';
 import type { LivePage } from './useLivePage.js';
 
@@ -55,6 +60,9 @@ const presets: { label: string; icon: ReactNode; rx: number; ry: number }[] = [
   { label: 'From the right', icon: <ViewRight />, rx: 0, ry: -70 },
 ];
 
+/** The widths the docs check every example at, one in each window class, in rem. */
+const checkWidths = [22, 40, 60, 80];
+
 type CachedSurface = { signature: string; element: HTMLElement; restore: () => void };
 
 export interface View3DProps {
@@ -63,6 +71,13 @@ export interface View3DProps {
   onSelect: (key: number | null) => void;
   /** The node hovered in the tree. */
   treeHover: number | null;
+  /** Which side columns show, which the toolbar hides and shows. */
+  sides: { tree: boolean; inspector: boolean };
+  onSidesChange: (sides: { tree: boolean; inspector: boolean }) => void;
+  /** The width the responsive frame lays the page out at, in px, or null for its real width. */
+  frameWidth: number | null;
+  onFrameWidthChange: (width: number | null) => void;
+  onClose: () => void;
 }
 
 /** The nodes in a node, itself included, by key. */
@@ -105,7 +120,17 @@ const Quiet = ({ children }: { children: ReactNode }) => (
 /** The floating controls take the pointer and the wheel for themselves, not for the view. */
 const keepPointer = (event: ReactPointerEvent) => event.stopPropagation();
 
-export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
+export function View3D({
+  live,
+  selected,
+  onSelect,
+  treeHover,
+  sides,
+  onSidesChange,
+  frameWidth,
+  onFrameWidthChange,
+  onClose,
+}: View3DProps) {
   const snapshot = live.geometry;
   const problemsByKey = live.full?.problemsByKey;
   const [spacing, setSpacing] = useState(48);
@@ -137,8 +162,10 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
   /** Moves the scene to the camera, without a render: dragging stays smooth. */
   const applyCamera = () => {
     const { rx, ry, zoom, px, py } = camera.current;
-    if (scene.current)
-      scene.current.style.transform = `translate(-50%, -50%) translate(${px}px, ${py}px) scale(${zoom}) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${-lift / 2}px)`;
+    if (!scene.current) return;
+    scene.current.style.transform = `translate(-50%, -50%) translate(${px}px, ${py}px) scale(${zoom}) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${-lift / 2}px)`;
+    // The frame's handles and label keep their size on screen at any zoom.
+    scene.current.style.setProperty('--env-dev-zoom', String(zoom));
   };
   useLayoutEffect(applyCamera);
 
@@ -310,6 +337,13 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
             z={(top - from + 0.75) * spacing + 2}
           />
         ) : null}
+        <Frame
+          width={origin.w}
+          set={frameWidth}
+          rootPx={snapshot.rootPx}
+          z={(top - from) * spacing + 4}
+          onWidthChange={onFrameWidthChange}
+        />
       </div>
 
       <Toolbar.Root
@@ -351,39 +385,21 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
             pressed={onlySelected}
             onClick={() => setOnlySelected((value) => !value)}
           />
+          <Toolbar.Button
+            icon={<Devices />}
+            label="Color by window class"
+            pressed={colorBy === 'window'}
+            onClick={() => setColorBy((value) => (value === 'window' ? 'kind' : 'window'))}
+          />
         </Toolbar.Group>
         <Toolbar.Separator />
         <Popover
-          title="Moving around"
+          title="View settings"
           side="bottom"
-          trigger={<IconButton icon={<Info />} aria-label="How to move around" />}
+          trigger={<IconButton icon={<Tune />} aria-label="View settings" />}
         >
-          <Text variant="body-sm" emphasis="default">
-            Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer; Ctrl+wheel
-            zooms. Click a plane, or a node in the tree, to select it; Only the selected shows it
-            and what is inside it.
-          </Text>
-        </Popover>
-      </Toolbar.Root>
-
-      <Column gap={2} className="env-dev-float env-dev-levels" onPointerDown={keepPointer}>
-        <Row gap={3} align="center" wrap>
-          <Quiet>Color by</Quiet>
-          <SegmentedControl
-            aria-label="Color by"
-            size="sm"
-            value={colorBy}
-            onValueChange={(value) => setColorBy(value as 'kind' | 'window')}
-            items={[
-              { value: 'kind', label: 'Kind' },
-              { value: 'window', label: 'Window class' },
-            ]}
-          />
-          {colorBy === 'window' ? <WindowLegend rootPx={snapshot.rootPx} /> : <KindLegend />}
-        </Row>
-        <Grid columns={3} gap={5}>
           <Slider
-            label={<Quiet>Spacing</Quiet>}
+            label={<Quiet>Spacing between levels</Quiet>}
             min={0}
             max={160}
             value={spacing}
@@ -410,8 +426,64 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
               if (value < from) setFrom(value);
             }}
           />
-        </Grid>
-      </Column>
+          <Column gap={2} role="group" aria-label="Page width">
+            <Quiet>Page width</Quiet>
+            <Row gap={1} wrap>
+              {checkWidths.map((rem) => (
+                <Button
+                  key={rem}
+                  size="sm"
+                  variant="outline"
+                  aria-pressed={frameWidth === rem * snapshot.rootPx}
+                  title={windowClassOf(rem)}
+                  onClick={() => onFrameWidthChange(rem * snapshot.rootPx)}
+                >
+                  {`${rem}rem`}
+                </Button>
+              ))}
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={frameWidth === null}
+                onClick={() => onFrameWidthChange(null)}
+              >
+                Real width
+              </Button>
+            </Row>
+          </Column>
+        </Popover>
+        <Popover
+          title="Moving around"
+          side="bottom"
+          trigger={<IconButton icon={<Info />} aria-label="How to move around" />}
+        >
+          <Text variant="body-sm" emphasis="default">
+            Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer; Ctrl+wheel
+            zooms. Click a plane, or a node in the tree, to select it; Only the selected shows it
+            and what is inside it. Drag a handle of the frame, or use the arrow keys on it, to lay
+            the page out at another width; double-click it for the real width.
+          </Text>
+        </Popover>
+        <Toolbar.Separator />
+        <Toolbar.Group aria-label="Panels">
+          <Toolbar.Button
+            icon={<LeftPanelOpen />}
+            label="Nodes"
+            pressed={sides.tree}
+            onClick={() => onSidesChange({ ...sides, tree: !sides.tree })}
+          />
+          <Toolbar.Button
+            icon={<RightPanelOpen />}
+            label="Inspector"
+            pressed={sides.inspector}
+            onClick={() => onSidesChange({ ...sides, inspector: !sides.inspector })}
+          />
+          <Toolbar.Button icon={<Close />} label="Close dev mode" onClick={onClose} />
+        </Toolbar.Group>
+      </Toolbar.Root>
+
+      {/* The legend floats over the view, with no pane behind it. */}
+      {colorBy === 'window' ? <WindowLegend rootPx={snapshot.rootPx} /> : <KindLegend />}
 
       {hoveredNode && !dragging ? (
         <div
@@ -426,6 +498,68 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
           />
         </div>
       ) : null}
+    </div>
+  );
+}
+
+interface FrameProps {
+  /** The page's width now, in px. */
+  width: number;
+  /** How high it floats: above every plane, where its handles and label are never covered. */
+  z: number;
+  /** The width the frame sets, in px, or null where the page has its real width. */
+  set: number | null;
+  rootPx: number;
+  onWidthChange: (width: number | null) => void;
+}
+
+/**
+ * The responsive frame: the rectangle the page is laid out in, floating above the planes, with a
+ * handle on each side edge. Dragging a handle, or the arrow keys on it, sets the width the page
+ * is laid out at; the label above says it in rem and px with its window class.
+ */
+function Frame({ width, z, set, rootPx, onWidthChange }: FrameProps) {
+  const rem = round(width / rootPx);
+  const windowClass = windowClassOf(rem);
+  const text = `${rem}rem · ${Math.round(width)}px · ${windowClass}`;
+  return (
+    <div
+      className="env-dev-frame"
+      data-set={set === null ? undefined : ''}
+      style={{ transform: `translateZ(${z}px)` }}
+    >
+      <Row
+        gap={1}
+        align="center"
+        className="env-dev-frame-label"
+        onPointerDown={keepPointer}
+        data-window={windowClass}
+      >
+        <Text variant="body-sm" emphasis="default" render={<span />}>
+          {text}
+        </Text>
+        {set !== null ? (
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<Close />}
+            aria-label="Back to the real width"
+            title="Back to the real width"
+            onClick={() => onWidthChange(null)}
+          />
+        ) : null}
+      </Row>
+      {(['start', 'end'] as const).map((edge) => (
+        <FrameHandle
+          key={edge}
+          edge={edge}
+          width={width}
+          set={set}
+          rootPx={rootPx}
+          text={text}
+          onWidthChange={onWidthChange}
+        />
+      ))}
     </div>
   );
 }
@@ -690,7 +824,7 @@ function Swatch({
 function KindLegend() {
   const kinds = ['box', 'row', 'column', 'grid', 'scaffold', 'page', 'overlay'];
   return (
-    <Row gap={2} wrap className="env-dev-legend">
+    <Row gap={3} wrap className="env-dev-legend" role="group" aria-label="Legend">
       {kinds.map((kind) => (
         <Swatch
           key={kind}
@@ -705,7 +839,7 @@ function KindLegend() {
 
 function WindowLegend({ rootPx }: { rootPx: number }) {
   return (
-    <Row gap={2} wrap className="env-dev-legend">
+    <Row gap={3} wrap className="env-dev-legend" role="group" aria-label="Legend">
       {windowClasses.map((windowClass, index) => {
         const next = windowClasses[index + 1];
         const range = next

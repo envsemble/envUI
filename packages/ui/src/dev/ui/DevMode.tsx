@@ -9,6 +9,7 @@ import { IconButton } from '../../actions/Button.js';
 import { PortalContainer } from '../../foundations/PortalContainer.js';
 import { Theme, type ThemeValue } from '../../foundations/Theme.js';
 import { ViewInAr } from '../../icons/ViewInAr.js';
+import { resizeRoot } from '../api.js';
 import { resolveRoot } from '../measure.js';
 import { Inspector, NodeTree } from './Inspector.js';
 import { useLivePage } from './useLivePage.js';
@@ -86,9 +87,18 @@ function Panel({ controller }: { controller: DevModeController }) {
   const live = useLivePage(root);
   const [selected, setSelected] = useState<number | null>(null);
   const [treeHover, setTreeHover] = useState<number | null>(null);
+  const [sides, setSides] = useState({ tree: true, inspector: true });
+  // The width the responsive frame lays the page out at, in px, or null for its real width.
+  const [frameWidth, setFrameWidth] = useState<number | null>(null);
   const panel = useRef<HTMLDivElement>(null);
   // While the panel covers the page, the page is inert and focus is in the panel.
   useLayoutEffect(() => cover(root, panel.current, returnFocus), [root, returnFocus]);
+  // The frame resizes the root as at() does, and puts its style back on a reset and as dev mode
+  // closes; the page re-lays out under the panel and the live page measures it again.
+  useLayoutEffect(
+    () => (frameWidth === null ? undefined : resizeRoot(root, frameWidth)),
+    [root, frameWidth],
+  );
   return (
     <div
       ref={panel}
@@ -102,9 +112,33 @@ function Panel({ controller }: { controller: DevModeController }) {
         controller.setOpen(false);
       }}
     >
-      <NodeTree live={live} selected={selected} onSelect={setSelected} onTreeHover={setTreeHover} />
-      <View3D live={live} selected={selected} onSelect={setSelected} treeHover={treeHover} />
-      <Inspector live={live} selected={selected} onClose={() => controller.setOpen(false)} />
+      {sides.tree ? (
+        <NodeTree
+          live={live}
+          selected={selected}
+          onSelect={setSelected}
+          onTreeHover={setTreeHover}
+          onHide={() => setSides((current) => ({ ...current, tree: false }))}
+        />
+      ) : null}
+      <View3D
+        live={live}
+        selected={selected}
+        onSelect={setSelected}
+        treeHover={treeHover}
+        sides={sides}
+        onSidesChange={setSides}
+        frameWidth={frameWidth}
+        onFrameWidthChange={setFrameWidth}
+        onClose={() => controller.setOpen(false)}
+      />
+      {sides.inspector ? (
+        <Inspector
+          live={live}
+          selected={selected}
+          onHide={() => setSides((current) => ({ ...current, inspector: false }))}
+        />
+      ) : null}
     </div>
   );
 }

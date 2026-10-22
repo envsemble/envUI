@@ -27,8 +27,7 @@ export const devStyles = /* css */ `
   .env-dev-panel {
     position: fixed;
     inset: 0;
-    display: grid;
-    grid-template-columns: min(17rem, 22vw) minmax(0, 1fr) min(24rem, 30vw);
+    display: flex;
     background: var(--env-color-bg-page);
     color: var(--env-color-fg-default);
     pointer-events: auto;
@@ -39,6 +38,8 @@ export const devStyles = /* css */ `
   }
   .env-dev-view {
     position: relative;
+    flex: 1 1 auto;
+    min-inline-size: 0;
     overflow: hidden;
     perspective: 125rem;
     cursor: grab;
@@ -63,6 +64,58 @@ export const devStyles = /* css */ `
     inset: 0;
     border: 1px dashed var(--env-color-border-default);
     border-radius: var(--env-radius-sm);
+  }
+  /* The responsive frame: the rectangle the page is laid out in, above the planes, a quiet outline
+     at the page's real width and the focus color at a width it sets. Its line, handles and label
+     keep their size on screen at any zoom. */
+  .env-dev-frame {
+    --env-dev-unzoom: calc(1 / var(--env-dev-zoom, 1));
+    position: absolute;
+    inset: 0;
+    border: calc(1px * var(--env-dev-unzoom)) solid var(--env-color-border-default);
+    border-radius: var(--env-radius-sm);
+    pointer-events: none;
+  }
+  .env-dev-frame[data-set] {
+    border: calc(1.5px * var(--env-dev-unzoom)) solid var(--env-color-border-focus);
+  }
+  .env-dev-frame-label {
+    position: absolute;
+    inset-block-end: 100%;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    scale: var(--env-dev-unzoom);
+    transform-origin: 50% 100%;
+    padding-block-end: var(--env-space-2);
+    white-space: nowrap;
+    pointer-events: auto;
+  }
+  .env-dev-frame-handle {
+    position: absolute;
+    inset-block-start: 50%;
+    inline-size: 0.5rem;
+    block-size: 2.5rem;
+    translate: -50% -50%;
+    scale: var(--env-dev-unzoom);
+    border-radius: var(--env-radius-full);
+    background: var(--env-color-fg-muted);
+    cursor: ew-resize;
+    touch-action: none;
+    pointer-events: auto;
+  }
+  .env-dev-frame-handle[data-edge='start'] {
+    inset-inline-start: 0;
+  }
+  .env-dev-frame-handle[data-edge='end'] {
+    inset-inline-start: 100%;
+  }
+  .env-dev-frame-handle:hover,
+  .env-dev-frame[data-set] .env-dev-frame-handle {
+    background: var(--env-color-border-focus);
+  }
+  .env-dev-frame-handle:focus-visible {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: 0.125rem;
   }
   .env-dev-plane {
     --env-dev-tint: var(--env-color-avatar-bg-slate);
@@ -171,20 +224,28 @@ export const devStyles = /* css */ `
     border-radius: var(--env-radius-surface);
     cursor: auto;
   }
+  /* One row; a view too narrow for it wraps it rather than cutting it off. */
   .env-dev-toolbar {
     inset-block-start: var(--env-space-3);
     inset-inline-start: 50%;
     translate: -50% 0;
+    inline-size: max-content;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .env-dev-levels {
-    inset-block-end: var(--env-space-3);
-    inset-inline-start: var(--env-space-3);
-    inline-size: 40rem;
-    padding: var(--env-space-2) var(--env-space-3);
+  /* The legend floats over the view with no pane: quiet small text in a corner, where the planes
+     seldom reach. The frame's label is small text too. */
+  .env-dev-legend,
+  .env-dev-frame-label {
     font: var(--env-type-body-small);
   }
   .env-dev-legend {
-    font: var(--env-type-body-small);
+    position: absolute;
+    inset-block-end: var(--env-space-3);
+    inset-inline-start: var(--env-space-4);
+    inset-inline-end: var(--env-space-4);
+    color: var(--env-color-fg-muted);
+    pointer-events: none;
   }
   .env-dev-swatch {
     position: static;
@@ -258,8 +319,19 @@ export const devStyles = /* css */ `
   /* The sidebars: flush, square panes on the navigation's color. Their heads line up with the
      tree's rows and the tabs' panel. */
   .env-dev-sidebar {
+    flex: none;
     min-block-size: 0;
     padding-block: var(--env-space-3);
+  }
+  .env-dev-sidebar[data-side='tree'] {
+    inline-size: min(17rem, 22vw);
+  }
+  .env-dev-sidebar[data-side='inspector'] {
+    inline-size: min(24rem, 30vw);
+    padding-block-start: var(--env-space-1);
+  }
+  .env-dev-hide {
+    margin-inline-start: auto;
   }
   .env-dev-sidebar-head,
   .env-dev-sidebar-note {
@@ -269,16 +341,8 @@ export const devStyles = /* css */ `
     flex: 1 1 auto;
     min-block-size: 0;
   }
-  .env-dev-tabs {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-block-size: 0;
-  }
   .env-dev-tab-panel {
-    display: flex;
-    flex-direction: column;
-    gap: var(--env-space-3);
+    flex: 1 1 auto;
     min-block-size: 0;
     padding: var(--env-space-3);
     overflow: auto;
