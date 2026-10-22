@@ -51,8 +51,16 @@ export interface ChildData {
   box: Box;
   /** Whether it is a node itself. */
   node: boolean;
-  /** Whether it is out of the flow in a way that never spills: fixed, or an overlay. */
+  /**
+   * Whether it is out of the flow, so it never spills: fixed, absolute, such as a resize handle
+   * across its parent's edge, or an overlay.
+   */
   detached: boolean;
+  /**
+   * How far a negative margin sets it out past its place on each side, in px, such as a text
+   * button's hit area reaching past its label: sticking out by that much is by design.
+   */
+  outset?: { left: number; right: number; top: number; bottom: number };
 }
 
 /** An element inside a node, not a node itself, that sticks, scrolls or holds squeezed text. */
@@ -109,6 +117,11 @@ export interface NodeData {
   overflow: { x: string; y: string };
   /** Its own scroll sizes in px, for the overflow checks. */
   scrollSize: { w: number; clientW: number; h: number; clientH: number };
+  /**
+   * The furthest anything inside it is set out sideways by a negative margin, in px, which widens
+   * its content by design, such as a toolbar whose padding keeps focus rings in view.
+   */
+  outsetInside?: number;
   scroll: ScrollData | null;
   position: string;
   sticky: StickyData | null;
