@@ -133,6 +133,9 @@ function painted(element: Element) {
 }
 
 async function open(page: Page) {
+  // The fixture's calendar shows October 2026 with the 14th chosen and compares with the 20th, so
+  // today is a day of that month that is neither.
+  await page.clock.install({ time: new Date('2026-10-16T12:00:00') });
   await page.emulateMedia({ forcedColors: 'active' });
   await page.goto(`${fixtureUrl}/forced-colors.html`);
   await page.waitForSelector('body[data-styles-ready] .env-theme');
