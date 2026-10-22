@@ -581,12 +581,46 @@ export const pairs: readonly ContrastPair[] = merged([
           [`--env-color-bg-${tone}-muted`, page],
           [`--env-color-bg-${tone}-muted`, surface],
         ])),
+    // A soft badge's text over its tint wherever a badge sits: list rows, muted and raised
+    // surfaces, and popups. The accent blue over its tint on a light row measures 4.14:1, and the
+    // blue stays as it is, so its row and muted pairs wait for a decision on the accent badge.
+    ...(tone === 'neutral'
+      ? []
+      : text(
+          toneText(tone),
+          [
+            ...(tone === 'accent'
+              ? []
+              : [
+                  [`--env-color-bg-${tone}-muted`, row],
+                  [`--env-color-bg-${tone}-muted`, muted],
+                ]),
+            [`--env-color-bg-${tone}-muted`, raised],
+            [`--env-color-bg-${tone}-muted`, popup],
+          ],
+          'A soft badge on a row, a muted or raised surface or a popup',
+        )),
     ...text(
       '--env-color-fg-on-emphasis',
       [`--env-color-bg-${tone}-emphasis`],
       'Solid badges and counters',
     ),
   ]),
+  // A diff stat's additions and deletions over its neutral fill, wherever it sits.
+  ...['--env-color-fg-success', '--env-color-fg-danger'].flatMap((fg) =>
+    text(
+      fg,
+      [
+        [fill, page],
+        [fill, surface],
+        [fill, row],
+        [fill, muted],
+        [fill, raised],
+        [fill, popup],
+      ],
+      'A diff stat’s additions and deletions on its fill',
+    ),
+  ),
   ...alertTones.flatMap((tone) => [
     ...text(
       '--env-color-fg-default',
