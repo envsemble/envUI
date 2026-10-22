@@ -439,7 +439,10 @@ const popupSurfaces =
 test(
   'every popup keeps a visible edge under forced colors, where its fill is gone',
   { tag: '@engines' },
-  async ({ page }) => {
+  async ({ page, browserName }) => {
+    // It opens and closes all fifteen kinds of popup: about 7 s in Firefox alone, and past the
+    // default 30 s while the other engines' workers keep every core busy.
+    test.slow(browserName === 'firefox');
     await page.emulateMedia({ contrast: 'no-preference', forcedColors: 'active' });
     await page.goto(`${fixtureUrl}/?fixture=theme-contrast`);
     for (const kind of popupKinds) {

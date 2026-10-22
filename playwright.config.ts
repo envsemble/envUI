@@ -151,15 +151,19 @@ export default defineConfig({
       },
     },
   ],
+  // --force bundles the dependencies again as a server starts. Vite reuses its bundle while the
+  // lockfile is unchanged, so after a change imports a dependency it holds none of, such as a code
+  // theme loaded on demand, the first page to ask for it makes Vite bundle it and reload every page
+  // the server has open, and the tests on those pages lose their state midway.
   webServer: [
     servers.catalogue && {
-      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.catalogue.port} --strictPort`,
+      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.catalogue.port} --strictPort --force`,
       cwd: 'apps/catalogue',
       url: `http://127.0.0.1:${servers.catalogue.port}`,
       reuseExistingServer: servers.catalogue.reuse,
     },
     servers.fixture && {
-      command: `node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port ${servers.fixture.port} --strictPort`,
+      command: `node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port ${servers.fixture.port} --strictPort --force`,
       url: `http://127.0.0.1:${servers.fixture.port}`,
       reuseExistingServer: servers.fixture.reuse,
     },

@@ -185,7 +185,10 @@ test.describe('Panes, supporting', () => {
   test(
     'the divider resizes the pane by keyboard and pointer, in rem, and remembers it',
     { tag: '@engines' },
-    async ({ page }) => {
+    async ({ page, browserName }) => {
+      // Four page loads: about 5 s in Firefox alone, and past the default 30 s while the other
+      // engines' workers keep every core busy.
+      test.slow(browserName === 'firefox');
       await page.goto(panes('&width=60rem&persist=fixture-panes'));
       const root = page.getByTestId('supporting');
       const divider = root.getByRole('separator', { name: 'Resize details' });
