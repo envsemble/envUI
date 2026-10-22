@@ -41,6 +41,7 @@ import { Palette } from '../../icons/Palette.js';
 import { RightPanelOpen } from '../../icons/RightPanelOpen.js';
 import { ScreenRotation } from '../../icons/ScreenRotation.js';
 import { Tune } from '../../icons/Tune.js';
+import { layoutAttribute, overlaySelector } from '../measure.js';
 import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
 import { queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
@@ -49,6 +50,7 @@ import { ViewFit, ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './
 import { deviceGroups } from './devices.js';
 import { FrameHandle, realSize, type FrameEdge, type FrameSize } from './FrameHandle.js';
 import type { EditorTheme } from './editorTheme.js';
+import { scrollsToward, wheelDelta } from './scrolling.js';
 import { surfaceOf } from './surfaces.js';
 import type { LivePage } from './useLivePage.js';
 
@@ -87,6 +89,8 @@ export interface View3DProps {
   /** The theme of dev mode's own UI, which its toolbar switches; the page keeps its own. */
   editorTheme: { value: EditorTheme; onChange: (theme: EditorTheme) => void };
   onClose: () => void;
+  /** The element dev mode shows; the wheel scrolls nothing around it. */
+  root: HTMLElement;
 }
 
 /** The nodes in a node, itself included, by key. */
@@ -101,22 +105,35 @@ function subtreeOf(snapshot: Snapshot, key: number): Set<number> {
   return keys;
 }
 
-/** What the wheel scrolls over a node: a scroller of its own content, or the nearest around it. */
-function scrollerAt(element: HTMLElement, dx: number, dy: number): HTMLElement | null {
-  const can = (candidate: HTMLElement) => {
-    const style = getComputedStyle(candidate);
-    const y =
-      /auto|scroll/.test(style.overflowY) && candidate.scrollHeight > candidate.clientHeight + 1;
-    const x =
-      /auto|scroll/.test(style.overflowX) && candidate.scrollWidth > candidate.clientWidth + 1;
-    return (dy !== 0 && y) || (dx !== 0 && x);
-  };
-  if (can(element)) return element;
+/**
+ * What the wheel scrolls over a node, as a browser would under the pointer: a scroller of the
+ * node's own content, else the nearest around it up to the root, else the window; one at its end
+ * passes the wheel on. Never what is around the root, which the view doesn't show; an open
+ * overlay's node scrolls only within the overlay. 'end' where all that scrolls there is at its
+ * end, null where nothing does.
+ */
+function scrollerAt(
+  element: HTMLElement,
+  root: HTMLElement,
+  dx: number,
+  dy: number,
+): HTMLElement | 'end' | null {
+  const inPage = root.contains(element);
+  const limit = inPage ? root : (element.closest<HTMLElement>(overlaySelector) ?? element);
+  const candidates = [element];
   for (const inner of Array.from(element.querySelectorAll<HTMLElement>('*')))
-    if (inner.closest('[data-env-layout]') === element && can(inner)) return inner;
-  for (let at = element.parentElement; at; at = at.parentElement) if (can(at)) return at;
+    if (inner.closest(`[${layoutAttribute}]`) === element) candidates.push(inner);
+  for (let at = element; at !== limit && at.parentElement; at = at.parentElement)
+    candidates.push(at.parentElement);
   const page = document.scrollingElement;
-  return page instanceof HTMLElement && can(page) ? page : null;
+  if (inPage && page instanceof HTMLElement && !candidates.includes(page)) candidates.push(page);
+  let end = false;
+  for (const candidate of candidates) {
+    const scrolls = scrollsToward(candidate, dx, dy);
+    if (scrolls === 'room') return candidate;
+    if (scrolls === 'end') end = true;
+  }
+  return end ? 'end' : null;
 }
 
 /** A secondary label, quiet and small. */
@@ -140,6 +157,7 @@ export function View3D({
   onFrameChange,
   editorTheme,
   onClose,
+  root,
 }: View3DProps) {
   const snapshot = live.geometry;
   const problemsByKey = live.full?.problemsByKey;
@@ -203,8 +221,8 @@ export function View3D({
     for (const key of surfaces.keys()) if (!keys.has(key)) surfaces.delete(key);
   }, [snapshot, surfaces]);
 
-  // The wheel scrolls the page's scroller under the pointer, and the planes follow; Ctrl+wheel,
-  // or the wheel where nothing scrolls, zooms toward the pointer.
+  // The wheel scrolls the page's scroller under the pointer, in the root, and the planes follow;
+  // Ctrl+wheel, or the wheel where nothing scrolls, zooms toward the pointer.
   useEffect(() => {
     const element = view.current;
     if (!element) return;
@@ -226,24 +244,22 @@ export function View3D({
     const wheel = (event: WheelEvent) => {
       if ((event.target as Element).closest('.env-dev-float')) return;
       event.preventDefault();
-      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 400 : 1;
-      const dx = (event.shiftKey ? event.deltaY : event.deltaX) * unit;
-      const dy = (event.shiftKey ? 0 : event.deltaY) * unit;
+      const { dx, dy } = wheelDelta(event);
       const key = hoveredRef.current;
       const current = snapshotRef.current;
       const node =
         key === null ? undefined : current?.nodes.find((candidate) => candidate.key === key);
       const target = node ? current?.elements?.[node.index] : undefined;
       const scroller =
-        !event.ctrlKey && !event.metaKey && target ? scrollerAt(target, dx, dy) : null;
-      if (scroller) scroller.scrollBy({ left: dx, top: dy });
-      else zoomAt(event);
+        !event.ctrlKey && !event.metaKey && target ? scrollerAt(target, root, dx, dy) : null;
+      if (scroller === null) zoomAt(event);
+      else if (scroller !== 'end') scroller.scrollBy({ left: dx, top: dy });
     };
     element.addEventListener('wheel', wheel, { passive: false });
     return () => element.removeEventListener('wheel', wheel);
     // applyCamera reads refs and `lift`, which the layout effect applies on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [root]);
 
   // With "only the selected" on, the view shows the selected node and what is inside it.
   const focused = onlySelected ? selected : null;
@@ -466,11 +482,11 @@ export function View3D({
           trigger={<IconButton icon={<Info />} aria-label="How to move around" />}
         >
           <Text variant="body-sm" emphasis="default">
-            Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer; Ctrl+wheel
-            zooms. Click a plane, or a node in the tree, to select it; Only the selected shows it
-            and what is inside it. Drag a handle of the frame, or use the arrow keys on an
-            edge&apos;s, to lay the page out at another size; double-click one for the page&apos;s
-            own size.
+            Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer, or zooms
+            where nothing there scrolls; Ctrl+wheel zooms. Click a plane, or a node in the tree, to
+            select it; Only the selected shows it and what is inside it. Drag a handle of the frame,
+            or use the arrow keys on an edge&apos;s, to lay the page out at another size;
+            double-click one for the page&apos;s own size.
           </Text>
         </Popover>
         <Toolbar.Separator />

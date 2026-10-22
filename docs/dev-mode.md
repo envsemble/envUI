@@ -113,19 +113,19 @@ Every visible layout node is a plane, lifted one level per step of nesting; stic
 
 The toolbar over the view turns it, chooses what the planes show, sets the page's size and dev mode's theme, and hides the side columns; View settings holds the spacing and levels. A legend in the corner says what the colors mean.
 
-| Do this                                   | To                                                                         |
-| ----------------------------------------- | -------------------------------------------------------------------------- |
-| Drag, Shift+drag, Ctrl+wheel              | Turn, pan and zoom; the wheel scrolls the page under the pointer.          |
-| A view in the toolbar, or Fit             | Look tilted, straight on, from the top or a side; bring it all back.       |
-| Names, Padding and gaps                   | Show or hide the planes' names, and the hatching of padding and gaps.      |
-| Click a plane, or a node in the tree      | Select the node; the inspector shows it.                                   |
-| Only the selected                         | Show only the selected node and what is inside it.                         |
-| Color by window class                     | Color each node by the window class its width falls in, not by its kind.   |
-| Rest on a plane                           | See its size and container; colored by window class, a ruler of its width. |
-| Device, Rotate                            | Lay the page out at a phone's, tablet's or screen's size; swap its sides.  |
-| Dev mode theme                            | Show dev mode itself light or dark, or as the page is, with high contrast. |
-| View settings: spacing, from and to level | Show a range of levels, with the spacing between them.                     |
-| Nodes, Inspector                          | Hide or show the side columns; the view takes their room.                  |
+| Do this                                   | To                                                                            |
+| ----------------------------------------- | ----------------------------------------------------------------------------- |
+| Drag, Shift+drag, Ctrl+wheel              | Turn, pan and zoom; the wheel scrolls the page under the pointer, else zooms. |
+| A view in the toolbar, or Fit             | Look tilted, straight on, from the top or a side; bring it all back.          |
+| Names, Padding and gaps                   | Show or hide the planes' names, and the hatching of padding and gaps.         |
+| Click a plane, or a node in the tree      | Select the node; the inspector shows it.                                      |
+| Only the selected                         | Show only the selected node and what is inside it.                            |
+| Color by window class                     | Color each node by the window class its width falls in, not by its kind.      |
+| Rest on a plane                           | See its size and container; colored by window class, a ruler of its width.    |
+| Device, Rotate                            | Lay the page out at a phone's, tablet's or screen's size; swap its sides.     |
+| Dev mode theme                            | Show dev mode itself light or dark, or as the page is, with high contrast.    |
+| View settings: spacing, from and to level | Show a range of levels, with the spacing between them.                        |
+| Nodes, Inspector                          | Hide or show the side columns; the view takes their room.                     |
 
 ### The responsive frame
 

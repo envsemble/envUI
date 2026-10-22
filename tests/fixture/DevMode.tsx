@@ -24,11 +24,15 @@ const styles = `
 .dev-off-window { position: fixed; inset: auto; left: -4rem; top: 2rem; margin: 0; inline-size: 10rem; }
 `;
 
-/** A page for dev mode: its readout, its checks at other widths, and its toggle. */
+/**
+ * A page for dev mode: its readout, its checks at other widths, and its toggle. `&root=<selector>`
+ * gives dev mode a root of its own, as the docs' demo does.
+ */
 export function DevModeFixture() {
   const popover = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const devMode = installDevMode({ parts: { schemaVersion: 1, components: {} } });
+    const root = new URLSearchParams(window.location.search).get('root') ?? undefined;
+    const devMode = installDevMode({ parts: { schemaVersion: 1, components: {} }, root });
     return () => devMode.uninstall();
   }, []);
   return (
