@@ -47,7 +47,9 @@
   text-align: center;
   text-decoration: none;
 }
+/* The icon's indicator, above the label, which comes first in the item's text. */
 .env-bar-icon {
+  order: -1;
   position: relative;
   flex: none;
   inline-size: min(var(--env-bar-icon-width), 100%);
