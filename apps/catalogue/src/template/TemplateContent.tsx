@@ -294,21 +294,20 @@ export function PageChangelog({ document, view }: { document: Document; view?: R
       data-section={changelog.id}
       aria-labelledby="changelog"
     >
+      <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
+        {changelog.title}
+      </Text>
       {entries ? (
-        <>
-          <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
-            {changelog.title}
-          </Text>
-          <DescriptionList.Root className="docs-changelog-entries">
-            {entries.map(({ version, text }, index) => (
-              <DescriptionList.Item key={`${index}-${version}`} label={version}>
-                <Documentation markdown={text} path={document.path} />
-              </DescriptionList.Item>
-            ))}
-          </DescriptionList.Root>
-        </>
+        <DescriptionList.Root className="docs-changelog-entries">
+          {entries.map(({ version, text }, index) => (
+            <DescriptionList.Item key={`${index}-${version}`} label={version}>
+              <Documentation markdown={text} path={document.path} />
+            </DescriptionList.Item>
+          ))}
+        </DescriptionList.Root>
       ) : (
-        <Documentation markdown={markdown} path={document.path} />
+        // A changelog written another way shows as its Markdown, below the same heading.
+        <Documentation markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
       )}
     </Column>
   );

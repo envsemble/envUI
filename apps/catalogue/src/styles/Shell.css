@@ -163,8 +163,8 @@ body {
   margin-top: auto;
 }
 /* A page's changelog follows the page navigation as quiet side information: small muted text, the
-   versions muted labels in a column of their own, inline code at the text's size on a faint
-   background rather than a chip, and no lines or boxes. */
+   versions muted labels in a column of their own, inline code at the text's size on the faint
+   text-color layer of envUI's inline code rather than a chip, and no lines or boxes. */
 .docs-changelog {
   inline-size: min(100%, var(--docs-content-width));
   margin-inline: auto;
@@ -197,7 +197,7 @@ body {
 }
 .docs-changelog .env-code {
   padding: 0 var(--env-space-1);
-  background: var(--env-color-bg-default);
+  background: var(--env-color-bg-neutral-muted);
   color: inherit;
   font-size: 0.88em;
 }
