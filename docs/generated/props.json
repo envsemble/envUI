@@ -314,6 +314,13 @@
           "description": "The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past 5 it shows the first 4 and a More item that opens the rest in a menu. Groups don't show."
         },
         {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Bar with page under a TopBar with its background."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,
@@ -2616,6 +2623,13 @@
           "required": false,
           "default": "2",
           "description": "The level of the groups' headings, which assistive technology lists with the page's headings: one below the heading the drawer sits under, such as 3 in a drawer under an h2."
+        },
+        {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The drawer's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Drawer with its background under a TopBar with page."
         },
         {
           "name": "aria-label",
@@ -5684,6 +5698,13 @@
           "description": "Content at the bottom of the rail, such as the account's AvatarButton."
         },
         {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The rail's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Rail with its background beside a TopBar with page."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,
@@ -8192,6 +8213,13 @@
           "required": false,
           "default": "false",
           "description": "The bar is the window's title bar, in an installed web app or a desktop shell that draws its own (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls the system draws, the title is centered, and its controls are small, with buttons that set no variant ghost. Put it in a Scaffold with topBarSpan=\"full\"."
+        },
+        {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a TopBar with page over a Drawer with its background."
         },
         {
           "name": "loading",

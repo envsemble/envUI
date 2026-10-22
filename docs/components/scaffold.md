@@ -43,7 +43,7 @@ components:
 
 Scaffold is the invisible structure of an application's screen: a top bar, the navigation and the body. It never paints; the components in its regions do. It shows the navigation form that fits its own width, the [Bar](bar.md), the [Rail](rail.md) or the [Drawer](drawer.md), so give it all three with the same destinations.
 
-```tsx example=NavigationForms
+```tsx example=NavigationForms stage=shaded
 
 ```
 
@@ -62,7 +62,7 @@ Render one Scaffold at the application's root, around the router's outlet, with 
 
 `forms` changes the form of a window class, or shows `none`. Where a window class asks for a form the application didn't give, the nearest given one shows.
 
-```tsx example=ChooseForms caption="A drawer only, and none on a compact width: forms={{ compact: 'none' }}."
+```tsx example=ChooseForms stage=shaded caption="A drawer only, and none on a compact width: forms={{ compact: 'none' }}."
 
 ```
 
@@ -70,7 +70,15 @@ Render one Scaffold at the application's root, around the router's outlet, with 
 
 `topBarSpan="full"` runs the top bar across the whole width, above the rail or the drawer, as a window's title bar needs.
 
-```tsx example=TitleBarAcross
+```tsx example=TitleBarAcross stage=shaded
+
+```
+
+### Backgrounds
+
+The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. `background="page"` on one of them puts it on the page's background instead, such as a top bar on the page beside a drawer with its background. On a surface, such as a Sheet, both values take the surface's color.
+
+```tsx example=TopBarOnThePage stage=shaded
 
 ```
 
@@ -80,11 +88,11 @@ By default the document scrolls, as on any website: the top bar, the bar and the
 
 ## When to use
 
-```tsx do=ActionsInPageHeader caption="The page's title and actions in its PageHeader."
+```tsx do=ActionsInPageHeader stage=shaded caption="The page's title and actions in its PageHeader."
 
 ```
 
-```tsx dont=ActionsInTopBar caption="The page's title and action in the top bar: the page has no heading."
+```tsx dont=ActionsInTopBar stage=shaded caption="The page's title and action in the top bar: the page has no heading."
 
 ```
 
@@ -93,7 +101,7 @@ By default the document scrolls, as on any website: the top bar, the bar and the
 
 ## Anatomy
 
-```tsx anatomy=ScaffoldAnatomy
+```tsx anatomy=ScaffoldAnatomy stage=shaded
 
 ```
 
@@ -108,7 +116,7 @@ Not shown: the skip links, `env-scaffold-skip-links`, and the bar's and drawer's
 
 The Scaffold queries its own width, in CSS: the bar on a compact width, the rail on a medium one and the drawer from expanded. Focus in a form that hides moves to the form that shows.
 
-```tsx example=FormsByWidth widths="24 44 60"
+```tsx example=FormsByWidth stage=shaded widths="24 44 60"
 
 ```
 

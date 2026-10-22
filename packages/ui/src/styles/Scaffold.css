@@ -126,9 +126,9 @@
   min-block-size: 0;
   outline: none;
 }
-/* A rail or a drawer runs the full height at the start, or below a top bar across the window, and
-   scrolls on its own. Where the document scrolls it stays in view, as tall as the window, or as
-   the window under a top bar across it. */
+/* A rail or a drawer runs the full height at the start, or below a top bar across the window,
+   flush with the window's edges and the body, and scrolls on its own. Where the document scrolls it
+   stays in view, as tall as the window, or as the window under a top bar across it. */
 .env-scaffold-rail,
 .env-scaffold-drawer {
   grid-column: 1;

@@ -48,9 +48,11 @@ test.describe('Scaffold', () => {
         expect(navigation.y).toBeGreaterThanOrEqual(content.y + content.height - 1);
         expect(navigation.width).toBeCloseTo(outer.width - 2, 0);
       } else {
-        // At the start, the full height, beside the body.
+        // At the start, the full height, flush with the window's edges and the body.
         expect(navigation.x).toBeLessThan(content.x);
+        expect(navigation.x).toBeCloseTo(outer.x + 1, 0);
         expect(navigation.y).toBeCloseTo(outer.y + 1, 0);
+        expect(navigation.x + navigation.width).toBeCloseTo(content.x, 0);
       }
     }
     // The window stayed as wide all along: the forms follow the scaffold's width, not the window's.
@@ -188,7 +190,7 @@ test.describe('Scaffold', () => {
     await page.goto(scaffold('&width=30rem'));
     const bar = page.locator('.env-top-bar');
     const height = await bar.evaluate((element) => element.getBoundingClientRect().height);
-    // 3.25 rem, its hairline included.
+    // 3.25 rem.
     expect(height).toBeCloseTo(3.25 * 16, 0);
     const title = page.locator('.env-top-bar-title');
     await expect(title).toHaveCSS('text-overflow', 'ellipsis');

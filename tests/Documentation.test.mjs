@@ -670,7 +670,7 @@ const figureBody = [
   '',
   '## Adapting to width',
   '',
-  '```tsx example=Narrow widths="16 30"',
+  '```tsx example=Narrow widths="16 30" stage=shaded',
   '',
   '```',
   '',
@@ -720,8 +720,10 @@ test('a component page with a When to use section is on the figure template', as
     // The flag open shows the example's overlays open; other figures leave it out.
     assert.equal(figure('OnSubmit').open, true);
     assert.equal(figure('Instant').open, undefined);
-    // stage=raised fills the stage with the raised background; other figures keep the page's.
+    // stage=raised fills the stage with the raised background, stage=shaded with a shade darker
+    // than the page's and the navigation's; other figures keep the page's.
     assert.equal(figure('OnSubmit').stage, 'raised');
+    assert.equal(figure('Narrow').stage, 'shaded');
     assert.equal(figure('Instant').stage, undefined);
 
     // The packaged page keeps the figures' kinds and attributes, and the legend.

@@ -317,6 +317,15 @@
       ],
       "states": [
         {
+          "attribute": "data-background",
+          "values": [
+            "page"
+          ],
+          "parts": [
+            "env-bar"
+          ]
+        },
+        {
           "attribute": "data-current",
           "values": [],
           "parts": [
@@ -1753,6 +1762,15 @@
         }
       ],
       "states": [
+        {
+          "attribute": "data-background",
+          "values": [
+            "page"
+          ],
+          "parts": [
+            "env-drawer"
+          ]
+        },
         {
           "attribute": "data-current",
           "values": [],
@@ -3235,6 +3253,15 @@
         }
       ],
       "states": [
+        {
+          "attribute": "data-background",
+          "values": [
+            "page"
+          ],
+          "parts": [
+            "env-rail"
+          ]
+        },
         {
           "attribute": "data-current",
           "values": [],
@@ -4810,6 +4837,15 @@
         }
       ],
       "states": [
+        {
+          "attribute": "data-background",
+          "values": [
+            "page"
+          ],
+          "parts": [
+            "env-top-bar"
+          ]
+        },
         {
           "attribute": "data-loading",
           "values": [

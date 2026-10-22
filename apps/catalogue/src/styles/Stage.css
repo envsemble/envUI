@@ -32,7 +32,9 @@
 }
 
 /* A stage of another fill, where the page's own would hide the subject, such as an open popup of
-   the page's color in the light theme (`stage="raised"`). The dots and the frame stay. */
+   the page's color in the light theme (`stage="raised"`), or a Scaffold's page and navigation
+   (`stage="shaded"`): a shade darker than both the page's background and the navigation's, in
+   each theme, so both stand apart from the stage. The dots and the frame stay. */
 :is(
   .docs-live-example,
   .docs-verdict-stage,
@@ -40,6 +42,25 @@
   .docs-when-stage
 )[data-stage='raised'] {
   background-color: var(--env-color-bg-raised);
+}
+
+/* A shade below the darker of the two: the navigation's in the light themes, the page's in the
+   dark ones, high contrast included. */
+.env-theme {
+  --docs-stage-shaded: oklch(from var(--env-color-bg-default) calc(l - 0.05) c h);
+}
+
+.env-theme[data-env-theme='dark'] {
+  --docs-stage-shaded: oklch(from var(--env-color-bg-page) calc(l - 0.05) c h);
+}
+
+:is(
+  .docs-live-example,
+  .docs-verdict-stage,
+  .docs-anatomy-stage,
+  .docs-when-stage
+)[data-stage='shaded'] {
+  background-color: var(--docs-stage-shaded);
 }
 
 /* What the stage shows keeps to its width, however wide its content would be. */
@@ -80,6 +101,20 @@
   > .env-document-tabs-root
   > .env-document-tabs-bar {
   inline-size: 100%;
+}
+
+/* A Scaffold on the stage stands in for a window, so its body shows what a window's would, the
+   page's background, rather than the dots; its figure's stage is shaded, so the page and the
+   navigation both stand apart from it. */
+:is(
+    .docs-live-example,
+    .docs-verdict-stage,
+    .docs-anatomy-subject,
+    .docs-width-box,
+    .docs-when-canvas
+  )
+  > .env-scaffold {
+  background-color: var(--env-color-bg-page);
 }
 
 /* A width frame keeps its own width on the stage; the example fills it. It is a window of its own,

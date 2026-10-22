@@ -950,7 +950,7 @@
       "note": "Sidebar is gone: the navigation forms, Bar, Rail and Drawer, size themselves."
     },
     "--env-app-divider": {
-      "note": "AppShell is gone: TopBar draws its own hairline, and Panes.Divider the line between panes."
+      "note": "AppShell is gone, and no line sets the frame's regions apart: the navigation and the top bar fill the navigation's background, or each the page's with background=\"page\". Panes.Divider is the line between panes."
     },
     "--env-app-control-height": {
       "note": "AppShell is gone: a TopBar with titleBar keeps the small control height."

@@ -1,6 +1,7 @@
-/* Rail, the navigation rail: a narrow column of destinations, each its icon in a pill-shaped
-   indicator above a short label, with an optional header and footer. The current destination fills
-   its indicator; the count sits on the icon's top end. Every placement is logical. */
+/* Rail, the navigation rail: a narrow column of destinations on the navigation's background, a
+   plain rectangle, each its icon in a pill-shaped indicator above a short label, with an optional
+   header and footer. The current destination fills its indicator; the count sits on the icon's top
+   end. Every placement is logical. */
 .env-rail {
   --env-rail-width: 5rem;
   --env-rail-indicator-width: 3.5rem;
@@ -12,8 +13,15 @@
   block-size: 100%;
   min-block-size: 0;
   padding-block: var(--env-space-3);
-  background: var(--env-color-bg-page);
+  /* The navigation's background, the default surface color; on a surface, such as a Sheet's, the
+     surface's color rather than a second fill on it. */
+  background: var(--env-surface-color, var(--env-color-bg-default));
   color: var(--env-color-fg-default);
+}
+/* background="page": the page's background, so the rail sits on the page; on a surface, the
+   surface's color. */
+.env-rail[data-background='page'] {
+  background: var(--env-surface-color, var(--env-color-bg-page));
 }
 .env-rail-header,
 .env-rail-footer {
@@ -121,9 +129,12 @@
     transform: scale(0.96);
   }
 }
-/* Forced colors: the system paints no fills, so the current indicator takes the selection colors
-   and the count an outline. */
+/* Forced colors: the system paints no fills, so an edge at its end sets the rail apart from the
+   body, the current indicator takes the selection colors and the count an outline. */
 @media (forced-colors: active) {
+  .env-rail {
+    border-inline-end: 1px solid CanvasText;
+  }
   .env-rail-item[data-current] .env-rail-indicator {
     forced-color-adjust: none;
     background-color: Highlight;

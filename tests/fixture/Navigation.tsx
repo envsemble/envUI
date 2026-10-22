@@ -6,7 +6,9 @@ import {
   LinkProvider,
   Drawer,
   Rail,
+  Surface,
   Theme,
+  TopBar,
   type Destination,
   type ThemeValue,
 } from '@envsemble/envui';
@@ -105,6 +107,21 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
           <Bar aria-label="Many bar" destinations={manyDestinations} />
           <Bar destinations={linked} />
         </div>
+      </div>
+      {/* The backgrounds: each form and the top bar on the navigation's background by default,
+          the page's on its own, and on a surface the surface's color. */}
+      <div className="fixture-navigation-backgrounds" data-testid="backgrounds">
+        <TopBar title="Filled" data-testid="top-bar-default" />
+        <TopBar title="On the page" background="page" data-testid="top-bar-none" />
+        <Drawer aria-label="Filled drawer" destinations={linked} />
+        <Drawer aria-label="Plain drawer" background="page" destinations={linked} />
+        <Rail aria-label="Filled rail" destinations={linked} />
+        <Rail aria-label="Plain rail" background="page" destinations={linked} />
+        <Bar aria-label="Filled bar" destinations={linked} />
+        <Bar aria-label="Plain bar" background="page" destinations={linked} />
+        <Surface background="muted" padding={0} radius="none" data-testid="surface">
+          <Drawer aria-label="Drawer on a surface" destinations={linked} />
+        </Surface>
       </div>
       <p data-testid="current">{`${mail.current}, ${many.current}`}</p>
       <LinkProvider component={RouterLink}>

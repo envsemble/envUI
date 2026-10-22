@@ -13,6 +13,7 @@ import {
   type DestinationClasses,
   type DrawerDestination,
 } from './internal/Destinations.js';
+import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
 
 /** The part classes of the drawer's destinations: a row of icon, label and count. */
 const drawerClasses: DestinationClasses = {
@@ -37,6 +38,14 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
    * @default 2
    */
   headingLevel?: 2 | 3 | 4 | 5 | 6;
+  /**
+   * The drawer's background, named as Surface's and Card's: default, the navigation's background,
+   * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
+   * page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as
+   * a Drawer with its background under a TopBar with page.
+   * @default 'default'
+   */
+  background?: NavigationBackground;
   /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
@@ -83,6 +92,7 @@ export function Drawer({
   header,
   footer,
   headingLevel = 2,
+  background = 'default',
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
@@ -98,6 +108,7 @@ export function Drawer({
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-drawer', className)}
+      data-background={backgroundAttribute(background)}
       align="stretch"
       gap={3}
     >

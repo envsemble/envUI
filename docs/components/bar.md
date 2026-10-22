@@ -45,6 +45,8 @@ The navigation bar holds an application's main destinations across the bottom of
 
 ```
 
+It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s; `background="page"` puts it on the page's background instead.
+
 ### More than five
 
 Past five destinations, the fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.

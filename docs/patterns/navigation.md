@@ -63,7 +63,7 @@ related:
 
 Navigation gives an application one way around and a clear sense of place: one primary navigation that marks the current page, a trail back up from deep pages, tabs only for views of one thing, and a quick way to open anything by name.
 
-```tsx example=PrimaryNavigation
+```tsx example=PrimaryNavigation stage=shaded
 
 ```
 
@@ -135,7 +135,7 @@ As narrow as a phone, the detail shows in place of the list, with a back button 
 
 ## Anatomy
 
-```tsx anatomy=NavigationAnatomy
+```tsx anatomy=NavigationAnatomy stage=shaded
 
 ```
 

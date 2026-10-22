@@ -107,7 +107,7 @@ Progress measures each file and says what has been sent.
 
 After 200 ms the bar along the top bar's bottom edge shows the next page is on its way, named by `loadingLabel`.
 
-```tsx example=PageProgress
+```tsx example=PageProgress stage=shaded
 
 ```
 

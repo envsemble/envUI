@@ -491,6 +491,12 @@
           "file": "docs/examples/scaffold/TitleBarAcross.tsx"
         },
         {
+          "name": "TopBarOnThePage",
+          "title": "Backgrounds",
+          "description": "The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. `background=\"page\"` on one of them puts it on the page's background instead, such as a top bar on the page beside a drawer with its background. On a surface, such as a Sheet, both values take the surface's color.",
+          "file": "docs/examples/scaffold/TopBarOnThePage.tsx"
+        },
+        {
           "name": "ActionsInPageHeader",
           "title": "Do: The page's title and actions in its PageHeader.",
           "description": "",
@@ -6877,6 +6883,15 @@
           ],
           "states": [
             {
+              "attribute": "data-background",
+              "values": [
+                "page"
+              ],
+              "parts": [
+                "env-bar"
+              ]
+            },
+            {
               "attribute": "data-current",
               "values": [],
               "parts": [
@@ -7041,6 +7056,15 @@
             }
           ],
           "states": [
+            {
+              "attribute": "data-background",
+              "values": [
+                "page"
+              ],
+              "parts": [
+                "env-rail"
+              ]
+            },
             {
               "attribute": "data-current",
               "values": [],
@@ -7237,6 +7261,15 @@
             }
           ],
           "states": [
+            {
+              "attribute": "data-background",
+              "values": [
+                "page"
+              ],
+              "parts": [
+                "env-drawer"
+              ]
+            },
             {
               "attribute": "data-current",
               "values": [],
@@ -7754,6 +7787,15 @@
             }
           ],
           "states": [
+            {
+              "attribute": "data-background",
+              "values": [
+                "page"
+              ],
+              "parts": [
+                "env-top-bar"
+              ]
+            },
             {
               "attribute": "data-loading",
               "values": [
@@ -17128,6 +17170,13 @@
           "description": "The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past 5 it shows the first 4 and a More item that opens the rest in a menu. Groups don't show."
         },
         {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Bar with page under a TopBar with its background."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,
@@ -19430,6 +19479,13 @@
           "required": false,
           "default": "2",
           "description": "The level of the groups' headings, which assistive technology lists with the page's headings: one below the heading the drawer sits under, such as 3 in a drawer under an h2."
+        },
+        {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The drawer's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Drawer with its background under a TopBar with page."
         },
         {
           "name": "aria-label",
@@ -22518,6 +22574,13 @@
           "description": "Content at the bottom of the rail, such as the account's AvatarButton."
         },
         {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The rail's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Rail with its background beside a TopBar with page."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,
@@ -25037,6 +25100,13 @@
           "required": false,
           "default": "false",
           "description": "The bar is the window's title bar, in an installed web app or a desktop shell that draws its own (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls the system draws, the title is centered, and its controls are small, with buttons that set no variant ghost. Put it in a Scaffold with topBarSpan=\"full\"."
+        },
+        {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a TopBar with page over a Drawer with its background."
         },
         {
           "name": "loading",
@@ -28918,7 +28988,7 @@
       {
         "cssVariable": "--env-app-divider",
         "removed": true,
-        "note": "AppShell is gone: TopBar draws its own hairline, and Panes.Divider the line between panes."
+        "note": "AppShell is gone, and no line sets the frame's regions apart: the navigation and the top bar fill the navigation's background, or each the page's with background=\"page\". Panes.Divider is the line between panes."
       },
       {
         "cssVariable": "--env-app-shell-block-size",

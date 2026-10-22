@@ -557,9 +557,11 @@ const figureAttributes = {
 };
 /**
  * The fills a figure's stage takes besides the default, the page's: `stage="raised"` where the
- * subject has the page's color, such as an open popup in the light theme, and would not show.
+ * subject has the page's color, such as an open popup in the light theme, and would not show;
+ * `stage="shaded"`, a shade darker than the page's and the navigation's backgrounds, where the
+ * subject shows both, such as a Scaffold.
  */
-const stageFills = ['raised'];
+const stageFills = ['raised', 'shaded'];
 /**
  * The attributes that are flags, written without a value: `open` shows the example's overlays
  * open on its stage, contained.
