@@ -17,13 +17,13 @@ const destinations: Destination[] = [
 
 export default function TopBarOnThePage() {
   return (
-    // The drawer keeps its background; background="none" leaves the top bar on the page.
+    // The drawer keeps its background; background="page" puts the top bar on the page.
     <Scaffold
       scroll="body"
       landmarks={false}
       forms={{ compact: 'drawer', medium: 'drawer' }}
       style={{ blockSize: '16rem' }}
-      topBar={<TopBar title="Northwind" background="none" />}
+      topBar={<TopBar title="Northwind" background="page" />}
       navigation={{ drawer: <Drawer destinations={destinations} /> }}
     >
       <Page header={<PageHeader title="Documents" headingLevel={3} />}>

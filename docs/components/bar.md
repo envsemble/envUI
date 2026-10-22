@@ -45,7 +45,7 @@ The navigation bar holds an application's main destinations across the bottom of
 
 ```
 
-It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s. `background="none"` turns it off.
+It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s; `background="page"` puts it on the page's background instead.
 
 ### More than five
 

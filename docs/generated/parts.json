@@ -306,7 +306,7 @@
         {
           "attribute": "data-background",
           "values": [
-            "none"
+            "page"
           ],
           "parts": [
             "env-bar"
@@ -1800,7 +1800,7 @@
         {
           "attribute": "data-background",
           "values": [
-            "none"
+            "page"
           ],
           "parts": [
             "env-drawer"
@@ -3414,7 +3414,7 @@
         {
           "attribute": "data-background",
           "values": [
-            "none"
+            "page"
           ],
           "parts": [
             "env-rail"
@@ -5065,7 +5065,7 @@
         {
           "attribute": "data-background",
           "values": [
-            "none"
+            "page"
           ],
           "parts": [
             "env-top-bar"

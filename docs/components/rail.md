@@ -41,7 +41,7 @@ The navigation rail holds an application's main destinations in a narrow column 
 
 ```
 
-It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s. `background="none"` turns it off.
+It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s; `background="page"` puts it on the page's background instead.
 
 ### Groups
 

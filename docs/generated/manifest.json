@@ -487,7 +487,7 @@
         {
           "name": "TopBarOnThePage",
           "title": "Backgrounds",
-          "description": "The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. `background=\"none\"` on one of them turns its own off, such as a top bar on the page beside a drawer with its background.",
+          "description": "The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. `background=\"page\"` on one of them puts it on the page's background instead, such as a top bar on the page beside a drawer with its background. On a surface, such as a Sheet, both values take the surface's color.",
           "file": "docs/examples/scaffold/TopBarOnThePage.tsx"
         },
         {
@@ -6989,7 +6989,7 @@
             {
               "attribute": "data-background",
               "values": [
-                "none"
+                "page"
               ],
               "parts": [
                 "env-bar"
@@ -7163,7 +7163,7 @@
             {
               "attribute": "data-background",
               "values": [
-                "none"
+                "page"
               ],
               "parts": [
                 "env-rail"
@@ -7368,7 +7368,7 @@
             {
               "attribute": "data-background",
               "values": [
-                "none"
+                "page"
               ],
               "parts": [
                 "env-drawer"
@@ -7894,7 +7894,7 @@
             {
               "attribute": "data-background",
               "values": [
-                "none"
+                "page"
               ],
               "parts": [
                 "env-top-bar"
@@ -17440,10 +17440,10 @@
         },
         {
           "name": "background",
-          "type": "'default' | 'none'",
+          "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The bar's background: default, the navigation's background, the default surface color, as a plain rectangle; none, no background of its own, so it sits on the page, or on the surface it is in. Set it on its own, such as a Bar with none under a TopBar with its background."
+          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Bar with page under a TopBar with its background."
         },
         {
           "name": "aria-label",
@@ -19881,10 +19881,10 @@
         },
         {
           "name": "background",
-          "type": "'default' | 'none'",
+          "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The drawer's background: default, the navigation's background, the default surface color, as a plain rectangle; none, no background of its own, so it sits on the page, or on the surface it is in. Set it on its own, such as a Drawer with its background under a TopBar with none."
+          "description": "The drawer's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Drawer with its background under a TopBar with page."
         },
         {
           "name": "aria-label",
@@ -23146,10 +23146,10 @@
         },
         {
           "name": "background",
-          "type": "'default' | 'none'",
+          "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The rail's background: default, the navigation's background, the default surface color, as a plain rectangle; none, no background of its own, so it sits on the page, or on the surface it is in. Set it on its own, such as a Rail with its background beside a TopBar with none."
+          "description": "The rail's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Rail with its background beside a TopBar with page."
         },
         {
           "name": "aria-label",
@@ -25744,10 +25744,10 @@
         },
         {
           "name": "background",
-          "type": "'default' | 'none'",
+          "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The bar's background: default, the navigation's background, the default surface color, as a plain rectangle; none, no background of its own, so it sits on the page, or on the surface it is in. Set it on its own, such as a TopBar with none over a Drawer with its background."
+          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a TopBar with page over a Drawer with its background."
         },
         {
           "name": "loading",
@@ -29661,7 +29661,7 @@
       {
         "cssVariable": "--env-app-divider",
         "removed": true,
-        "note": "AppShell is gone, and no line sets the frame's regions apart: the navigation and the top bar fill the navigation's background, which each turns off with background=\"none\". Panes.Divider is the line between panes."
+        "note": "AppShell is gone, and no line sets the frame's regions apart: the navigation and the top bar fill the navigation's background, or each the page's with background=\"page\". Panes.Divider is the line between panes."
       },
       {
         "cssVariable": "--env-app-shell-block-size",

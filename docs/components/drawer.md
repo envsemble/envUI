@@ -57,7 +57,7 @@ The navigation drawer holds an application's destinations in a column at the sta
 
 ```
 
-It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s, and on a surface, such as a [Sheet](sheet.md), takes that surface's color. `background="none"` turns it off.
+It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s; `background="page"` puts it on the page's background instead. On a surface, such as a [Sheet](sheet.md), it takes that surface's color either way.
 
 ### Without icons
 

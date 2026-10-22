@@ -40,7 +40,7 @@ The top bar sits at the top of an application or a screen, after Material's smal
 
 ```
 
-It fills a plain rectangle with the navigation's background, with no line below. `background="none"` turns it off, so it sits on the page, while the navigation keeps its own: see [Scaffold](scaffold.md#backgrounds).
+It fills a plain rectangle with the navigation's background, with no line below. `background="page"` puts it on the page's background instead, opaque when it sticks, while the navigation keeps its own: see [Scaffold](scaffold.md#backgrounds).
 
 ### Page progress
 

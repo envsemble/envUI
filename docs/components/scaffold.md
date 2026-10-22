@@ -76,7 +76,7 @@ Render one Scaffold at the application's root, around the router's outlet, with 
 
 ### Backgrounds
 
-The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. `background="none"` on one of them turns its own off, such as a top bar on the page beside a drawer with its background.
+The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. `background="page"` on one of them puts it on the page's background instead, such as a top bar on the page beside a drawer with its background. On a surface, such as a Sheet, both values take the surface's color.
 
 ```tsx example=TopBarOnThePage stage=shaded
 

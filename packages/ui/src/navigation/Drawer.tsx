@@ -39,9 +39,10 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
    */
   headingLevel?: 2 | 3 | 4 | 5 | 6;
   /**
-   * The drawer's background: default, the navigation's background, the default surface color, as
-   * a plain rectangle; none, no background of its own, so it sits on the page, or on the surface it
-   * is in. Set it on its own, such as a Drawer with its background under a TopBar with none.
+   * The drawer's background, named as Surface's and Card's: default, the navigation's background,
+   * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
+   * page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as
+   * a Drawer with its background under a TopBar with page.
    * @default 'default'
    */
   background?: NavigationBackground;

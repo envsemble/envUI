@@ -222,7 +222,7 @@ test('Rail is a narrow column, and Drawer items fill its width', async ({ page }
     expect(Math.abs((await item.boundingBox())!.width - list.width)).toBeLessThan(1);
 });
 
-test('the forms and the top bar fill a plain rectangle with one background, which each turns off on its own', async ({
+test('the forms and the top bar fill a plain rectangle with one background, or each the page’s on its own', async ({
   page,
 }) => {
   await page.goto(`${fixtureUrl}/?fixture=navigation`);
@@ -269,9 +269,9 @@ test('the forms and the top bar fill a plain rectangle with one background, whic
         radius: '0px',
         lines: ['0px', '0px', '0px'],
       });
-    // background="none": the page's, behind it.
+    // background="page": the page's background.
     for (const element of plain) {
-      await expect(element).toHaveAttribute('data-background', 'none');
+      await expect(element).toHaveAttribute('data-background', 'page');
       expect((await look(element)).background).toBe(pageColor);
     }
     // On a surface, the surface's color rather than a second fill.

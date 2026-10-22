@@ -44,8 +44,10 @@
   background-color: var(--env-color-bg-raised);
 }
 
+/* A shade below the darker of the two: the navigation's in the light themes, the page's in the
+   dark ones, high contrast included. */
 .env-theme {
-  --docs-stage-shaded: var(--env-color-bg-muted);
+  --docs-stage-shaded: oklch(from var(--env-color-bg-default) calc(l - 0.05) c h);
 }
 
 .env-theme[data-env-theme='dark'] {

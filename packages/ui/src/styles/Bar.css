@@ -16,9 +16,9 @@
   background: var(--env-surface-color, var(--env-color-bg-default));
   color: var(--env-color-fg-default);
 }
-/* background="none": no background of its own, so the bar sits on what is behind it, the page or
-   the surface it is on. */
-.env-bar[data-background='none'] {
+/* background="page": the page's background, so the bar sits on the page; on a surface, the
+   surface's color. */
+.env-bar[data-background='page'] {
   background: var(--env-surface-color, var(--env-color-bg-page));
 }
 .env-bar-list {

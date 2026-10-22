@@ -13,9 +13,9 @@
   color: var(--env-color-fg-default);
   white-space: nowrap;
 }
-/* background="none": no background of its own, so the bar sits on what is behind it, the page or
-   the surface it is on. */
-.env-top-bar[data-background='none'] {
+/* background="page": the page's background, so the bar sits on the page; on a surface, the
+   surface's color. */
+.env-top-bar[data-background='page'] {
   background: var(--env-surface-color, var(--env-color-bg-page));
 }
 .env-top-bar-start,

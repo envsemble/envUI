@@ -36,9 +36,10 @@ export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'
   /** Content at the bottom of the rail, such as the account's AvatarButton. */
   footer?: ReactNode;
   /**
-   * The rail's background: default, the navigation's background, the default surface color, as
-   * a plain rectangle; none, no background of its own, so it sits on the page, or on the surface it
-   * is in. Set it on its own, such as a Rail with its background beside a TopBar with none.
+   * The rail's background, named as Surface's and Card's: default, the navigation's background,
+   * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
+   * page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as
+   * a Rail with its background beside a TopBar with page.
    * @default 'default'
    */
   background?: NavigationBackground;
