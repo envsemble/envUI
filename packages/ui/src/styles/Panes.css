@@ -62,8 +62,13 @@
   inline-size: var(--env-panes-grip-dot);
   block-size: calc(5 * var(--env-panes-grip-dot));
   margin: auto;
-  background: radial-gradient(closest-side, var(--env-panes-grip-color) 85%, transparent) 0 0 /
-    var(--env-panes-grip-dot) calc(2 * var(--env-panes-grip-dot)) repeat-y;
+  /* Each dot is a circle at the top of a tile twice its height, so the grip ends on its third. */
+  background: radial-gradient(
+      circle at 50% calc(var(--env-panes-grip-dot) / 2),
+      var(--env-panes-grip-color) calc(0.4 * var(--env-panes-grip-dot)),
+      transparent calc(0.5 * var(--env-panes-grip-dot))
+    )
+    0 0 / var(--env-panes-grip-dot) calc(2 * var(--env-panes-grip-dot)) repeat-y;
 }
 /* The resize handle's own line doesn't show: the grip stands for it. */
 .env-panes > .env-panes-divider::after {
