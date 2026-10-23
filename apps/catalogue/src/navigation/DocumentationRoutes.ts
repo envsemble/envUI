@@ -38,6 +38,7 @@ export type PageKind =
   | 'docs-home'
   | 'guide'
   | 'codemods'
+  | 'docs-changelog'
   | 'skills'
   | 'tokens'
   | 'foundation-guide'
@@ -231,6 +232,14 @@ const startPages: SitePage[] = guideDocuments.flatMap((document) => {
         summary:
           'Upgrade an application from envUI 0.x to 1.0 with @envsemble/envui-codemods, which renames what it can and reports the rest.',
       },
+      {
+        path: 'docs/changelog',
+        title: 'Changelog',
+        area: 'docs',
+        section: 'Get started',
+        kind: 'docs-changelog',
+        summary: 'Every change in each release of @envsemble/envui, with how to migrate.',
+      },
     ];
   if (document.id === 'agent-tooling')
     return [
@@ -357,6 +366,7 @@ export function routeOfDocument(
     changelog: 'changelog',
     tokens: 'docs/tokens',
     codemods: 'docs/codemods',
+    'full-changelog': 'docs/changelog',
     'agent-skills': 'docs/agent-skills',
   };
   if (Object.hasOwn(own, id)) return `${own[id]}${query}`;

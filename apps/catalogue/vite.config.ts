@@ -16,6 +16,19 @@ import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/Th
 import { createDisplayBootstrapScript, displayStorageKeys } from './src/theme/DisplayStorage.ts';
 import { checkoutMarker } from '../../scripts/CheckoutMarker.mjs';
 import { resetClosedConnections } from '../../scripts/ServerSockets.mjs';
+import { benchmarkResultsDirectory, readBenchmark } from '../../scripts/BenchmarkResults.mjs';
+import { readReleaseNotes, releaseNotesSources } from '../../scripts/ReleaseNotes.mjs';
+
+/**
+ * Data the Site's pages read from the repository when the catalogue builds or serves, as virtual
+ * modules: the benchmark's saved runs and the release notes. While serving, a change to their
+ * files reloads the page with the new data.
+ */
+const siteData: Record<string, { read: () => unknown; sources: string[] }> = {
+  'virtual:envui-benchmark': { read: readBenchmark, sources: [benchmarkResultsDirectory] },
+  'virtual:envui-release-notes': { read: readReleaseNotes, sources: releaseNotesSources },
+};
+const resolvedId = (id: string) => `\0${id}`;
 
 /**
  * The revision the catalogue's links to source files point at: the release tag when the build is
@@ -89,6 +102,33 @@ export default defineConfig(() => {
               generateDocumentation();
             } catch (error) {
               server.config.logger.error(String(error));
+            }
+          });
+        },
+      },
+      {
+        name: 'envui-site-data',
+        resolveId(id) {
+          return Object.hasOwn(siteData, id) ? resolvedId(id) : undefined;
+        },
+        load(id) {
+          const name = Object.keys(siteData).find((entry) => resolvedId(entry) === id);
+          if (!name) return undefined;
+          return `export default ${JSON.stringify(siteData[name].read())};`;
+        },
+        configureServer(server) {
+          const sources = Object.values(siteData).flatMap((entry) => entry.sources);
+          server.watcher.add(sources);
+          server.watcher.on('all', (_event, path) => {
+            for (const [name, { sources: files }] of Object.entries(siteData)) {
+              const touched = files.some((source) => {
+                const contained = relative(source, path);
+                return !contained.startsWith('..') && !isAbsolute(contained);
+              });
+              const module = touched && server.moduleGraph.getModuleById(resolvedId(name));
+              if (!module) continue;
+              server.moduleGraph.invalidateModule(module);
+              server.ws.send({ type: 'full-reload' });
             }
           });
         },

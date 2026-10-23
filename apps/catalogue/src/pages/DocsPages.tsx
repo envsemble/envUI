@@ -160,6 +160,25 @@ export function TokensPage({ page }: { page: SitePage }) {
   );
 }
 
+/** The full changelog, a large page that loads with the page that shows it. */
+const changelog = lazyPart(
+  () => import('./Changelog'),
+  (module) => module.Changelog,
+  'src/pages/Changelog.tsx',
+);
+
+/** Every change in each release of @envsemble/envui, as the releases write them. */
+export function ChangelogDocsPage({ page }: { page: SitePage }) {
+  return (
+    <>
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <Column gap={7} className="docs-article">
+        <LoadedPart part={changelog} what="changelog" />
+      </Column>
+    </>
+  );
+}
+
 /** A link from a page of the Docs to the page of the Site that shows the same subject. */
 function SiteLink({ path }: { path: string }) {
   return (

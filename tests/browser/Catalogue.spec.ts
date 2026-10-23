@@ -4,6 +4,8 @@ import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
 import { chooseScheme } from './CatalogueThemes';
 import { readFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
+import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
+import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
 import { references } from '../../apps/catalogue/src/Reference';
 import { allPages, normalizeRoute } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 import { displayStorageKeys } from '../../apps/catalogue/src/theme/DisplayStorage';
@@ -1004,4 +1006,56 @@ test('F6 on the Toast page reaches a notification raised there, past the figures
   await expect(live).toHaveCount(1);
   await page.keyboard.press('F6');
   await expect(live).toBeFocused();
+});
+
+test("the Benchmark page shows the newest run's scores and a named chart with its data as a table", async ({
+  page,
+}) => {
+  const { latest, runs } = readBenchmark();
+  await page.goto(`${catalogueUrl}/benchmark`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Benchmark');
+  await expect(page.getByRole('heading', { name: 'Latest run', level: 2 })).toBeVisible();
+  const scores = page.getByRole('table', { name: `Scores of run ${latest.id}` });
+  await expect(scores.getByRole('row')).toHaveCount(latest.agents.length + 1);
+  for (const agent of latest.agents)
+    await expect(scores.getByRole('row', { name: agent.label })).toContainText(String(agent.mean));
+
+  // The chart is one image, named by its caption and described by every bar's value.
+  const chart = page.getByRole('img', { name: /^Mean score out of 100 by run and agent/ });
+  await expect(chart).toBeVisible();
+  await expect(chart).toHaveAccessibleDescription(new RegExp(latest.id));
+  // Its data is a table too, one row per agent of each run.
+  await page.getByText("The chart's data as a table").click();
+  const data = page.getByRole('table', { name: 'Mean score by run and agent' });
+  await expect(data).toBeVisible();
+  const bars = runs.reduce((count, run) => count + run.agents.length, 0);
+  await expect(data.getByRole('row')).toHaveCount(bars + 1);
+});
+
+test('the Changelog page lists each release, newest first, and its links reach sections of the Docs', async ({
+  page,
+}) => {
+  const releases = readReleaseNotes();
+  await page.goto(`${catalogueUrl}/changelog`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
+  const versions = page.locator('.docs-releases h2 .docs-release-version');
+  await expect(versions).toHaveText(releases.map((release) => release.version));
+
+  // Every link of the notes leads to a page of the Docs with the section it names.
+  const hrefs = await page
+    .locator('.docs-releases a')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href')!));
+  const sections = new Map<string, Set<string>>();
+  for (const href of hrefs) {
+    expect(href, href).toMatch(/^\/docs\/(?:migration|changelog)(?:#|$)/);
+    const [path, section] = href.split('#');
+    sections.set(path, new Set([...(sections.get(path) ?? []), ...(section ? [section] : [])]));
+  }
+  expect([...sections.keys()].sort()).toEqual(['/docs/changelog', '/docs/migration']);
+  for (const [path, ids] of sections) {
+    await page.goto(`${catalogueUrl}${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    for (const id of ids)
+      await expect(page.locator(`[id="${id}"]`), `${path}#${id}`).toBeAttached();
+  }
 });

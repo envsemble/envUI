@@ -27,6 +27,7 @@ import {
 } from './pages/SitePages';
 import {
   ApiPage,
+  ChangelogDocsPage,
   CodemodsPage,
   DocsHome,
   FoundationGuidePage,
@@ -57,6 +58,7 @@ const pageContent: Record<SitePage['kind'], (props: { page: SitePage }) => React
   'docs-home': DocsHome,
   guide: GuidePage,
   codemods: CodemodsPage,
+  'docs-changelog': ChangelogDocsPage,
   skills: SkillsPage,
   tokens: TokensPage,
   'foundation-guide': FoundationGuidePage,
