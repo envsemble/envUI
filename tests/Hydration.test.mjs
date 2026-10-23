@@ -39,6 +39,8 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
     globalThis.Date = RealDate;
   }
   assert.match(markup, /Server value/);
+  // The server names the search shortcut with Ctrl, whatever platform it runs on.
+  assert.match(markup, /aria-keyshortcuts="Control\+K"/);
   // The server renders the panes with their size and the side-by-side split, which CSS decides.
   assert.match(markup, /--env-panes-size:22\.5rem/);
   // A width kept in a cookie, which the server read: its markup has it.

@@ -8,15 +8,13 @@ import {
   Text,
   type CommandPaletteItem,
   type Destination,
+  useModifierKey,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
-
-/** ⌘ on Apple platforms, Ctrl elsewhere. */
-const apple = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
 
 const documents = ['Roadmap', 'Launch checklist', 'Pricing research', 'Interview notes'];
 
@@ -27,6 +25,7 @@ const destinations: Destination[] = [
 ];
 
 export default function InSidebar() {
+  const modifier = useModifierKey();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [opened, setOpened] = useState('');
@@ -48,8 +47,8 @@ export default function InSidebar() {
             fullWidth
             startIcon={<Search />}
             // The keys show the shortcut, which aria-keyshortcuts announces.
-            end={<Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} aria-hidden />}
-            aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
+            end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
+            aria-keyshortcuts={`${modifier.key}+K`}
             onClick={() => setOpen(true)}
           >
             Search

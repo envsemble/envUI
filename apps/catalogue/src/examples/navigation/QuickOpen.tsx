@@ -6,15 +6,13 @@ import {
   PageHeader,
   Column,
   type CommandPaletteItem,
+  useModifierKey,
 } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
-
-/** ⌘ on Apple platforms, Ctrl elsewhere. */
-const apple = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
 
 /** Moves focus to the page's heading, which takes focus without becoming a tab stop. */
 function focusHeading(page: HTMLElement | null) {
@@ -25,6 +23,7 @@ function focusHeading(page: HTMLElement | null) {
 }
 
 export default function QuickOpen() {
+  const modifier = useModifierKey();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [current, setCurrent] = useState(destinations[0]);
@@ -56,8 +55,8 @@ export default function QuickOpen() {
         <Button
           variant="secondary"
           startIcon={<Search />}
-          end={<Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} aria-hidden />}
-          aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
+          end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
+          aria-keyshortcuts={`${modifier.key}+K`}
           onClick={() => setOpen(true)}
         >
           Search Northwind

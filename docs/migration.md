@@ -682,20 +682,20 @@ A few components of 1.0.0-prerelease.0 fold into others, and a few become patter
 - Stat is gone, with Stat.Root, Stat.Group and their types: a figure has no behavior of its own, so the [key figures](patterns/key-figures.md) pattern builds it from a muted Text label, a headline Text figure in tabular digits and a Badge that says the trend in words, in its tone and with a trending icon; a Surface with `role="group"` around a Grid of even columns holds a few. `v1-names` reports Stat and its types where they are used, and `v1-classes` the `env-stat-*` classes: rebuild each one from the pattern.
 - EmptyState is gone, with `EmptyStateProps`: it carried no behavior, so the [empty states](patterns/empty-states.md) pattern builds one from a Column with an icon, a Text heading, a Text sentence and a Button. Give the heading the level the page's outline needs, such as `render={<h4 />}` under a section's `h3`, where EmptyState took `headingLevel`; centre the column, with a 2.5 rem icon, where `align="center"` did; and show a failure as an Alert with `tone="danger"` and `announce`, where `tone="danger"` gave the state the alert role. `v1-names` reports it where it is used, and `v1-classes` the `env-empty-state-*` classes.
 - OrganizationSwitcher is gone, with `OrganizationSwitcherProps`, `OrganizationSwitcherItem`, the prerelease's `OrganizationSwitcherOrganization` and `messages.organizationSwitcher`, and so is 0.x's OrganizationMenu: the [organization switcher](patterns/organization-switcher.md) pattern builds it from a Menu.Root whose trigger is a secondary Button that names the active organization, a Menu.RadioGroup of Menu.RadioItems with the person's role as each `description`, and a Menu.Item that creates one; before the first organization, the create action is a Button of its own. `v1-names` reports it where it is used, and `v1-classes` the `env-organization-switcher-*` and `env-organization-menu-*` classes.
-- SearchTrigger, from 1.0.0-prerelease.1, is gone, with `SearchTriggerProps`, its classes `env-search-trigger`, `env-search-trigger-label`, `env-search-trigger-shortcut` and `env-search-trigger-tooltip`, and `messages.searchTrigger`: the [search trigger](patterns/search-trigger.md) pattern builds it from a secondary Button with the Search icon, its label and the shortcut's keys in Button's new `end` slot, or from a ghost IconButton in a Tooltip. The trigger no longer presses itself on its shortcut: listen for ⌘K or Ctrl+K once, at the application's root, and open the same search, as the pattern shows. `v1-names` reports SearchTrigger where it is used, and `v1-classes` its classes:
+- SearchTrigger, from 1.0.0-prerelease.1, is gone, with `SearchTriggerProps`, its classes `env-search-trigger`, `env-search-trigger-label`, `env-search-trigger-shortcut` and `env-search-trigger-tooltip`, and `messages.searchTrigger`: the [search trigger](patterns/search-trigger.md) pattern builds it from a secondary Button with the Search icon, its label and the shortcut's keys in Button's new `end` slot, or from a ghost IconButton in a Tooltip. The trigger no longer presses itself on its shortcut: listen for ⌘K or Ctrl+K once, at the application's root, and open the same search, as the pattern shows. `useModifierKey()` gives the platform's modifier, `Meta` or `Control`, and its key cap, ⌘ or Ctrl, as the removed SearchTrigger chose it: Ctrl on the server and while hydrating, then ⌘ on Apple platforms, so server-rendered markup hydrates. `v1-names` reports SearchTrigger where it is used, and `v1-classes` its classes:
 
   ```tsx
   // Before
   <SearchTrigger fullWidth onClick={openSearch} />;
   <SearchTrigger iconOnly onClick={openSearch} />;
 
-  // 1.0
+  // 1.0, with const modifier = useModifierKey() in the component
   <Button
     variant="secondary"
     fullWidth
     startIcon={<Search />}
-    end={<Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} aria-hidden />}
-    aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
+    end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
+    aria-keyshortcuts={`${modifier.key}+K`}
     onClick={openSearch}
   >
     Search

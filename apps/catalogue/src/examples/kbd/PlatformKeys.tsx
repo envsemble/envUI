@@ -1,13 +1,12 @@
-import { Kbd, Text } from '@envsemble/envui';
-
-/** Apple keyboards name the Command key; others use Ctrl for the same shortcuts. */
-const apple = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent);
+import { Kbd, Text, useModifierKey } from '@envsemble/envui';
 
 export default function PlatformKeys() {
+  const modifier = useModifierKey();
   return (
     <Text>
-      Press <Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} /> to search, and{' '}
-      <Kbd keys={apple ? ['⌘', '⇧', 'P'] : ['Ctrl', 'Shift', 'P']} /> to run a command.
+      Press <Kbd keys={[modifier.label, 'K']} /> to search, and{' '}
+      <Kbd keys={[modifier.label, modifier.key === 'Meta' ? '⇧' : 'Shift', 'P']} /> to run a
+      command.
     </Text>
   );
 }
