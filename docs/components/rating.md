@@ -23,8 +23,6 @@ avoidWhen:
     use: Meter
   - text: A key figure on a dashboard, such as the average score this month.
     see: key-figures
-  - text: A state or a category, such as Approved or Featured.
-    use: Badge
 components:
   - Rating
 ---

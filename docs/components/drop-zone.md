@@ -21,8 +21,6 @@ useWhen:
   - People add a file to a form or a page, such as a logo, by dropping it or choosing it.
   - People attach several files at once, such as documents to a message (`multiple`, `size="sm"`).
 avoidWhen:
-  - text: A text value people type, such as a link to a file.
-    use: TextField
   - text: A single action that opens the file picker in a toolbar, without a drop target.
     use: Button
   - text: Progress of a long upload with a known size.

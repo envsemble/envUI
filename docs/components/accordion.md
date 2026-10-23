@@ -19,8 +19,6 @@ avoidWhen:
     use: Disclosure
   - text: Switching between views of the same content.
     use: Tabs
-  - text: A hierarchy people expand level by level, such as folders.
-    use: Tree
 components:
   - Accordion
 ---

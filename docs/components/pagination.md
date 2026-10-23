@@ -20,8 +20,6 @@ useWhen:
 avoidWhen:
   - text: Links between the pages of an ordered sequence, such as the chapters of a guide.
     use: Pager
-  - text: Switching between a few views of the same content.
-    use: Tabs
 components:
   - Pagination
 ---

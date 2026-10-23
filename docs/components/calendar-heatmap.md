@@ -22,8 +22,6 @@ avoidWhen:
     see: key-figures
   - text: Choosing a day.
     use: Calendar
-  - text: A share of a known range, such as storage used.
-    use: Meter
 components:
   - CalendarHeatmap
 ---

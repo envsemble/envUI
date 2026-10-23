@@ -27,7 +27,7 @@ avoidWhen:
     use: Select
   - text: Several choices from a long list, found by typing.
     use: Combobox
-  - text: Choosing rows of a table.
+  - text: Selecting rows of a table, which its selection column does.
     use: Table
 components:
   - Checkbox

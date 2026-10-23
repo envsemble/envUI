@@ -28,10 +28,6 @@ avoidWhen:
     use: List
   - text: Space between children without a background.
     use: Column
-  - text: Content over the page that people dismiss, such as a form in a window.
-    use: Dialog
-  - text: A floating panel that opens from a button.
-    use: Popover
 components:
   - Surface
   - placeholders

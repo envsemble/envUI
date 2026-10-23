@@ -26,8 +26,6 @@ avoidWhen:
     use: Page
   - text: Two panes side by side inside the body, such as a list and its detail.
     use: Panes
-  - text: Rows, columns and grids inside a page.
-    use: Grid
   - text: A whole frame to copy, with the navigation and a top bar.
     see: app-frame
   - text: An installed application's window that draws its own title bar.

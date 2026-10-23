@@ -19,10 +19,6 @@ avoidWhen:
     use: Tooltip
   - text: Details or a small form that people open on purpose and work in.
     use: Popover
-  - text: A task that needs people's attention before they go on.
-    use: Dialog
-  - text: Information people need to complete a task, which must stay visible.
-    use: Alert
 components:
   - HoverCard
 ---

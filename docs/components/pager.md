@@ -22,8 +22,6 @@ avoidWhen:
     use: Pagination
   - text: The next step of a form or a task, such as Continue in a checkout.
     use: Button
-  - text: An application's main destinations, such as the pages in a sidebar.
-    use: Drawer
   - text: The path from the top of a hierarchy down to the current page.
     use: Breadcrumbs
 components:

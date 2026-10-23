@@ -20,10 +20,6 @@ useWhen:
 avoidWhen:
   - text: Switching between a fixed set of views of the same content, such as Overview and Settings.
     use: Tabs
-  - text: Destinations in an application's navigation.
-    use: Drawer
-  - text: Choosing one of a few options or filters.
-    use: SegmentedControl
   - text: Items people keep open beside the page, such as drafts.
     use: PanelDock
   - text: Many documents in folders, browsed as a hierarchy.

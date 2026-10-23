@@ -22,8 +22,6 @@ avoidWhen:
     use: TopBar
   - text: The heading of a section inside a page, with its own actions.
     use: Row
-  - text: A heading with metadata and actions around a block of content.
-    use: Card
   - text: Controls for one subject that the arrow keys move between.
     use: Toolbar
 components:

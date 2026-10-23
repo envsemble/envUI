@@ -19,8 +19,8 @@ useWhen:
 avoidWhen:
   - text: Switching between views of the same content.
     use: Tabs
-  - text: Moving between destinations of the application.
-    use: Drawer
+  - text: Moving between the places of the application.
+    see: navigation
   - text: Information people need to complete a task, such as a required field or an error.
     see: forms
 composes:

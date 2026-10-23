@@ -17,14 +17,12 @@ useWhen:
   - A count changes while people make choices elsewhere, such as matching results in a button's label.
   - A figure follows a setting people change, such as seats left or a price per billing period.
 avoidWhen:
-  - text: A count that doesn't change while people look at it, which is plain text.
+  - text: 'A count that doesn’t change while people look at it: plain text.'
     use: Text
   - text: A compact count beside a label, such as unread messages.
     use: Badge
   - text: A headline figure with its label and trend, such as on a dashboard.
     see: key-figures
-  - text: How far a task has come.
-    use: Progress
 components:
   - AnimatedNumber
 ---

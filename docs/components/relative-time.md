@@ -22,8 +22,6 @@ avoidWhen:
     use: DatePicker
   - text: Days shown on a month grid.
     use: Calendar
-  - text: A count that changes in place, such as seats left.
-    use: AnimatedNumber
 components:
   - RelativeTime
   - formatRelativeTime

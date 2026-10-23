@@ -27,8 +27,6 @@ avoidWhen:
     use: List
   - text: A short notification that comes and goes, such as Message sent.
     use: Toast
-  - text: A message about a page or a section, such as a warning before a form.
-    use: Alert
   - text: Formatted text on its own, outside a conversation.
     use: Markdown
 components:

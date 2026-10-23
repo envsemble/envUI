@@ -42,7 +42,7 @@ avoidWhen:
     use: Meter
   - text: A headline number with its label and trend, such as on a dashboard.
     see: key-figures
-  - text: A count beside a destination in the navigation.
+  - text: A count beside a destination in the navigation, which a Drawer item shows with `count`.
     use: Drawer
   - text: An identifier or a command in text.
     use: Code

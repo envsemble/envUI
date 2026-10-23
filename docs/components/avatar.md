@@ -23,14 +23,10 @@ useWhen:
   - The signed-in account opens its menu from a picture in the application's chrome (AvatarButton).
   - Who is involved matters more than each name where space is short, such as a project's members in a row (AvatarGroup).
 avoidWhen:
-  - text: A status or a count beside a label.
-    use: Badge
   - text: An icon for a thing or an action, not a person.
     use: Icon
   - text: Every name of a list of people that should be read.
     use: List
-  - text: Choosing people, shown as chips in a field.
-    use: Combobox
 components:
   - Avatar
   - AvatarButton

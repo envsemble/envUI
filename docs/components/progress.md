@@ -24,8 +24,6 @@ avoidWhen:
     use: Surface
   - text: Loading a page or a route of an application, along the top bar.
     use: TopBar
-  - text: Saying that a task finished or failed.
-    use: Toast
   - text: Content loading in its place, in the shape of what is coming.
     see: loading
 components:

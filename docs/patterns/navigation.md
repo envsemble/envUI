@@ -18,8 +18,6 @@ useWhen:
   - An application has several places, and people move between them.
   - People need to see where they are, how they got there and how to go back up.
 avoidWhen:
-  - text: Narrowing a long list or a table to the items people want.
-    see: filtering
   - text: Showing more of the page's content without leaving the page.
     see: progressive-disclosure
   - text: Moving between pages of one long list.

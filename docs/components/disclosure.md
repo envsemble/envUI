@@ -24,8 +24,6 @@ avoidWhen:
     use: TextField
   - text: Switching between views of the same content.
     use: Tabs
-  - text: A hierarchy people expand level by level, such as folders.
-    use: Tree
   - text: Details beside a control that close when people move on.
     use: Popover
 components:

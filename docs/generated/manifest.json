@@ -475,10 +475,6 @@
           "use": "Panes"
         },
         {
-          "text": "Rows, columns and grids inside a page.",
-          "use": "Grid"
-        },
-        {
           "text": "A whole frame to copy, with the navigation and a top bar.",
           "see": "app-frame"
         },
@@ -490,7 +486,6 @@
       "related": [
         "page",
         "panes",
-        "grid",
         "app-frame",
         "window-frame"
       ],
@@ -744,10 +739,6 @@
           "use": "Scaffold"
         },
         {
-          "text": "Columns of cards or fields that wrap, inside a page.",
-          "use": "Grid"
-        },
-        {
           "text": "A panel that opens over the page from an edge on demand.",
           "use": "Sheet"
         },
@@ -758,7 +749,6 @@
       ],
       "related": [
         "scaffold",
-        "grid",
         "sheet",
         "page"
       ],
@@ -1020,10 +1010,6 @@
           "use": "Column"
         },
         {
-          "text": "A background, an inset and corners around a part of a page.",
-          "use": "Surface"
-        },
-        {
           "text": "Two panes side by side, such as a list and its detail.",
           "use": "Panes"
         },
@@ -1035,7 +1021,6 @@
       "related": [
         "scaffold",
         "column",
-        "surface",
         "panes",
         "page-header"
       ],
@@ -1160,10 +1145,6 @@
           "use": "Row"
         },
         {
-          "text": "A heading with metadata and actions around a block of content.",
-          "use": "Card"
-        },
-        {
           "text": "Controls for one subject that the arrow keys move between.",
           "use": "Toolbar"
         }
@@ -1171,7 +1152,6 @@
       "related": [
         "top-bar",
         "row",
-        "card",
         "toolbar"
       ],
       "exports": [
@@ -1341,22 +1321,12 @@
         {
           "text": "Space between children without a background.",
           "use": "Column"
-        },
-        {
-          "text": "Content over the page that people dismiss, such as a form in a window.",
-          "use": "Dialog"
-        },
-        {
-          "text": "A floating panel that opens from a button.",
-          "use": "Popover"
         }
       ],
       "related": [
         "card",
         "list",
-        "column",
-        "dialog",
-        "popover"
+        "column"
       ],
       "exports": [
         "Surface",
@@ -3767,10 +3737,6 @@
           "use": "MarkdownEditor"
         },
         {
-          "text": "A query that searches or filters content.",
-          "use": "SearchField"
-        },
-        {
           "text": "The messages of the conversation itself.",
           "use": "Message"
         }
@@ -3939,7 +3905,7 @@
           "use": "Combobox"
         },
         {
-          "text": "Choosing rows of a table.",
+          "text": "Selecting rows of a table, which its selection column does.",
           "use": "Table"
         }
       ],
@@ -5418,10 +5384,6 @@
           "use": "RelativeTime"
         },
         {
-          "text": "Activity per day over months, shown as shades.",
-          "use": "CalendarHeatmap"
-        },
-        {
           "text": "A free-text date that people type in any format.",
           "use": "TextField"
         },
@@ -5434,7 +5396,6 @@
         "time-picker",
         "month-picker",
         "relative-time",
-        "calendar-heatmap",
         "text-field",
         "segmented-control"
       ],
@@ -6111,16 +6072,11 @@
         {
           "text": "A choice among a few named periods, such as This month or Last month.",
           "use": "SegmentedControl"
-        },
-        {
-          "text": "Activity per day over months, shown as shades.",
-          "use": "CalendarHeatmap"
         }
       ],
       "related": [
         "date-picker",
-        "segmented-control",
-        "calendar-heatmap"
+        "segmented-control"
       ],
       "exports": [
         "MonthPicker"
@@ -6484,10 +6440,6 @@
       ],
       "avoidWhen": [
         {
-          "text": "A text value people type, such as a link to a file.",
-          "use": "TextField"
-        },
-        {
           "text": "A single action that opens the file picker in a toolbar, without a drop target.",
           "use": "Button"
         },
@@ -6501,7 +6453,6 @@
         }
       ],
       "related": [
-        "text-field",
         "button",
         "progress",
         "list"
@@ -6825,16 +6776,11 @@
         {
           "text": "The same destinations on an expanded or larger window, or with group headings and long labels.",
           "use": "Drawer"
-        },
-        {
-          "text": "A deep hierarchy that people expand and collapse, such as folders and files.",
-          "use": "Tree"
         }
       ],
       "related": [
         "bar",
-        "drawer",
-        "tree"
+        "drawer"
       ],
       "exports": [
         "Rail"
@@ -7191,15 +7137,15 @@
           "use": "Drawer"
         },
         {
-          "text": "Sections people may want open at the same time.",
-          "use": "Disclosure"
+          "text": "Sections people may want open at the same time, one under another.",
+          "use": "Accordion"
         }
       ],
       "related": [
         "segmented-control",
         "document-tabs",
         "drawer",
-        "disclosure"
+        "accordion"
       ],
       "exports": [
         "Tabs"
@@ -7385,10 +7331,6 @@
           "use": "Button"
         },
         {
-          "text": "An application's main destinations, such as the pages in a sidebar.",
-          "use": "Drawer"
-        },
-        {
           "text": "The path from the top of a hierarchy down to the current page.",
           "use": "Breadcrumbs"
         }
@@ -7396,7 +7338,6 @@
       "related": [
         "pagination",
         "button",
-        "drawer",
         "breadcrumbs"
       ],
       "exports": [
@@ -7743,15 +7684,15 @@
           "use": "Table"
         },
         {
-          "text": "Sections of content people show and hide in a page.",
-          "use": "Disclosure"
+          "text": "Sections of a page people show and hide, rather than items of a hierarchy.",
+          "use": "Accordion"
         }
       ],
       "related": [
         "drawer",
         "list",
         "table",
-        "disclosure"
+        "accordion"
       ],
       "exports": [
         "Tree"
@@ -7914,14 +7855,6 @@
           "use": "Tabs"
         },
         {
-          "text": "Destinations in an application's navigation.",
-          "use": "Drawer"
-        },
-        {
-          "text": "Choosing one of a few options or filters.",
-          "use": "SegmentedControl"
-        },
-        {
           "text": "Items people keep open beside the page, such as drafts.",
           "use": "PanelDock"
         },
@@ -7932,8 +7865,6 @@
       ],
       "related": [
         "tabs",
-        "drawer",
-        "segmented-control",
         "panel-dock",
         "tree"
       ],
@@ -8136,14 +8067,14 @@
           "use": "DocumentTabs"
         },
         {
-          "text": "A short message about something that happened.",
-          "use": "Toast"
+          "text": "One item’s details or settings at the edge of the window, closed when done.",
+          "use": "Sheet"
         }
       ],
       "related": [
         "dialog",
         "document-tabs",
-        "toast"
+        "sheet"
       ],
       "exports": [
         "PanelDock",
@@ -8421,10 +8352,6 @@
           "use": "Drawer"
         },
         {
-          "text": "Moving between the items of one level, such as views of the same content.",
-          "use": "Tabs"
-        },
-        {
           "text": "Previous and next pages of a sequence.",
           "use": "Pager"
         },
@@ -8435,7 +8362,6 @@
       ],
       "related": [
         "drawer",
-        "tabs",
         "pager",
         "tree"
       ],
@@ -8645,15 +8571,10 @@
         {
           "text": "Links between the pages of an ordered sequence, such as the chapters of a guide.",
           "use": "Pager"
-        },
-        {
-          "text": "Switching between a few views of the same content.",
-          "use": "Tabs"
         }
       ],
       "related": [
-        "pager",
-        "tabs"
+        "pager"
       ],
       "exports": [
         "Pagination"
@@ -9498,7 +9419,7 @@
           "see": "key-figures"
         },
         {
-          "text": "A count beside a destination in the navigation.",
+          "text": "A count beside a destination in the navigation, which a Drawer item shows with `count`.",
           "use": "Drawer"
         },
         {
@@ -9709,15 +9630,15 @@
           "use": "Tree"
         },
         {
-          "text": "Arranging content in columns for layout, such as a set of summaries.",
-          "use": "Card"
+          "text": "Arranging content in columns for layout, such as a set of summary cards.",
+          "use": "Grid"
         }
       ],
       "related": [
         "list",
         "key-figures",
         "tree",
-        "card"
+        "grid"
       ],
       "exports": [
         "Table",
@@ -10050,8 +9971,8 @@
           "use": "List"
         },
         {
-          "text": "A form that people fill in and submit.",
-          "use": "Field"
+          "text": "Values people fill in and submit, as a form.",
+          "see": "forms"
         },
         {
           "text": "One headline number with its trend.",
@@ -10061,7 +9982,7 @@
       "related": [
         "table",
         "list",
-        "field",
+        "forms",
         "key-figures"
       ],
       "exports": [
@@ -10206,17 +10127,12 @@
         {
           "text": "Code, a command or a file name in text.",
           "use": "Code"
-        },
-        {
-          "text": "A status or a count beside a label.",
-          "use": "Badge"
         }
       ],
       "related": [
         "menu",
         "command-palette",
-        "code",
-        "badge"
+        "code"
       ],
       "exports": [
         "Kbd"
@@ -10314,7 +10230,7 @@
       ],
       "avoidWhen": [
         {
-          "text": "A count that doesn't change while people look at it, which is plain text.",
+          "text": "A count that doesn’t change while people look at it: plain text.",
           "use": "Text"
         },
         {
@@ -10324,16 +10240,11 @@
         {
           "text": "A headline figure with its label and trend, such as on a dashboard.",
           "see": "key-figures"
-        },
-        {
-          "text": "How far a task has come.",
-          "use": "Progress"
         }
       ],
       "related": [
         "badge",
-        "key-figures",
-        "progress"
+        "key-figures"
       ],
       "exports": [
         "AnimatedNumber"
@@ -10439,18 +10350,13 @@
         {
           "text": "A key figure on a dashboard, such as the average score this month.",
           "see": "key-figures"
-        },
-        {
-          "text": "A state or a category, such as Approved or Featured.",
-          "use": "Badge"
         }
       ],
       "related": [
         "radio",
         "slider",
         "meter",
-        "key-figures",
-        "badge"
+        "key-figures"
       ],
       "exports": [
         "Rating"
@@ -10566,15 +10472,10 @@
         {
           "text": "Days shown on a month grid.",
           "use": "Calendar"
-        },
-        {
-          "text": "A count that changes in place, such as seats left.",
-          "use": "AnimatedNumber"
         }
       ],
       "related": [
-        "date-picker",
-        "animated-number"
+        "date-picker"
       ],
       "exports": [
         "RelativeTime",
@@ -10741,16 +10642,11 @@
         {
           "text": "Switching between views of the same content.",
           "use": "Tabs"
-        },
-        {
-          "text": "A hierarchy people expand level by level, such as folders.",
-          "use": "Tree"
         }
       ],
       "related": [
         "disclosure",
-        "tabs",
-        "tree"
+        "tabs"
       ],
       "exports": [
         "Accordion",
@@ -10917,10 +10813,6 @@
           "use": "Tabs"
         },
         {
-          "text": "A hierarchy people expand level by level, such as folders.",
-          "use": "Tree"
-        },
-        {
           "text": "Details beside a control that close when people move on.",
           "use": "Popover"
         }
@@ -10929,7 +10821,6 @@
         "accordion",
         "text-field",
         "tabs",
-        "tree",
         "popover"
       ],
       "exports": [
@@ -11025,26 +10916,16 @@
       ],
       "avoidWhen": [
         {
-          "text": "A status or a count beside a label.",
-          "use": "Badge"
-        },
-        {
           "text": "An icon for a thing or an action, not a person.",
           "use": "Icon"
         },
         {
           "text": "Every name of a list of people that should be read.",
           "use": "List"
-        },
-        {
-          "text": "Choosing people, shown as chips in a field.",
-          "use": "Combobox"
         }
       ],
       "related": [
-        "badge",
-        "list",
-        "combobox"
+        "list"
       ],
       "exports": [
         "Avatar",
@@ -11284,10 +11165,6 @@
           "use": "Toast"
         },
         {
-          "text": "A message about a page or a section, such as a warning before a form.",
-          "use": "Alert"
-        },
-        {
           "text": "Formatted text on its own, outside a conversation.",
           "use": "Markdown"
         }
@@ -11296,7 +11173,6 @@
         "composer",
         "list",
         "toast",
-        "alert",
         "markdown"
       ],
       "exports": [
@@ -11485,17 +11361,12 @@
         {
           "text": "Choosing a day.",
           "use": "Calendar"
-        },
-        {
-          "text": "A share of a known range, such as storage used.",
-          "use": "Meter"
         }
       ],
       "related": [
         "table",
         "key-figures",
-        "date-picker",
-        "meter"
+        "date-picker"
       ],
       "exports": [
         "CalendarHeatmap"
@@ -12134,7 +12005,7 @@
           "see": "empty-states"
         },
         {
-          "text": "An error about one field of a form.",
+          "text": "An error about one field, shown on the field with its `error`.",
           "use": "TextField"
         },
         {
@@ -12886,10 +12757,6 @@
           "use": "SearchField"
         },
         {
-          "text": "A task with fields and a decision.",
-          "use": "Dialog"
-        },
-        {
           "text": "The button that opens the palette, with its shortcut.",
           "see": "search-trigger"
         }
@@ -12898,7 +12765,6 @@
         "combobox",
         "menu",
         "text-field",
-        "dialog",
         "search-trigger"
       ],
       "exports": [
@@ -13155,10 +13021,6 @@
           "use": "Popover"
         },
         {
-          "text": "Switching between views of the same content.",
-          "use": "Tabs"
-        },
-        {
           "text": "One or two actions that fit beside the content they act on.",
           "use": "Button"
         }
@@ -13170,7 +13032,6 @@
         "command-palette",
         "drawer",
         "popover",
-        "tabs",
         "button"
       ],
       "exports": [
@@ -13486,23 +13347,18 @@
           "use": "Menu"
         },
         {
-          "text": "Destinations in an application's navigation.",
-          "use": "Drawer"
-        },
-        {
           "text": "Running a command by name.",
           "use": "CommandPalette"
         },
         {
-          "text": "A row of actions that stay visible, such as a toolbar.",
-          "use": "ButtonGroup"
+          "text": "A row of commands that stay visible, such as an editor’s formatting.",
+          "use": "Toolbar"
         }
       ],
       "related": [
         "menu",
-        "drawer",
         "command-palette",
-        "button"
+        "toolbar"
       ],
       "exports": [
         "Menubar",
@@ -14127,21 +13983,11 @@
         {
           "text": "Details or a small form that people open on purpose and work in.",
           "use": "Popover"
-        },
-        {
-          "text": "A task that needs people's attention before they go on.",
-          "use": "Dialog"
-        },
-        {
-          "text": "Information people need to complete a task, which must stay visible.",
-          "use": "Alert"
         }
       ],
       "related": [
         "tooltip",
-        "popover",
-        "dialog",
-        "alert"
+        "popover"
       ],
       "exports": [
         "HoverCard"
@@ -14442,10 +14288,6 @@
           "use": "TopBar"
         },
         {
-          "text": "Saying that a task finished or failed.",
-          "use": "Toast"
-        },
-        {
           "text": "Content loading in its place, in the shape of what is coming.",
           "see": "loading"
         }
@@ -14455,7 +14297,6 @@
         "spinner",
         "surface",
         "top-bar",
-        "toast",
         "loading"
       ],
       "exports": [
@@ -14886,12 +14727,12 @@
           "see": "settings"
         },
         {
-          "text": "Confirming a destructive action.",
-          "use": "ConfirmDialog"
+          "text": "Deleting or removing something, with undo or a confirmation.",
+          "see": "destructive-actions"
         },
         {
-          "text": "Filtering a list or a table as people choose.",
-          "use": "SearchField"
+          "text": "Narrowing a list or a table as people choose, without submitting.",
+          "see": "filtering"
         }
       ],
       "composes": [
@@ -14914,8 +14755,8 @@
       ],
       "related": [
         "settings",
-        "confirm-dialog",
-        "text-field"
+        "destructive-actions",
+        "filtering"
       ],
       "doc": "docs/patterns/forms.md",
       "examples": [
@@ -15654,10 +15495,6 @@
       ],
       "avoidWhen": [
         {
-          "text": "Narrowing a long list or a table to the items people want.",
-          "see": "filtering"
-        },
-        {
           "text": "Showing more of the page's content without leaving the page.",
           "see": "progressive-disclosure"
         },
@@ -15701,7 +15538,6 @@
         "Text"
       ],
       "related": [
-        "filtering",
         "progressive-disclosure",
         "pagination",
         "panes",
@@ -16523,8 +16359,8 @@
           "use": "Tabs"
         },
         {
-          "text": "Moving between destinations of the application.",
-          "use": "Drawer"
+          "text": "Moving between the places of the application.",
+          "see": "navigation"
         },
         {
           "text": "Information people need to complete a task, such as a required field or an error.",
@@ -16555,7 +16391,7 @@
       ],
       "related": [
         "tabs",
-        "drawer",
+        "navigation",
         "forms"
       ],
       "doc": "docs/patterns/progressive-disclosure.md",

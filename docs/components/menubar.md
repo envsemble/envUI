@@ -19,12 +19,10 @@ useWhen:
 avoidWhen:
   - text: A short list of actions behind one control.
     use: Menu
-  - text: Destinations in an application's navigation.
-    use: Drawer
   - text: Running a command by name.
     use: CommandPalette
-  - text: A row of actions that stay visible, such as a toolbar.
-    use: ButtonGroup
+  - text: A row of commands that stay visible, such as an editor’s formatting.
+    use: Toolbar
 components:
   - Menubar
 ---

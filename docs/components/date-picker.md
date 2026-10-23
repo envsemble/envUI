@@ -26,8 +26,6 @@ avoidWhen:
     use: MonthPicker
   - text: A moment shown relative to now, such as "3 hours ago".
     use: RelativeTime
-  - text: Activity per day over months, shown as shades.
-    use: CalendarHeatmap
   - text: A free-text date that people type in any format.
     use: TextField
   - text: A choice among a few named periods, such as This week or This month.

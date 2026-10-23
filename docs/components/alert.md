@@ -24,7 +24,7 @@ avoidWhen:
     use: Toast
   - text: A region without content yet, such as an empty list or no search results.
     see: empty-states
-  - text: An error about one field of a form.
+  - text: An error about one field, shown on the field with its `error`.
     use: TextField
   - text: A status beside a label, such as Draft or Blocked.
     use: Badge

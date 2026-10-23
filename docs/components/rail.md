@@ -20,8 +20,6 @@ avoidWhen:
     use: Bar
   - text: The same destinations on an expanded or larger window, or with group headings and long labels.
     use: Drawer
-  - text: A deep hierarchy that people expand and collapse, such as folders and files.
-    use: Tree
 components:
   - Rail
 ---

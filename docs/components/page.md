@@ -21,8 +21,6 @@ avoidWhen:
     use: Scaffold
   - text: Content in a column or a row with even gaps inside a page.
     use: Column
-  - text: A background, an inset and corners around a part of a page.
-    use: Surface
   - text: Two panes side by side, such as a list and its detail.
     use: Panes
   - text: A page's title row, with its actions.

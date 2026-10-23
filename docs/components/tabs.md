@@ -24,8 +24,8 @@ avoidWhen:
     use: DocumentTabs
   - text: An application's destinations, such as the pages in a sidebar.
     use: Drawer
-  - text: Sections people may want open at the same time.
-    use: Disclosure
+  - text: Sections people may want open at the same time, one under another.
+    use: Accordion
 components:
   - Tabs
 ---

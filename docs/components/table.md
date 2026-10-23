@@ -26,8 +26,8 @@ avoidWhen:
     see: key-figures
   - text: Items nested inside other items, such as folders and files.
     use: Tree
-  - text: Arranging content in columns for layout, such as a set of summaries.
-    use: Card
+  - text: Arranging content in columns for layout, such as a set of summary cards.
+    use: Grid
 components:
   - Table
 ---

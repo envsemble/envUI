@@ -25,8 +25,6 @@ avoidWhen:
     use: TextField
   - text: Formatted text with headings, lists and links.
     use: MarkdownEditor
-  - text: A query that searches or filters content.
-    use: SearchField
   - text: The messages of the conversation itself.
     use: Message
 components:

@@ -24,8 +24,6 @@ avoidWhen:
     use: CommandPalette
   - text: Code, a command or a file name in text.
     use: Code
-  - text: A status or a count beside a label.
-    use: Badge
 components:
   - Kbd
 ---

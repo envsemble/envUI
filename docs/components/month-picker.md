@@ -19,8 +19,6 @@ avoidWhen:
     use: DatePicker
   - text: A choice among a few named periods, such as This month or Last month.
     use: SegmentedControl
-  - text: Activity per day over months, shown as shades.
-    use: CalendarHeatmap
 components:
   - MonthPicker
 ---

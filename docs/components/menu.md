@@ -36,8 +36,6 @@ avoidWhen:
     use: Drawer
   - text: Content people work in beside a trigger, such as a small form or a color picker.
     use: Popover
-  - text: Switching between views of the same content.
-    use: Tabs
   - text: One or two actions that fit beside the content they act on.
     use: Button
 components:

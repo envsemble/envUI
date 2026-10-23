@@ -22,8 +22,8 @@ avoidWhen:
     use: Table
   - text: Items people open or act on, one per row.
     use: List
-  - text: A form that people fill in and submit.
-    use: Field
+  - text: Values people fill in and submit, as a form.
+    see: forms
   - text: One headline number with its trend.
     see: key-figures
 components:

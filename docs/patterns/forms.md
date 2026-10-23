@@ -19,10 +19,10 @@ useWhen:
 avoidWhen:
   - text: A single setting that takes effect at once.
     see: settings
-  - text: Confirming a destructive action.
-    use: ConfirmDialog
-  - text: Filtering a list or a table as people choose.
-    use: SearchField
+  - text: Deleting or removing something, with undo or a confirmation.
+    see: destructive-actions
+  - text: Narrowing a list or a table as people choose, without submitting.
+    see: filtering
 composes:
   - Field
   - TextField

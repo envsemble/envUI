@@ -25,8 +25,8 @@ avoidWhen:
     use: List
   - text: Records that share the same fields and that people compare.
     use: Table
-  - text: Sections of content people show and hide in a page.
-    use: Disclosure
+  - text: Sections of a page people show and hide, rather than items of a hierarchy.
+    use: Accordion
 components:
   - Tree
 ---
