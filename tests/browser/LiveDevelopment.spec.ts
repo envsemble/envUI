@@ -9,7 +9,7 @@ test('public component, stylesheet, new export and Markdown documentation update
   const buttonSource = resolve('packages/ui/src/actions/internal/ButtonBase.tsx');
   const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
-  const example = resolve('apps/catalogue/src/examples/text-field/Variants.tsx');
+  const example = resolve('apps/catalogue/src/examples/text-field/FieldsBesideButtons.tsx');
   const documentation = resolve('docs/components/text-field.md');
   const newComponent = resolve('packages/ui/src/LiveAcceptance.tsx');
   const paths = [buttonSource, stylesheet, index, example, documentation];
@@ -61,7 +61,7 @@ test('public component, stylesheet, new export and Markdown documentation update
     await writeFile(example, editedExample);
     await expect(
       page
-        .getByRole('group', { name: 'Variants example', exact: true })
+        .getByRole('group', { name: 'Sizes example', exact: true })
         .getByTestId('live-new-component'),
     ).toHaveText('New shared component');
     // A guideline added to the Markdown shows on the page.

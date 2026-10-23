@@ -164,6 +164,8 @@ test('live examples keep links in place, show their source, and specimens show f
 test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
   page,
 }) => {
+  // Wide enough for the overview's three figures to share a row.
+  await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto(`${catalogueUrl}/components/button`);
   // One page of sections, with no views; the props are on its page in the Docs, which API opens.
   await expect(page.locator('.docs-page-header').getByRole('tab')).toHaveCount(0);
@@ -182,7 +184,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
   ]);
   await expect(page.locator('.docs-figures .env-message')).toHaveCount(0);
   // Figures that share a row are cells of one size: equal widths, and stages as tall as the
-  // tallest.
+  // tallest, once their examples have loaded.
+  await expect(page.locator('[data-section="overview"] .docs-loading')).toHaveCount(0);
   const cells = () =>
     page
       .locator('[data-section="overview"] .docs-figure-run')
