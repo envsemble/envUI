@@ -97,7 +97,15 @@ export function AdoptionFixture() {
               />
             }
           >
-            <Menu.Header>Alex Morgan</Menu.Header>
+            <Menu.Header>
+              <Column align="center" gap={1} padding={2} style={{ textAlign: 'center' }}>
+                <Avatar name="Alex Morgan" size="lg" data-testid="account-avatar" />
+                <Text data-testid="account-name">Alex Morgan</Text>
+                <Text variant="body-sm" emphasis="muted">
+                  alex@example.com
+                </Text>
+              </Column>
+            </Menu.Header>
             <Menu.Item href="/account" onClick={() => setAction('Followed account settings')}>
               Account settings
             </Menu.Item>

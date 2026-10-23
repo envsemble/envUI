@@ -3,7 +3,6 @@ import {
   AvatarButton,
   Column,
   Menu,
-  Row,
   Text,
   ThemeRadioGroup,
   TopBar,
@@ -25,17 +24,16 @@ export default function AvatarMenu() {
           align="end"
           trigger={<AvatarButton name={user.name} description={user.email} />}
         >
-          {/* Who is signed in, above the person's own things. */}
+          {/* Who is signed in, centered above the person's own things. The header is not an
+              item, so focus starts on Account settings and the menu's label still names it. */}
           <Menu.Header>
-            <Row align="center" gap={3}>
+            <Column align="center" gap={1} padding={2} style={{ textAlign: 'center' }}>
               <Avatar name={user.name} size="lg" />
-              <Column>
-                <Text>{user.name}</Text>
-                <Text variant="body-sm" emphasis="muted">
-                  {user.email}
-                </Text>
-              </Column>
-            </Row>
+              <Text>{user.name}</Text>
+              <Text variant="body-sm" emphasis="muted">
+                {user.email}
+              </Text>
+            </Column>
           </Menu.Header>
           <Menu.Item href="/account" icon={<ManageAccounts />}>
             Account settings
