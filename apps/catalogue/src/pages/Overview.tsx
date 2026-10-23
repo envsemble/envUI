@@ -69,7 +69,7 @@ export function Overview() {
         <Text render={<h2 />} variant="headline">
           Explore
         </Text>
-        <div className="docs-catalogue-grid">
+        <div className="docs-catalogue-grid docs-explore-grid">
           {destinations.map(({ title, icon: Icon, text }) => (
             <Card key={title} href={routeHref(sectionHome(title).path)}>
               <Column gap={4} align="center" className="docs-catalogue-content">
