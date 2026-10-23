@@ -121,6 +121,7 @@ export function IconCatalogue({
                 padding={4}
                 className="docs-icon-tile"
                 aria-label={label}
+                title={label}
                 aria-pressed={selectedName === name}
                 aria-haspopup="dialog"
                 aria-controls={selectedName === name ? detailsId : undefined}
@@ -132,7 +133,12 @@ export function IconCatalogue({
                 }}
               >
                 <Symbol filled={filled} width="2rem" height="2rem" />
-                <Text render={<span />} variant="caption" emphasis="default">
+                <Text
+                  render={<span />}
+                  variant="caption"
+                  emphasis="default"
+                  className="docs-icon-label"
+                >
                   {label}
                 </Text>
               </Card>
