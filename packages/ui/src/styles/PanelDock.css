@@ -346,12 +346,12 @@
   pointer-events: none;
 }
 /* Until PanelDock reads its layout, as on the server and while hydrating, the dock has
-   data-stack-pending, and its markup carries both layouts: data-placement and data-tabs as panels
-   sit side by side, and data-stacked-placement, data-stacked-filled and data-stacked-tabs as the dock
-   stacks. Tabs and the strip that only one layout has say which with data-tab-in. */
+   data-env-ssr-pending, and its markup carries both layouts: data-placement and data-tabs as panels
+   sit side by side, and data-env-ssr-placement, data-env-ssr-filled and data-env-ssr-tabs as the dock
+   stacks. Tabs and the strip that only one layout has say which with data-env-ssr-tab-in. */
 @container env-panel-dock (width >= 37.5em) {
-  .env-panel-dock-strip[data-tab-in='stacked'],
-  .env-panel-dock-tab[data-tab-in='stacked'] {
+  .env-panel-dock-strip[data-env-ssr-tab-in='stacked'],
+  .env-panel-dock-tab[data-env-ssr-tab-in='stacked'] {
     display: none;
   }
 }
@@ -359,23 +359,23 @@
   .env-panel-dock-probe {
     inline-size: 100%;
   }
-  .env-panel-dock[data-stack-pending] > .env-panel-dock-row {
+  .env-panel-dock[data-env-ssr-pending] > .env-panel-dock-row {
     --env-panel-dock-strip-size: 0rem;
   }
-  .env-panel-dock[data-stacked-tabs] > .env-panel-dock-row {
+  .env-panel-dock[data-env-ssr-tabs] > .env-panel-dock-row {
     --env-panel-dock-strip-size: calc(var(--env-panel-dock-tab-height) + var(--env-space-2));
   }
   /* The panel that fills the region covers it above the tabs; the strip covers the rest. */
-  .env-panel-dock[data-stacked-filled] > .env-panel-dock-strip {
+  .env-panel-dock[data-env-ssr-filled] > .env-panel-dock-strip {
     background: var(--env-color-bg-page);
     pointer-events: auto;
   }
-  .env-panel-dock-strip[data-tab-in='wide'],
-  .env-panel-dock-tab[data-tab-in='wide'],
-  .env-panel-dock-panel[data-stacked-placement] [data-window-control='maximize'] {
+  .env-panel-dock-strip[data-env-ssr-tab-in='wide'],
+  .env-panel-dock-tab[data-env-ssr-tab-in='wide'],
+  .env-panel-dock-panel[data-env-ssr-placement] [data-window-control='maximize'] {
     display: none;
   }
-  .env-panel-dock-panel[data-stacked-placement='fill'] {
+  .env-panel-dock-panel[data-env-ssr-placement='fill'] {
     position: absolute;
     inset: 0 0 var(--env-panel-dock-strip-size);
     z-index: var(--env-z-base);
@@ -388,7 +388,7 @@
     opacity: 1;
     pointer-events: auto;
   }
-  .env-panel-dock-panel[data-stacked-placement='hidden'] {
+  .env-panel-dock-panel[data-env-ssr-placement='hidden'] {
     position: absolute;
     inset: auto 0 0 auto;
     z-index: calc(var(--env-z-base) - 1);

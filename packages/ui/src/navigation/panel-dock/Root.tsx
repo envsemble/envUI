@@ -733,9 +733,9 @@ export function Root<T extends PanelDockPanel>({
       data-stacked={stacked || undefined}
       data-filled={filled || undefined}
       data-tabs={hasTabs || undefined}
-      data-stack-pending={pending || undefined}
-      data-stacked-filled={stackedLayout?.filling !== undefined || undefined}
-      data-stacked-tabs={(stackedLayout && stackedTabs.length > 0) || undefined}
+      data-env-ssr-pending={pending || undefined}
+      data-env-ssr-filled={stackedLayout?.filling !== undefined || undefined}
+      data-env-ssr-tabs={(stackedLayout && stackedTabs.length > 0) || undefined}
     >
       <Row
         align="end"
@@ -782,7 +782,7 @@ export function Root<T extends PanelDockPanel>({
               ref={strip}
               className="env-panel-dock-strip"
               aria-label={tabsLabel}
-              data-tab-in={tabIn(hasTabs, stackedTabs.length > 0)}
+              data-env-ssr-tab-in={tabIn(hasTabs, stackedTabs.length > 0)}
             />
           }
         >

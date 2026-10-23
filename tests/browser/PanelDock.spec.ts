@@ -1665,7 +1665,7 @@ test(
     // stacked dock leaves out is inert.
     expect(await hydrate()).toEqual([]);
     await expect(narrow.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
-    await expect(narrow.locator('.env-panel-dock')).not.toHaveAttribute('data-stack-pending');
+    await expect(narrow.locator('.env-panel-dock')).not.toHaveAttribute('data-env-ssr-pending');
     await expect(wide.locator('.env-panel-dock')).not.toHaveAttribute('data-stacked');
     await expect(panel(narrow, 'report')).toHaveJSProperty('inert', true);
     await expect(panel(narrow, 'notes')).not.toHaveAttribute('data-entering');

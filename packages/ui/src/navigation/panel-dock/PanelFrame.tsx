@@ -164,7 +164,7 @@ export function PanelFrame({
           data-panel-id={id}
           data-mode={mode}
           data-placement={placement}
-          data-stacked-placement={stackedPlacement}
+          data-env-ssr-placement={stackedPlacement}
           data-active={panel.active || undefined}
           data-resizing={preview !== undefined || undefined}
           style={

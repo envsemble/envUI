@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { buildParts, partsFile, removedParts, serializeParts } from '../scripts/GenerateParts.mjs';
+import {
+  buildParts,
+  isPrivateState,
+  partsFile,
+  removedParts,
+  serializeParts,
+} from '../scripts/GenerateParts.mjs';
 
 const { parts, problems } = buildParts();
 const component = (name) => parts.components[name];
@@ -143,5 +149,18 @@ test('a part that moves to another group, or a value list that becomes free-form
   assert.deepEqual(
     removedParts(before, after).map(({ label }) => label),
     ["Menu: [data-tone='danger']"],
+  );
+});
+
+test('data-env-ssr-* attributes are private, and the contract leaves them out', () => {
+  assert.equal(isPrivateState('data-env-ssr-placement'), true);
+  assert.equal(isPrivateState('data-stacked'), false);
+  // PanelDock sets and styles them until it reads its layout; its public states stay.
+  const dock = component('PanelDock');
+  assert.ok(state(dock, 'data-stacked'));
+  const groups = [...Object.values(parts.components), ...Object.values(parts.shared)];
+  assert.deepEqual(
+    groups.flatMap((group) => group.states.filter((item) => isPrivateState(item.attribute))),
+    [],
   );
 });

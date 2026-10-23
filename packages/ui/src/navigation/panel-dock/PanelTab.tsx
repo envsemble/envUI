@@ -58,7 +58,7 @@ export function PanelTab({
           className="env-panel-dock-tab"
           data-panel-id={panel.id}
           data-mode={panel.mode}
-          data-tab-in={tabIn}
+          data-env-ssr-tab-in={tabIn}
           data-attention={attention || undefined}
         />
       }
