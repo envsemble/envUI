@@ -188,12 +188,12 @@
         {
           "id": "trigger",
           "label": "header search button",
-          "envui": ["Button", "IconButton", "SearchTrigger"]
+          "envui": ["Button", "IconButton"]
         },
         {
           "id": "shortcut-hint",
           "label": "shortcut key caps",
-          "envui": ["Kbd", "SearchTrigger"]
+          "envui": ["Kbd"]
         }
       ]
     },

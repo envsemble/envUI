@@ -330,13 +330,15 @@ export const Feature = () => (
     );
   });
 
-  it('credit SearchTrigger with the header button and its shortcut', () => {
+  it('credit the search trigger pattern, a Button with a Kbd, with the header button and its shortcut', () => {
     app.write({
-      'src/Feature.tsx': `import { CommandPalette, SearchTrigger } from '@envsemble/envui';
+      'src/Feature.tsx': `import { Button, CommandPalette, Kbd } from '@envsemble/envui';
 
 export const Feature = () => (
   <>
-    <SearchTrigger shortcut="Mod+K" onClick={() => {}} />
+    <Button onClick={() => {}} end={<Kbd>Ctrl K</Kbd>}>
+      Search
+    </Button>
     <CommandPalette open />
   </>
 );

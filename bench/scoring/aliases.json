@@ -100,7 +100,7 @@
     "QuickSearch": ["CommandPalette"],
     "QuickOpen": ["CommandPalette"],
     "SearchDialog": ["CommandPalette", "Dialog"],
-    "SearchButton": ["SearchTrigger", "Button"],
+    "SearchButton": ["Button"],
     "SearchModal": ["CommandPalette", "Dialog"],
     "SearchTrigger": ["Button", "IconButton"],
     "SearchButton": ["Button", "IconButton"],
