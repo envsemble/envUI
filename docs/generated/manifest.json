@@ -1356,6 +1356,12 @@
           "file": "docs/examples/surface/SurfaceLoading.tsx"
         },
         {
+          "name": "RecolorArea",
+          "title": "Colors",
+          "description": "`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the colors of one surface, through `style` or CSS; a surface inside keeps its own. To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own. Customize colors describes both.",
+          "file": "docs/examples/surface/RecolorArea.tsx"
+        },
+        {
           "name": "BlockOnPane",
           "title": "Do: One block on a pane, set apart by its fill and corners.",
           "description": "",
@@ -1411,6 +1417,20 @@
               "parts": [
                 "env-surface"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-surface-container",
+              "description": "The surface's fill, which its contents take as the color beneath them."
+            },
+            {
+              "property": "--env-surface-content",
+              "description": "The text."
+            },
+            {
+              "property": "--env-surface-outline",
+              "description": "An edge in this color."
             }
           ]
         },
@@ -1685,6 +1705,24 @@
               "parts": [
                 "env-list-item"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-list-item-container",
+              "description": "The row's fill; the state layers lie over it."
+            },
+            {
+              "property": "--env-list-item-content",
+              "description": "The text, and the color of the state layers."
+            },
+            {
+              "property": "--env-list-item-selected",
+              "description": "The fill of the current row and of a row whose checkbox is checked."
+            },
+            {
+              "property": "--env-list-item-selected-content",
+              "description": "The text of a selected row."
             }
           ]
         },
@@ -1977,6 +2015,20 @@
                 "env-card"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-card-container",
+              "description": "The card's surface; an interactive card's state layers lie over it."
+            },
+            {
+              "property": "--env-card-content",
+              "description": "The text, and the color of an interactive card’s state layers."
+            },
+            {
+              "property": "--env-card-outline",
+              "description": "An edge in this color."
+            }
           ]
         }
       },
@@ -2086,6 +2138,12 @@
           "title": "Remove people",
           "description": "",
           "file": "docs/examples/button/RemovePeople.tsx"
+        },
+        {
+          "name": "CustomColors",
+          "title": "Custom colors",
+          "description": "One button can take colors of its own through its color properties, such as `--env-button-container` and `--env-button-content`. Its hover, focus and press follow them, as state layers of its label color.",
+          "file": "docs/examples/button/CustomColors.tsx"
         },
         {
           "name": "PendingAction",
@@ -2278,6 +2336,28 @@
                 "env-button"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-button-container",
+              "description": "The fill, in every variant; the state layers lie over it, and a solid variant takes them instead of its designed hover and press fills."
+            },
+            {
+              "property": "--env-button-content",
+              "description": "The label and icons, and the color of the state layers."
+            },
+            {
+              "property": "--env-button-outline",
+              "description": "The edge, where the variant draws one, such as outline."
+            },
+            {
+              "property": "--env-button-selected",
+              "description": "The fill of a pressed toggle, such as a toolbar button that is on."
+            },
+            {
+              "property": "--env-button-selected-content",
+              "description": "The icon and label of a pressed toggle."
+            }
           ]
         },
         "IconButton": {
@@ -2315,6 +2395,28 @@
               "parts": [
                 "env-icon-button"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-button-container",
+              "description": "The fill, in every variant; the state layers lie over it, and a solid variant takes them instead of its designed hover and press fills."
+            },
+            {
+              "property": "--env-button-content",
+              "description": "The label and icons, and the color of the state layers."
+            },
+            {
+              "property": "--env-button-outline",
+              "description": "The edge, where the variant draws one, such as outline."
+            },
+            {
+              "property": "--env-button-selected",
+              "description": "The fill of a pressed toggle, such as a toolbar button that is on."
+            },
+            {
+              "property": "--env-button-selected-content",
+              "description": "The icon and label of a pressed toggle."
             }
           ]
         },
@@ -3502,6 +3604,24 @@
                 "env-text-field-control"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-text-field-container",
+              "description": "The well behind the entered text."
+            },
+            {
+              "property": "--env-text-field-content",
+              "description": "The entered text."
+            },
+            {
+              "property": "--env-text-field-outline",
+              "description": "The edge at rest."
+            },
+            {
+              "property": "--env-text-field-indicator",
+              "description": "The edge under the pointer, pressed and focused, the caret and the floating label while focused."
+            }
           ]
         },
         "Textarea": {
@@ -3519,6 +3639,24 @@
               "parts": [
                 "env-textarea-resize-edge"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-text-field-container",
+              "description": "The well behind the entered text."
+            },
+            {
+              "property": "--env-text-field-content",
+              "description": "The entered text."
+            },
+            {
+              "property": "--env-text-field-outline",
+              "description": "The edge at rest."
+            },
+            {
+              "property": "--env-text-field-indicator",
+              "description": "The edge under the pointer, pressed and focused, the caret and the floating label while focused."
             }
           ]
         }
@@ -4027,7 +4165,21 @@
               "description": "The label."
             }
           ],
-          "states": []
+          "states": [],
+          "colors": [
+            {
+              "property": "--env-checkbox-outline",
+              "description": "The box's edge while unchecked."
+            },
+            {
+              "property": "--env-checkbox-selected",
+              "description": "The box's fill while checked or indeterminate; set, it takes state layers instead of the designed hover and press fills."
+            },
+            {
+              "property": "--env-checkbox-icon",
+              "description": "The check mark or dash, and the color of the state layers."
+            }
+          ]
         }
       },
       "usedIn": {
@@ -4177,7 +4329,29 @@
               "description": "The label."
             }
           ],
-          "states": []
+          "states": [],
+          "colors": [
+            {
+              "property": "--env-switch-container",
+              "description": "The track while off; the state layers lie over it."
+            },
+            {
+              "property": "--env-switch-content",
+              "description": "The thumb while off, and the color of the state layers."
+            },
+            {
+              "property": "--env-switch-outline",
+              "description": "The track's ring while off."
+            },
+            {
+              "property": "--env-switch-selected",
+              "description": "The track while on; set, it takes state layers instead of the designed hover and press fills."
+            },
+            {
+              "property": "--env-switch-selected-content",
+              "description": "The thumb while on."
+            }
+          ]
         }
       },
       "usedIn": {
@@ -4353,6 +4527,20 @@
               "parts": [
                 "env-radio"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-radio-container",
+              "description": "The row's fill in a vertical group; the state layers lie over it."
+            },
+            {
+              "property": "--env-radio-content",
+              "description": "The label, and the color of a row's state layers."
+            },
+            {
+              "property": "--env-radio-selected",
+              "description": "The dot and ring of the chosen option."
             }
           ]
         },
@@ -4655,6 +4843,20 @@
               "parts": [
                 "env-select-trigger"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-select-container",
+              "description": "The trigger's fill; the state layers lie over it."
+            },
+            {
+              "property": "--env-select-content",
+              "description": "The trigger's label and chevron, and the color of the state layers."
+            },
+            {
+              "property": "--env-select-outline",
+              "description": "The trigger's edge, where its variant draws one."
             }
           ]
         },
@@ -4976,6 +5178,24 @@
               "parts": [
                 "env-segmented-control"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-segmented-control-container",
+              "description": "The rail behind the options."
+            },
+            {
+              "property": "--env-segmented-control-content",
+              "description": "The labels of the options not chosen, and the color of their state layers."
+            },
+            {
+              "property": "--env-segmented-control-selected",
+              "description": "The chosen option's fill; set, it takes state layers instead of the designed hover and press fills."
+            },
+            {
+              "property": "--env-segmented-control-selected-content",
+              "description": "The chosen option's label."
             }
           ]
         },
@@ -5320,6 +5540,16 @@
               "parts": [
                 "env-combobox"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-combobox-chip-container",
+              "description": "The fill of a chosen option’s chip."
+            },
+            {
+              "property": "--env-combobox-chip-content",
+              "description": "The chip's label and remove button."
             }
           ]
         },
@@ -6602,6 +6832,16 @@
                 "env-slider-thumb"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-slider-container",
+              "description": "The track."
+            },
+            {
+              "property": "--env-slider-indicator",
+              "description": "The filled part and the thumb, and the thumb's halo at 16%."
+            }
           ]
         }
       },
@@ -6958,6 +7198,28 @@
                 "env-bar"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-bar-item-container",
+              "description": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
+            },
+            {
+              "property": "--env-bar-item-content",
+              "description": "The label, and the color of the state layers."
+            },
+            {
+              "property": "--env-bar-item-icon",
+              "description": "The icon of a destination that is not current."
+            },
+            {
+              "property": "--env-bar-item-selected",
+              "description": "The pill around the icon of the current destination."
+            },
+            {
+              "property": "--env-bar-item-selected-content",
+              "description": "The icon of the current destination."
+            }
           ]
         },
         "Skeleton": {
@@ -7131,6 +7393,28 @@
               "parts": [
                 "env-rail"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-rail-item-container",
+              "description": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
+            },
+            {
+              "property": "--env-rail-item-content",
+              "description": "The label, and the color of the state layers."
+            },
+            {
+              "property": "--env-rail-item-icon",
+              "description": "The icon of a destination that is not current."
+            },
+            {
+              "property": "--env-rail-item-selected",
+              "description": "The pill around the icon of the current destination."
+            },
+            {
+              "property": "--env-rail-item-selected-content",
+              "description": "The icon of the current destination."
             }
           ]
         },
@@ -7336,6 +7620,28 @@
               "parts": [
                 "env-drawer"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-drawer-item-container",
+              "description": "The item at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
+            },
+            {
+              "property": "--env-drawer-item-content",
+              "description": "The label, and the color of the state layers."
+            },
+            {
+              "property": "--env-drawer-item-icon",
+              "description": "The icon of a destination that is not current."
+            },
+            {
+              "property": "--env-drawer-item-selected",
+              "description": "The item of the current destination."
+            },
+            {
+              "property": "--env-drawer-item-selected-content",
+              "description": "The label and icon of the current destination."
             }
           ]
         },
@@ -7567,6 +7873,16 @@
               "parts": [
                 "env-tabs-panel"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-tabs-container",
+              "description": "The rail behind the tabs."
+            },
+            {
+              "property": "--env-tabs-content",
+              "description": "The labels of the tabs not selected, and the color of their state layers; the selected tab keeps its button’s colors."
             }
           ]
         }
@@ -9940,6 +10256,20 @@
                 "env-badge"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-badge-container",
+              "description": "The fill, in place of the tone and variant."
+            },
+            {
+              "property": "--env-badge-content",
+              "description": "The label, count or icon."
+            },
+            {
+              "property": "--env-badge-outline",
+              "description": "An edge in this color."
+            }
           ]
         },
         "DiffStat": {
@@ -11577,6 +11907,16 @@
                 "env-avatar"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-avatar-container",
+              "description": "The fill behind the initials or figure, in place of the hue."
+            },
+            {
+              "property": "--env-avatar-content",
+              "description": "The initials and the figure."
+            }
           ]
         },
         "AvatarButton": {
@@ -12537,6 +12877,20 @@
                 "env-toast"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-toast-container",
+              "description": "The fill, in place of the tone; set, the dismiss button's states are state layers over it."
+            },
+            {
+              "property": "--env-toast-content",
+              "description": "The message, icons and dismiss button, and the color of its state layers."
+            },
+            {
+              "property": "--env-toast-outline",
+              "description": "The edge."
+            }
           ]
         }
       },
@@ -12715,6 +13069,24 @@
               "parts": [
                 "env-alert"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-alert-container",
+              "description": "The tint behind the alert."
+            },
+            {
+              "property": "--env-alert-content",
+              "description": "The title and message."
+            },
+            {
+              "property": "--env-alert-outline",
+              "description": "The edge."
+            },
+            {
+              "property": "--env-alert-icon",
+              "description": "The tone's icon and the dismiss button, whose state layers it colors."
             }
           ]
         },
@@ -13866,6 +14238,20 @@
                 "env-menu-item"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-menu-item-container",
+              "description": "The item's fill; the highlight and press are state layers over it."
+            },
+            {
+              "property": "--env-menu-item-content",
+              "description": "The label, and the color of the state layers."
+            },
+            {
+              "property": "--env-menu-item-icon",
+              "description": "The leading icon."
+            }
           ]
         },
         "Popup": {
@@ -14333,6 +14719,20 @@
               "parts": [
                 "env-tooltip"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-tooltip-container",
+              "description": "The fill."
+            },
+            {
+              "property": "--env-tooltip-content",
+              "description": "The text and the keys of a shortcut."
+            },
+            {
+              "property": "--env-tooltip-outline",
+              "description": "The edge."
             }
           ]
         },
@@ -15201,8 +15601,17 @@
         "feature-cards",
         "spinner",
         "empty-states",
+        "customizing-colors",
         "colors"
       ]
+    },
+    {
+      "name": "customizing-colors",
+      "title": "Customize colors",
+      "group": "Setup and workflows",
+      "summary": "Give one element its own colors through its color properties, or recolor an area with a nested Theme.",
+      "doc": "docs/customizing-colors.md",
+      "related": []
     },
     {
       "name": "agent-tooling",
@@ -15247,6 +15656,7 @@
         "scale",
         "setup",
         "migration",
+        "customizing-colors",
         "surface",
         "button",
         "drawer",
@@ -27900,6 +28310,42 @@
         "value": "0.48"
       },
       {
+        "id": "state.focus-opacity",
+        "cssVariable": "--env-state-focus-opacity",
+        "type": "number",
+        "description": "The state layer of keyboard focus, under the focus ring: 10% of the content color.",
+        "values": {
+          "light": "0.1",
+          "dark": "0.1",
+          "light-high-contrast": "0.07",
+          "dark-high-contrast": "0.07"
+        }
+      },
+      {
+        "id": "state.hover-opacity",
+        "cssVariable": "--env-state-hover-opacity",
+        "type": "number",
+        "description": "The state layer under the pointer: 8% of the content color over the container.",
+        "values": {
+          "light": "0.08",
+          "dark": "0.08",
+          "light-high-contrast": "0.06",
+          "dark-high-contrast": "0.06"
+        }
+      },
+      {
+        "id": "state.pressed-opacity",
+        "cssVariable": "--env-state-pressed-opacity",
+        "type": "number",
+        "description": "The state layer while pressed: 10% of the content color over the container.",
+        "values": {
+          "light": "0.1",
+          "dark": "0.12",
+          "light-high-contrast": "0.07",
+          "dark-high-contrast": "0.07"
+        }
+      },
+      {
         "id": "title-bar.height",
         "cssVariable": "--env-title-bar-height",
         "type": "dimension",
@@ -29461,6 +29907,31 @@
         "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
       },
       {
+        "cssVariable": "--env-alert-edge",
+        "use": "--env-alert-outline",
+        "note": "An alert's edge is the public color property --env-alert-outline."
+      },
+      {
+        "cssVariable": "--env-alert-hover",
+        "removed": true,
+        "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
+      },
+      {
+        "cssVariable": "--env-alert-pressed",
+        "removed": true,
+        "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
+      },
+      {
+        "cssVariable": "--env-alert-tint",
+        "use": "--env-alert-container",
+        "note": "An alert's tint is the public color property --env-alert-container, set on the alert."
+      },
+      {
+        "cssVariable": "--env-alert-tone",
+        "use": "--env-alert-icon",
+        "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
+      },
+      {
         "cssVariable": "--env-app-control-height",
         "removed": true,
         "note": "AppShell is gone: a TopBar with titleBar keeps the small control height."
@@ -29557,6 +30028,21 @@
         "note": "AppShell and WindowFrame are gone: sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
       },
       {
+        "cssVariable": "--env-list-item-fill",
+        "use": "--env-list-item-container",
+        "note": "A row's fill is the public color property --env-list-item-container, set on the row."
+      },
+      {
+        "cssVariable": "--env-list-item-fill-hover",
+        "removed": true,
+        "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
+      },
+      {
+        "cssVariable": "--env-list-item-fill-pressed",
+        "removed": true,
+        "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
+      },
+      {
         "cssVariable": "--env-sidebar-collapsed-width",
         "removed": true,
         "note": "Sidebar is gone: Rail, the navigation form for medium windows, has a width of its own."
@@ -29605,6 +30091,36 @@
         "cssVariable": "--env-stack-gap",
         "removed": true,
         "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
+      },
+      {
+        "cssVariable": "--env-surface-hover",
+        "removed": true,
+        "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
+      },
+      {
+        "cssVariable": "--env-surface-pressed",
+        "removed": true,
+        "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
+      },
+      {
+        "cssVariable": "--env-toast-edge",
+        "use": "--env-toast-outline",
+        "note": "A toast's edge is the public color property --env-toast-outline."
+      },
+      {
+        "cssVariable": "--env-toast-fill",
+        "use": "--env-toast-container",
+        "note": "A toast's fill is the public color property --env-toast-container, set on the toast."
+      },
+      {
+        "cssVariable": "--env-toast-fill-hover",
+        "removed": true,
+        "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
+      },
+      {
+        "cssVariable": "--env-toast-fill-pressed",
+        "removed": true,
+        "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
       },
       {
         "cssVariable": "--env-topbar-height",

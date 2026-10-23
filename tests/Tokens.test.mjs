@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, posix, relative } from 'node:path';
@@ -304,17 +305,23 @@ const baseUiProperties = [
 
 /**
  * Custom properties an application provides, which envUI's style sheets read without a fallback.
- * Each needs its place in the documentation; there are none yet.
+ * Each needs its place in the documentation: the components' color properties, which
+ * docs/generated/parts.json lists, are read so where an unset one must leave its declaration
+ * invalid, such as a surface's text color, or the layered fill of a container no one set.
  */
-const applicationHooks = [];
+const applicationHooks = Object.values(
+  JSON.parse(readFileSync(new URL('../docs/generated/parts.json', import.meta.url), 'utf8'))
+    .components,
+).flatMap((entry) => (entry.colors ?? []).map((color) => color.property));
 
 /**
  * Classes that an element always carries with another component's, so a rule for the first also
  * sees what is declared for the second: Card renders its root as a Surface (`<Surface
- * render={…}>`), which adds env-surface beside env-card.
+ * render={…}>`), which adds env-surface beside env-card, and Select's trigger is a Button.
  */
 const impliedClasses = {
   'env-card': ['env-surface'],
+  'env-select-trigger': ['env-button'],
 };
 
 /** The token build's style sheets: what they declare is defined only through `.env-theme`. */
