@@ -263,7 +263,7 @@ test(
 );
 
 test(
-  'the end slot holds quiet keys at the far end, with the icon and label at the start',
+  'the end slot holds keys in the label color at the far end, with the icon and label at the start',
   { tag: '@engines' },
   async ({ page }) => {
     await page.goto(fixture);
@@ -279,21 +279,31 @@ test(
       const icon = element.querySelector('.env-icon')!.getBoundingClientRect();
       const keys = element.querySelector('.env-button-end')!.getBoundingClientRect();
       const probe = document.createElement('span');
-      probe.style.color = 'var(--env-color-fg-muted)';
+      probe.style.color = 'color-mix(in srgb, currentColor 80%, transparent)';
       element.append(probe);
-      const muted = getComputedStyle(probe).color;
+      const separator = getComputedStyle(probe).color;
       probe.remove();
+      const cap = getComputedStyle(element.querySelector('.env-button-end .env-kbd')!);
       return {
         startGap: icon.left - box.left - parseFloat(style.paddingInlineStart),
         endGap: box.right - parseFloat(style.paddingInlineEnd) - keys.right,
+        label: style.color,
         endColor: getComputedStyle(element.querySelector('.env-button-end')!).color,
-        muted,
+        capColor: cap.color,
+        capFill: cap.backgroundColor,
+        separator,
+        separatorColor: getComputedStyle(element.querySelector('.env-kbd-separator')!).color,
       };
     });
     // The icon starts at the padding and the keys end at it, with the room between them.
     expect(Math.abs(layout.startGap)).toBeLessThan(1);
     expect(Math.abs(layout.endGap)).toBeLessThan(1);
-    expect(layout.endColor).toBe(layout.muted);
+    // The slot and its keys take the button's own content color, on no fill of their own, and the
+    // + between the keys is quieter, which the contrast gate measures on every variant.
+    expect(layout.endColor).toBe(layout.label);
+    expect(layout.capColor).toBe(layout.label);
+    expect(layout.capFill).toBe('rgba(0, 0, 0, 0)');
+    expect(layout.separatorColor).toBe(layout.separator);
   },
 );
 
