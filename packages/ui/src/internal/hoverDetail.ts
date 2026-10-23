@@ -39,6 +39,22 @@ interface TextLikeProps {
   children?: ReactNode;
   render?: unknown;
   className?: unknown;
+  role?: unknown;
+}
+
+/** The roles a text element may take and stay text. */
+const textRoles = new Set(['text', 'presentation', 'none', 'mark', 'time', 'term', 'definition']);
+
+/**
+ * Whether an element plays a part other than text: a role of another kind, such as an image or a
+ * button, or the part class of another component, such as an avatar group's overflow count.
+ */
+function playsOtherPart({ role, className }: TextLikeProps): boolean {
+  if (typeof role === 'string' && role.trim() !== '' && !textRoles.has(role.trim())) return true;
+  return (
+    typeof className === 'string' &&
+    className.split(/\s+/).some((name) => name.startsWith('env-') && !name.startsWith('env-text'))
+  );
 }
 
 /**
@@ -48,6 +64,7 @@ interface TextLikeProps {
  */
 function isTextElement(element: ReactElement<TextLikeProps>): boolean {
   const { type } = element;
+  if (playsOtherPart(element.props)) return false;
   if (typeof type === 'string')
     return (
       textTags.has(type) ||
@@ -77,7 +94,8 @@ function holdsText(children: ReactNode): boolean {
 
 /**
  * Whether a trigger is text, which a dotted underline marks: an inline text element or Text that
- * holds text. Buttons, links, avatars, icons and other components aren't.
+ * holds text. Buttons, links, avatars, icons, counts such as an avatar group's "+2" and other
+ * components aren't, nor is an element with a role other than text's.
  */
 export function isTextTrigger(element: ReactElement): boolean {
   const text = element as ReactElement<TextLikeProps>;

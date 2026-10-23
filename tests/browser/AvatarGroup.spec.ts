@@ -60,6 +60,8 @@ test('the overflow chip lists the hidden names on hover and keyboard focus', asy
   const scope = page.getByTestId('avatar-groups-light');
   const names = page.locator('.env-avatar-group-tooltip > span');
   const chip = scope.getByTestId('decorative').locator('.env-avatar-group-overflow');
+  // A count, not text: no dotted underline marks it.
+  await expect(chip).not.toHaveClass(/\benv-hover-detail\b/);
   await chip.hover();
   await expect(names).toHaveText(['Jordan Rivera', 'Taylor Kim']);
   await page.keyboard.press('Escape');
