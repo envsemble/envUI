@@ -180,12 +180,21 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
     return height;
   });
   expect(box.height).toBeCloseTo(field, 0);
+  // The fields' corners: the capped full corner, which the browser draws as rounded ends.
   expect(
-    Number.parseFloat(await control.evaluate((e) => getComputedStyle(e).borderTopLeftRadius)),
-  ).toBeCloseTo(field / 2, 0);
+    await control.evaluate((e) => {
+      const probe = document.createElement('div');
+      probe.style.blockSize = 'var(--env-radius-full)';
+      e.append(probe);
+      const full = probe.getBoundingClientRect().height;
+      probe.remove();
+      return Math.abs(Number.parseFloat(getComputedStyle(e).borderTopLeftRadius) - full);
+    }),
+  ).toBeLessThan(0.5);
   await expect(control).toHaveCSS('box-shadow', 'none');
   await expect(control).toHaveCSS('border-top-style', 'none');
-  // The label sits inside at the start and the value, in monospace, at the end.
+  // The label sits inside at the start and the value at the end, in a field's type, and the value
+  // with numbers of one width.
   const label = (await slider.locator('.env-slider-label').boundingBox())!;
   const value = slider.locator('.env-slider-value');
   const valueBox = (await value.boundingBox())!;
@@ -194,7 +203,21 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   expect(label.y + label.height).toBeLessThan(box.y + box.height);
   expect(valueBox.x + valueBox.width).toBeLessThan(box.x + box.width);
   expect(valueBox.x).toBeGreaterThan(label.x + label.width);
-  expect(await value.evaluate((e) => getComputedStyle(e).fontFamily)).toMatch(/monospace/);
+  const type = await slider.evaluate((root) => {
+    const field = document.createElement('p');
+    field.className = 'env-text';
+    root.append(field);
+    const style = getComputedStyle(field);
+    const expected = [style.fontFamily, style.fontSize];
+    field.remove();
+    return expected;
+  });
+  for (const part of [value, slider.locator('.env-slider-label')])
+    expect(
+      await part.evaluate((e) => [getComputedStyle(e).fontFamily, getComputedStyle(e).fontSize]),
+    ).toEqual(type);
+  await expect(value).toHaveCSS('font-variant-numeric', 'tabular-nums');
+  await expect(value).toHaveClass(/(^| )env-text( |$)/);
   // The fill runs from the slider's own start to the value, 40% of the way along the track.
   const fill = slider.locator('.env-slider-indicator');
   const fillStart = await fill.evaluate(
@@ -213,6 +236,12 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   expect(await ticks()).toBe('0');
   await control.hover();
   await expect(thumb).toHaveCSS('opacity', '1');
+  // The text under the handle recedes behind it; the rest keeps its full color.
+  const heading = slider.locator('.env-slider-heading');
+  await expect(heading).toHaveCSS('mask-image', /linear-gradient/);
+  await page.mouse.move(0, 0);
+  await expect(heading).toHaveCSS('mask-image', 'none');
+  await control.hover();
   await expect.poll(ticks).not.toBe('0');
   // Ten parts of 0 to 100 by large steps of 10; a range of few steps is cut at every step.
   await expect(slider).toHaveCSS('--env-slider-ticks', '10');

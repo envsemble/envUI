@@ -1,6 +1,6 @@
 /* A slider as a field: as tall as the fields and with their corners, so it sits in a form among
    them. The whole control is the track, a quiet tint, with the label inside at its start, the value
-   in monospace at its end and a stronger fill from the start that shows the value. A thin handle at
+   at its end, in a field's type, and a stronger fill from the start that shows the value. A thin handle at
    the value and faint ticks at the steps appear under the pointer and while it has focus; the value
    text says the exact amount. */
 /* Color properties: a slider's colors, which an application sets on one slider through style or its
@@ -64,7 +64,7 @@
   inline-size: var(--env-slider-inset);
   background: inherit;
 }
-/* The handle: a thin line at the value. */
+/* The handle: a thin line at the value, above the label and the value, which recede under it. */
 .env-slider-thumb {
   z-index: var(--env-z-raised);
   box-sizing: border-box;
@@ -95,32 +95,51 @@
   pointer-events: none;
   transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-/* The label and the value, over the track and the fill, in the field's padding. */
+/* The label and the value, over the track and the fill, in the field's padding, below the handle.
+   Where the handle is, along the row: past the start's rounded end, the value's share of the track. */
 .env-slider-heading {
+  --env-slider-handle: calc(
+    var(--env-slider-inset) + var(--env-slider-position, 0) * (100% - 2 * var(--env-slider-inset))
+  );
+  --env-slider-heading-direction: to right;
   position: relative;
   grid-area: slider;
   /* Across the whole field, its rounded ends included. */
   margin-inline: calc(-1 * var(--env-slider-inset));
-  /* Above the handle, as it comes after the track. */
-  z-index: var(--env-z-raised);
-  flex-wrap: nowrap;
+  z-index: var(--env-z-base);
   padding-inline: var(--env-space-4);
-  color: var(--env-slider-ink, var(--env-color-fg-default));
-  font: var(--env-type-body);
-  font-size: var(--env-control-font-size);
   pointer-events: none;
 }
-.env-slider-label {
+.env-slider-heading:dir(rtl) {
+  --env-slider-heading-direction: to left;
+}
+/* The label, in the text color, as muted text would lose its contrast on the fill; cut short where
+   the slider is narrow. */
+.env-slider-heading > .env-slider-label {
   min-inline-size: 0;
   overflow: hidden;
+  color: var(--env-slider-content, var(--env-color-fg-default));
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.env-slider-value {
+/* The value, as entered text, with numbers of one width so it doesn't shift as it changes. */
+.env-slider-heading > .env-slider-value {
   flex: 0 0 auto;
-  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
-  font-variant-numeric: tabular-nums;
   font-weight: var(--env-font-weight-medium);
+  color: var(--env-slider-content, var(--env-color-fg-default));
+  font-variant-numeric: tabular-nums;
+}
+/* Where the handle passes over the label or the value, that text recedes behind it; elsewhere it
+   keeps its full color. */
+.env-slider-control:is(:hover, :focus-within, [data-dragging]) .env-slider-heading {
+  mask: linear-gradient(
+    var(--env-slider-heading-direction),
+    CanvasText calc(var(--env-slider-handle) - var(--env-space-4)),
+    color-mix(in srgb, CanvasText 30%, transparent)
+      calc(var(--env-slider-handle) - var(--env-space-2))
+      calc(var(--env-slider-handle) + var(--env-space-2)),
+    CanvasText calc(var(--env-slider-handle) + var(--env-space-4))
+  );
 }
 /* Under the pointer, while dragged and while it has focus, the handle and the ticks show. */
 .env-slider-control:is(:hover, :focus-within, [data-dragging]) .env-slider-thumb {

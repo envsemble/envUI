@@ -103,7 +103,7 @@ Name the value in a short noun, and format it with its unit in `formatValue`; th
 3. **Label** (`env-slider-label`, `label`)
 4. **Fill** (`env-slider-indicator`): from the start to the value
 5. **Handle** (`env-slider-thumb`): a thin line at the value, under the pointer and on focus
-6. **Value** (`env-slider-value`, `formatValue`), in monospace
+6. **Value** (`env-slider-value`, `formatValue`), with numbers of one width
 7. **Description** (`env-field-description`, `description`)
 
 Not shown: the span the value moves along, `env-slider-track`, inside the field's rounded ends, which draws the faint ticks at the steps, or at the large steps where the steps are many, and the row of the label and the value, `env-slider-heading`.
@@ -145,7 +145,7 @@ A slider fills its container. Where it is narrow, a long label is cut short with
 
 ## Changelog
 
-- **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value in monospace at the end and a fill from the start, with a thin handle and faint ticks under the pointer and on focus. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
+- **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
 - **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, and `hint` is `description`, which the `v1-props` codemod writes. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes.
 - **1.0.0**: Sliders in the dark theme reach 3:1 contrast on every surface.
 - **0.5.0**: Slider, with `formatValue`, `min`, `max`, `step`, `largeStep`, `hint`, `disabled`, `name`, `form` and `onValueCommit`; the thumb grows on touch screens.

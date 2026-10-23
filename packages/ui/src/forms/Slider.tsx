@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../foundations/Layout.js';
+import { Text } from '../foundations/Text.js';
 import { setRef } from '../internal/setRef.js';
 import { useLocale } from '../internal/EnvUIContext.js';
 import { useDirectionScope } from '../internal/useDirection.js';
@@ -150,7 +151,15 @@ export function Slider({
           onFocus?.(event);
         }}
         className={classNames('env-slider', className)}
-        style={{ '--env-slider-ticks': ticks, ...style } as CSSProperties}
+        style={
+          {
+            '--env-slider-ticks': ticks,
+            // Where the value sits along the track, 0 to 1, which mutes the text under the handle.
+            '--env-slider-position':
+              max > min ? Math.min(1, Math.max(0, (current - min) / (max - min))) : 0,
+            ...style,
+          } as CSSProperties
+        }
         data-ticks={ticks > 1 ? '' : undefined}
         value={current}
         onValueChange={(next) => {
@@ -184,11 +193,14 @@ export function Slider({
                 }
               />
             </BaseSlider.Track>
-            {/* The label and the value sit over the track, inside the slider. */}
+            {/* The label and the value sit over the track, inside the slider, in the type of a
+                field's text, at full contrast, as the fill beneath them lightens. */}
             <Row align="center" justify="between" gap={3} className="env-slider-heading">
-              <BaseSlider.Label className="env-slider-label">{label}</BaseSlider.Label>
+              <BaseSlider.Label className="env-slider-label" render={<Text render={<div />} />}>
+                {label}
+              </BaseSlider.Label>
               {/* The output names the range input it shows, and stays quiet while the value moves. */}
-              <BaseSlider.Value className="env-slider-value">
+              <BaseSlider.Value className="env-slider-value" render={<Text render={<output />} />}>
                 {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
               </BaseSlider.Value>
             </Row>
