@@ -13,7 +13,7 @@ const { aliases } = readJson('scoring/aliases.json');
 
 /** The value and type exports of envUI's entry points the scorer reads, from the source. */
 function sourceExports() {
-  const entries = ['index.ts', 'content.ts', 'rich-text.ts', 'diff.ts'].map((file) =>
+  const entries = ['index.ts', 'content.ts', 'rich-text.ts', 'diff.ts', 'color.ts'].map((file) =>
     join(sourceDir, file),
   );
   const program = ts.createProgram(entries, {

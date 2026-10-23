@@ -138,10 +138,13 @@ test('public components hydrate server output without recoverable errors', async
   await page.keyboard.press('ArrowRight');
   await expect(activity.getByRole('gridcell', { name: nextName, exact: true })).toBeFocused();
   await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(nextName);
-  const color = page.getByRole('textbox', { name: 'Hydrated color HEX' });
-  await expect(color).toHaveValue('#1a73e8');
+  const color = page
+    .getByRole('group', { name: 'Hydrated color', exact: true })
+    .getByRole('textbox', { name: 'Hex' });
+  await expect(color).toHaveValue('#1A73E8');
   await color.fill('ABCDEF');
-  await expect(color).toHaveValue('#abcdef');
+  await color.press('Enter');
+  await expect(color).toHaveValue('#ABCDEF');
   await expect(page.getByRole('checkbox', { name: 'Hydrated choice' })).toHaveJSProperty(
     'indeterminate',
     true,

@@ -98,7 +98,7 @@ before(
     ]) {
       dependencies[name] = manifest.devDependencies[name];
     }
-    // This consumer uses the content, rich-text and diff entries, so it installs the libraries
+    // This consumer uses the content, rich-text, diff and color entries, so it installs the libraries
     // the setup guide names for them, at the versions envUI is tested with.
     const libraryManifest = JSON.parse(
       await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
@@ -137,6 +137,7 @@ before(
     import { createElement as h } from 'react';
     import { renderToString } from 'react-dom/server';
     import * as ui from '@envsemble/envui';
+    import * as color from '@envsemble/envui/color';
     import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
@@ -154,7 +155,9 @@ before(
       h(ui.Pager.Previous, { href: '/previous-guide' }, 'Earlier guide'),
       h(ui.Pager.Next, { href: '/next-guide', icon: custom }, 'Following guide'),
       h(ui.TextField, { name: 'title', label: 'Title', description: 'One line', defaultValue: 'Example' }),
-      h(ui.ColorPicker, { name: 'accent', label: 'Accent color', defaultValue: 'ABCDEF' }),
+      h(color.ColorPicker, { name: 'accent', label: 'Accent color', defaultValue: '#ABCDEF', alpha: true }),
+      h(color.ColorPickerButton, { name: 'border', label: 'Border color', defaultValue: '#123456' }),
+      h(color.ColorSwatch, { color: '#6750a4', format: 'rgb', label: 'Violet' }),
       h(ui.Textarea, { name: 'description', label: 'Description', defaultValue: 'Content' }),
       h(ui.Checkbox, { name: 'enabled', label: 'Enabled', defaultChecked: true }),
       h(ui.Switch, { name: 'alerts', label: 'Alerts' }),
@@ -170,7 +173,7 @@ before(
       h(ui.Card, { skeleton: true, title: ui.placeholders(1)[0].title }, h(ui.Text))
     ));
     console.log(JSON.stringify({
-      exports: Object.keys(ui), themeBootstrapExports: Object.keys(themeBootstrap), html,
+      exports: Object.keys(ui), colorExports: Object.keys(color), themeBootstrapExports: Object.keys(themeBootstrap), html,
       defaultIcon: renderToString(h(Home)), filledIcon: renderToString(h(Home, { filled: true, label: 'Home' })),
       barrelIcon: renderToString(h(BarrelHome)), customIcon: renderToString(custom),
       module: import.meta.resolve('@envsemble/envui'), iconsModule: import.meta.resolve('@envsemble/envui/icons'),
@@ -267,7 +270,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'useSkeleton',
     'Spinner',
     'TextField',
-    'ColorPicker',
     'Textarea',
     'Checkbox',
     'Switch',
@@ -300,9 +302,13 @@ test('a packed consumer resolves compiled public exports and its own React insta
     await readFile(join(installedDirectory, 'package.json'), 'utf8'),
   );
   assert.match(installedManifest.peerDependencies.react, /19/);
-  // ColorPicker's area and hue are envUI's own, on Base UI's Slider.
+  // ColorPicker, ColorPickerButton and ColorSwatch come from the color entry alone, on React Aria.
+  assert.deepEqual(ssr.colorExports.sort(), ['ColorPicker', 'ColorPickerButton', 'ColorSwatch']);
+  for (const name of ['ColorPicker', 'ColorSwatch'])
+    assert.ok(!ssr.exports.includes(name), `The main entry no longer exports ${name}`);
   assert.equal(installedManifest.dependencies['react-colorful'], undefined);
-  // Basic UI installs without the content, rich-text and diff stacks; apps using those entries add
+  assert.equal(installedManifest.exports['./color'].import, './dist/color.js');
+  // Basic UI installs without the content, rich-text, diff and color stacks; apps using those entries add
   // them. They aren't peers either, as npm installs every peer the registry doesn't mark optional.
   assert.deepEqual(Object.keys(installedManifest.dependencies), ['@base-ui/react']);
   assert.deepEqual(Object.keys(installedManifest.peerDependencies).sort(), ['react', 'react-dom']);
@@ -376,13 +382,17 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, Bar, Rail, Drawer, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Row, Column,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, Bar, Rail, Drawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
       EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
     import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
+    import { ColorPicker, ColorPickerButton, ColorSwatch, type Color, type ColorValue } from '@envsemble/envui/color';
+    const colorValue: ColorValue = 'hsl(256, 34%, 48%)';
+    const advanced = (color: Color): ColorValue => color.withChannelValue('alpha', 0.5);
+    void advanced;
     const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
     const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
@@ -409,7 +419,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
       <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
-      <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" ref={createRef<HTMLInputElement>()} onValueChange={value => { const typed: string = value; void typed; }} />
+      <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" formats={['hex', 'rgb']} alpha ref={createRef<HTMLDivElement>()} onValueChange={(value, color) => { const typed: string = value; const hsl: string = color.toString('hsl'); void typed; void hsl; }} />
+      <ColorPickerButton label="Border color" value={colorValue} valueFormat="hsl" swatches={['#abcdef', { color: colorValue, label: 'Current' }]} />
+      <ColorSwatch color="#abcdef" format="hex" size="sm" label="Accent" />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
       <Checkbox label="Enabled" checked="mixed" onCheckedChange={value => { const typed: boolean = value; void typed; }} />
       <Switch label="Alerts" defaultChecked /><RadioGroup name="mode"><Radio value="one" label="One" /></RadioGroup>
@@ -480,8 +492,16 @@ test('installed declarations typecheck a React 19 consumer without source aliase
 });
 
 test('public components import and render on a server with no DOM globals', function () {
-  assert.match(ssr.html, /aria-label="Accent color HEX"/);
+  assert.match(ssr.html, /role="group" aria-labelledby="[^"]+-label"[^>]*class="env-color-picker"/);
+  assert.match(ssr.html, /aria-label="Hex"/);
   assert.match(ssr.html, /name="accent"[^>]*value="#abcdef"/);
+  assert.match(ssr.html, /aria-label="Border color, #123456"/);
+  assert.ok(
+    ssr.html.includes(
+      'class="env-color-swatch-label">Violet</span><span class="env-color-swatch-value">rgb(103, 80, 164)',
+    ),
+    'A color swatch writes its label and its value in the format asked for.',
+  );
   assert.match(ssr.html, /data-env-theme="dark"/);
   assert.match(ssr.html, /data-originating-theme="dark"/);
   assert.match(
@@ -1046,7 +1066,9 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
   assert.ok(result.bytes < 12000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
   assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
-    result.emittedInputs.every((path) => !path.includes('/forms/internal/ColorPlane')),
+    result.emittedInputs.every(
+      (path) => !path.includes('/color/') && !path.includes('/@react-aria/'),
+    ),
     'Unused color picking must stay out of basic control bundles.',
   );
   assert.ok(

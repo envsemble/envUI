@@ -39,6 +39,9 @@ const ownThresholds = {
   // A stacking Table's region makes 37.5em its stackBelow through its font size, as em in a
   // container query is the container's own.
   'Table.css': ['37.5em'],
+  // A color picker's fields wrap below the format where they no longer fit beside it: hex alone,
+  // hex with alpha or a format of channels, and channels with alpha.
+  'ColorPicker.css': ['11rem', '16rem', '19.5rem'],
 };
 
 test('windowClasses holds the widths of the window-class tokens, from compact up', () => {

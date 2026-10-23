@@ -166,7 +166,7 @@ The mapping table:
 | `input[type=time]`       | `<input type="time">`                                                                              | `TimePicker`                                                        |
 | `input[type=month]`      | `<input type="month">`                                                                             | `MonthPicker`                                                       |
 | `input[type=file]`       | `<input type="file">`                                                                              | `DropZone`                                                          |
-| `input[type=color]`      | `<input type="color">`                                                                             | `ColorPicker`                                                       |
+| `input[type=color]`      | `<input type="color">`                                                                             | `ColorPicker`, from `@envsemble/envui/color`                        |
 | `input[type=search]`     | `<input type="search">`                                                                            | `SearchField`                                                       |
 | `input[type=submit]`     | `<input>` of type `submit`, `reset`, `button` or `image`                                           | `Button`                                                            |
 | `input[type=text]`       | `<input>` without a type, or of type `text`, `email`, `password`, `tel`, `url`, `number` or `week` | `TextField`, which takes the same type                              |

@@ -43,6 +43,7 @@ const reports = {
   ],
   'color-picker.tsx': [
     `line 8: ColorPicker's variant has a value the codemod can't move: ${report('ColorPicker', 'variant')}`,
+    `line 9: ${report('ColorPicker', 'ref')}`,
   ],
   'rich-text.tsx': [
     `line 9: RichTextEditor's variant has a value the codemod can't move: ${report('RichTextEditor', 'variant', undefined, richText)}`,

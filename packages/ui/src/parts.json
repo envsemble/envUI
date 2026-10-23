@@ -187,19 +187,38 @@
     },
     "ColorPicker": {
       "env-color-picker": "The color picker.",
-      "env-color-picker-area": "The area that holds the plane and the sliders.",
+      "env-color-picker-label": "The label above the picker.",
+      "env-color-picker-area": "The area of saturation and brightness over the hue.",
+      "env-color-picker-thumb": "The thumb of the area or of a slider.",
+      "env-color-picker-controls": "The row of the eyedropper and the sliders.",
+      "env-color-picker-eye-dropper": "The eyedropper, where the browser has one.",
+      "env-color-picker-sliders": "The hue and alpha sliders.",
+      "env-color-picker-slider": "A slider of one channel.",
       "env-color-picker-hue": "The hue slider.",
-      "env-color-picker-hue-control": "The hue slider's control.",
-      "env-color-picker-hue-thumb": "The hue slider's thumb.",
-      "env-color-picker-hue-track": "The hue slider's track.",
-      "env-color-picker-plane": "The plane of saturation and lightness.",
-      "env-color-picker-saturation": "The saturation slider.",
-      "env-color-picker-saturation-slider": "The saturation slider's control.",
-      "env-color-picker-saturation-thumb": "The saturation slider's thumb.",
-      "env-color-picker-status": "The announcement of the chosen color."
+      "env-color-picker-alpha": "The alpha slider.",
+      "env-color-picker-track": "A slider's track.",
+      "env-color-picker-values": "The row of the format, the fields and copy.",
+      "env-color-picker-format": "The format select.",
+      "env-color-picker-fields": "The fields of the chosen format.",
+      "env-color-picker-field": "A channel's field with its letter, or the hex field.",
+      "env-color-picker-field-label": "The letter of a channel's field, such as R.",
+      "env-color-picker-input": "The input of a field.",
+      "env-color-picker-copy": "The copy button.",
+      "env-color-picker-swatches": "The preset swatches.",
+      "env-color-picker-swatch": "A preset swatch.",
+      "env-color-picker-description": "The description under the picker.",
+      "env-color-picker-error": "The error under the picker.",
+      "env-color-picker-popover": "The popover of a ColorPickerButton, around its picker."
+    },
+    "ColorPickerButton": {
+      "env-color-picker-button": "The button that shows the color and opens the picker.",
+      "env-color-picker-button-value": "The color's value on the button."
     },
     "ColorSwatch": {
-      "env-color-swatch": "A swatch of one color."
+      "env-color-swatch": "A swatch of one color, with its label and value.",
+      "env-color-swatch-sample": "The sample of the color.",
+      "env-color-swatch-label": "The color's name.",
+      "env-color-swatch-value": "The color's value in the format asked for."
     },
     "Combobox": {
       "env-combobox": "The combobox field.",

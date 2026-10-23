@@ -1,7 +1,13 @@
-import { IconButton, ColorSwatch } from '@envsemble/envui';
+import { IconButton, Popover } from '@envsemble/envui';
+import { ColorPicker, ColorSwatch } from '@envsemble/envui/color';
 
 export default function SwatchAlone() {
   return (
-    <IconButton variant="secondary" icon={<ColorSwatch color="#3b6fd4" />} aria-label="Color" />
+    <Popover
+      aria-label="Label color"
+      trigger={<IconButton icon={<ColorSwatch color="#2f6f62" />} aria-label="Label color" />}
+    >
+      <ColorPicker label="Label color" showLabel={false} defaultValue="#2f6f62" />
+    </Popover>
   );
 }

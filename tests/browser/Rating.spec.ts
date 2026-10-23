@@ -65,26 +65,3 @@ test("ratings, changes and rolling numbers follow the provider's locale and mess
   );
   await expect(scope.getByTestId('number-de-light')).toHaveText('12.800');
 });
-
-test('a color swatch takes the size of a button icon and stays visible with a ring', async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}/?fixture=ratings`);
-  for (const theme of ['light', 'dark']) {
-    const button = page.getByRole('button', { name: `#FFFFFF ${theme}` });
-    const swatch = button.locator('.env-color-swatch');
-    await expect(swatch).toHaveAttribute('aria-hidden', 'true');
-    const [swatchBox, iconBox] = await Promise.all([
-      swatch.boundingBox(),
-      button.locator('.env-icon').boundingBox(),
-    ]);
-    expect(Math.abs(swatchBox!.width - iconBox!.width)).toBeLessThan(1);
-    expect(Math.abs(swatchBox!.height - iconBox!.height)).toBeLessThan(1);
-    const [background, ring] = await swatch.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return [style.backgroundColor, style.boxShadow];
-    });
-    expect(background).toBe('rgb(255, 255, 255)');
-    expect(ring).toContain('inset');
-  }
-});

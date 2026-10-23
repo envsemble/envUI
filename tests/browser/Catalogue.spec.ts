@@ -86,13 +86,15 @@ test('palette editing uses public controls and remains temporary and independent
   await swatch.click();
   const dialog = page.getByRole('dialog', { name: 'Page background', exact: true });
   await expect(dialog.locator('.env-color-picker')).toBeVisible();
-  await dialog.getByRole('textbox', { name: 'Page background HEX' }).fill('123456');
+  await dialog.getByRole('textbox', { name: 'Hex' }).fill('123456');
+  await dialog.getByRole('textbox', { name: 'Hex' }).press('Enter');
   await expect.poll(canvasValue).toBe('#123456');
   await dialog.getByRole('button', { name: 'Done', exact: true }).click();
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   expect(await canvasValue()).not.toBe('#123456');
   await swatch.click();
-  await dialog.getByRole('textbox', { name: 'Page background HEX' }).fill('#abcdef');
+  await dialog.getByRole('textbox', { name: 'Hex' }).fill('#abcdef');
+  await dialog.getByRole('textbox', { name: 'Hex' }).press('Enter');
   await expect.poll(canvasValue).toBe('#abcdef');
   await dialog.getByRole('button', { name: 'Done', exact: true }).click();
   await page.getByRole('button', { name: 'Switch to light theme' }).click();

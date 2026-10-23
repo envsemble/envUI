@@ -47,9 +47,9 @@ Paths default to the current folder. The CLI runs jscodeshift's runner with the 
 1. Commit first: the codemods write files in place.
 2. Run `npx envui-codemods v1-names src` first: it reads 0.x names, among them `Row`, 0.x's list row, before `v1-stack` writes 1.0's layout `Row`.
 3. Run `npx envui-codemods v1-structure src`, `npx envui-codemods v1-render src`, then `npx envui-codemods v1-stack src`: `v1-structure` writes Stacks for ActionGroup, `v1-render` turns a Stack's `as` into `render` while it is still a Stack, and `v1-stack` then makes each one a Row or a Column.
-4. Run `npx envui-codemods v1-props src`.
+4. Run `npx envui-codemods v1-props src`, then `npx envui-codemods v1-entries src`: `v1-props` finds ColorPicker by its import from `@envsemble/envui`, which `v1-entries` then moves to `@envsemble/envui/color`.
 5. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
-6. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
+6. Install the libraries of the entry points the code imports, such as React Aria's for `@envsemble/envui/color`, as the setup guide lists them, then install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
 
 The codemods read 0.x code and code written for 1.0.0-prerelease.0: they rewrite what has a 1.0 form, such as ListDetail and Stack, and report the rest, such as AppShell, Sidebar, NavList, SplitPane, AccountMenu, WindowFrame, Skeleton and the viewport breakpoints. The prerelease's Drawer, the panel that slides over the page, is Sheet in 1.0, but its name is the navigation drawer's now, so no codemod renames it: `v1-structure` reports a Drawer without `destinations`, and `v1-classes` its `env-drawer-popup`, `-viewport` and `-backdrop`; rename them by hand. Some hand-written 1.0 code reads as 0.x to them, such as a `useTheme()` call whose result nothing reads as `{ theme, contrast }`, so a run over code written for 1.0 can change it.
 
@@ -139,6 +139,15 @@ Rewrites Stack, which 1.0 replaces with the layout primitives Row and Column, al
 - Through a namespace import, `<ui.Stack direction="row">` becomes `<ui.Row>`.
 
 It reports, and leaves as it is, a `direction` that is an expression, such as `direction={vertical ? 'column' : 'row'}`: write a Row or a Column for each value. It reports an element that spreads props, which may set `direction`, a use of Stack other than as an element, such as passed as a value, which keeps the import, and `StackProps`, which is RowProps or ColumnProps. Only the changed text is replaced, so the file keeps its layout.
+
+## v1-entries
+
+Moves the imports of exports that 1.0 moved to another entry point, as the map's `moved` section lists them: ColorPicker, ColorSwatch, ColorPickerProps and ColorSwatchProps, from `@envsemble/envui` to `@envsemble/envui/color`, whose libraries, React Aria's color hooks, the application installs.
+
+- `import { Button, ColorPicker } from '@envsemble/envui'` keeps Button there and imports ColorPicker from `@envsemble/envui/color`, in that entry point's import where the file has one, or in a new import after the old one. A local name, `ColorSwatch as Swatch`, and `type` on an import or a specifier stay; an import left with no names goes.
+- A re-export, `export { ColorPicker } from '@envsemble/envui'`, moves the same way.
+
+It reports each use through a namespace import, such as `<ui.ColorPicker>` or `ui.ColorSwatchProps` after `import * as ui from '@envsemble/envui'`: import the name from `@envsemble/envui/color` instead. Run it after `v1-props`, which moves ColorPicker's props by its import from `@envsemble/envui`.
 
 ## v1-classes
 

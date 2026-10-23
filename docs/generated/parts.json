@@ -937,79 +937,289 @@
     },
     "ColorPicker": {
       "root": "env-color-picker",
-      "source": "packages/ui/src/forms/ColorPicker.tsx",
+      "source": "packages/ui/src/color/ColorPicker.tsx",
       "parts": [
         {
           "class": "env-color-picker",
           "description": "The color picker."
         },
         {
+          "class": "env-color-picker-alpha",
+          "description": "The alpha slider."
+        },
+        {
           "class": "env-color-picker-area",
-          "description": "The area that holds the plane and the sliders."
+          "description": "The area of saturation and brightness over the hue."
+        },
+        {
+          "class": "env-color-picker-controls",
+          "description": "The row of the eyedropper and the sliders."
+        },
+        {
+          "class": "env-color-picker-copy",
+          "description": "The copy button."
+        },
+        {
+          "class": "env-color-picker-description",
+          "description": "The description under the picker."
+        },
+        {
+          "class": "env-color-picker-error",
+          "description": "The error under the picker."
+        },
+        {
+          "class": "env-color-picker-eye-dropper",
+          "description": "The eyedropper, where the browser has one."
+        },
+        {
+          "class": "env-color-picker-field",
+          "description": "A channel's field with its letter, or the hex field."
+        },
+        {
+          "class": "env-color-picker-field-label",
+          "description": "The letter of a channel's field, such as R."
+        },
+        {
+          "class": "env-color-picker-fields",
+          "description": "The fields of the chosen format."
+        },
+        {
+          "class": "env-color-picker-format",
+          "description": "The format select."
         },
         {
           "class": "env-color-picker-hue",
           "description": "The hue slider."
         },
         {
-          "class": "env-color-picker-hue-control",
-          "description": "The hue slider's control."
+          "class": "env-color-picker-input",
+          "description": "The input of a field."
         },
         {
-          "class": "env-color-picker-hue-thumb",
-          "description": "The hue slider's thumb."
+          "class": "env-color-picker-label",
+          "description": "The label above the picker."
         },
         {
-          "class": "env-color-picker-hue-track",
-          "description": "The hue slider's track."
+          "class": "env-color-picker-popover",
+          "description": "The popover of a ColorPickerButton, around its picker."
         },
         {
-          "class": "env-color-picker-plane",
-          "description": "The plane of saturation and lightness."
+          "class": "env-color-picker-slider",
+          "description": "A slider of one channel."
         },
         {
-          "class": "env-color-picker-saturation",
-          "description": "The saturation slider."
+          "class": "env-color-picker-sliders",
+          "description": "The hue and alpha sliders."
         },
         {
-          "class": "env-color-picker-saturation-slider",
-          "description": "The saturation slider's control."
+          "class": "env-color-picker-swatch",
+          "description": "A preset swatch."
         },
         {
-          "class": "env-color-picker-saturation-thumb",
-          "description": "The saturation slider's thumb."
+          "class": "env-color-picker-swatches",
+          "description": "The preset swatches."
         },
         {
-          "class": "env-color-picker-status",
-          "description": "The announcement of the chosen color."
+          "class": "env-color-picker-thumb",
+          "description": "The thumb of the area or of a slider."
+        },
+        {
+          "class": "env-color-picker-track",
+          "description": "A slider's track."
+        },
+        {
+          "class": "env-color-picker-values",
+          "description": "The row of the format, the fields and copy."
         }
       ],
       "states": [
+        {
+          "attribute": "data-alpha",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-color-picker-values"
+          ]
+        },
+        {
+          "attribute": "data-channel",
+          "values": [
+            "alpha",
+            "blue",
+            "brightness",
+            "green",
+            "hex",
+            "hue",
+            "lightness",
+            "red",
+            "saturation"
+          ],
+          "parts": [
+            "env-color-picker-alpha",
+            "env-color-picker-field",
+            "env-color-picker-hue",
+            "env-color-picker-slider"
+          ]
+        },
         {
           "attribute": "data-disabled",
           "values": [
             "true"
           ],
           "parts": [
+            "env-color-picker",
+            "env-color-picker-alpha",
+            "env-color-picker-area",
+            "env-color-picker-hue",
+            "env-color-picker-slider"
+          ]
+        },
+        {
+          "attribute": "data-dragging",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-color-picker-thumb"
+          ]
+        },
+        {
+          "attribute": "data-format",
+          "values": [
+            "hex",
+            "hsl",
+            "rgb"
+          ],
+          "parts": [
+            "env-color-picker-values"
+          ]
+        },
+        {
+          "attribute": "data-invalid",
+          "values": [
+            "true"
+          ],
+          "parts": [
             "env-color-picker"
+          ]
+        },
+        {
+          "attribute": "data-readonly",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-color-picker"
+          ]
+        },
+        {
+          "attribute": "data-selected",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-color-picker-swatch"
+          ]
+        },
+        {
+          "attribute": "data-translucent",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-color-picker-swatch"
           ]
         }
       ],
       "uses": [
-        "Text",
-        "TextField"
+        "Button",
+        "CopyButton",
+        "Icon",
+        "IconButton",
+        "Menu",
+        "Tooltip"
+      ]
+    },
+    "ColorPickerButton": {
+      "root": "env-color-picker-button",
+      "source": "packages/ui/src/color/ColorPickerButton.tsx",
+      "parts": [
+        {
+          "class": "env-color-picker-button",
+          "description": "The button that shows the color and opens the picker."
+        },
+        {
+          "class": "env-color-picker-button-value",
+          "description": "The color's value on the button."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-size",
+          "values": [
+            "lg",
+            "md",
+            "sm"
+          ],
+          "parts": [
+            "env-color-picker-button"
+          ]
+        }
+      ],
+      "uses": [
+        "ColorPicker",
+        "ColorSwatch",
+        "Popover",
+        "Popup",
+        "Skeleton",
+        "Theme"
       ]
     },
     "ColorSwatch": {
       "root": "env-color-swatch",
-      "source": "packages/ui/src/content/ColorSwatch.tsx",
+      "source": "packages/ui/src/color/ColorSwatch.tsx",
       "parts": [
         {
           "class": "env-color-swatch",
-          "description": "A swatch of one color."
+          "description": "A swatch of one color, with its label and value."
+        },
+        {
+          "class": "env-color-swatch-label",
+          "description": "The color's name."
+        },
+        {
+          "class": "env-color-swatch-sample",
+          "description": "The sample of the color."
+        },
+        {
+          "class": "env-color-swatch-value",
+          "description": "The color's value in the format asked for."
         }
       ],
-      "states": []
+      "states": [
+        {
+          "attribute": "data-size",
+          "values": [
+            "md",
+            "sm"
+          ],
+          "parts": [
+            "env-color-swatch",
+            "env-color-swatch-sample"
+          ]
+        },
+        {
+          "attribute": "data-translucent",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-color-swatch",
+            "env-color-swatch-sample"
+          ]
+        }
+      ]
     },
     "Combobox": {
       "root": "env-combobox",
@@ -5346,6 +5556,7 @@
       "usedBy": [
         "Breadcrumbs",
         "CalendarHeatmap",
+        "ColorPickerButton",
         "Combobox",
         "CopyButton",
         "DatePicker",
@@ -5426,6 +5637,7 @@
         "Bar",
         "Breadcrumbs",
         "CalendarHeatmap",
+        "ColorPickerButton",
         "Combobox",
         "CommandPalette",
         "ConfirmDialog",

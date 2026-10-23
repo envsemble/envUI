@@ -23,10 +23,14 @@ const tail =
 const icon = ', or IconButton for an icon-only button';
 
 /** The error for an element, by the data the message is built from. */
-function uses(use, found, { alternatives = '', imports = use.split('.')[0], note = '' } = {}) {
+function uses(
+  use,
+  found,
+  { alternatives = '', imports = use.split('.')[0], note = '', source = '@envsemble/envui' } = {},
+) {
   return {
     messageId: 'useComponent',
-    data: { use, found, alternatives, imports, note: note && ` ${note}` },
+    data: { use, found, alternatives, imports, source, note: note && ` ${note}` },
   };
 }
 
@@ -155,7 +159,12 @@ ruleTester.run('no-html-elements', rule, {
     { code: '<input type="time" />', errors: [uses('TimePicker', 'a raw <input type="time">')] },
     { code: '<input type="month" />', errors: [uses('MonthPicker', 'a raw <input type="month">')] },
     { code: '<input type="file" />', errors: [uses('DropZone', 'a raw <input type="file">')] },
-    { code: '<input type="color" />', errors: [uses('ColorPicker', 'a raw <input type="color">')] },
+    {
+      code: '<input type="color" />',
+      errors: [
+        uses('ColorPicker', 'a raw <input type="color">', { source: '@envsemble/envui/color' }),
+      ],
+    },
     {
       code: '<input type="submit" value="Send" />',
       errors: [
