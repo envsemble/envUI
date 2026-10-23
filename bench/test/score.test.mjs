@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, before, describe, it } from 'node:test';
@@ -281,6 +281,79 @@ export const Feature = () => (
     assert.deepEqual(
       score.coverage.capabilities.map((capability) => capability.covered),
       [true, true, false],
+    );
+  });
+});
+
+describe('the composite components of the tasks', () => {
+  const { tasks } = JSON.parse(readFileSync(new URL('../tasks.json', import.meta.url), 'utf8'));
+  const taskById = (id) => tasks.find((each) => each.id === id);
+  let app;
+  before(async () => {
+    app = await makeApp();
+    app.write({
+      'node_modules/@envsemble/envui/index.d.ts': `export declare function Button(props: { children?: unknown; onClick?: () => void }): unknown;
+export declare function IconButton(props: { 'aria-label': string; onClick?: () => void }): unknown;
+export declare function ConfirmDialog(props: { open?: boolean; title?: string; onConfirm?: () => void }): unknown;
+export declare function CommandPalette(props: { open?: boolean }): unknown;
+export declare function SearchTrigger(props: { shortcut?: string; onClick?: () => void }): unknown;
+`,
+    });
+  });
+  after(() => app.cleanup());
+
+  // Both agents built these with ConfirmDialog and SearchTrigger in 2026-10-22-prerelease1, and
+  // the scorer missed what those components cover.
+  it('credit ConfirmDialog with the confirmation step', () => {
+    app.write({
+      'src/Feature.tsx': `import { ConfirmDialog, IconButton } from '@envsemble/envui';
+
+export const Feature = () => (
+  <>
+    <IconButton aria-label="Delete Northwind" />
+    <ConfirmDialog open title="Delete Northwind?" onConfirm={() => {}} />
+  </>
+);
+`,
+    });
+    const score = scoreRun({
+      appDir: app.appDir,
+      baseCommit: app.baseCommit,
+      task: taskById('confirm-delete'),
+    });
+    assert.deepEqual(
+      score.coverage.capabilities.map(({ id, covered }) => [id, covered]),
+      [
+        ['delete-action', true],
+        ['confirmation', true],
+      ],
+    );
+  });
+
+  it('credit SearchTrigger with the header button and its shortcut', () => {
+    app.write({
+      'src/Feature.tsx': `import { CommandPalette, SearchTrigger } from '@envsemble/envui';
+
+export const Feature = () => (
+  <>
+    <SearchTrigger shortcut="Mod+K" onClick={() => {}} />
+    <CommandPalette open />
+  </>
+);
+`,
+    });
+    const score = scoreRun({
+      appDir: app.appDir,
+      baseCommit: app.baseCommit,
+      task: taskById('command-palette'),
+    });
+    assert.deepEqual(
+      score.coverage.capabilities.map(({ id, covered }) => [id, covered]),
+      [
+        ['palette', true],
+        ['trigger', true],
+        ['shortcut-hint', true],
+      ],
     );
   });
 });

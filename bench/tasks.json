@@ -117,7 +117,7 @@
         {
           "id": "confirmation",
           "label": "confirmation step",
-          "envui": ["Dialog", "ConfirmButton"]
+          "envui": ["Dialog", "ConfirmDialog", "ConfirmButton"]
         }
       ]
     },
@@ -188,12 +188,12 @@
         {
           "id": "trigger",
           "label": "header search button",
-          "envui": ["Button", "IconButton"]
+          "envui": ["Button", "IconButton", "SearchTrigger"]
         },
         {
           "id": "shortcut-hint",
           "label": "shortcut key caps",
-          "envui": ["Kbd"]
+          "envui": ["Kbd", "SearchTrigger"]
         }
       ]
     },
