@@ -157,7 +157,7 @@ export function DocumentationSearch({
     <CommandPalette
       open={open}
       onOpenChange={onOpenChange}
-      aria-label="Search the Site and the Docs"
+      aria-label="Search envUI"
       placeholder="Search components, props and tokens"
       inputValue={query}
       onInputValueChange={setQuery}

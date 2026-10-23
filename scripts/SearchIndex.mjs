@@ -335,6 +335,8 @@ export function buildSearchIndex({ documents, props, tokens = readTokens() }) {
  * its name too (color.fg.muted). A query that is one of them ranks the document first.
  */
 function withNames(document) {
+  // A foundation's guide in the Docs shares its page's title; the page on the Site takes the name.
+  if (document.id.startsWith('guide:')) return { ...document, names: [] };
   const parted = !['export', 'prop', 'token'].includes(document.kind);
   const names = [
     // A prop's name alone is no whole name of it: many exports share it, such as variant.

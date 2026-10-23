@@ -71,7 +71,11 @@ body {
   padding-inline: var(--env-space-2);
 }
 /* The menu button and the compact forms of search and the Display menu show where the navigation
-   is in a sheet, below an expanded window; the full forms show from expanded. */
+   is in a sheet, below an expanded window; the full forms show from expanded. The wrappers of the
+   forms take no box of their own. */
+.docs-narrow-only {
+  display: contents;
+}
 .docs-wide-only {
   display: none;
 }

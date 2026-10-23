@@ -204,8 +204,13 @@ function Site() {
           }
           actions={
             <>
-              <SearchTrigger onClick={openSearch} className="docs-wide-only docs-search" />
-              <SearchTrigger iconOnly onClick={openSearch} className="docs-narrow-only" />
+              {/* The full trigger from an expanded window, its icon below; the wrappers take no box. */}
+              <span className="docs-wide-only">
+                <SearchTrigger onClick={openSearch} />
+              </span>
+              <span className="docs-narrow-only">
+                <SearchTrigger iconOnly onClick={openSearch} />
+              </span>
               {area === 'docs' ? (
                 <Button variant="ghost" href={routeHref(homeRoute)} startIcon={<ArrowBack />}>
                   Site
