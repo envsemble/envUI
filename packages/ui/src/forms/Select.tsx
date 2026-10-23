@@ -137,6 +137,7 @@ export function Select({
   const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const portal = usePortalContainer();
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? null);
@@ -173,6 +174,18 @@ export function Select({
       defaultOpen={defaultOpen}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
+      }}
+      onOpenChangeComplete={(open) => {
+        // Base UI moves focus to the highlighted option a frame after the list opens. On a busy
+        // page that queued focus is now and then lost, leaving focus on the trigger with the list
+        // open and an option highlighted; once the list has opened, focus goes where Base UI meant.
+        const trigger = triggerRef.current;
+        if (!open || !trigger || trigger.ownerDocument.activeElement !== trigger) return;
+        const options = listRef.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [];
+        const option =
+          Array.from(options).find((each) => each.hasAttribute('data-highlighted')) ??
+          Array.from(options).find((each) => each.getAttribute('aria-selected') === 'true');
+        option?.focus({ preventScroll: true });
       }}
       modal={containedModal(portal, true)}
       name={name}
@@ -225,7 +238,7 @@ export function Select({
           className="env-select-popup"
           layout={<Grid padding={1} />}
         >
-          <BaseSelect.List render={<Grid />} className="env-select-list">
+          <BaseSelect.List ref={listRef} render={<Grid />} className="env-select-list">
             {items.map((item) => (
               <ListRow
                 key={item.value}

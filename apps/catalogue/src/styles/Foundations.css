@@ -115,7 +115,8 @@
 }
 .docs-icon-catalogue {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 6.5rem), 1fr));
+  /* Wide enough for the names of most icons' longest words, such as Accessibility. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 8rem), 1fr));
   gap: var(--env-space-2);
   list-style: none;
   margin: 0;
@@ -130,6 +131,15 @@
   justify-content: flex-start;
   align-items: center;
   text-align: center;
+}
+/* Labels wrap only between words; a word longer than the tile ends in an ellipsis, and the label's
+   tooltip holds the whole name. */
+.docs-icon-label {
+  display: block;
+  max-inline-size: 100%;
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: ellipsis;
 }
 /* Leave the source grid usable beside its non-modal inspector in a large window. */
 @container env-window (width >= 75rem) {

@@ -6,13 +6,17 @@ function describe(element: Element | null) {
   return element?.getAttribute('aria-label') ?? element?.tagName.toLowerCase() ?? 'nothing';
 }
 
-/** A notes window's menubar with access keys, mounted with ?fixture=menubar. */
+/**
+ * A notes window's menubar with access keys, mounted with ?fixture=menubar; with &open, its Edit
+ * menu starts open through defaultOpen.
+ */
 export function MenubarFixture() {
   const [log, setLog] = useState<string[]>([]);
   const [wrap, setWrap] = useState(true);
   const [viewOpen, setViewOpen] = useState(false);
   const [keys, setKeys] = useState('');
   const editTarget = useRef<Element | null>(null);
+  const [editStartsOpen] = useState(() => new URLSearchParams(location.search).has('open'));
   const record = (entry: string) => setLog((current) => [...current, entry]);
   return (
     <section className="fixture-section" data-testid="menubar-fixture">
@@ -33,6 +37,7 @@ export function MenubarFixture() {
         <Menubar.Menu
           label="Edit"
           accessKey="E"
+          defaultOpen={editStartsOpen}
           onOpenChange={(open, { previousFocus }) => {
             if (open) editTarget.current = previousFocus;
             record(`Edit ${open ? 'opened' : 'closed'} after ${describe(previousFocus)}`);

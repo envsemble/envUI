@@ -1,8 +1,8 @@
 {
   "$comment": "Local component names that duplicate envUI. A component declared by the agent is a duplicate when its name, or its last one to three PascalCase words, match an entry here or an envUI export, and its body does not use any of the listed envUI exports. '@icons' means any import from @envsemble/envui/icons.",
   "aliases": {
-    "Modal": ["Dialog"],
-    "Dialog": ["Dialog", "ConfirmButton"],
+    "Modal": ["Dialog", "ConfirmDialog"],
+    "Dialog": ["Dialog", "ConfirmDialog", "ConfirmButton"],
     "Drawer": ["Sheet", "Drawer", "Dialog"],
     "Sheet": ["Sheet", "Dialog"],
     "Overlay": ["Dialog", "Popover", "CommandPalette"],
@@ -100,6 +100,7 @@
     "QuickSearch": ["CommandPalette"],
     "QuickOpen": ["CommandPalette"],
     "SearchDialog": ["CommandPalette", "Dialog"],
+    "SearchButton": ["SearchTrigger", "Button"],
     "SearchModal": ["CommandPalette", "Dialog"],
     "SearchTrigger": ["Button", "IconButton"],
     "SearchButton": ["Button", "IconButton"],

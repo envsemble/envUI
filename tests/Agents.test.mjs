@@ -784,12 +784,13 @@ test('search and plan rank by names, aliases and situations', () => {
   assert.ok(!frame.candidates.some((item) => /^Pag/.test(item.component)));
   assert.equal(frame.patterns[0]?.name, 'app-frame');
   assert.ok(frame.next.some((step) => /Read the app-frame pattern/.test(step)));
-  // A part a chosen component also matches stays with it.
+  // A part a chosen component also matches stays with it. Collapsing leads to Scaffold too, whose
+  // forms switch the drawer to the rail.
   assert.deepEqual(
     plan(manifest, 'add a collapsible sidebar with navigation links').candidates.map(
       (item) => item.component,
     ),
-    ['Drawer'],
+    ['Drawer', 'Scaffold'],
   );
   const form = plan(manifest, 'a sign-in form with email and password');
   assert.ok(form.candidates.some((item) => item.component === 'TextField'));

@@ -35,7 +35,7 @@ components:
 
 ## Overview
 
-The navigation rail holds an application's main destinations in a narrow column at the start of a medium window. It takes the same destinations as [Bar](bar.md) and [Drawer](drawer.md), and [Scaffold](scaffold.md) shows the form that fits the width.
+The navigation rail holds an application's main destinations in a narrow column at the start of a medium window. It takes the same destinations as [Bar](bar.md) and [Drawer](drawer.md), and [Scaffold](scaffold.md) shows the form that fits the width. A button that narrows the drawer to the rail asks the Scaffold for it through `forms` ([a button that narrows the navigation](scaffold.md#a-button-that-narrows-the-navigation)).
 
 ```tsx example=TabletDestinations
 

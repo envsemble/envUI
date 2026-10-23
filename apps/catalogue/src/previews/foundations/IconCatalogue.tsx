@@ -132,7 +132,13 @@ export function IconCatalogue({
                 }}
               >
                 <Symbol filled={filled} width="2rem" height="2rem" />
-                <Text render={<span />} variant="caption" emphasis="default">
+                <Text
+                  render={<span />}
+                  variant="caption"
+                  emphasis="default"
+                  className="docs-icon-label"
+                  title={label}
+                >
                   {label}
                 </Text>
               </Card>

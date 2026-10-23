@@ -15,6 +15,9 @@ aliases:
   - layout
   - skip links
   - WindowFrame
+  - collapsible sidebar
+  - collapse navigation
+  - icon strip
 useWhen:
   - An application's screen, with a top bar, its navigation and the page people are on.
   - A window without navigation, such as a start page, with its title bar above the body.
@@ -63,6 +66,14 @@ Render one Scaffold at the application's root, around the router's outlet, with 
 `forms` changes the form of a window class, or shows `none`. Where a window class asks for a form the application didn't give, the nearest given one shows.
 
 ```tsx example=ChooseForms stage=shaded caption="A drawer only, and none on a compact width: forms={{ compact: 'none' }}."
+
+```
+
+### A button that narrows the navigation
+
+A button that narrows the navigation to a strip of icons asks for the [Rail](rail.md) in place of the [Drawer](drawer.md) through `forms`, such as `forms={{ expanded: 'rail', large: 'rail' }}`; the application keeps the choice, such as in `localStorage`. Don't build a narrow drawer of your own: the Scaffold already has both forms.
+
+```tsx example=NarrowNavigation stage=shaded
 
 ```
 

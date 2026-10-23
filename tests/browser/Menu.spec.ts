@@ -500,6 +500,14 @@ test('Menu supports keyboard navigation, actions and routed destinations', async
   const menu = page.getByRole('menu', { name: 'Account', exact: true });
   await expect(menu).toBeVisible();
   await expect(menu.getByRole('menuitem')).toHaveCount(2);
+  // The header, the account menu pattern's avatar centered above the name, is not an item, and
+  // the menu keeps its own name.
+  await settled(menu);
+  const [avatar, name] = await Promise.all(
+    ['account-avatar', 'account-name'].map((id) => menu.getByTestId(id).boundingBox()),
+  );
+  expect(avatar!.y + avatar!.height).toBeLessThanOrEqual(name!.y);
+  expect(Math.abs(avatar!.x + avatar!.width / 2 - (name!.x + name!.width / 2))).toBeLessThan(1);
   // Opening from the keyboard highlights the first item.
   await expect(menu.getByRole('menuitem', { name: 'Account settings' })).toBeFocused();
   await page.keyboard.press('ArrowDown');

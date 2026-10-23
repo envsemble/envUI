@@ -36,7 +36,7 @@ related:
 
 ## Overview
 
-The organization switcher is a [Menu](../components/menu.md) opened from a secondary [Button](../components/button.md) that names the active organization: a radio group of the person's organizations, each with their role as its description, and an action that creates one. It fits the `header` of a navigation [Drawer](../components/drawer.md) or the start of the [TopBar](../components/top-bar.md).
+The organization switcher is a [Menu](../components/menu.md) opened from a secondary [Button](../components/button.md) that names the active organization: a first row with the groups icon above the heading Organizations, a radio group of the person's organizations that the heading names, each with their role as its description, and an action that creates one. It fits the `header` of a navigation [Drawer](../components/drawer.md) or the start of the [TopBar](../components/top-bar.md).
 
 ```tsx example=SwitchOrganization
 
@@ -77,7 +77,7 @@ Without organizations, the switcher is only the create action, a Button of its o
 ```
 
 1. **Trigger** (`env-button`, the active organization)
-2. **Group label** (`env-menu-group-label`, `label`)
+2. **Heading** (`env-menu-header`, Menu.Header with the groups icon and a headline Text that names the group through `aria-labelledby`)
 3. **Organization** (`env-menu-item`, Menu.RadioItem)
 4. **Role** (`env-menu-item-description`, `description`)
 5. **Create action** (`env-menu-separator + env-menu-item`)
@@ -95,12 +95,12 @@ Without organizations, the switcher is only the create action, a Button of its o
 
 ### envUI provides
 
-- The roles, states and focus handling of [Menu](../components/menu.md): the radio group, named by its `label`, and the active organization checked.
+- The roles, states and focus handling of [Menu](../components/menu.md): the radio group, named by the heading, and the active organization checked; the heading row is not an item.
 - The trigger's expanded state and the return of focus to it.
 
 ### You provide
 
-- The menu's name, such as Organizations, and the group's `label`.
+- The menu's name, such as Organizations, and the heading that names the group.
 - The switch itself, and a status that reports it where it takes time.
 
 ## Changelog

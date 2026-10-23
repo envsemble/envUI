@@ -83,13 +83,14 @@ With `accessKeys`, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, an
 
 ## Anatomy
 
-```tsx anatomy=MenubarAnatomy
+```tsx anatomy=MenubarAnatomy open
 
 ```
 
 1. **Menubar** (`env-menubar`)
 2. **Trigger** (`env-menubar-trigger`, `label`)
 3. **Access key** (`env-menubar-access-key`, `accessKey`)
+4. **Menu** (`env-menu`, the children, open with `open` or `defaultOpen`)
 
 Each trigger opens a [Menu](../components/menu.md) built from the Menu parts.
 

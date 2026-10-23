@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Button, Column, Menu, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
+import { Groups3 } from '@envsemble/envui/icons/Groups3';
 import { UnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
 
 const organizations = [
@@ -12,6 +13,7 @@ const organizations = [
 export default function SwitchOrganization() {
   const [current, setCurrent] = useState('northwind');
   const [message, setMessage] = useState('');
+  const headingId = useId();
   const active = organizations.find(({ id }) => id === current);
   return (
     // As wide as a navigation Drawer's header.
@@ -26,8 +28,17 @@ export default function SwitchOrganization() {
           </Button>
         }
       >
+        {/* The first row: the groups icon above the heading that names the organizations. */}
+        <Menu.Header>
+          <Column align="center" gap={2} padding={3}>
+            <Groups3 width="2rem" height="2rem" />
+            <Text variant="headline" id={headingId}>
+              Organizations
+            </Text>
+          </Column>
+        </Menu.Header>
         <Menu.RadioGroup
-          label="Organizations"
+          aria-labelledby={headingId}
           value={current}
           onValueChange={(id) => {
             setCurrent(id);

@@ -15,15 +15,13 @@ export default function WithOrganizations() {
     <Row justify="end">
       <Menu.Root aria-label="Account" align="end" trigger={<AvatarButton name="Sam Lee" />}>
         <Menu.Header>
-          <Row align="center" gap={3}>
+          <Column align="center" gap={1} padding={2} style={{ textAlign: 'center' }}>
             <Avatar name="Sam Lee" size="lg" />
-            <Column>
-              <Text>Sam Lee</Text>
-              <Text variant="body-sm" emphasis="muted">
-                {current?.label}
-              </Text>
-            </Column>
-          </Row>
+            <Text>Sam Lee</Text>
+            <Text variant="body-sm" emphasis="muted">
+              {current?.label}
+            </Text>
+          </Column>
         </Menu.Header>
         {/* A switch between the person's organizations, in a submenu of its own. */}
         <Menu.Submenu label="Organization" icon={<Groups3 />} description={current?.label}>
