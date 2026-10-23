@@ -16,6 +16,7 @@ export default function IconOnly() {
         </Text>
         <Row align="center" gap={1}>
           <Tooltip
+            side="bottom"
             content={
               <Row render={<span />} align="center" gap={2}>
                 Search <Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} />

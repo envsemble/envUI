@@ -670,7 +670,7 @@ A few components of 1.0.0-prerelease.0 fold into others, and a few become patter
   >
     Search
   </Button>;
-  <Tooltip content="Search">
+  <Tooltip content="Search" side="bottom">
     <IconButton variant="ghost" icon={<Search />} aria-label="Search" onClick={openSearch} />
   </Tooltip>;
   ```

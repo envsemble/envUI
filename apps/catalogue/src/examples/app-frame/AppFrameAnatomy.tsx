@@ -32,7 +32,7 @@ export default function AppFrameAnatomy() {
           title="Northwind"
           actions={
             <>
-              <Tooltip content="Search">
+              <Tooltip content="Search" side="bottom">
                 <IconButton variant="ghost" icon={<Search />} aria-label="Search" />
               </Tooltip>
               <AvatarButton name="Alex Morgan" />

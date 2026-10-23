@@ -16513,7 +16513,7 @@
         {
           "name": "IconOnly",
           "title": "Icon only",
-          "description": "In a phone's top bar, a crowded header or a Rail, search is a ghost IconButton named Search, with the label and the keys in a Tooltip.",
+          "description": "In a phone's top bar, a crowded header or a Rail, search is a ghost IconButton named Search, with the label and the keys in a Tooltip that opens below it, clear of the bar.",
           "file": "docs/examples/search-trigger/IconOnly.tsx"
         },
         {

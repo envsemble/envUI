@@ -99,7 +99,7 @@ export default function AppFrame() {
           title="Northwind"
           actions={
             <>
-              <Tooltip content="Search">
+              <Tooltip content="Search" side="bottom">
                 <IconButton
                   variant="ghost"
                   icon={<Search />}

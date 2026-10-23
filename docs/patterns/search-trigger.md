@@ -76,7 +76,7 @@ useEffect(() => {
 
 ### Icon only
 
-In a phone's top bar, a crowded header or a [Rail](../components/rail.md), search is a ghost [IconButton](../components/button.md) named Search, with the label and the keys in a [Tooltip](../components/tooltip.md).
+In a phone's top bar, a crowded header or a [Rail](../components/rail.md), search is a ghost [IconButton](../components/button.md) named Search, with the label and the keys in a [Tooltip](../components/tooltip.md) that opens below it, clear of the bar.
 
 ```tsx example=IconOnly
 

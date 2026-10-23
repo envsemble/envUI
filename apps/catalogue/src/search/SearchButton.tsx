@@ -24,6 +24,7 @@ export function SearchButton({
   if (iconOnly)
     return (
       <Tooltip
+        side="bottom"
         content={
           <Row render={<span />} align="center" gap={2}>
             Search <Kbd keys={keys} />
