@@ -34,7 +34,7 @@ The roles are the same across components:
 - **outline**: the edge, where the component draws one.
 - **icon**: an icon with a color of its own, such as an alert's or a menu item's leading icon.
 - **selected** and **selected-content**: the fill and content of what is chosen, current or on: a selected row, the current destination, a checked box, an on switch, a pressed toggle.
-- **indicator**: the part that shows the value or the focus, such as a slider's filled track and thumb or a field's focused edge.
+- **indicator**: the part that shows the value or the focus, such as a slider's fill, a selected tab's indicator or a field's focused edge.
 
 The properties don't inherit: each is registered with `@property` as a property that doesn't inherit, so set them on the element itself, through its `style` or a selector that matches it, such as `.my-toolbar .env-button`. Set on a toolbar, `--env-button-container` colors none of its buttons, and a surface inside a recolored surface keeps its own color.
 

@@ -4188,11 +4188,15 @@
       "parts": [
         {
           "class": "env-segmented-control",
-          "description": "The segmented control."
+          "description": "The segmented control: connected segments in one outline."
         },
         {
           "class": "env-segmented-control-item",
           "description": "One segment."
+        },
+        {
+          "class": "env-segmented-control-item-check",
+          "description": "The check on the chosen segment, in place of its icon."
         },
         {
           "class": "env-segmented-control-item-count",
@@ -4249,7 +4253,11 @@
       "colors": [
         {
           "property": "--env-segmented-control-container",
-          "description": "The rail behind the options."
+          "description": "The fill behind the options, transparent by default."
+        },
+        {
+          "property": "--env-segmented-control-outline",
+          "description": "The outline around and between the segments."
         },
         {
           "property": "--env-segmented-control-content",
@@ -4864,7 +4872,7 @@
         },
         {
           "class": "env-tabs-tab",
-          "description": "One tab."
+          "description": "One tab: a text tab, the selected one with an indicator under it."
         }
       ],
       "states": [
@@ -4925,11 +4933,19 @@
       "colors": [
         {
           "property": "--env-tabs-container",
-          "description": "The rail behind the tabs."
+          "description": "The rail behind the tabs, transparent by default."
         },
         {
           "property": "--env-tabs-content",
-          "description": "The labels of the tabs not selected, and the color of their state layers; the selected tab keeps its button’s colors."
+          "description": "The labels of the tabs not selected, and the color of their state layers."
+        },
+        {
+          "property": "--env-tabs-selected-content",
+          "description": "The selected tab's label."
+        },
+        {
+          "property": "--env-tabs-indicator",
+          "description": "The indicator under the selected tab."
         }
       ]
     },

@@ -48,15 +48,17 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-selected-hover',
     '--env-color-bg-selected-pressed',
   ],
+  // A selected tab is a text tab whatever its button's variant: no fill at rest, and the neutral
+  // state layer under the pointer and pressed.
   'tab-primary': [
-    '--env-color-bg-brand-emphasis',
-    '--env-color-bg-brand-emphasis-hover',
-    '--env-color-bg-brand-emphasis-pressed',
+    '--env-color-bg-neutral-subtle',
+    '--env-color-bg-neutral-subtle-hover',
+    '--env-color-bg-neutral-subtle-pressed',
   ],
   'tab-secondary': [
-    '--env-color-bg-neutral-muted',
-    '--env-color-bg-neutral-muted-hover',
-    '--env-color-bg-neutral-muted-pressed',
+    '--env-color-bg-neutral-subtle',
+    '--env-color-bg-neutral-subtle-hover',
+    '--env-color-bg-neutral-subtle-pressed',
   ],
 };
 
@@ -246,14 +248,13 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-bg-default', ['pane', 'paneCard']],
       ['--env-color-bg-muted', ['surface', 'card', 'contrastPane', 'radioRow', 'row']],
       ['--env-color-list-item-bg', ['row']],
-      [
-        '--env-color-bg-neutral-muted',
-        ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip'],
-      ],
+      ['--env-color-bg-neutral-muted', ['secondary', 'icon', 'select', 'selectError', 'chip']],
       ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
       ['--env-color-fg-link', ['link', 'textButton']],
-      ['--env-color-bg-brand-emphasis', ['primary', 'tab', 'radio', 'checkbox', 'switch']],
-      ['--env-color-fg-on-emphasis', ['primary', 'tab']],
+      ['--env-color-bg-brand-emphasis', ['primary', 'radio', 'checkbox', 'switch']],
+      ['--env-color-fg-on-emphasis', ['primary']],
+      // The selected tab is a text tab in the accent's text color, whatever its button's variant.
+      ['--env-color-fg-accent', ['tab']],
       ['--env-color-bg-selected', ['navigation']],
       // A neutral badge's text is muted, as InfoChip's metadata became a Badge.
       ['--env-color-fg-muted', ['navigationIcon', 'selectHint', 'chip']],
@@ -278,31 +279,24 @@ test('compositions reuse primitive colors while unrelated roles stay independent
           .getByTestId(`${theme}-color-field`)
           .evaluate((input) => (input as HTMLElement).blur());
     }
-    for (const [label, primitiveId, color] of [
-      ['First tab', `${theme}-button-primary`, '--env-color-bg-brand-emphasis'],
-      ['Second tab', `${theme}-button-secondary`, '--env-color-bg-neutral-muted'],
-    ]) {
+    // A selected tab is a text tab whatever its button's variant: no fill, its label in the
+    // accent's text color, and its indicator in the accent's border color.
+    for (const label of ['First tab', 'Second tab']) {
       const tab = boundary.getByRole('tab', { name: label });
       await tab.press('Enter');
       await expect(tab).toHaveAttribute('aria-selected', 'true');
-      const before = await tab.evaluate((element) => getComputedStyle(element).backgroundColor);
-      const primitive = page.getByTestId(primitiveId);
-      expect(before).toBe(
-        await primitive.evaluate((element) => getComputedStyle(element).backgroundColor),
+      await page.mouse.move(0, 0);
+      await tab.blur();
+      await expect(tab).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      const indicator = () =>
+        tab.evaluate((element) => getComputedStyle(element, '::after').backgroundColor);
+      const before = await indicator();
+      await boundary.evaluate((root) =>
+        (root as HTMLElement).style.setProperty('--env-color-border-accent-emphasis', '#d02780'),
       );
-      await boundary.evaluate(
-        (root, token) => (root as HTMLElement).style.setProperty(token, '#d02780'),
-        color,
-      );
-      expect(await tab.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(
-        before,
-      );
-      expect(await tab.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
-        await primitive.evaluate((element) => getComputedStyle(element).backgroundColor),
-      );
-      await boundary.evaluate(
-        (root, token) => (root as HTMLElement).style.removeProperty(token),
-        color,
+      expect(await indicator()).not.toBe(before);
+      await boundary.evaluate((root) =>
+        (root as HTMLElement).style.removeProperty('--env-color-border-accent-emphasis'),
       );
     }
     const selected = boundary.getByRole('tab', { name: 'Third tab' });

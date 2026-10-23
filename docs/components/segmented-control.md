@@ -1,6 +1,6 @@
 ---
 title: SegmentedControl
-summary: One choice among a few items on a pill rail, such as views or filters of the same content.
+summary: One choice among a few items, as connected outlined segments, such as views or filters of the same content.
 status: stable
 since: 0.5.0
 category: Forms & selection
@@ -44,7 +44,7 @@ components:
 
 ## Overview
 
-A segmented control switches between a few views or filters of the same content, and the choice applies at once.
+A segmented control switches between a few views or filters of the same content, and the choice applies at once. After Material's segmented buttons, it is connected segments in one outline, the chosen one in the selected fill with a check before its label; it picks a value, where [Tabs](tabs.md), text tabs with an indicator, switch panels.
 
 ```tsx example=WorkItems
 
@@ -96,7 +96,7 @@ Name options with a word or two that name the view, and name the control with `a
 
 ```
 
-```tsx dont=UnevenLabels caption="One long label that unbalances the rail."
+```tsx dont=UnevenLabels caption="One long label that unbalances the control."
 
 ```
 
@@ -106,19 +106,20 @@ Name options with a word or two that name the view, and name the control with `a
 
 ```
 
-1. **Rail** (`env-segmented-control`)
+1. **Outline** (`env-segmented-control`)
 2. **Segment** (`env-segmented-control-item`)
-3. **Icon** (`env-segmented-control-item > env-icon`, `icon`)
-4. **Label** (`env-segmented-control-item-label`, `label`)
-5. **Count** (`env-segmented-control-item-count`, `count`)
+3. **Check** (`env-segmented-control-item-check`), on the chosen segment, in place of its icon
+4. **Icon** (`env-segmented-control-item > env-icon`, `icon`)
+5. **Label** (`env-segmented-control-item-label`, `label`)
+6. **Count** (`env-segmented-control-item-count`, `count`)
 
 ### Colors
 
-`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` set the colors of one SegmentedControl, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-outline`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` set the colors of one SegmentedControl, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 
-The rail is as wide as its options. With `fullWidth` it fills its container and splits it evenly; a label too long for its share ends with an ellipsis and shows whole in a tooltip.
+The control is as wide as its options. With `fullWidth` it fills its container and splits it evenly; a label too long for its share ends with an ellipsis and shows whole in a tooltip.
 
 ```tsx example=FullWidthScope widths="14 26"
 
@@ -147,6 +148,7 @@ The rail is as wide as its options. With `fullWidth` it fills its container and 
 
 ## Changelog
 
+- **1.0.0-prerelease.2**: SegmentedControl looks like Material's segmented buttons: connected segments in one outline, the chosen one in the selected fill, `--env-color-bg-selected`, with a check, `env-segmented-control-item-check`, in place of its icon, so it reads differently from Tabs. `--env-segmented-control-outline` sets the outline. The API stays.
 - **1.0.0**: `options` is `items`, and `SegmentedControlOption` is `SegmentedControlItem`. The segments' classes are `env-segmented-control-item`, `-item-label` and `-item-count`. An unchosen segment's count keeps 4.5:1 contrast. SegmentedControl takes `ref`, `style`, `id` and other attributes of its rail, and its page is under Forms & selection.
 - **0.7.0**: The chosen segment takes the soft blue primary in the dark theme, as primary buttons do.
 - **0.6.0**: `fullWidth`: the rail fills its container and splits it evenly; a label too long for its share ends with an ellipsis and shows whole in a tooltip, or wraps on touch screens.

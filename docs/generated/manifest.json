@@ -5124,7 +5124,7 @@
       "category": "Forms & selection",
       "status": "stable",
       "since": "0.5.0",
-      "summary": "One choice among a few items on a pill rail, such as views or filters of the same content.",
+      "summary": "One choice among a few items, as connected outlined segments, such as views or filters of the same content.",
       "aliases": [
         "segmented button",
         "segmented buttons",
@@ -5178,7 +5178,7 @@
         {
           "name": "WorkItems",
           "title": "Work items",
-          "description": "A segmented control switches between a few views or filters of the same content, and the choice applies at once.",
+          "description": "A segmented control switches between a few views or filters of the same content, and the choice applies at once. After Material's segmented buttons, it is connected segments in one outline, the chosen one in the selected fill with a check before its label; it picks a value, where Tabs, text tabs with an indicator, switch panels.",
           "file": "docs/examples/segmented-control/WorkItems.tsx"
         },
         {
@@ -5219,7 +5219,7 @@
         },
         {
           "name": "UnevenLabels",
-          "title": "Don't: One long label that unbalances the rail.",
+          "title": "Don't: One long label that unbalances the control.",
           "description": "",
           "file": "docs/examples/segmented-control/UnevenLabels.tsx"
         },
@@ -5242,11 +5242,15 @@
           "parts": [
             {
               "class": "env-segmented-control",
-              "description": "The segmented control."
+              "description": "The segmented control: connected segments in one outline."
             },
             {
               "class": "env-segmented-control-item",
               "description": "One segment."
+            },
+            {
+              "class": "env-segmented-control-item-check",
+              "description": "The check on the chosen segment, in place of its icon."
             },
             {
               "class": "env-segmented-control-item-count",
@@ -5296,7 +5300,11 @@
           "colors": [
             {
               "property": "--env-segmented-control-container",
-              "description": "The rail behind the options."
+              "description": "The fill behind the options, transparent by default."
+            },
+            {
+              "property": "--env-segmented-control-outline",
+              "description": "The outline around and between the segments."
             },
             {
               "property": "--env-segmented-control-content",
@@ -7820,7 +7828,7 @@
       "category": "Navigation",
       "status": "stable",
       "since": "0.1.0",
-      "summary": "Switches between panels of related content in one place, from a rail of buttons.",
+      "summary": "Switches between panels of related content in one place, from a row of text tabs.",
       "aliases": [
         "tab bar",
         "tab list",
@@ -7869,7 +7877,7 @@
         {
           "name": "ProjectViews",
           "title": "Project views",
-          "description": "Tabs switch between panels of related content in one place. Each item gives a `button`, which becomes the tab, and the panel's `content`; the selected tab keeps its button's look.",
+          "description": "Tabs switch between panels of related content in one place. Each item gives a `button`, which becomes the tab, and the panel's `content`. After Material's tabs, every tab is a text tab, whatever its button's variant: the selected one in the accent color with an indicator under it, the others muted. It switches panels, where a SegmentedControl, connected outlined segments, picks a value.",
           "file": "docs/examples/tabs/ProjectViews.tsx"
         },
         {
@@ -7961,7 +7969,7 @@
             },
             {
               "class": "env-tabs-tab",
-              "description": "One tab."
+              "description": "One tab: a text tab, the selected one with an indicator under it."
             }
           ],
           "states": [
@@ -8019,11 +8027,19 @@
           "colors": [
             {
               "property": "--env-tabs-container",
-              "description": "The rail behind the tabs."
+              "description": "The rail behind the tabs, transparent by default."
             },
             {
               "property": "--env-tabs-content",
-              "description": "The labels of the tabs not selected, and the color of their state layers; the selected tab keeps its button’s colors."
+              "description": "The labels of the tabs not selected, and the color of their state layers."
+            },
+            {
+              "property": "--env-tabs-selected-content",
+              "description": "The selected tab's label."
+            },
+            {
+              "property": "--env-tabs-indicator",
+              "description": "The indicator under the selected tab."
             }
           ]
         }
@@ -24512,7 +24528,7 @@
     "SegmentedControl": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One choice among a few items on a pill rail, such as views or filters of the same content; the chosen item takes the primary colors. A radio group, with one tab stop and arrow keys.",
+      "description": "One choice among a few items, such as views or filters of the same content, as connected outlined segments after Material's segmented buttons: the chosen one takes the selected fill and a check. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
           "name": "items",
@@ -24542,7 +24558,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The rail's height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, the rail takes the control height of its container, md unless the container sets another."
+          "description": "The height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, it takes the control height of its container, md unless the container sets another."
         },
         {
           "name": "fullWidth",
@@ -25350,7 +25366,7 @@
     "Tabs": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. The selected tab keeps its button's own look; the others are quiet on the rail.",
+      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. Every tab is a text tab, the selected one in the accent color with an indicator under it.",
       "props": [
         {
           "name": "items",

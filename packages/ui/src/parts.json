@@ -626,8 +626,9 @@
       "env-scaffold-body": "The body, the main region, which scrolls."
     },
     "SegmentedControl": {
-      "env-segmented-control": "The segmented control.",
+      "env-segmented-control": "The segmented control: connected segments in one outline.",
       "env-segmented-control-item": "One segment.",
+      "env-segmented-control-item-check": "The check on the chosen segment, in place of its icon.",
       "env-segmented-control-item-count": "A segment's count.",
       "env-segmented-control-item-label": "A segment's label."
     },
@@ -693,7 +694,7 @@
       "env-tabs-list": "The list of tabs.",
       "env-tabs-panel": "One panel.",
       "env-tabs-panels": "The panels.",
-      "env-tabs-tab": "One tab."
+      "env-tabs-tab": "One tab: a text tab, the selected one with an indicator under it."
     },
     "Text": {
       "env-text": "Text in one of the type styles."
@@ -850,7 +851,8 @@
       "--env-rail-item-selected-content": "The icon of the current destination."
     },
     "SegmentedControl": {
-      "--env-segmented-control-container": "The rail behind the options.",
+      "--env-segmented-control-container": "The fill behind the options, transparent by default.",
+      "--env-segmented-control-outline": "The outline around and between the segments.",
       "--env-segmented-control-content": "The labels of the options not chosen, and the color of their state layers.",
       "--env-segmented-control-selected": "The chosen option's fill; set, it takes state layers instead of the designed hover and press fills.",
       "--env-segmented-control-selected-content": "The chosen option's label."
@@ -878,8 +880,10 @@
       "--env-switch-selected-content": "The thumb while on."
     },
     "Tabs": {
-      "--env-tabs-container": "The rail behind the tabs.",
-      "--env-tabs-content": "The labels of the tabs not selected, and the color of their state layers; the selected tab keeps its button’s colors."
+      "--env-tabs-container": "The rail behind the tabs, transparent by default.",
+      "--env-tabs-content": "The labels of the tabs not selected, and the color of their state layers.",
+      "--env-tabs-selected-content": "The selected tab's label.",
+      "--env-tabs-indicator": "The indicator under the selected tab."
     },
     "TextField": {
       "--env-text-field-container": "The well behind the entered text.",

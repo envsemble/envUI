@@ -260,9 +260,11 @@ interface FocusCase {
 }
 
 const focusCases: FocusCase[] = [
-  { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'fill' },
+  // A text tab has no fill: its ring is drawn on the canvas.
+  { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'canvas' },
   { name: 'the selected navigation item', ring: '.env-drawer-item[data-current]', over: 'fill' },
-  { name: 'the chosen segment', ring: '.env-segmented-control-item[data-checked]', over: 'canvas' },
+  // The ring is drawn inside the segment, on its fill, as the control clips what reaches past it.
+  { name: 'the chosen segment', ring: '.env-segmented-control-item[data-checked]', over: 'fill' },
   {
     // The ring goes around the tab's item, close button included.
     name: 'the active document tab',

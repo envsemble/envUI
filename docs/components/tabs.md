@@ -1,6 +1,6 @@
 ---
 title: Tabs
-summary: Switches between panels of related content in one place, from a rail of buttons.
+summary: Switches between panels of related content in one place, from a row of text tabs.
 status: stable
 since: 0.1.0
 category: Navigation
@@ -41,7 +41,7 @@ components:
 
 ## Overview
 
-Tabs switch between panels of related content in one place. Each item gives a `button`, which becomes the tab, and the panel's `content`; the selected tab keeps its button's look.
+Tabs switch between panels of related content in one place. Each item gives a `button`, which becomes the tab, and the panel's `content`. After Material's tabs, every tab is a text tab, whatever its button's variant: the selected one in the accent color with an indicator under it, the others muted. It switches panels, where a [SegmentedControl](segmented-control.md), connected outlined segments, picks a value.
 
 ```tsx example=ProjectViews
 
@@ -94,7 +94,7 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 
 ```
 
-- One button variant for every tab of a rail; tabs are buttons, never links.
+- Tabs are buttons, never links; the rail draws each as a text tab, whatever its variant.
 - Content people compare stays in one panel.
 
 ### Labels
@@ -115,12 +115,12 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 
 1. **Tabs** (`env-tabs`)
 2. **Rail** (`env-tabs-list`)
-3. **Tab** (`env-tabs-tab`, `button`)
+3. **Tab** (`env-tabs-tab`, `button`): a text tab, the selected one with its indicator under it
 4. **Panel** (`env-tabs-panel`, `content`)
 
 ### Colors
 
-`--env-tabs-container` and `--env-tabs-content` set the colors of one Tabs, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-tabs-container`, `--env-tabs-content`, `--env-tabs-selected-content` and `--env-tabs-indicator` set the colors of one Tabs, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 
@@ -157,6 +157,7 @@ Tabs keep their size: a rail with more tabs than fit scrolls sideways.
 
 ## Changelog
 
+- **1.0.0-prerelease.2**: Tabs look like Material's: text tabs on no fill, whatever their buttons' variants, the selected one in the accent's text color with an indicator under it, so they read differently from SegmentedControl. `--env-tabs-selected-content` and `--env-tabs-indicator` set those colors, and the rail has no fill unless `--env-tabs-container` sets one. The API stays.
 - **1.0.0**: The arrow keys follow the text direction, from EnvUIProvider's `dir` or the direction at the tabs; only the tab list takes it, so a panel keeps the direction around it. The tab and panel classes are `env-tabs-tab` and `env-tabs-panel` (were `env-tab` and `env-tab-panel`).
 - **0.7.0**: `size="compact"`: the whole rail as tall as a compact control, for bars and toolbars.
 - **0.5.0**: `fill`, for panels that fill a region. Labels in a selected tab keep 4.5:1 contrast on hover.

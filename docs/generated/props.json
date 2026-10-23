@@ -6690,7 +6690,7 @@
     "SegmentedControl": {
       "kind": "component",
       "source": "packages/ui/src/actions/SegmentedControl.tsx",
-      "description": "One choice among a few items on a pill rail, such as views or filters of the same content; the chosen item takes the primary colors. A radio group, with one tab stop and arrow keys.",
+      "description": "One choice among a few items, such as views or filters of the same content, as connected outlined segments after Material's segmented buttons: the chosen one takes the selected fill and a check. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
           "name": "items",
@@ -6720,7 +6720,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The rail's height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, the rail takes the control height of its container, md unless the container sets another."
+          "description": "The height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, it takes the control height of its container, md unless the container sets another."
         },
         {
           "name": "fullWidth",
@@ -7528,7 +7528,7 @@
     "Tabs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Tabs.tsx",
-      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. The selected tab keeps its button's own look; the others are quiet on the rail.",
+      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. Every tab is a text tab, the selected one in the accent color with an indicator under it.",
       "props": [
         {
           "name": "items",
