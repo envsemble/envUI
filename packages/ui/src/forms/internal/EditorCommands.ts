@@ -53,3 +53,24 @@ export const editorCommands: Readonly<Record<EditorCommand, EditorCommandInfo>> 
   link: { icon: Link, message: 'link' },
   table: { icon: Table, message: 'table' },
 };
+
+/**
+ * The kind of each command, which groups it in the toolbar: text styles, lists, blocks, and the
+ * things inserted, links and tables. Commands of one kind next to each other share a group.
+ */
+export const editorCommandGroup: Readonly<
+  Record<EditorCommand, 'text' | 'lists' | 'blocks' | 'insert'>
+> = {
+  heading: 'text',
+  bold: 'text',
+  italic: 'text',
+  strike: 'text',
+  'inline-code': 'text',
+  'bullet-list': 'lists',
+  'numbered-list': 'lists',
+  'task-list': 'lists',
+  quote: 'blocks',
+  'code-block': 'blocks',
+  link: 'insert',
+  table: 'insert',
+};

@@ -328,7 +328,7 @@
     },
     "EditorChrome": {
       "env-editor-status": "The editor's status line, such as a character count.",
-      "env-editor-toolbar": "The editor's formatting toolbar."
+      "env-editor-toolbar": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which scrolls sideways where it is wider than the editor."
     },
     "Field": {
       "env-field": "The field: label, control, description and error.",

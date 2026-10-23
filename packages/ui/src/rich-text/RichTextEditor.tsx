@@ -28,10 +28,11 @@ import {
 } from './Commands.js';
 import { RichTextRenderingContext } from './Reference.js';
 import { safeRichTextUrl } from './ReferenceAttributes.js';
-import type { RichTextEditorProps, RichTextSlashCommand } from './Types.js';
+import type { RichTextCommand, RichTextEditorProps, RichTextSlashCommand } from './Types.js';
 
 const emptySources: NonNullable<RichTextEditorProps['references']> = [];
 const emptyExtensions: NonNullable<RichTextEditorProps['extensions']> = [];
+const noCommands: readonly RichTextCommand[] = [];
 
 /**
  * A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a
@@ -460,7 +461,8 @@ export function RichTextEditor({
           <EditorToolbar
             label={messages.toolbar}
             commands={toolbar}
-            active={state?.active}
+            // Its formatting toggles from the start, off until the document reports them on.
+            active={state?.active ?? noCommands}
             disabled={unavailable}
             canUndo={Boolean(state?.undo)}
             canRedo={Boolean(state?.redo)}
@@ -473,7 +475,6 @@ export function RichTextEditor({
           >
             {onUpload && (
               <Toolbar.Button
-                variant="secondary"
                 icon={<AttachFile />}
                 label={messages.attach}
                 onMouseDown={keepEditorFocus}

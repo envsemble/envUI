@@ -5185,7 +5185,7 @@
         },
         {
           "class": "env-editor-toolbar",
-          "description": "The editor's formatting toolbar."
+          "description": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which scrolls sideways where it is wider than the editor."
         }
       ],
       "states": [],
@@ -5553,6 +5553,13 @@
             "hour",
             "minute"
           ],
+          "parts": [
+            "env-time-list-column"
+          ]
+        },
+        {
+          "attribute": "data-turning",
+          "values": [],
           "parts": [
             "env-time-list-column"
           ]
