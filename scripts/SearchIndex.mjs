@@ -88,6 +88,12 @@ export const cataloguePages = [
     aliases: ['envui-codemods', 'upgrade', 'transforms'],
   },
   {
+    page: 'full-changelog',
+    title: 'Every change by release',
+    area: 'docs',
+    aliases: ['full changelog', 'all changes'],
+  },
+  {
     page: 'agent-skills',
     title: 'Agent skills',
     area: 'docs',

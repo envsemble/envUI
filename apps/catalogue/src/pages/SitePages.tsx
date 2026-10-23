@@ -8,18 +8,11 @@ import { routeHref } from '../navigation/Address';
 import { getReferenceIcon } from '../navigation/TopicIcons';
 import { FoundationPreview } from '../previews/FoundationPreview';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
-import { lazyPart } from '../template/LoadBoundary';
 import type { Reference } from '../Reference';
 import { Catalogue } from './Catalogue';
 import { Documentation } from './Documentation';
-import { LoadedPart } from './LoadedPart';
-
-/** The changelog, a large page that loads with the page that shows it. */
-const changelog = lazyPart(
-  () => import('./Changelog'),
-  (module) => module.Changelog,
-  'src/pages/Changelog.tsx',
-);
+import { Benchmark } from './Benchmark';
+import { ReleaseNotes } from './ReleaseNotes';
 
 /**
  * A component's page on the Site: what it looks like and when to use it, in live figures with the
@@ -182,29 +175,25 @@ export function App() {
   );
 }
 
-/** The benchmark's page, which a later step of this release fills from bench/results. */
+/**
+ * The benchmark's page: what it measures, the newest run's scores and the scores of every run, read
+ * from bench/results when the site builds.
+ */
 export function BenchmarkPage({ page }: { page: SitePage }) {
   return (
     <>
       <PageHeader title={page.title} breadcrumb="Benchmark" description={page.summary} />
-      <Column gap={4} className="docs-article">
-        <Text>
-          The benchmark has coding agents build interfaces with envUI and scores how they do. Its
-          scores, per model and across releases, are coming in this release.
-        </Text>
-      </Column>
+      <Benchmark />
     </>
   );
 }
 
-/** The changelog of @envsemble/envui. */
+/** The release notes: a few lines on each release; the full changelog is in the Docs. */
 export function ChangelogPage({ page }: { page: SitePage }) {
   return (
     <>
       <PageHeader title={page.title} breadcrumb="Changelog" description={page.summary} />
-      <Column gap={7} className="docs-article">
-        <LoadedPart part={changelog} what="changelog" />
-      </Column>
+      <ReleaseNotes />
     </>
   );
 }
