@@ -74,8 +74,10 @@ export interface ReferencePage {
 const docsOnlyComponents = new Set(['field']);
 
 /**
- * Pages of docs/ for people who change envUI itself, and the agents' index of the pages, which
- * neither the Site nor the Docs show; they stay in the repository and the package.
+ * Pages of docs/ that neither the Site nor the Docs show: the contributor pages, for people who
+ * change envUI itself, which stay in the repository and which the package leaves out
+ * (contributorPages in scripts/GenerateDocumentation.mjs), and the agents' index of the pages, which
+ * the package ships.
  */
 export const unlistedDocuments = new Set([
   'index',
