@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { normalizeRoute } from './DocumentationRoutes';
-import { navigate, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
+import {
+  navigate,
+  oldHashRoute,
+  replaceAddress,
+  subscribeToAddress,
+  writtenRoute,
+} from './Address';
 
 function readRoute() {
   return normalizeRoute(writtenRoute() || 'overview');
@@ -15,13 +21,14 @@ export function currentRouteQuery() {
 }
 
 /**
- * An old address, such as a page's 0.x name, a view pages had before the Site and the Docs split, or
- * a hash route of the offline catalogue, is replaced in place by the address of the route it leads
- * to, so the address bar, a new bookmark and the history show the page's own address. The root
- * address stays as it is.
+ * An old address, such as a page's 0.x name or a view pages had before the Site and the Docs split,
+ * is replaced in place by the address of the route it leads to, so the address bar, a new bookmark
+ * and the history show the page's own address. An old hash address of the offline catalogue, such
+ * as a bookmark, is redirected the same way, once, to the path of the route it named: routes are
+ * then read from the path alone. The root address stays as it is.
  */
 function correctAddress() {
-  const written = writtenRoute();
+  const written = oldHashRoute() ?? writtenRoute();
   if (written) replaceAddress(normalizeRoute(written));
 }
 
@@ -76,7 +83,11 @@ export function useViewTabs(routeOf: (value: string) => string) {
 
 /** The current route, from the address's path. */
 export function useDocumentationRoute() {
-  const [route, setRoute] = useState(readRoute);
+  // An old hash address is redirected before the first render, which reads the path.
+  const [route, setRoute] = useState(() => {
+    if (oldHashRoute() !== undefined) correctAddress();
+    return readRoute();
+  });
   useEffect(() => {
     correctAddress();
     // An address that changed before this effect, such as an old one corrected, is read again.

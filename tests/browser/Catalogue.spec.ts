@@ -833,7 +833,7 @@ test(
   'paths support direct links, old hash links and back/forward navigation',
   { tag: '@engines' },
   async ({ page }) => {
-    // The hash address of an earlier release opens the route as a path.
+    // The hash address of an earlier release, such as a bookmark, is redirected to its path.
     await page.goto(`${catalogueUrl}/#/components/select/props`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
     await expect(page).toHaveURL(/\/docs\/components\/select$/);
