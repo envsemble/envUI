@@ -36,6 +36,7 @@ test('the transforms run in the order the README and the migration guide give', 
     'v1-render',
     'v1-stack',
     'v1-props',
+    'v1-entries',
     'v1-classes',
   ]);
   const readme = readFileSync(join(packageDirectory, 'README.md'), 'utf8');

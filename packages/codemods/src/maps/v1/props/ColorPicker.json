@@ -6,25 +6,19 @@
         "report": "ColorPicker's hint is description in 1.0."
       },
       "variant": {
-        "current": ["outline", "floating", "underline", "ghost"],
-        "report": "ColorPicker's variant is outline, floating, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "report": "ColorPicker has no variant in 1.0: its fields are one compact control. Remove it.",
         "values": {
-          "outlined": {
-            "props": {
-              "variant": "outline"
-            }
-          },
-          "plain": {
-            "props": {
-              "variant": "underline"
-            }
-          },
-          "quiet": {
-            "props": {
-              "variant": "ghost"
-            }
-          }
+          "outlined": {},
+          "plain": {},
+          "quiet": {},
+          "outline": {},
+          "floating": {},
+          "underline": {},
+          "ghost": {}
         }
+      },
+      "ref": {
+        "report": "ColorPicker's ref reaches its root element in 1.0, not the HEX field; a form takes its color from name, through a hidden input."
       }
     }
   }

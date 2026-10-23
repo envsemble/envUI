@@ -38,6 +38,7 @@ npx @envsemble/envui-codemods@<version> v1-structure src
 npx @envsemble/envui-codemods@<version> v1-render src
 npx @envsemble/envui-codemods@<version> v1-stack src
 npx @envsemble/envui-codemods@<version> v1-props src
+npx @envsemble/envui-codemods@<version> v1-entries src
 npx @envsemble/envui-codemods@<version> v1-classes src
 ```
 
@@ -56,6 +57,7 @@ export default defineConfig(envui.configs.recommended);
 - `v1-render` turns a literal `as` into `render`, `as="h2"` into `render={<h2 />}`, and a ternary of element names into a ternary of elements, `as={section ? 'h2' : 'h1'}` into `render={section ? <h2 /> : <h1 />}`.
 - `v1-stack` rewrites Stack into the [layout primitives](#layout-primitives): `<Stack direction="row">` becomes `<Row>` and any other Stack a `<Column>`, with `gap={4}`, Stack's default, where it set none.
 - `v1-props` moves the props that 1.0 removed, renamed or changed, as [scale and density](#scale-and-density) and [the vocabulary](#variants-tones-and-render) list them. A value that is a conditional of literals has each literal mapped, also in nested ternaries and beside `&&`, `||` and `??`: `tone={failed ? 'error' : 'info'}` becomes `tone={failed ? 'danger' : 'info'}`, and a value that 1.0 drops as the default becomes `undefined`, so `size={large ? 'large' : 'standard'}` on an Avatar becomes `size={large ? 'lg' : undefined}`.
+- `v1-entries` imports the exports that moved to another entry point from it: ColorPicker, ColorSwatch and their props types from `@envsemble/envui/color`, as [color](#color-picker-and-swatches) lists. It moves named imports and re-exports, and reports a use through a namespace import, such as `<ui.ColorPicker>`.
 - `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, CSS-in-JS templates (such as `` css`…` `` and `` styled.div`…` ``), class names, selector strings and test locators, turns the modifier classes that became attributes into attribute selectors, and renames the tokens' custom properties: `--color-text-muted` becomes `--env-color-fg-muted`, `--space-4` becomes `--env-space-4` and `--control-height-small` becomes `--env-control-height`, as [tokens](#tokens) lists them. It also renames the part classes of 1.0.0-prerelease.0 where the part carries on, such as `env-app-shell-header` to `env-top-bar` and `env-list-detail-back` to `env-panes-back`, and reports the rest, such as `env-sidebar-*` and `env-nav-list-*`. It renames every use, `var(--old)`, but a declaration only where the old name is the one that becomes the token: where 1.0 merges several names into one token, as it merges `--control-height`, `--control-height-small` and `--icon-button-size`, a declaration of another of them stays and is reported, since rewriting it would set the token for every component that reads it. It reports a token that 1.0 removes without one token in its place, and a 0.7 fixed color no token replaces, with what to use instead.
 - `envui/no-renamed-exports` reports the 0.x names left in imports and re-exports, and also those it can follow statically through namespace imports, `require()`, `import()`, `import … = require()`, destructuring and `createElement()`, with each one's 1.0 name or what to use instead. A name read through a computed member such as `envui[name]` is not followed; the type check catches those. The recommended config also reports raw elements that envUI provides and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
 
@@ -458,9 +460,37 @@ Change by hand what the codemods can't see:
 
 - **`className` and `style` style the root.** On TextField, SearchField, Textarea, Select, Combobox, DatePicker, Checkbox, Switch and Radio they reach the field's or the control's root, the element with `env-field` or the label around a choice, and on MarkdownEditor its root, `env-markdown-editor`, instead of the native control. `ref` and the other native props still reach the input, textarea or trigger, so form libraries keep registering them. A style meant for the input selects it through the root's class, such as `.my-field .env-text-field-input`. `v1-props` reports each `className` and `style` on these components without changing them.
 - **`env-choice-control`** was the root of Checkbox, Switch and an inline Radio alike; it is `env-checkbox`, `env-switch` or `env-radio` now, by the control. `v1-classes` leaves it as it is, since only the markup around it tells which; rename it by hand.
-- **ColorPicker** no longer uses react-colorful: its `.react-colorful` classes are gone, and the area and hue are `env-color-picker-saturation-slider` and `env-color-picker-hue`. Their accessible names change too: "Color" and "Hue" become "<label> saturation and brightness" and "<label> hue", so tests that find them by name need updating.
+- **ColorPicker** comes from its own entry point now, on React Aria: [color](#color-picker-and-swatches) lists what changes.
 - **A Combobox option's `leading`** is `start`. `v1-props` renames it in an array written in `items`, also in a group's `items`, and reports `items` it can't read, such as a variable; TypeScript points at the rest.
 - **DropZone** is named by its label and its description together, as its visible text is; a test that found it by its label alone matches the start of the name.
+
+### Color picker and swatches
+
+ColorPicker and ColorSwatch move to their own entry point, `@envsemble/envui/color`, rebuilt on React Aria's color hooks, with ColorPickerButton, a button that opens a picker in a popover. Like the content and diff entries, it uses libraries that envUI doesn't list as dependencies, so an application that imports it installs them, as [setup](setup.md#public-entry-points) lists:
+
+```sh
+npm install @react-aria/color@^3.2.1 @react-stately/color@^3.10.1 @react-aria/i18n@^3.13.1
+```
+
+`v1-props` moves ColorPicker's props while it is imported from `@envsemble/envui`, then `v1-entries` moves the imports:
+
+| Before                                                                | After                                                                                                                               |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `import { ColorPicker, ColorSwatch } from '@envsemble/envui'`         | `import { ColorPicker, ColorSwatch } from '@envsemble/envui/color'`, with `ColorPickerProps` and `ColorSwatchProps`                 |
+| ColorPicker `variant`                                                 | Removed: the fields are one compact control                                                                                         |
+| ColorPicker `ref`, the HEX field                                      | The picker's root; a form takes the color from `name`, through a hidden input                                                       |
+| `onValueChange(value)`, a `#rrggbb` string                            | `onValueChange(value, color)`: the string in `valueFormat`, `#rrggbb` by default, and React Aria's `Color`                          |
+| `value`, `defaultValue`: six hex digits                               | A CSS color string, hex, `rgb()` or `hsl()`, or a `Color`                                                                           |
+| HEX field, named "<label> HEX", committed as six digits are typed     | Fields for the format the select shows, hex, RGB or HSL, named Hex, Red, Hue and so on; typing commits on Enter and as focus leaves |
+| Area and hue named "<label> saturation and brightness", "<label> hue" | The area named "<label>, Color picker", the sliders Hue and Alpha, from React Aria in the EnvUIProvider's locale                    |
+| ColorSwatch: a round sample, always hidden from assistive technology  | A rounded square; alone, an image named by its color, such as dark purple; with `format` or `label`, its value and name beside it   |
+
+Change by hand:
+
+- **The messages.** EnvUIProvider's `messages.colorPicker` holds `format`, `hex`, `rgb`, `hsl`, `hexField`, `copy`, `eyeDropper`, `swatches` and `button` now. `description`, `invalid`, `hexLabel`, `restored`, `hue`, `area` and `areaValue` are gone: React Aria names the channels and the area, and describes their values, in the provider's locale, and a draft that is no color returns to the color as focus leaves.
+- **Tests** that found the HEX field by "<label> HEX" find the picker by its label, `getByRole('group', { name: 'Accent color' })`, and the field inside it by its name, Hex, then press Enter, or move focus, to commit what they typed.
+- **The parts.** `env-color-picker-plane`, `-saturation`, `-saturation-slider`, `-saturation-thumb`, `-hue-control`, `-hue-thumb`, `-hue-track` and `-status` are gone. The area is `env-color-picker-area` with its `env-color-picker-thumb`, each slider `env-color-picker-slider` (`env-color-picker-hue` and `env-color-picker-alpha`) with its `env-color-picker-track` and thumb, and the fields `env-color-picker-fields`. A ColorSwatch's color is `env-color-swatch-sample`, inside `env-color-swatch` where it has a label or a value.
+- **A swatch button.** A Popover around a ColorPicker, opened by a Button with a ColorSwatch, is ColorPickerButton now, which keeps the button's name and value in step with the color.
 
 ### Navigation and collections
 
