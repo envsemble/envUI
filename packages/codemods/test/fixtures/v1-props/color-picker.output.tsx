@@ -7,6 +7,7 @@ export function Accent({ variant, field }) {
       <ColorPicker label="Accent" />
       <ColorPicker label="Accent" variant={variant} />
       <ColorPicker label="Accent" ref={field} />
+      <ColorPicker label="Accent" required size="sm" autoComplete="off" onBlur={field.onBlur} />
     </>
   );
 }
