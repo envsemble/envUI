@@ -195,6 +195,10 @@ Name the value in a short noun phrase, and keep lasting instructions in the desc
 
 Not shown: the suffix, `env-text-field-suffix`, the error, `env-field-error`, and a Textarea's resize edge, `env-textarea-resize-edge`.
 
+### Colors
+
+`--env-text-field-container`, `--env-text-field-content`, `--env-text-field-outline` and `--env-text-field-indicator` set the colors of one TextField or Textarea, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 A field fills its container; set the width there. A long prefix is cut short so the value keeps its room.

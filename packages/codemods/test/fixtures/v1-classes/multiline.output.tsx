@@ -20,5 +20,5 @@ export const rows = (root: HTMLElement) =>
       > .env-list-item
   `);
 
-export const tone = `var(--env-alert-tone,
-  var(--env-list-item-fill))`;
+export const tone = `var(--env-alert-icon,
+  var(--env-list-item-container))`;

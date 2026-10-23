@@ -142,6 +142,10 @@ A count takes the same tones and variants: neutral and soft by default, and `ton
 
 A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.
 
+### Colors
+
+`--env-badge-container`, `--env-badge-content` and `--env-badge-outline` set the colors of one Badge, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 A badge stays on one line and ends with an ellipsis where its container is narrower.

@@ -112,6 +112,10 @@ Name options with a word or two that name the view, and name the control with `a
 4. **Label** (`env-segmented-control-item-label`, `label`)
 5. **Count** (`env-segmented-control-item-count`, `count`)
 
+### Colors
+
+`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` set the colors of one SegmentedControl, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 The rail is as wide as its options. With `fullWidth` it fills its container and splits it evenly; a label too long for its share ends with an ellipsis and shows whole in a tooltip.

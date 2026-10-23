@@ -367,6 +367,30 @@
     "--env-window-frame-title-bar-end": {
       "cssVariable": "--env-top-bar-title-bar-end",
       "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end."
+    },
+    "--env-list-item-fill": {
+      "cssVariable": "--env-list-item-container",
+      "note": "A row's fill is the public color property --env-list-item-container, set on the row."
+    },
+    "--env-toast-fill": {
+      "cssVariable": "--env-toast-container",
+      "note": "A toast's fill is the public color property --env-toast-container, set on the toast."
+    },
+    "--env-toast-edge": {
+      "cssVariable": "--env-toast-outline",
+      "note": "A toast's edge is the public color property --env-toast-outline."
+    },
+    "--env-alert-tint": {
+      "cssVariable": "--env-alert-container",
+      "note": "An alert's tint is the public color property --env-alert-container, set on the alert."
+    },
+    "--env-alert-edge": {
+      "cssVariable": "--env-alert-outline",
+      "note": "An alert's edge is the public color property --env-alert-outline."
+    },
+    "--env-alert-tone": {
+      "cssVariable": "--env-alert-icon",
+      "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
     }
   },
   "aliases": {
@@ -1154,6 +1178,12 @@
     },
     "--env-elevation-3-shadow": {
       "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-toast-fill-hover": {
+      "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
+    },
+    "--env-toast-fill-pressed": {
+      "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
     }
   }
 }

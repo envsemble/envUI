@@ -2234,6 +2234,39 @@ export const tokens = {
       'dark-high-contrast': '0.48',
     },
   },
+  /** The state layer of keyboard focus, under the focus ring: 10% of the content color. */
+  'state.focus-opacity': {
+    cssVariable: '--env-state-focus-opacity',
+    type: 'number',
+    values: {
+      light: '0.1',
+      dark: '0.1',
+      'light-high-contrast': '0.07',
+      'dark-high-contrast': '0.07',
+    },
+  },
+  /** The state layer under the pointer: 8% of the content color over the container. */
+  'state.hover-opacity': {
+    cssVariable: '--env-state-hover-opacity',
+    type: 'number',
+    values: {
+      light: '0.08',
+      dark: '0.08',
+      'light-high-contrast': '0.06',
+      'dark-high-contrast': '0.06',
+    },
+  },
+  /** The state layer while pressed: 10% of the content color over the container. */
+  'state.pressed-opacity': {
+    cssVariable: '--env-state-pressed-opacity',
+    type: 'number',
+    values: {
+      light: '0.1',
+      dark: '0.12',
+      'light-high-contrast': '0.07',
+      'dark-high-contrast': '0.07',
+    },
+  },
   /** A window title bar drawn by the application, which holds controls of size sm. */
   'title-bar.height': {
     cssVariable: '--env-title-bar-height',

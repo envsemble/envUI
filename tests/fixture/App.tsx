@@ -5,7 +5,8 @@ import './Fixture.css';
 import { FormsFixture } from './Forms.js';
 import { DialogFixture } from './Dialog.js';
 import { ToastTriggers, StrictToastFixture } from './Toasts.js';
-import { ColorControls } from './Colors.js';
+import { ColorControls, ColorOverrides } from './Colors.js';
+import { DefaultColors } from './DefaultColors.js';
 import { NavigationFixture } from './Navigation.js';
 import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
@@ -172,8 +173,11 @@ export default function App() {
             <>
               <ColorControls theme="light" />
               <ColorControls theme="dark" />
+              <ColorOverrides />
             </>
           )}
+          {/* Open popups: only on its own page, so they cover nothing else. */}
+          {fixture === 'default-colors' && <DefaultColors />}
           {includes('navigation') && (
             <>
               <NavigationFixture theme="light" />

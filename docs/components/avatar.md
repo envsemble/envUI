@@ -95,6 +95,8 @@ The name chooses one of eight colors, the same on every page; `hue` sets another
 
 <!-- specimen: Hues -->
 
+`--env-avatar-container` and `--env-avatar-content` set the colors of one avatar, its fill and its initials or figure, through `style` or CSS, in place of its hue. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## When to use
 
 ```tsx do=NamesBeside caption="The name beside the avatar, wherever there is room."

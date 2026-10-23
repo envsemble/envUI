@@ -111,6 +111,10 @@ Name the setting in a short phrase, so that on means yes.
 
 The thumb is drawn by the track and has no element of its own.
 
+### Colors
+
+`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` set the colors of one Switch, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 The label wraps beside the track.

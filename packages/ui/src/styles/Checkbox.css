@@ -1,5 +1,33 @@
+/* Color properties: a checkbox's colors, which an application sets on one checkbox through style or
+   its own CSS: outline the box's edge while unchecked, selected its fill while checked or
+   indeterminate, and icon the check mark. They don't inherit; the checkbox passes them on to its
+   box. With selected or icon set, the checked box's hover and press are state layers of the mark's
+   color over its fill (see Button.css). */
+@property --env-checkbox-outline {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-checkbox-selected {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-checkbox-icon {
+  syntax: '*';
+  inherits: false;
+}
+
 /* Checkbox: a native checkbox drawn as a box with a check mark, inside its label. */
 .env-checkbox {
+  --env-checkbox-edge: var(--env-checkbox-outline, var(--env-color-fg-muted));
+  --env-checkbox-edge-hover: var(--env-checkbox-outline, var(--env-color-fg-muted-hover));
+  --env-checkbox-edge-pressed: var(--env-checkbox-outline, var(--env-color-fg-muted-pressed));
+  --env-checkbox-mark: var(--env-checkbox-icon, var(--env-color-fg-on-emphasis));
+  --env-checkbox-icon-gate: color-mix(
+    in srgb,
+    var(--env-checkbox-icon) 0%,
+    var(--env-color-bg-brand-emphasis)
+  );
+  --env-checkbox-custom-base: var(--env-checkbox-selected, var(--env-checkbox-icon-gate));
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
@@ -60,7 +88,14 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  border: var(--env-control-border-width) solid var(--env-color-fg-muted);
+  --env-checkbox-layer: initial;
+  --env-checkbox-custom-layered: color-mix(
+    in srgb,
+    var(--env-checkbox-custom-base),
+    var(--env-checkbox-mark) var(--env-checkbox-layer)
+  );
+  --env-checkbox-custom-fill: var(--env-checkbox-custom-layered, var(--env-checkbox-custom-base));
+  border: var(--env-control-border-width) solid var(--env-checkbox-edge, var(--env-color-fg-muted));
   border-radius: var(--env-radius-xs);
   background: transparent;
   cursor: inherit;
@@ -75,13 +110,13 @@
   padding: calc(var(--env-checkbox-size) / 9);
   /* stylelint-disable-next-line unit-disallowed-list -- The pixel grid is in CSS pixels. */
   padding: round(calc(var(--env-checkbox-size) / 9), 1px);
-  color: var(--env-color-fg-on-emphasis);
+  color: var(--env-checkbox-mark, var(--env-color-fg-on-emphasis));
   pointer-events: none;
   visibility: hidden;
 }
 .env-checkbox-input:is(:checked, :indeterminate) {
   border-color: transparent;
-  background: var(--env-color-bg-brand-emphasis);
+  background: var(--env-checkbox-custom-fill, var(--env-color-bg-brand-emphasis));
 }
 .env-checkbox-input:checked + .env-checkbox-indicator {
   visibility: visible;
@@ -101,17 +136,19 @@
   background: currentColor;
 }
 .env-checkbox-input:hover:not(:disabled) {
-  border-color: var(--env-color-fg-muted-hover);
+  --env-checkbox-layer: calc(var(--env-state-hover-opacity) * 100%);
+  border-color: var(--env-checkbox-edge-hover, var(--env-color-fg-muted-hover));
 }
 .env-checkbox-input:active:not(:disabled) {
-  border-color: var(--env-color-fg-muted-pressed);
+  --env-checkbox-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  border-color: var(--env-checkbox-edge-pressed, var(--env-color-fg-muted-pressed));
 }
 .env-checkbox-input:is(:checked, :indeterminate):hover:not(:disabled) {
-  background: var(--env-color-bg-brand-emphasis-hover);
+  background: var(--env-checkbox-custom-fill, var(--env-color-bg-brand-emphasis-hover));
   border-color: transparent;
 }
 .env-checkbox-input:is(:checked, :indeterminate):active:not(:disabled) {
-  background: var(--env-color-bg-brand-emphasis-pressed);
+  background: var(--env-checkbox-custom-fill, var(--env-color-bg-brand-emphasis-pressed));
   border-color: transparent;
 }
 .env-checkbox-input:focus-visible {

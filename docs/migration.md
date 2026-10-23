@@ -715,7 +715,7 @@ A few components of 1.0.0-prerelease.0 fold into others, and a few become patter
 
 ### Part names and component tokens
 
-A component's part classes, `env-<component>-<part>` such as `.env-card-header`, and its state attributes, `data-*` such as `[data-tone='danger']`, are public and versioned: an application's CSS may target them, and a release that renames or removes one is a major release with a note here. `docs/generated/parts.json` lists every component's parts and states, as do the manifest and the MCP server's `get_component`. The custom properties a component declares for itself, its component tokens such as `--env-card-padding` or `--env-badge-fill`, are private and may change in any release: set the system tokens instead.
+A component's part classes, `env-<component>-<part>` such as `.env-card-header`, and its state attributes, `data-*` such as `[data-tone='danger']`, are public and versioned: an application's CSS may target them, and a release that renames or removes one is a major release with a note here. `docs/generated/parts.json` lists every component's parts and states, as do the manifest and the MCP server's `get_component`. So are its color properties, `--env-<component>-<role>` such as `--env-button-container`, which set its colors on one instance ([Customize colors](customizing-colors.md)). The other custom properties a component declares for itself, its component tokens such as `--env-card-padding` or `--env-badge-fill`, are private and may change in any release: set the system tokens instead.
 
 ```css
 /* Before: a component token */
@@ -735,6 +735,20 @@ The `no-private-classes` rules are gone from the ESLint plugin and the Stylelint
 rules: { 'envui/no-private-classes': 'off' }
 // 1.0: nothing to configure
 ```
+
+### Color properties and state layers
+
+1.0.0-prerelease.2 gives each component public color properties, `--env-<component>-<role>` with the roles container, content, outline, icon, selected, selected-content and indicator, which override its colors on one instance; envUI's own colors don't change. Set one through `style` or a selector that matches the instance: the properties don't inherit, so one set on a wrapper colors nothing inside it. Once a container or content color is set, the component's hover, focus and press are state layers of the content color over the container. A few component tokens of prerelease.1 became color properties, and the codemods' `v1-classes` renames them; the toast's hover and pressed tokens are private now, and `v1-classes` reports them:
+
+| prerelease.1                           | prerelease.2                                   |
+| -------------------------------------- | ---------------------------------------------- |
+| `--env-list-item-fill`                 | `--env-list-item-container`                    |
+| `--env-alert-tint`, `--env-alert-edge` | `--env-alert-container`, `--env-alert-outline` |
+| `--env-alert-tone`                     | `--env-alert-icon`                             |
+| `--env-toast-fill`, `--env-toast-edge` | `--env-toast-container`, `--env-toast-outline` |
+| `--env-toast-fill-hover`, `-pressed`   | Gone: set the container alone                  |
+
+`--env-badge-outline`, a private border shorthand in prerelease.1, is the badge's outline color now: write `--env-badge-outline: <color>` rather than a border. A stylesheet that recolored one component's states by its own rules can set its container and content instead: the states follow.
 
 ### Templates and agent tools
 
@@ -811,54 +825,60 @@ envUI draws no shadows in 1.0: popups, dialogs, sheets, toasts and tooltips sepa
 
 Renamed beyond the prefix:
 
-| Before 1.0                           | 1.0                                          | Note                                                                                                   |
-| ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `--avatar-group-ring`                | `--env-avatar-group-ring`                    | In 0.x, the ring color an application set for an avatar group on a fill that was not an envUI surface. |
-| `--color-bg-page-muted`              | `--env-color-bg-inset`                       | Named for its role: a background that leans back toward the page inside a fill.                        |
-| `--color-border-accent`              | `--env-color-border-accent-emphasis`         | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
-| `--color-border-accent-emphasis`     | `--env-color-border-accent`                  | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
-| `--color-border-accent-hover`        | `--env-color-border-accent-emphasis-hover`   | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
-| `--color-border-accent-pressed`      | `--env-color-border-accent-emphasis-pressed` | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
-| `--color-border-danger`              | `--env-color-border-danger-emphasis`         | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
-| `--color-border-danger-emphasis`     | `--env-color-border-danger`                  | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
-| `--color-border-danger-hover`        | `--env-color-border-danger-emphasis-hover`   | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
-| `--color-border-danger-pressed`      | `--env-color-border-danger-emphasis-pressed` | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge. |
-| `--color-border-done-emphasis`       | `--env-color-border-done`                    | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
-| `--color-border-neutral-emphasis`    | `--env-color-border-neutral`                 | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
-| `--color-border-pressed`             | `--env-color-border-muted-pressed`           | 0.7 defined it, but envUI didn't read it; the muted border's pressed state is the role it named.       |
-| `--color-border-success-emphasis`    | `--env-color-border-success`                 | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
-| `--color-border-translucent`         | `--env-color-border-media`                   | Named for its role: the inner edge of content of any color, such as images and color areas.            |
-| `--color-border-warning-emphasis`    | `--env-color-border-warning`                 | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.    |
-| `--color-control-blue-hover`         | `--env-color-bg-brand-strong-hover`          | 0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named.                |
-| `--color-control-blue-pressed`       | `--env-color-bg-brand-strong-pressed`        | 0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named.                |
-| `--color-control-text`               | `--env-color-fg-control`                     | A synonym of the control text color, which envUI didn't read.                                          |
-| `--color-fill-hover`                 | `--env-color-bg-neutral-muted-hover`         | 0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named.                 |
-| `--color-fill-pressed`               | `--env-color-bg-neutral-muted-pressed`       | 0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named.                 |
-| `--color-neutral-fill`               | `--env-color-bg-neutral-strong`              | 0.7 defined it, but envUI didn't read it; the neutral strong fill is the role it named.                |
-| `--color-surface-base`               | `--env-color-bg-raised`                      | 0.7 defined it, but envUI didn't read it; the raised surface is the role it named.                     |
-| `--color-surface-raised`             | `--env-color-bg-raised`                      | 0.7 defined it, but envUI didn't read it; the raised surface is the role it named.                     |
-| `--color-text-subtle`                | `--env-color-fg-muted`                       | A synonym of the muted text color, which envUI didn't read.                                            |
-| `--control-height-compact`           | `--env-control-height-sm`                    | The small control height. For a compact app or region, set scale="compact" on its Theme instead.       |
-| `--control-height-small`             | `--env-control-height`                       | It always equalled --control-height, which every control reads now.                                    |
-| `--env-app-shell-header-height`      | `--env-top-bar-height`                       | AppShell is gone; TopBar's height.                                                                     |
-| `--env-topbar-height`                | `--env-top-bar-height`                       | TopBar's height.                                                                                       |
-| `--env-window-frame-title-bar-end`   | `--env-top-bar-title-bar-end`                | WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end.           |
-| `--env-window-frame-title-bar-start` | `--env-top-bar-title-bar-start`              | WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start.         |
-| `--font-family-code`                 | `--env-code-font-family`                     |                                                                                                        |
-| `--font-size-code`                   | `--env-code-font-size`                       |                                                                                                        |
-| `--icon-button-size`                 | `--env-control-height`                       | An icon button is as tall as the other controls of its size.                                           |
-| `--line-height-body`                 | `--env-line-height-body`                     | The body line height an application may set; envUI reads it with a fallback of 1.4.                    |
-| `--md-sys-shape-corner-extra-large`  | `--env-radius-xl`                            | The old corner scale is the radius scale now.                                                          |
-| `--md-sys-shape-corner-extra-small`  | `--env-radius-xs`                            | The old corner scale is the radius scale now.                                                          |
-| `--md-sys-shape-corner-full`         | `--env-radius-full`                          | The old corner scale is the radius scale now.                                                          |
-| `--md-sys-shape-corner-large`        | `--env-radius-lg`                            | The old corner scale is the radius scale now.                                                          |
-| `--md-sys-shape-corner-medium`       | `--env-radius-md`                            | The old corner scale is the radius scale now.                                                          |
-| `--md-sys-shape-corner-none`         | `--env-radius-none`                          | The old corner scale is the radius scale now.                                                          |
-| `--md-sys-shape-corner-small`        | `--env-radius-sm`                            | The old corner scale is the radius scale now.                                                          |
-| `--radius-large`                     | `--env-radius-lg`                            | One radius scale: the large corner is its lg step.                                                     |
-| `--radius-standard`                  | `--env-radius-sm`                            | One radius scale: the standard corner is its sm step.                                                  |
-| `--topbar-height`                    | `--env-top-bar-height`                       | TopBar's height.                                                                                       |
-| `--viewport-gutter`                  | `--env-viewport-gutter`                      |                                                                                                        |
+| Before 1.0                           | 1.0                                          | Note                                                                                                      |
+| ------------------------------------ | -------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `--avatar-group-ring`                | `--env-avatar-group-ring`                    | In 0.x, the ring color an application set for an avatar group on a fill that was not an envUI surface.    |
+| `--color-bg-page-muted`              | `--env-color-bg-inset`                       | Named for its role: a background that leans back toward the page inside a fill.                           |
+| `--color-border-accent`              | `--env-color-border-accent-emphasis`         | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge.    |
+| `--color-border-accent-emphasis`     | `--env-color-border-accent`                  | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.       |
+| `--color-border-accent-hover`        | `--env-color-border-accent-emphasis-hover`   | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge.    |
+| `--color-border-accent-pressed`      | `--env-color-border-accent-emphasis-pressed` | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge.    |
+| `--color-border-danger`              | `--env-color-border-danger-emphasis`         | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge.    |
+| `--color-border-danger-emphasis`     | `--env-color-border-danger`                  | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.       |
+| `--color-border-danger-hover`        | `--env-color-border-danger-emphasis-hover`   | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge.    |
+| `--color-border-danger-pressed`      | `--env-color-border-danger-emphasis-pressed` | The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge.    |
+| `--color-border-done-emphasis`       | `--env-color-border-done`                    | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.       |
+| `--color-border-neutral-emphasis`    | `--env-color-border-neutral`                 | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.       |
+| `--color-border-pressed`             | `--env-color-border-muted-pressed`           | 0.7 defined it, but envUI didn't read it; the muted border's pressed state is the role it named.          |
+| `--color-border-success-emphasis`    | `--env-color-border-success`                 | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.       |
+| `--color-border-translucent`         | `--env-color-border-media`                   | Named for its role: the inner edge of content of any color, such as images and color areas.               |
+| `--color-border-warning-emphasis`    | `--env-color-border-warning`                 | The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis.       |
+| `--color-control-blue-hover`         | `--env-color-bg-brand-strong-hover`          | 0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named.                   |
+| `--color-control-blue-pressed`       | `--env-color-bg-brand-strong-pressed`        | 0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named.                   |
+| `--color-control-text`               | `--env-color-fg-control`                     | A synonym of the control text color, which envUI didn't read.                                             |
+| `--color-fill-hover`                 | `--env-color-bg-neutral-muted-hover`         | 0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named.                    |
+| `--color-fill-pressed`               | `--env-color-bg-neutral-muted-pressed`       | 0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named.                    |
+| `--color-neutral-fill`               | `--env-color-bg-neutral-strong`              | 0.7 defined it, but envUI didn't read it; the neutral strong fill is the role it named.                   |
+| `--color-surface-base`               | `--env-color-bg-raised`                      | 0.7 defined it, but envUI didn't read it; the raised surface is the role it named.                        |
+| `--color-surface-raised`             | `--env-color-bg-raised`                      | 0.7 defined it, but envUI didn't read it; the raised surface is the role it named.                        |
+| `--color-text-subtle`                | `--env-color-fg-muted`                       | A synonym of the muted text color, which envUI didn't read.                                               |
+| `--control-height-compact`           | `--env-control-height-sm`                    | The small control height. For a compact app or region, set scale="compact" on its Theme instead.          |
+| `--control-height-small`             | `--env-control-height`                       | It always equalled --control-height, which every control reads now.                                       |
+| `--env-alert-edge`                   | `--env-alert-outline`                        | An alert's edge is the public color property --env-alert-outline.                                         |
+| `--env-alert-tint`                   | `--env-alert-container`                      | An alert's tint is the public color property --env-alert-container, set on the alert.                     |
+| `--env-alert-tone`                   | `--env-alert-icon`                           | An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon. |
+| `--env-app-shell-header-height`      | `--env-top-bar-height`                       | AppShell is gone; TopBar's height.                                                                        |
+| `--env-list-item-fill`               | `--env-list-item-container`                  | A row's fill is the public color property --env-list-item-container, set on the row.                      |
+| `--env-toast-edge`                   | `--env-toast-outline`                        | A toast's edge is the public color property --env-toast-outline.                                          |
+| `--env-toast-fill`                   | `--env-toast-container`                      | A toast's fill is the public color property --env-toast-container, set on the toast.                      |
+| `--env-topbar-height`                | `--env-top-bar-height`                       | TopBar's height.                                                                                          |
+| `--env-window-frame-title-bar-end`   | `--env-top-bar-title-bar-end`                | WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end.              |
+| `--env-window-frame-title-bar-start` | `--env-top-bar-title-bar-start`              | WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start.            |
+| `--font-family-code`                 | `--env-code-font-family`                     |                                                                                                           |
+| `--font-size-code`                   | `--env-code-font-size`                       |                                                                                                           |
+| `--icon-button-size`                 | `--env-control-height`                       | An icon button is as tall as the other controls of its size.                                              |
+| `--line-height-body`                 | `--env-line-height-body`                     | The body line height an application may set; envUI reads it with a fallback of 1.4.                       |
+| `--md-sys-shape-corner-extra-large`  | `--env-radius-xl`                            | The old corner scale is the radius scale now.                                                             |
+| `--md-sys-shape-corner-extra-small`  | `--env-radius-xs`                            | The old corner scale is the radius scale now.                                                             |
+| `--md-sys-shape-corner-full`         | `--env-radius-full`                          | The old corner scale is the radius scale now.                                                             |
+| `--md-sys-shape-corner-large`        | `--env-radius-lg`                            | The old corner scale is the radius scale now.                                                             |
+| `--md-sys-shape-corner-medium`       | `--env-radius-md`                            | The old corner scale is the radius scale now.                                                             |
+| `--md-sys-shape-corner-none`         | `--env-radius-none`                          | The old corner scale is the radius scale now.                                                             |
+| `--md-sys-shape-corner-small`        | `--env-radius-sm`                            | The old corner scale is the radius scale now.                                                             |
+| `--radius-large`                     | `--env-radius-lg`                            | One radius scale: the large corner is its lg step.                                                        |
+| `--radius-standard`                  | `--env-radius-sm`                            | One radius scale: the standard corner is its sm step.                                                     |
+| `--topbar-height`                    | `--env-top-bar-height`                       | TopBar's height.                                                                                          |
+| `--viewport-gutter`                  | `--env-viewport-gutter`                      |                                                                                                           |
 
 The 0.7 aliases, removed, each with the token that replaces it:
 
@@ -1073,6 +1093,8 @@ Removed, with what to use instead:
 | `--env-split-view-gutter`             | —                                       | SplitView is gone: Panes has no gutter; Panes.Divider has a width of its own.                                                                                                                                                                                                                        |
 | `--env-split-view-size`               | —                                       | SplitView is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root.                                                                                                                                                                                                 |
 | `--env-stack-gap`                     | —                                       | Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead.                                                                                                                                                              |
+| `--env-toast-fill-hover`              | —                                       | A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color.                                                                                                                                                    |
+| `--env-toast-fill-pressed`            | —                                       | A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color.                                                                                                                                                    |
 | `--env-window-frame-title-bar-left`   | —                                       | WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end.                                                                                                                                                                     |
 | `--env-window-frame-title-bar-right`  | —                                       | WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end.                                                                                                                                                                     |
 | `--member-identity-avatar-size`       | —                                       | Unused.                                                                                                                                                                                                                                                                                              |

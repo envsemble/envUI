@@ -58,3 +58,26 @@
   outline-color: var(--env-color-border-focus);
   outline-offset: 0.0625rem;
 }
+/* The Colors page's state layers: list rows, navigation items and fields inside a forced state. */
+.docs-preview .docs-force-hover > .env-list-item[data-interactive] {
+  --env-list-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+  background: var(--env-list-item-custom-fill, var(--env-list-item-fill-hover));
+}
+.docs-preview .docs-force-pressed > .env-list-item[data-interactive] {
+  --env-list-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  background: var(--env-list-item-custom-fill, var(--env-list-item-fill-pressed));
+}
+.docs-preview .docs-force-hover .env-drawer-item {
+  --env-drawer-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+  background: var(--env-drawer-item-custom-fill, var(--env-color-bg-navigation-hover));
+}
+.docs-preview .docs-force-pressed .env-drawer-item {
+  --env-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  background: var(--env-drawer-item-custom-fill, var(--env-color-bg-navigation-pressed));
+}
+.docs-preview .docs-force-hover .env-text-field-control {
+  --env-field-border-color: var(--env-field-interaction-hover);
+}
+.docs-preview .docs-force-pressed .env-text-field-control {
+  --env-field-border-color: var(--env-field-interaction-pressed);
+}

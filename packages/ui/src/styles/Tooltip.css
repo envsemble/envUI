@@ -4,6 +4,20 @@
   --env-popup-layer: var(--env-z-tooltip);
   z-index: var(--env-z-tooltip);
 }
+/* Color properties: a tooltip's colors, which an application sets on one tooltip through its own
+   CSS or the popup's style: its fill, its text and its edge. They don't inherit. */
+@property --env-tooltip-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-tooltip-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-tooltip-outline {
+  syntax: '*';
+  inherits: false;
+}
 .env-tooltip {
   /* As wide as its text up to 18 rem, never wider than the room the positioner finds. */
   max-inline-size: min(18rem, var(--available-width, calc(100vw - 2rem)));
@@ -13,16 +27,16 @@
      the edge is the dark fill a step darker rather than the light popup edge, which would ring it
      like a halo; in dark it is the popup edge. The edge is the boundary in high contrast and what
      forced colors paint. */
-  border: 1px solid var(--env-color-border-neutral-strong);
+  border: 1px solid var(--env-tooltip-outline, var(--env-color-border-neutral-strong));
   border-radius: var(--env-radius-sm);
-  background: var(--env-color-bg-neutral-strong);
-  color: var(--env-color-fg-on-strong);
+  background: var(--env-tooltip-container, var(--env-color-bg-neutral-strong));
+  color: var(--env-tooltip-content, var(--env-color-fg-on-strong));
   font: var(--env-type-body-small);
   overflow-wrap: anywhere;
   /* A Kbd in a tooltip, such as a shortcut beside the name, takes key caps for the dark fill. */
-  --env-kbd-fg: var(--env-color-fg-on-strong);
+  --env-kbd-fg: currentColor;
   --env-kbd-bg: transparent;
-  --env-kbd-border: color-mix(in srgb, var(--env-color-fg-on-strong) 45%, transparent);
+  --env-kbd-border: color-mix(in srgb, currentColor 45%, transparent);
   /* Motion: it fades in, below, and grows from the origin its positioner sets. */
   transform-origin: var(--transform-origin, center);
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);

@@ -146,6 +146,29 @@ test('action and navigation fills paint their precomputed hover and pressed toke
   }
 });
 
+test('a nested Theme that overrides the semantic tokens recolors its area alone', async ({
+  page,
+}) => {
+  const inside = page.getByTestId('override-inside');
+  const outside = page.getByTestId('override-outside');
+  await expect(inside).toHaveCSS('background-color', 'rgb(23, 111, 53)');
+  await expect(page.getByTestId('override-switch')).toHaveCSS(
+    'background-color',
+    'rgb(23, 111, 53)',
+  );
+  // The area keeps every state: its own hover and pressed tokens apply.
+  await inside.hover();
+  await expect(inside).toHaveCSS('background-color', 'rgb(17, 90, 42)');
+  await page.mouse.down();
+  await expect(inside).toHaveCSS('background-color', 'rgb(11, 69, 32)');
+  await page.mouse.up();
+  await page.mouse.move(0, 0);
+  // Outside the area, the theme's own brand color stays.
+  const brand = await tokenColor(outside, '--env-color-bg-brand-emphasis');
+  expect(brand).not.toBe('rgb(23, 111, 53)');
+  await expect(outside).toHaveCSS('background-color', brand);
+});
+
 test('compositions reuse primitive colors while unrelated roles stay independent', async ({
   page,
 }) => {

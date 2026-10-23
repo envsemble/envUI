@@ -123,6 +123,10 @@ Text that isn't a control, such as an abbreviation, takes a quiet dotted underli
 
 Not shown: the wrapper that takes the pointer for a disabled control, `env-tooltip-disabled-target`, and the dotted underline of a text trigger, `env-hover-detail`.
 
+### Colors
+
+`--env-tooltip-container`, `--env-tooltip-content` and `--env-tooltip-outline` set the colors of one Tooltip, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Accessibility
 
 ### Keyboard

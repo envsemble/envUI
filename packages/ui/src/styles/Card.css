@@ -1,12 +1,50 @@
-.env-card {
-  --env-card-padding: var(--env-surface-padding);
+/* Color properties: a card's colors, which an application sets on one card through style or its
+   own CSS. They take the place of Surface's, which a card also reads, and don't inherit. */
+@property --env-card-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-card-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-card-outline {
+  syntax: '*';
+  inherits: false;
 }
 
-/* A link or button card: the whole surface is the target. */
+.env-card {
+  --env-card-padding: var(--env-surface-padding);
+  /* With no color property set, the designed fills below apply in every state. The custom fill is
+     valid only while the application sets the container or the content (see Button.css), and
+     then hover, focus and press lay the content color over the container. */
+  --env-card-layer: initial;
+  --env-card-content-gate: color-mix(in srgb, var(--env-card-content) 0%, var(--env-surface-color));
+  --env-card-custom-base: var(
+    --env-card-container,
+    var(--env-surface-container, var(--env-card-content-gate))
+  );
+  --env-card-custom-layered: color-mix(
+    in srgb,
+    var(--env-card-custom-base),
+    currentColor var(--env-card-layer)
+  );
+  --env-card-custom-fill: var(--env-card-custom-layered, var(--env-card-custom-base));
+  --env-surface-color: var(
+    --env-card-container,
+    var(--env-surface-container, var(--env-surface-container-default))
+  );
+  border: var(--env-control-border-width) solid var(--env-card-outline, var(--env-surface-outline));
+  color: var(--env-card-content, var(--env-surface-content));
+}
+
+/* A link or button card: the whole surface is the target. With a container or content color of
+   the application's, hover, focus and press lay the state layer of its text color over it. */
 .env-card[data-interactive] {
   inline-size: 100%;
   margin: 0;
-  color: var(--env-color-fg-default);
+  background: var(--env-card-custom-fill, var(--env-surface-color));
+  color: var(--env-card-content, var(--env-color-fg-default));
   font: inherit;
   text-align: start;
   text-decoration: none;
@@ -15,11 +53,17 @@
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-card[data-interactive]:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-surface-hover);
+  --env-card-layer: calc(var(--env-state-hover-opacity) * 100%);
+  background: var(--env-card-custom-fill, var(--env-surface-hover));
+}
+.env-card[data-interactive]:focus-visible:not(:disabled):not([aria-disabled='true']) {
+  --env-card-layer: calc(var(--env-state-focus-opacity) * 100%);
 }
 .env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-surface-pressed);
+  --env-card-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  background: var(--env-card-custom-fill, var(--env-surface-pressed));
 }
+
 .env-card[data-interactive]:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;

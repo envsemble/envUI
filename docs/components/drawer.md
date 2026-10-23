@@ -111,6 +111,10 @@ The application passes the same destinations to each form, and a group is a head
 7. **Heading** (`env-drawer-heading`)
 8. **Footer** (`env-drawer-footer`, `footer`)
 
+### Colors
+
+`--env-drawer-item-container`, `--env-drawer-item-content`, `--env-drawer-item-icon`, `--env-drawer-item-selected` and `--env-drawer-item-selected-content` set the colors of one Drawer, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Accessibility
 
 ### Keyboard

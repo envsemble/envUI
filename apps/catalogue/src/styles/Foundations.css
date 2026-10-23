@@ -42,10 +42,6 @@
     monospace;
   overflow-wrap: anywhere;
 }
-.docs-color-state {
-  min-block-size: 3rem;
-  inline-size: 100%;
-}
 .docs-type-list {
   display: grid;
   gap: var(--env-space-5);

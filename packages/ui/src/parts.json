@@ -1,5 +1,5 @@
 {
-  "$comment": "The hand-written part of the part contract, which scripts/GenerateParts.mjs merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group.",
+  "$comment": "The hand-written part of the part contract, which scripts/GenerateParts.mjs merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors.",
   "roots": {
     "Dialog": "env-dialog-popup",
     "ConfirmDialog": "env-dialog-popup",
@@ -765,6 +765,141 @@
       "env-tree-item": "One item.",
       "env-tree-label": "An item's label.",
       "env-tree-rows": "The rows of a level."
+    }
+  },
+  "colors": {
+    "Alert": {
+      "--env-alert-container": "The tint behind the alert.",
+      "--env-alert-content": "The title and message.",
+      "--env-alert-outline": "The edge.",
+      "--env-alert-icon": "The tone's icon and the dismiss button, whose state layers it colors."
+    },
+    "Avatar": {
+      "--env-avatar-container": "The fill behind the initials or figure, in place of the hue.",
+      "--env-avatar-content": "The initials and the figure."
+    },
+    "Badge": {
+      "--env-badge-container": "The fill, in place of the tone and variant.",
+      "--env-badge-content": "The label, count or icon.",
+      "--env-badge-outline": "An edge in this color."
+    },
+    "Bar": {
+      "--env-bar-item-container": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
+      "--env-bar-item-content": "The label, and the color of the state layers.",
+      "--env-bar-item-icon": "The icon of a destination that is not current.",
+      "--env-bar-item-selected": "The pill around the icon of the current destination.",
+      "--env-bar-item-selected-content": "The icon of the current destination."
+    },
+    "Button": {
+      "--env-button-container": "The fill, in every variant; the state layers lie over it, and a solid variant takes them instead of its designed hover and press fills.",
+      "--env-button-content": "The label and icons, and the color of the state layers.",
+      "--env-button-outline": "The edge, where the variant draws one, such as outline.",
+      "--env-button-selected": "The fill of a pressed toggle, such as a toolbar button that is on.",
+      "--env-button-selected-content": "The icon and label of a pressed toggle."
+    },
+    "Card": {
+      "--env-card-container": "The card's surface; an interactive card's state layers lie over it.",
+      "--env-card-content": "The text, and the color of an interactive card’s state layers.",
+      "--env-card-outline": "An edge in this color."
+    },
+    "Checkbox": {
+      "--env-checkbox-outline": "The box's edge while unchecked.",
+      "--env-checkbox-selected": "The box's fill while checked or indeterminate; set, it takes state layers instead of the designed hover and press fills.",
+      "--env-checkbox-icon": "The check mark or dash, and the color of the state layers."
+    },
+    "Combobox": {
+      "--env-combobox-chip-container": "The fill of a chosen option’s chip.",
+      "--env-combobox-chip-content": "The chip's label and remove button."
+    },
+    "Drawer": {
+      "--env-drawer-item-container": "The item at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
+      "--env-drawer-item-content": "The label, and the color of the state layers.",
+      "--env-drawer-item-icon": "The icon of a destination that is not current.",
+      "--env-drawer-item-selected": "The item of the current destination.",
+      "--env-drawer-item-selected-content": "The label and icon of the current destination."
+    },
+    "IconButton": {
+      "--env-button-container": "The fill, in every variant; the state layers lie over it, and a solid variant takes them instead of its designed hover and press fills.",
+      "--env-button-content": "The label and icons, and the color of the state layers.",
+      "--env-button-outline": "The edge, where the variant draws one, such as outline.",
+      "--env-button-selected": "The fill of a pressed toggle, such as a toolbar button that is on.",
+      "--env-button-selected-content": "The icon and label of a pressed toggle."
+    },
+    "List": {
+      "--env-list-item-container": "The row's fill; the state layers lie over it.",
+      "--env-list-item-content": "The text, and the color of the state layers.",
+      "--env-list-item-selected": "The fill of the current row and of a row whose checkbox is checked.",
+      "--env-list-item-selected-content": "The text of a selected row."
+    },
+    "Menu": {
+      "--env-menu-item-container": "The item's fill; the highlight and press are state layers over it.",
+      "--env-menu-item-content": "The label, and the color of the state layers.",
+      "--env-menu-item-icon": "The leading icon."
+    },
+    "Radio": {
+      "--env-radio-container": "The row's fill in a vertical group; the state layers lie over it.",
+      "--env-radio-content": "The label, and the color of a row's state layers.",
+      "--env-radio-selected": "The dot and ring of the chosen option."
+    },
+    "Rail": {
+      "--env-rail-item-container": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
+      "--env-rail-item-content": "The label, and the color of the state layers.",
+      "--env-rail-item-icon": "The icon of a destination that is not current.",
+      "--env-rail-item-selected": "The pill around the icon of the current destination.",
+      "--env-rail-item-selected-content": "The icon of the current destination."
+    },
+    "SegmentedControl": {
+      "--env-segmented-control-container": "The rail behind the options.",
+      "--env-segmented-control-content": "The labels of the options not chosen, and the color of their state layers.",
+      "--env-segmented-control-selected": "The chosen option's fill; set, it takes state layers instead of the designed hover and press fills.",
+      "--env-segmented-control-selected-content": "The chosen option's label."
+    },
+    "Select": {
+      "--env-select-container": "The trigger's fill; the state layers lie over it.",
+      "--env-select-content": "The trigger's label and chevron, and the color of the state layers.",
+      "--env-select-outline": "The trigger's edge, where its variant draws one."
+    },
+    "Slider": {
+      "--env-slider-container": "The track.",
+      "--env-slider-indicator": "The filled part and the thumb, and the thumb's halo at 16%."
+    },
+    "Surface": {
+      "--env-surface-container": "The surface's fill, which its contents take as the color beneath them.",
+      "--env-surface-content": "The text.",
+      "--env-surface-outline": "An edge in this color."
+    },
+    "Switch": {
+      "--env-switch-container": "The track while off; the state layers lie over it.",
+      "--env-switch-content": "The thumb while off, and the color of the state layers.",
+      "--env-switch-outline": "The track's ring while off.",
+      "--env-switch-selected": "The track while on; set, it takes state layers instead of the designed hover and press fills.",
+      "--env-switch-selected-content": "The thumb while on."
+    },
+    "Tabs": {
+      "--env-tabs-container": "The rail behind the tabs.",
+      "--env-tabs-content": "The labels of the tabs not selected, and the color of their state layers; the selected tab keeps its button’s colors."
+    },
+    "TextField": {
+      "--env-text-field-container": "The well behind the entered text.",
+      "--env-text-field-content": "The entered text.",
+      "--env-text-field-outline": "The edge at rest.",
+      "--env-text-field-indicator": "The edge under the pointer, pressed and focused, the caret and the floating label while focused."
+    },
+    "Textarea": {
+      "--env-text-field-container": "The well behind the entered text.",
+      "--env-text-field-content": "The entered text.",
+      "--env-text-field-outline": "The edge at rest.",
+      "--env-text-field-indicator": "The edge under the pointer, pressed and focused, the caret and the floating label while focused."
+    },
+    "Toast": {
+      "--env-toast-container": "The fill, in place of the tone; set, the dismiss button's states are state layers over it.",
+      "--env-toast-content": "The message, icons and dismiss button, and the color of its state layers.",
+      "--env-toast-outline": "The edge."
+    },
+    "Tooltip": {
+      "--env-tooltip-container": "The fill.",
+      "--env-tooltip-content": "The text and the keys of a shortcut.",
+      "--env-tooltip-outline": "The edge."
     }
   }
 }

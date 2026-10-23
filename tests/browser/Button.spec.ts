@@ -296,3 +296,98 @@ test(
     expect(layout.endColor).toBe(layout.muted);
   },
 );
+
+/** The sRGB channels, 0 to 255, and alpha of a computed color, rgb() or color(srgb …). */
+function channels(color: string) {
+  const srgb = /^color\(srgb ([\d.e-]+) ([\d.e-]+) ([\d.e-]+)(?: \/ ([\d.e-]+))?\)$/.exec(color);
+  if (srgb) return [...srgb.slice(1, 4).map((value) => Number(value) * 255), Number(srgb[4] ?? 1)];
+  const rgb = /^rgba?\(([\d.]+), ([\d.]+), ([\d.]+)(?:, ([\d.]+))?\)$/.exec(color);
+  if (!rgb) throw new Error(`Cannot read the color ${color}`);
+  return [...rgb.slice(1, 4).map(Number), Number(rgb[4] ?? 1)];
+}
+
+test('a button given its own colors lays state layers of its content color over its container', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=colors`);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const container = [11, 110, 79];
+  const content = [255, 255, 255];
+  // The state opacities are tokens: 8% under the pointer and 10% pressed in the light theme.
+  const opacity = await page.getByTestId('color-overrides').evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      hover: Number(style.getPropertyValue('--env-state-hover-opacity')),
+      pressed: Number(style.getPropertyValue('--env-state-pressed-opacity')),
+    };
+  });
+  expect(opacity).toEqual({ hover: 0.08, pressed: 0.1 });
+  const layered = (share: number) =>
+    container.map((channel, index) => channel * (1 - share) + content[index] * share);
+  /** Waits until the button's fill is `expected`, within rounding. */
+  async function expectFill(button: import('@playwright/test').Locator, expected: number[]) {
+    await expect
+      .poll(async () => {
+        const [r, g, b, alpha] = channels(
+          await button.evaluate((element) => getComputedStyle(element).backgroundColor),
+        );
+        return Math.max(...[r, g, b].map((value, index) => Math.abs(value - expected[index])), 0) <
+          1 && alpha === 1
+          ? 'matches'
+          : `${r} ${g} ${b} / ${alpha}`;
+      })
+      .toBe('matches');
+  }
+  // Every variant takes the container in place of its designed fills, whose states give way to
+  // the state layers.
+  for (const variant of ['primary', 'secondary', 'outline'] as const) {
+    const button = page.getByTestId(`custom-button-${variant}`);
+    await button.evaluate((element) => {
+      element.style.setProperty('--env-button-container', 'rgb(11 110 79)');
+      element.style.setProperty('--env-button-content', 'rgb(255 255 255)');
+    });
+    await expect(button, variant).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expectFill(button, container);
+    await button.hover();
+    await expectFill(button, layered(opacity.hover));
+    await page.mouse.down();
+    await expectFill(button, layered(opacity.pressed));
+    await page.mouse.up();
+    await page.mouse.move(0, 0);
+    await expectFill(button, container);
+  }
+  // Its content alone set, a button keeps its own fill at rest and lays the content over it.
+  const tinted = page.getByTestId('light-button-secondary');
+  await tinted.evaluate((element) =>
+    element.style.setProperty('--env-button-content', 'rgb(11 110 79)'),
+  );
+  const rest = await tinted.evaluate((element) => getComputedStyle(element).backgroundColor);
+  await tinted.hover();
+  const expected = await tinted.evaluate((element) => {
+    const probe = document.createElement('span');
+    probe.style.backgroundColor =
+      'color-mix(in srgb, var(--env-color-bg-neutral-muted), rgb(11 110 79) calc(var(--env-state-hover-opacity) * 100%))';
+    element.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return color;
+  });
+  // Within rounding: the gate that tells a set content mixes in 0% of it.
+  await expect
+    .poll(async () => {
+      const actual = channels(
+        await tinted.evaluate((element) => getComputedStyle(element).backgroundColor),
+      );
+      return channels(expected).every((value, index) => Math.abs(value - actual[index]) < 0.01);
+    })
+    .toBe(true);
+  expect(expected).not.toBe(rest);
+  await page.mouse.move(0, 0);
+  // The color properties don't inherit: set on an element around a button, they color nothing.
+  const outside = page.getByTestId('override-outside');
+  const before = await outside.evaluate((element) => getComputedStyle(element).backgroundColor);
+  await page
+    .getByTestId('color-overrides')
+    .evaluate((element) => element.style.setProperty('--env-button-container', 'rgb(11 110 79)'));
+  await expect(outside).toHaveCSS('background-color', before);
+});

@@ -33,6 +33,55 @@ test('a component lists its root, its part classes and the states it is styled b
   assert.equal(component('Dialog').root, 'env-dialog-popup');
 });
 
+test('a component lists its color properties, each registered so it does not inherit', () => {
+  const colors = (name) => (component(name).colors ?? []).map((color) => color.property);
+  assert.deepEqual(colors('Button'), [
+    '--env-button-container',
+    '--env-button-content',
+    '--env-button-outline',
+    '--env-button-selected',
+    '--env-button-selected-content',
+  ]);
+  // IconButton is a Button, and takes its properties.
+  assert.deepEqual(colors('IconButton'), colors('Button'));
+  for (const name of ['Card', 'List', 'Drawer', 'TextField', 'Checkbox', 'Switch', 'Slider'])
+    assert.ok(colors(name).length > 0, `${name} lists its color properties`);
+  for (const entry of Object.values(parts.components))
+    for (const color of entry.colors ?? []) {
+      assert.match(color.property, /^--env-[a-z]+(?:-[a-z]+)*$/);
+      assert.ok(color.description, `${color.property} has a description`);
+    }
+});
+
+test('a color property that goes is reported until a major changeset names it', () => {
+  const before = {
+    components: {
+      Button: {
+        parts: [{ class: 'env-button' }],
+        states: [],
+        colors: [{ property: '--env-button-container' }, { property: '--env-button-outline' }],
+      },
+    },
+  };
+  const after = {
+    components: {
+      Button: {
+        parts: [{ class: 'env-button' }],
+        states: [],
+        colors: [{ property: '--env-button-container' }],
+      },
+    },
+  };
+  assert.deepEqual(removedParts(before, after), [
+    { label: 'Button: --env-button-outline', name: '--env-button-outline', recorded: false },
+  ]);
+  assert.equal(
+    removedParts(before, after, [major('`--env-button-outline` is gone.')])[0].recorded,
+    true,
+  );
+  assert.deepEqual(removedParts(before, before), []);
+});
+
 test('shared anatomy lists the components that render it', () => {
   const row = parts.shared.ListRow;
   assert.equal(row.root, 'env-list-row');

@@ -426,5 +426,10 @@
     "1": { "border": { "$value": "{palette.neutral.55}" } },
     "2": { "border": { "$value": "{palette.neutral.55}" } },
     "3": { "border": { "$value": "{palette.neutral.55}" } }
+  },
+  "state": {
+    "$type": "number",
+    "$description": "A stronger pressed layer, as the designed dark pressed fills step further from their rest than the light ones.",
+    "pressed-opacity": { "$value": 0.12 }
   }
 }

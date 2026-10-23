@@ -1,0 +1,3 @@
+[
+  "line 11: --env-toast-fill-hover is removed in 1.0: A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
+]

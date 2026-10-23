@@ -89,6 +89,14 @@ Hover, press, keyboard focus and disabled, for each variant.
 
 <!-- specimen: InteractionStates -->
 
+### Colors of its own
+
+One button can take colors of its own through its color properties, such as `--env-button-container` and `--env-button-content`. Its hover, focus and press follow them, as state layers of its label color.
+
+```tsx example=CustomColors
+
+```
+
 ### Pending work
 
 While `pending`, a spinner replaces the content at the same size, and presses do nothing.
@@ -203,6 +211,10 @@ When the outcome is known, put it in the label.
 4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
 
 Not shown: the spinner, `env-button-spinner`, a ButtonGroup's `env-button-group`, and the end slot, `env-button-end`: quiet content after the label, such as a shortcut's keys in a Kbd, muted and at the far end of a wide button, as the [search trigger](../patterns/search-trigger.md) shows it.
+
+### Colors
+
+`--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` set the colors of one Button or IconButton, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 

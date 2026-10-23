@@ -75,6 +75,7 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 | Variants, tones and sizes                     | One table of the values and what each is for.                                                           |
 | What it does on its own, such as pending      | A `###` subsection of Overview, a sentence beside its figure.                                           |
 | Its parts and their class names               | The anatomy legend, names only.                                                                         |
+| Its color properties                          | Listed on the component's page in the Docs, with a link to [Customize colors](customizing-colors.md).   |
 | How it adapts to width                        | A sentence and an example at several widths.                                                            |
 | Keys, roles and what the application must add | Accessibility.                                                                                          |
 | Props                                         | Generated on the component's page in the Docs; never in prose.                                          |
