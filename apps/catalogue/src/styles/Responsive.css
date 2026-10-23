@@ -18,7 +18,7 @@
 @media print {
   .docs-header,
   .docs-sidebar,
-  .docs-page-controls,
+  .docs-rail,
   .docs-page-navigation,
   .docs-footer {
     display: none;

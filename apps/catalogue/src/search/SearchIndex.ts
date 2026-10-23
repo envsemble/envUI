@@ -10,8 +10,10 @@ export interface SearchResult {
   kind: 'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';
   title: string;
   detail: string;
-  /** The document id of the page it is on, such as button, or a catalogue page's, such as tokens. */
+  /** The document id of the page it is on, such as button, or a site page's, such as tokens. */
   page: string;
+  /** The area that shows it: the Site, or the Docs. */
+  area: 'site' | 'docs';
   /** The page's view it is in, such as props. */
   view?: string;
   /** The id of its element on the page. */
@@ -25,12 +27,13 @@ export function searchDocumentation(query: string, limit: number): SearchResult[
   return index
     .search(query, queryOptionsFor(query))
     .slice(0, limit)
-    .map(({ id, kind, title, detail, page, view, section }) => ({
+    .map(({ id, kind, title, detail, page, area, view, section }) => ({
       id,
       kind,
       title,
       detail,
       page,
+      area,
       view,
       section,
     }));

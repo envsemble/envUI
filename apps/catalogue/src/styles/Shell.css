@@ -15,44 +15,73 @@ body {
 .docs-app *::after {
   box-sizing: border-box;
 }
-/* The frame is a Scaffold with a TopBar, and the navigation at its start or in a sheet; these rules
-   size the wordmark and the navigation and keep the page's own layout. */
-.docs-brand-link,
+/* The frame is a Scaffold with a TopBar across the window and the navigation at its start, or in
+   a sheet that the top bar opens in a narrower window; these rules size the wordmark and the
+   navigation and keep the page's own layout. */
 .docs-header-brand {
-  display: block;
-  inline-size: 4.5rem;
-  margin-inline-start: var(--env-space-3);
-}
-.docs-header-brand {
-  inline-size: 4rem;
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
   margin-inline-start: var(--env-space-2);
+  color: var(--env-color-fg-default);
 }
-.docs-brand-link svg,
 .docs-header-brand svg {
   display: block;
-  inline-size: 100%;
+  inline-size: 4rem;
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-/* The navigation at the start of a wide window: a Drawer of its own width on the navigation's
-   background, flush with the window's edges and the body, which scrolls on its own. In the sheet
-   of a narrower window it takes the sheet's width and color. */
+.docs-header-area {
+  font: var(--env-type-body);
+  font-weight: var(--env-font-weight-medium);
+  color: var(--env-color-fg-muted);
+}
+/* The navigation at the start of a wide window: the Site's rail beside the drawer of the chosen
+   destination's pages, or the Docs' drawer, flush on the navigation's background with no line
+   between them. The rail stays in place while the drawer scrolls on its own. In the sheet of a
+   narrower window they take the sheet's width and color. */
+.docs-navigation {
+  display: flex;
+  align-items: stretch;
+  block-size: 100%;
+  min-block-size: 0;
+}
+.docs-rail {
+  /* Wide enough for its longest label, Components, on one line. */
+  --env-rail-width: 6rem;
+  flex: none;
+  padding-block: var(--env-space-4);
+  overflow-y: auto;
+}
 .docs-sidebar {
   inline-size: 15rem;
   min-block-size: 100%;
   padding: var(--env-space-4) var(--env-space-3);
+  overflow-y: auto;
 }
-.docs-sidebar[data-in-sheet] {
+.docs-navigation[data-in-sheet] {
+  margin: calc(-1 * var(--env-space-4)) 0;
+}
+.docs-navigation[data-in-sheet] .docs-sidebar {
+  flex: 1;
   inline-size: auto;
-  padding: 0;
+  min-inline-size: 0;
 }
 .docs-nav-heading {
   padding-inline: var(--env-space-2);
 }
-/* The top bar shows only where the navigation is in a sheet, below an expanded window. */
+/* The menu button and the compact forms of search and the Display menu show where the navigation
+   is in a sheet, below an expanded window; the full forms show from expanded. */
+.docs-wide-only {
+  display: none;
+}
 @container env-scaffold (width >= 52.5rem) {
-  .docs-frame > .env-scaffold-top-bar {
+  .docs-menu-button,
+  .docs-narrow-only {
     display: none;
+  }
+  .docs-wide-only {
+    display: contents;
   }
 }
 .docs-main {
@@ -125,49 +154,14 @@ body {
   width: 100%;
   height: 100%;
 }
-/* In a narrow banner the page's views wrap onto another row rather than scroll out of sight, so
-   every view, Props included, stays visible. */
-@container (max-inline-size: 30rem) {
-  .docs-reference-tabs .env-tabs-list {
-    flex-wrap: wrap;
-    justify-content: center;
-    --env-surface-radius: var(--env-radius-surface);
-  }
-}
-/* The display settings and the theme stay in the top right corner of the window as the page
-   scrolls, beside the content column rather than in it. The row that holds them sticks to the
-   window's top and is no taller than nothing, so they take no space above the page. */
-.docs-page-controls {
-  position: sticky;
-  z-index: var(--env-z-sticky);
-  inset-block-start: 0;
-  block-size: 0;
-}
-.docs-page-controls-bar {
-  position: absolute;
-  inset-block-start: var(--env-space-3);
-  inset-inline-end: var(--env-space-4);
-  display: flex;
-  gap: var(--env-space-2);
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-bg-page);
-}
-@container env-scaffold (width < 52.5rem) {
-  .docs-page-controls {
-    display: none;
-  }
-}
 .docs-page-navigation {
   padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);
   margin-top: auto;
 }
-/* A page's changelog follows the page navigation as quiet side information: small muted text, the
-   versions muted labels in a column of their own, inline code at the text's size on the faint
-   text-color layer of envUI's inline code rather than a chip, and no lines or boxes. */
+/* A component's changelog, last on its page in the Docs, is quiet side information: small muted
+   text, the versions muted labels in a column of their own, inline code at the text's size on the
+   faint text-color layer of envUI's inline code rather than a chip, and no lines or boxes. */
 .docs-changelog {
-  inline-size: min(100%, var(--docs-content-width));
-  margin-inline: auto;
-  padding: 0 var(--docs-gutter) var(--env-space-8);
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
 }
@@ -256,10 +250,39 @@ body {
     column-gap: var(--env-space-5);
   }
 }
-.docs-token-color {
+/* The token reference: each token its name, what it is for and its values, separated by a hairline
+   as the items of one list are, each value with a swatch of the color and the theme or scale it
+   is for. */
+.docs-token-list,
+.docs-link-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.docs-token {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--env-space-2) var(--env-space-5);
+  padding-block: var(--env-space-3);
+  border-block-end: var(--env-border-width, 1px) solid var(--env-color-border-muted);
+}
+.docs-token-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--env-space-2) var(--env-space-4);
+}
+.docs-token-value {
   display: inline-flex;
   align-items: center;
   gap: var(--env-space-2);
+}
+/* A list of links, such as a group of the Docs' pages on their home, one to a line. */
+.docs-link-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: var(--env-space-2) var(--env-space-5);
 }
 /* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge. */
 .docs-main [id] {

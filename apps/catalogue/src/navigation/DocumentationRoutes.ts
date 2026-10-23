@@ -1,248 +1,369 @@
 import {
+  componentGroups,
   documents,
   foundations,
   references,
   type Documentation,
   type Reference,
 } from '../Reference';
-import type { TemplateSectionId } from '../DocumentationTypes';
-import { homeRoute, routeHref } from './Address';
-
-/** The views of a page not yet on the template: live specimens and the Markdown guidance. */
-export const referenceViews = [
-  { id: 'preview', title: 'Preview' },
-  { id: 'usage', title: 'Usage' },
-] as const;
-/** The views of a page on the template, each showing some of its sections. */
-export const templateViews = [
-  { id: 'overview', title: 'Overview' },
-  { id: 'guidelines', title: 'Guidelines' },
-  { id: 'accessibility', title: 'Accessibility' },
-  { id: 'props', title: 'Props' },
-] as const;
-export type ReferenceView =
-  | (typeof referenceViews)[number]['id']
-  | (typeof templateViews)[number]['id'];
-export type ViewOption = { id: ReferenceView; title: string };
-
-/** The views of a component page on the figure template: every section, then the props. */
-export const figureViews = [
-  { id: 'overview', title: 'Overview' },
-  { id: 'props', title: 'Props' },
-] as const;
-
-/** Which template view shows each authored section; Props and Related are generated. */
-export const sectionViews: Record<TemplateSectionId, ReferenceView> = {
-  overview: 'overview',
-  usage: 'overview',
-  width: 'overview',
-  examples: 'overview',
-  changelog: 'overview',
-  anatomy: 'guidelines',
-  variants: 'guidelines',
-  states: 'guidelines',
-  content: 'guidelines',
-  'do-and-dont': 'guidelines',
-  accessibility: 'accessibility',
-};
+import { docsRoute, homeRoute, routeHref } from './Address';
 
 /**
- * The view that shows a section of a page: on the figure template the Overview, which holds every
- * section, and on the section template the view sectionViews names.
+ * The two areas of the site: the Site, at the root, introduces envUI to people, and the Docs, under
+ * /docs, are the developer reference.
  */
-export function viewOfSection(
-  reference: Pick<Reference, 'format'>,
-  section: TemplateSectionId,
-): ReferenceView {
-  return reference.format === 'figures' ? 'overview' : sectionViews[section];
-}
+export type Area = 'site' | 'docs';
 
-/** The views a page has: the template's, where it has sections for them, or Preview and Usage. */
-export function viewsOf(reference: Reference): readonly ViewOption[] {
-  const sections = reference.sections;
-  if (!sections) return referenceViews;
-  if (reference.format === 'figures') return figureViews;
-  return templateViews.filter(
-    (view) =>
-      view.id === 'overview' ||
-      view.id === 'props' ||
-      sections.some((section) => sectionViews[section.id] === view.id),
-  );
-}
-
-/** The closest view of another kind of page, so a reader moving on stays on the same kind. */
-const equivalentViews: Partial<Record<ReferenceView, ReferenceView>> = {
-  preview: 'overview',
-  usage: 'guidelines',
-  overview: 'preview',
-  guidelines: 'usage',
-  accessibility: 'usage',
-  props: 'usage',
-};
-export function viewFor(reference: Reference, requested?: string): ReferenceView {
-  const views = viewsOf(reference);
-  if (views.some((view) => view.id === requested)) return requested as ReferenceView;
-  const equivalent = equivalentViews[requested as ReferenceView];
-  if (views.some((view) => view.id === equivalent)) return equivalent!;
-  return views[0].id;
-}
-
-export const overviewViews = [
-  { id: 'components', title: 'Components' },
-  { id: 'get-started', title: 'Get started' },
-] as const;
-export type OverviewView = (typeof overviewViews)[number]['id'];
-
-export const referencePages = [
-  ...foundations.map((reference) => ({
-    reference,
-    section: 'Foundations' as const,
-    path: `foundations/${reference.id}`,
-    views: viewsOf(reference),
-  })),
-  ...references.map((reference) => ({
-    reference,
-    section: 'Components' as const,
-    path: `components/${reference.id}`,
-    views: viewsOf(reference),
-  })),
-];
-export type ReferencePage = (typeof referencePages)[number];
-
-/** The sections of the catalogue's navigation, in order. */
+/** The Site's destinations in its rail, in order; the drawer beside it lists their pages. */
 export const siteSections = [
-  'Get started',
-  'Foundations',
+  'Overview',
   'Components',
   'Patterns',
-  'Contributing',
+  'Foundations',
+  'Benchmark',
   'Changelog',
 ] as const;
 export type SiteSection = (typeof siteSections)[number];
 
-/** Pages of docs/ for people who change envUI itself, rather than use it. */
-const contributingDocuments = new Set(['library-development', 'component-pages', 'pattern-pages']);
+/** What a page shows, which decides how it renders. */
+export type PageKind =
+  | 'home'
+  | 'get-started'
+  | 'components'
+  | 'component'
+  | 'pattern'
+  | 'foundation'
+  | 'benchmark'
+  | 'changelog'
+  | 'docs-home'
+  | 'guide'
+  | 'codemods'
+  | 'skills'
+  | 'tokens'
+  | 'foundation-guide'
+  | 'api';
 
-/**
- * A page with one view: a guide or pattern page of docs/, such as the migration guide, or
- * a page of the catalogue's own, such as the token reference. `document` is the page of docs/ it
- * shows; a pattern page shows every section of the page template, in order.
- */
-export interface StandalonePage {
+/** One page of the Site or the Docs, at the route `path`. */
+export interface SitePage {
   path: string;
   title: string;
-  section: SiteSection;
+  /** The page's name in the navigation, where it differs from its title. */
+  label?: string;
+  area: Area;
+  /** The Site's rail destination the page belongs to, or the group of the Docs' navigation. */
+  section: string;
+  /** The group of the Site's drawer the page is listed in, such as a kind of component. */
+  group?: string;
+  kind: PageKind;
   summary?: string;
+  /** The page of docs/ the page shows. */
   document?: Documentation;
 }
 
 /**
- * The guides and patterns of docs/, each at a path of its section. The setup guide and
- * the index stay on the overview's Get started view.
+ * A component or foundation page of docs/ with the page that shows it: the Site's, or for Field,
+ * which has no page on the Site, its page in the Docs.
  */
-export const guidePages: StandalonePage[] = documents.flatMap((document): StandalonePage[] => {
-  if (document.group === 'Patterns')
-    return [
-      {
-        path: `${document.group.toLowerCase()}/${document.id}`,
-        title: document.title,
-        section: document.group,
-        summary: document.summary,
-        document,
-      },
-    ];
-  if (document.group !== 'Setup and workflows' || ['index', 'setup'].includes(document.id))
-    return [];
-  const section = contributingDocuments.has(document.id) ? 'Contributing' : 'Get started';
-  const path = `${section === 'Contributing' ? 'contributing' : 'get-started'}/${document.id}`;
-  return [{ path, title: document.title, section, summary: document.summary, document }];
-});
-
-/** The catalogue's own pages: the token reference and the changelog. */
-export const tokensPage: StandalonePage = {
-  path: 'foundations/tokens',
-  title: 'Design tokens',
-  section: 'Foundations',
-  summary:
-    'Every token as a CSS custom property, with its value in each theme and scale, generated from the token source.',
-};
-export const changelogPage: StandalonePage = {
-  path: 'changelog',
-  title: 'Changelog',
-  section: 'Changelog',
-  summary: 'What changed in each release of @envsemble/envui.',
-};
-export const standalonePages: StandalonePage[] = [...guidePages, tokensPage, changelogPage];
-
-export function findStandalonePage(path: string) {
-  return standalonePages.find((page) => page.path === path);
+export interface ReferencePage {
+  reference: Reference;
+  section: 'Foundations' | 'Components';
+  path: string;
 }
 
-/** The single-view pages of a section, in the order of the navigation. */
-export const pagesOf = (section: SiteSection) =>
-  standalonePages
-    .filter((page) => page.section === section)
-    .map(({ path, title }) => ({ path, title, views: [] as readonly ViewOption[] }));
+/** Field is documented in the Docs only, as "Build your own field". */
+const docsOnlyComponents = new Set(['field']);
 
 /**
- * The reading order, which the pager at the end of each page follows. Reference tabs do not create
- * extra destinations, and pages with one view have none.
+ * Pages of docs/ for people who change envUI itself, and the agents' index of the pages, which
+ * neither the Site nor the Docs show; they stay in the repository and the package.
  */
-export const documentationPages: { path: string; title: string; views: readonly ViewOption[] }[] = [
-  { path: 'overview', title: 'Overview', views: [] },
-  ...pagesOf('Get started'),
-  ...referencePages
-    .filter((page) => page.section === 'Foundations')
-    .map((page) => ({ path: page.path, title: page.reference.title, views: page.views })),
-  ...pagesOf('Foundations'),
-  ...referencePages
-    .filter((page) => page.section === 'Components')
-    .map((page) => ({ path: page.path, title: page.reference.title, views: page.views })),
-  ...pagesOf('Patterns'),
-  ...pagesOf('Contributing'),
-  ...pagesOf('Changelog'),
+export const unlistedDocuments = new Set([
+  'index',
+  'library-development',
+  'component-pages',
+  'pattern-pages',
+]);
+
+/** The component and foundation pages, each at the address of the page that shows it. */
+export const referencePages: ReferencePage[] = [
+  ...foundations.map((reference) => ({
+    reference,
+    section: 'Foundations' as const,
+    path: `foundations/${reference.id}`,
+  })),
+  ...references.map((reference) => ({
+    reference,
+    section: 'Components' as const,
+    path: docsOnlyComponents.has(reference.id)
+      ? `docs/components/${reference.id}`
+      : `components/${reference.id}`,
+  })),
 ];
 
-/** The view of a page on the template that shows the heading of id `anchor`, if it has one. */
-export function viewOfHeading(reference: Reference, anchor: string): ReferenceView | undefined {
-  const section = reference.sections?.find(({ anchors }) => anchors?.includes(anchor));
-  return section && viewOfSection(reference, section.id);
+/** The address of a component or foundation page. */
+export const pageHref = (page: ReferencePage) => routeHref(page.path);
+
+/** The route of a component's page in the Docs: its props, part names and changelog. */
+export const apiRoute = (id: string) => `docs/components/${id}`;
+
+/** The route of a foundation's guide in the Docs: its written guidance and reference. */
+export const foundationGuideRoute = (id: string) => `docs/foundations/${id}`;
+
+const patternDocuments = documents.filter((document) => document.group === 'Patterns');
+const guideDocuments = documents.filter(
+  (document) => document.group === 'Setup and workflows' && !unlistedDocuments.has(document.id),
+);
+
+const sitePages: SitePage[] = [
+  {
+    path: homeRoute,
+    title: 'envUI',
+    label: 'Introduction',
+    area: 'site',
+    section: 'Overview',
+    kind: 'home',
+  },
+  {
+    path: 'get-started',
+    title: 'Get started',
+    area: 'site',
+    section: 'Overview',
+    kind: 'get-started',
+    summary: 'Install envUI, connect its styles and theme, and find your way into the Docs.',
+  },
+  {
+    path: 'components',
+    title: 'Components',
+    label: 'All components',
+    area: 'site',
+    section: 'Components',
+    kind: 'components',
+    summary: 'Every component of envUI, by what it is for.',
+  },
+  ...componentGroups.flatMap((group) =>
+    referencePages
+      .filter(({ reference, path }) => reference.group === group && !path.startsWith('docs/'))
+      .map(
+        ({ reference, path }): SitePage => ({
+          path,
+          title: reference.title,
+          area: 'site',
+          section: 'Components',
+          group,
+          kind: 'component',
+          summary: reference.summary,
+          document: reference as Documentation,
+        }),
+      ),
+  ),
+  ...patternDocuments.map(
+    (document): SitePage => ({
+      path: `patterns/${document.id}`,
+      title: document.title,
+      area: 'site',
+      section: 'Patterns',
+      group: document.metadata?.intent,
+      kind: 'pattern',
+      summary: document.summary,
+      document,
+    }),
+  ),
+  ...referencePages
+    .filter(({ section }) => section === 'Foundations')
+    .map(
+      ({ reference, path }): SitePage => ({
+        path,
+        title: reference.title,
+        area: 'site',
+        section: 'Foundations',
+        kind: 'foundation',
+        summary: reference.summary,
+        document: reference as Documentation,
+      }),
+    ),
+  {
+    path: 'benchmark',
+    title: 'Benchmark',
+    area: 'site',
+    section: 'Benchmark',
+    kind: 'benchmark',
+    summary: 'How coding agents do when they build interfaces with envUI.',
+  },
+  {
+    path: 'changelog',
+    title: 'Changelog',
+    area: 'site',
+    section: 'Changelog',
+    kind: 'changelog',
+    summary: 'What changed in each release of @envsemble/envui.',
+  },
+];
+
+/** The shorter names of guides in the Docs' navigation. */
+const guideLabels: Record<string, string> = {
+  setup: 'Install and set up',
+  migration: 'Migrate to envUI',
+};
+
+const guidePage = (document: Documentation): SitePage => ({
+  path: `docs/${document.id}`,
+  title: document.title,
+  label: guideLabels[document.id],
+  area: 'docs',
+  section: 'Get started',
+  kind: 'guide',
+  summary: document.summary,
+  document,
+});
+
+/** The Docs' pages for getting started, in reading order, with codemods after migration. */
+const startPages: SitePage[] = guideDocuments.flatMap((document) => {
+  const page = guidePage(document);
+  if (document.id === 'migration')
+    return [
+      page,
+      {
+        path: 'docs/codemods',
+        title: 'Codemods',
+        area: 'docs',
+        section: 'Get started',
+        kind: 'codemods',
+        summary:
+          'Upgrade an application from envUI 0.x to 1.0 with @envsemble/envui-codemods, which renames what it can and reports the rest.',
+      },
+    ];
+  if (document.id === 'agent-tooling')
+    return [
+      page,
+      {
+        path: 'docs/agent-skills',
+        title: 'Agent skills',
+        area: 'docs',
+        section: 'Get started',
+        kind: 'skills',
+        summary:
+          'The skills that teach coding agents to use envUI and to migrate an interface to it.',
+      },
+    ];
+  return [page];
+});
+
+const field = references.find((reference) => docsOnlyComponents.has(reference.id));
+
+const docsPages: SitePage[] = [
+  {
+    path: docsRoute,
+    title: 'envUI Docs',
+    label: 'Introduction',
+    area: 'docs',
+    section: 'Get started',
+    kind: 'docs-home',
+    summary:
+      'The developer reference: setup, migration, tokens, and the props, part names and changelog of every component.',
+  },
+  ...startPages,
+  ...(field
+    ? [
+        {
+          path: apiRoute(field.id),
+          title: 'Build your own field',
+          area: 'docs',
+          section: 'Guides',
+          kind: 'api',
+          summary: field.summary,
+          document: field as Documentation,
+        } satisfies SitePage,
+      ]
+    : []),
+  ...foundations.map(
+    (reference): SitePage => ({
+      path: foundationGuideRoute(reference.id),
+      title: reference.title,
+      area: 'docs',
+      section: 'Foundations',
+      kind: 'foundation-guide',
+      summary: reference.summary,
+      document: reference as Documentation,
+    }),
+  ),
+  {
+    path: 'docs/tokens',
+    title: 'Design tokens',
+    area: 'docs',
+    section: 'Foundations',
+    kind: 'tokens',
+    summary:
+      'Every token as a CSS custom property, with its value in each theme and scale, generated from the token source.',
+  },
+  ...componentGroups.flatMap((group) =>
+    references
+      .filter((reference) => reference.group === group && !docsOnlyComponents.has(reference.id))
+      .map(
+        (reference): SitePage => ({
+          path: apiRoute(reference.id),
+          title: reference.title,
+          area: 'docs',
+          section: group,
+          kind: 'api',
+          summary: reference.summary,
+          document: reference as Documentation,
+        }),
+      ),
+  ),
+];
+
+/** Every page of the Site, then of the Docs, each in reading order, which the pager follows. */
+export const allPages: SitePage[] = [...sitePages, ...docsPages];
+
+/** The page at a route's path, if there is one. */
+export function findPage(path: string) {
+  return allPages.find((page) => page.path === path);
 }
 
-/** The address of a page in the view a reader starts with, or the one closest to view. */
-export function pageHref(page: ReferencePage, view?: string) {
-  return routeHref(`${page.path}/${viewFor(page.reference, view)}`);
+/** The pages of an area, in reading order. */
+export const pagesOf = (area: Area) => allPages.filter((page) => page.area === area);
+
+/** The first page of a Site destination, which its rail item opens. */
+export function sectionHome(section: SiteSection) {
+  return sitePages.find((page) => page.section === section)!;
 }
+
+/** The component or foundation page of a document id, such as button. */
+const referencePageOf = (id: string) => referencePages.find((page) => page.reference.id === id);
 
 /**
- * The route of a page by its document id, such as `button`, or by a catalogue page's, such as
- * `tokens`, in `view` where the page has it, scrolled to the element `section`.
+ * The route of a page by its document id, such as `button`, or by a site page's, such as `tokens`,
+ * scrolled to the element `section`. `view` picks the page's part in the Docs where the Site shows
+ * the rest: `props` a component's page there, `usage` a foundation's guide.
  */
 export function routeOfDocument(
   id: string,
   { view, section }: { view?: string; section?: string } = {},
 ): string | undefined {
   const query = section ? `?${new URLSearchParams({ section })}` : '';
-  const reference = referencePages.find((page) => page.reference.id === id);
+  const reference = referencePageOf(id);
   if (reference) {
-    const start = reference.reference.sections ? 'overview' : 'preview';
-    // A heading of a page on the template opens in the view that shows it.
-    const shown = (section && viewOfHeading(reference.reference, section)) ?? view ?? start;
-    return `${reference.path}/${viewFor(reference.reference, shown)}${query}`;
+    if (reference.section === 'Foundations' && view === 'usage')
+      return `${foundationGuideRoute(id)}${query}`;
+    if (reference.section === 'Components' && view === 'props') return `${apiRoute(id)}${query}`;
+    return `${reference.path}${query}`;
   }
-  // The setup guide and the index are on the overview's Get started view, each in a section of its
-  // own, where its headings are.
-  if (id === 'setup' || id === 'index')
-    return `overview/get-started?${new URLSearchParams({ section: section ?? (id === 'setup' ? 'setup' : 'documentation') })}`;
+  if (id === 'index' || id === docsRoute) return `${docsRoute}${query}`;
   if (id === 'overview') return homeRoute;
-  if (id === 'tokens') return `${tokensPage.path}${query}`;
-  if (id === 'changelog') return changelogPage.path;
-  const guide = guidePages.find((page) => page.document?.id === id);
-  return guide && `${guide.path}${query}`;
-}
-
-export function findReferencePage(path: string) {
-  return referencePages.find((page) => page.path === path.split('/').slice(0, 2).join('/'));
+  const own: Record<string, string> = {
+    'get-started': 'get-started',
+    components: 'components',
+    benchmark: 'benchmark',
+    changelog: 'changelog',
+    tokens: 'docs/tokens',
+    codemods: 'docs/codemods',
+    'agent-skills': 'docs/agent-skills',
+  };
+  if (Object.hasOwn(own, id)) return `${own[id]}${query}`;
+  const page = allPages.find(
+    (entry) => entry.document?.id === id && (entry.kind === 'pattern' || entry.kind === 'guide'),
+  );
+  return page && `${page.path}${query}`;
 }
 
 /** Component pages that became patterns, by their slug: the pattern each one opens. */
@@ -254,50 +375,56 @@ const componentPatterns: Record<string, string> = {
   'empty-state': 'empty-states',
 };
 
-/** Keep downloaded references and old bookmarks working after topic consolidation. */
+/** Whether an element id is a place on a component's page in the Docs: an export's or a prop's. */
+const apiSection = (section: string | null) => section?.startsWith('props-') ?? false;
+
+/**
+ * Keeps old addresses working: the views pages had before the Site and the Docs split, the 0.x
+ * names of pages and the pages that moved, each opens the page it became.
+ */
 export function normalizeRoute(route: string): string {
   const [originalPath, ...query] = route.split('?');
   const search = new URLSearchParams(query.join('?'));
-  if (originalPath === 'components') {
-    search.set('section', 'overview-components');
-    return `overview/components?${search}`;
-  }
-  // Guides and patterns were shown on the Get started view, by their document's id.
-  const shown = search.get('document');
-  if (originalPath === 'overview/get-started' && shown) {
-    const guide = guidePages.find((page) => page.document?.id === shown);
+  const rest = () => (search.size ? `?${search}` : '');
+  const section = search.get('section');
+  if (!originalPath) return `${homeRoute}${rest()}`;
+  // The overview's views: the components and Get started, which held the setup guide, the agents'
+  // skills and the guides by their document's id.
+  if (/^overview\/components(?:\/|$)/.test(originalPath))
+    return section && section !== 'overview-components'
+      ? `components${rest()}`
+      : section
+        ? 'components'
+        : homeRoute;
+  if (/^(?:overview\/get-started|overview\/usage|getting-started)(?:\/|$)/.test(originalPath)) {
+    const shown = search.get('document');
     search.delete('document');
-    if (guide) {
+    if (shown) {
       search.delete('section');
-      return `${guide.path}${search.size ? `?${search}` : ''}`;
+      return routeOfDocument(shown) ?? docsRoute;
     }
+    if (search.has('skill') || section === 'local-development') return 'docs/agent-skills';
+    if (section === 'documentation') return docsRoute;
+    if (section === 'setup') search.delete('section');
+    return `docs/setup${rest()}`;
   }
-  // A section's own address opens its first page.
-  const rest = search.size ? `?${search}` : '';
-  if (originalPath === 'get-started') return `overview/get-started${rest}`;
-  const first = {
-    foundations: referencePages[0].path,
-    patterns: pagesOf('Patterns')[0]?.path,
-    contributing: pagesOf('Contributing')[0]?.path,
-  }[originalPath];
-  if (first) return normalizeRoute(`${first}${rest}`);
+  if (/^overview\//.test(originalPath)) return `${homeRoute}${rest()}`;
+  // The guides of Get started moved to the Docs, and the contributing pages are gone.
+  const guide = /^get-started\/(.+)$/.exec(originalPath)?.[1];
+  if (guide) return routeOfDocument(guide, { section: section ?? undefined }) ?? docsRoute;
+  if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
+  // A destination's own address opens its first page.
+  if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
+  if (originalPath === 'patterns') return `${sectionHome('Patterns').path}${rest()}`;
+  if (originalPath === 'foundations/tokens') return `docs/tokens${rest()}`;
   // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
-  if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest}`;
-  if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest}`;
+  if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest()}`;
+  if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest()}`;
   // Components that became patterns open their pattern.
   const slug = originalPath.split('/')[1] ?? '';
   if (originalPath.startsWith('components/') && Object.hasOwn(componentPatterns, slug))
-    return `patterns/${componentPatterns[slug]}${rest}`;
-  if (findStandalonePage(originalPath)) return `${originalPath}${rest}`;
-  if (/^getting-started(?:\/|$)/.test(originalPath)) {
-    return `overview/get-started${search.size ? `?${search}` : ''}`;
-  }
-  if (/^overview(?:\/|$)/.test(originalPath)) {
-    const requestedView = originalPath.split('/')[1];
-    const view =
-      requestedView === 'get-started' || requestedView === 'usage' ? 'get-started' : 'components';
-    return `overview/${view}${search.size ? `?${search}` : ''}`;
-  }
+    return `patterns/${componentPatterns[slug]}${rest()}`;
+  if (findPage(originalPath)) return `${originalPath}${rest()}`;
   const path = originalPath
     .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
     .replace(/^components\/notes(?=\/|$)/, 'components/disclosure')
@@ -328,14 +455,20 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/(navigation|nav-list)(?=\/|$)/, 'components/drawer')
     .replace(/^components\/direction-links(?=\/|$)/, 'components/pager')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
-  const page = findReferencePage(path);
-  const requested = path.split('/')[2];
-  // Before the template, Guidelines was the name of what is now a page's Preview.
-  const view = requested === 'guidelines' && !page?.reference.sections ? 'preview' : requested;
-  // A heading of a page on the template opens in the view that shows it, also from an old link
-  // such as components/button#keyboard.
-  const section = search.get('section');
-  const opened = (page && section && viewOfHeading(page.reference, section)) || view;
-  const destination = page ? `${page.path}/${viewFor(page.reference, opened)}` : path;
-  return `${destination}${search.size ? `?${search}` : ''}`;
+  if (path.startsWith('patterns/')) return `${path}${rest()}`;
+  // A page's views are gone: its props are on its page in the Docs, a foundation's guidance in its
+  // guide there, and every other view is the Site's page.
+  const [area, id, view] = path.split('/');
+  const reference = (area === 'components' || area === 'foundations') && referencePageOf(id ?? '');
+  if (!reference) return `${path}${rest()}`;
+  const toDocs =
+    reference.section === 'Components'
+      ? view === 'props' || apiSection(section)
+      : view === 'usage' &&
+        !(section && reference.reference.sections?.some((part) => part.anchors?.includes(section)));
+  return (
+    routeOfDocument(id!, {
+      view: toDocs ? (reference.section === 'Components' ? 'props' : 'usage') : undefined,
+    }) + rest()
+  );
 }

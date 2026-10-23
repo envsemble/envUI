@@ -6,7 +6,17 @@
 export const searchFields = ['title', 'owner', 'aliases', 'keywords', 'text'];
 
 /** The fields a result carries, to show and open it without the documents themselves. */
-export const storeFields = ['kind', 'title', 'owner', 'names', 'detail', 'page', 'view', 'section'];
+export const storeFields = [
+  'kind',
+  'title',
+  'owner',
+  'names',
+  'detail',
+  'page',
+  'area',
+  'view',
+  'section',
+];
 
 /**
  * Splits text into words: at anything but a letter or digit, so `--env-color-fg-muted` and
