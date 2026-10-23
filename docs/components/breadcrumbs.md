@@ -24,12 +24,6 @@ avoidWhen:
     use: Pager
   - text: Browsing and expanding a whole hierarchy.
     use: Tree
-related:
-  - drawer
-  - tree
-  - pager
-  - link
-  - setup
 components:
   - Breadcrumbs
 ---

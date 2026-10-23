@@ -24,6 +24,8 @@ avoidWhen:
     see: forms
   - text: Putting a table's rows in order.
     see: data-tables
+  - text: No results that match, and a way to widen the search.
+    see: empty-states
 composes:
   - PageHeader
   - Column
@@ -43,13 +45,6 @@ composes:
   - List
   - Text
   - useContainerSize
-related:
-  - data-tables
-  - empty-states
-  - navigation
-  - text-field
-  - select
-  - popover
 ---
 
 # Filtering and search

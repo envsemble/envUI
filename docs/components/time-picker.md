@@ -21,11 +21,8 @@ avoidWhen:
     use: TextField
   - text: A choice among a few named times of day, such as Morning or Evening.
     use: SegmentedControl
-related:
-  - date-picker
-  - month-picker
-  - text-field
-  - select
+  - text: A few fixed times, such as on the hour.
+    use: Select
 components:
   - TimePicker
 ---

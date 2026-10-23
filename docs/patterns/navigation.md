@@ -24,6 +24,10 @@ avoidWhen:
     see: progressive-disclosure
   - text: Moving between pages of one long list.
     use: Pagination
+  - text: A list beside the detail of its selected item.
+    use: Panes
+  - text: A whole frame to copy, with the navigation and a top bar.
+    see: app-frame
 composes:
   - Scaffold
   - TopBar
@@ -49,15 +53,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - filtering
-  - loading
-  - scaffold
-  - panes
-  - drawer
-  - app-frame
-  - breadcrumbs
-  - search-trigger
 ---
 
 # Navigation

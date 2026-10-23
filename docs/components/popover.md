@@ -28,13 +28,6 @@ avoidWhen:
     use: Select
   - text: A task that needs people's full attention or more room, or a consequence to confirm.
     use: Dialog
-related:
-  - tooltip
-  - hover-card
-  - menu
-  - dialog
-  - select
-  - accessibility
 components:
   - Popover
 ---

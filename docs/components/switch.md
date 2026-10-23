@@ -25,12 +25,6 @@ avoidWhen:
     use: Button
   - text: An option that turns on or off inside a menu.
     use: Menu
-related:
-  - checkbox
-  - radio
-  - segmented-control
-  - list
-  - accessibility
 components:
   - Switch
 ---

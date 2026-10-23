@@ -30,15 +30,6 @@ avoidWhen:
     use: Sheet
   - text: Items people keep open and work on beside the page, such as drafts.
     use: PanelDock
-related:
-  - button
-  - sheet
-  - popover
-  - toast
-  - command-palette
-  - text-field
-  - row
-  - accessibility
 components:
   - Dialog
   - DialogClose

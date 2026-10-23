@@ -12,12 +12,6 @@
   padding: 0;
 }
 
-.docs-related-list {
-  display: grid;
-  gap: var(--env-space-3);
-  margin: 0;
-  padding-inline-start: var(--env-space-6);
-}
 
 /* Props tables wrap code between words, so a column is never narrower than its longest word. */
 .docs-prop-code {

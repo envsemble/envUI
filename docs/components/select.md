@@ -29,14 +29,6 @@ avoidWhen:
     use: Menu
   - text: A date, or a date and time.
     use: DatePicker
-related:
-  - combobox
-  - radio
-  - segmented-control
-  - menu
-  - text-field
-  - list
-  - accessibility
 components:
   - Select
 ---

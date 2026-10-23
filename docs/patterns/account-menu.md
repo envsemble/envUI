@@ -31,11 +31,6 @@ composes:
   - Text
   - ThemeRadioGroup
   - TopBar
-related:
-  - navigation
-  - menu
-  - avatar
-  - top-bar
 ---
 
 # Account menu

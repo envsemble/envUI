@@ -28,13 +28,8 @@ avoidWhen:
     use: Progress
   - text: Loading a page or a route of an application, along the top bar.
     use: TopBar
-related:
-  - loading
-  - surface
-  - progress
-  - button
-  - scaffold
-  - accessibility
+  - text: Content loading in its place, in the shape of what is coming.
+    see: loading
 components:
   - Spinner
 ---

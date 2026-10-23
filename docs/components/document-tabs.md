@@ -26,13 +26,8 @@ avoidWhen:
     use: SegmentedControl
   - text: Items people keep open beside the page, such as drafts.
     use: PanelDock
-related:
-  - tabs
-  - tree
-  - menu
-  - scaffold
-  - panel-dock
-  - accessibility
+  - text: Many documents in folders, browsed as a hierarchy.
+    use: Tree
 components:
   - DocumentTabs
 ---

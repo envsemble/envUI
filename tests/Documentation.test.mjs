@@ -74,7 +74,6 @@ const switchFrontmatter = [
   'avoidWhen:',
   '  - text: A choice that applies on submit.',
   '    use: Checkbox',
-  'related: []',
   'components: [Switch]',
   '---',
   '',
@@ -192,6 +191,8 @@ test('a page on the template is split into sections, examples and specimens', as
     const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
     assert.ok(compiled.includes(`\`\`\`tsx example=Basic\n${switchExample}\`\`\``));
     assert.doesNotMatch(compiled, /specimen/);
+    // Related, from avoidWhen: each export or page with when to pick it.
+    assert.match(compiled, /## Related\n\n- `Checkbox`: A choice that applies on submit\.\n/);
   });
 });
 
@@ -239,8 +240,24 @@ test('the template rejects pages that break its contract', async () => {
       /lists props in a table/,
     );
     await rejects(frontmatter + body.replace('```tsx example=Basic', '```tsx'), /example file/);
-    // Metadata that says nothing or points nowhere.
-    await rejects(frontmatter.replace('related: []', 'related: [switch]') + body, /itself/);
+    // Metadata that says nothing or points nowhere. avoidWhen is the one list of related pages:
+    // each entry names an export or a page, once.
+    await rejects(
+      frontmatter.replace(
+        '    use: Checkbox',
+        '    use: Checkbox\n  - text: Another.\n    use: Checkbox',
+      ) + body,
+      /names Checkbox twice/,
+    );
+    await rejects(
+      frontmatter.replace('    use: Checkbox\n', '') + body,
+      /avoidWhen must be a list/,
+    );
+    await rejects(
+      frontmatter.replace('components: [Switch]', 'components: [Switch]\nrelated: [checkbox]') +
+        body,
+      /unknown field related/,
+    );
     await rejects(frontmatter.replace('aliases: [toggle]', 'aliases: []') + body, /aliases must/);
     await rejects(frontmatter.replace('since: 0.1.0', 'since: 9.9.9') + body, /since 9\.9\.9/);
     // statuses: an export's own status, which differs from the page's and names a listed export.
@@ -297,7 +314,7 @@ test('the template rejects pages that break its contract', async () => {
 
 test('a page not yet on the template ships its own props table only', async () => {
   await templateFixture(async ({ page, read, examples }) => {
-    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=related:)/, '');
+    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=components:)/, '');
     await writeFile(
       page,
       `${legacy}# Switch\n\n## React usage\n\n### Props & contracts\n\n| Name | Contract |\n| --- | --- |\n| label | The visible label. |\n`,
@@ -388,7 +405,7 @@ test('the template rules read Markdown as it renders', async () => {
           '### Props forwarding\n\nOther props go to the input.\n\n| Attribute | Values |\n| --- | --- |\n| role | switch |\n\nTurns a setting on or off.',
         ),
     );
-    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=related:)/, '');
+    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=components:)/, '');
     // An example fence shown inside another fence is text, not an example.
     await accepts(
       `${legacy}# Switch\n\n## React usage\n\n\`\`\`\`md\n\`\`\`tsx example=Basic\n\`\`\`\n\`\`\`\`\n`,
@@ -420,7 +437,6 @@ const patternFrontmatter = [
   '  - text: A single choice.',
   '    use: Checkbox',
   'composes: [Switch]',
-  'related: [switch]',
   '---',
   '',
 ].join('\n');

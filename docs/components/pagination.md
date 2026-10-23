@@ -22,13 +22,6 @@ avoidWhen:
     use: Pager
   - text: Switching between a few views of the same content.
     use: Tabs
-related:
-  - table
-  - list
-  - pager
-  - button
-  - tooltip
-  - loading
 components:
   - Pagination
 ---

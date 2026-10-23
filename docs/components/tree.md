@@ -27,13 +27,6 @@ avoidWhen:
     use: Table
   - text: Sections of content people show and hide in a page.
     use: Disclosure
-related:
-  - drawer
-  - list
-  - menu
-  - document-tabs
-  - scaffold
-  - accessibility
 components:
   - Tree
 ---

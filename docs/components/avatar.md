@@ -29,12 +29,8 @@ avoidWhen:
     use: Icon
   - text: Every name of a list of people that should be read.
     use: List
-related:
-  - menu
-  - list
-  - tooltip
-  - scaffold
-  - combobox
+  - text: Choosing people, shown as chips in a field.
+    use: Combobox
 components:
   - Avatar
   - AvatarButton

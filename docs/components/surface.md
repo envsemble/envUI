@@ -32,12 +32,6 @@ avoidWhen:
     use: Dialog
   - text: A floating panel that opens from a button.
     use: Popover
-related:
-  - column
-  - card
-  - list
-  - spacing
-  - colors
 components:
   - Surface
   - placeholders

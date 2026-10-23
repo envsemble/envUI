@@ -35,13 +35,6 @@ avoidWhen:
     use: Radio
   - text: Content about one subject that stands on its own.
     use: Card
-related:
-  - card
-  - table
-  - drawer
-  - surface
-  - radio
-  - spacing
 components:
   - List
 ---

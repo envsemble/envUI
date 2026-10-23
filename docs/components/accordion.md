@@ -21,10 +21,6 @@ avoidWhen:
     use: Tabs
   - text: A hierarchy people expand level by level, such as folders.
     use: Tree
-related:
-  - disclosure
-  - tabs
-  - tree
 components:
   - Accordion
 ---

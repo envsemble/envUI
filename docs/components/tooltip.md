@@ -25,11 +25,6 @@ avoidWhen:
     use: TextField
   - text: Information people need that should stay visible, such as a warning about a limit.
     use: Alert
-related:
-  - button
-  - hover-card
-  - popover
-  - accessibility
 components:
   - Tooltip
 ---

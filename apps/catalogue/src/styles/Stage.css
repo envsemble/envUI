@@ -19,7 +19,7 @@
 .docs-verdict-stage,
 .docs-anatomy-stage,
 .docs-foundation-stage,
-.docs-when-stage,
+.docs-related-stage,
 .docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
   background-color: var(--env-color-bg-page);
   background-image: radial-gradient(
@@ -52,7 +52,7 @@
   .docs-live-example,
   .docs-verdict-stage,
   .docs-anatomy-stage,
-  .docs-when-stage
+  .docs-related-stage
 )[data-stage='raised'] {
   background-color: var(--docs-stage-raised);
 }
@@ -61,13 +61,13 @@
   .docs-live-example,
   .docs-verdict-stage,
   .docs-anatomy-stage,
-  .docs-when-stage
+  .docs-related-stage
 )[data-stage='shaded'] {
   background-color: var(--docs-stage-shaded);
 }
 
 /* What the stage shows keeps to its width, however wide its content would be. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-when-canvas) > * {
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-canvas) > * {
   max-inline-size: 100%;
 }
 
@@ -75,7 +75,7 @@
    `container` too), a strip of tabs, a window or a skeleton, has none of its own and would
    collapse if centred: an example that is or holds one fills the stage, unless it sets its
    width. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-when-canvas)
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-canvas)
   > :where(
     .env-description-list[data-layout='auto'],
     .env-page,
@@ -101,7 +101,7 @@
     )
   ),
 /* A strip of document tabs lays out its bar straight on the stage, its root being contents. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-when-canvas)
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-canvas)
   > .env-document-tabs-root
   > .env-document-tabs-bar {
   inline-size: 100%;
@@ -115,7 +115,7 @@
     .docs-verdict-stage,
     .docs-anatomy-subject,
     .docs-width-box,
-    .docs-when-canvas
+    .docs-related-canvas
   )
   > .env-scaffold,
 /* The dev mode demo's application sits in the element dev mode measures. */
@@ -134,7 +134,7 @@
 .docs-live-example,
 .docs-anatomy-stage,
 .docs-foundation-stage,
-.docs-when-stage,
+.docs-related-stage,
 .docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
   border: 0.0625rem solid var(--env-color-border-muted);
   border-radius: var(--env-radius-surface);
@@ -156,7 +156,7 @@
 }
 
 /* A row of items centres them on the stage, also once it wraps, unless the example aligns it. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-when-canvas)
+:is(.docs-live-example, .docs-verdict-stage, .docs-related-canvas)
   > [data-env-layout='row']:not([data-justify]) {
   justify-content: center;
 }

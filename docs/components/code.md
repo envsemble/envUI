@@ -31,12 +31,6 @@ avoidWhen:
     use: Textarea
   - text: The size of a change without its lines.
     use: DiffStat
-related:
-  - markdown
-  - kbd
-  - badge
-  - typography
-  - accessibility
 components:
   - Code
   - CodeBlock

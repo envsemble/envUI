@@ -30,12 +30,6 @@ avoidWhen:
     use: Select
   - text: A light, dark or system appearance.
     use: Radio
-related:
-  - popover
-  - text-field
-  - button
-  - colors
-  - accessibility
 components:
   - ColorPicker
   - ColorPickerButton

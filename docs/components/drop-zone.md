@@ -27,12 +27,8 @@ avoidWhen:
     use: Button
   - text: Progress of a long upload with a known size.
     use: Progress
-related:
-  - text-field
-  - button
-  - progress
-  - list
-  - loading
+  - text: The files already added, each with its actions.
+    use: List
 components:
   - DropZone
 ---

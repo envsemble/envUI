@@ -25,12 +25,6 @@ avoidWhen:
     use: CommandPalette
   - text: A row of actions that stay visible, such as a toolbar.
     use: ButtonGroup
-related:
-  - menu
-  - scaffold
-  - command-palette
-  - kbd
-  - accessibility
 components:
   - Menubar
 ---

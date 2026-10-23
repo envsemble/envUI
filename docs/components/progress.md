@@ -26,12 +26,8 @@ avoidWhen:
     use: TopBar
   - text: Saying that a task finished or failed.
     use: Toast
-related:
-  - meter
-  - spinner
-  - loading
-  - scaffold
-  - toast
+  - text: Content loading in its place, in the shape of what is coming.
+    see: loading
 components:
   - Progress
 ---

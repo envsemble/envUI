@@ -32,15 +32,6 @@ avoidWhen:
     use: TextField
   - text: A choice among a few named periods, such as This week or This month.
     use: SegmentedControl
-related:
-  - time-picker
-  - month-picker
-  - text-field
-  - popover
-  - combobox
-  - calendar-heatmap
-  - relative-time
-  - accessibility
 components:
   - DatePicker
   - Calendar

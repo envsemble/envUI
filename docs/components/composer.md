@@ -27,12 +27,8 @@ avoidWhen:
     use: MarkdownEditor
   - text: A query that searches or filters content.
     use: SearchField
-related:
-  - message
-  - text-field
-  - button
-  - markdown
-  - accessibility
+  - text: The messages of the conversation itself.
+    use: Message
 components:
   - Composer
 ---

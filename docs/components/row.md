@@ -31,12 +31,8 @@ avoidWhen:
     use: ButtonGroup
   - text: Controls for one subject that the arrow keys move between, such as an editor's formatting.
     use: Toolbar
-related:
-  - column
-  - grid
-  - box
-  - toolbar
-  - button
+  - text: One block with an inset or a size container, and no layout.
+    use: Box
 components:
   - Row
 ---

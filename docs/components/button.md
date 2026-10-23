@@ -35,14 +35,6 @@ avoidWhen:
     use: Menu
   - text: A consequence that needs a choice or typed confirmation before it happens.
     use: Dialog
-related:
-  - link
-  - menu
-  - segmented-control
-  - dialog
-  - animated-number
-  - icons
-  - accessibility
 components:
   - Button
   - IconButton

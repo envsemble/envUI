@@ -7,7 +7,7 @@
 // pageSchemas). A page on the template has the fixed `##` sections of templateSections, in their
 // order, the subset its kind allows (sectionRules); its examples are files in
 // apps/catalogue/src/examples/<page>/<Name>.tsx, referenced by an empty fence ```tsx example=Name```,
-// and its Props and Related sections are generated. docs/component-pages.md and docs/pattern-pages.md describe the
+// and its Props and Related sections are generated, Related from its avoidWhen. docs/component-pages.md and docs/pattern-pages.md describe the
 // template for authors.
 import {
   cpSync,
@@ -150,8 +150,8 @@ export const frontmatterSchema = {
   category: { type: 'string', required: true, values: componentGroups },
   aliases: { type: 'strings', required: true, nonEmpty: true },
   useWhen: { type: 'strings', template: true },
+  /** The page's one list of related components and pages: what to use for a need it doesn't meet. */
   avoidWhen: { type: 'avoid', template: true },
-  related: { type: 'strings', required: true },
   components: { type: 'strings', required: true, nonEmpty: true },
 };
 /** Frontmatter of a pattern page: required as a whole, with what it composes. */
@@ -165,7 +165,6 @@ const compositionFrontmatter = {
   avoidWhen: { type: 'avoid', required: true },
   /** The exports, namespaces rather than parts, that the page's compositions combine. */
   composes: { type: 'strings', required: true, nonEmpty: true },
-  related: { type: 'strings', required: true },
 };
 /** The frontmatter of each page kind that has its own; other pages take otherFrontmatter only. */
 export const pageSchemas = {
@@ -354,12 +353,12 @@ function validateFrontmatter(frontmatter, path, { kind, template, versions }) {
             !item.text.trim() ||
             ('use' in item && (typeof item.use !== 'string' || !item.use.trim())) ||
             ('see' in item && (typeof item.see !== 'string' || !item.see.trim())) ||
-            ('use' in item && 'see' in item) ||
+            'use' in item === 'see' in item ||
             Object.keys(item).some((field) => !['text', 'use', 'see'].includes(field)),
         )
       )
         problems.push(
-          `${key} must be a list of { text, use } or { text, see } entries, use naming the alternative export and see its page`,
+          `${key} must be a list of { text, use } or { text, see } entries, use naming the export to use instead and see the page to read instead`,
         );
     } else if (rule.type === 'statuses') {
       const listed = Array.isArray(frontmatter.components) ? frontmatter.components : [];
@@ -1151,11 +1150,28 @@ export function readDocumentation(
     }
   }
   for (const document of documents) {
-    // A page an avoidWhen entry sends readers to, by its id.
-    for (const { see } of document.frontmatter?.avoidWhen ?? [])
+    // A page's avoidWhen is its one list of related components and pages, its Related section:
+    // each entry names an export to use or a page to read, and each relation is named once.
+    const relations = [];
+    for (const { use, see } of document.frontmatter?.avoidWhen ?? []) {
       if (see && (see === document.id || !documents.some((entry) => entry.id === see)))
         throw new Error(
           `${document.path} sends readers to ${see} in avoidWhen, which is ${see === document.id ? 'the page itself' : 'not an indexed page'}.`,
+        );
+      const key = use ?? `page:${see}`;
+      if (relations.some((relation) => relation.key === key))
+        throw new Error(
+          `${document.path} names ${use ?? see} twice in avoidWhen; say each relation once, in one entry.`,
+        );
+      relations.push({ key, page: use ? pageOfExport(documents, use)?.id : see });
+    }
+    for (const { key, page } of relations)
+      if (
+        key.startsWith('page:') &&
+        relations.some((other) => !other.key.startsWith('page:') && other.page === page)
+      )
+        throw new Error(
+          `${document.path} sends readers to ${page} in avoidWhen and also names an export it documents; name the relation once.`,
         );
 
     let related = false;
@@ -1172,14 +1188,11 @@ export function readDocumentation(
       throw new Error(
         `${document.path} lists related topics in its body; they live in frontmatter.`,
       );
-    if (document.frontmatter?.related && !document.sections) {
-      // A page not yet on the template keeps its Related topics list; the frontmatter matches it.
-      if (document.frontmatter.related.join(' ') !== listed.join(' '))
-        throw new Error(
-          `Frontmatter related of ${document.path} differs from its Related topics list.`,
-        );
-    }
-    document.related = document.frontmatter?.related ?? listed;
+    // A component or pattern page relates to the pages its avoidWhen names; another page to those
+    // its Related topics list links.
+    document.related = sectionedKinds.has(pageKindOf(document.path))
+      ? [...new Set(relations.flatMap(({ page }) => (page && page !== document.id ? [page] : [])))]
+      : listed;
     if (document.related.includes(document.id))
       throw new Error(`${document.path} lists itself in related.`);
     for (const id of document.related)
@@ -1289,15 +1302,40 @@ export function renderProps(names, props, headingDepth = 2) {
   return lines.join('\n');
 }
 
+/** The component or pattern page that documents an export; a part such as Menu.Item is on its
+ * namespace's. */
+function pageOfExport(documents, name) {
+  return documents.find(
+    (entry) =>
+      sectionedKinds.has(pageKindOf(entry.path)) &&
+      entry.frontmatter?.components?.includes(name.split('.')[0]),
+  );
+}
+
+/**
+ * The generated Related section: on a component or pattern page, each entry of its avoidWhen, the
+ * export or page with when to choose it; on another page, each related page with its summary.
+ */
 function renderRelated(document, documents) {
   const lines = ['## Related', ''];
-  for (const id of document.related) {
-    const target = documents.find((entry) => entry.id === id);
+  const link = (target) => {
     const href = posix.relative(posix.dirname(document.path), target.path);
-    lines.push(
-      `- [${target.title}](${href.startsWith('.') ? href : `./${href}`}) — ${target.summary}`,
-    );
-  }
+    return href.startsWith('.') ? href : `./${href}`;
+  };
+  const entries = document.frontmatter?.avoidWhen;
+  if (entries?.length)
+    for (const { text, use, see } of entries) {
+      const target = use
+        ? pageOfExport(documents, use)
+        : documents.find((entry) => entry.id === see);
+      const name = use ?? target.title;
+      lines.push(`- ${target ? `[${name}](${link(target)})` : `\`${name}\``}: ${text}`);
+    }
+  else
+    for (const id of document.related) {
+      const target = documents.find((entry) => entry.id === id);
+      lines.push(`- [${target.title}](${link(target)}) — ${target.summary}`);
+    }
   return `${lines.join('\n')}\n`;
 }
 
@@ -1366,7 +1404,8 @@ export function compileDocument(document, documents, { props, examples = example
       continue;
     }
     if (section.id === 'related') {
-      if (document.related.length) parts.push(renderRelated(document, documents));
+      if (document.related.length || document.frontmatter?.avoidWhen?.length)
+        parts.push(renderRelated(document, documents));
       continue;
     }
     const authored = document.sections.find((item) => item.id === section.id);

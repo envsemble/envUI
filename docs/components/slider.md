@@ -24,12 +24,6 @@ avoidWhen:
     use: Meter
   - text: Showing how far a task has got.
     use: Progress
-related:
-  - text-field
-  - segmented-control
-  - meter
-  - progress
-  - accessibility
 components:
   - Slider
 ---

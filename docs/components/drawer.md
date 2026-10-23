@@ -36,13 +36,6 @@ avoidWhen:
     use: Tree
   - text: The path from the top of a hierarchy down to the current page.
     use: Breadcrumbs
-related:
-  - bar
-  - rail
-  - tabs
-  - tree
-  - breadcrumbs
-  - badge
 components:
   - Drawer
 ---

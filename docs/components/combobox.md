@@ -33,13 +33,6 @@ avoidWhen:
     use: SegmentedControl
   - text: Finding and running a command or opening a document by name.
     use: CommandPalette
-related:
-  - select
-  - text-field
-  - avatar
-  - command-palette
-  - menu
-  - accessibility
 components:
   - Combobox
 ---

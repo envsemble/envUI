@@ -213,10 +213,11 @@ test('a component page shows plain sections, equal cells and the parts of its an
     };
   });
   expect(corners).toEqual({ outer: true, inner: true, larger: true });
-  // When to use: a plain list, then a tile for each alternative, of one size, each a picture of
-  // it, inert and fitted to its stage, once the section nears the viewport.
-  const tiles = page.locator('[data-section="usage"] .docs-when-tile');
-  await expect(tiles.locator('.docs-when-name')).toHaveText([
+  // When to use is a plain list; Related, at the end, has a tile for each alternative, of one
+  // size, each a picture of it, inert and fitted to its stage, once the section nears the viewport.
+  await expect(page.locator('[data-section="usage"] .docs-related-tile')).toHaveCount(0);
+  const tiles = page.locator('[data-section="related"] .docs-related-tile');
+  await expect(tiles.locator('.docs-related-name')).toHaveText([
     'Link',
     'SegmentedControl',
     'Switch',
@@ -225,11 +226,11 @@ test('a component page shows plain sections, equal cells and the parts of its an
   ]);
   await tiles.first().scrollIntoViewIfNeeded();
   const tileStages = () =>
-    tiles.locator('.docs-when-stage').evaluateAll((stages) => ({
+    tiles.locator('.docs-related-stage').evaluateAll((stages) => ({
       widths: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().width))).size,
       heights: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().height)))
         .size,
-      fitted: stages.filter((stage) => stage.querySelector('.docs-when-canvas[data-fitted][inert]'))
+      fitted: stages.filter((stage) => stage.querySelector('.docs-related-canvas[data-fitted][inert]'))
         .length,
     }));
   await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });
@@ -305,7 +306,7 @@ test('every dotted stage is the only frame of its figure', async ({ page }) => {
     await expect(page.getByText(/^Loading (specimen|example)/)).toHaveCount(0);
     const framed = await page.evaluate(() => {
       const stages = document.querySelectorAll(
-        '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-when-stage, .docs-specimen-grid, .docs-matrix-scroll)',
+        '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll)',
       );
       const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
       const found: string[] = [];

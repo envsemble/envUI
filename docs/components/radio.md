@@ -28,13 +28,6 @@ avoidWhen:
     use: Checkbox
   - text: A setting that turns on or off and applies at once.
     use: Switch
-related:
-  - checkbox
-  - select
-  - segmented-control
-  - switch
-  - dialog
-  - accessibility
 components:
   - RadioGroup
   - Radio

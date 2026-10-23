@@ -25,12 +25,6 @@ avoidWhen:
     see: key-figures
   - text: A state or a category, such as Approved or Featured.
     use: Badge
-related:
-  - key-figures
-  - badge
-  - meter
-  - radio
-  - slider
 components:
   - Rating
 ---

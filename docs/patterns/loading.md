@@ -41,13 +41,6 @@ composes:
   - Row
   - Text
   - Avatar
-related:
-  - surface
-  - card
-  - spinner
-  - progress
-  - button
-  - scaffold
 ---
 
 # Loading

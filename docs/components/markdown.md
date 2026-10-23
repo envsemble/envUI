@@ -29,14 +29,6 @@ avoidWhen:
     use: Composer
   - text: Source code to read or copy on its own.
     use: CodeBlock
-related:
-  - code
-  - rich-text
-  - text-field
-  - composer
-  - kbd
-  - typography
-  - accessibility
 components:
   - Markdown
   - MarkdownEditor

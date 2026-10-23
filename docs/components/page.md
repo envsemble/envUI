@@ -25,12 +25,8 @@ avoidWhen:
     use: Surface
   - text: Two panes side by side, such as a list and its detail.
     use: Panes
-related:
-  - page-header
-  - column
-  - surface
-  - scaffold
-  - responsive
+  - text: A page's title row, with its actions.
+    use: PageHeader
 components:
   - Page
 ---

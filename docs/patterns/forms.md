@@ -40,13 +40,6 @@ composes:
   - Grid
   - Row
   - Text
-related:
-  - settings
-  - destructive-actions
-  - field
-  - text-field
-  - select
-  - radio
 ---
 
 # Form layout and validation

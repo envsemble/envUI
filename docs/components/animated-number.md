@@ -25,12 +25,6 @@ avoidWhen:
     see: key-figures
   - text: How far a task has come.
     use: Progress
-related:
-  - button
-  - key-figures
-  - badge
-  - typography
-  - accessibility
 components:
   - AnimatedNumber
 ---

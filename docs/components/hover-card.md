@@ -23,12 +23,6 @@ avoidWhen:
     use: Dialog
   - text: Information people need to complete a task, which must stay visible.
     use: Alert
-related:
-  - popover
-  - tooltip
-  - link
-  - avatar
-  - accessibility
 components:
   - HoverCard
 ---

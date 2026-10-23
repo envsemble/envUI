@@ -42,13 +42,10 @@ avoidWhen:
     use: Meter
   - text: A headline number with its label and trend, such as on a dashboard.
     see: key-figures
-related:
-  - card
-  - drawer
-  - button
-  - key-figures
-  - code
-  - colors
+  - text: A count beside a destination in the navigation.
+    use: Drawer
+  - text: An identifier or a command in text.
+    use: Code
 components:
   - Badge
   - DiffStat

@@ -33,13 +33,6 @@ composes:
   - Row
   - Column
   - Text
-related:
-  - command-palette
-  - button
-  - kbd
-  - text-field
-  - navigation
-  - app-frame
 ---
 
 # Search trigger

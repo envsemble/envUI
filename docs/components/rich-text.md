@@ -35,13 +35,6 @@ avoidWhen:
     use: Composer
   - text: A single line of text, such as a title.
     use: TextField
-related:
-  - markdown
-  - text-field
-  - composer
-  - message
-  - composition
-  - accessibility
 components:
   - RichText
   - RichTextEditor

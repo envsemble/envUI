@@ -24,11 +24,6 @@ avoidWhen:
     use: Slider
   - text: A score on a scale of stars, such as a review's 4.5 out of 5.
     use: Rating
-related:
-  - progress
-  - key-figures
-  - slider
-  - colors
 components:
   - Meter
 ---

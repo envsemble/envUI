@@ -36,11 +36,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - loading
-  - feedback
-  - list
-  - table
 ---
 
 # Empty states

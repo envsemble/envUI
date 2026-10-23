@@ -28,13 +28,10 @@ avoidWhen:
     use: Panes
   - text: Rows, columns and grids inside a page.
     use: Grid
-related:
-  - top-bar
-  - page
-  - panes
-  - app-frame
-  - window-frame
-  - responsive
+  - text: A whole frame to copy, with the navigation and a top bar.
+    see: app-frame
+  - text: An installed application's window that draws its own title bar.
+    see: window-frame
 components:
   - Scaffold
   - resolveNavigationForms

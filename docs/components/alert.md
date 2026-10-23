@@ -30,12 +30,6 @@ avoidWhen:
     use: Badge
   - text: A decision people must make before going on.
     use: Dialog
-related:
-  - toast
-  - empty-states
-  - badge
-  - dialog
-  - colors
 components:
   - Alert
 ---

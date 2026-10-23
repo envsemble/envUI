@@ -44,13 +44,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - forms
-  - feedback
-  - disclosure
-  - popover
-  - sheet
-  - menu
 ---
 
 # Progressive disclosure

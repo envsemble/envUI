@@ -20,6 +20,8 @@ avoidWhen:
     see: window-frame
   - text: Moving between views of one object, such as its overview and its activity.
     use: Tabs
+  - text: Choosing between a bar, a rail and a drawer.
+    see: navigation
 composes:
   - Scaffold
   - TopBar
@@ -41,13 +43,6 @@ composes:
   - Row
   - Column
   - Text
-related:
-  - scaffold
-  - top-bar
-  - drawer
-  - navigation
-  - account-menu
-  - search-trigger
 ---
 
 # App frame

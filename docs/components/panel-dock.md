@@ -28,13 +28,6 @@ avoidWhen:
     use: DocumentTabs
   - text: A short message about something that happened.
     use: Toast
-related:
-  - dialog
-  - document-tabs
-  - scaffold
-  - menu
-  - tooltip
-  - accessibility
 components:
   - PanelDock
 ---

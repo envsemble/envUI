@@ -19,6 +19,8 @@ avoidWhen:
     see: forms
   - text: A choice that filters or changes the view of the page people are on.
     use: SegmentedControl
+  - text: Deleting an account or a workspace.
+    see: destructive-actions
 composes:
   - Page
   - PageHeader
@@ -40,13 +42,6 @@ composes:
   - Toast
   - useToast
   - useThemePreference
-related:
-  - forms
-  - destructive-actions
-  - feedback
-  - switch
-  - radio
-  - description-list
 ---
 
 # Settings

@@ -22,11 +22,6 @@ avoidWhen:
     use: Drawer
   - text: A deep hierarchy that people expand and collapse, such as folders and files.
     use: Tree
-related:
-  - bar
-  - drawer
-  - tree
-  - badge
 components:
   - Rail
 ---

@@ -27,10 +27,6 @@ composes:
   - Column
   - Text
   - Button
-related:
-  - card
-  - empty-states
-  - button
 ---
 
 # Feature cards

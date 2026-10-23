@@ -25,12 +25,6 @@ avoidWhen:
     use: Tabs
   - text: Actions, such as New or Share.
     use: Toolbar
-related:
-  - rail
-  - drawer
-  - tabs
-  - menu
-  - badge
 components:
   - Bar
 ---

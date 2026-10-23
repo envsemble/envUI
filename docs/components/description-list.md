@@ -26,12 +26,6 @@ avoidWhen:
     use: Field
   - text: One headline number with its trend.
     see: key-figures
-related:
-  - table
-  - list
-  - card
-  - key-figures
-  - loading
 components:
   - DescriptionList
 ---

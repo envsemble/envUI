@@ -29,13 +29,6 @@ avoidWhen:
     use: Switch
   - text: Actions, such as Save and Share, rather than a choice that stays selected.
     use: ButtonGroup
-related:
-  - tabs
-  - radio
-  - select
-  - button
-  - switch
-  - accessibility
 components:
   - SegmentedControl
 ---

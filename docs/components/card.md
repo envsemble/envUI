@@ -31,12 +31,8 @@ avoidWhen:
     see: empty-states
   - text: A feature introduced with an icon, a sentence and the one action that starts it.
     see: feature-cards
-related:
-  - surface
-  - column
-  - list
-  - button
-  - typography
+  - text: Content that needs no surface of its own, such as a form on a page.
+    use: Column
 components:
   - Card
 ---

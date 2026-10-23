@@ -44,14 +44,6 @@ avoidWhen:
     use: Composer
   - text: Formatted text, such as headings, lists and links.
     use: MarkdownEditor
-related:
-  - select
-  - combobox
-  - date-picker
-  - composer
-  - markdown
-  - column
-  - accessibility
 components:
   - TextField
   - SearchField

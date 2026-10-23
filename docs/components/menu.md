@@ -40,17 +40,6 @@ avoidWhen:
     use: Tabs
   - text: One or two actions that fit beside the content they act on.
     use: Button
-related:
-  - menubar
-  - command-palette
-  - select
-  - popover
-  - drawer
-  - tree
-  - kbd
-  - tooltip
-  - avatar
-  - scaffold
 components:
   - Menu
   - ContextMenu

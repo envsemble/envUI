@@ -21,11 +21,10 @@ avoidWhen:
     use: PageHeader
   - text: A row of actions inside a page.
     use: Toolbar
-related:
-  - scaffold
-  - page-header
-  - menubar
-  - window-frame
+  - text: Desktop menus such as File and Edit across the top.
+    use: Menubar
+  - text: An installed application's window that draws its own title bar.
+    see: window-frame
 components:
   - TopBar
 ---

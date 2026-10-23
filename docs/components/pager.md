@@ -26,11 +26,6 @@ avoidWhen:
     use: Drawer
   - text: The path from the top of a hierarchy down to the current page.
     use: Breadcrumbs
-related:
-  - pagination
-  - drawer
-  - breadcrumbs
-  - button
 components:
   - Pager
 ---

@@ -24,13 +24,6 @@ avoidWhen:
     use: Calendar
   - text: A share of a known range, such as storage used.
     use: Meter
-related:
-  - key-figures
-  - table
-  - date-picker
-  - tooltip
-  - colors
-  - accessibility
 components:
   - CalendarHeatmap
 ---

@@ -24,10 +24,6 @@ avoidWhen:
     use: Textarea
   - text: A choice that turns on or off.
     use: Checkbox
-related:
-  - text-field
-  - select
-  - checkbox
 components:
   - Field
 ---

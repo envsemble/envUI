@@ -26,13 +26,6 @@ avoidWhen:
     use: Drawer
   - text: Sections people may want open at the same time.
     use: Disclosure
-related:
-  - segmented-control
-  - document-tabs
-  - drawer
-  - button
-  - card
-  - disclosure
 components:
   - Tabs
 ---

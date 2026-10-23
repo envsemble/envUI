@@ -26,12 +26,6 @@ avoidWhen:
     use: Code
   - text: A status or a count beside a label.
     use: Badge
-related:
-  - menu
-  - command-palette
-  - code
-  - markdown
-  - accessibility
 components:
   - Kbd
 ---

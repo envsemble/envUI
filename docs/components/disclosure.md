@@ -28,13 +28,6 @@ avoidWhen:
     use: Tree
   - text: Details beside a control that close when people move on.
     use: Popover
-related:
-  - accordion
-  - tree
-  - tabs
-  - popover
-  - text-field
-  - typography
 components:
   - Disclosure
 ---

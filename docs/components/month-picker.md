@@ -21,11 +21,6 @@ avoidWhen:
     use: SegmentedControl
   - text: Activity per day over months, shown as shades.
     use: CalendarHeatmap
-related:
-  - date-picker
-  - time-picker
-  - text-field
-  - calendar-heatmap
 components:
   - MonthPicker
 ---

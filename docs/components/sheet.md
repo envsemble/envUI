@@ -26,12 +26,6 @@ avoidWhen:
     use: PanelDock
   - text: Side content that sits beside the main content in a wide window, such as details.
     use: Panes
-related:
-  - panes
-  - dialog
-  - popover
-  - button
-  - panel-dock
 components:
   - Sheet
 ---

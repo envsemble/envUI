@@ -26,12 +26,6 @@ avoidWhen:
     use: Card
   - text: Controls for one subject that the arrow keys move between.
     use: Toolbar
-related:
-  - page
-  - breadcrumbs
-  - toolbar
-  - row
-  - button
 components:
   - PageHeader
 ---

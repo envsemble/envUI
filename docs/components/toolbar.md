@@ -25,12 +25,6 @@ avoidWhen:
     use: Menubar
   - text: A page's search, filters and primary action, where fields keep their arrow keys.
     use: PageHeader
-related:
-  - page-header
-  - button
-  - segmented-control
-  - menubar
-  - tooltip
 components:
   - Toolbar
 ---

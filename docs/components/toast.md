@@ -29,12 +29,6 @@ avoidWhen:
     use: Progress
   - text: Work that runs after a press, shown on the control that started it.
     use: Button
-related:
-  - alert
-  - dialog
-  - button
-  - progress
-  - accessibility
 components:
   - Toast
   - useToast

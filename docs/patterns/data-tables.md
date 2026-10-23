@@ -23,6 +23,10 @@ avoidWhen:
     see: filtering
   - text: Hierarchical items that open and close, such as folders.
     use: Tree
+  - text: A table with no rows yet, or none that match.
+    see: empty-states
+  - text: Deleting rows, with undo or a confirmation.
+    see: destructive-actions
 composes:
   - Table
   - Checkbox
@@ -46,13 +50,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - filtering
-  - empty-states
-  - destructive-actions
-  - table
-  - pagination
-  - toolbar
 ---
 
 # Data tables

@@ -31,13 +31,6 @@ avoidWhen:
     use: Alert
   - text: Formatted text on its own, outside a conversation.
     use: Markdown
-related:
-  - composer
-  - markdown
-  - relative-time
-  - list
-  - loading
-  - accessibility
 components:
   - Message
   - MessageList

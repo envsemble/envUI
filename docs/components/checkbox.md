@@ -29,13 +29,6 @@ avoidWhen:
     use: Combobox
   - text: Choosing rows of a table.
     use: Table
-related:
-  - switch
-  - radio
-  - select
-  - combobox
-  - table
-  - accessibility
 components:
   - Checkbox
 ---

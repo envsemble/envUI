@@ -25,11 +25,6 @@ composes:
   - Button
   - Column
   - Text
-related:
-  - menu
-  - account-menu
-  - navigation
-  - drawer
 ---
 
 # Organization switcher
