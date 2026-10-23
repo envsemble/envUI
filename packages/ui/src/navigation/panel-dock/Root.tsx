@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type CSSProperties,
   type ReactNode,
 } from 'react';
 import { classNames } from '../../internal/classNames.js';
@@ -209,6 +210,7 @@ export function Root<T extends PanelDockPanel>({
   closeLabel,
   resizeLabel,
   className,
+  style,
   ref,
   ...props
 }: RootProps<T>) {
@@ -248,7 +250,11 @@ export function Root<T extends PanelDockPanel>({
   const atRowEnd = useRef(true);
   const previousRow = useRef<readonly string[]>([]);
   const previousTabs = useRef<readonly string[]>([]);
-  const [stacked, setStacked] = useChangingState(false);
+  // Whether the dock stacks, as its container query lays it out; undefined until the dock reads it,
+  // as on the server and while hydrating, where CSS alone decides what shows.
+  const [measuredStacked, setStacked] = useChangingState<boolean | undefined>(undefined);
+  const stacked = measuredStacked ?? false;
+  const pending = measuredStacked === undefined;
   const [measurements, setMeasurements] = useState<Measurements>();
   const [overflowing, setOverflowing] = useChangingState(false);
   // Heights people chose for panels without a height of their own.
@@ -267,26 +273,45 @@ export function Root<T extends PanelDockPanel>({
   // A stacked dock fills the region with one shown panel: the one its tab asked for, else the
   // active one, else the newest; a wide one with its maximized panel. The others wait behind their
   // tabs.
-  const maximized = panels.filter((panel) => panel.mode === 'maximized');
-  const shown = stacked ? panels.filter((panel) => panel.mode !== 'minimized') : maximized;
   const activeId = panels.find((panel) => panel.active)?.id;
-  const chosen = stacked
-    ? heldChoice(tabChoice.current, panels, activeId, recency.current)
-    : undefined;
-  const filling =
-    shown.find((panel) => panel.id === chosen) ??
-    shown.find((panel) => panel.active) ??
-    newest(shown, recency.current);
-  const placements = new Map<string, Placement>();
-  for (const panel of panels)
-    placements.set(
-      panel.id,
-      panel === filling ? 'fill' : !stacked && panel.mode === 'open' ? 'row' : 'hidden',
-    );
+  const arrange = (asStacked: boolean) => {
+    const shown = asStacked
+      ? panels.filter((panel) => panel.mode !== 'minimized')
+      : panels.filter((panel) => panel.mode === 'maximized');
+    const choice = asStacked
+      ? heldChoice(tabChoice.current, panels, activeId, recency.current)
+      : undefined;
+    const fill =
+      shown.find((panel) => panel.id === choice) ??
+      shown.find((panel) => panel.active) ??
+      newest(shown, recency.current);
+    const where = new Map<string, Placement>();
+    for (const panel of panels)
+      where.set(
+        panel.id,
+        panel === fill ? 'fill' : !asStacked && panel.mode === 'open' ? 'row' : 'hidden',
+      );
+    return { chosen: choice, filling: fill, placements: where };
+  };
+  const { chosen, filling, placements } = arrange(stacked);
+  // Until the dock reads its layout, its markup carries both: the side-by-side one, which the
+  // dock's behaviour follows meanwhile, and the stacked one, which its container query shows where
+  // the dock is narrow, so the server's markup and the first paint already stack.
+  const stackedLayout = pending ? arrange(true) : undefined;
   const tabs = panels.filter((panel) => placements.get(panel.id) === 'hidden');
+  const stackedTabs = stackedLayout
+    ? panels.filter((panel) => stackedLayout.placements.get(panel.id) === 'hidden')
+    : tabs;
+  const shownTabs = stackedLayout
+    ? panels.filter((panel) => tabs.includes(panel) || stackedTabs.includes(panel))
+    : tabs;
+  /** While the layout is unread, the one layout that has a tab or the strip, if only one does. */
+  const tabIn = (wide: boolean, inStacked: boolean) =>
+    !stackedLayout || wide === inStacked ? undefined : wide ? 'wide' : 'stacked';
   const rowIds = panels.filter((panel) => placements.get(panel.id) === 'row').map(({ id }) => id);
   const layout = panels.map(({ id }) => `${id}:${placements.get(id)}`).join('\n');
   const hasTabs = tabs.length > 0;
+  const hasStrip = shownTabs.length > 0;
   const filled = filling !== undefined;
   // Where focus is before this update is committed, read while a panel or tab that is about to
   // hide or leave still holds it.
@@ -475,11 +500,12 @@ export function Root<T extends PanelDockPanel>({
     );
   }
 
-  /** Whether the dock is narrower than stackBelow, as laid out now. */
+  /**
+   * Whether the dock is narrower than stackBelow, as laid out now: its container query gives the
+   * probe a width where it stacks.
+   */
   function stacksNow() {
-    const element = root.current;
-    const threshold = probe.current;
-    return Boolean(element && threshold && element.offsetWidth < threshold.offsetWidth);
+    return (probe.current?.offsetWidth ?? 0) > 0;
   }
 
   function tabButtonOf(id: string | undefined) {
@@ -527,8 +553,8 @@ export function Root<T extends PanelDockPanel>({
     else focusTab(tabs.at(-1)?.id);
   }
 
-  // The dock measures itself: below stackBelow it stacks, and open panels fit the room above the
-  // tabs. A rem or em threshold follows the text size.
+  // The dock measures itself: it reads whether its container query stacks it, below stackBelow, and
+  // open panels fit the room above the tabs. A rem or em threshold follows the text size.
   useLayoutEffect(() => {
     const element = root.current;
     const threshold = probe.current;
@@ -566,6 +592,8 @@ export function Root<T extends PanelDockPanel>({
       });
     });
     observer.observe(element);
+    // The probe changes size as the query starts or stops stacking the dock, also where only the
+    // text size changes.
     observer.observe(threshold);
     if (strip.current) observer.observe(strip.current);
     return () => {
@@ -574,7 +602,7 @@ export function Root<T extends PanelDockPanel>({
     };
     // Stacking changes the row's padding above open panels in front of a maximized one, and with it
     // their room, without resizing anything the observer watches.
-  }, [stackBelow, hasTabs, filled, stacked, overflow, setStacked, setOverflowing]);
+  }, [stackBelow, hasStrip, filled, stacked, overflow, setStacked, setOverflowing]);
 
   useStackedReport(stacked, onStackedChange);
 
@@ -690,7 +718,7 @@ export function Root<T extends PanelDockPanel>({
     };
     element.addEventListener('wheel', onWheel, { passive: false });
     return () => element.removeEventListener('wheel', onWheel);
-  }, [hasTabs]);
+  }, [hasStrip]);
 
   return (
     <Column
@@ -701,9 +729,13 @@ export function Root<T extends PanelDockPanel>({
         setRef(ref, node);
       }}
       className={classNames('env-panel-dock', className)}
+      style={{ ...style, '--env-panel-dock-stack-below': cssLength(stackBelow) } as CSSProperties}
       data-stacked={stacked || undefined}
       data-filled={filled || undefined}
       data-tabs={hasTabs || undefined}
+      data-stack-pending={pending || undefined}
+      data-stacked-filled={stackedLayout?.filling !== undefined || undefined}
+      data-stacked-tabs={(stackedLayout && stackedTabs.length > 0) || undefined}
     >
       <Row
         align="end"
@@ -723,6 +755,7 @@ export function Root<T extends PanelDockPanel>({
               key={panel.id}
               panel={panel}
               placement={placement}
+              stackedPlacement={stackedLayout?.placements.get(panel.id)}
               stacked={stacked}
               height={height}
               bounds={placement === 'row' ? bounds : undefined}
@@ -741,15 +774,23 @@ export function Root<T extends PanelDockPanel>({
           );
         })}
       </Row>
-      {hasTabs && (
+      {hasStrip && (
         <Row
           align="end"
-          render={<ul ref={strip} className="env-panel-dock-strip" aria-label={tabsLabel} />}
+          render={
+            <ul
+              ref={strip}
+              className="env-panel-dock-strip"
+              aria-label={tabsLabel}
+              data-tab-in={tabIn(hasTabs, stackedTabs.length > 0)}
+            />
+          }
         >
-          {tabs.map((panel) => (
+          {shownTabs.map((panel) => (
             <PanelTab
               key={panel.id}
               panel={panel}
+              tabIn={tabIn(tabs.includes(panel), stackedTabs.includes(panel))}
               openLabel={nameOpen}
               closeLabel={nameClose}
               onRestore={() => restoreFromTab(panel)}
@@ -758,12 +799,7 @@ export function Root<T extends PanelDockPanel>({
           ))}
         </Row>
       )}
-      <div
-        ref={probe}
-        className="env-panel-dock-probe"
-        aria-hidden="true"
-        style={{ inlineSize: cssLength(stackBelow) }}
-      />
+      <div ref={probe} className="env-panel-dock-probe" aria-hidden="true" />
     </Column>
   );
 }

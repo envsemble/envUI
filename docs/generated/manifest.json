@@ -8751,12 +8751,61 @@
               ]
             },
             {
+              "attribute": "data-stack-pending",
+              "values": [
+                "true"
+              ],
+              "parts": [
+                "env-panel-dock"
+              ]
+            },
+            {
               "attribute": "data-stacked",
               "values": [
                 "true"
               ],
               "parts": [
                 "env-panel-dock"
+              ]
+            },
+            {
+              "attribute": "data-stacked-filled",
+              "values": [
+                "true"
+              ],
+              "parts": [
+                "env-panel-dock"
+              ]
+            },
+            {
+              "attribute": "data-stacked-placement",
+              "values": [
+                "fill",
+                "hidden",
+                "row"
+              ],
+              "parts": [
+                "env-panel-dock-panel"
+              ]
+            },
+            {
+              "attribute": "data-stacked-tabs",
+              "values": [
+                "true"
+              ],
+              "parts": [
+                "env-panel-dock"
+              ]
+            },
+            {
+              "attribute": "data-tab-in",
+              "values": [
+                "stacked",
+                "wide"
+              ],
+              "parts": [
+                "env-panel-dock-strip",
+                "env-panel-dock-tab"
               ]
             },
             {

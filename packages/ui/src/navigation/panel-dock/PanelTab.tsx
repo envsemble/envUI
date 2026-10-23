@@ -12,6 +12,8 @@ import { useEntrance } from './useEntrance.js';
 
 interface PanelTabProps {
   panel: PanelDockPanel;
+  /** Until the dock reads its layout, the one layout that has the tab, where only one does. */
+  tabIn: 'wide' | 'stacked' | undefined;
   openLabel: (label: string) => string;
   closeLabel: (label: string) => string;
   onRestore: () => void;
@@ -22,7 +24,14 @@ interface PanelTabProps {
  * A panel out of sight, as a tab in the strip along the bottom, as on a taskbar: a button that
  * brings it back and a close button.
  */
-export function PanelTab({ panel, openLabel, closeLabel, onRestore, onClose }: PanelTabProps) {
+export function PanelTab({
+  panel,
+  tabIn,
+  openLabel,
+  closeLabel,
+  onRestore,
+  onClose,
+}: PanelTabProps) {
   const descriptionId = useId();
   const tab = useRef<HTMLLIElement>(null);
   useEntrance(tab, 'tab', true);
@@ -49,6 +58,7 @@ export function PanelTab({ panel, openLabel, closeLabel, onRestore, onClose }: P
           className="env-panel-dock-tab"
           data-panel-id={panel.id}
           data-mode={panel.mode}
+          data-tab-in={tabIn}
           data-attention={attention || undefined}
         />
       }
