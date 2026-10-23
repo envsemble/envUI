@@ -2,7 +2,6 @@ import { memo, useEffect, useRef, useState } from 'react';
 import {
   ConfirmDialog,
   List,
-  SearchTrigger,
   Calendar,
   ColorPicker,
   Combobox,
@@ -248,9 +247,7 @@ export function MessageStringsFixture() {
             <FeedbackStrings />
           </Toast.Provider>
           <ShellAndEditorStrings />
-          {/* App parts: a search trigger, a reorderable list's handle and announcements, and a
-              confirm dialog. */}
-          <SearchTrigger listen={false} />
+          {/* App parts: a reorderable list's handle and announcements, and a confirm dialog. */}
           <List.Root aria-label="Order" onReorder={() => {}}>
             <List.Item label="First" />
             <List.Item label="Second" />

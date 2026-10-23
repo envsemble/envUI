@@ -1,0 +1,5 @@
+{
+  "env-search-trigger": {
+    "report": "SearchTrigger is gone, and the search trigger pattern builds it from a Button with its keys in the end slot, or an IconButton: style env-button and env-button-end, or a class of your own on the button."
+  }
+}

@@ -74,6 +74,8 @@ const reports = {
     ...removedFrom(1, ['AccountMenu', 'AppShell', 'ListDetail', 'NavList', 'Sidebar', 'SplitPane']),
     ...removedFrom(2, ['breakpoints', 'useBreakpoint', 'useMediaQuery', 'WindowFrame']),
   ],
+  // 1.0.0-prerelease.1's SearchTrigger, a pattern now, is reported where it is used.
+  'prerelease-search-trigger.tsx': removedFrom(1, ['SearchTrigger', 'SearchTriggerProps']),
   'removed.tsx': [
     ...removedFrom(1, [
       'getInitials',

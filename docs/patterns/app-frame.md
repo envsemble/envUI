@@ -28,7 +28,7 @@ composes:
   - Drawer
   - Sheet
   - Panes
-  - SearchTrigger
+  - Tooltip
   - CommandPalette
   - Menu
   - AvatarButton
@@ -47,13 +47,14 @@ related:
   - drawer
   - navigation
   - account-menu
+  - search-trigger
 ---
 
 # App frame
 
 ## Overview
 
-The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, search and the [account menu](account-menu.md), one array of destinations, and the page in the body.
+The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, [search](search-trigger.md) and the [account menu](account-menu.md), one array of destinations, and the page in the body.
 
 ```tsx example=AppFrame stage=shaded
 
@@ -102,7 +103,7 @@ Side content that is not navigation goes in a supporting pane of [Panes](../comp
 ```
 
 1. **Top bar** (`env-top-bar`)
-2. **Search** (`env-search-trigger`)
+2. **Search** (`env-top-bar-actions > env-icon-button`), the [search trigger](search-trigger.md)
 3. **Account menu** (`env-avatar-button`)
 4. **Navigation** (`env-rail`)
 5. **Page header** (`env-page-header`)

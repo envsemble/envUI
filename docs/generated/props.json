@@ -602,6 +602,12 @@
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+        },
+        {
           "name": "pending",
           "type": "boolean",
           "required": false,
@@ -1700,6 +1706,12 @@
       "description": "A button for an action that takes effect at once and cannot be undone. The first press arms it and names the consequence in place; a second press runs it. It disarms after a few seconds, when focus leaves and on Escape.",
       "props": [
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+        },
+        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -2519,6 +2531,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -3722,7 +3740,7 @@
           "name": "toolbar",
           "type": "readonly MarkdownCommand[] | false",
           "required": false,
-          "default": "['heading', 'bold', 'italic', 'bullet-list', 'numbered-list', 'quote', 'inline-code', 'code-block', 'link']",
+          "default": "['heading', 'bold', 'italic', 'inline-code', 'bullet-list', 'numbered-list', 'quote', 'code-block', 'link']",
           "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
         },
         {
@@ -5563,6 +5581,12 @@
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+        },
+        {
           "name": "pending",
           "type": "boolean",
           "required": false,
@@ -6486,68 +6510,6 @@
       ],
       "native": [
         "input"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "SearchTrigger": {
-      "kind": "component",
-      "source": "packages/ui/src/actions/SearchTrigger.tsx",
-      "description": "The button that opens search or a command palette: a field-like button with its label and the shortcut's keys, or a search icon alone. It presses itself when the shortcut is pressed, and the application opens the search from onClick.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'Search', or EnvUIProvider's messages.searchTrigger.label",
-          "description": "The label, and the name of the icon-only trigger."
-        },
-        {
-          "name": "shortcut",
-          "type": "string | false",
-          "required": false,
-          "default": "'mod+k'",
-          "description": "The keyboard shortcut, shown as keys at the end and announced as aria-keyshortcuts: `mod+k` is ⌘K on Apple platforms and Ctrl+K elsewhere. false shows and handles none."
-        },
-        {
-          "name": "listen",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Press the trigger when the shortcut is pressed anywhere in the window, text fields included. With several triggers listening for one shortcut, the most recently mounted one that is visible and not behind a modal dialog takes it. A disabled trigger, or a key press that something else already handled, such as an editor's own shortcut, leaves the key alone."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Show only the search icon, in a ghost IconButton with the label and shortcut in a tooltip."
-        },
-        {
-          "name": "tooltipSide",
-          "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
-          "required": false,
-          "default": "'bottom'",
-          "description": "The side of the trigger the icon-only tooltip opens on."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "default": "the container's control height, md unless the container sets another",
-          "description": "The height, as on every control."
-        },
-        {
-          "name": "fullWidth",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Fill the width of the container, such as at the top of a navigation drawer."
-        }
-      ],
-      "native": [
-        "button"
       ],
       "entries": [
         "@envsemble/envui"

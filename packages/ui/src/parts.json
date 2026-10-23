@@ -125,6 +125,7 @@
     "Button": {
       "env-button": "The button.",
       "env-button-content": "The button's label and icons.",
+      "env-button-end": "The quiet content at the button's end, such as a shortcut's keys.",
       "env-button-spinner": "The spinner of a pending button."
     },
     "ButtonGroup": {
@@ -604,12 +605,6 @@
       "env-scaffold-rail": "The slot of the navigation rail, at the start of a medium window.",
       "env-scaffold-drawer": "The slot of the navigation drawer, at the start from expanded.",
       "env-scaffold-body": "The body, the main region, which scrolls."
-    },
-    "SearchTrigger": {
-      "env-search-trigger": "The button that opens search.",
-      "env-search-trigger-label": "The button's label.",
-      "env-search-trigger-shortcut": "The keyboard shortcut.",
-      "env-search-trigger-tooltip": "The tooltip of the icon-only button."
     },
     "SegmentedControl": {
       "env-segmented-control": "The segmented control.",

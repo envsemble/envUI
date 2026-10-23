@@ -34,7 +34,6 @@ import { relativeTime } from './relativeTime.js';
 import { richText } from './richText.js';
 import { scaffold } from './scaffold.js';
 import { searchField } from './searchField.js';
-import { searchTrigger } from './searchTrigger.js';
 import { table } from './table.js';
 import { textarea } from './textarea.js';
 import { timePicker } from './timePicker.js';
@@ -86,7 +85,6 @@ export const defaultMessages = {
   richText,
   scaffold,
   searchField,
-  searchTrigger,
   table,
   textarea,
   timePicker,

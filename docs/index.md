@@ -49,7 +49,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Actions
 
 - [Button](components/button.md)
-- [SearchTrigger](components/search-trigger.md)
 - [Toolbar](components/toolbar.md)
 - [Link](components/link.md)
 
@@ -133,6 +132,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [App frame](patterns/app-frame.md)
 - [Account menu](patterns/account-menu.md)
 - [Organization switcher](patterns/organization-switcher.md)
+- [Search trigger](patterns/search-trigger.md)
 - [Window frame](patterns/window-frame.md)
 - [Feature cards](patterns/feature-cards.md)
 - [Filtering and search](patterns/filtering.md)

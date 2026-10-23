@@ -1,16 +1,18 @@
 import {
   AvatarButton,
+  IconButton,
   Page,
   PageHeader,
   Rail,
   Scaffold,
-  SearchTrigger,
   Text,
+  Tooltip,
   TopBar,
   type Destination,
 } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Home } from '@envsemble/envui/icons/Home';
+import { Search } from '@envsemble/envui/icons/Search';
 
 const destinations: Destination[] = [
   { label: 'Home', icon: <Home />, href: '/' },
@@ -30,7 +32,9 @@ export default function AppFrameAnatomy() {
           title="Northwind"
           actions={
             <>
-              <SearchTrigger iconOnly />
+              <Tooltip content="Search">
+                <IconButton variant="ghost" icon={<Search />} aria-label="Search" />
+              </Tooltip>
               <AvatarButton name="Alex Morgan" />
             </>
           }

@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import {
+  Button,
   CommandPalette,
   Drawer,
-  SearchTrigger,
+  Kbd,
   Column,
   Text,
   type CommandPaletteItem,
@@ -12,6 +13,10 @@ import { Description } from '@envsemble/envui/icons/Description';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
+import { Search } from '@envsemble/envui/icons/Search';
+
+/** ⌘ on Apple platforms, Ctrl elsewhere. */
+const apple = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
 
 const documents = ['Roadmap', 'Launch checklist', 'Pricing research', 'Interview notes'];
 
@@ -37,8 +42,19 @@ export default function InSidebar() {
       <Drawer
         aria-label="Workspace"
         destinations={destinations}
-        // The catalogue's own search keeps Ctrl+K here; an application's one trigger listens.
-        header={<SearchTrigger fullWidth listen={false} onClick={() => setOpen(true)} />}
+        header={
+          <Button
+            variant="secondary"
+            fullWidth
+            startIcon={<Search />}
+            // The keys show the shortcut, which aria-keyshortcuts announces.
+            end={<Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} aria-hidden />}
+            aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
+            onClick={() => setOpen(true)}
+          >
+            Search
+          </Button>
+        }
       />
       <CommandPalette
         open={open}

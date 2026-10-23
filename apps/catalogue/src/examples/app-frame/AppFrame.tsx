@@ -6,15 +6,16 @@ import {
   Column,
   CommandPalette,
   Drawer,
+  IconButton,
   Menu,
   Page,
   PageHeader,
   Rail,
   Row,
   Scaffold,
-  SearchTrigger,
   Text,
   ThemeRadioGroup,
+  Tooltip,
   TopBar,
   type CommandPaletteItem,
   type Destination,
@@ -26,6 +27,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Palette } from '@envsemble/envui/icons/Palette';
+import { Search } from '@envsemble/envui/icons/Search';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
@@ -97,7 +99,14 @@ export default function AppFrame() {
           title="Northwind"
           actions={
             <>
-              <SearchTrigger iconOnly onClick={() => setSearching(true)} />
+              <Tooltip content="Search">
+                <IconButton
+                  variant="ghost"
+                  icon={<Search />}
+                  aria-label="Search"
+                  onClick={() => setSearching(true)}
+                />
+              </Tooltip>
               {account}
             </>
           }

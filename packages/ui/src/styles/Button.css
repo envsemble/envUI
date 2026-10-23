@@ -366,6 +366,17 @@
 .env-button-content {
   display: contents;
 }
+/* The end slot, such as a shortcut's keys: muted, and at the far end of a button wider than its
+   content, while the icon and label stay at the start. Keys keep their caps' own colors, which
+   hold their contrast on the button's fill; the + between them is muted. */
+.env-button-end {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  margin-inline-start: auto;
+  color: var(--env-color-fg-muted);
+  white-space: nowrap;
+}
 /* Transparent rather than hidden, so the label stays the button's accessible name. */
 .env-button[data-pending] > .env-button-content {
   color: transparent;

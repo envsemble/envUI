@@ -20,7 +20,6 @@ export * from './actions/ButtonGroup.js';
 export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
-export * from './actions/SearchTrigger.js';
 export * from './actions/SegmentedControl.js';
 export * from './navigation/Bar.js';
 export * from './navigation/Rail.js';

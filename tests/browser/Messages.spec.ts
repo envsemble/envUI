@@ -116,7 +116,6 @@ test('the app parts take their names, labels and announcements from the provider
 }) => {
   await page.goto(`${fixtureUrl}/?fixture=message-strings`);
   const root = page.getByTestId('messages');
-  await expect(root.getByRole('button', { name: '⟦searchTrigger.label⟧' })).toBeVisible();
   // A reorderable list names its handles and announces a move.
   const handle = root.getByRole('list', { name: 'Order' }).getByRole('button').first();
   await expect(handle).toHaveAccessibleName('⟦list.reorder⟧');

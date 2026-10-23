@@ -202,7 +202,7 @@ When the outcome is known, put it in the label.
 3. **Label** (`env-button::text`)
 4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
 
-Not shown: the spinner, `env-button-spinner`, and a ButtonGroup's `env-button-group`.
+Not shown: the spinner, `env-button-spinner`, a ButtonGroup's `env-button-group`, and the end slot, `env-button-end`: quiet content after the label, such as a shortcut's keys in a Kbd, muted and at the far end of a wide button, as the [search trigger](../patterns/search-trigger.md) shows it.
 
 ## Adapting to width
 
@@ -243,7 +243,7 @@ Labels wrap, and icon-only buttons keep their size. On touch screens every butto
 
 ## Changelog
 
-- **1.0.0**: IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross, which the `v1-structure` codemod writes. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
+- **1.0.0**: `end`, a muted slot at the far end for a shortcut's keys, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross, which the `v1-structure` codemod writes. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
 - **0.6.0**: The `quiet` variant on Button, IconButton and ConfirmButton; CopyButton; ButtonGroup `fullWidth`.
 - **0.5.0**: ConfirmButton `icon`, an icon-only form that grows when armed.
 - **0.4.0**: `pending` on Button and IconButton; ConfirmButton.

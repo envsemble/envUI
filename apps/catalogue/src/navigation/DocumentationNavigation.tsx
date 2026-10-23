@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Drawer, Link, SearchTrigger, type DrawerDestination } from '@envsemble/envui';
+import { Drawer, Link, type DrawerDestination } from '@envsemble/envui';
+import { SearchButton } from '../search/SearchButton';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
@@ -147,7 +148,7 @@ export function DocumentationNavigation({
       header={
         <>
           {!inSheet && <Brand />}
-          <SearchTrigger fullWidth onClick={onSearch} className="docs-sidebar-search" />
+          <SearchButton onClick={onSearch} className="docs-sidebar-search" />
         </>
       }
     />

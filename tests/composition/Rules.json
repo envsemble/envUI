@@ -41,7 +41,6 @@
       "actions/ButtonGroup.tsx": "base",
       "actions/ConfirmButton.tsx": "composites",
       "actions/CopyButton.tsx": "composites",
-      "actions/SearchTrigger.tsx": "composites",
       "actions/Link.tsx": "composites",
       "actions/SegmentedControl.tsx": "base",
       "actions/Toolbar.tsx": "composites",
