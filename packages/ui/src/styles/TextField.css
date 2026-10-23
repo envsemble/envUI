@@ -368,12 +368,14 @@ textarea.env-text-field-input:disabled + .env-textarea-resize-edge {
 .env-text-field-input[type='search']::-webkit-search-cancel-button {
   appearance: none;
 }
-/* Fields share the button height and pill shape so they line up with buttons in a row. */
+/* Fields share the button height and rounded ends so they line up with buttons in a row. The
+   radius is half the field's height, not a pill's, so a field that grows taller, as a combobox
+   whose chips wrap, keeps its corners and becomes a rounded rectangle. */
 .env-text-field:not([data-tall]) .env-text-field-control {
   box-sizing: border-box;
   display: flex;
   min-height: var(--env-field-height);
-  border-radius: var(--env-radius-full);
+  border-radius: calc(var(--env-field-height) / 2);
 }
 .env-text-field:not([data-tall]) .env-text-field-input {
   /* The well owns the height, including its border, so it matches the button height exactly; the

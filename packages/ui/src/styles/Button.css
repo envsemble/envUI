@@ -31,7 +31,9 @@
     )
     var(--env-space-3);
   border: var(--env-control-border-width) solid transparent;
-  border-radius: 100vmax;
+  /* Rounded ends of half the control height, not a pill: a label that wraps onto more lines keeps
+     the corners, and the button becomes a rounded rectangle. */
+  border-radius: calc(var(--env-button-height) / 2);
   font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
   white-space: normal;
   overflow-wrap: anywhere;
