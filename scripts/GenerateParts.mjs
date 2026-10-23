@@ -17,6 +17,8 @@
 // - the state attributes: `data-*` attributes set in JSX on an element with a part class, their
 //   values from the attribute's type, and the `[data-*]` selectors that the style sheets
 //   (src/styles) put on a part class, with the values they compare;
+//   attributes named data-env-ssr-* are private and left out: server markup carries them only until
+//   a component reads its layout in the browser;
 // - the components: every component and namespace the public entries export, whose parts are the
 //   classes that start with `env-<its name in kebab case>`.
 //
@@ -58,6 +60,15 @@ const kebab = (name) =>
     .replace(/(?<=[A-Z])(?=[A-Z][a-z])/g, '-')
     .toLowerCase();
 const byText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+
+/**
+ * Whether a state attribute is private: data-env-ssr-*, which server markup carries only until a
+ * component reads its layout in the browser, such as a dock that stacks before it hydrates. Neither
+ * the contract nor the docs list them, and they may change in any release.
+ */
+export function isPrivateState(attribute) {
+  return attribute.startsWith('data-env-ssr-');
+}
 
 /** An `env-*` class in a string, not part of a selector, custom property or data attribute. */
 const classPattern = /(?<![\w.#-])env-[a-z\d]+(?:-[a-z\d]+)*(-?)/g;
@@ -130,7 +141,7 @@ function readSource() {
                     declaration,
                     new Set([...(elementsOfVariable.get(declaration) ?? []), element]),
                   );
-        } else if (name.startsWith('data-')) {
+        } else if (name.startsWith('data-') && !isPrivateState(name)) {
           const element = node.getParent().getParent();
           const list = statesOnElement.get(element) ?? [];
           list.push({ attribute: name, values: attributeValues(node), path });
@@ -297,6 +308,7 @@ function readStyles() {
       for (const match of compound.matchAll(
         /\[\s*(data-[\w-]+)\s*(?:[~|^$*]?=\s*(?:"([^"]*)"|'([^']*)'|([^\]\s]+)))?\s*(?:[is]\s*)?\]/g,
       )) {
+        if (isPrivateState(match[1])) continue;
         const value = match[2] ?? match[3] ?? match[4];
         states.push({
           attribute: match[1],

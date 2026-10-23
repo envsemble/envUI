@@ -1,4 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
+import { openServerMarkup } from './ServerMarkup';
 import { fixtureUrl } from './Servers';
 
 const dockFixture = `${fixtureUrl}/?fixture=panel-dock`;
@@ -1605,3 +1606,70 @@ test('the dock and its window controls take their names from EnvUIProvider, and 
   await entwurf.getByRole('button', { name: 'Maximieren' }).click();
   await expect(entwurf.getByRole('button', { name: 'Wiederherstellen' })).toBeVisible();
 });
+
+/** A dock of the given width in the server's markup, with two open panels and a minimized one. */
+const serverDock = (name: string, width: string) =>
+  `h('div', {'data-testid': '${name}', style: {position: 'relative', inlineSize: '${width}',
+    blockSize: '30rem'}}, h(PanelDock.Root, {
+    panels: [
+      {id: 'report', title: 'Quarterly report', mode: 'open'},
+      {id: 'notes', title: 'Meeting notes', mode: 'open', active: true},
+      {id: 'budget', title: 'Budget', mode: 'minimized'},
+    ],
+    onModeChange: () => {}, onClose: () => {},
+    children: (panel) => h(PanelDock.Header, {title: panel.title}),
+  }))`;
+
+test(
+  'a narrow dock stacks in the server markup and keeps that layout as it hydrates',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const hydrate = await openServerMarkup(
+      page,
+      `import {createElement as h} from 'react';
+      import {PanelDock} from '@envsemble/envui';
+      export const element = h('div', null, ${serverDock('narrow', '24rem')},
+        ${serverDock('wide', '60rem')});`,
+      { hydrate: true },
+    );
+    const narrow = page.getByTestId('narrow');
+    const wide = page.getByTestId('wide');
+    const panel = (scope: Locator, id: string) => scope.locator(`section[data-panel-id="${id}"]`);
+    const showButtons = (scope: Locator) =>
+      scope.getByRole('list', { name: 'Hidden panels' }).getByRole('button', { name: /^Show/ });
+    const layout = async () => ({
+      notes: await box(panel(narrow, 'notes')),
+      tabs: await showButtons(narrow).allTextContents(),
+    });
+
+    // Before any script runs, the container query stacks the narrow dock: the active panel fills
+    // it above the tabs, the other open panel waits as a tab, and the sheet has no Maximize. The
+    // wide dock keeps its panels side by side, with only the minimized one as a tab.
+    const dockBox = await box(narrow.locator('.env-panel-dock'));
+    const before = await layout();
+    expect(before.notes.x).toBeCloseTo(dockBox.x, 0);
+    expect(before.notes.y).toBeCloseTo(dockBox.y, 0);
+    expect(before.notes.width).toBeCloseTo(dockBox.width, 0);
+    await expect(panel(narrow, 'report')).toBeHidden();
+    await expect(showButtons(narrow).filter({ visible: true })).toHaveText([
+      'Quarterly report',
+      'Budget',
+    ]);
+    await expect(panel(narrow, 'notes').getByRole('button', { name: 'Maximize' })).toBeHidden();
+    await expect(panel(wide, 'report')).toBeVisible();
+    await expect(showButtons(wide).filter({ visible: true })).toHaveText(['Budget']);
+    await expect(panel(wide, 'notes').getByRole('button', { name: 'Maximize' })).toBeVisible();
+
+    // Hydrating reads the same layout: nothing moves, nothing plays an entrance, and the panel the
+    // stacked dock leaves out is inert.
+    expect(await hydrate()).toEqual([]);
+    await expect(narrow.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+    await expect(narrow.locator('.env-panel-dock')).not.toHaveAttribute('data-env-ssr-pending');
+    await expect(wide.locator('.env-panel-dock')).not.toHaveAttribute('data-stacked');
+    await expect(panel(narrow, 'report')).toHaveJSProperty('inert', true);
+    await expect(panel(narrow, 'notes')).not.toHaveAttribute('data-entering');
+    expect(await layout()).toEqual(before);
+    await expect(showButtons(wide)).toHaveText(['Budget']);
+  },
+);

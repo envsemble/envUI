@@ -104,7 +104,7 @@ Open panels take `preferredWidth`, 32 rem, and shrink to `minWidth`, 20 rem; the
 
 ## Adapting to width
 
-Below `stackBelow`, 40 rem of the dock's own width, one panel at a time fills the region like a sheet, and the others wait as tabs. In a narrow panel, the header's actions and controls take a row of their own above the title.
+Below `stackBelow`, 40 rem of the dock's own width, one panel at a time fills the region like a sheet, and the others wait as tabs. A container query on the dock decides it, so the server's markup and the first paint already stack; the dock then reads the layout to report it with `data-stacked` and `onStackedChange` and to make the panels it leaves out inert. The dock is an inline-size container, so an unnamed `@container` query in panel content resolves against it, and an `em` set on the dock itself scales with `stackBelow`, as the dock's font size is `stackBelow` / 37.5. In a narrow panel, the header's actions and controls take a row of their own above the title.
 
 ```tsx example=NarrowRegion widths="24 48"
 
