@@ -8773,6 +8773,15 @@
         "@envsemble/envui"
       ]
     },
+    "useModifierKey": {
+      "kind": "function",
+      "source": "packages/ui/src/content/useModifierKey.ts",
+      "description": "The platform's modifier for shortcuts: ⌘ on Apple platforms, Ctrl elsewhere. The server and the first render in the browser give Ctrl, so the markup hydrates; an Apple browser then renders ⌘.",
+      "signature": "(): ModifierKey",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "useSkeleton": {
       "kind": "function",
       "source": "packages/ui/src/foundations/SkeletonScope.tsx",

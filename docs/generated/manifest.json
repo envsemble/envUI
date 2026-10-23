@@ -10959,6 +10959,9 @@
       "doc": "docs/components/kbd.md",
       "category": "Content & guidance",
       "status": "stable",
+      "statuses": {
+        "useModifierKey": "beta"
+      },
       "since": "0.5.0",
       "summary": "Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.",
       "aliases": [
@@ -11002,7 +11005,8 @@
         "accessibility"
       ],
       "exports": [
-        "Kbd"
+        "Kbd",
+        "useModifierKey"
       ],
       "examples": [
         {
@@ -17198,6 +17202,7 @@
         "Button",
         "IconButton",
         "Kbd",
+        "useModifierKey",
         "Tooltip",
         "CommandPalette",
         "Drawer",
@@ -26594,6 +26599,15 @@
       "status": "beta",
       "page": "setup",
       "doc": "docs/setup.md"
+    },
+    "useModifierKey": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "The platform's modifier for shortcuts: ⌘ on Apple platforms, Ctrl elsewhere. The server and the first render in the browser give Ctrl, so the markup hydrates; an Apple browser then renders ⌘.",
+      "signature": "(): ModifierKey",
+      "status": "beta",
+      "page": "kbd",
+      "doc": "docs/components/kbd.md"
     },
     "useSkeleton": {
       "kind": "function",
