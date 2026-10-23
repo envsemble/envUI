@@ -1334,6 +1334,29 @@
       "kind": "removed",
       "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
+    "--env-alert-edge": {
+      "kind": "renamed",
+      "cssVariable": "--env-alert-outline",
+      "note": "An alert's edge is the public color property --env-alert-outline."
+    },
+    "--env-alert-hover": {
+      "kind": "removed",
+      "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
+    },
+    "--env-alert-pressed": {
+      "kind": "removed",
+      "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
+    },
+    "--env-alert-tint": {
+      "kind": "renamed",
+      "cssVariable": "--env-alert-container",
+      "note": "An alert's tint is the public color property --env-alert-container, set on the alert."
+    },
+    "--env-alert-tone": {
+      "kind": "renamed",
+      "cssVariable": "--env-alert-icon",
+      "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
+    },
     "--env-app-control-height": {
       "kind": "removed",
       "note": "AppShell is gone: a TopBar with titleBar keeps the small control height."
@@ -1412,6 +1435,19 @@
       "kind": "removed",
       "note": "AppShell and WindowFrame are gone: sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
     },
+    "--env-list-item-fill": {
+      "kind": "renamed",
+      "cssVariable": "--env-list-item-container",
+      "note": "A row's fill is the public color property --env-list-item-container, set on the row."
+    },
+    "--env-list-item-fill-hover": {
+      "kind": "removed",
+      "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
+    },
+    "--env-list-item-fill-pressed": {
+      "kind": "removed",
+      "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
+    },
     "--env-sidebar-collapsed-width": {
       "kind": "removed",
       "note": "Sidebar is gone: Rail, the navigation form for medium windows, has a width of its own."
@@ -1451,6 +1487,32 @@
     "--env-stack-gap": {
       "kind": "removed",
       "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
+    },
+    "--env-surface-hover": {
+      "kind": "removed",
+      "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
+    },
+    "--env-surface-pressed": {
+      "kind": "removed",
+      "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
+    },
+    "--env-toast-edge": {
+      "kind": "renamed",
+      "cssVariable": "--env-toast-outline",
+      "note": "A toast's edge is the public color property --env-toast-outline."
+    },
+    "--env-toast-fill": {
+      "kind": "renamed",
+      "cssVariable": "--env-toast-container",
+      "note": "A toast's fill is the public color property --env-toast-container, set on the toast."
+    },
+    "--env-toast-fill-hover": {
+      "kind": "removed",
+      "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
+    },
+    "--env-toast-fill-pressed": {
+      "kind": "removed",
+      "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
     },
     "--env-topbar-height": {
       "kind": "renamed",

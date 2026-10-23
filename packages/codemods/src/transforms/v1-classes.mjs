@@ -177,6 +177,32 @@ function renameTokens(text, tokens, report, pattern = tokenProperty, declared = 
 const renameDevelopmentToken = (name, tokens, report, text, offset, length, declared) =>
   tokenTarget(name, tokens, text, offset, length, report, declared) ?? name;
 
+/**
+ * The 1.0 name of the `--env-*` custom property `name` at `offset` in `text`: a development
+ * token's (see renameDevelopmentToken); a token's own, which stays; or its class rename's, followed
+ * by the token rename of the name that gives, so --env-notice-tone becomes --env-alert-tone and then
+ * --env-alert-icon in one run.
+ */
+function renameEnvProperty(
+  name,
+  classes,
+  tokens,
+  tokenNames,
+  report,
+  text,
+  offset,
+  length,
+  declared,
+) {
+  if (tokens.has(name))
+    return renameDevelopmentToken(name, tokens, report, text, offset, length, declared);
+  if (tokenNames.has(name)) return name;
+  const renamed = renameClass(name, classes);
+  return renamed !== name && tokens.has(renamed)
+    ? renameDevelopmentToken(renamed, tokens, report, text, offset, length, declared)
+    : renamed;
+}
+
 /** A `--env-*` custom property. */
 const customProperty = /(?<![A-Za-z0-9_-])--(env-[a-z0-9][a-z0-9_-]*)(?![A-Za-z0-9_-])/g;
 /** An attribute selector on `class`: `[class~='env-row']`, `[class*="env-notice-"]`. */
@@ -272,11 +298,10 @@ export function renameInStyles(
       selector.replace(attributeName, (name) => renameClass(name, classes)),
     )
     .replace(styleToken, (match, prefix, name, offset, whole) =>
-      prefix === '--' && tokens.has(name)
-        ? prefix + renameDevelopmentToken(name, tokens, report, whole, offset, match.length)
-        : prefix === '--' && tokenNames.has(name)
-          ? match
-          : prefix + renameClass(name, classes),
+      prefix === '--'
+        ? prefix +
+          renameEnvProperty(name, classes, tokens, tokenNames, report, whole, offset, match.length)
+        : prefix + renameClass(name, classes),
     );
   return renameTokens(renamed, tokens, report);
 }
@@ -326,12 +351,10 @@ export function reportClasses(text, classReports, report, selectors = true) {
 
 const renameCustomProperties = (text, classes, tokens, tokenNames, report, declared) =>
   renameTokens(
-    text.replace(customProperty, (match, name, offset) =>
-      tokens.has(name)
-        ? `--${renameDevelopmentToken(name, tokens, report, text, offset, match.length, declared)}`
-        : tokenNames.has(name)
-          ? match
-          : `--${renameClass(name, classes)}`,
+    text.replace(
+      customProperty,
+      (match, name, offset) =>
+        `--${renameEnvProperty(name, classes, tokens, tokenNames, report, text, offset, match.length, declared)}`,
     ),
     tokens,
     report,
@@ -343,12 +366,21 @@ const renameCustomProperties = (text, classes, tokens, tokenNames, report, decla
 const variable = /(var\(\s*--)(env-[a-z0-9][a-z0-9_-]*)(?![A-Za-z0-9_-])/g;
 const renameVariables = (text, classes, tokens, tokenNames, report) =>
   renameTokens(
-    text.replace(variable, (match, prefix, name, offset) =>
-      tokens.has(name)
-        ? prefix + renameDevelopmentToken(name, tokens, report, text, offset, match.length, false)
-        : tokenNames.has(name)
-          ? match
-          : prefix + renameClass(name, classes),
+    text.replace(
+      variable,
+      (match, prefix, name, offset) =>
+        prefix +
+        renameEnvProperty(
+          name,
+          classes,
+          tokens,
+          tokenNames,
+          report,
+          text,
+          offset,
+          match.length,
+          false,
+        ),
     ),
     tokens,
     report,

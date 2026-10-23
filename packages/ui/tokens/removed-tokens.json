@@ -367,6 +367,30 @@
     "--env-window-frame-title-bar-end": {
       "cssVariable": "--env-top-bar-title-bar-end",
       "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end."
+    },
+    "--env-list-item-fill": {
+      "cssVariable": "--env-list-item-container",
+      "note": "A row's fill is the public color property --env-list-item-container, set on the row."
+    },
+    "--env-toast-fill": {
+      "cssVariable": "--env-toast-container",
+      "note": "A toast's fill is the public color property --env-toast-container, set on the toast."
+    },
+    "--env-toast-edge": {
+      "cssVariable": "--env-toast-outline",
+      "note": "A toast's edge is the public color property --env-toast-outline."
+    },
+    "--env-alert-tint": {
+      "cssVariable": "--env-alert-container",
+      "note": "An alert's tint is the public color property --env-alert-container, set on the alert."
+    },
+    "--env-alert-edge": {
+      "cssVariable": "--env-alert-outline",
+      "note": "An alert's edge is the public color property --env-alert-outline."
+    },
+    "--env-alert-tone": {
+      "cssVariable": "--env-alert-icon",
+      "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
     }
   },
   "aliases": {
@@ -1154,6 +1178,30 @@
     },
     "--env-elevation-3-shadow": {
       "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-list-item-fill-hover": {
+      "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
+    },
+    "--env-list-item-fill-pressed": {
+      "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
+    },
+    "--env-toast-fill-hover": {
+      "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
+    },
+    "--env-toast-fill-pressed": {
+      "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
+    },
+    "--env-surface-hover": {
+      "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
+    },
+    "--env-surface-pressed": {
+      "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
+    },
+    "--env-alert-hover": {
+      "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
+    },
+    "--env-alert-pressed": {
+      "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
     }
   }
 }

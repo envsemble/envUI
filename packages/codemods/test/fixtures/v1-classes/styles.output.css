@@ -1,7 +1,7 @@
 /* Overrides for .env-alert and .env-list-item in the members page. */
 .members .env-alert {
-  --env-alert-tone: var(--brand-accent);
-  border-color: var(--env-alert-tone);
+  --env-alert-icon: var(--brand-accent);
+  border-color: var(--env-alert-icon);
 }
 
 .members .env-alert-title,
@@ -11,7 +11,7 @@
 
 .env-list-item:not(.env-list-item-fill):hover,
 :is(.env-list, .env-contrast-row-pane) > .env-list-item {
-  background: var(--env-list-item-fill, transparent);
+  background: var(--env-list-item-container, transparent);
 }
 
 li.env-navigation-item.env-navigation-selected .env-navigation-dot {
