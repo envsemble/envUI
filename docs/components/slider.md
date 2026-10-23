@@ -108,7 +108,7 @@ Name the value in a short noun, and format it with its unit in `formatValue`; th
 
 ### Colors
 
-`--env-slider-container` and `--env-slider-indicator` set the colors of one Slider, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-slider-container` and `--env-slider-indicator` set the colors of one Slider, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 

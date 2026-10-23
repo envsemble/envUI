@@ -29912,16 +29912,6 @@
         "note": "An alert's edge is the public color property --env-alert-outline."
       },
       {
-        "cssVariable": "--env-alert-hover",
-        "removed": true,
-        "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
-      },
-      {
-        "cssVariable": "--env-alert-pressed",
-        "removed": true,
-        "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
-      },
-      {
         "cssVariable": "--env-alert-tint",
         "use": "--env-alert-container",
         "note": "An alert's tint is the public color property --env-alert-container, set on the alert."
@@ -30033,16 +30023,6 @@
         "note": "A row's fill is the public color property --env-list-item-container, set on the row."
       },
       {
-        "cssVariable": "--env-list-item-fill-hover",
-        "removed": true,
-        "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
-      },
-      {
-        "cssVariable": "--env-list-item-fill-pressed",
-        "removed": true,
-        "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
-      },
-      {
         "cssVariable": "--env-sidebar-collapsed-width",
         "removed": true,
         "note": "Sidebar is gone: Rail, the navigation form for medium windows, has a width of its own."
@@ -30093,16 +30073,6 @@
         "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
       },
       {
-        "cssVariable": "--env-surface-hover",
-        "removed": true,
-        "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
-      },
-      {
-        "cssVariable": "--env-surface-pressed",
-        "removed": true,
-        "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
-      },
-      {
         "cssVariable": "--env-toast-edge",
         "use": "--env-toast-outline",
         "note": "A toast's edge is the public color property --env-toast-outline."
@@ -30115,12 +30085,12 @@
       {
         "cssVariable": "--env-toast-fill-hover",
         "removed": true,
-        "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
+        "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
       },
       {
         "cssVariable": "--env-toast-fill-pressed",
         "removed": true,
-        "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
+        "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
       },
       {
         "cssVariable": "--env-topbar-height",

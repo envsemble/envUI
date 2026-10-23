@@ -1,6 +1,6 @@
 # Customize colors
 
-Give one element colors of its own through its color properties, or recolor a whole area with a nested Theme. Either way the element keeps its hover, focus and pressed states.
+Give one element colors of its own through its color properties, or recolor a whole area with a nested Theme. Either way the element keeps its hover, focus and pressed states. Both override envUI's colors; set neither, and every component looks as its theme draws it.
 
 ## Color one element
 
@@ -40,17 +40,17 @@ The properties don't inherit: each is registered with `@property` as a property 
 
 Each component's page lists its color properties under Anatomy, and `docs/generated/parts.json` lists them with the parts, with what each colors. Like the part classes and state attributes, they are public and versioned. The other custom properties a component declares for itself, such as `--env-card-padding`, stay private.
 
-## States are state layers
+## States follow the colors you set
 
-Hover, keyboard focus and press lay the content color over the container at a low opacity, as Material draws them, so a component given a container and a content color keeps working states without further settings. The opacities are tokens:
+With no color property set, a component paints its designed colors in every state, from the theme's tokens. Once you set its container or its content, hover, keyboard focus and press are state layers: the content color over the container at a low opacity, as Material draws them, so the component keeps working states without further settings. The opacities are tokens:
 
 - `--env-state-hover-opacity`: 8%, and 6% at high contrast.
 - `--env-state-focus-opacity`: 10%, and 7% at high contrast, under the focus ring.
 - `--env-state-pressed-opacity`: 10%, 12% in the dark theme and 7% at high contrast.
 
-A few fills step further, as their designed states do: an outline button's press, a tab that isn't selected, whose muted label makes a lighter layer, and an alert's dismiss button, in the alert's tone. A selected fill takes lighter layers, as the designed selected fills are close together.
+A few layers are stronger or lighter, as the designed states beside them are: a tab that isn't selected, whose muted label makes a lighter layer, and an alert's dismiss button, in the alert's tone, are stronger; a selected item's are lighter. For what is chosen, current or on, selected and selected-content start its layers.
 
-Solid fills keep their designed hover and press fills until you set their container: primary buttons, in every tone, a checked checkbox, an on switch and a segmented control's chosen option. Those fills darken under a light label, where a light layer would take the label below its contrast. The navigation's items, in Bar, Rail and Drawer, keep their designed hover fills too, which are tinted in the light themes. Once their container, or selected, is set, they take state layers like every other component.
+How the guard works: the color properties are registered with `@property` and no initial value, so unset they are invalid, and so is every value that refers to one without a fallback. Each state reads `var(<the layered fill>, <the designed token>)`, and the layered fill refers to the container or the content, so it applies only while you set one. It works in every engine, for properties set inline or in CSS, without style queries.
 
 ## Recolor an area
 

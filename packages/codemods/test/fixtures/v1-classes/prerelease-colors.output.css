@@ -1,15 +1,14 @@
-/* Component tokens of 1.0.0-prerelease.1 that are color properties in prerelease.2, or that state
-   layers replace. */
+/* Component tokens of 1.0.0-prerelease.1 that are color properties in prerelease.2, or that are
+   gone. */
 .my-alert {
   --env-alert-container: var(--env-color-bg-muted);
   --env-alert-icon: var(--env-color-fg-accent);
-  --env-alert-hover: var(--env-color-bg-accent-subtle-hover);
 }
 .my-list .env-list-item {
   --env-list-item-container: var(--env-color-bg-raised);
-  --env-list-item-fill-hover: var(--env-color-bg-raised-hover);
 }
 .my-toast {
+  --env-toast-fill-hover: var(--env-color-bg-neutral-strong-hover);
   border-color: var(--env-toast-outline);
   background: var(--env-toast-container);
 }

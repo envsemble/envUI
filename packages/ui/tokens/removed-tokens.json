@@ -1179,29 +1179,11 @@
     "--env-elevation-3-shadow": {
       "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
-    "--env-list-item-fill-hover": {
-      "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
-    },
-    "--env-list-item-fill-pressed": {
-      "note": "States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
-    },
     "--env-toast-fill-hover": {
-      "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
+      "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
     },
     "--env-toast-fill-pressed": {
-      "note": "States are state layers now: a toast with --env-toast-container set shows its dismiss button's hover and press as layers of its text color."
-    },
-    "--env-surface-hover": {
-      "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
-    },
-    "--env-surface-pressed": {
-      "note": "States are state layers now: an interactive card's hover and press lay its text color over its container, --env-card-container."
-    },
-    "--env-alert-hover": {
-      "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
-    },
-    "--env-alert-pressed": {
-      "note": "States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint."
+      "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
     }
   }
 }

@@ -120,7 +120,7 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 
 ### Colors
 
-`--env-tabs-container` and `--env-tabs-content` set the colors of one Tabs, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-tabs-container` and `--env-tabs-content` set the colors of one Tabs, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 

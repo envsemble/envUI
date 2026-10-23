@@ -303,13 +303,9 @@ test('a button given its own colors lays state layers of its content color over 
       })
       .toBe('matches');
   }
-  // Every variant takes the container; a solid one too gives up its designed hover and press fills.
-  // An outline button's pressed layer is stronger, as its designed one is.
-  for (const [variant, pressed] of [
-    ['primary', 1],
-    ['secondary', 1],
-    ['outline', 1.3],
-  ] as const) {
+  // Every variant takes the container in place of its designed fills, whose states give way to
+  // the state layers.
+  for (const variant of ['primary', 'secondary', 'outline'] as const) {
     const button = page.getByTestId(`custom-button-${variant}`);
     await button.evaluate((element) => {
       element.style.setProperty('--env-button-container', 'rgb(11 110 79)');
@@ -320,11 +316,38 @@ test('a button given its own colors lays state layers of its content color over 
     await button.hover();
     await expectFill(button, layered(opacity.hover));
     await page.mouse.down();
-    await expectFill(button, layered(opacity.pressed * pressed));
+    await expectFill(button, layered(opacity.pressed));
     await page.mouse.up();
     await page.mouse.move(0, 0);
     await expectFill(button, container);
   }
+  // Its content alone set, a button keeps its own fill at rest and lays the content over it.
+  const tinted = page.getByTestId('light-button-secondary');
+  await tinted.evaluate((element) =>
+    element.style.setProperty('--env-button-content', 'rgb(11 110 79)'),
+  );
+  const rest = await tinted.evaluate((element) => getComputedStyle(element).backgroundColor);
+  await tinted.hover();
+  const expected = await tinted.evaluate((element) => {
+    const probe = document.createElement('span');
+    probe.style.backgroundColor =
+      'color-mix(in srgb, var(--env-color-bg-neutral-muted), rgb(11 110 79) calc(var(--env-state-hover-opacity) * 100%))';
+    element.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return color;
+  });
+  // Within rounding: the gate that tells a set content mixes in 0% of it.
+  await expect
+    .poll(async () => {
+      const actual = channels(
+        await tinted.evaluate((element) => getComputedStyle(element).backgroundColor),
+      );
+      return channels(expected).every((value, index) => Math.abs(value - actual[index]) < 0.01);
+    })
+    .toBe(true);
+  expect(expected).not.toBe(rest);
+  await page.mouse.move(0, 0);
   // The color properties don't inherit: set on an element around a button, they color nothing.
   const outside = page.getByTestId('override-outside');
   const before = await outside.evaluate((element) => getComputedStyle(element).backgroundColor);

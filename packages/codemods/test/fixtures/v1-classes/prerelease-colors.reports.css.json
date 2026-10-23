@@ -1,4 +1,3 @@
 [
-  "line 6: --env-alert-hover is removed in 1.0: States are state layers now: the dismiss button lays the icon color, --env-alert-icon, over the tint.",
-  "line 10: --env-list-item-fill-hover is removed in 1.0: States are state layers now: a row's hover and press lay its text color over --env-list-item-container, so set the container alone."
+  "line 11: --env-toast-fill-hover is removed in 1.0: A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
 ]

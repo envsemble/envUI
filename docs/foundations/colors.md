@@ -76,7 +76,7 @@ The colors come from an internal palette of ten hues in grades from 0 to 100, wh
 
 ## States and contrast
 
-- **Hover, focus and pressed** are state layers: the content color over the container at `--env-state-hover-opacity`, `--env-state-focus-opacity` and `--env-state-pressed-opacity`, as Material draws them. Solid fills, such as a primary button's, and the navigation's items keep designed hover and pressed tokens, other grades of the same hue, so labels keep their contrast in every state.
+- **Hover and pressed** are tokens of their own, other grades of the same hue, so labels keep their contrast in every state. A component given colors of its own through its color properties draws its states as state layers instead: the content color over the container at `--env-state-hover-opacity`, `--env-state-focus-opacity` and `--env-state-pressed-opacity`.
 - **Selection** stays apart from every other item, at rest and under the pointer, and carries a second cue: its label color, a check or a bar.
 - **High contrast** moves text to 7:1 and boundaries, indicators and focus rings to 4.5:1. A nested Theme and envUI's popups take the contrast and theme of where they open.
 - **Elevation** 0–3 is an edge, not a shadow: envUI draws no shadows, so a floating layer separates by its background and its edge, and a modal by its scrim as well. Popups float at 2, dialogs, sheets and the command palette at 3.
