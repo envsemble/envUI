@@ -222,7 +222,20 @@ test(
     const own = await rootSize();
     const ownWidth = await rootWidth();
     const viewBox = await view.boundingBox();
+    const frame = panel.locator('.env-dev-frame');
+    const toggle = panel.getByRole('button', { name: 'Responsive frame' });
+    // Off by default: the page at its own size, with no frame, handles or label.
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(frame).toHaveCount(0);
+    await expect(right).toHaveCount(0);
+    // Turned on, the frame starts at the page's own size; turned off, it goes again.
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
     await expect(right).toHaveAttribute('aria-valuenow', String(Math.round(ownWidth)));
+    expect(await rootSize()).toBe(own);
+    await toggle.click();
+    await expect(frame).toHaveCount(0);
+    await expect.poll(rootSize).toBe(own);
 
     // A device lays the page out at its size, and the planes follow; the window and the view keep
     // theirs.
@@ -261,11 +274,13 @@ test(
     await page.mouse.up();
     await expect.poll(rootWidth).toBeLessThan(587);
 
-    // Back to the page's own size: the root's style is as it was.
+    // Back to the page's own size: the frame goes, and the root's style is as it was.
     await panel.getByRole('button', { name: "Back to the page's own size" }).click();
     await expect.poll(rootSize).toBe(own);
+    await expect(frame).toHaveCount(0);
     expect(await root.evaluate((element) => element.hasAttribute('style'))).toBe(false);
     // Closing dev mode with a size set puts it back too.
+    await toggle.click();
     await bottom.focus();
     await page.keyboard.press('Shift+ArrowUp');
     await expect.poll(rootSize).not.toBe(own);

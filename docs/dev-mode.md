@@ -122,6 +122,7 @@ The toolbar over the view turns it, chooses what the planes show, sets the page'
 | Only the selected                                  | Show only the selected node and what is inside it.                            |
 | Color by window class                              | Color each node by the window class its width falls in, not by its kind.      |
 | Rest on a plane                                    | See its size and container; colored by window class, a ruler of its width.    |
+| Responsive frame                                   | Show the frame, and drag its handles to lay the page out at another size.     |
 | Device, Rotate                                     | Lay the page out at a phone's, tablet's or screen's size; swap its sides.     |
 | Dev mode theme                                     | Show dev mode itself light or dark, or as the page is, with high contrast.    |
 | View settings: spacing, from and to level          | Show a range of levels, with the spacing between them.                        |
@@ -129,9 +130,9 @@ The toolbar over the view turns it, chooses what the planes show, sets the page'
 
 ### The responsive frame
 
-A frame above the planes marks the page's size, labelled in px and rem with its window class and the device it came from. Drag a handle on its left, right or bottom edge, or a bottom corner, to lay the page out at another size, as a browser's responsive mode does: dev mode resizes the page's root, as `at()` does, measures it again and rebuilds the planes, while the window and the view keep their size. Given a height, the root takes it and scrolls what is taller, as a window would; a page shorter than the frame leaves the rest of it empty. A width snaps to the window class boundaries; with focus on an edge's handle, the arrow keys step by 1 rem and <kbd>Shift</kbd>+arrow by 5 rem.
+The page is laid out at its real size, with no frame, until you turn on Responsive frame in the toolbar or pick a device from Device. Then a frame above the planes marks the page's size, labelled in px and rem with its window class and the device it came from. Drag a handle on its left, right or bottom edge, or a bottom corner, to lay the page out at another size, as a browser's responsive mode does: dev mode resizes the page's root, as `at()` does, measures it again and rebuilds the planes, while the window and the view keep their size. Given a height, the root takes it and scrolls what is taller, as a window would; a page shorter than the frame leaves the rest of it empty. A width snaps to the window class boundaries; with focus on an edge's handle, the arrow keys step by 1 rem and <kbd>Shift</kbd>+arrow by 5 rem.
 
-Device lists common phones, tablets, laptops and screens at their CSS viewport sizes; dragging afterwards makes the frame a free one, Responsive. Rotate swaps the width and the height. The inspector and the readout follow the size. The frame's ×, a double-click on a handle or the page's own size in Device brings it back, and closing dev mode does too.
+Device lists common phones, tablets, laptops and screens at their CSS viewport sizes; dragging afterwards makes the frame a free one, Responsive. Rotate swaps the width and the height. The inspector and the readout follow the size. The frame's ×, a double-click on a handle, Responsive frame again or the page's own size in Device turns the frame off and brings the page back to its own size, and closing dev mode does too.
 
 ### Dev mode's theme
 

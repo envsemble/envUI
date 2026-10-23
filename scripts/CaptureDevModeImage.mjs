@@ -14,7 +14,7 @@ import { chromium } from '@playwright/test';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const catalogue = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
-const page = '#/overview/get-started?document=dev-mode&section=documentation';
+const page = 'docs/dev-mode';
 /** The picture's shape, width to height, as DevModeDemo.tsx declares it, and its margin in px. */
 const aspect = 16 / 10;
 const margin = 24;
@@ -32,18 +32,17 @@ try {
     });
     const tab = await context.newPage();
     await tab.goto(`${catalogue}/${page}`);
-    // The page starts the demo on a press, and opens dev mode on another.
-    await tab.getByRole('button', { name: /^(Try|Open) dev mode$/ }).waitFor({ timeout: 30_000 });
-    const start = tab.getByRole('button', { name: 'Try dev mode' });
-    if (await start.count()) await start.click();
-    const open = tab.getByRole('button', { name: 'Open dev mode' });
-    await open.click({ timeout: 30_000 });
+    // Try dev mode puts the application in the picture's place and opens dev mode over it, with
+    // the responsive frame off.
+    await tab.getByRole('button', { name: 'Try dev mode' }).click({ timeout: 30_000 });
     await tab.locator('.env-dev-plane').first().waitFor();
     // The whole application in view, its levels pulled further apart than by default.
     await tab.getByRole('button', { name: 'Fit', exact: true }).click();
+    await tab.getByRole('button', { name: 'View settings', exact: true }).click();
     const spacing = tab.getByRole('slider', { name: 'Spacing between levels' });
     await spacing.focus();
     for (let step = 0; step < 24; step++) await tab.keyboard.press('ArrowRight');
+    await tab.keyboard.press('Escape');
     await tab.getByRole('button', { name: 'Fit', exact: true }).click();
     // Dev mode's panels and controls stay out of the picture; the view keeps its size.
     await tab.addStyleTag({
