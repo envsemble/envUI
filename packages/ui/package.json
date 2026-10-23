@@ -66,6 +66,12 @@
       "import": "./dist/diff.js",
       "default": "./dist/diff.js"
     },
+    "./color": {
+      "envui-source": "./src/color.ts",
+      "types": "./dist/color.d.ts",
+      "import": "./dist/color.js",
+      "default": "./dist/color.js"
+    },
     "./theme-bootstrap": {
       "envui-source": "./src/theme-bootstrap.ts",
       "types": "./dist/theme-bootstrap.d.ts",
@@ -119,6 +125,9 @@
   },
   "devDependencies": {
     "@pierre/diffs": "1.5.2",
+    "@react-aria/color": "3.2.1",
+    "@react-aria/i18n": "3.13.1",
+    "@react-stately/color": "3.10.1",
     "@shikijs/langs": "4.5.0",
     "@tiptap/core": "3.31.4",
     "@tiptap/extension-image": "3.31.4",

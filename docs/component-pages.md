@@ -187,7 +187,7 @@ Write the keyboard table from the code and its browser tests, not from the patte
 
 An example is a file in `apps/catalogue/src/examples/<page>/<Name>.tsx`: a small component, default-exported, that an application could copy as it is.
 
-- Import only what an application can: `react`, `@envsemble/envui`, its `/content`, `/diff` and `/rich-text` entries, and icons from `@envsemble/envui/icons/<Name>`.
+- Import only what an application can: `react`, `@envsemble/envui`, its `/content`, `/diff`, `/rich-text` and `/color` entries, and icons from `@envsemble/envui/icons/<Name>`.
 - No catalogue classes (`docs-*`) or helpers. Lay out with envUI's components; where envUI has no layout for it yet, a short inline style with a comment is fine.
 - Use neutral sample data, such as Alex Morgan, Sam Lee, Priya Shah, Northwind or example.com, and never a product name.
 - Keep state inside the example, and stand in for slow work with a timer.

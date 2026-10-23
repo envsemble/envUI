@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Button, ColorPicker, Dialog, Column, Text, useTheme } from '@envsemble/envui';
+import { Button, Dialog, Column, Text, useTheme } from '@envsemble/envui';
+import { ColorPicker } from '@envsemble/envui/color';
 import { TokenValue } from './TokenValue';
 import { Example, Specimen, SpecimenGrid } from '../Example';
 import { colorGroups, colorVariable } from '../../theme/Palette';

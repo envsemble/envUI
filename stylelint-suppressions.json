@@ -42,16 +42,6 @@
       "count": 2
     }
   },
-  "packages/ui/src/styles/ColorPicker.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 7
-    }
-  },
-  "packages/ui/src/styles/ColorSwatch.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 3
-    }
-  },
   "packages/ui/src/styles/Combobox.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 10

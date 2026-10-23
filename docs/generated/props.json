@@ -1128,133 +1128,305 @@
     },
     "ColorPicker": {
       "kind": "component",
-      "source": "packages/ui/src/forms/ColorPicker.tsx",
-      "description": "A labelled color area, hue slider and native HEX field; the application owns the result. The area and the hue are sliders for the keyboard and assistive technology, named after the label in the EnvUIProvider's language, such as Accent color saturation and brightness and Accent color hue.",
+      "source": "packages/ui/src/color/ColorPicker.tsx",
+      "description": "A compact color picker on React Aria's color hooks: a saturation and brightness area, a hue slider, an alpha slider with `alpha`, a format select, fields for the chosen format, a copy button, the browser's eyedropper where it has one, and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
-        {
-          "name": "ref",
-          "type": "Ref<HTMLInputElement>",
-          "required": false,
-          "description": "The HEX field, so that a form library can register it and focus it."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "The picker's class, on its root element."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "Styles of the picker's root element."
-        },
-        {
-          "name": "label",
-          "type": "string",
-          "required": true,
-          "description": "The color's name above the picker; it names the group and, with \"HEX\", the field."
-        },
-        {
-          "name": "value",
-          "type": "string",
-          "required": false,
-          "description": "An opaque six-digit HEX color, with an optional # prefix."
-        },
-        {
-          "name": "defaultValue",
-          "type": "string",
-          "required": false,
-          "default": "'#000000'",
-          "description": "The color an uncontrolled picker starts at, and that a form reset restores; #000000 by default."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": false,
-          "description": "Receives valid colors normalized to lowercase #rrggbb."
-        },
-        {
-          "name": "prefix",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
-        },
-        {
-          "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
-        },
-        {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon at the start of the field, such as Search or Mail."
-        },
-        {
-          "name": "error",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
-        },
-        {
-          "name": "endAction",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A control at the end of the field, such as an IconButton that reveals or copies the value; name it with aria-label. A button that sets no variant takes ghost here."
-        },
         {
           "name": "showLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Show the label in the field, where it rests while the field is empty and floats into the outline while the field has focus or a value. Set false for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "Show the label above the picker. Set false where something else names it, such as the popover around it: the label still names the picker for assistive technology."
         },
         {
-          "name": "suffix",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Lasting guidance under the picker, such as where the color shows."
+        },
+        {
+          "name": "error",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A message under the picker that says what is wrong with the color, such as too little contrast."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "The color's name, such as Accent color; it names the picker, and ColorPickerButton's popover and button."
+        },
+        {
+          "name": "value",
+          "type": "ColorValue",
+          "required": false,
+          "description": "The color in a controlled picker: a CSS color string, such as #6750a4, rgb(103, 80, 164) or hsl(256, 34%, 48%), or React Aria's Color; update it from onValueChange."
+        },
+        {
+          "name": "defaultValue",
+          "type": "ColorValue",
+          "required": false,
+          "default": "'#000000'",
+          "description": "The color an uncontrolled picker starts at, and that a form reset restores."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string, color: Color) => void",
+          "required": false,
+          "description": "Receives the color as it changes, as a string in valueFormat, such as #6750a4, and as React Aria's Color, which keeps the hue of a gray and converts to any format."
+        },
+        {
+          "name": "valueFormat",
+          "type": "'hex' | 'rgb' | 'hsl'",
+          "required": false,
+          "default": "'hex'",
+          "description": "The format of the string onValueChange receives and a form submits: hex (#rrggbb, or #rrggbbaa while translucent), rgb (rgb() or rgba()) or hsl (hsl() or hsla())."
+        },
+        {
+          "name": "formats",
+          "type": "readonly ColorFormat[]",
+          "required": false,
+          "default": "['hex', 'rgb', 'hsl']",
+          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+        },
+        {
+          "name": "alpha",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the color has an alpha: a slider and a field for its opacity, and a value with its alpha while translucent. Without it, colors are opaque."
+        },
+        {
+          "name": "eyeDropper",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the eyedropper, which picks a color from the screen, where the browser has one (Chromium-based browsers on the desktop); elsewhere it never shows."
+        },
+        {
+          "name": "copy",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the button that copies the color, as the fields show it."
+        },
+        {
+          "name": "swatches",
+          "type": "readonly ColorPickerSwatch[]",
+          "required": false,
+          "description": "Preset colors to choose from, under the fields: CSS color strings, React Aria's Colors, or `{ color, label }` with a name, such as the colors of a brand."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "Submits the color with a form under this name, as a string in valueFormat."
+        },
+        {
+          "name": "form",
+          "type": "string",
+          "required": false,
+          "description": "The id of the form the color submits with, where the picker sits outside it."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the picker takes no input, faded."
+        },
+        {
+          "name": "readOnly",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether people can read and copy the color, but not change it."
         }
       ],
       "native": [
-        "input"
+        "div"
       ],
       "entries": [
-        "@envsemble/envui"
+        "@envsemble/envui/color"
+      ]
+    },
+    "ColorPickerButton": {
+      "kind": "component",
+      "source": "packages/ui/src/color/ColorPickerButton.tsx",
+      "description": "A button that shows a color as a swatch and its value, and opens a ColorPicker in a Popover: the common way to choose a color in a toolbar, a row or a form. The button is named after the label and the color, such as Accent color, #6750A4.",
+      "props": [
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The button's class, beside env-color-picker-button."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the button."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The button's height, as on every control; without it, its container's."
+        },
+        {
+          "name": "side",
+          "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
+          "required": false,
+          "default": "'bottom'",
+          "description": "The side of the button the picker opens on."
+        },
+        {
+          "name": "align",
+          "type": "'start' | 'center' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "How the picker lines up with the button along that side."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the picker starts open, such as in a picture of it."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "The color's name, such as Accent color; it names the picker, and ColorPickerButton's popover and button."
+        },
+        {
+          "name": "value",
+          "type": "ColorValue",
+          "required": false,
+          "description": "The color in a controlled picker: a CSS color string, such as #6750a4, rgb(103, 80, 164) or hsl(256, 34%, 48%), or React Aria's Color; update it from onValueChange."
+        },
+        {
+          "name": "defaultValue",
+          "type": "ColorValue",
+          "required": false,
+          "default": "'#000000'",
+          "description": "The color an uncontrolled picker starts at, and that a form reset restores."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string, color: Color) => void",
+          "required": false,
+          "description": "Receives the color as it changes, as a string in valueFormat, such as #6750a4, and as React Aria's Color, which keeps the hue of a gray and converts to any format."
+        },
+        {
+          "name": "valueFormat",
+          "type": "'hex' | 'rgb' | 'hsl'",
+          "required": false,
+          "default": "'hex'",
+          "description": "The format of the string onValueChange receives and a form submits: hex (#rrggbb, or #rrggbbaa while translucent), rgb (rgb() or rgba()) or hsl (hsl() or hsla())."
+        },
+        {
+          "name": "formats",
+          "type": "readonly ColorFormat[]",
+          "required": false,
+          "default": "['hex', 'rgb', 'hsl']",
+          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+        },
+        {
+          "name": "alpha",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the color has an alpha: a slider and a field for its opacity, and a value with its alpha while translucent. Without it, colors are opaque."
+        },
+        {
+          "name": "eyeDropper",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the eyedropper, which picks a color from the screen, where the browser has one (Chromium-based browsers on the desktop); elsewhere it never shows."
+        },
+        {
+          "name": "copy",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the button that copies the color, as the fields show it."
+        },
+        {
+          "name": "swatches",
+          "type": "readonly ColorPickerSwatch[]",
+          "required": false,
+          "description": "Preset colors to choose from, under the fields: CSS color strings, React Aria's Colors, or `{ color, label }` with a name, such as the colors of a brand."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "Submits the color with a form under this name, as a string in valueFormat."
+        },
+        {
+          "name": "form",
+          "type": "string",
+          "required": false,
+          "description": "The id of the form the color submits with, where the picker sits outside it."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the picker takes no input, faded."
+        },
+        {
+          "name": "readOnly",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether people can read and copy the color, but not change it."
+        }
+      ],
+      "native": [],
+      "entries": [
+        "@envsemble/envui/color"
       ]
     },
     "ColorSwatch": {
       "kind": "component",
-      "source": "packages/ui/src/content/ColorSwatch.tsx",
-      "description": "A round sample of a color with a hairline ring, so light and dark colors stay visible on every surface. It is decorative: name the color in the text beside it. As a Button's icon it takes the icon's size, such as on a button that opens a ColorPicker.",
+      "source": "packages/ui/src/color/ColorSwatch.tsx",
+      "description": "A small rounded sample of a color, with a hairline edge that keeps light and dark colors visible on every surface and a checkerboard under a translucent one. With `format`, it writes the color's value beside it, and with `label`, a name. Alone, it is an image named by the color's description, such as dark purple, in the EnvUIProvider's language; as a Button's icon it is decorative, and the button's text names the color.",
       "props": [
         {
           "name": "color",
-          "type": "string",
+          "type": "ColorValue",
           "required": true,
-          "description": "The color it shows, such as #6750a4."
+          "description": "The color it shows: a CSS color string, such as #6750a4, rgb(103, 80, 164) or hsl(256, 34%, 48%), with an optional alpha, or React Aria's Color."
+        },
+        {
+          "name": "format",
+          "type": "'hex' | 'rgb' | 'hsl'",
+          "required": false,
+          "description": "Writes the color beside the sample in this format: hex, such as #6750A4, rgb or hsl. Without it and a label, the sample stands alone, named by the color's description, such as dark purple."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A name beside the sample, before the value, such as the label the color belongs to."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "required": false,
+          "default": "'md'",
+          "description": "The sample's size: sm, 0.75 rem, for dense rows; md, 1 rem, the size of an icon. As a Button's icon it takes the icon's size."
         }
       ],
       "native": [
         "span"
       ],
       "entries": [
-        "@envsemble/envui"
+        "@envsemble/envui/color"
       ]
     },
     "Column": {

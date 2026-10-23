@@ -1,119 +1,280 @@
-/* ColorPicker: a saturation and brightness area over the hue, a hue slider under it, both with a
-   round pointer in the chosen color, and the HEX field. The area's and the hue's colors are
-   content, so they are literal. */
-/* stylelint-disable color-named -- The black, white and hues of a color picker are its content. */
+/* ColorPicker, from @envsemble/envui/color: a saturation and brightness area, the eyedropper beside
+   the hue and alpha sliders, a row with the format, its fields and copy, and preset swatches.
+   React Aria paints the area's and the tracks' gradients inline; they are content, as the thumbs'
+   white edge and the checkerboard under translucent colors are. */
 .env-color-picker {
-  --env-color-picker-pointer-size: 1.75rem;
-  /* The pointers rise over the hue bar, which the lowest brightness's pointer reaches into. */
-  --env-color-picker-thumb-layer: 1;
-}
-.env-color-picker-plane {
-  position: relative;
+  --env-color-picker-thumb-size: 1rem;
+  --env-color-picker-thumb-edge: 0.125rem;
+  --env-color-picker-track-height: 0.75rem;
+  --env-color-picker-area-height: 9rem;
+  --env-color-picker-swatch-size: 1.25rem;
+  --env-color-picker-checker: 0.5rem;
+  --env-color-picker-checkerboard: repeating-conic-gradient(
+      var(--env-color-bg-neutral-muted) 0 25%,
+      transparent 0 50%
+    )
+    0 0 / var(--env-color-picker-checker) var(--env-color-picker-checker);
+  /* stylelint-disable color-named -- A thumb's white edge, ringed in translucent black, shows on
+     every color, as on an image. */
+  --env-color-picker-thumb-color: white;
+  --env-color-picker-thumb-ring: color-mix(in srgb, black 45%, transparent);
+  /* stylelint-enable color-named */
+  container: env-color-picker / inline-size;
   display: flex;
   flex-direction: column;
-  inline-size: 100%;
-  aspect-ratio: 3 / 2;
-  min-block-size: calc(var(--env-control-height-sm) * 3);
-  max-block-size: 14rem;
-  user-select: none;
-  cursor: default;
+  gap: var(--env-space-3);
+  min-inline-size: 0;
+  color: var(--env-color-fg-default);
 }
-.env-color-picker-saturation {
-  position: relative;
-  flex-grow: 1;
-  /* A strip of black under the area, the darkest brightness, where the pointer of the lowest
-     brightness stays clear of the hue. */
-  border-block-end: var(--env-space-3) solid black;
-  border-radius: var(--env-radius-sm) var(--env-radius-sm) 0 0;
-  background-color: var(--env-color-picker-hue);
-  background-image:
-    linear-gradient(0deg, black, transparent), linear-gradient(90deg, white, transparent);
-  /* A neutral inner edge over every hue. */
-  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-media);
+.env-color-picker-label {
+  font: var(--env-type-body-small);
 }
-.env-color-picker-saturation-slider {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  outline: none;
-  touch-action: none;
-}
-.env-color-picker-saturation-slider:focus-visible,
-.env-color-picker-hue:has(:focus-visible) {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-.env-color-picker-saturation-thumb,
-.env-color-picker-hue-thumb {
-  box-sizing: border-box;
-  inline-size: var(--env-color-picker-pointer-size);
-  block-size: var(--env-color-picker-pointer-size);
-  border: 0.125rem solid white;
-  border-radius: 50%;
-  /* A ring outside the white edge holds the thumb on light colors; no shadow. */
-  box-shadow: 0 0 0 var(--env-control-border-width) var(--env-color-border-default);
-  pointer-events: none;
-}
-.env-color-picker-saturation-thumb {
-  position: absolute;
-  z-index: var(--env-color-picker-thumb-layer);
-  transform: translate(-50%, -50%);
-}
-.env-color-picker-saturation-slider:focus .env-color-picker-saturation-thumb {
-  transform: translate(-50%, -50%) scale(1.1);
-}
-.env-color-picker-hue {
+
+/* The area: as wide as the picker, at a fixed height that keeps it compact. */
+.env-color-picker-area {
   position: relative;
   flex-shrink: 0;
+  block-size: var(--env-color-picker-area-height);
+  border-radius: var(--env-radius-sm);
+  box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media);
+  cursor: crosshair;
+}
+.env-color-picker-thumb {
+  box-sizing: border-box;
+  inline-size: var(--env-color-picker-thumb-size);
+  block-size: var(--env-color-picker-thumb-size);
+  border: var(--env-color-picker-thumb-edge) solid var(--env-color-picker-thumb-color);
+  border-radius: 50%;
+  /* A ring outside the white edge and one inside it hold the thumb on light and dark colors. */
+  box-shadow:
+    0 0 0 var(--env-control-border-width) var(--env-color-picker-thumb-ring),
+    inset 0 0 0 var(--env-control-border-width) var(--env-color-picker-thumb-ring);
+  cursor: grab;
+}
+.env-color-picker-thumb[data-dragging] {
+  cursor: grabbing;
+}
+.env-color-picker-thumb:has(:focus-visible) {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: 2px;
+}
+
+/* The eyedropper beside the sliders, which stack. */
+.env-color-picker-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+.env-color-picker-sliders {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--env-space-3);
+  min-inline-size: 0;
+  /* The thumbs reach half their size past the tracks' ends. */
+  padding-inline: calc(var(--env-color-picker-thumb-size) / 2);
+}
+.env-color-picker-slider {
+  display: flex;
+  align-items: center;
+  block-size: var(--env-color-picker-thumb-size);
+}
+.env-color-picker-track {
+  position: relative;
+  flex: 1 1 auto;
+  block-size: var(--env-color-picker-track-height);
+  border-radius: var(--env-radius-full);
+  box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media);
+  cursor: pointer;
+}
+.env-color-picker-slider .env-color-picker-thumb {
+  inset-block-start: 50%;
+}
+
+/* The format, its fields and copy in one row. Where the row is too narrow for the format's fields,
+   they take a row of their own under the format and copy. */
+.env-color-picker-values {
+  display: grid;
+  grid-template-areas: 'format fields copy';
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+.env-color-picker-values:not(:has(> .env-color-picker-format)) {
+  grid-template-areas: 'fields copy';
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.env-color-picker-format {
+  grid-area: format;
+  min-inline-size: 0;
+}
+.env-color-picker-copy {
+  grid-area: copy;
+}
+/* The fields are one outlined control, as a text field is, with a borderless input per channel. */
+.env-color-picker-fields {
+  box-sizing: border-box;
+  display: flex;
+  grid-area: fields;
+  align-items: center;
+  gap: var(--env-space-1);
+  min-inline-size: 0;
   block-size: var(--env-control-height-sm);
-  border-radius: 0 0 var(--env-radius-sm) var(--env-radius-sm);
-  background: linear-gradient(
-    90deg,
-    red 0,
-    yellow 17%,
-    lime 33%,
-    cyan 50%,
-    blue 67%,
-    magenta 83%,
-    red
-  );
-  touch-action: none;
+  padding-inline: var(--env-space-2);
+  border: var(--env-control-border-width) solid var(--env-color-picker-fields-border);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-field);
+  transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
+  --env-color-picker-fields-border: var(--env-color-border-default);
 }
-.env-color-picker-hue-control,
-.env-color-picker-hue-track {
+@media (hover: hover) {
+  .env-color-picker-fields:hover:not(:has(> :disabled)) {
+    --env-color-picker-fields-border: var(--env-color-border-accent-emphasis-hover);
+  }
+}
+.env-color-picker-fields:focus-within {
+  --env-color-picker-fields-border: var(--env-color-border-accent-emphasis);
+}
+.env-color-picker-field {
+  box-sizing: border-box;
+  flex: 1 1 0;
+  inline-size: 100%;
+  min-inline-size: 0;
   block-size: 100%;
-  border-radius: inherit;
+  margin: 0;
+  padding: 0 var(--env-space-1);
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body-small);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  caret-color: var(--env-color-border-accent-emphasis);
 }
-.env-color-picker-hue-thumb {
-  background-color: var(--env-color-picker-hue);
+.env-color-picker-field[data-channel='hex'] {
+  flex-grow: 2.4;
+  text-align: start;
 }
-/* stylelint-enable color-named */
-.env-color-picker-hue:has(:focus) .env-color-picker-hue-thumb {
-  scale: 1.1;
-}
-.env-color-picker[data-disabled] > .env-text,
-.env-color-picker[data-disabled] > .env-color-picker-area {
+.env-color-picker-field:disabled {
   opacity: var(--env-state-disabled-opacity);
 }
-.env-color-picker-status {
-  position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+/* The row wraps where the format's fields would no longer fit beside the format and copy. */
+@container env-color-picker (width < 12.5rem) {
+  .env-color-picker-values:has(> .env-color-picker-format) {
+    grid-template-areas: 'format copy' 'fields fields';
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
 }
+@container env-color-picker (width < 16.5rem) {
+  .env-color-picker-values:is([data-alpha], :not([data-format='hex'])):has(
+      > .env-color-picker-format
+    ) {
+    grid-template-areas: 'format copy' 'fields fields';
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+@container env-color-picker (width < 19rem) {
+  .env-color-picker-values[data-alpha]:not([data-format='hex']):has(> .env-color-picker-format) {
+    grid-template-areas: 'format copy' 'fields fields';
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+.env-color-picker-values > .env-color-picker-format {
+  justify-self: start;
+}
+
+/* Preset swatches: small rounded squares in rows; the chosen one takes a ring. */
+.env-color-picker-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--env-space-2);
+}
+.env-color-picker-swatch {
+  inline-size: var(--env-color-picker-swatch-size);
+  block-size: var(--env-color-picker-swatch-size);
+  border-radius: var(--env-radius-xs);
+  background-color: var(--env-color-swatch-color);
+  box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-muted);
+  cursor: pointer;
+  outline: none;
+}
+.env-color-picker-swatch[data-translucent] {
+  background:
+    linear-gradient(var(--env-color-swatch-color), var(--env-color-swatch-color)),
+    var(--env-color-picker-checkerboard);
+}
+.env-color-picker-swatch[data-selected] {
+  box-shadow:
+    inset 0 0 0 var(--env-control-border-width) var(--env-color-border-muted),
+    0 0 0 2px var(--env-color-bg-default),
+    0 0 0 4px var(--env-color-fg-default);
+}
+.env-color-picker-swatch:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: 5px;
+}
+.env-color-picker-swatches[aria-disabled] .env-color-picker-swatch {
+  cursor: default;
+}
+
+.env-color-picker-description,
+.env-color-picker-error {
+  font: var(--env-type-body-small);
+}
+.env-color-picker-description {
+  color: var(--env-color-fg-muted);
+}
+.env-color-picker-error {
+  color: var(--env-color-fg-danger);
+}
+
+/* Disabled: the colors fade with the controls; read-only keeps them, without the pointers. */
+.env-color-picker[data-disabled]
+  :is(
+    .env-color-picker-label,
+    .env-color-picker-area,
+    .env-color-picker-sliders,
+    .env-color-picker-swatches
+  ) {
+  opacity: var(--env-state-disabled-opacity);
+}
+.env-color-picker:is([data-disabled], [data-readonly])
+  :is(
+    .env-color-picker-area,
+    .env-color-picker-track,
+    .env-color-picker-thumb,
+    .env-color-picker-swatch
+  ) {
+  cursor: default;
+}
+
+/* The popover of ColorPickerButton holds the picker at a compact width. */
+.env-color-picker-popover .env-color-picker {
+  --env-color-picker-width: 16rem;
+  inline-size: var(--env-color-picker-width);
+  max-inline-size: 100%;
+}
+
 @media (pointer: coarse) {
-  .env-color-picker-hue {
-    block-size: var(--env-control-height-touch);
+  .env-color-picker {
+    --env-color-picker-thumb-size: 1.5rem;
+    --env-color-picker-track-height: 1rem;
+    --env-color-picker-swatch-size: 1.75rem;
   }
 }
 
-/* Forced colors: the area, the hue and the pointers show colors as content, as an image does, so
-   the system keeps them. */
+/* Forced colors: the area, the tracks, the thumbs and the swatches show colors as content, as an
+   image does, so the system keeps them; the chosen swatch takes the selection color's ring. */
 @media (forced-colors: active) {
-  .env-color-picker-plane {
+  .env-color-picker-area,
+  .env-color-picker-track,
+  .env-color-picker-thumb,
+  .env-color-picker-swatch {
     forced-color-adjust: none;
+  }
+  .env-color-picker-swatch[data-selected] {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
   }
 }

@@ -27,7 +27,7 @@ const undocumentedExports = [];
  * each icon by its own path, as the setup guide asks, rather than through the icons barrel.
  */
 const publicModules =
-  /^(?:react|@envsemble\/envui(?:\/(?:content|diff|rich-text|icons\/[A-Za-z\d]+))?)$/;
+  /^(?:react|@envsemble\/envui(?:\/(?:content|diff|rich-text|color|icons\/[A-Za-z\d]+))?)$/;
 
 /**
  * Every module a source loads: static imports and re-exports, imports for their side effects, and

@@ -1,7 +1,5 @@
 import {
   AnimatedNumber,
-  Button,
-  ColorSwatch,
   DiffStat,
   EnvUIProvider,
   Rating,
@@ -39,9 +37,6 @@ export function RatingsFixture({ theme }: { theme: ThemeValue }) {
         <DiffStat additions={1234} deletions={5} data-testid={`diff-de-${theme}`} />
         <AnimatedNumber value={12800} data-testid={`number-de-${theme}`} />
       </EnvUIProvider>
-      <Button variant="secondary" startIcon={<ColorSwatch color="#ffffff" />}>
-        #FFFFFF {theme}
-      </Button>
     </Theme>
   );
 }

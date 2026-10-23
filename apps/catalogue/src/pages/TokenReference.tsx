@@ -1,4 +1,5 @@
-import { ColorSwatch, Column, Table, Text } from '@envsemble/envui';
+import { Column, Table, Text } from '@envsemble/envui';
+import { ColorSwatch } from '@envsemble/envui/color';
 import { Code } from '@envsemble/envui/content';
 import tokenList from '../../../../packages/ui/src/generated/tokens.json';
 // The ids search leads to, as the search index writes them.

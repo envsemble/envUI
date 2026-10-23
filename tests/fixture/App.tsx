@@ -191,12 +191,7 @@ export default function App() {
           {includes('layout') && <LayoutFixture />}
           {includes('cards') && <CardsFixture />}
           {includes('disclosures') && <DisclosuresFixture />}
-          {includes('color-picker') && (
-            <>
-              <ColorPickerFixture theme="light" />
-              <ColorPickerFixture theme="dark" />
-            </>
-          )}
+          {includes('color-picker') && <ColorPickerFixture />}
           {includes('markdown') && <MarkdownEditingFixture />}
           {includes('markdown-extensions') && <MarkdownExtensionsFixture />}
           {includes('tree') && (

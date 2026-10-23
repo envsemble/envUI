@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Theme,
   TextField,
-  ColorPicker,
   Checkbox,
   Select,
   Dialog,
@@ -37,6 +36,7 @@ import {
   DatePicker,
   Calendar,
 } from '@envsemble/envui';
+import { ColorPicker } from '@envsemble/envui/color';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
   id: `doc-${index}`,

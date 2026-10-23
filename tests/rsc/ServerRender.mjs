@@ -6,6 +6,7 @@ import { createElement as h } from 'react';
 import * as ui from '@envsemble/envui';
 import * as content from '@envsemble/envui/content';
 import * as diff from '@envsemble/envui/diff';
+import * as color from '@envsemble/envui/color';
 import * as richText from '@envsemble/envui/rich-text';
 import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
 import { Home } from '@envsemble/envui/icons/Home';
@@ -160,6 +161,7 @@ console.log(
       '@envsemble/envui': survey('@envsemble/envui', ui),
       '@envsemble/envui/content': survey('@envsemble/envui/content', content),
       '@envsemble/envui/diff': survey('@envsemble/envui/diff', diff),
+      '@envsemble/envui/color': survey('@envsemble/envui/color', color),
       '@envsemble/envui/rich-text': survey('@envsemble/envui/rich-text', richText),
     },
     page,

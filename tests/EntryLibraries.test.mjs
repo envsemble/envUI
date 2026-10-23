@@ -39,3 +39,12 @@ test('the entries’ libraries are neither dependencies nor peers', function () 
   assert.equal(manifest.peerDependenciesMeta, undefined);
   assert.deepEqual(Object.keys(manifest.dependencies), ['@base-ui/react']);
 });
+
+test('the color entry imports React Aria’s color hooks and nothing else', async function () {
+  assert.ok(libraryEntries.includes('color'));
+  assert.deepEqual([...(await importedLibraries(repository, 'color'))].sort(), [
+    '@react-aria/color',
+    '@react-aria/i18n',
+    '@react-stately/color',
+  ]);
+});

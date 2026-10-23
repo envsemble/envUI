@@ -4,7 +4,6 @@ import {
   List,
   SearchTrigger,
   Calendar,
-  ColorPicker,
   Combobox,
   Composer,
   Alert,
@@ -32,6 +31,7 @@ import {
   type EnvUIMessagesInput,
   Spinner,
 } from '@envsemble/envui';
+import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
 import { CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/content';
 import { defaultMessages } from '@envsemble/envui/messages';
 // Content and display, whose strings and numbers follow the provider.
@@ -228,7 +228,8 @@ export function MessageStringsFixture() {
           <MonthPicker label="Period" clearable defaultValue="2026-10" />
           <Calendar aria-label="Planning" defaultValue="2026-10-14" />
           <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
-          <ColorPicker label="Accent" defaultValue="#336699" />
+          <ColorPicker label="Accent" defaultValue="#336699" swatches={['#336699']} />
+          <ColorPickerButton label="Border" defaultValue="#336699" />
           {/* Layout: the divider between two panes, a detail's back button, and a scaffold's skip
               links. */}
           <Panes.Root behavior="list-detail" open>

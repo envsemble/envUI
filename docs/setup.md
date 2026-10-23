@@ -343,11 +343,12 @@ What a server component passes to a client component must be serializable: strin
 - `@envsemble/envui/content` when the feature needs code or Markdown.
 - `@envsemble/envui/diff` when the feature shows code diffs.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
+- `@envsemble/envui/color` when the feature chooses or shows colors: [ColorPicker, ColorPickerButton and ColorSwatch](components/color-picker.md).
 - `@envsemble/envui/messages` for `defaultMessages`, envUI's English strings by namespace, for applications that extract or translate them.
 - `@envsemble/envui/dev` for [dev mode](dev-mode.md), in development only: load it with a dynamic `import()` behind a development check, so production builds contain none of it.
 - `@envsemble/envui/assets/*` for raw assets, such as the Inter font file.
 
-The content, rich-text and diff entries use Shiki, react-markdown, remark-gfm, marked, Tiptap and Diffs, which envUI doesn't list as dependencies, so an application using only the main entry never installs them. An application importing one of these entries installs that entry's libraries itself, in the versions below or later ones within the same major version. Rich text highlights its code blocks with Shiki, and diffs take their code colors from it, so those entries need Shiki too:
+The content, rich-text, diff and color entries use Shiki, react-markdown, remark-gfm, marked, Tiptap, Diffs and React Aria, which envUI doesn't list as dependencies, so an application using only the main entry never installs them. An application importing one of these entries installs that entry's libraries itself, in the versions below or later ones within the same major version. Rich text highlights its code blocks with Shiki, and diffs take their code colors from it, so those entries need Shiki too:
 
 - `@envsemble/envui/content`:
 
@@ -365,6 +366,12 @@ The content, rich-text and diff entries use Shiki, react-markdown, remark-gfm, m
 
   ```sh
   npm install @pierre/diffs@^1.5.2 shiki@^4.5.0
+  ```
+
+- `@envsemble/envui/color`:
+
+  ```sh
+  npm install @react-aria/color@^3.2.1 @react-stately/color@^3.10.1 @react-aria/i18n@^3.13.1
   ```
 
 They aren't peer dependencies because GitHub Packages drops `peerDependenciesMeta`, the field that marks a peer optional, and npm installs every peer that isn't marked optional. A missing library fails the application's build where the entry imports it.

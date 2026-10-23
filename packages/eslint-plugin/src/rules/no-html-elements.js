@@ -35,6 +35,7 @@ const componentEntryPoints = new Set([
   '@envsemble/envui',
   '@envsemble/envui/content',
   '@envsemble/envui/diff',
+  '@envsemble/envui/color',
   '@envsemble/envui/rich-text',
 ]);
 
@@ -178,7 +179,7 @@ export default {
     defaultOptions: [{ allow: [], renderProps: ['render'] }],
     messages: {
       useComponent:
-        "Use envUI's {{use}} instead of {{found}}{{alternatives}}: import { {{imports}} } from '@envsemble/envui'.{{note}} If envUI can't do what you need, propose an addition to envUI instead of a local copy.",
+        "Use envUI's {{use}} instead of {{found}}{{alternatives}}: import { {{imports}} } from '{{source}}'.{{note}} If envUI can't do what you need, propose an addition to envUI instead of a local copy.",
     },
   },
   create(context) {
@@ -214,6 +215,7 @@ export default {
             .map(({ component, when }) => `, or ${component} ${when}`)
             .join(''),
           imports: bindings(entry).join(', '),
+          source: entry.from ?? '@envsemble/envui',
           note: entry.note ? ` ${entry.note}` : '',
         },
       });
