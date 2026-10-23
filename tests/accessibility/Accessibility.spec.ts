@@ -221,7 +221,7 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
           if (example) return 'specimen';
           const regions: [string, string][] = [
             ['.docs-sidebar', 'sidebar'],
-            ['.docs-header', 'top bar'],
+            ['.docs-compact-controls', 'page controls'],
             ['.docs-page-header, .docs-page-banner, .docs-overview-hero', 'header'],
             ['.docs-page-navigation', 'page navigation'],
             ['.docs-article', 'article'],

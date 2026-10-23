@@ -475,29 +475,46 @@ test('arrowing between the agent skills keeps focus on the tabs and adds no hist
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
 });
 
-test('the top bar keeps search, the other area and the Display menu in sight on a narrow screen', async ({
+test('the drawer holds the wordmark, search, the other area and the Display menu, and there is no top bar', async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  for (const [address, other] of [
-    ['/components/menu', 'Docs'],
-    ['/docs/components/menu', 'Site'],
+  for (const [address, other, label] of [
+    ['/components/menu', 'Docs', 'Components'],
+    ['/docs/components/menu', 'Site', 'Docs'],
   ] as const) {
+    await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(`${catalogueUrl}${address}`);
-    const bar = page.locator('.docs-header');
+    await expect(page.getByRole('banner')).toHaveCount(0);
+    const drawer = page.getByRole('navigation', { name: label });
+    // Its top and its foot stay in view while its list scrolls.
     for (const control of [
-      bar.getByRole('button', { name: 'Open navigation', exact: true }),
-      bar.getByRole('button', { name: /^Search/ }),
-      bar.getByRole('link', { name: other, exact: true }),
-      bar.getByRole('button', { name: 'Display', exact: true }),
+      drawer.getByRole('link', { name: /^envUI( Docs)? home$/ }),
+      drawer.getByRole('button', { name: /^Search/ }),
+      drawer.getByRole('link', { name: other, exact: true }),
+      drawer.getByRole('button', { name: 'Display', exact: true }),
+    ])
+      await expect(control, address).toBeInViewport();
+    // The theme is in the Display menu alone.
+    await expect(page.getByRole('button', { name: /^Switch to/ })).toHaveCount(0);
+
+    // A narrow window shows the menu button and search at the page's top start, and the sheet the
+    // menu opens holds the same drawer.
+    await page.setViewportSize({ width: 390, height: 844 });
+    const menu = page.getByRole('button', { name: 'Open navigation', exact: true });
+    for (const control of [
+      menu,
+      page.locator('.docs-compact-controls').getByRole('button', { name: /^Search/ }),
     ]) {
       const box = await control.boundingBox();
       expect(box, address).not.toBeNull();
       expect(box!.x, address).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width, address).toBeLessThanOrEqual(390);
     }
-    // The theme is in the Display menu alone.
-    await expect(page.getByRole('button', { name: /^Switch to/ })).toHaveCount(0);
+    await menu.click();
+    const sheet = page.getByRole('dialog', { name: address.startsWith('/docs') ? 'Docs' : 'Site' });
+    await expect(sheet.getByRole('link', { name: other, exact: true })).toBeInViewport();
+    await expect(sheet.getByRole('button', { name: 'Display', exact: true })).toBeInViewport();
+    await page.keyboard.press('Escape');
   }
 });
 
@@ -712,13 +729,19 @@ test('the navigation shows the current page, and focus moves to the page only on
     page.getByRole('navigation', { name: 'Foundations' }).getByRole('link', { name: 'Typography' }),
   ).toBeVisible();
   // The Docs have a navigation of their own, and the top bar leads back to the Site.
-  await page.locator('.docs-header').getByRole('link', { name: 'Docs', exact: true }).click();
+  await page
+    .locator('.docs-drawer-footer')
+    .getByRole('link', { name: 'Docs', exact: true })
+    .click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('envUI Docs');
   await expect(page.getByRole('navigation', { name: 'Site' })).toHaveCount(0);
   await expect(
     page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Design tokens' }),
   ).toBeVisible();
-  await page.locator('.docs-header').getByRole('link', { name: 'Site', exact: true }).click();
+  await page
+    .locator('.docs-drawer-footer')
+    .getByRole('link', { name: 'Site', exact: true })
+    .click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
 });
 

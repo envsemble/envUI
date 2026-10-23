@@ -26,8 +26,10 @@ test('public component, stylesheet, new export and Markdown documentation update
       .getByRole('textbox', { name: 'Project name', exact: true })
       .and(page.locator('[name="project"]'));
     await projectName.fill('Preserved draft');
-    // A Button of the site's own: the top bar's link to the Docs.
-    const docsLink = page.locator('.docs-header').getByRole('link', { name: 'Docs', exact: true });
+    // A Button of the site's own: the drawer's link to the Docs.
+    const docsLink = page
+      .locator('.docs-drawer-footer')
+      .getByRole('link', { name: 'Docs', exact: true });
     await writeFile(
       buttonSource,
       originals[0].replace(

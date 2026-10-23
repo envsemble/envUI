@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
-  Button,
   Column,
   EnvUIProvider,
   IconButton,
@@ -10,12 +9,9 @@ import {
   SearchTrigger,
   Sheet,
   Text,
-  TopBar,
+  Tooltip,
 } from '@envsemble/envui';
-import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { Menu as MenuIcon } from '@envsemble/envui/icons/Menu';
-import { MenuBook } from '@envsemble/envui/icons/MenuBook';
-import { EnvUILogo } from './brand/EnvUILogo';
 import { findPage, type Area, type SitePage } from './navigation/DocumentationRoutes';
 import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
@@ -45,7 +41,7 @@ import { RouterLink } from './navigation/RouterLink';
 import { docsRoute, homeRoute, inDocs, routeHref, revealSection } from './navigation/Address';
 import { isSearchShortcut } from './search/SearchShortcut';
 import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
-import { DisplayMenu, DisplaySettingsProvider } from './theme/DisplaySettings';
+import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { DocumentationSearch } from './search/DocumentationSearch';
 
 /** What each kind of page renders. */
@@ -78,8 +74,8 @@ function documentTitle(page: SitePage | undefined, area: Area) {
 /**
  * The site: the Site, at the root, which introduces envUI, with a rail of its destinations and a
  * drawer of the chosen one's pages, and the Docs, under /docs, the developer reference with a
- * navigation of their own. Each has a top bar with search, the Display menu and a link to the
- * other.
+ * navigation of their own. Each drawer holds the wordmark and search at its top, and the way to the
+ * other area and the Display menu at its foot.
  */
 function Site() {
   const route = useDocumentationRoute();
@@ -157,6 +153,13 @@ function Site() {
             setNavigationOpen(false);
           }
         : undefined,
+      // Search from the sheet closes it first.
+      onSearch: inSheet
+        ? () => {
+            setNavigationOpen(false);
+            openSearch();
+          }
+        : openSearch,
     };
     return area === 'docs' ? <DocsNavigation {...props} /> : <SiteNavigation {...props} />;
   };
@@ -169,68 +172,26 @@ function Site() {
       scroll="body"
       bodyId="docs-main"
       bodyRef={mainElement}
-      // The top bar runs across, above the navigation, as a website's does.
-      topBarSpan="full"
-      // The navigation is at the start of a wide window, and in a sheet that the top bar opens in a
-      // narrower one.
+      // The navigation is at the start of a wide window, and in a sheet that the page's menu button
+      // opens in a narrower one. There is no top bar: the drawer holds the wordmark and search.
       forms={{ compact: 'none', medium: 'none' }}
       navigation={{ drawer: navigation(false) }}
-      topBar={
-        <TopBar
-          className="docs-header"
-          start={
-            <>
-              <IconButton
-                icon={<MenuIcon />}
-                aria-label="Open navigation"
-                variant="ghost"
-                className="docs-menu-button"
-                onClick={() => setNavigationOpen(true)}
-              />
-              <Link
-                href={routeHref(area === 'docs' ? docsRoute : homeRoute)}
-                underline={false}
-                className="docs-header-brand"
-                aria-label={area === 'docs' ? 'envUI Docs home' : 'envUI home'}
-              >
-                <EnvUILogo />
-                {area === 'docs' && (
-                  <span className="docs-header-area" aria-hidden="true">
-                    Docs
-                  </span>
-                )}
-              </Link>
-            </>
-          }
-          actions={
-            <>
-              {/* The full trigger from an expanded window, its icon below; the wrappers take no box. */}
-              <span className="docs-wide-only">
-                <SearchTrigger onClick={openSearch} />
-              </span>
-              <span className="docs-narrow-only">
-                <SearchTrigger iconOnly onClick={openSearch} />
-              </span>
-              {area === 'docs' ? (
-                <Button variant="ghost" href={routeHref(homeRoute)} startIcon={<ArrowBack />}>
-                  Site
-                </Button>
-              ) : (
-                <Button variant="ghost" href={routeHref(docsRoute)} startIcon={<MenuBook />}>
-                  Docs
-                </Button>
-              )}
-              <span className="docs-wide-only">
-                <DisplayMenu />
-              </span>
-              <span className="docs-narrow-only">
-                <DisplayMenu iconOnly />
-              </span>
-            </>
-          }
-        />
-      }
     >
+      {/* Below an expanded window, where the navigation is in a sheet, a small pill of the menu
+          and search floats at the page's top start. */}
+      <div className="docs-compact-controls">
+        <div className="docs-compact-controls-bar">
+          <Tooltip content="Open navigation">
+            <IconButton
+              icon={<MenuIcon />}
+              aria-label="Open navigation"
+              variant="ghost"
+              onClick={() => setNavigationOpen(true)}
+            />
+          </Tooltip>
+          <SearchTrigger iconOnly onClick={openSearch} />
+        </div>
+      </div>
       <div className="docs-main">
         <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
           {content}
@@ -239,6 +200,7 @@ function Site() {
         <PageFooter />
       </div>
       <Sheet
+        className="docs-navigation-sheet"
         side="start"
         aria-label={area === 'docs' ? 'Docs' : 'Site'}
         width={area === 'docs' ? 'min(18rem, 100%)' : 'min(22rem, 100%)'}

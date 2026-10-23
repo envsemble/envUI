@@ -1,19 +1,33 @@
 import { useEffect, useRef } from 'react';
-import { Drawer, Rail, type Destination, type DrawerDestination } from '@envsemble/envui';
+import {
+  Button,
+  Drawer,
+  Link,
+  Rail,
+  Row,
+  SearchTrigger,
+  type Destination,
+  type DrawerDestination,
+} from '@envsemble/envui';
+import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
+import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
 import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
 import { History } from '@envsemble/envui/icons/History';
+import { EnvUILogo } from '../brand/EnvUILogo';
+import { DisplayMenu } from '../theme/DisplaySettings';
 import {
   pagesOf,
   sectionHome,
   siteSections,
+  type Area,
   type SitePage,
   type SiteSection,
 } from './DocumentationRoutes';
-import { routeHref } from './Address';
+import { docsRoute, homeRoute, routeHref } from './Address';
 
 /** The icon of each of the Site's destinations in its rail. */
 const sectionIcons: Record<SiteSection, typeof Home> = {
@@ -74,15 +88,81 @@ interface NavigationProps {
   inSheet?: boolean;
   /** Runs as a page is chosen, such as to close the sheet the navigation sits in. */
   onChoose?: () => void;
+  /** Opens search. */
+  onSearch: () => void;
+}
+
+/**
+ * The top of a drawer: the envUI wordmark, which leads to the area's home, with "Docs" beside it in
+ * the Docs, and search under it, as wide as the drawer.
+ */
+function DrawerHeader({ area, onSearch }: { area: Area; onSearch: () => void }) {
+  return (
+    <>
+      <Link
+        href={routeHref(area === 'docs' ? docsRoute : homeRoute)}
+        underline={false}
+        className="docs-brand"
+        aria-label={area === 'docs' ? 'envUI Docs home' : 'envUI home'}
+      >
+        <EnvUILogo />
+        {area === 'docs' && (
+          <span className="docs-brand-area" aria-hidden="true">
+            Docs
+          </span>
+        )}
+      </Link>
+      <SearchTrigger fullWidth onClick={onSearch} className="docs-drawer-search" />
+    </>
+  );
+}
+
+/**
+ * The foot of a drawer: quiet ghost buttons for the other area, the Docs from the Site and the Site
+ * from the Docs, and the Display menu, where the theme, contrast and scale are.
+ */
+function DrawerFooter({ area, onChoose }: { area: Area; onChoose?: () => void }) {
+  return (
+    <Row gap={1} wrap className="docs-drawer-footer">
+      {area === 'docs' ? (
+        <Button
+          variant="ghost"
+          href={routeHref(homeRoute)}
+          startIcon={<ArrowBack />}
+          onClick={onChoose}
+        >
+          Site
+        </Button>
+      ) : (
+        <Button
+          variant="ghost"
+          href={routeHref(docsRoute)}
+          startIcon={<MenuBook />}
+          onClick={onChoose}
+        >
+          Docs
+        </Button>
+      )}
+      <DisplayMenu />
+    </Row>
+  );
 }
 
 /**
  * The Site's navigation: a Rail of its destinations, Overview, Components, Patterns, Foundations,
  * Benchmark and Changelog, beside a Drawer of the chosen destination's pages, both flush on the
- * navigation's background with no line between them. A rail item opens its destination's first
- * page; in the sheet of a narrower window it leaves the sheet open, so a page can be chosen.
+ * navigation's background with no line between them. The drawer starts with the wordmark and
+ * search, and ends with the way to the Docs and the Display menu. A rail item opens its
+ * destination's first page; in the sheet of a narrower window it leaves the sheet open, so a page
+ * can be chosen.
  */
-export function SiteNavigation({ page, routePath, inSheet = false, onChoose }: NavigationProps) {
+export function SiteNavigation({
+  page,
+  routePath,
+  inSheet = false,
+  onChoose,
+  onSearch,
+}: NavigationProps) {
   const element = useCurrentInView();
   const section = (page?.area === 'site' ? page.section : 'Overview') as SiteSection;
   const pages = pagesOf('site').filter((entry) => entry.section === section);
@@ -96,14 +176,24 @@ export function SiteNavigation({ page, routePath, inSheet = false, onChoose }: N
       <Drawer
         aria-label={section}
         className="docs-sidebar"
+        header={<DrawerHeader area="site" onSearch={onSearch} />}
+        footer={<DrawerFooter area="site" onChoose={onChoose} />}
         destinations={pageDestinations(pages, routePath, onChoose)}
       />
     </div>
   );
 }
 
-/** The Docs' navigation: a Drawer of every page of the Docs, by its group. */
-export function DocsNavigation({ routePath, inSheet = false, onChoose }: NavigationProps) {
+/**
+ * The Docs' navigation: a Drawer of every page of the Docs, by its group, with the wordmark and
+ * search at its top, and the way back to the Site and the Display menu at its foot.
+ */
+export function DocsNavigation({
+  routePath,
+  inSheet = false,
+  onChoose,
+  onSearch,
+}: NavigationProps) {
   const element = useCurrentInView();
   const pages = pagesOf('docs').map((page) => ({ ...page, group: page.section }));
   return (
@@ -111,6 +201,8 @@ export function DocsNavigation({ routePath, inSheet = false, onChoose }: Navigat
       <Drawer
         aria-label="Docs"
         className="docs-sidebar"
+        header={<DrawerHeader area="docs" onSearch={onSearch} />}
+        footer={<DrawerFooter area="docs" onChoose={onChoose} />}
         destinations={pageDestinations(pages, routePath, onChoose)}
       />
     </div>

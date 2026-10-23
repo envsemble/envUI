@@ -15,31 +15,31 @@ body {
 .docs-app *::after {
   box-sizing: border-box;
 }
-/* The frame is a Scaffold with a TopBar across the window and the navigation at its start, or in
-   a sheet that the top bar opens in a narrower window; these rules size the wordmark and the
-   navigation and keep the page's own layout. */
-.docs-header-brand {
+/* The frame is a Scaffold without a top bar: the navigation at its start, or in a sheet that a
+   small menu button opens in a narrower window. The drawer holds the wordmark and search at its
+   top, and the way to the other area and the Display menu at its foot. */
+.docs-brand {
   display: flex;
   align-items: center;
   gap: var(--env-space-2);
-  margin-inline-start: var(--env-space-2);
+  padding: var(--env-space-1) var(--env-space-2) var(--env-space-2);
   color: var(--env-color-fg-default);
 }
-.docs-header-brand svg {
+.docs-brand svg {
   display: block;
-  inline-size: 4rem;
+  inline-size: 4.5rem;
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-.docs-header-area {
+.docs-brand-area {
   font: var(--env-type-body);
   font-weight: var(--env-font-weight-medium);
   color: var(--env-color-fg-muted);
 }
 /* The navigation at the start of a wide window: the Site's rail beside the drawer of the chosen
    destination's pages, or the Docs' drawer, flush on the navigation's background with no line
-   between them. The rail stays in place while the drawer scrolls on its own. In the sheet of a
-   narrower window they take the sheet's width and color. */
+   between them, as tall as the window. The drawer keeps its top and foot in view and scrolls its
+   list. In the sheet of a narrower window they take the sheet's width and color. */
 .docs-navigation {
   display: flex;
   align-items: stretch;
@@ -55,9 +55,18 @@ body {
 }
 .docs-sidebar {
   inline-size: 15rem;
-  min-block-size: 100%;
+  block-size: 100%;
   padding: var(--env-space-4) var(--env-space-3);
-  overflow-y: auto;
+}
+/* In the sheet, the navigation fills the sheet's height, so the drawer keeps its top and foot in
+   view there too and scrolls its list. */
+.docs-navigation-sheet {
+  display: flex;
+  flex-direction: column;
+}
+.docs-navigation-sheet .env-dialog-content {
+  flex: 1;
+  min-block-size: 0;
 }
 .docs-navigation[data-in-sheet] {
   margin: calc(-1 * var(--env-space-4)) 0;
@@ -67,25 +76,36 @@ body {
   inline-size: auto;
   min-inline-size: 0;
 }
-.docs-nav-heading {
-  padding-inline: var(--env-space-2);
+.docs-drawer-footer {
+  padding-block-start: var(--env-space-2);
 }
-/* The menu button and the compact forms of search and the Display menu show where the navigation
-   is in a sheet, below an expanded window; the full forms show from expanded. The wrappers of the
-   forms take no box of their own. */
-.docs-narrow-only {
-  display: contents;
+/* Below an expanded window, where the navigation is in a sheet, the menu button and search float
+   as a small pill at the page's top start: a row of no height that sticks to the body's top, so
+   the page starts below the pill and scrolls beneath it. */
+.docs-compact-controls {
+  position: sticky;
+  z-index: var(--env-z-sticky);
+  inset-block-start: 0;
+  block-size: 0;
 }
-.docs-wide-only {
-  display: none;
+.docs-compact-controls-bar {
+  position: absolute;
+  inset-block-start: var(--env-space-2);
+  inset-inline-start: var(--env-space-3);
+  display: flex;
+  gap: var(--env-space-1);
+  padding: var(--env-space-1);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-page);
+}
+@container env-scaffold (width < 52.5rem) {
+  .docs-main {
+    padding-block-start: var(--env-space-8);
+  }
 }
 @container env-scaffold (width >= 52.5rem) {
-  .docs-menu-button,
-  .docs-narrow-only {
+  .docs-compact-controls {
     display: none;
-  }
-  .docs-wide-only {
-    display: contents;
   }
 }
 .docs-main {
@@ -254,36 +274,75 @@ body {
     column-gap: var(--env-space-5);
   }
 }
-/* The token reference: each token its name, what it is for and its values, separated by a hairline
-   as the items of one list are, each value with a swatch of the color and the theme or scale it
-   is for. */
-.docs-token-list,
+/* The Docs' reference tables, the props and the tokens, are envUI's prose tables, as the keyboard
+   tables of component pages are: a plain header row and hairlines between rows, with no filled
+   header and no box around them. Code in them is plain monospace text, without a chip, and long
+   names and values wrap. */
+.docs-simple-table {
+  container: docs-simple-table / inline-size;
+}
+.docs-simple-table table {
+  margin: 0;
+}
+.docs-simple-table table[data-fixed] {
+  table-layout: fixed;
+}
+.docs-simple-table td {
+  vertical-align: top;
+}
+.docs-plain-code {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 0.9em;
+  overflow-wrap: break-word;
+}
+.docs-plain-code[data-name] {
+  overflow-wrap: anywhere;
+}
+.docs-token-description,
+.docs-prop-required {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+.docs-token-description {
+  display: block;
+  margin-block-start: var(--env-space-1);
+}
+.docs-token-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--env-space-2);
+}
+.docs-token-value .env-color-swatch {
+  flex: none;
+  align-self: center;
+}
+/* In a narrow container each row stacks: its cells one under another, each under its column's
+   name, and the header row, which names them already, hides. */
+@container docs-simple-table (width < 40rem) {
+  .docs-simple-table :is(table, tbody, tr, td) {
+    display: block;
+  }
+  .docs-simple-table thead {
+    display: none;
+  }
+  .docs-simple-table tr {
+    padding-block: var(--env-space-2);
+    border-block-end: 0.0625rem solid var(--env-color-border-muted);
+  }
+  .docs-simple-table td {
+    padding-block: var(--env-space-1);
+    border: 0;
+  }
+  .docs-simple-table td:not(:first-child)::before {
+    content: attr(data-label) ' ';
+    color: var(--env-color-fg-muted);
+  }
+}
+/* A list of links, such as a group of the Docs' pages on their home, one to a line. */
 .docs-link-list {
   margin: 0;
   padding: 0;
   list-style: none;
-}
-.docs-token {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: start;
-  justify-content: space-between;
-  gap: var(--env-space-2) var(--env-space-5);
-  padding-block: var(--env-space-3);
-  border-block-end: var(--env-border-width, 1px) solid var(--env-color-border-muted);
-}
-.docs-token-values {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--env-space-2) var(--env-space-4);
-}
-.docs-token-value {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-2);
-}
-/* A list of links, such as a group of the Docs' pages on their home, one to a line. */
-.docs-link-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
   gap: var(--env-space-2) var(--env-space-5);
