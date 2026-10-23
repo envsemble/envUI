@@ -42,7 +42,7 @@
   /* Base UI measures the value along the control's content box, which the track fills. */
   padding-inline: var(--env-slider-inset);
   overflow: hidden;
-  border-radius: calc(var(--env-slider-height) / 2);
+  border-radius: var(--env-radius-full);
   background: var(--env-slider-track, var(--env-color-bg-neutral-muted));
   cursor: pointer;
   touch-action: none;

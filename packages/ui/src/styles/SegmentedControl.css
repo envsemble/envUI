@@ -83,8 +83,8 @@
   outline: var(--env-control-border-width) solid
     var(--env-segmented-control-edge, var(--env-color-border-default));
   outline-offset: calc(-1 * var(--env-control-border-width));
-  /* Rounded ends of half the height, so a control whose labels wrap keeps its corners. */
-  border-radius: calc(var(--env-segmented-control-height) / 2);
+  /* The capped full corner, so a control whose labels wrap keeps its corners. */
+  border-radius: var(--env-radius-full);
   background: var(--env-segmented-control-container, transparent);
   /* Long labels stay reachable in narrow containers; the rounded ends clip the segments' fills. */
   overflow-x: auto;

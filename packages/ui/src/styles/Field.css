@@ -53,9 +53,9 @@
     )
     var(--env-space-4);
   border: var(--env-control-border-width) solid var(--env-field-control-border);
-  /* Half the control height, so a taller control given through render, such as a text area, keeps
+  /* The capped full corner, so a taller control given through render, such as a text area, keeps
      the corners rather than becoming a pill. */
-  border-radius: calc(var(--env-control-height) / 2);
+  border-radius: var(--env-radius-full);
   outline: none;
   background: transparent;
   color: var(--env-color-fg-default);

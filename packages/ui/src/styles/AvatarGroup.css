@@ -89,7 +89,7 @@
   min-inline-size: var(--env-avatar-group-size);
   block-size: var(--env-avatar-group-size);
   padding-inline: calc(var(--env-avatar-group-size) / 6);
-  border-radius: 100vmax;
+  border-radius: var(--env-radius-full);
   /* The neutral fill over the ring color: opaque, since the count overlaps the avatars. */
   background: linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted))
     var(--env-avatar-group-ring-color);

@@ -24,16 +24,16 @@ import { Surface, Column, Text } from '@envsemble/envui';
 
 Inside a Theme these follow the theme, its [scale](../foundations/scale.md) and the reader's text size; the values are the comfortable scale's.
 
-| Name                                                              | Contract                                                      |
-| ----------------------------------------------------------------- | ------------------------------------------------------------- |
-| `--env-space-1` â€¦ `--env-space-9`                               | The spacing scale                                             |
-| `--env-radius-xs` â€¦ `--env-radius-xl`                           | 0.25, 0.5, 0.75 and 1.75 rem                                  |
-| `--env-radius-sm`                                                 | 0.5 rem: inner rows, important actions, toasts and thumbnails |
-| `--env-radius-lg`                                                 | 1 rem: text fields, tables and drop zones                     |
-| `--env-radius-surface`                                            | 1.75 rem: panes, cards and the outside of a row group         |
-| `--env-radius-full`                                               | Pills: buttons, navigation items, badges and counters         |
-| `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                              |
-| `--env-control-icon-size`                                         | 1 rem: the icon inside controls                               |
+| Name                                                              | Contract                                                                                                    |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `--env-space-1` â€¦ `--env-space-9`                               | The spacing scale                                                                                           |
+| `--env-radius-xs` â€¦ `--env-radius-xl`                           | 0.25, 0.5, 0.75 and 1.75 rem                                                                                |
+| `--env-radius-sm`                                                 | 0.5 rem: inner rows, important actions, toasts and thumbnails                                               |
+| `--env-radius-lg`                                                 | 1 rem: text fields, tables and drop zones                                                                   |
+| `--env-radius-surface`                                            | 1.75 rem: panes, cards and the outside of a row group                                                       |
+| `--env-radius-full`                                               | Rounded ends: buttons, fields, navigation items, badges; capped, so a taller element is a rounded rectangle |
+| `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                                                                            |
+| `--env-control-icon-size`                                         | 1 rem: the icon inside controls                                                                             |
 
 ## Guidelines
 

@@ -44,7 +44,7 @@
 .env-tooltip-disabled-target {
   display: inline-flex;
   max-inline-size: 100%;
-  border-radius: calc(var(--env-control-height) / 2);
+  border-radius: var(--env-radius-full);
 }
 .env-tooltip-disabled-target:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);

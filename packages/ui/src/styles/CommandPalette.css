@@ -36,7 +36,7 @@
   flex: 0 0 auto;
   min-block-size: var(--env-control-height);
   padding-inline: var(--env-space-4);
-  border-radius: calc(var(--env-control-height) / 2);
+  border-radius: var(--env-radius-full);
   background: var(--env-color-bg-neutral-muted);
 }
 .env-command-palette-search > .env-icon {

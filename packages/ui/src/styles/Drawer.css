@@ -140,8 +140,8 @@
   margin: 0;
   padding: var(--env-space-1) var(--env-space-3);
   border: 0;
-  /* Half the item's height, not a pill's, so a label that wraps keeps the corners. */
-  border-radius: calc(var(--env-drawer-item-height) / 2);
+  /* The capped full corner, so a label that wraps keeps the corners. */
+  border-radius: var(--env-radius-full);
   background: var(--env-drawer-item-custom-fill, transparent);
   color: var(--env-drawer-item-content, var(--env-color-fg-control));
   font: var(--env-body-font-weight) var(--env-font-size-body) / 1.4 var(--env-font-family);
