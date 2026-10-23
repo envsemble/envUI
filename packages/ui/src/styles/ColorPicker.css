@@ -1,13 +1,13 @@
 /* ColorPicker, from @envsemble/envui/color, after the color panels of design tools: a square
-   saturation and brightness area, the eyedropper beside thin hue and alpha strips, a row with the
-   format, quiet fields that name their channels and copy, and preset swatches. React Aria paints
+   saturation and brightness area with thin vertical hue and alpha strips at its side, a row with the
+   eyedropper, the format, quiet fields that name their channels and copy, and preset swatches. React Aria paints
    the area's and the strips' gradients inline; they are content, as the thumbs' white edge and the
    checkerboard under translucent colors are. */
 .env-color-picker {
-  --env-color-picker-area-height: 9rem;
+  --env-color-picker-area-max-size: 15rem;
   --env-color-picker-thumb-size: 0.75rem;
   --env-color-picker-strip-thumb-size: 0.875rem;
-  --env-color-picker-strip-height: 0.625rem;
+  --env-color-picker-strip-width: 0.625rem;
   --env-color-picker-swatch-size: 1.125rem;
   --env-color-picker-label-width: 0.75rem;
   --env-color-picker-checker: 0.375rem;
@@ -37,11 +37,17 @@
   font: var(--env-type-body-small);
 }
 
-/* The area and the strips are square: their colors run edge to edge, as in a design tool. */
+/* The area and the strips have square corners: their colors run edge to edge, as in a design
+   tool. The area is square and takes the width the strips leave, up to 15 rem, so that a wide
+   picker stays compact; the strips stand at its side, as tall as it. */
+.env-color-picker-controls {
+  display: grid;
+  grid-template-columns: minmax(0, var(--env-color-picker-area-max-size)) auto;
+  gap: var(--env-space-2);
+}
 .env-color-picker-area {
   position: relative;
-  flex-shrink: 0;
-  block-size: var(--env-color-picker-area-height);
+  aspect-ratio: 1;
   border-radius: var(--env-radius-none);
   box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media);
   cursor: crosshair;
@@ -64,67 +70,107 @@
   outline-offset: 1px;
 }
 
-/* The eyedropper beside the strips, which stack. */
-.env-color-picker-controls {
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-2);
-  min-block-size: var(--env-control-height-sm);
-}
+/* The strips side by side, each in a column as wide as its thumb, which reaches half its size past
+   the strip's ends, as the area's thumb does past the area's edges. */
 .env-color-picker-sliders {
   display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
-  /* The thumbs reach half their size past the strips' ends. */
-  padding-inline: calc(var(--env-color-picker-strip-thumb-size) / 2);
+  gap: var(--env-space-1);
 }
 .env-color-picker-slider {
   display: flex;
-  align-items: center;
-  block-size: var(--env-color-picker-strip-thumb-size);
+  justify-content: center;
+  inline-size: var(--env-color-picker-strip-thumb-size);
 }
 .env-color-picker-track {
   position: relative;
-  flex: 1 1 auto;
-  block-size: var(--env-color-picker-strip-height);
+  inline-size: var(--env-color-picker-strip-width);
   border-radius: var(--env-radius-none);
   box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media);
   cursor: pointer;
 }
 .env-color-picker-slider .env-color-picker-thumb {
   --env-color-picker-thumb-size: var(--env-color-picker-strip-thumb-size);
-  inset-block-start: 50%;
+  /* Physical, as React Aria's translate(-50%, -50%) that centres the thumb is, in either
+     direction. */
+  left: 50%;
 }
 
-/* The format, its fields and copy in one row. Where the row is too narrow for the format's fields,
-   they take a row of their own under the format and copy. */
+/* Narrow, the strips stay at the side, a little closer, and the area shrinks with the width. */
+@container env-color-picker (width < 16rem) {
+  .env-color-picker-controls {
+    gap: var(--env-space-1);
+  }
+}
+
+/* The eyedropper, the format, its fields and copy in one row. Where the row is too narrow for the
+   format's fields, they take a row of their own under the others. The parts space themselves, so
+   the eyedropper's and the format's columns take no room where they don't show. */
 .env-color-picker-values {
   display: grid;
-  grid-template-areas: 'format fields copy';
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'eye-dropper format fields copy';
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--env-space-1);
+  row-gap: var(--env-space-1);
 }
-.env-color-picker-values:not(:has(> .env-color-picker-format)) {
-  grid-template-areas: 'fields copy';
-  grid-template-columns: minmax(0, 1fr) auto;
+.env-color-picker-eye-dropper {
+  grid-area: eye-dropper;
+  margin-inline-end: var(--env-space-1);
 }
 .env-color-picker-format {
   display: flex;
   grid-area: format;
   min-inline-size: 0;
+  margin-inline-end: var(--env-space-1);
 }
 .env-color-picker-copy {
   display: flex;
   grid-area: copy;
+  margin-inline-start: var(--env-space-1);
 }
 .env-color-picker-fields {
   display: flex;
   grid-area: fields;
   gap: var(--env-space-1);
   min-inline-size: 0;
+}
+/* The fields wrap below the width they need beside the format and copy, 2.25 rem more beside the
+   eyedropper: hex below 11 rem, with alpha or in another format below 16, and in another format
+   with alpha below 19.5. */
+@container env-color-picker (width < 11rem) {
+  .env-color-picker-values:has(> .env-color-picker-format) {
+    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
+  }
+}
+@container env-color-picker (width < 13.25rem) {
+  .env-color-picker-values:has(> .env-color-picker-format):has(> .env-color-picker-eye-dropper) {
+    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
+  }
+}
+@container env-color-picker (width < 16rem) {
+  .env-color-picker-values:is([data-alpha], :not([data-format='hex'])):has(
+      > .env-color-picker-format
+    ) {
+    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
+  }
+}
+@container env-color-picker (width < 18.25rem) {
+  .env-color-picker-values:is([data-alpha], :not([data-format='hex'])):has(
+      > .env-color-picker-format
+    ):has(> .env-color-picker-eye-dropper) {
+    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
+  }
+}
+@container env-color-picker (width < 19.5rem) {
+  .env-color-picker-values[data-alpha]:not([data-format='hex']):has(> .env-color-picker-format) {
+    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
+  }
+}
+@container env-color-picker (width < 21.75rem) {
+  .env-color-picker-values[data-alpha]:not([data-format='hex']):has(> .env-color-picker-format):has(
+      > .env-color-picker-eye-dropper
+    ) {
+    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
+  }
 }
 /* A quiet field: no outline at rest, a fill under the pointer, and the field's accent edge while
    focused. The channel's letter sits muted before its number. */
@@ -181,28 +227,6 @@
   opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
-/* The row wraps where the format's fields would no longer fit beside the format and copy. */
-@container env-color-picker (width < 11rem) {
-  .env-color-picker-values:has(> .env-color-picker-format) {
-    grid-template-areas: 'format copy' 'fields fields';
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-}
-@container env-color-picker (width < 16rem) {
-  .env-color-picker-values:is([data-alpha], :not([data-format='hex'])):has(
-      > .env-color-picker-format
-    ) {
-    grid-template-areas: 'format copy' 'fields fields';
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-}
-@container env-color-picker (width < 19.5rem) {
-  .env-color-picker-values[data-alpha]:not([data-format='hex']):has(> .env-color-picker-format) {
-    grid-template-areas: 'format copy' 'fields fields';
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-}
-
 /* Preset swatches: small squares with a slight radius in rows; the chosen one takes a ring. */
 .env-color-picker-swatches {
   display: flex;
@@ -320,7 +344,7 @@
   .env-color-picker {
     --env-color-picker-thumb-size: 1.25rem;
     --env-color-picker-strip-thumb-size: 1.5rem;
-    --env-color-picker-strip-height: 1rem;
+    --env-color-picker-strip-width: 1rem;
     --env-color-picker-swatch-size: 1.75rem;
   }
   .env-color-picker-field {

@@ -118,9 +118,10 @@ export interface ColorPickerProps
 }
 
 /**
- * A compact color picker on React Aria's color hooks: a saturation and brightness area, a hue
- * slider, an alpha slider with `alpha`, a format select, fields for the chosen format, a copy
- * button, the browser's eyedropper where it has one, and preset swatches. Every part works with
+ * A compact color picker on React Aria's color hooks: a square saturation and brightness area with
+ * a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, the browser's
+ * eyedropper where it has one, a format select, fields for the chosen format and a copy button;
+ * and preset swatches. Every part works with
  * the keyboard; the channels and the area are named in the EnvUIProvider's language.
  */
 export function ColorPicker({
@@ -199,8 +200,20 @@ export function ColorPicker({
             {label}
           </span>
         )}
-        <ColorArea value={color} onChange={change} disabled={inactive} label={label} />
         <div className="env-color-picker-controls">
+          <ColorArea value={color} onChange={change} disabled={inactive} label={label} />
+          <div className="env-color-picker-sliders">
+            <ColorSlider channel="hue" value={color} onChange={change} disabled={inactive} />
+            {alpha && (
+              <ColorSlider channel="alpha" value={color} onChange={change} disabled={inactive} />
+            )}
+          </div>
+        </div>
+        <div
+          className="env-color-picker-values"
+          data-format={format}
+          data-alpha={alpha || undefined}
+        >
           {eyeDropper && pick && !inactive && (
             <Tooltip content={messages.eyeDropper}>
               <IconButton
@@ -222,18 +235,6 @@ export function ColorPicker({
               />
             </Tooltip>
           )}
-          <div className="env-color-picker-sliders">
-            <ColorSlider channel="hue" value={color} onChange={change} disabled={inactive} />
-            {alpha && (
-              <ColorSlider channel="alpha" value={color} onChange={change} disabled={inactive} />
-            )}
-          </div>
-        </div>
-        <div
-          className="env-color-picker-values"
-          data-format={format}
-          data-alpha={alpha || undefined}
-        >
           {formats.length > 1 && (
             <div className="env-color-picker-format">
               <Menu.Root

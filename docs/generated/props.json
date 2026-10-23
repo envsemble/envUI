@@ -1135,7 +1135,7 @@
     "ColorPicker": {
       "kind": "component",
       "source": "packages/ui/src/color/ColorPicker.tsx",
-      "description": "A compact color picker on React Aria's color hooks: a saturation and brightness area, a hue slider, an alpha slider with `alpha`, a format select, fields for the chosen format, a copy button, the browser's eyedropper where it has one, and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
+      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, the browser's eyedropper where it has one, a format select, fields for the chosen format and a copy button; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
         {
           "name": "showLabel",

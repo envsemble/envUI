@@ -40,8 +40,9 @@ const ownThresholds = {
   // container query is the container's own.
   'Table.css': ['37.5em'],
   // A color picker's fields wrap below the format where they no longer fit beside it: hex alone,
-  // hex with alpha or a format of channels, and channels with alpha.
-  'ColorPicker.css': ['11rem', '16rem', '19.5rem'],
+  // hex with alpha or a format of channels, and channels with alpha, each 2.25 rem wider beside
+  // the eyedropper. Below 16 rem, its strips also move closer to the area.
+  'ColorPicker.css': ['11rem', '13.25rem', '16rem', '18.25rem', '19.5rem', '21.75rem'],
 };
 
 test('windowClasses holds the widths of the window-class tokens, from compact up', () => {
