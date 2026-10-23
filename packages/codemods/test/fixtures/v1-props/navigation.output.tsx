@@ -1,6 +1,6 @@
-import { List, Menu, NavList, OrganizationSwitcher, Table, Tree } from '@envsemble/envui';
+import { List, Menu, Table, Tree } from '@envsemble/envui';
 
-export function Navigation({ rows, organizations, orgId, switchTo, open, sort, count }) {
+export function Navigation({ rows, open, sort, count }) {
   return (
     <>
       <Menu.Root aria-label="Actions" trigger={<button>More</button>}>
@@ -8,17 +8,6 @@ export function Navigation({ rows, organizations, orgId, switchTo, open, sort, c
           Comments
         </Menu.Item>
       </Menu.Root>
-      <NavList.Root>
-        <NavList.Item href="/inbox" end={<span>3</span>}>
-          Inbox
-        </NavList.Item>
-      </NavList.Root>
-      <OrganizationSwitcher
-        items={[{ id: 'northwind', label: 'Northwind', description: 'Admin' }]}
-        value={orgId}
-        onValueChange={switchTo}
-        triggerClassName="org-trigger"
-      />
       <Tree
         aria-label="Files"
         items={rows}

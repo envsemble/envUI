@@ -31,8 +31,11 @@ const reports = {
     `line 10: Table.Root's density has a value the codemod can't move: ${report('Table.Root', 'density')}`,
   ],
   'content.tsx': [
-    `line 26: Card's layout: ${report('Card', 'layout', 'action')}`,
-    `line 30: Avatar's size has a value the codemod can't move: ${report('Avatar', 'size')}`,
+    `line 25: Card's layout: ${report('Card', 'layout', 'action')}`,
+    // The feature layout is a pattern now: the prop and its icon stay, reported.
+    `line 27: Card's layout has a value the codemod can't move: ${report('Card', 'layout')}`,
+    `line 27: ${report('Card', 'icon')}`,
+    `line 29: Avatar's size has a value the codemod can't move: ${report('Avatar', 'size')}`,
   ],
   'form-vocabulary.tsx': [
     `line 19: TextField's variant has a value the codemod can't move: ${report('TextField', 'variant')}`,
@@ -47,8 +50,7 @@ const reports = {
   // Data a prop takes, such as Combobox's items, is renamed in an array written in the prop and
   // reported where the codemod can't read it.
   'renames.tsx': [
-    `line 28: Combobox's items has entries the codemod can't read: ${report('Combobox', 'items')}`,
-    `line 35: OrganizationSwitcher's items has entries the codemod can't read: ${report('OrganizationSwitcher', 'items')}`,
+    `line 26: Combobox's items has entries the codemod can't read: ${report('Combobox', 'items')}`,
   ],
   'panel-dock.tsx': [
     `line 8: PanelDock.Header's controls has a value the codemod can't move: ${report('PanelDock.Header', 'controls')}`,

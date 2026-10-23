@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, EmptyState, Stack, Surface, Text } from '@envsemble/envui';
+import { Button, Column, Surface, Text } from '@envsemble/envui';
 import { Lock } from '@envsemble/envui/icons/Lock';
 
 export default function NoAccess() {
@@ -11,7 +11,7 @@ export default function NoAccess() {
   }, [requested]);
 
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <Text render={<h3 />} variant="title">
         Annual review
       </Text>
@@ -24,24 +24,28 @@ export default function NoAccess() {
         padding={0}
         style={{ display: 'grid', minBlockSize: '16rem' }}
       >
-        <EmptyState
-          align="center"
-          icon={<Lock />}
-          title="You don’t have access to this project"
-          description={
-            requested
-              ? 'Request sent to Priya Shah. You’ll get an email when they answer.'
-              : 'Ask Priya Shah, its owner, for access to see its documents.'
-          }
-          action={
-            requested ? undefined : (
-              <Button variant="secondary" onClick={() => setRequested(true)}>
-                Request access
-              </Button>
-            )
-          }
-        />
+        {/* Centred in the room the documents would take, with a larger icon. */}
+        <Column gap={4} padding={5} align="center" justify="center" style={{ textAlign: 'center' }}>
+          <Text render={<span />} emphasis="muted">
+            <Lock width="2.5rem" height="2.5rem" />
+          </Text>
+          <Column gap={2} align="center" style={{ maxInlineSize: '30rem' }}>
+            <Text render={<h4 />} variant="title">
+              You don’t have access to this project
+            </Text>
+            <Text variant="body-sm">
+              {requested
+                ? 'Request sent to Priya Shah. You’ll get an email when they answer.'
+                : 'Ask Priya Shah, its owner, for access to see its documents.'}
+            </Text>
+          </Column>
+          {!requested && (
+            <Button variant="secondary" onClick={() => setRequested(true)}>
+              Request access
+            </Button>
+          )}
+        </Column>
       </Surface>
-    </Stack>
+    </Column>
   );
 }

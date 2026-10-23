@@ -1,11 +1,13 @@
-import { IconButton, Popover, Text, Stack } from '@envsemble/envui';
+import { IconButton, Popover, Text, Row } from '@envsemble/envui';
 import { Help } from '@envsemble/envui/icons/Help';
 
 export default function FieldHelp() {
   return (
-    <Stack direction="row" wrap align="center" gap={4}>
+    <Row wrap align="center" gap={4}>
       <Text render={<span />}>Billing period: monthly</Text>
       <Popover
+        // Shown open in the docs; without defaultOpen, it opens from its trigger.
+        defaultOpen
         title="Billing periods"
         side="right"
         align="start"
@@ -16,6 +18,6 @@ export default function FieldHelp() {
           Members added later are billed from the next period.
         </Text>
       </Popover>
-    </Stack>
+    </Row>
   );
 }

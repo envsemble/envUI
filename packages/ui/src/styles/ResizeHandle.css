@@ -1,5 +1,7 @@
 /* ResizeHandle: a window splitter's handle. The owner places it on the edge it moves; a line shows
-   on hover, after a moment, at once on keyboard focus and while dragging. */
+   on hover, after a moment, at once on keyboard focus and while dragging. Two hooks, set on the
+   owner's element: --env-resize-handle-size, its thickness, also under a coarse pointer, and
+   --env-resize-handle-line: none, which leaves the line out for an owner that draws its own grip. */
 .env-resize-handle {
   position: relative;
   flex: 0 0 auto;
@@ -9,11 +11,11 @@
   outline: none;
 }
 .env-resize-handle[data-axis='inline'] {
-  inline-size: var(--env-space-2);
+  inline-size: var(--env-resize-handle-size, var(--env-space-2));
   cursor: col-resize;
 }
 .env-resize-handle[data-axis='block'] {
-  block-size: var(--env-space-2);
+  block-size: var(--env-resize-handle-size, var(--env-space-2));
   cursor: row-resize;
 }
 .env-resize-handle[aria-disabled='true'] {
@@ -21,6 +23,7 @@
 }
 .env-resize-handle::after {
   content: '';
+  display: var(--env-resize-handle-line, block);
   position: absolute;
   background: transparent;
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
@@ -47,10 +50,10 @@
 /* Under a coarse pointer the handle's hit area reaches the touch size across its line. */
 @media (pointer: coarse) {
   .env-resize-handle[data-axis='inline'] {
-    inline-size: var(--env-control-height-touch);
+    inline-size: var(--env-resize-handle-size, var(--env-control-height-touch));
   }
   .env-resize-handle[data-axis='block'] {
-    block-size: var(--env-control-height-touch);
+    block-size: var(--env-resize-handle-size, var(--env-control-height-touch));
   }
 }
 /* Forced colors: the line takes the system's colors. */

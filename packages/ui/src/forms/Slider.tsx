@@ -12,6 +12,7 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { useLocale } from '../internal/EnvUIContext.js';
 import { useDirectionScope } from '../internal/useDirection.js';
@@ -161,13 +162,13 @@ export function Slider({
         <FieldFrame
           id={id}
           label={
-            <div className="env-slider-heading">
+            <Row wrap justify="between" className="env-slider-heading">
               <BaseSlider.Label className="env-slider-label">{label}</BaseSlider.Label>
               {/* The output names the range input it shows, and stays quiet while the value moves. */}
               <BaseSlider.Value className="env-slider-value">
                 {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
               </BaseSlider.Value>
-            </div>
+            </Row>
           }
           description={description}
         >

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, ButtonGroup, IconButton, Stack, Theme, type ThemeValue } from '@envsemble/envui';
+import { Button, ButtonGroup, IconButton, Column, Theme, type ThemeValue } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
@@ -10,7 +10,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
   const [ends, setEnds] = useState(true);
   return (
     <Theme theme={theme} data-testid={`button-groups-${theme}`} className="fixture-section">
-      <Stack align="start">
+      <Column gap={4} align="start">
         <Button data-testid="standalone">Standalone action</Button>
         {(['horizontal', 'vertical'] as const).map((orientation) => (
           <ButtonGroup
@@ -20,13 +20,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
             data-testid={orientation}
           >
             <Button onClick={() => setActivations((value) => value + 1)}>Continue</Button>
-            <Button
-              variant="primary"
-              tone="accent"
-              iconOnly
-              icon={<Check />}
-              aria-label="Confirm"
-            />
+            <IconButton variant="primary" tone="accent" icon={<Check />} aria-label="Confirm" />
             <IconButton icon={<Settings />} aria-label="Settings" />
             <Button href="#group-destination" variant="outline" startIcon={<Settings />}>
               Manage
@@ -37,7 +31,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
           </ButtonGroup>
         ))}
         <ButtonGroup data-testid="important-end">
-          <Button variant="primary" tone="accent" iconOnly icon={<Check />} aria-label="Approve" />
+          <IconButton variant="primary" tone="accent" icon={<Check />} aria-label="Approve" />
           <Button variant="secondary">Cancel</Button>
         </ButtonGroup>
         <ButtonGroup orientation="vertical" data-testid="important-top">
@@ -50,10 +44,9 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
           <Button>Only action</Button>
         </ButtonGroup>
         <ButtonGroup orientation="vertical" data-testid="single-important">
-          <Button
+          <IconButton
             variant="primary"
             tone="accent"
-            iconOnly
             icon={<Check />}
             aria-label="Only confirmation"
           />
@@ -108,7 +101,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
             <IconButton icon={<Add />} aria-label="Add a list" />
           </ButtonGroup>
         </div>
-      </Stack>
+      </Column>
     </Theme>
   );
 }

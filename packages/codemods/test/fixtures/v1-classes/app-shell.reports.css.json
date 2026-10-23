@@ -1,6 +1,11 @@
 [
-  "line 7: .env-app-shell[data-compact] matches nothing in 1.0: AppShell.Root no longer marks the sidebar's state: select .env-sidebar[data-state='collapsed'], [data-rail] while it shows icons only and [data-peek] while it shows over the content; below the breakpoint the root has data-mobile and the sidebar is a drawer; the topbar's layout is data-header-span.",
-  "line 8: --env-sidebar-collapsed-width is removed in 1.0: A sidebar's rail is --env-control-height plus two --env-sidebar-inset wide; set --env-sidebar-inset to change it.",
-  "line 13: env-app-context has no 1.0 class: The topbar's context has no class of its own in 1.0: it sits in Sidebar.Header after the SidebarTrigger, or in AppShell.Header's start; style your own element there.",
-  "line 14: env-app-sidebar-backdrop has no 1.0 class: Below the breakpoint the sidebar is a Drawer, with the Drawer's own backdrop."
+  "line 5: --env-app-topbar-block-size is removed in 1.0: TopBar is --env-top-bar-height tall; the Scaffold measures its top bar region and sets --env-scaffold-sticky-top from it.",
+  "line 7: env-app-sidebar has no 1.0 class: The sidebar is gone, with its toggle, its resize handle and its drawer: the navigation forms in a Scaffold's navigation have classes of their own, in the slots env-scaffold-bar, env-scaffold-rail and env-scaffold-drawer.",
+  "line 7: env-app-shell has no 1.0 class: AppShell is gone: its frame is a Scaffold, env-scaffold, whose data-compact, data-medium, data-expanded and data-large name the navigation form each window class shows, and nothing collapses; its header is a TopBar, env-top-bar, and its main region env-scaffold-body.",
+  "line 8: --env-sidebar-collapsed-width is removed in 1.0: Sidebar is gone: Rail, the navigation form for medium windows, has a width of its own.",
+  "line 10: env-app-sidebar-toggle has no 1.0 class: The sidebar is gone, with its toggle, its resize handle and its drawer: the navigation forms in a Scaffold's navigation have classes of their own, in the slots env-scaffold-bar, env-scaffold-rail and env-scaffold-drawer.",
+  "line 10: env-app-brand has no 1.0 class: The brand mark has no class of its own in 1.0: put it in a TopBar's start, and style your own element there.",
+  "line 13: env-app-context has no 1.0 class: The topbar's context has no class of its own in 1.0: it sits in a TopBar's start; style your own element there.",
+  "line 14: env-app-sidebar-backdrop has no 1.0 class: The sidebar is gone, with its toggle, its resize handle and its drawer: the navigation forms in a Scaffold's navigation have classes of their own, in the slots env-scaffold-bar, env-scaffold-rail and env-scaffold-drawer.",
+  "line 18: --app-sticky-top is removed in 1.0: Sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
 ]

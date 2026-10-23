@@ -71,6 +71,10 @@ let errors: string[] = [];
 test.beforeEach(async ({ page }) => {
   errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  // Playwright catches file pickers only while a filechooser listener is on, and turns that on
+  // without waiting as a listener is added. Kept on for the whole test, a press right after a
+  // waitForEvent('filechooser') can't open a real picker, which headless Chromium cancels at once.
+  page.on('filechooser', () => {});
   await page.goto(`${fixtureUrl}/?fixture=drop-zones`);
 });
 

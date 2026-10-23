@@ -179,21 +179,21 @@ export { Button } from '@envsemble/envui';
 export { EnvDialog as AppDialog };
 export * from './more';
 `,
-      'src/ui/more.ts': "export { Stack } from '@envsemble/envui';\nexport const local = 1;\n",
+      'src/ui/more.ts': "export { Column } from '@envsemble/envui';\nexport const local = 1;\n",
     });
   });
   after(() => app.cleanup());
 
   it('counts named imports from the barrel as envUI', () => {
     app.write({
-      'src/Feature.tsx': `import { AppDialog, Button, Stack } from './ui';
+      'src/Feature.tsx': `import { AppDialog, Button, Column } from './ui';
 
 export function Feature() {
   return (
-    <Stack gap={2}>
+    <Column gap={2}>
       <Button variant="primary">Delete</Button>
       <AppDialog open title="Delete?" />
-    </Stack>
+    </Column>
   );
 }
 `,
@@ -201,11 +201,11 @@ export function Feature() {
     const score = scoreRun({
       appDir: app.appDir,
       baseCommit: app.baseCommit,
-      task: task('Button', 'Dialog', 'Stack'),
+      task: task('Button', 'Dialog', 'Column'),
     });
-    assert.deepEqual(score.envui.exportsUsed, ['Button', 'Dialog', 'Stack']);
+    assert.deepEqual(score.envui.exportsUsed, ['Button', 'Column', 'Dialog']);
     assert.equal(score.coverage.ratio, 1);
-    assert.deepEqual(score.envui.jsxUses, { Stack: 1, Button: 1, Dialog: 1 });
+    assert.deepEqual(score.envui.jsxUses, { Column: 1, Button: 1, Dialog: 1 });
   });
 
   it('counts a namespace import of the barrel', () => {
@@ -239,6 +239,48 @@ export const Feature = () => <Button size="huge">Go</Button>;
     assert.deepEqual(
       score.envuiErrors.map((error) => error.kind),
       ['invalid-prop'],
+    );
+  });
+});
+
+describe('props on a namespace part', () => {
+  let app;
+  before(async () => {
+    app = await makeApp({
+      'node_modules/@envsemble/envui/table.d.ts': `export declare function Root(props: { skeleton?: boolean; children?: unknown }): unknown;
+export declare function HeaderCell(props: { onSortChange?: (next: string) => void; children?: unknown }): unknown;
+`,
+    });
+    app.write({
+      'node_modules/@envsemble/envui/index.d.ts': `export declare function Button(props: { children?: unknown }): unknown;
+export declare function Column(props: { gap?: number; children?: unknown }): unknown;
+export * as Table from './table';
+`,
+    });
+  });
+  after(() => app.cleanup());
+
+  it('count as Namespace.Part.prop, through a named or a namespace import', () => {
+    app.write({
+      'src/Feature.tsx': `import { Table } from '@envsemble/envui';
+import * as ui from '@envsemble/envui';
+
+export const Feature = () => (
+  <Table.Root>
+    <Table.HeaderCell onSortChange={() => {}}>Name</Table.HeaderCell>
+    <ui.Table.Root skeleton />
+  </Table.Root>
+);
+`,
+    });
+    const score = scoreRun({
+      appDir: app.appDir,
+      baseCommit: app.baseCommit,
+      task: task('Table.HeaderCell.onSortChange', 'Table.Root.skeleton', 'Table.Root.onSortChange'),
+    });
+    assert.deepEqual(
+      score.coverage.capabilities.map((capability) => capability.covered),
+      [true, true, false],
     );
   });
 });

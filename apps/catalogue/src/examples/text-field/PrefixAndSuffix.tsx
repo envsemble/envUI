@@ -1,10 +1,10 @@
-import { Stack, TextField } from '@envsemble/envui';
+import { Column, TextField } from '@envsemble/envui';
 import { Sell } from '@envsemble/envui/icons/Sell';
 
 export default function PrefixAndSuffix() {
   return (
     // As wide as a form column.
-    <Stack style={{ inlineSize: 'min(100%, 24rem)' }}>
+    <Column gap={4} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <TextField
         label="Address"
         name="slug"
@@ -22,6 +22,6 @@ export default function PrefixAndSuffix() {
         suffix="per month"
         startIcon={<Sell />}
       />
-    </Stack>
+    </Column>
   );
 }

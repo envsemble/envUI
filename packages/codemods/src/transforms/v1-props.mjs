@@ -84,7 +84,7 @@ export default function transform(file, api, options = {}) {
     expression: (node) => node.value,
     literal: literalLike,
   };
-  // The objects in an array a prop or property takes, such as OrganizationSwitcher's items.
+  // The objects in an array a prop or property takes, such as Combobox's items.
   properties.properties = properties;
 
   let changed = false;

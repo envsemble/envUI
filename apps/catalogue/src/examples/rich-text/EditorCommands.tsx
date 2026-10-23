@@ -1,11 +1,11 @@
 import { useRef } from 'react';
-import { Button, Stack } from '@envsemble/envui';
+import { Button, Column } from '@envsemble/envui';
 import { RichTextEditor, type RichTextEditorHandle } from '@envsemble/envui/rich-text';
 
 export default function EditorCommands() {
   const editorRef = useRef<RichTextEditorHandle>(null);
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <RichTextEditor ref={editorRef} label="Reply" defaultValue="Thanks, the dates work for us." />
       <Button
         variant="secondary"
@@ -16,6 +16,6 @@ export default function EditorCommands() {
       >
         Add signature
       </Button>
-    </Stack>
+    </Column>
   );
 }

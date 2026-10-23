@@ -39,7 +39,7 @@ const object = (properties, required = []) => ({
   additionalProperties: false,
 });
 
-const searchKinds = ['component', 'export', 'pattern', 'template', 'foundation', 'guide', 'token'];
+const searchKinds = ['component', 'export', 'pattern', 'foundation', 'guide', 'token'];
 
 /** The tools, with their JSON Schemas and what each returns. */
 export const tools = [
@@ -47,7 +47,7 @@ export const tools = [
     name: 'search',
     title: 'Search envUI',
     description:
-      'Search envUI components, patterns, templates, foundations, guides and tokens by what they do or what people call them, such as "sidebar toggle", "modal" or "muted text". Search before writing any UI element.',
+      'Search envUI components, patterns, foundations, guides and tokens by what they do or what people call them, such as "sidebar toggle", "modal" or "muted text". Search before writing any UI element.',
     inputSchema: object(
       {
         query: string('What you need, in your own words.'),
@@ -76,7 +76,7 @@ export const tools = [
     name: 'get_component',
     title: 'Get an envUI component',
     description:
-      "A component's summary, aliases, when to use it and what to use instead, its exports with their import paths, its examples and related pages. Accepts a component, an export such as IconButton or Menu.Item, a page name or an alias. Set docs to true for the whole page as Markdown.",
+      "A component's summary, aliases, when to use it and what to use instead, its exports with their import paths, its examples, its parts (the part classes and state attributes CSS may target, each with what it is) and related pages. Accepts a component, an export such as IconButton or Menu.Item, a page name or an alias. Set docs to true for the whole page as Markdown.",
     inputSchema: object(
       {
         name: string('A component, export, part, page name or alias.'),
@@ -100,10 +100,10 @@ export const tools = [
     name: 'get_example',
     title: 'Get an envUI example',
     description:
-      "The source of an example: a small component an application can copy. Without an example name, lists the examples of a component, pattern, template, export or alias, with what each shows; a template's screens are listed too.",
+      'The source of an example: a small component an application can copy. Without an example name, lists the examples of a component, pattern, export or alias, with what each shows.',
     inputSchema: object(
       {
-        component: string('A component, pattern, template, export, page name or alias.'),
+        component: string('A component, pattern, export, page name or alias.'),
         example: string('The example file name, such as ConfirmDelete; leave out to list them.'),
       },
       ['component'],
@@ -128,27 +128,6 @@ export const tools = [
     inputSchema: object(
       {
         name: string('A pattern name, title or alias, such as loading.'),
-        docs: { type: 'boolean', description: "Include the page's Markdown." },
-      },
-      ['name'],
-    ),
-  },
-  {
-    name: 'list_templates',
-    title: 'List envUI templates',
-    description:
-      'Templates: whole screens, such as a settings page or a sign-in page, built from envUI as source to copy and edit; each with whether it renders inside the app frame and its files.',
-    inputSchema: object({}),
-  },
-  {
-    name: 'get_template',
-    title: 'Get an envUI template',
-    description:
-      'A template: its summary, when to use it, what it composes and its files. With file, the source of one of its screens or examples, to copy into the application and edit. Set docs to true for the whole page as Markdown.',
-    inputSchema: object(
-      {
-        name: string('A template name, title or alias, such as settings-page.'),
-        file: string('A file name or title of the template, such as SettingsPage.'),
         docs: { type: 'boolean', description: "Include the page's Markdown." },
       },
       ['name'],
@@ -180,7 +159,7 @@ export const tools = [
     name: 'plan',
     title: 'Find envUI candidates for a UI',
     description:
-      'Candidates for a description of a screen or feature: for each part, the envUI component whose names, aliases or description match it, with the words that matched; matching patterns and templates; tokens it names; the parts nothing matched; and words left out as content. The candidates come from matching words, not understanding: confirm each with get_component and get_props, and search for the uncovered parts. Not an import list.',
+      'Candidates for a description of a screen or feature: for each part, the envUI component whose names, aliases or description match it, with the words that matched; matching patterns; tokens it names; the parts nothing matched; and words left out as content. The candidates come from matching words, not understanding: confirm each with get_component and get_props, and search for the uncovered parts. Not an import list.',
     inputSchema: object(
       {
         description: string(
@@ -215,7 +194,7 @@ function componentOrError(manifest, name) {
   );
 }
 
-/** A pattern or template page by name, title or alias, or a ToolError that lists them. */
+/** A pattern page by name, title or alias, or a ToolError that lists them. */
 function pageOrError(manifest, kind, name) {
   const found = findPage(manifest, kind, name);
   if (found) return found;
@@ -228,25 +207,21 @@ function pageOrError(manifest, kind, name) {
 }
 
 /**
- * The page whose examples get_example lists: a pattern or template by its own name or title, else
- * a component page by name, export or alias, else a pattern or template by alias.
+ * The page whose examples get_example lists: a pattern by its own name or title, else a component
+ * page by name, export or alias, else a pattern by alias.
  */
 function exampleOwner(manifest, name) {
   const ofPage = (kind, page) => ({
     name: page.name,
     kind,
-    examples: [...(page.files ?? []), ...(page.examples ?? [])],
+    examples: page.examples ?? [],
   });
-  for (const kind of ['pattern', 'template']) {
-    const found = findPage(manifest, kind, name);
-    if (found && !found.requested) return ofPage(kind, found.page);
-  }
+  const own = findPage(manifest, 'pattern', name);
+  if (own && !own.requested) return ofPage('pattern', own.page);
   const component = findComponent(manifest, name);
   if (component) return { name: component.component.name, examples: component.component.examples };
-  for (const kind of ['pattern', 'template']) {
-    const found = findPage(manifest, kind, name);
-    if (found) return ofPage(kind, found.page);
-  }
+  const aliased = findPage(manifest, 'pattern', name);
+  if (aliased) return ofPage('pattern', aliased.page);
   const { exported } = componentOrError(manifest, name);
   if (exported) throw new ToolError(`${name} has no component page with examples.`);
   return undefined;
@@ -408,42 +383,6 @@ export function callTool(context, name, args = {}) {
       if (args.docs) result[markdownContent] = readPackageFile(root, page.doc);
       return result;
     }
-    case 'list_templates':
-      return {
-        templates: manifest.templates.map((page) => summarize(manifest, 'template', page)),
-        ...(!manifest.templates.length && {
-          note: 'This version has no templates yet. Use plan to choose components for a page.',
-        }),
-      };
-    case 'get_template': {
-      const { page, requested } = pageOrError(manifest, 'template', requireString(args, 'name'));
-      if (args.file === undefined || args.file === '') {
-        const result = { ...page, ...(requested && { requested }) };
-        if (args.docs) result[markdownContent] = readPackageFile(root, page.doc);
-        return result;
-      }
-      const files = [...(page.files ?? []), ...(page.examples ?? [])];
-      const file = fileOf(files, requireString(args, 'file'));
-      if (!file)
-        throw new ToolError(
-          `${page.name} has no file "${args.file}". Its files: ${files.map((item) => item.name).join(', ')}.`,
-        );
-      const result = {
-        template: page.name,
-        ...(requested && { requested }),
-        name: file.name,
-        title: file.title,
-        description: file.description,
-        ...(file.frame && { frame: file.frame }),
-        file: file.file,
-        source: readPackageFile(root, file.file),
-        ...(file.frame === 'app' && {
-          note: 'Renders inside AppShell.Main. Start the frame from get_template app-frame.',
-        }),
-      };
-      if (args.docs) result[markdownContent] = readPackageFile(root, page.doc);
-      return result;
-    }
     case 'get_tokens': {
       const { tokens } = manifest;
       const limit = Number.isInteger(args.limit) ? Math.min(Math.max(args.limit, 1), 400) : 60;
@@ -526,7 +465,7 @@ export function createServer({
 } = {}) {
   const version = manifest.version ?? JSON.parse(readPackageFile(root, 'package.json')).version;
   const context = { manifest, root };
-  const instructions = `envUI ${version} (${manifest.package}). ${manifest.rule} Use plan for candidates for a screen or feature and search to find a component, then get_component and get_props to confirm one before using it, and get_example for code to start from. Use list_templates and get_template for whole screens, and list_patterns and get_pattern for recurring needs such as forms, empty states or destructive actions. Use only exports these tools confirm exist.`;
+  const instructions = `envUI ${version} (${manifest.package}). ${manifest.rule} Use plan for candidates for a screen or feature and search to find a component, then get_component and get_props to confirm one before using it, and get_example for code to start from. Use list_patterns and get_pattern for recurring needs such as an app frame, forms, empty states or destructive actions. Use only exports these tools confirm exist.`;
   const result = (id, value) => ({ jsonrpc: '2.0', id, result: value });
   const error = (id, code, message) => ({ jsonrpc: '2.0', id, error: { code, message } });
 

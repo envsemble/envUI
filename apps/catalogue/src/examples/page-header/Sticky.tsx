@@ -1,46 +1,32 @@
-import type { CSSProperties } from 'react';
-import { Button, Page, PageHeader, Stack, Text } from '@envsemble/envui';
+import { Button, Column, Page, PageHeader, Text } from '@envsemble/envui';
 
 const sections = ['Summary', 'Revenue', 'Costs', 'Outlook'];
 
 export default function Sticky() {
   return (
-    // A scrolling box stands in for the application's main region.
-    <div
-      style={
-        {
-          blockSize: '18rem',
-          overflow: 'auto',
-          // In a box of its own that scrolls, the header sticks at the box's top edge.
-          '--env-frame-sticky-top': '0px',
-        } as CSSProperties
-      }
-    >
+    // A box that scrolls stands in for the window; the header sticks at its top edge.
+    <div style={{ blockSize: '18rem', overflow: 'auto' }}>
       <Page
         width="md"
         header={
-          // Level 2 under this page's own heading; a page's own header keeps the default, 1.
           <PageHeader
-            headingLevel={2}
+            headingLevel={3}
             sticky
             title="Annual report"
             actions={<Button variant="secondary">Download</Button>}
           />
         }
       >
-        <Stack gap={6}>
+        <Column gap={6}>
           {sections.map((section) => (
-            <Stack key={section} gap={2} render={<section />}>
-              <Text variant="title" render={<h3 />}>
+            <Column key={section} gap={2} render={<section />}>
+              <Text variant="title" render={<h4 />}>
                 {section}
               </Text>
-              <Text>
-                The header stays at the top of the page as it scrolls, and publishes its height as
-                --env-page-header-block-size for content that sticks below it.
-              </Text>
-            </Stack>
+              <Text>The header stays at the top of the page as it scrolls.</Text>
+            </Column>
           ))}
-        </Stack>
+        </Column>
       </Page>
     </div>
   );

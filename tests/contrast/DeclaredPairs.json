@@ -459,35 +459,35 @@
     "--env-color-border-danger-strong on --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-danger-strong on --env-color-bg-muted": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-danger-strong on --env-color-bg-page": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-danger-strong on --env-color-bg-popup": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-danger-strong on --env-color-bg-raised": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
@@ -690,7 +690,7 @@
     "--env-color-border-info-strong on --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
@@ -704,28 +704,28 @@
     "--env-color-border-info-strong on --env-color-bg-muted": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-info-strong on --env-color-bg-page": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-info-strong on --env-color-bg-popup": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-info-strong on --env-color-bg-raised": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
@@ -771,14 +771,14 @@
     "--env-color-border-neutral-strong on --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-neutral-strong on --env-color-bg-muted": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
@@ -792,21 +792,21 @@
     "--env-color-border-neutral-strong on --env-color-bg-page": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-neutral-strong on --env-color-bg-popup": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-neutral-strong on --env-color-bg-raised": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
@@ -848,35 +848,35 @@
     "--env-color-border-success-strong on --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-success-strong on --env-color-bg-muted": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-success-strong on --env-color-bg-page": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-success-strong on --env-color-bg-popup": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-color-border-success-strong on --env-color-bg-raised": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
@@ -920,6 +920,48 @@
       "minimum": {
         "standard": 1.2,
         "high": 1.5
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-popup": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-list-item-bg": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-default": {
@@ -1188,7 +1230,35 @@
         "high": 7
       }
     },
+    "--env-color-fg-danger on --env-color-bg-danger-muted over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-danger on --env-color-bg-danger-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-danger-muted over --env-color-bg-popup": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-danger-muted over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-danger-muted over --env-color-list-item-bg": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -1224,6 +1294,48 @@
       }
     },
     "--env-color-fg-danger on --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over --env-color-bg-popup": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over --env-color-list-item-bg": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -1545,7 +1657,35 @@
         "high": 7
       }
     },
+    "--env-color-fg-done on --env-color-bg-done-muted over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-done on --env-color-bg-done-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-done on --env-color-bg-done-muted over --env-color-bg-popup": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-done on --env-color-bg-done-muted over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-done on --env-color-bg-done-muted over --env-color-list-item-bg": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -2364,6 +2504,48 @@
         "high": 7
       }
     },
+    "--env-color-fg-success on --env-color-bg-neutral-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-success on --env-color-bg-neutral-muted over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-success on --env-color-bg-neutral-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-success on --env-color-bg-neutral-muted over --env-color-bg-popup": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-success on --env-color-bg-neutral-muted over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-success on --env-color-bg-neutral-muted over --env-color-list-item-bg": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-success on --env-color-bg-page": {
       "kind": "text",
       "minimum": {
@@ -2378,7 +2560,35 @@
         "high": 7
       }
     },
+    "--env-color-fg-success on --env-color-bg-success-muted over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-success on --env-color-bg-success-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-success on --env-color-bg-success-muted over --env-color-bg-popup": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-success on --env-color-bg-success-muted over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-success on --env-color-bg-success-muted over --env-color-list-item-bg": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -2427,7 +2637,35 @@
         "high": 7
       }
     },
+    "--env-color-fg-warning on --env-color-bg-warning-muted over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-warning on --env-color-bg-warning-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-warning on --env-color-bg-warning-muted over --env-color-bg-popup": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-warning on --env-color-bg-warning-muted over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-warning on --env-color-bg-warning-muted over --env-color-list-item-bg": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -2458,49 +2696,49 @@
     "--env-elevation-2-border on --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-elevation-2-border on --env-color-bg-muted": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-elevation-2-border on --env-color-bg-page": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-elevation-2-border on --env-color-bg-popup": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-elevation-2-border on --env-color-bg-raised": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-elevation-3-border on --env-color-bg-overlay over --env-color-bg-page": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
     "--env-elevation-3-border on --env-color-bg-raised": {
       "kind": "non-text",
       "minimum": {
-        "standard": 1.2,
+        "standard": 1.6,
         "high": 4.5
       }
     },
@@ -2856,6 +3094,8 @@
     "--elevation-2-border on --color-bg-raised",
     "--elevation-3-border on --color-bg-overlay over --color-bg-page",
     "--elevation-3-border on --color-bg-raised",
+    "--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-popup",
+    "--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-raised",
     "badge-outline-important on --color-bg-important-strong",
     "badge-outline-primary on --color-bg-brand-emphasis",
     "heatmap-accent-lowest on --color-bg-neutral-muted over --color-bg-page"

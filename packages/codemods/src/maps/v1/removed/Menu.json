@@ -2,6 +2,27 @@
   "@envsemble/envui": {
     "MenuDensity": {
       "use": "Menus have one anatomy in 1.0, and density is gone: the app's scale sizes them, so use ThemeScale for a scale and drop the density."
+    },
+    "OrganizationSwitcher": {
+      "use": "OrganizationSwitcher is gone: the organization switcher pattern builds it from a Menu.Root whose trigger is a secondary Button naming the active organization, a Menu.RadioGroup of Menu.RadioItems with the person's role as each description, and a Menu.Item that creates one; no codemod rewrites it."
+    },
+    "OrganizationMenu": {
+      "use": "OrganizationMenu, OrganizationSwitcher in 1.0.0-prerelease.0, is gone: the organization switcher pattern builds it from a Menu.Root whose trigger is a secondary Button naming the active organization, a Menu.RadioGroup of Menu.RadioItems with the person's role as each description, and a Menu.Item that creates one; no codemod rewrites it."
+    },
+    "OrganizationSwitcherProps": {
+      "use": "Menu.RootProps; OrganizationSwitcher is gone: the organization switcher pattern builds it from Menu.Root, Menu.RadioGroup and Button."
+    },
+    "OrganizationMenuProps": {
+      "use": "Menu.RootProps; OrganizationSwitcher is gone: the organization switcher pattern builds it from Menu.Root, Menu.RadioGroup and Button."
+    },
+    "OrganizationSwitcherItem": {
+      "use": "OrganizationSwitcher is gone, with its items: the organization switcher pattern renders the application's own organizations as Menu.RadioItems."
+    },
+    "OrganizationSwitcherOrganization": {
+      "use": "OrganizationSwitcher is gone, with its items: the organization switcher pattern renders the application's own organizations as Menu.RadioItems."
+    },
+    "OrganizationMenuOrganization": {
+      "use": "OrganizationSwitcher is gone, with its items: the organization switcher pattern renders the application's own organizations as Menu.RadioItems."
     }
   }
 }

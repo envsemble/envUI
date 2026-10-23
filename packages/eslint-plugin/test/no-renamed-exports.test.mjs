@@ -102,8 +102,9 @@ ruleTester.run('no-renamed-exports', rule, {
       errors: [renamed('MenuItem', 'Menu.Item'), renamed('MenuSeparator', 'Menu.Separator')],
     },
     {
+      // Row was a list row in 0.7 and is a layout primitive in 1.0, so it is no report.
       code: "import { GroupedRows, Row } from '@envsemble/envui';",
-      errors: [renamed('GroupedRows', 'List.Root'), renamed('Row', 'List.Item')],
+      errors: [renamed('GroupedRows', 'List.Root')],
     },
     {
       code: "import { DirectionLink } from '@envsemble/envui';",
@@ -139,8 +140,8 @@ ruleTester.run('no-renamed-exports', rule, {
     {
       code: "import { NavigationItem, OrganizationMenu, ToastProvider } from '@envsemble/envui';",
       errors: [
-        renamed('NavigationItem', 'NavList.Item'),
-        renamed('OrganizationMenu', 'OrganizationSwitcher'),
+        internal('NavigationItem'),
+        internal('OrganizationMenu'),
         renamed('ToastProvider', 'Toast.Provider'),
       ],
     },
@@ -149,7 +150,7 @@ ruleTester.run('no-renamed-exports', rule, {
       errors: [
         {
           message:
-            "LoadingBar is internal in envUI 1.0 and no longer exported. AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task.",
+            "LoadingBar is internal in envUI 1.0 and no longer exported. TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task.",
         },
         internal('getInitials'),
       ],
@@ -175,10 +176,10 @@ ruleTester.run('no-renamed-exports', rule, {
       ],
     },
     {
-      code: "import { Table as DataTable, Stat } from '@envsemble/envui'; <><DataTable /><Stat /></>;",
+      code: "import { Table as DataTable, Menubar } from '@envsemble/envui'; <><DataTable /><Menubar /></>;",
       errors: [
         namespace('Table', 'DataTable', 'DataTable.Root'),
-        namespace('Stat', 'Stat', 'Stat.Root'),
+        namespace('Menubar', 'Menubar', 'Menubar.Root'),
       ],
     },
     // The manual Toast is internal: rendering it is reported with what to do instead.
@@ -194,10 +195,10 @@ ruleTester.run('no-renamed-exports', rule, {
     },
     // Members of a namespace import.
     {
-      code: "import * as envui from '@envsemble/envui'; <envui.Input />; envui.Counter; <envui.Menubar />;",
+      code: "import * as envui from '@envsemble/envui'; <envui.Input />; envui.DiffCount; <envui.Menubar />;",
       errors: [
         renamed('Input', 'TextField'),
-        renamed('Counter', 'CounterBadge'),
+        renamed('DiffCount', 'DiffStat'),
         namespace('Menubar', 'envui.Menubar', 'envui.Menubar.Root'),
       ],
     },
@@ -217,14 +218,14 @@ ruleTester.run('no-renamed-exports', rule, {
       errors: [{ ...renamed('Input', 'TextField'), line: 1, column: 9 }, internal('LoadingBar')],
     },
     {
-      code: "const envui = require('@envsemble/envui'); envui.Notice; require('@envsemble/envui').Counter;",
-      errors: [renamed('Notice', 'Alert'), renamed('Counter', 'CounterBadge')],
+      code: "const envui = require('@envsemble/envui'); envui.Notice; require('@envsemble/envui').DiffCount;",
+      errors: [renamed('Notice', 'Alert'), renamed('DiffCount', 'DiffStat')],
     },
     {
-      code: "async function load() { const { Input } = await import('@envsemble/envui'); const ui = await import('@envsemble/envui'); return [Input, ui.Row, (await import('@envsemble/envui')).getInitials]; }",
+      code: "async function load() { const { Input } = await import('@envsemble/envui'); const ui = await import('@envsemble/envui'); return [Input, ui.GroupedRows, (await import('@envsemble/envui')).getInitials]; }",
       errors: [
         renamed('Input', 'TextField'),
-        renamed('Row', 'List.Item', 'List'),
+        renamed('GroupedRows', 'List.Root', 'List'),
         internal('getInitials'),
       ],
     },

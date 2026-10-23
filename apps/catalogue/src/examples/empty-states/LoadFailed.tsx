@@ -1,14 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  EmptyState,
-  LoadingState,
-  Skeleton,
-  Stack,
-  Surface,
-  Table,
-  Text,
-} from '@envsemble/envui';
+import { Alert, Button, Column, Row, Table, Text, placeholders } from '@envsemble/envui';
 import { Upload } from '@envsemble/envui/icons/Upload';
 
 export default function LoadFailed() {
@@ -26,18 +17,19 @@ export default function LoadFailed() {
   };
 
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       {/* The heading and the page's action stay whatever the table's state. */}
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+      <Row wrap align="center" justify="between" gap={3}>
         <Text render={<h3 ref={heading} tabIndex={-1} />} variant="title">
           Documents
         </Text>
         <Button variant="secondary" size="sm" startIcon={<Upload />} href="/documents/upload">
           Upload document
         </Button>
-      </Stack>
-      {state === 'loaded' ? (
-        <Table.Root aria-label="Documents">
+      </Row>
+      {state !== 'failed' ? (
+        // While the documents load, the same table is a skeleton over placeholder rows.
+        <Table.Root aria-label="Documents" skeleton={state === 'loading'}>
           <Table.Head>
             <Table.Row>
               <Table.HeaderCell>Name</Table.HeaderCell>
@@ -46,8 +38,8 @@ export default function LoadFailed() {
             </Table.Row>
           </Table.Head>
           <Table.Body>
-            {documents.map((item) => (
-              <Table.Row key={item.name}>
+            {(state === 'loaded' ? documents : placeholders<Document>(3)).map((item, row) => (
+              <Table.Row key={item.name ?? row}>
                 <Table.Cell>{item.name}</Table.Cell>
                 <Table.Cell>{item.owner}</Table.Cell>
                 <Table.Cell numeric nowrap>
@@ -57,38 +49,32 @@ export default function LoadFailed() {
             ))}
           </Table.Body>
         </Table.Root>
-      ) : state === 'loading' ? (
-        <LoadingState label="Loading documents">
-          {documents.map((item) => (
-            <Skeleton key={item.name} height="2.5rem" />
-          ))}
-        </LoadingState>
       ) : (
-        // In place of the table, in the space it takes. envUI has no region height for an
-        // example: the surface gives the state that space.
-        <Surface
-          background="default"
-          padding={0}
-          style={{ display: 'grid', minBlockSize: '14rem' }}
+        // A failure is a danger Alert that announces itself, in the table's place.
+        <Alert
+          tone="danger"
+          announce
+          title="Couldn’t load documents"
+          action={
+            <Button variant="secondary" onClick={retry}>
+              Try again
+            </Button>
+          }
         >
-          <EmptyState
-            align="center"
-            tone="danger"
-            title="Couldn’t load documents"
-            description="Your documents are safe. Check your connection and try again."
-            action={
-              <Button variant="secondary" onClick={retry}>
-                Try again
-              </Button>
-            }
-          />
-        </Surface>
+          Your documents are safe. Check your connection and try again.
+        </Alert>
       )}
-    </Stack>
+    </Column>
   );
 }
 
-const documents = [
+interface Document {
+  name: string;
+  owner: string;
+  size: string;
+}
+
+const documents: Document[] = [
   { name: 'Launch brief', owner: 'Alex Morgan', size: '84 KB' },
   { name: 'Budget 2026', owner: 'Priya Shah', size: '310 KB' },
   { name: 'Meeting notes', owner: 'Sam Lee', size: '12 KB' },

@@ -1,6 +1,6 @@
 import { useId, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Button, Dialog, Select, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, Dialog, Select, Column, Text, TextField } from '@envsemble/envui';
 
 const roles = [
   { value: 'member', label: 'Member' },
@@ -10,9 +10,13 @@ const roles = [
 export default function InviteMember() {
   const formId = useId();
   const emailField = useRef<HTMLInputElement>(null);
-  const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState<string>();
+  // Shown open in the docs after a send with a mistyped address, its error on the field; start
+  // closed and empty, with useState(false), useState('') and useState<string>().
+  const [open, setOpen] = useState(true);
+  const [email, setEmail] = useState('sam.lee@example');
+  const [error, setError] = useState<string | undefined>(
+    'Enter an email address such as sam.lee@example.com.',
+  );
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState('');
   const openChange = (next: boolean) => {
@@ -38,7 +42,7 @@ export default function InviteMember() {
     }, 1500);
   };
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Dialog
         open={open}
         onOpenChange={openChange}
@@ -54,7 +58,7 @@ export default function InviteMember() {
         }
       >
         <form id={formId} onSubmit={invite} noValidate>
-          <Stack gap={4}>
+          <Column gap={4}>
             <TextField
               ref={emailField}
               label="Email address"
@@ -76,10 +80,10 @@ export default function InviteMember() {
               items={roles}
               defaultValue="member"
             />
-          </Stack>
+          </Column>
         </form>
       </Dialog>
       <Text role="status">{result}</Text>
-    </Stack>
+    </Column>
   );
 }

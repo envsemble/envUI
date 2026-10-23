@@ -25,9 +25,17 @@ export type ReferenceView =
   | (typeof templateViews)[number]['id'];
 export type ViewOption = { id: ReferenceView; title: string };
 
+/** The views of a component page on the figure template: every section, then the props. */
+export const figureViews = [
+  { id: 'overview', title: 'Overview' },
+  { id: 'props', title: 'Props' },
+] as const;
+
 /** Which template view shows each authored section; Props and Related are generated. */
 export const sectionViews: Record<TemplateSectionId, ReferenceView> = {
   overview: 'overview',
+  usage: 'overview',
+  width: 'overview',
   examples: 'overview',
   changelog: 'overview',
   anatomy: 'guidelines',
@@ -38,10 +46,22 @@ export const sectionViews: Record<TemplateSectionId, ReferenceView> = {
   accessibility: 'accessibility',
 };
 
+/**
+ * The view that shows a section of a page: on the figure template the Overview, which holds every
+ * section, and on the section template the view sectionViews names.
+ */
+export function viewOfSection(
+  reference: Pick<Reference, 'format'>,
+  section: TemplateSectionId,
+): ReferenceView {
+  return reference.format === 'figures' ? 'overview' : sectionViews[section];
+}
+
 /** The views a page has: the template's, where it has sections for them, or Preview and Usage. */
 export function viewsOf(reference: Reference): readonly ViewOption[] {
   const sections = reference.sections;
   if (!sections) return referenceViews;
+  if (reference.format === 'figures') return figureViews;
   return templateViews.filter(
     (view) =>
       view.id === 'overview' ||
@@ -95,7 +115,6 @@ export const siteSections = [
   'Foundations',
   'Components',
   'Patterns',
-  'Templates',
   'Contributing',
   'Changelog',
 ] as const;
@@ -105,9 +124,9 @@ export type SiteSection = (typeof siteSections)[number];
 const contributingDocuments = new Set(['library-development', 'component-pages', 'pattern-pages']);
 
 /**
- * A page with one view: a guide, pattern or template page of docs/, such as the migration guide, or
+ * A page with one view: a guide or pattern page of docs/, such as the migration guide, or
  * a page of the catalogue's own, such as the token reference. `document` is the page of docs/ it
- * shows; a pattern or template page shows every section of the page template, in order.
+ * shows; a pattern page shows every section of the page template, in order.
  */
 export interface StandalonePage {
   path: string;
@@ -118,11 +137,11 @@ export interface StandalonePage {
 }
 
 /**
- * The guides, patterns and templates of docs/, each at a path of its section. The setup guide and
+ * The guides and patterns of docs/, each at a path of its section. The setup guide and
  * the index stay on the overview's Get started view.
  */
 export const guidePages: StandalonePage[] = documents.flatMap((document): StandalonePage[] => {
-  if (document.group === 'Patterns' || document.group === 'Templates')
+  if (document.group === 'Patterns')
     return [
       {
         path: `${document.group.toLowerCase()}/${document.id}`,
@@ -139,7 +158,7 @@ export const guidePages: StandalonePage[] = documents.flatMap((document): Standa
   return [{ path, title: document.title, section, summary: document.summary, document }];
 });
 
-/** The catalogue's own pages: the token reference, templates and the changelog. */
+/** The catalogue's own pages: the token reference and the changelog. */
 export const tokensPage: StandalonePage = {
   path: 'foundations/tokens',
   title: 'Design tokens',
@@ -147,24 +166,13 @@ export const tokensPage: StandalonePage = {
   summary:
     'Every token as a CSS custom property, with its value in each theme and scale, generated from the token source.',
 };
-export const templatesPage: StandalonePage = {
-  path: 'templates',
-  title: 'Templates',
-  section: 'Templates',
-  summary: 'Whole pages composed from envUI, to start an application from.',
-};
 export const changelogPage: StandalonePage = {
   path: 'changelog',
   title: 'Changelog',
   section: 'Changelog',
   summary: 'What changed in each release of @envsemble/envui.',
 };
-export const standalonePages: StandalonePage[] = [
-  ...guidePages,
-  tokensPage,
-  templatesPage,
-  changelogPage,
-];
+export const standalonePages: StandalonePage[] = [...guidePages, tokensPage, changelogPage];
 
 export function findStandalonePage(path: string) {
   return standalonePages.find((page) => page.path === path);
@@ -174,8 +182,6 @@ export function findStandalonePage(path: string) {
 export const pagesOf = (section: SiteSection) =>
   standalonePages
     .filter((page) => page.section === section)
-    // The Templates overview comes before the template pages it introduces.
-    .sort((a, b) => Number(b === templatesPage) - Number(a === templatesPage))
     .map(({ path, title }) => ({ path, title, views: [] as readonly ViewOption[] }));
 
 /**
@@ -193,7 +199,6 @@ export const documentationPages: { path: string; title: string; views: readonly 
     .filter((page) => page.section === 'Components')
     .map((page) => ({ path: page.path, title: page.reference.title, views: page.views })),
   ...pagesOf('Patterns'),
-  ...pagesOf('Templates'),
   ...pagesOf('Contributing'),
   ...pagesOf('Changelog'),
 ];
@@ -201,7 +206,7 @@ export const documentationPages: { path: string; title: string; views: readonly 
 /** The view of a page on the template that shows the heading of id `anchor`, if it has one. */
 export function viewOfHeading(reference: Reference, anchor: string): ReferenceView | undefined {
   const section = reference.sections?.find(({ anchors }) => anchors?.includes(anchor));
-  return section && sectionViews[section.id];
+  return section && viewOfSection(reference, section.id);
 }
 
 /** The address of a page in the view a reader starts with, or the one closest to view. */
@@ -231,7 +236,6 @@ export function routeOfDocument(
     return `overview/get-started?${new URLSearchParams({ section: section ?? (id === 'setup' ? 'setup' : 'documentation') })}`;
   if (id === 'overview') return homeRoute;
   if (id === 'tokens') return `${tokensPage.path}${query}`;
-  if (id === 'templates') return templatesPage.path;
   if (id === 'changelog') return changelogPage.path;
   const guide = guidePages.find((page) => page.document?.id === id);
   return guide && `${guide.path}${query}`;
@@ -240,6 +244,15 @@ export function routeOfDocument(
 export function findReferencePage(path: string) {
   return referencePages.find((page) => page.path === path.split('/').slice(0, 2).join('/'));
 }
+
+/** Component pages that became patterns, by their slug: the pattern each one opens. */
+const componentPatterns: Record<string, string> = {
+  'window-frame': 'window-frame',
+  'account-menu': 'account-menu',
+  stat: 'key-figures',
+  stats: 'key-figures',
+  'empty-state': 'empty-states',
+};
 
 /** Keep downloaded references and old bookmarks working after topic consolidation. */
 export function normalizeRoute(route: string): string {
@@ -268,6 +281,13 @@ export function normalizeRoute(route: string): string {
     contributing: pagesOf('Contributing')[0]?.path,
   }[originalPath];
   if (first) return normalizeRoute(`${first}${rest}`);
+  // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
+  if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest}`;
+  if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest}`;
+  // Components that became patterns open their pattern.
+  const slug = originalPath.split('/')[1] ?? '';
+  if (originalPath.startsWith('components/') && Object.hasOwn(componentPatterns, slug))
+    return `patterns/${componentPatterns[slug]}${rest}`;
   if (findStandalonePage(originalPath)) return `${originalPath}${rest}`;
   if (/^getting-started(?:\/|$)/.test(originalPath)) {
     return `overview/get-started${search.size ? `?${search}` : ''}`;
@@ -281,19 +301,18 @@ export function normalizeRoute(route: string): string {
   const path = originalPath
     .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
     .replace(/^components\/notes(?=\/|$)/, 'components/disclosure')
-    .replace(/^components\/(icon-buttons|buttons)(?=\/|$)/, 'components/button')
+    .replace(/^components\/(icon-buttons|buttons|close-button)(?=\/|$)/, 'components/button')
     .replace(/^components\/badges(?=\/|$)/, 'components/badge')
     .replace(/^components\/chips(?=\/|$)/, 'components/badge')
     .replace(/^components\/tables(?=\/|$)/, 'components/table')
-    .replace(/^components\/stats(?=\/|$)/, 'components/stat')
     .replace(/^components\/toasts(?=\/|$)/, 'components/toast')
     .replace(/^components\/dialogs(?=\/|$)/, 'components/dialog')
     .replace(/^components\/meters(?=\/|$)/, 'components/meter')
     .replace(/^components\/messages(?=\/|$)/, 'components/message')
     .replace(/^components\/cards(?=\/|$)/, 'components/card')
     .replace(/^components\/keyboard(?=\/|$)/, 'components/kbd')
-    .replace(/^components\/layout(?=\/|$)/, 'components/stack')
-    .replace(/^components\/loading(?=\/|$)/, 'components/skeleton')
+    .replace(/^components\/(layout|stack)(?=\/|$)/, 'components/column')
+    .replace(/^components\/(loading|skeleton)(?=\/|$)/, 'patterns/loading')
     .replace(/^components\/markdown-editor(?=\/|$)/, 'components/markdown')
     .replace(/^components\/(input|textarea)(?=\/|$)/, 'components/text-field')
     .replace(/^components\/fields(?=\/|$)/, 'components/text-field')
@@ -303,8 +322,10 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/notices(?=\/|$)/, 'components/alert')
     .replace(/^components\/heatmap(?=\/|$)/, 'components/calendar-heatmap')
     .replace(/^components\/rows(?=\/|$)/, 'components/list')
-    .replace(/^components\/split-view(?=\/|$)/, 'components/split-pane')
-    .replace(/^components\/navigation(?=\/|$)/, 'components/nav-list')
+    .replace(/^components\/(split-view|split-pane|list-detail)(?=\/|$)/, 'components/panes')
+    .replace(/^components\/app-shell(?=\/|$)/, 'components/scaffold')
+    .replace(/^components\/sidebar(?=\/|$)/, 'components/drawer')
+    .replace(/^components\/(navigation|nav-list)(?=\/|$)/, 'components/drawer')
     .replace(/^components\/direction-links(?=\/|$)/, 'components/pager')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);

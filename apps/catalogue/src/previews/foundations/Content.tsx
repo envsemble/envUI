@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
-import { Alert, Button, EmptyState, Stack, Surface, Text, TextField } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../Example';
+import { Alert, Button, Column, Row, Surface, Text, TextField } from '@envsemble/envui';
+import { Example, ExampleStage } from '../Example';
+import { VerdictFigure } from '../../template/Figures';
 
 /** One rule as a pair: the wording to follow and the wording to avoid, with why. */
 function Pair({
@@ -19,17 +20,20 @@ function Pair({
   avoidCaption: string;
 }) {
   return (
-    <Example title={title}>
-      <Text emphasis="muted">{rule}</Text>
-      <SpecimenGrid size="card">
-        <Specimen title="Do" caption={doCaption}>
-          {doing}
-        </Specimen>
-        <Specimen title="Don’t" caption={avoidCaption}>
-          {avoiding}
-        </Specimen>
-      </SpecimenGrid>
-    </Example>
+    // The do and don't figures have stages of their own.
+    <ExampleStage value={false}>
+      <Example title={title}>
+        <Text emphasis="muted">{rule}</Text>
+        <div className="docs-figure-run" data-count={2} data-verdicts>
+          <VerdictFigure verdict="do" caption={doCaption}>
+            {doing}
+          </VerdictFigure>
+          <VerdictFigure verdict="dont" caption={avoidCaption}>
+            {avoiding}
+          </VerdictFigure>
+        </div>
+      </Example>
+    </ExampleStage>
   );
 }
 
@@ -46,17 +50,17 @@ function Confirmation({
   confirm: string;
 }) {
   return (
-    <Surface background="default" padding={5} radius="sm" render={<Stack gap={4} />}>
-      <Stack gap={2}>
+    <Surface background="default" padding={5} radius="sm" render={<Column gap={4} />}>
+      <Column gap={2}>
         <Text render={<p />} variant="title">
           {title}
         </Text>
         <Text emphasis="muted">{description}</Text>
-      </Stack>
-      <Stack direction="row" wrap justify="end" gap={3}>
+      </Column>
+      <Row wrap justify="end" gap={3}>
         <Button variant="secondary">{cancel}</Button>
         <Button tone="danger">{confirm}</Button>
-      </Stack>
+      </Row>
     </Surface>
   );
 }
@@ -84,17 +88,17 @@ export function ContentPreview() {
         title="Buttons and actions"
         rule="A verb and its object, in sentence case, with the count when the action covers several things."
         doing={
-          <Stack direction="row" wrap gap={3}>
+          <Row wrap gap={3}>
             <Button variant="secondary">Cancel</Button>
             <Button tone="danger">Delete 3 documents</Button>
-          </Stack>
+          </Row>
         }
         doCaption="The button says what it does and to how many."
         avoiding={
-          <Stack direction="row" wrap gap={3}>
+          <Row wrap gap={3}>
             <Button variant="secondary">No</Button>
             <Button>Yes, Delete Selected</Button>
-          </Stack>
+          </Row>
         }
         avoidCaption="Yes and No send people back to the question; title case reads as shouting."
       />
@@ -146,25 +150,35 @@ export function ContentPreview() {
         title="Empty states"
         rule="A title that states the fact, a sentence on why or what next, and one action."
         doing={
-          <EmptyState
-            title="No matching projects"
-            description="No project names contain “roadmap”. Check the spelling or clear the filters."
-            action={<Button variant="secondary">Clear filters</Button>}
-          />
+          <Column gap={4} padding={5}>
+            <Column gap={2}>
+              <Text render={<h3 />} variant="title">
+                No matching projects
+              </Text>
+              <Text variant="body-sm">
+                No project names contain “roadmap”. Check the spelling or clear the filters.
+              </Text>
+            </Column>
+            <Button variant="secondary">Clear filters</Button>
+          </Column>
         }
         doCaption="Names the query and offers the way back."
         avoiding={
-          <EmptyState
-            title="Nothing here!"
-            description="Looks like there’s nothing to show. Try something else, or start something new!"
-            action={
-              <Stack direction="row" wrap gap={3}>
-                <Button>Create project</Button>
-                <Button variant="secondary">Import</Button>
-                <Button variant="secondary">Reset</Button>
-              </Stack>
-            }
-          />
+          <Column gap={4} padding={5}>
+            <Column gap={2}>
+              <Text render={<h3 />} variant="title">
+                Nothing here!
+              </Text>
+              <Text variant="body-sm">
+                Looks like there’s nothing to show. Try something else, or start something new!
+              </Text>
+            </Column>
+            <Row wrap gap={3}>
+              <Button>Create project</Button>
+              <Button variant="secondary">Import</Button>
+              <Button variant="secondary">Reset</Button>
+            </Row>
+          </Column>
         }
         avoidCaption="Doesn’t say why it is empty, and offers three competing ways out."
       />

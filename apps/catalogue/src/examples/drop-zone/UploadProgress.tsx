@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { DropZone, Stack, Text } from '@envsemble/envui';
+import { DropZone, Column, Text } from '@envsemble/envui';
 
 export default function UploadProgress() {
   const [uploading, setUploading] = useState<string>();
@@ -18,7 +18,8 @@ export default function UploadProgress() {
   };
 
   return (
-    <Stack gap={3}>
+    // As wide as a form column.
+    <Column gap={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <DropZone
         pending={uploading != null}
         label={uploading ? `Uploading ${uploading}` : 'Drop a report here, or browse'}
@@ -29,6 +30,6 @@ export default function UploadProgress() {
       <Text variant="caption" emphasis="muted" role="status">
         {done}
       </Text>
-    </Stack>
+    </Column>
   );
 }

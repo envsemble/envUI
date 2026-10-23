@@ -72,7 +72,7 @@ function linkBelow(from, installed, depth = 4) {
 }
 
 /**
- * An alias written as code, such as `ToastProvider`, `MenuItem` or `Sidebar.Item`: an agent would
+ * An alias written as code, such as `ToastProvider`, `MenuItem` or `Pager.Next`: an agent would
  * import it. Plain words and acronyms, such as "toast" or "CTA", are not.
  */
 const codeLike = (alias) =>
@@ -122,7 +122,7 @@ function renderBlock(manifest, aliasCount, packagePath) {
     '',
     `This project's UI is built with envUI (\`${manifest.package}\`${version}), a React design system.`,
     '',
-    `- **${manifest.rule}** Never hand-roll a button, field, menu, dialog, table, tabs or layout that envUI has, and never restyle its \`.env-*\` classes. What envUI lacks, compose from its parts for now and propose upstream.`,
+    `- **${manifest.rule}** Never hand-roll a button, field, menu, dialog, table, tabs or layout that envUI has. Adjust a component through its props; where CSS must, target its part classes and \`data-*\` states (\`get_component\` lists them), never its component tokens such as \`--env-card-padding\`. What envUI lacks, compose from its parts for now and propose upstream.`,
     '- Look things up with the `envui` MCP tools when they are available: `plan` for candidates for a whole screen, `search`, `get_component`, `get_props`, `get_example`, `get_tokens`. Otherwise read the docs below; use only the exports and props they or the `.d.ts` files list.',
     `- Docs in \`${packagePath}/docs/\`: \`index.md\`; \`components/<page>.md\` with when to use it and what instead, accessibility, examples and props; \`examples/<page>/<Name>.tsx\`; \`foundations/\`; \`patterns/\`; \`setup.md\`. The same as data in \`${packagePath}/manifest.json\`.`,
     `- Imports: ${manifest.imports.entryPoints.map((entry) => `\`${entry}\``).join(', ')}; icons one by one from \`${manifest.imports.icons}\` (names in \`icon-manifest.json\`); \`${manifest.imports.styles}\` once, and the UI inside \`Theme\`.`,
@@ -158,11 +158,6 @@ function renderBlock(manifest, aliasCount, packagePath) {
   lines.push('');
   if (manifest.patterns.length)
     lines.push(`Patterns, \`patterns/<name>.md\`: ${pageList(manifest.patterns)}.`);
-  if (manifest.templates.length)
-    lines.push(
-      `Templates, \`templates/<name>.md\`: ${pageList(manifest.templates)}.`,
-      'Template sources: `docs/examples/<template>/<Name>.tsx`; copy one and edit it.',
-    );
   if (manifest.foundations.length)
     lines.push(`Foundations, \`foundations/<name>.md\`: ${pageList(manifest.foundations)}.`);
   lines.push(endMarker);

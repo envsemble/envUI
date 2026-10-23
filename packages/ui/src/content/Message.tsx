@@ -1,14 +1,19 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
+import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 
 export type MessageStatus = 'sending' | 'failed';
 
-export interface MessageProps extends Omit<ComponentPropsWithRef<'article'>, 'children'> {
+export interface MessageProps
+  extends Omit<ComponentPropsWithRef<'article'>, 'children'>,
+    SkeletonProps {
   /**
    * self: written by the person using the app, a compact bubble at the inline end. other: from
    * anyone else, such as an assistant or another participant, full-width content without a bubble.
@@ -57,53 +62,72 @@ function present(node: ReactNode) {
  * bubble at the inline end for your own messages, full-width content for others', with an
  * optional author, meta, status and actions.
  */
-export function Message({
-  from,
-  author,
-  meta,
-  actions,
-  status,
-  statusLabel,
-  className,
-  children,
-  ...props
-}: MessageProps) {
+export function Message(allProps: MessageProps) {
+  const {
+    from,
+    author,
+    meta,
+    actions,
+    status,
+    statusLabel,
+    skeleton = false,
+    className,
+    children,
+    ...props
+  } = allProps;
+  // An author or meta given as undefined, as over a placeholder item, is a bar in a skeleton.
+  const hasAuthor = present(author) || given(allProps, 'author');
+  const hasMeta = present(meta) || given(allProps, 'meta');
   return (
-    <article
-      {...props}
-      className={classNames('env-message', className)}
-      data-from={from}
-      data-status={status}
+    <Grid
+      gap={2}
+      render={
+        <article
+          {...props}
+          {...skeletonAttributes(skeleton)}
+          className={classNames('env-message', className)}
+          data-from={from}
+          data-status={status}
+        />
+      }
     >
-      {(present(author) || present(meta)) && (
-        <header className="env-message-header">
-          {present(author) && <span className="env-message-author">{author}</span>}
-          {present(meta) && <span className="env-message-meta">{meta}</span>}
-        </header>
-      )}
-      <div className="env-message-content" data-text={typeof children === 'string' || undefined}>
-        {children}
-      </div>
-      {status != null && (
-        <div className="env-message-status">
-          {status === 'sending' ? (
-            <Spinner size="sm" />
-          ) : (
-            <DecorativeIcon>
-              <ErrorIcon />
-            </DecorativeIcon>
+      {inSkeleton(
+        skeleton,
+        <>
+          {(hasAuthor || hasMeta) && (
+            <Row render={<header />} wrap className="env-message-header">
+              {hasAuthor && <span className="env-message-author">{author}</span>}
+              {hasMeta && <span className="env-message-meta">{meta}</span>}
+            </Row>
           )}
-          <MessageStatusLabel status={status} label={statusLabel} />
-        </div>
+          <div
+            className="env-message-content"
+            data-text={typeof children === 'string' || undefined}
+          >
+            {children}
+          </div>
+          {status != null && (
+            <Row align="center" gap={1} className="env-message-status">
+              {status === 'sending' ? (
+                <Spinner size="sm" />
+              ) : (
+                <DecorativeIcon>
+                  <ErrorIcon />
+                </DecorativeIcon>
+              )}
+              <MessageStatusLabel status={status} label={statusLabel} />
+            </Row>
+          )}
+          {present(actions) && (
+            <Row wrap align="center" gap={1} className="env-message-actions">
+              <ControlDefaults variant="ghost" size="sm">
+                {actions}
+              </ControlDefaults>
+            </Row>
+          )}
+        </>,
       )}
-      {present(actions) && (
-        <div className="env-message-actions">
-          <ControlDefaults variant="ghost" size="sm">
-            {actions}
-          </ControlDefaults>
-        </div>
-      )}
-    </article>
+    </Grid>
   );
 }
 
@@ -123,7 +147,8 @@ export interface MessageListProps extends ComponentPropsWithRef<'div'> {
  */
 export function MessageList({ busy = false, className, ...props }: MessageListProps) {
   return (
-    <div
+    <Grid
+      gap={5}
       aria-live="polite"
       aria-busy={busy || undefined}
       {...props}

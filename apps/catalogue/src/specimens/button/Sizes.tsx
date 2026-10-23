@@ -1,4 +1,4 @@
-import { Button, IconButton, type ControlSize, Stack } from '@envsemble/envui';
+import { Button, IconButton, type ControlSize, Row } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
@@ -12,11 +12,11 @@ const sizes: readonly { size: ControlSize; caption: string }[] = [
 /** The three sizes of Button and IconButton, which every control of a size shares. */
 export default function Sizes() {
   return (
-    <Example title="Sizes" size="collection">
+    <Example size="collection">
       <SpecimenGrid size="compact">
         {sizes.map(({ size, caption }) => (
           <Specimen key={size} title={size} caption={caption}>
-            <Stack direction="row" wrap align="center" gap={4}>
+            <Row wrap align="center" gap={4}>
               <Button size={size} startIcon={<Add />}>
                 New
               </Button>
@@ -24,7 +24,7 @@ export default function Sizes() {
                 Cancel
               </Button>
               <IconButton size={size} icon={<Edit />} aria-label="Edit" />
-            </Stack>
+            </Row>
           </Specimen>
         ))}
       </SpecimenGrid>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Select, Stack, Surface, Text, TextField } from '@envsemble/envui';
+import { Button, Select, Column, Surface, Text, TextField } from '@envsemble/envui';
 
 const roleOptions = [
   { value: 'viewer', label: 'Viewer' },
@@ -20,7 +20,7 @@ export default function InviteMember() {
           setInvited(`Invited ${String(data.get('email'))} as ${role?.label ?? 'a member'}.`);
         }}
       >
-        <Stack gap={5}>
+        <Column gap={5}>
           <TextField label="E-mail address" name="email" type="email" required />
           <Select
             variant="outline"
@@ -30,11 +30,11 @@ export default function InviteMember() {
             items={roleOptions}
             defaultValue="editor"
           />
-          <Stack gap={3} align="start">
+          <Column gap={3} align="start">
             <Button type="submit">Send invitation</Button>
             <Text role="status">{invited}</Text>
-          </Stack>
-        </Stack>
+          </Column>
+        </Column>
       </form>
     </Surface>
   );

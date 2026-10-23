@@ -1,14 +1,12 @@
 import {
-  AccountMenu,
   AnimatedNumber,
   Avatar,
   Card,
   Combobox,
-  OrganizationSwitcher,
   PanelDock,
 } from '@envsemble/envui';
 
-export function Renames({ people, organizations, panels, price, name }) {
+export function Renames({ people, panels, price, name }) {
   return (
     <>
       <Card heading="Pricing research" headingLevel={2}>
@@ -26,20 +24,6 @@ export function Renames({ people, organizations, panels, price, name }) {
         ]}
       />
       <Combobox label="Reviewer" items={people} />
-      <OrganizationSwitcher
-        items={[{ id: 'northwind', name: 'Northwind', description: 'Admin' }]}
-        value="northwind"
-        onValueChange={() => {}}
-        className="org-trigger"
-      />
-      <OrganizationSwitcher items={organizations} value={null} onValueChange={() => {}} />
-      <AccountMenu.Root name="Alex Morgan">
-        <AccountMenu.OrganizationSubmenu
-          items={[{ id: 'contoso', name }]}
-          value={null}
-          onValueChange={() => {}}
-        />
-      </AccountMenu.Root>
       <PanelDock.Root
         panels={panels}
         onModeChange={() => {}}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Menu, Stack, Text } from '@envsemble/envui';
+import { Button, Menu, Column, Text } from '@envsemble/envui';
 import { Visibility } from '@envsemble/envui/icons/Visibility';
 
 const sortLabels: Record<string, string> = {
@@ -13,7 +13,7 @@ export default function Choices() {
   const [hiddenFiles, setHiddenFiles] = useState(false);
   const [extensions, setExtensions] = useState(true);
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Menu.Root
         aria-label="View options"
         align="start"
@@ -40,9 +40,9 @@ export default function Choices() {
         </Menu.Group>
       </Menu.Root>
       <Text variant="body-sm">
-        Sorted by {sortLabels[sort]}; hidden files {hiddenFiles ? 'shown' : 'hidden'}; extensions{' '}
-        {extensions ? 'shown' : 'hidden'}.
+        {`Sorted by ${sortLabels[sort]}; hidden files ${hiddenFiles ? 'shown' : 'hidden'}; `}
+        {`extensions ${extensions ? 'shown' : 'hidden'}.`}
       </Text>
-    </Stack>
+    </Column>
   );
 }

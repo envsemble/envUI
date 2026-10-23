@@ -195,7 +195,7 @@ function isAccessedFurther(path) {
 }
 
 export default function transform(file, api, options = {}) {
-  const { entries } = loadMap(options.map);
+  const { entries, reused } = loadMap(options.map);
   if (![...entries.keys()].some((entry) => file.source.includes(entry))) return undefined;
 
   const j = api.jscodeshift.withParser(parserFor(file.path));
@@ -530,9 +530,48 @@ export default function transform(file, api, options = {}) {
     }
   }
 
+  // 1.0 exports some 0.x names again for something else, such as Row, a list row in 0.x and a
+  // layout primitive in 1.0. A file that reads as 1.0 layout code keeps them as they are: one that
+  // imports Column, Grid or Box from the entry, or renders such a name with a prop only the layout
+  // primitive takes (gap, wrap, justify or padding), or renders it only as elements that lack what
+  // 0.x's list row needed: its required title, and with it its detail, action and interactive. An
+  // element with a spread may carry a title, so it reads as 0.x.
+  const layoutProps = ['gap', 'wrap', 'justify', 'padding'];
+  const listRowProps = ['title', 'detail', 'action', 'interactive'];
+  const hasProp = (opening, names) =>
+    opening.attributes.some(
+      (attribute) => attribute.type === 'JSXAttribute' && names.includes(attribute.name.name),
+    );
+  /** Whether the opening elements of a name read as 1.0 layout; `onlyElements` when it is used as nothing else. */
+  const layoutElements = (openings, onlyElements) =>
+    openings.some((opening) => hasProp(opening, layoutProps)) ||
+    (onlyElements &&
+      openings.length > 0 &&
+      openings.every(
+        (opening) =>
+          !hasProp(opening, listRowProps) &&
+          opening.attributes.every((attribute) => attribute.type === 'JSXAttribute'),
+      ));
+  const layoutCode = (entry) =>
+    specifiers.some(
+      (other) => other.entry === entry && ['Column', 'Grid', 'Box'].includes(other.imported),
+    ) ||
+    specifiers.some((other) => {
+      if (other.entry !== entry || !reused.has(other.imported) || other.isType) return false;
+      const references = referencesTo(other.local);
+      const openings = references
+        .filter(({ path, kind }) => kind === 'jsx' && path.parent.node.type === 'JSXOpeningElement')
+        .map(({ path }) => path.parent.node);
+      return layoutElements(
+        openings,
+        references.every(({ kind }) => kind === 'jsx'),
+      );
+    });
+
   // Pass 2: plan each imported specifier.
   for (const info of specifiers) {
     const { entry, imported, local } = info;
+    if (entry && reused.has(imported) && layoutCode(entry)) continue;
     const rename = entry.renames.get(imported);
     const split = entry.splits.get(imported);
     const removed = entry.removed.get(imported);
@@ -715,11 +754,12 @@ export default function transform(file, api, options = {}) {
         continue;
       }
       // An export that a later transform rewrites, such as ActionGroup, which v1-structure turns
-      // into a Stack, or AppShellSkeleton, which v1-app-shell rewrites, is no report while every
+      // into a Stack, ListDetail, which it turns into Panes, or Stack, which v1-stack turns
+      // into a Row or a Column (its removed entry names the transform), is no report while every
       // use is an element: that transform rewrites each one, or reports it.
       const references = referencesTo(local);
       if (
-        entry.structure.has(imported) &&
+        (entry.structure.has(imported) || removed.transform) &&
         references.length > 0 &&
         references.every(({ kind }) => kind === 'jsx')
       )
@@ -728,9 +768,36 @@ export default function transform(file, api, options = {}) {
     }
   }
 
+  /** The name a namespace member access reads, such as Row in `ui.Row` or `ui['Row']`. */
+  const memberName = (access, kind) => {
+    if (qualifiedKinds.has(kind)) return access.right?.name;
+    return access.computed ? literalValue(access.property) : access.property?.name;
+  };
+  // Through a namespace import, a file reads as 1.0 layout code as it does through named imports:
+  // it reads `ui.Column`, `ui.Grid` or `ui.Box`, or renders `<ui.Row>` with a prop only the layout
+  // primitive takes, as v1-stack writes it, or only as elements without 0.x's list row props.
+  const namespaceLayoutCode = (local) => {
+    const openings = new Map();
+    const usedOtherwise = new Set();
+    for (const { path, kind } of referencesTo(local)) {
+      if (!memberKinds.has(kind)) continue;
+      const access = path.parent.node;
+      const name = memberName(access, kind);
+      if (['Column', 'Grid', 'Box'].includes(name)) return true;
+      if (!reused.has(name)) continue;
+      const element = path.parent.parent?.node;
+      const rendered = kind === 'jsx-object' && element?.name === access;
+      if (rendered && element.type === 'JSXOpeningElement')
+        openings.set(name, [...(openings.get(name) ?? []), element]);
+      else if (!rendered || element.type !== 'JSXClosingElement') usedOtherwise.add(name);
+    }
+    return [...openings].some(([name, list]) => layoutElements(list, !usedOtherwise.has(name)));
+  };
+
   // `import * as ui from '@envsemble/envui'`: rewrite `ui.<old name>` accesses.
   for (const { local, entry } of namespaceImports) {
     const handled = new Set();
+    const layout = entry.name === library && namespaceLayoutCode(local);
     for (const { path, kind } of referencesTo(local)) {
       if (kind === 'value') {
         // `const { Input } = ui` and `({ Input } = ui)`.
@@ -800,6 +867,7 @@ export default function transform(file, api, options = {}) {
           );
         continue;
       }
+      if (layout && reused.has(name)) continue;
       const flavor = flavorOf(kind);
       const outer = accessPath.parent?.node;
       const rename = entry.renames.get(name);

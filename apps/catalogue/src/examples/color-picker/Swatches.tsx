@@ -1,13 +1,10 @@
-import { ColorSwatch, List } from '@envsemble/envui';
+import { ColorSwatch, List, Row } from '@envsemble/envui';
 
 const labels = [
   { name: 'Design', color: '#6b4fa3' },
   { name: 'Research', color: '#2f6f62' },
   { name: 'Archive', color: '#ffffff' },
 ];
-
-/** The swatch before the name, centred on its line. */
-const label = { display: 'flex', alignItems: 'center', gap: '0.5rem' } as const;
 
 export default function Swatches() {
   return (
@@ -16,10 +13,11 @@ export default function Swatches() {
         <List.Item
           key={name}
           label={
-            <span style={label}>
+            // The swatch before the name, centred on its line.
+            <Row render={<span />} align="center" gap={2}>
               <ColorSwatch color={color} />
               {name}
-            </span>
+            </Row>
           }
           description={color.toUpperCase()}
         />

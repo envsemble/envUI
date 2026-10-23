@@ -2,7 +2,6 @@ import {
   Alert,
   CommandPalette,
   Dialog,
-  EmptyState,
   HoverCard,
   Popover,
   Spinner,
@@ -15,7 +14,6 @@ export function Overlays({ items, query, setQuery, open }) {
   return (
     <Toast.Provider defaultPlacement="bottom-right">
       <Alert tone="error">Save failed</Alert>
-      <EmptyState tone="error" title="Couldn't load" />
       <Dialog title="Details" size="wide" />
       <Popover width="standard" trigger={<button />}>
         Details

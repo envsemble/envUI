@@ -3,37 +3,30 @@
 ## React usage
 
 ```tsx
-import { Stack, TextField, IconButton } from '@envsemble/envui';
+import { Column, IconButton, TextField } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
-<Stack>
-  <TextField label="Project name" description="Visible labels stay available while typing." />
+<Column gap={4}>
+  <TextField label="Project name" description="Visible labels stay while people type." />
   <IconButton icon={<ChevronRight />} aria-label="Next project" />
-</Stack>;
+</Column>;
 ```
 
 ### Props & contracts
 
-| Name                  | Contract                                                                                                                                                                                                                                       |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Library ownership     | Native control semantics, connected field guidance, keyboard behavior, modal focus and toast announcements                                                                                                                                     |
-| Application ownership | Labels, heading structure, reading order, product validation and recovery actions                                                                                                                                                              |
-| Keyboard              | <kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd> move focus; <kbd>Enter</kbd> activates links; <kbd>Enter</kbd> / <kbd>Space</kbd> activate buttons                                                                                            |
-| Focus                 | Text fields recolor their thin border or underline; other controls use the shared 0.125 rem focus ring                                                                                                                                         |
-| Motion                | Presses, popups, dialogs, toasts and new content use brief transitions under a quarter second                                                                                                                                                  |
-| Reduced motion        | prefers-reduced-motion removes movement and keeps only opacity changes; spinners turn slowly without morphing                                                                                                                                  |
-| Transition tokens     | --env-motion-duration-fast (0.12 s), --env-motion-duration-medium (0.16 s), --env-motion-duration-slow (0.24 s)                                                                                                                                |
-| Shared easing         | --env-motion-ease for state changes; --env-motion-ease-enter and --env-motion-ease-exit for elements entering/leaving                                                                                                                          |
-| Forced colors         | Under forced-colors: active, selected, current, checked, highlighted, focused, invalid and unavailable states take system colors, such as Highlight and GrayText, where a fill or shadow carried them; swatches and heatmaps keep their colors |
+| Name           | Contract                                                                                                                                   |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| envUI provides | Native control semantics, connected field guidance, keyboard behaviour, modal focus and announcements; each component's page lists its own |
+| You provide    | Labels and icon action names, headings, reading order, validation messages and recovery actions                                            |
+| Focus          | Text fields recolor their border or underline; other controls take the shared 0.125 rem ring                                               |
+| Reduced motion | `prefers-reduced-motion` keeps only opacity changes; spinners turn slowly                                                                  |
+| Forced colors  | States a fill or shadow carried take system colors, such as Highlight and GrayText; swatches and heatmaps keep theirs                      |
 
 ## Guidelines
 
-- Use <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> to move focus. Keep a visible focus indicator and a keyboard order matching the layout. Specific behavior for <kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> and <kbd>Esc</kbd> belongs to each component.
-- Keep motion brief and tied to a state change. Respect reduced motion in application animations too.
-- Give controls visible labels and icon actions accessible names. Preserve native form behavior and disabled states.
-- Use semantic headings, meaningful links and a keyboard order that follows the visible layout.
-- Library components handle their focus, keyboard and announcement behavior. Their own pages document those contracts.
-- Validate product content and contrast in both supported themes.
+- Keep the focus indicator visible, and the keyboard order the same as the visible layout.
+- Respect reduced motion in the application's own animations, with the `--env-motion-*` tokens.
+- Check the application's own content and contrast in both themes.
 
 TypeScript declarations provide the complete public API.
 

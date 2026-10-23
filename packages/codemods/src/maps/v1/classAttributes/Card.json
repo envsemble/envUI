@@ -10,11 +10,5 @@
     "attributes": {
       "data-actions": ""
     }
-  },
-  "env-feature-card": {
-    "class": "env-card",
-    "attributes": {
-      "data-layout": "feature"
-    }
   }
 }

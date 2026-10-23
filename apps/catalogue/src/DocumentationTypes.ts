@@ -36,20 +36,54 @@ export type ExportEntry =
   | (ExportBase & { kind: 'namespace'; parts: string[] })
   | (ExportBase & { kind: 'function'; signature: string });
 
+/** A fill a figure's stage takes instead of the page's. */
+export type StageFill = 'raised' | 'shaded';
+
 export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }
-  /** A file in apps/catalogue/src/examples/<page>/<name>.tsx, under its ### heading. */
-  | { kind: 'example'; name: string; heading: string }
   /**
-   * A template's screen, the file apps/catalogue/src/examples/<page>/<name>.tsx, rendered in frames of
-   * the frame route; app renders it inside the app frame template, none on its own.
+   * A file in apps/catalogue/src/examples/<page>/<name>.tsx, under its ### heading. On a page on the
+   * figure template it is a figure: a live example, a do or a don't figure, or an anatomy figure.
    */
-  | { kind: 'template'; name: string; heading: string; frame: 'app' | 'none' }
+  | {
+      kind: 'example';
+      name: string;
+      heading: string;
+      /** A do or don't figure, or an anatomy figure; a live example without it. */
+      role?: 'do' | 'dont' | 'anatomy';
+      /** One sentence under the figure; a do or don't figure's verdict. */
+      caption?: string;
+      /** The widths, in rem, of the frames an example is shown in, one to a row. */
+      widths?: number[];
+      /** The component of docs/generated/parts.json an anatomy figure without a legend numbers. */
+      of?: string;
+      /** Whether the figure shows the example's overlays open, contained in its stage. */
+      open?: boolean;
+      /** Whether an anatomy figure shows its subject half as large again where its stage has room. */
+      enlarge?: boolean;
+      /** The stage's fill where the page's own would hide the subject: `raised` or `shaded`. */
+      stage?: StageFill;
+      /** An anatomy figure's legend: each numbered part by its class name, and what it is. */
+      legend?: AnatomyLegendItem[];
+    }
   /** A catalogue-only specimen in apps/catalogue/src/specimens/<page>/<name>.tsx. */
   | { kind: 'specimen'; name: string };
 
+/** One numbered part of an anatomy figure. */
+export interface AnatomyLegendItem {
+  /** The part, by its class name, such as env-card-header, or a selector of env-* class names. */
+  part: string;
+  /**
+   * The legend's Markdown, which names the part; an item that holds only the part's class name
+   * takes its description from docs/generated/parts.json.
+   */
+  text: string;
+}
+
 export type TemplateSectionId =
   | 'overview'
+  | 'usage'
+  | 'width'
   | 'anatomy'
   | 'variants'
   | 'states'
@@ -67,7 +101,7 @@ export interface DocumentationSection {
   anchors?: string[];
 }
 
-/** A component, pattern or template page's frontmatter beyond its title, summary and category. */
+/** A component or pattern page's frontmatter beyond its title, summary and category. */
 export interface DocumentationMetadata {
   status: 'experimental' | 'beta' | 'stable' | 'deprecated';
   /** The status of an export that differs from the page's. */
@@ -77,14 +111,12 @@ export interface DocumentationMetadata {
   useWhen: string[];
   /** Situations that call for something else, with the component to use or the page to read. */
   avoidWhen: { text: string; use?: string; see?: string }[];
-  /** The exports a component page documents; none on a pattern or template page. */
+  /** The exports a component page documents; none on a pattern page. */
   components: string[];
   /** What people are doing, which groups a pattern page. */
   intent?: string;
-  /** The exports a pattern or template page combines. */
+  /** The exports a pattern page combines. */
   composes?: string[];
-  /** Where a template page's screens render: inside the app frame, or on their own. */
-  frame?: 'app' | 'none';
 }
 
 export interface DocumentationEntry {
@@ -97,8 +129,10 @@ export interface DocumentationEntry {
   /** The page's Markdown after its title. */
   markdown: string;
   metadata?: DocumentationMetadata;
+  /** A component page on the figure template: short text and live figures in every section. */
+  format?: 'figures';
   /** The sections of a page on the template; absent on pages not on it, such as guides. */
   sections?: DocumentationSection[];
-  /** The exports a template page documents, with namespaces expanded to their parts. */
+  /** The exports a page on the template documents, with namespaces expanded to their parts. */
   props?: Record<string, ExportEntry>;
 }

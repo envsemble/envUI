@@ -3,8 +3,8 @@
    and an outlined one draws the tone's edge.
    In a control, such as a tab with a count, the control sets hooks on its own element:
    --env-badge-fg, --env-badge-bg and --env-badge-border (a border shorthand) for every badge inside
-   it, whatever its tone and variant; --env-counter-badge-fg, -bg and -border for a counter badge;
-   and --env-diff-stat-fg, -bg and -border for a diff stat, whose two tones then take that one
+   it, whatever its tone and variant; --env-badge-count-fg, -bg and -border for a badge with a
+   count, which reads them instead; and --env-diff-stat-fg, -bg and -border for a diff stat, whose two tones then take that one
    color. Button sets them (Button.css). */
 .env-badge {
   --env-badge-tone: var(--env-color-fg-muted);
@@ -29,7 +29,7 @@
 }
 .env-badge[data-tone='accent'] {
   --env-badge-tone: var(--env-color-fg-accent);
-  --env-badge-tint: var(--env-color-bg-accent-muted);
+  --env-badge-tint: var(--env-color-bg-accent-badge);
   --env-badge-fill: var(--env-color-bg-accent-emphasis);
   --env-badge-edge: var(--env-color-border-accent);
 }
@@ -62,7 +62,8 @@
   color: var(--env-badge-fg, var(--env-color-fg-on-emphasis));
 }
 .env-badge[data-variant='outline'] {
-  border: var(--env-badge-border, 0.0625rem solid var(--env-badge-edge));
+  --env-badge-outline: 0.0625rem solid var(--env-badge-edge);
+  border: var(--env-badge-border, var(--env-badge-outline));
   background: var(--env-badge-bg, transparent);
 }
 .env-badge .env-icon {
@@ -75,31 +76,36 @@
   text-overflow: ellipsis;
 }
 
-/* Counter badges: a compact count in a rounded fill, a size smaller in the compact scale. */
-.env-counter-badge {
-  box-sizing: border-box;
+/* A count: a compact round pill, as wide as it is tall for one digit, a size smaller in the compact
+   scale, in tabular figures. Its tone and variant color it as any badge's, but a neutral count's
+   figures take the default text color, and it reads the count hooks instead of the badge ones. */
+.env-badge[data-count] {
   position: relative;
   flex: 0 0 auto;
   min-inline-size: var(--env-counter-badge-height);
   block-size: var(--env-counter-badge-height);
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
+  padding-block: 0;
   padding-inline: 0.375rem;
-  border: var(--env-counter-badge-border, none);
-  border-radius: 100vmax;
-  background: var(--env-counter-badge-bg, var(--env-color-bg-neutral-muted));
-  color: var(--env-counter-badge-fg, var(--env-color-fg-default));
+  border: var(--env-badge-count-border, none);
+  background: var(--env-badge-count-bg, var(--env-badge-tint));
+  color: var(--env-badge-count-fg, var(--env-badge-tone));
   font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  vertical-align: middle;
 }
-.env-counter-badge[data-tone='accent'] {
-  background: var(--env-counter-badge-bg, var(--env-color-bg-accent-emphasis));
-  color: var(--env-counter-badge-fg, var(--env-color-fg-on-emphasis));
+.env-badge[data-count][data-tone='neutral'] {
+  --env-badge-tone: var(--env-color-fg-default);
 }
-/* A change as one counter-sized pill: additions in the success tone, deletions in the danger tone. */
+/* The variant in :where(), so a skeleton's fill below still wins over it. */
+.env-badge[data-count]:where([data-variant='solid']) {
+  background: var(--env-badge-count-bg, var(--env-badge-fill));
+  color: var(--env-badge-count-fg, var(--env-color-fg-on-emphasis));
+}
+.env-badge[data-count]:where([data-variant='outline']) {
+  border: var(--env-badge-count-border, var(--env-badge-outline));
+  background: var(--env-badge-count-bg, transparent);
+}
+/* A change as one count-sized pill: additions in the success tone, deletions in the danger tone. */
 .env-diff-stat {
   box-sizing: border-box;
   position: relative;
@@ -123,7 +129,7 @@
 .env-diff-stat-deletions {
   color: var(--env-diff-stat-fg, var(--env-color-fg-danger));
 }
-.env-counter-badge-label,
+.env-badge-count-label,
 .env-diff-stat-label {
   position: absolute;
   inline-size: 0.0625rem;
@@ -132,4 +138,15 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* In a skeleton, a badge is a filled shape of its size, without its text or tone. */
+[data-env-skeleton] .env-badge {
+  forced-color-adjust: none;
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--env-skeleton-color);
+}
+[data-env-skeleton] .env-badge * {
+  visibility: hidden;
 }

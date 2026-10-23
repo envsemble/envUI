@@ -1,9 +1,3 @@
-.env-tabs {
-  display: flex;
-  flex-direction: column;
-  gap: var(--env-space-4);
-  min-inline-size: 0;
-}
 /* The whole rail is as tall as a control of its size, like a segmented control, and its tabs fill
    it inside its padding, which gives way where a tab would be shorter than the smallest target. */
 .env-tabs-list {
@@ -15,12 +9,8 @@
     calc((var(--env-tabs-height) - var(--env-control-target-min)) / 2)
   );
   --env-control-height: calc(var(--env-tabs-height) - 2 * var(--env-tabs-inset));
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-1);
   inline-size: fit-content;
   max-inline-size: 100%;
-  min-inline-size: 0;
   /* Inset focus rings remain visible when a long list needs scrolling. */
   overflow: auto;
   scrollbar-width: thin;
@@ -62,8 +52,6 @@
   padding-block: 0;
 }
 .env-tabs-list[data-orientation='vertical'] {
-  flex-direction: column;
-  align-items: stretch;
   --env-surface-radius: var(--env-radius-surface);
 }
 .env-tabs-list > .env-tabs-tab {
@@ -99,8 +87,6 @@
 }
 .env-tabs-panels {
   position: relative;
-  display: grid;
-  min-inline-size: 0;
 }
 /* Filling Tabs give the selected panel the height left below the list. */
 .env-tabs[data-fill] {

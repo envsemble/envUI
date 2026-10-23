@@ -1,3 +1,6 @@
 {
-  "env-title-bar": "env-window-frame-title-bar"
+  "env-window-frame-content": "env-scaffold-body",
+  "env-window-frame-title-bar": "env-top-bar",
+  "env-window-frame-title-bar-center": "env-top-bar-title",
+  "env-window-frame-title-bar-end": "env-top-bar-actions"
 }

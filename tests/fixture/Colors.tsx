@@ -2,8 +2,8 @@ import {
   Theme,
   Button,
   IconButton,
-  NavList,
-  Stack,
+  Drawer,
+  Column,
   Surface,
   Card,
   List,
@@ -17,7 +17,6 @@ import {
   Checkbox,
   Switch,
   Badge,
-  Skeleton,
   type ThemeValue,
 } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
@@ -55,13 +54,20 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         aria-label={`${theme} chevron`}
         data-testid={`${theme}-icon-button`}
       />
-      <NavList.Item icon={<Home />} data-testid={`${theme}-navigation`}>
-        {theme} navigation
-      </NavList.Item>
-      <NavList.Item selected data-testid={`${theme}-navigation-selected`}>
-        {theme} selected navigation
-      </NavList.Item>
-      <Stack gap={3}>
+      <Drawer
+        aria-label={`${theme} navigation`}
+        data-testid={`${theme}-navigation`}
+        destinations={[
+          { label: `${theme} navigation`, icon: <Home />, onSelect: () => {} },
+          {
+            label: `${theme} selected navigation`,
+            icon: <Home />,
+            current: true,
+            onSelect: () => {},
+          },
+        ]}
+      />
+      <Column gap={3}>
         <Surface background="muted" data-testid={`${theme}-color-surface`}>
           Surface
         </Surface>
@@ -100,11 +106,11 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
               content: 'Second panel',
             },
             {
-              value: 'navigation',
+              value: 'ghost',
               button: (
-                <NavList.Item icon={<Home />} data-testid={`${theme}-tab-navigation`}>
+                <Button variant="ghost" startIcon={<Home />}>
                   Third tab
-                </NavList.Item>
+                </Button>
               ),
               content: 'Third panel',
             },
@@ -163,8 +169,7 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
           data-testid={`${theme}-color-switch`}
         />
         <Badge data-testid={`${theme}-color-chip`}>Info</Badge>
-        <Skeleton data-testid={`${theme}-color-skeleton`} />
-      </Stack>
+      </Column>
     </Theme>
   );
 }

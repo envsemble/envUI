@@ -1,19 +1,9 @@
-'use client';
-
-import {
-  useContext,
-  useLayoutEffect,
-  useRef,
-  type ComponentPropsWithRef,
-  type ReactNode,
-  type RefObject,
-} from 'react';
+import type { ComponentPropsWithRef, ReactNode } from 'react';
+import { Column, Row } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
-import { useContainerSize } from '../foundations/useContainerSize.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
-import { setRef } from '../internal/setRef.js';
-import { PageContext } from './Page.js';
+import { StickyHeaderSize } from './internal/StickyHeaderSize.js';
 
 export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
   /** The page's title. It wraps, balanced across its lines, and is never cut short. */
@@ -33,19 +23,21 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
   /** Beside the title, wrapping with it: Badges, such as a status, or a count. */
   meta?: ReactNode;
   /**
-   * The page's actions, at the end of the title row: its primary action last. Below 32 rem of the
-   * header's own width they move under the title and wrap.
+   * The page's actions, at the end of the title row: its primary action last. Below 37.5 rem of
+   * the header's own width, a compact one, they move under the title and wrap.
    */
   actions?: ReactNode;
   /**
    * A second row under the title: search, filters and view switches, laid out with
-   * `<Stack direction="row" wrap justify="between">`; see Toolbar's layouts.
+   * `<Row wrap justify="between">`; see Toolbar's layouts.
    */
   toolbar?: ReactNode;
   /**
-   * Keeps the header in view at the top of the page as it scrolls, at `--env-frame-sticky-top`,
-   * under the app frame's header. Its height is published on its Page as
-   * `--env-page-header-block-size`, so content can stick below both.
+   * Keeps the header in view at the top of the area that scrolls, over the content that scrolls
+   * under it: under a Scaffold's top bar where the document scrolls, or at the top of a Scaffold's
+   * body that scrolls. As a Page's header, what scrolls into view below it, such as a field taking
+   * focus, keeps clear of it: the header measures its height, which CSS reckons from its rows until
+   * script runs.
    */
   sticky?: boolean;
   /**
@@ -56,24 +48,10 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
   controlSize?: 'sm' | 'md';
 }
 
-/** Publishes a sticky header's height on its Page, for content that sticks below it. */
-function usePublishedHeight(header: RefObject<HTMLElement | null>, sticky: boolean) {
-  const page = useContext(PageContext);
-  const size = useContainerSize(sticky ? header : null, { box: 'border-box' });
-  useLayoutEffect(() => {
-    const element = page?.current;
-    if (!element || !sticky || !size) return;
-    element.style.setProperty('--env-page-header-block-size', `${size.blockSize}px`);
-    return () => {
-      element.style.removeProperty('--env-page-header-block-size');
-    };
-  }, [page, sticky, size]);
-}
-
 /**
  * The heading of a page: its title with an optional trail above it, a description, leading content,
- * meta beside the title, actions at the end and a toolbar row under it. It responds to its own
- * width, and can stick to the top of the page as it scrolls.
+ * meta beside the title, actions at the end and a toolbar row under it, built from Row and
+ * Column. It responds to its own width, and can stick to the top of the area that scrolls.
  */
 export function PageHeader({
   title,
@@ -87,50 +65,53 @@ export function PageHeader({
   sticky = false,
   controlSize = 'md',
   className,
-  ref,
   ...props
 }: PageHeaderProps) {
-  const header = useRef<HTMLDivElement | null>(null);
-  usePublishedHeight(header, sticky);
   const Heading = `h${headingLevel}` as const;
   return (
     // A div, not a header: outside main, article or section a header would be a second banner.
-    <div
+    <Column
+      gap={3}
       {...props}
-      ref={(node) => {
-        header.current = node;
-        setRef(ref, node);
-      }}
       className={classNames('env-page-header', className)}
       data-sticky={sticky ? '' : undefined}
     >
+      {sticky && <StickyHeaderSize />}
       {breadcrumbs != null && <div className="env-page-header-breadcrumbs">{breadcrumbs}</div>}
-      <div className="env-page-header-row">
-        {start != null && <div className="env-page-header-start">{start}</div>}
-        <div className="env-page-header-heading">
-          <div className="env-page-header-title-line">
+      <Row wrap gap={4} align="start" className="env-page-header-row">
+        {start != null && (
+          <Row align="center" className="env-page-header-start">
+            {start}
+          </Row>
+        )}
+        <Column gap={1} className="env-page-header-heading">
+          <Row wrap align="center" className="env-page-header-title-line">
             <Text variant="headline" render={<Heading className="env-page-header-title" />}>
               {title}
             </Text>
-            {meta != null && <div className="env-page-header-meta">{meta}</div>}
-          </div>
+            {meta != null && (
+              <Row wrap align="center" gap={2} className="env-page-header-meta">
+                {meta}
+              </Row>
+            )}
+          </Row>
           {description != null && (
             <Text variant="body-sm" className="env-page-header-description">
               {description}
             </Text>
           )}
-        </div>
+        </Column>
         {actions != null && (
-          <div className="env-page-header-actions">
+          <Row wrap align="center" gap={2} className="env-page-header-actions">
             <ControlDefaults size={controlSize}>{actions}</ControlDefaults>
-          </div>
+          </Row>
         )}
-      </div>
+      </Row>
       {toolbar != null && (
         <div className="env-page-header-toolbar">
           <ControlDefaults size={controlSize}>{toolbar}</ControlDefaults>
         </div>
       )}
-    </div>
+    </Column>
   );
 }

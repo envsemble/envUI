@@ -1,7 +1,7 @@
 /* Menus are the desktop dropdown: a raised popup, a PopupSurface like Popover's and Select's, with
    small corners and concentric rows of the scale's row height that highlight on hover and keyboard
-   focus, hairline separators, small muted group labels, and shortcuts as small muted keys at the
-   end. env-popup gives the popup its fill, edge, shadow and motion. */
+   focus, full-width hairline separators, small muted group labels, and shortcuts as small muted
+   keys at the end. env-popup gives the popup its fill, edge and motion. */
 .env-menu-positioner {
   z-index: var(--env-z-popover);
   outline: none;
@@ -10,14 +10,12 @@
   /* One leading slot holds a check mark or an icon. */
   --env-menu-slot: calc(var(--env-control-icon-size) + var(--env-space-2));
   --env-menu-leading: 0rem;
-  display: grid;
-  gap: 0;
   inline-size: max-content;
-  min-inline-size: 12rem;
-  max-inline-size: min(22rem, calc(100vw - 2rem));
-  padding: var(--env-space-1);
+  min-inline-size: min(12rem, var(--available-width, 100vw));
+  /* From 12 rem up to 22 rem, and never wider than the room the positioner finds in the window. */
+  max-inline-size: min(22rem, var(--available-width, calc(100vw - 2rem)));
   /* Small corners, concentric with the rows inside. Menus float at elevation 2, PopupSurface's
-     default: a shadow and a hairline edge that forced colors keep once the shadow is gone. */
+     default: the popup fill and a hairline edge. */
   border-radius: calc(var(--env-radius-sm) + var(--env-space-1));
 }
 /* Labels line up across rows: once a row has a leading check mark or icon, the others keep its place. */
@@ -140,18 +138,18 @@
   opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
+/* A separator is a hairline across the popup's whole width, edge to edge as a table's row lines,
+   reaching through the popup's padding (MenuPopup's padding={1}), with space above and below. */
 .env-menu-separator {
-  block-size: 0.0625rem;
+  block-size: 0;
+  margin-block: var(--env-space-1);
+  margin-inline: calc(-1 * var(--env-space-1));
   border: 0;
-  margin: var(--env-space-1) 0;
-  background: var(--env-color-border-muted);
+  border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
 }
 /* A group is its own set of rows below a small muted heading. */
-.env-menu-group {
-  display: grid;
-  gap: 0;
-}
-.env-menu > .env-menu-group:not(:first-child) {
+.env-menu > .env-menu-group:not(:first-child),
+.env-menu > .env-skeleton-content > .env-menu-group:not(:first-child) {
   margin-block-start: var(--env-space-1);
 }
 .env-menu-group-label {
@@ -162,102 +160,6 @@
   overflow-wrap: anywhere;
 }
 
-/* Organization switcher: a secondary button in the shell's context area and a pane of radio rows. Long
-   organization names truncate inside the button. */
-.env-organization-switcher-trigger {
-  max-inline-size: 100%;
-}
-.env-organization-switcher-trigger-label {
-  min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.env-organization-switcher-header {
-  box-sizing: border-box;
-  min-block-size: 7.25rem;
-  padding: var(--env-space-5) var(--env-space-3);
-  border-radius: var(--env-radius-sm);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--env-space-2);
-  background: var(--env-color-bg-popup);
-  color: var(--env-color-fg-default);
-  text-align: center;
-}
-.env-organization-switcher-header .env-icon {
-  inline-size: 2rem;
-  block-size: 2rem;
-}
-.env-organization-switcher-heading {
-  font: var(--env-type-h1);
-}
-/* The organizations follow the header directly, without a group's gap. */
-.env-menu > .env-organization-switcher-options:not(:first-child) {
-  margin-block-start: 0;
-}
-.env-organization-switcher-description {
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-/* An organization's indicator follows the radio control: a ring, filled with a dot once chosen,
-   in place of the check mark of other radio items. */
-.env-organization-switcher-option > .env-menu-item-check {
-  box-sizing: border-box;
-  inline-size: 1.125rem;
-  block-size: 1.125rem;
-  flex: 0 0 1.125rem;
-  border: 0.125rem solid var(--env-color-fg-muted);
-  border-radius: 50%;
-  transition: border-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-organization-switcher-option[data-checked] > .env-menu-item-check {
-  border-color: var(--env-color-bg-brand-emphasis);
-}
-.env-organization-switcher-option .env-menu-item-check-mark {
-  inline-size: 0.5rem;
-  block-size: 0.5rem;
-  border-radius: 50%;
-  background: var(--env-color-bg-brand-emphasis);
-}
-.env-organization-switcher-option .env-menu-item-check-mark > svg {
-  display: none;
-}
-.env-organization-switcher-create {
-  box-sizing: border-box;
-  min-block-size: var(--env-control-height);
-  margin-block-start: var(--env-space-2);
-  padding: var(--env-space-1) var(--env-space-4);
-  border-radius: 100vmax;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--env-space-2);
-  /* A pill on the pane's row fill, separate from the organization rows above it. */
-  background: var(--env-color-bg-popup);
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  cursor: pointer;
-  outline: none;
-  user-select: none;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-organization-switcher-create .env-icon {
-  inline-size: var(--env-control-icon-size);
-  block-size: var(--env-control-icon-size);
-}
-.env-organization-switcher-create[data-highlighted] {
-  background: var(--env-color-bg-popup-hover);
-}
-.env-organization-switcher-create:active {
-  background: var(--env-color-bg-popup-pressed);
-}
-.env-organization-switcher-create:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
 /* Coarse pointers give rows the touch height in every scale. */
 @media (pointer: coarse) {
   .env-menu-item {
@@ -269,17 +171,8 @@
 .env-menu[data-instant='group'] {
   transition: none;
 }
-/* Motion: the chosen organization's dot settles into size. Only without a reduced-motion
-   preference. */
-@media (prefers-reduced-motion: no-preference) {
-  .env-organization-switcher-option .env-menu-item-check-mark {
-    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
-  }
-}
-
 /* Forced colors: the system paints no fills or shadows, so the highlighted item takes the
-   system’s selection colors, a disabled one the disabled color, and the chosen organization’s
-   radio is drawn in the text color. */
+   system’s selection colors, and a disabled one the disabled color. */
 @media (forced-colors: active) {
   .env-menu-item:is([data-highlighted], [data-popup-open]) {
     forced-color-adjust: none;
@@ -291,12 +184,6 @@
   }
   .env-menu-item[data-disabled] {
     color: GrayText;
-  }
-  .env-organization-switcher-option[data-checked] > .env-menu-item-check {
-    border-color: currentColor;
-  }
-  .env-organization-switcher-option .env-menu-item-check-mark {
-    background-color: currentColor;
   }
   .env-menu-item:is([data-highlighted], [data-popup-open]):focus-visible,
   .env-menu-item:is([data-highlighted], [data-popup-open]) :focus-visible {

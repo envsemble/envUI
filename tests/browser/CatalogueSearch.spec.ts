@@ -109,13 +109,16 @@ test.describe('search', () => {
   });
 
   test('a link to a heading opens the view that shows it', async ({ page }) => {
-    // The Keyboard heading is in Button's Accessibility view, not its first.
-    const route = routeOfDocument('button', { section: 'keyboard' });
-    expect(route).toBe('components/button/accessibility?section=keyboard');
-    // An old link to the page, without a view, opens the same view.
-    expect(normalizeRoute('components/button?section=keyboard')).toBe(route);
-    expect(normalizeRoute('components/button/overview?section=keyboard')).toBe(route);
-    await openCatalogue(page, `${catalogueUrl}/components/button/accessibility#keyboard`);
+    // A page on the figure template shows every heading in its Overview, also for a link to an
+    // old view or to the page without a view.
+    const route = routeOfDocument('dialog', { section: 'keyboard' });
+    expect(route).toBe('components/dialog/overview?section=keyboard');
+    expect(normalizeRoute('components/dialog?section=keyboard')).toBe(route);
+    expect(normalizeRoute('components/dialog/accessibility?section=keyboard')).toBe(route);
+    expect(normalizeRoute('components/button/accessibility?section=keyboard')).toBe(
+      'components/button/overview?section=keyboard',
+    );
+    await openCatalogue(page, `${catalogueUrl}/components/dialog/accessibility#keyboard`);
     const heading = page.getByRole('heading', { name: 'Keyboard', exact: true });
     await expect(heading).toBeInViewport();
     await expect(heading).toBeFocused();
@@ -199,14 +202,14 @@ test.describe('hosted build', () => {
       'aria-current',
       'page',
     );
-    await page.getByRole('tab', { name: 'Accessibility' }).click();
-    await expect(page).toHaveURL(`${siteUrl}/components/dialog/accessibility`);
+    await page.getByRole('tab', { name: 'Props' }).click();
+    await expect(page).toHaveURL(`${siteUrl}/components/dialog/props`);
     await navigation.getByRole('link', { name: 'Changelog', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/changelog`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
     await expect(page.getByRole('heading', { level: 2 }).first()).toBeVisible();
     await page.goBack();
-    await expect(page).toHaveURL(`${siteUrl}/components/dialog/accessibility`);
+    await expect(page).toHaveURL(`${siteUrl}/components/dialog/props`);
     await page.goBack();
     await page.goBack();
     await expect(page).toHaveURL(`${siteUrl}/`);
@@ -220,8 +223,8 @@ test.describe('hosted build', () => {
     requireSite();
     await serveSite(page);
     await page.goto(`${siteUrl}/#/components/tables/usage?section=keyboard`);
-    // The Keyboard heading is in the Accessibility view, which opens.
-    await expect(page).toHaveURL(`${siteUrl}/components/table/accessibility#keyboard`);
+    // The Keyboard heading is in the Overview, which opens on the figure template.
+    await expect(page).toHaveURL(`${siteUrl}/components/table/overview#keyboard`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Table');
     await page.goto(`${siteUrl}/#/overview/get-started?document=migration&section=documentation`);
     await expect(page).toHaveURL(`${siteUrl}/get-started/migration`);
@@ -250,10 +253,10 @@ test.describe('hosted build', () => {
     await openCatalogue(page, `${siteUrl}/`);
     expect(requested.filter((path) => files.includes(path))).toEqual([]);
     await search(page, 'hamburger');
-    await expect.poll(() => highlighted(page)).toBe('page:sidebar');
+    await expect.poll(() => highlighted(page)).toBe('page:drawer');
     expect(requested).toContain(files[0]);
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${siteUrl}/components/sidebar/overview`);
+    await expect(page).toHaveURL(`${siteUrl}/components/drawer/overview`);
 
     // An index that fails to load says so, and offers to load the page again.
     failing = true;

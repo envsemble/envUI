@@ -19,6 +19,7 @@ export function Settings(props: { item: ItemProps; table: TableProps; menu?: Men
         <ui.DirectionLink direction={props.item.title} href="/settings/teams" />
       </ui.Pager.Root>
       <ui.LoadingBar />
+      <ui.List.Item title="Members" />
     </ui.Toast.Provider>
   );
 }

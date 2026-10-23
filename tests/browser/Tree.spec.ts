@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
+import { openServerMarkup } from './ServerMarkup';
 
 const treeFixture = `${fixtureUrl}/?fixture=tree`;
 
@@ -225,4 +226,26 @@ test.describe('Tree', () => {
     await page.getByRole('menuitem', { name: 'New file' }).click();
     await expect.poll(() => lastLog(page)).toBe('new file');
   });
+});
+
+test('a tree renders a tall pane of rows before it measures, and fills its viewport once it has', async ({
+  page,
+}) => {
+  const hydrate = await openServerMarkup(
+    page,
+    `import {createElement as h} from 'react';
+    import {Tree} from '@envsemble/envui';
+    const items = Array.from({length: 100}, (_, index) => ({id: 'n' + index, depth: 0,
+      label: 'Node ' + index}));
+    export const element = h('div', {style: {blockSize: '20rem', display: 'grid'}},
+      h(Tree, {'aria-label': 'Files', items}));`,
+    { hydrate: true },
+  );
+  const rows = page.locator('.env-tree-item');
+  // 24 rows and the overscan of 8 below them, before any script runs.
+  await expect(rows).toHaveCount(33);
+  expect(await hydrate()).toEqual([]);
+  // Measured, a 20 rem viewport needs fewer rows than that: the rows in view and the overscan.
+  await expect.poll(() => rows.count()).toBeLessThan(33);
+  await expect(rows.first()).toBeVisible();
 });

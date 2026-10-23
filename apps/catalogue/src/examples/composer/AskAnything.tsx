@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Composer, Stack, Text } from '@envsemble/envui';
+import { Composer, Column, Text } from '@envsemble/envui';
 
 export default function AskAnything() {
   const [draft, setDraft] = useState('');
@@ -21,7 +21,8 @@ export default function AskAnything() {
   };
 
   return (
-    <Stack gap={3}>
+    // As wide as a conversation column.
+    <Column gap={3} style={{ inlineSize: 'min(100%, 32rem)' }}>
       <Composer
         aria-label="Message"
         placeholder="Ask anything"
@@ -34,6 +35,6 @@ export default function AskAnything() {
       <Text variant="caption" emphasis="muted" role="status">
         {running ? 'Replying…' : sent ? `Sent: ${sent}` : ''}
       </Text>
-    </Stack>
+    </Column>
   );
 }

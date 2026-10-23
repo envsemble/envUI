@@ -16,12 +16,14 @@ import { IconButton } from '../../actions/Button.js';
 import { list as listMessages } from '../../foundations/messages/list.js';
 import { DragIndicator } from '../../icons/DragIndicator.js';
 import { classNames } from '../../internal/classNames.js';
+import { Grid } from '../../foundations/Layout.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { useFormatters } from '../../internal/useFormatters.js';
 import { useHydrated } from '../../internal/useHydrated.js';
 import { useReorder, type Announcement, type ReorderHandlers } from '../../internal/useReorder.js';
 import type { RootProps } from '../List.js';
+import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 
 /**
  * The client side of List, as ActionElement is Button's: List.Root and List.Item stay server
@@ -45,14 +47,15 @@ const ReorderContext = createContext<Reorder | null>(null);
  */
 function Announcer({ announcement }: { announcement: Announcement }) {
   const hydrated = useHydrated();
-  if (!hydrated) return null;
+  const { container } = usePortalContainer();
+  if (!hydrated || container === null) return null;
   const shown = announcement.count % 2;
   return createPortal(
     <div className="env-list-announcer">
       <div role="status">{shown === 1 ? announcement.text : ''}</div>
       <div role="status">{shown === 0 ? announcement.text : ''}</div>
     </div>,
-    document.body,
+    container ?? document.body,
   );
 }
 
@@ -125,22 +128,26 @@ export function ReorderableList({
   );
   return (
     <ReorderContext value={reorder}>
-      <ul
-        {...props}
-        ref={forward}
-        data-density={density}
-        data-reorderable=""
-        className={classNames('env-list', 'env-connected-rows', className)}
-        onKeyDown={(event: KeyboardEvent<HTMLUListElement>) => {
-          onKeyDown?.(event);
-          const list = element.current;
-          if (event.defaultPrevented || !list) return;
-          const row = rowOf(list, event.target);
-          if (row) handlers.rowKeyDown(event, row, labelOf(row));
-        }}
+      <Grid
+        render={
+          <ul
+            {...props}
+            ref={forward}
+            data-density={density}
+            data-reorderable=""
+            className={classNames('env-list', 'env-connected-rows', className)}
+            onKeyDown={(event: KeyboardEvent<HTMLUListElement>) => {
+              onKeyDown?.(event);
+              const list = element.current;
+              if (event.defaultPrevented || !list) return;
+              const row = rowOf(list, event.target);
+              if (row) handlers.rowKeyDown(event, row, labelOf(row));
+            }}
+          />
+        }
       >
         {children}
-      </ul>
+      </Grid>
       <span id={instructions} hidden>
         {messages.instructions}
       </span>

@@ -6,12 +6,7 @@
    are in TokensHandwritten.css. */
 .env-theme {
   color-scheme: light;
-  --env-app-shell-header-height: 3.25rem;
   --env-body-font-weight: var(--env-font-weight-regular);
-  --env-breakpoint-lg: 64rem;
-  --env-breakpoint-md: 48rem;
-  --env-breakpoint-sm: 40rem;
-  --env-breakpoint-xl: 80rem;
   --env-color-avatar-bg: #005cc8;
   --env-color-avatar-bg-amber: #8a5504;
   --env-color-avatar-bg-green: #176f35;
@@ -22,6 +17,7 @@
   --env-color-avatar-bg-violet: #7a3fc8;
   --env-color-avatar-fg: #ffffff;
   --env-color-avatar-figure: #ffffff;
+  --env-color-bg-accent-badge: rgb(0 92 200 / 0.05);
   --env-color-bg-accent-emphasis: #005cc8;
   --env-color-bg-accent-muted: rgb(0 92 200 / 0.12);
   --env-color-bg-accent-subtle: transparent;
@@ -43,8 +39,8 @@
   --env-color-bg-danger-subtle-hover: rgb(183 43 32 / 0.14);
   --env-color-bg-danger-subtle-pressed: rgb(183 43 32 / 0.22);
   --env-color-bg-default: #eff1f5;
-  --env-color-bg-default-hover: #e2e4e8;
-  --env-color-bg-default-pressed: #dbdde1;
+  --env-color-bg-default-hover: #dbdde1;
+  --env-color-bg-default-pressed: #d2d4d8;
   --env-color-bg-done-emphasis: #7a3fc8;
   --env-color-bg-done-muted: rgb(122 63 200 / 0.12);
   --env-color-bg-field: #ffffff;
@@ -55,15 +51,15 @@
   --env-color-bg-info-strong-hover: #376cb2;
   --env-color-bg-info-strong-pressed: #4177be;
   --env-color-bg-inset: rgb(255 255 255 / 0.5);
-  --env-color-bg-muted: #f6f8fc;
-  --env-color-bg-muted-hover: #e8eaee;
-  --env-color-bg-muted-pressed: #dbdde1;
+  --env-color-bg-muted: #e2e4e8;
+  --env-color-bg-muted-hover: #d5d7db;
+  --env-color-bg-muted-pressed: #d2d4d8;
   --env-color-bg-navigation-hover: #cbd8ea;
   --env-color-bg-navigation-pressed: #c7d5e8;
   --env-color-bg-neutral-emphasis: #5d6166;
-  --env-color-bg-neutral-muted: rgb(30 31 33 / 0.06);
+  --env-color-bg-neutral-muted: rgb(30 31 33 / 0.1);
   --env-color-bg-neutral-muted-hover: rgb(30 31 33 / 0.17);
-  --env-color-bg-neutral-muted-pressed: rgb(30 31 33 / 0.29);
+  --env-color-bg-neutral-muted-pressed: rgb(30 31 33 / 0.25);
   --env-color-bg-neutral-strong: #424447;
   --env-color-bg-neutral-strong-hover: #5d6166;
   --env-color-bg-neutral-strong-pressed: #72767b;
@@ -78,8 +74,8 @@
   --env-color-bg-popup: #ffffff;
   --env-color-bg-popup-hover: #eff1f5;
   --env-color-bg-popup-pressed: #e2e4e8;
-  --env-color-bg-raised: #ffffff;
-  --env-color-bg-raised-hover: #e8eaee;
+  --env-color-bg-raised: #eff1f5;
+  --env-color-bg-raised-hover: #e2e4e8;
   --env-color-bg-raised-pressed: #dbdde1;
   --env-color-bg-selected: #dbe8fd;
   --env-color-bg-selected-hover: #d2e1fc;
@@ -105,7 +101,7 @@
   --env-color-border-danger: rgb(183 43 32 / 0.55);
   --env-color-border-danger-emphasis: #b72b20;
   --env-color-border-danger-emphasis-hover: #c64e43;
-  --env-color-border-danger-emphasis-pressed: #d66d63;
+  --env-color-border-danger-emphasis-pressed: #ce5e53;
   --env-color-border-danger-muted: rgb(183 43 32 / 0.28);
   --env-color-border-danger-strong: #9f0300;
   --env-color-border-default: #7d8185;
@@ -115,7 +111,7 @@
   --env-color-border-focus: #1872e7;
   --env-color-border-info-strong: #174d90;
   --env-color-border-media: rgb(0 0 0 / 0.05);
-  --env-color-border-muted: #dbdde1;
+  --env-color-border-muted: #cfd1d5;
   --env-color-border-muted-hover: #bdbfc3;
   --env-color-border-muted-pressed: #a1a4a9;
   --env-color-border-neutral: rgb(93 97 102 / 0.55);
@@ -127,26 +123,26 @@
   --env-color-border-warning-muted: rgb(138 85 4 / 0.28);
   --env-color-fg-accent: #005cc8;
   --env-color-fg-control: #424447;
-  --env-color-fg-danger: #b72b20;
+  --env-color-fg-danger: #ac190f;
   --env-color-fg-default: #1e1f21;
-  --env-color-fg-done: #7a3fc8;
-  --env-color-fg-link: #0366da;
-  --env-color-fg-link-hover: #005cc8;
-  --env-color-fg-link-on-tint: #005cc8;
-  --env-color-fg-link-on-tint-hover: #0053b5;
-  --env-color-fg-link-on-tint-pressed: #004aa2;
-  --env-color-fg-link-pressed: #0053b5;
-  --env-color-fg-muted: #5d6166;
-  --env-color-fg-muted-hover: #54575c;
-  --env-color-fg-muted-pressed: #4b4d51;
+  --env-color-fg-done: #7032bf;
+  --env-color-fg-link: #005cc8;
+  --env-color-fg-link-hover: #0053b5;
+  --env-color-fg-link-on-tint: #0053b5;
+  --env-color-fg-link-on-tint-hover: #004aa2;
+  --env-color-fg-link-on-tint-pressed: #00408f;
+  --env-color-fg-link-pressed: #004aa2;
+  --env-color-fg-muted: #54575c;
+  --env-color-fg-muted-hover: #4b4d51;
+  --env-color-fg-muted-pressed: #424447;
   --env-color-fg-on-emphasis: #ffffff;
   --env-color-fg-on-selected: #0053b5;
   --env-color-fg-on-strong: #ffffff;
-  --env-color-fg-success: #176f35;
-  --env-color-fg-warning: #8a5504;
-  --env-color-list-item-bg: var(--env-color-bg-default);
-  --env-color-list-item-bg-hover: var(--env-color-bg-default-hover);
-  --env-color-list-item-bg-pressed: var(--env-color-bg-default-pressed);
+  --env-color-fg-success: #02652b;
+  --env-color-fg-warning: #7e4b00;
+  --env-color-list-item-bg: var(--env-color-bg-muted);
+  --env-color-list-item-bg-hover: var(--env-color-bg-muted-hover);
+  --env-color-list-item-bg-pressed: var(--env-color-bg-muted-pressed);
   --env-control-border-width: 1px;
   --env-control-font-size: var(--env-font-size-body);
   --env-control-gap: 0.4375rem;
@@ -159,13 +155,9 @@
   --env-control-target-min: 1.5rem;
   --env-counter-badge-height: 1.25rem;
   --env-elevation-0-border: transparent;
-  --env-elevation-0-shadow: 0 0 0 0 transparent;
-  --env-elevation-1-border: var(--env-color-border-muted);
-  --env-elevation-1-shadow: 0 1px 2px 0 rgb(66 68 71 / 0.3), 0 1px 3px 1px rgb(66 68 71 / 0.15);
-  --env-elevation-2-border: var(--env-color-border-muted);
-  --env-elevation-2-shadow: 0 1px 2px 0 rgb(66 68 71 / 0.3), 0 2px 6px 2px rgb(66 68 71 / 0.15);
-  --env-elevation-3-border: var(--env-color-border-muted);
-  --env-elevation-3-shadow: 0 1px 3px 0 rgb(66 68 71 / 0.3), 0 4px 8px 3px rgb(66 68 71 / 0.15);
+  --env-elevation-1-border: #afb1b6;
+  --env-elevation-2-border: #afb1b6;
+  --env-elevation-3-border: #afb1b6;
   --env-field-floating-height: 3.5rem;
   --env-font-family: 'envUI Inter', sans-serif;
   --env-font-size-body: 0.9375rem;
@@ -216,6 +208,7 @@
   --env-space-9: 4rem;
   --env-state-disabled-opacity: 0.48;
   --env-title-bar-height: 2.5rem;
+  --env-top-bar-height: 3.25rem;
   --env-tree-row-padding-block-lg: var(--env-row-padding-block-lg);
   --env-tree-row-padding-block-md: var(--env-row-padding-block-md);
   --env-tree-row-padding-block-sm: var(--env-row-padding-block-sm);
@@ -248,6 +241,9 @@
   --env-type-h2-font-weight: var(--env-font-weight-medium);
   --env-type-h2-letter-spacing: 0rem;
   --env-type-h2-line-height: 1.4em;
+  --env-window-class-expanded: 52.5rem;
+  --env-window-class-large: 75rem;
+  --env-window-class-medium: 37.5rem;
   --env-z-base: 0;
   --env-z-modal: 100;
   --env-z-overlay: 90;
@@ -261,6 +257,7 @@
 
 .env-theme[data-env-theme='dark'] {
   color-scheme: dark;
+  --env-color-bg-accent-badge: var(--env-color-bg-accent-muted);
   --env-color-bg-accent-emphasis: #9fc1f8;
   --env-color-bg-accent-muted: rgb(159 193 248 / 0.14);
   --env-color-bg-accent-subtle: transparent;
@@ -346,22 +343,22 @@
   --env-color-border-danger-emphasis-hover: #e68c84;
   --env-color-border-danger-emphasis-pressed: #d66d63;
   --env-color-border-danger-muted: rgb(248 172 166 / 0.28);
-  --env-color-border-danger-strong: var(--env-color-border-muted);
+  --env-color-border-danger-strong: var(--env-elevation-2-border);
   --env-color-border-default: #898c91;
   --env-color-border-default-hover: #95989c;
   --env-color-border-default-pressed: #a1a4a9;
   --env-color-border-done: rgb(210 178 247 / 0.55);
   --env-color-border-focus: #9fc1f8;
-  --env-color-border-info-strong: var(--env-color-border-muted);
+  --env-color-border-info-strong: var(--env-elevation-2-border);
   --env-color-border-media: rgb(0 0 0 / 0.05);
   --env-color-border-muted: #5d6166;
   --env-color-border-muted-hover: #7d8185;
   --env-color-border-muted-pressed: #95989c;
   --env-color-border-neutral: rgb(189 191 195 / 0.55);
-  --env-color-border-neutral-strong: var(--env-color-border-muted);
+  --env-color-border-neutral-strong: var(--env-elevation-2-border);
   --env-color-border-success: rgb(122 209 151 / 0.55);
   --env-color-border-success-muted: rgb(122 209 151 / 0.28);
-  --env-color-border-success-strong: var(--env-color-border-muted);
+  --env-color-border-success-strong: var(--env-elevation-2-border);
   --env-color-border-warning: rgb(235 183 80 / 0.55);
   --env-color-border-warning-muted: rgb(235 183 80 / 0.28);
   --env-color-fg-accent: #9fc1f8;
@@ -386,9 +383,9 @@
   --env-color-list-item-bg: var(--env-color-bg-muted);
   --env-color-list-item-bg-hover: var(--env-color-bg-muted-hover);
   --env-color-list-item-bg-pressed: var(--env-color-bg-muted-pressed);
-  --env-elevation-1-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.6), 0 1px 3px 1px rgb(0 0 0 / 0.3);
-  --env-elevation-2-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.6), 0 2px 6px 2px rgb(0 0 0 / 0.3);
-  --env-elevation-3-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.6), 0 4px 8px 3px rgb(0 0 0 / 0.3);
+  --env-elevation-1-border: #686b70;
+  --env-elevation-2-border: #686b70;
+  --env-elevation-3-border: #686b70;
 }
 
 .env-theme[data-env-contrast='high'] {
@@ -400,6 +397,7 @@
   --env-color-avatar-bg-slate: #3c4e69;
   --env-color-avatar-bg-teal: #03593f;
   --env-color-avatar-bg-violet: #6725b4;
+  --env-color-bg-accent-badge: rgb(0 55 124 / 0.08);
   --env-color-bg-accent-emphasis: #00377c;
   --env-color-bg-accent-muted: rgb(0 55 124 / 0.08);
   --env-color-bg-accent-subtle-hover: rgb(0 55 124 / 0.14);
@@ -428,6 +426,7 @@
   --env-color-bg-info-strong: #094285;
   --env-color-bg-info-strong-hover: #003878;
   --env-color-bg-info-strong-pressed: #003068;
+  --env-color-bg-muted: #f6f8fc;
   --env-color-bg-muted-hover: #e8eaee;
   --env-color-bg-muted-pressed: #e2e4e8;
   --env-color-bg-navigation-hover: #d2d4d8;
@@ -445,6 +444,7 @@
   --env-color-bg-popup: #ffffff;
   --env-color-bg-popup-hover: #eff1f5;
   --env-color-bg-popup-pressed: #e2e4e8;
+  --env-color-bg-raised: #ffffff;
   --env-color-bg-raised-hover: #eff1f5;
   --env-color-bg-raised-pressed: #e2e4e8;
   --env-color-bg-selected: #c8dbfc;
@@ -506,6 +506,9 @@
   --env-color-fg-on-selected: #002f6d;
   --env-color-fg-success: #00441a;
   --env-color-fg-warning: #553200;
+  --env-color-list-item-bg: #eff1f5;
+  --env-color-list-item-bg-hover: #e2e4e8;
+  --env-color-list-item-bg-pressed: #dbdde1;
   --env-elevation-1-border: var(--env-color-border-default);
   --env-elevation-2-border: var(--env-color-border-default);
   --env-elevation-3-border: #121315;
@@ -520,6 +523,7 @@
     --env-color-avatar-bg-slate: #3c4e69;
     --env-color-avatar-bg-teal: #03593f;
     --env-color-avatar-bg-violet: #6725b4;
+    --env-color-bg-accent-badge: rgb(0 55 124 / 0.08);
     --env-color-bg-accent-emphasis: #00377c;
     --env-color-bg-accent-muted: rgb(0 55 124 / 0.08);
     --env-color-bg-accent-subtle-hover: rgb(0 55 124 / 0.14);
@@ -548,6 +552,7 @@
     --env-color-bg-info-strong: #094285;
     --env-color-bg-info-strong-hover: #003878;
     --env-color-bg-info-strong-pressed: #003068;
+    --env-color-bg-muted: #f6f8fc;
     --env-color-bg-muted-hover: #e8eaee;
     --env-color-bg-muted-pressed: #e2e4e8;
     --env-color-bg-navigation-hover: #d2d4d8;
@@ -565,6 +570,7 @@
     --env-color-bg-popup: #ffffff;
     --env-color-bg-popup-hover: #eff1f5;
     --env-color-bg-popup-pressed: #e2e4e8;
+    --env-color-bg-raised: #ffffff;
     --env-color-bg-raised-hover: #eff1f5;
     --env-color-bg-raised-pressed: #e2e4e8;
     --env-color-bg-selected: #c8dbfc;
@@ -626,6 +632,9 @@
     --env-color-fg-on-selected: #002f6d;
     --env-color-fg-success: #00441a;
     --env-color-fg-warning: #553200;
+    --env-color-list-item-bg: #eff1f5;
+    --env-color-list-item-bg-hover: #e2e4e8;
+    --env-color-list-item-bg-pressed: #dbdde1;
     --env-elevation-1-border: var(--env-color-border-default);
     --env-elevation-2-border: var(--env-color-border-default);
     --env-elevation-3-border: #121315;
@@ -641,6 +650,7 @@
   --env-color-avatar-bg-slate: #3c4e69;
   --env-color-avatar-bg-teal: #03593f;
   --env-color-avatar-bg-violet: #6725b4;
+  --env-color-bg-accent-badge: rgb(205 222 252 / 0.1);
   --env-color-bg-accent-emphasis: #cddefc;
   --env-color-bg-accent-muted: rgb(205 222 252 / 0.1);
   --env-color-bg-accent-subtle-hover: rgb(224 235 253 / 0.14);
@@ -669,6 +679,7 @@
   --env-color-bg-info-strong: #094285;
   --env-color-bg-info-strong-hover: #003878;
   --env-color-bg-info-strong-pressed: #003068;
+  --env-color-bg-muted: #343638;
   --env-color-bg-muted-hover: #383a3d;
   --env-color-bg-muted-pressed: #424447;
   --env-color-bg-navigation-hover: #383a3d;
@@ -686,6 +697,7 @@
   --env-color-bg-popup: #303234;
   --env-color-bg-popup-hover: #383a3d;
   --env-color-bg-popup-pressed: #424447;
+  --env-color-bg-raised: #28292b;
   --env-color-bg-raised-hover: #303234;
   --env-color-bg-raised-pressed: #383a3d;
   --env-color-bg-selected: #1d2e47;
@@ -747,6 +759,9 @@
   --env-color-fg-on-selected: #cddefc;
   --env-color-fg-success: #a5fdc1;
   --env-color-fg-warning: #ffe8be;
+  --env-color-list-item-bg: #343638;
+  --env-color-list-item-bg-hover: #383a3d;
+  --env-color-list-item-bg-pressed: #424447;
   --env-elevation-1-border: var(--env-color-border-default);
   --env-elevation-2-border: var(--env-color-border-default);
   --env-elevation-3-border: #a1a4a9;
@@ -761,6 +776,7 @@
     --env-color-avatar-bg-slate: #3c4e69;
     --env-color-avatar-bg-teal: #03593f;
     --env-color-avatar-bg-violet: #6725b4;
+    --env-color-bg-accent-badge: rgb(205 222 252 / 0.1);
     --env-color-bg-accent-emphasis: #cddefc;
     --env-color-bg-accent-muted: rgb(205 222 252 / 0.1);
     --env-color-bg-accent-subtle-hover: rgb(224 235 253 / 0.14);
@@ -789,6 +805,7 @@
     --env-color-bg-info-strong: #094285;
     --env-color-bg-info-strong-hover: #003878;
     --env-color-bg-info-strong-pressed: #003068;
+    --env-color-bg-muted: #343638;
     --env-color-bg-muted-hover: #383a3d;
     --env-color-bg-muted-pressed: #424447;
     --env-color-bg-navigation-hover: #383a3d;
@@ -806,6 +823,7 @@
     --env-color-bg-popup: #303234;
     --env-color-bg-popup-hover: #383a3d;
     --env-color-bg-popup-pressed: #424447;
+    --env-color-bg-raised: #28292b;
     --env-color-bg-raised-hover: #303234;
     --env-color-bg-raised-pressed: #383a3d;
     --env-color-bg-selected: #1d2e47;
@@ -867,6 +885,9 @@
     --env-color-fg-on-selected: #cddefc;
     --env-color-fg-success: #a5fdc1;
     --env-color-fg-warning: #ffe8be;
+    --env-color-list-item-bg: #343638;
+    --env-color-list-item-bg-hover: #383a3d;
+    --env-color-list-item-bg-pressed: #424447;
     --env-elevation-1-border: var(--env-color-border-default);
     --env-elevation-2-border: var(--env-color-border-default);
     --env-elevation-3-border: #a1a4a9;
@@ -874,7 +895,6 @@
 }
 
 .env-theme[data-env-scale='compact'] {
-  --env-app-shell-header-height: 2.625rem;
   --env-control-gap: 0.375rem;
   --env-control-height-lg: 2.375rem;
   --env-control-height-md: 2rem;
@@ -910,6 +930,7 @@
   --env-space-8: 2.375rem;
   --env-space-9: 3.25rem;
   --env-title-bar-height: 2rem;
+  --env-top-bar-height: 2.625rem;
   --env-tree-row-padding-block-lg: 0.4375rem;
   --env-tree-row-padding-block-md: 0.3125rem;
   --env-tree-row-padding-block-sm: 0.25rem;

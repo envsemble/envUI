@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, DropZone, Stack, Text } from '@envsemble/envui';
+import { Button, DropZone, Column, Row, Text } from '@envsemble/envui';
 
 const twoMegabytes = 2 * 1024 * 1024;
 
@@ -18,7 +18,8 @@ export default function LogoUpload() {
   }, [logo]);
 
   return (
-    <Stack gap={3}>
+    // As wide as a form column.
+    <Column gap={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <DropZone
         hidden={logo != null}
         inputRef={picker}
@@ -35,7 +36,7 @@ export default function LogoUpload() {
         onDropRejected={() => setError('Choose a PNG, JPG or WebP image.')}
       />
       {logo && (
-        <Stack direction="row" wrap align="center" gap={4}>
+        <Row wrap align="center" gap={4}>
           <img src={preview} alt="" width={48} height={48} style={{ borderRadius: '0.5rem' }} />
           <Text render={<span />}>{logo.name}</Text>
           {/* Replace opens the zone's file picker while the zone is hidden. */}
@@ -45,8 +46,8 @@ export default function LogoUpload() {
           <Button variant="text" onClick={() => setLogo(null)}>
             Remove
           </Button>
-        </Stack>
+        </Row>
       )}
-    </Stack>
+    </Column>
   );
 }

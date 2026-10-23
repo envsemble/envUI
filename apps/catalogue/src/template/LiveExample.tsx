@@ -1,7 +1,20 @@
-import { lazy, Suspense, use, useState, type ComponentType, type MouseEvent } from 'react';
-import { Disclosure, Stack, Text, Theme, useTheme } from '@envsemble/envui';
+import {
+  createContext,
+  lazy,
+  Suspense,
+  use,
+  useContext,
+  useState,
+  type ComponentType,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
+import { createPortal } from 'react-dom';
+import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
+import type { StageFill } from '../DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
+import { OpenExample } from './OpenExample';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
@@ -61,38 +74,85 @@ function preventNavigation(event: MouseEvent<HTMLDivElement>) {
 function Source({ path, name }: { path: string; name: string }) {
   const source = use(sourceOf(path));
   return (
-    <CodeBlock language="tsx" label={`${name}.tsx`} copyable>
+    <CodeBlock language="tsx" label={`${name}.tsx`} copyable className="docs-example-source">
       {source.replace(/\n$/, '')}
     </CodeBlock>
   );
 }
 
+/**
+ * Where the open code of a figure that sits in a narrower cell, beside another figure or beside
+ * text, is shown: a slot across the whole content column below the cells, so code never scrolls
+ * sideways in a cell. Without a slot, the code opens in its own disclosure.
+ */
+export const CodeSlot = createContext<HTMLElement | null>(null);
+
 /** An example's source in a Code disclosure, with a copy button; a template preview shows it too. */
 export function ExampleCode({ page, name }: { page: string; name: string }) {
   // A retry renders the code afresh from its file loaded again.
   const [, setAttempt] = useState(0);
+  const slot = useContext(CodeSlot);
+  const [open, setOpen] = useState(false);
   const path = examplePath(page, name);
+  const code = (
+    <LoadBoundary
+      what="code"
+      modules={[`src/examples/${page}/${name}.tsx?raw`]}
+      onRetry={() => {
+        forgetSource(path);
+        setAttempt((count) => count + 1);
+      }}
+    >
+      <Suspense fallback={<Text role="status">Loading code…</Text>}>
+        <Source path={path} name={name} />
+      </Suspense>
+    </LoadBoundary>
+  );
+  const title = (
+    <>
+      Code<span className="docs-visually-hidden">, {name}.tsx</span>
+    </>
+  );
+  if (!slot)
+    return (
+      <Disclosure title={title} className="docs-live-example-code">
+        {code}
+      </Disclosure>
+    );
   return (
-    <Disclosure title="Code" className="docs-live-example-code">
-      <LoadBoundary
-        what="code"
-        modules={[`src/examples/${page}/${name}.tsx?raw`]}
-        onRetry={() => {
-          forgetSource(path);
-          setAttempt((count) => count + 1);
-        }}
-      >
-        <Suspense fallback={<Text role="status">Loading code…</Text>}>
-          <Source path={path} name={name} />
-        </Suspense>
-      </LoadBoundary>
-    </Disclosure>
+    <>
+      <Disclosure
+        title={title}
+        open={open}
+        onOpenChange={setOpen}
+        className="docs-live-example-code"
+        data-slotted=""
+      />
+      {open &&
+        createPortal(
+          <section className="docs-code-panel" aria-label={`Code, ${name}.tsx`}>
+            {code}
+          </section>,
+          slot,
+        )}
+    </>
   );
 }
 
-/** An example rendered live in the documentation's theme, with its source and a copy button. */
-export function LiveExample({ page, name, title }: { page: string; name: string; title: string }) {
-  const theme = useTheme();
+/**
+ * An example file rendered live, loaded with the page and loaded again on a retry: the body of a
+ * live example and of each figure of a page on the figure template.
+ */
+export function ExampleRender({
+  page,
+  name,
+  fallback = <Text role="status">Loading example…</Text>,
+}: {
+  page: string;
+  name: string;
+  /** What shows while the file loads; a tile's tiny preview shows nothing. */
+  fallback?: ReactNode;
+}) {
   // A retry renders the example afresh from its file loaded again, and leaves its code as it is.
   const [, setAttempt] = useState(0);
   const path = examplePath(page, name);
@@ -100,33 +160,115 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
   if (!Example || !sourceLoaders[path])
     throw new Error(`No example file apps/catalogue/src/examples/${page}/${name}.tsx`);
   return (
-    <Stack gap={3} className="docs-live-example-entry">
-      <Stack
-        render={<Theme {...theme} />}
-        gap={0}
-        role="group"
-        aria-label={`${title} example`}
-        className="docs-live-example"
-        data-example={name}
-        onClickCapture={preventNavigation}
-        onAuxClickCapture={preventNavigation}
-      >
-        <LoadBoundary
-          what="example"
-          modules={[`src/examples/${page}/${name}.tsx`]}
-          onRetry={() => {
-            forgetExample(path);
-            setAttempt((count) => count + 1);
-          }}
+    <LoadBoundary
+      what="example"
+      modules={[`src/examples/${page}/${name}.tsx`]}
+      onRetry={() => {
+        forgetExample(path);
+        setAttempt((count) => count + 1);
+      }}
+    >
+      <Suspense fallback={fallback}>
+        {/* The example is looked up among module-level lazy components, not created here. */}
+        {/* eslint-disable-next-line react-hooks/static-components */}
+        <Example />
+      </Suspense>
+    </LoadBoundary>
+  );
+}
+
+/** The handlers that keep an example's links from leaving the documentation. */
+export const keepLinksInPlace = {
+  onClickCapture: preventNavigation,
+  onAuxClickCapture: preventNavigation,
+};
+
+/**
+ * An example rendered live in the documentation's theme, with its source and a copy button; with
+ * `widths`, in a frame of each width, one to a row, and with `caption`, a sentence below it.
+ */
+export function LiveExample({
+  page,
+  name,
+  title,
+  caption,
+  widths,
+  open = false,
+  stage,
+}: {
+  page: string;
+  name: string;
+  title: string;
+  caption?: string;
+  widths?: number[];
+  /** Whether the example's overlays are shown open, as a picture. */
+  open?: boolean;
+  /** The stage's fill, where the page's would hide the subject. */
+  stage?: StageFill;
+}) {
+  const theme = useTheme();
+  const render = open ? (
+    <OpenExample name={name}>
+      <ExampleRender page={page} name={name} />
+    </OpenExample>
+  ) : (
+    <ExampleRender page={page} name={name} />
+  );
+  return (
+    <Column gap={3} className="docs-live-example-entry">
+      {widths ? (
+        <div
+          role="group"
+          aria-label={`${title} example`}
+          className="docs-width-strip"
+          data-example={name}
+          {...keepLinksInPlace}
         >
-          <Suspense fallback={<Text role="status">Loading example…</Text>}>
-            {/* The example is looked up among module-level lazy components, not created here. */}
-            {/* eslint-disable-next-line react-hooks/static-components */}
-            <Example />
-          </Suspense>
-        </LoadBoundary>
-      </Stack>
+          {widths.map((width) => (
+            <figure key={width} className="docs-width-frame">
+              {/* The stage scrolls where the frame is wider than the page, so the keyboard can
+                  scroll it too. */}
+              <Column
+                render={<Theme {...theme} />}
+                container="env-window"
+                gap={0}
+                className="docs-live-example"
+                data-stage={stage}
+                tabIndex={0}
+                aria-label={`${width} rem wide`}
+                role="group"
+              >
+                <div className="docs-width-box" style={{ inlineSize: `${width}rem` }}>
+                  {render}
+                </div>
+              </Column>
+              <Text render={<figcaption />} variant="caption" emphasis="muted">
+                {width} rem wide
+              </Text>
+            </figure>
+          ))}
+        </div>
+      ) : (
+        <Column
+          render={<Theme {...theme} />}
+          container="env-window"
+          gap={0}
+          role="group"
+          aria-label={open ? `${title} example, shown open as a picture` : `${title} example`}
+          className="docs-live-example"
+          data-example={name}
+          data-stage={stage}
+          {...keepLinksInPlace}
+        >
+          {render}
+        </Column>
+      )}
+      {caption && (
+        <Text className="docs-figure-caption" emphasis="muted">
+          {caption}
+        </Text>
+      )}
       <ExampleCode page={page} name={name} />
-    </Stack>
+    </Column>
   );
 }

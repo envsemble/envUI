@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { CounterBadge, Tree, type TreeItem } from '@envsemble/envui';
+import { Tree, type TreeItem, Badge } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
@@ -15,7 +15,7 @@ const mailboxes: Mailbox[] = [
     depth: 0,
     label: 'Inbox',
     icon: <Inbox />,
-    end: <CounterBadge value={12} aria-label="12 unread" />,
+    end: <Badge count={12} aria-label="12 unread" />,
   },
   { id: 'clients', depth: 0, label: 'Clients', icon: <Folder />, expandable: true },
   {
@@ -25,7 +25,7 @@ const mailboxes: Mailbox[] = [
     label: 'Northwind',
     icon: <Folder />,
     description: 'Shared',
-    end: <CounterBadge value={3} aria-label="3 unread" />,
+    end: <Badge count={3} aria-label="3 unread" />,
   },
   { id: 'clients/example', parent: 'clients', depth: 1, label: 'Example Inc.', icon: <Folder /> },
   { id: 'sent', depth: 0, label: 'Sent', icon: <Send /> },

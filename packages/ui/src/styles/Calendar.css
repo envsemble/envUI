@@ -2,20 +2,14 @@
    chosen day a solid fill, and unavailable days are faded. Coarse pointers get touch-sized days. */
 .env-calendar {
   --env-calendar-day: var(--env-control-height-md);
-  display: grid;
-  gap: var(--env-space-2);
   inline-size: calc(7 * var(--env-calendar-day));
   max-inline-size: 100%;
-  min-inline-size: 0;
   color: var(--env-color-fg-default);
   font: var(--env-type-body-small);
 }
 .env-calendar-header {
   /* The month buttons are as tall and wide as a day. */
   --env-control-height: var(--env-calendar-day);
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-1);
 }
 .env-calendar-heading {
   flex: 1 1 auto;

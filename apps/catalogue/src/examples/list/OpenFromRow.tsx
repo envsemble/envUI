@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconButton, Link, List, Stack, Text } from '@envsemble/envui';
+import { IconButton, Link, List, Column, Text } from '@envsemble/envui';
 import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 const plans = [
@@ -10,7 +10,7 @@ const plans = [
 export default function OpenFromRow() {
   const [result, setResult] = useState('');
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <List.Root aria-label="Recent plans">
         {plans.map(({ id, name, updated }) => (
           <List.Item
@@ -46,6 +46,6 @@ export default function OpenFromRow() {
       <Text variant="caption" emphasis="muted" role="status">
         {result}
       </Text>
-    </Stack>
+    </Column>
   );
 }

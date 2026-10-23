@@ -139,11 +139,12 @@ export function parseTarget(name) {
  * The new name of an `env-*` class or custom property name (without its `--`), or the name itself.
  * An entry renames its old name and every name that continues it with a hyphen; the longest entry
  * wins. A name that already continues the entry's new name is left alone, so `env-counter-badge`
- * does not become `env-counter-badge-badge` on a second run.
+ * does not become `env-counter-badge-badge` on a second run. An `exact` entry, a class the map's
+ * `reusedClasses` lists, renames its old name alone.
  */
 export function renameClass(name, classes) {
-  for (const { from, to } of classes) {
-    if (name !== from && !name.startsWith(`${from}-`)) continue;
+  for (const { from, to, exact } of classes) {
+    if (name !== from && (exact || !name.startsWith(`${from}-`))) continue;
     if (to.startsWith(`${from}-`) && (name === to || name.startsWith(`${to}-`))) return name;
     return to + name.slice(from.length);
   }
@@ -222,14 +223,18 @@ export function validateMap(map) {
     }
   }
   const classes = [];
+  const reusedClassNames = Array.isArray(map.reusedClasses) ? map.reusedClasses : [];
   for (const [from, to] of entriesOf(map.classes)) {
     if (!className.test(from) || from.endsWith('-'))
       problems.push(`classes: ${from} is not an env- class name.`);
     if (typeof to !== 'string' || !className.test(to) || to.endsWith('-'))
       problems.push(`classes: ${from} must map to an env- class name.`);
     else if (to === from) problems.push(`classes: ${from} maps to itself.`);
-    classes.push({ from, to });
+    classes.push({ from, to, exact: reusedClassNames.includes(from) });
   }
+  for (const name of reusedClassNames)
+    if (!Object.hasOwn(map.classes ?? {}, name))
+      problems.push(`reusedClasses: ${name} is no class that classes renames.`);
   const sorted = sortClasses(classes);
   for (const { from, to } of sorted) {
     if (typeof to === 'string' && renameClass(to, sorted) !== to)
@@ -335,12 +340,19 @@ function validateTokens(tokens) {
 const propName = /^[A-Za-z_$][A-Za-z0-9_$-]*$/;
 const propValue = (value) => ['string', 'number', 'boolean'].includes(typeof value);
 
-/** An element a structure case adds as a prop, such as `{ "element": "article" }` for render={<article />}. */
+/**
+ * An element a structure case adds as a prop: `{ "element": "article" }` for render={<article />},
+ * or a component with the module it is imported from, such as
+ * `{ "element": "Close", "from": "@envsemble/envui/icons/Close" }` for icon={<Close />}.
+ */
 const elementValue = (value) =>
   isObject(value) &&
-  Object.keys(value).length === 1 &&
   typeof value.element === 'string' &&
-  /^[a-z][a-z0-9]*$/.test(value.element);
+  ((Object.keys(value).length === 1 && /^[a-z][a-z0-9]*$/.test(value.element)) ||
+    (Object.keys(value).length === 2 &&
+      /^[A-Z][A-Za-z0-9]*$/.test(value.element) &&
+      typeof value.from === 'string' &&
+      /^@envsemble\/envui(?:\/[A-Za-z0-9-]+)*$/.test(value.from)));
 
 /**
  * Problems with the rules for one component's props, or one call's object properties: each has a
@@ -348,7 +360,7 @@ const elementValue = (value) =>
  * replace them, or `to`, the name it takes in 1.0, with `values` for the literals that change. A
  * rule with neither is report-only: the prop keeps its name and value, and every use is reported.
  * `each` holds the rules for the properties of each object in an array the prop takes, such as an
- * organization's `name`; a rule with `each` alone reports only a value it can't read.
+ * option's `leading`; a rule with `each` alone reports only a value it can't read.
  */
 function validatePropRules(where, names) {
   const problems = [];
@@ -500,6 +512,8 @@ function validateStructureCase(at, each) {
       );
   if (each.element !== undefined && !isComponentName(each.element))
     problems.push(`${at}: "element" must be a component name.`);
+  if (each.childless !== undefined && typeof each.childless !== 'boolean')
+    problems.push(`${at}: "childless" must be true or false.`);
   for (const [prop, operation] of entriesOf(each.props))
     problems.push(...validatePropOperation(`${at}.props.${prop}`, operation));
   for (const [prop, value] of Object.entries(each.add ?? {}))
@@ -560,13 +574,16 @@ function validateStructureCase(at, each) {
     if (childRule.report !== undefined && typeof childRule.report !== 'string')
       problems.push(`${at}.children.${child}: "report" must be a string.`);
   }
+  for (const [prop, message] of entriesOf(each.reportProps))
+    if (!propName.test(prop) || typeof message !== 'string' || message.trim() === '')
+      problems.push(`${at}.reportProps.${prop} must be a report.`);
   if (each.report !== undefined && typeof each.report !== 'string')
     problems.push(`${at}: "report" must be a string.`);
   return problems;
 }
 
 /** Transforms of their own that rewrite a structure entry, instead of its cases. */
-export const structureTransforms = ['v1-app-shell'];
+export const structureTransforms = [];
 
 /** Problems with the `structure` section: per entry point and component, its cases. */
 function validateStructure(structure) {
@@ -584,8 +601,7 @@ function validateStructure(structure) {
         problems.push(`${where} needs a "report" for the uses it can't rewrite.`);
         continue;
       }
-      // An element a transform of its own rewrites, such as AppShell's one-to-many parts, has its
-      // reports here and no cases.
+      // An element a transform of its own rewrites has its reports here and no cases.
       if (rule.transform !== undefined) {
         if (!structureTransforms.includes(rule.transform))
           problems.push(`${where}: "transform" must be one of ${structureTransforms.join(', ')}.`);
@@ -740,8 +756,14 @@ export function normalizeMap(map) {
     attributes: rule.attributes,
     report: rule.report,
   }));
+  // 0.x classes that 1.0 uses again for something else, such as env-bar, are renamed alone.
+  const reusedClasses = new Set(Array.isArray(map.reusedClasses) ? map.reusedClasses : []);
   const classes = sortClasses([
-    ...entriesOf(map.classes).map(([from, to]) => ({ from, to })),
+    ...entriesOf(map.classes).map(([from, to]) => ({
+      from,
+      to,
+      ...(reusedClasses.has(from) && { exact: true }),
+    })),
     ...classReports
       .filter((rule) => !rule.within && !rule.attributes)
       .map(({ name }) => ({ from: name, to: name })),
@@ -798,7 +820,18 @@ export function normalizeMap(map) {
       `component that reads it, and renames only its uses: remove it, or set --${entry.to} where ` +
       `you mean that.${entry.note ? ` ${entry.note}` : ''}`;
   }
-  return { entries, classes, classAttributes, classesWithin, classReports, tokens, tokenNames };
+  // 0.x names that 1.0 exports again for something else, such as Row, the layout primitive.
+  const reused = new Set(Array.isArray(map.reused) ? map.reused : []);
+  return {
+    entries,
+    classes,
+    classAttributes,
+    classesWithin,
+    classReports,
+    tokens,
+    tokenNames,
+    reused,
+  };
 }
 
 const cache = new Map();

@@ -7,9 +7,11 @@ import { Check } from '../icons/Check.js';
 import { useTheme } from '../foundations/Theme.js';
 import { codeBlock as codeBlockMessages } from '../foundations/messages/codeBlock.js';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useCopy } from '../internal/useCopy.js';
-import { codeThemeStyle } from './internal/CodeThemes.js';
+import { codeThemeStyle } from './internal/CodeColors.js';
+import { useCodeContrast } from './internal/useCodeContrast.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
 import { tokenStyle } from './internal/codeTokenStyle.js';
 
@@ -45,11 +47,12 @@ export function CodeBlock({
 }: CodeBlockProps) {
   const { theme } = useTheme();
   const messages = useMessages('codeBlock', codeBlockMessages);
-  const tokens = useCodeHighlighting(source, language);
+  const preRef = useRef<HTMLPreElement>(null);
+  const contrast = useCodeContrast(preRef);
+  const tokens = useCodeHighlighting(source, language, contrast === 'high');
   // Copied or failed shows for three seconds; where the clipboard fails, the code is selected for
   // people to copy themselves.
   const { copy, status, reset } = useCopy({ resetAfter: 3_000 });
-  const preRef = useRef<HTMLPreElement>(null);
   useEffect(() => reset(), [source, reset]);
 
   async function copySource(button: HTMLElement) {
@@ -71,7 +74,7 @@ export function CodeBlock({
       style={{ ...codeThemeStyle(theme), ...style }}
     >
       {(label || copyable) && (
-        <div className="env-code-block-heading">
+        <Row wrap align="center" justify="between" gap={4} className="env-code-block-heading">
           <span>{label ?? language ?? messages.title}</span>
           {copyable && (
             <IconButton
@@ -81,7 +84,7 @@ export function CodeBlock({
               onClick={(event) => void copySource(event.currentTarget)}
             />
           )}
-        </div>
+        </Row>
       )}
       <pre
         ref={preRef}

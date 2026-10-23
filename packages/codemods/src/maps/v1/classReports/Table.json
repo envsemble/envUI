@@ -1,0 +1,5 @@
+{
+  "env-table-stack-probe": {
+    "report": "A stacking Table measures nothing in 1.0: it stacks through a container query on its region, @container env-table (width < 37.5em), so the probe is gone."
+  }
+}

@@ -3,10 +3,10 @@
 ## React usage
 
 ```tsx
-import { Surface, Stack, Text } from '@envsemble/envui';
+import { Surface, Column, Text } from '@envsemble/envui';
 
-<Surface padding={5} render={<Stack gap={4} />}>
-  <Text as="h2" variant="section-heading">
+<Surface padding={5} render={<Column gap={4} />}>
+  <Text render={<h2 />} variant="title">
     Workspace
   </Text>
   <Text>Padding is inside the surface; gap is between its children.</Text>
@@ -15,40 +15,31 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 
 ### Props & contracts
 
-| Name              | Contract                                                                                            |
-| ----------------- | --------------------------------------------------------------------------------------------------- |
-| Spacing steps 1–9 | 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem in the comfortable scale; smaller in the compact one   |
-| Step 0            | Removes padding or gap where the component supports it                                              |
-| Touch minimum     | 2.75 rem: every control grows to it under a coarse pointer, and can grow further with content       |
-| Outer corners     | 1.75 rem for panes, cards and the outside of a row group                                            |
-| Standard corners  | 0.5 rem for inner rows, important actions, toasts and chips                                         |
-| Other shapes      | Fully rounded actions/navigation; icon-only actions keep their variant corners; 0.25 rem checkboxes |
+| Name                | Contract                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| Spacing steps 0â€“9 | 0, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem in the comfortable scale; smaller in compact |
+| Touch minimum       | 2.75 rem: every control grows to it under a coarse pointer                                   |
 
 ### Tokens for application CSS
 
-Inside a `Theme`, or a document root themed by `ThemePreferenceProvider`, these custom properties arrange the application's own frames with the components, for example an image thumbnail beside a file drop zone. They follow the theme, its [scale](../foundations/scale.md) and the reader's text size; the values here are the comfortable scale's.
+Inside a Theme these follow the theme, its [scale](../foundations/scale.md) and the reader's text size; the values are the comfortable scale's.
 
-| Name                                                              | Contract                                                                                  |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `--env-space-1` … `--env-space-9`                                 | The spacing scale: 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem                           |
-| `--env-radius-sm`                                                 | 0.5 rem: inner rows, important actions, toasts, chips and small frames such as thumbnails |
-| `--env-radius-surface`                                            | 1.75 rem: panes, cards and the outside of a row group                                     |
-| `--env-radius-lg`                                                 | 1 rem: text fields, tables and file drop zones                                            |
-| `--env-radius-full`                                               | Fully rounded: pills such as buttons, navigation items, badges and counters               |
-| `--env-radius-xs` … `--env-radius-xl`                             | The rest of the corner scale: 0.25, 0.5, 0.75 and 1.75 rem                                |
-| `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | The height of a control without a size, and of each size, to line up with                 |
-| `--env-control-icon-size`                                         | 1 rem: the icon size inside controls                                                      |
+| Name                                                              | Contract                                                      |
+| ----------------------------------------------------------------- | ------------------------------------------------------------- |
+| `--env-space-1` â€¦ `--env-space-9`                               | The spacing scale                                             |
+| `--env-radius-xs` â€¦ `--env-radius-xl`                           | 0.25, 0.5, 0.75 and 1.75 rem                                  |
+| `--env-radius-sm`                                                 | 0.5 rem: inner rows, important actions, toasts and thumbnails |
+| `--env-radius-lg`                                                 | 1 rem: text fields, tables and drop zones                     |
+| `--env-radius-surface`                                            | 1.75 rem: panes, cards and the outside of a row group         |
+| `--env-radius-full`                                               | Pills: buttons, navigation items, badges and counters         |
+| `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                              |
+| `--env-control-icon-size`                                         | 1 rem: the icon inside controls                               |
 
 ## Guidelines
 
-- Use relative units and the shared spacing scale. The parent owns gaps; each component owns its internal padding.
-- Theme supplies scoped border-box sizing. Text, controls and layout children shrink to their container; long labels wrap. Rem and em dimensions follow browser text settings without shrinking the whole interface on a phone.
-- A Card in the feature layout responds to its own width. Dialogs, selects and notification stacks fit the viewport; code, tables, toolbars and crowded connected controls scroll within their own regions.
-- Applications own page grids and custom content, and take viewport breakpoints from envUI's [breakpoints](../foundations/responsive.md). Use minmax(0, 1fr) for grid tracks, min-inline-size: 0 for flex children and max-inline-size: 100% for media. Avoid fixed pixel widths and heights; retain content-driven height and a viewport meta tag.
-- Let text wrap and controls grow with content. The application chooses where its layout changes; there is no separate mobile theme or component set.
-- Text has no outer margins. Cards already space direct children; Stack and ActionGroup supply other layouts.
-- Use component defaults for geometry. Choose Surface for a plain pane and Card for a content surface.
-- Lists keep large outside corners and compact inside joins. Their component page owns the complete row behavior.
+- The parent owns gaps, through Row, Column and Grid; each component owns its padding. Text has no outer margins.
+- Use relative units; let text wrap and controls grow with their content. In your own grids, `minmax(0, 1fr)` tracks, `min-inline-size: 0` on flex children and `max-inline-size: 100%` on media.
+- Choose Surface for a plain pane and Card for a content surface, and keep their corners.
 
 TypeScript declarations provide the complete public API.
 
@@ -56,7 +47,9 @@ TypeScript declarations provide the complete public API.
 
 - [Scale & density](../foundations/scale.md)
 - [Responsive layout & stacking](../foundations/responsive.md)
-- [Stack](../components/stack.md)
+- [Column](../components/column.md)
+- [Row](../components/row.md)
+- [Grid](../components/grid.md)
 - [Surface](../components/surface.md)
 - [Card](../components/card.md)
 - [List](../components/list.md)

@@ -1,18 +1,15 @@
-import { Badge, Stack, Text } from '@envsemble/envui';
-
-/** A heading with its status beside it, on one line. */
-const heading = { display: 'flex', alignItems: 'center', gap: '0.5rem' } as const;
+import { Badge, Column, Row, Text } from '@envsemble/envui';
 
 export default function ProjectStatus() {
   return (
-    <Stack gap={1}>
-      <div style={heading}>
+    <Column gap={1}>
+      <Row align="center" gap={2}>
         <Text render={<h3 />} variant="title">
           Northwind launch
         </Text>
         <Badge tone="warning">Blocked</Badge>
-      </div>
+      </Row>
       <Text emphasis="muted">Waiting on two decisions from the design review.</Text>
-    </Stack>
+    </Column>
   );
 }

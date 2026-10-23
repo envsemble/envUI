@@ -252,8 +252,9 @@ test('the hidden count sits beyond the stack: above at the bottom end, below and
   for (const placement of ['bottom-end', 'top-center']) {
     const viewport = region(page, placement);
     const count = viewport.locator('.env-toast-queued-count');
-    await expect(count).toHaveClass(/env-counter-badge/);
-    // The status announces the full meaning; the counter shows the number.
+    await expect(count).toHaveClass(/env-badge/);
+    await expect(count).toHaveAttribute('data-count', '');
+    // The status announces the full meaning; the badge shows the number.
     await expect(count).toContainText('1 older notification hidden');
     await expect(count.locator('[aria-hidden="true"]')).toHaveText('+1');
     // Entrances and glides move the notices for a moment; poll until they settle.

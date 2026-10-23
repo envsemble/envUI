@@ -1,6 +1,5 @@
 import {
   Button,
-  Counter,
   DateTimeField,
   DiffCount,
   DisclosureNote,
@@ -8,7 +7,6 @@ import {
   Heatmap,
   Input,
   Notice,
-  OrganizationMenu,
 } from '@envsemble/envui';
 import type {
   CounterProps,
@@ -22,14 +20,7 @@ import type {
   InputProps,
   NoticeProps,
   NoticeTone,
-  OrganizationMenuOrganization,
-  OrganizationMenuProps,
 } from '@envsemble/envui';
-
-const organizations: OrganizationMenuOrganization[] = [
-  { id: 'northwind', name: 'Northwind Labs' },
-  { id: 'contoso', name: 'Contoso' },
-];
 
 export const fields = { Input, DateTimeField, FileDropzone };
 
@@ -45,15 +36,13 @@ export interface ProfileFormProps {
   heatmap?: HeatmapProps;
   days?: HeatmapDay[];
   cell?: HeatmapCell;
-  switcher?: OrganizationMenuProps;
 }
 
-type CounterComponent = typeof Counter;
+type DiffComponent = typeof DiffCount;
 
 export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   return (
     <form>
-      <OrganizationMenu organizations={organizations} />
       <Notice tone={tone} title="Profile">
         Alex Morgan updated the profile.
       </Notice>
@@ -61,7 +50,6 @@ export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
       <DateTimeField {...start} />
       <FileDropzone {...upload} />
       <DisclosureNote summary="Details">Owned by Contoso.</DisclosureNote>
-      <Counter value={3} />
       <DiffCount additions={12} deletions={4} />
       <Heatmap days={[]} />
       <Button type="submit">Save</Button>
@@ -69,4 +57,4 @@ export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   );
 }
 
-export type { CounterComponent };
+export type { DiffComponent };

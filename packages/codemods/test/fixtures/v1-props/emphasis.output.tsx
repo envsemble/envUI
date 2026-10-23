@@ -1,4 +1,4 @@
-import { Button, ConfirmButton, IconButton, Skeleton, Surface, Text } from '@envsemble/envui';
+import { Button, ConfirmButton, IconButton, Surface, Text } from '@envsemble/envui';
 
 export function Emphasis({ variant, tone }) {
   return (
@@ -22,7 +22,6 @@ export function Emphasis({ variant, tone }) {
       </Text>
       <Surface background="muted" radius="sm" />
       <Surface background="raised" radius="none" />
-      <Skeleton emphasis="default" />
     </>
   );
 }

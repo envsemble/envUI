@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Dialog, List, SearchField, Stack, Text } from '@envsemble/envui';
+import { Button, Dialog, List, SearchField, Column, Text } from '@envsemble/envui';
 import { Search } from '@envsemble/envui/icons/Search';
 
 const plans = [
@@ -18,7 +18,7 @@ export default function FindPlan() {
     plan.name.toLowerCase().includes(query.trim().toLowerCase()),
   );
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Dialog
         open={open}
         onOpenChange={(next) => {
@@ -33,7 +33,7 @@ export default function FindPlan() {
         }
         title="Find a plan"
       >
-        <Stack gap={4}>
+        <Column gap={4}>
           <SearchField label="Plan name" value={query} onValueChange={setQuery} />
           {matches.length > 0 ? (
             <List.Root aria-label="Matching plans">
@@ -60,9 +60,9 @@ export default function FindPlan() {
           ) : (
             <Text emphasis="muted">No plans match “{query.trim()}”.</Text>
           )}
-        </Stack>
+        </Column>
       </Dialog>
       <Text role="status">{opened && `Opened ${opened}`}</Text>
-    </Stack>
+    </Column>
   );
 }

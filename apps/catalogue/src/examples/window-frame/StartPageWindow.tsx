@@ -1,45 +1,43 @@
-import { Button, Menu, Menubar, Stack, Text, WindowFrame } from '@envsemble/envui';
+import type { CSSProperties } from 'react';
+import { Button, Column, Page, Scaffold, TopBar, Text } from '@envsemble/envui';
+import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
 
-const recent = ['Roadmap', 'Pricing research', 'Launch checklist', 'Interview notes', 'Budget'];
-
-/** Stands in for the window, which WindowFrame fills. */
-const frame = {
-  position: 'relative',
-  blockSize: '16rem',
-  overflow: 'hidden',
-  borderRadius: '1.75rem',
-  transform: 'translateZ(0)',
-} as const;
+/** Stands in for the window: a Scaffold fills its container, the window's height by default. */
+const preview: CSSProperties = { blockSize: '20rem' };
 
 export default function StartPageWindow() {
   return (
-    <div style={frame}>
-      <WindowFrame.Root>
-        <WindowFrame.TitleBar
-          start={
-            <Menubar.Root aria-label="Start page menu">
-              <Menubar.Menu label="File">
-                <Menu.Item shortcut="Ctrl+O">Open…</Menu.Item>
-              </Menubar.Menu>
-            </Menubar.Root>
-          }
-          end={<Button variant="secondary">Share</Button>}
-        >
-          Northwind
-        </WindowFrame.TitleBar>
-        <WindowFrame.Content>
-          <Stack gap={2} style={{ padding: '1.5rem' }}>
-            <Text render={<h3 />} variant="headline">
-              Recent documents
+    // A window without navigation: the title bar across the top, and the body scrolling below it,
+    // so the window controls drawn over the title bar never cover a scrollbar.
+    <Scaffold
+      scroll="body"
+      landmarks={false}
+      style={preview}
+      topBarSpan="full"
+      topBar={<TopBar titleBar title="Northwind Notes" />}
+    >
+      <Page width="sm">
+        <Column align="center">
+          <Column
+            gap={4}
+            padding={5}
+            align="center"
+            justify="center"
+            style={{ textAlign: 'center' }}
+          >
+            <Text render={<span />} emphasis="muted">
+              <NoteAdd width="2.5rem" height="2.5rem" />
             </Text>
-            {recent.map((name) => (
-              <Text key={name} emphasis="muted">
-                {name}
+            <Column gap={2} align="center" style={{ maxInlineSize: '30rem' }}>
+              <Text render={<h3 />} variant="title">
+                Start writing
               </Text>
-            ))}
-          </Stack>
-        </WindowFrame.Content>
-      </WindowFrame.Root>
-    </div>
+              <Text variant="body-sm">Your notes stay on this device until you share them.</Text>
+            </Column>
+            <Button>New note</Button>
+          </Column>
+        </Column>
+      </Page>
+    </Scaffold>
   );
 }

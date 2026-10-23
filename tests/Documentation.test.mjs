@@ -416,7 +416,7 @@ const patternFrontmatter = [
   'useWhen: [Someone changes a preference.]',
   'avoidWhen:',
   '  - text: A form submitted once.',
-  '    see: sign-in-page',
+  '    see: switch',
   '  - text: A single choice.',
   '    use: Checkbox',
   'composes: [Switch]',
@@ -475,69 +475,11 @@ const patternBody = [
   '',
 ].join('\n');
 
-const templateFrontmatter = [
-  '---',
-  'title: Sign-in page',
-  'summary: A whole screen to sign in with an email and a password.',
-  'status: beta',
-  'since: 0.2.0',
-  'frame: none',
-  'aliases: [login page]',
-  'useWhen: [People sign in to the application.]',
-  'avoidWhen:',
-  '  - text: Changing a preference.',
-  '    see: settings',
-  'composes: [Switch]',
-  'related: [settings]',
-  '---',
-  '',
-].join('\n');
-
-const templateBody = [
-  '# Sign-in page',
-  '',
-  '## Overview',
-  '',
-  'A screen of its own.',
-  '',
-  '```tsx template=SignInPage',
-  '```',
-  '',
-  '## Anatomy',
-  '',
-  '1. A form.',
-  '',
-  '## Accessibility',
-  '',
-  '### Landmarks and headings',
-  '',
-  '- One main and one level-one heading.',
-  '',
-  '### envUI provides',
-  '',
-  '- Labelled fields.',
-  '',
-  '### You provide',
-  '',
-  '- The page title.',
-  '',
-  '## Examples',
-  '',
-  '### Signed out',
-  '',
-  'The screen inside the app frame.',
-  '',
-  '```tsx template=SignedOut frame=app',
-  '```',
-  '',
-].join('\n');
-
-/** A docs/ folder with a component, a pattern and a template page and their example files. */
+/** A docs/ folder with a component and a pattern page and their example files. */
 async function compositionFixture(run) {
   await templateFixture(async ({ page, read, examples, docs }) => {
     await writeFile(page, switchFrontmatter + switchBody);
     await mkdir(join(docs, 'patterns'), { recursive: true });
-    await mkdir(join(docs, 'templates'), { recursive: true });
     await writeFile(
       join(docs, 'index.md'),
       [
@@ -551,64 +493,42 @@ async function compositionFixture(run) {
         '',
         '- [Settings](patterns/settings.md)',
         '',
-        '## Templates',
-        '',
-        '- [Sign-in page](templates/sign-in-page.md)',
-        '',
       ].join('\n'),
     );
-    for (const [folder, names] of [
-      ['settings', ['Lead', 'Grouped', 'SavedAtOnce']],
-      ['sign-in-page', ['SignInPage', 'SignedOut']],
-    ]) {
+    for (const [folder, names] of [['settings', ['Lead', 'Grouped', 'SavedAtOnce']]]) {
       await mkdir(join(examples, folder), { recursive: true });
       for (const name of names) await writeFile(join(examples, folder, `${name}.tsx`), lead(name));
     }
     const pattern = join(docs, 'patterns', 'settings.md');
-    const template = join(docs, 'templates', 'sign-in-page.md');
     await writeFile(pattern, patternFrontmatter + patternBody);
-    await writeFile(template, templateFrontmatter + templateBody);
-    await run({ pattern, template, read, examples, docs });
+    await run({ pattern, read, examples, docs });
   });
 }
 
-test('pattern and template pages are read into sections, examples and screens', async () => {
+test('pattern pages are read into sections and examples', async () => {
   await compositionFixture(async ({ read, examples }) => {
     const documents = read();
     const settings = documents.find((document) => document.id === 'settings');
-    const signIn = documents.find((document) => document.id === 'sign-in-page');
     assert.deepEqual(
       settings.sections.map((section) => section.id),
       ['overview', 'anatomy', 'content', 'accessibility', 'examples'],
     );
-    const blocks = (document) => document.sections.flatMap((section) => section.blocks);
-    assert.deepEqual(
-      blocks(signIn).filter((block) => block.kind === 'template'),
-      [
-        { kind: 'template', name: 'SignInPage', heading: 'Sign-in page', frame: 'none' },
-        { kind: 'template', name: 'SignedOut', heading: 'Signed out', frame: 'app' },
-      ],
-    );
-    assert.equal(blocks(settings).filter((block) => block.kind === 'example').length, 3);
-
-    // The packaged page fills in every screen's source; a screen keeps a frame that differs.
-    const compiled = compileDocument(signIn, documents, { examples });
-    assert.ok(compiled.includes(`\`\`\`tsx template=SignInPage\n${lead('SignInPage')}\`\`\``));
-    assert.ok(
-      compiled.includes(`\`\`\`tsx template=SignedOut frame=app\n${lead('SignedOut')}\`\`\``),
-    );
+    const blocks = settings.sections.flatMap((section) => section.blocks);
+    assert.equal(blocks.filter((block) => block.kind === 'example').length, 3);
+    // The packaged page fills in every example's source.
+    const compiled = compileDocument(settings, documents, { examples });
+    assert.ok(compiled.includes(`\`\`\`tsx example=Lead\n${lead('Lead')}\`\`\``));
     assert.doesNotMatch(compiled, /## Props/);
   });
 });
 
-test('pattern and template pages are validated as their kind', async () => {
-  await compositionFixture(async ({ pattern, template, read, docs }) => {
+test('pattern pages are validated as their kind', async () => {
+  await compositionFixture(async ({ pattern, read, docs }) => {
     const rejects = async (file, source, expected) => {
       await writeFile(file, source);
       assert.throws(read, expected);
     };
     const p = patternFrontmatter;
-    const t = templateFrontmatter;
     const withComposes = (list) => p.replace('composes: [Switch]', `composes: ${list}`);
     // Frontmatter: the fields of the kind, with values from their lists and names that exist.
     await rejects(pattern, p.replace(/intent: .*\n/, '') + patternBody, /intent is required/);
@@ -631,32 +551,20 @@ test('pattern and template pages are validated as their kind', async () => {
     );
     await rejects(
       pattern,
-      p.replace('see: sign-in-page', 'see: nowhere') + patternBody,
+      p.replace('see: switch', 'see: nowhere') + patternBody,
       /nowhere in avoidWhen, which is not an indexed page/,
     );
     await rejects(
       pattern,
-      p.replace('see: sign-in-page', 'see: settings') + patternBody,
+      p.replace('see: switch', 'see: settings') + patternBody,
       /the page itself/,
     );
     await rejects(
       pattern,
-      p.replace('    see: sign-in-page', '    see: sign-in-page\n    use: Switch') + patternBody,
+      p.replace('    see: switch', '    see: switch\n    use: Switch') + patternBody,
       /\{ text, see \}/,
     );
     await writeFile(pattern, patternFrontmatter + patternBody);
-    await rejects(
-      template,
-      t.replace('frame: none', 'frame: side') + templateBody,
-      /frame must be one of app, none/,
-    );
-    await rejects(template, t.replace('frame: none\n', '') + templateBody, /frame is required/);
-    await rejects(
-      template,
-      t.replace('frame: none', 'frame: none\nintent: Find and navigate') + templateBody,
-      /unknown field intent/,
-    );
-    await writeFile(template, templateFrontmatter + templateBody);
     // Sections: the subset of the kind, with the ones it needs.
     await rejects(
       pattern,
@@ -681,7 +589,7 @@ test('pattern and template pages are validated as their kind', async () => {
     await rejects(
       pattern,
       p + patternBody.replace('example=Grouped', 'template=Grouped'),
-      /belongs on a template page/,
+      /the fence `tsx template=Grouped` is malformed/,
     );
     await rejects(
       pattern,
@@ -694,37 +602,6 @@ test('pattern and template pages are validated as their kind', async () => {
     );
     await rejects(pattern, patternBody, /Pattern page patterns\/settings\.md needs frontmatter/);
     await writeFile(pattern, patternFrontmatter + patternBody);
-    await rejects(
-      template,
-      t + templateBody.replace('### Landmarks and headings', '### Landmarks'),
-      /"### Landmarks and headings" list/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('template=SignInPage', 'example=SignInPage'),
-      /shows the main screen/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('template=SignInPage\n```', 'template=SignInPage\n<Page />\n```'),
-      /fence of template SignInPage must be empty/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('template=SignedOut frame=app', 'template=signedOut'),
-      /signedOut must be a PascalCase/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('frame=app', 'frame=side'),
-      /frame=side; frame is app or none/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('template=SignedOut', 'template=Missing'),
-      /template Missing has no file/,
-    );
-    await writeFile(template, templateFrontmatter + templateBody);
     // The summary lives in the frontmatter only.
     const index = join(docs, 'index.md');
     const source = await readFile(index, 'utf8');
@@ -734,16 +611,6 @@ test('pattern and template pages are validated as their kind', async () => {
       /repeats a summary/,
     );
     // Each page's folder matches the index section that lists it.
-    await rejects(
-      index,
-      source.replace('## Templates', '## Foundations'),
-      /templates\/sign-in-page\.md is a template page, from docs\/templates, but the index lists it under "## Foundations"; list it under "## Templates"/,
-    );
-    await rejects(
-      index,
-      source.replace('## Patterns', '## Templates'),
-      /patterns\/settings\.md is a pattern page.*under "## Templates"; list it under "## Patterns"/,
-    );
     await rejects(
       index,
       source.replace('## Forms & selection', '## Patterns'),
@@ -757,11 +624,217 @@ test('pattern and template pages are validated as their kind', async () => {
     await writeFile(index, source);
     // A fence that names a file but doesn't parse is an error, not a code block.
     await rejects(
-      template,
-      t + templateBody.replace('frame=app', 'layout=app'),
-      /the fence `tsx template=SignedOut layout=app` is malformed/,
+      pattern,
+      patternFrontmatter + patternBody.replace('example=Grouped', 'example=Grouped layout=app'),
+      /the fence `tsx example=Grouped layout=app` is malformed/,
     );
-    await writeFile(template, templateFrontmatter + templateBody);
+    await writeFile(pattern, patternFrontmatter + patternBody);
     assert.doesNotThrow(read);
+  });
+});
+
+/** A Switch page on the figure template: short text, live figures and a legend. */
+const figureBody = [
+  '# Switch',
+  '',
+  '## Overview',
+  '',
+  'Turns a setting on or off.',
+  '',
+  '```tsx example=Basic',
+  '',
+  '```',
+  '',
+  '## When to use',
+  '',
+  '```tsx do=Instant caption="Use a switch for a setting that applies at once."',
+  '',
+  '```',
+  '',
+  '```tsx dont=OnSubmit open stage=raised caption="Don\'t use a switch in a form that applies on submit."',
+  '',
+  '```',
+  '',
+  '### Labels',
+  '',
+  'Name the setting, not the action.',
+  '',
+  '## Anatomy',
+  '',
+  '```tsx anatomy=Parts',
+  '',
+  '```',
+  '',
+  '1. **Track** (`env-switch`): the pill.',
+  '2. `env-switch-input`',
+  '',
+  '## Adapting to width',
+  '',
+  '```tsx example=Narrow widths="16 30" stage=shaded',
+  '',
+  '```',
+  '',
+  '## Accessibility',
+  '',
+  '### envUI provides',
+  '',
+  '- The switch role.',
+  '',
+  '### You provide',
+  '',
+  '- A label.',
+  '',
+  '## Changelog',
+  '',
+  '- **0.1.0**: Switch.',
+  '',
+].join('\n');
+
+test('a component page with a When to use section is on the figure template', async () => {
+  await templateFixture(async ({ page, read, examples }) => {
+    for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
+      await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
+    await writeFile(page, switchFrontmatter + figureBody);
+    const documents = read();
+    const switchPage = documents[1];
+    assert.equal(switchPage.format, 'figures');
+    assert.deepEqual(
+      switchPage.sections.map((section) => section.id),
+      ['overview', 'usage', 'anatomy', 'width', 'accessibility', 'changelog'],
+    );
+    const blocks = switchPage.sections.flatMap((section) => section.blocks);
+    const figure = (name) => blocks.find((block) => block.name === name);
+    assert.deepEqual(
+      [figure('Instant').role, figure('Instant').caption],
+      ['do', 'Use a switch for a setting that applies at once.'],
+    );
+    assert.equal(
+      figure('OnSubmit').heading,
+      "Don't: Don't use a switch in a form that applies on submit.",
+    );
+    assert.deepEqual(figure('Parts').legend, [
+      { part: 'env-switch', text: '**Track** (`env-switch`): the pill.' },
+      { part: 'env-switch-input', text: '`env-switch-input`' },
+    ]);
+    assert.deepEqual(figure('Narrow').widths, [16, 30]);
+    // The flag open shows the example's overlays open; other figures leave it out.
+    assert.equal(figure('OnSubmit').open, true);
+    assert.equal(figure('Instant').open, undefined);
+    // stage=raised fills the stage with the raised background, stage=shaded with a shade darker
+    // than the page's and the navigation's; other figures keep the page's.
+    assert.equal(figure('OnSubmit').stage, 'raised');
+    assert.equal(figure('Narrow').stage, 'shaded');
+    assert.equal(figure('Instant').stage, undefined);
+
+    // The packaged page keeps the figures' kinds and attributes, and the legend.
+    const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
+    assert.match(compiled, /^### Labels$/m);
+    assert.ok(
+      compiled.includes(
+        `\`\`\`tsx do=Instant caption="Use a switch for a setting that applies at once."\n${switchExample}\`\`\``,
+      ),
+    );
+    assert.ok(
+      compiled.includes('```tsx dont=OnSubmit open stage=raised caption="Don\'t use a switch'),
+    );
+    assert.match(
+      compiled,
+      /```\n\n1\. \*\*Track\*\* \(`env-switch`\): the pill\.\n2\. `env-switch-input`\n/,
+    );
+    assert.ok(compiled.indexOf('## Accessibility') < compiled.indexOf('## Props'));
+  });
+});
+
+test('a page on the figure template rejects what breaks its form', async () => {
+  await templateFixture(async ({ page, read, examples, docs }) => {
+    for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
+      await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
+    const rejects = async (body, pattern) => {
+      await writeFile(page, switchFrontmatter + body);
+      assert.throws(read, pattern);
+    };
+    const body = figureBody;
+    await rejects(
+      body.replace('Name the setting, not the action.', '> How do I label it?'),
+      /When to use has a blockquote/,
+    );
+    await rejects(
+      body.replace(' caption="Use a switch for a setting that applies at once."', ''),
+      /do Instant needs caption/,
+    );
+    await rejects(body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
+    await rejects(
+      body.replace('anatomy=Parts', 'anatomy=Parts size=lg'),
+      /anatomy Parts takes no size/,
+    );
+    await rejects(
+      body.replace('dont=OnSubmit open stage=raised', 'dont=OnSubmit open=yes'),
+      /write the flag open alone/,
+    );
+    await rejects(body.replace('anatomy=Parts', 'anatomy=Parts of'), /has of without a value/);
+    await rejects(body.replace('stage=raised', 'stage=dark'), /has stage="dark"/);
+    // A double quote inside a caption, escaped or not, is pointed at rather than called malformed.
+    for (const quote of ['"', '\\"'])
+      await rejects(
+        body.replace('applies at once.', `says ${quote}Save${quote}.`),
+        /the caption of the fence `tsx do=Instant caption="Use a switch for a setting that says "Save"\."` has a double quote inside it, at `"Save"\."`/,
+      );
+    await rejects(
+      body.replace('2. `env-switch-input`', '2. The thumb.'),
+      /item 2 of the legend of anatomy Parts names no part/,
+    );
+    await rejects(
+      body.replace('## Adapting to width', '## Width'),
+      /not a section of a component page/,
+    );
+    await rejects(
+      body.replace(/## When to use[\s\S]*?(?=## Anatomy)/, ''),
+      /a page on the figure template has a "## When to use" section/,
+    );
+    await rejects(
+      body.replace('## Changelog', '## Variants\n\nOne size.\n\n## Changelog'),
+      /"## Variants" must come before "## Accessibility"/,
+    );
+    await rejects(body.replace('example=Basic', 'example=Missing'), /has no file/);
+    // A legend names parts that exist, and a figure without one names a component with parts.
+    await rejects(
+      body.replace('2. `env-switch-input`', '2. `env-switch-knob`'),
+      /names env-switch-knob, which neither packages\/ui's CSS nor docs\/generated\/parts\.json has/,
+    );
+    const withoutLegend = body.replace(/1\. \*\*Track\*\*.*\n2\. `env-switch-input`\n/, '');
+    await rejects(
+      withoutLegend,
+      /anatomy Parts has no legend, and docs\/generated\/parts\.json lists no parts of Switch/,
+    );
+    await rejects(
+      withoutLegend.replace('anatomy=Parts', 'anatomy=Parts of=Toggle'),
+      /lists no parts of Toggle$/m,
+    );
+    await mkdir(join(docs, 'generated'), { recursive: true });
+    await writeFile(
+      join(docs, 'generated', 'parts.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        components: {
+          Switch: {
+            root: 'env-switch',
+            source: 'Switch.tsx',
+            parts: [{ class: 'env-switch-knob', description: 'The knob.' }],
+            states: [],
+          },
+        },
+        shared: {},
+      }),
+    );
+    await writeFile(
+      page,
+      switchFrontmatter + withoutLegend.replace('`env-switch-input`', '`env-switch-knob`'),
+    );
+    assert.doesNotThrow(read);
+    // A section-template page that borrows a figure-template section is told what makes one.
+    await rejects(
+      switchBody.replace('## States and behaviour', '## Adapting to width'),
+      /a page on the figure template has a "## When to use" section/,
+    );
   });
 });

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Composer, Stack, Text } from '@envsemble/envui';
+import { Composer, Column, Text } from '@envsemble/envui';
 
 export default function FormSubmit() {
   const [sent, setSent] = useState('');
@@ -10,13 +10,13 @@ export default function FormSubmit() {
     event.currentTarget.reset();
   };
   return (
-    <form onSubmit={submit}>
-      <Stack gap={3}>
+    <form onSubmit={submit} style={{ inlineSize: 'min(100%, 32rem)' }}>
+      <Column gap={3}>
         <Composer name="note" aria-label="Note" placeholder="Add a note to the plan" />
         <Text variant="caption" emphasis="muted" role="status">
           {sent && `Added: ${sent}`}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

@@ -14,13 +14,13 @@
   background: var(--env-list-item-fill, transparent);
 }
 
-li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item-dot {
+li.env-navigation-item.env-navigation-selected .env-navigation-dot {
   color: var(--env-color-accent);
 }
 
-.env-counter-badge,
-.env-counter-badge-label,
-.env-counter-badge {
+.env-badge:where([data-count]),
+.env-badge-count-label,
+.env-badge:where([data-count]) {
   min-width: 2ch;
 }
 
@@ -38,8 +38,8 @@ li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item
 .env-drop-zone-border,
 .env-disclosure > .env-disclosure-panel,
 .env-diff-stat-additions,
-.env-organization-switcher-option,
-.env-organization-switcher-trigger-label,
+.env-organization-menu-option,
+.env-organization-trigger-label,
 .env-pager {
   outline: none;
 }
@@ -58,7 +58,7 @@ li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item
 /* DiffCount's label had the counter's class; DiffStat names it for itself. */
 .env-diff-stat .env-diff-stat-label,
 .env-diff-stat:hover > .env-diff-stat-label,
-.env-counter-badge .env-counter-badge-label {
+.env-badge:where([data-count]) .env-badge-count-label {
   clip-path: inset(50%);
 }
 /* Navigation parts named after their components, and modifiers that became attributes. */
@@ -67,7 +67,7 @@ li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item
 .env-document-tabs-tab:hover .env-document-tabs-tab-label,
 .env-breadcrumbs-item + .env-breadcrumbs-item .env-breadcrumbs-link,
 .env-tree-item .env-tree-description,
-.env-nav-list-item.env-nav-list-item:where([data-icon-only]) .env-nav-list-item-end,
+.env-navigation-item.env-navigation-icon-only .env-navigation-trailing,
 .env-menu-item-end {
   color: inherit;
 }

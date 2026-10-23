@@ -16,7 +16,7 @@ const dist = join(repository, 'packages/ui/dist');
 const modules = await libraryModules();
 
 /** The entry points, whose `export *` and `export * as` lines a server component imports through. */
-const entries = ['index', 'content', 'diff', 'rich-text', 'theme-bootstrap', 'icons/index'];
+const entries = ['index', 'content', 'diff', 'rich-text', 'theme-bootstrap', 'dev', 'icons/index'];
 
 const startsWithDirective = (code) => /^\s*(['"])use client\1;?/.test(code);
 
@@ -168,10 +168,6 @@ test('a server component imports envUI and renders it on the server', () => {
   // The server writes the application's contrast into the script, which sets it before paint.
   assert.ok(result.bootstrapContrastScript.includes('r.setAttribute("data-env-contrast","high")'));
   assert.equal(result.relativeTime, '3 hours ago');
-  // The frame's cookie is read on the server, for AppShell.Root's initialState.
-  assert.deepEqual(result.appShellCookie, {
-    result: { start: { open: false }, end: { open: true, width: 21.5 } },
-  });
   assert.deepEqual(result.diffLines, { result: { additions: 2, deletions: 1 } });
   assert.ok(
     result.richTextExtensions.result?.includes('envReference'),
@@ -193,10 +189,9 @@ test('a server component imports envUI and renders it on the server', () => {
       'href="/destination"',
       'href="/destination" pending',
       'href="/destination" disabled',
-      'iconOnly icon={…} aria-label="Home"',
     ],
     Link: ['(defaults)', 'href="/destination"', 'href="/destination" disabled'],
-    Card: ['layout="feature"', 'href="/destination"'],
+    Card: ['href="/destination"'],
     Badge: ['tone="danger"', 'variant="solid"'],
     Alert: ['tone="danger"', 'announce'],
     Text: ['variant="headline"', 'emphasis="muted"'],
@@ -207,7 +202,7 @@ test('a server component imports envUI and renders it on the server', () => {
         main.variants[name]?.includes(variant),
         `${name} renders on the server with ${variant}`,
       );
-  for (const name of ['Badge', 'Card', 'Text', 'Button', 'Alert', 'List.Item', 'Stat.Root'])
+  for (const name of ['Badge', 'Card', 'Text', 'Button', 'Alert', 'List.Item'])
     assert.ok(main.server.includes(name), `${name} renders on the server`);
   for (const name of [
     'Menu.Item',
@@ -216,7 +211,6 @@ test('a server component imports envUI and renders it on the server', () => {
     'Table.Root',
     'useToast',
     'EnvUIProvider',
-    'CloseButton',
     'Toolbar.Root',
     'Field.Root',
   ])

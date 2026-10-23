@@ -1,15 +1,15 @@
 import { Example, SpecimenGrid } from '../Example';
-import { Stack, Text } from '@envsemble/envui';
+import { Column } from '@envsemble/envui';
 
 export function SpacingPreview() {
   return (
     <>
       <Example
         title="Spacing scale"
-        size="compact"
+        size="field"
         caption="Parents own gaps; components own padding. Both use this scale."
       >
-        <Stack gap={3}>
+        <Column gap={3}>
           {[0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4].map((size, i) => (
             <div className="docs-measure" key={size}>
               <code>--env-space-{i + 1}</code>
@@ -17,13 +17,7 @@ export function SpacingPreview() {
               <div className="docs-spacing-bar" style={{ width: `var(--env-space-${i + 1})` }} />
             </div>
           ))}
-        </Stack>
-      </Example>
-      <Example title="Responsive sizing">
-        <Text emphasis="muted">
-          Use relative units and let content wrap. The library increases touch targets to at least
-          2.75 rem for coarse pointers.
-        </Text>
+        </Column>
       </Example>
       <Example title="Corner scale" size="wide">
         <SpecimenGrid size="compact">

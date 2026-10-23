@@ -1,10 +1,18 @@
 {
-  "env-split-pane-pane": {
-    "attributes": ["data-pane"],
-    "report": "SplitPane's panes have no data-pane: give each SplitPane.Pane a className of your own, or select the first as .env-split-pane > .env-split-pane-pane:first-child."
+  "env-panes-pane": {
+    "report": "Panes has no generic pane: its panes are env-panes-main and env-panes-supporting, or env-panes-list and env-panes-detail."
   },
-  "env-split-pane": {
-    "attributes": ["data-resizing"],
-    "report": "SplitPane sets no data-resizing while dragging: the handle has data-dragging, so write .env-split-pane:has(> .env-split-pane-handle[data-dragging])."
+  "env-panes": {
+    "attributes": [
+      "data-resizing",
+      "data-orientation",
+      "data-stack-below",
+      "data-stacked",
+      "data-detail-shown"
+    ],
+    "report": "Panes decides its arrangement in CSS and marks it with data-behavior, data-split-at and data-open, the pane shown in less room: it has no orientation or stacking, and while its divider is dragged the divider has data-dragging, so write .env-panes:has(> .env-panes-divider[data-dragging]) for data-resizing."
+  },
+  "env-split-pane-probe": {
+    "report": "Panes measures nothing: CSS decides its arrangement from its own width, at splitAt, so the probe is gone."
   }
 }

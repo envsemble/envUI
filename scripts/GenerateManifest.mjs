@@ -1,14 +1,15 @@
 // Generates the files agents read from the package, all from the documentation's own sources: the
 // index and each page's frontmatter (docs/), the generated props (docs/generated/props.json), the
-// example files (apps/catalogue/src/examples) and the token list
-// (packages/ui/src/generated/tokens.json).
+// part contract (docs/generated/parts.json), the example files (apps/catalogue/src/examples) and the
+// token list (packages/ui/src/generated/tokens.json).
 //
 //   node scripts/GenerateManifest.mjs           rewrite docs/generated/manifest.json and llms.txt
 //   node scripts/GenerateManifest.mjs --check   fail when either differs from its sources
 //
 // manifest.json lists every component page with its summary, aliases, when to use it and what to
-// use instead, its exports with their import path and props, and its examples; the other pages
-// (guides, foundations, patterns and templates); every runtime export; and the tokens. llms.txt is
+// use instead, its exports with their import path and props, its examples, and its parts (the
+// public part classes and state attributes); the other pages
+// (guides, foundations and patterns); every runtime export; and the tokens. llms.txt is
 // the llmstxt.org index of the documentation. Both are committed, so a change to a source shows up
 // in review, and the package build copies them to the package root beside llms-full.txt, every
 // compiled page in one file. The `npx --no envui agents` index and the `envui mcp` server read the
@@ -29,6 +30,7 @@ import {
   readDocumentation,
   readProps,
 } from './GenerateDocumentation.mjs';
+import { partsFile, readParts } from './GenerateParts.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 export const manifestFile = resolve(root, 'docs/generated/manifest.json');
@@ -38,12 +40,30 @@ const tokensFile = resolve(root, 'packages/ui/src/generated/tokens.json');
 export const manifestSchemaVersion = 1;
 const packageName = '@envsemble/envui';
 
+/**
+ * The parts of a component page: for each of its exports that has parts, its root class, part
+ * classes and state attributes, and the shared anatomy those render, such as the list row of menus.
+ */
+function partsOf(names, parts) {
+  const entries = {};
+  const shared = new Set();
+  const brief = ({ source: _source, usedBy: _usedBy, uses, ...entry }) => entry;
+  for (const name of names) {
+    const entry = parts.components[name];
+    if (!entry || name in entries) continue;
+    entries[name] = brief(entry);
+    for (const group of entry.uses ?? []) if (parts.shared[group]) shared.add(group);
+  }
+  for (const group of [...shared].sort())
+    entries[group] = { shared: true, ...brief(parts.shared[group]) };
+  return entries;
+}
+
 /** Index groups that are not component categories, and the manifest list each one fills. */
 const pageKinds = {
   'Setup and workflows': 'guides',
   Foundations: 'foundations',
   Patterns: 'patterns',
-  Templates: 'templates',
 };
 
 /** Markdown reduced to one line of plain text: links keep their text, emphasis goes. */
@@ -92,8 +112,7 @@ function leadDescription(markdown) {
 }
 
 /**
- * The files a page shows of a kind, example or template, each with its title, what it shows and
- * its packaged path; a template's screen also with its frame and whether it is the page's main one.
+ * The example files a page shows, each with its title, what it shows and its packaged path.
  */
 function filesOf(document, kind) {
   const items = [];
@@ -110,16 +129,12 @@ function filesOf(document, kind) {
           before?.kind === 'markdown' ? before.markdown : '',
         ),
         file: `docs/examples/${document.id}/${block.name}.tsx`,
-        ...(kind === 'template' && { frame: block.frame, primary }),
       });
     });
   return items;
 }
 
-/** The scales every template is shown and tested in. */
-const templateScales = ['comfortable', 'compact'];
-
-/** A pattern or template page as the manifest lists it, from its frontmatter and files. */
+/** A pattern page as the manifest lists it, from its frontmatter and files. */
 function compositionEntry(document, kind, doc) {
   const { frontmatter } = document;
   return {
@@ -136,11 +151,6 @@ function compositionEntry(document, kind, doc) {
     composes: frontmatter.composes,
     related: document.related,
     doc,
-    ...(kind === 'template' && {
-      frame: frontmatter.frame,
-      scales: templateScales,
-      files: filesOf(document, 'template'),
-    }),
     examples: filesOf(document, 'example'),
   };
 }
@@ -219,7 +229,7 @@ function readTokens(file = tokensFile) {
     themes,
     scales: tokens.scales.map((scale) => scale.name),
     usage:
-      'Use a token through its CSS custom property, such as var(--env-color-fg-muted), in CSS that styles the application. envUI components already use them; never restyle their classes.',
+      "Use a token through its CSS custom property, such as var(--env-color-fg-muted), in CSS that styles the application. These system tokens and the components' part names are the public contract: CSS may target a component's part classes and state attributes (each component's parts), which are versioned, so a rename or removal is a breaking change. Component tokens, the custom properties a component declares for itself such as --env-card-padding, are private and may change in any release; set the system tokens instead.",
     items,
     legacy,
   };
@@ -231,20 +241,21 @@ export function buildManifest({
   props = readProps(directory),
   examples = examplesDirectory,
   tokens = tokensFile,
+  parts = existsSync(partsFile) ? readParts(partsFile) : { components: {}, shared: {} },
 } = {}) {
   // The contributor pages stay in the repository, so the agent files leave them out.
   const documents = readDocumentation(directory, { props, examples }).filter(
     (document) => !contributorPages.has(document.path),
   );
   const components = [];
-  const pages = { guides: [], foundations: [], patterns: [], templates: [] };
+  const pages = { guides: [], foundations: [], patterns: [] };
   const exportPages = new Map();
   const exportAliases = new Map();
   for (const document of documents) {
     if (document.id === 'index') continue;
     const doc = `docs/${document.path}`;
     const kind = pageKindOf(document.path);
-    if (kind === 'pattern' || kind === 'template') {
+    if (kind === 'pattern') {
       pages[`${kind}s`].push(compositionEntry(document, kind, doc));
       continue;
     }
@@ -300,14 +311,18 @@ export function buildManifest({
       related: document.related,
       exports: names,
       examples: exampleItems,
+      parts: partsOf(
+        names.map((name) => name.split('.')[0]),
+        parts,
+      ),
     });
   }
-  // Each component page leads to the patterns and templates that compose its exports.
+  // Each component page leads to the patterns that compose its exports.
   for (const component of components) {
     const names = new Set(component.exports.map((name) => name.split('.')[0]));
     const using = (list) =>
       list.filter((page) => page.composes.some((name) => names.has(name))).map(({ name }) => name);
-    component.usedIn = { patterns: using(pages.patterns), templates: using(pages.templates) };
+    component.usedIn = { patterns: using(pages.patterns) };
   }
   const exportIndex = Object.fromEntries(
     Object.entries(props.exports).map(([name, entry]) => [
@@ -317,7 +332,7 @@ export function buildManifest({
   );
   return {
     $comment:
-      'Generated by scripts/GenerateManifest.mjs from docs/, docs/generated/props.json, the example files and the tokens; do not edit. Paths are relative to the package root.',
+      'Generated by scripts/GenerateManifest.mjs from docs/, docs/generated/props.json, docs/generated/parts.json, the example files and the tokens; do not edit. Paths are relative to the package root.',
     schemaVersion: manifestSchemaVersion,
     package: packageName,
     rule: 'Search envUI before writing any UI element; propose an envUI addition instead of a local copy.',
@@ -326,6 +341,7 @@ export function buildManifest({
       llms: 'llms.txt',
       llmsFull: 'llms-full.txt',
       props: 'docs/generated/props.json',
+      parts: 'docs/generated/parts.json',
       icons: 'icon-manifest.json',
     },
     imports: {
@@ -363,6 +379,8 @@ export function renderLlmsText(manifest) {
     '',
     `${manifest.rule} Each component page has when to use it and what to use instead, accessibility, examples as source and props generated from the TypeScript declarations. manifest.json holds the same as data, and \`npx --no envui mcp\` serves it to agents over MCP.`,
     '',
+    'Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are public and versioned: CSS may target them, and each component below names its root classes. Component tokens, such as `--env-card-padding`, are private; use the system tokens. docs/generated/parts.json lists every part with what it is.',
+    '',
   ];
   const section = (title, items) => {
     if (!items.length) return;
@@ -381,9 +399,16 @@ export function renderLlmsText(manifest) {
         .map((component) => {
           const names = component.exports.filter((name) => !name.includes('.'));
           const others = names.filter((name) => name !== component.name);
+          const roots = [
+            ...new Set(
+              Object.values(component.parts ?? {})
+                .filter((entry) => !entry.shared && entry.root)
+                .map((entry) => `\`.${entry.root}\``),
+            ),
+          ];
           return `- [${component.name}](${component.doc}): ${component.summary}${
             others.length ? ` Also: ${others.join(', ')}.` : ''
-          }`;
+          }${roots.length ? ` Parts: ${roots.join(', ')}.` : ''}`;
         }),
     );
   for (const intent of manifest.intents)
@@ -391,17 +416,11 @@ export function renderLlmsText(manifest) {
       `Patterns: ${intent}`,
       manifest.patterns.filter((pattern) => pattern.intent === intent).map(page),
     );
-  section(
-    'Templates',
-    manifest.templates.map(
-      (template) =>
-        `${page(template)} (${template.frame === 'app' ? 'inside the app frame' : 'a whole screen'})`,
-    ),
-  );
   section('Optional', [
     '- [Full documentation](llms-full.txt): every page above in one file, with examples and props.',
     '- [Manifest](manifest.json): components, exports, props, examples, patterns and tokens as JSON.',
     '- [Props](docs/generated/props.json): the props of every export.',
+    '- [Parts](docs/generated/parts.json): the part classes and state attributes of every component, with what each part is.',
     '- [Icons](icon-manifest.json): every icon, imported from `@envsemble/envui/icons/<Name>`.',
   ]);
   return `${lines.join('\n').replace(/\n+$/, '')}\n`;
@@ -434,12 +453,10 @@ export function renderLlmsFull(
     const component = manifest.components.find((item) => item.page === document.id);
     const head = [`<!-- docs/${document.path} -->`, '', `# ${document.title}`, ''];
     if (document.summary) head.push(`> ${document.summary}`, '');
-    const composition = [...manifest.patterns, ...manifest.templates].find(
-      (item) => item.name === document.id,
-    );
+    const composition = manifest.patterns.find((item) => item.name === document.id);
     if (composition)
       head.push(
-        `Status: ${composition.status}. Since: ${composition.since}.${composition.intent ? ` Intent: ${composition.intent}.` : ''}${composition.frame ? ` Frame: ${composition.frame === 'app' ? 'inside the app frame' : 'a whole screen'}.` : ''} Built from: ${composition.composes.join(', ')}.`,
+        `Status: ${composition.status}. Since: ${composition.since}.${composition.intent ? ` Intent: ${composition.intent}.` : ''} Built from: ${composition.composes.join(', ')}.`,
         '',
       );
     if (component) {

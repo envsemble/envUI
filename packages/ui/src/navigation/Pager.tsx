@@ -3,6 +3,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useLinkComponent } from '../internal/LinkContext.js';
 import { useEnvUI, useMessages } from '../internal/EnvUIContext.js';
@@ -125,15 +126,23 @@ function Root({
   if (!previous && !next && children == null) return null;
 
   return (
-    <nav
-      {...props}
-      aria-label={ariaLabel ?? messages.label}
-      className={classNames('env-pager', className)}
+    <Row
+      wrap
+      justify="center"
+      align="stretch"
+      gap={4}
+      render={
+        <nav
+          {...props}
+          aria-label={ariaLabel ?? messages.label}
+          className={classNames('env-pager', className)}
+        />
+      }
     >
       {previous && <Previous {...previous} />}
       {children}
       {next && <Next {...next} />}
-    </nav>
+    </Row>
   );
 }
 

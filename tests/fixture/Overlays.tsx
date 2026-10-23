@@ -7,11 +7,11 @@ import {
   Link,
   Alert,
   Popover,
-  Stack,
+  Column,
   Text,
   Theme,
   type ThemeValue,
-  Drawer,
+  Sheet,
 } from '@envsemble/envui';
 
 export function AlertsFixture({ theme }: { theme: ThemeValue }) {
@@ -61,7 +61,7 @@ export function PopoverFixture({ theme }: { theme: ThemeValue }) {
           trigger={<Button variant="secondary">Rename {theme}</Button>}
         >
           {(close) => (
-            <Stack gap={3}>
+            <Column gap={3}>
               <TextField label="Name" name="name" defaultValue="Roadmap.md" />
               <Button
                 onClick={() => {
@@ -71,7 +71,7 @@ export function PopoverFixture({ theme }: { theme: ThemeValue }) {
               >
                 Save name
               </Button>
-            </Stack>
+            </Column>
           )}
         </Popover>
       </div>
@@ -98,21 +98,21 @@ export function DialogVariantsFixture() {
         >
           <TextField label="Search" name="search" />
         </Dialog>
-        <Drawer
+        <Sheet
           side="end"
           title="Report details"
           trigger={<Button variant="secondary">Open panel</Button>}
         >
           <Text>A panel at the right edge.</Text>
-        </Drawer>
-        <Drawer
+        </Sheet>
+        <Sheet
           side="end"
           title="Wide report details"
           width="lg"
           trigger={<Button variant="secondary">Open wide panel</Button>}
         >
           <Text>A wide panel for content-heavy details.</Text>
-        </Drawer>
+        </Sheet>
       </div>
     </Theme>
   );
@@ -129,6 +129,20 @@ export function HoverCardFixture({ theme }: { theme: ThemeValue }) {
           onOpenChange={(open) => setChanges((current) => [...current, String(open)])}
         >
           <Text>Changed today by Alex. 3 open decisions, 1 blocked.</Text>
+        </HoverCard>
+        {/* Text that shows more takes the dotted underline; a button or Text holding only an icon
+            doesn't. */}
+        <HoverCard
+          trigger={
+            <Text render={<span />} tabIndex={0}>
+              28 h {theme}
+            </Text>
+          }
+        >
+          <Text>Reviews 11 h, drafting 9 h, meetings 8 h.</Text>
+        </HoverCard>
+        <HoverCard trigger={<Button variant="secondary">Details {theme}</Button>}>
+          <Text>Button details.</Text>
         </HoverCard>
       </div>
       <output data-testid={`hover-card-changes-${theme}`}>{changes.join(' ')}</output>

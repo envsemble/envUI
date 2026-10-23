@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 test('public component, stylesheet, new export and Markdown documentation update live', async ({
   page,
 }) => {
-  const buttonSource = resolve('packages/ui/src/actions/Button.tsx');
+  const buttonSource = resolve('packages/ui/src/actions/internal/ButtonBase.tsx');
   const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
   const example = resolve('apps/catalogue/src/examples/text-field/Variants.tsx');
@@ -53,25 +53,21 @@ test('public component, stylesheet, new export and Markdown documentation update
     // An example file uses the new export as an application would.
     const editedExample =
       `import { LiveAcceptance } from '@envsemble/envui';\n` +
-      originals[3].replace(/(<Stack[^>]*>)/, '$1<LiveAcceptance />');
+      originals[3].replace(/(<(?:Row|Column)[^>]*>)/, '$1<LiveAcceptance />');
     expect(editedExample).toContain('<LiveAcceptance />');
     await writeFile(example, editedExample);
     await expect(
       page
-        .getByRole('group', { name: 'Appearances example', exact: true })
+        .getByRole('group', { name: 'Variants example', exact: true })
         .getByTestId('live-new-component'),
     ).toHaveText('New shared component');
-    // A guideline added to the Markdown shows in its view.
+    // A guideline added to the Markdown shows on the page.
     const editedDocumentation = originals[4].replace(
-      /## Content guidelines\r?\n/,
+      /### Labels\r?\n/,
       '$&\nLive documentation acceptance.\n',
     );
     expect(editedDocumentation).toContain('Live documentation acceptance.');
     await writeFile(documentation, editedDocumentation);
-    await page
-      .locator('.docs-page-header')
-      .getByRole('tab', { name: 'Guidelines', exact: true })
-      .click();
     await expect(page.getByText('Live documentation acceptance.', { exact: true })).toBeVisible();
     expect(await page.evaluate(() => (window as unknown as { liveProof: string }).liveProof)).toBe(
       'same-document',

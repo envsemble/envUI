@@ -2,6 +2,7 @@
 
 import { PreviewCard as BasePreviewCard } from '@base-ui/react/preview-card';
 import {
+  isValidElement,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -11,8 +12,35 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
+import { Grid } from '../foundations/Layout.js';
+import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
+
+/** Says what a HoverCard can't do while developing, once per message. */
+function warn(message: string) {
+  let developing = false;
+  try {
+    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
+    developing = process.env.NODE_ENV !== 'production';
+  } catch {
+    // No bundler defined process.env.NODE_ENV.
+  }
+  if (!developing || warned.has(message)) return;
+  warned.add(message);
+  // A development-only warning, as React warns of a prop it can't use.
+  // eslint-disable-next-line no-console
+  console.warn(`envUI: ${message}`);
+}
+const warned = new Set<string>();
+
+/** Whether keyboard focus reaches a text trigger: it has a tabIndex of 0 or more. */
+function takesFocus(trigger: ReactElement) {
+  const tabIndex = (trigger.props as { tabIndex?: number | string }).tabIndex;
+  return tabIndex !== undefined && Number(tabIndex) >= 0;
+}
 
 const parts = {
   Portal: BasePreviewCard.Portal,
@@ -21,8 +49,14 @@ const parts = {
 };
 
 export interface HoverCardProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue'> {
-  /** The element that opens the card on hover and keyboard focus; it receives the ref. */
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue'>,
+    SkeletonProps {
+  /**
+   * The element that opens the card on hover and keyboard focus; it receives the ref. Text, such
+   * as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; give it
+   * tabIndex={0}, so keyboard focus reaches it, which envUI reports while developing. A link or
+   * another control keeps its own look.
+   */
   trigger: ReactElement;
   /** The details. Supplementary: never the only place essential information appears. */
   children: ReactNode;
@@ -47,7 +81,8 @@ export interface HoverCardProps
    */
   closeDelay?: number;
   /**
-   * md about 20 rem wide; lg about 28 rem.
+   * The widest the card grows: md, 20 rem, or lg, 28 rem. It is as wide as its content from 12 rem
+   * up, and narrows to fit the window.
    * @default 'md'
    */
   width?: 'md' | 'lg';
@@ -85,15 +120,28 @@ export function HoverCard({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  skeleton = false,
   className,
   ...popupProps
 }: HoverCardProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+  const portal = usePortalContainer();
   const open = controlledOpen ?? uncontrolledOpen;
   const openRef = useRef(open);
   // The card takes the text direction at its trigger.
   const triggerRef = useRef<HTMLAnchorElement>(null);
   openRef.current = open;
+  // A Tooltip as the trigger passes the props on to its control, which is the one to tell.
+  const control = isTooltip(trigger.type)
+    ? (trigger.props as { children?: unknown }).children
+    : trigger;
+  const textTrigger = isValidElement(control) && isTextTrigger(control);
+  // Text takes no focus of its own: without a tabIndex, the card's details are out of the
+  // keyboard's reach.
+  if (textTrigger && !takesFocus(control))
+    warn(
+      'A HoverCard whose trigger is text needs tabIndex={0} on it, so keyboard focus opens the card too.',
+    );
   function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
     if (next === openRef.current) return;
     openRef.current = next;
@@ -107,13 +155,17 @@ export function HoverCard({
   return (
     <BasePreviewCard.Root
       open={open}
-      onOpenChange={(next, details) => setOpen(next, details.reason as PopoverOpenChangeReason)}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
+        else setOpen(next, details.reason as PopoverOpenChangeReason);
+      }}
     >
       {/* A Tooltip as the trigger, or around the HoverCard, shows no tooltip (see Tooltip). */}
       <HoverCardTriggerContext value={isTooltip(trigger.type)}>
         <BasePreviewCard.Trigger
           ref={triggerRef}
           render={trigger}
+          className={textTrigger ? hoverDetailClass : undefined}
           delay={delay}
           closeDelay={closeDelay}
           onFocus={openOnKeyboardFocus}
@@ -125,7 +177,9 @@ export function HoverCard({
         side={side}
         align={align}
         width={width}
+        skeleton={skeleton}
         className={classNames('env-hover-card', className)}
+        layout={<Grid gap={3} padding={5} />}
         popupProps={popupProps}
       >
         {children}

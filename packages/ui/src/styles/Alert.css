@@ -11,12 +11,6 @@
   --env-alert-hover: var(--env-color-bg-accent-subtle-hover);
   --env-alert-pressed: var(--env-color-bg-accent-subtle-pressed);
   box-sizing: border-box;
-  min-inline-size: 0;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: start;
-  gap: var(--env-space-3);
-  padding: var(--env-space-4);
   border: 0.0625rem solid var(--env-alert-edge);
   border-radius: var(--env-radius-lg);
   background: var(--env-alert-tint);
@@ -58,9 +52,6 @@
 }
 .env-alert-content {
   grid-column: 2;
-  min-inline-size: 0;
-  display: grid;
-  gap: var(--env-space-1);
 }
 .env-alert-title {
   font: var(--env-type-h2);
@@ -70,14 +61,12 @@
 }
 .env-alert-action {
   margin-block-start: var(--env-space-2);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--env-space-2);
 }
-/* The dismiss button is a small CloseButton circle in the alert's tone, centered on the first line.
+/* The dismiss button is a small IconButton circle with a cross in the alert's tone, centered on the first line.
    Under a coarse pointer it grows to the touch height, as every button does. Alert.css comes after
    Button.css, so at equal specificity the tone wins over the ghost colors. */
 .env-alert-dismiss {
+  --env-icon-button-hit-area: var(--env-control-height-touch);
   /* The small button's height, which grows to the touch height under a coarse pointer, as the
      button itself does. */
   --env-alert-dismiss-height: var(--env-control-height-sm);
@@ -102,4 +91,20 @@
 .env-alert-dismiss:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-alert-pressed);
   color: var(--env-alert-tone);
+}
+
+/* A title or message given as undefined, as over a placeholder item, takes no room outside a
+   skeleton; in one it is a bar. */
+.env-alert-title:empty:not([data-env-skeleton] *),
+.env-alert-message:empty:not([data-env-skeleton] *) {
+  display: none;
+}
+[data-env-skeleton] :is(.env-alert-title, .env-alert-message) {
+  --env-skeleton-placeholder: inline-block;
+}
+[data-env-skeleton] .env-alert-title {
+  --env-skeleton-length: 12rem;
+}
+[data-env-skeleton] .env-alert-message {
+  --env-skeleton-length: 24rem;
 }

@@ -16,12 +16,13 @@ import { CheckBox } from '@envsemble/envui/icons/CheckBox';
 import { Code } from '@envsemble/envui/icons/Code';
 import { CropSquare } from '@envsemble/envui/icons/CropSquare';
 import { Dashboard } from '@envsemble/envui/icons/Dashboard';
+import { BottomNavigation } from '@envsemble/envui/icons/BottomNavigation';
 import { Explore } from '@envsemble/envui/icons/Explore';
+import { SideNavigation } from '@envsemble/envui/icons/SideNavigation';
 import { Extension } from '@envsemble/envui/icons/Extension';
 import { FormatLineSpacing } from '@envsemble/envui/icons/FormatLineSpacing';
 import { FormatSize } from '@envsemble/envui/icons/FormatSize';
 import { HourglassEmpty } from '@envsemble/envui/icons/HourglassEmpty';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { Notes } from '@envsemble/envui/icons/Notes';
 import { Notifications } from '@envsemble/envui/icons/Notifications';
 import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
@@ -49,7 +50,6 @@ import { LinearScale } from '@envsemble/envui/icons/LinearScale';
 import { Tune } from '@envsemble/envui/icons/Tune';
 import { Send } from '@envsemble/envui/icons/Send';
 import { Forum } from '@envsemble/envui/icons/Forum';
-import { Monitoring } from '@envsemble/envui/icons/Monitoring';
 import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
 import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
@@ -109,20 +109,19 @@ const referenceIcons: Record<string, typeof Palette> = {
   'color-picker': Palette,
   composer: Send,
   message: Forum,
-  stat: Monitoring,
   'calendar-heatmap': CalendarViewMonth,
   rating: Star,
   'relative-time': Schedule,
-  'nav-list': Explore,
+  bar: BottomNavigation,
+  rail: SideNavigation,
+  drawer: Explore,
   tabs: WebAsset,
   pager: ArrowForward,
   markdown: Article,
   'rich-text': Article,
   code: Code,
   disclosure: Notes,
-  'empty-state': Inbox,
   spinner: HourglassEmpty,
-  skeleton: HourglassEmpty,
   toast: Notifications,
   dialog: WebAsset,
   menu: MoreVert,
@@ -131,9 +130,10 @@ const referenceIcons: Record<string, typeof Palette> = {
   avatar: AccountCircle,
   meter: Speed,
   progress: Speed,
-  'app-shell': SpaceDashboard,
-  sidebar: ViewSidebar,
-  'window-frame': WebAsset,
+  scaffold: SpaceDashboard,
+  panes: ViewSidebar,
+  'top-bar': WebAsset,
+  sheet: ViewSidebar,
   tree: AccountTree,
   'document-tabs': Tab,
   'panel-dock': DockToBottom,

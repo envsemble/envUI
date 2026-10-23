@@ -1,6 +1,6 @@
 // Counts what the recommended config reports in envUI's own catalogue and test fixture, without
-// enforcing it: they render raw elements and the library's classes on purpose. The counts show how
-// the rules behave on real envUI code, and what is left of the old names after the renames.
+// enforcing it: they render raw elements on purpose. The counts show how the rules behave on real
+// envUI code, and what is left of the old names after the renames.
 //
 //   node scripts/Dogfood.mjs [directory …]   default: apps/catalogue/src tests/fixture
 
@@ -33,13 +33,15 @@ const eslint = new ESLint({
 /** What a message is about: the element, class, color or name, for grouping. */
 function subject(ruleId, message) {
   const patterns = {
+    'envui/no-hand-rolled-layout':
+      /^Inline `display: ([\w-]+)` lays out (a row or a column|a row|a column|a grid)/,
     'envui/no-html-elements': /^Use envUI's (\S+) instead of (.+?)(?:, or |: import)/,
-    'envui/no-private-classes': /^(\S+)/,
     'envui/no-raw-colors': /^Raw color (.+) in an inline style/,
     'envui/no-renamed-exports': /^(?:In envUI 1\.0 )?(\S+)/,
   };
   const match = message.match(patterns[ruleId]);
   if (!match) return message;
+  if (ruleId === 'envui/no-hand-rolled-layout') return `${match[1]} (${match[2]})`;
   return ruleId === 'envui/no-html-elements' ? `${match[2]} -> ${match[1]}` : match[1];
 }
 

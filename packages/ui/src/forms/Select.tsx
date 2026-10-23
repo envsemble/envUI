@@ -17,6 +17,12 @@ import { ChevronRight } from '../icons/ChevronRight.js';
 import { Check } from '../icons/Check.js';
 import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
 import { PopupSurface } from '../internal/PopupSurface.js';
+import {
+  containedModal,
+  keepsOpen,
+  usePortalContainer,
+} from '../internal/PortalContainerContext.js';
+import { Grid } from '../foundations/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
@@ -56,6 +62,11 @@ export interface SelectProps
   defaultValue?: string | null;
   /** Receives the value of the option people choose. */
   onValueChange?: (value: string | null) => void;
+  /**
+   * Whether the list starts open, such as in a picture of the open list.
+   * @default false
+   */
+  defaultOpen?: boolean;
   /** Submits the chosen option's value with a form under this name, through a hidden input. */
   name?: string;
   /**
@@ -104,6 +115,7 @@ export function Select({
   value,
   defaultValue,
   onValueChange,
+  defaultOpen = false,
   name,
   required,
   disabled,
@@ -126,6 +138,7 @@ export function Select({
   const { id } = metadata;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const portal = usePortalContainer();
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? null);
   const selectedValue = value === undefined ? uncontrolledValue : value;
   useEffect(
@@ -157,6 +170,11 @@ export function Select({
       items={items}
       value={selectedValue}
       onValueChange={handleValueChange}
+      defaultOpen={defaultOpen}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
+      }}
+      modal={containedModal(portal, true)}
       name={name}
       required={required}
       disabled={disabled}
@@ -167,7 +185,11 @@ export function Select({
     >
       <FieldFrame
         id={id}
-        label={label != null ? <BaseSelect.Label>{label}</BaseSelect.Label> : null}
+        label={
+          label != null ? (
+            <BaseSelect.Label className="env-select-label">{label}</BaseSelect.Label>
+          ) : null
+        }
         description={description}
         error={error}
         className="env-select"
@@ -201,8 +223,9 @@ export function Select({
           sideOffset={getPopupOffset}
           trigger={triggerRef}
           className="env-select-popup"
+          layout={<Grid padding={1} />}
         >
-          <BaseSelect.List className="env-select-list">
+          <BaseSelect.List render={<Grid />} className="env-select-list">
             {items.map((item) => (
               <ListRow
                 key={item.value}

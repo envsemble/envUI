@@ -3,14 +3,25 @@
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { Stack } from '../../foundations/Layout.js';
+import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
+import { Theme, type ThemeProps } from '../../foundations/Theme.js';
+import { SkeletonScope } from '../../foundations/SkeletonScope.js';
 
 /**
- * The parts Dialog, Drawer, CommandPalette and other modal surfaces share, inside a Base UI Dialog
+ * The parts Dialog, Sheet, CommandPalette and other modal surfaces share, inside a Base UI Dialog
  * or Drawer root: the scrim, the raised surface, the heading block and the actions row. Each owner
  * adds its own class for its placement and motion.
  */
+
+/**
+ * The theme boundary in a modal surface's portal. It has no box and is no container, so it starts
+ * no stacking context: the scrim and the surface's positioner keep their own layers, under what
+ * opens over them, and the positioner, fixed over the viewport, is the env-window container.
+ */
+export function OverlayTheme({ className, ...props }: ThemeProps) {
+  return <Theme {...props} className={classNames('env-overlay-theme', className)} />;
+}
 
 /** The scrim behind a modal surface, which fades in and out. */
 export function DialogBackdrop({ className }: { className?: string }) {
@@ -18,8 +29,8 @@ export function DialogBackdrop({ className }: { className?: string }) {
 }
 
 /**
- * The raised surface of a dialog or a drawer, for its popup's render: the elevation-3 edge and
- * shadow, the body text and the scrolling that a dialog's content needs.
+ * The raised surface of a dialog or a sheet, for its popup's render: the elevation-3 edge, the body
+ * text and the scrolling that a dialog's content needs.
  */
 export function DialogSurface({ className, ...props }: SurfaceProps) {
   return (
@@ -34,7 +45,8 @@ export function DialogSurface({ className, ...props }: SurfaceProps) {
 
 /**
  * The title, with a close button at its end where the owner passes one, and the description under
- * it. The title names the dialog and the description describes it.
+ * it. The title names the dialog and the description describes it; the description belongs to the
+ * title, so they sit closer together than the dialog's sections.
  */
 export function DialogHeader({
   title,
@@ -47,47 +59,48 @@ export function DialogHeader({
 }) {
   if (title == null && description == null && close == null) return null;
   return (
-    <div className="env-dialog-header">
+    <Grid gap={2} className="env-dialog-header">
       {(title != null || close != null) && (
-        <div className="env-dialog-heading">
+        <Row align="center" justify="between" gap={4} className="env-dialog-heading">
           {title != null ? (
             <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
           ) : (
             <span />
           )}
           {close}
-        </div>
+        </Row>
       )}
       {description != null && (
         <BaseDialog.Description className="env-dialog-description">
           {description}
         </BaseDialog.Description>
       )}
-    </div>
+    </Grid>
   );
 }
 
 /** The row of a dialog's actions at its end, with the primary action last. */
 export function DialogActions({ children, ...props }: ComponentPropsWithRef<'div'>) {
   return (
-    <Stack
-      {...props}
-      direction="row"
-      wrap
-      align="center"
-      justify="end"
-      className="env-dialog-actions"
-    >
+    <Row gap={4} {...props} wrap align="center" justify="end" className="env-dialog-actions">
       {children}
-    </Stack>
+    </Row>
   );
 }
 
 /** The content column of a dialog: header, content and actions 1.5 rem apart. */
-export function DialogContent({ children }: { children: ReactNode }) {
+export function DialogContent({
+  skeleton = false,
+  children,
+}: {
+  skeleton?: boolean;
+  children: ReactNode;
+}) {
+  // A skeleton dialog keeps focus on its popup, the busy root, which closes with Escape; its
+  // content is inert.
   return (
-    <Stack gap={5} className="env-dialog-content">
-      {children}
-    </Stack>
+    <Column gap={5} className="env-dialog-content" inert={skeleton || undefined}>
+      <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>
+    </Column>
   );
 }

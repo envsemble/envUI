@@ -2,15 +2,16 @@ import { useCallback, useRef, useState, type ComponentType } from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
+  Alert,
   Button,
-  CloseButton,
   ConfirmButton,
   CopyButton,
   EnvUIProvider,
   Field,
   IconButton,
   Popover,
-  Stack,
+  Column,
+  Row,
   Text,
   TextField,
   Toolbar,
@@ -35,7 +36,7 @@ function ToolbarSample() {
   const [pressed, setPressed] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   return (
-    <Stack gap={2} data-testid="toolbar">
+    <Column gap={2} data-testid="toolbar">
       <button type="button">Before toolbar</button>
       <Toolbar.Root aria-label="Formatting">
         <Toolbar.Group aria-label="Text style">
@@ -79,7 +80,7 @@ function ToolbarSample() {
         Toggle busy
       </button>
       <output data-testid="toolbar-pressed">{pressed.join(',')}</output>
-    </Stack>
+    </Column>
   );
 }
 
@@ -95,7 +96,7 @@ function EmphasisSample() {
   // Mounted on request, so its deliberate console error reaches only the test that asks for it.
   const [showUndesigned, setShowUndesigned] = useState(false);
   return (
-    <Stack gap={2} data-testid="emphasis">
+    <Column gap={2} data-testid="emphasis">
       <Toolbar.Root aria-label="Emphasis">
         <Button tone="accent" data-testid="toolbar-accent">
           Publish
@@ -126,7 +127,7 @@ function EmphasisSample() {
           </Popover>
         }
       />
-      <Stack direction="row" gap={2}>
+      <Row gap={2}>
         <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}} data-testid="confirm-resting">
           Remove
         </ConfirmButton>
@@ -139,8 +140,8 @@ function EmphasisSample() {
             Undesigned
           </LooseButton>
         )}
-      </Stack>
-    </Stack>
+      </Row>
+    </Column>
   );
 }
 
@@ -153,7 +154,7 @@ function RefCleanupSample() {
     return () => setLog((current) => [...current, 'cleanup']);
   }, []);
   return (
-    <Stack gap={2}>
+    <Column gap={2}>
       <button type="button" onClick={() => setMounted((current) => !current)}>
         Toggle ref toolbar
       </button>
@@ -163,7 +164,7 @@ function RefCleanupSample() {
         </Toolbar.Root>
       )}
       <output data-testid="ref-log">{log.join(',')}</output>
-    </Stack>
+    </Column>
   );
 }
 
@@ -171,7 +172,7 @@ function RefCleanupSample() {
 function FieldSample() {
   const [invalid, setInvalid] = useState(false);
   return (
-    <Stack gap={4} data-testid="field">
+    <Column gap={4} data-testid="field">
       <Field.Root name="project" invalid={invalid}>
         <Field.Label>Project name</Field.Label>
         <Field.Control placeholder="Northwind" />
@@ -185,21 +186,18 @@ function FieldSample() {
         <Field.Label>Disabled field</Field.Label>
         <Field.Control defaultValue="Locked" />
       </Field.Root>
-    </Stack>
+    </Column>
   );
 }
 
-/** CloseButton: its default name, a provider's message and an own label. */
+/** An Alert's dismiss button, a small IconButton with a cross, for its touch-size hit area. */
 function CloseButtonSample() {
   return (
-    <Stack direction="row" gap={2} data-testid="close-buttons">
-      <CloseButton data-testid="close-default" />
-      <EnvUIProvider messages={{ common: { close: 'Schließen' } }}>
-        <CloseButton data-testid="close-provider" />
-        <CloseButton aria-label="Remove Alex Morgan" data-testid="close-own" />
-      </EnvUIProvider>
-      <CloseButton size="sm" variant="secondary" data-testid="close-small" />
-    </Stack>
+    <div data-testid="close-buttons">
+      <Alert title="Saved" onDismiss={() => {}}>
+        The draft is saved.
+      </Alert>
+    </div>
   );
 }
 
@@ -333,10 +331,10 @@ function DirectedPopup({ dir }: { dir: 'ltr' | 'rtl' }) {
 
 function PopupSample() {
   return (
-    <Stack direction="row" gap={4} data-testid="popups">
+    <Row gap={4} data-testid="popups">
       <DirectedPopup dir="ltr" />
       <DirectedPopup dir="rtl" />
-    </Stack>
+    </Row>
   );
 }
 
@@ -371,13 +369,13 @@ function CopySample() {
     },
   });
   return (
-    <Stack direction="row" gap={2} data-testid="copy">
+    <Row gap={2} data-testid="copy">
       <Button variant="secondary" onClick={(event) => void copy('Northwind', event.currentTarget)}>
         Copy name
       </Button>
       <output data-testid="copy-status">{status}</output>
       <output data-testid="copy-written">{written}</output>
-    </Stack>
+    </Row>
   );
 }
 
@@ -388,7 +386,7 @@ function LocaleProbe() {
 /** The primitives batch A adds, mounted with ?fixture=primitives. */
 export function PrimitivesFixture() {
   return (
-    <Stack gap={6}>
+    <Column gap={6}>
       <ToolbarSample />
       <EmphasisSample />
       <RefCleanupSample />
@@ -408,6 +406,6 @@ export function PrimitivesFixture() {
           <LocaleProbe />
         </span>
       </EnvUIProvider>
-    </Stack>
+    </Column>
   );
 }

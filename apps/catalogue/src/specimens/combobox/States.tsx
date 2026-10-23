@@ -11,17 +11,12 @@ const people: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan 
 /** An invalid, a read-only and a disabled field, and a small field with chips. */
 export default function States() {
   return (
-    <Example title="Combobox states" size="collection">
+    <Example size="collection">
       <SpecimenGrid>
         <Specimen title="Invalid">
-          <Combobox
-            label="Approver"
-            items={people}
-            required
-            error="Choose someone to approve the release."
-          />
+          <Combobox label="Approver" items={people} required error="Choose an approver." />
         </Specimen>
-        <Specimen title="Read only" caption="Can still be focused and browsed.">
+        <Specimen title="Read only">
           <Combobox
             multiple
             label="Reviewers"
@@ -30,10 +25,10 @@ export default function States() {
             readOnly
           />
         </Specimen>
-        <Specimen title="Disabled" caption="Unavailable and left out of form submission.">
+        <Specimen title="Disabled">
           <Combobox label="Owner" items={people} defaultValue="jordan.ellis" disabled />
         </Specimen>
-        <Specimen title="Compact with chips">
+        <Specimen title="Small, with chips">
           <Combobox
             multiple
             size="sm"

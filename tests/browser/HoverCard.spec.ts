@@ -129,3 +129,43 @@ test('a hover card closes on Escape while the pointer rests on its trigger', asy
   await page.keyboard.press('Escape');
   await expect(card(page)).toHaveCount(0);
 });
+
+test('a text trigger takes a quiet dotted underline, a button trigger none', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=hover-card`);
+  for (const theme of themes) {
+    const scope = page.getByTestId(`hover-card-${theme}`);
+    const text = scope.getByText(`28 h ${theme}`);
+    await expect(text).toHaveClass(/\benv-hover-detail\b/);
+    const style = await text.evaluate((element) => {
+      const computed = getComputedStyle(element);
+      return {
+        line: computed.textDecorationLine,
+        decoration: computed.textDecorationStyle,
+        color: computed.textDecorationColor,
+        textColor: computed.color,
+        offset: parseFloat(computed.textUnderlineOffset) / parseFloat(computed.fontSize),
+        cursor: computed.cursor,
+      };
+    });
+    expect(style.line).toBe('underline');
+    expect(style.decoration).toBe('dotted');
+    expect(style.offset).toBeCloseTo(0.25, 2);
+    expect(style.cursor).not.toBe('help');
+    // Quiet: the muted text color, not the text's own.
+    expect(style.color).not.toBe(style.textColor);
+
+    for (const control of [
+      scope.getByRole('button', { name: `Details ${theme}` }),
+      scope.getByRole('link', { name: `Roadmap ${theme}` }),
+    ]) {
+      await expect(control).not.toHaveClass(/\benv-hover-detail\b/);
+      expect(
+        await control.evaluate((element) => getComputedStyle(element).textDecorationStyle),
+      ).not.toBe('dotted');
+    }
+    const button = scope.getByRole('button', { name: `Details ${theme}` });
+    expect(await button.evaluate((element) => getComputedStyle(element).textDecorationLine)).toBe(
+      'none',
+    );
+  }
+});

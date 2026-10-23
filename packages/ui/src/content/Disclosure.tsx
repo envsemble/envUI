@@ -2,7 +2,7 @@
 
 import { useState, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Stack } from '../foundations/Layout.js';
+import { Column } from '../foundations/Layout.js';
 
 export interface DisclosureProps extends Omit<ComponentPropsWithRef<'details'>, 'title'> {
   /** The summary: one line that says what the details hold and opens or closes them. */
@@ -74,9 +74,9 @@ export function Disclosure({
       >
         {title}
       </summary>
-      <Stack gap={2} className="env-disclosure-panel">
+      <Column gap={2} className="env-disclosure-panel">
         {children}
-      </Stack>
+      </Column>
     </details>
   );
 }

@@ -3,10 +3,11 @@
 import { Meter as BaseMeter } from '@base-ui/react/meter';
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { useLocale } from '../internal/EnvUIContext.js';
 
 /** What Meter and Progress share: a label, a range, an optional value text and native passthrough. */
-export interface BarProps
+export interface RangeBarProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-valuetext' | 'defaultValue'> {
   /** What the bar shows, such as Seats assigned; it is visible above the bar and names it. */
   label: ReactNode;
@@ -33,7 +34,7 @@ export interface BarProps
   'aria-valuetext'?: string;
 }
 
-export interface MeterProps extends BarProps {
+export interface MeterProps extends RangeBarProps {
   /**
    * The measurement, between min and max. A value outside the range shows, and is reported, as the
    * nearest end.
@@ -66,12 +67,13 @@ export function Meter({
       locale={locale}
       // Only a text of the application's replaces Base UI's formatted value.
       {...(ariaValueText !== undefined && { 'aria-valuetext': ariaValueText })}
+      render={<Grid gap={2} />}
       className={classNames('env-meter', className)}
     >
-      <div className="env-meter-heading">
+      <Row wrap justify="between" gap={3} className="env-meter-heading">
         <BaseMeter.Label className="env-meter-label">{label}</BaseMeter.Label>
         {valueText != null && <span className="env-meter-value">{valueText}</span>}
-      </div>
+      </Row>
       <BaseMeter.Track className="env-meter-track">
         <BaseMeter.Indicator className="env-meter-indicator" />
       </BaseMeter.Track>

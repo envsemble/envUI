@@ -697,3 +697,24 @@ test('typing reads no styles for the text direction, which is read as the popup 
     ),
   ).toBe(0);
 });
+
+test('open in a contained PortalContainer, the list leaves the rest of the page in reach', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=portal-containers`);
+  await expect(page.getByTestId('combobox-layer').getByRole('listbox')).toBeVisible();
+  // Base UI hides the page around an open list from assistive technology, modal or not; in a
+  // contained PortalContainer, the field, the other previews and the page stay in reach.
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          ['outside', 'preview', 'dialog-preview', 'combobox-preview']
+            .map((id) => document.querySelector(`[data-testid="${id}"]`)!)
+            .concat(document.querySelector('.env-combobox-input')!)
+            .filter((element) => element.closest('[aria-hidden="true"]')).length,
+      ),
+    )
+    .toBe(0);
+  await expect(page.getByRole('combobox', { name: 'Owner' })).toBeVisible();
+});

@@ -7,14 +7,21 @@ export type BadgeTone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger' 
 /** A badge's emphasis: a tinted, a filled or an outlined pill. */
 export type BadgeVariant = 'soft' | 'solid' | 'outline';
 
-export interface BadgeProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
-  /** Meaning of the state; done is the purple of completed work. Neutral by default. */
+interface BadgeAppearanceProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
+  /**
+   * Meaning of the state; done is the purple of completed work. Neutral by default. A count in the
+   * accent tone, solid, draws attention, such as unread messages that need an answer.
+   */
   tone?: BadgeTone;
   /**
    * soft tints the background, solid fills it with the tone, outline draws a border.
    * @default 'soft'
    */
   variant?: BadgeVariant;
+}
+
+/** A badge with a label. */
+interface LabelBadgeProps extends BadgeAppearanceProps {
   /** A decorative icon before the label, such as a check mark; hidden from assistive technology. */
   icon?: ReactNode;
   /**
@@ -22,20 +29,64 @@ export interface BadgeProps extends Omit<ComponentPropsWithRef<'span'>, 'childre
    * an ellipsis where the badge is wider than its container.
    */
   children: ReactNode;
+  count?: undefined;
 }
+
+/** A badge with a count. */
+interface CountBadgeProps extends BadgeAppearanceProps {
+  /**
+   * A count, such as 12, or short text such as 99+, in place of a label: a compact round pill, in
+   * tabular figures, as beside a navigation label, in a tab or on a button.
+   */
+  count: number | string;
+  /**
+   * What the count means, such as 12 unread, which assistive technology reads in place of the
+   * number; the number alone otherwise.
+   */
+  'aria-label'?: string;
+  icon?: never;
+  children?: never;
+}
+
+/** A badge with a label, or with count a compact count. */
+export type BadgeProps = LabelBadgeProps | CountBadgeProps;
 
 /**
  * A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata,
- * such as a plan or a count of seats.
+ * such as a plan or a count of seats; with count, a compact count, such as 12 unread.
  */
 export function Badge({
   tone = 'neutral',
   variant = 'soft',
   icon,
+  count,
   children,
   className,
   ...props
 }: BadgeProps) {
+  if (count != null) {
+    const { 'aria-label': label, ...rest } = props as Omit<CountBadgeProps, 'count'>;
+    return (
+      <span
+        {...rest}
+        className={classNames('env-badge', className)}
+        data-tone={tone}
+        data-variant={variant}
+        data-count=""
+      >
+        {label === undefined ? (
+          <span className="env-badge-label">{count}</span>
+        ) : (
+          <>
+            <span className="env-badge-label" aria-hidden="true">
+              {count}
+            </span>
+            <span className="env-badge-count-label">{label}</span>
+          </>
+        )}
+      </span>
+    );
+  }
   return (
     <span
       {...props}

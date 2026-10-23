@@ -3,7 +3,8 @@ import {
   Button,
   IconButton,
   SegmentedControl,
-  Stack,
+  Column,
+  Row,
   Table,
   type RowDensity as Density,
 } from '@envsemble/envui';
@@ -20,8 +21,8 @@ const densities: readonly Density[] = ['xs', 'sm', 'md', 'lg'];
 export default function RowDensity() {
   const [density, setDensity] = useState<Density>('sm');
   return (
-    <Stack gap={3}>
-      <Stack direction="row" wrap align="center" gap={4}>
+    <Column gap={3}>
+      <Row wrap align="center" gap={4}>
         <SegmentedControl
           aria-label="Row density"
           size="sm"
@@ -29,7 +30,7 @@ export default function RowDensity() {
           onValueChange={(value) => setDensity(densities.find((each) => each === value) ?? 'md')}
           items={densities.map((value) => ({ value, label: value.toUpperCase() }))}
         />
-      </Stack>
+      </Row>
       <Table.Root aria-label="Reports" density={density}>
         <Table.Head>
           <Table.Row>
@@ -42,24 +43,24 @@ export default function RowDensity() {
         <Table.Body>
           {reports.map((report) => (
             <Table.Row key={report.id}>
-              <Table.Cell>{report.name}</Table.Cell>
+              <Table.Cell nowrap>{report.name}</Table.Cell>
               <Table.Cell nowrap>{report.owner}</Table.Cell>
               <Table.Cell numeric>{report.pages}</Table.Cell>
               <Table.Cell align="end">
                 {/* Buttons in the cells take the small control height at every density. */}
-                <Stack direction="row" wrap align="center" gap={4} justify="end">
+                <Row wrap align="center" gap={4} justify="end">
                   <Button variant="text">Open</Button>
                   <IconButton
                     variant="ghost"
                     icon={<MoreVert />}
                     aria-label={`More for ${report.name}`}
                   />
-                </Stack>
+                </Row>
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table.Root>
-    </Stack>
+    </Column>
   );
 }

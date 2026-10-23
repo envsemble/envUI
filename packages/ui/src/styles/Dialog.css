@@ -1,9 +1,9 @@
-/* Dialogs and drawers share one surface (DialogSurface): the popover's look at elevation 3, a
-   shadow and a hairline edge, plus text and action geometry. Dialog adds its corners, widths,
-   placements and motion; Drawer its edge geometry, in Drawer.css. */
+/* Dialogs and sheets share one surface (DialogSurface): the popover's look at elevation 3, the
+   popup fill and the elevation edge over the scrim, with no shadow, plus text and action
+   geometry. Dialog adds its corners, widths, placements and motion; Sheet its edge geometry, in
+   Sheet.css. */
 .env-dialog-surface {
   border: 0.0625rem solid var(--env-elevation-3-border);
-  box-shadow: var(--env-elevation-3-shadow);
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
   max-height: 100%;
@@ -13,31 +13,28 @@
   pointer-events: auto;
 }
 .env-surface.env-dialog-surface {
-  --env-surface-color: var(--env-color-bg-raised);
+  --env-surface-color: var(--env-color-bg-popup);
 }
 .env-dialog-popup {
-  width: min(28rem, 100%);
+  /* The positioner's inline gutters, as the popup's margins: the positioner is the env-window
+     container, so its content box stays as wide as the window. */
+  --env-dialog-gutters: calc(
+    max(var(--env-viewport-gutter), env(safe-area-inset-left)) +
+      max(var(--env-viewport-gutter), env(safe-area-inset-right))
+  );
+  width: min(28rem, 100% - var(--env-dialog-gutters));
+  margin-left: max(var(--env-viewport-gutter), env(safe-area-inset-left));
+  margin-right: max(var(--env-viewport-gutter), env(safe-area-inset-right));
   /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
   transform-origin: var(--transform-origin, center);
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-dialog-popup[data-width='lg'] {
-  width: min(44rem, 100%);
+  width: min(44rem, 100% - var(--env-dialog-gutters));
 }
 .env-dialog-title,
 .env-dialog-description {
   margin: 0;
-}
-/* The description belongs to the title, so they sit closer together than the dialog's sections. */
-.env-dialog-header {
-  display: grid;
-  gap: var(--env-space-2);
-}
-.env-dialog-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--env-space-4);
 }
 .env-dialog-title {
   min-inline-size: 0;
@@ -48,9 +45,24 @@
   font: var(--env-type-body-small);
   color: var(--env-color-fg-muted);
 }
+/* The theme boundary of a modal surface's portal (Dialog, ConfirmDialog, Sheet, CommandPalette) has
+   no box: it carries the theme to the scrim and the surface and is no container. The surface's
+   layer, the fixed positioner over the viewport (Sheet's viewport), is the env-window container
+   instead, as wide as the window, so the boundary is neither a stacking context nor a containing
+   block in any engine. The scrim and the positioner keep their own layers in the root context,
+   under the menus, toasts and tooltips opened over them, which portal beside them: a boundary that
+   were fixed over the viewport would start a stacking context even without a z-index (a fixed box
+   always does), and one of no height out of flow would be the fixed scrim's containing block in an
+   engine whose container-type also contains layout. The positioner, a stacking context already,
+   is safe as the container in both. */
+.env-overlay-theme {
+  display: contents;
+  container-type: normal;
+}
 .env-dialog-backdrop {
   position: fixed;
   inset: 0;
+  pointer-events: auto;
   z-index: var(--env-z-overlay);
   background: var(--env-color-bg-overlay);
   /* Motion: the scrim fades in and out. */
@@ -70,10 +82,11 @@
   z-index: var(--env-z-modal);
   display: grid;
   place-items: center;
-  padding: max(var(--env-viewport-gutter), env(safe-area-inset-top))
-    max(var(--env-viewport-gutter), env(safe-area-inset-right))
-    max(var(--env-viewport-gutter), env(safe-area-inset-bottom))
-    max(var(--env-viewport-gutter), env(safe-area-inset-left));
+  /* The env-window container of what the dialog holds (see .env-overlay-theme). Its inline
+     gutters are the popup's margins, so the container measures the whole window. */
+  container: env-window / inline-size;
+  padding-block: max(var(--env-viewport-gutter), env(safe-area-inset-top))
+    max(var(--env-viewport-gutter), env(safe-area-inset-bottom));
   pointer-events: none;
 }
 /* Search-like dialogs open near the top, so results can grow downward without moving the field. */

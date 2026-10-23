@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, List, Spinner, Stack, Text } from '@envsemble/envui';
+import { Button, List, Spinner, Column, Row, Text } from '@envsemble/envui';
 
 const activity = [
   { id: 'brief', text: 'Alex Morgan updated the launch brief', when: 'Today' },
@@ -19,24 +19,24 @@ export default function RefreshInPlace() {
     timer.current = window.setTimeout(() => setRefreshing(false), 1500);
   };
   return (
-    <Stack gap={4}>
-      <Stack direction="row" align="center" justify="between" gap={4}>
-        <Stack direction="row" align="center" gap={3}>
+    <Column gap={4}>
+      <Row align="center" justify="between" gap={4}>
+        <Row align="center" gap={3}>
           <Text render={<h4 />} variant="title">
             Team activity
           </Text>
           {/* The activity shown stays while it refreshes; the spinner says it is updating. */}
           {refreshing && <Spinner size="sm" label="Refreshing activity" />}
-        </Stack>
+        </Row>
         <Button variant="secondary" size="sm" onClick={refresh}>
           Refresh
         </Button>
-      </Stack>
+      </Row>
       <List.Root aria-label="Team activity" aria-busy={refreshing}>
         {activity.map((item) => (
           <List.Item key={item.id} label={item.text} description={item.when} />
         ))}
       </List.Root>
-    </Stack>
+    </Column>
   );
 }

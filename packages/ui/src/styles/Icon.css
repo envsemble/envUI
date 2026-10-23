@@ -14,3 +14,13 @@
   height: 100%;
   fill: currentColor;
 }
+
+/* In a skeleton, an icon is a filled square of its size, rounded like the symbol it stands for. */
+[data-env-skeleton] .env-icon {
+  forced-color-adjust: none;
+  border-radius: var(--env-radius-sm);
+  background: var(--env-skeleton-color);
+}
+[data-env-skeleton] .env-icon * {
+  visibility: hidden;
+}

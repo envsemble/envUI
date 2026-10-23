@@ -1,0 +1,3 @@
+[
+  "line 12: env-counter is gone in 1.0: .env-badge carries [data-count] instead, which the component's props set."
+]

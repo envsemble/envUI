@@ -50,7 +50,8 @@
   block-size: var(--env-color-picker-pointer-size);
   border: 0.125rem solid white;
   border-radius: 50%;
-  box-shadow: var(--env-elevation-1-shadow);
+  /* A ring outside the white edge holds the thumb on light colors; no shadow. */
+  box-shadow: 0 0 0 var(--env-control-border-width) var(--env-color-border-default);
   pointer-events: none;
 }
 .env-color-picker-saturation-thumb {

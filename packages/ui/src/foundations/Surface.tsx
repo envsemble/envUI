@@ -3,7 +3,9 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
 import { useRender } from '@base-ui/react/use-render';
 import { classNames } from '../internal/classNames.js';
+import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import type { SpaceStep } from './Layout.js';
+import { inSkeleton } from './inSkeleton.js';
 
 /**
  * A surface's fill: default, the background of panes and side regions; muted, the background of
@@ -17,7 +19,7 @@ export type SurfaceBackground = 'default' | 'muted' | 'page' | 'raised';
  */
 export type SurfaceRadius = 'xl' | 'sm' | 'full' | 'none';
 
-export interface SurfaceAppearanceProps {
+export interface SurfaceAppearanceProps extends SkeletonProps {
   /**
    * The fill: default, the background of panes and side regions; muted, the background of rows;
    * page, the page background; or raised, a block that stands out on a pane.
@@ -43,7 +45,7 @@ export type SurfaceProps<RenderedElement extends HTMLElement = HTMLDivElement> =
   SurfaceAppearanceProps & {
     /**
      * The element to render the surface as, for its meaning, such as render={<section />}, or
-     * another component to render it onto without a wrapper, such as a Stack that lays out its
+     * another component to render it onto without a wrapper, such as a Column that lays out its
      * content: the surface's class, style and attributes merge into its props. It must forward
      * native props and refs. A div by default.
      */
@@ -59,7 +61,7 @@ export type SurfaceProps<RenderedElement extends HTMLElement = HTMLDivElement> =
 
 /**
  * A container with a background, an inset and corners, but no layout of its own: spacing between
- * its children, alignment and behaviour come from what it holds, such as a Stack. Card and other
+ * its children, alignment and behaviour come from what it holds, such as a Column. Card and other
  * containers build on it.
  */
 export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({
@@ -67,8 +69,10 @@ export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({
   background = 'default',
   padding,
   radius = 'xl',
+  skeleton = false,
   className,
   style,
+  children,
   ...props
 }: SurfaceProps<RenderedElement>) {
   return useRender({
@@ -76,6 +80,11 @@ export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({
     render,
     props: {
       ...props,
+      ...skeletonAttributes(skeleton),
+      // A render element's own children stay when the surface is given none.
+      ...(children !== undefined && {
+        children: inSkeleton(skeleton, children),
+      }),
       className: classNames('env-surface', className),
       'data-background': background,
       'data-radius': radius,

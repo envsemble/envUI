@@ -1,0 +1,13 @@
+{
+  "@envsemble/envui": {
+    "NavigationItem": {
+      "use": "List the destinations in one array, each { label, icon, href or onSelect, count, group, current }, and pass it to Drawer, Rail or Bar, which render the items; selected is current, a count in end is count. No codemod rewrites it: rewrite each list by hand."
+    },
+    "NavigationItemProps": {
+      "use": "Destination, one item of the array that Bar, Rail and Drawer take, or DrawerDestination, whose icon is optional."
+    },
+    "NavList": {
+      "use": "NavList is gone: list the destinations in one array, each { label, icon, href or onSelect, count, group, current }, and pass it to Drawer, Rail or Bar; NavList.Skeleton is skeleton on the form. No codemod rewrites it: its items are elements and a destination is data."
+    }
+  }
+}

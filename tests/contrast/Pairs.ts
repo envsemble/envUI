@@ -53,6 +53,10 @@ const alertTones = ['accent', 'success', 'warning', 'danger'] as const;
 const toneText = (tone: (typeof tones)[number]) =>
   tone === 'neutral' ? '--env-color-fg-muted' : `--env-color-fg-${tone}`;
 
+/** The tint of a soft badge: the tone's muted fill, and for the accent a tint of its own. */
+const badgeTint = (tone: (typeof tones)[number]) =>
+  tone === 'accent' ? '--env-color-bg-accent-badge' : `--env-color-bg-${tone}-muted`;
+
 // Surfaces, by role.
 const page = '--env-color-bg-page'; // the app frame, title bars, Surface background="page"
 const surface = '--env-color-bg-default'; // Surface's default, sidebars, standard menus
@@ -72,7 +76,7 @@ const layerPressed = '--env-color-bg-neutral-subtle-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
 // Component tokens that take a different role per theme.
-const row = '--env-color-list-item-bg'; // List rows: the default surface in light, the muted one in dark
+const row = '--env-color-list-item-bg'; // List rows: the muted surface in both themes
 const rowHover = '--env-color-list-item-bg-hover';
 const rowPressed = '--env-color-list-item-bg-pressed';
 
@@ -112,17 +116,18 @@ const distinct = (fill: string, backgrounds: readonly Background[], note?: strin
   on('distinct', fill, backgrounds, note);
 
 /**
- * The hairline edge of an elevated surface at standard contrast: below 3:1 by design. WCAG 1.4.11
- * asks 3:1 of what is needed to identify a component; a popup is identified by its elevation shadow
- * and its content, so its edge is decorative there. Raising the edge to 3:1 would outline every
- * menu, list and popover in mid gray, which changes the identity (Decision 7). The gate still
- * measures the edge, so it can't fade into its surface: at least 1.2:1. It is the boundary in high
- * contrast (4.5:1, measured below) and under forced colors, where the shadow is gone.
+ * The edge of an elevated surface at standard contrast. envUI draws no shadows, so a popup is set
+ * apart by its fill and this edge alone, and a modal by its scrim as well: the edge must be clearly
+ * visible, about 2:1 against the popup's own fill and the page, and at least 1.6:1 against every
+ * surface it floats over. It stays below 3:1 by design: WCAG 1.4.11 asks 3:1 of what is needed to
+ * identify a component, and a popup is identified by its fill and its content; a 3:1 edge would
+ * outline every menu, list and popover in mid gray, which changes the identity (Decision 7). It is
+ * the boundary in high contrast (4.5:1, measured below) and under forced colors.
  */
 const popupEdge = {
-  minimum: { standard: 1.2 },
+  minimum: { standard: 1.6 },
   rationale:
-    'Decorative at standard contrast: the elevation shadow and the content identify the popup, as WCAG 1.4.11 allows, and a 3:1 edge would outline every popup in mid gray. Held to 1.2:1 so it stays visible; the boundary in high contrast and under forced colors.',
+    'No shadows: the edge and the fill set a popup apart, so the edge is clearly visible at 1.6:1 or more against every surface it floats over. Below 3:1 by design, as WCAG 1.4.11 allows: the fill and the content identify the popup, and a 3:1 edge would outline every popup in mid gray. The boundary in high contrast and under forced colors.',
 } as const;
 
 /**
@@ -377,7 +382,7 @@ export const pairs: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-border-default',
     [field, page, surface, muted, raised, popup],
-    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
+    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers, the track of a switch that is off and the tracks of Progress and Meter; DropZone and the empty stars of a Rating take it too',
   ),
   ...nonText(
     '--env-color-border-danger-emphasis',
@@ -399,7 +404,7 @@ export const pairs: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-border-muted',
     [page, surface, muted],
-    'Dividers: table lines, title bars, Markdown rules, menu separators',
+    'Hairlines between list items: table rows, Markdown rules, menu separators, accordion items',
     {
       contrast: 'high',
       rationale:
@@ -580,12 +585,49 @@ export const pairs: readonly ContrastPair[] = merged([
           [`--env-color-bg-${tone}-muted`, page],
           [`--env-color-bg-${tone}-muted`, surface],
         ])),
+    // A soft badge's text over its tint wherever a badge sits: list rows, muted and raised
+    // surfaces, and popups. The accent badge takes a tint of its own, bg.accent.badge, fainter in
+    // light than the info alert's, so the blue keeps 4.5:1 over it on a light row; it is measured on
+    // the page and default surface too, which the tone's tint pairs above measure for the others.
+    ...(tone === 'neutral'
+      ? []
+      : text(
+          toneText(tone),
+          [
+            ...(tone === 'accent'
+              ? [
+                  [badgeTint(tone), page],
+                  [badgeTint(tone), surface],
+                ]
+              : []),
+            [badgeTint(tone), row],
+            [badgeTint(tone), muted],
+            [badgeTint(tone), raised],
+            [badgeTint(tone), popup],
+          ],
+          'A soft badge on a row, a muted or raised surface or a popup',
+        )),
     ...text(
       '--env-color-fg-on-emphasis',
       [`--env-color-bg-${tone}-emphasis`],
       'Solid badges and counters',
     ),
   ]),
+  // A diff stat's additions and deletions over its neutral fill, wherever it sits.
+  ...['--env-color-fg-success', '--env-color-fg-danger'].flatMap((fg) =>
+    text(
+      fg,
+      [
+        [fill, page],
+        [fill, surface],
+        [fill, row],
+        [fill, muted],
+        [fill, raised],
+        [fill, popup],
+      ],
+      'A diff stat’s additions and deletions on its fill',
+    ),
+  ),
   ...alertTones.flatMap((tone) => [
     ...text(
       '--env-color-fg-default',
@@ -1897,6 +1939,12 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     rationale:
       'The inset ring of a hovered navigation item, on the bg.navigation role; the 0.7 name is its alias.',
   },
+  ...(['raised', 'popup'] as const).map((layer) => ({
+    from: `--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-${layer}`,
+    to: `--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-${layer}`,
+    rationale:
+      'A soft accent badge takes a tint of its own, bg.accent.badge: fainter than bg.accent.muted in light, so the blue keeps 4.5:1 on a light row, and the same in dark and at high contrast.',
+  })),
   ...prefixedPairs.map(([from, to]) => ({
     from,
     to,

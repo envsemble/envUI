@@ -1,28 +1,35 @@
 import { useRef, useState } from 'react';
 import {
   Button,
-  CounterBadge,
   DialogClose,
-  Drawer,
-  EmptyState,
   List,
   Radio,
   RadioGroup,
   SearchField,
   Select,
-  Stack,
+  Sheet,
+  Column,
+  Row,
   Text,
-  useBreakpoint,
+  useContainerSize,
+  windowClasses,
+  Badge,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} projects`);
 
+/** A width in rem, such as a window class's, in CSS pixels at the document's font size. */
+const remToPixels = (width: string) =>
+  Number.parseFloat(width) * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+
 export default function NarrowFilters() {
-  // From the md breakpoint up the filters sit in the toolbar; below it they move into a drawer,
-  // and the search stays in view.
-  const wide = useBreakpoint('md');
+  // From the medium window class up, measured on the filters' own width, they sit in the toolbar;
+  // in a compact one they move into a sheet, and the search stays in view.
+  const filters = useRef<HTMLDivElement>(null);
+  const size = useContainerSize(filters);
+  const wide = size === undefined || size.inlineSize >= remToPixels(windowClasses.medium);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('any');
   const [owner, setOwner] = useState<string | null>('anyone');
@@ -48,8 +55,8 @@ export default function NarrowFilters() {
   };
 
   return (
-    <Stack gap={4}>
-      <Stack direction="row" wrap align="center" gap={3}>
+    <Column ref={filters} gap={4}>
+      <Row wrap align="center" gap={3}>
         <SearchField
           ref={search}
           label="Search projects"
@@ -77,11 +84,11 @@ export default function NarrowFilters() {
             />
           </>
         ) : (
-          <Drawer
+          <Sheet
             trigger={
               <Button variant="secondary" size="sm" startIcon={<FilterList />}>
                 Filters
-                {applied > 0 && <CounterBadge value={applied} aria-label={`${applied} in use`} />}
+                {applied > 0 && <Badge count={applied} aria-label={`${applied} in use`} />}
               </Button>
             }
             title="Filters"
@@ -96,9 +103,9 @@ export default function NarrowFilters() {
               </>
             }
           >
-            <Stack gap={5}>
-              {/* The page behind the modal drawer is hidden from assistive technology, so the
-                  drawer has its own status, there as it opens, that announces the new count. */}
+            <Column gap={5}>
+              {/* The page behind the modal sheet is hidden from assistive technology, so the
+                  sheet has its own status, there as it opens, that announces the new count. */}
               <Text role="status" variant="body-sm" emphasis="muted">
                 {projectCount(shown.length)} {shown.length === 1 ? 'matches' : 'match'}
               </Text>
@@ -119,10 +126,10 @@ export default function NarrowFilters() {
                 value={owner}
                 onValueChange={setOwner}
               />
-            </Stack>
-          </Drawer>
+            </Column>
+          </Sheet>
         )}
-      </Stack>
+      </Row>
       <Text role="status" variant="body-sm" emphasis="muted">
         {projectCount(shown.length)}
       </Text>
@@ -133,23 +140,26 @@ export default function NarrowFilters() {
           ))}
         </List.Root>
       ) : (
-        // The toolbar stays above the empty state, so people can change what they asked for.
-        <EmptyState
-          icon={<SearchOff />}
-          title="No matching projects"
-          description={
-            term
-              ? `No project names contain “${query.trim()}” with these filters.`
-              : 'No projects match these filters.'
-          }
-          action={
-            <Button variant="secondary" onClick={clearAll}>
-              Clear filters
-            </Button>
-          }
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <SearchOff width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No matching projects
+            </Text>
+            <Text variant="body-sm">
+              {term
+                ? `No project names contain “${query.trim()}” with these filters.`
+                : 'No projects match these filters.'}
+            </Text>
+          </Column>
+          <Button variant="secondary" onClick={clearAll}>
+            Clear filters
+          </Button>
+        </Column>
       )}
-    </Stack>
+    </Column>
   );
 }
 

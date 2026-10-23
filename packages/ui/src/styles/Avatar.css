@@ -97,3 +97,14 @@
   /* Motion: the image fades in as it loads. */
   animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
 }
+
+/* In a skeleton, an avatar is a filled shape of its size, without its picture or initials. */
+[data-env-skeleton] .env-avatar {
+  forced-color-adjust: none;
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--env-skeleton-color);
+}
+[data-env-skeleton] .env-avatar * {
+  visibility: hidden;
+}

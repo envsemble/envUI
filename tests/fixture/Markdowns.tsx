@@ -1,4 +1,4 @@
-import { EnvUIProvider, Stack } from '@envsemble/envui';
+import { EnvUIProvider, Column } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
 
 const document = `## Prices
@@ -15,6 +15,8 @@ const document = `## Prices
 | --- | ------ |
 | Tab | Next   |
 
+---
+
 - [x] Draft the brief
 - [ ] Send it to Sam Lee
 `;
@@ -27,7 +29,7 @@ const narrow = `| Setting | Value |
 /** Markdown tables, tasks and inline code in a cell, mounted with ?fixture=markdown-tables. */
 export function MarkdownFixture() {
   return (
-    <Stack gap={6}>
+    <Column gap={6}>
       <div data-testid="english">
         <Markdown>{document}</Markdown>
       </div>
@@ -49,6 +51,6 @@ export function MarkdownFixture() {
       <div data-testid="narrow" style={{ inlineSize: '12rem' }}>
         <Markdown>{narrow}</Markdown>
       </div>
-    </Stack>
+    </Column>
   );
 }

@@ -1,21 +1,17 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import {
-  AccountMenu,
   ConfirmDialog,
   List,
   SearchTrigger,
   Calendar,
-  CloseButton,
   ColorPicker,
   Combobox,
   Composer,
   Alert,
   Button,
   CommandPalette,
-  Drawer,
-  LoadingState,
+  Sheet,
   Progress,
-  Skeleton,
   Toast,
   useToast,
   ConfirmButton,
@@ -26,13 +22,15 @@ import {
   Dialog,
   EnvUIProvider,
   SearchField,
-  SplitPane,
-  Stack,
+  Panes,
+  Scaffold,
+  Column,
   Textarea,
   ThemePreferenceProvider,
   ThemeToggle,
   PanelDock,
   type EnvUIMessagesInput,
+  Spinner,
 } from '@envsemble/envui';
 import { CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/content';
 import { defaultMessages } from '@envsemble/envui/messages';
@@ -79,13 +77,11 @@ function FeedbackStrings() {
   return (
     <>
       <Alert onDismiss={() => {}}>Saved on this device.</Alert>
-      <LoadingState>
-        <Skeleton />
-      </LoadingState>
+      <Spinner showLabel />
       <Progress label="Importing" value={null} />
-      <Drawer title="Filters" defaultOpen modal={false} disablePointerDismissal>
+      <Sheet title="Filters" defaultOpen modal={false} disablePointerDismissal>
         Filters
-      </Drawer>
+      </Sheet>
       <Button variant="secondary" onClick={() => setPalette(true)}>
         Open palette
       </Button>
@@ -119,9 +115,10 @@ function ShellAndEditorStrings() {
         </PanelDock.Root>
       </div>
       <CodeBlock copyable>npm run build</CodeBlock>
+      {/* The empty first header leaves the table no name of its own: messages.markdown.table. */}
       <Markdown>
         {[
-          '| Plan | Seats |',
+          '|      | Seats |',
           '| ---- | ----- |',
           '| Team | 5 |',
           '',
@@ -144,7 +141,7 @@ const MessagesProbe = memo(function MessagesProbe() {
   });
   return (
     <span ref={ref} data-testid="inline-probe">
-      {messages.close}
+      {messages.clear}
     </span>
   );
 });
@@ -160,7 +157,7 @@ function InlineMessages() {
       <button type="button" onClick={() => setRenders((current) => current + 1)}>
         ⟦rerender⟧ {renders}
       </button>
-      <EnvUIProvider messages={{ common: { close: '⟦inline.close⟧' } }}>
+      <EnvUIProvider messages={{ common: { clear: '⟦inline.clear⟧' } }}>
         <MessagesProbe />
       </EnvUIProvider>
     </>
@@ -176,8 +173,7 @@ export function MessageStringsFixture() {
   return (
     <ThemePreferenceProvider storageKey="fixture-messages-theme">
       <EnvUIProvider messages={pseudoMessages} locale="en-XA">
-        <Stack gap={4} data-testid="messages">
-          <CloseButton />
+        <Column gap={4} data-testid="messages">
           <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}}>
             Remove
           </ConfirmButton>
@@ -233,31 +229,32 @@ export function MessageStringsFixture() {
           <Calendar aria-label="Planning" defaultValue="2026-10-14" />
           <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
           <ColorPicker label="Accent" defaultValue="#336699" />
-          {/* Layout: the handle between two panes. */}
-          <SplitPane.Root>
-            <SplitPane.Pane>Start</SplitPane.Pane>
-            <SplitPane.ResizeHandle />
-            <SplitPane.Pane>End</SplitPane.Pane>
-          </SplitPane.Root>
+          {/* Layout: the divider between two panes, a detail's back button, and a scaffold's skip
+              links. */}
+          <Panes.Root behavior="list-detail" open>
+            <Panes.List label="Start">Start</Panes.List>
+            <Panes.Divider />
+            <Panes.Detail>End</Panes.Detail>
+          </Panes.Root>
+          <Scaffold
+            scroll="body"
+            bodyId="message-strings-body"
+            navigation={{ rail: <nav aria-label="Rail" /> }}
+            style={{ blockSize: '6rem' }}
+          >
+            Body
+          </Scaffold>
           <Toast.Provider>
             <FeedbackStrings />
           </Toast.Provider>
           <ShellAndEditorStrings />
-          {/* App parts: a search trigger, a reorderable list's handle and announcements, an
-              account menu with its theme and organization submenus, and a confirm dialog. */}
+          {/* App parts: a search trigger, a reorderable list's handle and announcements, and a
+              confirm dialog. */}
           <SearchTrigger listen={false} />
           <List.Root aria-label="Order" onReorder={() => {}}>
             <List.Item label="First" />
             <List.Item label="Second" />
           </List.Root>
-          <AccountMenu.Root name="Alex Morgan">
-            <AccountMenu.ThemeSubmenu />
-            <AccountMenu.OrganizationSubmenu
-              items={[{ id: 'northwind', label: 'Northwind' }]}
-              value="northwind"
-              onValueChange={() => {}}
-            />
-          </AccountMenu.Root>
           <ConfirmDialog
             trigger={<Button variant="secondary">Open confirm</Button>}
             title="Remove the draft?"
@@ -265,7 +262,7 @@ export function MessageStringsFixture() {
             onConfirm={() => {}}
           />
           <InlineMessages />
-        </Stack>
+        </Column>
       </EnvUIProvider>
     </ThemePreferenceProvider>
   );

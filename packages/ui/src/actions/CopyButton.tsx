@@ -9,7 +9,8 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
-import { Button, type ButtonProps, type IconButtonEmphasisProps } from './Button.js';
+import type { IconButtonEmphasisProps } from './Button.js';
+import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
 import { TooltipNestingContext, TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { Check } from '../icons/Check.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
@@ -146,17 +147,24 @@ export function CopyButton({
     'data-failed': result && !result.copied ? '' : undefined,
   };
   const button = iconOnly ? (
-    <Button
-      {...({ ...shared, iconOnly: true, icon: symbol, 'aria-label': name ?? '' } as ButtonProps)}
-    />
-  ) : (
-    <Button
+    <ButtonBase
       {...({
         ...shared,
+        fallbackVariant: 'primary',
+        iconOnly: true,
+        icon: symbol,
+        'aria-label': name ?? '',
+      } as ButtonBaseProps)}
+    />
+  ) : (
+    <ButtonBase
+      {...({
+        ...shared,
+        fallbackVariant: 'primary',
         startIcon: symbol,
         'aria-label': name,
         children: children as CopyButtonLabel,
-      } as ButtonProps)}
+      } as ButtonBaseProps)}
     />
   );
   const hoverTarget = iconOnly && disabled;

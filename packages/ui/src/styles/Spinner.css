@@ -21,6 +21,31 @@
   block-size: 100%;
   animation: env-spinner-turn 1.4s linear infinite;
 }
+/* With its label shown: a status line that centres the spinner and a muted label in its row, for
+   loading with no known shape. The arc keeps the size the spinner's own box had. */
+.env-spinner[data-show-label] {
+  --env-spinner-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--env-space-3);
+  inline-size: auto;
+  block-size: auto;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+.env-spinner[data-show-label]:where([data-size='sm']) {
+  --env-spinner-size: 1rem;
+}
+.env-spinner[data-show-label]:where([data-size='lg']) {
+  --env-spinner-size: 3rem;
+}
+.env-spinner[data-show-label] > svg {
+  flex: 0 0 auto;
+  inline-size: var(--env-spinner-size);
+  block-size: var(--env-spinner-size);
+  color: var(--env-spinner-color, var(--env-color-bg-brand-emphasis));
+}
 .env-spinner-arc {
   fill: none;
   stroke: currentColor;

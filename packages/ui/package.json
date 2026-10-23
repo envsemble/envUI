@@ -72,6 +72,12 @@
       "import": "./dist/theme-bootstrap.js",
       "default": "./dist/theme-bootstrap.js"
     },
+    "./dev": {
+      "envui-source": "./src/dev.ts",
+      "types": "./dist/dev.d.ts",
+      "import": "./dist/dev.js",
+      "default": "./dist/dev.js"
+    },
     "./messages": {
       "envui-source": "./src/messages.ts",
       "types": "./dist/messages.d.ts",
@@ -113,7 +119,6 @@
   },
   "devDependencies": {
     "@pierre/diffs": "1.5.2",
-    "@pierre/theme": "2.0.0",
     "@shikijs/langs": "4.5.0",
     "@tiptap/core": "3.31.4",
     "@tiptap/extension-image": "3.31.4",

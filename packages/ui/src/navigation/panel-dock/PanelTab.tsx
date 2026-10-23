@@ -1,10 +1,12 @@
 'use client';
 
 import { useId, useRef } from 'react';
-import { CloseButton } from '../../actions/CloseButton.js';
+import { IconButton } from '../../actions/Button.js';
+import { Close } from '../../icons/Close.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import { ActionElement } from '../../internal/ActionElement.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
+import { Row } from '../../foundations/Layout.js';
 import type { PanelDockPanel } from './Root.js';
 import { useEntrance } from './useEntrance.js';
 
@@ -39,15 +41,22 @@ export function PanelTab({ panel, openLabel, closeLabel, onRestore, onClose }: P
     </ActionElement>
   );
   return (
-    <li
-      ref={tab}
-      className="env-panel-dock-tab"
-      data-panel-id={panel.id}
-      data-mode={panel.mode}
-      data-attention={attention || undefined}
+    <Row
+      align="center"
+      render={
+        <li
+          ref={tab}
+          className="env-panel-dock-tab"
+          data-panel-id={panel.id}
+          data-mode={panel.mode}
+          data-attention={attention || undefined}
+        />
+      }
     >
       {panel.tooltip != null ? <Tooltip content={panel.tooltip}>{restore}</Tooltip> : restore}
-      <CloseButton
+      <IconButton
+        variant="ghost"
+        icon={<Close />}
         className="env-panel-dock-tab-close"
         aria-label={closeLabel(label)}
         onClick={onClose}
@@ -57,6 +66,6 @@ export function PanelTab({ panel, openLabel, closeLabel, onRestore, onClose }: P
           {panel.attention}
         </span>
       )}
-    </li>
+    </Row>
   );
 }

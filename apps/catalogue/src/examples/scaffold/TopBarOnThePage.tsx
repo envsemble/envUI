@@ -1,0 +1,36 @@
+import {
+  Drawer,
+  Page,
+  PageHeader,
+  Scaffold,
+  Text,
+  TopBar,
+  type Destination,
+} from '@envsemble/envui';
+import { Description } from '@envsemble/envui/icons/Description';
+import { Folder } from '@envsemble/envui/icons/Folder';
+
+const destinations: Destination[] = [
+  { label: 'Documents', icon: <Description />, href: '/documents', current: true },
+  { label: 'Shared', icon: <Folder />, href: '/shared' },
+];
+
+export default function TopBarOnThePage() {
+  return (
+    // The drawer keeps its background; background="page" puts the top bar on the page.
+    <Scaffold
+      scroll="body"
+      landmarks={false}
+      forms={{ compact: 'none', medium: 'drawer' }}
+      style={{ blockSize: '16rem' }}
+      topBar={<TopBar title="Northwind" background="page" />}
+      navigation={{
+        drawer: <Drawer aria-label="Main, top bar on the page" destinations={destinations} />,
+      }}
+    >
+      <Page header={<PageHeader title="Documents" headingLevel={3} />}>
+        <Text emphasis="muted">Twelve documents.</Text>
+      </Page>
+    </Scaffold>
+  );
+}

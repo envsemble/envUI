@@ -1,8 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
-import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
-import { Spinner } from '../feedback/Spinner.js';
+import type { ActionElementProps } from '../internal/ActionElement.js';
+import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
 import type { ControlSize } from '../foundations/Theme.js';
 
 /**
@@ -76,10 +74,7 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    * field takes the field's size.
    */
   size?: ControlSize;
-  /**
-   * Fill the width of the container, such as the actions of a narrow form stacked in a column.
-   * An icon-only button keeps its square size.
-   */
+  /** Fill the width of the container, such as the actions of a narrow form stacked in a column. */
   fullWidth?: boolean;
   /** A decorative icon before the label, such as an Add icon. */
   startIcon?: ReactNode;
@@ -91,86 +86,30 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    */
   pending?: boolean;
 };
-export type ButtonProps = ButtonAppearanceProps &
-  ActionElementProps &
-  (
-    | { iconOnly?: false; icon?: never }
-    | {
-        /** Show only icon, in a square button that keeps its size; name it with aria-label. */
-        iconOnly: true;
-        /** The icon of an icon-only button. */
-        icon: ReactNode;
-        /** The action's name, such as Delete draft, for an icon-only button. */
-        'aria-label': string;
-        children?: never;
-        startIcon?: never;
-        endIcon?: never;
-      }
-  );
+export type ButtonProps = ButtonAppearanceProps & ActionElementProps;
 
 /**
  * Starts an action, or goes to a destination with href, in one of five variants and three tones,
- * with optional icons; icon-only with iconOnly. It renders a native button or link.
+ * with optional icons. It renders a native button or link. An icon alone is an IconButton.
  */
 export function Button(props: ButtonProps) {
-  return renderButton(props, 'primary');
+  return <ButtonBase {...props} fallbackVariant="primary" />;
 }
 
-/** Button with the variant it takes where neither it nor its container sets one. */
-function renderButton(
-  {
-    variant,
-    tone,
-    underline = false,
-    size,
-    fullWidth = false,
-    iconOnly = false,
-    icon,
-    startIcon,
-    endIcon,
-    pending = false,
-    className,
-    children,
-    ...props
-  }: ButtonProps,
-  fallbackVariant: ButtonVariant,
-) {
-  const content = iconOnly ? (
-    <DecorativeIcon>{icon}</DecorativeIcon>
-  ) : (
-    <>
-      {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
-      {children}
-      {endIcon != null && <DecorativeIcon>{endIcon}</DecorativeIcon>}
-    </>
-  );
-  return (
-    <ActionElement
-      {...props}
-      pending={pending}
-      emphasis={{
-        variant,
-        fallbackVariant,
-        tone,
-        size,
-        underline,
-      }}
-      data-full-width={fullWidth || undefined}
-      className={classNames('env-button', iconOnly && 'env-icon-button', className)}
-    >
-      {pending ? (
-        <>
-          <span className="env-button-content">{content}</span>
-          <Spinner size="sm" className="env-button-spinner" />
-        </>
-      ) : (
-        content
-      )}
-    </ActionElement>
-  );
-}
+/** IconButton's element: a native button, or with href a native link, as Button's. */
+type IconButtonElementProps =
+  | (Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> & { href?: undefined })
+  | (Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-label'> & {
+      /** The destination: the button is a native link, through the LinkProvider's link component. */
+      href: string;
+      /**
+       * A disabled button cannot be pressed; a disabled link has no destination, cannot be focused
+       * or followed, and reports aria-disabled.
+       */
+      disabled?: boolean;
+    });
 
-export type IconButtonProps = Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> &
+export type IconButtonProps = IconButtonElementProps &
   IconButtonEmphasisProps & {
     /** The icon, such as Settings. */
     icon: ReactNode;
@@ -183,9 +122,10 @@ export type IconButtonProps = Omit<ComponentPropsWithRef<'button'>, 'children' |
   };
 
 /**
- * Shorthand for Button's icon-only mode. Without a variant it takes its container's, and else the
+ * A square button that shows its icon alone, named by aria-label, such as a close button with the
+ * Close cross; with href, a native link. Without a variant it takes its container's, and else the
  * neutral secondary one.
  */
 export function IconButton(props: IconButtonProps) {
-  return renderButton({ ...props, iconOnly: true } as ButtonProps, 'secondary');
+  return <ButtonBase {...(props as ButtonBaseProps)} iconOnly fallbackVariant="secondary" />;
 }

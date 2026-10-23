@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CounterBadge, IconButton, Menu, Stack, Text } from '@envsemble/envui';
+import { IconButton, Menu, Column, Text, Badge } from '@envsemble/envui';
 import { Comment } from '@envsemble/envui/icons/Comment';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Download } from '@envsemble/envui/icons/Download';
@@ -10,7 +10,7 @@ import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 export default function IconsAndShortcuts() {
   const [lastAction, setLastAction] = useState('');
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Menu.Root
         aria-label="Report actions"
         align="start"
@@ -24,7 +24,7 @@ export default function IconsAndShortcuts() {
         </Menu.Item>
         <Menu.Item
           icon={<Comment />}
-          end={<CounterBadge value={3} aria-label="3 unresolved" />}
+          end={<Badge count={3} aria-label="3 unresolved" />}
           onClick={() => setLastAction('Show comments')}
         >
           Show comments
@@ -40,6 +40,6 @@ export default function IconsAndShortcuts() {
       <Text variant="body-sm" role="status">
         {lastAction && `Chose ${lastAction}`}
       </Text>
-    </Stack>
+    </Column>
   );
 }

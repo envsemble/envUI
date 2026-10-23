@@ -1,20 +1,19 @@
-import { Badge, Link, Stack, Text } from '@envsemble/envui';
+import { Badge, Column, DescriptionList, Link, Text } from '@envsemble/envui';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import {
   pageHref,
   referencePages,
-  routeOfDocument,
-  sectionViews,
+  viewOfSection,
   type ReferencePage,
   type ReferenceView,
 } from '../navigation/DocumentationRoutes';
-import { routeHref } from '../navigation/Address';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
+import { FigureSection } from './Figures';
 import { LiveExample } from './LiveExample';
 import { PropsTables } from './PropsTables';
 import { Specimen } from './Specimen';
-import { TemplatePreview } from './TemplatePreview';
+import { pageOf, relatedHref, WhenToUse } from './WhenToUse';
 
 const statusTones = {
   experimental: 'warning',
@@ -22,15 +21,6 @@ const statusTones = {
   stable: 'success',
   deprecated: 'danger',
 } as const;
-
-/**
- * The page that documents a component, for the alternatives a page suggests and the exports a
- * pattern combines: a part such as Menu.Item is documented on the page of its namespace.
- */
-function pageOf(component: string) {
-  const namespace = component.split('.')[0];
-  return referencePages.find((page) => page.reference.metadata?.components.includes(namespace));
-}
 
 /** Status and first release under the title of a page on the template. */
 export function MetadataBadges({ metadata }: { metadata: DocumentationMetadata }) {
@@ -56,16 +46,18 @@ export function TemplateMeta({ page }: { page: ReferencePage }) {
   return <MetadataBadges metadata={page.reference.metadata!} />;
 }
 
+/** An export as a Markdown link to the page that documents it; pages of docs/ are one folder
+ * deep, so ../<path> reaches any of them from any page. */
+function exportLink(name: string) {
+  const page = pageOf(name);
+  return page ? `[${name}](../${page.path}.md)` : `\`${name}\``;
+}
+
 /**
  * When to use the page's subject and, when not, what to use or read instead; for a pattern or
  * template, also what it is built from.
  */
 function UseAndAvoid({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
-  // Pages of docs/ are one folder deep, so ../<path> reaches any of them from any page.
-  const exportLink = (name: string) => {
-    const page = pageOf(name);
-    return page ? `[${name}](../${page.path}.md)` : `\`${name}\``;
-  };
   const markdown = [
     '### When to use',
     '',
@@ -90,8 +82,30 @@ function UseAndAvoid({ metadata, path }: { metadata: DocumentationMetadata; path
 }
 
 function Section({ reference, section }: { reference: Document; section: DocumentationSection }) {
+  if (reference.format === 'figures')
+    return (
+      <FigureSection
+        reference={reference}
+        section={section}
+        lead={
+          section.id === 'usage' &&
+          reference.metadata && (
+            <WhenToUse
+              metadata={reference.metadata}
+              path={reference.path}
+              exportLink={exportLink}
+            />
+          )
+        }
+      />
+    );
   return (
-    <Stack render={<section />} gap={5} className="docs-template-section" data-section={section.id}>
+    <Column
+      render={<section />}
+      gap={5}
+      className="docs-template-section"
+      data-section={section.id}
+    >
       {section.blocks.map((block, index) =>
         block.kind === 'markdown' ? (
           <Documentation key={index} markdown={block.markdown} path={reference.path} />
@@ -102,30 +116,15 @@ function Section({ reference, section }: { reference: Document; section: Documen
             name={block.name}
             title={block.heading}
           />
-        ) : block.kind === 'template' ? (
-          <TemplatePreview
-            key={block.name}
-            page={reference.id}
-            name={block.name}
-            title={block.heading}
-          />
-        ) : (
+        ) : block.kind === 'specimen' ? (
           <Specimen key={block.name} page={reference.id} name={block.name} />
-        ),
+        ) : null,
       )}
-      {section.id === 'overview' && reference.metadata && (
+      {section.id === 'overview' && reference.metadata && !reference.format && (
         <UseAndAvoid metadata={reference.metadata} path={reference.path} />
       )}
-    </Stack>
+    </Column>
   );
-}
-
-/** The address of a related page: a reference page's overview, or any other page's route. */
-function relatedHref(id: string) {
-  const page = referencePages.find((item) => item.reference.id === id);
-  if (page) return pageHref(page, 'overview');
-  const route = routeOfDocument(id);
-  return route && routeHref(route);
 }
 
 function Related({ reference }: { reference: Document }) {
@@ -136,7 +135,7 @@ function Related({ reference }: { reference: Document }) {
   });
   if (!related.length) return null;
   return (
-    <Stack render={<section />} gap={4}>
+    <Column render={<section />} gap={4}>
       <Text render={<h2 />} variant="headline">
         Related
       </Text>
@@ -151,7 +150,33 @@ function Related({ reference }: { reference: Document }) {
           </li>
         ))}
       </ul>
-    </Stack>
+    </Column>
+  );
+}
+
+/**
+ * The Props section of a page on the figure template, which leads to the Props view: it lists them,
+ * generated from the TypeScript declarations.
+ */
+function PropsSection({ reference }: { reference: Document }) {
+  const page = referencePages.find((item) => item.reference.id === reference.id);
+  const components = reference.metadata?.components ?? [];
+  if (!page || !components.length) return null;
+  const names = components.map((name) => `\`${name}\``);
+  const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0];
+  return (
+    <section className="docs-figure-section" data-section="props">
+      <div className="docs-figure-section-heading">
+        <Documentation markdown="## Props" path={reference.path} />
+      </div>
+      <Documentation
+        markdown={`Every prop of ${list}, with its type and default.`}
+        path={reference.path}
+      />
+      <Text>
+        <Link href={pageHref(page, 'props')}>Open the props reference</Link>
+      </Text>
+    </section>
   );
 }
 
@@ -163,15 +188,20 @@ function Sections({
   reference: Document;
   sections: DocumentationSection[];
 }) {
+  const figures = reference.format === 'figures';
   return (
-    <Stack gap={8} className="docs-article docs-template">
+    <Column
+      gap={figures ? 9 : 8}
+      className={`docs-article docs-template${figures ? ' docs-figures' : ''}`}
+    >
       {sections
         .filter((section) => section.id !== 'changelog')
         .map((section) => (
           <Section key={section.id} reference={reference} section={section} />
         ))}
+      {figures && <PropsSection reference={reference} />}
       {sections.some((section) => section.id === 'overview') && <Related reference={reference} />}
-    </Stack>
+    </Column>
   );
 }
 
@@ -179,35 +209,78 @@ function Sections({
 export function TemplateContent({ page, view }: { page: ReferencePage; view: ReferenceView }) {
   if (view === 'props')
     return (
-      <Stack gap={7} className="docs-article docs-template">
+      <Column gap={7} className="docs-article docs-template">
         <PropsTables reference={page.reference} />
-      </Stack>
+      </Column>
     );
   return (
     <Sections
       reference={page.reference}
       sections={(page.reference.sections ?? []).filter(
-        (section) => sectionViews[section.id] === view,
+        (section) => viewOfSection(page.reference, section.id) === view,
       )}
     />
   );
 }
 
-/** A pattern or template page, which has one view: every section in the template's order. */
+/** A pattern page, which has one view: every section in the page's order. */
 export function SingleViewContent({ document }: { document: Document }) {
   return <Sections reference={document} sections={document.sections ?? []} />;
 }
 
 /**
- * A page's changelog, below the page navigation in smaller, quieter type than the guidance: on a
- * page with views it shows with the view that holds it, on a page with one view always.
+ * A changelog's entries, "- **1.0.0**: what changed", one per version, or nothing where it is
+ * written otherwise.
+ */
+function changelogEntries(markdown: string) {
+  const entries: { version: string; text: string }[] = [];
+  for (const line of markdown.split('\n')) {
+    if (!line.trim() || /^#{2,} /.test(line)) continue;
+    const entry = /^- \*\*([^*]+)\*\*:\s*(.*)$/.exec(line);
+    // A version listed twice in a row is one entry, each change a paragraph of its own.
+    if (entry && entries.at(-1)?.version === entry[1]) entries.at(-1)!.text += `\n\n${entry[2]}`;
+    else if (entry) entries.push({ version: entry[1], text: entry[2] });
+    else if (/^\s/.test(line) && entries.length) entries.at(-1)!.text += `\n${line.trim()}`;
+    else return undefined;
+  }
+  return entries.length ? entries : undefined;
+}
+
+/**
+ * A page's changelog, below the page navigation: quiet side information, each version a muted
+ * label beside what changed in it, in small muted type. On a page with views it shows with the
+ * view that holds it, on a page with one view always.
  */
 export function PageChangelog({ document, view }: { document: Document; view?: ReferenceView }) {
   const changelog = document.sections?.find((section) => section.id === 'changelog');
-  if (!changelog || (view && sectionViews[changelog.id] !== view)) return null;
+  if (!changelog || (view && viewOfSection(document, changelog.id) !== view)) return null;
+  const markdown = changelog.blocks
+    .map((block) => (block.kind === 'markdown' ? block.markdown : ''))
+    .join('\n');
+  const entries = changelogEntries(markdown);
   return (
-    <div className="docs-article docs-template docs-changelog">
-      <Section reference={document} section={changelog} />
-    </div>
+    <Column
+      render={<section />}
+      gap={3}
+      className="docs-changelog"
+      data-section={changelog.id}
+      aria-labelledby="changelog"
+    >
+      <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
+        {changelog.title}
+      </Text>
+      {entries ? (
+        <DescriptionList.Root className="docs-changelog-entries">
+          {entries.map(({ version, text }, index) => (
+            <DescriptionList.Item key={`${index}-${version}`} label={version}>
+              <Documentation markdown={text} path={document.path} />
+            </DescriptionList.Item>
+          ))}
+        </DescriptionList.Root>
+      ) : (
+        // A changelog written another way shows as its Markdown, below the same heading.
+        <Documentation markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
+      )}
+    </Column>
   );
 }

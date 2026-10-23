@@ -13,8 +13,10 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import { CloseButton } from '../actions/CloseButton.js';
+import { IconButton } from '../actions/Button.js';
+import { Close } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -57,7 +59,7 @@ export interface DocumentTabsProps {
    */
   onReorder?: (ids: string[]) => void;
   /**
-   * Content after the tabs, outside the strip that scrolls and on its hairline, such as a button
+   * Content after the tabs, outside the strip that scrolls and in line with it, such as a button
    * that closes every tab or opens a new one.
    */
   end?: ReactNode;
@@ -360,6 +362,7 @@ export function DocumentTabs({
       }}
       aria-label={label}
       activateOnFocus
+      render={<Row align="stretch" />}
       className={classNames('env-document-tabs', className)}
       style={style}
       data-fade-left={fades.left ? '' : undefined}
@@ -409,7 +412,10 @@ export function DocumentTabs({
               {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
               <span className="env-document-tabs-tab-label">{item.label}</span>
             </BaseTabs.Tab>
-            <CloseButton
+            <IconButton
+              variant="ghost"
+              icon={<Close />}
+              aria-label={closeName(item.label)}
               aria-hidden
               tabIndex={-1}
               title={closeName(item.label)}
@@ -431,7 +437,7 @@ export function DocumentTabs({
         }}
         className="env-document-tabs-root"
       >
-        <div className="env-document-tabs-bar">
+        <Row align="center" className="env-document-tabs-bar">
           <ContextMenu
             aria-label={contextMenuLabel ?? messages.actions}
             onOpenChange={(open) => {
@@ -488,7 +494,11 @@ export function DocumentTabs({
           >
             {strip}
           </ContextMenu>
-          {end != null && <div className="env-document-tabs-end">{end}</div>}
+          {end != null && (
+            <Row align="center" gap={1} className="env-document-tabs-end">
+              {end}
+            </Row>
+          )}
           {drag && dragged && (
             // The floating copy of the dragged tab, beside the pointer; decorative, since the drag is
             // a pointer's alternative to the context menu.
@@ -501,7 +511,7 @@ export function DocumentTabs({
               <span className="env-document-tabs-tab-label">{dragged.label}</span>
             </div>
           )}
-        </div>
+        </Row>
       </BaseTabs.Root>
     </DirectionProvider>
   );

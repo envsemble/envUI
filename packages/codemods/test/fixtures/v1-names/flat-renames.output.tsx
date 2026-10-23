@@ -1,6 +1,5 @@
 import {
   Button,
-  CounterBadge,
   DatePicker,
   DiffStat,
   Disclosure,
@@ -8,10 +7,9 @@ import {
   CalendarHeatmap,
   TextField,
   Alert,
-  OrganizationSwitcher,
 } from '@envsemble/envui';
 import type {
-  CounterBadgeProps,
+  BadgeProps,
   DatePickerProps,
   DiffStatProps,
   DisclosureProps,
@@ -22,14 +20,7 @@ import type {
   TextFieldProps,
   AlertProps,
   AlertTone,
-  OrganizationSwitcherItem,
-  OrganizationSwitcherProps,
 } from '@envsemble/envui';
-
-const organizations: OrganizationSwitcherItem[] = [
-  { id: 'northwind', name: 'Northwind Labs' },
-  { id: 'contoso', name: 'Contoso' },
-];
 
 export const fields = { Input: TextField, DateTimeField: DatePicker, FileDropzone: DropZone };
 
@@ -40,20 +31,18 @@ export interface ProfileFormProps {
   disclosure?: DisclosureProps;
   tone: AlertTone;
   notice?: AlertProps;
-  counter?: CounterBadgeProps;
+  counter?: BadgeProps;
   diff?: DiffStatProps;
   heatmap?: CalendarHeatmapProps;
   days?: CalendarHeatmapDay[];
   cell?: CalendarHeatmapCell;
-  switcher?: OrganizationSwitcherProps;
 }
 
-type CounterComponent = typeof CounterBadge;
+type DiffComponent = typeof DiffStat;
 
 export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   return (
     <form>
-      <OrganizationSwitcher organizations={organizations} />
       <Alert tone={tone} title="Profile">
         Alex Morgan updated the profile.
       </Alert>
@@ -61,7 +50,6 @@ export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
       <DatePicker {...start} />
       <DropZone {...upload} />
       <Disclosure summary="Details">Owned by Contoso.</Disclosure>
-      <CounterBadge value={3} />
       <DiffStat additions={12} deletions={4} />
       <CalendarHeatmap days={[]} />
       <Button type="submit">Save</Button>
@@ -69,4 +57,4 @@ export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   );
 }
 
-export type { CounterComponent };
+export type { DiffComponent };

@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { List, LoadingState, SegmentedControl, Skeleton, Stack } from '@envsemble/envui';
+import { Column, List, SegmentedControl, placeholders } from '@envsemble/envui';
 
 const teams = [
   { value: 'design', label: 'Design' },
   { value: 'marketing', label: 'Marketing' },
   { value: 'sales', label: 'Sales' },
 ];
-const projects: Record<string, { id: string; name: string; owner: string }[]> = {
+interface Project {
+  id: string;
+  name: string;
+  owner: string;
+}
+
+const projects: Record<string, Project[]> = {
   design: [
     { id: 'website-refresh', name: 'Website refresh', owner: 'Alex Morgan' },
     { id: 'icon-set', name: 'Icon set', owner: 'Sam Lee' },
@@ -24,7 +30,7 @@ const projects: Record<string, { id: string; name: string; owner: string }[]> = 
   ],
 };
 
-/** Placeholders appear only once a load has taken this long, so quick loads never flash them. */
+/** The skeleton appears only once a load has taken this long, so quick loads never flash it. */
 const placeholderDelay = 200;
 
 export default function SkeletonList() {
@@ -47,31 +53,23 @@ export default function SkeletonList() {
     ];
   };
   const name = teams.find((option) => option.value === team)?.label;
+  const items = loaded.includes(team) ? projects[team] : undefined;
   return (
-    <Stack gap={4}>
-      <Stack align="start">
+    <Column gap={4}>
+      <Column gap={4} align="start">
         <SegmentedControl aria-label="Team" value={team} onValueChange={choose} items={teams} />
-      </Stack>
-      {loaded.includes(team) ? (
-        <List.Root aria-label={`${name} projects`}>
-          {projects[team].map((project) => (
-            <List.Item key={project.id} label={project.name} description={project.owner} />
-          ))}
-        </List.Root>
-      ) : (
-        // One placeholder row per expected row, in the shape of a name and its owner. They keep
-        // their space, hidden, until the delay has passed, so the example doesn't jump.
-        <div style={{ visibility: showPlaceholders ? undefined : 'hidden' }}>
-          <LoadingState label={`Loading ${name} projects`}>
-            {projects[team].map((project, row) => (
-              <Stack key={project.id} gap={2}>
-                <Skeleton width={`${44 - row * 8}%`} height="1rem" emphasis="default" />
-                <Skeleton width="24%" height="0.75rem" />
-              </Stack>
-            ))}
-          </LoadingState>
-        </div>
-      )}
-    </Stack>
+      </Column>
+      {/* The same list, loaded or over placeholder rows as a skeleton. Until the delay has passed
+          the skeleton keeps its space, hidden, so the example doesn't jump. */}
+      <List.Root
+        aria-label={`${name} projects`}
+        skeleton={!items}
+        style={{ visibility: items || showPlaceholders ? undefined : 'hidden' }}
+      >
+        {(items ?? placeholders<Project>(3)).map((project) => (
+          <List.Item key={project.id} label={project.name} description={project.owner} />
+        ))}
+      </List.Root>
+    </Column>
   );
 }

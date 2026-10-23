@@ -2,9 +2,9 @@
   --env-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
   --env-code-font-size: 0.8125rem;
   /*
-   * A switch for the high-contrast colors of highlighted code, set by each Theme as the tokens'
-   * contrast is: empty under high contrast, and invalid otherwise, so that a token's
-   * --env-code-token-now, which starts with it, holds its high-contrast color or nothing.
+   * A switch for the high-contrast colors of code, set by each Theme as the tokens' contrast is:
+   * empty under high contrast, and invalid otherwise, so that a custom property that starts with
+   * it, such as a token's --env-code-token-now, holds its high-contrast color or nothing.
    */
   --env-code-high-contrast: initial;
 }
@@ -16,11 +16,22 @@
     --env-code-high-contrast: ;
   }
 }
+/* Code's colors come from the code theme, standard and high-contrast; see .env-theme. */
+.env-code,
+.env-code-block,
+.env-code-diff {
+  --env-code-background-now: var(--env-code-high-contrast) var(--env-code-background-high);
+  --env-code-foreground-now: var(--env-code-high-contrast) var(--env-code-foreground-high);
+
+  background: var(--env-code-background-now, var(--env-code-background));
+  color: var(--env-code-foreground-now, var(--env-code-foreground));
+}
+/* Inline code: the neutral muted fill, a layer of the text color, so it stands apart from the
+   page, panes, cards, muted fills and popups alike, as code blocks do with a layer of their own. */
 .env-code {
   padding: 0.125em 0.375em;
   border-radius: var(--env-radius-sm);
-  background: var(--env-code-background);
-  color: var(--env-code-foreground);
+  background: var(--env-color-bg-neutral-muted);
   font: 0.9em/1.4 var(--env-code-font-family);
   /* A container where a column should keep room for its longest word, such as a table cell, sets
      --env-code-overflow-wrap to break-word. */
@@ -34,8 +45,6 @@
   max-inline-size: 100%;
   padding: var(--env-space-5);
   border-radius: var(--env-radius-sm);
-  background: var(--env-code-background);
-  color: var(--env-code-foreground);
   font: var(--env-code-font-size) / 1.7 var(--env-code-font-family);
 }
 .env-code-block pre {
@@ -62,13 +71,7 @@
   overflow-wrap: anywhere;
 }
 .env-code-block-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--env-space-4);
   margin-block-end: var(--env-space-3);
-  min-inline-size: 0;
-  flex-wrap: wrap;
 }
 .env-code-block-heading > span {
   min-inline-size: 0;
@@ -85,16 +88,21 @@
   white-space: nowrap;
 }
 
-/* A code diff: Diffs draws the code on a transparent background, so the boundary takes the code
-   theme's editor background, as a code block does. */
+/* A code diff: Diffs draws the code on a transparent background, so the boundary takes the diff
+   background, which is opaque, since Diffs mixes its line tints from it. */
 .env-code-diff {
+  --env-code-background-now: var(--env-code-high-contrast) var(--env-code-diff-background-high);
+
   min-inline-size: 0;
+  background: var(--env-code-background-now, var(--env-code-diff-background));
   overflow: hidden;
   border-radius: var(--env-radius-sm);
-  background: var(--env-code-background);
-  color: var(--env-code-foreground);
 }
-.env-code-diff > .env-loading-state,
-.env-code-diff > .env-empty-state {
+.env-code-diff > .env-spinner,
+.env-code-diff-failed {
   padding: var(--env-space-5);
+}
+/* A diff that failed to load says so with the error icon in the danger color. */
+.env-code-diff-failed-icon {
+  color: var(--env-color-fg-danger);
 }

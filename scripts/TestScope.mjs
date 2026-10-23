@@ -28,40 +28,44 @@ export const aliases = {
   Breadcrumbs: ['DataDisplay'],
   Kbd: ['DataDisplay'],
   Progress: ['Meter'],
-  Spinner: ['Meter'],
-  AnimatedNumber: ['Stat'],
-  CounterBadge: ['DiffStat'],
+  Spinner: ['Meter', 'Skeleton'],
+  Badge: ['DiffStat'],
   ButtonCounts: ['DiffStat'],
-  OrganizationSwitcher: ['AccountMenu'],
   ConfirmButton: ['Button'],
   AvatarButton: ['Button'],
   LinkProvider: ['Button'],
   ActionElement: ['Button'],
   Adoption: ['Button'],
   QuietButtons: ['Button'],
-  SidebarTrigger: ['Sidebar'],
   ContextMenu: ['Menu'],
   MenuPopup: ['Menu', 'Menubar'],
-  Navigation: ['NavList'],
+  Bar: ['Navigation'],
+  Rail: ['Navigation'],
+  Drawer: ['Navigation'],
+  Destinations: ['Navigation'],
   Segments: ['SegmentedControl'],
   TreeView: ['Tree'],
   MarkdownEditing: ['MarkdownEditor'],
   RichTextEditing: ['RichTextEditor'],
   ChoiceControls: ['Checkbox', 'Radio', 'Switch'],
-  ListDetail: ['SplitPane', 'ListDetail'],
   Toolbar: ['Primitives'],
-  ResizeHandle: ['Primitives'],
-  PopupSurface: ['Primitives'],
+  ResizeHandle: ['Primitives', 'Panes'],
+  Editor: ['MarkdownEditor', 'RichTextEditor'],
+  useResize: ['Panes', 'PanelDock'],
+  TopBar: ['Scaffold'],
+  useScrollKeys: ['Scaffold'],
+  Page: ['PageHeader'],
+  PopupSurface: ['Primitives', 'PortalContainer'],
+  PortalContainerContext: ['PortalContainer'],
+  PortalContainers: ['PortalContainer'],
   useRovingFocus: ['Primitives'],
   useDirection: ['Direction'],
-  Theme: ['ThemePreference', 'ThemeContrast'],
+  Theme: ['ThemePreference', 'ThemeContrast', 'WindowClasses'],
+  Popup: ['WindowClasses', 'Primitives'],
+  windowClasses: ['WindowClasses'],
   ThemeBootstrap: ['ThemePreference', 'ThemeContrast'],
   'theme-bootstrap': ['ThemePreference', 'ThemeContrast'],
   ThemePreferenceContext: ['ThemePreference'],
-  useMediaQuery: ['ResponsiveHooks'],
-  breakpoints: ['ResponsiveHooks'],
-  Layout: ['Stack'],
-  StackStyle: ['Stack'],
   Density: ['Scale'],
   DensitySections: ['Scale'],
   MessageStrings: ['Messages'],
@@ -74,9 +78,15 @@ export const aliases = {
   Code: ['CodeBlock'],
   RichText: ['RichTextEditor'],
   TooltipPopup: ['Tooltip'],
-  DialogParts: ['Dialog'],
+  DialogParts: ['Dialog', 'Skeleton'],
+  SkeletonScope: ['Skeleton'],
+  skeleton: ['Skeleton'],
+  inSkeleton: ['Skeleton'],
+  placeholders: ['Skeleton'],
+  skeletonShift: ['Skeleton'],
+  SpinnerLabel: ['Skeleton'],
+  Skeletons: ['Skeleton'],
   AlertDismiss: ['Dialog'],
-  TitleBarFrame: ['WindowFrame', 'AppShell'],
   Listbox: ['Forms', 'Combobox'],
   ListRow: ['List'],
   Palette: ['CommandPalette'],
@@ -102,13 +112,19 @@ export const exceptions = [
     [...shared, 'CascadeLayers', 'ForcedColors'],
   ],
   [/^packages\/ui\/src\/foundations\/messages\//, ['Messages']],
+  [/^packages\/ui\/src\/dev(?:\.ts$|\/)/, ['DevMode']],
   [
     /^apps\/catalogue\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest|GenerateCodeThemes|Search\w*|MarkdownHeadings|FinalizeCatalogue|FinalizeSite|SiteModuleFiles|AssembleSiteVersions)\.m?[jt]s$/,
     catalogue,
   ],
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
   [/^apps\/catalogue\/src\//, ['LiveDevelopment']],
-  [/^docs\/templates\/|^apps\/catalogue\/src\/template\//, ['Templates']],
+  // The layout check measures every example the pages place, on the catalogue's stage, with dev
+  // mode's checks; the affected tier runs it.
+  [
+    /^apps\/catalogue\/src\/(?:examples\/|styles\/Stage\.css$)|^docs\/(?:components|patterns)\/|^packages\/ui\/src\/dev(?:\.ts$|\/)/,
+    ['LayoutCheck'],
+  ],
 ];
 
 /** More specs than this importing a changed helper leaves it to `npm run verify`. */
@@ -128,6 +144,8 @@ export function specNeeds(name, root = repositoryRoot) {
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
     live: name === 'LiveDevelopment',
+    // Renders every catalogue example at four widths: minutes, so the affected tier runs it.
+    whole: name === 'LayoutCheck',
   };
 }
 
@@ -230,7 +248,7 @@ export function selectScope(paths, root = repositoryRoot) {
     )
       scope.generated.add('icons');
     if (
-      /^packages\/ui\/src\/.*\.tsx?$|^docs\/|^apps\/catalogue\/|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest)\.mjs$/.test(
+      /^packages\/ui\/src\/.*\.(?:tsx?|css|json)$|^docs\/|^apps\/catalogue\/|^\.changeset\/|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateParts|GenerateManifest)\.mjs$/.test(
         path,
       )
     )
@@ -305,12 +323,13 @@ function git(args, root) {
  * The files changed since the merge-base with the integration branch, committed or not, and the
  * untracked ones. The branch is `base`, else ENVUI_BASE, else the first of defaultBases that exists.
  */
+/** The branches to compare with, in order: `base`, else ENVUI_BASE, else defaultBases. */
+export function baseCandidates(base) {
+  return base ? [base] : process.env.ENVUI_BASE ? [process.env.ENVUI_BASE] : defaultBases;
+}
+
 export function changedFiles({ root = repositoryRoot, base } = {}) {
-  const candidates = base
-    ? [base]
-    : process.env.ENVUI_BASE
-      ? [process.env.ENVUI_BASE]
-      : defaultBases;
+  const candidates = baseCandidates(base);
   const found = candidates.find((ref) => {
     try {
       git(['rev-parse', '--verify', '--quiet', `${ref}^{commit}`], root);

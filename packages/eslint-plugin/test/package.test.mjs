@@ -66,8 +66,8 @@ test('the package ships the plugin, its data and its documentation, and nothing 
     'src/data/renames.json',
     'src/data/tokens.json',
     'src/index.js',
+    'src/rules/no-hand-rolled-layout.js',
     'src/rules/no-html-elements.js',
-    'src/rules/no-private-classes.js',
     'src/rules/no-raw-colors.js',
     'src/rules/no-renamed-exports.js',
     'src/tokens.js',
@@ -85,7 +85,7 @@ test('an application lints with the installed recommended config', async () => {
     import { createRequire } from 'node:module';
     const location = createRequire(import.meta.url).resolve('@envsemble/eslint-plugin-envui');
     const code = "import { Notice } from '@envsemble/envui';\\n" +
-      "export const App = () => <form style={{ color: '#000' }} className='env-card'><button /></form>;";
+      "export const App = () => <form style={{ color: '#000', display: 'grid' }}><button /></form>;";
     const messages = new Linter().verify(code, [envui.configs.recommended], 'App.jsx');
     console.log(JSON.stringify({ location, rules: messages.map((message) => message.ruleId ?? message.message) }));
   `,
@@ -98,7 +98,7 @@ test('an application lints with the installed recommended config', async () => {
   assert.deepEqual(rules, [
     'envui/no-renamed-exports',
     'envui/no-raw-colors',
-    'envui/no-private-classes',
+    'envui/no-hand-rolled-layout',
     'envui/no-html-elements',
   ]);
 });

@@ -34,87 +34,48 @@
   }
 }
 
-/* The heading row: the heading, and the meta at the end of the row; the row wraps when it runs out
-   of room. */
-.env-card-header {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--env-space-3);
-}
-/* The meta goes to the end of the heading row; the header's child selector outweighs the text
-   margin reset that Text applies to every variant. */
+/* The heading row, which wraps when it runs out of room: the meta goes to its end; the header's
+   child selector outweighs the text margin reset that Text applies to every variant. */
 .env-card-header > .env-card-meta {
   margin-inline-start: auto;
 }
 
+/* A title, meta or description given as undefined, as over a placeholder item, takes no room
+   outside a skeleton; in one it is a bar. */
+.env-card-heading:empty:not([data-env-skeleton] *),
+.env-card-meta:empty:not([data-env-skeleton] *),
+.env-card-description:empty:not([data-env-skeleton] *),
+.env-card-header:not(:has(> :not(:empty))):not([data-env-skeleton] *) {
+  display: none;
+}
+
+.env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-meta {
+  --env-skeleton-length: 5rem;
+}
+
 /* A card with an action strip: the body takes the card's padding and the strip its own fill along
    the bottom. */
-.env-card[data-layout='stack'][data-actions] {
+.env-card[data-actions] {
   padding: 0;
   overflow: hidden;
 }
-.env-card[data-layout='stack'][data-actions] > .env-card-body {
+.env-card[data-actions] > .env-card-body,
+.env-card[data-actions] > .env-skeleton-content > .env-card-body {
   padding: var(--env-card-padding);
 }
-.env-card[data-layout='stack'][data-actions] > .env-card-body > :where(p:not(.env-text)) {
+.env-card[data-actions] > .env-card-body > :where(p:not(.env-text)),
+.env-card[data-actions] > .env-skeleton-content > .env-card-body > :where(p:not(.env-text)) {
   margin: 0;
   max-width: 32ch;
   font: var(--env-type-body);
   color: var(--env-color-fg-muted);
   overflow-wrap: anywhere;
 }
-.env-card[data-layout='stack'][data-actions] > .env-card-footer {
+.env-card[data-actions] > .env-card-footer,
+.env-card[data-actions] > .env-skeleton-content > .env-card-footer {
   margin-block-start: auto;
   padding: var(--env-space-3) var(--env-card-padding);
   background: var(--env-color-bg-default);
-}
-
-/* The feature layout: an icon at the start, the text, and the actions at the end. It follows the
-   card's own width: in a card narrower than 38 rem the actions move below the text. */
-.env-card[data-layout='feature'] {
-  container: env-card / inline-size;
-}
-.env-card-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--env-space-4);
-}
-.env-card-layout:has(> .env-card-icon) {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-}
-.env-card-icon {
-  --env-icon-size: 1.5rem;
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
-  display: grid;
-  place-items: center;
-  color: var(--env-color-fg-muted);
-  font-size: 1.5rem;
-}
-.env-card-layout > .env-card-body {
-  min-width: 0;
-}
-.env-card-layout > .env-card-footer {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  justify-self: end;
-}
-@container env-card (max-width: 38rem) {
-  .env-card-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .env-card-layout:has(> .env-card-icon) {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-  .env-card-layout > .env-card-footer {
-    grid-column: 1 / -1;
-    justify-self: stretch;
-  }
-  .env-card-layout > .env-card-footer > :is(a, button) {
-    width: 100%;
-  }
 }
 
 /* Motion: an interactive card settles a little while it is held, less than a compact control. Only

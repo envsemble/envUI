@@ -1,4 +1,4 @@
-import { ColorSwatch, Stack, Table, Text } from '@envsemble/envui';
+import { ColorSwatch, Column, Table, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import tokenList from '../../../../packages/ui/src/generated/tokens.json';
 // The ids search leads to, as the search index writes them.
@@ -9,7 +9,7 @@ type TokenValue = Token['values']['light'];
 
 /**
  * The groups of the reference, by the first part of the tokens' names, in order. The color roles
- * are color.bg, color.fg and color.border; the other colors are component tokens.
+ * are color.bg, color.fg and color.border; the other colors are system tokens named for a component.
  */
 const tokenGroups: { title: string; prefixes: string[]; component?: boolean }[] = [
   { title: 'Color roles', prefixes: ['color'] },
@@ -68,7 +68,7 @@ function TokenTable({ title, tokens }: { title: string; tokens: Token[] }) {
     : undefined;
   const headings = colors ? ['Light', 'Dark', 'Light, high contrast', 'Dark, high contrast'] : [];
   return (
-    <Stack render={<section />} gap={4} aria-labelledby={`tokens-${title}`}>
+    <Column render={<section />} gap={4} aria-labelledby={`tokens-${title}`}>
       <Text render={<h2 />} variant="title" id={`tokens-${title}`}>
         {title}
       </Text>
@@ -95,10 +95,10 @@ function TokenTable({ title, tokens }: { title: string; tokens: Token[] }) {
             return (
               <Table.Row key={token.id} id={tokenSection(token.cssVariable)}>
                 <Table.Cell label="Token">
-                  <Stack gap={1} align="start">
+                  <Column gap={1} align="start">
                     <Code className="docs-prop-code">{token.cssVariable}</Code>
                     {description && <Text variant="caption">{description}</Text>}
-                  </Stack>
+                  </Column>
                 </Table.Cell>
                 {columns ? (
                   columns.map((theme, index) => (
@@ -121,7 +121,7 @@ function TokenTable({ title, tokens }: { title: string; tokens: Token[] }) {
           })}
         </Table.Body>
       </Table.Root>
-    </Stack>
+    </Column>
   );
 }
 

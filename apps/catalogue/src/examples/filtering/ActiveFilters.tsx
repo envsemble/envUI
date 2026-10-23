@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, EmptyState, List, Menu, Stack, Text } from '@envsemble/envui';
+import { Button, List, Menu, Column, Row, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Close } from '@envsemble/envui/icons/Close';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
@@ -43,19 +43,11 @@ export default function ActiveFilters() {
   };
 
   return (
-    <Stack gap={4}>
-      <Stack ref={bar} direction="row" wrap align="center" gap={2}>
+    <Column gap={4}>
+      <Row ref={bar} wrap align="center" gap={2}>
         {/* envUI has no removable filter token yet: each is a small secondary Button whose name
             says what pressing it does, and whose visible text is part of that name. */}
-        <Stack
-          ref={tokens}
-          direction="row"
-          wrap
-          align="center"
-          gap={2}
-          role="group"
-          aria-label="Filters in use"
-        >
+        <Row ref={tokens} wrap align="center" gap={2} role="group" aria-label="Filters in use">
           {filters.map((filter) => (
             <Button
               key={filter.id}
@@ -68,7 +60,7 @@ export default function ActiveFilters() {
               {filter.label}
             </Button>
           ))}
-        </Stack>
+        </Row>
         <Menu.Root
           aria-label="Filters"
           trigger={
@@ -93,7 +85,7 @@ export default function ActiveFilters() {
             Clear filters
           </Button>
         )}
-      </Stack>
+      </Row>
       <Text role="status" variant="body-sm" emphasis="muted">
         {taskCount(shown.length)}
       </Text>
@@ -108,19 +100,22 @@ export default function ActiveFilters() {
           ))}
         </List.Root>
       ) : (
-        // The filters stay above the empty state, so people can remove one instead.
-        <EmptyState
-          icon={<SearchOff />}
-          title="No matching tasks"
-          description={`No tasks match ${filters.map((filter) => filter.label).join(' and ')}.`}
-          action={
-            <Button variant="secondary" onClick={clear}>
-              Clear filters
-            </Button>
-          }
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <SearchOff width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No matching tasks
+            </Text>
+            <Text variant="body-sm">{`No tasks match ${filters.map((filter) => filter.label).join(' and ')}.`}</Text>
+          </Column>
+          <Button variant="secondary" onClick={clear}>
+            Clear filters
+          </Button>
+        </Column>
       )}
-    </Stack>
+    </Column>
   );
 }
 

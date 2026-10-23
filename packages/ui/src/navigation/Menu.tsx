@@ -4,6 +4,7 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
   useId,
   useRef,
+  type AriaAttributes,
   type ComponentPropsWithRef,
   type CSSProperties,
   type MouseEvent,
@@ -12,12 +13,19 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Grid } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import type { PopupSide } from '../internal/PopupSurface.js';
+import {
+  containedModal,
+  keepsOpen,
+  usePortalContainer,
+} from '../internal/PortalContainerContext.js';
 import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from '../internal/LinkContext.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
 import { MenuPopup, menuPopupInlineInset, menuPopupInset } from './internal/MenuPopup.js';
 import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
@@ -32,7 +40,8 @@ const menuParts = {
 };
 
 export interface RootProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'>,
+    SkeletonProps {
   /**
    * The control that opens the menu, such as a Button or an AvatarButton; it receives the menu
    * button semantics and ref, so it must accept native props and a ref.
@@ -77,8 +86,8 @@ export interface RootProps
 
 /**
  * A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu
- * pattern. The popup is raised above the page, with rows of the scale's row height, hairline
- * separators and small keys for shortcuts.
+ * pattern. The popup is raised above the page, with rows of the scale's row height, full-width
+ * hairline separators and small keys for shortcuts.
  */
 function Root({
   trigger,
@@ -89,16 +98,22 @@ function Root({
   open,
   defaultOpen,
   onOpenChange,
+  skeleton = false,
   className,
   ref,
   ...popupProps
 }: RootProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const portal = usePortalContainer();
   return (
     <BaseMenu.Root
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={(next) => onOpenChange?.(next)}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
+        else onOpenChange?.(next);
+      }}
+      modal={containedModal(portal, true)}
     >
       <BaseMenu.Trigger ref={triggerRef} render={trigger} />
       {/* Base UI names the menu after its trigger; the menu's own label replaces that name. */}
@@ -112,6 +127,7 @@ function Root({
         className={className}
         popupRef={ref}
         popupProps={popupProps}
+        skeleton={skeleton}
       >
         {children}
       </MenuPopup>
@@ -144,7 +160,7 @@ interface ItemContentProps {
    * handles the shortcut itself.
    */
   shortcut?: string;
-  /** End content, such as a Badge or CounterBadge; it is part of the item's name. */
+  /** End content, such as a Badge or a count; it is part of the item's name. */
   end?: ReactNode;
 }
 
@@ -200,6 +216,16 @@ interface ItemSharedProps extends ItemContentProps {
    * @default false
    */
   disabled?: boolean;
+  /**
+   * Marks a destination as the page shown now, such as aria-current="page" on the current one of a
+   * Bar's destinations that its More menu holds.
+   */
+  'aria-current'?: AriaAttributes['aria-current'];
+  /**
+   * The item's accessible name, where its label and end content don't say it as wanted, such as
+   * Inbox, 3 new for a destination whose count shows as a badge.
+   */
+  'aria-label'?: string;
   /** Class of the item's row. */
   className?: string;
 }
@@ -245,6 +271,8 @@ function Item({
   shortcut,
   end,
   disabled,
+  'aria-current': ariaCurrent,
+  'aria-label': ariaLabel,
   className,
   ...props
 }: ItemProps) {
@@ -268,6 +296,8 @@ function Item({
         // The link component comes from LinkProvider and keeps its identity between renders.
         // eslint-disable-next-line react-hooks/static-components
         render={<LinkComponent href={props.href} target={props.target} rel={props.rel} />}
+        aria-current={ariaCurrent}
+        aria-label={ariaLabel}
         {...accessibility}
       >
         {content}
@@ -279,6 +309,8 @@ function Item({
       className={itemClassName}
       disabled={disabled}
       onClick={props.href === undefined ? props.onClick : preventActivation}
+      aria-current={ariaCurrent}
+      aria-label={ariaLabel}
       {...accessibility}
     >
       {content}
@@ -350,11 +382,16 @@ function Submenu({
   const closeReason = useRef<string | null>(null);
   const { content, accessibility } = useMenuItemContent({ icon, children: label, description });
   const textLabel = typeof label === 'string' ? label : undefined;
+  const portal = usePortalContainer();
   return (
     <BaseMenu.SubmenuRoot
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, trigger.current)) {
+          details.cancel();
+          return;
+        }
         closeReason.current = next ? null : details.reason;
         onOpenChange?.(next);
       }}
@@ -411,7 +448,7 @@ export interface GroupProps {
 /** A labelled group of related items, with a small heading above its rows. */
 function Group({ label, children, className }: GroupProps) {
   return (
-    <BaseMenu.Group className={classNames('env-menu-group', className)}>
+    <BaseMenu.Group render={<Grid />} className={classNames('env-menu-group', className)}>
       <BaseMenu.GroupLabel className="env-menu-group-label">{label}</BaseMenu.GroupLabel>
       {children}
     </BaseMenu.Group>
@@ -444,6 +481,7 @@ function RadioGroup({
 }: RadioGroupProps) {
   return (
     <BaseMenu.RadioGroup
+      render={<Grid />}
       aria-labelledby={labelledBy}
       className={classNames('env-menu-group', className)}
       value={value}

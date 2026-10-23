@@ -166,7 +166,8 @@ before(
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
       h(ui.Toast.Provider, null, 'Managed notifications'),
-      h(ui.LoadingState, null, h(ui.Skeleton, { width: '38%' }))
+      h(ui.Spinner, { label: 'Loading projects', showLabel: true }),
+      h(ui.Card, { skeleton: true, title: ui.placeholders(1)[0].title }, h(ui.Text))
     ));
     console.log(JSON.stringify({
       exports: Object.keys(ui), themeBootstrapExports: Object.keys(themeBootstrap), html,
@@ -221,10 +222,13 @@ test('no 0.x name of the rename map is exported, and every namespace is', async 
       .filter((name) => name.includes('.'))
       .map((name) => name.split('.')[0]),
   );
+  // Names that 1.0 exports again for something else, such as Row, a list row in 0.x and a layout
+  // primitive in 1.0, which the map lists as reused.
+  const reused = new Set(map.reused ?? []);
   for (const [entry, exported] of Object.entries(entries)) {
     for (const section of ['exports', 'split', 'removed'])
       for (const name of names(map[section][entry] ?? {}))
-        if (!namespaces.has(name))
+        if (!namespaces.has(name) && !reused.has(name))
           assert.ok(!exported.includes(name), `${entry} still exports ${name}.`);
   }
   for (const namespace of namespaces)
@@ -246,15 +250,22 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Button',
     'ButtonGroup',
     'IconButton',
-    'NavList',
+    'Bar',
+    'Rail',
+    'Drawer',
     'Pager',
     'Card',
-    'Stack',
+    'Row',
+    'Column',
+    'Grid',
+    'Box',
     'List',
     'Disclosure',
-    'EmptyState',
-    'Skeleton',
-    'LoadingState',
+    'Accordion',
+    'placeholders',
+    'isPlaceholder',
+    'useSkeleton',
+    'Spinner',
     'TextField',
     'ColorPicker',
     'Textarea',
@@ -275,15 +286,13 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Icon',
     'DropZone',
     'Alert',
-    'CounterBadge',
+    'Badge',
     'DiffStat',
     'CalendarHeatmap',
-    'OrganizationSwitcher',
     'Menu',
     'ContextMenu',
     'Menubar',
     'Table',
-    'Stat',
   ]) {
     assert.ok(ssr.exports.includes(name), `Missing public export: ${name}`);
   }
@@ -303,13 +312,72 @@ test('a packed consumer resolves compiled public exports and its own React insta
   );
 });
 
+test('a packed consumer imports the dev entry, which types its readout and does nothing on a server', async function () {
+  const dev = await runConsumer(
+    'DevConsumer.mjs',
+    `
+    import * as dev from '@envsemble/envui/dev';
+    const handle = dev.installDevMode();
+    await handle.ready;
+    handle.open();
+    handle.uninstall();
+    console.log(JSON.stringify({
+      exports: Object.keys(dev).sort(),
+      module: import.meta.resolve('@envsemble/envui/dev'),
+      same: handle.layout === dev.layout,
+      layout: Object.keys(dev.layout).sort(),
+    }));
+  `,
+  );
+  assert.deepEqual(dev.exports, ['installDevMode', 'layout']);
+  assert.match(dev.module, /\/node_modules\/@envsemble\/envui\/dist\/dev\.js$/);
+  assert.equal(dev.same, true);
+  assert.deepEqual(dev.layout, ['at', 'check', 'describe', 'skeletonShift']);
+  assert.ok(packedFiles.includes('docs/generated/parts.json'), 'Dev mode reads parts.json.');
+
+  await writeFile(
+    join(consumerDirectory, 'DevConsumer.tsx'),
+    `
+    import { installDevMode, layout, type DevModeHandle, type LayoutAtResult, type LayoutProblem, type PartsFile } from '@envsemble/envui/dev';
+    const parts: PartsFile = { schemaVersion: 1, components: {} };
+    const handle: DevModeHandle = installDevMode({ parts, root: '#app', button: false, shortcut: false });
+    const results: LayoutAtResult[] = layout.at(['22rem', 960]);
+    const problems: LayoutProblem[] = window.envui?.layout?.check() ?? [];
+    // @ts-expect-error at() takes px numbers or lengths, not options.
+    layout.at({ width: '40rem' });
+    void [handle, results, problems];
+  `,
+  );
+  await writeFile(
+    join(consumerDirectory, 'tsconfig.dev.json'),
+    JSON.stringify({
+      compilerOptions: {
+        target: 'ES2022',
+        module: 'NodeNext',
+        moduleResolution: 'NodeNext',
+        jsx: 'react-jsx',
+        strict: true,
+        noEmit: true,
+        skipLibCheck: false,
+        types: ['react', 'react-dom'],
+        lib: ['ES2022', 'DOM'],
+      },
+      include: ['DevConsumer.tsx'],
+    }),
+  );
+  run(consumerRequire.resolve('typescript/bin/tsc'), [
+    '--project',
+    join(consumerDirectory, 'tsconfig.dev.json'),
+  ]);
+});
+
 test('installed declarations typecheck a React 19 consumer without source aliases', async function () {
   await writeFile(
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack,
-      EnvUIProvider, Toolbar, Field, CloseButton, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, Bar, Rail, Drawer, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Row, Column,
+      EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
@@ -329,13 +397,14 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
       <ConfirmButton variant="ghost" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
       <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
-      <Stack gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Stack>
-      <Stack direction="row" wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Stack>
-      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><CloseButton ref={createRef<HTMLButtonElement>()} /></EnvUIProvider>
+      <Column gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Column>
+      <Row wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Row>
+      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { clear: 'Leeren' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><IconButton ref={createRef<HTMLButtonElement>()} aria-label="Schließen" icon={<Home />} /></EnvUIProvider>
       <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
       <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
-      <NavList.Item href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavList.Item>
-      <NavList.Item ref={createRef<HTMLButtonElement>()}>Change view</NavList.Item>
+      <Bar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <Home />, href: '/', current: true }, { label: 'View', icon: <Home />, onSelect: () => undefined, count: 2 }]} />
+      <Rail aria-label="Places" destinations={[{ label: 'Home', icon: <Home />, href: '/' }]} header={<Home />} />
+      <Drawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<Home />} />
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
@@ -363,7 +432,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     // @ts-expect-error Connected buttons support rows or columns.
     const unknownOrientation = <ButtonGroup orientation="diagonal" />;
     // @ts-expect-error Layout gap must use the defined spacing scale.
-    const unknownGap = <Stack gap={10} />;
+    const unknownGap = <Row gap={10} />;
     // @ts-expect-error A pager link takes its direction from its part.
     const unknownDirection = <Pager.Next direction="up" href="/guide">Guide</Pager.Next>;
     // @ts-expect-error A pager link requires a destination URL.
@@ -441,7 +510,11 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /role="grid"/);
   assert.match(ssr.html, /aria-selected="true"[^>]*data-date="2026-03-09"/);
   assert.match(ssr.html, /role="status"/);
-  assert.match(ssr.html, /aria-hidden="true" class="env-skeleton"/);
+  assert.match(ssr.html, /<span class="env-spinner-label">Loading projects<\/span>/);
+  assert.match(
+    ssr.html,
+    /class="env-card env-surface"[^>]* data-env-skeleton="" aria-busy="true"[^>]*><div class="env-skeleton-content" inert=""><div class="env-card-header"[^>]*><h3 class="env-text env-card-heading" data-variant="title"><\/h3>/,
+  );
 });
 
 /** The index of the parenthesis that closes the group opening at index, or -1. */
@@ -549,7 +622,8 @@ function scopedSelector(selector) {
 }
 
 /**
- * A selector that starts at an envUI class, or a zero-specificity :where() around such selectors,
+ * A selector that starts at an envUI class or an envUI data-env- attribute, such as a layout
+ * primitive's [data-env-layout], or a zero-specificity :where() around such selectors,
  * never names the document element, through which it would reach the whole page, and reaches
  * siblings only within envUI's elements or with an envUI class.
  */
@@ -557,7 +631,7 @@ function scopedElement(selector) {
   const list = splitSelectors(selector);
   if (list.length !== 1) return list.length > 1 && list.every(scopedElement);
   if (namesDocumentElement(selector) || !siblingsStayScoped(selector)) return false;
-  if (/^(?:[a-zA-Z][\w-]*)?\.env-/.test(selector)) return true;
+  if (/^(?:[a-zA-Z][\w-]*)?(?:\.env-|\[data-env-)/.test(selector)) return true;
   if (!selector.startsWith(':where(')) return false;
   const end = closingParenthesis(selector, ':where'.length);
   if (end === -1) return false;
@@ -583,7 +657,9 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     ':where(.env-theme) .env-button',
     '.env-markdown > * + *',
     '.env-button + .env-button',
-    ":where(html:has(.env-app-shell[data-scroll='document']))",
+    ":where(html:has(.env-scaffold[data-scroll='document']))",
+    ":where([data-env-layout='row'], [data-env-layout='column']) > *",
+    ':where([data-env-layout][data-gap="4"])',
   ])
     assert.ok(scopedSelector(selector), selector);
   for (const selector of [
@@ -591,18 +667,20 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     ':root',
     ':where(body)',
     ':where(.env-theme, body)',
+    ':where([data-gap])',
+    '[data-layout] > *',
     ':where(.env-theme) , body',
     ':where(.env-theme',
     ':where(html:has(body))',
-    ':where(html:has(.env-app-shell) body)',
-    ':where(html:has(.env-app-shell)) *',
-    ':where(html:has(.env-app-shell)) body',
-    ':where(html:has(.env-app-shell)) p',
-    ':where(html:has(.env-app-shell)) ~ div',
+    ':where(html:has(.env-scaffold) body)',
+    ':where(html:has(.env-scaffold)) *',
+    ':where(html:has(.env-scaffold)) body',
+    ':where(html:has(.env-scaffold)) p',
+    ':where(html:has(.env-scaffold)) ~ div',
     ':where(:where(html:has(.env-x))) input',
-    'html:has(.env-app-shell)',
-    'html:has(.env-app-shell) body',
-    'body:has(.env-app-shell)',
+    'html:has(.env-scaffold)',
+    'html:has(.env-scaffold) body',
+    'body:has(.env-scaffold)',
     '.env-theme:where(html) *',
     'html.env-theme body',
     'HTML.env-theme body',
@@ -715,7 +793,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   }
 });
 
-test('the installed MCP server lists the templates and serves a screen from the package', async function () {
+test('the installed MCP server lists the patterns and serves an example from the package', async function () {
   const messages = [
     {
       jsonrpc: '2.0',
@@ -728,13 +806,13 @@ test('the installed MCP server lists the templates and serves a screen from the 
       jsonrpc: '2.0',
       id: 2,
       method: 'tools/call',
-      params: { name: 'list_templates', arguments: {} },
+      params: { name: 'list_patterns', arguments: {} },
     },
     {
       jsonrpc: '2.0',
       id: 3,
       method: 'tools/call',
-      params: { name: 'get_template', arguments: { name: 'sign-in-page', file: 'SignInPage' } },
+      params: { name: 'get_example', arguments: { component: 'app-frame', example: 'AppFrame' } },
     },
   ];
   // The server answers each line on stdin and ends when stdin closes.
@@ -756,18 +834,17 @@ test('the installed MCP server lists the templates and serves a screen from the 
       .map((message) => [message.id, message]),
   );
   const value = (id) => JSON.parse(answers.get(id).result.content[0].text);
-  const { templates } = value(2);
-  const signIn = templates.find((template) => template.name === 'sign-in-page');
-  assert.ok(signIn, `list_templates: ${templates.map((template) => template.name).join(', ')}`);
-  assert.equal(signIn.frame, 'none');
-  assert.deepEqual(signIn.files, ['SignInPage']);
-  const screen = value(3);
-  assert.equal(screen.template, 'sign-in-page');
-  assert.equal(
-    screen.source,
-    await readFile(join(installedDirectory, 'docs/examples/sign-in-page/SignInPage.tsx'), 'utf8'),
+  const { patterns } = value(2);
+  assert.ok(
+    patterns.some((pattern) => pattern.name === 'app-frame'),
+    `list_patterns: ${patterns.map((pattern) => pattern.name).join(', ')}`,
   );
-  assert.match(screen.source, /export default function SignInPage\(\)/);
+  const example = value(3);
+  assert.equal(
+    example.source,
+    await readFile(join(installedDirectory, 'docs/examples/app-frame/AppFrame.tsx'), 'utf8'),
+  );
+  assert.match(example.source, /export default function AppFrame\(\)/);
 });
 
 test('explicit official icons preserve filled geometry and accept custom SVG content', async function () {

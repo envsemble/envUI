@@ -3,6 +3,7 @@ components:
   - EnvUIProvider
   - useLocale
   - LinkProvider
+  - PortalContainer
   - createThemeBootstrapScript
   - Theme
   - ThemePreferenceProvider
@@ -11,6 +12,7 @@ components:
   - useThemePreference
 statuses: # Never released before 1.0, so beta until a release has used them.
   useLocale: beta
+  PortalContainer: beta
 exportAliases:
   EnvUIProvider:
     - i18n
@@ -35,6 +37,11 @@ exportAliases:
   LinkProvider:
     - router link
     - client-side navigation
+  PortalContainer:
+    - portal container
+    - shadow root
+    - iframe
+    - overlay preview
 ---
 
 # Install the private package
@@ -115,7 +122,7 @@ When the application's contrast is fixed, such as an application that is always 
 
 ## Connect your router
 
-Destinations in envUI render native anchors: Button and Link with `href`, NavList.Item, Card, Pager links, Breadcrumbs and Menu.Item destinations. Register the router's link once with `LinkProvider`, around the application, and they navigate on the client. The component receives native anchor props with a string `href`, and must render an anchor and pass the props and the ref on:
+Destinations in envUI render native anchors: Button and Link with `href`, the destinations of Bar, Rail and Drawer, Card, Pager links, Breadcrumbs and Menu.Item destinations. Register the router's link once with `LinkProvider`, around the application, and they navigate on the client. The component receives native anchor props with a string `href`, and must render an anchor and pass the props and the ref on:
 
 ```tsx
 <LinkProvider component={RouterLink}>{app}</LinkProvider>
@@ -232,26 +239,25 @@ export function RouterLinks({ children }: { children: ReactNode }) {
 
 ### The current page and focus
 
-The application decides which destination is current: read the router's location and pass `selected` to the NavList.Item it shows, here with React Router's `useLocation`. A destination that has pages under it stays selected on them.
+The application decides which destination is current: read the router's location and mark that destination `current` in the array it passes to Bar, Rail or Drawer, here with React Router's `useLocation`. A destination that has pages under it stays current on them.
 
 ```tsx recipe
 import { useLocation } from 'react-router';
-import { NavList } from '@envsemble/envui';
+import { Drawer } from '@envsemble/envui';
+import { Folder } from '@envsemble/envui/icons/Folder';
+import { Group } from '@envsemble/envui/icons/Group';
 
 export function ProjectNavigation() {
   const { pathname } = useLocation();
   const current = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
   return (
-    <nav aria-label="Projects">
-      <NavList.Root>
-        <NavList.Item href="/projects" selected={current('/projects')}>
-          Projects
-        </NavList.Item>
-        <NavList.Item href="/people" selected={current('/people')}>
-          People
-        </NavList.Item>
-      </NavList.Root>
-    </nav>
+    <Drawer
+      aria-label="Projects"
+      destinations={[
+        { label: 'Projects', icon: <Folder />, href: '/projects', current: current('/projects') },
+        { label: 'People', icon: <Group />, href: '/people', current: current('/people') },
+      ]}
+    />
   );
 }
 ```
@@ -273,7 +279,7 @@ export function Localized({ children }: { children: ReactNode }) {
     <EnvUIProvider
       locale="de-CH"
       messages={{
-        common: { close: 'Schließen', loading: 'Wird geladen' },
+        common: { clear: 'Leeren', loading: 'Wird geladen' },
         toast: { hidden: ({ count }) => t('notifications.hidden', { count }) },
       }}
       dir="ltr"
@@ -292,12 +298,39 @@ The provider is a client component. A server component, such as a server layout,
 
 The provider compares `messages` namespace by namespace, so an object written inline, as above, keeps the components that read it from rendering again as long as its strings and functions are the same ones. A function written inline is a new one at each render: define the functions once, outside the component or with `useMemo`, where the provider re-renders often.
 
+## Render overlays elsewhere
+
+envUI's popups, menus, tooltips, dialogs, sheets and toasts render in a portal at the end of the document's body. `PortalContainer` renders those inside it into another element, such as one in a shadow root or in an iframe's document, whose styles reach them there:
+
+```tsx
+'use client';
+
+import { PortalContainer } from '@envsemble/envui';
+import { useState, type ReactNode } from 'react';
+
+export function Preview({ children }: { children: ReactNode }) {
+  const [layer, setLayer] = useState<HTMLDivElement | null>(null);
+  return (
+    <div style={{ position: 'relative', contain: 'layout', containerType: 'inline-size' }}>
+      <PortalContainer container={layer} contained>
+        {children}
+      </PortalContainer>
+      <div ref={setLayer} />
+    </div>
+  );
+}
+```
+
+- `container` is the element they render into. Pass `null` while it mounts, as above: they wait for it.
+- `contained` makes them part of the container rather than the window, for a preview of an interface with its overlays open, such as `defaultOpen` on a Menu.Root: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side, without flipping, at its content's size; toasts are shown without the page's <kbd>F6</kbd> shortcut; and a press or <kbd>Esc</kbd> elsewhere in the page doesn't close them, while the overlay's trigger and its own controls still do. A ContextMenu, which opens at the pointer, renders into the container but is otherwise as it is anywhere.
+- Give the container layout containment, as above, so dialogs, sheets, toasts and scrims are placed inside it rather than over the window, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. Make it `inert` where it is only a picture.
+
 ## React Server Components
 
 envUI works in an application built on React Server Components. Server and client components import from the same entry points:
 
 - Components that keep state, run effects, read context or take part in Base UI's interactions are client components. Their modules start with `'use client'`, as Base UI's parts do, so a server component renders them as client references and the bundler sends them to the browser. They include `Theme`, `Dialog`, `Menu.Root` and its parts, `Table.Root`, the form fields, and icons that follow a selection's fill.
-- Components that only lay out markup, such as `Card`, `Badge`, `Text`, `Button`, `Alert`, `List.Item` and `Stat.Root`, render on the server and send no code of their own to the browser.
+- Components that only lay out markup, such as `Card`, `Badge`, `Text`, `Button`, `Alert` and `List.Item`, render on the server and send no code of their own to the browser.
 - The entry points carry no directive, so `Menu.Item` from `@envsemble/envui` in a server component is the client part, reached through its namespace.
 - Plain functions, such as `createThemeBootstrapScript` and `formatRelativeTime`, run on the server.
 
@@ -311,26 +344,27 @@ What a server component passes to a client component must be serializable: strin
 - `@envsemble/envui/diff` when the feature shows code diffs.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
 - `@envsemble/envui/messages` for `defaultMessages`, envUI's English strings by namespace, for applications that extract or translate them.
+- `@envsemble/envui/dev` for [dev mode](dev-mode.md), in development only: load it with a dynamic `import()` behind a development check, so production builds contain none of it.
 - `@envsemble/envui/assets/*` for raw assets, such as the Inter font file.
 
-The content, rich-text and diff entries use Shiki, the Pierre code themes, react-markdown, remark-gfm, marked, Tiptap and Diffs, which envUI doesn't list as dependencies, so an application using only the main entry never installs them. An application importing one of these entries installs that entry's libraries itself, in the versions below or later ones within the same major version. Rich text highlights its code blocks with Shiki, and diffs use the Pierre themes, so those entries need them too:
+The content, rich-text and diff entries use Shiki, react-markdown, remark-gfm, marked, Tiptap and Diffs, which envUI doesn't list as dependencies, so an application using only the main entry never installs them. An application importing one of these entries installs that entry's libraries itself, in the versions below or later ones within the same major version. Rich text highlights its code blocks with Shiki, and diffs take their code colors from it, so those entries need Shiki too:
 
 - `@envsemble/envui/content`:
 
   ```sh
-  npm install shiki@^4.5.0 @shikijs/langs@^4.5.0 @pierre/theme@^2.0.0 react-markdown@^10.1.0 remark-gfm@^4.0.1
+  npm install shiki@^4.5.0 @shikijs/langs@^4.5.0 react-markdown@^10.1.0 remark-gfm@^4.0.1
   ```
 
 - `@envsemble/envui/rich-text`:
 
   ```sh
-  npm install @tiptap/core@^3.31.4 @tiptap/extension-image@^3.31.4 @tiptap/extension-list@^3.31.4 @tiptap/extension-mention@^3.31.4 @tiptap/extension-placeholder@^3.31.4 @tiptap/extension-table@^3.31.4 @tiptap/markdown@^3.31.4 @tiptap/pm@^3.31.4 @tiptap/react@^3.31.4 @tiptap/starter-kit@^3.31.4 @tiptap/static-renderer@^3.31.4 @tiptap/suggestion@^3.31.4 marked@^17.0.6 shiki@^4.5.0 @shikijs/langs@^4.5.0 @pierre/theme@^2.0.0
+  npm install @tiptap/core@^3.31.4 @tiptap/extension-image@^3.31.4 @tiptap/extension-list@^3.31.4 @tiptap/extension-mention@^3.31.4 @tiptap/extension-placeholder@^3.31.4 @tiptap/extension-table@^3.31.4 @tiptap/markdown@^3.31.4 @tiptap/pm@^3.31.4 @tiptap/react@^3.31.4 @tiptap/starter-kit@^3.31.4 @tiptap/static-renderer@^3.31.4 @tiptap/suggestion@^3.31.4 marked@^17.0.6 shiki@^4.5.0 @shikijs/langs@^4.5.0
   ```
 
 - `@envsemble/envui/diff`:
 
   ```sh
-  npm install @pierre/diffs@^1.5.2 @pierre/theme@^2.0.0
+  npm install @pierre/diffs@^1.5.2 shiki@^4.5.0
   ```
 
 They aren't peer dependencies because GitHub Packages drops `peerDependenciesMeta`, the field that marks a peer optional, and npm installs every peer that isn't marked optional. A missing library fails the application's build where the entry imports it.
@@ -347,8 +381,6 @@ The modules have no side effects, so a bundler keeps only what the application u
 | `Table.Root`, `Body`, `Row` and `Cell` |  9.2 KB |          5.3 KB |
 | `Menu.Item` alone                      |  7.7 KB |          3.8 KB |
 | `Menu.Root` with a `Menu.Item`         |  9.2 KB |          7.4 KB |
-| `Stat.Root`                            |  3.3 KB |          3.5 KB |
-| `NavList.Item`                         |  3.8 KB |          4.2 KB |
 | `Pager.Next`                           |  1.5 KB |          1.6 KB |
 | `Badge`, which is no namespace's part  |  0.6 KB |          0.9 KB |
 

@@ -15,8 +15,8 @@ body {
 .docs-app *::after {
   box-sizing: border-box;
 }
-/* The frame's parts come from AppShell and Sidebar; these rules size the wordmark in their headers
-   and keep the page's own layout. */
+/* The frame is a Scaffold with a TopBar, and the navigation at its start or in a sheet; these rules
+   size the wordmark and the navigation and keep the page's own layout. */
 .docs-brand-link,
 .docs-header-brand {
   display: block;
@@ -34,15 +34,31 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-/* The trigger that collapses the navigation starts the header, on the icons' centre line, so it
-   stays where it is as the navigation collapses to a rail or peeks out of one; a rail shows only
-   the trigger. */
-.docs-sidebar[data-rail] .docs-brand-link {
-  display: none;
+/* The navigation at the start of a wide window: a Drawer of its own width on the navigation's
+   background, flush with the window's edges and the body, which scrolls on its own. In the sheet
+   of a narrower window it takes the sheet's width and color. */
+.docs-sidebar {
+  inline-size: 15rem;
+  min-block-size: 100%;
+  padding: var(--env-space-4) var(--env-space-3);
+}
+.docs-sidebar[data-in-sheet] {
+  inline-size: auto;
+  padding: 0;
+}
+.docs-nav-heading {
+  padding-inline: var(--env-space-2);
+}
+/* The top bar shows only where the navigation is in a sheet, below an expanded window. */
+@container env-scaffold (width >= 52.5rem) {
+  .docs-frame > .env-scaffold-top-bar {
+    display: none;
+  }
 }
 .docs-main {
   display: flex;
   flex-direction: column;
+  min-block-size: 100%;
 }
 .docs-page-header,
 .docs-preview,
@@ -136,7 +152,7 @@ body {
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-page);
 }
-@media (width < 48rem), (max-height: 32rem) and (max-width: 54rem) {
+@container env-scaffold (width < 52.5rem) {
   .docs-page-controls {
     display: none;
   }
@@ -145,32 +161,100 @@ body {
   padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);
   margin-top: auto;
 }
-/* A page's changelog follows the page navigation, in the small muted type of a footnote. */
+/* A page's changelog follows the page navigation as quiet side information: small muted text, the
+   versions muted labels in a column of their own, inline code at the text's size on the faint
+   text-color layer of envUI's inline code rather than a chip, and no lines or boxes. */
 .docs-changelog {
+  inline-size: min(100%, var(--docs-content-width));
+  margin-inline: auto;
+  padding: 0 var(--docs-gutter) var(--env-space-8);
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
 }
+.docs-changelog > * {
+  max-inline-size: 48rem;
+}
 .docs-changelog :is(h2, h3, h4, p, li) {
+  margin: 0;
   color: inherit;
   font: inherit;
 }
-.docs-changelog code {
-  color: inherit;
-}
-.docs-changelog :is(h2, h3) {
+.docs-changelog .docs-changelog-title {
+  color: var(--env-color-fg-default);
   font-weight: var(--env-font-weight-medium);
 }
-/* The foot of every page, below a hairline across the content's width. */
+.docs-changelog-entries {
+  row-gap: var(--env-space-3);
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.docs-changelog .env-markdown {
+  color: inherit;
+}
+.docs-changelog .env-markdown > p + p {
+  margin-block-start: var(--env-space-2);
+}
+.docs-changelog .env-code {
+  padding: 0 var(--env-space-1);
+  background: var(--env-color-bg-neutral-muted);
+  color: inherit;
+  font-size: 0.88em;
+}
+/* The foot of every page, set apart from the page by space alone: the wordmark, the catalogue's
+   destinations in columns, as many as fit and wrapping onto more rows in a narrow page, and the
+   version. Its links are quiet text that comes forward when hovered. */
 .docs-footer {
+  container: docs-footer / inline-size;
+  background: var(--env-color-bg-default);
+}
+.docs-footer-inner {
   inline-size: min(100%, var(--docs-content-width));
   margin-inline: auto;
-  padding: var(--env-space-5) var(--docs-gutter) var(--env-space-6);
-  border-block-start: 0.0625rem solid var(--env-color-border-muted);
+  padding: var(--env-space-7) var(--docs-gutter) var(--env-space-8);
 }
-/* A page that has nothing to show yet, such as the templates. */
-.docs-placeholder {
-  display: grid;
-  min-block-size: 22rem;
+.docs-footer-brand {
+  display: block;
+  flex: none;
+  inline-size: 4.5rem;
+}
+.docs-footer-columns {
+  flex: 1;
+  min-inline-size: 0;
+}
+.docs-footer-brand svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  color: var(--env-color-fg-default);
+}
+.docs-footer .docs-footer-title {
+  margin: 0;
+  font-weight: var(--env-font-weight-medium);
+}
+.docs-footer-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.docs-footer-links .env-link {
+  color: var(--env-color-fg-muted);
+}
+.docs-footer-links .env-link:hover {
+  color: var(--env-color-fg-default);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+/* In a compact page the wordmark sits above the columns, and the columns pair up two to a row,
+   so none runs long on its own. */
+@container docs-footer (width < 37.5rem) {
+  .docs-footer-inner {
+    flex-direction: column;
+  }
+  .docs-footer-columns {
+    align-self: stretch;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--env-space-5);
+  }
 }
 .docs-token-color {
   display: inline-flex;

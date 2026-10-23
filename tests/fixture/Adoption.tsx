@@ -6,15 +6,12 @@ import {
   Button,
   ConfirmButton,
   Dialog,
-  EmptyState,
   List,
   TextField,
   LinkProvider,
   Menu,
   Meter,
-  OrganizationSwitcher,
   SearchField,
-  Skeleton,
   Spinner,
   Theme,
   ThemePreferenceProvider,
@@ -22,7 +19,10 @@ import {
   createThemeBootstrapScript,
   Tooltip,
   type LinkComponentProps,
+  Column,
+  Text,
 } from '@envsemble/envui';
+import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { Delete } from '@envsemble/envui/icons/Delete';
 
@@ -49,7 +49,6 @@ export function AdoptionFixture() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [action, setAction] = useState('');
-  const [organizationId, setOrganizationId] = useState('northwind');
   const [presses, setPresses] = useState(0);
   const [confirmed, setConfirmed] = useState(0);
   const [homes, setHomes] = useState(3);
@@ -108,27 +107,6 @@ export function AdoptionFixture() {
             </Menu.Item>
           </Menu.Root>
           <output data-testid="menu-action">{action}</output>
-          <OrganizationSwitcher
-            items={[
-              { id: 'northwind', label: 'Northwind Labs', description: 'Admin' },
-              { id: 'contoso', label: 'Contoso', description: 'Member' },
-            ]}
-            value={organizationId}
-            onValueChange={(id) => {
-              setOrganizationId(id);
-              setAction(`Selected ${id}`);
-            }}
-            onCreate={() => setAction('Create organization')}
-          />
-          <div data-testid="no-organization">
-            <OrganizationSwitcher
-              items={[]}
-              value={null}
-              onValueChange={() => undefined}
-              onCreate={() => setAction('Create first organization')}
-            />
-          </div>
-          <Skeleton width="4rem" />
           <div className="fixture-toolbar" data-testid="compact-label-toolbar">
             <TextField showLabel label="Project filter" data-testid="compact-label" />
             <Button>Apply</Button>
@@ -184,8 +162,26 @@ export function AdoptionFixture() {
               action={<Button variant="secondary">Remove</Button>}
             />
           </List.Root>
-          <EmptyState tone="danger" title="Products couldn’t load" description="Try again." />
-          <EmptyState headingLevel={1} title="Nothing here yet" />
+          <Column role="alert" gap={4} padding={5}>
+            <ErrorIcon
+              width="1.5rem"
+              height="1.5rem"
+              style={{ color: 'var(--env-color-fg-danger)' }}
+            />
+            <Column gap={2}>
+              <Text render={<h4 />} variant="title">
+                Products couldn’t load
+              </Text>
+              <Text variant="body-sm">Try again.</Text>
+            </Column>
+          </Column>
+          <Column gap={4} padding={5}>
+            <Column gap={2}>
+              <Text render={<h1 />} variant="title">
+                Nothing here yet
+              </Text>
+            </Column>
+          </Column>
           <Meter label="Seats assigned" value={7} max={5} valueText="5 of 5" />
           <Avatar name="Broken Picture" src="data:image/png;base64,invalid" named />
           <Avatar name="Organization Name" fallback="initials" named />

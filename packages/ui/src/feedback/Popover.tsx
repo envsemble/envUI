@@ -11,6 +11,9 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { Grid } from '../foundations/Layout.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
 
 const parts = {
   Portal: BasePopover.Portal,
@@ -40,7 +43,8 @@ export interface PopoverOpenChangeDetails {
 }
 
 export interface PopoverProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>,
+    SkeletonProps {
   /**
    * The control that opens and closes the popover, such as a Button or an IconButton. It must take
    * a ref and props: it receives the press handler, aria-haspopup and aria-expanded.
@@ -79,8 +83,8 @@ export interface PopoverProps
    */
   onOpenChange?: (open: boolean, details: PopoverOpenChangeDetails) => void;
   /**
-   * The popover's width: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form.
-   * Both narrow to fit the window.
+   * The widest the popover grows: md, 20 rem, for details and a field or two; lg, 28 rem, for a
+   * longer form. It is as wide as its content from 12 rem up, and narrows to fit the window.
    * @default 'md'
    */
   width?: 'md' | 'lg';
@@ -102,6 +106,7 @@ export function Popover({
   defaultOpen = false,
   onOpenChange,
   width = 'md',
+  skeleton = false,
   className,
   ...popupProps
 }: PopoverProps) {
@@ -114,10 +119,14 @@ export function Popover({
   const close = () => setOpen(false, 'close-press');
   // The popup takes the text direction at its trigger.
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const portal = usePortalContainer();
   return (
     <BasePopover.Root
       open={open}
-      onOpenChange={(next, details) => setOpen(next, details.reason as PopoverOpenChangeReason)}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
+        else setOpen(next, details.reason as PopoverOpenChangeReason);
+      }}
     >
       <BasePopover.Trigger ref={triggerRef} render={trigger} />
       <PopupSurface
@@ -126,7 +135,9 @@ export function Popover({
         side={side}
         align={align}
         width={width}
+        skeleton={skeleton}
         className={classNames('env-popover', className)}
+        layout={<Grid gap={3} padding={5} />}
         popupProps={{ ...popupProps, 'aria-label': title == null ? label : undefined }}
       >
         {title != null && (

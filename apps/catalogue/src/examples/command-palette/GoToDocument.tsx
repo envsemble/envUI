@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, CommandPalette, Stack, Text, type CommandPaletteItem } from '@envsemble/envui';
+import { Button, CommandPalette, Column, Text, type CommandPaletteItem } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Search } from '@envsemble/envui/icons/Search';
 
@@ -34,7 +34,7 @@ export default function GoToDocument() {
   }, [query]);
 
   return (
-    <Stack gap={3} align="start">
+    <Column gap={3} align="start">
       <Button variant="secondary" startIcon={<Search />} onClick={() => setOpen(true)}>
         Go to document
       </Button>
@@ -62,6 +62,6 @@ export default function GoToDocument() {
       <Text variant="caption" emphasis="muted" role="status">
         {opened}
       </Text>
-    </Stack>
+    </Column>
   );
 }

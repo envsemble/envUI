@@ -18,6 +18,8 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
+import { classNames } from '../internal/classNames.js';
+import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
 import { setRef } from '../internal/setRef.js';
 import { HoverCardTriggerContext, isTriggerOwner, markTooltip } from '../internal/triggerOwner.js';
 import {
@@ -26,6 +28,7 @@ import {
   TooltipPopup,
   type TooltipSide,
 } from './internal/TooltipPopup.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 
 /** The props of the control a Tooltip describes, as far as the tooltip reads them. */
 interface TriggerProps {
@@ -50,12 +53,13 @@ export interface TooltipProps
   content: ReactNode;
   /**
    * The one control it describes, such as an IconButton, which takes the trigger's props and ref,
-   * and the Tooltip's own native props and ref. Around a Menu.Root, Popover, Dialog, Drawer or
+   * and the Tooltip's own native props and ref. Around a Menu.Root, Popover, Dialog, Sheet or
    * ConfirmDialog, the tooltip describes their `trigger`; around a HoverCard, it shows nothing. A disabled control
    * is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu
    * item, it is focusable and carries the control's name, role and state, reported disabled, so
    * keyboard focus opens it too. One element: text, a Fragment or a component that doesn't pass
-   * the ref on to its element gets no tooltip, and says so while developing.
+   * the ref on to its element gets no tooltip, and says so while developing. Text, such as a
+   * focusable span or Text that holds text, takes a quiet dotted underline, env-hover-detail.
    */
   children: ReactElement<TriggerProps>;
   /**
@@ -77,6 +81,12 @@ export interface TooltipProps
    * @default 400
    */
   delay?: number;
+  /**
+   * Whether the tooltip starts open, such as in a picture of the interface; it then closes as an
+   * opened one does.
+   * @default false
+   */
+  defaultOpen?: boolean;
 }
 
 /** The control's own accessible name, where its props give one as text: a first guess. */
@@ -260,7 +270,15 @@ function useControl(children: ReactElement<TriggerProps>, forwarded: Forwarded) 
  * Popover; popupClassName styles the tooltip's popup.
  */
 export function Tooltip(props: TooltipProps) {
-  const { content, children, side = 'top', delay = 400, popupClassName, ...forwarded } = props;
+  const {
+    content,
+    children,
+    side = 'top',
+    delay = 400,
+    defaultOpen = false,
+    popupClassName,
+    ...forwarded
+  } = props;
   const hoverCardTrigger = useContext(HoverCardTriggerContext);
   // Text, a Fragment or a list can't take the trigger's props and ref.
   if (!isValidElement(children) || children.type === Fragment) {
@@ -295,6 +313,7 @@ export function Tooltip(props: TooltipProps) {
       content={content}
       side={side}
       delay={delay}
+      defaultOpen={defaultOpen}
       popupClassName={popupClassName}
       forwarded={forwarded}
     >
@@ -320,6 +339,7 @@ function TooltipTrigger({
   children,
   side,
   delay,
+  defaultOpen,
   popupClassName,
   forwarded,
 }: {
@@ -327,6 +347,7 @@ function TooltipTrigger({
   children: ReactElement<TriggerProps>;
   side: TooltipSide;
   delay: number;
+  defaultOpen: boolean;
   popupClassName?: string;
   forwarded: Forwarded;
 }) {
@@ -337,8 +358,9 @@ function TooltipTrigger({
   // closes that popup and the tooltip doesn't cover it.
   const expanded = isExpanded(trigger);
   const popupId = `${useId()}-tooltip`;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   if (open && expanded) setOpen(false);
+  const portal = usePortalContainer();
   // The tooltip takes the text direction at its trigger, the control or its wrapper.
   const triggerRef = useRef<HTMLButtonElement>(null);
   // Once the popup closes, such as on Esc, focus returns to the control: that focus opens no
@@ -432,6 +454,10 @@ function TooltipTrigger({
         key={isDisabled ? 'disabled' : 'enabled'}
         open={open}
         onOpenChange={(next, details) => {
+          if (keepsOpen(portal, next, details, triggerRef.current)) {
+            details.cancel();
+            return;
+          }
           if (next && expanded) return;
           if (next && returning.current) {
             if (
@@ -465,8 +491,16 @@ function TooltipTrigger({
               />
             ) : (
               // The control's own aria-describedby would win over the trigger's, so it carries
-              // the joined one.
-              cloneElement(control, { 'aria-describedby': describedBy })
+              // the joined one. Text that shows more takes the dotted underline.
+              cloneElement(control, {
+                'aria-describedby': describedBy,
+                ...(isTextTrigger(children) && {
+                  className: classNames(
+                    (control.props as { className?: string }).className,
+                    hoverDetailClass,
+                  ),
+                }),
+              } as TriggerProps)
             )
           }
         >

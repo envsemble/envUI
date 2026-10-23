@@ -27,20 +27,11 @@
       ]
     },
     "FeatureCard": {
-      "report": "FeatureCard is Card in 1.0: <Card layout=\"feature\" headingLevel={2} icon title description actions>, with its action as actions.",
+      "report": "FeatureCard is the feature cards pattern in 1.0, not a Card prop: a Card holding a Row with the icon in muted Text, a Column with a headline Text heading and a Text sentence, and the Button that starts the feature; rebuild it by hand.",
       "cases": [
         {
           "when": {},
-          "element": "Card",
-          "props": {
-            "action": {
-              "to": "actions"
-            }
-          },
-          "add": {
-            "layout": "feature",
-            "headingLevel": 2
-          }
+          "report": "FeatureCard is the feature cards pattern in 1.0, not a Card prop: a Card holding a Row with the icon in muted Text, a Column with a headline Text heading and a Text sentence, and the Button that starts the feature; rebuild it by hand."
         }
       ]
     },

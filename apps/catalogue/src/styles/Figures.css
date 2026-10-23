@@ -1,0 +1,372 @@
+/* Component pages on the figure template: ordinary sections of short text and live figures, with
+   a rhythm of space. What belongs together sits close: a heading and its first content, text and
+   the figure it introduces, a figure's stage, caption and code. Unrelated parts sit clearly apart:
+   one sub-topic from the next, and one section from the next, which the article's gap sets. */
+.docs-figures {
+  container-type: inline-size;
+}
+
+.docs-figure-section {
+  /* A link to a section stops below the sticky display controls. */
+  scroll-margin-block-start: var(--env-space-9);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* The space between sub-topics of a section. */
+  row-gap: var(--env-space-8);
+  min-inline-size: 0;
+}
+
+.docs-figure-section-heading h2 {
+  margin: 0;
+  font: var(--env-font-weight-medium) 1.5rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.01em;
+}
+
+/* A heading sits close to what it heads. */
+.docs-figure-section-heading + * {
+  margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
+}
+
+/* Text sits close to the figure it introduces, but not to a subsection that starts with its own
+   heading beside its figure. */
+.docs-figure-section
+  > .env-markdown
+  + :is(
+    .docs-live-example-entry,
+    .docs-shared-row:not(:has(> .docs-figure-split)),
+    .docs-anatomy,
+    .docs-verdict,
+    .docs-example
+  ) {
+  margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
+}
+
+/* A subsection that follows text, a list or a table in the same run of Markdown sits as far from
+   it as from a figure. */
+.docs-figure-section .env-markdown > h3:not(:first-child) {
+  margin-block-start: var(--env-space-8);
+}
+
+/* Lists side by side, such as what envUI provides and what you provide, in cells of one size. */
+.docs-section-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--env-space-5);
+}
+
+.docs-section-column {
+  min-inline-size: 0;
+  padding: var(--env-space-5) var(--env-space-6);
+  border-radius: var(--env-radius-surface);
+  background: var(--env-color-bg-muted);
+}
+
+/* A figure: its stage, its caption and its code, close together. */
+.docs-live-example-entry {
+  gap: var(--env-space-2);
+}
+
+.docs-figure-caption {
+  margin: 0;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+
+/* Cells that share a row, and the slot below them where their open code spans the column. */
+.docs-shared-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0;
+}
+
+.docs-code-slot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--env-space-4);
+  min-inline-size: 0;
+}
+
+.docs-code-slot:not(:empty) {
+  margin-block-start: var(--env-space-4);
+}
+
+/* A slotted disclosure is only the toggle; its code shows in the slot. */
+.docs-live-example-code[data-slotted] > .env-disclosure-panel {
+  display: none;
+}
+
+/* Figures side by side are cells of one size: equal widths, and each figure's stage, caption and
+   code lined up across the row on rows of their own, so the stages match the tallest. */
+/* A run is one column until all its figures fit side by side, so no row is left with an orphan:
+   two to a row from 38 rem for an even run, such as do and don't pairs, three from 58 rem for a run
+   of three. */
+.docs-figure-run {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--env-space-7) var(--env-space-6);
+  min-inline-size: 0;
+}
+
+.docs-figure-run > * {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  row-gap: var(--env-space-2);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.docs-figure-run > * > :first-child {
+  grid-row: 1;
+}
+
+.docs-figure-run > * > :last-child {
+  grid-row: 3;
+}
+
+/* A subsection's text beside its one figure. */
+.docs-figure-split {
+  display: grid;
+  align-items: start;
+  gap: var(--env-space-5) var(--env-space-7);
+  min-inline-size: 0;
+}
+
+/* Even runs go two to a row, do and don't pairs included; a run of three goes three across once
+   they fit, and stays one column before that, so no row is left with an orphan. */
+@container (width >= 38rem) {
+  .docs-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8']) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 58rem) {
+  .docs-figure-run[data-count='3'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 56rem) {
+  .docs-figure-split {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  }
+}
+
+/* An example at given widths: one frame to a row, each centred on a stage of its own, which
+   scrolls where the frame is wider than the page. */
+.docs-width-strip {
+  display: grid;
+  gap: var(--env-space-5);
+  min-inline-size: 0;
+}
+
+.docs-width-frame {
+  display: grid;
+  gap: var(--env-space-2);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+/* A frame wider than the page scrolls from its start, rather than centring past the stage's edge. */
+.docs-width-frame > .docs-live-example {
+  justify-items: safe center;
+  overflow-x: auto;
+}
+
+/* The frame the example responds to, outlined so its width shows. */
+.docs-width-box {
+  container-type: inline-size;
+  outline: 0.0625rem dashed var(--env-color-border-default);
+  outline-offset: var(--env-space-2);
+}
+
+/* Code soft-wraps where the content column is narrower than a 100-character line, rather than
+   scrolling sideways; examples are formatted to that width. */
+@container (width < 60rem) {
+  .docs-example-source pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (width < 48rem) {
+  .docs-example-source pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* A do or don't figure: the example on the stage, a green or red bar, and one sentence. */
+.docs-verdict {
+  display: grid;
+  align-content: start;
+  gap: var(--env-space-2);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.docs-verdict-frame {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  /* The stage and the bar are envUI's connected rows (env-connected-rows), which give the outer
+     corners the large radius and the inner corners where they meet the small one; the gap is the
+     one between a list's rows. */
+  gap: 0.125rem;
+}
+
+/* The stage keeps the frame of every stage; its corners are the connected rows'. */
+.docs-verdict-stage {
+  min-block-size: 10rem;
+  padding: var(--env-space-7) var(--env-space-6);
+  border: 0.0625rem solid var(--env-color-border-muted);
+}
+
+.docs-verdict-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+  padding: var(--env-space-2) var(--env-space-4);
+  color: var(--env-color-fg-on-strong);
+  font: var(--env-type-body);
+  font-weight: var(--env-font-weight-medium);
+}
+
+.docs-verdict-bar > svg {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.docs-verdict[data-verdict='do'] .docs-verdict-bar {
+  background: var(--env-color-bg-success-strong);
+}
+
+.docs-verdict[data-verdict='dont'] .docs-verdict-bar {
+  background: var(--env-color-bg-danger-strong);
+}
+
+.docs-verdict-caption {
+  padding-inline: var(--env-space-2);
+  font: var(--env-type-body);
+}
+
+/* An anatomy figure: the component in the reader's theme on the dotted stage, with numbered
+   callouts on its parts, measured from the live parts, and the legend of part names below. */
+.docs-anatomy {
+  display: grid;
+  gap: var(--env-space-4);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.docs-anatomy-stage {
+  position: relative;
+  padding: 3.5rem 3.75rem;
+}
+
+.docs-anatomy-subject {
+  display: grid;
+  justify-items: center;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.docs-anatomy-lines {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.docs-anatomy-lines line {
+  stroke: var(--env-color-fg-muted);
+  stroke-width: 1px;
+}
+
+.docs-anatomy-lines circle {
+  fill: var(--env-color-bg-page);
+  stroke: var(--env-color-fg-default);
+  stroke-width: 1px;
+}
+
+.docs-anatomy-box {
+  fill: none;
+  stroke: var(--env-color-fg-muted);
+  stroke-width: 1px;
+  stroke-dasharray: 3 2;
+}
+
+.docs-anatomy-badge,
+.docs-anatomy-number {
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: var(--env-radius-lg);
+  background: var(--env-color-fg-default);
+  color: var(--env-color-bg-page);
+  font: var(--env-type-body-small);
+  font-weight: var(--env-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.docs-anatomy-badge {
+  position: absolute;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+.docs-anatomy-caption {
+  display: grid;
+  gap: var(--env-space-4);
+}
+
+.docs-anatomy-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  gap: var(--env-space-3) var(--env-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-anatomy-legend > li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--env-space-3);
+}
+
+.docs-anatomy-legend p {
+  margin: 0;
+}
+
+@container (width < 30rem) {
+  .docs-anatomy-stage {
+    padding: 3.5rem 2.75rem;
+  }
+
+  .docs-verdict-stage {
+    padding: var(--env-space-6) var(--env-space-4);
+  }
+}
+
+/* Text for assistive technology alone, such as the file a Code disclosure shows. */
+.docs-visually-hidden {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The dev mode page's picture of the 3D view: a capture, not a live example, so no stage. */
+.docs-dev-mode-picture {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--env-radius-surface);
+}

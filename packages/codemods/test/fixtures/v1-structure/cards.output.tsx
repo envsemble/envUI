@@ -1,9 +1,15 @@
-import { Button, Card } from '@envsemble/envui';
+import { Button, Card, FeatureCard } from '@envsemble/envui';
 import { Groups } from '@envsemble/envui/icons/Groups';
 
 export function Cards({ kind, start }: { kind: 'div' | 'article'; start: () => void }) {
   return (
     <>
+      <FeatureCard
+        icon={<Groups />}
+        title="Invite your team"
+        description="Plans and files in one place."
+        action={<Button>Invite people</Button>}
+      />
       <Card as={kind}>Chosen at run time</Card>
       <Card disabled>Copy a project</Card>
       <Card
@@ -13,13 +19,6 @@ export function Cards({ kind, start }: { kind: 'div' | 'article'; start: () => v
         actions={<Button>Open</Button>}>
         Interviews from twelve teams.
       </Card>
-      <Card
-        layout="feature"
-        headingLevel={2}
-        icon={<Groups />}
-        title="Invite your team"
-        description="Plans and files in one place."
-        actions={<Button>Invite people</Button>} />
       <Card onClick={start}>
         Blank project
       </Card>

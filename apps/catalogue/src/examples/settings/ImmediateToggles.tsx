@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { List, Stack, Switch, Text, Toast, useToast } from '@envsemble/envui';
+import { List, Column, Switch, Text, Toast, useToast } from '@envsemble/envui';
 
 interface Setting {
   id: string;
@@ -21,7 +21,7 @@ function SettingsSection({
 }) {
   const id = useId();
   return (
-    <Stack render={<section aria-labelledby={`${id}-heading`} />} gap={3}>
+    <Column render={<section aria-labelledby={`${id}-heading`} />} gap={3}>
       <Text render={<h3 id={`${id}-heading`} />} variant="title">
         {title}
       </Text>
@@ -43,7 +43,7 @@ function SettingsSection({
           />
         ))}
       </List.Root>
-    </Stack>
+    </Column>
   );
 }
 
@@ -67,7 +67,7 @@ function NotificationSettings() {
       });
   };
   return (
-    <Stack gap={6}>
+    <Column gap={6}>
       <SettingsSection
         title="Email notifications"
         settings={notifications}
@@ -75,7 +75,7 @@ function NotificationSettings() {
         onChange={change}
       />
       <SettingsSection title="Privacy" settings={privacy} values={values} onChange={change} />
-    </Stack>
+    </Column>
   );
 }
 

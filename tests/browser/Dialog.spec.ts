@@ -63,7 +63,10 @@ test(
       await rename.click();
       const form = page.getByRole('dialog', { name: `Rename ${theme}` });
       await expect(form).toBeVisible();
-      expect((await form.boundingBox())!.width).toBeGreaterThan(400);
+      // The form is as wide as its field, within lg's 28 rem.
+      const formWidth = (await form.boundingBox())!.width;
+      expect(formWidth).toBeGreaterThanOrEqual(192);
+      expect(formWidth).toBeLessThanOrEqual(448);
       await form.getByRole('textbox', { name: 'Name' }).fill('Plan.md');
       await form.getByRole('button', { name: 'Save name' }).click();
       await expect(form).toBeHidden();
@@ -71,6 +74,31 @@ test(
     }
   },
 );
+
+test('popovers size to their content, from 12 rem up to their width, and stay in a narrow window', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=popover`);
+  const scope = page.getByTestId('popover-light');
+  await scope.getByRole('button', { name: 'Details light' }).click();
+  const details = page.getByRole('dialog', { name: 'Document details' });
+  await expect(details).toBeVisible();
+  // A title and a short line: narrower than md's 20 rem, never under 12 rem.
+  const short = (await details.boundingBox())!.width;
+  expect(short).toBeGreaterThanOrEqual(192);
+  expect(short).toBeLessThan(320);
+  await page.keyboard.press('Escape');
+  await expect(details).toBeHidden();
+  await page.setViewportSize({ width: 300, height: 700 });
+  await scope.getByRole('button', { name: 'Rename light' }).click();
+  const form = page.getByRole('dialog', { name: 'Rename light' });
+  await expect(form).toBeVisible();
+  await expect(async () => {
+    const box = (await form.boundingBox())!;
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(300);
+  }).toPass();
+});
 
 test('dialogs open wide for heavy content and near the top for search-like tasks', async ({
   page,

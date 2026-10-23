@@ -7,6 +7,7 @@ import { Tooltip } from '../feedback/Tooltip.js';
 import { ChevronLeft } from '../icons/ChevronLeft.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { pagination } from '../foundations/messages/pagination.js';
@@ -178,11 +179,18 @@ export function Pagination({
   }
 
   return (
-    <nav
-      {...props}
-      aria-label={label ?? messages.label}
-      className={classNames('env-pagination', className)}
-      data-size={size}
+    <Row
+      wrap
+      align="center"
+      gap={1}
+      render={
+        <nav
+          {...props}
+          aria-label={label ?? messages.label}
+          className={classNames('env-pagination', className)}
+          data-size={size}
+        />
+      }
     >
       {/* Announced when it changes, as a page loads; its own direction keeps numbers in order. */}
       <span className="env-pagination-range" dir="auto" aria-live="polite" aria-atomic="true">
@@ -196,6 +204,6 @@ export function Pagination({
       </span>
       {pageButton('previous')}
       {pageButton('next')}
-    </nav>
+    </Row>
   );
 }

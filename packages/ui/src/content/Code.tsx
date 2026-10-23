@@ -3,7 +3,7 @@
 import type { ComponentPropsWithRef } from 'react';
 import { useTheme } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
-import { codeThemeStyle } from './internal/CodeThemes.js';
+import { codeThemeStyle } from './internal/CodeColors.js';
 
 export type CodeProps = ComponentPropsWithRef<'code'>;
 

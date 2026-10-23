@@ -7,15 +7,6 @@ test('public components hydrate server output without recoverable errors', async
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(pathToFileURL(resolve('.cache/Hydration.html')).href);
   await expect(page.getByRole('textbox', { name: 'Hydrated input' })).toHaveValue('Server value');
-  // The sidebar's state came from the cookie the server read: collapsed, with its width in rem,
-  // in the server's markup and after hydration alike.
-  const sidebar = page.getByRole('navigation', { name: 'Hydrated sidebar' });
-  await expect(sidebar).toHaveAttribute('data-state', 'collapsed');
-  await expect(sidebar).toHaveCSS('--env-sidebar-chosen-width', '18rem');
-  const sidebarTrigger = page.getByTestId('hydrated-sidebar-trigger');
-  await expect(sidebarTrigger).toHaveAttribute('aria-expanded', 'false');
-  await sidebarTrigger.click();
-  await expect(sidebar).toHaveAttribute('data-state', 'expanded');
   await page.getByRole('textbox', { name: 'Hydrated input' }).fill('Client value');
   await expect(page.locator('output:not(.env-slider-value)')).toHaveText('Client value');
   // The newer components come before the notice below, which leaves after five seconds.
@@ -93,22 +84,28 @@ test('public components hydrate server output without recoverable errors', async
   await expect(conversation.getByRole('article')).toHaveCount(2);
   await expect(conversation.getByRole('article').last()).toHaveText('Hydrated message');
   await expect(composer).toHaveValue('');
-  // The server renders the split pane side by side; the client measures it and moves its handle.
+  // A width the server read from a cookie stays as the page hydrates: nothing moves.
+  await expect(page.getByRole('separator', { name: 'Hydrated kept split' })).toHaveAttribute(
+    'aria-valuetext',
+    '30 rem',
+  );
+  // The server renders the panes side by side; the divider moves the supporting pane's edge.
   const split = page.getByRole('separator', { name: 'Hydrated split' });
-  await expect(split).toHaveAttribute('aria-valuenow', '50');
+  await expect(split).toHaveAttribute('aria-valuetext', '22.5 rem');
   await expect(split).toHaveAttribute(
     'aria-controls',
-    (await page.getByRole('region', { name: 'Hydrated start' }).getAttribute('id'))!,
+    (await page.getByRole('region', { name: 'Hydrated supporting' }).getAttribute('id'))!,
   );
   await split.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(split).toHaveAttribute('aria-valuenow', '52');
+  // The supporting pane is at the end, so it grows as the divider moves toward the start.
+  await page.keyboard.press('ArrowLeft');
+  await expect(split).toHaveAttribute('aria-valuetext', '23.5 rem');
   // The server renders the dock's panels and chips; the client then measures and resizes them.
   const docked = page.getByRole('region', { name: 'Hydrated notes' });
   await expect(docked.getByRole('heading', { level: 3, name: 'Hydrated notes' })).toBeVisible();
   const chips = page.getByRole('list', { name: 'Hydrated chips' });
   await expect(
-    chips.getByRole('button', { name: 'Show Hydrated budget' }),
+    chips.getByRole('button', { name: 'Open Hydrated budget' }),
   ).toHaveAccessibleDescription('Hydrated changes');
   await expect(chips.getByRole('button', { name: 'Discard Hydrated budget' })).toBeVisible();
   const dockHandle = docked.getByRole('separator', { name: 'Height of Hydrated notes' });
@@ -116,11 +113,8 @@ test('public components hydrate server output without recoverable errors', async
   const dockDraft = docked.getByRole('textbox', { name: 'Hydrated notes draft' });
   await dockDraft.fill('Hydrated draft');
   await docked.getByRole('button', { name: 'Minimize' }).click();
-  await chips.getByRole('button', { name: 'Show Hydrated notes' }).click();
+  await chips.getByRole('button', { name: 'Open Hydrated notes' }).click();
   await expect(dockDraft).toHaveValue('Hydrated draft');
-  await expect(page.getByRole('group', { name: 'Hydrated stats' })).toHaveText(
-    'Hydrated stat128+12%Last 30 days',
-  );
   const activity = page.getByRole('grid', { name: 'Hydrated activity' });
   await expect(activity.getByRole('gridcell')).toHaveCount(31);
   // Without a locale, the server writes the days in en-GB and the browser, once hydrated, in its
@@ -167,7 +161,7 @@ test('public components hydrate server output without recoverable errors', async
   await page.getByRole('tab', { name: 'Two.md' }).click();
   await expect(page.getByRole('tab', { name: 'Two.md' })).toHaveAttribute('aria-selected', 'true');
   const file = page.getByRole('menuitem', { name: 'File', exact: true });
-  await expect(page.locator('.env-window-frame-title-bar')).toContainText('Hydrated title');
+  await expect(page.locator('.env-top-bar[data-title-bar]')).toContainText('Hydrated title');
   await file.click();
   const fileMenu = page.getByRole('menu', { name: 'File' });
   await expect(fileMenu.getByRole('menuitem', { name: 'Hydrated new' })).toBeVisible();

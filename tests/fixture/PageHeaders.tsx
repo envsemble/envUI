@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import {
   Badge,
   Breadcrumbs,
@@ -6,7 +6,9 @@ import {
   Page,
   PageHeader,
   SearchField,
-  Stack,
+  Column,
+  Row,
+  Scaffold,
   Text,
 } from '@envsemble/envui';
 
@@ -18,22 +20,21 @@ const trail = [
 
 /**
  * Page headers for the layout checks: one in a container the test narrows, one at heading level 2
- * with small controls, and a sticky one on a page under a frame header 48 px tall, with content
- * that sticks below both.
+ * with small controls, and a sticky one on a page in a Scaffold's body, with a field far below.
  */
 export function PageHeadersFixture() {
   const [width, setWidth] = useState('48rem');
   return (
-    <Stack gap={5}>
+    <Column gap={5}>
       <section aria-label="Responsive" className="fixture-section">
-        <Stack direction="row" gap={2}>
+        <Row gap={2}>
           <Button variant="secondary" onClick={() => setWidth('48rem')}>
             Wide header
           </Button>
           <Button variant="secondary" onClick={() => setWidth('20rem')}>
             Narrow header
           </Button>
-        </Stack>
+        </Row>
         <div style={{ inlineSize: width }}>
           <PageHeader
             data-testid="responsive"
@@ -58,44 +59,38 @@ export function PageHeadersFixture() {
           controlSize="sm"
           actions={<Button>Invite</Button>}
           toolbar={
-            <Stack direction="row" wrap align="center" justify="between">
+            <Row gap={4} wrap align="center" justify="between">
               <SearchField label="Search members" size="sm" />
               <Button variant="secondary">Export</Button>
-            </Stack>
+            </Row>
           }
         />
       </section>
-      <div style={{ '--env-frame-sticky-top': '48px' } as CSSProperties}>
-        <div
-          data-testid="frame-header"
-          style={{
-            position: 'sticky',
-            insetBlockStart: 0,
-            blockSize: '48px',
-            zIndex: 'var(--env-z-sticky)',
-            background: 'var(--env-color-bg-raised)',
-          }}
-        />
-        <Page
-          data-testid="page"
-          width="md"
-          header={<PageHeader data-testid="sticky" title="Annual report" sticky />}
-        >
-          <div
-            data-testid="sticky-content"
-            style={{
-              position: 'sticky',
-              insetBlockStart:
-                'calc(var(--env-frame-sticky-top) + var(--env-page-header-block-size, 0px))',
-            }}
+      <div className="fixture-scaffold-frame" data-testid="frame">
+        <Scaffold scroll="body" landmarks={false}>
+          <Page
+            data-testid="page"
+            width="md"
+            header={
+              <PageHeader
+                data-testid="sticky"
+                title="Annual report for the board and every shareholder"
+                sticky
+                actions={<Button>Share</Button>}
+                toolbar={<Button variant="secondary">Filter</Button>}
+              />
+            }
           >
-            Section heading that sticks below both
-          </div>
-          <div style={{ blockSize: '200vh' }}>
-            <Text>Long page content.</Text>
-          </div>
-        </Page>
+            <div style={{ blockSize: '60rem' }}>
+              <Text>Long page content.</Text>
+            </div>
+            <label>
+              Far field <input data-testid="far-field" />
+            </label>
+            <div style={{ blockSize: '20rem' }} />
+          </Page>
+        </Scaffold>
       </div>
-    </Stack>
+    </Column>
   );
 }

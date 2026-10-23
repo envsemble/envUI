@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Toast, useToast, Stack } from '@envsemble/envui';
+import { Button, Toast, useToast } from '@envsemble/envui';
 
 function SaveButton() {
   const toast = useToast();
@@ -13,11 +13,9 @@ function SaveButton() {
     }, 1200);
   };
   return (
-    <Stack direction="row" wrap align="center" gap={4}>
-      <Button pending={saving} onClick={save}>
-        Save changes
-      </Button>
-    </Stack>
+    <Button pending={saving} onClick={save}>
+      Save changes
+    </Button>
   );
 }
 

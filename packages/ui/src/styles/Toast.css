@@ -9,14 +9,13 @@
   padding: var(--env-space-2) var(--env-space-3);
   min-width: 0;
   min-height: 3rem;
-  /* Toasts float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
-     fill separates from a surface of its own color. On a light page each tone's edge is its fill
-     a step darker rather than the light popup edge, which would ring it like a halo; in dark it is
-     the popup edge. The edge is the boundary in high contrast and what forced colors paint once
-     the shadow is gone. */
+  /* Toasts float over everything at elevation 2, as menus do, set apart by their strong fill and
+     an edge, with no shadow, so the fill separates from a surface of its own color. On a light page
+     each tone's edge is its fill a step darker rather than the light popup edge, which would ring
+     it like a halo; in dark it is the popup edge. The edge is the boundary in high contrast and
+     what forced colors paint. */
   border: 1px solid var(--env-toast-edge, var(--env-color-border-neutral-strong));
   border-radius: var(--env-radius-sm);
-  box-shadow: var(--env-elevation-2-shadow);
   font: var(--env-type-body-small);
   color: var(--env-color-fg-on-strong);
   flex-wrap: nowrap;
@@ -79,10 +78,11 @@
   white-space: normal;
   overflow-wrap: break-word;
 }
-/* The dismiss button is a CloseButton on the notice's strong fill: the fill's text color, with the
+/* The dismiss button is an IconButton with a cross on the notice's strong fill: the fill's text color, with the
    fill's own hover and press steps. Toast.css comes after Button.css, so at equal specificity
    these colors win over the ghost ones. */
 .env-toast-dismiss {
+  --env-icon-button-hit-area: var(--env-control-height-touch);
   --env-icon-size: 1.125rem;
   color: inherit;
 }
@@ -98,7 +98,10 @@
   outline: 0.125rem solid var(--env-color-fg-on-strong);
   outline-offset: 0.125rem;
 }
+/* The toasts need no window, so their portal's boundary is no container: nothing changes for the
+   fixed viewport inside it. */
 .env-toast-portal-theme {
+  container-type: normal;
   background: none;
 }
 .env-toast-viewport {
@@ -147,13 +150,13 @@
   margin: 0;
   pointer-events: none;
 }
-/* The CounterBadge of hidden notices sits beyond the stack: above it at the bottom end, and below it,
-   centered, at the top center, where notices arrive from above. It takes the neutral toast colors,
-   so it reads over any page. */
+/* The count of hidden notices, a Badge, sits beyond the stack: above it at the bottom end, and below
+   it, centered, at the top center, where notices arrive from above. It takes the neutral toast
+   colors through the badge's count hooks, so it reads over any page. */
 .env-toast-viewport > .env-toast-queued-count {
+  --env-badge-count-bg: var(--env-color-bg-neutral-strong);
+  --env-badge-count-fg: var(--env-color-fg-on-strong);
   order: 1;
-  background: var(--env-color-bg-neutral-strong);
-  color: var(--env-color-fg-on-strong);
 }
 .env-toast-viewport[data-placement='bottom-end'] {
   inset-inline-end: max(var(--env-space-4), env(safe-area-inset-right));

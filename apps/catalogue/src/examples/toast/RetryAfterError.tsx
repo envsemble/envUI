@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Toast, useToast, Stack } from '@envsemble/envui';
+import { Button, Toast, useToast } from '@envsemble/envui';
 
 function PublishButton() {
   const toast = useToast();
@@ -29,11 +29,9 @@ function PublishButton() {
     }, 1200);
   };
   return (
-    <Stack direction="row" wrap align="center" gap={4}>
-      <Button pending={publishing} onClick={publish}>
-        Publish
-      </Button>
-    </Stack>
+    <Button pending={publishing} onClick={publish}>
+      Publish
+    </Button>
   );
 }
 

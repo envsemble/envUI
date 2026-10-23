@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { Button, Dialog, Stack, Text } from '@envsemble/envui';
+import { Button, Dialog, Column, Text } from '@envsemble/envui';
 
 export default function ConfirmDelete() {
-  const [open, setOpen] = useState(false);
+  // Shown open in the docs; start closed, useState(false), to open it from its trigger.
+  const [open, setOpen] = useState(true);
   const [result, setResult] = useState('');
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Dialog
         open={open}
         onOpenChange={setOpen}
         trigger={<Button variant="secondary">Delete project</Button>}
         title="Delete project?"
-        description="This deletes Northwind launch and its files for everyone in the workspace."
+        description="This deletes Northwind launch and its files. It can’t be undone."
         closeLabel="Cancel"
         actions={
           <Button
@@ -27,6 +28,6 @@ export default function ConfirmDelete() {
         }
       />
       <Text role="status">{result}</Text>
-    </Stack>
+    </Column>
   );
 }

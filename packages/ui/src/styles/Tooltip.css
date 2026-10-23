@@ -5,18 +5,18 @@
   z-index: var(--env-z-tooltip);
 }
 .env-tooltip {
-  max-inline-size: min(18rem, calc(100vw - 2rem));
+  /* As wide as its text up to 18 rem, never wider than the room the positioner finds. */
+  max-inline-size: min(18rem, var(--available-width, calc(100vw - 2rem)));
   padding: var(--env-space-1) var(--env-space-2);
-  /* Tooltips float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
-     fill separates from a surface of its own color. On a light page the edge is the dark fill a step
-     darker rather than the light popup edge, which would ring it like a halo; in dark it is the
-     popup edge. The edge is the boundary in high contrast and what forced colors paint once the
-     shadow is gone. */
+  /* Tooltips float over everything at elevation 2, as menus do, set apart by their strong fill and
+     an edge, with no shadow, so the fill separates from a surface of its own color. On a light page
+     the edge is the dark fill a step darker rather than the light popup edge, which would ring it
+     like a halo; in dark it is the popup edge. The edge is the boundary in high contrast and what
+     forced colors paint. */
   border: 1px solid var(--env-color-border-neutral-strong);
   border-radius: var(--env-radius-sm);
   background: var(--env-color-bg-neutral-strong);
   color: var(--env-color-fg-on-strong);
-  box-shadow: var(--env-elevation-2-shadow);
   font: var(--env-type-body-small);
   overflow-wrap: anywhere;
   /* A Kbd in a tooltip, such as a shortcut beside the name, takes key caps for the dark fill. */

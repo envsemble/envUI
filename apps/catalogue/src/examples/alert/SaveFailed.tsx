@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Button, Stack } from '@envsemble/envui';
+import { Alert, Button, Column, Row } from '@envsemble/envui';
 
 export default function SaveFailed() {
   const [status, setStatus] = useState<'idle' | 'saving' | 'failed'>('idle');
@@ -19,18 +19,18 @@ export default function SaveFailed() {
   };
 
   return (
-    <Stack gap={3}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 32rem)' }}>
       {status === 'failed' && (
         <Alert tone="danger" title="Couldn’t save the draft" announce onDismiss={dismiss}>
           The connection dropped while saving. Your changes are still in the editor; try again in a
           moment.
         </Alert>
       )}
-      <Stack direction="row" wrap align="center" gap={4}>
+      <Row wrap align="center" gap={4}>
         <Button ref={saveButton} pending={status === 'saving'} onClick={save}>
           Save draft
         </Button>
-      </Stack>
-    </Stack>
+      </Row>
+    </Column>
   );
 }

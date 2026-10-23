@@ -1,3 +1,5 @@
 {
-  "split-view": "split-pane"
+  "split-view": "panes",
+  "split-pane": "panes",
+  "list-detail": "panes"
 }

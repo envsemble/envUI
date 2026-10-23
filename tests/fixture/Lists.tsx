@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Avatar, Checkbox, EnvUIProvider, Link, List, Stack } from '@envsemble/envui';
+import { Avatar, Checkbox, EnvUIProvider, Link, List, Column } from '@envsemble/envui';
 
 const slides = ['Intro', 'Roadmap', 'Budget', 'Questions'];
 
@@ -16,7 +16,7 @@ function Slides({ testId }: { testId: string }) {
   const [items, setItems] = useState(slides);
   const [current, setCurrent] = useState('Roadmap');
   return (
-    <Stack gap={2}>
+    <Column gap={2}>
       <List.Root
         aria-label={`Slides ${testId}`}
         data-testid={testId}
@@ -45,7 +45,7 @@ function Slides({ testId }: { testId: string }) {
         ))}
       </List.Root>
       <output data-testid={`${testId}-order`}>{items.join(',')}</output>
-    </Stack>
+    </Column>
   );
 }
 
@@ -73,7 +73,7 @@ function WrappedSlides({ bare = false }: { bare?: boolean }) {
   const [items, setItems] = useState(slides);
   const testId = bare ? 'bare-slides' : 'wrapped-slides';
   return (
-    <Stack gap={2}>
+    <Column gap={2}>
       <List.Root
         aria-label={`Slides ${testId}`}
         data-testid={testId}
@@ -88,7 +88,7 @@ function WrappedSlides({ bare = false }: { bare?: boolean }) {
         )}
       </List.Root>
       <output data-testid={`${testId}-order`}>{items.join(',')}</output>
-    </Stack>
+    </Column>
   );
 }
 
@@ -100,7 +100,7 @@ function WrappedSlides({ bare = false }: { bare?: boolean }) {
 export function ListsFixture() {
   const [checked, setChecked] = useState<string[]>(['Sam Lee']);
   return (
-    <Stack gap={5} className="fixture-section" style={{ inlineSize: '24rem' }}>
+    <Column gap={5} className="fixture-section" style={{ inlineSize: '24rem' }}>
       <Slides testId="slides" />
       <EnvUIProvider dir="rtl">
         <div dir="rtl">
@@ -138,6 +138,6 @@ export function ListsFixture() {
           />
         ))}
       </List.Root>
-    </Stack>
+    </Column>
   );
 }

@@ -10,21 +10,27 @@
       "ActionCardProps": { "to": [], "use": "CardProps, with title, meta and actions." },
       "ActionGroup": {
         "to": [],
-        "use": "Lay actions out with Stack: <Stack direction=\"row\" wrap align=\"center\" gap={4}> for a row, with justify=\"end\" for the end of a form, and <Stack gap={2}> with fullWidth on each labelled Button for a stacked group. v1-structure rewrites each use."
+        "use": "Lay actions out with Row and Column: <Row wrap align=\"center\" gap={4}> for a row, with justify=\"end\" for the end of a form, and <Column gap={2}> with fullWidth on each labelled Button for a stacked group. v1-structure and v1-stack rewrite each use."
       },
       "ActionGroupProps": {
         "to": [],
-        "use": "StackProps, with direction, wrap, align, justify and gap."
+        "use": "RowProps, with wrap, align, justify and gap, or ColumnProps."
       },
-      "AppShell": { "to": ["AppShell.Root"] },
-      "AppShellProps": { "to": ["AppShell.RootProps"] },
+      "AppShell": {
+        "to": [],
+        "use": "AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
+      },
+      "AppShellProps": {
+        "to": [],
+        "use": "ScaffoldProps and TopBarProps; AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
+      },
       "AppShellSkeleton": {
         "to": [],
-        "use": "Render the frame's own parts as its loading state, with NavList.Skeleton in Sidebar.Content, inside a LoadingState; the v1-app-shell codemod rewrites it."
+        "use": "AppShellSkeleton is gone: render the frame's Scaffold with skeleton on its TopBar, Drawer, Rail or Bar and its page's surfaces, over placeholders(count)."
       },
       "AppShellSkeletonProps": {
         "to": [],
-        "use": "AppShellSkeleton is gone: the frame's own parts, with NavList.Skeleton, are its loading state."
+        "use": "AppShellSkeleton is gone: the frame, a Scaffold, with skeleton on its parts over placeholders(count), is its loading state."
       },
       "BrandLogo": {
         "to": [],
@@ -37,8 +43,11 @@
       "ClickableCard": { "to": ["Card"] },
       "ClickableCardProps": { "to": ["CardProps"] },
       "CommandPaletteSelectOptions": { "to": ["CommandPaletteActionOptions"] },
-      "Counter": { "to": ["CounterBadge"] },
-      "CounterProps": { "to": ["CounterBadgeProps"] },
+      "Counter": {
+        "to": [],
+        "use": "Counter is Badge with count in 1.0: <Badge count={value}>, solid in the accent tone; v1-structure rewrites each use."
+      },
+      "CounterProps": { "to": ["BadgeProps"] },
       "DateTimeField": { "to": ["DatePicker"] },
       "DateTimeFieldProps": { "to": ["DatePickerProps"] },
       "DiffCount": { "to": ["DiffStat"] },
@@ -54,6 +63,14 @@
       "DirectionLinksProps": { "to": ["Pager.RootProps"] },
       "DisclosureNote": { "to": ["Disclosure"] },
       "DisclosureNoteProps": { "to": ["DisclosureProps"] },
+      "EmptyState": {
+        "to": [],
+        "use": "EmptyState is gone: the empty states pattern builds one from a Column with an icon, a Text heading of the level the page's outline needs, a Text sentence and a Button, centred with align=\"center\" where it takes a region's place, and a danger Alert with announce where content failed to load; no codemod rewrites it."
+      },
+      "EmptyStateProps": {
+        "to": [],
+        "use": "EmptyState is gone, with its props: the empty states pattern builds one from Column, Text and Button."
+      },
       "EnvUILogo": {
         "to": [],
         "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."
@@ -64,11 +81,11 @@
       },
       "FeatureCard": {
         "to": [],
-        "use": "Card with layout=\"feature\" and headingLevel={2}: icon, title, description and actions for action; v1-structure rewrites each use."
+        "use": "FeatureCard is the feature cards pattern in 1.0: a Card holding a Row with an icon, a Column of Text and a Button; v1-structure reports each use."
       },
       "FeatureCardProps": {
         "to": [],
-        "use": "CardProps, with layout=\"feature\": actions for action."
+        "use": "CardProps; FeatureCard is the feature cards pattern in 1.0, a Card holding a Row of Text and a Button."
       },
       "FileDropzone": { "to": ["DropZone"] },
       "FileDropzoneProps": { "to": ["DropZoneProps"] },
@@ -84,12 +101,17 @@
       "InputProps": { "to": ["TextFieldProps"] },
       "LoadingBar": {
         "to": [],
-        "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
+        "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."
       },
       "LoadingBarProps": {
         "to": [],
-        "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
+        "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."
       },
+      "LoadingState": {
+        "to": [],
+        "use": "LoadingState is a Spinner with showLabel in 1.0: <Spinner label=\"…\" showLabel />, which says Loading without a label; v1-structure rewrites each use."
+      },
+      "LoadingStateProps": { "to": ["SpinnerProps"] },
       "Menu": { "to": ["Menu.Root"] },
       "MenuCheckboxItem": { "to": ["Menu.CheckboxItem"] },
       "MenuCheckboxItemProps": { "to": ["Menu.CheckboxItemProps"] },
@@ -116,14 +138,29 @@
       "MenubarMenuOpenChangeDetails": { "to": ["Menubar.MenuOpenChangeDetails"] },
       "MenubarMenuProps": { "to": ["Menubar.MenuProps"] },
       "MenubarProps": { "to": ["Menubar.RootProps"] },
-      "NavigationItem": { "to": ["NavList.Item"] },
-      "NavigationItemProps": { "to": ["NavList.ItemProps"] },
+      "NavigationItem": {
+        "to": [],
+        "use": "List the destinations in one array, each { label, icon, href or onSelect, count, group, current }, and pass it to Drawer, Rail or Bar, which render the items; selected is current, a count in end is count. No codemod rewrites it: rewrite each list by hand."
+      },
+      "NavigationItemProps": {
+        "to": [],
+        "use": "Destination, one item of the array that Bar, Rail and Drawer take, or DrawerDestination, whose icon is optional."
+      },
       "Notice": { "to": ["Alert"] },
       "NoticeProps": { "to": ["AlertProps"] },
       "NoticeTone": { "to": ["AlertTone"] },
-      "OrganizationMenu": { "to": ["OrganizationSwitcher"] },
-      "OrganizationMenuOrganization": { "to": ["OrganizationSwitcherItem"] },
-      "OrganizationMenuProps": { "to": ["OrganizationSwitcherProps"] },
+      "OrganizationMenu": {
+        "to": [],
+        "use": "OrganizationMenu, OrganizationSwitcher in 1.0.0-prerelease.0, is gone: the organization switcher pattern builds it from a Menu.Root whose trigger is a secondary Button naming the active organization, a Menu.RadioGroup of Menu.RadioItems with the person's role as each description, and a Menu.Item that creates one; no codemod rewrites it."
+      },
+      "OrganizationMenuOrganization": {
+        "to": [],
+        "use": "OrganizationSwitcher is gone, with its items: the organization switcher pattern renders the application's own organizations as Menu.RadioItems."
+      },
+      "OrganizationMenuProps": {
+        "to": [],
+        "use": "Menu.RootProps; OrganizationSwitcher is gone: the organization switcher pattern builds it from Menu.Root, Menu.RadioGroup and Button."
+      },
       "PanelDock": { "to": ["PanelDock.Root"] },
       "PanelDockControls": {
         "to": [],
@@ -136,20 +173,49 @@
       "PanelDockHeader": { "to": ["PanelDock.Header"] },
       "PanelDockHeaderProps": { "to": ["PanelDock.HeaderProps"] },
       "PanelDockProps": { "to": ["PanelDock.RootProps"] },
-      "Row": { "to": ["List.Item"] },
-      "RowProps": { "to": ["List.ItemProps"] },
       "SegmentedControlOption": { "to": ["SegmentedControlItem"] },
       "SelectOption": { "to": ["SelectItem"] },
+      "Skeleton": {
+        "to": [],
+        "use": "Skeletons are the components themselves in 1.0: put skeleton on the surface that holds the content, such as a Surface, Card, List.Root or Table.Root, and render its normal components over placeholders(count) while the items load; its text becomes bars and its controls filled shapes. For loading with no known shape, a Spinner with showLabel shows a spinner and its label."
+      },
+      "SkeletonProps": {
+        "to": [],
+        "use": "Skeleton is gone: skeleton on a Surface, Card, List.Root, Table.Root and the other containers, over placeholders(count)."
+      },
+      "Stack": {
+        "to": [],
+        "use": "Lay out with Row for direction=\"row\" and Column otherwise, with the same gap, align, justify and render; v1-stack rewrites each element."
+      },
       "StackElement": {
         "to": [],
-        "use": "Stack, Surface and Text render another element through render, such as render={<section />}; they no longer take as."
+        "use": "Row, Column, Grid, Box, Surface and Text render another element through render, such as render={<section />}; they no longer take as."
       },
-      "Stat": { "to": ["Stat.Root"] },
-      "StatGroup": { "to": ["Stat.Group"] },
-      "StatGroupProps": { "to": ["Stat.GroupProps"] },
-      "StatProps": { "to": ["Stat.RootProps"] },
-      "StatTrend": { "to": ["Stat.Trend"] },
-      "StatTrendTone": { "to": ["Stat.TrendTone"] },
+      "StackProps": { "to": [], "use": "RowProps or ColumnProps." },
+      "Stat": {
+        "to": [],
+        "use": "Stat is gone: the key figures pattern builds a figure from Text, a muted label and a headline figure in tabular digits, with a Badge that says the trend in words, and a group from a Surface around a Grid; no codemod rewrites it."
+      },
+      "StatGroup": {
+        "to": [],
+        "use": "Stat.Group is gone: the key figures pattern puts the figures in a Surface with role=\"group\" around a Grid of even columns."
+      },
+      "StatGroupProps": {
+        "to": [],
+        "use": "SurfaceProps; Stat.Group is gone: the key figures pattern puts the figures in a Surface around a Grid."
+      },
+      "StatProps": {
+        "to": [],
+        "use": "Stat is gone, with its props: the key figures pattern builds a figure from Text and a Badge."
+      },
+      "StatTrend": {
+        "to": [],
+        "use": "Stat is gone: the key figures pattern says the trend with a Badge, its tone and a trending icon."
+      },
+      "StatTrendTone": {
+        "to": [],
+        "use": "BadgeTone; Stat is gone: the key figures pattern says the trend with a Badge in its tone."
+      },
       "SurfaceCorners": { "to": ["SurfaceRadius"] },
       "SurfaceDensity": {
         "to": [],
@@ -174,8 +240,14 @@
         "use": "Text renders another element through render, such as render={<h2 />}."
       },
       "TextTone": { "to": ["TextEmphasis"] },
-      "TitleBar": { "to": ["WindowFrame.TitleBar"] },
-      "TitleBarProps": { "to": ["WindowFrame.TitleBarProps"] },
+      "TitleBar": {
+        "to": [],
+        "use": "TitleBar is gone: <TopBar titleBar start={…} title={…} actions={…} />, with its end content in actions."
+      },
+      "TitleBarProps": {
+        "to": [],
+        "use": "TopBarProps; TitleBar is gone: a TopBar with titleBar is the window's title bar."
+      },
       "Toast": {
         "to": [],
         "use": "Show notifications through useToast() inside Toast.Provider. The manual Toast is internal; the `Toast` export is now the namespace of Toast.Provider.",
@@ -189,19 +261,29 @@
       "ToastProviderProps": { "to": ["Toast.ProviderProps"] },
       "ToastVariant": { "to": ["ToastTone"] },
       "TreeOpenOptions": { "to": ["TreeActionOptions"] },
-      "WindowFrame": { "to": ["WindowFrame.Root"] },
-      "WindowFrameProps": { "to": ["WindowFrame.RootProps"] },
+      "WindowFrame": {
+        "to": [],
+        "use": "WindowFrame is gone: a window that draws its title bar is a Scaffold with topBarSpan=\"full\" and topBar={<TopBar titleBar … />}, and bodyRef for scrollRef, as the window frame pattern shows."
+      },
+      "WindowFrameProps": {
+        "to": [],
+        "use": "ScaffoldProps; WindowFrame is gone: a Scaffold with topBarSpan=\"full\" and a TopBar with titleBar frame the window."
+      },
       "getInitials": {
         "to": [],
         "use": "Avatar shows the initials itself with fallback=\"initials\"; derive initials in the application for custom layouts."
       },
+      "useAppShell": {
+        "to": [],
+        "use": "AppShell is gone: Scaffold's bodyRef is the element that scrolls the page, and sticky content sticks at the top of the body, at 0."
+      },
       "useLinkComponent": {
         "to": [],
-        "use": "Render envUI's Link, Button with href, NavList.Item or Menu.Item with href, which use the LinkProvider's component; or read the router's link component in the application."
+        "use": "Render envUI's Link, Button with href, the destinations of Bar, Rail and Drawer, or Menu.Item with href, which use the LinkProvider's component; or read the router's link component in the application."
       },
       "useSidebarCompact": {
         "to": [],
-        "use": "useSidebar().isRail says whether the sidebar shows icons only; AppShell.Root's sidebarOpen and onSidebarOpenChange keep its state."
+        "use": "The sidebar is gone: Scaffold shows a navigation Rail of icons in a medium window, chosen by its width in CSS, with no state to read."
       }
     },
     "@envsemble/envui/theme-bootstrap": {

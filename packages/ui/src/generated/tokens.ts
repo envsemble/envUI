@@ -28,18 +28,6 @@ export interface TokenDefinition {
 
 /** Every token, by its DTCG path. */
 export const tokens = {
-  /** The app frame's header bar, a single row that holds controls of the control height with space around them; sticky content and the sidebar headers line up with it. */
-  'app-shell.header-height': {
-    cssVariable: '--env-app-shell-header-height',
-    type: 'dimension',
-    values: {
-      light: '3.25rem',
-      dark: '3.25rem',
-      'light-high-contrast': '3.25rem',
-      'dark-high-contrast': '3.25rem',
-    },
-    scales: { compact: '2.625rem' },
-  },
   'body.font-weight': {
     cssVariable: '--env-body-font-weight',
     type: 'fontWeight',
@@ -48,50 +36,6 @@ export const tokens = {
       dark: '400',
       'light-high-contrast': '400',
       'dark-high-contrast': '400',
-    },
-  },
-  /** 64 rem: a tablet held sideways or a laptop. */
-  'breakpoint.lg': {
-    cssVariable: '--env-breakpoint-lg',
-    type: 'dimension',
-    values: {
-      light: '64rem',
-      dark: '64rem',
-      'light-high-contrast': '64rem',
-      'dark-high-contrast': '64rem',
-    },
-  },
-  /** 48 rem: a tablet held upright, and the default line between a phone's layout and a wider one. */
-  'breakpoint.md': {
-    cssVariable: '--env-breakpoint-md',
-    type: 'dimension',
-    values: {
-      light: '48rem',
-      dark: '48rem',
-      'light-high-contrast': '48rem',
-      'dark-high-contrast': '48rem',
-    },
-  },
-  /** 40 rem: a large phone held sideways, or a narrow window. */
-  'breakpoint.sm': {
-    cssVariable: '--env-breakpoint-sm',
-    type: 'dimension',
-    values: {
-      light: '40rem',
-      dark: '40rem',
-      'light-high-contrast': '40rem',
-      'dark-high-contrast': '40rem',
-    },
-  },
-  /** 80 rem: a desktop window. */
-  'breakpoint.xl': {
-    cssVariable: '--env-breakpoint-xl',
-    type: 'dimension',
-    values: {
-      light: '80rem',
-      dark: '80rem',
-      'light-high-contrast': '80rem',
-      'dark-high-contrast': '80rem',
     },
   },
   /** The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue="blue". */
@@ -204,6 +148,17 @@ export const tokens = {
       'dark-high-contrast': '#ffffff',
     },
   },
+  /** The tint of a soft accent badge. In light it is the accent blue at 5%, fainter than color.bg.accent.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.accent.muted. */
+  'color.bg.accent.badge': {
+    cssVariable: '--env-color-bg-accent-badge',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.05)',
+      dark: 'rgb(159 193 248 / 0.14)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
+      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
+    },
+  },
   /** A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis. */
   'color.bg.accent.emphasis': {
     cssVariable: '--env-color-bg-accent-emphasis',
@@ -215,7 +170,7 @@ export const tokens = {
       'dark-high-contrast': '#cddefc',
     },
   },
-  /** The translucent accent tint of badges and info alerts. */
+  /** The translucent accent tint of info alerts, and of soft accent badges in dark and at high contrast; in light they take color.bg.accent.badge. */
   'color.bg.accent.muted': {
     cssVariable: '--env-color-bg-accent-muted',
     type: 'color',
@@ -424,7 +379,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 228 226 / 0.22)',
     },
   },
-  /** The default surface: Surface, sidebars, standard menus. */
+  /** The default surface: Surface, navigation, standard menus. */
   'color.bg.default': {
     cssVariable: '--env-color-bg-default',
     type: 'color',
@@ -440,7 +395,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-default-hover',
     type: 'color',
     values: {
-      light: '#e2e4e8',
+      light: '#dbdde1',
       dark: '#383a3d',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#303234',
@@ -451,7 +406,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-default-pressed',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#d2d4d8',
       dark: '#424447',
       'light-high-contrast': '#dbdde1',
       'dark-high-contrast': '#383a3d',
@@ -567,12 +522,12 @@ export const tokens = {
       'dark-high-contrast': 'rgb(30 31 33 / 0.5)',
     },
   },
-  /** The muted surface: Surface background="muted", radio rows. Lighter than the default surface in both themes. */
+  /** The muted surface: Surface background="muted", radio rows. Grayer than the default surface in the light theme, so cards stand apart from a pane, and lighter than it in the dark theme. */
   'color.bg.muted': {
     cssVariable: '--env-color-bg-muted',
     type: 'color',
     values: {
-      light: '#f6f8fc',
+      light: '#e2e4e8',
       dark: '#343638',
       'light-high-contrast': '#f6f8fc',
       'dark-high-contrast': '#343638',
@@ -583,7 +538,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-muted-hover',
     type: 'color',
     values: {
-      light: '#e8eaee',
+      light: '#d5d7db',
       dark: '#424447',
       'light-high-contrast': '#e8eaee',
       'dark-high-contrast': '#383a3d',
@@ -594,7 +549,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-muted-pressed',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#d2d4d8',
       dark: '#4b4d51',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#424447',
@@ -638,7 +593,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted',
     type: 'color',
     values: {
-      light: 'rgb(30 31 33 / 0.06)',
+      light: 'rgb(30 31 33 / 0.1)',
       dark: 'rgb(232 234 238 / 0.125)',
       'light-high-contrast': 'rgb(30 31 33 / 0.06)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
@@ -660,7 +615,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted-pressed',
     type: 'color',
     values: {
-      light: 'rgb(30 31 33 / 0.29)',
+      light: 'rgb(30 31 33 / 0.25)',
       dark: 'rgb(232 234 238 / 0.28)',
       'light-high-contrast': 'rgb(30 31 33 / 0.18)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.15)',
@@ -743,7 +698,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(30 31 33 / 0.55)',
     },
   },
-  /** The lighter scrim behind a drawer, such as the app shell’s sidebar over a narrow window: the dark page color at 30%. */
+  /** The lighter scrim behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%. */
   'color.bg.overlay.muted': {
     cssVariable: '--env-color-bg-overlay-muted',
     type: 'color',
@@ -787,7 +742,7 @@ export const tokens = {
       'dark-high-contrast': '#303234',
     },
   },
-  /** Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. */
+  /** Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light they are white, a step lighter than the panes they open over, as in dark they are a step lighter than the page; a popup the pane's gray would blend into it. */
   'color.bg.popup': {
     cssVariable: '--env-color-bg-popup',
     type: 'color',
@@ -825,7 +780,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised',
     type: 'color',
     values: {
-      light: '#ffffff',
+      light: '#eff1f5',
       dark: '#28292b',
       'light-high-contrast': '#ffffff',
       'dark-high-contrast': '#28292b',
@@ -836,7 +791,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised-hover',
     type: 'color',
     values: {
-      light: '#e8eaee',
+      light: '#e2e4e8',
       dark: '#383a3d',
       'light-high-contrast': '#eff1f5',
       'dark-high-contrast': '#303234',
@@ -1122,7 +1077,7 @@ export const tokens = {
     cssVariable: '--env-color-border-danger-emphasis-pressed',
     type: 'color',
     values: {
-      light: '#d66d63',
+      light: '#ce5e53',
       dark: '#d66d63',
       'light-high-contrast': '#5a0100',
       'dark-high-contrast': '#fff6f5',
@@ -1139,13 +1094,13 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 228 226 / 0.28)',
     },
   },
-  /** The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.danger.strong': {
     cssVariable: '--env-color-border-danger-strong',
     type: 'color',
     values: {
       light: '#9f0300',
-      dark: '#5d6166',
+      dark: '#686b70',
       'light-high-contrast': '#6b0100',
       'dark-high-contrast': '#a1a4a9',
     },
@@ -1205,13 +1160,13 @@ export const tokens = {
       'dark-high-contrast': '#b5cffb',
     },
   },
-  /** The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.info.strong': {
     cssVariable: '--env-color-border-info-strong',
     type: 'color',
     values: {
       light: '#174d90',
-      dark: '#5d6166',
+      dark: '#686b70',
       'light-high-contrast': '#003068',
       'dark-high-contrast': '#a1a4a9',
     },
@@ -1227,12 +1182,12 @@ export const tokens = {
       'dark-high-contrast': 'rgb(0 0 0 / 0.05)',
     },
   },
-  /** Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify. */
+  /** The hairlines between the items of one list, across its full width: table rows, Markdown rules, menu separators and accordion items; and decorative edges that are not a control’s only boundary: quote bars, keyboard keys and color swatches. Regions separate by space and background instead. A floating layer takes its own, clearer edge, elevation.{level}.border. */
   'color.border.muted': {
     cssVariable: '--env-color-border-muted',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#cfd1d5',
       dark: '#5d6166',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
@@ -1271,13 +1226,13 @@ export const tokens = {
       'dark-high-contrast': 'rgb(232 234 238 / 0.55)',
     },
   },
-  /** The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.neutral.strong': {
     cssVariable: '--env-color-border-neutral-strong',
     type: 'color',
     values: {
       light: '#303234',
-      dark: '#5d6166',
+      dark: '#686b70',
       'light-high-contrast': '#303234',
       'dark-high-contrast': '#a1a4a9',
     },
@@ -1304,13 +1259,13 @@ export const tokens = {
       'dark-high-contrast': 'rgb(165 253 193 / 0.28)',
     },
   },
-  /** The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.success.strong': {
     cssVariable: '--env-color-border-success-strong',
     type: 'color',
     values: {
       light: '#03593f',
-      dark: '#5d6166',
+      dark: '#686b70',
       'light-high-contrast': '#003a28',
       'dark-high-contrast': '#a1a4a9',
     },
@@ -1364,7 +1319,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-danger',
     type: 'color',
     values: {
-      light: '#b72b20',
+      light: '#ac190f',
       dark: '#f8aca6',
       'light-high-contrast': '#7a0200',
       'dark-high-contrast': '#ffe4e2',
@@ -1386,7 +1341,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-done',
     type: 'color',
     values: {
-      light: '#7a3fc8',
+      light: '#7032bf',
       dark: '#d2b2f7',
       'light-high-contrast': '#53009a',
       'dark-high-contrast': '#f1e6ff',
@@ -1397,7 +1352,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link',
     type: 'color',
     values: {
-      light: '#0366da',
+      light: '#005cc8',
       dark: '#9fc1f8',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#e0ebfd',
@@ -1408,7 +1363,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-on-tint',
     type: 'color',
     values: {
-      light: '#005cc8',
+      light: '#0053b5',
       dark: '#9fc1f8',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#e0ebfd',
@@ -1419,7 +1374,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-on-tint-hover',
     type: 'color',
     values: {
-      light: '#0053b5',
+      light: '#004aa2',
       dark: '#b5cffb',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#eaf2ff',
@@ -1430,7 +1385,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-on-tint-pressed',
     type: 'color',
     values: {
-      light: '#004aa2',
+      light: '#00408f',
       dark: '#cddefc',
       'light-high-contrast': '#00275c',
       'dark-high-contrast': '#f4f8ff',
@@ -1441,7 +1396,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-hover',
     type: 'color',
     values: {
-      light: '#005cc8',
+      light: '#0053b5',
       dark: '#8ab3f5',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#eaf2ff',
@@ -1452,7 +1407,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-pressed',
     type: 'color',
     values: {
-      light: '#0053b5',
+      light: '#004aa2',
       dark: '#75a5f2',
       'light-high-contrast': '#00275c',
       'dark-high-contrast': '#f4f8ff',
@@ -1463,7 +1418,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-muted',
     type: 'color',
     values: {
-      light: '#5d6166',
+      light: '#54575c',
       dark: '#bdbfc3',
       'light-high-contrast': '#303234',
       'dark-high-contrast': '#e8eaee',
@@ -1474,7 +1429,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-muted-hover',
     type: 'color',
     values: {
-      light: '#54575c',
+      light: '#4b4d51',
       dark: '#ccced2',
       'light-high-contrast': '#28292b',
       'dark-high-contrast': '#eff1f5',
@@ -1485,7 +1440,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-muted-pressed',
     type: 'color',
     values: {
-      light: '#4b4d51',
+      light: '#424447',
       dark: '#dbdde1',
       'light-high-contrast': '#1e1f21',
       'dark-high-contrast': '#f6f8fc',
@@ -1529,7 +1484,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-success',
     type: 'color',
     values: {
-      light: '#176f35',
+      light: '#02652b',
       dark: '#7ad197',
       'light-high-contrast': '#00441a',
       'dark-high-contrast': '#a5fdc1',
@@ -1540,18 +1495,18 @@ export const tokens = {
     cssVariable: '--env-color-fg-warning',
     type: 'color',
     values: {
-      light: '#8a5504',
+      light: '#7e4b00',
       dark: '#ebb750',
       'light-high-contrast': '#553200',
       'dark-high-contrast': '#ffe8be',
     },
   },
-  /** The fill of a list item: the default surface in light, the muted one in dark, so items stand apart from the page and from a surface in both. */
+  /** The fill of a list item: the muted surface in both themes, so items stand apart from the page and from a surface; high contrast keeps the default surface in light. */
   'color.list-item.bg': {
     cssVariable: '--env-color-list-item-bg',
     type: 'color',
     values: {
-      light: '#eff1f5',
+      light: '#e2e4e8',
       dark: '#343638',
       'light-high-contrast': '#eff1f5',
       'dark-high-contrast': '#343638',
@@ -1562,7 +1517,7 @@ export const tokens = {
     cssVariable: '--env-color-list-item-bg-hover',
     type: 'color',
     values: {
-      light: '#e2e4e8',
+      light: '#d5d7db',
       dark: '#424447',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#383a3d',
@@ -1573,7 +1528,7 @@ export const tokens = {
     cssVariable: '--env-color-list-item-bg-pressed',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#d2d4d8',
       dark: '#4b4d51',
       'light-high-contrast': '#dbdde1',
       'dark-high-contrast': '#424447',
@@ -1714,74 +1669,37 @@ export const tokens = {
       'dark-high-contrast': 'transparent',
     },
   },
-  'elevation.0.shadow': {
-    cssVariable: '--env-elevation-0-shadow',
-    type: 'shadow',
-    values: {
-      light: '0 0 0 0 transparent',
-      dark: '0 0 0 0 transparent',
-      'light-high-contrast': '0 0 0 0 transparent',
-      'dark-high-contrast': '0 0 0 0 transparent',
-    },
-  },
+  /** The edge of a level-1 layer, the same as every level's: envUI draws no shadows, so the edge and the fill set a floating layer apart. */
   'elevation.1.border': {
     cssVariable: '--env-elevation-1-border',
     type: 'color',
     values: {
-      light: '#dbdde1',
-      dark: '#5d6166',
+      light: '#afb1b6',
+      dark: '#686b70',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  'elevation.1.shadow': {
-    cssVariable: '--env-elevation-1-shadow',
-    type: 'shadow',
-    values: {
-      light: '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 1px 3px 1px rgb(66 68 71 / 0.15)',
-      dark: '0 1px 2px 0 rgb(0 0 0 / 0.6), 0 1px 3px 1px rgb(0 0 0 / 0.3)',
-      'light-high-contrast': '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 1px 3px 1px rgb(66 68 71 / 0.15)',
-      'dark-high-contrast': '0 1px 2px 0 rgb(0 0 0 / 0.6), 0 1px 3px 1px rgb(0 0 0 / 0.3)',
-    },
-  },
+  /** The edge of menus, Select and Combobox lists, popovers, hover cards, pickers, rich text suggestions, docked panels and drag images: about 2:1 against a popup's own fill and the page, and at least 1.6:1 against every surface it floats over. */
   'elevation.2.border': {
     cssVariable: '--env-elevation-2-border',
     type: 'color',
     values: {
-      light: '#dbdde1',
-      dark: '#5d6166',
+      light: '#afb1b6',
+      dark: '#686b70',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  'elevation.2.shadow': {
-    cssVariable: '--env-elevation-2-shadow',
-    type: 'shadow',
-    values: {
-      light: '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 2px 6px 2px rgb(66 68 71 / 0.15)',
-      dark: '0 1px 2px 0 rgb(0 0 0 / 0.6), 0 2px 6px 2px rgb(0 0 0 / 0.3)',
-      'light-high-contrast': '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 2px 6px 2px rgb(66 68 71 / 0.15)',
-      'dark-high-contrast': '0 1px 2px 0 rgb(0 0 0 / 0.6), 0 2px 6px 2px rgb(0 0 0 / 0.3)',
-    },
-  },
+  /** The edge of dialogs, sheets and the command palette, the same as level 2's; a modal's scrim sets it apart as well. */
   'elevation.3.border': {
     cssVariable: '--env-elevation-3-border',
     type: 'color',
     values: {
-      light: '#dbdde1',
-      dark: '#5d6166',
+      light: '#afb1b6',
+      dark: '#686b70',
       'light-high-contrast': '#121315',
       'dark-high-contrast': '#a1a4a9',
-    },
-  },
-  'elevation.3.shadow': {
-    cssVariable: '--env-elevation-3-shadow',
-    type: 'shadow',
-    values: {
-      light: '0 1px 3px 0 rgb(66 68 71 / 0.3), 0 4px 8px 3px rgb(66 68 71 / 0.15)',
-      dark: '0 1px 3px 0 rgb(0 0 0 / 0.6), 0 4px 8px 3px rgb(0 0 0 / 0.3)',
-      'light-high-contrast': '0 1px 3px 0 rgb(66 68 71 / 0.3), 0 4px 8px 3px rgb(66 68 71 / 0.15)',
-      'dark-high-contrast': '0 1px 3px 0 rgb(0 0 0 / 0.6), 0 4px 8px 3px rgb(0 0 0 / 0.3)',
     },
   },
   /** The height of a text field's floating variant, whose label rests inside the field and floats into its outline. Other fields take the control height. */
@@ -2328,6 +2246,18 @@ export const tokens = {
     },
     scales: { compact: '2rem' },
   },
+  /** TopBar's height: a single row that holds controls of the control height with space around them. */
+  'top-bar.height': {
+    cssVariable: '--env-top-bar-height',
+    type: 'dimension',
+    values: {
+      light: '3.25rem',
+      dark: '3.25rem',
+      'light-high-contrast': '3.25rem',
+      'dark-high-contrast': '3.25rem',
+    },
+    scales: { compact: '2.625rem' },
+  },
   /** A tree row's block padding at density lg: the row density's in the comfortable scale. */
   'tree.row-padding-block-lg': {
     cssVariable: '--env-tree-row-padding-block-lg',
@@ -2500,13 +2430,46 @@ export const tokens = {
       },
     },
   },
+  /** 52.5 rem: where expanded starts, such as a tablet held sideways. */
+  'window-class.expanded': {
+    cssVariable: '--env-window-class-expanded',
+    type: 'dimension',
+    values: {
+      light: '52.5rem',
+      dark: '52.5rem',
+      'light-high-contrast': '52.5rem',
+      'dark-high-contrast': '52.5rem',
+    },
+  },
+  /** 75 rem: where large starts, such as a desktop window. */
+  'window-class.large': {
+    cssVariable: '--env-window-class-large',
+    type: 'dimension',
+    values: {
+      light: '75rem',
+      dark: '75rem',
+      'light-high-contrast': '75rem',
+      'dark-high-contrast': '75rem',
+    },
+  },
+  /** 37.5 rem: where medium starts, such as a tablet held upright or a narrow desktop window; narrower is compact, such as a phone. */
+  'window-class.medium': {
+    cssVariable: '--env-window-class-medium',
+    type: 'dimension',
+    values: {
+      light: '37.5rem',
+      dark: '37.5rem',
+      'light-high-contrast': '37.5rem',
+      'dark-high-contrast': '37.5rem',
+    },
+  },
   /** The flow of a page or a component; a part drawn behind its siblings takes calc(var(--env-z-base) - 1). */
   'z.base': {
     cssVariable: '--env-z-base',
     type: 'number',
     values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
   },
-  /** Modal layers over their scrim: dialogs, drawers and the command palette. */
+  /** Modal layers over their scrim: dialogs, sheets and the command palette. */
   'z.modal': {
     cssVariable: '--env-z-modal',
     type: 'number',
@@ -2523,7 +2486,7 @@ export const tokens = {
     type: 'number',
     values: { light: '90', dark: '90', 'light-high-contrast': '90', 'dark-high-contrast': '90' },
   },
-  /** A collapsed sidebar that opens over the content without docking, above the frame's sticky parts. */
+  /** A supporting pane that opens over its main pane as a sheet, and the scrim behind it, above the sticky parts. */
   'z.peek': {
     cssVariable: '--env-z-peek',
     type: 'number',
@@ -2546,7 +2509,7 @@ export const tokens = {
     type: 'number',
     values: { light: '1', dark: '1', 'light-high-contrast': '1', 'dark-high-contrast': '1' },
   },
-  /** The frame's sticky and fixed parts that content scrolls under: the app header and the sidebar columns. */
+  /** Sticky parts that content scrolls under: a sticky TopBar or PageHeader. */
   'z.sticky': {
     cssVariable: '--env-z-sticky',
     type: 'number',

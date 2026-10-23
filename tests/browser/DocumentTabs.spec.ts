@@ -341,8 +341,7 @@ test.describe('DocumentTabs', () => {
             return [box.width, box.height];
           }),
         }));
-        // The tabs fill the strip above its hairline, and every close button shows, as tall and
-        // wide as its tab.
+        // The tabs fill the strip, and every close button shows, as tall and wide as its tab.
         expect(boxes.inside).toBe(44);
         expect(boxes.tabs.length).toBeGreaterThan(0);
         expect(boxes.tabs.filter((height) => height !== 44)).toEqual([]);

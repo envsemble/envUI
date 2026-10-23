@@ -46,7 +46,7 @@ export interface TreeItem {
    * out of room, and is read with the label.
    */
   description?: ReactNode;
-  /** Content at the end of the row, such as a CounterBadge or a Badge; it is read with the label. */
+  /** Content at the end of the row, such as a Badge with a count; it is read with the label. */
   end?: ReactNode;
   /** The row's native tooltip, such as the full path of a truncated name. */
   title?: string;
@@ -118,6 +118,11 @@ export interface TreeProps<T extends TreeItem> {
 
 /** Rows outside the viewport kept rendered above and below it. */
 const overscan = 8;
+/**
+ * The rows a tree renders before it has measured its viewport, such as in the server's markup: as
+ * many as a tall pane shows, so the first paint is already full and measuring only adds rows.
+ */
+const unmeasuredRows = 24;
 const typeAheadDelay = 600;
 /** Each density's row height in rem in the comfortable scale, until a row can be measured. */
 const rowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.75 };
@@ -390,9 +395,10 @@ export function Tree<T extends TreeItem>({
 
   // Only rows in view, plus overscan and the active row, are in the document.
   const first = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan);
+  const shownHeight = viewportHeight || unmeasuredRows * rowHeight;
   const last = Math.min(
     items.length - 1,
-    Math.ceil((scrollTop + viewportHeight) / rowHeight) + overscan,
+    Math.ceil((scrollTop + shownHeight) / rowHeight) + overscan,
   );
   const indexes: number[] = [];
   for (let index = first; index <= last; index += 1) indexes.push(index);

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Checkbox, Popover, Stack, Text } from '@envsemble/envui';
+import { Button, Checkbox, Popover, Column, Row, Text } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
@@ -13,7 +13,7 @@ export default function FilterTasks() {
       checked ? [...current, person] : current.filter((name) => name !== person),
     );
   return (
-    <Stack gap={3} align="start">
+    <Column gap={3} align="start">
       <Popover
         title="Assignees"
         align="start"
@@ -29,7 +29,7 @@ export default function FilterTasks() {
           </Button>
         }
       >
-        <Stack gap={3}>
+        <Column gap={3}>
           {people.map((person) => (
             <Checkbox
               key={person}
@@ -38,8 +38,8 @@ export default function FilterTasks() {
               onCheckedChange={(checked) => toggle(person, checked)}
             />
           ))}
-        </Stack>
-        <Stack direction="row" wrap align="center" gap={4} justify="end">
+        </Column>
+        <Row wrap align="center" gap={4} justify="end">
           <Button variant="secondary" onClick={() => setDraft([])}>
             Clear
           </Button>
@@ -51,11 +51,11 @@ export default function FilterTasks() {
           >
             Apply
           </Button>
-        </Stack>
+        </Row>
       </Popover>
       <Text variant="body-sm">
         {applied.length ? `Showing tasks for ${applied.join(', ')}.` : 'Showing every task.'}
       </Text>
-    </Stack>
+    </Column>
   );
 }

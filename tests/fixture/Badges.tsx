@@ -1,8 +1,8 @@
 import {
   Badge,
-  CounterBadge,
-  NavList,
-  Stack,
+  Drawer,
+  Rail,
+  Column,
   Surface,
   Theme,
   type BadgeTone,
@@ -22,7 +22,7 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
           padding={4}
           data-surface={surface}
         >
-          <Stack gap={2}>
+          <Column gap={2}>
             {(['soft', 'solid', 'outline'] as const).map((variant) => (
               <div key={variant} className="fixture-actions">
                 {tones.map((tone) => (
@@ -43,18 +43,17 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
                 </span>
               ))}
             </div>
-          </Stack>
+          </Column>
         </Surface>
       ))}
-      <NavList.Item
-        icon={<Inbox />}
-        end={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
-      >
-        Inbox
-      </NavList.Item>
-      <NavList.Item icon={<Inbox />} iconOnly aria-label="Inbox" end={<CounterBadge value={12} />}>
-        Inbox
-      </NavList.Item>
+      <Drawer
+        aria-label={`Badges ${theme}`}
+        destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
+      />
+      <Rail
+        aria-label={`Badges rail ${theme}`}
+        destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
+      />
     </Theme>
   );
 }

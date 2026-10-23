@@ -1,0 +1,80 @@
+{
+  "@envsemble/envui": {
+    "CloseButton": {
+      "report": "CloseButton is gone in 1.0: an IconButton with variant=\"ghost\", icon={<Close />} from @envsemble/envui/icons/Close and an aria-label in the application's language.",
+      "cases": [
+        {
+          "when": {
+            "aria-label": [null]
+          },
+          "element": "IconButton",
+          "add": {
+            "variant": "ghost",
+            "icon": {
+              "element": "Close",
+              "from": "@envsemble/envui/icons/Close"
+            },
+            "aria-label": "Close"
+          },
+          "report": "CloseButton was named Close in EnvUIProvider's language, from messages.common.close, which is gone: translate the IconButton's aria-label, Close, as the application translates its own strings."
+        },
+        {
+          "when": {},
+          "element": "IconButton",
+          "add": {
+            "variant": "ghost",
+            "icon": {
+              "element": "Close",
+              "from": "@envsemble/envui/icons/Close"
+            }
+          }
+        }
+      ]
+    },
+    "Button": {
+      "report": "Button's iconOnly is gone in 1.0: an icon-only button is an IconButton with icon and aria-label. Change an iconOnly that is an expression by hand.",
+      "cases": [
+        {
+          "has": ["iconOnly"],
+          "when": {
+            "iconOnly": [true],
+            "variant": [null]
+          },
+          "element": "IconButton",
+          "props": {
+            "iconOnly": null
+          },
+          "reportProps": {
+            "fullWidth": "IconButton has no fullWidth: an icon-only button keeps its square size, so drop it.",
+            "underline": "IconButton has no underline, which only a text button's label takes: drop it.",
+            "tone": "Without a variant, IconButton is secondary, which takes no tone: give it the variant the tone needs, such as variant=\"primary\" or \"ghost\" with tone=\"danger\"."
+          },
+          "report": "Without a variant, Button iconOnly was primary outside a container that gives one, where IconButton is secondary: add variant=\"primary\" if it should stay primary."
+        },
+        {
+          "has": ["iconOnly"],
+          "when": {
+            "iconOnly": [true]
+          },
+          "element": "IconButton",
+          "props": {
+            "iconOnly": null
+          },
+          "reportProps": {
+            "fullWidth": "IconButton has no fullWidth: an icon-only button keeps its square size, so drop it.",
+            "underline": "IconButton has no underline, which only a text button's label takes: drop it."
+          }
+        },
+        {
+          "has": ["iconOnly"],
+          "when": {
+            "iconOnly": [false]
+          },
+          "props": {
+            "iconOnly": null
+          }
+        }
+      ]
+    }
+  }
+}

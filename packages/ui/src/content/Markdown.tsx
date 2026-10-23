@@ -57,10 +57,19 @@ interface HastNode {
 const textOf = (node: HastNode): string =>
   node.type === 'text' ? (node.value ?? '') : (node.children ?? []).map(textOf).join('');
 
+/** The text of a table's first header cell, which names its first column. */
+function firstHeader(table: HastNode): string {
+  const find = (node: HastNode): HastNode | undefined =>
+    node.tagName === 'th' ? node : node.children?.map(find).find(Boolean);
+  const header = find(table);
+  return header ? textOf(header).trim() : '';
+}
+
 /**
  * Names each table's scrolling region after the table: its caption, or the heading it follows, as
- * "Keyboard table" (messages.tableNamed), else "Table" (messages.table), numbered where several
- * take one name. Regions need names of their own, which one shared name such as "Table" is not.
+ * "Keyboard table" (messages.tableNamed), else its first column's header, as "Variant table", else
+ * "Table" (messages.table), numbered where several take one name. Regions need names of their
+ * own, which one shared name such as "Table" is not, also across the Markdown of one page.
  */
 function rehypeTableNames(messages: MarkdownMessages) {
   return () => (tree: HastNode) => {
@@ -73,10 +82,11 @@ function rehypeTableNames(messages: MarkdownMessages) {
       }
       if (node.type === 'element' && node.tagName === 'table') {
         const caption = node.children?.find((child) => child.tagName === 'caption');
+        const column = heading ? '' : firstHeader(node);
         const base = caption
           ? textOf(caption).trim()
-          : heading
-            ? messages.tableNamed({ name: heading })
+          : heading || column
+            ? messages.tableNamed({ name: heading || column })
             : messages.table;
         const count = (counts.get(base) ?? 0) + 1;
         counts.set(base, count);

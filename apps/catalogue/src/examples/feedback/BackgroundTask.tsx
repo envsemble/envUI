@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Link, Stack, Text, Toast, useToast } from '@envsemble/envui';
+import { Button, Link, Column, Row, Text, Toast, useToast } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 
 const file = 'quarterly-report.csv';
@@ -32,7 +32,7 @@ function ExportReport() {
   };
 
   return (
-    <Stack gap={4} align="start">
+    <Column gap={4} align="start">
       <Button
         variant="secondary"
         startIcon={<Download />}
@@ -42,7 +42,7 @@ function ExportReport() {
         Export report
       </Button>
       {/* The page keeps the state too, so the file stays reachable once the toast is gone. */}
-      <Stack direction="row" wrap align="center" gap={3}>
+      <Row wrap align="center" gap={3}>
         <Text role="status" variant="body-sm" emphasis="muted">
           {state === 'running' ? `Preparing ${file}. You can leave this page.` : ''}
         </Text>
@@ -51,8 +51,8 @@ function ExportReport() {
             {`Download ${file}`}
           </Link>
         )}
-      </Stack>
-    </Stack>
+      </Row>
+    </Column>
   );
 }
 

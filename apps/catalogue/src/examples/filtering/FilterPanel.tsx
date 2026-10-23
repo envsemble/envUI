@@ -1,14 +1,5 @@
 import { useRef, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  CounterBadge,
-  EmptyState,
-  List,
-  Popover,
-  Stack,
-  Text,
-} from '@envsemble/envui';
+import { Button, Checkbox, List, Popover, Column, Row, Text, Badge } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
@@ -30,8 +21,8 @@ export default function FilterPanel() {
   );
 
   return (
-    <Stack gap={4}>
-      <Stack ref={toolbar} direction="row" wrap align="center" justify="between" gap={3}>
+    <Column gap={4}>
+      <Row ref={toolbar} wrap align="center" justify="between" gap={3}>
         <Popover
           title="Filter documents"
           align="start"
@@ -39,12 +30,12 @@ export default function FilterPanel() {
             <Button variant="secondary" size="sm" startIcon={<FilterList />}>
               Filters
               {/* The count of filters in use; its label says what the number counts. */}
-              {applied > 0 && <CounterBadge value={applied} aria-label={`${applied} in use`} />}
+              {applied > 0 && <Badge count={applied} aria-label={`${applied} in use`} />}
             </Button>
           }
         >
           {/* Each box filters the list at once: no Apply button, and the popover stays open. */}
-          <Stack gap={5}>
+          <Column gap={5}>
             {groups.map((group, index) => (
               // envUI has no checkbox group yet: a fieldset and its legend name the choices, and
               // are read with each one, as RadioGroup's are.
@@ -56,7 +47,7 @@ export default function FilterPanel() {
                 <legend style={{ padding: 0, marginBlockEnd: 'var(--env-space-3)' }}>
                   {group.legend}
                 </legend>
-                <Stack gap={2}>
+                <Column gap={2}>
                   {group.options.map((option, position) => (
                     <Checkbox
                       key={option.value}
@@ -72,11 +63,11 @@ export default function FilterPanel() {
                       }
                     />
                   ))}
-                </Stack>
+                </Column>
               </fieldset>
             ))}
             {filters.length > 0 && (
-              <Stack align="start">
+              <Column gap={4} align="start">
                 <Button
                   variant="text"
                   size="sm"
@@ -88,14 +79,14 @@ export default function FilterPanel() {
                 >
                   Clear filters
                 </Button>
-              </Stack>
+              </Column>
             )}
-          </Stack>
+          </Column>
         </Popover>
         <Text role="status" variant="body-sm" emphasis="muted">
           {documentCount(shown.length)}
         </Text>
-      </Stack>
+      </Row>
       {shown.length > 0 ? (
         <List.Root aria-label="Documents">
           {shown.map((document) => (
@@ -107,26 +98,29 @@ export default function FilterPanel() {
           ))}
         </List.Root>
       ) : (
-        // The Filters button stays above the empty state, so people can change one filter instead.
-        <EmptyState
-          icon={<SearchOff />}
-          title="No matching documents"
-          description="No documents match these filters."
-          action={
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setFilters([]);
-                // The empty state goes with the filters, so focus moves to the Filters button.
-                toolbar.current?.querySelector('button')?.focus();
-              }}
-            >
-              Clear filters
-            </Button>
-          }
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <SearchOff width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No matching documents
+            </Text>
+            <Text variant="body-sm">No documents match these filters.</Text>
+          </Column>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setFilters([]);
+              // The empty state goes with the filters, so focus moves to the Filters button.
+              toolbar.current?.querySelector('button')?.focus();
+            }}
+          >
+            Clear filters
+          </Button>
+        </Column>
       )}
-    </Stack>
+    </Column>
   );
 }
 

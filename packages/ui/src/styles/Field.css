@@ -3,10 +3,7 @@
 .env-field {
   /* The color of a field's error and of its invalid control. */
   --env-field-error-color: var(--env-color-fg-danger);
-  display: grid;
   align-content: start;
-  gap: var(--env-space-3);
-  min-width: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
   font: var(--env-type-body-small);
@@ -22,9 +19,6 @@
   color: var(--env-color-fg-muted);
 }
 .env-field-error {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--env-space-2);
   color: var(--env-field-error-color);
 }
 .env-field-error > svg {

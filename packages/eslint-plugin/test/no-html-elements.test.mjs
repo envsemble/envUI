@@ -260,8 +260,8 @@ ruleTester.run('no-html-elements', rule, {
       errors: [uses('Dialog', '<Surface role="dialog">')],
     },
     {
-      code: 'import { Stack, Card } from \'@envsemble/envui\'; <Stack role="menu"><Card role="menuitem">Rename</Card></Stack>;',
-      errors: [uses('Menu.Root', '<Stack role="menu">')],
+      code: 'import { Column, Card } from \'@envsemble/envui\'; <Column role="menu"><Card role="menuitem">Rename</Card></Column>;',
+      errors: [uses('Menu.Root', '<Column role="menu">')],
     },
     {
       code: 'import * as ui from \'@envsemble/envui\'; <ui.Text role="alert">Saved</ui.Text>;',

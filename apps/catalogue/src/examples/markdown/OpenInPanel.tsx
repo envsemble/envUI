@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Link, Stack, Text } from '@envsemble/envui';
+import { Link, Column, Text } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
 
 const text =
-  'See the [launch plan](/documents/launch-plan) and the [pricing research](/documents/pricing), or the [public changelog](https://example.com/changelog).';
+  'See the [launch plan](/documents/launch-plan) and the [pricing research](/documents/pricing), ' +
+  'or the [public changelog](https://example.com/changelog).';
 
 export default function OpenInPanel() {
   const [opened, setOpened] = useState('');
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Markdown
         renderLink={({ href, children, ...props }) => (
           <Link
@@ -37,6 +38,6 @@ export default function OpenInPanel() {
       <Text variant="caption" emphasis="muted" role="status">
         {opened}
       </Text>
-    </Stack>
+    </Column>
   );
 }

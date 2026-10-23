@@ -23,54 +23,6 @@
         "to": "end",
         "report": "Menu.Item's trailing content is end in 1.0."
       }
-    },
-    "OrganizationSwitcher": {
-      "organizations": {
-        "to": "items",
-        "report": "OrganizationSwitcher's organizations are items in 1.0, and each item's name and detail are label and description: the codemod renames them in an array written in the prop, and TypeScript points at the others.",
-        "each": {
-          "name": {
-            "to": "label",
-            "report": "An organization's name is label in 1.0."
-          },
-          "detail": {
-            "to": "description",
-            "report": "An organization's detail is description in 1.0."
-          }
-        }
-      },
-      "currentOrganizationId": {
-        "to": "value",
-        "report": "OrganizationSwitcher's currentOrganizationId is value in 1.0."
-      },
-      "onSelect": {
-        "to": "onValueChange",
-        "report": "OrganizationSwitcher's onSelect is onValueChange in 1.0, called with the id as before."
-      },
-      "items": {
-        "report": "Each of OrganizationSwitcher's items names its organization with label in 1.0, where it was name: the codemod renames it in an array written in the prop, and TypeScript points at the others.",
-        "each": {
-          "name": {
-            "to": "label",
-            "report": "An organization's name is label in 1.0."
-          }
-        }
-      },
-      "className": {
-        "to": "triggerClassName",
-        "report": "OrganizationSwitcher's className styled the trigger, which triggerClassName does in 1.0: className, style and ref go to the menu popup, as on Menu.Root."
-      }
-    },
-    "AccountMenu.OrganizationSubmenu": {
-      "items": {
-        "report": "Each of AccountMenu.OrganizationSubmenu's items names its organization with label in 1.0, where it was name: the codemod renames it in an array written in the prop, and TypeScript points at the others.",
-        "each": {
-          "name": {
-            "to": "label",
-            "report": "An organization's name is label in 1.0."
-          }
-        }
-      }
     }
   }
 }

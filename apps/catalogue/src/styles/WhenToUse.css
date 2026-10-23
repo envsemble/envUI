@@ -1,0 +1,148 @@
+/* The start of When to use on a page on the figure template, from its frontmatter: a short plain
+   list of what the component is for, then a tile for each component or page to use instead, each
+   a tiny live picture of it on the dotted stage with its name and situation below. The stage is
+   the tile's one frame. */
+.docs-when {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Apart, as one sub-topic from the next. */
+  row-gap: var(--env-space-8);
+  min-inline-size: 0;
+}
+
+.docs-when-else {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Close, as a heading to what it heads. */
+  row-gap: var(--env-space-4);
+  min-inline-size: 0;
+}
+
+.docs-when .env-markdown > :is(h3, ul):first-child {
+  margin-block-start: 0;
+}
+
+.docs-when .env-markdown > :last-child {
+  margin-block-end: 0;
+}
+
+/* Tiles of one size. A row is never left with one alone: one column until two fit, even counts
+   two to a row, counts of three, five, six and nine three to a row, and once four fit, every count
+   in tiles of a quarter of the column, five, six and nine still in rows of three. */
+.docs-when-tiles {
+  --docs-when-gap: var(--env-space-5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--env-space-6) var(--docs-when-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@container (width >= 24rem) {
+  .docs-when-tiles:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8']) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 36rem) {
+  .docs-when-tiles:is([data-count='3'], [data-count='5'], [data-count='6'], [data-count='9']) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 48rem) {
+  .docs-when-tiles.docs-when-tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .docs-when-tiles:is([data-count='5'], [data-count='6'], [data-count='9']) > :nth-child(3n + 1) {
+    grid-column-start: 1;
+  }
+}
+
+.docs-when-tile {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  row-gap: var(--env-space-2);
+  min-inline-size: 0;
+}
+
+/* The name's link covers the tile's picture and name, so the whole preview leads to the page. The
+   lines below keep their own links above it. */
+.docs-when-link::after {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--env-radius-surface);
+  content: '';
+}
+.docs-when-line {
+  position: relative;
+}
+
+/* The stage, as wide as the tile and of one height in a row; what it shows is scaled to fit. */
+.docs-when-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  max-block-size: 10rem;
+  overflow: clip;
+}
+
+/* The window the example lays out in, at a width it was written for, then scaled down and centred
+   (WhenToUse.tsx). It contains its fixed overlays, such as a dialog, and hides until it fits. */
+.docs-when-canvas {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  display: grid;
+  place-content: center stretch;
+  justify-items: center;
+  box-sizing: border-box;
+  inline-size: 36rem;
+  container: env-window / inline-size;
+  contain: layout;
+  transform: scale(1);
+  transform-origin: 0 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.docs-when-canvas[data-fitted] {
+  visibility: visible;
+}
+
+/* Room for an overlay shown open, such as a dialog over the page. */
+.docs-when-canvas:has(> .docs-overlay-layer) {
+  min-block-size: 28rem;
+}
+
+/* A picture of the overlay, without the scrim, which would fill the canvas. */
+.docs-when-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
+  display: none;
+}
+
+/* An alternative without an example: a page icon in the middle of the same stage. */
+.docs-when-placeholder {
+  inline-size: 2rem;
+  block-size: 2rem;
+  color: var(--env-color-fg-muted);
+}
+
+.docs-when-name {
+  padding-block-start: var(--env-space-2);
+  font-weight: var(--env-font-weight-medium);
+}
+
+.docs-when-line .env-markdown {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+
+.docs-when-line .env-markdown > * {
+  margin: 0;
+}

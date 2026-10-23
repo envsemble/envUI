@@ -1,10 +1,12 @@
-import { Button, Popover, Stack, Text } from '@envsemble/envui';
+import { Button, Popover, Column, Text } from '@envsemble/envui';
 import { Info } from '@envsemble/envui/icons/Info';
 
 export default function DocumentDetails() {
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Popover
+        // Shown open in the docs; without defaultOpen, it opens from its trigger.
+        defaultOpen
         title="Launch plan.md"
         trigger={
           <Button variant="secondary" startIcon={<Info />}>
@@ -15,6 +17,6 @@ export default function DocumentDetails() {
         <Text emphasis="muted">Changed today by Alex Morgan. 3 open decisions, 1 blocked.</Text>
         <Text emphasis="muted">Shared with everyone at Northwind.</Text>
       </Popover>
-    </Stack>
+    </Column>
   );
 }

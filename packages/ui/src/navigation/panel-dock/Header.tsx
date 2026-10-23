@@ -9,13 +9,14 @@ import {
   type ReactNode,
 } from 'react';
 import { IconButton } from '../../actions/Button.js';
-import { CloseButton } from '../../actions/CloseButton.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import { panelDock as panelDockMessages } from '../../foundations/messages/panelDock.js';
 import { CloseFullscreen } from '../../icons/CloseFullscreen.js';
 import { Minimize } from '../../icons/Minimize.js';
+import { Close } from '../../icons/Close.js';
 import { OpenInFull } from '../../icons/OpenInFull.js';
 import { classNames } from '../../internal/classNames.js';
+import { Grid, Row } from '../../foundations/Layout.js';
 import { ControlDefaults } from '../../internal/ControlDefaults.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
@@ -95,16 +96,16 @@ export function Header({
       // Also where the header sits deeper in the content, such as in a form.
       data-scrolled={panel?.scrolled || undefined}
     >
-      <div className="env-panel-dock-heading">
+      <Grid className="env-panel-dock-heading">
         {createElement(`h${headingLevel}`, { className: 'env-panel-dock-title' }, title)}
         {meta != null && <div className="env-panel-dock-meta">{meta}</div>}
-      </div>
+      </Grid>
       {(actions != null || windowControls) && (
-        <div className="env-panel-dock-actions">
+        <Row align="center" className="env-panel-dock-actions">
           {/* The application's buttons take the window controls' quiet look. */}
           <ControlDefaults variant="ghost">{actions}</ControlDefaults>
           {windowControls && <WindowControls />}
-        </div>
+        </Row>
       )}
       {children != null && <div className="env-panel-dock-header-content">{children}</div>}
     </header>
@@ -121,7 +122,7 @@ function WindowControls() {
   const messages = useMessages('panelDock', panelDockMessages);
   const maximized = panel.mode === 'maximized';
   return (
-    <div className="env-panel-dock-controls">
+    <Row align="center" className="env-panel-dock-controls">
       <WindowControl
         label={messages.minimize}
         icon={<Minimize />}
@@ -135,9 +136,14 @@ function WindowControls() {
         />
       )}
       <Tooltip content={messages.close}>
-        <CloseButton aria-label={messages.close} onClick={panel.close} />
+        <IconButton
+          variant="ghost"
+          icon={<Close />}
+          aria-label={messages.close}
+          onClick={panel.close}
+        />
       </Tooltip>
-    </div>
+    </Row>
   );
 }
 

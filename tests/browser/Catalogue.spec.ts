@@ -5,7 +5,6 @@ import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
-import { documentedVersion } from '../../scripts/GenerateDocumentation.mjs';
 import {
   references,
   foundations as foundationReferences,
@@ -39,13 +38,15 @@ test('offline usage renders shared Markdown guidance and follows relative topic 
   page,
 }) => {
   await page.goto(`${offline}#/foundations/composition/usage`);
+  await expect(page.getByRole('heading', { name: 'Compose one root', exact: true })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Build from existing primitives', exact: true }),
+    page.getByText('Surface supplies fill, padding and corners', { exact: false }),
   ).toBeVisible();
-  await expect(
-    page.getByText('Surface supplies fill, padding and corners.', { exact: false }),
-  ).toBeVisible();
-  await page.locator('.docs-article').getByRole('link', { name: 'Surface', exact: true }).click();
+  await page
+    .locator('.docs-article')
+    .getByRole('link', { name: 'Surface', exact: true })
+    .first()
+    .click();
   // Surface is on the template, so a link to its page opens Overview.
   await expect(page).toHaveURL(/#\/components\/surface\/overview$/);
   await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
@@ -100,39 +101,215 @@ test('palette editing uses public controls and remains temporary and independent
   await expect.poll(canvasValue).toBe(initialLight);
 });
 
-test('live examples keep links in place, show their source, and matrices sit in the guidelines', async ({
+test('live examples keep links in place, show their source, and specimens show forced states', async ({
   page,
 }) => {
   await page.goto(`${offline}#/components/button/overview`);
   const hash = await page.evaluate(() => location.hash);
   // Links in an example keep their semantics without leaving the documentation.
-  const destinations = page.getByRole('group', { name: 'Destinations example', exact: true });
+  const destinations = page.getByRole('group', { name: 'Button links example', exact: true });
   await destinations.getByRole('link', { name: 'Read the guide', exact: true }).press('Enter');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
   await destinations
     .getByRole('link', { name: 'Read help', exact: true })
     .click({ modifiers: ['Control'] });
   expect(await page.evaluate(() => location.hash)).toBe(hash);
-  // Every example shows the source of its file, ready to copy.
-  const code = destinations.locator('xpath=following-sibling::details[1]');
-  await code.locator('summary').click();
+  // Every example shows the source of its file, ready to copy. A figure that shares its row opens
+  // its code below the row, across the whole content column.
+  await page
+    .locator('[data-example="ButtonLinks"] ~ details summary', { hasText: 'Code' })
+    .first()
+    .click();
+  const code = page.getByRole('region', { name: 'Code, ButtonLinks.tsx', exact: true });
   await expect(code.locator('.env-code-block')).toContainText(
-    "import { Button, Stack } from '@envsemble/envui';",
+    'export default function ButtonLinks',
   );
   await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
-  // Catalogue-only specimens, such as the forced interaction states, are in the guidelines.
-  await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
-  const disclosure = page.locator('.docs-preview details.env-disclosure');
-  await disclosure.locator('summary').focus();
-  await disclosure.locator('summary').press('Enter');
-  await expect(disclosure).toHaveAttribute('open', '');
-  await expect(disclosure.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
-  await page.goto(`${offline}#/components/nav-list/guidelines`);
-  const navigationDisclosure = page.locator('.docs-preview details.env-disclosure');
-  await navigationDisclosure.locator('summary').click();
-  await expect(
-    navigationDisclosure.getByRole('region', { name: 'Navigation item interaction states' }),
-  ).toBeVisible();
+  const widths = await code.evaluate((panel) => ({
+    panel: Math.round(panel.getBoundingClientRect().width),
+    column: Math.round(panel.closest('.docs-figure-section')!.getBoundingClientRect().width),
+  }));
+  expect(widths.panel).toBe(widths.column);
+  // Catalogue-only specimens, such as the forced interaction states, sit in the section they
+  // illustrate on the figure template.
+  await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
+});
+
+test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/components/button/overview`);
+  // Every section is in the Overview; the props have a view of their own.
+  await expect(page.getByRole('tab')).toHaveText(['Overview', 'Props']);
+  // Ordinary headings in the fixed order, and no questions.
+  await expect(page.locator('.docs-figure-section-heading h2')).toHaveText([
+    'Overview',
+    'Variants',
+    'When to use',
+    'Anatomy',
+    'Adapting to width',
+    'Accessibility',
+    'Props',
+  ]);
+  await expect(page.locator('.docs-figures .env-message')).toHaveCount(0);
+  // Figures that share a row are cells of one size: equal widths, and stages as tall as the
+  // tallest.
+  const cells = () =>
+    page
+      .locator('[data-section="overview"] .docs-figure-run')
+      .first()
+      .evaluate((run) => {
+        const stages = [...run.querySelectorAll('.docs-live-example')].map((stage) =>
+          stage.getBoundingClientRect(),
+        );
+        return {
+          count: stages.length,
+          widths: new Set(stages.map((box) => Math.round(box.width))).size,
+          heights: new Set(stages.map((box) => Math.round(box.height))).size,
+        };
+      });
+  await expect.poll(cells).toEqual({ count: 3, widths: 1, heights: 1 });
+  // Do and don't figures carry their verdict and one sentence, with the code below.
+  const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
+  await expect(verdict.locator('.docs-verdict-bar')).toHaveText('Do');
+  await expect(verdict.locator('details summary')).toHaveText('Code, OnePrimaryAction.tsx');
+  // Its stage and its bar are connected rows: large outer corners, small inner ones.
+  const corners = await verdict.evaluate((figure) => {
+    const stage = getComputedStyle(figure.querySelector('.docs-verdict-stage')!);
+    const bar = getComputedStyle(figure.querySelector('.docs-verdict-bar')!);
+    return {
+      outer: stage.borderTopLeftRadius === bar.borderBottomLeftRadius,
+      inner: stage.borderBottomLeftRadius === bar.borderTopLeftRadius,
+      larger: parseFloat(stage.borderTopLeftRadius) > parseFloat(stage.borderBottomLeftRadius),
+    };
+  });
+  expect(corners).toEqual({ outer: true, inner: true, larger: true });
+  // When to use: a plain list, then a tile for each alternative, of one size, each a picture of
+  // it, inert and fitted to its stage, once the section nears the viewport.
+  const tiles = page.locator('[data-section="usage"] .docs-when-tile');
+  await expect(tiles.locator('.docs-when-name')).toHaveText([
+    'Link',
+    'SegmentedControl',
+    'Switch',
+    'Menu',
+    'Dialog',
+  ]);
+  await tiles.first().scrollIntoViewIfNeeded();
+  const tileStages = () =>
+    tiles.locator('.docs-when-stage').evaluateAll((stages) => ({
+      widths: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().width))).size,
+      heights: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().height)))
+        .size,
+      fitted: stages.filter((stage) => stage.querySelector('.docs-when-canvas[data-fitted][inert]'))
+        .length,
+    }));
+  await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });
+  // The anatomy numbers each part of the live button beside the part it names, in the theme the
+  // reader has chosen alone, and keeps them there as the page narrows and the theme changes.
+  const stages = page.locator('.docs-anatomy-stage');
+  await expect(stages).toHaveCount(1);
+  const placement = () =>
+    stages.evaluate((stage) => {
+      // Until the example and its badges render, there is nothing to place: poll again.
+      const iconElement = stage.querySelector('.env-button > .env-icon');
+      const badgeElement = [...stage.querySelectorAll('.docs-anatomy-badge')].find(
+        (item) => item.textContent === '2',
+      );
+      if (!iconElement || !badgeElement) return null;
+      const icon = iconElement.getBoundingClientRect();
+      const badge = badgeElement.getBoundingClientRect();
+      return {
+        badges: stage.querySelectorAll('.docs-anatomy-badge').length,
+        // Centred on the icon, give or take the rounding of a centred stage.
+        aligned: Math.abs(badge.left + badge.width / 2 - (icon.left + icon.width / 2)) <= 1,
+        theme: stage.getAttribute('data-env-theme'),
+      };
+    });
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
+  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
+  await page.setViewportSize({ width: 420, height: 800 });
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
+  await expect(page.locator('.docs-anatomy-legend > li')).toHaveCount(4);
+});
+
+test('every anatomy figure numbers each part its legend names', async ({ page }) => {
+  // It visits every page on the figure template, whose examples load as each opens.
+  test.slow();
+  // A legend part the example doesn't render would leave its number off the figure.
+  const pages = references
+    .filter((reference) => reference.format === 'figures')
+    .map((reference) => ({
+      id: reference.id,
+      figures: (reference.sections ?? [])
+        .flatMap((section) => section.blocks)
+        .filter((block) => block.kind === 'example' && block.role === 'anatomy').length,
+    }));
+  expect(pages.length).toBeGreaterThan(0);
+  await page.goto(`${catalogueUrl}/#/overview`);
+  for (const { id, figures } of pages) {
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, `/components/${id}/overview`);
+    const anatomy = page.locator('.docs-anatomy');
+    await expect(anatomy, `${id} shows its anatomy figures`).toHaveCount(figures);
+    for (const figure of await anatomy.all()) {
+      const legend = await figure.locator('.docs-anatomy-legend > li').count();
+      await expect(
+        figure.locator('.docs-anatomy-stage .docs-anatomy-badge'),
+        `${id} numbers every part`,
+      ).toHaveCount(legend);
+    }
+  }
+});
+
+test('every dotted stage is the only frame of its figure', async ({ page }) => {
+  // It visits every page on the figure template, whose examples load as each opens.
+  test.slow();
+  // One frame per figure: no stage sits inside another framed or filled box in the article, such
+  // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
+  // frame, which holds its stage and its verdict bar, is the figure's one frame.
+  const pages = references.filter((reference) => reference.format === 'figures');
+  expect(pages.length).toBeGreaterThan(0);
+  await page.goto(`${catalogueUrl}/#/overview`);
+  for (const { id } of pages) {
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, `/components/${id}/overview`);
+    await expect(page.locator('.docs-figures .docs-figure-section').first()).toBeVisible();
+    await expect(page.getByText(/^Loading (specimen|example)/)).toHaveCount(0);
+    const framed = await page.evaluate(() => {
+      const stages = document.querySelectorAll(
+        '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-when-stage, .docs-specimen-grid, .docs-matrix-scroll)',
+      );
+      const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
+      const found: string[] = [];
+      for (const stage of stages) {
+        const canvas = getComputedStyle(stage).backgroundColor;
+        for (
+          let node = stage.parentElement;
+          node && !node.classList.contains('docs-figures');
+          node = node.parentElement
+        ) {
+          if (node.classList.contains('docs-verdict-frame')) continue;
+          const style = getComputedStyle(node);
+          const bordered = (['Top', 'Right', 'Bottom', 'Left'] as const).some(
+            (side) =>
+              parseFloat(style.getPropertyValue(`border-${side.toLowerCase()}-width`)) > 0 &&
+              !/none|hidden/.test(style.getPropertyValue(`border-${side.toLowerCase()}-style`)),
+          );
+          const filled =
+            (visible(style.backgroundColor) && style.backgroundColor !== canvas) ||
+            style.backgroundImage !== 'none' ||
+            style.boxShadow !== 'none';
+          if (bordered || filled)
+            found.push(`${stage.className.split(' ')[0]} inside ${node.className || node.tagName}`);
+        }
+      }
+      return found;
+    });
+    expect(framed, `${id} has a stage inside another frame`).toEqual([]);
+  }
 });
 
 test('the props view links each source file at the revision the catalogue was built from', async ({
@@ -165,7 +342,9 @@ test('offline reference loads every view without network or script errors', asyn
   });
   await page.goto(`${offline}#/overview`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
-  await expect(page.locator('.docs-footer')).toContainText(`envUI ${documentedVersion()}`);
+  await expect(
+    page.locator('.docs-footer').getByRole('navigation', { name: 'Footer' }),
+  ).toContainText('Changelog');
   // Every view of every page: Preview and Usage, or the views of a page on the template.
   for (const { path, views } of referencePages) {
     for (const view of views) {
@@ -264,13 +443,11 @@ test('single previews retain state when the theme changes', async ({ page }) => 
 
 test('arrowing between views keeps focus on the tabs and adds no history', async ({ page }) => {
   await page.goto(`${offline}#/components/link/overview`);
-  await page.goto(`${offline}#/components/menu/accessibility?section=keyboard`);
+  await page.goto(`${offline}#/components/menu/props`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Menu');
   const before = await page.evaluate(() => history.length);
   const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
-  await tabs.getByRole('tab', { name: 'Accessibility', exact: true }).focus();
-  await page.keyboard.press('ArrowLeft');
-  await expect(tabs.getByRole('tab', { name: 'Guidelines', exact: true })).toBeFocused();
+  await tabs.getByRole('tab', { name: 'Props', exact: true }).focus();
   await page.keyboard.press('ArrowLeft');
   await expect(tabs.getByRole('tab', { name: 'Overview', exact: true })).toBeFocused();
   expect(await page.evaluate(() => location.hash)).toBe('#/components/menu/overview');
@@ -284,7 +461,7 @@ test('the views of a page stay in sight on a narrow screen', async ({ page }) =>
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${offline}#/components/menu/overview`);
   const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
-  for (const name of ['Overview', 'Guidelines', 'Accessibility', 'Props']) {
+  for (const name of ['Overview', 'Props']) {
     const box = await tabs.getByRole('tab', { name, exact: true }).boundingBox();
     expect(box, name).not.toBeNull();
     expect(box!.x, name).toBeGreaterThanOrEqual(0);
@@ -333,24 +510,6 @@ test('in the hosted build, an example whose file is missing offers a reload, whi
   await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
-});
-
-test("in the hosted build, a template page's previews load in the site's own frames", async ({
-  page,
-}) => {
-  // The previews are iframes of the site's frame route, ?frame=, so the site's framing headers in
-  // _headers must allow its own origin: X-Frame-Options DENY left them blank.
-  requireSite();
-  await serveSite(page);
-  await page.goto(`${siteUrl}/templates/index-page`);
-  const frames = page.locator('iframe.docs-template-frame');
-  await expect(frames.first()).toBeVisible();
-  for (const frame of await frames.all()) {
-    await frame.scrollIntoViewIfNeeded();
-    await expect(
-      page.frameLocator(`iframe[title="${await frame.getAttribute('title')}"]`).locator('main'),
-    ).toBeVisible();
-  }
 });
 
 /**
@@ -438,8 +597,13 @@ test('code that fails to load is asked for once, not on every render', async ({ 
   });
   await page.route(source, (route) => route.abort());
   await page.goto(`${catalogueUrl}/#/components/button/overview`);
-  const entry = page.locator('.docs-live-example-entry').first();
-  await entry.getByText('Code', { exact: true }).click();
+  await page
+    .locator('.docs-live-example-entry')
+    .first()
+    .locator('.docs-live-example-code summary')
+    .click();
+  // The first figure shares its row, so its code opens below the row.
+  const entry = page.getByRole('region', { name: 'Code, CreateProject.tsx', exact: true });
   await expect(entry.getByText('The code could not load')).toBeVisible();
   // The example beside it is not loaded again.
   await expect(
@@ -463,12 +627,12 @@ test('a retry returns focus once, and later updates leave focus where it is', as
   await page.keyboard.press('Enter');
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
-  // Focus leaves for the page; the theme changes with a click that moves no focus.
-  await page.evaluate(() => {
-    (document.activeElement as HTMLElement | null)?.blur();
-    window.scrollTo(0, document.documentElement.scrollHeight);
-  });
-  const scrolled = await page.evaluate(() => window.scrollY);
+  // Focus leaves for the page; the theme changes with a click that moves no focus. The frame's
+  // body scrolls, not the document.
+  const body = page.locator('#docs-main');
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  await body.evaluate((element) => element.scrollTo(0, element.scrollHeight));
+  const scrolled = await body.evaluate((element) => element.scrollTop);
   expect(scrolled).toBeGreaterThan(1000);
   await page
     .locator('.docs-page-controls')
@@ -476,7 +640,7 @@ test('a retry returns focus once, and later updates leave focus where it is', as
     .evaluate((toggle: HTMLElement) => toggle.click());
   await expect(page.locator('.docs-app')).toHaveAttribute('data-env-theme', 'dark');
   expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
-  expect(await page.evaluate(() => window.scrollY)).toBe(scrolled);
+  expect(await body.evaluate((element) => element.scrollTop)).toBe(scrolled);
 });
 
 test('an example that fails to render says so in place, and the rest of the page works', async ({
@@ -499,8 +663,12 @@ test('an example that fails to render says so in place, and the rest of the page
   // The other examples and the example's code render.
   const variants = page.getByRole('group', { name: 'Variants example', exact: true });
   await expect(variants.getByRole('button').first()).toBeVisible();
-  const entry = page.locator('.docs-live-example-entry').first();
-  await entry.getByText('Code', { exact: true }).click();
+  await page
+    .locator('.docs-live-example-entry')
+    .first()
+    .locator('.docs-live-example-code summary')
+    .click();
+  const entry = page.getByRole('region', { name: 'Code, CreateProject.tsx', exact: true });
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
   // And the navigation still leads elsewhere.
   await page
@@ -509,6 +677,25 @@ test('an example that fails to render says so in place, and the rest of the page
     .getByRole('link', { name: 'Badge', exact: true })
     .click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
+});
+
+test('the navigation shows the current page, and focus moves to the page only on a route change', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto(`${catalogueUrl}/#/components/tree/overview`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tree');
+  const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
+  // The current page's link is scrolled into view as the navigation mounts.
+  const current = navigation.locator('[aria-current="page"]');
+  await expect(current).toHaveText(/Tree/);
+  await expect(current).toBeInViewport();
+  // The first page loaded leaves focus at the start of the document.
+  const main = page.getByRole('main');
+  await expect(main).not.toBeFocused();
+  await navigation.getByRole('link', { name: 'Button', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(main).toBeFocused();
 });
 
 test('a page that fails to render says so, and the navigation leads to the others', async ({
@@ -528,8 +715,9 @@ test('a page that fails to render says so, and the navigation leads to the other
   // A link to the overview would lead here again; the overview offers a reload instead.
   await expect(main.getByRole('link', { name: 'Return to overview' })).toHaveCount(0);
   await expect(main.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
-  // The page failed as it opened, so focus stays where the route put it.
-  await expect(main).toBeFocused();
+  // The page failed as it opened, the first the catalogue loaded, so focus stays at the start of
+  // the document, as on any page that loads.
+  await expect(main).not.toBeFocused();
   const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
   await navigation.getByRole('link', { name: 'Button', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
@@ -593,17 +781,17 @@ test(
   'offline hashes support direct links and back/forward navigation',
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${offline}#/components/select/guidelines`);
+    await page.goto(`${offline}#/components/select/props`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
     await page.getByRole('tab', { name: 'Overview', exact: true }).click();
-    await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
+    await page.getByRole('tab', { name: 'Props', exact: true }).click();
     await page.goBack();
     await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
       'Overview',
     );
     await page.goForward();
     await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-      'Guidelines',
+      'Props',
     );
   },
 );
@@ -628,17 +816,18 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
 
   for (const width of [1920, 960, 390]) {
     await page.setViewportSize({ width, height: 1400 });
+    // The content fills the frame's body, which fills the window below the top bar.
     const canvas = await page.locator('.docs-main').evaluate((main) => {
-      const rect = main.getBoundingClientRect();
+      const body = main.closest('.env-scaffold-body')!;
       return {
-        height: rect.height,
-        bottom: rect.bottom + window.scrollY,
-        documentHeight: document.documentElement.scrollHeight,
+        height: main.getBoundingClientRect().height,
+        body: body.clientHeight,
+        bottom: body.getBoundingClientRect().bottom,
         background: getComputedStyle(main).backgroundImage,
       };
     });
-    expect(canvas.height).toBeGreaterThanOrEqual(1400);
-    expect(Math.abs(canvas.bottom - canvas.documentHeight)).toBeLessThan(1);
+    expect(canvas.height).toBeGreaterThanOrEqual(canvas.body - 1);
+    expect(Math.abs(canvas.bottom - 1400)).toBeLessThan(1);
     expect(canvas.background).toBe('none');
   }
 
@@ -672,4 +861,99 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   await expect(panes).toHaveCount(0);
+});
+
+test('figures with open overlays keep them in their stages, inert, and leave the page alone', async ({
+  page,
+}) => {
+  test.slow();
+  const pages = references
+    .filter((reference) =>
+      (reference.sections ?? []).some((section) =>
+        section.blocks.some((block) => block.kind === 'example' && block.open),
+      ),
+    )
+    .map(({ id }) => id);
+  expect(pages).toEqual(expect.arrayContaining(['dialog', 'menu', 'tooltip', 'toast', 'select']));
+  await page.goto(`${catalogueUrl}/#/overview`);
+  for (const id of pages) {
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, `/components/${id}/overview`);
+    const rooms = page.locator('.docs-open-example');
+    await expect(rooms.first()).toBeVisible();
+    await expect(page.getByText(/^Loading example/)).toHaveCount(0);
+    // Every open figure shows an overlay, inside its stage, and is a picture: inert.
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() =>
+            [...document.querySelectorAll<HTMLElement>('.docs-open-example')].flatMap((room) => {
+              const stage = room
+                .closest('.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage')!
+                .getBoundingClientRect();
+              const surfaces = [
+                ...room.querySelectorAll(
+                  '.env-popup, .env-dialog-popup, .env-sheet-popup, .env-command-palette, .env-toast',
+                ),
+              ];
+              const name = room.dataset.openExample;
+              if (!room.inert) return [`${name} is not inert`];
+              if (!surfaces.length) return [`${name} shows no overlay`];
+              return surfaces
+                .map((surface) => surface.getBoundingClientRect())
+                .filter(
+                  (box) =>
+                    box.left < stage.left - 1 ||
+                    box.right > stage.right + 1 ||
+                    box.top < stage.top - 1 ||
+                    box.bottom > stage.bottom + 1,
+                )
+                .map(() => `${name} reaches past its stage`);
+            }),
+          ),
+        { message: `${id}: open figures` },
+      )
+      .toEqual([]);
+    // No figure took focus or locked the page.
+    expect(
+      await page.evaluate(() => ({
+        focusInFigure: !!document.activeElement?.closest('.docs-open-example'),
+        locked: [document.documentElement, document.body].some(
+          (element) => getComputedStyle(element).overflow === 'hidden',
+        ),
+        hidden: !!document.querySelector('main [aria-hidden="true"] .docs-figures'),
+      })),
+      id,
+    ).toEqual({ focusInFigure: false, locked: false, hidden: false });
+  }
+  // The page still scrolls with the wheel.
+  const scroller = page.locator('.env-scaffold-body');
+  const before = await scroller.evaluate((element) => element.scrollTop);
+  await page.mouse.move(700, 400);
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => scroller.evaluate((element) => element.scrollTop)).not.toBe(before);
+});
+
+test('F6 on the Toast page reaches a notification raised there, past the figures @engines', async ({
+  page,
+}) => {
+  await page.goto(`${catalogueUrl}/#/components/toast/overview`);
+  await expect(page.locator('.docs-open-example .env-toast').first()).toBeVisible();
+  // While no notification of the page is open, F6 is the browser's: the figures' notices, which
+  // are pictures, don't take it.
+  await page.evaluate(() =>
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'F6') document.body.dataset.f6Prevented = String(event.defaultPrevented);
+    }),
+  );
+  await page.keyboard.press('F6');
+  await expect(page.locator('body')).toHaveAttribute('data-f6-prevented', 'false');
+  await page.getByRole('button', { name: 'Save changes' }).first().click();
+  const live = page
+    .locator('.env-toast-viewport:not(.docs-open-example .env-toast-viewport)')
+    .filter({ has: page.locator('.env-toast') });
+  await expect(live).toHaveCount(1);
+  await page.keyboard.press('F6');
+  await expect(live).toBeFocused();
 });

@@ -9,7 +9,7 @@
     color var(--env-motion-duration-fast) var(--env-motion-ease),
     border-color var(--env-motion-duration-fast) var(--env-motion-ease);
   /* Badges inside take the button's text color as an outlined pill (Badge.css's hooks; the
-     counter badge and diff stat hooks are further down). */
+     count and diff stat hooks are further down). */
   --env-badge-fg: currentColor;
   --env-badge-bg: transparent;
   --env-badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
@@ -105,12 +105,25 @@
   border-color: var(--env-color-border-default-pressed);
 }
 
+/* Text: a label in the link color. Its hit area and focus ring reach 0.25 rem past the label on
+   each side, so the ring never touches the letters, and a negative margin takes that back, so the
+   label lines up with the text around it as a bare label would. */
 .env-button:where([data-variant='text']) {
-  padding-inline: 0;
+  padding-inline: var(--env-space-1);
   border: 0;
   background: transparent;
   color: var(--env-color-fg-link);
   cursor: pointer;
+}
+
+.env-button:where([data-variant='text']):not(.env-icon-button, [data-full-width]) {
+  margin-inline: calc(-1 * var(--env-space-1));
+}
+
+/* A Link in running text has no padding, so it takes no margin back either: the spaces and the
+   punctuation beside it stay clear. */
+.env-button.env-link {
+  margin-inline: 0;
 }
 
 .env-button:where([data-variant='text'])[data-underline] {
@@ -278,6 +291,12 @@
   box-shadow: inset 0 0 0 var(--env-button-focus-inner-ring, 0) currentColor;
 }
 
+/* A ghost button shows no shape until hover, so its ring traces the edge its state layer fills,
+   rather than floating past an outline nobody sees. */
+.env-button:where([data-variant='ghost']):focus-visible {
+  outline-offset: 0;
+}
+
 .env-button:where([data-variant='outline']):focus-visible {
   outline-color: var(--env-color-border-focus);
   outline-offset: 0.0625rem;
@@ -319,17 +338,18 @@
   }
 }
 
-/* CloseButton: under a coarse pointer its hit area reaches the touch size around it, also where its
-   container draws the buttons smaller, as a field's end does; never wider than the button's box
-   allows across. */
+/* An icon button that its container draws smaller than the touch size, such as a component's close
+   or remove button, reaches it with its hit area under a coarse pointer where the container sets
+   the hook --env-icon-button-hit-area to the touch size, also where it draws the buttons smaller,
+   as a field's end does; never wider than the button's box allows across. */
 @media (pointer: coarse) {
-  .env-close-button {
+  :where(.env-icon-button) {
     position: relative;
   }
-  .env-close-button::before {
+  .env-icon-button::before {
     content: '';
     position: absolute;
-    inset: min(0%, calc((100% - var(--env-control-height-touch)) / 2));
+    inset: min(0%, calc((100% - var(--env-icon-button-hit-area, 0%)) / 2));
   }
 }
 
@@ -432,15 +452,15 @@
 }
 
 /* Badges in a button, such as a tab with a count, through Badge.css's hooks. A badge takes the
-   button's text color as an outlined pill. A counter badge or diff stat keeps its own filled pill,
+   button's text color as an outlined pill. A badge with a count or a diff stat keeps its own filled pill,
    except on the solid primary fills, neutral and accent, where that pill can't keep its contrast:
    there it is an outlined pill in the text color too. The outline is the label color at 55%, which
    only the button knows; the contrast gate measures it on each fill as a derived color
    (tests/contrast/Pairs.ts). The hooks every button sets for its badges are in its first rule. */
 .env-button:is([data-variant='primary']:where(:not([data-tone='danger']))) {
-  --env-counter-badge-fg: currentColor;
-  --env-counter-badge-bg: transparent;
-  --env-counter-badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
+  --env-badge-count-fg: currentColor;
+  --env-badge-count-bg: transparent;
+  --env-badge-count-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
   --env-diff-stat-fg: currentColor;
   --env-diff-stat-bg: transparent;
   --env-diff-stat-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
@@ -468,4 +488,15 @@
     ) {
     border-color: GrayText;
   }
+}
+
+/* In a skeleton, a button, a link drawn as one included, is a filled shape of its size. */
+[data-env-skeleton] .env-button {
+  forced-color-adjust: none;
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--env-skeleton-color);
+}
+[data-env-skeleton] .env-button * {
+  visibility: hidden;
 }

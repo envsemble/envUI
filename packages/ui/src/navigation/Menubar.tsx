@@ -17,8 +17,10 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { MenuPopup } from './internal/MenuPopup.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { useDirection } from '../internal/useDirection.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 
@@ -270,6 +272,7 @@ function Root({
     <MenubarContext value={context}>
       <DirectionProvider direction={direction}>
         <BaseMenubar
+          render={<Row align="center" />}
           {...props}
           ref={setRoot}
           onFocus={(event) => {
@@ -374,6 +377,7 @@ function Menu({
   const trigger = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement | null>(null);
   const actions = useRef<BaseMenu.Root.Actions>(null);
+  const portal = usePortalContainer();
   const previousFocus = useRef<Element | null>(null);
   const closeReason = useRef<string | null>(null);
   const key = normalizeAccessKey(accessKey);
@@ -429,7 +433,10 @@ function Menu({
       onOpenChange={(next, details) => {
         // Base UI checks where focus went a moment after it leaves the trigger. When that check runs
         // late, focus may already be in one of the menu's own submenus, so the menu stays open.
-        if (!next && details.reason === 'trigger-focus' && focusInSubmenu()) {
+        if (
+          (!next && details.reason === 'trigger-focus' && focusInSubmenu()) ||
+          keepsOpen(portal, next, details, trigger.current)
+        ) {
           details.cancel();
           return;
         }

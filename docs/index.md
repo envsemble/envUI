@@ -10,13 +10,15 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
 
+- [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
+
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
 
 - [Extend the shared library](library-development.md) — Public API changes, changesets, catalogue specimens and acceptance checks.
 
 - [Write a component page](component-pages.md) — The page template, frontmatter, generated props and example files, and how to convert a page.
 
-- [Write a pattern or template page](pattern-pages.md) — The frontmatter, sections and files of pattern and template pages, and the rules for template screens.
+- [Write a pattern page](pattern-pages.md) — The frontmatter, sections and files of pattern pages.
 
 ## Foundations
 
@@ -24,7 +26,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Typography](foundations/typography.md) — Shared styles for headings, body copy and supporting text.
 - [Spacing & shape](foundations/spacing.md) — A shared scale for space, corners and controls that grow with content.
 - [Scale & density](foundations/scale.md) — The comfortable and compact app scales, control sizes and the row density of data components.
-- [Responsive layout & stacking](foundations/responsive.md) — Viewport breakpoints, container queries, the media query hooks and the stacking order of frames and popups.
+- [Responsive layout & stacking](foundations/responsive.md) — Window classes, container queries, measuring a container and the stacking order of frames and popups.
 - [Composition & extension](foundations/composition.md) — Build product interfaces from shared primitives and existing components.
 - [Icons & assets](foundations/icons.md) — Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](foundations/accessibility.md) — Keyboard access, visible focus and clear guidance across shared controls.
@@ -32,10 +34,14 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Layout & surfaces
 
-- [Stack](components/stack.md)
+- [Box](components/box.md)
+- [Row](components/row.md)
+- [Column](components/column.md)
+- [Grid](components/grid.md)
+- [Scaffold](components/scaffold.md)
+- [Panes](components/panes.md)
 - [Page](components/page.md)
 - [PageHeader](components/page-header.md)
-- [SplitPane](components/split-pane.md)
 - [Surface](components/surface.md)
 - [List](components/list.md)
 - [Card](components/card.md)
@@ -43,7 +49,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Actions
 
 - [Button](components/button.md)
-- [CloseButton](components/close-button.md)
 - [SearchTrigger](components/search-trigger.md)
 - [Toolbar](components/toolbar.md)
 - [Link](components/link.md)
@@ -68,18 +73,17 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Navigation
 
-- [NavList](components/nav-list.md)
+- [Bar](components/bar.md)
+- [Rail](components/rail.md)
+- [Drawer](components/drawer.md)
 - [Tabs](components/tabs.md)
 - [Pager](components/pager.md)
-- [AppShell](components/app-shell.md)
-- [Sidebar](components/sidebar.md)
-- [WindowFrame](components/window-frame.md)
+- [TopBar](components/top-bar.md)
 - [Tree](components/tree.md)
 - [DocumentTabs](components/document-tabs.md)
 - [PanelDock](components/panel-dock.md)
 - [Breadcrumbs](components/breadcrumbs.md)
 - [Pagination](components/pagination.md)
-- [AccountMenu](components/account-menu.md)
 
 ## Content & guidance
 
@@ -93,21 +97,19 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [AnimatedNumber](components/animated-number.md)
 - [Rating](components/rating.md)
 - [RelativeTime](components/relative-time.md)
+- [Accordion](components/accordion.md)
 - [Disclosure](components/disclosure.md)
 - [Avatar](components/avatar.md)
 - [Message](components/message.md)
-- [Stat](components/stat.md)
 - [CalendarHeatmap](components/calendar-heatmap.md)
 
 ## Feedback & overlays
 
-- [EmptyState](components/empty-state.md)
 - [Spinner](components/spinner.md)
-- [Skeleton](components/skeleton.md)
 - [Toast](components/toast.md)
 - [Alert](components/alert.md)
 - [Dialog](components/dialog.md)
-- [Drawer](components/drawer.md)
+- [Sheet](components/sheet.md)
 - [ConfirmDialog](components/confirm-dialog.md)
 - [CommandPalette](components/command-palette.md)
 - [Menu](components/menu.md)
@@ -126,17 +128,13 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Notifications and feedback](patterns/feedback.md)
 - [Loading](patterns/loading.md)
 - [Empty states](patterns/empty-states.md)
+- [Key figures](patterns/key-figures.md)
 - [Navigation](patterns/navigation.md)
+- [App frame](patterns/app-frame.md)
+- [Account menu](patterns/account-menu.md)
+- [Organization switcher](patterns/organization-switcher.md)
+- [Window frame](patterns/window-frame.md)
+- [Feature cards](patterns/feature-cards.md)
 - [Filtering and search](patterns/filtering.md)
 - [Data tables](patterns/data-tables.md)
 - [Progressive disclosure](patterns/progressive-disclosure.md)
-
-## Templates
-
-- [App frame with sidebar](templates/app-frame.md)
-- [Index page](templates/index-page.md)
-- [Details page](templates/details-page.md)
-- [Settings page](templates/settings-page.md)
-- [Dashboard](templates/dashboard-page.md)
-- [Sign-in page](templates/sign-in-page.md)
-- [Error and not-found pages](templates/error-pages.md)

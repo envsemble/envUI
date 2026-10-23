@@ -58,12 +58,16 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-neutral-muted-hover',
     '--env-color-bg-neutral-muted-pressed',
   ],
-  'tab-navigation': [
-    '--env-color-bg-selected',
-    '--env-color-bg-selected-hover',
-    '--env-color-bg-selected-pressed',
-  ],
 };
+
+/** A control of the color fixture by its name: the drawer's items by whether they are current. */
+function colorControl(page: import('@playwright/test').Page, theme: string, name: string) {
+  if (name === 'navigation')
+    return page.getByTestId(`${theme}-navigation`).locator('.env-drawer-item:not([data-current])');
+  if (name === 'navigation-selected')
+    return page.getByTestId(`${theme}-navigation`).locator('.env-drawer-item[data-current]');
+  return page.getByTestId(`${theme}-${name}`);
+}
 
 /**
  * HSL lightness of a control's fill as painted on its theme canvas. Translucent fills are calibrated
@@ -119,7 +123,7 @@ test('action and navigation fills paint their precomputed hover and pressed toke
 }) => {
   for (const theme of ['light', 'dark']) {
     for (const [name, [rest, hover, pressed]] of Object.entries(sources)) {
-      const control = page.getByTestId(`${theme}-${name}`);
+      const control = colorControl(page, theme, name);
       if (name.startsWith('tab-')) await control.press('Enter');
       const colors = {
         rest: await tokenColor(control, rest),
@@ -162,11 +166,10 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       contrastPane: `.env-surface:has(> [data-testid="${theme}-color-contrast-rows"])`,
       tabRail: `[data-testid="${theme}-color-tabs"] .env-tabs-list`,
       tab: `[data-testid="${theme}-color-tabs"] [role="tab"][aria-selected="true"]`,
-      tabIcon: `[data-testid="${theme}-color-tabs"] .env-nav-list-item .env-icon`,
       link: `[data-testid="${theme}-color-link"]`,
       textButton: `[data-testid="${theme}-color-text-button"]`,
-      navigation: `[data-testid="${theme}-navigation-selected"]`,
-      navigationIcon: `[data-testid="${theme}-navigation"] .env-icon`,
+      navigation: `[data-testid="${theme}-navigation"] .env-drawer-item[data-current]`,
+      navigationIcon: `[data-testid="${theme}-navigation"] .env-drawer-item:not([data-current]) .env-icon`,
       direction: `[data-testid="${theme}-color-direction"]`,
       field: `[data-testid="${theme}-color-field"]`,
       fieldWell: `.env-text-field-control:has([data-testid="${theme}-color-field"])`,
@@ -180,7 +183,6 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       checkbox: `[data-testid="${theme}-color-checkbox"]`,
       switch: `[data-testid="${theme}-color-switch"]`,
       chip: `[data-testid="${theme}-color-chip"]`,
-      skeleton: `[data-testid="${theme}-color-skeleton"]`,
     };
     async function compareToken(token: string) {
       return boundary.evaluate(
@@ -216,16 +218,13 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     // Each role, and every part that paints it: a component shares the role of what it means.
     const cases = [
       ['--env-color-bg-page', ['canvas', 'canvasCard']],
-      // A list item's component token is the default surface in light and the muted one in dark.
-      ['--env-color-bg-default', ['pane', 'paneCard', ...(theme === 'light' ? ['row'] : [])]],
-      [
-        '--env-color-bg-muted',
-        ['surface', 'card', 'contrastPane', 'radioRow', ...(theme === 'dark' ? ['row'] : [])],
-      ],
+      // A list item's component token is the muted surface in both themes.
+      ['--env-color-bg-default', ['pane', 'paneCard']],
+      ['--env-color-bg-muted', ['surface', 'card', 'contrastPane', 'radioRow', 'row']],
       ['--env-color-list-item-bg', ['row']],
       [
         '--env-color-bg-neutral-muted',
-        ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip', 'skeleton'],
+        ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip'],
       ],
       ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
       ['--env-color-fg-link', ['link', 'textButton']],
@@ -233,7 +232,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-fg-on-emphasis', ['primary', 'tab']],
       ['--env-color-bg-selected', ['navigation']],
       // A neutral badge's text is muted, as InfoChip's metadata became a Badge.
-      ['--env-color-fg-muted', ['navigationIcon', 'tabIcon', 'selectHint', 'chip']],
+      ['--env-color-fg-muted', ['navigationIcon', 'selectHint', 'chip']],
       ['--env-color-bg-raised', ['direction']],
       ['--env-color-bg-field', ['fieldWell', 'fieldError']],
       ['--env-color-border-accent-emphasis', ['fieldWell']],
@@ -259,7 +258,6 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     for (const [label, primitiveId, color] of [
       ['First tab', `${theme}-button-primary`, '--env-color-bg-brand-emphasis'],
       ['Second tab', `${theme}-button-secondary`, '--env-color-bg-neutral-muted'],
-      ['Third tab', `${theme}-navigation-selected`, '--env-color-bg-selected'],
     ]) {
       const tab = boundary.getByRole('tab', { name: label });
       await tab.press('Enter');
@@ -285,6 +283,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       );
     }
     const selected = boundary.getByRole('tab', { name: 'Third tab' });
+    await selected.press('Enter');
+    await expect(selected).toHaveAttribute('aria-selected', 'true');
     const selectedFill = await selected.evaluate(
       (element) => getComputedStyle(element).backgroundColor,
     );

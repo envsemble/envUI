@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Button, Select, Stack, Text, TextField, Toast, useToast } from '@envsemble/envui';
+import { Button, Select, Column, Row, Text, TextField, Toast, useToast } from '@envsemble/envui';
 import { Send } from '@envsemble/envui/icons/Send';
 
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
@@ -44,7 +44,7 @@ function InviteForm() {
   return (
     <form noValidate onSubmit={submit}>
       {/* envUI has no form column yet: one column, kept to a width that reads easily. */}
-      <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
+      <Column gap={5} style={{ maxInlineSize: '32rem' }}>
         <TextField
           ref={field}
           label="Email address"
@@ -63,16 +63,16 @@ function InviteForm() {
           }}
         />
         <Select label="Role" name="role" defaultValue="editor" items={roles} />
-        <Stack direction="row" wrap gap={3}>
+        <Row wrap gap={3}>
           {/* The button shows the work while it runs; the toast says how it ended. */}
           <Button type="submit" startIcon={<Send />} pending={sending}>
             Send invitation
           </Button>
-        </Stack>
+        </Row>
         <Text role="status" emphasis="muted">
           {status}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

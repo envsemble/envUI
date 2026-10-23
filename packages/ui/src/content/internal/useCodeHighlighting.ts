@@ -27,8 +27,11 @@ const languageAliases: Record<string, string> = {
   ini: 'ini',
 };
 
-/** Render plain source on the server and first client render, then enrich it in place. */
-export function useCodeHighlighting(source: string, language?: string) {
+/**
+ * Render plain source on the server and first client render, then enrich it in place: with the
+ * high-contrast colors too where `highContrast` asks for them.
+ */
+export function useCodeHighlighting(source: string, language?: string, highContrast = false) {
   const resolvedLanguage = languageAliases[language?.toLowerCase() ?? ''];
   const eligible =
     Boolean(resolvedLanguage) &&
@@ -43,7 +46,9 @@ export function useCodeHighlighting(source: string, language?: string) {
     if (!eligible || !resolvedLanguage) return;
     let current = true;
     import('./CodeHighlighting.js')
-      .then(({ highlightCode }) => (current ? highlightCode(source, resolvedLanguage) : null))
+      .then(({ highlightCode }) =>
+        current ? highlightCode(source, resolvedLanguage, highContrast) : null,
+      )
       .then((tokens) => {
         if (current && tokens) setResult({ source, language: resolvedLanguage, tokens });
       })
@@ -53,7 +58,7 @@ export function useCodeHighlighting(source: string, language?: string) {
     return () => {
       current = false;
     };
-  }, [source, resolvedLanguage, eligible]);
+  }, [source, resolvedLanguage, eligible, highContrast]);
   return eligible && result?.source === source && result.language === resolvedLanguage
     ? result.tokens
     : null;

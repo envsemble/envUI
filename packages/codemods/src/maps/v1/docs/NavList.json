@@ -1,3 +1,4 @@
 {
-  "navigation": "nav-list"
+  "navigation": "drawer",
+  "nav-list": "drawer"
 }

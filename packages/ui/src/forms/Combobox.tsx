@@ -3,6 +3,7 @@
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
+  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -18,12 +19,17 @@ import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { PopupSurface } from '../internal/PopupSurface.js';
+import {
+  keepsOpen,
+  useKeepPageVisible,
+  usePortalContainer,
+} from '../internal/PortalContainerContext.js';
+import { Column, Grid } from '../foundations/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
 import { common as commonMessages } from '../foundations/messages/common.js';
 import { IconButton } from '../actions/Button.js';
-import { CloseButton } from '../actions/CloseButton.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
@@ -256,6 +262,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const selectionId = `${id}-selection`;
   const inputRef = useRef<HTMLInputElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
   const pressFocus = useRef(false);
   // The query onInputValueChange reported last.
   const reportedQuery = useRef('');
@@ -319,6 +326,13 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const [inputText, setInputText] = useState(() => singleItem?.label ?? '');
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
   const popupOpen = open ?? uncontrolledOpen;
+  const portal = usePortalContainer();
+  // Base UI hides the rest of the page while the list is open; a contained one leaves it in reach.
+  useKeepPageVisible(
+    portal,
+    popupOpen,
+    useCallback(() => [popupRef.current, inputRef.current], []),
+  );
   // The chips' arrow keys and the popup follow the text direction, read as the popup opens or
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
@@ -445,7 +459,10 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
         // the Combobox's implementation.
         autoHighlight={'always' as never}
         open={popupOpen}
-        onOpenChange={changeOpen}
+        onOpenChange={(next, details) => {
+          if (keepsOpen(portal, next, details)) details.cancel();
+          else changeOpen(next);
+        }}
         name={name}
         form={form}
         required={required}
@@ -458,7 +475,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           id={id}
           label={
             label != null ? (
-              <label htmlFor={id} id={labelId}>
+              <label htmlFor={id} id={labelId} className="env-combobox-label">
                 {label}
               </label>
             ) : null
@@ -498,7 +515,13 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                   {!disabled && !readOnly && (
                     <BaseCombobox.ChipRemove
                       className="env-combobox-chip-remove"
-                      render={<CloseButton aria-label={removeName(text)} />}
+                      render={
+                        <IconButton
+                          variant="ghost"
+                          icon={<Close />}
+                          aria-label={removeName(text)}
+                        />
+                      }
                     />
                   )}
                 </BaseCombobox.Chip>
@@ -582,6 +605,8 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           sideOffset={popupOffset}
           dir={direction}
           className="env-combobox-popup"
+          layout={<Column padding={1} />}
+          popupProps={{ ref: popupRef }}
         >
           <BaseCombobox.Status className="env-combobox-status">
             {loading ? (
@@ -596,12 +621,17 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           </BaseCombobox.Empty>
           {/* The options are busy while they load, not the popup, whose status announces
               the loading label meanwhile. */}
-          <BaseCombobox.List className="env-combobox-list" aria-busy={loading || undefined}>
+          <BaseCombobox.List
+            render={<Grid />}
+            className="env-combobox-list"
+            aria-busy={loading || undefined}
+          >
             {(entry: Item | ComboboxGroup<Item>) =>
               grouped && isGroup(entry) ? (
                 <BaseCombobox.Group
                   key={entry.label}
                   items={entry.items as Item[]}
+                  render={<Grid />}
                   className="env-combobox-group"
                 >
                   <BaseCombobox.GroupLabel className="env-combobox-group-label">

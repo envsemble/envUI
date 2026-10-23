@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { IconButton, Menu, Stack, Tree, type TreeItem } from '@envsemble/envui';
+import { IconButton, Menu, Column, Tree, type TreeItem } from '@envsemble/envui';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Description } from '@envsemble/envui/icons/Description';
 import { FileCopy } from '@envsemble/envui/icons/FileCopy';
@@ -85,7 +85,7 @@ export default function ContextMenuActions() {
     });
 
   return (
-    <Stack gap={2} style={{ inlineSize: 'min(100%, 20rem)' }}>
+    <Column gap={2} style={{ inlineSize: 'min(100%, 20rem)' }}>
       {/* The menu's actions are buttons too, for people who cannot right-click. */}
       <div style={{ display: 'flex', gap: '0.25rem' }}>
         <IconButton
@@ -138,6 +138,6 @@ export default function ContextMenuActions() {
           }
         />
       </div>
-    </Stack>
+    </Column>
   );
 }

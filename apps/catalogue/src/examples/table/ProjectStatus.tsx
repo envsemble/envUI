@@ -51,7 +51,7 @@ export default function ProjectStatus() {
       <Table.Body>
         {projects.map((project) => (
           <Table.Row key={project.id} interactive>
-            <Table.Cell>
+            <Table.Cell nowrap>
               <Link href={`/projects/${project.id}`} underline={false}>
                 {project.name}
               </Link>

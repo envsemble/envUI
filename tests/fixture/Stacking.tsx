@@ -8,14 +8,10 @@ import { Button, Dialog, Menu, Theme, Toast, Tooltip, useToast } from '@envsembl
 function Ladder() {
   return (
     <div className="fixture-stacking-ladder" aria-hidden="true">
-      <div className="env-app-shell" data-scroll="document">
-        <div data-layer="app-topbar" className="env-app-shell-header" />
-        <div data-layer="app-sidebar" className="env-sidebar" data-frame="">
-          <div className="env-sidebar-panel">
-            <div data-layer="app-sidebar-resize" className="env-sidebar-handle" />
-          </div>
-        </div>
-        <div data-layer="app-sidebar-peek" className="env-sidebar" data-frame="" data-peek="" />
+      <div data-layer="top-bar-sticky" className="env-top-bar" data-sticky="" />
+      <div className="env-panes" data-behavior="supporting" data-open="">
+        <div data-layer="panes-supporting-sheet" className="env-panes-supporting" />
+        <div data-layer="panes-scrim" className="env-panes-scrim" />
       </div>
       <div data-layer="dialog-backdrop" className="env-dialog-backdrop" />
       <div data-layer="dialog-positioner" className="env-dialog-positioner" />

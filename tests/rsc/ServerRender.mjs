@@ -123,7 +123,6 @@ const page = render(
     h(ui.IconButton, { icon: h(Search), 'aria-label': 'Searching', pending: true }),
     h(ui.Menu.Root, { trigger: h(ui.Button, null, 'More') }, h(ui.Menu.Item, null, 'Rename')),
     h(ui.Alert, { tone: 'success', title: 'Saved' }, 'The release is saved.'),
-    h(ui.Stat.Root, { label: 'Builds', value: 12 }),
   ),
 );
 
@@ -149,9 +148,6 @@ console.log(
     themeBootstrapScript: typeof ui.createThemeBootstrapScript({ storageKey: 'app-theme' }),
     bootstrapEntryScript: typeof themeBootstrap.createThemeBootstrapScript(),
     bootstrapContrastScript: themeBootstrap.createThemeBootstrapScript({ contrast: 'high' }),
-    appShellCookie: attempt(() =>
-      ui.readAppShellCookie('theme=dark; app.frame=start.open%3D0%26end.width%3D21.5', 'app.frame'),
-    ),
     relativeTime: ui.formatRelativeTime(Date.UTC(2026, 9, 14, 9), {
       now: Date.UTC(2026, 9, 14, 12),
       locale: 'en',

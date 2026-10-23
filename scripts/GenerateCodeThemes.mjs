@@ -1,7 +1,7 @@
 // Generates packages/ui/src/content/internal/CodeDiffTints.ts: how Diffs tints the lines and words
 // a diff adds and removes, read from Diffs' style sheet. The code themes make their token colors
-// readable where they load (packages/ui/src/content/internal/CodeThemes.ts), from whichever Pierre
-// themes an application installs; for code diffs they also need the backgrounds Diffs gives changed
+// readable where they load (packages/ui/src/content/internal/CodeThemes.ts), from whichever
+// themes the installed Shiki ships; for code diffs they also need the backgrounds Diffs gives changed
 // lines, which Diffs mixes in its style sheet from the theme's addition and deletion colors:
 //
 // - a changed line's background is code's background mixed in Lab with the change color;

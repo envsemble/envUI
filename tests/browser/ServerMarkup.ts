@@ -11,8 +11,8 @@ import { fixtureUrl } from './Servers';
  * from the checkout, that exports `element`; `@envsemble/envui` resolves to the source.
  *
  *   await openServerMarkup(page, `import {createElement as h} from 'react';
- *     import {SplitPane} from '@envsemble/envui';
- *     export const element = h(SplitPane.Root, …);`);
+ *     import {Table} from '@envsemble/envui';
+ *     export const element = h(Table.Root, …);`);
  *
  * With `hydrate`, the page also loads the same module for the browser, and the returned function
  * hydrates the markup, so a spec can measure the page before and after any script runs. It

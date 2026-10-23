@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Menu, Menubar, Stack, Surface, Text, Textarea } from '@envsemble/envui';
+import { Menu, Menubar, Column, Surface, Text, Textarea } from '@envsemble/envui';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { History } from '@envsemble/envui/icons/History';
 import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
@@ -18,10 +18,10 @@ export default function NotesMenubar() {
     editTarget.current instanceof HTMLTextAreaElement ? editTarget.current : note.current;
 
   return (
-    <Stack gap={3}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
       {/* Stands in for the application's window. */}
       <Surface background="default" padding={3}>
-        <Stack gap={3}>
+        <Column gap={3}>
           <Menubar.Root aria-label="Notes menu" accessKeys>
             <Menubar.Menu label="File" accessKey="F">
               <Menu.Item
@@ -89,13 +89,13 @@ export default function NotesMenubar() {
             label="Note"
             rows={4}
             wrap={wordWrap ? 'soft' : 'off'}
-            defaultValue="Ship the pricing page on Friday. Ask Sam Lee to review the copy and Priya Shah to check the numbers."
+            defaultValue="Ship the pricing page on Friday. Ask Sam Lee to review the copy."
           />
-        </Stack>
+        </Column>
       </Surface>
       <Text variant="caption" emphasis="muted" role="status">
         {lastCommand}
       </Text>
-    </Stack>
+    </Column>
   );
 }

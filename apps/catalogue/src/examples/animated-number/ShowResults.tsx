@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AnimatedNumber, Button, Checkbox, Stack } from '@envsemble/envui';
+import { AnimatedNumber, Button, Checkbox, Column, Row } from '@envsemble/envui';
 
 const statuses = [
   { value: 'open', label: 'Open', count: 24 },
@@ -13,8 +13,8 @@ export default function ShowResults() {
     .filter(({ value }) => chosen.includes(value))
     .reduce((sum, { count }) => sum + count, 0);
   return (
-    <Stack gap={4}>
-      <Stack gap={2} role="group" aria-label="Status">
+    <Column gap={4}>
+      <Column gap={2} role="group" aria-label="Status">
         {statuses.map(({ value, label }) => (
           <Checkbox
             key={value}
@@ -27,12 +27,12 @@ export default function ShowResults() {
             }
           />
         ))}
-      </Stack>
-      <Stack direction="row" wrap align="center" gap={4}>
+      </Column>
+      <Row wrap align="center" gap={4}>
         <Button disabled={total === 0}>
           Show <AnimatedNumber value={total} /> {total === 1 ? 'task' : 'tasks'}
         </Button>
-      </Stack>
-    </Stack>
+      </Row>
+    </Column>
   );
 }

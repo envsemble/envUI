@@ -2,14 +2,13 @@
   "$comment": "Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild. Maps every custom property that 1.0 no longer defines to what replaces it, from packages/ui/tokens/removed-tokens.json: the token (token, with its custom property, cssVariable) or the hand-written property (cssVariable alone) that takes its place, a fixed color's value, or nothing for a removed one. kind says why: prefixed (only the --env- prefix is new), renamed, alias (a 0.7 alias, removed for its role), fixed (a 0.7 color no role replaces) or removed; a note says what changed beyond the name. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.",
   "names": {
     "--app-sticky-top": {
-      "kind": "renamed",
-      "cssVariable": "--env-frame-sticky-top",
-      "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
+      "kind": "removed",
+      "note": "Sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
     },
     "--avatar-group-ring": {
       "kind": "renamed",
       "cssVariable": "--env-avatar-group-ring",
-      "note": "The ring color an application sets for an avatar group on a fill that is not an envUI surface."
+      "note": "In 0.x, the ring color an application set for an avatar group on a fill that was not an envUI surface."
     },
     "--body-font-weight": { "kind": "prefixed", "cssVariable": "--env-body-font-weight" },
     "--color-accent": {
@@ -41,14 +40,14 @@
       "token": "color.avatar.bg",
       "cssVariable": "--env-color-avatar-bg",
       "component": "Avatars",
-      "note": "A component token now."
+      "note": "A system token named for avatars now."
     },
     "--color-avatar-figure": {
       "kind": "alias",
       "token": "color.avatar.figure",
       "cssVariable": "--env-color-avatar-figure",
       "component": "Avatars",
-      "note": "A component token now."
+      "note": "A system token named for avatars now."
     },
     "--color-bg-accent-emphasis": {
       "kind": "prefixed",
@@ -796,7 +795,7 @@
       "token": "color.avatar.fg",
       "cssVariable": "--env-color-avatar-fg",
       "component": "Avatars",
-      "note": "A component token now."
+      "note": "A system token named for avatars now."
     },
     "--color-on-calendar-selected": {
       "kind": "alias",
@@ -963,7 +962,7 @@
       "token": "color.list-item.bg",
       "cssVariable": "--env-color-list-item-bg",
       "component": "List rows",
-      "note": "A component token: the default surface in light, the muted one in dark."
+      "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-alternate": {
       "kind": "alias",
@@ -982,14 +981,14 @@
       "token": "color.list-item.bg.hover",
       "cssVariable": "--env-color-list-item-bg-hover",
       "component": "List rows",
-      "note": "A component token: the default surface in light, the muted one in dark."
+      "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-pressed": {
       "kind": "alias",
       "token": "color.list-item.bg.pressed",
       "cssVariable": "--env-color-list-item-bg-pressed",
       "component": "List rows",
-      "note": "A component token: the default surface in light, the muted one in dark."
+      "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-selected-hover": {
       "kind": "alias",
@@ -1316,64 +1315,166 @@
     "--control-icon-size": { "kind": "prefixed", "cssVariable": "--env-control-icon-size" },
     "--control-target-min": { "kind": "prefixed", "cssVariable": "--env-control-target-min" },
     "--elevation-0-border": { "kind": "prefixed", "cssVariable": "--env-elevation-0-border" },
-    "--elevation-0-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-0-shadow" },
+    "--elevation-0-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
     "--elevation-1-border": { "kind": "prefixed", "cssVariable": "--env-elevation-1-border" },
-    "--elevation-1-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-1-shadow" },
+    "--elevation-1-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
     "--elevation-2-border": { "kind": "prefixed", "cssVariable": "--env-elevation-2-border" },
-    "--elevation-2-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-2-shadow" },
+    "--elevation-2-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
     "--elevation-3-border": { "kind": "prefixed", "cssVariable": "--env-elevation-3-border" },
-    "--elevation-3-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-3-shadow" },
+    "--elevation-3-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
     "--env-app-control-height": {
       "kind": "removed",
-      "note": "The frame's rails line up on --env-control-height, which a title bar's small controls keep."
+      "note": "AppShell is gone: a TopBar with titleBar keeps the small control height."
     },
     "--env-app-divider": {
       "kind": "removed",
-      "note": "The frame's hairlines follow AppShell.Root's dividers prop."
+      "note": "AppShell is gone, and no line sets the frame's regions apart: the navigation and the top bar fill the navigation's background, or each the page's with background=\"page\". Panes.Divider is the gap between panes, with a grip."
+    },
+    "--env-app-shell-block-size": {
+      "kind": "removed",
+      "note": "AppShell is gone: Scaffold fills 100dvh; give it another block-size with your own class."
+    },
+    "--env-app-shell-header-divider": {
+      "kind": "removed",
+      "note": "AppShell is gone: a TopBar draws no divider of its own; give it a border with your own class."
+    },
+    "--env-app-shell-header-height": {
+      "kind": "renamed",
+      "token": "top-bar.height",
+      "cssVariable": "--env-top-bar-height",
+      "note": "AppShell is gone; TopBar's height."
+    },
+    "--env-app-shell-loading-bar-offset": {
+      "kind": "removed",
+      "note": "AppShell is gone: TopBar's loading bar runs along its bottom edge."
     },
     "--env-app-sticky-top": {
-      "kind": "renamed",
-      "cssVariable": "--env-frame-sticky-top",
-      "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
+      "kind": "removed",
+      "note": "Sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
     },
     "--env-app-toggle-size": {
       "kind": "removed",
-      "note": "SidebarTrigger is an IconButton: give it a size, or let a coarse pointer grow it to 44 px."
+      "note": "SidebarTrigger is gone: open a navigation drawer from an IconButton, and give it a size."
     },
     "--env-app-topbar-block-size": {
-      "kind": "renamed",
-      "cssVariable": "--env-frame-header-block-size",
-      "note": "The height of the app frame's header or title bar, which the frame sets on the document."
+      "kind": "removed",
+      "note": "TopBar is --env-top-bar-height tall; the Scaffold measures its top bar region and sets --env-scaffold-sticky-top from it."
+    },
+    "--env-breakpoint-lg": {
+      "kind": "removed",
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-md": {
+      "kind": "removed",
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-sm": {
+      "kind": "removed",
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-xl": {
+      "kind": "removed",
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-elevation-0-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-1-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-2-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-3-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-frame-header-block-size": {
+      "kind": "removed",
+      "note": "AppShell and WindowFrame are gone: TopBar is --env-top-bar-height tall; the Scaffold measures its top bar region and sets --env-scaffold-sticky-top from it."
+    },
+    "--env-frame-sticky-top": {
+      "kind": "removed",
+      "note": "AppShell and WindowFrame are gone: sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
     },
     "--env-sidebar-collapsed-width": {
       "kind": "removed",
-      "note": "A sidebar's rail is --env-control-height plus two --env-sidebar-inset wide; set --env-sidebar-inset to change it."
+      "note": "Sidebar is gone: Rail, the navigation form for medium windows, has a width of its own."
     },
     "--env-sidebar-content-width": {
       "kind": "removed",
-      "note": "AppShell no longer measures its sidebar: Sidebar.Root's content width fits its content between minWidth and maxWidth."
+      "note": "Sidebar is gone: the navigation forms, Bar, Rail and Drawer, size themselves."
     },
     "--env-sidebar-expanded-width": {
       "kind": "removed",
-      "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
+      "note": "AppShell and Sidebar are gone: the navigation forms, Bar, Rail and Drawer, size themselves; side content goes in a Panes supporting pane."
+    },
+    "--env-sidebar-inset": {
+      "kind": "removed",
+      "note": "Sidebar is gone: the navigation forms, Bar, Rail and Drawer, keep their own insets."
     },
     "--env-sidebar-width": {
       "kind": "removed",
-      "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
+      "note": "AppShell and Sidebar are gone: the navigation forms, Bar, Rail and Drawer, size themselves; side content goes in a Panes supporting pane."
+    },
+    "--env-split-pane-handle": {
+      "kind": "removed",
+      "note": "SplitPane is gone: Panes.Divider, env-panes-divider, is the divider that resizes the panes."
+    },
+    "--env-split-pane-size": {
+      "kind": "removed",
+      "note": "SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
     },
     "--env-split-view-gutter": {
       "kind": "removed",
-      "note": "SplitPane has no gutter: its handle has a width of its own, and stacked panes have a hairline between them rather than a gap."
+      "note": "SplitView is gone: Panes has no gutter; Panes.Divider has a width of its own."
     },
     "--env-split-view-size": {
       "kind": "removed",
-      "note": "SplitPane sets --env-split-pane-size from size and unit, with the unit, such as 30% rather than 30: set size or defaultSize on SplitPane.Root instead."
+      "note": "SplitView is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
+    },
+    "--env-stack-gap": {
+      "kind": "removed",
+      "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
     },
     "--env-topbar-height": {
       "kind": "renamed",
-      "token": "app-shell.header-height",
-      "cssVariable": "--env-app-shell-header-height",
-      "note": "The app frame's header height."
+      "token": "top-bar.height",
+      "cssVariable": "--env-top-bar-height",
+      "note": "TopBar's height."
+    },
+    "--env-window-frame-title-bar-end": {
+      "kind": "renamed",
+      "cssVariable": "--env-top-bar-title-bar-end",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end."
+    },
+    "--env-window-frame-title-bar-left": {
+      "kind": "removed",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+    },
+    "--env-window-frame-title-bar-right": {
+      "kind": "removed",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+    },
+    "--env-window-frame-title-bar-start": {
+      "kind": "renamed",
+      "cssVariable": "--env-top-bar-title-bar-start",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start."
     },
     "--field-floating-height": { "kind": "prefixed", "cssVariable": "--env-field-floating-height" },
     "--font-family": { "kind": "prefixed", "cssVariable": "--env-font-family" },
@@ -1582,9 +1683,9 @@
     },
     "--topbar-height": {
       "kind": "renamed",
-      "token": "app-shell.header-height",
-      "cssVariable": "--env-app-shell-header-height",
-      "note": "The app frame's header height."
+      "token": "top-bar.height",
+      "cssVariable": "--env-top-bar-height",
+      "note": "TopBar's height."
     },
     "--tree-row-padding-block-lg": {
       "kind": "prefixed",

@@ -4,29 +4,22 @@
 .env-document-tabs-root {
   display: contents;
 }
-/* The bar holds the strip and the content after it, on one hairline, as tall as a medium control:
-   2.5rem, and 2rem in the compact scale. It takes the width it is given; its tabs never widen a
-   grid or flex parent. */
+/* The bar holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem
+   in the compact scale. No line runs under it: the active tab's fill and indicator mark it. It
+   takes the width it is given; its tabs never widen a grid or flex parent. */
 .env-document-tabs-bar {
   /* The close button's size, and the room a tab leaves for it as it scrolls into view. */
   --env-document-tabs-close-size: 1.5rem;
   /* The widest a tab, and the copy of one being dragged, grows. */
   --env-document-tabs-item-max: 14rem;
   box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  min-inline-size: 0;
   max-inline-size: 100%;
   block-size: var(--env-control-height-md);
-  border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
   contain: inline-size;
 }
 /* Content after the tabs, such as a button that closes them all, keeps its size at the end. */
 .env-document-tabs-end {
   flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-1);
   padding-inline: var(--env-space-1);
 }
 .env-document-tabs {
@@ -36,11 +29,8 @@
   /* The strip is the offset parent of its items, which Base UI measures to scroll the active tab
      into view. */
   position: relative;
-  display: flex;
   flex: 1 1 auto;
-  align-items: stretch;
   gap: 0.125rem;
-  min-inline-size: 0;
   block-size: 100%;
   padding-inline: var(--env-space-1);
   overflow-x: auto;
@@ -112,7 +102,6 @@
   border: var(--env-control-border-width) solid var(--env-elevation-2-border);
   border-radius: var(--env-radius-sm);
   background: var(--env-color-bg-popup);
-  box-shadow: var(--env-elevation-2-shadow);
   color: var(--env-color-fg-default);
   font: var(--env-type-body-small);
   white-space: nowrap;
@@ -210,10 +199,11 @@
   font-synthesis: style;
   padding-inline-end: 0.125em;
 }
-/* The close button, a CloseButton, is a small circle that keeps its space so tabs do not change
+/* The close button, an IconButton with a cross, is a small circle that keeps its space so tabs do not change
    width; it shows on the active tab, on hover and with keyboard focus. The strip sets its size
    through the control size it reads, also inside a container that gives controls a size. */
 .env-document-tabs-item .env-document-tabs-close {
+  --env-icon-button-hit-area: var(--env-control-height-touch);
   --env-control-height: var(--env-document-tabs-close-size);
   --env-control-icon-size: 1rem;
   visibility: hidden;
@@ -224,12 +214,12 @@
   .env-document-tabs-close {
   visibility: visible;
 }
-/* Under a coarse pointer the tabs are the touch height above the strip's hairline, and each close
-   button always shows, as tall and wide as its tab. */
+/* Under a coarse pointer the tabs are the touch height, and each close button always shows, as tall
+   and wide as its tab. */
 @media (pointer: coarse) {
   .env-document-tabs-bar {
     --env-document-tabs-close-size: var(--env-control-height-touch);
-    block-size: calc(var(--env-control-height-touch) + var(--env-control-border-width));
+    block-size: var(--env-control-height-touch);
   }
   .env-document-tabs-item .env-document-tabs-close {
     visibility: visible;

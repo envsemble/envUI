@@ -179,6 +179,15 @@ export function TooltipsFixture() {
       <Tooltip content="Shows the badge" delay={0}>
         <BadgeButton trigger={<span>Badge</span>} aria-label="Badge button" />
       </Tooltip>
+      {/* Text that shows more takes the dotted underline; a button doesn't. */}
+      <Text>
+        Standup at 9:30{' '}
+        <Tooltip content="Central European Time" delay={0}>
+          <abbr tabIndex={0} data-testid="tooltip-text-trigger">
+            CET
+          </abbr>
+        </Tooltip>
+      </Text>
       {new URLSearchParams(window.location.search).has('warnings') && (
         <>
           {/* Around a HoverCard, or as its trigger, a Tooltip shows nothing: the card opens instead. */}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconButton, Select, Stack, Surface, Text } from '@envsemble/envui';
+import { IconButton, Select, Column, Row, Surface, Text } from '@envsemble/envui';
 import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
 import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
 
@@ -14,14 +14,14 @@ export default function SmallToolbar() {
   };
   return (
     // The toolbar is as wide as its controls.
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Surface
         background="default"
         padding={1}
         radius="full"
         role="group"
         aria-label="Diagram"
-        render={<Stack direction="row" wrap align="center" gap={4} />}
+        render={<Row wrap align="center" gap={4} />}
       >
         {/* The label starts clear of the rounded end, as the buttons' own padding does. */}
         <Text
@@ -54,6 +54,6 @@ export default function SmallToolbar() {
           onClick={() => step(1)}
         />
       </Surface>
-    </Stack>
+    </Column>
   );
 }

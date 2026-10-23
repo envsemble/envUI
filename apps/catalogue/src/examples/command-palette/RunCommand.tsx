@@ -4,7 +4,7 @@ import {
   Button,
   CommandPalette,
   Kbd,
-  Stack,
+  Column,
   Text,
   type CommandPaletteItem,
 } from '@envsemble/envui';
@@ -49,7 +49,7 @@ export default function RunCommand() {
     [query],
   );
   return (
-    <Stack gap={3} align="start">
+    <Column gap={3} align="start">
       <Button variant="secondary" onClick={() => setOpen(true)}>
         Run a command
       </Button>
@@ -71,6 +71,6 @@ export default function RunCommand() {
       <Text variant="caption" emphasis="muted" role="status">
         {ran}
       </Text>
-    </Stack>
+    </Column>
   );
 }

@@ -1,4 +1,4 @@
-// Readable code colors, computed where the code themes load: whichever version of the Pierre themes
+// Readable code colors, computed where the code themes load: whichever version of the themes
 // an application installs, each token color that falls short of a contrast on code's background is
 // moved, by its OKLCH lightness alone, to the closest color that reaches it. Small enough to ship:
 // sRGB, OKLab and WCAG contrast, without a color library.

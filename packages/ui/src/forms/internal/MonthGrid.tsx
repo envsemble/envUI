@@ -1,6 +1,7 @@
 'use client';
 
 import { useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { Grid, Row } from '../../foundations/Layout.js';
 import { IconButton } from '../../actions/Button.js';
 import { ChevronLeft } from '../../icons/ChevronLeft.js';
 import { ChevronRight } from '../../icons/ChevronRight.js';
@@ -123,8 +124,8 @@ export function MonthGrid({
   const nextAvailable = max === undefined || first + 12 <= max;
 
   return (
-    <div className="env-month-picker-year">
-      <div className="env-month-picker-header">
+    <Grid gap={2} className="env-month-picker-year">
+      <Row align="center" gap={1} className="env-month-picker-header">
         <IconButton
           variant="ghost"
           icon={<ChevronLeft />}
@@ -151,7 +152,7 @@ export function MonthGrid({
             if (nextAvailable) moveTo(active + 12, false);
           }}
         />
-      </div>
+      </Row>
       <table
         ref={grid}
         role="grid"
@@ -191,6 +192,6 @@ export function MonthGrid({
           ))}
         </tbody>
       </table>
-    </div>
+    </Grid>
   );
 }

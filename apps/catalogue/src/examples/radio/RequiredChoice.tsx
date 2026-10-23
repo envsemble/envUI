@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { Button, Radio, RadioGroup, Stack, Text } from '@envsemble/envui';
+import { Button, Radio, RadioGroup, Column, Text } from '@envsemble/envui';
 
 const formats: Record<string, string> = { csv: 'CSV', json: 'JSON', markdown: 'Markdown' };
 
@@ -22,7 +22,7 @@ export default function RequiredChoice() {
         setExported(format);
       }}
     >
-      <Stack gap={4} align="start">
+      <Column gap={4} align="start">
         <RadioGroup
           label="Export format"
           name="format"
@@ -50,7 +50,7 @@ export default function RequiredChoice() {
         <Text role="status">
           {exported && `Exported Northwind launch as ${formats[exported]}.`}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

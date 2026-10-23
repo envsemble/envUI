@@ -9,8 +9,8 @@ The rule they all carry: **search envUI before writing any UI element; propose a
 | Path in `node_modules/@envsemble/envui/` | What it holds                                                                                                                                                          |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `docs/`                                  | These pages, with examples and props filled in; `docs/index.md` lists them.                                                                                            |
-| `docs/examples/<page>/<Name>.tsx`        | Every example and template screen as a file an application can copy.                                                                                                   |
-| `manifest.json`                          | The library as data: every component with its summary, aliases, when to use it and what instead, exports, props and examples.                                          |
+| `docs/examples/<page>/<Name>.tsx`        | Every example as a file an application can copy.                                                                                                                       |
+| `manifest.json`                          | The library as data: every component with its summary, aliases, when to use it and what instead, exports, props, examples and parts.                                   |
 | `llms.txt`                               | The index of the documentation in the [llms.txt](https://llmstxt.org) format.                                                                                          |
 | `llms-full.txt`                          | Every page in one file, about 1 MB, for tools that split it into chunks or index it. Too large for an agent to read whole: read `docs/index.md` and the pages instead. |
 | `bin/envui.mjs`                          | The `envui` command: `envui agents` and `envui mcp`.                                                                                                                   |
@@ -59,21 +59,19 @@ The server starts in the folder the client works in. Where a workspace installs 
 
 | Tool              | What it answers                                                                                                                                                 |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plan`            | A description of a screen or feature → candidates for each part with the words that matched, patterns, templates, tokens, gaps and ignored words.               |
-| `search`          | Components, exports without a page of their own, patterns, templates, foundations, guides and tokens by what they do or what people call them, ranked.          |
+| `plan`            | A description of a screen or feature → candidates for each part with the words that matched, patterns, tokens, gaps and ignored words.                          |
+| `search`          | Components, exports without a page of their own, patterns, foundations, guides and tokens by what they do or what people call them, ranked.                     |
 | `list_components` | Every component page with its exports, import path, status and summary, optionally by category or status.                                                       |
-| `get_component`   | A component or export by name, part or alias: when to use it, what to use instead, exports, examples, related pages and, with `docs`, its page.                 |
+| `get_component`   | A component or export by name, part or alias: when to use it, what to use instead, exports, examples, parts, related pages and, with `docs`, its page.          |
 | `get_props`       | The props of an export or part, with types, defaults and descriptions, or a function's signature.                                                               |
-| `get_example`     | The examples of a component, pattern or template, or the source of one.                                                                                         |
+| `get_example`     | The examples of a component or pattern, or the source of one.                                                                                                   |
 | `list_patterns`   | The patterns, with their intent, status and what they compose, optionally of one `intent`.                                                                      |
 | `get_pattern`     | A pattern by name, title or alias: when to use it, what to use or read instead, what it composes, its examples and, with `docs`, its page.                      |
-| `list_templates`  | The templates, with whether each renders inside the app frame and its files.                                                                                    |
-| `get_template`    | A template by name, title or alias, or with `file` the source of one of its screens to copy and edit, with where it renders.                                    |
 | `get_tokens`      | Tokens by words, name prefix or type, with their custom property and values per theme and scale; with `legacy`, the 0.7 names and the tokens that replace them. |
 
 `plan` and `search` rank by plain term matching over names, aliases, summaries and when-to-use text; no model is involved. So `plan` proposes candidates, not an answer: each comes with the words that matched and the part it answers, to confirm with `get_component` and `get_props`, and it gives no list of imports to paste. Words it reads as content, such as quoted labels, code or capitalized names envUI has no component for, come back under `ignored`. `plan` reads each part of a description in the context of the whole: a part that a component already chosen also matches, such as the toggle of "a collapsible sidebar with a toggle", stays with it. Words such as page, screen, view and flow name structure, which templates and patterns answer. A part that nothing matches comes back under `uncovered`.
 
-A name an agent passes to `get_example` resolves in a fixed order: a pattern's or template's own name or title first, then a component by name, export or alias, then a pattern or template by alias. A name always wins over an alias, so `get_example loading` gives the Loading pattern's examples even where a component lists loading as an alias; ask for that component by its own name, such as `Spinner`. `get_pattern` and `get_template` add `requested` when they found the page by an alias, so the agent sees which page answered.
+A name an agent passes to `get_example` resolves in a fixed order: a pattern's own name or title first, then a component by name, export or alias, then a pattern by alias. A name always wins over an alias, so `get_example loading` gives the Loading pattern's examples even where a component lists loading as an alias; ask for that component by its own name, such as `Spinner`. `get_pattern` adds `requested` when they found the page by an alias, so the agent sees which page answered.
 
 ## The manifest
 
@@ -81,12 +79,22 @@ A name an agent passes to `get_example` resolves in a fixed order: a pattern's o
 
 - `package`, `version` and `rule`; `files`, the other agent files; `imports`, the entry points, the stylesheet and the icon path.
 - `categories`, the component groups in the order of the index, and `intents`, the groups of the patterns: what people are doing.
-- `components`: one entry per component page, with `name`, `page`, `doc`, `category`, `status`, `since`, `summary`, `aliases`, `useWhen`, `avoidWhen` (each `{ text, use }`, `use` naming the export to use instead), `related` pages, the names of its `exports` and its `examples`, each with `name`, `title`, `description` and `file`, its source in `docs/examples/`, and `usedIn`, the `patterns` and `templates` that compose its exports.
+- `components`: one entry per component page, with `name`, `page`, `doc`, `category`, `status`, `since`, `summary`, `aliases`, `useWhen`, `avoidWhen` (each `{ text, use }`, `use` naming the export to use instead), `related` pages, the names of its `exports` and its `examples`, each with `name`, `title`, `description` and `file`, its source in `docs/examples/`, `usedIn`, the `patterns` and `templates` that compose its exports, and its `parts`, described below.
 - `patterns`: one entry per pattern page, with `name`, `title`, `intent`, `status`, `since`, `summary`, `aliases`, `useWhen`, `avoidWhen` (each `{ text, use }` or `{ text, see }`, `see` naming the page to read instead), `composes`, the exports it combines, `related`, `doc` and its `examples`.
-- `templates`: the same without `intent`, with `frame` (`app`, inside the app frame template's main region, or `none`, a whole screen), the `scales` it is shown in, and its `files`, the screens to copy, each with its `frame` and `primary` for the page's main one; `examples` holds smaller snippets. A template is source to copy into the application and edit, not an export.
 - `guides` and `foundations`: the other pages, with `name`, `title`, `summary`, `doc`, the exports they document and the pages they link to.
 - `exports`: every runtime export by name, with its `kind` (component, namespace or function), `import`, `description`, the `page` and `doc` that document it, the `aliases` its page gives it when it has no component page of its own, and for a component its `props` and `native`, the elements whose native props it also accepts; a namespace lists its `parts`, which are exports too, such as `Menu.Item`, and a function its `signature`.
-- `tokens`: `themes`, `scales`, the current tokens in `items` (`id`, `cssVariable`, `type`, `description`, a `value` or `values` per theme, and the compact value under `compact`) and, in `legacy`, each 0.7 name with its `type` and the token to `use` instead.
+- `tokens`: `usage`, how to use them and what is public; `themes`, `scales`, the current tokens in `items` (`id`, `cssVariable`, `type`, `description`, a `value` or `values` per theme, and the compact value under `compact`) and, in `legacy`, each 0.7 name with its `type` and the token to `use` instead.
+
+## Parts
+
+A component's part classes (`env-<component>-<part>`) and state attributes (`data-*`) are public and versioned: an application's CSS may target them, and a release that renames or removes one is a major release with a migration note. Component tokens, the custom properties a component declares for itself such as `--env-card-padding`, are private and may change in any release; applications rely on the system tokens and the part names. `docs/generated/parts.json` holds the contract, and each component's `parts` in the manifest holds its share, keyed by export:
+
+- `root`: the class on the component's outermost element, or `null` when it renders none of its own.
+- `parts`: every part class of its own, each with `class` and a one-line `description`, the root first. A root that belongs to another component or shared group, such as ConfirmDialog's `env-dialog-popup`, is listed there and not here.
+- `states`: each state attribute with the `values` it takes (`""` is an attribute set without a value; an empty list, one that takes any value or is selected by its presence alone) and the `parts` it is set on.
+- Anatomy several components render, such as the row of menu, select and combobox options, is listed under its own name with `shared: true`.
+
+`get_component` returns the same `parts`.
 
 ## Skills
 
@@ -136,4 +144,4 @@ A client installs a copy of `plugin/` alone, and a plugin's manifest can't point
 
 ## Lint feedback
 
-[`@envsemble/eslint-plugin-envui`](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin) and `@envsemble/stylelint-config-envui` report hand-built controls, private `.env-*` classes and raw colors, naming the envUI component or token to use. Agents see their messages in the usual edit-and-check loop, even when they skipped the docs.
+[`@envsemble/eslint-plugin-envui`](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin) and `@envsemble/stylelint-config-envui` report hand-built controls and raw colors, naming the envUI component or token to use. Agents see their messages in the usual edit-and-check loop, even when they skipped the docs.

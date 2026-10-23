@@ -1,19 +1,19 @@
 import { useState } from 'react';
-import { Button, PageHeader, SearchField, SegmentedControl, Stack } from '@envsemble/envui';
+import { Button, PageHeader, SearchField, SegmentedControl, Row } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 
 export default function PageToolbar() {
   const [status, setStatus] = useState('open');
   return (
-    // Level 2 under this page's own heading; a page's own header keeps the default, 1.
+    // Level 3 under this section; a page's own header keeps the default, 1.
     <PageHeader
-      headingLevel={2}
+      headingLevel={3}
       title="Tasks"
       toolbar={
-        // A page toolbar is a Stack, not a Toolbar: the field keeps its arrow keys, and every
+        // A page toolbar is a Row, not a Toolbar: the field keeps its arrow keys, and every
         // control is a tab stop. The primary action sits at the end.
-        <Stack direction="row" wrap align="center" justify="between" gap={3}>
-          <Stack direction="row" wrap align="center" gap={3}>
+        <Row wrap align="center" justify="between" gap={3}>
+          <Row wrap align="center" gap={3}>
             <SearchField label="Search tasks" />
             <SegmentedControl
               aria-label="Status"
@@ -25,9 +25,9 @@ export default function PageToolbar() {
                 { value: 'all', label: 'All' },
               ]}
             />
-          </Stack>
+          </Row>
           <Button startIcon={<Add />}>New task</Button>
-        </Stack>
+        </Row>
       }
     />
   );

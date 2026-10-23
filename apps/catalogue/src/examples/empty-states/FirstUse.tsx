@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, EmptyState, List, Stack, Surface, Text } from '@envsemble/envui';
+import { Button, List, Column, Row, Surface, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
@@ -20,8 +20,8 @@ export default function FirstUse() {
   };
 
   return (
-    <Stack gap={4}>
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+    <Column gap={4}>
+      <Row wrap align="center" justify="between" gap={3}>
         <Text render={<h3 />} variant="title">
           Projects
         </Text>
@@ -31,7 +31,7 @@ export default function FirstUse() {
             Create project
           </Button>
         )}
-      </Stack>
+      </Row>
       {projects.length > 0 ? (
         <List.Root ref={list} aria-label="Projects" tabIndex={-1}>
           {projects.map((project, index) => (
@@ -45,21 +45,33 @@ export default function FirstUse() {
           padding={0}
           style={{ display: 'grid', minBlockSize: '18rem' }}
         >
-          <EmptyState
+          {/* An icon, a heading of the level the page's outline needs, a sentence and the one
+              action, centred in the room the list will take. */}
+          <Column
+            gap={4}
+            padding={5}
             align="center"
-            headingLevel={4}
-            icon={<FolderOpen />}
-            title="No projects yet"
-            description="A project brings its documents, tasks and people together in one place."
-            action={
-              <Button startIcon={<Add />} onClick={create}>
-                Create project
-              </Button>
-            }
-          />
+            justify="center"
+            style={{ textAlign: 'center' }}
+          >
+            <Text render={<span />} emphasis="muted">
+              <FolderOpen width="2.5rem" height="2.5rem" />
+            </Text>
+            <Column gap={2} align="center" style={{ maxInlineSize: '30rem' }}>
+              <Text render={<h4 />} variant="title">
+                No projects yet
+              </Text>
+              <Text variant="body-sm">
+                A project brings its documents, tasks and people together in one place.
+              </Text>
+            </Column>
+            <Button startIcon={<Add />} onClick={create}>
+              Create project
+            </Button>
+          </Column>
         </Surface>
       )}
-    </Stack>
+    </Column>
   );
 }
 

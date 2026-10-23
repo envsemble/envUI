@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
-// The primitives batch A of 1.0 adds: Toolbar, Field and CloseButton, which are public, and the
+// The primitives batch A of 1.0 adds: Toolbar and Field, which are public, and the
 // internals that envUI's own components build on: ResizeHandle, useRovingFocus, PopupSurface,
 // ListRow and useCopy. tests/fixture/Primitives.tsx mounts each.
 
@@ -193,21 +193,24 @@ test.describe('Button emphasis', () => {
   });
 });
 
-test.describe('CloseButton', () => {
+test.describe('Close buttons', () => {
   test.describe('on a coarse pointer', () => {
     // A touch screen is a coarse pointer in every engine.
     test.use({ hasTouch: true });
     test('reaches the touch size with its hit area', async ({ page }) => {
       await open(page);
       expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
-      const area = await page.getByTestId('close-small').evaluate((element) => {
-        const before = getComputedStyle(element, '::before');
-        const box = element.getBoundingClientRect();
-        return {
-          height: box.height + -2 * parseFloat(before.top),
-          width: box.width + -2 * parseFloat(before.left),
-        };
-      });
+      const area = await page
+        .getByTestId('close-buttons')
+        .locator('.env-alert-dismiss')
+        .evaluate((element) => {
+          const before = getComputedStyle(element, '::before');
+          const box = element.getBoundingClientRect();
+          return {
+            height: box.height + -2 * parseFloat(before.top),
+            width: box.width + -2 * parseFloat(before.left),
+          };
+        });
       expect(area.height).toBeGreaterThanOrEqual(44);
       expect(area.width).toBeGreaterThanOrEqual(44);
     });

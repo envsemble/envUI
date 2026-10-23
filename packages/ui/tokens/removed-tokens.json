@@ -114,13 +114,9 @@
     "--control-icon-size",
     "--control-target-min",
     "--elevation-0-border",
-    "--elevation-0-shadow",
     "--elevation-1-border",
-    "--elevation-1-shadow",
     "--elevation-2-border",
-    "--elevation-2-shadow",
     "--elevation-3-border",
-    "--elevation-3-shadow",
     "--field-floating-height",
     "--font-family",
     "--font-size-body",
@@ -283,36 +279,30 @@
       "replacement": "radius.lg",
       "note": "One radius scale: the large corner is its lg step."
     },
-    "--viewport-gutter": { "cssVariable": "--env-viewport-gutter" },
+    "--viewport-gutter": {
+      "cssVariable": "--env-viewport-gutter"
+    },
     "--line-height-body": {
       "cssVariable": "--env-line-height-body",
       "note": "The body line height an application may set; envUI reads it with a fallback of 1.4."
     },
     "--avatar-group-ring": {
       "cssVariable": "--env-avatar-group-ring",
-      "note": "The ring color an application sets for an avatar group on a fill that is not an envUI surface."
+      "note": "In 0.x, the ring color an application set for an avatar group on a fill that was not an envUI surface."
     },
-    "--font-family-code": { "cssVariable": "--env-code-font-family" },
-    "--font-size-code": { "cssVariable": "--env-code-font-size" },
-    "--app-sticky-top": {
-      "cssVariable": "--env-frame-sticky-top",
-      "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
+    "--font-family-code": {
+      "cssVariable": "--env-code-font-family"
     },
-    "--env-app-sticky-top": {
-      "cssVariable": "--env-frame-sticky-top",
-      "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
-    },
-    "--env-app-topbar-block-size": {
-      "cssVariable": "--env-frame-header-block-size",
-      "note": "The height of the app frame's header or title bar, which the frame sets on the document."
+    "--font-size-code": {
+      "cssVariable": "--env-code-font-size"
     },
     "--topbar-height": {
-      "replacement": "app-shell.header-height",
-      "note": "The app frame's header height."
+      "replacement": "top-bar.height",
+      "note": "TopBar's height."
     },
     "--env-topbar-height": {
-      "replacement": "app-shell.header-height",
-      "note": "The app frame's header height."
+      "replacement": "top-bar.height",
+      "note": "TopBar's height."
     },
     "--color-surface-base": {
       "replacement": "color.bg.raised",
@@ -365,6 +355,18 @@
     "--icon-button-size": {
       "replacement": "control.height",
       "note": "An icon button is as tall as the other controls of its size."
+    },
+    "--env-app-shell-header-height": {
+      "replacement": "top-bar.height",
+      "note": "AppShell is gone; TopBar's height."
+    },
+    "--env-window-frame-title-bar-start": {
+      "cssVariable": "--env-top-bar-title-bar-start",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start."
+    },
+    "--env-window-frame-title-bar-end": {
+      "cssVariable": "--env-top-bar-title-bar-end",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end."
     }
   },
   "aliases": {
@@ -387,15 +389,19 @@
     "--color-avatar": {
       "replacement": "color.avatar.bg",
       "component": "Avatars",
-      "note": "A component token now."
+      "note": "A system token named for avatars now."
     },
     "--color-avatar-figure": {
       "replacement": "color.avatar.figure",
       "component": "Avatars",
-      "note": "A component token now."
+      "note": "A system token named for avatars now."
     },
-    "--color-border-hover": { "replacement": "color.border.muted.hover" },
-    "--color-border-strong": { "replacement": "color.border.muted" },
+    "--color-border-hover": {
+      "replacement": "color.border.muted.hover"
+    },
+    "--color-border-strong": {
+      "replacement": "color.border.muted"
+    },
     "--color-calendar-selected": {
       "replacement": "color.bg.brand.emphasis",
       "component": "Calendars"
@@ -404,14 +410,22 @@
       "replacement": "color.border.accent.emphasis",
       "component": "Calendars"
     },
-    "--color-canvas": { "replacement": "color.bg.page" },
-    "--color-canvas-dark": { "value": "#1e1f21", "component": "Fixed dark page color" },
+    "--color-canvas": {
+      "replacement": "color.bg.page"
+    },
+    "--color-canvas-dark": {
+      "value": "#1e1f21",
+      "component": "Fixed dark page color"
+    },
     "--color-checkbox": {
       "replacement": "color.bg.brand.emphasis",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
-    "--color-checkbox-border": { "replacement": "color.fg.muted", "component": "Checkboxes" },
+    "--color-checkbox-border": {
+      "replacement": "color.fg.muted",
+      "component": "Checkboxes"
+    },
     "--color-checkbox-hover": {
       "replacement": "color.bg.brand.emphasis.hover",
       "component": "Checkboxes",
@@ -430,9 +444,18 @@
       "replacement": "color.fg.muted.pressed",
       "component": "Checkboxes"
     },
-    "--color-checkbox-text": { "replacement": "color.fg.default", "component": "Checkboxes" },
-    "--color-chip": { "replacement": "color.bg.neutral.muted", "component": "Chips" },
-    "--color-chip-text": { "replacement": "color.fg.accent", "component": "Chips" },
+    "--color-checkbox-text": {
+      "replacement": "color.fg.default",
+      "component": "Checkboxes"
+    },
+    "--color-chip": {
+      "replacement": "color.bg.neutral.muted",
+      "component": "Chips"
+    },
+    "--color-chip-text": {
+      "replacement": "color.fg.accent",
+      "component": "Chips"
+    },
     "--color-control-blue": {
       "replacement": "color.bg.brand.emphasis",
       "component": "Spinners, sliders and meters",
@@ -450,12 +473,17 @@
       "replacement": "color.bg.danger.strong.pressed",
       "component": "Destructive buttons"
     },
-    "--color-dialog": { "replacement": "color.bg.raised" },
+    "--color-dialog": {
+      "replacement": "color.bg.raised"
+    },
     "--color-dialog-overlay": {
       "replacement": "color.bg.overlay",
       "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
     },
-    "--color-direction-link": { "replacement": "color.bg.raised", "component": "Pager links" },
+    "--color-direction-link": {
+      "replacement": "color.bg.raised",
+      "component": "Pager links"
+    },
     "--color-direction-link-border": {
       "replacement": "color.border.muted",
       "component": "Pager links"
@@ -468,41 +496,90 @@
       "replacement": "color.border.muted.pressed",
       "component": "Pager links"
     },
-    "--color-direction-link-icon": { "replacement": "color.fg.accent", "component": "Pager links" },
-    "--color-direction-link-label": { "replacement": "color.fg.muted", "component": "Pager links" },
+    "--color-direction-link-icon": {
+      "replacement": "color.fg.accent",
+      "component": "Pager links"
+    },
+    "--color-direction-link-label": {
+      "replacement": "color.fg.muted",
+      "component": "Pager links"
+    },
     "--color-direction-link-text": {
       "replacement": "color.fg.default",
       "component": "Pager links"
     },
-    "--color-disabled-text": { "replacement": "color.fg.muted" },
+    "--color-disabled-text": {
+      "replacement": "color.fg.muted"
+    },
     "--color-disclosure-text": {
       "replacement": "color.fg.muted",
       "component": "Disclosure summaries"
     },
-    "--color-field": { "replacement": "color.bg.field" },
+    "--color-field": {
+      "replacement": "color.bg.field"
+    },
     "--color-field-active": {
       "replacement": "color.border.accent.emphasis",
       "component": "Fields"
     },
-    "--color-field-border": { "replacement": "color.border.default", "component": "Fields" },
-    "--color-field-error": { "replacement": "color.fg.danger", "component": "Fields" },
-    "--color-field-hint": { "replacement": "color.fg.muted", "component": "Fields" },
-    "--color-field-label": { "replacement": "color.fg.muted", "component": "Fields" },
-    "--color-field-placeholder": { "replacement": "color.fg.muted", "component": "Fields" },
-    "--color-field-text": { "replacement": "color.fg.default", "component": "Fields" },
-    "--color-fill": { "replacement": "color.bg.neutral.muted" },
-    "--color-focus-ring": { "replacement": "color.border.focus" },
-    "--color-icon": { "replacement": "color.fg.muted" },
-    "--color-link": { "replacement": "color.fg.link" },
-    "--color-link-hover": { "replacement": "color.fg.link.hover" },
-    "--color-link-pressed": { "replacement": "color.fg.link.pressed" },
-    "--color-markdown-border": { "replacement": "color.border.muted", "component": "Markdown" },
-    "--color-menu-row": { "replacement": "color.bg.popup", "component": "Menu rows" },
+    "--color-field-border": {
+      "replacement": "color.border.default",
+      "component": "Fields"
+    },
+    "--color-field-error": {
+      "replacement": "color.fg.danger",
+      "component": "Fields"
+    },
+    "--color-field-hint": {
+      "replacement": "color.fg.muted",
+      "component": "Fields"
+    },
+    "--color-field-label": {
+      "replacement": "color.fg.muted",
+      "component": "Fields"
+    },
+    "--color-field-placeholder": {
+      "replacement": "color.fg.muted",
+      "component": "Fields"
+    },
+    "--color-field-text": {
+      "replacement": "color.fg.default",
+      "component": "Fields"
+    },
+    "--color-fill": {
+      "replacement": "color.bg.neutral.muted"
+    },
+    "--color-focus-ring": {
+      "replacement": "color.border.focus"
+    },
+    "--color-icon": {
+      "replacement": "color.fg.muted"
+    },
+    "--color-link": {
+      "replacement": "color.fg.link"
+    },
+    "--color-link-hover": {
+      "replacement": "color.fg.link.hover"
+    },
+    "--color-link-pressed": {
+      "replacement": "color.fg.link.pressed"
+    },
+    "--color-markdown-border": {
+      "replacement": "color.border.muted",
+      "component": "Markdown"
+    },
+    "--color-menu-row": {
+      "replacement": "color.bg.popup",
+      "component": "Menu rows"
+    },
     "--color-navigation-hover": {
       "replacement": "color.bg.selected.hover",
       "component": "Navigation items"
     },
-    "--color-navigation-icon": { "replacement": "color.fg.muted", "component": "Navigation items" },
+    "--color-navigation-icon": {
+      "replacement": "color.fg.muted",
+      "component": "Navigation items"
+    },
     "--color-navigation-pressed": {
       "replacement": "color.bg.selected.pressed",
       "component": "Navigation items"
@@ -528,11 +605,14 @@
       "replacement": "color.fg.control",
       "component": "Navigation items"
     },
-    "--color-on-accent": { "replacement": "color.fg.on-strong", "component": "Important buttons" },
+    "--color-on-accent": {
+      "replacement": "color.fg.on-strong",
+      "component": "Important buttons"
+    },
     "--color-on-avatar": {
       "replacement": "color.avatar.fg",
       "component": "Avatars",
-      "note": "A component token now."
+      "note": "A system token named for avatars now."
     },
     "--color-on-calendar-selected": {
       "replacement": "color.fg.on-emphasis",
@@ -567,15 +647,27 @@
       "replacement": "color.fg.accent",
       "component": "Outlined buttons"
     },
-    "--color-on-toast": { "replacement": "color.fg.on-strong", "component": "Toasts and tooltips" },
-    "--color-on-tone": { "replacement": "color.fg.on-emphasis" },
+    "--color-on-toast": {
+      "replacement": "color.fg.on-strong",
+      "component": "Toasts and tooltips"
+    },
+    "--color-on-tone": {
+      "replacement": "color.fg.on-emphasis"
+    },
     "--color-outlined-focus": {
       "replacement": "color.border.focus",
       "component": "Outlined buttons"
     },
-    "--color-pane": { "replacement": "color.bg.default" },
-    "--color-popup": { "replacement": "color.bg.popup" },
-    "--color-popup-border": { "replacement": "elevation.2.border", "component": "Popups" },
+    "--color-pane": {
+      "replacement": "color.bg.default"
+    },
+    "--color-popup": {
+      "replacement": "color.bg.popup"
+    },
+    "--color-popup-border": {
+      "replacement": "elevation.2.border",
+      "component": "Popups"
+    },
     "--color-primary-action": {
       "replacement": "color.bg.brand.emphasis",
       "component": "Primary buttons"
@@ -596,8 +688,14 @@
       "replacement": "color.fg.muted.pressed",
       "component": "Disclosure summaries"
     },
-    "--color-radio": { "replacement": "color.bg.brand.emphasis", "component": "Radios" },
-    "--color-radio-detail": { "replacement": "color.fg.muted", "component": "Radios" },
+    "--color-radio": {
+      "replacement": "color.bg.brand.emphasis",
+      "component": "Radios"
+    },
+    "--color-radio-detail": {
+      "replacement": "color.fg.muted",
+      "component": "Radios"
+    },
     "--color-radio-hover": {
       "replacement": "color.bg.brand.emphasis.hover",
       "component": "Radios"
@@ -606,32 +704,44 @@
       "replacement": "color.bg.brand.emphasis.pressed",
       "component": "Radios"
     },
-    "--color-radio-row": { "replacement": "color.bg.muted", "component": "Radio rows" },
-    "--color-radio-row-hover": { "replacement": "color.bg.muted.hover", "component": "Radio rows" },
+    "--color-radio-row": {
+      "replacement": "color.bg.muted",
+      "component": "Radio rows"
+    },
+    "--color-radio-row-hover": {
+      "replacement": "color.bg.muted.hover",
+      "component": "Radio rows"
+    },
     "--color-radio-row-pressed": {
       "replacement": "color.bg.muted.pressed",
       "component": "Radio rows"
     },
-    "--color-radio-text": { "replacement": "color.fg.default", "component": "Radios" },
+    "--color-radio-text": {
+      "replacement": "color.fg.default",
+      "component": "Radios"
+    },
     "--color-row": {
       "replacement": "color.list-item.bg",
       "component": "List rows",
-      "note": "A component token: the default surface in light, the muted one in dark."
+      "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-alternate": {
       "replacement": "color.bg.raised",
       "component": "List rows on a contrasting surface"
     },
-    "--color-row-detail": { "replacement": "color.fg.muted", "component": "List rows" },
+    "--color-row-detail": {
+      "replacement": "color.fg.muted",
+      "component": "List rows"
+    },
     "--color-row-hover": {
       "replacement": "color.list-item.bg.hover",
       "component": "List rows",
-      "note": "A component token: the default surface in light, the muted one in dark."
+      "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-pressed": {
       "replacement": "color.list-item.bg.pressed",
       "component": "List rows",
-      "note": "A component token: the default surface in light, the muted one in dark."
+      "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-selected-hover": {
       "replacement": "color.bg.selected.hover",
@@ -641,7 +751,10 @@
       "replacement": "color.bg.selected.pressed",
       "component": "Tree and table rows"
     },
-    "--color-row-text": { "replacement": "color.fg.default", "component": "List rows" },
+    "--color-row-text": {
+      "replacement": "color.fg.default",
+      "component": "List rows"
+    },
     "--color-secondary-action": {
       "replacement": "color.bg.neutral.muted",
       "component": "Secondary buttons"
@@ -654,7 +767,10 @@
       "replacement": "color.bg.neutral.muted.pressed",
       "component": "Secondary buttons"
     },
-    "--color-select-option": { "replacement": "color.bg.popup", "component": "Select options" },
+    "--color-select-option": {
+      "replacement": "color.bg.popup",
+      "component": "Select options"
+    },
     "--color-select-option-hover": {
       "replacement": "color.bg.popup.hover",
       "component": "Select options"
@@ -679,15 +795,27 @@
       "replacement": "color.bg.selected.pressed",
       "component": "Select options"
     },
-    "--color-skeleton-base": { "replacement": "color.bg.neutral.muted", "component": "Skeletons" },
+    "--color-skeleton-base": {
+      "replacement": "color.bg.neutral.muted",
+      "component": "Skeletons"
+    },
     "--color-skeleton-highlight": {
       "replacement": "color.bg.neutral.muted.hover",
       "component": "Skeletons"
     },
-    "--color-state-layer": { "replacement": "color.fg.default" },
-    "--color-state-layer-hover": { "replacement": "color.bg.neutral.subtle.hover" },
-    "--color-state-layer-pressed": { "replacement": "color.bg.neutral.subtle.pressed" },
-    "--color-subtle-action": { "replacement": "color.bg.raised", "component": "Outlined buttons" },
+    "--color-state-layer": {
+      "replacement": "color.fg.default"
+    },
+    "--color-state-layer-hover": {
+      "replacement": "color.bg.neutral.subtle.hover"
+    },
+    "--color-state-layer-pressed": {
+      "replacement": "color.bg.neutral.subtle.pressed"
+    },
+    "--color-subtle-action": {
+      "replacement": "color.bg.raised",
+      "component": "Outlined buttons"
+    },
     "--color-subtle-action-border": {
       "replacement": "color.border.default",
       "component": "Outlined buttons"
@@ -708,9 +836,16 @@
       "replacement": "color.bg.raised.pressed",
       "component": "Outlined buttons"
     },
-    "--color-surface": { "replacement": "color.bg.raised" },
-    "--color-surface-muted": { "replacement": "color.bg.muted" },
-    "--color-switch-off": { "replacement": "color.bg.neutral.muted", "component": "Switches" },
+    "--color-surface": {
+      "replacement": "color.bg.raised"
+    },
+    "--color-surface-muted": {
+      "replacement": "color.bg.muted"
+    },
+    "--color-switch-off": {
+      "replacement": "color.bg.neutral.muted",
+      "component": "Switches"
+    },
     "--color-switch-off-hover": {
       "replacement": "color.bg.neutral.muted.hover",
       "component": "Switches"
@@ -734,59 +869,100 @@
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
-    "--color-switch-text": { "replacement": "color.fg.default", "component": "Switches" },
-    "--color-switch-thumb": { "replacement": "color.fg.control", "component": "Switches" },
+    "--color-switch-text": {
+      "replacement": "color.fg.default",
+      "component": "Switches"
+    },
+    "--color-switch-thumb": {
+      "replacement": "color.fg.control",
+      "component": "Switches"
+    },
     "--color-switch-thumb-on": {
       "replacement": "color.fg.on-emphasis",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
-    "--color-text-muted": { "replacement": "color.fg.muted" },
-    "--color-text-primary": { "replacement": "color.fg.default" },
-    "--color-text-quiet": { "replacement": "color.fg.muted" },
-    "--color-text-strong": { "replacement": "color.fg.control" },
-    "--color-toast-error": { "replacement": "color.bg.danger.strong", "component": "Toasts" },
-    "--color-toast-info": { "replacement": "color.bg.info.strong", "component": "Toasts" },
+    "--color-text-muted": {
+      "replacement": "color.fg.muted"
+    },
+    "--color-text-primary": {
+      "replacement": "color.fg.default"
+    },
+    "--color-text-quiet": {
+      "replacement": "color.fg.muted"
+    },
+    "--color-text-strong": {
+      "replacement": "color.fg.control"
+    },
+    "--color-toast-error": {
+      "replacement": "color.bg.danger.strong",
+      "component": "Toasts"
+    },
+    "--color-toast-info": {
+      "replacement": "color.bg.info.strong",
+      "component": "Toasts"
+    },
     "--color-toast-neutral": {
       "replacement": "color.bg.neutral.strong",
       "component": "Toasts and tooltips"
     },
-    "--color-toast-success": { "replacement": "color.bg.success.strong", "component": "Toasts" },
-    "--color-tone-accent": { "replacement": "color.fg.accent" },
-    "--color-tone-danger": { "replacement": "color.fg.danger" },
-    "--color-tone-done": { "replacement": "color.fg.done" },
-    "--color-tone-neutral": { "replacement": "color.fg.muted" },
-    "--color-tone-success": { "replacement": "color.fg.success" },
-    "--color-tone-warning": { "replacement": "color.fg.warning" },
-    "--color-white": { "value": "#ffffff", "component": "Fixed white" }
+    "--color-toast-success": {
+      "replacement": "color.bg.success.strong",
+      "component": "Toasts"
+    },
+    "--color-tone-accent": {
+      "replacement": "color.fg.accent"
+    },
+    "--color-tone-danger": {
+      "replacement": "color.fg.danger"
+    },
+    "--color-tone-done": {
+      "replacement": "color.fg.done"
+    },
+    "--color-tone-neutral": {
+      "replacement": "color.fg.muted"
+    },
+    "--color-tone-success": {
+      "replacement": "color.fg.success"
+    },
+    "--color-tone-warning": {
+      "replacement": "color.fg.warning"
+    },
+    "--color-white": {
+      "value": "#ffffff",
+      "component": "Fixed white"
+    }
   },
   "removed": {
+    "--env-stack-gap": {
+      "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
+    },
     "--env-sidebar-width": {
-      "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
+      "note": "AppShell and Sidebar are gone: the navigation forms, Bar, Rail and Drawer, size themselves; side content goes in a Panes supporting pane."
     },
     "--env-sidebar-expanded-width": {
-      "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
+      "note": "AppShell and Sidebar are gone: the navigation forms, Bar, Rail and Drawer, size themselves; side content goes in a Panes supporting pane."
     },
     "--env-sidebar-collapsed-width": {
-      "note": "A sidebar's rail is --env-control-height plus two --env-sidebar-inset wide; set --env-sidebar-inset to change it."
+      "note": "Sidebar is gone: Rail, the navigation form for medium windows, has a width of its own."
     },
     "--env-sidebar-content-width": {
-      "note": "AppShell no longer measures its sidebar: Sidebar.Root's content width fits its content between minWidth and maxWidth."
+      "note": "Sidebar is gone: the navigation forms, Bar, Rail and Drawer, size themselves."
     },
     "--env-app-divider": {
-      "note": "The frame's hairlines follow AppShell.Root's dividers prop."
+      "note": "AppShell is gone, and no line sets the frame's regions apart: the navigation and the top bar fill the navigation's background, or each the page's with background=\"page\". Panes.Divider is the gap between panes, with a grip."
     },
     "--env-app-control-height": {
-      "note": "The frame's rails line up on --env-control-height, which a title bar's small controls keep."
+      "note": "AppShell is gone: a TopBar with titleBar keeps the small control height."
     },
     "--env-app-toggle-size": {
-      "note": "SidebarTrigger is an IconButton: give it a size, or let a coarse pointer grow it to 44 px."
+      "note": "SidebarTrigger is gone: open a navigation drawer from an IconButton, and give it a size."
     },
     "--env-split-view-gutter": {
-      "note": "SplitPane has no gutter: its handle has a width of its own, and stacked panes have a hairline between them rather than a gap."
+      "note": "SplitView is gone: Panes has no gutter; Panes.Divider has a width of its own."
     },
     "--env-split-view-size": {
-      "note": "SplitPane sets --env-split-pane-size from size and unit, with the unit, such as 30% rather than 30: set size or defaultSize on SplitPane.Root instead."
+      "note": "SplitView is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
     },
     "--state-lightness-direction": {
       "replacement": null,
@@ -812,8 +988,14 @@
       "replacement": null,
       "note": "The runtime hover rule is gone."
     },
-    "--state-hover-shift": { "replacement": null, "note": "The runtime hover rule is gone." },
-    "--state-pressed-shift": { "replacement": null, "note": "The runtime hover rule is gone." },
+    "--state-hover-shift": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-pressed-shift": {
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
     "--state-surface-hover-shift": {
       "replacement": null,
       "note": "The runtime hover rule is gone."
@@ -850,15 +1032,42 @@
       "replacement": "color.bg.neutral.muted",
       "note": "The neutral fill is a translucent color token; layer it over a surface rather than mixing."
     },
-    "--state-card-strip-weight": { "replacement": null, "note": "Unused." },
-    "--state-selected-base-weight": { "replacement": null, "note": "Unused." },
-    "--member-identity-avatar-size": { "replacement": null, "note": "Unused." },
-    "--member-identity-copy-height": { "replacement": null, "note": "Unused." },
-    "--member-identity-email-line-height": { "replacement": null, "note": "Unused." },
-    "--member-identity-email-size": { "replacement": null, "note": "Unused." },
-    "--member-identity-gap": { "replacement": null, "note": "Unused." },
-    "--member-identity-name-line-height": { "replacement": null, "note": "Unused." },
-    "--member-identity-name-size": { "replacement": null, "note": "Unused." },
+    "--state-card-strip-weight": {
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--state-selected-base-weight": {
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--member-identity-avatar-size": {
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--member-identity-copy-height": {
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--member-identity-email-line-height": {
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--member-identity-email-size": {
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--member-identity-gap": {
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--member-identity-name-line-height": {
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--member-identity-name-size": {
+      "replacement": null,
+      "note": "Unused."
+    },
     "--scale": {
       "replacement": null,
       "note": "The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."
@@ -870,6 +1079,81 @@
     "--surface-card-padding": {
       "replacement": null,
       "note": "Internal to the 0.7 card. Set a card's padding with its padding prop."
+    },
+    "--app-sticky-top": {
+      "note": "Sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
+    },
+    "--env-app-sticky-top": {
+      "note": "Sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
+    },
+    "--env-app-topbar-block-size": {
+      "note": "TopBar is --env-top-bar-height tall; the Scaffold measures its top bar region and sets --env-scaffold-sticky-top from it."
+    },
+    "--env-frame-sticky-top": {
+      "note": "AppShell and WindowFrame are gone: sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
+    },
+    "--env-frame-header-block-size": {
+      "note": "AppShell and WindowFrame are gone: TopBar is --env-top-bar-height tall; the Scaffold measures its top bar region and sets --env-scaffold-sticky-top from it."
+    },
+    "--env-app-shell-block-size": {
+      "note": "AppShell is gone: Scaffold fills 100dvh; give it another block-size with your own class."
+    },
+    "--env-sidebar-inset": {
+      "note": "Sidebar is gone: the navigation forms, Bar, Rail and Drawer, keep their own insets."
+    },
+    "--env-split-pane-size": {
+      "note": "SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
+    },
+    "--env-breakpoint-sm": {
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-md": {
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-lg": {
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-xl": {
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-app-shell-header-divider": {
+      "note": "AppShell is gone: a TopBar draws no divider of its own; give it a border with your own class."
+    },
+    "--env-app-shell-loading-bar-offset": {
+      "note": "AppShell is gone: TopBar's loading bar runs along its bottom edge."
+    },
+    "--env-split-pane-handle": {
+      "note": "SplitPane is gone: Panes.Divider, env-panes-divider, is the divider that resizes the panes."
+    },
+    "--env-window-frame-title-bar-left": {
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+    },
+    "--env-window-frame-title-bar-right": {
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+    },
+    "--elevation-0-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--elevation-1-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--elevation-2-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--elevation-3-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-0-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-1-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-2-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-3-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     }
   }
 }

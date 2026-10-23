@@ -81,6 +81,7 @@ test('a component runs the spec of its name, or of the name its alias gives', ()
   assert.deepEqual(specs('packages/ui/src/foundations/Theme.tsx'), [
     'ThemeContrast',
     'ThemePreference',
+    'WindowClasses',
   ]);
   // Names match as written, whatever the file system: messages/table.ts is not about Table.
   assert.deepEqual(specs('packages/ui/src/foundations/messages/table.ts'), ['Messages']);
@@ -100,7 +101,6 @@ test('a shared file runs the shared set, and an unknown file runs no spec', () =
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
   assert.deepEqual(specs('tests/browser/Tree.spec.ts'), ['Tree']);
-  assert.deepEqual(specs('tests/browser/TemplateChecks.ts'), ['Templates']);
   // Every spec imports Servers.ts: verify covers it.
   assert.deepEqual(specs('tests/browser/Servers.ts'), []);
 });
@@ -116,6 +116,13 @@ test('the catalogue runs its specs and live development, with the builds they op
   assert.equal(specNeeds('LiveDevelopment').live, true);
   assert.equal(specNeeds('Hydration').library, true);
   assert.equal(selectScope(['tests/browser/Hydration.spec.ts']).build.library, true);
+});
+
+test('the examples, the pages that place them and dev mode run the layout check', () => {
+  assert.deepEqual(specs('docs/components/card.md'), ['LayoutCheck']);
+  assert.ok(specs('apps/catalogue/src/examples/card/ProjectSummary.tsx').includes('LayoutCheck'));
+  assert.ok(specs('packages/ui/src/dev/measure.ts').includes('LayoutCheck'));
+  assert.equal(specNeeds('LayoutCheck').whole, true);
 });
 
 test('static checks cover the changed files, and configuration the whole of its check', () => {

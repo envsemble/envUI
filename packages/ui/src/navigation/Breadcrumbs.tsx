@@ -12,6 +12,7 @@ import {
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -132,21 +133,27 @@ export function Breadcrumbs({
       className={classNames('env-breadcrumbs', className)}
       data-nowrap={wrap ? undefined : ''}
     >
-      <ol className="env-breadcrumbs-list">
+      <Row render={<ol />} wrap={wrap} align="center" gap={1} className="env-breadcrumbs-list">
         {items.map((item, index) => {
           const current = index === items.length - 1;
           return (
-            <li key={index} className="env-breadcrumbs-item">
+            <Row
+              key={index}
+              render={<li />}
+              align="center"
+              gap={1}
+              className="env-breadcrumbs-item"
+            >
               <Crumb item={item} current={current} />
               {!current && (
                 <span className="env-icon env-breadcrumbs-separator" aria-hidden="true">
                   <ChevronRight />
                 </span>
               )}
-            </li>
+            </Row>
           );
         })}
-      </ol>
+      </Row>
     </nav>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Stack } from '@envsemble/envui';
+import { Button, Column } from '@envsemble/envui';
 import {
   CodeBlock,
   Markdown,
@@ -51,7 +51,7 @@ export function MarkdownEditingFixture() {
   const [requiredSubmissions, setRequiredSubmissions] = useState(0);
   const [block, setBlock] = useState<string | null>(null);
   return (
-    <Stack render={<section />} className="fixture-section" data-testid="markdown-editing">
+    <Column gap={4} render={<section />} className="fixture-section" data-testid="markdown-editing">
       <form
         data-testid="markdown-form"
         onSubmit={(event) => {
@@ -110,7 +110,7 @@ export function MarkdownEditingFixture() {
         <Button onClick={() => setBlock(null)}>Remove code workload</Button>
         {block !== null && <CodeBlock language="javascript">{block}</CodeBlock>}
       </div>
-    </Stack>
+    </Column>
   );
 }
 

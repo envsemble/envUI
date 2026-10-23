@@ -112,12 +112,16 @@ export function runWithTimeout(
   });
 }
 
-/** Runs a short command synchronously and returns trimmed stdout. */
+/**
+ * Runs a short command synchronously and returns trimmed stdout, or an empty string when the
+ * caller passes stdout through (`stdio: 'inherit'`).
+ */
 export function run(file, args, options = {}) {
-  return execFileSync(file, args, {
+  const output = execFileSync(file, args, {
     encoding: 'utf8',
     maxBuffer: 64 * 1024 * 1024,
     stdio: ['ignore', 'pipe', 'pipe'],
     ...options,
-  }).trim();
+  });
+  return output?.trim() ?? '';
 }

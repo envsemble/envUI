@@ -5,7 +5,7 @@ export function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <Text as="strong">Workspace</Text>
+        <Text render={<strong />}>Workspace</Text>
       </header>
       <main className="app-main">
         <ProjectsPage />

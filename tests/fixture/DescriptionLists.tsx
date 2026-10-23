@@ -1,19 +1,19 @@
 import { useState } from 'react';
-import { Badge, Button, DescriptionList, Select, Stack } from '@envsemble/envui';
+import { Badge, Button, DescriptionList, Select, Column, Row } from '@envsemble/envui';
 
 /** Description lists: one whose container the test narrows, a stacked one, and one with controls. */
 export function DescriptionListsFixture() {
   const [width, setWidth] = useState('40rem');
   return (
-    <Stack gap={5} className="fixture-section">
-      <Stack direction="row" gap={2}>
+    <Column gap={5} className="fixture-section">
+      <Row gap={2}>
         <Button variant="secondary" onClick={() => setWidth('40rem')}>
           Wide list
         </Button>
         <Button variant="secondary" onClick={() => setWidth('16rem')}>
           Narrow list
         </Button>
-      </Stack>
+      </Row>
       <div style={{ inlineSize: width }}>
         <DescriptionList.Root data-testid="auto" aria-label="Project facts">
           <DescriptionList.Item label="Owner">Alex Morgan</DescriptionList.Item>
@@ -41,6 +41,6 @@ export function DescriptionListsFixture() {
         </DescriptionList.Item>
         <DescriptionList.Item label="Owner">Priya Shah</DescriptionList.Item>
       </DescriptionList.Root>
-    </Stack>
+    </Column>
   );
 }

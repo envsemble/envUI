@@ -71,7 +71,7 @@
 }
 .docs-measure {
   display: grid;
-  grid-template-columns: minmax(0, 0.6fr) minmax(0, 0.45fr) minmax(0, 1fr);
+  grid-template-columns: minmax(max-content, 0.6fr) minmax(max-content, 0.45fr) minmax(0, 1fr);
   gap: 0.5rem;
   align-items: center;
   font: var(--env-type-body-small);
@@ -131,8 +131,8 @@
   align-items: center;
   text-align: center;
 }
-/* Leave the source grid usable beside its non-modal inspector on desktop. */
-@media (min-width: 76rem) {
+/* Leave the source grid usable beside its non-modal inspector in a large window. */
+@container env-window (width >= 75rem) {
   body:has(.docs-icon-details) .docs-main {
     padding-inline-end: 24rem;
   }

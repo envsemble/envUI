@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode, Ref } from 'react';
 import { classNames } from '../../internal/classNames.js';
+import { Grid } from '../../foundations/Layout.js';
 import {
   PopupSurface,
   type PopupAlign,
@@ -15,7 +16,8 @@ import {
 export function renderMenuPopup(label: string | undefined) {
   return function renderPopup(props: ComponentPropsWithRef<'div'>) {
     return (
-      <div
+      <Grid
+        padding={1}
         {...props}
         aria-labelledby={label === undefined ? props['aria-labelledby'] : undefined}
         aria-label={label}
@@ -43,6 +45,7 @@ export interface MenuPopupProps {
   popupRef?: Ref<HTMLDivElement>;
   /** More props for the popup element, such as style and data attributes. */
   popupProps?: Record<string, unknown>;
+  skeleton?: boolean;
   children?: ReactNode;
 }
 
@@ -63,6 +66,7 @@ export function MenuPopup({
   className,
   popupRef,
   popupProps,
+  skeleton,
   children,
 }: MenuPopupProps) {
   return (
@@ -80,6 +84,7 @@ export function MenuPopup({
       className={classNames('env-menu', className)}
       positionerClassName="env-menu-positioner"
       popupProps={{ ...popupProps, ref: popupRef, render: renderMenuPopup(label) }}
+      skeleton={skeleton}
     >
       {children}
     </PopupSurface>

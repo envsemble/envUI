@@ -1,7 +1,4 @@
 {
-  "env-organization-menu": "env-organization-switcher",
-  "env-organization-trigger": "env-organization-switcher-trigger",
   "env-menu-item-trailing": "env-menu-item-end",
-  "env-organization-menu-detail": "env-organization-switcher-description",
   "env-menu-theme": "env-popup-theme"
 }

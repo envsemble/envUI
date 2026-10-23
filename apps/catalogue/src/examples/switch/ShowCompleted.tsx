@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { List, Stack, Switch } from '@envsemble/envui';
+import { List, Column, Switch } from '@envsemble/envui';
 
 const tasks = [
   { id: 'brief', title: 'Write the launch brief', done: true },
@@ -12,14 +12,12 @@ export default function ShowCompleted() {
   const [showCompleted, setShowCompleted] = useState(false);
   const shown = showCompleted ? tasks : tasks.filter((task) => !task.done);
   return (
-    <Stack gap={3}>
-      <Stack align="start">
-        <Switch
-          label="Show completed tasks"
-          checked={showCompleted}
-          onCheckedChange={setShowCompleted}
-        />
-      </Stack>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
+      <Switch
+        label="Show completed tasks"
+        checked={showCompleted}
+        onCheckedChange={setShowCompleted}
+      />
       <List.Root aria-label="Tasks">
         {shown.map((task) => (
           <List.Item
@@ -29,6 +27,6 @@ export default function ShowCompleted() {
           />
         ))}
       </List.Root>
-    </Stack>
+    </Column>
   );
 }

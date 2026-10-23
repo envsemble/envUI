@@ -13,16 +13,9 @@ import { CardsFixture } from './Cards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
 import { AdoptionFixture } from './Adoption.js';
-import {
-  AppShellFixture,
-  FramedAppShellFixture,
-  FullShellFixture,
-  LoadingFrameFixture,
-  ScrollKeysFixture,
-  TwoAppShellsFixture,
-} from './AppShells.js';
-import { SidebarRailsFixture, SidebarsFixture } from './Sidebars.js';
-import { WindowFrameFixture } from './WindowFrames.js';
+import { ScaffoldFixture, ScrollKeysFixture } from './Scaffolds.js';
+import { ScaffoldPanesFixture } from './ScaffoldPanes.js';
+import { PanesFixture } from './Panes.js';
 import { CodeBlockFixture } from './CodeBlocks.js';
 import { MarkdownFixture } from './Markdowns.js';
 import { MenusFixture } from './Menus.js';
@@ -53,7 +46,6 @@ import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
-import { StatsFixture } from './Stats.js';
 import { DropZonesFixture } from './DropZones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
 import { CalendarHeatmapFixture } from './CalendarHeatmaps.js';
@@ -67,12 +59,12 @@ import { DatePickerFixture } from './DatePickers.js';
 import { TimePickersFixture } from './TimePickers.js';
 import { MonthPickersFixture } from './MonthPickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
-import { EmptyStatesFixture } from './EmptyStates.js';
-import { DrawersFixture } from './Drawers.js';
+import { SheetsFixture } from './Sheets.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
 import { DisclosuresFixture } from './Disclosures.js';
+import { AccordionsFixture } from './Accordions.js';
 import { DensityFixture } from './Density.js';
 import { ChoiceControlsFixture } from './ChoiceControls.js';
 import { StackingFixture } from './Stacking.js';
@@ -80,14 +72,16 @@ import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
-import { SplitPanesFixture } from './SplitPanes.js';
 import { PageHeadersFixture } from './PageHeaders.js';
 import { DescriptionListsFixture } from './DescriptionLists.js';
 import { ContainerSizeFixture } from './ContainerSize.js';
 import { SearchTriggersFixture } from './SearchTriggers.js';
-import { AccountMenuShellFixture, AccountMenusFixture } from './AccountMenus.js';
 import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
+import { PortalContainersFixture } from './PortalContainers.js';
 import { ListsFixture } from './Lists.js';
+import { DevModeFixture } from './DevMode.js';
+import { SkeletonsFixture } from './Skeletons.js';
+import { LayoutCheckFixture } from './LayoutCheck.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -98,20 +92,16 @@ import {
 
 /** Fixtures that fill the viewport, or need it to themselves, are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
-  'app-shell': AppShellFixture,
-  'two-app-shells': TwoAppShellsFixture,
-  'framed-app-shell': FramedAppShellFixture,
-  'full-shell': FullShellFixture,
-  'loading-frame': LoadingFrameFixture,
-  'sidebar-rails': SidebarRailsFixture,
-  sidebars: SidebarsFixture,
-  'window-frame': WindowFrameFixture,
   'code-block': CodeBlockFixture,
   'markdown-tables': MarkdownFixture,
+  scaffold: ScaffoldFixture,
   'scroll-keys': ScrollKeysFixture,
+  'scaffold-panes': ScaffoldPanesFixture,
+  panes: PanesFixture,
   density: DensityFixture,
   'choice-controls': ChoiceControlsFixture,
   stacking: StackingFixture,
+  'portal-containers': PortalContainersFixture,
   'responsive-hooks': ResponsiveHooksFixture,
   primitives: PrimitivesFixture,
   'message-strings': MessageStringsFixture,
@@ -120,20 +110,21 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'rtl-document-tabs': RtlDocumentTabsFixture,
   'document-tabs-rerender': DocumentTabsRerenderFixture,
   pagers: PagersFixture,
-  drawers: DrawersFixture,
+  sheets: SheetsFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
-  'split-panes': SplitPanesFixture,
   'page-headers': PageHeadersFixture,
   'description-lists': DescriptionListsFixture,
   'container-size': ContainerSizeFixture,
   'search-triggers': SearchTriggersFixture,
-  'account-menus': AccountMenusFixture,
-  'account-menu-shell': AccountMenuShellFixture,
   'confirm-dialogs': ConfirmDialogsFixture,
   lists: ListsFixture,
   'time-pickers': TimePickersFixture,
   'month-pickers': MonthPickersFixture,
+  'dev-mode': DevModeFixture,
+  'layout-check': LayoutCheckFixture,
+  skeletons: SkeletonsFixture,
+  accordions: AccordionsFixture,
 };
 
 export default function App() {
@@ -305,12 +296,6 @@ export default function App() {
               <MessagesFixture theme="dark" />
             </>
           )}
-          {includes('stats') && (
-            <>
-              <StatsFixture theme="light" />
-              <StatsFixture theme="dark" />
-            </>
-          )}
           {includes('drop-zones') && (
             <>
               <DropZonesFixture theme="light" />
@@ -387,12 +372,6 @@ export default function App() {
             <>
               <RatingsFixture theme="light" />
               <RatingsFixture theme="dark" />
-            </>
-          )}
-          {includes('empty-states') && (
-            <>
-              <EmptyStatesFixture theme="light" />
-              <EmptyStatesFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

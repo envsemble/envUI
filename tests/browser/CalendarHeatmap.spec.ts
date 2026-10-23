@@ -391,15 +391,17 @@ test(
     await page.goto(heatmapFixture);
     const heatmap = page.getByTestId('calendar-heatmap-year-light');
     const scroller = heatmap.locator('.env-calendar-heatmap-scroll');
-    // It stays at the end while the weeks settle, such as when the web font loads.
+    // It starts and stays at the end while the weeks settle, such as when the web font loads: the
+    // scroller is a reversed row, whose scroll origin is its end, so no script scrolls it.
     await expect
       .poll(() =>
         scroller.evaluate((element) => ({
           scrolls: element.scrollWidth > element.clientWidth,
-          atEnd: Math.abs(element.scrollLeft + element.clientWidth - element.scrollWidth) < 2,
+          atEnd: Math.abs(element.scrollLeft) < 2,
+          reversed: getComputedStyle(element).flexDirection,
         })),
       )
-      .toEqual({ scrolls: true, atEnd: true });
+      .toEqual({ scrolls: true, atEnd: true, reversed: 'row-reverse' });
     const box = (await scroller.boundingBox())!;
     const last = (await heatmap.locator('td[data-date="2026-10-10"]').boundingBox())!;
     expect(last.x + last.width).toBeLessThanOrEqual(box.x + box.width + 1);

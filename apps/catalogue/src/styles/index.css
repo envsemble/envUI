@@ -5,4 +5,7 @@
 @import './Foundations.css';
 @import './InteractionStates.css';
 @import './Template.css';
+@import './Stage.css';
+@import './Figures.css';
+@import './WhenToUse.css';
 @import './Responsive.css';

@@ -140,7 +140,7 @@ function searchDocuments(manifest) {
         text: [],
       },
     });
-  for (const kind of ['pattern', 'template', 'foundation', 'guide']) {
+  for (const kind of ['pattern', 'foundation', 'guide']) {
     for (const page of manifest[`${kind}s`] ?? [])
       documents.push({
         kind,
@@ -151,7 +151,7 @@ function searchDocuments(manifest) {
           name: [...terms(page.title), ...terms(page.name)],
           alias: (page.aliases ?? []).flatMap(terms),
           summary: terms(page.summary),
-          // A pattern or template is for the situations of its useWhen, and is found by what it
+          // A pattern is for the situations of its useWhen, and is found by what it
           // composes and the intent it serves.
           use: (page.useWhen ?? []).flatMap(terms),
           text: [
@@ -207,7 +207,6 @@ const kindFactor = {
   component: 1,
   export: 1,
   pattern: 1,
-  template: 1,
   foundation: 0.7,
   guide: 0.6,
   token: 0.5,
@@ -344,22 +343,11 @@ export function summarize(manifest, kind, item) {
       composes: item.composes,
       doc: item.doc,
     };
-  if (kind === 'template')
-    return {
-      name: item.name,
-      title: item.title,
-      summary: item.summary,
-      status: item.status,
-      frame: item.frame,
-      composes: item.composes,
-      files: (item.files ?? []).map((file) => file.name),
-      doc: item.doc,
-    };
   return { name: item.name, title: item.title, summary: item.summary, doc: item.doc };
 }
 
 /**
- * A pattern or template page by its name, title or alias; `requested` is the alias it was found
+ * A pattern page by its name, title or alias; `requested` is the alias it was found
  * by, when it was.
  */
 export function findPage(manifest, kind, name) {
@@ -480,7 +468,7 @@ function clauses(sentence) {
 
 /**
  * Words that name the structure of a screen rather than an element on it. A part such as "a
- * sign-in page" leads to templates and patterns; its other words still pick components.
+ * sign-in page" leads to patterns; its other words still pick components.
  */
 const structuralTerms = new Set(['page', 'screen', 'view', 'flow']);
 
@@ -592,7 +580,7 @@ const plannable = (manifest, hit) => {
 
 /**
  * Candidates for a UI description: for each part of it, the component whose names, aliases or
- * description match it, with the words that matched; the patterns and templates that fit the
+ * description match it, with the words that matched; the patterns that fit the
  * whole; tokens it names; the parts nothing matched; and what was left out as content. They are
  * matches on words, not an import list: each is to be confirmed with get_component and get_props.
  *
@@ -658,7 +646,7 @@ export function plan(manifest, description, { limit = 12 } = {}) {
     if (structural) structure.push(part);
     const first = pick(hits, shape);
     // A part whose words are at least half in a phrase its sentence already named belongs to that, as
-    // "links" in "a sidebar with links" belongs to NavList. Only the phrase's own words count, so
+    // "links" in "a sidebar with links" belongs to the navigation. Only the phrase's own words count, so
     // the button of "a Delete button and a confirm dialog" stays a Button.
     const claim = claims.find(
       (item) =>
@@ -670,7 +658,7 @@ export function plan(manifest, description, { limit = 12 } = {}) {
       continue;
     }
     // In a part about structure, such as "a settings page", only a component named outright
-    // counts; the rest of it is for templates and patterns.
+    // counts; the rest of it is for patterns.
     if (!first || (structural && !first.named)) {
       (structural ? structureOnly : uncovered).push(part);
       continue;
@@ -716,14 +704,12 @@ export function plan(manifest, description, { limit = 12 } = {}) {
     });
   const pages = (kind) =>
     search(manifest, description, { kinds: [kind], limit: 3 }).filter((hit) => hit.score >= 12);
-  const templates = pages('template');
   const patterns = pages('pattern');
-  // A part that names only a structure is covered by a template or pattern, or not at all.
-  if (!templates.length && !patterns.length) uncovered.push(...structureOnly);
+  // A part that names only a structure is covered by a pattern, or not at all.
+  if (!patterns.length) uncovered.push(...structureOnly);
   return {
     candidates,
     patterns,
-    templates,
     tokens: styleTerms(description).length
       ? search(manifest, styleTerms(description).join(' '), { kinds: ['token'], limit: 12 })
           .filter((hit) => !/\.(?:hover|pressed)$/.test(hit.name))
@@ -734,16 +720,16 @@ export function plan(manifest, description, { limit = 12 } = {}) {
     next: [
       'These are candidates matched on words, not an import list: confirm each with get_component (when to use it, and what to use instead) and get_props before writing code, and use only exports these tools confirm exist.',
       uncovered.length
-        ? 'For the uncovered parts, search in other words, then compose envUI components (Stack, Surface, List, Card) and tokens; if something is still missing, propose an envUI addition instead of a local copy.'
+        ? 'For the uncovered parts, search in other words, then compose envUI components (Row, Column, Grid, Surface, List, Card) and tokens; if something is still missing, propose an envUI addition instead of a local copy.'
         : undefined,
       ignored.length
         ? 'The ignored words read as content, such as labels or code; search them if they name an element.'
         : undefined,
-      templates.length
-        ? `Start from get_template ${templates[0].name}: copy its screen and edit it, rather than laying the page out from scratch.`
+      patterns.length
+        ? `Read the ${patterns[0].name} pattern with get_example: it shows how envUI's components combine for it.`
         : undefined,
-      structure.length && !templates.length
-        ? `No template matches ${structure.map((part) => `"${part}"`).join(', ')}: lay the page out with AppShell.Root, Page and Stack around the components.`
+      structure.length && !patterns.length
+        ? `No pattern matches ${structure.map((part) => `"${part}"`).join(', ')}: lay the page out with Scaffold, Page, Panes, Row, Column and Grid around the components.`
         : undefined,
     ].filter(Boolean),
   };

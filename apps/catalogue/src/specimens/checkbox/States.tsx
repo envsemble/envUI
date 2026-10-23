@@ -1,5 +1,5 @@
-import { Checkbox, Stack } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Checkbox } from '@envsemble/envui';
+import { Example } from '../../previews/Example';
 
 const states = [
   { title: 'Unchecked', checked: false },
@@ -7,26 +7,36 @@ const states = [
   { title: 'Mixed', checked: 'mixed' },
 ] as const;
 
-/** Each state enabled and disabled, and a label that wraps. */
+/** Each state, enabled and disabled. */
 export default function States() {
   return (
-    <Example title="Checkbox states" size="collection">
-      <SpecimenGrid size="compact">
-        {states.map(({ title, checked }) => (
-          <Specimen key={title} title={title}>
-            <Stack gap={3}>
-              <Checkbox label="Include archived projects" checked={checked} />
-              <Checkbox label="Include archived projects" checked={checked} disabled />
-            </Stack>
-          </Specimen>
-        ))}
-        <Specimen title="Long label">
-          <Checkbox
-            label="Send a copy of every comment on plans I follow to my e-mail address"
-            defaultChecked
-          />
-        </Specimen>
-      </SpecimenGrid>
+    <Example size="wide">
+      <div className="docs-matrix-scroll" tabIndex={0} role="region" aria-label="Checkbox states">
+        <table className="docs-matrix">
+          <thead>
+            <tr>
+              <th scope="col">State</th>
+              {states.map(({ title }) => (
+                <th scope="col" key={title}>
+                  {title}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {[false, true].map((disabled) => (
+              <tr key={String(disabled)}>
+                <th scope="row">{disabled ? 'Disabled' : 'Enabled'}</th>
+                {states.map(({ title, checked }) => (
+                  <td key={title}>
+                    <Checkbox label="Archived" checked={checked} disabled={disabled} inert />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Example>
   );
 }

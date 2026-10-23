@@ -20,10 +20,25 @@ test('table regions are named after their heading, numbered where they share a n
     'Prices table 2',
     'Prices table 3',
   ]);
+  // Without a heading, a table is named after its first column.
+  await expectNames(page.getByTestId('narrow').getByRole('region'), ['Setting table']);
   const tasks = english.getByRole('checkbox');
   await expectNames(tasks, ['Completed task', 'Incomplete task']);
   // Tasks are envUI checkboxes, not small native boxes.
   await expect(tasks.first()).toHaveClass(/env-checkbox-input/);
+});
+
+test('a rule is a hairline across the whole text column', async ({ page }) => {
+  await page.goto(fixture);
+  const rule = page.getByTestId('english').locator('hr');
+  await expect(rule).toHaveCSS('border-top-width', '1px');
+  await expect(rule).toHaveCSS('border-top-style', 'solid');
+  await expect(rule).toHaveCSS('border-bottom-width', '0px');
+  const [own, column] = await rule.evaluate((element) => [
+    element.getBoundingClientRect().width,
+    element.closest('.env-prose')!.clientWidth,
+  ]);
+  expect(own).toBeCloseTo(column, 0);
 });
 
 test(

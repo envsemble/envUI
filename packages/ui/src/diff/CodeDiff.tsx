@@ -4,23 +4,26 @@ import { parseDiffFromFile, preloadHighlighter, registerCustomTheme } from '@pie
 import { File, FileDiff } from '@pierre/diffs/react';
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type RefObject,
 } from 'react';
 import { Button } from '../actions/Button.js';
 import {
-  codeBackground,
+  codeThemeName,
   codeThemeStyle,
-  diffTheme,
   type CodeContrast,
-} from '../content/internal/CodeThemes.js';
-import { EmptyState } from '../feedback/EmptyState.js';
+} from '../content/internal/CodeColors.js';
+import { diffTheme } from '../content/internal/CodeThemes.js';
+import { useCodeContrast } from '../content/internal/useCodeContrast.js';
+import { Column } from '../foundations/Layout.js';
+import { Text } from '../foundations/Text.js';
+import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { Error as ErrorIcon } from '../icons/Error.js';
 import { useTheme } from '../foundations/Theme.js';
-import { LoadingState } from '../feedback/LoadingState.js';
-import { Skeleton } from '../feedback/Skeleton.js';
+import { Spinner } from '../feedback/Spinner.js';
 import { Refresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
@@ -44,18 +47,18 @@ export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 }
 
 /**
- * Diffs paints its own background from the theme's editor color; it takes the code blocks'
- * background instead, so diffs and snippets match in both app themes.
+ * Diffs paints its own background from the theme's editor color; it takes the diff background
+ * instead, as the style sheet chooses it for the contrast.
  */
-const DIFF_BACKGROUND_CSS = `:host { --diffs-light-bg: ${codeBackground('light')}; --diffs-dark-bg: ${codeBackground('dark')}; }`;
+const DIFF_BACKGROUND_CSS = `:host { --diffs-light-bg: var(--env-code-background-now, var(--env-code-diff-background)); --diffs-dark-bg: var(--env-code-background-now, var(--env-code-diff-background)); }`;
 
 /** Side by side from this many rem of the diff's own width. */
 const SPLIT_FROM_REM = 56;
 
-/** The names of the readable Pierre themes of code diffs for a contrast, light and dark. */
+/** The names of the readable code themes of code diffs for a contrast, light and dark. */
 const diffThemeNames = (contrast: CodeContrast) => ({
-  light: diffTheme('light', contrast).name!,
-  dark: diffTheme('dark', contrast).name!,
+  light: codeThemeName('diff', 'light', contrast),
+  dark: codeThemeName('diff', 'dark', contrast),
 });
 let themesRegistered = false;
 /** Registers the diff themes with Diffs once, under their names; each is built when Diffs asks. */
@@ -65,60 +68,32 @@ function registerThemes() {
   for (const contrast of ['standard', 'high'] as const)
     for (const scheme of ['light', 'dark'] as const)
       registerCustomTheme(
-        `envui-pierre-diff-${scheme}${contrast === 'high' ? '-high' : ''}`,
+        codeThemeName('diff', scheme, contrast),
         async () => diffTheme(scheme, contrast) as never,
       );
 }
 
-/**
- * The contrast of the nearest Theme around an element, as the style sheet reads it: high where it
- * says so, standard where it says so, and otherwise high while the system asks for more contrast.
- * Diffs takes its colors as themes rather than from the style sheet, so it follows this.
- */
-function useCodeContrast(ref: RefObject<HTMLElement | null>): CodeContrast {
-  const { contrast: themeContrast } = useTheme();
-  const [contrast, setContrast] = useState<CodeContrast>(
-    themeContrast === 'high' ? 'high' : 'standard',
-  );
-  useEffect(() => {
-    const element = ref.current;
-    const theme = element?.closest('.env-theme');
-    const media = window.matchMedia?.('(prefers-contrast: more)');
-    const update = () => {
-      const attribute = theme?.getAttribute('data-env-contrast');
-      setContrast(
-        attribute === 'high' || (attribute !== 'standard' && media?.matches) ? 'high' : 'standard',
-      );
-    };
-    update();
-    media?.addEventListener('change', update);
-    const observer = new MutationObserver(update);
-    if (theme)
-      observer.observe(theme, { attributes: true, attributeFilter: ['data-env-contrast'] });
-    return () => {
-      media?.removeEventListener('change', update);
-      observer.disconnect();
-    };
-  }, [ref, themeContrast]);
-  return contrast;
-}
-
 let highlighterReady: Promise<void> | undefined;
 const loadedLanguages = new Set<string>();
+const loadedContrasts = new Set<CodeContrast>();
 
-function prepareHighlighter(language: string) {
-  if (loadedLanguages.has(language) && highlighterReady) return highlighterReady;
-  // The Pierre themes, readable on changed lines too; the app theme chooses between them.
+/**
+ * Loads a language and the themes of a contrast into Diffs' highlighter, adding to what it has:
+ * the high-contrast themes load only once a diff shows at high contrast.
+ */
+function prepareHighlighter(language: string, contrast: CodeContrast) {
+  if (loadedLanguages.has(language) && loadedContrasts.has(contrast) && highlighterReady)
+    return highlighterReady;
+  // The code themes, readable on changed lines too; the app theme chooses between them.
   registerThemes();
+  const contrasts = new Set([...loadedContrasts, contrast]);
   highlighterReady = preloadHighlighter({
     langs: [...loadedLanguages, language] as never,
-    themes: [
-      ...Object.values(diffThemeNames('standard')),
-      ...Object.values(diffThemeNames('high')),
-    ],
+    themes: [...contrasts].flatMap((each) => Object.values(diffThemeNames(each))),
   }).then(
     () => {
       loadedLanguages.add(language);
+      loadedContrasts.add(contrast);
     },
     (error: unknown) => {
       highlighterReady = undefined;
@@ -129,8 +104,8 @@ function prepareHighlighter(language: string) {
 }
 
 /**
- * The changes between two versions of a file, rendered by Diffs (diffs.com) in its own Pierre theme
- * for the app theme, as code blocks are; the whole file when nothing changed.
+ * The changes between two versions of a file, rendered by Diffs (diffs.com) in the code theme
+ * of the app theme, as code blocks are; the whole file when nothing changed.
  */
 export function CodeDiff({
   before,
@@ -157,7 +132,7 @@ export function CodeDiff({
   useEffect(() => {
     let active = true;
     setLoaded(false);
-    prepareHighlighter(lang).then(
+    prepareHighlighter(lang, contrast).then(
       () => {
         if (active) setLoaded(true);
       },
@@ -168,9 +143,12 @@ export function CodeDiff({
     return () => {
       active = false;
     };
-  }, [lang, attempt]);
+  }, [lang, contrast, attempt]);
 
-  useEffect(() => {
+  // Split and unified are different markup from Diffs, which CSS can't switch between, so the
+  // width is measured: as the diff loads, before it paints, so it never shows the other layout
+  // first, and again as the root resizes.
+  useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root || layout !== 'auto' || !loaded) {
       setWide(false);
@@ -178,6 +156,14 @@ export function CodeDiff({
     }
     const rem =
       Number.parseFloat(getComputedStyle(root.ownerDocument.documentElement).fontSize) || 16;
+    const style = getComputedStyle(root);
+    setWide(
+      root.clientWidth -
+        (Number.parseFloat(style.paddingLeft) || 0) -
+        (Number.parseFloat(style.paddingRight) || 0) >=
+        SPLIT_FROM_REM * rem,
+    );
+    if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(([entry]) => {
       if (entry) setWide(entry.contentRect.width >= SPLIT_FROM_REM * rem);
     });
@@ -206,30 +192,32 @@ export function CodeDiff({
       aria-busy={!loaded && !failed ? true : undefined}
     >
       {failed ? (
-        <EmptyState
-          tone="danger"
-          headingLevel={3}
-          title={messages.failed}
-          description={messages.failedDescription}
-          action={
-            <Button
-              variant="secondary"
-              startIcon={<Refresh />}
-              onClick={() => {
-                setFailed(false);
-                setAttempt((current) => current + 1);
-              }}
-            >
-              {messages.retry}
-            </Button>
-          }
-        />
+        // An alert, so the failure is announced: the error icon, a heading, a sentence and Retry.
+        <Column role="alert" gap={4} className="env-code-diff-failed">
+          <span className="env-code-diff-failed-icon">
+            <DecorativeIcon>
+              <ErrorIcon />
+            </DecorativeIcon>
+          </span>
+          <Column gap={2}>
+            <Text render={<h3 />} variant="title">
+              {messages.failed}
+            </Text>
+            <Text variant="body-sm">{messages.failedDescription}</Text>
+          </Column>
+          <Button
+            variant="secondary"
+            startIcon={<Refresh />}
+            onClick={() => {
+              setFailed(false);
+              setAttempt((current) => current + 1);
+            }}
+          >
+            {messages.retry}
+          </Button>
+        </Column>
       ) : !loaded ? (
-        <LoadingState label={messages.loading}>
-          <Skeleton width="100%" height="1rem" />
-          <Skeleton width="90%" height="1rem" />
-          <Skeleton width="95%" height="1rem" />
-        </LoadingState>
+        <Spinner label={messages.loading} showLabel />
       ) : before === after ? (
         <File
           file={{ name: filename, contents: after, lang: lang as never }}

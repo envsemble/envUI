@@ -4,25 +4,62 @@ import {
   isValidElement,
   type CSSProperties,
   type ReactElement,
+  type Ref,
 } from 'react';
 import { classNames } from './classNames.js';
 
 type Props = Record<string, unknown> & { className?: string; style?: CSSProperties };
 
+/** An event handler prop, such as onClick or onKeyDownCapture. */
+const handlerName = /^on[A-Z]/;
+
+/** Sets a ref, a callback or an object, to a node; returns a callback ref's cleanup. */
+function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
+  if (typeof ref === 'function') return ref(node);
+  if (ref) (ref as { current: T | null }).current = node;
+  return undefined;
+}
+
+/** One callback ref that sets both refs, and cleans both up, as React 19's refs do. */
+function mergeRefs<T>(first: Ref<T> | undefined, second: Ref<T> | undefined): Ref<T> {
+  return (node: T | null) => {
+    const cleanups = [setRef(first, node), setRef(second, node)];
+    return () => {
+      [first, second].forEach((ref, index) => {
+        const cleanup = cleanups[index];
+        if (typeof cleanup === 'function') cleanup();
+        else setRef(ref, null);
+      });
+    };
+  };
+}
+
 /**
  * Renders a component's props onto the element its `render` prop gives, or onto a `tag` of its own,
- * without a hook, so that a server component can take `render`, as Text does. The element's own
- * props win, except that classes join and styles merge (the element's last); a ref given to the
- * component reaches the node in place of one on the element.
+ * without a hook, so that a server component can take `render`, as Text does. As Base UI's
+ * mergeProps does, the element's own props win, except that classes join, styles merge (the
+ * element's last), event handlers both run (the element's first) and both refs receive the node.
  */
 export function renderElement(tag: string, render: ReactElement | undefined, props: Props) {
   if (!isValidElement(render)) return createElement(tag, props);
   const own = render.props as Props;
+  const merged: Props = { ...props, ...own };
+  for (const name of Object.keys(props)) {
+    const ours = props[name];
+    const theirs = own[name];
+    if (!handlerName.test(name) || typeof ours !== 'function' || typeof theirs !== 'function')
+      continue;
+    merged[name] = (...args: unknown[]) => {
+      (theirs as (...values: unknown[]) => unknown)(...args);
+      (ours as (...values: unknown[]) => unknown)(...args);
+    };
+  }
+  const ownRef = (render as { props: { ref?: Ref<unknown> } }).props.ref;
+  const ref = props.ref as Ref<unknown> | undefined;
   return cloneElement(render as ReactElement<Props>, {
-    ...props,
-    ...own,
-    className: classNames(props.className, own.className),
+    ...merged,
+    className: classNames(props.className, own.className) || undefined,
     style: props.style || own.style ? { ...props.style, ...own.style } : undefined,
-    ...(props.ref !== undefined && { ref: props.ref }),
+    ...(ref !== undefined && { ref: ownRef ? mergeRefs(ref, ownRef) : ref }),
   });
 }
