@@ -278,6 +278,60 @@ export function attributesInStyles(text, classAttributes = new Map(), quote = "'
   });
 }
 
+/** The selector of the rule whose block holds `offset` in `text`, or undefined outside a rule. */
+function selectorAt(text, offset) {
+  const open = text.lastIndexOf('{', offset);
+  if (open === -1 || text.lastIndexOf('}', offset) > open) return undefined;
+  const before = text.slice(0, open);
+  const start =
+    Math.max(before.lastIndexOf('}'), before.lastIndexOf('{'), before.lastIndexOf(';')) + 1;
+  return before
+    .slice(start)
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .trim();
+}
+
+/**
+ * Reports each declaration of a component token that becomes a color property, which doesn't
+ * inherit, in a rule whose selector doesn't end at the component: in prerelease.1 the token, set on
+ * a wrapper, reached the component inside it; its color property, set there, colors nothing. A
+ * selector that ends with `&` or none, such as a style object's, is the component's own as far as
+ * the codemod can tell.
+ */
+function reportInheritance(text, classes, tokens, report) {
+  for (const match of text.matchAll(/(?<![A-Za-z0-9_-])--([a-z][a-z0-9_-]*)\s*:/g)) {
+    const name = match[1];
+    const entry = tokens.get(name) ?? tokens.get(renameClass(name, classes));
+    if (!entry?.colorPropertyOf) continue;
+    const selector = selectorAt(text, match.index);
+    if (!selector) continue;
+    const own = new RegExp(String.raw`\.${entry.colorPropertyOf}(?![A-Za-z0-9_-])`);
+    const wrappers = selector
+      .split(',')
+      .map((part) =>
+        part
+          .trim()
+          .split(/\s*[\s>+~]\s*/)
+          .at(-1),
+      )
+      .filter(
+        (subject) =>
+          !subject.includes('&') &&
+          !own.test(
+            subject.replace(/\.(env-[a-z0-9_-]+)/g, (_, n) => `.${renameClass(n, classes)}`),
+          ),
+      );
+    if (wrappers.length === 0) continue;
+    report(
+      match.index,
+      `--${name} becomes --${entry.to}, a color property that doesn't inherit: where ` +
+        `${wrappers.join(', ')} matches a wrapper rather than the .${entry.colorPropertyOf} itself, it ` +
+        `no longer reaches the one inside. Set it on the component, such as with ` +
+        `"${wrappers[0]} .${entry.colorPropertyOf}", its className or its style.`,
+    );
+  }
+}
+
 /**
  * Renames class selectors, attribute selectors and custom properties in style sheet text. A
  * custom property that a 1.0 token has, such as --env-row-height, is no class's: the class renames
@@ -293,6 +347,7 @@ export function renameInStyles(
   classAttributes = new Map(),
   quote = "'",
 ) {
+  if (report) reportInheritance(text, classes, tokens, report);
   const renamed = renameWithin(attributesInStyles(text, classAttributes, quote), classesWithin)
     .replace(classAttribute, (selector) =>
       selector.replace(attributeName, (name) => renameClass(name, classes)),

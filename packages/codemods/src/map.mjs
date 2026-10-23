@@ -330,7 +330,8 @@ const newProperty = /^--env-[a-z0-9]+(?:-[a-z0-9]+)*$/;
 /**
  * Problems with the `tokens` section: each old custom property, without the --env- prefix or a
  * name that 1.0's development gave it, maps to the --env- property that replaces it (`to`), to a
- * fixed color's `value`, or is `removed`, with `to` what to use instead or null.
+ * fixed color's `value`, or is `removed`, with `to` what to use instead or null. `colorPropertyOf`
+ * names the class of the component whose color property `to` is.
  */
 function validateTokens(tokens) {
   const problems = [];
@@ -351,6 +352,11 @@ function validateTokens(tokens) {
     } else if (typeof entry.to !== 'string' || !newProperty.test(entry.to))
       problems.push(`${where} needs "to", an --env- custom property, "value" or "removed".`);
     else if (entry.to === from) problems.push(`${where} maps to itself.`);
+    if (
+      entry.colorPropertyOf !== undefined &&
+      !/^env-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(entry.colorPropertyOf)
+    )
+      problems.push(`${where}: "colorPropertyOf" must be a component's class, such as env-alert.`);
   }
   return problems;
 }
@@ -686,7 +692,8 @@ const sortClasses = (classes) =>
  *   `{ name, within, attributes, report }`; a class reported without `within` or `attributes` is
  *   also kept by the class renames, so a shorter entry that it continues does not rename it;
  * - `tokens`: each custom property before 1.0, without its `--`, to its entry: `to` the 1.0
- *   name (without `--`) that replaces it, with `declaration`, the report for a declaration of a
+ *   name (without `--`) that replaces it, with `colorPropertyOf`, the class of the component
+ *   whose color property it is, which doesn't inherit, `declaration`, the report for a declaration of a
  *   name that shares its target and is not the target's own, or a `report` for a fixed color or a
  *   removed name;
  * - `tokenNames`: the 1.0 names the tokens become, without `--`, which class renames leave alone.
@@ -820,7 +827,11 @@ export function normalizeMap(map) {
         }, or a custom property of your own.`,
       });
     else {
-      tokens.set(name, { to: entry.to.slice(2), note: entry.note });
+      tokens.set(name, {
+        to: entry.to.slice(2),
+        note: entry.note,
+        colorPropertyOf: entry.colorPropertyOf,
+      });
       tokenNames.add(entry.to.slice(2));
     }
   }
