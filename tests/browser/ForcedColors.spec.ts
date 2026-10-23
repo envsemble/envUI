@@ -47,8 +47,8 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-radio[data-orientation=vertical] >> nth=1',
   ],
   'an invalid field': [
-    '.env-text-field-control:has-text("Invalid")',
-    '.env-text-field-control:has-text("Valid") >> nth=0',
+    '.env-text-field-control:has-text("Invalid") > .env-text-field-border',
+    '.env-text-field-control:has-text("Valid") >> nth=0 >> .env-text-field-border',
   ],
   'a disabled field': [
     '.env-text-field-control:has-text("Disabled")',

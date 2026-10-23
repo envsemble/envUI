@@ -4968,6 +4968,10 @@
           "description": "The text field."
         },
         {
+          "class": "env-text-field-border",
+          "description": "The border over the well's edge, which a floated label opens behind it."
+        },
+        {
           "class": "env-text-field-control",
           "description": "The well around the input and its adornments."
         },

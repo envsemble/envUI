@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  isValidElement,
   type ComponentPropsWithoutRef,
   type CSSProperties,
   type MouseEvent,
@@ -109,6 +110,11 @@ function focusControl(event: MouseEvent<HTMLElement>) {
   }
 }
 
+/** The text of a field's label element, for the notch its floated label cuts in the border. */
+function labelText(label: ReactNode): ReactNode {
+  return isValidElement<{ children?: ReactNode }>(label) ? label.props.children : label;
+}
+
 /** Whether a text field shows its label: unless showLabel is false. */
 export function isLabelShown({ showLabel }: TextFieldDecorationProps) {
   return showLabel ?? true;
@@ -188,6 +194,14 @@ export function FieldFrame({
           'data-suffix': suffix != null || undefined,
           children: (
             <>
+              {/* The border, drawn over the control's own, which stays transparent. A floated label
+                  cuts a notch in it through the legend, a hidden copy of the label, so the field
+                  needs no fill of its own to hide the line behind the label. */}
+              <fieldset aria-hidden="true" className="env-text-field-border">
+                <legend>
+                  {isLabelShown({ showLabel }) && label != null && <span>{labelText(label)}</span>}
+                </legend>
+              </fieldset>
               {/* The control names the prefix and suffix in its description, so they are read once. */}
               {prefix != null && (
                 <span

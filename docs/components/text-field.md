@@ -126,7 +126,7 @@ A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the
 | `floating` | A long form on a page.                                       |
 | `ghost`    | A search in an application's chrome, such as atop a sidebar. |
 
-Textarea comes outline or ghost.
+Textarea comes outline or ghost. Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it.
 
 ### Sizes
 

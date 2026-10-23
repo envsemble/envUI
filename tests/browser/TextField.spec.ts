@@ -165,7 +165,7 @@ test('a quiet field is only its text at rest, takes a soft fill on hover and foc
         const style = getComputedStyle(element);
         const input = element.querySelector('input')!;
         return {
-          border: style.borderTopColor,
+          border: getComputedStyle(element.querySelector('.env-text-field-border')!).borderTopColor,
           fill: style.backgroundColor,
           placeholder: getComputedStyle(input, '::placeholder').color,
         };
@@ -236,9 +236,45 @@ test('compact fields can float their label into the outline and keep the button 
   const wellBox = (await well.boundingBox())!;
   expect(resting.y).toBeGreaterThan(wellBox.y);
   await field.fill('Northwind');
-  // Floated onto the outline, the label hides only the line, not a box of field color above it.
-  await expect(label).toHaveCSS('background-image', /linear-gradient/);
+  // Floated onto the outline, the label has no fill: the border opens behind it instead.
+  await expect(label).toHaveCSS('background-image', 'none');
+  await expect(label).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect
+    .poll(() =>
+      well
+        .locator(':scope > .env-text-field-border legend')
+        .evaluate((legend) => legend.clientWidth),
+    )
+    .toBeGreaterThan(0);
   await expect.poll(async () => (await label.boundingBox())!.y).toBeLessThan(wellBox.y + 2);
   const button = page.getByTestId('compact-label-toolbar').getByRole('button', { name: 'Apply' });
   expect(Math.round(wellBox.height)).toBe(Math.round((await button.boundingBox())!.height));
+});
+
+test('an outline field has no fill of its own, and its floated label cuts a notch in the border', async ({
+  page,
+}) => {
+  await page.goto(affixes);
+  const field = page.getByTestId('affixes-dark').getByRole('textbox', { name: 'Address' });
+  const control = field.locator('xpath=..');
+  const border = control.locator(':scope > .env-text-field-border');
+  const notch = () =>
+    border.locator('legend').evaluate((legend) => legend.getBoundingClientRect().width);
+  // It takes the background of what it sits on, and the fieldset over its edge draws the border.
+  await expect(control).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(control).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  await expect(border).not.toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  await expect(border).toHaveAttribute('aria-hidden', 'true');
+  expect(await notch()).toBe(0);
+  // Focused, the label floats into the border, which opens behind it as wide as the label.
+  await field.focus();
+  const label = control.locator(':scope > label');
+  await expect
+    .poll(async () => Math.abs((await notch()) - (await label.boundingBox())!.width))
+    .toBeLessThanOrEqual(1);
+  const [labelBox, notchBox] = [
+    (await label.boundingBox())!,
+    (await border.locator('legend').boundingBox())!,
+  ];
+  expect(Math.abs(labelBox.x - notchBox.x)).toBeLessThanOrEqual(1);
 });

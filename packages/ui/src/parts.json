@@ -700,6 +700,7 @@
     },
     "TextField": {
       "env-text-field": "The text field.",
+      "env-text-field-border": "The border over the well's edge, which a floated label opens behind it.",
       "env-text-field-control": "The well around the input and its adornments.",
       "env-text-field-end": "The buttons at the end of the well.",
       "env-text-field-input": "The input.",

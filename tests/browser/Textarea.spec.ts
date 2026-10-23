@@ -41,7 +41,10 @@ test('a ghost textarea shows no border or fill at rest, and a soft fill while fo
   const field = page.getByRole('textbox', { name: 'Ghost notes', exact: true });
   const control = page.locator('.env-text-field-control', { has: field });
   await expect(control).toHaveAttribute('data-variant', 'ghost');
-  await expect(control).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  await expect(control.locator(':scope > .env-text-field-border')).toHaveCSS(
+    'border-top-color',
+    'rgba(0, 0, 0, 0)',
+  );
   await expect(control).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await field.focus();
   await expect

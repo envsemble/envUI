@@ -3578,6 +3578,10 @@
               "description": "The text field."
             },
             {
+              "class": "env-text-field-border",
+              "description": "The border over the well's edge, which a floated label opens behind it."
+            },
+            {
               "class": "env-text-field-control",
               "description": "The well around the input and its adornments."
             },
@@ -27066,7 +27070,7 @@
         "id": "color.bg.field",
         "cssVariable": "--env-color-bg-field",
         "type": "color",
-        "description": "Text fields and other inputs.",
+        "description": "A well that keeps a fill of its own, such as the color picker's value button and code and references in rich text. Text fields have none: they take the background of what they sit on.",
         "values": {
           "light": "#ffffff",
           "dark": "#1e1f21",

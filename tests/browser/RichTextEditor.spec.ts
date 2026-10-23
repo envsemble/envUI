@@ -604,7 +604,9 @@ test('the document takes the field look: border, variants, error and a disabled 
     .or(scope.getByRole('textbox', { name: 'Controlled notes' }))
     .first();
   await expect(
-    outline.locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]'),
+    outline.locator(
+      'xpath=ancestor::*[contains(@class, "env-text-field-control")][1]/*[contains(@class, "env-text-field-border")]',
+    ),
   ).toHaveCSS('border-top-color', await color('--env-color-border-default'));
   // Ghost draws no border or fill at rest.
   await expect(box('Ghost notes')).toHaveAttribute('data-variant', 'ghost');
@@ -613,7 +615,7 @@ test('the document takes the field look: border, variants, error and a disabled 
   const invalid = scope.getByRole('textbox', { name: 'Invalid notes' });
   await expect(invalid).toHaveAttribute('aria-invalid', 'true');
   await expect(invalid).toHaveAccessibleDescription('Say what changed. Write at least a sentence.');
-  await expect(box('Invalid notes')).toHaveCSS(
+  await expect(box('Invalid notes').locator(':scope > .env-text-field-border')).toHaveCSS(
     'border-top-color',
     await color('--env-color-fg-danger'),
   );

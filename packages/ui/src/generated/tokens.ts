@@ -434,7 +434,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(232 214 255 / 0.1)',
     },
   },
-  /** Text fields and other inputs. */
+  /** A well that keeps a fill of its own, such as the color picker's value button and code and references in rich text. Text fields have none: they take the background of what they sit on. */
   'color.bg.field': {
     cssVariable: '--env-color-bg-field',
     type: 'color',

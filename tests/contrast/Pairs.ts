@@ -354,6 +354,35 @@ export const pairs: readonly ContrastPair[] = merged([
   ),
   ...text('--env-color-border-accent-emphasis', [field], 'The label of a focused field'),
   ...text('--env-color-fg-danger', [field], 'The label and message of an invalid field'),
+  // A field has no fill of its own: its text, label and border sit on the surface beneath it.
+  ...text(
+    '--env-color-fg-accent',
+    [page, surface, muted, raised, popup],
+    'The label of a focused field, on the surface the field sits on',
+  ),
+  ...nonText(
+    '--env-color-border-accent-emphasis',
+    [muted, raised],
+    'The border of a focused field on a card or in a dialog',
+  ),
+  ...text(
+    '--env-color-fg-danger',
+    [page, surface, raised, popup],
+    'The label of an invalid field, on the surface the field sits on',
+  ),
+  ...nonText(
+    '--env-color-border-danger-emphasis',
+    [muted, popup],
+    'The border of an invalid field on a card or in a popover',
+  ),
+  ...text(
+    '--env-color-fg-default',
+    [
+      [fill, muted],
+      [fill, popup],
+    ],
+    'Combobox chips in a field on a card or in a popover',
+  ),
   ...text(
     '--env-color-fg-danger',
     [muted],

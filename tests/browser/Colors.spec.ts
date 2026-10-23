@@ -195,8 +195,9 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       navigationIcon: `[data-testid="${theme}-navigation"] .env-drawer-item:not([data-current]) .env-icon`,
       direction: `[data-testid="${theme}-color-direction"]`,
       field: `[data-testid="${theme}-color-field"]`,
-      fieldWell: `.env-text-field-control:has([data-testid="${theme}-color-field"])`,
-      fieldError: `.env-text-field-control:has([data-testid="${theme}-color-error-field"])`,
+      // A field has no fill of its own; its border is the fieldset over its edge.
+      fieldWell: `.env-text-field-control:has([data-testid="${theme}-color-field"]) > .env-text-field-border`,
+      fieldError: `.env-text-field-control:has([data-testid="${theme}-color-error-field"]) > .env-text-field-border`,
       select: `[data-testid="${theme}-color-select"]`,
       selectLabel: `.env-field:has(> [data-testid="${theme}-color-select"])`,
       selectHint: `.env-field:has(> [data-testid="${theme}-color-select"]) > .env-field-description`,
@@ -257,7 +258,6 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       // A neutral badge's text is muted, as InfoChip's metadata became a Badge.
       ['--env-color-fg-muted', ['navigationIcon', 'selectHint', 'chip']],
       ['--env-color-bg-raised', ['direction']],
-      ['--env-color-bg-field', ['fieldWell', 'fieldError']],
       ['--env-color-border-accent-emphasis', ['fieldWell']],
       ['--env-color-fg-danger', ['fieldError', 'selectError']],
       // The default text color is every part's that sets no other, so it has no case of its own.
