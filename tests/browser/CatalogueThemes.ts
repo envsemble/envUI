@@ -2,15 +2,15 @@
  * The themes the visual baseline and the accessibility scan show catalogue pages in: every page in
  * light, and the pages in samplePages in dark, light high contrast and dark high contrast as well.
  */
-import type { Page } from '@playwright/test';
-import { referencePages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { expect, type Page } from '@playwright/test';
+import { allPages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 export type ThemeName = 'light' | 'dark' | 'light-hc' | 'dark-hc';
 
 export interface CatalogueTheme {
   /** Names the theme in snapshot files and in KnownViolations.json. */
   name: ThemeName;
-  /** The scheme the catalogue's theme button switches to. */
+  /** The scheme chosen in the catalogue's Display menu. */
   scheme: 'light' | 'dark';
   /**
    * The emulated prefers-contrast. The token CSS applies the high-contrast values to every theme
@@ -33,7 +33,8 @@ export const allThemes: readonly CatalogueTheme[] = [...standardThemes, ...highC
 /**
  * The theme sample: pages also checked in dark and in high contrast. Every other page is checked in
  * light alone. Together they show the color roles, actions with their forced states, a field, table
- * rows and highlighted code, which takes high-contrast token colors of its own. The contrast gate
+ * rows, highlighted code, which takes high-contrast token colors of its own, and the Docs' props
+ * tables and token swatches. The contrast gate
  * (tests/browser/Contrast.spec.ts) measures every token pair in all four themes, and the visual
  * baseline's open lists capture menus and selects in dark and high contrast.
  */
@@ -43,10 +44,12 @@ export const samplePages: ReadonlySet<string> = new Set([
   'components/text-field',
   'components/table',
   'components/code',
+  'docs/components/button',
+  'docs/tokens',
 ]);
 
 const unknownPages = [...samplePages].filter(
-  (path) => !referencePages.some((page) => page.path === path),
+  (path) => !allPages.some((page) => page.path === path),
 );
 if (unknownPages.length)
   throw new Error(
@@ -58,7 +61,22 @@ export function themesFor(path: string): readonly CatalogueTheme[] {
   return samplePages.has(path) ? allThemes : standardThemes.slice(0, 1);
 }
 
-/** Emulates the theme's contrast preference; the catalogue's theme button sets the scheme. */
+/** Emulates the theme's contrast preference; the catalogue's Display menu sets the scheme. */
 export async function emulateContrast(page: Page, theme: CatalogueTheme) {
   await page.emulateMedia({ contrast: theme.contrast });
+}
+
+/**
+ * Chooses a scheme in the catalogue's Display menu, where the theme is, and closes the menu, which
+ * returns focus to its button.
+ */
+export async function chooseScheme(page: Page, scheme: 'light' | 'dark') {
+  await page.getByRole('button', { name: 'Display', exact: true }).click();
+  const menu = page.getByRole('menu', { name: 'Display' });
+  await menu
+    .getByRole('menuitemradio', { name: scheme === 'dark' ? 'Dark' : 'Light', exact: true })
+    .click();
+  await page.locator(`.docs-app[data-env-theme="${scheme}"]`).waitFor();
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
 }

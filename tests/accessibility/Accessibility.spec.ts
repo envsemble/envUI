@@ -1,7 +1,7 @@
 /**
- * Accessibility gate: axe scans the first view of every catalogue page in light, every view of the
- * Button page (to cover each kind of view once), and the theme sample of samplePages
- * (tests/browser/CatalogueThemes.ts) in dark and both high-contrast themes too, and compares the
+ * Accessibility gate: axe scans every page of the Site and the Docs in light, and the theme sample
+ * of samplePages (tests/browser/CatalogueThemes.ts) in dark and both high-contrast themes too, and
+ * compares the
  * violations with KnownViolations.json. A new violation fails, and so does a listed
  * one that no longer occurs, so the list only shrinks. Run `npm run test:a11y`; after fixing
  * violations, or when a reviewed change has to add one, rewrite the list with
@@ -18,15 +18,13 @@ import { mkdirSync, readFileSync, rmdirSync, rmSync, statSync, writeFileSync } f
 import { fileURLToPath } from 'node:url';
 import { serveSite, siteBuilt, siteUrl } from '../browser/HostedSite';
 import {
+  chooseScheme,
   emulateContrast,
   themesFor,
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/CatalogueThemes';
-import {
-  documentationPages,
-  overviewViews,
-} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { allPages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 /** light on every page, and dark, light-hc and dark-hc on the pages of samplePages. */
 type Theme = ThemeName;
@@ -55,30 +53,12 @@ const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  */
 const highContrastRules = { 'color-contrast-enhanced': { enabled: true } };
 
-/** The page whose every view is scanned; every other page is scanned at its first view. */
-const everyView = 'components/button';
-/**
- * Every destination of the catalogue's own route list, at its first view (each of its views on
- * everyView), with the themes each route is scanned in: the page's themes at its first view, and
- * light at the others.
- */
-const pages = documentationPages.map(({ path, title, views }) => {
-  const all =
-    path === 'overview'
-      ? overviewViews.map((view) => `overview/${view.id}`)
-      : views.length
-        ? views.map((view) => `${path}/${view.id}`)
-        : [path];
-  const themes = themesFor(path);
-  return {
-    path,
-    title,
-    routes: (path === everyView ? all : all.slice(0, 1)).map((route, index) => ({
-      route,
-      themes: index ? themes.slice(0, 1) : themes,
-    })),
-  };
-});
+/** Every page of the Site and the Docs, with the themes it is scanned in. */
+const pages = allPages.map(({ path, title }) => ({
+  path,
+  title,
+  routes: [{ route: path, themes: themesFor(path) }],
+}));
 /** Every route scanned, with the themes it is scanned in. */
 const routes = new Map<string, Set<string>>([
   ...pages.flatMap((page) =>
@@ -193,14 +173,12 @@ async function highlighted(page: Page) {
   );
 }
 
-/** Switches the catalogue to the theme's scheme with its button, under the theme's contrast. */
+/** Switches the catalogue to the theme's scheme in its Display menu, under the theme's contrast. */
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
   const app = page.locator('.docs-app');
   if ((await app.getAttribute('data-env-theme')) !== theme.scheme)
-    await page
-      .getByRole('button', { name: `Switch to ${theme.scheme} theme`, exact: true })
-      .click();
+    await chooseScheme(page, theme.scheme);
   await page.locator(`.docs-app[data-env-theme="${theme.scheme}"]`).waitFor();
 }
 
@@ -335,7 +313,7 @@ for (const { path, title, routes: pageRoutes } of pages) {
     test.slow(pageRoutes.flatMap(({ themes }) => themes).length > 1);
     const scans: Scan[] = [];
     for (const { route, themes } of pageRoutes) {
-      await page.goto(`${siteUrl}/#/${route}`);
+      await page.goto(`${siteUrl}/${route === 'overview' ? '' : route}`);
       await expandCode(page);
       for (const theme of themes) {
         await setTheme(page, theme);
@@ -366,10 +344,10 @@ function record(testInfo: TestInfo, title: string, scans: Scan[]) {
   const report: string[] = [];
   for (const scan of scans) {
     const { added, fixed } = compare(scan, known[scan.route]?.[scan.theme]);
-    if (added.length) report.push(`  New violations on #/${scan.route} (${scan.theme}):`, ...added);
+    if (added.length) report.push(`  New violations on /${scan.route} (${scan.theme}):`, ...added);
     if (fixed.length)
       report.push(
-        `  No longer found, so remove from KnownViolations.json: #/${scan.route} (${scan.theme}):`,
+        `  No longer found, so remove from KnownViolations.json: /${scan.route} (${scan.theme}):`,
         ...fixed,
       );
   }
