@@ -210,3 +210,27 @@ test('className and style reach the root, and the textarea keeps its own class',
   await expect(source).not.toHaveClass(/required-markdown-editor/);
   expect(await source.evaluate((input) => input.style.maxInlineSize)).toBe('');
 });
+
+test('the formatting toolbar is one tab stop, in groups the arrow keys cross', async ({ page }) => {
+  await page.goto(fixtureUrl);
+  const form = page.getByTestId('markdown-form');
+  const toolbar = form.getByRole('toolbar').first();
+  const button = (name: string) => toolbar.getByRole('button', { name, exact: true });
+  // Text styles, lists, blocks, links, and history, a line between each.
+  await expect(toolbar.getByRole('group')).toHaveCount(5);
+  await expect(toolbar.getByRole('separator')).toHaveCount(4);
+  await expect
+    .poll(() =>
+      toolbar
+        .getByRole('button')
+        .evaluateAll((buttons) => buttons.filter((each) => each.tabIndex === 0).length),
+    )
+    .toBe(1);
+  await button('Inline code').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(button('Bulleted list')).toBeFocused();
+  await page.keyboard.press('ArrowLeft');
+  await expect(button('Inline code')).toBeFocused();
+  // Formatting the source can't be told from the caret, so its buttons act once, not as toggles.
+  await expect(button('Bold')).not.toHaveAttribute('aria-pressed');
+});

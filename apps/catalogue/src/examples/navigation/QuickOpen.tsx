@@ -1,8 +1,9 @@
 import { useMemo, useRef, useState } from 'react';
 import {
+  Button,
   CommandPalette,
+  Kbd,
   PageHeader,
-  SearchTrigger,
   Column,
   type CommandPaletteItem,
 } from '@envsemble/envui';
@@ -10,6 +11,10 @@ import { Category } from '@envsemble/envui/icons/Category';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
+import { Search } from '@envsemble/envui/icons/Search';
+
+/** ⌘ on Apple platforms, Ctrl elsewhere. */
+const apple = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
 
 /** Moves focus to the page's heading, which takes focus without becoming a tab stop. */
 function focusHeading(page: HTMLElement | null) {
@@ -46,8 +51,17 @@ export default function QuickOpen() {
     <Column ref={page} gap={4}>
       {/* Where the frame puts search: the sidebar's top, or the header's end. */}
       <Column gap={4} align="start">
-        {/* The catalogue's own search keeps Ctrl+K here; an application's one trigger listens. */}
-        <SearchTrigger label="Search Northwind" listen={false} onClick={() => setOpen(true)} />
+        {/* The search trigger pattern: the application opens the palette on Ctrl+K too, which
+            the catalogue's own search keeps here. */}
+        <Button
+          variant="secondary"
+          startIcon={<Search />}
+          end={<Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} aria-hidden />}
+          aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
+          onClick={() => setOpen(true)}
+        >
+          Search Northwind
+        </Button>
       </Column>
       <PageHeader headingLevel={3} title={current.label} description={current.description} />
       <CommandPalette

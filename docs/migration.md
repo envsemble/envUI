@@ -61,7 +61,7 @@ export default defineConfig(envui.configs.recommended);
 
 Change by hand what the codemods report, each with its file and line:
 
-- removed exports: `LoadingBar` and `LoadingBarProps` (TopBar's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent`, `useSidebarCompact` (the navigation forms show their own), `PanelDockControls` and `PanelDockControlsProps` (PanelDock.Header's own controls), `BrandLogo`, `BrandLogoProps`, `EnvUILogo` and `EnvUILogoProps` (envUI ships no logos), and the `MenuDensity` and `SurfaceDensity` types (menus have one anatomy; give controls a `size` or a Theme a `scale`). ActionGroup, ActionCard, FeatureCard, Counter, and the prerelease's CounterBadge and CloseButton, are reported only where they are used other than as elements, such as passed as a value: `v1-structure` rewrites their elements; AppShell, AppShellSkeleton, SplitView, WindowFrame, TitleBar, OrganizationMenu, Stat and EmptyState are reported wherever they are used, as are 1.0.0-prerelease.0's Sidebar, SidebarTrigger, NavList, SplitPane, AccountMenu, Skeleton and viewport breakpoints, as the sections below say;
+- removed exports: `LoadingBar` and `LoadingBarProps` (TopBar's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent`, `useSidebarCompact` (the navigation forms show their own), `PanelDockControls` and `PanelDockControlsProps` (PanelDock.Header's own controls), `BrandLogo`, `BrandLogoProps`, `EnvUILogo` and `EnvUILogoProps` (envUI ships no logos), and the `MenuDensity` and `SurfaceDensity` types (menus have one anatomy; give controls a `size` or a Theme a `scale`). ActionGroup, ActionCard, FeatureCard, Counter, and the prerelease's CounterBadge and CloseButton, are reported only where they are used other than as elements, such as passed as a value: `v1-structure` rewrites their elements; AppShell, AppShellSkeleton, SplitView, WindowFrame, TitleBar, OrganizationMenu, Stat and EmptyState are reported wherever they are used, as are 1.0.0-prerelease.0's Sidebar, SidebarTrigger, NavList, SplitPane, AccountMenu, Skeleton and viewport breakpoints, and 1.0.0-prerelease.1's SearchTrigger, as the sections below say;
 - 1.0.0-prerelease.0's Drawer, which takes no `destinations`: it is Sheet now, and the name is the navigation drawer's, so rename it by hand, as [overlays](#overlays-and-feedback) says; and a LoadingState's children, which a Spinner doesn't take, as [skeletons](#skeletons) says;
 - a `DirectionLink` whose `direction` is computed or spread, or that is used outside JSX;
 - re-exports of namespace parts, and names destructured from a namespace import, `useTheme` among them;
@@ -204,7 +204,6 @@ Now:
 
 - **PageHeader's sticky height**: a sticky PageHeader sticks under the Scaffold's top bar, or at the top of a body that scrolls, and still publishes `--env-page-header-block-size` on its Page; what takes focus in its Page keeps clear of it by a scroll margin. Put content that should stay in view under it in its `toolbar`.
 - **Page**: its gutter follows the window class of the region it sits in, 1 rem in a compact one and 1.5 rem from medium, where it grew with the viewport from 1 to 2 rem.
-- **SearchTrigger** no longer shows its icon alone by itself in a sidebar's rail: set `iconOnly` where it should.
 - **Classes and tokens**: `v1-classes` renames the prerelease's `env-app-shell-header`, `-header-start`, `-header-title`, `-header-end`, `-main`, `-loading-bar` and `-skip-links` to `env-top-bar`, `env-top-bar-start`, `env-top-bar-title`, `env-top-bar-actions`, `env-scaffold-body`, `env-top-bar-loading-bar` and `env-scaffold-skip-links`, and reports `env-app-shell` itself and Sidebar's `env-sidebar-*`. `--env-app-shell-header-height` is `--env-top-bar-height`, which it rewrites; the frame's own custom properties have no counterpart, as [tokens](#tokens) lists.
 
 ### Navigation forms
@@ -653,6 +652,29 @@ A few components of 1.0.0-prerelease.0 fold into others, and a few become patter
 - Stat is gone, with Stat.Root, Stat.Group and their types: a figure has no behavior of its own, so the [key figures](patterns/key-figures.md) pattern builds it from a muted Text label, a headline Text figure in tabular digits and a Badge that says the trend in words, in its tone and with a trending icon; a Surface with `role="group"` around a Grid of even columns holds a few. `v1-names` reports Stat and its types where they are used, and `v1-classes` the `env-stat-*` classes: rebuild each one from the pattern.
 - EmptyState is gone, with `EmptyStateProps`: it carried no behavior, so the [empty states](patterns/empty-states.md) pattern builds one from a Column with an icon, a Text heading, a Text sentence and a Button. Give the heading the level the page's outline needs, such as `render={<h4 />}` under a section's `h3`, where EmptyState took `headingLevel`; centre the column, with a 2.5 rem icon, where `align="center"` did; and show a failure as an Alert with `tone="danger"` and `announce`, where `tone="danger"` gave the state the alert role. `v1-names` reports it where it is used, and `v1-classes` the `env-empty-state-*` classes.
 - OrganizationSwitcher is gone, with `OrganizationSwitcherProps`, `OrganizationSwitcherItem`, the prerelease's `OrganizationSwitcherOrganization` and `messages.organizationSwitcher`, and so is 0.x's OrganizationMenu: the [organization switcher](patterns/organization-switcher.md) pattern builds it from a Menu.Root whose trigger is a secondary Button that names the active organization, a Menu.RadioGroup of Menu.RadioItems with the person's role as each `description`, and a Menu.Item that creates one; before the first organization, the create action is a Button of its own. `v1-names` reports it where it is used, and `v1-classes` the `env-organization-switcher-*` and `env-organization-menu-*` classes.
+- SearchTrigger, from 1.0.0-prerelease.1, is gone, with `SearchTriggerProps`, its classes `env-search-trigger`, `env-search-trigger-label`, `env-search-trigger-shortcut` and `env-search-trigger-tooltip`, and `messages.searchTrigger`: the [search trigger](patterns/search-trigger.md) pattern builds it from a secondary Button with the Search icon, its label and the shortcut's keys in Button's new `end` slot, or from a ghost IconButton in a Tooltip. The trigger no longer presses itself on its shortcut: listen for ⌘K or Ctrl+K once, at the application's root, and open the same search, as the pattern shows. `v1-names` reports SearchTrigger where it is used, and `v1-classes` its classes:
+
+  ```tsx
+  // Before
+  <SearchTrigger fullWidth onClick={openSearch} />;
+  <SearchTrigger iconOnly onClick={openSearch} />;
+
+  // 1.0
+  <Button
+    variant="secondary"
+    fullWidth
+    startIcon={<Search />}
+    end={<Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} aria-hidden />}
+    aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
+    onClick={openSearch}
+  >
+    Search
+  </Button>;
+  <Tooltip content="Search" side="bottom">
+    <IconButton variant="ghost" icon={<Search />} aria-label="Search" onClick={openSearch} />
+  </Tooltip>;
+  ```
+
 - Card's feature layout is gone, with `layout`, which is `stack` alone otherwise, its `icon`, `data-layout`, `env-card-layout` and `env-card-icon`, and so is 0.x's FeatureCard: the [feature cards](patterns/feature-cards.md) pattern builds one from a Card holding a Row with the icon in muted Text, a Column with a headline Text heading and a Text sentence, and the Button that starts the feature, which moves below the text in a narrow card. `v1-props` drops `layout="stack"` and reports `layout="feature"` and `icon`, `v1-structure` reports FeatureCard, and `v1-classes` the classes and `[data-layout]`: rebuild each one from the pattern. A card with actions is `.env-card[data-actions]`.
 - A Badge with `count` takes `tone` and `variant` as any badge does, so the accent count of a CounterBadge, a filled pill, is `tone="accent" variant="solid"`, which `v1-structure` writes; it reports a `tone` that is an expression. Its `aria-label`, such as 12 unread, is read in place of the number, as CounterBadge's was.
 - Without a `variant`, `Button iconOnly` was a primary button outside a container that gives one, and IconButton is secondary: `v1-structure` reports each one it rewrites without a variant, so add `variant="primary"` where it should stay primary, and each that sets `fullWidth`, `underline` or a `tone` without a `variant`, which IconButton doesn't take. It reports an `iconOnly` that is an expression and leaves it.

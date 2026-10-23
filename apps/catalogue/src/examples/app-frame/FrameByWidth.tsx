@@ -2,17 +2,19 @@ import { useState } from 'react';
 import {
   Bar,
   Drawer,
+  IconButton,
   Page,
   PageHeader,
   Rail,
   Scaffold,
-  SearchTrigger,
+  Tooltip,
   TopBar,
   type Destination,
 } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
+import { Search } from '@envsemble/envui/icons/Search';
 
 export default function FrameByWidth() {
   const [current, setCurrent] = useState('Projects');
@@ -31,7 +33,16 @@ export default function FrameByWidth() {
       scroll="body"
       landmarks={false}
       style={{ blockSize: '16rem' }}
-      topBar={<TopBar title="Northwind" actions={<SearchTrigger iconOnly />} />}
+      topBar={
+        <TopBar
+          title="Northwind"
+          actions={
+            <Tooltip content="Search" side="bottom">
+              <IconButton variant="ghost" icon={<Search />} aria-label="Search" />
+            </Tooltip>
+          }
+        />
+      }
       navigation={{
         bar: <Bar aria-label="Main, by width" destinations={destinations} />,
         rail: <Rail aria-label="Main, by width" destinations={destinations} />,

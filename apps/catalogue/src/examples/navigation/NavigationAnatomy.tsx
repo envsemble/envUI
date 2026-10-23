@@ -2,18 +2,20 @@ import { useState } from 'react';
 import {
   Breadcrumbs,
   Button,
+  IconButton,
   Page,
   PageHeader,
   Rail,
   Scaffold,
-  SearchTrigger,
   Tabs,
   Text,
+  Tooltip,
   TopBar,
   type Destination,
 } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Home } from '@envsemble/envui/icons/Home';
+import { Search } from '@envsemble/envui/icons/Search';
 
 const destinations: Destination[] = [
   { label: 'Home', icon: <Home />, href: '/' },
@@ -29,7 +31,16 @@ export default function NavigationAnatomy() {
       landmarks={false}
       style={{ blockSize: '20rem' }}
       forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
-      topBar={<TopBar title="Northwind" actions={<SearchTrigger iconOnly />} />}
+      topBar={
+        <TopBar
+          title="Northwind"
+          actions={
+            <Tooltip content="Search" side="bottom">
+              <IconButton variant="ghost" icon={<Search />} aria-label="Search" />
+            </Tooltip>
+          }
+        />
+      }
       navigation={{ rail: <Rail destinations={destinations} /> }}
     >
       <Page

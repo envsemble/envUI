@@ -87,7 +87,7 @@ CommonMark with tables, strikethrough, task lists, automatic links and footnotes
 | `fixed`       | A long document: the source keeps its height. The default. |
 | `content`     | A short description: the source grows with its text.       |
 
-`toolbar` chooses the actions, in a fixed order, and `onRequestLink` opens the application's own link picker.
+`toolbar` chooses the actions, in a fixed order, grouped by kind with a line between groups, and `onRequestLink` opens the application's own link picker.
 
 ```tsx example=LinkPicker
 

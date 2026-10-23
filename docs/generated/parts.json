@@ -497,6 +497,10 @@
           "description": "The button's label and icons."
         },
         {
+          "class": "env-button-end",
+          "description": "The quiet content at the button's end, such as a shortcut's keys."
+        },
+        {
           "class": "env-button-spinner",
           "description": "The spinner of a pending button."
         }
@@ -3732,49 +3736,6 @@
         "Button"
       ]
     },
-    "SearchTrigger": {
-      "root": "env-search-trigger",
-      "source": "packages/ui/src/actions/SearchTrigger.tsx",
-      "parts": [
-        {
-          "class": "env-search-trigger",
-          "description": "The button that opens search."
-        },
-        {
-          "class": "env-search-trigger-label",
-          "description": "The button's label."
-        },
-        {
-          "class": "env-search-trigger-shortcut",
-          "description": "The keyboard shortcut."
-        },
-        {
-          "class": "env-search-trigger-tooltip",
-          "description": "The tooltip of the icon-only button."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-icon-only",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-search-trigger"
-          ]
-        }
-      ],
-      "uses": [
-        "Button",
-        "Icon",
-        "IconButton",
-        "Kbd",
-        "Popup",
-        "Skeleton",
-        "Theme",
-        "Tooltip"
-      ]
-    },
     "SegmentedControl": {
       "root": "env-segmented-control",
       "source": "packages/ui/src/actions/SegmentedControl.tsx",
@@ -5185,7 +5146,7 @@
         },
         {
           "class": "env-editor-toolbar",
-          "description": "The editor's formatting toolbar."
+          "description": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which scrolls sideways where it is wider than the editor."
         }
       ],
       "states": [],
@@ -5394,7 +5355,6 @@
         "MonthPicker",
         "Popover",
         "RelativeTime",
-        "SearchTrigger",
         "SegmentedControl",
         "Select",
         "TimePicker",
@@ -5484,7 +5444,6 @@
         "Popover",
         "Rail",
         "RelativeTime",
-        "SearchTrigger",
         "SegmentedControl",
         "Select",
         "Sheet",
@@ -5553,6 +5512,13 @@
             "hour",
             "minute"
           ],
+          "parts": [
+            "env-time-list-column"
+          ]
+        },
+        {
+          "attribute": "data-turning",
+          "values": [],
           "parts": [
             "env-time-list-column"
           ]

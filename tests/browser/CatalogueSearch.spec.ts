@@ -33,7 +33,7 @@ function highlighted(page: Page) {
 
 /** The search shortcut's modifier where the page runs: ⌘ on Apple platforms, Ctrl elsewhere. */
 async function shortcutKeys(page: Page) {
-  // As SearchTrigger decides: by the platform, which WebKit on Windows reports as Windows although
+  // As the catalogue decides: by the platform, which WebKit on Windows reports as Windows although
   // its user agent names a Mac.
   const apple = await page.evaluate(() => {
     const { userAgentData } = navigator as Navigator & { userAgentData?: { platform?: string } };

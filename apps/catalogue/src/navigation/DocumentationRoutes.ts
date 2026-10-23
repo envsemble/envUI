@@ -252,6 +252,7 @@ const componentPatterns: Record<string, string> = {
   stat: 'key-figures',
   stats: 'key-figures',
   'empty-state': 'empty-states',
+  'search-trigger': 'search-trigger',
 };
 
 /** Keep downloaded references and old bookmarks working after topic consolidation. */

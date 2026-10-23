@@ -261,3 +261,38 @@ test(
     expect(Math.abs(label - edge)).toBeLessThan(0.5);
   },
 );
+
+test(
+  'the end slot holds quiet keys at the far end, with the icon and label at the start',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(fixture);
+    const button = page.getByTestId('end-button');
+    // The keys are hidden and announced by aria-keyshortcuts, so the name is the label alone.
+    await expect(button).toHaveAccessibleName('Search');
+    await expect(button).toHaveAttribute('aria-keyshortcuts', 'Control+K');
+    const end = button.locator('.env-button-end');
+    await expect(end).toHaveText('Ctrl+K');
+    const layout = await button.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      const icon = element.querySelector('.env-icon')!.getBoundingClientRect();
+      const keys = element.querySelector('.env-button-end')!.getBoundingClientRect();
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--env-color-fg-muted)';
+      element.append(probe);
+      const muted = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        startGap: icon.left - box.left - parseFloat(style.paddingInlineStart),
+        endGap: box.right - parseFloat(style.paddingInlineEnd) - keys.right,
+        endColor: getComputedStyle(element.querySelector('.env-button-end')!).color,
+        muted,
+      };
+    });
+    // The icon starts at the padding and the keys end at it, with the room between them.
+    expect(Math.abs(layout.startGap)).toBeLessThan(1);
+    expect(Math.abs(layout.endGap)).toBeLessThan(1);
+    expect(layout.endColor).toBe(layout.muted);
+  },
+);

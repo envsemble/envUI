@@ -6,6 +6,7 @@ import {
   Button,
   ConfirmButton,
   Dialog,
+  Kbd,
   List,
   TextField,
   LinkProvider,
@@ -25,6 +26,7 @@ import {
 import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { Delete } from '@envsemble/envui/icons/Delete';
+import { Search } from '@envsemble/envui/icons/Search';
 
 /** Stands in for a router link: it records client navigation instead of loading a page. */
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
@@ -119,6 +121,19 @@ export function AdoptionFixture() {
             Save changes
           </Button>
           <output data-testid="pending-presses">{presses}</output>
+          {/* A wide button with the keys of its shortcut in the end slot, as a search trigger. */}
+          <div style={{ inlineSize: '20rem' }}>
+            <Button
+              variant="secondary"
+              fullWidth
+              startIcon={<Search />}
+              end={<Kbd keys={['Ctrl', 'K']} aria-hidden />}
+              aria-keyshortcuts="Control+K"
+              data-testid="end-button"
+            >
+              Search
+            </Button>
+          </div>
           <Spinner label="Refreshing seats" />
           <ConfirmButton
             confirmLabel="Remove Morgan?"

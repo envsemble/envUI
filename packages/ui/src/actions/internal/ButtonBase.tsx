@@ -29,6 +29,7 @@ export function ButtonBase({
   icon,
   startIcon,
   endIcon,
+  end,
   pending = false,
   fallbackVariant,
   className,
@@ -42,6 +43,7 @@ export function ButtonBase({
       {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
       {children}
       {endIcon != null && <DecorativeIcon>{endIcon}</DecorativeIcon>}
+      {end != null && <span className="env-button-end">{end}</span>}
     </>
   );
   return (

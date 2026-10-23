@@ -27,6 +27,10 @@
   outline: none;
   mask-image: linear-gradient(transparent, currentcolor 30%, currentcolor 70%, transparent);
 }
+/* While the wheel eases into a row by itself, snapping would pull each step back. */
+.env-time-list-column[data-turning] {
+  scroll-snap-type: none;
+}
 .env-time-list-column::-webkit-scrollbar {
   display: none;
 }

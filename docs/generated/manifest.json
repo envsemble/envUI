@@ -118,7 +118,9 @@
       ],
       "parts": {},
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "search-trigger"
+        ]
       }
     },
     {
@@ -216,6 +218,7 @@
           "navigation",
           "app-frame",
           "account-menu",
+          "search-trigger",
           "feature-cards",
           "filtering",
           "data-tables",
@@ -321,6 +324,7 @@
           "app-frame",
           "account-menu",
           "organization-switcher",
+          "search-trigger",
           "window-frame",
           "feature-cards",
           "filtering",
@@ -2209,6 +2213,10 @@
               "description": "The button's label and icons."
             },
             {
+              "class": "env-button-end",
+              "description": "The quiet content at the button's end, such as a shortcut's keys."
+            },
+            {
               "class": "env-button-spinner",
               "description": "The spinner of a pending button."
             }
@@ -2464,212 +2472,12 @@
           "app-frame",
           "account-menu",
           "organization-switcher",
+          "search-trigger",
           "window-frame",
           "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
-        ]
-      }
-    },
-    {
-      "name": "SearchTrigger",
-      "page": "search-trigger",
-      "doc": "docs/components/search-trigger.md",
-      "category": "Actions",
-      "status": "beta",
-      "since": "1.0.0",
-      "summary": "The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon.",
-      "aliases": [
-        "SearchButton",
-        "quick open button",
-        "search button",
-        "command palette button",
-        "search shortcut"
-      ],
-      "useWhen": [
-        "Search or a command palette opens from a button at the top of a sidebar or in a header.",
-        "The application opens search with a keyboard shortcut and shows it where people look for search.",
-        "A narrow header or a sidebar showing icons only needs search as an icon."
-      ],
-      "avoidWhen": [
-        {
-          "text": "People type the search on the page itself and the results filter in place.",
-          "use": "SearchField"
-        },
-        {
-          "text": "The search itself, with its field and results.",
-          "use": "CommandPalette"
-        }
-      ],
-      "related": [
-        "command-palette",
-        "text-field",
-        "kbd",
-        "button",
-        "scaffold"
-      ],
-      "exports": [
-        "SearchTrigger"
-      ],
-      "examples": [
-        {
-          "name": "InSidebar",
-          "title": "In sidebar",
-          "description": "SearchTrigger is the button that opens an application's search. It looks like a search field and presses itself on its shortcut, ⌘K on Apple platforms and Ctrl+K elsewhere, so `onClick` is the one place search opens.",
-          "file": "docs/examples/search-trigger/InSidebar.tsx"
-        },
-        {
-          "name": "IconOnly",
-          "title": "Icon only",
-          "description": "",
-          "file": "docs/examples/search-trigger/IconOnly.tsx"
-        },
-        {
-          "name": "UsualShortcut",
-          "title": "Do: The platform's usual shortcut for search.",
-          "description": "",
-          "file": "docs/examples/search-trigger/UsualShortcut.tsx"
-        },
-        {
-          "name": "EditorShortcut",
-          "title": "Don't: A shortcut that editors need, such as Ctrl+B for bold.",
-          "description": "",
-          "file": "docs/examples/search-trigger/EditorShortcut.tsx"
-        },
-        {
-          "name": "ButtonLabel",
-          "title": "Do: Search, or what it searches where there are several.",
-          "description": "",
-          "file": "docs/examples/search-trigger/ButtonLabel.tsx"
-        },
-        {
-          "name": "TypingLabel",
-          "title": "Don't: A placeholder's words: people expect to type, but it is a button.",
-          "description": "",
-          "file": "docs/examples/search-trigger/TypingLabel.tsx"
-        },
-        {
-          "name": "SearchTriggerAnatomy",
-          "title": "SearchTrigger anatomy",
-          "description": "",
-          "file": "docs/examples/search-trigger/SearchTriggerAnatomy.tsx"
-        },
-        {
-          "name": "NarrowSidebar",
-          "title": "Narrow sidebar",
-          "description": "",
-          "file": "docs/examples/search-trigger/NarrowSidebar.tsx"
-        }
-      ],
-      "parts": {
-        "SearchTrigger": {
-          "root": "env-search-trigger",
-          "parts": [
-            {
-              "class": "env-search-trigger",
-              "description": "The button that opens search."
-            },
-            {
-              "class": "env-search-trigger-label",
-              "description": "The button's label."
-            },
-            {
-              "class": "env-search-trigger-shortcut",
-              "description": "The keyboard shortcut."
-            },
-            {
-              "class": "env-search-trigger-tooltip",
-              "description": "The tooltip of the icon-only button."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-icon-only",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-search-trigger"
-              ]
-            }
-          ]
-        },
-        "Popup": {
-          "shared": true,
-          "root": "env-popup",
-          "parts": [
-            {
-              "class": "env-popup",
-              "description": "The surface of menus, popovers, tooltips and lists."
-            },
-            {
-              "class": "env-popup-positioner",
-              "description": "A popup's positioner."
-            },
-            {
-              "class": "env-popup-theme",
-              "description": "The theme boundary around a popup."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-elevation",
-              "values": [
-                "1",
-                "2",
-                "3"
-              ],
-              "parts": [
-                "env-popup"
-              ]
-            },
-            {
-              "attribute": "data-ending-style",
-              "values": [],
-              "parts": [
-                "env-popup"
-              ]
-            },
-            {
-              "attribute": "data-starting-style",
-              "values": [],
-              "parts": [
-                "env-popup"
-              ]
-            },
-            {
-              "attribute": "data-width",
-              "values": [
-                "lg",
-                "md"
-              ],
-              "parts": [
-                "env-popup"
-              ]
-            }
-          ]
-        },
-        "Skeleton": {
-          "shared": true,
-          "root": null,
-          "parts": [
-            {
-              "class": "env-skeleton-content",
-              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
-            },
-            {
-              "class": "env-skeleton-status",
-              "description": "The visually hidden status beside a skeleton list, which says what is loading."
-            }
-          ],
-          "states": []
-        }
-      },
-      "usedIn": {
-        "patterns": [
-          "navigation",
-          "app-frame"
         ]
       }
     },
@@ -5908,6 +5716,13 @@
               ]
             },
             {
+              "attribute": "data-turning",
+              "values": [],
+              "parts": [
+                "env-time-list-column"
+              ]
+            },
+            {
               "attribute": "data-value",
               "values": [],
               "parts": [
@@ -6179,6 +5994,13 @@
                 "hour",
                 "minute"
               ],
+              "parts": [
+                "env-time-list-column"
+              ]
+            },
+            {
+              "attribute": "data-turning",
+              "values": [],
               "parts": [
                 "env-time-list-column"
               ]
@@ -7362,6 +7184,7 @@
           "loading",
           "navigation",
           "app-frame",
+          "search-trigger",
           "window-frame"
         ]
       }
@@ -9269,7 +9092,7 @@
             },
             {
               "class": "env-editor-toolbar",
-              "description": "The editor's formatting toolbar."
+              "description": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which scrolls sideways where it is wider than the editor."
             }
           ],
           "states": []
@@ -9533,7 +9356,7 @@
             },
             {
               "class": "env-editor-toolbar",
-              "description": "The editor's formatting toolbar."
+              "description": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which scrolls sideways where it is wider than the editor."
             }
           ],
           "states": []
@@ -10624,7 +10447,10 @@
         }
       },
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "navigation",
+          "search-trigger"
+        ]
       }
     },
     {
@@ -11643,6 +11469,7 @@
           "loading",
           "app-frame",
           "account-menu",
+          "search-trigger",
           "data-tables"
         ]
       }
@@ -13576,7 +13403,8 @@
       "usedIn": {
         "patterns": [
           "navigation",
-          "app-frame"
+          "app-frame",
+          "search-trigger"
         ]
       }
     },
@@ -14420,6 +14248,9 @@
       },
       "usedIn": {
         "patterns": [
+          "navigation",
+          "app-frame",
+          "search-trigger",
           "data-tables",
           "progressive-disclosure"
         ]
@@ -15201,6 +15032,7 @@
         "feature-cards",
         "spinner",
         "empty-states",
+        "search-trigger",
         "colors"
       ]
     },
@@ -16273,7 +16105,9 @@
         "PageHeader",
         "Tabs",
         "Pager",
-        "SearchTrigger",
+        "Kbd",
+        "IconButton",
+        "Tooltip",
         "CommandPalette",
         "Panes",
         "LinkProvider",
@@ -16293,7 +16127,8 @@
         "panes",
         "drawer",
         "app-frame",
-        "breadcrumbs"
+        "breadcrumbs",
+        "search-trigger"
       ],
       "doc": "docs/patterns/navigation.md",
       "examples": [
@@ -16318,7 +16153,7 @@
         {
           "name": "QuickOpen",
           "title": "Quick open",
-          "description": "Choosing a result opens it as a link would. Here the trigger takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search.",
+          "description": "Choosing a result opens it as a link would. An application opens the palette on <kbd>Ctrl</kbd>+<kbd>K</kbd> too, as the search trigger pattern shows; here the catalogue's own search keeps the keys.",
           "file": "docs/examples/navigation/QuickOpen.tsx"
         },
         {
@@ -16386,7 +16221,7 @@
         "Drawer",
         "Sheet",
         "Panes",
-        "SearchTrigger",
+        "Tooltip",
         "CommandPalette",
         "Menu",
         "AvatarButton",
@@ -16405,7 +16240,8 @@
         "top-bar",
         "drawer",
         "navigation",
-        "account-menu"
+        "account-menu",
+        "search-trigger"
       ],
       "doc": "docs/patterns/app-frame.md",
       "examples": [
@@ -16610,6 +16446,111 @@
           "title": "Organization switcher anatomy",
           "description": "",
           "file": "docs/examples/organization-switcher/OrganizationSwitcherAnatomy.tsx"
+        }
+      ]
+    },
+    {
+      "name": "search-trigger",
+      "title": "Search trigger",
+      "group": "Patterns",
+      "intent": "Find and navigate",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, built from a Button with the search icon, its label and the keys, or an IconButton in a narrow header.",
+      "aliases": [
+        "SearchTrigger",
+        "SearchButton",
+        "search trigger",
+        "quick open button",
+        "search button",
+        "command palette button",
+        "search shortcut"
+      ],
+      "useWhen": [
+        "Search or a command palette opens from a button at the top of a sidebar or in a header.",
+        "The application opens search with a keyboard shortcut and shows it where people look for search.",
+        "A narrow header or a rail needs search as an icon."
+      ],
+      "avoidWhen": [
+        {
+          "text": "People type the search on the page itself and the results filter in place.",
+          "use": "SearchField"
+        },
+        {
+          "text": "The search itself, with its field and results.",
+          "use": "CommandPalette"
+        }
+      ],
+      "composes": [
+        "Button",
+        "IconButton",
+        "Kbd",
+        "Tooltip",
+        "CommandPalette",
+        "Drawer",
+        "AvatarButton",
+        "Box",
+        "Row",
+        "Column",
+        "Text"
+      ],
+      "related": [
+        "command-palette",
+        "button",
+        "kbd",
+        "text-field",
+        "navigation",
+        "app-frame"
+      ],
+      "doc": "docs/patterns/search-trigger.md",
+      "examples": [
+        {
+          "name": "InSidebar",
+          "title": "In sidebar",
+          "description": "A search trigger is the button that opens an application's search: a secondary Button with the Search icon, its label and the shortcut's keys in a Kbd at its `end`, which reads like a search field. Pressing it, or the shortcut, opens a CommandPalette.",
+          "file": "docs/examples/search-trigger/InSidebar.tsx"
+        },
+        {
+          "name": "IconOnly",
+          "title": "Icon only",
+          "description": "In a phone's top bar, a crowded header or a Rail, search is a ghost IconButton named Search, with the label and the keys in a Tooltip that opens below it, clear of the bar.",
+          "file": "docs/examples/search-trigger/IconOnly.tsx"
+        },
+        {
+          "name": "UsualShortcut",
+          "title": "Do: The platform's usual shortcut for search.",
+          "description": "",
+          "file": "docs/examples/search-trigger/UsualShortcut.tsx"
+        },
+        {
+          "name": "EditorShortcut",
+          "title": "Don't: A shortcut that editors need, such as Ctrl+B for bold.",
+          "description": "",
+          "file": "docs/examples/search-trigger/EditorShortcut.tsx"
+        },
+        {
+          "name": "ButtonLabel",
+          "title": "Do: Search, or what it searches where there are several.",
+          "description": "",
+          "file": "docs/examples/search-trigger/ButtonLabel.tsx"
+        },
+        {
+          "name": "TypingLabel",
+          "title": "Don't: A placeholder's words: people expect to type, but it is a button.",
+          "description": "",
+          "file": "docs/examples/search-trigger/TypingLabel.tsx"
+        },
+        {
+          "name": "SearchTriggerAnatomy",
+          "title": "Search trigger anatomy",
+          "description": "",
+          "file": "docs/examples/search-trigger/SearchTriggerAnatomy.tsx"
+        },
+        {
+          "name": "NarrowSidebar",
+          "title": "Narrow sidebar",
+          "description": "",
+          "file": "docs/examples/search-trigger/NarrowSidebar.tsx"
         }
       ]
     },
@@ -17734,6 +17675,12 @@
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+        },
+        {
           "name": "pending",
           "type": "boolean",
           "required": false,
@@ -18832,6 +18779,12 @@
       "description": "A button for an action that takes effect at once and cannot be undone. The first press arms it and names the consequence in place; a second press runs it. It disarms after a few seconds, when focus leaves and on Escape.",
       "props": [
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+        },
+        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -19651,6 +19604,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -20868,7 +20827,7 @@
           "name": "toolbar",
           "type": "readonly MarkdownCommand[] | false",
           "required": false,
-          "default": "['heading', 'bold', 'italic', 'bullet-list', 'numbered-list', 'quote', 'inline-code', 'code-block', 'link']",
+          "default": "['heading', 'bold', 'italic', 'inline-code', 'bullet-list', 'numbered-list', 'quote', 'code-block', 'link']",
           "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
         },
         {
@@ -22709,6 +22668,12 @@
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+        },
+        {
           "name": "pending",
           "type": "boolean",
           "required": false,
@@ -23642,68 +23607,6 @@
       "status": "stable",
       "page": "text-field",
       "doc": "docs/components/text-field.md"
-    },
-    "SearchTrigger": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "The button that opens search or a command palette: a field-like button with its label and the shortcut's keys, or a search icon alone. It presses itself when the shortcut is pressed, and the application opens the search from onClick.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'Search', or EnvUIProvider's messages.searchTrigger.label",
-          "description": "The label, and the name of the icon-only trigger."
-        },
-        {
-          "name": "shortcut",
-          "type": "string | false",
-          "required": false,
-          "default": "'mod+k'",
-          "description": "The keyboard shortcut, shown as keys at the end and announced as aria-keyshortcuts: `mod+k` is ⌘K on Apple platforms and Ctrl+K elsewhere. false shows and handles none."
-        },
-        {
-          "name": "listen",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Press the trigger when the shortcut is pressed anywhere in the window, text fields included. With several triggers listening for one shortcut, the most recently mounted one that is visible and not behind a modal dialog takes it. A disabled trigger, or a key press that something else already handled, such as an editor's own shortcut, leaves the key alone."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Show only the search icon, in a ghost IconButton with the label and shortcut in a tooltip."
-        },
-        {
-          "name": "tooltipSide",
-          "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
-          "required": false,
-          "default": "'bottom'",
-          "description": "The side of the trigger the icon-only tooltip opens on."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "default": "the container's control height, md unless the container sets another",
-          "description": "The height, as on every control."
-        },
-        {
-          "name": "fullWidth",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Fill the width of the container, such as at the top of a navigation drawer."
-        }
-      ],
-      "native": [
-        "button"
-      ],
-      "status": "beta",
-      "page": "search-trigger",
-      "doc": "docs/components/search-trigger.md"
     },
     "SegmentedControl": {
       "kind": "component",

@@ -49,7 +49,7 @@ A command palette is a search field over a list, near the top of the window, for
 
 ```
 
-Open it from a [SearchTrigger](../components/search-trigger.md), which shows the shortcut, such as <kbd>Ctrl</kbd>+<kbd>K</kbd>, and handles it.
+Open it from a [search trigger](../patterns/search-trigger.md), a button that shows the shortcut, such as <kbd>Ctrl</kbd>+<kbd>K</kbd>, which the application handles too.
 
 ### Run a command
 
@@ -118,5 +118,5 @@ Not shown: the message for no matches, `env-command-palette-status`.
 
 ## Changelog
 
-- **1.0.0**: Opens from SearchTrigger, which handles the shortcut. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionOptions`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface.
+- **1.0.0**: Opens from the search trigger pattern, a Button with the shortcut's keys. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionOptions`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface.
 - **0.5.0**: CommandPalette, with grouped options, keyboard highlight, modifier selection and key `hints` shown as Kbd keys.

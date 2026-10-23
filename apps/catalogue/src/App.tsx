@@ -5,7 +5,6 @@ import {
   Link,
   LinkProvider,
   Scaffold,
-  SearchTrigger,
   Sheet,
   Column,
   ThemeToggle,
@@ -31,6 +30,7 @@ import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
 import { homeRoute, routeHref, revealSection } from './navigation/Address';
 import { isSearchShortcut } from './search/SearchShortcut';
+import { SearchButton } from './search/SearchButton';
 import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
 import { DisplayMenu, DisplaySettingsProvider } from './theme/DisplaySettings';
 import { DocumentationSearch } from './search/DocumentationSearch';
@@ -60,18 +60,16 @@ function Catalogue() {
   const contentPath = page?.path ?? standalone?.path ?? root;
   const contentRoute = `${contentPath}${search ? `?${search}` : ''}`;
   useEffect(() => {
-    if (!searchOpen) return;
-    // The search triggers press themselves on ⌘K. While search is open they are behind it, so the
-    // shortcut closes it here; an editor that handles the keys itself, such as for a link, keeps
-    // them.
+    // ⌘K, or Ctrl+K, opens search from anywhere, text fields included, and closes it again; an
+    // editor that handles the keys itself, such as for a link, keeps them.
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.defaultPrevented || !isSearchShortcut(event)) return;
       event.preventDefault();
-      setSearchOpen(false);
+      setSearchOpen((open) => !open);
     };
     addEventListener('keydown', onKeyDown);
     return () => removeEventListener('keydown', onKeyDown);
-  }, [searchOpen]);
+  }, []);
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
     // Moving between a page's views keeps focus on its tabs, where the reader is.
@@ -157,7 +155,7 @@ function Catalogue() {
           }
           actions={
             <>
-              <SearchTrigger iconOnly onClick={openSearch} />
+              <SearchButton iconOnly onClick={openSearch} />
               <DisplayMenu iconOnly />
               <ThemeToggle variant="ghost" />
             </>

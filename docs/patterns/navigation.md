@@ -35,7 +35,9 @@ composes:
   - PageHeader
   - Tabs
   - Pager
-  - SearchTrigger
+  - Kbd
+  - IconButton
+  - Tooltip
   - CommandPalette
   - Panes
   - LinkProvider
@@ -55,6 +57,7 @@ related:
   - drawer
   - app-frame
   - breadcrumbs
+  - search-trigger
 ---
 
 # Navigation
@@ -79,7 +82,7 @@ After the router shows the new page, move focus to the Scaffold's body or the pa
 | A page two or more levels down      | [Breadcrumbs](../components/breadcrumbs.md) with `wrap={false}` in the [PageHeader](../components/page-header.md)                   |
 | Views of the object a page is about | [Tabs](../components/tabs.md) under the PageHeader                                                                                  |
 | Pages read in order                 | A [Pager](../components/pager.md) at the end of the content                                                                         |
-| Opening anything by name            | A [SearchTrigger](../components/search-trigger.md) that opens a [CommandPalette](../components/command-palette.md)                  |
+| Opening anything by name            | A [search trigger](search-trigger.md) that opens a [CommandPalette](../components/command-palette.md)                               |
 | A list whose items open beside it   | List-detail [Panes](../components/panes.md)                                                                                         |
 
 ### Hierarchy
@@ -100,7 +103,7 @@ Tabs switch the views of one project in place. Its settings are another page, so
 
 ### Quick open
 
-Choosing a result opens it as a link would. Here the trigger takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search.
+Choosing a result opens it as a link would. An application opens the palette on <kbd>Ctrl</kbd>+<kbd>K</kbd> too, as the [search trigger](search-trigger.md) pattern shows; here the catalogue's own search keeps the keys.
 
 ```tsx example=QuickOpen
 
@@ -140,7 +143,7 @@ As narrow as a phone, the detail shows in place of the list, with a back button 
 ```
 
 1. **Primary navigation** (`env-rail`)
-2. **Quick open** (`env-search-trigger`)
+2. **Quick open** (`env-top-bar-actions > env-icon-button`)
 3. **Trail** (`env-breadcrumbs`)
 4. **Views** (`env-tabs-list`)
 

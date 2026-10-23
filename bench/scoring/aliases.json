@@ -101,6 +101,8 @@
     "QuickOpen": ["CommandPalette"],
     "SearchDialog": ["CommandPalette", "Dialog"],
     "SearchModal": ["CommandPalette", "Dialog"],
+    "SearchTrigger": ["Button", "IconButton"],
+    "SearchButton": ["Button", "IconButton"],
     "EmptyState": ["Column", "Text", "Button"],
     "NoResults": ["Column", "Text", "Button"],
     "Card": ["Card"],

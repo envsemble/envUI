@@ -118,7 +118,7 @@ Headings, emphasis, strikethrough, code, lists and task lists, quotes, links, im
 | `underline` | A document that is the page's content, such as notes. |
 | `ghost`     | Notes in a quiet panel: only the text at rest.        |
 
-`toolbar` takes the commands to show, in order, or `false` for none.
+`toolbar` takes the commands to show, in order, or `false` for none. Commands of one kind next to each other share a group of the toolbar, with a line between groups: text styles, lists, blocks, and links and tables; Undo and Redo, and Attach files, follow in groups of their own. Formatting on at the caret, such as Bold, shows as a pressed toggle.
 
 <!-- specimen: States -->
 
