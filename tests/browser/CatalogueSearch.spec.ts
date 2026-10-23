@@ -44,7 +44,7 @@ async function shortcutKeys(page: Page) {
 async function search(page: Page, query: string) {
   await page.keyboard.press((await shortcutKeys(page)).own);
   await expect(field(page)).toBeFocused();
-  await expect(dialog(page).getByText('Loading search…')).toHaveCount(0);
+  await expect(dialog(page).locator('.docs-loading')).toHaveCount(0);
   await field(page).fill(query);
 }
 

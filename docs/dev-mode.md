@@ -10,13 +10,13 @@ aliases:
 
 Dev mode describes and checks a page's layout while you develop it: as text for agents, and in 3D with an inspector for people. It reads the rendered page, changing nothing but the root's width while `at()` measures, and lives in its own entry point, `@envsemble/envui/dev`, so a production build contains none of it.
 
-Below is dev mode's 3D view of a small application. Try dev mode runs the real dev mode on it, with `root` set to the application. Its three fixed columns squeeze the cards at a narrow width; turn them off and the problems go.
+Below is dev mode's 3D view of a small application. Try dev mode opens the real dev mode over it at once, with `root` set to the application: its three fixed columns squeeze the cards at a narrow width, and the problems name them.
 
 <!-- demo: DevModeDemo -->
 
 ## Opening it
 
-The Dev mode button in the corner of the page, or Alt+Shift+D outside a field, opens dev mode over the page: the node tree on one side, the 3D view in the middle and the inspector on the other side. Escape closes it and gives focus back. The handle `installDevMode()` returns opens it from code too, with `open()`, `close()` and `toggle()`.
+The Dev mode button in the corner of the page, or <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> outside a field, opens dev mode over the page: the node tree on one side, the 3D view in the middle and the inspector on the other side. <kbd>Esc</kbd> closes it and gives focus back. The handle `installDevMode()` returns opens it from code too, with `open()`, `close()` and `toggle()`.
 
 ## The readout, for agents
 
@@ -113,23 +113,23 @@ Every visible layout node is a plane, lifted one level per step of nesting; stic
 
 The toolbar over the view turns it, chooses what the planes show, sets the page's size and dev mode's theme, and hides the side columns; View settings holds the spacing and levels. A legend in the corner says what the colors mean.
 
-| Do this                                   | To                                                                            |
-| ----------------------------------------- | ----------------------------------------------------------------------------- |
-| Drag, Shift+drag, Ctrl+wheel              | Turn, pan and zoom; the wheel scrolls the page under the pointer, else zooms. |
-| A view in the toolbar, or Fit             | Look tilted, straight on, from the top or a side; bring it all back.          |
-| Names, Padding and gaps                   | Show or hide the planes' names, and the hatching of padding and gaps.         |
-| Click a plane, or a node in the tree      | Select the node; the inspector shows it.                                      |
-| Only the selected                         | Show only the selected node and what is inside it.                            |
-| Color by window class                     | Color each node by the window class its width falls in, not by its kind.      |
-| Rest on a plane                           | See its size and container; colored by window class, a ruler of its width.    |
-| Device, Rotate                            | Lay the page out at a phone's, tablet's or screen's size; swap its sides.     |
-| Dev mode theme                            | Show dev mode itself light or dark, or as the page is, with high contrast.    |
-| View settings: spacing, from and to level | Show a range of levels, with the spacing between them.                        |
-| Nodes, Inspector                          | Hide or show the side columns; the view takes their room.                     |
+| Do this                                            | To                                                                            |
+| -------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Drag, <kbd>Shift</kbd>+drag, <kbd>Ctrl</kbd>+wheel | Turn, pan and zoom; the wheel scrolls the page under the pointer, else zooms. |
+| A view in the toolbar, or Fit                      | Look tilted, straight on, from the top or a side; bring it all back.          |
+| Names, Padding and gaps                            | Show or hide the planes' names, and the hatching of padding and gaps.         |
+| Click a plane, or a node in the tree               | Select the node; the inspector shows it.                                      |
+| Only the selected                                  | Show only the selected node and what is inside it.                            |
+| Color by window class                              | Color each node by the window class its width falls in, not by its kind.      |
+| Rest on a plane                                    | See its size and container; colored by window class, a ruler of its width.    |
+| Device, Rotate                                     | Lay the page out at a phone's, tablet's or screen's size; swap its sides.     |
+| Dev mode theme                                     | Show dev mode itself light or dark, or as the page is, with high contrast.    |
+| View settings: spacing, from and to level          | Show a range of levels, with the spacing between them.                        |
+| Nodes, Inspector                                   | Hide or show the side columns; the view takes their room.                     |
 
 ### The responsive frame
 
-A frame above the planes marks the page's size, labelled in px and rem with its window class and the device it came from. Drag a handle on its left, right or bottom edge, or a bottom corner, to lay the page out at another size, as a browser's responsive mode does: dev mode resizes the page's root, as `at()` does, measures it again and rebuilds the planes, while the window and the view keep their size. Given a height, the root takes it and scrolls what is taller, as a window would; a page shorter than the frame leaves the rest of it empty. A width snaps to the window class boundaries; with focus on an edge's handle, the arrow keys step by 1 rem and Shift+arrow by 5 rem.
+A frame above the planes marks the page's size, labelled in px and rem with its window class and the device it came from. Drag a handle on its left, right or bottom edge, or a bottom corner, to lay the page out at another size, as a browser's responsive mode does: dev mode resizes the page's root, as `at()` does, measures it again and rebuilds the planes, while the window and the view keep their size. Given a height, the root takes it and scrolls what is taller, as a window would; a page shorter than the frame leaves the rest of it empty. A width snaps to the window class boundaries; with focus on an edge's handle, the arrow keys step by 1 rem and <kbd>Shift</kbd>+arrow by 5 rem.
 
 Device lists common phones, tablets, laptops and screens at their CSS viewport sizes; dragging afterwards makes the frame a free one, Responsive. Rotate swaps the width and the height. The inspector and the readout follow the size. The frame's ×, a double-click on a handle or the page's own size in Device brings it back, and closing dev mode does too.
 
@@ -174,7 +174,7 @@ if (import.meta.env.DEV) {
 | `root`     | found   | The element the 3D view and the inspector show, or a selector; the readout's root. |
 | `parts`    | fetched | The parts' descriptions, `docs/generated/parts.json`'s content or a URL to it.     |
 | `button`   | `true`  | Show the Dev mode button in the corner.                                            |
-| `shortcut` | `true`  | Toggle dev mode with Alt+Shift+D.                                                  |
+| `shortcut` | `true`  | Toggle dev mode with <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd>.                 |
 | `open`     | `false` | Open the 3D view and the inspector at once.                                        |
 
 `installDevMode()` returns a handle with `open()`, `close()`, `toggle()`, `uninstall()`, `layout` and `ready`, which settles once the parts' descriptions have loaded. Calling it again returns the same handle.

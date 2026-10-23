@@ -126,7 +126,7 @@ With `narrowLayout="stack"`, a narrow table shows each row as a block with its c
 
 ## Accessibility
 
-Tab reaches the table's scroll region, then each sort button and control in the cells. Sort and Pagination buttons keep focus as the rows change. When an action clears the selection, focus moves to the header's checkbox; after a row is deleted, to the next row's menu button.
+<kbd>Tab</kbd> reaches the table's scroll region, then each sort button and control in the cells. Sort and Pagination buttons keep focus as the rows change. When an action clears the selection, focus moves to the header's checkbox; after a row is deleted, to the next row's menu button.
 
 ### envUI provides
 

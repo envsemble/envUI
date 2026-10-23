@@ -8104,7 +8104,7 @@
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md",
       "category": "Navigation",
-      "status": "stable",
+      "status": "experimental",
       "since": "0.6.0",
       "summary": "Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.",
       "aliases": [
@@ -10191,7 +10191,7 @@
         "key combination"
       ],
       "useWhen": [
-        "Text names a key or a shortcut, such as \"Press Ctrl+P to open a document\".",
+        "Text names a key or a shortcut, such as \"Press <kbd>Ctrl</kbd>+<kbd>P</kbd> to open a document\".",
         "A hint lists the keys a list or a popup handles, such as a footer that says which keys move, open and close."
       ],
       "avoidWhen": [
@@ -10249,7 +10249,7 @@
         {
           "name": "PlatformKeys",
           "title": "Content",
-          "description": "Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, and ←, →, ↑, ↓. Pass the names of the reader's platform, such as ⌘ on Apple keyboards.",
+          "description": "Write keys as the keyboard names them: <kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Esc</kbd>, <kbd>F2</kbd>, capital letters, and <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>. Pass the names of the reader's platform, such as <kbd>⌘</kbd> on Apple keyboards.",
           "file": "docs/examples/kbd/PlatformKeys.tsx"
         },
         {
@@ -13692,7 +13692,7 @@
       "useWhen": [
         "Showing an icon-only control's name, such as a toolbar's Refresh button, for people who don't recognise the icon.",
         "Saying why a control is disabled, such as All seats are assigned, beside the page's own account of it.",
-        "Showing a control's keyboard shortcut, such as Bold (Ctrl+B)."
+        "Showing a control's keyboard shortcut, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>)."
       ],
       "avoidWhen": [
         {
@@ -21946,7 +21946,7 @@
         "PanelDock.Root",
         "PanelDock.Header"
       ],
-      "status": "stable",
+      "status": "experimental",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },
@@ -21997,7 +21997,7 @@
       "native": [
         "header"
       ],
-      "status": "stable",
+      "status": "experimental",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },
@@ -22094,7 +22094,7 @@
       "native": [
         "div"
       ],
-      "status": "stable",
+      "status": "experimental",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },

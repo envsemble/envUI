@@ -4,13 +4,13 @@ import { SpacingPreview } from './foundations/Spacing';
 import { ScalePreview } from './foundations/Scale';
 import { ResponsivePreview } from './foundations/Responsive';
 import { Suspense, useState } from 'react';
-import { Text } from '@envsemble/envui';
 import { AccessibilityPreview } from './foundations/Accessibility';
 import { CompositionPreview } from './foundations/Composition';
 import { ContentPreview } from './foundations/Content';
 import { ExampleStage } from './Example';
 import { Preview } from './Preview';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
+import { Loading } from '../template/Loading';
 
 /** The icon list, with every icon, loads with the page that shows it. */
 const iconList = lazyPart(
@@ -35,7 +35,7 @@ function IconList() {
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={<Text role="status">Loading icons…</Text>}>
+      <Suspense fallback={<Loading what="icons" />}>
         <IconsPreview />
       </Suspense>
     </LoadBoundary>

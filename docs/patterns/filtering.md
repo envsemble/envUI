@@ -123,7 +123,7 @@ Narrower than the `medium` [window class](../foundations/responsive.md), measure
 
 ## Accessibility
 
-Typing filters without moving focus, and the count is announced politely. The popover takes focus as it opens; Tab past its last checkbox closes it, and <kbd>Esc</kbd> returns focus to its button. When Clear filters or a token goes, focus moves to the search, or to the next token.
+Typing filters without moving focus, and the count is announced politely. The popover takes focus as it opens; <kbd>Tab</kbd> past its last checkbox closes it, and <kbd>Esc</kbd> returns focus to its button. When Clear filters or a token goes, focus moves to the search, or to the next token.
 
 ### envUI provides
 

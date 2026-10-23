@@ -120,7 +120,7 @@ One choice of several is a [RadioGroup](../components/radio.md); several are Che
 
 ## Accessibility
 
-Tab follows the fields in the order they show, and Enter in a text field submits. A refused submit moves focus to the summary, whose links each focus their field; where focus goes straight to the field and is already there, as after Enter, say the error in a status too.
+<kbd>Tab</kbd> follows the fields in the order they show, and <kbd>Enter</kbd> in a text field submits. A refused submit moves focus to the summary, whose links each focus their field; where focus goes straight to the field and is already there, as after <kbd>Enter</kbd>, say the error in a status too.
 
 ### envUI provides
 

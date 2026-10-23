@@ -15,7 +15,7 @@ aliases:
   - hotkey
   - key combination
 useWhen:
-  - Text names a key or a shortcut, such as "Press Ctrl+P to open a document".
+  - Text names a key or a shortcut, such as "Press <kbd>Ctrl</kbd>+<kbd>P</kbd> to open a document".
   - A hint lists the keys a list or a popup handles, such as a footer that says which keys move, open and close.
 avoidWhen:
   - text: The shortcut of a menu item, which also needs to reach assistive technology.
@@ -59,7 +59,7 @@ Kbd shows a key as a key cap, or with `keys`, keys pressed together. It only sho
 
 ### Content
 
-Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, and ←, →, ↑, ↓. Pass the names of the reader's platform, such as ⌘ on Apple keyboards.
+Write keys as the keyboard names them: <kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Esc</kbd>, <kbd>F2</kbd>, capital letters, and <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>. Pass the names of the reader's platform, such as <kbd>⌘</kbd> on Apple keyboards.
 
 ```tsx example=PlatformKeys
 
@@ -80,7 +80,7 @@ Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, an
 ### envUI provides
 
 - Native `<kbd>`: one per key, and one around a combination.
-- The + as text, so a combination reads as written, such as Ctrl+P.
+- The + as text, so a combination reads as written, such as <kbd>Ctrl</kbd>+<kbd>P</kbd>.
 - No focus and no role: keys read as part of their sentence.
 
 ### You provide

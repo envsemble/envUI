@@ -1,7 +1,7 @@
 ---
 title: PanelDock
 summary: Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.
-status: stable
+status: experimental
 since: 0.6.0
 category: Navigation
 aliases:

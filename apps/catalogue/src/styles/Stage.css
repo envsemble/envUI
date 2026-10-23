@@ -159,6 +159,12 @@
   padding-inline: 0;
 }
 
+/* A foundation's figure without a stage sits right under its title, as a section's text does. */
+.docs-foundation-stage[data-stage='none'] {
+  min-block-size: 0;
+  padding-block: 0;
+}
+
 .docs-live-example {
   min-block-size: 8rem;
   padding: var(--env-space-7) var(--env-space-6);

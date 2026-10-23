@@ -230,13 +230,19 @@ test('a component page shows plain sections, equal cells and the parts of its an
       widths: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().width))).size,
       heights: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().height)))
         .size,
-      fitted: stages.filter((stage) => stage.querySelector('.docs-related-canvas[data-fitted][inert]'))
-        .length,
+      fitted: stages.filter((stage) =>
+        stage.querySelector('.docs-related-canvas[data-fitted][inert]'),
+      ).length,
     }));
   await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });
   // The anatomy numbers each part of the live button beside the part it names, in the theme the
   // reader has chosen alone, and keeps them there as the page narrows and the theme changes.
-  const stages = page.locator('.docs-anatomy-stage');
+  // The variants figure names each variant with a callout on the start side of its item.
+  const variantNames = page.locator('.docs-variants .docs-variant-label');
+  await variantNames.first().scrollIntoViewIfNeeded();
+  await expect(variantNames).toHaveText(['Primary', 'Secondary', 'Outline', 'Ghost', 'Text']);
+  await expect(variantNames.first()).toHaveAttribute('data-side', 'left');
+  const stages = page.locator('.docs-anatomy .docs-anatomy-stage');
   await expect(stages).toHaveCount(1);
   const placement = () =>
     stages.evaluate((stage) => {
@@ -303,10 +309,11 @@ test('every dotted stage is the only frame of its figure', async ({ page }) => {
   for (const { id } of pages) {
     await goTo(page, `/components/${id}`);
     await expect(page.locator('.docs-figures .docs-figure-section').first()).toBeVisible();
-    await expect(page.getByText(/^Loading (specimen|example)/)).toHaveCount(0);
+    await expect(page.locator('.docs-loading')).toHaveCount(0);
     const framed = await page.evaluate(() => {
       const stages = document.querySelectorAll(
-        '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll)',
+        // A figure without a stage (stage="none") has no frame to count.
+        ".docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll):not([data-stage='none'], [data-stage='none'] *)",
       );
       const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
       const found: string[] = [];
@@ -597,7 +604,7 @@ async function openFailingButtonPage(page: Page) {
   });
   await page.goto(`${siteUrl}/`);
   await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
-  await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
+  await expect(page.locator('.docs-loading')).toHaveCount(0);
   state = 'failing';
   await goTo(page, '/components/button');
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
@@ -697,8 +704,8 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(hero.getByRole('button')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   // The other examples and the example's code render.
-  const variants = page.getByRole('group', { name: 'Variants example', exact: true });
-  await expect(variants.getByRole('button').first()).toBeVisible();
+  const toolbar = page.getByRole('group', { name: 'Quiet toolbar example', exact: true });
+  await expect(toolbar.getByRole('button').first()).toBeVisible();
   await page
     .locator('.docs-live-example-entry')
     .first()
@@ -931,7 +938,7 @@ test('figures with open overlays keep them in their stages, inert, and leave the
     await goTo(page, `/components/${id}`);
     const rooms = page.locator('.docs-open-example');
     await expect(rooms.first()).toBeVisible();
-    await expect(page.getByText(/^Loading example/)).toHaveCount(0);
+    await expect(page.locator('.docs-loading')).toHaveCount(0);
     // Every open figure shows an overlay, inside its stage, and is a picture: inert.
     await expect
       .poll(

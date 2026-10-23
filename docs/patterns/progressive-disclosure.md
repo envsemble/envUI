@@ -140,7 +140,7 @@ A help button opens a Popover with a short definition and a link; a Tooltip only
 
 ## Accessibility
 
-A Disclosure's summary is a button; Enter or Space opens it, and focus stays. Show all keeps focus as the list grows. A Sheet, Menu or Popover moves focus in as it opens and back to its trigger as it closes; a Tooltip and a HoverCard never take focus.
+A Disclosure's summary is a button; <kbd>Enter</kbd> or <kbd>Space</kbd> opens it, and focus stays. Show all keeps focus as the list grows. A Sheet, Menu or Popover moves focus in as it opens and back to its trigger as it closes; a Tooltip and a HoverCard never take focus.
 
 ### envUI provides
 

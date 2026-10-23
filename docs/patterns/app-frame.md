@@ -116,7 +116,7 @@ The bar on a compact width, the rail on a medium one and the drawer from expande
 
 ## Accessibility
 
-Tab reaches the skip links first, then the top bar, the navigation that shows and the body. After a destination opens its page, move focus to the body or the page's heading.
+<kbd>Tab</kbd> reaches the skip links first, then the top bar, the navigation that shows and the body. After a destination opens its page, move focus to the body or the page's heading.
 
 ### envUI provides
 

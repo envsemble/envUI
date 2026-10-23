@@ -96,7 +96,7 @@ Each trigger opens a [Menu](../components/menu.md) built from the Menu parts.
 ### envUI provides
 
 - A `menubar` whose triggers are `menuitem`s with `aria-haspopup` and `aria-expanded`.
-- `aria-keyshortcuts` on triggers with access keys, such as Alt+F.
+- `aria-keyshortcuts` on triggers with access keys, such as <kbd>Alt</kbd>+<kbd>F</kbd>.
 - Focus that roves between triggers and returns to the earlier element after a command.
 
 ### You provide
