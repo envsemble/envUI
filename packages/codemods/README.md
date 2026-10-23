@@ -147,7 +147,7 @@ Moves the imports of exports that 1.0 moved to another entry point, as the map's
 - `import { Button, ColorPicker } from '@envsemble/envui'` keeps Button there and imports ColorPicker from `@envsemble/envui/color`, in that entry point's import where the file has one, or in a new import after the old one. A local name, `ColorSwatch as Swatch`, and `type` on an import or a specifier stay; an import left with no names goes.
 - A re-export, `export { ColorPicker } from '@envsemble/envui'`, moves the same way.
 
-It reports each use through a namespace import, such as `<ui.ColorPicker>` or `ui.ColorSwatchProps` after `import * as ui from '@envsemble/envui'`: import the name from `@envsemble/envui/color` instead. Run it after `v1-props`, which moves ColorPicker's props by its import from `@envsemble/envui`.
+It reports each use through a namespace import, such as `<ui.ColorPicker>` or `ui.ColorSwatchProps` after `import * as ui from '@envsemble/envui'`: import the name from `@envsemble/envui/color` instead. It also reports `export * from '@envsemble/envui'` and `export * as ui from '@envsemble/envui'`, which no longer re-export the moved names, and, in a file that names one of them, each `import('@envsemble/envui')` and `require('@envsemble/envui')`, whose module doesn't have them: load them from `@envsemble/envui/color`. Run it after `v1-props`, which moves ColorPicker's props by its import from `@envsemble/envui`.
 
 ## v1-classes
 

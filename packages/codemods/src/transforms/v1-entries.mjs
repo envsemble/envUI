@@ -10,6 +10,9 @@
 // - A re-export, `export { ColorSwatch } from '@envsemble/envui'`, moves the same way.
 // - A use through a namespace import, such as `ui.ColorPicker` after
 //   `import * as ui from '@envsemble/envui'`, is reported: import it from its entry point.
+// - `export * from '@envsemble/envui'`, and `export * as ui`, are reported: they no longer
+//   re-export the moved names. So is a dynamic `import('@envsemble/envui')` or a `require()` of it
+//   in a file that names one of them, since the module it resolves to doesn't have it.
 // Run it after v1-props, which moves the props of these components by their import from
 // @envsemble/envui; running it again changes nothing.
 import { loadMap } from '../map.mjs';
@@ -20,6 +23,18 @@ export const parser = 'tsx';
 /** The name a specifier imports or exports from its module. */
 const importedName = (specifier) =>
   specifier.imported?.name ?? specifier.imported?.value ?? specifier.local?.name;
+
+/** The names an entry moves, by the entry point they move to. */
+function movedBy(entry) {
+  const targets = new Map();
+  for (const [name, target] of entry.moved)
+    targets.set(target, [...(targets.get(target) ?? []), name]);
+  return targets;
+}
+
+/** Names as a sentence's list: A, B and C. */
+const list = (names) =>
+  names.length === 1 ? names[0] : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
 
 export default function transform(file, api, options = {}) {
   const { entries } = loadMap(options.map);
@@ -176,6 +191,56 @@ export default function transform(file, api, options = {}) {
       root
         .find(j.TSQualifiedName, { left: { type: 'Identifier', name: namespace } })
         .forEach(({ node: name }) => report(name, name.right.name));
+    }
+  });
+
+  // An export of the whole entry point, or of it as a namespace, no longer carries the moved names.
+  const reportExport = (node, text) => {
+    const entry = moving.get(node.source?.value);
+    if (!entry) return;
+    for (const [target, names] of movedBy(entry))
+      reporter.warn(
+        node,
+        `${text} no longer re-exports ${list(names)}: they come from ${target} in 1.0, whose libraries the application installs. Re-export them from there too, such as export * from '${target}'.`,
+      );
+  };
+  root
+    .find(j.ExportAllDeclaration)
+    .forEach(({ node }) =>
+      reportExport(
+        node,
+        `export * ${node.exported ? `as ${node.exported.name} ` : ''}from '${node.source?.value}'`,
+      ),
+    );
+  root.find(j.ExportNamedDeclaration).forEach(({ node }) => {
+    const namespace = (node.specifiers ?? []).find(
+      (specifier) => specifier.type === 'ExportNamespaceSpecifier',
+    );
+    if (namespace)
+      reportExport(node, `export * as ${namespace.exported.name} from '${node.source?.value}'`);
+  });
+
+  // A module loaded at run time, by import() or require(): the moved names aren't on it, in a file
+  // that names them.
+  const mentions = (name) => new RegExp(String.raw`\b${name}\b`).test(file.source);
+  root.find(j.CallExpression).forEach(({ node }) => {
+    const call =
+      node.callee.type === 'Import'
+        ? 'import'
+        : node.callee.type === 'Identifier' && node.callee.name === 'require'
+          ? 'require'
+          : undefined;
+    const [argument] = node.arguments ?? [];
+    const source = typeof argument?.value === 'string' ? argument.value : undefined;
+    const entry = call ? moving.get(source) : undefined;
+    if (!entry) return;
+    for (const [target, names] of movedBy(entry)) {
+      const named = names.filter(mentions);
+      if (named.length > 0)
+        reporter.warn(
+          node,
+          `${call}('${source}') has no ${list(named)} in 1.0: load ${named.length === 1 ? 'it' : 'them'} from ${target}, whose libraries the application installs.`,
+        );
     }
   });
 
