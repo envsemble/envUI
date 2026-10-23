@@ -1,5 +1,5 @@
 import { ColorSwatch, Column, Text } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/content';
+import { PlainCode, SimpleTable } from '../template/SimpleTable';
 import tokenList from '../../../../packages/ui/src/generated/tokens.json';
 // The ids search leads to, as the search index writes them.
 import { tokenSection } from '../../../../scripts/SearchAnchors.mjs';
@@ -48,77 +48,86 @@ const valueText = (value: TokenValue | undefined) => {
         .join('; ');
 };
 
-/** The themes a color takes a value in, and the scales of the other tokens, by their names. */
+/** The themes a color takes a value in, by their names. */
 const themes = [
   ['light', 'Light'],
   ['dark', 'Dark'],
-  ['light-high-contrast', 'Light, high contrast'],
-  ['dark-high-contrast', 'Dark, high contrast'],
+  ['light-high-contrast', 'Light high contrast'],
+  ['dark-high-contrast', 'Dark high contrast'],
 ] as const;
 
-/** One value, named, with a swatch of the color for a color token. */
-function Value({ token, label, value }: { token: Token; label: string; value?: TokenValue }) {
+/** One value in plain monospace, with a small swatch of the color for a color token. */
+function Value({ token, value }: { token: Token; value?: TokenValue }) {
   const color = token.type === 'color' && typeof value?.resolved === 'string';
   return (
     <span className="docs-token-value">
       {color && <ColorSwatch color={value.resolved as string} />}
-      {label && (
-        <Text render={<span />} variant="caption">
-          {label}
-        </Text>
-      )}
-      <Code className="docs-prop-code">{valueText(value)}</Code>
+      <PlainCode>{valueText(value)}</PlainCode>
     </span>
   );
 }
 
-/** A token's values: a color in each theme, another token at each scale, or its one value. */
-function Values({ token }: { token: Token }) {
-  if (token.type === 'color')
-    return themes.map(([theme, label]) => (
-      <Value key={theme} token={token} label={label} value={token.values[theme]} />
-    ));
-  const compact = 'scales' in token ? token.scales?.compact : undefined;
-  if (!compact || valueText(compact) === valueText(token.values.light))
-    return <Value token={token} label="" value={token.values.light} />;
+/** A token's name in plain monospace, with what it is for below in small muted text. */
+function TokenName({ token }: { token: Token }) {
+  const description = 'description' in token ? token.description : undefined;
   return (
     <>
-      <Value token={token} label="Comfortable" value={token.values.light} />
-      <Value token={token} label="Compact" value={compact} />
+      <PlainCode name>{token.cssVariable}</PlainCode>
+      {description && <span className="docs-token-description">{description}</span>}
     </>
   );
 }
 
-/** A group of tokens as a list, each token its name, what it is for and its values. */
-function TokenList({ title, tokens }: { title: string; tokens: Token[] }) {
+/**
+ * A group of tokens as a simple table: colors with their value in each theme, other tokens at
+ * each scale.
+ */
+function TokenTable({ title, tokens }: { title: string; tokens: Token[] }) {
+  const colors = tokens[0]?.type === 'color';
+  const columns = colors
+    ? [
+        { title: 'Token', width: '36%' },
+        ...themes.map(([, label]) => ({ title: label, width: '16%' })),
+      ]
+    : [
+        { title: 'Token', width: '50%' },
+        { title: 'Comfortable', width: '25%' },
+        { title: 'Compact', width: '25%' },
+      ];
   return (
     <Column render={<section />} gap={4} aria-labelledby={`tokens-${title}`}>
       <Text render={<h2 />} variant="title" id={`tokens-${title}`}>
         {title}
       </Text>
-      <ul className="docs-token-list" aria-label={`${title} tokens`}>
-        {tokens.map((token) => {
-          const description = 'description' in token ? token.description : undefined;
-          return (
-            <li key={token.id} id={tokenSection(token.cssVariable)} className="docs-token">
-              <Column gap={1} align="start">
-                <Code className="docs-prop-code">{token.cssVariable}</Code>
-                {description && <Text variant="caption">{description}</Text>}
-              </Column>
-              <div className="docs-token-values">
-                <Values token={token} />
-              </div>
-            </li>
-          );
+      <SimpleTable
+        label={`${title} tokens`}
+        columns={columns}
+        rows={tokens.map((token) => {
+          const compact = 'scales' in token ? token.scales?.compact : undefined;
+          return {
+            key: token.id,
+            id: tokenSection(token.cssVariable),
+            cells: [
+              <TokenName key="name" token={token} />,
+              ...(colors
+                ? themes.map(([theme]) => (
+                    <Value key={theme} token={token} value={token.values[theme]} />
+                  ))
+                : [
+                    <Value key="comfortable" token={token} value={token.values.light} />,
+                    <Value key="compact" token={token} value={compact ?? token.values.light} />,
+                  ]),
+            ],
+          };
         })}
-      </ul>
+      />
     </Column>
   );
 }
 
 /**
  * Every token, generated from the token list that the token build writes from the DTCG source:
- * colors with a swatch in each theme, other tokens at each scale. Search leads to a token.
+ * colors with a swatch in each theme, other tokens at each scale. Search leads to a token's row.
  */
 export function TokenReference() {
   return (
@@ -132,7 +141,7 @@ export function TokenReference() {
       {tokenGroups.map((group) => {
         const tokens = tokenList.tokens.filter((token) => groupOf(token) === group);
         return tokens.length ? (
-          <TokenList key={group.title} title={group.title} tokens={tokens} />
+          <TokenTable key={group.title} title={group.title} tokens={tokens} />
         ) : null;
       })}
     </>
