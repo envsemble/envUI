@@ -55,7 +55,7 @@ A component page is a reference page in the traditional style: ordinary headings
 | Accessibility     | yes      | A `### Keyboard` table (Key, Action) where it handles keys, and `### envUI provides` and `### You provide` lists.     |
 | Changelog         |          | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                          |
 
-The build adds **Props** and **Related** before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. In the catalogue every section is in the page's Overview view, which ends with a Props section that leads to the Props view. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
+The build adds **Props** and **Related** before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. On the website the page's sections are its page on the Site, and its props, part names and changelog are its page in the Docs, which the Site's page links to as API. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
 
 ### Write little
 
@@ -77,7 +77,7 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 | Its parts and their class names               | The anatomy legend, names only.                                                                         |
 | How it adapts to width                        | A sentence and an example at several widths.                                                            |
 | Keys, roles and what the application must add | Accessibility.                                                                                          |
-| Props                                         | The generated Props view; never in prose.                                                               |
+| Props                                         | Generated on the component's page in the Docs; never in prose.                                          |
 | Releases                                      | Changelog.                                                                                              |
 
 Choose the form that teaches each point best rather than a column of paragraphs: a live example for how it looks and behaves, a do and don't pair for a judgment, an anatomy figure for parts, an example at several widths for how it adapts, a table for values, a short list for rules. The catalogue lays out some patterns for you:
@@ -242,7 +242,7 @@ To convert a page on the section template to the figure template:
 2. Move each section's content into the section of the figure template that holds it: Variants and sizes into Variants; States and behaviour into `###` subsections of Overview, or into Variants where a state belongs to one variant; Content guidelines into a `### Labels` or `### Content` subsection of When to use; Do and don't into pairs under When to use, with the rules no picture needs as a short list; Examples into the sections they illustrate, as figures with a caption or under a `###` subsection. Keep what a reader needs, check it against the code, and drop what a figure, the props reference or another section already says.
 3. Keep every heading another page links to, such as `#confirm-in-place`, as a `###` subsection: the build fails on a link to a heading that is gone.
 4. Write the new example files: the do and don't pairs, the anatomy example and, where the component adapts, an example for `widths`. Keep specimens where they show what code can't, such as forced hover and pressed states.
-5. Cut the page down: each thing once, in its place in [the table](#write-little), and no sentence a figure already shows. Run `npm run check`, and look at the page in the catalogue at a narrow and a wide width, in light and dark: cells that share a row of one size, the callouts on their parts, one for each legend item, figures centred on their stages, open code across the column and nothing overflowing. Check the outline too, in the browser's accessibility tree or with a headings list: one `h2` per section and nothing else at that level, so no specimen or example adds an `h2` of its own. Update browser tests that visited the page's Guidelines or Accessibility view; on the figure template, those headings are in its Overview.
+5. Cut the page down: each thing once, in its place in [the table](#write-little), and no sentence a figure already shows. Run `npm run check`, and look at the page in the catalogue at a narrow and a wide width, in light and dark: cells that share a row of one size, the callouts on their parts, one for each legend item, figures centred on their stages, open code across the column and nothing overflowing. Check the outline too, in the browser's accessibility tree or with a headings list: one `h2` per section and nothing else at that level, so no specimen or example adds an `h2` of its own. Update browser tests that visited the page's old views; on the figure template, every heading is on its page.
 
 ### From the earliest pages
 
@@ -251,7 +251,7 @@ Pages written before the template have `## React usage` and `### Props & contrac
 1. Read the component's source and its browser tests in `tests/browser`.
 2. Move what the props table says into TSDoc on the props, then run `npm run docs:props`.
 3. Write the sections of the figure template. Keep the guidance a reader needs, and check each claim against the code.
-4. Turn the preview's specimens into example files, or into specimens where they only serve review. Remove the page's case from `apps/catalogue/src/previews/ComponentPreview.tsx` and its preview function.
+4. Turn the preview's specimens into example files, or into specimens where they only serve review. Remove its preview function from `apps/catalogue/src/previews`.
 5. Take the page out of `unconverted` in `tests/DocumentationPages.test.mjs`.
 6. Update browser tests that visited the old preview, then run `npm run typecheck`, `npm test`, the Chromium tests, and `npm run test:a11y:update` and `npm run test:visual:update`; review the changed images and accessibility entries.
 
