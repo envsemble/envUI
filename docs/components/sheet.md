@@ -71,14 +71,6 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 
 ## When to use
 
-```tsx do=ResultAsAction open caption="A primary action named after its result."
-
-```
-
-```tsx dont=VagueAction open caption="Apply: people can't tell what they will see."
-
-```
-
 - Name the sheet after what it holds, such as Filters or Alex Morgan, with a `title` or an `aria-label`.
 - Keep the close button unless another control in the sheet closes it.
 - Show the next level inside the sheet rather than opening another; side content that fits beside the page is a [Panes](panes.md) supporting pane.

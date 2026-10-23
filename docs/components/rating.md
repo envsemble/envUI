@@ -73,14 +73,6 @@ The stars, the number and the name show the value to the nearest half star: 4.3 
 
 ```
 
-```tsx do=ReviewList caption="Stars alone beside one reviewer's words."
-
-```
-
-```tsx dont=RepeatedRating caption="The rating said again in text: it is read twice."
-
-```
-
 - Keep to one scale on a page, so ratings compare at a glance.
 
 ## Anatomy

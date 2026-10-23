@@ -97,16 +97,6 @@ Text that isn't a control, such as an abbreviation, takes a quiet dotted underli
 
 - Wrap a control that takes focus, never plain text or an icon.
 
-### Content
-
-```tsx do=ShortName open caption="A few words, the same as the control’s accessible name."
-
-```
-
-```tsx dont=LongTooltip open caption="A paragraph people must hold the pointer still to read."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=TooltipAnatomy open

@@ -86,16 +86,6 @@ An alert is a message about a page or a section that stays above the content it 
 - Remove an alert once it no longer applies.
 - Offer `onDismiss` only where the message can safely be hidden.
 
-### Content
-
-```tsx do=ProblemInTitle caption="The problem in the title, the next step in the action."
-
-```
-
-```tsx dont=GenericTitle caption="A title that only names the tone, and a vague action."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=AlertAnatomy

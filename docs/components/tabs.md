@@ -90,16 +90,6 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 - One button variant for every tab of a rail; tabs are buttons, never links.
 - Content people compare stays in one panel.
 
-### Labels
-
-```tsx do=ShortTabNames caption="One or two words each, parallel."
-
-```
-
-```tsx dont=WordyTabNames caption="Phrases of different shapes: hard to scan."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=TabsAnatomy

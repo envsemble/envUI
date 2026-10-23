@@ -101,14 +101,6 @@ The name chooses one of eight colors, the same on every page; `hue` sets another
 
 ```
 
-```tsx do=RoleAsBadge caption="A role in a Badge, beside the name."
-
-```
-
-```tsx dont=RoleAsColor caption="A role in the avatar's color: nobody can read it."
-
-```
-
 - Use AvatarButton, not an Avatar inside your own button.
 - Choose a group's `max` so it fits without wrapping.
 - Pass the person's full name as `name`, the same everywhere: it names the image and chooses the initials and the color.

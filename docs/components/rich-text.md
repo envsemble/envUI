@@ -130,14 +130,6 @@ Headings, emphasis, strikethrough, code, lists and task lists, quotes, links, im
 
 ### Content
 
-```tsx do=PlaceholderSaysHow caption="A label that names the document, and a placeholder that says how to start."
-
-```
-
-```tsx dont=VaguePlaceholder caption="Text and Enter text here: neither says what to write."
-
-```
-
 - Give image attachments a label that describes the image: it becomes the alternative text.
 
 ## Anatomy

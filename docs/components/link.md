@@ -62,14 +62,6 @@ For a link that should look like a button, use Button with `href`.
 
 ### Labels
 
-```tsx do=NamesDestination caption="Words that name the destination."
-
-```
-
-```tsx dont=ClickHere caption="Click here: it says nothing out of context."
-
-```
-
 - Link a few words, not a whole sentence.
 
 ## Anatomy

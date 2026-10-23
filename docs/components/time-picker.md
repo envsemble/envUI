@@ -76,26 +76,8 @@ The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 
 
 ## When to use
 
-```tsx do=LimitsExplained caption="Say which values can be chosen in the description."
-
-```
-
-```tsx dont=LimitsUnexplained caption="Unavailable values that people find only in the popup."
-
-```
-
 - Use `readOnly`, not `disabled`, to show a time people can't change.
 - For one moment, a day and a time, use a single DatePicker with `granularity="minute"`.
-
-### Labels
-
-```tsx do=NamedMoment caption="A label that names the moment."
-
-```
-
-```tsx dont=GenericLabel caption="Time, which says nothing about what happens then."
-
-```
 
 ## Anatomy
 

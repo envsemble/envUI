@@ -582,14 +582,14 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   );
 
   const examples = await server.call('get_example', { component: 'Dialog' });
-  assert.ok(examples.examples.some((example) => example.name === 'ConfirmDelete'));
+  assert.ok(examples.examples.some((example) => example.name === 'InviteMember'));
   const example = await server.call('get_example', {
     component: 'dialog',
-    example: 'confirmdelete',
+    example: 'invitemember',
   });
   assert.equal(
     example.source,
-    readFileSync(join(examplesDirectory, 'dialog/ConfirmDelete.tsx'), 'utf8'),
+    readFileSync(join(examplesDirectory, 'dialog/InviteMember.tsx'), 'utf8'),
   );
   assert.match(
     (await server.call('get_example', { component: 'Dialog', example: '../../package' })).error,

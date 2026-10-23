@@ -98,16 +98,6 @@ CodeDiff shows what changed between two versions of a file; `countDiffLines` cou
 - Don't style code or pick its colors: envUI follows the app theme.
 - Keep blocks short, and link to the whole file.
 
-### Content
-
-```tsx do=ExactValue caption="Exact values in Code, the sentence around them in plain text."
-
-```
-
-```tsx dont=SentenceAsCode caption="A whole sentence in Code: it reads as a value to type."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=CodeBlockAnatomy

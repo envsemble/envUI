@@ -1026,7 +1026,7 @@ test('the installed envui command writes the AGENTS.md index and serves MCP thro
   send({
     id: 3,
     method: 'tools/call',
-    params: { name: 'get_example', arguments: { component: 'Dialog', example: 'ConfirmDelete' } },
+    params: { name: 'get_example', arguments: { component: 'Dialog', example: 'InviteMember' } },
   });
   await answered;
   server.stdin.end();
@@ -1035,7 +1035,7 @@ test('the installed envui command writes the AGENTS.md index and serves MCP thro
   assert.equal(JSON.parse(responses[1].result.content[0].text).results[0].name, 'Dialog');
   assert.equal(
     JSON.parse(responses[2].result.content[0].text).source,
-    await readFile(join(installedDirectory, 'docs/examples/dialog/ConfirmDelete.tsx'), 'utf8'),
+    await readFile(join(installedDirectory, 'docs/examples/dialog/InviteMember.tsx'), 'utf8'),
   );
 });
 

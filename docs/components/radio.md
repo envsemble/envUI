@@ -93,14 +93,6 @@ With `required` and nothing chosen, the form asks for a choice. Link the error t
 
 Name the group with a short noun, and give options short, parallel names.
 
-```tsx do=ParallelNames caption="Short names that read alike."
-
-```
-
-```tsx dont=MixedNames caption="Names of different shapes, which people must read twice."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=RadioAnatomy

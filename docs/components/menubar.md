@@ -65,14 +65,6 @@ With `accessKeys`, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, an
 
 ### Content
 
-```tsx do=OneWordNames caption="One word per menu."
-
-```
-
-```tsx dont=LongMenuNames caption="Long menu names that crowd the bar."
-
-```
-
 - Name items as in [Menu](../components/menu.md), with an ellipsis for a command that asks for more, such as Export… in File.
 
 ## Anatomy

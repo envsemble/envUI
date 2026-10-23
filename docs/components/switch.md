@@ -85,14 +85,6 @@ Name the setting in a short phrase, so that on means yes.
 
 ```
 
-```tsx do=PositiveLabel caption="A label that on means yes to."
-
-```
-
-```tsx dont=NegativeLabel caption="A negative label: on means no."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=SwitchAnatomy

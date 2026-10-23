@@ -157,25 +157,9 @@ Keyboard focus draws a ring 2 px outside a button, or on the edge of a ghost but
 
 - `href` for a destination, `onClick` for an action.
 
-```tsx do=CloseAtEnd caption="A close button at the end of the header of what it closes."
-
-```
-
-```tsx dont=CloseAtStart caption="At the start, it reads as part of the content."
-
-```
-
 ### Labels
 
 Start with a verb and say what will happen.
-
-```tsx do=SpecificLabel caption="Name the action and what it affects."
-
-```
-
-```tsx dont=VagueLabel caption="OK or Submit, when a specific verb fits."
-
-```
 
 When the outcome is known, put it in the label.
 

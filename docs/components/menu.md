@@ -129,14 +129,6 @@ With `href`, an item is a link, through the `LinkProvider`.
 
 ### Content
 
-```tsx do=ConsistentIcons open stage=raised caption="An icon on every item of a set, or on none."
-
-```
-
-```tsx dont=MixedIcons open stage=raised caption="An icon on one item only: it stands out for no reason."
-
-```
-
 - Start an action with a verb, such as Rename, and name a destination after its page.
 - Show a `shortcut` only where the application handles its keys.
 

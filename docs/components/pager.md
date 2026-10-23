@@ -66,14 +66,6 @@ Pager.Previous and Pager.Next as children of Pager.Root make the same pair, and 
 
 ```
 
-```tsx do=IconsOnBoth caption="An icon on both links, or on neither."
-
-```
-
-```tsx dont=IconOnOne caption="An icon on one link only: the pair stops reading as one."
-
-```
-
 - Keep the order of the sequence the same as in the navigation that lists its pages.
 - Don't mix the `previous` and `next` props with the parts in one pager.
 

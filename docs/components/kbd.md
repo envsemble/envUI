@@ -59,14 +59,6 @@ Kbd shows a key as a key cap, or with `keys`, keys pressed together. It only sho
 
 ### Content
 
-```tsx do=SayWhatItDoes caption="Say what the keys do, in a sentence."
-
-```
-
-```tsx dont=KeysAlone caption="A key and a word: people have to guess the rest."
-
-```
-
 Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, and ←, →, ↑, ↓. Pass the names of the reader's platform, such as ⌘ on Apple keyboards.
 
 ```tsx example=PlatformKeys

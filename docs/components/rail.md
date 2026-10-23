@@ -56,14 +56,6 @@ A destination's `group` shows no heading in the rail: grouped destinations follo
 
 ```
 
-```tsx do=OneWordLabels caption="One short word for each destination."
-
-```
-
-```tsx dont=PhraseLabels caption="Phrases: they wrap over several lines in the narrow rail."
-
-```
-
 - Set `current` on one destination from the router; a press doesn't select by itself.
 - `footer` for the account, such as an AvatarButton.
 

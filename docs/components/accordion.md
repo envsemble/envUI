@@ -53,14 +53,6 @@ An accordion is a list of sections, each a heading that shows and hides the pane
 
 ## When to use
 
-```tsx do=SayWhatItHolds caption="Titles that say what each section holds, such as the question it answers."
-
-```
-
-```tsx dont=VagueTitles caption="More information or Details: people open each one to find out."
-
-```
-
 - Don't nest accordions; show the next level inside the panel as a list.
 - Keep what people need to finish a task out of closed sections.
 

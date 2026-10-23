@@ -162,14 +162,6 @@ Name the value in a short noun phrase, and keep lasting instructions in the desc
 
 ```
 
-```tsx do=HelpfulError caption="An error that says how to correct the value."
-
-```
-
-```tsx dont=VagueError caption="An error that only says the value is wrong."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=TextFieldAnatomy

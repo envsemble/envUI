@@ -94,14 +94,6 @@ The first load shows the table as a skeleton over placeholder rows after 200 ms,
 
 ## When to use
 
-```tsx do=NumbersAlignedEnd caption="Numbers aligned to the end with numeric, so they compare down the column."
-
-```
-
-```tsx dont=NumbersAlignedStart caption="Numbers aligned to the start: hundreds and tens look alike."
-
-```
-
 - Give each row one link, on its name, rather than making the whole row a click target.
 - Select rows with a checkbox beside `selected`; a press on the row alone is announced unevenly.
 - Match the controls above the table to its `density`: `size="sm"` over small rows.

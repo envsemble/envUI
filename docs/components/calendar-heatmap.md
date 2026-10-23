@@ -85,14 +85,6 @@ EnvUIProvider's `locale` names the months, weekdays and dates, and `messages.cal
 
 ```
 
-```tsx do=FiveLevels caption="Five steps, which people can tell apart."
-
-```
-
-```tsx dont=TenLevels caption="Ten steps: neighbouring shades look the same."
-
-```
-
 - Name it after what it counts and when, such as Deployments in the last year.
 - Give each day a `label` with its unit, such as 4 deployments.
 

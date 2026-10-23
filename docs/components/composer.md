@@ -80,14 +80,6 @@ Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the form, which 
 
 ```
 
-```tsx do=ShortFooter caption="A footer of a few words."
-
-```
-
-```tsx dont=LongFooter caption="Instructions in the footer that nobody reads."
-
-```
-
 - Place the composer below the conversation it adds to.
 - Show a message that couldn't be sent in the conversation, with its status.
 

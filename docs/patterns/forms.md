@@ -96,14 +96,6 @@ One choice of several is a [RadioGroup](../components/radio.md); several are Che
 
 ```
 
-```tsx do=VisibleLabel caption="A label, and the format as a description that stays."
-
-```
-
-```tsx dont=PlaceholderLabel caption="The placeholder as the label: it goes as people type."
-
-```
-
 - Keep submit enabled, and say what is wrong after a submit; a disabled button can't tell people why.
 - Keep what people entered after any error, and set `type` and `autoComplete` on the fields people fill in often.
 - envUI has no stepper yet: split a long form into short pages of your own, each with its submit and a Back link.

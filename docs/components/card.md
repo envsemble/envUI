@@ -105,14 +105,6 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 
 ### Content
 
-```tsx do=ShortCard caption="A short title that names the subject, and a sentence or two."
-
-```
-
-```tsx dont=WordyCard caption="A long title and a paragraph: the card stops being scannable."
-
-```
-
 - Put the fact that matters most for choosing in `meta`.
 - Start a link card with its destination's name.
 

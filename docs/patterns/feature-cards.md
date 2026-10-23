@@ -41,14 +41,6 @@ A feature card is a [Card](../components/card.md) holding a [Row](../components/
 
 ## When to use
 
-```tsx do=OneAction caption="One action, the one that starts the feature."
-
-```
-
-```tsx dont=SeveralActions caption="Several actions: none of them says what the card is for."
-
-```
-
 - Give the heading the level the page's outline needs, such as `render={<h3 />}` under a section's `h2`; its look stays the headline type.
 - A few feature cards side by side sit in a [Grid](../components/grid.md) of even columns.
 

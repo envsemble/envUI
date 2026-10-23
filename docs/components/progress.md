@@ -81,16 +81,6 @@ Start with `value={null}`, show the share once it is known, and replace the bar 
 - Don't move the bar backwards, or hold it just short of the end.
 - Offer a way to cancel a long task beside the bar.
 
-### Content
-
-```tsx do=ImportContacts caption="Name the task, and count items where people count them."
-
-```
-
-```tsx dont=VagueLabel caption="A label that doesn't say what is running."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=ProgressAnatomy

@@ -101,14 +101,6 @@ With `name`, the form submits the files the zone took, and a reset clears them. 
 
 Say what to add in the label, and which files fit in the description.
 
-```tsx do=SaysWhatFits caption="What to add, and which files fit."
-
-```
-
-```tsx dont=BareLabel caption="Upload alone: people find out what fits only when a file is refused."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=DropZoneAnatomy

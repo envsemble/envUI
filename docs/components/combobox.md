@@ -113,14 +113,6 @@ With `filter={null}` the list shows the options the application finds for the ty
 
 Name the field after what people choose, and use the placeholder for what to type.
 
-```tsx do=NamedLabel caption="A label that names what people choose."
-
-```
-
-```tsx dont=InstructionLabel caption="An instruction as the label."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=ComboboxAnatomy

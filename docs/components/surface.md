@@ -92,14 +92,6 @@ Without `padding`, the inset grows from 1.25 rem in narrow windows to 1.5 rem fr
 
 ```
 
-```tsx do=NamedRegions caption="A heading that names each region."
-
-```
-
-```tsx dont=FillsOnly caption="Regions told apart by their fills alone, which are close in contrast."
-
-```
-
 - No margins on a surface's children; lay them out with a Column.
 - A block with a title, metadata and actions is a [Card](card.md).
 

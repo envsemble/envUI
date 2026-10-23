@@ -69,16 +69,6 @@ With `sticky`, the header stays at the top of the area that scrolls, under a Sca
 - One PageHeader per page, with the page's `h1`; set `headingLevel` lower in a pane or a dialog.
 - A toolbar row that holds a text field is a [Row](row.md), not a Toolbar, as [Toolbar's layouts](toolbar.md#layouts) describe.
 
-### Content
-
-```tsx do=NameTheContent caption="A title that names what the page holds."
-
-```
-
-```tsx dont=InstructionAsTitle caption="An instruction as the title, and a description that repeats it."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=PageHeaderAnatomy

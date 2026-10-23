@@ -103,14 +103,6 @@ A danger notification stays until it is dismissed, and is announced at once.
 
 ### Content
 
-```tsx do=NameWhatHappened open caption="Say what happened, and to what."
-
-```
-
-```tsx dont=GenericSuccess open caption="A message that only repeats the tone."
-
-```
-
 - Label an action with a short verb, such as Undo or Try again; one action at most.
 
 ## Anatomy

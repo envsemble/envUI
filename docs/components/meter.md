@@ -48,23 +48,7 @@ A meter shows a measurement within a known range, such as the seats assigned of 
 
 ```
 
-```tsx do=SameWidths caption="One width for meters people compare."
-
-```
-
-```tsx dont=MixedWidths caption="Bars of different lengths, side by side."
-
-```
-
 ### Content
-
-```tsx do=StorageQuota caption="The value as people count it, with its unit."
-
-```
-
-```tsx dont=PercentOfStorage caption="A percentage, where people count an amount."
-
-```
 
 - Name what is measured in `label`, such as Seats assigned.
 

@@ -74,14 +74,6 @@ A spinner shows work of unknown length in a small area, such as a preview on its
 
 ```
 
-```tsx do=OneSpinner caption="One spinner for one piece of work."
-
-```
-
-```tsx dont=SpinnerPerRow caption="A spinner on every row of one update."
-
-```
-
 - Name the work in `label`, such as Updating tasks.
 
 ## Anatomy

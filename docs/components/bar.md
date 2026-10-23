@@ -51,22 +51,6 @@ Past five destinations, the fifth place is More, which opens the rest in a menu 
 
 ## When to use
 
-```tsx do=ShortLabels caption="One short word for each destination."
-
-```
-
-```tsx dont=LongLabels caption="Long labels: each shares a fifth of a phone and is cut short."
-
-```
-
-```tsx do=OneCurrent caption="One current destination, the page people are on."
-
-```
-
-```tsx dont=TwoCurrent caption="Two current destinations: people can't tell where they are."
-
-```
-
 - Three to five destinations; group headings don't show, so order the array.
 - Set `current` from the router; a press doesn't select by itself.
 

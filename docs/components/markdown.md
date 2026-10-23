@@ -100,14 +100,6 @@ CommonMark with tables, strikethrough, task lists, automatic links and footnotes
 
 ### Content
 
-```tsx do=LinkNamesDestination caption="Link text that names the destination."
-
-```
-
-```tsx dont=ClickHere caption="Click here: out of context, it says nothing."
-
-```
-
 - Give images alternative text in the source.
 
 ## Anatomy

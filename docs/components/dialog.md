@@ -103,16 +103,6 @@ While `pending`, nothing closes the dialog and its close button is disabled. Sub
 
 - Keep one task per dialog, and don't open a dialog from another.
 
-### Content
-
-```tsx do=ConfirmDelete open caption="Ask the question, and repeat its verb in the action."
-
-```
-
-```tsx dont=AreYouSure open caption="Are you sure? with Yes and No: neither says what happens."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=DialogAnatomy open

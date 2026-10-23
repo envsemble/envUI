@@ -111,14 +111,6 @@ A count takes the same tones and variants: neutral and soft by default, and `ton
 
 ### Content
 
-```tsx do=ShortState caption="One or two words, in sentence case."
-
-```
-
-```tsx dont=SentenceInBadge caption="A sentence: it drops below the title and stops reading as a state."
-
-```
-
 - Show `99+` beyond two digits, with the full count in `aria-label`.
 
 ### In navigation

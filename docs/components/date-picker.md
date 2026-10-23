@@ -111,26 +111,8 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 ```
 
-```tsx do=LimitsExplained caption="Say which days can be chosen in the description."
-
-```
-
-```tsx dont=LimitsUnexplained caption="Unavailable days that people find only in the calendar."
-
-```
-
 - Use two fields for a range, such as First day and Last day.
 - Use `readOnly`, not `disabled`, to show a date people can't change.
-
-### Labels
-
-```tsx do=NamedMoment caption="A label that names the moment."
-
-```
-
-```tsx dont=GenericLabel caption="Date, which says nothing about what happens then."
-
-```
 
 ## Anatomy
 

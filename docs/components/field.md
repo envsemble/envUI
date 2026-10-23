@@ -67,16 +67,6 @@ Field gives a control of your own a label, a description and an error, wired for
 - Keep the description while the error shows; the error adds to it.
 - Without children, `Field.Error` shows the browser's validation message; `match` picks one kind of failure.
 
-### Labels
-
-```tsx do=ShortLabel caption="A short noun phrase, with guidance in the description."
-
-```
-
-```tsx dont=WordyLabel caption="A sentence with a colon, which people read twice."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=FieldAnatomy

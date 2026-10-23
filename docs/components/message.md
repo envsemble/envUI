@@ -84,14 +84,6 @@ A message is one entry of a conversation, such as a chat message or a comment, i
 
 ### Content
 
-```tsx do=AuthorWhereNeeded caption="An author where it tells people apart."
-
-```
-
-```tsx dont=AuthorEverywhere caption="Your own name on your own messages."
-
-```
-
 - Name icon actions after what they do, such as Copy answer.
 
 ## Anatomy
