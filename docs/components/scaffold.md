@@ -17,7 +17,6 @@ aliases:
   - WindowFrame
   - collapsible sidebar
   - collapse navigation
-  - sidebar toggle
   - icon strip
 useWhen:
   - An application's screen, with a top bar, its navigation and the page people are on.

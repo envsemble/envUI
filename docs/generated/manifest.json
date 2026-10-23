@@ -442,7 +442,6 @@
         "WindowFrame",
         "collapsible sidebar",
         "collapse navigation",
-        "sidebar toggle",
         "icon strip"
       ],
       "useWhen": [

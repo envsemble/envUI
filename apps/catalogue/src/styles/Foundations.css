@@ -132,7 +132,7 @@
   align-items: center;
   text-align: center;
 }
-/* Labels wrap only between words; a word longer than the tile ends in an ellipsis, and the tile's
+/* Labels wrap only between words; a word longer than the tile ends in an ellipsis, and the label's
    tooltip holds the whole name. */
 .docs-icon-label {
   display: block;
