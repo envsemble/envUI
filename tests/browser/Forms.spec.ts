@@ -242,6 +242,32 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
   await expect(trigger).toBeFocused();
 });
 
+test('a Select whose queued focus is lost moves focus to the highlighted option once open', async ({
+  page,
+}) => {
+  // On a busy page, Base UI's queued move of focus to the option is now and then lost. Stand in
+  // for that by ignoring the first focus call an option gets.
+  await page.evaluate(() => {
+    const focus = HTMLElement.prototype.focus;
+    let lost = false;
+    HTMLElement.prototype.focus = function (this: HTMLElement, options?: FocusOptions) {
+      if (this.getAttribute('role') === 'option' && !lost) {
+        lost = true;
+        return;
+      }
+      focus.call(this, options);
+    };
+  });
+  const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
+  await trigger.focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('listbox')).toBeVisible();
+  await expect(page.getByRole('option', { name: 'Starter', exact: true })).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(trigger).toHaveText('Team');
+});
+
 test('Select triggers are button styles, and the open list stands apart from a pane', async ({
   page,
 }) => {
