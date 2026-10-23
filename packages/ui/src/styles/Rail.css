@@ -247,7 +247,7 @@
 [data-env-skeleton] .env-rail-count {
   forced-color-adjust: none;
   border-color: transparent;
-  background: var(--env-skeleton-color);
+  background: var(--env-skeleton-paint);
 }
 [data-env-skeleton] .env-rail-count * {
   visibility: hidden;

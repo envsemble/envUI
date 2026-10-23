@@ -270,7 +270,7 @@
 [data-env-skeleton] .env-drawer-count {
   forced-color-adjust: none;
   border-color: transparent;
-  background: var(--env-skeleton-color);
+  background: var(--env-skeleton-paint);
 }
 [data-env-skeleton] .env-drawer-count * {
   visibility: hidden;

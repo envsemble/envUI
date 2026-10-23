@@ -420,7 +420,8 @@
         "hover": { "$value": "{color.bg.muted.hover}" },
         "pressed": { "$value": "{color.bg.muted.pressed}" }
       }
-    }
+    },
+    "skeleton": { "shine": { "$value": "{color.border.default}" } }
   },
   "elevation": {
     "1": { "border": { "$value": "{palette.neutral.55}" } },

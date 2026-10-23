@@ -149,7 +149,7 @@ After 200 ms the bar along the top bar's bottom edge shows the next page is on i
 4. **Description bars** (`env-card-description`)
 5. **Action shape** (`env-card-footer`)
 
-Not shown: the inert content inside the root, `env-skeleton-content`, which has no box of its own. Every bar and shape pulses in step across the page, and keeps still with a reduced-motion preference.
+Not shown: the inert content inside the root, `env-skeleton-content`, which has no box of its own. A soft highlight sweeps across every bar and shape, in step across the page, and keeps still with a reduced-motion preference. Bars have small rounded corners, and shapes keep their component's, such as a chip's, an avatar's round one or a card's.
 
 ## Accessibility
 

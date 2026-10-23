@@ -93,8 +93,23 @@
   display: none;
 }
 
+/* In a skeleton, the bars take the room the loaded text usually does, so the card keeps its size
+   when it loads: the title and the meta share one row, the title's bar giving way to the meta's in
+   a narrow card, and the description is one line, as a card's supporting sentence usually is. */
+.env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-heading {
+  --env-skeleton-length: 9rem;
+}
+.env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-heading:empty {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
 .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-meta {
-  --env-skeleton-length: 5rem;
+  --env-skeleton-length: 3.5rem;
+}
+.env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-description {
+  --env-skeleton-length: 16rem;
+  --env-skeleton-lines: 1;
+  --env-skeleton-last: 100%;
 }
 
 /* A card with an action strip: the body takes the card's padding and the strip its own fill along

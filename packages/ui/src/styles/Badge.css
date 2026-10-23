@@ -162,7 +162,7 @@
   forced-color-adjust: none;
   border-color: transparent;
   box-shadow: none;
-  background: var(--env-skeleton-color);
+  background: var(--env-skeleton-paint);
 }
 [data-env-skeleton] .env-badge * {
   visibility: hidden;

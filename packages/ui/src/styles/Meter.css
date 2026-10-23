@@ -112,7 +112,7 @@
 /* In a skeleton, a meter's or a progress bar's track is a bar of the skeleton's color, with no
    value in it. */
 [data-env-skeleton] :is(.env-meter-track, .env-progress-track, .env-progress-segment) {
-  background: var(--env-skeleton-color);
+  background: var(--env-skeleton-paint);
   box-shadow: none;
 }
 [data-env-skeleton] :is(.env-meter-indicator, .env-progress-indicator),

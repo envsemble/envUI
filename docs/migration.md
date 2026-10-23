@@ -656,7 +656,7 @@ Skeleton is gone: a component that paints a container, such as Surface, Card, Li
 | `.env-skeleton` in a style sheet                          | `[data-env-skeleton]`, on the skeleton's root, and what is inside it                         |
 
 - A skeleton's root is a busy region, `aria-busy`, which assistive technology hears once, and its content, in an inert wrapper without a box of its own, can't be focused or read until it loads. A list, which holds no wrapper, is inert as a whole, with a visually hidden status beside it that says what is loading; a table holds its wrapper inside its scroll region. Turning `skeleton` on or off renders the content anew.
-- Text becomes bars and icons, media and controls filled shapes of their size, in one color that pulses in step across the page, and still with a reduced-motion preference. Give media an aspect ratio so it holds its place.
+- Text becomes bars and icons, media and controls filled shapes of their size, with a soft highlight that sweeps across them in step across the page, and still with a reduced-motion preference. Give media an aspect ratio so it holds its place.
 - `placeholders<Item>(count)` returns stand-in items with an `id` each and every other field of `Item` possibly undefined, as the type says, and `isPlaceholder(item)` tells one apart; `useSkeleton()` tells a component of the application's own that it is inside a skeleton.
 - LoadingState is gone: a [Spinner](components/spinner.md) with `showLabel` shows a spinner with its `label`, as [folded components](#folded-components-and-patterns) says, and takes no children.
 - The documentation's Skeleton page is the [Loading](patterns/loading.md) pattern.

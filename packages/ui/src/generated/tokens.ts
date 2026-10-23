@@ -588,7 +588,7 @@ export const tokens = {
       'dark-high-contrast': '#dbdde1',
     },
   },
-  /** The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface. */
+  /** The translucent neutral fill of secondary buttons, chips, switch tracks and skeletons: a layer of the text color, so it keeps its tone on every surface. */
   'color.bg.neutral.muted': {
     cssVariable: '--env-color-bg-neutral-muted',
     type: 'color',
@@ -1532,6 +1532,17 @@ export const tokens = {
       dark: '#4b4d51',
       'light-high-contrast': '#dbdde1',
       'dark-high-contrast': '#424447',
+    },
+  },
+  /** The soft highlight that sweeps across a skeleton's bars and shapes: lighter than their fill on every surface, the raised surface in the light theme and the default border's gray in the dark. */
+  'color.skeleton.shine': {
+    cssVariable: '--env-color-skeleton-shine',
+    type: 'color',
+    values: {
+      light: '#eff1f5',
+      dark: '#898c91',
+      'light-high-contrast': '#ffffff',
+      'dark-high-contrast': '#a1a4a9',
     },
   },
   /** The hairline border of controls and fields, which stays 1 px in both scales. */
