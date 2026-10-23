@@ -43,10 +43,10 @@ export const tokens = {
     cssVariable: '--env-color-avatar-bg',
     type: 'color',
     values: {
-      light: '#005cc8',
-      dark: '#005cc8',
-      'light-high-contrast': '#004aa2',
-      'dark-high-contrast': '#004aa2',
+      light: '#40638a',
+      dark: '#40638a',
+      'light-high-contrast': '#2d4f75',
+      'dark-high-contrast': '#2d4f75',
     },
   },
   /** The amber fill, one of the hues an avatar takes from its name. */
@@ -54,10 +54,10 @@ export const tokens = {
     cssVariable: '--env-color-avatar-bg-amber',
     type: 'color',
     values: {
-      light: '#8a5504',
-      dark: '#8a5504',
-      'light-high-contrast': '#704300',
-      'dark-high-contrast': '#704300',
+      light: '#795c32',
+      dark: '#795c32',
+      'light-high-contrast': '#65481d',
+      'dark-high-contrast': '#65481d',
     },
   },
   /** The green fill, one of the hues an avatar takes from its name. */
@@ -65,10 +65,10 @@ export const tokens = {
     cssVariable: '--env-color-avatar-bg-green',
     type: 'color',
     values: {
-      light: '#176f35',
-      dark: '#176f35',
-      'light-high-contrast': '#005a25',
-      'dark-high-contrast': '#005a25',
+      light: '#44694b',
+      dark: '#44694b',
+      'light-high-contrast': '#305538',
+      'dark-high-contrast': '#305538',
     },
   },
   /** The purple fill, one of the hues an avatar takes from its name. */
@@ -76,10 +76,10 @@ export const tokens = {
     cssVariable: '--env-color-avatar-bg-purple',
     type: 'color',
     values: {
-      light: '#8e3caa',
-      dark: '#8e3caa',
-      'light-high-contrast': '#782594',
-      'dark-high-contrast': '#782594',
+      light: '#7e5370',
+      dark: '#7e5370',
+      'light-high-contrast': '#69405c',
+      'dark-high-contrast': '#69405c',
     },
   },
   /** The red fill, one of the hues an avatar takes from its name. */
@@ -87,21 +87,21 @@ export const tokens = {
     cssVariable: '--env-color-avatar-bg-red',
     type: 'color',
     values: {
-      light: '#b72b20',
-      dark: '#b72b20',
-      'light-high-contrast': '#9f0300',
-      'dark-high-contrast': '#9f0300',
+      light: '#8c514d',
+      dark: '#8c514d',
+      'light-high-contrast': '#763d3a',
+      'dark-high-contrast': '#763d3a',
     },
   },
-  /** The slate fill, one of the hues an avatar takes from its name. */
+  /** The slate fill, a blue-tinted gray, one of the hues an avatar takes from its name. */
   'color.avatar.bg.slate': {
     cssVariable: '--env-color-avatar-bg-slate',
     type: 'color',
     values: {
-      light: '#4e627e',
-      dark: '#4e627e',
-      'light-high-contrast': '#3c4e69',
-      'dark-high-contrast': '#3c4e69',
+      light: '#5d6166',
+      dark: '#5d6166',
+      'light-high-contrast': '#4b4d51',
+      'dark-high-contrast': '#4b4d51',
     },
   },
   /** The teal fill, one of the hues an avatar takes from its name. */
@@ -109,10 +109,10 @@ export const tokens = {
     cssVariable: '--env-color-avatar-bg-teal',
     type: 'color',
     values: {
-      light: '#236d52',
-      dark: '#236d52',
-      'light-high-contrast': '#03593f',
-      'dark-high-contrast': '#03593f',
+      light: '#30696c',
+      dark: '#30696c',
+      'light-high-contrast': '#1a5558',
+      'dark-high-contrast': '#1a5558',
     },
   },
   /** The violet fill, one of the hues an avatar takes from its name. */
@@ -120,10 +120,10 @@ export const tokens = {
     cssVariable: '--env-color-avatar-bg-violet',
     type: 'color',
     values: {
-      light: '#7a3fc8',
-      dark: '#7a3fc8',
-      'light-high-contrast': '#6725b4',
-      'dark-high-contrast': '#6725b4',
+      light: '#665a8a',
+      dark: '#665a8a',
+      'light-high-contrast': '#524674',
+      'dark-high-contrast': '#524674',
     },
   },
   /** The initials of an avatar, at least 4.5:1 on every fill, and 7:1 at high contrast. */

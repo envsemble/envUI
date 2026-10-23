@@ -85,6 +85,15 @@ export const hues = {
   red: { description: 'Danger and errors.', seeds: ['#f5a9a3', '#b42318'] },
   violet: { description: 'Done: completed work.', seeds: ['#d1b1f6', '#7639c6'] },
   purple: { description: 'The accent purple of important actions.', seeds: ['#9b4ab8'] },
+  // The muted hues of avatars: low chroma at one lightness, so a group of avatars reads as calm
+  // and professional while its hues stay apart.
+  'blue-muted': { description: 'The muted blue of avatars.', seeds: ['#43668d'] },
+  'teal-muted': { description: 'The muted teal of avatars.', seeds: ['#356e71'] },
+  'green-muted': { description: 'The muted green of avatars.', seeds: ['#486e4f'] },
+  'amber-muted': { description: 'The muted ochre of avatars.', seeds: ['#7b5d33'] },
+  'red-muted': { description: 'The muted rose of avatars.', seeds: ['#8b504c'] },
+  'violet-muted': { description: 'The muted violet of avatars.', seeds: ['#665a8a'] },
+  'purple-muted': { description: 'The muted plum of avatars.', seeds: ['#7e5370'] },
 };
 
 /** The relative luminance at the exact value of a grade. */

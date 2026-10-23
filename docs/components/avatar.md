@@ -91,7 +91,7 @@ Without a picture, or while it loads or after it fails, an avatar shows the defa
 
 ### Colors
 
-The name chooses one of eight colors, the same on every page; `hue` sets another, such as an organization's own. The colors only tell people apart.
+The name chooses one of eight muted colors, the same on every page; `hue` sets another, such as an organization's own. The colors only tell people apart.
 
 <!-- specimen: Hues -->
 

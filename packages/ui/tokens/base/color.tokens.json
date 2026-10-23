@@ -723,46 +723,46 @@
       }
     },
     "avatar": {
-      "$description": "Component tokens of avatars without an image: a solid fill in one of eight hues, which the avatar takes from its name, with white initials or a white figure.",
+      "$description": "Component tokens of avatars without an image: a solid, muted fill in one of eight hues, which the avatar takes from its name, with white initials or a white figure.",
       "bg": {
         "$root": {
           "$description": "The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue=\"blue\".",
-          "$value": "{palette.blue.60}",
+          "$value": "{palette.blue-muted.60}",
           "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
         },
         "teal": {
           "$description": "The teal fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.teal.60}",
+          "$value": "{palette.teal-muted.60}",
           "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
         },
         "green": {
           "$description": "The green fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.green.60}",
+          "$value": "{palette.green-muted.60}",
           "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
         },
         "amber": {
           "$description": "The amber fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.amber.60}",
+          "$value": "{palette.amber-muted.60}",
           "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
         },
         "red": {
           "$description": "The red fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.red.60}",
+          "$value": "{palette.red-muted.60}",
           "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
         },
         "violet": {
           "$description": "The violet fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.violet.60}",
+          "$value": "{palette.violet-muted.60}",
           "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
         },
         "purple": {
           "$description": "The purple fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.purple.60}",
+          "$value": "{palette.purple-muted.60}",
           "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
         },
         "slate": {
-          "$description": "The slate fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.slate.60}",
+          "$description": "The slate fill, a blue-tinted gray, one of the hues an avatar takes from its name.",
+          "$value": "{palette.neutral.60}",
           "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
         }
       },

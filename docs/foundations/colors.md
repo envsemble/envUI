@@ -72,7 +72,7 @@ Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emp
 - **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
 - **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
 
-The colors come from an internal palette of ten hues in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The 0.7 names are gone; the [migration guide](../migration.md#tokens) lists what replaces each.
+The colors come from an internal palette of ten hues, and the muted hues of avatars, in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The 0.7 names are gone; the [migration guide](../migration.md#tokens) lists what replaces each.
 
 ## States and contrast
 
