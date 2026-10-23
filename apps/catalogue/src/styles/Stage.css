@@ -144,6 +144,21 @@
   padding: var(--env-space-6);
 }
 
+/* No stage (`stage="none"`), where the subject is a color or the page itself, such as the page's
+   backgrounds: no dots and no frame, and no inset at the sides, so it lines up with the text. */
+:is(
+  .docs-live-example,
+  .docs-verdict-stage,
+  .docs-anatomy-stage,
+  .docs-related-stage,
+  .docs-foundation-stage
+)[data-stage='none'],
+.docs-example[data-stage='none'] :is(.docs-specimen-grid, .docs-matrix-scroll) {
+  border-color: transparent;
+  background: none;
+  padding-inline: 0;
+}
+
 .docs-live-example {
   min-block-size: 8rem;
   padding: var(--env-space-7) var(--env-space-6);

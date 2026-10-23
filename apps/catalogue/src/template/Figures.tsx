@@ -93,7 +93,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
         stage={block.stage}
       />
     );
-  if (block.role === 'anatomy')
+  if (block.role === 'anatomy' || block.role === 'variants')
     return (
       <AnatomyFigure
         page={page.id}
@@ -105,6 +105,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
         open={block.open}
         enlarge={block.enlarge}
         stage={block.stage}
+        variants={block.role === 'variants'}
       />
     );
   return (
@@ -217,7 +218,11 @@ function groupFigures(blocks: DocumentationBlock[]) {
   for (const block of blocks) {
     if (block.kind === 'markdown' && !block.markdown.trim()) continue;
     const last = groups.at(-1);
-    const figure = block.kind === 'example' && block.role !== 'anatomy' && !block.widths;
+    const figure =
+      block.kind === 'example' &&
+      block.role !== 'anatomy' &&
+      block.role !== 'variants' &&
+      !block.widths;
     if (figure && Array.isArray(last)) last.push(block);
     else groups.push(figure ? [block] : block);
   }

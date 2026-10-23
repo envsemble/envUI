@@ -67,9 +67,12 @@ A row's title names its select with `aria-label`.
 
 ## Variants
 
-```tsx example=TriggerStyles
+```tsx variants=TriggerStyles
 
 ```
+
+1. **Secondary**
+2. **Outline**
 
 | Variant     | Use for                                           |
 | ----------- | ------------------------------------------------- |

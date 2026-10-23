@@ -12,7 +12,6 @@
   padding: 0;
 }
 
-
 /* Props tables wrap code between words, so a column is never narrower than its longest word. */
 .docs-prop-code {
   overflow-wrap: break-word;

@@ -108,9 +108,14 @@ A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Floating**
+3. **Underline**
+4. **Ghost**
 
 | Variant     | Use for                                                      |
 | ----------- | ------------------------------------------------------------ |

@@ -817,6 +817,13 @@ test('a page on the figure template rejects what breaks its form', async () => {
       body.replace('2. `env-switch-input`', '2. `env-switch-knob`'),
       /names env-switch-knob, which neither packages\/ui's CSS nor docs\/generated\/parts\.json has/,
     );
+    // A variants figure names each variant in bold, in a legend it can't do without.
+    const variants = body.replace('anatomy=Parts', 'variants=Parts');
+    await rejects(variants.replace('1. **Track** (`env-switch`)', '1. Track'), /in bold/);
+    await rejects(
+      variants.replace(/1\. \*\*Track\*\*.*\n2\. `env-switch-input`\n/, ''),
+      /variants Parts has no legend/,
+    );
     const withoutLegend = body.replace(/1\. \*\*Track\*\*.*\n2\. `env-switch-input`\n/, '');
     await rejects(
       withoutLegend,

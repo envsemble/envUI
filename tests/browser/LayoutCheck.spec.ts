@@ -25,7 +25,7 @@ const windowHeight = 800;
 interface Figure {
   page: string;
   name: string;
-  role: 'example' | 'do' | 'anatomy';
+  role: 'example' | 'do' | 'anatomy' | 'variants';
 }
 
 /** Every figure the documentation places, but the don'ts, which show mistakes on purpose. */

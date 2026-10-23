@@ -54,9 +54,13 @@ A spinner shows work of unknown length in a small area, such as a preview on its
 
 ## Variants
 
-```tsx example=Sizes
+```tsx variants=Sizes
 
 ```
+
+1. **sm**
+2. **md**
+3. **lg**
 
 | Size | Use for                                                  |
 | ---- | -------------------------------------------------------- |

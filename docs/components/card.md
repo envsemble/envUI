@@ -89,7 +89,13 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 | `default`  | A quieter fill, such as a settings section.     |
 | `page`     | The page's own color, set apart by its corners. |
 
-<!-- specimen: Backgrounds -->
+```tsx variants=Backgrounds
+
+```
+
+1. **Muted**
+2. **Default**
+3. **Page**
 
 ## When to use
 

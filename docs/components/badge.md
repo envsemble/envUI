@@ -71,9 +71,13 @@ A badge is a small, static pill that names a state or a fact beside the content 
 
 ## Variants
 
-```tsx example=Emphasis
+```tsx variants=Emphasis
 
 ```
+
+1. **Soft**
+2. **Solid**
+3. **Outline**
 
 | Variant   | Use for                                             |
 | --------- | --------------------------------------------------- |
@@ -81,9 +85,16 @@ A badge is a small, static pill that names a state or a fact beside the content 
 | `solid`   | The one state that must stand out, such as Overdue. |
 | `outline` | Names and categories, such as a team or a folder.   |
 
-```tsx example=Tones
+```tsx variants=Tones
 
 ```
+
+1. **Neutral**
+2. **Accent**
+3. **Success**
+4. **Warning**
+5. **Danger**
+6. **Done**
 
 | Tone      | Use for                                               |
 | --------- | ----------------------------------------------------- |

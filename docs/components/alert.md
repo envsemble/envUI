@@ -54,9 +54,14 @@ An alert is a message about a page or a section that stays above the content it 
 
 ## Variants
 
-```tsx example=Tones
+```tsx variants=Tones
 
 ```
+
+1. **Info**
+2. **Success**
+3. **Warning**
+4. **Danger**
 
 | Tone      | Use for                                                               |
 | --------- | --------------------------------------------------------------------- |

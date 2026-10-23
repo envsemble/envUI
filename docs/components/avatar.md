@@ -66,9 +66,14 @@ With `onPersonClick` each avatar in a group is a button; a person with `href` is
 
 ## Variants
 
-```tsx example=Sizes
+```tsx variants=Sizes
 
 ```
+
+1. **sm**
+2. **md**
+3. **lg**
+4. **xl**
 
 | Size | Use for                                               |
 | ---- | ----------------------------------------------------- |

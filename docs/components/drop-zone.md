@@ -75,9 +75,12 @@ With `name`, the form submits the files the zone took, and a reset clears them. 
 
 ## Variants
 
-```tsx example=Sizes
+```tsx variants=Sizes
 
 ```
+
+1. **md**
+2. **sm**
 
 | Size        | Use for                                                 |
 | ----------- | ------------------------------------------------------- |

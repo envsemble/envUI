@@ -63,9 +63,12 @@ The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Floating**
 
 | Variant              | Use for                                                 |
 | -------------------- | ------------------------------------------------------- |

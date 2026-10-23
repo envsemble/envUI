@@ -90,7 +90,7 @@ function ColorPalette() {
     // Each group is an Example, so the visual baseline captures it; their margins space them.
     <Column ref={paletteElement} gap={0} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
-        <Example key={group} title={group} size="collection">
+        <Example key={group} title={group} size="collection" stage="none">
           <Column gap={0}>
             {tokens.map(([token, label]) => (
               <div className="docs-palette-row" key={label}>
@@ -119,7 +119,7 @@ function InteractionColors() {
   ];
 
   return (
-    <Example title="Derived interaction colors" size="collection">
+    <Example title="Derived interaction colors" size="collection" stage="none">
       <Text emphasis="muted">
         Hover and pressed are derived when the tokens are built: other grades of the same hue, each
         a token of its own, so the contrast gate checks the label on every state.

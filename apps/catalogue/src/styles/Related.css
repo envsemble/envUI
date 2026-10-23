@@ -32,7 +32,8 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .docs-related-tiles:is([data-count='5'], [data-count='6'], [data-count='9']) > :nth-child(3n + 1) {
+  .docs-related-tiles:is([data-count='5'], [data-count='6'], [data-count='9'])
+    > :nth-child(3n + 1) {
     grid-column-start: 1;
   }
 }

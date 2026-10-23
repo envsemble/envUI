@@ -1893,6 +1893,12 @@
           "file": "docs/examples/card/StartOptions.tsx"
         },
         {
+          "name": "Backgrounds",
+          "title": "Card variants",
+          "description": "| Background | Use for | | ---------- | ----------------------------------------------- | | `muted` | A card on the page or in a pane. The default. | | `default` | A quieter fill, such as a settings section. | | `page` | The page's own color, set apart by its corners. |",
+          "file": "docs/examples/card/Backgrounds.tsx"
+        },
+        {
           "name": "OneCardSections",
           "title": "Do: One card per subject, with Text for its parts.",
           "description": "",
@@ -2102,7 +2108,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "Button variants",
           "description": "",
           "file": "docs/examples/button/Variants.tsx"
         },
@@ -3334,7 +3340,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "TextField variants",
           "description": "",
           "file": "docs/examples/text-field/Variants.tsx"
         },
@@ -4481,7 +4487,7 @@
         },
         {
           "name": "TriggerStyles",
-          "title": "Trigger styles",
+          "title": "Select variants",
           "description": "",
           "file": "docs/examples/select/TriggerStyles.tsx"
         },
@@ -5068,7 +5074,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "Combobox variants",
           "description": "",
           "file": "docs/examples/combobox/Variants.tsx"
         },
@@ -5469,7 +5475,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "DatePicker variants",
           "description": "",
           "file": "docs/examples/date-picker/Variants.tsx"
         },
@@ -5890,7 +5896,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "TimePicker variants",
           "description": "",
           "file": "docs/examples/time-picker/Variants.tsx"
         },
@@ -6146,7 +6152,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "MonthPicker variants",
           "description": "",
           "file": "docs/examples/month-picker/Variants.tsx"
         },
@@ -6530,7 +6536,7 @@
         },
         {
           "name": "Sizes",
-          "title": "Sizes",
+          "title": "DropZone variants",
           "description": "",
           "file": "docs/examples/drop-zone/Sizes.tsx"
         },
@@ -9534,13 +9540,13 @@
         },
         {
           "name": "Emphasis",
-          "title": "Emphasis",
+          "title": "Badge variants",
           "description": "",
           "file": "docs/examples/badge/Emphasis.tsx"
         },
         {
           "name": "Tones",
-          "title": "Tones",
+          "title": "Badge variants",
           "description": "",
           "file": "docs/examples/badge/Tones.tsx"
         },
@@ -10595,7 +10601,7 @@
         },
         {
           "name": "Formats",
-          "title": "Formats",
+          "title": "RelativeTime variants",
           "description": "",
           "file": "docs/examples/relative-time/Formats.tsx"
         },
@@ -11073,7 +11079,7 @@
         },
         {
           "name": "Sizes",
-          "title": "Sizes",
+          "title": "Avatar variants",
           "description": "",
           "file": "docs/examples/avatar/Sizes.tsx"
         },
@@ -11790,7 +11796,7 @@
         },
         {
           "name": "Sizes",
-          "title": "Sizes",
+          "title": "Spinner variants",
           "description": "",
           "file": "docs/examples/spinner/Sizes.tsx"
         },
@@ -12165,7 +12171,7 @@
         },
         {
           "name": "Tones",
-          "title": "Tones",
+          "title": "Alert variants",
           "description": "",
           "file": "docs/examples/alert/Tones.tsx"
         },

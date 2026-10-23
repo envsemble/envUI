@@ -116,12 +116,15 @@ Under every figure the catalogue shows a closed Code toggle with the file's sour
 | ` ```tsx do=Name caption="…" `   | The example on the stage joined to a green Do bar, and the caption below. | `caption`, required: what to do, as one sentence.             |
 | ` ```tsx dont=Name caption="…" ` | The same with a red Don't bar.                                            | `caption`, required: what not to do and why, as one sentence. |
 | ` ```tsx anatomy=Name `          | The example in the reader's theme, with numbered callouts on its parts.   | `of`, `enlarge`: see below. `caption`: a sentence below it.   |
+| ` ```tsx variants=Name `         | The example on the stage, with a callout naming each variant it shows.    | `caption`: a sentence below it. See below.                    |
 
 Each kind also takes the flag `open`, written alone, such as ` ```tsx do=OneMenu open caption="…" `: see [open overlays](#open-overlays).
 
 ### Stage fill
 
 `stage=raised` fills a figure's stage with the pane background (`--env-color-bg-default`) instead of the page's, in the light theme only, standard and high contrast; the dots and the frame stay. Use it only when the default doesn't show the subject clearly: when the subject has the page's color in the light theme, such as an open menu or popover, white on white. In the dark theme a popup is already a step lighter than the page, so the stage keeps the page's color there. `stage=shaded` fills it a shade darker than both the page's and the navigation's backgrounds, in each theme, for a figure that shows both, such as a Scaffold with its navigation, top bar and body; a Scaffold on the stage paints the page's background in its body. Don't draw a frame or an edge around the subject instead. Check the figure in light and dark.
+
+`stage=none` leaves the stage out: no dots and no frame, the figure on the page itself. Use it only where the subject is a color or the page itself, such as backgrounds or swatches, which the dots would sit on and change; a specimen does the same with `stage="none"` on its `Example`.
 
 ### Open overlays
 
@@ -161,6 +164,21 @@ An ordered list right after an anatomy fence is its legend. Each item names its 
 - The build fails on a legend class that neither packages/ui's CSS nor `parts.json` has, and on a fence without a legend whose component has no parts there. A part the example doesn't render leaves its number off the figure, which the catalogue's browser test that counts every anatomy figure's callouts catches.
 - The catalogue shows a small subject, such as a badge or a checkbox, half as large again where its stage has room, so its callouts don't crowd. The flag `enlarge` on an anatomy fence does the same for a larger subject whose parts sit close together, such as a bar's item or a table's header cells.
 - Make the anatomy example small and complete, with every part the legend names present once: the root first, then the parts in reading order. Name parts the figure can't show in one sentence below it, such as "Not shown: the spinner, `env-button-spinner`."
+
+### Variants figures
+
+A figure that shows named variants, tones or sizes side by side names each with a callout, as an anatomy figure numbers its parts, rather than with labels or captions inside the example. An ordered list right after a `variants` fence names them, each item the variant's name in bold, in the order the example shows them:
+
+````md
+```tsx variants=Variants
+
+```
+
+1. **Outline**
+2. **Floating**
+````
+
+Each name labels the example's next item: a child of its root, such as a field in a Column, or of the one element the root holds. An item may name what it labels with a part reference instead, such as ``**Ghost** (`env-text-field[data-variant='ghost']`)``. Items one under another take their names on the start side, items side by side above them; write a long run, such as six tones, one under another, so it never wraps. The names are the figure's alone: the variants table below says what each is for.
 
 ## Pages on the section template
 

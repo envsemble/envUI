@@ -61,9 +61,12 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Floating**
 
 | Variant              | Use for                                                 |
 | -------------------- | ------------------------------------------------------- |

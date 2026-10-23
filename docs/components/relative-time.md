@@ -57,9 +57,13 @@ The text rounds to the nearest unit and stays a count: 1 day ago, never yesterda
 
 ## Variants
 
-```tsx example=Formats
+```tsx variants=Formats
 
 ```
+
+1. **long**
+2. **short**
+3. **narrow**
 
 | Format   | Reads as    | Use for                           |
 | -------- | ----------- | --------------------------------- |

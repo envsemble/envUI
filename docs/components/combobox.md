@@ -79,9 +79,12 @@ With `filter={null}` the list shows the options the application finds for the ty
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Floating**
 
 | Variant    | Use for                                                 |
 | ---------- | ------------------------------------------------------- |

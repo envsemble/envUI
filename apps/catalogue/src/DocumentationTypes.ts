@@ -36,21 +36,22 @@ export type ExportEntry =
   | (ExportBase & { kind: 'namespace'; parts: string[] })
   | (ExportBase & { kind: 'function'; signature: string });
 
-/** A fill a figure's stage takes instead of the page's. */
-export type StageFill = 'raised' | 'shaded';
+/** A fill a figure's stage takes instead of the page's, or none: no dots and no frame. */
+export type StageFill = 'raised' | 'shaded' | 'none';
 
 export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }
   /**
    * A file in apps/catalogue/src/examples/<page>/<name>.tsx, under its ### heading. On a page on the
-   * figure template it is a figure: a live example, a do or a don't figure, or an anatomy figure.
+   * figure template it is a figure: a live example, a do or a don't figure, an anatomy figure or a
+   * variants figure.
    */
   | {
       kind: 'example';
       name: string;
       heading: string;
-      /** A do or don't figure, or an anatomy figure; a live example without it. */
-      role?: 'do' | 'dont' | 'anatomy';
+      /** A do or don't figure, an anatomy or a variants figure; a live example without it. */
+      role?: 'do' | 'dont' | 'anatomy' | 'variants';
       /** One sentence under the figure; a do or don't figure's verdict. */
       caption?: string;
       /** The widths, in rem, of the frames an example is shown in, one to a row. */
@@ -63,7 +64,10 @@ export type DocumentationBlock =
       enlarge?: boolean;
       /** The stage's fill where the page's own would hide the subject: `raised` or `shaded`. */
       stage?: StageFill;
-      /** An anatomy figure's legend: each numbered part by its class name, and what it is. */
+      /**
+       * An anatomy figure's legend: each numbered part by its class name, and what it is; a variants
+       * figure's: each variant's name, and the item it labels.
+       */
       legend?: AnatomyLegendItem[];
     }
   /** A catalogue-only specimen in apps/catalogue/src/specimens/<page>/<name>.tsx. */
@@ -78,6 +82,11 @@ export interface AnatomyLegendItem {
    * takes its description from docs/generated/parts.json.
    */
   text: string;
+  /**
+   * In a variants figure, the variant's name, shown on its callout; the item it labels is the part,
+   * or else the example's item in the legend's order.
+   */
+  label?: string;
 }
 
 export type TemplateSectionId =

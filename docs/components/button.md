@@ -107,9 +107,15 @@ CopyButton copies its `value` and shows Copied, or Couldn’t copy, for about tw
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Primary**
+2. **Secondary**
+3. **Outline**
+4. **Ghost**
+5. **Text**
 
 | Variant     | Tones                   | Use for                                        |
 | ----------- | ----------------------- | ---------------------------------------------- |

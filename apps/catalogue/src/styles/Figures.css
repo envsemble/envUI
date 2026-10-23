@@ -35,6 +35,7 @@
     .docs-live-example-entry,
     .docs-shared-row:not(:has(> .docs-figure-split)),
     .docs-anatomy,
+    .docs-variants,
     .docs-verdict,
     .docs-example
   ) {
@@ -252,7 +253,8 @@
 
 /* An anatomy figure: the component in the reader's theme on the dotted stage, with numbered
    callouts on its parts, measured from the live parts, and the legend of part names below. */
-.docs-anatomy {
+.docs-anatomy,
+.docs-variants {
   display: grid;
   gap: var(--env-space-4);
   min-inline-size: 0;
@@ -316,6 +318,26 @@
   position: absolute;
   translate: -50% -50%;
   pointer-events: none;
+}
+
+/* A variants figure's callouts: each variant's name in place of a number, on the start side of
+   items one under another, or above items side by side (AnatomyFigure.tsx). */
+.docs-variant-label {
+  inline-size: auto;
+  padding-inline: var(--env-space-3);
+  white-space: nowrap;
+}
+
+.docs-variant-label[data-side='left'] {
+  translate: -100% -50%;
+}
+
+.docs-variant-label[data-side='right'] {
+  translate: 0 -50%;
+}
+
+.docs-variant-label[data-side='top'] {
+  translate: -50% -100%;
 }
 
 .docs-anatomy-caption {

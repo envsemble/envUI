@@ -83,9 +83,13 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Outline, with a time**
+3. **Floating**
 
 | Variant                | Use for                                                 |
 | ---------------------- | ------------------------------------------------------- |

@@ -541,19 +541,19 @@ function headingProblems(token) {
 
 /**
  * A figure of a page on the figure template: ```tsx example=Name```, a do or don't figure
- * ```tsx do=Name caption="…"``` or ```tsx dont=Name caption="…"```, or an anatomy figure
- * ```tsx anatomy=Name```, each with optional attributes, written name="value", and flags, such as
- * `open`, written as their name alone.
+ * ```tsx do=Name caption="…"``` or ```tsx dont=Name caption="…"```, an anatomy figure
+ * ```tsx anatomy=Name``` or a variants figure ```tsx variants=Name```, each with optional
+ * attributes, written name="value", and flags, such as `open`, written as their name alone.
  */
 const figurePattern =
-  /^tsx\s+(example|do|dont|anatomy)=(\S+)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^\s"]+))?)*)\s*$/;
+  /^tsx\s+(example|do|dont|anatomy|variants)=(\S+)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^\s"]+))?)*)\s*$/;
 /**
  * Where a figure fence that doesn't parse has a double quote inside a value, such as
  * `caption="Label it "Save"."`: the attribute and the text from the stray quote on. A value can't
  * hold one, escaped or not, since Markdown unescapes `\"` in a fence's info string.
  */
 export function strayQuote(info) {
-  const head = info.match(/^tsx\s+(?:example|do|dont|anatomy)=\S+/);
+  const head = info.match(/^tsx\s+(?:example|do|dont|anatomy|variants)=\S+/);
   if (!head) return undefined;
   const rest = info.slice(head[0].length).trimEnd();
   const attribute = /\s+([a-z]+)(?:=(?:"[^"]*"|[^\s"]+))?/y;
@@ -577,14 +577,16 @@ const figureAttributes = {
   do: { allowed: ['caption', 'open', 'stage'], required: ['caption'] },
   dont: { allowed: ['caption', 'open', 'stage'], required: ['caption'] },
   anatomy: { allowed: ['caption', 'of', 'open', 'stage', 'enlarge'], required: [] },
+  variants: { allowed: ['caption', 'stage'], required: [] },
 };
 /**
  * The fills a figure's stage takes besides the default, the page's: `stage="raised"` where the
  * subject has the page's color, such as an open popup in the light theme, and would not show;
  * `stage="shaded"`, a shade darker than the page's and the navigation's backgrounds, where the
- * subject shows both, such as a Scaffold.
+ * subject shows both, such as a Scaffold; `stage="none"`, no dots and no frame, where the subject
+ * is a color or the page itself, such as the page's backgrounds.
  */
-const stageFills = ['raised', 'shaded'];
+const stageFills = ['raised', 'shaded', 'none'];
 /**
  * The attributes that are flags, written without a value: `open` shows the example's overlays
  * open on its stage, contained, and `enlarge` shows an anatomy figure's subject half as large
@@ -649,7 +651,7 @@ function readFigures(document, body, { examples, specimens, partNames }) {
   const problems = [];
   let current;
   let subheading;
-  /** The anatomy figure an ordered list right after it is the legend of. */
+  /** The anatomy or variants figure an ordered list right after it is the legend of. */
   let legendOf;
   for (const token of tokens) {
     problems.push(...headingProblems(token));
@@ -701,6 +703,26 @@ function readFigures(document, body, { examples, specimens, partNames }) {
     if (token.type === 'heading' && token.depth === 3) subheading = token.text;
     if (isPropsTable(token))
       problems.push(`${current.title} lists props in a table; the Props section is generated`);
+    if (legendOf?.role === 'variants' && token.type === 'list' && token.ordered) {
+      // A variants figure's legend: each variant's name in bold, labelling the example's items in
+      // order, or the item a part reference names.
+      legendOf.legend = token.items.map((item, index) => {
+        const label = item.text.match(/^\*\*([^*]+)\*\*/)?.[1];
+        if (!label)
+          problems.push(
+            `item ${index + 1} of the legend of variants ${legendOf.name} must start with the variant's name in bold, such as **Outline**`,
+          );
+        const part = item.text.match(/`(env-[^`]+)`/)?.[1] ?? '';
+        for (const name of part.match(/env-[\w-]+/g) ?? [])
+          if (!partNames.classes.has(name))
+            problems.push(
+              `item ${index + 1} of the legend of variants ${legendOf.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
+            );
+        return { part, text: item.text.replace(/\s+/g, ' ').trim(), label: label ?? '' };
+      });
+      legendOf = undefined;
+      continue;
+    }
     if (legendOf && token.type === 'list' && token.ordered) {
       // The anatomy figure's legend: one numbered part per item, by its class name.
       legendOf.legend = token.items.map((item, index) => {
@@ -721,7 +743,10 @@ function readFigures(document, body, { examples, specimens, partNames }) {
       continue;
     }
     legendOf = undefined;
-    if (token.type === 'code' && /^tsx\s+(?:example|do|dont|anatomy)=/.test(token.lang ?? '')) {
+    if (
+      token.type === 'code' &&
+      /^tsx\s+(?:example|do|dont|anatomy|variants)=/.test(token.lang ?? '')
+    ) {
       const match = (token.lang ?? '').match(figurePattern);
       const quote = match ? undefined : strayQuote(token.lang);
       if (quote) {
@@ -732,7 +757,7 @@ function readFigures(document, body, { examples, specimens, partNames }) {
       }
       if (!match) {
         problems.push(
-          `the fence \`${token.lang}\` is malformed: write \`tsx example=Name\`, \`tsx do=Name caption="…"\`, \`tsx dont=Name caption="…"\` or \`tsx anatomy=Name\`, with attributes as name="value" and flags, such as open, as their name alone`,
+          `the fence \`${token.lang}\` is malformed: write \`tsx example=Name\`, \`tsx do=Name caption="…"\`, \`tsx dont=Name caption="…"\`, \`tsx anatomy=Name\` or \`tsx variants=Name\`, with attributes as name="value" and flags, such as open, as their name alone`,
         );
         continue;
       }
@@ -775,10 +800,12 @@ function readFigures(document, body, { examples, specimens, partNames }) {
               ? `Don't: ${caption}`
               : role === 'anatomy'
                 ? `${document.title} anatomy`
-                : // The Overview's first example shows the component itself, named after it.
-                  current.id === 'overview' && !blocks.some((item) => item.kind === 'example')
-                  ? document.title
-                  : (subheading ?? fileWords(name)),
+                : role === 'variants'
+                  ? `${document.title} variants`
+                  : // The Overview's first example shows the component itself, named after it.
+                    current.id === 'overview' && !blocks.some((item) => item.kind === 'example')
+                    ? document.title
+                    : (subheading ?? fileWords(name)),
         ...(role !== 'example' && { role }),
         ...(caption && { caption }),
       };
@@ -798,13 +825,13 @@ function readFigures(document, body, { examples, specimens, partNames }) {
         if (stageFills.includes(attributes.stage)) block.stage = attributes.stage;
         else
           problems.push(
-            `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(' or ')}, or no stage for the page's color`,
+            `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(', ')}, or nothing for the dotted stage in the page's color`,
           );
       }
       if (attributes.open === true) block.open = true;
       if (attributes.enlarge === true) block.enlarge = true;
       blocks.push(block);
-      if (role === 'anatomy') legendOf = block;
+      if (role === 'anatomy' || role === 'variants') legendOf = block;
       continue;
     }
     if (token.type === 'html' && specimenPattern.test(token.raw.trim())) {
@@ -818,10 +845,15 @@ function readFigures(document, body, { examples, specimens, partNames }) {
     }
     appendMarkdown(token.raw);
   }
-  // An anatomy figure without a legend numbers the parts parts.json lists for its component.
+  // An anatomy figure without a legend numbers the parts parts.json lists for its component; a
+  // variants figure needs one, the names of its variants.
   for (const section of sections)
     for (const block of section.blocks)
-      if (block.role === 'anatomy' && !block.legend) {
+      if (block.role === 'variants' && !block.legend)
+        problems.push(
+          `variants ${block.name} has no legend: follow it with a numbered list of its variants' names in bold, such as 1. **Outline**`,
+        );
+      else if (block.role === 'anatomy' && !block.legend) {
         const component = block.of ?? document.title;
         if (!partNames.components[component]?.length)
           problems.push(
