@@ -1,5 +1,5 @@
-import { Link, Column, Table, Text } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/content';
+import { Link, Column, Text } from '@envsemble/envui';
+import { PlainCode, SimpleTable } from './SimpleTable';
 import type { ExportEntry, PropEntry } from '../DocumentationTypes';
 import type { Reference } from '../Reference';
 // The ids search leads to, as the search index writes them.
@@ -35,48 +35,43 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
   return (
     <Column render={<section />} gap={4} aria-labelledby={exportSection(name)}>
       <Text render={<h2 />} variant="title" id={exportSection(name)}>
-        <Code>{name}</Code>
+        <PlainCode>{name}</PlainCode>
       </Text>
       {entry.description && <Text>{entry.description}</Text>}
       {entry.kind === 'function' ? (
         <Text>
-          <Code>{`${name}${entry.signature}`}</Code>
+          <PlainCode>{`${name}${entry.signature}`}</PlainCode>
         </Text>
       ) : entry.props.length ? (
-        <Table.Root aria-label={`${name} props`} narrowLayout="stack" stackBelow="40rem">
-          <Table.Head>
-            <Table.Row>
-              <Table.HeaderCell>Prop</Table.HeaderCell>
-              <Table.HeaderCell>Type</Table.HeaderCell>
-              <Table.HeaderCell>Default</Table.HeaderCell>
-              <Table.HeaderCell>Description</Table.HeaderCell>
-            </Table.Row>
-          </Table.Head>
-          <Table.Body>
-            {entry.props.map((prop) => (
-              // Search leads to a prop's row: props-Button-variant.
-              <Table.Row key={prop.name} id={propSection(name, prop.name)}>
-                <Table.Cell label="Prop" nowrap>
-                  <Code className="docs-prop-code">{prop.name}</Code>
-                  {prop.required && <Text variant="caption"> required</Text>}
-                </Table.Cell>
-                <Table.Cell label="Type">
-                  <Code className="docs-prop-code">{prop.type}</Code>
-                </Table.Cell>
-                <Table.Cell label="Default" nowrap>
-                  {prop.default !== undefined ? (
-                    <Code className="docs-prop-code">{prop.default}</Code>
-                  ) : prop.defaultBuiltIn ? (
-                    'built-in'
-                  ) : (
-                    '—'
-                  )}
-                </Table.Cell>
-                <Table.Cell label="Description">{description(prop)}</Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
+        <SimpleTable
+          label={`${name} props`}
+          columns={[
+            { title: 'Prop', width: '17%' },
+            { title: 'Type', width: '25%' },
+            { title: 'Default', width: '14%' },
+            { title: 'Description', width: '44%' },
+          ]}
+          rows={entry.props.map((prop) => ({
+            key: prop.name,
+            // Search leads to a prop's row: props-Button-variant.
+            id: propSection(name, prop.name),
+            cells: [
+              <>
+                <PlainCode>{prop.name}</PlainCode>
+                {prop.required && <span className="docs-prop-required"> required</span>}
+              </>,
+              <PlainCode key="type">{prop.type}</PlainCode>,
+              prop.default !== undefined ? (
+                <PlainCode key="default">{prop.default}</PlainCode>
+              ) : prop.defaultBuiltIn ? (
+                'built-in'
+              ) : (
+                '—'
+              ),
+              description(prop),
+            ],
+          }))}
+        />
       ) : (
         <Text>{entry.native.length ? 'No props of its own.' : 'Takes no props.'}</Text>
       )}

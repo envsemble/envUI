@@ -118,8 +118,8 @@ export function useDisplaySettings() {
 
 /**
  * The Display menu: the theme, the contrast and the scale, each stored as it is chosen. iconOnly
- * shows its trigger as an icon, such as in a phone's top bar. It opens below its trigger, at the
- * top of the page.
+ * shows its trigger as an icon, in a narrow window. It opens below its trigger, at the page's top
+ * end.
  */
 export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
   const { contrast, setContrast, scale, setScale } = useDisplaySettings();

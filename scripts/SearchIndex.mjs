@@ -1,11 +1,13 @@
-// The documentation's search: one document per page, export, prop and token, from the same sources
-// as the catalogue and the packaged docs (docs/, docs/generated/props.json and the token list), and
-// the MiniSearch index the catalogue loads, written to apps/catalogue/src/generated/SearchIndex.json
-// by GenerateDocumentation.mjs. The catalogue opens it with ⌘K or Ctrl+K, hosted and offline.
+// The site's search: one document per page, export, prop and token, from the same sources as the
+// site and the packaged docs (docs/, docs/generated/props.json and the token list), and the
+// MiniSearch index the site loads, written to apps/catalogue/src/generated/SearchIndex.json by
+// GenerateDocumentation.mjs. The site opens it with ⌘K or Ctrl+K, on the Site and in the Docs.
 //
 // searchDocuments() is plain data, so other tools can index the same documents: each names the page
-// it is found on by its document id (the file name in docs/, or a catalogue page such as `tokens`),
-// and, where it is part of a page, the page's view and the element id of its place there.
+// it is found on by its document id (the file name in docs/, or a site page such as `tokens`), the
+// area that shows it, the Site or the Docs, and, where it is part of a page, the page's view and the
+// element id of its place there. A view picks the Docs' part of a subject the Site shows too:
+// `props` a component's page in the Docs, `usage` a foundation's guide there.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -34,25 +36,78 @@ export const tokensFile = fileURLToPath(
  *   owner: string;
  *   text: string;
  *   page: string;
+ *   area: 'site' | 'docs';
  *   view?: 'props' | 'usage';
  *   section?: string;
  * }} SearchDocument
  */
 
-/** Pages of the catalogue that no file in docs/ writes. */
+/** Pages of the site that no file in docs/ writes, each in its area. */
 export const cataloguePages = [
+  { page: 'overview', title: 'Overview', area: 'site', aliases: ['home', 'introduction'] },
   {
-    page: 'overview',
-    title: 'Overview',
-    aliases: ['home', 'components overview', 'catalogue'],
+    page: 'get-started',
+    title: 'Get started',
+    area: 'site',
+    aliases: ['install', 'quick start', 'getting started'],
+  },
+  {
+    page: 'components',
+    title: 'Components',
+    area: 'site',
+    aliases: ['all components', 'component list', 'catalogue'],
+  },
+  {
+    page: 'benchmark',
+    title: 'Benchmark',
+    area: 'site',
+    aliases: ['agent benchmark', 'scores', 'evaluation'],
+  },
+  {
+    page: 'changelog',
+    title: 'Changelog',
+    area: 'site',
+    aliases: ['release notes', 'releases', 'versions'],
+  },
+  {
+    page: 'docs',
+    title: 'Docs',
+    area: 'docs',
+    aliases: ['documentation', 'developer reference', 'reference'],
   },
   {
     page: 'tokens',
     title: 'Design tokens',
+    area: 'docs',
     aliases: ['token reference', 'CSS custom properties', 'CSS variables'],
   },
-  { page: 'changelog', title: 'Changelog', aliases: ['release notes', 'releases', 'versions'] },
+  {
+    page: 'codemods',
+    title: 'Codemods',
+    area: 'docs',
+    aliases: ['envui-codemods', 'upgrade', 'transforms'],
+  },
+  {
+    page: 'agent-skills',
+    title: 'Agent skills',
+    area: 'docs',
+    aliases: ['skills', 'envui-use', 'envui-migrate'],
+  },
 ];
+
+/**
+ * Pages of docs/ for people who change envUI itself, and the agents' index of the pages, which
+ * neither the Site nor the Docs show, so search finds none of them.
+ */
+export const unlistedPages = new Set([
+  'index',
+  'library-development',
+  'component-pages',
+  'pattern-pages',
+]);
+
+/** Components documented in the Docs alone: Field, as "Build your own field". */
+const docsOnlyPages = new Set(['field']);
 
 export { exportSection, propSection, tokenSection, headingSlug } from './SearchAnchors.mjs';
 
@@ -117,12 +172,15 @@ function placeOf(name, home, documents) {
   return { document: home };
 }
 
-/** The route parts of a document's place: the Usage view of a reference page, at its section. */
+/**
+ * The route parts of a document's place, in the Docs: a foundation's guide, or a guide, at its
+ * section.
+ */
 function placeRoute({ document, section }) {
-  const reference = document.group === 'Foundations' || document.path.startsWith('components/');
   return {
     page: document.id,
-    ...(reference && { view: 'usage' }),
+    area: 'docs',
+    ...(document.group === 'Foundations' && { view: 'usage' }),
     ...(section && { section }),
   };
 }
@@ -141,7 +199,7 @@ export function searchDocuments({ documents, props, tokens }) {
   /** The page that lists each export, by its name. */
   const homes = new Map();
   for (const document of documents) {
-    if (document.id === 'index') continue;
+    if (unlistedPages.has(document.id)) continue;
     const kind = kindOfGroup(document.group);
     const frontmatter = document.frontmatter ?? {};
     const exports = documentedExports(frontmatter.components ?? [], props);
@@ -163,9 +221,27 @@ export function searchDocuments({ documents, props, tokens }) {
       owner: '',
       text: [document.summary, ...(frontmatter.useWhen ?? [])].join('\n'),
       page: document.id,
+      area: kind === 'guide' || docsOnlyPages.has(document.id) ? 'docs' : 'site',
     });
+    // A foundation's written guidance is its guide in the Docs, beside its page on the Site.
+    if (kind === 'foundation')
+      results.push({
+        id: `guide:${document.id}`,
+        kind: 'guide',
+        title: document.title,
+        detail: 'Foundation guide',
+        aliases: '',
+        keywords: '',
+        owner: '',
+        text: document.summary,
+        page: document.id,
+        area: 'docs',
+        view: 'usage',
+      });
   }
-  const pages = new Set(results.map(({ title }) => title));
+  const pages = new Set(
+    results.filter(({ id }) => id.startsWith('page:')).map(({ title }) => title),
+  );
   const setup = documents.find((document) => document.id === 'setup');
   for (const [name, entry] of Object.entries(props.exports)) {
     // A namespace is found as the page of its name, such as Menu; one documented on another page,
@@ -178,7 +254,7 @@ export function searchDocuments({ documents, props, tokens }) {
     const place = where && placeRoute(where);
     // The page a result opens, which its detail names.
     const destination = where?.document ?? home;
-    const own = (section) => place ?? { page: home.id, view: 'props', section };
+    const own = (section) => place ?? { page: home.id, area: 'docs', view: 'props', section };
     if (!(homes.get(name)?.title === name && pages.has(name)))
       results.push({
         id: `export:${name}`,
@@ -221,15 +297,16 @@ export function searchDocuments({ documents, props, tokens }) {
         ...(tokens.formerNames?.[token.cssVariable] ?? []).map((name) => `Before 1.0: ${name}.`),
       ].join(' '),
       page: 'tokens',
+      area: 'docs',
       section: tokenSection(token.cssVariable),
     });
   }
   return results;
 }
 
-/** The catalogue's own pages, as search documents. */
+/** The site's own pages, as search documents. */
 function catalogueDocuments() {
-  return cataloguePages.map(({ page, title, aliases }) => ({
+  return cataloguePages.map(({ page, title, area, aliases }) => ({
     id: `page:${page}`,
     kind: 'page',
     title,
@@ -239,10 +316,11 @@ function catalogueDocuments() {
     owner: '',
     text: '',
     page,
+    area,
   }));
 }
 
-/** The catalogue's MiniSearch index, serialized, of the documentation and the catalogue's pages. */
+/** The site's MiniSearch index, serialized, of the documentation and the site's own pages. */
 export function buildSearchIndex({ documents, props, tokens = readTokens() }) {
   const index = new MiniSearch(indexOptions);
   index.addAll(
@@ -257,6 +335,8 @@ export function buildSearchIndex({ documents, props, tokens = readTokens() }) {
  * its name too (color.fg.muted). A query that is one of them ranks the document first.
  */
 function withNames(document) {
+  // A foundation's guide in the Docs shares its page's title; the page on the Site takes the name.
+  if (document.id.startsWith('guide:')) return { ...document, names: [] };
   const parted = !['export', 'prop', 'token'].includes(document.kind);
   const names = [
     // A prop's name alone is no whole name of it: many exports share it, such as variant.
@@ -289,7 +369,7 @@ export function readTokens() {
   return { ...list, formerNames };
 }
 
-/** Writes the catalogue's index when it changed. */
+/** Writes the site's index when it changed. */
 export function writeSearchIndex(sources) {
   const json = buildSearchIndex(sources);
   mkdirSync(dirname(searchIndexFile), { recursive: true });

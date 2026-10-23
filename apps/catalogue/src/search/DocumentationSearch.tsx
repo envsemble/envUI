@@ -55,6 +55,9 @@ const icons: Record<SearchResult['kind'], ReactNode> = {
   prop: <DataObject />,
   token: <Palette />,
 };
+/** The name of each area of the site, which a result's description starts with. */
+const areas: Record<SearchResult['area'], string> = { site: 'Site', docs: 'Docs' };
+
 /** Results considered, and shown in each group. */
 const resultLimit = 60;
 const groupLimit = 8;
@@ -80,9 +83,10 @@ type IndexState =
   | { status: 'failed' };
 
 /**
- * Searches the documentation in envUI's CommandPalette: components by their names and aliases,
- * their props, the tokens and the foundations, patterns and guides. A result opens its page, and
- * the prop or token on it; with Ctrl or ⌘ held, in a new tab.
+ * Searches the Site and the Docs in envUI's CommandPalette: components by their names and aliases,
+ * their props, the tokens and the foundations, patterns and guides, each result saying which area
+ * it is in. A result opens its page, and the prop or token on it; with Ctrl or ⌘ held, in a new
+ * tab.
  */
 export function DocumentationSearch({
   open,
@@ -117,7 +121,8 @@ export function DocumentationSearch({
       results.map((result) => ({
         id: result.id,
         label: result.title,
-        description: result.detail,
+        // Which area the result is in, the Site or the Docs, then what it is.
+        description: `${areas[result.area]} · ${result.detail}`,
         icon: icons[result.kind],
         group: groups[result.kind],
       })),
@@ -152,7 +157,7 @@ export function DocumentationSearch({
     <CommandPalette
       open={open}
       onOpenChange={onOpenChange}
-      aria-label="Search the documentation"
+      aria-label="Search envUI"
       placeholder="Search components, props and tokens"
       inputValue={query}
       onInputValueChange={setQuery}

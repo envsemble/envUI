@@ -21,10 +21,9 @@ const iconList = lazyPart(
 
 interface FoundationPreviewProps {
   id: string;
-  onIconUsage?: (name: string, filled: boolean) => void;
 }
 
-function IconList({ onIconUsage }: Pick<FoundationPreviewProps, 'onIconUsage'>) {
+function IconList() {
   const [, setAttempt] = useState(0);
   const IconsPreview = iconList.component;
   return (
@@ -37,13 +36,13 @@ function IconList({ onIconUsage }: Pick<FoundationPreviewProps, 'onIconUsage'>) 
       }}
     >
       <Suspense fallback={<Text role="status">Loading icons…</Text>}>
-        <IconsPreview onRequestUsage={onIconUsage} />
+        <IconsPreview />
       </Suspense>
     </LoadBoundary>
   );
 }
 
-function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
+function FoundationTopic({ id }: FoundationPreviewProps) {
   switch (id) {
     case 'colors':
       return <ColorsPreview />;
@@ -56,7 +55,7 @@ function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
     case 'responsive':
       return <ResponsivePreview />;
     case 'icons':
-      return <IconList onIconUsage={onIconUsage} />;
+      return <IconList />;
     case 'composition':
       return <CompositionPreview />;
     case 'accessibility':

@@ -24,10 +24,10 @@ export function pageOf(component: string) {
   return referencePages.find((page) => page.reference.metadata?.components.includes(namespace));
 }
 
-/** The address of a related page: a reference page's overview, or any other page's route. */
+/** The address of a related page: a component's or foundation's page, or any other page's route. */
 export function relatedHref(id: string) {
   const page = referencePages.find((item) => item.reference.id === id);
-  if (page) return pageHref(page, 'overview');
+  if (page) return pageHref(page);
   const route = routeOfDocument(id);
   return route && routeHref(route);
 }
@@ -109,7 +109,7 @@ export function alternativesOf(metadata: DocumentationMetadata) {
       alternatives.push({
         key,
         name: use,
-        href: page && pageHref(page, 'overview'),
+        href: page && pageHref(page),
         preview: page && previewOf(page.reference, use),
         lines: [text],
       });

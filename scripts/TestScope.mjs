@@ -109,7 +109,7 @@ export const aliases = {
 
 /** The specs a token, theme or other shared change runs. */
 const shared = ['Contrast', 'Colors', 'ThemeContrast', 'Scale'];
-/** The catalogue's own specs; they open its builds. */
+/** The catalogue's own specs; some open its hosted build. */
 const catalogue = ['Catalogue', 'CatalogueSearch'];
 
 /** Paths that name no component, by prefix, and the specs they run. */
@@ -125,7 +125,7 @@ export const exceptions = [
   [/^packages\/ui\/src\/foundations\/messages\//, ['Messages']],
   [/^packages\/ui\/src\/dev(?:\.ts$|\/)/, ['DevMode']],
   [
-    /^apps\/catalogue\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest|GenerateCodeThemes|Search\w*|MarkdownHeadings|FinalizeCatalogue|FinalizeSite|SiteModuleFiles|AssembleSiteVersions)\.m?[jt]s$/,
+    /^apps\/catalogue\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest|GenerateCodeThemes|Search\w*|MarkdownHeadings|FinalizeSite|SiteModuleFiles)\.m?[jt]s$/,
     catalogue,
   ],
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
@@ -148,9 +148,8 @@ const baseName = (path) => posix.basename(path).replace(/\.(?:spec\.ts|tsx?|css|
 export function specNeeds(name, root = repositoryRoot) {
   const source = read(root, specFile(name));
   return {
-    // Opens the hosted build, or the offline file, which the catalogue builds write.
+    // Opens the hosted build, which npm run build:site writes.
     site: /from '\.\/HostedSite'/.test(source),
-    catalogue: /dist\/envUI\.html/.test(source),
     // Opens a page that the unit tests on the library build render.
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
@@ -221,7 +220,7 @@ export function selectScope(paths, root = repositoryRoot) {
     whole: { lint: false, css: false, format: false },
     typecheck: false,
     generated: new Set(),
-    build: { library: false, catalogue: false, site: false },
+    build: { library: false, site: false },
   };
   for (const path of paths) {
     const exists = existsSync(resolve(root, path));
@@ -275,7 +274,6 @@ export function selectScope(paths, root = repositoryRoot) {
   for (const name of specs.keys()) {
     const needs = specNeeds(name, root);
     scope.build.site ||= needs.site;
-    scope.build.catalogue ||= needs.catalogue;
     scope.build.library ||= needs.library;
   }
   return { ...scope, specs, unmatched, helpers };

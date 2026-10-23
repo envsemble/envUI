@@ -1,6 +1,7 @@
 import { useId, useMemo, useRef, useState } from 'react';
 import { Button, Card, SearchField, Column, Row, Switch, Text, Sheet } from '@envsemble/envui';
-// This offline browser consumes the full public catalogue. Products use per-icon imports.
+import { CodeBlock } from '@envsemble/envui/content';
+// This browser of every icon loads the full public set. Products use per-icon imports.
 import * as symbols from '@envsemble/envui/icons';
 import { Example } from '../Example';
 
@@ -51,15 +52,7 @@ const catalogue = Object.entries(symbols)
   }));
 const pageSize = 72;
 
-function IconDetails({
-  name,
-  filled,
-  onRequestUsage,
-}: {
-  name: keyof typeof symbols;
-  filled: boolean;
-  onRequestUsage?: (name: string, filled: boolean) => void;
-}) {
+function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boolean }) {
   const Symbol = symbols[name];
 
   return (
@@ -71,20 +64,17 @@ function IconDetails({
         </div>
       </Column>
       <Text variant="caption">Inherits the surrounding text color.</Text>
-      {onRequestUsage && (
-        <Button variant="secondary" onClick={() => onRequestUsage(name, filled)}>
-          View usage
-        </Button>
-      )}
+      {/* The code to use it, as under every example. */}
+      <CodeBlock language="tsx" label="React import" copyable>
+        {`import { ${name} } from '@envsemble/envui/icons/${name}';
+
+<${name}${filled ? ' filled' : ''} />`}
+      </CodeBlock>
     </Column>
   );
 }
 
-export function IconCatalogue({
-  onRequestUsage,
-}: {
-  onRequestUsage?: (name: string, filled: boolean) => void;
-}) {
+export function IconCatalogue() {
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
   const [filled, setFilled] = useState(false);
@@ -178,14 +168,7 @@ export function IconCatalogue({
         closeLabel="Close icon details"
         finalFocus={selectedButton}
       >
-        {selectedName && (
-          <IconDetails
-            key={selectedName}
-            name={selectedName}
-            filled={filled}
-            onRequestUsage={onRequestUsage}
-          />
-        )}
+        {selectedName && <IconDetails key={selectedName} name={selectedName} filled={filled} />}
       </Sheet>
     </Example>
   );

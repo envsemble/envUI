@@ -1,156 +1,205 @@
 import { useEffect, useRef } from 'react';
-import { Drawer, Link, type DrawerDestination } from '@envsemble/envui';
-import { SearchButton } from '../search/SearchButton';
-import { EnvUILogo } from '../brand/EnvUILogo';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Category } from '@envsemble/envui/icons/Category';
-import { RocketLaunch } from '@envsemble/envui/icons/RocketLaunch';
-import { Article } from '@envsemble/envui/icons/Article';
-import { Token } from '@envsemble/envui/icons/Token';
-import { Pattern } from '@envsemble/envui/icons/Pattern';
-import { Handyman } from '@envsemble/envui/icons/Handyman';
-import { History } from '@envsemble/envui/icons/History';
-import { references, foundations, componentGroups } from '../Reference';
 import {
-  changelogPage,
-  guidePages,
-  pageHref,
+  Button,
+  Drawer,
+  IconButton,
+  Link,
+  Rail,
+  Tooltip,
+  type Destination,
+  type DrawerDestination,
+} from '@envsemble/envui';
+import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
+import { MenuBook } from '@envsemble/envui/icons/MenuBook';
+import { Home } from '@envsemble/envui/icons/Home';
+import { Widgets } from '@envsemble/envui/icons/Widgets';
+import { Pattern } from '@envsemble/envui/icons/Pattern';
+import { Palette } from '@envsemble/envui/icons/Palette';
+import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
+import { History } from '@envsemble/envui/icons/History';
+import { EnvUILogo } from '../brand/EnvUILogo';
+import { SearchButton } from '../search/SearchButton';
+import { DisplayMenu } from '../theme/DisplaySettings';
+import {
   pagesOf,
-  referencePages,
-  tokensPage,
-  type ReferencePage,
+  sectionHome,
+  siteSections,
+  type Area,
+  type SitePage,
+  type SiteSection,
 } from './DocumentationRoutes';
-import { homeRoute, routeHref } from './Address';
-import { foundationIcons, getComponentIcon } from './TopicIcons';
+import { docsRoute, homeRoute, routeHref } from './Address';
 
-/** The pattern pages in the order of the index, which lists the patterns by intent. */
-const patternPages = guidePages.filter((page) => page.section === 'Patterns');
+/** The icon of each of the Site's destinations in its rail. */
+const sectionIcons: Record<SiteSection, typeof Home> = {
+  Overview: Home,
+  Components: Widgets,
+  Patterns: Pattern,
+  Foundations: Palette,
+  Benchmark: Leaderboard,
+  Changelog: History,
+};
 
-interface NavigationProps {
-  routePath: string;
-  page?: ReferencePage;
+/** The Site's destinations, for its rail: each opens its first page. */
+export function siteDestinations(current: string | undefined, onChoose?: () => void) {
+  return siteSections.map((section): Destination => {
+    const Icon = sectionIcons[section];
+    return {
+      label: section,
+      href: routeHref(sectionHome(section).path),
+      icon: <Icon />,
+      current: section === current,
+      onSelect: onChoose,
+    };
+  });
 }
 
-/**
- * The catalogue's destinations, one group per section of the site, in order: Get started,
- * Foundations, a group per kind of component, in the index's order, Patterns, Contributing and
- * Changelog. Drawer has one level of groups, so the intents of patterns
- * fold into their section, in the order the index gives them. `onChoose` runs as a destination is
- * followed, such as to close the sheet the navigation sits in.
- */
-export function documentationDestinations(
-  { routePath, page }: NavigationProps,
+/** The pages of one of the Site's destinations, or of the Docs, for a drawer. */
+export function pageDestinations(
+  pages: readonly SitePage[],
+  currentPath: string,
   onChoose?: () => void,
 ): DrawerDestination[] {
-  const reference = page?.reference;
-  const destination = (
-    group: string,
-    label: string,
-    href: string,
-    icon: DrawerDestination['icon'],
-    current: boolean,
-  ): DrawerDestination => ({ group, label, href, icon, current, onSelect: onChoose });
-  const pages = (
-    group: string,
-    list: readonly { path: string; title: string }[],
-    icon: () => DrawerDestination['icon'],
-  ) =>
-    list.map(({ path, title }) =>
-      destination(group, title, routeHref(path), icon(), routePath === path),
-    );
-  return [
-    destination(
-      'Get started',
-      'Overview',
-      routeHref(homeRoute),
-      <Home />,
-      routePath === 'overview/components',
-    ),
-    destination(
-      'Get started',
-      'Install and set up',
-      routeHref('overview/get-started'),
-      <RocketLaunch />,
-      routePath === 'overview/get-started',
-    ),
-    ...pages('Get started', pagesOf('Get started'), () => <Article />),
-    ...foundations.map((foundation) => {
-      const Icon = foundationIcons[foundation.id] ?? Category;
-      return destination(
-        'Foundations',
-        foundation.title,
-        pageHref(referencePages.find((entry) => entry.reference === foundation)!),
-        <Icon />,
-        page?.section === 'Foundations' && reference?.id === foundation.id,
-      );
-    }),
-    ...pages('Foundations', [tokensPage], () => <Token />),
-    ...componentGroups.flatMap((kind) =>
-      references
-        .filter((component) => component.group === kind)
-        .map((component) => {
-          const Icon = getComponentIcon(component.group);
-          return destination(
-            kind,
-            component.title,
-            pageHref(referencePages.find((entry) => entry.reference === component)!),
-            <Icon />,
-            reference?.id === component.id,
-          );
-        }),
-    ),
-    ...pages('Patterns', patternPages, () => <Pattern />),
-    ...pages('Contributing', pagesOf('Contributing'), () => <Handyman />),
-    ...pages('Changelog', [changelogPage], () => <History />),
-  ];
+  return pages.map((page) => ({
+    group: page.group,
+    label: page.label ?? page.title,
+    href: routeHref(page.path),
+    current: page.path === currentPath,
+    onSelect: onChoose,
+  }));
 }
 
-/** The envUI wordmark, which leads to the overview. */
-function Brand() {
+/** Scrolls the current page's link into view as the navigation mounts, as on a page deep in it. */
+function useCurrentInView() {
+  const element = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    element.current
+      ?.querySelector('.env-drawer [aria-current="page"]')
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, []);
+  return element;
+}
+
+interface NavigationProps {
+  /** The page shown, whose destination and page the navigation marks as current. */
+  page?: SitePage;
+  /** The route's path, such as components/button. */
+  routePath: string;
+  /** Whether the navigation is in the sheet of a narrower window. */
+  inSheet?: boolean;
+  /** Runs as a page is chosen, such as to close the sheet the navigation sits in. */
+  onChoose?: () => void;
+  /** Opens search. */
+  onSearch: () => void;
+}
+
+/** The envUI wordmark, which leads to the area's home, with "Docs" beside it in the Docs. */
+function Brand({ area }: { area: Area }) {
   return (
     <Link
-      href={routeHref(homeRoute)}
+      href={routeHref(area === 'docs' ? docsRoute : homeRoute)}
       underline={false}
-      className="docs-brand-link"
-      aria-label="envUI overview"
+      className="docs-brand"
+      aria-label={area === 'docs' ? 'envUI Docs home' : 'envUI home'}
     >
       <EnvUILogo />
+      {area === 'docs' && (
+        <span className="docs-brand-area" aria-hidden="true">
+          Docs
+        </span>
+      )}
     </Link>
   );
 }
 
 /**
- * The catalogue's navigation: a Drawer with the wordmark and search above the destinations. The
- * frame shows it at the start of an expanded window, and in a sheet that the top bar opens in a
- * narrower one, where choosing a destination closes the sheet.
+ * The Site's navigation, one pane: a Rail of its destinations, Overview, Components, Patterns,
+ * Foundations, Benchmark and Changelog, under the envUI wordmark, beside a Drawer of the chosen
+ * destination's pages under search, both on the navigation's background with no seam or line
+ * between them. A rail item opens its destination's first page; in the sheet of a narrower window
+ * it leaves the sheet open, so a page can be chosen.
  */
-export function DocumentationNavigation({
-  routePath,
+export function SiteNavigation({
   page,
-  onSearch,
+  routePath,
   inSheet = false,
   onChoose,
-}: NavigationProps & { onSearch: () => void; inSheet?: boolean; onChoose?: () => void }) {
-  // The current page's link shows as the navigation mounts, as on a page opened deep in the list.
-  const drawer = useRef<HTMLElement>(null);
-  useEffect(() => {
-    drawer.current
-      ?.querySelector('[aria-current="page"]')
-      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }, []);
+  onSearch,
+}: NavigationProps) {
+  const element = useCurrentInView();
+  const section = (page?.area === 'site' ? page.section : 'Overview') as SiteSection;
+  const pages = pagesOf('site').filter((entry) => entry.section === section);
   return (
-    <Drawer
-      ref={drawer}
-      aria-label="Documentation"
-      className="docs-sidebar"
-      data-in-sheet={inSheet || undefined}
-      destinations={documentationDestinations({ routePath, page }, onChoose)}
-      header={
-        <>
-          {!inSheet && <Brand />}
-          <SearchButton onClick={onSearch} className="docs-sidebar-search" />
-        </>
-      }
-    />
+    <div ref={element} className="docs-navigation" data-in-sheet={inSheet || undefined}>
+      <Rail
+        aria-label="Site"
+        className="docs-rail"
+        header={<Brand area="site" />}
+        destinations={siteDestinations(page?.area === 'site' ? section : undefined)}
+      />
+      <Drawer
+        aria-label={section}
+        className="docs-sidebar"
+        header={<SearchButton onClick={onSearch} className="docs-drawer-search" />}
+        destinations={pageDestinations(pages, routePath, onChoose)}
+      />
+    </div>
+  );
+}
+
+/**
+ * The Docs' navigation: a Drawer of every page of the Docs, by its group, with the wordmark and
+ * search side by side at its top.
+ */
+export function DocsNavigation({
+  routePath,
+  inSheet = false,
+  onChoose,
+  onSearch,
+}: NavigationProps) {
+  const element = useCurrentInView();
+  const pages = pagesOf('docs').map((page) => ({ ...page, group: page.section }));
+  return (
+    <div ref={element} className="docs-navigation" data-in-sheet={inSheet || undefined}>
+      <Drawer
+        aria-label="Docs"
+        className="docs-sidebar docs-docs-drawer"
+        header={
+          <div className="docs-drawer-top">
+            <Brand area="docs" />
+            <SearchButton onClick={onSearch} className="docs-drawer-search" />
+          </div>
+        }
+        destinations={pageDestinations(pages, routePath, onChoose)}
+      />
+    </div>
+  );
+}
+
+/**
+ * The page's own controls at its top end, quiet ghost buttons with no bar behind them: the other
+ * area, the Docs from the Site and the Site from the Docs, and the Display menu, where the theme,
+ * contrast and scale are. Below an expanded window they are icon buttons with tooltips.
+ */
+export function PageActions({ area }: { area: Area }) {
+  const [label, href, Icon] =
+    area === 'docs'
+      ? (['Site', routeHref(homeRoute), ArrowBack] as const)
+      : (['Docs', routeHref(docsRoute), MenuBook] as const);
+  return (
+    <div className="docs-page-actions">
+      <span className="docs-wide-only">
+        <Button variant="ghost" href={href} startIcon={<Icon />}>
+          {label}
+        </Button>
+        <DisplayMenu />
+      </span>
+      <span className="docs-narrow-only">
+        <Tooltip content={label}>
+          <IconButton variant="ghost" href={href} icon={<Icon />} aria-label={label} />
+        </Tooltip>
+        <DisplayMenu iconOnly />
+      </span>
+    </div>
   );
 }

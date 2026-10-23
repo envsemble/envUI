@@ -1,7 +1,7 @@
-// The hosted catalogue: a Worker that serves the static build in dist/site from
-// `npm run build:site`. Page loads and files outside /assets/ are served without running the
-// script; it answers /assets/ and requests that match no file. CONTRIBUTING.md's Hosting section
-// describes deployment.
+// The hosted site: a Worker that serves the static build in dist/site from `npm run build:site`,
+// the Site at the root and the Docs under /docs, both from the one index.html. Page loads and
+// files outside /assets/ are served without running the script; it answers /assets/ and requests
+// that match no file. CONTRIBUTING.md's Hosting section describes deployment.
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "envui",
@@ -11,10 +11,9 @@
   "assets": {
     "directory": "./dist/site",
     "binding": "ASSETS",
-    // A path without a file answers with index.html, so routes can live in the URL path.
+    // A path without a file answers with index.html, so the Site's routes and the Docs' under
+    // /docs load from a deep link and on a refresh.
     "not_found_handling": "single-page-application",
-    // /v0.7 redirects to /v0.7/, which serves v0.7/index.html.
-    "html_handling": "auto-trailing-slash",
     // The script answers /assets/ first, so a missing hashed file is not found even when a browser
     // opens it as a page, rather than index.html cached for a year under its name.
     "run_worker_first": ["/assets/*"],

@@ -16,9 +16,9 @@
   }
 }
 @media print {
-  .docs-header,
+  .docs-compact-controls,
   .docs-sidebar,
-  .docs-page-controls,
+  .docs-rail,
   .docs-page-navigation,
   .docs-footer {
     display: none;

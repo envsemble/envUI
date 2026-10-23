@@ -59,3 +59,8 @@ export function partSelector(part: string): { selector: string; text: boolean } 
     .trim();
   return { selector, text };
 }
+
+/** A component's part names and state attributes, by its export name, such as Button. */
+export function partsOf(component: string): PartGroup | undefined {
+  return components[component];
+}

@@ -2,7 +2,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 /**
- * The workspaces whose runtime dependencies ship: the library's and the offline catalogue's. The
+ * The workspaces whose runtime dependencies ship: the library's and the hosted site's. The
  * codemods package runs on the developer's machine and its dependencies ship with it, not here.
  */
 const shippingWorkspaces = ['packages/ui', 'apps/catalogue'];

@@ -69,8 +69,8 @@ export function lazyPart<M, P extends object>(
   return part;
 }
 
-/** Whether this is the hosted catalogue, whose parts load from files of their own. */
-const hostedBuild = import.meta.env.MODE === 'site';
+/** Whether this is the built site, whose parts load from files of their own. */
+const hostedBuild = import.meta.env.PROD;
 
 /**
  * The files of the hosted catalogue behind each part that loads on its own, from the
@@ -98,8 +98,7 @@ async function moduleFiles(): Promise<Record<string, string[]> | null> {
  * the hosted build, the files of `modules` are fetched anew first. Each is a module's path in the
  * catalogue app, such as `src/examples/button/CreateProject.tsx`. The connection seems down when
  * module-files.json can't be fetched, or none of those files can; a file that answers, even as not
- * found after a new deploy, shows that it is up. Elsewhere it always reloads: the offline catalogue
- * reloads from its own file, which needs no connection whatever the browser says of it.
+ * found after a new deploy, shows that it is up. In development it always reloads.
  */
 export async function reloadPage(modules: readonly string[] = []): Promise<boolean> {
   if (hostedBuild) {

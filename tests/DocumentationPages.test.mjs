@@ -13,8 +13,7 @@ import {
 } from '../scripts/GenerateDocumentation.mjs';
 
 /**
- * Component pages not on the template yet. They keep their hand-written props tables and their
- * catalogue preview in apps/catalogue/src/previews (the switch in ComponentPreview.tsx). Convert a
+ * Component pages not on the template yet, which keep their hand-written props tables. Convert a
  * page as docs/component-pages.md describes, then remove it here; the list only shrinks.
  */
 const unconverted = [];
@@ -102,15 +101,6 @@ test('pages not on the template are listed, and only those', () => {
     [...unconverted].sort(),
     'A converted page leaves `unconverted` in this test; a new page starts on the template.',
   );
-});
-
-test('only pages not on the template keep a preview family in ComponentPreview.tsx', () => {
-  const source = readFileSync(
-    new URL('../apps/catalogue/src/previews/ComponentPreview.tsx', import.meta.url),
-    'utf8',
-  );
-  const cases = [...source.matchAll(/case '([a-z-]+)':/g)].map((match) => match[1]);
-  assert.deepEqual(cases.sort(), [...unconverted].sort());
 });
 
 test('pages on the template list no props by hand', () => {

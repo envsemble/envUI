@@ -83,7 +83,6 @@ const [phase1, built] = await Promise.all([
       '--tsBuildInfoFile',
       '.cache/tsc/catalogue.tsbuildinfo',
     ]),
-    task('build:catalogue', [...bin.npm, 'run', '-s', 'build:catalogue']),
     task('build:site', [...bin.npm, 'run', '-s', 'build:site']),
   ]),
   series([

@@ -26,6 +26,7 @@ import {
 import { catalogueUrl, fixtureUrl } from '../browser/Servers';
 import {
   allThemes,
+  chooseScheme,
   emulateContrast,
   themesFor,
   type CatalogueTheme,
@@ -111,7 +112,7 @@ function toasts(name: string, tones: string[], themes: readonly ThemeName[]): Op
   return {
     name,
     themes,
-    route: 'components/toast/overview',
+    route: 'components/toast',
     trigger: (page) => show(page, tones[0]),
     open: async (page) => {
       for (const tone of tones) await press(page, show(page, tone));
@@ -134,7 +135,7 @@ const openLists: OpenList[] = [
   {
     name: 'select',
     themes: ['light', 'dark', 'light-hc'],
-    route: 'components/select/overview',
+    route: 'components/select',
     trigger: (page) =>
       liveExample(page, 'ProjectVisibility').getByRole('combobox', {
         name: 'Visibility',
@@ -150,7 +151,7 @@ const openLists: OpenList[] = [
   {
     name: 'select-small',
     themes: ['light'],
-    route: 'components/select/overview',
+    route: 'components/select',
     trigger: (page) =>
       liveExample(page, 'SmallToolbar').getByRole('combobox', { name: 'Zoom', exact: true }),
     key: 'Space',
@@ -162,7 +163,7 @@ const openLists: OpenList[] = [
   {
     name: 'combobox',
     themes: ['light'],
-    route: 'components/combobox/overview',
+    route: 'components/combobox',
     trigger: (page) =>
       liveExample(page, 'ChooseOwner').getByRole('combobox', { name: 'Owner', exact: true }),
     key: 'ArrowDown',
@@ -175,7 +176,7 @@ const openLists: OpenList[] = [
   {
     name: 'menu',
     themes: ['light', 'dark', 'light-hc'],
-    route: 'components/menu/overview',
+    route: 'components/menu',
     trigger: (page) =>
       liveExample(page, 'IconsAndShortcuts').getByRole('button', {
         name: 'More actions',
@@ -190,7 +191,7 @@ const openLists: OpenList[] = [
   {
     name: 'menu-choices',
     themes: ['light'],
-    route: 'components/menu/overview',
+    route: 'components/menu',
     trigger: (page) =>
       liveExample(page, 'Choices').getByRole('button', { name: 'View', exact: true }),
     key: 'ArrowDown',
@@ -202,7 +203,7 @@ const openLists: OpenList[] = [
   {
     name: 'command-palette',
     themes: ['light'],
-    route: 'components/command-palette/overview',
+    route: 'components/command-palette',
     trigger: (page) =>
       liveExample(page, 'GoToDocument').getByRole('button', {
         name: 'Go to document',
@@ -218,7 +219,7 @@ const openLists: OpenList[] = [
     // A dark fill on a light page in the light themes: its edge must not read as a halo.
     name: 'tooltip',
     themes: ['light', 'dark'],
-    route: 'components/tooltip/overview',
+    route: 'components/tooltip',
     trigger: (page) =>
       liveExample(page, 'IconActions').getByRole('button', {
         name: 'Refresh members',
@@ -303,12 +304,15 @@ async function press(page: Page, control: Locator) {
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
 }
 
-/** Switches the catalogue to the theme's scheme with its button, under the theme's contrast. */
+/** Switches the catalogue to the theme's scheme in its Display menu, under the theme's contrast. */
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
   const { scheme } = theme;
-  if ((await page.locator('.docs-app').getAttribute('data-env-theme')) !== scheme)
-    await press(page, page.getByRole('button', { name: `Switch to ${scheme} theme`, exact: true }));
+  if ((await page.locator('.docs-app').getAttribute('data-env-theme')) !== scheme) {
+    await chooseScheme(page, scheme);
+    await page.mouse.move(0, 0);
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  }
   await page.locator(`.docs-app[data-env-theme="${scheme}"]`).waitFor();
 }
 
@@ -416,7 +420,7 @@ function reconcile(testInfo: TestInfo, directory: string, recorded: string[], ta
 }
 
 test.describe('catalogue', () => {
-  for (const { path, reference, views } of referencePages) {
+  for (const { path, reference } of referencePages) {
     test(`${reference.title} (${path})`, async ({ page }, testInfo) => {
       const directory = join(snapshots, 'catalogue', reference.id);
       const recorded = contents(directory);
@@ -425,22 +429,19 @@ test.describe('catalogue', () => {
         taken.add(file);
         await capture(locator, ['catalogue', reference.id, file]);
       };
-      // A page not on the template shows its specimens in Preview; a page on the template shows
-      // its live examples in Overview and its specimens in whichever view their section is in.
-      const visited = reference.sections ? views.map((view) => view.id) : ['preview'];
+      // Each page shows its specimens, or its live examples, on one page: a foundation's visuals,
+      // a component's figures, or Field's in the Docs.
+      const visited = [path];
       await page.clock.setFixedTime(now);
-      await page.goto(`${catalogueUrl}/#/${path}/${visited[0]}`);
-      await page.locator('.docs-reference-tabs').waitFor();
+      await page.goto(`${catalogueUrl}/${path}`);
+      await page.locator('.docs-page-header').waitFor();
       for (const theme of themesFor(path)) {
         await setTheme(page, theme);
         const name = namer();
         let specimens = 0;
         const matrices: string[] = [];
-        const open = async (view: string) => {
-          await page.evaluate((hash) => (location.hash = hash), `/${path}/${view}`);
-          await page.locator('.docs-page-header').getByRole('tab', { selected: true }).waitFor();
-          // The development server keeps routes in the path, and opens a hash route there.
-          await expect(page).toHaveURL(new RegExp(`/${path}/${view}$`));
+        const open = async (route: string) => {
+          await expect(page).toHaveURL(new RegExp(`/${route}$`));
           await settle(page);
         };
         for (const view of visited) {
@@ -534,8 +535,8 @@ test.describe('open lists', () => {
         // Timers keep running until just before the popups open, so the page and its animations settle.
         if (list.pauseTimers) await page.clock.install({ time: now });
         else await page.clock.setFixedTime(now);
-        await page.goto(`${catalogueUrl}/#/${list.route}`);
-        await page.locator('.docs-reference-tabs').waitFor();
+        await page.goto(`${catalogueUrl}/${list.route}`);
+        await page.locator('.docs-page-header').waitFor();
         await setTheme(page, theme);
         await settle(page);
         // A modal popup hides the rest of the page from role queries, so the trigger is held as

@@ -1,7 +1,7 @@
 import { Column, Grid, Link, Row, Text } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { componentGroupId, componentGroups } from '../Reference';
-import { homeRoute, routeHref } from '../navigation/Address';
+import { docsRoute, homeRoute, routeHref } from '../navigation/Address';
 import { routeOfDocument } from '../navigation/DocumentationRoutes';
 
 const repository = 'https://github.com/envsemble/envUI';
@@ -21,15 +21,12 @@ function pagesById(entries: [id: string, label: string][]): FooterLink[] {
 
 const columns: { title: string; links: FooterLink[] }[] = [
   {
-    title: 'Get started',
+    title: 'Overview',
     links: [
-      { label: 'Overview', href: routeHref(homeRoute) },
-      { label: 'Install and set up', href: routeHref('overview/get-started') },
-      ...pagesById([
-        ['migration', 'Migrate to envUI'],
-        ['agent-tooling', 'For agents'],
-        ['dev-mode', 'Dev mode'],
-      ]),
+      { label: 'Introduction', href: routeHref(homeRoute) },
+      { label: 'Get started', href: routeHref('get-started') },
+      { label: 'Benchmark', href: routeHref('benchmark') },
+      { label: 'Changelog', href: routeHref('changelog') },
     ],
   },
   {
@@ -40,14 +37,13 @@ const columns: { title: string; links: FooterLink[] }[] = [
       ['spacing', 'Spacing & shape'],
       ['responsive', 'Responsive layout'],
       ['accessibility', 'Accessibility'],
-      ['tokens', 'Design tokens'],
     ]),
   },
   {
     title: 'Components',
     links: componentGroups.map((group) => ({
       label: group,
-      href: routeHref(`${homeRoute}?${new URLSearchParams({ section: componentGroupId(group) })}`),
+      href: routeHref(`components?${new URLSearchParams({ section: componentGroupId(group) })}`),
     })),
   },
   {
@@ -62,19 +58,25 @@ const columns: { title: string; links: FooterLink[] }[] = [
     ]),
   },
   {
-    title: 'Resources',
+    title: 'Docs',
     links: [
-      { label: 'Changelog', href: routeHref('changelog') },
-      ...pagesById([['library-development', 'Contributing']]),
+      { label: 'Introduction', href: routeHref(docsRoute) },
+      ...pagesById([
+        ['setup', 'Install and set up'],
+        ['migration', 'Migrate to envUI'],
+        ['codemods', 'Codemods'],
+        ['tokens', 'Design tokens'],
+        ['agent-tooling', 'For agents'],
+        ['dev-mode', 'Dev mode'],
+      ]),
       { label: 'Source', href: repository },
-      { label: 'Report an issue', href: `${repository}/issues` },
     ],
   },
 ];
 
 /**
- * The foot of every page, on the navigation's pane color: the wordmark in a column of its own,
- * then the catalogue's main destinations in columns that wrap onto more rows in a narrow page.
+ * The foot of every page of the Site and the Docs, on the navigation's pane color: the wordmark in
+ * a column of its own, then the main destinations of both in columns that wrap onto more rows in a narrow page.
  * Its links are quiet text until hovered.
  */
 export function PageFooter() {
@@ -85,7 +87,7 @@ export function PageFooter() {
           href={routeHref(homeRoute)}
           underline={false}
           className="docs-footer-brand"
-          aria-label="envUI overview"
+          aria-label="envUI home"
         >
           <EnvUILogo />
         </Link>
