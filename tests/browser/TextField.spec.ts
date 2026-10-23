@@ -132,7 +132,7 @@ test('compact fields hold a prefix and suffix between the icon and the end actio
   const handle = scope.getByRole('textbox', { name: 'Handle', exact: true });
   const handlePrefix = (await affix(handle, 'prefix').boundingBox())!;
   const handleWell = (await handle.locator('xpath=..').boundingBox())!;
-  // Plain fields keep their text on the field's edge.
+  // A floating field's prefix starts at its well's edge, its padding inside it, as an outline field's.
   expect(Math.abs(handlePrefix.x - handleWell.x)).toBeLessThanOrEqual(1);
 });
 

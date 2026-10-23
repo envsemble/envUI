@@ -5097,8 +5097,7 @@
         {
           "attribute": "data-variant",
           "values": [
-            "ghost",
-            "underline"
+            "ghost"
           ],
           "parts": [
             "env-text-field-control"

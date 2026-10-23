@@ -3707,8 +3707,7 @@
             {
               "attribute": "data-variant",
               "values": [
-                "ghost",
-                "underline"
+                "ghost"
               ],
               "parts": [
                 "env-text-field-control"
@@ -21770,7 +21769,7 @@
           "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
         },
         {
           "name": "error",
@@ -24171,7 +24170,7 @@
           "type": "Exclude<FieldVariant, 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The document's look, as a text area's: outline, in a bordered box on the field background; underline, without a border or fill, with an underline while it has focus; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
+          "description": "The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
         },
         {
           "name": "extensions",
@@ -24458,7 +24457,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
         },
         {
           "name": "description",
@@ -24468,10 +24467,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
+          "type": "'outline' | 'floating' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
         },
         {
           "name": "error",
@@ -25469,7 +25468,7 @@
     "TextField": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating and underline variants, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating variant, with an optional start icon, end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -25515,10 +25514,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
+          "type": "'outline' | 'floating' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
         },
         {
           "name": "startIcon",
@@ -25543,7 +25542,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
         },
         {
           "name": "prefix",
@@ -25593,7 +25592,7 @@
           "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
         },
         {
           "name": "onValueChange",
@@ -26657,10 +26656,10 @@
         "type": "color",
         "description": "The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue=\"blue\".",
         "values": {
-          "light": "#005cc8",
-          "dark": "#005cc8",
-          "light-high-contrast": "#004aa2",
-          "dark-high-contrast": "#004aa2"
+          "light": "#40638a",
+          "dark": "#40638a",
+          "light-high-contrast": "#2d4f75",
+          "dark-high-contrast": "#2d4f75"
         }
       },
       {
@@ -26669,10 +26668,10 @@
         "type": "color",
         "description": "The amber fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#8a5504",
-          "dark": "#8a5504",
-          "light-high-contrast": "#704300",
-          "dark-high-contrast": "#704300"
+          "light": "#795c32",
+          "dark": "#795c32",
+          "light-high-contrast": "#65481d",
+          "dark-high-contrast": "#65481d"
         }
       },
       {
@@ -26681,10 +26680,10 @@
         "type": "color",
         "description": "The green fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#176f35",
-          "dark": "#176f35",
-          "light-high-contrast": "#005a25",
-          "dark-high-contrast": "#005a25"
+          "light": "#44694b",
+          "dark": "#44694b",
+          "light-high-contrast": "#305538",
+          "dark-high-contrast": "#305538"
         }
       },
       {
@@ -26693,10 +26692,10 @@
         "type": "color",
         "description": "The purple fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#8e3caa",
-          "dark": "#8e3caa",
-          "light-high-contrast": "#782594",
-          "dark-high-contrast": "#782594"
+          "light": "#7e5370",
+          "dark": "#7e5370",
+          "light-high-contrast": "#69405c",
+          "dark-high-contrast": "#69405c"
         }
       },
       {
@@ -26705,22 +26704,22 @@
         "type": "color",
         "description": "The red fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#b72b20",
-          "dark": "#b72b20",
-          "light-high-contrast": "#9f0300",
-          "dark-high-contrast": "#9f0300"
+          "light": "#8c514d",
+          "dark": "#8c514d",
+          "light-high-contrast": "#763d3a",
+          "dark-high-contrast": "#763d3a"
         }
       },
       {
         "id": "color.avatar.bg.slate",
         "cssVariable": "--env-color-avatar-bg-slate",
         "type": "color",
-        "description": "The slate fill, one of the hues an avatar takes from its name.",
+        "description": "The slate fill, a blue-tinted gray, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#4e627e",
-          "dark": "#4e627e",
-          "light-high-contrast": "#3c4e69",
-          "dark-high-contrast": "#3c4e69"
+          "light": "#5d6166",
+          "dark": "#5d6166",
+          "light-high-contrast": "#4b4d51",
+          "dark-high-contrast": "#4b4d51"
         }
       },
       {
@@ -26729,10 +26728,10 @@
         "type": "color",
         "description": "The teal fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#236d52",
-          "dark": "#236d52",
-          "light-high-contrast": "#03593f",
-          "dark-high-contrast": "#03593f"
+          "light": "#30696c",
+          "dark": "#30696c",
+          "light-high-contrast": "#1a5558",
+          "dark-high-contrast": "#1a5558"
         }
       },
       {
@@ -26741,10 +26740,10 @@
         "type": "color",
         "description": "The violet fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#7a3fc8",
-          "dark": "#7a3fc8",
-          "light-high-contrast": "#6725b4",
-          "dark-high-contrast": "#6725b4"
+          "light": "#665a8a",
+          "dark": "#665a8a",
+          "light-high-contrast": "#524674",
+          "dark-high-contrast": "#524674"
         }
       },
       {

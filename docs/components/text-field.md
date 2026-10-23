@@ -120,14 +120,13 @@ A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the
 
 ```
 
-| Variant     | Use for                                                      |
-| ----------- | ------------------------------------------------------------ |
-| `outline`   | In forms, dialogs, panes and toolbars. The default.          |
-| `floating`  | A long form on a page.                                       |
-| `underline` | A value in a document or a header, such as a title.          |
-| `ghost`     | A search in an application's chrome, such as atop a sidebar. |
+| Variant    | Use for                                                      |
+| ---------- | ------------------------------------------------------------ |
+| `outline`  | In forms, dialogs, panes and toolbars. The default.          |
+| `floating` | A long form on a page.                                       |
+| `ghost`    | A search in an application's chrome, such as atop a sidebar. |
 
-Textarea comes outline, underline or ghost.
+Textarea comes outline or ghost.
 
 ### Sizes
 
@@ -238,6 +237,7 @@ A field fills its container; set the width there. A long prefix is cut short so 
 
 ## Changelog
 
+- **1.0.0-prerelease.2**: The `underline` variant is gone from TextField, SearchField and Textarea; the `v1-props` codemod drops it for the default outline. Outline and floating fields have no fill of their own.
 - **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating`, `underline` and `ghost`: `outlined` is `outline`, `plain` is `underline` and `quiet` is `ghost`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`.
 - **1.0.0**: `Input` is `TextField`, with the same props, behaviour and look; the page is `text-field`.
 - **0.6.0**: The `quiet` variant on TextField and SearchField.

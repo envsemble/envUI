@@ -606,10 +606,9 @@ test('the document takes the field look: border, variants, error and a disabled 
   await expect(
     outline.locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]'),
   ).toHaveCSS('border-top-color', await color('--env-color-border-default'));
-  // Ghost draws no border or fill at rest; underline has no border either.
+  // Ghost draws no border or fill at rest.
   await expect(box('Ghost notes')).toHaveAttribute('data-variant', 'ghost');
   await expect(box('Ghost notes')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  await expect(box('Underlined notes')).toHaveAttribute('data-variant', 'underline');
   // The error makes the document invalid and its border the error color.
   const invalid = scope.getByRole('textbox', { name: 'Invalid notes' });
   await expect(invalid).toHaveAttribute('aria-invalid', 'true');

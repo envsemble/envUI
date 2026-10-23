@@ -5,7 +5,7 @@ export function Notes({ value, onChange }) {
     <MarkdownEditor
       label="Notes"
       hint="Markdown is supported."
-      variant="plain"
+      variant="quiet"
       className="notes"
       value={value}
       onChange={onChange}
