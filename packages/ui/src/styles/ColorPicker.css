@@ -19,7 +19,11 @@
   --env-color-picker-thumb-color: white;
   --env-color-picker-thumb-ring: color-mix(in srgb, black 45%, transparent);
   /* stylelint-enable color-named */
+  --env-color-picker-intrinsic-width: 16rem;
   container: env-color-picker / inline-size;
+  /* A size container has no width of its own: where nothing sets one, as in a row or a popup that
+     takes its content's width, the picker is 16 rem wide. */
+  contain-intrinsic-inline-size: var(--env-color-picker-intrinsic-width);
   display: flex;
   flex-direction: column;
   gap: var(--env-space-3);
@@ -174,7 +178,7 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
 }
-@container env-color-picker (width < 19rem) {
+@container env-color-picker (width < 19.5rem) {
   .env-color-picker-values[data-alpha]:not([data-format='hex']):has(> .env-color-picker-format) {
     grid-template-areas: 'format copy' 'fields fields';
     grid-template-columns: minmax(0, 1fr) auto;
@@ -251,7 +255,7 @@
 
 /* The popover of ColorPickerButton holds the picker at a compact width. */
 .env-color-picker-popover .env-color-picker {
-  --env-color-picker-width: 16rem;
+  --env-color-picker-width: 17rem;
   inline-size: var(--env-color-picker-width);
   max-inline-size: 100%;
 }

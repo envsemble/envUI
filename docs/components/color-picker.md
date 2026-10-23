@@ -144,7 +144,7 @@ Not shown: the description and error, `env-color-picker-description` and `env-co
 
 ## Adapting to width
 
-The picker fills its container. Under 17 rem the fields take a row of their own.
+The picker fills its container. Where the fields no longer fit beside the format select, they take a row of their own.
 
 ```tsx example=FillWidth widths="15 22"
 

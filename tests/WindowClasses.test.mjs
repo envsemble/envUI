@@ -41,7 +41,7 @@ const ownThresholds = {
   'Table.css': ['37.5em'],
   // A color picker's fields wrap below the format where they no longer fit beside it: hex alone,
   // hex with alpha or a format of channels, and channels with alpha.
-  'ColorPicker.css': ['12.5rem', '16.5rem', '19rem'],
+  'ColorPicker.css': ['12.5rem', '16.5rem', '19.5rem'],
 };
 
 test('windowClasses holds the widths of the window-class tokens, from compact up', () => {

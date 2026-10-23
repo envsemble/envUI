@@ -374,6 +374,8 @@ The content, rich-text, diff and color entries use Shiki, react-markdown, remark
   npm install @react-aria/color@^3.2.1 @react-stately/color@^3.10.1 @react-aria/i18n@^3.13.1
   ```
 
+  React Aria brings the names of channels and colors in every language it supports, about 57 KB of the entry's 190 KB minified; its build plugin, `@react-aria/optimize-locales-plugin`, keeps only the application's languages.
+
 They aren't peer dependencies because GitHub Packages drops `peerDependenciesMeta`, the field that marks a peer optional, and npm installs every peer that isn't marked optional. A missing library fails the application's build where the entry imports it.
 
 Keep optional content/editor imports with their features. Import icons by subpath, one module each, such as `import { Add } from '@envsemble/envui/icons/Add'`, rather than from the `@envsemble/envui/icons` barrel: the barrel re-exports every symbol, so a bundler reads the whole catalogue for one icon, and Vite without `@vitejs/plugin-react` prints a warning about the `'use client'` directive of each of its thousands of modules (2,734 for one icon). See [icons](foundations/icons.md) when adding icons.
