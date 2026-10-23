@@ -20,13 +20,6 @@ avoidWhen:
     use: Bar
   - text: The same destinations on an expanded or larger window, or with group headings and long labels.
     use: Drawer
-  - text: A deep hierarchy that people expand and collapse, such as folders and files.
-    use: Tree
-related:
-  - bar
-  - drawer
-  - tree
-  - badge
 components:
   - Rail
 ---
@@ -58,14 +51,6 @@ A destination's `group` shows no heading in the rail: grouped destinations follo
 ```
 
 ```tsx dont=ActionAtTheBottom caption="The main action below the destinations, where people don't look for it."
-
-```
-
-```tsx do=OneWordLabels caption="One short word for each destination."
-
-```
-
-```tsx dont=PhraseLabels caption="Phrases: they wrap over several lines in the narrow rail."
 
 ```
 

@@ -25,14 +25,8 @@ avoidWhen:
     use: TextField
   - text: Formatted text with headings, lists and links.
     use: MarkdownEditor
-  - text: A query that searches or filters content.
-    use: SearchField
-related:
-  - message
-  - text-field
-  - button
-  - markdown
-  - accessibility
+  - text: The messages of the conversation itself.
+    use: Message
 components:
   - Composer
 ---
@@ -81,14 +75,6 @@ Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the form, which 
 ```
 
 ```tsx dont=DisabledWhileSending caption="A disabled composer, which takes focus away from the draft."
-
-```
-
-```tsx do=ShortFooter caption="A footer of a few words."
-
-```
-
-```tsx dont=LongFooter caption="Instructions in the footer that nobody reads."
 
 ```
 

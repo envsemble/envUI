@@ -35,13 +35,6 @@ avoidWhen:
     use: Composer
   - text: A single line of text, such as a title.
     use: TextField
-related:
-  - markdown
-  - text-field
-  - composer
-  - message
-  - composition
-  - accessibility
 components:
   - RichText
   - RichTextEditor
@@ -136,14 +129,6 @@ Headings, emphasis, strikethrough, code, lists and task lists, quotes, links, im
 - Show saved Markdown with RichText and the same `extensions`.
 
 ### Content
-
-```tsx do=PlaceholderSaysHow caption="A label that names the document, and a placeholder that says how to start."
-
-```
-
-```tsx dont=VaguePlaceholder caption="Text and Enter text here: neither says what to write."
-
-```
 
 - Give image attachments a label that describes the image: it becomes the alternative text.
 

@@ -26,21 +26,10 @@ avoidWhen:
     use: MonthPicker
   - text: A moment shown relative to now, such as "3 hours ago".
     use: RelativeTime
-  - text: Activity per day over months, shown as shades.
-    use: CalendarHeatmap
   - text: A free-text date that people type in any format.
     use: TextField
   - text: A choice among a few named periods, such as This week or This month.
     use: SegmentedControl
-related:
-  - time-picker
-  - month-picker
-  - text-field
-  - popover
-  - combobox
-  - calendar-heatmap
-  - relative-time
-  - accessibility
 components:
   - DatePicker
   - Calendar
@@ -92,9 +81,13 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Outline, with a time**
+3. **Floating**
 
 | Variant                | Use for                                                 |
 | ---------------------- | ------------------------------------------------------- |
@@ -120,26 +113,8 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 ```
 
-```tsx do=LimitsExplained caption="Say which days can be chosen in the description."
-
-```
-
-```tsx dont=LimitsUnexplained caption="Unavailable days that people find only in the calendar."
-
-```
-
 - Use two fields for a range, such as First day and Last day.
 - Use `readOnly`, not `disabled`, to show a date people can't change.
-
-### Labels
-
-```tsx do=NamedMoment caption="A label that names the moment."
-
-```
-
-```tsx dont=GenericLabel caption="Date, which says nothing about what happens then."
-
-```
 
 ## Anatomy
 

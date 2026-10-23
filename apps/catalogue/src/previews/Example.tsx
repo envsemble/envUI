@@ -29,6 +29,7 @@ export function Example({
   className,
   gap = 4,
   size = 'content',
+  stage,
 }: {
   title?: string;
   actions?: ReactNode;
@@ -37,6 +38,8 @@ export function Example({
   className?: string;
   gap?: SpaceStep;
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
+  /** `none` leaves the dotted stage out, where the subject is a color or the page itself. */
+  stage?: 'none';
 }) {
   const level = useContext(SpecimenHeadingLevel);
   const Heading = `h${level}` as const;
@@ -46,6 +49,7 @@ export function Example({
       render={<section />}
       gap={gap}
       data-size={size}
+      data-stage={stage}
       className={['docs-example', className].filter(Boolean).join(' ')}
     >
       {title && actions ? (
@@ -61,7 +65,13 @@ export function Example({
         </Text>
       ) : null}
       <PartHeadingLevel value={title ? ((level + 1) as 3 | 4) : level}>
-        {staged ? <div className="docs-foundation-stage">{children}</div> : children}
+        {staged ? (
+          <div className="docs-foundation-stage" data-stage={stage}>
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </PartHeadingLevel>
       {caption && (
         <Text variant="caption" className="docs-caption">

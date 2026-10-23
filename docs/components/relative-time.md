@@ -18,18 +18,10 @@ useWhen:
   - Activity and lists where times update while the page stays open, such as Draft saved 2 minutes ago.
   - A string that says how long ago, for a place that takes only text, such as an option label or an accessible name (formatRelativeTime).
 avoidWhen:
-  - text: A moment people must read exactly, such as a deadline, an appointment or the date of a record; format the date with Intl.DateTimeFormat.
   - text: Choosing a date, or a date and time.
     use: DatePicker
   - text: Days shown on a month grid.
     use: Calendar
-  - text: A count that changes in place, such as seats left.
-    use: AnimatedNumber
-related:
-  - tooltip
-  - date-picker
-  - animated-number
-  - table
 components:
   - RelativeTime
   - formatRelativeTime
@@ -63,9 +55,13 @@ The text rounds to the nearest unit and stays a count: 1 day ago, never yesterda
 
 ## Variants
 
-```tsx example=Formats
+```tsx variants=Formats
 
 ```
+
+1. **long**
+2. **short**
+3. **narrow**
 
 | Format   | Reads as    | Use for                           |
 | -------- | ----------- | --------------------------------- |
@@ -75,14 +71,6 @@ The text rounds to the nearest unit and stays a count: 1 day ago, never yesterda
 
 ## When to use
 
-```tsx do=EventFirst caption="Put the event first, so the time never stands alone."
-
-```
-
-```tsx dont=TimeAlone caption="A time on its own: people can't tell what happened."
-
-```
-
 ```tsx do=ExactDateNearby caption="Show the date where it matters, with the relative time beside it."
 
 ```
@@ -91,6 +79,7 @@ The text rounds to the nearest unit and stays a count: 1 day ago, never yesterda
 
 ```
 
+- Where people must read the moment exactly, such as a deadline, an appointment or the date of a record, format the date with `Intl.DateTimeFormat` instead.
 - Don't run a timer of your own: one shared clock updates every time on the page.
 - Pass the same `now` to the server and the browser where their output must match, as in tests.
 

@@ -25,12 +25,6 @@ avoidWhen:
     use: Button
   - text: An option that turns on or off inside a menu.
     use: Menu
-related:
-  - checkbox
-  - radio
-  - segmented-control
-  - list
-  - accessibility
 components:
   - Switch
 ---
@@ -88,14 +82,6 @@ Name the setting in a short phrase, so that on means yes.
 ```
 
 ```tsx dont=StateInLabel caption="A label that changes to say the state, which the track shows."
-
-```
-
-```tsx do=PositiveLabel caption="A label that on means yes to."
-
-```
-
-```tsx dont=NegativeLabel caption="A negative label: on means no."
 
 ```
 

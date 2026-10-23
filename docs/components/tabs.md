@@ -24,15 +24,8 @@ avoidWhen:
     use: DocumentTabs
   - text: An application's destinations, such as the pages in a sidebar.
     use: Drawer
-  - text: Sections people may want open at the same time.
-    use: Disclosure
-related:
-  - segmented-control
-  - document-tabs
-  - drawer
-  - button
-  - card
-  - disclosure
+  - text: Sections people may want open at the same time, one under another.
+    use: Accordion
 components:
   - Tabs
 ---
@@ -96,16 +89,6 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 
 - One button variant for every tab of a rail; tabs are buttons, never links.
 - Content people compare stays in one panel.
-
-### Labels
-
-```tsx do=ShortTabNames caption="One or two words each, parallel."
-
-```
-
-```tsx dont=WordyTabNames caption="Phrases of different shapes: hard to scan."
-
-```
 
 ## Anatomy
 

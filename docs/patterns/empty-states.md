@@ -36,11 +36,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - loading
-  - feedback
-  - list
-  - table
 ---
 
 # Empty states
@@ -128,7 +123,7 @@ When the last review is approved, the queue says so plainly, with what comes nex
 
 ## Accessibility
 
-An empty state doesn't take focus; Tab reaches its action after the toolbar. When the action makes the state go, move focus on: Clear filters to the search, Create project to the new list, Try again to the region's heading.
+An empty state doesn't take focus; <kbd>Tab</kbd> reaches its action after the toolbar. When the action makes the state go, move focus on: Clear filters to the search, Create project to the new list, Try again to the region's heading.
 
 ### envUI provides
 

@@ -41,13 +41,6 @@ composes:
   - AnimatedNumber
   - Button
   - Card
-related:
-  - animated-number
-  - badge
-  - meter
-  - table
-  - card
-  - surface
 ---
 
 # Key figures

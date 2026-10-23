@@ -19,13 +19,6 @@ avoidWhen:
     use: DatePicker
   - text: A choice among a few named periods, such as This month or Last month.
     use: SegmentedControl
-  - text: Activity per day over months, shown as shades.
-    use: CalendarHeatmap
-related:
-  - date-picker
-  - time-picker
-  - text-field
-  - calendar-heatmap
 components:
   - MonthPicker
 ---
@@ -66,9 +59,12 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Floating**
 
 | Variant              | Use for                                                 |
 | -------------------- | ------------------------------------------------------- |
@@ -79,26 +75,8 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 
 ## When to use
 
-```tsx do=LimitsExplained caption="Say which values can be chosen in the description."
-
-```
-
-```tsx dont=LimitsUnexplained caption="Unavailable values that people find only in the popup."
-
-```
-
 - Use `readOnly`, not `disabled`, to show a month people can't change.
 - Use two fields for a range of months, such as From and To.
-
-### Labels
-
-```tsx do=NamedPeriod caption="A label that names the period."
-
-```
-
-```tsx dont=GenericLabel caption="Month, which says nothing about what the month is for."
-
-```
 
 ## Anatomy
 

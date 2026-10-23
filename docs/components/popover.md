@@ -28,13 +28,6 @@ avoidWhen:
     use: Select
   - text: A task that needs people's full attention or more room, or a consequence to confirm.
     use: Dialog
-related:
-  - tooltip
-  - hover-card
-  - menu
-  - dialog
-  - select
-  - accessibility
 components:
   - Popover
 ---
@@ -79,14 +72,6 @@ A popover is as wide as its content up to its width. `side` places it below its 
 ```
 
 ## When to use
-
-```tsx do=ShortHelp open stage=raised caption="A few lines, which people read at a glance."
-
-```
-
-```tsx dont=LongHelp open stage=raised caption="Paragraphs of help: too much to read beside the page."
-
-```
 
 - One to three fields at most in a form, with the action last.
 - Give every popover a `title`, or an `aria-label` where a title would repeat its trigger.

@@ -29,14 +29,6 @@ avoidWhen:
     use: Composer
   - text: Source code to read or copy on its own.
     use: CodeBlock
-related:
-  - code
-  - rich-text
-  - text-field
-  - composer
-  - kbd
-  - typography
-  - accessibility
 components:
   - Markdown
   - MarkdownEditor
@@ -107,14 +99,6 @@ CommonMark with tables, strikethrough, task lists, automatic links and footnotes
 - Don't render untrusted Markdown with a plugin that brings raw HTML back.
 
 ### Content
-
-```tsx do=LinkNamesDestination caption="Link text that names the destination."
-
-```
-
-```tsx dont=ClickHere caption="Click here: out of context, it says nothing."
-
-```
 
 - Give images alternative text in the source.
 

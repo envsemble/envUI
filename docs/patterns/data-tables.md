@@ -23,6 +23,10 @@ avoidWhen:
     see: filtering
   - text: Hierarchical items that open and close, such as folders.
     use: Tree
+  - text: A table with no rows yet, or none that match.
+    see: empty-states
+  - text: Deleting rows, with undo or a confirmation.
+    see: destructive-actions
 composes:
   - Table
   - Checkbox
@@ -46,13 +50,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - filtering
-  - empty-states
-  - destructive-actions
-  - table
-  - pagination
-  - toolbar
 ---
 
 # Data tables
@@ -97,14 +94,6 @@ The first load shows the table as a skeleton over placeholder rows after 200 ms,
 
 ## When to use
 
-```tsx do=NumbersAlignedEnd caption="Numbers aligned to the end with numeric, so they compare down the column."
-
-```
-
-```tsx dont=NumbersAlignedStart caption="Numbers aligned to the start: hundreds and tens look alike."
-
-```
-
 - Give each row one link, on its name, rather than making the whole row a click target.
 - Select rows with a checkbox beside `selected`; a press on the row alone is announced unevenly.
 - Match the controls above the table to its `density`: `size="sm"` over small rows.
@@ -137,7 +126,7 @@ With `narrowLayout="stack"`, a narrow table shows each row as a block with its c
 
 ## Accessibility
 
-Tab reaches the table's scroll region, then each sort button and control in the cells. Sort and Pagination buttons keep focus as the rows change. When an action clears the selection, focus moves to the header's checkbox; after a row is deleted, to the next row's menu button.
+<kbd>Tab</kbd> reaches the table's scroll region, then each sort button and control in the cells. Sort and Pagination buttons keep focus as the rows change. When an action clears the selection, focus moves to the header's checkbox; after a row is deleted, to the next row's menu button.
 
 ### envUI provides
 

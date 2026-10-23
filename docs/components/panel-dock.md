@@ -1,7 +1,7 @@
 ---
 title: PanelDock
 summary: Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.
-status: stable
+status: experimental
 since: 0.6.0
 category: Navigation
 aliases:
@@ -26,15 +26,8 @@ avoidWhen:
     use: Dialog
   - text: Switching between open documents in one place, as in an editor.
     use: DocumentTabs
-  - text: A short message about something that happened.
-    use: Toast
-related:
-  - dialog
-  - document-tabs
-  - scaffold
-  - menu
-  - tooltip
-  - accessibility
+  - text: One item’s details or settings at the edge of the window, closed when done.
+    use: Sheet
 components:
   - PanelDock
 ---

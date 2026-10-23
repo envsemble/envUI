@@ -9,6 +9,9 @@ import { legendOf, partDescription, partSelector } from './Parts';
 /** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
 interface Callout {
   number: number;
+  /** A variants figure's callout: the variant's name, and the side of its item it sits on. */
+  label?: string;
+  side?: Side;
   badge: { x: number; y: number };
   anchor: { x: number; y: number };
   /** The part's box, outlined; the root's is not. */
@@ -189,6 +192,121 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
   return callouts.sort((a, b) => a.number - b.number);
 }
 
+/** The room, in px, a variants figure's names take beside its items: on the start side or above. */
+interface Room {
+  start: number;
+  top: number;
+}
+
+/** A name's width in px, as its callout draws it, measured off-screen in the stage. */
+function labelWidth(stage: HTMLElement, text: string) {
+  const probe = document.createElement('span');
+  probe.className = 'docs-anatomy-badge docs-variant-label';
+  probe.style.visibility = 'hidden';
+  probe.textContent = text;
+  stage.append(probe);
+  const width = probe.getBoundingClientRect().width;
+  probe.remove();
+  return width;
+}
+
+/**
+ * Places a callout with each variant's name on the item it labels: the item a legend item's part
+ * names, or else the example's items in the legend's order. Items one under another take their
+ * names on the start side, items side by side above them, each with a line to its item and its box
+ * outlined. Returns the room the names need, which the subject keeps free.
+ */
+function measureVariants(
+  stage: HTMLElement,
+  subject: HTMLElement,
+  legend: AnatomyLegendItem[],
+): { callouts: Callout[]; room: Room } {
+  const origin = stage.getBoundingClientRect();
+  const rtl = getComputedStyle(stage).direction === 'rtl';
+  // The example's items: the children of its root, or of the wrapper the root holds alone, that
+  // show, leaving out such as a select's hidden input.
+  const shown = (element: Element) => {
+    const box = element.getBoundingClientRect();
+    return box.width > 1 && box.height > 1;
+  };
+  let root = subject.firstElementChild;
+  while (root && [...root.children].filter(shown).length === 1 && legend.length > 1)
+    root = [...root.children].find(shown) ?? null;
+  const items = root ? [...root.children].filter(shown) : [];
+  const found = legend.flatMap((item, index) => {
+    let element: Element | null | undefined = items[index];
+    if (item.part) {
+      try {
+        element = subject.querySelector(partSelector(item.part).selector);
+      } catch {
+        element = undefined;
+      }
+    }
+    const box = element && boxOf(element, false, origin);
+    return box ? [{ number: index + 1, box, label: item.label ?? '' }] : [];
+  });
+  if (!found.length) return { callouts: [], room: { start: 0, top: 0 } };
+  const widths = found.map(({ label }) => labelWidth(stage, label));
+  const outer: Box = {
+    left: Math.min(...found.map(({ box }) => box.left)),
+    top: Math.min(...found.map(({ box }) => box.top)),
+    right: Math.max(...found.map(({ box }) => box.right)),
+    bottom: Math.max(...found.map(({ box }) => box.bottom)),
+  };
+  const outline = (box: Box) => ({
+    x: box.left,
+    y: box.top,
+    width: box.right - box.left,
+    height: box.bottom - box.top,
+  });
+  // One under another where no two items share a line.
+  const sorted = [...found].sort((a, b) => a.box.top - b.box.top);
+  const stacked = sorted.every(
+    (item, index) => index === 0 || item.box.top >= sorted[index - 1].box.bottom - 1,
+  );
+  if (stacked) {
+    const side: Side = rtl ? 'right' : 'left';
+    const callouts = found.map(({ number, box, label }) => {
+      const y = (box.top + box.bottom) / 2;
+      return {
+        number,
+        label,
+        side,
+        badge: { x: side === 'left' ? outer.left - reach : outer.right + reach, y },
+        anchor: { x: side === 'left' ? box.left : box.right, y },
+        box: outline(box),
+      };
+    });
+    return { callouts, room: { start: Math.ceil(Math.max(...widths) + reach + 8), top: 0 } };
+  }
+  // Side by side: the names above, spread so that none overlaps the next.
+  const order = found
+    .map((_, index) => index)
+    .sort((a, b) => found[a].box.left - found[b].box.left);
+  const centres = order.map((index) => (found[index].box.left + found[index].box.right) / 2);
+  for (let rank = 1; rank < order.length; rank++)
+    centres[rank] = Math.max(
+      centres[rank],
+      centres[rank - 1] + (widths[order[rank - 1]] + widths[order[rank]]) / 2 + 6,
+    );
+  const callouts = order.map((index, rank) => {
+    const { number, box, label } = found[index];
+    const x = centres[rank];
+    return {
+      number,
+      label,
+      side: 'top' as const,
+      badge: { x, y: outer.top - reach },
+      anchor: { x: Math.min(Math.max(x, box.left + 2), box.right - 2), y: box.top },
+      box: outline(box),
+    };
+  });
+  return {
+    callouts: callouts.sort((a, b) => a.number - b.number),
+    room: { start: 0, top: Math.ceil(badgeSize + reach) },
+  };
+}
+
 /** A subject at most this wide and tall, in CSS pixels, is small enough to show larger. */
 const smallSubject = { width: 240, height: 48 };
 
@@ -224,6 +342,7 @@ function AnatomyStage({
   open,
   enlarged,
   stage: fill,
+  variants,
 }: {
   page: string;
   name: string;
@@ -232,11 +351,14 @@ function AnatomyStage({
   /** Whether the subject shows half as large again, though it isn't small. */
   enlarged: boolean;
   stage?: StageFill;
+  /** Whether the callouts name the variants rather than number the parts. */
+  variants: boolean;
 }) {
   const theme = useTheme();
   const stage = useRef<HTMLDivElement>(null);
   const subject = useRef<HTMLDivElement>(null);
   const [callouts, setCallouts] = useState<Callout[]>([]);
+  const [room, setRoom] = useState<Room>({ start: 0, top: 0 });
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const subjectElement = subject.current;
@@ -247,11 +369,19 @@ function AnatomyStage({
       // Only a change of place re-renders the callouts.
       frame = requestAnimationFrame(() => {
         // Open overlays take the room they need; they are never small.
-        if (!open) enlarge(subjectElement, enlarged);
-        const next = measure(stageElement, subjectElement, legend);
+        if (!open && !variants) enlarge(subjectElement, enlarged);
+        const measured = variants
+          ? measureVariants(stageElement, subjectElement, legend)
+          : { callouts: measure(stageElement, subjectElement, legend), room: undefined };
+        const next = measured.callouts;
         setCallouts((current) =>
           JSON.stringify(current) === JSON.stringify(next) ? current : next,
         );
+        const needed = measured.room;
+        if (needed)
+          setRoom((current) =>
+            current.start === needed.start && current.top === needed.top ? current : needed,
+          );
       });
     };
     update();
@@ -271,7 +401,7 @@ function AnatomyStage({
       resize.disconnect();
       mutation.disconnect();
     };
-  }, [legend, open, enlarged]);
+  }, [legend, open, enlarged, variants]);
   return (
     <Theme
       {...theme}
@@ -280,8 +410,21 @@ function AnatomyStage({
       data-example={name}
       data-stage={fill}
     >
-      {/* A picture of the parts: the live component neither takes focus nor changes under it. */}
-      <div ref={subject} className="docs-anatomy-subject" inert>
+      {/* A picture of the parts: the live component neither takes focus nor changes under it. A
+          variants figure keeps room beside its items for their names. */}
+      <div
+        ref={subject}
+        className="docs-anatomy-subject"
+        inert
+        style={
+          variants
+            ? {
+                paddingInlineStart: room.start || undefined,
+                paddingBlockStart: room.top || undefined,
+              }
+            : undefined
+        }
+      >
         {open ? (
           <OpenExample name={name}>
             <ExampleRender page={page} name={name} />
@@ -307,15 +450,18 @@ function AnatomyStage({
           </g>
         ))}
       </svg>
-      {callouts.map(({ number, badge }) => (
+      {callouts.map(({ number, badge, label, side }) => (
         <span
           key={number}
-          className="docs-anatomy-badge"
+          className={
+            label === undefined ? 'docs-anatomy-badge' : 'docs-anatomy-badge docs-variant-label'
+          }
+          data-side={side}
           aria-hidden="true"
           // Measured in physical coordinates, in either direction.
           style={{ left: badge.x, top: badge.y }}
         >
-          {number}
+          {label ?? number}
         </span>
       ))}
     </Theme>
@@ -331,7 +477,9 @@ function legendText({ part, text }: AnatomyLegendItem) {
 
 /**
  * An anatomy figure: the live component in the reader's theme, a numbered callout on each part its
- * legend names, by class name, and the legend of part names, with the example's code below.
+ * legend names, by class name, and the legend of part names, with the example's code below. A
+ * variants figure names each variant on its callout instead, as anatomy figures number parts, so
+ * its legend is for assistive technology alone.
  */
 export function AnatomyFigure({
   page,
@@ -343,6 +491,7 @@ export function AnatomyFigure({
   open = false,
   enlarge: enlarged = false,
   stage,
+  variants = false,
 }: {
   page: string;
   name: string;
@@ -356,10 +505,12 @@ export function AnatomyFigure({
   enlarge?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
+  /** A variants figure: a callout with each variant's name on the example's items. */
+  variants?: boolean;
 }) {
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   return (
-    <figure className="docs-anatomy" aria-label={title}>
+    <figure className={variants ? 'docs-variants' : 'docs-anatomy'} aria-label={title}>
       <AnatomyStage
         page={page}
         name={name}
@@ -367,10 +518,18 @@ export function AnatomyFigure({
         open={open}
         enlarged={enlarged}
         stage={stage}
+        variants={variants}
       />
       <figcaption className="docs-anatomy-caption">
         {caption && <p className="docs-figure-caption">{caption}</p>}
-        {items.length > 0 && (
+        {variants && (
+          <ul className="docs-visually-hidden">
+            {items.map((item, index) => (
+              <li key={`${index}-${item.label}`}>{item.label}</li>
+            ))}
+          </ul>
+        )}
+        {!variants && items.length > 0 && (
           <ol className="docs-anatomy-legend">
             {items.map((item, index) => (
               <li key={`${index}-${item.part}`}>

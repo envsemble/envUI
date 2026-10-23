@@ -21,11 +21,8 @@ avoidWhen:
     use: TextField
   - text: A choice among a few named times of day, such as Morning or Evening.
     use: SegmentedControl
-related:
-  - date-picker
-  - month-picker
-  - text-field
-  - select
+  - text: A few fixed times, such as on the hour.
+    use: Select
 components:
   - TimePicker
 ---
@@ -66,9 +63,12 @@ The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Floating**
 
 | Variant              | Use for                                                 |
 | -------------------- | ------------------------------------------------------- |
@@ -79,26 +79,8 @@ The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 
 
 ## When to use
 
-```tsx do=LimitsExplained caption="Say which values can be chosen in the description."
-
-```
-
-```tsx dont=LimitsUnexplained caption="Unavailable values that people find only in the popup."
-
-```
-
 - Use `readOnly`, not `disabled`, to show a time people can't change.
 - For one moment, a day and a time, use a single DatePicker with `granularity="minute"`.
-
-### Labels
-
-```tsx do=NamedMoment caption="A label that names the moment."
-
-```
-
-```tsx dont=GenericLabel caption="Time, which says nothing about what happens then."
-
-```
 
 ## Anatomy
 

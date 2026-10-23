@@ -22,15 +22,6 @@ avoidWhen:
     see: key-figures
   - text: Choosing a day.
     use: Calendar
-  - text: A share of a known range, such as storage used.
-    use: Meter
-related:
-  - key-figures
-  - table
-  - date-picker
-  - tooltip
-  - colors
-  - accessibility
 components:
   - CalendarHeatmap
 ---
@@ -89,14 +80,6 @@ EnvUIProvider's `locale` names the months, weekdays and dates, and `messages.cal
 ```
 
 ```tsx dont=IncidentsInSuccess caption="Incidents in the success tone: a bad week reads as a good one."
-
-```
-
-```tsx do=FiveLevels caption="Five steps, which people can tell apart."
-
-```
-
-```tsx dont=TenLevels caption="Ten steps: neighbouring shades look the same."
 
 ```
 

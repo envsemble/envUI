@@ -27,12 +27,6 @@ avoidWhen:
     use: Grid
   - text: A background, a border or corners.
     use: Surface
-related:
-  - column
-  - row
-  - grid
-  - surface
-  - responsive
 components:
   - Box
 ---

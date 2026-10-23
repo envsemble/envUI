@@ -23,14 +23,6 @@ avoidWhen:
     use: Meter
   - text: A key figure on a dashboard, such as the average score this month.
     see: key-figures
-  - text: A state or a category, such as Approved or Featured.
-    use: Badge
-related:
-  - key-figures
-  - badge
-  - meter
-  - radio
-  - slider
 components:
   - Rating
 ---
@@ -76,14 +68,6 @@ The stars, the number and the name show the value to the nearest half star: 4.3 
 ```
 
 ```tsx dont=UnsourcedStars caption="Stars with no source: people can't tell how much they count."
-
-```
-
-```tsx do=ReviewList caption="Stars alone beside one reviewer's words."
-
-```
-
-```tsx dont=RepeatedRating caption="The rating said again in text: it is read twice."
 
 ```
 

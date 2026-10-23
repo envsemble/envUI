@@ -22,15 +22,8 @@ avoidWhen:
     use: Pagination
   - text: The next step of a form or a task, such as Continue in a checkout.
     use: Button
-  - text: An application's main destinations, such as the pages in a sidebar.
-    use: Drawer
   - text: The path from the top of a hierarchy down to the current page.
     use: Breadcrumbs
-related:
-  - pagination
-  - drawer
-  - breadcrumbs
-  - button
 components:
   - Pager
 ---
@@ -68,14 +61,6 @@ Pager.Previous and Pager.Next as children of Pager.Root make the same pair, and 
 ```
 
 ```tsx dont=DirectionInTitles caption="Next or Back in the title: the label already says it."
-
-```
-
-```tsx do=IconsOnBoth caption="An icon on both links, or on neither."
-
-```
-
-```tsx dont=IconOnOne caption="An icon on one link only: the pair stops reading as one."
 
 ```
 

@@ -28,13 +28,6 @@ avoidWhen:
     use: Checkbox
   - text: A setting that turns on or off and applies at once.
     use: Switch
-related:
-  - checkbox
-  - select
-  - segmented-control
-  - switch
-  - dialog
-  - accessibility
 components:
   - RadioGroup
   - Radio
@@ -99,14 +92,6 @@ With `required` and nothing chosen, the form asks for a choice. Link the error t
 ### Labels
 
 Name the group with a short noun, and give options short, parallel names.
-
-```tsx do=ParallelNames caption="Short names that read alike."
-
-```
-
-```tsx dont=MixedNames caption="Names of different shapes, which people must read twice."
-
-```
 
 ## Anatomy
 

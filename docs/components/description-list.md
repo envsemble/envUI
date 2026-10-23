@@ -22,16 +22,10 @@ avoidWhen:
     use: Table
   - text: Items people open or act on, one per row.
     use: List
-  - text: A form that people fill in and submit.
-    use: Field
+  - text: Values people fill in and submit, as a form.
+    see: forms
   - text: One headline number with its trend.
     see: key-figures
-related:
-  - table
-  - list
-  - card
-  - key-figures
-  - loading
 components:
   - DescriptionList
 ---
@@ -72,16 +66,6 @@ DescriptionList shows the facts about one thing as labels and their values.
 
 - No headings or long paragraphs in values: link to them.
 - Don't nest description lists.
-
-### Content
-
-```tsx do=ShortLabels caption="Short nouns as labels, and a dash for a value not set."
-
-```
-
-```tsx dont=WordyLabels caption="Questions, colons and empty values."
-
-```
 
 ## Anatomy
 

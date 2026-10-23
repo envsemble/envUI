@@ -25,16 +25,8 @@ avoidWhen:
     use: Menu
   - text: Searching or filtering the content on the page.
     use: SearchField
-  - text: A task with fields and a decision.
-    use: Dialog
-related:
-  - search-trigger
-  - dialog
-  - menu
-  - combobox
-  - kbd
-  - text-field
-  - accessibility
+  - text: The button that opens the palette, with its shortcut.
+    see: search-trigger
 components:
   - CommandPalette
 ---

@@ -21,15 +21,10 @@ useWhen:
 avoidWhen:
   - text: An application's screen with its top bar and navigation.
     use: Scaffold
-  - text: Columns of cards or fields that wrap, inside a page.
-    use: Grid
   - text: A panel that opens over the page from an edge on demand.
     use: Sheet
-related:
-  - scaffold
-  - page
-  - sheet
-  - grid
+  - text: One column of content at a readable width.
+    use: Page
 components:
   - Panes
   - readPanesSize

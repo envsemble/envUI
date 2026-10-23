@@ -22,6 +22,8 @@ avoidWhen:
     see: loading
   - text: A region with nothing to show.
     see: empty-states
+  - text: Undo after a delete, or a confirmation before one.
+    see: destructive-actions
 composes:
   - Toast
   - useToast
@@ -38,13 +40,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - loading
-  - empty-states
-  - destructive-actions
-  - toast
-  - alert
-  - badge
 ---
 
 # Notifications and feedback

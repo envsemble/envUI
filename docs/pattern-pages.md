@@ -20,13 +20,12 @@ avoidWhen:
   - text: Confirming a destructive action.
     use: ConfirmDialog # Or an export to use instead.
 composes: [Switch, Select, Field, Button, Toast, Column] # The exports it combines: namespaces, not parts.
-related: [forms, switch]
 ---
 ```
 
 - **`intent`** groups patterns by what people are doing: _Collect and change information_, _Keep people informed_ or _Find and navigate_.
 - **`composes`** names every envUI export the page's example files import, and only exports; `npm test` checks both.
-- **`see`** names an indexed page, a pattern or component page; **`use`** names an export. An entry has one or the other.
+- **`avoidWhen`** is the page's one list of related pages, shown as Related at its end, as on [component pages](component-pages.md#frontmatter). **`see`** names an indexed page, a pattern or component page; **`use`** names an export. An entry has one or the other, and names each once.
 
 Register the page in [the index](index.md) under `## Patterns`, with only its title and path; the summary comes from the frontmatter. Patterns are listed in intent order.
 
@@ -45,4 +44,4 @@ A pattern page may instead be on the [figure template](component-pages.md#sectio
 | Examples             | yes      | At least two more live compositions, each under a `###` heading with a sentence or two, so a pattern shows at least three example files.    |
 | Changelog            |          | Releases that changed the pattern.                                                                                                          |
 
-Related is generated from the frontmatter. A pattern shows each composition in context, so its examples differ from the component pages' ones.
+Related is generated from `avoidWhen`. A pattern shows each composition in context, so its examples differ from the component pages' ones.

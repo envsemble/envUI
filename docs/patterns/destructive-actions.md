@@ -34,13 +34,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - feedback
-  - settings
-  - confirm-dialog
-  - toast
-  - button
-  - menu
 ---
 
 # Confirmation and destructive actions

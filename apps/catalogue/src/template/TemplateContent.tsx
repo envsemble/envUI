@@ -1,12 +1,13 @@
 import type { ReactNode } from 'react';
-import { Badge, Column, DescriptionList, Link, Text } from '@envsemble/envui';
+import { Badge, Column, DescriptionList, Text } from '@envsemble/envui';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
 import { FigureSection } from './Figures';
 import { LiveExample } from './LiveExample';
 import { Specimen } from './Specimen';
-import { pageOf, relatedHref, WhenToUse } from './WhenToUse';
+import { pageOf, Related } from './Related';
+import { WhenToUse } from './WhenToUse';
 
 const statusTones = {
   experimental: 'warning',
@@ -125,33 +126,6 @@ function Section({ reference, section }: { reference: Document; section: Documen
   );
 }
 
-function Related({ reference }: { reference: Document }) {
-  const related = reference.related.flatMap((id) => {
-    const document = documents.find((item) => item.id === id);
-    const href = relatedHref(id);
-    return document && href ? [{ document, href }] : [];
-  });
-  if (!related.length) return null;
-  return (
-    <Column render={<section />} gap={4}>
-      <Text render={<h2 />} variant="headline">
-        Related
-      </Text>
-      <ul className="docs-related-list">
-        {related.map(({ document, href }) => (
-          <li key={document.id}>
-            <Link href={href}>{document.title}</Link>
-            <Text render={<span />} emphasis="muted">
-              {' '}
-              — {document.summary}
-            </Text>
-          </li>
-        ))}
-      </ul>
-    </Column>
-  );
-}
-
 /** Sections in the template's order, then Related; the changelog follows the page navigation. */
 function Sections({
   reference,
@@ -171,7 +145,9 @@ function Sections({
         .map((section) => (
           <Section key={section.id} reference={reference} section={section} />
         ))}
-      {sections.some((section) => section.id === 'overview') && <Related reference={reference} />}
+      {sections.some((section) => section.id === 'overview') && reference.metadata && (
+        <Related metadata={reference.metadata} path={reference.path} />
+      )}
     </Column>
   );
 }

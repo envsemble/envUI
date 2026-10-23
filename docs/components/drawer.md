@@ -36,13 +36,6 @@ avoidWhen:
     use: Tree
   - text: The path from the top of a hierarchy down to the current page.
     use: Breadcrumbs
-related:
-  - bar
-  - rail
-  - tabs
-  - tree
-  - breadcrumbs
-  - badge
 components:
   - Drawer
 ---
@@ -76,14 +69,6 @@ The application passes the same destinations to each form, and a group is a head
 ```
 
 ## When to use
-
-```tsx do=IconsForAll caption="An icon on every destination, or on none."
-
-```
-
-```tsx dont=IconsForSome caption="Icons on some destinations: the labels don't line up."
-
-```
 
 ```tsx do=GroupsTogether caption="A group's destinations next to each other."
 

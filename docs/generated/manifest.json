@@ -85,8 +85,7 @@
         "column",
         "row",
         "grid",
-        "surface",
-        "responsive"
+        "surface"
       ],
       "exports": [
         "Box"
@@ -168,14 +167,18 @@
         {
           "text": "Controls for one subject that the arrow keys move between, such as an editor's formatting.",
           "use": "Toolbar"
+        },
+        {
+          "text": "One block with an inset or a size container, and no layout.",
+          "use": "Box"
         }
       ],
       "related": [
         "column",
         "grid",
-        "box",
+        "button",
         "toolbar",
-        "button"
+        "box"
       ],
       "exports": [
         "Row"
@@ -280,7 +283,7 @@
         "grid",
         "box",
         "surface",
-        "spacing"
+        "card"
       ],
       "exports": [
         "Column"
@@ -373,13 +376,22 @@
         {
           "text": "Two panes people resize, or a list beside its detail.",
           "use": "Panes"
+        },
+        {
+          "text": "One block with an inset or a size container, and no columns.",
+          "use": "Box"
+        },
+        {
+          "text": "A layout that changes by the window class rather than by what fits.",
+          "see": "responsive"
         }
       ],
       "related": [
         "column",
         "row",
+        "table",
+        "panes",
         "box",
-        "card",
         "responsive"
       ],
       "exports": [
@@ -463,17 +475,19 @@
           "use": "Panes"
         },
         {
-          "text": "Rows, columns and grids inside a page.",
-          "use": "Grid"
+          "text": "A whole frame to copy, with the navigation and a top bar.",
+          "see": "app-frame"
+        },
+        {
+          "text": "An installed application's window that draws its own title bar.",
+          "see": "window-frame"
         }
       ],
       "related": [
-        "top-bar",
         "page",
         "panes",
         "app-frame",
-        "window-frame",
-        "responsive"
+        "window-frame"
       ],
       "exports": [
         "Scaffold",
@@ -725,19 +739,18 @@
           "use": "Scaffold"
         },
         {
-          "text": "Columns of cards or fields that wrap, inside a page.",
-          "use": "Grid"
-        },
-        {
           "text": "A panel that opens over the page from an edge on demand.",
           "use": "Sheet"
+        },
+        {
+          "text": "One column of content at a readable width.",
+          "use": "Page"
         }
       ],
       "related": [
         "scaffold",
-        "page",
         "sheet",
-        "grid"
+        "page"
       ],
       "exports": [
         "Panes",
@@ -997,20 +1010,19 @@
           "use": "Column"
         },
         {
-          "text": "A background, an inset and corners around a part of a page.",
-          "use": "Surface"
-        },
-        {
           "text": "Two panes side by side, such as a list and its detail.",
           "use": "Panes"
+        },
+        {
+          "text": "A page's title row, with its actions.",
+          "use": "PageHeader"
         }
       ],
       "related": [
-        "page-header",
-        "column",
-        "surface",
         "scaffold",
-        "responsive"
+        "column",
+        "panes",
+        "page-header"
       ],
       "exports": [
         "Page"
@@ -1133,20 +1145,14 @@
           "use": "Row"
         },
         {
-          "text": "A heading with metadata and actions around a block of content.",
-          "use": "Card"
-        },
-        {
           "text": "Controls for one subject that the arrow keys move between.",
           "use": "Toolbar"
         }
       ],
       "related": [
-        "page",
-        "breadcrumbs",
-        "toolbar",
+        "top-bar",
         "row",
-        "button"
+        "toolbar"
       ],
       "exports": [
         "PageHeader"
@@ -1181,18 +1187,6 @@
           "title": "Don't: The account and sign-out in a page's header: they belong to the frame.",
           "description": "",
           "file": "docs/examples/page-header/FrameActions.tsx"
-        },
-        {
-          "name": "NameTheContent",
-          "title": "Do: A title that names what the page holds.",
-          "description": "",
-          "file": "docs/examples/page-header/NameTheContent.tsx"
-        },
-        {
-          "name": "InstructionAsTitle",
-          "title": "Don't: An instruction as the title, and a description that repeats it.",
-          "description": "",
-          "file": "docs/examples/page-header/InstructionAsTitle.tsx"
         },
         {
           "name": "PageHeaderAnatomy",
@@ -1327,22 +1321,12 @@
         {
           "text": "Space between children without a background.",
           "use": "Column"
-        },
-        {
-          "text": "Content over the page that people dismiss, such as a form in a window.",
-          "use": "Dialog"
-        },
-        {
-          "text": "A floating panel that opens from a button.",
-          "use": "Popover"
         }
       ],
       "related": [
-        "column",
         "card",
         "list",
-        "spacing",
-        "colors"
+        "column"
       ],
       "exports": [
         "Surface",
@@ -1386,18 +1370,6 @@
           "title": "Don't: A surface in a surface in a surface: the fills stack up.",
           "description": "",
           "file": "docs/examples/surface/NestedSurfaces.tsx"
-        },
-        {
-          "name": "NamedRegions",
-          "title": "Do: A heading that names each region.",
-          "description": "",
-          "file": "docs/examples/surface/NamedRegions.tsx"
-        },
-        {
-          "name": "FillsOnly",
-          "title": "Don't: Regions told apart by their fills alone, which are close in contrast.",
-          "description": "",
-          "file": "docs/examples/surface/FillsOnly.tsx"
         }
       ],
       "parts": {
@@ -1527,12 +1499,11 @@
         }
       ],
       "related": [
-        "card",
         "table",
         "drawer",
-        "surface",
+        "tree",
         "radio",
-        "spacing"
+        "card"
       ],
       "exports": [
         "List",
@@ -1593,18 +1564,6 @@
           "title": "Don't: Several links in a row: a press could open any of them.",
           "description": "",
           "file": "docs/examples/list/SeveralTargets.tsx"
-        },
-        {
-          "name": "SameActions",
-          "title": "Do: The same kind of action at the end of every row.",
-          "description": "",
-          "file": "docs/examples/list/SameActions.tsx"
-        },
-        {
-          "name": "MixedActions",
-          "title": "Don't: A different action on each row: people can't scan them.",
-          "description": "",
-          "file": "docs/examples/list/MixedActions.tsx"
         },
         {
           "name": "ListAnatomy",
@@ -1892,14 +1851,20 @@
         {
           "text": "A feature introduced with an icon, a sentence and the one action that starts it.",
           "see": "feature-cards"
+        },
+        {
+          "text": "Content that needs no surface of its own, such as a form on a page.",
+          "use": "Column"
         }
       ],
       "related": [
         "surface",
-        "column",
         "list",
-        "button",
-        "typography"
+        "table",
+        "alert",
+        "empty-states",
+        "feature-cards",
+        "column"
       ],
       "exports": [
         "Card"
@@ -1936,6 +1901,12 @@
           "file": "docs/examples/card/StartOptions.tsx"
         },
         {
+          "name": "Backgrounds",
+          "title": "Card variants",
+          "description": "| Background | Use for | | ---------- | ----------------------------------------------- | | `muted` | A card on the page or in a pane. The default. | | `default` | A quieter fill, such as a settings section. | | `page` | The page's own color, set apart by its corners. |",
+          "file": "docs/examples/card/Backgrounds.tsx"
+        },
+        {
           "name": "OneCardSections",
           "title": "Do: One card per subject, with Text for its parts.",
           "description": "",
@@ -1946,18 +1917,6 @@
           "title": "Don't: Cards inside cards: the fills and corners stack up.",
           "description": "",
           "file": "docs/examples/card/NestedCards.tsx"
-        },
-        {
-          "name": "ShortCard",
-          "title": "Do: A short title that names the subject, and a sentence or two.",
-          "description": "",
-          "file": "docs/examples/card/ShortCard.tsx"
-        },
-        {
-          "name": "WordyCard",
-          "title": "Don't: A long title and a paragraph: the card stops being scannable.",
-          "description": "",
-          "file": "docs/examples/card/WordyCard.tsx"
         },
         {
           "name": "CardAnatomy",
@@ -2108,12 +2067,10 @@
       ],
       "related": [
         "link",
-        "menu",
         "segmented-control",
-        "dialog",
-        "animated-number",
-        "icons",
-        "accessibility"
+        "switch",
+        "menu",
+        "dialog"
       ],
       "exports": [
         "Button",
@@ -2179,7 +2136,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "Button variants",
           "description": "",
           "file": "docs/examples/button/Variants.tsx"
         },
@@ -2220,33 +2177,9 @@
           "file": "docs/examples/button/DisabledUntilValid.tsx"
         },
         {
-          "name": "CloseAtEnd",
-          "title": "Do: A close button at the end of the header of what it closes.",
-          "description": "",
-          "file": "docs/examples/button/CloseAtEnd.tsx"
-        },
-        {
-          "name": "CloseAtStart",
-          "title": "Don't: At the start, it reads as part of the content.",
-          "description": "",
-          "file": "docs/examples/button/CloseAtStart.tsx"
-        },
-        {
-          "name": "SpecificLabel",
-          "title": "Do: Name the action and what it affects.",
-          "description": "Start with a verb and say what will happen.",
-          "file": "docs/examples/button/SpecificLabel.tsx"
-        },
-        {
-          "name": "VagueLabel",
-          "title": "Don't: OK or Submit, when a specific verb fits.",
-          "description": "",
-          "file": "docs/examples/button/VagueLabel.tsx"
-        },
-        {
           "name": "SayWhatWillHappen",
           "title": "Labels",
-          "description": "",
+          "description": "Start with a verb and say what will happen. When the outcome is known, put it in the label.",
           "file": "docs/examples/button/SayWhatWillHappen.tsx"
         },
         {
@@ -2636,11 +2569,11 @@
         }
       ],
       "related": [
-        "page-header",
+        "row",
         "button",
         "segmented-control",
         "menubar",
-        "tooltip"
+        "page-header"
       ],
       "exports": [
         "Toolbar",
@@ -2784,11 +2717,7 @@
       ],
       "avoidWhen": [
         {
-          "text": "An action, such as saving or deleting, even when it looks like text.",
-          "use": "Button"
-        },
-        {
-          "text": "The next step of a flow, which should read as an action.",
+          "text": "An action, such as saving or deleting, even when it looks like text, or the next step of a flow.",
           "use": "Button"
         },
         {
@@ -2803,8 +2732,7 @@
       "related": [
         "button",
         "drawer",
-        "pager",
-        "setup"
+        "pager"
       ],
       "exports": [
         "Link"
@@ -2833,18 +2761,6 @@
           "title": "Don't: No underline in a sentence: only its color tells it apart.",
           "description": "",
           "file": "docs/examples/link/NoUnderlineInText.tsx"
-        },
-        {
-          "name": "NamesDestination",
-          "title": "Do: Words that name the destination.",
-          "description": "",
-          "file": "docs/examples/link/NamesDestination.tsx"
-        },
-        {
-          "name": "ClickHere",
-          "title": "Don't: Click here: it says nothing out of context.",
-          "description": "",
-          "file": "docs/examples/link/ClickHere.tsx"
         },
         {
           "name": "LinkAnatomy",
@@ -2936,11 +2852,9 @@
         }
       ],
       "related": [
-        "popover",
-        "text-field",
-        "button",
-        "colors",
-        "accessibility"
+        "segmented-control",
+        "select",
+        "radio"
       ],
       "exports": [
         "ColorPicker",
@@ -3443,10 +3357,10 @@
         "select",
         "combobox",
         "date-picker",
+        "time-picker",
+        "month-picker",
         "composer",
-        "markdown",
-        "column",
-        "accessibility"
+        "markdown"
       ],
       "exports": [
         "TextField",
@@ -3498,7 +3412,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "TextField variants",
           "description": "",
           "file": "docs/examples/text-field/Variants.tsx"
         },
@@ -3543,18 +3457,6 @@
           "title": "Don't: Instructions in the placeholder: they vanish as people type.",
           "description": "",
           "file": "docs/examples/text-field/PlaceholderAsLabel.tsx"
-        },
-        {
-          "name": "HelpfulError",
-          "title": "Do: An error that says how to correct the value.",
-          "description": "",
-          "file": "docs/examples/text-field/HelpfulError.tsx"
-        },
-        {
-          "name": "VagueError",
-          "title": "Don't: An error that only says the value is wrong.",
-          "description": "",
-          "file": "docs/examples/text-field/VagueError.tsx"
         },
         {
           "name": "TextFieldAnatomy",
@@ -3868,18 +3770,6 @@
           "file": "docs/examples/field/ErrorOnArrival.tsx"
         },
         {
-          "name": "ShortLabel",
-          "title": "Do: A short noun phrase, with guidance in the description.",
-          "description": "",
-          "file": "docs/examples/field/ShortLabel.tsx"
-        },
-        {
-          "name": "WordyLabel",
-          "title": "Don't: A sentence with a colon, which people read twice.",
-          "description": "",
-          "file": "docs/examples/field/WordyLabel.tsx"
-        },
-        {
           "name": "FieldAnatomy",
           "title": "Field anatomy",
           "description": "",
@@ -3985,16 +3875,14 @@
           "use": "MarkdownEditor"
         },
         {
-          "text": "A query that searches or filters content.",
-          "use": "SearchField"
+          "text": "The messages of the conversation itself.",
+          "use": "Message"
         }
       ],
       "related": [
-        "message",
         "text-field",
-        "button",
         "markdown",
-        "accessibility"
+        "message"
       ],
       "exports": [
         "Composer"
@@ -4035,18 +3923,6 @@
           "title": "Don't: A disabled composer, which takes focus away from the draft.",
           "description": "",
           "file": "docs/examples/composer/DisabledWhileSending.tsx"
-        },
-        {
-          "name": "ShortFooter",
-          "title": "Do: A footer of a few words.",
-          "description": "",
-          "file": "docs/examples/composer/ShortFooter.tsx"
-        },
-        {
-          "name": "LongFooter",
-          "title": "Don't: Instructions in the footer that nobody reads.",
-          "description": "",
-          "file": "docs/examples/composer/LongFooter.tsx"
         },
         {
           "name": "ComposerAnatomy",
@@ -4167,7 +4043,7 @@
           "use": "Combobox"
         },
         {
-          "text": "Choosing rows of a table.",
+          "text": "Selecting rows of a table, which its selection column does.",
           "use": "Table"
         }
       ],
@@ -4176,8 +4052,7 @@
         "radio",
         "select",
         "combobox",
-        "table",
-        "accessibility"
+        "table"
       ],
       "exports": [
         "Checkbox"
@@ -4212,30 +4087,6 @@
           "title": "Don't: Checkboxes with no name for the group: mentions of what?",
           "description": "",
           "file": "docs/examples/checkbox/UnnamedGroup.tsx"
-        },
-        {
-          "name": "DisabledWithReason",
-          "title": "Do: Say why a choice is unavailable, next to it.",
-          "description": "",
-          "file": "docs/examples/checkbox/DisabledWithReason.tsx"
-        },
-        {
-          "name": "DisabledWithoutReason",
-          "title": "Don't: A disabled checkbox that doesn’t say why.",
-          "description": "",
-          "file": "docs/examples/checkbox/DisabledWithoutReason.tsx"
-        },
-        {
-          "name": "PositiveLabel",
-          "title": "Do: A label that checking means yes to.",
-          "description": "Write the label as the choice it turns on, in sentence case, so checking it means yes.",
-          "file": "docs/examples/checkbox/PositiveLabel.tsx"
-        },
-        {
-          "name": "NegativeLabel",
-          "title": "Don't: A negative label: checking it means no.",
-          "description": "",
-          "file": "docs/examples/checkbox/NegativeLabel.tsx"
         },
         {
           "name": "CheckboxAnatomy",
@@ -4346,10 +4197,10 @@
       ],
       "related": [
         "checkbox",
-        "radio",
         "segmented-control",
-        "list",
-        "accessibility"
+        "radio",
+        "button",
+        "menu"
       ],
       "exports": [
         "Switch"
@@ -4396,18 +4247,6 @@
           "title": "Don't: A label that changes to say the state, which the track shows.",
           "description": "",
           "file": "docs/examples/switch/StateInLabel.tsx"
-        },
-        {
-          "name": "PositiveLabel",
-          "title": "Do: A label that on means yes to.",
-          "description": "",
-          "file": "docs/examples/switch/PositiveLabel.tsx"
-        },
-        {
-          "name": "NegativeLabel",
-          "title": "Don't: A negative label: on means no.",
-          "description": "",
-          "file": "docs/examples/switch/NegativeLabel.tsx"
         },
         {
           "name": "SwitchAnatomy",
@@ -4516,12 +4355,11 @@
         }
       ],
       "related": [
-        "checkbox",
         "select",
+        "combobox",
         "segmented-control",
-        "switch",
-        "dialog",
-        "accessibility"
+        "checkbox",
+        "switch"
       ],
       "exports": [
         "RadioGroup",
@@ -4563,18 +4401,6 @@
           "title": "Don't: Explanations packed into inline labels.",
           "description": "",
           "file": "docs/examples/radio/LongInlineLabels.tsx"
-        },
-        {
-          "name": "ParallelNames",
-          "title": "Do: Short names that read alike.",
-          "description": "Name the group with a short noun, and give options short, parallel names.",
-          "file": "docs/examples/radio/ParallelNames.tsx"
-        },
-        {
-          "name": "MixedNames",
-          "title": "Don't: Names of different shapes, which people must read twice.",
-          "description": "",
-          "file": "docs/examples/radio/MixedNames.tsx"
         },
         {
           "name": "RadioAnatomy",
@@ -4785,13 +4611,11 @@
         }
       ],
       "related": [
-        "combobox",
         "radio",
+        "combobox",
         "segmented-control",
         "menu",
-        "text-field",
-        "list",
-        "accessibility"
+        "date-picker"
       ],
       "exports": [
         "Select"
@@ -4817,7 +4641,7 @@
         },
         {
           "name": "TriggerStyles",
-          "title": "Trigger styles",
+          "title": "Select variants",
           "description": "",
           "file": "docs/examples/select/TriggerStyles.tsx"
         },
@@ -4850,18 +4674,6 @@
           "title": "Don't: A filled trigger on a pane, where its fill blends in.",
           "description": "",
           "file": "docs/examples/select/FilledOnPane.tsx"
-        },
-        {
-          "name": "ErrorSaysWhatToDo",
-          "title": "Do: An error that says what to do.",
-          "description": "Name the select with a short noun, and say in a disabled option's label why it is unavailable.",
-          "file": "docs/examples/select/ErrorSaysWhatToDo.tsx"
-        },
-        {
-          "name": "ErrorSaysWhatFailed",
-          "title": "Don't: An error that only says what failed.",
-          "description": "",
-          "file": "docs/examples/select/ErrorSaysWhatFailed.tsx"
         },
         {
           "name": "SelectAnatomy",
@@ -5164,9 +4976,8 @@
         "tabs",
         "radio",
         "select",
-        "button",
         "switch",
-        "accessibility"
+        "button"
       ],
       "exports": [
         "SegmentedControl"
@@ -5195,30 +5006,6 @@
           "title": "Don't: A larger control than its neighbours, so the row doesn't line up.",
           "description": "",
           "file": "docs/examples/segmented-control/MismatchedSize.tsx"
-        },
-        {
-          "name": "IconsOnAll",
-          "title": "Do: Icons on every option, or on none.",
-          "description": "",
-          "file": "docs/examples/segmented-control/IconsOnAll.tsx"
-        },
-        {
-          "name": "IconsOnSome",
-          "title": "Don't: An icon on one option, which then looks more important.",
-          "description": "",
-          "file": "docs/examples/segmented-control/IconsOnSome.tsx"
-        },
-        {
-          "name": "ParallelLabels",
-          "title": "Do: Short labels of about the same length.",
-          "description": "Name options with a word or two that name the view, and name the control with `aria-label`.",
-          "file": "docs/examples/segmented-control/ParallelLabels.tsx"
-        },
-        {
-          "name": "UnevenLabels",
-          "title": "Don't: One long label that unbalances the rail.",
-          "description": "",
-          "file": "docs/examples/segmented-control/UnevenLabels.tsx"
         },
         {
           "name": "SegmentedControlAnatomy",
@@ -5440,10 +5227,8 @@
       "related": [
         "select",
         "text-field",
-        "avatar",
-        "command-palette",
-        "menu",
-        "accessibility"
+        "segmented-control",
+        "command-palette"
       ],
       "exports": [
         "Combobox"
@@ -5475,7 +5260,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "Combobox variants",
           "description": "",
           "file": "docs/examples/combobox/Variants.tsx"
         },
@@ -5496,18 +5281,6 @@
           "title": "Don't: An optional value that people can change but not remove.",
           "description": "",
           "file": "docs/examples/combobox/StuckOptional.tsx"
-        },
-        {
-          "name": "NamedLabel",
-          "title": "Do: A label that names what people choose.",
-          "description": "Name the field after what people choose, and use the placeholder for what to type.",
-          "file": "docs/examples/combobox/NamedLabel.tsx"
-        },
-        {
-          "name": "InstructionLabel",
-          "title": "Don't: An instruction as the label.",
-          "description": "",
-          "file": "docs/examples/combobox/InstructionLabel.tsx"
         },
         {
           "name": "ComboboxAnatomy",
@@ -5841,10 +5614,6 @@
           "use": "RelativeTime"
         },
         {
-          "text": "Activity per day over months, shown as shades.",
-          "use": "CalendarHeatmap"
-        },
-        {
           "text": "A free-text date that people type in any format.",
           "use": "TextField"
         },
@@ -5856,12 +5625,9 @@
       "related": [
         "time-picker",
         "month-picker",
-        "text-field",
-        "popover",
-        "combobox",
-        "calendar-heatmap",
         "relative-time",
-        "accessibility"
+        "text-field",
+        "segmented-control"
       ],
       "exports": [
         "DatePicker",
@@ -5900,7 +5666,7 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "DatePicker variants",
           "description": "",
           "file": "docs/examples/date-picker/Variants.tsx"
         },
@@ -5921,30 +5687,6 @@
           "title": "Don't: A time nobody chose, such as midnight on a due date.",
           "description": "",
           "file": "docs/examples/date-picker/NeedlessTime.tsx"
-        },
-        {
-          "name": "LimitsExplained",
-          "title": "Do: Say which days can be chosen in the description.",
-          "description": "",
-          "file": "docs/examples/date-picker/LimitsExplained.tsx"
-        },
-        {
-          "name": "LimitsUnexplained",
-          "title": "Don't: Unavailable days that people find only in the calendar.",
-          "description": "",
-          "file": "docs/examples/date-picker/LimitsUnexplained.tsx"
-        },
-        {
-          "name": "NamedMoment",
-          "title": "Do: A label that names the moment.",
-          "description": "",
-          "file": "docs/examples/date-picker/NamedMoment.tsx"
-        },
-        {
-          "name": "GenericLabel",
-          "title": "Don't: Date, which says nothing about what happens then.",
-          "description": "",
-          "file": "docs/examples/date-picker/GenericLabel.tsx"
         },
         {
           "name": "DatePickerAnatomy",
@@ -6303,12 +6045,16 @@
         {
           "text": "A choice among a few named times of day, such as Morning or Evening.",
           "use": "SegmentedControl"
+        },
+        {
+          "text": "A few fixed times, such as on the hour.",
+          "use": "Select"
         }
       ],
       "related": [
         "date-picker",
-        "month-picker",
         "text-field",
+        "segmented-control",
         "select"
       ],
       "exports": [
@@ -6341,33 +6087,9 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "TimePicker variants",
           "description": "",
           "file": "docs/examples/time-picker/Variants.tsx"
-        },
-        {
-          "name": "LimitsExplained",
-          "title": "Do: Say which values can be chosen in the description.",
-          "description": "",
-          "file": "docs/examples/time-picker/LimitsExplained.tsx"
-        },
-        {
-          "name": "LimitsUnexplained",
-          "title": "Don't: Unavailable values that people find only in the popup.",
-          "description": "",
-          "file": "docs/examples/time-picker/LimitsUnexplained.tsx"
-        },
-        {
-          "name": "NamedMoment",
-          "title": "Do: A label that names the moment.",
-          "description": "",
-          "file": "docs/examples/time-picker/NamedMoment.tsx"
-        },
-        {
-          "name": "GenericLabel",
-          "title": "Don't: Time, which says nothing about what happens then.",
-          "description": "",
-          "file": "docs/examples/time-picker/GenericLabel.tsx"
         },
         {
           "name": "TimePickerAnatomy",
@@ -6580,17 +6302,11 @@
         {
           "text": "A choice among a few named periods, such as This month or Last month.",
           "use": "SegmentedControl"
-        },
-        {
-          "text": "Activity per day over months, shown as shades.",
-          "use": "CalendarHeatmap"
         }
       ],
       "related": [
         "date-picker",
-        "time-picker",
-        "text-field",
-        "calendar-heatmap"
+        "segmented-control"
       ],
       "exports": [
         "MonthPicker"
@@ -6622,33 +6338,9 @@
         },
         {
           "name": "Variants",
-          "title": "Variants",
+          "title": "MonthPicker variants",
           "description": "",
           "file": "docs/examples/month-picker/Variants.tsx"
-        },
-        {
-          "name": "LimitsExplained",
-          "title": "Do: Say which values can be chosen in the description.",
-          "description": "",
-          "file": "docs/examples/month-picker/LimitsExplained.tsx"
-        },
-        {
-          "name": "LimitsUnexplained",
-          "title": "Don't: Unavailable values that people find only in the popup.",
-          "description": "",
-          "file": "docs/examples/month-picker/LimitsUnexplained.tsx"
-        },
-        {
-          "name": "NamedPeriod",
-          "title": "Do: A label that names the period.",
-          "description": "",
-          "file": "docs/examples/month-picker/NamedPeriod.tsx"
-        },
-        {
-          "name": "GenericLabel",
-          "title": "Don't: Month, which says nothing about what the month is for.",
-          "description": "",
-          "file": "docs/examples/month-picker/GenericLabel.tsx"
         },
         {
           "name": "MonthPickerAnatomy",
@@ -6836,8 +6528,7 @@
         "text-field",
         "segmented-control",
         "meter",
-        "progress",
-        "accessibility"
+        "progress"
       ],
       "exports": [
         "Slider"
@@ -6878,18 +6569,6 @@
           "title": "Don't: Single minutes over a whole day: no value is easy to reach.",
           "description": "",
           "file": "docs/examples/slider/NeedlessPrecision.tsx"
-        },
-        {
-          "name": "FormattedValue",
-          "title": "Do: The value as people read it, with its unit.",
-          "description": "Name the value in a short noun, and format it with its unit in `formatValue`; the same text is announced.",
-          "file": "docs/examples/slider/FormattedValue.tsx"
-        },
-        {
-          "name": "RawValue",
-          "title": "Don't: A raw number that people must interpret.",
-          "description": "",
-          "file": "docs/examples/slider/RawValue.tsx"
         },
         {
           "name": "SliderAnatomy",
@@ -7001,24 +6680,22 @@
       ],
       "avoidWhen": [
         {
-          "text": "A text value people type, such as a link to a file.",
-          "use": "TextField"
-        },
-        {
           "text": "A single action that opens the file picker in a toolbar, without a drop target.",
           "use": "Button"
         },
         {
           "text": "Progress of a long upload with a known size.",
           "use": "Progress"
+        },
+        {
+          "text": "The files already added, each with its actions.",
+          "use": "List"
         }
       ],
       "related": [
-        "text-field",
         "button",
         "progress",
-        "list",
-        "loading"
+        "list"
       ],
       "exports": [
         "DropZone"
@@ -7050,7 +6727,7 @@
         },
         {
           "name": "Sizes",
-          "title": "Sizes",
+          "title": "DropZone variants",
           "description": "",
           "file": "docs/examples/drop-zone/Sizes.tsx"
         },
@@ -7065,18 +6742,6 @@
           "title": "Don't: A spinner beside a label that still asks for a file.",
           "description": "",
           "file": "docs/examples/drop-zone/SilentPending.tsx"
-        },
-        {
-          "name": "SaysWhatFits",
-          "title": "Do: What to add, and which files fit.",
-          "description": "Say what to add in the label, and which files fit in the description.",
-          "file": "docs/examples/drop-zone/SaysWhatFits.tsx"
-        },
-        {
-          "name": "BareLabel",
-          "title": "Don't: Upload alone: people find out what fits only when a file is refused.",
-          "description": "",
-          "file": "docs/examples/drop-zone/BareLabel.tsx"
         },
         {
           "name": "DropZoneAnatomy",
@@ -7209,8 +6874,7 @@
         "rail",
         "drawer",
         "tabs",
-        "menu",
-        "badge"
+        "toolbar"
       ],
       "exports": [
         "Bar"
@@ -7227,30 +6891,6 @@
           "title": "More destinations",
           "description": "Past five destinations, the fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.",
           "file": "docs/examples/bar/MoreDestinations.tsx"
-        },
-        {
-          "name": "ShortLabels",
-          "title": "Do: One short word for each destination.",
-          "description": "",
-          "file": "docs/examples/bar/ShortLabels.tsx"
-        },
-        {
-          "name": "LongLabels",
-          "title": "Don't: Long labels: each shares a fifth of a phone and is cut short.",
-          "description": "",
-          "file": "docs/examples/bar/LongLabels.tsx"
-        },
-        {
-          "name": "OneCurrent",
-          "title": "Do: One current destination, the page people are on.",
-          "description": "",
-          "file": "docs/examples/bar/OneCurrent.tsx"
-        },
-        {
-          "name": "TwoCurrent",
-          "title": "Don't: Two current destinations: people can't tell where they are.",
-          "description": "",
-          "file": "docs/examples/bar/TwoCurrent.tsx"
         },
         {
           "name": "BarAnatomy",
@@ -7398,17 +7038,11 @@
         {
           "text": "The same destinations on an expanded or larger window, or with group headings and long labels.",
           "use": "Drawer"
-        },
-        {
-          "text": "A deep hierarchy that people expand and collapse, such as folders and files.",
-          "use": "Tree"
         }
       ],
       "related": [
         "bar",
-        "drawer",
-        "tree",
-        "badge"
+        "drawer"
       ],
       "exports": [
         "Rail"
@@ -7437,18 +7071,6 @@
           "title": "Don't: The main action below the destinations, where people don't look for it.",
           "description": "",
           "file": "docs/examples/rail/ActionAtTheBottom.tsx"
-        },
-        {
-          "name": "OneWordLabels",
-          "title": "Do: One short word for each destination.",
-          "description": "",
-          "file": "docs/examples/rail/OneWordLabels.tsx"
-        },
-        {
-          "name": "PhraseLabels",
-          "title": "Don't: Phrases: they wrap over several lines in the narrow rail.",
-          "description": "",
-          "file": "docs/examples/rail/PhraseLabels.tsx"
         },
         {
           "name": "RailAnatomy",
@@ -7624,8 +7246,7 @@
         "rail",
         "tabs",
         "tree",
-        "breadcrumbs",
-        "badge"
+        "breadcrumbs"
       ],
       "exports": [
         "Drawer"
@@ -7648,18 +7269,6 @@
           "title": "One list three forms",
           "description": "The application passes the same destinations to each form, and a group is a heading in the drawer only.",
           "file": "docs/examples/drawer/OneListThreeForms.tsx"
-        },
-        {
-          "name": "IconsForAll",
-          "title": "Do: An icon on every destination, or on none.",
-          "description": "",
-          "file": "docs/examples/drawer/IconsForAll.tsx"
-        },
-        {
-          "name": "IconsForSome",
-          "title": "Don't: Icons on some destinations: the labels don't line up.",
-          "description": "",
-          "file": "docs/examples/drawer/IconsForSome.tsx"
         },
         {
           "name": "GroupsTogether",
@@ -7834,17 +7443,15 @@
           "use": "Drawer"
         },
         {
-          "text": "Sections people may want open at the same time.",
-          "use": "Disclosure"
+          "text": "Sections people may want open at the same time, one under another.",
+          "use": "Accordion"
         }
       ],
       "related": [
         "segmented-control",
         "document-tabs",
         "drawer",
-        "button",
-        "card",
-        "disclosure"
+        "accordion"
       ],
       "exports": [
         "Tabs"
@@ -7897,18 +7504,6 @@
           "title": "Don't: Steps that go in order: nothing leads to the next one.",
           "description": "",
           "file": "docs/examples/tabs/StepsAsTabs.tsx"
-        },
-        {
-          "name": "ShortTabNames",
-          "title": "Do: One or two words each, parallel.",
-          "description": "",
-          "file": "docs/examples/tabs/ShortTabNames.tsx"
-        },
-        {
-          "name": "WordyTabNames",
-          "title": "Don't: Phrases of different shapes: hard to scan.",
-          "description": "",
-          "file": "docs/examples/tabs/WordyTabNames.tsx"
         },
         {
           "name": "TabsAnatomy",
@@ -8052,19 +7647,14 @@
           "use": "Button"
         },
         {
-          "text": "An application's main destinations, such as the pages in a sidebar.",
-          "use": "Drawer"
-        },
-        {
           "text": "The path from the top of a hierarchy down to the current page.",
           "use": "Breadcrumbs"
         }
       ],
       "related": [
         "pagination",
-        "drawer",
-        "breadcrumbs",
-        "button"
+        "button",
+        "breadcrumbs"
       ],
       "exports": [
         "Pager",
@@ -8102,18 +7692,6 @@
           "title": "Don't: Next or Back in the title: the label already says it.",
           "description": "",
           "file": "docs/examples/pager/DirectionInTitles.tsx"
-        },
-        {
-          "name": "IconsOnBoth",
-          "title": "Do: An icon on both links, or on neither.",
-          "description": "",
-          "file": "docs/examples/pager/IconsOnBoth.tsx"
-        },
-        {
-          "name": "IconOnOne",
-          "title": "Don't: An icon on one link only: the pair stops reading as one.",
-          "description": "",
-          "file": "docs/examples/pager/IconOnOne.tsx"
         },
         {
           "name": "PagerAnatomy",
@@ -8200,11 +7778,19 @@
         {
           "text": "A row of actions inside a page.",
           "use": "Toolbar"
+        },
+        {
+          "text": "Desktop menus such as File and Edit across the top.",
+          "use": "Menubar"
+        },
+        {
+          "text": "An installed application's window that draws its own title bar.",
+          "see": "window-frame"
         }
       ],
       "related": [
-        "scaffold",
         "page-header",
+        "toolbar",
         "menubar",
         "window-frame"
       ],
@@ -8414,17 +8000,15 @@
           "use": "Table"
         },
         {
-          "text": "Sections of content people show and hide in a page.",
-          "use": "Disclosure"
+          "text": "Sections of a page people show and hide, rather than items of a hierarchy.",
+          "use": "Accordion"
         }
       ],
       "related": [
         "drawer",
         "list",
-        "menu",
-        "document-tabs",
-        "scaffold",
-        "accessibility"
+        "table",
+        "accordion"
       ],
       "exports": [
         "Tree"
@@ -8453,30 +8037,6 @@
           "title": "Row density",
           "description": "",
           "file": "docs/examples/tree/RowDensity.tsx"
-        },
-        {
-          "name": "TellKindsApart",
-          "title": "Do: Icons that tell folders and documents apart.",
-          "description": "",
-          "file": "docs/examples/tree/TellKindsApart.tsx"
-        },
-        {
-          "name": "OneIconForAll",
-          "title": "Don't: One icon for every row: only the chevrons tell folders apart.",
-          "description": "",
-          "file": "docs/examples/tree/OneIconForAll.tsx"
-        },
-        {
-          "name": "NamesWithPathInTitle",
-          "title": "Do: Short names, with the full path in title.",
-          "description": "",
-          "file": "docs/examples/tree/NamesWithPathInTitle.tsx"
-        },
-        {
-          "name": "PathsAsNames",
-          "title": "Don't: Paths as labels: they repeat the folder and lose the name.",
-          "description": "",
-          "file": "docs/examples/tree/PathsAsNames.tsx"
         },
         {
           "name": "TreeAnatomy",
@@ -8611,25 +8171,18 @@
           "use": "Tabs"
         },
         {
-          "text": "Destinations in an application's navigation.",
-          "use": "Drawer"
-        },
-        {
-          "text": "Choosing one of a few options or filters.",
-          "use": "SegmentedControl"
-        },
-        {
           "text": "Items people keep open beside the page, such as drafts.",
           "use": "PanelDock"
+        },
+        {
+          "text": "Many documents in folders, browsed as a hierarchy.",
+          "use": "Tree"
         }
       ],
       "related": [
         "tabs",
-        "tree",
-        "menu",
-        "scaffold",
         "panel-dock",
-        "accessibility"
+        "tree"
       ],
       "exports": [
         "DocumentTabs"
@@ -8798,7 +8351,7 @@
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md",
       "category": "Navigation",
-      "status": "stable",
+      "status": "experimental",
       "since": "0.6.0",
       "summary": "Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.",
       "aliases": [
@@ -8830,17 +8383,14 @@
           "use": "DocumentTabs"
         },
         {
-          "text": "A short message about something that happened.",
-          "use": "Toast"
+          "text": "One item’s details or settings at the edge of the window, closed when done.",
+          "use": "Sheet"
         }
       ],
       "related": [
         "dialog",
         "document-tabs",
-        "scaffold",
-        "menu",
-        "tooltip",
-        "accessibility"
+        "sheet"
       ],
       "exports": [
         "PanelDock",
@@ -9118,10 +8668,6 @@
           "use": "Drawer"
         },
         {
-          "text": "Moving between the items of one level, such as views of the same content.",
-          "use": "Tabs"
-        },
-        {
           "text": "Previous and next pages of a sequence.",
           "use": "Pager"
         },
@@ -9132,10 +8678,8 @@
       ],
       "related": [
         "drawer",
-        "tree",
         "pager",
-        "link",
-        "setup"
+        "tree"
       ],
       "exports": [
         "Breadcrumbs"
@@ -9343,19 +8887,10 @@
         {
           "text": "Links between the pages of an ordered sequence, such as the chapters of a guide.",
           "use": "Pager"
-        },
-        {
-          "text": "Switching between a few views of the same content.",
-          "use": "Tabs"
         }
       ],
       "related": [
-        "table",
-        "list",
-        "pager",
-        "button",
-        "tooltip",
-        "loading"
+        "pager"
       ],
       "exports": [
         "Pagination"
@@ -9512,10 +9047,7 @@
       "related": [
         "markdown",
         "text-field",
-        "composer",
-        "message",
-        "composition",
-        "accessibility"
+        "composer"
       ],
       "exports": [
         "RichText",
@@ -9576,18 +9108,6 @@
           "title": "Don't: Every command for a comment: the toolbar outweighs the text.",
           "description": "",
           "file": "docs/examples/rich-text/EveryCommand.tsx"
-        },
-        {
-          "name": "PlaceholderSaysHow",
-          "title": "Do: A label that names the document, and a placeholder that says how to start.",
-          "description": "",
-          "file": "docs/examples/rich-text/PlaceholderSaysHow.tsx"
-        },
-        {
-          "name": "VaguePlaceholder",
-          "title": "Don't: Text and Enter text here: neither says what to write.",
-          "description": "",
-          "file": "docs/examples/rich-text/VaguePlaceholder.tsx"
         },
         {
           "name": "RichTextAnatomy",
@@ -9857,13 +9377,10 @@
         }
       ],
       "related": [
-        "code",
-        "rich-text",
         "text-field",
+        "rich-text",
         "composer",
-        "kbd",
-        "typography",
-        "accessibility"
+        "code"
       ],
       "exports": [
         "Markdown",
@@ -9911,18 +9428,6 @@
           "title": "Don't: No toolbar: only people who know Markdown can format.",
           "description": "",
           "file": "docs/examples/markdown/WithoutToolbar.tsx"
-        },
-        {
-          "name": "LinkNamesDestination",
-          "title": "Do: Link text that names the destination.",
-          "description": "",
-          "file": "docs/examples/markdown/LinkNamesDestination.tsx"
-        },
-        {
-          "name": "ClickHere",
-          "title": "Don't: Click here: out of context, it says nothing.",
-          "description": "",
-          "file": "docs/examples/markdown/ClickHere.tsx"
         },
         {
           "name": "MarkdownEditorAnatomy",
@@ -10042,11 +9547,10 @@
         }
       ],
       "related": [
-        "markdown",
         "kbd",
-        "badge",
-        "typography",
-        "accessibility"
+        "markdown",
+        "text-field",
+        "badge"
       ],
       "exports": [
         "Code",
@@ -10096,18 +9600,6 @@
           "title": "Don't: A prompt such as $: it is copied with the command.",
           "description": "",
           "file": "docs/examples/code/CommandWithPrompt.tsx"
-        },
-        {
-          "name": "ExactValue",
-          "title": "Do: Exact values in Code, the sentence around them in plain text.",
-          "description": "",
-          "file": "docs/examples/code/ExactValue.tsx"
-        },
-        {
-          "name": "SentenceAsCode",
-          "title": "Don't: A whole sentence in Code: it reads as a value to type.",
-          "description": "",
-          "file": "docs/examples/code/SentenceAsCode.tsx"
         },
         {
           "name": "CodeBlockAnatomy",
@@ -10241,15 +9733,24 @@
         {
           "text": "A headline number with its label and trend, such as on a dashboard.",
           "see": "key-figures"
+        },
+        {
+          "text": "A count beside a destination in the navigation, which a Drawer item shows with `count`.",
+          "use": "Drawer"
+        },
+        {
+          "text": "An identifier or a command in text.",
+          "use": "Code"
         }
       ],
       "related": [
-        "card",
-        "drawer",
         "button",
+        "segmented-control",
+        "alert",
+        "meter",
         "key-figures",
-        "code",
-        "colors"
+        "drawer",
+        "code"
       ],
       "exports": [
         "Badge",
@@ -10276,13 +9777,13 @@
         },
         {
           "name": "Emphasis",
-          "title": "Emphasis",
+          "title": "Badge variants",
           "description": "",
           "file": "docs/examples/badge/Emphasis.tsx"
         },
         {
           "name": "Tones",
-          "title": "Tones",
+          "title": "Badge variants",
           "description": "",
           "file": "docs/examples/badge/Tones.tsx"
         },
@@ -10297,18 +9798,6 @@
           "title": "Don't: Solid badges everywhere: none of them stands out.",
           "description": "",
           "file": "docs/examples/badge/SolidEverywhere.tsx"
-        },
-        {
-          "name": "ShortState",
-          "title": "Do: One or two words, in sentence case.",
-          "description": "",
-          "file": "docs/examples/badge/ShortState.tsx"
-        },
-        {
-          "name": "SentenceInBadge",
-          "title": "Don't: A sentence: it drops below the title and stops reading as a state.",
-          "description": "",
-          "file": "docs/examples/badge/SentenceInBadge.tsx"
         },
         {
           "name": "NavigationCounts",
@@ -10471,22 +9960,15 @@
           "use": "Tree"
         },
         {
-          "text": "Arranging content in columns for layout, such as a set of summaries.",
-          "use": "Card"
-        },
-        {
-          "text": "A spreadsheet that people edit cell by cell and move through with the arrow keys."
+          "text": "Arranging content in columns for layout, such as a set of summary cards.",
+          "use": "Grid"
         }
       ],
       "related": [
         "list",
         "key-figures",
-        "badge",
-        "checkbox",
-        "pagination",
-        "empty-states",
-        "loading",
-        "typography"
+        "tree",
+        "grid"
       ],
       "exports": [
         "Table",
@@ -10819,8 +10301,8 @@
           "use": "List"
         },
         {
-          "text": "A form that people fill in and submit.",
-          "use": "Field"
+          "text": "Values people fill in and submit, as a form.",
+          "see": "forms"
         },
         {
           "text": "One headline number with its trend.",
@@ -10830,9 +10312,8 @@
       "related": [
         "table",
         "list",
-        "card",
-        "key-figures",
-        "loading"
+        "forms",
+        "key-figures"
       ],
       "exports": [
         "DescriptionList",
@@ -10863,18 +10344,6 @@
           "title": "Don't: Without controls: labels sit higher than the controls beside them.",
           "description": "",
           "file": "docs/examples/description-list/ControlsUnaligned.tsx"
-        },
-        {
-          "name": "ShortLabels",
-          "title": "Do: Short nouns as labels, and a dash for a value not set.",
-          "description": "",
-          "file": "docs/examples/description-list/ShortLabels.tsx"
-        },
-        {
-          "name": "WordyLabels",
-          "title": "Don't: Questions, colons and empty values.",
-          "description": "",
-          "file": "docs/examples/description-list/WordyLabels.tsx"
         },
         {
           "name": "DescriptionListAnatomy",
@@ -10976,7 +10445,7 @@
         "key combination"
       ],
       "useWhen": [
-        "Text names a key or a shortcut, such as \"Press Ctrl+P to open a document\".",
+        "Text names a key or a shortcut, such as \"Press <kbd>Ctrl</kbd>+<kbd>P</kbd> to open a document\".",
         "A hint lists the keys a list or a popup handles, such as a footer that says which keys move, open and close."
       ],
       "avoidWhen": [
@@ -10991,18 +10460,12 @@
         {
           "text": "Code, a command or a file name in text.",
           "use": "Code"
-        },
-        {
-          "text": "A status or a count beside a label.",
-          "use": "Badge"
         }
       ],
       "related": [
         "menu",
         "command-palette",
-        "code",
-        "markdown",
-        "accessibility"
+        "code"
       ],
       "exports": [
         "Kbd",
@@ -11034,21 +10497,9 @@
           "file": "docs/examples/kbd/SequenceAsOne.tsx"
         },
         {
-          "name": "SayWhatItDoes",
-          "title": "Do: Say what the keys do, in a sentence.",
-          "description": "",
-          "file": "docs/examples/kbd/SayWhatItDoes.tsx"
-        },
-        {
-          "name": "KeysAlone",
-          "title": "Don't: A key and a word: people have to guess the rest.",
-          "description": "",
-          "file": "docs/examples/kbd/KeysAlone.tsx"
-        },
-        {
           "name": "PlatformKeys",
           "title": "Content",
-          "description": "",
+          "description": "Write keys as the keyboard names them: <kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Esc</kbd>, <kbd>F2</kbd>, capital letters, and <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>. Pass the names of the reader's platform, such as <kbd>⌘</kbd> on Apple keyboards: `useModifierKey()` gives the shortcut modifier's `label`, ⌘ or Ctrl, and its `key`, `Meta` or `Control`, for `aria-keyshortcuts`. It is Ctrl on the server and while the page hydrates, then ⌘ on Apple platforms, so server-rendered markup hydrates; don't read `navigator` while rendering.",
           "file": "docs/examples/kbd/PlatformKeys.tsx"
         },
         {
@@ -11113,7 +10564,7 @@
       ],
       "avoidWhen": [
         {
-          "text": "A count that doesn't change while people look at it, which is plain text.",
+          "text": "A count that doesn’t change while people look at it: plain text.",
           "use": "Text"
         },
         {
@@ -11123,18 +10574,11 @@
         {
           "text": "A headline figure with its label and trend, such as on a dashboard.",
           "see": "key-figures"
-        },
-        {
-          "text": "How far a task has come.",
-          "use": "Progress"
         }
       ],
       "related": [
-        "button",
-        "key-figures",
         "badge",
-        "typography",
-        "accessibility"
+        "key-figures"
       ],
       "exports": [
         "AnimatedNumber"
@@ -11240,18 +10684,13 @@
         {
           "text": "A key figure on a dashboard, such as the average score this month.",
           "see": "key-figures"
-        },
-        {
-          "text": "A state or a category, such as Approved or Featured.",
-          "use": "Badge"
         }
       ],
       "related": [
-        "key-figures",
-        "badge",
-        "meter",
         "radio",
-        "slider"
+        "slider",
+        "meter",
+        "key-figures"
       ],
       "exports": [
         "Rating"
@@ -11286,18 +10725,6 @@
           "title": "Don't: Stars with no source: people can't tell how much they count.",
           "description": "",
           "file": "docs/examples/rating/UnsourcedStars.tsx"
-        },
-        {
-          "name": "ReviewList",
-          "title": "Do: Stars alone beside one reviewer's words.",
-          "description": "",
-          "file": "docs/examples/rating/ReviewList.tsx"
-        },
-        {
-          "name": "RepeatedRating",
-          "title": "Don't: The rating said again in text: it is read twice.",
-          "description": "",
-          "file": "docs/examples/rating/RepeatedRating.tsx"
         },
         {
           "name": "RatingAnatomy",
@@ -11373,26 +10800,16 @@
       ],
       "avoidWhen": [
         {
-          "text": "A moment people must read exactly, such as a deadline, an appointment or the date of a record; format the date with Intl.DateTimeFormat."
-        },
-        {
           "text": "Choosing a date, or a date and time.",
           "use": "DatePicker"
         },
         {
           "text": "Days shown on a month grid.",
           "use": "Calendar"
-        },
-        {
-          "text": "A count that changes in place, such as seats left.",
-          "use": "AnimatedNumber"
         }
       ],
       "related": [
-        "tooltip",
-        "date-picker",
-        "animated-number",
-        "table"
+        "date-picker"
       ],
       "exports": [
         "RelativeTime",
@@ -11419,21 +10836,9 @@
         },
         {
           "name": "Formats",
-          "title": "Formats",
+          "title": "RelativeTime variants",
           "description": "",
           "file": "docs/examples/relative-time/Formats.tsx"
-        },
-        {
-          "name": "EventFirst",
-          "title": "Do: Put the event first, so the time never stands alone.",
-          "description": "",
-          "file": "docs/examples/relative-time/EventFirst.tsx"
-        },
-        {
-          "name": "TimeAlone",
-          "title": "Don't: A time on its own: people can't tell what happened.",
-          "description": "",
-          "file": "docs/examples/relative-time/TimeAlone.tsx"
         },
         {
           "name": "ExactDateNearby",
@@ -11571,16 +10976,11 @@
         {
           "text": "Switching between views of the same content.",
           "use": "Tabs"
-        },
-        {
-          "text": "A hierarchy people expand level by level, such as folders.",
-          "use": "Tree"
         }
       ],
       "related": [
         "disclosure",
-        "tabs",
-        "tree"
+        "tabs"
       ],
       "exports": [
         "Accordion",
@@ -11605,18 +11005,6 @@
           "title": "Open from outside",
           "description": "`value` and `onValueChange` control which sections are open.",
           "file": "docs/examples/accordion/OpenFromOutside.tsx"
-        },
-        {
-          "name": "SayWhatItHolds",
-          "title": "Do: Titles that say what each section holds, such as the question it answers.",
-          "description": "",
-          "file": "docs/examples/accordion/SayWhatItHolds.tsx"
-        },
-        {
-          "name": "VagueTitles",
-          "title": "Don't: More information or Details: people open each one to find out.",
-          "description": "",
-          "file": "docs/examples/accordion/VagueTitles.tsx"
         },
         {
           "name": "AccordionAnatomy",
@@ -11759,21 +11147,15 @@
           "use": "Tabs"
         },
         {
-          "text": "A hierarchy people expand level by level, such as folders.",
-          "use": "Tree"
-        },
-        {
           "text": "Details beside a control that close when people move on.",
           "use": "Popover"
         }
       ],
       "related": [
         "accordion",
-        "tree",
-        "tabs",
-        "popover",
         "text-field",
-        "typography"
+        "tabs",
+        "popover"
       ],
       "exports": [
         "Disclosure"
@@ -11808,18 +11190,6 @@
           "title": "Don't: Rules people need, hidden: they find them only after an error.",
           "description": "",
           "file": "docs/examples/disclosure/HiddenRules.tsx"
-        },
-        {
-          "name": "SayWhatItHolds",
-          "title": "Do: A summary that says what the details hold.",
-          "description": "",
-          "file": "docs/examples/disclosure/SayWhatItHolds.tsx"
-        },
-        {
-          "name": "VagueSummary",
-          "title": "Don't: More or Show details: people open it to find out.",
-          "description": "",
-          "file": "docs/examples/disclosure/VagueSummary.tsx"
         },
         {
           "name": "DisclosureAnatomy",
@@ -11880,10 +11250,6 @@
       ],
       "avoidWhen": [
         {
-          "text": "A status or a count beside a label.",
-          "use": "Badge"
-        },
-        {
           "text": "An icon for a thing or an action, not a person.",
           "use": "Icon"
         },
@@ -11893,11 +11259,7 @@
         }
       ],
       "related": [
-        "menu",
-        "list",
-        "tooltip",
-        "scaffold",
-        "combobox"
+        "list"
       ],
       "exports": [
         "Avatar",
@@ -11932,7 +11294,7 @@
         },
         {
           "name": "Sizes",
-          "title": "Sizes",
+          "title": "Avatar variants",
           "description": "",
           "file": "docs/examples/avatar/Sizes.tsx"
         },
@@ -11953,18 +11315,6 @@
           "title": "Don't: Avatars alone: people must hover each one to learn who it is.",
           "description": "",
           "file": "docs/examples/avatar/AvatarsAlone.tsx"
-        },
-        {
-          "name": "RoleAsBadge",
-          "title": "Do: A role in a Badge, beside the name.",
-          "description": "",
-          "file": "docs/examples/avatar/RoleAsBadge.tsx"
-        },
-        {
-          "name": "RoleAsColor",
-          "title": "Don't: A role in the avatar's color: nobody can read it.",
-          "description": "",
-          "file": "docs/examples/avatar/RoleAsColor.tsx"
         },
         {
           "name": "AvatarAnatomy",
@@ -12159,21 +11509,15 @@
           "use": "Toast"
         },
         {
-          "text": "A message about a page or a section, such as a warning before a form.",
-          "use": "Alert"
-        },
-        {
           "text": "Formatted text on its own, outside a conversation.",
           "use": "Markdown"
         }
       ],
       "related": [
         "composer",
-        "markdown",
-        "relative-time",
         "list",
-        "loading",
-        "accessibility"
+        "toast",
+        "markdown"
       ],
       "exports": [
         "Message",
@@ -12209,18 +11553,6 @@
           "title": "Don't: self for someone else, to put them on a side: self means you.",
           "description": "",
           "file": "docs/examples/message/SelfForOthers.tsx"
-        },
-        {
-          "name": "AuthorWhereNeeded",
-          "title": "Do: An author where it tells people apart.",
-          "description": "",
-          "file": "docs/examples/message/AuthorWhereNeeded.tsx"
-        },
-        {
-          "name": "AuthorEverywhere",
-          "title": "Don't: Your own name on your own messages.",
-          "description": "",
-          "file": "docs/examples/message/AuthorEverywhere.tsx"
         },
         {
           "name": "MessageAnatomy",
@@ -12373,19 +11705,12 @@
         {
           "text": "Choosing a day.",
           "use": "Calendar"
-        },
-        {
-          "text": "A share of a known range, such as storage used.",
-          "use": "Meter"
         }
       ],
       "related": [
-        "key-figures",
         "table",
-        "date-picker",
-        "tooltip",
-        "colors",
-        "accessibility"
+        "key-figures",
+        "date-picker"
       ],
       "exports": [
         "CalendarHeatmap"
@@ -12426,18 +11751,6 @@
           "title": "Don't: Incidents in the success tone: a bad week reads as a good one.",
           "description": "",
           "file": "docs/examples/calendar-heatmap/IncidentsInSuccess.tsx"
-        },
-        {
-          "name": "FiveLevels",
-          "title": "Do: Five steps, which people can tell apart.",
-          "description": "",
-          "file": "docs/examples/calendar-heatmap/FiveLevels.tsx"
-        },
-        {
-          "name": "TenLevels",
-          "title": "Don't: Ten steps: neighbouring shades look the same.",
-          "description": "",
-          "file": "docs/examples/calendar-heatmap/TenLevels.tsx"
         },
         {
           "name": "HeatmapAnatomy",
@@ -12667,15 +11980,18 @@
         {
           "text": "Loading a page or a route of an application, along the top bar.",
           "use": "TopBar"
+        },
+        {
+          "text": "Content loading in its place, in the shape of what is coming.",
+          "see": "loading"
         }
       ],
       "related": [
-        "loading",
+        "button",
         "surface",
         "progress",
-        "button",
-        "scaffold",
-        "accessibility"
+        "top-bar",
+        "loading"
       ],
       "exports": [
         "Spinner"
@@ -12695,7 +12011,7 @@
         },
         {
           "name": "Sizes",
-          "title": "Sizes",
+          "title": "Spinner variants",
           "description": "",
           "file": "docs/examples/spinner/Sizes.tsx"
         },
@@ -12710,18 +12026,6 @@
           "title": "Don't: Content hidden behind a spinner while it updates.",
           "description": "",
           "file": "docs/examples/spinner/CoverContent.tsx"
-        },
-        {
-          "name": "OneSpinner",
-          "title": "Do: One spinner for one piece of work.",
-          "description": "",
-          "file": "docs/examples/spinner/OneSpinner.tsx"
-        },
-        {
-          "name": "SpinnerPerRow",
-          "title": "Don't: A spinner on every row of one update.",
-          "description": "",
-          "file": "docs/examples/spinner/SpinnerPerRow.tsx"
         },
         {
           "name": "SpinnerAnatomy",
@@ -12824,9 +12128,9 @@
       "related": [
         "alert",
         "dialog",
-        "button",
+        "text-field",
         "progress",
-        "accessibility"
+        "button"
       ],
       "exports": [
         "Toast",
@@ -12881,18 +12185,6 @@
           "title": "Don't: A notification for each item: they stack up and hide each other.",
           "description": "",
           "file": "docs/examples/toast/OnePerItem.tsx"
-        },
-        {
-          "name": "NameWhatHappened",
-          "title": "Do: Say what happened, and to what.",
-          "description": "",
-          "file": "docs/examples/toast/NameWhatHappened.tsx"
-        },
-        {
-          "name": "GenericSuccess",
-          "title": "Don't: A message that only repeats the tone.",
-          "description": "",
-          "file": "docs/examples/toast/GenericSuccess.tsx"
         },
         {
           "name": "ToastAnatomy",
@@ -13071,7 +12363,7 @@
           "see": "empty-states"
         },
         {
-          "text": "An error about one field of a form.",
+          "text": "An error about one field, shown on the field with its `error`.",
           "use": "TextField"
         },
         {
@@ -13086,9 +12378,9 @@
       "related": [
         "toast",
         "empty-states",
+        "text-field",
         "badge",
-        "dialog",
-        "colors"
+        "dialog"
       ],
       "exports": [
         "Alert"
@@ -13108,7 +12400,7 @@
         },
         {
           "name": "Tones",
-          "title": "Tones",
+          "title": "Alert variants",
           "description": "",
           "file": "docs/examples/alert/Tones.tsx"
         },
@@ -13129,18 +12421,6 @@
           "title": "Don't: Several alerts about one situation.",
           "description": "",
           "file": "docs/examples/alert/StackedAlerts.tsx"
-        },
-        {
-          "name": "ProblemInTitle",
-          "title": "Do: The problem in the title, the next step in the action.",
-          "description": "",
-          "file": "docs/examples/alert/ProblemInTitle.tsx"
-        },
-        {
-          "name": "GenericTitle",
-          "title": "Don't: A title that only names the tone, and a vague action.",
-          "description": "",
-          "file": "docs/examples/alert/GenericTitle.tsx"
         },
         {
           "name": "AlertAnatomy",
@@ -13302,13 +12582,13 @@
       ],
       "related": [
         "button",
-        "sheet",
+        "confirm-dialog",
         "popover",
         "toast",
+        "alert",
         "command-palette",
-        "text-field",
-        "row",
-        "accessibility"
+        "sheet",
+        "panel-dock"
       ],
       "exports": [
         "Dialog",
@@ -13368,18 +12648,6 @@
           "title": "Don't: An error in a second dialog over the first.",
           "description": "",
           "file": "docs/examples/dialog/ErrorInSecondDialog.tsx"
-        },
-        {
-          "name": "ConfirmDelete",
-          "title": "Do: Ask the question, and repeat its verb in the action.",
-          "description": "",
-          "file": "docs/examples/dialog/ConfirmDelete.tsx"
-        },
-        {
-          "name": "AreYouSure",
-          "title": "Don't: Are you sure? with Yes and No: neither says what happens.",
-          "description": "",
-          "file": "docs/examples/dialog/AreYouSure.tsx"
         },
         {
           "name": "DialogAnatomy",
@@ -13561,11 +12829,10 @@
         }
       ],
       "related": [
-        "panes",
         "dialog",
         "popover",
-        "button",
-        "panel-dock"
+        "panel-dock",
+        "panes"
       ],
       "exports": [
         "Sheet"
@@ -13588,18 +12855,6 @@
           "title": "Share choices",
           "description": "`side=\"bottom\"` holds a short set of choices, as tall as its content.",
           "file": "docs/examples/sheet/ShareChoices.tsx"
-        },
-        {
-          "name": "ResultAsAction",
-          "title": "Do: A primary action named after its result.",
-          "description": "",
-          "file": "docs/examples/sheet/ResultAsAction.tsx"
-        },
-        {
-          "name": "VagueAction",
-          "title": "Don't: Apply: people can't tell what they will see.",
-          "description": "",
-          "file": "docs/examples/sheet/VagueAction.tsx"
         },
         {
           "name": "SheetAnatomy",
@@ -13734,13 +12989,17 @@
         {
           "text": "Undoing an action after it ran, such as an archived item.",
           "use": "Toast"
+        },
+        {
+          "text": "A warning that needs no answer, shown in the page.",
+          "use": "Alert"
         }
       ],
       "related": [
+        "button",
         "dialog",
-        "menu",
-        "alert",
-        "button"
+        "toast",
+        "alert"
       ],
       "exports": [
         "ConfirmDialog"
@@ -13874,18 +13133,15 @@
           "use": "SearchField"
         },
         {
-          "text": "A task with fields and a decision.",
-          "use": "Dialog"
+          "text": "The button that opens the palette, with its shortcut.",
+          "see": "search-trigger"
         }
       ],
       "related": [
-        "search-trigger",
-        "dialog",
-        "menu",
         "combobox",
-        "kbd",
+        "menu",
         "text-field",
-        "accessibility"
+        "search-trigger"
       ],
       "exports": [
         "CommandPalette"
@@ -14141,25 +13397,18 @@
           "use": "Popover"
         },
         {
-          "text": "Switching between views of the same content.",
-          "use": "Tabs"
-        },
-        {
           "text": "One or two actions that fit beside the content they act on.",
           "use": "Button"
         }
       ],
       "related": [
+        "account-menu",
+        "select",
         "menubar",
         "command-palette",
-        "select",
-        "popover",
         "drawer",
-        "tree",
-        "kbd",
-        "tooltip",
-        "avatar",
-        "scaffold"
+        "popover",
+        "button"
       ],
       "exports": [
         "Menu",
@@ -14241,18 +13490,6 @@
           "title": "Don't: An item that disappears, so people wonder where it went.",
           "description": "",
           "file": "docs/examples/menu/HiddenItem.tsx"
-        },
-        {
-          "name": "ConsistentIcons",
-          "title": "Do: An icon on every item of a set, or on none.",
-          "description": "",
-          "file": "docs/examples/menu/ConsistentIcons.tsx"
-        },
-        {
-          "name": "MixedIcons",
-          "title": "Don't: An icon on one item only: it stands out for no reason.",
-          "description": "",
-          "file": "docs/examples/menu/MixedIcons.tsx"
         },
         {
           "name": "MenuAnatomy",
@@ -14500,24 +13737,18 @@
           "use": "Menu"
         },
         {
-          "text": "Destinations in an application's navigation.",
-          "use": "Drawer"
-        },
-        {
           "text": "Running a command by name.",
           "use": "CommandPalette"
         },
         {
-          "text": "A row of actions that stay visible, such as a toolbar.",
-          "use": "ButtonGroup"
+          "text": "A row of commands that stay visible, such as an editor’s formatting.",
+          "use": "Toolbar"
         }
       ],
       "related": [
         "menu",
-        "scaffold",
         "command-palette",
-        "kbd",
-        "accessibility"
+        "toolbar"
       ],
       "exports": [
         "Menubar",
@@ -14548,18 +13779,6 @@
           "title": "Don't: Help first and File in the middle.",
           "description": "",
           "file": "docs/examples/menubar/UnusualOrder.tsx"
-        },
-        {
-          "name": "OneWordNames",
-          "title": "Do: One word per menu.",
-          "description": "",
-          "file": "docs/examples/menubar/OneWordNames.tsx"
-        },
-        {
-          "name": "LongMenuNames",
-          "title": "Don't: Long menu names that crowd the bar.",
-          "description": "",
-          "file": "docs/examples/menubar/LongMenuNames.tsx"
         },
         {
           "name": "MenubarAnatomy",
@@ -14719,7 +13938,7 @@
       "useWhen": [
         "Showing an icon-only control's name, such as a toolbar's Refresh button, for people who don't recognise the icon.",
         "Saying why a control is disabled, such as All seats are assigned, beside the page's own account of it.",
-        "Showing a control's keyboard shortcut, such as Bold (Ctrl+B)."
+        "Showing a control's keyboard shortcut, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>)."
       ],
       "avoidWhen": [
         {
@@ -14740,10 +13959,10 @@
         }
       ],
       "related": [
-        "button",
         "hover-card",
         "popover",
-        "accessibility"
+        "text-field",
+        "alert"
       ],
       "exports": [
         "Tooltip"
@@ -14802,18 +14021,6 @@
           "title": "Don't: The reason only in a tooltip, which touch screens never show.",
           "description": "",
           "file": "docs/examples/tooltip/ReasonOnlyInTooltip.tsx"
-        },
-        {
-          "name": "ShortName",
-          "title": "Do: A few words, the same as the control’s accessible name.",
-          "description": "",
-          "file": "docs/examples/tooltip/ShortName.tsx"
-        },
-        {
-          "name": "LongTooltip",
-          "title": "Don't: A paragraph people must hold the pointer still to read.",
-          "description": "",
-          "file": "docs/examples/tooltip/LongTooltip.tsx"
         },
         {
           "name": "TooltipAnatomy",
@@ -15011,9 +14218,8 @@
         "tooltip",
         "hover-card",
         "menu",
-        "dialog",
         "select",
-        "accessibility"
+        "dialog"
       ],
       "exports": [
         "Popover"
@@ -15042,18 +14248,6 @@
           "title": "Field help",
           "description": "",
           "file": "docs/examples/popover/FieldHelp.tsx"
-        },
-        {
-          "name": "ShortHelp",
-          "title": "Do: A few lines, which people read at a glance.",
-          "description": "",
-          "file": "docs/examples/popover/ShortHelp.tsx"
-        },
-        {
-          "name": "LongHelp",
-          "title": "Don't: Paragraphs of help: too much to read beside the page.",
-          "description": "",
-          "file": "docs/examples/popover/LongHelp.tsx"
         },
         {
           "name": "PopoverAnatomy",
@@ -15193,22 +14387,11 @@
         {
           "text": "Details or a small form that people open on purpose and work in.",
           "use": "Popover"
-        },
-        {
-          "text": "A task that needs people's attention before they go on.",
-          "use": "Dialog"
-        },
-        {
-          "text": "Information people need to complete a task, which must stay visible.",
-          "use": "Alert"
         }
       ],
       "related": [
-        "popover",
         "tooltip",
-        "link",
-        "avatar",
-        "accessibility"
+        "popover"
       ],
       "exports": [
         "HoverCard"
@@ -15237,18 +14420,6 @@
           "title": "Placement",
           "description": "",
           "file": "docs/examples/hover-card/Placement.tsx"
-        },
-        {
-          "name": "NameAndFacts",
-          "title": "Do: The name, then one or two facts that help decide.",
-          "description": "",
-          "file": "docs/examples/hover-card/NameAndFacts.tsx"
-        },
-        {
-          "name": "RepeatsTrigger",
-          "title": "Don't: A card that only repeats what the link says.",
-          "description": "",
-          "file": "docs/examples/hover-card/RepeatsTrigger.tsx"
         },
         {
           "name": "HoverCardAnatomy",
@@ -15409,7 +14580,7 @@
         "progress",
         "key-figures",
         "slider",
-        "colors"
+        "rating"
       ],
       "exports": [
         "Meter"
@@ -15432,30 +14603,6 @@
           "title": "Don't: A full bar left to speak for itself: it has no warning color.",
           "description": "",
           "file": "docs/examples/meter/FullWithoutWords.tsx"
-        },
-        {
-          "name": "SameWidths",
-          "title": "Do: One width for meters people compare.",
-          "description": "",
-          "file": "docs/examples/meter/SameWidths.tsx"
-        },
-        {
-          "name": "MixedWidths",
-          "title": "Don't: Bars of different lengths, side by side.",
-          "description": "",
-          "file": "docs/examples/meter/MixedWidths.tsx"
-        },
-        {
-          "name": "StorageQuota",
-          "title": "Do: The value as people count it, with its unit.",
-          "description": "",
-          "file": "docs/examples/meter/StorageQuota.tsx"
-        },
-        {
-          "name": "PercentOfStorage",
-          "title": "Don't: A percentage, where people count an amount.",
-          "description": "",
-          "file": "docs/examples/meter/PercentOfStorage.tsx"
         },
         {
           "name": "MeterAnatomy",
@@ -15545,16 +14692,16 @@
           "use": "TopBar"
         },
         {
-          "text": "Saying that a task finished or failed.",
-          "use": "Toast"
+          "text": "Content loading in its place, in the shape of what is coming.",
+          "see": "loading"
         }
       ],
       "related": [
         "meter",
         "spinner",
-        "loading",
-        "scaffold",
-        "toast"
+        "surface",
+        "top-bar",
+        "loading"
       ],
       "exports": [
         "Progress"
@@ -15595,18 +14742,6 @@
           "title": "Don't: A bar for every file of one upload.",
           "description": "",
           "file": "docs/examples/progress/BarPerFile.tsx"
-        },
-        {
-          "name": "ImportContacts",
-          "title": "Do: Name the task, and count items where people count them.",
-          "description": "",
-          "file": "docs/examples/progress/ImportContacts.tsx"
-        },
-        {
-          "name": "VagueLabel",
-          "title": "Don't: A label that doesn't say what is running.",
-          "description": "",
-          "file": "docs/examples/progress/VagueLabel.tsx"
         },
         {
           "name": "ProgressAnatomy",
@@ -16006,12 +15141,12 @@
           "see": "settings"
         },
         {
-          "text": "Confirming a destructive action.",
-          "use": "ConfirmDialog"
+          "text": "Deleting or removing something, with undo or a confirmation.",
+          "see": "destructive-actions"
         },
         {
-          "text": "Filtering a list or a table as people choose.",
-          "use": "SearchField"
+          "text": "Narrowing a list or a table as people choose, without submitting.",
+          "see": "filtering"
         }
       ],
       "composes": [
@@ -16035,10 +15170,7 @@
       "related": [
         "settings",
         "destructive-actions",
-        "field",
-        "text-field",
-        "select",
-        "radio"
+        "filtering"
       ],
       "doc": "docs/patterns/forms.md",
       "examples": [
@@ -16085,18 +15217,6 @@
           "file": "docs/examples/forms/SideBySide.tsx"
         },
         {
-          "name": "VisibleLabel",
-          "title": "Do: A label, and the format as a description that stays.",
-          "description": "",
-          "file": "docs/examples/forms/VisibleLabel.tsx"
-        },
-        {
-          "name": "PlaceholderLabel",
-          "title": "Don't: The placeholder as the label: it goes as people type.",
-          "description": "",
-          "file": "docs/examples/forms/PlaceholderLabel.tsx"
-        },
-        {
           "name": "FormAnatomy",
           "title": "Form layout and validation anatomy",
           "description": "",
@@ -16132,6 +15252,10 @@
         {
           "text": "A choice that filters or changes the view of the page people are on.",
           "use": "SegmentedControl"
+        },
+        {
+          "text": "Deleting an account or a workspace.",
+          "see": "destructive-actions"
         }
       ],
       "composes": [
@@ -16158,11 +15282,8 @@
       ],
       "related": [
         "forms",
-        "destructive-actions",
-        "feedback",
-        "switch",
-        "radio",
-        "description-list"
+        "segmented-control",
+        "destructive-actions"
       ],
       "doc": "docs/patterns/settings.md",
       "examples": [
@@ -16257,12 +15378,8 @@
         "Text"
       ],
       "related": [
-        "feedback",
-        "settings",
-        "confirm-dialog",
-        "toast",
-        "button",
-        "menu"
+        "dialog",
+        "feedback"
       ],
       "doc": "docs/patterns/destructive-actions.md",
       "examples": [
@@ -16343,6 +15460,10 @@
         {
           "text": "A region with nothing to show.",
           "see": "empty-states"
+        },
+        {
+          "text": "Undo after a delete, or a confirmation before one.",
+          "see": "destructive-actions"
         }
       ],
       "composes": [
@@ -16363,12 +15484,10 @@
         "Text"
       ],
       "related": [
+        "forms",
         "loading",
         "empty-states",
-        "destructive-actions",
-        "toast",
-        "alert",
-        "badge"
+        "destructive-actions"
       ],
       "doc": "docs/patterns/feedback.md",
       "examples": [
@@ -16468,12 +15587,7 @@
         "Avatar"
       ],
       "related": [
-        "surface",
-        "card",
-        "spinner",
-        "progress",
-        "button",
-        "scaffold"
+        "empty-states"
       ],
       "doc": "docs/patterns/loading.md",
       "examples": [
@@ -16595,9 +15709,7 @@
       ],
       "related": [
         "loading",
-        "feedback",
-        "list",
-        "table"
+        "feedback"
       ],
       "doc": "docs/patterns/empty-states.md",
       "examples": [
@@ -16709,12 +15821,10 @@
         "Card"
       ],
       "related": [
-        "animated-number",
-        "badge",
-        "meter",
         "table",
-        "card",
-        "surface"
+        "meter",
+        "badge",
+        "animated-number"
       ],
       "doc": "docs/patterns/key-figures.md",
       "examples": [
@@ -16799,16 +15909,20 @@
       ],
       "avoidWhen": [
         {
-          "text": "Narrowing a long list or a table to the items people want.",
-          "see": "filtering"
-        },
-        {
           "text": "Showing more of the page's content without leaving the page.",
           "see": "progressive-disclosure"
         },
         {
           "text": "Moving between pages of one long list.",
           "use": "Pagination"
+        },
+        {
+          "text": "A list beside the detail of its selected item.",
+          "use": "Panes"
+        },
+        {
+          "text": "A whole frame to copy, with the navigation and a top bar.",
+          "see": "app-frame"
         }
       ],
       "composes": [
@@ -16839,14 +15953,10 @@
         "Text"
       ],
       "related": [
-        "filtering",
-        "loading",
-        "scaffold",
+        "progressive-disclosure",
+        "pagination",
         "panes",
-        "drawer",
-        "app-frame",
-        "breadcrumbs",
-        "search-trigger"
+        "app-frame"
       ],
       "doc": "docs/patterns/navigation.md",
       "examples": [
@@ -16929,6 +16039,10 @@
         {
           "text": "Moving between views of one object, such as its overview and its activity.",
           "use": "Tabs"
+        },
+        {
+          "text": "Choosing between a bar, a rail and a drawer.",
+          "see": "navigation"
         }
       ],
       "composes": [
@@ -16954,12 +16068,9 @@
         "Text"
       ],
       "related": [
-        "scaffold",
-        "top-bar",
-        "drawer",
-        "navigation",
-        "account-menu",
-        "search-trigger"
+        "window-frame",
+        "tabs",
+        "navigation"
       ],
       "doc": "docs/patterns/app-frame.md",
       "examples": [
@@ -17052,9 +16163,7 @@
       ],
       "related": [
         "navigation",
-        "menu",
-        "avatar",
-        "top-bar"
+        "organization-switcher"
       ],
       "doc": "docs/patterns/account-menu.md",
       "examples": [
@@ -17128,10 +16237,8 @@
         "Text"
       ],
       "related": [
-        "menu",
         "account-menu",
-        "navigation",
-        "drawer"
+        "navigation"
       ],
       "doc": "docs/patterns/organization-switcher.md",
       "examples": [
@@ -17214,12 +16321,8 @@
         "Text"
       ],
       "related": [
-        "command-palette",
-        "button",
-        "kbd",
         "text-field",
-        "navigation",
-        "app-frame"
+        "command-palette"
       ],
       "doc": "docs/patterns/search-trigger.md",
       "examples": [
@@ -17234,18 +16337,6 @@
           "title": "Icon only",
           "description": "In a phone's top bar, a crowded header or a Rail, search is a ghost IconButton named Search, with the label and the keys in a Tooltip that opens below it, clear of the bar.",
           "file": "docs/examples/search-trigger/IconOnly.tsx"
-        },
-        {
-          "name": "UsualShortcut",
-          "title": "Do: The platform's usual shortcut for search.",
-          "description": "",
-          "file": "docs/examples/search-trigger/UsualShortcut.tsx"
-        },
-        {
-          "name": "EditorShortcut",
-          "title": "Don't: A shortcut that editors need, such as Ctrl+B for bold.",
-          "description": "",
-          "file": "docs/examples/search-trigger/EditorShortcut.tsx"
         },
         {
           "name": "ButtonLabel",
@@ -17317,10 +16408,8 @@
         "Text"
       ],
       "related": [
-        "scaffold",
-        "top-bar",
-        "menubar",
-        "app-frame"
+        "app-frame",
+        "page-header"
       ],
       "doc": "docs/patterns/window-frame.md",
       "examples": [
@@ -17406,7 +16495,7 @@
       "related": [
         "card",
         "empty-states",
-        "button"
+        "alert"
       ],
       "doc": "docs/patterns/feature-cards.md",
       "examples": [
@@ -17415,18 +16504,6 @@
           "title": "Import plans",
           "description": "A feature card is a Card holding a Row: a muted icon, a heading and a sentence in a Column of Text, and the one Button that starts the feature, at the end of the row.",
           "file": "docs/examples/feature-cards/ImportPlans.tsx"
-        },
-        {
-          "name": "OneAction",
-          "title": "Do: One action, the one that starts the feature.",
-          "description": "",
-          "file": "docs/examples/feature-cards/OneAction.tsx"
-        },
-        {
-          "name": "SeveralActions",
-          "title": "Don't: Several actions: none of them says what the card is for.",
-          "description": "",
-          "file": "docs/examples/feature-cards/SeveralActions.tsx"
         },
         {
           "name": "FeatureCardAnatomy",
@@ -17477,6 +16554,10 @@
         {
           "text": "Putting a table's rows in order.",
           "see": "data-tables"
+        },
+        {
+          "text": "No results that match, and a way to widen the search.",
+          "see": "empty-states"
         }
       ],
       "composes": [
@@ -17500,12 +16581,10 @@
         "useContainerSize"
       ],
       "related": [
+        "command-palette",
+        "forms",
         "data-tables",
-        "empty-states",
-        "navigation",
-        "text-field",
-        "select",
-        "popover"
+        "empty-states"
       ],
       "doc": "docs/patterns/filtering.md",
       "examples": [
@@ -17587,6 +16666,14 @@
         {
           "text": "Hierarchical items that open and close, such as folders.",
           "use": "Tree"
+        },
+        {
+          "text": "A table with no rows yet, or none that match.",
+          "see": "empty-states"
+        },
+        {
+          "text": "Deleting rows, with undo or a confirmation.",
+          "see": "destructive-actions"
         }
       ],
       "composes": [
@@ -17614,12 +16701,11 @@
         "Text"
       ],
       "related": [
+        "list",
         "filtering",
+        "tree",
         "empty-states",
-        "destructive-actions",
-        "table",
-        "pagination",
-        "toolbar"
+        "destructive-actions"
       ],
       "doc": "docs/patterns/data-tables.md",
       "examples": [
@@ -17646,18 +16732,6 @@
           "title": "Loading and empty",
           "description": "The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in Loading; with no records, an empty state takes its place.",
           "file": "docs/examples/data-tables/EmptyAndLoading.tsx"
-        },
-        {
-          "name": "NumbersAlignedEnd",
-          "title": "Do: Numbers aligned to the end with numeric, so they compare down the column.",
-          "description": "",
-          "file": "docs/examples/data-tables/NumbersAlignedEnd.tsx"
-        },
-        {
-          "name": "NumbersAlignedStart",
-          "title": "Don't: Numbers aligned to the start: hundreds and tens look alike.",
-          "description": "",
-          "file": "docs/examples/data-tables/NumbersAlignedStart.tsx"
         },
         {
           "name": "DataTableAnatomy",
@@ -17701,8 +16775,8 @@
           "use": "Tabs"
         },
         {
-          "text": "Moving between destinations of the application.",
-          "use": "Drawer"
+          "text": "Moving between the places of the application.",
+          "see": "navigation"
         },
         {
           "text": "Information people need to complete a task, such as a required field or an error.",
@@ -17732,12 +16806,9 @@
         "Text"
       ],
       "related": [
-        "forms",
-        "feedback",
-        "disclosure",
-        "popover",
-        "sheet",
-        "menu"
+        "tabs",
+        "navigation",
+        "forms"
       ],
       "doc": "docs/patterns/progressive-disclosure.md",
       "examples": [
@@ -23127,7 +22198,7 @@
         "PanelDock.Root",
         "PanelDock.Header"
       ],
-      "status": "stable",
+      "status": "experimental",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },
@@ -23178,7 +22249,7 @@
       "native": [
         "header"
       ],
-      "status": "stable",
+      "status": "experimental",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },
@@ -23275,7 +22346,7 @@
       "native": [
         "div"
       ],
-      "status": "stable",
+      "status": "experimental",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },

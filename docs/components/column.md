@@ -31,12 +31,6 @@ avoidWhen:
     use: Surface
   - text: A block with a heading, metadata and actions.
     use: Card
-related:
-  - row
-  - grid
-  - box
-  - surface
-  - spacing
 components:
   - Column
 ---

@@ -42,13 +42,10 @@ avoidWhen:
     use: Meter
   - text: A headline number with its label and trend, such as on a dashboard.
     see: key-figures
-related:
-  - card
-  - drawer
-  - button
-  - key-figures
-  - code
-  - colors
+  - text: A count beside a destination in the navigation, which a Drawer item shows with `count`.
+    use: Drawer
+  - text: An identifier or a command in text.
+    use: Code
 components:
   - Badge
   - DiffStat
@@ -74,9 +71,13 @@ A badge is a small, static pill that names a state or a fact beside the content 
 
 ## Variants
 
-```tsx example=Emphasis
+```tsx variants=Emphasis
 
 ```
+
+1. **Soft**
+2. **Solid**
+3. **Outline**
 
 | Variant   | Use for                                             |
 | --------- | --------------------------------------------------- |
@@ -84,9 +85,16 @@ A badge is a small, static pill that names a state or a fact beside the content 
 | `solid`   | The one state that must stand out, such as Overdue. |
 | `outline` | Names and categories, such as a team or a folder.   |
 
-```tsx example=Tones
+```tsx variants=Tones
 
 ```
+
+1. **Neutral**
+2. **Accent**
+3. **Success**
+4. **Warning**
+5. **Danger**
+6. **Done**
 
 | Tone      | Use for                                               |
 | --------- | ----------------------------------------------------- |
@@ -113,14 +121,6 @@ A count takes the same tones and variants: neutral and soft by default, and `ton
 - Don't let the tone carry the meaning alone: the word says it.
 
 ### Content
-
-```tsx do=ShortState caption="One or two words, in sentence case."
-
-```
-
-```tsx dont=SentenceInBadge caption="A sentence: it drops below the title and stops reading as a state."
-
-```
 
 - Show `99+` beyond two digits, with the full count in `aria-label`.
 

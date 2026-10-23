@@ -34,13 +34,6 @@ composes:
   - Row
   - Column
   - Text
-related:
-  - command-palette
-  - button
-  - kbd
-  - text-field
-  - navigation
-  - app-frame
 ---
 
 # Search trigger
@@ -87,14 +80,6 @@ In a phone's top bar, a crowded header or a [Rail](../components/rail.md), searc
 ```
 
 ## When to use
-
-```tsx do=UsualShortcut caption="The platform's usual shortcut for search."
-
-```
-
-```tsx dont=EditorShortcut caption="A shortcut that editors need, such as Ctrl+B for bold."
-
-```
 
 - One listener for the shortcut, however many triggers show it: two would open search twice.
 

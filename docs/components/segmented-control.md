@@ -29,13 +29,6 @@ avoidWhen:
     use: Switch
   - text: Actions, such as Save and Share, rather than a choice that stays selected.
     use: ButtonGroup
-related:
-  - tabs
-  - radio
-  - select
-  - button
-  - switch
-  - accessibility
 components:
   - SegmentedControl
 ---
@@ -78,27 +71,11 @@ Each option can show an icon and a count. `disabled` dims one option, which the 
 
 ```
 
-```tsx do=IconsOnAll caption="Icons on every option, or on none."
-
-```
-
-```tsx dont=IconsOnSome caption="An icon on one option, which then looks more important."
-
-```
-
 - Put the most used option first, and start on it.
 
 ### Labels
 
 Name options with a word or two that name the view, and name the control with `aria-label`.
-
-```tsx do=ParallelLabels caption="Short labels of about the same length."
-
-```
-
-```tsx dont=UnevenLabels caption="One long label that unbalances the rail."
-
-```
 
 ## Anatomy
 

@@ -18,12 +18,14 @@ useWhen:
   - An application has several places, and people move between them.
   - People need to see where they are, how they got there and how to go back up.
 avoidWhen:
-  - text: Narrowing a long list or a table to the items people want.
-    see: filtering
   - text: Showing more of the page's content without leaving the page.
     see: progressive-disclosure
   - text: Moving between pages of one long list.
     use: Pagination
+  - text: A list beside the detail of its selected item.
+    use: Panes
+  - text: A whole frame to copy, with the navigation and a top bar.
+    see: app-frame
 composes:
   - Scaffold
   - TopBar
@@ -50,15 +52,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - filtering
-  - loading
-  - scaffold
-  - panes
-  - drawer
-  - app-frame
-  - breadcrumbs
-  - search-trigger
 ---
 
 # Navigation

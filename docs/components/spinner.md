@@ -28,13 +28,8 @@ avoidWhen:
     use: Progress
   - text: Loading a page or a route of an application, along the top bar.
     use: TopBar
-related:
-  - loading
-  - surface
-  - progress
-  - button
-  - scaffold
-  - accessibility
+  - text: Content loading in its place, in the shape of what is coming.
+    see: loading
 components:
   - Spinner
 ---
@@ -59,9 +54,13 @@ A spinner shows work of unknown length in a small area, such as a preview on its
 
 ## Variants
 
-```tsx example=Sizes
+```tsx variants=Sizes
 
 ```
+
+1. **sm**
+2. **md**
+3. **lg**
 
 | Size | Use for                                                  |
 | ---- | -------------------------------------------------------- |
@@ -76,14 +75,6 @@ A spinner shows work of unknown length in a small area, such as a preview on its
 ```
 
 ```tsx dont=CoverContent caption="Content hidden behind a spinner while it updates."
-
-```
-
-```tsx do=OneSpinner caption="One spinner for one piece of work."
-
-```
-
-```tsx dont=SpinnerPerRow caption="A spinner on every row of one update."
 
 ```
 

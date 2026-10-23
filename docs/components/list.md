@@ -35,13 +35,6 @@ avoidWhen:
     use: Radio
   - text: Content about one subject that stands on its own.
     use: Card
-related:
-  - card
-  - table
-  - drawer
-  - surface
-  - radio
-  - spacing
 components:
   - List
 ---
@@ -111,14 +104,6 @@ A checkbox in `start` chooses rows for an action on several at once.
 ```
 
 ### Content
-
-```tsx do=SameActions caption="The same kind of action at the end of every row."
-
-```
-
-```tsx dont=MixedActions caption="A different action on each row: people can't scan them."
-
-```
 
 - Keep the description to one fact that tells items apart, such as who changed it and when.
 - Name a repeated action after its row, such as More actions for Roadmap.

@@ -24,17 +24,8 @@ avoidWhen:
     use: TextField
   - text: Switching between views of the same content.
     use: Tabs
-  - text: A hierarchy people expand level by level, such as folders.
-    use: Tree
   - text: Details beside a control that close when people move on.
     use: Popover
-related:
-  - accordion
-  - tree
-  - tabs
-  - popover
-  - text-field
-  - typography
 components:
   - Disclosure
 ---
@@ -76,16 +67,6 @@ Disclosures that share a `name` open one at a time, where the browser supports i
 ```
 
 - Don't nest disclosures.
-
-### Content
-
-```tsx do=SayWhatItHolds caption="A summary that says what the details hold."
-
-```
-
-```tsx dont=VagueSummary caption="More or Show details: people open it to find out."
-
-```
 
 ## Anatomy
 

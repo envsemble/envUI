@@ -228,6 +228,8 @@ test("the Colors page's forced interaction states paint what the components' own
 test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
   page,
 }) => {
+  // Wide enough for the overview's three figures to share a row.
+  await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto(`${catalogueUrl}/components/button`);
   // One page of sections, with no views; the props are on its page in the Docs, which API opens.
   await expect(page.locator('.docs-page-header').getByRole('tab')).toHaveCount(0);
@@ -246,7 +248,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
   ]);
   await expect(page.locator('.docs-figures .env-message')).toHaveCount(0);
   // Figures that share a row are cells of one size: equal widths, and stages as tall as the
-  // tallest.
+  // tallest, once their examples have loaded.
+  await expect(page.locator('[data-section="overview"] .docs-loading')).toHaveCount(0);
   const cells = () =>
     page
       .locator('[data-section="overview"] .docs-figure-run')
@@ -277,10 +280,11 @@ test('a component page shows plain sections, equal cells and the parts of its an
     };
   });
   expect(corners).toEqual({ outer: true, inner: true, larger: true });
-  // When to use: a plain list, then a tile for each alternative, of one size, each a picture of
-  // it, inert and fitted to its stage, once the section nears the viewport.
-  const tiles = page.locator('[data-section="usage"] .docs-when-tile');
-  await expect(tiles.locator('.docs-when-name')).toHaveText([
+  // When to use is a plain list; Related, at the end, has a tile for each alternative, of one
+  // size, each a picture of it, inert and fitted to its stage, once the section nears the viewport.
+  await expect(page.locator('[data-section="usage"] .docs-related-tile')).toHaveCount(0);
+  const tiles = page.locator('[data-section="related"] .docs-related-tile');
+  await expect(tiles.locator('.docs-related-name')).toHaveText([
     'Link',
     'SegmentedControl',
     'Switch',
@@ -289,17 +293,23 @@ test('a component page shows plain sections, equal cells and the parts of its an
   ]);
   await tiles.first().scrollIntoViewIfNeeded();
   const tileStages = () =>
-    tiles.locator('.docs-when-stage').evaluateAll((stages) => ({
+    tiles.locator('.docs-related-stage').evaluateAll((stages) => ({
       widths: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().width))).size,
       heights: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().height)))
         .size,
-      fitted: stages.filter((stage) => stage.querySelector('.docs-when-canvas[data-fitted][inert]'))
-        .length,
+      fitted: stages.filter((stage) =>
+        stage.querySelector('.docs-related-canvas[data-fitted][inert]'),
+      ).length,
     }));
   await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });
   // The anatomy numbers each part of the live button beside the part it names, in the theme the
   // reader has chosen alone, and keeps them there as the page narrows and the theme changes.
-  const stages = page.locator('.docs-anatomy-stage');
+  // The variants figure names each variant with a callout on the start side of its item.
+  const variantNames = page.locator('.docs-variants .docs-variant-label');
+  await variantNames.first().scrollIntoViewIfNeeded();
+  await expect(variantNames).toHaveText(['Primary', 'Secondary', 'Outline', 'Ghost', 'Text']);
+  await expect(variantNames.first()).toHaveAttribute('data-side', 'left');
+  const stages = page.locator('.docs-anatomy .docs-anatomy-stage');
   await expect(stages).toHaveCount(1);
   const placement = () =>
     stages.evaluate((stage) => {
@@ -366,10 +376,11 @@ test('every dotted stage is the only frame of its figure', async ({ page }) => {
   for (const { id } of pages) {
     await goTo(page, `/components/${id}`);
     await expect(page.locator('.docs-figures .docs-figure-section').first()).toBeVisible();
-    await expect(page.getByText(/^Loading (specimen|example)/)).toHaveCount(0);
+    await expect(page.locator('.docs-loading')).toHaveCount(0);
     const framed = await page.evaluate(() => {
       const stages = document.querySelectorAll(
-        '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-when-stage, .docs-specimen-grid, .docs-matrix-scroll)',
+        // A figure without a stage (stage="none") has no frame to count.
+        ".docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll):not([data-stage='none'], [data-stage='none'] *)",
       );
       const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
       const found: string[] = [];
@@ -660,7 +671,7 @@ async function openFailingButtonPage(page: Page) {
   });
   await page.goto(`${siteUrl}/`);
   await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
-  await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
+  await expect(page.locator('.docs-loading')).toHaveCount(0);
   state = 'failing';
   await goTo(page, '/components/button');
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
@@ -760,8 +771,8 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(hero.getByRole('button')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   // The other examples and the example's code render.
-  const variants = page.getByRole('group', { name: 'Variants example', exact: true });
-  await expect(variants.getByRole('button').first()).toBeVisible();
+  const toolbar = page.getByRole('group', { name: 'Quiet toolbar example', exact: true });
+  await expect(toolbar.getByRole('button').first()).toBeVisible();
   await page
     .locator('.docs-live-example-entry')
     .first()
@@ -994,7 +1005,7 @@ test('figures with open overlays keep them in their stages, inert, and leave the
     await goTo(page, `/components/${id}`);
     const rooms = page.locator('.docs-open-example');
     await expect(rooms.first()).toBeVisible();
-    await expect(page.getByText(/^Loading example/)).toHaveCount(0);
+    await expect(page.locator('.docs-loading')).toHaveCount(0);
     // Every open figure shows an overlay, inside its stage, and is a picture: inert.
     await expect
       .poll(

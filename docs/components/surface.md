@@ -28,16 +28,6 @@ avoidWhen:
     use: List
   - text: Space between children without a background.
     use: Column
-  - text: Content over the page that people dismiss, such as a form in a window.
-    use: Dialog
-  - text: A floating panel that opens from a button.
-    use: Popover
-related:
-  - column
-  - card
-  - list
-  - spacing
-  - colors
 components:
   - Surface
   - placeholders
@@ -103,14 +93,6 @@ Without `padding`, the inset grows from 1.25 rem in narrow windows to 1.5 rem fr
 ```
 
 ```tsx dont=NestedSurfaces caption="A surface in a surface in a surface: the fills stack up."
-
-```
-
-```tsx do=NamedRegions caption="A heading that names each region."
-
-```
-
-```tsx dont=FillsOnly caption="Regions told apart by their fills alone, which are close in contrast."
 
 ```
 

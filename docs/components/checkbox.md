@@ -27,15 +27,8 @@ avoidWhen:
     use: Select
   - text: Several choices from a long list, found by typing.
     use: Combobox
-  - text: Choosing rows of a table.
+  - text: Selecting rows of a table, which its selection column does.
     use: Table
-related:
-  - switch
-  - radio
-  - select
-  - combobox
-  - table
-  - accessibility
 components:
   - Checkbox
 ---
@@ -82,27 +75,11 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 
 ```
 
-```tsx do=DisabledWithReason caption="Say why a choice is unavailable, next to it."
-
-```
-
-```tsx dont=DisabledWithoutReason caption="A disabled checkbox that doesn’t say why."
-
-```
-
 - Derive a parent's state from its children; the checkbox doesn't.
 
 ### Labels
 
 Write the label as the choice it turns on, in sentence case, so checking it means yes.
-
-```tsx do=PositiveLabel caption="A label that checking means yes to."
-
-```
-
-```tsx dont=NegativeLabel caption="A negative label: checking it means no."
-
-```
 
 ## Anatomy
 

@@ -24,18 +24,12 @@ avoidWhen:
     use: Toast
   - text: A region without content yet, such as an empty list or no search results.
     see: empty-states
-  - text: An error about one field of a form.
+  - text: An error about one field, shown on the field with its `error`.
     use: TextField
   - text: A status beside a label, such as Draft or Blocked.
     use: Badge
   - text: A decision people must make before going on.
     use: Dialog
-related:
-  - toast
-  - empty-states
-  - badge
-  - dialog
-  - colors
 components:
   - Alert
 ---
@@ -60,9 +54,14 @@ An alert is a message about a page or a section that stays above the content it 
 
 ## Variants
 
-```tsx example=Tones
+```tsx variants=Tones
 
 ```
+
+1. **Info**
+2. **Success**
+3. **Warning**
+4. **Danger**
 
 | Tone      | Use for                                                               |
 | --------- | --------------------------------------------------------------------- |
@@ -91,16 +90,6 @@ An alert is a message about a page or a section that stays above the content it 
 
 - Remove an alert once it no longer applies.
 - Offer `onDismiss` only where the message can safely be hidden.
-
-### Content
-
-```tsx do=ProblemInTitle caption="The problem in the title, the next step in the action."
-
-```
-
-```tsx dont=GenericTitle caption="A title that only names the tone, and a vague action."
-
-```
 
 ## Anatomy
 

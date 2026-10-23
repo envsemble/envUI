@@ -26,12 +26,6 @@ avoidWhen:
     use: PanelDock
   - text: Side content that sits beside the main content in a wide window, such as details.
     use: Panes
-related:
-  - panes
-  - dialog
-  - popover
-  - button
-  - panel-dock
 components:
   - Sheet
 ---
@@ -76,14 +70,6 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 `side` is logical: `end` is the right edge in left-to-right text. A `md` side sheet takes the whole width of a compact window, and a `lg` one of a compact or medium window; a bottom sheet is as wide as the window up to 40 rem.
 
 ## When to use
-
-```tsx do=ResultAsAction open caption="A primary action named after its result."
-
-```
-
-```tsx dont=VagueAction open caption="Apply: people can't tell what they will see."
-
-```
 
 - Name the sheet after what it holds, such as Filters or Alex Morgan, with a `title` or an `aria-label`.
 - Keep the close button unless another control in the sheet closes it.

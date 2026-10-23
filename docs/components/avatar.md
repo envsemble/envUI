@@ -23,18 +23,10 @@ useWhen:
   - The signed-in account opens its menu from a picture in the application's chrome (AvatarButton).
   - Who is involved matters more than each name where space is short, such as a project's members in a row (AvatarGroup).
 avoidWhen:
-  - text: A status or a count beside a label.
-    use: Badge
   - text: An icon for a thing or an action, not a person.
     use: Icon
   - text: Every name of a list of people that should be read.
     use: List
-related:
-  - menu
-  - list
-  - tooltip
-  - scaffold
-  - combobox
 components:
   - Avatar
   - AvatarButton
@@ -70,9 +62,14 @@ With `onPersonClick` each avatar in a group is a button; a person with `href` is
 
 ## Variants
 
-```tsx example=Sizes
+```tsx variants=Sizes
 
 ```
+
+1. **sm**
+2. **md**
+3. **lg**
+4. **xl**
 
 | Size | Use for                                               |
 | ---- | ----------------------------------------------------- |
@@ -104,14 +101,6 @@ The name chooses one of eight colors, the same on every page; `hue` sets another
 ```
 
 ```tsx dont=AvatarsAlone caption="Avatars alone: people must hover each one to learn who it is."
-
-```
-
-```tsx do=RoleAsBadge caption="A role in a Badge, beside the name."
-
-```
-
-```tsx dont=RoleAsColor caption="A role in the avatar's color: nobody can read it."
 
 ```
 

@@ -24,12 +24,6 @@ avoidWhen:
     use: Meter
   - text: Showing how far a task has got.
     use: Progress
-related:
-  - text-field
-  - segmented-control
-  - meter
-  - progress
-  - accessibility
 components:
   - Slider
 ---
@@ -83,14 +77,6 @@ A disabled slider keeps its value visible; the description says who sets it.
 ### Labels
 
 Name the value in a short noun, and format it with its unit in `formatValue`; the same text is announced.
-
-```tsx do=FormattedValue caption="The value as people read it, with its unit."
-
-```
-
-```tsx dont=RawValue caption="A raw number that people must interpret."
-
-```
 
 ## Anatomy
 

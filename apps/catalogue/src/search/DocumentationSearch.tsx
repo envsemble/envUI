@@ -12,6 +12,7 @@ import { navigate, routeHref } from '../navigation/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../template/LoadBoundary';
 import type { SearchResult } from './SearchIndex';
 import { commandKey } from './SearchShortcut';
+import { Loading } from '../template/Loading';
 
 /** The search index's module, by its path in the catalogue app, as module-files.json names it. */
 const indexModule = 'src/search/SearchIndex.ts';
@@ -129,7 +130,7 @@ export function DocumentationSearch({
     [results],
   );
   let emptyLabel: ReactNode;
-  if (index.status === 'loading') emptyLabel = 'Loading search…';
+  if (index.status === 'loading') emptyLabel = <Loading what="search" />;
   else if (index.status === 'failed')
     emptyLabel = (
       <Column gap={3} align="center">

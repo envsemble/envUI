@@ -33,13 +33,6 @@ avoidWhen:
     use: SegmentedControl
   - text: Finding and running a command or opening a document by name.
     use: CommandPalette
-related:
-  - select
-  - text-field
-  - avatar
-  - command-palette
-  - menu
-  - accessibility
 components:
   - Combobox
 ---
@@ -86,9 +79,12 @@ With `filter={null}` the list shows the options the application finds for the ty
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Floating**
 
 | Variant    | Use for                                                 |
 | ---------- | ------------------------------------------------------- |
@@ -119,14 +115,6 @@ With `filter={null}` the list shows the options the application finds for the ty
 ### Labels
 
 Name the field after what people choose, and use the placeholder for what to type.
-
-```tsx do=NamedLabel caption="A label that names what people choose."
-
-```
-
-```tsx dont=InstructionLabel caption="An instruction as the label."
-
-```
 
 ## Anatomy
 

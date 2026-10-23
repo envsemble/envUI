@@ -31,11 +31,6 @@ composes:
   - Column
   - Drawer
   - Text
-related:
-  - scaffold
-  - top-bar
-  - menubar
-  - app-frame
 ---
 
 # Window frame

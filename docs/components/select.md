@@ -29,14 +29,6 @@ avoidWhen:
     use: Menu
   - text: A date, or a date and time.
     use: DatePicker
-related:
-  - combobox
-  - radio
-  - segmented-control
-  - menu
-  - text-field
-  - list
-  - accessibility
 components:
   - Select
 ---
@@ -75,9 +67,12 @@ A row's title names its select with `aria-label`.
 
 ## Variants
 
-```tsx example=TriggerStyles
+```tsx variants=TriggerStyles
 
 ```
+
+1. **Secondary**
+2. **Outline**
 
 | Variant     | Use for                                           |
 | ----------- | ------------------------------------------------- |
@@ -116,14 +111,6 @@ A row's title names its select with `aria-label`.
 ### Labels
 
 Name the select with a short noun, and say in a disabled option's label why it is unavailable.
-
-```tsx do=ErrorSaysWhatToDo caption="An error that says what to do."
-
-```
-
-```tsx dont=ErrorSaysWhatFailed caption="An error that only says what failed."
-
-```
 
 ## Anatomy
 

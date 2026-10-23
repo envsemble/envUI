@@ -25,15 +25,8 @@ avoidWhen:
     use: List
   - text: Records that share the same fields and that people compare.
     use: Table
-  - text: Sections of content people show and hide in a page.
-    use: Disclosure
-related:
-  - drawer
-  - list
-  - menu
-  - document-tabs
-  - scaffold
-  - accessibility
+  - text: Sections of a page people show and hide, rather than items of a hierarchy.
+    use: Accordion
 components:
   - Tree
 ---
@@ -83,26 +76,8 @@ The tree is as tall as its parent and renders only the rows in view, so give it 
 
 ## When to use
 
-```tsx do=TellKindsApart caption="Icons that tell folders and documents apart."
-
-```
-
-```tsx dont=OneIconForAll caption="One icon for every row: only the chevrons tell folders apart."
-
-```
-
 - No buttons, links or fields in rows: their actions go in the context menu and a toolbar.
 - Stable ids, such as paths, so focus and selection stay on their rows.
-
-### Labels
-
-```tsx do=NamesWithPathInTitle caption="Short names, with the full path in title."
-
-```
-
-```tsx dont=PathsAsNames caption="Paths as labels: they repeat the folder and lose the name."
-
-```
 
 ## Anatomy
 

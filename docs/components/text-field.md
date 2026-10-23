@@ -44,14 +44,6 @@ avoidWhen:
     use: Composer
   - text: Formatted text, such as headings, lists and links.
     use: MarkdownEditor
-related:
-  - select
-  - combobox
-  - date-picker
-  - composer
-  - markdown
-  - column
-  - accessibility
 components:
   - TextField
   - SearchField
@@ -116,9 +108,14 @@ A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Floating**
+3. **Underline**
+4. **Ghost**
 
 | Variant     | Use for                                                      |
 | ----------- | ------------------------------------------------------------ |
@@ -167,14 +164,6 @@ Name the value in a short noun phrase, and keep lasting instructions in the desc
 ```
 
 ```tsx dont=PlaceholderAsLabel caption="Instructions in the placeholder: they vanish as people type."
-
-```
-
-```tsx do=HelpfulError caption="An error that says how to correct the value."
-
-```
-
-```tsx dont=VagueError caption="An error that only says the value is wrong."
 
 ```
 
