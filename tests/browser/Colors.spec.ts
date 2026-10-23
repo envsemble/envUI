@@ -6,7 +6,10 @@ test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 
-/** The token each control paints at rest; its hover and pressed tokens carry `-hover`, `-pressed`. */
+/**
+ * The token each control with a designed solid or navigation fill paints at rest, and its hover and
+ * pressed tokens, `-hover` and `-pressed`, which a state layer can't match.
+ */
 const sources: Record<string, readonly [rest: string, hover: string, pressed: string]> = {
   'button-primary': [
     '--env-color-bg-brand-emphasis',
@@ -18,47 +21,37 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-important-strong-hover',
     '--env-color-bg-important-strong-pressed',
   ],
-  'button-secondary': [
-    '--env-color-bg-neutral-muted',
-    '--env-color-bg-neutral-muted-hover',
-    '--env-color-bg-neutral-muted-pressed',
-  ],
-  'button-outlined': [
-    '--env-color-bg-raised',
-    '--env-color-bg-raised-hover',
-    '--env-color-bg-raised-pressed',
-  ],
   'button-destructive': [
     '--env-color-bg-danger-strong',
     '--env-color-bg-danger-strong-hover',
     '--env-color-bg-danger-strong-pressed',
-  ],
-  'icon-button': [
-    '--env-color-bg-neutral-muted',
-    '--env-color-bg-neutral-muted-hover',
-    '--env-color-bg-neutral-muted-pressed',
   ],
   navigation: [
     '--env-color-list-item-bg',
     '--env-color-bg-navigation-hover',
     '--env-color-bg-navigation-pressed',
   ],
-  'navigation-selected': [
-    '--env-color-bg-selected',
-    '--env-color-bg-selected-hover',
-    '--env-color-bg-selected-pressed',
-  ],
   'tab-primary': [
     '--env-color-bg-brand-emphasis',
     '--env-color-bg-brand-emphasis-hover',
     '--env-color-bg-brand-emphasis-pressed',
   ],
-  'tab-secondary': [
-    '--env-color-bg-neutral-muted',
-    '--env-color-bg-neutral-muted-hover',
-    '--env-color-bg-neutral-muted-pressed',
-  ],
 };
+
+/**
+ * The token each control with a layered fill paints at rest, and how much stronger than the state
+ * opacity its pressed layer is: hover and press lay its content color over it (Button.css).
+ */
+const layers: Record<string, readonly [rest: string, pressed: number]> = {
+  'button-secondary': ['--env-color-bg-neutral-muted', 1],
+  'button-outlined': ['--env-color-bg-raised', 1.3],
+  'icon-button': ['--env-color-bg-neutral-muted', 1],
+  'navigation-selected': ['--env-color-bg-selected', 0.9],
+  'tab-secondary': ['--env-color-bg-neutral-muted', 1],
+};
+
+/** A fully transparent fill, as a state layer at rest computes it, or the keyword's own value. */
+const transparent = /^(?:rgba\(0, 0, 0, 0\)|color\(srgb [\d.]+ [\d.]+ [\d.]+ \/ 0\))$/;
 
 /** A control of the color fixture by its name: the drawer's items by whether they are current. */
 function colorControl(page: import('@playwright/test').Page, theme: string, name: string) {
@@ -118,7 +111,30 @@ async function tokenColor(control: import('@playwright/test').Locator, token: st
   }, token);
 }
 
-test('action and navigation fills paint their precomputed hover and pressed tokens', async ({
+/**
+ * The computed color of a state layer inside an element: its text color at the state's opacity,
+ * times `factor`, over the token `rest`.
+ */
+async function layerColor(
+  control: import('@playwright/test').Locator,
+  rest: string,
+  state: 'hover' | 'pressed',
+  factor = 1,
+) {
+  return control.evaluate(
+    (element, { rest, state, factor }) => {
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = `color-mix(in srgb, var(${rest}), currentColor calc(var(--env-state-${state}-opacity) * ${factor * 100}%))`;
+      element.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    },
+    { rest, state, factor },
+  );
+}
+
+test('solid and navigation fills paint their designed hover and pressed tokens', async ({
   page,
 }) => {
   for (const theme of ['light', 'dark']) {
@@ -144,6 +160,59 @@ test('action and navigation fills paint their precomputed hover and pressed toke
       await page.mouse.move(0, 0);
     }
   }
+});
+
+test('the other fills lay state layers of their content color over their rest', async ({
+  page,
+}) => {
+  for (const theme of ['light', 'dark']) {
+    for (const [name, [rest, pressed]] of Object.entries(layers)) {
+      const control = colorControl(page, theme, name);
+      // Keyboard focus shows a layer of its own, so the tab is chosen and then left.
+      if (name.startsWith('tab-')) {
+        await control.press('Enter');
+        await control.evaluate((element) => (element as HTMLElement).blur());
+      }
+      // The current destination's layers are lighter, as the designed selected fills are close.
+      const hoverFactor = name === 'navigation-selected' ? 0.75 : 1;
+      await control.hover();
+      const hover = await layerColor(control, rest, 'hover', hoverFactor);
+      expect(hover, `${theme}/${name} hover differs from rest`).not.toBe(
+        await tokenColor(control, rest),
+      );
+      await expect(control, `${theme}/${name} hover`).toHaveCSS('background-color', hover);
+      await page.mouse.down();
+      await expect(control, `${theme}/${name} pressed`).toHaveCSS(
+        'background-color',
+        await layerColor(control, rest, 'pressed', pressed),
+      );
+      await page.mouse.up();
+      await page.mouse.move(0, 0);
+    }
+  }
+});
+
+test('a nested Theme that overrides the semantic tokens recolors its area alone', async ({
+  page,
+}) => {
+  const inside = page.getByTestId('override-inside');
+  const outside = page.getByTestId('override-outside');
+  await expect(inside).toHaveCSS('background-color', 'rgb(23, 111, 53)');
+  await expect(page.getByTestId('override-switch')).toHaveCSS(
+    'background-color',
+    'rgb(23, 111, 53)',
+  );
+  // The area keeps every state: its own hover and pressed tokens apply.
+  await inside.hover();
+  await expect(inside).toHaveCSS('background-color', 'rgb(17, 90, 42)');
+  await page.mouse.down();
+  await expect(inside).toHaveCSS('background-color', 'rgb(11, 69, 32)');
+  await page.mouse.up();
+  await page.mouse.move(0, 0);
+  // Outside the area, the theme's own brand color stays.
+  const brand = await tokenColor(outside, '--env-color-bg-brand-emphasis');
+  expect(brand).not.toBe('rgb(23, 111, 53)');
+  await expect(outside).toHaveCSS('background-color', brand);
 });
 
 test('compositions reuse primitive colors while unrelated roles stay independent', async ({
@@ -229,7 +298,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
       ['--env-color-fg-link', ['link', 'textButton']],
       ['--env-color-bg-brand-emphasis', ['primary', 'tab', 'radio', 'checkbox', 'switch']],
-      ['--env-color-fg-on-emphasis', ['primary', 'tab']],
+      // A checked switch's thumb takes it too, as the switch's color, in which its layers are drawn.
+      ['--env-color-fg-on-emphasis', ['primary', 'tab', 'switch']],
       ['--env-color-bg-selected', ['navigation']],
       // A neutral badge's text is muted, as InfoChip's metadata became a Badge.
       ['--env-color-fg-muted', ['navigationIcon', 'selectHint', 'chip']],
@@ -262,6 +332,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       const tab = boundary.getByRole('tab', { name: label });
       await tab.press('Enter');
       await expect(tab).toHaveAttribute('aria-selected', 'true');
+      // Keyboard focus lays a layer of its own over the fill, so the tab is left first.
+      await tab.evaluate((element) => (element as HTMLElement).blur());
       const before = await tab.evaluate((element) => getComputedStyle(element).backgroundColor);
       const primitive = page.getByTestId(primitiveId);
       expect(before).toBe(
@@ -292,7 +364,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     const railLightness = await lightness(rail, undefined, { layered: true });
     for (const id of ['tab-primary', 'tab-secondary']) {
       const inactive = page.getByTestId(`${theme}-${id}`);
-      await expect(inactive).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(inactive).toHaveCSS('background-color', transparent);
       await inactive.hover();
       // Hover is a translucent state layer over the rail, clearly visible in both themes.
       const shift =
@@ -307,7 +379,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     const disabled = page.getByTestId(`${theme}-tab-disabled`);
     await disabled.hover();
     await expect(disabled).toBeDisabled();
-    await expect(disabled).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(disabled).toHaveCSS('background-color', transparent);
     await expect(selected).toHaveAttribute('aria-selected', 'true');
   }
 });

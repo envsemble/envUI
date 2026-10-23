@@ -5,7 +5,7 @@ import './Fixture.css';
 import { FormsFixture } from './Forms.js';
 import { DialogFixture } from './Dialog.js';
 import { ToastTriggers, StrictToastFixture } from './Toasts.js';
-import { ColorControls } from './Colors.js';
+import { ColorControls, ColorOverrides } from './Colors.js';
 import { NavigationFixture } from './Navigation.js';
 import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
@@ -174,6 +174,7 @@ export default function App() {
             <>
               <ColorControls theme="light" />
               <ColorControls theme="dark" />
+              <ColorOverrides />
             </>
           )}
           {includes('navigation') && (

@@ -747,6 +747,96 @@ export const pairs: readonly ContrastPair[] = merged([
     },
   ),
 
+  // State layers: hover and press lay the content color over the container at the state's opacity
+  // (Button.css), where they take the place of a designed state token. Each is measured as the
+  // layer over its rest: the text on it, and the state against its rest.
+  ...text(
+    '--env-color-fg-default',
+    [
+      ['layer-hover-default', row],
+      ['layer-pressed-default', row],
+      ['layer-hover-default', popup],
+      ['layer-pressed-default', popup],
+      ['layer-hover-default', muted],
+      ['layer-pressed-default', muted],
+    ],
+    'List rows, menu items, interactive cards and a vertical radio group’s rows, hovered and pressed',
+  ),
+  ...text(
+    '--env-color-fg-muted',
+    [
+      ['layer-hover-default', row],
+      ['layer-hover-default', popup],
+    ],
+    'Row details and menu item descriptions, hovered',
+  ),
+  ...text(
+    '--env-color-fg-control',
+    [
+      ['layer-hover-control', fill, page],
+      ['layer-hover-control', fill, surface],
+      ['layer-hover-control', fill, muted],
+      ['layer-hover-control', fill, raised],
+      ['layer-pressed-control', fill, page],
+      ['layer-pressed-control', fill, surface],
+      ['layer-pressed-control', fill, muted],
+      ['layer-pressed-control', fill, raised],
+    ],
+    'Secondary buttons, icon buttons and Select triggers, hovered and pressed',
+  ),
+  ...text(
+    '--env-color-fg-accent',
+    [
+      ['layer-hover-accent', raised],
+      ['layer-pressed-outline', raised],
+    ],
+    'Outline buttons, hovered and pressed',
+  ),
+  ...text(
+    '--env-color-fg-on-selected',
+    [
+      ['layer-hover-selected', selected],
+      ['layer-pressed-selected', selected],
+    ],
+    'The current destination and a pressed toggle, hovered and pressed',
+  ),
+  ...text(
+    '--env-color-fg-default',
+    [
+      ['layer-hover-selected-row', selected],
+      ['layer-pressed-selected-row', selected],
+    ],
+    'A selected list row, hovered and pressed',
+  ),
+  ...different(
+    'layer-hover-default',
+    [row, popup, muted],
+    'A list row, menu item, interactive card or radio row under the pointer, against its rest',
+  ),
+  ...different(
+    'layer-hover-control',
+    [
+      [fill, surface],
+      [fill, page],
+    ],
+    'A secondary button under the pointer, against its rest',
+  ),
+  ...different(
+    'layer-hover-accent',
+    [raised],
+    'An outline button under the pointer, against its rest',
+  ),
+  ...different(
+    'layer-hover-selected',
+    [selected],
+    'The current destination under the pointer, against its rest',
+  ),
+  ...different(
+    'layer-hover-selected-row',
+    [selected],
+    'A selected list row under the pointer, against its rest',
+  ),
+
   // Focus rings, against what they are drawn on.
   ...focus(
     '--env-color-border-focus',
@@ -1996,8 +2086,13 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
 
 /**
  * Colors a component composes where it paints, because they depend on something no token can
- * name, measured as the browser resolves them. Every other hover, pressed and translucent color is
- * a token of its own; add a token rather than an entry here.
+ * name, measured as the browser resolves them. Every other translucent color is a token of its
+ * own; add a token rather than an entry here.
+ *
+ * - A state layer: the content color at the state's opacity, `--env-state-hover-opacity` or
+ *   `--env-state-pressed-opacity`, times the share a role takes (Button.css), laid over the
+ *   container. Mixing it into the container in sRGB, as the components do, paints the same color as
+ *   laying it over, so each is the layer alone, measured over its rest.
  *
  * - A badge or counter inside a primary or important button is outlined in 55% of the button's label
  *   color, `currentColor`, which only the button knows (Button.css sets Badge.css's hooks).
@@ -2006,6 +2101,26 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  *   lightest step of the default accent tone is measured.
  */
 export const derived: Readonly<Record<string, string>> = {
+  'layer-hover-default':
+    'color-mix(in srgb, transparent, var(--env-color-fg-default) calc(var(--env-state-hover-opacity) * 100%))',
+  'layer-pressed-default':
+    'color-mix(in srgb, transparent, var(--env-color-fg-default) calc(var(--env-state-pressed-opacity) * 100%))',
+  'layer-hover-control':
+    'color-mix(in srgb, transparent, var(--env-color-fg-control) calc(var(--env-state-hover-opacity) * 100%))',
+  'layer-pressed-control':
+    'color-mix(in srgb, transparent, var(--env-color-fg-control) calc(var(--env-state-pressed-opacity) * 100%))',
+  'layer-hover-accent':
+    'color-mix(in srgb, transparent, var(--env-color-fg-accent) calc(var(--env-state-hover-opacity) * 100%))',
+  'layer-pressed-outline':
+    'color-mix(in srgb, transparent, var(--env-color-fg-accent) calc(var(--env-state-pressed-opacity) * 130%))',
+  'layer-hover-selected':
+    'color-mix(in srgb, transparent, var(--env-color-fg-on-selected) calc(var(--env-state-hover-opacity) * 75%))',
+  'layer-pressed-selected':
+    'color-mix(in srgb, transparent, var(--env-color-fg-on-selected) calc(var(--env-state-pressed-opacity) * 90%))',
+  'layer-hover-selected-row':
+    'color-mix(in srgb, transparent, var(--env-color-fg-default) calc(var(--env-state-hover-opacity) * 75%))',
+  'layer-pressed-selected-row':
+    'color-mix(in srgb, transparent, var(--env-color-fg-default) calc(var(--env-state-pressed-opacity) * 75%))',
   'badge-outline-primary': 'color-mix(in srgb, var(--env-color-fg-on-emphasis) 55%, transparent)',
   'badge-outline-important': 'color-mix(in srgb, var(--env-color-fg-on-strong) 55%, transparent)',
   'heatmap-accent-lowest':
