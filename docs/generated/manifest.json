@@ -2951,7 +2951,7 @@
         {
           "name": "MinimalPicker",
           "title": "Minimal picker",
-          "description": "A color picker chooses a color by eye, by its value or from presets. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as setup lists.",
+          "description": "A color picker chooses a color by eye, by its value or from presets. A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as setup lists.",
           "file": "docs/examples/color-picker/MinimalPicker.tsx"
         },
         {
@@ -3041,11 +3041,11 @@
             },
             {
               "class": "env-color-picker-area",
-              "description": "The area of saturation and brightness over the hue."
+              "description": "The square area of saturation and brightness over the hue."
             },
             {
               "class": "env-color-picker-controls",
-              "description": "The row of the eyedropper and the sliders."
+              "description": "The row of the area and the sliders at its side."
             },
             {
               "class": "env-color-picker-copy",
@@ -3101,7 +3101,7 @@
             },
             {
               "class": "env-color-picker-sliders",
-              "description": "The hue and alpha sliders."
+              "description": "The vertical hue and alpha sliders, side by side."
             },
             {
               "class": "env-color-picker-swatch",
@@ -3121,7 +3121,7 @@
             },
             {
               "class": "env-color-picker-values",
-              "description": "The row of the format, the fields and copy."
+              "description": "The format, the eyedropper and copy, with the fields in equal columns under them."
             }
           ],
           "states": [
@@ -18921,7 +18921,7 @@
     "ColorPicker": {
       "kind": "component",
       "import": "@envsemble/envui/color",
-      "description": "A compact color picker on React Aria's color hooks: a saturation and brightness area, a hue slider, an alpha slider with `alpha`, a format select, fields for the chosen format, a copy button, the browser's eyedropper where it has one, and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
+      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
         {
           "name": "showLabel",

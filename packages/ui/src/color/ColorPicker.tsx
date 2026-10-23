@@ -118,9 +118,10 @@ export interface ColorPickerProps
 }
 
 /**
- * A compact color picker on React Aria's color hooks: a saturation and brightness area, a hue
- * slider, an alpha slider with `alpha`, a format select, fields for the chosen format, a copy
- * button, the browser's eyedropper where it has one, and preset swatches. Every part works with
+ * A compact color picker on React Aria's color hooks: a square saturation and brightness area with
+ * a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select,
+ * the browser's eyedropper where it has one, a copy button, and fields for the chosen format; and
+ * preset swatches. Every part works with
  * the keyboard; the channels and the area are named in the EnvUIProvider's language.
  */
 export function ColorPicker({
@@ -199,29 +200,8 @@ export function ColorPicker({
             {label}
           </span>
         )}
-        <ColorArea value={color} onChange={change} disabled={inactive} label={label} />
         <div className="env-color-picker-controls">
-          {eyeDropper && pick && !inactive && (
-            <Tooltip content={messages.eyeDropper}>
-              <IconButton
-                variant="ghost"
-                size="sm"
-                icon={<Colorize />}
-                aria-label={messages.eyeDropper}
-                className="env-color-picker-eye-dropper"
-                onClick={async () => {
-                  const picked = await pick();
-                  if (picked)
-                    change(
-                      toColor(picked, true).withChannelValue(
-                        'alpha',
-                        color.getChannelValue('alpha'),
-                      ),
-                    );
-                }}
-              />
-            </Tooltip>
-          )}
+          <ColorArea value={color} onChange={change} disabled={inactive} label={label} />
           <div className="env-color-picker-sliders">
             <ColorSlider channel="hue" value={color} onChange={change} disabled={inactive} />
             {alpha && (
@@ -282,6 +262,27 @@ export function ColorPicker({
             disabled={disabled}
             readOnly={readOnly}
           />
+          {eyeDropper && pick && !inactive && (
+            <Tooltip content={messages.eyeDropper}>
+              <IconButton
+                variant="ghost"
+                size="sm"
+                icon={<Colorize />}
+                aria-label={messages.eyeDropper}
+                className="env-color-picker-eye-dropper"
+                onClick={async () => {
+                  const picked = await pick();
+                  if (picked)
+                    change(
+                      toColor(picked, true).withChannelValue(
+                        'alpha',
+                        color.getChannelValue('alpha'),
+                      ),
+                    );
+                }}
+              />
+            </Tooltip>
+          )}
           {copy && (
             <div className="env-color-picker-copy">
               <CopyButton

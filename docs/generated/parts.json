@@ -1063,11 +1063,11 @@
         },
         {
           "class": "env-color-picker-area",
-          "description": "The area of saturation and brightness over the hue."
+          "description": "The square area of saturation and brightness over the hue."
         },
         {
           "class": "env-color-picker-controls",
-          "description": "The row of the eyedropper and the sliders."
+          "description": "The row of the area and the sliders at its side."
         },
         {
           "class": "env-color-picker-copy",
@@ -1123,7 +1123,7 @@
         },
         {
           "class": "env-color-picker-sliders",
-          "description": "The hue and alpha sliders."
+          "description": "The vertical hue and alpha sliders, side by side."
         },
         {
           "class": "env-color-picker-swatch",
@@ -1143,7 +1143,7 @@
         },
         {
           "class": "env-color-picker-values",
-          "description": "The row of the format, the fields and copy."
+          "description": "The format, the eyedropper and copy, with the fields in equal columns under them."
         }
       ],
       "states": [

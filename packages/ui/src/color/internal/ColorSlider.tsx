@@ -20,8 +20,9 @@ export interface ColorSliderProps {
 }
 
 /**
- * One channel of a color on a track that shows it, on React Aria's useColorSlider: a thumb over a
- * visually hidden range input named after the channel, such as Hue or Alpha.
+ * One channel of a color on a vertical track that shows it, on React Aria's useColorSlider: a thumb
+ * over a visually hidden range input named after the channel, such as Hue or Alpha. The top is the
+ * channel's maximum; Up and Right raise it, Down and Left lower it.
  */
 export function ColorSlider({ channel, value, onChange, onChangeEnd, disabled }: ColorSliderProps) {
   const { locale } = useLocale();
@@ -35,9 +36,17 @@ export function ColorSlider({ channel, value, onChange, onChangeEnd, disabled }:
     onChangeEnd,
     isDisabled: disabled,
     locale,
+    orientation: 'vertical',
   });
   const { trackProps, thumbProps, inputProps } = useColorSlider(
-    { channel, colorSpace: 'hsb', trackRef, inputRef, isDisabled: disabled },
+    {
+      channel,
+      colorSpace: 'hsb',
+      orientation: 'vertical',
+      trackRef,
+      inputRef,
+      isDisabled: disabled,
+    },
     state,
   );
   return (

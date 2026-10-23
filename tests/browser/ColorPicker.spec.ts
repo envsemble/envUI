@@ -21,34 +21,80 @@ async function eyeDropper(page: Page, picked: string | null) {
 const picker = (page: Page, name: string) =>
   page.getByTestId('color-picker').getByRole('group', { name, exact: true });
 
-test('the area and the hue slider move the color with the keyboard', async ({ page }) => {
-  await page.goto(fixture);
-  const controlled = picker(page, 'Controlled color');
-  const area = controlled.getByRole('slider', { name: 'Controlled color, Color picker' });
-  const hex = controlled.getByRole('textbox', { name: 'Hex' });
-  const last = page.getByTestId('color-last');
-  await area.focus();
-  await page.keyboard.press('ArrowLeft');
-  await expect(last).not.toHaveText('');
-  const lessSaturated = await last.textContent();
-  await expect(hex).toHaveValue(lessSaturated!.toUpperCase());
-  // Up moves the brightness, the area's other channel.
-  await page.keyboard.press('ArrowUp');
-  await expect(last).not.toHaveText(lessSaturated!);
-  // The thumb shows its focus ring while the keyboard moves it.
-  const thumb = controlled.locator('.env-color-picker-area .env-color-picker-thumb');
-  expect(await thumb.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('solid');
-  const hue = controlled.getByRole('slider', { name: 'Hue' });
-  const before = Number(await hue.inputValue());
-  await hue.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(hue).toHaveValue(String(before + 1));
-  await page.keyboard.press('Home');
-  await expect(hue).toHaveValue('0');
-  await expect(hue).toHaveAttribute('aria-valuetext', /^0°/);
-  await expect(hex).toHaveValue(/^#[0-9A-F]{6}$/);
-  await expect(page.getByTestId('color-changes')).toHaveText('4');
-});
+test(
+  'the area and the hue slider move the color with the keyboard',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(fixture);
+    const controlled = picker(page, 'Controlled color');
+    const area = controlled.getByRole('slider', { name: 'Controlled color, Color picker' });
+    const hex = controlled.getByRole('textbox', { name: 'Hex' });
+    const last = page.getByTestId('color-last');
+    await area.focus();
+    await page.keyboard.press('ArrowLeft');
+    await expect(last).not.toHaveText('');
+    const lessSaturated = await last.textContent();
+    await expect(hex).toHaveValue(lessSaturated!.toUpperCase());
+    // Up moves the brightness, the area's other channel.
+    await page.keyboard.press('ArrowUp');
+    await expect(last).not.toHaveText(lessSaturated!);
+    // The thumb shows its focus ring while the keyboard moves it.
+    const thumb = controlled.locator('.env-color-picker-area .env-color-picker-thumb');
+    expect(await thumb.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('solid');
+    // The hue slider is vertical: Up raises it and Down lowers it, as Right and Left do.
+    const hue = controlled.getByRole('slider', { name: 'Hue' });
+    await expect(hue).toHaveAttribute('aria-orientation', 'vertical');
+    const before = Number(await hue.inputValue());
+    await hue.focus();
+    await page.keyboard.press('ArrowUp');
+    await expect(hue).toHaveValue(String(before + 1));
+    await page.keyboard.press('ArrowRight');
+    await expect(hue).toHaveValue(String(before + 2));
+    await page.keyboard.press('ArrowDown');
+    await expect(hue).toHaveValue(String(before + 1));
+    await page.keyboard.press('Home');
+    await expect(hue).toHaveValue('0');
+    await expect(hue).toHaveAttribute('aria-valuetext', /^0°/);
+    await expect(hex).toHaveValue(/^#[0-9A-F]{6}$/);
+    await expect(page.getByTestId('color-changes')).toHaveText('6');
+  },
+);
+
+test(
+  'the area is square, with the strips upright at its side and as tall',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(fixture);
+    const translucent = picker(page, 'Translucent color');
+    const area = await translucent.locator('.env-color-picker-area').boundingBox();
+    expect(Math.abs(area!.width - area!.height)).toBeLessThan(1);
+    const tracks = await translucent.locator('.env-color-picker-track').all();
+    expect(tracks).toHaveLength(2);
+    for (const track of tracks) {
+      const box = await track.boundingBox();
+      expect(box!.x).toBeGreaterThan(area!.x + area!.width);
+      expect(Math.abs(box!.y - area!.y)).toBeLessThan(1);
+      expect(Math.abs(box!.height - area!.height)).toBeLessThan(1);
+    }
+    // Under them, the fields span the area and the strips, and copy ends at the outer strip.
+    const outer = await tracks[1].boundingBox();
+    const [fields, copy] = await Promise.all([
+      translucent.locator('.env-color-picker-fields').boundingBox(),
+      translucent.locator('.env-color-picker-copy').boundingBox(),
+    ]);
+    expect(Math.abs(fields!.x - area!.x)).toBeLessThan(1);
+    expect(Math.abs(fields!.x + fields!.width - (outer!.x + outer!.width))).toBeLessThan(1);
+    expect(Math.abs(copy!.x + copy!.width - (outer!.x + outer!.width))).toBeLessThan(1);
+    // The thumb sits on the strip's centre line, at its value from the bottom.
+    const alpha = translucent.locator('.env-color-picker-alpha');
+    const [track, thumb] = await Promise.all([
+      alpha.locator('.env-color-picker-track').boundingBox(),
+      alpha.locator('.env-color-picker-thumb').boundingBox(),
+    ]);
+    expect(Math.abs(thumb!.x + thumb!.width / 2 - (track!.x + track!.width / 2))).toBeLessThan(1);
+    expect(Math.abs(thumb!.y + thumb!.height / 2 - (track!.y + track!.height / 2))).toBeLessThan(2);
+  },
+);
 
 test('each format types the color in its own fields', async ({ page }) => {
   await page.goto(fixture);
@@ -99,7 +145,10 @@ test('alpha has a slider and a field, and values keep it while translucent', asy
   await alpha.press('Enter');
   await expect(output).toHaveText('rgba(103, 80, 164, 0.25)');
   const slider = translucent.getByRole('slider', { name: 'Alpha' });
+  await expect(slider).toHaveAttribute('aria-orientation', 'vertical');
   await slider.focus();
+  await page.keyboard.press('ArrowDown');
+  await expect(alpha).toHaveValue('24%');
   await page.keyboard.press('End');
   // Fully opaque, the value drops its alpha.
   await expect(output).toHaveText('rgb(103, 80, 164)');
