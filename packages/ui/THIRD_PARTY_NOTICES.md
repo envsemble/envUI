@@ -50,4 +50,4 @@ targets made readable where they load. Shiki and the GitHub themes are licensed 
 
 `licenses/Runtime-Dependencies-LICENSE.txt` includes the locked runtime dependencies'
 copyright and license notices. The build generates this file from installed packages
-and embeds the same notices in the offline documentation artifact.
+and the hosted documentation site serves the same notices.

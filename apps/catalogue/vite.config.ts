@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { viteSingleFile } from 'vite-plugin-singlefile';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { isAbsolute, relative } from 'node:path';
@@ -10,9 +9,8 @@ import {
   generateDocumentation,
   specimensDirectory,
 } from '../../scripts/GenerateDocumentation.mjs';
-// `vite build` makes the offline catalogue, one HTML file with every asset inlined. With
-// `--mode site` it makes the hosted catalogue: separate files with content-hashed names that
-// browsers keep cached.
+// `vite build` makes the static site: separate files with content-hashed names that browsers keep
+// cached, the Site at the root and the Docs under /docs, both from one index.html.
 import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
 import { createDisplayBootstrapScript, displayStorageKeys } from './src/theme/DisplayStorage.ts';
@@ -38,16 +36,10 @@ function sourceRevision() {
   }
 }
 
-export default defineConfig(({ command, mode }) => {
-  const site = mode === 'site';
+export default defineConfig(() => {
   return {
     define: {
       __ENVUI_SOURCE_REVISION__: JSON.stringify(sourceRevision()),
-      // The hosted catalogue, and the development server, keep routes in the address's path, such
-      // as /components/button/props, which the server answers with index.html. The offline
-      // catalogue keeps them in its hash, #/components/button/props: opened from a file, or from
-      // an archived version's folder of the hosted site, no server answers another path with it.
-      __ENVUI_PATH_ROUTES__: JSON.stringify(site || command === 'serve'),
     },
     plugins: [
       // Tells the browser tests which checkout this server serves.
@@ -102,7 +94,6 @@ export default defineConfig(({ command, mode }) => {
         },
       },
       react(),
-      ...(site ? [] : [viteSingleFile()]),
     ],
     publicDir: '../../assets/brand/envUI',
     resolve: {
@@ -112,13 +103,12 @@ export default defineConfig(({ command, mode }) => {
     // The linked catalogue has thousands of modules; serve it as one lazy dependency in dev.
     optimizeDeps: { include: ['@envsemble/envui/icons'] },
     build: {
-      outDir: site ? '../../dist/site' : '../../dist/catalogue',
+      outDir: '../../dist/site',
       emptyOutDir: true,
-      // The hosted catalogue's manifest, which FinalizeSite.mjs turns into module-files.json: the
-      // files a reload fetches again when part of a page failed to load.
-      ...(site && { manifest: true }),
+      // The site's manifest, which FinalizeSite.mjs turns into module-files.json: the files a
+      // reload fetches again when part of a page failed to load.
+      manifest: true,
       target: 'es2022',
-      ...(!site && { assetsInlineLimit: () => true, cssCodeSplit: false }),
       // The token reference reads the authored HSL channels from CSS.
       cssMinify: false,
     },

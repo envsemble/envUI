@@ -1,4 +1,4 @@
-// The hosted catalogue's Worker script. The asset server answers page loads, which get index.html
+// The hosted site's Worker script. The asset server answers page loads, which get index.html
 // when no file matches, and every request for a file outside /assets/. This script runs first for
 // /assets/ (`run_worker_first` in wrangler.jsonc), and also receives the remaining requests: those
 // of scripts, styles or fetch() for another path with no file.
