@@ -139,6 +139,8 @@ export function Select({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  /** Whether the list last opened from the keyboard, where Base UI moves focus into it. */
+  const openedByKeyboard = useRef(false);
   const portal = usePortalContainer();
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? null);
   const selectedValue = value === undefined ? uncontrolledValue : value;
@@ -174,13 +176,22 @@ export function Select({
       defaultOpen={defaultOpen}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
+        // A key, or the click a key gives a button (detail 0), rather than the pointer, which
+        // opens the list on mousedown.
+        const event = details.event;
+        if (next)
+          openedByKeyboard.current =
+            event?.type.startsWith('key') === true ||
+            (event?.type === 'click' && (event as MouseEvent).detail === 0);
       }}
       onOpenChangeComplete={(open) => {
-        // Base UI moves focus to the highlighted option a frame after the list opens. On a busy
-        // page that queued focus is now and then lost, leaving focus on the trigger with the list
-        // open and an option highlighted; once the list has opened, focus goes where Base UI meant.
+        // Base UI moves focus to the highlighted option a frame after the list opens from the
+        // keyboard. On a busy page that queued focus is now and then lost, leaving focus on the
+        // trigger with the list open and an option highlighted; once the list has opened, focus
+        // goes where Base UI meant. A pointer open is left as Base UI leaves it.
         const trigger = triggerRef.current;
-        if (!open || !trigger || trigger.ownerDocument.activeElement !== trigger) return;
+        if (!open || !openedByKeyboard.current) return;
+        if (!trigger || trigger.ownerDocument.activeElement !== trigger) return;
         const options = listRef.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? [];
         const option =
           Array.from(options).find((each) => each.hasAttribute('data-highlighted')) ??
