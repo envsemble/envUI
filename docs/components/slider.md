@@ -106,6 +106,10 @@ Name the value in a short noun, and format it with its unit in `formatValue`; th
 6. **Thumb** (`env-slider-thumb`)
 7. **Description** (`env-field-description`, `description`)
 
+### Colors
+
+`--env-slider-container` and `--env-slider-indicator` set the colors of one Slider, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 A slider fills its container. Where the line is too narrow, the value wraps under the label.

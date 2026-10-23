@@ -90,6 +90,10 @@ Past five destinations, the fifth place is More, which opens the rest in a menu 
 
 Not shown: More, `env-bar-more`.
 
+### Colors
+
+`--env-bar-item-container`, `--env-bar-item-content`, `--env-bar-item-icon`, `--env-bar-item-selected` and `--env-bar-item-selected-content` set the colors of one Bar, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 The destinations share the bar's width equally, and labels stay on one line.

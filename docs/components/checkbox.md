@@ -115,6 +115,10 @@ Write the label as the choice it turns on, in sentence case, so checking it mean
 3. **Check** (`env-checkbox-indicator`)
 4. **Label** (`env-checkbox-label`, `label`)
 
+### Colors
+
+`--env-checkbox-outline`, `--env-checkbox-selected` and `--env-checkbox-icon` set the colors of one Checkbox, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 The label wraps onto more lines, and the box stays centred beside it.

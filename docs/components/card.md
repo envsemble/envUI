@@ -134,6 +134,10 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 6. **Content** (`env-card-body > env-text:last-child`, `children`)
 7. **Actions** (`env-card-footer`, `actions`)
 
+### Colors
+
+`--env-card-container`, `--env-card-content` and `--env-card-outline` set the colors of one Card, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 A card fills its container.

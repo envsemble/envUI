@@ -88,6 +88,14 @@ A pane that is a skeleton until its project arrives; its Text, given no text, is
 
 Without `padding`, the inset grows from 1.25 rem in narrow windows to 1.5 rem from 50 rem wide.
 
+### Colors
+
+`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the colors of one surface, through `style` or CSS; a surface inside keeps its own. To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own. [Customize colors](../customizing-colors.md) describes both.
+
+```tsx example=RecolorArea caption="A nested Theme gives an area the brand's green; its button and switch keep every state."
+
+```
+
 ## When to use
 
 ```tsx do=BlockOnPane caption="One block on a pane, set apart by its fill and corners."

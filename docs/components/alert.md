@@ -115,6 +115,10 @@ An alert is a message about a page or a section that stays above the content it 
 5. **Action** (`env-alert-action`, `action`)
 6. **Dismiss button** (`env-alert-dismiss`, `onDismiss`)
 
+### Colors
+
+`--env-alert-container`, `--env-alert-content`, `--env-alert-outline` and `--env-alert-icon` set the colors of one Alert, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Accessibility
 
 ### Keyboard

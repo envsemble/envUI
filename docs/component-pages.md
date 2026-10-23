@@ -65,20 +65,21 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 - **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section.
 - **Short over complete.** Leave out what the generated props reference holds, such as each prop's values and defaults, and what the code does for itself, such as an exact delay or padding, unless a reader chooses it.
 
-| Information                                   | Its one place                                                                                           |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| What it is                                    | One sentence at the start of Overview.                                                                  |
-| What it looks like                            | Figures, with no sentence describing them.                                                              |
-| When to use it, and what to use instead       | The frontmatter's `useWhen` and `avoidWhen`, which When to use shows first.                             |
-| A judgment, such as one primary button        | A do and don't pair whose captions are the rule. A pair never pictures a `useWhen` or `avoidWhen` item. |
-| Rules no picture shows                        | A short list after the pairs, two or three items at most.                                               |
-| Variants, tones and sizes                     | One table of the values and what each is for.                                                           |
-| What it does on its own, such as pending      | A `###` subsection of Overview, a sentence beside its figure.                                           |
-| Its parts and their class names               | The anatomy legend, names only.                                                                         |
-| How it adapts to width                        | A sentence and an example at several widths.                                                            |
-| Keys, roles and what the application must add | Accessibility.                                                                                          |
-| Props                                         | The generated Props view; never in prose.                                                               |
-| Releases                                      | Changelog.                                                                                              |
+| Information                                   | Its one place                                                                                                |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| What it is                                    | One sentence at the start of Overview.                                                                       |
+| What it looks like                            | Figures, with no sentence describing them.                                                                   |
+| When to use it, and what to use instead       | The frontmatter's `useWhen` and `avoidWhen`, which When to use shows first.                                  |
+| A judgment, such as one primary button        | A do and don't pair whose captions are the rule. A pair never pictures a `useWhen` or `avoidWhen` item.      |
+| Rules no picture shows                        | A short list after the pairs, two or three items at most.                                                    |
+| Variants, tones and sizes                     | One table of the values and what each is for.                                                                |
+| What it does on its own, such as pending      | A `###` subsection of Overview, a sentence beside its figure.                                                |
+| Its parts and their class names               | The anatomy legend, names only.                                                                              |
+| Its color properties                          | A `### Colors` subsection of Anatomy: their names, with a link to [Customize colors](customizing-colors.md). |
+| How it adapts to width                        | A sentence and an example at several widths.                                                                 |
+| Keys, roles and what the application must add | Accessibility.                                                                                               |
+| Props                                         | The generated Props view; never in prose.                                                                    |
+| Releases                                      | Changelog.                                                                                                   |
 
 Choose the form that teaches each point best rather than a column of paragraphs: a live example for how it looks and behaves, a do and don't pair for a judgment, an anatomy figure for parts, an example at several widths for how it adapts, a table for values, a short list for rules. The catalogue lays out some patterns for you:
 

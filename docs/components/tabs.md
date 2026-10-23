@@ -118,6 +118,10 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 3. **Tab** (`env-tabs-tab`, `button`)
 4. **Panel** (`env-tabs-panel`, `content`)
 
+### Colors
+
+`--env-tabs-container` and `--env-tabs-content` set the colors of one Tabs, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 Tabs keep their size: a rail with more tabs than fit scrolls sideways.

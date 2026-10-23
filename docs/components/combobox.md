@@ -152,6 +152,10 @@ Name the field after what people choose, and use the placeholder for what to typ
 3. **Leading content** (`env-combobox-item env-avatar`, `start`)
 4. **Check** (`env-combobox-item-indicator`)
 
+### Colors
+
+`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 A field fills its container, and chips wrap onto more rows.

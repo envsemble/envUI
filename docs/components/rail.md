@@ -86,6 +86,10 @@ A destination's `group` shows no heading in the rail: grouped destinations follo
 6. **Label** (`env-rail-label`)
 7. **Footer** (`env-rail-footer`, `footer`)
 
+### Colors
+
+`--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content` set the colors of one Rail, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Accessibility
 
 ### Keyboard

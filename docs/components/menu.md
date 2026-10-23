@@ -167,6 +167,10 @@ With `href`, an item is a link, through the `LinkProvider`.
 
 Not shown: a submenu's row, `env-menu-submenu-trigger`, and the check of a choice, `env-menu-item-check`.
 
+### Colors
+
+`--env-menu-item-container`, `--env-menu-item-content` and `--env-menu-item-icon` set the colors of one Menu, through `style` or CSS. Hover, focus and press are state layers of the content color over the container. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Accessibility
 
 ### Keyboard

@@ -8,6 +8,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Migrate an interface to envUI](migration.md) — Replace existing UI while preserving application behavior.
 
+- [Customize colors](customizing-colors.md) — Give one element its own colors through its color properties, or recolor an area with a nested Theme.
+
 - [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
 
 - [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
