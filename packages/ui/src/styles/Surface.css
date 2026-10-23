@@ -62,7 +62,7 @@
 }
 
 /* In a skeleton, a surface carries the skeleton's highlight over its fill (Skeleton.css). */
-.env-surface:is([data-env-skeleton] *) {
+[data-env-skeleton] .env-surface {
   background-image: var(--env-skeleton-glow);
   background-attachment: fixed;
 }
