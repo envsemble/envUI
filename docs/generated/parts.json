@@ -1029,7 +1029,7 @@
         },
         {
           "class": "env-color-picker-values",
-          "description": "The row of the eyedropper, the format, the fields and copy."
+          "description": "The format, the eyedropper and copy, with the fields in equal columns under them."
         }
       ],
       "states": [

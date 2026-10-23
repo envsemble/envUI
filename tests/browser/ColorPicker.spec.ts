@@ -76,6 +76,15 @@ test(
       expect(Math.abs(box!.y - area!.y)).toBeLessThan(1);
       expect(Math.abs(box!.height - area!.height)).toBeLessThan(1);
     }
+    // Under them, the fields span the area and the strips, and copy ends at the outer strip.
+    const outer = await tracks[1].boundingBox();
+    const [fields, copy] = await Promise.all([
+      translucent.locator('.env-color-picker-fields').boundingBox(),
+      translucent.locator('.env-color-picker-copy').boundingBox(),
+    ]);
+    expect(Math.abs(fields!.x - area!.x)).toBeLessThan(1);
+    expect(Math.abs(fields!.x + fields!.width - (outer!.x + outer!.width))).toBeLessThan(1);
+    expect(Math.abs(copy!.x + copy!.width - (outer!.x + outer!.width))).toBeLessThan(1);
     // The thumb sits on the strip's centre line, at its value from the bottom.
     const alpha = translucent.locator('.env-color-picker-alpha');
     const [track, thumb] = await Promise.all([

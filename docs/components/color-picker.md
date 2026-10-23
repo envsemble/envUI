@@ -46,7 +46,7 @@ components:
 
 ## Overview
 
-A color picker chooses a color by eye, by its value or from presets. A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the eyedropper, the format menu, the fields and copy. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as [setup](../setup.md#public-entry-points) lists.
+A color picker chooses a color by eye, by its value or from presets. A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as [setup](../setup.md#public-entry-points) lists.
 
 ```tsx example=MinimalPicker
 
@@ -134,9 +134,9 @@ ColorSwatch shows a color as a small sample, with its value in a `format` and an
 4. **Thumb** (`env-color-picker-area > env-color-picker-thumb`)
 5. **Hue slider** (`env-color-picker-slider[data-channel='hue']`)
 6. **Alpha slider** (`env-color-picker-slider[data-channel='alpha']`)
-7. **Eyedropper** (`env-color-picker-eye-dropper`)
-8. **Format** (`env-color-picker-format`)
-9. **Fields** (`env-color-picker-fields`)
+7. **Format** (`env-color-picker-format`)
+8. **Fields** (`env-color-picker-fields`)
+9. **Eyedropper** (`env-color-picker-eye-dropper`)
 10. **Copy** (`env-color-picker-copy`)
 11. **Swatches** (`env-color-picker-swatches`, `swatches`)
 
@@ -144,7 +144,7 @@ Not shown: the description and error, `env-color-picker-description` and `env-co
 
 ## Adapting to width
 
-The picker fills its container; its area grows with it up to 15 rem square, so that a wide picker stays compact. The strips stay upright at the area's side at every width, and a narrow picker's area shrinks. Where the fields no longer fit beside the eyedropper and the format menu, they take a row of their own.
+The picker fills its container up to 18 rem, so that a wide picker stays compact, and everything under the area and the strips takes their width. The strips stay upright at the area's side at every width, and a narrow picker's area shrinks. The format menu, the eyedropper and copy share a row, and the fields take the row under it, in equal columns that keep each channel's letter in its place in every format.
 
 ```tsx example=FillWidth widths="15 22"
 
@@ -156,7 +156,7 @@ The picker fills its container; its area grows with it up to 15 rem square, so t
 
 | Key                                             | Action                                                                                |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves through the area, the sliders, the eyedropper, the format, the fields and copy. |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves through the area, the sliders, the format, the fields, the eyedropper and copy. |
 | <kbd>←</kbd>, <kbd>→</kbd> in the color area    | Changes the saturation; <kbd>Shift</kbd> or <kbd>Page Up</kbd> by more.               |
 | <kbd>↑</kbd>, <kbd>↓</kbd> in the color area    | Changes the brightness; <kbd>Shift</kbd> or <kbd>Page Up</kbd> by more.               |
 | <kbd>↑</kbd>, <kbd>↓</kbd> in a slider          | Moves the hue or the alpha slider; <kbd>←</kbd>, <kbd>→</kbd> too.                    |

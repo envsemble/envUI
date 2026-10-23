@@ -4,12 +4,11 @@
    the area's and the strips' gradients inline; they are content, as the thumbs' white edge and the
    checkerboard under translucent colors are. */
 .env-color-picker {
-  --env-color-picker-area-max-size: 15rem;
+  --env-color-picker-max-width: 18rem;
   --env-color-picker-thumb-size: 0.75rem;
   --env-color-picker-strip-thumb-size: 0.875rem;
   --env-color-picker-strip-width: 0.625rem;
   --env-color-picker-swatch-size: 1.125rem;
-  --env-color-picker-label-width: 0.75rem;
   --env-color-picker-checker: 0.375rem;
   --env-color-picker-checkerboard: repeating-conic-gradient(
       var(--env-color-bg-neutral-muted) 0 25%,
@@ -30,6 +29,8 @@
   flex-direction: column;
   gap: var(--env-space-2);
   min-inline-size: 0;
+  /* Everything under the area and the strips takes their width, so a wide picker stays compact. */
+  max-inline-size: var(--env-color-picker-max-width);
   color: var(--env-color-fg-default);
   font: var(--env-type-body-small);
 }
@@ -38,11 +39,12 @@
 }
 
 /* The area and the strips have square corners: their colors run edge to edge, as in a design
-   tool. The area is square and takes the width the strips leave, up to 15 rem, so that a wide
-   picker stays compact; the strips stand at its side, as tall as it. */
+   tool. The area is square and takes the width the strips leave; the strips stand at its side, as
+   tall as it, and the outer one ends at the picker's edge. The gap between them is the picker's
+   own, as under them. */
 .env-color-picker-controls {
   display: grid;
-  grid-template-columns: minmax(0, var(--env-color-picker-area-max-size)) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--env-space-2);
 }
 .env-color-picker-area {
@@ -70,16 +72,14 @@
   outline-offset: 1px;
 }
 
-/* The strips side by side, each in a column as wide as its thumb, which reaches half its size past
-   the strip's ends, as the area's thumb does past the area's edges. */
+/* The strips side by side. A thumb reaches half its size past the strip's ends, as the area's
+   thumb does past the area's edges, and a little past its sides. */
 .env-color-picker-sliders {
   display: flex;
   gap: var(--env-space-1);
 }
 .env-color-picker-slider {
   display: flex;
-  justify-content: center;
-  inline-size: var(--env-color-picker-strip-thumb-size);
 }
 .env-color-picker-track {
   position: relative;
@@ -95,102 +95,67 @@
   left: 50%;
 }
 
-/* Narrow, the strips stay at the side, a little closer, and the area shrinks with the width. */
-@container env-color-picker (width < 16rem) {
-  .env-color-picker-controls {
-    gap: var(--env-space-1);
-  }
-}
-
-/* The eyedropper, the format, its fields and copy in one row. Where the row is too narrow for the
-   format's fields, they take a row of their own under the others. The parts space themselves, so
-   the eyedropper's and the format's columns take no room where they don't show. */
+/* Under the area and the strips, at their width: the format at the start, the eyedropper and copy
+   at the end, ending at the outer strip's edge; and the fields on a row of their own, in equal
+   columns, one for each channel and one for alpha, so the letters and numbers keep their places
+   in every format. Hex spans the channels' columns. Without the format, the fields take its
+   place. */
 .env-color-picker-values {
   display: grid;
-  grid-template-areas: 'eye-dropper format fields copy';
-  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-areas: 'format eye-dropper copy' 'fields fields fields';
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
-  row-gap: var(--env-space-1);
+  gap: var(--env-space-1);
+}
+.env-color-picker-values:not(:has(> .env-color-picker-format)) {
+  grid-template-areas: 'fields eye-dropper copy';
 }
 .env-color-picker-eye-dropper {
   grid-area: eye-dropper;
-  margin-inline-end: var(--env-space-1);
 }
 .env-color-picker-format {
   display: flex;
   grid-area: format;
   min-inline-size: 0;
-  margin-inline-end: var(--env-space-1);
+  /* The ghost button's text starts where the fields' letters do; its fill under the pointer
+     reaches a little past the area's edge. */
+  margin-inline-start: calc(var(--env-space-1) - var(--env-space-3));
 }
 .env-color-picker-copy {
   display: flex;
   grid-area: copy;
-  margin-inline-start: var(--env-space-1);
 }
 .env-color-picker-fields {
-  display: flex;
+  display: grid;
   grid-area: fields;
-  gap: var(--env-space-1);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* The fields' own padding parts them, so a narrow picker keeps room for 100%. */
+  gap: 0;
   min-inline-size: 0;
 }
-/* The fields wrap below the width they need beside the format and copy, 2.25 rem more beside the
-   eyedropper: hex below 11 rem, with alpha or in another format below 16, and in another format
-   with alpha below 19.5. */
-@container env-color-picker (width < 11rem) {
-  .env-color-picker-values:has(> .env-color-picker-format) {
-    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
-  }
+.env-color-picker-values[data-alpha] .env-color-picker-fields {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
-@container env-color-picker (width < 13.25rem) {
-  .env-color-picker-values:has(> .env-color-picker-format):has(> .env-color-picker-eye-dropper) {
-    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
-  }
-}
-@container env-color-picker (width < 16rem) {
-  .env-color-picker-values:is([data-alpha], :not([data-format='hex'])):has(
-      > .env-color-picker-format
-    ) {
-    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
-  }
-}
-@container env-color-picker (width < 18.25rem) {
-  .env-color-picker-values:is([data-alpha], :not([data-format='hex'])):has(
-      > .env-color-picker-format
-    ):has(> .env-color-picker-eye-dropper) {
-    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
-  }
-}
-@container env-color-picker (width < 19.5rem) {
-  .env-color-picker-values[data-alpha]:not([data-format='hex']):has(> .env-color-picker-format) {
-    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
-  }
-}
-@container env-color-picker (width < 21.75rem) {
-  .env-color-picker-values[data-alpha]:not([data-format='hex']):has(> .env-color-picker-format):has(
-      > .env-color-picker-eye-dropper
-    ) {
-    grid-template-areas: 'eye-dropper format . copy' 'fields fields fields fields';
-  }
+.env-color-picker-field[data-channel='hex'] {
+  grid-column: span 3;
 }
 /* A quiet field: no outline at rest, a fill under the pointer, and the field's accent edge while
    focused. The channel's letter sits muted before its number. */
 .env-color-picker-field {
   box-sizing: border-box;
   display: flex;
-  flex: 1 1 0;
   align-items: center;
   gap: var(--env-space-1);
   min-inline-size: 0;
   block-size: var(--env-control-height-sm);
-  padding-inline: var(--env-space-1);
+  /* The next column's padding parts a number from the letter after it, so a narrow picker keeps
+     room for 100%. */
+  padding-inline: var(--env-space-1) 0;
   border-radius: var(--env-radius-sm);
   cursor: text;
   transition:
     background-color var(--env-motion-duration-fast) var(--env-motion-ease),
     box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-color-picker-field[data-channel='hex'] {
-  flex-grow: 2.2;
 }
 @media (hover: hover) {
   .env-color-picker-field:hover:not(:has(:disabled)) {
@@ -203,9 +168,9 @@
 }
 .env-color-picker-field-label {
   flex-shrink: 0;
-  inline-size: var(--env-color-picker-label-width);
   color: var(--env-color-fg-muted);
-  text-align: center;
+  /* At its column's start, in line with the format's text above. */
+  text-align: start;
   user-select: none;
 }
 .env-color-picker-input {
@@ -346,6 +311,9 @@
     --env-color-picker-strip-thumb-size: 1.5rem;
     --env-color-picker-strip-width: 1rem;
     --env-color-picker-swatch-size: 1.75rem;
+  }
+  .env-color-picker-sliders {
+    gap: var(--env-space-2);
   }
   .env-color-picker-field {
     block-size: var(--env-control-height-touch);
