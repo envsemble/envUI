@@ -439,7 +439,11 @@
         "frame",
         "layout",
         "skip links",
-        "WindowFrame"
+        "WindowFrame",
+        "collapsible sidebar",
+        "collapse navigation",
+        "sidebar toggle",
+        "icon strip"
       ],
       "useWhen": [
         "An application's screen, with a top bar, its navigation and the page people are on.",
@@ -483,6 +487,12 @@
           "title": "Navigation by window class",
           "description": "| Window class | Width of the Scaffold | Form | | ------------ | --------------------- | -------- | | compact | below 37.5 rem | `bar` | | medium | 37.5 to 52.5 rem | `rail` | | expanded | 52.5 to 75 rem | `drawer` | | large | from 75 rem | `drawer` | `forms` changes the form of a window class, or shows `none`. Where a window class asks for a form the application didn't give, the nearest given one shows.",
           "file": "docs/examples/scaffold/ChooseForms.tsx"
+        },
+        {
+          "name": "NarrowNavigation",
+          "title": "A button that narrows the navigation",
+          "description": "A button that narrows the navigation to a strip of icons asks for the Rail in place of the Drawer through `forms`, such as `forms={{ expanded: 'rail', large: 'rail' }}`; the application keeps the choice, such as in `localStorage`. Don't build a narrow drawer of your own: the Scaffold already has both forms.",
+          "file": "docs/examples/scaffold/NarrowNavigation.tsx"
         },
         {
           "name": "TitleBarAcross",
@@ -7031,7 +7041,7 @@
         {
           "name": "TabletDestinations",
           "title": "Tablet destinations",
-          "description": "The navigation rail holds an application's main destinations in a narrow column at the start of a medium window. It takes the same destinations as Bar and Drawer, and Scaffold shows the form that fits the width.",
+          "description": "The navigation rail holds an application's main destinations in a narrow column at the start of a medium window. It takes the same destinations as Bar and Drawer, and Scaffold shows the form that fits the width. A button that narrows the drawer to the rail asks the Scaffold for it through `forms` (a button that narrows the navigation).",
           "file": "docs/examples/rail/TabletDestinations.tsx"
         },
         {
@@ -16507,7 +16517,7 @@
         {
           "name": "AvatarMenu",
           "title": "Avatar menu",
-          "description": "The account menu is a Menu opened from the person's AvatarButton at the end of the TopBar: a header with who is signed in, then their own things, ending with Sign out.",
+          "description": "The account menu is a Menu opened from the person's AvatarButton at the end of the TopBar: a larger first row with who is signed in, their avatar centered above their name and email, then their own things, ending with Sign out.",
           "file": "docs/examples/account-menu/AvatarMenu.tsx"
         },
         {
@@ -16584,7 +16594,7 @@
         {
           "name": "SwitchOrganization",
           "title": "Switch organization",
-          "description": "The organization switcher is a Menu opened from a secondary Button that names the active organization: a radio group of the person's organizations, each with their role as its description, and an action that creates one. It fits the `header` of a navigation Drawer or the start of the TopBar.",
+          "description": "The organization switcher is a Menu opened from a secondary Button that names the active organization: a first row with the groups icon above the heading Organizations, a radio group of the person's organizations that the heading names, each with their role as its description, and an action that creates one. It fits the `header` of a navigation Drawer or the start of the TopBar.",
           "file": "docs/examples/organization-switcher/SwitchOrganization.tsx"
         },
         {
