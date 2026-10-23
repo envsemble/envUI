@@ -16,13 +16,15 @@ body {
   box-sizing: border-box;
 }
 /* The frame is a Scaffold without a top bar: the navigation at its start, or in a sheet that a
-   small menu button opens in a narrower window. The drawer holds the wordmark and search at its
-   top, and the way to the other area and the Display menu at its foot. */
+   small menu button opens in a narrower window. The wordmark tops the rail, or the Docs' drawer,
+   on the row of search, and the page has the way to the other area and the Display menu at its
+   top end. */
 .docs-brand {
   display: flex;
   align-items: center;
   gap: var(--env-space-2);
-  padding: var(--env-space-1) var(--env-space-2) var(--env-space-2);
+  /* As tall as search beside it, so the rail's destinations and the drawer's pages start level. */
+  min-block-size: var(--env-control-height-md);
   color: var(--env-color-fg-default);
 }
 .docs-brand svg {
@@ -76,8 +78,58 @@ body {
   inline-size: auto;
   min-inline-size: 0;
 }
-.docs-drawer-footer {
+/* The rail and the drawer start on one row: the wordmark at the top of the rail, search at the
+   top of the drawer. */
+.docs-rail .env-rail-header {
+  margin-block-end: var(--env-space-2);
+}
+/* The Docs' drawer, which has no rail, is wide enough for the wordmark and search on its first
+   row. */
+.docs-docs-drawer {
+  --env-drawer-max-width: 21rem;
+  inline-size: 21rem;
+}
+.docs-drawer-top {
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-3);
+}
+.docs-drawer-top .docs-drawer-search {
+  flex: 1;
+  min-inline-size: 0;
+}
+.docs-drawer-top .docs-brand {
+  flex: none;
+  padding-inline-start: var(--env-space-2);
+}
+.docs-drawer-top .docs-brand svg {
+  inline-size: 4rem;
+}
+/* The other area and the Display menu: ghost buttons at the page's top end, with nothing behind
+   them, which scroll away with the page. Below an expanded window they are icon buttons, across
+   from the menu button and search. */
+.docs-page-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--env-space-1);
+  padding: var(--env-space-3) var(--env-space-4) 0;
+}
+.docs-page-actions ~ .docs-page-header {
   padding-block-start: var(--env-space-2);
+}
+.docs-narrow-only {
+  display: contents;
+}
+.docs-wide-only {
+  display: none;
+}
+@container env-scaffold (width >= 52.5rem) {
+  .docs-narrow-only {
+    display: none;
+  }
+  .docs-wide-only {
+    display: contents;
+  }
 }
 /* Below an expanded window, where the navigation is in a sheet, the menu button and search float
    as a small pill at the page's top start: a row of no height that sticks to the body's top, so
@@ -97,11 +149,6 @@ body {
   padding: var(--env-space-1);
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-page);
-}
-@container env-scaffold (width < 52.5rem) {
-  .docs-main {
-    padding-block-start: var(--env-space-8);
-  }
 }
 @container env-scaffold (width >= 52.5rem) {
   .docs-compact-controls {

@@ -223,7 +223,7 @@ test.describe('hosted build', () => {
     await page.getByRole('link', { name: 'API', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/docs/components/dialog`);
     await page
-      .locator('.docs-drawer-footer')
+      .locator('.docs-page-actions')
       .getByRole('link', { name: 'Site', exact: true })
       .click();
     await rail.getByRole('link', { name: 'Changelog', exact: true }).click();
@@ -305,10 +305,7 @@ test('a token found in search opens the token reference in the Docs', async ({ p
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(`${catalogueUrl}/docs/tokens#token-env-color-fg-muted`);
   await expect(page.locator('#token-env-color-fg-muted')).toBeInViewport();
-  await page
-    .locator('.docs-drawer-footer')
-    .getByRole('link', { name: 'Site', exact: true })
-    .click();
+  await page.locator('.docs-page-actions').getByRole('link', { name: 'Site', exact: true }).click();
   await page
     .getByRole('navigation', { name: 'Site' })
     .getByRole('link', { name: 'Patterns', exact: true })

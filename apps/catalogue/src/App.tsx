@@ -35,7 +35,7 @@ import {
   SkillsPage,
   TokensPage,
 } from './pages/DocsPages';
-import { DocsNavigation, SiteNavigation } from './navigation/DocumentationNavigation';
+import { DocsNavigation, PageActions, SiteNavigation } from './navigation/DocumentationNavigation';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
 import { docsRoute, homeRoute, inDocs, routeHref, revealSection } from './navigation/Address';
@@ -74,8 +74,8 @@ function documentTitle(page: SitePage | undefined, area: Area) {
 /**
  * The site: the Site, at the root, which introduces envUI, with a rail of its destinations and a
  * drawer of the chosen one's pages, and the Docs, under /docs, the developer reference with a
- * navigation of their own. Each drawer holds the wordmark and search at its top, and the way to the
- * other area and the Display menu at its foot.
+ * navigation of their own. The navigation holds the wordmark and search at its top, and the page
+ * has the way to the other area and the Display menu at its top end.
  */
 function Site() {
   const route = useDocumentationRoute();
@@ -173,7 +173,7 @@ function Site() {
       bodyId="docs-main"
       bodyRef={mainElement}
       // The navigation is at the start of a wide window, and in a sheet that the page's menu button
-      // opens in a narrower one. There is no top bar: the drawer holds the wordmark and search.
+      // opens in a narrower one. There is no top bar: the navigation holds the wordmark and search.
       forms={{ compact: 'none', medium: 'none' }}
       navigation={{ drawer: navigation(false) }}
     >
@@ -193,6 +193,7 @@ function Site() {
         </div>
       </div>
       <div className="docs-main">
+        <PageActions area={area} />
         <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
           {content}
         </PageBoundary>

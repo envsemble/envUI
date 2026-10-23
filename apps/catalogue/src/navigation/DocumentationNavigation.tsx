@@ -2,10 +2,11 @@ import { useEffect, useRef } from 'react';
 import {
   Button,
   Drawer,
+  IconButton,
   Link,
   Rail,
-  Row,
   SearchTrigger,
+  Tooltip,
   type Destination,
   type DrawerDestination,
 } from '@envsemble/envui';
@@ -92,69 +93,31 @@ interface NavigationProps {
   onSearch: () => void;
 }
 
-/**
- * The top of a drawer: the envUI wordmark, which leads to the area's home, with "Docs" beside it in
- * the Docs, and search under it, as wide as the drawer.
- */
-function DrawerHeader({ area, onSearch }: { area: Area; onSearch: () => void }) {
+/** The envUI wordmark, which leads to the area's home, with "Docs" beside it in the Docs. */
+function Brand({ area }: { area: Area }) {
   return (
-    <>
-      <Link
-        href={routeHref(area === 'docs' ? docsRoute : homeRoute)}
-        underline={false}
-        className="docs-brand"
-        aria-label={area === 'docs' ? 'envUI Docs home' : 'envUI home'}
-      >
-        <EnvUILogo />
-        {area === 'docs' && (
-          <span className="docs-brand-area" aria-hidden="true">
-            Docs
-          </span>
-        )}
-      </Link>
-      <SearchTrigger fullWidth onClick={onSearch} className="docs-drawer-search" />
-    </>
-  );
-}
-
-/**
- * The foot of a drawer: quiet ghost buttons for the other area, the Docs from the Site and the Site
- * from the Docs, and the Display menu, where the theme, contrast and scale are.
- */
-function DrawerFooter({ area, onChoose }: { area: Area; onChoose?: () => void }) {
-  return (
-    <Row gap={1} wrap className="docs-drawer-footer">
-      {area === 'docs' ? (
-        <Button
-          variant="ghost"
-          href={routeHref(homeRoute)}
-          startIcon={<ArrowBack />}
-          onClick={onChoose}
-        >
-          Site
-        </Button>
-      ) : (
-        <Button
-          variant="ghost"
-          href={routeHref(docsRoute)}
-          startIcon={<MenuBook />}
-          onClick={onChoose}
-        >
+    <Link
+      href={routeHref(area === 'docs' ? docsRoute : homeRoute)}
+      underline={false}
+      className="docs-brand"
+      aria-label={area === 'docs' ? 'envUI Docs home' : 'envUI home'}
+    >
+      <EnvUILogo />
+      {area === 'docs' && (
+        <span className="docs-brand-area" aria-hidden="true">
           Docs
-        </Button>
+        </span>
       )}
-      <DisplayMenu />
-    </Row>
+    </Link>
   );
 }
 
 /**
- * The Site's navigation: a Rail of its destinations, Overview, Components, Patterns, Foundations,
- * Benchmark and Changelog, beside a Drawer of the chosen destination's pages, both flush on the
- * navigation's background with no line between them. The drawer starts with the wordmark and
- * search, and ends with the way to the Docs and the Display menu. A rail item opens its
- * destination's first page; in the sheet of a narrower window it leaves the sheet open, so a page
- * can be chosen.
+ * The Site's navigation, one pane: a Rail of its destinations, Overview, Components, Patterns,
+ * Foundations, Benchmark and Changelog, under the envUI wordmark, beside a Drawer of the chosen
+ * destination's pages under search, both on the navigation's background with no seam or line
+ * between them. A rail item opens its destination's first page; in the sheet of a narrower window
+ * it leaves the sheet open, so a page can be chosen.
  */
 export function SiteNavigation({
   page,
@@ -171,13 +134,13 @@ export function SiteNavigation({
       <Rail
         aria-label="Site"
         className="docs-rail"
+        header={<Brand area="site" />}
         destinations={siteDestinations(page?.area === 'site' ? section : undefined)}
       />
       <Drawer
         aria-label={section}
         className="docs-sidebar"
-        header={<DrawerHeader area="site" onSearch={onSearch} />}
-        footer={<DrawerFooter area="site" onChoose={onChoose} />}
+        header={<SearchTrigger fullWidth onClick={onSearch} className="docs-drawer-search" />}
         destinations={pageDestinations(pages, routePath, onChoose)}
       />
     </div>
@@ -186,7 +149,7 @@ export function SiteNavigation({
 
 /**
  * The Docs' navigation: a Drawer of every page of the Docs, by its group, with the wordmark and
- * search at its top, and the way back to the Site and the Display menu at its foot.
+ * search side by side at its top.
  */
 export function DocsNavigation({
   routePath,
@@ -200,11 +163,43 @@ export function DocsNavigation({
     <div ref={element} className="docs-navigation" data-in-sheet={inSheet || undefined}>
       <Drawer
         aria-label="Docs"
-        className="docs-sidebar"
-        header={<DrawerHeader area="docs" onSearch={onSearch} />}
-        footer={<DrawerFooter area="docs" onChoose={onChoose} />}
+        className="docs-sidebar docs-docs-drawer"
+        header={
+          <div className="docs-drawer-top">
+            <Brand area="docs" />
+            <SearchTrigger fullWidth onClick={onSearch} className="docs-drawer-search" />
+          </div>
+        }
         destinations={pageDestinations(pages, routePath, onChoose)}
       />
+    </div>
+  );
+}
+
+/**
+ * The page's own controls at its top end, quiet ghost buttons with no bar behind them: the other
+ * area, the Docs from the Site and the Site from the Docs, and the Display menu, where the theme,
+ * contrast and scale are. Below an expanded window they are icon buttons with tooltips.
+ */
+export function PageActions({ area }: { area: Area }) {
+  const [label, href, Icon] =
+    area === 'docs'
+      ? (['Site', routeHref(homeRoute), ArrowBack] as const)
+      : (['Docs', routeHref(docsRoute), MenuBook] as const);
+  return (
+    <div className="docs-page-actions">
+      <span className="docs-wide-only">
+        <Button variant="ghost" href={href} startIcon={<Icon />}>
+          {label}
+        </Button>
+        <DisplayMenu />
+      </span>
+      <span className="docs-narrow-only">
+        <Tooltip content={label}>
+          <IconButton variant="ghost" href={href} icon={<Icon />} aria-label={label} />
+        </Tooltip>
+        <DisplayMenu iconOnly />
+      </span>
     </div>
   );
 }
