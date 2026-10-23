@@ -19,14 +19,20 @@
      the application set. While none is set, --env-toast-custom-hover and -pressed refer to it
      without a fallback, so they are invalid, and the tone's designed fills apply, which darken in
      high contrast, where a light layer would take the cross below its contrast. */
+  --env-toast-content-gate: color-mix(
+    in srgb,
+    var(--env-toast-content) 0%,
+    var(--env-toast-container-default)
+  );
+  --env-toast-custom-base: var(--env-toast-container, var(--env-toast-content-gate));
   --env-toast-custom-hover: color-mix(
     in srgb,
-    var(--env-toast-container),
+    var(--env-toast-custom-base),
     var(--env-toast-text) calc(var(--env-state-hover-opacity) * 100%)
   );
   --env-toast-custom-pressed: color-mix(
     in srgb,
-    var(--env-toast-container),
+    var(--env-toast-custom-base),
     var(--env-toast-text) calc(var(--env-state-pressed-opacity) * 100%)
   );
   --env-toast-dismiss-hover: var(--env-toast-custom-hover, var(--env-toast-hover-default));

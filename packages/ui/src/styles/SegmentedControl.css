@@ -12,9 +12,8 @@
 /* Color properties: a segmented control's colors, which an application sets on one control through
    style or its own CSS: container the rail, content the labels of the other options, selected and
    selected-content the chosen option. They don't inherit; the control passes them on to its
-   options. Hover and press are state layers of an option's label color; the chosen option keeps
-   the designed hover and press fills of its solid fill until selected is set, as a primary
-   button does. */
+   options. With none set, the options keep their designed fills in every state; with them, hover
+   and press are state layers of an option's label color (see Button.css). */
 @property --env-segmented-control-container {
   syntax: '*';
   inherits: false;
@@ -44,8 +43,20 @@
     --env-segmented-control-selected-content,
     var(--env-color-fg-on-emphasis)
   );
-  /* The chosen option's layered fill, invalid while selected is unset (see Button.css). */
-  --env-segmented-control-custom-selected: var(--env-segmented-control-selected);
+  /* Valid only while the application sets the colors of the options or of the chosen one. */
+  --env-segmented-control-custom: var(
+    --env-segmented-control-container,
+    var(--env-segmented-control-content)
+  );
+  --env-segmented-control-selected-gate: color-mix(
+    in srgb,
+    var(--env-segmented-control-selected-content) 0%,
+    var(--env-color-bg-brand-emphasis)
+  );
+  --env-segmented-control-custom-selected: var(
+    --env-segmented-control-selected,
+    var(--env-segmented-control-selected-gate)
+  );
   box-sizing: border-box;
   inline-size: fit-content;
   max-inline-size: 100%;
@@ -86,11 +97,10 @@
     )
     var(--env-space-4);
   --env-segmented-control-layer: initial;
-  /* Unset at rest, so the plain fills apply (Button.css). */
-  --env-segmented-control-layered: color-mix(
+  --env-segmented-control-custom-fill: color-mix(
     in srgb,
-    transparent,
-    currentColor var(--env-segmented-control-layer)
+    var(--env-segmented-control-custom) 0%,
+    color-mix(in srgb, transparent, currentColor var(--env-segmented-control-layer))
   );
   --env-segmented-control-selected-layered: color-mix(
     in srgb,
@@ -103,8 +113,8 @@
   );
   border: 0;
   border-radius: 100vmax;
-  background: var(--env-segmented-control-layered, transparent);
-  color: var(--env-segmented-control-option-color);
+  background: transparent;
+  color: var(--env-segmented-control-option-color, var(--env-color-fg-muted));
   font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
   white-space: nowrap;
   cursor: pointer;
@@ -124,12 +134,19 @@
 .env-segmented-control-item:active:not([data-disabled]) {
   --env-segmented-control-layer: calc(var(--env-state-pressed-opacity) * 100%);
 }
-.env-segmented-control-item:is(:hover, :active):not([data-checked]):not([data-disabled]) {
-  color: var(--env-segmented-control-option-hover-color);
+.env-segmented-control-item:focus-visible:not([data-checked]):not([data-disabled]) {
+  background: var(--env-segmented-control-custom-fill, transparent);
+}
+.env-segmented-control-item:hover:not([data-checked]):not([data-disabled]) {
+  background: var(--env-segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+  color: var(--env-segmented-control-option-hover-color, var(--env-color-fg-default));
+}
+.env-segmented-control-item:active:not([data-checked]):not([data-disabled]) {
+  background: var(--env-segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
 }
 .env-segmented-control-item[data-checked] {
   background: var(--env-segmented-control-selected-fill, var(--env-color-bg-brand-emphasis));
-  color: var(--env-segmented-control-selected-color);
+  color: var(--env-segmented-control-selected-color, var(--env-color-fg-on-emphasis));
 }
 .env-segmented-control-item[data-checked]:hover:not([data-disabled]) {
   background: var(--env-segmented-control-selected-fill, var(--env-color-bg-brand-emphasis-hover));

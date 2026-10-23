@@ -1,6 +1,6 @@
 /* Color properties: a select's colors, which an application sets on one Select through style or
    its own CSS: its trigger's fill, label and edge. They don't inherit; the select passes them on to
-   its trigger, which shows Button's state layers over them. An invalid trigger keeps the error
+   its trigger as Button's, which shows state layers over them. An invalid trigger keeps the error
    color on its edge. */
 @property --env-select-container {
   syntax: '*';
@@ -15,7 +15,7 @@
   inherits: false;
 }
 .env-select {
-  /* Invalid while unset, so the trigger falls back to its button's own colors. */
+  /* Invalid while unset, which leaves the trigger's own properties unset. */
   --env-select-trigger-container: var(--env-select-container);
   --env-select-trigger-content: var(--env-select-content);
   --env-select-trigger-outline: var(--env-select-outline);
@@ -25,40 +25,28 @@
    shared popup (PopupSurface) with a list of rows (ListRow). The trigger starts at the field's start
    and keeps its width. */
 .env-select > .env-select-trigger {
+  --env-button-container: var(--env-select-trigger-container);
+  --env-button-content: var(--env-select-trigger-content);
+  --env-button-outline: var(--env-select-trigger-outline);
   position: relative;
   justify-self: start;
   gap: var(--env-space-2);
-  /* Its fill, layered in a state as a button's is (Button.css). */
-  --env-select-trigger-fill: var(
-    --env-select-trigger-container,
-    var(--env-button-container, var(--env-button-container-default))
-  );
-  --env-select-trigger-layered: color-mix(
-    in srgb,
-    var(--env-select-trigger-fill),
-    currentColor var(--env-button-layer)
-  );
-  background-color: var(--env-select-trigger-layered, var(--env-select-trigger-fill));
-  color: var(
-    --env-select-trigger-content,
-    var(--env-button-content, var(--env-button-content-default))
-  );
-  border-color: var(
-    --env-select-trigger-outline,
-    var(--env-button-outline, var(--env-button-outline-default))
-  );
 }
 /* A transparent border lets an invalid secondary trigger show the error color without resizing. */
 .env-select-trigger[data-variant='secondary'] {
-  border-width: var(--env-control-border-width);
-  border-style: solid;
+  border: var(--env-control-border-width) solid
+    var(--env-select-trigger-border, var(--env-button-outline, transparent));
 }
-/* The open trigger keeps the hover layer while its list is open. */
+/* The open trigger keeps the hover state while its list is open. */
 .env-select-trigger[aria-expanded='true']:not(:disabled, :active) {
   --env-button-layer: calc(var(--env-state-hover-opacity) * 100%);
 }
+.env-select-trigger[data-variant='secondary'][aria-expanded='true']:not(:disabled, :active) {
+  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted-hover));
+}
 .env-select-trigger[data-variant='outline'][aria-expanded='true']:not(:disabled, :active) {
-  --env-button-outline-default: var(--env-color-border-default-hover);
+  background: var(--env-button-custom-fill, var(--env-color-bg-raised-hover));
+  border-color: var(--env-button-outline, var(--env-color-border-default-hover));
 }
 /* Invalid triggers recolor their border and keep their fill. */
 .env-select-trigger[aria-invalid='true'] {
@@ -71,6 +59,16 @@
 }
 .env-select-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
   --env-button-layer: initial;
+}
+.env-select-trigger[data-variant='secondary'][aria-invalid='true']:is(:hover, :active):not(
+    :disabled
+  ) {
+  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted));
+}
+.env-select-trigger[data-variant='outline'][aria-invalid='true']:is(:hover, :active):not(
+    :disabled
+  ) {
+  background: var(--env-button-custom-fill, var(--env-color-bg-raised));
 }
 @media (hover: hover) {
   .env-select > .env-select-trigger[aria-invalid='true']:hover:not(:disabled) {

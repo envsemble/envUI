@@ -28,22 +28,34 @@
   padding: 0;
   list-style: none;
 }
-/* A row's hover, focus and press are state layers of its text color over its container. */
 .env-list > .env-list-item {
-  --env-list-item-layer: initial;
   --env-list-item-container-default: var(--env-color-list-item-bg);
-  --env-list-item-rest: var(--env-list-item-container, var(--env-list-item-container-default));
-  /* Unset at rest, so the plain fill applies (Button.css). */
-  --env-list-item-layered: color-mix(
+  --env-list-item-fill-hover: var(--env-color-list-item-bg-hover);
+  --env-list-item-fill-pressed: var(--env-color-list-item-bg-pressed);
+  /* With no color property set, the designed fills below apply in every state. The custom fill is
+     valid only while the application sets the container or the content (see Button.css), and
+     then hover, focus and press lay the content color over the container. */
+  --env-list-item-layer: initial;
+  --env-list-item-content-gate: color-mix(
     in srgb,
-    var(--env-list-item-rest),
+    var(--env-list-item-content) 0%,
+    var(--env-list-item-container-default)
+  );
+  --env-list-item-custom-base: var(--env-list-item-container, var(--env-list-item-content-gate));
+  --env-list-item-custom-layered: color-mix(
+    in srgb,
+    var(--env-list-item-custom-base),
     currentColor var(--env-list-item-layer)
+  );
+  --env-list-item-custom-fill: var(
+    --env-list-item-custom-layered,
+    var(--env-list-item-custom-base)
   );
   box-sizing: border-box;
   min-height: calc(var(--env-control-height-sm) + 2 * var(--env-list-row-padding));
   padding: var(--env-list-row-padding) var(--env-row-padding-inline);
   font: var(--env-type-body-small);
-  background: var(--env-list-item-layered, var(--env-list-item-rest));
+  background: var(--env-list-item-custom-fill, var(--env-list-item-container-default));
   color: var(--env-list-item-content, var(--env-color-fg-default));
 }
 .env-list[data-density='xs'] {
@@ -81,9 +93,18 @@
   cursor: grabbing;
 }
 /* The current row, and a row whose checkbox in its start slot is checked, take the selected fill,
-   with lighter state layers, as the designed selected fills are close together. */
+   or the application's selected and selected-content, with lighter state layers, as the designed
+   selected fills are close together. */
 .env-list > .env-list-item:is([data-selected], :has(> .env-list-item-start input:checked)) {
-  --env-list-item-rest: var(--env-list-item-selected, var(--env-color-bg-selected));
+  --env-list-item-container-default: var(--env-color-bg-selected);
+  --env-list-item-fill-hover: var(--env-color-bg-selected-hover);
+  --env-list-item-fill-pressed: var(--env-color-bg-selected-pressed);
+  --env-list-item-content-gate: color-mix(
+    in srgb,
+    var(--env-list-item-selected-content) 0%,
+    var(--env-color-bg-selected)
+  );
+  --env-list-item-custom-base: var(--env-list-item-selected, var(--env-list-item-content-gate));
   color: var(
     --env-list-item-selected-content,
     var(--env-list-item-content, var(--env-color-fg-default))
@@ -153,6 +174,8 @@
   > .env-list
   > .env-list-item {
   --env-list-item-container-default: var(--env-color-bg-raised);
+  --env-list-item-fill-hover: var(--env-color-bg-raised-hover);
+  --env-list-item-fill-pressed: var(--env-color-bg-raised-pressed);
 }
 /* A row that opens something through a link or button inside reacts like a clickable card: to
    hover, to keyboard focus inside it and to presses. The link or button marked data-row-target
@@ -178,6 +201,7 @@
   --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
   --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
   --env-list-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+  background: var(--env-list-item-custom-fill, var(--env-list-item-fill-hover));
 }
 .env-list
   > .env-list-item[data-interactive]:is(
@@ -188,6 +212,7 @@
   --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
   --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
   --env-list-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  background: var(--env-list-item-custom-fill, var(--env-list-item-fill-pressed));
 }
 .env-list
   > .env-list-item[data-interactive]:is(

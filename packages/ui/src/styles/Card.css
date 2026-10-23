@@ -15,7 +15,21 @@
 
 .env-card {
   --env-card-padding: var(--env-surface-padding);
+  /* With no color property set, the designed fills below apply in every state. The custom fill is
+     valid only while the application sets the container or the content (see Button.css), and
+     then hover, focus and press lay the content color over the container. */
   --env-card-layer: initial;
+  --env-card-content-gate: color-mix(in srgb, var(--env-card-content) 0%, var(--env-surface-color));
+  --env-card-custom-base: var(
+    --env-card-container,
+    var(--env-surface-container, var(--env-card-content-gate))
+  );
+  --env-card-custom-layered: color-mix(
+    in srgb,
+    var(--env-card-custom-base),
+    currentColor var(--env-card-layer)
+  );
+  --env-card-custom-fill: var(--env-card-custom-layered, var(--env-card-custom-base));
   --env-surface-color: var(
     --env-card-container,
     var(--env-surface-container, var(--env-surface-container-default))
@@ -24,18 +38,12 @@
   color: var(--env-card-content, var(--env-surface-content));
 }
 
-/* A link or button card: the whole surface is the target. Hover, focus and press lay the state
-   layer of its text color over its container. */
+/* A link or button card: the whole surface is the target. With a container or content color of
+   the application's, hover, focus and press lay the state layer of its text color over it. */
 .env-card[data-interactive] {
   inline-size: 100%;
   margin: 0;
-  /* Unset at rest, so the plain surface color applies (Button.css). */
-  --env-card-layered: color-mix(
-    in srgb,
-    var(--env-surface-color),
-    currentColor var(--env-card-layer)
-  );
-  background: var(--env-card-layered, var(--env-surface-color));
+  background: var(--env-card-custom-fill, var(--env-surface-color));
   color: var(--env-card-content, var(--env-color-fg-default));
   font: inherit;
   text-align: start;
@@ -46,12 +54,14 @@
 }
 .env-card[data-interactive]:hover:not(:disabled):not([aria-disabled='true']) {
   --env-card-layer: calc(var(--env-state-hover-opacity) * 100%);
+  background: var(--env-card-custom-fill, var(--env-surface-hover));
 }
 .env-card[data-interactive]:focus-visible:not(:disabled):not([aria-disabled='true']) {
   --env-card-layer: calc(var(--env-state-focus-opacity) * 100%);
 }
 .env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
   --env-card-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  background: var(--env-card-custom-fill, var(--env-surface-pressed));
 }
 
 .env-card[data-interactive]:focus-visible {

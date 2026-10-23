@@ -43,7 +43,7 @@
 /* Color properties: a destination's colors, which an application sets on one item through style or
    its own CSS: container and selected color the pill around its icon, at rest and when current,
    content its label, icon its icon at rest and selected-content its icon when current. They don't
-   inherit; the item passes them on to its pill. */
+   inherit; the item passes them on to its pill, where currentColor in them is the pill's color. */
 @property --env-rail-item-container {
   syntax: '*';
   inherits: false;
@@ -65,27 +65,36 @@
   inherits: false;
 }
 
-/* Hover and press are state layers of the pill's own color over its container. Without a
-   container of the application's, the pill keeps the navigation's designed hover and press fills,
-   tinted in light themes, which a layer of the text color can't match: --env-rail-item-custom-fill refers
-   to the unset container without a fallback, so it is invalid and the fallback beside it applies.
-   currentColor in these values is the pill's color, where they are used. */
 .env-rail-item {
+  /* With no color property set, the designed fills below apply in every state. The custom fill is
+     valid only while the application sets the container or the content (see Button.css), and
+     then hover, focus and press lay the content color over the container. */
   --env-rail-item-layer: initial;
+  --env-rail-item-content-gate: color-mix(in srgb, var(--env-rail-item-content) 0%, transparent);
+  --env-rail-item-custom-base: var(--env-rail-item-container, var(--env-rail-item-content-gate));
   --env-rail-item-custom-layered: color-mix(
     in srgb,
-    var(--env-rail-item-container),
+    var(--env-rail-item-custom-base),
     currentColor var(--env-rail-item-layer)
   );
-  --env-rail-item-custom-fill: var(--env-rail-item-custom-layered, var(--env-rail-item-container));
+  --env-rail-item-custom-fill: var(
+    --env-rail-item-custom-layered,
+    var(--env-rail-item-custom-base)
+  );
+  --env-rail-item-selected-gate: color-mix(
+    in srgb,
+    var(--env-rail-item-selected-content) 0%,
+    var(--env-color-bg-selected)
+  );
+  --env-rail-item-selected-base: var(--env-rail-item-selected, var(--env-rail-item-selected-gate));
   --env-rail-item-selected-layered: color-mix(
     in srgb,
-    var(--env-rail-item-selected, var(--env-color-bg-selected)),
+    var(--env-rail-item-selected-base),
     currentColor var(--env-rail-item-layer)
   );
   --env-rail-item-selected-fill: var(
     --env-rail-item-selected-layered,
-    var(--env-rail-item-selected, var(--env-color-bg-selected))
+    var(--env-rail-item-selected-base)
   );
   --env-rail-item-selected-icon: var(
     --env-rail-item-selected-content,
@@ -142,7 +151,10 @@
   white-space: nowrap;
 }
 .env-rail-item:not([data-current]) .env-icon {
-  color: var(--env-rail-item-icon-color);
+  color: var(--env-rail-item-icon-color, var(--env-color-fg-muted));
+}
+.env-rail-item:hover .env-rail-indicator {
+  background: var(--env-rail-item-custom-fill, var(--env-color-bg-navigation-hover));
 }
 .env-rail-item:hover {
   --env-rail-item-layer: calc(var(--env-state-hover-opacity) * 100%);
@@ -150,8 +162,11 @@
 .env-rail-item:active {
   --env-rail-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
 }
-.env-rail-item:hover .env-rail-indicator {
-  background: var(--env-rail-item-custom-fill, var(--env-color-bg-navigation-hover));
+.env-rail-item[data-current]:hover {
+  --env-rail-item-layer: calc(var(--env-state-hover-opacity) * 75%);
+}
+.env-rail-item[data-current]:active {
+  --env-rail-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
 }
 .env-rail-item:active .env-rail-indicator {
   background: var(--env-rail-item-custom-fill, var(--env-color-bg-navigation-pressed));
@@ -159,18 +174,15 @@
 .env-rail-item[data-current] {
   color: var(--env-rail-item-content, var(--env-color-fg-default));
 }
-/* The current destination's pill takes the selected container, with lighter state layers, as the
-   designed selected fills are close together. */
-.env-rail-item[data-current] .env-rail-indicator,
-.env-rail-item[data-current]:is(:hover, :active) .env-rail-indicator {
-  color: var(--env-rail-item-selected-icon);
-  background: var(--env-rail-item-selected-fill);
+.env-rail-item[data-current] .env-rail-indicator {
+  color: var(--env-rail-item-selected-icon, var(--env-color-fg-on-selected));
+  background: var(--env-rail-item-selected-fill, var(--env-color-bg-selected));
 }
-.env-rail-item[data-current]:hover {
-  --env-rail-item-layer: calc(var(--env-state-hover-opacity) * 75%);
+.env-rail-item[data-current]:hover .env-rail-indicator {
+  background: var(--env-rail-item-selected-fill, var(--env-color-bg-selected-hover));
 }
-.env-rail-item[data-current]:active {
-  --env-rail-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
+.env-rail-item[data-current]:active .env-rail-indicator {
+  background: var(--env-rail-item-selected-fill, var(--env-color-bg-selected-pressed));
 }
 .env-rail-item:focus-visible {
   outline: 2px solid var(--env-color-border-focus);

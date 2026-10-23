@@ -88,21 +88,46 @@
   inherits: false;
 }
 
-/* Hover and press are state layers of the item's text color over its container. Without a
-   container of the application's, an item keeps the navigation's designed hover and press fills,
-   tinted in light themes, which a layer of the text color can't match:
-   --env-drawer-item-custom-fill refers to the unset container without a fallback, so it is invalid
-   and the fallback beside it applies. */
 .env-drawer-item {
+  /* With no color property set, the designed fills below apply in every state. The custom fill is
+     valid only while the application sets the container or the content (see Button.css), and
+     then hover, focus and press lay the content color over the container. */
   --env-drawer-item-layer: initial;
+  --env-drawer-item-content-gate: color-mix(
+    in srgb,
+    var(--env-drawer-item-content) 0%,
+    transparent
+  );
+  --env-drawer-item-custom-base: var(
+    --env-drawer-item-container,
+    var(--env-drawer-item-content-gate)
+  );
   --env-drawer-item-custom-layered: color-mix(
     in srgb,
-    var(--env-drawer-item-container),
+    var(--env-drawer-item-custom-base),
     currentColor var(--env-drawer-item-layer)
   );
   --env-drawer-item-custom-fill: var(
     --env-drawer-item-custom-layered,
-    var(--env-drawer-item-container)
+    var(--env-drawer-item-custom-base)
+  );
+  --env-drawer-item-selected-gate: color-mix(
+    in srgb,
+    var(--env-drawer-item-selected-content) 0%,
+    var(--env-color-bg-selected)
+  );
+  --env-drawer-item-selected-base: var(
+    --env-drawer-item-selected,
+    var(--env-drawer-item-selected-gate)
+  );
+  --env-drawer-item-selected-layered: color-mix(
+    in srgb,
+    var(--env-drawer-item-selected-base),
+    currentColor var(--env-drawer-item-layer)
+  );
+  --env-drawer-item-selected-fill: var(
+    --env-drawer-item-selected-layered,
+    var(--env-drawer-item-selected-base)
   );
   /* The icon's color, for the icons inside, which can't read the item's own properties. */
   --env-drawer-item-icon-color: var(--env-drawer-item-icon, var(--env-color-fg-muted));
@@ -152,7 +177,7 @@
   white-space: nowrap;
 }
 .env-drawer-item:not([data-current]) .env-icon {
-  color: var(--env-drawer-item-icon-color);
+  color: var(--env-drawer-item-icon-color, var(--env-color-fg-muted));
 }
 .env-drawer-item:hover {
   --env-drawer-item-layer: calc(var(--env-state-hover-opacity) * 100%);
@@ -162,25 +187,19 @@
   --env-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
   background: var(--env-drawer-item-custom-fill, var(--env-color-bg-navigation-pressed));
 }
-/* The current destination takes the selected container, with lighter state layers, as the designed
-   selected fills are close together. */
+/* The current destination takes the selected fill, or the application's selected and
+   selected-content, with lighter state layers, as the designed selected fills are close together. */
 .env-drawer-item[data-current] {
   color: var(--env-drawer-item-selected-content, var(--env-color-fg-on-selected));
-  --env-drawer-item-selected-layered: color-mix(
-    in srgb,
-    var(--env-drawer-item-selected, var(--env-color-bg-selected)),
-    currentColor var(--env-drawer-item-layer)
-  );
-  background: var(
-    --env-drawer-item-selected-layered,
-    var(--env-drawer-item-selected, var(--env-color-bg-selected))
-  );
+  background: var(--env-drawer-item-selected-fill, var(--env-color-bg-selected));
 }
 .env-drawer-item[data-current]:hover {
   --env-drawer-item-layer: calc(var(--env-state-hover-opacity) * 75%);
+  background: var(--env-drawer-item-selected-fill, var(--env-color-bg-selected-hover));
 }
 .env-drawer-item[data-current]:active {
   --env-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
+  background: var(--env-drawer-item-selected-fill, var(--env-color-bg-selected-pressed));
 }
 .env-drawer-item:focus-visible {
   outline: 2px solid var(--env-color-border-focus);

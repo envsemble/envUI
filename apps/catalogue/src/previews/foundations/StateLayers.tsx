@@ -87,17 +87,17 @@ const samples: readonly { name: string; render: (state: ForcedState) => ReactNod
  */
 export function StateLayers() {
   return (
-    <Example title="State layers" size="wide">
+    <Example title="Interaction states" size="wide">
       <Text emphasis="muted">
-        Hover, focus and press lay the content color over the container at a low opacity, as
-        Material draws them, so a component given its own colors keeps its states. Solid fills and
-        the navigation keep their designed hover and press fills until their container is set.
+        Hover and press take tokens of their own, in every theme. A component given colors of its
+        own through its color properties lays its content color over its container instead, as
+        Material draws state layers, so it keeps its states.
       </Text>
       <div
         className="docs-matrix-scroll docs-state-layers"
         tabIndex={0}
         role="region"
-        aria-label="State layers"
+        aria-label="Interaction states"
       >
         <table className="docs-matrix">
           <thead>

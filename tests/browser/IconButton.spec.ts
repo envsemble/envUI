@@ -60,14 +60,8 @@ test('quiet buttons take the icon color, a state layer and the focus ring in bot
       }, value);
     const icon = await resolve(toggle, 'var(--env-color-fg-muted)');
     const text = await resolve(toggle, 'var(--env-color-fg-default)');
-    // The state layer: the text color at the state's opacity, as the ghost button's label is then.
-    const layer = (state: string) =>
-      resolve(
-        toggle,
-        `color-mix(in srgb, transparent, var(--env-color-fg-default) calc(var(--env-state-${state}-opacity) * 100%))`,
-      );
-    const hover = await layer('hover');
-    const pressed = await layer('pressed');
+    const hover = await resolve(toggle, 'var(--env-color-bg-neutral-subtle-hover)');
+    const pressed = await resolve(toggle, 'var(--env-color-bg-neutral-subtle-pressed)');
     const ring = await resolve(toggle, 'var(--env-color-border-focus)');
     // At rest: the icon, or the label, in the icon color, without a fill or a border.
     for (const button of [toggle, labelled, pane]) {

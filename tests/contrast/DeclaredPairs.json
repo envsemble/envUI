@@ -1048,20 +1048,6 @@
         "high": 7
       }
     },
-    "--env-color-fg-accent on layer-hover-accent over --env-color-bg-raised": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-accent on layer-pressed-outline over --env-color-bg-raised": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
     "--env-color-fg-control on --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -1231,62 +1217,6 @@
       }
     },
     "--env-color-fg-control on --env-color-bg-raised": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-control on layer-hover-control over --env-color-bg-neutral-muted over --env-color-bg-default": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-control on layer-hover-control over --env-color-bg-neutral-muted over --env-color-bg-muted": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-control on layer-hover-control over --env-color-bg-neutral-muted over --env-color-bg-page": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-control on layer-hover-control over --env-color-bg-neutral-muted over --env-color-bg-raised": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-control on layer-pressed-control over --env-color-bg-neutral-muted over --env-color-bg-default": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-control on layer-pressed-control over --env-color-bg-neutral-muted over --env-color-bg-muted": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-control on layer-pressed-control over --env-color-bg-neutral-muted over --env-color-bg-page": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-control on layer-pressed-control over --env-color-bg-neutral-muted over --env-color-bg-raised": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -1707,62 +1637,6 @@
       }
     },
     "--env-color-fg-default on --env-color-list-item-bg-pressed": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on layer-hover-default over --env-color-bg-muted": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on layer-hover-default over --env-color-bg-popup": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on layer-hover-default over --env-color-list-item-bg": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on layer-hover-selected-row over --env-color-bg-selected": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on layer-pressed-default over --env-color-bg-muted": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on layer-pressed-default over --env-color-bg-popup": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on layer-pressed-default over --env-color-list-item-bg": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-default on layer-pressed-selected-row over --env-color-bg-selected": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -2364,20 +2238,6 @@
         "high": 7
       }
     },
-    "--env-color-fg-muted on layer-hover-default over --env-color-bg-popup": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-muted on layer-hover-default over --env-color-list-item-bg": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
     "--env-color-fg-muted-hover on --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -2509,20 +2369,6 @@
       "minimum": {
         "standard": 0.03,
         "high": 0.04
-      }
-    },
-    "--env-color-fg-on-selected on layer-hover-selected over --env-color-bg-selected": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-on-selected on layer-pressed-selected over --env-color-bg-selected": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-brand-strong": {
@@ -2915,62 +2761,6 @@
       "minimum": {
         "standard": 0.03,
         "high": 0.04
-      }
-    },
-    "layer-hover-accent on --env-color-bg-raised": {
-      "kind": "difference",
-      "minimum": {
-        "standard": 0.02,
-        "high": 0.02
-      }
-    },
-    "layer-hover-control on --env-color-bg-neutral-muted over --env-color-bg-default": {
-      "kind": "difference",
-      "minimum": {
-        "standard": 0.02,
-        "high": 0.02
-      }
-    },
-    "layer-hover-control on --env-color-bg-neutral-muted over --env-color-bg-page": {
-      "kind": "difference",
-      "minimum": {
-        "standard": 0.02,
-        "high": 0.02
-      }
-    },
-    "layer-hover-default on --env-color-bg-muted": {
-      "kind": "difference",
-      "minimum": {
-        "standard": 0.02,
-        "high": 0.02
-      }
-    },
-    "layer-hover-default on --env-color-bg-popup": {
-      "kind": "difference",
-      "minimum": {
-        "standard": 0.02,
-        "high": 0.02
-      }
-    },
-    "layer-hover-default on --env-color-list-item-bg": {
-      "kind": "difference",
-      "minimum": {
-        "standard": 0.02,
-        "high": 0.02
-      }
-    },
-    "layer-hover-selected on --env-color-bg-selected": {
-      "kind": "difference",
-      "minimum": {
-        "standard": 0.02,
-        "high": 0.02
-      }
-    },
-    "layer-hover-selected-row on --env-color-bg-selected": {
-      "kind": "difference",
-      "minimum": {
-        "standard": 0.02,
-        "high": 0.02
       }
     }
   },

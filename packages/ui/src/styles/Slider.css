@@ -17,7 +17,9 @@
   --env-slider-thumb-size: 1.25rem;
   --env-slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
   --env-slider-fill: var(--env-slider-indicator, var(--env-color-bg-brand-emphasis));
-  --env-slider-halo: color-mix(in srgb, var(--env-slider-fill) 16%, transparent);
+  /* Valid only while the application sets the indicator (see Button.css). */
+  --env-slider-custom-halo: color-mix(in srgb, var(--env-slider-indicator) 16%, transparent);
+  --env-slider-halo: var(--env-slider-custom-halo, var(--env-color-bg-brand-muted));
   min-inline-size: 0;
 }
 .env-slider-heading {

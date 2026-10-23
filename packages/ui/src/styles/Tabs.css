@@ -13,6 +13,8 @@
 .env-tabs {
   --env-tabs-rail-color: var(--env-tabs-container, var(--env-color-bg-neutral-muted));
   --env-tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted));
+  /* Valid only while the application sets the container or the content (see Button.css). */
+  --env-tabs-custom: var(--env-tabs-container, var(--env-tabs-content));
 }
 
 /* The whole rail is as tall as a control of its size, like a segmented control, and its tabs fill
@@ -80,23 +82,28 @@
     color var(--env-motion-duration-medium) var(--env-motion-ease),
     border-color var(--env-motion-duration-medium) var(--env-motion-ease);
 }
-/* Only the active tab uses its variant's fill and interaction colors; the others show the state
-   layer of their label color on the rail, a quarter stronger than Button's, as the muted label is
-   lighter than the text color the rail's designed state layers took. */
+/* Only the active tab uses its variant's fill and interaction colors. With the application's
+   colors, the others show the state layer of their label on the rail, a quarter stronger than
+   Button's, as a muted label is lighter than the text color. */
 .env-tabs-list > .env-tabs-tab:not([data-active]),
 .env-tabs-list > .env-tabs-tab:not([data-active]):is(:hover, :active) {
-  --env-tabs-tab-layered: color-mix(
+  /* Valid only in a state while the application sets the tabs' colors (see Button.css). */
+  --env-tabs-tab-custom-fill: color-mix(
     in srgb,
-    transparent,
-    currentColor calc(var(--env-button-layer) * 1.25)
+    var(--env-tabs-custom) 0%,
+    color-mix(in srgb, transparent, currentColor calc(var(--env-button-layer) * 1.25))
   );
-  background: var(--env-tabs-tab-layered, transparent);
+  background: transparent;
   border-color: transparent;
   color: var(--env-tabs-label-color, var(--env-color-fg-muted));
+}
+.env-tabs-list > .env-tabs-tab:not([data-active]):hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-hover));
 }
 .env-tabs-list
   > .env-tabs-tab:not([data-active]):active:not(:disabled):not([aria-disabled='true']) {
   --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
 }
 .env-tabs-list > .env-tabs-tab:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);

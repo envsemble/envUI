@@ -1,8 +1,8 @@
 /* Color properties: a switch's colors, which an application sets on one switch through style or its
    own CSS: container, outline and content the track, its ring and the thumb while off, selected and
    selected-content the track and the thumb while on. They don't inherit; the switch passes them on
-   to its track. Hover and press are state layers of the thumb's color over the track; while on, the
-   track keeps the designed hover and press fills of its solid fill until selected is set. */
+   to its track. With them, hover and press are state layers of the thumb's color over the track
+   (see Button.css). */
 @property --env-switch-container {
   syntax: '*';
   inherits: false;
@@ -26,12 +26,22 @@
 
 /* Switch: a native checkbox with the switch role, drawn as a track and a thumb, inside its label. */
 .env-switch {
-  --env-switch-track: var(--env-switch-container, var(--env-color-bg-neutral-muted));
-  --env-switch-ring: var(--env-switch-outline, var(--env-color-border-default));
   --env-switch-handle: var(--env-switch-content, var(--env-color-fg-control));
   --env-switch-on-handle: var(--env-switch-selected-content, var(--env-color-fg-on-emphasis));
-  /* Invalid while selected is unset, so the designed fills apply (see Button.css). */
-  --env-switch-custom-on: var(--env-switch-selected);
+  --env-switch-ring: var(--env-switch-outline, var(--env-color-border-default));
+  /* Valid only while the application sets the track's or the thumb's color, off or on. */
+  --env-switch-off-gate: color-mix(
+    in srgb,
+    var(--env-switch-content) 0%,
+    var(--env-color-bg-neutral-muted)
+  );
+  --env-switch-off-base: var(--env-switch-container, var(--env-switch-off-gate));
+  --env-switch-on-gate: color-mix(
+    in srgb,
+    var(--env-switch-selected-content) 0%,
+    var(--env-color-bg-brand-emphasis)
+  );
+  --env-switch-on-base: var(--env-switch-selected, var(--env-switch-on-gate));
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
@@ -72,23 +82,21 @@
   margin: 0;
   padding: var(--env-space-1);
   --env-switch-layer: initial;
-  /* Unset at rest, so the plain fills apply (Button.css). */
-  --env-switch-layered: color-mix(
+  --env-switch-off-layered: color-mix(
     in srgb,
-    var(--env-switch-track, var(--env-color-bg-neutral-muted)),
-    currentColor var(--env-switch-layer)
+    var(--env-switch-off-base),
+    var(--env-switch-handle) var(--env-switch-layer)
   );
+  --env-switch-off-fill: var(--env-switch-off-layered, var(--env-switch-off-base));
   --env-switch-on-layered: color-mix(
     in srgb,
-    var(--env-switch-custom-on),
-    currentColor var(--env-switch-layer)
+    var(--env-switch-on-base),
+    var(--env-switch-on-handle) var(--env-switch-layer)
   );
-  --env-switch-on-fill: var(--env-switch-on-layered, var(--env-switch-custom-on));
+  --env-switch-on-fill: var(--env-switch-on-layered, var(--env-switch-on-base));
   border: 0;
   border-radius: 100vmax;
-  background: var(--env-switch-layered, var(--env-switch-track, var(--env-color-bg-neutral-muted)));
-  /* The thumb's color: the state layer is drawn in it. */
-  color: var(--env-switch-handle, var(--env-color-fg-control));
+  background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted));
   /* The translucent track is too faint to be the switch's boundary, so a ring draws it at 3:1. */
   box-shadow: inset 0 0 0 1px var(--env-switch-ring, var(--env-color-border-default));
   cursor: inherit;
@@ -100,16 +108,16 @@
   width: var(--env-switch-thumb);
   height: var(--env-switch-thumb);
   border-radius: 50%;
-  background: currentColor;
+  background: var(--env-switch-handle, var(--env-color-fg-control));
   transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-switch-input:checked {
   background: var(--env-switch-on-fill, var(--env-color-bg-brand-emphasis));
-  color: var(--env-switch-on-handle, var(--env-color-fg-on-emphasis));
   box-shadow: none;
 }
 .env-switch-input:checked::before {
   transform: translateX(100%);
+  background: var(--env-switch-on-handle, var(--env-color-fg-on-emphasis));
 }
 /* In right-to-left text the thumb starts at the right, so it travels its own width to the left. */
 .env-switch-input:checked:dir(rtl)::before {
@@ -117,15 +125,16 @@
 }
 .env-switch-input:hover:not(:disabled) {
   --env-switch-layer: calc(var(--env-state-hover-opacity) * 100%);
+  background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted-hover));
 }
 .env-switch-input:active:not(:disabled) {
   --env-switch-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted-pressed));
 }
 .env-switch-input:checked:hover:not(:disabled) {
   background: var(--env-switch-on-fill, var(--env-color-bg-brand-emphasis-hover));
 }
 .env-switch-input:checked:active:not(:disabled) {
-  --env-switch-layer: calc(var(--env-state-pressed-opacity) * 100%);
   background: var(--env-switch-on-fill, var(--env-color-bg-brand-emphasis-pressed));
 }
 .env-switch-input:focus-visible {
