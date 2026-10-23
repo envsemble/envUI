@@ -1,3 +1,20 @@
+/* Color properties: the tabs' colors, which an application sets on one Tabs through style or its
+   own CSS: container the rail, content the labels of the tabs not selected. The selected tab keeps
+   its own button's look, which Button's color properties set on that button. They don't inherit;
+   Tabs passes them on to its rail and tabs. */
+@property --env-tabs-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-tabs-content {
+  syntax: '*';
+  inherits: false;
+}
+.env-tabs {
+  --env-tabs-rail-color: var(--env-tabs-container, var(--env-color-bg-neutral-muted));
+  --env-tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted));
+}
+
 /* The whole rail is as tall as a control of its size, like a segmented control, and its tabs fill
    it inside its padding, which gives way where a tab would be shorter than the smallest target. */
 .env-tabs-list {
@@ -17,7 +34,7 @@
 }
 /* The rail is a translucent fill, so it stands out from the canvas, panes and rows alike. */
 .env-tabs-list.env-surface {
-  --env-surface-color: var(--env-color-bg-neutral-muted);
+  --env-surface-color: var(--env-tabs-rail-color, var(--env-color-bg-neutral-muted));
   --env-surface-padding: var(--env-tabs-inset);
 }
 /* Under a coarse pointer the rail grows to the touch height, like every control of its row, and
@@ -63,19 +80,23 @@
     color var(--env-motion-duration-medium) var(--env-motion-ease),
     border-color var(--env-motion-duration-medium) var(--env-motion-ease);
 }
-/* Only the active tab uses its variant's fill and interaction colors. */
+/* Only the active tab uses its variant's fill and interaction colors; the others show the state
+   layer of their label color on the rail, a quarter stronger than Button's, as the muted label is
+   lighter than the text color the rail's designed state layers took. */
 .env-tabs-list > .env-tabs-tab:not([data-active]),
 .env-tabs-list > .env-tabs-tab:not([data-active]):is(:hover, :active) {
-  background: transparent;
+  --env-tabs-tab-layered: color-mix(
+    in srgb,
+    transparent,
+    currentColor calc(var(--env-button-layer) * 1.25)
+  );
+  background: var(--env-tabs-tab-layered, transparent);
   border-color: transparent;
-  color: var(--env-color-fg-muted);
-}
-.env-tabs-list > .env-tabs-tab:not([data-active]):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-color-bg-neutral-subtle-hover);
+  color: var(--env-tabs-label-color, var(--env-color-fg-muted));
 }
 .env-tabs-list
   > .env-tabs-tab:not([data-active]):active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-color-bg-neutral-subtle-pressed);
+  --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
 }
 .env-tabs-list > .env-tabs-tab:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);

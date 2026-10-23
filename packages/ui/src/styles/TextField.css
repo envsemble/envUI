@@ -1,6 +1,40 @@
+/* Color properties: a field's colors, which an application sets on one TextField or Textarea
+   through style or its own CSS: container its well, content the entered text, outline its edge at
+   rest and indicator its edge under the pointer, pressed and focused, with the caret and the
+   floating label while focused. They don't inherit; the field passes them on to its parts. An
+   invalid field keeps the error color. */
+@property --env-text-field-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-text-field-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-text-field-outline {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-text-field-indicator {
+  syntax: '*';
+  inherits: false;
+}
+
 /* A field takes the control height of its size, or of its container where it sets none. A tall
    field (the floating and underline variants and text areas) keeps room above it for its label. */
 .env-text-field {
+  --env-text-field-well: var(--env-text-field-container, var(--env-color-bg-field));
+  --env-text-field-text: var(--env-text-field-content, var(--env-color-fg-default));
+  --env-text-field-edge: var(--env-text-field-outline, var(--env-color-border-default));
+  --env-text-field-accent: var(--env-text-field-indicator, var(--env-color-border-accent-emphasis));
+  --env-text-field-accent-hover: var(
+    --env-text-field-indicator,
+    var(--env-color-border-accent-emphasis-hover)
+  );
+  --env-text-field-accent-pressed: var(
+    --env-text-field-indicator,
+    var(--env-color-border-accent-emphasis-pressed)
+  );
   --env-field-height: var(--env-control-height);
   /* The color of the field's error and of its invalid control, as on every field. */
   --env-field-error-color: var(--env-color-fg-danger);
@@ -18,16 +52,25 @@
   padding-block-start: var(--env-space-2);
 }
 .env-text-field-control {
-  --env-field-border-base: var(--env-color-border-default);
-  --env-field-interaction-color: var(--env-color-border-accent-emphasis);
-  --env-field-interaction-hover: var(--env-color-border-accent-emphasis-hover);
-  --env-field-interaction-pressed: var(--env-color-border-accent-emphasis-pressed);
+  --env-field-border-base: var(--env-text-field-edge, var(--env-color-border-default));
+  --env-field-interaction-color: var(
+    --env-text-field-accent,
+    var(--env-color-border-accent-emphasis)
+  );
+  --env-field-interaction-hover: var(
+    --env-text-field-accent-hover,
+    var(--env-color-border-accent-emphasis-hover)
+  );
+  --env-field-interaction-pressed: var(
+    --env-text-field-accent-pressed,
+    var(--env-color-border-accent-emphasis-pressed)
+  );
   --env-field-border-color: var(--env-field-border-base);
   position: relative;
   min-width: 0;
   border: var(--env-control-border-width) solid var(--env-field-border-color);
   border-radius: var(--env-radius-lg);
-  background: var(--env-color-bg-field);
+  background: var(--env-text-field-well, var(--env-color-bg-field));
   transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 @media (hover: hover) {
@@ -69,11 +112,11 @@
   border-radius: inherit;
   outline: none;
   background: transparent;
-  color: var(--env-color-fg-default);
+  color: var(--env-text-field-text, var(--env-color-fg-default));
   font: var(--env-type-body);
   /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
   font-size: var(--env-control-font-size);
-  caret-color: var(--env-color-border-accent-emphasis);
+  caret-color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
 }
 .env-text-field-input::placeholder {
   color: var(--env-color-fg-muted);
@@ -124,13 +167,16 @@
     [data-label-floating]
   )
   > label {
-  background: linear-gradient(transparent calc(50% - 0.0625rem), var(--env-color-bg-field) 0);
+  background: linear-gradient(
+    transparent calc(50% - 0.0625rem),
+    var(--env-text-field-well, var(--env-color-bg-field)) 0
+  );
 }
 .env-text-field-control:has(> label) > .env-text-field-input:not(:focus)::placeholder {
   color: transparent;
 }
 .env-text-field-control:focus-within > label {
-  color: var(--env-color-border-accent-emphasis);
+  color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
 }
 .env-text-field-control[data-variant='underline'] {
   border-color: transparent;
@@ -341,7 +387,7 @@ textarea.env-text-field-input:disabled + .env-textarea-resize-edge {
   padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
 }
 .env-text-field-control:focus-within > .env-text-field-start {
-  color: var(--env-color-border-accent-emphasis);
+  color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
 }
 /* Search inputs supply their own clear action. */
 .env-text-field-input[type='search']::-webkit-search-cancel-button {

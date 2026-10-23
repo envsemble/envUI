@@ -33,7 +33,58 @@
   display: flex;
 }
 
+/* Color properties: a destination's colors, which an application sets on one item through style or
+   its own CSS: container and selected color the pill around its icon, at rest and when current,
+   content its label, icon its icon at rest and selected-content its icon when current. They don't
+   inherit; the item passes them on to its pill. */
+@property --env-bar-item-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-bar-item-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-bar-item-icon {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-bar-item-selected {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-bar-item-selected-content {
+  syntax: '*';
+  inherits: false;
+}
+
+/* Hover and press are state layers of the pill's own color over its container. Without a
+   container of the application's, the pill keeps the navigation's designed hover and press fills,
+   tinted in light themes, which a layer of the text color can't match: --env-bar-item-custom-fill refers
+   to the unset container without a fallback, so it is invalid and the fallback beside it applies.
+   currentColor in these values is the pill's color, where they are used. */
 .env-bar-item {
+  --env-bar-item-layer: initial;
+  --env-bar-item-custom-layered: color-mix(
+    in srgb,
+    var(--env-bar-item-container),
+    currentColor var(--env-bar-item-layer)
+  );
+  --env-bar-item-custom-fill: var(--env-bar-item-custom-layered, var(--env-bar-item-container));
+  --env-bar-item-selected-layered: color-mix(
+    in srgb,
+    var(--env-bar-item-selected, var(--env-color-bg-selected)),
+    currentColor var(--env-bar-item-layer)
+  );
+  --env-bar-item-selected-fill: var(
+    --env-bar-item-selected-layered,
+    var(--env-bar-item-selected, var(--env-color-bg-selected))
+  );
+  --env-bar-item-selected-icon: var(
+    --env-bar-item-selected-content,
+    var(--env-color-fg-on-selected)
+  );
+  --env-bar-item-icon-color: var(--env-bar-item-icon, var(--env-color-fg-muted));
   --env-icon-size: var(--env-control-icon-size);
   box-sizing: border-box;
   inline-size: 100%;
@@ -42,7 +93,7 @@
   border: 0;
   border-radius: var(--env-radius-md);
   background: transparent;
-  color: var(--env-color-fg-control);
+  color: var(--env-bar-item-content, var(--env-color-fg-control));
   font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.3 var(--env-font-family);
   text-align: center;
   text-decoration: none;
@@ -57,6 +108,7 @@
   display: grid;
   place-items: center;
   border-radius: var(--env-radius-full);
+  background: var(--env-bar-item-custom-fill, transparent);
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-bar-text {
@@ -85,27 +137,37 @@
   white-space: nowrap;
 }
 .env-bar-item:not([data-current]) .env-icon {
-  color: var(--env-color-fg-muted);
+  color: var(--env-bar-item-icon-color);
+}
+.env-bar-item:hover,
+.env-bar-more[aria-expanded='true'] {
+  --env-bar-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+}
+.env-bar-item:active {
+  --env-bar-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
 }
 .env-bar-item:hover .env-bar-icon,
 .env-bar-more[aria-expanded='true'] .env-bar-icon {
-  background: var(--env-color-bg-navigation-hover);
+  background: var(--env-bar-item-custom-fill, var(--env-color-bg-navigation-hover));
 }
 .env-bar-item:active .env-bar-icon {
-  background: var(--env-color-bg-navigation-pressed);
+  background: var(--env-bar-item-custom-fill, var(--env-color-bg-navigation-pressed));
 }
 .env-bar-item[data-current] {
-  color: var(--env-color-fg-default);
+  color: var(--env-bar-item-content, var(--env-color-fg-default));
 }
-.env-bar-item[data-current] .env-bar-icon {
-  color: var(--env-color-fg-on-selected);
-  background: var(--env-color-bg-selected);
+/* The current destination's pill takes the selected container, with lighter state layers, as the
+   designed selected fills are close together. */
+.env-bar-item[data-current] .env-bar-icon,
+.env-bar-item[data-current]:is(:hover, :active) .env-bar-icon {
+  color: var(--env-bar-item-selected-icon);
+  background: var(--env-bar-item-selected-fill);
 }
-.env-bar-item[data-current]:hover .env-bar-icon {
-  background: var(--env-color-bg-selected-hover);
+.env-bar-item[data-current]:hover {
+  --env-bar-item-layer: calc(var(--env-state-hover-opacity) * 75%);
 }
-.env-bar-item[data-current]:active .env-bar-icon {
-  background: var(--env-color-bg-selected-pressed);
+.env-bar-item[data-current]:active {
+  --env-bar-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
 }
 .env-bar-item:focus-visible {
   outline: 2px solid var(--env-color-border-focus);

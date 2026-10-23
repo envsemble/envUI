@@ -1,9 +1,9 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, ColorPicker, Dialog, Column, Text, useTheme } from '@envsemble/envui';
-import { TokenValue } from './TokenValue';
-import { Example, Specimen, SpecimenGrid } from '../Example';
+import { Example } from '../Example';
 import { colorGroups, colorVariable } from '../../theme/Palette';
 import { usePaletteCustomization } from '../../theme/PaletteCustomization';
+import { StateLayers } from './StateLayers';
 
 interface MeasuredColor {
   css: string;
@@ -109,52 +109,11 @@ function ColorPalette() {
   );
 }
 
-function InteractionColors() {
-  const states = [
-    { label: 'Default', token: '--env-color-bg-brand-emphasis' },
-    { label: 'Hover', token: '--env-color-bg-brand-emphasis-hover' },
-    { label: 'Pressed', token: '--env-color-bg-brand-emphasis-pressed' },
-    { label: 'Disabled', token: '--env-color-bg-brand-emphasis' },
-  ];
-
-  return (
-    <Example title="Derived interaction colors" size="collection">
-      <Text emphasis="muted">
-        Hover and pressed are derived when the tokens are built: other grades of the same hue, each
-        a token of its own, so the contrast gate checks the label on every state.
-      </Text>
-      <SpecimenGrid size="compact">
-        {states.map(({ label, token }) => (
-          <Specimen key={label} title={label}>
-            <div
-              className="docs-color-state"
-              aria-hidden="true"
-              style={{
-                background: `var(${token})`,
-                opacity: label === 'Disabled' ? 'var(--env-state-disabled-opacity)' : undefined,
-              }}
-            />
-            <Text variant="caption">
-              {label === 'Disabled' ? (
-                <>
-                  <TokenValue token="--env-state-disabled-opacity" /> opacity
-                </>
-              ) : (
-                <code>{token}</code>
-              )}
-            </Text>
-          </Specimen>
-        ))}
-      </SpecimenGrid>
-    </Example>
-  );
-}
-
 export function ColorsPreview() {
   return (
     <>
       <ColorPalette />
-      <InteractionColors />
+      <StateLayers />
     </>
   );
 }

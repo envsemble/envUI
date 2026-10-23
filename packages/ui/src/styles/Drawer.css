@@ -64,7 +64,48 @@
   overflow-wrap: anywhere;
 }
 
+/* Color properties: a destination's colors, which an application sets on one Drawer.Item through
+   style or its own CSS. They don't inherit. selected and selected-content color the current
+   destination. */
+@property --env-drawer-item-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-drawer-item-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-drawer-item-icon {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-drawer-item-selected {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-drawer-item-selected-content {
+  syntax: '*';
+  inherits: false;
+}
+
+/* Hover and press are state layers of the item's text color over its container. Without a
+   container of the application's, an item keeps the navigation's designed hover and press fills,
+   tinted in light themes, which a layer of the text color can't match:
+   --env-drawer-item-custom-fill refers to the unset container without a fallback, so it is invalid
+   and the fallback beside it applies. */
 .env-drawer-item {
+  --env-drawer-item-layer: initial;
+  --env-drawer-item-custom-layered: color-mix(
+    in srgb,
+    var(--env-drawer-item-container),
+    currentColor var(--env-drawer-item-layer)
+  );
+  --env-drawer-item-custom-fill: var(
+    --env-drawer-item-custom-layered,
+    var(--env-drawer-item-container)
+  );
+  /* The icon's color, for the icons inside, which can't read the item's own properties. */
+  --env-drawer-item-icon-color: var(--env-drawer-item-icon, var(--env-color-fg-muted));
   /* The height the item draws at: the control height, or more under a coarse pointer. */
   --env-drawer-item-height: var(--env-control-height);
   --env-icon-size: var(--env-control-icon-size);
@@ -75,8 +116,8 @@
   padding: var(--env-space-1) var(--env-space-3);
   border: 0;
   border-radius: var(--env-radius-full);
-  background: transparent;
-  color: var(--env-color-fg-control);
+  background: var(--env-drawer-item-custom-fill, transparent);
+  color: var(--env-drawer-item-content, var(--env-color-fg-control));
   font: var(--env-body-font-weight) var(--env-font-size-body) / 1.4 var(--env-font-family);
   text-align: start;
   text-decoration: none;
@@ -111,23 +152,35 @@
   white-space: nowrap;
 }
 .env-drawer-item:not([data-current]) .env-icon {
-  color: var(--env-color-fg-muted);
+  color: var(--env-drawer-item-icon-color);
 }
 .env-drawer-item:hover {
-  background: var(--env-color-bg-navigation-hover);
+  --env-drawer-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+  background: var(--env-drawer-item-custom-fill, var(--env-color-bg-navigation-hover));
 }
 .env-drawer-item:active {
-  background: var(--env-color-bg-navigation-pressed);
+  --env-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  background: var(--env-drawer-item-custom-fill, var(--env-color-bg-navigation-pressed));
 }
+/* The current destination takes the selected container, with lighter state layers, as the designed
+   selected fills are close together. */
 .env-drawer-item[data-current] {
-  color: var(--env-color-fg-on-selected);
-  background: var(--env-color-bg-selected);
+  color: var(--env-drawer-item-selected-content, var(--env-color-fg-on-selected));
+  --env-drawer-item-selected-layered: color-mix(
+    in srgb,
+    var(--env-drawer-item-selected, var(--env-color-bg-selected)),
+    currentColor var(--env-drawer-item-layer)
+  );
+  background: var(
+    --env-drawer-item-selected-layered,
+    var(--env-drawer-item-selected, var(--env-color-bg-selected))
+  );
 }
 .env-drawer-item[data-current]:hover {
-  background: var(--env-color-bg-selected-hover);
+  --env-drawer-item-layer: calc(var(--env-state-hover-opacity) * 75%);
 }
 .env-drawer-item[data-current]:active {
-  background: var(--env-color-bg-selected-pressed);
+  --env-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
 }
 .env-drawer-item:focus-visible {
   outline: 2px solid var(--env-color-border-focus);

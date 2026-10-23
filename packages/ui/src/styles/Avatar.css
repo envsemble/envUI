@@ -1,3 +1,15 @@
+/* Color properties: an avatar's colors, which an application sets on one avatar through style or
+   its own CSS: the fill behind its initials or figure, and the initials and figure. They don't
+   inherit, and they win over its hue. */
+@property --env-avatar-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-avatar-content {
+  syntax: '*';
+  inherits: false;
+}
+
 /* Avatars, tooltips and bars reuse the shared palette and corner scale. */
 .env-avatar {
   --env-avatar-size: 2rem;
@@ -10,9 +22,11 @@
   overflow: hidden;
   border-radius: 50%;
   /* The solid fill of the avatar's hue, from data-hue, behind white initials or figure. */
-  --env-avatar-fill: var(--env-color-avatar-bg);
+  --env-avatar-container-default: var(--env-color-avatar-bg);
+  --env-avatar-fill: var(--env-avatar-container, var(--env-avatar-container-default));
+  --env-avatar-figure-color: var(--env-avatar-content, var(--env-color-avatar-figure));
   background: var(--env-avatar-fill);
-  color: var(--env-color-avatar-fg);
+  color: var(--env-avatar-content, var(--env-color-avatar-fg));
   font: var(--env-font-weight-semibold) calc(var(--env-avatar-size) * 0.38) / 1
     var(--env-font-family);
   letter-spacing: 0.01em;
@@ -22,25 +36,25 @@
   box-shadow: var(--env-avatar-ring, none);
 }
 .env-avatar[data-hue='teal'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-teal);
+  --env-avatar-container-default: var(--env-color-avatar-bg-teal);
 }
 .env-avatar[data-hue='green'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-green);
+  --env-avatar-container-default: var(--env-color-avatar-bg-green);
 }
 .env-avatar[data-hue='amber'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-amber);
+  --env-avatar-container-default: var(--env-color-avatar-bg-amber);
 }
 .env-avatar[data-hue='red'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-red);
+  --env-avatar-container-default: var(--env-color-avatar-bg-red);
 }
 .env-avatar[data-hue='violet'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-violet);
+  --env-avatar-container-default: var(--env-color-avatar-bg-violet);
 }
 .env-avatar[data-hue='purple'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-purple);
+  --env-avatar-container-default: var(--env-color-avatar-bg-purple);
 }
 .env-avatar[data-hue='slate'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-slate);
+  --env-avatar-container-default: var(--env-color-avatar-bg-slate);
 }
 /* A hairline just inside the edge, over the fill or the picture, so a white figure or a light
    photo keeps its circle on a page of the same color. */
@@ -86,7 +100,7 @@
   fill: var(--env-avatar-fill);
 }
 .env-avatar-person-figure {
-  fill: var(--env-color-avatar-figure);
+  fill: var(--env-avatar-figure-color);
 }
 .env-avatar-image {
   position: absolute;

@@ -1,33 +1,46 @@
-/* Background geometry is independent of content layout and interactive behavior. */
+/* Color properties: a surface's colors, which an application sets on one surface through style or
+   its own CSS. They are registered so they don't inherit: a surface inside keeps its own. */
+@property --env-surface-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-surface-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-surface-outline {
+  syntax: '*';
+  inherits: false;
+}
+
+/* Background geometry is independent of content layout and interactive behavior. The surface's
+   color, --env-surface-color, is its container: what its contents, such as an avatar group's ring
+   or a navigation bar, take as the color beneath them. Unset, the content and outline properties
+   leave the inherited text color and no edge. */
 .env-surface {
   box-sizing: border-box;
   min-inline-size: 0;
   max-inline-size: 100%;
-  --env-surface-color: var(--env-color-bg-default);
+  --env-surface-container-default: var(--env-color-bg-default);
+  --env-surface-color: var(--env-surface-container, var(--env-surface-container-default));
   --env-surface-padding: clamp(1.25rem, 3vw, 1.5rem);
   --env-surface-radius: var(--env-radius-surface);
-  --env-surface-hover: var(--env-color-bg-default-hover);
-  --env-surface-pressed: var(--env-color-bg-default-pressed);
   padding: var(--env-surface-padding);
-  border: 0;
+  border: var(--env-control-border-width) solid var(--env-surface-outline);
   border-radius: var(--env-surface-radius);
   background: var(--env-surface-color);
+  color: var(--env-surface-content);
 }
 .env-surface:where([data-background='muted']) {
-  --env-surface-color: var(--env-color-bg-muted);
-  --env-surface-hover: var(--env-color-bg-muted-hover);
-  --env-surface-pressed: var(--env-color-bg-muted-pressed);
+  --env-surface-container-default: var(--env-color-bg-muted);
 }
 .env-surface:where([data-background='page']) {
-  --env-surface-color: var(--env-color-bg-page);
-  --env-surface-hover: var(--env-color-bg-page-hover);
-  --env-surface-pressed: var(--env-color-bg-page-pressed);
+  --env-surface-container-default: var(--env-color-bg-page);
 }
 .env-surface:where([data-background='raised']) {
-  --env-surface-color: var(--env-color-bg-raised);
-  --env-surface-hover: var(--env-color-bg-raised-hover);
-  --env-surface-pressed: var(--env-color-bg-raised-pressed);
+  --env-surface-container-default: var(--env-color-bg-raised);
 }
+
 .env-surface:where([data-radius='sm']) {
   --env-surface-radius: var(--env-radius-sm);
 }

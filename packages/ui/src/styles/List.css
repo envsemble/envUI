@@ -1,3 +1,23 @@
+/* Color properties: a row's colors, which an application sets on one List.Item through style or
+   its own CSS. They are registered so they don't inherit, so a list inside a row keeps its own.
+   selected and selected-content color the current row and a row whose checkbox is checked. */
+@property --env-list-item-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-list-item-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-list-item-selected {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-list-item-selected-content {
+  syntax: '*';
+  inherits: false;
+}
+
 /* List geometry is shared with selectable rows and select options. */
 .env-list {
   /* The density sets the rows' block padding; a row is at least as tall as a small control with it. */
@@ -8,16 +28,23 @@
   padding: 0;
   list-style: none;
 }
+/* A row's hover, focus and press are state layers of its text color over its container. */
 .env-list > .env-list-item {
-  --env-list-item-fill: var(--env-color-list-item-bg);
-  --env-list-item-fill-hover: var(--env-color-list-item-bg-hover);
-  --env-list-item-fill-pressed: var(--env-color-list-item-bg-pressed);
+  --env-list-item-layer: initial;
+  --env-list-item-container-default: var(--env-color-list-item-bg);
+  --env-list-item-rest: var(--env-list-item-container, var(--env-list-item-container-default));
+  /* Unset at rest, so the plain fill applies (Button.css). */
+  --env-list-item-layered: color-mix(
+    in srgb,
+    var(--env-list-item-rest),
+    currentColor var(--env-list-item-layer)
+  );
   box-sizing: border-box;
   min-height: calc(var(--env-control-height-sm) + 2 * var(--env-list-row-padding));
   padding: var(--env-list-row-padding) var(--env-row-padding-inline);
   font: var(--env-type-body-small);
-  background: var(--env-list-item-fill);
-  color: var(--env-color-fg-default);
+  background: var(--env-list-item-layered, var(--env-list-item-rest));
+  color: var(--env-list-item-content, var(--env-color-fg-default));
 }
 .env-list[data-density='xs'] {
   --env-list-row-padding: calc(var(--env-row-padding-block-xs) + var(--env-space-1));
@@ -53,11 +80,14 @@
 .env-list[data-reordering] .env-list-item-handle {
   cursor: grabbing;
 }
-/* The current row, and a row whose checkbox in its start slot is checked, take the selected fill. */
+/* The current row, and a row whose checkbox in its start slot is checked, take the selected fill,
+   with lighter state layers, as the designed selected fills are close together. */
 .env-list > .env-list-item:is([data-selected], :has(> .env-list-item-start input:checked)) {
-  --env-list-item-fill: var(--env-color-bg-selected);
-  --env-list-item-fill-hover: var(--env-color-bg-selected-hover);
-  --env-list-item-fill-pressed: var(--env-color-bg-selected-pressed);
+  --env-list-item-rest: var(--env-list-item-selected, var(--env-color-bg-selected));
+  color: var(
+    --env-list-item-selected-content,
+    var(--env-list-item-content, var(--env-color-fg-default))
+  );
 }
 /* The current row's target, a link or button that names the row, reads in the row's text color
    on the selected fill, where a link's color would lose its contrast. */
@@ -122,9 +152,7 @@
   > .env-skeleton-content
   > .env-list
   > .env-list-item {
-  --env-list-item-fill: var(--env-color-bg-raised);
-  --env-list-item-fill-hover: var(--env-color-bg-raised-hover);
-  --env-list-item-fill-pressed: var(--env-color-bg-raised-pressed);
+  --env-list-item-container-default: var(--env-color-bg-raised);
 }
 /* A row that opens something through a link or button inside reacts like a clickable card: to
    hover, to keyboard focus inside it and to presses. The link or button marked data-row-target
@@ -149,7 +177,7 @@
   --env-color-fg-link: var(--env-color-fg-link-on-tint);
   --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
   --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
-  background: var(--env-list-item-fill-hover);
+  --env-list-item-layer: calc(var(--env-state-hover-opacity) * 100%);
 }
 .env-list
   > .env-list-item[data-interactive]:is(
@@ -159,7 +187,21 @@
   --env-color-fg-link: var(--env-color-fg-link-on-tint);
   --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
   --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
-  background: var(--env-list-item-fill-pressed);
+  --env-list-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+}
+.env-list
+  > .env-list-item[data-interactive]:is(
+    [data-selected],
+    :has(> .env-list-item-start input:checked)
+  ):is(:hover, :has(:focus-visible)) {
+  --env-list-item-layer: calc(var(--env-state-hover-opacity) * 75%);
+}
+.env-list
+  > .env-list-item[data-interactive]:is(
+    [data-selected],
+    :has(> .env-list-item-start input:checked)
+  ):is(:has([data-row-target]:active), :not(:has([data-row-target])):active) {
+  --env-list-item-layer: calc(var(--env-state-pressed-opacity) * 75%);
 }
 @media (prefers-reduced-motion: reduce) {
   .env-list > .env-list-item[data-interactive] {

@@ -6,7 +6,24 @@
    it, whatever its tone and variant; --env-badge-count-fg, -bg and -border for a badge with a
    count, which reads them instead; and --env-diff-stat-fg, -bg and -border for a diff stat, whose two tones then take that one
    color. Button sets them (Button.css). */
+/* Color properties: a badge's colors, which an application sets on one badge through style or its
+   own CSS. They don't inherit, and they win over its tone and variant and over the hooks of a
+   control around it. outline draws an edge in that color. */
+@property --env-badge-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-badge-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-badge-outline {
+  syntax: '*';
+  inherits: false;
+}
 .env-badge {
+  /* The edge of an outline the application set; invalid, and so not drawn, while none is. */
+  --env-badge-own-border: 0.0625rem solid var(--env-badge-outline);
   --env-badge-tone: var(--env-color-fg-muted);
   --env-badge-tint: var(--env-color-bg-neutral-muted);
   --env-badge-fill: var(--env-color-bg-neutral-emphasis);
@@ -19,10 +36,10 @@
   align-items: center;
   gap: var(--env-space-1);
   padding: 0.0625rem var(--env-space-2);
-  border: var(--env-badge-border, 0.0625rem solid transparent);
+  border: var(--env-badge-own-border, var(--env-badge-border, 0.0625rem solid transparent));
   border-radius: 100vmax;
-  background: var(--env-badge-bg, var(--env-badge-tint));
-  color: var(--env-badge-fg, var(--env-badge-tone));
+  background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-tint)));
+  color: var(--env-badge-content, var(--env-badge-fg, var(--env-badge-tone)));
   font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
   white-space: nowrap;
   vertical-align: middle;
@@ -58,13 +75,13 @@
   --env-badge-edge: var(--env-color-border-done);
 }
 .env-badge[data-variant='solid'] {
-  background: var(--env-badge-bg, var(--env-badge-fill));
-  color: var(--env-badge-fg, var(--env-color-fg-on-emphasis));
+  background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-fill)));
+  color: var(--env-badge-content, var(--env-badge-fg, var(--env-color-fg-on-emphasis)));
 }
 .env-badge[data-variant='outline'] {
-  --env-badge-outline: 0.0625rem solid var(--env-badge-edge);
-  border: var(--env-badge-border, var(--env-badge-outline));
-  background: var(--env-badge-bg, transparent);
+  --env-badge-edge-border: 0.0625rem solid var(--env-badge-edge);
+  border: var(--env-badge-own-border, var(--env-badge-border, var(--env-badge-edge-border)));
+  background: var(--env-badge-container, var(--env-badge-bg, transparent));
 }
 .env-badge .env-icon {
   inline-size: 0.875rem;
@@ -87,9 +104,9 @@
   justify-content: center;
   padding-block: 0;
   padding-inline: 0.375rem;
-  border: var(--env-badge-count-border, none);
-  background: var(--env-badge-count-bg, var(--env-badge-tint));
-  color: var(--env-badge-count-fg, var(--env-badge-tone));
+  border: var(--env-badge-own-border, var(--env-badge-count-border, none));
+  background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-tint)));
+  color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-badge-tone)));
   font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
   font-variant-numeric: tabular-nums;
 }
@@ -98,12 +115,12 @@
 }
 /* The variant in :where(), so a skeleton's fill below still wins over it. */
 .env-badge[data-count]:where([data-variant='solid']) {
-  background: var(--env-badge-count-bg, var(--env-badge-fill));
-  color: var(--env-badge-count-fg, var(--env-color-fg-on-emphasis));
+  background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-fill)));
+  color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-color-fg-on-emphasis)));
 }
 .env-badge[data-count]:where([data-variant='outline']) {
-  border: var(--env-badge-count-border, var(--env-badge-outline));
-  background: var(--env-badge-count-bg, transparent);
+  border: var(--env-badge-own-border, var(--env-badge-count-border, var(--env-badge-edge-border)));
+  background: var(--env-badge-container, var(--env-badge-count-bg, transparent));
 }
 /* A change as one count-sized pill: additions in the success tone, deletions in the danger tone. */
 .env-diff-stat {

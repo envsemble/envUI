@@ -1,4 +1,36 @@
+/* Color properties: a toast's colors, which an application sets on one toast through style or its
+   own CSS: its fill, its text and icons, and its edge. They don't inherit, and they win over its
+   tone. */
+@property --env-toast-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-toast-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-toast-outline {
+  syntax: '*';
+  inherits: false;
+}
 .env-toast {
+  --env-toast-text: var(--env-toast-content, var(--env-color-fg-on-strong));
+  /* The dismiss button's hover and press fills: state layers of the text color over a container
+     the application set. While none is set, --env-toast-custom-hover and -pressed refer to it
+     without a fallback, so they are invalid, and the tone's designed fills apply, which darken in
+     high contrast, where a light layer would take the cross below its contrast. */
+  --env-toast-custom-hover: color-mix(
+    in srgb,
+    var(--env-toast-container),
+    var(--env-toast-text) calc(var(--env-state-hover-opacity) * 100%)
+  );
+  --env-toast-custom-pressed: color-mix(
+    in srgb,
+    var(--env-toast-container),
+    var(--env-toast-text) calc(var(--env-state-pressed-opacity) * 100%)
+  );
+  --env-toast-dismiss-hover: var(--env-toast-custom-hover, var(--env-toast-hover-default));
+  --env-toast-dismiss-pressed: var(--env-toast-custom-pressed, var(--env-toast-pressed-default));
   box-sizing: border-box;
   display: inline-flex;
   width: max-content;
@@ -14,39 +46,40 @@
      each tone's edge is its fill a step darker rather than the light popup edge, which would ring
      it like a halo; in dark it is the popup edge. The edge is the boundary in high contrast and
      what forced colors paint. */
-  border: 1px solid var(--env-toast-edge, var(--env-color-border-neutral-strong));
+  border: 1px solid
+    var(
+      --env-toast-outline,
+      var(--env-toast-outline-default, var(--env-color-border-neutral-strong))
+    );
   border-radius: var(--env-radius-sm);
+  background: var(--env-toast-container, var(--env-toast-container-default));
   font: var(--env-type-body-small);
-  color: var(--env-color-fg-on-strong);
+  color: var(--env-toast-text);
   flex-wrap: nowrap;
 }
 .env-toast:where([data-tone='neutral']) {
-  --env-toast-fill: var(--env-color-bg-neutral-strong);
-  --env-toast-edge: var(--env-color-border-neutral-strong);
-  --env-toast-fill-hover: var(--env-color-bg-neutral-strong-hover);
-  --env-toast-fill-pressed: var(--env-color-bg-neutral-strong-pressed);
-  background: var(--env-toast-fill);
+  --env-toast-container-default: var(--env-color-bg-neutral-strong);
+  --env-toast-outline-default: var(--env-color-border-neutral-strong);
+  --env-toast-hover-default: var(--env-color-bg-neutral-strong-hover);
+  --env-toast-pressed-default: var(--env-color-bg-neutral-strong-pressed);
 }
 .env-toast:where([data-tone='success']) {
-  --env-toast-fill: var(--env-color-bg-success-strong);
-  --env-toast-edge: var(--env-color-border-success-strong);
-  --env-toast-fill-hover: var(--env-color-bg-success-strong-hover);
-  --env-toast-fill-pressed: var(--env-color-bg-success-strong-pressed);
-  background: var(--env-toast-fill);
+  --env-toast-container-default: var(--env-color-bg-success-strong);
+  --env-toast-outline-default: var(--env-color-border-success-strong);
+  --env-toast-hover-default: var(--env-color-bg-success-strong-hover);
+  --env-toast-pressed-default: var(--env-color-bg-success-strong-pressed);
 }
 .env-toast:where([data-tone='info']) {
-  --env-toast-fill: var(--env-color-bg-info-strong);
-  --env-toast-edge: var(--env-color-border-info-strong);
-  --env-toast-fill-hover: var(--env-color-bg-info-strong-hover);
-  --env-toast-fill-pressed: var(--env-color-bg-info-strong-pressed);
-  background: var(--env-toast-fill);
+  --env-toast-container-default: var(--env-color-bg-info-strong);
+  --env-toast-outline-default: var(--env-color-border-info-strong);
+  --env-toast-hover-default: var(--env-color-bg-info-strong-hover);
+  --env-toast-pressed-default: var(--env-color-bg-info-strong-pressed);
 }
 .env-toast:where([data-tone='danger']) {
-  --env-toast-fill: var(--env-color-bg-danger-strong);
-  --env-toast-edge: var(--env-color-border-danger-strong);
-  --env-toast-fill-hover: var(--env-color-bg-danger-strong-hover);
-  --env-toast-fill-pressed: var(--env-color-bg-danger-strong-pressed);
-  background: var(--env-toast-fill);
+  --env-toast-container-default: var(--env-color-bg-danger-strong);
+  --env-toast-outline-default: var(--env-color-border-danger-strong);
+  --env-toast-hover-default: var(--env-color-bg-danger-strong-hover);
+  --env-toast-pressed-default: var(--env-color-bg-danger-strong-pressed);
 }
 .env-toast-message {
   flex: 0 1 auto;
@@ -79,7 +112,7 @@
   overflow-wrap: break-word;
 }
 /* The dismiss button is an IconButton with a cross on the notice's strong fill: the fill's text color, with the
-   fill's own hover and press steps. Toast.css comes after Button.css, so at equal specificity
+   fill's own hover and press steps, or state layers on a container the application set. Toast.css comes after Button.css, so at equal specificity
    these colors win over the ghost ones. */
 .env-toast-dismiss {
   --env-icon-button-hit-area: var(--env-control-height-touch);
@@ -87,15 +120,15 @@
   color: inherit;
 }
 .env-toast-dismiss:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-toast-fill-hover);
+  background: var(--env-toast-dismiss-hover);
   color: inherit;
 }
 .env-toast-dismiss:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-toast-fill-pressed);
+  background: var(--env-toast-dismiss-pressed);
   color: inherit;
 }
 .env-toast-dismiss:focus-visible {
-  outline: 0.125rem solid var(--env-color-fg-on-strong);
+  outline: 0.125rem solid currentColor;
   outline-offset: 0.125rem;
 }
 /* The toasts need no window, so their portal's boundary is no container: nothing changes for the

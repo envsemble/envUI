@@ -12,18 +12,26 @@
 .env-toolbar-separator[data-orientation='horizontal'] {
   border-block-start-width: var(--env-control-border-width);
 }
-/* A pressed toggle, such as Bold while the selection is bold, takes the selected fill. */
+/* A pressed toggle, such as Bold while the selection is bold, takes Button's selected container
+   and content, --env-button-selected and --env-button-selected-content, with Button's state layer
+   over them, lighter than elsewhere, as the designed selected fills are close together. */
 .env-toolbar-button[aria-pressed='true'] {
-  background: var(--env-color-bg-selected);
-  color: var(--env-color-fg-on-selected);
+  --env-toolbar-button-selected-layered: color-mix(
+    in srgb,
+    var(--env-button-selected, var(--env-color-bg-selected)),
+    currentColor var(--env-button-layer)
+  );
+  background-color: var(
+    --env-toolbar-button-selected-layered,
+    var(--env-button-selected, var(--env-color-bg-selected))
+  );
+  color: var(--env-button-selected-content, var(--env-color-fg-on-selected));
 }
 .env-toolbar-button[aria-pressed='true']:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-color-bg-selected-hover);
-  color: var(--env-color-fg-on-selected);
+  --env-button-layer: calc(var(--env-state-hover-opacity) * 75%);
 }
 .env-toolbar-button[aria-pressed='true']:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-color-bg-selected-pressed);
-  color: var(--env-color-fg-on-selected);
+  --env-button-layer: calc(var(--env-state-pressed-opacity) * 90%);
 }
 .env-toolbar-tooltip {
   display: inline-flex;

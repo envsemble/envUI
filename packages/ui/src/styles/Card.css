@@ -1,12 +1,42 @@
-.env-card {
-  --env-card-padding: var(--env-surface-padding);
+/* Color properties: a card's colors, which an application sets on one card through style or its
+   own CSS. They take the place of Surface's, which a card also reads, and don't inherit. */
+@property --env-card-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-card-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-card-outline {
+  syntax: '*';
+  inherits: false;
 }
 
-/* A link or button card: the whole surface is the target. */
+.env-card {
+  --env-card-padding: var(--env-surface-padding);
+  --env-card-layer: initial;
+  --env-surface-color: var(
+    --env-card-container,
+    var(--env-surface-container, var(--env-surface-container-default))
+  );
+  border: var(--env-control-border-width) solid var(--env-card-outline, var(--env-surface-outline));
+  color: var(--env-card-content, var(--env-surface-content));
+}
+
+/* A link or button card: the whole surface is the target. Hover, focus and press lay the state
+   layer of its text color over its container. */
 .env-card[data-interactive] {
   inline-size: 100%;
   margin: 0;
-  color: var(--env-color-fg-default);
+  /* Unset at rest, so the plain surface color applies (Button.css). */
+  --env-card-layered: color-mix(
+    in srgb,
+    var(--env-surface-color),
+    currentColor var(--env-card-layer)
+  );
+  background: var(--env-card-layered, var(--env-surface-color));
+  color: var(--env-card-content, var(--env-color-fg-default));
   font: inherit;
   text-align: start;
   text-decoration: none;
@@ -15,11 +45,15 @@
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-card[data-interactive]:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-surface-hover);
+  --env-card-layer: calc(var(--env-state-hover-opacity) * 100%);
+}
+.env-card[data-interactive]:focus-visible:not(:disabled):not([aria-disabled='true']) {
+  --env-card-layer: calc(var(--env-state-focus-opacity) * 100%);
 }
 .env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-surface-pressed);
+  --env-card-layer: calc(var(--env-state-pressed-opacity) * 100%);
 }
+
 .env-card[data-interactive]:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;

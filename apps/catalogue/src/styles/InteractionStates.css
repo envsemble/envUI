@@ -1,60 +1,89 @@
-/* Artificial state examples are intentionally private to this application. */
+/* Artificial state examples are intentionally private to this application. A button's states are
+   state layers (Button.css): a forced state sets the layer's opacity, and where a variant changes
+   more than the layer, the defaults it changes. */
+.docs-preview .docs-force-hover.env-button {
+  --env-button-layer: calc(var(--env-state-hover-opacity) * 100%);
+}
+.docs-preview .docs-force-pressed.env-button {
+  --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
+}
+/* The solid fills keep their designed hover and press fills. */
 .docs-preview .docs-force-hover.env-button:where([data-variant='primary'][data-tone='neutral']) {
-  background: var(--env-color-bg-brand-emphasis-hover);
+  background-color: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis-hover));
 }
 .docs-preview .docs-force-pressed.env-button:where([data-variant='primary'][data-tone='neutral']) {
-  background: var(--env-color-bg-brand-emphasis-pressed);
+  background-color: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis-pressed));
 }
 .docs-preview .docs-force-hover.env-button:where([data-variant='primary'][data-tone='accent']) {
-  background: var(--env-color-bg-important-strong-hover);
+  background-color: var(--env-button-custom-fill, var(--env-color-bg-important-strong-hover));
 }
 .docs-preview .docs-force-pressed.env-button:where([data-variant='primary'][data-tone='accent']) {
-  background: var(--env-color-bg-important-strong-pressed);
+  background-color: var(--env-button-custom-fill, var(--env-color-bg-important-strong-pressed));
 }
 .docs-preview .docs-force-hover.env-button:where([data-variant='primary'][data-tone='danger']) {
-  background: var(--env-color-bg-danger-strong-hover);
+  background-color: var(--env-button-custom-fill, var(--env-color-bg-danger-strong-hover));
 }
 .docs-preview .docs-force-pressed.env-button:where([data-variant='primary'][data-tone='danger']) {
-  background: var(--env-color-bg-danger-strong-pressed);
-}
-.docs-preview .docs-force-hover.env-button:where([data-variant='secondary']) {
-  background: var(--env-color-bg-neutral-muted-hover);
-}
-.docs-preview .docs-force-pressed.env-button:where([data-variant='secondary']) {
-  background: var(--env-color-bg-neutral-muted-pressed);
+  background-color: var(--env-button-custom-fill, var(--env-color-bg-danger-strong-pressed));
 }
 .docs-preview .docs-force-hover.env-button:where([data-variant='outline']) {
-  background: var(--env-color-bg-raised-hover);
-  border-color: var(--env-color-border-default-hover);
+  --env-button-outline-default: var(--env-color-border-default-hover);
 }
 .docs-preview .docs-force-pressed.env-button:where([data-variant='outline']) {
-  background: var(--env-color-bg-raised-pressed);
-  border-color: var(--env-color-border-default-pressed);
+  --env-button-layer: calc(var(--env-state-pressed-opacity) * 130%);
+  --env-button-outline-default: var(--env-color-border-default-pressed);
+}
+.docs-preview :is(.docs-force-hover, .docs-force-pressed).env-button:where([data-variant='ghost']) {
+  --env-button-content-default: var(--env-color-fg-default);
 }
 .docs-preview .docs-force-hover.env-button:where([data-variant='text']) {
-  color: var(--env-color-fg-link-hover);
+  --env-button-content-default: var(--env-color-fg-link-hover);
 }
 .docs-preview .docs-force-pressed.env-button:where([data-variant='text']) {
-  color: var(--env-color-fg-link-pressed);
+  --env-button-content-default: var(--env-color-fg-link-pressed);
 }
-/* The danger pairs of outline and text buttons. */
+/* The danger pairs of outline, ghost and text buttons. */
 .docs-preview .docs-force-hover.env-button:where([data-variant='outline'][data-tone='danger']) {
-  border-color: var(--env-color-border-danger-emphasis-hover);
+  --env-button-outline-default: var(--env-color-border-danger-emphasis-hover);
 }
 .docs-preview .docs-force-pressed.env-button:where([data-variant='outline'][data-tone='danger']) {
-  border-color: var(--env-color-border-danger-emphasis-pressed);
+  --env-button-outline-default: var(--env-color-border-danger-emphasis-pressed);
 }
 .docs-preview
   :is(.docs-force-hover, .docs-force-pressed).env-button:where(
-    [data-variant='text'][data-tone='danger']
+    [data-tone='danger']:is([data-variant='ghost'], [data-variant='text'])
   ) {
-  color: var(--env-color-fg-danger);
+  --env-button-content-default: var(--env-color-fg-danger);
 }
 .docs-preview .docs-force-focus {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
+.docs-preview .docs-force-focus.env-button {
+  --env-button-layer: calc(var(--env-state-focus-opacity) * 100%);
+}
 .docs-preview .docs-force-focus.env-button:where([data-variant='outline']) {
   outline-color: var(--env-color-border-focus);
   outline-offset: 0.0625rem;
+}
+/* The Colors page's state layers: list rows, navigation items and fields inside a forced state. */
+.docs-preview .docs-force-hover > .env-list-item[data-interactive] {
+  --env-list-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+}
+.docs-preview .docs-force-pressed > .env-list-item[data-interactive] {
+  --env-list-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+}
+.docs-preview .docs-force-hover .env-drawer-item {
+  --env-drawer-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+  background: var(--env-drawer-item-custom-fill, var(--env-color-bg-navigation-hover));
+}
+.docs-preview .docs-force-pressed .env-drawer-item {
+  --env-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  background: var(--env-drawer-item-custom-fill, var(--env-color-bg-navigation-pressed));
+}
+.docs-preview .docs-force-hover .env-text-field-control {
+  --env-field-border-color: var(--env-field-interaction-hover);
+}
+.docs-preview .docs-force-pressed .env-text-field-control {
+  --env-field-border-color: var(--env-field-interaction-pressed);
 }

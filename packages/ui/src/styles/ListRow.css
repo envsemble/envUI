@@ -19,8 +19,13 @@
   user-select: none;
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
+/* The highlighted row shows the state layer of its text color, as a menu item does. */
 .env-list-row:is([data-highlighted], [data-popup-open]) {
-  background: var(--env-color-bg-popup-hover);
+  background: color-mix(
+    in srgb,
+    transparent,
+    currentColor calc(var(--env-state-hover-opacity) * 100%)
+  );
 }
 .env-list-row:is([data-disabled], [aria-disabled='true']) {
   opacity: var(--env-state-disabled-opacity);
