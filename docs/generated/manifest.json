@@ -1422,13 +1422,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [],
-              "parts": [
-                "env-surface"
-              ]
-            },
-            {
               "attribute": "data-radius",
               "values": [
                 "full",
@@ -1666,13 +1659,6 @@
               ],
               "parts": [
                 "env-list"
-              ]
-            },
-            {
-              "attribute": "data-env-skeleton",
-              "values": [],
-              "parts": [
-                "env-list-item"
               ]
             },
             {
