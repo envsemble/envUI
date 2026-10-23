@@ -2987,7 +2987,7 @@
         {
           "name": "ProjectColorForm",
           "title": "Project color form",
-          "description": "`name` submits the color as a string in `valueFormat`, and a reset returns to `defaultValue`.",
+          "description": "`name` submits the color as a string in `valueFormat`, and a reset returns to `defaultValue`. The picker always holds a color, so it takes no `required`: where a color must be chosen, keep \"no color yet\" in the form's own state and validate it there.",
           "file": "docs/examples/color-picker/ProjectColorForm.tsx"
         },
         {
@@ -18396,7 +18396,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -19672,7 +19672,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "size",
@@ -20499,7 +20499,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -23561,7 +23561,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -30477,12 +30477,12 @@
       {
         "cssVariable": "--env-toast-fill-hover",
         "removed": true,
-        "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
+        "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
       },
       {
         "cssVariable": "--env-toast-fill-pressed",
         "removed": true,
-        "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
+        "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
       },
       {
         "cssVariable": "--env-topbar-height",
