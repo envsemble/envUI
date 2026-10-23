@@ -138,8 +138,16 @@
     min-block-size: var(--env-control-height-md);
   }
 }
+/* Each action keeps its label on one line, as Today, Now and Clear are short: where the popup is too
+   narrow for them side by side, the row wraps whole buttons rather than the words inside one. */
 .env-date-picker-actions-end {
+  flex: 0 0 auto;
   margin-inline-start: auto;
+}
+.env-date-picker-actions .env-button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 /* Motion: the calendar icon, always in the field, doesn't settle in as the field's other actions

@@ -650,3 +650,31 @@ test('pressing the label of an open field closes its calendar, as pressing the f
   await wellOf(publish).locator('label').click();
   await expect(openPopup(page)).toBeVisible();
 });
+
+/** Each footer action's label and the number of lines it takes. */
+const actionLines = (popup: Locator) =>
+  popup.locator('.env-date-picker-actions .env-button').evaluateAll((buttons) =>
+    buttons.map((button) => {
+      const range = document.createRange();
+      range.selectNodeContents(button);
+      const tops = new Set([...range.getClientRects()].map((rect) => Math.round(rect.top)));
+      return `${button.textContent}:${tops.size}`;
+    }),
+  );
+
+test('the actions under the calendar keep their labels on one line, also on a phone', async ({
+  page,
+}) => {
+  for (const width of [1440, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const [name, actions] of [
+      ['Publish on light', ['Today:1', 'Clear:1']],
+      ['Meeting light', ['Now:1', 'Clear:1']],
+    ] as const) {
+      await field(page, name).click();
+      await expect.poll(() => actionLines(openPopup(page))).toEqual(actions);
+      await page.keyboard.press('Escape');
+      await expect(openPopup(page)).toHaveCount(0);
+    }
+  }
+});

@@ -258,10 +258,22 @@ const reducedMotion = () =>
   typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
+ * A wheel event of at least this many pixels is one notch of a mouse wheel, which turns the wheel
+ * by one row; smaller ones, from a touchpad, turn it by as far as they scroll.
+ */
+const notchPixels = 50;
+/**
+ * How quickly a turn eases into its row: each frame closes the distance left with a time constant of
+ * this many ms, so quick notches add up to one turn that glides on and settles calmly.
+ */
+const turnEasing = 90;
+
+/**
  * One column of a time list: a spinbutton drawn as a wheel whose middle row is its value. Hours and
  * minutes loop endlessly, their entries repeated with the scroll position moved back to the middle
  * copy near either end; the day periods don't. The row that settles in the middle as scrolling
- * ends is chosen, and an unavailable one gives way to the nearest available.
+ * ends is chosen, and an unavailable one gives way to the nearest available. A mouse wheel turns it
+ * a row a notch, easing into place, rather than as far as a page would scroll.
  */
 function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }: TimeWheelProps) {
   const wheelRef = useRef<HTMLDivElement>(null);
@@ -270,6 +282,10 @@ function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }:
   const shown = useRef<{ current: number; count: number } | null>(null);
   // The row a turn the wheel makes itself is heading for, until it comes to rest.
   const target = useRef<number | null>(null);
+  // A turn the wheel is easing through: its scroll position, kept unrounded, and its next frame.
+  const turn = useRef<{ position: number; frame: number; time: number } | null>(null);
+  // A touchpad's scrolling not yet turned into a whole row, in pixels.
+  const wheelRest = useRef(0);
   const loop = part !== 'dayPeriod';
   const count = entries.length;
   const copies = loop ? copiesOf(count) : 1;
@@ -280,11 +296,28 @@ function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }:
   );
   // The row in the middle while it scrolls, which takes the middle row's look.
   const [centred, setCentred] = useState(middleCopy * count + currentIndex);
+  // What a wheel settling later, after a pause or a turn, chooses from: the latest render's entries
+  // and choice, never those of the render that started it, so a choice made on another wheel in
+  // the meantime, such as AM or PM, stays.
+  const latest = useRef({ entries, currentIndex, onChoose });
+  // The row this wheel chose that the value doesn't show yet: the end of a turn and the end of its
+  // scrolling both settle it, and it chooses once.
+  const chosenAt = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    latest.current = { entries, currentIndex, onChoose };
+    chosenAt.current = null;
+  });
 
   /** The row height, and the offset of the middle row from the wheel's top. */
   function metrics(wheel: HTMLDivElement) {
     const row = wheel.querySelector<HTMLElement>('.env-time-list-row')?.offsetHeight || 1;
     return { row, offset: (wheel.clientHeight - row) / 2 };
+  }
+
+  /** The scroll position that puts a row in the middle. */
+  function topOf(wheel: HTMLDivElement, rowIndex: number) {
+    const { row, offset } = metrics(wheel);
+    return rowIndex * row + (loop ? 0 : offset) - offset;
   }
 
   /** The row whose middle is at the wheel's middle. */
@@ -294,17 +327,55 @@ function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }:
     return Math.round((wheel.scrollTop + offset - padding) / row);
   }
 
+  function stopTurn(wheel: HTMLDivElement | null) {
+    if (!turn.current) return;
+    cancelAnimationFrame(turn.current.frame);
+    turn.current = null;
+    if (wheel) delete wheel.dataset.turning;
+  }
+
+  /** Eases the wheel towards the target row, a frame at a time, and settles once it is there. */
+  function turnFrame(time: number) {
+    const wheel = wheelRef.current;
+    const state = turn.current;
+    if (!wheel || !state || target.current === null) {
+      stopTurn(wheel);
+      return;
+    }
+    const goal = topOf(wheel, target.current);
+    const elapsed = Math.min(Math.max(time - state.time, 0), 64);
+    state.time = time;
+    state.position += (goal - state.position) * (1 - Math.exp(-elapsed / turnEasing));
+    if (Math.abs(goal - state.position) < 0.5) {
+      wheel.scrollTop = goal;
+      stopTurn(wheel);
+      settle();
+      return;
+    }
+    wheel.scrollTop = state.position;
+    state.frame = requestAnimationFrame(turnFrame);
+  }
+
   function scrollToRow(rowIndex: number, smooth: boolean) {
     const wheel = wheelRef.current;
     if (!wheel) return;
-    const { row, offset } = metrics(wheel);
-    const padding = loop ? 0 : offset;
     target.current = rowIndex;
-    wheel.scrollTo({
-      top: rowIndex * row + padding - offset,
-      behavior: smooth && !reducedMotion() ? 'smooth' : 'instant',
-    });
+    chosenAt.current = null;
     setCentred(rowIndex);
+    if (!smooth || reducedMotion()) {
+      stopTurn(wheel);
+      wheel.scrollTo({ top: topOf(wheel, rowIndex), behavior: 'instant' });
+      return;
+    }
+    // A turn under way heads for the new row from where it is.
+    if (turn.current) return;
+    // Snapping stays off while the wheel eases, as it would pull each frame back to a row.
+    wheel.dataset.turning = '';
+    turn.current = {
+      position: wheel.scrollTop,
+      time: performance.now(),
+      frame: requestAnimationFrame(turnFrame),
+    };
   }
 
   /** The row of an entry nearest the middle row, so the wheel turns the short way. */
@@ -335,37 +406,56 @@ function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, count]);
 
-  useEffect(() => () => clearTimeout(settleTimer.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(settleTimer.current);
+      if (turn.current) cancelAnimationFrame(turn.current.frame);
+    },
+    [],
+  );
 
-  /** Chooses the entry that settled in the middle, or turns to the nearest available one. */
   /**
-   * Moves a looping wheel back to its middle copy, onto the same rows, unseen. It waits for the
-   * wheel to come to rest, as moving it mid-turn would stop a smooth turn short.
+   * Moves a looping wheel by whole copies of its entries, onto the same rows, unseen, with the turn
+   * it is making and the row it is heading for.
    */
+  function shiftRows(wheel: HTMLDivElement, rows: number) {
+    const pixels = rows * metrics(wheel).row;
+    wheel.scrollTop += pixels;
+    if (turn.current) turn.current.position += pixels;
+    if (target.current !== null) target.current += rows;
+    setCentred((row) => row + rows);
+  }
+
+  /** Moves a looping wheel back to its middle copy, onto the same rows, unseen. */
   function recentre(wheel: HTMLDivElement, at: number) {
     if (!loop || (at >= count && at < (copies - 1) * count)) return at;
     const moved = middleCopy * count + (((at % count) + count) % count);
-    wheel.scrollTop += (moved - at) * metrics(wheel).row;
-    setCentred(moved);
+    shiftRows(wheel, moved - at);
     return moved;
   }
 
+  /** Chooses the entry that settled in the middle, or turns to the nearest available one. */
   function settle() {
     const wheel = wheelRef.current;
-    if (!wheel) return;
+    // A turn the wheel is easing through settles once it ends.
+    if (!wheel || turn.current) return;
     clearTimeout(settleTimer.current);
     // A turn the wheel makes itself that another one cut short settles nothing; the last settles.
     if (target.current !== null && centredRow(wheel) !== target.current) return;
     target.current = null;
+    const { entries: rows, currentIndex: chosen, onChoose: choose } = latest.current;
     const at = recentre(wheel, centredRow(wheel));
     const index = loop ? ((at % count) + count) % count : Math.min(Math.max(at, 0), count - 1);
-    const available = nearestAvailable(entries, index, loop, 0);
+    const available = nearestAvailable(rows, index, loop, 0);
     if (available === -1) return;
     if (available !== index) {
       scrollToRow(loop ? at + (available - index) : available, true);
       return;
     }
-    if (index !== currentIndex) onChoose(entries[index]!.value);
+    if (index !== chosen && chosenAt.current !== index) {
+      chosenAt.current = index;
+      choose(rows[index]!.value);
+    }
   }
 
   function handleScroll() {
@@ -377,8 +467,50 @@ function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }:
     if (at !== centred) setCentred(at);
     clearTimeout(settleTimer.current);
     // A browser without scrollend, or one that misses it after snapping, settles on a pause.
-    settleTimer.current = setTimeout(settle, 200);
+    if (!turn.current) settleTimer.current = setTimeout(settle, 200);
   }
+
+  // A mouse wheel turns the wheel a row a notch, and a touchpad as far as it scrolls, easing into
+  // place rather than scrolling as fast as a page. The listener is added outside React, whose wheel
+  // listeners are passive and can't keep the browser from scrolling on its own.
+  useEffect(() => {
+    const wheel = wheelRef.current;
+    if (!wheel) return;
+    function handleWheel(event: WheelEvent) {
+      // Zooming, and scrolling sideways, are left to the browser.
+      if (!wheel || event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+      event.preventDefault();
+      const { row } = metrics(wheel);
+      let rows: number;
+      if (event.deltaMode !== WheelEvent.DOM_DELTA_PIXEL) {
+        // Lines or pages: a notch is three lines, as Firefox reports one.
+        rows = Math.sign(event.deltaY) * Math.max(1, Math.round(Math.abs(event.deltaY) / 3));
+        wheelRest.current = 0;
+      } else if (Math.abs(event.deltaY) >= notchPixels) {
+        rows = Math.sign(event.deltaY);
+        wheelRest.current = 0;
+      } else {
+        wheelRest.current += event.deltaY;
+        rows = Math.trunc(wheelRest.current / row);
+        wheelRest.current -= rows * row;
+      }
+      if (!rows) return;
+      let next = (target.current ?? centredRow(wheel)) + rows;
+      if (!loop) next = Math.min(Math.max(next, 0), count - 1);
+      else if (next < count || next >= (copies - 1) * count) {
+        // Far from the middle copy, the wheel moves back to it first, so a long spin never ends.
+        const shift = middleCopy * count + (((next % count) + count) % count) - next;
+        shiftRows(wheel, shift);
+        next += shift;
+      }
+      clearTimeout(settleTimer.current);
+      scrollToRow(next, true);
+    }
+    wheel.addEventListener('wheel', handleWheel, { passive: false });
+    return () => wheel.removeEventListener('wheel', handleWheel);
+    // The handler measures the wheel as it runs; it needs adding again only for other rows.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count, copies]);
 
   function step(index: number, direction: 1 | -1) {
     let next = index;
@@ -452,14 +584,13 @@ function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }:
       onKeyDown={handleKeyDown}
       onScroll={handleScroll}
       onScrollEnd={settle}
-      // Someone turning the wheel takes over from a turn it makes itself.
-      onWheel={() => {
+      // Someone dragging the wheel, or pressing a row, takes over from a turn it makes itself.
+      onPointerDown={(event) => {
+        stopTurn(event.currentTarget);
         target.current = null;
       }}
-      onPointerDown={() => {
-        target.current = null;
-      }}
-      onTouchStart={() => {
+      onTouchStart={(event) => {
+        stopTurn(event.currentTarget);
         target.current = null;
       }}
     >

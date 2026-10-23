@@ -286,3 +286,83 @@ test('disabled, read-only and invalid fields', async ({ page }) => {
   await expect(invalid).toHaveAttribute('aria-invalid', 'true');
   await expect(invalid).toHaveAccessibleDescription('Choose a later time.');
 });
+
+test(
+  'a mouse wheel turns a wheel a row a notch, and quick notches add up to one calm turn',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const start = field(page, 'Start time');
+    await start.click();
+    const dialog = page.getByRole('dialog', { name: 'Start time' });
+    const minutes = wheel(dialog, 'Minutes');
+    await minutes.hover();
+    // A notch of a mouse wheel, 100 pixels, is one row, not as far as a page would scroll.
+    await page.mouse.wheel(0, 100);
+    await expect(start).toHaveText('09:45');
+    await expect(minutes.locator('[data-centred]')).toHaveText('45');
+    // Notches in quick succession turn on together, a row each, and settle once.
+    await page.mouse.wheel(0, 100);
+    await page.mouse.wheel(0, 100);
+    await expect(start).toHaveText('09:15');
+    await expect(minutes).not.toHaveAttribute('data-turning');
+    await wheel(dialog, 'Hours').hover();
+    await page.mouse.wheel(0, -100);
+    await expect(start).toHaveText('08:15');
+  },
+);
+
+test(
+  'switching between AM and PM keeps the hour and minutes and moves the time by 12 hours',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const reminder = field(page, 'Reminder');
+    const output = page.getByTestId('time-picker-reminder');
+    await expect(reminder).toHaveText(/^2:00\sPM$/);
+    await reminder.click();
+    const dialog = page.getByRole('dialog', { name: 'Reminder' });
+    const period = wheel(dialog, 'AM/PM');
+    // Pressing AM keeps 2:00.
+    await (await rowFromMiddle(period, -1)).click();
+    await expect(reminder).toHaveText(/^2:00\sAM$/);
+    await expect(output).toContainText('"reminder":"02:00"');
+    // A turn of the hours still settling doesn't undo AM or PM chosen meanwhile, nor the other way.
+    await wheel(dialog, 'Hours').hover();
+    await page.mouse.wheel(0, 100);
+    await period.hover();
+    await page.mouse.wheel(0, 100);
+    await expect(reminder).toHaveText(/^3:00\sPM$/);
+    await expect(output).toContainText('"reminder":"15:00"');
+    await expect(wheel(dialog, 'Hours')).toHaveAttribute('aria-valuetext', '3');
+    // The keys keep it too.
+    await period.focus();
+    await page.keyboard.press('a');
+    await expect(reminder).toHaveText(/^3:00\sAM$/);
+    await page.keyboard.press('ArrowDown');
+    await expect(reminder).toHaveText(/^3:00\sPM$/);
+    // Each choice reached the application once.
+    await expect(output).toHaveText(
+      JSON.stringify({ reminder: '15:00', changes: ['02:00', '03:00', '15:00', '03:00', '15:00'] }),
+    );
+  },
+);
+
+/** Each popup action's label and the number of lines it takes. */
+const actionLines = (popup: Locator) =>
+  popup.locator('.env-date-picker-actions .env-button').evaluateAll((buttons) =>
+    buttons.map((button) => {
+      const range = document.createRange();
+      range.selectNodeContents(button);
+      const tops = new Set([...range.getClientRects()].map((rect) => Math.round(rect.top)));
+      return `${button.textContent}:${tops.size}`;
+    }),
+  );
+
+test('Now and Clear keep their labels on one line, also on a phone', async ({ page }) => {
+  for (const width of [1440, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    await field(page, 'Start time').click();
+    await expect.poll(() => actionLines(openPopup(page))).toEqual(['Now:1', 'Clear:1']);
+    await page.keyboard.press('Escape');
+    await expect(openPopup(page)).toHaveCount(0);
+  }
+});
