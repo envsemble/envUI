@@ -163,6 +163,68 @@ test('live examples keep links in place, show their source, and specimens show f
   await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
 });
 
+test("the Colors page's forced interaction states paint what the components' own states paint", async ({
+  page,
+}) => {
+  // The samples take each state's color through public color properties. A component's own hover
+  // and press, forced on its rest sample, must paint the same, so the page can't drift from it.
+  await page.goto(`${catalogueUrl}/foundations/colors`);
+  await page.addStyleTag({
+    content: '*, *::before, *::after { transition: none !important; animation: none !important; }',
+  });
+  const table = page.getByRole('region', { name: 'Interaction states', exact: true });
+  await expect(table).toBeVisible();
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await cdp.send('CSS.enable');
+  const { root } = await cdp.send('DOM.getDocument', { depth: -1 });
+  const nodes = async (selector: string) =>
+    (await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector })).nodeIds;
+  const samples = {
+    'List row': ['.env-list-item', 'background-color'],
+    'Navigation item': ['.env-drawer-item', 'background-color'],
+    Field: ['.env-text-field-control', 'border-top-color'],
+    'Primary button': ['.env-button', 'background-color'],
+    'Secondary button': ['.env-button', 'background-color'],
+    'Outline button': ['.env-button', 'background-color'],
+    'Ghost button': ['.env-button', 'background-color'],
+  } as const;
+  for (const [sample, [part, property]] of Object.entries(samples)) {
+    const cells = table.getByRole('row', { name: sample, exact: false }).getByRole('cell');
+    const paint = (cell: number) =>
+      cells
+        .nth(cell)
+        .locator(part)
+        .first()
+        .evaluate((element, name) => getComputedStyle(element).getPropertyValue(name), property);
+    await cells
+      .nth(0)
+      .locator(part)
+      .first()
+      .evaluate((element) => element.setAttribute('data-forced-target', ''));
+    const [target] = await nodes('[data-forced-target]');
+    // A row is pressed through its target, which the row's style reads.
+    const inner = await nodes('[data-forced-target] [data-row-target]');
+    for (const [cell, state] of [
+      [1, ['hover']],
+      [2, ['hover', 'active']],
+    ] as const) {
+      await cdp.send('CSS.forcePseudoState', { nodeId: target!, forcedPseudoClasses: [...state] });
+      for (const nodeId of inner)
+        await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [...state] });
+      expect(await paint(0), `${sample}, ${state.join(' and ')}`).toBe(await paint(cell));
+    }
+    await cdp.send('CSS.forcePseudoState', { nodeId: target!, forcedPseudoClasses: [] });
+    for (const nodeId of inner)
+      await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [] });
+    await cells
+      .nth(0)
+      .locator(part)
+      .first()
+      .evaluate((element) => element.removeAttribute('data-forced-target'));
+  }
+});
+
 test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
   page,
 }) => {
@@ -835,7 +897,7 @@ test(
   'paths support direct links, old hash links and back/forward navigation',
   { tag: '@engines' },
   async ({ page }) => {
-    // The hash address of an earlier release opens the route as a path.
+    // The hash address of an earlier release, such as a bookmark, is redirected to its path.
     await page.goto(`${catalogueUrl}/#/components/select/props`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
     await expect(page).toHaveURL(/\/docs\/components\/select$/);

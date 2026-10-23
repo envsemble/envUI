@@ -268,6 +268,34 @@ test('a Select whose queued focus is lost moves focus to the highlighted option 
   await expect(trigger).toHaveText('Team');
 });
 
+test('a Select opened with the pointer leaves focus where Base UI puts it', async ({ page }) => {
+  // The safety net above is for keyboard opens only. Record who focuses an option, and let none
+  // take focus, so focus stays on the trigger as the list opens: only Base UI may move it.
+  await page.evaluate(() => {
+    const callers: string[] = [];
+    (window as unknown as { optionFocusCallers: string[] }).optionFocusCallers = callers;
+    const focus = HTMLElement.prototype.focus;
+    HTMLElement.prototype.focus = function (this: HTMLElement, options?: FocusOptions) {
+      if (this.getAttribute('role') === 'option') callers.push(new Error().stack ?? '');
+      else focus.call(this, options);
+    };
+  });
+  const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
+  await trigger.click();
+  const popup = page.locator('.env-select-popup');
+  await expect(page.getByRole('listbox')).toBeVisible();
+  // The safety net runs once the list has opened, when its animations finish.
+  await expect
+    .poll(() => popup.evaluate((element) => element.getAnimations({ subtree: true }).length))
+    .toBe(0);
+  await expect(trigger).toBeFocused();
+  const callers = await page.evaluate(
+    () => (window as unknown as { optionFocusCallers: string[] }).optionFocusCallers,
+  );
+  expect(callers.filter((stack) => stack.includes('Select.tsx'))).toEqual([]);
+  await page.keyboard.press('Escape');
+});
+
 test('Select triggers are button styles, and the open list stands apart from a pane', async ({
   page,
 }) => {

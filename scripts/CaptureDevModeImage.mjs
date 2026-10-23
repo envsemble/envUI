@@ -14,7 +14,7 @@ import { chromium } from '@playwright/test';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const catalogue = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
-const page = '#/overview/get-started?document=dev-mode&section=documentation';
+const page = 'docs/dev-mode';
 /** The picture's shape, width to height, as DevModeDemo.tsx declares it, and its margin in px. */
 const aspect = 16 / 10;
 const margin = 24;

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   Alert,
   Avatar,
@@ -25,8 +26,10 @@ import {
   TextField,
   Textarea,
   Theme,
+  Toast,
   Toolbar,
   Tooltip,
+  useToast,
   type Destination,
 } from '@envsemble/envui';
 import { FormatBold } from '@envsemble/envui/icons/FormatBold';
@@ -42,8 +45,23 @@ const destinations: Destination[] = [
   { label: 'Settings', icon: <Settings />, href: '#settings' },
 ];
 
+/** Toasts in a few tones, one with an action, kept until the page closes. */
+function Toasts() {
+  const toast = useToast();
+  useEffect(() => {
+    toast.show({ message: 'Neutral toast', duration: 0 });
+    toast.show({ message: 'Success toast', tone: 'success', duration: 0 });
+    toast.show({
+      message: 'Error toast',
+      tone: 'danger',
+      action: { label: 'Retry', onClick: () => {} },
+    });
+  }, [toast]);
+  return null;
+}
+
 /**
- * Every component that has color properties, at rest, with none set: DefaultColors.spec.ts forces
+ * Every component that has color properties, at rest and disabled, with none set: DefaultColors.spec.ts forces
  * each control into its states and compares the colors it paints with those the integration branch
  * painted, so envUI's own colors can't drift.
  */
@@ -171,6 +189,28 @@ export function DefaultColors() {
         <Tooltip content="Tip" defaultOpen>
           <Button variant="secondary">With a tooltip</Button>
         </Tooltip>
+        <Row gap={2} wrap>
+          <Button disabled>Disabled primary</Button>
+          <Button variant="secondary" disabled>
+            Disabled secondary
+          </Button>
+          <Button variant="outline" disabled>
+            Disabled outline
+          </Button>
+          <Button variant="ghost" disabled>
+            Disabled ghost
+          </Button>
+          <Button variant="text" disabled>
+            Disabled text
+          </Button>
+        </Row>
+        <TextField label="Disabled name" defaultValue="Roadmap" disabled />
+        <Checkbox label="Disabled checked" defaultChecked disabled />
+        <Switch label="Disabled on" defaultChecked disabled />
+        <Slider label="Disabled volume" defaultValue={40} disabled />
+        <Toast.Provider>
+          <Toasts />
+        </Toast.Provider>
         <Combobox
           multiple
           label="Reviewers"

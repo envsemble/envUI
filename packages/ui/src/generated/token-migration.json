@@ -1337,16 +1337,19 @@
     "--env-alert-edge": {
       "kind": "renamed",
       "cssVariable": "--env-alert-outline",
+      "colorPropertyOf": "env-alert",
       "note": "An alert's edge is the public color property --env-alert-outline."
     },
     "--env-alert-tint": {
       "kind": "renamed",
       "cssVariable": "--env-alert-container",
+      "colorPropertyOf": "env-alert",
       "note": "An alert's tint is the public color property --env-alert-container, set on the alert."
     },
     "--env-alert-tone": {
       "kind": "renamed",
       "cssVariable": "--env-alert-icon",
+      "colorPropertyOf": "env-alert",
       "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
     },
     "--env-app-control-height": {
@@ -1430,6 +1433,7 @@
     "--env-list-item-fill": {
       "kind": "renamed",
       "cssVariable": "--env-list-item-container",
+      "colorPropertyOf": "env-list-item",
       "note": "A row's fill is the public color property --env-list-item-container, set on the row."
     },
     "--env-sidebar-collapsed-width": {
@@ -1475,20 +1479,22 @@
     "--env-toast-edge": {
       "kind": "renamed",
       "cssVariable": "--env-toast-outline",
+      "colorPropertyOf": "env-toast",
       "note": "A toast's edge is the public color property --env-toast-outline."
     },
     "--env-toast-fill": {
       "kind": "renamed",
       "cssVariable": "--env-toast-container",
+      "colorPropertyOf": "env-toast",
       "note": "A toast's fill is the public color property --env-toast-container, set on the toast."
     },
     "--env-toast-fill-hover": {
       "kind": "removed",
-      "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
+      "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
     },
     "--env-toast-fill-pressed": {
       "kind": "removed",
-      "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
+      "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
     },
     "--env-topbar-height": {
       "kind": "renamed",

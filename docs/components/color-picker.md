@@ -96,7 +96,7 @@ ColorSwatch shows a color as a small sample, with its value in a `format` and an
 
 ### In a form
 
-`name` submits the color as a string in `valueFormat`, and a reset returns to `defaultValue`.
+`name` submits the color as a string in `valueFormat`, and a reset returns to `defaultValue`. The picker always holds a color, so it takes no `required`: where a color must be chosen, keep "no color yet" in the form's own state and validate it there.
 
 ```tsx example=ProjectColorForm
 

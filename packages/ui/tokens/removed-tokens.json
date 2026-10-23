@@ -1,5 +1,5 @@
 {
-  "$comment": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it. prefixed: names that only take the --env- prefix. renamed: names that changed beyond the prefix, to a token (replacement) or a hand-written property (cssVariable); a name of 1.0’s development has the prefix already. aliases: the 0.7 alias tokens, removed with the prefix, each to the token of its role or the value of a fixed color. removed: names with no counterpart, with the token to use instead where there is one, which does not take its place as it is, such as a color token for a state opacity; a name that one token replaces as it is goes in renamed, which the codemods rewrite: every use, and a declaration only where no other name becomes the same token, since a declaration of a name merged into a token with others, such as --control-height-small, would set the token for all of them, so the codemods report it. The token build turns this into src/generated/token-migration.json, the map that the codemods (v1-classes) and the migration guide read.",
+  "$comment": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it. prefixed: names that only take the --env- prefix. renamed: names that changed beyond the prefix, to a token (replacement) or a hand-written property (cssVariable); a name of 1.0’s development has the prefix already, and colorPropertyOf names the class of the component whose color property, which doesn't inherit, the cssVariable is, so the codemods report a declaration on a wrapper. aliases: the 0.7 alias tokens, removed with the prefix, each to the token of its role or the value of a fixed color. removed: names with no counterpart, with the token to use instead where there is one, which does not take its place as it is, such as a color token for a state opacity; a name that one token replaces as it is goes in renamed, which the codemods rewrite: every use, and a declaration only where no other name becomes the same token, since a declaration of a name merged into a token with others, such as --control-height-small, would set the token for all of them, so the codemods report it. The token build turns this into src/generated/token-migration.json, the map that the codemods (v1-classes) and the migration guide read.",
   "prefixed": [
     "--body-font-weight",
     "--color-bg-accent-emphasis",
@@ -370,26 +370,32 @@
     },
     "--env-list-item-fill": {
       "cssVariable": "--env-list-item-container",
+      "colorPropertyOf": "env-list-item",
       "note": "A row's fill is the public color property --env-list-item-container, set on the row."
     },
     "--env-toast-fill": {
       "cssVariable": "--env-toast-container",
+      "colorPropertyOf": "env-toast",
       "note": "A toast's fill is the public color property --env-toast-container, set on the toast."
     },
     "--env-toast-edge": {
       "cssVariable": "--env-toast-outline",
+      "colorPropertyOf": "env-toast",
       "note": "A toast's edge is the public color property --env-toast-outline."
     },
     "--env-alert-tint": {
       "cssVariable": "--env-alert-container",
+      "colorPropertyOf": "env-alert",
       "note": "An alert's tint is the public color property --env-alert-container, set on the alert."
     },
     "--env-alert-edge": {
       "cssVariable": "--env-alert-outline",
+      "colorPropertyOf": "env-alert",
       "note": "An alert's edge is the public color property --env-alert-outline."
     },
     "--env-alert-tone": {
       "cssVariable": "--env-alert-icon",
+      "colorPropertyOf": "env-alert",
       "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
     }
   },
@@ -1180,10 +1186,10 @@
       "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-toast-fill-hover": {
-      "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
+      "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
     },
     "--env-toast-fill-pressed": {
-      "note": "A toast's hover and press fills are private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
+      "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
     }
   }
 }

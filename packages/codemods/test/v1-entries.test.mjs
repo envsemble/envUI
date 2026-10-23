@@ -6,6 +6,11 @@ import { encodings, fixtures, runTransform } from './helpers.mjs';
 const moved = (name) =>
   `comes from @envsemble/envui/color in 1.0, whose libraries the application installs: import ${name} from there.`;
 
+const reexported =
+  "no longer re-exports ColorPicker, ColorPickerProps, ColorSwatch and ColorSwatchProps: they come from @envsemble/envui/color in 1.0, whose libraries the application installs. Re-export them from there too, such as export * from '@envsemble/envui/color'.";
+const loaded =
+  'has no ColorPicker and ColorSwatch in 1.0: load them from @envsemble/envui/color, whose libraries the application installs.';
+
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
   // A namespace import can't be split: each use of a moved export is reported, once a line.
@@ -13,6 +18,17 @@ const reports = {
     `line 3: ui.ColorPickerProps ${moved('ColorPickerProps')}`,
     `line 6: ui.ColorPicker ${moved('ColorPicker')}`,
     `line 11: ui.ColorSwatch ${moved('ColorSwatch')}`,
+  ],
+  // A re-export of the whole entry point no longer carries the moved names.
+  'barrel.tsx': [
+    `line 2: export * from '@envsemble/envui' ${reexported}`,
+    `line 3: export * as ui from '@envsemble/envui' ${reexported}`,
+  ],
+  // Nor does a module loaded at run time, in a file that names one of them.
+  'dynamic.tsx': [
+    `line 6: import('@envsemble/envui') ${loaded}`,
+    `line 8: import('@envsemble/envui') ${loaded}`,
+    `line 9: require('@envsemble/envui') ${loaded}`,
   ],
 };
 

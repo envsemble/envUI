@@ -605,7 +605,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -1881,7 +1881,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "size",
@@ -2708,7 +2708,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -5756,7 +5756,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the muted color, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -8769,6 +8769,15 @@
       "source": "packages/ui/src/internal/EnvUIContext.ts",
       "description": "The locale of the nearest EnvUIProvider, for formatting in step with envUI, or undefined where no provider sets one: the runtime's locale applies then.",
       "signature": "(): string | undefined",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useModifierKey": {
+      "kind": "function",
+      "source": "packages/ui/src/content/useModifierKey.ts",
+      "description": "The platform's modifier for shortcuts: ⌘ on Apple platforms, Ctrl elsewhere. The server and the first render in the browser give Ctrl, so the markup hydrates; an Apple browser then renders ⌘.",
+      "signature": "(): ModifierKey",
       "entries": [
         "@envsemble/envui"
       ]

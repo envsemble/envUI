@@ -35,6 +35,7 @@ export * from './content/Badge.js';
 export * from './content/DiffStat.js';
 export * as Table from './content/Table.js';
 export * from './content/Kbd.js';
+export * from './content/useModifierKey.js';
 export * as Field from './forms/Field.js';
 export * from './forms/TextField.js';
 export * from './forms/Textarea.js';

@@ -2,7 +2,7 @@
  * The site's search and navigation: search in envUI's CommandPalette, opened with ⌘K or Ctrl+K,
  * which finds pages of the Site and the Docs and names the area of each; path routes in the hosted
  * build, served through the hosted Worker script, with deep links into both areas, refreshes and
- * the old hash addresses. tests/SearchIndex.test.mjs checks that every result leads to a section.
+ * the redirects from old hash addresses. tests/SearchIndex.test.mjs checks that every result leads to a section.
  */
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
@@ -256,7 +256,7 @@ test.describe('hosted build', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(
       'Migrate an interface to envUI',
     );
-    // A hash route opened in the page, as by an old link, also moves to its path.
+    // An old hash address entered in an open page is redirected to its path too.
     await page.evaluate(() => (location.hash = '/components/buttons/preview'));
     await expect(page).toHaveURL(`${siteUrl}/components/button`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');

@@ -1,10 +1,8 @@
-import { Box, Button, Kbd } from '@envsemble/envui';
+import { Box, Button, Kbd, useModifierKey } from '@envsemble/envui';
 import { Search } from '@envsemble/envui/icons/Search';
 
-/** ⌘ on Apple platforms, Ctrl elsewhere. */
-const apple = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
-
 export default function ButtonLabel() {
+  const modifier = useModifierKey();
   return (
     <Box style={{ inlineSize: '16rem' }}>
       {/* A sidebar's width, which an application's frame sets. */}
@@ -12,8 +10,8 @@ export default function ButtonLabel() {
         variant="secondary"
         fullWidth
         startIcon={<Search />}
-        end={<Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} aria-hidden />}
-        aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
+        end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
+        aria-keyshortcuts={`${modifier.key}+K`}
       >
         Search documents
       </Button>

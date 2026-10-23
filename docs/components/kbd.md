@@ -34,6 +34,9 @@ related:
   - accessibility
 components:
   - Kbd
+  - useModifierKey
+statuses:
+  useModifierKey: beta
 ---
 
 # Kbd
@@ -73,7 +76,7 @@ Kbd shows a key as a key cap, or with `keys`, keys pressed together. It only sho
 
 ```
 
-Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, and ←, →, ↑, ↓. Pass the names of the reader's platform, such as ⌘ on Apple keyboards.
+Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, and ←, →, ↑, ↓. Pass the names of the reader's platform, such as ⌘ on Apple keyboards: `useModifierKey()` gives the shortcut modifier's `label`, ⌘ or Ctrl, and its `key`, `Meta` or `Control`, for `aria-keyshortcuts`. It is Ctrl on the server and while the page hydrates, then ⌘ on Apple platforms, so server-rendered markup hydrates; don't read `navigator` while rendering.
 
 ```tsx example=PlatformKeys
 
@@ -104,5 +107,5 @@ Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, an
 
 ## Changelog
 
-- **1.0.0**: The page is `kbd`, after the component.
+- **1.0.0**: `useModifierKey()`, the platform's shortcut modifier, safe to render on the server. The page is `kbd`, after the component.
 - **0.5.0**: Kbd, for a key or, with `keys`, keys pressed together; Markdown renders `<kbd>` as Kbd.

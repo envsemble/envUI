@@ -82,9 +82,10 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
   endIcon?: ReactNode;
   /**
    * Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the
-   * same: it takes the muted color, and in a button wider than its content, such as with
-   * fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here
-   * take aria-hidden, and the button announces them with aria-keyshortcuts.
+   * same: it takes the button's content color, keys in it are outlined caps with no fill, and in a
+   * button wider than its content, such as with fullWidth, it stays at the end while the icon and
+   * label stay at the start. Keys shown here take aria-hidden, and the button announces them with
+   * aria-keyshortcuts.
    */
   end?: ReactNode;
   /**

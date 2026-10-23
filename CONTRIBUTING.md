@@ -22,7 +22,7 @@ There is no top bar. The rail and the drawer read as one pane: the wordmark tops
 
 ⌘K or Ctrl+K opens search, in envUI's `CommandPalette`: components by their names and frontmatter `aliases`, their props, the design tokens, and the foundations, patterns and guides, each result naming its area, the Site or the Docs; a result opens its page at the prop's or token's row. `scripts/SearchIndex.mjs` builds the MiniSearch index from `docs/`, `docs/generated/props.json` and the token list whenever the documentation is generated, into `apps/catalogue/src/generated/SearchIndex.json`; its `searchDocuments()` gives the same documents to other tools, and `scripts/SearchTerms.mjs` how words are split and matched.
 
-Routes live in the address's path, such as `/docs/components/button#props-Button-variant`, in development and in the hosted site. The hash addresses of earlier releases' offline catalogue, such as `#/components/button/props`, the views pages had before the Site and the Docs split, and earlier names of pages open at the path address of the page they became.
+Routes live in the address's path, such as `/docs/components/button#props-Button-variant`, in development and in the hosted site; the fragment only names a section. There is no hash routing: the site never writes a hash address. An old hash address of earlier releases' offline catalogue, such as a bookmark of `#/components/button/props`, is redirected once to the path address of the page it named, as are the views pages had before the Site and the Docs split and earlier names of pages.
 
 | Command                    | Purpose                                                       |
 | -------------------------- | ------------------------------------------------------------- |

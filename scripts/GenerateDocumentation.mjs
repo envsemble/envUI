@@ -29,8 +29,10 @@ import { writeSearchIndex } from './SearchIndex.mjs';
 export const documentationDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
 
 /**
- * Pages for people who work on envUI itself. The catalogue shows them; the package leaves them out,
- * and its pages link to the copies on main instead.
+ * Pages the package leaves out, whose links in its pages lead to the copies on main instead: the
+ * contributor pages, for people who work on envUI itself, which neither the Site nor the Docs show
+ * (unlistedDocuments in apps/catalogue/src/navigation/DocumentationRoutes.ts), and local
+ * development, which needs a checkout of envUI and which the Docs show.
  */
 export const contributorPages = new Set([
   'local-development.md',

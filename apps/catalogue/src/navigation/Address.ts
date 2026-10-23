@@ -5,9 +5,10 @@
  * with the section as the fragment: the Site at the root and the Docs under /docs. The server
  * answers every path without a file with index.html, so a deep link and a refresh load the page.
  *
- * An address written as a hash route, `#/components/button/props?section=…`, from the offline
- * catalogue of earlier releases or an old bookmark, opens the route it names, and is replaced with
- * the path address of the same route.
+ * There is no hash routing: the site never writes a hash route, and reads routes only from the
+ * path. An old hash address, `#/components/button/props?section=…`, from the offline catalogue of
+ * earlier releases, such as a bookmark, is redirected once to the path address of the route it
+ * named (oldHashRoute), and the route is read from the path.
  */
 
 /** The route of the Site's home page, which the root address shows. */
@@ -56,13 +57,18 @@ function routeOfLocation({ pathname, search, hash }: Pick<URL, 'pathname' | 'sea
   return path || !query ? `${path}${query}` : `overview${query}`;
 }
 
-/** The route the address names, as it is written; empty at the root. */
+/** The route the address's path names, as it is written; empty at the root. */
 export function writtenRoute(): string {
-  const { hash } = location;
-  // A hash route, from the offline catalogue of earlier releases or an old bookmark, names the
-  // route itself.
-  if (hash.startsWith('#/')) return hash.slice(2);
   return routeOfLocation(location);
+}
+
+/**
+ * The route an old hash address names, such as components/button/props for
+ * `#/components/button/props`, which the address is redirected from; undefined for any other.
+ */
+export function oldHashRoute(): string | undefined {
+  const { hash } = location;
+  return hash.startsWith('#/') ? hash.slice(2) : undefined;
 }
 
 /** The part of the address that routes are written in. */
@@ -78,8 +84,6 @@ export function currentHref() {
 export function routeOfLink(href: string): string | undefined {
   const url = new URL(href, location.href);
   if (url.origin !== location.origin) return undefined;
-  // A hash route, written as #/route, opens that route.
-  if (url.hash.startsWith('#/')) return url.hash.slice(2);
   const last = url.pathname.split('/').at(-1) ?? '';
   if (/^\/assets(?:\/|$)/.test(url.pathname) || last.includes('.')) return undefined;
   return routeOfLocation(url);
@@ -185,7 +189,9 @@ export function navigate(route: string, { replace = false }: { replace?: boolean
 /** Replaces the address in place, without announcing it, such as an old address with its route's. */
 export function replaceAddress(route: string) {
   const href = routeHref(route);
-  if (href !== currentHref()) history.replaceState(history.state, '', href);
+  // An old hash address of the same path, such as /#/overview at the root, is still replaced.
+  if (href !== currentHref() || oldHashRoute() !== undefined)
+    history.replaceState(history.state, '', href);
 }
 
 /** Calls `listener` whenever the address changes: by a link, the history or navigate(). */

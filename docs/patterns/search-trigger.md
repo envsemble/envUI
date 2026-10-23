@@ -25,6 +25,7 @@ composes:
   - Button
   - IconButton
   - Kbd
+  - useModifierKey
   - Tooltip
   - CommandPalette
   - Drawer
@@ -56,20 +57,23 @@ A search trigger is the button that opens an application's search: a secondary [
 
 The application listens for the shortcut once, at its root, and opens the same search the button does: <kbd>⌘</kbd>+<kbd>K</kbd> on Apple platforms and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, from anywhere in the window, text fields included. A key press that something else already handled, such as an editor's own shortcut, is left alone. The button shows the keys and announces them with `aria-keyshortcuts`.
 
+`useModifierKey()` gives the platform's modifier: its `key`, `Meta` or `Control`, for `aria-keyshortcuts` and the listener, and its `label`, ⌘ or Ctrl, for Kbd. It is Ctrl on the server and while the page hydrates, so server-rendered markup matches, and becomes ⌘ on Apple platforms right after. Don't read `navigator` while rendering: it doesn't exist on the server, and markup that differs from the server's fails to hydrate.
+
 ```tsx
-const apple = /mac|iphone|ipad/i.test(navigator.platform);
+const modifier = useModifierKey();
 
 useEffect(() => {
   const onKeyDown = (event: KeyboardEvent) => {
-    const modifier = apple ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
-    if (event.defaultPrevented || !modifier || event.altKey || event.shiftKey) return;
+    const pressed =
+      modifier.key === 'Meta' ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+    if (event.defaultPrevented || !pressed || event.altKey || event.shiftKey) return;
     if (event.key.toLowerCase() !== 'k') return;
     event.preventDefault();
     setSearchOpen((open) => !open);
   };
   addEventListener('keydown', onKeyDown);
   return () => removeEventListener('keydown', onKeyDown);
-}, []);
+}, [modifier.key]);
 ```
 
 ## Variants
@@ -139,12 +143,12 @@ With `fullWidth` it fills its container, such as the top of a navigation drawer,
 ### envUI provides
 
 - A native `button` named by its label, or by `aria-label` when it shows only its icon.
-- The keys in the muted end slot, and the tooltip's keys, as Kbd.
+- The keys in the end slot, in the button's content color on every variant, and the tooltip's keys, as Kbd.
 
 ### You provide
 
 - `onClick`, which opens the search, and the shortcut's listener, which opens the same one.
-- `aria-keyshortcuts` for the platform, `Meta+K` or `Control+K`, and `aria-hidden` on the keys it shows, so the shortcut is announced once.
+- `aria-keyshortcuts` for the platform, `` `${modifier.key}+K` `` from `useModifierKey()`, and `aria-hidden` on the keys it shows, so the shortcut is announced once.
 - Focus on the search when it opens, and back on the trigger when it closes, which CommandPalette does.
 
 ## Changelog

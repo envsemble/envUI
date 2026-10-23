@@ -44,12 +44,15 @@ const targets = [
   `${section} .env-radio`,
   `${section} .env-switch-input`,
   `${section} .env-slider-thumb`,
+  `${section} .env-slider-track`,
+  `${section} .env-slider-indicator`,
   `${section} .env-badge`,
   `${section} .env-avatar`,
   `${section} .env-alert`,
   `${section} .env-combobox-chip`,
   '.env-menu-item',
   '.env-tooltip',
+  '.env-toast',
 ];
 
 const states = {
@@ -94,6 +97,7 @@ test('with no color property set, every component paints its colors of before in
   });
   await expect(page.locator('.env-menu-item').first()).toBeVisible();
   await expect(page.locator('.env-tooltip')).toBeVisible();
+  await expect(page.locator('.env-toast')).toHaveCount(3);
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('DOM.enable');
   await cdp.send('CSS.enable');

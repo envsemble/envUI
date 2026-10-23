@@ -1,11 +1,18 @@
 import { useState } from 'react';
-import { AvatarButton, IconButton, Kbd, Column, Row, Text, Tooltip } from '@envsemble/envui';
+import {
+  AvatarButton,
+  IconButton,
+  Kbd,
+  Column,
+  Row,
+  Text,
+  Tooltip,
+  useModifierKey,
+} from '@envsemble/envui';
 import { Search } from '@envsemble/envui/icons/Search';
 
-/** ⌘ on Apple platforms, Ctrl elsewhere. */
-const apple = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
-
 export default function IconOnly() {
+  const modifier = useModifierKey();
   const [searches, setSearches] = useState(0);
   return (
     <Column gap={3}>
@@ -19,7 +26,7 @@ export default function IconOnly() {
             side="bottom"
             content={
               <Row render={<span />} align="center" gap={2}>
-                Search <Kbd keys={[apple ? '⌘' : 'Ctrl', 'K']} />
+                Search <Kbd keys={[modifier.label, 'K']} />
               </Row>
             }
           >
@@ -27,7 +34,7 @@ export default function IconOnly() {
               variant="ghost"
               icon={<Search />}
               aria-label="Search"
-              aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
+              aria-keyshortcuts={`${modifier.key}+K`}
               onClick={() => setSearches((count) => count + 1)}
             />
           </Tooltip>

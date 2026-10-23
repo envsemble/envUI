@@ -36,6 +36,7 @@ composes:
   - Tabs
   - Pager
   - Kbd
+  - useModifierKey
   - IconButton
   - Tooltip
   - CommandPalette
