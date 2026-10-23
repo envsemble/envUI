@@ -6803,7 +6803,7 @@
       "category": "Forms & selection",
       "status": "stable",
       "since": "0.5.0",
-      "summary": "A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.",
+      "summary": "A value in a known range, chosen by pressing or dragging along a field, or with the keyboard.",
       "aliases": [
         "range",
         "range slider",
@@ -6849,19 +6849,19 @@
         {
           "name": "LayerOpacity",
           "title": "Layer opacity",
-          "description": "A slider chooses a value in a range by dragging a thumb, pressing the track or with the keyboard.",
+          "description": "A slider chooses a value in a range. It is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys, and a thin handle and faint ticks at its steps appear under the pointer and while it has focus.",
           "file": "docs/examples/slider/LayerOpacity.tsx"
         },
         {
           "name": "SaveOnRelease",
           "title": "Save on release",
-          "description": "`onValueChange` follows the thumb as it moves; `onValueCommitted` reports the value once, when the thumb is released or after a key. Save from it.",
+          "description": "`onValueChange` follows the value as it moves; `onValueCommitted` reports it once, when the pointer is released or after a key. Save from it.",
           "file": "docs/examples/slider/SaveOnRelease.tsx"
         },
         {
           "name": "SessionTimeout",
           "title": "Session timeout",
-          "description": "`min`, `max` and `step` set the values, and `name` submits the value with the form.",
+          "description": "`min`, `max` and `step` set the values, and `name` submits the value with the form. The slider lines up with the fields around it.",
           "file": "docs/examples/slider/SessionTimeout.tsx"
         },
         {
@@ -6917,27 +6917,27 @@
             },
             {
               "class": "env-slider-control",
-              "description": "The control that takes the pointer."
+              "description": "The field: the track's tint, which takes the pointer."
             },
             {
               "class": "env-slider-heading",
-              "description": "The row with the label and the value."
+              "description": "The row of the label and the value, over the track."
             },
             {
               "class": "env-slider-indicator",
-              "description": "The filled part of the track."
+              "description": "The fill from the start to the value."
             },
             {
               "class": "env-slider-label",
-              "description": "The label."
+              "description": "The label, inside at the start."
             },
             {
               "class": "env-slider-thumb",
-              "description": "The thumb."
+              "description": "The handle: a thin line at the value, under the pointer and on focus."
             },
             {
               "class": "env-slider-track",
-              "description": "The track."
+              "description": "The span the value moves along, inside the rounded ends, with the ticks."
             },
             {
               "class": "env-slider-value",
@@ -6956,18 +6956,31 @@
               "attribute": "data-dragging",
               "values": [],
               "parts": [
-                "env-slider-thumb"
+                "env-slider-control"
+              ]
+            },
+            {
+              "attribute": "data-ticks",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-slider"
               ]
             }
           ],
           "colors": [
             {
               "property": "--env-slider-container",
-              "description": "The track."
+              "description": "The track: the field's tint."
             },
             {
               "property": "--env-slider-indicator",
-              "description": "The filled part and the thumb, and the thumb's halo at 16%."
+              "description": "The fill that shows the value."
+            },
+            {
+              "property": "--env-slider-content",
+              "description": "The label, the value, the handle and the ticks."
             }
           ]
         }
@@ -24809,19 +24822,19 @@
     "Slider": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A value in a range, chosen by dragging a thumb along a track, pressing the track or with the keyboard, with its label and current value above the track and an optional description below.",
+      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle and faint ticks at its steps appear under the pointer and while it has focus. An optional description sits below it.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The value's name above the track, such as Opacity. It names the slider, and pressing it moves focus to the slider."
+          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "Lasting guidance under the track, such as what the value applies to, linked to the slider as its description."
+          "description": "Lasting guidance under the slider, such as what the value applies to, linked to the slider as its description."
         },
         {
           "name": "value",
@@ -24880,7 +24893,7 @@
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "description": "The value as people read it above the track and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
+          "description": "The value as people read it at the slider's end and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
         },
         {
           "name": "locale",
@@ -27238,7 +27251,7 @@
         "id": "color.bg.neutral.muted",
         "cssVariable": "--env-color-bg-neutral-muted",
         "type": "color",
-        "description": "The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
+        "description": "The translucent neutral fill of secondary buttons, chips, switch tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
         "values": {
           "light": "rgb(30 31 33 / 0.1)",
           "dark": "rgb(232 234 238 / 0.125)",
@@ -28224,6 +28237,18 @@
           "dark": "#4b4d51",
           "light-high-contrast": "#dbdde1",
           "dark-high-contrast": "#424447"
+        }
+      },
+      {
+        "id": "color.skeleton.shine",
+        "cssVariable": "--env-color-skeleton-shine",
+        "type": "color",
+        "description": "The soft highlight that sweeps across a skeleton's bars and shapes: lighter than their fill on every surface, the raised surface in the light theme and the default border's gray in the dark.",
+        "values": {
+          "light": "#eff1f5",
+          "dark": "#898c91",
+          "light-high-contrast": "#ffffff",
+          "dark-high-contrast": "#a1a4a9"
         }
       },
       {

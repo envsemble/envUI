@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type CSSProperties,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -23,12 +24,11 @@ import { subscribeFormReset } from './internal/subscribeFormReset.js';
 export interface SliderProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
   /**
-   * The value's name above the track, such as Opacity. It names the slider, and pressing it moves
-   * focus to the slider.
+   * The value's name, inside the slider at its start, such as Opacity. It names the slider.
    */
   label: ReactNode;
   /**
-   * Lasting guidance under the track, such as what the value applies to, linked to the slider as
+   * Lasting guidance under the slider, such as what the value applies to, linked to the slider as
    * its description.
    */
   description?: ReactNode;
@@ -64,7 +64,7 @@ export interface SliderProps
    */
   largeStep?: number;
   /**
-   * The value as people read it above the track and assistive technology announces it, such as
+   * The value as people read it at the slider's end and assistive technology announces it, such as
    * (value) => `${value}%`. Without it, the number shows in the locale.
    */
   formatValue?: (value: number) => string;
@@ -81,8 +81,11 @@ export interface SliderProps
 }
 
 /**
- * A value in a range, chosen by dragging a thumb along a track, pressing the track or with the
- * keyboard, with its label and current value above the track and an optional description below.
+ * A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form
+ * among them, with its label inside at the start, its value at the end and a fill from the start
+ * that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a
+ * thin handle and faint ticks at its steps appear under the pointer and while it has focus. An
+ * optional description sits below it.
  */
 export function Slider({
   label,
@@ -105,6 +108,7 @@ export function Slider({
   ref,
   onFocus,
   'aria-describedby': describedBy,
+  style,
   ...props
 }: SliderProps) {
   // The arrow keys follow the text direction: Base UI reads it from its DirectionProvider.
@@ -127,6 +131,8 @@ export function Slider({
     },
     [value, defaultValue, min, form],
   );
+  // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
+  const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
     [describedBy, description != null ? fieldMessageIds(id).description : undefined]
       .filter(Boolean)
@@ -144,6 +150,8 @@ export function Slider({
           onFocus?.(event);
         }}
         className={classNames('env-slider', className)}
+        style={{ '--env-slider-ticks': ticks, ...style } as CSSProperties}
+        data-ticks={ticks > 1 ? '' : undefined}
         value={current}
         onValueChange={(next) => {
           if (value === undefined) setUncontrolledValue(next);
@@ -159,22 +167,11 @@ export function Slider({
         name={name}
         form={form}
       >
-        <FieldFrame
-          id={id}
-          label={
-            <Row wrap justify="between" className="env-slider-heading">
-              <BaseSlider.Label className="env-slider-label">{label}</BaseSlider.Label>
-              {/* The output names the range input it shows, and stays quiet while the value moves. */}
-              <BaseSlider.Value className="env-slider-value">
-                {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
-              </BaseSlider.Value>
-            </Row>
-          }
-          description={description}
-        >
+        <FieldFrame id={id} description={description}>
           <BaseSlider.Control className="env-slider-control">
             <BaseSlider.Track className="env-slider-track">
               <BaseSlider.Indicator className="env-slider-indicator" />
+              {/* The handle: a thin line at the value, which shows under the pointer and on focus. */}
               <BaseSlider.Thumb
                 className="env-slider-thumb"
                 inputRef={(node: HTMLInputElement | null) => {
@@ -187,9 +184,33 @@ export function Slider({
                 }
               />
             </BaseSlider.Track>
+            {/* The label and the value sit over the track, inside the slider. */}
+            <Row align="center" justify="between" gap={3} className="env-slider-heading">
+              <BaseSlider.Label className="env-slider-label">{label}</BaseSlider.Label>
+              {/* The output names the range input it shows, and stays quiet while the value moves. */}
+              <BaseSlider.Value className="env-slider-value">
+                {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
+              </BaseSlider.Value>
+            </Row>
           </BaseSlider.Control>
         </FieldFrame>
       </BaseSlider.Root>
     </DirectionProvider>
   );
+}
+
+/**
+ * How many equal parts the ticks cut the range into: the steps where there are at most 20, else
+ * the large steps where they cut it evenly into at most 20. Otherwise none, as ticks between the
+ * values the slider takes would mislead; one part draws none either.
+ */
+function tickCount(min: number, max: number, step: number, largeStep: number): number {
+  const range = max - min;
+  if (!(range > 0)) return 0;
+  for (const size of [step, largeStep]) {
+    const parts = range / size;
+    if (size > 0 && Math.abs(parts - Math.round(parts)) < 1e-9 && parts <= 20)
+      return Math.round(parts);
+  }
+  return 0;
 }

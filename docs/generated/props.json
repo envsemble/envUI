@@ -7000,19 +7000,19 @@
     "Slider": {
       "kind": "component",
       "source": "packages/ui/src/forms/Slider.tsx",
-      "description": "A value in a range, chosen by dragging a thumb along a track, pressing the track or with the keyboard, with its label and current value above the track and an optional description below.",
+      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle and faint ticks at its steps appear under the pointer and while it has focus. An optional description sits below it.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The value's name above the track, such as Opacity. It names the slider, and pressing it moves focus to the slider."
+          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "Lasting guidance under the track, such as what the value applies to, linked to the slider as its description."
+          "description": "Lasting guidance under the slider, such as what the value applies to, linked to the slider as its description."
         },
         {
           "name": "value",
@@ -7071,7 +7071,7 @@
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "description": "The value as people read it above the track and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
+          "description": "The value as people read it at the slider's end and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
         },
         {
           "name": "locale",

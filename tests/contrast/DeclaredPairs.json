@@ -225,6 +225,41 @@
         "high": 0.02
       }
     },
+    "--env-color-bg-neutral-subtle-pressed on --env-color-bg-neutral-muted over --env-color-bg-default": {
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02,
+        "high": 0.02
+      }
+    },
+    "--env-color-bg-neutral-subtle-pressed on --env-color-bg-neutral-muted over --env-color-bg-muted": {
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02,
+        "high": 0.02
+      }
+    },
+    "--env-color-bg-neutral-subtle-pressed on --env-color-bg-neutral-muted over --env-color-bg-page": {
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02,
+        "high": 0.02
+      }
+    },
+    "--env-color-bg-neutral-subtle-pressed on --env-color-bg-neutral-muted over --env-color-bg-popup": {
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02,
+        "high": 0.02
+      }
+    },
+    "--env-color-bg-neutral-subtle-pressed on --env-color-bg-neutral-muted over --env-color-bg-raised": {
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02,
+        "high": 0.02
+      }
+    },
     "--env-color-bg-popup-hover on --env-color-bg-popup": {
       "kind": "difference",
       "minimum": {
@@ -1623,6 +1658,41 @@
       }
     },
     "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over --env-color-bg-popup": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over --env-color-bg-raised": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,

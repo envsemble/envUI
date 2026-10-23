@@ -4456,27 +4456,27 @@
         },
         {
           "class": "env-slider-control",
-          "description": "The control that takes the pointer."
+          "description": "The field: the track's tint, which takes the pointer."
         },
         {
           "class": "env-slider-heading",
-          "description": "The row with the label and the value."
+          "description": "The row of the label and the value, over the track."
         },
         {
           "class": "env-slider-indicator",
-          "description": "The filled part of the track."
+          "description": "The fill from the start to the value."
         },
         {
           "class": "env-slider-label",
-          "description": "The label."
+          "description": "The label, inside at the start."
         },
         {
           "class": "env-slider-thumb",
-          "description": "The thumb."
+          "description": "The handle: a thin line at the value, under the pointer and on focus."
         },
         {
           "class": "env-slider-track",
-          "description": "The track."
+          "description": "The span the value moves along, inside the rounded ends, with the ticks."
         },
         {
           "class": "env-slider-value",
@@ -4495,7 +4495,16 @@
           "attribute": "data-dragging",
           "values": [],
           "parts": [
-            "env-slider-thumb"
+            "env-slider-control"
+          ]
+        },
+        {
+          "attribute": "data-ticks",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-slider"
           ]
         }
       ],
@@ -4507,11 +4516,15 @@
       "colors": [
         {
           "property": "--env-slider-container",
-          "description": "The track."
+          "description": "The track: the field's tint."
         },
         {
           "property": "--env-slider-indicator",
-          "description": "The filled part and the thumb, and the thumb's halo at 16%."
+          "description": "The fill that shows the value."
+        },
+        {
+          "property": "--env-slider-content",
+          "description": "The label, the value, the handle and the ticks."
         }
       ]
     },

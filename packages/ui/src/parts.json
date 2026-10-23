@@ -652,12 +652,12 @@
     },
     "Slider": {
       "env-slider": "The slider.",
-      "env-slider-control": "The control that takes the pointer.",
-      "env-slider-heading": "The row with the label and the value.",
-      "env-slider-indicator": "The filled part of the track.",
-      "env-slider-label": "The label.",
-      "env-slider-thumb": "The thumb.",
-      "env-slider-track": "The track.",
+      "env-slider-control": "The field: the track's tint, which takes the pointer.",
+      "env-slider-heading": "The row of the label and the value, over the track.",
+      "env-slider-indicator": "The fill from the start to the value.",
+      "env-slider-label": "The label, inside at the start.",
+      "env-slider-thumb": "The handle: a thin line at the value, under the pointer and on focus.",
+      "env-slider-track": "The span the value moves along, inside the rounded ends, with the ticks.",
       "env-slider-value": "The value as text."
     },
     "Spinner": {
@@ -861,8 +861,9 @@
       "--env-select-outline": "The trigger's edge, where its variant draws one."
     },
     "Slider": {
-      "--env-slider-container": "The track.",
-      "--env-slider-indicator": "The filled part and the thumb, and the thumb's halo at 16%."
+      "--env-slider-container": "The track: the field's tint.",
+      "--env-slider-indicator": "The fill that shows the value.",
+      "--env-slider-content": "The label, the value, the handle and the ticks."
     },
     "Surface": {
       "--env-surface-container": "The surface's fill, which its contents take as the color beneath them.",

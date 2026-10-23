@@ -1,6 +1,6 @@
 ---
 title: Slider
-summary: A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.
+summary: A value in a known range, chosen by pressing or dragging along a field, or with the keyboard.
 status: stable
 since: 0.5.0
 category: Forms & selection
@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-A slider chooses a value in a range by dragging a thumb, pressing the track or with the keyboard.
+A slider chooses a value in a range. It is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys, and a thin handle and faint ticks at its steps appear under the pointer and while it has focus.
 
 ```tsx example=LayerOpacity
 
@@ -46,7 +46,7 @@ A slider chooses a value in a range by dragging a thumb, pressing the track or w
 
 ### Save once a change is complete
 
-`onValueChange` follows the thumb as it moves; `onValueCommitted` reports the value once, when the thumb is released or after a key. Save from it.
+`onValueChange` follows the value as it moves; `onValueCommitted` reports it once, when the pointer is released or after a key. Save from it.
 
 ```tsx example=SaveOnRelease
 
@@ -54,7 +54,7 @@ A slider chooses a value in a range by dragging a thumb, pressing the track or w
 
 ### Steps in a form
 
-`min`, `max` and `step` set the values, and `name` submits the value with the form.
+`min`, `max` and `step` set the values, and `name` submits the value with the form. The slider lines up with the fields around it.
 
 ```tsx example=SessionTimeout
 
@@ -99,20 +99,22 @@ Name the value in a short noun, and format it with its unit in `formatValue`; th
 ```
 
 1. **Slider** (`env-slider`)
-2. **Label** (`env-slider-label`, `label`)
-3. **Value** (`env-slider-value`, `formatValue`)
-4. **Track** (`env-slider-track`)
-5. **Indicator** (`env-slider-indicator`)
-6. **Thumb** (`env-slider-thumb`)
+2. **Field** (`env-slider-control`): the track, a quiet tint, which takes the pointer
+3. **Label** (`env-slider-label`, `label`)
+4. **Fill** (`env-slider-indicator`): from the start to the value
+5. **Handle** (`env-slider-thumb`): a thin line at the value, under the pointer and on focus
+6. **Value** (`env-slider-value`, `formatValue`), in monospace
 7. **Description** (`env-field-description`, `description`)
+
+Not shown: the span the value moves along, `env-slider-track`, inside the field's rounded ends, which draws the faint ticks at the steps, or at the large steps where the steps are many, and the row of the label and the value, `env-slider-heading`.
 
 ### Colors
 
-`--env-slider-container` and `--env-slider-indicator` set the colors of one Slider, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-slider-container` sets the track's tint, `--env-slider-indicator` the fill and `--env-slider-content` the label, the value, the handle and the ticks of one Slider, through `style` or CSS; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 
-A slider fills its container. Where the line is too narrow, the value wraps under the label.
+A slider fills its container. Where it is narrow, a long label is cut short with an ellipsis, and the value keeps its room.
 
 ```tsx example=NarrowSlider widths="14 30"
 
@@ -124,7 +126,7 @@ A slider fills its container. Where the line is too narrow, the value wraps unde
 
 | Key                                                                         | Action                                    |
 | --------------------------------------------------------------------------- | ----------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                             | Moves to and from the thumb.              |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                             | Moves to and from the slider.             |
 | <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>                      | Moves a step, in the reading direction.   |
 | <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, or <kbd>Shift</kbd> with an arrow | Moves a large step, a tenth of the range. |
 | <kbd>Home</kbd>, <kbd>End</kbd>                                             | Moves to the minimum or maximum.          |
@@ -133,7 +135,7 @@ A slider fills its container. Where the line is too narrow, the value wraps unde
 
 - A native range input in Base UI's slider, named by its label.
 - The formatted value as `aria-valuetext`, such as 40%.
-- The description linked to the input, and a 2.75 rem target on touch screens.
+- The description linked to the input, a focus ring around the whole field, and the touch height on touch screens, where the whole field takes the finger.
 
 ### You provide
 
@@ -143,6 +145,7 @@ A slider fills its container. Where the line is too narrow, the value wraps unde
 
 ## Changelog
 
+- **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value in monospace at the end and a fill from the start, with a thin handle and faint ticks under the pointer and on focus. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
 - **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, and `hint` is `description`, which the `v1-props` codemod writes. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes.
 - **1.0.0**: Sliders in the dark theme reach 3:1 contrast on every surface.
 - **0.5.0**: Slider, with `formatValue`, `min`, `max`, `step`, `largeStep`, `hint`, `disabled`, `name`, `form` and `onValueCommit`; the thumb grows on touch screens.

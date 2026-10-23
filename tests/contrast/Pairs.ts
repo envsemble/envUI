@@ -188,7 +188,7 @@ export const pairs: readonly ContrastPair[] = merged([
   ...text(
     '--env-color-fg-control',
     [page, surface],
-    'Navigation labels, meter and slider values, the thumb of a switch that is off',
+    'Navigation labels, meter values, the thumb of a switch that is off',
   ),
   ...text('--env-color-fg-default', [row, rowHover, rowPressed], 'List rows'),
   ...text('--env-color-fg-muted', [row, rowHover, rowPressed], 'List row details'),
@@ -748,7 +748,31 @@ export const pairs: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-bg-brand-emphasis',
     [page, surface, muted, raised, [fill, page], [fill, surface]],
-    'Spinners, slider thumbs and indicators, and meter indicators on their track',
+    'Spinners, and meter indicators on their track',
+  ),
+  // Slider: a field whose track is the neutral fill, with a stronger fill from the start to the
+  // value; the label, the value and the handle sit on both.
+  ...text(
+    '--env-color-fg-default',
+    [
+      ['--env-color-bg-neutral-subtle-pressed', fill, page],
+      ['--env-color-bg-neutral-subtle-pressed', fill, surface],
+      ['--env-color-bg-neutral-subtle-pressed', fill, muted],
+      ['--env-color-bg-neutral-subtle-pressed', fill, raised],
+      ['--env-color-bg-neutral-subtle-pressed', fill, popup],
+    ],
+    'The label, the value and the handle of a slider on its fill',
+  ),
+  ...different(
+    '--env-color-bg-neutral-subtle-pressed',
+    [
+      [fill, page],
+      [fill, surface],
+      [fill, muted],
+      [fill, raised],
+      [fill, popup],
+    ],
+    'The fill of a slider against its track',
   ),
   ...nonText(
     '--env-color-bg-brand-emphasis',

@@ -61,7 +61,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [DatePicker](docs/components/date-picker.md): A field that opens a calendar to choose a date, or a date and time, and the calendar on its own. Also: Calendar. Parts: `.env-date-picker`, `.env-calendar`.
 - [TimePicker](docs/components/time-picker.md): A field that opens wheels of hours and minutes to choose a time of day, on the locale's own clock. Parts: `.env-time-picker`.
 - [MonthPicker](docs/components/month-picker.md): A field that opens a year of months to choose a month, such as a billing or reporting period. Parts: `.env-month-picker`.
-- [Slider](docs/components/slider.md): A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard. Parts: `.env-slider`.
+- [Slider](docs/components/slider.md): A value in a known range, chosen by pressing or dragging along a field, or with the keyboard. Parts: `.env-slider`.
 - [DropZone](docs/components/drop-zone.md): An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files. Parts: `.env-drop-zone`.
 
 ## Components: Navigation
