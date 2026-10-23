@@ -1,5 +1,6 @@
 /* Meter and Progress share one look: a label row over a rounded track whose indicator fills with
-   the value. Each emits its own classes, env-meter* and env-progress*; Progress adds the
+   the value. The track is a quiet tint with no outline, as Material draws it; the indicator reaches
+   3:1 against the track and the surface, and the value text says the exact amount. Each emits its own classes, env-meter* and env-progress*; Progress adds the
    indeterminate sweep and segments. */
 .env-meter-heading,
 .env-progress-heading {
@@ -20,10 +21,9 @@
   block-size: 0.625rem;
   overflow: hidden;
   border-radius: var(--env-radius-full);
-  background: var(--env-color-bg-neutral-muted);
-  /* The translucent fill is too faint to show the track's extent, so a ring draws it at 3:1, as on a
-     switch that is off; the indicator covers it where it fills. */
-  box-shadow: inset 0 0 0 1px var(--env-color-border-default);
+  /* The quiet tint of a state layer, light enough that the indicator keeps 3:1 against it on every
+     surface, a card's included. */
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
 .env-meter-indicator,
 .env-progress-indicator {
@@ -61,16 +61,13 @@
   display: flex;
   gap: var(--env-space-1);
   background: none;
-  box-shadow: none;
 }
-/* Each segment is a track of its own, with its ring; its fill grows from the start of the line,
-   over the ring. */
+/* Each segment is a track of its own; its fill grows from the start of the line. */
 .env-progress-segment {
   flex: 1 1 0;
   overflow: hidden;
   border-radius: var(--env-radius-full);
-  background: var(--env-color-bg-neutral-muted);
-  box-shadow: inset 0 0 0 1px var(--env-color-border-default);
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
 .env-progress-segment::before {
   content: '';
@@ -106,7 +103,6 @@
   .env-progress-segment {
     forced-color-adjust: none;
     background: Canvas;
-    box-shadow: none;
   }
   .env-progress-segment::before {
     background: Highlight;

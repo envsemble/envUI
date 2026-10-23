@@ -411,7 +411,7 @@ export const pairs: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-border-default',
     [field, page, surface, muted, raised, popup],
-    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers, the track of a switch that is off and the tracks of Progress and Meter; DropZone and the empty stars of a Rating take it too',
+    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
   ),
   ...nonText(
     '--env-color-border-danger-emphasis',
@@ -749,6 +749,17 @@ export const pairs: readonly ContrastPair[] = merged([
     '--env-color-bg-brand-emphasis',
     [page, surface, muted, raised, [fill, page], [fill, surface]],
     'Spinners, slider thumbs and indicators, and meter indicators on their track',
+  ),
+  ...nonText(
+    '--env-color-bg-brand-emphasis',
+    [
+      [layerHover, page],
+      [layerHover, surface],
+      [layerHover, muted],
+      [layerHover, raised],
+      [layerHover, popup],
+    ],
+    'The indicators of Meter and Progress on their track, a quiet tint with no outline, on every surface',
   ),
   ...distinct(
     'heatmap-accent-lowest',
