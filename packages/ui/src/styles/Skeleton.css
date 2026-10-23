@@ -39,8 +39,9 @@
     )
     fixed;
   /* A bar: a rectangle with small rounded corners, as tall as a line's letters, in the middle of
-     its line. It sizes to its mask tile, so the corners stay the same at any length. */
-  --env-skeleton-bar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect y='22%25' width='100%25' height='56%25' rx='4'/%3E%3C/svg%3E");
+     its line. It sizes to its mask tile, so the corners stay the same at any length. Its namespace is
+     escaped: it is no address the style sheet loads. */
+  --env-skeleton-bar: url("data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Crect y='22%25' width='100%25' height='56%25' rx='4'/%3E%3C/svg%3E");
   /* The length of missing text whose part sets none. */
   --env-skeleton-text-length: 10rem;
   /* Text is never drawn: a line through it as thick as its letters stands for it. The line goes on

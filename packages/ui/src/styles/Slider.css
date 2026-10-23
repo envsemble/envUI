@@ -31,11 +31,15 @@
   min-inline-size: 0;
 }
 /* The control is the field: the pressable track, with the label and the value over it. */
+/* The track and the row of the label and the value share one cell, so the slider is as wide as its
+   label and value where nothing stretches it, as a field is, and fills its container otherwise. */
 .env-slider-control {
   position: relative;
   box-sizing: border-box;
-  display: flex;
+  display: grid;
+  grid-template: 'slider' 100% / minmax(0, auto);
   block-size: var(--env-slider-height);
+  /* Base UI measures the value along the control's content box, which the track fills. */
   padding-inline: var(--env-slider-inset);
   overflow: hidden;
   border-radius: calc(var(--env-slider-height) / 2);
@@ -45,7 +49,7 @@
   isolation: isolate;
 }
 .env-slider-track {
-  flex: 1 1 auto;
+  grid-area: slider;
   block-size: 100%;
 }
 /* The fill runs from the slider's start, under its rounded end, to the value. */
@@ -93,8 +97,10 @@
 }
 /* The label and the value, over the track and the fill, in the field's padding. */
 .env-slider-heading {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  grid-area: slider;
+  /* Across the whole field, its rounded ends included. */
+  margin-inline: calc(-1 * var(--env-slider-inset));
   /* Above the handle, as it comes after the track. */
   z-index: var(--env-z-raised);
   flex-wrap: nowrap;
