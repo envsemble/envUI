@@ -2571,6 +2571,13 @@
           ]
         },
         {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-list-item"
+          ]
+        },
+        {
           "attribute": "data-interactive",
           "values": [
             ""
@@ -4519,6 +4526,7 @@
       "uses": [
         "Field",
         "Icon",
+        "Text",
         "TextField"
       ],
       "colors": [
@@ -4591,6 +4599,13 @@
             "page",
             "raised"
           ],
+          "parts": [
+            "env-surface"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
           "parts": [
             "env-surface"
           ]

@@ -229,6 +229,11 @@
   box-shadow: none;
   background: transparent;
 }
+.env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-item,
+.env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-item :not(.env-bar-count) {
+  /* A destination is not a shape: its label draws as a bar. */
+  --env-skeleton-shape: 0;
+}
 .env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-item * {
   visibility: visible;
 }
@@ -241,6 +246,7 @@
 [data-env-skeleton] .env-bar-count {
   forced-color-adjust: none;
   border-color: transparent;
+  --env-skeleton-shape: 1;
   background: var(--env-skeleton-paint);
 }
 [data-env-skeleton] .env-bar-count * {

@@ -342,8 +342,57 @@ test('in forced colors, bars and shapes stay visible in the system gray', async 
   const bar = await style(page, heading, 'background-image', '::before');
   expect(bar).toMatch(/^linear-gradient/);
   expect(bar).not.toContain('rgba(0, 0, 0, 0)');
-  expect(await style(page, '[data-testid="projects"]', 'text-decoration-color')).not.toBe(
-    'rgba(0, 0, 0, 0)',
-  );
+  // Text that is there is drawn by the bar layer over the content, in the system gray too.
+  const layer = await style(page, '[data-testid="projects"]', 'background-image', '::after');
+  expect(layer).toMatch(/^linear-gradient/);
+  expect(layer).not.toContain('rgba(0, 0, 0, 0)');
   expect(await style(page, '[data-testid="projects"] .env-avatar', 'background-image')).toBe(bar);
+});
+
+test('text that is there draws as rounded bars over its line boxes, which shimmer with the rest', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page);
+  const projects = page.getByTestId('projects');
+  // The script marks the root once it has measured its text, and the line through goes.
+  await expect(projects).toHaveAttribute('data-env-skeleton-text', '');
+  expect(await style(page, '[data-testid="projects"]', '--env-skeleton-color')).toBe('transparent');
+  // One rounded bar per line box of the heading that is there, laid over it in the bar layer.
+  const bars = await projects.evaluate((root) => {
+    const value = root.style.getPropertyValue('--env-skeleton-text-bars');
+    const layers = [...value.matchAll(/(-?[\d.]+)px (-?[\d.]+)px \/ ([\d.]+)px ([\d.]+)px/g)].map(
+      (match) => match.slice(1).map(Number),
+    );
+    const heading = root.querySelector('h2')!;
+    const range = document.createRange();
+    range.selectNodeContents(heading);
+    const line = range.getBoundingClientRect();
+    const box = root.getBoundingClientRect();
+    return {
+      layers,
+      heading: [line.left - box.left - root.clientLeft, line.width],
+    };
+  });
+  const [x, width] = bars.heading;
+  expect(bars.layers.some(([left, , w]) => Math.abs(left - x) < 1 && Math.abs(w - width) < 1)).toBe(
+    true,
+  );
+  const after = await projects.evaluate((root) => {
+    const style = getComputedStyle(root, '::after');
+    return { mask: style.maskImage, paint: style.backgroundImage, position: style.position };
+  });
+  expect(after.mask).toContain('data:image/svg+xml');
+  expect(after.paint).toMatch(/^linear-gradient/);
+  expect(after.position).toBe('absolute');
+  // The surface itself carries the highlight over its fill.
+  expect(await style(page, '[data-testid="projects"]', 'background-image')).toMatch(
+    /linear-gradient/,
+  );
+  // Loaded, the bars and the marks go.
+  await page.getByRole('button', { name: 'Load' }).click();
+  await expect(projects).not.toHaveAttribute('data-env-skeleton-text');
+  expect(
+    await projects.evaluate((root) => root.style.getPropertyValue('--env-skeleton-text-bars')),
+  ).toBe('');
 });

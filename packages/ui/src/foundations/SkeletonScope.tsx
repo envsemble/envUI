@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { common } from './messages/common.js';
+import { retainSkeletonText } from './skeletonText.js';
 
 const SkeletonContext = createContext(false);
 
@@ -39,7 +40,10 @@ export function SkeletonScope({ skeleton, children }: { skeleton: boolean; child
   const inherited = useContext(SkeletonContext);
   const active = skeleton || inherited;
   useEffect(() => {
-    if (skeleton) alignPulses();
+    if (!skeleton) return;
+    alignPulses();
+    // Text that is there draws as rounded, shimmering bars, as missing text does.
+    return retainSkeletonText();
   }, [skeleton]);
   return <SkeletonContext value={active}>{children}</SkeletonContext>;
 }

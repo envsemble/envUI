@@ -149,3 +149,9 @@
     transform: scale(0.99);
   }
 }
+
+/* In a skeleton, a card carries the skeleton's highlight over its fill (Skeleton.css). */
+.env-card:is([data-env-skeleton] *) {
+  background-image: var(--env-skeleton-glow);
+  background-attachment: fixed;
+}

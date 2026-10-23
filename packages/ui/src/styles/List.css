@@ -272,3 +272,9 @@
     outline-offset: -2px;
   }
 }
+
+/* In a skeleton, a row carries the skeleton's highlight over its fill (Skeleton.css). */
+.env-list-item:is([data-env-skeleton] *) {
+  background-image: var(--env-skeleton-glow);
+  background-attachment: fixed;
+}

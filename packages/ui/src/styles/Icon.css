@@ -19,6 +19,7 @@
 [data-env-skeleton] .env-icon {
   forced-color-adjust: none;
   border-radius: var(--env-radius-sm);
+  --env-skeleton-shape: 1;
   background: var(--env-skeleton-paint);
 }
 [data-env-skeleton] .env-icon * {

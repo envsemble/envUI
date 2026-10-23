@@ -60,3 +60,9 @@
 .env-surface:where([data-radius='none']) {
   --env-surface-radius: 0rem;
 }
+
+/* In a skeleton, a surface carries the skeleton's highlight over its fill (Skeleton.css). */
+.env-surface:is([data-env-skeleton] *) {
+  background-image: var(--env-skeleton-glow);
+  background-attachment: fixed;
+}
