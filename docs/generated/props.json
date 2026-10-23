@@ -1253,7 +1253,7 @@
     "ColorPickerButton": {
       "kind": "component",
       "source": "packages/ui/src/color/ColorPickerButton.tsx",
-      "description": "A button that shows a color as a swatch and its value, and opens a ColorPicker in a Popover: the common way to choose a color in a toolbar, a row or a form. The button is named after the label and the color, such as Accent color, #6750A4.",
+      "description": "A compact button that shows a color as a swatch and its value, and opens a ColorPicker in a Popover: the common way to choose a color in a toolbar, a row or a form. The button is named after the label and the color, such as Accent color, #6750A4.",
       "props": [
         {
           "name": "className",

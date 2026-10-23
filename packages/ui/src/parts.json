@@ -199,7 +199,9 @@
       "env-color-picker-values": "The row of the format, the fields and copy.",
       "env-color-picker-format": "The format select.",
       "env-color-picker-fields": "The fields of the chosen format.",
-      "env-color-picker-field": "A channel's field, or the hex field.",
+      "env-color-picker-field": "A channel's field with its letter, or the hex field.",
+      "env-color-picker-field-label": "The letter of a channel's field, such as R.",
+      "env-color-picker-input": "The input of a field.",
       "env-color-picker-copy": "The copy button.",
       "env-color-picker-swatches": "The preset swatches.",
       "env-color-picker-swatch": "A preset swatch.",
@@ -208,7 +210,8 @@
       "env-color-picker-popover": "The popover of a ColorPickerButton, around its picker."
     },
     "ColorPickerButton": {
-      "env-color-picker-button": "The button that shows the color and opens the picker."
+      "env-color-picker-button": "The button that shows the color and opens the picker.",
+      "env-color-picker-button-value": "The color's value on the button."
     },
     "ColorSwatch": {
       "env-color-swatch": "A swatch of one color, with its label and value.",

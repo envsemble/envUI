@@ -5,8 +5,10 @@
  * from React Aria in the provider's locale.
  */
 export const colorPicker = {
-  /** Names the format select. */
+  /** Names the menu of formats. */
   format: 'Color format',
+  /** Names the button that opens the menu of formats, with the format it shows, such as Hex. */
+  formatButton: ({ format }: { format: string }) => `Color format: ${format}`,
   /** The hexadecimal format, in the format select. */
   hex: 'Hex',
   /** The RGB format, in the format select. */
@@ -15,6 +17,20 @@ export const colorPicker = {
   hsl: 'HSL',
   /** Names the hexadecimal field. */
   hexField: 'Hex',
+  /** The letter beside the red channel's number. */
+  redShort: 'R',
+  /** The letter beside the green channel's number. */
+  greenShort: 'G',
+  /** The letter beside the blue channel's number. */
+  blueShort: 'B',
+  /** The letter beside the hue's number. */
+  hueShort: 'H',
+  /** The letter beside the saturation's number. */
+  saturationShort: 'S',
+  /** The letter beside the lightness's number. */
+  lightnessShort: 'L',
+  /** The letter beside the alpha's number. */
+  alphaShort: 'A',
   /** Names the copy button. */
   copy: 'Copy color',
   /** Names the eyedropper button. */

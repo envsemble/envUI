@@ -55,7 +55,7 @@ test('no English default is left under a provider that sets every message', asyn
     'calendar.previousMonth',
     'calendar.nextMonth',
     'composer.send',
-    'colorPicker.format',
+    'colorPicker.formatButton',
     'colorPicker.hex',
     'colorPicker.hexField',
     'colorPicker.copy',

@@ -3,8 +3,9 @@
 import { useId, useRef, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import type { Color } from '@react-stately/color';
 import { CopyButton } from '../actions/CopyButton.js';
-import { IconButton } from '../actions/Button.js';
-import { Select } from '../forms/Select.js';
+import { Button, IconButton } from '../actions/Button.js';
+import * as Menu from '../navigation/Menu.js';
+import { ExpandMore } from '../icons/ExpandMore.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { colorPicker as colorPickerMessages } from '../foundations/messages/colorPicker.js';
 import { Colorize } from '../icons/Colorize.js';
@@ -235,23 +236,47 @@ export function ColorPicker({
         >
           {formats.length > 1 && (
             <div className="env-color-picker-format">
-              <Select
+              <Menu.Root
                 aria-label={messages.format}
-                variant="outline"
-                size="sm"
-                items={formats.map((each) => ({ value: each, label: messages[each] }))}
-                value={format}
-                onValueChange={(next) => {
-                  if (next) setFormat(next as ColorFormat);
-                }}
-                disabled={disabled}
-              />
+                align="start"
+                trigger={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    endIcon={<ExpandMore />}
+                    disabled={disabled}
+                    aria-label={messages.formatButton({ format: messages[format] })}
+                  >
+                    {messages[format]}
+                  </Button>
+                }
+              >
+                <Menu.RadioGroup
+                  value={format}
+                  onValueChange={(next) => setFormat(next as ColorFormat)}
+                >
+                  {formats.map((each) => (
+                    <Menu.RadioItem key={each} value={each}>
+                      {messages[each]}
+                    </Menu.RadioItem>
+                  ))}
+                </Menu.RadioGroup>
+              </Menu.Root>
             </div>
           )}
           <ColorFields
             format={format}
             alpha={alpha}
             hexLabel={messages.hexField}
+            shorts={{
+              red: messages.redShort,
+              green: messages.greenShort,
+              blue: messages.blueShort,
+              hue: messages.hueShort,
+              saturation: messages.saturationShort,
+              lightness: messages.lightnessShort,
+              alpha: messages.alphaShort,
+            }}
             value={color}
             onChange={change}
             disabled={disabled}

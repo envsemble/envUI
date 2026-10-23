@@ -969,7 +969,11 @@
         },
         {
           "class": "env-color-picker-field",
-          "description": "A channel's field, or the hex field."
+          "description": "A channel's field with its letter, or the hex field."
+        },
+        {
+          "class": "env-color-picker-field-label",
+          "description": "The letter of a channel's field, such as R."
         },
         {
           "class": "env-color-picker-fields",
@@ -982,6 +986,10 @@
         {
           "class": "env-color-picker-hue",
           "description": "The hue slider."
+        },
+        {
+          "class": "env-color-picker-input",
+          "description": "The input of a field."
         },
         {
           "class": "env-color-picker-label",
@@ -1121,10 +1129,11 @@
         }
       ],
       "uses": [
+        "Button",
         "CopyButton",
         "Icon",
         "IconButton",
-        "Select",
+        "Menu",
         "Tooltip"
       ]
     },
@@ -1135,11 +1144,26 @@
         {
           "class": "env-color-picker-button",
           "description": "The button that shows the color and opens the picker."
+        },
+        {
+          "class": "env-color-picker-button-value",
+          "description": "The color's value on the button."
         }
       ],
-      "states": [],
+      "states": [
+        {
+          "attribute": "data-size",
+          "values": [
+            "lg",
+            "md",
+            "sm"
+          ],
+          "parts": [
+            "env-color-picker-button"
+          ]
+        }
+      ],
       "uses": [
-        "Button",
         "ColorPicker",
         "ColorSwatch",
         "Popover",

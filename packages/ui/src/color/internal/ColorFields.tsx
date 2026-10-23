@@ -40,7 +40,11 @@ function HexField({ value, onChange, disabled, readOnly, label }: FieldProps & {
     state,
     ref,
   );
-  return <input {...inputProps} ref={ref} className="env-color-picker-field" data-channel="hex" />;
+  return (
+    <label className="env-color-picker-field" data-channel="hex">
+      <input {...inputProps} ref={ref} className="env-color-picker-input" />
+    </label>
+  );
 }
 
 /**
@@ -55,7 +59,8 @@ function ChannelField({
   readOnly,
   channel,
   colorSpace,
-}: FieldProps & { channel: ColorChannel; colorSpace: ColorSpace }) {
+  short,
+}: FieldProps & { channel: ColorChannel; colorSpace: ColorSpace; short: string }) {
   const { locale } = useLocale();
   const ref = useRef<HTMLInputElement>(null);
   const state = useColorChannelFieldState({
@@ -74,8 +79,14 @@ function ChannelField({
     state,
     ref,
   );
+  // The channel's letter, such as R, shows which number is which; the input is named in full.
   return (
-    <input {...inputProps} ref={ref} className="env-color-picker-field" data-channel={channel} />
+    <label className="env-color-picker-field" data-channel={channel}>
+      <span className="env-color-picker-field-label" aria-hidden="true">
+        {short}
+      </span>
+      <input {...inputProps} ref={ref} className="env-color-picker-input" />
+    </label>
   );
 }
 
@@ -91,24 +102,37 @@ export interface ColorFieldsProps extends FieldProps {
   alpha: boolean;
   /** Names the hexadecimal field. */
   hexLabel: string;
+  /** Each channel's letter, shown beside its number, such as R for red. */
+  shorts: Record<'red' | 'green' | 'blue' | 'hue' | 'saturation' | 'lightness' | 'alpha', string>;
 }
 
 /**
- * The fields of a format in one outlined control: one hexadecimal field, or a field per channel,
- * then alpha.
+ * The fields of a format, quiet until hovered or focused: one hexadecimal field, or a field per
+ * channel with its letter, then alpha with A.
  */
-export function ColorFields({ format, alpha, hexLabel, ...field }: ColorFieldsProps) {
+export function ColorFields({ format, alpha, hexLabel, shorts, ...field }: ColorFieldsProps) {
   return (
     <div className="env-color-picker-fields">
       {format === 'hex' ? (
         <HexField {...field} label={hexLabel} />
       ) : (
         channels[format].map((channel) => (
-          <ChannelField key={channel} {...field} channel={channel} colorSpace={format} />
+          <ChannelField
+            key={channel}
+            {...field}
+            channel={channel}
+            colorSpace={format}
+            short={shorts[channel]}
+          />
         ))
       )}
       {alpha && (
-        <ChannelField {...field} channel="alpha" colorSpace={format === 'hsl' ? 'hsl' : 'rgb'} />
+        <ChannelField
+          {...field}
+          channel="alpha"
+          colorSpace={format === 'hsl' ? 'hsl' : 'rgb'}
+          short={shorts.alpha}
+        />
       )}
     </div>
   );

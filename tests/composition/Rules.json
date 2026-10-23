@@ -173,6 +173,7 @@
       "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "internal/FileInput.tsx": ["input"],
       "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
+      "color/ColorPickerButton.tsx": ["button"],
       "color/internal/ColorArea.tsx": ["input"],
       "color/internal/ColorFields.tsx": ["input"],
       "color/internal/ColorSlider.tsx": ["input"],

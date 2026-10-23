@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, type CSSProperties } from 'react';
-import { Button } from '../actions/Button.js';
 import { Popover } from '../feedback/Popover.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import { colorPicker as colorPickerMessages } from '../foundations/messages/colorPicker.js';
@@ -39,7 +38,7 @@ export interface ColorPickerButtonProps extends ColorPickerValueProps {
 }
 
 /**
- * A button that shows a color as a swatch and its value, and opens a ColorPicker in a Popover: the
+ * A compact button that shows a color as a swatch and its value, and opens a ColorPicker in a Popover: the
  * common way to choose a color in a toolbar, a row or a form. The button is named after the label
  * and the color, such as Accent color, #6750A4.
  */
@@ -81,17 +80,18 @@ export function ColorPickerButton({
         defaultOpen={defaultOpen}
         className="env-color-picker-popover"
         trigger={
-          <Button
-            variant="secondary"
-            size={size}
+          // A compact field-like button, with the small radius of the picker's controls.
+          <button
+            type="button"
             disabled={disabled}
             className={classNames('env-color-picker-button', className)}
+            data-size={size}
             style={style}
             aria-label={messages.button({ label, value: shown })}
-            startIcon={<ColorSwatch color={color} />}
           >
-            {shown}
-          </Button>
+            <ColorSwatch color={color} aria-hidden="true" />
+            <span className="env-color-picker-button-value">{shown}</span>
+          </button>
         }
       >
         <ColorPicker

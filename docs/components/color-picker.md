@@ -58,7 +58,7 @@ A color picker chooses a color by eye, by its value or from presets. It is built
 
 ### Formats and values
 
-`formats` lists the formats people can type the color in, hex, RGB and HSL, and the select shows them in that order; with one, there is no select. `value` and `defaultValue` take a CSS color string or React Aria's `Color`, and `onValueChange` receives the color as a string in `valueFormat`, hex by default, and as a `Color`. With `alpha`, the picker adds an alpha slider and field, and the value carries its alpha while it is translucent.
+`formats` lists the formats people can type the color in, hex, RGB and HSL, and the format menu lists them in that order; with one, there is no menu. Each channel's field shows its letter, such as R, G and B, beside its number. `value` and `defaultValue` take a CSS color string or React Aria's `Color`, and `onValueChange` receives the color as a string in `valueFormat`, hex by default, and as a `Color`. With `alpha`, the picker adds an alpha slider and field, and the value carries its alpha while it is translucent.
 
 The copy button copies the color as the fields show it. The eyedropper picks a color from the screen where the browser has one, Chromium-based browsers on the desktop; elsewhere it never shows.
 
@@ -144,7 +144,7 @@ Not shown: the description and error, `env-color-picker-description` and `env-co
 
 ## Adapting to width
 
-The picker fills its container. Where the fields no longer fit beside the format select, they take a row of their own.
+The picker fills its container. Where the fields no longer fit beside the format menu, they take a row of their own.
 
 ```tsx example=FillWidth widths="15 22"
 
@@ -168,7 +168,7 @@ The picker fills its container. Where the fields no longer fit beside the format
 
 - A group named by `label`, with the area, sliders and fields named after their channels, such as Hue and Alpha, in the EnvUIProvider's language.
 - Value texts that say each channel and the color's name, such as dark vibrant blue.
-- Names for the format select, copy, the eyedropper and the swatches from EnvUIProvider's `messages.colorPicker`.
+- Names for the format menu, the channels' letters, copy, the eyedropper and the swatches from EnvUIProvider's `messages.colorPicker`.
 - A ColorSwatch alone named by its color's description; beside its value or label, the sample is hidden from assistive technology.
 
 ### You provide
@@ -178,6 +178,6 @@ The picker fills its container. Where the fields no longer fit beside the format
 
 ## Changelog
 
-- **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields with a format select, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. ColorSwatch is a rounded square that writes its color in a `format`, with a `label` and a small size. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
+- **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area and strips are square, the fields quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
 - **0.7.0**: ColorSwatch.
 - **0.1.0**: ColorPicker, with a color area, a hue slider and a HEX field.

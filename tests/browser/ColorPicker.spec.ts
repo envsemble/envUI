@@ -65,8 +65,10 @@ test('each format types the color in its own fields', async ({ page }) => {
   await expect(hex).toHaveValue('#FF8800');
   await expect(page.getByTestId('color-changes')).toHaveText('1');
 
-  await controlled.getByRole('combobox', { name: 'Color format' }).click();
-  await page.getByRole('option', { name: 'RGB' }).click();
+  await controlled.getByRole('button', { name: /^Color format/ }).click();
+  await page.getByRole('menuitemradio', { name: 'RGB' }).click();
+  // Each number shows its channel's letter.
+  await expect(controlled.locator('.env-color-picker-field-label')).toHaveText(['R', 'G', 'B']);
   const red = controlled.getByRole('textbox', { name: 'Red' });
   await expect(red).toHaveValue('255');
   await expect(controlled.getByRole('textbox', { name: 'Blue' })).toHaveValue('0');
@@ -77,8 +79,8 @@ test('each format types the color in its own fields', async ({ page }) => {
   await red.press('ArrowUp');
   await expect(last).toHaveText('#118800');
 
-  await controlled.getByRole('combobox', { name: 'Color format' }).click();
-  await page.getByRole('option', { name: 'HSL' }).click();
+  await controlled.getByRole('button', { name: /^Color format/ }).click();
+  await page.getByRole('menuitemradio', { name: 'HSL' }).click();
   const lightness = controlled.getByRole('textbox', { name: 'Lightness' });
   await expect(controlled.getByRole('textbox', { name: 'Hue' })).toBeVisible();
   await lightness.fill('50');
