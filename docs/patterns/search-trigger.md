@@ -143,7 +143,7 @@ With `fullWidth` it fills its container, such as the top of a navigation drawer,
 ### envUI provides
 
 - A native `button` named by its label, or by `aria-label` when it shows only its icon.
-- The keys in the muted end slot, and the tooltip's keys, as Kbd.
+- The keys in the end slot, in the button's content color on every variant, and the tooltip's keys, as Kbd.
 
 ### You provide
 

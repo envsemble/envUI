@@ -106,6 +106,14 @@ const nonText = (
   note?: string,
   extra?: Pick<ContrastPair, 'contrast' | 'minimum' | 'rationale'>,
 ) => on('non-text', fg, backgrounds, note, extra);
+/** The + between keys in a button's end slot, in the button's content color `--env-color-fg-<role>`. */
+const buttonEndSeparator = (role: string, backgrounds: readonly Background[]) =>
+  on(
+    'non-text',
+    `button-end-separator-${role}`,
+    backgrounds,
+    `The + between the keys in the end slot of a button whose label is --env-color-fg-${role}`,
+  );
 const focus = (fg: string, backgrounds: readonly Background[], note?: string) =>
   on('focus', fg, backgrounds, note);
 /** `fill` must look different from each background: a state from its own rest or its surface. */
@@ -746,6 +754,59 @@ export const pairs: readonly ContrastPair[] = merged([
         'Decorative: the pill’s text is the button’s label color, which the important button pairs measure at 4.5:1; the outline only groups it. Held to 1.5:1, and 3:1 in high contrast, so it stays visible.',
     },
   ),
+
+  // The + between the keys in a button's end slot: the button's content color at 80%, decorative,
+  // since the keys around it name the shortcut. The keys and any text in the slot are the label's
+  // color on no fill of their own, which the button pairs above measure.
+  ...buttonEndSeparator('on-emphasis', [
+    '--env-color-bg-brand-emphasis',
+    '--env-color-bg-brand-emphasis-hover',
+    '--env-color-bg-brand-emphasis-pressed',
+  ]),
+  ...buttonEndSeparator('control', [
+    [fill, page],
+    ['--env-color-bg-neutral-muted-hover', page],
+    ['--env-color-bg-neutral-muted-pressed', page],
+    [fill, surface],
+    ['--env-color-bg-neutral-muted-hover', surface],
+    ['--env-color-bg-neutral-muted-pressed', surface],
+    [fill, muted],
+    ['--env-color-bg-neutral-muted-hover', muted],
+    ['--env-color-bg-neutral-muted-pressed', muted],
+    [fill, raised],
+    ['--env-color-bg-neutral-muted-hover', raised],
+    ['--env-color-bg-neutral-muted-pressed', raised],
+  ]),
+  ...buttonEndSeparator('accent', [
+    raised,
+    '--env-color-bg-raised-hover',
+    '--env-color-bg-raised-pressed',
+  ]),
+  ...buttonEndSeparator('on-strong', [
+    '--env-color-bg-danger-strong',
+    '--env-color-bg-danger-strong-hover',
+    '--env-color-bg-danger-strong-pressed',
+    '--env-color-bg-important-strong',
+    '--env-color-bg-important-strong-hover',
+    '--env-color-bg-important-strong-pressed',
+  ]),
+  ...buttonEndSeparator('muted', [page, surface, muted, raised]),
+  ...buttonEndSeparator('default', [
+    [layerHover, page],
+    [layerPressed, page],
+    [layerHover, surface],
+    [layerPressed, surface],
+  ]),
+  ...buttonEndSeparator('link', [page, surface, muted, raised]),
+  ...buttonEndSeparator('danger', [
+    raised,
+    '--env-color-bg-raised-hover',
+    '--env-color-bg-raised-pressed',
+    [layerHover, page],
+    [layerPressed, page],
+    [layerHover, surface],
+    [layerPressed, surface],
+  ]),
 
   // Focus rings, against what they are drawn on.
   ...focus(
@@ -1999,6 +2060,8 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * name, measured as the browser resolves them. Every other hover, pressed and translucent color is
  * a token of its own; add a token rather than an entry here.
  *
+ * - The + between the keys in a button's end slot is 80% of the button's label color, `currentColor`
+ *   (Button.css sets Kbd.css's hooks); each label color a variant, tone and state takes is measured.
  * - A badge or counter inside a primary or important button is outlined in 55% of the button's label
  *   color, `currentColor`, which only the button knows (Button.css sets Badge.css's hooks).
  * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
@@ -2006,6 +2069,18 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  *   lightest step of the default accent tone is measured.
  */
 export const derived: Readonly<Record<string, string>> = {
+  'button-end-separator-on-emphasis':
+    'color-mix(in srgb, var(--env-color-fg-on-emphasis) 80%, transparent)',
+  'button-end-separator-control':
+    'color-mix(in srgb, var(--env-color-fg-control) 80%, transparent)',
+  'button-end-separator-accent': 'color-mix(in srgb, var(--env-color-fg-accent) 80%, transparent)',
+  'button-end-separator-on-strong':
+    'color-mix(in srgb, var(--env-color-fg-on-strong) 80%, transparent)',
+  'button-end-separator-muted': 'color-mix(in srgb, var(--env-color-fg-muted) 80%, transparent)',
+  'button-end-separator-default':
+    'color-mix(in srgb, var(--env-color-fg-default) 80%, transparent)',
+  'button-end-separator-link': 'color-mix(in srgb, var(--env-color-fg-link) 80%, transparent)',
+  'button-end-separator-danger': 'color-mix(in srgb, var(--env-color-fg-danger) 80%, transparent)',
   'badge-outline-primary': 'color-mix(in srgb, var(--env-color-fg-on-emphasis) 55%, transparent)',
   'badge-outline-important': 'color-mix(in srgb, var(--env-color-fg-on-strong) 55%, transparent)',
   'heatmap-accent-lowest':
