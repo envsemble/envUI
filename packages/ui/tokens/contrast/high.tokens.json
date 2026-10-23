@@ -230,5 +230,12 @@
         "$value": "{contrast-high.color.border.scrim}"
       }
     }
+  },
+  "state": {
+    "$type": "number",
+    "$description": "Lighter state layers, as the designed high-contrast state fills are, so text keeps 7:1 over them.",
+    "hover-opacity": { "$value": 0.06 },
+    "focus-opacity": { "$value": 0.07 },
+    "pressed-opacity": { "$value": 0.07 }
   }
 }

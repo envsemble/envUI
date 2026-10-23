@@ -2,7 +2,19 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "state": {
     "$type": "number",
-    "$description": "Opacities of interaction states that components apply themselves. Hover, pressed and selected colors are color tokens of their own (color.bg, color.fg, color.border), and so are scrims and translucent fills.",
-    "disabled-opacity": { "$value": 0.48 }
+    "$description": "Opacities of interaction states that components apply themselves. A hover, focus or pressed state is a state layer: the component's content color at its opacity over its container, as Material draws them, so a component given its own colors keeps working states. The semantic hover and pressed tokens (color.bg, color.fg, color.border) stay for the solid fills and navigation fills a layer can't match, and for applications.",
+    "disabled-opacity": { "$value": 0.48 },
+    "hover-opacity": {
+      "$value": 0.08,
+      "$description": "The state layer under the pointer: 8% of the content color over the container."
+    },
+    "focus-opacity": {
+      "$value": 0.1,
+      "$description": "The state layer of keyboard focus, under the focus ring: 10% of the content color."
+    },
+    "pressed-opacity": {
+      "$value": 0.1,
+      "$description": "The state layer while pressed: 10% of the content color over the container."
+    }
   }
 }
