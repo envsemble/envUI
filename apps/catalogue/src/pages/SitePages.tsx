@@ -37,7 +37,7 @@ function ApiLink({ path }: { path: string }) {
  * The link from a foundation's page on the Site to its guide in the Docs: the tokens, values and code
  * behind its plain words.
  */
-function GuideLink({ path }: { path: string }) {
+export function GuideLink({ path }: { path: string }) {
   return (
     <Button
       variant="secondary"

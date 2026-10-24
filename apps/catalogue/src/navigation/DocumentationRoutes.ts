@@ -15,8 +15,8 @@ import { docsRoute, homeRoute, routeHref } from './Address';
 export type Area = 'site' | 'docs';
 
 /**
- * The Site's destinations in its rail, in order; the drawer beside it lists their pages. The
- * benchmark is a page of the Overview, and the changelog is in the Docs.
+ * The Site's destinations in its rail, in order; the drawer beside it lists their pages. Dev mode
+ * and the benchmark are pages of the Overview, and the changelog is in the Docs.
  */
 export const siteSections = ['Overview', 'Foundations', 'Components', 'Patterns'] as const;
 export type SiteSection = (typeof siteSections)[number];
@@ -29,6 +29,7 @@ export type PageKind =
   | 'patterns'
   | 'pattern'
   | 'foundation'
+  | 'dev-mode'
   | 'benchmark'
   | 'docs-home'
   | 'guide'
@@ -126,6 +127,15 @@ const sitePages: SitePage[] = [
     area: 'site',
     section: 'Overview',
     kind: 'home',
+  },
+  {
+    path: 'dev-mode',
+    title: 'Dev mode',
+    area: 'site',
+    section: 'Overview',
+    kind: 'dev-mode',
+    summary:
+      'A view of a page taken apart, layer by layer, that shows how it is built and what is wrong with it.',
   },
   {
     path: 'benchmark',
@@ -391,6 +401,8 @@ export function routeOfDocument(
     components: 'components',
     patterns: 'patterns',
     benchmark: 'benchmark',
+    // Dev mode's page on the Site; its guide in the Docs is the document dev-mode.
+    'dev-mode-overview': 'dev-mode',
     changelog: 'docs/changelog',
     tokens: 'docs/tokens',
     codemods: 'docs/codemods',
