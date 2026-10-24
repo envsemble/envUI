@@ -666,8 +666,9 @@
       "env-slider-value": "The value as text."
     },
     "Spinner": {
-      "env-spinner": "The spinner, or with data-show-label the status line that holds it and its label.",
-      "env-spinner-shape": "Each of the mark's four shapes, two pills and two circles, which take the color in turn.",
+      "env-spinner": "The spinner, or with data-show-label the status line that holds it and its label; data-contained draws the shape on a circle.",
+      "env-spinner-shape": "The shape that turns and morphs through Material's rounded shapes.",
+      "env-spinner-container": "The circle of the brand's tint behind the shape, with data-contained.",
       "env-spinner-label": "The label shown beside the spinner, which says what is loading."
     },
     "Surface": {

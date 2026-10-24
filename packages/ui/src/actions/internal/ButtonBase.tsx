@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from '../../internal/ActionElement.js';
-import { SpinnerMark } from '../../feedback/internal/SpinnerMark.js';
+import { SpinnerIndicator } from '../../feedback/internal/SpinnerIndicator.js';
 import type { ButtonAppearanceProps, ButtonVariant } from '../Button.js';
 
 export type ButtonBaseProps = ButtonAppearanceProps &
@@ -63,7 +63,7 @@ export function ButtonBase({
       {pending ? (
         <>
           <span className="env-button-content">{content}</span>
-          <SpinnerMark size="sm" aria-hidden className="env-button-spinner" />
+          <SpinnerIndicator size="sm" aria-hidden className="env-button-spinner" />
         </>
       ) : (
         content

@@ -4634,7 +4634,11 @@
       "parts": [
         {
           "class": "env-spinner",
-          "description": "The spinner, or with data-show-label the status line that holds it and its label."
+          "description": "The spinner, or with data-show-label the status line that holds it and its label; data-contained draws the shape on a circle."
+        },
+        {
+          "class": "env-spinner-container",
+          "description": "The circle of the brand's tint behind the shape, with data-contained."
         },
         {
           "class": "env-spinner-label",
@@ -4642,10 +4646,19 @@
         },
         {
           "class": "env-spinner-shape",
-          "description": "Each of the mark's four shapes, two pills and two circles, which take the color in turn."
+          "description": "The shape that turns and morphs through Material's rounded shapes."
         }
       ],
       "states": [
+        {
+          "attribute": "data-contained",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-spinner"
+          ]
+        },
         {
           "attribute": "data-show-label",
           "values": [],

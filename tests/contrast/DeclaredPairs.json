@@ -127,6 +127,13 @@
         "high": 4.5
       }
     },
+    "--env-color-bg-brand-emphasis on --env-color-bg-brand-muted over --env-color-bg-default": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
     "--env-color-bg-brand-emphasis on --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
