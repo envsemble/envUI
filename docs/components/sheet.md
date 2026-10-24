@@ -56,6 +56,14 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 
 ```
 
+### Resizable
+
+With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width.
+
+```tsx example=ResizableDetails
+
+```
+
 ## Variants
 
 | Option          | Use for                                                        |
@@ -88,7 +96,7 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 5. **Content** (`env-sheet-popup env-checkbox`, `children`)
 6. **Action** (`env-dialog-actions > env-button`, `actions`)
 
-Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`.
+Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`, and the handle on a resizable sheet's inner edge, `env-sheet-resize-handle`.
 
 ## Accessibility
 
@@ -100,6 +108,8 @@ Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`.
 | <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>        | Moves through the sheet; a modal sheet keeps focus inside, a non-modal one lets it go on. |
 | <kbd>Esc</kbd>                                         | Closes the sheet, or first what is open inside it; nothing while `pending`.               |
 | <kbd>Enter</kbd> or <kbd>Space</kbd> on a close button | Closes the sheet; focus returns to the trigger or `finalFocus`.                           |
+| <kbd>←</kbd>, <kbd>→</kbd> on the resize handle        | Resizes a `resizable` side sheet 1 rem; with <kbd>Shift</kbd>, 5.                         |
+| <kbd>Home</kbd>, <kbd>End</kbd> on the resize handle   | Resizes it to its smallest or largest width.                                              |
 
 ### envUI provides
 
@@ -108,6 +118,7 @@ Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`.
 - In a modal sheet, the rest of the page hidden, closed to presses and locked from scrolling.
 - A close button for touch screen reader users, who have no <kbd>Esc</kbd>, disabled while `pending`.
 - Its side, slide and swipe in the text direction.
+- With `resizable`, a focusable separator on its inner edge, named Resize, with its width as its value.
 
 ### You provide
 
@@ -116,4 +127,4 @@ Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`.
 
 ## Changelog
 
-- **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.
+- **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction. With `resizable`, people resize a side sheet by its inner edge.
