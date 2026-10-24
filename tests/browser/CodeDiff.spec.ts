@@ -44,3 +44,43 @@ for (const theme of ['light', 'dark'] as const)
       expect(added).toMatch(/\/ 0\.3\)$|, 0\.3\)$/);
     }
   });
+
+test('a code diff keeps its expanded lines and shows no spinner as the theme switches', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const scope = page.getByTestId('switched');
+  const diff = scope.locator('.env-code-diff');
+  await expect(diff).not.toHaveAttribute('aria-busy');
+  /** The diff's lines, the element that holds them, and whether a spinner has shown since. */
+  const state = () =>
+    diff.evaluate((element) => {
+      const host = [...element.querySelectorAll('*')].find((each) => each.shadowRoot);
+      return {
+        lines: host?.shadowRoot?.querySelectorAll('[data-line]').length ?? 0,
+        same: (host as (Element & { marked?: boolean }) | undefined)?.marked === true,
+        spinner: (window as { spinnerShown?: boolean }).spinnerShown === true,
+      };
+    });
+  await expect.poll(async () => (await state()).lines).toBeGreaterThan(0);
+  const folded = (await state()).lines;
+  // Expand the folded lines, mark the element Diffs renders into and watch for a spinner.
+  await diff.evaluate((element) => {
+    const host = [...element.querySelectorAll('*')].find((each) => each.shadowRoot)!;
+    (host as Element & { marked?: boolean }).marked = true;
+    host.shadowRoot!.querySelector<HTMLElement>('[data-expand-button]')!.click();
+    new MutationObserver(() => {
+      if (element.querySelector('[role=status]'))
+        (window as { spinnerShown?: boolean }).spinnerShown = true;
+    }).observe(element, { childList: true, subtree: true });
+  });
+  await expect.poll(async () => (await state()).lines).toBeGreaterThan(folded);
+  const expanded = (await state()).lines;
+  const light = await tokenColor(diff, 'const');
+  for (const scheme of ['dark', 'light']) {
+    await scope.getByRole('button', { name: 'Switch theme' }).click();
+    if (scheme === 'dark') await expect.poll(() => tokenColor(diff, 'const')).not.toBe(light);
+    else await expect.poll(() => tokenColor(diff, 'const')).toBe(light);
+    expect(await state(), scheme).toEqual({ lines: expanded, same: true, spinner: false });
+  }
+});

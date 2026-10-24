@@ -149,17 +149,24 @@ export function CodeDiff({
   const [attempt, setAttempt] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const contrast = useCodeContrast(rootRef);
-  // The highlighter with the language and the code themes, and the tints of the app theme.
-  const [tints, setTints] = useState<{ key: string; css: string } | null>(null);
-  const tintsKey = `${lang}-${theme}-${contrast}`;
-  const loaded = tints?.key === tintsKey;
+  // The highlighter with the language and the code themes, and the tints of the app theme. As the
+  // theme or contrast changes, the diff keeps the ones it shows until the new ones load, so it
+  // stays mounted, with its expanded lines and scroll: only the first load, or another language,
+  // shows the spinner.
+  const [shown, setShown] = useState<{
+    lang: string;
+    theme: typeof theme;
+    contrast: CodeContrast;
+    css: string;
+  } | null>(null);
+  const loaded = shown?.lang === lang;
   const [wide, setWide] = useState(false);
 
   useEffect(() => {
     let active = true;
     Promise.all([prepareHighlighter(lang, contrast), diffTintColors(theme, contrast)]).then(
       ([, colors]) => {
-        if (active) setTints({ key: tintsKey, css: diffCSS(colors) });
+        if (active) setShown({ lang, theme, contrast, css: diffCSS(colors) });
       },
       () => {
         if (active) setFailed(true);
@@ -168,7 +175,7 @@ export function CodeDiff({
     return () => {
       active = false;
     };
-  }, [lang, theme, contrast, tintsKey, attempt]);
+  }, [lang, theme, contrast, attempt]);
 
   // Split and unified are different markup from Diffs, which CSS can't switch between, so the
   // width is measured: as the diff loads, before it paints, so it never shows the other layout
@@ -213,7 +220,7 @@ export function CodeDiff({
       {...props}
       ref={rootRef}
       className={classNames('env-code-diff', className)}
-      style={{ ...codeThemeStyle(theme), ...style }}
+      style={{ ...codeThemeStyle(shown?.theme ?? theme), ...style }}
       aria-busy={!loaded && !failed ? true : undefined}
     >
       {failed ? (
@@ -241,7 +248,7 @@ export function CodeDiff({
             {messages.retry}
           </Button>
         </Column>
-      ) : !loaded ? (
+      ) : !loaded || !shown ? (
         <Spinner label={messages.loading} showLabel />
       ) : before === after ? (
         <File
@@ -249,10 +256,10 @@ export function CodeDiff({
           disableWorkerPool
           options={{
             overflow: 'wrap',
-            theme: diffThemeNames(contrast),
-            themeType: theme,
+            theme: diffThemeNames(shown.contrast),
+            themeType: shown.theme,
             disableFileHeader: !header,
-            unsafeCSS: tints?.css,
+            unsafeCSS: shown.css,
           }}
         />
       ) : (
@@ -262,11 +269,11 @@ export function CodeDiff({
           options={{
             diffStyle: wide ? 'split' : 'unified',
             overflow: 'wrap',
-            theme: diffThemeNames(contrast),
-            themeType: theme,
+            theme: diffThemeNames(shown.contrast),
+            themeType: shown.theme,
             disableFileHeader: !header,
             expandUnchanged,
-            unsafeCSS: tints?.css,
+            unsafeCSS: shown.css,
           }}
         />
       )}
