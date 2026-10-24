@@ -274,7 +274,7 @@ body {
 }
 /* The foot of every page, set apart from the page by space alone: the wordmark, the catalogue's
    destinations in columns, as many as fit and wrapping onto more rows in a narrow page, and the
-   version. Its links are quiet text that comes forward when hovered. */
+   credit for the icons under them. Its links are quiet text that comes forward when hovered. */
 .docs-footer {
   container: docs-footer / inline-size;
   background: var(--env-color-bg-default);
@@ -308,7 +308,11 @@ body {
   padding: 0;
   list-style: none;
 }
-.docs-footer-links .env-link {
+.docs-footer-credit {
+  margin: 0;
+}
+/* The footer's links are muted; the credit's stay underlined, as links in running text are. */
+:is(.docs-footer-links, .docs-footer-credit) .env-link {
   color: var(--env-color-fg-muted);
 }
 .docs-footer-links .env-link:hover {
@@ -319,7 +323,7 @@ body {
 /* In a compact page the wordmark sits above the columns, and the columns pair up two to a row,
    so none runs long on its own. */
 @container docs-footer (width < 37.5rem) {
-  .docs-footer-inner {
+  .docs-footer-main {
     flex-direction: column;
   }
   .docs-footer-columns {

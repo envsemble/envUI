@@ -41,6 +41,8 @@ import { Home } from '@envsemble/envui/icons/Home';
 - Icons take the color of their text. Decorative icons stay hidden from assistive technology; icon-only controls need an accessible name.
 - envUI ships no logos: draw the application's own with `Icon` where it should follow the text color.
 
+The symbols are Material Design's [Material Symbols](https://m3.material.io/styles/icons), in their Rounded style, under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0); the package carries the license and its notice.
+
 TypeScript declarations provide the complete public API.
 
 ## Related topics

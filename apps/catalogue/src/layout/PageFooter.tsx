@@ -75,52 +75,60 @@ const columns: { title: string; links: FooterLink[] }[] = [
 
 /**
  * The foot of every page of the Site and the Docs, on the navigation's pane color: the wordmark in
- * a column of its own, then the main destinations of both in columns that wrap onto more rows in a narrow page.
- * Its links are quiet text until hovered.
+ * a column of its own, then the main destinations of both in columns that wrap onto more rows in a narrow page,
+ * and under them the credit for the icons. Its links are quiet text until hovered.
  */
 export function PageFooter() {
   return (
     <footer className="docs-footer">
-      <Row gap={7} align="start" className="docs-footer-inner">
-        <Link
-          href={routeHref(homeRoute)}
-          underline={false}
-          className="docs-footer-brand"
-          aria-label="envUI home"
-        >
-          <EnvUILogo />
-        </Link>
-        <Grid
-          render={<nav aria-label="Footer" />}
-          columns={{ min: '9rem' }}
-          gap={6}
-          className="docs-footer-columns"
-        >
-          {columns.map(({ title, links }) => (
-            <Column key={title} gap={3} align="start">
-              <Text
-                render={<h2 />}
-                variant="body-sm"
-                emphasis="default"
-                className="docs-footer-title"
-              >
-                {title}
-              </Text>
-              <Column render={<ul />} gap={2} align="start" className="docs-footer-links">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <Text variant="body-sm">
-                      <Link href={link.href} underline={false}>
-                        {link.label}
-                      </Link>
-                    </Text>
-                  </li>
-                ))}
+      <Column gap={7} className="docs-footer-inner">
+        <Row gap={7} align="start" className="docs-footer-main">
+          <Link
+            href={routeHref(homeRoute)}
+            underline={false}
+            className="docs-footer-brand"
+            aria-label="envUI home"
+          >
+            <EnvUILogo />
+          </Link>
+          <Grid
+            render={<nav aria-label="Footer" />}
+            columns={{ min: '9rem' }}
+            gap={6}
+            className="docs-footer-columns"
+          >
+            {columns.map(({ title, links }) => (
+              <Column key={title} gap={3} align="start">
+                <Text
+                  render={<h2 />}
+                  variant="body-sm"
+                  emphasis="default"
+                  className="docs-footer-title"
+                >
+                  {title}
+                </Text>
+                <Column render={<ul />} gap={2} align="start" className="docs-footer-links">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      <Text variant="body-sm">
+                        <Link href={link.href} underline={false}>
+                          {link.label}
+                        </Link>
+                      </Text>
+                    </li>
+                  ))}
+                </Column>
               </Column>
-            </Column>
-          ))}
-        </Grid>
-      </Row>
+            ))}
+          </Grid>
+        </Row>
+        {/* The icons are Material Symbols, under the Apache License 2.0
+            (packages/ui/THIRD_PARTY_NOTICES.md). */}
+        <Text variant="caption" emphasis="muted" className="docs-footer-credit">
+          Icons are <Link href="https://m3.material.io/styles/icons">Material Symbols</Link>, under
+          the <Link href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</Link>.
+        </Text>
+      </Column>
     </footer>
   );
 }

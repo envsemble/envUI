@@ -813,6 +813,22 @@ test("the overview's hero shows the package's version under the wordmark, and sa
     await expect(hero.getByRole('link', { name, exact: true })).toBeVisible();
 });
 
+test('the footer of the Site and the Docs credits Material Symbols with their license', async ({
+  page,
+}) => {
+  for (const path of ['', 'docs']) {
+    await page.goto(`${catalogueUrl}/${path}`);
+    const credit = page.locator('.docs-footer-credit');
+    await expect(credit, path).toHaveText(
+      'Icons are Material Symbols, under the Apache License 2.0.',
+    );
+    await expect(credit.getByRole('link', { name: 'Apache License 2.0' })).toHaveAttribute(
+      'href',
+      'https://www.apache.org/licenses/LICENSE-2.0',
+    );
+  }
+});
+
 test("every label and heading of the Site's and the Docs' drawers fits on one line at the default width", async ({
   page,
 }) => {
