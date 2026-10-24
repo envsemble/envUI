@@ -43,12 +43,12 @@ Page goes in a [Scaffold](scaffold.md)'s body, with its header at the top of the
 
 ### Widths
 
-| Width  | Content width | Use for                                            |
-| ------ | ------------- | -------------------------------------------------- |
-| Small  | 40 rem        | A form, a settings page or a sign-in page.         |
-| Medium | 60 rem        | A document, an article or the details of one item. |
-| Large  | 76 rem        | A dashboard, a list or a table. The default.       |
-| Full   | The whole     | A board, a canvas or a wide table.                 |
+| Width  | Content width   | Use for                                            |
+| ------ | --------------- | -------------------------------------------------- |
+| Small  | 40 rem          | A form, a settings page or a sign-in page.         |
+| Medium | 60 rem          | A document, an article or the details of one item. |
+| Large  | 76 rem          | A dashboard, a list or a table. The default.       |
+| Full   | The whole width | A board, a canvas or a wide table.                 |
 
 ```tsx example=Widths
 

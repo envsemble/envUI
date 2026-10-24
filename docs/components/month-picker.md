@@ -12,8 +12,8 @@ aliases:
   - period picker
   - billing period
 useWhen:
-  - People choose a month of a year, such as the month a report covers or a billing period.
-  - The day doesn't matter, only the month.
+  - A month of a year, such as the month a report covers
+  - A period where the day doesn't matter, such as a billing period
 avoidWhen:
   - text: A day, or a day and a time.
     use: DatePicker
@@ -27,7 +27,7 @@ components:
 
 ## Overview
 
-MonthPicker writes the month in the reader's locale.
+The month shows in the reader's language, and choosing one closes the popup.
 
 ```tsx example=ReportMonth
 
@@ -35,7 +35,7 @@ MonthPicker writes the month in the reader's locale.
 
 ### Within a fiscal year
 
-Months outside `min` and `max` are unavailable, and the year buttons stop at them.
+Months outside the range a field allows are unavailable, and the year buttons stop at them.
 
 ```tsx example=FiscalYear
 
@@ -43,7 +43,7 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 
 ### A short format
 
-`formatOptions` changes how the field writes the month.
+The field can write the month in a shorter form, such as 07/28.
 
 ```tsx example=ShortFormat
 
@@ -51,7 +51,7 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 
 ### In a form
 
-`name` submits the month as `YYYY-MM`, which sorts and compares as text.
+The month goes with its form as the year and the month in numbers, such as 2026-10, which sort and compare as text.
 
 ```tsx example=ExpenseForm
 
@@ -66,17 +66,24 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 1. **Outline**
 2. **Floating**
 
-| Variant              | Use for                                                 |
-| -------------------- | ------------------------------------------------------- |
-| Default              | A month of a year; choosing one closes the popup.       |
-| `variant="floating"` | A long form on a page, as TextField's floating variant. |
+| Variant  | Use for                                                 |
+| -------- | ------------------------------------------------------- |
+| Outline  | Forms, dialogs and panes. The default.                  |
+| Floating | A long form on a page, as TextField's floating variant. |
 
-`sm`, `md` and `lg` set the field's height, the control heights of the [scale](../foundations/scale.md).
+### Sizes
+
+An outline field comes in the three control heights of the [scale](../foundations/scale.md), small, medium and large, so it lines up with buttons of the same size.
 
 ## When to use
 
-- Use `readOnly`, not `disabled`, to show a month people can't change.
-- Use two fields for a range of months, such as From and To.
+### Read only
+
+Show a month people can't change as read-only, not disabled, so they can still focus it and read it.
+
+### Ranges
+
+Use two fields for a range of months, such as From and To.
 
 ## Anatomy
 
@@ -126,6 +133,44 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 - A `label`, or `aria-label` on a field without one.
 - Validation and its `error`.
 - The labels in the application's language.
+
+## In code
+
+### Usage
+
+A MonthPicker takes its `label`, a `description` and an `error`, and its value is a month as `YYYY-MM`. Leave it uncontrolled, with `defaultValue`, which a form reset restores, or control it with `value` and `onValueChange`, which receives the month, or `null` once the field is cleared. `clearable` adds a clear button to the field and the popup.
+
+```tsx source=ReportMonth
+
+```
+
+#### Range and format
+
+`min` and `max`, as `YYYY-MM`, make earlier and later months unavailable. `formatOptions` takes `Intl.DateTimeFormat` options for the shown value, by default the long month and the year; `locale` is EnvUIProvider's, else the browser's, and months are Gregorian, also in a locale with a calendar of its own.
+
+```tsx source=FiscalYear
+
+```
+
+```tsx source=ShortFormat
+
+```
+
+#### In a form
+
+`name` submits the month as `YYYY-MM`, and `required` keeps an empty field's form from submitting. Use `readOnly`, not `disabled`, for a month people can't change.
+
+```tsx source=ExpenseForm
+
+```
+
+#### Variants, sizes and the popup
+
+`variant` is `outline`, the default, at the control height, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `showLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons, or EnvUIProvider's `messages.monthPicker` does for the whole application.
+
+### Composition
+
+The field, `env-month-picker`, shares DatePicker's parts: the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup, `env-month-picker-popup`, has a header, `env-month-picker-header`, with the previous year, `env-month-picker-previous`, the year, `env-month-picker-heading`, and the next year, `env-month-picker-next`; the year's grid, `env-month-picker-year` and `env-month-picker-grid`, of months, `env-month-picker-month`, each with `data-month` and a mark, `env-month-picker-month-mark`; and the actions, `env-date-picker-actions`. `ref` reaches the field's button, and `className` and `style` its root.
 
 ## Changelog
 

@@ -14,9 +14,9 @@ aliases:
   - toggletip
   - info popup
 useWhen:
-  - Details about something on the page that people open on demand, such as a document's history or what a setting means.
-  - A small form beside the control it changes, such as renaming an item or choosing filters.
-  - An explanation behind an icon button, such as a help mark beside a value.
+  - Details people open on demand, such as a document's history
+  - A small form beside the control it changes, such as a rename
+  - An explanation behind a help mark beside a value
 avoidWhen:
   - text: A short name or hint for a control, shown on hover and focus.
     use: Tooltip
@@ -44,15 +44,15 @@ Popover takes focus as it opens, and also closes when focus leaves it; it isn't 
 
 ### A small form
 
-A function child receives `close`, to close the popover once its action is done.
+An action inside the popover closes it once its work is done, such as Rename.
 
 ```tsx example=RenameInPlace open
 
 ```
 
-### Controlled
+### Opened by the application
 
-`open` and `onOpenChange` control the popover, here starting from the filters in use each time it opens.
+The application can open and close the popover itself, here starting from the filters in use each time it opens and applying them as it closes.
 
 ```tsx example=FilterTasks
 
@@ -60,23 +60,36 @@ A function child receives `close`, to close the popover once its action is done.
 
 ## Variants
 
-| Width | Use for                                                |
-| ----- | ------------------------------------------------------ |
-| `md`  | Details and a field or two, up to 20 rem. The default. |
-| `lg`  | A longer form, up to 28 rem.                           |
+### Widths
 
-A popover is as wide as its content up to its width. `side` places it below its trigger, above, beside it or at the inline start or end, and `align` lines it up; it flips where there is no room.
+A popover is as wide as its content, up to its width.
 
-```tsx example=FieldHelp open caption="side right, beside a value it explains."
+| Width  | Use for                                                |
+| ------ | ------------------------------------------------------ |
+| Medium | Details and a field or two, up to 20 rem. The default. |
+| Large  | A longer form, up to 28 rem.                           |
+
+### Sides
+
+A popover opens below its trigger, above it or beside it, lined up with the trigger's start, center or end, and flips where there is no room.
+
+```tsx example=FieldHelp open
 
 ```
 
 ## When to use
 
-- One to three fields at most in a form, with the action last.
-- Give every popover a `title`, or an `aria-label` where a title would repeat its trigger.
-- Name an icon-only trigger after what the popover holds, such as About billing periods.
-- Keep what matters reachable elsewhere: a popover is out of sight until opened.
+### Forms
+
+One to three fields at most, with the action last.
+
+### Names
+
+Give every popover a title, or a name for assistive technology where a title would repeat its trigger. Name an icon-only trigger after what the popover holds, such as About billing periods.
+
+### Out of sight
+
+Keep what matters reachable elsewhere: a popover is out of sight until it opens.
 
 ## Anatomy
 
@@ -109,6 +122,44 @@ A popover is as wide as its content up to its width. `side` places it below its 
 
 - A `title` or an `aria-label`, and a name for an icon-only trigger.
 - The actions inside, and a call to `close` when one is done.
+
+## In code
+
+### Usage
+
+A Popover opens from its `trigger`, such as a Button or an IconButton, which must take a ref and props: it receives the press handler, `aria-haspopup` and `aria-expanded`. `title` is a heading at the top that names it; without one, name it with `aria-label`. `children` is its content.
+
+```tsx source=DocumentDetails
+
+```
+
+#### A small form
+
+A function child receives `close`, for an action inside that closes the popover once it is done, such as a form's submit.
+
+```tsx source=RenameInPlace
+
+```
+
+#### Controlled
+
+Leave it uncontrolled, with `defaultOpen` to start open, or control it with `open` and `onOpenChange`, which receives the requested state and why: the trigger, <kbd>Esc</kbd>, a press outside, focus leaving it, or `close` as `close-press`.
+
+```tsx source=FilterTasks
+
+```
+
+#### Width, side and alignment
+
+`width` is `md`, 20 rem and the default, or `lg`, 28 rem: the widest the popover grows, as wide as its content from 12 rem up, and narrower to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; it flips to the other side without room. `align` is `start`, `center`, the default, or `end`.
+
+```tsx source=FieldHelp
+
+```
+
+### Customize
+
+`className`, `style`, `ref` and data attributes reach the surface, `env-popover`, which has `data-width="lg"` when large and renders on PopupSurface in the trigger's text direction and theme. Its title is `env-popover-title`.
 
 ## Changelog
 
