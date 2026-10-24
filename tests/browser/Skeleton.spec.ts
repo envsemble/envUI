@@ -10,6 +10,7 @@ async function open(page: Page) {
   // The bars are measured from the text, which the web font widens when it arrives, after the page
   // has loaded on a busy machine: wait for it, and for the frame in which the bars are drawn again.
   await page.evaluate(async () => {
+    await document.fonts.load('1em "envUI Inter"');
     await document.fonts.ready;
     const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
     await frame();
