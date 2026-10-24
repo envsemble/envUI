@@ -1,10 +1,10 @@
-import { Button, Card, Column, Link, Row, Surface, Text } from '@envsemble/envui';
+import { Button, Card, Column, Row, Surface, Text } from '@envsemble/envui';
 import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
 import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
-import { documentedVersion as version } from '../generated/Documentation';
+import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { sectionHome } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
@@ -44,16 +44,18 @@ export function Overview() {
           render={<Column gap={6} align="center" />}
           className="docs-overview-hero"
         >
-          <Text render={<h1 />} aria-label="envUI" className="docs-overview-title">
-            <EnvUILogo className="docs-overview-logo" />
-          </Text>
-          {/* The version this site shows, which leads to what changed in it. */}
-          <Text variant="body-sm" className="docs-overview-version">
-            <Link href={routeHref('changelog')}>Version {version}</Link>
-          </Text>
-          <Text emphasis="muted" className="docs-overview-lead">
-            React components, design tokens and patterns that give applications one consistent look
-            and behavior, from a button to dialogs, navigation and rich text.
+          {/* The wordmark, with the package's version under it as a quiet subheading, read from
+              packages/ui/package.json as the site builds. */}
+          <Column gap={3} align="center" className="docs-overview-brand">
+            <Text render={<h1 />} aria-label="envUI" className="docs-overview-title">
+              <EnvUILogo className="docs-overview-logo" />
+            </Text>
+            <Text variant="title" emphasis="muted" className="docs-overview-version">
+              v{version}
+            </Text>
+          </Column>
+          <Text variant="title" className="docs-overview-lead">
+            envUI is a design system for React apps.
           </Text>
           <Row gap={3} wrap justify="center">
             <Button href={routeHref('components')} startIcon={<Widgets />}>

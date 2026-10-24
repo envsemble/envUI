@@ -798,6 +798,21 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
 });
 
+test("the overview's hero shows the package's version under the wordmark, and says what envUI is", async ({
+  page,
+}) => {
+  await page.goto(`${catalogueUrl}/`);
+  const hero = page.locator('.docs-overview-hero');
+  await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
+  // The version is packages/ui/package.json's, as a quiet subheading rather than a link.
+  const versionLine = hero.locator('.docs-overview-version');
+  await expect(versionLine).toHaveText(`v${version}`);
+  await expect(versionLine.getByRole('link')).toHaveCount(0);
+  await expect(hero).toContainText('envUI is a design system for React apps.');
+  for (const name of ['Browse components', 'Read the Docs'])
+    await expect(hero.getByRole('link', { name, exact: true })).toBeVisible();
+});
+
 test("every label and heading of the Site's and the Docs' drawers fits on one line at the default width", async ({
   page,
 }) => {
