@@ -15,8 +15,8 @@ aliases:
   - show more
   - toggle details
 useWhen:
-  - Optional guidance or details that most people don't need, such as how a setting works.
-  - Settings that most people leave alone, such as advanced options in a form.
+  - Optional guidance most people don't need, such as how a setting works
+  - Settings most people leave alone, such as advanced options
 avoidWhen:
   - text: A list of questions or sections whose answers people open one at a time.
     use: Accordion
@@ -34,7 +34,7 @@ components:
 
 ## Overview
 
-Finding text in a closed disclosure's panel opens it, where the browser supports it.
+Finding text in a closed disclosure's details opens it, where the browser supports it.
 
 ```tsx example=VisibilityHelp
 
@@ -42,7 +42,7 @@ Finding text in a closed disclosure's panel opens it, where the browser supports
 
 ### One at a time
 
-Disclosures that share a `name` open one at a time, where the browser supports it.
+Disclosures in a set can open one at a time, where the browser supports it.
 
 ```tsx example=FrequentQuestions
 
@@ -50,7 +50,7 @@ Disclosures that share a `name` open one at a time, where the browser supports i
 
 ### Open on an error
 
-`open` and `onOpenChange` control it, such as to open it when a field inside has an error.
+The application can open a disclosure itself, such as when a field inside has an error.
 
 ```tsx example=OpenOnError
 
@@ -66,7 +66,9 @@ Disclosures that share a `name` open one at a time, where the browser supports i
 
 ```
 
-- Don't nest disclosures.
+### One level
+
+Don't put a disclosure inside another.
 
 ## Anatomy
 
@@ -95,6 +97,36 @@ Disclosures that share a `name` open one at a time, where the browser supports i
 
 - A summary that says what the details hold.
 - `open` where something inside needs attention.
+
+## In code
+
+### Usage
+
+A Disclosure is a native `<details>`: `title` is its one-line summary, and `children` the details shown below it while it is open. It keeps its own state, closed unless `defaultOpen` is set; finding text in a closed panel opens it where the browser supports it.
+
+```tsx source=VisibilityHelp
+
+```
+
+#### One at a time
+
+Disclosures that share a `name` open one at a time, where the browser supports it.
+
+```tsx source=FrequentQuestions
+
+```
+
+#### Open on an error
+
+`open` and `onOpenChange(open)` control it, such as to open it when a field inside has an error. A native `onToggle` still passes through.
+
+```tsx source=OpenOnError
+
+```
+
+### Composition
+
+The summary is `env-disclosure > summary`, and the details are in `env-disclosure-panel`. Never nest a disclosure in another.
 
 ## Changelog
 
