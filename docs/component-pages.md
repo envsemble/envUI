@@ -289,7 +289,7 @@ An example is a file in `apps/catalogue/src/examples/<page>/<Name>.tsx`: a small
 
 - Import only what an application can: `react`, `@envsemble/envui`, its `/content`, `/diff`, `/rich-text` and `/color` entries, and icons from `@envsemble/envui/icons/<Name>`.
 - No catalogue classes (`docs-*`) or helpers. Lay out with envUI's components; where envUI has no layout for it yet, a short inline style with a comment is fine.
-- Use the neutral [sample data](#sample-data) below, and never a product name.
+- Use the neutral [sample data](#sample-data) below, and never the name of an application built on envUI.
 - Keep state inside the example, and stand in for slow work with a timer.
 - Keep it small: the stage centres the example at its own width. Give the root a width where it should be wider than its content, such as `inlineSize: '100%'` on a grid of cards. A root that is or holds a size container, such as a feature card or a page header, fills the stage, since centred it would have no width.
 - Name the file after what it shows, such as `ConfirmInPlace.tsx`.
@@ -317,7 +317,7 @@ Examples, screenshots and tests use one neutral set of sample data, so they look
 - **Organisation and application:** Northwind.
 - **Things:** projects, such as Website refresh, Quarterly report, Onboarding guide, Mobile release, Data migration and Annual review; documents; tasks; teams.
 - **Dates:** absolute dates in February and March 2026, so relative times read naturally.
-- **No product names and no logos.** envUI never names the products that use it, in code, documentation, comments or sample data. Describe a behaviour instead of naming where it comes from.
+- **No names of the applications built on envUI, and no logos.** envUI never names the applications that use it, in code, documentation, comments or sample data; describe the behaviour instead of the application that asked for it. Other products, such as a design system envUI follows, may be named.
 
 Its words follow the [writing guide](writing.md), as an application's would.
 

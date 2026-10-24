@@ -94,7 +94,7 @@ A change that people using envUI notice carries a changeset: a Markdown file in 
 - `minor`: a new component, prop, variant or token.
 - `patch`: a fix that keeps the API.
 
-Describe the pattern rather than the application that needed it: changesets, the changelog and this documentation name no products, and `npm test` rejects them. Releases turn the changesets into the changelog; see `CONTRIBUTING.md` in the envUI repository.
+Describe the pattern rather than the application that needed it: changesets, the changelog and this documentation name no application built on envUI, and `npm test` rejects them. Releases turn the changesets into the changelog; see `CONTRIBUTING.md` in the envUI repository.
 
 ## Verify
 

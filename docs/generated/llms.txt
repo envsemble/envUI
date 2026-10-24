@@ -104,7 +104,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 
 - [Scaffold](docs/components/scaffold.md): The invisible frame of an application's screen, around its top bar, its navigation and the page. Also: resolveNavigationForms. Parts: `.env-scaffold`.
 - [Page](docs/components/page.md): The invisible column a page's content sits in, at a readable width, under its header with the page's title and actions. Also: PageHeader. Parts: `.env-page`, `.env-page-header`.
-- [Panes](docs/components/panes.md): Two panes side by side, a main pane with a supporting one or a list and its detail, that make the most of less room. Also: readPanesSize. Parts: `.env-panes`.
+- [Panes](docs/components/panes.md): Two panes side by side, after Material's pane layouts, a main pane with a supporting one or a list and its detail, that make the most of less room. Also: readPanesSize. Parts: `.env-panes`.
 - [TopBar](docs/components/top-bar.md): The bar at the top of an application or a screen, with start content, a title that truncates first and actions, which can stick, show page progress or be the window's title bar. Parts: `.env-top-bar`.
 - [PanelDock](docs/components/panel-dock.md): Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted. Parts: `.env-panel-dock`.
 - [Surface](docs/components/surface.md): A container with a background, an inset and corners, but no layout of its own. Also: placeholders, isPlaceholder, useSkeleton. Parts: `.env-surface`.

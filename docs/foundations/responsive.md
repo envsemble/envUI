@@ -97,7 +97,7 @@ The Site's Adapting to width page names the window classes in words and teaches 
 | `expanded`   | 52.5 to 75 rem         | A tablet held sideways, or a laptop window |
 | `large`      | From 75 rem            | A desktop window                           |
 
-- The classes start at 600, 840 and 1200 px at the default text size, and are in rem, so they follow the reader's text size: with larger text, a window counts as a narrower class.
+- The classes are Material's window size classes. They start at 600, 840 and 1200 px at the default text size, and are in rem, so they follow the reader's text size: with larger text, a window counts as a narrower class.
 - Measured on a container, never the viewport: a page embedded in a smaller frame gets the class of its own width. Menus, dialogs and sheets measure the window they open in.
 - `container="env-window"` on a primitive makes a region a window of its own, such as a preview. Don't give envUI's other `env-*` container names to your own.
 - Compact first: write the compact layout as the default and switch up with `width >=`. Where no `env-window` is found, no query matches and the compact layout shows. CSS can't read the `--env-window-class-*` tokens inside a query, so write the width.

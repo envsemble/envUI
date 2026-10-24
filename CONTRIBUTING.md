@@ -164,7 +164,7 @@ The GitHub release's notes are the version's changelog section, so its first par
 
 - One or two sentences on what the release brings for people who use envUI, in the style of the earlier releases: the headline components and changes, not a list.
 - For 1.0.0, say that it is the first stable release, that it breaks code written for 0.x, that `@envsemble/envui-codemods` makes most of the changes, and link the [migration guide](docs/migration.md) by its absolute URL on `main`.
-- Name no products or applications, as in changesets.
+- Name no application built on envUI, as in changesets.
 - Leave the generated entries below as Changesets wrote them. Fix a wrong entry where it stands rather than rewriting the section.
 
 ### Release by merging into main

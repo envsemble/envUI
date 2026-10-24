@@ -5,25 +5,20 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 
-// envUI is product agnostic: what it ships and documents names no application that uses it and no
-// third-party product it is styled after. Names match as whole words. Distinctive names match in any
-// case; names that are also English words or code match only as written, so `console.log`,
-// `navigator.platform`, "forms" or an application's "chrome" do not count.
+// envUI names no application that uses it: its first versions gathered what those applications
+// needed, and naming them would make its components read as built for one of them. Other products,
+// such as the design systems it follows, may be named. Names match as whole words. Distinctive names
+// match in any case; names that are also English words or code match only as written, so
+// `console.log`, `navigator.platform` or "forms" do not count.
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 
-/** Applications built on envUI and third-party products. Extend the lists as products appear. */
+/** The applications built on envUI. Extend the list as applications adopt it. */
 const productNames = [
-  // In any case: `atlas` or `COORD` name the product as surely as the capitalized name.
-  ...['Atlas', 'Coord', 'Electron', 'Figma', 'Google', 'Jira', 'Slack'].map((name) => ({
-    name,
-    flags: 'gi',
-  })),
-  // Only as written: lowercase, they are English words, CSS keywords or host names in URLs.
-  ...['Chrome', 'Console', 'Forms', 'GitHub', 'Linear', 'Notion', 'Platform'].map((name) => ({
-    name,
-    flags: 'g',
-  })),
+  // In any case: `atlas` or `COORD` name the application as surely as the capitalized name.
+  ...['Atlas', 'Coord'].map((name) => ({ name, flags: 'gi' })),
+  // Only as written: lowercase, they are English words or code.
+  ...['Console', 'Forms', 'Platform'].map((name) => ({ name, flags: 'g' })),
 ];
 
 /**
@@ -31,18 +26,14 @@ const productNames = [
  * name's patterns matches on the same line and covers it.
  */
 const allowed = {
-  // envUI is distributed through GitHub Packages and installed with a GitHub token, also in GitHub
-  // Actions; setup says so.
-  GitHub: [/GitHub (?:Packages|Actions|token)/g],
   // The English word: the name of the family of form components, and a list of what to preserve.
   Forms: [/Forms & selection/g, /^#{2,} Forms$/g, /^- Forms, validation/g],
 };
 
 /** Uses allowed in one file only, by path and name. */
 const allowedIn = {
-  // The maintainers' guide, which does not ship: releases are GitHub releases, and the hosted
-  // catalogue's readers sign in with GitHub login.
-  'CONTRIBUTING.md': { GitHub: [/GitHub (?:release|login)/g] },
+  // The maintainers' guide, which does not ship, may say which application asked for a change.
+  'CONTRIBUTING.md': {},
 };
 
 /**
@@ -125,27 +116,24 @@ test('shipped text, documentation and sample data name no products', async () =>
   assert.deepEqual(findings, [], 'Name no products; describe the pattern instead.');
 });
 
-test('the check finds a product name and lets its allowed uses pass', () => {
-  const text = '- Lay it out as Console does.\n- Publish to GitHub Packages; read GitHub Docs.\n';
+test('the check finds an application built on envUI and lets other products pass', () => {
+  const text = '- Lay it out as Console does.\n- Follow the design system Material describes.\n';
   assert.deepEqual(productMentions('example.md', text, { start: 0, text }), [
     'example.md:1: Console in "- Lay it out as Console does."',
-    'example.md:2: GitHub in "- Publish to GitHub Packages; read GitHub Docs."',
   ]);
-  const release = '- Attach it to the GitHub release.\n';
-  assert.deepEqual(productMentions('README.md', release, { start: 0, text: release }), [
-    'README.md:1: GitHub in "- Attach it to the GitHub release."',
+  const forms = '- Forms & selection, then the list of Forms the team built.\n';
+  assert.deepEqual(productMentions('example.md', forms, { start: 0, text: forms }), [
+    'example.md:1: Forms in "- Forms & selection, then the list of Forms the team built."',
   ]);
-  assert.deepEqual(productMentions('CONTRIBUTING.md', release, { start: 0, text: release }), []);
-  const cases = '- Plans live in ~/.atlas; ask in slack.\n- The window chrome, linear easing.\n';
+  const cases = '- Plans live in ~/.atlas; the window chrome, a platform.\n';
   assert.deepEqual(productMentions('example.md', cases, { start: 0, text: cases }), [
-    'example.md:1: Atlas in "- Plans live in ~/.atlas; ask in slack."',
-    'example.md:1: Slack in "- Plans live in ~/.atlas; ask in slack."',
+    'example.md:1: Atlas in "- Plans live in ~/.atlas; the window chrome, a platform."',
   ]);
-  const code = "// Unlike Slack.\nconsole.log('Coord');\nimport { Forms } from './Forms';\n";
+  const code = "// Unlike Coord.\nconsole.log('Atlas');\nimport { Forms } from './Forms';\n";
   const segments = codeText('example.ts', code);
   assert.deepEqual(
     segments.flatMap((segment) => productMentions('example.ts', code, segment)),
-    ['example.ts:1: Slack in "// Unlike Slack."', `example.ts:2: Coord in "'Coord'"`],
+    ['example.ts:1: Coord in "// Unlike Coord."', `example.ts:2: Atlas in "'Atlas'"`],
   );
 });
 

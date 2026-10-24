@@ -13110,7 +13110,7 @@
       "category": "App frame & layout",
       "status": "beta",
       "since": "1.0.0",
-      "summary": "Two panes side by side, a main pane with a supporting one or a list and its detail, that make the most of less room.",
+      "summary": "Two panes side by side, after Material's pane layouts, a main pane with a supporting one or a list and its detail, that make the most of less room.",
       "aliases": [
         "SplitPane",
         "ListDetail",
