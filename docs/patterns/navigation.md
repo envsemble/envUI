@@ -71,14 +71,14 @@ After the router shows the new page, the window's title names it, such as "Proje
 
 ## Variants
 
-| Need                                | Use                                                                                                                                |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| The places of the application       | One list of destinations given to [Bar](../components/bar.md), [Rail](../components/rail.md) and [Drawer](../components/drawer.md) |
-| A page two or more levels down      | [Breadcrumbs](../components/breadcrumbs.md) on one line in the [PageHeader](../components/page-header.md)                          |
-| Views of the object a page is about | [Tabs](../components/tabs.md) under the PageHeader                                                                                 |
-| Pages read in order                 | A [Pager](../components/pager.md) at the end of the content                                                                        |
-| Opening anything by name            | A [search trigger](search-trigger.md) that opens a [CommandPalette](../components/command-palette.md)                              |
-| A list whose items open beside it   | List-detail [Panes](../components/panes.md)                                                                                        |
+| Need                                | Use                                                                                                                    |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| The places of the application       | One list of destinations given to Bar, Rail and [Drawer](../components/drawer.md)                                      |
+| A page two or more levels down      | [Breadcrumbs](../components/breadcrumbs.md) on one line in the [PageHeader](../components/page.md)                     |
+| Views of the object a page is about | [Tabs](../components/tabs.md) under the PageHeader                                                                     |
+| Pages read in order                 | A [Pager](../components/pager.md) at the end of the content                                                            |
+| Opening anything by name            | A search button that opens a [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut) |
+| A list whose items open beside it   | List-detail [Panes](../components/panes.md)                                                                            |
 
 ### Hierarchy
 
@@ -98,7 +98,7 @@ Tabs switch the views of one project in place. Its settings are another page, so
 
 ### Quick open
 
-Choosing a result opens it as a link would. An application opens the palette on <kbd>Ctrl</kbd>+<kbd>K</kbd> too, as the [search trigger](search-trigger.md) pattern shows; here the catalogue's own search keeps the keys.
+Choosing a result opens it as a link would. An application opens the palette on <kbd>Ctrl</kbd>+<kbd>K</kbd> too, as [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut) shows; here the catalogue's own search keeps the keys.
 
 ```tsx example=QuickOpen
 
@@ -183,7 +183,7 @@ Pass Breadcrumbs with `wrap={false}` to the PageHeader's `breadcrumbs`, from two
 
 #### Views and quick open
 
-Tabs go under the PageHeader for the views of the object the page is about; a link to another page, such as its settings, goes in the PageHeader's `actions`. A CommandPalette, opened by the [search trigger](search-trigger.md), lists the destinations as items and opens the chosen one through the router.
+Tabs go under the PageHeader for the views of the object the page is about; a link to another page, such as its settings, goes in the PageHeader's `actions`. A CommandPalette, opened by a [search button](../components/command-palette.md#opening-it-the-button-and-the-shortcut), lists the destinations as items and opens the chosen one through the router.
 
 #### List and detail
 

@@ -192,7 +192,7 @@ Start with a verb and say what will happen, and when the outcome is known, put i
 3. **Label** (`env-button::text`)
 4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
 
-Not shown: the spinner, a group's frame, and the end slot, quiet content after the label, such as a shortcut's keys, at the far end of a wide button, as the [search trigger](../patterns/search-trigger.md) shows it.
+Not shown: the spinner, a group's frame, and the end slot, quiet content after the label, such as a shortcut's keys, at the far end of a wide button, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) shows it.
 
 ### Colors
 
@@ -297,7 +297,7 @@ CopyButton copies its `value`, a string or a function that returns one, also as 
 
 ### Composition
 
-ButtonGroup joins related buttons in a row or, with `orientation="vertical"`, a column in which every button is as wide as the group; name it with `aria-label`. `fullWidth` makes a button or a group fill its container. `end` holds quiet content at the far end, after the label, such as the Kbd of a shortcut, as the [search trigger](../patterns/search-trigger.md) does.
+ButtonGroup joins related buttons in a row or, with `orientation="vertical"`, a column in which every button is as wide as the group; name it with `aria-label`. `fullWidth` makes a button or a group fill its container. `end` holds quiet content at the far end, after the label, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
 
 ```tsx source=ConnectedButtons
 

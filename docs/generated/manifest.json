@@ -118,9 +118,7 @@
       ],
       "parts": {},
       "usedIn": {
-        "patterns": [
-          "search-trigger"
-        ]
+        "patterns": []
       }
     },
     {
@@ -222,8 +220,6 @@
           "navigation",
           "app-frame",
           "account-menu",
-          "search-trigger",
-          "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -328,9 +324,7 @@
           "app-frame",
           "account-menu",
           "organization-switcher",
-          "search-trigger",
           "window-frame",
-          "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -445,7 +439,7 @@
       "category": "Layout & surfaces",
       "status": "beta",
       "since": "1.0.0",
-      "summary": "The invisible structure of an application's screen, with a top bar region, the navigation and the body, which shows the navigation form that fits its own width and keeps the bars in view as the page scrolls.",
+      "summary": "The invisible frame of an application's screen, around its top bar, its navigation and the page.",
       "aliases": [
         "AppShell",
         "app shell",
@@ -497,19 +491,19 @@
         {
           "name": "NavigationForms",
           "title": "Navigation forms",
-          "description": "The components in Scaffold's regions paint, never Scaffold itself. Give it the Bar, the Rail and the Drawer with the same destinations, and it shows the one that fits its width.",
+          "description": "Scaffold paints nothing itself: what goes in its top bar, its navigation and its body does. The bars stay in view as the page scrolls.",
           "file": "docs/examples/scaffold/NavigationForms.tsx"
         },
         {
           "name": "ChooseForms",
-          "title": "Another form, or none",
-          "description": "The application can choose another form for a window class, or no navigation at all, such as on a phone where the top bar opens it.",
+          "title": "The navigation for each width",
+          "description": "Scaffold shows the navigation that fits its own width: the bar on a phone, the rail on a tablet and the drawer on wider windows. The application can choose another form for a width, or none, such as on a phone where the top bar opens the navigation; where it asks for a form it didn't give, the nearest one shows.",
           "file": "docs/examples/scaffold/ChooseForms.tsx"
         },
         {
           "name": "NarrowNavigation",
           "title": "A button that narrows the navigation",
-          "description": "A button can narrow the navigation to a strip of icons by asking for the Rail in place of the Drawer, and the application keeps the choice. Don't build a narrow drawer of your own: the Scaffold already has both forms.",
+          "description": "A button can narrow the navigation to a strip of icons by asking for the rail in place of the drawer, and the application keeps the choice. Don't build a narrow drawer of your own: the Scaffold already has both forms.",
           "file": "docs/examples/scaffold/NarrowNavigation.tsx"
         },
         {
@@ -521,20 +515,8 @@
         {
           "name": "TopBarOnThePage",
           "title": "Backgrounds",
-          "description": "The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. Either can sit on the page's background instead, such as a top bar beside a drawer; on a surface, such as a Sheet, both take the surface's color.",
+          "description": "The navigation and the top bar share one fill, flush with the window's edges and the body, with no line between them. Either can sit on the page's background instead, such as a top bar beside a drawer.",
           "file": "docs/examples/scaffold/TopBarOnThePage.tsx"
-        },
-        {
-          "name": "ActionsInPageHeader",
-          "title": "Do: The page's title and actions in its PageHeader.",
-          "description": "",
-          "file": "docs/examples/scaffold/ActionsInPageHeader.tsx"
-        },
-        {
-          "name": "ActionsInTopBar",
-          "title": "Don't: The page's title and action in the top bar: the page has no heading.",
-          "description": "",
-          "file": "docs/examples/scaffold/ActionsInTopBar.tsx"
         },
         {
           "name": "ScaffoldAnatomy",
@@ -987,7 +969,7 @@
       "category": "Layout & surfaces",
       "status": "beta",
       "since": "1.0.0",
-      "summary": "The invisible column a page's content sits in, centered at a readable width with the page gutter by window class, and the page's header at its top.",
+      "summary": "The invisible column a page's content sits in, at a readable width, under its header with the page's title and actions.",
       "aliases": [
         "Container",
         "container",
@@ -996,11 +978,21 @@
         "max width",
         "page column",
         "page layout",
-        "main column"
+        "main column",
+        "page header",
+        "page heading",
+        "page title",
+        "header bar",
+        "title bar",
+        "page toolbar",
+        "heading row",
+        "sticky header"
       ],
       "useWhen": [
         "A readable width in a wide window, such as for a form or a document",
-        "A page's heading and actions above its content"
+        "A page's title and the actions for the whole page, such as New project (PageHeader)",
+        "A trail, a status or a count beside the title, or search and filters under it",
+        "A page heading that stays in view as the page scrolls"
       ],
       "avoidWhen": [
         {
@@ -1008,51 +1000,68 @@
           "use": "Scaffold"
         },
         {
-          "text": "Content in a column or a row with even gaps inside a page.",
-          "use": "Column"
+          "text": "The application's bar across every page, with its name, search and account menu.",
+          "use": "TopBar"
         },
         {
           "text": "Two panes side by side, such as a list and its detail.",
           "use": "Panes"
         },
         {
-          "text": "A page's title row, with its actions.",
-          "use": "PageHeader"
+          "text": "Content in a column with even gaps inside a page.",
+          "use": "Column"
+        },
+        {
+          "text": "The heading of a section inside a page, with its own actions.",
+          "use": "Row"
+        },
+        {
+          "text": "Controls for one subject that the arrow keys move between.",
+          "use": "Toolbar"
         }
       ],
       "related": [
         "scaffold",
-        "column",
+        "top-bar",
         "panes",
-        "page-header"
+        "column",
+        "row",
+        "toolbar"
       ],
       "exports": [
-        "Page"
+        "Page",
+        "PageHeader"
       ],
       "examples": [
         {
           "name": "WithHeader",
           "title": "With header",
-          "description": "Page goes in a Scaffold's body, with its header at the top of the same column, and adds no landmark of its own.",
+          "description": "Page goes in a Scaffold's body. Its header, a PageHeader, sits at the top of the same column, so the title lines up with the content.",
           "file": "docs/examples/page/WithHeader.tsx"
+        },
+        {
+          "name": "WithBreadcrumbs",
+          "title": "With breadcrumbs",
+          "description": "The title can have a trail above it, a status or a count beside it and a sentence under it, with the page's actions at the end of its row.",
+          "file": "docs/examples/page/WithBreadcrumbs.tsx"
+        },
+        {
+          "name": "WithToolbar",
+          "title": "With toolbar",
+          "description": "A row below the title holds search, filters and view switches. On a dense page, its buttons and the actions take the small control height.",
+          "file": "docs/examples/page/WithToolbar.tsx"
+        },
+        {
+          "name": "Sticky",
+          "title": "Sticky",
+          "description": "A header can stay at the top of the area that scrolls, under a Scaffold's top bar. What takes focus in the page keeps clear of it.",
+          "file": "docs/examples/page/Sticky.tsx"
         },
         {
           "name": "Widths",
           "title": "Widths",
-          "description": "| Width | Content width | Use for | | ------ | --------------- | -------------------------------------------------- | | Small | 40 rem | A form, a settings page or a sign-in page. | | Medium | 60 rem | A document, an article or the details of one item. | | Large | 76 rem | A dashboard, a list or a table. The default. | | Full | The whole width | A board, a canvas or a wide table. |",
+          "description": "| Width | Use for | | ------ | -------------------------------------------------- | | Small | A form, a settings page or a sign-in page. | | Medium | A document, an article or the details of one item. | | Large | A dashboard, a list or a table. The default. | | Full | A board, a canvas or a wide table. |",
           "file": "docs/examples/page/Widths.tsx"
-        },
-        {
-          "name": "HeaderInPage",
-          "title": "Do: The heading in the page's header, in its column and gutter.",
-          "description": "",
-          "file": "docs/examples/page/HeaderInPage.tsx"
-        },
-        {
-          "name": "HeaderOutside",
-          "title": "Don't: A PageHeader outside the page: it doesn't line up with the content.",
-          "description": "",
-          "file": "docs/examples/page/HeaderOutside.tsx"
         },
         {
           "name": "PageAnatomy",
@@ -1061,10 +1070,22 @@
           "file": "docs/examples/page/PageAnatomy.tsx"
         },
         {
+          "name": "PageHeaderAnatomy",
+          "title": "Page anatomy",
+          "description": "",
+          "file": "docs/examples/page/PageHeaderAnatomy.tsx"
+        },
+        {
           "name": "Gutters",
           "title": "Gutters",
           "description": "",
           "file": "docs/examples/page/Gutters.tsx"
+        },
+        {
+          "name": "InANarrowPane",
+          "title": "The header",
+          "description": "The header follows its own width: where it is narrow, the actions move under the title and wrap. The title wraps too and is never cut short; more actions than fit go in a Menu as the last one.",
+          "file": "docs/examples/page/InANarrowPane.tsx"
         }
       ],
       "parts": {
@@ -1102,108 +1123,7 @@
               ]
             }
           ]
-        }
-      },
-      "usedIn": {
-        "patterns": [
-          "settings",
-          "loading",
-          "navigation",
-          "app-frame",
-          "window-frame"
-        ]
-      }
-    },
-    {
-      "name": "PageHeader",
-      "page": "page-header",
-      "doc": "docs/components/page-header.md",
-      "category": "Layout & surfaces",
-      "status": "beta",
-      "since": "1.0.0",
-      "summary": "A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top.",
-      "aliases": [
-        "page header",
-        "page heading",
-        "page title",
-        "header bar",
-        "title bar",
-        "page toolbar",
-        "heading row",
-        "sticky header"
-      ],
-      "useWhen": [
-        "A page's title and the actions for the whole page, such as New project",
-        "A trail, a status or a count beside the title, or search and filters under it",
-        "A page heading that stays in view as the page scrolls"
-      ],
-      "avoidWhen": [
-        {
-          "text": "The application's bar across every page, with its name, search and account menu.",
-          "use": "TopBar"
         },
-        {
-          "text": "The heading of a section inside a page, with its own actions.",
-          "use": "Row"
-        },
-        {
-          "text": "Controls for one subject that the arrow keys move between.",
-          "use": "Toolbar"
-        }
-      ],
-      "related": [
-        "top-bar",
-        "row",
-        "toolbar"
-      ],
-      "exports": [
-        "PageHeader"
-      ],
-      "examples": [
-        {
-          "name": "WithBreadcrumbs",
-          "title": "With breadcrumbs",
-          "description": "A PageHeader sits at the top of a Page.",
-          "file": "docs/examples/page-header/WithBreadcrumbs.tsx"
-        },
-        {
-          "name": "WithToolbar",
-          "title": "With toolbar",
-          "description": "A row below the title holds search, filters and view switches. On a dense page, its buttons and the actions take the small control height.",
-          "file": "docs/examples/page-header/WithToolbar.tsx"
-        },
-        {
-          "name": "Sticky",
-          "title": "Sticky",
-          "description": "A header can stay at the top of the area that scrolls, under a Scaffold's top bar. What takes focus in the page keeps clear of it.",
-          "file": "docs/examples/page-header/Sticky.tsx"
-        },
-        {
-          "name": "PageActions",
-          "title": "Do: Actions for this page, with the primary one last.",
-          "description": "",
-          "file": "docs/examples/page-header/PageActions.tsx"
-        },
-        {
-          "name": "FrameActions",
-          "title": "Don't: The account and sign-out in a page's header: they belong to the frame.",
-          "description": "",
-          "file": "docs/examples/page-header/FrameActions.tsx"
-        },
-        {
-          "name": "PageHeaderAnatomy",
-          "title": "PageHeader anatomy",
-          "description": "",
-          "file": "docs/examples/page-header/PageHeaderAnatomy.tsx"
-        },
-        {
-          "name": "InANarrowPane",
-          "title": "In ANarrow pane",
-          "description": "",
-          "file": "docs/examples/page-header/InANarrowPane.tsx"
-        }
-      ],
-      "parts": {
         "PageHeader": {
           "root": "env-page-header",
           "parts": [
@@ -1823,12 +1743,20 @@
         "button card",
         "action card",
         "ClickableCard",
-        "ActionCard"
+        "ActionCard",
+        "FeatureCard",
+        "feature card",
+        "feature layout",
+        "layout=\"feature\"",
+        "call to action card",
+        "promo card",
+        "onboarding card"
       ],
       "useWhen": [
         "Content about one subject, such as a project's summary",
         "A summary with its own actions, such as Share and Open",
-        "A whole surface that leads to one place or starts one action"
+        "A whole surface that leads to one place or starts one action",
+        "Introducing a feature with the one action that starts it, such as inviting the team"
       ],
       "avoidWhen": [
         {
@@ -1852,10 +1780,6 @@
           "see": "empty-states"
         },
         {
-          "text": "A feature introduced with an icon, a sentence and the one action that starts it.",
-          "see": "feature-cards"
-        },
-        {
           "text": "Content that needs no surface of its own, such as a form on a page.",
           "use": "Column"
         }
@@ -1866,7 +1790,6 @@
         "table",
         "alert",
         "empty-states",
-        "feature-cards",
         "column"
       ],
       "exports": [
@@ -1878,12 +1801,6 @@
           "title": "Project summary",
           "description": "",
           "file": "docs/examples/card/ProjectSummary.tsx"
-        },
-        {
-          "name": "CardLoading",
-          "title": "Card loading",
-          "description": "While its content loads, a card shows as its own skeleton: text becomes bars and controls become filled shapes, as Loading shows.",
-          "file": "docs/examples/card/CardLoading.tsx"
         },
         {
           "name": "ActionStrip",
@@ -1900,8 +1817,14 @@
         {
           "name": "StartOptions",
           "title": "Button card",
-          "description": "The whole card is one button. It holds only short text, with no headings, lists or controls.",
+          "description": "The whole card is one button.",
           "file": "docs/examples/card/StartOptions.tsx"
+        },
+        {
+          "name": "ImportPlans",
+          "title": "Feature card",
+          "description": "An icon, a heading, a sentence and the one button that starts a feature. The heading names the feature, the sentence says what it gives people, and the button starts it with a verb, such as Invite people.",
+          "file": "docs/examples/card/ImportPlans.tsx"
         },
         {
           "name": "Backgrounds",
@@ -1926,6 +1849,12 @@
           "title": "Card anatomy",
           "description": "",
           "file": "docs/examples/card/CardAnatomy.tsx"
+        },
+        {
+          "name": "InviteFeature",
+          "title": "Invite feature",
+          "description": "",
+          "file": "docs/examples/card/InviteFeature.tsx"
         }
       ],
       "parts": {
@@ -2011,8 +1940,7 @@
       "usedIn": {
         "patterns": [
           "loading",
-          "key-figures",
-          "feature-cards"
+          "key-figures"
         ]
       }
     },
@@ -2521,9 +2449,7 @@
           "app-frame",
           "account-menu",
           "organization-switcher",
-          "search-trigger",
           "window-frame",
-          "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -2577,7 +2503,7 @@
         "button",
         "segmented-control",
         "menubar",
-        "page-header"
+        "page"
       ],
       "exports": [
         "Toolbar",
@@ -2609,7 +2535,7 @@
         {
           "name": "PageToolbar",
           "title": "Layouts",
-          "description": "Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a Row, where every control keeps its tab stop and fields keep their arrow keys. | Bar | Build it with | | ------------------------------------------- | ------------------------------------------------------ | | Icon commands, such as formatting or tools | A Toolbar of its buttons | | A page's search, filters and primary action | A Row in the toolbar of a PageHeader | | A section's heading with its actions | A Row that wraps, with the actions at the end | | A table's search and actions | A Row above the table, in the size of its rows | | Actions in a window's title bar | A TopBar as a title bar, with small ghost buttons |",
+          "description": "Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a Row, where every control keeps its tab stop and fields keep their arrow keys. | Bar | Build it with | | ------------------------------------------- | ------------------------------------------------- | | Icon commands, such as formatting or tools | A Toolbar of its buttons | | A page's search, filters and primary action | A Row in the toolbar of a PageHeader | | A section's heading with its actions | A Row that wraps, with the actions at the end | | A table's search and actions | A Row above the table, in the size of its rows | | Actions in a window's title bar | A TopBar as a title bar, with small ghost buttons |",
           "file": "docs/examples/toolbar/PageToolbar.tsx"
         },
         {
@@ -6860,359 +6786,13 @@
       }
     },
     {
-      "name": "Bar",
-      "page": "bar",
-      "doc": "docs/components/bar.md",
-      "category": "Navigation",
-      "status": "beta",
-      "since": "1.0.0",
-      "summary": "The navigation bar for compact windows, such as phones, with three to five destinations, each an icon above its label.",
-      "aliases": [
-        "navigation bar",
-        "bottom navigation",
-        "bottom bar",
-        "tab bar",
-        "bottom tabs",
-        "mobile navigation",
-        "NavigationBar",
-        "BottomNavigation"
-      ],
-      "useWhen": [
-        "An application's main destinations on a phone",
-        "Three to five destinations people move between often"
-      ],
-      "avoidWhen": [
-        {
-          "text": "The same destinations on a medium window, such as a tablet.",
-          "use": "Rail"
-        },
-        {
-          "text": "The same destinations on an expanded or larger window, or more than five, or in groups.",
-          "use": "Drawer"
-        },
-        {
-          "text": "Switching between views of the same content in one place.",
-          "use": "Tabs"
-        },
-        {
-          "text": "Actions, such as New or Share.",
-          "use": "Toolbar"
-        }
-      ],
-      "related": [
-        "rail",
-        "drawer",
-        "tabs",
-        "toolbar"
-      ],
-      "exports": [
-        "Bar"
-      ],
-      "examples": [
-        {
-          "name": "PhoneDestinations",
-          "title": "Phone destinations",
-          "description": "Bar takes the same destinations as Rail and Drawer, and Scaffold shows the form that fits the width, the bar at the bottom of a compact window.",
-          "file": "docs/examples/bar/PhoneDestinations.tsx"
-        },
-        {
-          "name": "MoreDestinations",
-          "title": "More destinations",
-          "description": "Past five destinations, the fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.",
-          "file": "docs/examples/bar/MoreDestinations.tsx"
-        },
-        {
-          "name": "BarAnatomy",
-          "title": "Bar anatomy",
-          "description": "",
-          "file": "docs/examples/bar/BarAnatomy.tsx"
-        },
-        {
-          "name": "SharedWidth",
-          "title": "Shared width",
-          "description": "",
-          "file": "docs/examples/bar/SharedWidth.tsx"
-        }
-      ],
-      "parts": {
-        "Bar": {
-          "root": "env-bar",
-          "parts": [
-            {
-              "class": "env-bar",
-              "description": "The navigation bar: a nav landmark across the bottom of a compact window."
-            },
-            {
-              "class": "env-bar-count",
-              "description": "A destination's count, on the icon's top end; 999+ above 999."
-            },
-            {
-              "class": "env-bar-icon",
-              "description": "The pill around a destination's icon, filled while the destination is current."
-            },
-            {
-              "class": "env-bar-item",
-              "description": "A destination: a link or button with its indicator above its label."
-            },
-            {
-              "class": "env-bar-list",
-              "description": "The row of destinations, which share the bar's width."
-            },
-            {
-              "class": "env-bar-more",
-              "description": "The last item past five destinations, which opens the rest in a menu."
-            },
-            {
-              "class": "env-bar-text",
-              "description": "A destination's label, under its indicator, cut short with an ellipsis."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-background",
-              "values": [
-                "page"
-              ],
-              "parts": [
-                "env-bar"
-              ]
-            },
-            {
-              "attribute": "data-current",
-              "values": [],
-              "parts": [
-                "env-bar-item"
-              ]
-            },
-            {
-              "attribute": "data-env-skeleton",
-              "values": [],
-              "parts": [
-                "env-bar"
-              ]
-            }
-          ],
-          "colors": [
-            {
-              "property": "--env-bar-item-container",
-              "description": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
-            },
-            {
-              "property": "--env-bar-item-content",
-              "description": "The label, and the color of the state layers."
-            },
-            {
-              "property": "--env-bar-item-icon",
-              "description": "The icon of a destination that is not current."
-            },
-            {
-              "property": "--env-bar-item-selected",
-              "description": "The pill around the icon of the current destination."
-            },
-            {
-              "property": "--env-bar-item-selected-content",
-              "description": "The icon of the current destination."
-            }
-          ]
-        },
-        "Skeleton": {
-          "shared": true,
-          "root": null,
-          "parts": [
-            {
-              "class": "env-skeleton-content",
-              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
-            },
-            {
-              "class": "env-skeleton-status",
-              "description": "The visually hidden status beside a skeleton list, which says what is loading."
-            }
-          ],
-          "states": []
-        }
-      },
-      "usedIn": {
-        "patterns": [
-          "navigation",
-          "app-frame"
-        ]
-      }
-    },
-    {
-      "name": "Rail",
-      "page": "rail",
-      "doc": "docs/components/rail.md",
-      "category": "Navigation",
-      "status": "beta",
-      "since": "1.0.0",
-      "summary": "The navigation rail for medium windows, such as tablets, a narrow column of destinations, each an icon above a short label.",
-      "aliases": [
-        "navigation rail",
-        "side rail",
-        "icon rail",
-        "collapsed sidebar",
-        "icon sidebar",
-        "NavigationRail",
-        "sidebar rail"
-      ],
-      "useWhen": [
-        "An application's main destinations on a tablet",
-        "Short labels that fit under their icons"
-      ],
-      "avoidWhen": [
-        {
-          "text": "The same destinations on a compact window, such as a phone.",
-          "use": "Bar"
-        },
-        {
-          "text": "The same destinations on an expanded or larger window, or with group headings and long labels.",
-          "use": "Drawer"
-        }
-      ],
-      "related": [
-        "bar",
-        "drawer"
-      ],
-      "exports": [
-        "Rail"
-      ],
-      "examples": [
-        {
-          "name": "TabletDestinations",
-          "title": "Tablet destinations",
-          "description": "Rail takes the same destinations as Bar and Drawer, and Scaffold shows the form that fits the width, the rail at the start of a medium window. A button can narrow the drawer to the rail in a wider window too, as a button that narrows the navigation shows.",
-          "file": "docs/examples/rail/TabletDestinations.tsx"
-        },
-        {
-          "name": "GroupsInOrder",
-          "title": "Groups in order",
-          "description": "The rail shows no group headings: grouped destinations follow one another in their order.",
-          "file": "docs/examples/rail/GroupsInOrder.tsx"
-        },
-        {
-          "name": "RailAnatomy",
-          "title": "Rail anatomy",
-          "description": "",
-          "file": "docs/examples/rail/RailAnatomy.tsx"
-        }
-      ],
-      "parts": {
-        "Rail": {
-          "root": "env-rail",
-          "parts": [
-            {
-              "class": "env-rail",
-              "description": "The navigation rail: a nav landmark, a narrow column with the header, the list and the footer."
-            },
-            {
-              "class": "env-rail-count",
-              "description": "A destination's count, on the icon's top end; 999+ above 999."
-            },
-            {
-              "class": "env-rail-footer",
-              "description": "Content at the bottom of the rail, such as the account's button."
-            },
-            {
-              "class": "env-rail-header",
-              "description": "Content above the destinations, such as a button that opens the drawer or the main action."
-            },
-            {
-              "class": "env-rail-indicator",
-              "description": "The pill around a destination's icon, filled while the destination is current."
-            },
-            {
-              "class": "env-rail-item",
-              "description": "A destination: a link or button with its indicator above its label."
-            },
-            {
-              "class": "env-rail-label",
-              "description": "A destination's short label, under its indicator."
-            },
-            {
-              "class": "env-rail-list",
-              "description": "The list of destinations, one under another, which scrolls where the rail is shorter."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-background",
-              "values": [
-                "page"
-              ],
-              "parts": [
-                "env-rail"
-              ]
-            },
-            {
-              "attribute": "data-current",
-              "values": [],
-              "parts": [
-                "env-rail-item"
-              ]
-            },
-            {
-              "attribute": "data-env-skeleton",
-              "values": [],
-              "parts": [
-                "env-rail"
-              ]
-            }
-          ],
-          "colors": [
-            {
-              "property": "--env-rail-item-container",
-              "description": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
-            },
-            {
-              "property": "--env-rail-item-content",
-              "description": "The label, and the color of the state layers."
-            },
-            {
-              "property": "--env-rail-item-icon",
-              "description": "The icon of a destination that is not current."
-            },
-            {
-              "property": "--env-rail-item-selected",
-              "description": "The pill around the icon of the current destination."
-            },
-            {
-              "property": "--env-rail-item-selected-content",
-              "description": "The icon of the current destination."
-            }
-          ]
-        },
-        "Skeleton": {
-          "shared": true,
-          "root": null,
-          "parts": [
-            {
-              "class": "env-skeleton-content",
-              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
-            },
-            {
-              "class": "env-skeleton-status",
-              "description": "The visually hidden status beside a skeleton list, which says what is loading."
-            }
-          ],
-          "states": []
-        }
-      },
-      "usedIn": {
-        "patterns": [
-          "loading",
-          "navigation",
-          "app-frame"
-        ]
-      }
-    },
-    {
       "name": "Drawer",
       "page": "drawer",
       "doc": "docs/components/drawer.md",
       "category": "Navigation",
       "status": "beta",
       "since": "1.0.0",
-      "summary": "The navigation drawer for expanded and larger windows, a column of destinations with icons, labels, counts and group headings.",
+      "summary": "An application's main destinations, as a drawer with group headings and counts on wider windows, a rail on tablets or a bar on phones.",
       "aliases": [
         "navigation drawer",
         "Sidebar",
@@ -7229,22 +6809,31 @@
         "navigation list",
         "nav links",
         "navigation links",
-        "navigation"
+        "navigation",
+        "navigation rail",
+        "side rail",
+        "icon rail",
+        "collapsed sidebar",
+        "icon sidebar",
+        "NavigationRail",
+        "sidebar rail",
+        "navigation bar",
+        "bottom navigation",
+        "bottom bar",
+        "tab bar",
+        "bottom tabs",
+        "mobile navigation",
+        "NavigationBar",
+        "BottomNavigation"
       ],
       "useWhen": [
-        "An application's main destinations, on an expanded or larger window",
+        "An application's main destinations, on a laptop or a wider window",
         "Many destinations, in groups under headings, with counts",
-        "The sections of a guide or of the settings, beside their content"
+        "The sections of a guide or of the settings, beside their content",
+        "The same destinations on a tablet, each an icon above a short label (Rail)",
+        "Three to five destinations on a phone, along the bottom of the window (Bar)"
       ],
       "avoidWhen": [
-        {
-          "text": "The same destinations on a compact window, such as a phone.",
-          "use": "Bar"
-        },
-        {
-          "text": "The same destinations on a medium window, such as a tablet.",
-          "use": "Rail"
-        },
         {
           "text": "Switching between views of the same content in one place.",
           "use": "Tabs"
@@ -7256,41 +6845,64 @@
         {
           "text": "The path from the top of a hierarchy down to the current page.",
           "use": "Breadcrumbs"
+        },
+        {
+          "text": "Actions, such as New or Share.",
+          "use": "Toolbar"
         }
       ],
       "related": [
-        "bar",
-        "rail",
         "tabs",
         "tree",
-        "breadcrumbs"
+        "breadcrumbs",
+        "toolbar"
       ],
       "exports": [
-        "Drawer"
+        "Drawer",
+        "Rail",
+        "Bar"
       ],
       "examples": [
         {
           "name": "AppDestinations",
           "title": "App destinations",
-          "description": "Scaffold shows the Drawer, the Rail or the Bar, whichever fits the width, at the window's start.",
+          "description": "",
           "file": "docs/examples/drawer/AppDestinations.tsx"
         },
         {
-          "name": "GuideSections",
-          "title": "Guide sections",
-          "description": "A drawer's destinations can go without icons, such as the sections of a guide; the Bar and the Rail need them.",
-          "file": "docs/examples/drawer/GuideSections.tsx"
+          "name": "TabletDestinations",
+          "title": "Tablet destinations",
+          "description": "",
+          "file": "docs/examples/drawer/TabletDestinations.tsx"
+        },
+        {
+          "name": "PhoneDestinations",
+          "title": "Phone destinations",
+          "description": "",
+          "file": "docs/examples/drawer/PhoneDestinations.tsx"
         },
         {
           "name": "OneListThreeForms",
           "title": "One list three forms",
-          "description": "The application passes the same destinations to each form, and a group is a heading in the drawer only.",
+          "description": "The drawer, the rail and the bar take the same list of destinations, and Scaffold shows the one that fits its width. A group is a heading in the drawer only: the rail and the bar show its destinations one after another.",
           "file": "docs/examples/drawer/OneListThreeForms.tsx"
+        },
+        {
+          "name": "GuideSections",
+          "title": "Guide sections",
+          "description": "A drawer's destinations can go without icons, such as the sections of a guide; the rail and the bar need them.",
+          "file": "docs/examples/drawer/GuideSections.tsx"
+        },
+        {
+          "name": "MoreDestinations",
+          "title": "More destinations",
+          "description": "Past five destinations, the bar's fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.",
+          "file": "docs/examples/drawer/MoreDestinations.tsx"
         },
         {
           "name": "ResizableDrawer",
           "title": "Resizable drawer",
-          "description": "People can resize the drawer by its end edge, by pointer or with the arrow keys, with the same grip of three dots as between Panes, within a smallest and a largest width and never past half its container. As it narrows, labels and headings stay on one line and end in an ellipsis, and a label cut short shows in full in a tooltip. The application can keep the width for the next visit.",
+          "description": "People can resize the drawer by its end edge, with the same grip as between Panes. As it narrows, a label that no longer fits ends in an ellipsis and shows in full in a tooltip.",
           "file": "docs/examples/drawer/ResizableDrawer.tsx"
         },
         {
@@ -7310,6 +6922,24 @@
           "title": "Drawer anatomy",
           "description": "",
           "file": "docs/examples/drawer/DrawerAnatomy.tsx"
+        },
+        {
+          "name": "RailAnatomy",
+          "title": "Drawer anatomy",
+          "description": "",
+          "file": "docs/examples/drawer/RailAnatomy.tsx"
+        },
+        {
+          "name": "BarAnatomy",
+          "title": "Drawer anatomy",
+          "description": "",
+          "file": "docs/examples/drawer/BarAnatomy.tsx"
+        },
+        {
+          "name": "SharedWidth",
+          "title": "Shared width",
+          "description": "",
+          "file": "docs/examples/drawer/SharedWidth.tsx"
         }
       ],
       "parts": {
@@ -7411,6 +7041,170 @@
             {
               "property": "--env-drawer-item-selected-content",
               "description": "The label and icon of the current destination."
+            }
+          ]
+        },
+        "Rail": {
+          "root": "env-rail",
+          "parts": [
+            {
+              "class": "env-rail",
+              "description": "The navigation rail: a nav landmark, a narrow column with the header, the list and the footer."
+            },
+            {
+              "class": "env-rail-count",
+              "description": "A destination's count, on the icon's top end; 999+ above 999."
+            },
+            {
+              "class": "env-rail-footer",
+              "description": "Content at the bottom of the rail, such as the account's button."
+            },
+            {
+              "class": "env-rail-header",
+              "description": "Content above the destinations, such as a button that opens the drawer or the main action."
+            },
+            {
+              "class": "env-rail-indicator",
+              "description": "The pill around a destination's icon, filled while the destination is current."
+            },
+            {
+              "class": "env-rail-item",
+              "description": "A destination: a link or button with its indicator above its label."
+            },
+            {
+              "class": "env-rail-label",
+              "description": "A destination's short label, under its indicator."
+            },
+            {
+              "class": "env-rail-list",
+              "description": "The list of destinations, one under another, which scrolls where the rail is shorter."
+            }
+          ],
+          "states": [
+            {
+              "attribute": "data-background",
+              "values": [
+                "page"
+              ],
+              "parts": [
+                "env-rail"
+              ]
+            },
+            {
+              "attribute": "data-current",
+              "values": [],
+              "parts": [
+                "env-rail-item"
+              ]
+            },
+            {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-rail"
+              ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-rail-item-container",
+              "description": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
+            },
+            {
+              "property": "--env-rail-item-content",
+              "description": "The label, and the color of the state layers."
+            },
+            {
+              "property": "--env-rail-item-icon",
+              "description": "The icon of a destination that is not current."
+            },
+            {
+              "property": "--env-rail-item-selected",
+              "description": "The pill around the icon of the current destination."
+            },
+            {
+              "property": "--env-rail-item-selected-content",
+              "description": "The icon of the current destination."
+            }
+          ]
+        },
+        "Bar": {
+          "root": "env-bar",
+          "parts": [
+            {
+              "class": "env-bar",
+              "description": "The navigation bar: a nav landmark across the bottom of a compact window."
+            },
+            {
+              "class": "env-bar-count",
+              "description": "A destination's count, on the icon's top end; 999+ above 999."
+            },
+            {
+              "class": "env-bar-icon",
+              "description": "The pill around a destination's icon, filled while the destination is current."
+            },
+            {
+              "class": "env-bar-item",
+              "description": "A destination: a link or button with its indicator above its label."
+            },
+            {
+              "class": "env-bar-list",
+              "description": "The row of destinations, which share the bar's width."
+            },
+            {
+              "class": "env-bar-more",
+              "description": "The last item past five destinations, which opens the rest in a menu."
+            },
+            {
+              "class": "env-bar-text",
+              "description": "A destination's label, under its indicator, cut short with an ellipsis."
+            }
+          ],
+          "states": [
+            {
+              "attribute": "data-background",
+              "values": [
+                "page"
+              ],
+              "parts": [
+                "env-bar"
+              ]
+            },
+            {
+              "attribute": "data-current",
+              "values": [],
+              "parts": [
+                "env-bar-item"
+              ]
+            },
+            {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-bar"
+              ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-bar-item-container",
+              "description": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
+            },
+            {
+              "property": "--env-bar-item-content",
+              "description": "The label, and the color of the state layers."
+            },
+            {
+              "property": "--env-bar-item-icon",
+              "description": "The icon of a destination that is not current."
+            },
+            {
+              "property": "--env-bar-item-selected",
+              "description": "The pill around the icon of the current destination."
+            },
+            {
+              "property": "--env-bar-item-selected-content",
+              "description": "The icon of the current destination."
             }
           ]
         },
@@ -7530,7 +7324,6 @@
           "loading",
           "navigation",
           "app-frame",
-          "search-trigger",
           "window-frame"
         ]
       }
@@ -7926,7 +7719,7 @@
         }
       ],
       "related": [
-        "page-header",
+        "page",
         "toolbar",
         "menubar",
         "window-frame"
@@ -10648,8 +10441,7 @@
       },
       "usedIn": {
         "patterns": [
-          "navigation",
-          "search-trigger"
+          "navigation"
         ]
       }
     },
@@ -11615,7 +11407,6 @@
           "loading",
           "app-frame",
           "account-menu",
-          "search-trigger",
           "data-tables"
         ]
       }
@@ -13298,7 +13089,7 @@
       "category": "Feedback & overlays",
       "status": "stable",
       "since": "0.5.0",
-      "summary": "A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks.",
+      "summary": "A quick-open dialog near the top of the window that finds a document, a page, a person or a command by name.",
       "aliases": [
         "quick open",
         "command menu",
@@ -13306,14 +13097,23 @@
         "command launcher",
         "cmdk",
         "Ctrl+K",
+        "⌘K",
         "spotlight",
         "go to anything",
         "jump to",
-        "omnibox"
+        "omnibox",
+        "SearchTrigger",
+        "SearchButton",
+        "search trigger",
+        "search button",
+        "quick open button",
+        "command palette button",
+        "search shortcut"
       ],
       "useWhen": [
         "Jumping to a document, a page or a person by name, from anywhere",
-        "Running a command by name, such as one without a visible control"
+        "Running a command by name, such as one without a visible control",
+        "A search button at the top of the navigation or in the top bar, with its shortcut"
       ],
       "avoidWhen": [
         {
@@ -13327,17 +13127,12 @@
         {
           "text": "Searching or filtering the content on the page.",
           "use": "SearchField"
-        },
-        {
-          "text": "The button that opens the palette, with its shortcut.",
-          "see": "search-trigger"
         }
       ],
       "related": [
         "combobox",
         "menu",
-        "text-field",
-        "search-trigger"
+        "text-field"
       ],
       "exports": [
         "CommandPalette"
@@ -13346,7 +13141,7 @@
         {
           "name": "GoToDocument",
           "title": "Go to document",
-          "description": "The application owns the items and what choosing one does.",
+          "description": "",
           "file": "docs/examples/command-palette/GoToDocument.tsx"
         },
         {
@@ -13354,6 +13149,18 @@
           "title": "Run command",
           "description": "An item can end with its shortcut or a badge, and hints below the list say what keys do.",
           "file": "docs/examples/command-palette/RunCommand.tsx"
+        },
+        {
+          "name": "InSidebar",
+          "title": "In sidebar",
+          "description": "A secondary Button with the search icon, its label and the shortcut's keys at its far end reads like a search field. Pressing it, or <kbd>⌘</kbd>+<kbd>K</kbd> on Apple platforms and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, opens the palette from anywhere in the window, text fields included.",
+          "file": "docs/examples/command-palette/InSidebar.tsx"
+        },
+        {
+          "name": "IconOnly",
+          "title": "Icon only",
+          "description": "Search is an icon button named Search, with its label and keys in a Tooltip that opens below it.",
+          "file": "docs/examples/command-palette/IconOnly.tsx"
         },
         {
           "name": "ShowRecent",
@@ -13368,10 +13175,28 @@
           "file": "docs/examples/command-palette/EmptyUntilTyped.tsx"
         },
         {
+          "name": "ButtonLabel",
+          "title": "Do: Label the button Search, or what it searches where there are several.",
+          "description": "",
+          "file": "docs/examples/command-palette/ButtonLabel.tsx"
+        },
+        {
+          "name": "TypingLabel",
+          "title": "Don't: A placeholder's words on the button: people expect to type in it.",
+          "description": "",
+          "file": "docs/examples/command-palette/TypingLabel.tsx"
+        },
+        {
           "name": "CommandPaletteAnatomy",
           "title": "CommandPalette anatomy",
           "description": "",
           "file": "docs/examples/command-palette/CommandPaletteAnatomy.tsx"
+        },
+        {
+          "name": "NarrowSidebar",
+          "title": "Narrow sidebar",
+          "description": "",
+          "file": "docs/examples/command-palette/NarrowSidebar.tsx"
         }
       ],
       "parts": {
@@ -13533,8 +13358,7 @@
       "usedIn": {
         "patterns": [
           "navigation",
-          "app-frame",
-          "search-trigger"
+          "app-frame"
         ]
       }
     },
@@ -14347,7 +14171,6 @@
         "patterns": [
           "navigation",
           "app-frame",
-          "search-trigger",
           "data-tables",
           "progressive-disclosure"
         ]
@@ -15051,8 +14874,6 @@
         "scaffold",
         "top-bar",
         "account-menu",
-        "bar",
-        "rail",
         "drawer",
         "window-frame",
         "column",
@@ -15061,10 +14882,10 @@
         "box",
         "panes",
         "scale",
-        "feature-cards",
+        "card",
         "spinner",
         "empty-states",
-        "search-trigger",
+        "command-palette",
         "customizing-colors",
         "colors"
       ]
@@ -16161,7 +15982,7 @@
         {
           "name": "QuickOpen",
           "title": "Quick open",
-          "description": "Choosing a result opens it as a link would. An application opens the palette on <kbd>Ctrl</kbd>+<kbd>K</kbd> too, as the search trigger pattern shows; here the catalogue's own search keeps the keys.",
+          "description": "Choosing a result opens it as a link would. An application opens the palette on <kbd>Ctrl</kbd>+<kbd>K</kbd> too, as CommandPalette shows; here the catalogue's own search keeps the keys.",
           "file": "docs/examples/navigation/QuickOpen.tsx"
         },
         {
@@ -16456,96 +16277,6 @@
       ]
     },
     {
-      "name": "search-trigger",
-      "title": "Search trigger",
-      "group": "Patterns",
-      "intent": "Find and navigate",
-      "status": "beta",
-      "since": "1.0.0",
-      "summary": "The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, built from a Button with the search icon, its label and the keys, or an IconButton in a narrow header.",
-      "aliases": [
-        "SearchTrigger",
-        "SearchButton",
-        "search trigger",
-        "quick open button",
-        "search button",
-        "command palette button",
-        "search shortcut"
-      ],
-      "useWhen": [
-        "Opening search or a command palette from a sidebar or a header",
-        "Showing search's keyboard shortcut where people look for it",
-        "Search as an icon, in a narrow header or a rail"
-      ],
-      "avoidWhen": [
-        {
-          "text": "People type the search on the page itself and the results filter in place.",
-          "use": "SearchField"
-        },
-        {
-          "text": "The search itself, with its field and results.",
-          "use": "CommandPalette"
-        }
-      ],
-      "composes": [
-        "Button",
-        "IconButton",
-        "Kbd",
-        "useModifierKey",
-        "Tooltip",
-        "CommandPalette",
-        "Drawer",
-        "AvatarButton",
-        "Box",
-        "Row",
-        "Column",
-        "Text"
-      ],
-      "related": [
-        "text-field",
-        "command-palette"
-      ],
-      "doc": "docs/patterns/search-trigger.md",
-      "examples": [
-        {
-          "name": "InSidebar",
-          "title": "In sidebar",
-          "description": "A secondary Button with the shortcut's keys at its far end reads like a search field. Pressing it, or the shortcut, opens a CommandPalette.",
-          "file": "docs/examples/search-trigger/InSidebar.tsx"
-        },
-        {
-          "name": "IconOnly",
-          "title": "Icon only",
-          "description": "Search is a ghost IconButton named Search, with the label and the keys in a Tooltip that opens below it, clear of the header.",
-          "file": "docs/examples/search-trigger/IconOnly.tsx"
-        },
-        {
-          "name": "ButtonLabel",
-          "title": "Do: Search, or what it searches where there are several.",
-          "description": "",
-          "file": "docs/examples/search-trigger/ButtonLabel.tsx"
-        },
-        {
-          "name": "TypingLabel",
-          "title": "Don't: A placeholder's words: people expect to type, but it is a button.",
-          "description": "",
-          "file": "docs/examples/search-trigger/TypingLabel.tsx"
-        },
-        {
-          "name": "SearchTriggerAnatomy",
-          "title": "Search trigger anatomy",
-          "description": "",
-          "file": "docs/examples/search-trigger/SearchTriggerAnatomy.tsx"
-        },
-        {
-          "name": "NarrowSidebar",
-          "title": "Narrow sidebar",
-          "description": "",
-          "file": "docs/examples/search-trigger/NarrowSidebar.tsx"
-        }
-      ]
-    },
-    {
       "name": "window-frame",
       "title": "Window frame",
       "group": "Patterns",
@@ -16590,7 +16321,7 @@
       ],
       "related": [
         "app-frame",
-        "page-header"
+        "page"
       ],
       "doc": "docs/patterns/window-frame.md",
       "examples": [
@@ -16629,75 +16360,6 @@
           "title": "Window frame anatomy",
           "description": "",
           "file": "docs/examples/window-frame/WindowFrameAnatomy.tsx"
-        }
-      ]
-    },
-    {
-      "name": "feature-cards",
-      "title": "Feature cards",
-      "group": "Patterns",
-      "intent": "Find and navigate",
-      "status": "beta",
-      "since": "1.0.0",
-      "summary": "Introduce a feature with an icon, a heading, a sentence and the one action that starts it, in a Card.",
-      "aliases": [
-        "FeatureCard",
-        "feature card",
-        "feature layout",
-        "layout=\"feature\"",
-        "call to action card",
-        "promo card",
-        "onboarding card"
-      ],
-      "useWhen": [
-        "Introducing a feature or a next step, such as inviting the team",
-        "One action that starts it"
-      ],
-      "avoidWhen": [
-        {
-          "text": "A summary of one subject people open or act on, with a title row and actions.",
-          "use": "Card"
-        },
-        {
-          "text": "A region with nothing to show yet, whose action ends that state.",
-          "see": "empty-states"
-        },
-        {
-          "text": "A message about a page or section that people may need to act on.",
-          "use": "Alert"
-        }
-      ],
-      "composes": [
-        "Card",
-        "Row",
-        "Column",
-        "Text",
-        "Button"
-      ],
-      "related": [
-        "card",
-        "empty-states",
-        "alert"
-      ],
-      "doc": "docs/patterns/feature-cards.md",
-      "examples": [
-        {
-          "name": "ImportPlans",
-          "title": "Import plans",
-          "description": "Everything sits in one Row inside the Card, the icon muted and the Button at the far end, so the action is the last thing people read.",
-          "file": "docs/examples/feature-cards/ImportPlans.tsx"
-        },
-        {
-          "name": "FeatureCardAnatomy",
-          "title": "Feature cards anatomy",
-          "description": "",
-          "file": "docs/examples/feature-cards/FeatureCardAnatomy.tsx"
-        },
-        {
-          "name": "InviteFeature",
-          "title": "Invite feature",
-          "description": "",
-          "file": "docs/examples/feature-cards/InviteFeature.tsx"
         }
       ]
     },
@@ -17526,8 +17188,8 @@
         "nav"
       ],
       "status": "beta",
-      "page": "bar",
-      "doc": "docs/components/bar.md"
+      "page": "drawer",
+      "doc": "docs/components/drawer.md"
     },
     "Box": {
       "kind": "component",
@@ -22202,8 +21864,8 @@
         "div"
       ],
       "status": "beta",
-      "page": "page-header",
-      "doc": "docs/components/page-header.md"
+      "page": "page",
+      "doc": "docs/components/page.md"
     },
     "Pager": {
       "kind": "namespace",
@@ -23235,8 +22897,8 @@
         "element"
       ],
       "status": "beta",
-      "page": "rail",
-      "doc": "docs/components/rail.md"
+      "page": "drawer",
+      "doc": "docs/components/drawer.md"
     },
     "Rating": {
       "kind": "component",

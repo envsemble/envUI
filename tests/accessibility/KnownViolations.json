@@ -1,8 +1,9 @@
 {
-  "components/bar": {
+  "components/drawer": {
     "light": {
       "landmark-unique": {
-        "article :: nav.env-bar": 1
+        "article :: nav.env-bar": 1,
+        "article :: nav.env-drawer": 1
       }
     }
   },
