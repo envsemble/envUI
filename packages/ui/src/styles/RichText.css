@@ -116,9 +116,12 @@
 .env-rich-text-document.ProseMirror-hideselection * {
   caret-color: transparent;
 }
+/* Code blocks, a selected table cell and references take the neutral muted fill, a layer of the
+   text color, as inline code does: the editor has no fill of its own, so they stand apart from
+   whatever it sits on, a page, a card or a dialog. */
 .env-rich-text-document pre {
   padding: var(--env-space-4);
-  background: var(--env-color-bg-field);
+  background: var(--env-color-bg-neutral-muted);
   overflow: auto;
   white-space: pre;
 }
@@ -131,13 +134,13 @@
   position: relative;
 }
 .env-rich-text-document .selectedCell {
-  background: var(--env-color-bg-field);
+  background: var(--env-color-bg-neutral-muted);
 }
 .env-rich-text-reference {
   display: inline;
   padding: 0 var(--env-space-1);
   border-radius: 0.25rem;
-  background: var(--env-color-bg-field);
+  background: var(--env-color-bg-neutral-muted);
   color: var(--env-color-fg-default);
   text-decoration: none;
   box-decoration-break: clone;

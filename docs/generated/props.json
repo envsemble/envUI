@@ -7001,7 +7001,7 @@
           "type": "'md' | 'lg' | number | (string & {})",
           "required": false,
           "default": "'md'",
-          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange. A bottom sheet ignores it."
+          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange, while a CSS length is ignored, and warned of while developing: the sheet starts at `defaultWidth`. A bottom sheet ignores it."
         },
         {
           "name": "resizable",

@@ -266,7 +266,8 @@
   padding-inline: var(--env-space-2) var(--env-space-3);
   border: var(--env-control-border-width) solid var(--env-color-picker-button-border);
   border-radius: var(--env-radius-sm);
-  background: var(--env-color-bg-field);
+  /* No fill of its own, as the fields have none: it takes the background of what it sits on. */
+  background: transparent;
   color: var(--env-color-fg-default);
   font: var(--env-type-body-small);
   font-variant-numeric: tabular-nums;

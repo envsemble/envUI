@@ -4,6 +4,7 @@ import type { SkeletonProps } from '../internal/skeleton.js';
 import { Drawer as BaseDrawer } from '@base-ui/react/drawer';
 import {
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -100,7 +101,8 @@ export interface SheetProps
    * panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md
    * takes the whole width of a compact window, lg of a compact or medium one, where the page
    * beside it would be a sliver. A number is a width in rem: with `resizable`, the width the
-   * application controls with onWidthChange. A bottom sheet ignores it.
+   * application controls with onWidthChange, while a CSS length is ignored, and warned of while
+   * developing: the sheet starts at `defaultWidth`. A bottom sheet ignores it.
    * @default 'md'
    */
   width?: 'md' | 'lg' | number | (string & {});
@@ -187,6 +189,29 @@ function readDirection(source: Element | null): Direction {
 /** Base UI's mark on an element that no swipe starts from: a drag on the handle resizes. */
 const noSwipe = { 'data-base-ui-swipe-ignore': '' };
 
+/**
+ * Says while developing that a resizable side sheet ignores a CSS length as its width, once a page:
+ * its width is a number of rem then, which it starts at.
+ */
+let reportedCssWidth = false;
+function reportCssWidth(width: string) {
+  let developing = false;
+  try {
+    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
+    developing = process.env.NODE_ENV !== 'production';
+  } catch {
+    // No bundler defined process.env.NODE_ENV.
+  }
+  if (!developing || reportedCssWidth) return;
+  reportedCssWidth = true;
+  // A development-only warning, as React warns of a prop it can't use.
+  // eslint-disable-next-line no-console
+  console.warn(
+    `envUI: a resizable Sheet ignores width="${width}": its width is a number of rem. ` +
+      'Pass defaultWidth, or width as a number with onWidthChange, and minWidth and maxWidth.',
+  );
+}
+
 /** The widest a resizable sheet can be, in rem: its viewport's width, the window's. */
 const roomFor = (handle: HTMLElement) => {
   const viewport = handle.closest('.env-sheet-viewport');
@@ -266,6 +291,10 @@ export function Sheet({
   // A bottom sheet is as tall as its content and as wide as the window, so only a side sheet
   // resizes: its width in rem, the application's where width is a number.
   const resizable = resizableProp && side !== 'bottom';
+  const cssWidth = resizable && typeof width === 'string' && !named ? width : undefined;
+  useEffect(() => {
+    if (cssWidth !== undefined) reportCssWidth(cssWidth);
+  }, [cssWidth]);
   const resize = useResizableWidth({
     width: typeof width === 'number' ? width : undefined,
     defaultWidth: defaultWidth ?? (width === 'lg' ? 44 : 24),

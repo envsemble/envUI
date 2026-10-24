@@ -7298,7 +7298,7 @@
         {
           "name": "ResizableDrawer",
           "title": "Resizable drawer",
-          "description": "With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage.",
+          "description": "With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage, which it reads once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number. A `width` that isn't a finite number is ignored.",
           "file": "docs/examples/drawer/ResizableDrawer.tsx"
         },
         {
@@ -12959,7 +12959,7 @@
         {
           "name": "ResizableDetails",
           "title": "Resizable details",
-          "description": "With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width.",
+          "description": "With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width. Its width is then a number of rem: a CSS length as `width`, such as `min(30rem, 90%)`, is ignored, with a warning while developing, and the sheet starts at `defaultWidth`.",
           "file": "docs/examples/sheet/ResizableDetails.tsx"
         },
         {
@@ -24032,7 +24032,7 @@
           "type": "'md' | 'lg' | number | (string & {})",
           "required": false,
           "default": "'md'",
-          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange. A bottom sheet ignores it."
+          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange, while a CSS length is ignored, and warned of while developing: the sheet starts at `defaultWidth`. A bottom sheet ignores it."
         },
         {
           "name": "resizable",
@@ -29916,43 +29916,43 @@
         "cssVariable": "--env-color-avatar-bg-amber",
         "use": "--env-color-avatar-bg-butter",
         "type": "color",
-        "note": "The avatar hues are named for their colors: amber is butter."
+        "note": "The avatar hues are named for their colors: amber is butter. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-butter and --env-color-avatar-figure-butter."
       },
       {
         "cssVariable": "--env-color-avatar-bg-green",
         "use": "--env-color-avatar-bg-sage",
         "type": "color",
-        "note": "The avatar hues are named for their colors: green is sage."
+        "note": "The avatar hues are named for their colors: green is sage. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-sage and --env-color-avatar-figure-sage."
       },
       {
         "cssVariable": "--env-color-avatar-bg-purple",
         "use": "--env-color-avatar-bg-orchid",
         "type": "color",
-        "note": "The avatar hues are named for their colors: purple is orchid."
+        "note": "The avatar hues are named for their colors: purple is orchid. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-orchid and --env-color-avatar-figure-orchid."
       },
       {
         "cssVariable": "--env-color-avatar-bg-red",
         "use": "--env-color-avatar-bg-blush",
         "type": "color",
-        "note": "The avatar hues are named for their colors: red is blush."
+        "note": "The avatar hues are named for their colors: red is blush. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-blush and --env-color-avatar-figure-blush."
       },
       {
         "cssVariable": "--env-color-avatar-bg-slate",
         "use": "--env-color-avatar-bg-oat",
         "type": "color",
-        "note": "The avatar hues are named for their colors: slate is oat."
+        "note": "The avatar hues are named for their colors: slate is oat. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-oat and --env-color-avatar-figure-oat."
       },
       {
         "cssVariable": "--env-color-avatar-bg-teal",
         "use": "--env-color-avatar-bg-seafoam",
         "type": "color",
-        "note": "The avatar hues are named for their colors: teal is seafoam."
+        "note": "The avatar hues are named for their colors: teal is seafoam. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-seafoam and --env-color-avatar-figure-seafoam."
       },
       {
         "cssVariable": "--env-color-avatar-bg-violet",
         "use": "--env-color-avatar-bg-periwinkle",
         "type": "color",
-        "note": "The avatar hues are named for their colors: violet is periwinkle."
+        "note": "The avatar hues are named for their colors: violet is periwinkle. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-periwinkle and --env-color-avatar-figure-periwinkle."
       },
       {
         "cssVariable": "--env-elevation-0-shadow",

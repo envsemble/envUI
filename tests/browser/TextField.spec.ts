@@ -278,3 +278,26 @@ test('an outline field has no fill of its own, and its floated label cuts a notc
   ];
   expect(Math.abs(labelBox.x - notchBox.x)).toBeLessThanOrEqual(1);
 });
+
+test('right to left, the floated label cuts its notch under itself, with a start icon too', async ({
+  page,
+}) => {
+  await page.goto(affixes);
+  for (const name of ['Street', 'City']) {
+    const field = page.getByTestId('affixes-light').getByRole('textbox', { name });
+    const control = field.locator('xpath=..');
+    const label = control.locator(':scope > label');
+    const legend = control.locator(':scope > .env-text-field-border legend');
+    await field.focus();
+    await expect
+      .poll(async () =>
+        Math.abs((await legend.boundingBox())!.width - (await label.boundingBox())!.width),
+      )
+      .toBeLessThanOrEqual(1);
+    const [labelBox, notchBox] = [(await label.boundingBox())!, (await legend.boundingBox())!];
+    // The notch starts at the right, where the label does.
+    expect(
+      Math.abs(labelBox.x + labelBox.width - (notchBox.x + notchBox.width)),
+    ).toBeLessThanOrEqual(1);
+  }
+});
