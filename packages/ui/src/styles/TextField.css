@@ -91,7 +91,8 @@
     calc(-1 * var(--env-control-border-width));
   min-inline-size: 0;
   margin: 0;
-  padding: 0 var(--env-space-2) 0 calc(var(--env-text-field-label-start) - var(--env-space-1));
+  padding-block: 0;
+  padding-inline: calc(var(--env-text-field-label-start) - var(--env-space-1)) var(--env-space-2);
   border: var(--env-control-border-width) solid var(--env-field-border-color);
   border-radius: inherit;
   pointer-events: none;
