@@ -46,7 +46,7 @@ composes:
 
 ## Overview
 
-A form asks for information and gets it right on the first submit: one column of labelled fields, the primary action after the last, and errors that say how to fix each problem, with focus taken to where people need to act.
+The aim is a form people get right on the first submit.
 
 ```tsx example=CreateProject
 

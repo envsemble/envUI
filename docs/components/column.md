@@ -39,7 +39,7 @@ components:
 
 ## Overview
 
-Column lays out its children one under another, the same step of the spacing scale apart, so the children need no margins. Like [Row](row.md), [Grid](grid.md) and [Box](box.md), it sizes to its content and never paints.
+Like [Row](row.md), [Grid](grid.md) and [Box](box.md), Column sizes to its content and never paints, and its children need no margins.
 
 ```tsx example=ProjectDetails
 

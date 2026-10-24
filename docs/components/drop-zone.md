@@ -35,8 +35,6 @@ components:
 
 ## Overview
 
-A drop zone takes files dropped onto it, or chosen in the file picker it opens when pressed. The application uploads the files and shows what was chosen.
-
 ```tsx example=LogoUpload
 
 ```
@@ -49,7 +47,7 @@ A drop zone takes files dropped onto it, or chosen in the file picker it opens w
 
 ### Attach several files
 
-With `multiple`, the zone takes several files at once; the application lists them, each with Remove.
+With `multiple`, the application lists the files the zone took, each with Remove.
 
 ```tsx example=AttachDocuments
 
@@ -57,7 +55,7 @@ With `multiple`, the zone takes several files at once; the application lists the
 
 ### Upload with progress
 
-While the application uploads, `pending` keeps the zone busy, and its label says what is happening.
+While the application uploads, `pending` keeps the zone busy.
 
 ```tsx example=UploadProgress
 

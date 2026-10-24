@@ -30,8 +30,6 @@ components:
 
 ## Overview
 
-A calendar heatmap shows a value for each day as a shade of one tone, weeks as columns. Each day is named with its date and value, shown in a tooltip.
-
 ```tsx example=Deployments
 
 ```

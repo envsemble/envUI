@@ -37,7 +37,7 @@ components:
 
 ## Overview
 
-A select chooses one value from a list that stays collapsed until people open it.
+Typing an option's label in the open list jumps to it.
 
 ```tsx example=ProjectVisibility
 

@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-Document tabs are the strip of open documents above an editor, one tab per document, each with a close button. The application owns the documents, the active one and its panel; the strip renders the tabs.
+The strip sits above an editor and renders only the tabs. The application owns the documents, which one is active and its panel.
 
 ```tsx example=OpenDocuments
 

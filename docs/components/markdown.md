@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-Markdown renders a Markdown string in envUI's typography, and MarkdownEditor writes one. Both come from `@envsemble/envui/content`.
+Markdown and MarkdownEditor come from `@envsemble/envui/content`.
 
 ```tsx example=ProjectNote
 

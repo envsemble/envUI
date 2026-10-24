@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-A meter shows a measurement within a known range, such as the seats assigned of a plan.
+A value outside `min` and `max` shows as the nearest end.
 
 ```tsx example=SeatsAssigned
 

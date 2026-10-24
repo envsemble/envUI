@@ -34,7 +34,7 @@ components:
 
 ## Overview
 
-A sheet is a panel at an edge of the window, over the page or beside it, after Material's side and bottom sheets: an item's details, filters, an inspector or a short set of choices. It shares Dialog's surface, title, description and actions, and DialogClose closes it.
+Sheet shares Dialog's surface, title, description and actions, and DialogClose closes it.
 
 ```tsx example=FilterPanel open
 
@@ -50,7 +50,7 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 
 ### Choices from the bottom
 
-`side="bottom"` holds a short set of choices, as tall as its content.
+A `side="bottom"` sheet is as tall as its content.
 
 ```tsx example=ShareChoices open
 
@@ -66,14 +66,13 @@ With `resizable`, people resize a side sheet by its inner edge, by pointer or th
 
 ## Variants
 
-| Option          | Use for                                                        |
-| --------------- | -------------------------------------------------------------- |
-| `side="end"`    | Details, settings, filters and inspectors. The default.        |
-| `side="start"`  | Panels about what sits at the start of the page.               |
-| `side="bottom"` | A short set of choices or actions.                             |
-| `width="md"`    | 24 rem, for details and filters. The default.                  |
-| `width="lg"`    | 44 rem, for tables, comparisons and longer forms.              |
-| `modal={false}` | A panel beside a page that stays usable, such as an inspector. |
+| Option          | Use for                                                 |
+| --------------- | ------------------------------------------------------- |
+| `side="end"`    | Details, settings, filters and inspectors. The default. |
+| `side="start"`  | Panels about what sits at the start of the page.        |
+| `side="bottom"` | A short set of choices or actions.                      |
+| `width="md"`    | 24 rem, for details and filters. The default.           |
+| `width="lg"`    | 44 rem, for tables, comparisons and longer forms.       |
 
 `side` is logical: `end` is the right edge in left-to-right text. A `md` side sheet takes the whole width of a compact window, and a `lg` one of a compact or medium window; a bottom sheet is as wide as the window up to 40 rem.
 
@@ -81,7 +80,7 @@ With `resizable`, people resize a side sheet by its inner edge, by pointer or th
 
 - Name the sheet after what it holds, such as Filters or Alex Morgan, with a `title` or an `aria-label`.
 - Keep the close button unless another control in the sheet closes it.
-- Show the next level inside the sheet rather than opening another; side content that fits beside the page is a [Panes](panes.md) supporting pane.
+- Show the next level inside the sheet rather than opening another.
 
 ## Anatomy
 

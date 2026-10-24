@@ -31,8 +31,6 @@ components:
 
 ## Overview
 
-A rating shows a score people gave as stars, in half steps. It only shows a rating; it never asks for one.
-
 ```tsx example=ReviewScore
 
 ```

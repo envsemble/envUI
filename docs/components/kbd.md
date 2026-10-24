@@ -35,7 +35,7 @@ statuses:
 
 ## Overview
 
-Kbd shows a key as a key cap, or with `keys`, keys pressed together. It only shows them: the application handles the shortcut.
+Kbd only shows keys, one or a combination through `keys`: the application handles the shortcut.
 
 ```tsx example=ShortcutsInText
 
@@ -56,7 +56,6 @@ Kbd shows a key as a key cap, or with `keys`, keys pressed together. It only sho
 ```
 
 - Show only shortcuts the application handles.
-- In a menu, use Menu.Item's `shortcut`, which also sets `aria-keyshortcuts`.
 
 ### Content
 

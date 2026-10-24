@@ -31,7 +31,7 @@ components:
 
 ## Overview
 
-A time picker is a field that opens wheels to choose a time of day, in the reader's locale.
+Where people write AM and PM, a third wheel holds them.
 
 ```tsx example=StartTime
 

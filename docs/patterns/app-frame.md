@@ -49,7 +49,7 @@ composes:
 
 ## Overview
 
-The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, [search](search-trigger.md) and the [account menu](account-menu.md), one array of destinations, and the page in the body.
+The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, [search](search-trigger.md) and the [account menu](account-menu.md), the navigation, and the page in the body.
 
 ```tsx example=AppFrame stage=shaded
 
@@ -108,7 +108,7 @@ Not shown: the [CommandPalette](../components/command-palette.md) the search ope
 
 ## Adapting to width
 
-The bar on a compact width, the rail on a medium one and the drawer from expanded, from the one array.
+The bar on a compact width, the rail on a medium one and the drawer from expanded.
 
 ```tsx example=FrameByWidth stage=shaded widths="24 44 60"
 

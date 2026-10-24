@@ -30,7 +30,7 @@ components:
 
 ## Overview
 
-Breadcrumbs show the path from the top level to the current page, such as a workspace, its folders and the document open in them. Earlier levels are links, or buttons with `onClick`; the current page is last, and never a link.
+A trail runs from a workspace through its folders to the open document; the current page is always last, and never a link.
 
 ```tsx example=DocumentTrail
 
@@ -56,10 +56,10 @@ An entry without `href` or `onClick` is plain text, for a level that can't be op
 
 | Wrapping         | Use for                                                              |
 | ---------------- | -------------------------------------------------------------------- |
-| `wrap` (default) | A trail above a page's content, which wraps onto more lines.         |
+| `wrap` (default) | A trail above a page's content.                                      |
 | `wrap={false}`   | A bar that stays one line tall: the current page is cut short first. |
 
-```tsx example=OneLine caption="wrap={false} in a header bar, beside a status and an action."
+```tsx example=OneLine
 
 ```
 

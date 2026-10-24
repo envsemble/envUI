@@ -46,7 +46,7 @@ A component page is a reference page in the traditional style: ordinary headings
 
 | Section           | Required | Holds                                                                                                                 |
 | ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
-| Overview          | yes      | What it is in one sentence, its family as figures, and `###` subsections on what it does on its own, such as pending. |
+| Overview          | yes      | What the summary above it doesn't say, its family as figures, and `###` subsections on what it does on its own.       |
 | Variants          |          | Variants, tones, layouts and sizes: a table of the values, examples and specimens.                                    |
 | When to use       | yes      | Do and don't pairs and the few rules they don't show; a `### Labels` or `### Content` subsection on writing its text. |
 | Anatomy           |          | An anatomy figure with its legend, and one sentence naming parts the figure can't show.                               |
@@ -61,13 +61,13 @@ The build adds **Props** and **Related**, from `avoidWhen`, before Changelog; do
 The docs are mainly visual. Let the figures, the do and don't pairs and the anatomy teach, and write a sentence or two around them:
 
 - **Show, then say little.** Cut every sentence a figure already shows, such as what a variant looks like, its colors or its corners. A sentence beside a figure says what the figure can't: the prop that makes it, or the rule it illustrates.
-- **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section.
+- **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section. The banner shows the summary right above Overview, so Overview starts with what the summary doesn't say, such as how the component works or the prop that matters, or with its first figure; `npm test` fails on an Overview whose first sentence says the summary again. Nor does a sentence repeat a `useWhen` or `avoidWhen` entry, which When to use and Related show.
 - **Short over complete.** Leave out what the generated props reference holds, such as each prop's values and defaults, and what the code does for itself, such as an exact delay or padding, unless a reader chooses it.
 - **No links into the Docs.** The Site reaches the Docs only through a page's API button and the Docs link at the top of every page. Link other component, pattern and foundation pages, a foundation without a heading, since its headings are in its guide in the Docs, and say a point of a Docs page, such as setup or Customize colors, without the link. `npm test` checks it; the changelog and the lists of what envUI and the application provide, which the Docs show, may link anywhere.
 
 | Information                                   | Its one place                                                                                           |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| What it is                                    | One sentence at the start of Overview.                                                                  |
+| What it is                                    | The frontmatter's `summary`, which the banner shows above Overview.                                     |
 | What it looks like                            | Figures, with no sentence describing them.                                                              |
 | When to use it                                | The frontmatter's `useWhen`, which When to use shows first.                                             |
 | What to use instead                           | The frontmatter's `avoidWhen`, which Related shows at the end of the page.                              |

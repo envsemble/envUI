@@ -33,7 +33,7 @@ components:
 
 ## Overview
 
-The navigation bar holds an application's main destinations across the bottom of a compact window. It takes the same destinations as [Rail](rail.md) and [Drawer](drawer.md), and [Scaffold](scaffold.md) shows the form that fits the width.
+Bar takes the same destinations as [Rail](rail.md) and [Drawer](drawer.md), and [Scaffold](scaffold.md) shows the form that fits the width.
 
 ```tsx example=PhoneDestinations
 
@@ -51,7 +51,7 @@ Past five destinations, the fifth place is More, which opens the rest in a menu 
 
 ## When to use
 
-- Three to five destinations; group headings don't show, so order the array.
+- Group headings don't show, so order the array.
 - Set `current` from the router; a press doesn't select by itself.
 
 ## Anatomy

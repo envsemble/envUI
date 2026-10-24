@@ -55,8 +55,6 @@ components:
 
 ## Overview
 
-A badge is a small, static pill that names a state or a fact beside the content it describes.
-
 ```tsx example=ProjectStatus
 
 ```
@@ -126,7 +124,7 @@ A count takes the same tones and variants: neutral and soft by default, and `ton
 
 ### In navigation
 
-```tsx example=NavigationCounts caption="Bar, Rail and Drawer show a destination's count themselves, from a number, not a Badge."
+```tsx example=NavigationCounts
 
 ```
 

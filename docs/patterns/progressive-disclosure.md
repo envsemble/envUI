@@ -50,7 +50,7 @@ composes:
 
 ## Overview
 
-Progressive disclosure keeps a page about its main task while the rest stays one step away: advanced options behind a [Disclosure](../components/disclosure.md), the long tail of a list behind Show all, details in a sheet, rare actions in a menu. What a task needs is never hidden.
+Advanced options wait behind a [Disclosure](../components/disclosure.md).
 
 ```tsx example=AdvancedOptions
 
@@ -101,7 +101,7 @@ Share and Edit stay visible; the rest wait in a More actions menu, a destructive
 
 ### Explain a term
 
-A help button opens a Popover with a short definition and a link; a Tooltip only repeats an icon-only control's name.
+A help button opens a Popover with a short definition and a link.
 
 ```tsx example=ExplainATerm
 

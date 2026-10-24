@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-A slider chooses a value in a range. It is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys, and a thin handle and faint ticks at its steps appear under the pointer and while it has focus. The label and the value always keep their full strength: where the handle and the end of the fill pass under them, those fade instead.
+Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. A thin handle and faint ticks at its steps appear under the pointer and while it has focus. The label and the value always keep their full strength: where the handle and the end of the fill pass under them, those fade instead.
 
 ```tsx example=LayerOpacity
 
@@ -48,7 +48,7 @@ A slider chooses a value in a range. It is a field, as tall as the fields and wi
 
 ### Steps in a form
 
-`min`, `max` and `step` set the values, and `name` submits the value with the form. The slider lines up with the fields around it.
+`min`, `max` and `step` set the values, and `name` submits the value with the form.
 
 ```tsx example=SessionTimeout
 
@@ -88,7 +88,7 @@ Name the value in a short noun, and format it with its unit in `formatValue`; th
 2. **Field** (`env-slider-control`): the track, a quiet tint, which takes the pointer
 3. **Label** (`env-slider-label`, `label`)
 4. **Fill** (`env-slider-indicator`): from the start to the value
-5. **Handle** (`env-slider-thumb`): a thin line at the value, under the pointer and on focus, beneath the label and the value, faint where it passes under them
+5. **Handle** (`env-slider-thumb`)
 6. **Value** (`env-slider-value`, `formatValue`), with numbers of one width
 7. **Description** (`env-field-description`, `description`)
 

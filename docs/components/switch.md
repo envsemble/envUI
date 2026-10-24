@@ -33,8 +33,6 @@ components:
 
 ## Overview
 
-A switch turns a setting on or off, and the change takes effect at once.
-
 ```tsx example=NotificationSettings
 
 ```
@@ -47,7 +45,7 @@ Pressing the track or its label toggles it.
 
 ### Apply at once
 
-The application applies the setting as soon as the switch changes; there is nothing to save.
+Apply the setting from `onCheckedChange`.
 
 ```tsx example=ShowCompleted
 

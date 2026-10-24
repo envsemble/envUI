@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-A spinner shows work of unknown length in a small area, such as a preview on its way.
+With reduced motion, the arc keeps turning, more slowly.
 
 ```tsx example=LoadingPreview
 
@@ -46,7 +46,7 @@ A spinner shows work of unknown length in a small area, such as a preview on its
 
 ### With its label
 
-`showLabel` puts the label beside the spinner, to say what is loading where its shape isn't known; where it is known, show the component itself as a skeleton.
+`showLabel` puts the label beside the spinner.
 
 ```tsx example=SearchingDocuments
 

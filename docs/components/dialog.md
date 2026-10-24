@@ -39,7 +39,7 @@ components:
 
 ## Overview
 
-A dialog holds one task over the page: a decision, a short form, or details people read before they go on. Its actions end with the primary one, after a built-in close button.
+A dialog's actions end with the primary one, after a built-in close button.
 
 ```tsx example=ProjectDetails
 

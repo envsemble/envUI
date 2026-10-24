@@ -27,7 +27,7 @@ components:
 
 ## Overview
 
-An accordion is a list of sections, each a heading that shows and hides the panel below it. One section is open at a time.
+One section is open at a time.
 
 ```tsx example=FrequentQuestions
 

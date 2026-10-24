@@ -37,7 +37,7 @@ composes:
 
 ## Overview
 
-The window frame is for an installed application that draws its own title bar: a [Scaffold](../components/scaffold.md) with `topBarSpan="full"` and `scroll="body"`, a [TopBar](../components/top-bar.md) with `titleBar` across the top, and the content scrolling below it, where the window controls never cover a scrollbar.
+A [Scaffold](../components/scaffold.md) with `topBarSpan="full"` puts a [TopBar](../components/top-bar.md) with `titleBar` across the window, and `scroll="body"` scrolls only the body, so the window controls never cover a scrollbar.
 
 ```tsx example=StartPageWindow stage=shaded
 
@@ -59,7 +59,7 @@ A [Menubar](../components/menubar.md) in the TopBar's `start`, and a page whose 
 
 ### Navigation below the title bar
 
-The Scaffold's navigation runs below the title bar, which spans the window.
+The Scaffold's `navigation`, here a [Drawer](../components/drawer.md), sits beside the body.
 
 ```tsx example=WithNavigation stage=shaded
 
@@ -74,8 +74,6 @@ The Scaffold's navigation runs below the title bar, which spans the window.
 ```tsx dont=CrowdedTitleBar stage=shaded caption="The page's actions in the title bar: no room is left to drag the window."
 
 ```
-
-- The page's own actions go in its PageHeader.
 
 ### Content
 

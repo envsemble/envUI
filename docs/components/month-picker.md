@@ -27,7 +27,7 @@ components:
 
 ## Overview
 
-A month picker is a field that opens a year of months to choose one, in the reader's locale.
+MonthPicker writes the month in the reader's locale.
 
 ```tsx example=ReportMonth
 

@@ -33,15 +33,15 @@ A pattern page may instead be on the [figure template](component-pages.md#sectio
 
 ## Pattern sections
 
-| Section              | Required | Holds                                                                                                                                       |
-| -------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Overview             | yes      | One paragraph, "Use this pattern to …", naming the problem, then the lead example. The catalogue adds When to use, When not and Built from. |
-| Anatomy              | yes      | The parts of the composition, numbered, each naming its component and the props that matter.                                                |
-| States and behaviour |          | The flow and its timing: when to validate, when a toast appears and leaves, what happens on failure, and responsive behaviour.              |
-| Content guidelines   | yes      | The pattern's copy rules, linking to the content guidelines rather than repeating them.                                                     |
-| Do and don't         |          | A `### Do` and a `### Don't` list.                                                                                                          |
-| Accessibility        | yes      | `### Focus and keyboard`, the flow of focus rather than a table of keys, and `### envUI provides` and `### You provide` lists.              |
-| Examples             | yes      | At least two more live compositions, each under a `###` heading with a sentence or two, so a pattern shows at least three example files.    |
-| Changelog            |          | Releases that changed the pattern.                                                                                                          |
+| Section              | Required | Holds                                                                                                                                    |
+| -------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Overview             | yes      | One paragraph on how the pattern meets its need, which the summary above it names, then the lead example; never the summary again.       |
+| Anatomy              | yes      | The parts of the composition, numbered, each naming its component and the props that matter.                                             |
+| States and behaviour |          | The flow and its timing: when to validate, when a toast appears and leaves, what happens on failure, and responsive behaviour.           |
+| Content guidelines   | yes      | The pattern's copy rules, linking to the content guidelines rather than repeating them.                                                  |
+| Do and don't         |          | A `### Do` and a `### Don't` list.                                                                                                       |
+| Accessibility        | yes      | `### Focus and keyboard`, the flow of focus rather than a table of keys, and `### envUI provides` and `### You provide` lists.           |
+| Examples             | yes      | At least two more live compositions, each under a `###` heading with a sentence or two, so a pattern shows at least three example files. |
+| Changelog            |          | Releases that changed the pattern.                                                                                                       |
 
 Related is generated from `avoidWhen`. A pattern shows each composition in context, so its examples differ from the component pages' ones. The Site leaves out the `### envUI provides` and `### You provide` lists, as on component pages; the packaged page and the agents' files keep them.

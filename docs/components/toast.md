@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-A toast is brief feedback after an action, at the edge of the window. Put one **Toast.Provider** near the root of the application; any component inside it calls **useToast** to `show` a notification.
+Put one **Toast.Provider** near the root of the application; any component inside it calls **useToast** to `show` a notification.
 
 ```tsx example=SaveChanges
 
@@ -79,7 +79,7 @@ A danger notification stays until it is dismissed, and is announced at once.
 | `neutral` | Routine feedback, such as Files archived. The default. |
 | `success` | An action that worked, such as Invitation sent.        |
 | `info`    | Something worth noticing that needs no action.         |
-| `danger`  | An action that failed. It stays until it is dismissed. |
+| `danger`  | An action that failed.                                 |
 
 ### Top center and a limit
 

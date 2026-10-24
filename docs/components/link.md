@@ -27,7 +27,7 @@ components:
 
 ## Overview
 
-Link is a native `<a>` for a destination inside running text. It renders through the `LinkProvider`'s link component, so the application's router handles it.
+Link renders a native `<a>` through the `LinkProvider`'s link component, so the application's router handles it.
 
 ```tsx example=InRunningText
 
@@ -39,7 +39,7 @@ A `disabled` link has no destination: it can't be focused or followed.
 
 ## Variants
 
-```tsx example=WithoutUnderline caption="underline={false}, for a short list that already reads as links."
+```tsx example=WithoutUnderline
 
 ```
 

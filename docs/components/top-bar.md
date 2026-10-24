@@ -33,13 +33,13 @@ components:
 
 ## Overview
 
-The top bar sits at the top of an application or a screen, after Material's small top app bar: start content, the title and the actions, in one row. It goes in a [Scaffold](scaffold.md)'s top bar region, which is the banner landmark.
+A [Scaffold](scaffold.md)'s top bar region, which holds the TopBar, is the banner landmark.
 
 ```tsx example=AppTopBar
 
 ```
 
-It fills a plain rectangle with the navigation's background, with no line below. `background="page"` puts it on the page's background instead, opaque when it sticks, while the navigation keeps its own: see [Scaffold](scaffold.md#backgrounds).
+The bar fills a plain rectangle with the navigation's background, with no line below. `background="page"` puts it on the page's background instead, opaque when it sticks, while the navigation keeps its own: see [Scaffold](scaffold.md#backgrounds).
 
 ### Page progress
 
@@ -71,7 +71,7 @@ It fills a plain rectangle with the navigation's background, with no line below.
 
 ```
 
-- The title names the application or the section; the page's own title and actions go in its [PageHeader](page-header.md).
+- The title names the application or the section.
 - The navigation goes in the Scaffold's navigation region, not in the top bar.
 
 ## Anatomy

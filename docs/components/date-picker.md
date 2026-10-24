@@ -39,13 +39,11 @@ components:
 
 ## Overview
 
-A date picker is a field that opens a calendar to choose a day, or a day and a time.
-
 ```tsx example=PublishDate
 
 ```
 
-```tsx example=PlanningCalendar caption="Calendar: the month the field opens, also on its own in a page."
+```tsx example=PlanningCalendar caption="Calendar: the month the field opens."
 
 ```
 

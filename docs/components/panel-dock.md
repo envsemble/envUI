@@ -36,8 +36,6 @@ components:
 
 ## Overview
 
-A panel dock holds panels people work in beside the page, such as drafts and conversations: open panels side by side at the bottom inline-end edge, and minimized ones as tabs, as on a taskbar. A panel's content stays mounted through every change, so a draft survives being minimized.
-
 The application owns the panels, their order, modes, the active one and their heights; the dock asks for changes through its callbacks. PanelDock.Header is each panel's sticky header, with the title, the application's actions and the window controls.
 
 ```tsx example=DocumentDrafts
@@ -77,7 +75,6 @@ Open panels take `preferredWidth`, 32 rem, and shrink to `minWidth`, 20 rem; the
 - Put the dock in a positioned container with a height, or directly in a [Scaffold](scaffold.md)'s body, where it lies over the visible area.
 - Make the content beneath inert while a panel fills the region.
 - Activate a panel when it opens, and keep at most one maximized.
-- Panels are regions, never modal: a task to finish first is a [Dialog](dialog.md).
 
 ## Anatomy
 

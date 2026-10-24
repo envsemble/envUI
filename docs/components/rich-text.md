@@ -53,7 +53,7 @@ RichTextEditor and RichText come from the optional `@envsemble/envui/rich-text` 
 
 ### Show saved content
 
-RichText shows saved Markdown read-only, also on a server. `onReferenceClick` and `onLinkClick` open references and links.
+RichText also renders on a server. `onReferenceClick` and `onLinkClick` open references and links.
 
 ```tsx example=SavedContent
 

@@ -43,8 +43,6 @@ components:
 
 ## Overview
 
-A list is a column of connected rows, each with a label, a description and an action at its end.
-
 ```tsx example=SettingsRows
 
 ```

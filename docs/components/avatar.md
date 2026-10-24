@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-An avatar is a round picture of a person or an organization. Beside a visible name it is decorative; with `named` it is an image named after them.
+Beside a visible name an avatar is decorative; with `named` it is an image named after them.
 
 ```tsx example=PersonWithName
 
@@ -48,7 +48,7 @@ An avatar is a round picture of a person or an organization. Beside a visible na
 
 ```
 
-```tsx example=ProjectMembers caption="AvatarGroup: bunched avatars, which spread along an arch under the pointer and show the count of the rest."
+```tsx example=ProjectMembers caption="AvatarGroup: avatars bunched in a group."
 
 ```
 

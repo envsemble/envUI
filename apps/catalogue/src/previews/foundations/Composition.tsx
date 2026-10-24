@@ -7,7 +7,7 @@ export function CompositionPreview() {
       <Example
         title="Surface and layout on one root"
         size="field"
-        caption="Surface owns fill, padding and corners; Column owns the gaps, on the same element through render."
+        caption="Surface owns fill, padding and corners, and Column the gaps, through render."
       >
         <Surface background="default" padding={5} render={<Column render={<section />} gap={4} />}>
           <Text render={<h3 />} variant="title">
@@ -19,7 +19,7 @@ export function CompositionPreview() {
       <Example
         title="Product content on a shared card"
         size="field"
-        caption="Wrap public components for product content; data, routing and validation stay in the application."
+        caption="Data, routing and validation stay in the application."
       >
         <Card render={<article />}>
           <Text render={<h3 />} variant="title">

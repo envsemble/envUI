@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-A message is one entry of a conversation, such as a chat message or a comment, in a MessageList that announces new messages politely. A [Composer](../components/composer.md) below writes the next one.
+Each Message sits in a MessageList, which holds the conversation.
 
 ```tsx example=Conversation
 

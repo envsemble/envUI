@@ -37,15 +37,13 @@ components:
 
 ## Overview
 
-A checkbox turns one choice on or off, on its own, and takes effect when a form is sent.
-
 ```tsx example=IncludeArchived
 
 ```
 
 ### States
 
-Pressing the box or its label toggles it. `checked="mixed"` shows a dash, for a parent whose children are only partly chosen.
+Pressing the box or its label toggles it. `checked="mixed"` shows a dash.
 
 <!-- specimen: States -->
 

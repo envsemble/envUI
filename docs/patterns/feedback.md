@@ -46,7 +46,7 @@ composes:
 
 ## Overview
 
-Feedback goes as close as it can to what it is about, and speaks only as loudly as it must: each message is announced at most once, and only what needs people interrupts them. The outcome of an action people started is a toast from [useToast](../components/toast.md).
+Each message is announced at most once, and only what calls for action interrupts. The outcome of an action people started is a toast from [useToast](../components/toast.md).
 
 ```tsx example=SaveConfirmation
 
@@ -71,7 +71,7 @@ A success or neutral toast closes after 5 seconds, paused while the pointer rest
 
 ### A condition of the page
 
-An Alert that is there when the page loads describes it and isn't announced; it offers the one thing people can do.
+An Alert that is there when the page loads describes it and offers the one thing people can do.
 
 ```tsx example=SectionAlert
 
@@ -87,7 +87,7 @@ When the export ends, a toast with Download reaches people wherever they are, an
 
 ### Status in rows
 
-One tone per status everywhere, with words that carry the meaning without the color.
+One tone per status, everywhere.
 
 ```tsx example=StatusInRows
 

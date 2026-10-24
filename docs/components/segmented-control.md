@@ -37,7 +37,7 @@ components:
 
 ## Overview
 
-A segmented control switches between a few views or filters of the same content, and the choice applies at once. After Material's segmented buttons, it is connected segments in one outline, the chosen one in the selected fill with a check before its label; it picks a value, where [Tabs](tabs.md), text tabs with an indicator, switch panels.
+`items` holds the options, each with a `value` and a short `label`.
 
 ```tsx example=WorkItems
 

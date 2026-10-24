@@ -286,6 +286,63 @@ test('the docs publish at least 8 patterns', () => {
   assert.ok(count >= 8, `${count} patterns; 1.0 needs 8.`);
 });
 
+/** Words too common to say whether two sentences say the same thing. */
+const commonWords = new Set(
+  'a an the and or of to in on for with its it is as by at from that this be are which what who than into one their your can own such when where how all any so not no but if has have each'.split(
+    ' ',
+  ),
+);
+
+/**
+ * The words that carry a sentence's meaning, without code, link targets or common words, and
+ * without a plural's ending, so "panels" and "panel" count as one.
+ */
+function meaningfulWords(text) {
+  const words = text
+    .replace(/`[^`]*`/g, ' ')
+    .replace(/\]\([^)]*\)/g, ' ')
+    .toLowerCase()
+    .match(/[a-z][a-z’'-]*/g);
+  return new Set(
+    (words ?? [])
+      .filter((word) => !commonWords.has(word))
+      .map((word) => word.replace(/(?<=..)(es|s)$/, '')),
+  );
+}
+
+/** The first sentence of a page's Overview, where the section opens with text. */
+function overviewOpening(document) {
+  const first = document.sections.find((section) => section.id === 'overview')?.blocks[0];
+  if (first?.kind !== 'markdown') return '';
+  const paragraph =
+    first.markdown
+      .replace(/^## .*\n/, '')
+      .trim()
+      .split(/\n\s*\n/)[0] ?? '';
+  if (/^(#|\||[-*+] |\d+[.)] |```|<!--)/.test(paragraph)) return '';
+  return paragraph.replace(/\n/g, ' ').split(/(?<=[.!?])\s+(?=[A-Z<`[*])/)[0];
+}
+
+test("a page's Overview doesn't open by saying its summary again", () => {
+  // The banner shows the summary right above the Overview, so the Overview starts with what the
+  // banner doesn't say.
+  const repeats = sectioned.flatMap((document) => {
+    // Naming the page's subject repeats nothing.
+    const title = meaningfulWords(document.title);
+    const opening = meaningfulWords(overviewOpening(document)).difference(title);
+    const summary = meaningfulWords(document.summary);
+    const shared = [...opening].filter((word) => summary.has(word));
+    return shared.length >= 3 && shared.length / opening.size >= 0.35
+      ? [`${document.path} (${shared.join(', ')})`]
+      : [];
+  });
+  assert.deepEqual(
+    repeats,
+    [],
+    "These Overviews open by saying the summary again; start with what the banner doesn't say.",
+  );
+});
+
 /**
  * A page's Markdown as the Site shows it: without its changelog and the lists of what envUI and
  * the application provide, which its page in the Docs shows.

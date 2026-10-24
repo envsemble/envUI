@@ -34,7 +34,7 @@ components:
 
 ## Overview
 
-Tabs switch between panels of related content in one place. Each item gives a `button`, which becomes the tab, and the panel's `content`. After Material's tabs, every tab is a text tab, whatever its button's variant: the selected one in the accent color with an indicator under it, the others muted. It switches panels, where a [SegmentedControl](segmented-control.md), connected outlined segments, picks a value.
+Each item gives a `button`, which becomes the tab, and the panel's `content`. Every tab is a text tab, whatever its button's variant.
 
 ```tsx example=ProjectViews
 
@@ -87,7 +87,7 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 
 ```
 
-- Tabs are buttons, never links; the rail draws each as a text tab, whatever its variant.
+- Tabs are buttons, never links.
 - Content people compare stays in one panel.
 
 ## Anatomy
@@ -98,7 +98,7 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 
 1. **Tabs** (`env-tabs`)
 2. **Rail** (`env-tabs-list`)
-3. **Tab** (`env-tabs-tab`, `button`): a text tab, the selected one with its indicator under it
+3. **Tab** (`env-tabs-tab`, `button`)
 4. **Panel** (`env-tabs-panel`, `content`)
 
 ### Colors

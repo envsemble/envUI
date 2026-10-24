@@ -37,7 +37,7 @@ components:
 
 ## Overview
 
-A radio group shows a few options and lets people choose exactly one.
+Each Radio sits in a RadioGroup, whose `label` names the choice.
 
 ```tsx example=ProjectAccess
 
@@ -78,7 +78,7 @@ With `required` and nothing chosen, the form asks for a choice. Link the error t
 
 ## When to use
 
-```tsx do=DescribedRows caption="Rows with a description where options need explaining."
+```tsx do=DescribedRows caption="Short labels, with each explanation in a description."
 
 ```
 

@@ -34,9 +34,9 @@ components:
 
 ## Overview
 
-Panes is the invisible structure of two panes side by side, after Material's supporting pane and list-detail layouts. Its own width decides how they sit: side by side from `splitAt`, and in less room as `behavior` says.
+Panes never paints; `behavior` picks one of the layouts below.
 
-`behavior="supporting"`: a main pane and a supporting one, such as a document and its details. In less room the supporting pane is a modal sheet while `open`, which Panes.Trigger in the main pane opens; the trigger hides while the panes sit side by side.
+`behavior="supporting"`: a main pane and a supporting one. In less room the supporting pane is a modal sheet while `open`, which Panes.Trigger in the main pane opens; the trigger hides while the panes sit side by side.
 
 ```tsx example=SupportingPane
 

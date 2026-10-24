@@ -44,7 +44,7 @@ components:
 
 ## Overview
 
-The navigation drawer holds an application's destinations in a column at the start of an expanded or larger window, with group headings and counts. It takes the same destinations as [Bar](bar.md) and [Rail](rail.md), and [Scaffold](scaffold.md) shows the form that fits the width.
+[Scaffold](scaffold.md) shows the Drawer, the [Rail](rail.md) or the [Bar](bar.md), whichever fits the width.
 
 ```tsx example=AppDestinations
 
@@ -54,7 +54,7 @@ It fills a plain rectangle with the navigation's background, the same as the [To
 
 ### Without icons
 
-A `DrawerDestination` may leave its icon out, for the sections of a guide or of the settings; the Bar and the Rail need icons.
+A `DrawerDestination` may leave its icon out; the Bar and the Rail need icons.
 
 ```tsx example=GuideSections
 
@@ -87,7 +87,7 @@ With `resizable`, people resize the drawer by its end edge, by pointer or the ar
 ```
 
 - Set `current` on one destination from the router; a press doesn't select by itself.
-- Short labels, which fit on one line: a long one wraps, or in a resizable drawer is cut short with an ellipsis.
+- Short labels, which fit on one line; a long one wraps.
 
 ## Anatomy
 

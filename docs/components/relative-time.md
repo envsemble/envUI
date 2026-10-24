@@ -31,7 +31,7 @@ components:
 
 ## Overview
 
-RelativeTime shows a moment relative to now, such as 3 hours ago, and keeps it current while the page stays open.
+`value` takes a Date, milliseconds since 1970 or a date string, such as an ISO 8601 timestamp.
 
 ```tsx example=DraftSaved
 
@@ -43,7 +43,7 @@ RelativeTime shows a moment relative to now, such as 3 hours ago, and keeps it c
 
 ### Text for a label
 
-`formatRelativeTime` returns the same text as a string, for an option label or a name. It doesn't update by itself.
+`formatRelativeTime` returns the same text as a string. It doesn't update by itself.
 
 ```tsx example=VersionLabels
 
@@ -51,7 +51,7 @@ RelativeTime shows a moment relative to now, such as 3 hours ago, and keeps it c
 
 ### Rounding and languages
 
-The text rounds to the nearest unit and stays a count: 1 day ago, never yesterday. Hovering it shows the exact date and time; `tooltip={false}` leaves that out. `locale` sets the language, such as `de` for vor 3 Stunden; without it, EnvUIProvider's `locale`, else the browser's.
+The text rounds to the nearest unit and stays a count: 1 day ago, never yesterday. `tooltip={false}` leaves out the tooltip. `locale` sets the language, such as `de` for vor 3 Stunden; without it, EnvUIProvider's `locale`, else the browser's.
 
 ## Variants
 

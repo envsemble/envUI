@@ -39,7 +39,7 @@ components:
 
 ## Overview
 
-A surface gives a region a background, an inset and rounded corners, and nothing else. Lay out what it holds with a [Column](column.md) or a [Row](row.md) through `render`, so the surface and its layout are one element.
+Lay out what a Surface holds with a [Column](column.md) or a [Row](row.md) through `render`, so the surface and its layout are one element.
 
 ```tsx example=DetailPane
 
@@ -96,8 +96,7 @@ Without `padding`, the inset grows from 1.25 rem in narrow windows to 1.5 rem fr
 
 ```
 
-- No margins on a surface's children; lay them out with a Column.
-- A block with a title, metadata and actions is a [Card](card.md).
+- No margins on a surface's children.
 
 ## Accessibility
 

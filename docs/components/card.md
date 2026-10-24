@@ -41,8 +41,6 @@ components:
 
 ## Overview
 
-A card groups content about one subject on a rounded surface.
-
 ```tsx example=ProjectSummary
 
 ```

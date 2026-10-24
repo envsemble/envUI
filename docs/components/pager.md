@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-A pager links a page of an ordered sequence, such as a guide, to the pages before and after it, after the page's content.
+Each link shows its destination's title under the label Previous or Up next.
 
 ```tsx example=PreviousAndNext
 

@@ -67,28 +67,19 @@ export function PatternPage({ page }: { page: SitePage }) {
 }
 
 /**
- * The tokens each foundation's page names in a sentence: the custom properties, as Markdown, of
- * what the page shows. A foundation without tokens of its own names none.
+ * The tokens a foundation's page names in a sentence, as Markdown, where its figures don't already
+ * name them: the spacing, colors, stacking order, icons and motion figures show their tokens.
  */
 const foundationTokens: Record<string, string> = {
-  colors:
-    'The colors are the `--env-color-*` tokens: roles such as `--env-color-bg-page` and `--env-color-fg-muted`, each with a value in every theme.',
   typography:
     'Type takes the `--env-type-*` and `--env-font-*` tokens, such as `--env-type-body` and `--env-font-weight-medium`.',
-  spacing:
-    'Space and corners take the `--env-space-*` and `--env-radius-*` tokens, such as `--env-space-4` and `--env-radius-surface`.',
   scale:
     'Sizes that follow the scale are tokens, such as `--env-control-height-md`, `--env-row-height` and `--env-icon-size-md`, with a comfortable and a compact value.',
-  responsive:
-    'The stacking order takes the `--env-z-*` tokens, such as `--env-z-sticky` and `--env-z-popover`.',
-  icons: 'Icons take their size from the `--env-icon-*` tokens and their color from the text.',
-  accessibility:
-    'Motion takes the `--env-motion-*` tokens, and an unavailable control `--env-state-disabled-opacity`.',
 };
 
 /**
- * A foundation's page on the Site: a short introduction, its visuals and the tokens it uses in a
- * sentence. Its written guidance is its guide in the Docs.
+ * A foundation's page on the Site: a short introduction, its visuals and, where its figures don't
+ * name them, the tokens it uses in a sentence. Its written guidance is its guide in the Docs.
  */
 export function FoundationPage({ page }: { page: SitePage }) {
   const reference = page.document as Reference;

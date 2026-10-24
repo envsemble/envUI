@@ -47,8 +47,6 @@ components:
 
 ## Overview
 
-A button starts an action. With `href` it is a native link that looks like a button.
-
 ```tsx example=CreateProject
 
 ```

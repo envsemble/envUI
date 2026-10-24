@@ -33,7 +33,7 @@ components:
 
 ## Overview
 
-A tooltip is a short label beside a control, shown while the pointer rests on it or it has keyboard focus.
+Tooltip wraps the control it describes, and `content` holds its text.
 
 ```tsx example=IconActions
 

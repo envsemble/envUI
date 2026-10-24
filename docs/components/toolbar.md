@@ -33,7 +33,7 @@ components:
 
 ## Overview
 
-A toolbar holds the controls for one subject, such as an editor's formatting, as one tab stop that the arrow keys move through. `Toolbar.Button` is an icon button named by its `label`, which a tooltip shows with its `shortcut`; with `pressed` it is a toggle.
+`Toolbar.Button` is an icon button named by its `label`, which a tooltip shows with its `shortcut`; with `pressed` it is a toggle.
 
 ```tsx example=FormattingToolbar
 
