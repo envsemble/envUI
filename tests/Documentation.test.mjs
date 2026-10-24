@@ -682,7 +682,7 @@ const figureBody = [
   '```',
   '',
   '1. **Track** (`env-switch`): the pill.',
-  '2. `env-switch-input`',
+  '2. **Thumb** (`env-switch-input`)',
   '',
   '## Adapting to width',
   '',
@@ -716,7 +716,7 @@ test('a component page with a When to use section is on the figure template', as
     assert.equal(switchPage.format, 'figures');
     assert.deepEqual(
       switchPage.sections.map((section) => section.id),
-      ['overview', 'usage', 'anatomy', 'width', 'accessibility', 'changelog'],
+      ['overview', 'usage', 'anatomy', 'width', 'accessibility', 'code', 'changelog'],
     );
     const blocks = switchPage.sections.flatMap((section) => section.blocks);
     const figure = (name) => blocks.find((block) => block.name === name);
@@ -729,8 +729,8 @@ test('a component page with a When to use section is on the figure template', as
       "Don't: Don't use a switch in a form that applies on submit.",
     );
     assert.deepEqual(figure('Parts').legend, [
-      { part: 'env-switch', text: '**Track** (`env-switch`): the pill.' },
-      { part: 'env-switch-input', text: '`env-switch-input`' },
+      { part: 'env-switch', text: '**Track** (`env-switch`): the pill.', name: 'Track' },
+      { part: 'env-switch-input', text: '**Thumb** (`env-switch-input`)', name: 'Thumb' },
     ]);
     assert.deepEqual(figure('Narrow').widths, [16, 30]);
     // The flag open shows the example's overlays open; other figures leave it out.
@@ -755,7 +755,7 @@ test('a component page with a When to use section is on the figure template', as
     );
     assert.match(
       compiled,
-      /```\n\n1\. \*\*Track\*\* \(`env-switch`\): the pill\.\n2\. `env-switch-input`\n/,
+      /```\n\n1\. \*\*Track\*\* \(`env-switch`\): the pill\.\n2\. \*\*Thumb\*\* \(`env-switch-input`\)\n/,
     );
     assert.ok(compiled.indexOf('## Accessibility') < compiled.indexOf('## Props'));
   });
@@ -802,7 +802,7 @@ test('a page on the figure template rejects what breaks its form', async () => {
         /the caption of the fence `tsx do=Instant caption="Use a switch for a setting that says "Save"\."` has a double quote inside it, at `"Save"\."`/,
       );
     await rejects(
-      body.replace('2. `env-switch-input`', '2. The thumb.'),
+      body.replace('2. **Thumb** (`env-switch-input`)', '2. The thumb.'),
       /item 2 of the legend of anatomy Parts names no part/,
     );
     await rejects(
@@ -820,17 +820,17 @@ test('a page on the figure template rejects what breaks its form', async () => {
     await rejects(body.replace('example=Basic', 'example=Missing'), /has no file/);
     // A legend names parts that exist, and a figure without one names a component with parts.
     await rejects(
-      body.replace('2. `env-switch-input`', '2. `env-switch-knob`'),
+      body.replace('2. **Thumb** (`env-switch-input`)', '2. `env-switch-knob`'),
       /names env-switch-knob, which neither packages\/ui's CSS nor docs\/generated\/parts\.json has/,
     );
     // A variants figure names each variant in bold, in a legend it can't do without.
     const variants = body.replace('anatomy=Parts', 'variants=Parts');
     await rejects(variants.replace('1. **Track** (`env-switch`)', '1. Track'), /in bold/);
     await rejects(
-      variants.replace(/1\. \*\*Track\*\*.*\n2\. `env-switch-input`\n/, ''),
+      variants.replace(/1\. \*\*Track\*\*.*\n2\. \*\*Thumb\*\*.*\n/, ''),
       /variants Parts has no legend/,
     );
-    const withoutLegend = body.replace(/1\. \*\*Track\*\*.*\n2\. `env-switch-input`\n/, '');
+    const withoutLegend = body.replace(/1\. \*\*Track\*\*.*\n2\. \*\*Thumb\*\*.*\n/, '');
     await rejects(
       withoutLegend,
       /anatomy Parts has no legend, and docs\/generated\/parts\.json lists no parts of Switch/,
@@ -865,5 +865,96 @@ test('a page on the figure template rejects what breaks its form', async () => {
       switchBody.replace('## States and behaviour', '## Adapting to width'),
       /a page on the figure template has a "## When to use" section/,
     );
+  });
+});
+
+/** A developer-only part: "## In code" with its usage, an example file shown as code. */
+const inCode = [
+  '## In code',
+  '',
+  '### Usage',
+  '',
+  'Give every switch a `label`.',
+  '',
+  '```tsx source=Basic',
+  '',
+  '```',
+  '',
+  '### Customize',
+  '',
+  '`--env-switch-track` sets the track.',
+  '',
+  '',
+].join('\n');
+
+test('"## In code" is the developer-only part, opened by the generated Import', async () => {
+  await templateFixture(async ({ page, read, examples }) => {
+    for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
+      await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
+    await writeFile(
+      page,
+      switchFrontmatter + figureBody.replace('## Changelog', `${inCode}## Changelog`),
+    );
+    const documents = read();
+    const switchPage = documents[1];
+    const code = switchPage.sections.find((section) => section.id === 'code');
+    assert.deepEqual(
+      code.blocks.map((block) => block.kind),
+      ['markdown', 'source', 'markdown'],
+    );
+    assert.match(
+      code.blocks[0].markdown,
+      /^## In code\n\n### Import\n\n```tsx\nimport \{ Switch \} from '@envsemble\/envui';\n```\n\n### Usage\n/,
+    );
+    assert.deepEqual(code.blocks[1], { kind: 'source', name: 'Basic' });
+    // The packaged page keeps it, with the example's source filled in, before the props.
+    const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
+    assert.ok(compiled.includes(`\`\`\`tsx source=Basic\n${switchExample}\`\`\``));
+    assert.ok(compiled.indexOf('## Accessibility') < compiled.indexOf('## In code'));
+    assert.ok(compiled.indexOf('## In code') < compiled.indexOf('## Props'));
+
+    const rejects = async (part, pattern) => {
+      await writeFile(
+        page,
+        switchFrontmatter + figureBody.replace('## Changelog', `${part}## Changelog`),
+      );
+      assert.throws(read, pattern);
+    };
+    await rejects(
+      inCode.replace('### Usage', '### Import'),
+      /"### Import" of "## In code" is generated/,
+    );
+    await rejects(
+      inCode.replace('### Usage', '### Recipes'),
+      /"### Recipes" is not a subsection of "## In code"/,
+    );
+    await rejects(inCode.replace('### Usage\n', ''), /"## In code" starts with a "###" subsection/);
+    await rejects(
+      inCode.replace('### Customize', '### Composition').replace('### Usage', '### Customize'),
+      /"### Composition" must come before "### Customize"/,
+    );
+    await rejects(
+      inCode.replace('### Usage', '### Composition'),
+      /"## In code" needs a "### Usage" subsection/,
+    );
+    await rejects(inCode.replace('source=Basic', 'source=Missing'), /source Missing has no file/);
+    await rejects(
+      inCode.replace('source=Basic', 'example=Basic'),
+      /"## In code" shows code, not figures/,
+    );
+    // An example's source as code belongs in "## In code" only.
+    await writeFile(
+      page,
+      switchFrontmatter +
+        figureBody.replace('### Labels', '```tsx source=Basic\n\n```\n\n### Labels'),
+    );
+    assert.throws(read, /an example's source as code belongs in "## In code"/);
+    // An anatomy legend item starts with its part's name in bold, all the Site shows of it.
+    await writeFile(
+      page,
+      switchFrontmatter +
+        figureBody.replace('2. **Thumb** (`env-switch-input`)', '2. `env-switch-input`'),
+    );
+    assert.throws(read, /must start with the part's name in bold/);
   });
 });
