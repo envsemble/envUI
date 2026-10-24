@@ -378,63 +378,31 @@ test('a page the Site shows links nowhere in the Docs', () => {
   assert.deepEqual(links, [], 'Link these to a page of the Site, or say it without the link.');
 });
 
-/**
- * Pages whose Site speaks plain language: no inline code outside the Code disclosures under its
- * figures, with what developers need in the page's "## In code" and in Accessibility's lists of
- * what envUI and the application provide. The list grows until it holds every page, and then goes.
- */
-const plainPages = ['button', 'card', 'text-field', 'sheet', 'forms'];
+/** Every page the Site shows: Field's page is in the Docs only. */
+const sitePages = () => sectioned.filter((document) => document.id !== 'field');
 
-test("a plain page's Site shows no inline code", (t) => {
-  const found = sectioned
-    .filter((document) => plainPages.includes(document.id))
-    .flatMap((document) =>
-      siteInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
-    );
+test("a page's Site shows no inline code", () => {
+  const found = sitePages().flatMap((document) =>
+    siteInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
+  );
   assert.deepEqual(
     found,
     [],
     'The Site speaks plain language: say it in words, and move the code to "## In code".',
   );
-  // The pages still to rewrite, with the inline code their Site shows; Field's page is in the Docs.
-  const left = sectioned
-    .filter((document) => !plainPages.includes(document.id) && document.id !== 'field')
-    .map((document) => [document.id, siteInlineCode(document).length])
-    .filter(([, count]) => count);
-  t.diagnostic(
-    `Inline code on the Site of the other pages: ${left.reduce((sum, [, count]) => sum + count, 0)} on ${left.length} pages (${left
-      .sort((a, b) => b[1] - a[1])
-      .map(([id, count]) => `${id} ${count}`)
-      .join(', ')}).`,
-  );
 });
 
-/** The count of what a check found on each of the other pages, most first, as one line. */
-const tally = (counts) =>
-  `${counts.reduce((sum, [, count]) => sum + count, 0)} on ${counts.length} pages (${counts
-    .sort((a, b) => b[1] - a[1])
-    .map(([id, count]) => `${id} ${count}`)
-    .join(', ')})`;
-
-test("a plain page's Site text is in titled blocks", (t) => {
-  const found = sectioned
-    .filter((document) => plainPages.includes(document.id))
-    .flatMap((document) =>
-      siteStructure(document).map(
-        ({ where, kind, text }) => `${document.path}, ${where}, ${kind}: ${text}`,
-      ),
-    );
+test("a page's Site text is in titled blocks", () => {
+  const found = sitePages().flatMap((document) =>
+    siteStructure(document).map(
+      ({ where, kind, text }) => `${document.path}, ${where}, ${kind}: ${text}`,
+    ),
+  );
   assert.deepEqual(
     found,
     [],
     'Every piece of Site text is in a titled block, a heading and one short paragraph: give loose text a "###" heading, or fold it into the block it belongs to.',
   );
-  // The pages still to rewrite, with the loose text their Site shows.
-  const left = sectioned
-    .filter((document) => !plainPages.includes(document.id) && document.id !== 'field')
-    .map((document) => [document.id, siteStructure(document).length])
-    .filter(([, count]) => count);
-  t.diagnostic(`Loose text on the Site of the other pages: ${tally(left)}.`);
 });
 
 /**
@@ -459,20 +427,13 @@ function unmatchedOptions(document) {
   return found;
 }
 
-test("a plain page's option table after a variants figure names the figure's variants", (t) => {
-  const found = sectioned
-    .filter((document) => plainPages.includes(document.id))
-    .flatMap((document) => unmatchedOptions(document).map((text) => `${document.path}, ${text}`));
+test("an option table after a variants figure names the figure's variants", () => {
+  const found = sectioned.flatMap((document) =>
+    unmatchedOptions(document).map((text) => `${document.path}, ${text}`),
+  );
   assert.deepEqual(
     found,
     [],
     "Name the options as the variants figure's legend does, in its order.",
-  );
-  const left = sectioned
-    .filter((document) => !plainPages.includes(document.id))
-    .map((document) => [document.id, unmatchedOptions(document).length])
-    .filter(([, count]) => count);
-  t.diagnostic(
-    `Option tables not named as their variants figure on the other pages: ${tally(left)}.`,
   );
 });
