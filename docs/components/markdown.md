@@ -180,7 +180,7 @@ MarkdownEditor is a Textarea with a toolbar and Write and Preview tabs. Leave it
 
 ### Composition
 
-The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the toolbar, a Toolbar in `env-editor-toolbar`, the source, `env-markdown-source`, and the description, `env-field-description`. `className` and `style` reach the root, and `ref` and the other native props the textarea. A rendered document is `env-markdown`, with `env-prose`, and a table in it scrolls in `env-markdown-table`. Lists in it take envUI's list markers: a small dot in the accent color, or the item's number in the muted text color, with a quieter dot or a letter one level in.
+The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the toolbar, a Toolbar in `env-editor-toolbar`, the source, `env-markdown-source`, and the description, `env-field-description`. `className` and `style` reach the root, and `ref` and the other native props the textarea. A rendered document is `env-markdown`, with `env-prose`, and a table in it scrolls in `env-markdown-table`. Lists in it take envUI's list markers: a plain small dot in the text color, or the item's number in the muted text color, with a small muted ring or a letter one level in.
 
 ## Changelog
 

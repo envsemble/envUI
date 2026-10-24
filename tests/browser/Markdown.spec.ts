@@ -41,7 +41,7 @@ test('a rule is a hairline across the whole text column', async ({ page }) => {
   expect(own).toBeCloseTo(column, 0);
 });
 
-test('list markers are plain: an accent dot or a muted number on the first line, quieter one level in', async ({
+test('list markers are plain: a dot in the text color or a muted number on the first line, quieter one level in', async ({
   page,
 }) => {
   await page.goto(fixture);
@@ -59,29 +59,50 @@ test('list markers are plain: an accent dot or a muted number on the first line,
         const middle = parseFloat(marker.top) + parseFloat(marker.height) / 2;
         const probe = document.createElement('span');
         item.append(probe);
-        probe.style.color = 'var(--env-color-fg-accent)';
-        const accent = getComputedStyle(probe).color;
+        probe.style.color = 'var(--env-color-fg-default)';
+        const text = getComputedStyle(probe).color;
         probe.style.color = 'var(--env-color-fg-muted)';
         const muted = getComputedStyle(probe).color;
         probe.remove();
-        const color = bullet ? marker.backgroundColor : marker.color;
+        // A dot is filled; a ring, one level in, is only its border.
+        const ring = bullet && marker.backgroundColor === 'rgba(0, 0, 0, 0)';
+        const color = !bullet
+          ? marker.color
+          : ring
+            ? marker.borderTopColor
+            : marker.backgroundColor;
         return {
           content: marker.content,
+          shape: !bullet ? 'number' : ring ? 'ring' : 'dot',
+          size: bullet ? marker.width : undefined,
           // No circle behind any marker.
           circle: getComputedStyle(item, '::before').backgroundColor !== 'rgba(0, 0, 0, 0)',
-          tone: color === accent ? 'accent' : color === muted ? 'muted' : color,
+          tone: color === text ? 'text' : color === muted ? 'muted' : color,
           onFirstLine: bullet ? Math.abs(middle - line / 2) < 0.5 : parseFloat(marker.top) === 0,
         };
       }),
     );
   expect(markers).toEqual([
-    { content: '""', circle: false, tone: 'accent', onFirstLine: true },
-    { content: '""', circle: false, tone: 'accent', onFirstLine: true },
-    { content: '""', circle: false, tone: 'muted', onFirstLine: true },
-    { content: 'counter(list-item) "."', circle: false, tone: 'muted', onFirstLine: true },
-    { content: 'counter(list-item) "."', circle: false, tone: 'muted', onFirstLine: true },
+    { content: '""', shape: 'dot', size: '5px', circle: false, tone: 'text', onFirstLine: true },
+    { content: '""', shape: 'dot', size: '5px', circle: false, tone: 'text', onFirstLine: true },
+    { content: '""', shape: 'ring', size: '5px', circle: false, tone: 'muted', onFirstLine: true },
+    {
+      content: 'counter(list-item) "."',
+      shape: 'number',
+      circle: false,
+      tone: 'muted',
+      onFirstLine: true,
+    },
+    {
+      content: 'counter(list-item) "."',
+      shape: 'number',
+      circle: false,
+      tone: 'muted',
+      onFirstLine: true,
+    },
     {
       content: 'counter(list-item, lower-alpha) "."',
+      shape: 'number',
       circle: false,
       tone: 'muted',
       onFirstLine: true,
