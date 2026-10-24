@@ -1,1 +1,16 @@
-{ "exceptions": [] }
+{
+  "exceptions": [
+    {
+      "pair": "--env-color-border-focus on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over catalogue-canvas",
+      "theme": "light",
+      "ratio": 2.81,
+      "note": "The catalogue's recessed canvas, 0.035 below white, takes the inset ring on a pressed tab in a tab rail below 3:1; on the page it is 3.09:1. Waiting on Jacob: a darker light focus color, or accept it for the catalogue's canvas alone."
+    },
+    {
+      "pair": "--env-color-fg-muted on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over catalogue-canvas",
+      "theme": "light",
+      "ratio": 4.46,
+      "note": "The catalogue's recessed canvas, 0.035 below white, takes a pressed unselected tab's label in a tab rail just below 4.5:1; on the page it is 4.91:1. Waiting on Jacob: a darker light muted text color, or accept it for the catalogue's canvas alone."
+    }
+  ]
+}

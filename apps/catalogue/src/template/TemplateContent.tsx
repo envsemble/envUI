@@ -133,8 +133,36 @@ function Section({ reference, section }: { reference: Document; section: Documen
 }
 
 /**
- * Sections in the template's order, then, with `related`, Related on a band of its own across the
- * content pane; the changelog is on the page in the Docs.
+ * The three larger sections of a component or pattern page, each a group of its sections, by id:
+ * what it is and its variants; when to use it and its parts, on the page's one band; how it adapts
+ * and its accessibility. A section the list doesn't name joins the group of the section before it.
+ */
+const sectionGroups: readonly (readonly string[])[] = [
+  ['overview', 'variants'],
+  ['usage', 'anatomy'],
+  ['width', 'accessibility'],
+];
+
+/** The group that sits on the band. */
+const bandGroup = 1;
+
+/** A page's sections in their groups, in the page's order; a group may be empty. */
+function groupSections(sections: readonly DocumentationSection[]) {
+  const groups: DocumentationSection[][] = sectionGroups.map(() => []);
+  let group = 0;
+  for (const section of sections) {
+    const named = sectionGroups.findIndex((ids) => ids.includes(section.id));
+    if (named >= 0) group = named;
+    groups[group].push(section);
+  }
+  return groups;
+}
+
+/**
+ * Sections in the template's order, then, with `related`, Related; the changelog is on the page in
+ * the Docs. On the figure template, the sections come in their three groups, far apart, the second
+ * on a band across the whole content pane; a group without sections, and a page's band where it
+ * has neither When to use nor Anatomy, are left out.
  */
 function Sections({
   reference,
@@ -147,24 +175,43 @@ function Sections({
   provides: boolean;
   related: boolean;
 }) {
-  const figures = reference.format === 'figures';
-  return (
-    <>
-      <Column
-        gap={figures ? 9 : 8}
-        className={`docs-article docs-template${figures ? ' docs-figures' : ''}`}
-      >
-        {sections
-          .filter((section) => section.id !== 'changelog')
-          .flatMap((section) => (provides ? section : (siteSection(section) ?? [])))
-          .map((section) => (
-            <Section key={section.id} reference={reference} section={section} />
-          ))}
+  const shown = sections
+    .filter((section) => section.id !== 'changelog')
+    .flatMap((section) => (provides ? section : (siteSection(section) ?? [])));
+  const render = (section: DocumentationSection) => (
+    <Section key={section.id} reference={reference} section={section} />
+  );
+  const end = related &&
+    sections.some((section) => section.id === 'overview') &&
+    reference.metadata && <Related metadata={reference.metadata} path={reference.path} />;
+  if (reference.format !== 'figures')
+    return (
+      <Column gap={8} className="docs-article docs-template">
+        {shown.map(render)}
+        {end}
       </Column>
-      {related && sections.some((section) => section.id === 'overview') && reference.metadata && (
-        <Related metadata={reference.metadata} path={reference.path} />
+    );
+  return (
+    <div className="docs-section-groups">
+      {groupSections(shown).map((group, index) => {
+        if (!group.length) return null;
+        const content = (
+          <div key={index} className="docs-article docs-template docs-figures docs-section-group">
+            {group.map(render)}
+          </div>
+        );
+        return index === bandGroup ? (
+          <div key={index} className="docs-band">
+            {content}
+          </div>
+        ) : (
+          content
+        );
+      })}
+      {end && (
+        <div className="docs-article docs-template docs-figures docs-section-group">{end}</div>
       )}
-    </>
+    </div>
   );
 }
 

@@ -7,9 +7,11 @@
   gap: var(--env-space-4);
 }
 
-/* Specimens inside an article share its gutter instead of adding their own. */
+/* Specimens inside an article share its gutter instead of adding their own, and its background,
+   the page's or the band's: only their canvas is filled. */
 .docs-article .docs-preview {
   padding: 0;
+  background: none;
 }
 
 /* Props tables wrap code between words, so a column is never narrower than its longest word. */
@@ -22,10 +24,24 @@
   overflow-wrap: break-word;
 }
 
-/* A page is parts, not one stream: its sections stand far apart, twice the largest step of the
-   spacing scale, while what is inside a section sits close (Figures.css). */
-.docs-template.docs-figures {
-  row-gap: calc(var(--env-space-9) * 2);
+/* A page is parts, not one stream. A component or pattern page groups its sections into three
+   larger ones (TemplateContent.tsx), which stand far apart, twice the largest step of the spacing
+   scale; the sections within a group sit closer, the largest step, and what is inside a section
+   closer still (Figures.css). */
+.docs-section-groups {
+  --docs-group-gap: calc(var(--env-space-9) * 2);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--docs-group-gap);
+  padding-block-end: 3rem;
+}
+
+.docs-section-groups .docs-section-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  row-gap: var(--env-space-9);
+  padding-block-end: 0;
 }
 
 /* The same on a foundation's page, whose sections are its figures, each under its h2, and on a
@@ -38,39 +54,31 @@
   row-gap: calc(var(--env-space-9) * 2);
 }
 
-.docs-example > h2 {
+.docs-example > h2,
+.docs-related > h2 {
   font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
   letter-spacing: -0.015em;
 }
 
-/* A band: where a page turns from its subject to others, at Related, the last section of a
-   component or pattern page, the section sits on a fill of its own that spans the whole content
-   pane, gutters included. One band to a page, so it marks the turn rather than decorating. The fill
-   is the theme's muted surface, which stands apart from the page, the navigation and the examples'
-   stages; text, links and inline code keep their contrast on it (tests/contrast/Pairs.ts). */
+/* The band: the second group, When to use and Anatomy, on a fill of its own that spans the whole
+   content pane, gutters included, the one band of a page. Its edges sit halfway between its
+   content and the groups around it, so they stand as far apart as two groups. The fill is the
+   theme's muted surface, which stands apart from the page and the navigation. In the light high
+   contrast theme the muted surface is a step from white, too light to see, so the band's
+   lightness is kept to 0.955 at most: as deep as it can be while code keeps 7:1 on its surface
+   there. Elsewhere the muted surface is deeper already. Text, links and inline code keep their contrast on it
+   (tests/contrast/Pairs.ts); examples on it sit on a canvas of the page's color in the light
+   themes and on the page's canvas in the dark ones (Stage.css). */
 .docs-band {
-  /* As far from the last section as two sections are apart, with the article's 3 rem of padding
-     below it (Reference.css). */
-  margin-block-start: calc(var(--env-space-9) * 2 - 3rem);
+  --docs-band-fill: oklch(from var(--env-color-bg-muted) min(l, 0.955) c h);
+  /* The light themes' canvas on the band is the page's color (Stage.css). */
+  --docs-canvas-depth: 0;
+  margin-block: calc(var(--env-space-9) - var(--docs-group-gap));
   padding-block: var(--env-space-9);
-  background: var(--env-color-bg-muted);
+  background: var(--docs-band-fill);
 }
 
-.docs-band-content {
-  container-type: inline-size;
-  inline-size: min(100%, var(--docs-content-width));
-  margin-inline: auto;
-  padding-inline: var(--docs-gutter);
-}
-
-/* The band ends the page's content; the page navigation follows it at its own distance. */
-.docs-band + .docs-page-navigation {
-  padding-block-start: var(--env-space-7);
-}
-
-/* The band is a section of the page, so its heading is a section's (Figures.css). */
-.docs-band-content > h2 {
-  margin: 0;
-  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
-  letter-spacing: -0.015em;
+/* A band that ends the page, where nothing follows it, keeps the page's padding below it. */
+.docs-band:last-child {
+  margin-block-end: 0;
 }
