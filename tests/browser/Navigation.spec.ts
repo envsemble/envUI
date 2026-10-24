@@ -376,7 +376,7 @@ test.describe('Drawer resizable', () => {
   );
 
   test(
-    'keeps each label and heading on one line, and shows a label cut short in a tooltip',
+    'keeps each label and heading on one line, and shows a label cut short in a tooltip and a heading in its title',
     { tag: '@engines' },
     async ({ page }) => {
       await page.goto(resizable);
@@ -390,6 +390,7 @@ test.describe('Drawer resizable', () => {
       // Wide enough, nothing is cut and no tooltip opens.
       const height = (await item.boundingBox())!.height;
       expect(await isCut(label)).toBe(false);
+      await expect(heading).not.toHaveAttribute('title');
       await item.hover();
       await expect(tooltip).toHaveCount(0);
       // Narrowed, the label and heading end in an ellipsis on one line, and the item keeps its height.
@@ -404,6 +405,8 @@ test.describe('Drawer resizable', () => {
         await expect(element).toHaveCSS('white-space', 'nowrap');
       }
       expect((await item.boundingBox())!.height).toBeCloseTo(height, 0);
+      // A heading cut short gives its full text as its title, as it takes no focus for a tooltip.
+      await expect(heading).toHaveAttribute('title', (await heading.textContent())!);
       // The full label shows in a tooltip, on hover and on keyboard focus, and names nothing new.
       await item.hover();
       await expect(tooltip).toHaveText('Reviews waiting for the whole team');
