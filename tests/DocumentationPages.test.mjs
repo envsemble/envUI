@@ -285,3 +285,36 @@ test('the docs publish at least 8 patterns', () => {
   const count = documents.filter((document) => document.group === 'Patterns').length;
   assert.ok(count >= 8, `${count} patterns; 1.0 needs 8.`);
 });
+
+/**
+ * A page's Markdown as the Site shows it: without its changelog and the lists of what envUI and
+ * the application provide, which its page in the Docs shows.
+ */
+function siteMarkdown(document) {
+  return document.markdown
+    .replace(/\n## Changelog\n[\s\S]*$/, '\n')
+    .replace(/\n### (?:envUI provides|You provide)\n[\s\S]*?(?=\n#{2,3} |$)/g, '\n');
+}
+
+test('a page the Site shows links nowhere in the Docs', () => {
+  // The Site reaches the Docs only through a page's API button and the Docs link at the top: a
+  // component or pattern page links to other pages of the Site, a foundation's without a heading,
+  // since a foundation's headings are in its guide in the Docs.
+  const links = sectioned
+    .filter((document) => document.id !== 'field')
+    .flatMap((document) =>
+      [...siteMarkdown(document).matchAll(/\]\(([^)\s]+)\)/g)]
+        .map(([, href]) => href)
+        .filter((href) => !/^(?:[a-z][a-z\d+.-]*:|#)/i.test(href))
+        .filter((href) => {
+          const [path, fragment] = new URL(href, `https://envui.invalid/docs/${document.path}`).href
+            .slice('https://envui.invalid/docs/'.length)
+            .split('#');
+          if (path === 'components/field.md') return true;
+          if (/^(components|patterns)\/[a-z-]+\.md$/.test(path)) return false;
+          return !(/^foundations\/[a-z-]+\.md$/.test(path) && !fragment);
+        })
+        .map((href) => `${document.path}: ${href}`),
+    );
+  assert.deepEqual(links, [], 'Link these to a page of the Site, or say it without the link.');
+});

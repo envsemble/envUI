@@ -96,7 +96,7 @@ Not shown: the span the value moves along, `env-slider-track`, inside the field'
 
 ### Colors
 
-`--env-slider-container` sets the track's tint, `--env-slider-indicator` the fill and `--env-slider-content` the label, the value, the handle and the ticks of one Slider, through `style` or CSS; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-slider-container` sets the track's tint, `--env-slider-indicator` the fill and `--env-slider-content` the label, the value, the handle and the ticks of one Slider, through `style` or CSS; with none set, it keeps its own colors.
 
 ## Adapting to width
 

@@ -1,7 +1,7 @@
 import { Column, Grid, Link, Row, Text } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { componentGroupId, componentGroups } from '../Reference';
-import { docsRoute, homeRoute, routeHref } from '../navigation/Address';
+import { homeRoute, routeHref } from '../navigation/Address';
 import { routeOfDocument } from '../navigation/DocumentationRoutes';
 
 const repository = 'https://github.com/envsemble/envUI';
@@ -25,6 +25,7 @@ const columns: { title: string; links: FooterLink[] }[] = [
     links: [
       { label: 'Introduction', href: routeHref(homeRoute) },
       { label: 'Benchmark', href: routeHref('benchmark') },
+      { label: 'Source', href: repository },
     ],
   },
   {
@@ -54,22 +55,6 @@ const columns: { title: string; links: FooterLink[] }[] = [
       ['empty-states', 'Empty states'],
       ['data-tables', 'Data tables'],
     ]),
-  },
-  {
-    title: 'Docs',
-    links: [
-      { label: 'Introduction', href: routeHref(docsRoute) },
-      ...pagesById([
-        ['setup', 'Install and set up'],
-        ['migration', 'Migrate to envUI'],
-        ['codemods', 'Codemods'],
-        ['full-changelog', 'Changelog'],
-        ['tokens', 'Design tokens'],
-        ['agent-tooling', 'For agents'],
-        ['dev-mode', 'Dev mode'],
-      ]),
-      { label: 'Source', href: repository },
-    ],
   },
 ];
 

@@ -1,7 +1,7 @@
-import { Button, Column, Link, Text } from '@envsemble/envui';
+import { Button, Column } from '@envsemble/envui';
 import { Api } from '@envsemble/envui/icons/Api';
 import { PageHeader } from '../layout/PageHeader';
-import { apiRoute, foundationGuideRoute, type SitePage } from '../navigation/DocumentationRoutes';
+import { apiRoute, type SitePage } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
 import { getReferenceIcon } from '../navigation/TopicIcons';
 import { FoundationPreview } from '../previews/FoundationPreview';
@@ -87,8 +87,8 @@ const foundationTokens: Record<string, string> = {
 };
 
 /**
- * A foundation's page on the Site: a short introduction, its visuals, the tokens it uses in a
- * sentence and a link to its guide in the Docs, where the written guidance is.
+ * A foundation's page on the Site: a short introduction, its visuals and the tokens it uses in a
+ * sentence. Its written guidance is its guide in the Docs.
  */
 export function FoundationPage({ page }: { page: SitePage }) {
   const reference = page.document as Reference;
@@ -104,14 +104,11 @@ export function FoundationPage({ page }: { page: SitePage }) {
         symbol={<Icon />}
       />
       <FoundationPreview id={reference.id} />
-      <Column gap={4} className="docs-article docs-foundation-notes">
-        {tokens && <Documentation markdown={tokens} path={reference.path} />}
-        <Text>
-          <Link href={routeHref(foundationGuideRoute(reference.id))}>
-            Read the {page.title.toLowerCase()} guide in the Docs
-          </Link>
-        </Text>
-      </Column>
+      {tokens && (
+        <Column gap={4} className="docs-article docs-foundation-notes">
+          <Documentation markdown={tokens} path={reference.path} />
+        </Column>
+      )}
     </>
   );
 }

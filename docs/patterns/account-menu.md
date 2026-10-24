@@ -81,7 +81,7 @@ A ghost Button `fullWidth` with the avatar and the name, as wide as the drawer; 
 ### Content
 
 - The person's own name and email in the header, never "My account".
-- Say "Sign out", never "Log out" ([content](../foundations/content.md#buttons-and-actions)).
+- Say "Sign out", never "Log out" ([content](../foundations/content.md)).
 
 ## Accessibility
 

@@ -40,7 +40,7 @@ components:
 
 ## Overview
 
-A color picker chooses a color by eye, by its value or from presets. A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as [setup](../setup.md#public-entry-points) lists.
+A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below. ColorPicker comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs.
 
 ```tsx example=MinimalPicker
 

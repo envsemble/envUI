@@ -102,7 +102,7 @@ The name chooses one of eight colors, the same on every page; `hue` sets another
 
 <!-- specimen: Hues -->
 
-`--env-avatar-container` and `--env-avatar-content` set the colors of one avatar, its fill and its initials or figure, through `style` or CSS, in place of its hue. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-avatar-container` and `--env-avatar-content` set the colors of one avatar, its fill and its initials or figure, through `style` or CSS, in place of its hue.
 
 ## When to use
 

@@ -142,7 +142,7 @@ Name the field after what people choose, and use the placeholder for what to typ
 
 ### Colors
 
-`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Adapting to width
 

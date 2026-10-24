@@ -105,7 +105,7 @@ When the last review is approved, the queue says so plainly, with what comes nex
 
 ### Content
 
-- The title states the fact, the description says why or what next ([empty states](../foundations/content.md#empty-states)).
+- The title states the fact, the description says why or what next ([content](../foundations/content.md)).
 - Name the query in curly quotes: "Nothing matches “roadmap” with these filters."
 - Keep a done state factual: "No reviews waiting", not "All caught up! Great job!".
 

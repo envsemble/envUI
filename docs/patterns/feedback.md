@@ -119,7 +119,7 @@ A count Badge's `aria-label` says what it counts, "12 unread".
 ### Content
 
 - A toast names what happened to what, in the past tense: "Invitation sent to jordan.kim@example.com."
-- A failure says what happened, whether work is safe and what to do ([error messages](../foundations/content.md#error-messages)).
+- A failure says what happened, whether work is safe and what to do ([content](../foundations/content.md)).
 - A status in a word or two, the same everywhere: "On track", "At risk", "Blocked", "Done". No "Success" or "Error" prefix; the tone says it.
 
 ## Accessibility

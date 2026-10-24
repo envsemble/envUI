@@ -63,6 +63,7 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 - **Show, then say little.** Cut every sentence a figure already shows, such as what a variant looks like, its colors or its corners. A sentence beside a figure says what the figure can't: the prop that makes it, or the rule it illustrates.
 - **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section.
 - **Short over complete.** Leave out what the generated props reference holds, such as each prop's values and defaults, and what the code does for itself, such as an exact delay or padding, unless a reader chooses it.
+- **No links into the Docs.** The Site reaches the Docs only through a page's API button and the Docs link at the top of every page. Link other component, pattern and foundation pages, a foundation without a heading, since its headings are in its guide in the Docs, and say a point of a Docs page, such as setup or Customize colors, without the link. `npm test` checks it; the changelog and the lists of what envUI and the application provide, which the Docs show, may link anywhere.
 
 | Information                                   | Its one place                                                                                           |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -75,7 +76,7 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 | Variants, tones and sizes                     | One table of the values and what each is for.                                                           |
 | What it does on its own, such as pending      | A `###` subsection of Overview, a sentence beside its figure.                                           |
 | Its parts and their class names               | The anatomy legend, names only.                                                                         |
-| Its color properties                          | Listed on the component's page in the Docs, with a link to [Customize colors](customizing-colors.md).   |
+| Its color properties                          | A `### Colors` subsection of Anatomy: the properties in a sentence, with no link into the Docs.         |
 | How it adapts to width                        | A sentence and an example at several widths.                                                            |
 | Keys, roles and what the application must add | Accessibility: keys in its Keyboard table, roles and what the application adds in its two lists.        |
 | Props                                         | Generated on the component's page in the Docs; never in prose.                                          |

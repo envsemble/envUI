@@ -80,7 +80,7 @@ Without `padding`, the inset grows from 1.25 rem in narrow windows to 1.5 rem fr
 
 ### Colors
 
-`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the colors of one surface, through `style` or CSS; a surface inside keeps its own. To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own. [Customize colors](../customizing-colors.md) describes both.
+`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the colors of one surface, through `style` or CSS; a surface inside keeps its own. To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own.
 
 ```tsx example=RecolorArea caption="A nested Theme gives an area the brand's green; its button and switch keep every state."
 
