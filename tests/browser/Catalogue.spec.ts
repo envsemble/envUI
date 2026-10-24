@@ -519,6 +519,42 @@ test('the model foundation pages show no technical text, in their words or their
   }
 });
 
+/**
+ * Component pages whose rewrite is still to come, which the count below reports rather than fails;
+ * every other component page shows no technical text. The list only shrinks.
+ */
+const technicalComponentPages = [
+  'bar',
+  'card',
+  'command-palette',
+  'drawer',
+  'page',
+  'page-header',
+  'rail',
+  'scaffold',
+].map((id) => `components/${id}`);
+
+/** The component pages of the Site held to the plain-language rule. */
+const plainComponentPages = allPages.filter(
+  ({ path, kind, area }) =>
+    area === 'site' && kind === 'component' && !technicalComponentPages.includes(path),
+);
+
+test('component pages show no technical text, in their words or their figures', async ({
+  page,
+}) => {
+  // Lengths, tokens, percentages and code names belong to the page's In code, in the Docs.
+  test.slow();
+  await page.goto(`${catalogueUrl}/`);
+  const found: string[] = [];
+  for (const { path, title } of plainComponentPages) {
+    await goTo(page, `/${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(title);
+    for (const entry of technicalOf(await siteWords(page))) found.push(`${path}: ${entry}`);
+  }
+  expect(found, "Say it in words, and move the value to the page's In code.").toEqual([]);
+});
+
 test('the technical text on every other page of the Site is counted, for the rewrite to come', async ({
   page,
 }, testInfo) => {
@@ -528,6 +564,7 @@ test('the technical text on every other page of the Site is counted, for the rew
   const counts: string[] = [];
   for (const { path, title, kind, area } of allPages) {
     if (area !== 'site' || plainPages.includes(path)) continue;
+    if (plainComponentPages.some((plain) => plain.path === path)) continue;
     await goTo(page, path === 'overview' ? '/' : `/${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
       kind === 'home' ? 'envUI' : title,

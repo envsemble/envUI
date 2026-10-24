@@ -46,7 +46,7 @@ export function ComponentPage({ page }: { page: SitePage }) {
         symbol={<Icon />}
         meta={
           document.metadata && (
-            <MetadataBadges metadata={document.metadata}>
+            <MetadataBadges metadata={document.metadata} plain>
               <ApiLink path={apiRoute(document.id)} />
             </MetadataBadges>
           )
@@ -71,7 +71,7 @@ export function PatternPage({ page }: { page: SitePage }) {
         description={page.summary}
         meta={
           document.metadata && (
-            <MetadataBadges metadata={document.metadata}>
+            <MetadataBadges metadata={document.metadata} plain>
               <ApiLink path={patternGuideRoute(document.id)} />
             </MetadataBadges>
           )

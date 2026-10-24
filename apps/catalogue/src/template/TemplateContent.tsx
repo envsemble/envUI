@@ -25,9 +25,12 @@ const statusTones = {
  */
 export function MetadataBadges({
   metadata,
+  plain = false,
   children,
 }: {
   metadata: DocumentationMetadata;
+  /** Leave out the statuses of exports that are code, such as a hook, as the Site does. */
+  plain?: boolean;
   children?: ReactNode;
 }) {
   return (
@@ -35,11 +38,15 @@ export function MetadataBadges({
       <Badge tone={statusTones[metadata.status]}>
         {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
       </Badge>
-      {Object.entries(metadata.statuses ?? {}).map(([name, status]) => (
-        <Badge key={name} tone={statusTones[status]}>
-          {name}: {status[0].toUpperCase() + status.slice(1)}
-        </Badge>
-      ))}
+      {/* On the Site, a component's status only: a hook or a function, such as useModifierKey, is
+          code, which the Site never names; its page in the Docs shows its status. */}
+      {Object.entries(metadata.statuses ?? {})
+        .filter(([name]) => !plain || /^[A-Z]/.test(name))
+        .map(([name, status]) => (
+          <Badge key={name} tone={statusTones[status]}>
+            {name}: {status[0].toUpperCase() + status.slice(1)}
+          </Badge>
+        ))}
       <Text render={<span />} variant="caption">
         Since {metadata.since}
       </Text>

@@ -460,15 +460,47 @@ test('technical text is found in words, and plain words are left alone', () => {
   );
 });
 
+/** The technical text in a page's Site Markdown, as plain words: keys are written as <kbd>. */
+const siteTechnicalText = (document) =>
+  siteText(document).flatMap(({ markdown, text }) =>
+    technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
+  );
+
+/**
+ * Component pages whose rewrite is still to come, which the count below reports rather than
+ * fails; the list only shrinks.
+ */
+const technicalComponentPages = [
+  'bar',
+  'card',
+  'command-palette',
+  'drawer',
+  'page',
+  'page-header',
+  'rail',
+  'scaffold',
+];
+
+test("a component page's Site shows no technical text", () => {
+  // The Site is for people looking at envUI: lengths, tokens, percentages and code names go in
+  // the page's In code, which its page in the Docs shows.
+  const found = sitePages()
+    .filter(
+      (document) =>
+        document.path.startsWith('components/') && !technicalComponentPages.includes(document.id),
+    )
+    .flatMap((document) =>
+      siteTechnicalText(document).map(({ kind, text }) => `${document.path}: ${kind} ${text}`),
+    );
+  assert.deepEqual(found, [], 'Say it in words, and move the value to "## In code".');
+});
+
 test("the technical text in each page's Site Markdown is counted, for the rewrite to come", (t) => {
   // Reporting only, like the catalogue's count of the rendered pages: the Site shows no token
   // names, hex colors, lengths, percentages or code, which belong to the page's guide in the Docs.
   // Inline code is already rejected above; this counts what plain words still carry.
   const counts = sitePages().flatMap((document) => {
-    const found = siteText(document).flatMap(({ markdown, text }) =>
-      // Keys are written as <kbd>, which the Site shows as keys.
-      technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
-    );
+    const found = siteTechnicalText(document);
     return found.length
       ? [`${document.path}: ${found.length} (${found.map(({ text }) => text).join(', ')})`]
       : [];
