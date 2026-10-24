@@ -146,6 +146,12 @@ async function open(page: Page) {
   await page.goto(`${fixtureUrl}/forced-colors.html`);
   await page.waitForSelector('body[data-styles-ready] .env-theme');
   expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
+  // The menus held open move focus into their popup once they have opened; let them, or they take
+  // it from the button below.
+  await expect(page.getByRole('menu')).toHaveCount(2);
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement?.getAttribute('role')))
+    .toBe('menu');
   // Keyboard focus on the button whose ring the states compare.
   await page.getByTestId('button-focus').focus();
   await page.keyboard.press('Shift+Tab');
