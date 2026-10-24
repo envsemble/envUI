@@ -1212,6 +1212,61 @@ test('the navigation shows the current page, and focus moves to the page only on
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
 });
 
+test("the pager and the drawer open a page at its top, and a section's address at the section", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const body = page.locator('#docs-main');
+  const bottom = () => body.evaluate((element) => element.scrollTo(0, element.scrollHeight));
+  // Select's page shows its list open, partway down; the list scrolling its chosen option into
+  // view once moved the whole page there.
+  const listShown = () =>
+    expect(page.locator('.docs-open-example .env-select-popup').first()).toBeVisible();
+  await page.goto(`${catalogueUrl}/components/combobox`);
+  await expect(page.locator('.docs-page-navigation')).toBeVisible();
+  await bottom();
+  await page
+    .locator('.docs-page-navigation')
+    .getByRole('link', { name: /Select/ })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
+  await listShown();
+  await expect(page.locator('.docs-loading')).toHaveCount(0);
+  expect(await body.evaluate((element) => element.scrollTop)).toBe(0);
+  // A page chosen in the drawer, from the foot of another, opens at its top too.
+  await page
+    .getByRole('navigation', { name: 'Components' })
+    .getByRole('link', { name: 'Combobox', exact: true })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Combobox');
+  await bottom();
+  await page
+    .getByRole('navigation', { name: 'Components' })
+    .getByRole('link', { name: 'Select', exact: true })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
+  await listShown();
+  await expect(page.locator('.docs-loading')).toHaveCount(0);
+  expect(await body.evaluate((element) => element.scrollTop)).toBe(0);
+  // An address with a section, past the open list, still lands on the section.
+  await goTo(page, '/components/combobox');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Combobox');
+  await goTo(page, '/components/select#accessibility');
+  await listShown();
+  await expect(page.locator('.docs-loading')).toHaveCount(0);
+  const heading = page.locator('#accessibility');
+  await expect
+    .poll(() =>
+      heading.evaluate(
+        (element) =>
+          element.getBoundingClientRect().top -
+          document.getElementById('docs-main')!.getBoundingClientRect().top,
+      ),
+    )
+    .toBeLessThan(80);
+  await expect(heading).toBeInViewport();
+});
+
 test('a page that fails to render says so, and the navigation leads to the others', async ({
   page,
 }) => {

@@ -200,6 +200,51 @@ function fit(room: HTMLElement, layer: HTMLElement) {
 }
 
 /**
+ * How far a box scrolls to show an item it holds, by the item's `block` alignment as
+ * scrollIntoView takes it; `nearest` scrolls only as far as the item needs.
+ */
+function scrollDelta(item: DOMRect, box: HTMLElement, block: ScrollLogicalPosition) {
+  const top = item.top - box.getBoundingClientRect().top - box.clientTop;
+  const bottom = top + item.height;
+  if (block === 'start') return top;
+  if (block === 'end') return bottom - box.clientHeight;
+  if (block === 'center') return (top + bottom - box.clientHeight) / 2;
+  if (top < 0) return top;
+  return Math.max(0, bottom - box.clientHeight);
+}
+
+/**
+ * Keeps an open example's scrolling inside it. A popup shown open scrolls its chosen item into view
+ * as it opens, as a select's list does, and the browser's scrollIntoView scrolls every box around
+ * the item, the page's body included: a page with such a picture opened partway down, wherever the
+ * picture was, and a gallery tile scrolled the page as it rendered. Within an open example,
+ * scrollIntoView scrolls only the boxes inside the example, such as the popup's list.
+ */
+function keepScrollingInOpenExamples() {
+  if (typeof Element === 'undefined') return;
+  const native = Element.prototype.scrollIntoView;
+  Element.prototype.scrollIntoView = function (
+    this: Element,
+    options?: boolean | ScrollIntoViewOptions,
+  ) {
+    const example = this.closest('.docs-open-example');
+    if (!example) return native.call(this, options);
+    const block =
+      typeof options === 'object'
+        ? (options.block ?? 'start')
+        : options === false
+          ? 'end'
+          : 'start';
+    for (let box = this.parentElement; box && box !== example; box = box.parentElement) {
+      if (box.scrollHeight <= box.clientHeight) continue;
+      if (!/auto|scroll/.test(getComputedStyle(box).overflowY)) continue;
+      box.scrollTop += scrollDelta(this.getBoundingClientRect(), box, block);
+    }
+  };
+}
+keepScrollingInOpenExamples();
+
+/**
  * An example shown with its overlays open, as a picture: its dialogs, menus, tooltips and toasts
  * render into a layer of the figure through envUI's PortalContainer, contained, so they neither
  * lock the page's scroll, take focus nor close when the reader presses elsewhere, and sit inside
