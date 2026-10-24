@@ -57,6 +57,13 @@ export const cataloguePages = [
     area: 'site',
     aliases: ['all patterns', 'pattern list', 'pattern gallery'],
   },
+  // Dev mode's page on the Site, beside its guide in the Docs, the document dev-mode.
+  {
+    page: 'dev-mode-overview',
+    title: 'Dev mode',
+    area: 'site',
+    aliases: ['dev mode', 'layout inspector', '3D view', 'check a layout'],
+  },
   {
     page: 'benchmark',
     title: 'Benchmark',

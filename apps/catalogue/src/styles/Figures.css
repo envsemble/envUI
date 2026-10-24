@@ -435,3 +435,25 @@
   block-size: auto;
   border-radius: var(--env-radius-surface);
 }
+
+/* The dev mode page's pictures of dev mode at work, on the recessed canvas, each at its own size
+   (`--docs-shot-width`, half the file's) or the stage's width where that is narrower. */
+.docs-foundation-stage > .docs-dev-mode-shot {
+  display: block;
+  justify-self: center;
+  inline-size: min(100%, var(--docs-shot-width, 100%));
+  block-size: auto;
+  border-radius: var(--env-radius-md);
+}
+
+/* A page of an application with the dev mode button in its bottom corner, as dev mode places it. */
+.docs-dev-mode-corner {
+  position: relative;
+  min-block-size: 10rem;
+}
+.docs-dev-mode-button {
+  position: absolute;
+  inset-block-end: var(--env-space-4);
+  inset-inline-end: var(--env-space-4);
+  border-radius: var(--env-radius-full);
+}

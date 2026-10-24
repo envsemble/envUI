@@ -16,6 +16,7 @@ import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { PageFooter } from './layout/PageFooter';
 import { Overview } from './pages/Overview';
+import { DevModePage } from './pages/DevMode';
 import {
   BenchmarkPage,
   ComponentPage,
@@ -52,6 +53,7 @@ const pageContent: Record<SitePage['kind'], (props: { page: SitePage }) => React
   component: ComponentPage,
   pattern: PatternPage,
   foundation: FoundationPage,
+  'dev-mode': DevModePage,
   benchmark: BenchmarkPage,
   'docs-home': DocsHome,
   guide: GuidePage,

@@ -464,8 +464,9 @@ const technicalOf = (words: string[]) =>
   words.flatMap((text) => technicalText(text).map((found) => `${found.kind}: ${found.text}`));
 
 /**
- * The pages that show no technical text at all: every foundation. Every other page of the Site is
- * reported until it is rewritten to the same rule, then joins this list.
+ * The pages that show no technical text at all: every foundation, dev mode's page and every
+ * pattern. Every other page of the Site is reported until it is rewritten to the same rule, then
+ * joins this list.
  */
 const plainPages = [
   'foundations/colors',
@@ -474,6 +475,8 @@ const plainPages = [
   'foundations/responsive',
   'foundations/icons',
   'foundations/accessibility',
+  // Dev mode's page, written as a foundation's is, with its guide in the Docs.
+  'dev-mode',
   // The patterns, each its decision and its compositions.
   ...[
     'forms',
@@ -503,7 +506,7 @@ test('the foundation and pattern pages show no technical text, in their words or
   await page.goto(`${catalogueUrl}/`);
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
-    if (path.startsWith('foundations/')) {
+    if (path.startsWith('foundations/') || path === 'dev-mode') {
       await expect(page.locator('.docs-topic').last()).toBeVisible();
       // The marks of a figure are measured once it has laid out.
       if (await page.locator('.docs-marked').count())
