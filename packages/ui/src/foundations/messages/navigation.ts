@@ -14,6 +14,10 @@ export const navigation = {
    * count, such as More, 5 new, current page inside.
    */
   moreCurrent: ({ name }: { name: string }) => `${name}, current page inside`,
+  /** Names the handle that resizes a resizable Drawer. */
+  resize: 'Resize navigation',
+  /** The resize handle's value: the Drawer's width in rem, such as 17.5 rem, in the locale's digits. */
+  width: ({ width }: { width: string }) => `${width} rem`,
 };
 
 export type NavigationMessages = typeof navigation;

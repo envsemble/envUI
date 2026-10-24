@@ -481,7 +481,8 @@
       "env-drawer-item": "A destination: a link or button as wide as the drawer, with its icon, label and count.",
       "env-drawer-label": "A destination's label.",
       "env-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
-      "env-drawer-footer": "Content below the destinations, at the bottom of the drawer."
+      "env-drawer-footer": "Content below the destinations, at the bottom of the drawer.",
+      "env-drawer-resize-handle": "The handle on a resizable drawer's end edge, a separator that resizes it."
     },
     "Page": {
       "env-page": "The page: a readable width and the gutter; it never paints.",
@@ -644,7 +645,8 @@
     "Sheet": {
       "env-sheet-popup": "The sheet.",
       "env-sheet-backdrop": "The backdrop behind a modal sheet.",
-      "env-sheet-viewport": "The viewport the sheet slides in from, at its edge."
+      "env-sheet-viewport": "The viewport the sheet slides in from, at its edge.",
+      "env-sheet-resize-handle": "The handle on a resizable side sheet's inner edge, a separator that resizes it."
     },
     "Skeleton": {
       "env-skeleton-content": "A skeleton's content: no box of its own, inert, inside the busy root.",

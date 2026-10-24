@@ -297,3 +297,97 @@ test('the forms and the top bar fill a plain rectangle with one background, or e
     ).toBe(surface);
   }
 });
+
+test.describe('Drawer resizable', () => {
+  const resizable = `${fixtureUrl}/?fixture=resizable-drawers`;
+  const widthOf = async (drawer: Locator) => (await drawer.boundingBox())!.width;
+
+  test('resizes with the arrow keys, Home and End, and a double click resets it', async ({
+    page,
+  }) => {
+    await page.goto(resizable);
+    const drawer = page.getByRole('navigation', { name: 'Own width' });
+    const handle = drawer.getByRole('separator', { name: 'Resize navigation' });
+    await expect(handle).toHaveAttribute('aria-orientation', 'vertical');
+    await expect(handle).toHaveAttribute('aria-valuemin', '15');
+    await expect(handle).toHaveAttribute('aria-valuemax', '30');
+    await expect(handle).toHaveAttribute('aria-valuetext', '17.5 rem');
+    // It starts at the default width, set in the markup, and its handle is on its end edge.
+    expect(await widthOf(drawer)).toBeCloseTo(17.5 * 16, 0);
+    const drawerBox = (await drawer.boundingBox())!;
+    const handleBox = (await handle.boundingBox())!;
+    expect(handleBox.x + handleBox.width).toBeCloseTo(drawerBox.x + drawerBox.width, 0);
+    expect(handleBox.height).toBeCloseTo(drawerBox.height, 0);
+
+    await handle.focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(handle).toHaveAttribute('aria-valuetext', '18.5 rem');
+    expect(await widthOf(drawer)).toBeCloseTo(18.5 * 16, 0);
+    await page.keyboard.press('Shift+ArrowLeft');
+    await expect(handle).toHaveAttribute('aria-valuetext', '15 rem');
+    await page.keyboard.press('End');
+    await expect(handle).toHaveAttribute('aria-valuetext', '30 rem');
+    expect(await widthOf(drawer)).toBeCloseTo(30 * 16, 0);
+    await page.keyboard.press('Home');
+    await expect(handle).toHaveAttribute('aria-valuetext', '15 rem');
+    await handle.dblclick();
+    await expect(handle).toHaveAttribute('aria-valuetext', '17.5 rem');
+
+    // A drawer that isn't resizable has no handle and keeps its own width.
+    const fixed = page.getByRole('navigation', { name: 'Fixed' });
+    await expect(fixed.getByRole('separator')).toHaveCount(0);
+    await expect(fixed).not.toHaveAttribute('data-resizable');
+    const fixedWidth = await widthOf(fixed);
+    expect(fixedWidth).toBeGreaterThanOrEqual(15 * 16 - 0.5);
+    expect(fixedWidth).toBeLessThanOrEqual(20 * 16 + 0.5);
+  });
+
+  test(
+    'follows the pointer, reports the width to the application and keeps to half its container',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(resizable);
+      const drawer = page.getByRole('navigation', { name: 'Controlled' });
+      const handle = drawer.getByRole('separator', { name: 'Resize mail' });
+      await expect(handle).toHaveAttribute('aria-valuetext', '20 rem');
+      await handle.scrollIntoViewIfNeeded();
+      const box = (await handle.boundingBox())!;
+      const y = box.y + box.height / 2;
+      await page.mouse.move(box.x + box.width / 2, y);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width / 2 - 32, y, { steps: 4 });
+      await expect(handle).toHaveAttribute('data-dragging', '');
+      // While dragging, the application hears each width, uncommitted.
+      await expect(page.getByTestId('width')).toHaveText('18');
+      await expect(page.getByTestId('committed')).toHaveText('');
+      expect(await widthOf(drawer)).toBeCloseTo(18 * 16, 0);
+      // Its container is 48 rem wide, so it stops at 24 rem, under its largest width.
+      await page.mouse.move(box.x + box.width / 2 + 400, y, { steps: 4 });
+      await expect(page.getByTestId('width')).toHaveText('24');
+      await page.mouse.up();
+      await expect(page.getByTestId('committed')).toHaveText('24');
+      await expect(handle).not.toHaveAttribute('data-dragging');
+      expect(await widthOf(drawer)).toBeCloseTo(24 * 16, 0);
+    },
+  );
+
+  test('in right-to-left text the handle is on the left edge and grows to the left', async ({
+    page,
+  }) => {
+    await page.goto(resizable);
+    const drawer = page.getByRole('navigation', { name: 'Right to left' });
+    const handle = drawer.getByRole('separator');
+    const drawerBox = (await drawer.boundingBox())!;
+    expect((await handle.boundingBox())!.x).toBeCloseTo(drawerBox.x, 0);
+    await handle.focus();
+    await page.keyboard.press('ArrowLeft');
+    await expect(handle).toHaveAttribute('aria-valuetext', '18.5 rem');
+    const box = (await handle.boundingBox())!;
+    const y = box.y + box.height / 2;
+    await page.mouse.move(box.x + box.width / 2, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 - 16, y, { steps: 2 });
+    await page.mouse.up();
+    await expect(handle).toHaveAttribute('aria-valuetext', '19.5 rem');
+  });
+});

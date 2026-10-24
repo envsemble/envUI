@@ -7326,6 +7326,10 @@
               "description": "The list of destinations and groups, which scrolls where the drawer is shorter."
             },
             {
+              "class": "env-drawer-resize-handle",
+              "description": "The handle on a resizable drawer's end edge, a separator that resizes it."
+            },
+            {
               "class": "env-drawer-section",
               "description": "A group: its heading and the list of its destinations."
             }
@@ -7353,6 +7357,15 @@
               "parts": [
                 "env-drawer"
               ]
+            },
+            {
+              "attribute": "data-resizable",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-drawer"
+              ]
             }
           ],
           "colors": [
@@ -7375,6 +7388,35 @@
             {
               "property": "--env-drawer-item-selected-content",
               "description": "The label and icon of the current destination."
+            }
+          ]
+        },
+        "ResizeHandle": {
+          "shared": true,
+          "root": "env-resize-handle",
+          "parts": [
+            {
+              "class": "env-resize-handle",
+              "description": "A handle that resizes a region."
+            }
+          ],
+          "states": [
+            {
+              "attribute": "data-axis",
+              "values": [
+                "block",
+                "inline"
+              ],
+              "parts": [
+                "env-resize-handle"
+              ]
+            },
+            {
+              "attribute": "data-dragging",
+              "values": [],
+              "parts": [
+                "env-resize-handle"
+              ]
             }
           ]
         },
@@ -12876,6 +12918,10 @@
               "description": "The backdrop behind a modal sheet."
             },
             {
+              "class": "env-sheet-resize-handle",
+              "description": "The handle on a resizable side sheet's inner edge, a separator that resizes it."
+            },
+            {
               "class": "env-sheet-viewport",
               "description": "The viewport the sheet slides in from, at its edge."
             }
@@ -12890,6 +12936,15 @@
             },
             {
               "attribute": "data-env-skeleton",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-sheet-popup"
+              ]
+            },
+            {
+              "attribute": "data-resizable",
               "values": [
                 ""
               ],
@@ -12928,6 +12983,35 @@
               "values": [],
               "parts": [
                 "env-sheet-popup"
+              ]
+            }
+          ]
+        },
+        "ResizeHandle": {
+          "shared": true,
+          "root": "env-resize-handle",
+          "parts": [
+            {
+              "class": "env-resize-handle",
+              "description": "A handle that resizes a region."
+            }
+          ],
+          "states": [
+            {
+              "attribute": "data-axis",
+              "values": [
+                "block",
+                "inline"
+              ],
+              "parts": [
+                "env-resize-handle"
+              ]
+            },
+            {
+              "attribute": "data-dragging",
+              "values": [],
+              "parts": [
+                "env-resize-handle"
               ]
             }
           ]
@@ -19778,7 +19862,7 @@
     "Drawer": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop. Its list scrolls where the drawer is shorter than its destinations.",
+      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
       "props": [
         {
           "name": "destinations",
@@ -19818,6 +19902,53 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "resizable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns to `defaultWidth`. Leave it out of a drawer in a sheet of a narrow window."
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "required": false,
+          "description": "The drawer's width in rem while `resizable`, for a drawer the application controls with onWidthChange, such as a width it keeps for the next visit."
+        },
+        {
+          "name": "defaultWidth",
+          "type": "number",
+          "required": false,
+          "default": "17.5",
+          "description": "The width in rem a `resizable` drawer starts at until people resize it, and that a double click on the handle returns it to."
+        },
+        {
+          "name": "onWidthChange",
+          "type": "(width: number, details: { committed: boolean }) => void",
+          "required": false,
+          "description": "Receives each new width of a `resizable` drawer, in rem: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it. Store the committed width to keep it, and pass it back as `width`."
+        },
+        {
+          "name": "minWidth",
+          "type": "number",
+          "required": false,
+          "default": "15",
+          "description": "The smallest width of a `resizable` drawer, in rem."
+        },
+        {
+          "name": "maxWidth",
+          "type": "number",
+          "required": false,
+          "default": "30",
+          "description": "The largest width of a `resizable` drawer, in rem. It never takes more than half its container, such as the Scaffold, or of the window."
+        },
+        {
+          "name": "resizeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Resize navigation', or EnvUIProvider's messages.navigation.resize",
+          "description": "The resize handle's name."
         },
         {
           "name": "skeleton",
@@ -23747,7 +23878,7 @@
     "Sheet": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A panel that slides in over the page from an edge of the window, for filters, details, an inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a modal by default, which traps focus and returns it on close, or beside the page with modal false. A side sheet takes the whole width of a compact window, and a swipe toward its edge closes it. className, style, ref and data attributes go to the sheet's surface.",
+      "description": "A panel that slides in over the page from an edge of the window, for filters, details, an inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a modal by default, which traps focus and returns it on close, or beside the page with modal false. A side sheet takes the whole width of a compact window, and a swipe toward its edge closes it; with `resizable`, people resize it by its inner edge. className, style, ref and data attributes go to the sheet's surface.",
       "props": [
         {
           "name": "open",
@@ -23827,10 +23958,51 @@
         },
         {
           "name": "width",
-          "type": "'md' | 'lg' | (string & {})",
+          "type": "'md' | 'lg' | number | (string & {})",
           "required": false,
           "default": "'md'",
-          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A bottom sheet ignores it."
+          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange. A bottom sheet ignores it."
+        },
+        {
+          "name": "resizable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Lets people resize a side sheet by its inner edge, the one toward the page: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth` and never wider than the window, which a double click returns to `defaultWidth`. The sheet is then as wide as it at every window width. A bottom sheet ignores it."
+        },
+        {
+          "name": "defaultWidth",
+          "type": "number",
+          "required": false,
+          "default": "24, or 44 where width is lg",
+          "description": "The width in rem a `resizable` side sheet starts at until people resize it, and that a double click on the handle returns it to."
+        },
+        {
+          "name": "onWidthChange",
+          "type": "(width: number, details: { committed: boolean }) => void",
+          "required": false,
+          "description": "Receives each new width of a `resizable` side sheet, in rem: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it. Store the committed width to keep it, and pass it back as `width`."
+        },
+        {
+          "name": "minWidth",
+          "type": "number",
+          "required": false,
+          "default": "16",
+          "description": "The smallest width of a `resizable` side sheet, in rem."
+        },
+        {
+          "name": "maxWidth",
+          "type": "number",
+          "required": false,
+          "default": "60",
+          "description": "The largest width of a `resizable` side sheet, in rem; it never takes more than the window."
+        },
+        {
+          "name": "resizeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Resize', or EnvUIProvider's messages.dialog.resize",
+          "description": "The resize handle's name."
         },
         {
           "name": "modal",

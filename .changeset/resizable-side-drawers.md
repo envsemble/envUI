@@ -1,0 +1,5 @@
+---
+'@envsemble/envui': minor
+---
+
+Drawer and side Sheets can be resized by their inner edge with `resizable`: a handle there, the same as Panes.Divider's, that the pointer drags and the arrow keys move, 1 rem a step and 5 with Shift, with Home and End for the least and the largest width and a double click back to the default. It shows a line on hover, keyboard focus and while dragging, and a wider touch target under a coarse pointer. The width is in rem, between `minWidth` and `maxWidth`: `defaultWidth` sets where it starts, and `width` with `onWidthChange` lets the application control it and keep it, such as for the next visit. A Drawer takes at most half its container, such as the Scaffold; a side Sheet keeps to the window, and a bottom sheet ignores `resizable`. Sheet's `width` also takes a number of rem. The handles are `env-drawer-resize-handle` and `env-sheet-resize-handle`, and `messages.navigation.resize`, `messages.navigation.width`, `messages.dialog.resize` and `messages.dialog.width` name them and their value. Without `resizable`, nothing changes.

@@ -2184,6 +2184,10 @@
           "description": "The list of destinations and groups, which scrolls where the drawer is shorter."
         },
         {
+          "class": "env-drawer-resize-handle",
+          "description": "The handle on a resizable drawer's end edge, a separator that resizes it."
+        },
+        {
           "class": "env-drawer-section",
           "description": "A group: its heading and the list of its destinations."
         }
@@ -2211,10 +2215,20 @@
           "parts": [
             "env-drawer"
           ]
+        },
+        {
+          "attribute": "data-resizable",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-drawer"
+          ]
         }
       ],
       "uses": [
         "Icon",
+        "ResizeHandle",
         "Skeleton"
       ],
       "colors": [
@@ -4382,6 +4396,10 @@
           "description": "The backdrop behind a modal sheet."
         },
         {
+          "class": "env-sheet-resize-handle",
+          "description": "The handle on a resizable side sheet's inner edge, a separator that resizes it."
+        },
+        {
           "class": "env-sheet-viewport",
           "description": "The viewport the sheet slides in from, at its edge."
         }
@@ -4396,6 +4414,15 @@
         },
         {
           "attribute": "data-env-skeleton",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-sheet-popup"
+          ]
+        },
+        {
+          "attribute": "data-resizable",
           "values": [
             ""
           ],
@@ -4441,6 +4468,7 @@
         "Dialog",
         "Icon",
         "IconButton",
+        "ResizeHandle",
         "Skeleton",
         "Surface",
         "Theme"
@@ -6003,7 +6031,9 @@
         }
       ],
       "usedBy": [
-        "Panes"
+        "Drawer",
+        "Panes",
+        "Sheet"
       ]
     },
     "Skeleton": {

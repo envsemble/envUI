@@ -96,6 +96,52 @@
 .env-sheet-popup[data-side='start']:dir(rtl) {
   padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
 }
+/* resizable: a side sheet as wide as --env-sheet-width, which the component sets, at every window
+   width, but never wider than the window, with an edge on its inner side. Its content runs the
+   sheet's full height and holds the resize handle (ResizeHandle.css), which reaches out over the
+   padding to the inner edge and down the whole sheet, so it scrolls along with the content and
+   stays as tall as the sheet. The handle's line is on that edge. Under a coarse pointer it is
+   wider, as wide as the padding, a touch target that leaves the content alone. */
+.env-sheet-popup[data-resizable]:is([data-side='start'], [data-side='end']) {
+  --env-sheet-padding-inline: max(
+    var(--env-space-5),
+    env(safe-area-inset-left),
+    env(safe-area-inset-right)
+  );
+  --env-sheet-padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
+  --env-sheet-padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
+  inline-size: min(var(--env-sheet-width), 100%);
+  padding: var(--env-sheet-padding-block-start) var(--env-sheet-padding-inline)
+    var(--env-sheet-padding-block-end);
+}
+.env-sheet-popup[data-resizable][data-side='end'] {
+  border-inline-start-width: var(--env-control-border-width);
+}
+.env-sheet-popup[data-resizable][data-side='start'] {
+  border-inline-end-width: var(--env-control-border-width);
+}
+.env-sheet-popup[data-resizable] > .env-dialog-content {
+  position: relative;
+  min-block-size: 100%;
+}
+.env-sheet-popup[data-resizable] .env-sheet-resize-handle {
+  position: absolute;
+  inset-block: calc(-1 * var(--env-sheet-padding-block-start))
+    calc(-1 * var(--env-sheet-padding-block-end));
+}
+.env-sheet-popup[data-resizable][data-side='end'] .env-sheet-resize-handle {
+  --env-resize-handle-line-start: 0rem;
+  inset-inline-start: calc(-1 * var(--env-sheet-padding-inline));
+}
+.env-sheet-popup[data-resizable][data-side='start'] .env-sheet-resize-handle {
+  --env-resize-handle-line-start: calc(100% - 2 * var(--env-control-border-width));
+  inset-inline-end: calc(-1 * var(--env-sheet-padding-inline));
+}
+@media (pointer: coarse) {
+  .env-sheet-popup[data-resizable] .env-sheet-resize-handle {
+    --env-resize-handle-size: var(--env-space-5);
+  }
+}
 
 /* Motion: the sheet fades and slides in from its edge. Movement only without a reduced-motion
    preference, and none while a finger moves it. */
