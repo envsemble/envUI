@@ -39,7 +39,8 @@ function Frame({ width, dir, children }: { width: string; dir?: 'rtl'; children:
 /**
  * Resizable drawers, mounted with ?fixture=resizable-drawers: one that keeps its own width, one
  * the application controls in a narrower container, which halves its room, one in right-to-left
- * text, one that isn't resizable, and one whose long label and heading it cuts short as it narrows.
+ * text, one that isn't resizable, one whose long label and heading it cuts short as it narrows,
+ * and one given a width that is no number.
  */
 export function ResizableDrawersFixture() {
   const [width, setWidth] = useState(20);
@@ -77,6 +78,15 @@ export function ResizableDrawersFixture() {
           resizable
           defaultWidth={22}
           minWidth={10}
+        />
+      </Frame>
+      {/* A width that is no number, as from a stored value that didn't parse: ignored. */}
+      <Frame width="64rem">
+        <Drawer
+          aria-label="Not a number"
+          destinations={destinations}
+          resizable
+          width={Number.NaN}
         />
       </Frame>
     </div>

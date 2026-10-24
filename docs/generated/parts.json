@@ -2502,6 +2502,7 @@
         {
           "attribute": "data-variant",
           "values": [
+            "secondary",
             "text"
           ],
           "parts": [

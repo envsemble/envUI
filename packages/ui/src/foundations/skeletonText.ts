@@ -100,9 +100,18 @@ function untrack(root: HTMLElement, state: Tracked) {
   state.mutations.disconnect();
   tracked.delete(root);
   root.removeAttribute(skeletonTextAttribute);
-  root.style.removeProperty('--env-skeleton-text-bars');
+  for (const property of layerProperties) root.style.removeProperty(property);
   if (state.position !== undefined) root.style.position = state.position;
 }
+
+/** The properties the script sets on a root: the bars, and the layer's place and size. */
+const layerProperties = [
+  '--env-skeleton-text-bars',
+  '--env-skeleton-text-left',
+  '--env-skeleton-text-top',
+  '--env-skeleton-text-width',
+  '--env-skeleton-text-height',
+];
 
 interface Bar {
   x: number;
@@ -174,12 +183,41 @@ function draw(root: HTMLElement) {
       last.width = Math.max(last.width, bar.x + bar.width - last.x);
     else joined.push({ ...bar });
   }
+  // The layer is placed from the start of the root's scrolled content. A root that scrolls, such as
+  // a table's region or a tall dialog, holds content beyond its box, and along the axis it scrolls
+  // the layer reaches every bar, so none past the first screen is cut off. It spans the bars and the
+  // box, never more, so it doesn't add to what the root scrolls; leftwards of the start, as under
+  // dir=rtl, it starts at the first bar. A root that doesn't scroll keeps the layer to its box.
+  const rootStyle = getComputedStyle(root);
+  const scrollsX = rootStyle.overflowX !== 'visible';
+  const scrollsY = rootStyle.overflowY !== 'visible';
+  let left = 0;
+  let top = 0;
+  let right = root.clientWidth;
+  let bottom = root.clientHeight;
+  for (const bar of joined) {
+    if (scrollsX) {
+      left = Math.min(left, bar.x);
+      right = Math.max(right, bar.x + bar.width);
+    }
+    if (scrollsY) {
+      top = Math.min(top, bar.y);
+      bottom = Math.max(bottom, bar.y + bar.height);
+    }
+  }
   const round = (value: number) => Math.round(value * 100) / 100;
   const layers = joined.map(
     (bar) =>
-      `var(--env-skeleton-rect) ${round(bar.x)}px ${round(bar.y)}px / ${round(bar.width)}px ${round(bar.height)}px no-repeat`,
+      `var(--env-skeleton-rect) ${round(bar.x - left)}px ${round(bar.y - top)}px / ${round(bar.width)}px ${round(bar.height)}px no-repeat`,
   );
-  const value = layers.length > 0 ? layers.join(', ') : 'linear-gradient(transparent 0 0)';
-  if (root.style.getPropertyValue('--env-skeleton-text-bars') !== value)
-    root.style.setProperty('--env-skeleton-text-bars', value);
+  const values: Record<string, string> = {
+    '--env-skeleton-text-bars':
+      layers.length > 0 ? layers.join(', ') : 'linear-gradient(transparent 0 0)',
+    '--env-skeleton-text-left': `${round(left)}px`,
+    '--env-skeleton-text-top': `${round(top)}px`,
+    '--env-skeleton-text-width': `${round(right - left)}px`,
+    '--env-skeleton-text-height': `${round(bottom - top)}px`,
+  };
+  for (const [property, value] of Object.entries(values))
+    if (root.style.getPropertyValue(property) !== value) root.style.setProperty(property, value);
 }

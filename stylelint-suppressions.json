@@ -64,7 +64,7 @@
   },
   "packages/ui/src/styles/DatePicker.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 5
+      "count": 4
     }
   },
   "packages/ui/src/styles/Dialog.css": {

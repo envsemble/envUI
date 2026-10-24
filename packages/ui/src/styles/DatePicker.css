@@ -1,10 +1,22 @@
 /* Date & time field: the shared text field, whose control is a button that shows the value and opens
    a calendar on the shared popup (PopupSurface). Beside other controls it stays wide enough for a date, like an
    input's default width, and in a narrower container it fills it. The field's height is TextField's:
-   its size's control height, and the touch height under a coarse pointer. */
+   its size's control height, and the touch height under a coarse pointer.
+   The width comes from two columns that every part spans: one that grows to 12rem and one that
+   takes the rest. A container sized to its content, such as an inline-flex toolbar, measures the
+   field at 12rem at least, as it lays it out, so the field doesn't grow after the container has
+   placed its neighbours; a container narrower than 12rem shrinks the first column to fit. The
+   minimum width keeps the field from shrinking under 12rem in a row with room for it; alone, it
+   counts as nothing while a container measures its content. */
 .env-date-picker {
   --env-field-height: var(--env-control-height);
-  min-inline-size: min(12rem, 100%);
+  --env-date-picker-min-width: 12rem;
+  min-inline-size: min(var(--env-date-picker-min-width), 100%);
+  grid-template-columns: minmax(0, var(--env-date-picker-min-width)) minmax(0, 1fr);
+  column-gap: 0;
+}
+.env-date-picker > * {
+  grid-column: 1 / -1;
 }
 @media (pointer: coarse) {
   .env-date-picker {

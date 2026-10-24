@@ -106,6 +106,15 @@ export function SheetsFixture() {
             <Text>A long list.</Text>
           </div>
         </Sheet>
+        {/* A CSS length, which a resizable sheet ignores and warns of while developing. */}
+        <Sheet
+          title="Resizable css width"
+          resizable
+          width="min(30rem, 90%)"
+          trigger={<Button variant="secondary">Open resizable css width</Button>}
+        >
+          <Text>Starts at the default width.</Text>
+        </Sheet>
         <div dir="rtl">
           <Sheet
             title="Resizable rtl"

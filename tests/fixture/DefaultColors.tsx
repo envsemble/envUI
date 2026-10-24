@@ -13,11 +13,13 @@ import {
   IconButton,
   List,
   Menu,
+  Meter,
   Radio,
   RadioGroup,
   Rail,
   Row,
   SegmentedControl,
+  Progress,
   Select,
   Slider,
   Surface,
@@ -164,6 +166,8 @@ export function DefaultColors() {
         <Switch label="On" defaultChecked />
         <Switch label="Off" />
         <Slider label="Volume" defaultValue={40} />
+        <Meter label="Storage" value={60} />
+        <Progress label="Upload" value={30} />
         <Row gap={2} wrap>
           <Badge>Neutral</Badge>
           <Badge tone="accent" variant="solid">
