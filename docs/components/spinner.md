@@ -1,6 +1,6 @@
 ---
 title: Spinner
-summary: Work of unknown length in a small area, such as a panel that is updating, as one shape that turns and changes form.
+summary: Work of unknown length in a small area, such as a panel that is updating, as a turning arc.
 status: stable
 since: 0.4.0
 category: Feedback
@@ -36,7 +36,7 @@ components:
 
 ## Overview
 
-It is Material's expressive loading indicator: the shape morphs through Material's rounded forms, a soft burst, cookies, a pentagon, a pill and an oval, with a springy quarter turn at each change. With reduced motion, it breathes in place without turning.
+With reduced motion, the arc keeps turning, more slowly.
 
 ```tsx example=LoadingPreview
 
@@ -58,14 +58,6 @@ It is Material's expressive loading indicator: the shape morphs through Material
 | Medium | A panel or a card that is updating. The default.         |
 | Large  | The middle of a region whose content is on its way.      |
 
-### Contained
-
-On a circle of the brand's tint, the spinner stands out where it floats over content, such as an image or a busy canvas.
-
-```tsx example=Contained
-
-```
-
 ## When to use
 
 ## Anatomy
@@ -75,9 +67,9 @@ On a circle of the brand's tint, the spinner stands out where it floats over con
 ```
 
 1. **Spinner** (`env-spinner`)
-2. **Shape** (`env-spinner-shape`)
+2. **Arc** (`env-spinner-arc`)
 
-Not shown: the circle behind a contained spinner, and the label beside the shape, where it shows.
+Not shown: the label beside the arc, where it shows.
 
 ## Accessibility
 
@@ -85,7 +77,7 @@ Not shown: the circle behind a contained spinner, and the label beside the shape
 
 - `role="progressbar"` named by `label`, or the spinner hidden without one.
 - With `showLabel`, a busy `role="status"` whose label, Loading by default in the provider's language, is read as the status.
-- Under reduced motion, a shape that breathes in place without turning or morphing, instead of stopping.
+- A slower turn with a fixed arc under reduced motion, instead of stopping.
 
 ### You provide
 
@@ -97,7 +89,7 @@ Not shown: the circle behind a contained spinner, and the label beside the shape
 
 ### Usage
 
-A Spinner's `label` names the work it stands for, such as Updating tasks, and names it as a progress bar for assistive technology; leave it out where a busy control or region already says what happens, and the spinner is hidden. `size` is `sm`, 1 rem, `md`, 1.5 rem and the default, or `lg`, 3 rem, as `data-size`. `contained` draws the shape on a circle of `--env-color-bg-brand-muted` laid on `--env-color-bg-default`, as `data-contained`.
+A Spinner's `label` names the work it stands for, such as Updating tasks, and names it as a progress bar for assistive technology; leave it out where a busy control or region already says what happens, and the spinner is hidden. `size` is `sm`, 1 rem, `md`, 1.5 rem and the default, or `lg`, 3 rem, as `data-size`.
 
 ```tsx source=LoadingPreview
 
@@ -120,9 +112,9 @@ export default function SearchingDocuments() {
 
 For the work that follows a press, such as saving, set `pending` on the Button that started it, and for content of a known shape, `skeleton`, rather than a spinner. Set `aria-busy` on the region that updates, and put the result or the error in the spinner's place when the work ends.
 
-The parts are the spinner, `env-spinner`, its shape, `env-spinner-shape`, with `contained` the circle behind it, `env-spinner-container`, and with `showLabel` the label beside it, `env-spinner-label`. The shape follows Material's indeterminate timing: the drawing turns once every 4666 ms, and every 650 ms the shape morphs into the next while it takes a quarter turn, on Material's spring of damping 0.6 and stiffness 200. The morph animates the path's `d` from CSS; where a browser can't, the soft burst keeps turning. Recolor it with `--env-spinner-color`, as busy buttons do with their label's color.
+The parts are the spinner, `env-spinner`, its arc, `env-spinner-arc`, and with `showLabel` the label beside it, `env-spinner-label`.
 
 ## Changelog
 
-- **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0, which the `v1-structure` codemod rewrites. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label. The turning arc becomes Material's expressive loading indicator, a shape that morphs as it turns, and `env-spinner-arc` gives way to `env-spinner-shape`; `contained` draws it on a circle.
+- **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0, which the `v1-structure` codemod rewrites. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
 - **0.4.0**: Spinner, in small, standard and large sizes; pending buttons show a small one.

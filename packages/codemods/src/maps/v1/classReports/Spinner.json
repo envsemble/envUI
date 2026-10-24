@@ -1,5 +1,0 @@
-{
-  "env-spinner-arc": {
-    "report": "The turning arc is gone: Spinner draws Material's expressive loading indicator, one filled shape, env-spinner-shape, that morphs as it turns. Recolor it with --env-spinner-color rather than styling the drawing."
-  }
-}

@@ -1,5 +1,5 @@
 import type { ComponentPropsWithRef } from 'react';
-import { SpinnerIndicator } from './internal/SpinnerIndicator.js';
+import { SpinnerArc } from './internal/SpinnerArc.js';
 import { SpinnerLabel } from './internal/SpinnerLabel.js';
 
 export interface SpinnerProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
@@ -23,50 +23,40 @@ export interface SpinnerProps extends Omit<ComponentPropsWithRef<'span'>, 'child
    * @default 'md'
    */
   size?: 'sm' | 'md' | 'lg';
-  /**
-   * Draw the shape on a circle of the brand's tint, as Material's contained loading indicator,
-   * where the spinner stands alone over content, such as on an image or a busy canvas.
-   * @default false
-   */
-  contained?: boolean;
 }
 
 /**
- * Work of unknown length in a small area, such as a panel that is updating: Material's expressive
- * loading indicator, one shape in the control blue that turns and morphs through Material's
- * rounded shapes, and with a reduced-motion preference breathes without turning. With a label it
- * is a progress bar named by it; without one it is hidden from assistive technology. With
- * showLabel it is a status line with its label beside it, for loading with no known shape. The
- * hook --env-spinner-color recolors it, such as to a button's label color.
+ * Work of unknown length in a small area, such as a panel that is updating: an arc in the control
+ * blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a
+ * progress bar named by it; without one it is hidden from assistive technology. With showLabel it
+ * is a status line with its label beside it, for loading with no known shape. The hook
+ * --env-spinner-color recolors it, such as to a button's label color.
  */
 export function Spinner({
   label,
   showLabel = false,
   size = 'md',
-  contained = false,
   className,
   ...props
 }: SpinnerProps) {
   if (showLabel)
     return (
       // A status region marked busy, which the label names as it shows.
-      <SpinnerIndicator
+      <SpinnerArc
         {...props}
         size={size}
-        contained={contained}
         role="status"
         aria-busy="true"
         className={className}
         data-show-label=""
       >
         <SpinnerLabel label={label} />
-      </SpinnerIndicator>
+      </SpinnerArc>
     );
   return (
-    <SpinnerIndicator
+    <SpinnerArc
       {...props}
       size={size}
-      contained={contained}
       role={label ? 'progressbar' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}

@@ -78,7 +78,7 @@
       "feedback/Popover.tsx": "base",
       "feedback/Spinner.tsx": "base",
       "feedback/internal/SpinnerLabel.tsx": "base",
-      "feedback/internal/SpinnerIndicator.tsx": "base",
+      "feedback/internal/SpinnerArc.tsx": "base",
       "feedback/Tooltip.tsx": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
@@ -265,7 +265,7 @@
         "modules": ["feedback/internal/AlertDismiss.tsx"]
       },
       "Spinner": {
-        "modules": ["feedback/internal/SpinnerLabel.tsx", "feedback/internal/SpinnerIndicator.tsx"]
+        "modules": ["feedback/internal/SpinnerLabel.tsx", "feedback/internal/SpinnerArc.tsx"]
       },
       "Scaffold": {
         "modules": ["layout/internal/useScrollKeys.ts"]

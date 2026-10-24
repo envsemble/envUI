@@ -11291,7 +11291,7 @@
       "category": "Feedback",
       "status": "stable",
       "since": "0.4.0",
-      "summary": "Work of unknown length in a small area, such as a panel that is updating, as one shape that turns and changes form.",
+      "summary": "Work of unknown length in a small area, such as a panel that is updating, as a turning arc.",
       "aliases": [
         "loader",
         "loading indicator",
@@ -11340,7 +11340,7 @@
         {
           "name": "LoadingPreview",
           "title": "Loading preview",
-          "description": "It is Material's expressive loading indicator: the shape morphs through Material's rounded forms, a soft burst, cookies, a pentagon, a pill and an oval, with a springy quarter turn at each change. With reduced motion, it breathes in place without turning.",
+          "description": "With reduced motion, the arc keeps turning, more slowly.",
           "file": "docs/examples/spinner/LoadingPreview.tsx"
         },
         {
@@ -11348,12 +11348,6 @@
           "title": "Spinner variants",
           "description": "",
           "file": "docs/examples/spinner/Sizes.tsx"
-        },
-        {
-          "name": "Contained",
-          "title": "Contained",
-          "description": "On a circle of the brand's tint, the spinner stands out where it floats over content, such as an image or a busy canvas.",
-          "file": "docs/examples/spinner/Contained.tsx"
         },
         {
           "name": "SpinnerAnatomy",
@@ -11368,31 +11362,18 @@
           "parts": [
             {
               "class": "env-spinner",
-              "description": "The spinner, or with data-show-label the status line that holds it and its label; data-contained draws the shape on a circle."
+              "description": "The spinner, or with data-show-label the status line that holds it and its label."
             },
             {
-              "class": "env-spinner-container",
-              "description": "The circle of the brand's tint behind the shape, with data-contained."
+              "class": "env-spinner-arc",
+              "description": "The turning arc."
             },
             {
               "class": "env-spinner-label",
               "description": "The label shown beside the spinner, which says what is loading."
-            },
-            {
-              "class": "env-spinner-shape",
-              "description": "The shape that turns and morphs through Material's rounded shapes."
             }
           ],
           "states": [
-            {
-              "attribute": "data-contained",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-spinner"
-              ]
-            },
             {
               "attribute": "data-show-label",
               "values": [],
@@ -23813,7 +23794,7 @@
     "Spinner": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Work of unknown length in a small area, such as a panel that is updating: Material's expressive loading indicator, one shape in the control blue that turns and morphs through Material's rounded shapes, and with a reduced-motion preference breathes without turning. With a label it is a progress bar named by it; without one it is hidden from assistive technology. With showLabel it is a status line with its label beside it, for loading with no known shape. The hook --env-spinner-color recolors it, such as to a button's label color.",
+      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. With showLabel it is a status line with its label beside it, for loading with no known shape. The hook --env-spinner-color recolors it, such as to a button's label color.",
       "props": [
         {
           "name": "label",
@@ -23834,13 +23815,6 @@
           "required": false,
           "default": "'md'",
           "description": "sm, 1 rem, inside controls and beside a line of text; md, 1.5 rem, beside a heading or in a panel; or lg, 3 rem, in the middle of a region whose content is on its way."
-        },
-        {
-          "name": "contained",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Draw the shape on a circle of the brand's tint, as Material's contained loading indicator, where the spinner stands alone over content, such as on an image or a busy canvas."
         }
       ],
       "native": [

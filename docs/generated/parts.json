@@ -4652,31 +4652,18 @@
       "parts": [
         {
           "class": "env-spinner",
-          "description": "The spinner, or with data-show-label the status line that holds it and its label; data-contained draws the shape on a circle."
+          "description": "The spinner, or with data-show-label the status line that holds it and its label."
         },
         {
-          "class": "env-spinner-container",
-          "description": "The circle of the brand's tint behind the shape, with data-contained."
+          "class": "env-spinner-arc",
+          "description": "The turning arc."
         },
         {
           "class": "env-spinner-label",
           "description": "The label shown beside the spinner, which says what is loading."
-        },
-        {
-          "class": "env-spinner-shape",
-          "description": "The shape that turns and morphs through Material's rounded shapes."
         }
       ],
       "states": [
-        {
-          "attribute": "data-contained",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-spinner"
-          ]
-        },
         {
           "attribute": "data-show-label",
           "values": [],
