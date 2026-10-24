@@ -36,6 +36,14 @@
   margin-inline-start: calc(-1 * var(--env-avatar-group-overlap));
 }
 
+/* Initials center in the part of the circle that the next avatar and its ring leave uncovered,
+   through Avatar's hook. Before the bunched and spread rules below, which change it. */
+.env-avatar-group > :not(:last-child) {
+  --env-avatar-initials-inset-end: calc(
+    var(--env-avatar-group-overlap) + var(--env-avatar-group-ring-width)
+  );
+}
+
 /* Where there is a pointer that hovers, the group rests bunched: the avatars overlap more, each a
    little off the line and turned, by its place, the same on every render and from a server, and
    the count of the rest waits behind the last. Under the pointer, or while focus is inside, they
@@ -121,13 +129,6 @@
     scale: 1;
   }
 }
-/* Initials center in the part of the circle that the next avatar and its ring leave uncovered,
-   through Avatar's hook. */
-.env-avatar-group > :not(:last-child) {
-  --env-avatar-initials-inset-end: calc(
-    var(--env-avatar-group-overlap) + var(--env-avatar-group-ring-width)
-  );
-}
 /* A pressable avatar: a button or link the size of the picture, with a state layer over it. */
 .env-avatar-group-item {
   display: inline-flex;
@@ -154,9 +155,12 @@
 .env-avatar-group-item:active::after {
   background: var(--env-color-bg-neutral-subtle-pressed);
 }
-/* The avatar under the pointer or keyboard focus comes in front of its neighbours. */
+/* The avatar under the pointer or keyboard focus comes in front of its neighbours, and so does a
+   chosen one, whose check would otherwise sit under the next avatar: each avatar's turn and lift
+   keep what it draws, the check included, in its own stacking context. */
 .env-avatar-group
-  > :is(.env-avatar-group-item, .env-avatar-group-overflow):is(:hover, :focus-visible) {
+  > :is(.env-avatar-group-item, .env-avatar-group-overflow):is(:hover, :focus-visible),
+.env-avatar-group > :is([data-selected], :has([data-selected])) {
   z-index: var(--env-z-raised);
 }
 .env-avatar-group-item:focus-visible,
@@ -175,7 +179,9 @@
   min-inline-size: var(--env-avatar-group-size);
   block-size: var(--env-avatar-group-size);
   padding-inline: calc(var(--env-avatar-group-size) / 6);
-  border-radius: var(--env-radius-full);
+  /* Round at any size, as the avatars beside it are, and a pill when a larger count widens it: the
+     capped full corner would leave a large chip a rounded square. */
+  border-radius: calc(var(--env-avatar-group-size) / 2);
   /* The neutral fill over the ring color: opaque, since the count overlaps the avatars. */
   background: linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted))
     var(--env-avatar-group-ring-color);

@@ -378,3 +378,66 @@ test('a group lines up with small controls in a toolbar', async ({ page }) => {
     expect(await item.evaluate((element) => (element as HTMLElement).offsetHeight)).toBe(32);
   }
 });
+
+test('with a fine pointer, initials center in what the bunch leaves, and spread in the whole circle', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(fixture);
+  const group = page.getByTestId('avatar-groups-light').getByTestId('initials');
+  const insets = () =>
+    group
+      .locator(':scope > .env-avatar')
+      .evaluateAll((avatars) =>
+        avatars.map((avatar) =>
+          getComputedStyle(avatar).getPropertyValue('--env-avatar-initials-inset-end').trim(),
+        ),
+      );
+  await page.mouse.move(0, 0);
+  // Bunched, each but the last leaves room for the next avatar's larger overlap: 0.4 of 2 rem and
+  // the ring, more than the eighth a group without hover overlaps by.
+  const rest = await insets();
+  const restPx = await group
+    .locator(':scope > .env-avatar')
+    .first()
+    .evaluate((avatar) => {
+      const probe = document.createElement('div');
+      probe.style.inlineSize = getComputedStyle(avatar).getPropertyValue(
+        '--env-avatar-initials-inset-end',
+      );
+      avatar.append(probe);
+      const width = probe.getBoundingClientRect().width;
+      probe.remove();
+      return width;
+    });
+  expect(restPx).toBeCloseTo(32 * 0.4 + 2, 0);
+  expect(rest.at(-1)).toBe('');
+  // Spread, nothing covers them, and the initials center in the whole circle.
+  await group.hover();
+  await expect.poll(insets).toEqual(rest.map(() => '0rem'));
+});
+
+test('a chosen avatar keeps its check over the next one, and a large count chip stays round', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(fixture);
+  const group = page.getByTestId('avatar-groups-light').getByTestId('selected-xl');
+  await page.mouse.move(0, 0);
+  const check = group.locator('.env-avatar-check');
+  await expect(check).toHaveCount(1);
+  // The middle of the check's end, where the next avatar overlaps it, is the check's.
+  const onTop = await check.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const target = document.elementFromPoint(box.right - box.width / 4, box.top + box.height / 2);
+    return element.contains(target);
+  });
+  expect(onTop).toBe(true);
+  // The count chip is round at the extra large size, as the avatars are: half its height.
+  const chip = group.locator('.env-avatar-group-overflow');
+  const { radius, height } = await chip.evaluate((element) => ({
+    radius: Number.parseFloat(getComputedStyle(element).borderStartStartRadius),
+    height: (element as HTMLElement).offsetHeight,
+  }));
+  expect(radius).toBeCloseTo(height / 2, 0);
+});

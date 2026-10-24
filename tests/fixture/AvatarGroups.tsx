@@ -56,6 +56,14 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
         formatMore={(count) => `${count} weitere`}
       />
       <AvatarGroup data-testid="empty" people={[]} />
+      {/* A chosen avatar, whose check must stay over the next one, and a large count chip. */}
+      <AvatarGroup
+        data-testid="selected-xl"
+        size="xl"
+        people={initials.map((person, index) => ({ ...person, selected: index === 0 }))}
+        total={240}
+        max={3}
+      />
       <AvatarButton data-testid="avatar-button-small" name="Alex Morgan" size="sm" />
       <AvatarGroup
         data-testid="unknown-counts"
