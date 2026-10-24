@@ -13,8 +13,8 @@ aliases:
   - hierarchy
   - folder path
 useWhen:
-  - People move through a hierarchy and need to see where they are and go up, such as folders above a document.
-  - A header or a bar names the current item's place in one line beside its status and actions (`wrap={false}`).
+  - Seeing where you are in a hierarchy and going up, such as the folders above a document
+  - An item's place, on one line of a header or a bar beside its status and actions
 avoidWhen:
   - text: The application's main navigation, such as the pages in a sidebar.
     use: Drawer
@@ -36,9 +36,9 @@ A trail runs from a workspace through its folders to the open document; the curr
 
 ```
 
-### Applications without URLs
+### Applications without addresses
 
-Levels with `onClick` are buttons. Pressing one shortens the trail, and the application moves focus, here to the folder's title.
+Levels can be buttons rather than links. Pressing one shortens the trail, and the application moves focus, here to the folder's title.
 
 ```tsx example=WithoutUrls
 
@@ -46,7 +46,7 @@ Levels with `onClick` are buttons. Pressing one shortens the trail, and the appl
 
 ### A level without a page
 
-An entry without `href` or `onClick` is plain text, for a level that can't be opened.
+A level that can't be opened is plain text.
 
 ```tsx example=LevelWithoutPage
 
@@ -54,14 +54,20 @@ An entry without `href` or `onClick` is plain text, for a level that can't be op
 
 ## Variants
 
-| Wrapping         | Use for                                                              |
-| ---------------- | -------------------------------------------------------------------- |
-| `wrap` (default) | A trail above a page's content.                                      |
-| `wrap={false}`   | A bar that stays one line tall: the current page is cut short first. |
+### Wrapping
+
+A trail above a page wraps; one in a bar stays on one line.
+
+| Wrapping | Use for                                                              |
+| -------- | -------------------------------------------------------------------- |
+| Wraps    | A trail above a page's content. The default.                         |
+| One line | A bar that stays one line tall: the current page is cut short first. |
 
 ```tsx example=OneLine
 
 ```
+
+### Long labels
 
 A label longer than 20 rem ends with an ellipsis, and a tooltip shows it in full on hover and on keyboard focus.
 
@@ -75,8 +81,13 @@ A label longer than 20 rem ends with an ellipsis, and a tooltip shows it in full
 
 ```
 
-- Name each level as it is named elsewhere, and the current page as the page's heading.
-- Pair the trail with the main navigation; it never replaces it, and a trail of one level shows nothing.
+### Names
+
+Name each level as it is named elsewhere, and the current page as the page's heading.
+
+### Beside the navigation
+
+Pair the trail with the main navigation: it never replaces it, and a trail of one level shows nothing.
 
 ## Anatomy
 
@@ -91,7 +102,7 @@ A label longer than 20 rem ends with an ellipsis, and a tooltip shows it in full
 
 ## Adapting to width
 
-By default the trail wraps onto more lines when it runs out of room; the chevrons mirror in right-to-left text.
+The trail wraps onto more lines when it runs out of room, and its chevrons mirror in right-to-left text.
 
 ```tsx example=WrappingTrail widths="14 36"
 
@@ -118,6 +129,38 @@ By default the trail wraps onto more lines when it runs out of room; the chevron
 - The routing behind `href`, through `LinkProvider`, or the navigation behind `onClick`.
 - An `aria-label` that tells two trails on a page apart.
 - Where focus goes after a level is pressed, such as the new page's heading.
+
+## In code
+
+### Usage
+
+Breadcrumbs takes its levels as `items`, from the top down to the current page, the last item, which is never a link. Each has its `label`; with `href` it is a link, through the application's router link from `LinkProvider`; with `onClick` it is a button; with neither it is plain text, for a level that can't be opened.
+
+```tsx source=DocumentTrail
+
+```
+
+#### Without addresses
+
+Give levels `onClick` where the application has no URLs. Pressing one makes it the current page, which is not a control, so move focus yourself, such as to the new title.
+
+```tsx source=WithoutUrls
+
+```
+
+#### One line
+
+`wrap` is true by default, and the trail wraps onto more lines when it runs out of room. `wrap={false}` keeps it on one line, for a bar or a header: the current page is cut short first, and earlier levels keep their width. A label beyond 20 rem ends with an ellipsis, with a tooltip on hover and keyboard focus.
+
+```tsx source=OneLine
+
+```
+
+### Composition
+
+The landmark is named Breadcrumb, from EnvUIProvider's `messages.breadcrumbs`; set `aria-label` to tell two trails on a page apart. Pair it with the main navigation, such as a Drawer, never in its place.
+
+The parts are the trail, `env-breadcrumbs`, its items, `env-breadcrumbs-item`, each level's link or button, `env-breadcrumbs-link`, the separators, `env-breadcrumbs-separator`, and the current page, `env-breadcrumbs-current`.
 
 ## Changelog
 

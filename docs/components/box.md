@@ -15,9 +15,9 @@ aliases:
   - container query
   - region
 useWhen:
-  - Content needs an inset and nothing else, such as a region of a page.
-  - The application's style sheet queries a region's width, through a named size container.
-  - A region should show up by name in dev mode and the docs.
+  - An inset and nothing else, such as around a region of a page
+  - A region whose width the application's own styles respond to
+  - A region that shows up by name in dev mode and the docs
 avoidWhen:
   - text: Children one under another with gaps.
     use: Column
@@ -41,9 +41,9 @@ Like [Row](row.md), [Column](column.md) and [Grid](grid.md), Box sizes to its co
 
 ```
 
-### Size container
+### Responds to its width
 
-`container="summary"` makes the box a size container that the application's style sheet can query, such as `@container summary (width >= 37.5rem)`. Give one in a flex row a width of its own: a container takes its width from its context, never from its content.
+A box can be a size container, whose width the application's own styles respond to. One in a row needs a width of its own: a container takes its width from where it sits, never from its content.
 
 ```tsx example=SizeContainer
 
@@ -59,8 +59,9 @@ Like [Row](row.md), [Column](column.md) and [Grid](grid.md), Box sizes to its co
 
 ```
 
-- `name` names a region for dev mode and agents, as `data-env-name`.
-- The `env-*` container names are envUI's own; `container="env-window"` only for a preview frame whose content should lay out at the box's width.
+### Named regions
+
+A box can carry a name, which dev mode and agents show, so a region of the page is easy to find and talk about.
 
 ## Accessibility
 
@@ -72,6 +73,30 @@ Like [Row](row.md), [Column](column.md) and [Grid](grid.md), Box sizes to its co
 ### You provide
 
 - A heading and a name for a box that is a region, such as `aria-labelledby` on a section.
+
+## In code
+
+### Usage
+
+Box renders a `div`, or the element in `render`, such as `render={<section />}`, which takes its attributes. `padding` sets its inset on every side, a step of the spacing scale, none by default. `name` names the region for dev mode and agents, as `data-env-name`.
+
+```tsx source=InsetRegion
+
+```
+
+#### Size container
+
+`container="summary"` makes the box a size container that the application's style sheet can query, such as `@container summary (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content, so give one in a flex row a width of its own.
+
+```tsx source=SizeContainer
+
+```
+
+The `env-*` container names are envUI's own. Use `container="env-window"` only for a preview frame whose content should lay out at the box's width, as a window of its own.
+
+### Composition
+
+Put one inset on the region and a Column, Row or Grid inside it for the gaps, rather than a padded box around each child. Box has no fill, border or corners: a Surface has them.
 
 ## Changelog
 

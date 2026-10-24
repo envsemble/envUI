@@ -16,13 +16,13 @@ aliases:
   - LoadingState
   - loading state
 useWhen:
-  - Work of unknown length in a small area, such as a list that updates after a filter changes.
-  - An update to content already shown, beside the content, which stays in place meanwhile.
-  - Content whose shape isn't known while it loads, such as a file's preview (`size="lg"`), or search results, with its label beside it (`showLabel`).
+  - Work of unknown length in a small area, such as a list updating after a filter changes
+  - An update beside content that stays in place meanwhile
+  - Content of unknown shape while it loads, such as search results, with its label beside it
 avoidWhen:
-  - text: The work that follows a press, such as saving; show it on the button that started it with `pending`.
+  - text: The work that follows a press, such as saving, shown on the button that started it.
     use: Button
-  - text: Content of a known shape while it loads, such as a card or a list, which shows itself as a skeleton with `skeleton`.
+  - text: Content of a known shape while it loads, such as a card or a list, which shows itself as a skeleton.
     use: Surface
   - text: A task whose completion can be measured, such as an upload.
     use: Progress
@@ -46,7 +46,7 @@ With reduced motion, the arc keeps turning, more slowly.
 
 ### With its label
 
-`showLabel` puts the label beside the spinner.
+The spinner can show its label beside it, for loading with no known shape, such as search results.
 
 ```tsx example=SearchingDocuments
 
@@ -58,15 +58,15 @@ With reduced motion, the arc keeps turning, more slowly.
 
 ```
 
-1. **sm**
-2. **md**
-3. **lg**
+1. **Small**
+2. **Medium**
+3. **Large**
 
-| Size | Use for                                                  |
-| ---- | -------------------------------------------------------- |
-| `sm` | Inside controls, and beside a line of text or a heading. |
-| `md` | A panel or a card that is updating. The default.         |
-| `lg` | The middle of a region whose content is on its way.      |
+| Size   | Use for                                                  |
+| ------ | -------------------------------------------------------- |
+| Small  | Inside controls, and beside a line of text or a heading. |
+| Medium | A panel or a card that is updating. The default.         |
+| Large  | The middle of a region whose content is on its way.      |
 
 ## When to use
 
@@ -78,7 +78,9 @@ With reduced motion, the arc keeps turning, more slowly.
 
 ```
 
-- Name the work in `label`, such as Updating tasks.
+### Labels
+
+Name the work the spinner stands for, such as Updating tasks.
 
 ## Anatomy
 
@@ -89,7 +91,7 @@ With reduced motion, the arc keeps turning, more slowly.
 1. **Spinner** (`env-spinner`)
 2. **Arc** (`env-spinner-arc`)
 
-Not shown: with `showLabel`, the label beside the arc, `env-spinner-label`.
+Not shown: the label beside the arc, where it shows.
 
 ## Accessibility
 
@@ -104,6 +106,30 @@ Not shown: with `showLabel`, the label beside the arc, `env-spinner-label`.
 - A `label`, unless a busy control or region already says what happens.
 - `aria-busy` on the region that updates, and a status where people wait for a result.
 - The result or the error in place of the spinner when the work ends.
+
+## In code
+
+### Usage
+
+A Spinner's `label` names the work it stands for, such as Updating tasks, and names it as a progress bar for assistive technology; leave it out where a busy control or region already says what happens, and the spinner is hidden. `size` is `sm`, 1 rem, `md`, 1.5 rem and the default, or `lg`, 3 rem, as `data-size`.
+
+```tsx source=LoadingPreview
+
+```
+
+#### With its label
+
+`showLabel` shows the label beside the spinner, in a busy status line that centres the two in its row, for loading with no known shape. Without a `label` it says Loading, in the provider's language.
+
+```tsx source=SearchingDocuments
+
+```
+
+### Composition
+
+For the work that follows a press, such as saving, set `pending` on the Button that started it, and for content of a known shape, `skeleton`, rather than a spinner. Set `aria-busy` on the region that updates, and put the result or the error in the spinner's place when the work ends.
+
+The parts are the spinner, `env-spinner`, its arc, `env-spinner-arc`, and with `showLabel` the label beside it, `env-spinner-label`.
 
 ## Changelog
 

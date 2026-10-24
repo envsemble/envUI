@@ -59,9 +59,9 @@
         "region"
       ],
       "useWhen": [
-        "Content needs an inset and nothing else, such as a region of a page.",
-        "The application's style sheet queries a region's width, through a named size container.",
-        "A region should show up by name in dev mode and the docs."
+        "An inset and nothing else, such as around a region of a page",
+        "A region whose width the application's own styles respond to",
+        "A region that shows up by name in dev mode and the docs"
       ],
       "avoidWhen": [
         {
@@ -100,7 +100,7 @@
         {
           "name": "SizeContainer",
           "title": "Size container",
-          "description": "`container=\"summary\"` makes the box a size container that the application's style sheet can query, such as `@container summary (width >= 37.5rem)`. Give one in a flex row a width of its own: a container takes its width from its context, never from its content.",
+          "description": "A box can be a size container, whose width the application's own styles respond to. One in a row needs a width of its own: a container takes its width from where it sits, never from its content.",
           "file": "docs/examples/box/SizeContainer.tsx"
         },
         {
@@ -356,9 +356,9 @@
         "responsive grid"
       ],
       "useWhen": [
-        "Items of one kind fill the width in as many columns as fit, such as cards or stats.",
-        "A main column sits beside a narrower one, such as a summary and its details.",
-        "Content lines up in a set number of equal columns."
+        "Items of one kind in as many columns as fit, such as cards or stats",
+        "A main column beside a narrower one, such as a summary and its details",
+        "Content lined up in a set number of equal columns"
       ],
       "avoidWhen": [
         {
@@ -1473,11 +1473,11 @@
         "selectable rows"
       ],
       "useWhen": [
-        "Related items with a title, a short detail and an action each, such as the sections of a settings page.",
-        "Items that each open a page or a document, such as recent plans (`interactive`).",
-        "A short set of results or members under a search field.",
-        "The list beside an item's details, with its current row marked (`selected`).",
-        "Items people put in their own order, such as the slides of a deck or an agenda (`onReorder`)."
+        "Related items with a title, a detail and an action each, such as settings",
+        "Items that each open a page or a document, such as recent plans",
+        "A short set of results or members under a search field",
+        "The list beside an item's details, with its current row marked",
+        "Items people put in their own order, such as an agenda"
       ],
       "avoidWhen": [
         {
@@ -1523,37 +1523,37 @@
         {
           "name": "OpenFromRow",
           "title": "Open from row",
-          "description": "With `interactive`, the link marked `data-row-target` covers its row. The row's other controls take `position: relative` to stay above it.",
+          "description": "A whole row can open what it names, through its one link, while its other controls stay pressable above it.",
           "file": "docs/examples/list/OpenFromRow.tsx"
         },
         {
           "name": "CurrentRow",
           "title": "Current row",
-          "description": "`selected` marks the row whose details show beside the list, with `aria-current`.",
+          "description": "The row whose details show beside the list is marked as the current one.",
           "file": "docs/examples/list/CurrentRow.tsx"
         },
         {
           "name": "CheckedRows",
           "title": "Checked rows",
-          "description": "A checkbox in `start` chooses rows for an action on several at once.",
+          "description": "A checkbox at a row's start chooses it for an action on several rows at once.",
           "file": "docs/examples/list/CheckedRows.tsx"
         },
         {
           "name": "Reorder",
           "title": "Reorder",
-          "description": "`onReorder` gives each row a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys. The list reports the move, and the application moves the item.",
+          "description": "Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys. The list reports the move, and the application moves the item.",
           "file": "docs/examples/list/Reorder.tsx"
         },
         {
           "name": "OnAPane",
-          "title": "On APane",
-          "description": "",
+          "title": "On a pane",
+          "description": "In a muted surface that holds only lists, the rows take the raised fill, so they stand out from it.",
           "file": "docs/examples/list/OnAPane.tsx"
         },
         {
           "name": "ExtraContent",
-          "title": "Extra content",
-          "description": "",
+          "title": "More content",
+          "description": "More content can follow the description, such as a status.",
           "file": "docs/examples/list/ExtraContent.tsx"
         },
         {
@@ -3734,8 +3734,8 @@
         "validation"
       ],
       "useWhen": [
-        "A control of the application's own needs a label, a description and an error, wired for assistive technology.",
-        "A form validates a value on blur or on submit with the browser's validity or a function of its own."
+        "A label, a description and an error for a control of the application's own",
+        "A value checked on blur or on submit, by the browser's rules or a check of its own"
       ],
       "avoidWhen": [
         {
@@ -3778,13 +3778,13 @@
         {
           "name": "ValidateOnBlur",
           "title": "Validate on blur",
-          "description": "`validate` returns an error message for a value, or nothing for a valid one. `validationMode` checks on submit, the default, on blur or on change.",
+          "description": "A field can check its value with a check of the application's own, which returns an error message or nothing, on submit, on blur or as people type.",
           "file": "docs/examples/field/ValidateOnBlur.tsx"
         },
         {
           "name": "ApplicationControl",
           "title": "Application control",
-          "description": "`render` on `Field.Control` takes any control, which the label and description then describe.",
+          "description": "The control can be any control, which the label and the description then name and describe.",
           "file": "docs/examples/field/ApplicationControl.tsx"
         },
         {
@@ -4051,9 +4051,9 @@
         "opt-in"
       ],
       "useWhen": [
-        "People choose any number of options from a list, each on its own, such as which e-mails to receive.",
-        "One option is agreed to or included, such as accepting the terms or including archived items, and takes effect when a form is sent.",
-        "A parent selects or clears a group of options and shows when only some are chosen (`checked=\"mixed\"`)."
+        "Any number of options, each chosen on its own, such as which e-mails to receive",
+        "Agreeing to or including one option, applied when a form is sent, such as the terms",
+        "A parent that selects or clears a group, and shows when only some are chosen"
       ],
       "avoidWhen": [
         {
@@ -4103,7 +4103,7 @@
         {
           "name": "NotificationForm",
           "title": "Notification form",
-          "description": "A checked box submits its `name` with its `value`; an unchecked one submits nothing. A reset restores `defaultChecked`.",
+          "description": "A checked box is sent with the form, and an unchecked one is not. Resetting the form restores how each box started.",
           "file": "docs/examples/checkbox/NotificationForm.tsx"
         },
         {
@@ -5610,9 +5610,9 @@
         "month view"
       ],
       "useWhen": [
-        "People choose a day, such as when a report goes out or a task is due.",
-        "People choose a day and a time, such as when a meeting starts (`granularity=\"minute\"`).",
-        "A day is chosen within a page or a panel from a month that stays visible, such as in a planning view (Calendar)."
+        "A day, such as when a report goes out or a task is due",
+        "A day and a time, such as when a meeting starts",
+        "A day chosen from a month that stays in view, such as in a planning view (Calendar)"
       ],
       "avoidWhen": [
         {
@@ -5663,19 +5663,19 @@
         {
           "name": "MeetingTime",
           "title": "Meeting time",
-          "description": "With `granularity=\"minute\"`, the calendar stays open beside the time's wheels; turning a wheel sets the time at once.",
+          "description": "With a time, the calendar stays open beside the time's wheels, and turning a wheel sets the time at once.",
           "file": "docs/examples/date-picker/MeetingTime.tsx"
         },
         {
           "name": "WithinRange",
           "title": "Within range",
-          "description": "Days outside `min` and `max` are unavailable, and the month buttons stop at them.",
+          "description": "Days outside the allowed range are unavailable, and the month buttons stop at them.",
           "file": "docs/examples/date-picker/WithinRange.tsx"
         },
         {
           "name": "LeaveRequest",
           "title": "Leave request",
-          "description": "`name` submits the value as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm`, a local date without a zone. Converting it to a moment belongs to the application.",
+          "description": "The form sends the date as a local date, with no time zone. Turning it into a moment belongs to the application.",
           "file": "docs/examples/date-picker/LeaveRequest.tsx"
         },
         {
@@ -5687,7 +5687,7 @@
         {
           "name": "SmallToolbar",
           "title": "Sizes",
-          "description": "`sm`, `md` and `lg`, the control heights of the scale. With `showLabel={false}`, the placeholder shows in place of the label. The field is 12 rem wide at least, also in a toolbar sized to its content, and in a narrower container it takes the container's width.",
+          "description": "Small, medium and large, the control heights of the scale. A field without a visible label, such as in a toolbar, shows its placeholder instead. It is at least 12 rem wide, also in a toolbar sized to its content, and in a narrower container it takes the container's width.",
           "file": "docs/examples/date-picker/SmallToolbar.tsx"
         },
         {
@@ -6517,8 +6517,8 @@
         "volume slider"
       ],
       "useWhen": [
-        "People adjust a value by eye within a known range, such as opacity, volume or zoom, and see the result as they move it.",
-        "The exact number matters less than its place in the range, and the value shows beside the label as it changes."
+        "A value adjusted by eye in a known range, such as opacity, volume or zoom",
+        "A value whose place in the range matters more than the exact number"
       ],
       "avoidWhen": [
         {
@@ -6557,13 +6557,13 @@
         {
           "name": "SaveOnRelease",
           "title": "Save on release",
-          "description": "`onValueChange` follows the value as it moves; `onValueCommitted` reports it once, when the pointer is released or after a key. Save from it.",
+          "description": "The value follows the pointer as it moves, and is reported once more when the pointer lets go or after a key. Save it then.",
           "file": "docs/examples/slider/SaveOnRelease.tsx"
         },
         {
           "name": "SessionTimeout",
           "title": "Session timeout",
-          "description": "`min`, `max` and `step` set the values, and `name` submits the value with the form.",
+          "description": "A slider has a lowest and a highest value and a step between values, and a form sends its value.",
           "file": "docs/examples/slider/SessionTimeout.tsx"
         },
         {
@@ -6704,8 +6704,8 @@
         "drag and drop upload"
       ],
       "useWhen": [
-        "People add a file to a form or a page, such as a logo, by dropping it or choosing it.",
-        "People attach several files at once, such as documents to a message (`multiple`, `size=\"sm\"`)."
+        "Adding a file to a form or a page by dropping or choosing it, such as a logo",
+        "Attaching several files at once, such as documents to a message"
       ],
       "avoidWhen": [
         {
@@ -6739,19 +6739,19 @@
         {
           "name": "AttachDocuments",
           "title": "Attach documents",
-          "description": "With `multiple`, the application lists the files the zone took, each with Remove.",
+          "description": "A zone can take several files at once. The application lists the files it took, each with Remove.",
           "file": "docs/examples/drop-zone/AttachDocuments.tsx"
         },
         {
           "name": "UploadProgress",
           "title": "Upload progress",
-          "description": "While the application uploads, `pending` keeps the zone busy.",
+          "description": "While the application uploads, the zone stays busy.",
           "file": "docs/examples/drop-zone/UploadProgress.tsx"
         },
         {
           "name": "InAForm",
           "title": "In AForm",
-          "description": "With `name`, the form submits the files the zone took, and a reset clears them. `files` hands the zone the files the application keeps.",
+          "description": "The form sends the files the zone took, and a reset clears them. The application can hand the zone the files it keeps, such as after a Remove.",
           "file": "docs/examples/drop-zone/InAForm.tsx"
         },
         {
@@ -7232,9 +7232,9 @@
         "navigation"
       ],
       "useWhen": [
-        "An application's main destinations on an expanded or larger window, where Scaffold places the drawer at the window's start.",
-        "Many destinations, in groups under headings, with counts.",
-        "The sections of a guide or of the settings beside their content, with or without icons."
+        "An application's main destinations, on an expanded or larger window",
+        "Many destinations, in groups under headings, with counts",
+        "The sections of a guide or of the settings, beside their content"
       ],
       "avoidWhen": [
         {
@@ -7272,13 +7272,13 @@
         {
           "name": "AppDestinations",
           "title": "App destinations",
-          "description": "Scaffold shows the Drawer, the Rail or the Bar, whichever fits the width.",
+          "description": "Scaffold shows the Drawer, the Rail or the Bar, whichever fits the width, at the window's start.",
           "file": "docs/examples/drawer/AppDestinations.tsx"
         },
         {
           "name": "GuideSections",
           "title": "Guide sections",
-          "description": "A `DrawerDestination` may leave its icon out; the Bar and the Rail need icons.",
+          "description": "A drawer's destinations can go without icons, such as the sections of a guide; the Bar and the Rail need them.",
           "file": "docs/examples/drawer/GuideSections.tsx"
         },
         {
@@ -7290,7 +7290,7 @@
         {
           "name": "ResizableDrawer",
           "title": "Resizable drawer",
-          "description": "With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, with the same handle as between Panes, a grip of three dots on that edge, between `minWidth` and `maxWidth`, and never past half its container. Its labels and group headings keep to one line, so its items keep their height as it narrows: one that doesn't fit ends in an ellipsis. A label cut short shows in full in a tooltip; a heading cut short, which takes no focus, gives its full text as its `title`, shown on hover. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage, which it reads once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number. A `width` that isn't a finite number is ignored. Keep a resizable drawer on its own background rather than `background=\"page\"`, so its handle is the edge of a surface and doesn't float beside the page's content.",
+          "description": "People can resize the drawer by its end edge, by pointer or with the arrow keys, with the same grip of three dots as between Panes, within a smallest and a largest width and never past half its container. As it narrows, labels and headings stay on one line and end in an ellipsis, and a label cut short shows in full in a tooltip. The application can keep the width for the next visit.",
           "file": "docs/examples/drawer/ResizableDrawer.tsx"
         },
         {
@@ -7904,8 +7904,8 @@
         "page progress"
       ],
       "useWhen": [
-        "The top of an application's screen, in a Scaffold's top bar region, with its name, search and the account menu.",
-        "A window that draws its own title bar, in an installed web app."
+        "The top of an application's screen, with its name, search and the account menu",
+        "A window that draws its own title bar, in an installed web app"
       ],
       "avoidWhen": [
         {
@@ -7944,13 +7944,13 @@
         {
           "name": "LoadingPage",
           "title": "Loading page",
-          "description": "`loading` shows a thin bar along the bottom edge while the next page loads, after a short delay so quick loads never flash it.",
+          "description": "A thin bar along the bottom edge shows that the next page is loading, after a short delay, so quick loads never flash it.",
           "file": "docs/examples/top-bar/LoadingPage.tsx"
         },
         {
           "name": "TitleBar",
           "title": "Title bar",
-          "description": "`titleBar` makes the bar the window's own title bar in an installed web app: empty space drags the window, the title is centred and the controls are small. Put it in a Scaffold with `topBarSpan=\"full\"`.",
+          "description": "The bar can be the window's own title bar in an installed web app: empty space drags the window, the title is centred and the controls are small. It then spans the whole Scaffold.",
           "file": "docs/examples/top-bar/TitleBar.tsx"
         },
         {
@@ -8299,8 +8299,8 @@
         "preview tab"
       ],
       "useWhen": [
-        "People open several documents or files and switch between them, such as in an editor or a workspace.",
-        "Tabs open and close as people work, and one may be a preview until it is kept (`preview`, `onPin`)."
+        "Switching between several open documents or files, such as in an editor",
+        "Tabs that open and close as people work, one perhaps a preview until kept"
       ],
       "avoidWhen": [
         {
@@ -8334,7 +8334,7 @@
         {
           "name": "CloseAllButton",
           "title": "Close all button",
-          "description": "`end` puts the application's own content after the tabs, outside the strip that scrolls.",
+          "description": "The application's own content can follow the tabs, outside the strip that scrolls.",
           "file": "docs/examples/document-tabs/CloseAllButton.tsx"
         },
         {
@@ -8506,9 +8506,9 @@
         "PanelDockPanel"
       ],
       "useWhen": [
-        "Items people work on beside the page and switch between, such as drafts, conversations or documents.",
-        "Work that must survive being set aside, such as an unsaved draft in a panel people minimize.",
-        "Several windows open at once in a workspace, which people minimize, maximize, resize and close."
+        "Items worked on beside the page and switched between, such as drafts or conversations",
+        "Work that must survive being set aside, such as an unsaved draft",
+        "Several windows open in a workspace, minimized, maximized, resized and closed"
       ],
       "avoidWhen": [
         {
@@ -8538,7 +8538,7 @@
         {
           "name": "DocumentDrafts",
           "title": "Document drafts",
-          "description": "The application owns the panels, their order, modes, the active one and their heights; the dock asks for changes through its callbacks. PanelDock.Header is each panel's sticky header, with the title, the application's actions and the window controls.",
+          "description": "The application keeps the panels and decides what happens to them; the dock asks for each change. Each panel's header stays in view as its content scrolls, with its title, the application's actions and the window controls.",
           "file": "docs/examples/panel-dock/DocumentDrafts.tsx"
         },
         {
@@ -8550,7 +8550,7 @@
         {
           "name": "MinimizeWhatDoesNotFit",
           "title": "Make room",
-          "description": "Open panels take `preferredWidth`, 32 rem, and shrink to `minWidth`, 20 rem; then the row scrolls sideways. With `overflow=\"minimize\"` the dock asks to minimize the panel active longest ago instead, and opens it again once there is room.",
+          "description": "Open panels take their preferred width and shrink to a minimum, then the row scrolls sideways. The dock can instead minimize the panel used longest ago, and open it again once there is room.",
           "file": "docs/examples/panel-dock/MinimizeWhatDoesNotFit.tsx"
         },
         {
@@ -8796,8 +8796,8 @@
         "folder path"
       ],
       "useWhen": [
-        "People move through a hierarchy and need to see where they are and go up, such as folders above a document.",
-        "A header or a bar names the current item's place in one line beside its status and actions (`wrap={false}`)."
+        "Seeing where you are in a hierarchy and going up, such as the folders above a document",
+        "An item's place, on one line of a header or a bar beside its status and actions"
       ],
       "avoidWhen": [
         {
@@ -8831,19 +8831,19 @@
         {
           "name": "WithoutUrls",
           "title": "Without urls",
-          "description": "Levels with `onClick` are buttons. Pressing one shortens the trail, and the application moves focus, here to the folder's title.",
+          "description": "Levels can be buttons rather than links. Pressing one shortens the trail, and the application moves focus, here to the folder's title.",
           "file": "docs/examples/breadcrumbs/WithoutUrls.tsx"
         },
         {
           "name": "LevelWithoutPage",
           "title": "Level without page",
-          "description": "An entry without `href` or `onClick` is plain text, for a level that can't be opened.",
+          "description": "A level that can't be opened is plain text.",
           "file": "docs/examples/breadcrumbs/LevelWithoutPage.tsx"
         },
         {
           "name": "OneLine",
-          "title": "One line",
-          "description": "",
+          "title": "Wrapping",
+          "description": "A trail above a page wraps; one in a bar stays on one line. | Wrapping | Use for | | -------- | -------------------------------------------------------------------- | | Wraps | A trail above a page's content. The default. | | One line | A bar that stays one line tall: the current page is cut short first. |",
           "file": "docs/examples/breadcrumbs/OneLine.tsx"
         },
         {
@@ -9143,9 +9143,9 @@
         "createRichTextExtensions"
       ],
       "useWhen": [
-        "People write formatted text and see it as it will look, such as meeting notes, a brief or release notes.",
-        "Text mentions people, topics or files the application knows, saved with their IDs (references).",
-        "Formatted text saved earlier shows again read-only, rendered the same way, such as on a detail page (RichText)."
+        "Formatted text people see as it will look, such as meeting notes or a brief",
+        "Text that mentions people, topics or files the application knows",
+        "Formatted text saved earlier, shown again read-only (RichText)"
       ],
       "avoidWhen": [
         {
@@ -9183,43 +9183,43 @@
         {
           "name": "EditAndPreview",
           "title": "Edit and preview",
-          "description": "RichTextEditor and RichText come from the optional `@envsemble/envui/rich-text` entry, which needs Tiptap and marked.",
+          "description": "RichTextEditor and RichText come from an optional part of envUI, which an application installs with the libraries it needs.",
           "file": "docs/examples/rich-text/EditAndPreview.tsx"
         },
         {
           "name": "SavedContent",
           "title": "Saved content",
-          "description": "RichText also renders on a server. `onReferenceClick` and `onLinkClick` open references and links.",
+          "description": "RichText shows saved text again as it was written, also on a server, and opens its references and links through the application.",
           "file": "docs/examples/rich-text/SavedContent.tsx"
         },
         {
           "name": "References",
           "title": "References",
-          "description": "Typing a source's trigger, such as @, opens its suggestions. The Markdown keeps each reference's ID; resolving it is the application's.",
+          "description": "Typing a source's trigger, such as @, opens its suggestions. The saved text keeps each reference's ID; looking it up is the application's.",
           "file": "docs/examples/rich-text/References.tsx"
         },
         {
           "name": "SlashCommands",
           "title": "Slash commands",
-          "description": "`slashCommands` offers blocks on /, then the application's own commands.",
+          "description": "Typing / offers blocks, such as headings and lists, then the application's own commands.",
           "file": "docs/examples/rich-text/SlashCommands.tsx"
         },
         {
           "name": "UploadsAndLinks",
           "title": "Uploads and links",
-          "description": "`onUpload` adds Attach files, and `onRequestLink` replaces the link dialog with the application's picker.",
+          "description": "The application can let people attach files, and replace the link dialog with a picker of its own.",
           "file": "docs/examples/rich-text/UploadsAndLinks.tsx"
         },
         {
           "name": "EditorCommands",
           "title": "Editor commands",
-          "description": "`ref.editor` is the Tiptap editor, so the application can change the document with its commands.",
+          "description": "The application can change the document with the editor's own commands, such as from a button beside it.",
           "file": "docs/examples/rich-text/EditorCommands.tsx"
         },
         {
           "name": "ReleaseNotesForm",
           "title": "Release notes form",
-          "description": "With `name`, a form submits the Markdown; `error` says what to fix.",
+          "description": "A form sends the editor's text as Markdown, and an error says what to fix.",
           "file": "docs/examples/rich-text/ReleaseNotesForm.tsx"
         },
         {
@@ -11078,8 +11078,8 @@
         "expansion panels"
       ],
       "useWhen": [
-        "A list of questions or topics that people open one or a few at a time, such as frequently asked questions.",
-        "Long reference or settings content split into sections that people scan by their headings."
+        "Questions or topics opened one or a few at a time, such as an FAQ",
+        "Long reference or settings content, scanned by its headings"
       ],
       "avoidWhen": [
         {
@@ -11104,19 +11104,19 @@
         {
           "name": "FrequentQuestions",
           "title": "Frequent questions",
-          "description": "One section is open at a time.",
+          "description": "One section is open at a time: opening another closes it.",
           "file": "docs/examples/accordion/FrequentQuestions.tsx"
         },
         {
           "name": "SeveralOpen",
           "title": "Several open",
-          "description": "`multiple` lets people keep several sections open at once.",
+          "description": "An accordion can let people keep several sections open at once.",
           "file": "docs/examples/accordion/SeveralOpen.tsx"
         },
         {
           "name": "OpenFromOutside",
           "title": "Open from outside",
-          "description": "`value` and `onValueChange` control which sections are open.",
+          "description": "The application can open a section itself, such as from a help button elsewhere on the page.",
           "file": "docs/examples/accordion/OpenFromOutside.tsx"
         },
         {
@@ -12099,17 +12099,17 @@
         "loading state"
       ],
       "useWhen": [
-        "Work of unknown length in a small area, such as a list that updates after a filter changes.",
-        "An update to content already shown, beside the content, which stays in place meanwhile.",
-        "Content whose shape isn't known while it loads, such as a file's preview (`size=\"lg\"`), or search results, with its label beside it (`showLabel`)."
+        "Work of unknown length in a small area, such as a list updating after a filter changes",
+        "An update beside content that stays in place meanwhile",
+        "Content of unknown shape while it loads, such as search results, with its label beside it"
       ],
       "avoidWhen": [
         {
-          "text": "The work that follows a press, such as saving; show it on the button that started it with `pending`.",
+          "text": "The work that follows a press, such as saving, shown on the button that started it.",
           "use": "Button"
         },
         {
-          "text": "Content of a known shape while it loads, such as a card or a list, which shows itself as a skeleton with `skeleton`.",
+          "text": "Content of a known shape while it loads, such as a card or a list, which shows itself as a skeleton.",
           "use": "Surface"
         },
         {
@@ -12145,7 +12145,7 @@
         {
           "name": "SearchingDocuments",
           "title": "Searching documents",
-          "description": "`showLabel` puts the label beside the spinner.",
+          "description": "The spinner can show its label beside it, for loading with no known shape, such as search results.",
           "file": "docs/examples/spinner/SearchingDocuments.tsx"
         },
         {
@@ -14561,7 +14561,7 @@
         "peek"
       ],
       "useWhen": [
-        "A link or a name refers to something people may want a glance at before following it, such as a document's summary or a person's role."
+        "A glance at what a link or a name refers to, such as a document's summary or a person's role"
       ],
       "avoidWhen": [
         {
@@ -14590,19 +14590,19 @@
         {
           "name": "TextDetails",
           "title": "Text details",
-          "description": "A trigger that is text rather than a link, such as a span or Text, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; links, buttons and avatars keep their own look. Make the text focusable with `tabIndex={0}`, so keyboard focus opens the card too; envUI warns in the console while developing when it isn't.",
+          "description": "Text that isn't a link takes a quiet dotted underline, which says it shows more on hover or focus; links, buttons and avatars keep their own look. Such text takes keyboard focus too, so focus opens the card.",
           "file": "docs/examples/hover-card/TextDetails.tsx"
         },
         {
           "name": "PersonDetails",
-          "title": "Person details",
-          "description": "",
+          "title": "Widths",
+          "description": "The card is as wide as its content, up to its width, and narrows to fit the window. | Width | Use for | | ------ | --------------------------------------------------------------- | | Medium | A short summary, such as a document's last change. The default. | | Large | Richer details, such as a person with an avatar and a role. |",
           "file": "docs/examples/hover-card/PersonDetails.tsx"
         },
         {
           "name": "Placement",
           "title": "Placement",
-          "description": "",
+          "description": "The card opens below its trigger, centred on it, or on another side or lined up with one end, such as above a link near the bottom of a pane.",
           "file": "docs/examples/hover-card/Placement.tsx"
         },
         {

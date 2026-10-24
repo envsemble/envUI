@@ -16,9 +16,9 @@ aliases:
   - day picker
   - month view
 useWhen:
-  - People choose a day, such as when a report goes out or a task is due.
-  - People choose a day and a time, such as when a meeting starts (`granularity="minute"`).
-  - A day is chosen within a page or a panel from a month that stays visible, such as in a planning view (Calendar).
+  - A day, such as when a report goes out or a task is due
+  - A day and a time, such as when a meeting starts
+  - A day chosen from a month that stays in view, such as in a planning view (Calendar)
 avoidWhen:
   - text: A time of day without a date, such as when a shift starts.
     use: TimePicker
@@ -55,7 +55,7 @@ A read-only field shows its value, and its calendar doesn't open.
 
 ### A date and a time
 
-With `granularity="minute"`, the calendar stays open beside the time's wheels; turning a wheel sets the time at once.
+With a time, the calendar stays open beside the time's wheels, and turning a wheel sets the time at once.
 
 ```tsx example=MeetingTime
 
@@ -63,7 +63,7 @@ With `granularity="minute"`, the calendar stays open beside the time's wheels; t
 
 ### Within a range
 
-Days outside `min` and `max` are unavailable, and the month buttons stop at them.
+Days outside the allowed range are unavailable, and the month buttons stop at them.
 
 ```tsx example=WithinRange
 
@@ -71,7 +71,7 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 ### In a form
 
-`name` submits the value as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm`, a local date without a zone. Converting it to a moment belongs to the application.
+The form sends the date as a local date, with no time zone. Turning it into a moment belongs to the application.
 
 ```tsx example=LeaveRequest
 
@@ -87,15 +87,15 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 2. **Outline, with a time**
 3. **Floating**
 
-| Variant                | Use for                                                 |
-| ---------------------- | ------------------------------------------------------- |
-| Date                   | A day; choosing one closes the calendar. The default.   |
-| `granularity="minute"` | A day and a time, with Now and the time's wheels.       |
-| `variant="floating"`   | A long form on a page, as TextField's floating variant. |
+| Variant              | Use for                                                    |
+| -------------------- | ---------------------------------------------------------- |
+| Outline              | A day; choosing one closes the calendar. The default.      |
+| Outline, with a time | A day and a time, with Now and the time's wheels.          |
+| Floating             | A long form on a page, as a text field's floating variant. |
 
 ### Sizes
 
-`sm`, `md` and `lg`, the control heights of the [scale](../foundations/scale.md). With `showLabel={false}`, the placeholder shows in place of the label. The field is 12 rem wide at least, also in a toolbar sized to its content, and in a narrower container it takes the container's width.
+Small, medium and large, the control heights of the [scale](../foundations/scale.md). A field without a visible label, such as in a toolbar, shows its placeholder instead. It is at least 12 rem wide, also in a toolbar sized to its content, and in a narrower container it takes the container's width.
 
 ```tsx example=SmallToolbar
 
@@ -111,8 +111,13 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 ```
 
-- Use two fields for a range, such as First day and Last day.
-- Use `readOnly`, not `disabled`, to show a date people can't change.
+### Ranges
+
+Use two fields for a range, such as First day and Last day.
+
+### Dates people can't change
+
+Show a date people can't change as read-only rather than disabled, so they can still focus and read it.
 
 ## Anatomy
 
@@ -139,7 +144,7 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 5. **Day** (`env-calendar-day`)
 6. **Actions** (`env-date-picker-actions`)
 
-Not shown: the times, `env-date-picker-time`, beside the calendar with `granularity="minute"`.
+Not shown: the time's wheels beside the calendar, for a field that takes a time.
 
 ## Accessibility
 
@@ -169,6 +174,58 @@ Not shown: the times, `env-date-picker-time`, beside the calendar with `granular
 - A `label`, or `aria-label` on a field without one.
 - Validation, such as the order of two dates, and its `error`.
 - The labels in the application's language.
+
+## In code
+
+### Usage
+
+A DatePicker is a field with its `label`, `description` and `error`, whose button opens the calendar. Its value is a day as `YYYY-MM-DD`, or `null` for none: leave it uncontrolled, with `defaultValue`, or control it with `value` and `onValueChange`, which receives `null` once the field is cleared. `clearable` adds a clear button to the field and the calendar.
+
+```tsx source=PublishDate
+
+```
+
+#### A date and a time
+
+`granularity` is `day`, the default, or `minute`, for a local date and time as `YYYY-MM-DDTHH:mm`, chosen on wheels of hours, minutes every `minuteStep` minutes, 15 by default, and, on a 12-hour clock, day periods. `defaultTime`, as `HH:mm`, is the time a newly chosen day starts with, 00:00 by default.
+
+```tsx source=MeetingTime
+
+```
+
+#### Range and format
+
+`min` and `max`, in the value's format, make earlier and later days unavailable, and the month buttons stop at them. Check the order of two dates yourself, and set `error`. `locale`, EnvUIProvider's by default, sets the shown value and the calendar's names, `weekStart` the first day of the week, from 0 for Sunday, and `formatOptions` the `Intl.DateTimeFormat` options of the shown value.
+
+#### In a form
+
+`name` submits the value as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm`, a local date without a zone; converting it to a moment belongs to the application. `required` keeps an empty field from submitting, and a reset restores `defaultValue`. Use `readOnly`, not `disabled`, for a date people can't change.
+
+```tsx source=LeaveRequest
+
+```
+
+#### Variants and sizes
+
+`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label, as TextField's. `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. With `showLabel={false}`, `placeholder` shows in place of the label; name the field with `aria-label`. The field is 12 rem wide at least, also in a container sized to its content, and in a narrower container it takes the container's width.
+
+```tsx source=SmallToolbar
+
+```
+
+#### Calendar
+
+Calendar is the month on its own, for a page or a panel: it takes `value`, `defaultValue` and `onValueChange`, `min`, `max`, `weekStart` and `locale`, as the field does.
+
+```tsx source=PlanningCalendar
+
+```
+
+### Composition
+
+`open`, `defaultOpen` and `onOpenChange` control the calendar. `clearLabel`, `todayLabel`, `nowLabel`, `timeLabel`, `previousMonthLabel` and `nextMonthLabel` name its buttons, from EnvUIProvider's `messages` by default. `className` and `style` reach the field's root, and `ref` the button.
+
+The field's parts are the root, `env-field` with `env-date-picker`; the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup, `env-date-picker-popup`, shared with TimePicker and MonthPicker, holds the calendar, with `env-calendar-previous`, `env-calendar-heading`, `env-calendar-next` and `env-calendar-day`; the times, `env-date-picker-time`, beside it with `granularity="minute"`; and the actions, `env-date-picker-actions`.
 
 ## Changelog
 

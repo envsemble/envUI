@@ -19,11 +19,11 @@ aliases:
   - drag and drop list
   - selectable rows
 useWhen:
-  - Related items with a title, a short detail and an action each, such as the sections of a settings page.
-  - Items that each open a page or a document, such as recent plans (`interactive`).
-  - A short set of results or members under a search field.
-  - The list beside an item's details, with its current row marked (`selected`).
-  - Items people put in their own order, such as the slides of a deck or an agenda (`onReorder`).
+  - Related items with a title, a detail and an action each, such as settings
+  - Items that each open a page or a document, such as recent plans
+  - A short set of results or members under a search field
+  - The list beside an item's details, with its current row marked
+  - Items people put in their own order, such as an agenda
 avoidWhen:
   - text: Data compared across columns, or rows people sort by a value.
     use: Table
@@ -49,7 +49,7 @@ components:
 
 ### Rows that open something
 
-With `interactive`, the link marked `data-row-target` covers its row. The row's other controls take `position: relative` to stay above it.
+A whole row can open what it names, through its one link, while its other controls stay pressable above it.
 
 ```tsx example=OpenFromRow
 
@@ -57,7 +57,7 @@ With `interactive`, the link marked `data-row-target` covers its row. The row's 
 
 ### The current row
 
-`selected` marks the row whose details show beside the list, with `aria-current`.
+The row whose details show beside the list is marked as the current one.
 
 ```tsx example=CurrentRow
 
@@ -65,7 +65,7 @@ With `interactive`, the link marked `data-row-target` covers its row. The row's 
 
 ### Checked rows
 
-A checkbox in `start` chooses rows for an action on several at once.
+A checkbox at a row's start chooses it for an action on several rows at once.
 
 ```tsx example=CheckedRows
 
@@ -73,7 +73,7 @@ A checkbox in `start` chooses rows for an action on several at once.
 
 ### Put in order
 
-`onReorder` gives each row a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys. The list reports the move, and the application moves the item.
+Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys. The list reports the move, and the application moves the item.
 
 ```tsx example=Reorder
 
@@ -81,15 +81,25 @@ A checkbox in `start` chooses rows for an action on several at once.
 
 ## Variants
 
-```tsx example=OnAPane caption="In a muted Surface that holds only lists, the rows take the raised fill."
+### On a pane
+
+In a muted surface that holds only lists, the rows take the raised fill, so they stand out from it.
+
+```tsx example=OnAPane
 
 ```
 
-```tsx example=ExtraContent caption="Children follow the description, such as a status."
+### More content
+
+More content can follow the description, such as a status.
+
+```tsx example=ExtraContent
 
 ```
 
-`density`, from `xs` to `lg`, changes only the rows' block padding.
+### Density
+
+Rows pack more or less tightly, from extra small to large, which changes only their padding, never the text.
 
 ## When to use
 
@@ -103,8 +113,7 @@ A checkbox in `start` chooses rows for an action on several at once.
 
 ### Content
 
-- Keep the description to one fact that tells items apart, such as who changed it and when.
-- Name a repeated action after its row, such as More actions for Roadmap.
+Keep the description to one fact that tells items apart, such as who changed it and when, and name a repeated action after its row, such as More actions for Roadmap.
 
 ## Anatomy
 
@@ -122,7 +131,7 @@ A checkbox in `start` chooses rows for an action on several at once.
 
 ### Colors
 
-`--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected` and `--env-list-item-selected-content` set the colors of one List, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+One list can take colors of its own for its rows: their fill, their text, and the fill and text of the current row and of checked rows. Their hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 
@@ -157,6 +166,56 @@ Labels and descriptions wrap, and an action that no longer fits beside the text 
 - One link or button marked `data-row-target` in an interactive row, with `draggable={false}` on a link.
 - Names for a start checkbox and for actions, which say which row they act on.
 - `textValue` on a reorderable row whose label isn't plain text, and the move in `onReorder`.
+
+## In code
+
+### Usage
+
+List.Root is a `ul` of List.Item rows, each with its `label`, a `description` below it, one short fact, an `action` at its end, such as a Button, and `children` after the description, such as a Badge. `start` holds content before the label, such as an Avatar, an icon or a Checkbox. Name the list with `aria-label` where its heading doesn't.
+
+```tsx source=SettingsRows
+
+```
+
+#### Rows that open something
+
+With `interactive`, a row reacts to hover, keyboard focus inside it and presses. Mark its one link or button `data-row-target`, which stretches it over the row; give a link `draggable={false}`, so a press that moves a little doesn't drag it. The row's other controls take `position: relative` to stay above it.
+
+```tsx source=OpenFromRow
+
+```
+
+#### The current and checked rows
+
+`selected` marks the current row, such as the one whose details show beside the list, with the selected fill and `aria-current="true"` on its `data-row-target`, or on the row without one. A row whose `start` checkbox is checked takes the selected fill too; name each checkbox after its row.
+
+```tsx source=CurrentRow
+
+```
+
+#### Put in order
+
+`onReorder` on List.Root gives each row a handle, moved by dragging it, by pressing it or by keyboard, and calls it with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The rows are the list's children, directly or in arrays and fragments: List.Item elements, or elements of a row component that passes the props it doesn't use on to its List.Item. `textValue` names a row whose `label` isn't plain text, for its handle and the announcements.
+
+```tsx source=Reorder
+
+```
+
+#### Density and panes
+
+`density` is `xs`, `sm`, `md`, the default, or `lg`, and changes only the rows' block padding. Put a list directly in `<Surface background="muted" padding={3}>`, a muted Surface that holds only lists, and its rows take the raised fill.
+
+```tsx source=OnAPane
+
+```
+
+### Composition
+
+The parts are the list, `env-list`, each row, `env-list-item`, with its handle, `env-list-item-handle`, its start, `env-list-item-start`, its content, `env-list-item-content`, which holds the label and the description, and its action at the end. Rows render on the server; only the handle of a reorderable row needs the browser.
+
+### Customize
+
+`--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected` and `--env-list-item-selected-content` set the colors of one List, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Changelog
 
