@@ -464,12 +464,19 @@ test('the hosted build opens every page of the Site and the Docs without network
   await expect(
     page.locator('.docs-footer').getByRole('navigation', { name: 'Footer' }),
   ).toContainText('Benchmark');
-  for (const { path, title, kind } of allPages) {
+  for (const { path, title, kind, area } of allPages) {
     await goTo(page, path === 'overview' ? '/' : `/${path}`);
     await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(
       kind === 'home' ? 'envUI' : title,
     );
     await expect(page.getByText('This page failed to render')).toHaveCount(0);
+    // A page of the Site links into the Docs only through its API button and the Docs link, not
+    // from its content, the links generated from its frontmatter included, such as Built from.
+    if (area === 'site' && kind !== 'home')
+      await expect(
+        page.locator('.docs-main :is(.docs-article, .docs-band) a[href^="/docs"]'),
+        path,
+      ).toHaveCount(0);
   }
   // A deep link loads its page, in the Docs too.
   await page.goto(`${siteUrl}/docs/setup`);

@@ -46,11 +46,16 @@ export function MetadataBadges({
   );
 }
 
-/** An export as a Markdown link to the page that documents it; pages of docs/ are one folder
- * deep, so ../<path> reaches any of them from any page. */
+/**
+ * An export as a Markdown link to the page of the Site that shows it; pages of docs/ are one folder
+ * deep, so ../<path> reaches any of them from any page. An export documented only in the Docs, such
+ * as Field, is code: the Site links into the Docs only through the API button and the Docs link.
+ */
 function exportLink(name: string) {
   const page = pageOf(name);
-  return page ? `[${name}](../${page.reference.path})` : `\`${name}\``;
+  return page && !page.path.startsWith('docs/')
+    ? `[${name}](../${page.reference.path})`
+    : `\`${name}\``;
 }
 
 /**
