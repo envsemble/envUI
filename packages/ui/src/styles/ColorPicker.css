@@ -1,3 +1,11 @@
+/* Color properties: ColorPickerButton's fill, container, which an application sets on one button
+   through style or its own CSS; transparent by default, so the button takes the background of what
+   it sits on, as a field does. It doesn't inherit. */
+@property --env-color-picker-button-container {
+  syntax: '*';
+  inherits: false;
+}
+
 /* ColorPicker, from @envsemble/envui/color, after the color panels of design tools: a square
    saturation and brightness area with thin vertical hue and alpha strips at its side, a row with the
    eyedropper, the format, quiet fields that name their channels and copy, and preset swatches. React Aria paints
@@ -255,7 +263,8 @@
 }
 
 /* ColorPickerButton: a compact, field-like button with the small radius, the color's swatch and its
-   value. Its popover holds the picker at a compact width. */
+   value. Like a field, it has no fill of its own and takes the background of what it sits on, until
+   its color property gives it one. Its popover holds the picker at a compact width. */
 .env-color-picker-button {
   box-sizing: border-box;
   display: inline-flex;
@@ -266,7 +275,7 @@
   padding-inline: var(--env-space-2) var(--env-space-3);
   border: var(--env-control-border-width) solid var(--env-color-picker-button-border);
   border-radius: var(--env-radius-sm);
-  background: var(--env-color-bg-field);
+  background: var(--env-color-picker-button-container, transparent);
   color: var(--env-color-fg-default);
   font: var(--env-type-body-small);
   font-variant-numeric: tabular-nums;

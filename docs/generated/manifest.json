@@ -3163,6 +3163,12 @@
                 "env-color-picker-button"
               ]
             }
+          ],
+          "colors": [
+            {
+              "property": "--env-color-picker-button-container",
+              "description": "The fill behind the swatch and the value, transparent by default."
+            }
           ]
         },
         "ColorSwatch": {

@@ -812,6 +812,9 @@
       "--env-checkbox-selected": "The box's fill while checked or indeterminate; set, it takes state layers instead of the designed hover and press fills.",
       "--env-checkbox-icon": "The check mark or dash, and the color of the state layers."
     },
+    "ColorPickerButton": {
+      "--env-color-picker-button-container": "The fill behind the swatch and the value, transparent by default."
+    },
     "Combobox": {
       "--env-combobox-chip-container": "The fill of a chosen option’s chip.",
       "--env-combobox-chip-content": "The chip's label and remove button."

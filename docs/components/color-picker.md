@@ -136,6 +136,10 @@ ColorSwatch shows a color as a small sample, with its value in a `format` and an
 
 Not shown: the description and error, `env-color-picker-description` and `env-color-picker-error`; ColorPickerButton's `env-color-picker-button` and its popover, `env-color-picker-popover`; and the eyedropper where the browser has none.
 
+### Colors
+
+ColorPickerButton has no fill of its own: like a field, it takes the background of what it sits on. `--env-color-picker-button-container` gives one button a fill, through `style` or CSS. [Customize colors](../customizing-colors.md) describes the roles.
+
 ## Adapting to width
 
 The picker fills its container up to 18 rem, so that a wide picker stays compact, and everything under the area and the strips takes their width. The strips stay upright at the area's side at every width, and a narrow picker's area shrinks. The format menu, the eyedropper and copy share a row, and the fields take the row under it, in equal columns that keep each channel's letter in its place in every format.
@@ -173,6 +177,6 @@ The picker fills its container up to 18 rem, so that a wide picker stays compact
 
 ## Changelog
 
-- **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
+- **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. ColorPickerButton has no fill of its own, as fields have none, and `--env-color-picker-button-container` gives one button a fill. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
 - **0.7.0**: ColorSwatch.
 - **0.1.0**: ColorPicker, with a color area, a hue slider and a HEX field.

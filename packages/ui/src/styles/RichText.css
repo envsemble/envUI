@@ -116,9 +116,11 @@
 .env-rich-text-document.ProseMirror-hideselection * {
   caret-color: transparent;
 }
+/* A code block, a selected cell and a reference stand out from the editor by translucent fills,
+   which take the background of what the editor sits on, as the editor itself does. */
 .env-rich-text-document pre {
   padding: var(--env-space-4);
-  background: var(--env-color-bg-field);
+  background: var(--env-color-bg-neutral-muted);
   overflow: auto;
   white-space: pre;
 }
@@ -131,13 +133,13 @@
   position: relative;
 }
 .env-rich-text-document .selectedCell {
-  background: var(--env-color-bg-field);
+  background: var(--env-color-bg-selected);
 }
 .env-rich-text-reference {
   display: inline;
   padding: 0 var(--env-space-1);
   border-radius: 0.25rem;
-  background: var(--env-color-bg-field);
+  background: var(--env-color-bg-neutral-muted);
   color: var(--env-color-fg-default);
   text-decoration: none;
   box-decoration-break: clone;
