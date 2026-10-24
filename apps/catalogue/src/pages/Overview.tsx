@@ -6,6 +6,7 @@ import { Palette } from '@envsemble/envui/icons/Palette';
 import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
+import { BannerShapes } from '../layout/BannerShapes';
 import { routeHref } from '../navigation/Address';
 import { sectionHome } from '../navigation/DocumentationRoutes';
 
@@ -49,8 +50,10 @@ export function Overview() {
           background="default"
           padding={6}
           render={<Column gap={6} align="center" />}
-          className="docs-overview-hero"
+          className="docs-overview-hero docs-banner"
+          data-banner="landing"
         >
+          <BannerShapes />
           {/* The wordmark, with the package's version under it as a quiet subheading, read from
               packages/ui/package.json as the site builds. */}
           <Column gap={3} align="center" className="docs-overview-brand">
