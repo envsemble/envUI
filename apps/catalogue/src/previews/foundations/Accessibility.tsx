@@ -24,6 +24,7 @@ export function AccessibilityPreview() {
       <Example
         title="Motion defaults"
         size="field"
+        explains
         caption="Motion supports a state change: brief, and only opacity under reduced motion."
       >
         <Column gap={4} className="docs-facts">

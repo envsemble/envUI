@@ -582,13 +582,11 @@ const figureAttributes = {
   variants: { allowed: ['caption', 'stage'], required: [] },
 };
 /**
- * The fills a figure's stage takes besides the default, the page's: `stage="raised"` where the
- * subject has the page's color, such as an open popup in the light theme, and would not show;
+ * The fills a figure's stage takes besides the default, the page color of the examples' theme:
  * `stage="shaded"`, a shade darker than the page's and the navigation's backgrounds, where the
- * subject shows both, such as a Scaffold; `stage="none"`, no dots and no frame, where the subject
- * is a color or the page itself, such as the page's backgrounds.
+ * subject is a whole window that shows both, such as a Scaffold.
  */
-const stageFills = ['raised', 'shaded', 'none'];
+const stageFills = ['shaded'];
 /**
  * The attributes that are flags, written without a value: `open` shows the example's overlays
  * open on its stage, contained, and `enlarge` shows an anatomy figure's subject half as large
@@ -827,7 +825,7 @@ function readFigures(document, body, { examples, specimens, partNames }) {
         if (stageFills.includes(attributes.stage)) block.stage = attributes.stage;
         else
           problems.push(
-            `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(', ')}, or nothing for the dotted stage in the page's color`,
+            `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(', ')}, or nothing for the stage in the page's color`,
           );
       }
       if (attributes.open === true) block.open = true;

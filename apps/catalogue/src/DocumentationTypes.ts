@@ -36,8 +36,8 @@ export type ExportEntry =
   | (ExportBase & { kind: 'namespace'; parts: string[] })
   | (ExportBase & { kind: 'function'; signature: string });
 
-/** A fill a figure's stage takes instead of the page's, or none: no dots and no frame. */
-export type StageFill = 'raised' | 'shaded' | 'none';
+/** A fill a figure's stage takes instead of the page color of the examples' theme. */
+export type StageFill = 'shaded';
 
 export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }

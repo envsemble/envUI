@@ -96,7 +96,7 @@ The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 
 6. **Clock icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-```tsx anatomy=TimePickerPopupAnatomy open stage=raised
+```tsx anatomy=TimePickerPopupAnatomy open
 
 ```
 

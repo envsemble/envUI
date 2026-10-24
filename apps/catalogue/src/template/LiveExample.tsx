@@ -10,10 +10,11 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
+import { Disclosure, Column, Text } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import type { StageFill } from '../DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
+import { ExampleTheme } from './ExampleTheme';
 import { OpenExample } from './OpenExample';
 import { Loading } from './Loading';
 
@@ -207,7 +208,6 @@ export function LiveExample({
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
 }) {
-  const theme = useTheme();
   const render = open ? (
     <OpenExample name={name}>
       <ExampleRender page={page} name={name} />
@@ -230,7 +230,7 @@ export function LiveExample({
               {/* The stage scrolls where the frame is wider than the page, so the keyboard can
                   scroll it too. */}
               <Column
-                render={<Theme {...theme} />}
+                render={<ExampleTheme />}
                 container="env-window"
                 gap={0}
                 className="docs-live-example"
@@ -251,7 +251,7 @@ export function LiveExample({
         </div>
       ) : (
         <Column
-          render={<Theme {...theme} />}
+          render={<ExampleTheme />}
           container="env-window"
           gap={0}
           role="group"

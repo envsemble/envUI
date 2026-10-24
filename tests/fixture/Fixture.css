@@ -472,7 +472,7 @@ body:has(.density-fixture) {
 }
 
 /* LayoutCheck.tsx: one catalogue example on the catalogue's stage, without the stage's padding,
-   frame, dots and least height, so the stage is the window the example gets, and paints nothing. */
+   fill, corners and least height, so the stage is the window the example gets, and paints nothing. */
 body:has(.fixture-layout-check) {
   margin: 0;
 }

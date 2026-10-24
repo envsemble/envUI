@@ -251,8 +251,9 @@
   font: var(--env-type-body);
 }
 
-/* An anatomy figure: the component in the reader's theme on the dotted stage, with numbered
-   callouts on its parts, measured from the live parts, and the legend of part names below. */
+/* An anatomy figure: the component on its stage, in the examples' theme, with numbered callouts
+   on its parts, measured from the live parts, and the legend of part names below. The callouts
+   take the stage's theme, so they read on it in either. */
 .docs-anatomy,
 .docs-variants {
   display: grid;

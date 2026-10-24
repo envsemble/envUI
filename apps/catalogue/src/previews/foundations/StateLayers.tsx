@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Button, Drawer, List, Text, TextField } from '@envsemble/envui';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Example } from '../Example';
+import { Example, MatrixScroll } from '../Example';
 
 const states = [
   { title: 'Rest', className: 'docs-force-default' },
@@ -87,18 +87,13 @@ const samples: readonly { name: string; render: (state: ForcedState) => ReactNod
  */
 export function StateLayers() {
   return (
-    <Example title="Interaction states" size="wide">
+    <Example title="Interaction states" size="wide" explains>
       <Text emphasis="muted">
         Hover and press take tokens of their own, in every theme. A component given colors of its
         own through its color properties lays its content color over its container instead, as
         Material draws state layers, so it keeps its states.
       </Text>
-      <div
-        className="docs-matrix-scroll docs-state-layers"
-        tabIndex={0}
-        role="region"
-        aria-label="Interaction states"
-      >
+      <MatrixScroll label="Interaction states" className="docs-state-layers">
         <table className="docs-matrix">
           <thead>
             <tr>
@@ -121,7 +116,7 @@ export function StateLayers() {
             ))}
           </tbody>
         </table>
-      </div>
+      </MatrixScroll>
     </Example>
   );
 }

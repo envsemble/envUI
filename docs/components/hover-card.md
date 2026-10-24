@@ -29,7 +29,7 @@ components:
 
 A hover card shows supplementary details beside its trigger, usually a link, once the pointer rests on it or keyboard focus reaches it, like a preview of the page the link leads to. Focus stays on the trigger, and the card stays open while the pointer moves onto it.
 
-```tsx example=DocumentPreview open stage=raised
+```tsx example=DocumentPreview open
 
 ```
 
@@ -48,11 +48,11 @@ A trigger that is text rather than a link, such as a span or Text, takes a quiet
 | `md`  | A short summary, such as a document's last change. The default. |
 | `lg`  | Richer details, such as a person with an avatar and a role.     |
 
-```tsx example=PersonDetails open stage=raised caption="lg, with an avatar beside the name."
+```tsx example=PersonDetails open caption="lg, with an avatar beside the name."
 
 ```
 
-```tsx example=Placement open stage=raised caption="side top and align start, for a link near the bottom of a pane."
+```tsx example=Placement open caption="side top and align start, for a link near the bottom of a pane."
 
 ```
 
@@ -64,7 +64,7 @@ A trigger that is text rather than a link, such as a span or Text, takes a quiet
 
 ## Anatomy
 
-```tsx anatomy=HoverCardAnatomy open stage=raised
+```tsx anatomy=HoverCardAnatomy open
 
 ```
 

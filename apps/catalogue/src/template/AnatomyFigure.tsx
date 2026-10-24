@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
+import { ExampleTheme } from './ExampleTheme';
 import { ExampleCode, ExampleRender } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
@@ -354,7 +354,6 @@ function AnatomyStage({
   /** Whether the callouts name the variants rather than number the parts. */
   variants: boolean;
 }) {
-  const theme = useTheme();
   const stage = useRef<HTMLDivElement>(null);
   const subject = useRef<HTMLDivElement>(null);
   const [callouts, setCallouts] = useState<Callout[]>([]);
@@ -403,8 +402,7 @@ function AnatomyStage({
     };
   }, [legend, open, enlarged, variants]);
   return (
-    <Theme
-      {...theme}
+    <ExampleTheme
       ref={stage}
       className="docs-anatomy-stage"
       data-example={name}
@@ -464,7 +462,7 @@ function AnatomyStage({
           {label ?? number}
         </span>
       ))}
-    </Theme>
+    </ExampleTheme>
   );
 }
 

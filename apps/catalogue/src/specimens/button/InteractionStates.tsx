@@ -1,4 +1,4 @@
-import { Example } from '../../previews/Example';
+import { Example, MatrixScroll } from '../../previews/Example';
 import { controlStates } from '../../previews/InteractionStates';
 import { ButtonSample, buttonVariants, pairName } from '../../previews/ButtonSamples';
 
@@ -6,12 +6,7 @@ import { ButtonSample, buttonVariants, pairName } from '../../previews/ButtonSam
 export default function InteractionStates() {
   return (
     <Example size="wide">
-      <div
-        className="docs-matrix-scroll"
-        tabIndex={0}
-        role="region"
-        aria-label="Button interaction states"
-      >
+      <MatrixScroll label="Button interaction states">
         <table className="docs-matrix">
           <thead>
             <tr>
@@ -44,7 +39,7 @@ export default function InteractionStates() {
               ))}
           </tbody>
         </table>
-      </div>
+      </MatrixScroll>
     </Example>
   );
 }
