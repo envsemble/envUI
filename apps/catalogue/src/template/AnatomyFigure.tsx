@@ -5,6 +5,7 @@ import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
+import { PictureMark } from './PictureMark';
 
 /** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
 interface Callout {
@@ -464,6 +465,7 @@ function AnatomyStage({
           {label ?? number}
         </span>
       ))}
+      <PictureMark />
     </Theme>
   );
 }

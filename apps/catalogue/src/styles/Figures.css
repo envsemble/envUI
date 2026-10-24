@@ -373,7 +373,16 @@
   white-space: nowrap;
 }
 
-/* The dev mode page's picture of the 3D view: a capture, not a live example, so no stage. */
+/* The dev mode page's picture of the 3D view: a capture, not a live example, so no stage; its
+   picture mark sits on the capture's own corner, on the page's color so it shows on the picture. */
+.docs-dev-mode-frame {
+  min-inline-size: 0;
+}
+
+.docs-dev-mode-frame > .docs-picture-mark {
+  background: var(--env-color-bg-page);
+}
+
 .docs-dev-mode-picture {
   display: block;
   inline-size: 100%;

@@ -1,5 +1,6 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useRef, type ReactNode } from 'react';
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
+import { PictureMark, useShowsPicture } from '../template/PictureMark';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
@@ -19,6 +20,27 @@ const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
  * stays below the stage.
  */
 export const ExampleStage = createContext(false);
+
+/**
+ * Whether a SpecimenGrid or MatrixScroll is a component's specimen on its own stage, as a page's
+ * specimen is (template/Specimen.tsx); one inside it, or in a foundation's figure, is not.
+ */
+export const SpecimenStage = createContext(false);
+
+/**
+ * A foundation's figure that shows envUI at work, on its stage, marked as a picture where nothing
+ * in it can be used.
+ */
+function FoundationStage({ children }: { children: ReactNode }) {
+  const stage = useRef<HTMLDivElement>(null);
+  const picture = useShowsPicture(stage);
+  return (
+    <div ref={stage} className="docs-foundation-stage" data-figure="example">
+      {children}
+      {picture && <PictureMark />}
+    </div>
+  );
+}
 
 /** Documentation specimen framing; product UI is composed from public envUI components. */
 export function Example({
@@ -68,10 +90,12 @@ export function Example({
         </Text>
       ) : null}
       <PartHeadingLevel value={title ? ((level + 1) as 3 | 4) : level}>
-        {staged ? (
-          <div className="docs-foundation-stage" data-figure={explains ? 'explanation' : 'example'}>
+        {staged && explains ? (
+          <div className="docs-foundation-stage" data-figure="explanation">
             {children}
           </div>
+        ) : staged ? (
+          <FoundationStage>{children}</FoundationStage>
         ) : (
           children
         )}
@@ -97,9 +121,12 @@ export function SpecimenGrid({
   children: ReactNode;
   size?: 'compact' | 'field' | 'card' | 'wide';
 }) {
+  const stage = useRef<HTMLDivElement>(null);
+  const picture = useShowsPicture(stage, useContext(SpecimenStage));
   return (
-    <div className="docs-specimen-grid" data-size={size}>
-      {children}
+    <div ref={stage} className="docs-specimen-grid" data-size={size}>
+      <SpecimenStage value={false}>{children}</SpecimenStage>
+      {picture && <PictureMark />}
     </div>
   );
 }
@@ -140,14 +167,18 @@ export function MatrixScroll({
   className?: string;
   children: ReactNode;
 }) {
+  const stage = useRef<HTMLDivElement>(null);
+  const picture = useShowsPicture(stage, useContext(SpecimenStage));
   return (
     <div
+      ref={stage}
       className={['docs-matrix-scroll', className].filter(Boolean).join(' ')}
       tabIndex={0}
       role="region"
       aria-label={label}
     >
-      {children}
+      <SpecimenStage value={false}>{children}</SpecimenStage>
+      {picture && <PictureMark />}
     </div>
   );
 }
