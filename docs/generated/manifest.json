@@ -9654,7 +9654,7 @@
         {
           "name": "PlainOutput",
           "title": "Plain output",
-          "description": "envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill and blocks on a layer of the text color of their own, both translucent, so they stand a step apart from the page, a pane, a card, a muted fill or a popup alike; diffs sit on an opaque muted grey. A block shows its plain source first and colors it once the highlighter loads.",
+          "description": "envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill and blocks and diffs on a layer of the text color of their own, both translucent, so they stand a step apart from the page, a pane, a card, a muted fill or a popup alike. A diff takes the same code theme and token colors as a block, and tints its added and removed lines with their change color over that layer, faintly enough that every token keeps its contrast there. A block shows its plain source first and colors it once the highlighter loads.",
           "file": "docs/examples/code/PlainOutput.tsx"
         },
         {

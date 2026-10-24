@@ -127,7 +127,7 @@ export const exceptions = [
   [/^packages\/ui\/src\/foundations\/messages\//, ['Messages']],
   [/^packages\/ui\/src\/dev(?:\.ts$|\/)/, ['DevMode']],
   [
-    /^apps\/catalogue\/|^bench\/results\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest|GenerateCodeThemes|Search\w*|MarkdownHeadings|FinalizeSite|SiteModuleFiles|BenchmarkResults|ReleaseNotes)\.m?[jt]s$/,
+    /^apps\/catalogue\/|^bench\/results\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest|Search\w*|MarkdownHeadings|FinalizeSite|SiteModuleFiles|BenchmarkResults|ReleaseNotes)\.m?[jt]s$/,
     catalogue,
   ],
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.

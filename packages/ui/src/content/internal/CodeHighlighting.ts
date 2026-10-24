@@ -92,11 +92,11 @@ export async function highlightCode(
   const initialized = cache.get(key);
   if (initialized) return initialized;
   const names: Record<string, string> = {
-    light: codeThemeName('code', 'light', 'standard'),
-    dark: codeThemeName('code', 'dark', 'standard'),
+    light: codeThemeName('light', 'standard'),
+    dark: codeThemeName('dark', 'standard'),
     ...(highContrast && {
-      lightHigh: codeThemeName('code', 'light', 'high'),
-      darkHigh: codeThemeName('code', 'dark', 'high'),
+      lightHigh: codeThemeName('light', 'high'),
+      darkHigh: codeThemeName('dark', 'high'),
     }),
   };
   const tokens = runtime

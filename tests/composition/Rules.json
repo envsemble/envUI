@@ -256,7 +256,6 @@
           "content/internal/CodeColors.ts",
           "content/internal/CodeThemes.ts",
           "content/internal/useCodeContrast.ts",
-          "content/internal/CodeDiffTints.ts",
           "content/internal/ReadableColors.ts",
           "content/internal/CodeHighlighting.ts",
           "content/internal/useCodeHighlighting.ts"

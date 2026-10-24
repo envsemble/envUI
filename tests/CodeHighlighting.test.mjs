@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { highlightCode } from '../packages/ui/dist/content/internal/CodeHighlighting.js';
 import { tokenStyle } from '../packages/ui/dist/content/internal/codeTokenStyle.js';
@@ -54,23 +53,16 @@ test('a token without high-contrast styles takes its standard color at high cont
 });
 
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {
-  const { wcagContrast, interpolate, formatHex, rgb, differenceEuclidean } = await import('culori');
-  const { codeTheme, diffTheme } = await import(
+  const { wcagContrast, differenceEuclidean } = await import('culori');
+  const { codeTheme, diffTintColors } = await import(
     '../packages/ui/dist/content/internal/CodeThemes.js'
   );
-  const { codeBackgrounds, codeColors, codeContrastTargets, diffBackground } = await import(
+  const { codeBackgrounds, codeColors, codeContrastTargets, diffTintOpacity } = await import(
     '../packages/ui/dist/content/internal/CodeColors.js'
   );
   const { tokens } = await import('../packages/ui/src/generated/tokens.ts');
   const { over, readableReplacements } = await import(
     '../packages/ui/dist/content/internal/ReadableColors.js'
-  );
-  const { diffTints } = await import('../packages/ui/dist/content/internal/CodeDiffTints.js');
-  const { tintsFile, tintsSource } = await import('../scripts/GenerateCodeThemes.mjs');
-  assert.equal(
-    readFileSync(tintsFile, 'utf8'),
-    await tintsSource(),
-    'Run node scripts/GenerateCodeThemes.mjs and commit CodeDiffTints.ts.',
   );
   const theme = async (name) => (await import(`shiki/themes/${name}.mjs`)).default;
   const github = {
@@ -199,8 +191,6 @@ test('every highlighted token is readable on its code background, in code blocks
           wcagContrast(foreground, surface) >= target,
           `${scheme} ${contrast} foreground ${foreground} on ${surface}`,
         );
-      // Diffs sit on their own opaque background, from which Diffs mixes its line tints.
-      const background = diffBackground(scheme, contrast);
       // Tokens that were distinct stay apart: by 0.02 in OKLab, or as far as they were.
       const distance = differenceEuclidean('oklab');
       const mapped = [...pairs(github[scheme][contrast], theme)];
@@ -212,33 +202,33 @@ test('every highlighted token is readable on its code background, in code blocks
               `${scheme} ${contrast}: ${a} and ${b} became ${aAfter} and ${bAfter}`,
             );
 
-      // Diffs: the change colors read on code's background, and the tokens on every line and word
-      // Diffs tints with them, mixed as its style sheet mixes them.
-      const diff = await diffTheme(scheme, contrast);
-      assert.notEqual(diff.name, theme.name);
-      const backgrounds = [background];
+      // Diffs: on a block's layer with the code theme itself, its change colors readable there,
+      // and every token readable on the lines and words it tints, as the browser composites them.
+      const tints = await diffTintColors(scheme, contrast);
       for (const [kind, key] of [
         ['addition', 'gitDecoration.addedResourceForeground'],
         ['deletion', 'gitDecoration.deletedResourceForeground'],
       ]) {
-        const change = diff.colors[key];
-        assert.ok(wcagContrast(change, background) >= target, `${scheme} ${contrast} ${kind}`);
-        const { mix, alpha } = diffTints[kind][scheme];
-        const line = formatHex(interpolate([background, change], 'lab')(mix));
-        const [top, bottom] = [rgb(change), rgb(line)];
-        const word = formatHex({
-          mode: 'rgb',
-          r: top.r * alpha + bottom.r * (1 - alpha),
-          g: top.g * alpha + bottom.g * (1 - alpha),
-          b: top.b * alpha + bottom.b * (1 - alpha),
-        });
-        backgrounds.push(line, word);
-      }
-      for (const color of textColors(diff))
-        for (const tint of backgrounds)
+        for (const block of blocks)
           assert.ok(
-            wcagContrast(color, tint) >= target,
-            `diff ${scheme} ${contrast} ${color} on ${tint}: ${wcagContrast(color, tint)}`,
+            wcagContrast(theme.colors[key], block) >= target,
+            `${scheme} ${contrast} ${kind} on ${block}`,
           );
+        for (const block of blocks) {
+          const line = over(tints[kind], diffTintOpacity.line, block);
+          const word = over(tints[kind], diffTintOpacity.word, line);
+          // A tint people can see: a step from the block, as the block is from its surface.
+          assert.ok(
+            differenceEuclidean('oklab')(line, block) >= 0.01,
+            `${scheme} ${contrast} ${kind} line ${line} on ${block}`,
+          );
+          for (const color of textColors(theme))
+            for (const tint of [line, word])
+              assert.ok(
+                wcagContrast(color, tint) >= target,
+                `diff ${scheme} ${contrast} ${color} on ${tint}: ${wcagContrast(color, tint)}`,
+              );
+        }
+      }
     }
 });

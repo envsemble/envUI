@@ -83,62 +83,6 @@ function fromOklch(lightness: number, chroma: number, hue: number) {
   return formatHex(oklabToLinear(at(fits)).map(fromLinear) as Rgb);
 }
 
-type Matrix = readonly [Rgb, Rgb, Rgb];
-const multiply = (matrix: Matrix, [x, y, z]: Rgb): Rgb =>
-  matrix.map(([a, b, c]) => a * x + b * y + c * z) as Rgb;
-const linearToXyz: Matrix = [
-  [0.41239079926595934, 0.357584339383878, 0.1804807884018343],
-  [0.21263900587151027, 0.715168678767756, 0.07219231536073371],
-  [0.01933081871559182, 0.11919477979462598, 0.9505321522496607],
-];
-const xyzToLinear: Matrix = [
-  [3.2409699419045226, -1.537383177570094, -0.4986107602930034],
-  [-0.9692436362808796, 1.8759675015077202, 0.04155505740717559],
-  [0.05563007969699366, -0.20397695888897652, 1.0569715142428786],
-];
-const d65ToD50: Matrix = [
-  [1.0479298208405488, 0.022946793341019088, -0.05019222954313557],
-  [0.029627815688159344, 0.990434484573249, -0.01707382502938514],
-  [-0.009243058152591178, 0.015055144896577895, 0.7518742899580008],
-];
-const d50ToD65: Matrix = [
-  [0.9554734527042182, -0.023098536874261423, 0.0632593086610217],
-  [-0.028369706963208136, 1.0099954580058226, 0.021041398966943008],
-  [0.012314001688319899, -0.020507696433477912, 1.3303659366080753],
-];
-const d50White: Rgb = [0.3457 / 0.3585, 1, (1 - 0.3457 - 0.3585) / 0.3585];
-const epsilon = 216 / 24389;
-const kappa = 24389 / 27;
-
-/** A color in CIE Lab (D50), the space of CSS `color-mix(in lab, …)`. */
-function toLab(color: string): Lab {
-  const xyz = multiply(d65ToD50, multiply(linearToXyz, parseHex(color).map(toLinear) as Rgb));
-  const [fx, fy, fz] = xyz.map((value, index) => {
-    const t = value / d50White[index]!;
-    return t > epsilon ? Math.cbrt(t) : (kappa * t + 16) / 116;
-  }) as Rgb;
-  return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
-}
-
-function fromLab([lightness, a, b]: Lab) {
-  const fy = (lightness + 16) / 116;
-  const fx = a / 500 + fy;
-  const fz = fy - b / 200;
-  const inverse = (f: number) => (f ** 3 > epsilon ? f ** 3 : (116 * f - 16) / kappa);
-  const xyz: Rgb = [
-    inverse(fx) * d50White[0],
-    (lightness > kappa * epsilon ? fy ** 3 : lightness / kappa) * d50White[1],
-    inverse(fz) * d50White[2],
-  ];
-  return formatHex(multiply(xyzToLinear, multiply(d50ToD65, xyz)).map(fromLinear) as Rgb);
-}
-
-/** `color-mix(in lab, base, color share)`: `share` of `color` mixed into `base`. */
-export function mixInLab(base: string, color: string, share: number) {
-  const [x, y] = [toLab(base), toLab(color)];
-  return fromLab(x.map((value, index) => value + (y[index]! - value) * share) as Lab);
-}
-
 /** A color at an opacity over a background, as the browser composites it. */
 export function over(color: string, alpha: number, background: string) {
   const [top, bottom] = [parseHex(color), parseHex(background)];
@@ -185,6 +129,32 @@ export function readableColor(
   for (let step = 0; step < 20; step += 1) {
     const middle = (reaches + misses) / 2;
     if (passes(middle)) reaches = middle;
+    else misses = middle;
+  }
+  return at(reaches);
+}
+
+/**
+ * The color nearest `color` that `accepts`: itself if it does, or else the same OKLCH hue, moved in
+ * `direction` to the lightness nearest its own that it accepts, with the chroma the gamut allows
+ * there. `accepts` must hold at the far end, black or white, and at every lightness beyond one it
+ * holds at.
+ */
+export function nearestColor(
+  color: string,
+  accepts: (candidate: string) => boolean,
+  direction: Direction,
+) {
+  if (accepts(color)) return color;
+  const [lightness, a, b] = toOklab(color);
+  const chroma = Math.hypot(a, b) < 1e-4 ? 0 : Math.hypot(a, b);
+  const hue = Math.atan2(b, a);
+  const at = (l: number) => fromOklch(l, chroma, hue);
+  let reaches = direction === 'darker' ? 0 : 1;
+  let misses = lightness;
+  for (let step = 0; step < 20; step += 1) {
+    const middle = (reaches + misses) / 2;
+    if (accepts(at(middle))) reaches = middle;
     else misses = middle;
   }
   return at(reaches);
