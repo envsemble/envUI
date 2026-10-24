@@ -106,7 +106,7 @@ test('pressable avatars are buttons and links named after each person, with name
     await buttons.evaluateAll((items) => items.map((item) => item.getAttribute('aria-label'))),
   ).toEqual(['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Rivera']);
   // At rest a pressable group bunches only as far as leaves each avatar a 24 px target, and the
-  // hidden count lies under the last avatar and lets the pointer through to it.
+  // count lies under the last avatar, which keeps its presses, and shows past its end.
   const jordan = group.getByRole('button', { name: 'Jordan Rivera' });
   await jordan.scrollIntoViewIfNeeded();
   const rest = (await boxes(group)).slice(0, 4);
@@ -118,6 +118,11 @@ test('pressable avatars are buttons and links named after each person, with name
     return element.contains(target);
   });
   expect(reachable).toBe(true);
+  const countShows = await group.locator('.env-avatar-group-overflow').evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    return element.contains(document.elementFromPoint(box.right - 4, box.top + box.height / 2));
+  });
+  expect(countShows).toBe(true);
   const tooltip = page.locator('.env-tooltip');
   const alex = group.getByRole('button', { name: 'Alex Morgan' });
   await alex.hover();
@@ -169,33 +174,38 @@ test('pressable avatars are buttons and links named after each person, with name
   await expect(page.locator('body')).toHaveAttribute('data-avatar-navigated-to', '/people/sam');
 });
 
-test('the ring takes the color of the surface below in both themes', async ({ page }) => {
+test('nothing rings the avatars or the count, and a chosen avatar’s gap takes the surface color', async ({
+  page,
+}) => {
   await page.goto(fixture);
   for (const theme of ['light', 'dark']) {
     const scope = page.getByTestId(`avatar-groups-${theme}`);
     await expect(scope.getByTestId('on-custom')).toBeVisible();
-    const rings = await scope
+    const groups = await scope
       .locator('[data-testid^="on-"], [data-testid="decorative"]')
       .evaluateAll((groups) =>
         groups.map((group) => {
           const surface = group.closest('[data-surface]') ?? group.closest('.fixture-section')!;
           const background = getComputedStyle(surface).backgroundColor;
-          const ring = (element: Element) =>
-            getComputedStyle(element).boxShadow.match(/^(?:rgba?|color|oklch|hsla?)\([^)]*\)/)?.[0];
+          const chosen = group.querySelector('.env-avatar[data-selected]');
           return {
             group: group.getAttribute('data-testid'),
-            avatar: ring(group.querySelector('.env-avatar')!) === background,
-            chip: ring(group.querySelector('.env-avatar-group-overflow')!) === background,
+            ringed: [...group.querySelectorAll('.env-avatar:not([data-selected])')]
+              .concat([...group.querySelectorAll('.env-avatar-group-overflow')])
+              .some((element) => getComputedStyle(element).boxShadow !== 'none'),
+            // The chosen look: the gap in the surface color, then the accent ring.
+            gap: chosen
+              ? getComputedStyle(chosen).boxShadow.match(
+                  /^(?:rgba?|color|oklch|hsla?)\([^)]*\)/,
+                )?.[0] === background
+              : null,
           };
         }),
       );
-    expect(rings).toEqual(
-      ['decorative', 'on-pane', 'on-row', 'on-custom'].map((group) => ({
-        group,
-        avatar: true,
-        chip: true,
-      })),
-    );
+    expect(groups).toEqual([
+      { group: 'decorative', ringed: false, gap: null },
+      ...['on-pane', 'on-row', 'on-custom'].map((group) => ({ group, ringed: false, gap: true })),
+    ]);
   }
 });
 
@@ -221,7 +231,7 @@ test('without a hovering pointer, avatars overlap by an eighth, line up with sma
       return avatar.parentElement!.children[1]!.contains(target);
     });
   expect(coveredByNext).toBe(true);
-  // Each avatar's initials end before the next avatar and its ring begin, in both sizes.
+  // Each avatar's initials end before the next avatar begins, in both sizes.
   for (const id of ['initials', 'initials-small']) {
     const clearances = await scope
       .getByTestId(id)
@@ -238,11 +248,7 @@ test('without a hovering pointer, avatars overlap by an eighth, line up with sma
             ? avatar
             : avatar.parentElement!;
           const next = item.nextElementSibling!;
-          const ringed = next.matches('.env-avatar, .env-avatar-group-overflow')
-            ? next
-            : next.querySelector('.env-avatar')!;
-          const ring = parseFloat(getComputedStyle(ringed).boxShadow.split(' ').at(-1) ?? '0');
-          return [next.getBoundingClientRect().left - ring - range.getBoundingClientRect().right];
+          return [next.getBoundingClientRect().left - range.getBoundingClientRect().right];
         }),
       );
     expect(clearances.length, id).toBeGreaterThan(0);
@@ -274,41 +280,108 @@ test('a group rests bunched, and spreads along an arch under the pointer and wit
   const scope = page.getByTestId('avatar-groups-light');
   const group = scope.getByTestId('decorative');
   const chip = group.locator('.env-avatar-group-overflow');
+  // Each item's center, lift and turn, from its box and its computed transforms.
   const layout = () =>
     group.evaluate((element) =>
-      [...element.querySelectorAll<HTMLElement>(':scope > .env-avatar')].map((avatar) => {
-        const style = getComputedStyle(avatar);
+      [...element.querySelectorAll<HTMLElement>(':scope > *')].map((item) => {
+        const style = getComputedStyle(item);
+        const box = item.getBoundingClientRect();
         return {
-          start: Number.parseFloat(style.marginInlineStart),
+          center: box.x + box.width / 2,
           lift: Number.parseFloat(style.translate.split(' ')[1] ?? '0') || 0,
           turn: Number.parseFloat(style.rotate) || 0,
         };
       }),
     );
+  const steps = (items: { center: number }[]) =>
+    items.slice(1).map((item, index) => item.center - items[index]!.center);
   await page.mouse.move(0, 0);
   // At rest the avatars overlap by more than an eighth, each a little off the line and turned by
-  // its place, the same on every load, and the count waits out of sight.
+  // its place, the same on every load. The count shows, under the last avatar by an eighth, and
+  // upright.
   const rest = await layout();
-  expect(rest.slice(1).every((avatar) => avatar.start < -32 / 8)).toBe(true);
-  expect(new Set(rest.map((avatar) => avatar.turn)).size).toBeGreaterThan(1);
-  await expect(chip).toHaveCSS('opacity', '0');
+  const restSteps = steps(rest);
+  expect(restSteps.slice(0, -1).every((step) => step < 32 - 32 / 8)).toBe(true);
+  expect(restSteps.at(-1)).toBeCloseTo(32 - 32 / 8, 0);
+  expect(new Set(rest.slice(0, -1).map((item) => item.turn)).size).toBeGreaterThan(1);
+  expect(rest.at(-1)!.turn).toBe(0);
+  await expect(chip).toHaveCSS('opacity', '1');
+  const under = await chip.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const covered = document.elementFromPoint(box.left + 2, box.top + box.height / 2);
+    const clear = document.elementFromPoint(box.right - 4, box.top + box.height / 2);
+    return { covered: !element.contains(covered), clear: element.contains(clear) };
+  });
+  expect(under).toEqual({ covered: true, clear: true });
   // Under the pointer they spread into a row with gaps, along an arch: the ends lower and turned
-  // out, the middle highest, and the count shows.
+  // out, the middle highest. The count stays upright.
   await group.hover();
   const spread = await layout();
-  expect(spread.slice(1).every((avatar) => avatar.start > 0)).toBe(true);
+  expect(steps(spread).every((step) => step > 32)).toBe(true);
   expect(spread[0]!.lift).toBeGreaterThan(spread[1]!.lift);
   expect(spread[0]!.turn).toBeLessThan(0);
-  await expect(chip).toHaveCSS('opacity', '1');
+  expect(spread.at(-1)!.turn).toBe(0);
   // It bunches back once the pointer leaves.
   await page.mouse.move(0, 0);
-  await expect(chip).toHaveCSS('opacity', '0');
   expect(await layout()).toEqual(rest);
-  // The keyboard reaches the count, which spreads the group and shows it.
+  // The keyboard reaches the count, which spreads the group.
   await page.keyboard.press('Tab');
   await expect(chip).toBeFocused();
-  await expect(chip).toHaveCSS('opacity', '1');
-  expect((await layout()).slice(1).every((avatar) => avatar.start > 0)).toBe(true);
+  expect(steps(await layout()).every((step) => step > 32)).toBe(true);
+});
+
+test('spreading never changes the group’s box, so a narrow row never wraps it under the pointer', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(fixture);
+  const scope = page.getByTestId('avatar-groups-light');
+  const groups = ['decorative', 'pressable', 'preview', 'in-row'].map((id) =>
+    scope.getByTestId(id),
+  );
+  // The group's layout box and those around it, and the items' extent within it.
+  const measure = (group: Locator) =>
+    group.evaluate((element) => {
+      const item = element.closest('.env-list-item') ?? element.parentElement!;
+      const box = element.getBoundingClientRect();
+      const items = [...element.children].map((child) => child.getBoundingClientRect());
+      return {
+        box: [element.offsetLeft, element.offsetTop, element.offsetWidth, element.offsetHeight],
+        around: [(item as HTMLElement).offsetWidth, (item as HTMLElement).offsetHeight],
+        start: Math.round(Math.min(...items.map((rect) => rect.left)) - box.left),
+        end: Math.round(box.right - Math.max(...items.map((rect) => rect.right))),
+      };
+    });
+  for (const group of groups) {
+    await group.scrollIntoViewIfNeeded();
+    await page.mouse.move(0, 0);
+    const rest = await measure(group);
+    await group.hover();
+    const hovered = await measure(group);
+    expect(hovered.box).toEqual(rest.box);
+    expect(hovered.around).toEqual(rest.around);
+    // Spread, the items stay within the box, which kept the room for them; turned ends reach a
+    // little past.
+    expect(hovered.start).toBeGreaterThanOrEqual(-3);
+    expect(hovered.end).toBeGreaterThanOrEqual(-3);
+    // Focus inside spreads it the same way.
+    await page.mouse.move(0, 0);
+    await group.locator('[tabindex="0"], button, a').last().focus();
+    expect((await measure(group)).box).toEqual(rest.box);
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  }
+  // A group as wide as its content is exactly the spread row. At rest it gathers at the start of
+  // that room, or at its end with gather="end".
+  const inRow = scope.getByTestId('in-row');
+  await inRow.hover();
+  const spread = await measure(inRow);
+  expect(Math.abs(spread.start)).toBeLessThanOrEqual(3);
+  expect(Math.abs(spread.end)).toBeLessThanOrEqual(3);
+  await page.mouse.move(0, 0);
+  const gathered = await measure(inRow);
+  expect(gathered.start).toBeGreaterThan(32);
+  expect(Math.abs(gathered.end)).toBeLessThanOrEqual(3);
+  expect(Math.abs((await measure(scope.getByTestId('decorative'))).start)).toBeLessThanOrEqual(3);
 });
 
 test('the spread moves with the motion tokens, and at once with reduced motion', async ({
@@ -322,7 +395,7 @@ test('the spread moves with the motion tokens, and at once with reduced motion',
     .nth(1);
   expect(
     await avatar.evaluate((element) => getComputedStyle(element).transitionProperty),
-  ).toContain('margin-inline-start');
+  ).toContain('translate');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   expect(await avatar.evaluate((element) => getComputedStyle(element).transitionDuration)).toBe(
     '0s',
@@ -409,8 +482,8 @@ test('with a fine pointer, initials center in what the bunch leaves, and spread 
         ),
       );
   await page.mouse.move(0, 0);
-  // Bunched, each but the last leaves room for the next avatar's larger overlap: 0.4 of 2 rem and
-  // the ring, more than the eighth a group without hover overlaps by.
+  // Bunched, each but the last leaves room for the next avatar's larger overlap: 0.4 of 2 rem, more
+  // than the eighth a group without hover overlaps by.
   const rest = await insets();
   const restPx = await group
     .locator(':scope > .env-avatar')
@@ -425,7 +498,7 @@ test('with a fine pointer, initials center in what the bunch leaves, and spread 
       probe.remove();
       return width;
     });
-  expect(restPx).toBeCloseTo(32 * 0.4 + 2, 0);
+  expect(restPx).toBeCloseTo(32 * 0.4, 0);
   expect(rest.at(-1)).toBe('');
   // Spread, nothing covers them, and the initials center in the whole circle.
   await group.hover();
@@ -455,4 +528,26 @@ test('a chosen avatar keeps its check over the next one, and a large count chip 
     height: (element as HTMLElement).offsetHeight,
   }));
   expect(radius).toBeCloseTo(height / 2, 0);
+});
+
+test('the count is set as initials are, in a neutral fill, and comes in front with keyboard focus', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(fixture);
+  const scope = page.getByTestId('avatar-groups-light');
+  const type = (locator: Locator) =>
+    locator.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return [style.fontFamily, style.fontWeight, style.fontSize, style.letterSpacing];
+    });
+  const chip = scope.getByTestId('decorative').locator('.env-avatar-group-overflow');
+  // The same type as the initials of an avatar of its size.
+  expect(await type(chip)).toEqual(
+    await type(scope.getByTestId('initials').locator('.env-avatar').first()),
+  );
+  await expect(chip).toHaveCSS('font-variant-numeric', 'tabular-nums');
+  // Focused, it comes in front of the avatar it lies under.
+  await chip.focus();
+  await expect(chip).toHaveCSS('z-index', '1');
 });

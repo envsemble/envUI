@@ -32,9 +32,6 @@
     var(--env-font-family);
   letter-spacing: 0.01em;
   user-select: none;
-  /* Hook: a container draws a ring around its avatars with --env-avatar-ring, a box-shadow, such
-     as an avatar group's ring in the color of the surface below. */
-  box-shadow: var(--env-avatar-ring, none);
 }
 .env-avatar[data-hue='seafoam'] {
   --env-avatar-container-default: var(--env-color-avatar-bg-seafoam);

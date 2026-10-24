@@ -11537,6 +11537,15 @@
           ],
           "states": [
             {
+              "attribute": "data-gather",
+              "values": [
+                "end"
+              ],
+              "parts": [
+                "env-avatar-group"
+              ]
+            },
+            {
               "attribute": "data-interactive",
               "values": [
                 ""
@@ -17342,7 +17351,7 @@
     "AvatarGroup": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip. A ring in the color of the surface below separates the avatars.",
+      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip.",
       "props": [
         {
           "name": "people",
@@ -17362,6 +17371,13 @@
           "required": false,
           "default": "'md'",
           "description": "As Avatar: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem."
+        },
+        {
+          "name": "gather",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where a pointer can hover, the group keeps the room its spread takes, so spreading never moves what is around it, and the avatars gather at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
         },
         {
           "name": "total",

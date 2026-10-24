@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentPropsWithRef, MouseEvent } from 'react';
+import type { ComponentPropsWithRef, CSSProperties, MouseEvent } from 'react';
 import { Avatar, type AvatarProps, type AvatarSize } from './Avatar.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { ActionElement } from '../internal/ActionElement.js';
@@ -37,6 +37,13 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
    * @default 'md'
    */
   size?: AvatarSize;
+  /**
+   * Where a pointer can hover, the group keeps the room its spread takes, so spreading never moves
+   * what is around it, and the avatars gather at rest toward one end of that room: start, or end for
+   * a group at the end of a row, such as a list row's action.
+   * @default 'start'
+   */
+  gather?: 'start' | 'end';
   /** How many people there are in all, when people is only a preview of them. */
   total?: number;
   /** Makes every avatar a button with a name tooltip; receives the person pressed. */
@@ -59,18 +66,19 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
 
 /**
  * Overlapping avatars for a set of people, such as the members of a project, with a chip that
- * counts the rest and lists them in its tooltip. A ring in the color of the surface below
- * separates the avatars.
+ * counts the rest and lists them in its tooltip.
  */
 export function AvatarGroup({
   people,
   max,
   size = 'md',
+  gather = 'start',
   total,
   onPersonClick,
   formatMore: ownFormatMore,
   formatLabel: ownFormatLabel,
   className,
+  style,
   'aria-label': label,
   ...props
 }: AvatarGroupProps) {
@@ -109,13 +117,25 @@ export function AvatarGroup({
   // The overflow chip stands for the people it hides, as its tooltip lists them.
   const hiddenNames = hidden.map((person) => person.name);
   if (unlisted > 0) hiddenNames.push(formatMore(unlisted));
+  // Each item's place: the avatars before and after it, and whether the count is, from which the
+  // style sheet moves it as the group bunches, within the room the group keeps for its spread.
+  const counted = overflow > 0;
+  const place = (index: number) =>
+    ({
+      '--env-avatar-group-before': String(Math.min(index, shown.length - 1)),
+      '--env-avatar-group-after': String(Math.max(0, shown.length - 1 - index)),
+      '--env-avatar-group-count-before': index === shown.length ? '1' : '0',
+      '--env-avatar-group-count-after': counted && index < shown.length ? '1' : '0',
+    }) as CSSProperties;
   return (
     <div
       role="group"
       {...props}
       aria-label={label ?? formatLabel(count, names)}
       className={classNames('env-avatar-group', className)}
+      style={style}
       data-size={size}
+      data-gather={gather === 'end' ? 'end' : undefined}
       data-interactive={interactive ? '' : undefined}
     >
       {shown.map((person, index) => (
@@ -123,6 +143,7 @@ export function AvatarGroup({
           key={person.id ?? `${index}-${person.name}`}
           person={person}
           size={size}
+          style={place(index)}
           onPersonClick={onPersonClick}
         />
       ))}
@@ -142,6 +163,7 @@ export function AvatarGroup({
               +2 in right-to-left text too. */}
           <span
             className="env-avatar-group-overflow"
+            style={place(shown.length)}
             tabIndex={0}
             role="img"
             aria-label={list(hiddenNames)}
@@ -157,12 +179,15 @@ export function AvatarGroup({
 function AvatarGroupItem({
   person,
   size,
+  style,
   onPersonClick,
 }: {
   person: AvatarGroupPerson;
   size: AvatarSize;
+  style: CSSProperties;
   onPersonClick: AvatarGroupProps['onPersonClick'];
 }) {
+  const pressable = Boolean(person.href) || onPersonClick !== undefined;
   const avatar = (
     <Avatar
       name={person.name}
@@ -170,9 +195,10 @@ function AvatarGroupItem({
       fallback={person.fallback}
       size={size}
       selected={person.selected}
+      style={pressable ? undefined : style}
     />
   );
-  if (!person.href && !onPersonClick) return avatar;
+  if (!pressable) return avatar;
   const onClick =
     onPersonClick && ((event: MouseEvent<HTMLElement>) => onPersonClick(person, event));
   return (
@@ -182,12 +208,18 @@ function AvatarGroupItem({
           href={person.href}
           aria-label={person.name}
           className="env-avatar-group-item"
+          style={style}
           onClick={onClick}
         >
           {avatar}
         </ActionElement>
       ) : (
-        <ActionElement aria-label={person.name} className="env-avatar-group-item" onClick={onClick}>
+        <ActionElement
+          aria-label={person.name}
+          className="env-avatar-group-item"
+          style={style}
+          onClick={onClick}
+        >
           {avatar}
         </ActionElement>
       )}
