@@ -30,7 +30,6 @@ export type SiteSection = (typeof siteSections)[number];
 /** What a page shows, which decides how it renders. */
 export type PageKind =
   | 'home'
-  | 'get-started'
   | 'components'
   | 'component'
   | 'pattern'
@@ -126,14 +125,6 @@ const sitePages: SitePage[] = [
     area: 'site',
     section: 'Overview',
     kind: 'home',
-  },
-  {
-    path: 'get-started',
-    title: 'Get started',
-    area: 'site',
-    section: 'Overview',
-    kind: 'get-started',
-    summary: 'Install envUI, connect its styles and theme, and find your way into the Docs.',
   },
   ...referencePages
     .filter(({ section }) => section === 'Foundations')
@@ -356,7 +347,7 @@ export function routeOfDocument(
   if (id === 'index' || id === docsRoute) return `${docsRoute}${query}`;
   if (id === 'overview') return homeRoute;
   const own: Record<string, string> = {
-    'get-started': 'get-started',
+    'get-started': 'docs/setup',
     components: 'components',
     benchmark: 'benchmark',
     changelog: 'docs/changelog',
@@ -396,14 +387,19 @@ export function normalizeRoute(route: string): string {
   const section = search.get('section');
   if (!originalPath) return `${homeRoute}${rest()}`;
   // The overview's views: the components and Get started, which held the setup guide, the agents'
-  // skills and the guides by their document's id.
+  // skills and the guides by their document's id. The Site's Get started page that followed is the
+  // setup guide too.
   if (/^overview\/components(?:\/|$)/.test(originalPath))
     return section && section !== 'overview-components'
       ? `components${rest()}`
       : section
         ? 'components'
         : homeRoute;
-  if (/^(?:overview\/get-started|overview\/usage|getting-started)(?:\/|$)/.test(originalPath)) {
+  if (
+    /^(?:overview\/get-started|overview\/usage|getting-started)(?:\/|$)|^get-started$/.test(
+      originalPath,
+    )
+  ) {
     const shown = search.get('document');
     search.delete('document');
     if (shown) {

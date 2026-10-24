@@ -46,12 +46,6 @@ export const tokensFile = fileURLToPath(
 export const cataloguePages = [
   { page: 'overview', title: 'Overview', area: 'site', aliases: ['home', 'introduction'] },
   {
-    page: 'get-started',
-    title: 'Get started',
-    area: 'site',
-    aliases: ['install', 'quick start', 'getting started'],
-  },
-  {
     page: 'components',
     title: 'Components',
     area: 'site',

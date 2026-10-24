@@ -1,7 +1,5 @@
-import { Button, Column, Link, Row, Text } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { Button, Column, Link, Text } from '@envsemble/envui';
 import { Api } from '@envsemble/envui/icons/Api';
-import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { PageHeader } from '../layout/PageHeader';
 import { apiRoute, foundationGuideRoute, type SitePage } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
@@ -125,50 +123,6 @@ export function ComponentsPage({ page }: { page: SitePage }) {
       <PageHeader title={page.title} breadcrumb="Components" description={page.summary} />
       <Column gap={7} className="docs-article docs-overview">
         <Catalogue />
-      </Column>
-    </>
-  );
-}
-
-/** Getting started on the Site: the install in a few lines, and the way into the Docs. */
-export function GetStartedPage({ page }: { page: SitePage }) {
-  return (
-    <>
-      <PageHeader title={page.title} breadcrumb="Overview" description={page.summary} />
-      <Column gap={6} className="docs-article">
-        <Text>
-          envUI is a private package of React components, design tokens and patterns for building
-          applications. Install it with an exact version, import its styles once, and compose its
-          components.
-        </Text>
-        <CodeBlock language="sh" label="Install" copyable>
-          {'npm install --save-exact @envsemble/envui@<version>'}
-        </CodeBlock>
-        <CodeBlock language="tsx" label="Use" copyable>
-          {`import { Theme, Button } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import '@envsemble/envui/styles.css';
-
-export function App() {
-  return (
-    <Theme theme="light">
-      <Button startIcon={<Add />}>Create item</Button>
-    </Theme>
-  );
-}`}
-        </CodeBlock>
-        <Text>
-          The Docs hold the rest: registry access, themes and routers, migrating an interface,
-          codemods, the tokens, and every component&apos;s props.
-        </Text>
-        <Row gap={3} wrap>
-          <Button href={routeHref('docs/setup')} startIcon={<MenuBook />}>
-            Install and set up
-          </Button>
-          <Button variant="secondary" href={routeHref('docs')}>
-            Open the Docs
-          </Button>
-        </Row>
       </Column>
     </>
   );

@@ -56,6 +56,8 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'overview/get-started': 'docs/setup',
     'overview/get-started?skill=migrate&section=local-development': 'docs/agent-skills',
     'get-started/migration': 'docs/migration',
+    // The Site's Get started page is the setup guide.
+    'get-started': 'docs/setup',
     'contributing/library-development': 'overview',
     // The Site's changelog is the Docs' now, with its release notes.
     changelog: 'docs/changelog',

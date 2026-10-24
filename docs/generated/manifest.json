@@ -15037,6 +15037,12 @@
         "useTheme",
         "useThemePreference"
       ],
+      "aliases": [
+        "install",
+        "quick start",
+        "get started",
+        "getting started"
+      ],
       "related": [
         "migration",
         "colors",
