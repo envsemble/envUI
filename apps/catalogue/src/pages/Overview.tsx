@@ -1,4 +1,4 @@
-import { Button, Card, Column, Row, Surface, Text } from '@envsemble/envui';
+import { Button, Card, Column, Row, Surface, Text, Theme, useTheme } from '@envsemble/envui';
 import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
@@ -6,32 +6,76 @@ import { Palette } from '@envsemble/envui/icons/Palette';
 import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
-import { sectionHome } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
+import { sectionHome } from '../navigation/DocumentationRoutes';
+import { OverviewScreen } from '../previews/OverviewScreen';
+import { InteractiveMark } from '../template/InteractiveMark';
+import { keepLinksInPlace } from '../template/LiveExample';
 
-/** The Site's destinations the home page leads to, each with what it holds. */
+/**
+ * Where the home page leads, each with what it is for rather than what it lists, so a page that
+ * moves or merges never leaves it out of date.
+ */
 const destinations = [
   {
     title: 'Foundations',
+    route: sectionHome('Foundations').path,
     icon: Palette,
-    text: 'Colors and themes, type, space, scale, layout, icons, accessibility and content.',
+    text: 'What every screen built with envUI shares, and the words to ask for it.',
   },
   {
     title: 'Components',
+    route: 'components',
     icon: Widgets,
-    text: 'Every component, what it looks like and when to use it, in live examples with their code.',
+    text: 'The pieces a screen is made of: what each looks like and when to use it.',
   },
   {
     title: 'Patterns',
+    route: 'patterns',
     icon: Pattern,
-    text: 'Components put together for what people do: forms, settings, navigation and more.',
+    text: 'Components put together for what people do, such as filling in a form.',
   },
   {
     title: 'Benchmark',
+    route: 'benchmark',
     icon: Leaderboard,
-    text: 'How coding agents do when they build interfaces with envUI.',
+    text: 'How well coding agents build interfaces with envUI.',
   },
 ] as const;
+
+/**
+ * One whole envUI screen, live on the recessed canvas every example sits on: an application framed
+ * as the App frame pattern frames one, with a page of real content.
+ */
+function WholeScreen() {
+  const theme = useTheme();
+  return (
+    <Column render={<section aria-labelledby="overview-screen" />} gap={5}>
+      <Column gap={2} align="center">
+        <Text render={<h2 id="overview-screen" />} variant="headline">
+          A whole screen
+        </Text>
+        <Text emphasis="muted" className="docs-overview-screen-text">
+          An application built with envUI: its frame, its navigation and a page of projects. It is
+          live, so try it.
+        </Text>
+      </Column>
+      <Column
+        render={<Theme {...theme} />}
+        container="env-window"
+        gap={0}
+        role="group"
+        aria-label="A whole screen example"
+        className="docs-live-example docs-overview-screen"
+        data-stage="shaded"
+        {...keepLinksInPlace}
+      >
+        <OverviewScreen />
+        <InteractiveMark />
+      </Column>
+    </Column>
+  );
+}
 
 /** The Site's home: what envUI is, and the way to its components, patterns and Docs. */
 export function Overview() {
@@ -67,27 +111,30 @@ export function Overview() {
           </Row>
         </Surface>
       </header>
-      <Column gap={5} className="docs-article docs-overview">
-        <Text render={<h2 />} variant="headline">
-          Explore
-        </Text>
-        <div className="docs-catalogue-grid docs-explore-grid">
-          {destinations.map(({ title, icon: Icon, text }) => (
-            <Card key={title} href={routeHref(sectionHome(title).path)}>
-              <Column gap={4} align="center" className="docs-catalogue-content">
-                <Icon width="1.5rem" height="1.5rem" aria-hidden="true" />
-                <Column gap={2} align="center">
-                  <Text render={<h3 />} variant="headline">
-                    {title}
-                  </Text>
-                  <Text variant="caption" className="docs-caption">
-                    {text}
-                  </Text>
+      <Column gap={8} className="docs-article docs-overview">
+        <WholeScreen />
+        <Column render={<section aria-labelledby="overview-explore" />} gap={5}>
+          <Text render={<h2 id="overview-explore" />} variant="headline">
+            Explore
+          </Text>
+          <div className="docs-catalogue-grid docs-explore-grid">
+            {destinations.map(({ title, route, icon: Icon, text }) => (
+              <Card key={title} href={routeHref(route)}>
+                <Column gap={4} align="center" className="docs-catalogue-content">
+                  <Icon width="1.5rem" height="1.5rem" aria-hidden="true" />
+                  <Column gap={2} align="center">
+                    <Text render={<h3 />} variant="headline">
+                      {title}
+                    </Text>
+                    <Text variant="caption" className="docs-caption">
+                      {text}
+                    </Text>
+                  </Column>
                 </Column>
-              </Column>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        </Column>
       </Column>
     </>
   );

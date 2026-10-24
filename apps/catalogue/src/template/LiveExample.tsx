@@ -37,6 +37,9 @@ const sourceLoads = new Map<string, () => Promise<string>>();
 
 export const examplePath = (page: string, name: string) => `../examples/${page}/${name}.tsx`;
 
+/** Whether a page has an example file of the name, such as one a gallery picks for its tile. */
+export const hasExample = (page: string, name: string) => examples.has(examplePath(page, name));
+
 /**
  * The source of an example, loaded once and kept for every later render. A load that fails is kept
  * too, so renders until a retry read the same rejected promise rather than a new one each time,

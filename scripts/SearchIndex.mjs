@@ -52,6 +52,12 @@ export const cataloguePages = [
     aliases: ['all components', 'component list', 'catalogue'],
   },
   {
+    page: 'patterns',
+    title: 'Patterns',
+    area: 'site',
+    aliases: ['all patterns', 'pattern list', 'pattern gallery'],
+  },
+  {
     page: 'benchmark',
     title: 'Benchmark',
     area: 'site',
