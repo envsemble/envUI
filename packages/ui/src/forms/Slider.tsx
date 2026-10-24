@@ -163,9 +163,9 @@ export function Slider({
     },
     [value, defaultValue, min, form],
   );
-  // Where the fill's end and the handle pass under the label or the value, they fade, so the text
-  // stays legible at full strength: measured again as the value moves and as the slider or its text
-  // changes size.
+  // Where the fill's end and the handle pass under the label or the value while the slider is
+  // pressed, they fade, so the text stays legible at full strength: measured again as the value moves
+  // and as the slider or its text changes size. At rest the stylesheet ignores the measure.
   useLayoutEffect(
     function veilAtCurrentValue() {
       if (control.current) veilIndicatorUnderText(control.current);
@@ -266,8 +266,9 @@ export function Slider({
 }
 
 /**
- * Fades the end of the fill and the handle while they sit under the label or the value, within half
- * a line of either, by setting --env-slider-veil on the control to 1, and to 0 elsewhere.
+ * Marks where the end of the fill and the handle sit under the label or the value, within half a line
+ * of either, by setting --env-slider-veil on the control to 1, and to 0 elsewhere; the stylesheet
+ * fades them there only while the slider is pressed.
  */
 function veilIndicatorUnderText(control: HTMLElement) {
   const thumb = control.querySelector('.env-slider-thumb');
