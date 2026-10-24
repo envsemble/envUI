@@ -92,6 +92,16 @@
   visibility: hidden;
   transition: visibility 0s linear var(--env-avatar-group-settle);
 }
+/* Nor do the piled avatars and the count take the pointer themselves, below, so nothing, a
+   browser's hit test or a checker's, counts them as targets that cover each other; spread, they do. */
+@media (hover: hover) {
+  .env-avatar-group:hover > * {
+    pointer-events: auto;
+  }
+}
+.env-avatar-group:is([data-spread], :has(:focus-visible)) > * {
+  pointer-events: auto;
+}
 
 .env-avatar-group > * {
   --env-avatar-group-pad: 0rem;
@@ -127,6 +137,8 @@
   position: relative;
   flex: 0 0 auto;
   margin-inline: var(--env-avatar-group-pad);
+  /* Piled, the pointer reaches the group alone. */
+  pointer-events: none;
   translate: calc(
       (var(--env-avatar-group-shift) + var(--env-avatar-group-nudge)) *
         (1 - var(--env-avatar-group-spread)) * var(--env-avatar-group-inline)

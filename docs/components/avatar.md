@@ -185,7 +185,7 @@ AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`
 
 `onPersonClick` makes every avatar a button, which receives the person pressed; a person with `href` is a link, through the application's router link from `LinkProvider`.
 
-A cover over the group, its `::before`, takes the pointer while the group is piled, so no avatar can be pressed or hovered then, and stays for the medium motion duration after the group starts to spread, until the avatars are in place. A hovering pointer spreads the group with `:hover`, and keyboard focus inside with `:focus-visible`; a click's focus, without a focus ring, doesn't hold it spread. Where no pointer hovers, a tap on the pile sets `data-spread` on the group, until a tap outside it or five seconds without a tap in it. Spread, each pressable avatar is a whole target, 2.75 rem on touch screens.
+While the group is piled its avatars and count take no pointer events, and a cover over the group, its `::before`, takes the pointer, so no avatar can be pressed or hovered then; the cover stays for the medium motion duration after the group starts to spread, until the avatars are in place. A hovering pointer spreads the group with `:hover`, and keyboard focus inside with `:focus-visible`; a click's focus, without a focus ring, doesn't hold it spread. Where no pointer hovers, a tap on the pile sets `data-spread` on the group, until a tap outside it or five seconds without a tap in it. Spread, each pressable avatar is a whole target, 2.75 rem on touch screens.
 
 ### Composition
 

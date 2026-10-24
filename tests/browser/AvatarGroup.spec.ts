@@ -44,8 +44,12 @@ function hits(group: Locator) {
   );
 }
 
-/** Draws the group without its cover, to check what lies over what in the pile. */
-const uncovered = '.env-avatar-group::before { display: none; }';
+/**
+ * The group without its cover, and its items taking the pointer, to check what lies over what in
+ * the pile.
+ */
+const uncovered =
+  '.env-avatar-group::before { display: none; } .env-avatar-group > * { pointer-events: auto; }';
 
 test('an avatar group names everyone and counts the people it does not show', async ({ page }) => {
   await page.goto(fixture);
