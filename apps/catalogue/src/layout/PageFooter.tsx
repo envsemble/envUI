@@ -33,8 +33,8 @@ const columns: { title: string; links: FooterLink[] }[] = [
     links: pagesById([
       ['colors', 'Colors & themes'],
       ['typography', 'Typography'],
-      ['spacing', 'Spacing & shape'],
-      ['responsive', 'Layout & stacking'],
+      ['spacing', 'Spacing & density'],
+      ['responsive', 'Adapting to width'],
       ['accessibility', 'Accessibility'],
     ]),
   },
