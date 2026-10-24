@@ -261,18 +261,6 @@ export function libraryVersions({
   return versions;
 }
 
-/**
- * The version the catalogue documents: the newest of libraryVersions, which is the release the
- * pending changesets lead to, such as 1.0.0 before 1.0.0 is published; the library's own version
- * outside the repository.
- */
-export function documentedVersion() {
-  const versions = libraryVersions();
-  if (versions?.size) return [...versions].sort(compareVersions).at(-1);
-  const manifest = fileURLToPath(new URL('../packages/ui/package.json', import.meta.url));
-  return JSON.parse(readFileSync(manifest, 'utf8')).version;
-}
-
 export function readProps(directory = documentationDirectory) {
   const file = resolve(directory, 'generated/props.json');
   return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
@@ -1529,7 +1517,7 @@ export function generateDocumentation() {
       }),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../DocumentationTypes';\n\n/** The version these pages document: the next release while changesets are pending. */\nexport const documentedVersion = ${JSON.stringify(documentedVersion())};\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../DocumentationTypes';\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
   mkdirSync(dirname(generatedFile), { recursive: true });
   if (!existsSync(generatedFile) || readFileSync(generatedFile, 'utf8') !== source)
     writeFileSync(generatedFile, source);
