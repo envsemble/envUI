@@ -156,7 +156,7 @@ export function DefaultColors() {
           </Badge>
           <Badge count={4} aria-label="4 items" />
           <Avatar name="Alex Morgan" />
-          <Avatar name="Sam Lee" hue="teal" />
+          <Avatar name="Sam Lee" hue="seafoam" />
         </Row>
         {([undefined, 'success', 'warning', 'danger'] as const).map((tone) => (
           <Alert

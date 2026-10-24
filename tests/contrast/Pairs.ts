@@ -48,6 +48,17 @@ export interface ContrastPair {
 
 const tones = ['neutral', 'accent', 'success', 'warning', 'danger', 'done'] as const;
 const alertTones = ['accent', 'success', 'warning', 'danger'] as const;
+/** The avatar hues, each a pair of its own; the unsuffixed tokens are the powder hue's. */
+const avatarHues = [
+  'powder',
+  'seafoam',
+  'sage',
+  'butter',
+  'blush',
+  'periwinkle',
+  'orchid',
+  'oat',
+] as const;
 
 /** The text color of each status tone; the neutral tone is muted text. */
 const toneText = (tone: (typeof tones)[number]) =>
@@ -731,7 +742,7 @@ export const pairs: readonly ContrastPair[] = merged([
   ...text('--env-color-fg-default', [[fill, field]], 'Combobox chips'),
   // Avatars are tonal pairs: each hue's initials, and its figure, a deep shade on its pastel fill.
   ...text('--env-color-avatar-fg', ['--env-color-avatar-bg'], 'Avatar initials on their hue'),
-  ...['teal', 'green', 'amber', 'red', 'violet', 'purple', 'slate'].flatMap((hue) =>
+  ...avatarHues.flatMap((hue) =>
     text(
       `--env-color-avatar-fg-${hue}`,
       [`--env-color-avatar-bg-${hue}`],
@@ -743,7 +754,7 @@ export const pairs: readonly ContrastPair[] = merged([
     ['--env-color-avatar-bg'],
     'The avatar figure on its hue',
   ),
-  ...['teal', 'green', 'amber', 'red', 'violet', 'purple', 'slate'].flatMap((hue) =>
+  ...avatarHues.flatMap((hue) =>
     nonText(
       `--env-color-avatar-figure-${hue}`,
       [`--env-color-avatar-bg-${hue}`],
@@ -2031,6 +2042,76 @@ const renamedTokenPairs: readonly (readonly [from: string, to: string])[] = [
  * is, or has since been dropped or renamed onward in turn.
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  {
+    from: '--env-color-avatar-fg-teal on --env-color-avatar-bg-teal',
+    to: '--env-color-avatar-fg-seafoam on --env-color-avatar-bg-seafoam',
+    rationale: 'The avatar hues are named for their colors: teal is seafoam.',
+  },
+  {
+    from: '--env-color-avatar-fg-green on --env-color-avatar-bg-green',
+    to: '--env-color-avatar-fg-sage on --env-color-avatar-bg-sage',
+    rationale: 'The avatar hues are named for their colors: green is sage.',
+  },
+  {
+    from: '--env-color-avatar-fg-amber on --env-color-avatar-bg-amber',
+    to: '--env-color-avatar-fg-butter on --env-color-avatar-bg-butter',
+    rationale: 'The avatar hues are named for their colors: amber is butter.',
+  },
+  {
+    from: '--env-color-avatar-fg-red on --env-color-avatar-bg-red',
+    to: '--env-color-avatar-fg-blush on --env-color-avatar-bg-blush',
+    rationale: 'The avatar hues are named for their colors: red is blush.',
+  },
+  {
+    from: '--env-color-avatar-fg-violet on --env-color-avatar-bg-violet',
+    to: '--env-color-avatar-fg-periwinkle on --env-color-avatar-bg-periwinkle',
+    rationale: 'The avatar hues are named for their colors: violet is periwinkle.',
+  },
+  {
+    from: '--env-color-avatar-fg-purple on --env-color-avatar-bg-purple',
+    to: '--env-color-avatar-fg-orchid on --env-color-avatar-bg-orchid',
+    rationale: 'The avatar hues are named for their colors: purple is orchid.',
+  },
+  {
+    from: '--env-color-avatar-fg-slate on --env-color-avatar-bg-slate',
+    to: '--env-color-avatar-fg-oat on --env-color-avatar-bg-oat',
+    rationale: 'The avatar hues are named for their colors: slate is oat.',
+  },
+  {
+    from: '--env-color-avatar-figure-teal on --env-color-avatar-bg-teal',
+    to: '--env-color-avatar-figure-seafoam on --env-color-avatar-bg-seafoam',
+    rationale: 'The avatar hues are named for their colors: teal is seafoam.',
+  },
+  {
+    from: '--env-color-avatar-figure-green on --env-color-avatar-bg-green',
+    to: '--env-color-avatar-figure-sage on --env-color-avatar-bg-sage',
+    rationale: 'The avatar hues are named for their colors: green is sage.',
+  },
+  {
+    from: '--env-color-avatar-figure-amber on --env-color-avatar-bg-amber',
+    to: '--env-color-avatar-figure-butter on --env-color-avatar-bg-butter',
+    rationale: 'The avatar hues are named for their colors: amber is butter.',
+  },
+  {
+    from: '--env-color-avatar-figure-red on --env-color-avatar-bg-red',
+    to: '--env-color-avatar-figure-blush on --env-color-avatar-bg-blush',
+    rationale: 'The avatar hues are named for their colors: red is blush.',
+  },
+  {
+    from: '--env-color-avatar-figure-violet on --env-color-avatar-bg-violet',
+    to: '--env-color-avatar-figure-periwinkle on --env-color-avatar-bg-periwinkle',
+    rationale: 'The avatar hues are named for their colors: violet is periwinkle.',
+  },
+  {
+    from: '--env-color-avatar-figure-purple on --env-color-avatar-bg-purple',
+    to: '--env-color-avatar-figure-orchid on --env-color-avatar-bg-orchid',
+    rationale: 'The avatar hues are named for their colors: purple is orchid.',
+  },
+  {
+    from: '--env-color-avatar-figure-slate on --env-color-avatar-bg-slate',
+    to: '--env-color-avatar-figure-oat on --env-color-avatar-bg-oat',
+    rationale: 'The avatar hues are named for their colors: slate is oat.',
+  },
   {
     from: '--color-fg-control on --color-navigation-quiet-hover',
     to: '--color-fg-control on --color-bg-navigation-hover',

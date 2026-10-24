@@ -599,54 +599,54 @@
       },
       "avatar": {
         "bg": {
-          "$root": {
-            "$value": "{palette.sky.15}"
+          "powder": {
+            "$value": "{palette.powder.15}"
           },
-          "teal": {
+          "seafoam": {
             "$value": "{palette.seafoam.15}"
           },
-          "green": {
+          "sage": {
             "$value": "{palette.sage.15}"
           },
-          "amber": {
+          "butter": {
             "$value": "{palette.butter.15}"
           },
-          "red": {
+          "blush": {
             "$value": "{palette.blush.15}"
           },
-          "violet": {
+          "periwinkle": {
             "$value": "{palette.periwinkle.15}"
           },
-          "purple": {
+          "orchid": {
             "$value": "{palette.orchid.15}"
           },
-          "slate": {
+          "oat": {
             "$value": "{palette.oat.15}"
           }
         },
         "fg": {
-          "$root": {
-            "$value": "{palette.sky.86}"
+          "powder": {
+            "$value": "{palette.powder.86}"
           },
-          "teal": {
+          "seafoam": {
             "$value": "{palette.seafoam.86}"
           },
-          "green": {
+          "sage": {
             "$value": "{palette.sage.86}"
           },
-          "amber": {
+          "butter": {
             "$value": "{palette.butter.86}"
           },
-          "red": {
+          "blush": {
             "$value": "{palette.blush.86}"
           },
-          "violet": {
+          "periwinkle": {
             "$value": "{palette.periwinkle.86}"
           },
-          "purple": {
+          "orchid": {
             "$value": "{palette.orchid.86}"
           },
-          "slate": {
+          "oat": {
             "$value": "{palette.oat.86}"
           }
         }

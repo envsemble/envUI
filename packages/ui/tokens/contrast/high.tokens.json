@@ -435,55 +435,55 @@
     },
     "avatar": {
       "bg": {
-        "$root": {
-          "$value": "{contrast-high.color.avatar.bg}"
+        "powder": {
+          "$value": "{contrast-high.color.avatar.bg.powder}"
         },
-        "teal": {
-          "$value": "{contrast-high.color.avatar.bg.teal}"
+        "seafoam": {
+          "$value": "{contrast-high.color.avatar.bg.seafoam}"
         },
-        "green": {
-          "$value": "{contrast-high.color.avatar.bg.green}"
+        "sage": {
+          "$value": "{contrast-high.color.avatar.bg.sage}"
         },
-        "amber": {
-          "$value": "{contrast-high.color.avatar.bg.amber}"
+        "butter": {
+          "$value": "{contrast-high.color.avatar.bg.butter}"
         },
-        "red": {
-          "$value": "{contrast-high.color.avatar.bg.red}"
+        "blush": {
+          "$value": "{contrast-high.color.avatar.bg.blush}"
         },
-        "violet": {
-          "$value": "{contrast-high.color.avatar.bg.violet}"
+        "periwinkle": {
+          "$value": "{contrast-high.color.avatar.bg.periwinkle}"
         },
-        "purple": {
-          "$value": "{contrast-high.color.avatar.bg.purple}"
+        "orchid": {
+          "$value": "{contrast-high.color.avatar.bg.orchid}"
         },
-        "slate": {
-          "$value": "{contrast-high.color.avatar.bg.slate}"
+        "oat": {
+          "$value": "{contrast-high.color.avatar.bg.oat}"
         }
       },
       "fg": {
-        "$root": {
-          "$value": "{contrast-high.color.avatar.fg}"
+        "powder": {
+          "$value": "{contrast-high.color.avatar.fg.powder}"
         },
-        "teal": {
-          "$value": "{contrast-high.color.avatar.fg.teal}"
+        "seafoam": {
+          "$value": "{contrast-high.color.avatar.fg.seafoam}"
         },
-        "green": {
-          "$value": "{contrast-high.color.avatar.fg.green}"
+        "sage": {
+          "$value": "{contrast-high.color.avatar.fg.sage}"
         },
-        "amber": {
-          "$value": "{contrast-high.color.avatar.fg.amber}"
+        "butter": {
+          "$value": "{contrast-high.color.avatar.fg.butter}"
         },
-        "red": {
-          "$value": "{contrast-high.color.avatar.fg.red}"
+        "blush": {
+          "$value": "{contrast-high.color.avatar.fg.blush}"
         },
-        "violet": {
-          "$value": "{contrast-high.color.avatar.fg.violet}"
+        "periwinkle": {
+          "$value": "{contrast-high.color.avatar.fg.periwinkle}"
         },
-        "purple": {
-          "$value": "{contrast-high.color.avatar.fg.purple}"
+        "orchid": {
+          "$value": "{contrast-high.color.avatar.fg.orchid}"
         },
-        "slate": {
-          "$value": "{contrast-high.color.avatar.fg.slate}"
+        "oat": {
+          "$value": "{contrast-high.color.avatar.fg.oat}"
         }
       }
     }

@@ -318,7 +318,7 @@ export function View3D({
             height="7"
             patternTransform="rotate(45)"
           >
-            <rect width="3" height="7" fill="var(--env-color-avatar-bg-amber)" fillOpacity="0.45" />
+            <rect width="3" height="7" fill="var(--env-dev-tint-butter)" fillOpacity="0.45" />
           </pattern>
           <pattern
             id="env-dev-gap"
@@ -327,7 +327,7 @@ export function View3D({
             height="6"
             patternTransform="rotate(-45)"
           >
-            <rect width="2" height="6" fill="var(--env-color-avatar-bg-teal)" fillOpacity="0.3" />
+            <rect width="2" height="6" fill="var(--env-dev-tint-seafoam)" fillOpacity="0.3" />
           </pattern>
         </defs>
       </svg>

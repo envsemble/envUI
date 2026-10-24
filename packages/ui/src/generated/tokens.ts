@@ -38,7 +38,7 @@ export const tokens = {
       'dark-high-contrast': '400',
     },
   },
-  /** The powder blue pastel fill, under the name blue, one of the hues an avatar takes from its name, and the fill of an avatar with hue="blue". */
+  /** The default fill, the powder hue: the fill of an avatar whose hue nothing sets. */
   'color.avatar.bg': {
     cssVariable: '--env-color-avatar-bg',
     type: 'color',
@@ -49,42 +49,9 @@ export const tokens = {
       'dark-high-contrast': '#afd3e9',
     },
   },
-  /** The butter yellow pastel fill, under the name amber, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.amber': {
-    cssVariable: '--env-color-avatar-bg-amber',
-    type: 'color',
-    values: {
-      light: '#efdca4',
-      dark: '#e1cc95',
-      'light-high-contrast': '#efdca4',
-      'dark-high-contrast': '#e1cc95',
-    },
-  },
-  /** The sage pastel fill, under the name green, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.green': {
-    cssVariable: '--env-color-avatar-bg-green',
-    type: 'color',
-    values: {
-      light: '#cee4c3',
-      dark: '#bed4b3',
-      'light-high-contrast': '#cee4c3',
-      'dark-high-contrast': '#bed4b3',
-    },
-  },
-  /** The orchid pastel fill, under the name purple, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.purple': {
-    cssVariable: '--env-color-avatar-bg-purple',
-    type: 'color',
-    values: {
-      light: '#fad2ec',
-      dark: '#ecc2dd',
-      'light-high-contrast': '#fad2ec',
-      'dark-high-contrast': '#ecc2dd',
-    },
-  },
-  /** The blush pink pastel fill, under the name red, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.red': {
-    cssVariable: '--env-color-avatar-bg-red',
+  /** The blush pink pastel fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.blush': {
+    cssVariable: '--env-color-avatar-bg-blush',
     type: 'color',
     values: {
       light: '#ffd3d4',
@@ -93,9 +60,20 @@ export const tokens = {
       'dark-high-contrast': '#f3c2c4',
     },
   },
-  /** The warm oat pastel fill, under the name slate, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.slate': {
-    cssVariable: '--env-color-avatar-bg-slate',
+  /** The butter yellow pastel fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.butter': {
+    cssVariable: '--env-color-avatar-bg-butter',
+    type: 'color',
+    values: {
+      light: '#efdca4',
+      dark: '#e1cc95',
+      'light-high-contrast': '#efdca4',
+      'dark-high-contrast': '#e1cc95',
+    },
+  },
+  /** The warm oat pastel fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.oat': {
+    cssVariable: '--env-color-avatar-bg-oat',
     type: 'color',
     values: {
       light: '#e7dbce',
@@ -104,20 +82,20 @@ export const tokens = {
       'dark-high-contrast': '#d8ccbf',
     },
   },
-  /** The seafoam pastel fill, under the name teal, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.teal': {
-    cssVariable: '--env-color-avatar-bg-teal',
+  /** The orchid pastel fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.orchid': {
+    cssVariable: '--env-color-avatar-bg-orchid',
     type: 'color',
     values: {
-      light: '#b8e7de',
-      dark: '#a7d7cf',
-      'light-high-contrast': '#b8e7de',
-      'dark-high-contrast': '#a7d7cf',
+      light: '#fad2ec',
+      dark: '#ecc2dd',
+      'light-high-contrast': '#fad2ec',
+      'dark-high-contrast': '#ecc2dd',
     },
   },
-  /** The periwinkle pastel fill, under the name violet, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.violet': {
-    cssVariable: '--env-color-avatar-bg-violet',
+  /** The periwinkle pastel fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.periwinkle': {
+    cssVariable: '--env-color-avatar-bg-periwinkle',
     type: 'color',
     values: {
       light: '#dadaff',
@@ -126,7 +104,40 @@ export const tokens = {
       'dark-high-contrast': '#cacaf3',
     },
   },
-  /** The initials on the blue fill. */
+  /** The powder blue pastel fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.powder': {
+    cssVariable: '--env-color-avatar-bg-powder',
+    type: 'color',
+    values: {
+      light: '#c0e2f6',
+      dark: '#afd3e9',
+      'light-high-contrast': '#c0e2f6',
+      'dark-high-contrast': '#afd3e9',
+    },
+  },
+  /** The sage pastel fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.sage': {
+    cssVariable: '--env-color-avatar-bg-sage',
+    type: 'color',
+    values: {
+      light: '#cee4c3',
+      dark: '#bed4b3',
+      'light-high-contrast': '#cee4c3',
+      'dark-high-contrast': '#bed4b3',
+    },
+  },
+  /** The seafoam pastel fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.seafoam': {
+    cssVariable: '--env-color-avatar-bg-seafoam',
+    type: 'color',
+    values: {
+      light: '#b8e7de',
+      dark: '#a7d7cf',
+      'light-high-contrast': '#b8e7de',
+      'dark-high-contrast': '#a7d7cf',
+    },
+  },
+  /** The default initials, on the powder fill. */
   'color.avatar.fg': {
     cssVariable: '--env-color-avatar-fg',
     type: 'color',
@@ -137,42 +148,9 @@ export const tokens = {
       'dark-high-contrast': '#002e56',
     },
   },
-  /** The initials on the amber fill. */
-  'color.avatar.fg.amber': {
-    cssVariable: '--env-color-avatar-fg-amber',
-    type: 'color',
-    values: {
-      light: '#7c5b2a',
-      dark: '#73501f',
-      'light-high-contrast': '#523300',
-      'dark-high-contrast': '#422800',
-    },
-  },
-  /** The initials on the green fill. */
-  'color.avatar.fg.green': {
-    cssVariable: '--env-color-avatar-fg-green',
-    type: 'color',
-    values: {
-      light: '#4d6845',
-      dark: '#425e3b',
-      'light-high-contrast': '#26401f',
-      'dark-high-contrast': '#193312',
-    },
-  },
-  /** The initials on the purple fill. */
-  'color.avatar.fg.purple': {
-    cssVariable: '--env-color-avatar-fg-purple',
-    type: 'color',
-    values: {
-      light: '#864f70',
-      dark: '#7d4566',
-      'light-high-contrast': '#5d2648',
-      'dark-high-contrast': '#4e193b',
-    },
-  },
-  /** The initials on the red fill. */
-  'color.avatar.fg.red': {
-    cssVariable: '--env-color-avatar-fg-red',
+  /** The initials on the blush fill. */
+  'color.avatar.fg.blush': {
+    cssVariable: '--env-color-avatar-fg-blush',
     type: 'color',
     values: {
       light: '#924c4f',
@@ -181,9 +159,20 @@ export const tokens = {
       'dark-high-contrast': '#59131b',
     },
   },
-  /** The initials on the slate fill. */
-  'color.avatar.fg.slate': {
-    cssVariable: '--env-color-avatar-fg-slate',
+  /** The initials on the butter fill. */
+  'color.avatar.fg.butter': {
+    cssVariable: '--env-color-avatar-fg-butter',
+    type: 'color',
+    values: {
+      light: '#7c5b2a',
+      dark: '#73501f',
+      'light-high-contrast': '#523300',
+      'dark-high-contrast': '#422800',
+    },
+  },
+  /** The initials on the oat fill. */
+  'color.avatar.fg.oat': {
+    cssVariable: '--env-color-avatar-fg-oat',
     type: 'color',
     values: {
       light: '#6e5e51',
@@ -192,20 +181,20 @@ export const tokens = {
       'dark-high-contrast': '#392b1f',
     },
   },
-  /** The initials on the teal fill. */
-  'color.avatar.fg.teal': {
-    cssVariable: '--env-color-avatar-fg-teal',
+  /** The initials on the orchid fill. */
+  'color.avatar.fg.orchid': {
+    cssVariable: '--env-color-avatar-fg-orchid',
     type: 'color',
     values: {
-      light: '#266b68',
-      dark: '#16615f',
-      'light-high-contrast': '#004140',
-      'dark-high-contrast': '#003432',
+      light: '#864f70',
+      dark: '#7d4566',
+      'light-high-contrast': '#5d2648',
+      'dark-high-contrast': '#4e193b',
     },
   },
-  /** The initials on the violet fill. */
-  'color.avatar.fg.violet': {
-    cssVariable: '--env-color-avatar-fg-violet',
+  /** The initials on the periwinkle fill. */
+  'color.avatar.fg.periwinkle': {
+    cssVariable: '--env-color-avatar-fg-periwinkle',
     type: 'color',
     values: {
       light: '#5d5a96',
@@ -214,6 +203,40 @@ export const tokens = {
       'dark-high-contrast': '#2c255f',
     },
   },
+  /** The initials on the powder fill. */
+  'color.avatar.fg.powder': {
+    cssVariable: '--env-color-avatar-fg-powder',
+    type: 'color',
+    values: {
+      light: '#39648d',
+      dark: '#2f5a84',
+      'light-high-contrast': '#0f3b64',
+      'dark-high-contrast': '#002e56',
+    },
+  },
+  /** The initials on the sage fill. */
+  'color.avatar.fg.sage': {
+    cssVariable: '--env-color-avatar-fg-sage',
+    type: 'color',
+    values: {
+      light: '#4d6845',
+      dark: '#425e3b',
+      'light-high-contrast': '#26401f',
+      'dark-high-contrast': '#193312',
+    },
+  },
+  /** The initials on the seafoam fill. */
+  'color.avatar.fg.seafoam': {
+    cssVariable: '--env-color-avatar-fg-seafoam',
+    type: 'color',
+    values: {
+      light: '#266b68',
+      dark: '#16615f',
+      'light-high-contrast': '#004140',
+      'dark-high-contrast': '#003432',
+    },
+  },
+  /** The default figure, on the powder fill. */
   'color.avatar.figure': {
     cssVariable: '--env-color-avatar-figure',
     type: 'color',
@@ -224,38 +247,8 @@ export const tokens = {
       'dark-high-contrast': '#002e56',
     },
   },
-  'color.avatar.figure.amber': {
-    cssVariable: '--env-color-avatar-figure-amber',
-    type: 'color',
-    values: {
-      light: '#7c5b2a',
-      dark: '#73501f',
-      'light-high-contrast': '#523300',
-      'dark-high-contrast': '#422800',
-    },
-  },
-  'color.avatar.figure.green': {
-    cssVariable: '--env-color-avatar-figure-green',
-    type: 'color',
-    values: {
-      light: '#4d6845',
-      dark: '#425e3b',
-      'light-high-contrast': '#26401f',
-      'dark-high-contrast': '#193312',
-    },
-  },
-  'color.avatar.figure.purple': {
-    cssVariable: '--env-color-avatar-figure-purple',
-    type: 'color',
-    values: {
-      light: '#864f70',
-      dark: '#7d4566',
-      'light-high-contrast': '#5d2648',
-      'dark-high-contrast': '#4e193b',
-    },
-  },
-  'color.avatar.figure.red': {
-    cssVariable: '--env-color-avatar-figure-red',
+  'color.avatar.figure.blush': {
+    cssVariable: '--env-color-avatar-figure-blush',
     type: 'color',
     values: {
       light: '#924c4f',
@@ -264,8 +257,18 @@ export const tokens = {
       'dark-high-contrast': '#59131b',
     },
   },
-  'color.avatar.figure.slate': {
-    cssVariable: '--env-color-avatar-figure-slate',
+  'color.avatar.figure.butter': {
+    cssVariable: '--env-color-avatar-figure-butter',
+    type: 'color',
+    values: {
+      light: '#7c5b2a',
+      dark: '#73501f',
+      'light-high-contrast': '#523300',
+      'dark-high-contrast': '#422800',
+    },
+  },
+  'color.avatar.figure.oat': {
+    cssVariable: '--env-color-avatar-figure-oat',
     type: 'color',
     values: {
       light: '#6e5e51',
@@ -274,24 +277,54 @@ export const tokens = {
       'dark-high-contrast': '#392b1f',
     },
   },
-  'color.avatar.figure.teal': {
-    cssVariable: '--env-color-avatar-figure-teal',
+  'color.avatar.figure.orchid': {
+    cssVariable: '--env-color-avatar-figure-orchid',
     type: 'color',
     values: {
-      light: '#266b68',
-      dark: '#16615f',
-      'light-high-contrast': '#004140',
-      'dark-high-contrast': '#003432',
+      light: '#864f70',
+      dark: '#7d4566',
+      'light-high-contrast': '#5d2648',
+      'dark-high-contrast': '#4e193b',
     },
   },
-  'color.avatar.figure.violet': {
-    cssVariable: '--env-color-avatar-figure-violet',
+  'color.avatar.figure.periwinkle': {
+    cssVariable: '--env-color-avatar-figure-periwinkle',
     type: 'color',
     values: {
       light: '#5d5a96',
       dark: '#54508d',
       'light-high-contrast': '#38326d',
       'dark-high-contrast': '#2c255f',
+    },
+  },
+  'color.avatar.figure.powder': {
+    cssVariable: '--env-color-avatar-figure-powder',
+    type: 'color',
+    values: {
+      light: '#39648d',
+      dark: '#2f5a84',
+      'light-high-contrast': '#0f3b64',
+      'dark-high-contrast': '#002e56',
+    },
+  },
+  'color.avatar.figure.sage': {
+    cssVariable: '--env-color-avatar-figure-sage',
+    type: 'color',
+    values: {
+      light: '#4d6845',
+      dark: '#425e3b',
+      'light-high-contrast': '#26401f',
+      'dark-high-contrast': '#193312',
+    },
+  },
+  'color.avatar.figure.seafoam': {
+    cssVariable: '--env-color-avatar-figure-seafoam',
+    type: 'color',
+    values: {
+      light: '#266b68',
+      dark: '#16615f',
+      'light-high-contrast': '#004140',
+      'dark-high-contrast': '#003432',
     },
   },
   /** The tint of a soft accent badge. In light it is the accent blue at 5%, fainter than color.bg.accent.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.accent.muted. */

@@ -233,14 +233,14 @@
         {
           "attribute": "data-hue",
           "values": [
-            "amber",
-            "blue",
-            "green",
-            "purple",
-            "red",
-            "slate",
-            "teal",
-            "violet"
+            "blush",
+            "butter",
+            "oat",
+            "orchid",
+            "periwinkle",
+            "powder",
+            "sage",
+            "seafoam"
           ],
           "parts": [
             "env-avatar"

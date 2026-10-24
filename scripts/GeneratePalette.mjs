@@ -88,7 +88,7 @@ export const hues = {
   // The pastel hues of avatars, one palette rather than the hues above softened: a light seed for
   // the fill and a deep one for the initials and figure, each a shade of the same hue, at a shared
   // soft chroma so a group of avatars reads as one set.
-  sky: { description: 'The powder blue of avatars.', seeds: ['#c2e4f8', '#2d5883'] },
+  powder: { description: 'The powder blue of avatars.', seeds: ['#c2e4f8', '#2d5883'] },
   seafoam: { description: 'The seafoam of avatars.', seeds: ['#bae9e0', '#16615f'] },
   sage: { description: 'The sage of avatars.', seeds: ['#d0e6c5', '#425e3b'] },
   butter: { description: 'The butter yellow of avatars.', seeds: ['#f0dda5', '#704d1c'] },

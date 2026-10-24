@@ -36,33 +36,33 @@
      as an avatar group's ring in the color of the surface below. */
   box-shadow: var(--env-avatar-ring, none);
 }
-.env-avatar[data-hue='teal'] {
-  --env-avatar-container-default: var(--env-color-avatar-bg-teal);
-  --env-avatar-content-default: var(--env-color-avatar-fg-teal);
+.env-avatar[data-hue='seafoam'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-seafoam);
+  --env-avatar-content-default: var(--env-color-avatar-fg-seafoam);
 }
-.env-avatar[data-hue='green'] {
-  --env-avatar-container-default: var(--env-color-avatar-bg-green);
-  --env-avatar-content-default: var(--env-color-avatar-fg-green);
+.env-avatar[data-hue='sage'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-sage);
+  --env-avatar-content-default: var(--env-color-avatar-fg-sage);
 }
-.env-avatar[data-hue='amber'] {
-  --env-avatar-container-default: var(--env-color-avatar-bg-amber);
-  --env-avatar-content-default: var(--env-color-avatar-fg-amber);
+.env-avatar[data-hue='butter'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-butter);
+  --env-avatar-content-default: var(--env-color-avatar-fg-butter);
 }
-.env-avatar[data-hue='red'] {
-  --env-avatar-container-default: var(--env-color-avatar-bg-red);
-  --env-avatar-content-default: var(--env-color-avatar-fg-red);
+.env-avatar[data-hue='blush'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-blush);
+  --env-avatar-content-default: var(--env-color-avatar-fg-blush);
 }
-.env-avatar[data-hue='violet'] {
-  --env-avatar-container-default: var(--env-color-avatar-bg-violet);
-  --env-avatar-content-default: var(--env-color-avatar-fg-violet);
+.env-avatar[data-hue='periwinkle'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-periwinkle);
+  --env-avatar-content-default: var(--env-color-avatar-fg-periwinkle);
 }
-.env-avatar[data-hue='purple'] {
-  --env-avatar-container-default: var(--env-color-avatar-bg-purple);
-  --env-avatar-content-default: var(--env-color-avatar-fg-purple);
+.env-avatar[data-hue='orchid'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-orchid);
+  --env-avatar-content-default: var(--env-color-avatar-fg-orchid);
 }
-.env-avatar[data-hue='slate'] {
-  --env-avatar-container-default: var(--env-color-avatar-bg-slate);
-  --env-avatar-content-default: var(--env-color-avatar-fg-slate);
+.env-avatar[data-hue='oat'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-oat);
+  --env-avatar-content-default: var(--env-color-avatar-fg-oat);
 }
 /* A hairline just inside the edge, over the fill or the picture, so a pastel fill or a light photo
    keeps its circle on a page of a near color. */

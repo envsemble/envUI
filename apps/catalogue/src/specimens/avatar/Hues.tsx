@@ -7,11 +7,7 @@ export default function Hues() {
     <Example size="collection">
       <SpecimenGrid size="compact">
         {avatarHues.map((hue) => (
-          <Specimen
-            key={hue}
-            title={hue}
-            caption={`--env-color-avatar-bg${hue === 'blue' ? '' : `-${hue}`}`}
-          >
+          <Specimen key={hue} title={hue} caption={`--env-color-avatar-bg-${hue}`}>
             <Row align="center" gap={3}>
               <Avatar name="Northwind Labs" fallback="initials" hue={hue} size="lg" />
               <Avatar name="Sam Lee" hue={hue} size="lg" />

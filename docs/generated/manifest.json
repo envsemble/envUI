@@ -12052,14 +12052,14 @@
             {
               "attribute": "data-hue",
               "values": [
-                "amber",
-                "blue",
-                "green",
-                "purple",
-                "red",
-                "slate",
-                "teal",
-                "violet"
+                "blush",
+                "butter",
+                "oat",
+                "orchid",
+                "periwinkle",
+                "powder",
+                "sage",
+                "seafoam"
               ],
               "parts": [
                 "env-avatar"
@@ -26713,7 +26713,7 @@
         "id": "color.avatar.bg",
         "cssVariable": "--env-color-avatar-bg",
         "type": "color",
-        "description": "The powder blue pastel fill, under the name blue, one of the hues an avatar takes from its name, and the fill of an avatar with hue=\"blue\".",
+        "description": "The default fill, the powder hue: the fill of an avatar whose hue nothing sets.",
         "values": {
           "light": "#c0e2f6",
           "dark": "#afd3e9",
@@ -26722,46 +26722,10 @@
         }
       },
       {
-        "id": "color.avatar.bg.amber",
-        "cssVariable": "--env-color-avatar-bg-amber",
+        "id": "color.avatar.bg.blush",
+        "cssVariable": "--env-color-avatar-bg-blush",
         "type": "color",
-        "description": "The butter yellow pastel fill, under the name amber, one of the hues an avatar takes from its name.",
-        "values": {
-          "light": "#efdca4",
-          "dark": "#e1cc95",
-          "light-high-contrast": "#efdca4",
-          "dark-high-contrast": "#e1cc95"
-        }
-      },
-      {
-        "id": "color.avatar.bg.green",
-        "cssVariable": "--env-color-avatar-bg-green",
-        "type": "color",
-        "description": "The sage pastel fill, under the name green, one of the hues an avatar takes from its name.",
-        "values": {
-          "light": "#cee4c3",
-          "dark": "#bed4b3",
-          "light-high-contrast": "#cee4c3",
-          "dark-high-contrast": "#bed4b3"
-        }
-      },
-      {
-        "id": "color.avatar.bg.purple",
-        "cssVariable": "--env-color-avatar-bg-purple",
-        "type": "color",
-        "description": "The orchid pastel fill, under the name purple, one of the hues an avatar takes from its name.",
-        "values": {
-          "light": "#fad2ec",
-          "dark": "#ecc2dd",
-          "light-high-contrast": "#fad2ec",
-          "dark-high-contrast": "#ecc2dd"
-        }
-      },
-      {
-        "id": "color.avatar.bg.red",
-        "cssVariable": "--env-color-avatar-bg-red",
-        "type": "color",
-        "description": "The blush pink pastel fill, under the name red, one of the hues an avatar takes from its name.",
+        "description": "The blush pink pastel fill, one of the hues an avatar takes from its name.",
         "values": {
           "light": "#ffd3d4",
           "dark": "#f3c2c4",
@@ -26770,10 +26734,22 @@
         }
       },
       {
-        "id": "color.avatar.bg.slate",
-        "cssVariable": "--env-color-avatar-bg-slate",
+        "id": "color.avatar.bg.butter",
+        "cssVariable": "--env-color-avatar-bg-butter",
         "type": "color",
-        "description": "The warm oat pastel fill, under the name slate, one of the hues an avatar takes from its name.",
+        "description": "The butter yellow pastel fill, one of the hues an avatar takes from its name.",
+        "values": {
+          "light": "#efdca4",
+          "dark": "#e1cc95",
+          "light-high-contrast": "#efdca4",
+          "dark-high-contrast": "#e1cc95"
+        }
+      },
+      {
+        "id": "color.avatar.bg.oat",
+        "cssVariable": "--env-color-avatar-bg-oat",
+        "type": "color",
+        "description": "The warm oat pastel fill, one of the hues an avatar takes from its name.",
         "values": {
           "light": "#e7dbce",
           "dark": "#d8ccbf",
@@ -26782,22 +26758,22 @@
         }
       },
       {
-        "id": "color.avatar.bg.teal",
-        "cssVariable": "--env-color-avatar-bg-teal",
+        "id": "color.avatar.bg.orchid",
+        "cssVariable": "--env-color-avatar-bg-orchid",
         "type": "color",
-        "description": "The seafoam pastel fill, under the name teal, one of the hues an avatar takes from its name.",
+        "description": "The orchid pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#b8e7de",
-          "dark": "#a7d7cf",
-          "light-high-contrast": "#b8e7de",
-          "dark-high-contrast": "#a7d7cf"
+          "light": "#fad2ec",
+          "dark": "#ecc2dd",
+          "light-high-contrast": "#fad2ec",
+          "dark-high-contrast": "#ecc2dd"
         }
       },
       {
-        "id": "color.avatar.bg.violet",
-        "cssVariable": "--env-color-avatar-bg-violet",
+        "id": "color.avatar.bg.periwinkle",
+        "cssVariable": "--env-color-avatar-bg-periwinkle",
         "type": "color",
-        "description": "The periwinkle pastel fill, under the name violet, one of the hues an avatar takes from its name.",
+        "description": "The periwinkle pastel fill, one of the hues an avatar takes from its name.",
         "values": {
           "light": "#dadaff",
           "dark": "#cacaf3",
@@ -26806,10 +26782,46 @@
         }
       },
       {
+        "id": "color.avatar.bg.powder",
+        "cssVariable": "--env-color-avatar-bg-powder",
+        "type": "color",
+        "description": "The powder blue pastel fill, one of the hues an avatar takes from its name.",
+        "values": {
+          "light": "#c0e2f6",
+          "dark": "#afd3e9",
+          "light-high-contrast": "#c0e2f6",
+          "dark-high-contrast": "#afd3e9"
+        }
+      },
+      {
+        "id": "color.avatar.bg.sage",
+        "cssVariable": "--env-color-avatar-bg-sage",
+        "type": "color",
+        "description": "The sage pastel fill, one of the hues an avatar takes from its name.",
+        "values": {
+          "light": "#cee4c3",
+          "dark": "#bed4b3",
+          "light-high-contrast": "#cee4c3",
+          "dark-high-contrast": "#bed4b3"
+        }
+      },
+      {
+        "id": "color.avatar.bg.seafoam",
+        "cssVariable": "--env-color-avatar-bg-seafoam",
+        "type": "color",
+        "description": "The seafoam pastel fill, one of the hues an avatar takes from its name.",
+        "values": {
+          "light": "#b8e7de",
+          "dark": "#a7d7cf",
+          "light-high-contrast": "#b8e7de",
+          "dark-high-contrast": "#a7d7cf"
+        }
+      },
+      {
         "id": "color.avatar.fg",
         "cssVariable": "--env-color-avatar-fg",
         "type": "color",
-        "description": "The initials on the blue fill.",
+        "description": "The default initials, on the powder fill.",
         "values": {
           "light": "#39648d",
           "dark": "#2f5a84",
@@ -26818,46 +26830,10 @@
         }
       },
       {
-        "id": "color.avatar.fg.amber",
-        "cssVariable": "--env-color-avatar-fg-amber",
+        "id": "color.avatar.fg.blush",
+        "cssVariable": "--env-color-avatar-fg-blush",
         "type": "color",
-        "description": "The initials on the amber fill.",
-        "values": {
-          "light": "#7c5b2a",
-          "dark": "#73501f",
-          "light-high-contrast": "#523300",
-          "dark-high-contrast": "#422800"
-        }
-      },
-      {
-        "id": "color.avatar.fg.green",
-        "cssVariable": "--env-color-avatar-fg-green",
-        "type": "color",
-        "description": "The initials on the green fill.",
-        "values": {
-          "light": "#4d6845",
-          "dark": "#425e3b",
-          "light-high-contrast": "#26401f",
-          "dark-high-contrast": "#193312"
-        }
-      },
-      {
-        "id": "color.avatar.fg.purple",
-        "cssVariable": "--env-color-avatar-fg-purple",
-        "type": "color",
-        "description": "The initials on the purple fill.",
-        "values": {
-          "light": "#864f70",
-          "dark": "#7d4566",
-          "light-high-contrast": "#5d2648",
-          "dark-high-contrast": "#4e193b"
-        }
-      },
-      {
-        "id": "color.avatar.fg.red",
-        "cssVariable": "--env-color-avatar-fg-red",
-        "type": "color",
-        "description": "The initials on the red fill.",
+        "description": "The initials on the blush fill.",
         "values": {
           "light": "#924c4f",
           "dark": "#894144",
@@ -26866,10 +26842,22 @@
         }
       },
       {
-        "id": "color.avatar.fg.slate",
-        "cssVariable": "--env-color-avatar-fg-slate",
+        "id": "color.avatar.fg.butter",
+        "cssVariable": "--env-color-avatar-fg-butter",
         "type": "color",
-        "description": "The initials on the slate fill.",
+        "description": "The initials on the butter fill.",
+        "values": {
+          "light": "#7c5b2a",
+          "dark": "#73501f",
+          "light-high-contrast": "#523300",
+          "dark-high-contrast": "#422800"
+        }
+      },
+      {
+        "id": "color.avatar.fg.oat",
+        "cssVariable": "--env-color-avatar-fg-oat",
+        "type": "color",
+        "description": "The initials on the oat fill.",
         "values": {
           "light": "#6e5e51",
           "dark": "#645447",
@@ -26878,33 +26866,70 @@
         }
       },
       {
-        "id": "color.avatar.fg.teal",
-        "cssVariable": "--env-color-avatar-fg-teal",
+        "id": "color.avatar.fg.orchid",
+        "cssVariable": "--env-color-avatar-fg-orchid",
         "type": "color",
-        "description": "The initials on the teal fill.",
+        "description": "The initials on the orchid fill.",
         "values": {
-          "light": "#266b68",
-          "dark": "#16615f",
-          "light-high-contrast": "#004140",
-          "dark-high-contrast": "#003432"
+          "light": "#864f70",
+          "dark": "#7d4566",
+          "light-high-contrast": "#5d2648",
+          "dark-high-contrast": "#4e193b"
         }
       },
       {
-        "id": "color.avatar.fg.violet",
-        "cssVariable": "--env-color-avatar-fg-violet",
+        "id": "color.avatar.fg.periwinkle",
+        "cssVariable": "--env-color-avatar-fg-periwinkle",
         "type": "color",
-        "description": "The initials on the violet fill.",
+        "description": "The initials on the periwinkle fill.",
         "values": {
           "light": "#5d5a96",
           "dark": "#54508d",
           "light-high-contrast": "#38326d",
           "dark-high-contrast": "#2c255f"
+        }
+      },
+      {
+        "id": "color.avatar.fg.powder",
+        "cssVariable": "--env-color-avatar-fg-powder",
+        "type": "color",
+        "description": "The initials on the powder fill.",
+        "values": {
+          "light": "#39648d",
+          "dark": "#2f5a84",
+          "light-high-contrast": "#0f3b64",
+          "dark-high-contrast": "#002e56"
+        }
+      },
+      {
+        "id": "color.avatar.fg.sage",
+        "cssVariable": "--env-color-avatar-fg-sage",
+        "type": "color",
+        "description": "The initials on the sage fill.",
+        "values": {
+          "light": "#4d6845",
+          "dark": "#425e3b",
+          "light-high-contrast": "#26401f",
+          "dark-high-contrast": "#193312"
+        }
+      },
+      {
+        "id": "color.avatar.fg.seafoam",
+        "cssVariable": "--env-color-avatar-fg-seafoam",
+        "type": "color",
+        "description": "The initials on the seafoam fill.",
+        "values": {
+          "light": "#266b68",
+          "dark": "#16615f",
+          "light-high-contrast": "#004140",
+          "dark-high-contrast": "#003432"
         }
       },
       {
         "id": "color.avatar.figure",
         "cssVariable": "--env-color-avatar-figure",
         "type": "color",
+        "description": "The default figure, on the powder fill.",
         "values": {
           "light": "#39648d",
           "dark": "#2f5a84",
@@ -26913,41 +26938,8 @@
         }
       },
       {
-        "id": "color.avatar.figure.amber",
-        "cssVariable": "--env-color-avatar-figure-amber",
-        "type": "color",
-        "values": {
-          "light": "#7c5b2a",
-          "dark": "#73501f",
-          "light-high-contrast": "#523300",
-          "dark-high-contrast": "#422800"
-        }
-      },
-      {
-        "id": "color.avatar.figure.green",
-        "cssVariable": "--env-color-avatar-figure-green",
-        "type": "color",
-        "values": {
-          "light": "#4d6845",
-          "dark": "#425e3b",
-          "light-high-contrast": "#26401f",
-          "dark-high-contrast": "#193312"
-        }
-      },
-      {
-        "id": "color.avatar.figure.purple",
-        "cssVariable": "--env-color-avatar-figure-purple",
-        "type": "color",
-        "values": {
-          "light": "#864f70",
-          "dark": "#7d4566",
-          "light-high-contrast": "#5d2648",
-          "dark-high-contrast": "#4e193b"
-        }
-      },
-      {
-        "id": "color.avatar.figure.red",
-        "cssVariable": "--env-color-avatar-figure-red",
+        "id": "color.avatar.figure.blush",
+        "cssVariable": "--env-color-avatar-figure-blush",
         "type": "color",
         "values": {
           "light": "#924c4f",
@@ -26957,8 +26949,19 @@
         }
       },
       {
-        "id": "color.avatar.figure.slate",
-        "cssVariable": "--env-color-avatar-figure-slate",
+        "id": "color.avatar.figure.butter",
+        "cssVariable": "--env-color-avatar-figure-butter",
+        "type": "color",
+        "values": {
+          "light": "#7c5b2a",
+          "dark": "#73501f",
+          "light-high-contrast": "#523300",
+          "dark-high-contrast": "#422800"
+        }
+      },
+      {
+        "id": "color.avatar.figure.oat",
+        "cssVariable": "--env-color-avatar-figure-oat",
         "type": "color",
         "values": {
           "light": "#6e5e51",
@@ -26968,25 +26971,58 @@
         }
       },
       {
-        "id": "color.avatar.figure.teal",
-        "cssVariable": "--env-color-avatar-figure-teal",
+        "id": "color.avatar.figure.orchid",
+        "cssVariable": "--env-color-avatar-figure-orchid",
         "type": "color",
         "values": {
-          "light": "#266b68",
-          "dark": "#16615f",
-          "light-high-contrast": "#004140",
-          "dark-high-contrast": "#003432"
+          "light": "#864f70",
+          "dark": "#7d4566",
+          "light-high-contrast": "#5d2648",
+          "dark-high-contrast": "#4e193b"
         }
       },
       {
-        "id": "color.avatar.figure.violet",
-        "cssVariable": "--env-color-avatar-figure-violet",
+        "id": "color.avatar.figure.periwinkle",
+        "cssVariable": "--env-color-avatar-figure-periwinkle",
         "type": "color",
         "values": {
           "light": "#5d5a96",
           "dark": "#54508d",
           "light-high-contrast": "#38326d",
           "dark-high-contrast": "#2c255f"
+        }
+      },
+      {
+        "id": "color.avatar.figure.powder",
+        "cssVariable": "--env-color-avatar-figure-powder",
+        "type": "color",
+        "values": {
+          "light": "#39648d",
+          "dark": "#2f5a84",
+          "light-high-contrast": "#0f3b64",
+          "dark-high-contrast": "#002e56"
+        }
+      },
+      {
+        "id": "color.avatar.figure.sage",
+        "cssVariable": "--env-color-avatar-figure-sage",
+        "type": "color",
+        "values": {
+          "light": "#4d6845",
+          "dark": "#425e3b",
+          "light-high-contrast": "#26401f",
+          "dark-high-contrast": "#193312"
+        }
+      },
+      {
+        "id": "color.avatar.figure.seafoam",
+        "cssVariable": "--env-color-avatar-figure-seafoam",
+        "type": "color",
+        "values": {
+          "light": "#266b68",
+          "dark": "#16615f",
+          "light-high-contrast": "#004140",
+          "dark-high-contrast": "#003432"
         }
       },
       {
@@ -30604,6 +30640,48 @@
         "cssVariable": "--env-breakpoint-xl",
         "removed": true,
         "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-amber",
+        "use": "--env-color-avatar-bg-butter",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: amber is butter."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-green",
+        "use": "--env-color-avatar-bg-sage",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: green is sage."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-purple",
+        "use": "--env-color-avatar-bg-orchid",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: purple is orchid."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-red",
+        "use": "--env-color-avatar-bg-blush",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: red is blush."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-slate",
+        "use": "--env-color-avatar-bg-oat",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: slate is oat."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-teal",
+        "use": "--env-color-avatar-bg-seafoam",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: teal is seafoam."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-violet",
+        "use": "--env-color-avatar-bg-periwinkle",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: violet is periwinkle."
       },
       {
         "cssVariable": "--env-elevation-0-shadow",

@@ -607,27 +607,28 @@ Behaviour that changes without a rename:
 
 The Card family is one Card, InfoChip is a Badge, sizes and slots take the 1.0 words, and envUI ships no logos. `v1-names` renames the exports, `v1-structure` rewrites ActionCard and Card's `as` and reports FeatureCard, `v1-props` moves the literal values and `v1-classes` the classes:
 
-| 0.x                                                                               | 1.0                                                                                                                         |
-| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `<ClickableCard href>`, `<Card as="button" onClick>`, `<ClickableCard onClick>`   | `<Card href>`, `<Card onClick>`: a card with `onClick` is a native button                                                   |
-| `<Card as="article">`                                                             | `<Card render={<article />}>`                                                                                               |
-| `<ActionCard title meta actions>`                                                 | `<Card render={<article />} title meta actions>`                                                                            |
-| `<FeatureCard icon title description action>`                                     | The [feature cards](patterns/feature-cards.md) pattern: a Card holding a Row with the icon, a Column of Text and the Button |
-| Card `heading`                                                                    | `title`, as on Dialog; `headingLevel` still sets its level                                                                  |
-| Card `tone`: `row`, `pane`, `canvas`                                              | `background`: `muted` (the default), `default`, `page`                                                                      |
-| Card `layout`: `content`, `action`, and `feature` and `icon` (1.0.0-prerelease.0) | Removed: `actions` gives the action strip, and the feature layout is the [feature cards](patterns/feature-cards.md) pattern |
-| `ClickableCardProps`, `ActionCardProps`, `FeatureCardProps`                       | `CardProps`                                                                                                                 |
-| `env-clickable-card`, `env-action-card`                                           | `.env-card[data-interactive]`, `.env-card[data-actions]`                                                                    |
-| `env-action-card-heading`, `-meta`, `-body`, `-actions`                           | `env-card-header`, `-meta`, `-body`, `-footer`                                                                              |
-| `<InfoChip>`, `InfoChipProps`, `env-info-chip`                                    | `<Badge>`, a neutral soft pill; `BadgeProps`; `env-badge`                                                                   |
-| Badge `variant="subtle"`                                                          | `soft`, the default                                                                                                         |
-| Avatar and AvatarGroup `size`: `small`, `standard`, `large`, `display`            | `sm`, `md` (the default), `lg`, `xl`; `env-avatar-{size}` is `.env-avatar[data-size]`                                       |
-| Avatar `label`, which named it as an image                                        | `named`                                                                                                                     |
-| AvatarButton `size`: `small`, `standard`, `large`; `detail`                       | `sm`, `md`, `lg`; `description`                                                                                             |
-| AnimatedNumber `format`                                                           | `formatValue`, as on Slider and CalendarHeatmap                                                                             |
-| SegmentedControl `options`, `SegmentedControlOption`                              | `items`, `SegmentedControlItem`                                                                                             |
-| `env-segment`, `env-segment-label`, `env-segment-count`                           | `env-segmented-control-item`, `-item-label`, `-item-count`                                                                  |
-| `BrandLogo`, `EnvUILogo` and their props types                                    | Removed: keep your artwork in the application, as an SVG file or a component that draws it with `Icon`                      |
+| 0.x                                                                                               | 1.0                                                                                                                         |
+| ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `<ClickableCard href>`, `<Card as="button" onClick>`, `<ClickableCard onClick>`                   | `<Card href>`, `<Card onClick>`: a card with `onClick` is a native button                                                   |
+| `<Card as="article">`                                                                             | `<Card render={<article />}>`                                                                                               |
+| `<ActionCard title meta actions>`                                                                 | `<Card render={<article />} title meta actions>`                                                                            |
+| `<FeatureCard icon title description action>`                                                     | The [feature cards](patterns/feature-cards.md) pattern: a Card holding a Row with the icon, a Column of Text and the Button |
+| Card `heading`                                                                                    | `title`, as on Dialog; `headingLevel` still sets its level                                                                  |
+| Card `tone`: `row`, `pane`, `canvas`                                                              | `background`: `muted` (the default), `default`, `page`                                                                      |
+| Card `layout`: `content`, `action`, and `feature` and `icon` (1.0.0-prerelease.0)                 | Removed: `actions` gives the action strip, and the feature layout is the [feature cards](patterns/feature-cards.md) pattern |
+| `ClickableCardProps`, `ActionCardProps`, `FeatureCardProps`                                       | `CardProps`                                                                                                                 |
+| `env-clickable-card`, `env-action-card`                                                           | `.env-card[data-interactive]`, `.env-card[data-actions]`                                                                    |
+| `env-action-card-heading`, `-meta`, `-body`, `-actions`                                           | `env-card-header`, `-meta`, `-body`, `-footer`                                                                              |
+| `<InfoChip>`, `InfoChipProps`, `env-info-chip`                                                    | `<Badge>`, a neutral soft pill; `BadgeProps`; `env-badge`                                                                   |
+| Badge `variant="subtle"`                                                                          | `soft`, the default                                                                                                         |
+| Avatar and AvatarGroup `size`: `small`, `standard`, `large`, `display`                            | `sm`, `md` (the default), `lg`, `xl`; `env-avatar-{size}` is `.env-avatar[data-size]`                                       |
+| Avatar `label`, which named it as an image                                                        | `named`                                                                                                                     |
+| Avatar `hue` and `data-hue`: `blue`, `teal`, `green`, `amber`, `red`, `violet`, `purple`, `slate` | `powder`, `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid`, `oat`; `v1-props` rewrites a literal `hue`          |
+| AvatarButton `size`: `small`, `standard`, `large`; `detail`                                       | `sm`, `md`, `lg`; `description`                                                                                             |
+| AnimatedNumber `format`                                                                           | `formatValue`, as on Slider and CalendarHeatmap                                                                             |
+| SegmentedControl `options`, `SegmentedControlOption`                                              | `items`, `SegmentedControlItem`                                                                                             |
+| `env-segment`, `env-segment-label`, `env-segment-count`                                           | `env-segmented-control-item`, `-item-label`, `-item-count`                                                                  |
+| `BrandLogo`, `EnvUILogo` and their props types                                                    | Removed: keep your artwork in the application, as an SVG file or a component that draws it with `Icon`                      |
 
 Change these by hand where the codemods report them, or where they can't see them:
 
@@ -860,6 +861,13 @@ Renamed beyond the prefix:
 | `--env-alert-tint`                   | `--env-alert-container`                      | An alert's tint is the public color property --env-alert-container, set on the alert.                     |
 | `--env-alert-tone`                   | `--env-alert-icon`                           | An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon. |
 | `--env-app-shell-header-height`      | `--env-top-bar-height`                       | AppShell is gone; TopBar's height.                                                                        |
+| `--env-color-avatar-bg-amber`        | `--env-color-avatar-bg-butter`               | The avatar hues are named for their colors: amber is butter.                                              |
+| `--env-color-avatar-bg-green`        | `--env-color-avatar-bg-sage`                 | The avatar hues are named for their colors: green is sage.                                                |
+| `--env-color-avatar-bg-purple`       | `--env-color-avatar-bg-orchid`               | The avatar hues are named for their colors: purple is orchid.                                             |
+| `--env-color-avatar-bg-red`          | `--env-color-avatar-bg-blush`                | The avatar hues are named for their colors: red is blush.                                                 |
+| `--env-color-avatar-bg-slate`        | `--env-color-avatar-bg-oat`                  | The avatar hues are named for their colors: slate is oat.                                                 |
+| `--env-color-avatar-bg-teal`         | `--env-color-avatar-bg-seafoam`              | The avatar hues are named for their colors: teal is seafoam.                                              |
+| `--env-color-avatar-bg-violet`       | `--env-color-avatar-bg-periwinkle`           | The avatar hues are named for their colors: violet is periwinkle.                                         |
 | `--env-list-item-fill`               | `--env-list-item-container`                  | A row's fill is the public color property --env-list-item-container, set on the row.                      |
 | `--env-toast-edge`                   | `--env-toast-outline`                        | A toast's edge is the public color property --env-toast-outline.                                          |
 | `--env-toast-fill`                   | `--env-toast-container`                      | A toast's fill is the public color property --env-toast-container, set on the toast.                      |

@@ -9,19 +9,22 @@ import { useResolvedLocale } from '../internal/useFormatters.js';
 /** An avatar's size: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem. */
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 
-/** The fills an avatar without a picture takes, each a solid hue under white initials or figure. */
+/**
+ * The hues an avatar without a picture takes, named for their colors: each a pastel fill with the
+ * initials or figure in a deep shade of the same hue.
+ */
 export const avatarHues = [
-  'blue',
-  'teal',
-  'green',
-  'amber',
-  'red',
-  'violet',
-  'purple',
-  'slate',
+  'powder',
+  'seafoam',
+  'sage',
+  'butter',
+  'blush',
+  'periwinkle',
+  'orchid',
+  'oat',
 ] as const;
 
-/** One of the fills of an avatar without a picture. */
+/** One of the hues of an avatar without a picture. */
 export type AvatarHue = (typeof avatarHues)[number];
 
 /**
