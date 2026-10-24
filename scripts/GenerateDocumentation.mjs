@@ -24,6 +24,7 @@ import { marked } from 'marked';
 import { parse as parseYaml } from 'yaml';
 import { headingsOf } from './MarkdownHeadings.mjs';
 import { headingSlugger } from './SearchAnchors.mjs';
+import { optionTable, optionTableProblems } from './SiteContent.mjs';
 import { writeSearchIndex } from './SearchIndex.mjs';
 
 export const documentationDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
@@ -792,6 +793,12 @@ function readFigures(document, body, { examples, specimens, partNames }) {
     if (token.type === 'heading' && token.depth === 3) subheading = token.text;
     if (isPropsTable(token))
       problems.push(`${current.title} lists props in a table; the Props section is generated`);
+    // An option table, whose last column is Use for, shows on the Site as a legend of tags.
+    const options = optionTable(token);
+    if (options)
+      problems.push(
+        ...optionTableProblems(options).map((problem) => `${current.title}: ${problem}`),
+      );
     if (legendOf?.role === 'variants' && token.type === 'list' && token.ordered) {
       // A variants figure's legend: each variant's name in bold, labelling the example's items in
       // order, or the item a part reference names.

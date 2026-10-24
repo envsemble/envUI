@@ -118,3 +118,139 @@ export function siteInlineCode(document) {
     ).map((code) => ({ where, code })),
   );
 }
+
+/** The heading of the last column of an option table, which names what each option is for. */
+export const optionUseHeading = 'Use for';
+
+/** The plain text of inline Markdown tokens, as a reader sees it: code spans without backticks. */
+function plainText(tokens) {
+  return tokens
+    .map((token) => (token.tokens ? plainText(token.tokens) : (token.text ?? '')))
+    .join('')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * An option table, such as a component's variants, tones or sizes, from a lexed Markdown table:
+ * the first column names each option, the last, headed Use for, says what it is for, and any
+ * columns between them add a detail, such as the tones a variant takes. The Site shows it as a
+ * legend, each option's name in a tag followed by what it is for, as an anatomy figure's legend
+ * shows its parts; the packaged page and the Docs keep the table. Anything else is undefined.
+ */
+export function optionTable(token) {
+  if (token?.type !== 'table' || token.header.length < 2) return undefined;
+  if (token.header.at(-1).text.trim() !== optionUseHeading) return undefined;
+  const titles = token.header.map((cell) => plainText(cell.tokens));
+  return {
+    column: titles[0],
+    options: token.rows.map((row) => ({
+      name: plainText(row[0].tokens),
+      nameTokens: row[0].tokens,
+      details: row.slice(1, -1).map((cell, index) => ({
+        title: titles[index + 1],
+        markdown: cell.text.trim(),
+      })),
+      use: row.at(-1).text.trim(),
+    })),
+  };
+}
+
+/**
+ * What keeps an option table from showing as a legend: an option's name is a tag, a few words of
+ * plain text with no link, image or HTML, named once, and each option says what it is for.
+ */
+export function optionTableProblems(table) {
+  const problems = [];
+  const seen = new Set();
+  for (const [index, option] of table.options.entries()) {
+    const at = `row ${index + 1} of the ${table.column} table`;
+    const kinds = new Set();
+    marked.walkTokens(option.nameTokens, (token) => kinds.add(token.type));
+    if (!option.name) problems.push(`${at} names no option`);
+    else if (['link', 'image', 'html'].some((kind) => kinds.has(kind)))
+      problems.push(`${at} names its option with a link, an image or HTML; write its name alone`);
+    else if (option.name.split(' ').length > 5 || /[.:;!?]$/.test(option.name))
+      problems.push(
+        `${at} names its option "${option.name}": a name of a few words, such as Outline or From the bottom, which the Site shows as a tag`,
+      );
+    if (seen.has(option.name)) problems.push(`${at} names ${option.name} again`);
+    seen.add(option.name);
+    if (!option.use) problems.push(`${at} says nothing under ${optionUseHeading}`);
+  }
+  return problems;
+}
+
+/** The first words of a piece of text, to say where it is. */
+const opening = (text) => {
+  const words = text.replace(/\s+/g, ' ').trim().split(' ');
+  return words.length > 8 ? `${words.slice(0, 8).join(' ')}…` : words.join(' ');
+};
+
+/**
+ * Where a page's Site text has no structure. Every piece of text belongs to a titled block: a
+ * heading and one short paragraph, with its figure where it has one, as a section's opening or a
+ * `###` subsection is written. Two kinds of loose text break that:
+ *
+ * - **after a figure**: a paragraph after a figure, a table or a list with no heading between them,
+ *   such as a lone sentence after the do and don't pairs, or between two figures. The one
+ *   paragraph right after an anatomy figure's legend, which names the parts it can't show, belongs
+ *   to the figure.
+ * - **a second paragraph**: a block holds one paragraph; two short ones are one paragraph, or two
+ *   blocks with headings of their own.
+ */
+export function siteStructure(document) {
+  const found = [];
+  for (const section of document.sections ?? []) {
+    if (docsOnlySections.has(section.id)) continue;
+    let paragraphs = 0;
+    let figure = false;
+    let afterAnatomy = false;
+    for (const block of section.blocks) {
+      if (block.kind !== 'markdown') {
+        figure = true;
+        afterAnatomy = block.kind === 'example' && block.role === 'anatomy';
+        continue;
+      }
+      const markdown =
+        section.id === 'accessibility' ? withoutProvides(block.markdown) : block.markdown;
+      for (const token of marked.lexer(markdown)) {
+        if (token.type === 'space') continue;
+        const anatomyNote = afterAnatomy;
+        afterAnatomy = false;
+        if (token.type === 'heading') {
+          paragraphs = 0;
+          figure = false;
+        } else if (token.type === 'paragraph') {
+          if (figure && !anatomyNote)
+            found.push({ where: section.title, kind: 'after a figure', text: opening(token.text) });
+          else if (paragraphs)
+            found.push({
+              where: section.title,
+              kind: 'a second paragraph',
+              text: opening(token.text),
+            });
+          paragraphs++;
+          if (anatomyNote) figure = true;
+        } else figure = true;
+      }
+    }
+  }
+  return found;
+}
+
+/**
+ * Markdown cut at its option tables, in order: runs of Markdown, and each option table parsed,
+ * which the Site shows as a legend.
+ */
+export function optionPieces(markdown) {
+  const pieces = [];
+  for (const token of marked.lexer(markdown)) {
+    const options = optionTable(token);
+    const last = pieces.at(-1);
+    if (options) pieces.push({ options, raw: token.raw });
+    else if (last && 'markdown' in last) last.markdown += token.raw;
+    else pieces.push({ markdown: token.raw });
+  }
+  return pieces;
+}
