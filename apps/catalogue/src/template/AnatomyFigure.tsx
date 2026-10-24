@@ -402,12 +402,7 @@ function AnatomyStage({
     };
   }, [legend, open, enlarged, variants]);
   return (
-    <ExampleTheme
-      ref={stage}
-      className="docs-anatomy-stage"
-      data-example={name}
-      data-stage={fill}
-    >
+    <ExampleTheme ref={stage} className="docs-anatomy-stage" data-example={name} data-stage={fill}>
       {/* A picture of the parts: the live component neither takes focus nor changes under it. A
           variants figure keeps room beside its items for their names. */}
       <div

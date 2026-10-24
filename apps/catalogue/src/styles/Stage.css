@@ -39,11 +39,11 @@
 }
 
 :is(
-  .docs-live-example,
-  .docs-verdict-stage,
-  .docs-anatomy-stage,
-  .docs-related-stage
-)[data-stage='shaded'][data-env-theme='dark'] {
+    .docs-live-example,
+    .docs-verdict-stage,
+    .docs-anatomy-stage,
+    .docs-related-stage
+  )[data-stage='shaded'][data-env-theme='dark'] {
   background-color: oklch(from var(--env-color-bg-page) calc(l - 0.05) c h);
 }
 
