@@ -15,9 +15,9 @@ aliases:
   - tri-state checkbox
   - opt-in
 useWhen:
-  - People choose any number of options from a list, each on its own, such as which e-mails to receive.
-  - One option is agreed to or included, such as accepting the terms or including archived items, and takes effect when a form is sent.
-  - A parent selects or clears a group of options and shows when only some are chosen (`checked="mixed"`).
+  - Any number of options, each chosen on its own, such as which e-mails to receive
+  - Agreeing to or including one option, applied when a form is sent, such as the terms
+  - A parent that selects or clears a group, and shows when only some are chosen
 avoidWhen:
   - text: A setting that takes effect at once, such as turning notifications on.
     use: Switch
@@ -43,7 +43,7 @@ components:
 
 ### States
 
-Pressing the box or its label toggles it. `checked="mixed"` shows a dash.
+Pressing the box or its label toggles it. A mixed box shows a dash.
 
 <!-- specimen: States -->
 
@@ -57,7 +57,7 @@ A parent is checked when every child is, mixed when some are, and checks or clea
 
 ### In a form
 
-A checked box submits its `name` with its `value`; an unchecked one submits nothing. A reset restores `defaultChecked`.
+A checked box is sent with the form, and an unchecked one is not. Resetting the form restores how each box started.
 
 ```tsx example=NotificationForm
 
@@ -73,7 +73,9 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 
 ```
 
-- Derive a parent's state from its children; the checkbox doesn't.
+### A parent's state
+
+Work out a parent's state from its children: the checkbox doesn't do it on its own.
 
 ### Labels
 
@@ -92,7 +94,7 @@ Write the label as the choice it turns on, in sentence case, so checking it mean
 
 ### Colors
 
-`--env-checkbox-outline`, `--env-checkbox-selected` and `--env-checkbox-icon` set the colors of one Checkbox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+One checkbox can take colors of its own: its edge, its fill when checked and its check. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 
@@ -122,6 +124,40 @@ The label wraps onto more lines, and the box stays centred beside it.
 - A `label`, or `aria-label` on a checkbox without one.
 - A name for a group, such as a fieldset's legend.
 - An error or description, linked with `aria-describedby`.
+
+## In code
+
+### Usage
+
+A Checkbox is a native checkbox inside its `<label>`, named by `label`. Leave it uncontrolled, with `defaultChecked`, or control it with `checked` and `onCheckedChange`, which receives the new state as a boolean.
+
+```tsx source=IncludeArchived
+
+```
+
+#### Mixed and select all
+
+`checked="mixed"` shows a dash, for a parent whose children are partly chosen; pressing a mixed checkbox reports `true`. The checkbox doesn't derive it: set the parent's `checked` from its children, `true` when all are checked, `'mixed'` when some are and `false` when none are.
+
+```tsx source=SelectAll
+
+```
+
+#### In a form
+
+A checked box submits its `name` with its `value`; an unchecked one submits nothing. A reset restores `defaultChecked`. Name a group with a native `fieldset` and its `legend`.
+
+```tsx source=NotificationForm
+
+```
+
+### Composition
+
+`className` and `style` reach the root, `env-checkbox`, the label around the box and the text; `ref` and the other native props, such as `name` and `required`, reach the input, `env-checkbox-input`, so a form library can register and focus it. The box is `env-checkbox-box`, the check `env-checkbox-indicator` and the text `env-checkbox-label`.
+
+### Customize
+
+`--env-checkbox-outline`, `--env-checkbox-selected` and `--env-checkbox-icon` set the colors of one Checkbox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Changelog
 
