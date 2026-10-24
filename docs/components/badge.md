@@ -85,6 +85,8 @@ components:
 
 ### Tones
 
+A badge takes every status tone, which [Colors & themes](../foundations/colors.md) describes.
+
 ```tsx variants=Tones
 
 ```
@@ -95,15 +97,6 @@ components:
 4. **Warning**
 5. **Danger**
 6. **Done**
-
-| Tone    | Use for                                               |
-| ------- | ----------------------------------------------------- |
-| Neutral | No urgency, such as Draft, and metadata. The default. |
-| Accent  | The current or highlighted state, such as In review.  |
-| Success | Done well or healthy, such as Ready.                  |
-| Warning | Needs attention soon, such as Blocked.                |
-| Danger  | Failed or at risk, such as Failed.                    |
-| Done    | Completed work, such as Merged.                       |
 
 ### Counts
 
@@ -127,14 +120,6 @@ Give the same state the same word and tone everywhere, and let the word carry th
 
 Show 99+ beyond two digits, and give the full count in the count's name for assistive technology.
 
-### In navigation
-
-A drawer shows each destination's count at its end, and says it in the destination's name.
-
-```tsx example=NavigationCounts
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=BadgeAnatomy
@@ -146,10 +131,6 @@ A drawer shows each destination's count at its end, and says it in the destinati
 3. **Label** (`env-badge-label`, `children`)
 
 Not shown: a count, and DiffStat's added and removed lines.
-
-### Colors
-
-One badge can take colors of its own: its fill, its text and its edge. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 
@@ -212,8 +193,22 @@ DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in
 
 A Drawer destination's `count` shows the count at its end and adds it to the destination's name, such as Inbox, 12 new.
 
-```tsx source=NavigationCounts
+```tsx
+import { Drawer, type Destination } from '@envsemble/envui';
+import { Description } from '@envsemble/envui/icons/Description';
+import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { Schedule } from '@envsemble/envui/icons/Schedule';
 
+// The drawer shows each count at the end of its destination and says it in the name: Inbox, 12 new.
+const destinations: Destination[] = [
+  { label: 'Inbox', icon: <Inbox />, href: '/inbox', count: 12, current: true },
+  { label: 'Plans', icon: <Description />, href: '/plans', count: 4 },
+  { label: 'Later', icon: <Schedule />, href: '/later', count: 1200 },
+];
+
+export default function NavigationCounts() {
+  return <Drawer aria-label="Workspace" destinations={destinations} />;
+}
 ```
 
 ### Composition

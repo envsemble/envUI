@@ -49,14 +49,6 @@ The field can write the month in a shorter form, such as 07/28.
 
 ```
 
-### In a form
-
-The month goes with its form as the year and the month in numbers, such as 2026-10, which sort and compare as text.
-
-```tsx example=ExpenseForm
-
-```
-
 ## Variants
 
 ```tsx variants=Variants
@@ -71,15 +63,7 @@ The month goes with its form as the year and the month in numbers, such as 2026-
 | Outline  | In forms, dialogs and panes. The default.               |
 | Floating | A long form on a page, as TextField's floating variant. |
 
-### Sizes
-
-An outline field comes in the three control heights of the [scale](../foundations/scale.md), small, medium and large, so it lines up with buttons of the same size.
-
 ## When to use
-
-### Read only
-
-Show a month people can't change as read-only, not disabled, so they can still focus it and read it.
 
 ### Ranges
 
@@ -160,8 +144,34 @@ A MonthPicker takes its `label`, a `description` and an `error`, and its value i
 
 `name` submits the month as `YYYY-MM`, and `required` keeps an empty field's form from submitting. Use `readOnly`, not `disabled`, for a month people can't change.
 
-```tsx source=ExpenseForm
+```tsx
+import { useState, type FormEvent } from 'react';
+import { Button, MonthPicker, Column, Row, Text } from '@envsemble/envui';
 
+export default function ExpenseForm() {
+  const [sent, setSent] = useState('');
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    setSent(`Expenses for ${String(data.get('period'))} submitted.`);
+  };
+  return (
+    <form onSubmit={submit} onReset={() => setSent('')} style={{ inlineSize: 'min(100%, 16rem)' }}>
+      <Column gap={4}>
+        <MonthPicker label="Period" name="period" placeholder="Choose a month" required />
+        <Row wrap align="center" gap={4}>
+          <Button type="submit">Submit expenses</Button>
+          <Button type="reset" variant="secondary">
+            Reset
+          </Button>
+        </Row>
+        <Text variant="caption" emphasis="muted" role="status">
+          {sent}
+        </Text>
+      </Column>
+    </form>
+  );
+}
 ```
 
 #### Variants, sizes and the popup

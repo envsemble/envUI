@@ -69,14 +69,6 @@ Days outside the allowed range are unavailable, and the month buttons stop at th
 
 ```
 
-### In a form
-
-The form sends the date as a local date, with no time zone. Turning it into a moment belongs to the application.
-
-```tsx example=LeaveRequest
-
-```
-
 ## Variants
 
 ```tsx variants=Variants
@@ -93,9 +85,9 @@ The form sends the date as a local date, with no time zone. Turning it into a mo
 | Outline, with a time | A day and a time, with Now and the time's wheels.          |
 | Floating             | A long form on a page, as a text field's floating variant. |
 
-### Sizes
+### In a toolbar
 
-Small, medium and large, the control heights of the [scale](../foundations/scale.md). A field without a visible label, such as in a toolbar, shows its placeholder instead. It is at least 12 rem wide, also in a toolbar sized to its content, and in a narrower container it takes the container's width.
+A field without a visible label, such as in a toolbar, shows its placeholder instead, and keeps enough width for a date.
 
 ```tsx example=SmallToolbar
 
@@ -114,10 +106,6 @@ Small, medium and large, the control heights of the [scale](../foundations/scale
 ### Ranges
 
 Use two fields for a range, such as First day and Last day.
-
-### Dates people can't change
-
-Show a date people can't change as read-only rather than disabled, so they can still focus and read it.
 
 ## Anatomy
 
@@ -201,8 +189,47 @@ A DatePicker is a field with its `label`, `description` and `error`, whose butto
 
 `name` submits the value as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm`, a local date without a zone; converting it to a moment belongs to the application. `required` keeps an empty field from submitting, and a reset restores `defaultValue`. Use `readOnly`, not `disabled`, for a date people can't change.
 
-```tsx source=LeaveRequest
+```tsx
+import { useState, type FormEvent } from 'react';
+import { Button, DatePicker, Column, Row, Text } from '@envsemble/envui';
 
+export default function LeaveRequest() {
+  const [error, setError] = useState<string>();
+  const [sent, setSent] = useState('');
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const [first, last] = [String(data.get('first')), String(data.get('last'))];
+    // Values are YYYY-MM-DD, so they compare as text.
+    const invalid = first && last && last < first;
+    setError(invalid ? 'Choose a last day on or after the first.' : undefined);
+    setSent(invalid ? '' : `Requested ${first} to ${last}.`);
+  };
+  return (
+    <form
+      onSubmit={submit}
+      onReset={() => {
+        setError(undefined);
+        setSent('');
+      }}
+      style={{ inlineSize: 'min(100%, 20rem)' }}
+    >
+      <Column gap={4}>
+        <DatePicker label="First day" name="first" defaultValue="2026-11-02" required />
+        <DatePicker label="Last day" name="last" defaultValue="2026-11-06" required error={error} />
+        <Row wrap align="center" gap={4}>
+          <Button type="submit">Request leave</Button>
+          <Button type="reset" variant="secondary">
+            Reset
+          </Button>
+        </Row>
+        <Text variant="caption" emphasis="muted" role="status">
+          {sent}
+        </Text>
+      </Column>
+    </form>
+  );
+}
 ```
 
 #### Variants and sizes

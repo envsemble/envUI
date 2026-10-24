@@ -98,14 +98,6 @@ A read-only picker can be read and copied but not changed, and a disabled one ta
 
 <!-- specimen: States -->
 
-### In a form
-
-The color goes with its form in the format the application chooses, and a reset returns to where it started. The picker always holds a color, so where one must be chosen, the form keeps "no color yet" in its own state and checks it there.
-
-```tsx example=ProjectColorForm
-
-```
-
 ## When to use
 
 ```tsx do=PickerButton caption="ColorPickerButton: the color's swatch and value, named after its label."
@@ -113,14 +105,6 @@ The color goes with its form in the format the application chooses, and a reset 
 ```
 
 ```tsx dont=SwatchAlone caption="A swatch alone, which hides the value and names no color."
-
-```
-
-```tsx do=OpaqueLabelColor caption="Offer only the formats and alpha the stored color can hold."
-
-```
-
-```tsx dont=TranslucentLabelColor caption="Alpha and every format for a color stored as six hex digits."
 
 ```
 
@@ -154,7 +138,7 @@ ColorPickerButton has no fill of its own: like a field, it takes the background 
 
 ## Adapting to width
 
-The picker fills its container up to 18 rem, so that a wide picker stays compact, and everything under the area and the strips takes their width. The strips stay upright at the area's side at every width, and a narrow picker's area shrinks. The format menu, the eyedropper and copy share a row, and the fields take the row under it, in equal columns that keep each channel's letter in its place in every format.
+The picker fills its container but stays compact in a wide one, and everything under the area and the strips takes their width. The strips stay upright at the area's side at every width, and a narrow picker's area shrinks. The format menu, the eyedropper and copy share a row, and the fields take the row under it, in equal columns that keep each channel's letter in its place in every format.
 
 ```tsx example=FillWidth widths="15 22"
 
@@ -205,6 +189,21 @@ Without `formats`, the picker shows one format at a time, hex first, with the fo
 
 ```
 
+Offer only the formats and the alpha the stored color can hold: a color stored as six hex digits takes `formats={['hex']}` and no `alpha`, rather than every format and an alpha it would lose.
+
+```tsx
+import { ColorPicker } from '@envsemble/envui/color';
+
+export default function OpaqueLabelColor() {
+  // Labels are stored as #rrggbb: the picker offers what the value can hold.
+  return (
+    <div style={{ inlineSize: 'min(100%, 16rem)' }}>
+      <ColorPicker label="Label color" defaultValue="#2f6f62" formats={['hex']} />
+    </div>
+  );
+}
+```
+
 #### Copy, the eyedropper and swatches
 
 `copy` and `eyeDropper` are on by default. The eyedropper shows only where the browser has one, Chromium-based browsers on the desktop. `swatches` lists preset colors under the fields: CSS color strings, `Color`s, or `{ color, label }` with a name.
@@ -233,13 +232,49 @@ ColorSwatch shows its `color`, with an optional alpha, and writes it in `format`
 
 `name` submits the color as a string in `valueFormat`, and `form` ties it to a form it sits outside; a reset returns to `defaultValue`. The picker always holds a color, so it takes no `required`: keep "no color yet" in the form's own state and validate it there. `readOnly` lets people read and copy the color but not change it, and `disabled` takes no input.
 
-```tsx source=ProjectColorForm
+```tsx
+import { useState, type FormEvent } from 'react';
+import { Button, Column, Row, Text } from '@envsemble/envui';
+import { ColorPicker } from '@envsemble/envui/color';
 
+export default function ProjectColorForm() {
+  const [applied, setApplied] = useState('');
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setApplied(String(new FormData(event.currentTarget).get('color')));
+  };
+  return (
+    <form
+      onSubmit={submit}
+      onReset={() => setApplied('')}
+      style={{ inlineSize: 'min(100%, 18rem)' }}
+    >
+      <Column gap={4}>
+        <ColorPicker
+          label="Project color"
+          name="color"
+          defaultValue="#6b4fa3"
+          formats={['hex', 'rgb']}
+          description="Shown beside the project in lists."
+        />
+        <Row wrap align="center" gap={4}>
+          <Button type="submit">Apply color</Button>
+          <Button type="reset" variant="secondary">
+            Reset
+          </Button>
+        </Row>
+        <Text variant="caption" emphasis="muted" role="status">
+          {applied && `Applied ${applied}.`}
+        </Text>
+      </Column>
+    </form>
+  );
+}
 ```
 
 ### Composition
 
-The picker, `env-color-picker`, holds its label, `env-color-picker-label`; the controls, `env-color-picker-controls`, with the area, `env-color-picker-area`, and the sliders, `env-color-picker-sliders`, the hue, `env-color-picker-hue`, and the alpha, `env-color-picker-alpha`, each an `env-color-picker-slider` with its track, `env-color-picker-track`, and a thumb, `env-color-picker-thumb`, like the area's; and the values, `env-color-picker-values`, with the format, `env-color-picker-format`, the eyedropper, `env-color-picker-eye-dropper`, copy, `env-color-picker-copy`, and the fields, `env-color-picker-fields`, each an `env-color-picker-field` with its letter, `env-color-picker-field-label`, and input, `env-color-picker-input`. Several formats shown together are rows, `env-color-picker-row`. Then come the swatches, `env-color-picker-swatches`, each an `env-color-picker-swatch`, the description, `env-color-picker-description`, and the error, `env-color-picker-error`. `data-channel` names a slider's or a field's channel, and `data-format` a row's format.
+The picker fills its container up to 18 rem. The picker, `env-color-picker`, holds its label, `env-color-picker-label`; the controls, `env-color-picker-controls`, with the area, `env-color-picker-area`, and the sliders, `env-color-picker-sliders`, the hue, `env-color-picker-hue`, and the alpha, `env-color-picker-alpha`, each an `env-color-picker-slider` with its track, `env-color-picker-track`, and a thumb, `env-color-picker-thumb`, like the area's; and the values, `env-color-picker-values`, with the format, `env-color-picker-format`, the eyedropper, `env-color-picker-eye-dropper`, copy, `env-color-picker-copy`, and the fields, `env-color-picker-fields`, each an `env-color-picker-field` with its letter, `env-color-picker-field-label`, and input, `env-color-picker-input`. Several formats shown together are rows, `env-color-picker-row`. Then come the swatches, `env-color-picker-swatches`, each an `env-color-picker-swatch`, the description, `env-color-picker-description`, and the error, `env-color-picker-error`. `data-channel` names a slider's or a field's channel, and `data-format` a row's format.
 
 ColorPickerButton is `env-color-picker-button`, with its value, `env-color-picker-button-value`, and its popover, `env-color-picker-popover`. ColorSwatch is `env-color-swatch`, with its sample, `env-color-swatch-sample`, its label, `env-color-swatch-label`, and its value, `env-color-swatch-value`.
 

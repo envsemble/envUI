@@ -98,12 +98,6 @@
           "file": "docs/examples/box/InsetRegion.tsx"
         },
         {
-          "name": "SizeContainer",
-          "title": "Size container",
-          "description": "A box can be a size container, whose width the application's own styles respond to. One in a row needs a width of its own: a container takes its width from where it sits, never from its content.",
-          "file": "docs/examples/box/SizeContainer.tsx"
-        },
-        {
           "name": "OneInset",
           "title": "Do: One inset on the region, and a Column inside for the gaps.",
           "description": "",
@@ -141,7 +135,6 @@
         "button row",
         "button set",
         "form actions",
-        "toolbar",
         "wrap"
       ],
       "useWhen": [
@@ -185,7 +178,7 @@
         {
           "name": "FormActions",
           "title": "Form actions",
-          "description": "Like Column, Grid and Box, Row sizes to its content and never paints.",
+          "description": "",
           "file": "docs/examples/row/FormActions.tsx"
         },
         {
@@ -288,7 +281,7 @@
         {
           "name": "ProjectDetails",
           "title": "Project details",
-          "description": "Like Row, Grid and Box, Column sizes to its content and has no fill or edge of its own, and its children need no margins.",
+          "description": "",
           "file": "docs/examples/column/ProjectDetails.tsx"
         },
         {
@@ -395,7 +388,7 @@
         {
           "name": "ProjectCards",
           "title": "Project cards",
-          "description": "Like Row, Column and Box, Grid sizes to its content and never paints; its gap is a step of the spacing scale.",
+          "description": "",
           "file": "docs/examples/grid/ProjectCards.tsx"
         },
         {
@@ -698,7 +691,7 @@
       "category": "Layout & surfaces",
       "status": "beta",
       "since": "1.0.0",
-      "summary": "Two panes side by side, after Material's pane patterns, that behave as a main pane with a supporting sheet or as a list and its detail when there is less room.",
+      "summary": "Two panes side by side, a main pane with a supporting one or a list and its detail, that make the most of less room.",
       "aliases": [
         "SplitPane",
         "ListDetail",
@@ -749,19 +742,19 @@
         {
           "name": "SupportingPane",
           "title": "Supporting pane",
-          "description": "In less room, the supporting pane is a sheet over the main one, which a button in the main pane opens. The button hides while the panes sit side by side.",
+          "description": "### A main pane and a supporting one",
           "file": "docs/examples/panes/SupportingPane.tsx"
         },
         {
           "name": "ListAndDetail",
           "title": "List and detail",
-          "description": "In less room, one pane shows at a time: the detail once an item is chosen, with a back button to the list.",
+          "description": "",
           "file": "docs/examples/panes/ListAndDetail.tsx"
         },
         {
           "name": "ResizableDetails",
           "title": "Resizable",
-          "description": "People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys. The application can keep the width they choose.",
+          "description": "People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys.",
           "file": "docs/examples/panes/ResizableDetails.tsx"
         },
         {
@@ -775,18 +768,6 @@
           "title": "Don't: No button: in less room, the details can't be reached.",
           "description": "",
           "file": "docs/examples/panes/NoWayToDetails.tsx"
-        },
-        {
-          "name": "BackToInbox",
-          "title": "Do: A back button that names where it goes.",
-          "description": "",
-          "file": "docs/examples/panes/BackToInbox.tsx"
-        },
-        {
-          "name": "GenericBack",
-          "title": "Don't: Back alone: people can't tell where it leads.",
-          "description": "",
-          "file": "docs/examples/panes/GenericBack.tsx"
         },
         {
           "name": "PanesAnatomy",
@@ -803,7 +784,7 @@
         {
           "name": "ListDetailByWidth",
           "title": "A list and its detail by width",
-          "description": "In less room the list and its detail show one at a time: choose a message, and Inbox returns to the list.",
+          "description": "In less room the list and its detail show one at a time: choose a message, and a back button named after the list, here Inbox, returns to it.",
           "file": "docs/examples/panes/ListDetailByWidth.tsx"
         }
       ],
@@ -1220,16 +1201,11 @@
         "background",
         "paper",
         "well",
-        "region",
-        "toolbar",
-        "skeleton",
-        "placeholder",
-        "loading"
+        "region"
       ],
       "useWhen": [
         "A region with a background, such as a detail pane or a side panel",
-        "A block that stands apart, such as a summary on a pane",
-        "A toolbar that floats over dense content, such as a diagram"
+        "A block that stands apart, such as a summary on a pane"
       ],
       "avoidWhen": [
         {
@@ -1262,36 +1238,6 @@
           "title": "Detail pane",
           "description": "A surface lays out nothing itself: a Column or a Row lays out what it holds, as one element with it.",
           "file": "docs/examples/surface/DetailPane.tsx"
-        },
-        {
-          "name": "Toolbar",
-          "title": "Toolbar",
-          "description": "",
-          "file": "docs/examples/surface/Toolbar.tsx"
-        },
-        {
-          "name": "SurfaceLoading",
-          "title": "Surface loading",
-          "description": "A pane can be a skeleton until its content arrives: its text shows as bars of the text's usual length.",
-          "file": "docs/examples/surface/SurfaceLoading.tsx"
-        },
-        {
-          "name": "RecolorArea",
-          "title": "Recolor area",
-          "description": "One surface can take colors of its own: its fill, its text and an edge, while a surface inside keeps its own. To recolor an area with its controls, give it a theme of its own, with hover and pressed colors too.",
-          "file": "docs/examples/surface/RecolorArea.tsx"
-        },
-        {
-          "name": "BlockOnPane",
-          "title": "Do: One block on a pane, set apart by its fill and corners.",
-          "description": "",
-          "file": "docs/examples/surface/BlockOnPane.tsx"
-        },
-        {
-          "name": "NestedSurfaces",
-          "title": "Don't: A surface in a surface in a surface: the fills stack up.",
-          "description": "",
-          "file": "docs/examples/surface/NestedSurfaces.tsx"
         }
       ],
       "parts": {
@@ -1461,7 +1407,7 @@
         {
           "name": "Reorder",
           "title": "Reorder",
-          "description": "Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys. The list reports the move, and the application moves the item.",
+          "description": "Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys.",
           "file": "docs/examples/list/Reorder.tsx"
         },
         {
@@ -2042,12 +1988,6 @@
           "file": "docs/examples/button/RemovePeople.tsx"
         },
         {
-          "name": "CustomColors",
-          "title": "Custom colors",
-          "description": "One button can take colors of its own, such as its fill and its label. Its hover, focus and press follow them, as layers of its label color.",
-          "file": "docs/examples/button/CustomColors.tsx"
-        },
-        {
           "name": "PendingAction",
           "title": "Pending action",
           "description": "While its work runs, a spinner replaces the content at the same size, and presses do nothing.",
@@ -2080,7 +2020,7 @@
         {
           "name": "ButtonLinks",
           "title": "Links",
-          "description": "A button that goes somewhere is a link, and one that does something is a button.",
+          "description": "A button can go to a page instead of acting; Link says when a destination takes a button's shape.",
           "file": "docs/examples/button/ButtonLinks.tsx"
         },
         {
@@ -2463,7 +2403,7 @@
       "category": "Actions",
       "status": "beta",
       "since": "1.0.0",
-      "summary": "A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys.",
+      "summary": "A bar of icon buttons for one subject, such as an editor's formatting, in a row or a column.",
       "aliases": [
         "toolbar",
         "formatting bar",
@@ -2523,13 +2463,13 @@
         {
           "name": "DrawingTools",
           "title": "Orientation",
-          "description": "| Orientation | Use for | | ----------- | ----------------------------------------------------------------------------------- | | Horizontal | Most toolbars, moved through with <kbd>←</kbd> and <kbd>→</kbd>. The default. | | Vertical | A palette, such as drawing tools, moved through with <kbd>↑</kbd> and <kbd>↓</kbd>. |",
+          "description": "| Orientation | Use for | | ----------- | --------------------------------- | | Horizontal | Most toolbars. The default. | | Vertical | A palette, such as drawing tools. |",
           "file": "docs/examples/toolbar/DrawingTools.tsx"
         },
         {
           "name": "ViewControls",
-          "title": "Sizes",
-          "description": "The buttons come in the three control heights of the scale, or take the height of the toolbar's container.",
+          "title": "Over content",
+          "description": "A toolbar can float over dense content, such as a diagram, on a fully rounded surface with small buttons.",
           "file": "docs/examples/toolbar/ViewControls.tsx"
         },
         {
@@ -2823,12 +2763,6 @@
           "file": "docs/examples/color-picker/SwatchFormats.tsx"
         },
         {
-          "name": "ProjectColorForm",
-          "title": "Project color form",
-          "description": "The color goes with its form in the format the application chooses, and a reset returns to where it started. The picker always holds a color, so where one must be chosen, the form keeps \"no color yet\" in its own state and checks it there.",
-          "file": "docs/examples/color-picker/ProjectColorForm.tsx"
-        },
-        {
           "name": "PickerButton",
           "title": "Do: ColorPickerButton: the color's swatch and value, named after its label.",
           "description": "",
@@ -2839,18 +2773,6 @@
           "title": "Don't: A swatch alone, which hides the value and names no color.",
           "description": "",
           "file": "docs/examples/color-picker/SwatchAlone.tsx"
-        },
-        {
-          "name": "OpaqueLabelColor",
-          "title": "Do: Offer only the formats and alpha the stored color can hold.",
-          "description": "",
-          "file": "docs/examples/color-picker/OpaqueLabelColor.tsx"
-        },
-        {
-          "name": "TranslucentLabelColor",
-          "title": "Don't: Alpha and every format for a color stored as six hex digits.",
-          "description": "",
-          "file": "docs/examples/color-picker/TranslucentLabelColor.tsx"
         },
         {
           "name": "ColorPickerAnatomy",
@@ -3857,12 +3779,6 @@
           "file": "docs/examples/composer/PendingSend.tsx"
         },
         {
-          "name": "FormSubmit",
-          "title": "Form submit",
-          "description": "A composer can send through its form instead: <kbd>Enter</kbd> and the send button submit the form, with the text among its values.",
-          "file": "docs/examples/composer/FormSubmit.tsx"
-        },
-        {
           "name": "StartAndFooter",
           "title": "Layouts",
           "description": "A composer is its field alone, or has a row below the field with controls at its start and the send button at its end, and a note under it.",
@@ -4027,12 +3943,6 @@
           "file": "docs/examples/checkbox/SelectAll.tsx"
         },
         {
-          "name": "NotificationForm",
-          "title": "Notification form",
-          "description": "A checked box is sent with the form, and an unchecked one is not. Resetting the form restores how each box started.",
-          "file": "docs/examples/checkbox/NotificationForm.tsx"
-        },
-        {
           "name": "NamedGroup",
           "title": "Do: Name a group with a legend, so each choice reads in context.",
           "description": "",
@@ -4181,18 +4091,6 @@
           "file": "docs/examples/switch/SettingsRows.tsx"
         },
         {
-          "name": "ManagedSetting",
-          "title": "Do: Say why a setting can't change, and who can change it.",
-          "description": "",
-          "file": "docs/examples/switch/ManagedSetting.tsx"
-        },
-        {
-          "name": "DisabledWithoutReason",
-          "title": "Don't: Disabled switches that don’t say why.",
-          "description": "",
-          "file": "docs/examples/switch/DisabledWithoutReason.tsx"
-        },
-        {
           "name": "SameLabel",
           "title": "Do: One label, whichever way the switch is set.",
           "description": "Name the setting in a short phrase, so that on means yes.",
@@ -4333,12 +4231,6 @@
           "title": "Required choice",
           "description": "A required group with nothing chosen asks for a choice before the form is sent, and its error is tied to the group.",
           "file": "docs/examples/radio/RequiredChoice.tsx"
-        },
-        {
-          "name": "InheritedAccess",
-          "title": "Inherited access",
-          "description": "A disabled group keeps its choice visible; a sentence says where to change it.",
-          "file": "docs/examples/radio/InheritedAccess.tsx"
         },
         {
           "name": "VisibilityRows",
@@ -4584,12 +4476,6 @@
           "file": "docs/examples/select/ProjectVisibility.tsx"
         },
         {
-          "name": "InviteMember",
-          "title": "Invite member",
-          "description": "The chosen value is sent with its form, and resetting the form restores the choice it started with.",
-          "file": "docs/examples/select/InviteMember.tsx"
-        },
-        {
           "name": "SettingRows",
           "title": "Setting rows",
           "description": "A row's title names the select in it, so the select shows no label of its own.",
@@ -4604,7 +4490,7 @@
         {
           "name": "SmallToolbar",
           "title": "Sizes",
-          "description": "Small, medium and large, the control heights of the scale, so a select lines up with the buttons beside it.",
+          "description": "",
           "file": "docs/examples/select/SmallToolbar.tsx"
         },
         {
@@ -5195,7 +5081,7 @@
         {
           "name": "RequiredInForm",
           "title": "Required in form",
-          "description": "The field sends its value with the form, or one entry for each chip. Checking the value and showing its error belong to the application.",
+          "description": "A required field shows its error when the form is sent without a value.",
           "file": "docs/examples/combobox/RequiredInForm.tsx"
         },
         {
@@ -5203,12 +5089,6 @@
           "title": "Combobox variants",
           "description": "",
           "file": "docs/examples/combobox/Variants.tsx"
-        },
-        {
-          "name": "SmallToolbar",
-          "title": "Sizes",
-          "description": "Small, medium and large, the control heights of the scale. A field without a visible label, such as in a toolbar, says what to type in its placeholder.",
-          "file": "docs/examples/combobox/SmallToolbar.tsx"
         },
         {
           "name": "ClearableOptional",
@@ -5221,6 +5101,12 @@
           "title": "Don't: An optional value that people can change but not remove.",
           "description": "",
           "file": "docs/examples/combobox/StuckOptional.tsx"
+        },
+        {
+          "name": "SmallToolbar",
+          "title": "Labels",
+          "description": "Name the field after what people choose, and use the placeholder for what to type. A field without a visible label, such as in a toolbar, says what to type in its placeholder.",
+          "file": "docs/examples/combobox/SmallToolbar.tsx"
         },
         {
           "name": "ComboboxAnatomy",
@@ -5599,12 +5485,6 @@
           "file": "docs/examples/date-picker/WithinRange.tsx"
         },
         {
-          "name": "LeaveRequest",
-          "title": "Leave request",
-          "description": "The form sends the date as a local date, with no time zone. Turning it into a moment belongs to the application.",
-          "file": "docs/examples/date-picker/LeaveRequest.tsx"
-        },
-        {
           "name": "Variants",
           "title": "DatePicker variants",
           "description": "",
@@ -5612,8 +5492,8 @@
         },
         {
           "name": "SmallToolbar",
-          "title": "Sizes",
-          "description": "Small, medium and large, the control heights of the scale. A field without a visible label, such as in a toolbar, shows its placeholder instead. It is at least 12 rem wide, also in a toolbar sized to its content, and in a narrower container it takes the container's width.",
+          "title": "In a toolbar",
+          "description": "A field without a visible label, such as in a toolbar, shows its placeholder instead, and keeps enough width for a date.",
           "file": "docs/examples/date-picker/SmallToolbar.tsx"
         },
         {
@@ -6020,12 +5900,6 @@
           "file": "docs/examples/time-picker/ClockConventions.tsx"
         },
         {
-          "name": "ShiftForm",
-          "title": "Shift form",
-          "description": "The form sends the time alone, without a date or a time zone. Combining it with a date belongs to the application.",
-          "file": "docs/examples/time-picker/ShiftForm.tsx"
-        },
-        {
           "name": "Variants",
           "title": "TimePicker variants",
           "description": "",
@@ -6271,12 +6145,6 @@
           "file": "docs/examples/month-picker/ShortFormat.tsx"
         },
         {
-          "name": "ExpenseForm",
-          "title": "Expense form",
-          "description": "The month goes with its form as the year and the month in numbers, such as 2026-10, which sort and compare as text.",
-          "file": "docs/examples/month-picker/ExpenseForm.tsx"
-        },
-        {
           "name": "Variants",
           "title": "MonthPicker variants",
           "description": "",
@@ -6489,14 +6357,8 @@
         {
           "name": "SessionTimeout",
           "title": "Session timeout",
-          "description": "A slider has a lowest and a highest value and a step between values, and a form sends its value.",
+          "description": "A slider has a lowest and a highest value and a step between values.",
           "file": "docs/examples/slider/SessionTimeout.tsx"
-        },
-        {
-          "name": "ManagedLimit",
-          "title": "Managed limit",
-          "description": "A disabled slider keeps its value visible; the description says who sets it.",
-          "file": "docs/examples/slider/ManagedLimit.tsx"
         },
         {
           "name": "UsefulSteps",
@@ -6667,18 +6529,6 @@
           "title": "Attach documents",
           "description": "A zone can take several files at once. The application lists the files it took, each with Remove.",
           "file": "docs/examples/drop-zone/AttachDocuments.tsx"
-        },
-        {
-          "name": "UploadProgress",
-          "title": "Upload progress",
-          "description": "While the application uploads, the zone stays busy.",
-          "file": "docs/examples/drop-zone/UploadProgress.tsx"
-        },
-        {
-          "name": "InAForm",
-          "title": "In AForm",
-          "description": "The form sends the files the zone took, and a reset clears them. The application can hand the zone the files it keeps, such as after a Remove.",
-          "file": "docs/examples/drop-zone/InAForm.tsx"
         },
         {
           "name": "Sizes",
@@ -7386,12 +7236,6 @@
           "file": "docs/examples/tabs/ProjectViews.tsx"
         },
         {
-          "name": "ManualActivation",
-          "title": "Manual activation",
-          "description": "The arrow keys select the tab they reach. Tabs can instead only move focus there, and <kbd>Enter</kbd> or <kbd>Space</kbd> selects, for a panel that loads when it shows.",
-          "file": "docs/examples/tabs/ManualActivation.tsx"
-        },
-        {
           "name": "SmallRail",
           "title": "Sizes",
           "description": "| Size | Use for | | ---------------- | ----------------------------------------------------- | | Large | Most tabs, as tall as buttons. The default. | | Small and medium | Toolbars and bars, as tall as a control of that size. |",
@@ -7698,7 +7542,7 @@
       ],
       "useWhen": [
         "The top of an application's screen, with its name, search and the account menu",
-        "A window that draws its own title bar, in an installed web app"
+        "The bar inside a window frame, as the window's own title bar"
       ],
       "avoidWhen": [
         {
@@ -7733,12 +7577,6 @@
           "title": "App top bar",
           "description": "A Scaffold's top bar region, which holds the TopBar, is the banner landmark.",
           "file": "docs/examples/top-bar/AppTopBar.tsx"
-        },
-        {
-          "name": "LoadingPage",
-          "title": "Loading page",
-          "description": "A thin bar along the bottom edge shows that the next page is loading, after a short delay, so quick loads never flash it.",
-          "file": "docs/examples/top-bar/LoadingPage.tsx"
         },
         {
           "name": "TitleBar",
@@ -7899,7 +7737,7 @@
       "category": "Navigation",
       "status": "stable",
       "since": "0.5.0",
-      "summary": "A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.",
+      "summary": "A tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.",
       "aliases": [
         "TreeView",
         "tree view",
@@ -7947,7 +7785,7 @@
         {
           "name": "FileTree",
           "title": "File tree",
-          "description": "The application passes the visible rows in order, each at its depth, and owns expansion and selection; the tree owns focus, the keys and scrolling.",
+          "description": "",
           "file": "docs/examples/tree/FileTree.tsx"
         },
         {
@@ -7955,12 +7793,6 @@
           "title": "Context menu actions",
           "description": "A right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.",
           "file": "docs/examples/tree/ContextMenuActions.tsx"
-        },
-        {
-          "name": "ThousandsOfRows",
-          "title": "Thousands of rows",
-          "description": "The tree stays fast by rendering only the rows in view. It is as tall as its parent, so give it a parent with a height.",
-          "file": "docs/examples/tree/ThousandsOfRows.tsx"
         },
         {
           "name": "RowDensity",
@@ -8079,7 +7911,7 @@
       "category": "Navigation",
       "status": "stable",
       "since": "0.5.0",
-      "summary": "Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document.",
+      "summary": "Editor-style tabs for open documents, which people switch, close, pin and close all.",
       "aliases": [
         "editor tabs",
         "file tabs",
@@ -8121,7 +7953,7 @@
         {
           "name": "OpenDocuments",
           "title": "Open documents",
-          "description": "The strip sits above an editor and renders only the tabs. The application owns the documents, which one is active and its panel.",
+          "description": "",
           "file": "docs/examples/document-tabs/OpenDocuments.tsx"
         },
         {
@@ -8331,7 +8163,7 @@
         {
           "name": "DocumentDrafts",
           "title": "Document drafts",
-          "description": "The application keeps the panels and decides what happens to them; the dock asks for each change. Each panel's header stays in view as its content scrolls, with its title, the application's actions and the window controls.",
+          "description": "Each panel's header stays in view as its content scrolls, with its title, the application's actions and the window controls.",
           "file": "docs/examples/panel-dock/DocumentDrafts.tsx"
         },
         {
@@ -8829,20 +8661,14 @@
         {
           "name": "PagesOfAList",
           "title": "Pages of AList",
-          "description": "The range counts items, as in 1–60 of 245. The application owns the page and its loading; while a page loads, the button pressed shows a spinner and focus stays on it.",
+          "description": "The range counts items, as in 1–60 of 245. While a page loads, the button pressed shows a spinner and focus stays on it.",
           "file": "docs/examples/pagination/PagesOfAList.tsx"
         },
         {
           "name": "WithoutATotal",
           "title": "Without ATotal",
-          "description": "Until the total is known, the range shows only the page's items, and the application says when the list ends.",
+          "description": "Until the total is known, the range shows only the page's items.",
           "file": "docs/examples/pagination/WithoutATotal.tsx"
-        },
-        {
-          "name": "ApplicationStrings",
-          "title": "Application strings",
-          "description": "The names and the range follow the application's language, for every pager or for one.",
-          "file": "docs/examples/pagination/ApplicationStrings.tsx"
         },
         {
           "name": "SmallToolbar",
@@ -8946,7 +8772,7 @@
           "use": "MarkdownEditor"
         },
         {
-          "text": "Showing Markdown from anywhere, with the full CommonMark syntax, footnotes and plugins.",
+          "text": "Showing Markdown from anywhere, with everything Markdown can hold, such as footnotes.",
           "use": "Markdown"
         },
         {
@@ -8976,7 +8802,7 @@
         {
           "name": "EditAndPreview",
           "title": "Edit and preview",
-          "description": "RichTextEditor and RichText come from an optional part of envUI, which an application installs with the libraries it needs.",
+          "description": "",
           "file": "docs/examples/rich-text/EditAndPreview.tsx"
         },
         {
@@ -8988,7 +8814,7 @@
         {
           "name": "References",
           "title": "References",
-          "description": "Typing a source's trigger, such as @, opens its suggestions. The saved text keeps each reference's ID; looking it up is the application's.",
+          "description": "Typing a source's trigger, such as @, opens its suggestions, and the reference stays linked to what it names.",
           "file": "docs/examples/rich-text/References.tsx"
         },
         {
@@ -9002,18 +8828,6 @@
           "title": "Uploads and links",
           "description": "The application can let people attach files, and replace the link dialog with a picker of its own.",
           "file": "docs/examples/rich-text/UploadsAndLinks.tsx"
-        },
-        {
-          "name": "EditorCommands",
-          "title": "Editor commands",
-          "description": "The application can change the document with the editor's own commands, such as from a button beside it.",
-          "file": "docs/examples/rich-text/EditorCommands.tsx"
-        },
-        {
-          "name": "ReleaseNotesForm",
-          "title": "Release notes form",
-          "description": "A form sends the editor's text as Markdown, and an error says what to fix.",
-          "file": "docs/examples/rich-text/ReleaseNotesForm.tsx"
         },
         {
           "name": "FewCommands",
@@ -9332,7 +9146,7 @@
         {
           "name": "LinkPicker",
           "title": "Toolbar",
-          "description": "The application chooses the toolbar's actions, which keep a fixed order, grouped by kind with a line between groups, and can offer a link picker of its own.",
+          "description": "The toolbar holds the actions the text needs, as RichText's does, and can offer a link picker of the application's own.",
           "file": "docs/examples/markdown/LinkPicker.tsx"
         },
         {
@@ -9690,7 +9504,7 @@
         {
           "name": "Tones",
           "title": "Badge variants",
-          "description": "",
+          "description": "A badge takes every status tone, which Colors & themes describes.",
           "file": "docs/examples/badge/Tones.tsx"
         },
         {
@@ -9704,12 +9518,6 @@
           "title": "Don't: Solid badges everywhere: none of them stands out.",
           "description": "",
           "file": "docs/examples/badge/SolidEverywhere.tsx"
-        },
-        {
-          "name": "NavigationCounts",
-          "title": "In navigation",
-          "description": "A drawer shows each destination's count at its end, and says it in the destination's name.",
-          "file": "docs/examples/badge/NavigationCounts.tsx"
         },
         {
           "name": "BadgeAnatomy",
@@ -9895,7 +9703,7 @@
         {
           "name": "SortableColumns",
           "title": "Sortable columns",
-          "description": "A header can sort the rows by its column: the application sorts them, and each sortable header shows the order.",
+          "description": "A header can sort the rows by its column, and each sortable header shows the order.",
           "file": "docs/examples/table/SortableColumns.tsx"
         },
         {
@@ -9963,12 +9771,6 @@
           "title": "Stacked rows",
           "description": "",
           "file": "docs/examples/table/StackedRows.tsx"
-        },
-        {
-          "name": "SortWhileStacked",
-          "title": "Sorting while stacked",
-          "description": "While the header row is hidden, the application can offer the order another way, here with a select.",
-          "file": "docs/examples/table/SortWhileStacked.tsx"
         }
       ],
       "parts": {
@@ -10234,22 +10036,16 @@
           "file": "docs/examples/description-list/Facts.tsx"
         },
         {
+          "name": "ControlsAligned",
+          "title": "Controls aligned",
+          "description": "Values can be controls, such as switches, and each label sits on its control's line.",
+          "file": "docs/examples/description-list/ControlsAligned.tsx"
+        },
+        {
           "name": "Stacked",
           "title": "Sizes",
           "description": "Smaller text, the default, suits a card or a pane, and body text a page of details.",
           "file": "docs/examples/description-list/Stacked.tsx"
-        },
-        {
-          "name": "ControlsAligned",
-          "title": "Do: With controls, each label sits on its control's line.",
-          "description": "",
-          "file": "docs/examples/description-list/ControlsAligned.tsx"
-        },
-        {
-          "name": "ControlsUnaligned",
-          "title": "Don't: Without controls: labels sit higher than the controls beside them.",
-          "description": "",
-          "file": "docs/examples/description-list/ControlsUnaligned.tsx"
         },
         {
           "name": "DescriptionListAnatomy",
@@ -10381,7 +10177,7 @@
         {
           "name": "ShortcutsInText",
           "title": "Shortcuts in text",
-          "description": "Kbd only shows the keys: the application itself handles the shortcut.",
+          "description": "",
           "file": "docs/examples/kbd/ShortcutsInText.tsx"
         },
         {
@@ -10701,7 +10497,7 @@
       "useWhen": [
         "How long ago or how soon, more than the exact moment, such as a review due",
         "Times that stay current while the page is open, such as Draft saved 2 minutes ago",
-        "How long ago as plain text, such as in an option's label (formatRelativeTime)"
+        "How long ago as plain text, such as in an option's label"
       ],
       "avoidWhen": [
         {
@@ -11900,10 +11696,6 @@
           "use": "Button"
         },
         {
-          "text": "Content of a known shape while it loads, such as a card or a list, which shows itself as a skeleton.",
-          "use": "Surface"
-        },
-        {
           "text": "A task whose completion can be measured, such as an upload.",
           "use": "Progress"
         },
@@ -11912,13 +11704,12 @@
           "use": "TopBar"
         },
         {
-          "text": "Content loading in its place, in the shape of what is coming.",
+          "text": "Content of a known shape loading in its place, such as a card or a list, as a skeleton.",
           "see": "loading"
         }
       ],
       "related": [
         "button",
-        "surface",
         "progress",
         "top-bar",
         "loading"
@@ -11934,28 +11725,10 @@
           "file": "docs/examples/spinner/LoadingPreview.tsx"
         },
         {
-          "name": "SearchingDocuments",
-          "title": "Searching documents",
-          "description": "The spinner can show its label beside it, for loading with no known shape, such as search results.",
-          "file": "docs/examples/spinner/SearchingDocuments.tsx"
-        },
-        {
           "name": "Sizes",
           "title": "Spinner variants",
           "description": "",
           "file": "docs/examples/spinner/Sizes.tsx"
-        },
-        {
-          "name": "UpdatingList",
-          "title": "Do: Keep the content in place, and the spinner beside what changes.",
-          "description": "",
-          "file": "docs/examples/spinner/UpdatingList.tsx"
-        },
-        {
-          "name": "CoverContent",
-          "title": "Don't: Content hidden behind a spinner while it updates.",
-          "description": "",
-          "file": "docs/examples/spinner/CoverContent.tsx"
         },
         {
           "name": "SpinnerAnatomy",
@@ -12071,13 +11844,13 @@
         {
           "name": "SaveChanges",
           "title": "Save changes",
-          "description": "Any part of the application can show a notification. It leaves after a few seconds, which pause while people point at it or focus it.",
+          "description": "Its timer pauses while the pointer rests on it or it has focus.",
           "file": "docs/examples/toast/SaveChanges.tsx"
         },
         {
           "name": "UndoArchive",
           "title": "Undo archive",
-          "description": "A notification with an action stays until it is dismissed, which the application does once the action has run.",
+          "description": "A notification with an action stays until its action has run or people dismiss it.",
           "file": "docs/examples/toast/UndoArchive.tsx"
         },
         {
@@ -12552,7 +12325,7 @@
         {
           "name": "ReviewChanges",
           "title": "Widths",
-          "description": "Both narrow to fit the window. | Width | Use for | | ------ | ------------------------------------------------- | | Medium | 28 rem, for most dialogs. The default. | | Large | 44 rem, for tables, comparisons and longer forms. |",
+          "description": "Both narrow to fit the window. | Width | Use for | | ------ | ------------------------------------- | | Medium | Most dialogs. The default. | | Large | Tables, comparisons and longer forms. |",
           "file": "docs/examples/dialog/ReviewChanges.tsx"
         },
         {
@@ -12789,7 +12562,7 @@
         {
           "name": "ResizableDetails",
           "title": "Resizable details",
-          "description": "People can resize a side sheet by its inner edge, by pointer or with the arrow keys, with the same handle as between Panes: a grip of three dots that stays at the middle of the sheet, never a line. It stays between a smallest and a largest width, and never grows past the window. The application can keep the width people chose.",
+          "description": "People can resize a side sheet by its inner edge, by pointer or with the arrow keys, with the same grip as between Panes. It stays between a smallest and a largest width, and never grows past the window.",
           "file": "docs/examples/sheet/ResizableDetails.tsx"
         },
         {
@@ -13388,12 +13161,11 @@
         "A short list of actions behind one control, such as More actions",
         "A few destinations behind one control, such as the account's pages",
         "Options that change a view, such as a sort order",
-        "Actions for an area on right click (ContextMenu)",
-        "Switching between a person's organizations"
+        "Actions for an area on right click (ContextMenu)"
       ],
       "avoidWhen": [
         {
-          "text": "The signed-in person's menu, with its header and theme submenu.",
+          "text": "The signed-in person's menu, with its header and theme submenu, or switching between their organizations.",
           "see": "account-menu"
         },
         {
@@ -13456,12 +13228,6 @@
           "title": "Context menu for rows",
           "description": "ContextMenu opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>.",
           "file": "docs/examples/menu/ContextMenuForRows.tsx"
-        },
-        {
-          "name": "AccountMenu",
-          "title": "Account menu",
-          "description": "A menu behind the account's avatar, with a header that shows the account.",
-          "file": "docs/examples/menu/AccountMenu.tsx"
         },
         {
           "name": "GroupsAndSeparators",
@@ -14245,12 +14011,6 @@
           "file": "docs/examples/popover/RenameInPlace.tsx"
         },
         {
-          "name": "FilterTasks",
-          "title": "Filter tasks",
-          "description": "The application can open and close the popover itself, here starting from the filters in use each time it opens and applying them as it closes.",
-          "file": "docs/examples/popover/FilterTasks.tsx"
-        },
-        {
           "name": "FieldHelp",
           "title": "Sides",
           "description": "A popover opens below its trigger, above it or beside it, lined up with the trigger's start, center or end, and flips where there is no room.",
@@ -14413,7 +14173,7 @@
         {
           "name": "TextDetails",
           "title": "Text details",
-          "description": "Text that isn't a link takes a quiet dotted underline, which says it shows more on hover or focus; links, buttons and avatars keep their own look. Such text takes keyboard focus too, so focus opens the card.",
+          "description": "Text that isn't a link can open a card too, with the dotted underline and the focus a tooltip on text takes.",
           "file": "docs/examples/hover-card/TextDetails.tsx"
         },
         {
@@ -14691,22 +14451,17 @@
           "use": "Spinner"
         },
         {
-          "text": "Content of a known shape while it loads, such as a card or a list, as a skeleton.",
-          "use": "Surface"
-        },
-        {
           "text": "Loading a page or a route of an application, along the top bar.",
           "use": "TopBar"
         },
         {
-          "text": "Content loading in its place, in the shape of what is coming.",
+          "text": "Content of a known shape loading in its place, such as a card or a list, as a skeleton.",
           "see": "loading"
         }
       ],
       "related": [
         "meter",
         "spinner",
-        "surface",
         "top-bar",
         "loading"
       ],

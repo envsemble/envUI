@@ -50,24 +50,16 @@ An action inside the popover closes it once its work is done, such as Rename.
 
 ```
 
-### Opened by the application
-
-The application can open and close the popover itself, here starting from the filters in use each time it opens and applying them as it closes.
-
-```tsx example=FilterTasks
-
-```
-
 ## Variants
 
 ### Widths
 
 A popover is as wide as its content, up to its width.
 
-| Width  | Use for                                                |
-| ------ | ------------------------------------------------------ |
-| Medium | Details and a field or two, up to 20 rem. The default. |
-| Large  | A longer form, up to 28 rem.                           |
+| Width  | Use for                                  |
+| ------ | ---------------------------------------- |
+| Medium | Details and a field or two. The default. |
+| Large  | A longer form.                           |
 
 ### Sides
 
@@ -145,8 +137,68 @@ A function child receives `close`, for an action inside that closes the popover 
 
 Leave it uncontrolled, with `defaultOpen` to start open, or control it with `open` and `onOpenChange`, which receives the requested state and why: the trigger, <kbd>Esc</kbd>, a press outside, focus leaving it, or `close` as `close-press`.
 
-```tsx source=FilterTasks
+```tsx
+import { useState } from 'react';
+import { Button, Checkbox, Popover, Column, Row, Text } from '@envsemble/envui';
+import { FilterList } from '@envsemble/envui/icons/FilterList';
 
+const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
+
+export default function FilterTasks() {
+  const [open, setOpen] = useState(false);
+  const [applied, setApplied] = useState<string[]>([]);
+  const [draft, setDraft] = useState<string[]>([]);
+  const toggle = (person: string, checked: boolean) =>
+    setDraft((current) =>
+      checked ? [...current, person] : current.filter((name) => name !== person),
+    );
+  return (
+    <Column gap={3} align="start">
+      <Popover
+        title="Assignees"
+        align="start"
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next);
+          // Each time it opens, the popover starts from the filters in use.
+          if (next) setDraft(applied);
+        }}
+        trigger={
+          <Button variant="secondary" startIcon={<FilterList />}>
+            {applied.length ? `Assignees (${applied.length})` : 'Assignees'}
+          </Button>
+        }
+      >
+        <Column gap={3}>
+          {people.map((person) => (
+            <Checkbox
+              key={person}
+              label={person}
+              checked={draft.includes(person)}
+              onCheckedChange={(checked) => toggle(person, checked)}
+            />
+          ))}
+        </Column>
+        <Row wrap align="center" gap={4} justify="end">
+          <Button variant="secondary" onClick={() => setDraft([])}>
+            Clear
+          </Button>
+          <Button
+            onClick={() => {
+              setApplied(draft);
+              setOpen(false);
+            }}
+          >
+            Apply
+          </Button>
+        </Row>
+      </Popover>
+      <Text variant="body-sm">
+        {applied.length ? `Showing tasks for ${applied.join(', ')}.` : 'Showing every task.'}
+      </Text>
+    </Column>
+  );
+}
 ```
 
 #### Width, side and alignment

@@ -136,10 +136,6 @@ Show only as many people in a group as fit without wrapping, and use AvatarButto
 
 Not shown: a picture, the check of a chosen avatar, a pressable avatar and AvatarButton.
 
-### Colors
-
-One avatar can take colors of its own, for its fill and for its initials or figure, in place of the color its name chooses.
-
 ## Accessibility
 
 ### Keyboard

@@ -51,8 +51,6 @@ Each option can show an icon and a count. One option can be disabled, which the 
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/scale.md). Without a size of its own, the control takes its container's.
-
 <!-- specimen: Sizes -->
 
 ```tsx example=SmallToolbar caption="Small, in a toolbar beside a small button."
@@ -81,10 +79,6 @@ Name each option with a word or two for its view, and name the whole control aft
 4. **Icon** (`env-segmented-control-item > env-icon`, `icon`)
 5. **Label** (`env-segmented-control-item-label`, `label`)
 6. **Count** (`env-segmented-control-item-count`, `count`)
-
-### Colors
-
-One control can take colors of its own: the fill behind its options, its outline, its labels, and the chosen option's fill and label. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 

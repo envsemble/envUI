@@ -152,9 +152,9 @@ Outline and ghost fields come in the three control heights of the [scale](../fou
 
 ```
 
-### Values and errors
+### Kinds of value
 
-Say what kind of value each field takes, such as an e-mail address, so the browser can fill it in and show the right keyboard. Show an error once people leave the field or submit, and remove it as soon as the value fits.
+Say what kind of value each field takes, such as an e-mail address, so the browser can fill it in and show the right keyboard.
 
 ### Labels
 
@@ -184,10 +184,6 @@ Name the value in a short noun phrase, and keep lasting instructions in the desc
 8. **Description** (`env-field-description`, `description`)
 
 Not shown: the suffix, the error and a text area's resize edge.
-
-### Colors
-
-One field can take colors of its own: its fill, its text, its edge at rest and its edge in use. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 

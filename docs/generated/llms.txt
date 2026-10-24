@@ -33,7 +33,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Column](docs/components/column.md): Column lays out content one under another with even gaps, such as a heading, text and a form.
 - [Grid](docs/components/grid.md): Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.
 - [Scaffold](docs/components/scaffold.md): The invisible frame of an application's screen, around its top bar, its navigation and the page. Also: resolveNavigationForms. Parts: `.env-scaffold`.
-- [Panes](docs/components/panes.md): Two panes side by side, after Material's pane patterns, that behave as a main pane with a supporting sheet or as a list and its detail when there is less room. Also: readPanesSize. Parts: `.env-panes`.
+- [Panes](docs/components/panes.md): Two panes side by side, a main pane with a supporting one or a list and its detail, that make the most of less room. Also: readPanesSize. Parts: `.env-panes`.
 - [Page](docs/components/page.md): The invisible column a page's content sits in, at a readable width, under its header with the page's title and actions. Also: PageHeader. Parts: `.env-page`, `.env-page-header`.
 - [Surface](docs/components/surface.md): A container with a background, an inset and corners, but no layout of its own. Also: placeholders, isPlaceholder, useSkeleton. Parts: `.env-surface`.
 - [List](docs/components/list.md): A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order. Parts: `.env-list`.
@@ -42,7 +42,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 ## Components: Actions
 
 - [Button](docs/components/button.md): Starts an action, or goes to a destination as a link, alone, icon-only, confirmed in place, copying a value or connected in a group. Also: IconButton, ConfirmButton, CopyButton, ButtonGroup. Parts: `.env-button`, `.env-icon-button`, `.env-confirm-button`, `.env-copy-button`, `.env-button-group`.
-- [Toolbar](docs/components/toolbar.md): A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys. Parts: `.env-toolbar`.
+- [Toolbar](docs/components/toolbar.md): A bar of icon buttons for one subject, such as an editor's formatting, in a row or a column. Parts: `.env-toolbar`.
 - [Link](docs/components/link.md): A destination inside running text, underlined by default, routed by the application. Parts: `.env-link`.
 
 ## Components: Forms & selection
@@ -69,8 +69,8 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a row of text tabs. Parts: `.env-tabs`.
 - [Pager](docs/components/pager.md): Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content. Parts: `.env-pager`.
 - [TopBar](docs/components/top-bar.md): The bar at the top of an application or a screen, with start content, a title that truncates first and actions, which can stick, show page progress or be the window's title bar. Parts: `.env-top-bar`.
-- [Tree](docs/components/tree.md): A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu. Parts: `.env-tree`.
-- [DocumentTabs](docs/components/document-tabs.md): Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document. Parts: `.env-document-tabs`.
+- [Tree](docs/components/tree.md): A tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu. Parts: `.env-tree`.
+- [DocumentTabs](docs/components/document-tabs.md): Editor-style tabs for open documents, which people switch, close, pin and close all. Parts: `.env-document-tabs`.
 - [PanelDock](docs/components/panel-dock.md): Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted. Parts: `.env-panel-dock`.
 - [Breadcrumbs](docs/components/breadcrumbs.md): The path from the top level to the current page, with earlier levels as links or buttons. Parts: `.env-breadcrumbs`.
 - [Pagination](docs/components/pagination.md): The range of items shown with previous and next page buttons, small enough for a toolbar. Parts: `.env-pagination`.

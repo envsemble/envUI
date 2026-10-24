@@ -27,7 +27,7 @@ useWhen:
 avoidWhen:
   - text: People edit Markdown source directly, with a preview.
     use: MarkdownEditor
-  - text: Showing Markdown from anywhere, with the full CommonMark syntax, footnotes and plugins.
+  - text: Showing Markdown from anywhere, with everything Markdown can hold, such as footnotes.
     use: Markdown
   - text: Plain text over several lines, without formatting.
     use: Textarea
@@ -45,8 +45,6 @@ components:
 
 ## Overview
 
-RichTextEditor and RichText come from an optional part of envUI, which an application installs with the libraries it needs.
-
 ```tsx example=EditAndPreview
 
 ```
@@ -61,7 +59,7 @@ RichText shows saved text again as it was written, also on a server, and opens i
 
 ### References
 
-Typing a source's trigger, such as @, opens its suggestions. The saved text keeps each reference's ID; looking it up is the application's.
+Typing a source's trigger, such as @, opens its suggestions, and the reference stays linked to what it names.
 
 ```tsx example=References
 
@@ -82,26 +80,6 @@ The application can let people attach files, and replace the link dialog with a 
 ```tsx example=UploadsAndLinks
 
 ```
-
-### Commands from outside
-
-The application can change the document with the editor's own commands, such as from a button beside it.
-
-```tsx example=EditorCommands
-
-```
-
-### In a form
-
-A form sends the editor's text as Markdown, and an error says what to fix.
-
-```tsx example=ReleaseNotesForm
-
-```
-
-### Markdown it keeps
-
-Headings, emphasis, strikethrough, code, lists and task lists, quotes, links, images, simple tables and references. Raw HTML shows as text; other syntax, such as footnotes, needs an extension or [Markdown](markdown.md).
 
 ## Variants
 
@@ -125,10 +103,6 @@ The toolbar shows the commands the content needs, in order, or none. Commands of
 ```tsx dont=EveryCommand caption="Every command for a comment: the toolbar outweighs the text."
 
 ```
-
-### Saved content
-
-Show saved text with RichText, with the same additions the editor had, so it reads as it was written.
 
 ### Content
 
@@ -229,17 +203,71 @@ RichText renders the Markdown in its `children`, also on a server. Pass it the e
 
 `ref.current.editor` is the Tiptap editor, so the application can change the document with its commands.
 
-```tsx source=EditorCommands
+```tsx
+import { useRef } from 'react';
+import { Button, Column } from '@envsemble/envui';
+import { RichTextEditor, type RichTextEditorHandle } from '@envsemble/envui/rich-text';
 
+export default function EditorCommands() {
+  const editorRef = useRef<RichTextEditorHandle>(null);
+  return (
+    <Column gap={4}>
+      <RichTextEditor ref={editorRef} label="Reply" defaultValue="Thanks, the dates work for us." />
+      <Button
+        variant="secondary"
+        onClick={() =>
+          // Tiptap's commands change the document from outside the editor.
+          editorRef.current?.editor?.chain().focus('end').insertContent(' — Alex Morgan').run()
+        }
+      >
+        Add signature
+      </Button>
+    </Column>
+  );
+}
 ```
 
 #### In a form
 
 With `name`, a native form submits the Markdown through a hidden input, and `form` names a form the editor sits outside of. `error` says what to fix.
 
-```tsx source=ReleaseNotesForm
+```tsx
+import { useState, type FormEvent } from 'react';
+import { Button, Column, Text } from '@envsemble/envui';
+import { RichTextEditor } from '@envsemble/envui/rich-text';
 
+export default function ReleaseNotesForm() {
+  const [error, setError] = useState<string>();
+  const [published, setPublished] = useState('');
+  function publish(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    // The editor submits its Markdown under its name.
+    const notes = String(new FormData(event.currentTarget).get('notes') ?? '').trim();
+    setError(notes ? undefined : 'Write what changed before publishing.');
+    setPublished(notes ? 'Release notes published.' : '');
+  }
+  return (
+    <Column gap={4} render={<form onSubmit={publish} noValidate />}>
+      <RichTextEditor
+        name="notes"
+        label="Release notes"
+        description="Shown to everyone in the workspace."
+        error={error}
+        placeholder="What changed in this release?"
+        toolbar={['heading', 'bold', 'italic', 'bullet-list', 'link']}
+      />
+      <Button type="submit">Publish</Button>
+      <Text variant="body-sm" role="status">
+        {published}
+      </Text>
+    </Column>
+  );
+}
 ```
+
+#### The Markdown it keeps
+
+Headings, emphasis, strikethrough, code, lists and task lists, quotes, links, images, simple tables and references. Raw HTML shows as text; other syntax, such as footnotes, needs an extension or [Markdown](markdown.md).
 
 ### Composition
 

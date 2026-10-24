@@ -41,14 +41,6 @@ Like [Row](row.md), [Column](column.md) and [Grid](grid.md), Box sizes to its co
 
 ```
 
-### Responds to its width
-
-A box can be a size container, whose width the application's own styles respond to. One in a row needs a width of its own: a container takes its width from where it sits, never from its content.
-
-```tsx example=SizeContainer
-
-```
-
 ## When to use
 
 ```tsx do=OneInset caption="One inset on the region, and a Column inside for the gaps."
@@ -58,10 +50,6 @@ A box can be a size container, whose width the application's own styles respond 
 ```tsx dont=BoxPerChild caption="A padded box around each child: every gap is different."
 
 ```
-
-### Named regions
-
-A box can carry a name, which dev mode and agents show, so a region of the page is easy to find and talk about.
 
 ## Accessibility
 
@@ -88,8 +76,33 @@ Box renders a `div`, or the element in `render`, such as `render={<section />}`,
 
 `container="summary"` makes the box a size container that the application's style sheet can query, such as `@container summary (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content, so give one in a flex row a width of its own.
 
-```tsx source=SizeContainer
+```tsx
+import { Box, Column, Grid, Text } from '@envsemble/envui';
 
+const figures = [
+  ['Open tasks', '24'],
+  ['Done this week', '9'],
+  ['Overdue', '2'],
+];
+
+export default function SizeContainer() {
+  return (
+    // A container the application's own style sheet can query, such as
+    // @container summary (width >= 37.5rem) { … }; the box is as wide as its context gives it.
+    <Box container="summary">
+      <Grid columns="repeat(auto-fit, minmax(min(100%, 9rem), 1fr))" gap={4}>
+        {figures.map(([label, value]) => (
+          <Column key={label} gap={1}>
+            <Text variant="body-sm" emphasis="muted">
+              {label}
+            </Text>
+            <Text variant="headline">{value}</Text>
+          </Column>
+        ))}
+      </Grid>
+    </Box>
+  );
+}
 ```
 
 The `env-*` container names are envUI's own. Use `container="env-window"` only for a preview frame whose content should lay out at the box's width, as a window of its own.

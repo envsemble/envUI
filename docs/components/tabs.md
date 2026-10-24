@@ -38,18 +38,6 @@ components:
 
 ```
 
-### Manual activation
-
-The arrow keys select the tab they reach. Tabs can instead only move focus there, and <kbd>Enter</kbd> or <kbd>Space</kbd> selects, for a panel that loads when it shows.
-
-```tsx example=ManualActivation
-
-```
-
-### Keep panels mounted
-
-Only the selected panel shows. The others can stay ready while hidden, so a draft or a scroll position survives switching.
-
 ## Variants
 
 ### Sizes
@@ -112,10 +100,6 @@ Keep content people compare in one panel. Every tab is a button that shows its p
 3. **Tab** (`env-tabs-tab`, `button`)
 4. **Panel** (`env-tabs-panel`, `content`)
 
-### Colors
-
-One set of tabs can take colors of its own: the rail behind them, the labels, the selected label and its indicator. Its hover, focus and press then follow them; with none set, it keeps its own colors.
-
 ## Adapting to width
 
 Tabs keep their size: a rail with more tabs than fit scrolls sideways.
@@ -163,8 +147,47 @@ Tabs takes `items`, each a `TabsItem` with its `value`, its `button`, which beco
 
 `activation` is `automatic`, the default, which selects a tab as the arrow keys reach it, or `manual`, where <kbd>Enter</kbd> or <kbd>Space</kbd> selects. Only the selected panel is mounted; `keepMounted` keeps the others mounted and hidden, so their state survives switching.
 
-```tsx source=ManualActivation
+```tsx
+import { useEffect, useState } from 'react';
+import { Button, Spinner, Tabs, Text } from '@envsemble/envui';
 
+const reports = ['Revenue', 'Customers', 'Refunds'];
+
+/** A report that loads once, the first time its tab is chosen, as from a server. */
+function Report({ name, ready, onLoad }: { name: string; ready: boolean; onLoad: () => void }) {
+  useEffect(() => {
+    if (ready) return;
+    const timer = setTimeout(onLoad, 800);
+    return () => clearTimeout(timer);
+  }, [ready, onLoad]);
+  return ready ? (
+    <Text>The {name.toLowerCase()} report for March is ready.</Text>
+  ) : (
+    <Spinner label={`Loading the ${name.toLowerCase()} report`} />
+  );
+}
+
+export default function ManualActivation() {
+  // The first report is ready; the others load when their tab is chosen.
+  const [loaded, setLoaded] = useState(() => new Set(['Revenue']));
+  return (
+    <Tabs
+      aria-label="Reports"
+      activation="manual"
+      items={reports.map((name) => ({
+        value: name.toLowerCase(),
+        button: <Button>{name}</Button>,
+        content: (
+          <Report
+            name={name}
+            ready={loaded.has(name)}
+            onLoad={() => setLoaded((current) => new Set(current).add(name))}
+          />
+        ),
+      }))}
+    />
+  );
+}
 ```
 
 #### Size, orientation and fill

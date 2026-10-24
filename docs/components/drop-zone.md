@@ -53,22 +53,6 @@ A zone can take several files at once. The application lists the files it took, 
 
 ```
 
-### Upload with progress
-
-While the application uploads, the zone stays busy.
-
-```tsx example=UploadProgress
-
-```
-
-### In a form
-
-The form sends the files the zone took, and a reset clears them. The application can hand the zone the files it keeps, such as after a Remove.
-
-```tsx example=InAForm
-
-```
-
 ## Variants
 
 ```tsx variants=Sizes
@@ -168,8 +152,42 @@ A DropZone takes dropped files and opens the file picker when pressed. `label` s
 
 While `pending`, a spinner replaces the icon, the zone reports `aria-busy` and takes no new files. Change the label to say what is happening.
 
-```tsx source=UploadProgress
+```tsx
+import { useEffect, useRef, useState } from 'react';
+import { DropZone, Column, Text } from '@envsemble/envui';
 
+export default function UploadProgress() {
+  const [uploading, setUploading] = useState<string>();
+  const [done, setDone] = useState('');
+  const timer = useRef<number>(undefined);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  const upload = ([file]: File[]) => {
+    setUploading(file.name);
+    setDone('');
+    // Stands in for the upload to a server.
+    timer.current = window.setTimeout(() => {
+      setUploading(undefined);
+      setDone(`${file.name} is uploaded.`);
+    }, 1500);
+  };
+
+  return (
+    // As wide as a form column.
+    <Column gap={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
+      <DropZone
+        pending={uploading != null}
+        label={uploading ? `Uploading ${uploading}` : 'Drop a report here, or browse'}
+        description={uploading ? 'This takes a moment' : 'PDF up to 10 MB'}
+        accept="application/pdf,.pdf"
+        onDropAccepted={upload}
+      />
+      <Text variant="caption" emphasis="muted" role="status">
+        {done}
+      </Text>
+    </Column>
+  );
+}
 ```
 
 #### Sizes
@@ -180,8 +198,45 @@ While `pending`, a spinner replaces the icon, the zone reports `aria-busy` and t
 
 With `name`, a native form submits the last files the zone took, dropped ones too, and a reset clears them. `files` hands the zone the files the application keeps, such as after a Remove, and replaces the ones it took. `form` names a form the zone sits outside of, and `inputRef` reaches the native file input, to open the picker from a Replace button.
 
-```tsx source=InAForm
+```tsx
+import { useState, type FormEvent } from 'react';
+import { Button, DropZone, Column, Row, Text, TextField } from '@envsemble/envui';
 
+export default function InAForm() {
+  const [sent, setSent] = useState('');
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // A named zone submits the last files it took, dropped ones too.
+    const files = new FormData(event.currentTarget)
+      .getAll('attachments')
+      .filter((entry): entry is File => entry instanceof File && entry.name !== '');
+    setSent(files.length ? `Sent with ${files.map((file) => file.name).join(', ')}.` : 'Sent.');
+  };
+  return (
+    <form onSubmit={submit} onReset={() => setSent('')} style={{ inlineSize: 'min(100%, 28rem)' }}>
+      <Column gap={4}>
+        <TextField label="Subject" name="subject" defaultValue="Quarterly figures" />
+        <DropZone
+          size="sm"
+          multiple
+          name="attachments"
+          label="Attach files"
+          description="Sent with the message"
+          onDropAccepted={() => setSent('')}
+        />
+        <Row wrap align="center" gap={4}>
+          <Button type="submit">Send</Button>
+          <Button type="reset" variant="secondary">
+            Reset
+          </Button>
+        </Row>
+        <Text variant="caption" emphasis="muted" role="status">
+          {sent}
+        </Text>
+      </Column>
+    </form>
+  );
+}
 ```
 
 ### Composition

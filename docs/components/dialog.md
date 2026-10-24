@@ -78,18 +78,14 @@ Other buttons can close the dialog after doing their own work, such as Don’t s
 
 Both narrow to fit the window.
 
-| Width  | Use for                                           |
-| ------ | ------------------------------------------------- |
-| Medium | 28 rem, for most dialogs. The default.            |
-| Large  | 44 rem, for tables, comparisons and longer forms. |
+| Width  | Use for                               |
+| ------ | ------------------------------------- |
+| Medium | Most dialogs. The default.            |
+| Large  | Tables, comparisons and longer forms. |
 
 ```tsx example=ReviewChanges caption="A large dialog, for a table of changes."
 
 ```
-
-### Beside the page
-
-A dialog can also leave the page usable beside it, such as an inspector.
 
 ## When to use
 
@@ -108,10 +104,6 @@ A dialog can also leave the page usable beside it, such as an inspector.
 ```tsx dont=ErrorInSecondDialog open caption="An error in a second dialog over the first."
 
 ```
-
-### One task
-
-Keep one task per dialog, and never open a dialog from another.
 
 ## Anatomy
 

@@ -116,7 +116,7 @@ test('a page an alias names ranks above the props of that name', () => {
   assert.deepEqual(best('modal'), ['page:dialog']);
   assert.deepEqual(best('hint'), ['page:tooltip']);
   assert.deepEqual(best('shortcut'), ['page:kbd']);
-  assert.deepEqual(best('placeholder'), ['page:surface']);
+  assert.deepEqual(best('placeholder'), ['page:loading']);
   assert.deepEqual(best('topbar'), ['page:top-bar']);
   assert.deepEqual(best('dark mode'), ['page:colors']);
   // An export's own name counts more than a page's alias of it.

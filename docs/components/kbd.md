@@ -35,8 +35,6 @@ statuses:
 
 ## Overview
 
-Kbd only shows the keys: the application itself handles the shortcut.
-
 ```tsx example=ShortcutsInText
 
 ```

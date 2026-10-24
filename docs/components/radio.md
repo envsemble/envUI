@@ -57,14 +57,6 @@ A required group with nothing chosen asks for a choice before the form is sent, 
 
 ```
 
-### A choice that can't change here
-
-A disabled group keeps its choice visible; a sentence says where to change it.
-
-```tsx example=InheritedAccess
-
-```
-
 ## Variants
 
 | Layout    | Use for                                                         |
@@ -94,10 +86,6 @@ Choose a default where one option suits most people, and none where people must 
 
 Keep links and buttons out of labels and descriptions: pressing anywhere on an option chooses it.
 
-### Labels
-
-Name the group with a short noun, and give options short, parallel names.
-
 ## Anatomy
 
 ```tsx anatomy=RadioAnatomy
@@ -110,10 +98,6 @@ Name the group with a short noun, and give options short, parallel names.
 4. **Label** (`env-radio > span::text`, `label`)
 5. **Description** (`env-radio-description`, `description`)
 6. **Radio** (`env-radio-input`)
-
-### Colors
-
-One radio can take colors of its own: its fill, its text and its chosen color. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 
@@ -165,7 +149,33 @@ A RadioGroup holds Radio options and is a native `<fieldset>`: its `label`, the 
 
 #### Required and disabled
 
-`required` asks for a choice before the form submits, through native constraint validation. Show the error under the group, linked with `aria-describedby`, and move focus to the group when a form is refused. `disabled` disables every option: the group keeps its choice visible, but can't be focused or changed.
+`required` asks for a choice before the form submits, through native constraint validation. Show the error under the group, linked with `aria-describedby`, and move focus to the group when a form is refused. `disabled` disables every option: the group keeps its choice visible, but can't be focused or changed. Say where to change it in a sentence beside it.
+
+```tsx
+import { useId } from 'react';
+import { Radio, RadioGroup, Column, Text } from '@envsemble/envui';
+
+export default function InheritedAccess() {
+  const reason = useId();
+  return (
+    <Column gap={3} align="start">
+      <RadioGroup
+        label="Access"
+        name="inherited-access"
+        value="team"
+        disabled
+        aria-describedby={reason}
+      >
+        <Radio value="team" label="Team" />
+        <Radio value="private" label="Private" />
+      </RadioGroup>
+      <Text id={reason} variant="body-sm">
+        This folder takes its access from Northwind launch. Change it there.
+      </Text>
+    </Column>
+  );
+}
+```
 
 ```tsx source=RequiredChoice
 

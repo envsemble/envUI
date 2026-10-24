@@ -47,14 +47,6 @@ While a send is in progress, the next one waits; the field stays editable and ke
 
 ```
 
-### Sent by its form
-
-A composer can send through its form instead: <kbd>Enter</kbd> and the send button submit the form, with the text among its values.
-
-```tsx example=FormSubmit
-
-```
-
 ## Variants
 
 ### Layouts
@@ -151,8 +143,29 @@ A Composer is a native textarea with no visible label, so name it with `aria-lab
 
 Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the composer's form, which sends the text under its `name`.
 
-```tsx source=FormSubmit
+```tsx
+import { useState, type FormEvent } from 'react';
+import { Composer, Column, Text } from '@envsemble/envui';
 
+export default function FormSubmit() {
+  const [sent, setSent] = useState('');
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Without onSubmit, Enter and the send button submit the form, which sends the field by name.
+    setSent(String(new FormData(event.currentTarget).get('note')));
+    event.currentTarget.reset();
+  };
+  return (
+    <form onSubmit={submit} style={{ inlineSize: 'min(100%, 32rem)' }}>
+      <Column gap={3}>
+        <Composer name="note" aria-label="Note" placeholder="Add a note to the plan" />
+        <Text variant="caption" emphasis="muted" role="status">
+          {sent && `Added: ${sent}`}
+        </Text>
+      </Column>
+    </form>
+  );
+}
 ```
 
 #### Rows, start and footer

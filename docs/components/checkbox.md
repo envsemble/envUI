@@ -55,14 +55,6 @@ A parent is checked when every child is, mixed when some are, and checks or clea
 
 ```
 
-### In a form
-
-A checked box is sent with the form, and an unchecked one is not. Resetting the form restores how each box started.
-
-```tsx example=NotificationForm
-
-```
-
 ## When to use
 
 ```tsx do=NamedGroup caption="Name a group with a legend, so each choice reads in context."
@@ -72,10 +64,6 @@ A checked box is sent with the form, and an unchecked one is not. Resetting the 
 ```tsx dont=UnnamedGroup caption="Checkboxes with no name for the group: mentions of what?"
 
 ```
-
-### A parent's state
-
-Work out a parent's state from its children: the checkbox doesn't do it on its own.
 
 ### Labels
 
@@ -91,10 +79,6 @@ Write the label as the choice it turns on, in sentence case, so checking it mean
 2. **Box** (`env-checkbox-box`)
 3. **Check** (`env-checkbox-indicator`)
 4. **Label** (`env-checkbox-label`, `label`)
-
-### Colors
-
-One checkbox can take colors of its own: its edge, its fill when checked and its check. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 
@@ -147,8 +131,47 @@ A Checkbox is a native checkbox inside its `<label>`, named by `label`. Leave it
 
 A checked box submits its `name` with its `value`; an unchecked one submits nothing. A reset restores `defaultChecked`. Name a group with a native `fieldset` and its `legend`.
 
-```tsx source=NotificationForm
+```tsx
+import { useState, type FormEvent } from 'react';
+import { Button, Checkbox, Column, Row, Text } from '@envsemble/envui';
 
+export default function NotificationForm() {
+  const [sent, setSent] = useState<string>();
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // A checked box submits its name with its value; an unchecked one submits nothing.
+    const chosen = new FormData(event.currentTarget).getAll('notify');
+    setSent(chosen.length ? `E-mails for ${chosen.join(', ')}` : 'No e-mails');
+  };
+  return (
+    <form onSubmit={submit} onReset={() => setSent(undefined)}>
+      <Column gap={4}>
+        {/* envUI has no checkbox group yet: a fieldset names the choices, read with each one. */}
+        <fieldset style={{ minInlineSize: 0, margin: 0, padding: 0, border: 0 }}>
+          <legend style={{ padding: 0, marginBlockEnd: '0.75rem' }}>
+            <Text render={<span />} variant="title">
+              Send me an e-mail about
+            </Text>
+          </legend>
+          <Column gap={3}>
+            <Checkbox name="notify" value="mentions" label="Mentions" defaultChecked />
+            <Checkbox name="notify" value="comments" label="Comments on my plans" defaultChecked />
+            <Checkbox name="notify" value="digest" label="A weekly digest" />
+          </Column>
+        </fieldset>
+        <Row wrap align="center" gap={4}>
+          <Button type="submit">Save preferences</Button>
+          <Button type="reset" variant="secondary">
+            Reset
+          </Button>
+        </Row>
+        <Text variant="caption" emphasis="muted" role="status">
+          {sent && `Saved: ${sent}.`}
+        </Text>
+      </Column>
+    </form>
+  );
+}
 ```
 
 ### Composition

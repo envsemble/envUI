@@ -22,9 +22,8 @@ useWhen:
   - A few destinations behind one control, such as the account's pages
   - Options that change a view, such as a sort order
   - Actions for an area on right click (ContextMenu)
-  - Switching between a person's organizations
 avoidWhen:
-  - text: The signed-in person's menu, with its header and theme submenu.
+  - text: The signed-in person's menu, with its header and theme submenu, or switching between their organizations.
     see: account-menu
   - text: Choosing a value for a form field.
     use: Select
@@ -57,14 +56,6 @@ components:
 ContextMenu opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>.
 
 ```tsx example=ContextMenuForRows
-
-```
-
-### Account menu
-
-A menu behind the account's avatar, with a header that shows the account.
-
-```tsx example=AccountMenu
 
 ```
 
@@ -144,10 +135,6 @@ Start an action with a verb, such as Rename, and name a destination after its pa
 
 Not shown: a submenu's row and the check of a choice.
 
-### Colors
-
-One menu can take colors of its own: its items' fill, their labels and their icons. Its highlight and press then follow them; with none set, it keeps its own colors.
-
 ## Accessibility
 
 ### Keyboard
@@ -199,8 +186,45 @@ ContextMenu makes its one child the region, which must accept native props and a
 
 Menu.Header holds the context at the top, such as the signed-in person's avatar, name and e-mail address, under an AvatarButton trigger, as the [account menu](../patterns/account-menu.md) pattern builds it.
 
-```tsx source=AccountMenu
+```tsx
+import { Avatar, AvatarButton, Column, Menu, Row, Text } from '@envsemble/envui';
+import { Logout } from '@envsemble/envui/icons/Logout';
+import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { Settings } from '@envsemble/envui/icons/Settings';
 
+export default function AccountMenu() {
+  return (
+    // The avatar sits at the end of a topbar, so the menu lines up with the trigger's end.
+    <Row justify="end" style={{ inlineSize: 'min(100%, 20rem)' }}>
+      <Menu.Root
+        aria-label="Account"
+        trigger={
+          <AvatarButton
+            name="Alex Morgan"
+            description="alex@example.com"
+            aria-label="Open account menu"
+          />
+        }
+      >
+        <Menu.Header>
+          <Column align="center" gap={1} padding={2} style={{ textAlign: 'center' }}>
+            <Avatar name="Alex Morgan" size="lg" />
+            <Text>Alex Morgan</Text>
+            <Text variant="body-sm" emphasis="muted">
+              alex@example.com
+            </Text>
+          </Column>
+        </Menu.Header>
+        <Menu.Item href="/account" icon={<ManageAccounts />}>
+          Account settings
+        </Menu.Item>
+        <Menu.Item icon={<Settings />}>Preferences</Menu.Item>
+        <Menu.Separator />
+        <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+      </Menu.Root>
+    </Row>
+  );
+}
 ```
 
 #### Groups, choices and submenus

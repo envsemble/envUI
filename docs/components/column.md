@@ -39,8 +39,6 @@ components:
 
 ## Overview
 
-Like [Row](row.md), [Grid](grid.md) and [Box](box.md), Column sizes to its content and has no fill or edge of its own, and its children need no margins.
-
 ```tsx example=ProjectDetails
 
 ```
@@ -82,10 +80,6 @@ Each child is as wide as the column by default, or keeps its own width at the st
 ### A fill and corners
 
 A Column paints nothing: a fill, a border or corners come from a [Surface](surface.md) that the Column lays out.
-
-### Its meaning
-
-A Column can be the element its content needs, such as a section or a form, rather than a box with no meaning.
 
 ## Accessibility
 

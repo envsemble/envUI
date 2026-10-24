@@ -1,6 +1,6 @@
 ---
 title: DocumentTabs
-summary: Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document.
+summary: Editor-style tabs for open documents, which people switch, close, pin and close all.
 status: stable
 since: 0.5.0
 category: Navigation
@@ -31,8 +31,6 @@ components:
 # DocumentTabs
 
 ## Overview
-
-The strip sits above an editor and renders only the tabs. The application owns the documents, which one is active and its panel.
 
 ```tsx example=OpenDocuments
 

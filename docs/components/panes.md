@@ -1,6 +1,6 @@
 ---
 title: Panes
-summary: Two panes side by side, after Material's pane patterns, that behave as a main pane with a supporting sheet or as a list and its detail when there is less room.
+summary: Two panes side by side, a main pane with a supporting one or a list and its detail, that make the most of less room.
 status: beta
 since: 1.0.0
 category: Layout & surfaces
@@ -38,15 +38,11 @@ Panes never paints. Each pane scrolls on its own where the panes have a height, 
 
 ### A main pane and a supporting one
 
-In less room, the supporting pane is a sheet over the main one, which a button in the main pane opens. The button hides while the panes sit side by side.
-
 ```tsx example=SupportingPane
 
 ```
 
 ### A list and its detail
-
-In less room, one pane shows at a time: the detail once an item is chosen, with a back button to the list.
 
 ```tsx example=ListAndDetail
 
@@ -56,17 +52,17 @@ In less room, one pane shows at a time: the detail once an item is chosen, with 
 
 ### Side by side
 
-The panes sit side by side from a width of their own.
+The panes sit side by side once they are as wide as a medium, an expanded or a large window.
 
-| Side by side from | Width    | Use for                                             |
-| ----------------- | -------- | --------------------------------------------------- |
-| Medium            | 37.5 rem | A main pane that reads well narrow, such as a list. |
-| Expanded          | 52.5 rem | Most panes. The default.                            |
-| Large             | 75 rem   | A wide main pane, such as a table or a canvas.      |
+| Side by side from | Use for                                             |
+| ----------------- | --------------------------------------------------- |
+| Medium            | A main pane that reads well narrow, such as a list. |
+| Expanded          | Most panes. The default.                            |
+| Large             | A wide main pane, such as a table or a canvas.      |
 
 ### Resizable
 
-People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys. The application can keep the width they choose.
+People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys.
 
 ```tsx example=ResizableDetails widths="44"
 
@@ -79,14 +75,6 @@ People can resize the supporting pane or the list by the gap between the panes, 
 ```
 
 ```tsx dont=NoWayToDetails caption="No button: in less room, the details can't be reached."
-
-```
-
-```tsx do=BackToInbox caption="A back button that names where it goes."
-
-```
-
-```tsx dont=GenericBack caption="Back alone: people can't tell where it leads."
 
 ```
 
@@ -113,7 +101,7 @@ Not shown: the main and supporting panes, the supporting sheet's close button an
 
 ## Adapting to width
 
-The panes decide how they sit from their own width alone, before anything runs. A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one; press Details to open it.
+The panes decide how they sit from their own width alone, before anything runs. A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens; press Details to open it.
 
 ```tsx example=SupportingByWidth widths="24 44 60"
 
@@ -121,7 +109,7 @@ The panes decide how they sit from their own width alone, before anything runs. 
 
 ### A list and its detail by width
 
-In less room the list and its detail show one at a time: choose a message, and Inbox returns to the list.
+In less room the list and its detail show one at a time: choose a message, and a back button named after the list, here Inbox, returns to it.
 
 ```tsx example=ListDetailByWidth widths="24 60"
 
@@ -134,8 +122,8 @@ In less room the list and its detail show one at a time: choose a message, and I
 | Key                                                     | Action                                                             |
 | ------------------------------------------------------- | ------------------------------------------------------------------ |
 | <kbd>Esc</kbd> in the supporting sheet                  | Closes it, and focus returns to where it was.                      |
-| <kbd>←</kbd>, <kbd>→</kbd> on the divider               | Moves the divider 1 rem; with <kbd>Shift</kbd>, 5 rem.             |
-| <kbd>Page Up</kbd>, <kbd>Page Down</kbd> on the divider | Moves the divider 5 rem.                                           |
+| <kbd>←</kbd>, <kbd>→</kbd> on the divider               | Moves the divider a little; further with <kbd>Shift</kbd>.         |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd> on the divider | Moves the divider further.                                         |
 | <kbd>Home</kbd>, <kbd>End</kbd> on the divider          | Moves the resized pane to its smallest or largest width.           |
 | <kbd>Enter</kbd> on the back button                     | Returns from the detail to the list, and focus to its current row. |
 
@@ -177,7 +165,7 @@ Panes.Supporting and Panes.List take a `label`, which names their region; on Pan
 
 #### Resizable
 
-Panes.Divider, named by its `label`, Resize panes by default, resizes the supporting pane or the list, by pointer and the arrow keys; a double click returns it to `defaultSize`, 22.5 rem by default. It stays between `minSize` and `maxSize`, 16 and 40 rem by default, and never leaves the other pane less than 16 rem. `size` and `onSizeChange`, which receives each width in rem and `committed` once a drag ends or a key moves it, let the application control it. The divider is the gap between two surfaces: give each pane a Surface as tall as the pane, with `min-block-size: 100%`, and where the detail shows alone, its surface fills the room below the back button. Panes keeps the same gap without a divider.
+Panes.Divider, named by its `label`, Resize panes by default, resizes the supporting pane or the list, by pointer and the arrow keys; a double click returns it to `defaultSize`, 22.5 rem by default. It stays between `minSize` and `maxSize`, 16 and 40 rem by default, and never leaves the other pane less than 16 rem. The arrow keys move it 1 rem, 5 rem with <kbd>Shift</kbd>, and <kbd>Page Up</kbd> and <kbd>Page Down</kbd> 5 rem. `size` and `onSizeChange`, which receives each width in rem and `committed` once a drag ends or a key moves it, let the application control it. The divider is the gap between two surfaces: give each pane a Surface as tall as the pane, with `min-block-size: 100%`, and where the detail shows alone, its surface fills the room below the back button. Panes keeps the same gap without a divider.
 
 `persist` keeps the width people choose in a cookie of that name. Read it on the server with `readPanesSize(cookieHeader, key)` and pass it as `persistedSize`, so nothing moves as the page hydrates.
 

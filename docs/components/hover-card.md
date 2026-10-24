@@ -35,7 +35,7 @@ The pointer can move from the trigger onto the card without closing it, and focu
 
 ### Text with more details
 
-Text that isn't a link takes a quiet dotted underline, which says it shows more on hover or focus; links, buttons and avatars keep their own look. Such text takes keyboard focus too, so focus opens the card.
+Text that isn't a link can open a card too, with the dotted underline and the focus a [tooltip on text](tooltip.md#text) takes.
 
 ```tsx example=TextDetails
 
@@ -68,7 +68,7 @@ The card opens below its trigger, centred on it, or on another side or lined up 
 
 ### Details that are also elsewhere
 
-Keep the details supplementary: the page the link leads to has them too, as touch screens have no hover.
+Keep the details supplementary: the page the link leads to has them too.
 
 ### Nothing to press
 

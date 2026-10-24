@@ -69,7 +69,7 @@ A trail above a page wraps; one in a bar stays on one line.
 
 ### Long labels
 
-A label longer than 20 rem ends with an ellipsis, and a tooltip shows it in full on hover and on keyboard focus.
+A long label ends with an ellipsis, and a tooltip shows it in full on hover and on keyboard focus.
 
 ## When to use
 

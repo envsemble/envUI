@@ -110,10 +110,6 @@ A tooltip belongs to something people can focus, such as a button, never to an i
 
 Not shown: the wrapper that lets a disabled control show a tooltip, and the dotted underline of text.
 
-### Colors
-
-One tooltip can take colors of its own: its fill, its text and its edge. With none set, it keeps its own colors.
-
 ## Accessibility
 
 ### Keyboard

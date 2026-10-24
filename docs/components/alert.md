@@ -105,10 +105,6 @@ Remove an alert once it no longer applies, and let people dismiss it only where 
 5. **Action** (`env-alert-action`, `action`)
 6. **Dismiss button** (`env-alert-dismiss`, `onDismiss`)
 
-### Colors
-
-One alert can take colors of its own: its fill, its text, its edge and its icon. Its hover, focus and press then follow them; with none set, it keeps its own colors.
-
 ## Accessibility
 
 ### Keyboard
