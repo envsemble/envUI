@@ -15,8 +15,8 @@ aliases:
   - hotkey
   - key combination
 useWhen:
-  - Text names a key or a shortcut, such as "Press <kbd>Ctrl</kbd>+<kbd>P</kbd> to open a document".
-  - A hint lists the keys a list or a popup handles, such as a footer that says which keys move, open and close.
+  - A key or a shortcut named in text
+  - Hints of the keys a list or a popup handles
 avoidWhen:
   - text: The shortcut of a menu item, which also needs to reach assistive technology.
     use: Menu
@@ -35,7 +35,7 @@ statuses:
 
 ## Overview
 
-Kbd only shows keys, one or a combination through `keys`: the application handles the shortcut.
+Kbd only shows the keys: the application itself handles the shortcut.
 
 ```tsx example=ShortcutsInText
 
@@ -51,15 +51,17 @@ Kbd only shows keys, one or a combination through `keys`: the application handle
 
 ```
 
-```tsx dont=SequenceAsOne caption="A sequence in one keys list: it reads as four keys pressed at once."
+```tsx dont=SequenceAsOne caption="A sequence as one combination: it reads as four keys pressed at once."
 
 ```
 
-- Show only shortcuts the application handles.
+### Real shortcuts only
+
+Show only shortcuts the application handles.
 
 ### Content
 
-Write keys as the keyboard names them: <kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Esc</kbd>, <kbd>F2</kbd>, capital letters, and <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>. Pass the names of the reader's platform, such as <kbd>⌘</kbd> on Apple keyboards: `useModifierKey()` gives the shortcut modifier's `label`, ⌘ or Ctrl, and its `key`, `Meta` or `Control`, for `aria-keyshortcuts`. It is Ctrl on the server and while the page hydrates, then ⌘ on Apple platforms, so server-rendered markup hydrates; don't read `navigator` while rendering.
+Write keys as the keyboard names them: <kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Esc</kbd>, <kbd>F2</kbd>, capital letters, and <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>. Use the names of the reader's platform, such as <kbd>⌘</kbd> on Apple keyboards.
 
 ```tsx example=PlatformKeys
 
@@ -87,6 +89,28 @@ Write keys as the keyboard names them: <kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>E
 
 - The shortcut itself.
 - `aria-keyshortcuts` on the control it triggers, where envUI doesn't set it.
+
+## In code
+
+### Usage
+
+A Kbd's children are one key. `keys` shows keys pressed together, such as `['Ctrl', 'P']`: one key cap each, joined by +, inside an outer `<kbd>`. A sequence is one Kbd per step, with words such as then between them. Kbd only shows keys: the application handles the shortcut, and sets `aria-keyshortcuts` on the control it triggers where envUI doesn't. Markdown renders `<kbd>` as Kbd.
+
+```tsx source=ShortcutSequence
+
+```
+
+#### The platform's modifier
+
+`useModifierKey()` gives the shortcut modifier of the reader's platform: its `label`, ⌘ or Ctrl, and its `key`, `Meta` or `Control`, for `aria-keyshortcuts`. It is Ctrl on the server and while the page hydrates, then ⌘ on Apple platforms, so server-rendered markup hydrates; don't read `navigator` while rendering.
+
+```tsx source=PlatformKeys
+
+```
+
+### Composition
+
+The parts are the combination, `env-kbd-combination`, an outer `<kbd>` around the keys, each key cap, `env-kbd`, and the separator between them, `env-kbd-separator`, the + as text.
 
 ## Changelog
 
