@@ -40,21 +40,29 @@ components:
 
 ## Overview
 
-A color picker chooses a color by eye, by its value or from presets. A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as [setup](../setup.md#public-entry-points) lists.
+A color picker chooses a color by eye, by its value or from presets. A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below, or several formats show their fields together, a row each. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as [setup](../setup.md#public-entry-points) lists.
 
 ```tsx example=MinimalPicker
 
 ```
 
-```tsx example=EveryFormat caption="Every format, with alpha: the application chooses the formats and whether the color has an alpha."
+```tsx example=EveryFormat caption="Hex, RGB and HSL one at a time, from the format menu, with alpha: the application chooses whether the color has an alpha."
 
 ```
 
 ### Formats and values
 
-`formats` lists the formats people can type the color in, hex, RGB and HSL, and the format menu lists them in that order; with one, there is no menu. Each channel's field shows its letter, such as R, G and B, beside its number. `value` and `defaultValue` take a CSS color string or React Aria's `Color`, and `onValueChange` receives the color as a string in `valueFormat`, hex by default, and as a `Color`. With `alpha`, the picker adds an alpha slider and field, and the value carries its alpha while it is translucent.
+By default the picker shows one format at a time, hex first, and the format menu switches to RGB or HSL. `formats` chooses the formats instead: one, such as `['hex']`, shows that format alone, with no menu; two or more show their fields together, as below. Each channel's field shows its letter, such as R, G and B, beside its number. `value` and `defaultValue` take a CSS color string or React Aria's `Color`, and `onValueChange` receives the color as a string in `valueFormat`, hex by default, and as a `Color`. With `alpha`, the picker adds an alpha slider and field, and the value carries its alpha while it is translucent.
 
 The copy button copies the color as the fields show it. The eyedropper picks a color from the screen where the browser has one, Chromium-based browsers on the desktop; elsewhere it never shows.
+
+### Several formats at once
+
+`formats={['hex', 'rgb', 'hsl']}` shows each format's fields on a row of its own, in that order, with its own copy button. They edit the same color: typing in one moves the others. The channels' letters and the hex value's # say which format a row holds, the letters and numbers line up from row to row, and with `alpha` each row ends in its alpha. Each row is a group named after its format, so a screen reader says which Red or Alpha it is in.
+
+```tsx example=FormatsTogether
+
+```
 
 ### Open from a button
 
@@ -134,7 +142,11 @@ ColorSwatch shows a color as a small sample, with its value in a `format` and an
 10. **Copy** (`env-color-picker-copy`)
 11. **Swatches** (`env-color-picker-swatches`, `swatches`)
 
-Not shown: the description and error, `env-color-picker-description` and `env-color-picker-error`; ColorPickerButton's `env-color-picker-button` and its popover, `env-color-picker-popover`; and the eyedropper where the browser has none.
+Not shown: the description and error, `env-color-picker-description` and `env-color-picker-error`; the rows of several formats shown together, `env-color-picker-row`; ColorPickerButton's `env-color-picker-button` and its popover, `env-color-picker-popover`; and the eyedropper where the browser has none.
+
+### Colors
+
+ColorPickerButton has no fill of its own: like a field, it takes the background of what it sits on. `--env-color-picker-button-container` gives one button a fill, through `style` or CSS. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 
@@ -148,16 +160,16 @@ The picker fills its container up to 18 rem, so that a wide picker stays compact
 
 ### Keyboard
 
-| Key                                             | Action                                                                                |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves through the area, the sliders, the format, the fields, the eyedropper and copy. |
-| <kbd>←</kbd>, <kbd>→</kbd> in the color area    | Changes the saturation; <kbd>Shift</kbd> or <kbd>Page Up</kbd> by more.               |
-| <kbd>↑</kbd>, <kbd>↓</kbd> in the color area    | Changes the brightness; <kbd>Shift</kbd> or <kbd>Page Up</kbd> by more.               |
-| <kbd>↑</kbd>, <kbd>↓</kbd> in a slider          | Moves the hue or the alpha slider; <kbd>←</kbd>, <kbd>→</kbd> too.                    |
-| <kbd>Home</kbd>, <kbd>End</kbd> in a slider     | Moves the hue or the alpha slider to its bottom or its top.                           |
-| <kbd>↑</kbd>, <kbd>↓</kbd> in a field           | Steps its value.                                                                      |
-| <kbd>Enter</kbd> in a field                     | Commits what was typed, as leaving the field does.                                    |
-| <kbd>←</kbd>, <kbd>→</kbd> in the swatches      | Moves between swatches; <kbd>Enter</kbd> or <kbd>Space</kbd> chooses.                 |
+| Key                                             | Action                                                                                                                                                  |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves through the area, the sliders, the format, the fields, the eyedropper and copy; with several formats, through each row's fields and copy in turn. |
+| <kbd>←</kbd>, <kbd>→</kbd> in the color area    | Changes the saturation; <kbd>Shift</kbd> or <kbd>Page Up</kbd> by more.                                                                                 |
+| <kbd>↑</kbd>, <kbd>↓</kbd> in the color area    | Changes the brightness; <kbd>Shift</kbd> or <kbd>Page Up</kbd> by more.                                                                                 |
+| <kbd>↑</kbd>, <kbd>↓</kbd> in a slider          | Moves the hue or the alpha slider; <kbd>←</kbd>, <kbd>→</kbd> too.                                                                                      |
+| <kbd>Home</kbd>, <kbd>End</kbd> in a slider     | Moves the hue or the alpha slider to its bottom or its top.                                                                                             |
+| <kbd>↑</kbd>, <kbd>↓</kbd> in a field           | Steps its value.                                                                                                                                        |
+| <kbd>Enter</kbd> in a field                     | Commits what was typed, as leaving the field does.                                                                                                      |
+| <kbd>←</kbd>, <kbd>→</kbd> in the swatches      | Moves between swatches; <kbd>Enter</kbd> or <kbd>Space</kbd> chooses.                                                                                   |
 
 ### envUI provides
 
@@ -173,6 +185,6 @@ The picker fills its container up to 18 rem, so that a wide picker stays compact
 
 ## Changelog
 
-- **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
+- **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. `formats` with two or more formats shows their fields together, a row each with its own copy button, while the format menu stays the default. ColorPickerButton has no fill of its own, as fields have none, and `--env-color-picker-button-container` gives one button a fill. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
 - **0.7.0**: ColorSwatch.
 - **0.1.0**: ColorPicker, with a color area, a hue slider and a HEX field.

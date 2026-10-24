@@ -2865,7 +2865,7 @@
         {
           "name": "MinimalPicker",
           "title": "Minimal picker",
-          "description": "A color picker chooses a color by eye, by its value or from presets. A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as setup lists.",
+          "description": "A color picker chooses a color by eye, by its value or from presets. A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below, or several formats show their fields together, a row each. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as setup lists.",
           "file": "docs/examples/color-picker/MinimalPicker.tsx"
         },
         {
@@ -2873,6 +2873,12 @@
           "title": "Every format",
           "description": "",
           "file": "docs/examples/color-picker/EveryFormat.tsx"
+        },
+        {
+          "name": "FormatsTogether",
+          "title": "Formats together",
+          "description": "`formats={['hex', 'rgb', 'hsl']}` shows each format's fields on a row of its own, in that order, with its own copy button. They edit the same color: typing in one moves the others. The channels' letters and the hex value's # say which format a row holds, the letters and numbers line up from row to row, and with `alpha` each row ends in its alpha. Each row is a group named after its format, so a screen reader says which Red or Alpha it is in.",
+          "file": "docs/examples/color-picker/FormatsTogether.tsx"
         },
         {
           "name": "PickerButtonOpen",
@@ -2987,7 +2993,7 @@
             },
             {
               "class": "env-color-picker-fields",
-              "description": "The fields of the chosen format."
+              "description": "The fields of the chosen format, or of one format's row."
             },
             {
               "class": "env-color-picker-format",
@@ -3008,6 +3014,10 @@
             {
               "class": "env-color-picker-popover",
               "description": "The popover of a ColorPickerButton, around its picker."
+            },
+            {
+              "class": "env-color-picker-row",
+              "description": "A format's row where several formats show together: its fields and its copy button."
             },
             {
               "class": "env-color-picker-slider",
@@ -3091,11 +3101,30 @@
               ]
             },
             {
+              "attribute": "data-eye-dropper",
+              "values": [
+                "true"
+              ],
+              "parts": [
+                "env-color-picker-values"
+              ]
+            },
+            {
               "attribute": "data-format",
               "values": [
                 "hex",
                 "hsl",
                 "rgb"
+              ],
+              "parts": [
+                "env-color-picker-row",
+                "env-color-picker-values"
+              ]
+            },
+            {
+              "attribute": "data-formats",
+              "values": [
+                "together"
               ],
               "parts": [
                 "env-color-picker-values"
@@ -3162,6 +3191,12 @@
               "parts": [
                 "env-color-picker-button"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-color-picker-button-container",
+              "description": "The fill behind the swatch and the value, transparent by default."
             }
           ]
         },
@@ -9709,7 +9744,7 @@
         {
           "name": "PlainOutput",
           "title": "Plain output",
-          "description": "envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill and blocks on a layer of the text color of their own, both translucent, so they stand a step apart from the page, a pane, a card, a muted fill or a popup alike; diffs sit on an opaque muted grey. A block shows its plain source first and colors it once the highlighter loads.",
+          "description": "envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill and blocks and diffs on a layer of the text color of their own, both translucent, so they stand a step apart from the page, a pane, a card, a muted fill or a popup alike. A diff takes the same code theme and token colors as a block, and tints its added and removed lines with their change color over that layer, faintly enough that every token keeps its contrast there. A block shows its plain source first and colors it once the highlighter loads.",
           "file": "docs/examples/code/PlainOutput.tsx"
         },
         {
@@ -18213,7 +18248,7 @@
     "ColorPicker": {
       "kind": "component",
       "import": "@envsemble/envui/color",
-      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
+      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format, or the fields of several `formats` together, each with its own copy button; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
         {
           "name": "showLabel",
@@ -18270,8 +18305,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
@@ -18414,8 +18448,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
