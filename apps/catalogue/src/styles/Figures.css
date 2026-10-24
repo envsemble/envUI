@@ -1,30 +1,33 @@
 /* Component pages on the figure template: ordinary sections of short text and live figures, with
    a rhythm of space. What belongs together sits close: a heading and its first content, text and
-   the figure it introduces, a figure's stage, caption and code. Unrelated parts sit clearly apart:
-   one sub-topic from the next, and one section from the next, which the article's gap sets. */
+   the figure it introduces, a figure's stage, caption and code. Unrelated parts sit apart: one
+   sub-topic clearly from the next, and one section far from the next, which the article's gap
+   sets (Template.css). */
 .docs-figures {
   container-type: inline-size;
 }
 
 .docs-figure-section {
+  /* The space between sub-topics of a section: clearly apart, and far closer than two sections,
+     which the article's gap sets (Template.css). */
+  --docs-subtopic-gap: var(--env-space-7);
   /* A link to a section stops below the sticky display controls. */
   scroll-margin-block-start: var(--env-space-9);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  /* The space between sub-topics of a section. */
-  row-gap: var(--env-space-8);
+  row-gap: var(--docs-subtopic-gap);
   min-inline-size: 0;
 }
 
 .docs-figure-section-heading h2 {
   margin: 0;
-  font: var(--env-font-weight-medium) 1.5rem / 1.25 var(--env-font-family);
-  letter-spacing: -0.01em;
+  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.015em;
 }
 
 /* A heading sits close to what it heads. */
 .docs-figure-section-heading + * {
-  margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
+  margin-block-start: calc(var(--env-space-4) - var(--docs-subtopic-gap));
 }
 
 /* Text sits close to the figure it introduces, but not to a subsection that starts with its own
@@ -39,13 +42,13 @@
     .docs-verdict,
     .docs-example
   ) {
-  margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
+  margin-block-start: calc(var(--env-space-4) - var(--docs-subtopic-gap));
 }
 
 /* A subsection that follows text, a list or a table in the same run of Markdown sits as far from
    it as from a figure. */
 .docs-figure-section .env-markdown > h3:not(:first-child) {
-  margin-block-start: var(--env-space-8);
+  margin-block-start: var(--docs-subtopic-gap);
 }
 
 /* A figure: its stage, its caption and its code, close together. */

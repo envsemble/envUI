@@ -21,3 +21,24 @@
 .docs-template .env-markdown-table code {
   overflow-wrap: break-word;
 }
+
+/* A page is parts, not one stream: its sections stand far apart, twice the largest step of the
+   spacing scale, while what is inside a section sits close (Figures.css). */
+.docs-template.docs-figures {
+  row-gap: calc(var(--env-space-9) * 2);
+}
+
+/* The same on a foundation's page, whose sections are its figures, each under its h2, and on a
+   component's page in the Docs. */
+.docs-example:has(> h2) {
+  margin-block-end: calc(var(--env-space-9) * 2);
+}
+
+.docs-api.docs-api {
+  row-gap: calc(var(--env-space-9) * 2);
+}
+
+.docs-example > h2 {
+  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.015em;
+}
