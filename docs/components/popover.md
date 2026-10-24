@@ -79,7 +79,7 @@ A popover opens below its trigger, above it or beside it, lined up with the trig
 
 ## When to use
 
-### Forms
+### Fields
 
 One to three fields at most, with the action last.
 
