@@ -18,6 +18,8 @@ test('public components hydrate server output without recoverable errors', async
   const people = page.getByRole('group', {
     name: '5 people: Alex Morgan, Sam Lee, Priya Shah, 2 more',
   });
+  // The pointer reaches the group first, which spreads it, and then the avatar in its new place.
+  await people.hover();
   await people.getByRole('button', { name: 'Sam Lee' }).click();
   await expect(page.getByTestId('hydrated-person')).toHaveText('Sam Lee');
   await expect(people.locator('.env-avatar-group-overflow')).toHaveText('+3');

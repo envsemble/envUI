@@ -105,6 +105,15 @@ test('pressable avatars are buttons and links named after each person, with name
   expect(
     await buttons.evaluateAll((items) => items.map((item) => item.getAttribute('aria-label'))),
   ).toEqual(['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Rivera']);
+  // At rest the hidden count lies under the last avatar and lets the pointer through to it.
+  const jordan = group.getByRole('button', { name: 'Jordan Rivera' });
+  await jordan.scrollIntoViewIfNeeded();
+  const reachable = await jordan.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const target = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+    return element.contains(target);
+  });
+  expect(reachable).toBe(true);
   const tooltip = page.locator('.env-tooltip');
   const alex = group.getByRole('button', { name: 'Alex Morgan' });
   await alex.hover();
@@ -148,6 +157,8 @@ test('pressable avatars are buttons and links named after each person, with name
   await expect(linked.getByRole('link')).toHaveCount(2);
   const link = linked.getByRole('link', { name: 'Sam Lee' });
   await expect(link).toHaveAttribute('href', '/people/sam');
+  // The pointer reaches the group first, which spreads it, and then the avatar in its new place.
+  await linked.hover();
   await link.hover();
   await expect(tooltip).toHaveText('Sam Lee');
   await link.click();
