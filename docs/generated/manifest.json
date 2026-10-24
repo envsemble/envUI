@@ -11953,6 +11953,12 @@
           "file": "docs/examples/avatar/ProjectMembers.tsx"
         },
         {
+          "name": "ChooseReviewers",
+          "title": "Choose reviewers",
+          "description": "`selected` shows an avatar as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. A person in an AvatarGroup takes `selected` too.",
+          "file": "docs/examples/avatar/ChooseReviewers.tsx"
+        },
+        {
           "name": "PressableAvatars",
           "title": "Pressable avatars",
           "description": "With `onPersonClick` each avatar in a group is a button; a person with `href` is a link. The count lists the people it hides.",
@@ -12010,6 +12016,10 @@
               "description": "The avatar: an image, initials or a figure in a circle."
             },
             {
+              "class": "env-avatar-check",
+              "description": "The check at the bottom end of a chosen avatar."
+            },
+            {
               "class": "env-avatar-fallback",
               "description": "What shows without an image: initials or a figure."
             },
@@ -12050,6 +12060,15 @@
                 "slate",
                 "teal",
                 "violet"
+              ],
+              "parts": [
+                "env-avatar"
+              ]
+            },
+            {
+              "attribute": "data-selected",
+              "values": [
+                ""
               ],
               "parts": [
                 "env-avatar"
@@ -18086,6 +18105,13 @@
           "required": false,
           "default": "false",
           "description": "Names the avatar as an image by `name`. Without it, the avatar is hidden from assistive technology, for when text beside it already names the person."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the avatar as chosen, such as in a list of people to pick from: a ring around it and a small check at its bottom end, so the choice never rests on color alone. It is a look only: the control around the avatar, such as a checkbox or an option, says it is chosen."
         }
       ],
       "native": [
@@ -26687,111 +26713,281 @@
         "id": "color.avatar.bg",
         "cssVariable": "--env-color-avatar-bg",
         "type": "color",
-        "description": "The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue=\"blue\".",
+        "description": "The blue pastel fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue=\"blue\".",
         "values": {
-          "light": "#40638a",
-          "dark": "#40638a",
-          "light-high-contrast": "#2d4f75",
-          "dark-high-contrast": "#2d4f75"
+          "light": "#abd1fe",
+          "dark": "#9cc3ee",
+          "light-high-contrast": "#badaff",
+          "dark-high-contrast": "#abd1fe"
         }
       },
       {
         "id": "color.avatar.bg.amber",
         "cssVariable": "--env-color-avatar-bg-amber",
         "type": "color",
-        "description": "The amber fill, one of the hues an avatar takes from its name.",
+        "description": "The amber, a cream ochre pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#795c32",
-          "dark": "#795c32",
-          "light-high-contrast": "#65481d",
-          "dark-high-contrast": "#65481d"
+          "light": "#ebc89c",
+          "dark": "#dbba8d",
+          "light-high-contrast": "#f4d2a5",
+          "dark-high-contrast": "#ebc89c"
         }
       },
       {
         "id": "color.avatar.bg.green",
         "cssVariable": "--env-color-avatar-bg-green",
         "type": "color",
-        "description": "The green fill, one of the hues an avatar takes from its name.",
+        "description": "The green pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#44694b",
-          "dark": "#44694b",
-          "light-high-contrast": "#305538",
-          "dark-high-contrast": "#305538"
+          "light": "#aed8b5",
+          "dark": "#a0c9a6",
+          "light-high-contrast": "#b7e1be",
+          "dark-high-contrast": "#aed8b5"
         }
       },
       {
         "id": "color.avatar.bg.purple",
         "cssVariable": "--env-color-avatar-bg-purple",
         "type": "color",
-        "description": "The purple fill, one of the hues an avatar takes from its name.",
+        "description": "The purple, a dusty plum pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#7e5370",
-          "dark": "#7e5370",
-          "light-high-contrast": "#69405c",
-          "dark-high-contrast": "#69405c"
+          "light": "#f1bfe0",
+          "dark": "#e2b1d1",
+          "light-high-contrast": "#fbc8e9",
+          "dark-high-contrast": "#f1bfe0"
         }
       },
       {
         "id": "color.avatar.bg.red",
         "cssVariable": "--env-color-avatar-bg-red",
         "type": "color",
-        "description": "The red fill, one of the hues an avatar takes from its name.",
+        "description": "The red, a soft peach pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#8c514d",
-          "dark": "#8c514d",
-          "light-high-contrast": "#763d3a",
-          "dark-high-contrast": "#763d3a"
+          "light": "#ffbeb8",
+          "dark": "#f2aea9",
+          "light-high-contrast": "#ffcbc6",
+          "dark-high-contrast": "#ffbeb8"
         }
       },
       {
         "id": "color.avatar.bg.slate",
         "cssVariable": "--env-color-avatar-bg-slate",
         "type": "color",
-        "description": "The slate fill, a blue-tinted gray, one of the hues an avatar takes from its name.",
+        "description": "The slate, a blue-tinted gray pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#5d6166",
-          "dark": "#5d6166",
-          "light-high-contrast": "#4b4d51",
-          "dark-high-contrast": "#4b4d51"
+          "light": "#ccced2",
+          "dark": "#bdbfc3",
+          "light-high-contrast": "#d5d7db",
+          "dark-high-contrast": "#ccced2"
         }
       },
       {
         "id": "color.avatar.bg.teal",
         "cssVariable": "--env-color-avatar-bg-teal",
         "type": "color",
-        "description": "The teal fill, one of the hues an avatar takes from its name.",
+        "description": "The teal pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#30696c",
-          "dark": "#30696c",
-          "light-high-contrast": "#1a5558",
-          "dark-high-contrast": "#1a5558"
+          "light": "#9ed8db",
+          "dark": "#8fc9cc",
+          "light-high-contrast": "#a7e1e4",
+          "dark-high-contrast": "#9ed8db"
         }
       },
       {
         "id": "color.avatar.bg.violet",
         "cssVariable": "--env-color-avatar-bg-violet",
         "type": "color",
-        "description": "The violet fill, one of the hues an avatar takes from its name.",
+        "description": "The violet pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#665a8a",
-          "dark": "#665a8a",
-          "light-high-contrast": "#524674",
-          "dark-high-contrast": "#524674"
+          "light": "#d3c6fd",
+          "dark": "#c4b8ee",
+          "light-high-contrast": "#dbd1ff",
+          "dark-high-contrast": "#d3c6fd"
         }
       },
       {
         "id": "color.avatar.fg",
         "cssVariable": "--env-color-avatar-fg",
         "type": "color",
-        "description": "The initials of an avatar, at least 4.5:1 on every fill, and 7:1 at high contrast.",
-        "value": "#ffffff"
+        "description": "The initials on the blue fill.",
+        "values": {
+          "light": "#37597f",
+          "dark": "#2d4f75",
+          "light-high-contrast": "#15375b",
+          "dark-high-contrast": "#0c2e51"
+        }
+      },
+      {
+        "id": "color.avatar.fg.amber",
+        "cssVariable": "--env-color-avatar-fg-amber",
+        "type": "color",
+        "description": "The initials on the amber fill.",
+        "values": {
+          "light": "#6f5228",
+          "dark": "#65481d",
+          "light-high-contrast": "#4c3001",
+          "dark-high-contrast": "#412800"
+        }
+      },
+      {
+        "id": "color.avatar.fg.green",
+        "cssVariable": "--env-color-avatar-fg-green",
+        "type": "color",
+        "description": "The initials on the green fill.",
+        "values": {
+          "light": "#3a5f41",
+          "dark": "#305538",
+          "light-high-contrast": "#183d21",
+          "dark-high-contrast": "#0f3419"
+        }
+      },
+      {
+        "id": "color.avatar.fg.purple",
+        "cssVariable": "--env-color-avatar-fg-purple",
+        "type": "color",
+        "description": "The initials on the purple fill.",
+        "values": {
+          "light": "#744a66",
+          "dark": "#69405c",
+          "light-high-contrast": "#502844",
+          "dark-high-contrast": "#46203b"
+        }
+      },
+      {
+        "id": "color.avatar.fg.red",
+        "cssVariable": "--env-color-avatar-fg-red",
+        "type": "color",
+        "description": "The initials on the red fill.",
+        "values": {
+          "light": "#814743",
+          "dark": "#763d3a",
+          "light-high-contrast": "#5b2523",
+          "dark-high-contrast": "#511c1b"
+        }
+      },
+      {
+        "id": "color.avatar.fg.slate",
+        "cssVariable": "--env-color-avatar-fg-slate",
+        "type": "color",
+        "description": "The initials on the slate fill.",
+        "values": {
+          "light": "#54575c",
+          "dark": "#4b4d51",
+          "light-high-contrast": "#343638",
+          "dark-high-contrast": "#2c2d30"
+        }
+      },
+      {
+        "id": "color.avatar.fg.teal",
+        "cssVariable": "--env-color-avatar-fg-teal",
+        "type": "color",
+        "description": "The initials on the teal fill.",
+        "values": {
+          "light": "#255f62",
+          "dark": "#1a5558",
+          "light-high-contrast": "#003d3f",
+          "dark-high-contrast": "#003336"
+        }
+      },
+      {
+        "id": "color.avatar.fg.violet",
+        "cssVariable": "--env-color-avatar-fg-violet",
+        "type": "color",
+        "description": "The initials on the violet fill.",
+        "values": {
+          "light": "#5c507f",
+          "dark": "#524674",
+          "light-high-contrast": "#3b2e5a",
+          "dark-high-contrast": "#322651"
+        }
       },
       {
         "id": "color.avatar.figure",
         "cssVariable": "--env-color-avatar-figure",
         "type": "color",
-        "description": "The default figure of an avatar without an image, on any of its fills.",
-        "value": "#ffffff"
+        "values": {
+          "light": "#37597f",
+          "dark": "#2d4f75",
+          "light-high-contrast": "#15375b",
+          "dark-high-contrast": "#0c2e51"
+        }
+      },
+      {
+        "id": "color.avatar.figure.amber",
+        "cssVariable": "--env-color-avatar-figure-amber",
+        "type": "color",
+        "values": {
+          "light": "#6f5228",
+          "dark": "#65481d",
+          "light-high-contrast": "#4c3001",
+          "dark-high-contrast": "#412800"
+        }
+      },
+      {
+        "id": "color.avatar.figure.green",
+        "cssVariable": "--env-color-avatar-figure-green",
+        "type": "color",
+        "values": {
+          "light": "#3a5f41",
+          "dark": "#305538",
+          "light-high-contrast": "#183d21",
+          "dark-high-contrast": "#0f3419"
+        }
+      },
+      {
+        "id": "color.avatar.figure.purple",
+        "cssVariable": "--env-color-avatar-figure-purple",
+        "type": "color",
+        "values": {
+          "light": "#744a66",
+          "dark": "#69405c",
+          "light-high-contrast": "#502844",
+          "dark-high-contrast": "#46203b"
+        }
+      },
+      {
+        "id": "color.avatar.figure.red",
+        "cssVariable": "--env-color-avatar-figure-red",
+        "type": "color",
+        "values": {
+          "light": "#814743",
+          "dark": "#763d3a",
+          "light-high-contrast": "#5b2523",
+          "dark-high-contrast": "#511c1b"
+        }
+      },
+      {
+        "id": "color.avatar.figure.slate",
+        "cssVariable": "--env-color-avatar-figure-slate",
+        "type": "color",
+        "values": {
+          "light": "#54575c",
+          "dark": "#4b4d51",
+          "light-high-contrast": "#343638",
+          "dark-high-contrast": "#2c2d30"
+        }
+      },
+      {
+        "id": "color.avatar.figure.teal",
+        "cssVariable": "--env-color-avatar-figure-teal",
+        "type": "color",
+        "values": {
+          "light": "#255f62",
+          "dark": "#1a5558",
+          "light-high-contrast": "#003d3f",
+          "dark-high-contrast": "#003336"
+        }
+      },
+      {
+        "id": "color.avatar.figure.violet",
+        "cssVariable": "--env-color-avatar-figure-violet",
+        "type": "color",
+        "values": {
+          "light": "#5c507f",
+          "dark": "#524674",
+          "light-high-contrast": "#3b2e5a",
+          "dark-high-contrast": "#322651"
+        }
       },
       {
         "id": "color.bg.accent.badge",

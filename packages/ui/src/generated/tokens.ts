@@ -38,114 +38,260 @@ export const tokens = {
       'dark-high-contrast': '400',
     },
   },
-  /** The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue="blue". */
+  /** The blue pastel fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue="blue". */
   'color.avatar.bg': {
     cssVariable: '--env-color-avatar-bg',
     type: 'color',
     values: {
-      light: '#40638a',
-      dark: '#40638a',
-      'light-high-contrast': '#2d4f75',
-      'dark-high-contrast': '#2d4f75',
+      light: '#abd1fe',
+      dark: '#9cc3ee',
+      'light-high-contrast': '#badaff',
+      'dark-high-contrast': '#abd1fe',
     },
   },
-  /** The amber fill, one of the hues an avatar takes from its name. */
+  /** The amber, a cream ochre pastel fill, one of the hues an avatar takes from its name. */
   'color.avatar.bg.amber': {
     cssVariable: '--env-color-avatar-bg-amber',
     type: 'color',
     values: {
-      light: '#795c32',
-      dark: '#795c32',
-      'light-high-contrast': '#65481d',
-      'dark-high-contrast': '#65481d',
+      light: '#ebc89c',
+      dark: '#dbba8d',
+      'light-high-contrast': '#f4d2a5',
+      'dark-high-contrast': '#ebc89c',
     },
   },
-  /** The green fill, one of the hues an avatar takes from its name. */
+  /** The green pastel fill, one of the hues an avatar takes from its name. */
   'color.avatar.bg.green': {
     cssVariable: '--env-color-avatar-bg-green',
     type: 'color',
     values: {
-      light: '#44694b',
-      dark: '#44694b',
-      'light-high-contrast': '#305538',
-      'dark-high-contrast': '#305538',
+      light: '#aed8b5',
+      dark: '#a0c9a6',
+      'light-high-contrast': '#b7e1be',
+      'dark-high-contrast': '#aed8b5',
     },
   },
-  /** The purple fill, one of the hues an avatar takes from its name. */
+  /** The purple, a dusty plum pastel fill, one of the hues an avatar takes from its name. */
   'color.avatar.bg.purple': {
     cssVariable: '--env-color-avatar-bg-purple',
     type: 'color',
     values: {
-      light: '#7e5370',
-      dark: '#7e5370',
-      'light-high-contrast': '#69405c',
-      'dark-high-contrast': '#69405c',
+      light: '#f1bfe0',
+      dark: '#e2b1d1',
+      'light-high-contrast': '#fbc8e9',
+      'dark-high-contrast': '#f1bfe0',
     },
   },
-  /** The red fill, one of the hues an avatar takes from its name. */
+  /** The red, a soft peach pastel fill, one of the hues an avatar takes from its name. */
   'color.avatar.bg.red': {
     cssVariable: '--env-color-avatar-bg-red',
     type: 'color',
     values: {
-      light: '#8c514d',
-      dark: '#8c514d',
-      'light-high-contrast': '#763d3a',
-      'dark-high-contrast': '#763d3a',
+      light: '#ffbeb8',
+      dark: '#f2aea9',
+      'light-high-contrast': '#ffcbc6',
+      'dark-high-contrast': '#ffbeb8',
     },
   },
-  /** The slate fill, a blue-tinted gray, one of the hues an avatar takes from its name. */
+  /** The slate, a blue-tinted gray pastel fill, one of the hues an avatar takes from its name. */
   'color.avatar.bg.slate': {
     cssVariable: '--env-color-avatar-bg-slate',
     type: 'color',
     values: {
-      light: '#5d6166',
-      dark: '#5d6166',
-      'light-high-contrast': '#4b4d51',
-      'dark-high-contrast': '#4b4d51',
+      light: '#ccced2',
+      dark: '#bdbfc3',
+      'light-high-contrast': '#d5d7db',
+      'dark-high-contrast': '#ccced2',
     },
   },
-  /** The teal fill, one of the hues an avatar takes from its name. */
+  /** The teal pastel fill, one of the hues an avatar takes from its name. */
   'color.avatar.bg.teal': {
     cssVariable: '--env-color-avatar-bg-teal',
     type: 'color',
     values: {
-      light: '#30696c',
-      dark: '#30696c',
-      'light-high-contrast': '#1a5558',
-      'dark-high-contrast': '#1a5558',
+      light: '#9ed8db',
+      dark: '#8fc9cc',
+      'light-high-contrast': '#a7e1e4',
+      'dark-high-contrast': '#9ed8db',
     },
   },
-  /** The violet fill, one of the hues an avatar takes from its name. */
+  /** The violet pastel fill, one of the hues an avatar takes from its name. */
   'color.avatar.bg.violet': {
     cssVariable: '--env-color-avatar-bg-violet',
     type: 'color',
     values: {
-      light: '#665a8a',
-      dark: '#665a8a',
-      'light-high-contrast': '#524674',
-      'dark-high-contrast': '#524674',
+      light: '#d3c6fd',
+      dark: '#c4b8ee',
+      'light-high-contrast': '#dbd1ff',
+      'dark-high-contrast': '#d3c6fd',
     },
   },
-  /** The initials of an avatar, at least 4.5:1 on every fill, and 7:1 at high contrast. */
+  /** The initials on the blue fill. */
   'color.avatar.fg': {
     cssVariable: '--env-color-avatar-fg',
     type: 'color',
     values: {
-      light: '#ffffff',
-      dark: '#ffffff',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#ffffff',
+      light: '#37597f',
+      dark: '#2d4f75',
+      'light-high-contrast': '#15375b',
+      'dark-high-contrast': '#0c2e51',
     },
   },
-  /** The default figure of an avatar without an image, on any of its fills. */
+  /** The initials on the amber fill. */
+  'color.avatar.fg.amber': {
+    cssVariable: '--env-color-avatar-fg-amber',
+    type: 'color',
+    values: {
+      light: '#6f5228',
+      dark: '#65481d',
+      'light-high-contrast': '#4c3001',
+      'dark-high-contrast': '#412800',
+    },
+  },
+  /** The initials on the green fill. */
+  'color.avatar.fg.green': {
+    cssVariable: '--env-color-avatar-fg-green',
+    type: 'color',
+    values: {
+      light: '#3a5f41',
+      dark: '#305538',
+      'light-high-contrast': '#183d21',
+      'dark-high-contrast': '#0f3419',
+    },
+  },
+  /** The initials on the purple fill. */
+  'color.avatar.fg.purple': {
+    cssVariable: '--env-color-avatar-fg-purple',
+    type: 'color',
+    values: {
+      light: '#744a66',
+      dark: '#69405c',
+      'light-high-contrast': '#502844',
+      'dark-high-contrast': '#46203b',
+    },
+  },
+  /** The initials on the red fill. */
+  'color.avatar.fg.red': {
+    cssVariable: '--env-color-avatar-fg-red',
+    type: 'color',
+    values: {
+      light: '#814743',
+      dark: '#763d3a',
+      'light-high-contrast': '#5b2523',
+      'dark-high-contrast': '#511c1b',
+    },
+  },
+  /** The initials on the slate fill. */
+  'color.avatar.fg.slate': {
+    cssVariable: '--env-color-avatar-fg-slate',
+    type: 'color',
+    values: {
+      light: '#54575c',
+      dark: '#4b4d51',
+      'light-high-contrast': '#343638',
+      'dark-high-contrast': '#2c2d30',
+    },
+  },
+  /** The initials on the teal fill. */
+  'color.avatar.fg.teal': {
+    cssVariable: '--env-color-avatar-fg-teal',
+    type: 'color',
+    values: {
+      light: '#255f62',
+      dark: '#1a5558',
+      'light-high-contrast': '#003d3f',
+      'dark-high-contrast': '#003336',
+    },
+  },
+  /** The initials on the violet fill. */
+  'color.avatar.fg.violet': {
+    cssVariable: '--env-color-avatar-fg-violet',
+    type: 'color',
+    values: {
+      light: '#5c507f',
+      dark: '#524674',
+      'light-high-contrast': '#3b2e5a',
+      'dark-high-contrast': '#322651',
+    },
+  },
   'color.avatar.figure': {
     cssVariable: '--env-color-avatar-figure',
     type: 'color',
     values: {
-      light: '#ffffff',
-      dark: '#ffffff',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#ffffff',
+      light: '#37597f',
+      dark: '#2d4f75',
+      'light-high-contrast': '#15375b',
+      'dark-high-contrast': '#0c2e51',
+    },
+  },
+  'color.avatar.figure.amber': {
+    cssVariable: '--env-color-avatar-figure-amber',
+    type: 'color',
+    values: {
+      light: '#6f5228',
+      dark: '#65481d',
+      'light-high-contrast': '#4c3001',
+      'dark-high-contrast': '#412800',
+    },
+  },
+  'color.avatar.figure.green': {
+    cssVariable: '--env-color-avatar-figure-green',
+    type: 'color',
+    values: {
+      light: '#3a5f41',
+      dark: '#305538',
+      'light-high-contrast': '#183d21',
+      'dark-high-contrast': '#0f3419',
+    },
+  },
+  'color.avatar.figure.purple': {
+    cssVariable: '--env-color-avatar-figure-purple',
+    type: 'color',
+    values: {
+      light: '#744a66',
+      dark: '#69405c',
+      'light-high-contrast': '#502844',
+      'dark-high-contrast': '#46203b',
+    },
+  },
+  'color.avatar.figure.red': {
+    cssVariable: '--env-color-avatar-figure-red',
+    type: 'color',
+    values: {
+      light: '#814743',
+      dark: '#763d3a',
+      'light-high-contrast': '#5b2523',
+      'dark-high-contrast': '#511c1b',
+    },
+  },
+  'color.avatar.figure.slate': {
+    cssVariable: '--env-color-avatar-figure-slate',
+    type: 'color',
+    values: {
+      light: '#54575c',
+      dark: '#4b4d51',
+      'light-high-contrast': '#343638',
+      'dark-high-contrast': '#2c2d30',
+    },
+  },
+  'color.avatar.figure.teal': {
+    cssVariable: '--env-color-avatar-figure-teal',
+    type: 'color',
+    values: {
+      light: '#255f62',
+      dark: '#1a5558',
+      'light-high-contrast': '#003d3f',
+      'dark-high-contrast': '#003336',
+    },
+  },
+  'color.avatar.figure.violet': {
+    cssVariable: '--env-color-avatar-figure-violet',
+    type: 'color',
+    values: {
+      light: '#5c507f',
+      dark: '#524674',
+      'light-high-contrast': '#3b2e5a',
+      'dark-high-contrast': '#322651',
     },
   },
   /** The tint of a soft accent badge. In light it is the accent blue at 5%, fainter than color.bg.accent.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.accent.muted. */

@@ -197,6 +197,10 @@
           "description": "The avatar: an image, initials or a figure in a circle."
         },
         {
+          "class": "env-avatar-check",
+          "description": "The check at the bottom end of a chosen avatar."
+        },
+        {
           "class": "env-avatar-fallback",
           "description": "What shows without an image: initials or a figure."
         },
@@ -243,6 +247,15 @@
           ]
         },
         {
+          "attribute": "data-selected",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-avatar"
+          ]
+        },
+        {
           "attribute": "data-size",
           "values": [
             "lg",
@@ -254,6 +267,9 @@
             "env-avatar"
           ]
         }
+      ],
+      "uses": [
+        "Icon"
       ],
       "colors": [
         {

@@ -8,53 +8,109 @@
         "high": 7
       }
     },
-    "--env-color-avatar-fg on --env-color-avatar-bg-amber": {
+    "--env-color-avatar-fg-amber on --env-color-avatar-bg-amber": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
         "high": 7
       }
     },
-    "--env-color-avatar-fg on --env-color-avatar-bg-green": {
+    "--env-color-avatar-fg-green on --env-color-avatar-bg-green": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
         "high": 7
       }
     },
-    "--env-color-avatar-fg on --env-color-avatar-bg-purple": {
+    "--env-color-avatar-fg-purple on --env-color-avatar-bg-purple": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
         "high": 7
       }
     },
-    "--env-color-avatar-fg on --env-color-avatar-bg-red": {
+    "--env-color-avatar-fg-red on --env-color-avatar-bg-red": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
         "high": 7
       }
     },
-    "--env-color-avatar-fg on --env-color-avatar-bg-slate": {
+    "--env-color-avatar-fg-slate on --env-color-avatar-bg-slate": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
         "high": 7
       }
     },
-    "--env-color-avatar-fg on --env-color-avatar-bg-teal": {
+    "--env-color-avatar-fg-teal on --env-color-avatar-bg-teal": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
         "high": 7
       }
     },
-    "--env-color-avatar-fg on --env-color-avatar-bg-violet": {
+    "--env-color-avatar-fg-violet on --env-color-avatar-bg-violet": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
         "high": 7
+      }
+    },
+    "--env-color-avatar-figure on --env-color-avatar-bg": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-avatar-figure-amber on --env-color-avatar-bg-amber": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-avatar-figure-green on --env-color-avatar-bg-green": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-avatar-figure-purple on --env-color-avatar-bg-purple": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-avatar-figure-red on --env-color-avatar-bg-red": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-avatar-figure-slate on --env-color-avatar-bg-slate": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-avatar-figure-teal on --env-color-avatar-bg-teal": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-avatar-figure-violet on --env-color-avatar-bg-violet": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
       }
     },
     "--env-color-bg-brand-emphasis on --env-color-bg-default": {
@@ -2935,7 +2991,14 @@
   "dropped": [
     "--color-border-strong on --color-canvas",
     "--color-border-strong on --color-pane",
-    "--color-focus-ring on --color-primary-action"
+    "--color-focus-ring on --color-primary-action",
+    "--env-color-avatar-fg on --env-color-avatar-bg-amber",
+    "--env-color-avatar-fg on --env-color-avatar-bg-green",
+    "--env-color-avatar-fg on --env-color-avatar-bg-purple",
+    "--env-color-avatar-fg on --env-color-avatar-bg-red",
+    "--env-color-avatar-fg on --env-color-avatar-bg-slate",
+    "--env-color-avatar-fg on --env-color-avatar-bg-teal",
+    "--env-color-avatar-fg on --env-color-avatar-bg-violet"
   ],
   "renamed": [
     "--color-action-strip on --color-bg-muted",

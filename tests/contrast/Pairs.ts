@@ -729,15 +729,26 @@ export const pairs: readonly ContrastPair[] = merged([
     'Chips',
   ),
   ...text('--env-color-fg-default', [[fill, field]], 'Combobox chips'),
-  ...text(
-    '--env-color-avatar-fg',
-    [
-      '--env-color-avatar-bg',
-      ...['teal', 'green', 'amber', 'red', 'violet', 'purple', 'slate'].map(
-        (hue) => `--env-color-avatar-bg-${hue}`,
-      ),
-    ],
-    'Avatar initials on every hue',
+  // Avatars are tonal pairs: each hue's initials, and its figure, a deep shade on its pastel fill.
+  ...text('--env-color-avatar-fg', ['--env-color-avatar-bg'], 'Avatar initials on their hue'),
+  ...['teal', 'green', 'amber', 'red', 'violet', 'purple', 'slate'].flatMap((hue) =>
+    text(
+      `--env-color-avatar-fg-${hue}`,
+      [`--env-color-avatar-bg-${hue}`],
+      'Avatar initials on their hue',
+    ),
+  ),
+  ...nonText(
+    '--env-color-avatar-figure',
+    ['--env-color-avatar-bg'],
+    'The avatar figure on its hue',
+  ),
+  ...['teal', 'green', 'amber', 'red', 'violet', 'purple', 'slate'].flatMap((hue) =>
+    nonText(
+      `--env-color-avatar-figure-${hue}`,
+      [`--env-color-avatar-bg-${hue}`],
+      'The avatar figure on its hue',
+    ),
   ),
   ...text(
     '--env-color-fg-default',
@@ -846,6 +857,41 @@ export const pairs: readonly ContrastPair[] = merged([
  * `pairs` without an entry, and on a dropped pair that is still declared.
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-teal',
+    rationale:
+      'Avatars are tonal pairs now: the teal fill carries its own deep initials, --env-color-avatar-fg-teal, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-green',
+    rationale:
+      'Avatars are tonal pairs now: the green fill carries its own deep initials, --env-color-avatar-fg-green, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-amber',
+    rationale:
+      'Avatars are tonal pairs now: the amber fill carries its own deep initials, --env-color-avatar-fg-amber, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-red',
+    rationale:
+      'Avatars are tonal pairs now: the red fill carries its own deep initials, --env-color-avatar-fg-red, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-violet',
+    rationale:
+      'Avatars are tonal pairs now: the violet fill carries its own deep initials, --env-color-avatar-fg-violet, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-purple',
+    rationale:
+      'Avatars are tonal pairs now: the purple fill carries its own deep initials, --env-color-avatar-fg-purple, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-slate',
+    rationale:
+      'Avatars are tonal pairs now: the slate fill carries its own deep initials, --env-color-avatar-fg-slate, measured on it as text, rather than the white initials every hue shared.',
+  },
   {
     pair: '--color-focus-ring on --color-primary-action',
     rationale:

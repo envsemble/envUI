@@ -19,14 +19,15 @@
   flex: 0 0 auto;
   inline-size: var(--env-avatar-size);
   block-size: var(--env-avatar-size);
-  overflow: hidden;
   border-radius: 50%;
-  /* The solid fill of the avatar's hue, from data-hue, behind white initials or figure. */
+  /* A tonal pair of the avatar's hue, from data-hue: a soft pastel fill behind initials and a
+     figure in a deep shade of the same hue. */
   --env-avatar-container-default: var(--env-color-avatar-bg);
+  --env-avatar-content-default: var(--env-color-avatar-fg);
   --env-avatar-fill: var(--env-avatar-container, var(--env-avatar-container-default));
-  --env-avatar-figure-color: var(--env-avatar-content, var(--env-color-avatar-figure));
+  --env-avatar-figure-color: var(--env-avatar-content, var(--env-avatar-content-default));
   background: var(--env-avatar-fill);
-  color: var(--env-avatar-content, var(--env-color-avatar-fg));
+  color: var(--env-avatar-content, var(--env-avatar-content-default));
   font: var(--env-font-weight-semibold) calc(var(--env-avatar-size) * 0.38) / 1
     var(--env-font-family);
   letter-spacing: 0.01em;
@@ -37,27 +38,34 @@
 }
 .env-avatar[data-hue='teal'] {
   --env-avatar-container-default: var(--env-color-avatar-bg-teal);
+  --env-avatar-content-default: var(--env-color-avatar-fg-teal);
 }
 .env-avatar[data-hue='green'] {
   --env-avatar-container-default: var(--env-color-avatar-bg-green);
+  --env-avatar-content-default: var(--env-color-avatar-fg-green);
 }
 .env-avatar[data-hue='amber'] {
   --env-avatar-container-default: var(--env-color-avatar-bg-amber);
+  --env-avatar-content-default: var(--env-color-avatar-fg-amber);
 }
 .env-avatar[data-hue='red'] {
   --env-avatar-container-default: var(--env-color-avatar-bg-red);
+  --env-avatar-content-default: var(--env-color-avatar-fg-red);
 }
 .env-avatar[data-hue='violet'] {
   --env-avatar-container-default: var(--env-color-avatar-bg-violet);
+  --env-avatar-content-default: var(--env-color-avatar-fg-violet);
 }
 .env-avatar[data-hue='purple'] {
   --env-avatar-container-default: var(--env-color-avatar-bg-purple);
+  --env-avatar-content-default: var(--env-color-avatar-fg-purple);
 }
 .env-avatar[data-hue='slate'] {
   --env-avatar-container-default: var(--env-color-avatar-bg-slate);
+  --env-avatar-content-default: var(--env-color-avatar-fg-slate);
 }
-/* A hairline just inside the edge, over the fill or the picture, so a white figure or a light
-   photo keeps its circle on a page of the same color. */
+/* A hairline just inside the edge, over the fill or the picture, so a pastel fill or a light photo
+   keeps its circle on a page of a near color. */
 .env-avatar::after {
   content: '';
   position: absolute;
@@ -82,6 +90,48 @@
 .env-avatar-fallback {
   display: contents;
 }
+/* Chosen: a ring around the avatar, apart from it by the color of the surface below, and a check at
+   its bottom end, so the choice shows by shape as well as color. */
+.env-avatar[data-selected] {
+  --env-avatar-selected-gap: var(
+    --env-avatar-group-ring-color,
+    var(--env-surface-color, var(--env-color-bg-page))
+  );
+  box-shadow:
+    0 0 0 2px var(--env-avatar-selected-gap),
+    0 0 0 4px var(--env-color-fg-default);
+}
+.env-avatar-check {
+  position: absolute;
+  inset-block-end: calc(var(--env-avatar-size) * -0.06);
+  inset-inline-end: calc(var(--env-avatar-size) * -0.06);
+  z-index: var(--env-z-raised);
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  inline-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.4));
+  block-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.4));
+  border-radius: 50%;
+  background: var(--env-color-fg-default);
+  color: var(--env-color-bg-page);
+  box-shadow: 0 0 0 2px var(--env-avatar-selected-gap);
+}
+.env-avatar-check .env-icon,
+.env-avatar-check svg {
+  inline-size: 75%;
+  block-size: 75%;
+}
+@media (forced-colors: active) {
+  .env-avatar[data-selected] {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+  .env-avatar-check {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+}
 /* Hook: a container that covers the end of an avatar, such as an avatar group, sets
    --env-avatar-initials-inset-end to that width, so initials center in the part left uncovered. */
 .env-avatar:has(> .env-avatar-fallback-initials) {
@@ -93,6 +143,7 @@
 }
 .env-avatar-person {
   display: block;
+  border-radius: inherit;
   inline-size: 100%;
   block-size: 100%;
 }
@@ -105,6 +156,7 @@
 .env-avatar-image {
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;

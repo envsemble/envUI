@@ -268,6 +268,13 @@
           "required": false,
           "default": "false",
           "description": "Names the avatar as an image by `name`. Without it, the avatar is hidden from assistive technology, for when text beside it already names the person."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the avatar as chosen, such as in a list of people to pick from: a ring around it and a small check at its bottom end, so the choice never rests on color alone. It is a look only: the control around the avatar, such as a checkbox or an option, says it is chosen."
         }
       ],
       "native": [

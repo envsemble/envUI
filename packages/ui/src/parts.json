@@ -80,6 +80,7 @@
     },
     "Avatar": {
       "env-avatar": "The avatar: an image, initials or a figure in a circle.",
+      "env-avatar-check": "The check at the bottom end of a chosen avatar.",
       "env-avatar-fallback": "What shows without an image: initials or a figure.",
       "env-avatar-fallback-initials": "The fallback that shows initials.",
       "env-avatar-fallback-person": "The fallback that shows a person's figure.",

@@ -7,16 +7,30 @@
 .env-theme {
   color-scheme: light;
   --env-body-font-weight: var(--env-font-weight-regular);
-  --env-color-avatar-bg: #40638a;
-  --env-color-avatar-bg-amber: #795c32;
-  --env-color-avatar-bg-green: #44694b;
-  --env-color-avatar-bg-purple: #7e5370;
-  --env-color-avatar-bg-red: #8c514d;
-  --env-color-avatar-bg-slate: #5d6166;
-  --env-color-avatar-bg-teal: #30696c;
-  --env-color-avatar-bg-violet: #665a8a;
-  --env-color-avatar-fg: #ffffff;
-  --env-color-avatar-figure: #ffffff;
+  --env-color-avatar-bg: #abd1fe;
+  --env-color-avatar-bg-amber: #ebc89c;
+  --env-color-avatar-bg-green: #aed8b5;
+  --env-color-avatar-bg-purple: #f1bfe0;
+  --env-color-avatar-bg-red: #ffbeb8;
+  --env-color-avatar-bg-slate: #ccced2;
+  --env-color-avatar-bg-teal: #9ed8db;
+  --env-color-avatar-bg-violet: #d3c6fd;
+  --env-color-avatar-fg: #37597f;
+  --env-color-avatar-fg-amber: #6f5228;
+  --env-color-avatar-fg-green: #3a5f41;
+  --env-color-avatar-fg-purple: #744a66;
+  --env-color-avatar-fg-red: #814743;
+  --env-color-avatar-fg-slate: #54575c;
+  --env-color-avatar-fg-teal: #255f62;
+  --env-color-avatar-fg-violet: #5c507f;
+  --env-color-avatar-figure: var(--env-color-avatar-fg);
+  --env-color-avatar-figure-amber: var(--env-color-avatar-fg-amber);
+  --env-color-avatar-figure-green: var(--env-color-avatar-fg-green);
+  --env-color-avatar-figure-purple: var(--env-color-avatar-fg-purple);
+  --env-color-avatar-figure-red: var(--env-color-avatar-fg-red);
+  --env-color-avatar-figure-slate: var(--env-color-avatar-fg-slate);
+  --env-color-avatar-figure-teal: var(--env-color-avatar-fg-teal);
+  --env-color-avatar-figure-violet: var(--env-color-avatar-fg-violet);
   --env-color-bg-accent-badge: rgb(0 92 200 / 0.05);
   --env-color-bg-accent-emphasis: #005cc8;
   --env-color-bg-accent-muted: rgb(0 92 200 / 0.12);
@@ -261,6 +275,22 @@
 
 .env-theme[data-env-theme='dark'] {
   color-scheme: dark;
+  --env-color-avatar-bg: #9cc3ee;
+  --env-color-avatar-bg-amber: #dbba8d;
+  --env-color-avatar-bg-green: #a0c9a6;
+  --env-color-avatar-bg-purple: #e2b1d1;
+  --env-color-avatar-bg-red: #f2aea9;
+  --env-color-avatar-bg-slate: #bdbfc3;
+  --env-color-avatar-bg-teal: #8fc9cc;
+  --env-color-avatar-bg-violet: #c4b8ee;
+  --env-color-avatar-fg: #2d4f75;
+  --env-color-avatar-fg-amber: #65481d;
+  --env-color-avatar-fg-green: #305538;
+  --env-color-avatar-fg-purple: #69405c;
+  --env-color-avatar-fg-red: #763d3a;
+  --env-color-avatar-fg-slate: #4b4d51;
+  --env-color-avatar-fg-teal: #1a5558;
+  --env-color-avatar-fg-violet: #524674;
   --env-color-bg-accent-badge: var(--env-color-bg-accent-muted);
   --env-color-bg-accent-emphasis: #9fc1f8;
   --env-color-bg-accent-muted: rgb(159 193 248 / 0.14);
@@ -395,14 +425,22 @@
 }
 
 .env-theme[data-env-contrast='high'] {
-  --env-color-avatar-bg: #2d4f75;
-  --env-color-avatar-bg-amber: #65481d;
-  --env-color-avatar-bg-green: #305538;
-  --env-color-avatar-bg-purple: #69405c;
-  --env-color-avatar-bg-red: #763d3a;
-  --env-color-avatar-bg-slate: #4b4d51;
-  --env-color-avatar-bg-teal: #1a5558;
-  --env-color-avatar-bg-violet: #524674;
+  --env-color-avatar-bg: #badaff;
+  --env-color-avatar-bg-amber: #f4d2a5;
+  --env-color-avatar-bg-green: #b7e1be;
+  --env-color-avatar-bg-purple: #fbc8e9;
+  --env-color-avatar-bg-red: #ffcbc6;
+  --env-color-avatar-bg-slate: #d5d7db;
+  --env-color-avatar-bg-teal: #a7e1e4;
+  --env-color-avatar-bg-violet: #dbd1ff;
+  --env-color-avatar-fg: #15375b;
+  --env-color-avatar-fg-amber: #4c3001;
+  --env-color-avatar-fg-green: #183d21;
+  --env-color-avatar-fg-purple: #502844;
+  --env-color-avatar-fg-red: #5b2523;
+  --env-color-avatar-fg-slate: #343638;
+  --env-color-avatar-fg-teal: #003d3f;
+  --env-color-avatar-fg-violet: #3b2e5a;
   --env-color-bg-accent-badge: rgb(0 55 124 / 0.08);
   --env-color-bg-accent-emphasis: #00377c;
   --env-color-bg-accent-muted: rgb(0 55 124 / 0.08);
@@ -524,14 +562,22 @@
 }
 @media (prefers-contrast: more) {
   .env-theme:not([data-env-contrast='standard']) {
-    --env-color-avatar-bg: #2d4f75;
-    --env-color-avatar-bg-amber: #65481d;
-    --env-color-avatar-bg-green: #305538;
-    --env-color-avatar-bg-purple: #69405c;
-    --env-color-avatar-bg-red: #763d3a;
-    --env-color-avatar-bg-slate: #4b4d51;
-    --env-color-avatar-bg-teal: #1a5558;
-    --env-color-avatar-bg-violet: #524674;
+    --env-color-avatar-bg: #badaff;
+    --env-color-avatar-bg-amber: #f4d2a5;
+    --env-color-avatar-bg-green: #b7e1be;
+    --env-color-avatar-bg-purple: #fbc8e9;
+    --env-color-avatar-bg-red: #ffcbc6;
+    --env-color-avatar-bg-slate: #d5d7db;
+    --env-color-avatar-bg-teal: #a7e1e4;
+    --env-color-avatar-bg-violet: #dbd1ff;
+    --env-color-avatar-fg: #15375b;
+    --env-color-avatar-fg-amber: #4c3001;
+    --env-color-avatar-fg-green: #183d21;
+    --env-color-avatar-fg-purple: #502844;
+    --env-color-avatar-fg-red: #5b2523;
+    --env-color-avatar-fg-slate: #343638;
+    --env-color-avatar-fg-teal: #003d3f;
+    --env-color-avatar-fg-violet: #3b2e5a;
     --env-color-bg-accent-badge: rgb(0 55 124 / 0.08);
     --env-color-bg-accent-emphasis: #00377c;
     --env-color-bg-accent-muted: rgb(0 55 124 / 0.08);
@@ -654,14 +700,22 @@
 }
 
 .env-theme[data-env-theme='dark'][data-env-contrast='high'] {
-  --env-color-avatar-bg: #2d4f75;
-  --env-color-avatar-bg-amber: #65481d;
-  --env-color-avatar-bg-green: #305538;
-  --env-color-avatar-bg-purple: #69405c;
-  --env-color-avatar-bg-red: #763d3a;
-  --env-color-avatar-bg-slate: #4b4d51;
-  --env-color-avatar-bg-teal: #1a5558;
-  --env-color-avatar-bg-violet: #524674;
+  --env-color-avatar-bg: #abd1fe;
+  --env-color-avatar-bg-amber: #ebc89c;
+  --env-color-avatar-bg-green: #aed8b5;
+  --env-color-avatar-bg-purple: #f1bfe0;
+  --env-color-avatar-bg-red: #ffbeb8;
+  --env-color-avatar-bg-slate: #ccced2;
+  --env-color-avatar-bg-teal: #9ed8db;
+  --env-color-avatar-bg-violet: #d3c6fd;
+  --env-color-avatar-fg: #0c2e51;
+  --env-color-avatar-fg-amber: #412800;
+  --env-color-avatar-fg-green: #0f3419;
+  --env-color-avatar-fg-purple: #46203b;
+  --env-color-avatar-fg-red: #511c1b;
+  --env-color-avatar-fg-slate: #2c2d30;
+  --env-color-avatar-fg-teal: #003336;
+  --env-color-avatar-fg-violet: #322651;
   --env-color-bg-accent-badge: rgb(205 222 252 / 0.1);
   --env-color-bg-accent-emphasis: #cddefc;
   --env-color-bg-accent-muted: rgb(205 222 252 / 0.1);
@@ -783,14 +837,22 @@
 }
 @media (prefers-contrast: more) {
   .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
-    --env-color-avatar-bg: #2d4f75;
-    --env-color-avatar-bg-amber: #65481d;
-    --env-color-avatar-bg-green: #305538;
-    --env-color-avatar-bg-purple: #69405c;
-    --env-color-avatar-bg-red: #763d3a;
-    --env-color-avatar-bg-slate: #4b4d51;
-    --env-color-avatar-bg-teal: #1a5558;
-    --env-color-avatar-bg-violet: #524674;
+    --env-color-avatar-bg: #abd1fe;
+    --env-color-avatar-bg-amber: #ebc89c;
+    --env-color-avatar-bg-green: #aed8b5;
+    --env-color-avatar-bg-purple: #f1bfe0;
+    --env-color-avatar-bg-red: #ffbeb8;
+    --env-color-avatar-bg-slate: #ccced2;
+    --env-color-avatar-bg-teal: #9ed8db;
+    --env-color-avatar-bg-violet: #d3c6fd;
+    --env-color-avatar-fg: #0c2e51;
+    --env-color-avatar-fg-amber: #412800;
+    --env-color-avatar-fg-green: #0f3419;
+    --env-color-avatar-fg-purple: #46203b;
+    --env-color-avatar-fg-red: #511c1b;
+    --env-color-avatar-fg-slate: #2c2d30;
+    --env-color-avatar-fg-teal: #003336;
+    --env-color-avatar-fg-violet: #322651;
     --env-color-bg-accent-badge: rgb(205 222 252 / 0.1);
     --env-color-bg-accent-emphasis: #cddefc;
     --env-color-bg-accent-muted: rgb(205 222 252 / 0.1);

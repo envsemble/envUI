@@ -53,6 +53,7 @@ const unbounded = /(?:^|[\s(,])(?:\d*\.?\d+%|\d{4,}px|\d+(?:\.\d+)?vmax)/;
 const alwaysSquare = new Set([
   'packages/ui/src/styles/Alert.css .env-alert-dismiss',
   'packages/ui/src/styles/Avatar.css .env-avatar',
+  'packages/ui/src/styles/Avatar.css .env-avatar-check',
   'packages/ui/src/styles/AvatarGroup.css .env-avatar-group-item',
   'packages/ui/src/styles/Button.css .env-avatar-button',
   'packages/ui/src/styles/Calendar.css .env-calendar-day-mark',
