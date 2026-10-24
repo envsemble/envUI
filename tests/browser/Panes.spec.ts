@@ -364,6 +364,10 @@ test.describe('Panes, list-detail', () => {
     await expect(root.getByRole('region', { name: 'Website refresh' })).toBeVisible();
     await expect(list).toBeVisible();
     await expect(root.getByRole('button', { name: 'All projects' })).toBeHidden();
+    // The detail's surface, as tall as the pane, ends at the pane's end.
+    const surface = await box(root.getByTestId('detail-surface'));
+    const detailBox = await box(root.getByRole('region', { name: 'Website refresh' }));
+    expect(surface.y + surface.height).toBeCloseTo(detailBox.y + detailBox.height, 0);
     // Focus stays on the row people chose.
     await expect(root.getByRole('button', { name: 'Website refresh' })).toBeFocused();
   });
@@ -381,6 +385,16 @@ test.describe('Panes, list-detail', () => {
     await expect(list).toBeHidden();
     const back = root.getByRole('button', { name: 'All projects' });
     await expect(back).toBeFocused();
+    // A surface as tall as the pane fills the room below the back button: it ends at the pane's
+    // end, and the pane doesn't scroll by the button's height.
+    const backBox = await box(back);
+    const surface = await box(root.getByTestId('detail-surface'));
+    const detailBox = await box(detail);
+    expect(surface.y).toBeGreaterThan(backBox.y + backBox.height - 1);
+    expect(surface.y + surface.height).toBeCloseTo(detailBox.y + detailBox.height, 0);
+    expect(
+      await detail.evaluate((element) => element.scrollHeight - element.clientHeight),
+    ).toBeLessThanOrEqual(0);
     expect((await box(detail)).width).toBeCloseTo(
       (await box(page.getByTestId('list-frame'))).width - 2,
       0,

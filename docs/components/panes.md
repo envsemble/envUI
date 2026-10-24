@@ -60,7 +60,7 @@ Each pane scrolls on its own when Panes has a height, as in a [Scaffold](scaffol
 
 ### Resizable
 
-Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line, so it goes between two surfaces: give each pane a [Surface](surface.md), as tall as the pane, and the divider is the gap between them. Panes keeps the same gap without a divider. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.
+Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line, so it goes between two surfaces: give each pane a [Surface](surface.md), as tall as the pane with `min-block-size: 100%`, and the divider is the gap between them. Where the detail shows alone, its surface fills the room below the back button. Panes keeps the same gap without a divider. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.
 
 ```tsx example=ResizableDetails widths="44"
 

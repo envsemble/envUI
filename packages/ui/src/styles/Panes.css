@@ -138,6 +138,14 @@
 .env-panes[data-behavior='list-detail']:not([data-open]) > .env-panes-detail {
   display: none;
 }
+/* The detail alone is a column of the back button and the rest of the pane: what follows the
+   button fills the room below it, so a surface as tall as the pane (min-block-size: 100%) ends at
+   the pane's end rather than overflowing by the button's height. Side by side it is a block. */
+.env-panes[data-behavior='list-detail'][data-open] > .env-panes-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+}
 /* The back button keeps clear of the pane's corner: its label lines up 1 rem in, where a pane's
    content usually starts, as a text button's label sits on its text's edge. */
 .env-panes-back {

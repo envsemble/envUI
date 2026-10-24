@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Panes, Text, type PanesSplitAt } from '@envsemble/envui';
+import { Button, Panes, Surface, Text, type PanesSplitAt } from '@envsemble/envui';
 
 const params = () => new URLSearchParams(location.search);
 
@@ -90,7 +90,10 @@ export function PanesFixture() {
           </Panes.List>
           {divider && <Panes.Divider />}
           <Panes.Detail label={chosen ?? 'No project'}>
-            <Text>{chosen ? `About ${chosen}` : 'Choose a project.'}</Text>
+            {/* A surface as tall as the pane, as the guidance asks next to a divider. */}
+            <Surface padding={4} data-testid="detail-surface" style={{ minBlockSize: '100%' }}>
+              <Text>{chosen ? `About ${chosen}` : 'Choose a project.'}</Text>
+            </Surface>
           </Panes.Detail>
         </Panes.Root>
       </div>
