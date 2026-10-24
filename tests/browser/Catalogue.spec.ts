@@ -466,6 +466,11 @@ test('the foundation pages show no technical text, in their words or their figur
     // The marks of a figure are measured once it has laid out.
     if (await page.locator('.docs-marked').count())
       await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
+    // Guide opens the foundation's guide in the Docs, as API does for a component.
+    await expect(page.getByRole('link', { name: 'Guide', exact: true })).toHaveAttribute(
+      'href',
+      `/docs/${path}`,
+    );
     expect(technicalOf(await siteWords(page)), `${path} shows technical text`).toEqual([]);
   }
 });
