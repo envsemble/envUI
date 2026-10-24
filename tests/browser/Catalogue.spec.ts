@@ -302,8 +302,9 @@ test('a component page shows plain sections, equal cells and the parts of its an
       ).length,
     }));
   await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });
-  // The anatomy numbers each part of the live button beside the part it names, in the theme the
-  // reader has chosen alone, and keeps them there as the page narrows and the theme changes.
+  // The anatomy numbers each part of the live button beside the part it names, in the examples'
+  // theme, the one opposite the reader's, and keeps them there as the page narrows and the theme
+  // changes.
   // The variants figure names each variant with a callout on the start side of its item.
   const variantNames = page.locator('.docs-variants .docs-variant-label');
   await variantNames.first().scrollIntoViewIfNeeded();
@@ -328,11 +329,11 @@ test('a component page shows plain sections, equal cells and the parts of its an
         theme: stage.getAttribute('data-env-theme'),
       };
     });
-  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
   await chooseScheme(page, 'dark');
-  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
   await page.setViewportSize({ width: 420, height: 800 });
-  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
   await expect(page.locator('.docs-anatomy-legend > li')).toHaveCount(4);
 });
 
@@ -364,12 +365,14 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
   }
 });
 
-test('every dotted stage is the only frame of its figure', async ({ page }) => {
+test('every stage is the only frame of its figure', async ({ page }) => {
   // It visits every page on the figure template, whose examples load as each opens.
   test.slow();
   // One frame per figure: no stage sits inside another framed or filled box in the article, such
   // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
-  // frame, which holds its stage and its verdict bar, is the figure's one frame.
+  // frame, which holds its stage and its verdict bar, is the figure's one frame. A stage is in the
+  // examples' theme, so it differs from the page; a box filled with the page's color, such as the
+  // theme boundary around a specimen, is the page, not a frame.
   const pages = references.filter((reference) => reference.format === 'figures');
   expect(pages.length).toBeGreaterThan(0);
   await page.goto(`${catalogueUrl}/`);
@@ -379,9 +382,10 @@ test('every dotted stage is the only frame of its figure', async ({ page }) => {
     await expect(page.locator('.docs-loading')).toHaveCount(0);
     const framed = await page.evaluate(() => {
       const stages = document.querySelectorAll(
-        // A figure without a stage (stage="none") has no frame to count.
-        ".docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll):not([data-stage='none'], [data-stage='none'] *)",
+        '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll)',
       );
+      const figures = document.querySelector('.docs-figures')!;
+      const pageColor = getComputedStyle(figures.closest('.env-theme')!).backgroundColor;
       const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
       const found: string[] = [];
       for (const stage of stages) {
@@ -399,7 +403,9 @@ test('every dotted stage is the only frame of its figure', async ({ page }) => {
               !/none|hidden/.test(style.getPropertyValue(`border-${side.toLowerCase()}-style`)),
           );
           const filled =
-            (visible(style.backgroundColor) && style.backgroundColor !== canvas) ||
+            (visible(style.backgroundColor) &&
+              style.backgroundColor !== canvas &&
+              style.backgroundColor !== pageColor) ||
             style.backgroundImage !== 'none' ||
             style.boxShadow !== 'none';
           if (bordered || filled)
@@ -465,14 +471,14 @@ test('the hosted build opens every page of the Site and the Docs without network
 });
 
 test('single previews retain state when the theme changes', async ({ page }) => {
-  // The 0.x preview of text fields opens the TextField page, whose live examples follow the
-  // documentation's theme.
+  // The 0.x preview of text fields opens the TextField page, whose live examples take the theme
+  // opposite the documentation's.
   await page.goto(`${catalogueUrl}/components/input/preview`);
   const example = page.getByRole('group', { name: 'TextField example', exact: true });
   const projectName = example.getByRole('textbox', { name: 'Project name', exact: true });
   await projectName.fill('Winter release');
   await chooseScheme(page, 'dark');
-  await expect(example).toHaveAttribute('data-env-theme', 'dark');
+  await expect(example).toHaveAttribute('data-env-theme', 'light');
   await expect(projectName).toHaveValue('Winter release');
   for (const width of [1920, 1440, 960, 390]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -528,7 +534,7 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   const disclosure = page.getByRole('group', { name: 'Disclosure example', exact: true });
   await disclosure.locator('summary').click();
   await chooseScheme(page, 'dark');
-  await expect(disclosure).toHaveAttribute('data-env-theme', 'dark');
+  await expect(disclosure).toHaveAttribute('data-env-theme', 'light');
   await expect(disclosure.locator('details')).toHaveAttribute('open', '');
 });
 
@@ -932,13 +938,14 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await page.goto(`${catalogueUrl}/components/checkbox/preview`);
   const app = page.locator('.docs-app');
   const panes = page.locator('.docs-preview');
-  // The 0.x preview opens the Checkbox page, whose live example follows the theme with its state.
+  // The 0.x preview opens the Checkbox page, whose live example takes the opposite theme and keeps
+  // its state.
   const example = page.getByRole('group', { name: 'Checkbox example', exact: true });
   const archived = example.getByRole('checkbox', { name: 'Include archived projects' });
   await archived.check();
   await chooseScheme(page, 'dark');
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
-  await expect(example).toHaveAttribute('data-env-theme', 'dark');
+  await expect(example).toHaveAttribute('data-env-theme', 'light');
   await expect(example).toHaveCount(1);
   await expect(archived).toBeChecked();
   await expect(page.locator('.docs-theme-label')).toHaveCount(0);
