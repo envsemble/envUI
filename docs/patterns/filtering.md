@@ -3,7 +3,7 @@ title: Filtering and search
 summary: Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Work with lists and tables
 aliases:
   - filter
   - filters

@@ -3,7 +3,7 @@ title: Window frame
 summary: Frame an installed application's window that draws its own title bar, with the title bar across the top and the content scrolling below it.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Frame the application
 aliases:
   - WindowFrame
   - window frame

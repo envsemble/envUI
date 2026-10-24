@@ -3,7 +3,7 @@ title: Progressive disclosure
 summary: Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Work with lists and tables
 aliases:
   - progressive disclosure
   - advanced options

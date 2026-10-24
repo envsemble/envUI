@@ -3,7 +3,7 @@ title: CommandPalette
 summary: A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks.
 status: stable
 since: 0.5.0
-category: Feedback & overlays
+category: Actions
 aliases:
   - quick open
   - command menu

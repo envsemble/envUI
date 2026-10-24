@@ -3,7 +3,7 @@ title: Page
 summary: The invisible column a page's content sits in, centered at a readable width with the page gutter by window class, and the page's header at its top.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - Container
   - container

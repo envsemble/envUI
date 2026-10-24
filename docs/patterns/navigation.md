@@ -3,7 +3,7 @@ title: Navigation
 summary: Let people move between the places of an application, see where they are, and find their way back.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Frame the application
 aliases:
   - navigation
   - primary navigation

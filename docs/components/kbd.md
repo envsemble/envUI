@@ -3,7 +3,7 @@ title: Kbd
 summary: Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.
 status: stable
 since: 0.5.0
-category: Content & guidance
+category: Text & content
 aliases:
   - keyboard
   - keyboard key

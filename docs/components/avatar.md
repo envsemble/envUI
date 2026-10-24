@@ -3,7 +3,7 @@ title: Avatar
 summary: A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or piled in a group.
 status: stable
 since: 0.2.0
-category: Content & guidance
+category: Data display
 aliases:
   - profile picture
   - profile photo

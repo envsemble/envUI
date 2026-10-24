@@ -3,7 +3,7 @@ title: Tooltip
 summary: A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled.
 status: stable
 since: 0.2.0
-category: Feedback & overlays
+category: Overlays
 aliases:
   - hint
   - tip

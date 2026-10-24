@@ -3,7 +3,7 @@ title: Disclosure
 summary: A one-line summary that shows and hides optional details below it, on the native details element.
 status: stable
 since: 0.1.0
-category: Content & guidance
+category: Text & content
 aliases:
   - DisclosureNote
   - collapsible

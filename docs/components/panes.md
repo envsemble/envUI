@@ -3,7 +3,7 @@ title: Panes
 summary: Two panes side by side, after Material's pane patterns, that behave as a main pane with a supporting sheet or as a list and its detail when there is less room.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - SplitPane
   - ListDetail

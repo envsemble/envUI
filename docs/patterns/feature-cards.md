@@ -3,7 +3,7 @@ title: Feature cards
 summary: Introduce a feature with an icon, a heading, a sentence and the one action that starts it, in a Card.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Frame the application
 aliases:
   - FeatureCard
   - feature card

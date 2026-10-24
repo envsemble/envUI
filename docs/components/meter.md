@@ -3,7 +3,7 @@ title: Meter
 summary: A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar.
 status: stable
 since: 0.2.0
-category: Feedback & overlays
+category: Data display
 aliases:
   - gauge
   - usage bar

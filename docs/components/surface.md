@@ -3,7 +3,7 @@ title: Surface
 summary: A container with a background, an inset and corners, but no layout of its own.
 status: beta
 since: 0.1.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - panel
   - pane

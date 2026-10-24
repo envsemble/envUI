@@ -3,7 +3,7 @@ title: Badge
 summary: Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change.
 status: stable
 since: 0.5.0
-category: Content & guidance
+category: Data display
 aliases:
   - Counter
   - CounterBadge

@@ -3,7 +3,7 @@ title: Toast
 summary: Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people.
 status: stable
 since: 0.1.0
-category: Feedback & overlays
+category: Feedback
 aliases:
   - snackbar
   - notification

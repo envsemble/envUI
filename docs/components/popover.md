@@ -3,7 +3,7 @@ title: Popover
 summary: A floating panel beside its trigger for details or a small form; Esc or a press outside closes it.
 status: stable
 since: 0.5.0
-category: Feedback & overlays
+category: Overlays
 aliases:
   - popup
   - pop-up

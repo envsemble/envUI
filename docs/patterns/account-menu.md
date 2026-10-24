@@ -3,7 +3,7 @@ title: Account menu
 summary: Show who is signed in and give them their own things, such as account settings, the theme and Sign out, from their avatar.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Frame the application
 aliases:
   - AccountMenu
   - account menu

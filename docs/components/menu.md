@@ -3,7 +3,7 @@ title: Menu
 summary: Actions and destinations, opened from a trigger or a right click.
 status: stable
 since: 0.3.0
-category: Feedback & overlays
+category: Actions
 aliases:
   - dropdown menu
   - context menu

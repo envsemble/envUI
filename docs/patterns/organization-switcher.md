@@ -3,7 +3,7 @@ title: Organization switcher
 summary: Show the active organization and switch between the person's organizations, from a Menu at the top of the navigation or in the top bar.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Frame the application
 aliases:
   - OrganizationSwitcher
   - OrganizationMenu

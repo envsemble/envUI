@@ -3,7 +3,7 @@ title: Spinner
 summary: Work of unknown length in a small area, such as a panel that is updating, as a turning arc.
 status: stable
 since: 0.4.0
-category: Feedback & overlays
+category: Feedback
 aliases:
   - loader
   - loading indicator

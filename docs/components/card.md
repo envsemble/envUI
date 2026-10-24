@@ -3,7 +3,7 @@ title: Card
 summary: A rounded surface that groups content about one subject, as a content card with a title and actions, or one link or button.
 status: stable
 since: 0.1.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - tile
   - panel
