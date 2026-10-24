@@ -320,32 +320,6 @@ function Provides({ document, title, id }: { document: Document; title: string; 
   );
 }
 
-/**
- * What the application and envUI provide for each pattern, under the pattern's name, from the
- * Accessibility section of its page, in the Site's order: the pattern pages on the Site leave them
- * out, and patterns have no page of their own in the Docs.
- */
-export function PatternProvidesPage({ page }: { page: SitePage }) {
-  const patterns = pagesOf('site').flatMap((entry) =>
-    entry.kind === 'pattern' && entry.document ? [entry.document] : [],
-  );
-  return (
-    <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
-      <Column gap={8} className="docs-article">
-        {patterns.map((pattern) => (
-          <Provides
-            key={pattern.id}
-            document={pattern}
-            title={pattern.title}
-            id={`pattern-${pattern.id}`}
-          />
-        ))}
-      </Column>
-    </>
-  );
-}
-
 /** Markdown with its `####` and deeper headings raised a level, outside code fences. */
 function raisedHeadings(markdown: string) {
   let fence: string | undefined;

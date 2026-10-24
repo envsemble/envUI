@@ -42,8 +42,7 @@ export type PageKind =
   | 'skills'
   | 'tokens'
   | 'foundation-guide'
-  | 'api'
-  | 'pattern-provides';
+  | 'api';
 
 /** One page of the Site or the Docs, at the route `path`. */
 export interface SitePage {
@@ -278,15 +277,6 @@ const docsPages: SitePage[] = [
         } satisfies SitePage,
       ]
     : []),
-  {
-    path: 'docs/patterns',
-    title: 'Patterns: what you provide',
-    area: 'docs',
-    section: 'Guides',
-    kind: 'pattern-provides',
-    summary:
-      'What the application provides for each pattern to be accessible, and what envUI provides for it, from the pattern pages.',
-  },
   ...foundations.map(
     (reference): SitePage => ({
       path: foundationGuideRoute(reference.id),
@@ -453,6 +443,9 @@ export function normalizeRoute(route: string): string {
   // A destination's own address opens its first page.
   if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
   if (originalPath === 'patterns') return `${sectionHome('Patterns').path}${rest()}`;
+  // What every pattern needs was one page in the Docs; each pattern's guide says it now.
+  if (originalPath === 'docs/patterns')
+    return `${patternGuideRoute(sectionHome('Patterns').document!.id)}${rest()}`;
   if (originalPath === 'foundations/tokens') return `docs/tokens${rest()}`;
   // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
   if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest()}`;
