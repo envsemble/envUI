@@ -1,16 +1,16 @@
 {
+  "components/breadcrumbs": {
+    "light": {
+      "landmark-unique": {
+        "article :: nav.env-breadcrumbs": 1
+      }
+    }
+  },
   "components/drawer": {
     "light": {
       "landmark-unique": {
         "article :: nav.env-bar": 1,
         "article :: nav.env-drawer": 1
-      }
-    }
-  },
-  "components/breadcrumbs": {
-    "light": {
-      "landmark-unique": {
-        "article :: nav.env-breadcrumbs": 1
       }
     }
   },
@@ -89,7 +89,7 @@
   "patterns/app-frame": {
     "light": {
       "landmark-unique": {
-        "article :: nav.env-bar": 1
+        "article :: nav.env-rail": 1
       }
     }
   }
