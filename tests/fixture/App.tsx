@@ -61,6 +61,7 @@ import { TimePickersFixture } from './TimePickers.js';
 import { MonthPickersFixture } from './MonthPickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { SheetsFixture } from './Sheets.js';
+import { ResizableDrawersFixture } from './ResizableDrawers.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
@@ -111,6 +112,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'document-tabs-rerender': DocumentTabsRerenderFixture,
   pagers: PagersFixture,
   sheets: SheetsFixture,
+  'resizable-drawers': ResizableDrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
   'page-headers': PageHeadersFixture,

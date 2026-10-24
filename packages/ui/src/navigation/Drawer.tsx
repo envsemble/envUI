@@ -1,8 +1,10 @@
 'use client';
 
-import { useId, type ComponentPropsWithRef, type ReactNode } from 'react';
+import { useId, type ComponentPropsWithRef, type CSSProperties, type ReactNode } from 'react';
 import { Column } from '../foundations/Layout.js';
 import { classNames } from '../internal/classNames.js';
+import { ResizeHandle } from '../internal/ResizeHandle.js';
+import { containerWidth, useResizableWidth } from '../internal/useResizableWidth.js';
 import { inSkeleton } from '../foundations/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import {
@@ -51,6 +53,46 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
    * @default messages.navigation.label, Main
    */
   'aria-label'?: string;
+  /**
+   * Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer
+   * drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns
+   * to `defaultWidth`. Leave it out of a drawer in a sheet of a narrow window.
+   * @default false
+   */
+  resizable?: boolean;
+  /**
+   * The drawer's width in rem while `resizable`, for a drawer the application controls with
+   * onWidthChange, such as a width it keeps for the next visit.
+   */
+  width?: number;
+  /**
+   * The width in rem a `resizable` drawer starts at until people resize it, and that a double click
+   * on the handle returns it to.
+   * @default 17.5
+   */
+  defaultWidth?: number;
+  /**
+   * Receives each new width of a `resizable` drawer, in rem: while dragging with committed false,
+   * and with committed true as a drag ends, a key moves the handle or a double click resets it.
+   * Store the committed width to keep it, and pass it back as `width`.
+   */
+  onWidthChange?: (width: number, details: { committed: boolean }) => void;
+  /**
+   * The smallest width of a `resizable` drawer, in rem.
+   * @default 15
+   */
+  minWidth?: number;
+  /**
+   * The largest width of a `resizable` drawer, in rem. It never takes more than half its
+   * container, such as the Scaffold, or of the window.
+   * @default 30
+   */
+  maxWidth?: number;
+  /**
+   * The resize handle's name.
+   * @default 'Resize navigation', or EnvUIProvider's messages.navigation.resize
+   */
+  resizeLabel?: string;
 }
 
 /** A group's heading and its destinations, a list of its own named by the heading. */
@@ -81,11 +123,15 @@ function Section({
   );
 }
 
+/** The widest a resizable drawer can be, in rem: half its container's width. */
+const roomFor = (handle: HTMLElement) => containerWidth(handle.parentElement ?? handle) / 2;
+
 /**
  * The navigation drawer for expanded and larger windows: a column at the window's start with every
  * destination as a row of icon, label and count, under the headings of their groups. A `nav`
  * landmark; the current destination reports aria-current="page", and every destination is a tab
- * stop. Its list scrolls where the drawer is shorter than its destinations.
+ * stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`,
+ * people resize it by its end edge.
  */
 export function Drawer({
   destinations,
@@ -95,11 +141,29 @@ export function Drawer({
   background = 'default',
   'aria-label': label,
   'aria-labelledby': labelledBy,
+  resizable = false,
+  width: controlledWidth,
+  defaultWidth = 17.5,
+  onWidthChange,
+  minWidth = 15,
+  maxWidth = 30,
+  resizeLabel,
   skeleton = false,
   className,
+  style,
   ...props
 }: DrawerProps) {
   const messages = useNavigationMessages();
+  const resize = useResizableWidth({
+    width: controlledWidth,
+    defaultWidth,
+    minWidth,
+    maxWidth,
+    onWidthChange,
+    room: roomFor,
+    reverse: false,
+    widthText: (width) => messages.width({ width }),
+  });
   return (
     <Column
       render={<nav />}
@@ -108,7 +172,18 @@ export function Drawer({
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-drawer', className)}
+      style={
+        resizable
+          ? ({
+              '--env-drawer-width': `${resize.width}rem`,
+              '--env-drawer-min-width': `${resize.handleProps.min}rem`,
+              '--env-drawer-max-width': `${resize.handleProps.max}rem`,
+              ...style,
+            } as CSSProperties)
+          : style
+      }
       data-background={backgroundAttribute(background)}
+      data-resizable={resizable ? '' : undefined}
       align="stretch"
       gap={3}
     >
@@ -144,6 +219,13 @@ export function Drawer({
             </Column>
           )}
         </>,
+      )}
+      {resizable && (
+        <ResizeHandle
+          {...resize.handleProps}
+          label={resizeLabel ?? messages.resize}
+          className="env-drawer-resize-handle"
+        />
       )}
     </Column>
   );

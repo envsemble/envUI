@@ -34,6 +34,8 @@ import {
   OverlayTheme,
 } from './internal/DialogParts.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
+import { ResizeHandle } from '../internal/ResizeHandle.js';
+import { useResizableWidth, widthInRem } from '../internal/useResizableWidth.js';
 import {
   containedModal,
   keepsOpen,
@@ -97,10 +99,46 @@ export interface SheetProps
    * A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy
    * panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md
    * takes the whole width of a compact window, lg of a compact or medium one, where the page
-   * beside it would be a sliver. A bottom sheet ignores it.
+   * beside it would be a sliver. A number is a width in rem: with `resizable`, the width the
+   * application controls with onWidthChange. A bottom sheet ignores it.
    * @default 'md'
    */
-  width?: 'md' | 'lg' | (string & {});
+  width?: 'md' | 'lg' | number | (string & {});
+  /**
+   * Lets people resize a side sheet by its inner edge, the one toward the page: a handle there that
+   * the pointer drags and the arrow keys move, between `minWidth` and `maxWidth` and never wider
+   * than the window, which a double click returns to `defaultWidth`. The sheet is then as wide as
+   * it at every window width. A bottom sheet ignores it.
+   * @default false
+   */
+  resizable?: boolean;
+  /**
+   * The width in rem a `resizable` side sheet starts at until people resize it, and that a double
+   * click on the handle returns it to.
+   * @default 24, or 44 where width is lg
+   */
+  defaultWidth?: number;
+  /**
+   * Receives each new width of a `resizable` side sheet, in rem: while dragging with committed
+   * false, and with committed true as a drag ends, a key moves the handle or a double click resets
+   * it. Store the committed width to keep it, and pass it back as `width`.
+   */
+  onWidthChange?: (width: number, details: { committed: boolean }) => void;
+  /**
+   * The smallest width of a `resizable` side sheet, in rem.
+   * @default 16
+   */
+  minWidth?: number;
+  /**
+   * The largest width of a `resizable` side sheet, in rem; it never takes more than the window.
+   * @default 60
+   */
+  maxWidth?: number;
+  /**
+   * The resize handle's name.
+   * @default 'Resize', or EnvUIProvider's messages.dialog.resize
+   */
+  resizeLabel?: string;
   /**
    * true traps focus in the sheet over a backdrop, hides the page from assistive technology,
    * blocks presses on it and locks its scroll. false leaves the page usable beside the sheet, for
@@ -146,12 +184,21 @@ function readDirection(source: Element | null): Direction {
   return getComputedStyle(element).direction === 'rtl' ? 'rtl' : 'ltr';
 }
 
+/** Base UI's mark on an element that no swipe starts from: a drag on the handle resizes. */
+const noSwipe = { 'data-base-ui-swipe-ignore': '' };
+
+/** The widest a resizable sheet can be, in rem: its viewport's width, the window's. */
+const roomFor = (handle: HTMLElement) => {
+  const viewport = handle.closest('.env-sheet-viewport');
+  return viewport ? widthInRem(viewport) : Infinity;
+};
+
 /**
  * A panel that slides in over the page from an edge of the window, for filters, details, an
  * inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a
  * modal by default, which traps focus and returns it on close, or beside the page with modal
  * false. A side sheet takes the whole width of a compact window, and a swipe toward its edge
- * closes it. className, style, ref and data attributes go to the sheet's surface.
+ * closes it; with `resizable`, people resize it by its inner edge. className, style, ref and data attributes go to the sheet's surface.
  */
 export function Sheet({
   open,
@@ -167,6 +214,12 @@ export function Sheet({
   closeButton = true,
   closeLabel: ownCloseLabel,
   width = 'md',
+  resizable: resizableProp = false,
+  defaultWidth,
+  onWidthChange,
+  minWidth = 16,
+  maxWidth = 60,
+  resizeLabel,
   modal = true,
   disablePointerDismissal = false,
   initialFocus,
@@ -210,6 +263,27 @@ export function Sheet({
   const towardEnd = (side === 'end') === (direction === 'ltr');
   const swipeDirection = side === 'bottom' ? 'down' : towardEnd ? 'right' : 'left';
   const named = width === 'md' || width === 'lg';
+  // A bottom sheet is as tall as its content and as wide as the window, so only a side sheet
+  // resizes: its width in rem, the application's where width is a number.
+  const resizable = resizableProp && side !== 'bottom';
+  const resize = useResizableWidth({
+    width: typeof width === 'number' ? width : undefined,
+    defaultWidth: defaultWidth ?? (width === 'lg' ? 44 : 24),
+    minWidth,
+    maxWidth,
+    onWidthChange,
+    room: roomFor,
+    // A sheet at the end grows as its inner edge, its start, moves toward the start.
+    reverse: side === 'end',
+    widthText: (value) => messages.width({ width: value }),
+  });
+  const customWidth = resizable
+    ? `${resize.width}rem`
+    : typeof width === 'number'
+      ? `${width}rem`
+      : named
+        ? undefined
+        : width;
   const portal = usePortalContainer();
   return (
     <BaseDrawer.Root
@@ -238,9 +312,15 @@ export function Sheet({
                 {...popupProps}
                 ref={attachPopup}
                 className={classNames('env-sheet-popup', className)}
-                style={{ ...(!named && { '--env-sheet-width': width }), ...style } as CSSProperties}
+                style={
+                  {
+                    ...(customWidth !== undefined && { '--env-sheet-width': customWidth }),
+                    ...style,
+                  } as CSSProperties
+                }
                 data-side={side}
                 data-width={named ? width : 'custom'}
+                data-resizable={resizable ? '' : undefined}
                 aria-label={title == null ? label : undefined}
                 aria-busy={pending || skeleton || undefined}
                 data-env-skeleton={skeleton ? '' : undefined}
@@ -268,6 +348,17 @@ export function Sheet({
                   />
                   {children}
                   {actions != null && <DialogActions>{actions}</DialogActions>}
+                  {resizable && (
+                    // On the content, which runs the sheet's full height and scrolls with it, so
+                    // the handle stays as tall as the sheet; the handle reaches out to the edge.
+                    // A drag on it resizes rather than swipes the sheet closed.
+                    <ResizeHandle
+                      {...resize.handleProps}
+                      label={resizeLabel ?? messages.resize}
+                      className="env-sheet-resize-handle"
+                      {...noSwipe}
+                    />
+                  )}
                 </DialogContent>
               </BaseDrawer.Popup>
             </BaseDrawer.Viewport>

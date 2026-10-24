@@ -1,7 +1,9 @@
 /* ResizeHandle: a window splitter's handle. The owner places it on the edge it moves; a line shows
-   on hover, after a moment, at once on keyboard focus and while dragging. Two hooks, set on the
-   owner's element: --env-resize-handle-size, its thickness, also under a coarse pointer, and
-   --env-resize-handle-line: none, which leaves the line out for an owner that draws its own grip. */
+   on hover, after a moment, at once on keyboard focus and while dragging. Three hooks, set on the
+   owner's element: --env-resize-handle-size, its thickness, also under a coarse pointer;
+   --env-resize-handle-line: none, which leaves the line out for an owner that draws its own grip;
+   and --env-resize-handle-line-start, where the line sits across an inline handle, from its start,
+   for a handle on a region's edge whose line is on that edge rather than in the middle. */
 .env-resize-handle {
   position: relative;
   flex: 0 0 auto;
@@ -30,7 +32,10 @@
 }
 .env-resize-handle[data-axis='inline']::after {
   inset-block: 0;
-  inset-inline-start: calc(50% - var(--env-control-border-width));
+  inset-inline-start: var(
+    --env-resize-handle-line-start,
+    calc(50% - var(--env-control-border-width))
+  );
   inline-size: calc(2 * var(--env-control-border-width));
 }
 .env-resize-handle[data-axis='block']::after {

@@ -41,7 +41,9 @@ body {
 /* The navigation at the start of a wide window: the Site's rail beside the drawer of the chosen
    destination's pages, or the Docs' drawer, flush on the navigation's background with no line
    between them, as tall as the window. The drawer keeps its top and foot in view and scrolls its
-   list. In the sheet of a narrower window they take the sheet's width and color. */
+   list; the reader resizes it by its end edge, and the catalogue keeps the width it starts at and
+   its bounds (DocumentationNavigation.tsx). In the sheet of a narrower window they take the
+   sheet's width and color. */
 .docs-navigation {
   display: flex;
   align-items: stretch;
@@ -56,7 +58,6 @@ body {
   overflow-y: auto;
 }
 .docs-sidebar {
-  inline-size: 15rem;
   block-size: 100%;
   padding: var(--env-space-4) var(--env-space-3);
 }
@@ -82,12 +83,6 @@ body {
    top of the drawer. */
 .docs-rail .env-rail-header {
   margin-block-end: var(--env-space-2);
-}
-/* The Docs' drawer, which has no rail, is wide enough for the wordmark and search on its first
-   row. */
-.docs-docs-drawer {
-  --env-drawer-max-width: 21rem;
-  inline-size: 21rem;
 }
 .docs-drawer-top {
   display: flex;
