@@ -26,7 +26,18 @@ const narrow = `| Setting | Value |
 | \`notificationDeliveryScheduleOverride\` | on |
 `;
 
-/** Markdown tables, tasks and inline code in a cell, mounted with ?fixture=markdown-tables. */
+const lists = `- Confirm the pricing
+- Review the plan
+  - Keep the notes
+
+1. Freeze the copy
+2. Publish the notes
+   1. Draft them
+`;
+
+/**
+ * Markdown tables, tasks, inline code in a cell and lists, mounted with ?fixture=markdown-tables.
+ */
 export function MarkdownFixture() {
   return (
     <Column gap={6}>
@@ -47,6 +58,9 @@ export function MarkdownFixture() {
           <Markdown>{document}</Markdown>
         </div>
       </EnvUIProvider>
+      <div data-testid="lists">
+        <Markdown>{lists}</Markdown>
+      </div>
       {/* A narrow column, where a cell's code would otherwise break inside its word. */}
       <div data-testid="narrow" style={{ inlineSize: '12rem' }}>
         <Markdown>{narrow}</Markdown>

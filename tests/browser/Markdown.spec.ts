@@ -41,6 +41,41 @@ test('a rule is a hairline across the whole text column', async ({ page }) => {
   expect(own).toBeCloseTo(column, 0);
 });
 
+test('list markers are tinted circles on the first line, quieter one level in', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const markers = await page
+    .getByTestId('lists')
+    .locator('li')
+    .evaluateAll((items) =>
+      items.map((item) => {
+        const marker = getComputedStyle(item, '::before');
+        const line = parseFloat(getComputedStyle(item).lineHeight);
+        // The circle's middle, from its offset in the item, against the middle of the first line.
+        const middle = parseFloat(marker.top) + parseFloat(marker.height) / 2;
+        return {
+          content: marker.content,
+          filled: marker.backgroundColor !== 'rgba(0, 0, 0, 0)',
+          centred: Math.abs(middle - line / 2) < 0.5,
+        };
+      }),
+    );
+  expect(markers).toEqual([
+    { content: '""', filled: true, centred: true },
+    { content: '""', filled: true, centred: true },
+    { content: '""', filled: false, centred: true },
+    { content: 'counter(list-item)', filled: true, centred: true },
+    { content: 'counter(list-item)', filled: true, centred: true },
+    { content: 'counter(list-item, lower-alpha)', filled: false, centred: true },
+  ]);
+  // Task lists keep their checkboxes and draw no marker.
+  await expect(page.getByTestId('english').locator('.task-list-item').first()).toHaveCSS(
+    'padding-inline-start',
+    '0px',
+  );
+});
+
 test(
   'inline code in a table cell breaks only where it would overflow, not inside its word',
   { tag: '@engines' },

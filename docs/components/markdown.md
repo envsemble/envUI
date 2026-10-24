@@ -72,7 +72,7 @@ MarkdownEditor is a textarea with a formatting toolbar, undo and redo, and a Pre
 
 CommonMark with tables, strikethrough, task lists, automatic links and footnotes. Raw HTML is ignored, except keys written as `<kbd>`, which render as Kbd.
 
-Lists take envUI's own markers rather than the browser's: a small muted dot, a ring for a nested item, and muted numbers, each beside its item's first line.
+Lists take envUI's own markers rather than the browser's: a small tinted circle beside each item's first line, with a dot or the item's number in it, and room between items. A nested list's markers are quieter, without the circle's fill.
 
 ## Variants
 

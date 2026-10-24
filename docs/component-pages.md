@@ -106,7 +106,7 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 
 - **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a titled block between figures that should not share a row.
 - **A subsection beside its figure**: a `###` subsection of text, with no table or list at its start, followed by exactly one figure, sits beside that figure on a wide page, such as each kind of card under Variants.
-- **When to use** starts with the frontmatter's `useWhen`, a short plain list under Use it when, and on a pattern page with what it is built from. Write what follows it, not the same points again.
+- **When to use** starts with the frontmatter's `useWhen`, a short plain list under Use it when, and on a pattern page with what it is built from. Write what follows it, not the same points again. An item that ends with a component's name in parentheses, such as "(IconButton)", shows the name after a muted dot, linked to its page where that is another page. The catalogue shows the lists of component, pattern and foundation pages as check lists.
 - **Related** ends the page, from the frontmatter's `avoidWhen`: a tile for each component or page an entry names, its lead example small and inert on its canvas, with its name and the entry's text below. The tiles render once the section nears the viewport. A page with an open anatomy figure, such as Dialog or Menu, is shown by that figure instead; a page without an example shows a page icon on the same stage. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three.
 
 ### Layout: equal cells, spacing with rhythm
