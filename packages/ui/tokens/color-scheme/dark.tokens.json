@@ -703,54 +703,54 @@
     "avatar": {
       "bg": {
         "$root": {
-          "$value": "{palette.blue-muted.20}"
+          "$value": "{palette.sky.15}"
         },
         "teal": {
-          "$value": "{palette.teal-muted.20}"
+          "$value": "{palette.seafoam.15}"
         },
         "green": {
-          "$value": "{palette.green-muted.20}"
+          "$value": "{palette.sage.15}"
         },
         "amber": {
-          "$value": "{palette.amber-muted.20}"
+          "$value": "{palette.butter.15}"
         },
         "red": {
-          "$value": "{palette.red-muted.20}"
+          "$value": "{palette.blush.15}"
         },
         "violet": {
-          "$value": "{palette.violet-muted.20}"
+          "$value": "{palette.periwinkle.15}"
         },
         "purple": {
-          "$value": "{palette.purple-muted.20}"
+          "$value": "{palette.orchid.15}"
         },
         "slate": {
-          "$value": "{palette.neutral.20}"
+          "$value": "{palette.oat.15}"
         }
       },
       "fg": {
         "$root": {
-          "$value": "{palette.blue-muted.70}"
+          "$value": "{palette.sky.65}"
         },
         "teal": {
-          "$value": "{palette.teal-muted.70}"
+          "$value": "{palette.seafoam.65}"
         },
         "green": {
-          "$value": "{palette.green-muted.70}"
+          "$value": "{palette.sage.65}"
         },
         "amber": {
-          "$value": "{palette.amber-muted.70}"
+          "$value": "{palette.butter.65}"
         },
         "red": {
-          "$value": "{palette.red-muted.70}"
+          "$value": "{palette.blush.65}"
         },
         "violet": {
-          "$value": "{palette.violet-muted.70}"
+          "$value": "{palette.periwinkle.65}"
         },
         "purple": {
-          "$value": "{palette.purple-muted.70}"
+          "$value": "{palette.orchid.65}"
         },
         "slate": {
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.oat.65}"
         }
       }
     }

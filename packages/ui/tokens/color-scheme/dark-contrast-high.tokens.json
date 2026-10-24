@@ -600,54 +600,54 @@
       "avatar": {
         "bg": {
           "$root": {
-            "$value": "{palette.blue-muted.15}"
+            "$value": "{palette.sky.15}"
           },
           "teal": {
-            "$value": "{palette.teal-muted.15}"
+            "$value": "{palette.seafoam.15}"
           },
           "green": {
-            "$value": "{palette.green-muted.15}"
+            "$value": "{palette.sage.15}"
           },
           "amber": {
-            "$value": "{palette.amber-muted.15}"
+            "$value": "{palette.butter.15}"
           },
           "red": {
-            "$value": "{palette.red-muted.15}"
+            "$value": "{palette.blush.15}"
           },
           "violet": {
-            "$value": "{palette.violet-muted.15}"
+            "$value": "{palette.periwinkle.15}"
           },
           "purple": {
-            "$value": "{palette.purple-muted.15}"
+            "$value": "{palette.orchid.15}"
           },
           "slate": {
-            "$value": "{palette.neutral.15}"
+            "$value": "{palette.oat.15}"
           }
         },
         "fg": {
           "$root": {
-            "$value": "{palette.blue-muted.86}"
+            "$value": "{palette.sky.86}"
           },
           "teal": {
-            "$value": "{palette.teal-muted.86}"
+            "$value": "{palette.seafoam.86}"
           },
           "green": {
-            "$value": "{palette.green-muted.86}"
+            "$value": "{palette.sage.86}"
           },
           "amber": {
-            "$value": "{palette.amber-muted.86}"
+            "$value": "{palette.butter.86}"
           },
           "red": {
-            "$value": "{palette.red-muted.86}"
+            "$value": "{palette.blush.86}"
           },
           "violet": {
-            "$value": "{palette.violet-muted.86}"
+            "$value": "{palette.periwinkle.86}"
           },
           "purple": {
-            "$value": "{palette.purple-muted.86}"
+            "$value": "{palette.orchid.86}"
           },
           "slate": {
-            "$value": "{palette.neutral.86}"
+            "$value": "{palette.oat.86}"
           }
         }
       }

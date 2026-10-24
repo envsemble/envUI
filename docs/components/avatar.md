@@ -101,7 +101,7 @@ Without a picture, or while it loads or after it fails, an avatar shows the defa
 
 ### Colors
 
-The name chooses one of eight colors, the same on every page; `hue` sets another, such as an organization's own. Each is a tonal pair: a soft pastel fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme. The colors only tell people apart.
+The name chooses one of eight colors, the same on every page; `hue` sets another, such as an organization's own. Each is a tonal pair from one pastel palette, powder blue, seafoam, sage, butter, blush, periwinkle, orchid and a warm oat: a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme. The `hue` values keep their names, `blue` to `slate`, for the colors they hold. The colors only tell people apart.
 
 <!-- specimen: Hues -->
 
@@ -168,7 +168,7 @@ Not shown: a picture, `env-avatar-image`; the check of a chosen avatar, `env-ava
 
 ## Changelog
 
-- **1.0.0-prerelease.2**: The eight colors are tonal pairs: a soft pastel fill with initials and a figure in a deep shade of the same hue, rather than white; slate is the neutral blue-gray. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover and spreads along an arch under the pointer or with focus inside, showing the count of the rest.
+- **1.0.0-prerelease.2**: The eight colors are a new pastel palette of tonal pairs: a soft fill with initials and a figure in a deep shade of the same hue, rather than white. The `hue` names stay: `blue` is powder blue, `teal` seafoam, `green` sage, `amber` butter, `red` blush, `violet` periwinkle, `purple` orchid and `slate` a warm oat. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover and spreads along an arch under the pointer or with focus inside, showing the count of the rest.
 - **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits, and it rings its avatars through the `--env-avatar-ring` hook. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
 - **0.6.0**: AvatarGroup.
 - **0.4.0**: AvatarButton; initials use the avatar blue of the default person picture.
