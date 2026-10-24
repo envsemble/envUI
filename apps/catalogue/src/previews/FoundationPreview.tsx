@@ -6,7 +6,6 @@ import { ResponsivePreview } from './foundations/Responsive';
 import { Suspense, useState } from 'react';
 import { AccessibilityPreview } from './foundations/Accessibility';
 import { CompositionPreview } from './foundations/Composition';
-import { ContentPreview } from './foundations/Content';
 import { ExampleStage } from './Example';
 import { Preview } from './Preview';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
@@ -60,8 +59,6 @@ function FoundationTopic({ id }: FoundationPreviewProps) {
       return <CompositionPreview />;
     case 'accessibility':
       return <AccessibilityPreview />;
-    case 'content':
-      return <ContentPreview />;
     default:
       return null;
   }

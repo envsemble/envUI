@@ -289,7 +289,7 @@ An example is a file in `apps/catalogue/src/examples/<page>/<Name>.tsx`: a small
 
 - Import only what an application can: `react`, `@envsemble/envui`, its `/content`, `/diff`, `/rich-text` and `/color` entries, and icons from `@envsemble/envui/icons/<Name>`.
 - No catalogue classes (`docs-*`) or helpers. Lay out with envUI's components; where envUI has no layout for it yet, a short inline style with a comment is fine.
-- Use neutral sample data, such as Alex Morgan, Sam Lee, Priya Shah, Northwind or example.com, and never a product name.
+- Use the neutral [sample data](#sample-data) below, and never a product name.
 - Keep state inside the example, and stand in for slow work with a timer.
 - Keep it small: the stage centres the example at its own width. Give the root a width where it should be wider than its content, such as `inlineSize: '100%'` on a grid of cards. A root that is or holds a size container, such as a feature card or a page header, fills the stage, since centred it would have no width.
 - Name the file after what it shows, such as `ConfirmInPlace.tsx`.
@@ -308,6 +308,18 @@ ConfirmButton names the consequence on the first press and acts on the second.
 ````
 
 The fence stays empty in `docs/`: the catalogue renders the file live, with its source and a copy button, and the packaged page gets the file's source in the fence, so agents read it inline. On the section template the Overview may show one example without a heading. Every example file, do, don't and anatomy figures included, is referenced exactly once, which `npm test` checks.
+
+### Sample data
+
+Examples, screenshots and tests use one neutral set of sample data, so they look like a real application without naming one.
+
+- **People:** Alex Morgan, Sam Lee, Priya Shah, Jordan Kim, Maria Garcia and Chen Wei, with email addresses at `example.com`, such as `alex.morgan@example.com`.
+- **Organisation and application:** Northwind.
+- **Things:** projects, such as Website refresh, Quarterly report, Onboarding guide, Mobile release, Data migration and Annual review; documents; tasks; teams.
+- **Dates:** absolute dates in February and March 2026, so relative times read naturally.
+- **No product names and no logos.** envUI never names the products that use it, in code, documentation, comments or sample data. Describe a behaviour instead of naming where it comes from.
+
+Its words follow the [writing guide](writing.md), as an application's would.
 
 ## Specimens
 
