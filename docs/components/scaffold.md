@@ -39,7 +39,7 @@ components:
 
 ## Overview
 
-Scaffold is the invisible structure of an application's screen: a top bar, the navigation and the body. It never paints; the components in its regions do. It shows the navigation form that fits its own width, the [Bar](bar.md), the [Rail](rail.md) or the [Drawer](drawer.md), so give it all three with the same destinations.
+The components in Scaffold's regions paint, never Scaffold itself. Give it the [Bar](bar.md), the [Rail](rail.md) and the [Drawer](drawer.md) with the same destinations, and it shows the one that fits its width.
 
 ```tsx example=NavigationForms stage=shaded
 
@@ -102,7 +102,7 @@ By default the document scrolls, as on any website: the top bar, the bar and the
 
 ```
 
-- One Scaffold at the root, kept mounted as the pages change; a part of a page with panes is [Panes](panes.md).
+- Keep the Scaffold mounted as the pages change.
 - Pass the forms and let the Scaffold choose; don't pick a form in script from the window's width.
 
 ## Anatomy
@@ -120,7 +120,7 @@ Not shown: the skip links, `env-scaffold-skip-links`, and the bar's and drawer's
 
 ## Adapting to width
 
-The Scaffold queries its own width, in CSS: the bar on a compact width, the rail on a medium one and the drawer from expanded. Focus in a form that hides moves to the form that shows.
+The Scaffold queries its own width, in CSS. Focus in a form that hides moves to the form that shows.
 
 ```tsx example=FormsByWidth stage=shaded widths="24 44 60"
 

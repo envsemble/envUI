@@ -311,17 +311,25 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
 
 /**
  * Related, the last section of a component or pattern page: a tile for each component or page its
- * frontmatter names, with when to pick it instead.
+ * frontmatter names, with when to pick it instead. The page turns from its subject to others here,
+ * so the section sits on a band, a fill of its own across the whole content pane.
  */
 export function Related({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
   const alternatives = alternativesOf(metadata);
   if (!alternatives.length) return null;
   return (
-    <Column render={<section />} gap={4} className="docs-related" data-section="related">
-      <Text render={<h2 />} variant="headline" id="related">
-        Related
-      </Text>
-      <Tiles alternatives={alternatives} path={path} />
-    </Column>
+    <div className="docs-band">
+      <Column
+        render={<section />}
+        gap={4}
+        className="docs-band-content docs-related"
+        data-section="related"
+      >
+        <Text render={<h2 />} variant="headline" id="related">
+          Related
+        </Text>
+        <Tiles alternatives={alternatives} path={path} />
+      </Column>
+    </div>
   );
 }

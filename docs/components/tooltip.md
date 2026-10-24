@@ -33,7 +33,7 @@ components:
 
 ## Overview
 
-A tooltip is a short label beside a control, shown while the pointer rests on it or it has keyboard focus.
+Tooltip wraps the control it describes, and `content` holds its text.
 
 ```tsx example=IconActions
 
@@ -110,7 +110,7 @@ Not shown: the wrapper that takes the pointer for a disabled control, `env-toolt
 
 ### Colors
 
-`--env-tooltip-container`, `--env-tooltip-content` and `--env-tooltip-outline` set the colors of one Tooltip, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-tooltip-container`, `--env-tooltip-content` and `--env-tooltip-outline` set the colors of one Tooltip, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Accessibility
 

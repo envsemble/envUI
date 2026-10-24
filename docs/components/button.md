@@ -47,8 +47,6 @@ components:
 
 ## Overview
 
-A button starts an action. With `href` it is a native link that looks like a button.
-
 ```tsx example=CreateProject
 
 ```
@@ -196,7 +194,7 @@ Not shown: the spinner, `env-button-spinner`, a ButtonGroup's `env-button-group`
 
 ### Colors
 
-`--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` set the colors of one Button or IconButton, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` set the colors of one Button or IconButton, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Adapting to width
 

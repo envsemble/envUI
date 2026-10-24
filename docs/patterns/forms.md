@@ -46,7 +46,7 @@ composes:
 
 ## Overview
 
-A form asks for information and gets it right on the first submit: one column of labelled fields, the primary action after the last, and errors that say how to fix each problem, with focus taken to where people need to act.
+The aim is a form people get right on the first submit.
 
 ```tsx example=CreateProject
 
@@ -104,7 +104,7 @@ One choice of several is a [RadioGroup](../components/radio.md); several are Che
 
 - Name the submit button after what it does, "Create project", never "Submit".
 - Mark the optional fields, "(optional)", rather than the required ones.
-- Errors say how to fix the value, "Enter an email address like name@example.com", the same in the field and the summary ([error messages](../foundations/content.md#error-messages)).
+- Errors say how to fix the value, "Enter an email address like name@example.com", the same in the field and the summary ([content](../foundations/content.md)).
 
 ## Anatomy
 

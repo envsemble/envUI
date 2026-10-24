@@ -42,7 +42,7 @@ composes:
 
 ## Overview
 
-An empty state says why a region has nothing to show and what people can do, in place of the list or the table, under the heading and toolbar that stay: an icon, a heading, a sentence and the one action, in a [Column](../components/column.md) of [Text](../foundations/typography.md) and a [Button](../components/button.md). Until something exists, it holds the create action; then the page's own header action takes over.
+The state takes the place of the list or the table, under the heading and toolbar that stay: an icon, a heading, a sentence and the one action, in a [Column](../components/column.md) of [Text](../foundations/typography.md) and a [Button](../components/button.md). Until something exists, it holds the create action; then the page's own header action takes over.
 
 ```tsx example=FirstUse
 
@@ -60,7 +60,7 @@ An empty state says why a region has nothing to show and what people can do, in 
 
 ### No results
 
-The search and filters stay, a count in a status says how many match, and Clear filters resets them and returns focus to the search.
+The search and filters stay, a count in a status says how many match, and Clear filters resets them.
 
 ```tsx example=NoResults
 
@@ -68,7 +68,7 @@ The search and filters stay, a count in a status says how many match, and Clear 
 
 ### Load failed
 
-A failure is an [Alert](../components/alert.md) with `tone="danger"` and `announce`, so it is announced, in the room the table takes; it says the documents are safe and offers Try again.
+A failure is an [Alert](../components/alert.md) with `tone="danger"` and `announce`, in the room the table takes; it says the documents are safe.
 
 ```tsx example=LoadFailed
 
@@ -84,7 +84,7 @@ The state says who to ask, and Request access sends the request.
 
 ### All done
 
-When the last review is approved, the queue says so plainly, with what comes next and no action.
+When the last review is approved, the queue says so, and what comes next.
 
 ```tsx example=AllDone
 
@@ -100,12 +100,11 @@ When the last review is approved, the queue says so plainly, with what comes nex
 
 ```
 
-- Show placeholders while content loads, and the empty state only once the answer is "nothing", as in [Loading](loading.md).
 - Centred, with a 2.5 rem icon, where the state takes a region's place and the region gives it height; at the start, with a 1.5 rem icon, in a small card or under a list's toolbar.
 
 ### Content
 
-- The title states the fact, the description says why or what next ([empty states](../foundations/content.md#empty-states)).
+- The title states the fact, the description says why or what next ([content](../foundations/content.md)).
 - Name the query in curly quotes: "Nothing matches “roadmap” with these filters."
 - Keep a done state factual: "No reviews waiting", not "All caught up! Great job!".
 

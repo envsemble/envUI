@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-An alert is a message about a page or a section that stays above the content it concerns until it no longer applies.
+An alert sits above the content it concerns.
 
 ```tsx example=BlockedRelease
 
@@ -63,12 +63,12 @@ An alert is a message about a page or a section that stays above the content it 
 3. **Warning**
 4. **Danger**
 
-| Tone      | Use for                                                               |
-| --------- | --------------------------------------------------------------------- |
-| `info`    | Something to know about the page, such as a paused sync. The default. |
-| `success` | A result that stays relevant, where a toast would leave too soon.     |
-| `warning` | A problem to come unless people act, such as storage almost full.     |
-| `danger`  | Something that failed or stopped working.                             |
+| Tone      | Use for                                                           |
+| --------- | ----------------------------------------------------------------- |
+| `info`    | Something to know about the page. The default.                    |
+| `success` | A result that stays relevant, where a toast would leave too soon. |
+| `warning` | A problem to come unless people act.                              |
+| `danger`  | Something that failed or stopped working.                         |
 
 ### Another icon, or none
 
@@ -106,7 +106,7 @@ An alert is a message about a page or a section that stays above the content it 
 
 ### Colors
 
-`--env-alert-container`, `--env-alert-content`, `--env-alert-outline` and `--env-alert-icon` set the colors of one Alert, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-alert-container`, `--env-alert-content`, `--env-alert-outline` and `--env-alert-icon` set the colors of one Alert, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Accessibility
 

@@ -34,8 +34,6 @@ components:
 
 ## Overview
 
-DescriptionList shows the facts about one thing as labels and their values.
-
 ```tsx example=Facts
 
 ```

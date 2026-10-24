@@ -37,7 +37,7 @@ composes:
 
 ## Overview
 
-The account menu is a [Menu](../components/menu.md) opened from the person's [AvatarButton](../components/avatar.md) at the end of the [TopBar](../components/top-bar.md): a larger first row with who is signed in, their avatar centered above their name and email, then their own things, ending with Sign out.
+The account menu is a [Menu](../components/menu.md) opened from the person's [AvatarButton](../components/avatar.md) at the end of the [TopBar](../components/top-bar.md): a larger first row with their avatar centered above their name and email, then the items, with Sign out last.
 
 ```tsx example=AvatarMenu
 
@@ -75,13 +75,12 @@ A ghost Button `fullWidth` with the avatar and the name, as wide as the drawer; 
 
 ```
 
-- Keep it to the person's own things; the application's places belong in its navigation.
 - Open it on a press, never on hover.
 
 ### Content
 
 - The person's own name and email in the header, never "My account".
-- Say "Sign out", never "Log out" ([content](../foundations/content.md#buttons-and-actions)).
+- Say "Sign out", never "Log out" ([content](../foundations/content.md)).
 
 ## Accessibility
 

@@ -48,7 +48,7 @@ components:
 
 ## Overview
 
-A menu shows a short list of actions or destinations from one control, on a temporary surface. **Menu.Root** opens **Menu.Item** rows from its `trigger`, and the other parts build the rest.
+**Menu.Root** opens **Menu.Item** rows from its `trigger` on a temporary surface, and the other parts build the rest.
 
 ```tsx example=IconsAndShortcuts
 
@@ -56,7 +56,7 @@ A menu shows a short list of actions or destinations from one control, on a temp
 
 ### Context menu
 
-**ContextMenu** opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>. Offer the same actions in a visible button too.
+**ContextMenu** opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>.
 
 ```tsx example=ContextMenuForRows
 
@@ -64,7 +64,7 @@ A menu shows a short list of actions or destinations from one control, on a temp
 
 ### Account menu
 
-An AvatarButton trigger and a **Menu.Header** with the account. The full menu, with the theme and the organizations, is the [account menu](../patterns/account-menu.md) pattern, and a switch between organizations of its own the [organization switcher](../patterns/organization-switcher.md).
+An AvatarButton trigger and a **Menu.Header** with the account.
 
 ```tsx example=AccountMenu
 
@@ -148,7 +148,7 @@ Not shown: a submenu's row, `env-menu-submenu-trigger`, and the check of a choic
 
 ### Colors
 
-`--env-menu-item-container`, `--env-menu-item-content` and `--env-menu-item-icon` set the colors of one Menu, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-menu-item-container`, `--env-menu-item-content` and `--env-menu-item-icon` set the colors of one Menu, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Accessibility
 

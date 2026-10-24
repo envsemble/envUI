@@ -55,8 +55,6 @@ components:
 
 ## Overview
 
-A badge is a small, static pill that names a state or a fact beside the content it describes.
-
 ```tsx example=ProjectStatus
 
 ```
@@ -126,7 +124,7 @@ A count takes the same tones and variants: neutral and soft by default, and `ton
 
 ### In navigation
 
-```tsx example=NavigationCounts caption="Bar, Rail and Drawer show a destination's count themselves, from a number, not a Badge."
+```tsx example=NavigationCounts
 
 ```
 
@@ -144,7 +142,7 @@ A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-l
 
 ### Colors
 
-`--env-badge-container`, `--env-badge-content` and `--env-badge-outline` set the colors of one Badge, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-badge-container`, `--env-badge-content` and `--env-badge-outline` set the colors of one Badge, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Adapting to width
 

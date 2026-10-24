@@ -45,7 +45,7 @@ components:
 
 ## Overview
 
-RichTextEditor is a field for formatted text that people edit as it looks; its value is Markdown. RichText shows saved Markdown the same way. Both come from the optional `@envsemble/envui/rich-text` entry, which needs Tiptap and marked, as [setup](../setup.md) describes.
+RichTextEditor and RichText come from the optional `@envsemble/envui/rich-text` entry, which needs Tiptap and marked.
 
 ```tsx example=EditAndPreview
 
@@ -53,7 +53,7 @@ RichTextEditor is a field for formatted text that people edit as it looks; its v
 
 ### Show saved content
 
-RichText shows saved Markdown read-only, also on a server. `onReferenceClick` and `onLinkClick` open references and links.
+RichText also renders on a server. `onReferenceClick` and `onLinkClick` open references and links.
 
 ```tsx example=SavedContent
 

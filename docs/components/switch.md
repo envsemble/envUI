@@ -33,8 +33,6 @@ components:
 
 ## Overview
 
-A switch turns a setting on or off, and the change takes effect at once.
-
 ```tsx example=NotificationSettings
 
 ```
@@ -47,7 +45,7 @@ Pressing the track or its label toggles it.
 
 ### Apply at once
 
-The application applies the setting as soon as the switch changes; there is nothing to save.
+Apply the setting from `onCheckedChange`.
 
 ```tsx example=ShowCompleted
 
@@ -99,7 +97,7 @@ The thumb is drawn by the track and has no element of its own.
 
 ### Colors
 
-`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` set the colors of one Switch, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` set the colors of one Switch, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Adapting to width
 

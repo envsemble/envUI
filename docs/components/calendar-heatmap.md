@@ -30,8 +30,6 @@ components:
 
 ## Overview
 
-A calendar heatmap shows a value for each day as a shade of one tone, weeks as columns. Each day is named with its date and value, shown in a tooltip.
-
 ```tsx example=Deployments
 
 ```
@@ -74,14 +72,6 @@ EnvUIProvider's `locale` names the months, weekdays and dates, and `messages.cal
 `levels` sets the number of color steps, the empty one included; five by default.
 
 ## When to use
-
-```tsx do=IncidentsInDanger caption="A tone that says what more means: danger for incidents."
-
-```
-
-```tsx dont=IncidentsInSuccess caption="Incidents in the success tone: a bad week reads as a good one."
-
-```
 
 - Name it after what it counts and when, such as Deployments in the last year.
 - Give each day a `label` with its unit, such as 4 deployments.

@@ -35,8 +35,6 @@ components:
 
 ## Overview
 
-A composer is where people write a message and send it with <kbd>Enter</kbd>; <kbd>Shift</kbd>+<kbd>Enter</kbd> starts a new line. While a reply runs, the send button stops it.
-
 ```tsx example=AskAnything
 
 ```

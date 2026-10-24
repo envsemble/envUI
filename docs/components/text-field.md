@@ -122,7 +122,7 @@ A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the
 | `floating` | A long form on a page.                                       |
 | `ghost`    | A search in an application's chrome, such as atop a sidebar. |
 
-Textarea comes outline or ghost. Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it. `--env-text-field-container` gives one a fill, as [Customize colors](../customizing-colors.md#give-a-field-a-fill) describes.
+Textarea comes outline or ghost. Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it. `--env-text-field-container` gives one a fill, through `style` or CSS.
 
 ### Sizes
 
@@ -184,7 +184,7 @@ Not shown: the suffix, `env-text-field-suffix`, the error, `env-field-error`, an
 
 ### Colors
 
-`--env-text-field-container`, `--env-text-field-content`, `--env-text-field-outline` and `--env-text-field-indicator` set the colors of one TextField or Textarea, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-text-field-container`, `--env-text-field-content`, `--env-text-field-outline` and `--env-text-field-indicator` set the colors of one TextField or Textarea, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Adapting to width
 

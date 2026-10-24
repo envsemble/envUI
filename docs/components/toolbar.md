@@ -33,7 +33,7 @@ components:
 
 ## Overview
 
-A toolbar holds the controls for one subject, such as an editor's formatting, as one tab stop that the arrow keys move through. `Toolbar.Button` is an icon button named by its `label`, which a tooltip shows with its `shortcut`; with `pressed` it is a toggle.
+`Toolbar.Button` is an icon button named by its `label`, which a tooltip shows with its `shortcut`; with `pressed` it is a toggle.
 
 ```tsx example=FormattingToolbar
 
@@ -75,14 +75,6 @@ Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled
 ```
 
 ## When to use
-
-```tsx do=GroupedControls caption="Related controls in groups, with separators between them."
-
-```
-
-```tsx dont=UngroupedControls caption="Controls in no order: people search the whole row."
-
-```
 
 ```tsx do=SameIconPressed caption="A toggle keeps its icon, pressed or not."
 

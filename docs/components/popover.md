@@ -36,7 +36,7 @@ components:
 
 ## Overview
 
-A popover is a floating panel beside its trigger, for details people ask for or a small form that changes something nearby. It takes focus as it opens and closes with <kbd>Esc</kbd>, a press outside or when focus leaves it; it isn't modal, so the page stays usable.
+Popover takes focus as it opens, and also closes when focus leaves it; it isn't modal, so the page stays usable.
 
 ```tsx example=DocumentDetails open
 

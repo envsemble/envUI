@@ -31,7 +31,7 @@ components:
 
 ## Overview
 
-A menubar holds an application's commands as a desktop window does: a row of menus, such as File, Edit and View. After a command, focus returns to where it was, so Copy acts on the field people were in.
+After a command, Menubar returns focus to where it was, so Copy acts on the field people were in.
 
 ```tsx example=NotesMenubar
 
@@ -39,7 +39,7 @@ A menubar holds an application's commands as a desktop window does: a row of men
 
 ### In a title bar
 
-A [TopBar](../components/top-bar.md) with `titleBar` holds the menubar at its start, as the [window frame](../patterns/window-frame.md) pattern shows.
+The [window frame](../patterns/window-frame.md) pattern shows the whole title bar.
 
 ```tsx example=InTitleBar
 
@@ -50,14 +50,6 @@ A [TopBar](../components/top-bar.md) with `titleBar` holds the menubar at its st
 With `accessKeys`, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, and <kbd>Alt</kbd> with the letter opens it. Turn it on for one menubar per window.
 
 ## When to use
-
-```tsx do=StandardOrder caption="Menus in the order people expect: File, Edit, View, your own, then Help."
-
-```
-
-```tsx dont=UnusualOrder caption="Help first and File in the middle."
-
-```
 
 - Offer the most frequent commands in visible controls too.
 
@@ -75,8 +67,6 @@ With `accessKeys`, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, an
 2. **Trigger** (`env-menubar-trigger`, `label`)
 3. **Access key** (`env-menubar-access-key`, `accessKey`)
 4. **Menu** (`env-menu`, the children, open with `open` or `defaultOpen`)
-
-Each trigger opens a [Menu](../components/menu.md) built from the Menu parts.
 
 ## Accessibility
 

@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-Field gives a control of your own a label, a description and an error, wired for assistive technology.
+Field ties its parts together for assistive technology, whatever control sits in it.
 
 ```tsx example=ProjectName
 

@@ -46,7 +46,7 @@ A component page is a reference page in the traditional style: ordinary headings
 
 | Section           | Required | Holds                                                                                                                 |
 | ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
-| Overview          | yes      | What it is in one sentence, its family as figures, and `###` subsections on what it does on its own, such as pending. |
+| Overview          | yes      | What the summary above it doesn't say, its family as figures, and `###` subsections on what it does on its own.       |
 | Variants          |          | Variants, tones, layouts and sizes: a table of the values, examples and specimens.                                    |
 | When to use       | yes      | Do and don't pairs and the few rules they don't show; a `### Labels` or `### Content` subsection on writing its text. |
 | Anatomy           |          | An anatomy figure with its legend, and one sentence naming parts the figure can't show.                               |
@@ -54,19 +54,20 @@ A component page is a reference page in the traditional style: ordinary headings
 | Accessibility     | yes      | A `### Keyboard` table (Key, Action) where it handles keys, and `### envUI provides` and `### You provide` lists.     |
 | Changelog         |          | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                          |
 
-The build adds **Props** and **Related**, from `avoidWhen`, before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. On the website the page's sections are its page on the Site, and its props, part names and changelog are its page in the Docs, which the Site's page links to as API. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
+The build adds **Props** and **Related**, from `avoidWhen`, before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. On the website the page's sections are its page on the Site, and its props, what envUI and the application provide, part names and changelog are its page in the Docs, which the Site's page links to as API. The Site leaves out Accessibility's `### envUI provides` and `### You provide`, and the whole section where nothing else is in it; the page in the Docs shows them as plain lists after the props. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
 
 ### Write little
 
 The docs are mainly visual. Let the figures, the do and don't pairs and the anatomy teach, and write a sentence or two around them:
 
 - **Show, then say little.** Cut every sentence a figure already shows, such as what a variant looks like, its colors or its corners. A sentence beside a figure says what the figure can't: the prop that makes it, or the rule it illustrates.
-- **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section.
+- **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section. The banner shows the summary right above Overview, so Overview starts with what the summary doesn't say, such as how the component works or the prop that matters, or with its first figure; `npm test` fails on an Overview whose first sentence says the summary again. Nor does a sentence repeat a `useWhen` or `avoidWhen` entry, which When to use and Related show.
 - **Short over complete.** Leave out what the generated props reference holds, such as each prop's values and defaults, and what the code does for itself, such as an exact delay or padding, unless a reader chooses it.
+- **No links into the Docs.** The Site reaches the Docs only through a page's API button and the Docs link at the top of every page. Link other component, pattern and foundation pages, a foundation without a heading, since its headings are in its guide in the Docs, and say a point of a Docs page, such as setup or Customize colors, without the link. `npm test` checks it; the changelog and the lists of what envUI and the application provide, which the Docs show, may link anywhere.
 
 | Information                                   | Its one place                                                                                           |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| What it is                                    | One sentence at the start of Overview.                                                                  |
+| What it is                                    | The frontmatter's `summary`, which the banner shows above Overview.                                     |
 | What it looks like                            | Figures, with no sentence describing them.                                                              |
 | When to use it                                | The frontmatter's `useWhen`, which When to use shows first.                                             |
 | What to use instead                           | The frontmatter's `avoidWhen`, which Related shows at the end of the page.                              |
@@ -75,9 +76,9 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 | Variants, tones and sizes                     | One table of the values and what each is for.                                                           |
 | What it does on its own, such as pending      | A `###` subsection of Overview, a sentence beside its figure.                                           |
 | Its parts and their class names               | The anatomy legend, names only.                                                                         |
-| Its color properties                          | Listed on the component's page in the Docs, with a link to [Customize colors](customizing-colors.md).   |
+| Its color properties                          | A `### Colors` subsection of Anatomy: the properties in a sentence, with no link into the Docs.         |
 | How it adapts to width                        | A sentence and an example at several widths.                                                            |
-| Keys, roles and what the application must add | Accessibility.                                                                                          |
+| Keys, roles and what the application must add | Accessibility: keys in its Keyboard table, roles and what the application adds in its two lists.        |
 | Props                                         | Generated on the component's page in the Docs; never in prose.                                          |
 | Releases                                      | Changelog.                                                                                              |
 
@@ -85,16 +86,16 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 
 - **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a sentence between figures that should not share a row.
 - **A subsection beside its figure**: a `###` subsection of text, with no table or list at its start, followed by exactly one figure, sits beside that figure on a wide page, such as each kind of card under Variants.
-- **Lists in columns**: two or more `###` subsections in a row that each hold only a list sit side by side, such as `### envUI provides` and `### You provide`.
 - **When to use** starts with the frontmatter's `useWhen`, a short plain list under Use it when, and on a pattern page with what it is built from. Write what follows it, not the same points again.
-- **Related** ends the page, from the frontmatter's `avoidWhen`: a tile for each component or page an entry names, its lead example small and inert on its stage, in the examples' theme, with its name and the entry's text below. The tiles render once the section nears the viewport. A page with an open anatomy figure, such as Dialog or Menu, is shown by that figure instead; a page without an example shows a page icon on the same stage. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three.
+- **Related** ends the page, from the frontmatter's `avoidWhen`, on a [band](#layout-equal-cells-spacing-with-rhythm): a tile for each component or page an entry names, its lead example small and inert on its stage, in the examples' theme, with its name and the entry's text below. The tiles render once the section nears the viewport. A page with an open anatomy figure, such as Dialog or Menu, is shown by that figure instead; a page without an example shows a page icon on the same stage. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three.
 
 ### Layout: equal cells, spacing with rhythm
 
 - **Cells that share a row are one size.** Figures side by side take equal widths, and their stages are as tall as the tallest, with their captions and Code toggles lined up across the row. Never put cells of different sizes side by side: an example at several widths shows one frame to a row, each centred on its own stage. A row of figures stays one column until all of them fit side by side, so no row is left with an orphan: an even run, do and don't pairs included, two to a row from 38 rem, and a run of three, do and don't figures included, three across from 58 rem; write two or three figures in a row, or four as two pairs, and never five.
-- **Related things sit close, unrelated things apart.** A heading sits close to its first content, text close to the figure it introduces, and a figure's stage, caption and Code toggle close together. One sub-topic, such as a `###` subsection or the next figure after a caption, sits clearly apart from the last, also where the last is only text, a list or a table, and one section further still. The catalogue spaces them with the spacing tokens: 1 rem for what belongs together, 3 rem between sub-topics and 4 rem between sections.
+- **Related things sit close, unrelated things apart.** A heading sits close to its first content, text close to the figure it introduces, and a figure's stage, caption and Code toggle close together. One sub-topic, such as a `###` subsection or the next figure after a caption, sits clearly apart from the last, also where the last is only text, a list or a table, and one section far further still, so a page reads as parts rather than one stream. The catalogue spaces them with the spacing tokens: 1 rem for what belongs together, 2.5 rem between sub-topics and 8 rem, twice the largest step, between sections, whose headings are larger than a subsection's.
 - **No separators.** Space, not lines, separates sections and sub-topics.
-- **One frame per figure.** A figure's stage is its only frame: never put it inside another framed or filled box, such as a Surface or Card around a specimen grid, or a stage inside a stage. A do or don't figure's stage and its bar are one figure: two blocks joined as envUI's connected rows (`env-connected-rows`), with the outer corners rounded large and the inner ones small, and the small gap of a list's rows between them. A tile of Related is its stage, with its name and line below it in no box. A catalogue browser test fails on a stage with a bordered, filled or shadowed ancestor in the article.
+- **One band, where the topic turns.** Related, where a page turns from its subject to others, sits on a band: the theme's muted fill across the whole content pane, gutters included, which stands apart from the page, the navigation and the examples' stages. It is the one band of a component or pattern page; a foundation page, which has no Related, has none. Don't add bands elsewhere: one that marks every section marks nothing. The contrast gate measures text, links and inline code on the band's fill.
+- **One frame per figure.** A figure's stage is its only frame: never put it inside another framed or filled box, such as a Surface or Card around a specimen grid, or a stage inside a stage. A do or don't figure's stage and its bar are one figure: two blocks joined as envUI's connected rows (`env-connected-rows`), with the outer corners rounded large and the inner ones small, and the small gap of a list's rows between them. A tile of Related is its stage, with its name and line below it in no box; the band under Related is the page's background there, not a frame. A catalogue browser test fails on a stage with a bordered, filled or shadowed ancestor in the article.
 
 ### Learn from Material's docs
 
@@ -199,7 +200,7 @@ The build adds **Props**, generated from the TypeScript declarations, and **Rela
 
 On a page on the section template, the catalogue shows the sections as tabs: Overview (overview, examples, related, changelog), Guidelines (anatomy to do and don't), Accessibility and Props.
 
-Write the keyboard table from the code and its browser tests, not from the pattern in general: list the keys the component handles, and Tab for how focus enters and leaves. "envUI provides" names the roles, names, announcements and focus handling the component does itself; "You provide" names what the application must add, such as a label or an accessible name.
+Write the keyboard table from the code and its browser tests, not from the pattern in general: list the keys the component handles, and Tab for how focus enters and leaves. "envUI provides" names the roles, names, announcements and focus handling the component does itself; "You provide" names what the application must add, such as a label or an accessible name. Both are for people who build with envUI: the component's page in the Docs shows them, and the Site leaves them out.
 
 ## Examples
 

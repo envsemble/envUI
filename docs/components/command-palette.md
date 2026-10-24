@@ -35,13 +35,11 @@ components:
 
 ## Overview
 
-A command palette is a search field over a list, near the top of the window, for jumping to anything by name. The application owns the items, how they are filtered and ranked, and what choosing one does.
+The application owns the items and what choosing one does.
 
 ```tsx example=GoToDocument
 
 ```
-
-Open it from a [search trigger](../patterns/search-trigger.md), a button that shows the shortcut, such as <kbd>Ctrl</kbd>+<kbd>K</kbd>, which the application handles too.
 
 ### Run a command
 

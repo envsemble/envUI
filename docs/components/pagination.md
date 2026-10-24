@@ -28,7 +28,7 @@ components:
 
 ## Overview
 
-Pagination shows which items of a long list are on screen, such as 1–60 of 245, and moves a page back or forward. The application owns the page and its loading; while `pending`, the button pressed shows a spinner and focus stays on it.
+The range counts items, as in 1–60 of 245. The application owns the page and its loading; while `pending`, the button pressed shows a spinner and focus stays on it.
 
 ```tsx example=PagesOfAList
 
@@ -60,16 +60,8 @@ Without `total`, the range shows only the page's items, and `hasNextPage` says w
 
 ## When to use
 
-```tsx do=MatchingSize caption="The size of the fields beside it."
-
-```
-
-```tsx dont=MismatchedSize caption="A larger size than the field beside it: the row doesn't line up."
-
-```
-
 - Keep focus where it is after a page loads, and scroll the list to its top.
-- Pass `pending` while a page loads, and `total` once it is known.
+- Pass `total` once it is known.
 - Leave the end buttons to the pager: they stay focusable and unavailable. `hideWhenSinglePage` hides a pager with one page.
 
 ## Anatomy

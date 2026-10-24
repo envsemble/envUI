@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-A page header holds a page's title, with an optional trail, description, meta and the page's actions. Put it in a [Page](page.md)'s `header`.
+Put a PageHeader in a [Page](page.md)'s `header`.
 
 ```tsx example=WithBreadcrumbs
 

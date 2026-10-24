@@ -122,54 +122,6 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
 }
 
 /**
- * Markdown cut where a run of `###` subsections each holds only a list, such as what envUI provides
- * and what you provide: such a run is laid out in columns, the rest as it is written.
- */
-export function splitColumns(markdown: string): (string | string[])[] {
-  const chunks: string[] = [''];
-  let fence: string | undefined;
-  for (const line of markdown.split('\n')) {
-    const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/)?.[1];
-    if (marker && (!fence || (marker[0] === fence[0] && marker.length >= fence.length)))
-      fence = fence ? undefined : marker;
-    if (!fence && /^### /.test(line)) chunks.push('');
-    chunks[chunks.length - 1] += `${line}\n`;
-  }
-  const listOnly = (chunk: string) => {
-    if (!/^### /.test(chunk)) return false;
-    const body = chunk
-      .split('\n')
-      .slice(1)
-      .filter((line) => line.trim());
-    return (
-      body.length > 0 &&
-      /^([-*+]|\d+[.)]) /.test(body[0]) &&
-      body.every((line) => /^(\s+\S|[-*+] |\d+[.)] )/.test(line))
-    );
-  };
-  const pieces: (string | string[])[] = [];
-  for (const chunk of chunks) {
-    const last = pieces.at(-1);
-    if (listOnly(chunk)) {
-      if (Array.isArray(last)) last.push(chunk);
-      else pieces.push([chunk]);
-    } else if (typeof last === 'string') pieces[pieces.length - 1] = last + chunk;
-    else pieces.push(chunk);
-  }
-  // A single list stays in the flow; two or more sit side by side.
-  return pieces
-    .flatMap((piece) => (Array.isArray(piece) && piece.length < 2 ? piece : [piece]))
-    .reduce<(string | string[])[]>((merged, piece) => {
-      const last = merged.at(-1);
-      if (typeof piece === 'string' && typeof last === 'string')
-        merged[merged.length - 1] = last + piece;
-      else merged.push(piece);
-      return merged;
-    }, [])
-    .filter((piece) => typeof piece !== 'string' || piece.trim());
-}
-
-/**
  * Markdown cut before its last `###` subsection, when that subsection is text a figure can sit
  * beside: no table, no fence, and not only a list.
  */
@@ -186,27 +138,6 @@ export function lastSubsection(markdown: string): [string, string] | undefined {
   if (!body.length || body.some((line) => /^\s*(\||`{3,}|~{3,})/.test(line))) return undefined;
   if (/^([-*+]|\d+[.)]) /.test(body[0])) return undefined;
   return [lines.slice(0, start).join('\n'), lines.slice(start).join('\n')];
-}
-
-/** A section's Markdown, with runs of lists in columns. */
-export function SectionColumns({ markdown, path }: { markdown: string; path: string }) {
-  return (
-    <>
-      {splitColumns(markdown).map((piece, index) =>
-        typeof piece === 'string' ? (
-          <Documentation key={index} markdown={piece} path={path} />
-        ) : (
-          <div key={index} className="docs-section-columns">
-            {piece.map((column, part) => (
-              <div key={part} className="docs-section-column">
-                <Documentation markdown={column} path={path} />
-              </div>
-            ))}
-          </div>
-        ),
-      )}
-    </>
-  );
 }
 
 /**
@@ -269,7 +200,7 @@ export function FigureSection({
   const beside = new Map<number, string>();
   const content: ReactNode[] = lead ? [<Fragment key="lead">{lead}</Fragment>] : [];
   const markdown = (key: number, text: string) => (
-    <SectionColumns key={key} markdown={text} path={reference.path} />
+    <Documentation key={key} markdown={text} path={reference.path} />
   );
   groups.forEach((group, index) => {
     const text = beside.get(index);

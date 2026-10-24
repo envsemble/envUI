@@ -37,7 +37,7 @@ components:
 
 ## Overview
 
-A segmented control switches between a few views or filters of the same content, and the choice applies at once. After Material's segmented buttons, it is connected segments in one outline, the chosen one in the selected fill with a check before its label; it picks a value, where [Tabs](tabs.md), text tabs with an indicator, switch panels.
+`items` holds the options, each with a `value` and a short `label`.
 
 ```tsx example=WorkItems
 
@@ -63,14 +63,6 @@ Each option can show an icon and a count. `disabled` dims one option, which the 
 
 ## When to use
 
-```tsx do=MatchingSize caption="The size of the controls beside it."
-
-```
-
-```tsx dont=MismatchedSize caption="A larger control than its neighbours, so the row doesn't line up."
-
-```
-
 - Put the most used option first, and start on it.
 
 ### Labels
@@ -92,7 +84,7 @@ Name options with a word or two that name the view, and name the control with `a
 
 ### Colors
 
-`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-outline`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` set the colors of one SegmentedControl, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-outline`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` set the colors of one SegmentedControl, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Adapting to width
 

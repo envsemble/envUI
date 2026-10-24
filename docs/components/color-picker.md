@@ -40,7 +40,7 @@ components:
 
 ## Overview
 
-A color picker chooses a color by eye, by its value or from presets. A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below, or several formats show their fields together, a row each. It is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs, as [setup](../setup.md#public-entry-points) lists.
+A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below, or several formats show their fields together, a row each. ColorPicker is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs.
 
 ```tsx example=MinimalPicker
 
@@ -146,7 +146,7 @@ Not shown: the description and error, `env-color-picker-description` and `env-co
 
 ### Colors
 
-ColorPickerButton has no fill of its own: like a field, it takes the background of what it sits on. `--env-color-picker-button-container` gives one button a fill, through `style` or CSS. [Customize colors](../customizing-colors.md) describes the roles.
+ColorPickerButton has no fill of its own: like a field, it takes the background of what it sits on. `--env-color-picker-button-container` gives one button a fill, through `style` or CSS.
 
 ## Adapting to width
 

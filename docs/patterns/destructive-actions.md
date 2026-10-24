@@ -40,7 +40,7 @@ composes:
 
 ## Overview
 
-A destructive action gets only as much friction as it needs: asking "Are you sure?" before everything trains people to confirm without reading. Archiving here happens at once, and a toast from [useToast](../components/toast.md) offers Undo.
+Asking "Are you sure?" before everything trains people to confirm without reading. Archiving here happens at once, and a toast from [useToast](../components/toast.md) offers Undo.
 
 ```tsx example=UndoInstead
 
@@ -48,7 +48,7 @@ A destructive action gets only as much friction as it needs: asking "Are you sur
 
 ### Undo
 
-The item leaves at once; the toast stays until dismissed, since it has an action, and Undo puts the item back where it was. Keep what was archived reachable elsewhere too, as a toast can be dismissed.
+The toast stays until dismissed, since it has an action, and Undo puts the item back where it was. Keep what was archived reachable elsewhere too, as a toast can be dismissed.
 
 ## Variants
 
@@ -69,7 +69,7 @@ The first press names the consequence in the button, "Remove file?"; the second 
 
 ### Confirm from a menu
 
-The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete. Pass the menu button as `finalFocus`; after the delete, move focus to the next row.
+The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete. Pass the menu button as `finalFocus`.
 
 ```tsx example=ConfirmDelete
 
@@ -101,7 +101,6 @@ The count is in the button, the question and the confirm button: "Delete 2 docum
 
 ```
 
-- Don't confirm what Undo can reverse.
 - Return the action's promise from `onConfirm`, so the dialog waits, pending, and stays open with `error` when it fails.
 - envUI has no danger tone for a menu item yet: label it with the consequence, last after a separator.
 
@@ -113,7 +112,7 @@ The count is in the button, the question and the confirm button: "Delete 2 docum
 
 ## Accessibility
 
-A confirmation dialog takes focus to Cancel, keeps it inside and returns it to `finalFocus`, else the trigger. When the action removes its own control, move focus to the next row, or the list. The undo toast doesn't take focus; <kbd>F6</kbd> reaches it.
+A confirmation dialog keeps focus inside and returns it to `finalFocus`, else the trigger. When the action removes its own control, move focus to the next row, or the list. The undo toast doesn't take focus; <kbd>F6</kbd> reaches it.
 
 ### envUI provides
 

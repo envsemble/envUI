@@ -42,7 +42,7 @@ components:
 
 ## Overview
 
-Code shows source as selectable text that never runs: inline in a sentence, as a block, or as a diff. Code and CodeBlock come from `@envsemble/envui/content`, CodeDiff from `@envsemble/envui/diff`.
+Code shows source as selectable text that never runs. Code and CodeBlock come from `@envsemble/envui/content`, CodeDiff from `@envsemble/envui/diff`.
 
 ```tsx example=HighlightedSource
 

@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-Grid lays out its children in columns, the same step of the spacing scale apart. Like [Row](row.md), [Column](column.md) and [Box](box.md), it sizes to its content and never paints.
+Like [Row](row.md), [Column](column.md) and [Box](box.md), Grid sizes to its content and never paints; its gap is a step of the spacing scale.
 
 ```tsx example=ProjectCards
 

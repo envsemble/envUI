@@ -33,7 +33,7 @@ composes:
 
 ## Overview
 
-A feature card is a [Card](../components/card.md) holding a [Row](../components/row.md): a muted icon, a heading and a sentence in a [Column](../components/column.md) of [Text](../foundations/typography.md), and the one [Button](../components/button.md) that starts the feature, at the end of the row.
+The [Card](../components/card.md) holds one [Row](../components/row.md): a muted icon, a [Column](../components/column.md) of [Text](../foundations/typography.md), and the [Button](../components/button.md) at the end.
 
 ```tsx example=ImportPlans
 

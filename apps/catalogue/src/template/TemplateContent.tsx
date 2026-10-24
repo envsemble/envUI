@@ -6,6 +6,7 @@ import type { DocumentationMetadata, DocumentationSection } from '../Documentati
 import { FigureSection } from './Figures';
 import { LiveExample } from './LiveExample';
 import { Specimen } from './Specimen';
+import { siteSection } from './Provides';
 import { pageOf, Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 
@@ -126,38 +127,54 @@ function Section({ reference, section }: { reference: Document; section: Documen
   );
 }
 
-/** Sections in the template's order, then Related; the changelog follows the page navigation. */
+/**
+ * Sections in the template's order, then Related on a band of its own across the content pane; the
+ * changelog is on the page in the Docs.
+ */
 function Sections({
   reference,
   sections,
+  provides,
 }: {
   reference: Document;
   sections: DocumentationSection[];
+  provides: boolean;
 }) {
   const figures = reference.format === 'figures';
   return (
-    <Column
-      gap={figures ? 9 : 8}
-      className={`docs-article docs-template${figures ? ' docs-figures' : ''}`}
-    >
-      {sections
-        .filter((section) => section.id !== 'changelog')
-        .map((section) => (
-          <Section key={section.id} reference={reference} section={section} />
-        ))}
+    <>
+      <Column
+        gap={figures ? 9 : 8}
+        className={`docs-article docs-template${figures ? ' docs-figures' : ''}`}
+      >
+        {sections
+          .filter((section) => section.id !== 'changelog')
+          .flatMap((section) => (provides ? section : (siteSection(section) ?? [])))
+          .map((section) => (
+            <Section key={section.id} reference={reference} section={section} />
+          ))}
+      </Column>
       {sections.some((section) => section.id === 'overview') && reference.metadata && (
         <Related metadata={reference.metadata} path={reference.path} />
       )}
-    </Column>
+    </>
   );
 }
 
 /**
  * A component or pattern page of the Site: every section in the page's order, then Related; a
- * component's props, part names and changelog are on its page in the Docs.
+ * component's props, part names, what the application provides and changelog are on its page in
+ * the Docs. `provides` keeps what envUI and the application provide in Accessibility, for Field,
+ * whose whole page is in the Docs.
  */
-export function TemplateContent({ document }: { document: Document }) {
-  return <Sections reference={document} sections={document.sections ?? []} />;
+export function TemplateContent({
+  document,
+  provides = false,
+}: {
+  document: Document;
+  provides?: boolean;
+}) {
+  return <Sections reference={document} sections={document.sections ?? []} provides={provides} />;
 }
 
 /**

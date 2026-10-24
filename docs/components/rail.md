@@ -28,13 +28,13 @@ components:
 
 ## Overview
 
-The navigation rail holds an application's main destinations in a narrow column at the start of a medium window. It takes the same destinations as [Bar](bar.md) and [Drawer](drawer.md), and [Scaffold](scaffold.md) shows the form that fits the width. A button that narrows the drawer to the rail asks the Scaffold for it through `forms` ([a button that narrows the navigation](scaffold.md#a-button-that-narrows-the-navigation)).
+Rail takes the same destinations as [Bar](bar.md) and [Drawer](drawer.md), and [Scaffold](scaffold.md) shows the form that fits the width. A button that narrows the drawer to the rail asks the Scaffold for it through `forms` ([a button that narrows the navigation](scaffold.md#a-button-that-narrows-the-navigation)).
 
 ```tsx example=TabletDestinations
 
 ```
 
-It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s; `background="page"` puts it on the page's background instead.
+The rail fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s; `background="page"` puts it on the page's background instead.
 
 ### Groups
 
@@ -45,14 +45,6 @@ A destination's `group` shows no heading in the rail: grouped destinations follo
 ```
 
 ## When to use
-
-```tsx do=ActionAtTheTop caption="The main action in the header, above the destinations."
-
-```
-
-```tsx dont=ActionAtTheBottom caption="The main action below the destinations, where people don't look for it."
-
-```
 
 - Set `current` on one destination from the router; a press doesn't select by itself.
 - `footer` for the account, such as an AvatarButton.
@@ -73,7 +65,7 @@ A destination's `group` shows no heading in the rail: grouped destinations follo
 
 ### Colors
 
-`--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content` set the colors of one Rail, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content` set the colors of one Rail, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Accessibility
 

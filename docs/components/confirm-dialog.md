@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-ConfirmDialog asks one question before an action runs, and names the consequence on its confirm button. A press outside doesn't close it.
+A press outside doesn't close a ConfirmDialog.
 
 ```tsx example=DeleteProject
 
@@ -61,7 +61,7 @@ Without a `trigger`, open it with `open` and `onOpenChange`; `finalFocus` return
 | `neutral` | An action people can get back from, such as archiving. Focus starts on the confirm button. The default. |
 | `danger`  | An action that deletes or ends something. Focus starts on Cancel.                                       |
 
-```tsx example=ArchiveProject caption="The neutral tone, for an action people can undo."
+```tsx example=ArchiveProject caption="The neutral tone."
 
 ```
 
@@ -74,8 +74,6 @@ Without a `trigger`, open it with `open` and `onOpenChange`; `finalFocus` return
 ```tsx dont=NeutralForDelete open caption="A neutral deletion: focus starts on Delete, so a hurried Enter deletes."
 
 ```
-
-- Keep it to the question: a real form belongs in a [Dialog](../components/dialog.md).
 
 ### Content
 

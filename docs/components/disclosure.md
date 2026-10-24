@@ -34,7 +34,7 @@ components:
 
 ## Overview
 
-A disclosure is a one-line summary that shows and hides the details below it, on the native `<details>` element. Finding text in a closed panel opens it, where the browser supports it.
+Finding text in a closed disclosure's panel opens it, where the browser supports it.
 
 ```tsx example=VisibilityHelp
 

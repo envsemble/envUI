@@ -47,7 +47,7 @@ composes:
 
 ## Overview
 
-Loading shows that something is on its way, in the place and the shape of what is coming. Where the shape is known, the page renders its own components as skeletons over placeholder items, so its code is the same loading and loaded.
+Where the shape is known, the page renders its own components as skeletons over placeholder items, so its code is the same loading and loaded.
 
 ```tsx example=CardsLoading
 
@@ -123,7 +123,6 @@ After 200 ms the bar along the top bar's bottom edge shows the next page is on i
 ```
 
 - Give media an aspect ratio, with `width` and `height` or `aspect-ratio`, so it holds its place; dev mode's `envui.layout.skeletonShift()` reports what moves.
-- When content fails or turns out empty, show an [empty state](empty-states.md) in its place.
 
 ### Content
 

@@ -37,7 +37,7 @@ components:
 
 ## Overview
 
-A select chooses one value from a list that stays collapsed until people open it.
+Typing an option's label in the open list jumps to it.
 
 ```tsx example=ProjectVisibility
 
@@ -97,14 +97,6 @@ A row's title names its select with `aria-label`.
 
 ```
 
-```tsx do=OutlineOnPane caption="An outline trigger on a pane."
-
-```
-
-```tsx dont=FilledOnPane caption="A filled trigger on a pane, where its fill blends in."
-
-```
-
 - Order options naturally, such as by frequency, or alphabetically where there is no order.
 - Don't navigate away or run a destructive action as the choice changes.
 
@@ -135,7 +127,7 @@ Name the select with a short noun, and say in a disabled option's label why it i
 
 ### Colors
 
-`--env-select-container`, `--env-select-content` and `--env-select-outline` set the colors of one Select, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-select-container`, `--env-select-content` and `--env-select-outline` set the colors of one Select, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Accessibility
 

@@ -40,7 +40,7 @@ composes:
 
 ## Overview
 
-A search trigger is the button that opens an application's search: a secondary [Button](../components/button.md) with the Search icon, its label and the shortcut's keys in a [Kbd](../components/kbd.md) at its `end`, which reads like a search field. Pressing it, or the shortcut, opens a [CommandPalette](../components/command-palette.md).
+A secondary [Button](../components/button.md) with a [Kbd](../components/kbd.md) at its `end` reads like a search field. Pressing it, or the shortcut, opens a [CommandPalette](../components/command-palette.md).
 
 ```tsx example=InSidebar
 
@@ -48,7 +48,7 @@ A search trigger is the button that opens an application's search: a secondary [
 
 ### The shortcut
 
-The application listens for the shortcut once, at its root, and opens the same search the button does: <kbd>⌘</kbd>+<kbd>K</kbd> on Apple platforms and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, from anywhere in the window, text fields included. A key press that something else already handled, such as an editor's own shortcut, is left alone. The button shows the keys and announces them with `aria-keyshortcuts`.
+The application listens for the shortcut once, at its root, however many triggers show it, and opens the same search the button does: <kbd>⌘</kbd>+<kbd>K</kbd> on Apple platforms and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, from anywhere in the window, text fields included. A key press that something else already handled, such as an editor's own shortcut, is left alone.
 
 `useModifierKey()` gives the platform's modifier: its `key`, `Meta` or `Control`, for `aria-keyshortcuts` and the listener, and its `label`, ⌘ or Ctrl, for Kbd. It is Ctrl on the server and while the page hydrates, so server-rendered markup matches, and becomes ⌘ on Apple platforms right after. Don't read `navigator` while rendering: it doesn't exist on the server, and markup that differs from the server's fails to hydrate.
 
@@ -73,15 +73,13 @@ useEffect(() => {
 
 ### Icon only
 
-In a phone's top bar, a crowded header or a [Rail](../components/rail.md), search is a ghost [IconButton](../components/button.md) named Search, with the label and the keys in a [Tooltip](../components/tooltip.md) that opens below it, clear of the bar.
+Search is a ghost [IconButton](../components/button.md) named Search, with the label and the keys in a [Tooltip](../components/tooltip.md) that opens below it, clear of the header.
 
 ```tsx example=IconOnly
 
 ```
 
 ## When to use
-
-- One listener for the shortcut, however many triggers show it: two would open search twice.
 
 ### Labels
 

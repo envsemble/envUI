@@ -47,7 +47,7 @@ composes:
 
 ## Overview
 
-A key figure is a muted label, a large figure in [Text](../foundations/typography.md) and a [Badge](../components/badge.md) that says how it changed, with the period beside it. A [Surface](../components/surface.md) holds a few of them in a [Grid](../components/grid.md) of even columns.
+A key figure is a muted label, a large figure in [Text](../foundations/typography.md) and a [Badge](../components/badge.md) that says how it changed, with the period beside it. A [Surface](../components/surface.md) holds a few of them in a [Grid](../components/grid.md).
 
 ```tsx example=ProjectHealth caption="An AnimatedNumber as the figure rolls to each new value."
 
@@ -81,16 +81,8 @@ A [Card](../components/card.md) frames a single figure.
 
 ```
 
-```tsx do=BadNewsTone caption="A rise that is bad news in the danger tone."
-
-```
-
-```tsx dont=GoodNewsToneForBadNews caption="A rising error rate in the success tone."
-
-```
-
 - Three to five figures in a group.
-- The trend's tone says whether the change is good news: `success` for a rise in projects, `danger` for a rise in errors, `neutral` for no change.
+- The trend's tone says whether the change is good news: `success`, `danger`, or `neutral` for no change.
 
 ### Content
 

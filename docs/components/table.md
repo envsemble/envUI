@@ -36,7 +36,7 @@ components:
 
 ## Overview
 
-A table shows records that share the same fields in rows and columns, for data people compare, sort and scan. Its parts are the native table elements, on a rounded surface inside a focusable region that scrolls sideways where the columns don't fit.
+Table's parts are the native table elements, inside a focusable region.
 
 ```tsx example=ProjectStatus
 
@@ -93,8 +93,6 @@ Density changes only the rows' padding; controls in cells keep the small height.
 ```tsx example=RowDensity
 
 ```
-
-`numeric` amounts line up down their column, and a header cell with `scope="row"` heads the totals.
 
 ```tsx example=NumericColumns
 

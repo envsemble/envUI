@@ -46,7 +46,7 @@ composes:
 
 ## Overview
 
-Feedback goes as close as it can to what it is about, and speaks only as loudly as it must: each message is announced at most once, and only what needs people interrupts them. The outcome of an action people started is a toast from [useToast](../components/toast.md).
+Each message is announced at most once, and only what calls for action interrupts. The outcome of an action people started is a toast from [useToast](../components/toast.md).
 
 ```tsx example=SaveConfirmation
 
@@ -71,7 +71,7 @@ A success or neutral toast closes after 5 seconds, paused while the pointer rest
 
 ### A condition of the page
 
-An Alert that is there when the page loads describes it and isn't announced; it offers the one thing people can do.
+An Alert that is there when the page loads describes it and offers the one thing people can do.
 
 ```tsx example=SectionAlert
 
@@ -87,7 +87,7 @@ When the export ends, a toast with Download reaches people wherever they are, an
 
 ### Status in rows
 
-One tone per status everywhere, with words that carry the meaning without the color.
+One tone per status, everywhere.
 
 ```tsx example=StatusInRows
 
@@ -119,7 +119,7 @@ A count Badge's `aria-label` says what it counts, "12 unread".
 ### Content
 
 - A toast names what happened to what, in the past tense: "Invitation sent to jordan.kim@example.com."
-- A failure says what happened, whether work is safe and what to do ([error messages](../foundations/content.md#error-messages)).
+- A failure says what happened, whether work is safe and what to do ([content](../foundations/content.md)).
 - A status in a word or two, the same everywhere: "On track", "At risk", "Blocked", "Done". No "Success" or "Error" prefix; the tone says it.
 
 ## Accessibility

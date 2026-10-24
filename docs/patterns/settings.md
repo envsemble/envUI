@@ -48,7 +48,7 @@ composes:
 
 ## Overview
 
-Settings let people change how the application works for them. Each setting either applies the moment it changes, or waits with the settings it depends on for a Save button, and the two never share a section.
+Each setting either applies the moment it changes, or waits with the settings it depends on for a Save button, and the two never share a section.
 
 ```tsx example=ImmediateToggles
 
@@ -62,7 +62,7 @@ A Switch shows its own state, so most changes need no message. A toast through [
 
 ### Save a section
 
-Fields that only make sense together wait in a `form` for Save, marked by a [Badge](../components/badge.md) while they hold unsaved changes; Cancel puts back what was saved.
+A section that saves together is a `form`, marked by a [Badge](../components/badge.md) while it holds unsaved changes; Cancel puts back what was saved.
 
 ```tsx example=SaveSection
 
@@ -78,7 +78,7 @@ The theme applies at once through `useThemePreference`. The scale is one for the
 
 ### Danger zone
 
-The last section, apart from the rest: an outline danger Button opens a [ConfirmDialog](../components/confirm-dialog.md), which asks for the name when the action can't be undone and reaches everyone, as in [destructive actions](destructive-actions.md).
+The last section, apart from the rest: an outline danger Button opens a [ConfirmDialog](../components/confirm-dialog.md), which asks for the name when the action can't be undone and reaches everyone.
 
 ```tsx example=DangerZone
 

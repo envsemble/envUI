@@ -27,7 +27,7 @@ components:
 
 ## Overview
 
-A hover card shows supplementary details beside its trigger, usually a link, once the pointer rests on it or keyboard focus reaches it, like a preview of the page the link leads to. Focus stays on the trigger, and the card stays open while the pointer moves onto it.
+The pointer can move from the trigger onto the card without closing it, and focus stays on the trigger.
 
 ```tsx example=DocumentPreview open
 

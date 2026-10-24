@@ -34,7 +34,7 @@ components:
 
 ## Overview
 
-Progress shows how much of a task is done, such as an upload.
+`value` counts the work done, such as 40 of 100.
 
 ```tsx example=UploadingFile
 

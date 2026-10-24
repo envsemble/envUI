@@ -35,7 +35,7 @@ components:
 
 ## Overview
 
-A tree shows a hierarchy that people expand and collapse, such as folders and files. The application passes the visible rows in order, each with its `depth`, and owns expansion and selection; the tree owns focus, the keys and scrolling.
+The application passes the visible rows in order, each with its `depth`, and owns expansion and selection; the tree owns focus, the keys and scrolling.
 
 ```tsx example=FileTree
 
@@ -55,7 +55,7 @@ With `contextMenu`, right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> o
 
 ### Thousands of rows
 
-The tree is as tall as its parent and renders only the rows in view, so give it a parent with a height.
+The tree is as tall as its parent, so give it a parent with a height.
 
 ```tsx example=ThousandsOfRows
 

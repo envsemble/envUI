@@ -33,7 +33,7 @@ components:
 
 ## Overview
 
-Page is the column a page's content sits in: a readable width, the page gutter and the page's header at its top. It never paints and adds no landmark; it goes in a [Scaffold](scaffold.md)'s body, which is the main.
+Page goes in a [Scaffold](scaffold.md)'s body and adds no landmark of its own.
 
 ```tsx example=WithHeader
 

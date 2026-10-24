@@ -463,7 +463,7 @@ test('the hosted build opens every page of the Site and the Docs without network
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(
     page.locator('.docs-footer').getByRole('navigation', { name: 'Footer' }),
-  ).toContainText('Changelog');
+  ).toContainText('Benchmark');
   for (const { path, title, kind } of allPages) {
     await goTo(page, path === 'overview' ? '/' : `/${path}`);
     await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(

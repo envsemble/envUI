@@ -7,9 +7,10 @@ import { routeHref } from '../navigation/Address';
 import { currentRouteQuery, useViewTabs } from '../navigation/useDocumentationRoute';
 import { lazyPart } from '../template/LoadBoundary';
 import { partsOf } from '../template/Parts';
+import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
-import type { Reference } from '../Reference';
+import type { Documentation as Document, Reference } from '../Reference';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
@@ -280,7 +281,40 @@ function PartNames({ components }: { components: readonly string[] }) {
 }
 
 /**
- * A component's page in the Docs: its props, part names and changelog. Field, which has no page on
+ * What an application adds for a component to be accessible, and what envUI does for it, as the
+ * Accessibility section of its page writes them: plain lists, after the props.
+ */
+function Provides({ document }: { document: Document }) {
+  const { envui, app } = providesOf(document.sections ?? []);
+  if (!envui && !app) return null;
+  return (
+    <Column render={<section />} gap={5} aria-labelledby="provides" className="docs-provides">
+      <Text render={<h2 />} variant="headline" id="provides">
+        Accessibility
+      </Text>
+      {app && (
+        <Column gap={3}>
+          <Text render={<h3 />} variant="title">
+            You provide
+          </Text>
+          <Documentation markdown={app} path={document.path} />
+        </Column>
+      )}
+      {envui && (
+        <Column gap={3}>
+          <Text render={<h3 />} variant="title">
+            envUI provides
+          </Text>
+          <Documentation markdown={envui} path={document.path} />
+        </Column>
+      )}
+    </Column>
+  );
+}
+
+/**
+ * A component's page in the Docs: its props, what the application provides, part names and
+ * changelog. Field, which has no page on
  * the Site, shows its whole page here, as "Build your own field".
  */
 export function ApiPage({ page }: { page: SitePage }) {
@@ -304,7 +338,7 @@ export function ApiPage({ page }: { page: SitePage }) {
           )
         }
       />
-      {!sitePage && <TemplateContent document={document} />}
+      {!sitePage && <TemplateContent document={document} provides />}
       <Column gap={8} className="docs-article docs-api">
         <Column render={<section />} gap={5} aria-labelledby="props">
           <Text render={<h2 />} variant="headline" id="props">
@@ -312,6 +346,7 @@ export function ApiPage({ page }: { page: SitePage }) {
           </Text>
           <PropsTables reference={reference} />
         </Column>
+        {sitePage && <Provides document={document} />}
         <PartNames components={metadata?.components ?? []} />
         <PageChangelog document={document} />
       </Column>

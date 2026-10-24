@@ -41,7 +41,7 @@ components:
 
 ## Overview
 
-Row lays out its children side by side, the same step of the spacing scale apart. Like [Column](column.md), [Grid](grid.md) and [Box](box.md), it sizes to its content and never paints.
+Like [Column](column.md), [Grid](grid.md) and [Box](box.md), Row sizes to its content and never paints.
 
 ```tsx example=FormActions
 
@@ -68,7 +68,6 @@ Row lays out its children side by side, the same step of the spacing scale apart
 ```
 
 - `align="center"` for controls of different heights, such as a heading and a small button.
-- Buttons that act as one control are a [ButtonGroup](button.md); a row of controls the arrow keys move through is a [Toolbar](toolbar.md).
 
 ## Adapting to width
 

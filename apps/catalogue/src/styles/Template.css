@@ -21,3 +21,56 @@
 .docs-template .env-markdown-table code {
   overflow-wrap: break-word;
 }
+
+/* A page is parts, not one stream: its sections stand far apart, twice the largest step of the
+   spacing scale, while what is inside a section sits close (Figures.css). */
+.docs-template.docs-figures {
+  row-gap: calc(var(--env-space-9) * 2);
+}
+
+/* The same on a foundation's page, whose sections are its figures, each under its h2, and on a
+   component's page in the Docs. */
+.docs-example:has(> h2) {
+  margin-block-end: calc(var(--env-space-9) * 2);
+}
+
+.docs-api.docs-api {
+  row-gap: calc(var(--env-space-9) * 2);
+}
+
+.docs-example > h2 {
+  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.015em;
+}
+
+/* A band: where a page turns from its subject to others, at Related, the last section of a
+   component or pattern page, the section sits on a fill of its own that spans the whole content
+   pane, gutters included. One band to a page, so it marks the turn rather than decorating. The fill
+   is the theme's muted surface, which stands apart from the page, the navigation and the examples'
+   stages; text, links and inline code keep their contrast on it (tests/contrast/Pairs.ts). */
+.docs-band {
+  /* As far from the last section as two sections are apart, with the article's 3 rem of padding
+     below it (Reference.css). */
+  margin-block-start: calc(var(--env-space-9) * 2 - 3rem);
+  padding-block: var(--env-space-9);
+  background: var(--env-color-bg-muted);
+}
+
+.docs-band-content {
+  container-type: inline-size;
+  inline-size: min(100%, var(--docs-content-width));
+  margin-inline: auto;
+  padding-inline: var(--docs-gutter);
+}
+
+/* The band ends the page's content; the page navigation follows it at its own distance. */
+.docs-band + .docs-page-navigation {
+  padding-block-start: var(--env-space-7);
+}
+
+/* The band is a section of the page, so its heading is a section's (Figures.css). */
+.docs-band-content > h2 {
+  margin: 0;
+  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.015em;
+}

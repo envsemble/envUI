@@ -37,15 +37,13 @@ components:
 
 ## Overview
 
-A checkbox turns one choice on or off, on its own, and takes effect when a form is sent.
-
 ```tsx example=IncludeArchived
 
 ```
 
 ### States
 
-Pressing the box or its label toggles it. `checked="mixed"` shows a dash, for a parent whose children are only partly chosen.
+Pressing the box or its label toggles it. `checked="mixed"` shows a dash.
 
 <!-- specimen: States -->
 
@@ -94,7 +92,7 @@ Write the label as the choice it turns on, in sentence case, so checking it mean
 
 ### Colors
 
-`--env-checkbox-outline`, `--env-checkbox-selected` and `--env-checkbox-icon` set the colors of one Checkbox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-checkbox-outline`, `--env-checkbox-selected` and `--env-checkbox-icon` set the colors of one Checkbox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Adapting to width
 

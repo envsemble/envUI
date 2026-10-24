@@ -31,7 +31,7 @@ components:
 
 ## Overview
 
-AnimatedNumber shows a number in text and rolls it to its new value: up as it grows, down as it shrinks. Its text is always the current value.
+AnimatedNumber rolls up as the value grows and down as it shrinks.
 
 ```tsx example=ShowResults
 

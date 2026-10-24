@@ -58,7 +58,7 @@ composes:
 
 ## Overview
 
-Navigation gives an application one way around and a clear sense of place: one primary navigation that marks the current page, a trail back up from deep pages, tabs only for views of one thing, and a quick way to open anything by name.
+The primary navigation marks the current page, a trail leads back up from deep pages, and quick open finds anything by name.
 
 ```tsx example=PrimaryNavigation stage=shaded
 
@@ -66,7 +66,7 @@ Navigation gives an application one way around and a clear sense of place: one p
 
 ### Changing the page
 
-After the router shows the new page, move focus to the Scaffold's body or the page's `h1`, and set `document.title`, such as "Projects – Northwind". Give every place an `href`, rendered by the router's link through [LinkProvider](../setup.md#connect-your-router); the examples keep the page in state instead.
+After the router shows the new page, set `document.title`, such as "Projects – Northwind". Give every place an `href`, rendered by the router's link through `LinkProvider`; the examples keep the page in state instead.
 
 ## Variants
 

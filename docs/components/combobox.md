@@ -41,8 +41,6 @@ components:
 
 ## Overview
 
-A combobox is a text field with a list of options: typing filters the list, and <kbd>Enter</kbd> chooses the first match.
-
 ```tsx example=ChooseOwner
 
 ```
@@ -55,7 +53,7 @@ A read-only field can be focused and its list browsed, but its value can't chang
 
 ### Several reviewers
 
-With `multiple`, chosen options are chips in the field, and the list stays open. <kbd>Backspace</kbd> in the empty text removes the last chip.
+With `multiple`, the list stays open as people choose.
 
 ```tsx example=Reviewers
 
@@ -63,7 +61,7 @@ With `multiple`, chosen options are chips in the field, and the list stays open.
 
 ### Search on a server
 
-With `filter={null}` the list shows the options the application finds for the typed text; `loading` shows a spinner while it searches.
+With `filter={null}`, the list doesn't filter the options itself; `loading` shows a spinner while the application searches.
 
 ```tsx example=ServerSearch
 
@@ -110,7 +108,7 @@ With `filter={null}` the list shows the options the application finds for the ty
 ```
 
 - Give options that share a label a description, such as an e-mail address.
-- Don't take free text as the value; offer it as an option, or use a TextField.
+- Don't take free text as the value; offer it as an option.
 
 ### Labels
 
@@ -142,7 +140,7 @@ Name the field after what people choose, and use the placeholder for what to typ
 
 ### Colors
 
-`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Adapting to width
 

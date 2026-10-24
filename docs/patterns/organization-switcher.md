@@ -31,7 +31,7 @@ composes:
 
 ## Overview
 
-The organization switcher is a [Menu](../components/menu.md) opened from a secondary [Button](../components/button.md) that names the active organization: a first row with the groups icon above the heading Organizations, a radio group of the person's organizations that the heading names, each with their role as its description, and an action that creates one. It fits the `header` of a navigation [Drawer](../components/drawer.md) or the start of the [TopBar](../components/top-bar.md).
+A secondary [Button](../components/button.md) opens a [Menu](../components/menu.md): a first row with the groups icon above the heading Organizations, a radio group of the person's organizations that the heading names, and an action that creates one. The switcher fits the `header` of a navigation [Drawer](../components/drawer.md) or the start of the [TopBar](../components/top-bar.md).
 
 ```tsx example=SwitchOrganization
 
@@ -72,7 +72,7 @@ Without organizations, the switcher is only the create action, a Button of its o
 ```
 
 1. **Trigger** (`env-button`, the active organization)
-2. **Heading** (`env-menu-header`, Menu.Header with the groups icon and a headline Text that names the group through `aria-labelledby`)
+2. **Heading** (`env-menu-header`, Menu.Header with a headline Text that names the group through `aria-labelledby`)
 3. **Organization** (`env-menu-item`, Menu.RadioItem)
 4. **Role** (`env-menu-item-description`, `description`)
 5. **Create action** (`env-menu-separator + env-menu-item`)

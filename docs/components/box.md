@@ -35,7 +35,7 @@ components:
 
 ## Overview
 
-Box is a plain block for an inset, a size container or a name, with no layout of its own. Like [Row](row.md), [Column](column.md) and [Grid](grid.md), it sizes to its content and never paints.
+Like [Row](row.md), [Column](column.md) and [Grid](grid.md), Box sizes to its content and never paints.
 
 ```tsx example=InsetRegion
 

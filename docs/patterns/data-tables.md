@@ -56,7 +56,7 @@ composes:
 
 ## Overview
 
-A data table shows records people compare, sort and act on: one link per row on the record's name, sortable columns, numbers aligned to compare, a page of rows at a time, and selection that leads to actions on several rows.
+The records sit in a [Table](../components/table.md), with their numbers aligned to compare.
 
 ```tsx example=SortAndPaginate
 
@@ -70,7 +70,7 @@ A press on a sortable header asks for the other order; the application sorts, go
 
 ### Select and act on several rows
 
-While rows are selected, a bulk bar shows the count and actions that name it, "Archive 2 projects". Archive acts at once with Undo; Delete asks first, as in [destructive actions](destructive-actions.md).
+While rows are selected, a bulk bar shows the count and its actions. Archive acts at once with Undo; Delete asks first.
 
 ```tsx example=SelectAndBulkActions
 
