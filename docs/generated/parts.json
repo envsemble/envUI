@@ -324,6 +324,15 @@
       ],
       "states": [
         {
+          "attribute": "data-gather",
+          "values": [
+            "end"
+          ],
+          "parts": [
+            "env-avatar-group"
+          ]
+        },
+        {
           "attribute": "data-interactive",
           "values": [
             ""

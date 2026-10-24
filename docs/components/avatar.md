@@ -48,11 +48,11 @@ An avatar is a round picture of a person or an organization. Beside a visible na
 
 ```
 
-```tsx example=ProjectMembers caption="AvatarGroup: bunched avatars, which spread along an arch under the pointer and show the count of the rest."
+```tsx example=ProjectMembers caption="AvatarGroup: bunched avatars with the count of the rest, which spread along an arch under the pointer."
 
 ```
 
-Where a pointer can hover, a group rests bunched, each avatar a little off the line and turned, and spreads into a row with gaps along a gentle arch under the pointer or while focus is inside, showing the count of the rest; the keyboard reaches the count, which spreads it too. Pressable avatars bunch less, so each keeps a target of at least 1.5 rem uncovered at rest. On touch screens it stays a plain overlapping row with the count shown. With a reduced-motion preference it spreads at once.
+Where a pointer can hover, a group rests bunched, each avatar a little off the line and turned, with the count of the rest under the last, and spreads into a row with gaps along a gentle arch under the pointer or while focus is inside; the keyboard reaches the count, which spreads it too. The group always keeps the room its spread takes, so spreading never moves what is around it; at rest the avatars gather at the start of that room, or at its end with `gather="end"`, for a group that ends a row, as in a list row's action. Pressable avatars bunch less, so each keeps a target of at least 1.5 rem uncovered at rest. On touch screens it stays a plain overlapping row with the count shown. With a reduced-motion preference it spreads at once.
 
 ### Chosen
 
@@ -115,7 +115,7 @@ The name chooses one of eight colors, the same on every page; `hue` sets another
 ```
 
 - Use AvatarButton, not an Avatar inside your own button.
-- Choose a group's `max` so it fits without wrapping.
+- Choose a group's `max` so it fits without wrapping, and pass `gather="end"` to a group at the end of a row.
 - Pass the person's full name as `name`, the same everywhere: it names the image and chooses the initials and the color.
 
 ## Anatomy
@@ -157,8 +157,8 @@ Not shown: a picture, `env-avatar-image`; the check of a chosen avatar, `env-ava
 
 ## Changelog
 
-- **1.0.0-prerelease.2**: The eight colors are a new pastel palette of tonal pairs: a soft fill with initials and a figure in a deep shade of the same hue, rather than white. The hues are named for their colors, in `hue`, `data-hue` and the tokens: `blue` is `powder`, `teal` `seafoam`, `green` `sage`, `amber` `butter`, `red` `blush`, `violet` `periwinkle`, `purple` `orchid` and `slate` `oat`; `v1-props` rewrites a literal `hue`. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover and spreads along an arch under the pointer or with focus inside, showing the count of the rest.
-- **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits, and it rings its avatars through the `--env-avatar-ring` hook. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
+- **1.0.0-prerelease.2**: The eight colors are a new pastel palette of tonal pairs: a soft fill with initials and a figure in a deep shade of the same hue, rather than white. The hues are named for their colors, in `hue`, `data-hue` and the tokens: `blue` is `powder`, `teal` `seafoam`, `green` `sage`, `amber` `butter`, `red` `blush`, `violet` `periwinkle`, `purple` `orchid` and `slate` `oat`; `v1-props` rewrites a literal `hue`. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover, with the count of the rest under the last avatar, and spreads along an arch under the pointer or with focus inside, within the room it keeps for the spread; `gather` sets where the avatars gather at rest. Avatars in a group and the count take no ring; `--env-avatar-ring` is gone, and `--env-avatar-group-ring` sets only the gap in a chosen avatar's ring.
+- **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
 - **0.6.0**: AvatarGroup.
 - **0.4.0**: AvatarButton; initials use the avatar blue of the default person picture.
 - **0.2.0**: Avatar, with the default person picture or initials as fallback.
