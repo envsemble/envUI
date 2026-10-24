@@ -3,7 +3,6 @@ import { Button, Column, Row, Text, Theme, useTheme } from '@envsemble/envui';
 import { ViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import type { DevModeHandle } from '@envsemble/envui/dev';
 import { keepLinksInPlace } from '../../template/LiveExample';
-import { PictureMark } from '../../template/PictureMark';
 import { DemoApp } from './DemoApp';
 // The 3D view of the application below, captured from the real dev mode by
 // scripts/CaptureDevModeImage.mjs (npm run docs:dev-mode-image).
@@ -30,16 +29,13 @@ export function DevModeDemo() {
       {started ? (
         <LiveApplication onReady={setDevMode} onFail={() => setFailed(true)} />
       ) : (
-        <div className="docs-dev-mode-frame">
-          <img
-            className="docs-dev-mode-picture"
-            src={theme === 'dark' ? viewDark : viewLight}
-            alt="Dev mode's 3D view of a small application: its layout boxes pulled apart into stacked, tilted layers, the scaffold at the bottom, then the top bar, the navigation and the page, and the cards, their headers and the list on top, each outlined in the color of its kind and labelled with its name."
-            width={viewSize.width}
-            height={viewSize.height}
-          />
-          <PictureMark />
-        </div>
+        <img
+          className="docs-dev-mode-picture"
+          src={theme === 'dark' ? viewDark : viewLight}
+          alt="Dev mode's 3D view of a small application: its layout boxes pulled apart into stacked, tilted layers, the scaffold at the bottom, then the top bar, the navigation and the page, and the cards, their headers and the list on top, each outlined in the color of its kind and labelled with its name."
+          width={viewSize.width}
+          height={viewSize.height}
+        />
       )}
       <Row>
         <Button

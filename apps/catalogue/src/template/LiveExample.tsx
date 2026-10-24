@@ -15,7 +15,7 @@ import { CodeBlock } from '@envsemble/envui/content';
 import type { StageFill } from '../DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 import { OpenExample } from './OpenExample';
-import { PictureMark } from './PictureMark';
+import { InteractiveMark } from './InteractiveMark';
 import { Loading } from './Loading';
 
 /**
@@ -252,6 +252,7 @@ export function LiveExample({
                 <div className="docs-width-box" style={{ inlineSize: `${width}rem` }}>
                   {render}
                 </div>
+                <InteractiveMark enabled={!open} />
               </Column>
               <Text render={<figcaption />} variant="caption" emphasis="muted">
                 {width} rem wide
@@ -272,7 +273,7 @@ export function LiveExample({
           {...keepLinksInPlace}
         >
           {render}
-          {open && <PictureMark />}
+          <InteractiveMark enabled={!open} />
         </Column>
       )}
       {caption && (

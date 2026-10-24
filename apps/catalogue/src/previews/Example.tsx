@@ -1,6 +1,6 @@
-import { createContext, useContext, useRef, type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
-import { PictureMark, useShowsPicture } from '../template/PictureMark';
+import { InteractiveMark } from '../template/InteractiveMark';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
@@ -28,16 +28,14 @@ export const ExampleStage = createContext(false);
 export const SpecimenStage = createContext(false);
 
 /**
- * A foundation's figure that shows envUI at work, on its stage, marked as a picture where nothing
- * in it can be used.
+ * A foundation's figure that shows envUI at work, on its stage, marked as interactive where
+ * something in it can be used.
  */
 function FoundationStage({ children }: { children: ReactNode }) {
-  const stage = useRef<HTMLDivElement>(null);
-  const picture = useShowsPicture(stage);
   return (
-    <div ref={stage} className="docs-foundation-stage" data-figure="example">
+    <div className="docs-foundation-stage" data-figure="example">
       {children}
-      {picture && <PictureMark />}
+      <InteractiveMark />
     </div>
   );
 }
@@ -121,12 +119,11 @@ export function SpecimenGrid({
   children: ReactNode;
   size?: 'compact' | 'field' | 'card' | 'wide';
 }) {
-  const stage = useRef<HTMLDivElement>(null);
-  const picture = useShowsPicture(stage, useContext(SpecimenStage));
+  const staged = useContext(SpecimenStage);
   return (
-    <div ref={stage} className="docs-specimen-grid" data-size={size}>
+    <div className="docs-specimen-grid" data-size={size}>
       <SpecimenStage value={false}>{children}</SpecimenStage>
-      {picture && <PictureMark />}
+      <InteractiveMark enabled={staged} />
     </div>
   );
 }
@@ -167,18 +164,16 @@ export function MatrixScroll({
   className?: string;
   children: ReactNode;
 }) {
-  const stage = useRef<HTMLDivElement>(null);
-  const picture = useShowsPicture(stage, useContext(SpecimenStage));
+  const staged = useContext(SpecimenStage);
   return (
     <div
-      ref={stage}
       className={['docs-matrix-scroll', className].filter(Boolean).join(' ')}
       tabIndex={0}
       role="region"
       aria-label={label}
     >
       <SpecimenStage value={false}>{children}</SpecimenStage>
-      {picture && <PictureMark />}
+      <InteractiveMark enabled={staged} />
     </div>
   );
 }

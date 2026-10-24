@@ -143,6 +143,8 @@ Under every figure the catalogue shows a closed Code toggle with the file's sour
 
 Each kind also takes the flag `open`, written alone, such as ` ```tsx do=OneMenu open caption="…" `: see [open overlays](#open-overlays).
 
+A stage whose example can be used, such as a live button, shows a small touch icon at its bottom end, in its padding, named and titled "Interactive: try it". A picture shows nothing: an anatomy or variants figure, a figure shown open, and a specimen whose parts are inert. The catalogue finds it from the stage's content; the page writes nothing for it.
+
 ### Stage fill
 
 The canvas is deeper than the page in every theme, so an open popup on it stands out as it does in an application, by its own fill and edge. `stage=shaded` is for a figure that shows a whole window, such as a Scaffold with its navigation, top bar and body, whose edges must show on the canvas: in the light themes, whose navigation is darker than the page, it recesses the canvas from the navigation's fill instead of the page's, or from the band's on the band. In the dark themes the canvas is already deeper than both, so it changes nothing there. A Scaffold on the stage paints the page's background in its body. Don't draw a frame or an edge around the subject instead. Check the figure in light and dark.
