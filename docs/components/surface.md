@@ -18,9 +18,9 @@ aliases:
   - placeholder
   - loading
 useWhen:
-  - A region needs a background, an inset and corners, such as a detail pane or a side panel.
-  - A block should stand apart from what is around it, such as a summary on a pane.
-  - A toolbar floats over dense content, such as a diagram, with small controls inside.
+  - A region with a background, such as a detail pane or a side panel
+  - A block that stands apart, such as a summary on a pane
+  - A toolbar that floats over dense content, such as a diagram
 avoidWhen:
   - text: Content with a heading, metadata and actions, or a block people press to open something.
     use: Card
@@ -39,7 +39,7 @@ components:
 
 ## Overview
 
-Lay out what a Surface holds with a [Column](column.md) or a [Row](row.md) through `render`, so the surface and its layout are one element.
+A surface lays out nothing itself: a [Column](column.md) or a [Row](row.md) lays out what it holds, as one element with it.
 
 ```tsx example=DetailPane
 
@@ -51,9 +51,17 @@ Lay out what a Surface holds with a [Column](column.md) or a [Row](row.md) throu
 
 ### Loading
 
-A pane that is a skeleton until its project arrives; its Text, given no text, is a bar of the text style's length.
+A pane can be a skeleton until its content arrives: its text shows as bars of the text's usual length.
 
 ```tsx example=SurfaceLoading
+
+```
+
+### Colors of its own
+
+One surface can take colors of its own: its fill, its text and an edge, while a surface inside keeps its own. To recolor an area with its controls, give it a theme of its own, with hover and pressed colors too.
+
+```tsx example=RecolorArea caption="A theme of its own gives an area the brand's green; its button and switch keep every state."
 
 ```
 
@@ -61,30 +69,25 @@ A pane that is a skeleton until its project arrives; its Text, given no text, is
 
 ### Backgrounds
 
-| Background | Use for                                        |
-| ---------- | ---------------------------------------------- |
-| `default`  | Panes and side regions. The default.           |
-| `muted`    | A block that stands apart on a pane, and rows. |
-| `page`     | A well inside a pane that returns to the page. |
-| `raised`   | Popups and overlays; it matches `default`.     |
+| Background | Use for                                         |
+| ---------- | ----------------------------------------------- |
+| Default    | Panes and side regions. The default.            |
+| Muted      | A block that stands apart on a pane, and rows.  |
+| Page       | A well inside a pane that returns to the page.  |
+| Raised     | Popups and overlays, in the default background. |
 
 <!-- specimen: Backgrounds -->
 
 ### Corners
 
-`xl` for panes and large regions, `sm` for small blocks, `full` for a group of controls and `none` for a band that meets the edges of its container.
+| Corners      | Use for                                       |
+| ------------ | --------------------------------------------- |
+| Large        | Panes and large regions. The default.         |
+| Small        | Small blocks.                                 |
+| Rounded ends | A group of controls.                          |
+| Square       | A band that meets the edges of its container. |
 
 <!-- specimen: Corners -->
-
-Without `padding`, the inset grows from 1.25 rem in narrow windows to 1.5 rem from 50 rem wide.
-
-### Colors
-
-`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the colors of one surface, through `style` or CSS; a surface inside keeps its own. To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own.
-
-```tsx example=RecolorArea caption="A nested Theme gives an area the brand's green; its button and switch keep every state."
-
-```
 
 ## When to use
 
@@ -96,7 +99,9 @@ Without `padding`, the inset grows from 1.25 rem in narrow windows to 1.5 rem fr
 
 ```
 
-- No margins on a surface's children.
+### Spacing
+
+Space what a surface holds with the layout inside it, never with margins of its own.
 
 ## Accessibility
 
@@ -108,6 +113,42 @@ Without `padding`, the inset grows from 1.25 rem in narrow windows to 1.5 rem fr
 
 - A heading for a surface that is a region, and its name, such as `aria-labelledby` on a section.
 - `role="group"` and an `aria-label` on a group of controls; a [Toolbar](toolbar.md) for one the arrow keys move through.
+
+## In code
+
+### Usage
+
+A Surface gives its content a `background`, an inset and corners. Lay out what it holds through `render`, with a Column or a Row, so the surface and its layout are one element; `render` also gives it its meaning, such as `render={<section />}`, and `ref` reaches the rendered element.
+
+```tsx source=DetailPane
+
+```
+
+#### Backgrounds, corners and inset
+
+`background` is `default`, the default, `muted`, `page` or `raised`, which matches `default`. `radius` is `xl`, 1.75 rem and the default, `sm`, 0.5 rem, `full`, fully rounded ends, or `none`, square. `padding` sets the inset as a step of the spacing scale, from `1`, 0.25 rem, to `9`, 4 rem, and `0` removes it; without it, the inset grows from 1.25 rem in narrow windows to 1.5 rem from 50 rem wide.
+
+```tsx source=Toolbar
+
+```
+
+#### Loading
+
+`skeleton` shows the surface and everything inside it as a skeleton until its content arrives: text becomes bars of its text style's length, and controls filled shapes. Render the same components over stand-in items, `items ?? placeholders<Project>(3)`, whose fields are undefined; `isPlaceholder(item)` tells a stand-in by its id. A component of the application's own reads `useSkeleton()` to give its skeleton a look of its own, such as a chart's.
+
+```tsx source=SurfaceLoading
+
+```
+
+### Customize
+
+`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the fill, the text and an edge of one surface, through `style` or CSS; a surface inside keeps its own. To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own, such as `--env-color-bg-brand-emphasis` with `-hover` and `-pressed`.
+
+```tsx source=RecolorArea
+
+```
+
+CSS may target `env-surface`, with `data-background` and `data-radius` for the values other than the defaults.
 
 ## Changelog
 

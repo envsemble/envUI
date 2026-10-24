@@ -1,6 +1,6 @@
 ---
 title: ColorPicker
-summary: A compact color picker on React Aria's color hooks, with hex, RGB and HSL, optional alpha, copy, an eyedropper and preset swatches; a button that opens it in a popover; and a color swatch that shows a color in a format.
+summary: A compact color picker with hex, RGB and HSL, optional alpha, copy, an eyedropper and preset swatches; a button that opens it in a popover; and a color swatch that shows a color in a format.
 status: stable
 since: 0.1.0
 category: Forms & selection
@@ -20,9 +20,9 @@ aliases:
   - swatch
   - color sample
 useWhen:
-  - People choose any color, such as an accent or a label's color, by eye, by its value or from presets.
-  - A toolbar, a row or a form shows a color that opens a picker (ColorPickerButton).
-  - A list or a table shows a color that people chose, with its value (ColorSwatch).
+  - Any color, such as an accent, chosen by eye, by value or from presets
+  - A color in a toolbar, a row or a form that opens a picker (ColorPickerButton)
+  - A chosen color shown in a list or a table, with its value (ColorSwatch)
 avoidWhen:
   - text: Choosing one of a few named colors or themes.
     use: SegmentedControl
@@ -40,8 +40,6 @@ components:
 
 ## Overview
 
-A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below, or several formats show their fields together, a row each. ColorPicker is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs.
-
 ```tsx example=MinimalPicker
 
 ```
@@ -52,13 +50,15 @@ A square area chooses the saturation and brightness, with upright hue and alpha 
 
 ### Formats and values
 
-By default the picker shows one format at a time, hex first, and the format menu switches to RGB or HSL. `formats` chooses the formats instead: one, such as `['hex']`, shows that format alone, with no menu; two or more show their fields together, as below. Each channel's field shows its letter, such as R, G and B, beside its number. `value` and `defaultValue` take a CSS color string or React Aria's `Color`, and `onValueChange` receives the color as a string in `valueFormat`, hex by default, and as a `Color`. With `alpha`, the picker adds an alpha slider and field, and the value carries its alpha while it is translucent.
+The picker shows one format at a time, hex first, and the format menu switches to RGB or HSL. It can also show one format alone, with no menu, or several together. Each channel's field shows its letter, such as R, G and B, beside its number, and a color with an alpha keeps it while it is translucent.
 
-The copy button copies the color as the fields show it. The eyedropper picks a color from the screen where the browser has one, Chromium-based browsers on the desktop; elsewhere it never shows.
+### Copy and the eyedropper
+
+Copy copies the color as the fields show it. The eyedropper picks a color from the screen in browsers that offer one, on the desktop; elsewhere it never shows.
 
 ### Several formats at once
 
-`formats={['hex', 'rgb', 'hsl']}` shows each format's fields on a row of its own, in that order, with its own copy button. They edit the same color: typing in one moves the others. The channels' letters and the hex value's # say which format a row holds, the letters and numbers line up from row to row, and with `alpha` each row ends in its alpha. Each row is a group named after its format, so a screen reader says which Red or Alpha it is in.
+Several formats show their fields on a row each, with a copy button each. They edit the same color: typing in one moves the others. The channels' letters and the hex value's # say which format a row holds, the letters and numbers line up from row to row, and with an alpha each row ends in it.
 
 ```tsx example=FormatsTogether
 
@@ -74,7 +74,7 @@ ColorPickerButton shows the color as a swatch and its value, and opens a picker 
 
 ### Preset swatches
 
-`swatches` lists colors to choose from, each with an optional name.
+A picker can offer colors to choose from, each with an optional name.
 
 ```tsx example=PresetSwatches
 
@@ -82,7 +82,7 @@ ColorPickerButton shows the color as a swatch and its value, and opens a picker 
 
 ### Color swatches
 
-ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`. As the icon of an IconButton in its default variant, the button draws no round fill behind the square sample: it is a rounded square whose fill shows on hover, keyboard focus and press, and while its popup is open.
+ColorSwatch shows a color as a small sample, with its value in a format and an optional label. As the icon of an icon button, it is a rounded square whose fill shows on hover, keyboard focus and press, and while its popup is open.
 
 ```tsx example=Swatches
 
@@ -94,11 +94,13 @@ ColorSwatch shows a color as a small sample, with its value in a `format` and an
 
 ### States
 
+A read-only picker can be read and copied but not changed, and a disabled one takes no input.
+
 <!-- specimen: States -->
 
 ### In a form
 
-`name` submits the color as a string in `valueFormat`, and a reset returns to `defaultValue`. The picker always holds a color, so it takes no `required`: where a color must be chosen, keep "no color yet" in the form's own state and validate it there.
+The color goes with its form in the format the application chooses, and a reset returns to where it started. The picker always holds a color, so where one must be chosen, the form keeps "no color yet" in its own state and checks it there.
 
 ```tsx example=ProjectColorForm
 
@@ -122,7 +124,9 @@ ColorSwatch shows a color as a small sample, with its value in a `format` and an
 
 ```
 
-- Where the color carries text, check its contrast and say what is wrong through `error`.
+### Contrast
+
+Where the color carries text, check its contrast and say what is wrong under the picker.
 
 ## Anatomy
 
@@ -142,11 +146,11 @@ ColorSwatch shows a color as a small sample, with its value in a `format` and an
 10. **Copy** (`env-color-picker-copy`)
 11. **Swatches** (`env-color-picker-swatches`, `swatches`)
 
-Not shown: the description and error, `env-color-picker-description` and `env-color-picker-error`; the rows of several formats shown together, `env-color-picker-row`; ColorPickerButton's `env-color-picker-button` and its popover, `env-color-picker-popover`; and the eyedropper where the browser has none.
+Not shown: the description and the error; the rows of several formats shown together; ColorPickerButton and its popover; and the eyedropper where the browser has none.
 
 ### Colors
 
-ColorPickerButton has no fill of its own: like a field, it takes the background of what it sits on. `--env-color-picker-button-container` gives one button a fill, through `style` or CSS.
+ColorPickerButton has no fill of its own: like a field, it takes the background of what it sits on. One button can be given a fill of its own.
 
 ## Adapting to width
 
@@ -182,6 +186,66 @@ The picker fills its container up to 18 rem, so that a wide picker stays compact
 
 - A `label` that names what the color is for.
 - A contrast check where the color carries text, and its message in `error`.
+
+## In code
+
+### Usage
+
+ColorPicker, ColorPickerButton and ColorSwatch come from their own entry, `@envsemble/envui/color`, built on React Aria's color hooks, whose libraries the application installs. A ColorPicker takes its `label`, which names it, a `description` and an `error`; `showLabel={false}` hides the label where something else names the picker, such as a popover. `value` and `defaultValue`, `#000000` by default, take a CSS color string, such as `#6750a4`, `rgb(103, 80, 164)` or `hsl(256, 34%, 48%)`, or React Aria's `Color`. `onValueChange` receives the color as a string in `valueFormat` and as a `Color`, which keeps the hue of a gray and converts to any format. `valueFormat` is `hex`, the default, `#rrggbb` or `#rrggbbaa` while translucent, `rgb` or `hsl`. With `alpha`, the picker adds an alpha slider and field; without it, colors are opaque.
+
+```tsx source=MinimalPicker
+
+```
+
+#### Formats
+
+Without `formats`, the picker shows one format at a time, hex first, with the format menu. `formats` with one format, such as `['hex']`, shows it alone, with no menu; with two or more, such as `['hex', 'rgb', 'hsl']`, it shows each on a row of its own in that order, with its own copy button, and each row is a group named after its format, so a screen reader says which Red or Alpha it is in.
+
+```tsx source=FormatsTogether
+
+```
+
+#### Copy, the eyedropper and swatches
+
+`copy` and `eyeDropper` are on by default. The eyedropper shows only where the browser has one, Chromium-based browsers on the desktop. `swatches` lists preset colors under the fields: CSS color strings, `Color`s, or `{ color, label }` with a name.
+
+```tsx source=PresetSwatches
+
+```
+
+#### ColorPickerButton
+
+ColorPickerButton takes the picker's props, and opens it in a popover on its `side`, `bottom` by default, lined up by `align`, `start` by default; `defaultOpen` starts it open. `size` is `sm`, `md` or `lg`, or its container's control height. `className` and `style` reach the button.
+
+```tsx source=PickerButtonOpen
+
+```
+
+#### ColorSwatch
+
+ColorSwatch shows its `color`, with an optional alpha, and writes it in `format`, `hex`, `rgb` or `hsl`, after an optional `label`. Without a format and a label, the sample stands alone, named by the color's description, such as dark purple. `size` is `md`, 1 rem and the default, or `sm`, 0.75 rem, for dense rows; as a Button's icon it takes the icon's size. As the icon of an IconButton in its default variant, the button draws no round fill behind the square sample.
+
+```tsx source=Swatches
+
+```
+
+#### In a form
+
+`name` submits the color as a string in `valueFormat`, and `form` ties it to a form it sits outside; a reset returns to `defaultValue`. The picker always holds a color, so it takes no `required`: keep "no color yet" in the form's own state and validate it there. `readOnly` lets people read and copy the color but not change it, and `disabled` takes no input.
+
+```tsx source=ProjectColorForm
+
+```
+
+### Composition
+
+The picker, `env-color-picker`, holds its label, `env-color-picker-label`; the controls, `env-color-picker-controls`, with the area, `env-color-picker-area`, and the sliders, `env-color-picker-sliders`, the hue, `env-color-picker-hue`, and the alpha, `env-color-picker-alpha`, each an `env-color-picker-slider` with its track, `env-color-picker-track`, and a thumb, `env-color-picker-thumb`, like the area's; and the values, `env-color-picker-values`, with the format, `env-color-picker-format`, the eyedropper, `env-color-picker-eye-dropper`, copy, `env-color-picker-copy`, and the fields, `env-color-picker-fields`, each an `env-color-picker-field` with its letter, `env-color-picker-field-label`, and input, `env-color-picker-input`. Several formats shown together are rows, `env-color-picker-row`. Then come the swatches, `env-color-picker-swatches`, each an `env-color-picker-swatch`, the description, `env-color-picker-description`, and the error, `env-color-picker-error`. `data-channel` names a slider's or a field's channel, and `data-format` a row's format.
+
+ColorPickerButton is `env-color-picker-button`, with its value, `env-color-picker-button-value`, and its popover, `env-color-picker-popover`. ColorSwatch is `env-color-swatch`, with its sample, `env-color-swatch-sample`, its label, `env-color-swatch-label`, and its value, `env-color-swatch-value`.
+
+### Customize
+
+ColorPickerButton has no fill of its own; `--env-color-picker-button-container` gives one button a fill, through `style` or CSS.
 
 ## Changelog
 

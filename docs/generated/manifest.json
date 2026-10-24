@@ -147,9 +147,9 @@
         "wrap"
       ],
       "useWhen": [
-        "A few actions belong together, such as a form's Cancel and Save, in a row that wraps.",
-        "A heading and its actions share a line, with the actions at the end.",
-        "Small items sit side by side, such as a label and a badge."
+        "A few actions that belong together, such as Cancel and Save",
+        "A heading and its actions on one line",
+        "Small items side by side, such as a label and a badge"
       ],
       "avoidWhen": [
         {
@@ -192,7 +192,7 @@
         },
         {
           "name": "WrappingActions",
-          "title": "Do: wrap, so an action that doesn't fit moves to the next line.",
+          "title": "Do: A row that wraps, so an action that doesn't fit moves to the next line.",
           "description": "",
           "file": "docs/examples/row/WrappingActions.tsx"
         },
@@ -730,8 +730,8 @@
         "resizable panes"
       ],
       "useWhen": [
-        "A main pane with a supporting pane beside it, such as a document and its details, which becomes a sheet where there is no room.",
-        "A list beside the chosen item's detail, which shows one at a time where there is no room."
+        "A main pane with a supporting one, such as a document and its details",
+        "A list beside the chosen item's detail, such as messages"
       ],
       "avoidWhen": [
         {
@@ -767,19 +767,19 @@
         {
           "name": "SupportingPane",
           "title": "Supporting pane",
-          "description": "`behavior=\"supporting\"`: a main pane and a supporting one. In less room the supporting pane is a modal sheet while `open`, which Panes.Trigger in the main pane opens; the trigger hides while the panes sit side by side.",
+          "description": "In less room, the supporting pane is a sheet over the main one, which a button in the main pane opens. The button hides while the panes sit side by side.",
           "file": "docs/examples/panes/SupportingPane.tsx"
         },
         {
           "name": "ListAndDetail",
           "title": "List and detail",
-          "description": "",
+          "description": "In less room, one pane shows at a time: the detail once an item is chosen, with a back button to the list.",
           "file": "docs/examples/panes/ListAndDetail.tsx"
         },
         {
           "name": "ResizableDetails",
           "title": "Resizable",
-          "description": "Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line, so it goes between two surfaces: give each pane a Surface, as tall as the pane with `min-block-size: 100%`, and the divider is the gap between them. Where the detail shows alone, its surface fills the room below the back button. Panes keeps the same gap without a divider. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.",
+          "description": "People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys. The application can keep the width they choose.",
           "file": "docs/examples/panes/ResizableDetails.tsx"
         },
         {
@@ -796,7 +796,7 @@
         },
         {
           "name": "BackToInbox",
-          "title": "Do: A backLabel that names where the back button goes.",
+          "title": "Do: A back button that names where it goes.",
           "description": "",
           "file": "docs/examples/panes/BackToInbox.tsx"
         },
@@ -820,8 +820,8 @@
         },
         {
           "name": "ListDetailByWidth",
-          "title": "List detail by width",
-          "description": "",
+          "title": "A list and its detail by width",
+          "description": "In less room the list and its detail show one at a time: choose a message, and Inbox returns to the list.",
           "file": "docs/examples/panes/ListDetailByWidth.tsx"
         }
       ],
@@ -999,8 +999,8 @@
         "main column"
       ],
       "useWhen": [
-        "A page's content needs a readable width in a wide window, such as a form, a document or a dashboard.",
-        "A page has a heading with actions above its content, passed as its header."
+        "A readable width in a wide window, such as for a form or a document",
+        "A page's heading and actions above its content"
       ],
       "avoidWhen": [
         {
@@ -1033,18 +1033,18 @@
         {
           "name": "WithHeader",
           "title": "With header",
-          "description": "Page goes in a Scaffold's body and adds no landmark of its own.",
+          "description": "Page goes in a Scaffold's body, with its header at the top of the same column, and adds no landmark of its own.",
           "file": "docs/examples/page/WithHeader.tsx"
         },
         {
           "name": "Widths",
           "title": "Widths",
-          "description": "",
+          "description": "| Width | Content width | Use for | | ------ | --------------- | -------------------------------------------------- | | Small | 40 rem | A form, a settings page or a sign-in page. | | Medium | 60 rem | A document, an article or the details of one item. | | Large | 76 rem | A dashboard, a list or a table. The default. | | Full | The whole width | A board, a canvas or a wide table. |",
           "file": "docs/examples/page/Widths.tsx"
         },
         {
           "name": "HeaderInPage",
-          "title": "Do: The heading in header, in the page's column and gutter.",
+          "title": "Do: The heading in the page's header, in its column and gutter.",
           "description": "",
           "file": "docs/examples/page/HeaderInPage.tsx"
         },
@@ -1307,9 +1307,9 @@
         "loading"
       ],
       "useWhen": [
-        "A region needs a background, an inset and corners, such as a detail pane or a side panel.",
-        "A block should stand apart from what is around it, such as a summary on a pane.",
-        "A toolbar floats over dense content, such as a diagram, with small controls inside."
+        "A region with a background, such as a detail pane or a side panel",
+        "A block that stands apart, such as a summary on a pane",
+        "A toolbar that floats over dense content, such as a diagram"
       ],
       "avoidWhen": [
         {
@@ -1340,7 +1340,7 @@
         {
           "name": "DetailPane",
           "title": "Detail pane",
-          "description": "Lay out what a Surface holds with a Column or a Row through `render`, so the surface and its layout are one element.",
+          "description": "A surface lays out nothing itself: a Column or a Row lays out what it holds, as one element with it.",
           "file": "docs/examples/surface/DetailPane.tsx"
         },
         {
@@ -1352,13 +1352,13 @@
         {
           "name": "SurfaceLoading",
           "title": "Surface loading",
-          "description": "A pane that is a skeleton until its project arrives; its Text, given no text, is a bar of the text style's length.",
+          "description": "A pane can be a skeleton until its content arrives: its text shows as bars of the text's usual length.",
           "file": "docs/examples/surface/SurfaceLoading.tsx"
         },
         {
           "name": "RecolorArea",
-          "title": "Colors",
-          "description": "`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the colors of one surface, through `style` or CSS; a surface inside keeps its own. To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own.",
+          "title": "Recolor area",
+          "description": "One surface can take colors of its own: its fill, its text and an edge, while a surface inside keeps its own. To recolor an area with its controls, give it a theme of its own, with hover and pressed colors too.",
           "file": "docs/examples/surface/RecolorArea.tsx"
         },
         {
@@ -2546,9 +2546,9 @@
         "tool palette"
       ],
       "useWhen": [
-        "A set of controls acts on one subject, such as an editor's formatting or a diagram's view.",
-        "Many icon-only actions sit together and would make a long tab sequence one by one.",
-        "A tool is chosen from a palette and stays chosen, such as a drawing tool."
+        "Controls for one subject, such as an editor's formatting",
+        "Many icon-only actions that would each take a tab stop",
+        "A palette whose chosen tool stays chosen, such as drawing tools"
       ],
       "avoidWhen": [
         {
@@ -2591,25 +2591,25 @@
         {
           "name": "FormattingToolbar",
           "title": "Formatting toolbar",
-          "description": "`Toolbar.Button` is an icon button named by its `label`, which a tooltip shows with its `shortcut`; with `pressed` it is a toggle.",
+          "description": "Each button is an icon, whose name and shortcut show in a tooltip; a button can also be a toggle that stays pressed.",
           "file": "docs/examples/toolbar/FormattingToolbar.tsx"
         },
         {
           "name": "DrawingTools",
-          "title": "Drawing tools",
-          "description": "",
+          "title": "Orientation",
+          "description": "| Orientation | Use for | | ----------- | ----------------------------------------------------------------------------------- | | Horizontal | Most toolbars, moved through with <kbd>←</kbd> and <kbd>→</kbd>. The default. | | Vertical | A palette, such as drawing tools, moved through with <kbd>↑</kbd> and <kbd>↓</kbd>. |",
           "file": "docs/examples/toolbar/DrawingTools.tsx"
         },
         {
           "name": "ViewControls",
-          "title": "View controls",
-          "description": "",
+          "title": "Sizes",
+          "description": "The buttons come in the three control heights of the scale, or take the height of the toolbar's container.",
           "file": "docs/examples/toolbar/ViewControls.tsx"
         },
         {
           "name": "PageToolbar",
           "title": "Layouts",
-          "description": "Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a Row, where every control keeps its tab stop and fields keep their arrow keys. | Bar | Build it with | | ------------------------------------------- | ------------------------------------------------------------- | | Icon commands, such as formatting or tools | `Toolbar.Root` with `Toolbar.Button`s | | A page's search, filters and primary action | PageHeader's `toolbar`, a Row | | A section's heading with its actions | `<Row wrap align=\"center\" justify=\"between\">` | | A table's search and actions | A Row above the table, in the size of its rows | | Actions in a window's title bar | A TopBar with `titleBar`: its `actions`, small ghost buttons |",
+          "description": "Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a Row, where every control keeps its tab stop and fields keep their arrow keys. | Bar | Build it with | | ------------------------------------------- | ------------------------------------------------------ | | Icon commands, such as formatting or tools | A Toolbar of its buttons | | A page's search, filters and primary action | A Row in the toolbar of a PageHeader | | A section's heading with its actions | A Row that wraps, with the actions at the end | | A table's search and actions | A Row above the table, in the size of its rows | | Actions in a window's title bar | A TopBar as a title bar, with small ghost buttons |",
           "file": "docs/examples/toolbar/PageToolbar.tsx"
         },
         {
@@ -2733,7 +2733,7 @@
         {
           "name": "InRunningText",
           "title": "In running text",
-          "description": "Link renders a native `<a>` through the `LinkProvider`'s link component, so the application's router handles it.",
+          "description": "",
           "file": "docs/examples/link/InRunningText.tsx"
         },
         {
@@ -2807,7 +2807,7 @@
       "category": "Forms & selection",
       "status": "stable",
       "since": "0.1.0",
-      "summary": "A compact color picker on React Aria's color hooks, with hex, RGB and HSL, optional alpha, copy, an eyedropper and preset swatches; a button that opens it in a popover; and a color swatch that shows a color in a format.",
+      "summary": "A compact color picker with hex, RGB and HSL, optional alpha, copy, an eyedropper and preset swatches; a button that opens it in a popover; and a color swatch that shows a color in a format.",
       "aliases": [
         "colour picker",
         "color input",
@@ -2825,9 +2825,9 @@
         "color sample"
       ],
       "useWhen": [
-        "People choose any color, such as an accent or a label's color, by eye, by its value or from presets.",
-        "A toolbar, a row or a form shows a color that opens a picker (ColorPickerButton).",
-        "A list or a table shows a color that people chose, with its value (ColorSwatch)."
+        "Any color, such as an accent, chosen by eye, by value or from presets",
+        "A color in a toolbar, a row or a form that opens a picker (ColorPickerButton)",
+        "A chosen color shown in a list or a table, with its value (ColorSwatch)"
       ],
       "avoidWhen": [
         {
@@ -2857,7 +2857,7 @@
         {
           "name": "MinimalPicker",
           "title": "Minimal picker",
-          "description": "A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below, or several formats show their fields together, a row each. ColorPicker is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs.",
+          "description": "",
           "file": "docs/examples/color-picker/MinimalPicker.tsx"
         },
         {
@@ -2869,7 +2869,7 @@
         {
           "name": "FormatsTogether",
           "title": "Formats together",
-          "description": "`formats={['hex', 'rgb', 'hsl']}` shows each format's fields on a row of its own, in that order, with its own copy button. They edit the same color: typing in one moves the others. The channels' letters and the hex value's # say which format a row holds, the letters and numbers line up from row to row, and with `alpha` each row ends in its alpha. Each row is a group named after its format, so a screen reader says which Red or Alpha it is in.",
+          "description": "Several formats show their fields on a row each, with a copy button each. They edit the same color: typing in one moves the others. The channels' letters and the hex value's # say which format a row holds, the letters and numbers line up from row to row, and with an alpha each row ends in it.",
           "file": "docs/examples/color-picker/FormatsTogether.tsx"
         },
         {
@@ -2881,13 +2881,13 @@
         {
           "name": "PresetSwatches",
           "title": "Preset swatches",
-          "description": "`swatches` lists colors to choose from, each with an optional name.",
+          "description": "A picker can offer colors to choose from, each with an optional name.",
           "file": "docs/examples/color-picker/PresetSwatches.tsx"
         },
         {
           "name": "Swatches",
           "title": "Swatches",
-          "description": "ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`. As the icon of an IconButton in its default variant, the button draws no round fill behind the square sample: it is a rounded square whose fill shows on hover, keyboard focus and press, and while its popup is open.",
+          "description": "ColorSwatch shows a color as a small sample, with its value in a format and an optional label. As the icon of an icon button, it is a rounded square whose fill shows on hover, keyboard focus and press, and while its popup is open.",
           "file": "docs/examples/color-picker/Swatches.tsx"
         },
         {
@@ -2899,7 +2899,7 @@
         {
           "name": "ProjectColorForm",
           "title": "Project color form",
-          "description": "`name` submits the color as a string in `valueFormat`, and a reset returns to `defaultValue`. The picker always holds a color, so it takes no `required`: where a color must be chosen, keep \"no color yet\" in the form's own state and validate it there.",
+          "description": "The color goes with its form in the format the application chooses, and a reset returns to where it started. The picker always holds a color, so where one must be chosen, the form keeps \"no color yet\" in its own state and checks it there.",
           "file": "docs/examples/color-picker/ProjectColorForm.tsx"
         },
         {
@@ -4964,9 +4964,9 @@
         "pill tabs"
       ],
       "useWhen": [
-        "People switch between two to five views or filters of the same content, such as Open, Blocked and Done items, and the choice applies at once.",
-        "A toolbar switches how content is laid out, such as List and Board (`size=\"sm\"`).",
-        "A narrow container, such as a sidebar, holds a choice between two scopes (`fullWidth`)."
+        "Two to five views or filters of the same content, such as Open and Done",
+        "How a toolbar lays out content, such as List and Board",
+        "A choice between two scopes in a narrow container, such as a sidebar"
       ],
       "avoidWhen": [
         {
@@ -5004,7 +5004,7 @@
         {
           "name": "WorkItems",
           "title": "Work items",
-          "description": "`items` holds the options, each with a `value` and a short `label`.",
+          "description": "",
           "file": "docs/examples/segmented-control/WorkItems.tsx"
         },
         {
@@ -6305,8 +6305,8 @@
         "billing period"
       ],
       "useWhen": [
-        "People choose a month of a year, such as the month a report covers or a billing period.",
-        "The day doesn't matter, only the month."
+        "A month of a year, such as the month a report covers",
+        "A period where the day doesn't matter, such as a billing period"
       ],
       "avoidWhen": [
         {
@@ -6329,25 +6329,25 @@
         {
           "name": "ReportMonth",
           "title": "Report month",
-          "description": "MonthPicker writes the month in the reader's locale.",
+          "description": "The month shows in the reader's language, and choosing one closes the popup.",
           "file": "docs/examples/month-picker/ReportMonth.tsx"
         },
         {
           "name": "FiscalYear",
           "title": "Fiscal year",
-          "description": "Months outside `min` and `max` are unavailable, and the year buttons stop at them.",
+          "description": "Months outside the range a field allows are unavailable, and the year buttons stop at them.",
           "file": "docs/examples/month-picker/FiscalYear.tsx"
         },
         {
           "name": "ShortFormat",
           "title": "Short format",
-          "description": "`formatOptions` changes how the field writes the month.",
+          "description": "The field can write the month in a shorter form, such as 07/28.",
           "file": "docs/examples/month-picker/ShortFormat.tsx"
         },
         {
           "name": "ExpenseForm",
           "title": "Expense form",
-          "description": "`name` submits the month as `YYYY-MM`, which sorts and compares as text.",
+          "description": "The month goes with its form as the year and the month in numbers, such as 2026-10, which sort and compare as text.",
           "file": "docs/examples/month-picker/ExpenseForm.tsx"
         },
         {
@@ -6878,8 +6878,8 @@
         "BottomNavigation"
       ],
       "useWhen": [
-        "An application's main destinations on a compact window, such as a phone, where Scaffold places the bar at the bottom.",
-        "Three to five destinations of equal weight that people move between often."
+        "An application's main destinations on a phone",
+        "Three to five destinations people move between often"
       ],
       "avoidWhen": [
         {
@@ -6912,7 +6912,7 @@
         {
           "name": "PhoneDestinations",
           "title": "Phone destinations",
-          "description": "Bar takes the same destinations as Rail and Drawer, and Scaffold shows the form that fits the width.",
+          "description": "Bar takes the same destinations as Rail and Drawer, and Scaffold shows the form that fits the width, the bar at the bottom of a compact window.",
           "file": "docs/examples/bar/PhoneDestinations.tsx"
         },
         {
@@ -7056,8 +7056,8 @@
         "sidebar rail"
       ],
       "useWhen": [
-        "An application's main destinations on a medium window, such as a tablet, where Scaffold places the rail at the window's start.",
-        "Destinations with short labels that fit under their icons."
+        "An application's main destinations on a tablet",
+        "Short labels that fit under their icons"
       ],
       "avoidWhen": [
         {
@@ -7080,13 +7080,13 @@
         {
           "name": "TabletDestinations",
           "title": "Tablet destinations",
-          "description": "Rail takes the same destinations as Bar and Drawer, and Scaffold shows the form that fits the width. A button that narrows the drawer to the rail asks the Scaffold for it through `forms` (a button that narrows the navigation).",
+          "description": "Rail takes the same destinations as Bar and Drawer, and Scaffold shows the form that fits the width, the rail at the start of a medium window. A button can narrow the drawer to the rail in a wider window too, as a button that narrows the navigation shows.",
           "file": "docs/examples/rail/TabletDestinations.tsx"
         },
         {
           "name": "GroupsInOrder",
           "title": "Groups in order",
-          "description": "A destination's `group` shows no heading in the rail: grouped destinations follow one another in the array's order.",
+          "description": "The rail shows no group headings: grouped destinations follow one another in their order.",
           "file": "docs/examples/rail/GroupsInOrder.tsx"
         },
         {
@@ -7554,9 +7554,9 @@
         "view switcher"
       ],
       "useWhen": [
-        "Related views of one subject in one place, such as a project's summary, details and activity.",
-        "Content that splits into sections people look at one at a time, such as the parts of a settings page.",
-        "Views that fill a region, such as a diagram's canvas and its outline (fill)."
+        "Related views of one subject, such as a project's summary and activity",
+        "Sections people look at one at a time, such as a settings page's",
+        "Views that fill a region, such as a diagram's canvas and its outline"
       ],
       "avoidWhen": [
         {
@@ -7589,37 +7589,37 @@
         {
           "name": "ProjectViews",
           "title": "Project views",
-          "description": "Each item gives a `button`, which becomes the tab, and the panel's `content`. Every tab is a text tab, whatever its button's variant.",
+          "description": "",
           "file": "docs/examples/tabs/ProjectViews.tsx"
         },
         {
           "name": "ManualActivation",
           "title": "Manual activation",
-          "description": "By default the arrow keys select the tab they reach. With `activation=\"manual\"` they only move focus and <kbd>Enter</kbd> or <kbd>Space</kbd> selects, for a panel that loads when it shows.",
+          "description": "The arrow keys select the tab they reach. Tabs can instead only move focus there, and <kbd>Enter</kbd> or <kbd>Space</kbd> selects, for a panel that loads when it shows.",
           "file": "docs/examples/tabs/ManualActivation.tsx"
         },
         {
           "name": "SmallRail",
-          "title": "Small rail",
-          "description": "",
+          "title": "Sizes",
+          "description": "| Size | Use for | | ---------------- | ----------------------------------------------------- | | Large | Most tabs, as tall as buttons. The default. | | Small and medium | Toolbars and bars, as tall as a control of that size. |",
           "file": "docs/examples/tabs/SmallRail.tsx"
         },
         {
           "name": "VerticalList",
-          "title": "Vertical list",
-          "description": "",
+          "title": "Vertical",
+          "description": "A column of tabs beside their panels, for the sections of a settings page.",
           "file": "docs/examples/tabs/VerticalList.tsx"
         },
         {
           "name": "FillARegion",
-          "title": "Fill ARegion",
-          "description": "",
+          "title": "Fill a region",
+          "description": "The selected panel takes the height left below the tabs, for a view such as a canvas.",
           "file": "docs/examples/tabs/FillARegion.tsx"
         },
         {
           "name": "ListBesideAHeading",
-          "title": "List beside AHeading",
-          "description": "",
+          "title": "Beside a heading",
+          "description": "The tabs can share a row with a heading, with their panels below.",
           "file": "docs/examples/tabs/ListBesideAHeading.tsx"
         },
         {
@@ -12237,10 +12237,10 @@
         "undo notification"
       ],
       "useWhen": [
-        "Feedback after an action people started, such as Changes saved or Invitation sent.",
-        "An undo right after an action that took effect at once, such as archiving a project.",
-        "An action that failed and can be tried again, such as a save that didn't reach the server.",
-        "Work that finished in the background, such as an export becoming ready."
+        "Feedback after an action, such as Changes saved",
+        "An undo right after an action that took effect at once",
+        "An action that failed and can be tried again",
+        "Work that finished in the background, such as an export"
       ],
       "avoidWhen": [
         {
@@ -12280,13 +12280,13 @@
         {
           "name": "SaveChanges",
           "title": "Save changes",
-          "description": "Put one Toast.Provider near the root of the application; any component inside it calls useToast to `show` a notification.",
+          "description": "Any part of the application can show a notification. It leaves after a few seconds, which pause while people point at it or focus it.",
           "file": "docs/examples/toast/SaveChanges.tsx"
         },
         {
           "name": "UndoArchive",
           "title": "Undo archive",
-          "description": "A notification with an action stays until it is dismissed. Dismiss it with the id `show` returned once the action has run.",
+          "description": "A notification with an action stays until it is dismissed, which the application does once the action has run.",
           "file": "docs/examples/toast/UndoArchive.tsx"
         },
         {
@@ -12298,19 +12298,19 @@
         {
           "name": "ExportReady",
           "title": "Export ready",
-          "description": "`duration: Infinity` keeps a notification until people dismiss it.",
+          "description": "A notification can stay until people dismiss it.",
           "file": "docs/examples/toast/ExportReady.tsx"
         },
         {
           "name": "Tones",
           "title": "Tones",
-          "description": "",
+          "description": "| Tone | Use for | | ------- | ------------------------------------------------------ | | Neutral | Routine feedback, such as Files archived. The default. | | Success | An action that worked, such as Invitation sent. | | Info | Something worth noticing that needs no action. | | Danger | An action that failed. |",
           "file": "docs/examples/toast/Tones.tsx"
         },
         {
           "name": "TopCenter",
-          "title": "Top center and a limit",
-          "description": "`top-center` suits an application whose bottom corner is taken. `visibleLimit` hides older notifications behind a count.",
+          "title": "Placements",
+          "description": "Past a limit, older notifications wait behind a count, and danger notifications always show. | Placement | Use for | | ---------- | ---------------------------------------------------------------------------- | | Bottom end | Most applications, at the bottom corner at the end of the line. The default. | | Top center | An application whose bottom corner is taken. |",
           "file": "docs/examples/toast/TopCenter.tsx"
         },
         {
@@ -13561,11 +13561,11 @@
         "theme choice"
       ],
       "useWhen": [
-        "A short list of actions behind one control, such as a row's or a toolbar's More actions.",
-        "A few destinations that share a trigger, such as the account pages behind the avatar.",
-        "Options that change a view, such as a sort order or whether hidden files show, as radio and checkbox items.",
-        "Actions for an area or its rows on right click, beside the visible controls that offer them too (ContextMenu).",
-        "Switching between the organizations a person belongs to, as the organization switcher pattern shows."
+        "A short list of actions behind one control, such as More actions",
+        "A few destinations behind one control, such as the account's pages",
+        "Options that change a view, such as a sort order",
+        "Actions for an area on right click (ContextMenu)",
+        "Switching between a person's organizations"
       ],
       "avoidWhen": [
         {
@@ -13624,7 +13624,7 @@
         {
           "name": "IconsAndShortcuts",
           "title": "Icons and shortcuts",
-          "description": "Menu.Root opens Menu.Item rows from its `trigger` on a temporary surface, and the other parts build the rest.",
+          "description": "",
           "file": "docs/examples/menu/IconsAndShortcuts.tsx"
         },
         {
@@ -13636,31 +13636,31 @@
         {
           "name": "AccountMenu",
           "title": "Account menu",
-          "description": "An AvatarButton trigger and a Menu.Header with the account.",
+          "description": "A menu behind the account's avatar, with a header that shows the account.",
           "file": "docs/examples/menu/AccountMenu.tsx"
         },
         {
           "name": "GroupsAndSeparators",
           "title": "Groups and separators",
-          "description": "Menu.Group puts items under a heading; Menu.Separator splits sets without one.",
+          "description": "Groups put items under a heading, and separators split sets without one.",
           "file": "docs/examples/menu/GroupsAndSeparators.tsx"
         },
         {
           "name": "Choices",
           "title": "Radio and checkbox items",
-          "description": "A Menu.RadioItem checks one choice and closes the menu; a Menu.CheckboxItem toggles and keeps it open. ThemeRadioGroup is the theme choice as radio items.",
+          "description": "A radio item checks one choice and closes the menu, and a checkbox item toggles and keeps it open. ThemeRadioGroup is the theme choice as radio items.",
           "file": "docs/examples/menu/Choices.tsx"
         },
         {
           "name": "Submenus",
           "title": "Submenus",
-          "description": "A Menu.Submenu row opens a nested menu beside it, on hover or with <kbd>→</kbd>.",
+          "description": "A submenu's row opens a nested menu beside it, on hover or with <kbd>→</kbd>.",
           "file": "docs/examples/menu/Submenus.tsx"
         },
         {
           "name": "Destinations",
           "title": "Destinations",
-          "description": "With `href`, an item is a link, through the `LinkProvider`.",
+          "description": "An item can go to a page, as a link the application's router follows.",
           "file": "docs/examples/menu/Destinations.tsx"
         },
         {
@@ -14120,9 +14120,9 @@
         "hover label"
       ],
       "useWhen": [
-        "Showing an icon-only control's name, such as a toolbar's Refresh button, for people who don't recognise the icon.",
-        "Saying why a control is disabled, such as All seats are assigned, beside the page's own account of it.",
-        "Showing a control's keyboard shortcut, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>)."
+        "An icon-only control's name, such as Refresh",
+        "Why a control is disabled, beside the page's own account of it",
+        "A control's keyboard shortcut, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>)"
       ],
       "avoidWhen": [
         {
@@ -14155,31 +14155,31 @@
         {
           "name": "IconActions",
           "title": "Icon actions",
-          "description": "Tooltip wraps the control it describes, and `content` holds its text.",
+          "description": "",
           "file": "docs/examples/tooltip/IconActions.tsx"
         },
         {
           "name": "MenuTrigger",
           "title": "Menu trigger",
-          "description": "A Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog, and stays closed while their popup is open.",
+          "description": "A tooltip can name the button that opens a menu, a popover, a dialog or a sheet, and stays closed while what it opens is open.",
           "file": "docs/examples/tooltip/MenuTrigger.tsx"
         },
         {
           "name": "ShortcutHints",
           "title": "Shortcut hints",
-          "description": "Write the shortcut after the name, and give the control `aria-keyshortcuts`.",
+          "description": "Write the shortcut after the control's name, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>).",
           "file": "docs/examples/tooltip/ShortcutHints.tsx"
         },
         {
           "name": "TextAbbreviation",
           "title": "Text abbreviation",
-          "description": "Text that isn't a control, such as an abbreviation, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; buttons, icon buttons and links keep their own look. Make it focusable with `tabIndex={0}`, so keyboard focus opens the tooltip too.",
+          "description": "Text that isn't a control, such as an abbreviation, takes a quiet dotted underline that says it shows more on hover or focus, and takes keyboard focus so the keyboard opens the tooltip too. Buttons, icon buttons and links keep their own look.",
           "file": "docs/examples/tooltip/TextAbbreviation.tsx"
         },
         {
           "name": "RailOfIcons",
-          "title": "Beside a rail",
-          "description": "",
+          "title": "Sides",
+          "description": "Where the window has no room, a tooltip flips to the other side. | Side | Use for | | ------ | ------------------------------------------------------------- | | Top | Most controls. The default. | | Bottom | Controls at the top of a window or a pane, such as a toolbar. | | Beside | A vertical rail, toward the content, in either direction. |",
           "file": "docs/examples/tooltip/RailOfIcons.tsx"
         },
         {
@@ -14372,9 +14372,9 @@
         "info popup"
       ],
       "useWhen": [
-        "Details about something on the page that people open on demand, such as a document's history or what a setting means.",
-        "A small form beside the control it changes, such as renaming an item or choosing filters.",
-        "An explanation behind an icon button, such as a help mark beside a value."
+        "Details people open on demand, such as a document's history",
+        "A small form beside the control it changes, such as a rename",
+        "An explanation behind a help mark beside a value"
       ],
       "avoidWhen": [
         {
@@ -14418,19 +14418,19 @@
         {
           "name": "RenameInPlace",
           "title": "Rename in place",
-          "description": "A function child receives `close`, to close the popover once its action is done.",
+          "description": "An action inside the popover closes it once its work is done, such as Rename.",
           "file": "docs/examples/popover/RenameInPlace.tsx"
         },
         {
           "name": "FilterTasks",
           "title": "Filter tasks",
-          "description": "`open` and `onOpenChange` control the popover, here starting from the filters in use each time it opens.",
+          "description": "The application can open and close the popover itself, here starting from the filters in use each time it opens and applying them as it closes.",
           "file": "docs/examples/popover/FilterTasks.tsx"
         },
         {
           "name": "FieldHelp",
-          "title": "Field help",
-          "description": "",
+          "title": "Sides",
+          "description": "A popover opens below its trigger, above it or beside it, lined up with the trigger's start, center or end, and flips where there is no room.",
           "file": "docs/examples/popover/FieldHelp.tsx"
         },
         {
