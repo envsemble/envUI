@@ -3787,7 +3787,7 @@
         {
           "name": "LayerOpacity",
           "title": "Layer opacity",
-          "description": "Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys. A thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it, fading out when it lets go. The label and the value always keep their full strength: where the handle and the end of the fill pass under them, those fade instead.",
+          "description": "Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys. A thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it, fading out when it lets go. The label and the value always keep their full strength: while the slider is held, where the handle and the end of the fill pass under them, those fade instead. Once it is let go, the fill simply ends and the handle shows in full, even under the text.",
           "file": "docs/examples/slider/LayerOpacity.tsx"
         },
         {
@@ -9631,6 +9631,17 @@
           ],
           "states": []
         },
+        "HoverDetail": {
+          "shared": true,
+          "root": "env-hover-detail",
+          "parts": [
+            {
+              "class": "env-hover-detail",
+              "description": "Text that shows more on hover or focus, a HoverCard's or Tooltip's text trigger, with a quiet dotted underline; an application's own text component can take it too."
+            }
+          ],
+          "states": []
+        },
         "Popup": {
           "shared": true,
           "root": "env-popup",
@@ -12429,7 +12440,7 @@
         {
           "name": "TextAbbreviation",
           "title": "Text abbreviation",
-          "description": "Text that isn't a control, such as an abbreviation, takes a quiet dotted underline that says it shows more on hover or focus, and takes keyboard focus so the keyboard opens the tooltip too. Buttons, icon buttons and links keep their own look.",
+          "description": "Text that isn't a control, such as an abbreviation, takes a quiet underline of round, well-spaced dots that says it shows more on hover or focus, and takes keyboard focus so the keyboard opens the tooltip too. The pointer stays the arrow over it, not the text cursor. Hover cards and relative times on text take the same underline. Buttons, icon buttons and links keep their own look.",
           "file": "docs/examples/tooltip/TextAbbreviation.tsx"
         },
         {
