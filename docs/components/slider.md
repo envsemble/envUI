@@ -46,19 +46,11 @@ The value follows the pointer as it moves, and is reported once more when the po
 
 ```
 
-### Steps in a form
+### Steps
 
-A slider has a lowest and a highest value and a step between values, and a form sends its value.
+A slider has a lowest and a highest value and a step between values.
 
 ```tsx example=SessionTimeout
-
-```
-
-### A value people can't change
-
-A disabled slider keeps its value visible; the description says who sets it.
-
-```tsx example=ManagedLimit
 
 ```
 
@@ -78,7 +70,7 @@ Show the effect where people can see it as the value changes.
 
 ### Labels
 
-Name the value in a short noun, and show it with its unit; the same text is announced.
+Show the value with its unit, such as 30 minutes; the same text is announced.
 
 ## Anatomy
 
@@ -95,10 +87,6 @@ Name the value in a short noun, and show it with its unit; the same text is anno
 7. **Description** (`env-field-description`, `description`)
 
 Not shown: the span the value moves along, which draws the faint ticks, and the row of the label and the value.
-
-### Colors
-
-One slider can take colors of its own: the track's tint, the fill, and its label, value, handle and ticks. With none set, it keeps its own colors.
 
 ## Adapting to width
 
@@ -160,6 +148,28 @@ A Slider takes its `label`, inside it at the start, and a `description` under it
 #### Disabled
 
 `disabled` dims the slider: it can't be focused or moved, and forms leave it out. Say in the `description` who sets the value.
+
+```tsx
+import { Slider } from '@envsemble/envui';
+
+export default function ManagedLimit() {
+  return (
+    // As wide as a form column.
+    <div style={{ inlineSize: 'min(100%, 24rem)' }}>
+      <Slider
+        label="Storage per member"
+        description="Sam Lee, your administrator, sets this limit for everyone at Northwind."
+        min={5}
+        max={100}
+        step={5}
+        defaultValue={20}
+        formatValue={(value) => `${value} GB`}
+        disabled
+      />
+    </div>
+  );
+}
+```
 
 ### Composition
 

@@ -38,8 +38,6 @@ components:
 
 ## Overview
 
-Like [Row](row.md), [Column](column.md) and [Box](box.md), Grid sizes to its content and never paints; its gap is a step of the spacing scale.
-
 ```tsx example=ProjectCards
 
 ```
@@ -65,18 +63,6 @@ Like [Row](row.md), [Column](column.md) and [Box](box.md), Grid sizes to its con
 ```tsx dont=FixedColumns caption="Three columns in a narrow pane: each card is squeezed."
 
 ```
-
-### Long content
-
-Let the columns of a template shrink below their content, so long content wraps rather than widening its column.
-
-### Reading order
-
-Keep the order people see the order of the page, so what they read and move through with the keyboard doesn't jump around.
-
-### Lists
-
-Where the items are a list people count, make the grid a list.
 
 ## Adapting to width
 

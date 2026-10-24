@@ -16,7 +16,7 @@ aliases:
 useWhen:
   - How long ago or how soon, more than the exact moment, such as a review due
   - Times that stay current while the page is open, such as Draft saved 2 minutes ago
-  - How long ago as plain text, such as in an option's label (formatRelativeTime)
+  - How long ago as plain text, such as in an option's label
 avoidWhen:
   - text: Choosing a date, or a date and time.
     use: DatePicker
@@ -76,14 +76,6 @@ The text rounds to the nearest unit and stays a count: 1 day ago, never yesterda
 ```tsx dont=DateOnlyInTooltip caption="The date only in the tooltip: keyboards and screen readers never reach it."
 
 ```
-
-### Exact moments
-
-Where people must read the moment exactly, such as a deadline, an appointment or the date of a record, show the date itself instead.
-
-### One clock
-
-Every time on the page updates from one shared clock, so the application runs no timer of its own.
 
 ## Anatomy
 

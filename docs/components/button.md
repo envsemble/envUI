@@ -77,14 +77,6 @@ Hover, press, keyboard focus and disabled, for each variant. Keyboard focus draw
 
 <!-- specimen: InteractionStates -->
 
-### Colors of its own
-
-One button can take colors of its own, such as its fill and its label. Its hover, focus and press follow them, as layers of its label color.
-
-```tsx example=CustomColors
-
-```
-
 ### Pending work
 
 While its work runs, a spinner replaces the content at the same size, and presses do nothing.
@@ -129,10 +121,6 @@ CopyButton copies a value and shows Copied, or Couldn’t copy, for about two se
 | Ghost     | Neutral, danger         | An application's chrome, such as a toolbar.  |
 | Text      | Neutral, danger         | A link-like action, underlined where needed. |
 
-### Tones
-
-The accent tone is for a rare, consequential action, and the danger tone for one that deletes or ends something.
-
 ### In a toolbar
 
 A button without a variant of its own takes its container's, such as ghost in a toolbar.
@@ -143,7 +131,7 @@ A button without a variant of its own takes its container's, such as ghost in a 
 
 ### Links
 
-A button that goes somewhere is a link, and one that does something is a button.
+A button can go to a page instead of acting; [Link](link.md) says when a destination takes a button's shape.
 
 ```tsx example=ButtonLinks
 
@@ -194,13 +182,9 @@ Start with a verb and say what will happen, and when the outcome is known, put i
 
 Not shown: the spinner, a group's frame, and the end slot, quiet content after the label, such as a shortcut's keys, at the far end of a wide button, as the [search trigger](../patterns/search-trigger.md) shows it.
 
-### Colors
-
-One button can take colors of its own: its fill, its label, its edge, and its fill and label when selected. Its hover, focus and press then follow them; with none set, it keeps its own colors.
-
 ## Adapting to width
 
-Labels wrap, and icon-only buttons keep their size. On touch screens every button grows to at least 2.75 rem, and an icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with its hit area.
+Labels wrap, and icon-only buttons keep their size. On touch screens every button grows to the size of a fingertip, and an icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
 
 ```tsx example=NarrowActions widths="16 30"
 
@@ -309,8 +293,26 @@ The parts are the container, `env-button`, its icons, `env-button > env-icon:fir
 
 `--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` set the colors of one Button or IconButton, through `style` or CSS. Its hover, focus and press then follow them, as state layers of its label color; with none set, it keeps its own colors.
 
-```tsx source=CustomColors
+```tsx
+import type { CSSProperties } from 'react';
+import { Button, Row } from '@envsemble/envui';
 
+/** One button's own colors: its container and its label, which its state layers take. */
+const forest = {
+  '--env-button-container': '#0a5c42',
+  '--env-button-content': '#ffffff',
+} as CSSProperties;
+
+export default function CustomColors() {
+  return (
+    <Row gap={2} wrap>
+      <Button variant="primary" style={forest}>
+        Start trial
+      </Button>
+      <Button variant="secondary">Not now</Button>
+    </Row>
+  );
+}
 ```
 
 Under a coarse pointer, an icon button drawn smaller than the touch size reaches the 2.75 rem touch size with its hit area when its container sets `--env-icon-button-hit-area: var(--env-control-height-touch)` on it or around it. Alert, Toast, Combobox chips, DocumentTabs and PanelDock's tabs set it on their own close buttons.

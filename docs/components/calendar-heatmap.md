@@ -61,14 +61,9 @@ The months, weekdays, dates and the legend follow the application's language, an
 
 ## Variants
 
-| Tone    | Use for                                       |
-| ------- | --------------------------------------------- |
-| Accent  | Activity without a judgment. The default.     |
-| Success | Something good to have more of.               |
-| Warning | Something that needs attention.               |
-| Danger  | Something to have less of, such as incidents. |
-| Done    | Completed work.                               |
-| Neutral | A quiet count beside other charts.            |
+### Tones
+
+A heatmap is drawn in one tone, the accent by default, or any status tone, which [Colors & themes](../foundations/colors.md) describes.
 
 ### Color steps
 
@@ -96,7 +91,7 @@ Not shown: the tooltip.
 
 ## Adapting to width
 
-The heatmap is never wider than its container: a narrow one scrolls the weeks, starting at the latest. On touch screens, days grow to 1.25 rem.
+The heatmap is never wider than its container: a narrow one scrolls the weeks, starting at the latest. On touch screens, days grow to fit a fingertip.
 
 ```tsx example=ScrollingWeeks widths="16 36"
 

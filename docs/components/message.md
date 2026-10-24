@@ -52,10 +52,6 @@ A message can show that it is on its way, or that it wasn't sent; offer Retry be
 
 ```
 
-### Streaming
-
-While a reply streams in, or earlier messages load, the list tells assistive technology to wait until the change is done. The list doesn't scroll by itself: keeping the newest message in view is the application's.
-
 ## Variants
 
 ```tsx variants=FormattedAnswer
@@ -104,7 +100,7 @@ Name icon actions after what they do, such as Copy answer.
 
 ## Adapting to width
 
-Your own bubble grows to three quarters of the list, and to at least 16 rem in a narrow list.
+Your own bubble grows to three quarters of the list, and keeps a readable width in a narrow list.
 
 ```tsx example=BubbleWidth widths="20 40"
 
@@ -129,7 +125,7 @@ Your own bubble grows to three quarters of the list, and to at least 16 rem in a
 
 ### Usage
 
-A MessageList holds the conversation, oldest first, and each Message in it takes `from`: `self` for the person using the app, a compact bubble at the inline end, or `other` for anyone else, such as an assistant or another participant, full-width content with no bubble. `author` names who wrote it, `meta` holds supporting facts beside the author, such as a RelativeTime, and `children` the message: plain text keeps its line breaks, and formatted content, such as Markdown, fills the width of a message from someone else. Never set `from="self"` on someone else's message to put it on a side.
+A MessageList holds the conversation, oldest first, and each Message in it takes `from`: `self` for the person using the app, a compact bubble at the inline end, or `other` for anyone else, such as an assistant or another participant, full-width content with no bubble. Your own bubble grows to three quarters of the list, and to at least 16 rem in a narrow list. `author` names who wrote it, `meta` holds supporting facts beside the author, such as a RelativeTime, and `children` the message: plain text keeps its line breaks, and formatted content, such as Markdown, fills the width of a message from someone else. Never set `from="self"` on someone else's message to put it on a side.
 
 ```tsx source=Conversation
 

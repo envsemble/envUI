@@ -1,6 +1,6 @@
 ---
 title: Toolbar
-summary: A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys.
+summary: A bar of icon buttons for one subject, such as an editor's formatting, in a row or a column.
 status: beta
 since: 1.0.0
 category: Actions
@@ -41,26 +41,26 @@ Each button is an icon, whose name and shortcut show in a tooltip; a button can 
 
 ### Buttons of your own
 
-Buttons inside a toolbar take the ghost look unless they set another. A button of the application's own, such as a menu's trigger, keeps its own tab stop, outside the arrow keys' path.
+A button of the application's own, such as a menu's trigger, keeps its own tab stop, outside the arrow keys' path.
 
 ## Variants
 
 ### Orientation
 
-| Orientation | Use for                                                                             |
-| ----------- | ----------------------------------------------------------------------------------- |
-| Horizontal  | Most toolbars, moved through with <kbd>←</kbd> and <kbd>→</kbd>. The default.       |
-| Vertical    | A palette, such as drawing tools, moved through with <kbd>↑</kbd> and <kbd>↓</kbd>. |
+| Orientation | Use for                           |
+| ----------- | --------------------------------- |
+| Horizontal  | Most toolbars. The default.       |
+| Vertical    | A palette, such as drawing tools. |
 
 ```tsx example=DrawingTools caption="A vertical toolbar of toggles, where one tool stays chosen."
 
 ```
 
-### Sizes
+### Over content
 
-The buttons come in the three control heights of the [scale](../foundations/scale.md), or take the height of the toolbar's container.
+A toolbar can float over dense content, such as a diagram, on a fully rounded surface with small buttons.
 
-```tsx example=ViewControls caption="Small buttons, on a rounded surface that floats over a diagram."
+```tsx example=ViewControls
 
 ```
 

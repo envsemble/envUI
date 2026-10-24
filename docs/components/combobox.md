@@ -69,7 +69,7 @@ The application can find the options itself, such as on a server, and a spinner 
 
 ### In a form
 
-The field sends its value with the form, or one entry for each chip. Checking the value and showing its error belong to the application.
+A required field shows its error when the form is sent without a value.
 
 ```tsx example=RequiredInForm
 
@@ -89,14 +89,6 @@ The field sends its value with the form, or one entry for each chip. Checking th
 | Outline  | In forms, dialogs and toolbars. The default.            |
 | Floating | A long form on a page, as TextField's floating variant. |
 
-### Sizes
-
-Small, medium and large, the control heights of the [scale](../foundations/scale.md). A field without a visible label, such as in a toolbar, says what to type in its placeholder.
-
-```tsx example=SmallToolbar
-
-```
-
 ## When to use
 
 ```tsx do=ClearableOptional caption="A clear button where the value is optional."
@@ -113,7 +105,11 @@ Give options that share a label a description, such as an e-mail address. Text p
 
 ### Labels
 
-Name the field after what people choose, and use the placeholder for what to type.
+Name the field after what people choose, and use the placeholder for what to type. A field without a visible label, such as in a toolbar, says what to type in its placeholder.
+
+```tsx example=SmallToolbar
+
+```
 
 ## Anatomy
 
@@ -138,10 +134,6 @@ Name the field after what people choose, and use the placeholder for what to typ
 2. **Option** (`env-combobox-item`, `items`)
 3. **Leading content** (`env-combobox-item env-avatar`, `start`)
 4. **Check** (`env-combobox-item-indicator`)
-
-### Colors
-
-One field can give its chips colors of their own: their fill and their text. Their hover, focus and press then follow them; with none set, they keep their own colors.
 
 ## Adapting to width
 

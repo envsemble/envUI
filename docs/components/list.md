@@ -73,7 +73,7 @@ A checkbox at a row's start chooses it for an action on several rows at once.
 
 ### Put in order
 
-Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys. The list reports the move, and the application moves the item.
+Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys.
 
 ```tsx example=Reorder
 
@@ -128,10 +128,6 @@ Keep the description to one fact that tells items apart, such as who changed it 
 5. **Content** (`env-list-item-content`, `label`)
 6. **Description** (`env-list-item-content > small`, `description`)
 7. **Action** (`env-list-item > env-button:last-child`, `action`)
-
-### Colors
-
-One list can take colors of its own for its rows: their fill, their text, and the fill and text of the current row and of checked rows. Their hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 

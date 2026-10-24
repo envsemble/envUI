@@ -38,6 +38,14 @@ components:
 
 ```
 
+### With controls
+
+Values can be controls, such as switches, and each label sits on its control's line.
+
+```tsx example=ControlsAligned
+
+```
+
 ## Variants
 
 | Layout    | Labels                                               | Use for                           |
@@ -56,14 +64,6 @@ Smaller text, the default, suits a card or a pane, and body text a page of detai
 
 ## When to use
 
-```tsx do=ControlsAligned caption="With controls, each label sits on its control's line."
-
-```
-
-```tsx dont=ControlsUnaligned caption="Without controls: labels sit higher than the controls beside them."
-
-```
-
 ### Values
 
 Keep headings and long paragraphs out of values and link to them instead, and don't put a description list inside another.
@@ -81,7 +81,7 @@ Keep headings and long paragraphs out of values and link to them instead, and do
 
 ## Adapting to width
 
-In the automatic layout, labels move above their values where the list is narrower than 24 rem.
+In the automatic layout, labels move above their values where the list is narrow.
 
 ```tsx example=FactsAtWidths widths="16 30"
 

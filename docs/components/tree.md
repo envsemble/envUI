@@ -1,6 +1,6 @@
 ---
 title: Tree
-summary: A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.
+summary: A tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.
 status: stable
 since: 0.5.0
 category: Navigation
@@ -35,29 +35,19 @@ components:
 
 ## Overview
 
-The application passes the visible rows in order, each at its depth, and owns expansion and selection; the tree owns focus, the keys and scrolling.
-
 ```tsx example=FileTree
 
 ```
 
 ### Opening and previewing
 
-A click and <kbd>Space</kbd> preview a row, and a double click and <kbd>Enter</kbd> open it to keep, as an editor previews a file in a tab before keeping it. The tree doesn't select by itself: the application marks the row people opened.
+A click and <kbd>Space</kbd> preview a row, and a double click and <kbd>Enter</kbd> open it to keep, as an editor previews a file in a tab before keeping it.
 
 ### Actions in a context menu
 
 A right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.
 
 ```tsx example=ContextMenuActions
-
-```
-
-### Thousands of rows
-
-The tree stays fast by rendering only the rows in view. It is as tall as its parent, so give it a parent with a height.
-
-```tsx example=ThousandsOfRows
 
 ```
 
@@ -79,10 +69,6 @@ The tree stays fast by rendering only the rows in view. It is as tall as its par
 ### Nothing to press in rows
 
 Keep buttons, links and fields out of rows: their actions go in the context menu and a toolbar.
-
-### Stable rows
-
-Give rows stable identities, such as paths, so focus and selection stay on their rows.
 
 ## Anatomy
 
@@ -167,8 +153,75 @@ A Tree takes `items`, the visible rows in order, flattened: an expanded row is f
 
 The tree renders only the rows in view, and is as tall as its parent: give the parent a height, or the tree one through `style`. `className`, `style` and `ref` reach the tree, the element that scrolls and holds focus.
 
-```tsx source=ThousandsOfRows
+```tsx
+import { useMemo, useState } from 'react';
+import { Button, Column, Row, Text, Tree, type TreeItem } from '@envsemble/envui';
+import { Description } from '@envsemble/envui/icons/Description';
+import { Folder } from '@envsemble/envui/icons/Folder';
 
+/** 50 folders of 200 logs each: over 10,000 rows when every folder is open. */
+const folders = Array.from({ length: 50 }, (_, index) => `Week ${index + 1}`);
+const logsPerFolder = 200;
+
+export default function ThousandsOfRows() {
+  const [expanded, setExpanded] = useState(() => new Set(['Week 1']));
+  const [selected, setSelected] = useState<string | null>(null);
+  const rows = useMemo(
+    () =>
+      folders.flatMap((folder) => {
+        const open = expanded.has(folder);
+        const row: TreeItem = {
+          id: folder,
+          depth: 0,
+          label: folder,
+          icon: <Folder />,
+          expandable: true,
+          expanded: open,
+        };
+        if (!open) return [row];
+        const logs: TreeItem[] = Array.from({ length: logsPerFolder }, (_, index) => ({
+          id: `${folder}/${index + 1}`,
+          depth: 1,
+          label: `Build ${index + 1}.log`,
+          icon: <Description />,
+        }));
+        return [row, ...logs];
+      }),
+    [expanded],
+  );
+  const setFolder = (folder: string, open: boolean) =>
+    setExpanded((current) => {
+      const next = new Set(current);
+      if (open) next.add(folder);
+      else next.delete(folder);
+      return next;
+    });
+  return (
+    <Column gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
+      <Row wrap align="center" gap={4}>
+        <Button variant="secondary" onClick={() => setExpanded(new Set(folders))}>
+          Expand all
+        </Button>
+        <Button variant="secondary" onClick={() => setExpanded(new Set())}>
+          Collapse all
+        </Button>
+      </Row>
+      {/* The tree fills its parent's height and scrolls itself. */}
+      <div style={{ blockSize: '16rem' }}>
+        <Tree
+          aria-label="Build logs"
+          items={rows}
+          value={selected}
+          onAction={(row) =>
+            row.expandable ? setFolder(row.id, !row.expanded) : setSelected(row.id)
+          }
+          onExpandedChange={(row, open) => setFolder(row.id, open)}
+        />
+      </div>
+      <Text variant="caption">{rows.length.toLocaleString('en')} visible rows</Text>
+    </Column>
+  );
+}
 ```
 
 #### Density

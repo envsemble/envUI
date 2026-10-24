@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-Any part of the application can show a notification. It leaves after a few seconds, which pause while people point at it or focus it.
+Its timer pauses while the pointer rests on it or it has focus.
 
 ```tsx example=SaveChanges
 
@@ -46,7 +46,7 @@ Any part of the application can show a notification. It leaves after a few secon
 
 ### Undo an action
 
-A notification with an action stays until it is dismissed, which the application does once the action has run.
+A notification with an action stays until its action has run or people dismiss it.
 
 ```tsx example=UndoArchive
 
@@ -127,10 +127,6 @@ Label an action with a short verb, such as Undo or Try again, and give a notific
 5. **Dismiss button** (`env-toast-dismiss`, `dismissible`)
 
 Not shown: the count of hidden notifications.
-
-### Colors
-
-One notification can take colors of its own: its fill in place of its tone's, its message and icons, and its edge. Its dismiss button's hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Accessibility
 

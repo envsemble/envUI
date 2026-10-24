@@ -58,7 +58,7 @@ A sheet from the bottom is as tall as its content.
 
 ### Resizable
 
-People can resize a side sheet by its inner edge, by pointer or with the arrow keys, with the same handle as between [Panes](panes.md): a grip of three dots that stays at the middle of the sheet, never a line. It stays between a smallest and a largest width, and never grows past the window. The application can keep the width people chose.
+People can resize a side sheet by its inner edge, by pointer or with the arrow keys, with the same grip as between [Panes](panes.md). It stays between a smallest and a largest width, and never grows past the window.
 
 ```tsx example=ResizableDetails
 
@@ -78,12 +78,12 @@ The end is the right edge in left-to-right text, and the left in right-to-left t
 
 ### Widths
 
-A medium side sheet takes the whole width of a compact window, and a large one of a compact or medium window; a bottom sheet is as wide as the window, up to 40 rem.
+A medium side sheet takes the whole width of a compact window, and a large one of a compact or medium window; a bottom sheet is as wide as the window, up to a comfortable reading width.
 
-| Width  | Use for                                           |
-| ------ | ------------------------------------------------- |
-| Medium | 24 rem, for details and filters. The default.     |
-| Large  | 44 rem, for tables, comparisons and longer forms. |
+| Width  | Use for                               |
+| ------ | ------------------------------------- |
+| Medium | Details and filters. The default.     |
+| Large  | Tables, comparisons and longer forms. |
 
 ## When to use
 
@@ -114,7 +114,7 @@ Not shown: the scrim behind a modal sheet, and the handle on a resizable sheet's
 | <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>        | Moves through the sheet; a modal sheet keeps focus inside, a non-modal one lets it go on. |
 | <kbd>Esc</kbd>                                         | Closes the sheet, or first what is open inside it; nothing while its work runs.           |
 | <kbd>Enter</kbd> or <kbd>Space</kbd> on a close button | Closes the sheet; focus returns to the trigger, or where the application sends it.        |
-| <kbd>←</kbd>, <kbd>→</kbd> on the resize handle        | Resizes a resizable side sheet 1 rem; with <kbd>Shift</kbd>, 5.                           |
+| <kbd>←</kbd>, <kbd>→</kbd> on the resize handle        | Resizes a resizable side sheet a little; further with <kbd>Shift</kbd>.                   |
 | <kbd>Home</kbd>, <kbd>End</kbd> on the resize handle   | Resizes it to its smallest or largest width.                                              |
 
 ### envUI provides
@@ -143,7 +143,7 @@ A Sheet opens from its `trigger`, such as a Button, and holds its `title`, a `de
 
 #### Side and width
 
-`side` is `end`, the default, `start` or `bottom`, in the text direction: `end` is the right edge in left-to-right text. `width` is `md`, 24 rem and the default, or `lg`, 44 rem, for a side sheet; the widths follow the window classes of its container. A bottom sheet is as tall as its content.
+`side` is `end`, the default, `start` or `bottom`, in the text direction: `end` is the right edge in left-to-right text. `width` is `md`, 24 rem and the default, or `lg`, 44 rem, for a side sheet; the widths follow the window classes of its container. A bottom sheet is as tall as its content, and as wide as the window up to 40 rem.
 
 ```tsx
 <Sheet side="bottom" title="Share" trigger={<Button>Share</Button>}>
@@ -161,7 +161,7 @@ With `modal={false}` the page stays usable beside the sheet. `disablePointerDism
 
 #### Resizable
 
-With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, 16 and 60 rem by default, and never past the window. It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem. A CSS length as `width`, such as `min(30rem, 90%)`, is ignored then, with a warning while developing. `resizeLabel` names the handle.
+With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, 16 and 60 rem by default, and never past the window. The arrow keys on the handle resize it 1 rem, 5 rem with <kbd>Shift</kbd>. It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem. A CSS length as `width`, such as `min(30rem, 90%)`, is ignored then, with a warning while developing. `resizeLabel` names the handle.
 
 ```tsx source=ResizableDetails
 

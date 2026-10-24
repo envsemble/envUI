@@ -22,13 +22,11 @@ useWhen:
 avoidWhen:
   - text: The work that follows a press, such as saving, shown on the button that started it.
     use: Button
-  - text: Content of a known shape while it loads, such as a card or a list, which shows itself as a skeleton.
-    use: Surface
   - text: A task whose completion can be measured, such as an upload.
     use: Progress
   - text: Loading a page or a route of an application, along the top bar.
     use: TopBar
-  - text: Content loading in its place, in the shape of what is coming.
+  - text: Content of a known shape loading in its place, such as a card or a list, as a skeleton.
     see: loading
 components:
   - Spinner
@@ -41,14 +39,6 @@ components:
 With reduced motion, the arc keeps turning, more slowly.
 
 ```tsx example=LoadingPreview
-
-```
-
-### With its label
-
-The spinner can show its label beside it, for loading with no known shape, such as search results.
-
-```tsx example=SearchingDocuments
 
 ```
 
@@ -69,18 +59,6 @@ The spinner can show its label beside it, for loading with no known shape, such 
 | Large  | The middle of a region whose content is on its way.      |
 
 ## When to use
-
-```tsx do=UpdatingList caption="Keep the content in place, and the spinner beside what changes."
-
-```
-
-```tsx dont=CoverContent caption="Content hidden behind a spinner while it updates."
-
-```
-
-### Labels
-
-Name the work the spinner stands for, such as Updating tasks.
 
 ## Anatomy
 
@@ -121,8 +99,13 @@ A Spinner's `label` names the work it stands for, such as Updating tasks, and na
 
 `showLabel` shows the label beside the spinner, in a busy status line that centres the two in its row, for loading with no known shape. Without a `label` it says Loading, in the provider's language.
 
-```tsx source=SearchingDocuments
+```tsx
+import { Spinner } from '@envsemble/envui';
 
+export default function SearchingDocuments() {
+  // Results whose number and shape aren't known until they arrive.
+  return <Spinner label="Searching documents" showLabel />;
+}
 ```
 
 ### Composition

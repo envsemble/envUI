@@ -28,7 +28,7 @@ components:
 
 ## Overview
 
-The range counts items, as in 1–60 of 245. The application owns the page and its loading; while a page loads, the button pressed shows a spinner and focus stays on it.
+The range counts items, as in 1–60 of 245. While a page loads, the button pressed shows a spinner and focus stays on it.
 
 ```tsx example=PagesOfAList
 
@@ -36,23 +36,15 @@ The range counts items, as in 1–60 of 245. The application owns the page and i
 
 ### Without a known total
 
-Until the total is known, the range shows only the page's items, and the application says when the list ends.
+Until the total is known, the range shows only the page's items.
 
 ```tsx example=WithoutATotal
 
 ```
 
-### In the application's language
-
-The names and the range follow the application's language, for every pager or for one.
-
-```tsx example=ApplicationStrings
-
-```
-
 ## Variants
 
-The buttons come in the three control heights, and in an icon button's looks: secondary by default, or text for a quiet toolbar. Without a size of their own they take their container's.
+The buttons are secondary by default, or text for a quiet toolbar.
 
 ```tsx example=SmallToolbar caption="Small text buttons in a toolbar."
 
@@ -66,7 +58,7 @@ Keep focus where it is, and scroll the list to its top.
 
 ### Ends and totals
 
-Show the total once it is known. Leave the end buttons to the pager, which keeps them focusable and unavailable, and hide a pager whose items fit on one page.
+Show the total once it is known. Leave the end buttons to Pagination, which keeps them focusable and unavailable, and hide it where the items fit on one page.
 
 ## Anatomy
 
@@ -133,8 +125,31 @@ Pagination shows `page`, counted from 1 and kept within the pages that exist, of
 
 EnvUIProvider's `messages.pagination` sets the names, `label`, `previous` and `next`, and the `range` for every pager inside it, and its `locale` formats the numbers. `aria-label`, `previousLabel`, `nextLabel` and `formatRange` set them for one pager: `formatRange` receives the first and last item shown, the total, the page and the page count.
 
-```tsx source=ApplicationStrings
+```tsx
+import { useState } from 'react';
+import { EnvUIProvider, Pagination } from '@envsemble/envui';
 
+// The application's own strings for every pager inside the provider, in the page's language; an
+// application that translates passes the strings of the reader's language. The numbers follow the
+// locale the provider inherits from the page.
+const messages = {
+  pagination: {
+    label: 'Result pages',
+    previous: 'Previous results',
+    next: 'More results',
+    range: ({ start, end, total }: { start: string; end: string; total?: string }) =>
+      total === undefined ? `${start}–${end}` : `${start}–${end} of ${total} results`,
+  },
+};
+
+export default function ApplicationStrings() {
+  const [page, setPage] = useState(2);
+  return (
+    <EnvUIProvider messages={messages}>
+      <Pagination page={page} pageSize={20} total={1234} onPageChange={setPage} />
+    </EnvUIProvider>
+  );
+}
 ```
 
 #### Size and variant

@@ -49,14 +49,6 @@ While nothing is chosen, the trigger shows a placeholder. People can't clear a c
 
 <!-- specimen: States -->
 
-### In a form
-
-The chosen value is sent with its form, and resetting the form restores the choice it started with.
-
-```tsx example=InviteMember
-
-```
-
 ### In list rows
 
 A row's title names the select in it, so the select shows no label of its own.
@@ -81,9 +73,7 @@ A row's title names the select in it, so the select shows no label of its own.
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/scale.md), so a select lines up with the buttons beside it.
-
-```tsx example=SmallToolbar
+```tsx example=SmallToolbar caption="A small select beside small buttons in a toolbar."
 
 ```
 
@@ -105,10 +95,6 @@ Order options naturally, such as by frequency, or alphabetically where there is 
 
 Choosing an option sets a value: it never moves to another page or runs a destructive action.
 
-### Labels
-
-Name the select with a short noun, and say in a disabled option's label why it is unavailable.
-
 ## Anatomy
 
 ```tsx anatomy=SelectAnatomy
@@ -129,10 +115,6 @@ Name the select with a short noun, and say in a disabled option's label why it i
 1. **List** (`env-select-popup`)
 2. **Option** (`env-select-item`, `items`)
 3. **Check** (`env-select-item-indicator`)
-
-### Colors
-
-One select can take colors of its own: its fill, its text and its edge. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Accessibility
 
@@ -174,8 +156,48 @@ Select takes its options as `items`, each with a `value`, a `label` and `disable
 
 With `name`, a hidden input submits the chosen value, and a form reset restores `defaultValue`. `required` makes the browser refuse the form while nothing is chosen and move focus to the trigger, and `autoComplete` gives the browser's autofill a hint, such as `country`.
 
-```tsx source=InviteMember
+```tsx
+import { useState } from 'react';
+import { Button, Select, Column, Surface, Text, TextField } from '@envsemble/envui';
 
+const roleOptions = [
+  { value: 'viewer', label: 'Viewer' },
+  { value: 'editor', label: 'Editor' },
+  { value: 'admin', label: 'Admin' },
+];
+
+export default function InviteMember() {
+  const [invited, setInvited] = useState('');
+  return (
+    // As wide as a form column.
+    <Surface padding={5} style={{ inlineSize: 'min(100%, 28rem)' }}>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const data = new FormData(event.currentTarget);
+          const role = roleOptions.find((option) => option.value === data.get('role'));
+          setInvited(`Invited ${String(data.get('email'))} as ${role?.label ?? 'a member'}.`);
+        }}
+      >
+        <Column gap={5}>
+          <TextField label="E-mail address" name="email" type="email" required />
+          <Select
+            variant="outline"
+            label="Role"
+            name="role"
+            description="Admins also manage members and billing."
+            items={roleOptions}
+            defaultValue="editor"
+          />
+          <Column gap={3} align="start">
+            <Button type="submit">Send invitation</Button>
+            <Text role="status">{invited}</Text>
+          </Column>
+        </Column>
+      </form>
+    </Surface>
+  );
+}
 ```
 
 #### In list rows

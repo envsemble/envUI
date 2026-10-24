@@ -89,8 +89,6 @@ A block keeps the source's layout and scrolls long lines sideways, or wraps them
 
 ### Diff layouts
 
-A diff sets the two versions side by side where it is wide enough, or keeps one column at any width.
-
 | Diff layout  | Use for                                             |
 | ------------ | --------------------------------------------------- |
 | Side by side | Most diffs, in one column when narrow. The default. |
@@ -105,10 +103,6 @@ A diff sets the two versions side by side where it is wide enough, or keeps one 
 ```tsx dont=CommandWithPrompt caption="A prompt such as $: it is copied with the command."
 
 ```
-
-### Colors
-
-Leave the colors of code to envUI, which follows the app theme.
 
 ### Length
 
@@ -129,7 +123,7 @@ Inline code is a single part.
 
 ## Adapting to width
 
-A diff shows the two versions side by side from 56 rem, and one column below.
+A diff shows the two versions side by side where it is wide, and in one column in a narrow pane.
 
 ```tsx example=DiffColumns widths="36 60"
 

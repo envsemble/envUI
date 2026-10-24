@@ -56,10 +56,10 @@ A menu item can open the dialog, and focus returns to the menu's button when it 
 
 ## Variants
 
-| Tone    | Use for                                                                                                 |
-| ------- | ------------------------------------------------------------------------------------------------------- |
-| Neutral | An action people can get back from, such as archiving. Focus starts on the confirm button. The default. |
-| Danger  | An action that deletes or ends something. Focus starts on Cancel.                                       |
+| Tone    | Use for                                                             |
+| ------- | ------------------------------------------------------------------- |
+| Neutral | An action people can get back from, such as archiving. The default. |
+| Danger  | An action that deletes or ends something.                           |
 
 ```tsx example=ArchiveProject caption="The neutral tone, for archiving."
 

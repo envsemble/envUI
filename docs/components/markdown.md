@@ -70,10 +70,6 @@ The application can change how an element renders, here a quote as an Alert, and
 
 Common Markdown with tables, strikethrough, task lists, automatic links and footnotes. Raw HTML is ignored, except keys, which render as Kbd.
 
-### Lists
-
-Lists take envUI's own markers rather than the browser's: a small tinted circle beside each item's first line, with a dot or the item's number in it, and room between items. A nested list's markers are quieter, without the circle's fill.
-
 ## Variants
 
 ### Editor sizing
@@ -87,21 +83,13 @@ An editor keeps its height for a long document, or grows with its text for a sho
 
 ### Toolbar
 
-The application chooses the toolbar's actions, which keep a fixed order, grouped by kind with a line between groups, and can offer a link picker of its own.
+The toolbar holds the actions the text needs, as [RichText](rich-text.md#toolbar)'s does, and can offer a link picker of the application's own.
 
 ```tsx example=LinkPicker
 
 ```
 
 ## When to use
-
-### Headings
-
-Shift the document's headings so that its first sits one level below the page's own.
-
-### Untrusted text
-
-Markdown people write never brings raw HTML back: keep it out, also through extensions.
 
 ### Content
 

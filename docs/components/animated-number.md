@@ -59,10 +59,6 @@ With a reduced-motion preference, the new value only fades in.
 
 ```
 
-### Only what people change
-
-A count that changes on its own, such as a live total, stays still: rolling is for the number a choice changes.
-
 ### Words
 
 Keep the words in the same sentence as the number, and match them to it: 1 seat, 3 seats.

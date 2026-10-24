@@ -31,10 +31,6 @@ components:
 
 ```
 
-### Disabled
-
-A disabled link has no destination: it can't be focused or followed.
-
 ## Variants
 
 | Underline | Use for                                               |

@@ -44,7 +44,7 @@ Table's parts are the native table elements, inside a focusable region.
 
 ### Sort by a column
 
-A header can sort the rows by its column: the application sorts them, and each sortable header shows the order.
+A header can sort the rows by its column, and each sortable header shows the order.
 
 ```tsx example=SortableColumns
 
@@ -132,10 +132,6 @@ A cell can line its content up for comparing, keep it on one line, or head its r
 
 Name every table, with a caption above it or by a heading just before it.
 
-### Opening a row
-
-Open a row through a link or a button in one of its cells, and let the row highlight; never make the whole row pressable.
-
 ### Not a spreadsheet
 
 A table has no editing cell by cell and no moving between cells with the arrow keys.
@@ -143,10 +139,6 @@ A table has no editing cell by cell and no moving between cells with the arrow k
 ### The first cell
 
 Start each row with the cell that identifies it, which titles the row when rows stack.
-
-### No rows, many rows
-
-Show an [empty state](../patterns/empty-states.md) when there are no rows, and [Pagination](pagination.md) for a long table.
 
 ## Anatomy
 
@@ -166,17 +158,9 @@ Not shown: a column's resize handle, and a stacked cell's label.
 
 ## Adapting to width
 
-By default the columns keep their width and the region scrolls sideways. A table can stack its rows instead: below 36 rem of its own width, each row becomes a block titled by its first cell, with each other value beside its column's name.
+By default the columns keep their width and the region scrolls sideways. A table can stack its rows instead: where it is narrow, such as on a phone, each row becomes a block titled by its first cell, with each other value beside its column's name.
 
 ```tsx example=StackedRows widths="22 44"
-
-```
-
-### Sorting while stacked
-
-While the header row is hidden, the application can offer the order another way, here with a select.
-
-```tsx example=SortWhileStacked
 
 ```
 
@@ -262,8 +246,110 @@ With `resizableColumns`, a handle at the end of each header cell but the last mo
 
 By default, `narrowLayout` is `scroll`: the columns keep their width and the region scrolls sideways. With `narrowLayout="stack"`, below `stackBelow`, 36 rem of the region's own width by default, a CSS length or a number of pixels, each body row becomes a block titled by its first cell, with each other cell's `label` beside its value, and the header row is visually hidden. A container query decides it, so the server's markup already stacks. `onStackedChange` reports the change, here to offer a Select for the order while the header row is hidden.
 
-```tsx source=SortWhileStacked
+```tsx
+import { useState } from 'react';
+import { Select, Column, Table } from '@envsemble/envui';
 
+const invoices = [
+  { number: 'INV-1041', client: 'Northwind', due: '2026-03-14', amount: 1875 },
+  { number: 'INV-1042', client: 'Alex Morgan', due: '2026-03-02', amount: 600 },
+  { number: 'INV-1043', client: 'Priya Shah', due: '2026-03-28', amount: 4687.5 },
+  { number: 'INV-1044', client: 'Sam Lee', due: '2026-03-09', amount: 1200 },
+];
+
+type Invoice = (typeof invoices)[number];
+type SortColumn = 'client' | 'due' | 'amount';
+type Direction = 'ascending' | 'descending';
+
+const orders = [
+  { value: 'client ascending', label: 'Client, A to Z' },
+  { value: 'client descending', label: 'Client, Z to A' },
+  { value: 'due ascending', label: 'Due, soonest first' },
+  { value: 'due descending', label: 'Due, latest first' },
+  { value: 'amount descending', label: 'Amount, highest first' },
+  { value: 'amount ascending', label: 'Amount, lowest first' },
+];
+
+const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' });
+
+function compare(column: SortColumn) {
+  return (first: Invoice, second: Invoice) =>
+    column === 'amount'
+      ? first.amount - second.amount
+      : first[column].localeCompare(second[column]);
+}
+
+export default function SortWhileStacked() {
+  const [sort, setSort] = useState<{ column: SortColumn; direction: Direction }>({
+    column: 'due',
+    direction: 'ascending',
+  });
+  // While the rows stack, the header row and its sort buttons are hidden.
+  const [stacked, setStacked] = useState(false);
+  const rows = [...invoices].sort((first, second) =>
+    sort.direction === 'ascending'
+      ? compare(sort.column)(first, second)
+      : compare(sort.column)(second, first),
+  );
+  const direction = (column: SortColumn): Table.SortDirection =>
+    sort.column === column ? sort.direction : 'none';
+  const sortBy = (column: SortColumn) => () =>
+    setSort((current) => ({
+      column,
+      direction:
+        current.column === column && current.direction === 'ascending' ? 'descending' : 'ascending',
+    }));
+  return (
+    // As narrow as a phone or a side panel, so the rows stack.
+    <Column gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
+      {stacked && (
+        <Select
+          label="Sort by"
+          value={`${sort.column} ${sort.direction}`}
+          onValueChange={(value) => {
+            const [column, order] = (value ?? '').split(' ');
+            if (column && order)
+              setSort({ column: column as SortColumn, direction: order as Direction });
+          }}
+          items={orders}
+        />
+      )}
+      <Table.Root aria-label="Invoices" narrowLayout="stack" onStackedChange={setStacked}>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Invoice</Table.HeaderCell>
+            <Table.HeaderCell sortDirection={direction('client')} onSortChange={sortBy('client')}>
+              Client
+            </Table.HeaderCell>
+            <Table.HeaderCell sortDirection={direction('due')} onSortChange={sortBy('due')}>
+              Due
+            </Table.HeaderCell>
+            <Table.HeaderCell
+              numeric
+              sortDirection={direction('amount')}
+              onSortChange={sortBy('amount')}
+            >
+              Amount
+            </Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          {rows.map((invoice) => (
+            <Table.Row key={invoice.number}>
+              <Table.Cell>{invoice.number}</Table.Cell>
+              <Table.Cell label="Client">{invoice.client}</Table.Cell>
+              <Table.Cell label="Due">{date.format(new Date(invoice.due))}</Table.Cell>
+              <Table.Cell label="Amount" numeric>
+                {money.format(invoice.amount)}
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
+    </Column>
+  );
+}
 ```
 
 ### Composition

@@ -20,11 +20,9 @@ avoidWhen:
     use: Meter
   - text: Work of unknown length in a small area, such as a panel that is updating.
     use: Spinner
-  - text: Content of a known shape while it loads, such as a card or a list, as a skeleton.
-    use: Surface
   - text: Loading a page or a route of an application, along the top bar.
     use: TopBar
-  - text: Content loading in its place, in the shape of what is coming.
+  - text: Content of a known shape loading in its place, such as a card or a list, as a skeleton.
     see: loading
 components:
   - Progress

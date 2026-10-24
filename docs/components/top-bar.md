@@ -15,7 +15,7 @@ aliases:
   - page progress
 useWhen:
   - The top of an application's screen, with its name, search and the account menu
-  - A window that draws its own title bar, in an installed web app
+  - The bar inside a window frame, as the window's own title bar
 avoidWhen:
   - text: A page's own title, description and actions.
     use: PageHeader
@@ -43,14 +43,6 @@ A [Scaffold](scaffold.md)'s top bar region, which holds the TopBar, is the banne
 
 The bar is a plain rectangle in the navigation's background, with no line below, or it sits on the page's background instead, opaque when it sticks, while the navigation keeps its own, as [Scaffold](scaffold.md#backgrounds) shows.
 
-### Page progress
-
-A thin bar along the bottom edge shows that the next page is loading, after a short delay, so quick loads never flash it.
-
-```tsx example=LoadingPage
-
-```
-
 ## Variants
 
 ### Title bar
@@ -60,10 +52,6 @@ The bar can be the window's own title bar in an installed web app: empty space d
 ```tsx example=TitleBar
 
 ```
-
-### Outside a Scaffold
-
-A bar outside a Scaffold can stay at the top as the document scrolls, and be the page's banner.
 
 ## When to use
 
@@ -131,8 +119,30 @@ A TopBar holds `start` content before the title, such as a navigation or back Ic
 
 `loading` shows a thin bar along the bottom edge while the next page loads, after a short delay so quick loads never flash it. `loadingLabel` names it, Loading page by default, from EnvUIProvider's `messages.topBar`.
 
-```tsx source=LoadingPage
+```tsx
+import { useEffect, useRef, useState } from 'react';
+import { Button, Column, TopBar } from '@envsemble/envui';
 
+export default function LoadingPage() {
+  const [loading, setLoading] = useState(false);
+  const timer = useRef<number>(undefined);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+  return (
+    <Column gap={4} align="start">
+      <TopBar title="Northwind" loading={loading} loadingLabel="Loading Projects" />
+      <Button
+        variant="secondary"
+        onClick={() => {
+          setLoading(true);
+          // The next page loads from a server; a timer stands in for it here.
+          timer.current = window.setTimeout(() => setLoading(false), 1500);
+        }}
+      >
+        Open Projects
+      </Button>
+    </Column>
+  );
+}
 ```
 
 #### Title bar

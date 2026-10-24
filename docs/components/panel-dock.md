@@ -36,7 +36,7 @@ components:
 
 ## Overview
 
-The application keeps the panels and decides what happens to them; the dock asks for each change. Each panel's header stays in view as its content scrolls, with its title, the application's actions and the window controls.
+Each panel's header stays in view as its content scrolls, with its title, the application's actions and the window controls.
 
 ```tsx example=DocumentDrafts
 
@@ -98,7 +98,7 @@ Activate a panel when it opens, and keep at most one maximized. While a panel fi
 
 ## Adapting to width
 
-Where the dock is narrower than 40 rem, one panel at a time fills the region like a sheet, and the others wait as tabs, already in the first paint. In a narrow panel, the header's actions and controls take a row of their own above the title.
+Where the dock is narrow, such as on a phone, one panel at a time fills the region like a sheet, and the others wait as tabs, already in the first paint. In a narrow panel, the header's actions and controls take a row of their own above the title.
 
 ```tsx example=NarrowRegion widths="24 48"
 
@@ -111,7 +111,7 @@ Where the dock is narrower than 40 rem, one panel at a time fills the region lik
 | Key                                                          | Action                                                                               |
 | ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
 | <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>              | Moves through each panel's resize handle, header and content, then through the tabs. |
-| <kbd>↑</kbd>, <kbd>↓</kbd> on a resize handle                | Makes the panel 16 px taller or shorter, 64 px with <kbd>Shift</kbd>.                |
+| <kbd>↑</kbd>, <kbd>↓</kbd> on a resize handle                | Makes the panel a little taller or shorter, more with <kbd>Shift</kbd>.              |
 | <kbd>Home</kbd>, <kbd>End</kbd> on a resize handle           | Makes the panel its lowest or greatest height.                                       |
 | <kbd>Enter</kbd> or <kbd>Space</kbd> on Minimize             | Minimizes the panel and moves focus to its tab.                                      |
 | <kbd>Enter</kbd> or <kbd>Space</kbd> on Maximize or Restore  | Fills the region with the panel, or returns it to the row.                           |
@@ -154,7 +154,7 @@ A minimized panel is a tab. `label` gives the tab a shorter text than the title,
 
 #### Make room
 
-A panel takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `minWidth`, 20 rem, up to `maxWidth`, 48 rem; then the row scrolls sideways. With `overflow="minimize"`, the dock instead asks `onModeChange` to minimize the open panel active longest ago, one at a time, until the rest fit, and to open it again once there is room. It never asks for the active panel, the newest one or the one that holds focus. A panel starts at 85% of the room above the tabs, up to 40 rem, unless `height` sets it, and people resize it between `minHeight`, 15 rem, and `maxHeight`, the room above the tabs; all of them are in pixels.
+A panel takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `minWidth`, 20 rem, up to `maxWidth`, 48 rem; then the row scrolls sideways. With `overflow="minimize"`, the dock instead asks `onModeChange` to minimize the open panel active longest ago, one at a time, until the rest fit, and to open it again once there is room. It never asks for the active panel, the newest one or the one that holds focus. A panel starts at 85% of the room above the tabs, up to 40 rem, unless `height` sets it, and people resize it between `minHeight`, 15 rem, and `maxHeight`, the room above the tabs; all of them are in pixels. The arrow keys on a resize handle change the height by 16 px, and by 64 px with <kbd>Shift</kbd>.
 
 ```tsx source=MinimizeWhatDoesNotFit
 

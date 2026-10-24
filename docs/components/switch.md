@@ -61,18 +61,6 @@ In a row, the row's title names the switch, and its detail describes it.
 
 ## When to use
 
-```tsx do=ManagedSetting caption="Say why a setting can't change, and who can change it."
-
-```
-
-```tsx dont=DisabledWithoutReason caption="Disabled switches that don’t say why."
-
-```
-
-### When saving fails
-
-Turn the switch back and say what went wrong.
-
 ### Labels
 
 Name the setting in a short phrase, so that on means yes.
@@ -96,10 +84,6 @@ Name the setting in a short phrase, so that on means yes.
 3. **Label** (`env-switch-label`, `label`)
 
 The thumb is drawn by the track and has no element of its own.
-
-### Colors
-
-One switch can take colors of its own: its track and thumb, on and off, and its edge. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 
@@ -138,6 +122,28 @@ A Switch is a native checkbox with `role="switch"`, named by its `label`, which 
 
 ```tsx source=ShowCompleted
 
+```
+
+#### Disabled
+
+`disabled` keeps the setting from changing. Say why beside it, such as in the row's detail, and who can change it.
+
+```tsx
+import { useId } from 'react';
+import { Column, Switch, Text } from '@envsemble/envui';
+
+export default function ManagedSetting() {
+  const reason = useId();
+  return (
+    <Column gap={3} align="start">
+      <Switch label="Two-step sign-in" defaultChecked disabled aria-describedby={reason} />
+      <Switch label="Share documents outside Northwind" disabled aria-describedby={reason} />
+      <Text id={reason} variant="body-sm">
+        Your administrator, Sam Lee, manages these settings for everyone at Northwind.
+      </Text>
+    </Column>
+  );
+}
 ```
 
 #### Settings in a list

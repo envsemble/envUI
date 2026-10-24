@@ -16,7 +16,6 @@ aliases:
   - button row
   - button set
   - form actions
-  - toolbar
   - wrap
 useWhen:
   - A few actions that belong together, such as Cancel and Save
@@ -40,8 +39,6 @@ components:
 # Row
 
 ## Overview
-
-Like [Column](column.md), [Grid](grid.md) and [Box](box.md), Row sizes to its content and never paints.
 
 ```tsx example=FormActions
 
