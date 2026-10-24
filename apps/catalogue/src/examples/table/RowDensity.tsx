@@ -17,6 +17,12 @@ const reports = [
   { id: 'roadmap', name: 'Roadmap', owner: 'Jordan Kim', pages: 6 },
 ];
 const densities: readonly Density[] = ['xs', 'sm', 'md', 'lg'];
+const names: Record<Density, string> = {
+  xs: 'Extra small',
+  sm: 'Small',
+  md: 'Medium',
+  lg: 'Large',
+};
 
 export default function RowDensity() {
   const [density, setDensity] = useState<Density>('sm');
@@ -28,7 +34,7 @@ export default function RowDensity() {
           size="sm"
           value={density}
           onValueChange={(value) => setDensity(densities.find((each) => each === value) ?? 'md')}
-          items={densities.map((value) => ({ value, label: value.toUpperCase() }))}
+          items={densities.map((value) => ({ value, label: names[value] }))}
         />
       </Row>
       <Table.Root aria-label="Reports" density={density}>

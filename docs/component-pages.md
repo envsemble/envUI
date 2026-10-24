@@ -61,7 +61,7 @@ The build adds **Props** and **Related**, from `avoidWhen`, before Changelog; do
 
 The Site is for people looking at envUI, not for developers: it shows and introduces, and the Docs teach how to build with it. Outside the Code disclosures under its figures, a page's Site shows no code:
 
-- **No inline code.** Name no props, values, part classes, tokens or container names, such as `variant="ghost"` or `--env-card-container`. Say in plain words what matters: "the ghost variant", "one card can take colors of its own", "a sheet from the bottom". Component names, such as SearchField, are names, not code. The developer detail goes in [In code](#in-code-the-developer-only-part). `npm test` fails on a code span in the Site's text of a converted page, `plainPages` in `tests/DocumentationPages.test.mjs`: its sections, captions, anatomy legend names, `useWhen` and `avoidWhen`; it reports the count left on the other pages.
+- **No inline code.** Name no props, values, part classes, tokens or container names, such as `variant="ghost"` or `--env-card-container`. Say in plain words what matters: "the ghost variant", "one card can take colors of its own", "a sheet from the bottom". Component names, such as SearchField, are names, not code. The developer detail goes in [In code](#in-code-the-developer-only-part). `npm test` fails on a code span in the Site's text of any page but Field's, which only the Docs show: its sections, captions, anatomy legend names, `useWhen` and `avoidWhen`.
 - **Options in words.** A table of variants, tones, sides or sizes names each option as people see it, such as Outline, Floating and Ghost, or From the bottom, never its value.
 - **Lists sparingly.** A list is for a few short items, usually not full sentences, such as `useWhen`. Write rules as a sentence or two, or as a do and don't pair, rather than as a list of sentences.
 
@@ -73,7 +73,7 @@ Every piece of text on the Site belongs to a titled block: a heading and one sho
 - **One paragraph per block.** Two short paragraphs under one heading, such as two one-line rules under Labels, are one paragraph, or two blocks with headings of their own.
 - **envUI's type scale.** A block's heading is a title, its paragraph body text, and a figure's caption the small muted text under it, as the [typography](foundations/typography.md) foundation sets them. The catalogue styles them; don't fake a heading with bold text or HTML.
 
-`npm test` finds loose text in the Site's sections, with `siteStructure` in `scripts/SiteContent.mjs`: it fails on a page in `plainPages` and reports the count on the others.
+`npm test` fails on loose text in the Site's sections of any page but Field's, with `siteStructure` in `scripts/SiteContent.mjs`.
 
 ### Write little
 
@@ -115,7 +115,7 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 - **Three larger sections.** The catalogue groups a page's sections into three larger ones, each holding its sections in their order: Overview with Variants; When to use with Anatomy; and Adapting to width with Accessibility. Related follows them. A page groups the sections it has; a group with none of them is left out.
 - **Related things sit close, unrelated things apart.** A heading sits close to its first content, text close to the figure it introduces, and a figure's stage, caption and Code toggle close together. One sub-topic, such as a `###` subsection or the next figure after a caption, sits clearly apart from the last, also where the last is only text, a list or a table; one section further from the next in its group, and one group far further still, so a page reads as parts rather than one stream. The catalogue spaces them with the spacing tokens: 1 rem for what belongs together, 2.5 rem between sub-topics, 4 rem, the largest step, between the sections of a group, and 8 rem, twice that, between groups. Section headings are larger than a subsection's.
 - **No separators.** Space, not lines, separates sections and sub-topics.
-- **One band, for the middle group.** When to use and Anatomy, the group that turns from what the subject is to how to use it, sit on a band: the theme's muted fill across the whole content pane, gutters included, which stands apart from the page and the navigation, and in the light high-contrast theme is deepened to show on white, as far as code on it keeps its 7:1 contrast, since the muted fill there is nearly white. It is the one band of a component or pattern page; a page with neither When to use nor Anatomy has none, and a foundation page has none. Don't add bands elsewhere: one that marks every section marks nothing. The contrast gate measures text, links and inline code on the band's fill. Examples on the band sit on the page's canvas in the dark themes, deeper than the band, and on a canvas of the page's own color in the light ones, lighter than the band: there a canvas deeper than the band would take envUI's light colors below their contrast.
+- **One band, for the middle group.** When to use and Anatomy, the group that turns from what the subject is to how to use it, sit on one subtle band: a fill a small step from the page, just beyond the navigation's, across the whole content pane, gutters included, so it reads as a region of the page rather than a surface. It is the one band of a component or pattern page: Related, the groups around it and a foundation page sit on the page, and a page with neither When to use nor Anatomy has none. Don't add bands elsewhere: one that marks every section marks nothing. The contrast gate measures text, links and inline code on the band's fill. Examples on the band sit on the page's canvas in the dark themes, deeper than the band, and on a canvas of the page's own color in the light ones, lighter than the band: there a canvas deeper than the band would take envUI's light colors below their contrast.
 - **One frame per figure.** A figure's stage is its only frame: never put it inside another framed or filled box, such as a Surface or Card around a specimen grid, or a stage inside a stage. A do or don't figure's stage and its bar are one figure: two blocks joined as envUI's connected rows (`env-connected-rows`), with the outer corners rounded large and the inner ones small, and the small gap of a list's rows between them. A tile of Related is its stage, with its name and line below it in no box. The band is the page's background where it lies, not a frame. A catalogue browser test fails on a stage with a bordered, filled or shadowed ancestor in the article.
 
 ### Learn from Material's docs
@@ -143,7 +143,7 @@ Under every figure the catalogue shows a closed Code toggle with the file's sour
 
 Each kind also takes the flag `open`, written alone, such as ` ```tsx do=OneMenu open caption="…" `: see [open overlays](#open-overlays).
 
-A stage whose example can be used, such as a live button, shows a small touch icon at its bottom end, in its padding, named and titled "Interactive: try it". A picture shows nothing: an anatomy or variants figure, a figure shown open, and a specimen whose parts are inert. The catalogue finds it from the stage's content; the page writes nothing for it.
+Only a stage whose example can be used, such as a live button, shows a mark: a small finger icon at its bottom end, in its padding, named and titled "Interactive: try it". Every other figure shows none: an anatomy or variants figure, a figure shown open, and a specimen whose parts are inert. The catalogue finds it from the stage's content; the page writes nothing for it.
 
 ### Stage fill
 
@@ -221,7 +221,7 @@ Variants, tones, sizes, sides and layouts are written as an option table: a Mark
 | Floating | A long form on a page.                              |
 ````
 
-- **Names are tags.** Each option's name is a few words of plain text, such as Outline or From the bottom, named once, with no link, image or HTML, and each option says what it is for; the build checks both. After a variants figure, the names are the figure's, in its order, which `npm test` checks on the pages in `plainPages`.
+- **Names are tags.** Each option's name is a few words of plain text, such as Outline or From the bottom, named once, with no link, image or HTML, and each option says what it is for; the build checks both. After a variants figure, the names are the figure's, in its order, which `npm test` checks on every page.
 - **One kind per table.** Sides and widths are two tables, each in its own titled block, as on [Sheet](components/sheet.md); a sentence about them is the block's paragraph, before the table, never loose after it.
 - **Other tables stay tables.** Only a table whose last column is Use for is a legend; a keyboard table or a comparison, such as a pattern's table of needs, stays a table.
 
@@ -317,6 +317,8 @@ Some visual references are not examples: a matrix of every variant in every form
 ```
 
 On a page on the figure template, keep a specimen only where it shows what an example can't, such as forced hover and pressed looks or every size side by side; a matrix that repeats the variants an example already shows goes. On its stage, a grid of specimens is centred with even space on its four sides, in columns of one width, each specimen's content centred in its column unless it fills it, such as cards; a matrix, such as forced states by variant, has a label column and then columns of one width, with each cell centred and each label on its row's centre line. The catalogue's CSS does this; a specimen adds no wrapper of its own around its grid or table. Give it a `###` heading and its sentence in the Markdown before it, so the text sits next to the figure; the specimen itself takes no title there, and its parts' titles are `h4`. Elsewhere a specimen's title is an `h2` and its parts' `h3`. The catalogue sets the level; a specimen's `Example` and `Specimen` take it from there.
+
+A specimen speaks plain language too: its titles, captions and matrix headers name options in words, as its page's option table does, such as Small, Large or Step 1, never by their values, such as `sm` or `gap={1}`, nor by tokens. A catalogue browser test fails on a title that starts in lower case or is written as code.
 
 The visual baseline captures a page's specimens, and its first example when it has no specimen.
 

@@ -19,9 +19,12 @@ export const buttonVariants = [
   { variant: 'text', tone: 'danger', label: 'Leave', icon: Close },
 ] as const;
 
+/** A value in words, as the Site names it: capitalised. */
+const inWords = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
 /** The name of a pair, as the matrix's rows show it: the variant, and the tone unless neutral. */
 export const pairName = ({ variant, tone }: (typeof buttonVariants)[number]) =>
-  tone === 'neutral' ? variant : `${variant} · ${tone}`;
+  tone === 'neutral' ? inWords(variant) : `${inWords(variant)}, ${tone}`;
 
 export const buttonForms = [
   { value: 'label', title: 'Label' },

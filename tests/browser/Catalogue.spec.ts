@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl } from './Servers';
 import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
 import { chooseScheme } from './CatalogueThemes';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
 import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
@@ -444,6 +444,31 @@ test('every stage is the only frame of its figure', async ({ page }) => {
   }
 });
 
+test("a specimen's titles and captions name options in words, not values", async ({ page }) => {
+  // The Site speaks plain language in its specimens too: Small rather than sm, Step 1 rather than
+  // gap={1}. A value starts in lower case or is written as code, with =, braces, quotes or --.
+  const pages = readdirSync('docs/components')
+    .filter((file) => readFileSync(`docs/components/${file}`, 'utf8').includes('<!-- specimen:'))
+    .map((file) => file.replace(/\.md$/, ''));
+  expect(pages.length).toBeGreaterThan(0);
+  await page.goto(`${catalogueUrl}/`);
+  for (const id of pages) {
+    await goTo(page, `/components/${id}`);
+    await expect(
+      page.locator('.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll)').first(),
+    ).toBeVisible();
+    const texts = await page
+      .locator(
+        '.docs-figures :is(.docs-specimen > :is(h3, h4, h5, .env-text[data-variant="caption"]), .docs-matrix-scroll th)',
+      )
+      .allTextContents();
+    const raw = texts
+      .map((text) => text.trim())
+      .filter((text) => text && (/^[a-z]/.test(text) || /[={}"`]|--/.test(text)));
+    expect(raw, `${id} names options by their values`).toEqual([]);
+  }
+});
+
 test('a component page groups its sections into three, the middle one on the band', async ({
   page,
 }) => {
@@ -492,8 +517,21 @@ test("a pattern's guide lists what it needs, and Field's page in the Docs ends w
   page,
 }) => {
   // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
-  // under Accessibility; the address of the page that once listed them all opens the first guide.
+  // under Accessibility. The address of the page that once listed them all opens the Docs' home,
+  // whose Patterns list links every pattern's guide.
   await page.goto(`${catalogueUrl}/docs/patterns`);
+  await expect(page).toHaveURL(/\/docs$/);
+  const guides = page
+    .locator('.docs-article section', {
+      has: page.getByRole('heading', { name: 'Patterns', exact: true }),
+    })
+    .getByRole('link');
+  await expect(guides).toHaveText(
+    allPages
+      .filter((entry) => entry.area === 'docs' && entry.section === 'Patterns')
+      .map((entry) => entry.title),
+  );
+  await guides.getByText('Form layout and validation', { exact: true }).click();
   await expect(page).toHaveURL(/\/docs\/patterns\/forms$/);
   const provides = page.getByRole('region', { name: 'Accessibility', exact: true });
   await expect(provides.getByRole('heading', { level: 3 })).toHaveText([
