@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys. A thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it, fading out when it lets go. The label and the value always keep their full strength: where the handle and the end of the fill pass under them, those fade instead.
+Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys. A thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it, fading out when it lets go. The label and the value always keep their full strength: while the slider is held, where the handle and the end of the fill pass under them, those fade instead. Once it is let go, the fill simply ends and the handle shows in full, even under the text.
 
 ```tsx example=LayerOpacity
 

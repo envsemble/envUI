@@ -3,8 +3,9 @@
    at its end, in a field's type, and a stronger fill from the start that shows the value. A thin
    handle at the value appears under the pointer and while it has focus, and faint ticks at the
    steps, a ruler, only while the pointer presses it; the value text says the exact amount. The text
-   always keeps its full strength: where the fill's end and the handle pass under the label or the
-   value, they fade instead. */
+   always keeps its full strength: while the pointer presses the slider, where the fill's end and the
+   handle pass under the label or the value, they fade instead. At rest, under a resting pointer and
+   with focus, the fill ends crisply and the handle ignores the text. */
 /* Color properties: a slider's colors, which an application sets on one slider through style or its
    own CSS: container the track, indicator the fill that shows the value, and content the label, the
    value, the handle and the ticks. They don't inherit; the slider passes them on to its parts. */
@@ -21,7 +22,7 @@
   inherits: false;
 }
 /* 1 while the fill's end and the handle sit under the label or the value, which Slider measures,
-   else 0; a number, so the fade between them eases. */
+   else 0; a number, so the fade between them eases. It takes effect only while pressed. */
 @property --env-slider-veil {
   syntax: '<number>';
   inherits: true;
@@ -74,9 +75,9 @@
   inline-size: var(--env-slider-inset);
   background: inherit;
 }
-/* Under the label or the value, the fill's end fades into the track, so no edge cuts through the
-   text: a veil of the track's color over its last stretch, reaching back under the rounded start
-   where the fill is short. */
+/* While pressed, under the label or the value, the fill's end fades into the track, so no edge cuts
+   through the text being dragged across: a veil of the track's color over its last stretch, reaching
+   back under the rounded start where the fill is short. Released, the fill ends crisply. */
 .env-slider-indicator::after {
   --env-slider-indicator-direction: to right;
   content: '';
@@ -89,8 +90,12 @@
     transparent,
     color-mix(in srgb, var(--env-slider-track) 80%, transparent)
   );
-  opacity: var(--env-slider-veil);
+  opacity: 0;
   pointer-events: none;
+  transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-slider-control[data-pressed] .env-slider-indicator::after {
+  opacity: var(--env-slider-veil);
 }
 .env-slider-indicator:dir(rtl)::after {
   --env-slider-indicator-direction: to left;
@@ -151,9 +156,12 @@
   color: var(--env-slider-content, var(--env-color-fg-default));
   font-variant-numeric: tabular-nums;
 }
-/* Under the pointer, while pressed and while it has focus, the handle shows, faint while it passes
-   under the label or the value. */
+/* Under the pointer, while pressed and while it has focus, the handle shows; only while pressed is it
+   faint where it passes under the label or the value. */
 .env-slider-control:is(:hover, :focus-within, [data-pressed]) .env-slider-thumb {
+  opacity: 1;
+}
+.env-slider-control[data-pressed] .env-slider-thumb {
   opacity: calc(1 - 0.75 * var(--env-slider-veil));
 }
 /* The ticks show only while the pointer presses the slider (data-pressed, which Slider sets from the
@@ -185,6 +193,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .env-slider-thumb,
+  .env-slider-indicator::after,
   .env-slider-track::after {
     transition: none;
   }

@@ -41,7 +41,7 @@ test('a rule is a hairline across the whole text column', async ({ page }) => {
   expect(own).toBeCloseTo(column, 0);
 });
 
-test('list markers are tinted circles on the first line, quieter one level in', async ({
+test('list markers are plain: an accent dot or a muted number on the first line, quieter one level in', async ({
   page,
 }) => {
   await page.goto(fixture);
@@ -50,24 +50,42 @@ test('list markers are tinted circles on the first line, quieter one level in', 
     .locator('li')
     .evaluateAll((items) =>
       items.map((item) => {
-        const marker = getComputedStyle(item, '::before');
+        const bullet = item.parentElement!.localName === 'ul';
+        // A bullet is the item's ::after, a number its ::before.
+        const marker = getComputedStyle(item, bullet ? '::after' : '::before');
         const line = parseFloat(getComputedStyle(item).lineHeight);
-        // The circle's middle, from its offset in the item, against the middle of the first line.
+        // The dot's middle, from its offset in the item, against the middle of the first line; a
+        // number sits on the first line itself.
         const middle = parseFloat(marker.top) + parseFloat(marker.height) / 2;
+        const probe = document.createElement('span');
+        item.append(probe);
+        probe.style.color = 'var(--env-color-fg-accent)';
+        const accent = getComputedStyle(probe).color;
+        probe.style.color = 'var(--env-color-fg-muted)';
+        const muted = getComputedStyle(probe).color;
+        probe.remove();
+        const color = bullet ? marker.backgroundColor : marker.color;
         return {
           content: marker.content,
-          filled: marker.backgroundColor !== 'rgba(0, 0, 0, 0)',
-          centred: Math.abs(middle - line / 2) < 0.5,
+          // No circle behind any marker.
+          circle: getComputedStyle(item, '::before').backgroundColor !== 'rgba(0, 0, 0, 0)',
+          tone: color === accent ? 'accent' : color === muted ? 'muted' : color,
+          onFirstLine: bullet ? Math.abs(middle - line / 2) < 0.5 : parseFloat(marker.top) === 0,
         };
       }),
     );
   expect(markers).toEqual([
-    { content: '""', filled: true, centred: true },
-    { content: '""', filled: true, centred: true },
-    { content: '""', filled: false, centred: true },
-    { content: 'counter(list-item)', filled: true, centred: true },
-    { content: 'counter(list-item)', filled: true, centred: true },
-    { content: 'counter(list-item, lower-alpha)', filled: false, centred: true },
+    { content: '""', circle: false, tone: 'accent', onFirstLine: true },
+    { content: '""', circle: false, tone: 'accent', onFirstLine: true },
+    { content: '""', circle: false, tone: 'muted', onFirstLine: true },
+    { content: 'counter(list-item) "."', circle: false, tone: 'muted', onFirstLine: true },
+    { content: 'counter(list-item) "."', circle: false, tone: 'muted', onFirstLine: true },
+    {
+      content: 'counter(list-item, lower-alpha) "."',
+      circle: false,
+      tone: 'muted',
+      onFirstLine: true,
+    },
   ]);
   // Task lists keep their checkboxes and draw no marker.
   await expect(page.getByTestId('english').locator('.task-list-item').first()).toHaveCSS(

@@ -70,7 +70,7 @@ test.describe('PanelDock', () => {
     expect(await report.evaluate((element) => getComputedStyle(element).zIndex)).toBe('1');
 
     // The dock fills its positioned frame; open panels sit side by side at its inline end, standing
-    // on the strip of tabs along the bottom.
+    // on its bottom edge, and the strip of tabs floats over that edge, in front of them.
     const frameBox = await dock.frame.evaluate((element) =>
       element.getBoundingClientRect().toJSON(),
     );
@@ -83,9 +83,27 @@ test.describe('PanelDock', () => {
     const stripBox = await box(dock.tabs);
     expect(notesBox.x - (reportBox.x + reportBox.width)).toBeCloseTo(8, 0);
     expect(rootBox.x + rootBox.width - (notesBox.x + notesBox.width)).toBeCloseTo(24, 0);
-    expect(reportBox.y + reportBox.height).toBeCloseTo(stripBox.y, 0);
-    expect(notesBox.y + notesBox.height).toBeCloseTo(stripBox.y, 0);
+    expect(reportBox.y + reportBox.height).toBeCloseTo(rootBox.y + rootBox.height, 0);
+    expect(notesBox.y + notesBox.height).toBeCloseTo(rootBox.y + rootBox.height, 0);
     expect(stripBox.y + stripBox.height).toBeCloseTo(rootBox.y + rootBox.height, 0);
+    expect(stripBox.y).toBeLessThan(notesBox.y + notesBox.height);
+    const tabBox = await box(dock.tabs.getByRole('listitem').first());
+    expect(tabBox.x).toBeGreaterThan(notesBox.x);
+    expect(
+      await page.evaluate(
+        ({ x, y }) => document.elementFromPoint(x, y)?.closest('.env-panel-dock-tab') !== null,
+        { x: tabBox.x + tabBox.width / 2, y: tabBox.y + tabBox.height / 2 },
+      ),
+    ).toBe(true);
+    // The open panels' content keeps the tabs' height clear at its end, so it scrolls out from
+    // beneath them, and focus does too.
+    const stripHeight = await dock.tabs.evaluate((element) => element.offsetHeight);
+    const endPadding = await notes.locator('.env-panel-dock-content').evaluate((element) => ({
+      padding: parseFloat(getComputedStyle(element).paddingBlockEnd),
+      scroll: parseFloat(getComputedStyle(element).scrollPaddingBlockEnd),
+    }));
+    expect(endPadding.padding).toBeCloseTo(stripHeight, 0);
+    expect(endPadding.scroll).toBeGreaterThan(stripHeight);
 
     // A minimized panel is a tab with its label, an attention dot described for assistive
     // technology, a tooltip and a close button.
@@ -111,10 +129,12 @@ test.describe('PanelDock', () => {
     await expect(dock.panel('notes')).toBeHidden();
     await expect(dock.panel('notes')).toHaveAttribute('data-mode', 'minimized');
     await expect(dock.tabs.getByRole('button')).toHaveText(['Meeting notes', '', 'Budget', '']);
-    // The open panel left moves to the inline end.
+    // The open panel left moves to the inline end, still standing on the bottom edge beneath the
+    // new tab: a tab moves no open panel up.
     const alone = await box(report);
     const region = await box(dock.root);
     expect(region.x + region.width - (alone.x + alone.width)).toBeCloseTo(24, 0);
+    expect(alone.y + alone.height).toBeCloseTo(region.y + region.height, 0);
 
     await report.getByRole('button', { name: 'Maximize' }).click();
     await expect(report).toHaveAttribute('data-mode', 'maximized');
@@ -262,7 +282,7 @@ test.describe('PanelDock', () => {
       await expect(handle).toHaveAttribute('aria-orientation', 'horizontal');
       await expect(handle).toHaveAttribute('tabindex', '0');
       await expect(handle).toHaveAttribute('aria-controls', (await report.getAttribute('id'))!);
-      // Without a height of its own, a panel takes 85% of the room above the tabs.
+      // Without a height of its own, a panel takes 85% of the room in the dock.
       const room = Number(await handle.getAttribute('aria-valuemax'));
       const start = Number(await handle.getAttribute('aria-valuenow'));
       expect(start).toBe(Math.round(room * 0.85));
@@ -315,13 +335,8 @@ test.describe('PanelDock', () => {
       // A shorter region holds the panel within its room without changing the chosen height.
       const entries = (await logOf(page)).length;
       await dock.frame.evaluate((element) => (element.style.blockSize = '30rem'));
-      // The room is the dock's height above the tabs, less the gutter.
-      const shorter = await dock.root.evaluate(
-        (element) =>
-          element.clientHeight -
-          element.querySelector<HTMLElement>('.env-panel-dock-strip')!.offsetHeight -
-          24,
-      );
+      // The room is the dock's height, less the gutter: the tabs float over the panels' bottom.
+      const shorter = await dock.root.evaluate((element) => element.clientHeight - 24);
       expect(shorter).toBeLessThan(room);
       await expect(handle).toHaveAttribute('aria-valuemax', String(shorter));
       await expect(handle).toHaveAttribute('aria-valuenow', String(shorter));
@@ -1029,16 +1044,11 @@ test('open panels leave the controls of a maximized one in view after the dock s
   const dock = dockOf(page);
   const report = dock.panel('report');
   const notes = dock.panel('notes');
-  // The room of an open panel is the dock's height above the tabs, below the row's padding.
+  // The room of an open panel is the dock's height below the row's padding; the tabs float over it.
   const room = () =>
     dock.root.evaluate((element) => {
       const row = element.querySelector<HTMLElement>(':scope > .env-panel-dock-row')!;
-      const strip = element.querySelector<HTMLElement>(':scope > .env-panel-dock-strip');
-      return Math.floor(
-        element.clientHeight -
-          (strip?.offsetHeight ?? 0) -
-          parseFloat(getComputedStyle(row).paddingTop),
-      );
+      return Math.floor(element.clientHeight - parseFloat(getComputedStyle(row).paddingTop));
     });
   const handle = report.getByRole('separator', { name: 'Resize Quarterly report' });
   await notes.getByRole('button', { name: 'Maximize' }).click();

@@ -60,9 +60,10 @@ test('the keyboard moves the value by steps, large steps and to the ends', async
   await page.keyboard.press('Home');
   await expect(state).toHaveText('0');
   await expect(page.getByTestId('commits-light')).toContainText('0');
-  // Keyboard focus rings the whole field and shows the handle, faint at 0, under the label.
+  // Keyboard focus rings the whole field and shows the handle in full, even at 0 under the label: it
+  // fades there only while the pointer presses the slider.
   await expect(scope.locator('.env-slider-control').first()).toHaveCSS('outline-style', 'solid');
-  await expect(scope.locator('.env-slider-thumb').first()).toHaveCSS('opacity', '0.25');
+  await expect(scope.locator('.env-slider-thumb').first()).toHaveCSS('opacity', '1');
 
   // Steps follow step and the range; the large step is a tenth of the range.
   const scale = scope.getByRole('slider', { name: 'Scale' });
@@ -238,8 +239,9 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   await control.hover();
   await expect(thumb).toHaveCSS('opacity', '1');
   expect(await ticks()).toBe('0');
-  // The text never dims: where the handle and the fill's end pass under the label or the value,
-  // they fade instead, and the text above them keeps its full color.
+  // The text never dims. Slider marks where the handle and the fill's end pass under the label or the
+  // value; at rest and with focus they ignore it: the fill ends crisply and the handle shows in full.
+  // Only while pressed do they fade there, which the next test covers.
   const heading = slider.locator('.env-slider-heading');
   const veil = () =>
     control.evaluate((e) => getComputedStyle(e).getPropertyValue('--env-slider-veil').trim());
@@ -250,8 +252,8 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   await input.focus();
   await page.keyboard.press('Home');
   await expect.poll(veil).toBe('1');
-  await expect(thumb).toHaveCSS('opacity', '0.25');
-  await expect.poll(fillEnd).toBe('1');
+  await expect(thumb).toHaveCSS('opacity', '1');
+  expect(await fillEnd()).toBe('0');
   await page.keyboard.press('End');
   await expect.poll(veil).toBe('1');
   await page.keyboard.press('PageDown');
@@ -296,6 +298,27 @@ test(
     await page.mouse.up();
     await expect(control).not.toHaveAttribute('data-pressed');
     await expect.poll(ticks).toBe('0');
+    // Held at the start, under the label, the handle dims and the fill's end fades; let go, the fill
+    // ends crisply and the handle shows in full, though it still sits under the label.
+    const thumb = slider.locator('.env-slider-thumb');
+    const fillEnd = () =>
+      slider
+        .locator('.env-slider-indicator')
+        .evaluate((e) => getComputedStyle(e, '::after').opacity);
+    await page.mouse.move(box.x + 2, y);
+    await page.mouse.down();
+    await expect(control).toHaveAttribute('data-pressed', '');
+    await expect
+      .poll(() =>
+        control.evaluate((e) => getComputedStyle(e).getPropertyValue('--env-slider-veil').trim()),
+      )
+      .toBe('1');
+    await expect(thumb).toHaveCSS('opacity', '0.25');
+    await expect.poll(fillEnd).toBe('1');
+    await page.mouse.up();
+    await expect(control).not.toHaveAttribute('data-pressed');
+    await expect(thumb).toHaveCSS('opacity', '1');
+    await expect.poll(fillEnd).toBe('0');
     // The slider keeps focus after the release, and the keyboard brings no ticks back.
     await expect(slider.getByRole('slider')).toBeFocused();
     await page.keyboard.press('ArrowLeft');

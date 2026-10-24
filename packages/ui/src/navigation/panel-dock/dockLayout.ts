@@ -6,7 +6,7 @@ export type Placement = 'row' | 'fill' | 'hidden';
 export interface HeightBounds {
   min: number;
   max: number;
-  /** The block size open panels have above the tabs. */
+  /** The block size open panels have: the dock's height below the row's gutter. */
   room: number;
 }
 

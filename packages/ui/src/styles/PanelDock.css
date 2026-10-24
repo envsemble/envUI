@@ -1,7 +1,8 @@
 /* Panels docked to the bottom inline-end edge of a region, beside the page: open panels side by side
    in a row, one maximized panel filling the region behind them, and minimized panels as tabs in a
-   strip along the bottom. The dock fills its positioned container
-   and lets presses through around its panels. State attributes come from PanelDock. */
+   strip that floats over the bottom edge, so a tab coming or going never moves the open panels. The
+   dock fills its positioned container and lets presses through around its panels. State attributes
+   come from PanelDock. */
 .env-panel-dock {
   --env-panel-dock-gap: var(--env-space-2);
   /* Room around the row and the strip, between the panels and the region's edges. */
@@ -9,6 +10,8 @@
   --env-panel-dock-tab-height: var(--env-control-height-sm);
   /* The height of the header's small controls, which a coarse pointer raises to the touch height. */
   --env-panel-dock-control: var(--env-control-height-sm);
+  /* The strip's height while there are tabs: the room a panel filling the region leaves below it,
+     and the room open panels' content keeps clear at its end. */
   --env-panel-dock-strip-size: 0rem;
   /* The dock is the env-panel-dock container, and its font size is stackBelow / 37.5, so 37.5em in
      its queries is stackBelow (em in a container query is the container's own; panels and tabs set
@@ -119,7 +122,7 @@
 }
 /* The content scrolls within the panel; a PanelDock.Header sticks to its top. Scroll padding as
    tall as the header, which measures itself, and a little more for focus rings, brings a control
-   that takes focus out from beneath it (WCAG 2.4.11). */
+   that takes focus out from beneath it (WCAG 2.4.11); at the end, the same for the tabs. */
 .env-panel-dock-content {
   flex: 1 1 auto;
   min-block-size: 0;
@@ -131,6 +134,13 @@
   border-start-start-radius: inherit;
   border-start-end-radius: inherit;
   outline: none;
+}
+/* The tabs float over the bottom of the open panels, which keep their place. Their content keeps
+   the tabs' height clear at its end, so its last lines and actions scroll out from beneath them, and
+   content that fills the panel ends above them; content shorter than the panel doesn't move. */
+.env-panel-dock-panel[data-placement='row'] > .env-panel-dock-content {
+  padding-block-end: var(--env-panel-dock-strip-size);
+  scroll-padding-block-end: calc(var(--env-panel-dock-strip-size) + var(--env-space-2));
 }
 /* The top edge resizes an open panel. It reaches a little above the panel, between its rounded
    corners; a short bar shows on hover and takes the focus color with the keyboard and while
@@ -242,12 +252,15 @@
 }
 
 /* Minimized panels wait as tabs along the bottom, at the inline end: a button that brings the
-   panel back and a close button. The strip scrolls sideways with the wheel, touch and the keyboard;
-   a scrollbar would cover the tabs. */
+   panel back and a close button. The strip floats over the bottom edge, in front of the open
+   panels, and lets presses through around its tabs. It comes after the panels, so focus reaches the
+   tabs after them. The strip scrolls sideways with the wheel, touch and the keyboard; a scrollbar
+   would cover the tabs. */
 .env-panel-dock-strip {
-  position: relative;
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
   z-index: calc(var(--env-z-raised) + 2);
-  flex: 0 0 auto;
   gap: var(--env-panel-dock-gap);
   margin: 0;
   padding: var(--env-space-2) var(--env-panel-dock-gutter) 0;
@@ -387,6 +400,10 @@
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
+  }
+  /* A panel the stacked first paint fills the region with already ends above the tabs. */
+  .env-panel-dock-panel[data-env-ssr-placement] > .env-panel-dock-content {
+    padding-block-end: 0;
   }
   .env-panel-dock-panel[data-env-ssr-placement='hidden'] {
     position: absolute;
