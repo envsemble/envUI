@@ -9,8 +9,9 @@ function preventExampleNavigation(event: MouseEvent<HTMLDivElement>) {
 }
 
 /**
- * One specimen area that follows the documentation's current theme; `specimen` names the catalogue
- * specimen it shows, so the visual baseline can name an untitled one's image after it.
+ * One specimen area in the documentation's current theme, around the stages that show examples in
+ * the opposite one; `specimen` names the catalogue specimen it shows, so the visual baseline can
+ * name an untitled one's image after it.
  */
 export function Preview({ specimen, children }: { specimen?: string; children: ReactNode }) {
   const theme = useTheme();

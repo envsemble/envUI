@@ -332,8 +332,8 @@ function enlarge(subject: HTMLElement, always: boolean) {
 }
 
 /**
- * The component in the theme the reader has chosen, following it as it changes, with its callouts
- * measured from its live parts.
+ * The component in the examples' theme, the one opposite the reader's, following it as it changes,
+ * with its callouts measured from its live parts.
  */
 function AnatomyStage({
   page,
@@ -469,7 +469,7 @@ function legendText({ part, text }: AnatomyLegendItem) {
 }
 
 /**
- * An anatomy figure: the live component in the reader's theme, a numbered callout on each part its
+ * An anatomy figure: the live component in the examples' theme, a numbered callout on each part its
  * legend names, by class name, and the legend of part names, with the example's code below. A
  * variants figure names each variant on its callout instead, as anatomy figures number parts, so
  * its legend is for assistive technology alone.

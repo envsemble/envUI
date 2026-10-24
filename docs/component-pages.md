@@ -144,7 +144,7 @@ Put a `do` fence and a `dont` fence after each other, so they sit side by side; 
 
 ### Anatomy figures
 
-An ordered list right after an anatomy fence is its legend. Each item names its part by class name in a code span, and the catalogue puts that item's number on the part, measured from the live component in the theme the reader has chosen; the callouts follow the figure as it resizes and as the theme changes. The legend holds names only: what a part looks like is in the figure, and what it does belongs in the section that covers it.
+An ordered list right after an anatomy fence is its legend. Each item names its part by class name in a code span, and the catalogue puts that item's number on the part, measured from the live component in the examples' theme; the callouts follow the figure as it resizes and as the theme changes. The legend holds names only: what a part looks like is in the figure, and what it does belongs in the section that covers it.
 
 ````md
 ```tsx anatomy=CardAnatomy

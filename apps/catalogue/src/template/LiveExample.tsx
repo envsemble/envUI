@@ -186,8 +186,9 @@ export const keepLinksInPlace = {
 };
 
 /**
- * An example rendered live in the documentation's theme, with its source and a copy button; with
- * `widths`, in a frame of each width, one to a row, and with `caption`, a sentence below it.
+ * An example rendered live in the theme opposite the documentation's, with its source and a copy
+ * button; with `widths`, in a frame of each width, one to a row, and with `caption`, a sentence
+ * below it.
  */
 export function LiveExample({
   page,
