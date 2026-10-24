@@ -310,3 +310,14 @@
   transition: none;
   animation: none;
 }
+
+/* Forced colors paint every stage in Canvas, like the page: a border keeps each example apart. */
+@media (forced-colors: active) {
+  .docs-live-example,
+  .docs-verdict-stage,
+  .docs-anatomy-stage,
+  .docs-foundation-stage,
+  .docs-related-stage {
+    border: 1px solid CanvasText;
+  }
+}
