@@ -99,7 +99,7 @@ While `pending`, a spinner replaces the content at the same size, and presses do
 
 ### Confirm in place
 
-ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.
+ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it. Its armed label is short and has no question mark: the verb, or the verb and object, "Remove Sam".
 
 ```tsx example=ConfirmInPlace
 

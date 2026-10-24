@@ -23,7 +23,10 @@ import { confirmButton } from '../foundations/messages/confirmButton.js';
 
 type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
   Omit<ComponentPropsWithRef<'button'>, 'onClick' | 'type'> & {
-    /** The label while armed, naming what a second press does, such as “Remove Morgan?”. */
+    /**
+     * The label while armed: what a second press does, short and without a question mark, such
+     * as “Remove Morgan”.
+     */
     confirmLabel: ReactNode;
     /** Runs on the second press, while the button is armed. */
     onConfirm: () => void;
@@ -169,7 +172,7 @@ export function ConfirmButton({
       <span className="env-confirm-button-status" role="status">
         {armed && (
           <>
-            {confirmLabel} {messages.armed}
+            {confirmLabel}. {messages.armed}
           </>
         )}
       </span>

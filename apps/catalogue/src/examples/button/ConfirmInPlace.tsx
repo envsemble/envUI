@@ -47,7 +47,7 @@ export default function ConfirmInPlace() {
             label={name}
             action={
               <ConfirmButton
-                confirmLabel={`Remove ${name.split(' ')[0]}?`}
+                confirmLabel={`Remove ${name.split(' ')[0]}`}
                 onConfirm={() => remove(name)}
               >
                 Remove
@@ -70,7 +70,7 @@ export default function ConfirmInPlace() {
           <ConfirmButton
             icon={<Delete />}
             aria-label="Delete draft"
-            confirmLabel="Delete draft?"
+            confirmLabel="Delete draft"
             onConfirm={() => setDraft(true)}
           />
         )}

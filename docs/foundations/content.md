@@ -122,12 +122,14 @@ The title states the fact, the description says why or what next, and one action
 
 ## Confirmations
 
-- The title asks the question with the object's name; the description says the consequence and whether it can be undone.
+- A dialog's title asks the question with the object's name; the description says the consequence and whether it can be undone.
 - The confirm button repeats the verb and object, "Delete project"; the other stays "Cancel". Never "Are you sure?".
+- An inline confirmation's armed label is short and has no question mark: the verb, or the verb and object, "Remove file".
 
-| Do                                         | Don't                        |
-| ------------------------------------------ | ---------------------------- |
-| Delete Website refresh? — "Delete project" | Are you sure? — "Yes" / "No" |
+| Do                                         | Don't                          |
+| ------------------------------------------ | ------------------------------ |
+| Delete Website refresh? — "Delete project" | Are you sure? — "Yes" / "No"   |
+| Armed in place: "Remove file"              | Armed in place: "Remove file?" |
 
 ## Numbers, dates and time
 

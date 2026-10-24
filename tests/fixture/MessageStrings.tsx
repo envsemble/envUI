@@ -173,7 +173,7 @@ export function MessageStringsFixture() {
     <ThemePreferenceProvider storageKey="fixture-messages-theme">
       <EnvUIProvider messages={pseudoMessages} locale="en-XA">
         <Column gap={4} data-testid="messages">
-          <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}}>
+          <ConfirmButton confirmLabel="Remove" onConfirm={() => {}}>
             Remove
           </ConfirmButton>
           {/* A blank name leaves it named by its copy label. */}
