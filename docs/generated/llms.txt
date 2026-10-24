@@ -89,7 +89,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Alert](docs/components/alert.md): An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button. Parts: `.env-alert`.
 - [Toast](docs/components/toast.md): Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people. Also: useToast. Parts: `.env-toast`.
 - [Progress](docs/components/progress.md): How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown. Parts: `.env-progress`.
-- [Spinner](docs/components/spinner.md): Work of unknown length in a small area, such as a panel that is updating, as a turning arc. Parts: `.env-spinner`.
+- [Spinner](docs/components/spinner.md): Work of unknown length in a small area, such as a panel that is updating, as envUI's mark whose shapes take the color in turn. Parts: `.env-spinner`.
 
 ## Components: Overlays
 

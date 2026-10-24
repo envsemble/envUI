@@ -1,4 +1,5 @@
-/* Spinner: an arc that turns and lengthens, for work of unknown length in a small area. */
+/* Spinner: envUI's mark, two pills and two circles, whose shapes take the color in turn, for work
+   of unknown length in a small area. */
 .env-spinner {
   display: inline-block;
   flex: 0 0 auto;
@@ -19,10 +20,9 @@
   display: block;
   inline-size: 100%;
   block-size: 100%;
-  animation: env-spinner-turn 1.4s linear infinite;
 }
 /* With its label shown: a status line that centres the spinner and a muted label in its row, for
-   loading with no known shape. The arc keeps the size the spinner's own box had. */
+   loading with no known shape. The mark keeps the size the spinner's own box had. */
 .env-spinner[data-show-label] {
   --env-spinner-size: 1.5rem;
   display: flex;
@@ -46,41 +46,51 @@
   block-size: var(--env-spinner-size);
   color: var(--env-spinner-color, var(--env-color-bg-brand-emphasis));
 }
-.env-spinner-arc {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 5;
-  stroke-linecap: round;
-  stroke-dasharray: 1 200;
-  animation: env-spinner-arc 1.4s ease-in-out infinite;
+/* The shapes rest at a tint of the color and take it whole in turn, clockwise from the top pill.
+   The next shape fills before the last one fades, so one is always at full color, which holds 3:1
+   on the surfaces spinners sit on. Only opacity changes: nothing moves, and the browser can run it
+   while the page is busy. */
+.env-spinner-shape {
+  fill: currentColor;
+  opacity: 0.28;
+  animation: env-spinner-relay 2s var(--env-motion-ease-standard) infinite;
 }
-@keyframes env-spinner-turn {
-  to {
-    transform: rotate(360deg);
-  }
+.env-spinner-shape:where(:nth-child(2)) {
+  animation-delay: -1.5s;
 }
-@keyframes env-spinner-arc {
+.env-spinner-shape:where(:nth-child(3)) {
+  animation-delay: -1s;
+}
+.env-spinner-shape:where(:nth-child(4)) {
+  animation-delay: -0.5s;
+}
+@keyframes env-spinner-relay {
   0% {
-    stroke-dasharray: 1 200;
-    stroke-dashoffset: 0;
+    opacity: 0.28;
   }
-  50% {
-    stroke-dasharray: 90 200;
-    stroke-dashoffset: -35;
+  8%,
+  33% {
+    opacity: 1;
   }
+  62%,
   100% {
-    stroke-dasharray: 90 200;
-    stroke-dashoffset: -124;
+    opacity: 0.28;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* The spinner keeps turning slowly, because it is the only sign of the work. */
-  .env-spinner > svg {
-    animation-duration: 2.8s;
+  /* The color keeps passing from shape to shape, as a slow fade, because it is the only sign of
+     the work. */
+  .env-spinner-shape {
+    animation-duration: 4s;
   }
-  .env-spinner-arc {
-    animation: none;
-    stroke-dasharray: 80 200;
+  .env-spinner-shape:where(:nth-child(2)) {
+    animation-delay: -3s;
+  }
+  .env-spinner-shape:where(:nth-child(3)) {
+    animation-delay: -2s;
+  }
+  .env-spinner-shape:where(:nth-child(4)) {
+    animation-delay: -1s;
   }
 }

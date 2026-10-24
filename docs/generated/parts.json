@@ -4636,12 +4636,12 @@
           "description": "The spinner, or with data-show-label the status line that holds it and its label."
         },
         {
-          "class": "env-spinner-arc",
-          "description": "The turning arc."
-        },
-        {
           "class": "env-spinner-label",
           "description": "The label shown beside the spinner, which says what is loading."
+        },
+        {
+          "class": "env-spinner-shape",
+          "description": "Each of the mark's four shapes, two pills and two circles, which take the color in turn."
         }
       ],
       "states": [

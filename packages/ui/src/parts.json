@@ -667,7 +667,7 @@
     },
     "Spinner": {
       "env-spinner": "The spinner, or with data-show-label the status line that holds it and its label.",
-      "env-spinner-arc": "The turning arc.",
+      "env-spinner-shape": "Each of the mark's four shapes, two pills and two circles, which take the color in turn.",
       "env-spinner-label": "The label shown beside the spinner, which says what is loading."
     },
     "Surface": {

@@ -7215,7 +7215,7 @@
     "Spinner": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Spinner.tsx",
-      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. With showLabel it is a status line with its label beside it, for loading with no known shape. The hook --env-spinner-color recolors it, such as to a button's label color.",
+      "description": "Work of unknown length in a small area, such as a panel that is updating: envUI's mark, two pills and two circles, whose shapes take the control blue in turn, more slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. With showLabel it is a status line with its label beside it, for loading with no known shape. The hook --env-spinner-color recolors it, such as to a button's label color.",
       "props": [
         {
           "name": "label",
