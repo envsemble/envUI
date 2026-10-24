@@ -57,6 +57,9 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'overview/get-started?skill=migrate&section=local-development': 'docs/agent-skills',
     'get-started/migration': 'docs/migration',
     'contributing/library-development': 'overview',
+    // The Site's changelog is the Docs' now, with its release notes.
+    changelog: 'docs/changelog',
+    'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
   };
   for (const [from, to] of Object.entries(routes)) expect(normalizeRoute(from), from).toBe(to);
   // Every page of both areas is its own route.
@@ -1131,13 +1134,17 @@ test("the Benchmark page shows the newest run's scores and a named chart with it
   await expect(data.getByRole('row')).toHaveCount(bars + 1);
 });
 
-test('the Changelog page lists each release, newest first, and its links reach sections of the Docs', async ({
+test("the Docs' Changelog page lists each release's highlights, newest first, and their links reach sections of the Docs", async ({
   page,
 }) => {
   const releases = readReleaseNotes();
+  // The Site's old address opens it.
   await page.goto(`${catalogueUrl}/changelog`);
+  await expect(page).toHaveURL(`${catalogueUrl}/docs/changelog`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
-  const versions = page.locator('.docs-releases h2 .docs-release-version');
+  await expect(page.getByRole('heading', { level: 2, name: 'Highlights' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'Every change' })).toBeVisible();
+  const versions = page.locator('.docs-releases h3 .docs-release-version');
   await expect(versions).toHaveText(releases.map((release) => release.version));
 
   // Every link of the notes leads to a page of the Docs with the section it names.

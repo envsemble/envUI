@@ -13,6 +13,7 @@ import type { Reference } from '../Reference';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
+import { ReleaseNotes } from './ReleaseNotes';
 import codemodsReadme from '../../../../packages/codemods/README.md?raw';
 import usageSkill from '../../../../.agents/skills/envui-use/SKILL.md?raw';
 import migrationSkill from '../../../../.agents/skills/envui-migrate/SKILL.md?raw';
@@ -167,13 +168,27 @@ const changelog = lazyPart(
   'src/pages/Changelog.tsx',
 );
 
-/** Every change in each release of @envsemble/envui, as the releases write them. */
+/**
+ * What changed in each release of @envsemble/envui: the release notes, a few lines on each release
+ * with what it breaks, then every change as the releases write them.
+ */
 export function ChangelogDocsPage({ page }: { page: SitePage }) {
   return (
     <>
       <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
-      <Column gap={7} className="docs-article">
-        <LoadedPart part={changelog} what="changelog" />
+      <Column gap={8} className="docs-article">
+        <Column gap={6} render={<section aria-labelledby="highlights" />}>
+          <Text render={<h2 id="highlights" />} variant="headline">
+            Highlights
+          </Text>
+          <ReleaseNotes />
+        </Column>
+        <Column gap={6} render={<section aria-labelledby="every-change" />}>
+          <Text render={<h2 id="every-change" />} variant="headline">
+            Every change
+          </Text>
+          <LoadedPart part={changelog} what="changelog" />
+        </Column>
       </Column>
     </>
   );

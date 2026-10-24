@@ -14,14 +14,16 @@ import { docsRoute, homeRoute, routeHref } from './Address';
  */
 export type Area = 'site' | 'docs';
 
-/** The Site's destinations in its rail, in order; the drawer beside it lists their pages. */
+/**
+ * The Site's destinations in its rail, in order; the drawer beside it lists their pages. The
+ * changelog is in the Docs.
+ */
 export const siteSections = [
   'Overview',
+  'Foundations',
   'Components',
   'Patterns',
-  'Foundations',
   'Benchmark',
-  'Changelog',
 ] as const;
 export type SiteSection = (typeof siteSections)[number];
 
@@ -34,7 +36,6 @@ export type PageKind =
   | 'pattern'
   | 'foundation'
   | 'benchmark'
-  | 'changelog'
   | 'docs-home'
   | 'guide'
   | 'codemods'
@@ -134,6 +135,19 @@ const sitePages: SitePage[] = [
     kind: 'get-started',
     summary: 'Install envUI, connect its styles and theme, and find your way into the Docs.',
   },
+  ...referencePages
+    .filter(({ section }) => section === 'Foundations')
+    .map(
+      ({ reference, path }): SitePage => ({
+        path,
+        title: reference.title,
+        area: 'site',
+        section: 'Foundations',
+        kind: 'foundation',
+        summary: reference.summary,
+        document: reference as Documentation,
+      }),
+    ),
   {
     path: 'components',
     title: 'Components',
@@ -171,19 +185,6 @@ const sitePages: SitePage[] = [
       document,
     }),
   ),
-  ...referencePages
-    .filter(({ section }) => section === 'Foundations')
-    .map(
-      ({ reference, path }): SitePage => ({
-        path,
-        title: reference.title,
-        area: 'site',
-        section: 'Foundations',
-        kind: 'foundation',
-        summary: reference.summary,
-        document: reference as Documentation,
-      }),
-    ),
   {
     path: 'benchmark',
     title: 'Benchmark',
@@ -191,14 +192,6 @@ const sitePages: SitePage[] = [
     section: 'Benchmark',
     kind: 'benchmark',
     summary: 'How coding agents do when they build interfaces with envUI.',
-  },
-  {
-    path: 'changelog',
-    title: 'Changelog',
-    area: 'site',
-    section: 'Changelog',
-    kind: 'changelog',
-    summary: 'What changed in each release of @envsemble/envui.',
   },
 ];
 
@@ -240,7 +233,8 @@ const startPages: SitePage[] = guideDocuments.flatMap((document) => {
         area: 'docs',
         section: 'Get started',
         kind: 'docs-changelog',
-        summary: 'Every change in each release of @envsemble/envui, with how to migrate.',
+        summary:
+          'What changed in each release of @envsemble/envui: its highlights, then every change with how to migrate.',
       },
     ];
   if (document.id === 'agent-tooling')
@@ -365,7 +359,7 @@ export function routeOfDocument(
     'get-started': 'get-started',
     components: 'components',
     benchmark: 'benchmark',
-    changelog: 'changelog',
+    changelog: 'docs/changelog',
     tokens: 'docs/tokens',
     codemods: 'docs/codemods',
     'full-changelog': 'docs/changelog',
@@ -426,6 +420,8 @@ export function normalizeRoute(route: string): string {
   const guide = /^get-started\/(.+)$/.exec(originalPath)?.[1];
   if (guide) return routeOfDocument(guide, { section: section ?? undefined }) ?? docsRoute;
   if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
+  // The Site's changelog moved to the Docs, with its release notes.
+  if (originalPath === 'changelog') return `docs/changelog${rest()}`;
   // A destination's own address opens its first page.
   if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
   if (originalPath === 'patterns') return `${sectionHome('Patterns').path}${rest()}`;

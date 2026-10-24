@@ -12,7 +12,6 @@ import type { Reference } from '../Reference';
 import { Catalogue } from './Catalogue';
 import { Documentation } from './Documentation';
 import { Benchmark } from './Benchmark';
-import { ReleaseNotes } from './ReleaseNotes';
 
 /**
  * A component's page on the Site: what it looks like and when to use it, in live figures with the
@@ -184,16 +183,6 @@ export function BenchmarkPage({ page }: { page: SitePage }) {
     <>
       <PageHeader title={page.title} breadcrumb="Benchmark" description={page.summary} />
       <Benchmark />
-    </>
-  );
-}
-
-/** The release notes: a few lines on each release; the full changelog is in the Docs. */
-export function ChangelogPage({ page }: { page: SitePage }) {
-  return (
-    <>
-      <PageHeader title={page.title} breadcrumb="Changelog" description={page.summary} />
-      <ReleaseNotes />
     </>
   );
 }

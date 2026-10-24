@@ -64,12 +64,6 @@ export const cataloguePages = [
     aliases: ['agent benchmark', 'scores', 'evaluation'],
   },
   {
-    page: 'changelog',
-    title: 'Changelog',
-    area: 'site',
-    aliases: ['release notes', 'releases', 'versions'],
-  },
-  {
     page: 'docs',
     title: 'Docs',
     area: 'docs',
@@ -89,9 +83,9 @@ export const cataloguePages = [
   },
   {
     page: 'full-changelog',
-    title: 'Every change by release',
+    title: 'Changelog',
     area: 'docs',
-    aliases: ['full changelog', 'all changes'],
+    aliases: ['release notes', 'releases', 'versions', 'full changelog', 'all changes'],
   },
   {
     page: 'agent-skills',

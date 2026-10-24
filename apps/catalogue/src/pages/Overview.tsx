@@ -12,6 +12,11 @@ import { routeHref } from '../navigation/Address';
 /** The Site's destinations the home page leads to, each with what it holds. */
 const destinations = [
   {
+    title: 'Foundations',
+    icon: Palette,
+    text: 'Colors and themes, type, space, scale, layout, icons, accessibility and content.',
+  },
+  {
     title: 'Components',
     icon: Widgets,
     text: 'Every component, what it looks like and when to use it, in live examples with their code.',
@@ -20,11 +25,6 @@ const destinations = [
     title: 'Patterns',
     icon: Pattern,
     text: 'Components put together for what people do: forms, settings, navigation and more.',
-  },
-  {
-    title: 'Foundations',
-    icon: Palette,
-    text: 'Colors and themes, type, space, scale, layout, icons, accessibility and content.',
   },
   {
     title: 'Benchmark',

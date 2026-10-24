@@ -26,7 +26,6 @@ const columns: { title: string; links: FooterLink[] }[] = [
       { label: 'Introduction', href: routeHref(homeRoute) },
       { label: 'Get started', href: routeHref('get-started') },
       { label: 'Benchmark', href: routeHref('benchmark') },
-      { label: 'Changelog', href: routeHref('changelog') },
     ],
   },
   {
@@ -65,6 +64,7 @@ const columns: { title: string; links: FooterLink[] }[] = [
         ['setup', 'Install and set up'],
         ['migration', 'Migrate to envUI'],
         ['codemods', 'Codemods'],
+        ['full-changelog', 'Changelog'],
         ['tokens', 'Design tokens'],
         ['agent-tooling', 'For agents'],
         ['dev-mode', 'Dev mode'],

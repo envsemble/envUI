@@ -3,7 +3,6 @@ import { Column, Link, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import releases from 'virtual:envui-release-notes';
 import type { InlinePiece, Release } from './SiteData';
-import { routeHref } from '../navigation/Address';
 
 const formatDate = (date: string) =>
   new Intl.DateTimeFormat('en', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(date));
@@ -26,12 +25,15 @@ function Pieces({ pieces }: { pieces: InlinePiece[] }): ReactNode {
 /** A release's slug, which its heading takes as an id: 1-0-0-prerelease-1. */
 const releaseId = (version: string) => `release-${version.replace(/[^\w]+/g, '-')}`;
 
-/** One release: its version and date as quiet labels, its highlights, then what it breaks. */
+/**
+ * One release: its version and date as quiet labels, its highlights, then what it breaks, under the
+ * page's Highlights heading.
+ */
 function ReleaseEntry({ release }: { release: Release }) {
   const id = releaseId(release.version);
   return (
     <Column gap={3} render={<section aria-labelledby={id} />} className="docs-release">
-      <Text render={<h2 id={id} />} variant="body-sm" className="docs-release-label">
+      <Text render={<h3 id={id} />} variant="body-sm" className="docs-release-label">
         <span className="docs-release-version">{release.version}</span>
         <span className="docs-release-date">
           {release.date ? (
@@ -50,7 +52,7 @@ function ReleaseEntry({ release }: { release: Release }) {
       </ul>
       {release.breaking.length > 0 && (
         <Column gap={2}>
-          <Text render={<h3 />} variant="body-sm" className="docs-release-label">
+          <Text render={<h4 />} variant="body-sm" className="docs-release-label">
             Breaking changes
           </Text>
           <ul className="docs-release-list">
@@ -66,19 +68,10 @@ function ReleaseEntry({ release }: { release: Release }) {
   );
 }
 
-/** Every release, newest first, and the way to the full changelog in the Docs. */
+/** The release notes: a few lines on each release, newest first. */
 export function ReleaseNotes() {
   return (
-    <Column gap={8} className="docs-article docs-releases">
-      <Text>
-        A few lines on each release. The{' '}
-        <Link href={routeHref('docs/changelog')}>full changelog in the Docs</Link> lists every
-        change, and the{' '}
-        <Link href={routeHref('docs/migration?section=upgrade-from-envui-0x-to-10')}>
-          migration guide
-        </Link>{' '}
-        says how to upgrade.
-      </Text>
+    <Column gap={7} className="docs-releases">
       {releases.map((release) => (
         <ReleaseEntry key={release.version} release={release} />
       ))}
