@@ -350,16 +350,22 @@ function afterRelease(current: SliderHover, control: HTMLElement, event: Event):
 }
 
 /**
- * Marks where the end of the fill and the handle sit under the label or the value, within half a line
- * of either, by setting --env-slider-veil on the control to 1, and to 0 elsewhere; the stylesheet
- * fades them there while they show.
+ * Marks where the slider's indicators pass under the label or the value, within half a line of
+ * either, so the stylesheet fades them there while they show. --env-slider-veil on the control is 1
+ * where the end of the fill and the handle sit under the text, and 0 elsewhere. For the ticks,
+ * --env-slider-clear-start and --env-slider-clear-end bound the stretch clear of the text, from the
+ * track's left side, physical as the ticks are, so that either direction works.
  */
 function veilIndicatorUnderText(control: HTMLElement) {
   const thumb = control.querySelector('.env-slider-thumb');
-  if (!thumb) return;
+  const track = control.querySelector('.env-slider-track');
+  if (!thumb || !track) return;
   const handle = thumb.getBoundingClientRect();
+  const span = track.getBoundingClientRect();
   const at = handle.left + handle.width / 2;
   let veiled = false;
+  let clearStart = 0;
+  let clearEnd = span.width;
   for (const text of control.querySelectorAll<HTMLElement>(
     '.env-slider-label, .env-slider-value',
   )) {
@@ -367,8 +373,14 @@ function veilIndicatorUnderText(control: HTMLElement) {
     if (box.width === 0) continue;
     const margin = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
     if (at >= box.left - margin && at <= box.right + margin) veiled = true;
+    // The text in the track's left half bounds the clear stretch on the left, the other on the right.
+    if (box.left + box.width / 2 < span.left + span.width / 2)
+      clearStart = Math.max(clearStart, box.right + margin - span.left);
+    else clearEnd = Math.min(clearEnd, box.left - margin - span.left);
   }
   control.style.setProperty('--env-slider-veil', veiled ? '1' : '0');
+  control.style.setProperty('--env-slider-clear-start', `${clearStart}px`);
+  control.style.setProperty('--env-slider-clear-end', `${clearEnd}px`);
 }
 
 /**

@@ -40,7 +40,7 @@ Slider is a field, as tall as the fields and with their corners, so it sits in a
 
 ### Under the pointer
 
-When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps. Where the handle and the end of the fill pass under the label or the value, they fade, so the text keeps its full strength. Pressing anywhere moves the value there, and dragging carries it along. Once the slider is let go, the handle and the ticks go away, even with the pointer still over it, and come back when the pointer leaves and returns. On a touch screen they show only while the finger is down.
+When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps. Where the handle, the end of the fill and the ticks pass under the label or the value, they fade, so the text keeps its full strength. Pressing anywhere moves the value there, and dragging carries it along. Once the slider is let go, the handle and the ticks go away, even with the pointer still over it, and come back when the pointer leaves and returns. On a touch screen they show only while the finger is down.
 
 ### With the keyboard
 

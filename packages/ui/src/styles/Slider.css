@@ -4,8 +4,8 @@
    that is all: the fill ends crisply. Slider decides what shows besides (sliderReveal) and marks it
    on the control: a thin handle at the value and faint ticks at the steps, a ruler, under a hovering
    pointer and while pressed (data-handle, data-ruler), until a release, and the handle alone with
-   keyboard focus (data-handle). The text always keeps its full strength: while the handle shows,
-   where it and the fill's end pass under the label or the value, they fade instead. */
+   keyboard focus (data-handle). The text always keeps its full strength: while they show, where the
+   handle, the fill's end and the ticks pass under the label or the value, they fade instead. */
 /* Color properties: a slider's colors, which an application sets on one slider through style or its
    own CSS: container the track, indicator the fill that shows the value, and content the label, the
    value, the handle and the ticks. They don't inherit; the slider passes them on to its parts. */
@@ -129,6 +129,18 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  /* Under the label and the value the ticks fade to a quarter, as the handle does: a mask at a
+     quarter outside the clear stretch between them, which Slider measures from the track's left
+     side. Its stops are in this box, which starts one part along the track. */
+  --env-slider-part: calc(100% / (var(--env-slider-ticks) - 1));
+  --env-slider-tick-faint: color-mix(in srgb, var(--env-color-fg-default) 25%, transparent);
+  mask-image: linear-gradient(
+    to right,
+    var(--env-slider-tick-faint) calc(var(--env-slider-clear-start, 0%) - var(--env-slider-part)),
+    /* Any opaque color: the mask keeps what lies under its opaque part. */
+      var(--env-color-fg-default) 0 calc(var(--env-slider-clear-end, 200%) - var(--env-slider-part)),
+    var(--env-slider-tick-faint) 0
+  );
 }
 /* The label and the value, over the track, the fill and the handle, in the field's padding. */
 .env-slider-heading {

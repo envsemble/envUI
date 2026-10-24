@@ -314,6 +314,44 @@ test(
   },
 );
 
+test('the ticks fade under the label and the value, as the handle does', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  const state = stateOf(page);
+  const box = (await state.control.boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.5, box.y + box.height / 2);
+  await expect.poll(state.ticks).toBe('0.35');
+  // Each tick is faint, at a quarter, where it sits within half a line of the label or the value,
+  // and in full between them: read from the measured clear stretch the mask keeps whole.
+  const ticks = await state.slider.evaluate((root) => {
+    const track = root.querySelector('.env-slider-track')!.getBoundingClientRect();
+    const control = root.querySelector<HTMLElement>('.env-slider-control')!;
+    const style = getComputedStyle(control);
+    const clearStart = Number.parseFloat(style.getPropertyValue('--env-slider-clear-start'));
+    const clearEnd = Number.parseFloat(style.getPropertyValue('--env-slider-clear-end'));
+    const parts = Number(getComputedStyle(root).getPropertyValue('--env-slider-ticks'));
+    const texts = [...root.querySelectorAll('.env-slider-label, .env-slider-value')].map((text) => {
+      const at = text.getBoundingClientRect();
+      const margin = Number.parseFloat(getComputedStyle(text).fontSize) / 2;
+      return [at.left - margin - track.left, at.right + margin - track.left];
+    });
+    const mask = getComputedStyle(root.querySelector('.env-slider-track')!, '::after').maskImage;
+    return {
+      mask: mask.startsWith('linear-gradient'),
+      each: Array.from({ length: parts - 1 }, (_, index) => {
+        const at = (track.width * (index + 1)) / parts;
+        return {
+          underText: texts.some(([start, end]) => at >= start! && at <= end!),
+          faint: at < clearStart || at > clearEnd,
+        };
+      }),
+    };
+  });
+  expect(ticks.mask).toBe(true);
+  for (const tick of ticks.each) expect(tick.faint).toBe(tick.underText);
+  expect(ticks.each.some((tick) => tick.faint)).toBe(true);
+  expect(ticks.each.some((tick) => !tick.faint)).toBe(true);
+});
+
 test(
   'a click moves the value to the pointer and leaves the slider at rest under it',
   { tag: '@engines' },
