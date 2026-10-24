@@ -11,7 +11,7 @@ import type { CSSProperties } from 'react';
 import { Button } from '@envsemble/envui';
 
 const forest = {
-  '--env-button-container': '#0b6e4f',
+  '--env-button-container': '#0a5c42',
   '--env-button-content': '#ffffff',
 } as CSSProperties;
 
@@ -26,6 +26,8 @@ const forest = {
   --env-alert-outline: #e7c48a;
 }
 ```
+
+Colors set this way stay the same in every theme, the high-contrast ones too, so choose a content color with at least 7:1 on its container, as the green above has with white.
 
 The roles are the same across components:
 
