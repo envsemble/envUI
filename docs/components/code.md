@@ -144,7 +144,7 @@ A diff shows the two versions side by side where it is wide, and in one column i
 - Native `code` and `pre`, read as text.
 - A focusable source named by `label` or its language.
 - A copy button named Copy code, then Code copied, with the result announced.
-- A busy diff while it loads, and an error with Retry if it fails.
+- A busy diff while it loads, and an error with Try again if it fails.
 
 ### You provide
 

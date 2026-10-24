@@ -19,6 +19,8 @@ useWhen:
   - A message in a conversation, such as a chat, a comment or a prompt
   - A reply that runs after a send, which people may stop
 avoidWhen:
+  - text: A whole conversation, with the log above the composer and a reply that streams in.
+    see: conversation
   - text: Text over several lines in a form, where Enter starts a new line.
     use: Textarea
   - text: One line of text in a form.

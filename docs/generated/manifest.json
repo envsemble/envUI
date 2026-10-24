@@ -533,10 +533,12 @@
           "forms",
           "settings",
           "destructive-actions",
+          "file-upload",
           "feedback",
           "loading",
           "empty-states",
           "key-figures",
+          "conversation",
           "filtering",
           "data-tables",
           "progressive-disclosure",
@@ -2047,6 +2049,7 @@
           "forms",
           "settings",
           "destructive-actions",
+          "file-upload",
           "feedback",
           "loading",
           "empty-states",
@@ -5321,6 +5324,10 @@
       ],
       "avoidWhen": [
         {
+          "text": "Uploading files, with a list of them, progress for each and a way to try again.",
+          "see": "file-upload"
+        },
+        {
           "text": "A single action that opens the file picker in a toolbar, without a drop target.",
           "use": "Button"
         },
@@ -5334,6 +5341,7 @@
         }
       ],
       "related": [
+        "file-upload",
         "button",
         "progress",
         "list"
@@ -5456,7 +5464,9 @@
         }
       },
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "file-upload"
+        ]
       }
     },
     {
@@ -5485,6 +5495,10 @@
       ],
       "avoidWhen": [
         {
+          "text": "A whole conversation, with the log above the composer and a reply that streams in.",
+          "see": "conversation"
+        },
+        {
           "text": "Text over several lines in a form, where Enter starts a new line.",
           "use": "Textarea"
         },
@@ -5502,6 +5516,7 @@
         }
       ],
       "related": [
+        "conversation",
         "text-field",
         "markdown",
         "message"
@@ -5614,7 +5629,9 @@
         }
       },
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "conversation"
+        ]
       }
     },
     {
@@ -8227,6 +8244,7 @@
         "patterns": [
           "settings",
           "destructive-actions",
+          "file-upload",
           "feedback",
           "loading",
           "empty-states",
@@ -9845,7 +9863,9 @@
         }
       },
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "conversation"
+        ]
       }
     },
     {
@@ -10166,6 +10186,10 @@
       ],
       "avoidWhen": [
         {
+          "text": "A whole conversation, with the log, the composer, a streaming reply and a failed send.",
+          "see": "conversation"
+        },
+        {
           "text": "The field where people write and send the next message.",
           "use": "Composer"
         },
@@ -10183,6 +10207,7 @@
         }
       ],
       "related": [
+        "conversation",
         "composer",
         "list",
         "toast",
@@ -10202,7 +10227,7 @@
         {
           "name": "DeliveryStatus",
           "title": "Delivery status",
-          "description": "A message can show that it is on its way, or that it wasn't sent; offer Retry beside one that failed.",
+          "description": "A message can show that it is on its way, or that it wasn't sent; offer Try again beside one that failed.",
           "file": "docs/examples/message/DeliveryStatus.tsx"
         },
         {
@@ -10338,7 +10363,9 @@
         }
       },
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "conversation"
+        ]
       }
     },
     {
@@ -11058,6 +11085,7 @@
         "patterns": [
           "settings",
           "destructive-actions",
+          "file-upload",
           "feedback",
           "data-tables"
         ]
@@ -11086,6 +11114,10 @@
       ],
       "avoidWhen": [
         {
+          "text": "Files that each upload on their own, with a bar in each file's row.",
+          "see": "file-upload"
+        },
+        {
           "text": "A measurement within a range, such as seats assigned or storage used.",
           "use": "Meter"
         },
@@ -11103,6 +11135,7 @@
         }
       ],
       "related": [
+        "file-upload",
         "meter",
         "spinner",
         "top-bar",
@@ -11144,7 +11177,7 @@
         },
         {
           "name": "BarPerFile",
-          "title": "Don't: A bar for every file of one upload.",
+          "title": "Don't: A bar for every file of one task, as when they upload together.",
           "description": "",
           "file": "docs/examples/progress/BarPerFile.tsx"
         },
@@ -11217,6 +11250,7 @@
       "usedIn": {
         "patterns": [
           "forms",
+          "file-upload",
           "loading"
         ]
       }
@@ -11334,7 +11368,8 @@
       },
       "usedIn": {
         "patterns": [
-          "loading"
+          "loading",
+          "conversation"
         ]
       }
     },
@@ -14344,10 +14379,12 @@
           "forms",
           "settings",
           "destructive-actions",
+          "file-upload",
           "feedback",
           "loading",
           "empty-states",
           "key-figures",
+          "conversation",
           "filtering",
           "data-tables",
           "progressive-disclosure",
@@ -14447,10 +14484,12 @@
           "forms",
           "settings",
           "destructive-actions",
+          "file-upload",
           "feedback",
           "loading",
           "empty-states",
           "key-figures",
+          "conversation",
           "filtering",
           "data-tables",
           "progressive-disclosure",
@@ -14557,7 +14596,8 @@
         "patterns": [
           "forms",
           "loading",
-          "key-figures"
+          "key-figures",
+          "conversation"
         ]
       }
     }
@@ -15165,6 +15205,113 @@
       ]
     },
     {
+      "name": "file-upload",
+      "title": "File upload",
+      "group": "Patterns",
+      "intent": "Enter and change data",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Let people add files, follow each upload, and put right the ones that fail.",
+      "aliases": [
+        "upload",
+        "upload files",
+        "multiple file upload",
+        "file uploader",
+        "attachments",
+        "attach files",
+        "upload progress",
+        "upload list",
+        "file list",
+        "retry upload"
+      ],
+      "useWhen": [
+        "Several files that upload as soon as they are added",
+        "Attachments to a form, sent once they are up"
+      ],
+      "avoidWhen": [
+        {
+          "text": "One file, such as a logo, sent with its form.",
+          "use": "DropZone"
+        },
+        {
+          "text": "One task over many files that succeeds or fails as a whole, such as an import.",
+          "use": "Progress"
+        },
+        {
+          "text": "Deleting files that can't come back, with a confirmation.",
+          "see": "destructive-actions"
+        }
+      ],
+      "composes": [
+        "DropZone",
+        "List",
+        "Progress",
+        "Button",
+        "Toast",
+        "useToast",
+        "Textarea",
+        "Column",
+        "Row",
+        "Text"
+      ],
+      "related": [
+        "drop-zone",
+        "progress",
+        "destructive-actions"
+      ],
+      "doc": "docs/patterns/file-upload.md",
+      "examples": [
+        {
+          "name": "UploadFiles",
+          "title": "Upload files",
+          "description": "Each file uploads as soon as it is added, in its own row of a list under the drop zone: a bar while it goes up, its size once it is there, or what went wrong with Try again.",
+          "file": "docs/examples/file-upload/UploadFiles.tsx"
+        },
+        {
+          "name": "TurnedAway",
+          "title": "Turned away",
+          "description": "A file of the wrong kind or too large never joins the list. The zone says which file and why, and takes the others.",
+          "file": "docs/examples/file-upload/TurnedAway.tsx"
+        },
+        {
+          "name": "FailedUpload",
+          "title": "Failed upload",
+          "description": "The file keeps its row, with what went wrong and Try again, which starts it over. The other files go on uploading.",
+          "file": "docs/examples/file-upload/FailedUpload.tsx"
+        },
+        {
+          "name": "RemoveWithUndo",
+          "title": "Remove with undo",
+          "description": "Remove takes the file out of the list at once and stops its upload, and a toast offers Undo, as destructive actions describe.",
+          "file": "docs/examples/file-upload/RemoveWithUndo.tsx"
+        },
+        {
+          "name": "AttachInForm",
+          "title": "In a form",
+          "description": "The files upload while people fill in the rest. A send waits for any still going up, then goes with them.",
+          "file": "docs/examples/file-upload/AttachInForm.tsx"
+        },
+        {
+          "name": "ZoneStaysReady",
+          "title": "Do: The zone stays ready for more while each file's row shows its upload.",
+          "description": "",
+          "file": "docs/examples/file-upload/ZoneStaysReady.tsx"
+        },
+        {
+          "name": "ZoneBusyWhileUploading",
+          "title": "Don't: The whole zone busy until every file is up: people wait to add the next.",
+          "description": "",
+          "file": "docs/examples/file-upload/ZoneBusyWhileUploading.tsx"
+        },
+        {
+          "name": "FileUploadAnatomy",
+          "title": "File upload anatomy",
+          "description": "",
+          "file": "docs/examples/file-upload/FileUploadAnatomy.tsx"
+        }
+      ]
+    },
+    {
       "name": "feedback",
       "title": "Notifications and feedback",
       "group": "Patterns",
@@ -15291,6 +15438,10 @@
       ],
       "avoidWhen": [
         {
+          "text": "Files uploading, each with its own progress.",
+          "see": "file-upload"
+        },
+        {
           "text": "Content that turned out empty, or that failed to load.",
           "see": "empty-states"
         }
@@ -15317,6 +15468,7 @@
         "Avatar"
       ],
       "related": [
+        "file-upload",
         "empty-states"
       ],
       "doc": "docs/patterns/loading.md",
@@ -15602,6 +15754,116 @@
           "title": "Group columns",
           "description": "",
           "file": "docs/examples/key-figures/GroupColumns.tsx"
+        }
+      ]
+    },
+    {
+      "name": "conversation",
+      "title": "Conversation",
+      "group": "Patterns",
+      "intent": "Keep people informed",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Talk with an assistant or with other people, and follow each reply as it arrives.",
+      "aliases": [
+        "chat",
+        "AI chat",
+        "assistant chat",
+        "chatbot",
+        "chat window",
+        "chat panel",
+        "conversation view",
+        "streaming reply",
+        "stop generating",
+        "messaging",
+        "support chat"
+      ],
+      "useWhen": [
+        "A chat with an assistant whose replies stream in",
+        "Messages between people, such as a support chat or a team thread"
+      ],
+      "avoidWhen": [
+        {
+          "text": "Comments on one item, read more often than written.",
+          "use": "Message"
+        },
+        {
+          "text": "A short notice that comes and goes, such as Message sent.",
+          "use": "Toast"
+        },
+        {
+          "text": "Several answers given together and submitted once.",
+          "see": "forms"
+        }
+      ],
+      "composes": [
+        "MessageList",
+        "Message",
+        "Composer",
+        "Markdown",
+        "Button",
+        "CopyButton",
+        "IconButton",
+        "Spinner",
+        "Column",
+        "Grid",
+        "Row",
+        "Text"
+      ],
+      "related": [
+        "message",
+        "toast",
+        "forms"
+      ],
+      "doc": "docs/patterns/conversation.md",
+      "examples": [
+        {
+          "name": "AssistantChat",
+          "title": "Assistant chat",
+          "description": "The log of messages takes the space and scrolls, and the composer stays at its foot, so the draft is always in reach. An assistant's answers are formatted text, with Copy once they are complete.",
+          "file": "docs/examples/conversation/AssistantChat.tsx"
+        },
+        {
+          "name": "FirstMessage",
+          "title": "First message",
+          "description": "Before anything is said, the log's place holds a short question and a few suggestions. Pressing one sends it as the first message; the composer is there from the start.",
+          "file": "docs/examples/conversation/FirstMessage.tsx"
+        },
+        {
+          "name": "StoppedReply",
+          "title": "Stopped reply",
+          "description": "Stop keeps what has arrived, marked as stopped, with Try again beside it. People can also simply write their next message.",
+          "file": "docs/examples/conversation/StoppedReply.tsx"
+        },
+        {
+          "name": "FailedSend",
+          "title": "Failed send",
+          "description": "The message stays in the log where it was written, marked as not sent, with Try again beside it. Nothing people wrote is lost, and the composer is free for the next message.",
+          "file": "docs/examples/conversation/FailedSend.tsx"
+        },
+        {
+          "name": "BetweenPeople",
+          "title": "Between people",
+          "description": "Each message from someone else names its author and time. Replies arrive whole, so there is nothing to stop, and a message on its way says so until the server takes it.",
+          "file": "docs/examples/conversation/BetweenPeople.tsx"
+        },
+        {
+          "name": "ReplyAsItArrives",
+          "title": "Do: The reply in the log as it arrives, so people read while it is written.",
+          "description": "",
+          "file": "docs/examples/conversation/ReplyAsItArrives.tsx"
+        },
+        {
+          "name": "WholeReplyAtOnce",
+          "title": "Don't: A spinner until the whole reply is ready: people wait with nothing to read.",
+          "description": "",
+          "file": "docs/examples/conversation/WholeReplyAtOnce.tsx"
+        },
+        {
+          "name": "ConversationAnatomy",
+          "title": "Conversation anatomy",
+          "description": "",
+          "file": "docs/examples/conversation/ConversationAnatomy.tsx"
         }
       ]
     },
@@ -21003,7 +21265,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Small actions below the message, such as Copy or Retry: buttons without a variant or size of their own are ghost buttons at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
+          "description": "Small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are ghost buttons at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
         },
         {
           "name": "status",

@@ -489,6 +489,8 @@ const plainPages = [
     'filtering',
     'data-tables',
     'progressive-disclosure',
+    'conversation',
+    'file-upload',
   ].map((id) => `patterns/${id}`),
 ];
 

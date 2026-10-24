@@ -16,6 +16,8 @@ useWhen:
   - A task whose completion can be measured, such as an upload or an import
   - A task that has started but can't be measured yet, such as preparing an export
 avoidWhen:
+  - text: Files that each upload on their own, with a bar in each file's row.
+    see: file-upload
   - text: A measurement within a range, such as seats assigned or storage used.
     use: Meter
   - text: Work of unknown length in a small area, such as a panel that is updating.
@@ -70,7 +72,7 @@ The track can split into equal steps that fill in turn.
 
 ```
 
-```tsx dont=BarPerFile caption="A bar for every file of one upload."
+```tsx dont=BarPerFile caption="A bar for every file of one task, as when they upload together."
 
 ```
 

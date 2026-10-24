@@ -4721,7 +4721,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Small actions below the message, such as Copy or Retry: buttons without a variant or size of their own are ghost buttons at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
+          "description": "Small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are ghost buttons at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
         },
         {
           "name": "status",

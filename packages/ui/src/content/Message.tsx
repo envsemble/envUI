@@ -27,7 +27,7 @@ export interface MessageProps
   /** Supporting facts beside the author, in the muted color, such as the time or a RelativeTime. */
   meta?: ReactNode;
   /**
-   * Small actions below the message, such as Copy or Retry: buttons without a variant or size of
+   * Small actions below the message, such as Copy or Try again: buttons without a variant or size of
    * their own are ghost buttons at the small control height, with the touch height on touch
    * screens; at the inline end for your own messages. A text IconButton at the edge lines its icon
    * up with the message. false and null count as absent.

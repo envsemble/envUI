@@ -21,6 +21,8 @@ useWhen:
   - Adding a file to a form or a page by dropping or choosing it, such as a logo
   - Attaching several files at once, such as documents to a message
 avoidWhen:
+  - text: Uploading files, with a list of them, progress for each and a way to try again.
+    see: file-upload
   - text: A single action that opens the file picker in a toolbar, without a drop target.
     use: Button
   - text: Progress of a long upload with a known size.

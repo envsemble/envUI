@@ -19,6 +19,8 @@ useWhen:
   - A page, a region or a result that takes a noticeable while
   - Work with a measurable end, such as an upload
 avoidWhen:
+  - text: Files uploading, each with its own progress.
+    see: file-upload
   - text: Content that turned out empty, or that failed to load.
     see: empty-states
 composes:

@@ -21,6 +21,8 @@ useWhen:
   - A thread of comments, each with its author and time
   - A reply that streams in while people read
 avoidWhen:
+  - text: A whole conversation, with the log, the composer, a streaming reply and a failed send.
+    see: conversation
   - text: The field where people write and send the next message.
     use: Composer
   - text: Items people scan, open and act on, such as a list of conversations.
@@ -46,7 +48,7 @@ Each Message sits in a MessageList, which holds the conversation.
 
 ### Delivery status
 
-A message can show that it is on its way, or that it wasn't sent; offer Retry beside one that failed.
+A message can show that it is on its way, or that it wasn't sent; offer Try again beside one that failed.
 
 ```tsx example=DeliveryStatus
 
@@ -118,7 +120,7 @@ Your own bubble grows to three quarters of the list, and keeps a readable width 
 
 - A name for the list, such as Conversation with Sam Lee.
 - `busy` while a reply streams in.
-- Names for icon-only actions, and Retry for a failed message.
+- Names for icon-only actions, and Try again for a failed message.
 - Scrolling, without moving focus.
 
 ## In code
@@ -133,7 +135,7 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 
 #### Actions and status
 
-`actions` holds small actions below the message, such as Copy or Retry: buttons without a variant or size of their own are small ghost buttons. `status` is `sending`, with a spinner and Sending, or `failed`, with an error icon and Not sent; `statusLabel` replaces the words, which otherwise come from EnvUIProvider's `messages.message`.
+`actions` holds small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are small ghost buttons. `status` is `sending`, with a spinner and Sending, or `failed`, with an error icon and Not sent; `statusLabel` replaces the words, which otherwise come from EnvUIProvider's `messages.message`.
 
 ```tsx source=DeliveryStatus
 

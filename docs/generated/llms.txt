@@ -119,6 +119,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Form layout and validation](docs/patterns/forms.md): Ask for information in a form, check it, and help people fix what's wrong.
 - [Settings](docs/patterns/settings.md): Let people change how the application works for them, and see each change apply.
 - [Destructive actions](docs/patterns/destructive-actions.md): Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.
+- [File upload](docs/patterns/file-upload.md): Let people add files, follow each upload, and put right the ones that fail.
 
 ## Patterns: Keep people informed
 
@@ -126,6 +127,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Loading](docs/patterns/loading.md): Show that something is loading, in the place and shape of what is coming, without implying how long it takes.
 - [Empty states](docs/patterns/empty-states.md): Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.
 - [Key figures](docs/patterns/key-figures.md): Show the few labelled figures that sum up a view, such as a dashboard's, with how each changed and over what period.
+- [Conversation](docs/patterns/conversation.md): Talk with an assistant or with other people, and follow each reply as it arrives.
 
 ## Patterns: Work with lists and tables
 
