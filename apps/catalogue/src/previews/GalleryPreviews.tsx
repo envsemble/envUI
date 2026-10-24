@@ -12,6 +12,7 @@ import {
   Column,
   ConfirmDialog,
   Disclosure,
+  DocumentTabs,
   Drawer,
   Grid,
   IconButton,
@@ -23,6 +24,7 @@ import {
   Rail,
   Row,
   Spinner,
+  Surface,
   Table,
   Text,
   TextField,
@@ -33,6 +35,7 @@ import {
 } from '@envsemble/envui';
 import { CodeBlock, Markdown } from '@envsemble/envui/content';
 import { Add } from '@envsemble/envui/icons/Add';
+import { Description } from '@envsemble/envui/icons/Description';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Home } from '@envsemble/envui/icons/Home';
@@ -171,6 +174,10 @@ function BadgePreview() {
   );
 }
 
+/*
+ * Avatars in their sizes, and a person named beside one. A group keeps the room it spreads into
+ * beside its pile, so it would sit off the tile's centre; its rows show it in List.
+ */
 function AvatarPreview() {
   return (
     <Column gap={4} align="center">
@@ -179,8 +186,39 @@ function AvatarPreview() {
         <Avatar name="Priya Shah" size="lg" />
         <Avatar name="Alex Morgan" size="xl" />
       </Row>
-      <AvatarGroup people={people} max={4} />
+      <Row gap={2} align="center">
+        <Avatar name="Jordan Ellis" size="sm" />
+        <Text variant="body-sm" render={<span />}>
+          Jordan Ellis
+        </Text>
+      </Row>
     </Column>
+  );
+}
+
+const openDocuments = [
+  { id: 'plan', label: 'Plan.md', icon: <Description /> },
+  { id: 'notes', label: 'Notes.md', icon: <Description /> },
+];
+
+/** Two open documents with short names, so both tabs fit the tile, over the open one's panel. */
+function DocumentTabsPreview() {
+  return (
+    <Surface background="default" padding={0} style={{ inlineSize: '100%' }}>
+      <DocumentTabs
+        aria-label="Open documents"
+        items={openDocuments}
+        value="plan"
+        onValueChange={() => {}}
+        onClose={() => {}}
+      />
+      <Column gap={1} padding={4}>
+        <Text>Launch plan</Text>
+        <Text variant="body-sm" emphasis="muted">
+          Pricing and the press kit.
+        </Text>
+      </Column>
+    </Surface>
   );
 }
 
@@ -406,11 +444,15 @@ export const galleryPreviews: Record<string, GalleryPreview> = {
   checkbox: { render: CheckboxPreview },
   'rich-text': { example: 'RichTextAnatomy' },
   rail: { render: RailPreview },
+  'document-tabs': { render: DocumentTabsPreview },
+  // A little wider than the gallery's window, so its three segments show whole.
+  'segmented-control': { example: 'WorkItems', window: { width: 20, height: 15 } },
   drawer: { render: DrawerPreview },
   table: { render: TablePreview },
   list: { render: ListPreview },
   badge: { render: BadgePreview },
   avatar: { render: AvatarPreview },
+  'calendar-heatmap': { example: 'HeatmapAnatomy' },
   'animated-number': { render: AnimatedNumberPreview },
   markdown: { render: MarkdownPreview },
   code: { render: CodePreview },
@@ -435,7 +477,9 @@ export const galleryPreviews: Record<string, GalleryPreview> = {
   'empty-states': { example: 'EmptyStatesAnatomy' },
   'key-figures': { example: 'KeyFiguresAnatomy' },
   filtering: { example: 'FilteringAnatomy' },
-  'data-tables': { example: 'DataTableAnatomy' },
+  // A little wider than the gallery's window, so the projects' names stay on one line each.
+  'data-tables': { example: 'DataTableAnatomy', window: { width: 20, height: 15 } },
+  conversation: { example: 'ConversationAnatomy' },
   'app-frame': { example: 'AppFrameAnatomy', stage: 'shaded', window: overlay },
   navigation: { example: 'NavigationAnatomy' },
   'account-and-organizations': { render: AccountPreview, open: true },
