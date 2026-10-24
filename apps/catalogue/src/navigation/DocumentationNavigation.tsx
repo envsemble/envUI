@@ -177,7 +177,8 @@ export function DocsNavigation({
 }
 
 /**
- * The page's own controls at its top end, quiet ghost buttons with no bar behind them: the other
+ * The page's own controls at its top end, quiet ghost buttons that stay in the corner as the page
+ * scrolls, on a small pill of the page's color: the other
  * area, the Docs from the Site and the Site from the Docs, and the Display menu, where the theme,
  * contrast and scale are. Below an expanded window they are icon buttons with tooltips.
  */
@@ -188,18 +189,20 @@ export function PageActions({ area }: { area: Area }) {
       : (['Docs', routeHref(docsRoute), MenuBook] as const);
   return (
     <div className="docs-page-actions">
-      <span className="docs-wide-only">
-        <Button variant="ghost" href={href} startIcon={<Icon />}>
-          {label}
-        </Button>
-        <DisplayMenu />
-      </span>
-      <span className="docs-narrow-only">
-        <Tooltip content={label}>
-          <IconButton variant="ghost" href={href} icon={<Icon />} aria-label={label} />
-        </Tooltip>
-        <DisplayMenu iconOnly />
-      </span>
+      <div className="docs-page-actions-bar">
+        <span className="docs-wide-only">
+          <Button variant="ghost" href={href} startIcon={<Icon />}>
+            {label}
+          </Button>
+          <DisplayMenu />
+        </span>
+        <span className="docs-narrow-only">
+          <Tooltip content={label}>
+            <IconButton variant="ghost" href={href} icon={<Icon />} aria-label={label} />
+          </Tooltip>
+          <DisplayMenu iconOnly />
+        </span>
+      </div>
     </div>
   );
 }

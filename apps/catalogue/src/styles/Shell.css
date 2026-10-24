@@ -105,14 +105,26 @@ body {
 .docs-drawer-top .docs-brand svg {
   inline-size: 4rem;
 }
-/* The other area and the Display menu: ghost buttons at the page's top end, with nothing behind
-   them, which scroll away with the page. Below an expanded window they are icon buttons, across
-   from the menu button and search. */
+/* The other area and the Display menu: ghost buttons at the page's top end that stay in the corner
+   as the page scrolls. Their row sticks to the body's top and lets the page show through; the
+   buttons sit on a small pill of the page's color, so content scrolling beneath doesn't run into
+   them. Below an expanded window they are icon buttons, across from the menu button and search. */
 .docs-page-actions {
+  position: sticky;
+  z-index: var(--env-z-sticky);
+  inset-block-start: 0;
   display: flex;
   justify-content: flex-end;
-  gap: var(--env-space-1);
   padding: var(--env-space-3) var(--env-space-4) 0;
+  pointer-events: none;
+}
+.docs-page-actions-bar {
+  display: flex;
+  gap: var(--env-space-1);
+  padding: var(--env-space-1);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-page);
+  pointer-events: auto;
 }
 .docs-page-actions ~ .docs-page-header {
   padding-block-start: var(--env-space-2);
