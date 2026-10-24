@@ -66,13 +66,13 @@ const medium = windowClasses.medium;
 
 ### Props & contracts
 
-| Name                                 | Contract                                                                                                      |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `windowClasses`                      | `{ compact: '0rem', medium: '37.5rem', expanded: '52.5rem', large: '75rem' }`: where each window class starts |
-| `WindowClass`                        | `'compact'`, `'medium'`, `'expanded'` or `'large'`                                                            |
-| `env-window`                         | The container the outermost theme boundary is; a query on it measures the window class                        |
-| `useContainerSize(target, { box })`  | An element's `{ inlineSize, blockSize }` in CSS pixels, measured before it paints; undefined on the server    |
-| `--env-z-base` â€¦ `--env-z-tooltip` | The stacking order of envUI's layers and the application's own, lowest first                                  |
+| Name                                | Contract                                                                                                      |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `windowClasses`                     | `{ compact: '0rem', medium: '37.5rem', expanded: '52.5rem', large: '75rem' }`: where each window class starts |
+| `WindowClass`                       | `'compact'`, `'medium'`, `'expanded'` or `'large'`                                                            |
+| `env-window`                        | The container the outermost theme boundary is; a query on it measures the window class                        |
+| `useContainerSize(target, { box })` | An element's `{ inlineSize, blockSize }` in CSS pixels, measured before it paints; undefined on the server    |
+| `--env-z-base` … `--env-z-tooltip`  | The stacking order of envUI's layers and the application's own, lowest first                                  |
 
 ## Window classes
 

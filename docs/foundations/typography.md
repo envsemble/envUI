@@ -30,6 +30,10 @@ import { Column, Text } from '@envsemble/envui';
 | Text emphasis | default, muted or subtle, in place of the variant's own color               |
 | Text render   | The element, such as `render={<h2 />}` or `render={<span />}`; p by default |
 
+### Tokens for application CSS
+
+Type takes the `--env-type-*` and `--env-font-*` tokens, such as `--env-type-body` and `--env-font-weight-medium`, which follow the theme's [scale](../foundations/scale.md) and the reader's text size.
+
 ## Guidelines
 
 - Choose the element for the document's structure and the variant for its look, apart: a section's `h2` may be a title.

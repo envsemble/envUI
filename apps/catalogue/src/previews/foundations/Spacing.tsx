@@ -58,7 +58,7 @@ export function SpacingPreview() {
       <Example
         title="The full corner"
         size="wide"
-        caption="--env-radius-full is half the tallest single-line control, 1.5 rem at most. One line tall, the corners meet as round ends; taller, the same corners make a rounded rectangle, never a pill."
+        caption="The full corner is half the height of the tallest single-line control, 1.5 rem at most. One line tall, the corners meet as round ends; taller, the same corners make a rounded rectangle, never a pill."
       >
         <Row wrap align="start" gap={6}>
           <Button>Save</Button>

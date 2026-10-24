@@ -14,6 +14,13 @@ const stackingLevels = [
   ['tooltip', 'Tooltips'],
 ] as const;
 
+const windowClassNames: Record<WindowClass, string> = {
+  compact: 'Compact',
+  medium: 'Medium',
+  expanded: 'Expanded',
+  large: 'Large',
+};
+
 const windowClassUses: Record<WindowClass, string> = {
   compact: 'A phone held upright, or a narrow pane',
   medium: 'A tablet held upright, or a narrow window',
@@ -28,12 +35,14 @@ export function ResponsivePreview() {
         title="Window classes"
         size="content"
         explains
-        caption="Container widths in rem, from the theme boundary, the env-window container; components follow their own container."
+        caption="Widths in rem of the window around the application, not of the screen; each component follows the width of the space it sits in."
       >
         <Column gap={3}>
           {(Object.keys(windowClasses) as WindowClass[]).map((windowClass) => (
             <div className="docs-measure" key={windowClass}>
-              <code>{windowClass}</code>
+              <Text render={<span />} variant="body-sm">
+                {windowClassNames[windowClass]}
+              </Text>
               <span>from {windowClasses[windowClass]}</span>
               <Text emphasis="muted">{windowClassUses[windowClass]}</Text>
             </div>
@@ -44,12 +53,14 @@ export function ResponsivePreview() {
         title="Stacking order"
         size="content"
         explains
-        caption="Every z-index comes from these levels, lowest first."
+        caption="Every layer takes one of these levels, lowest first."
       >
         <Column gap={3}>
           {stackingLevels.map(([level, use]) => (
             <div className="docs-measure" key={level}>
-              <code>--env-z-{level}</code>
+              <Text render={<span />} variant="body-sm">
+                {level[0]!.toUpperCase() + level.slice(1)}
+              </Text>
               <TokenValue token={`--env-z-${level}`} />
               <Text emphasis="muted">{use}</Text>
             </div>
