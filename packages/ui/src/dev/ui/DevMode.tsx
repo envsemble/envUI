@@ -35,12 +35,23 @@ export interface DevModeController {
   host: HTMLElement;
 }
 
-/** The page's theme, so dev mode's UI matches it. */
-function pageTheme(): ThemeValue {
-  const theme = document
-    .querySelector('[data-env-theme]:not([data-env-dev] *)')
-    ?.getAttribute('data-env-theme');
-  return theme === 'dark' ? 'dark' : 'light';
+/**
+ * The theme of the page dev mode measures, so dev mode's UI matches it: the theme boundary around
+ * its root, or the root's own, which a nested Theme gives a page of another theme than the document,
+ * else the document's first.
+ */
+function pageTheme(root?: Element | string): ThemeValue {
+  let element: Element | null | undefined;
+  try {
+    const resolved = resolveRoot(root);
+    element =
+      resolved.closest('[data-env-theme]') ??
+      resolved.querySelector('[data-env-theme]:not([data-env-dev] *)');
+  } catch {
+    // A root that isn't there yet: the panel reports it as it opens.
+  }
+  element ??= document.querySelector('[data-env-theme]:not([data-env-dev] *)');
+  return element?.getAttribute('data-env-theme') === 'dark' ? 'dark' : 'light';
 }
 
 export function DevMode({ controller }: { controller: DevModeController }) {
@@ -48,11 +59,11 @@ export function DevMode({ controller }: { controller: DevModeController }) {
   // Dev mode's own UI takes the theme chosen in its toolbar, or by default the page's theme as it
   // opens. The page keeps its own.
   const [editor, setEditor] = useState(loadEditorTheme);
-  const [page, setPage] = useState(pageTheme);
+  const [page, setPage] = useState(() => pageTheme(controller.root));
   useEffect(
     () =>
       controller.subscribe((next) => {
-        if (next) setPage(pageTheme());
+        if (next) setPage(pageTheme(controller.root));
         setOpen(next);
       }),
     [controller],
@@ -60,7 +71,7 @@ export function DevMode({ controller }: { controller: DevModeController }) {
   const editorTheme = {
     value: editor,
     onChange: (next: EditorTheme) => {
-      if (next.theme === 'page') setPage(pageTheme());
+      if (next.theme === 'page') setPage(pageTheme(controller.root));
       setEditor(next);
       saveEditorTheme(next);
     },
