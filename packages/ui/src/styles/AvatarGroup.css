@@ -59,6 +59,16 @@
   .env-avatar-group:dir(rtl) {
     --env-avatar-group-turn-out: -1;
   }
+  /* Pressable avatars bunch only as far as leaves each one the minimum target uncovered at rest,
+     with a twentieth of the size to spare for the next avatar's turn, which widens its box; small
+     ones overlap by the eighth they take without a hovering pointer. */
+  .env-avatar-group[data-interactive] {
+    --env-avatar-group-bunch: clamp(
+      var(--env-avatar-group-overlap),
+      calc(var(--env-avatar-group-size) * 0.95 - var(--env-control-target-min)),
+      calc(var(--env-avatar-group-size) * 0.4)
+    );
+  }
   .env-avatar-group > * {
     --env-avatar-group-lift: 0rem;
     --env-avatar-group-turn: 0deg;

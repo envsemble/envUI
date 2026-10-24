@@ -105,9 +105,13 @@ test('pressable avatars are buttons and links named after each person, with name
   expect(
     await buttons.evaluateAll((items) => items.map((item) => item.getAttribute('aria-label'))),
   ).toEqual(['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Rivera']);
-  // At rest the hidden count lies under the last avatar and lets the pointer through to it.
+  // At rest a pressable group bunches only as far as leaves each avatar a 24 px target, and the
+  // hidden count lies under the last avatar and lets the pointer through to it.
   const jordan = group.getByRole('button', { name: 'Jordan Rivera' });
   await jordan.scrollIntoViewIfNeeded();
+  const rest = (await boxes(group)).slice(0, 4);
+  for (const [index, box] of rest.slice(1).entries())
+    expect(box.x - rest[index]!.x).toBeGreaterThanOrEqual(24);
   const reachable = await jordan.evaluate((element) => {
     const box = element.getBoundingClientRect();
     const target = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
