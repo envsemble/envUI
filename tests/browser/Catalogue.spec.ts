@@ -531,25 +531,9 @@ test('the model foundation pages show no technical text, in their words or their
   }
 });
 
-/**
- * Component pages whose rewrite is still to come, which the count below reports rather than fails;
- * every other component page shows no technical text. The list only shrinks.
- */
-const technicalComponentPages = [
-  'bar',
-  'card',
-  'command-palette',
-  'drawer',
-  'page',
-  'page-header',
-  'rail',
-  'scaffold',
-].map((id) => `components/${id}`);
-
 /** The component pages of the Site held to the plain-language rule. */
 const plainComponentPages = allPages.filter(
-  ({ path, kind, area }) =>
-    area === 'site' && kind === 'component' && !technicalComponentPages.includes(path),
+  ({ kind, area }) => area === 'site' && kind === 'component',
 );
 
 test('component pages show no technical text, in their words or their figures', async ({

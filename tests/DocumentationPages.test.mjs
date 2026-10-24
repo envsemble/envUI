@@ -466,29 +466,11 @@ const siteTechnicalText = (document) =>
     technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
   );
 
-/**
- * Component pages whose rewrite is still to come, which the count below reports rather than
- * fails; the list only shrinks.
- */
-const technicalComponentPages = [
-  'bar',
-  'card',
-  'command-palette',
-  'drawer',
-  'page',
-  'page-header',
-  'rail',
-  'scaffold',
-];
-
 test("a component page's Site shows no technical text", () => {
   // The Site is for people looking at envUI: lengths, tokens, percentages and code names go in
   // the page's In code, which its page in the Docs shows.
   const found = sitePages()
-    .filter(
-      (document) =>
-        document.path.startsWith('components/') && !technicalComponentPages.includes(document.id),
-    )
+    .filter((document) => document.path.startsWith('components/'))
     .flatMap((document) =>
       siteTechnicalText(document).map(({ kind, text }) => `${document.path}: ${kind} ${text}`),
     );
