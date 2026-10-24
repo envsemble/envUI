@@ -27380,7 +27380,7 @@
         "type": "color",
         "description": "Focus rings: at least 3:1 against what they are drawn on.",
         "values": {
-          "light": "#1872e7",
+          "light": "#0366da",
           "dark": "#9fc1f8",
           "light-high-contrast": "#0053b5",
           "dark-high-contrast": "#b5cffb"
@@ -27663,7 +27663,7 @@
         "type": "color",
         "description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
         "values": {
-          "light": "#54575c",
+          "light": "#4b4d51",
           "dark": "#bdbfc3",
           "light-high-contrast": "#303234",
           "dark-high-contrast": "#e8eaee"
@@ -27675,7 +27675,7 @@
         "type": "color",
         "description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
         "values": {
-          "light": "#4b4d51",
+          "light": "#424447",
           "dark": "#ccced2",
           "light-high-contrast": "#28292b",
           "dark-high-contrast": "#eff1f5"
@@ -27687,7 +27687,7 @@
         "type": "color",
         "description": "Muted text while pressed.",
         "values": {
-          "light": "#424447",
+          "light": "#383a3d",
           "dark": "#dbdde1",
           "light-high-contrast": "#1e1f21",
           "dark-high-contrast": "#f6f8fc"

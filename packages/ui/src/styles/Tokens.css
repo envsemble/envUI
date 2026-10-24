@@ -125,7 +125,7 @@
   --env-color-border-default-hover: #72767b;
   --env-color-border-default-pressed: #686b70;
   --env-color-border-done: rgb(122 63 200 / 0.55);
-  --env-color-border-focus: #1872e7;
+  --env-color-border-focus: #0366da;
   --env-color-border-info-strong: #174d90;
   --env-color-border-media: rgb(0 0 0 / 0.05);
   --env-color-border-muted: #cfd1d5;
@@ -149,9 +149,9 @@
   --env-color-fg-link-on-tint-hover: #004aa2;
   --env-color-fg-link-on-tint-pressed: #00408f;
   --env-color-fg-link-pressed: #004aa2;
-  --env-color-fg-muted: #54575c;
-  --env-color-fg-muted-hover: #4b4d51;
-  --env-color-fg-muted-pressed: #424447;
+  --env-color-fg-muted: #4b4d51;
+  --env-color-fg-muted-hover: #424447;
+  --env-color-fg-muted-pressed: #383a3d;
   --env-color-fg-on-emphasis: #ffffff;
   --env-color-fg-on-selected: #0053b5;
   --env-color-fg-on-strong: #ffffff;
