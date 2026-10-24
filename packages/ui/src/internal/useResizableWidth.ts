@@ -7,6 +7,10 @@ import { useFormatters } from './useFormatters.js';
 /** Widths are kept to a hundredth of a rem. */
 const round = (value: number) => Math.round(value * 100) / 100;
 
+/** A number that is finite, else undefined. */
+const finite = (value: number | undefined) =>
+  value !== undefined && Number.isFinite(value) ? value : undefined;
+
 /** The root's font size in pixels: what a rem is. */
 export const remPixels = (element: Element) =>
   Number.parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
@@ -47,8 +51,8 @@ interface Options {
  * Home and End to the least and the largest width, and a double click back to the default.
  */
 export function useResizableWidth({
-  width: controlled,
-  defaultWidth,
+  width: controlledWidth,
+  defaultWidth: givenDefault,
   minWidth,
   maxWidth,
   onWidthChange,
@@ -64,6 +68,10 @@ export function useResizableWidth({
     [min, max],
   );
   const [chosen, setChosen] = useState<number>();
+  // A width that is no number, such as NaN from a stored value that didn't parse, is ignored: the
+  // component keeps the width as if it weren't given, and a default that is none is the least.
+  const controlled = finite(controlledWidth);
+  const defaultWidth = finite(givenDefault) ?? min;
   const width = clamp(controlled ?? chosen ?? defaultWidth);
 
   const latest = useRef({ width, controlled, onWidthChange, defaultWidth, clamp });

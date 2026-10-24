@@ -312,6 +312,8 @@ test.describe('Drawer resizable', () => {
     await expect(handle).toHaveAttribute('aria-valuemin', '15');
     await expect(handle).toHaveAttribute('aria-valuemax', '30');
     await expect(handle).toHaveAttribute('aria-valuetext', '17.5 rem');
+    // The value keeps its fraction, as its text does.
+    await expect(handle).toHaveAttribute('aria-valuenow', '17.5');
     // It starts at the default width, set in the markup, and its handle is on its end edge.
     expect(await widthOf(drawer)).toBeCloseTo(17.5 * 16, 0);
     const drawerBox = (await drawer.boundingBox())!;
@@ -350,6 +352,8 @@ test.describe('Drawer resizable', () => {
       const drawer = page.getByRole('navigation', { name: 'Controlled' });
       const handle = drawer.getByRole('separator', { name: 'Resize mail' });
       await expect(handle).toHaveAttribute('aria-valuetext', '20 rem');
+      // Its largest value is what its container's half allows, under its largest width.
+      await expect(handle).toHaveAttribute('aria-valuemax', '24');
       await handle.scrollIntoViewIfNeeded();
       const box = (await handle.boundingBox())!;
       const y = box.y + box.height / 2;
@@ -370,6 +374,20 @@ test.describe('Drawer resizable', () => {
       expect(await widthOf(drawer)).toBeCloseTo(24 * 16, 0);
     },
   );
+
+  test('a width that is no number is ignored, and the drawer keeps its default', async ({
+    page,
+  }) => {
+    await page.goto(resizable);
+    const drawer = page.getByRole('navigation', { name: 'Not a number' });
+    const handle = drawer.getByRole('separator');
+    await expect(handle).toHaveAttribute('aria-valuenow', '17.5');
+    await expect(handle).toHaveAttribute('aria-valuetext', '17.5 rem');
+    expect(
+      await drawer.evaluate((element) => element.style.getPropertyValue('--env-drawer-width')),
+    ).toBe('17.5rem');
+    expect(await widthOf(drawer)).toBeCloseTo(17.5 * 16, 0);
+  });
 
   test('in right-to-left text the handle is on the left edge and grows to the left', async ({
     page,

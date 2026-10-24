@@ -70,7 +70,7 @@ The application passes the same destinations to each form, and a group is a head
 
 ### Resizable
 
-With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage.
+With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage, which it reads once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number. A `width` that isn't a finite number is ignored.
 
 ```tsx example=ResizableDrawer
 
