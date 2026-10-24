@@ -462,8 +462,8 @@
         "icon strip"
       ],
       "useWhen": [
-        "An application's screen, with a top bar, its navigation and the page people are on.",
-        "A window without navigation, such as a start page, with its title bar above the body."
+        "An application's screen, with a top bar, its navigation and the page",
+        "A window without navigation, such as a start page, under its title bar"
       ],
       "avoidWhen": [
         {
@@ -502,26 +502,26 @@
         },
         {
           "name": "ChooseForms",
-          "title": "Navigation by window class",
-          "description": "| Window class | Width of the Scaffold | Form | | ------------ | --------------------- | -------- | | compact | below 37.5 rem | `bar` | | medium | 37.5 to 52.5 rem | `rail` | | expanded | 52.5 to 75 rem | `drawer` | | large | from 75 rem | `drawer` | `forms` changes the form of a window class, or shows `none`. Where a window class asks for a form the application didn't give, the nearest given one shows.",
+          "title": "Another form, or none",
+          "description": "The application can choose another form for a window class, or no navigation at all, such as on a phone where the top bar opens it.",
           "file": "docs/examples/scaffold/ChooseForms.tsx"
         },
         {
           "name": "NarrowNavigation",
           "title": "A button that narrows the navigation",
-          "description": "A button that narrows the navigation to a strip of icons asks for the Rail in place of the Drawer through `forms`, such as `forms={{ expanded: 'rail', large: 'rail' }}`; the application keeps the choice, such as in `localStorage`. Don't build a narrow drawer of your own: the Scaffold already has both forms.",
+          "description": "A button can narrow the navigation to a strip of icons by asking for the Rail in place of the Drawer, and the application keeps the choice. Don't build a narrow drawer of your own: the Scaffold already has both forms.",
           "file": "docs/examples/scaffold/NarrowNavigation.tsx"
         },
         {
           "name": "TitleBarAcross",
           "title": "A title bar across",
-          "description": "`topBarSpan=\"full\"` runs the top bar across the whole width, above the rail or the drawer, as a window's title bar needs.",
+          "description": "The top bar can run across the whole width, above the rail or the drawer, as a window's title bar needs.",
           "file": "docs/examples/scaffold/TitleBarAcross.tsx"
         },
         {
           "name": "TopBarOnThePage",
           "title": "Backgrounds",
-          "description": "The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. `background=\"page\"` on one of them puts it on the page's background instead, such as a top bar on the page beside a drawer with its background. On a surface, such as a Sheet, both values take the surface's color.",
+          "description": "The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. Either can sit on the page's background instead, such as a top bar beside a drawer; on a surface, such as a Sheet, both take the surface's color.",
           "file": "docs/examples/scaffold/TopBarOnThePage.tsx"
         },
         {
@@ -1133,9 +1133,9 @@
         "sticky header"
       ],
       "useWhen": [
-        "A page opens with its title and the actions that apply to the whole page, such as New project.",
-        "A page needs its trail, a status or a count beside its title, or a row of search and filters under it.",
-        "The page's heading should stay in view as the page scrolls."
+        "A page's title and the actions for the whole page, such as New project",
+        "A trail, a status or a count beside the title, or search and filters under it",
+        "A page heading that stays in view as the page scrolls"
       ],
       "avoidWhen": [
         {
@@ -1163,19 +1163,19 @@
         {
           "name": "WithBreadcrumbs",
           "title": "With breadcrumbs",
-          "description": "Put a PageHeader in a Page's `header`.",
+          "description": "A PageHeader sits at the top of a Page.",
           "file": "docs/examples/page-header/WithBreadcrumbs.tsx"
         },
         {
           "name": "WithToolbar",
           "title": "With toolbar",
-          "description": "`toolbar` adds a row below the title for search, filters and view switches. `controlSize=\"sm\"` gives the buttons in `actions` and `toolbar` the small height of a dense page.",
+          "description": "A row below the title holds search, filters and view switches. On a dense page, its buttons and the actions take the small control height.",
           "file": "docs/examples/page-header/WithToolbar.tsx"
         },
         {
           "name": "Sticky",
           "title": "Sticky",
-          "description": "With `sticky`, the header stays at the top of the area that scrolls, under a Scaffold's top bar. What takes focus in the page keeps clear of it.",
+          "description": "A header can stay at the top of the area that scrolls, under a Scaffold's top bar. What takes focus in the page keeps clear of it.",
           "file": "docs/examples/page-header/Sticky.tsx"
         },
         {
@@ -4358,9 +4358,9 @@
         "single choice"
       ],
       "useWhen": [
-        "People choose exactly one of two to five options, and seeing them all helps them choose, such as who can open a project.",
-        "Each option needs a sentence that explains it, such as a role or a visibility (`orientation=\"vertical\"`).",
-        "A choice in a form or a dialog that takes effect when the form is saved."
+        "Exactly one of two to five options, all in view, such as who can open a project",
+        "Options that each need a sentence to explain them, such as roles",
+        "A choice in a form that takes effect when the form is saved"
       ],
       "avoidWhen": [
         {
@@ -4399,19 +4399,19 @@
         {
           "name": "ProjectAccess",
           "title": "Project access",
-          "description": "Each Radio sits in a RadioGroup, whose `label` names the choice.",
+          "description": "Each Radio sits in a RadioGroup, whose label names the choice.",
           "file": "docs/examples/radio/ProjectAccess.tsx"
         },
         {
           "name": "RequiredChoice",
           "title": "Required choice",
-          "description": "With `required` and nothing chosen, the form asks for a choice. Link the error to the group with `aria-describedby`.",
+          "description": "A required group with nothing chosen asks for a choice before the form is sent, and its error is tied to the group.",
           "file": "docs/examples/radio/RequiredChoice.tsx"
         },
         {
           "name": "InheritedAccess",
           "title": "Inherited access",
-          "description": "`disabled` on the group keeps its choice visible; a sentence says where to change it.",
+          "description": "A disabled group keeps its choice visible; a sentence says where to change it.",
           "file": "docs/examples/radio/InheritedAccess.tsx"
         },
         {
@@ -8119,9 +8119,9 @@
         "nested list"
       ],
       "useWhen": [
-        "A hierarchy people expand and collapse, such as folders and files in a workspace's sidebar.",
-        "Thousands of rows, such as a large project's files, which the tree keeps fast by rendering only the rows in view.",
-        "Rows people preview with a click and open to keep with a double click, as in a desktop editor."
+        "A hierarchy people expand and collapse, such as folders and files",
+        "Thousands of rows, such as a large project's files",
+        "Rows previewed with a click and opened to keep with a double click"
       ],
       "avoidWhen": [
         {
@@ -8154,19 +8154,19 @@
         {
           "name": "FileTree",
           "title": "File tree",
-          "description": "The application passes the visible rows in order, each with its `depth`, and owns expansion and selection; the tree owns focus, the keys and scrolling.",
+          "description": "The application passes the visible rows in order, each at its depth, and owns expansion and selection; the tree owns focus, the keys and scrolling.",
           "file": "docs/examples/tree/FileTree.tsx"
         },
         {
           "name": "ContextMenuActions",
           "title": "Context menu actions",
-          "description": "With `contextMenu`, right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.",
+          "description": "A right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.",
           "file": "docs/examples/tree/ContextMenuActions.tsx"
         },
         {
           "name": "ThousandsOfRows",
           "title": "Thousands of rows",
-          "description": "The tree is as tall as its parent, so give it a parent with a height.",
+          "description": "The tree stays fast by rendering only the rows in view. It is as tall as its parent, so give it a parent with a height.",
           "file": "docs/examples/tree/ThousandsOfRows.tsx"
         },
         {
@@ -9016,9 +9016,9 @@
         "table pagination"
       ],
       "useWhen": [
-        "A long list or table read a page at a time, such as reports or invoices.",
-        "A list read in batches whose total isn't known yet, such as an activity feed.",
-        "A toolbar with little room for paging, beside a search field or filters."
+        "A long list or table read a page at a time, such as invoices",
+        "A list read in batches whose total isn't known yet, such as a feed",
+        "Paging in a toolbar with little room, beside a search field"
       ],
       "avoidWhen": [
         {
@@ -9036,19 +9036,19 @@
         {
           "name": "PagesOfAList",
           "title": "Pages of AList",
-          "description": "The range counts items, as in 1–60 of 245. The application owns the page and its loading; while `pending`, the button pressed shows a spinner and focus stays on it.",
+          "description": "The range counts items, as in 1–60 of 245. The application owns the page and its loading; while a page loads, the button pressed shows a spinner and focus stays on it.",
           "file": "docs/examples/pagination/PagesOfAList.tsx"
         },
         {
           "name": "WithoutATotal",
           "title": "Without ATotal",
-          "description": "Without `total`, the range shows only the page's items, and `hasNextPage` says when the list ends.",
+          "description": "Until the total is known, the range shows only the page's items, and the application says when the list ends.",
           "file": "docs/examples/pagination/WithoutATotal.tsx"
         },
         {
           "name": "ApplicationStrings",
           "title": "Application strings",
-          "description": "`messages.pagination` on EnvUIProvider sets the names and the range for every pager inside it, and its `locale` formats the numbers; `previousLabel`, `nextLabel` and `formatRange` set them for one pager.",
+          "description": "The names and the range follow the application's language, for every pager or for one.",
           "file": "docs/examples/pagination/ApplicationStrings.tsx"
         },
         {
@@ -9820,11 +9820,11 @@
         "change size"
       ],
       "useWhen": [
-        "A short state sits beside the content it describes, such as In review, Blocked or Archived.",
-        "A short name or category marks an item, such as a team or a folder (`variant=\"outline\"`).",
-        "A piece of neutral metadata sits beside related content, such as a plan or a count of seats.",
-        "A number belongs to a label, such as unread messages beside a navigation item or comments on a button (`count`).",
-        "The size of a change shows beside a file or a version, such as +12 −3 (DiffStat)."
+        "A short state beside what it describes, such as In review or Blocked",
+        "A name or a category on an item, such as a team or a folder",
+        "Neutral metadata beside related content, such as a plan",
+        "A number that belongs to a label, such as unread messages",
+        "The size of a change beside a file, such as +12 −3 (DiffStat)"
       ],
       "avoidWhen": [
         {
@@ -9848,7 +9848,7 @@
           "see": "key-figures"
         },
         {
-          "text": "A count beside a destination in the navigation, which a Drawer item shows with `count`.",
+          "text": "A count beside a destination in the navigation, which a Drawer item shows itself.",
           "use": "Drawer"
         },
         {
@@ -9915,7 +9915,7 @@
         {
           "name": "NavigationCounts",
           "title": "In navigation",
-          "description": "",
+          "description": "A drawer shows each destination's count at its end, and says it in the destination's name.",
           "file": "docs/examples/badge/NavigationCounts.tsx"
         },
         {
@@ -10401,8 +10401,8 @@
         "dl"
       ],
       "useWhen": [
-        "A page, card or sidebar shows the facts about one item, such as a project's owner, status and dates.",
-        "Settings of one item sit beside their labels, each a small control, such as a visibility Select."
+        "The facts about one item, such as a project's owner, status and dates",
+        "An item's settings beside their labels, each a small control"
       ],
       "avoidWhen": [
         {
@@ -10442,8 +10442,8 @@
         },
         {
           "name": "Stacked",
-          "title": "Stacked",
-          "description": "",
+          "title": "Sizes",
+          "description": "Smaller text, the default, suits a card or a pane, and body text a page of details.",
           "file": "docs/examples/description-list/Stacked.tsx"
         },
         {
@@ -10558,8 +10558,8 @@
         "key combination"
       ],
       "useWhen": [
-        "Text names a key or a shortcut, such as \"Press <kbd>Ctrl</kbd>+<kbd>P</kbd> to open a document\".",
-        "A hint lists the keys a list or a popup handles, such as a footer that says which keys move, open and close."
+        "A key or a shortcut named in text",
+        "Hints of the keys a list or a popup handles"
       ],
       "avoidWhen": [
         {
@@ -10588,7 +10588,7 @@
         {
           "name": "ShortcutsInText",
           "title": "Shortcuts in text",
-          "description": "Kbd only shows keys, one or a combination through `keys`: the application handles the shortcut.",
+          "description": "Kbd only shows the keys: the application itself handles the shortcut.",
           "file": "docs/examples/kbd/ShortcutsInText.tsx"
         },
         {
@@ -10605,14 +10605,14 @@
         },
         {
           "name": "SequenceAsOne",
-          "title": "Don't: A sequence in one keys list: it reads as four keys pressed at once.",
+          "title": "Don't: A sequence as one combination: it reads as four keys pressed at once.",
           "description": "",
           "file": "docs/examples/kbd/SequenceAsOne.tsx"
         },
         {
           "name": "PlatformKeys",
           "title": "Content",
-          "description": "Write keys as the keyboard names them: <kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Esc</kbd>, <kbd>F2</kbd>, capital letters, and <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>. Pass the names of the reader's platform, such as <kbd>⌘</kbd> on Apple keyboards: `useModifierKey()` gives the shortcut modifier's `label`, ⌘ or Ctrl, and its `key`, `Meta` or `Control`, for `aria-keyshortcuts`. It is Ctrl on the server and while the page hydrates, then ⌘ on Apple platforms, so server-rendered markup hydrates; don't read `navigator` while rendering.",
+          "description": "Write keys as the keyboard names them: <kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Esc</kbd>, <kbd>F2</kbd>, capital letters, and <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>. Use the names of the reader's platform, such as <kbd>⌘</kbd> on Apple keyboards.",
           "file": "docs/examples/kbd/PlatformKeys.tsx"
         },
         {
@@ -10778,8 +10778,8 @@
         "score"
       ],
       "useWhen": [
-        "Showing a rating people gave, such as a review score or the average of many reviews.",
-        "A compact summary of quality beside a name in a list, a card or a table row."
+        "A rating people gave, such as a review score or an average of many",
+        "A compact summary of quality beside a name in a list, a card or a row"
       ],
       "avoidWhen": [
         {
@@ -10818,7 +10818,7 @@
         {
           "name": "ApplicationLabel",
           "title": "Application label",
-          "description": "`messages.rating.label` on EnvUIProvider writes the name, and the provider's locale the number, such as 4,5 in German.",
+          "description": "The name and the number follow the application's language, such as 4,5 in German.",
           "file": "docs/examples/rating/ApplicationLabel.tsx"
         },
         {
@@ -11357,9 +11357,9 @@
         "people stack"
       ],
       "useWhen": [
-        "A person or an organization is pictured beside their name, such as in a list of members or a comment.",
-        "The signed-in account opens its menu from a picture in the application's chrome (AvatarButton).",
-        "Who is involved matters more than each name where space is short, such as a project's members in a row (AvatarGroup)."
+        "A person or an organization beside their name, such as in a list of members",
+        "The signed-in account's menu in the application's chrome (AvatarButton)",
+        "A few people in a row where space is short, such as a project's members (AvatarGroup)"
       ],
       "avoidWhen": [
         {
@@ -11396,19 +11396,19 @@
         {
           "name": "ProjectMembers",
           "title": "Project members",
-          "description": "",
+          "description": "AvatarGroup rests as a compact pile, like stacked cards, with the count of the rest in a rounded square. Hovering, tapping or focusing it spreads the avatars along a gentle arch, so each one shows, and it keeps the room its spread takes, so nothing around it moves.",
           "file": "docs/examples/avatar/ProjectMembers.tsx"
         },
         {
           "name": "ChooseReviewers",
           "title": "Choose reviewers",
-          "description": "An avatar can show as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. People in a group can show as chosen too.",
+          "description": "An avatar can show as chosen, such as in a list of people to pick from: a ring and a check, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen.",
           "file": "docs/examples/avatar/ChooseReviewers.tsx"
         },
         {
           "name": "PressableAvatars",
           "title": "Pressable avatars",
-          "description": "Each avatar in a group can open something, such as the person's profile. While the group is piled, the whole pile is one target: the first hover, tap or keyboard focus spreads it, and only then is each avatar a target of its own, so a press never lands on someone hidden under another. On touch screens each spread avatar is as large as a finger needs. The count lists the people it hides.",
+          "description": "Each avatar in a group can open something, such as the person's profile. While piled, the whole pile is one target that spreads it, so a press never lands on someone hidden under another; spread, each avatar is a target of its own, as large as a finger needs on a touch screen.",
           "file": "docs/examples/avatar/PressableAvatars.tsx"
         },
         {
@@ -11841,7 +11841,8 @@
         "year in review"
       ],
       "useWhen": [
-        "A count per day over weeks or months shows a pattern, such as activity or deployments, where the pattern matters more than each number."
+        "A count per day over weeks or months, such as deployments",
+        "A pattern that matters more than each day's number"
       ],
       "avoidWhen": [
         {
@@ -11875,19 +11876,19 @@
         {
           "name": "ColorByRank",
           "title": "Color by rank",
-          "description": "`thresholds` sets where each step starts, such as quantiles of the data, so a few very busy days don't leave the rest pale.",
+          "description": "Each color step can start where the application chooses, such as at quantiles of the data, so a few very busy days don't leave the rest pale.",
           "file": "docs/examples/calendar-heatmap/ColorByRank.tsx"
         },
         {
           "name": "CustomTooltip",
           "title": "Custom tooltip",
-          "description": "`formatTooltip` lays out the tooltip; the day's name keeps its date and value.",
+          "description": "The application can lay out the tooltip itself; each day's name keeps its date and value.",
           "file": "docs/examples/calendar-heatmap/CustomTooltip.tsx"
         },
         {
           "name": "ApplicationStrings",
           "title": "Application strings",
-          "description": "EnvUIProvider's `locale` names the months, weekdays and dates, and `messages.calendarHeatmap` writes the legend. `weekStart={1}` starts weeks on Monday.",
+          "description": "The months, weekdays, dates and the legend follow the application's language, and weeks can start on Monday.",
           "file": "docs/examples/calendar-heatmap/ApplicationStrings.tsx"
         },
         {
@@ -12487,9 +12488,9 @@
         "error message"
       ],
       "useWhen": [
-        "A message about a page or a section stays until it no longer applies, such as a paused sync or a blocked release.",
-        "Something that just happened failed and the message should stay beside what it concerns, such as a save that didn't go through (`announce`).",
-        "A section needs a warning before people act in it, such as storage that is almost full."
+        "A message that stays until it no longer applies, such as a paused sync",
+        "A failure beside what it concerns, such as a save that didn't go through",
+        "A warning before people act in a section, such as storage almost full"
       ],
       "avoidWhen": [
         {
@@ -12501,7 +12502,7 @@
           "see": "empty-states"
         },
         {
-          "text": "An error about one field, shown on the field with its `error`.",
+          "text": "An error about one field, shown on the field.",
           "use": "TextField"
         },
         {
@@ -12533,7 +12534,7 @@
         {
           "name": "SaveFailed",
           "title": "Save failed",
-          "description": "`announce` reads a warning or danger alert at once, for one that appears because of something people just did. Info and success alerts are always read politely.",
+          "description": "A warning or a danger alert that appears because of something people just did, such as a save that failed, can be read out at once. Info and success alerts are always read politely, without interrupting.",
           "file": "docs/examples/alert/SaveFailed.tsx"
         },
         {
@@ -12545,7 +12546,7 @@
         {
           "name": "CustomIcon",
           "title": "Another icon, or none",
-          "description": "`icon` replaces the tone's icon, and `icon={false}` leaves it out.",
+          "description": "An alert can take another icon in place of its tone's, or none at all.",
           "file": "docs/examples/alert/CustomIcon.tsx"
         },
         {
@@ -12679,10 +12680,10 @@
         "popup"
       ],
       "useWhen": [
-        "People decide on a consequence before it happens, such as deleting a project, or type a name to confirm it.",
-        "A short task needs people's attention before they go on, such as inviting a member or renaming a project.",
-        "Content needs more room than a popup, such as a table, a comparison or a longer form (`width=\"lg\"`).",
-        "A search-like task shows results that grow below its field (`placement=\"top\"`)."
+        "A decision before a consequence, such as deleting a project",
+        "A short task that needs attention first, such as inviting a member",
+        "Content that needs more room than a popup, such as a comparison",
+        "A search-like task whose results grow below its field"
       ],
       "avoidWhen": [
         {
@@ -12742,30 +12743,30 @@
         {
           "name": "RenameProject",
           "title": "Rename project",
-          "description": "While `pending`, nothing closes the dialog and its close button is disabled. Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.",
+          "description": "While its work runs, nothing closes the dialog and its close button is disabled. Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.",
           "file": "docs/examples/dialog/RenameProject.tsx"
         },
         {
           "name": "UnsavedChanges",
           "title": "Unsaved changes",
-          "description": "DialogClose closes the dialog after its own `onClick`, such as Don’t save.",
+          "description": "Other buttons can close the dialog after doing their own work, such as Don’t save.",
           "file": "docs/examples/dialog/UnsavedChanges.tsx"
         },
         {
-          "name": "ReviewChanges",
-          "title": "Wide content",
-          "description": "",
-          "file": "docs/examples/dialog/ReviewChanges.tsx"
-        },
-        {
           "name": "FindPlan",
-          "title": "Near the top",
-          "description": "",
+          "title": "Placement",
+          "description": "| Placement | Use for | | ------------ | -------------------------------------------------------------- | | Centered | Confirmations, short forms and details. The default. | | Near the top | Search-like tasks, whose results grow down from a fixed field. |",
           "file": "docs/examples/dialog/FindPlan.tsx"
         },
         {
+          "name": "ReviewChanges",
+          "title": "Widths",
+          "description": "Both narrow to fit the window. | Width | Use for | | ------ | ------------------------------------------------- | | Medium | 28 rem, for most dialogs. The default. | | Large | 44 rem, for tables, comparisons and longer forms. |",
+          "file": "docs/examples/dialog/ReviewChanges.tsx"
+        },
+        {
           "name": "CancelAsCloseLabel",
-          "title": "Do: closeLabel=Cancel names the built-in button for a decision.",
+          "title": "Do: The built-in button named Cancel, for a decision.",
           "description": "",
           "file": "docs/examples/dialog/CancelAsCloseLabel.tsx"
         },
@@ -13168,9 +13169,9 @@
         "delete confirmation"
       ],
       "useWhen": [
-        "An action deletes or ends something and people should read what it affects first, such as deleting a project.",
-        "An action started from a menu item, which can't confirm in place, needs a confirmation.",
-        "The action takes a moment and can fail, and the confirmation should stay until it has finished."
+        "Deleting or ending something, once people read what it affects",
+        "Confirming an action from a menu item, which can't confirm in place",
+        "An action that takes a moment and can fail"
       ],
       "avoidWhen": [
         {
@@ -13209,13 +13210,13 @@
         {
           "name": "AsyncWithError",
           "title": "Async with error",
-          "description": "When `onConfirm` returns a promise, the dialog waits for it, pending, and stays open with `error` when it fails.",
+          "description": "The dialog waits for its action, showing that it is working, and stays open with the error when the action fails, so people can try again.",
           "file": "docs/examples/confirm-dialog/AsyncWithError.tsx"
         },
         {
           "name": "FromMenu",
           "title": "From menu",
-          "description": "Without a `trigger`, open it with `open` and `onOpenChange`; `finalFocus` returns focus to the menu's button.",
+          "description": "A menu item can open the dialog, and focus returns to the menu's button when it closes.",
           "file": "docs/examples/confirm-dialog/FromMenu.tsx"
         },
         {
@@ -13226,7 +13227,7 @@
         },
         {
           "name": "DangerForDelete",
-          "title": "Do: tone=danger for an action that deletes.",
+          "title": "Do: The danger tone for an action that deletes.",
           "description": "",
           "file": "docs/examples/confirm-dialog/DangerForDelete.tsx"
         },
@@ -13239,7 +13240,7 @@
         {
           "name": "NameTheConsequence",
           "title": "Do: Buttons that name what each choice does.",
-          "description": "",
+          "description": "Ask the question in the title, and name the consequence on the confirm button.",
           "file": "docs/examples/confirm-dialog/NameTheConsequence.tsx"
         },
         {
@@ -14738,8 +14739,8 @@
         "meters"
       ],
       "useWhen": [
-        "A quantity within a known range, such as the seats assigned of a plan's five or the storage used of a quota.",
-        "Several limits people compare at a glance, such as a plan's seats, projects and requests."
+        "A quantity within a known range, such as storage used of a quota",
+        "Several limits compared at a glance, such as a plan's seats and projects"
       ],
       "avoidWhen": [
         {
@@ -14772,7 +14773,7 @@
         {
           "name": "SeatsAssigned",
           "title": "Seats assigned",
-          "description": "A value outside `min` and `max` shows as the nearest end.",
+          "description": "A value outside the range shows as its nearest end.",
           "file": "docs/examples/meter/SeatsAssigned.tsx"
         },
         {
@@ -14854,8 +14855,8 @@
         "indeterminate progress"
       ],
       "useWhen": [
-        "A task whose completion can be measured, such as an upload, an import or an export.",
-        "A task that has started but can't be measured yet, such as preparing an export (`value={null}`)."
+        "A task whose completion can be measured, such as an upload or an import",
+        "A task that has started but can't be measured yet, such as preparing an export"
       ],
       "avoidWhen": [
         {
@@ -14893,25 +14894,25 @@
         {
           "name": "UploadingFile",
           "title": "Uploading file",
-          "description": "`value` counts the work done, such as 40 of 100.",
+          "description": "The bar counts the work done, such as 40 of 100.",
           "file": "docs/examples/progress/UploadingFile.tsx"
         },
         {
           "name": "PreparingExport",
           "title": "Preparing export",
-          "description": "With `value={null}`, the indicator sweeps while the amount of work is unknown.",
+          "description": "While the amount of work is unknown, the indicator sweeps along the track.",
           "file": "docs/examples/progress/PreparingExport.tsx"
         },
         {
           "name": "ExportMembers",
           "title": "Export members",
-          "description": "Start with `value={null}`, show the share once it is known, and replace the bar with the result.",
+          "description": "Start with an unknown amount, show the share once it is known, and replace the bar with the result.",
           "file": "docs/examples/progress/ExportMembers.tsx"
         },
         {
           "name": "SetupSteps",
           "title": "Steps",
-          "description": "`segments` splits the track into equal steps that fill in turn.",
+          "description": "The track can split into equal steps that fill in turn.",
           "file": "docs/examples/progress/SetupSteps.tsx"
         },
         {
