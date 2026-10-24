@@ -96,7 +96,13 @@ One choice of several is a [RadioGroup](../components/radio.md); several are che
 
 ```
 
-Keep the submit button enabled, and say what is wrong after a submit: a disabled button can't tell people why. Keep what people entered after any error. envUI has no stepper yet, so split a long form into short pages of your own, each with its submit and a Back link.
+### After an error
+
+Keep the submit button enabled, and say what is wrong after a submit: a disabled button can't tell people why. Keep what people entered after any error.
+
+### Long forms
+
+envUI has no stepper yet, so split a long form into short pages of your own, each with its submit and a Back link.
 
 ### Content
 

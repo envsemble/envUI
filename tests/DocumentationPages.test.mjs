@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { marked } from 'marked';
 import ts from 'typescript';
-import { siteInlineCode } from '../scripts/SiteContent.mjs';
+import { optionTable, siteInlineCode, siteStructure } from '../scripts/SiteContent.mjs';
 import {
   examplesDirectory,
   isPropsTable,
@@ -406,5 +406,73 @@ test("a plain page's Site shows no inline code", (t) => {
       .sort((a, b) => b[1] - a[1])
       .map(([id, count]) => `${id} ${count}`)
       .join(', ')}).`,
+  );
+});
+
+/** The count of what a check found on each of the other pages, most first, as one line. */
+const tally = (counts) =>
+  `${counts.reduce((sum, [, count]) => sum + count, 0)} on ${counts.length} pages (${counts
+    .sort((a, b) => b[1] - a[1])
+    .map(([id, count]) => `${id} ${count}`)
+    .join(', ')})`;
+
+test("a plain page's Site text is in titled blocks", (t) => {
+  const found = sectioned
+    .filter((document) => plainPages.includes(document.id))
+    .flatMap((document) =>
+      siteStructure(document).map(
+        ({ where, kind, text }) => `${document.path}, ${where}, ${kind}: ${text}`,
+      ),
+    );
+  assert.deepEqual(
+    found,
+    [],
+    'Every piece of Site text is in a titled block, a heading and one short paragraph: give loose text a "###" heading, or fold it into the block it belongs to.',
+  );
+  // The pages still to rewrite, with the loose text their Site shows.
+  const left = sectioned
+    .filter((document) => !plainPages.includes(document.id) && document.id !== 'field')
+    .map((document) => [document.id, siteStructure(document).length])
+    .filter(([, count]) => count);
+  t.diagnostic(`Loose text on the Site of the other pages: ${tally(left)}.`);
+});
+
+/**
+ * The option tables right after a variants figure whose names are not the figure's, in its order:
+ * the legend shows each name in the tag the figure's callout shows.
+ */
+function unmatchedOptions(document) {
+  const found = [];
+  for (const section of document.sections ?? [])
+    section.blocks.forEach((block, index) => {
+      const next = section.blocks[index + 1];
+      if (block.role !== 'variants' || next?.kind !== 'markdown') return;
+      const table = optionTable(
+        marked.lexer(next.markdown).find((token) => token.type !== 'space'),
+      );
+      if (!table) return;
+      const names = table.options.map(({ name }) => name);
+      const labels = (block.legend ?? []).map(({ label }) => label);
+      if (names.join('|') !== labels.join('|'))
+        found.push(`${section.title}: ${names.join(', ')} for ${labels.join(', ')}`);
+    });
+  return found;
+}
+
+test("a plain page's option table after a variants figure names the figure's variants", (t) => {
+  const found = sectioned
+    .filter((document) => plainPages.includes(document.id))
+    .flatMap((document) => unmatchedOptions(document).map((text) => `${document.path}, ${text}`));
+  assert.deepEqual(
+    found,
+    [],
+    "Name the options as the variants figure's legend does, in its order.",
+  );
+  const left = sectioned
+    .filter((document) => !plainPages.includes(document.id))
+    .map((document) => [document.id, unmatchedOptions(document).length])
+    .filter(([, count]) => count);
+  t.diagnostic(
+    `Option tables not named as their variants figure on the other pages: ${tally(left)}.`,
   );
 });
