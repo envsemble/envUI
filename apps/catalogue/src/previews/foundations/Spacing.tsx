@@ -192,7 +192,7 @@ function ShapesFigure() {
             {shape.picture}
           </div>
           <figcaption className="docs-topic-text">
-            <Text render={<h4 />} variant="title">
+            <Text render={<p />} variant="title">
               {shape.name}
             </Text>
             <Text variant="body-sm" emphasis="muted">
