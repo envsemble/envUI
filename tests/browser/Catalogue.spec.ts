@@ -1114,6 +1114,42 @@ test('a Related tile of a page without an example shows its specimen', async ({ 
   await expect(page.locator('.docs-related-placeholder')).toHaveCount(0);
 });
 
+test('every tile of the galleries of components and patterns is fitted, shown whole on its stage', async ({
+  page,
+}) => {
+  // A tile's example loads as it nears the viewport and comes into its canvas after the fit has
+  // started to watch it; each must still be fitted, and show what it holds inside its stage.
+  const tiles = page.locator('.docs-gallery-tile');
+  const unfitted = () =>
+    tiles.evaluateAll((items) =>
+      items.flatMap((tile) => {
+        const name = tile.querySelector('.docs-gallery-name')?.textContent ?? '';
+        const stage = tile.querySelector('.docs-related-stage')!.getBoundingClientRect();
+        const canvas = tile.querySelector<HTMLElement>('.docs-related-canvas[data-fitted]');
+        if (!canvas || !/scale\(/.test(canvas.style.transform)) return [`${name}: not fitted`];
+        const shown = [...canvas.querySelectorAll('*')]
+          .filter((element) => element.checkVisibility({ visibilityProperty: true }))
+          .map((element) => element.getBoundingClientRect())
+          .filter((box) => box.width >= 1 && box.height >= 1);
+        if (!shown.length) return [`${name}: empty`];
+        const outside =
+          Math.min(...shown.map((box) => box.left)) < stage.left - 1 ||
+          Math.min(...shown.map((box) => box.top)) < stage.top - 1 ||
+          Math.max(...shown.map((box) => box.right)) > stage.right + 1 ||
+          Math.max(...shown.map((box) => box.bottom)) > stage.bottom + 1;
+        return outside ? [`${name}: clipped`] : [];
+      }),
+    );
+  for (const route of ['/components', '/patterns']) {
+    await page.goto(`${catalogueUrl}${route}`);
+    await expect(tiles.first()).toBeVisible();
+    const count = await tiles.count();
+    expect(count).toBeGreaterThan(route === '/components' ? 60 : 10);
+    for (let index = 0; index < count; index += 4) await tiles.nth(index).scrollIntoViewIfNeeded();
+    await expect.poll(unfitted, { message: route }).toEqual([]);
+  }
+});
+
 test("every label and heading of the Site's and the Docs' drawers fits on one line at the default width", async ({
   page,
 }) => {
