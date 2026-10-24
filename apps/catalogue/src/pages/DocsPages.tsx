@@ -39,7 +39,12 @@ export function DocsHome({ page }: { page: SitePage }) {
     if (entry !== page) groups.set(entry.section, [...(groups.get(entry.section) ?? []), entry]);
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <PageHeader
+        title={page.title}
+        breadcrumb="Docs"
+        description={page.summary}
+        kind="docs-home"
+      />
       <Column gap={7} className="docs-article">
         {[...groups].map(([group, entries]) => (
           <Column key={group} render={<section />} gap={3}>
@@ -64,7 +69,7 @@ export function DocsHome({ page }: { page: SitePage }) {
 export function GuidePage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
       <Column gap={7} className="docs-article">
         <GuideDocument document={page.document!} />
       </Column>
@@ -76,7 +81,7 @@ export function GuidePage({ page }: { page: SitePage }) {
 export function CodemodsPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
       <Column gap={7} className="docs-article">
         <Markdown codeCopyable>{codemodsReadme.replace(/^# [^\n]*\n+/, '')}</Markdown>
       </Column>
@@ -117,7 +122,7 @@ export function SkillsPage({ page }: { page: SitePage }) {
   const tabs = useViewTabs((value) => `docs/agent-skills?skill=${value}`);
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
       <Column gap={7} className="docs-article">
         <Tabs
           aria-label="Agent skills"
@@ -153,7 +158,12 @@ export function SkillsPage({ page }: { page: SitePage }) {
 export function TokensPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs / Foundations" description={page.summary} />
+      <PageHeader
+        title={page.title}
+        breadcrumb="Docs / Foundations"
+        description={page.summary}
+        kind="docs"
+      />
       <Column gap={7} className="docs-article">
         <LoadedPart part={tokenReference} what="token reference" />
       </Column>
@@ -175,7 +185,7 @@ const changelog = lazyPart(
 export function ChangelogDocsPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
       <Column gap={8} className="docs-article">
         <Column gap={6} render={<section aria-labelledby="highlights" />}>
           <Text render={<h2 id="highlights" />} variant="headline">
@@ -238,6 +248,7 @@ export function FoundationGuidePage({ page }: { page: SitePage }) {
     <>
       <PageHeader
         title={page.title}
+        kind="docs"
         breadcrumb="Docs / Foundations"
         description={page.summary}
         meta={sitePage && <SiteLink path={sitePage.path} />}
@@ -455,6 +466,7 @@ export function ApiPage({ page }: { page: SitePage }) {
     <>
       <PageHeader
         title={page.title}
+        kind="docs"
         breadcrumb={`Docs / ${pattern ? 'Patterns' : reference.group}`}
         description={page.summary}
         meta={

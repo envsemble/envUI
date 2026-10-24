@@ -8,6 +8,8 @@ body {
 .docs-app {
   --docs-content-width: 72rem;
   --docs-gutter: clamp(0.75rem, 3vw, 3rem);
+  /* The monospace of code, which the Docs also set their banners' trails in. */
+  --docs-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
   min-height: 100dvh;
 }
 .docs-app *,
@@ -33,10 +35,15 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
+/* "Docs" by the wordmark in the Docs: a small tag in the accent, in monospace, so the developer
+   reference reads as its own place at once. */
 .docs-brand-area {
-  font: var(--env-type-body);
-  font-weight: var(--env-font-weight-medium);
-  color: var(--env-color-fg-muted);
+  padding: 0.0625rem var(--env-space-2);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-accent-muted);
+  color: var(--env-color-fg-accent);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.5
+    var(--docs-code-font-family);
 }
 /* The navigation at the start of a wide window: the Site's rail beside the drawer of the chosen
    destination's pages, or the Docs' drawer, flush on the navigation's background with no line
@@ -221,10 +228,6 @@ body {
   max-inline-size: 100%;
 }
 .docs-page-banner {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  container-type: inline-size;
   padding-block: clamp(2.5rem, 5vw, 4rem);
 }
 .docs-page-banner-content {
@@ -244,22 +247,6 @@ body {
 .docs-page-banner-description {
   max-inline-size: 42ch;
   text-wrap: balance;
-}
-.docs-page-banner-symbol {
-  position: absolute;
-  inset-inline-end: -1rem;
-  inset-block-start: 50%;
-  inline-size: clamp(10rem, 28cqi, 18rem);
-  aspect-ratio: 1;
-  transform: translateY(-50%) rotate(-12deg);
-  color: var(--env-color-fg-muted);
-  opacity: 0.1;
-  pointer-events: none;
-}
-.docs-page-banner-symbol > svg {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 .docs-page-navigation {
   padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);
@@ -376,7 +363,7 @@ body {
   vertical-align: top;
 }
 .docs-plain-code {
-  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-family: var(--docs-code-font-family);
   font-size: 0.9em;
   overflow-wrap: break-word;
 }

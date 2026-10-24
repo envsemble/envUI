@@ -1,4 +1,4 @@
-import { Button, Card, Column, Row, Surface, Text, Theme, useTheme } from '@envsemble/envui';
+import { Button, Card, Column, Row, Surface, Text } from '@envsemble/envui';
 import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
@@ -6,11 +6,9 @@ import { Palette } from '@envsemble/envui/icons/Palette';
 import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
+import { BannerShapes } from '../layout/BannerShapes';
 import { routeHref } from '../navigation/Address';
 import { sectionHome } from '../navigation/DocumentationRoutes';
-import { OverviewScreen } from '../previews/OverviewScreen';
-import { InteractiveMark } from '../template/InteractiveMark';
-import { keepLinksInPlace } from '../template/LiveExample';
 
 /**
  * Where the home page leads, each with what it is for rather than what it lists, so a page that
@@ -43,40 +41,6 @@ const destinations = [
   },
 ] as const;
 
-/**
- * One whole envUI screen, live on the recessed canvas every example sits on: an application framed
- * as the App frame pattern frames one, with a page of real content.
- */
-function WholeScreen() {
-  const theme = useTheme();
-  return (
-    <Column render={<section aria-labelledby="overview-screen" />} gap={5}>
-      <Column gap={2} align="center">
-        <Text render={<h2 id="overview-screen" />} variant="headline">
-          A whole screen
-        </Text>
-        <Text emphasis="muted" className="docs-overview-screen-text">
-          An application built with envUI: its frame, its navigation and a page of projects. It is
-          live, so try it.
-        </Text>
-      </Column>
-      <Column
-        render={<Theme {...theme} />}
-        container="env-window"
-        gap={0}
-        role="group"
-        aria-label="A whole screen example"
-        className="docs-live-example docs-overview-screen"
-        data-stage="shaded"
-        {...keepLinksInPlace}
-      >
-        <OverviewScreen />
-        <InteractiveMark />
-      </Column>
-    </Column>
-  );
-}
-
 /** The Site's home: what envUI is, and the way to its components, patterns and Docs. */
 export function Overview() {
   return (
@@ -86,8 +50,10 @@ export function Overview() {
           background="default"
           padding={6}
           render={<Column gap={6} align="center" />}
-          className="docs-overview-hero"
+          className="docs-overview-hero docs-banner"
+          data-banner="landing"
         >
+          <BannerShapes />
           {/* The wordmark, with the package's version under it as a quiet subheading, read from
               packages/ui/package.json as the site builds. */}
           <Column gap={3} align="center" className="docs-overview-brand">
@@ -112,7 +78,6 @@ export function Overview() {
         </Surface>
       </header>
       <Column gap={8} className="docs-article docs-overview">
-        <WholeScreen />
         <Column render={<section aria-labelledby="overview-explore" />} gap={5}>
           <Text render={<h2 id="overview-explore" />} variant="headline">
             Explore

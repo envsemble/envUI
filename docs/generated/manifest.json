@@ -5470,171 +5470,6 @@
       }
     },
     {
-      "name": "Composer",
-      "page": "composer",
-      "doc": "docs/components/composer.md",
-      "category": "Forms & selection",
-      "status": "stable",
-      "since": "0.5.0",
-      "summary": "The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.",
-      "aliases": [
-        "ChatInput",
-        "PromptInput",
-        "chat input",
-        "chat box",
-        "prompt input",
-        "prompt box",
-        "message input",
-        "message box",
-        "reply field",
-        "comment box"
-      ],
-      "useWhen": [
-        "A message in a conversation, such as a chat, a comment or a prompt",
-        "A reply that runs after a send, which people may stop"
-      ],
-      "avoidWhen": [
-        {
-          "text": "A whole conversation, with the log above the composer and a reply that streams in.",
-          "see": "conversation"
-        },
-        {
-          "text": "Text over several lines in a form, where Enter starts a new line.",
-          "use": "Textarea"
-        },
-        {
-          "text": "One line of text in a form.",
-          "use": "TextField"
-        },
-        {
-          "text": "Formatted text with headings, lists and links.",
-          "use": "MarkdownEditor"
-        },
-        {
-          "text": "The messages of the conversation itself.",
-          "use": "Message"
-        }
-      ],
-      "related": [
-        "conversation",
-        "text-field",
-        "markdown",
-        "message"
-      ],
-      "exports": [
-        "Composer"
-      ],
-      "examples": [
-        {
-          "name": "AskAnything",
-          "title": "Ask anything",
-          "description": "",
-          "file": "docs/examples/composer/AskAnything.tsx"
-        },
-        {
-          "name": "PendingSend",
-          "title": "Pending send",
-          "description": "While a send is in progress, the next one waits; the field stays editable and keeps focus.",
-          "file": "docs/examples/composer/PendingSend.tsx"
-        },
-        {
-          "name": "StartAndFooter",
-          "title": "Layouts",
-          "description": "A composer is its field alone, or has a row below the field with controls at its start and the send button at its end, and a note under it.",
-          "file": "docs/examples/composer/StartAndFooter.tsx"
-        },
-        {
-          "name": "PendingStaysEditable",
-          "title": "Do: Wait while a send is in progress, so people can keep writing.",
-          "description": "",
-          "file": "docs/examples/composer/PendingStaysEditable.tsx"
-        },
-        {
-          "name": "DisabledWhileSending",
-          "title": "Don't: A disabled composer, which takes focus away from the draft.",
-          "description": "",
-          "file": "docs/examples/composer/DisabledWhileSending.tsx"
-        },
-        {
-          "name": "ComposerAnatomy",
-          "title": "Composer anatomy",
-          "description": "",
-          "file": "docs/examples/composer/ComposerAnatomy.tsx"
-        },
-        {
-          "name": "GrowingDraft",
-          "title": "Growing draft",
-          "description": "",
-          "file": "docs/examples/composer/GrowingDraft.tsx"
-        }
-      ],
-      "parts": {
-        "Composer": {
-          "root": "env-composer",
-          "parts": [
-            {
-              "class": "env-composer",
-              "description": "The message composer."
-            },
-            {
-              "class": "env-composer-action",
-              "description": "The send or stop button."
-            },
-            {
-              "class": "env-composer-footer",
-              "description": "The row of actions under the input."
-            },
-            {
-              "class": "env-composer-input",
-              "description": "The text input."
-            },
-            {
-              "class": "env-composer-start",
-              "description": "The actions at the start of the footer."
-            },
-            {
-              "class": "env-composer-surface",
-              "description": "The surface around the input and the footer."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-disabled",
-              "values": [
-                "true"
-              ],
-              "parts": [
-                "env-composer"
-              ]
-            },
-            {
-              "attribute": "data-running",
-              "values": [
-                "true"
-              ],
-              "parts": [
-                "env-composer"
-              ]
-            },
-            {
-              "attribute": "data-start",
-              "values": [
-                "true"
-              ],
-              "parts": [
-                "env-composer"
-              ]
-            }
-          ]
-        }
-      },
-      "usedIn": {
-        "patterns": [
-          "conversation"
-        ]
-      }
-    },
-    {
       "name": "RichText",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md",
@@ -10371,6 +10206,171 @@
             }
           ],
           "states": []
+        }
+      },
+      "usedIn": {
+        "patterns": [
+          "conversation"
+        ]
+      }
+    },
+    {
+      "name": "Composer",
+      "page": "composer",
+      "doc": "docs/components/composer.md",
+      "category": "Text & content",
+      "status": "stable",
+      "since": "0.5.0",
+      "summary": "The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.",
+      "aliases": [
+        "ChatInput",
+        "PromptInput",
+        "chat input",
+        "chat box",
+        "prompt input",
+        "prompt box",
+        "message input",
+        "message box",
+        "reply field",
+        "comment box"
+      ],
+      "useWhen": [
+        "A message in a conversation, such as a chat, a comment or a prompt",
+        "A reply that runs after a send, which people may stop"
+      ],
+      "avoidWhen": [
+        {
+          "text": "A whole conversation, with the log above the composer and a reply that streams in.",
+          "see": "conversation"
+        },
+        {
+          "text": "Text over several lines in a form, where Enter starts a new line.",
+          "use": "Textarea"
+        },
+        {
+          "text": "One line of text in a form.",
+          "use": "TextField"
+        },
+        {
+          "text": "Formatted text with headings, lists and links.",
+          "use": "MarkdownEditor"
+        },
+        {
+          "text": "The messages of the conversation itself.",
+          "use": "Message"
+        }
+      ],
+      "related": [
+        "conversation",
+        "text-field",
+        "markdown",
+        "message"
+      ],
+      "exports": [
+        "Composer"
+      ],
+      "examples": [
+        {
+          "name": "AskAnything",
+          "title": "Ask anything",
+          "description": "",
+          "file": "docs/examples/composer/AskAnything.tsx"
+        },
+        {
+          "name": "PendingSend",
+          "title": "Pending send",
+          "description": "While a send is in progress, the next one waits; the field stays editable and keeps focus.",
+          "file": "docs/examples/composer/PendingSend.tsx"
+        },
+        {
+          "name": "StartAndFooter",
+          "title": "Layouts",
+          "description": "A composer is its field alone, or has a row below the field with controls at its start and the send button at its end, and a note under it.",
+          "file": "docs/examples/composer/StartAndFooter.tsx"
+        },
+        {
+          "name": "PendingStaysEditable",
+          "title": "Do: Wait while a send is in progress, so people can keep writing.",
+          "description": "",
+          "file": "docs/examples/composer/PendingStaysEditable.tsx"
+        },
+        {
+          "name": "DisabledWhileSending",
+          "title": "Don't: A disabled composer, which takes focus away from the draft.",
+          "description": "",
+          "file": "docs/examples/composer/DisabledWhileSending.tsx"
+        },
+        {
+          "name": "ComposerAnatomy",
+          "title": "Composer anatomy",
+          "description": "",
+          "file": "docs/examples/composer/ComposerAnatomy.tsx"
+        },
+        {
+          "name": "GrowingDraft",
+          "title": "Growing draft",
+          "description": "",
+          "file": "docs/examples/composer/GrowingDraft.tsx"
+        }
+      ],
+      "parts": {
+        "Composer": {
+          "root": "env-composer",
+          "parts": [
+            {
+              "class": "env-composer",
+              "description": "The message composer."
+            },
+            {
+              "class": "env-composer-action",
+              "description": "The send or stop button."
+            },
+            {
+              "class": "env-composer-footer",
+              "description": "The row of actions under the input."
+            },
+            {
+              "class": "env-composer-input",
+              "description": "The text input."
+            },
+            {
+              "class": "env-composer-start",
+              "description": "The actions at the start of the footer."
+            },
+            {
+              "class": "env-composer-surface",
+              "description": "The surface around the input and the footer."
+            }
+          ],
+          "states": [
+            {
+              "attribute": "data-disabled",
+              "values": [
+                "true"
+              ],
+              "parts": [
+                "env-composer"
+              ]
+            },
+            {
+              "attribute": "data-running",
+              "values": [
+                "true"
+              ],
+              "parts": [
+                "env-composer"
+              ]
+            },
+            {
+              "attribute": "data-start",
+              "values": [
+                "true"
+              ],
+              "parts": [
+                "env-composer"
+              ]
+            }
+          ]
         }
       },
       "usedIn": {

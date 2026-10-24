@@ -49,7 +49,6 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [MonthPicker](docs/components/month-picker.md): A field that opens a year of months to choose a month, such as a billing or reporting period. Parts: `.env-month-picker`.
 - [ColorPicker](docs/components/color-picker.md): A compact color picker with hex, RGB and HSL, optional alpha, copy, an eyedropper and preset swatches; a button that opens it in a popover; and a color swatch that shows a color in a format. Also: ColorPickerButton, ColorSwatch. Parts: `.env-color-picker`, `.env-color-picker-button`, `.env-color-swatch`.
 - [DropZone](docs/components/drop-zone.md): An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files. Parts: `.env-drop-zone`.
-- [Composer](docs/components/composer.md): The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply. Parts: `.env-composer`.
 - [RichText](docs/components/rich-text.md): Formatted text people edit as it looks, saved as Markdown with references, and shown again read-only. Also: RichTextEditor, createRichTextExtensions. Parts: `.env-rich-text`, `.env-rich-text-editor`.
 
 ## Components: Navigation
@@ -81,6 +80,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Code](docs/components/code.md): Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file. Also: CodeBlock, CodeDiff, countDiffLines. Parts: `.env-code`, `.env-code-block`, `.env-code-diff`.
 - [Kbd](docs/components/kbd.md): Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus. Also: useModifierKey. Parts: `.env-kbd`.
 - [Message](docs/components/message.md): Conversation entries in a log: compact bubbles for your own messages, full-width content from others. Also: MessageList. Parts: `.env-message`, `.env-message-list`.
+- [Composer](docs/components/composer.md): The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply. Parts: `.env-composer`.
 - [Accordion](docs/components/accordion.md): A list of sections separated by full-width hairlines, each a heading with a plus or minus that shows and hides its panel. Parts: `.env-accordion`.
 - [Disclosure](docs/components/disclosure.md): A one-line summary that shows and hides optional details below it, on the native details element. Parts: `.env-disclosure`.
 
