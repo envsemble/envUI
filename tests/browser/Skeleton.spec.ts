@@ -7,6 +7,14 @@ import type { LayoutProblem } from '@envsemble/envui/dev';
 async function open(page: Page) {
   await page.goto(`${fixtureUrl}/?fixture=skeletons`);
   await page.waitForFunction(() => window.envui?.layout !== undefined);
+  // The bars are measured from the text, which the web font widens when it arrives, after the page
+  // has loaded on a busy machine: wait for it, and for the frame in which the bars are drawn again.
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+    await frame();
+    await frame();
+  });
 }
 
 /** A computed style of an element, or of one of its pseudo-elements. */
