@@ -4545,8 +4545,10 @@
           ]
         },
         {
-          "attribute": "data-dragging",
-          "values": [],
+          "attribute": "data-pressed",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-slider-control"
           ]
