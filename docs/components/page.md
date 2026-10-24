@@ -3,7 +3,7 @@ title: Page
 summary: The invisible column a page's content sits in, at a readable width, under its header with the page's title and actions.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - Container
   - container

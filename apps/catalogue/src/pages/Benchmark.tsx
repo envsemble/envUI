@@ -6,23 +6,81 @@ import type { BenchmarkAgent, BenchmarkRun } from './SiteData';
 const formatDate = (date: string) =>
   new Intl.DateTimeFormat('en', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(date));
 
-const percent = (share: number) => `${Math.round(share * 100)}%`;
+/** How many of an agent's runs type-check, in words rather than as a share. */
+const passes = (agent: BenchmarkAgent) =>
+  `${Math.round(agent.typecheckPassRate * agent.runs)} of ${agent.runs}`;
 
-/** What a run measured, in one quiet line: its date, the envUI build, the tasks and the app. */
-function RunFacts({ run }: { run: BenchmarkRun }) {
-  const build = [run.envui.version && `envUI ${run.envui.version}`, run.envui.commit]
-    .filter(Boolean)
-    .join(' at ');
-  const facts = [
-    formatDate(run.date),
-    build,
-    run.tasks && `${run.tasks} tasks`,
-    `${run.fixture === 'hard' ? 'the app with hand-rolled components' : 'the plain app'}`,
-  ].filter(Boolean);
+/**
+ * Each run's name in the chart and the detail: its date, and where one day has several runs, its
+ * place among them, so a run reads by when it ran rather than by its id.
+ */
+function runLabels(runs: BenchmarkRun[]) {
+  const labels = new Map<string, string>();
+  const byDate = new Map<string, BenchmarkRun[]>();
+  for (const run of runs) {
+    const day = run.date.slice(0, 10);
+    byDate.set(day, [...(byDate.get(day) ?? []), run]);
+  }
+  for (const sameDay of byDate.values())
+    sameDay.forEach((run, index) =>
+      labels.set(
+        run.id,
+        sameDay.length > 1 ? `${formatDate(run.date)}, run ${index + 1}` : formatDate(run.date),
+      ),
+    );
+  return labels;
+}
+
+/** The app a run's tasks were set in. */
+const appOf = (run: BenchmarkRun) =>
+  run.fixture === 'hard' ? 'The app with hand-rolled components' : 'The plain app';
+
+/**
+ * Every run in detail, collapsed under the chart: its id, the envUI build and commit it measured,
+ * its tasks and app, and each agent's scores, which are the chart's data as a table too.
+ */
+function RunDetails({ runs, labels }: { runs: BenchmarkRun[]; labels: Map<string, string> }) {
   return (
-    <Text variant="body-sm" emphasis="muted">
-      {run.id} · {facts.join(' · ')}
-    </Text>
+    <Disclosure title="Every run in detail">
+      <Table.Root aria-label="Every run with its scores" density="sm" narrowLayout="stack">
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Run</Table.HeaderCell>
+            <Table.HeaderCell>Build and tasks</Table.HeaderCell>
+            <Table.HeaderCell>Agent</Table.HeaderCell>
+            <Table.HeaderCell numeric>Mean</Table.HeaderCell>
+            <Table.HeaderCell numeric>Median</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          {runs.flatMap((run) =>
+            run.agents.map((agent) => (
+              <Table.Row key={`${run.id}-${agent.id}`}>
+                <Table.Cell>
+                  {labels.get(run.id)}
+                  <Text variant="caption">{run.id}</Text>
+                </Table.Cell>
+                <Table.Cell label="Build and tasks">
+                  {[run.envui.version && `envUI ${run.envui.version}`, run.envui.commit]
+                    .filter(Boolean)
+                    .join(' at ')}
+                  <Text variant="caption">
+                    {[run.tasks && `${run.tasks} tasks`, appOf(run)].filter(Boolean).join(', ')}
+                  </Text>
+                </Table.Cell>
+                <Table.Cell label="Agent">{agent.label}</Table.Cell>
+                <Table.Cell numeric label="Mean">
+                  {agent.mean}
+                </Table.Cell>
+                <Table.Cell numeric label="Median">
+                  {agent.median}
+                </Table.Cell>
+              </Table.Row>
+            )),
+          )}
+        </Table.Body>
+      </Table.Root>
+    </Disclosure>
   );
 }
 
@@ -51,7 +109,7 @@ function LatestScores({ run }: { run: BenchmarkRun }) {
               {agent.median}
             </Table.Cell>
             <Table.Cell numeric label="Type check passes">
-              {percent(agent.typecheckPassRate)}
+              {passes(agent)}
             </Table.Cell>
             <Table.Cell numeric label="Capabilities covered">
               {agent.capabilities.covered} of {agent.capabilities.total}
@@ -97,11 +155,12 @@ function ScoreBar({ agent }: { agent: BenchmarkAgent }) {
  * scale. One color: each bar is named by its agent beside it, not by a legend. The chart is an
  * image for assistive technology, named and described here, and its data follows as a table.
  */
-function ScoresChart({ runs }: { runs: BenchmarkRun[] }) {
+function ScoresChart({ runs, labels }: { runs: BenchmarkRun[]; labels: Map<string, string> }) {
   const id = useId();
   const description = runs
     .map(
-      (run) => `${run.id}: ${run.agents.map((agent) => `${agent.label} ${agent.mean}`).join(', ')}`,
+      (run) =>
+        `${labels.get(run.id)}: ${run.agents.map((agent) => `${agent.label} ${agent.mean}`).join(', ')}`,
     )
     .join('; ');
   return (
@@ -114,7 +173,9 @@ function ScoresChart({ runs }: { runs: BenchmarkRun[] }) {
       >
         {runs.map((run) => (
           <Column key={run.id} gap={2} className="docs-bench-chart-run">
-            <RunFacts run={run} />
+            <Text variant="body-sm" emphasis="muted">
+              {labels.get(run.id)}
+            </Text>
             {run.agents.map((agent) => (
               <ScoreBar key={agent.id} agent={agent} />
             ))}
@@ -132,34 +193,7 @@ function ScoresChart({ runs }: { runs: BenchmarkRun[] }) {
       <Text id={`${id}-caption`} render={<figcaption />} variant="body-sm" emphasis="muted">
         Mean score out of 100 by run and agent, oldest run first.
       </Text>
-      <Disclosure title="The chart's data as a table">
-        <Table.Root aria-label="Mean score by run and agent" density="sm" narrowLayout="stack">
-          <Table.Head>
-            <Table.Row>
-              <Table.HeaderCell>Run</Table.HeaderCell>
-              <Table.HeaderCell>Agent</Table.HeaderCell>
-              <Table.HeaderCell numeric>Mean</Table.HeaderCell>
-              <Table.HeaderCell numeric>Median</Table.HeaderCell>
-            </Table.Row>
-          </Table.Head>
-          <Table.Body>
-            {runs.flatMap((run) =>
-              run.agents.map((agent) => (
-                <Table.Row key={`${run.id}-${agent.id}`}>
-                  <Table.Cell>{run.id}</Table.Cell>
-                  <Table.Cell label="Agent">{agent.label}</Table.Cell>
-                  <Table.Cell numeric label="Mean">
-                    {agent.mean}
-                  </Table.Cell>
-                  <Table.Cell numeric label="Median">
-                    {agent.median}
-                  </Table.Cell>
-                </Table.Row>
-              )),
-            )}
-          </Table.Body>
-        </Table.Root>
-      </Disclosure>
+      <RunDetails runs={runs} labels={labels} />
     </Column>
   );
 }
@@ -168,7 +202,7 @@ function ScoresChart({ runs }: { runs: BenchmarkRun[] }) {
  * What differs between the runs, so the chart is read fairly: other agents, the harder app and
  * the layout check, which later runs added.
  */
-export function runNotes(runs: BenchmarkRun[]) {
+export function runNotes(runs: BenchmarkRun[], labels = runLabels(runs)) {
   const notes: string[] = [];
   const agentsOf = (run: BenchmarkRun) => run.agents.map((agent) => agent.label).join('|');
   if (new Set(runs.map(agentsOf)).size > 1) notes.push('Runs differ in the agents they ran.');
@@ -179,15 +213,19 @@ export function runNotes(runs: BenchmarkRun[]) {
   const layout = runs.findIndex((run) => run.agents.some((agent) => agent.layoutChecked !== null));
   if (layout > 0)
     notes.push(
-      `The layout check at four widths began with ${runs[layout].id}; earlier scores leave it out.`,
+      `The layout check at four widths began with the run of ${labels.get(runs[layout].id)}; earlier scores leave it out.`,
     );
   if (notes.length) notes.push("Compare a run's agents with each other more than across runs.");
   return notes;
 }
 
-/** The benchmark page's content: what it measures, the newest run's scores and every run's. */
+/**
+ * The benchmark page's content: what it measures, the newest run's scores and the chart of every
+ * run's, with each run's id, build and commit collapsed under it.
+ */
 export function Benchmark() {
   const { latest, runs } = benchmark;
+  const labels = runLabels(runs);
   return (
     <Column gap={7} className="docs-article docs-bench">
       <Column gap={3}>
@@ -208,7 +246,9 @@ export function Benchmark() {
             <Text render={<h2 id="benchmark-latest" />} variant="title">
               Latest run
             </Text>
-            <RunFacts run={latest} />
+            <Text variant="body-sm" emphasis="muted">
+              {labels.get(latest.id) ?? formatDate(latest.date)}
+            </Text>
           </Column>
           <LatestScores run={latest} />
         </Column>
@@ -221,9 +261,9 @@ export function Benchmark() {
             <Text render={<h2 id="benchmark-runs" />} variant="title">
               Scores by run
             </Text>
-            {runNotes(runs).length > 0 && <Text>{runNotes(runs).join(' ')}</Text>}
+            {runNotes(runs, labels).length > 0 && <Text>{runNotes(runs, labels).join(' ')}</Text>}
           </Column>
-          <ScoresChart runs={runs} />
+          <ScoresChart runs={runs} labels={labels} />
         </Column>
       )}
     </Column>

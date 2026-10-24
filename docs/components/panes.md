@@ -3,7 +3,7 @@ title: Panes
 summary: Two panes side by side, a main pane with a supporting one or a list and its detail, that make the most of less room.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - SplitPane
   - ListDetail

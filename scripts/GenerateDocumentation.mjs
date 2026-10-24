@@ -65,12 +65,14 @@ const changesetDirectory = fileURLToPath(new URL('../.changeset/', import.meta.u
 
 /** The index's component groups; a component page's category is one of them. */
 export const componentGroups = [
-  'Layout & surfaces',
   'Actions',
   'Forms & selection',
   'Navigation',
-  'Content & guidance',
-  'Feedback & overlays',
+  'Data display',
+  'Text & content',
+  'Feedback',
+  'Overlays',
+  'App frame & layout',
 ];
 export const statuses = ['experimental', 'beta', 'stable', 'deprecated'];
 /**
@@ -79,7 +81,12 @@ export const statuses = ['experimental', 'beta', 'stable', 'deprecated'];
  */
 export const guideExportStatus = 'stable';
 /** What people are doing, in order: a pattern page's intent groups it in the catalogue and agents. */
-export const intents = ['Enter and change data', 'Keep people informed', 'Find and navigate'];
+export const intents = [
+  'Enter and change data',
+  'Keep people informed',
+  'Work with lists and tables',
+  'Frame the application',
+];
 /** The kind of a page of docs/, by its folder. */
 export function pageKindOf(path) {
   if (path.startsWith('components/')) return 'component';

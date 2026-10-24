@@ -3,7 +3,7 @@ title: List
 summary: A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.
 status: stable
 since: 0.1.0
-category: Layout & surfaces
+category: Data display
 aliases:
   - GroupedRows
   - Row

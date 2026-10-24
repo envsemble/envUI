@@ -3,7 +3,7 @@ title: App frame
 summary: Frame an application's screens with a Scaffold, a TopBar and the same destinations as a Bar, a Rail or a Drawer, by the width of the window.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Frame the application
 aliases:
   - app frame
   - application frame

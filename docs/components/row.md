@@ -3,7 +3,7 @@ title: Row
 summary: Row lays out content side by side with even gaps, and wraps when it doesn't fit, such as a form's actions.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - Stack
   - hstack

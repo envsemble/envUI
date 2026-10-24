@@ -4,7 +4,7 @@ summary: 'Conversation entries in a log: compact bubbles for your own messages, 
   from others.'
 status: stable
 since: 0.5.0
-category: Content & guidance
+category: Text & content
 aliases:
   - Messages
   - MessageList

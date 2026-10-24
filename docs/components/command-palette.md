@@ -3,7 +3,7 @@ title: CommandPalette
 summary: A quick-open dialog near the top of the window that finds a document, a page, a person or a command by name.
 status: stable
 since: 0.5.0
-category: Feedback & overlays
+category: Actions
 aliases:
   - quick open
   - command menu

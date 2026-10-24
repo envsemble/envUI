@@ -5,7 +5,7 @@ status: stable
 statuses:
   MarkdownEditor: beta
 since: 0.1.0
-category: Content & guidance
+category: Text & content
 aliases:
   - MD
   - markdown renderer

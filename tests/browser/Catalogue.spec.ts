@@ -1420,7 +1420,7 @@ test('F6 on the Toast page reaches a notification raised there, past the figures
   await expect(live).toBeFocused();
 });
 
-test("the Benchmark page shows the newest run's scores and a named chart with its data as a table", async ({
+test("the Benchmark page shows the newest run's scores and a named chart, with every run in detail under it", async ({
   page,
 }) => {
   const { latest, runs } = readBenchmark();
@@ -1435,13 +1435,18 @@ test("the Benchmark page shows the newest run's scores and a named chart with it
   // The chart is one image, named by its caption and described by every bar's value.
   const chart = page.getByRole('img', { name: /^Mean score out of 100 by run and agent/ });
   await expect(chart).toBeVisible();
-  await expect(chart).toHaveAccessibleDescription(new RegExp(latest.id));
-  // Its data is a table too, one row per agent of each run.
-  await page.getByText("The chart's data as a table").click();
-  const data = page.getByRole('table', { name: 'Mean score by run and agent' });
+  await expect(chart).toHaveAccessibleDescription(
+    new RegExp(latest.agents.map((agent) => `${agent.label} ${agent.mean}`).join(', ')),
+  );
+  // Run ids and commits are out of sight until asked for: every run in detail, one row per agent of
+  // each run, which is the chart's data as a table too.
+  await expect(page.getByText(latest.id, { exact: true }).first()).toBeHidden();
+  await page.getByText('Every run in detail').click();
+  const data = page.getByRole('table', { name: 'Every run with its scores' });
   await expect(data).toBeVisible();
   const bars = runs.reduce((count, run) => count + run.agents.length, 0);
   await expect(data.getByRole('row')).toHaveCount(bars + 1);
+  await expect(data).toContainText(latest.id);
 });
 
 test("the Docs' Changelog page lists each release's highlights, newest first, and their links reach sections of the Docs", async ({

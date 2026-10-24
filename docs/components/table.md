@@ -4,7 +4,7 @@ summary: 'Semantic data tables on a rounded surface: sorting, resizable columns,
   stacked rows in narrow containers.'
 status: stable
 since: 0.5.0
-category: Content & guidance
+category: Data display
 aliases:
   - data table
   - grid

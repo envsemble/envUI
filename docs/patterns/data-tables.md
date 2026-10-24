@@ -3,7 +3,7 @@ title: Data tables
 summary: Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Work with lists and tables
 aliases:
   - data table
   - data grid

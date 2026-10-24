@@ -4,7 +4,7 @@ summary: A moment as text relative to now, such as 3 hours ago, kept current, wi
   in a tooltip.
 status: stable
 since: 0.6.0
-category: Content & guidance
+category: Data display
 aliases:
   - time ago
   - timeago

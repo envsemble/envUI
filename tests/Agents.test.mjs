@@ -520,7 +520,7 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   const listed = await server.call('list_components', { category: 'Actions' });
   assert.deepEqual(
     listed.components.map((component) => component.name),
-    ['Button', 'Toolbar', 'Link'],
+    ['Button', 'Link', 'Toolbar', 'Menu', 'Menubar', 'CommandPalette'],
   );
   assert.equal(listed.components[0].import, '@envsemble/envui');
 

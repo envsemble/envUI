@@ -16,15 +16,9 @@ export type Area = 'site' | 'docs';
 
 /**
  * The Site's destinations in its rail, in order; the drawer beside it lists their pages. The
- * changelog is in the Docs.
+ * benchmark is a page of the Overview, and the changelog is in the Docs.
  */
-export const siteSections = [
-  'Overview',
-  'Foundations',
-  'Components',
-  'Patterns',
-  'Benchmark',
-] as const;
+export const siteSections = ['Overview', 'Foundations', 'Components', 'Patterns'] as const;
 export type SiteSection = (typeof siteSections)[number];
 
 /** What a page shows, which decides how it renders. */
@@ -32,6 +26,7 @@ export type PageKind =
   | 'home'
   | 'components'
   | 'component'
+  | 'patterns'
   | 'pattern'
   | 'foundation'
   | 'benchmark'
@@ -132,6 +127,14 @@ const sitePages: SitePage[] = [
     section: 'Overview',
     kind: 'home',
   },
+  {
+    path: 'benchmark',
+    title: 'Benchmark',
+    area: 'site',
+    section: 'Overview',
+    kind: 'benchmark',
+    summary: 'How coding agents do when they build interfaces with envUI.',
+  },
   ...referencePages
     .filter(({ section }) => section === 'Foundations')
     .map(
@@ -170,6 +173,15 @@ const sitePages: SitePage[] = [
         }),
       ),
   ),
+  {
+    path: 'patterns',
+    title: 'Patterns',
+    label: 'All patterns',
+    area: 'site',
+    section: 'Patterns',
+    kind: 'patterns',
+    summary: 'Components put together for what people do, by what they are doing.',
+  },
   ...patternDocuments.map(
     (document): SitePage => ({
       path: `patterns/${document.id}`,
@@ -182,14 +194,6 @@ const sitePages: SitePage[] = [
       document,
     }),
   ),
-  {
-    path: 'benchmark',
-    title: 'Benchmark',
-    area: 'site',
-    section: 'Benchmark',
-    kind: 'benchmark',
-    summary: 'How coding agents do when they build interfaces with envUI.',
-  },
 ];
 
 /** The shorter names of guides in the Docs' navigation. */
@@ -198,57 +202,61 @@ const guideLabels: Record<string, string> = {
   migration: 'Migrate to envUI',
 };
 
+/**
+ * The guides that get an application going, in the Docs' Get started group; every other guide of
+ * the index's Setup and workflows, such as customizing colors or dev mode, is in Guides.
+ */
+const startGuides = new Set(['setup', 'migration', 'agent-tooling']);
+
 const guidePage = (document: Documentation): SitePage => ({
   path: `docs/${document.id}`,
   title: document.title,
   label: guideLabels[document.id],
   area: 'docs',
-  section: 'Get started',
+  section: startGuides.has(document.id) ? 'Get started' : 'Guides',
   kind: 'guide',
   summary: document.summary,
   document,
 });
 
 /** The Docs' pages for getting started, in reading order, with codemods after migration. */
-const startPages: SitePage[] = guideDocuments.flatMap((document) => {
-  const page = guidePage(document);
-  if (document.id === 'migration')
-    return [
-      page,
-      {
-        path: 'docs/codemods',
-        title: 'Codemods',
-        area: 'docs',
-        section: 'Get started',
-        kind: 'codemods',
-        summary:
-          'Upgrade an application from envUI 0.x to 1.0 with @envsemble/envui-codemods, which renames what it can and reports the rest.',
-      },
-      {
-        path: 'docs/changelog',
-        title: 'Changelog',
-        area: 'docs',
-        section: 'Get started',
-        kind: 'docs-changelog',
-        summary:
-          'What changed in each release of @envsemble/envui: its highlights, then every change with how to migrate.',
-      },
-    ];
-  if (document.id === 'agent-tooling')
-    return [
-      page,
-      {
-        path: 'docs/agent-skills',
-        title: 'Agent skills',
-        area: 'docs',
-        section: 'Get started',
-        kind: 'skills',
-        summary:
-          'The skills that teach coding agents to use envUI and to migrate an interface to it.',
-      },
-    ];
-  return [page];
-});
+const startPages: SitePage[] = guideDocuments
+  .filter((document) => startGuides.has(document.id))
+  .flatMap((document) => {
+    const page = guidePage(document);
+    if (document.id === 'migration')
+      return [
+        page,
+        {
+          path: 'docs/codemods',
+          title: 'Codemods',
+          area: 'docs',
+          section: 'Get started',
+          kind: 'codemods',
+          summary:
+            'Upgrade an application from envUI 0.x to 1.0 with @envsemble/envui-codemods, which renames what it can and reports the rest.',
+        },
+      ];
+    if (document.id === 'agent-tooling')
+      return [
+        page,
+        {
+          path: 'docs/agent-skills',
+          title: 'Agent skills',
+          area: 'docs',
+          section: 'Get started',
+          kind: 'skills',
+          summary:
+            'The skills that teach coding agents to use envUI and to migrate an interface to it.',
+        },
+      ];
+    return [page];
+  });
+
+/** The Docs' other guides, in the index's order. */
+const guidePages: SitePage[] = guideDocuments
+  .filter((document) => !startGuides.has(document.id))
+  .map(guidePage);
 
 const field = references.find((reference) => docsOnlyComponents.has(reference.id));
 
@@ -261,9 +269,10 @@ const docsPages: SitePage[] = [
     section: 'Get started',
     kind: 'docs-home',
     summary:
-      'The developer reference: setup, migration, tokens, and how to use every component and pattern in code, with their props and part names.',
+      'How to build with envUI in code: setup, guides, tokens, and every component and pattern with its props. The Site shows what each looks like and when to use it.',
   },
   ...startPages,
+  ...guidePages,
   ...(field
     ? [
         {
@@ -326,6 +335,15 @@ const docsPages: SitePage[] = [
         document,
       }),
     ),
+  {
+    path: 'docs/changelog',
+    title: 'Changelog',
+    area: 'docs',
+    section: 'Changelog',
+    kind: 'docs-changelog',
+    summary:
+      'What changed in each release of @envsemble/envui: its highlights, then every change with how to migrate.',
+  },
 ];
 
 /** Every page of the Site, then of the Docs, each in reading order, which the pager follows. */
@@ -371,6 +389,7 @@ export function routeOfDocument(
   const own: Record<string, string> = {
     'get-started': 'docs/setup',
     components: 'components',
+    patterns: 'patterns',
     benchmark: 'benchmark',
     changelog: 'docs/changelog',
     tokens: 'docs/tokens',
@@ -472,7 +491,6 @@ export function normalizeRoute(route: string): string {
   if (originalPath === 'changelog') return `docs/changelog${rest()}`;
   // A destination's own address opens its first page.
   if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
-  if (originalPath === 'patterns') return `${sectionHome('Patterns').path}${rest()}`;
   // What every pattern needs was one page in the Docs; each pattern's guide says it now, and the
   // Docs' home lists the guides under Patterns.
   if (originalPath === 'docs/patterns') return `${docsRoute}${rest()}`;

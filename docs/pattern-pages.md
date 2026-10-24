@@ -23,7 +23,7 @@ composes: [Switch, Select, Field, Button, Toast, Column] # The exports it combin
 ---
 ```
 
-- **`intent`** groups patterns by what people are doing: _Enter and change data_, _Keep people informed_ or _Find and navigate_.
+- **`intent`** groups patterns by what people are doing: _Enter and change data_, _Keep people informed_, _Work with lists and tables_ or _Frame the application_.
 - **`composes`** names every envUI export the page's example files import, and only exports; `npm test` checks both.
 - **`avoidWhen`** is the page's one list of related pages, shown as Related at its end, as on [component pages](component-pages.md#frontmatter). **`see`** names an indexed page, a pattern or component page; **`use`** names an export. An entry has one or the other, and names each once.
 

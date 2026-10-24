@@ -3,7 +3,7 @@ title: Column
 summary: Column lays out content one under another with even gaps, such as a heading, text and a form.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - Stack
   - Layout

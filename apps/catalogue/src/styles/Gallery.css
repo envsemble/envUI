@@ -1,0 +1,68 @@
+/* The galleries of components and patterns (Gallery.tsx): by group, a tile for each page, its
+   live picture on the recessed canvas every example sits on, inert and scaled to fit, with its
+   name under it. Tiles are of one size, so the pictures line up in rows. */
+.docs-gallery {
+  text-align: start;
+}
+
+.docs-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: var(--env-space-6) var(--env-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-gallery-tile {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  row-gap: var(--env-space-3);
+  min-inline-size: 0;
+}
+
+/* The stage of a gallery tile: a little taller than a Related tile's, so a whole screen and a
+   single control both sit at ease in it. Its window is smaller than a Related tile's and counts
+   whole (Related.tsx), so every tile is drawn at one scale and a control that fills its width is
+   drawn larger; only an example wider or taller than the window is scaled down further. */
+.docs-gallery-stage.docs-gallery-stage {
+  aspect-ratio: 4 / 3;
+  max-block-size: none;
+}
+
+.docs-gallery-stage .docs-related-canvas,
+.docs-gallery-stage .docs-related-canvas:has(> .docs-overlay-layer) {
+  place-content: center stretch;
+  inline-size: var(--docs-gallery-window-width, 16rem);
+  block-size: var(--docs-gallery-window-height, 12rem);
+  min-block-size: 0;
+}
+
+.docs-gallery-name {
+  margin: 0;
+  font-weight: var(--env-font-weight-medium);
+}
+
+.docs-gallery-link {
+  color: var(--env-color-fg-default);
+}
+
+/* The name's link covers the tile, so the whole picture leads to the page. */
+.docs-gallery-link::after {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--env-radius-surface);
+  content: '';
+}
+
+/* The pointer over a tile, or the keyboard on its link, lifts its picture a little. */
+.docs-gallery-tile:has(.docs-gallery-link:is(:hover, :focus-visible)) .docs-gallery-stage {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: 0.125rem;
+}
+
+.docs-gallery-tile:has(.docs-gallery-link:hover:not(:focus-visible)) .docs-gallery-stage {
+  outline-color: var(--env-color-border-default);
+}

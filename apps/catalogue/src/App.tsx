@@ -20,6 +20,7 @@ import {
   BenchmarkPage,
   ComponentPage,
   ComponentsPage,
+  PatternsPage,
   FoundationPage,
   PatternPage,
 } from './pages/SitePages';
@@ -47,6 +48,7 @@ import { DocumentationSearch } from './search/DocumentationSearch';
 const pageContent: Record<SitePage['kind'], (props: { page: SitePage }) => ReactNode> = {
   home: Overview,
   components: ComponentsPage,
+  patterns: PatternsPage,
   component: ComponentPage,
   pattern: PatternPage,
   foundation: FoundationPage,

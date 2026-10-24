@@ -3,7 +3,7 @@ title: Grid
 summary: Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - columns
   - grid layout

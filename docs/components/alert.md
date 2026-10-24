@@ -3,7 +3,7 @@ title: Alert
 summary: An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
 status: stable
 since: 0.5.0
-category: Feedback & overlays
+category: Feedback
 aliases:
   - Notice
   - banner

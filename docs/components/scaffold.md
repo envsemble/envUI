@@ -3,7 +3,7 @@ title: Scaffold
 summary: The invisible frame of an application's screen, around its top bar, its navigation and the page.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - AppShell
   - app shell

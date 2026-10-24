@@ -3,7 +3,7 @@ title: Rating
 summary: A read-only rating as stars filled in half steps, named once for assistive technology.
 status: stable
 since: 0.7.0
-category: Content & guidance
+category: Data display
 aliases:
   - stars
   - star rating

@@ -3,7 +3,7 @@ title: AnimatedNumber
 summary: A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.
 status: stable
 since: 0.4.0
-category: Content & guidance
+category: Data display
 aliases:
   - animated counter
   - counter

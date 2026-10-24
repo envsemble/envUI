@@ -3,7 +3,7 @@ title: HoverCard
 summary: A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview.
 status: stable
 since: 0.6.0
-category: Feedback & overlays
+category: Overlays
 aliases:
   - PreviewCard
   - preview card

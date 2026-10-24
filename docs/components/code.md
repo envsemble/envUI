@@ -3,7 +3,7 @@ title: Code
 summary: Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file.
 status: stable
 since: 0.1.0
-category: Content & guidance
+category: Text & content
 aliases:
   - inline code
   - code block

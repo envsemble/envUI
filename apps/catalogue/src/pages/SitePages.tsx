@@ -14,6 +14,7 @@ import { FoundationPreview } from '../previews/FoundationPreview';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import type { Reference } from '../Reference';
 import { Catalogue } from './Catalogue';
+import { PatternCatalogue } from './PatternCatalogue';
 import { Documentation } from './Documentation';
 import { Benchmark } from './Benchmark';
 
@@ -156,6 +157,18 @@ export function ComponentsPage({ page }: { page: SitePage }) {
   );
 }
 
+/** Every pattern, by what people are doing. */
+export function PatternsPage({ page }: { page: SitePage }) {
+  return (
+    <>
+      <PageHeader title={page.title} breadcrumb="Patterns" description={page.summary} />
+      <Column gap={7} className="docs-article docs-overview">
+        <PatternCatalogue />
+      </Column>
+    </>
+  );
+}
+
 /**
  * The benchmark's page: what it measures, the newest run's scores and the scores of every run, read
  * from bench/results when the site builds.
@@ -163,7 +176,7 @@ export function ComponentsPage({ page }: { page: SitePage }) {
 export function BenchmarkPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Benchmark" description={page.summary} />
+      <PageHeader title={page.title} breadcrumb="Overview" description={page.summary} />
       <Benchmark />
     </>
   );

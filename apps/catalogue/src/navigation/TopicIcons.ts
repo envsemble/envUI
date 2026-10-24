@@ -71,12 +71,14 @@ export const foundationIcons: Record<string, typeof Palette> = {
 };
 const groupIcons = {
   Foundations: Category,
-  'Layout & surfaces': ViewList,
   Actions: TouchApp,
   'Forms & selection': TextFields,
   Navigation: Home,
-  'Content & guidance': Category,
-  'Feedback & overlays': Info,
+  'Data display': TableChart,
+  'Text & content': Article,
+  Feedback: Info,
+  Overlays: WebAsset,
+  'App frame & layout': SpaceDashboard,
 } satisfies Record<Reference['group'], typeof Apps>;
 export function getComponentIcon(group: Reference['group']) {
   return groupIcons[group];

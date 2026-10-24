@@ -3,7 +3,7 @@ title: Account and organizations
 summary: Show who is signed in and where, and give people their own things and their organizations from a menu in the frame.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Frame the application
 aliases:
   - AccountMenu
   - account menu

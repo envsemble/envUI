@@ -4,7 +4,7 @@ summary: Formatted text people edit as it looks, saved as Markdown with referenc
   read-only.
 status: experimental
 since: 0.1.0
-category: Content & guidance
+category: Forms & selection
 aliases:
   - RichTextEditor
   - rich text editor

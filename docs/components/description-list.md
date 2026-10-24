@@ -3,7 +3,7 @@ title: DescriptionList
 summary: The facts about one thing, as labels and their values, beside each other or stacked by the list's own width.
 status: beta
 since: 1.0.0
-category: Content & guidance
+category: Data display
 aliases:
   - facts
   - fact list

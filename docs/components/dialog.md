@@ -3,7 +3,7 @@ title: Dialog
 summary: A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal.
 status: stable
 since: 0.1.0
-category: Feedback & overlays
+category: Overlays
 aliases:
   - modal
   - modal dialog

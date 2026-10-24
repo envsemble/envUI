@@ -3,7 +3,7 @@ title: Accordion
 summary: A list of sections separated by full-width hairlines, each a heading with a plus or minus that shows and hides its panel.
 status: beta
 since: 1.0.0
-category: Content & guidance
+category: Text & content
 aliases:
   - accordion
   - collapsible sections

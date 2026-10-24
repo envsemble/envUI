@@ -3,7 +3,7 @@ title: Menubar
 summary: A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.
 status: stable
 since: 0.5.0
-category: Feedback & overlays
+category: Actions
 aliases:
   - menu bar
   - application menu

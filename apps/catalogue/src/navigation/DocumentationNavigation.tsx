@@ -15,7 +15,6 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
-import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu } from '../theme/DisplaySettings';
@@ -35,7 +34,6 @@ const sectionIcons: Record<SiteSection, typeof Home> = {
   Foundations: Palette,
   Components: Widgets,
   Patterns: Pattern,
-  Benchmark: Leaderboard,
 };
 
 /** The Site's destinations, for its rail: each opens its first page. */
@@ -161,8 +159,8 @@ function Brand({ area }: { area: Area }) {
 }
 
 /**
- * The Site's navigation, one pane: a Rail of its destinations, Overview, Foundations, Components,
- * Patterns and Benchmark, under the envUI wordmark, beside a Drawer of the chosen
+ * The Site's navigation, one pane: a Rail of its destinations, Overview, Foundations, Components
+ * and Patterns, under the envUI wordmark, beside a Drawer of the chosen
  * destination's pages under search, both on the navigation's background with no seam or line
  * between them. A rail item opens its destination's first page; in the sheet of a narrower window
  * it leaves the sheet open, so a page can be chosen.
