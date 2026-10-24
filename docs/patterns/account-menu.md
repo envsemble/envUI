@@ -14,7 +14,7 @@ aliases:
   - theme submenu
   - organization switcher in a menu
 useWhen:
-  - People sign in, and need their account settings, the theme and Sign out within reach on every page.
+  - Account settings, the theme and Sign out on every page
 avoidWhen:
   - text: The application's places, such as Projects and Settings.
     see: navigation
@@ -45,7 +45,7 @@ The account menu is a [Menu](../components/menu.md) opened from the person's [Av
 
 ### The theme
 
-A [ThemeRadioGroup](../components/menu.md) in a Theme submenu applies the choice at once and keeps the menu open, so people see the result; the nearest ThemePreferenceProvider stores it.
+A [ThemeRadioGroup](../components/menu.md) in a Theme submenu applies the choice at once and keeps the menu open, so people see the result, and the application remembers it.
 
 ## Variants
 
@@ -59,7 +59,7 @@ A submenu switches between the person's organizations; the header names the curr
 
 ### A row at the foot of the navigation
 
-A ghost Button `fullWidth` with the avatar and the name, as wide as the drawer; the menu opens above it with `side="top"`.
+A ghost button with the avatar and the name, as wide as the drawer, and the menu opens above it.
 
 ```tsx example=RowTrigger
 
@@ -75,12 +75,13 @@ A ghost Button `fullWidth` with the avatar and the name, as wide as the drawer; 
 
 ```
 
-- Open it on a press, never on hover.
+### On a press
+
+Open the menu on a press, never on hover.
 
 ### Content
 
-- The person's own name and email in the header, never "My account".
-- Say "Sign out", never "Log out" ([content](../foundations/content.md)).
+The person's own name and email in the header, never "My account", and "Sign out", never "Log out", as the [content guidelines](../foundations/content.md) say.
 
 ## Accessibility
 
@@ -103,6 +104,36 @@ A ghost Button `fullWidth` with the avatar and the name, as wide as the drawer; 
 
 - The menu's name, Account, and the person's name and email.
 - What Sign out does, and the account settings page.
+
+## In code
+
+### Usage
+
+A `Menu.Root` named `aria-label="Account"`, with `align="end"`, takes as its `trigger` an AvatarButton with the person's `name` and, for its tooltip, their email as `description`. A `Menu.Header` holds a large Avatar, `size="lg"`, centred above the name and email; it is not an item, so focus starts on the first item. Then come the items, such as a `Menu.Item` with `href="/account"`, a `Menu.Submenu` labelled Theme, and Sign out after a `Menu.Separator`.
+
+```tsx source=AvatarMenu
+
+```
+
+#### The theme
+
+A ThemeRadioGroup inside the Theme `Menu.Submenu` applies the choice at once and keeps the menu open; the nearest ThemePreferenceProvider stores it.
+
+#### Organizations
+
+A `Menu.Submenu` labelled Organization, with the current one as its `description`, holds a `Menu.RadioGroup` with `value` and `onValueChange` and a `Menu.RadioItem` for each organization.
+
+```tsx source=WithOrganizations
+
+```
+
+#### A row at the foot of the navigation
+
+The trigger is a Button with `variant="ghost"`, `fullWidth` and an `endIcon`, holding a small Avatar, `size="sm"`, and the name in a Row. The menu opens above it with `side="top"` and `align="start"`.
+
+```tsx source=RowTrigger
+
+```
 
 ## Changelog
 

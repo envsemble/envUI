@@ -14,8 +14,8 @@ aliases:
   - accordion
   - help text
 useWhen:
-  - A page has options, details or actions that most people don't need most of the time.
-  - A term or a value needs an explanation that would clutter the page if always shown.
+  - Options, details or actions most people rarely need
+  - An explanation of a term that would clutter the page
 avoidWhen:
   - text: Switching between views of the same content.
     use: Tabs
@@ -77,7 +77,7 @@ Open the Disclosure that holds an invalid field, so the field and its message sh
 
 ### Show all
 
-The button stays after the list and says what a press does, "Show all 12", then "Show fewer"; `aria-expanded` says the same.
+The button stays after the list and says what a press does, "Show all 12", then "Show fewer", and tells assistive technology whether the whole list shows.
 
 ```tsx example=ShowMore
 
@@ -117,15 +117,21 @@ A help button opens a Popover with a short definition and a link.
 
 ```
 
-- One step away at most: don't put a menu in a popover in a sheet either.
-- Nothing to act on in a Tooltip or a HoverCard; what a HoverCard shows must be reachable without hover, as it never opens on touch.
-- Several Disclosures with a shared `name` stand in for an accordion; put a heading above the stack, as their summaries aren't headings.
+### One step away
+
+Keep the rest one step away at most: don't put a menu in a popover in a sheet either.
+
+### Nothing to act on in a hover
+
+A tooltip or a hover card holds nothing to act on, and what a hover card shows must be reachable without hover, as it never opens on touch.
+
+### An accordion
+
+Disclosures that share a name open one at a time, which stands in for an accordion. Put a heading above the stack, as their summaries aren't headings.
 
 ### Content
 
-- Label a Disclosure with what it holds, "Advanced options".
-- Say how much more there is: "Show all 12", not "Show more".
-- Name an overflow menu "More actions", or "More actions for Launch brief" in a row.
+Label a disclosure with what it holds, "Advanced options", and say how much more there is: "Show all 12", not "Show more". Name an overflow menu "More actions", or "More actions for Launch brief" in a row.
 
 ## Anatomy
 
@@ -134,7 +140,7 @@ A help button opens a Popover with a short definition and a link.
 ```
 
 1. **Visible layer** (`env-text-field`)
-2. **Disclosure** (`env-disclosure summary`, `title`)
+2. **Summary** (`env-disclosure summary`, `title`)
 3. **Disclosed layer** (`env-disclosure-panel`)
 4. **More actions** (`env-button ~ env-button`)
 
@@ -153,6 +159,52 @@ A Disclosure's summary is a button; <kbd>Enter</kbd> or <kbd>Space</kbd> opens i
 - A name for every icon-only trigger, and `aria-expanded` and `aria-controls` on a Show all button.
 - Opening a Disclosure that holds an invalid field.
 - The details of a HoverCard somewhere people reach without hover.
+
+## In code
+
+### Usage
+
+A Disclosure takes its summary as `title` and holds the optional settings; control it with `open` and `onOpenChange` where the application opens it, or start it open with `defaultOpen`. When a submit finds an invalid field inside a closed Disclosure, set `open`, then move focus to the field once it shows; where focus is already in the field, as after <kbd>Enter</kbd>, say the error in a `role="status"` message instead.
+
+```tsx source=AdvancedOptions
+
+```
+
+#### Show all
+
+A text Button after the list, with `aria-expanded` and `aria-controls` naming the list, toggles between the first few items and all of them, and keeps focus as the list grows.
+
+```tsx source=ShowMore
+
+```
+
+#### An accordion
+
+Disclosures with the same `name` open one at a time, as native `details` do; put a heading above them.
+
+#### Details in a sheet
+
+A row's text Button, with `aria-haspopup="dialog"`, opens a Sheet controlled through `open` and `onOpenChange`, with the item's details, such as a stacked DescriptionList, and an `actions` link to its own page. Keep the shown item while the sheet closes, so its content doesn't empty as it slides out.
+
+```tsx source=DetailsInSheet
+
+```
+
+#### Overflow actions
+
+A Menu named by `aria-label` takes a ghost IconButton with the MoreVert icon and `aria-label="More actions"` as its `trigger`, wrapped in a Tooltip that names it. A `Menu.Separator` sets the destructive item apart, last.
+
+```tsx source=OverflowActions
+
+```
+
+#### Explain a term
+
+A Popover with `side="bottom"` opens from an IconButton named for the term, such as `aria-label="About billable hours"`, and holds a short definition and a Link.
+
+### Composition
+
+The anatomy's parts are the visible layer, here a TextField's `env-text-field`, the Disclosure's summary, `env-disclosure summary`, its panel, `env-disclosure-panel`, and the More actions trigger, `env-button ~ env-button`.
 
 ## Changelog
 

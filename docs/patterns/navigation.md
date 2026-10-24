@@ -15,8 +15,8 @@ aliases:
   - quick open
   - tabs or navigation
 useWhen:
-  - An application has several places, and people move between them.
-  - People need to see where they are, how they got there and how to go back up.
+  - Several places people move between
+  - Showing where people are and the way back up
 avoidWhen:
   - text: Showing more of the page's content without leaving the page.
     see: progressive-disclosure
@@ -67,18 +67,18 @@ The primary navigation marks the current page, a trail leads back up from deep p
 
 ### Changing the page
 
-After the router shows the new page, set `document.title`, such as "Projects – Northwind". Give every place an `href`, rendered by the router's link through `LinkProvider`; the examples keep the page in state instead.
+After the router shows the new page, the window's title names it, such as "Projects – Northwind". Every place has an address of its own, opened by the application's router; the examples keep the page in state instead.
 
 ## Variants
 
-| Need                                | Use                                                                                                                                 |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| The places of the application       | One array of destinations given to [Bar](../components/bar.md), [Rail](../components/rail.md) and [Drawer](../components/drawer.md) |
-| A page two or more levels down      | [Breadcrumbs](../components/breadcrumbs.md) with `wrap={false}` in the [PageHeader](../components/page-header.md)                   |
-| Views of the object a page is about | [Tabs](../components/tabs.md) under the PageHeader                                                                                  |
-| Pages read in order                 | A [Pager](../components/pager.md) at the end of the content                                                                         |
-| Opening anything by name            | A [search trigger](search-trigger.md) that opens a [CommandPalette](../components/command-palette.md)                               |
-| A list whose items open beside it   | List-detail [Panes](../components/panes.md)                                                                                         |
+| Need                                | Use                                                                                                                                |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| The places of the application       | One list of destinations given to [Bar](../components/bar.md), [Rail](../components/rail.md) and [Drawer](../components/drawer.md) |
+| A page two or more levels down      | [Breadcrumbs](../components/breadcrumbs.md) on one line in the [PageHeader](../components/page-header.md)                          |
+| Views of the object a page is about | [Tabs](../components/tabs.md) under the PageHeader                                                                                 |
+| Pages read in order                 | A [Pager](../components/pager.md) at the end of the content                                                                        |
+| Opening anything by name            | A [search trigger](search-trigger.md) that opens a [CommandPalette](../components/command-palette.md)                              |
+| A list whose items open beside it   | List-detail [Panes](../components/panes.md)                                                                                        |
 
 ### Hierarchy
 
@@ -122,14 +122,17 @@ As narrow as a phone, the detail shows in place of the list, with a back button 
 
 ```
 
-- One primary navigation, in the same order on every page, never hidden behind a menu on a wide window.
-- On a page below a place, such as one project, keep the place current and let the trail say the rest.
+### One primary navigation
+
+One primary navigation, in the same order on every page, and never hidden behind a menu on a wide window.
+
+### Pages below a place
+
+On a page below a place, such as one project, keep the place current and let the trail say the rest.
 
 ### Content
 
-- Name each place with a short noun, the word of its page's title.
-- Name the navigation after its role, "Main", rather than its look.
-- Name a link after its destination: "Project settings", not "More".
+Name each place with a short noun, the word of its page's title, and the navigation after its role, "Main", rather than its look. Name a link after its destination: "Project settings", not "More".
 
 ## Anatomy
 
@@ -159,6 +162,40 @@ The skip links come first. After a page opens, from a destination, a trail level
 
 - `current` on the place shown, focus after each change of page, and `document.title`.
 - `LinkProvider` with the router's link, and an `href` on every place.
+
+## In code
+
+### Usage
+
+Build one array of destinations, each with its `label`, `icon` and `href`, `current` on the place shown, and optionally a `count`, a `group` and an `onSelect`. Give the same array to a Bar, a Rail and a Drawer, in the Scaffold's `navigation` as `bar`, `rail` and `drawer`. Render every `href` through the router's link with `LinkProvider`. After the router shows the new page, set `document.title`, such as "Projects – Northwind", and move focus to the body or the page's heading.
+
+```tsx source=PrimaryNavigation
+
+```
+
+#### Hierarchy
+
+Pass Breadcrumbs with `wrap={false}` to the PageHeader's `breadcrumbs`, from two levels down. Each level above the page is an item with `label` and `href`; the last item, the page, has only its `label`.
+
+```tsx source=Hierarchy
+
+```
+
+#### Views and quick open
+
+Tabs go under the PageHeader for the views of the object the page is about; a link to another page, such as its settings, goes in the PageHeader's `actions`. A CommandPalette, opened by the [search trigger](search-trigger.md), lists the destinations as items and opens the chosen one through the router.
+
+#### List and detail
+
+`Panes.Root` with `behavior="list-detail"` and a `backLabel` that names the list, such as "All projects", holds a `Panes.List`, a `Panes.Divider` and a `Panes.Detail`, each with its `label`.
+
+```tsx source=ListAndDetail
+
+```
+
+### Composition
+
+The primary navigation is a Rail here, from Scaffold's `navigation`; the trail is Breadcrumbs in the PageHeader, the views Tabs below it, and quick open an IconButton in the TopBar's actions. A Pager ends a page read in order. The parts are the rail, `env-rail`, the quick-open button, `env-top-bar-actions > env-icon-button`, the trail, `env-breadcrumbs`, and the tabs, `env-tabs-list`.
 
 ## Changelog
 

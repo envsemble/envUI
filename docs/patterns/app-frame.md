@@ -14,7 +14,7 @@ aliases:
   - sidebar layout
   - main navigation
 useWhen:
-  - An application has a handful of destinations people move between, and a page for each.
+  - A handful of destinations, each with a page
 avoidWhen:
   - text: A window that draws its own title bar, in an installed application.
     see: window-frame
@@ -59,7 +59,7 @@ The app frame is one [Scaffold](../components/scaffold.md) at the application's 
 
 ### A menu on phones
 
-With many destinations, or none with icons, `forms={{ compact: 'none' }}` hides the bar, and a menu button in the top bar opens the same Drawer in a [Sheet](../components/sheet.md).
+With many destinations, or none with icons, a phone shows no bar: a menu button in the top bar opens the same Drawer in a [Sheet](../components/sheet.md).
 
 ```tsx example=MenuOnPhones stage=shaded
 
@@ -83,13 +83,17 @@ Side content that is not navigation goes in a supporting pane of [Panes](../comp
 
 ```
 
-- Pass the same array to the Bar, the Rail and the Drawer, and mark the current one from the router.
-- Let the Scaffold choose the form; don't choose it in script from the window's width.
+### One list of destinations
+
+The bar, the rail and the drawer show the same destinations, with the current one marked from the router.
+
+### The frame chooses the form
+
+The Scaffold chooses the bar, the rail or the drawer from its own width; don't choose it in script from the window's width.
 
 ### Content
 
-- Name each destination with one or two nouns, the words of its page's title.
-- Keep the account menu to the person's own things, ending with Sign out.
+Name each destination with one or two nouns, the words of its page's title. Keep the account menu to the person's own things, ending with Sign out.
 
 ## Anatomy
 
@@ -98,17 +102,17 @@ Side content that is not navigation goes in a supporting pane of [Panes](../comp
 ```
 
 1. **Top bar** (`env-top-bar`)
-2. **Search** (`env-top-bar-actions > env-icon-button`), the [search trigger](search-trigger.md)
+2. **Search** (`env-top-bar-actions > env-icon-button`)
 3. **Account menu** (`env-avatar-button`)
 4. **Navigation** (`env-rail`)
 5. **Page header** (`env-page-header`)
 6. **Page** (`env-page`)
 
-Not shown: the [CommandPalette](../components/command-palette.md) the search opens.
+Not shown: the [CommandPalette](../components/command-palette.md) the search opens, as the [search trigger](search-trigger.md) describes.
 
 ## Adapting to width
 
-The bar on a compact width, the rail on a medium one and the drawer from expanded.
+A bar on a narrow window, a rail on a medium one and a drawer from a wide one.
 
 ```tsx example=FrameByWidth stage=shaded widths="24 44 60"
 
@@ -127,6 +131,36 @@ The bar on a compact width, the rail on a medium one and the drawer from expande
 
 - Which destination is current, and `document.title` for each page.
 - The page's one `h1`, in its PageHeader.
+
+## In code
+
+### Usage
+
+Render one Scaffold at the application's root, around the router's outlet. Its `topBar` is a TopBar with the application's `title` and, in `actions`, the search IconButton in a Tooltip and the account menu's AvatarButton. Its `navigation` takes `bar`, `rail` and `drawer`, a Bar, a Rail and a Drawer given the same array of destinations, with `current` set from the router. The router's page, a Page with its PageHeader, is the Scaffold's children.
+
+```tsx source=AppFrame
+
+```
+
+#### A menu on phones
+
+`forms={{ compact: 'none', medium: 'drawer' }}` shows no navigation on a compact window and the drawer from medium. A menu IconButton in the TopBar's `start` opens a Sheet with `side="start"` holding the same Drawer, which closes the sheet when a destination is chosen.
+
+```tsx source=MenuOnPhones
+
+```
+
+#### Details beside the page
+
+`Panes.Root` with `behavior="supporting"` fills the Scaffold's body: `Panes.Main` holds the page, with a `Panes.Trigger` that opens `Panes.Supporting`, and each pane scrolls on its own.
+
+#### By width
+
+The Scaffold shows the bar on a `compact` window, the rail on a `medium` one and the drawer from `expanded`, by its own container's width; `forms` changes the form for a window class. Don't choose the form in script from the window's width.
+
+### Composition
+
+The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a CommandPalette, as the [search trigger](search-trigger.md) shows, and the account menu is the [account menu](account-menu.md) pattern.
 
 ## Changelog
 

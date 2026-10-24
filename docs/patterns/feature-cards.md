@@ -13,7 +13,8 @@ aliases:
   - promo card
   - onboarding card
 useWhen:
-  - A feature or a next step is introduced on a page, such as importing plans or inviting the team, with one action that starts it.
+  - Introducing a feature or a next step, such as inviting the team
+  - One action that starts it
 avoidWhen:
   - text: A summary of one subject people open or act on, with a title row and actions.
     use: Card
@@ -33,7 +34,7 @@ composes:
 
 ## Overview
 
-The [Card](../components/card.md) holds one [Row](../components/row.md): a muted icon, a [Column](../components/column.md) of [Text](../foundations/typography.md), and the [Button](../components/button.md) at the end.
+Everything sits in one [Row](../components/row.md) inside the [Card](../components/card.md), the icon muted and the [Button](../components/button.md) at the far end, so the action is the last thing people read.
 
 ```tsx example=ImportPlans
 
@@ -41,12 +42,13 @@ The [Card](../components/card.md) holds one [Row](../components/row.md): a muted
 
 ## When to use
 
-- Give the heading the level the page's outline needs, such as `render={<h3 />}` under a section's `h2`; its look stays the headline type.
-- A few feature cards side by side sit in a [Grid](../components/grid.md) of even columns.
+### Heading level
+
+Give the heading the level the page's outline needs, such as one below the section it sits in; its look stays the same. A few feature cards side by side sit in a [Grid](../components/grid.md) of even columns.
 
 ### Content
 
-- The heading names the feature, the sentence says what it gives people, and the button starts it with a verb: Import, Invite people.
+The heading names the feature, the sentence says what it gives people, and the button starts it with a verb: Import, Invite people.
 
 ## Anatomy
 
@@ -62,7 +64,7 @@ The [Card](../components/card.md) holds one [Row](../components/row.md): a muted
 
 ## Adapting to width
 
-The text takes the room the icon and the action leave, at least 16 rem; in a narrower card the action moves below the text.
+The text takes the room the icon and the action leave; in a narrow card the action moves below the text.
 
 ```tsx example=InviteFeature widths="24 40"
 
@@ -79,6 +81,20 @@ The text takes the room the icon and the action leave, at least 16 rem; in a nar
 
 - A heading level that fits the page's outline.
 - An action label that makes sense on its own, such as Invite people rather than Start.
+
+## In code
+
+### Usage
+
+A Card holds a Row with `wrap` and `align="center"`: the icon in a muted Text with `render={<span />}`, a Column of a headline Text and a `body-sm` Text, and a secondary Button. The Column takes `flex: '1 1 16rem'`, so the text keeps at least 16 rem and the action wraps below it in a narrower card. Render the heading at the level the outline needs, such as `render={<h3 />}` under a section's `h2`; `variant="headline"` keeps its look. The Button takes `href` where the action goes somewhere.
+
+```tsx source=ImportPlans
+
+```
+
+### Composition
+
+Lay several feature cards side by side in a Grid of even columns. The parts are the card, `env-card`, the icon, `env-card env-text > svg`, the heading, `env-card env-text[data-variant='headline']`, the sentence, `env-card env-text[data-variant='body-sm']`, and the action, `env-card env-button`.
 
 ## Changelog
 
