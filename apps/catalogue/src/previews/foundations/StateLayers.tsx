@@ -87,7 +87,7 @@ const samples: readonly { name: string; render: (state: ForcedState) => ReactNod
  */
 export function StateLayers() {
   return (
-    <Example title="Interaction states" size="wide" stage="none">
+    <Example title="Interaction states" size="wide" explains>
       <Text emphasis="muted">
         Hover and press take tokens of their own, in every theme. A component given colors of its
         own through its color properties lays its content color over its container instead, as

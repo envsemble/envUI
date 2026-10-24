@@ -1,11 +1,10 @@
 /* The stage every figure sits on: live examples, do and don't figures, anatomy figures, the tiles
-   of Related and, on a page on the figure template, specimens alike. An example is envUI itself, so
-   its stage is a theme boundary of its own (ExampleTheme.tsx) in the theme opposite the reader's,
-   with the reader's contrast and scale, painted in that theme's page color with a surface's
-   corners; its popups, dialogs and toasts keep that theme through their portals. A figure that
-   explains the system rather than showing envUI at work, on a foundation page, stays in the
-   reader's theme on a pane's fill. Both centre what they show. A device of the documentation,
-   kept out of envUI. */
+   of Related and, on a page on the figure template, specimens alike. An example is envUI itself,
+   in the theme the reader has chosen, on a recessed canvas: a well a shade deeper than the page,
+   with a surface's corners and no edge, so the example's own surfaces rise out of it and never
+   read as the catalogue's. A figure that explains
+   the system rather than showing envUI at work, on a foundation page, sits on the page itself.
+   Both centre what they show. A device of the documentation, kept out of envUI. */
 .docs-live-example,
 .docs-verdict-stage,
 .docs-anatomy-stage {
@@ -25,32 +24,41 @@
   border-radius: var(--env-radius-surface);
 }
 
-/* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its
-   navigation, top bar and body: the stage a shade darker than both the window's page and its
-   navigation, the darker of which is the navigation's in the light theme and the page's in the
-   dark one, so the window's edges show. In the example's own theme, high contrast included. */
-:is(
-  .docs-live-example,
-  .docs-verdict-stage,
-  .docs-anatomy-stage,
-  .docs-related-stage
-)[data-stage='shaded'] {
-  background-color: oklch(from var(--env-color-bg-default) calc(l - 0.05) c h);
+/* The recessed canvas: the page's background, or `--docs-canvas-under`, 0.035 deeper in OKLCH
+   lightness in the light themes (`--docs-canvas-depth`) and 0.045 in the dark ones, high contrast
+   included. The contrast gate measures every pair an example paints on the page on the canvas too
+   (`catalogue-canvas` in tests/contrast/Pairs.ts, which repeats this formula). On the band
+   (Template.css) the dark themes' canvas is deeper than the band too. A canvas deeper than the
+   band would take envUI's light colors below their contrast, so there the light themes' canvas
+   is the page's own color, which stands lighter than the band. */
+.docs-live-example,
+.docs-verdict-stage,
+.docs-anatomy-stage,
+.docs-related-stage,
+.docs-foundation-stage[data-figure='example'],
+.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
+  background-color: light-dark(
+    oklch(
+      from var(--docs-canvas-under, var(--env-color-bg-page))
+        calc(l - var(--docs-canvas-depth, 0.035)) c h
+    ),
+    oklch(from var(--docs-canvas-under, var(--env-color-bg-page)) calc(l - 0.045) c h)
+  );
 }
 
+/* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its
+   navigation, top bar and body, whose edges must show on the canvas. In the dark themes the
+   canvas is already deeper than both, the navigation being lighter than the page. In the light
+   themes it is recessed from the navigation's fill instead, the darker of the window's two, or
+   from the band's where it sits on the band, which is deeper still. */
 :is(
     .docs-live-example,
     .docs-verdict-stage,
     .docs-anatomy-stage,
     .docs-related-stage
-  )[data-stage='shaded'][data-env-theme='dark'] {
-  background-color: oklch(from var(--env-color-bg-page) calc(l - 0.05) c h);
-}
-
-/* A figure that explains the system, in the reader's theme: a pane's fill sets it apart from the
-   page as an example's theme does. */
-.docs-foundation-stage[data-figure='explanation'] {
-  background: var(--env-color-bg-default);
+  )[data-stage='shaded'][data-env-theme='light'] {
+  --docs-canvas-under: var(--docs-band-fill, var(--env-color-bg-default));
+  --docs-canvas-depth: 0.035;
 }
 
 /* What the stage shows keeps to its width, however wide its content would be. */
@@ -121,10 +129,11 @@
   padding: var(--env-space-6);
 }
 
-/* A foundation's figure without a stage (`stage="none"`), where the subject is a color, such as
-   the palette's swatches and the state layers that sit on the page: no fill and no inset, so it
-   sits right under its title and lines up with the text, as a section's text does. */
-.docs-foundation-stage[data-stage='none'] {
+/* A foundation's figure that explains the system (`explains`), such as the spacing scale, the
+   palette's swatches and the state layers: on the page itself, with no fill and no inset, so it
+   sits right under its title and lines up with the text, as a section's text does, and never
+   reads as an example. */
+.docs-foundation-stage[data-figure='explanation'] {
   justify-items: start;
   min-block-size: 0;
   padding: 0;
@@ -311,13 +320,15 @@
   animation: none;
 }
 
-/* Forced colors paint every stage in Canvas, like the page: a border keeps each example apart. */
+/* Forced colors paint the canvas in Canvas, like the page: a frame keeps each example apart. A
+   figure that explains the system sits on the page and takes none. */
 @media (forced-colors: active) {
   .docs-live-example,
   .docs-verdict-stage,
   .docs-anatomy-stage,
-  .docs-foundation-stage,
-  .docs-related-stage {
+  .docs-foundation-stage[data-figure='example'],
+  .docs-related-stage,
+  .docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
     border: 1px solid CanvasText;
   }
 }

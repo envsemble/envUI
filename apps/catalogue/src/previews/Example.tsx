@@ -1,6 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
-import { ExampleTheme, ExplanationScope, useFigureKind } from '../template/ExampleTheme';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
@@ -30,7 +29,6 @@ export function Example({
   className,
   gap = 4,
   size = 'content',
-  stage,
   explains = false,
 }: {
   title?: string;
@@ -40,11 +38,10 @@ export function Example({
   className?: string;
   gap?: SpaceStep;
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
-  /** `none` leaves the stage's fill out, where the subject is a color, such as a swatch. */
-  stage?: 'none';
   /**
-   * Whether the figure explains the system, such as a scale of tokens, rather than shows envUI at
-   * work: it then stays in the catalogue's theme, where an example takes the opposite one.
+   * Whether the figure explains the system, such as a scale of tokens or the palette, rather than
+   * shows envUI at work: it then sits on the page itself, under its title and in line with the
+   * text, rather than on the recessed canvas of an example.
    */
   explains?: boolean;
 }) {
@@ -56,7 +53,6 @@ export function Example({
       render={<section />}
       gap={gap}
       data-size={size}
-      data-stage={stage}
       className={['docs-example', className].filter(Boolean).join(' ')}
     >
       {title && actions ? (
@@ -72,16 +68,10 @@ export function Example({
         </Text>
       ) : null}
       <PartHeadingLevel value={title ? ((level + 1) as 3 | 4) : level}>
-        {staged && (explains || stage === 'none') ? (
-          <ExplanationScope>
-            <div className="docs-foundation-stage" data-figure="explanation" data-stage={stage}>
-              {children}
-            </div>
-          </ExplanationScope>
-        ) : staged ? (
-          <ExampleTheme className="docs-foundation-stage" data-figure="example">
+        {staged ? (
+          <div className="docs-foundation-stage" data-figure={explains ? 'explanation' : 'example'}>
             {children}
-          </ExampleTheme>
+          </div>
         ) : (
           children
         )}
@@ -97,7 +87,7 @@ export function Example({
 
 /**
  * Related specimens share a responsive grid; the components keep their own styling. On its own, as
- * a component's specimen, the grid is an example in the theme opposite the catalogue's; inside a
+ * a component's specimen, the grid is an example on the recessed canvas (Stage.css); inside a
  * figure, it takes the figure's.
  */
 export function SpecimenGrid({
@@ -107,13 +97,6 @@ export function SpecimenGrid({
   children: ReactNode;
   size?: 'compact' | 'field' | 'card' | 'wide';
 }) {
-  const kind = useFigureKind();
-  if (kind === 'none')
-    return (
-      <ExampleTheme className="docs-specimen-grid" data-size={size}>
-        {children}
-      </ExampleTheme>
-    );
   return (
     <div className="docs-specimen-grid" data-size={size}>
       {children}
@@ -146,7 +129,7 @@ export function Specimen({
 
 /**
  * A matrix of states that scrolls sideways where it is wider than the page, by keyboard too. As a
- * component's specimen it is an example in the theme opposite the catalogue's, as SpecimenGrid is.
+ * component's specimen it is an example on the recessed canvas, as SpecimenGrid is.
  */
 export function MatrixScroll({
   label,
@@ -157,16 +140,14 @@ export function MatrixScroll({
   className?: string;
   children: ReactNode;
 }) {
-  const kind = useFigureKind();
-  const props = {
-    className: ['docs-matrix-scroll', className].filter(Boolean).join(' '),
-    tabIndex: 0,
-    role: 'region',
-    'aria-label': label,
-  };
-  return kind === 'none' ? (
-    <ExampleTheme {...props}>{children}</ExampleTheme>
-  ) : (
-    <div {...props}>{children}</div>
+  return (
+    <div
+      className={['docs-matrix-scroll', className].filter(Boolean).join(' ')}
+      tabIndex={0}
+      role="region"
+      aria-label={label}
+    >
+      {children}
+    </div>
   );
 }

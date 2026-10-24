@@ -566,9 +566,9 @@ const figureAttributes = {
   variants: { allowed: ['caption', 'stage'], required: [] },
 };
 /**
- * The fills a figure's stage takes besides the default, the page color of the examples' theme:
- * `stage="shaded"`, a shade darker than the page's and the navigation's backgrounds, where the
- * subject is a whole window that shows both, such as a Scaffold.
+ * The fills a figure's stage takes besides the default, the canvas recessed from what it sits on:
+ * `stage="shaded"`, a canvas deeper than both the page's and the navigation's backgrounds, where
+ * the subject is a whole window that shows both, such as a Scaffold.
  */
 const stageFills = ['shaded'];
 /**

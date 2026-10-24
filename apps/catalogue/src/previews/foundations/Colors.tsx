@@ -149,7 +149,7 @@ function ColorPalette() {
     // Each group is an Example, so the visual baseline captures it; their margins space them.
     <Column ref={paletteElement} gap={0} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
-        <Example key={group} title={group} size="collection" stage="none">
+        <Example key={group} title={group} size="collection" explains>
           <Column gap={0}>
             {tokens.map(([token, label]) => (
               <div className="docs-palette-row" key={label}>

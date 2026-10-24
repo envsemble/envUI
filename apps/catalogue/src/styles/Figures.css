@@ -204,7 +204,7 @@
   gap: 0.125rem;
 }
 
-/* The stage is every stage's card, in the examples' theme; its corners are the connected rows'. */
+/* The stage is every stage's recessed canvas (Stage.css); its corners are the connected rows'. */
 .docs-verdict-stage {
   min-block-size: 10rem;
   padding: var(--env-space-7) var(--env-space-6);
@@ -239,9 +239,8 @@
   font: var(--env-type-body);
 }
 
-/* An anatomy figure: the component on its stage, in the examples' theme, with numbered callouts
-   on its parts, measured from the live parts, and the legend of part names below. The callouts
-   take the stage's theme, so they read on it in either. */
+/* An anatomy figure: the component in the reader's theme on its recessed canvas, with numbered
+   callouts on its parts, measured from the live parts, and the legend of part names below. */
 .docs-anatomy,
 .docs-variants {
   display: grid;
