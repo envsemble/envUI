@@ -14,8 +14,8 @@ aliases:
   - MenubarMenu
   - access keys
 useWhen:
-  - A document-centred application has many commands, grouped as a desktop application groups them, such as File, Edit, View and Help.
-  - A window draws its own title bar and holds the application's menus at its start (with TopBar's `titleBar`).
+  - Many commands in a document-centred application, grouped as File, Edit, View and Help
+  - The application's menus at the start of a title bar the window draws itself
 avoidWhen:
   - text: A short list of actions behind one control.
     use: Menu
@@ -47,15 +47,17 @@ The [window frame](../patterns/window-frame.md) pattern shows the whole title ba
 
 ### Access keys
 
-With `accessKeys`, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, and <kbd>Alt</kbd> with the letter opens it. Turn it on for one menubar per window.
+A menubar can underline a letter of each menu's name while <kbd>Alt</kbd> is held, and <kbd>Alt</kbd> with the letter opens that menu. One menubar per window has them.
 
 ## When to use
 
-- Offer the most frequent commands in visible controls too.
+### Visible controls too
+
+Offer the most frequent commands in visible controls too, not only in the menus.
 
 ### Content
 
-- Name items as in [Menu](../components/menu.md), with an ellipsis for a command that asks for more, such as Export… in File.
+Name items as in [Menu](../components/menu.md), with an ellipsis for a command that asks for more, such as Export… in File.
 
 ## Anatomy
 
@@ -72,14 +74,14 @@ With `accessKeys`, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, an
 
 ### Keyboard
 
-| Key                                                             | Action                                                        |
-| --------------------------------------------------------------- | ------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                 | Moves to the menubar, one tab stop, and out of it.            |
-| <kbd>←</kbd>, <kbd>→</kbd>                                      | Moves between triggers, or between open menus.                |
-| <kbd>↓</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd> on a trigger | Opens its menu with the first item highlighted.               |
-| <kbd>Esc</kbd>                                                  | Closes the menu and leaves focus on its trigger.              |
-| <kbd>Alt</kbd>                                                  | With `accessKeys`, moves focus to the first trigger and back. |
-| <kbd>Alt</kbd> with an access key                               | Opens that menu.                                              |
+| Key                                                             | Action                                                       |
+| --------------------------------------------------------------- | ------------------------------------------------------------ |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                 | Moves to the menubar, one tab stop, and out of it.           |
+| <kbd>←</kbd>, <kbd>→</kbd>                                      | Moves between triggers, or between open menus.               |
+| <kbd>↓</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd> on a trigger | Opens its menu with the first item highlighted.              |
+| <kbd>Esc</kbd>                                                  | Closes the menu and leaves focus on its trigger.             |
+| <kbd>Alt</kbd>                                                  | With access keys, moves focus to the first trigger and back. |
+| <kbd>Alt</kbd> with an access key                               | Opens that menu.                                             |
 
 ### envUI provides
 
@@ -91,6 +93,47 @@ With `accessKeys`, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, an
 
 - An `aria-label`, such as Application menu.
 - The keys behind every shortcut, and commands that act on `previousFocus` where they edit a field.
+
+## In code
+
+### Usage
+
+Menubar.Root, named by its `aria-label`, holds a Menubar.Menu for each menu. A Menubar.Menu takes its trigger's `label`, such as File, and its items as children: Menu.Item, Menu.Submenu, Menu.Separator and Menu's other parts, with their shortcuts. `disabled` dims one menu's trigger, or on Menubar.Root every menu. A menu opens on its own, or with `open`, `defaultOpen` and `onOpenChange`.
+
+```tsx source=NotesMenubar
+
+```
+
+#### Commands that edit a field
+
+The menubar returns focus to where it was after a command. `onOpenChange(open, details)` receives `details.previousFocus`, the element that had focus before the menubar took it, so an Edit command such as Copy acts on that field.
+
+```tsx
+<Menubar.Menu
+  label="Edit"
+  onOpenChange={(open, { previousFocus }) => {
+    if (open) editTarget.current = previousFocus;
+  }}
+>
+  …
+</Menubar.Menu>
+```
+
+#### Access keys
+
+With `accessKeys` on Menubar.Root, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, a letter of its label such as F for File, <kbd>Alt</kbd> with the letter opens that menu, and <kbd>Alt</kbd> alone moves focus to the menubar and back. They are off by default; turn them on for one menubar per window.
+
+#### In a title bar
+
+In a window that draws its own title bar, a TopBar with `titleBar`, put the menubar in its `start`, as the [window frame](../patterns/window-frame.md) pattern does.
+
+```tsx source=InTitleBar
+
+```
+
+### Composition
+
+The menubar is `env-menubar`, with a trigger, `env-menubar-trigger`, for each menu, whose access key is `env-menubar-access-key`. Each menu's popup is the shared popup surface, `env-menu`; `className`, `style` and `ref` on Menubar.Menu reach it, and the trigger is the menubar's own. The arrow keys between menus follow the text direction.
 
 ## Changelog
 
