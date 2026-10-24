@@ -146,6 +146,8 @@ export interface DocumentationEntry {
   /** The page's Markdown after its title. */
   markdown: string;
   metadata?: DocumentationMetadata;
+  /** The exports a page off the template documents, such as Icon on the Icons foundation's. */
+  components?: string[];
   /** A component page on the figure template: short text and live figures in every section. */
   format?: 'figures';
   /** The sections of a page on the template; absent on pages not on it, such as guides. */

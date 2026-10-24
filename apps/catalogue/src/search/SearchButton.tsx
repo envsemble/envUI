@@ -44,7 +44,6 @@ export function SearchButton({
   return (
     <Button
       variant="secondary"
-      fullWidth
       startIcon={<Search />}
       end={<Kbd keys={keys} aria-hidden />}
       aria-keyshortcuts={ariaKeyShortcuts}

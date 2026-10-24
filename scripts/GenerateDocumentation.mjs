@@ -1613,7 +1613,11 @@ export function generateDocumentation() {
   const entries = documents.map((document) => {
     const { yaml: _yaml, frontmatter, sections, ...entry } = document;
     const kind = pageKindOf(document.path);
-    if (!frontmatter || !sectionedKinds.has(kind)) return entry;
+    if (!frontmatter) return entry;
+    // A page off the template, such as a foundation's, names the exports it documents, such as
+    // Icon, so a page that relates to one links to it.
+    if (!sectionedKinds.has(kind))
+      return frontmatter.components ? { ...entry, components: frontmatter.components } : entry;
     const metadata = {
       status: frontmatter.status,
       since: frontmatter.since,

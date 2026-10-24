@@ -14,14 +14,18 @@ import { pageHref, referencePages, routeOfDocument } from '../navigation/Documen
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import { ExampleRender } from './LiveExample';
+import { hasPageSpecimen, PageSpecimen } from './PageSpecimens';
 
 /**
  * The page that documents a component, for the components a page relates to and the exports a
- * pattern combines: a part such as Menu.Item is documented on the page of its namespace.
+ * pattern combines: a part such as Menu.Item is documented on the page of its namespace, and an
+ * export such as Icon on the foundation's page that names it.
  */
 export function pageOf(component: string) {
   const namespace = component.split('.')[0];
-  return referencePages.find((page) => page.reference.metadata?.components.includes(namespace));
+  return referencePages.find((page) =>
+    (page.reference.metadata?.components ?? page.reference.components)?.includes(namespace),
+  );
 }
 
 /** The address of a related page: a component's or foundation's page, or any other page's route. */
@@ -39,6 +43,8 @@ interface Preview {
   open: boolean;
   /** The fill its figure's stage takes, where the page's would hide it. */
   stage?: StageFill;
+  /** A page without an example, such as a foundation's: the id of its specimen (PageSpecimens.tsx). */
+  specimen?: string;
 }
 
 /** Letters alone, lower case, to match an export's name with a figure's heading or file. */
@@ -48,7 +54,8 @@ const squash = (text: string) => text.toLowerCase().replace(/[^a-z\d]/g, '');
  * What a tile shows of a page: where its component floats over the page, such as a dialog or a
  * menu, its anatomy figure, which shows it open; else the Overview's first example, its lead
  * example. For an export that isn't the page's first, such as Textarea on the TextField page, the
- * first example named after it, where there is one.
+ * first example named after it, where there is one. A page without one, such as a foundation's,
+ * shows its specimen.
  */
 export function previewOf(document: Document, component?: string): Preview | undefined {
   const blocks = (document.sections ?? []).flatMap((section) =>
@@ -68,7 +75,10 @@ export function previewOf(document: Document, component?: string): Preview | und
     ?.find((section) => section.id === 'overview')
     ?.blocks.find((block) => block.kind === 'example' && !block.role);
   const chosen = named || (!own && anatomy?.open ? anatomy : lead);
-  if (!chosen || chosen.kind !== 'example') return undefined;
+  if (!chosen || chosen.kind !== 'example')
+    return hasPageSpecimen(document.id)
+      ? { page: document.id, name: document.id, open: false, specimen: document.id }
+      : undefined;
   return {
     page: document.id,
     name: chosen.name,
@@ -222,7 +232,8 @@ function useFit(
 
 /**
  * A tiny live picture of an alternative on the recessed canvas: its example, inert and scaled down
- * to fit, rendered once the tiles near the viewport. Without an example, a page icon.
+ * to fit, rendered once the tiles near the viewport; for a page without one, its specimen, in the
+ * same way. Without either, a page icon.
  */
 function TilePreview({ preview, near }: { preview?: Preview; near: boolean }) {
   const theme = useTheme();
@@ -236,7 +247,8 @@ function TilePreview({ preview, near }: { preview?: Preview; near: boolean }) {
       {...theme}
       ref={stage}
       className="docs-related-stage"
-      data-example={preview?.name}
+      data-example={preview?.specimen ? undefined : preview?.name}
+      data-specimen={preview?.specimen}
       data-stage={preview?.stage}
       data-empty={preview ? undefined : ''}
     >
@@ -245,7 +257,9 @@ function TilePreview({ preview, near }: { preview?: Preview; near: boolean }) {
       ) : (
         shown && (
           <div ref={canvas} className="docs-related-canvas" inert aria-hidden>
-            {preview.open ? (
+            {preview.specimen ? (
+              <PageSpecimen id={preview.specimen} />
+            ) : preview.open ? (
               <PortalContainer container={layer} contained>
                 <ExampleRender page={preview.page} name={preview.name} fallback={null} />
               </PortalContainer>

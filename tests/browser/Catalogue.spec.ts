@@ -495,6 +495,26 @@ test("the Docs list what each pattern needs, and end Field's page with Related",
   expect(ends).toBe(true);
 });
 
+test("a page's changelog in the Docs is collapsed, and a link to it opens it", async ({ page }) => {
+  await page.goto(`${catalogueUrl}/docs/components/button`);
+  const changelog = page.locator('.docs-changelog details');
+  await expect(changelog.locator('summary')).toHaveText('Changelog');
+  await expect(changelog).not.toHaveAttribute('open');
+  await expect(changelog.locator('.docs-changelog-entries')).toBeHidden();
+  // Following a link to it on the page opens it, as loading its address does.
+  await page.evaluate(() => {
+    const link = document.createElement('a');
+    link.href = '/docs/components/button#changelog';
+    document.querySelector('#docs-main')!.append(link);
+    link.click();
+    link.remove();
+  });
+  await expect(changelog).toHaveAttribute('open');
+  await page.goto(`${catalogueUrl}/docs/patterns/forms#changelog`);
+  await expect(page.locator('.docs-changelog details')).toHaveAttribute('open');
+  await expect(page.locator('#changelog')).toBeInViewport();
+});
+
 test('the props in the Docs link each source file at the revision the site was built from', async ({
   page,
 }) => {
@@ -663,6 +683,19 @@ test('the navigation holds the wordmark and search, the page the other area and 
     const [mark, field] = await Promise.all([wordmark.boundingBox(), search.boundingBox()]);
     expect(Math.abs(mark!.y + mark!.height / 2 - (field!.y + field!.height / 2))).toBeLessThan(4);
     expect(mark!.x + mark!.width).toBeLessThanOrEqual(field!.x);
+    // Search is as wide as its content; on the Site it is centred in the drawer, and the drawer's
+    // first item starts level with the rail's first destination.
+    const drawer = (await page.locator('.docs-sidebar').boundingBox())!;
+    expect(field!.width).toBeLessThan(drawer.width - 24);
+    // The list may be scrolled to the current page: where it starts is where its first item does.
+    const first = (await page.locator('.docs-sidebar .env-drawer-list').boundingBox())!;
+    if (brand === 'Site') {
+      const left = field!.x - drawer.x;
+      const right = drawer.x + drawer.width - (field!.x + field!.width);
+      expect(Math.abs(left - right), address).toBeLessThan(2);
+      const destination = (await page.locator('.docs-rail .env-rail-item').first().boundingBox())!;
+      expect(Math.abs(first.y - destination.y), address).toBeLessThan(1);
+    }
     // The other area and the Display menu are ghost buttons at the page's top end.
     const actions = page.locator('.docs-page-actions');
     for (const control of [
@@ -893,20 +926,36 @@ test("the overview's hero shows the package's version under the wordmark, and sa
     await expect(hero.getByRole('link', { name, exact: true })).toBeVisible();
 });
 
-test('the footer of the Site and the Docs credits Material Symbols with their license', async ({
+test('the Icons page credits Material Symbols with their license, and the footer does not', async ({
   page,
 }) => {
-  for (const path of ['', 'docs']) {
-    await page.goto(`${catalogueUrl}/${path}`);
-    const credit = page.locator('.docs-footer-credit');
-    await expect(credit, path).toHaveText(
-      'Icons are Material Symbols, under the Apache License 2.0.',
-    );
-    await expect(credit.getByRole('link', { name: 'Apache License 2.0' })).toHaveAttribute(
-      'href',
-      'https://www.apache.org/licenses/LICENSE-2.0',
-    );
-  }
+  await page.goto(`${catalogueUrl}/foundations/icons`);
+  const credit = page.locator('.docs-icons-credit');
+  await expect(credit.getByRole('heading', { name: 'Where the icons come from' })).toBeVisible();
+  await expect(credit.getByRole('link', { name: 'Material Symbols' })).toHaveAttribute(
+    'href',
+    'https://m3.material.io/styles/icons',
+  );
+  await expect(credit.getByRole('link', { name: 'Apache License 2.0' })).toHaveAttribute(
+    'href',
+    'https://www.apache.org/licenses/LICENSE-2.0',
+  );
+  await expect(page.locator('.docs-footer')).not.toContainText('Material Symbols');
+});
+
+test('a Related tile of a page without an example shows its specimen', async ({ page }) => {
+  // Icon is documented on the Icons foundation's page, which has no example: its tile links there
+  // and shows a few of the icons, fitted to its stage as an example is.
+  await page.goto(`${catalogueUrl}/components/avatar`);
+  const tile = page.locator('.docs-related-tile').filter({ hasText: /^Icon/ });
+  await tile.scrollIntoViewIfNeeded();
+  await expect(tile.getByRole('link', { name: 'Icon', exact: true })).toHaveAttribute(
+    'href',
+    '/foundations/icons',
+  );
+  await expect(tile.locator('.docs-related-stage')).toHaveAttribute('data-specimen', 'icons');
+  await expect(tile.locator('.docs-related-canvas[data-fitted] svg')).toHaveCount(6);
+  await expect(page.locator('.docs-related-placeholder')).toHaveCount(0);
 });
 
 test("every label and heading of the Site's and the Docs' drawers fits on one line at the default width", async ({
