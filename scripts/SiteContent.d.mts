@@ -32,3 +32,4 @@ export declare function siteStructure(document: {
 export declare function optionPieces(
   markdown: string,
 ): ({ markdown: string } | { options: OptionTable; raw: string })[];
+export declare function technicalText(text: string): { kind: string; text: string }[];

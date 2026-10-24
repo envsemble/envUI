@@ -24,9 +24,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Foundations
 
-- [Colors & themes](foundations/colors.md) — Semantic colors that carry the same purpose across light and dark themes.
+- [Colors & themes](foundations/colors.md) — Colors named by their role, so every screen works in light, dark and high contrast.
 - [Typography](foundations/typography.md) — Shared styles for headings, body copy and supporting text.
-- [Spacing & shape](foundations/spacing.md) — A shared scale for space, corners and controls that grow with content.
+- [Spacing & shape](foundations/spacing.md) — How space groups things, controls line up and corners say what a thing is.
 - [Scale & density](foundations/scale.md) — The comfortable and compact app scales, control sizes and the row density of data components.
 - [Layout & stacking](foundations/responsive.md) — Window classes, container queries, measuring a container and the stacking order of frames and popups.
 - [Composition & extension](foundations/composition.md) — Build product interfaces from shared primitives and existing components.

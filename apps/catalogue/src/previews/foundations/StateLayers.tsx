@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { Button, Drawer, List, Text, TextField } from '@envsemble/envui';
+import { Button, Drawer, List, TextField } from '@envsemble/envui';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Example, MatrixScroll } from '../Example';
+import { MatrixScroll } from '../Example';
 
 const states = [
   { title: 'Rest', className: 'docs-force-default' },
@@ -65,7 +65,7 @@ const samples: readonly { name: string; render: (state: ForcedState) => ReactNod
     render: (state) => (
       <div className={state} inert>
         <Drawer
-          aria-label={`Navigation, ${state}`}
+          aria-label={`Navigation, ${states.find((each) => each.className === state)!.title.toLowerCase()}`}
           destinations={[{ label: 'Inbox', icon: <Inbox />, onSelect: () => {} }]}
         />
       </div>
@@ -83,39 +83,34 @@ const samples: readonly { name: string; render: (state: ForcedState) => ReactNod
 
 /**
  * Hover and press of buttons, list rows, navigation items and fields, each forced into its state,
- * so the state layers can be compared with each other and across themes.
+ * so the state layers can be compared with each other and across themes. It sits on the page, as a
+ * specimen of the system, under the Colors page's block that explains it.
  */
 export function StateLayers() {
   return (
-    <Example title="Interaction states" size="wide" explains>
-      <Text emphasis="muted">
-        Hover and press have colors of their own, in every theme. A component given colors of its
-        own lays its label color over its fill instead, so it keeps its states.
-      </Text>
-      <MatrixScroll label="Interaction states" className="docs-state-layers">
-        <table className="docs-matrix">
-          <thead>
-            <tr>
-              <th scope="col">Component</th>
+    <MatrixScroll label="Interaction states" className="docs-state-layers">
+      <table className="docs-matrix">
+        <thead>
+          <tr>
+            <th scope="col">Component</th>
+            {states.map((state) => (
+              <th scope="col" key={state.title}>
+                {state.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {samples.map((sample) => (
+            <tr key={sample.name}>
+              <th scope="row">{sample.name}</th>
               {states.map((state) => (
-                <th scope="col" key={state.title}>
-                  {state.title}
-                </th>
+                <td key={state.title}>{sample.render(state.className)}</td>
               ))}
             </tr>
-          </thead>
-          <tbody>
-            {samples.map((sample) => (
-              <tr key={sample.name}>
-                <th scope="row">{sample.name}</th>
-                {states.map((state) => (
-                  <td key={state.title}>{sample.render(state.className)}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </MatrixScroll>
-    </Example>
+          ))}
+        </tbody>
+      </table>
+    </MatrixScroll>
   );
 }

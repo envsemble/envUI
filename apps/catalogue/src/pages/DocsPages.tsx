@@ -16,6 +16,8 @@ import type { Documentation as Document, Reference } from '../Reference';
 import { Documentation, GuidanceLists } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
+import { ColorPalette } from '../previews/foundations/ColorPalette';
+import { SpecimenHeadingLevel } from '../previews/Example';
 import { ReleaseNotes } from './ReleaseNotes';
 import { subsections } from '../../../../scripts/SiteContent.mjs';
 import { headingSlug } from '../../../../scripts/SearchAnchors.mjs';
@@ -214,6 +216,27 @@ function SiteLink({ path }: { path: string }) {
   );
 }
 
+/**
+ * The colors guide's editable palette: every role a component paints, by its token, with its value
+ * in the current theme, each a swatch that picks another color for this visit.
+ */
+function PaletteSection() {
+  return (
+    <Column render={<section />} gap={5} aria-labelledby="palette">
+      <Text render={<h2 />} variant="headline" id="palette">
+        Try the palette
+      </Text>
+      <Text emphasis="muted">
+        Each swatch shows a token&apos;s value in the theme you are reading in. Press one to pick
+        another color: the whole catalogue follows, in this theme only, until you reload.
+      </Text>
+      <SpecimenHeadingLevel value={3}>
+        <ColorPalette />
+      </SpecimenHeadingLevel>
+    </Column>
+  );
+}
+
 /** A foundation's written guidance and reference, whose visuals are its page on the Site. */
 export function FoundationGuidePage({ page }: { page: SitePage }) {
   const document = page.document!;
@@ -231,6 +254,7 @@ export function FoundationGuidePage({ page }: { page: SitePage }) {
         <GuidanceLists value>
           <Documentation document={document} />
         </GuidanceLists>
+        {document.id === 'colors' && <PaletteSection />}
       </Column>
     </>
   );

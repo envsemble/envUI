@@ -4,7 +4,13 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { marked } from 'marked';
 import ts from 'typescript';
-import { optionTable, siteInlineCode, siteStructure } from '../scripts/SiteContent.mjs';
+import {
+  optionTable,
+  siteInlineCode,
+  siteStructure,
+  siteText,
+  technicalText,
+} from '../scripts/SiteContent.mjs';
 import {
   examplesDirectory,
   isPropsTable,
@@ -435,5 +441,41 @@ test("an option table after a variants figure names the figure's variants", () =
     found,
     [],
     "Name the options as the variants figure's legend does, in its order.",
+  );
+});
+
+test('technical text is found in words, and plain words are left alone', () => {
+  const kinds = (text) => technicalText(text).map(({ kind }) => kind);
+  assert.deepEqual(kinds('Use --env-color-bg-page here'), ['token']);
+  assert.deepEqual(kinds('The env-card-heading part'), ['class name']);
+  assert.deepEqual(kinds('#1e1f21 or #fff'), ['hex color', 'hex color']);
+  assert.deepEqual(kinds('0.25 rem, 32px and 150ms'), ['length', 'length', 'length']);
+  assert.deepEqual(kinds('A 50% radius'), ['percentage']);
+  assert.deepEqual(kinds('At least 4.5:1'), ['ratio']);
+  assert.deepEqual(kinds('Set variant="ghost"'), ['code']);
+  assert.deepEqual(kinds('Call onValueChange'), ['identifier']);
+  assert.deepEqual(
+    kinds('More room between sections, step 1, 4 people, version 1.0.0, Ctrl + K, envUI on macOS.'),
+    [],
+  );
+});
+
+test("the technical text in each page's Site Markdown is counted, for the rewrite to come", (t) => {
+  // Reporting only, like the catalogue's count of the rendered pages: the Site shows no token
+  // names, hex colors, lengths, percentages or code, which belong to the page's guide in the Docs.
+  // Inline code is already rejected above; this counts what plain words still carry.
+  const counts = sitePages().flatMap((document) => {
+    const found = siteText(document).flatMap(({ markdown, text }) =>
+      // Keys are written as <kbd>, which the Site shows as keys.
+      technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
+    );
+    return found.length
+      ? [`${document.path}: ${found.length} (${found.map(({ text }) => text).join(', ')})`]
+      : [];
+  });
+  t.diagnostic(
+    counts.length
+      ? `Technical text in the Site's Markdown:\n${counts.join('\n')}`
+      : 'No technical text in the Site Markdown.',
   );
 });

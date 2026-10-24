@@ -6,6 +6,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
 import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
+import { technicalText } from '../../scripts/SiteContent.mjs';
 import { references } from '../../apps/catalogue/src/Reference';
 import {
   allPages,
@@ -110,14 +111,15 @@ test("a foundation's guide in the Docs renders shared Markdown and follows relat
 test('palette editing uses public controls and remains temporary and independent between themes', async ({
   page,
 }) => {
-  await page.goto(`${catalogueUrl}/foundations/colors`);
+  // The editable palette, with its tokens and values, is on the colors guide in the Docs.
+  await page.goto(`${catalogueUrl}/docs/foundations/colors`);
   const app = page.locator('.docs-app');
   const canvasValue = () =>
     app.evaluate((element) =>
       getComputedStyle(element).getPropertyValue('--env-color-bg-page').trim(),
     );
   const initialLight = await canvasValue();
-  const swatch = page.getByRole('button', { name: 'Pick page background color', exact: true });
+  const swatch = page.getByRole('button', { name: /^#[\da-f]{6} page background: pick a color$/ });
   await expect(swatch).toHaveClass(/env-button/);
   await swatch.click();
   const dialog = page.getByRole('dialog', { name: 'Page background', exact: true });
@@ -467,6 +469,79 @@ test("a specimen's titles and captions name options in words, not values", async
       .filter((text) => text && (/^[a-z]/.test(text) || /[={}"`]|--/.test(text)));
     expect(raw, `${id} names options by their values`).toEqual([]);
   }
+});
+
+/**
+ * The words a page of the Site shows and names, as a reader and a screen reader meet them: every
+ * text and the names, titles and placeholders of its content, outside the Code disclosures under
+ * its figures and outside the examples they show, which are envUI at work with an application's
+ * own sample text. Foundation figures, specimens, captions, swatches and legends all count.
+ */
+async function siteWords(page: Page) {
+  return page.locator('.docs-main').evaluate((main) => {
+    const skipped =
+      '.docs-live-example-code, .docs-code-slot, pre, .env-code-block, .docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-stage, .docs-open-example, [hidden]';
+    const words: string[] = [];
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode())
+      if (node.textContent?.trim() && !node.parentElement?.closest(skipped))
+        words.push(node.textContent.trim());
+    for (const element of main.querySelectorAll('[aria-label], [title], [alt], [placeholder]'))
+      if (!element.closest(skipped))
+        for (const name of ['aria-label', 'title', 'alt', 'placeholder'])
+          if (element.getAttribute(name)) words.push(element.getAttribute(name)!);
+    return words;
+  });
+}
+
+/** The technical text in a page's words, each as "kind: text". */
+const technicalOf = (words: string[]) =>
+  words.flatMap((text) => technicalText(text).map((found) => `${found.kind}: ${found.text}`));
+
+/**
+ * The model foundation pages, which show no technical text at all. Every other page of the Site is
+ * reported until it is rewritten to the same rule, then joins this list.
+ */
+const plainPages = ['foundations/spacing', 'foundations/colors'];
+
+test('the model foundation pages show no technical text, in their words or their figures', async ({
+  page,
+}) => {
+  // The Site is for people looking at envUI: no token names, hex colors, lengths, percentages or
+  // code. They belong to each foundation's guide in the Docs.
+  await page.goto(`${catalogueUrl}/`);
+  for (const path of plainPages) {
+    await goTo(page, `/${path}`);
+    await expect(page.locator('.docs-topic').first()).toBeVisible();
+    // The marks of a figure are measured once it has laid out.
+    await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
+    expect(technicalOf(await siteWords(page)), `${path} shows technical text`).toEqual([]);
+  }
+});
+
+test('the technical text on every other page of the Site is counted, for the rewrite to come', async ({
+  page,
+}, testInfo) => {
+  // Reporting only: the counts say how far each page is from the model pages' rule.
+  test.slow();
+  await page.goto(`${catalogueUrl}/`);
+  const counts: string[] = [];
+  for (const { path, title, kind, area } of allPages) {
+    if (area !== 'site' || plainPages.includes(path)) continue;
+    await goTo(page, path === 'overview' ? '/' : `/${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
+      kind === 'home' ? 'envUI' : title,
+    );
+    const found = technicalOf(await siteWords(page));
+    if (!found.length) continue;
+    const kinds = Map.groupBy(found, (entry) => entry.split(':')[0]!);
+    counts.push(
+      `${path}: ${found.length} (${[...kinds].map(([name, list]) => `${name} ${list.length}`).join(', ')})`,
+    );
+  }
+  const report = counts.length ? counts.join('\n') : 'No technical text on any page.';
+  console.log(`Technical text on the Site, by page:\n${report}`);
+  await testInfo.attach('technical-text.txt', { body: report, contentType: 'text/plain' });
 });
 
 test('a component page groups its sections into three, the middle one on the band', async ({
@@ -1216,21 +1291,15 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await goTo(page, '/foundations/colors');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
-  await expect(panes.first().locator('.docs-swatch code').first()).toHaveText(/^#[0-9a-f]{6}$/);
-  const swatches = await panes.evaluateAll((columns) =>
-    columns.map((column) => {
-      const label = column.querySelector('.docs-palette-label')!.getBoundingClientRect();
-      const swatch = column.querySelector('.docs-swatch')!.getBoundingClientRect();
-      return { label: label.x, swatch: swatch.x, left: swatch.left, right: swatch.right };
-    }),
-  );
-  expect(swatches[0].swatch).toBeGreaterThan(swatches[0].label);
-  expect(swatches).toHaveLength(1);
-  const darkColor = await panes.locator('.docs-swatch code').first().textContent();
+  // The role swatches show each role in the reader's theme, and follow it.
+  const pageSwatch = panes.first().locator('.docs-role-swatch').first();
+  const swatchColor = () =>
+    pageSwatch.evaluate((swatch) => getComputedStyle(swatch).backgroundColor);
+  const darkColor = await swatchColor();
   await chooseScheme(page, 'light');
   await expect(app).toHaveAttribute('data-env-theme', 'light');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'light');
-  await expect(panes.locator('.docs-swatch code').first()).not.toHaveText(darkColor!);
+  await expect.poll(swatchColor).not.toBe(darkColor);
   await chooseScheme(page, 'dark');
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   // The setup guide, in the Docs, keeps the theme.
