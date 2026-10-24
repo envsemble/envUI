@@ -147,6 +147,34 @@
 .env-color-picker-field[data-channel='hex'] {
   grid-column: span 3;
 }
+/* Several formats together: a row for each, its fields and its copy button, in columns that line
+   up from row to row, and the eyedropper at the end of the first. The fields keep their equal
+   columns, so the letters and numbers of every format line up too. */
+.env-color-picker-values[data-formats='together'] {
+  grid-template-areas: none;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.env-color-picker-values[data-formats='together'][data-eye-dropper] {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+.env-color-picker-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+.env-color-picker-row > .env-color-picker-fields {
+  grid-area: auto;
+  grid-column: 1;
+}
+.env-color-picker-row > .env-color-picker-eye-dropper {
+  grid-area: auto;
+  grid-column: 2;
+}
+.env-color-picker-row > .env-color-picker-copy {
+  grid-area: auto;
+  grid-column: -2;
+}
 /* A quiet field: no outline at rest, a fill under the pointer, and the field's accent edge while
    focused. The channel's letter sits muted before its number. */
 .env-color-picker-field {

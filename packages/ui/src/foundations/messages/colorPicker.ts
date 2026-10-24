@@ -9,11 +9,11 @@ export const colorPicker = {
   format: 'Color format',
   /** Names the button that opens the menu of formats, with the format it shows, such as Hex. */
   formatButton: ({ format }: { format: string }) => `Color format: ${format}`,
-  /** The hexadecimal format, in the format select. */
+  /** The hexadecimal format, in the format select and before its field. */
   hex: 'Hex',
-  /** The RGB format, in the format select. */
+  /** The RGB format, in the format select and before its fields. */
   rgb: 'RGB',
-  /** The HSL format, in the format select. */
+  /** The HSL format, in the format select and before its fields. */
   hsl: 'HSL',
   /** Names the hexadecimal field. */
   hexField: 'Hex',
@@ -33,6 +33,8 @@ export const colorPicker = {
   alphaShort: 'A',
   /** Names the copy button. */
   copy: 'Copy color',
+  /** Names the copy button of one format where several show together, such as Copy color as RGB. */
+  copyFormat: ({ format }: { format: string }) => `Copy color as ${format}`,
   /** Names the eyedropper button. */
   eyeDropper: 'Pick a color from the screen',
   /** Names the list of preset colors. */

@@ -62,9 +62,9 @@ export interface ColorPickerValueProps {
    */
   valueFormat?: ColorFormat;
   /**
-   * The formats people can type the color in, in the order the format select lists them; the
-   * first is shown first. With one, there is no select.
-   * @default ['hex', 'rgb', 'hsl']
+   * The formats whose fields show together, one under another in this order, such as
+   * `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it
+   * shows one format at a time, hex first, with a select that switches to RGB or HSL.
    */
   formats?: readonly ColorFormat[];
   /**
@@ -120,9 +120,10 @@ export interface ColorPickerProps
 /**
  * A compact color picker on React Aria's color hooks: a square saturation and brightness area with
  * a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select,
- * the browser's eyedropper where it has one, a copy button, and fields for the chosen format; and
- * preset swatches. Every part works with
- * the keyboard; the channels and the area are named in the EnvUIProvider's language.
+ * the browser's eyedropper where it has one, a copy button, and fields for the chosen format, or
+ * the fields of several `formats` together, each with its own copy button; and preset swatches.
+ * Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's
+ * language.
  */
 export function ColorPicker({
   ref,
@@ -132,7 +133,7 @@ export function ColorPicker({
   defaultValue = '#000000',
   onValueChange,
   valueFormat = 'hex',
-  formats: ownFormats = allFormats,
+  formats: ownFormats,
   alpha = false,
   eyeDropper = true,
   copy = true,
@@ -151,7 +152,9 @@ export function ColorPicker({
   const messages = useMessages('colorPicker', colorPickerMessages);
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
-  const formats = ownFormats.length > 0 ? ownFormats : allFormats;
+  const formats = ownFormats && ownFormats.length > 0 ? ownFormats : allFormats;
+  // Two or more formats show together; one, or none given, one at a time.
+  const together = formats.length > 1 && ownFormats !== undefined;
   const [chosenFormat, setFormat] = useState(formats[0]);
   const format = formats.includes(chosenFormat) ? chosenFormat : formats[0];
   const { color, setOwn, reset, controlled } = useColorState(value, defaultValue, alpha);
@@ -173,6 +176,44 @@ export function ColorPicker({
     if (!sameColor(normalized, color))
       onValueChange?.(formatColor(normalized, valueFormat), normalized);
   }
+
+  const shorts = {
+    red: messages.redShort,
+    green: messages.greenShort,
+    blue: messages.blueShort,
+    hue: messages.hueShort,
+    saturation: messages.saturationShort,
+    lightness: messages.lightnessShort,
+    alpha: messages.alphaShort,
+  };
+  const fields = (each: ColorFormat) => (
+    <ColorFields
+      format={each}
+      alpha={alpha}
+      hexLabel={messages.hexField}
+      shorts={shorts}
+      value={color}
+      onChange={change}
+      disabled={disabled}
+      readOnly={readOnly}
+    />
+  );
+  const eyeDropperButton = eyeDropper && pick && !inactive && (
+    <Tooltip content={messages.eyeDropper}>
+      <IconButton
+        variant="ghost"
+        size="sm"
+        icon={<Colorize />}
+        aria-label={messages.eyeDropper}
+        className="env-color-picker-eye-dropper"
+        onClick={async () => {
+          const picked = await pick();
+          if (picked)
+            change(toColor(picked, true).withChannelValue('alpha', color.getChannelValue('alpha')));
+        }}
+      />
+    </Tooltip>
+  );
 
   const describedByIds =
     [describedBy, description != null && `${id}-description`, error != null && `${id}-error`]
@@ -209,92 +250,91 @@ export function ColorPicker({
             )}
           </div>
         </div>
-        <div
-          className="env-color-picker-values"
-          data-format={format}
-          data-alpha={alpha || undefined}
-        >
-          {formats.length > 1 && (
-            <div className="env-color-picker-format">
-              <Menu.Root
-                aria-label={messages.format}
-                align="start"
-                trigger={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    endIcon={<ExpandMore />}
-                    disabled={disabled}
-                    aria-label={messages.formatButton({ format: messages[format] })}
-                  >
-                    {messages[format]}
-                  </Button>
-                }
+        {together ? (
+          // Each format on a row of its own, named after it, its fields and its copy button in
+          // columns that line up from row to row; the eyedropper ends the first row. The channels'
+          // letters, and the hex value's #, say which format a row is.
+          <div
+            className="env-color-picker-values"
+            data-formats="together"
+            data-alpha={alpha || undefined}
+            data-eye-dropper={eyeDropperButton ? true : undefined}
+          >
+            {formats.map((each, index) => (
+              <div
+                key={each}
+                role="group"
+                aria-label={messages[each]}
+                className="env-color-picker-row"
+                data-format={each}
               >
-                <Menu.RadioGroup
-                  value={format}
-                  onValueChange={(next) => setFormat(next as ColorFormat)}
+                {fields(each)}
+                {index === 0 && eyeDropperButton}
+                {copy && (
+                  <div className="env-color-picker-copy">
+                    <CopyButton
+                      variant="ghost"
+                      size="sm"
+                      aria-label={messages.copyFormat({ format: messages[each] })}
+                      value={() => displayColor(color, each)}
+                      disabled={disabled}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div
+            className="env-color-picker-values"
+            data-format={format}
+            data-alpha={alpha || undefined}
+          >
+            {formats.length > 1 && (
+              <div className="env-color-picker-format">
+                <Menu.Root
+                  aria-label={messages.format}
+                  align="start"
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      endIcon={<ExpandMore />}
+                      disabled={disabled}
+                      aria-label={messages.formatButton({ format: messages[format] })}
+                    >
+                      {messages[format]}
+                    </Button>
+                  }
                 >
-                  {formats.map((each) => (
-                    <Menu.RadioItem key={each} value={each}>
-                      {messages[each]}
-                    </Menu.RadioItem>
-                  ))}
-                </Menu.RadioGroup>
-              </Menu.Root>
-            </div>
-          )}
-          <ColorFields
-            format={format}
-            alpha={alpha}
-            hexLabel={messages.hexField}
-            shorts={{
-              red: messages.redShort,
-              green: messages.greenShort,
-              blue: messages.blueShort,
-              hue: messages.hueShort,
-              saturation: messages.saturationShort,
-              lightness: messages.lightnessShort,
-              alpha: messages.alphaShort,
-            }}
-            value={color}
-            onChange={change}
-            disabled={disabled}
-            readOnly={readOnly}
-          />
-          {eyeDropper && pick && !inactive && (
-            <Tooltip content={messages.eyeDropper}>
-              <IconButton
-                variant="ghost"
-                size="sm"
-                icon={<Colorize />}
-                aria-label={messages.eyeDropper}
-                className="env-color-picker-eye-dropper"
-                onClick={async () => {
-                  const picked = await pick();
-                  if (picked)
-                    change(
-                      toColor(picked, true).withChannelValue(
-                        'alpha',
-                        color.getChannelValue('alpha'),
-                      ),
-                    );
-                }}
-              />
-            </Tooltip>
-          )}
-          {copy && (
-            <div className="env-color-picker-copy">
-              <CopyButton
-                variant="ghost"
-                size="sm"
-                aria-label={messages.copy}
-                value={() => displayColor(color, format)}
-                disabled={disabled}
-              />
-            </div>
-          )}
-        </div>
+                  <Menu.RadioGroup
+                    value={format}
+                    onValueChange={(next) => setFormat(next as ColorFormat)}
+                  >
+                    {formats.map((each) => (
+                      <Menu.RadioItem key={each} value={each}>
+                        {messages[each]}
+                      </Menu.RadioItem>
+                    ))}
+                  </Menu.RadioGroup>
+                </Menu.Root>
+              </div>
+            )}
+            {fields(format)}
+            {eyeDropperButton}
+            {copy && (
+              <div className="env-color-picker-copy">
+                <CopyButton
+                  variant="ghost"
+                  size="sm"
+                  aria-label={messages.copy}
+                  value={() => displayColor(color, format)}
+                  disabled={disabled}
+                />
+              </div>
+            )}
+          </div>
+        )}
         {swatches && swatches.length > 0 && (
           <SwatchList
             swatches={swatches}

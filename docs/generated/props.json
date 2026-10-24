@@ -1142,7 +1142,7 @@
     "ColorPicker": {
       "kind": "component",
       "source": "packages/ui/src/color/ColorPicker.tsx",
-      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
+      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format, or the fields of several `formats` together, each with its own copy button; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
         {
           "name": "showLabel",
@@ -1199,8 +1199,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
@@ -1343,8 +1342,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
