@@ -1,6 +1,6 @@
 ---
 title: Spinner
-summary: Work of unknown length in a small area, such as a panel that is updating, as a turning arc.
+summary: Work of unknown length in a small area, such as a panel that is updating, as envUI's mark whose shapes take the color in turn.
 status: stable
 since: 0.4.0
 category: Feedback
@@ -36,7 +36,7 @@ components:
 
 ## Overview
 
-With reduced motion, the arc keeps turning, more slowly.
+The four shapes of envUI's mark, two pills and two circles, take the color one after another while they stay still. With reduced motion, the color passes from shape to shape more slowly.
 
 ```tsx example=LoadingPreview
 
@@ -67,9 +67,9 @@ With reduced motion, the arc keeps turning, more slowly.
 ```
 
 1. **Spinner** (`env-spinner`)
-2. **Arc** (`env-spinner-arc`)
+2. **Shape** (`env-spinner-shape`)
 
-Not shown: the label beside the arc, where it shows.
+Not shown: the label beside the mark, where it shows.
 
 ## Accessibility
 
@@ -77,7 +77,7 @@ Not shown: the label beside the arc, where it shows.
 
 - `role="progressbar"` named by `label`, or the spinner hidden without one.
 - With `showLabel`, a busy `role="status"` whose label, Loading by default in the provider's language, is read as the status.
-- A slower turn with a fixed arc under reduced motion, instead of stopping.
+- Under reduced motion, a slower fade from shape to shape, instead of stopping.
 
 ### You provide
 
@@ -112,9 +112,9 @@ export default function SearchingDocuments() {
 
 For the work that follows a press, such as saving, set `pending` on the Button that started it, and for content of a known shape, `skeleton`, rather than a spinner. Set `aria-busy` on the region that updates, and put the result or the error in the spinner's place when the work ends.
 
-The parts are the spinner, `env-spinner`, its arc, `env-spinner-arc`, and with `showLabel` the label beside it, `env-spinner-label`.
+The parts are the spinner, `env-spinner`, its four shapes, `env-spinner-shape`, and with `showLabel` the label beside it, `env-spinner-label`.
 
 ## Changelog
 
-- **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0, which the `v1-structure` codemod rewrites. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
+- **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0, which the `v1-structure` codemod rewrites. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label. The turning arc becomes envUI's mark, two pills and two circles that take the color in turn, and `env-spinner-arc` gives way to `env-spinner-shape`.
 - **0.4.0**: Spinner, in small, standard and large sizes; pending buttons show a small one.

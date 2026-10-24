@@ -565,7 +565,7 @@ function measureInner(
 /**
  * How far an element reaches sideways past its place in the layout, on purpose, in px: set out by
  * a negative margin, such as a text button's hit area past its label; by an absolute pseudo-element,
- * such as an invisible hit area; or by a transform, such as a turning spinner's corners. The
+ * such as an invisible hit area; or by a transform, such as a turned element's corners. The
  * content of every node around it may be that much wider without overflowing.
  */
 function outsetOf(element: Element, style: CSSStyleDeclaration): number {

@@ -1,5 +1,5 @@
 import type { ComponentPropsWithRef } from 'react';
-import { SpinnerArc } from './internal/SpinnerArc.js';
+import { SpinnerMark } from './internal/SpinnerMark.js';
 import { SpinnerLabel } from './internal/SpinnerLabel.js';
 
 export interface SpinnerProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
@@ -26,11 +26,12 @@ export interface SpinnerProps extends Omit<ComponentPropsWithRef<'span'>, 'child
 }
 
 /**
- * Work of unknown length in a small area, such as a panel that is updating: an arc in the control
- * blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a
- * progress bar named by it; without one it is hidden from assistive technology. With showLabel it
- * is a status line with its label beside it, for loading with no known shape. The hook
- * --env-spinner-color recolors it, such as to a button's label color.
+ * Work of unknown length in a small area, such as a panel that is updating: envUI's mark, two
+ * pills and two circles, whose shapes take the control blue in turn, more slowly with a
+ * reduced-motion preference. With a label it is a progress bar named by it; without one it is
+ * hidden from assistive technology. With showLabel it is a status line with its label beside it,
+ * for loading with no known shape. The hook --env-spinner-color recolors it, such as to a
+ * button's label color.
  */
 export function Spinner({
   label,
@@ -42,7 +43,7 @@ export function Spinner({
   if (showLabel)
     return (
       // A status region marked busy, which the label names as it shows.
-      <SpinnerArc
+      <SpinnerMark
         {...props}
         size={size}
         role="status"
@@ -51,10 +52,10 @@ export function Spinner({
         data-show-label=""
       >
         <SpinnerLabel label={label} />
-      </SpinnerArc>
+      </SpinnerMark>
     );
   return (
-    <SpinnerArc
+    <SpinnerMark
       {...props}
       size={size}
       role={label ? 'progressbar' : undefined}
