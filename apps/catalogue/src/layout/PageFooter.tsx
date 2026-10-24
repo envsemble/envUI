@@ -35,7 +35,7 @@ const columns: { title: string; links: FooterLink[] }[] = [
       ['colors', 'Colors & themes'],
       ['typography', 'Typography'],
       ['spacing', 'Spacing & shape'],
-      ['responsive', 'Responsive layout'],
+      ['responsive', 'Layout & stacking'],
       ['accessibility', 'Accessibility'],
     ]),
   },

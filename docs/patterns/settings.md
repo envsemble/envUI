@@ -3,7 +3,7 @@ title: Settings
 summary: Let people change how the application works for them, and see each change apply.
 status: beta
 since: 1.0.0
-intent: Collect and change information
+intent: Enter and change data
 aliases:
   - preferences
   - options

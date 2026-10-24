@@ -7,7 +7,12 @@ import { readMap } from '../../packages/codemods/src/map.mjs';
 import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
 import { references } from '../../apps/catalogue/src/Reference';
-import { allPages, normalizeRoute } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import {
+  allPages,
+  normalizeRoute,
+  sectionHome,
+  siteSections,
+} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 import { displayStorageKeys } from '../../apps/catalogue/src/theme/DisplayStorage';
 
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
@@ -786,6 +791,27 @@ test('an example that fails to render says so in place, and the rest of the page
     .getByRole('link', { name: 'Badge', exact: true })
     .click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
+});
+
+test("every label and heading of the Site's and the Docs' drawers fits on one line at the default width", async ({
+  page,
+}) => {
+  // A fresh page has no width stored, so each drawer starts at its default width.
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  for (const path of [...siteSections.map((section) => sectionHome(section).path), 'docs']) {
+    await page.goto(`${catalogueUrl}/${path}`);
+    const drawer = page.locator('.docs-sidebar');
+    await expect(drawer.locator('.env-drawer-item').first()).toBeVisible();
+    // The drawer keeps each on one line, cut short where it doesn't fit: none may be cut.
+    const cut = await drawer
+      .locator('.env-drawer-label, .env-drawer-heading')
+      .evaluateAll((elements) =>
+        elements
+          .filter((element) => element.scrollWidth > element.clientWidth)
+          .map((element) => element.textContent),
+      );
+    expect(cut, path).toEqual([]);
+  }
 });
 
 test('the navigation shows the current page, and focus moves to the page only on a route change', async ({

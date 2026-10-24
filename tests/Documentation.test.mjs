@@ -428,7 +428,7 @@ const patternFrontmatter = [
   'summary: Let people change how the application works for them.',
   'status: beta',
   'since: 0.2.0',
-  'intent: Collect and change information',
+  'intent: Enter and change data',
   'aliases: [preferences]',
   'useWhen: [Someone changes a preference.]',
   'avoidWhen:',
@@ -550,7 +550,7 @@ test('pattern pages are validated as their kind', async () => {
     await rejects(pattern, p.replace(/intent: .*\n/, '') + patternBody, /intent is required/);
     await rejects(
       pattern,
-      p.replace('intent: Collect', 'intent: Gather') + patternBody,
+      p.replace('intent: Enter', 'intent: Gather') + patternBody,
       /intent must be one of/,
     );
     await rejects(pattern, withComposes('[Toggle]') + patternBody, /no Toggle/);

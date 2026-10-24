@@ -85,7 +85,7 @@ function useCurrentInView() {
  * The Docs' drawer holds the wordmark and search on its first row, so it starts wider.
  */
 const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWidth: number }> = {
-  site: { defaultWidth: 15, minWidth: 13, maxWidth: 24 },
+  site: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
   docs: { defaultWidth: 21, minWidth: 18, maxWidth: 30 },
 };
 

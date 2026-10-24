@@ -1,9 +1,9 @@
 ---
-title: Confirmation and destructive actions
+title: Destructive actions
 summary: Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.
 status: beta
 since: 1.0.0
-intent: Collect and change information
+intent: Enter and change data
 aliases:
   - destructive action
   - delete confirmation
@@ -36,7 +36,7 @@ composes:
   - Text
 ---
 
-# Confirmation and destructive actions
+# Destructive actions
 
 ## Overview
 

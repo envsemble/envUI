@@ -1,7 +1,17 @@
 'use client';
 
-import { useId, type ComponentPropsWithRef, type CSSProperties, type ReactNode } from 'react';
+import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
+import {
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import { Column } from '../foundations/Layout.js';
+import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { containerWidth, useResizableWidth } from '../internal/useResizableWidth.js';
@@ -56,7 +66,9 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
   /**
    * Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer
    * drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns
-   * to `defaultWidth`. Leave it out of a drawer in a sheet of a narrow window.
+   * to `defaultWidth`. Its labels and headings keep to one line: one that doesn't fit ends in an
+   * ellipsis, and a label cut short shows in full in a tooltip. Leave it out of a drawer in a sheet
+   * of a narrow window.
    * @default false
    */
   resizable?: boolean;
@@ -95,15 +107,62 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
   resizeLabel?: string;
 }
 
+/**
+ * One destination of the drawer. In a resizable drawer, whose labels keep to one line, a label cut
+ * short with an ellipsis shows in full in a tooltip beside the drawer, on hover and keyboard focus.
+ * The tooltip stays in place while the label fits, so the item and its focus are kept as the
+ * drawer is resized.
+ */
+function DrawerItem({
+  destination,
+  oneLine,
+}: {
+  destination: DrawerDestination;
+  oneLine: boolean;
+}) {
+  const label = useRef<HTMLSpanElement>(null);
+  const [cut, setCut] = useState(false);
+  useLayoutEffect(() => {
+    const element = label.current;
+    if (!oneLine || !element) {
+      setCut(false);
+      return;
+    }
+    const measure = () => setCut(element.scrollWidth > element.clientWidth);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [oneLine]);
+  const item = (
+    <DestinationItem classes={drawerClasses} destination={destination} labelRef={label} />
+  );
+  return (
+    <li>
+      {oneLine ? (
+        <BaseTooltip.Root disabled={!cut}>
+          <BaseTooltip.Trigger delay={400} render={item} />
+          {cut && <TooltipPopup content={destination.label} side="inline-end" />}
+        </BaseTooltip.Root>
+      ) : (
+        item
+      )}
+    </li>
+  );
+}
+
 /** A group's heading and its destinations, a list of its own named by the heading. */
 function Section({
   group,
   items,
   level,
+  oneLine,
 }: {
   group: string;
   items: DrawerDestination[];
   level: 2 | 3 | 4 | 5 | 6;
+  oneLine: boolean;
 }) {
   const headingId = useId();
   const Heading = `h${level}` as const;
@@ -114,9 +173,11 @@ function Section({
       </Heading>
       <Column render={<ul />} aria-labelledby={headingId} align="stretch" gap={1}>
         {items.map((destination) => (
-          <li key={destinationKey(destination)}>
-            <DestinationItem classes={drawerClasses} destination={destination} />
-          </li>
+          <DrawerItem
+            key={destinationKey(destination)}
+            destination={destination}
+            oneLine={oneLine}
+          />
         ))}
       </Column>
     </Column>
@@ -199,9 +260,11 @@ export function Drawer({
             {destinationSections(destinations).map((section, index) =>
               section.group === undefined ? (
                 section.items.map((destination) => (
-                  <li key={destinationKey(destination)}>
-                    <DestinationItem classes={drawerClasses} destination={destination} />
-                  </li>
+                  <DrawerItem
+                    key={destinationKey(destination)}
+                    destination={destination}
+                    oneLine={resizable}
+                  />
                 ))
               ) : (
                 <Section
@@ -209,6 +272,7 @@ export function Drawer({
                   group={section.group}
                   items={section.items}
                   level={headingLevel}
+                  oneLine={resizable}
                 />
               ),
             )}
