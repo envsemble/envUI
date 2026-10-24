@@ -2,6 +2,13 @@
    share through the env-prose class: paragraphs, headings, lists, quotes, tables, images and rules
    in envUI's type, spaced as a document. */
 .env-prose {
+  /* The lists' indent, the step between items, and their markers' color, size and gap before the
+     text (below). */
+  --env-prose-list-indent: var(--env-space-4);
+  --env-prose-list-item-gap: var(--env-space-2);
+  --env-prose-list-marker-color: var(--env-color-fg-muted);
+  --env-prose-list-marker-size: 0.375rem;
+  --env-prose-list-marker-gap: var(--env-space-2);
   min-inline-size: 0;
   font: var(--env-type-body);
   color: var(--env-color-fg-default);
@@ -29,14 +36,60 @@
 .env-prose strong {
   font-weight: var(--env-font-weight-medium);
 }
+/* Lists: envUI's own markers instead of the browser's discs, quiet beside the text. Each item's
+   text starts one indent in; its marker hangs in that indent, a gap before the text, on the middle
+   of the item's first line. A bullet is a small dot in the muted text color, a ring one level in;
+   a number is the muted text color in tabular figures, a letter one level in and a roman numeral
+   two. Items stand a small step apart and a nested list as far from its item's text, so a list
+   reads as one block in the flow of the text around it. Task lists keep their checkboxes
+   (Markdown.css, RichText.css). The custom properties on .env-prose tune them. */
 .env-prose :where(ul, ol) {
-  padding-inline-start: var(--env-space-5);
+  padding-inline-start: var(--env-prose-list-indent);
 }
-.env-prose li + li {
-  margin-block-start: var(--env-space-2);
+.env-prose :where(li + li),
+.env-prose :where(li) > :where(ul, ol) {
+  margin-block-start: var(--env-prose-list-item-gap);
 }
-.env-prose li > :where(ul, ol) {
-  margin-block-start: var(--env-space-2);
+.env-prose :where(ul) {
+  list-style: none;
+}
+.env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li) {
+  position: relative;
+}
+.env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::before {
+  position: absolute;
+  inset-block-start: calc((1lh - var(--env-prose-list-marker-size)) / 2);
+  inset-inline-start: calc(
+    -1 * (var(--env-prose-list-marker-gap) + var(--env-prose-list-marker-size))
+  );
+  box-sizing: border-box;
+  inline-size: var(--env-prose-list-marker-size);
+  block-size: var(--env-prose-list-marker-size);
+  /* The dot is its border, so forced colors paint it in the text's color, as they do borders. */
+  border: calc(var(--env-prose-list-marker-size) / 2) solid var(--env-prose-list-marker-color);
+  border-radius: var(--env-radius-full);
+  content: '';
+}
+.env-prose :where(li ul:not(.contains-task-list, [data-type='taskList']) > li)::before {
+  border-width: 1px;
+}
+/* Two-digit numbers need a wider indent, which a list takes once it reaches ten items. */
+.env-prose :where(ol:has(> li:nth-child(10))) {
+  padding-inline-start: calc(var(--env-prose-list-indent) + var(--env-prose-list-marker-gap));
+}
+.env-prose :where(ol > li) {
+  /* The number sits outside the item and ends in a space: half the gap, with the space, makes it. */
+  padding-inline-start: calc(var(--env-prose-list-marker-gap) / 2);
+}
+.env-prose :where(ol > li)::marker {
+  color: var(--env-prose-list-marker-color);
+  font-variant-numeric: tabular-nums;
+}
+.env-prose :where(li ol) {
+  list-style-type: lower-alpha;
+}
+.env-prose :where(li li ol) {
+  list-style-type: lower-roman;
 }
 .env-prose blockquote {
   padding-inline-start: var(--env-space-4);
