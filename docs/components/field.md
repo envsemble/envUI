@@ -13,8 +13,8 @@ aliases:
   - error message
   - validation
 useWhen:
-  - A control of the application's own needs a label, a description and an error, wired for assistive technology.
-  - A form validates a value on blur or on submit with the browser's validity or a function of its own.
+  - A label, a description and an error for a control of the application's own
+  - A value checked on blur or on submit, by the browser's rules or a check of its own
 avoidWhen:
   - text: A single-line text input with a label, a description and an error.
     use: TextField
@@ -40,7 +40,7 @@ Field ties its parts together for assistive technology, whatever control sits in
 
 ### Validate on blur
 
-`validate` returns an error message for a value, or nothing for a valid one. `validationMode` checks on submit, the default, on blur or on change.
+A field can check its value with a check of the application's own, which returns an error message or nothing, on submit, on blur or as people type.
 
 ```tsx example=ValidateOnBlur
 
@@ -48,7 +48,7 @@ Field ties its parts together for assistive technology, whatever control sits in
 
 ### A control of the application's own
 
-`render` on `Field.Control` takes any control, which the label and description then describe.
+The control can be any control, which the label and the description then name and describe.
 
 ```tsx example=ApplicationControl
 
@@ -64,8 +64,9 @@ Field ties its parts together for assistive technology, whatever control sits in
 
 ```
 
-- Keep the description while the error shows; the error adds to it.
-- Without children, `Field.Error` shows the browser's validation message; `match` picks one kind of failure.
+### Description and error
+
+Keep the description while the error shows: the error adds to it.
 
 ## Anatomy
 
@@ -97,6 +98,36 @@ Field ties its parts together for assistive technology, whatever control sits in
 
 - A label for every field.
 - A control in `render` that forwards its props and ref to the element people use.
+
+## In code
+
+### Usage
+
+Field.Root holds a Field.Label, a Field.Control, a Field.Description and a Field.Error, and gives the field its `name` for a form. Field.Control is a native input by default, which takes its native props, such as `required` and `maxLength`, `defaultValue`, or `value` and `onValueChange`, and `size`, `sm`, `md` or `lg`, the control heights.
+
+```tsx source=ProjectName
+
+```
+
+#### Validation
+
+`validate` on Field.Root returns an error message for a value, or nothing for a valid one. `validationMode` checks `onSubmit`, the default, `onBlur` or `onChange`, with `validationDebounceTime` between checks as people type. Without children, Field.Error shows the field's validation message, the one `validate` returns or the browser's; `match` shows an error for one kind of failure only, such as `valueMissing`. `invalid`, `dirty` and `touched` take the state from a form library, and `actionsRef` validates on demand.
+
+```tsx source=ValidateOnBlur
+
+```
+
+#### Any control
+
+`render` on Field.Control takes any control, which receives the id, the ids of the label and the description, and the ref; it must forward them to the element people use. A control that draws its own frame can take the field's outline off through `style`.
+
+```tsx source=ApplicationControl
+
+```
+
+### Composition
+
+The parts are the root, `env-field`, the label, `env-field-label`, the control, `env-field-control`, the description, `env-field-description`, and the error, `env-field-error`. TextField, DatePicker and envUI's other fields are built from them, and so are fields of an application's own. `disabled` and `name` on Field.Root take precedence over the control's.
 
 ## Changelog
 

@@ -18,8 +18,8 @@ aliases:
   - attachment
   - drag and drop upload
 useWhen:
-  - People add a file to a form or a page, such as a logo, by dropping it or choosing it.
-  - People attach several files at once, such as documents to a message (`multiple`, `size="sm"`).
+  - Adding a file to a form or a page by dropping or choosing it, such as a logo
+  - Attaching several files at once, such as documents to a message
 avoidWhen:
   - text: A single action that opens the file picker in a toolbar, without a drop target.
     use: Button
@@ -41,13 +41,13 @@ components:
 
 ### States
 
-`accept` filters dropped and chosen files; those that don't fit go to `onDropRejected`. While `pending`, a spinner replaces the icon and the zone takes no files.
+A zone can take only some kinds of file, and turns the others away. While the application works on the files, a spinner replaces the icon and the zone takes no more.
 
 <!-- specimen: States -->
 
 ### Attach several files
 
-With `multiple`, the application lists the files the zone took, each with Remove.
+A zone can take several files at once. The application lists the files it took, each with Remove.
 
 ```tsx example=AttachDocuments
 
@@ -55,7 +55,7 @@ With `multiple`, the application lists the files the zone took, each with Remove
 
 ### Upload with progress
 
-While the application uploads, `pending` keeps the zone busy.
+While the application uploads, the zone stays busy.
 
 ```tsx example=UploadProgress
 
@@ -63,7 +63,7 @@ While the application uploads, `pending` keeps the zone busy.
 
 ### In a form
 
-With `name`, the form submits the files the zone took, and a reset clears them. `files` hands the zone the files the application keeps.
+The form sends the files the zone took, and a reset clears them. The application can hand the zone the files it keeps, such as after a Remove.
 
 ```tsx example=InAForm
 
@@ -75,13 +75,13 @@ With `name`, the form submits the files the zone took, and a reset clears them. 
 
 ```
 
-1. **md**
-2. **sm**
+1. **Medium**
+2. **Small**
 
-| Size        | Use for                                                 |
-| ----------- | ------------------------------------------------------- |
-| `size="md"` | A file that is the main content of a form. The default. |
-| `size="sm"` | Attachments in a dense form or a row.                   |
+| Size   | Use for                                                 |
+| ------ | ------------------------------------------------------- |
+| Medium | A file that is the main content of a form. The default. |
+| Small  | Attachments in a dense form or a row.                   |
 
 ## When to use
 
@@ -93,8 +93,13 @@ With `name`, the form submits the files the zone took, and a reset clears them. 
 
 ```
 
-- Show what was chosen beside or in place of the zone, with Replace and Remove.
-- No links or other controls inside the zone: the whole zone is one button.
+### What was chosen
+
+Show what was chosen beside the zone or in its place, with Replace and Remove.
+
+### One button
+
+The whole zone is one button, so it holds no links or other controls.
 
 ### Labels
 
@@ -140,6 +145,48 @@ A zone fills its container, and its text wraps.
 - A label that says what to add.
 - Checks of size and contents, and the `error` message.
 - An announcement when an upload finishes, and the list of chosen files.
+
+## In code
+
+### Usage
+
+A DropZone takes dropped files and opens the file picker when pressed. `label` says what to add and `description` which files fit; together they name the zone. `onDropAccepted` receives the files it takes. `icon` replaces the upload icon.
+
+```tsx source=LogoUpload
+
+```
+
+#### Accept, several files and errors
+
+`accept` filters dropped and chosen files, as the native attribute does, with MIME types such as `image/png`, groups such as `image/*` and extensions such as `.webp`; any file by default. Without `multiple` the zone takes the first file. Files that don't fit, and those after the first without `multiple`, go to `onDropRejected`. Check size and contents yourself, and show the message in `error`, which takes the error color on the zone's outline. `disabled` turns the zone off; it still keeps the browser from opening dropped files.
+
+```tsx source=AttachDocuments
+
+```
+
+#### Pending work
+
+While `pending`, a spinner replaces the icon, the zone reports `aria-busy` and takes no new files. Change the label to say what is happening.
+
+```tsx source=UploadProgress
+
+```
+
+#### Sizes
+
+`size` is `md`, the tall area with a large icon and the default, or `sm`, one row with a small icon, for attachments in a dense form or a row.
+
+#### In a form
+
+With `name`, a native form submits the last files the zone took, dropped ones too, and a reset clears them. `files` hands the zone the files the application keeps, such as after a Remove, and replaces the ones it took. `form` names a form the zone sits outside of, and `inputRef` reaches the native file input, to open the picker from a Replace button.
+
+```tsx source=InAForm
+
+```
+
+### Composition
+
+The zone's frame is Field's root and error. Its parts are the zone, `env-drop-zone`, the target people press, `env-drop-zone-target`, with its icon, `env-drop-zone-icon`, its label, `env-drop-zone-label`, and its description, `env-drop-zone-description`; then the error, `env-field-error`. List the chosen files beside it, such as in a List with Replace and Remove, and keep links and other controls out of the zone.
 
 ## Changelog
 
