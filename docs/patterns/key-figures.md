@@ -20,8 +20,8 @@ aliases:
   - stat card
   - trend
 useWhen:
-  - The few figures that sum up a view, such as a dashboard's active projects, tasks done and lead time.
-  - A figure with how it changed since an earlier period, such as +12% from last month.
+  - The few figures that sum up a view, such as a dashboard's
+  - A figure and how it changed, such as +12% from last month
 avoidWhen:
   - text: Many values to compare or sort, such as figures for each project.
     use: Table
@@ -47,9 +47,9 @@ composes:
 
 ## Overview
 
-A key figure is a muted label, a large figure in [Text](../foundations/typography.md) and a [Badge](../components/badge.md) that says how it changed, with the period beside it. A [Surface](../components/surface.md) holds a few of them in a [Grid](../components/grid.md).
+A key figure is a muted label, a large figure and a [Badge](../components/badge.md) that says how it changed, with the period beside it. A [Surface](../components/surface.md) holds a few of them in a [Grid](../components/grid.md).
 
-```tsx example=ProjectHealth caption="An AnimatedNumber as the figure rolls to each new value."
+```tsx example=ProjectHealth caption="A figure that rolls to each new value, as an AnimatedNumber."
 
 ```
 
@@ -57,7 +57,7 @@ A key figure is a muted label, a large figure in [Text](../foundations/typograph
 
 ### On a pane
 
-A group on a pane takes the `muted` fill, so its figures stand apart; the pane's heading names it.
+A group on a pane takes the muted fill, so its figures stand apart; the pane's heading names it.
 
 ```tsx example=OnAPane
 
@@ -81,14 +81,13 @@ A [Card](../components/card.md) frames a single figure.
 
 ```
 
-- Three to five figures in a group.
-- The trend's tone says whether the change is good news: `success`, `danger`, or `neutral` for no change.
+### A few figures
+
+Keep a group to three to five figures. The trend's color says whether the change is good news: green for good, red for bad, and neutral for no change.
 
 ### Content
 
-- Labels as short noun phrases: Active projects, Lead time.
-- The unit in the figure or the description: 2.5 days, Median.
-- Figures formatted in the reader's language: 1,284, €4,120.
+Labels are short noun phrases, such as Active projects or Lead time. The unit goes in the figure or the description, such as 2.5 days or Median, and figures are formatted in the reader's language, such as 1,284 or €4,120.
 
 ## Anatomy
 
@@ -104,7 +103,7 @@ A [Card](../components/card.md) frames a single figure.
 
 ## Adapting to width
 
-The grid shows as many even columns as fit, each at least 11 rem wide, and stacks the figures in one column below that.
+The grid shows as many even columns as fit, and stacks the figures in one column where there is room for only one.
 
 ```tsx example=GroupColumns widths="12 26 40"
 
@@ -123,6 +122,34 @@ The grid shows as many even columns as fit, each at least 11 rem wide, and stack
 - Tabular digits on the figure, `font-variant-numeric: tabular-nums`, so it keeps its width as it changes; AnimatedNumber uses them.
 - A heading level for the group's own heading, where it has one, that fits the page; the figures themselves are not headings.
 - Figures formatted in the reader's language.
+
+## In code
+
+### Usage
+
+A key figure is a Column of three Texts: the label with `variant="body-sm"` and `emphasis="muted"`, the figure with `variant="headline"` and `fontVariantNumeric: 'tabular-nums'`, so it keeps its width, and a Row with the trend Badge and a muted description. The Badge takes the change in words and an `icon`, such as TrendingUp or TrendingFlat, and its `tone` says whether it is good news: `success`, `danger`, or `neutral` for no change. A figure that changes while people look at it is an AnimatedNumber inside the figure's Text.
+
+```tsx source=ProjectHealth
+
+```
+
+#### On a pane or in a card
+
+On a pane, the group's Surface takes `background="muted"`, inside the pane's own `background="default"` Surface with its heading. A single figure sits in a Card.
+
+### Composition
+
+The group is a Surface with `role="group"` and an `aria-label`, rendering a Grid through `render`. The Grid's `columns` are `repeat(auto-fit, minmax(min(100%, 11rem), 1fr))`: as many even columns as fit, each at least 11 rem wide, and one column below that.
+
+```tsx
+<Surface
+  role="group"
+  aria-label="Project health"
+  render={<Grid columns="repeat(auto-fit, minmax(min(100%, 11rem), 1fr))" gap={5} />}
+>
+  {/* One Column per figure */}
+</Surface>
+```
 
 ## Changelog
 
