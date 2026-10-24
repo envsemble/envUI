@@ -205,6 +205,30 @@ export function SkeletonsFixture() {
         <Text variant="title" render={<h3 />} data-testid="rtl-title" />
       </Surface>
 
+      {/* Skeleton roots that scroll, as a wide table's region or a tall dialog: the bars past the
+          first screen are drawn too. */}
+      {(['ltr', 'rtl'] as const).map((dir) => (
+        <Surface
+          key={dir}
+          skeleton
+          dir={dir}
+          data-testid={`scrolling-${dir}`}
+          // Not a tab stop, as a scroller would be: the skeletons above it are skipped by Tab.
+          tabIndex={-1}
+          padding={2}
+          style={{ inlineSize: '10rem', blockSize: '4rem', overflow: 'auto' }}
+        >
+          <Text render={<p />} style={{ whiteSpace: 'nowrap' }}>
+            A line of text much wider than the box that holds it
+          </Text>
+          {['First', 'Second', 'Third', 'Fourth', 'Fifth'].map((line) => (
+            <Text key={line} render={<p />}>
+              {line} line
+            </Text>
+          ))}
+        </Surface>
+      ))}
+
       {/* A list skeleton on its own: inert, with a visually hidden busy status beside it. */}
       <List.Root skeleton aria-label="Owners loading" data-testid="list-skeleton">
         {placeholders<Project>(2).map((project) => (
