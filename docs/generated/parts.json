@@ -4589,7 +4589,25 @@
           ]
         },
         {
+          "attribute": "data-handle",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-slider-control"
+          ]
+        },
+        {
           "attribute": "data-pressed",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-slider-control"
+          ]
+        },
+        {
+          "attribute": "data-ruler",
           "values": [
             ""
           ],
