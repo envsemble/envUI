@@ -122,11 +122,11 @@ test('a page an alias names ranks above the props of that name', () => {
   // An export's own name counts more than a page's alias of it.
   assert.deepEqual(best('icon'), ['export:Icon']);
   assert.ok(best('icon', 3).includes('page:icons'));
-  // A page whose title names the topic, as Spacing & shape names spacing, ranks above pages and
+  // A page whose title names the topic, as Spacing & density names spacing, ranks above pages and
   // props that only mention it.
   assert.deepEqual(best('spacing'), ['page:spacing']);
-  assert.deepEqual(best('scale'), ['page:scale']);
-  assert.deepEqual(best('density'), ['page:scale']);
+  assert.deepEqual(best('scale'), ['page:spacing']);
+  assert.deepEqual(best('density'), ['page:spacing']);
   assert.deepEqual(best('contrast'), ['page:colors']);
   // An export's name written out finds the export before the page that lists it as an alias.
   assert.deepEqual(best('copy button'), ['export:CopyButton']);

@@ -1,7 +1,13 @@
 import { Button, Column } from '@envsemble/envui';
 import { Api } from '@envsemble/envui/icons/Api';
+import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { PageHeader } from '../layout/PageHeader';
-import { apiRoute, patternGuideRoute, type SitePage } from '../navigation/DocumentationRoutes';
+import {
+  apiRoute,
+  foundationGuideRoute,
+  patternGuideRoute,
+  type SitePage,
+} from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
 import { getReferenceIcon } from '../navigation/TopicIcons';
 import { FoundationPreview } from '../previews/FoundationPreview';
@@ -22,6 +28,24 @@ function ApiLink({ path }: { path: string }) {
       className="docs-api-link"
     >
       API
+    </Button>
+  );
+}
+
+/**
+ * The link from a foundation's page on the Site to its guide in the Docs: the tokens, values and code
+ * behind its plain words.
+ */
+function GuideLink({ path }: { path: string }) {
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      href={routeHref(path)}
+      startIcon={<MenuBook />}
+      className="docs-guide-link"
+    >
+      Guide
     </Button>
   );
 }
@@ -94,8 +118,8 @@ const iconsCredit = [
 ].join('\n');
 
 /**
- * A foundation's page on the Site: a short introduction and its visuals, in plain words. Its written
- * guidance, with the tokens and code it uses, is its guide in the Docs.
+ * A foundation's page on the Site: how envUI handles its subject, in pictures and plain words. Its
+ * guide in the Docs, which Guide opens, holds the tokens and code behind them.
  */
 export function FoundationPage({ page }: { page: SitePage }) {
   const reference = page.document as Reference;
@@ -108,6 +132,7 @@ export function FoundationPage({ page }: { page: SitePage }) {
         description={page.summary}
         // eslint-disable-next-line react-hooks/static-components
         symbol={<Icon />}
+        meta={<GuideLink path={foundationGuideRoute(reference.id)} />}
       />
       <FoundationPreview id={reference.id} />
       {reference.id === 'icons' && (

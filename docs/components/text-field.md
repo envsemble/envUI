@@ -128,7 +128,7 @@ Outline and floating fields have no fill of their own: they take the background 
 
 ### Sizes
 
-Outline and ghost fields come in the three control heights of the [scale](../foundations/scale.md), small, medium and large, so they line up with buttons of the same size.
+Outline and ghost fields come in the three control heights of the [scale](../foundations/spacing.md), small, medium and large, so they line up with buttons of the same size.
 
 ```tsx example=FieldsBesideButtons
 

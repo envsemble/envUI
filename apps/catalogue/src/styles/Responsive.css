@@ -8,9 +8,6 @@
   .docs-swatch {
     min-block-size: var(--env-control-height-touch);
   }
-  .docs-measure {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
 }
 @media print {
   .docs-compact-controls,

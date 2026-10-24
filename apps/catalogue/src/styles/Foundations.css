@@ -45,39 +45,6 @@
     monospace;
   overflow-wrap: anywhere;
 }
-.docs-type-list {
-  display: grid;
-  gap: var(--env-space-5);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.docs-type-list > li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
-  gap: var(--env-space-6);
-  align-items: center;
-}
-.docs-type-meta code {
-  font-size: 0.75rem;
-  overflow-wrap: anywhere;
-}
-@container (max-width: 38rem) {
-  .docs-type-list > li {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--env-space-2);
-  }
-}
-.docs-measure {
-  display: grid;
-  grid-template-columns: minmax(max-content, 0.6fr) minmax(max-content, 0.45fr) minmax(0, 1fr);
-  gap: 0.5rem;
-  align-items: center;
-  font: var(--env-type-body-small);
-}
-.docs-measure code {
-  font-size: 0.75rem;
-}
 .docs-icon-toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -127,25 +94,6 @@
   body:has(.docs-icon-details) .docs-main {
     padding-inline-end: 24rem;
   }
-}
-.docs-facts p {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.docs-facts code {
-  font-size: 0.75rem;
-}
-/* Scale: every kind of control at one size, on one row, so their heights compare. */
-.docs-scale-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--env-space-2);
-}
-.docs-scale-row > .env-text-field {
-  inline-size: 11rem;
 }
 /* A foundation page on the figure template's rules (previews/foundations/Topic.tsx): sections
    under their h2, each opened by a paragraph, then titled blocks beside their figures, a sub-topic
@@ -249,6 +197,61 @@
 }
 .docs-shape-inner {
   inline-size: 18rem;
+}
+
+/* The two scales side by side: the same content, so the sizes compare. */
+/* The scale's own boundary, a Theme, paints no page of its own on the canvas. */
+.docs-scale-theme {
+  background: none;
+  inline-size: auto;
+}
+.docs-scale-sample {
+  inline-size: min(20rem, 100%);
+}
+
+/* Adapting to width: the same components in a narrow frame and across the column. */
+.docs-width-figures {
+  display: grid;
+  gap: var(--env-space-7);
+  min-inline-size: 0;
+}
+.docs-topic-figure > .docs-foundation-stage > .docs-width-sample[data-width='narrow'] {
+  inline-size: min(18rem, 100%);
+}
+.docs-topic-figure > .docs-foundation-stage > .docs-width-sample[data-width='wide'] {
+  inline-size: 100%;
+}
+
+/* Typography: a small screen of text styles, and every style in a list on the page. */
+.docs-type-screen {
+  inline-size: min(26rem, 100%);
+}
+.docs-type-styles {
+  display: grid;
+  gap: var(--env-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.docs-type-styles > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--env-space-2) var(--env-space-6);
+  align-items: center;
+}
+.docs-type-name {
+  display: grid;
+  gap: var(--env-space-1);
+}
+@container (max-width: 38rem) {
+  .docs-type-styles > li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Accessibility: a small form to move through with the keyboard. */
+.docs-keyboard-sample {
+  inline-size: min(22rem, 100%);
 }
 
 /* The color roles as swatches, on the page: each a block of the role's color with its name and

@@ -1,18 +1,16 @@
 import { ColorsPreview } from './foundations/Colors';
 import { TypographyPreview } from './foundations/Typography';
 import { SpacingPreview } from './foundations/Spacing';
-import { ScalePreview } from './foundations/Scale';
 import { ResponsivePreview } from './foundations/Responsive';
 import { Suspense, useState } from 'react';
 import { AccessibilityPreview } from './foundations/Accessibility';
-import { CompositionPreview } from './foundations/Composition';
 import { ContentPreview } from './foundations/Content';
 import { ExampleStage } from './Example';
 import { Preview } from './Preview';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
 import { Loading } from '../template/Loading';
 
-/** The icon list, with every icon, loads with the page that shows it. */
+/** The Icons page, with every icon in its list, loads when it is shown. */
 const iconList = lazyPart(
   () => import('./foundations/Icons'),
   (module) => module.IconsPreview,
@@ -50,14 +48,10 @@ function FoundationTopic({ id }: FoundationPreviewProps) {
       return <TypographyPreview />;
     case 'spacing':
       return <SpacingPreview />;
-    case 'scale':
-      return <ScalePreview />;
     case 'responsive':
       return <ResponsivePreview />;
     case 'icons':
       return <IconList />;
-    case 'composition':
-      return <CompositionPreview />;
     case 'accessibility':
       return <AccessibilityPreview />;
     case 'content':

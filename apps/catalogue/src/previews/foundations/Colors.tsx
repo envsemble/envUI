@@ -15,7 +15,6 @@ import {
 } from '@envsemble/envui';
 import { ExampleStage } from '../Example';
 import { MarkedSubject } from './Marks';
-import { StateLayers } from './StateLayers';
 import { Block, Figure, NumberedLegend, TagLegend, Topic } from './Topic';
 
 /**
@@ -162,10 +161,10 @@ function ThemesFigure() {
   );
 }
 
-/** The status colors at work: badges in each tone, and a warning. */
+/** The tones at work: badges in each, a warning, a note and a danger button. */
 function StatusFigure() {
   return (
-    <Figure label="Status colors" className="docs-status-stage">
+    <Figure label="Each tone at work" className="docs-status-stage">
       <Column gap={4} align="center" inert>
         <Row wrap justify="center" gap={2}>
           <Badge tone="accent">Current</Badge>
@@ -178,6 +177,8 @@ function StatusFigure() {
         <Alert tone="warning" title="Two reports need a review">
           They are due on Friday.
         </Alert>
+        <Alert tone="info" title="Reports now show who changed them last" />
+        <Button tone="danger">Delete report</Button>
       </Column>
     </Figure>
   );
@@ -224,7 +225,10 @@ const words = [
   { tag: 'A filled card', text: 'A card with the soft fill, for a group inside a surface.' },
   { tag: 'Supporting text', text: 'Quieter text for details, captions and hints.' },
   { tag: 'The accent', text: 'The color of the main action, links and what is selected.' },
-  { tag: 'Success or warning', text: 'A status color, with words or an icon that say the same.' },
+  {
+    tag: 'Success or warning',
+    text: 'A tone that says how something stands, with words or an icon.',
+  },
   { tag: 'A danger button', text: 'A red action for deleting or anything that can’t be undone.' },
   { tag: 'Its own color', text: 'One element in a color of its own, keeping its hover and press.' },
   { tag: 'A dark area', text: 'One part of a light page in the dark theme, or the other way.' },
@@ -245,7 +249,7 @@ export function ColorsPreview() {
         <RolesFigure />
         <Block
           title="Every role in this theme"
-          text="Each swatch shows a role in the theme you are reading in. Switch the theme in Display, and each takes the color its role has there."
+          text="Each swatch shows a role in the theme you are reading in. Switch the theme in the Display menu, and each takes the color its role has there."
           stacked
         >
           <RoleSwatches />
@@ -256,40 +260,38 @@ export function ColorsPreview() {
         lead="Every role has a color in the light and the dark theme, and a high-contrast version of each, with stronger text and edges. People choose, or the app follows their system, and every screen follows without changes."
       >
         <ThemesFigure />
+        <Block
+          title="Try it on this site"
+          text="Choose a theme and a contrast in the Display menu, at the top of the page, and every page and example here follows."
+        />
       </Topic>
       <Topic
-        title="Status colors"
-        lead="Success, warning, danger and done mark how something stands, and the accent marks what is current. A status color always comes with words or an icon, so nobody has to tell colors apart."
+        title="What each color means"
+        lead="A tone means the same on every component, on badges, alerts, buttons, toasts and charts alike. A tone always comes with words or an icon, so nobody has to tell colors apart."
       >
         <StatusFigure />
         <TagLegend
-          label="Status colors"
+          label="What each tone means"
           entries={[
-            { tag: 'Accent', text: 'The current or highlighted state.' },
+            { tag: 'Neutral', text: 'No particular state, such as archived, and most actions.' },
+            { tag: 'Accent', text: 'The main action, and the current or highlighted state.' },
+            { tag: 'Info', text: 'Something to know, neither good nor bad, such as a tip.' },
             { tag: 'Success', text: 'Healthy, ready or saved.' },
             { tag: 'Warning', text: 'Needs attention soon.' },
             { tag: 'Danger', text: 'Failed, or an action that destroys something.' },
             { tag: 'Done', text: 'Completed work.' },
-            { tag: 'Neutral', text: 'No particular state, such as archived.' },
           ]}
         />
       </Topic>
       <Topic
         title="Colors of its own"
-        lead="Where a screen needs a color the roles don't give, one element can take a color of its own, and one area can take the other theme."
+        lead="Where a screen needs a color the roles don't give, most components, such as buttons, fields, cards, badges, alerts, menus and navigation, can take colors of their own, and one area can take the other theme."
       >
         <Block
           title="One element, one area"
-          text="A button in a brand color keeps its hover and press, made from its own color. An area in the other theme, such as a dark banner on a light page, brings all its roles along."
+          text="A button in a brand color keeps its hover and press, made from its own color, and its label stays readable in every state. An area in the other theme, such as a dark banner on a light page, brings all its roles along."
         >
           <OwnColorsFigure />
-        </Block>
-        <Block
-          title="Hover and press"
-          text="Every control has its own hover and press colors in each theme, so its label stays readable in every state."
-          stacked
-        >
-          <StateLayers />
         </Block>
       </Topic>
       <Topic
