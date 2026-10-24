@@ -331,7 +331,7 @@
     "AvatarGroup": {
       "kind": "component",
       "source": "packages/ui/src/content/AvatarGroup.tsx",
-      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip. A ring in the color of the surface below separates the avatars.",
+      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip.",
       "props": [
         {
           "name": "people",
@@ -351,6 +351,13 @@
           "required": false,
           "default": "'md'",
           "description": "As Avatar: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem."
+        },
+        {
+          "name": "gather",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where a pointer can hover, the group keeps the room its spread takes, so spreading never moves what is around it, and the avatars gather at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
         },
         {
           "name": "total",
@@ -1935,7 +1942,7 @@
           "name": "confirmLabel",
           "type": "ReactNode",
           "required": true,
-          "description": "The label while armed, naming what a second press does, such as “Remove Morgan?”."
+          "description": "The label while armed: what a second press does, short and without a question mark, such as “Remove Morgan”."
         },
         {
           "name": "onConfirm",
@@ -5564,7 +5571,7 @@
     "Panes.Divider": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged.",
+      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged. Place it between two surfaces, each pane's own, such as a Surface as tall as the pane, never beside content on the page.",
       "props": [
         {
           "name": "label",
@@ -6916,7 +6923,7 @@
     "Sheet": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Sheet.tsx",
-      "description": "A panel that slides in over the page from an edge of the window, for filters, details, an inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a modal by default, which traps focus and returns it on close, or beside the page with modal false. A side sheet takes the whole width of a compact window, and a swipe toward its edge closes it; with `resizable`, people resize it by its inner edge. className, style, ref and data attributes go to the sheet's surface.",
+      "description": "A panel that slides in over the page from an edge of the window, for filters, details, an inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a modal by default, which traps focus and returns it on close, or beside the page with modal false. A side sheet takes the whole width of a compact window, and a finger's swipe toward its edge closes it; a mouse or a pen never swipes it. With `resizable`, people resize it by its inner edge, with the same handle as between Panes. className, style, ref and data attributes go to the sheet's surface.",
       "props": [
         {
           "name": "open",
@@ -6935,7 +6942,7 @@
           "name": "onOpenChange",
           "type": "(open: boolean, details: DialogOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the requested state, and why, when the sheet asks to open or close: from the trigger, Escape, an outside press, the close button, a swipe toward its edge or a DialogClose. Not called for a dismissal that pending blocks."
+          "description": "Called with the requested state, and why, when the sheet asks to open or close: from the trigger, Escape, an outside press, the close button, a swipe of a finger toward its edge or a DialogClose. Not called for a dismissal that pending blocks."
         },
         {
           "name": "trigger",
@@ -7093,7 +7100,7 @@
     "Slider": {
       "kind": "component",
       "source": "packages/ui/src/forms/Slider.tsx",
-      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle and faint ticks at its steps appear under the pointer and while it has focus. An optional description sits below it.",
+      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it. An optional description sits below it.",
       "props": [
         {
           "name": "label",

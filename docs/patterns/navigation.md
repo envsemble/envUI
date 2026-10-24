@@ -43,6 +43,7 @@ composes:
   - Tooltip
   - CommandPalette
   - Panes
+  - Surface
   - LinkProvider
   - Link
   - List

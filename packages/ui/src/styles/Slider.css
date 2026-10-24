@@ -1,9 +1,10 @@
 /* A slider as a field: as tall as the fields and with their corners, so it sits in a form among
    them. The whole control is the track, a quiet tint, with the label inside at its start, the value
-   at its end, in a field's type, and a stronger fill from the start that shows the value. A thin handle at
-   the value and faint ticks at the steps appear under the pointer and while it has focus; the value
-   text says the exact amount. The text always keeps its full strength: where the fill's end and the
-   handle pass under the label or the value, they fade instead. */
+   at its end, in a field's type, and a stronger fill from the start that shows the value. A thin
+   handle at the value appears under the pointer and while it has focus, and faint ticks at the
+   steps, a ruler, only while the pointer presses it; the value text says the exact amount. The text
+   always keeps its full strength: where the fill's end and the handle pass under the label or the
+   value, they fade instead. */
 /* Color properties: a slider's colors, which an application sets on one slider through style or its
    own CSS: container the track, indicator the fill that shows the value, and content the label, the
    value, the handle and the ticks. They don't inherit; the slider passes them on to its parts. */
@@ -150,12 +151,15 @@
   color: var(--env-slider-content, var(--env-color-fg-default));
   font-variant-numeric: tabular-nums;
 }
-/* Under the pointer, while dragged and while it has focus, the handle and the ticks show; the handle
-   faint while it passes under the label or the value. */
-.env-slider-control:is(:hover, :focus-within, [data-dragging]) .env-slider-thumb {
+/* Under the pointer, while pressed and while it has focus, the handle shows, faint while it passes
+   under the label or the value. */
+.env-slider-control:is(:hover, :focus-within, [data-pressed]) .env-slider-thumb {
   opacity: calc(1 - 0.75 * var(--env-slider-veil));
 }
-.env-slider-control:is(:hover, :focus-within, [data-dragging]) .env-slider-track::after {
+/* The ticks show only while the pointer presses the slider (data-pressed, which Slider sets from the
+   press to the release), and fade out when it lets go: not under a resting pointer, nor with the
+   keyboard. */
+.env-slider-control[data-pressed] .env-slider-track::after {
   opacity: 0.35;
 }
 /* Keyboard focus rings the whole field, as on a button. */

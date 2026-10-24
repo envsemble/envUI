@@ -1,23 +1,25 @@
-/* Avatar groups: overlapping avatars, later ones over earlier ones, each ringed in the color of the
-   surface below so neighbours stay apart. The ring follows the envUI surface the group sits on, or
-   the canvas; --env-avatar-group-ring sets it for any other surface, such as a row. Each avatar
-   covers an eighth of the one before, and initials center in what it leaves, so they stay clear of
-   the next avatar and its ring. */
+/* Avatar groups: overlapping avatars, later ones over earlier ones, and the count of the rest at
+   the end, under the last avatar. Nothing rings them: each avatar's own hairline edge keeps it
+   apart from the one it overlaps. Each avatar covers an eighth of the one before, and initials
+   center in what it leaves, so they stay clear of the next avatar. */
 .env-avatar-group {
   --env-avatar-group-size: 2rem;
   --env-avatar-group-overlap: calc(var(--env-avatar-group-size) / 8);
-  --env-avatar-group-ring-width: max(0.125rem, calc(var(--env-avatar-group-size) / 16));
+  /* The color of the surface below, for the gap in a chosen avatar's ring: the envUI surface the
+     group sits on, or the canvas; --env-avatar-group-ring sets it for any other surface, such as a
+     row. */
   --env-avatar-group-ring-color: var(
     --env-avatar-group-ring,
     var(--env-surface-color, var(--env-color-bg-page))
   );
-  /* Each avatar's ring, through Avatar's hook. */
-  --env-avatar-ring: 0 0 0 var(--env-avatar-group-ring-width) var(--env-avatar-group-ring-color);
   box-sizing: border-box;
   display: inline-flex;
   flex: 0 0 auto;
+  flex-wrap: nowrap;
   align-items: center;
   vertical-align: middle;
+  /* The group's own stacking context, so the count can lie under its avatars. */
+  isolation: isolate;
 }
 .env-avatar-group[data-size='sm'] {
   --env-avatar-group-size: 1.5rem;
@@ -35,29 +37,45 @@
 .env-avatar-group > * + * {
   margin-inline-start: calc(-1 * var(--env-avatar-group-overlap));
 }
+/* The count lies under the last avatar, at the bottom of the stack: the avatar keeps its whole
+   circle and its presses, and the count shows past its end. */
+.env-avatar-group > .env-avatar-group-overflow {
+  z-index: calc(-1 * var(--env-z-raised));
+}
 
-/* Initials center in the part of the circle that the next avatar and its ring leave uncovered,
-   through Avatar's hook. Before the bunched and spread rules below, which change it. */
-.env-avatar-group > :not(:last-child) {
-  --env-avatar-initials-inset-end: calc(
-    var(--env-avatar-group-overlap) + var(--env-avatar-group-ring-width)
-  );
+/* Initials center in the part of the circle that the next avatar leaves uncovered, through Avatar's
+   hook; the count lies under the last avatar, which keeps its whole circle. Before the bunched and
+   spread rules below, which change it. */
+.env-avatar-group > :has(+ :not(.env-avatar-group-overflow)) {
+  --env-avatar-initials-inset-end: var(--env-avatar-group-overlap);
 }
 
 /* Where there is a pointer that hovers, the group rests bunched: the avatars overlap more, each a
-   little off the line and turned, by its place, the same on every render and from a server, and
-   the count of the rest waits behind the last. Under the pointer, or while focus is inside, they
-   spread apart along a gentle arch, the middle highest and the ends a little lower and turned out,
-   and the count shows; the keyboard reaches it as before, which spreads the group too. */
+   little off the line and turned, by its place, the same on every render and from a server, with
+   the count of the rest under the last. Under the pointer, or while focus is inside, they spread
+   apart along a gentle arch, the middle highest and the ends a little lower and turned out; the
+   keyboard reaches the count, which spreads the group too.
+
+   The group's box is always the spread row, and bunching and spreading only move the items, by
+   translate and rotate, within it: spreading never changes the group's size, so it can't push what
+   is around it, wrap the row it sits in, or move out from under the pointer and bunch again. At
+   rest the items gather toward the start of that room, or its end with data-gather="end", each by
+   its place, which the component sets as --env-avatar-group-before, -after, -count-before and
+   -count-after. */
 @media (hover: hover) and (pointer: fine) {
   .env-avatar-group {
     --env-avatar-group-bunch: calc(var(--env-avatar-group-size) * 0.4);
     --env-avatar-group-gap: calc(var(--env-avatar-group-size) * 0.15);
-    /* The way the ends turn out: mirrored in right-to-left text. */
-    --env-avatar-group-turn-out: 1;
+    /* Where the items gather at rest: 0 at the start, 1 at the end. */
+    --env-avatar-group-gather: 0;
+    /* The inline direction: mirrored in right-to-left text, for the gathering and the turns. */
+    --env-avatar-group-inline: 1;
+  }
+  .env-avatar-group[data-gather='end'] {
+    --env-avatar-group-gather: 1;
   }
   .env-avatar-group:dir(rtl) {
-    --env-avatar-group-turn-out: -1;
+    --env-avatar-group-inline: -1;
   }
   /* Pressable avatars bunch only as far as leaves each one the minimum target uncovered at rest,
      with a twentieth of the size to spare for the next avatar's turn, which widens its box; small
@@ -72,16 +90,37 @@
   .env-avatar-group > * {
     --env-avatar-group-lift: 0rem;
     --env-avatar-group-turn: 0deg;
-    translate: 0 var(--env-avatar-group-lift);
-    rotate: calc(var(--env-avatar-group-turn) * var(--env-avatar-group-turn-out));
+    /* Bunched, each item moves from its place in the spread row by a step, the gap and the bunch's
+       overlap, for each avatar between it and the end the items gather toward, and by a smaller
+       step for the count, which tucks only an eighth under the last avatar, so it stays legible. */
+    --env-avatar-group-step: calc(var(--env-avatar-group-bunch) + var(--env-avatar-group-gap));
+    --env-avatar-group-count-step: calc(
+      var(--env-avatar-group-overlap) + var(--env-avatar-group-gap)
+    );
+    --env-avatar-group-shift: calc(
+      var(--env-avatar-group-gather) *
+        (
+          var(--env-avatar-group-after, 0) * var(--env-avatar-group-step) +
+            var(--env-avatar-group-count-after, 0) * var(--env-avatar-group-count-step)
+        ) -
+        (1 - var(--env-avatar-group-gather)) *
+        (
+          var(--env-avatar-group-before, 0) * var(--env-avatar-group-step) +
+            var(--env-avatar-group-count-before, 0) * var(--env-avatar-group-count-step)
+        )
+    );
+    translate: calc(var(--env-avatar-group-shift) * var(--env-avatar-group-inline))
+      var(--env-avatar-group-lift);
+  }
+  /* The avatars turn; the count stays upright, so its figures never lean like italics. */
+  .env-avatar-group > :not(.env-avatar-group-overflow) {
+    rotate: calc(var(--env-avatar-group-turn) * var(--env-avatar-group-inline));
   }
   .env-avatar-group > * + * {
-    margin-inline-start: calc(-1 * var(--env-avatar-group-bunch));
+    margin-inline-start: var(--env-avatar-group-gap);
   }
-  .env-avatar-group > :not(:last-child) {
-    --env-avatar-initials-inset-end: calc(
-      var(--env-avatar-group-bunch) + var(--env-avatar-group-ring-width)
-    );
+  .env-avatar-group > :has(+ :not(.env-avatar-group-overflow)) {
+    --env-avatar-initials-inset-end: var(--env-avatar-group-bunch);
   }
   /* At rest, small offsets that vary by place. */
   .env-avatar-group > :nth-child(3n + 1) {
@@ -96,20 +135,9 @@
     --env-avatar-group-lift: calc(var(--env-avatar-group-size) * -0.01);
     --env-avatar-group-turn: -1deg;
   }
-  /* At rest, the count waits behind the last avatar, out of sight, and lets the pointer through
-     to it: drawn after the avatar, it would otherwise take the avatar's hover and clicks. */
-  .env-avatar-group > .env-avatar-group-overflow {
-    margin-inline-start: calc(-1 * var(--env-avatar-group-size));
-    opacity: 0;
-    scale: 0.6;
-    pointer-events: none;
-  }
-  /* Spread: an even row with gaps along an arch, and the count shown. */
-  .env-avatar-group:is(:hover, :focus-within) > * + *,
-  .env-avatar-group:is(:hover, :focus-within) > .env-avatar-group-overflow {
-    margin-inline-start: var(--env-avatar-group-gap);
-  }
+  /* Spread: each item in its place in the row, with gaps, along an arch. */
   .env-avatar-group:is(:hover, :focus-within) > * {
+    --env-avatar-group-shift: 0rem;
     --env-avatar-group-lift: 0rem;
     --env-avatar-group-turn: 0deg;
     --env-avatar-initials-inset-end: 0rem;
@@ -135,11 +163,6 @@
   .env-avatar-group:is(:hover, :focus-within) > :only-child {
     --env-avatar-group-lift: 0rem;
     --env-avatar-group-turn: 0deg;
-  }
-  .env-avatar-group:is(:hover, :focus-within) > .env-avatar-group-overflow {
-    opacity: 1;
-    scale: 1;
-    pointer-events: auto;
   }
 }
 /* A pressable avatar: a button or link the size of the picture, with a state layer over it. */
@@ -168,39 +191,38 @@
 .env-avatar-group-item:active::after {
   background: var(--env-color-bg-neutral-subtle-pressed);
 }
-/* The avatar under the pointer or keyboard focus comes in front of its neighbours, and so does a
-   chosen one, whose check would otherwise sit under the next avatar: each avatar's turn and lift
+/* The avatar under the pointer or keyboard focus comes in front of its neighbours, as does the
+   count with keyboard focus, and so does a chosen one, whose check would otherwise sit under the next avatar: each avatar's turn and lift
    keep what it draws, the check included, in its own stacking context. */
-.env-avatar-group
-  > :is(.env-avatar-group-item, .env-avatar-group-overflow):is(:hover, :focus-visible),
+.env-avatar-group > .env-avatar-group-item:is(:hover, :focus-visible),
+.env-avatar-group > .env-avatar-group-overflow:focus-visible,
 .env-avatar-group > :is([data-selected], :has([data-selected])) {
   z-index: var(--env-z-raised);
 }
 .env-avatar-group-item:focus-visible,
 .env-avatar-group-overflow:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: var(--env-avatar-group-ring-width);
+  outline-offset: 0.125rem;
 }
 
-/* The overflow chip: the count in the translucent fill as painted on the surface, opaque so the
-   avatar it overlaps stays hidden. A larger count grows it into a pill. */
+/* The count of the rest, set as an avatar's initials are, in the same weight, size and spacing, in
+   a neutral fill with the default text color, as a neutral count is: round as the avatars beside
+   it, and a pill when a larger count widens it, since the capped full corner would leave a large
+   chip a rounded square. It lies under the avatars, over the surface alone, so the fill can stay
+   translucent. */
 .env-avatar-group-overflow {
   box-sizing: border-box;
-  box-shadow: var(--env-avatar-ring);
   display: inline-grid;
   place-items: center;
   min-inline-size: var(--env-avatar-group-size);
   block-size: var(--env-avatar-group-size);
   padding-inline: calc(var(--env-avatar-group-size) / 6);
-  /* Round at any size, as the avatars beside it are, and a pill when a larger count widens it: the
-     capped full corner would leave a large chip a rounded square. */
   border-radius: calc(var(--env-avatar-group-size) / 2);
-  /* The neutral fill over the ring color: opaque, since the count overlaps the avatars. */
-  background: linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted))
-    var(--env-avatar-group-ring-color);
+  background: var(--env-color-bg-neutral-muted);
   color: var(--env-color-fg-default);
-  font: var(--env-font-weight-medium) max(0.6875rem, calc(var(--env-avatar-group-size) * 0.4)) / 1
+  font: var(--env-font-weight-semibold) calc(var(--env-avatar-group-size) * 0.38) / 1
     var(--env-font-family);
+  letter-spacing: 0.01em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   cursor: default;
@@ -245,10 +267,10 @@
   }
 }
 /* Motion: the group spreads and bunches with the medium duration, after a pressable avatar's own
-   press; with a reduced-motion preference it changes at once. */
+   press; with a reduced-motion preference it changes at once. Only transforms move. */
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .env-avatar-group > * {
-    transition-property: margin-inline-start, translate, rotate, opacity, scale, transform;
+    transition-property: translate, rotate, transform;
     transition-duration: var(--env-motion-duration-medium);
     transition-timing-function: var(--env-motion-ease);
   }

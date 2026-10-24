@@ -227,7 +227,8 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
       Number.parseFloat(getComputedStyle(e, '::before').inlineSize) * -1,
   );
   expect(Math.abs(fillStart)).toBeLessThanOrEqual(1);
-  // At rest the handle and the ticks are out of sight; under the pointer they show.
+  // At rest the handle and the ticks are out of sight; under the pointer the handle shows, and the
+  // ticks only while the pointer presses the slider, which the next test covers.
   const thumb = slider.locator('.env-slider-thumb');
   const ticks = () =>
     slider.locator('.env-slider-track').evaluate((e) => getComputedStyle(e, '::after').opacity);
@@ -236,7 +237,7 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   expect(await ticks()).toBe('0');
   await control.hover();
   await expect(thumb).toHaveCSS('opacity', '1');
-  await expect.poll(ticks).not.toBe('0');
+  expect(await ticks()).toBe('0');
   // The text never dims: where the handle and the fill's end pass under the label or the value,
   // they fade instead, and the text above them keeps its full color.
   const heading = slider.locator('.env-slider-heading');
@@ -267,3 +268,49 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   // Ten parts of 0 to 100 by large steps of 10; a range of few steps is cut at every step.
   await expect(slider).toHaveCSS('--env-slider-ticks', '10');
 });
+
+test(
+  'the ticks show only while the pointer presses the slider, never stuck',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const scope = page.getByTestId('sliders-light');
+    const slider = scope.locator('.env-slider').first();
+    const control = slider.locator('.env-slider-control');
+    const ticks = () =>
+      slider.locator('.env-slider-track').evaluate((e) => getComputedStyle(e, '::after').opacity);
+    const box = (await control.boundingBox())!;
+    const y = box.y + box.height / 2;
+    // At rest and under a resting pointer, none.
+    await page.mouse.move(0, 0);
+    expect(await ticks()).toBe('0');
+    await page.mouse.move(box.x + box.width * 0.5, y);
+    await expect(slider.locator('.env-slider-thumb')).toHaveCSS('opacity', '1');
+    expect(await ticks()).toBe('0');
+    // Pressed and dragged, they show, until the pointer lets go, here outside the slider.
+    await page.mouse.down();
+    await expect(control).toHaveAttribute('data-pressed', '');
+    await expect.poll(ticks).toBe('0.35');
+    await page.mouse.move(box.x + box.width * 0.8, y, { steps: 4 });
+    await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 4, { steps: 2 });
+    expect(await ticks()).toBe('0.35');
+    await page.mouse.up();
+    await expect(control).not.toHaveAttribute('data-pressed');
+    await expect.poll(ticks).toBe('0');
+    // The slider keeps focus after the release, and the keyboard brings no ticks back.
+    await expect(slider.getByRole('slider')).toBeFocused();
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('PageDown');
+    expect(await ticks()).toBe('0');
+    await expect(control).not.toHaveAttribute('data-pressed');
+    // A cancelled pointer and a lost capture end the press as a release does.
+    for (const end of ['pointercancel', 'lostpointercapture']) {
+      await page.mouse.move(box.x + box.width * 0.5, y);
+      await page.mouse.down();
+      await expect(control).toHaveAttribute('data-pressed', '');
+      await control.dispatchEvent(end, { pointerId: 1, bubbles: true });
+      await expect(control).not.toHaveAttribute('data-pressed');
+      await expect.poll(ticks).toBe('0');
+      await page.mouse.up();
+    }
+  },
+);

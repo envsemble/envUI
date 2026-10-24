@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { chevronTips, expectVerticalFlip, slowChevron } from './Chevron';
 import { fixtureUrl } from './Servers';
 
 /** Contrast between two opaque CSS colors, as WCAG computes it. */
@@ -293,6 +294,34 @@ test('a Select opened with the pointer leaves focus where Base UI puts it', asyn
     () => (window as unknown as { optionFocusCallers: string[] }).optionFocusCallers,
   );
   expect(callers.filter((stack) => stack.includes('Select.tsx'))).toEqual([]);
+  await page.keyboard.press('Escape');
+});
+
+test("a Select's chevron flips as the list opens and closes, never pointing sideways", async ({
+  page,
+}) => {
+  // A half turn swings the chevron through pointing right in a frame or two, a twitch beside the
+  // opening list. It flips over instead.
+  const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
+  const icon = trigger.locator('.env-select-icon');
+  await slowChevron(icon);
+  await trigger.click();
+  await expect(page.getByRole('listbox')).toBeVisible();
+  expectVerticalFlip(await chevronTips(icon), 1);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('listbox')).toHaveCount(0);
+  expectVerticalFlip(await chevronTips(icon), -1);
+  // With reduced motion it points the other way at once, at the style sheet's own duration.
+  await icon.evaluate((element: HTMLElement) =>
+    element.style.removeProperty('transition-duration'),
+  );
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await trigger.click();
+  await expect(page.getByRole('listbox')).toBeVisible();
+  expect(await icon.evaluate((element) => element.getAnimations().length)).toBe(0);
+  expect(
+    await icon.evaluate((element) => new DOMMatrix(getComputedStyle(element).transform).b),
+  ).toBeCloseTo(-1, 2);
   await page.keyboard.press('Escape');
 });
 

@@ -66,8 +66,9 @@
 /* resizable: the drawer is --env-drawer-width wide, which the component sets with its bounds, and
    never more than half its container, such as the Scaffold, or of the window. The resize handle
    (ResizeHandle.css) runs down its end edge, inside it, so nothing overflows the column that holds
-   it; its line is on that edge, shown on hover, keyboard focus and while dragging. It keeps within
-   the drawer's padding, and under a coarse pointer it is wider, a touch target across the edge. */
+   it: the same handle as between Panes, a grip at its middle and never a line. It is as wide as the
+   drawer's padding, so it leaves the destinations alone, and under a coarse pointer wider, a touch
+   target across the edge. */
 .env-drawer[data-resizable] {
   position: relative;
   inline-size: var(--env-drawer-width);
@@ -83,7 +84,7 @@
   overflow-wrap: normal;
 }
 .env-drawer > .env-drawer-resize-handle {
-  --env-resize-handle-line-start: calc(100% - 2 * var(--env-control-border-width));
+  --env-resize-handle-size: var(--env-space-3);
   position: absolute;
   inset-block: 0;
   inset-inline-end: 0;

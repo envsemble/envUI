@@ -55,7 +55,8 @@ export interface SheetProps
   defaultOpen?: boolean;
   /**
    * Called with the requested state, and why, when the sheet asks to open or close: from the
-   * trigger, Escape, an outside press, the close button, a swipe toward its edge or a DialogClose.
+   * trigger, Escape, an outside press, the close button, a swipe of a finger toward its edge or a
+   * DialogClose.
    * Not called for a dismissal that pending blocks.
    */
   onOpenChange?: (open: boolean, details: DialogOpenChangeDetails) => void;
@@ -186,7 +187,7 @@ function readDirection(source: Element | null): Direction {
   return getComputedStyle(element).direction === 'rtl' ? 'rtl' : 'ltr';
 }
 
-/** Base UI's mark on an element that no swipe starts from: a drag on the handle resizes. */
+/** Base UI's mark on an element that no swipe starts from: a drag on the handle resizes, by touch too. */
 const noSwipe = { 'data-base-ui-swipe-ignore': '' };
 
 /**
@@ -222,8 +223,9 @@ const roomFor = (handle: HTMLElement) => {
  * A panel that slides in over the page from an edge of the window, for filters, details, an
  * inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a
  * modal by default, which traps focus and returns it on close, or beside the page with modal
- * false. A side sheet takes the whole width of a compact window, and a swipe toward its edge
- * closes it; with `resizable`, people resize it by its inner edge. className, style, ref and data attributes go to the sheet's surface.
+ * false. A side sheet takes the whole width of a compact window, and a finger's swipe toward its
+ * edge closes it; a mouse or a pen never swipes it. With `resizable`, people resize it by its inner
+ * edge, with the same handle as between Panes. className, style, ref and data attributes go to the sheet's surface.
  */
 export function Sheet({
   open,
@@ -262,7 +264,7 @@ export function Sheet({
   // Whether it shows, also where the application doesn't control it.
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
   const shown = open ?? uncontrolledOpen;
-  // The swipe that closes a side sheet runs toward its edge, which is physical, so it follows the
+  // The touch swipe that closes a side sheet runs toward its edge, which is physical, so it follows the
   // direction where the sheet opens: the provider's, else its trigger's, read as it opens.
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [read, setRead] = useState<Direction>();
@@ -337,7 +339,13 @@ export function Sheet({
             {modal && <DialogBackdrop className="env-sheet-backdrop" />}
             <BaseDrawer.Viewport className="env-sheet-viewport" data-side={side}>
               <BaseDrawer.Popup
-                render={<DialogSurface radius={side === 'bottom' ? undefined : 'none'} />}
+                // The whole sheet is Base UI's drawer content, where a mouse or a pen selects text
+                // and never swipes: only a finger swipes the sheet closed, as on a phone.
+                render={
+                  <BaseDrawer.Content
+                    render={<DialogSurface radius={side === 'bottom' ? undefined : 'none'} />}
+                  />
+                }
                 {...popupProps}
                 ref={attachPopup}
                 className={classNames('env-sheet-popup', className)}
@@ -380,10 +388,11 @@ export function Sheet({
                   {resizable && (
                     // On the content, which runs the sheet's full height and scrolls with it, so
                     // the handle stays as tall as the sheet; the handle reaches out to the edge.
-                    // A drag on it resizes rather than swipes the sheet closed.
+                    // A drag on it resizes rather than swipes the sheet closed, by touch too.
                     <ResizeHandle
                       {...resize.handleProps}
                       label={resizeLabel ?? messages.resize}
+                      grip
                       className="env-sheet-resize-handle"
                       {...noSwipe}
                     />

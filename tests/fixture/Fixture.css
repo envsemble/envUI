@@ -271,7 +271,8 @@ body:has(> #root > .env-theme > .env-scaffold) {
   inline-size: min(100%, 42rem);
   block-size: 24rem;
 }
-/* An application's own fill, which the avatar group's ring matches through its custom property. */
+/* An application's own fill, which the gap of a chosen avatar's ring in a group matches through
+   its custom property. */
 .fixture-avatar-surface {
   --fixture-avatar-surface: hsl(40 90% 88%);
   --env-avatar-group-ring: var(--fixture-avatar-surface);
@@ -280,6 +281,10 @@ body:has(> #root > .env-theme > .env-scaffold) {
 }
 [data-env-theme='dark'] .fixture-avatar-surface {
   --fixture-avatar-surface: hsl(40 30% 20%);
+}
+/* A list row about as narrow as a phone's, where a group that grew as it spread would wrap. */
+.fixture-avatar-row {
+  inline-size: 17rem;
 }
 .fixture-narrow-time {
   inline-size: 6rem;

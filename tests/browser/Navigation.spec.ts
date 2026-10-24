@@ -320,8 +320,22 @@ test.describe('Drawer resizable', () => {
     const handleBox = (await handle.boundingBox())!;
     expect(handleBox.x + handleBox.width).toBeCloseTo(drawerBox.x + drawerBox.width, 0);
     expect(handleBox.height).toBeCloseTo(drawerBox.height, 0);
+    // The same handle as between Panes, as wide as the drawer's padding: a grip of three dots at
+    // its middle, never a line, and focus rings it.
+    const grip = await handle.evaluate((element) => {
+      const after = getComputedStyle(element, '::after');
+      return {
+        grip: element.hasAttribute('data-grip'),
+        dots: after.backgroundImage.match(/radial-gradient/g)?.length,
+        length: parseFloat(after.height),
+      };
+    });
+    expect(grip).toMatchObject({ grip: true, dots: 3 });
+    expect(grip.length).toBeLessThan(20);
+    expect(handleBox.width).toBeCloseTo(12, 0);
 
     await handle.focus();
+    await expect(handle).toHaveCSS('outline-style', 'solid');
     await page.keyboard.press('ArrowRight');
     await expect(handle).toHaveAttribute('aria-valuetext', '18.5 rem');
     expect(await widthOf(drawer)).toBeCloseTo(18.5 * 16, 0);

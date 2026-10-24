@@ -86,8 +86,8 @@ export interface SliderProps
  * A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form
  * among them, with its label inside at the start, its value at the end and a fill from the start
  * that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a
- * thin handle and faint ticks at its steps appear under the pointer and while it has focus. An
- * optional description sits below it.
+ * thin handle at the value appears under the pointer and while it has focus, and faint ticks at its
+ * steps only while the pointer presses it. An optional description sits below it.
  */
 export function Slider({
   label,
@@ -120,6 +120,35 @@ export function Slider({
   const input = useRef<HTMLInputElement>(null);
   const control = useRef<HTMLDivElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? min);
+  // The ticks, a ruler, show only while the pointer presses the slider: from the press until it is
+  // released anywhere, cancelled or loses its capture, or the window loses focus, so they never stay.
+  const [pressed, setPressed] = useState(false);
+  useLayoutEffect(
+    function releaseRuler() {
+      const element = control.current;
+      if (!pressed || !element) return;
+      const view = element.ownerDocument.defaultView;
+      const release = () => setPressed(false);
+      // A move without a button means the release went to something that kept it.
+      const move = (event: PointerEvent) => {
+        if (event.buttons === 0) release();
+      };
+      const owner = element.ownerDocument;
+      owner.addEventListener('pointerup', release, true);
+      owner.addEventListener('pointercancel', release, true);
+      owner.addEventListener('pointermove', move, true);
+      element.addEventListener('lostpointercapture', release);
+      view?.addEventListener('blur', release);
+      return () => {
+        owner.removeEventListener('pointerup', release, true);
+        owner.removeEventListener('pointercancel', release, true);
+        owner.removeEventListener('pointermove', move, true);
+        element.removeEventListener('lostpointercapture', release);
+        view?.removeEventListener('blur', release);
+      };
+    },
+    [pressed],
+  );
   const current = value ?? uncontrolledValue;
   useEffect(
     function subscribeToFormReset() {
@@ -194,7 +223,14 @@ export function Slider({
         form={form}
       >
         <FieldFrame id={id} description={description}>
-          <BaseSlider.Control ref={control} className="env-slider-control">
+          <BaseSlider.Control
+            ref={control}
+            className="env-slider-control"
+            data-pressed={pressed && !disabled ? '' : undefined}
+            onPointerDown={(event) => {
+              if (!disabled && event.button === 0) setPressed(true);
+            }}
+          >
             <BaseSlider.Track className="env-slider-track">
               <BaseSlider.Indicator className="env-slider-indicator" />
               {/* The handle: a thin line at the value, which shows under the pointer and on focus,

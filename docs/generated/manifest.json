@@ -779,7 +779,7 @@
         {
           "name": "ResizableDetails",
           "title": "Resizable",
-          "description": "Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line. Panes keeps the same gap without a divider, so give each pane a Surface and they stand apart across it. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.",
+          "description": "Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line, so it goes between two surfaces: give each pane a Surface, as tall as the pane with `min-block-size: 100%`, and the divider is the gap between them. Where the detail shows alone, its surface fills the room below the back button. Panes keeps the same gap without a divider. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.",
           "file": "docs/examples/panes/ResizableDetails.tsx"
         },
         {
@@ -882,13 +882,6 @@
               ]
             },
             {
-              "attribute": "data-dragging",
-              "values": [],
-              "parts": [
-                "env-panes-divider"
-              ]
-            },
-            {
               "attribute": "data-env-layout",
               "values": [
                 "panes"
@@ -949,6 +942,15 @@
             {
               "attribute": "data-dragging",
               "values": [],
+              "parts": [
+                "env-resize-handle"
+              ]
+            },
+            {
+              "attribute": "data-grip",
+              "values": [
+                ""
+              ],
               "parts": [
                 "env-resize-handle"
               ]
@@ -1442,6 +1444,7 @@
           "loading",
           "empty-states",
           "key-figures",
+          "navigation",
           "data-tables"
         ]
       }
@@ -2125,7 +2128,7 @@
         {
           "name": "ConfirmInPlace",
           "title": "Confirm in place",
-          "description": "ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.",
+          "description": "ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it. Its armed label is short and has no question mark: the verb, or the verb and object, \"Remove Sam\".",
           "file": "docs/examples/button/ConfirmInPlace.tsx"
         },
         {
@@ -6548,7 +6551,7 @@
         {
           "name": "LayerOpacity",
           "title": "Layer opacity",
-          "description": "Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. A thin handle and faint ticks at its steps appear under the pointer and while it has focus. The label and the value always keep their full strength: where the handle and the end of the fill pass under them, those fade instead.",
+          "description": "Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys. A thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it, fading out when it lets go. The label and the value always keep their full strength: where the handle and the end of the fill pass under them, those fade instead.",
           "file": "docs/examples/slider/LayerOpacity.tsx"
         },
         {
@@ -6640,8 +6643,10 @@
               ]
             },
             {
-              "attribute": "data-dragging",
-              "values": [],
+              "attribute": "data-pressed",
+              "values": [
+                ""
+              ],
               "parts": [
                 "env-slider-control"
               ]
@@ -7285,7 +7290,7 @@
         {
           "name": "ResizableDrawer",
           "title": "Resizable drawer",
-          "description": "With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. Its labels and group headings keep to one line, so its items keep their height as it narrows: one that doesn't fit ends in an ellipsis. A label cut short shows in full in a tooltip; a heading cut short, which takes no focus, gives its full text as its `title`, shown on hover. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage, which it reads once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number. A `width` that isn't a finite number is ignored.",
+          "description": "With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, with the same handle as between Panes, a grip of three dots on that edge, between `minWidth` and `maxWidth`, and never past half its container. Its labels and group headings keep to one line, so its items keep their height as it narrows: one that doesn't fit ends in an ellipsis. A label cut short shows in full in a tooltip; a heading cut short, which takes no focus, gives its full text as its `title`, shown on hover. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage, which it reads once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number. A `width` that isn't a finite number is ignored. Keep a resizable drawer on its own background rather than `background=\"page\"`, so its handle is the edge of a surface and doesn't float beside the page's content.",
           "file": "docs/examples/drawer/ResizableDrawer.tsx"
         },
         {
@@ -7487,6 +7492,15 @@
             {
               "attribute": "data-dragging",
               "values": [],
+              "parts": [
+                "env-resize-handle"
+              ]
+            },
+            {
+              "attribute": "data-grip",
+              "values": [
+                ""
+              ],
               "parts": [
                 "env-resize-handle"
               ]
@@ -11555,6 +11569,15 @@
           ],
           "states": [
             {
+              "attribute": "data-gather",
+              "values": [
+                "end"
+              ],
+              "parts": [
+                "env-avatar-group"
+              ]
+            },
+            {
               "attribute": "data-interactive",
               "values": [
                 ""
@@ -12947,7 +12970,7 @@
         {
           "name": "FilterPanel",
           "title": "Filter panel",
-          "description": "Sheet shares Dialog's surface, title, description and actions, and DialogClose closes it.",
+          "description": "Sheet shares Dialog's surface, title, description and actions, and DialogClose closes it. On a touch screen a swipe toward its edge closes it too; a mouse or a pen never moves the sheet, and a drag inside it selects text.",
           "file": "docs/examples/sheet/FilterPanel.tsx"
         },
         {
@@ -12965,7 +12988,7 @@
         {
           "name": "ResizableDetails",
           "title": "Resizable details",
-          "description": "With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width. Its width is then a number of rem: a CSS length as `width`, such as `min(30rem, 90%)`, is ignored, with a warning while developing, and the sheet starts at `defaultWidth`.",
+          "description": "With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, with the same handle as between Panes: a grip of three dots that stays at the middle of the sheet, never a line, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width. Its width is then a number of rem: a CSS length as `width`, such as `min(30rem, 90%)`, is ignored, with a warning while developing, and the sheet starts at `defaultWidth`.",
           "file": "docs/examples/sheet/ResizableDetails.tsx"
         },
         {
@@ -13080,6 +13103,15 @@
             {
               "attribute": "data-dragging",
               "values": [],
+              "parts": [
+                "env-resize-handle"
+              ]
+            },
+            {
+              "attribute": "data-grip",
+              "values": [
+                ""
+              ],
               "parts": [
                 "env-resize-handle"
               ]
@@ -15540,7 +15572,7 @@
         {
           "name": "ConfirmInPlace",
           "title": "Confirm in place",
-          "description": "The first press names the consequence in the button, \"Remove file?\"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.",
+          "description": "The first press names the consequence in the button, \"Remove file\"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.",
           "file": "docs/examples/destructive-actions/ConfirmInPlace.tsx"
         },
         {
@@ -16078,6 +16110,7 @@
         "Tooltip",
         "CommandPalette",
         "Panes",
+        "Surface",
         "LinkProvider",
         "Link",
         "List",
@@ -17330,7 +17363,7 @@
     "AvatarGroup": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip. A ring in the color of the surface below separates the avatars.",
+      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip.",
       "props": [
         {
           "name": "people",
@@ -17350,6 +17383,13 @@
           "required": false,
           "default": "'md'",
           "description": "As Avatar: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem."
+        },
+        {
+          "name": "gather",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where a pointer can hover, the group keeps the room its spread takes, so spreading never moves what is around it, and the avatars gather at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
         },
         {
           "name": "total",
@@ -18934,7 +18974,7 @@
           "name": "confirmLabel",
           "type": "ReactNode",
           "required": true,
-          "description": "The label while armed, naming what a second press does, such as “Remove Morgan?”."
+          "description": "The label while armed: what a second press does, short and without a question mark, such as “Remove Morgan”."
         },
         {
           "name": "onConfirm",
@@ -22577,7 +22617,7 @@
     "Panes.Divider": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged.",
+      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged. Place it between two surfaces, each pane's own, such as a Surface as tall as the pane, never beside content on the page.",
       "props": [
         {
           "name": "label",
@@ -23935,7 +23975,7 @@
     "Sheet": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A panel that slides in over the page from an edge of the window, for filters, details, an inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a modal by default, which traps focus and returns it on close, or beside the page with modal false. A side sheet takes the whole width of a compact window, and a swipe toward its edge closes it; with `resizable`, people resize it by its inner edge. className, style, ref and data attributes go to the sheet's surface.",
+      "description": "A panel that slides in over the page from an edge of the window, for filters, details, an inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a modal by default, which traps focus and returns it on close, or beside the page with modal false. A side sheet takes the whole width of a compact window, and a finger's swipe toward its edge closes it; a mouse or a pen never swipes it. With `resizable`, people resize it by its inner edge, with the same handle as between Panes. className, style, ref and data attributes go to the sheet's surface.",
       "props": [
         {
           "name": "open",
@@ -23954,7 +23994,7 @@
           "name": "onOpenChange",
           "type": "(open: boolean, details: DialogOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the requested state, and why, when the sheet asks to open or close: from the trigger, Escape, an outside press, the close button, a swipe toward its edge or a DialogClose. Not called for a dismissal that pending blocks."
+          "description": "Called with the requested state, and why, when the sheet asks to open or close: from the trigger, Escape, an outside press, the close button, a swipe of a finger toward its edge or a DialogClose. Not called for a dismissal that pending blocks."
         },
         {
           "name": "trigger",
@@ -24112,7 +24152,7 @@
     "Slider": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle and faint ticks at its steps appear under the pointer and while it has focus. An optional description sits below it.",
+      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it. An optional description sits below it.",
       "props": [
         {
           "name": "label",

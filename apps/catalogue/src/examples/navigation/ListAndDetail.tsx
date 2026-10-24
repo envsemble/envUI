@@ -1,12 +1,23 @@
 import { useState } from 'react';
-import { Badge, DescriptionList, Link, List, Panes, Column, Row, Text } from '@envsemble/envui';
+import {
+  Badge,
+  DescriptionList,
+  Link,
+  List,
+  Panes,
+  Column,
+  Row,
+  Surface,
+  Text,
+} from '@envsemble/envui';
 
 export default function ListAndDetail() {
   const [chosen, setChosen] = useState(projects[0]);
   const [detailShown, setDetailShown] = useState(false);
   return (
     // As narrow as a phone, so the list and the detail show one at a time. From an expanded width
-    // of their own, 52.5 rem, Panes show them side by side.
+    // of their own, 52.5 rem, Panes show them side by side, each on a surface with the divider
+    // between them.
     <Column gap={4} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Panes.Root
         behavior="list-detail"
@@ -16,35 +27,37 @@ export default function ListAndDetail() {
         style={{ blockSize: '18rem' }}
       >
         <Panes.List label="Projects">
-          <List.Root aria-label="Projects">
-            {projects.map((project) => (
-              <List.Item
-                key={project.id}
-                interactive
-                label={
-                  // The chosen project's link carries aria-current, where Back returns focus.
-                  <Link
-                    href={`/projects/${project.id}`}
-                    underline={false}
-                    data-row-target
-                    draggable={false}
-                    aria-current={project.id === chosen.id || undefined}
-                    onClick={() => {
-                      setChosen(project);
-                      setDetailShown(true);
-                    }}
-                  >
-                    {project.name}
-                  </Link>
-                }
-                description={project.owner}
-              />
-            ))}
-          </List.Root>
+          <Surface padding={2} style={{ minBlockSize: '100%' }}>
+            <List.Root aria-label="Projects">
+              {projects.map((project) => (
+                <List.Item
+                  key={project.id}
+                  interactive
+                  label={
+                    // The chosen project's link carries aria-current, where Back returns focus.
+                    <Link
+                      href={`/projects/${project.id}`}
+                      underline={false}
+                      data-row-target
+                      draggable={false}
+                      aria-current={project.id === chosen.id || undefined}
+                      onClick={() => {
+                        setChosen(project);
+                        setDetailShown(true);
+                      }}
+                    >
+                      {project.name}
+                    </Link>
+                  }
+                  description={project.owner}
+                />
+              ))}
+            </List.Root>
+          </Surface>
         </Panes.List>
         <Panes.Divider label="Resize project list" />
         <Panes.Detail label={chosen.name}>
-          <Column gap={3} style={{ padding: 'var(--env-space-4)' }}>
+          <Surface padding={4} render={<Column gap={3} />} style={{ minBlockSize: '100%' }}>
             <Row wrap align="center" gap={2}>
               <Text variant="title" render={<h3 />}>
                 {chosen.name}
@@ -58,7 +71,7 @@ export default function ListAndDetail() {
               <DescriptionList.Item label="Due">{chosen.due}</DescriptionList.Item>
               <DescriptionList.Item label="Open tasks">{chosen.tasks}</DescriptionList.Item>
             </DescriptionList.Root>
-          </Column>
+          </Surface>
         </Panes.Detail>
       </Panes.Root>
     </Column>

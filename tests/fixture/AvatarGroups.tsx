@@ -5,6 +5,7 @@ import {
   IconButton,
   type LinkComponentProps,
   LinkProvider,
+  List,
   Surface,
   Theme,
   type ThemeValue,
@@ -18,6 +19,8 @@ const people = [
   { id: 'jordan', name: 'Jordan Rivera' },
   { id: 'taylor', name: 'Taylor Kim' },
 ];
+/** The same people with the first chosen, whose ring's gap takes the color of the surface below. */
+const chosen = people.map((person, index) => ({ ...person, selected: index === 0 }));
 /** Initials, which a group must leave readable, such as the wide M of AM. */
 const initials = [
   { id: 'alex', name: 'Alex Morgan', fallback: 'initials' as const },
@@ -115,11 +118,11 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
           padding={4}
           data-surface={tone}
         >
-          <AvatarGroup data-testid={`on-${tone}`} people={people} max={3} />
+          <AvatarGroup data-testid={`on-${tone}`} people={chosen} max={3} />
         </Surface>
       ))}
       <div className="fixture-avatar-surface" data-surface="custom">
-        <AvatarGroup data-testid="on-custom" people={people} max={3} />
+        <AvatarGroup data-testid="on-custom" people={chosen} max={3} />
       </div>
       {/* A small toolbar: 2 rem controls beside a standard and a small group. */}
       <Surface
@@ -145,6 +148,17 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
       </div>
       <div dir="rtl">
         <AvatarGroup data-testid="rtl" people={people} max={3} />
+      </div>
+      {/* A group at the end of a narrow list row, which wraps the action under the label when it
+          doesn't fit beside it. */}
+      <div className="fixture-avatar-row">
+        <List.Root aria-label={`Projects ${theme}`}>
+          <List.Item
+            label="Northwind launch"
+            description="4 members"
+            action={<AvatarGroup data-testid="in-row" people={people} max={3} gather="end" />}
+          />
+        </List.Root>
       </div>
     </Theme>
   );

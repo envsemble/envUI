@@ -30,12 +30,12 @@ export default function ConfirmInPlace() {
           label={file.name}
           description={file.size}
           action={
-            // Low stakes, one item: the first press asks in place, the second removes.
+            // Low stakes, one item: the first press names the consequence in place, the second removes.
             <ConfirmButton
               variant="ghost"
               icon={<Close />}
               aria-label={`Remove ${file.name}`}
-              confirmLabel="Remove file?"
+              confirmLabel="Remove file"
               onConfirm={() => remove(file.name)}
             />
           }

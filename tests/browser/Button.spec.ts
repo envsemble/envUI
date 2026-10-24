@@ -110,9 +110,9 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await expect(button).toHaveAttribute('data-variant', 'outline');
 
   await button.click();
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan');
   await expect(button).toHaveAttribute('data-tone', 'danger');
-  await expect(status).toHaveText('Remove Morgan? Press again to confirm.');
+  await expect(status).toHaveText('Remove Morgan. Press again to confirm.');
   await page.clock.runFor(450);
   await button.click();
   await expect(confirmed).toHaveText('1');
@@ -121,19 +121,19 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
 
   // A double click only arms it.
   await button.dblclick();
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan');
   await expect(confirmed).toHaveText('1');
   // Escape, leaving the button and waiting all disarm it.
   await button.press('Escape');
   await expect(button).toHaveText('Remove');
   await button.focus();
   await page.keyboard.press('Enter');
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan');
   await page.keyboard.press('Tab');
   await expect(button).toHaveText('Remove');
   await button.focus();
   await page.keyboard.press('Enter');
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan');
   await page.clock.runFor(800);
   await expect(button).toHaveText('Remove');
   await expect(confirmed).toHaveText('1');
@@ -162,15 +162,15 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   // Keyboard arming keeps focus on the button while it grows to name the consequence.
   await button.focus();
   await page.keyboard.press('Enter');
-  await expect(button).toHaveAccessibleName('Remove Morgan?');
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveAccessibleName('Remove');
+  await expect(button).toHaveText('Remove');
   await expect(button).toHaveAttribute('data-tone', 'danger');
   await expect(button).not.toHaveClass(/env-icon-button/);
   await expect(button).toBeFocused();
   await expect(button.locator('.env-icon')).toHaveCount(1);
   expect((await button.boundingBox())!.width).toBeGreaterThan(rest.width + 40);
   await expect(page.locator('.env-confirm-button-status').nth(1)).toHaveText(
-    'Remove Morgan? Press again to confirm.',
+    'Remove. Press again to confirm.',
   );
   await page.clock.runFor(450);
   await page.keyboard.press('Enter');
@@ -180,7 +180,7 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   await expect(button).toBeFocused();
 
   await button.click();
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove');
   await button.press('Escape');
   await expect(button).toHaveClass(/env-icon-button/);
   await expect(confirmed).toHaveText('1');

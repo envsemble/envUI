@@ -324,6 +324,15 @@
       ],
       "states": [
         {
+          "attribute": "data-gather",
+          "values": [
+            "end"
+          ],
+          "parts": [
+            "env-avatar-group"
+          ]
+        },
+        {
           "attribute": "data-interactive",
           "values": [
             ""
@@ -3609,13 +3618,6 @@
           ]
         },
         {
-          "attribute": "data-dragging",
-          "values": [],
-          "parts": [
-            "env-panes-divider"
-          ]
-        },
-        {
           "attribute": "data-env-layout",
           "values": [
             "panes"
@@ -4577,8 +4579,10 @@
           ]
         },
         {
-          "attribute": "data-dragging",
-          "values": [],
+          "attribute": "data-pressed",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-slider-control"
           ]
@@ -6108,6 +6112,15 @@
         {
           "attribute": "data-dragging",
           "values": [],
+          "parts": [
+            "env-resize-handle"
+          ]
+        },
+        {
+          "attribute": "data-grip",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-resize-handle"
           ]
