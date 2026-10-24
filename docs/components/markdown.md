@@ -87,14 +87,6 @@ CommonMark with tables, strikethrough, task lists, automatic links and footnotes
 
 ## When to use
 
-```tsx do=WithToolbar caption="A toolbar, so people needn't know the syntax."
-
-```
-
-```tsx dont=WithoutToolbar caption="No toolbar: only people who know Markdown can format."
-
-```
-
 - Set `headingOffset` so the document's first heading sits one level below the page's.
 - Don't render untrusted Markdown with a plugin that brings raw HTML back.
 

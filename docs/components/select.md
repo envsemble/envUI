@@ -97,14 +97,6 @@ A row's title names its select with `aria-label`.
 
 ```
 
-```tsx do=OutlineOnPane caption="An outline trigger on a pane."
-
-```
-
-```tsx dont=FilledOnPane caption="A filled trigger on a pane, where its fill blends in."
-
-```
-
 - Order options naturally, such as by frequency, or alphabetically where there is no order.
 - Don't navigate away or run a destructive action as the choice changes.
 

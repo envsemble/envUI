@@ -46,14 +46,6 @@ A destination's `group` shows no heading in the rail: grouped destinations follo
 
 ## When to use
 
-```tsx do=ActionAtTheTop caption="The main action in the header, above the destinations."
-
-```
-
-```tsx dont=ActionAtTheBottom caption="The main action below the destinations, where people don't look for it."
-
-```
-
 - Set `current` on one destination from the router; a press doesn't select by itself.
 - `footer` for the account, such as an AvatarButton.
 

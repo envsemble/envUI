@@ -2609,18 +2609,6 @@
           "file": "docs/examples/toolbar/PageToolbar.tsx"
         },
         {
-          "name": "GroupedControls",
-          "title": "Do: Related controls in groups, with separators between them.",
-          "description": "",
-          "file": "docs/examples/toolbar/GroupedControls.tsx"
-        },
-        {
-          "name": "UngroupedControls",
-          "title": "Don't: Controls in no order: people search the whole row.",
-          "description": "",
-          "file": "docs/examples/toolbar/UngroupedControls.tsx"
-        },
-        {
           "name": "SameIconPressed",
           "title": "Do: A toggle keeps its icon, pressed or not.",
           "description": "",
@@ -4667,18 +4655,6 @@
           "file": "docs/examples/select/NeedlessPlaceholder.tsx"
         },
         {
-          "name": "OutlineOnPane",
-          "title": "Do: An outline trigger on a pane.",
-          "description": "",
-          "file": "docs/examples/select/OutlineOnPane.tsx"
-        },
-        {
-          "name": "FilledOnPane",
-          "title": "Don't: A filled trigger on a pane, where its fill blends in.",
-          "description": "",
-          "file": "docs/examples/select/FilledOnPane.tsx"
-        },
-        {
           "name": "SelectAnatomy",
           "title": "Select anatomy",
           "description": "",
@@ -4997,18 +4973,6 @@
           "title": "Sizes",
           "description": "",
           "file": "docs/examples/segmented-control/SmallToolbar.tsx"
-        },
-        {
-          "name": "MatchingSize",
-          "title": "Do: The size of the controls beside it.",
-          "description": "",
-          "file": "docs/examples/segmented-control/MatchingSize.tsx"
-        },
-        {
-          "name": "MismatchedSize",
-          "title": "Don't: A larger control than its neighbours, so the row doesn't line up.",
-          "description": "",
-          "file": "docs/examples/segmented-control/MismatchedSize.tsx"
         },
         {
           "name": "SegmentedControlAnatomy",
@@ -7085,18 +7049,6 @@
           "file": "docs/examples/rail/GroupsInOrder.tsx"
         },
         {
-          "name": "ActionAtTheTop",
-          "title": "Do: The main action in the header, above the destinations.",
-          "description": "",
-          "file": "docs/examples/rail/ActionAtTheTop.tsx"
-        },
-        {
-          "name": "ActionAtTheBottom",
-          "title": "Don't: The main action below the destinations, where people don't look for it.",
-          "description": "",
-          "file": "docs/examples/rail/ActionAtTheBottom.tsx"
-        },
-        {
           "name": "RailAnatomy",
           "title": "Rail anatomy",
           "description": "",
@@ -9056,18 +9008,6 @@
           "file": "docs/examples/pagination/SmallToolbar.tsx"
         },
         {
-          "name": "MatchingSize",
-          "title": "Do: The size of the fields beside it.",
-          "description": "",
-          "file": "docs/examples/pagination/MatchingSize.tsx"
-        },
-        {
-          "name": "MismatchedSize",
-          "title": "Don't: A larger size than the field beside it: the row doesn't line up.",
-          "description": "",
-          "file": "docs/examples/pagination/MismatchedSize.tsx"
-        },
-        {
           "name": "PaginationAnatomy",
           "title": "Pagination anatomy",
           "description": "",
@@ -9551,18 +9491,6 @@
           "title": "Link picker",
           "description": "",
           "file": "docs/examples/markdown/LinkPicker.tsx"
-        },
-        {
-          "name": "WithToolbar",
-          "title": "Do: A toolbar, so people needn't know the syntax.",
-          "description": "",
-          "file": "docs/examples/markdown/WithToolbar.tsx"
-        },
-        {
-          "name": "WithoutToolbar",
-          "title": "Don't: No toolbar: only people who know Markdown can format.",
-          "description": "",
-          "file": "docs/examples/markdown/WithoutToolbar.tsx"
         },
         {
           "name": "MarkdownEditorAnatomy",
@@ -11895,18 +11823,6 @@
           "file": "docs/examples/calendar-heatmap/ApplicationStrings.tsx"
         },
         {
-          "name": "IncidentsInDanger",
-          "title": "Do: A tone that says what more means: danger for incidents.",
-          "description": "",
-          "file": "docs/examples/calendar-heatmap/IncidentsInDanger.tsx"
-        },
-        {
-          "name": "IncidentsInSuccess",
-          "title": "Don't: Incidents in the success tone: a bad week reads as a good one.",
-          "description": "",
-          "file": "docs/examples/calendar-heatmap/IncidentsInSuccess.tsx"
-        },
-        {
           "name": "HeatmapAnatomy",
           "title": "CalendarHeatmap anatomy",
           "description": "",
@@ -13969,18 +13885,6 @@
           "title": "In title bar",
           "description": "The window frame pattern shows the whole title bar.",
           "file": "docs/examples/menubar/InTitleBar.tsx"
-        },
-        {
-          "name": "StandardOrder",
-          "title": "Do: Menus in the order people expect: File, Edit, View, your own, then Help.",
-          "description": "",
-          "file": "docs/examples/menubar/StandardOrder.tsx"
-        },
-        {
-          "name": "UnusualOrder",
-          "title": "Don't: Help first and File in the middle.",
-          "description": "",
-          "file": "docs/examples/menubar/UnusualOrder.tsx"
         },
         {
           "name": "MenubarAnatomy",
@@ -16065,18 +15969,6 @@
           "title": "Don't: A bare percentage: without the icon and color, it doesn't say which way.",
           "description": "",
           "file": "docs/examples/key-figures/TrendWithoutWords.tsx"
-        },
-        {
-          "name": "BadNewsTone",
-          "title": "Do: A rise that is bad news in the danger tone.",
-          "description": "",
-          "file": "docs/examples/key-figures/BadNewsTone.tsx"
-        },
-        {
-          "name": "GoodNewsToneForBadNews",
-          "title": "Don't: A rising error rate in the success tone.",
-          "description": "",
-          "file": "docs/examples/key-figures/GoodNewsToneForBadNews.tsx"
         },
         {
           "name": "KeyFiguresAnatomy",

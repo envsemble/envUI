@@ -51,14 +51,6 @@ With `accessKeys`, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, an
 
 ## When to use
 
-```tsx do=StandardOrder caption="Menus in the order people expect: File, Edit, View, your own, then Help."
-
-```
-
-```tsx dont=UnusualOrder caption="Help first and File in the middle."
-
-```
-
 - Offer the most frequent commands in visible controls too.
 
 ### Content

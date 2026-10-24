@@ -63,14 +63,6 @@ Each option can show an icon and a count. `disabled` dims one option, which the 
 
 ## When to use
 
-```tsx do=MatchingSize caption="The size of the controls beside it."
-
-```
-
-```tsx dont=MismatchedSize caption="A larger control than its neighbours, so the row doesn't line up."
-
-```
-
 - Put the most used option first, and start on it.
 
 ### Labels

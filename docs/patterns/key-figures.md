@@ -81,14 +81,6 @@ A [Card](../components/card.md) frames a single figure.
 
 ```
 
-```tsx do=BadNewsTone caption="A rise that is bad news in the danger tone."
-
-```
-
-```tsx dont=GoodNewsToneForBadNews caption="A rising error rate in the success tone."
-
-```
-
 - Three to five figures in a group.
 - The trend's tone says whether the change is good news: `success`, `danger`, or `neutral` for no change.
 

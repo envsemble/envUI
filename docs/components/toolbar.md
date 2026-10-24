@@ -76,14 +76,6 @@ Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled
 
 ## When to use
 
-```tsx do=GroupedControls caption="Related controls in groups, with separators between them."
-
-```
-
-```tsx dont=UngroupedControls caption="Controls in no order: people search the whole row."
-
-```
-
 ```tsx do=SameIconPressed caption="A toggle keeps its icon, pressed or not."
 
 ```

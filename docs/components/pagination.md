@@ -60,14 +60,6 @@ Without `total`, the range shows only the page's items, and `hasNextPage` says w
 
 ## When to use
 
-```tsx do=MatchingSize caption="The size of the fields beside it."
-
-```
-
-```tsx dont=MismatchedSize caption="A larger size than the field beside it: the row doesn't line up."
-
-```
-
 - Keep focus where it is after a page loads, and scroll the list to its top.
 - Pass `total` once it is known.
 - Leave the end buttons to the pager: they stay focusable and unavailable. `hideWhenSinglePage` hides a pager with one page.
