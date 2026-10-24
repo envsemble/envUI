@@ -1,6 +1,6 @@
 /**
  * Scale and size: every control of one size has the same height in a scale, in both scales, and
- * the scale's control heights are the token tables' (docs/foundations/scale.md). The density
+ * the scale's control heights are the token tables' (docs/foundations/spacing.md). The density
  * fixture's sizes section holds one row per size of every control that takes a size, in a
  * comfortable and a compact Theme. Every target is at least 24 px, or has 24 px of room. Under a
  * coarse pointer every control grows to the touch height, so the controls of a row still match;

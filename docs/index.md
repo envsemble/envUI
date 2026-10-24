@@ -8,7 +8,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Migrate an interface to envUI](migration.md) — Replace existing UI while preserving application behavior.
 
-- [Customize colors](customizing-colors.md) — Give one element its own colors through its color properties, or recolor an area with a nested Theme.
+- [Customize and extend](customizing.md) — Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.
 
 - [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
 
@@ -25,13 +25,11 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Foundations
 
 - [Colors & themes](foundations/colors.md) — Colors named by their role, so every screen works in light, dark and high contrast.
-- [Typography](foundations/typography.md) — Shared styles for headings, body copy and supporting text.
-- [Spacing & shape](foundations/spacing.md) — How space groups things, controls line up and corners say what a thing is.
-- [Scale & density](foundations/scale.md) — The comfortable and compact app scales, control sizes and the row density of data components.
-- [Layout & stacking](foundations/responsive.md) — Window classes, container queries, measuring a container and the stacking order of frames and popups.
-- [Composition & extension](foundations/composition.md) — Build product interfaces from shared primitives and existing components.
-- [Icons & assets](foundations/icons.md) — Local Material Symbols and official brand assets, ready to use.
-- [Accessibility](foundations/accessibility.md) — Keyboard access, visible focus and clear guidance across shared controls.
+- [Typography](foundations/typography.md) — A few text styles, each with one job, from a page's hero line to small notes.
+- [Spacing & density](foundations/spacing.md) — How space groups things, controls line up, the compact scale and tighter rows, and what corners say.
+- [Adapting to width](foundations/responsive.md) — Components follow the space they sit in, and four window classes name where a layout changes.
+- [Icons](foundations/icons.md) — Thousands of Material Symbols that follow their text, outlined or filled.
+- [Accessibility](foundations/accessibility.md) — What every component does for keyboard, screen readers, contrast, motion and touch, and what an app still supplies.
 - [Content guidelines](foundations/content.md) — Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.
 
 ## Layout & surfaces

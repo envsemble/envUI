@@ -91,7 +91,7 @@ The field sends its value with the form, or one entry for each chip. Checking th
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/scale.md). A field without a visible label, such as in a toolbar, says what to type in its placeholder.
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). A field without a visible label, such as in a toolbar, says what to type in its placeholder.
 
 ```tsx example=SmallToolbar
 

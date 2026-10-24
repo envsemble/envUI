@@ -65,10 +65,8 @@ export const foundationIcons: Record<string, typeof Palette> = {
   colors: Palette,
   typography: TextFields,
   spacing: ViewList,
-  scale: ViewList,
   responsive: Devices,
   icons: Category,
-  composition: ViewList,
   accessibility: TouchApp,
 };
 const groupIcons = {

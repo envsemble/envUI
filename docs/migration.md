@@ -412,7 +412,7 @@ A `variant` typed as a union of variants, such as `variant={pressed ? 'primary' 
 
 ### Scale and density
 
-1.0 sizes an interface on two axes: an app scale, `comfortable` or `compact`, set with `scale` on a Theme, and a row density on data components. Every control takes a `size`, `sm`, `md` or `lg`, with the same height for every control of that size; see [scale and density](foundations/scale.md). The per-component density props go, and `v1-props` moves them where the meaning carries over:
+1.0 sizes an interface on two axes: an app scale, `comfortable` or `compact`, set with `scale` on a Theme, and a row density on data components. Every control takes a `size`, `sm`, `md` or `lg`, with the same height for every control of that size; see [Spacing & density](foundations/spacing.md). The per-component density props go, and `v1-props` moves them where the meaning carries over:
 
 | 0.x                                                                | 1.0                                                                     |
 | ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
@@ -726,7 +726,7 @@ A few components of 1.0.0-prerelease.0 fold into others, and a few become patter
 
 ### Part names and component tokens
 
-A component's part classes, `env-<component>-<part>` such as `.env-card-header`, and its state attributes, `data-*` such as `[data-tone='danger']`, are public and versioned: an application's CSS may target them, and a release that renames or removes one is a major release with a note here. `docs/generated/parts.json` lists every component's parts and states, as do the manifest and the MCP server's `get_component`. So are its color properties, `--env-<component>-<role>` such as `--env-button-container`, which set its colors on one instance ([Customize colors](customizing-colors.md)). The other custom properties a component declares for itself, its component tokens such as `--env-card-padding` or `--env-badge-fill`, are private and may change in any release: set the system tokens instead.
+A component's part classes, `env-<component>-<part>` such as `.env-card-header`, and its state attributes, `data-*` such as `[data-tone='danger']`, are public and versioned: an application's CSS may target them, and a release that renames or removes one is a major release with a note here. `docs/generated/parts.json` lists every component's parts and states, as do the manifest and the MCP server's `get_component`. So are its color properties, `--env-<component>-<role>` such as `--env-button-container`, which set its colors on one instance ([Customize and extend](customizing.md)). The other custom properties a component declares for itself, its component tokens such as `--env-card-padding` or `--env-badge-fill`, are private and may change in any release: set the system tokens instead.
 
 ```css
 /* Before: a component token */

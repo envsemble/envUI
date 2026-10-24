@@ -95,7 +95,7 @@ The form sends the date as a local date, with no time zone. Turning it into a mo
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/scale.md). A field without a visible label, such as in a toolbar, shows its placeholder instead. It is at least 12 rem wide, also in a toolbar sized to its content, and in a narrower container it takes the container's width.
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). A field without a visible label, such as in a toolbar, shows its placeholder instead. It is at least 12 rem wide, also in a toolbar sized to its content, and in a narrower container it takes the container's width.
 
 ```tsx example=SmallToolbar
 

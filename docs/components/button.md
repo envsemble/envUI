@@ -151,7 +151,7 @@ A button that goes somewhere is a link, and one that does something is a button.
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/scale.md). A button without a size of its own takes its container's, such as small in a table cell.
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). A button without a size of its own takes its container's, such as small in a table cell.
 
 <!-- specimen: Sizes -->
 

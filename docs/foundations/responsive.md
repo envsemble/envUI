@@ -25,7 +25,7 @@ aliases:
   - layers
 ---
 
-# Layout & stacking
+# Adapting to width
 
 ## React usage
 
@@ -74,6 +74,20 @@ const medium = windowClasses.medium;
 | `useContainerSize(target, { box })` | An element's `{ inlineSize, blockSize }` in CSS pixels, measured before it paints; undefined on the server    |
 | `--env-z-base` … `--env-z-tooltip`  | The stacking order of envUI's layers and the application's own, lowest first                                  |
 
+## The words people use
+
+The Site's Adapting to width page names the window classes in words and teaches these phrases. Each maps to one change here:
+
+| Words on the Site             | What it means in code                                                                     |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| Components follow their space | Nothing to do: envUI components query their container, never the viewport                 |
+| On a phone                    | The `compact` window class, the default layout every query starts from                    |
+| In a narrow pane              | The pane's own width; a region of your own becomes a window with `container="env-window"` |
+| Side by side from expanded up | `@container env-window (width >= 52.5rem)` around the two-column layout                   |
+| Stack on a phone              | The default, one-column layout, before any `width >=` query                               |
+| Wrap                          | `wrap` on Row, so its children run onto the next line                                     |
+| Popups fit the window         | Nothing to do: menus, dialogs and sheets measure the window they open in                  |
+
 ## Window classes
 
 | Window class | Width                  | Where it falls                             |
@@ -83,7 +97,7 @@ const medium = windowClasses.medium;
 | `expanded`   | 52.5 to 75 rem         | A tablet held sideways, or a laptop window |
 | `large`      | From 75 rem            | A desktop window                           |
 
-- Material's window size classes, 600, 840 and 1200 px at the default text size, in rem so they follow the reader's text size.
+- The classes start at 600, 840 and 1200 px at the default text size, and are in rem, so they follow the reader's text size: with larger text, a window counts as a narrower class.
 - Measured on a container, never the viewport: a page embedded in a smaller frame gets the class of its own width. Menus, dialogs and sheets measure the window they open in.
 - `container="env-window"` on a primitive makes a region a window of its own, such as a preview. Don't give envUI's other `env-*` container names to your own.
 - Compact first: write the compact layout as the default and switch up with `width >=`. Where no `env-window` is found, no query matches and the compact layout shows. CSS can't read the `--env-window-class-*` tokens inside a query, so write the width.
@@ -115,8 +129,9 @@ TypeScript declarations provide the complete public API.
 
 ## Related topics
 
-- [Spacing & shape](../foundations/spacing.md)
-- [Scale & density](../foundations/scale.md)
+- [Spacing & density](../foundations/spacing.md)
+- [Panes](../components/panes.md)
+- [PageHeader](../components/page-header.md)
 - [Dialog](../components/dialog.md)
 - [Menu](../components/menu.md)
 - [Tooltip](../components/tooltip.md)

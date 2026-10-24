@@ -58,7 +58,7 @@ Buttons inside a toolbar take the ghost look unless they set another. A button o
 
 ### Sizes
 
-The buttons come in the three control heights of the [scale](../foundations/scale.md), or take the height of the toolbar's container.
+The buttons come in the three control heights of the [scale](../foundations/spacing.md), or take the height of the toolbar's container.
 
 ```tsx example=ViewControls caption="Small buttons, on a rounded surface that floats over a diagram."
 

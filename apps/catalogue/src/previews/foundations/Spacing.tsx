@@ -8,7 +8,6 @@ import {
   Column,
   Combobox,
   IconButton,
-  Link,
   List,
   Row,
   SearchField,
@@ -16,16 +15,20 @@ import {
   Select,
   Surface,
   Switch,
+  Table,
   Text,
   TextField,
+  Theme,
+  useTheme,
   type ComboboxItem,
+  type RowDensity,
+  type ThemeScale,
 } from '@envsemble/envui';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { Add } from '@envsemble/envui/icons/Add';
-import { routeHref } from '../../navigation/Address';
 import { ExampleStage } from '../Example';
 import { MarkedSubject } from './Marks';
-import { Block, Figure, NumberedLegend, TagLegend, Topic } from './Topic';
+import { Block, Figure, FigureRun, NumberedLegend, TagLegend, Topic } from './Topic';
 
 const reviewers: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Ellis'].map(
   (name) => ({
@@ -184,24 +187,103 @@ const shapes = [
 ] as const;
 
 function ShapesFigure() {
+  return <FigureRun figures={shapes} className="docs-shape-stage" />;
+}
+
+/** A small dialog's content, the same in each scale, so the two compare. */
+function ScaleSample() {
   return (
-    <div className="docs-figure-run" data-count={shapes.length}>
-      {shapes.map((shape) => (
-        <figure key={shape.name} className="docs-topic-figure" aria-label={shape.name}>
-          <div className="docs-foundation-stage docs-shape-stage" data-figure="example" inert>
-            {shape.picture}
-          </div>
-          <figcaption className="docs-topic-text">
-            <Text render={<p />} variant="title">
-              {shape.name}
-            </Text>
-            <Text variant="body-sm" emphasis="muted">
-              {shape.text}
-            </Text>
-          </figcaption>
-        </figure>
-      ))}
-    </div>
+    <Surface
+      background="default"
+      padding={5}
+      radius="xl"
+      className="docs-scale-sample"
+      render={<Column gap={4} />}
+    >
+      <Column gap={1}>
+        <Text render={<p />} variant="title">
+          Rename report
+        </Text>
+        <Text emphasis="muted">Everyone on the team sees the new name.</Text>
+      </Column>
+      <TextField label="Title" defaultValue="Quarterly report" />
+      <Row gap={2} justify="end">
+        <Button variant="secondary">Cancel</Button>
+        <Button>Rename</Button>
+      </Row>
+    </Surface>
+  );
+}
+
+const scales: readonly { scale: ThemeScale; name: string; text: string }[] = [
+  {
+    scale: 'comfortable',
+    name: 'Comfortable',
+    text: 'The default, with room to breathe: for websites and touch.',
+  },
+  {
+    scale: 'compact',
+    name: 'Compact',
+    text: 'Everything a step smaller: for desktop tools people work in all day.',
+  },
+];
+
+/** The same content in the comfortable and the compact scale. */
+function ScalesFigure() {
+  const theme = useTheme();
+  return (
+    <FigureRun
+      figures={scales.map(({ scale, name, text }) => ({
+        name,
+        text,
+        picture: (
+          <Theme {...theme} scale={scale} className="docs-scale-theme">
+            <ScaleSample />
+          </Theme>
+        ),
+      }))}
+    />
+  );
+}
+
+const reports = [
+  { name: 'Quarterly report', owner: 'Priya Shah' },
+  { name: 'Accessibility audit', owner: 'Sam Lee' },
+  { name: 'Pricing research', owner: 'Alex Morgan' },
+];
+
+const densities: readonly { density: RowDensity; name: string; text: string }[] = [
+  { density: 'sm', name: 'Tighter rows', text: 'For scanning many records at once.' },
+  { density: 'md', name: 'Regular rows', text: 'For reading row by row.' },
+];
+
+/** One table with tight rows and with regular ones: only the space in the rows changes. */
+function RowsFigure() {
+  return (
+    <FigureRun
+      figures={densities.map(({ density, name, text }) => ({
+        name,
+        text,
+        picture: (
+          <Table.Root aria-label={`Reports, ${name.toLowerCase()}`} density={density}>
+            <Table.Head>
+              <Table.Row>
+                <Table.HeaderCell>Report</Table.HeaderCell>
+                <Table.HeaderCell>Owner</Table.HeaderCell>
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              {reports.map((report) => (
+                <Table.Row key={report.name}>
+                  <Table.Cell>{report.name}</Table.Cell>
+                  <Table.Cell>{report.owner}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
+        ),
+      }))}
+    />
   );
 }
 
@@ -228,7 +310,7 @@ function TallFigure() {
   );
 }
 
-/** The words to ask for space and shape with, and what envUI does for each. */
+/** The words to ask for space, density and shape with, and what envUI does for each. */
 const words = [
   {
     tag: 'More room between these',
@@ -247,12 +329,20 @@ const words = [
     text: 'Gives controls in one row the same size, so their tops and bottoms meet.',
   },
   {
-    tag: 'Tighter rows',
-    text: 'Makes the rows of a table or list shorter, while their text stays the same size.',
+    tag: 'A small button',
+    text: 'One of the three control sizes, small, medium or large; medium is the default.',
   },
   {
     tag: 'Compact',
-    text: 'Makes the whole app denser: smaller controls and space everywhere.',
+    text: 'Makes the whole app denser: smaller controls, text, corners and space everywhere.',
+  },
+  {
+    tag: 'Comfortable',
+    text: 'The default scale, with more room, for websites and touch.',
+  },
+  {
+    tag: 'Tighter rows',
+    text: 'Makes the rows of a table or list shorter, while their text stays the same size.',
   },
   {
     tag: 'On a surface',
@@ -284,14 +374,29 @@ export function SpacingPreview() {
       >
         <AlignFigure />
         <Block
-          title="Denser or roomier"
-          text={
-            <>
-              A dense tool can use the compact scale, which makes every control and space a little
-              smaller, and tables and lists can take tighter rows on their own.{' '}
-              <Link href={routeHref('foundations/scale')}>Scale & density</Link> shows both.
-            </>
-          }
+          title="Small, medium and large"
+          text="Controls come in three sizes. Medium is the default; small suits a table row or a dense toolbar. Whatever the size, the controls of one size line up."
+        />
+      </Topic>
+      <Topic
+        title="Comfortable or compact"
+        lead="The whole of envUI comes in two scales. Compact makes every control, text, corner and space a step smaller at once, so a dense tool stays in proportion. An app uses one scale throughout."
+      >
+        <ScalesFigure />
+        <Block
+          title="Try it on this site"
+          text="Choose Compact under Scale in the Display menu, at the top of the page, and this whole site becomes the compact scale."
+        />
+        <Block
+          title="Tighter rows"
+          text="Tables, lists and trees can pack their rows closer on their own, in either scale. Only the space in each row changes; the text keeps its size."
+          stacked
+        >
+          <RowsFigure />
+        </Block>
+        <Block
+          title="Big enough for a finger"
+          text="On a touchscreen, controls and rows grow to a size a finger can hit, in either scale. With a mouse, they keep the size of their scale."
         />
       </Topic>
       <Topic
@@ -308,9 +413,9 @@ export function SpacingPreview() {
       </Topic>
       <Topic
         title="Words to use"
-        lead="Ask an agent for space and shape in these words; envUI turns each into the right amount of space or the right corner, so the result matches the rest of the app."
+        lead="Ask an agent for space, density and shape in these words; envUI turns each into the right amount of space, the right size or the right corner, so the result matches the rest of the app."
       >
-        <TagLegend label="Words for space and shape" entries={words} />
+        <TagLegend label="Words for space, density and shape" entries={words} />
       </Topic>
     </ExampleStage>
   );

@@ -73,7 +73,7 @@ The month goes with its form as the year and the month in numbers, such as 2026-
 
 ### Sizes
 
-An outline field comes in the three control heights of the [scale](../foundations/scale.md), small, medium and large, so it lines up with buttons of the same size.
+An outline field comes in the three control heights of the [scale](../foundations/spacing.md), small, medium and large, so it lines up with buttons of the same size.
 
 ## When to use
 

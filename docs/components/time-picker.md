@@ -77,7 +77,7 @@ The form sends the time alone, without a date or a time zone. Combining it with 
 
 ### Sizes
 
-Small, medium and large set the field's height, the control heights of the [scale](../foundations/scale.md).
+Small, medium and large set the field's height, the control heights of the [scale](../foundations/spacing.md).
 
 ## When to use
 

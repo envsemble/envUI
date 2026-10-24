@@ -1,10 +1,10 @@
-# Customize colors
+# Customize and extend
 
-Give one element colors of its own through its color properties, or recolor a whole area with a nested Theme. Either way the element keeps its hover, focus and pressed states. Both override envUI's colors; set neither, and every component looks as its theme draws it.
+Make envUI the application's own without copying its styles: give one element colors of its own or recolor a whole area, compose components into product components, and adjust a component's parts where its props don't reach. Props come first; set no color and no part style, and every component looks as its theme draws it.
 
 ## Color one element
 
-Each component has a few public color properties on its root, after Material's component tokens, such as `--md-filled-button-container-color`. They are named `--env-<component>-<role>`, and set on one instance through `style` or the application's CSS:
+Each component has a few public color properties on its root. They are named `--env-<component>-<role>`, and set on one instance through `style` or the application's CSS:
 
 ```tsx
 import type { CSSProperties } from 'react';
@@ -64,7 +64,7 @@ import { TextField } from '@envsemble/envui';
 
 ## States follow the colors you set
 
-With no color property set, a component paints its designed colors in every state, from the theme's tokens. Once you set its container or its content, hover, keyboard focus and press are state layers: the content color over the container at a low opacity, as Material draws them, so the component keeps working states without further settings. The opacities are tokens:
+With no color property set, a component paints its designed colors in every state, from the theme's tokens. Once you set its container or its content, hover, keyboard focus and press are state layers: the content color over the container at a low opacity, so the component keeps working states without further settings. The opacities are tokens:
 
 - `--env-state-hover-opacity`: 8%, and 6% at high contrast.
 - `--env-state-focus-opacity`: 10%, and 7% at high contrast, under the focus ring.
@@ -114,3 +114,60 @@ function GreenArea({ children }: { children: React.ReactNode }) {
 ## Contrast is yours
 
 envUI's contrast gate measures its own tokens and the colors its components compose, in all four themes. It can't measure colors an application chooses: keep text at 4.5:1 on your container, 7:1 at high contrast, and boundaries and icons at 3:1, also on the state layers. Under forced colors, the system's colors take the place of yours.
+
+## Compose one root
+
+[Surface](components/surface.md) supplies fill, padding and corners; [Row](components/row.md), [Column](components/column.md) and [Grid](components/grid.md) supply layout. `render` puts both on one element, with the semantic tag on the element it supplies. A custom render component passes native props, `className`, `style`, `children` and `ref` to its root.
+
+```tsx
+import { Surface, Column, Text } from '@envsemble/envui';
+
+export function WorkspacePane() {
+  return (
+    <Surface background="default" padding={5} render={<Column render={<section />} gap={4} />}>
+      <Text render={<h2 />} variant="title">
+        Workspace
+      </Text>
+      <Text>Shared plans and notes for the project.</Text>
+    </Surface>
+  );
+}
+```
+
+## Create a product component
+
+Wrap public components to give them product meaning, and spread the rest of the props onto them, so `id`, `aria-*`, handlers and `ref` reach the element. Card keeps its appearance and spacing.
+
+```tsx
+import { Card, type CardContentProps } from '@envsemble/envui';
+
+type ProjectSummaryProps = Omit<
+  CardContentProps,
+  'title' | 'description' | 'render' | 'children'
+> & {
+  title: string;
+  description: string;
+};
+
+export function ProjectSummary({ title, description, ...props }: ProjectSummaryProps) {
+  return <Card {...props} render={<article />} title={title} description={description} />;
+}
+```
+
+## Style a component's parts
+
+Props come first. Where CSS must adjust a component, it targets its parts, `env-<component>-<part>` such as `.env-card-header`, and its `data-*` states, such as `[data-tone='danger']`. Part classes and states are public and versioned; the manifest lists them, and `get_component` returns them. envUI's CSS is in the `env` cascade layer, so an application's rule wins without extra specificity.
+
+```css
+@layer app {
+  .project-card .env-card-header {
+    align-items: baseline;
+  }
+}
+```
+
+Set system tokens, such as `--env-space-4`, to change what every component takes from them. Component tokens, such as `--env-card-padding`, are each component's own and may change in any release: don't set or read them.
+
+## When envUI lacks it
+
+What every application needs, a control's look or interaction, belongs in envUI as a variant, slot or component, built on its primitives and tokens; don't copy a component's styles into the application.

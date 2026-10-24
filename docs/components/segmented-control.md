@@ -51,7 +51,7 @@ Each option can show an icon and a count. One option can be disabled, which the 
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/scale.md). Without a size of its own, the control takes its container's.
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). Without a size of its own, the control takes its container's.
 
 <!-- specimen: Sizes -->
 

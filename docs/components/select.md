@@ -81,7 +81,7 @@ A row's title names the select in it, so the select shows no label of its own.
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/scale.md), so a select lines up with the buttons beside it.
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md), so a select lines up with the buttons beside it.
 
 ```tsx example=SmallToolbar
 

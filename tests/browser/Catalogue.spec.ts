@@ -52,6 +52,13 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'foundations/colors/preview': 'foundations/colors',
     'foundations/colors/usage': 'docs/foundations/colors',
     'foundations/tokens': 'docs/tokens',
+    // Nine foundations became six: merged pages open the page they joined.
+    'foundations/scale': 'foundations/spacing',
+    'foundations/scale/usage': 'docs/foundations/spacing',
+    'docs/foundations/scale': 'docs/foundations/spacing',
+    'foundations/composition': 'docs/customizing',
+    'docs/foundations/composition': 'docs/customizing',
+    'docs/customizing-colors': 'docs/customizing',
     'overview/components': 'overview',
     'overview/components?section=components-actions': 'components?section=components-actions',
     'overview/get-started': 'docs/setup',
@@ -69,10 +76,8 @@ test('the addresses of the views before the Site and the Docs split open the pag
   for (const { path } of allPages) expect(normalizeRoute(path)).toBe(path);
 });
 
-test("a foundation's guide in the Docs renders shared Markdown and follows relative links", async ({
-  page,
-}) => {
-  await page.goto(`${catalogueUrl}/docs/foundations/composition`);
+test('a guide in the Docs renders shared Markdown and follows relative links', async ({ page }) => {
+  await page.goto(`${catalogueUrl}/docs/customizing`);
   await expect(page.getByRole('heading', { name: 'Compose one root', exact: true })).toBeVisible();
   await expect(
     page.getByText('Surface supplies fill, padding and corners', { exact: false }),
@@ -173,68 +178,6 @@ test('live examples keep links in place, show their source, and specimens show f
   // Catalogue-only specimens, such as the forced interaction states, sit in the section they
   // illustrate on the figure template.
   await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
-});
-
-test("the Colors page's forced interaction states paint what the components' own states paint", async ({
-  page,
-}) => {
-  // The samples take each state's color through public color properties. A component's own hover
-  // and press, forced on its rest sample, must paint the same, so the page can't drift from it.
-  await page.goto(`${catalogueUrl}/foundations/colors`);
-  await page.addStyleTag({
-    content: '*, *::before, *::after { transition: none !important; animation: none !important; }',
-  });
-  const table = page.getByRole('region', { name: 'Interaction states', exact: true });
-  await expect(table).toBeVisible();
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send('DOM.enable');
-  await cdp.send('CSS.enable');
-  const { root } = await cdp.send('DOM.getDocument', { depth: -1 });
-  const nodes = async (selector: string) =>
-    (await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector })).nodeIds;
-  const samples = {
-    'List row': ['.env-list-item', 'background-color'],
-    'Navigation item': ['.env-drawer-item', 'background-color'],
-    Field: ['.env-text-field-control', 'border-top-color'],
-    'Primary button': ['.env-button', 'background-color'],
-    'Secondary button': ['.env-button', 'background-color'],
-    'Outline button': ['.env-button', 'background-color'],
-    'Ghost button': ['.env-button', 'background-color'],
-  } as const;
-  for (const [sample, [part, property]] of Object.entries(samples)) {
-    const cells = table.getByRole('row', { name: sample, exact: false }).getByRole('cell');
-    const paint = (cell: number) =>
-      cells
-        .nth(cell)
-        .locator(part)
-        .first()
-        .evaluate((element, name) => getComputedStyle(element).getPropertyValue(name), property);
-    await cells
-      .nth(0)
-      .locator(part)
-      .first()
-      .evaluate((element) => element.setAttribute('data-forced-target', ''));
-    const [target] = await nodes('[data-forced-target]');
-    // A row is pressed through its target, which the row's style reads.
-    const inner = await nodes('[data-forced-target] [data-row-target]');
-    for (const [cell, state] of [
-      [1, ['hover']],
-      [2, ['hover', 'active']],
-    ] as const) {
-      await cdp.send('CSS.forcePseudoState', { nodeId: target!, forcedPseudoClasses: [...state] });
-      for (const nodeId of inner)
-        await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [...state] });
-      expect(await paint(0), `${sample}, ${state.join(' and ')}`).toBe(await paint(cell));
-    }
-    await cdp.send('CSS.forcePseudoState', { nodeId: target!, forcedPseudoClasses: [] });
-    for (const nodeId of inner)
-      await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [] });
-    await cells
-      .nth(0)
-      .locator(part)
-      .first()
-      .evaluate((element) => element.removeAttribute('data-forced-target'));
-  }
 });
 
 test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
@@ -499,12 +442,19 @@ const technicalOf = (words: string[]) =>
   words.flatMap((text) => technicalText(text).map((found) => `${found.kind}: ${found.text}`));
 
 /**
- * The model foundation pages, which show no technical text at all. Every other page of the Site is
+ * The pages that show no technical text at all: every foundation. Every other page of the Site is
  * reported until it is rewritten to the same rule, then joins this list.
  */
-const plainPages = ['foundations/spacing', 'foundations/colors'];
+const plainPages = [
+  'foundations/colors',
+  'foundations/typography',
+  'foundations/spacing',
+  'foundations/responsive',
+  'foundations/icons',
+  'foundations/accessibility',
+];
 
-test('the model foundation pages show no technical text, in their words or their figures', async ({
+test('the foundation pages show no technical text, in their words or their figures', async ({
   page,
 }) => {
   // The Site is for people looking at envUI: no token names, hex colors, lengths, percentages or
@@ -512,9 +462,10 @@ test('the model foundation pages show no technical text, in their words or their
   await page.goto(`${catalogueUrl}/`);
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
-    await expect(page.locator('.docs-topic').first()).toBeVisible();
+    await expect(page.locator('.docs-topic').last()).toBeVisible();
     // The marks of a figure are measured once it has laid out.
-    await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
+    if (await page.locator('.docs-marked').count())
+      await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
     expect(technicalOf(await siteWords(page)), `${path} shows technical text`).toEqual([]);
   }
 });

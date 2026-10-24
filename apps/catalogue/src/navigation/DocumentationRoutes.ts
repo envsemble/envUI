@@ -377,6 +377,10 @@ export function routeOfDocument(
     codemods: 'docs/codemods',
     'full-changelog': 'docs/changelog',
     'agent-skills': 'docs/agent-skills',
+    // Pages merged into others.
+    'customizing-colors': 'docs/customizing',
+    composition: 'docs/customizing',
+    scale: 'foundations/spacing',
   };
   if (Object.hasOwn(own, id)) return `${own[id]}${query}`;
   const page = allPages.find(
@@ -447,6 +451,11 @@ export function normalizeRoute(route: string): string {
   // Docs' home lists the guides under Patterns.
   if (originalPath === 'docs/patterns') return `${docsRoute}${rest()}`;
   if (originalPath === 'foundations/tokens') return `docs/tokens${rest()}`;
+  // Nine foundations became six: Scale & density joined Spacing & density, and Composition &
+  // extension, with Customize colors, became the Docs' guide Customize and extend.
+  if (/^(?:docs\/)?foundations\/composition(?:\/|$)|^docs\/customizing-colors$/.test(originalPath))
+    return `docs/customizing${rest()}`;
+  if (originalPath === 'docs/foundations/scale') return `docs/foundations/spacing${rest()}`;
   // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
   if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest()}`;
   if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest()}`;
@@ -484,7 +493,8 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/sidebar(?=\/|$)/, 'components/drawer')
     .replace(/^components\/(navigation|nav-list)(?=\/|$)/, 'components/drawer')
     .replace(/^components\/direction-links(?=\/|$)/, 'components/pager')
-    .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
+    .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility')
+    .replace(/^foundations\/scale(?=\/|$)/, 'foundations/spacing');
   if (path.startsWith('patterns/')) return `${path}${rest()}`;
   // A page's views are gone: its props are on its page in the Docs, a foundation's guidance in its
   // guide there, and every other view is the Site's page.

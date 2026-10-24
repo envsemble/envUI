@@ -70,7 +70,7 @@ Settings that only make sense together wait for a Save button. A [Badge](../comp
 
 ### Appearance
 
-The theme applies at once. The [scale](../foundations/scale.md), comfortable or compact, is one for the whole application: it never changes for one page or one section.
+The theme applies at once. The [scale](../foundations/spacing.md), comfortable or compact, is one for the whole application: it never changes for one page or one section.
 
 ```tsx example=AppearanceChoice
 
