@@ -72,14 +72,20 @@
 }
 /* Text that is there, once the script has measured it (skeletonText.ts): no line through it, but a
    rounded bar over each of its line boxes, all drawn by one layer over the content in the skeleton's
-   paint, masked to the bars. The script makes the root a containing block. */
+   paint, masked to the bars. The script makes the root a containing block, and places and sizes the
+   layer over the root's scrolled content, so a root that scrolls draws the bars past its box too;
+   until it has, the layer covers the padding box. */
 [data-env-skeleton][data-env-skeleton-text] {
   --env-skeleton-color: transparent;
 }
 [data-env-skeleton][data-env-skeleton-text]::after {
   content: '';
   position: absolute;
-  inset: 0;
+  /* Physical, as the script measures it. */
+  left: var(--env-skeleton-text-left, 0);
+  top: var(--env-skeleton-text-top, 0);
+  width: var(--env-skeleton-text-width, 100%);
+  height: var(--env-skeleton-text-height, 100%);
   forced-color-adjust: none;
   background: var(--env-skeleton-paint);
   mask: var(--env-skeleton-text-bars, linear-gradient(transparent 0 0));

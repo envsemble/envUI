@@ -7,11 +7,15 @@ import {
   codeColors,
   codeContrastTargets,
   codeThemeName,
-  diffBackground,
+  diffTintsOver,
   type CodeContrast,
 } from './CodeColors.js';
-import { diffTints } from './CodeDiffTints.js';
-import { mixInLab, over, readableReplacements, type Direction } from './ReadableColors.js';
+import {
+  contrastRatio,
+  nearestColor,
+  readableReplacements,
+  type Direction,
+} from './ReadableColors.js';
 
 /** The standard code themes, as Shiki ships them: github-light-default and the grey github-dark-dimmed. */
 const standard: Record<ThemeValue, ThemeRegistration> = {
@@ -82,11 +86,9 @@ function withColors(
   } as ThemeRegistration;
 }
 
-/** Builds each theme once, when it is first asked for. */
-const memo = (
-  build: (scheme: ThemeValue, contrast: CodeContrast) => Promise<ThemeRegistration>,
-) => {
-  const built = new Map<string, Promise<ThemeRegistration>>();
+/** Builds each theme, or what is made of it, once, when it is first asked for. */
+const memo = <Built>(build: (scheme: ThemeValue, contrast: CodeContrast) => Promise<Built>) => {
+  const built = new Map<string, Promise<Built>>();
   return (scheme: ThemeValue, contrast: CodeContrast = 'standard') => {
     const key = `${scheme}-${contrast}`;
     if (!built.has(key))
@@ -101,66 +103,76 @@ const memo = (
   };
 };
 
-/**
- * The code theme of an app theme and contrast: its Shiki theme, with each token color that falls
- * short of the contrast's target on a code block, over any surface, moved to the closest color of the same
- * OKLCH hue that reaches it, darker in the light theme and lighter in the dark one, with as much of
- * its chroma as the gamut allows there. Tokens that were distinct stay distinct. The colors are
- * computed where the theme first loads, from the installed Shiki themes.
- */
-export const codeTheme = memo(async (scheme, contrast) => {
-  const theme = await shikiTheme(scheme, contrast);
-  const { foreground } = codeColors(scheme, contrast);
-  const backgrounds = codeBackgrounds('block', scheme, contrast);
-  return withColors(
-    theme,
-    codeThemeName('code', scheme, contrast),
-    readableReplacements(
-      textColors(theme),
-      backgrounds,
-      codeContrastTargets[contrast],
-      direction(scheme),
-    ),
-    { 'editor.background': backgrounds[0]!, 'editor.foreground': foreground },
-  );
-});
-
 /** The colors Diffs takes a theme's addition and deletion colors from, for lines and counts. */
 const changeColorKeys = {
   addition: ['gitDecoration.addedResourceForeground', 'terminal.ansiGreen'],
   deletion: ['gitDecoration.deletedResourceForeground', 'terminal.ansiRed'],
 } as const;
+const changeKinds = ['addition', 'deletion'] as const;
 
 /**
- * The theme of code diffs for an app theme and contrast: as the code theme, but with its tokens
- * readable on the lines and words Diffs tints with the addition and deletion colors too, and those
- * colors, which also color the change counts, readable on code's background.
+ * The code theme of an app theme and contrast, which code blocks and code diffs share: its Shiki
+ * theme, with each token color that falls short of the contrast's target on a code block, over any
+ * surface, moved to the closest color of the same OKLCH hue that reaches it, darker in the light
+ * theme and lighter in the dark one, with as much of its chroma as the gamut allows there. Tokens
+ * that were distinct stay distinct. Its addition and deletion colors, which color a diff's change
+ * counts and line numbers, reach the target on a block too. The colors are computed where the
+ * theme first loads, from the installed Shiki themes.
  */
-export const diffTheme = memo(async (scheme, contrast) => {
+export const codeTheme = memo(async (scheme, contrast) => {
   const theme = await shikiTheme(scheme, contrast);
-  const background = diffBackground(scheme, contrast);
+  const { foreground } = codeColors(scheme, contrast);
+  const backgrounds = codeBackgrounds('block', scheme, contrast);
   const target = codeContrastTargets[contrast];
   const changeColors: Record<string, string> = {};
-  const backgrounds = [background];
-  for (const kind of ['addition', 'deletion'] as const) {
+  for (const kind of changeKinds) {
     const key = changeColorKeys[kind].find((candidate) => theme.colors?.[candidate]);
     const original = key && theme.colors?.[key];
     if (!key || !original) continue;
     const readable =
-      readableReplacements([original], [background], target, direction(scheme))[
+      readableReplacements([original], backgrounds, target, direction(scheme))[
         original.toLowerCase()
       ] ?? original;
     for (const name of changeColorKeys[kind])
       if (theme.colors?.[name]?.toLowerCase() === original.toLowerCase())
         changeColors[name] = readable;
-    const { mix, alpha } = diffTints[kind][scheme];
-    const line = mixInLab(background, readable, mix);
-    backgrounds.push(line, over(readable, alpha, line));
   }
   return withColors(
     theme,
-    codeThemeName('diff', scheme, contrast),
+    codeThemeName(scheme, contrast),
     readableReplacements(textColors(theme), backgrounds, target, direction(scheme)),
-    { ...changeColors, 'editor.background': background },
+    { ...changeColors, 'editor.background': backgrounds[0]!, 'editor.foreground': foreground },
   );
+});
+
+/** The colors a diff tints its changed lines and words with, at `diffTintOpacity`. */
+export interface DiffTintColors {
+  addition: string;
+  deletion: string;
+}
+
+/**
+ * How a code diff tints its changed lines and words in an app theme and contrast. A diff sits on a
+ * code block's layer and takes the code theme's token colors as they are, so the tints are chosen
+ * to keep them readable: each kind's color is the theme's change color, moved in OKLCH lightness
+ * towards the background, darker in the dark theme and lighter in the light one, only as far as
+ * every token then reaches the target on its line and its word over every surface.
+ */
+export const diffTintColors = memo<DiffTintColors>(async (scheme, contrast) => {
+  const theme = await codeTheme(scheme, contrast);
+  const blocks = codeBackgrounds('block', scheme, contrast);
+  const target = codeContrastTargets[contrast];
+  const texts = textColors(theme);
+  const tint = (kind: (typeof changeKinds)[number]) => {
+    const change = changeColorKeys[kind].map((key) => theme.colors?.[key]).find(Boolean);
+    return nearestColor(
+      change ?? (kind === 'addition' ? '#1a7f37' : '#cf222e'),
+      (candidate) =>
+        diffTintsOver(blocks, candidate).every((tinted) =>
+          texts.every((text) => contrastRatio(text, tinted) >= target),
+        ),
+      scheme === 'light' ? 'lighter' : 'darker',
+    );
+  };
+  return { addition: tint('addition'), deletion: tint('deletion') };
 });

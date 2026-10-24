@@ -1142,7 +1142,7 @@
     "ColorPicker": {
       "kind": "component",
       "source": "packages/ui/src/color/ColorPicker.tsx",
-      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
+      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format, or the fields of several `formats` together, each with its own copy button; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
         {
           "name": "showLabel",
@@ -1199,8 +1199,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
@@ -1343,8 +1342,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
@@ -7001,7 +6999,7 @@
           "type": "'md' | 'lg' | number | (string & {})",
           "required": false,
           "default": "'md'",
-          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange. A bottom sheet ignores it."
+          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange, while a CSS length is ignored, and warned of while developing: the sheet starts at `defaultWidth`. A bottom sheet ignores it."
         },
         {
           "name": "resizable",

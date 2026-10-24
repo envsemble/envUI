@@ -70,7 +70,7 @@ The application passes the same destinations to each form, and a group is a head
 
 ### Resizable
 
-With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. Its labels and group headings keep to one line, so its items keep their height as it narrows: one that doesn't fit ends in an ellipsis, and a label cut short shows in full in a tooltip. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage.
+With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. Its labels and group headings keep to one line, so its items keep their height as it narrows: one that doesn't fit ends in an ellipsis, and a label cut short shows in full in a tooltip. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage, which it reads once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number. A `width` that isn't a finite number is ignored.
 
 ```tsx example=ResizableDrawer
 
@@ -137,4 +137,6 @@ Not shown: the handle on a resizable drawer's end edge, `env-drawer-resize-handl
 
 ## Changelog
 
-- **1.0.0**: Drawer, the navigation drawer, with Bar and Rail; together they replace NavList. With `resizable`, people resize it by its end edge. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.
+- **1.0.0-prerelease.3**: A resizable Drawer keeps each label and group heading on one line as it narrows: one that doesn't fit ends in an ellipsis, and a label cut short shows in full in a tooltip.
+- **1.0.0-prerelease.2**: With `resizable`, people resize it by its end edge, between `minWidth` and `maxWidth` and never past half its container, from `defaultWidth`; `width` and `onWidthChange` keep it. The handle is `env-drawer-resize-handle`.
+- **1.0.0**: Drawer, the navigation drawer, with Bar and Rail; together they replace NavList. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.

@@ -61,6 +61,11 @@ export function AffixesFixture({ theme }: { theme: ThemeValue }) {
         <button type="submit">Submit affixes</button>
       </form>
       <output data-testid={`affixes-submitted-${theme}`}>{submitted}</output>
+      {/* Right to left, with and without a start icon: the notch follows the floated label. */}
+      <div dir="rtl">
+        <TextField label="Street" name="street" />
+        <TextField label="City" name="city" startIcon={<Sell />} />
+      </div>
     </Theme>
   );
 }

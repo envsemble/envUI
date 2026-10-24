@@ -88,13 +88,10 @@
   white-space: nowrap;
 }
 
-/* A code diff: Diffs draws the code on a transparent background, so the boundary takes the diff
-   background, which is opaque, since Diffs mixes its line tints from it. */
+/* A code diff sits on a code block's layer: Diffs draws the code and tints its changed lines on a
+   transparent background, so they show over the layer the boundary paints, as a block's code does. */
 .env-code-diff {
-  --env-code-background-now: var(--env-code-high-contrast) var(--env-code-diff-background-high);
-
   min-inline-size: 0;
-  background: var(--env-code-background-now, var(--env-code-diff-background));
   overflow: hidden;
   border-radius: var(--env-radius-sm);
 }

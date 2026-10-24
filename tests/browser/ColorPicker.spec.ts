@@ -135,6 +135,95 @@ test('each format types the color in its own fields', async ({ page }) => {
   await expect(controlled.getByRole('textbox', { name: 'Hex' })).toHaveCount(0);
 });
 
+test('several formats show their fields together, each editing the same color', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const every = picker(page, 'Every format');
+  const output = page.getByTestId('color-every');
+  // No select: a row for each format, named by the format it shows, in the order given.
+  await expect(every.getByRole('button', { name: /^Color format/ })).toHaveCount(0);
+  expect(
+    await every
+      .locator('.env-color-picker-row')
+      .evaluateAll((rows) => rows.map((row) => row.getAttribute('aria-label'))),
+  ).toEqual(['Hex', 'RGB', 'HSL']);
+  const [hexRow, rgbRow, hslRow] = ['Hex', 'RGB', 'HSL'].map((name) =>
+    every.getByRole('group', { name, exact: true }),
+  );
+  const hex = hexRow.getByRole('textbox', { name: 'Hex' });
+  const red = rgbRow.getByRole('textbox', { name: 'Red' });
+  const blue = rgbRow.getByRole('textbox', { name: 'Blue' });
+  const hue = hslRow.getByRole('textbox', { name: 'Hue' });
+  const lightness = hslRow.getByRole('textbox', { name: 'Lightness' });
+  await expect(hex).toHaveValue('#336699');
+  await expect(red).toHaveValue('51');
+  await expect(hue).toHaveValue('210°');
+  await expect(lightness).toHaveValue('40%');
+  // Each row's channels show their letters, and alpha follows in every row.
+  await expect(rgbRow.locator('.env-color-picker-field-label')).toHaveText(['R', 'G', 'B', 'A']);
+  await expect(hslRow.locator('.env-color-picker-field-label')).toHaveText(['H', 'S', 'L', 'A']);
+  // Typing in any format moves the others with it.
+  await hex.fill('ff8800');
+  await hex.press('Enter');
+  await expect(output).toHaveText('#ff8800');
+  await expect(red).toHaveValue('255');
+  await expect(blue).toHaveValue('0');
+  await expect(hue).toHaveValue('32°');
+  await red.fill('16');
+  await red.press('Enter');
+  await expect(output).toHaveText('#108800');
+  await expect(hex).toHaveValue('#108800');
+  await red.press('ArrowUp');
+  await expect(output).toHaveText('#118800');
+  await lightness.fill('50');
+  await lightness.press('Enter');
+  await expect(hex).not.toHaveValue('#118800');
+  await expect(output).toHaveText((await hex.inputValue()).toLowerCase());
+  await hslRow.getByRole('textbox', { name: 'Alpha' }).fill('50');
+  await hslRow.getByRole('textbox', { name: 'Alpha' }).press('Enter');
+  await expect(rgbRow.getByRole('textbox', { name: 'Alpha' })).toHaveValue('50%');
+  await expect(hexRow.getByRole('textbox', { name: 'Alpha' })).toHaveValue('50%');
+  await expect(output).toHaveText(/^#[0-9a-f]{6}80$/);
+  // Each format copies itself.
+  for (const format of ['Hex', 'RGB', 'HSL'])
+    await expect(every.getByRole('button', { name: `Copy color as ${format}` })).toBeVisible();
+  // The fields of every row share their columns, so the letters and numbers line up.
+  const boxes = await every.locator('.env-color-picker-fields').evaluateAll((fields) =>
+    fields.map((field) => {
+      const { x, width } = field.getBoundingClientRect();
+      return [Math.round(x), Math.round(width)];
+    }),
+  );
+  expect(new Set(boxes.map(String)).size).toBe(1);
+  const alphas = await every
+    .locator('.env-color-picker-field[data-channel="alpha"]')
+    .evaluateAll((fields) => fields.map((field) => Math.round(field.getBoundingClientRect().x)));
+  expect(new Set(alphas).size).toBe(1);
+});
+
+test('Tab moves through several formats row by row', { tag: '@engines' }, async ({ page }) => {
+  await eyeDropper(page, null);
+  await page.goto(fixture);
+  const every = picker(page, 'Every format');
+  const rows = ['Hex', 'RGB', 'HSL'].map((name) => every.getByRole('group', { name, exact: true }));
+  await rows[0].getByRole('textbox', { name: 'Hex' }).focus();
+  const order = [
+    rows[0].getByRole('textbox', { name: 'Alpha' }),
+    every.getByRole('button', { name: 'Copy color as Hex' }),
+    rows[1].getByRole('textbox', { name: 'Red' }),
+    rows[1].getByRole('textbox', { name: 'Green' }),
+    rows[1].getByRole('textbox', { name: 'Blue' }),
+    rows[1].getByRole('textbox', { name: 'Alpha' }),
+    every.getByRole('button', { name: 'Copy color as RGB' }),
+    rows[2].getByRole('textbox', { name: 'Hue' }),
+  ];
+  for (const next of order) {
+    await page.keyboard.press('Tab');
+    await expect(next).toBeFocused();
+  }
+});
+
 test('alpha has a slider and a field, and values keep it while translucent', async ({ page }) => {
   await page.goto(fixture);
   const translucent = picker(page, 'Translucent color');
@@ -178,6 +267,8 @@ test('copy writes the color as the fields show it', async ({ page, browserName, 
   await picker(page, 'Controlled color').getByRole('button', { name: 'Copy color' }).click();
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('#1A73E8');
   const translucent = picker(page, 'Translucent color');
+  await translucent.getByRole('button', { name: /^Color format/ }).click();
+  await page.getByRole('menuitemradio', { name: 'RGB' }).click();
   await translucent.getByRole('button', { name: 'Copy color' }).click();
   await expect
     .poll(() => page.evaluate(() => navigator.clipboard.readText()))

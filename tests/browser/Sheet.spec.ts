@@ -215,6 +215,25 @@ test.describe('Sheet resizable', () => {
     return sheet;
   };
 
+  test('a resizable sheet ignores a CSS length as its width, and warns of it while developing', async ({
+    page,
+  }) => {
+    const warnings: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'warning') warnings.push(message.text());
+    });
+    await page.goto(sheets);
+    const sheet = await open(page, 'Open resizable css width', 'Resizable css width');
+    await expect(sheet.getByRole('separator', { name: 'Resize' })).toHaveAttribute(
+      'aria-valuetext',
+      '24 rem',
+    );
+    expect((await sheet.boundingBox())!.width).toBeCloseTo(24 * 16, 0);
+    expect(warnings.filter((text) => text.includes('resizable Sheet ignores'))).toEqual([
+      expect.stringContaining('width="min(30rem, 90%)"'),
+    ]);
+  });
+
   test('a side sheet resizes by its inner edge, by keys and pointer, and a drag never closes it', async ({
     page,
   }) => {

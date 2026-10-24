@@ -7,6 +7,7 @@ export function ColorPickerFixture() {
   const [changes, setChanges] = useState(0);
   const [last, setLast] = useState('');
   const [translucent, setTranslucent] = useState('');
+  const [every, setEvery] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [preventReset, setPreventReset] = useState(false);
   const [policy, setPolicy] = useState<'accept' | 'reject' | 'clamp'>('accept');
@@ -58,9 +59,15 @@ export function ColorPickerFixture() {
               defaultValue="#6750a480"
               alpha
               valueFormat="rgb"
-              formats={['rgb', 'hsl', 'hex']}
               swatches={['#ff0000', { color: '#00800080', label: 'Half green' }, '#0000ff']}
               onValueChange={setTranslucent}
+            />
+            <ColorPicker
+              label="Every format"
+              defaultValue="#336699"
+              formats={['hex', 'rgb', 'hsl']}
+              alpha
+              onValueChange={setEvery}
             />
             <ColorPicker
               label="Disabled color"
@@ -115,6 +122,7 @@ export function ColorPickerFixture() {
         <output data-testid="color-changes">{changes}</output>
         <output data-testid="color-last">{last}</output>
         <output data-testid="color-translucent">{translucent}</output>
+        <output data-testid="color-every">{every}</output>
         <output data-testid="color-values">{JSON.stringify(values)}</output>
       </Column>
     </Theme>

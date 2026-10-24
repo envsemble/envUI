@@ -58,7 +58,7 @@ A `side="bottom"` sheet is as tall as its content.
 
 ### Resizable
 
-With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width.
+With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width. Its width is then a number of rem: a CSS length as `width`, such as `min(30rem, 90%)`, is ignored, with a warning while developing, and the sheet starts at `defaultWidth`.
 
 ```tsx example=ResizableDetails
 
@@ -126,4 +126,5 @@ Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`, and the handle 
 
 ## Changelog
 
-- **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction. With `resizable`, people resize a side sheet by its inner edge.
+- **1.0.0-prerelease.2**: With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, from `defaultWidth`; `width` takes a number of rem, which `onWidthChange` keeps. The handle is `env-sheet-resize-handle`.
+- **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.

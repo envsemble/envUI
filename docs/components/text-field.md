@@ -122,7 +122,7 @@ A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the
 | `floating` | A long form on a page.                                       |
 | `ghost`    | A search in an application's chrome, such as atop a sidebar. |
 
-Textarea comes outline or ghost. Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it.
+Textarea comes outline or ghost. Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it. `--env-text-field-container` gives one a fill, through `style` or CSS.
 
 ### Sizes
 
@@ -225,8 +225,8 @@ A field fills its container; set the width there. A long prefix is cut short so 
 
 ## Changelog
 
-- **1.0.0-prerelease.2**: The `underline` variant is gone from TextField, SearchField and Textarea; the `v1-props` codemod drops it for the default outline. Outline and floating fields have no fill of their own.
-- **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating`, `underline` and `ghost`: `outlined` is `outline`, `plain` is `underline` and `quiet` is `ghost`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`.
+- **1.0.0-prerelease.2**: The `underline` variant, which `plain` became in the earlier prereleases, is gone from TextField, SearchField and Textarea; the `v1-props` codemod drops `underline` and `plain` for the default outline. Outline and floating fields have no fill of their own.
+- **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes, and it drops `plain` for the default outline. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`.
 - **1.0.0**: `Input` is `TextField`, with the same props, behaviour and look; the page is `text-field`.
 - **0.6.0**: The `quiet` variant on TextField and SearchField.
 - **0.5.0**: `prefix` and `suffix`; entered text, resting labels, prefixes and suffixes are 1 rem on touch screens; a growing Textarea with `rows` starts at that many lines.

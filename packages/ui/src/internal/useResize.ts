@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type FocusEvent as ReactFocusEvent,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
@@ -71,6 +72,7 @@ export interface ResizeHandleProps {
   onPointerCancel(event: ReactPointerEvent<HTMLElement>): void;
   onLostPointerCapture(event: ReactPointerEvent<HTMLElement>): void;
   onKeyDown(event: ReactKeyboardEvent<HTMLElement>): void;
+  onFocus?(event: ReactFocusEvent<HTMLElement>): void;
 }
 
 interface Drag {
@@ -104,7 +106,12 @@ export function useResize({
   onChange,
   valueText,
   disabled = false,
-}: ResizeOptions): { handleProps: ResizeHandleProps; dragging: boolean } {
+}: ResizeOptions): {
+  handleProps: ResizeHandleProps;
+  dragging: boolean;
+  /** Reads the room around the handle again, which the largest value it reports follows. */
+  measure: (handle: HTMLElement) => void;
+} {
   const provided = useEnvUI().dir;
   const drag = useRef<Drag | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -123,7 +130,18 @@ export function useResize({
   const change = (next: number, committed: boolean, upper = max) =>
     onChange(clamp(next, min, upper), { committed });
   /** The largest size the room allows now, never under min nor over max. */
-  const upperAt = (handle: HTMLElement) => (room ? clamp(room(handle), min, max) : max);
+  const upperAt = (handle: HTMLElement) => {
+    const allowed = room?.(handle);
+    return allowed !== undefined && Number.isFinite(allowed) ? clamp(allowed, min, max) : max;
+  };
+  // The largest size the room allowed when last read, which the handle reports as its largest
+  // value: a size beyond it shows at it.
+  const [roomMax, setRoomMax] = useState<number>();
+  const measure = (handle: HTMLElement) => {
+    if (!room) return;
+    const upper = upperAt(handle);
+    setRoomMax((previous) => (previous === upper ? previous : upper));
+  };
 
   const position = (event: ReactPointerEvent<HTMLElement>) =>
     axis === 'inline' ? event.clientX : event.clientY;
@@ -150,6 +168,7 @@ export function useResize({
       unit === '%' ? (extent > 0 ? 100 / extent : 0) : unit === 'rem' ? 1 / remPixels() : 1;
     const perPixel = perUnit * layoutPerScreen;
     const upper = upperAt(event.currentTarget);
+    measure(event.currentTarget);
     drag.current = {
       pointerId: event.pointerId,
       start: position(event),
@@ -196,6 +215,7 @@ export function useResize({
     const amount = event.shiftKey ? largeStep : step;
     const direction = sign(event.currentTarget);
     const upper = upperAt(event.currentTarget);
+    measure(event.currentTarget);
     const from = Math.min(value, upper);
     const forward = axis === 'inline' ? 'ArrowRight' : 'ArrowDown';
     const backward = axis === 'inline' ? 'ArrowLeft' : 'ArrowUp';
@@ -211,16 +231,22 @@ export function useResize({
     change(next, true, upper);
   };
 
+  // The values as the handle reports them: a size in rem keeps its fraction, as its text says it,
+  // and the largest is what the room allows, with the size no larger.
+  const reported = unit === 'rem' ? (size: number) => Math.round(size * 100) / 100 : Math.round;
+  const upper = Math.min(max, roomMax ?? max);
+  const shown = Math.min(value, upper);
   return {
     dragging,
+    measure,
     handleProps: {
       role: 'separator',
       // A handle that moves along the inline axis is a vertical line between side-by-side panes.
       'aria-orientation': axis === 'inline' ? 'vertical' : 'horizontal',
-      'aria-valuenow': Math.round(value),
-      'aria-valuemin': Math.round(min),
-      'aria-valuemax': Math.round(max),
-      ...(valueText && { 'aria-valuetext': valueText(value) }),
+      'aria-valuenow': reported(shown),
+      'aria-valuemin': reported(min),
+      'aria-valuemax': reported(upper),
+      ...(valueText && { 'aria-valuetext': valueText(shown) }),
       ...(disabled && { 'aria-disabled': true as const }),
       tabIndex: disabled ? -1 : 0,
       'data-axis': axis,
@@ -231,6 +257,9 @@ export function useResize({
       onPointerCancel: end,
       onLostPointerCapture: end,
       onKeyDown,
+      ...(room && {
+        onFocus: (event: ReactFocusEvent<HTMLElement>) => measure(event.currentTarget),
+      }),
     },
   };
 }

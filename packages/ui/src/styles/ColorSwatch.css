@@ -39,6 +39,26 @@
   display: block;
   --env-color-swatch-size: 100%;
 }
+/* An icon button that shows a swatch alone, in the default secondary variant, draws no round fill
+   behind the square sample: it is a rounded square that shows its fill only on hover, keyboard
+   focus, press and while its popup is open. The selectors match Button.css's, so they keep the
+   specificity application styles meet and win by order. */
+.env-icon-button:where([data-variant='secondary']:has(> .env-icon > .env-color-swatch)) {
+  border-radius: var(--env-radius-sm);
+  background: var(--env-button-custom-fill, transparent);
+}
+.env-icon-button:where([data-variant='secondary']:has(> .env-icon > .env-color-swatch)):is(
+    :hover,
+    :focus-visible,
+    [aria-expanded='true']
+  ):not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+}
+.env-icon-button:where([data-variant='secondary']:has(> .env-icon > .env-color-swatch)):active:not(
+    :disabled
+  ):not([aria-disabled='true']) {
+  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+}
 
 /* Forced colors: a swatch shows a color as content, as an image does, so the system keeps it. */
 @media (forced-colors: active) {

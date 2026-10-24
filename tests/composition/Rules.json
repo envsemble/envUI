@@ -256,7 +256,6 @@
           "content/internal/CodeColors.ts",
           "content/internal/CodeThemes.ts",
           "content/internal/useCodeContrast.ts",
-          "content/internal/CodeDiffTints.ts",
           "content/internal/ReadableColors.ts",
           "content/internal/CodeHighlighting.ts",
           "content/internal/useCodeHighlighting.ts"
@@ -534,6 +533,12 @@
           "classes": ["env-dialog-content"],
           "properties": [],
           "note": "A resizable side sheet makes its content, which scrolls with the sheet, at least as tall as the sheet and the containing block of its resize handle, so the handle runs down the whole edge; it never restyles the content."
+        },
+        {
+          "stylesheet": "ColorSwatch.css",
+          "classes": ["env-icon-button"],
+          "properties": ["background", "border-radius"],
+          "note": "An icon button in the default secondary variant that holds a swatch alone, read with :has(), is a rounded square with no fill at rest, so no round fill clashes with the square sample; it keeps Button's custom fill and its state fills on hover, focus and press."
         }
       ]
     }

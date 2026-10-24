@@ -1,7 +1,8 @@
 'use client';
 
-import type { ComponentPropsWithRef } from 'react';
+import { useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { classNames } from './classNames.js';
+import { setRef } from './setRef.js';
 import { useResize, type ResizeOptions } from './useResize.js';
 
 export type ResizeHandleProps = ResizeOptions &
@@ -32,9 +33,10 @@ export function ResizeHandle({
   disabled,
   label,
   className,
+  ref,
   ...props
 }: ResizeHandleProps) {
-  const { handleProps } = useResize({
+  const { handleProps, measure } = useResize({
     axis,
     value,
     min,
@@ -48,10 +50,29 @@ export function ResizeHandle({
     valueText,
     disabled,
   });
+  // The largest value it reports follows the room around it, read once it is placed and again as
+  // the window resizes, so it is right before the handle is focused or moved.
+  const element = useRef<HTMLDivElement | null>(null);
+  const latestMeasure = useRef(measure);
+  latestMeasure.current = measure;
+  const measures = room !== undefined;
+  useEffect(() => {
+    const handle = element.current;
+    if (!measures || !handle) return;
+    const read = () => latestMeasure.current(handle);
+    read();
+    const view = handle.ownerDocument.defaultView;
+    view?.addEventListener('resize', read);
+    return () => view?.removeEventListener('resize', read);
+  }, [measures]);
   return (
     <div
       {...props}
       {...handleProps}
+      ref={(node) => {
+        element.current = node;
+        setRef(ref, node);
+      }}
       aria-label={label}
       className={classNames('env-resize-handle', className)}
     />

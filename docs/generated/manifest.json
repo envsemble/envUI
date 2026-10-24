@@ -2341,6 +2341,7 @@
             {
               "attribute": "data-variant",
               "values": [
+                "secondary",
                 "text"
               ],
               "parts": [
@@ -2853,7 +2854,7 @@
         {
           "name": "MinimalPicker",
           "title": "Minimal picker",
-          "description": "A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below. ColorPicker comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs.",
+          "description": "A square area chooses the saturation and brightness, with upright hue and alpha strips at its side; under them, a row holds the format menu, the eyedropper and copy, and the fields take the row below, or several formats show their fields together, a row each. ColorPicker is built on React Aria's color hooks and comes from its own entry, `@envsemble/envui/color`, whose libraries the application installs.",
           "file": "docs/examples/color-picker/MinimalPicker.tsx"
         },
         {
@@ -2861,6 +2862,12 @@
           "title": "Every format",
           "description": "",
           "file": "docs/examples/color-picker/EveryFormat.tsx"
+        },
+        {
+          "name": "FormatsTogether",
+          "title": "Formats together",
+          "description": "`formats={['hex', 'rgb', 'hsl']}` shows each format's fields on a row of its own, in that order, with its own copy button. They edit the same color: typing in one moves the others. The channels' letters and the hex value's # say which format a row holds, the letters and numbers line up from row to row, and with `alpha` each row ends in its alpha. Each row is a group named after its format, so a screen reader says which Red or Alpha it is in.",
+          "file": "docs/examples/color-picker/FormatsTogether.tsx"
         },
         {
           "name": "PickerButtonOpen",
@@ -2877,7 +2884,7 @@
         {
           "name": "Swatches",
           "title": "Swatches",
-          "description": "ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`.",
+          "description": "ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`. As the icon of an IconButton in its default variant, the button draws no round fill behind the square sample: it is a rounded square whose fill shows on hover, keyboard focus and press, and while its popup is open.",
           "file": "docs/examples/color-picker/Swatches.tsx"
         },
         {
@@ -2975,7 +2982,7 @@
             },
             {
               "class": "env-color-picker-fields",
-              "description": "The fields of the chosen format."
+              "description": "The fields of the chosen format, or of one format's row."
             },
             {
               "class": "env-color-picker-format",
@@ -2996,6 +3003,10 @@
             {
               "class": "env-color-picker-popover",
               "description": "The popover of a ColorPickerButton, around its picker."
+            },
+            {
+              "class": "env-color-picker-row",
+              "description": "A format's row where several formats show together: its fields and its copy button."
             },
             {
               "class": "env-color-picker-slider",
@@ -3079,11 +3090,30 @@
               ]
             },
             {
+              "attribute": "data-eye-dropper",
+              "values": [
+                "true"
+              ],
+              "parts": [
+                "env-color-picker-values"
+              ]
+            },
+            {
               "attribute": "data-format",
               "values": [
                 "hex",
                 "hsl",
                 "rgb"
+              ],
+              "parts": [
+                "env-color-picker-row",
+                "env-color-picker-values"
+              ]
+            },
+            {
+              "attribute": "data-formats",
+              "values": [
+                "together"
               ],
               "parts": [
                 "env-color-picker-values"
@@ -3150,6 +3180,12 @@
               "parts": [
                 "env-color-picker-button"
               ]
+            }
+          ],
+          "colors": [
+            {
+              "property": "--env-color-picker-button-container",
+              "description": "The fill behind the swatch and the value, transparent by default."
             }
           ]
         },
@@ -5648,7 +5684,7 @@
         {
           "name": "SmallToolbar",
           "title": "Sizes",
-          "description": "`sm`, `md` and `lg`, the control heights of the scale. With `showLabel={false}`, the placeholder shows in place of the label.",
+          "description": "`sm`, `md` and `lg`, the control heights of the scale. With `showLabel={false}`, the placeholder shows in place of the label. The field is 12 rem wide at least, also in a toolbar sized to its content, and in a narrower container it takes the container's width.",
           "file": "docs/examples/date-picker/SmallToolbar.tsx"
         },
         {
@@ -7249,7 +7285,7 @@
         {
           "name": "ResizableDrawer",
           "title": "Resizable drawer",
-          "description": "With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. Its labels and group headings keep to one line, so its items keep their height as it narrows: one that doesn't fit ends in an ellipsis, and a label cut short shows in full in a tooltip. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage.",
+          "description": "With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. Its labels and group headings keep to one line, so its items keep their height as it narrows: one that doesn't fit ends in an ellipsis, and a label cut short shows in full in a tooltip. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage, which it reads once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number. A `width` that isn't a finite number is ignored.",
           "file": "docs/examples/drawer/ResizableDrawer.tsx"
         },
         {
@@ -9637,7 +9673,7 @@
         {
           "name": "PlainOutput",
           "title": "Plain output",
-          "description": "envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill and blocks on a layer of the text color of their own, both translucent, so they stand a step apart from the page, a pane, a card, a muted fill or a popup alike; diffs sit on an opaque muted grey. A block shows its plain source first and colors it once the highlighter loads.",
+          "description": "envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill and blocks and diffs on a layer of the text color of their own, both translucent, so they stand a step apart from the page, a pane, a card, a muted fill or a popup alike. A diff takes the same code theme and token colors as a block, and tints its added and removed lines with their change color over that layer, faintly enough that every token keeps its contrast there. A block shows its plain source first and colors it once the highlighter loads.",
           "file": "docs/examples/code/PlainOutput.tsx"
         },
         {
@@ -12929,7 +12965,7 @@
         {
           "name": "ResizableDetails",
           "title": "Resizable details",
-          "description": "With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width.",
+          "description": "With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width. Its width is then a number of rem: a CSS length as `width`, such as `min(30rem, 90%)`, is ignored, with a warning while developing, and the sheet starts at `defaultWidth`.",
           "file": "docs/examples/sheet/ResizableDetails.tsx"
         },
         {
@@ -18105,7 +18141,7 @@
     "ColorPicker": {
       "kind": "component",
       "import": "@envsemble/envui/color",
-      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
+      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format, or the fields of several `formats` together, each with its own copy button; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
         {
           "name": "showLabel",
@@ -18162,8 +18198,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
@@ -18306,8 +18341,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
@@ -23984,7 +24018,7 @@
           "type": "'md' | 'lg' | number | (string & {})",
           "required": false,
           "default": "'md'",
-          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange. A bottom sheet ignores it."
+          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange, while a CSS length is ignored, and warned of while developing: the sheet starts at `defaultWidth`. A bottom sheet ignores it."
         },
         {
           "name": "resizable",
@@ -29868,43 +29902,43 @@
         "cssVariable": "--env-color-avatar-bg-amber",
         "use": "--env-color-avatar-bg-butter",
         "type": "color",
-        "note": "The avatar hues are named for their colors: amber is butter."
+        "note": "The avatar hues are named for their colors: amber is butter. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-butter and --env-color-avatar-figure-butter."
       },
       {
         "cssVariable": "--env-color-avatar-bg-green",
         "use": "--env-color-avatar-bg-sage",
         "type": "color",
-        "note": "The avatar hues are named for their colors: green is sage."
+        "note": "The avatar hues are named for their colors: green is sage. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-sage and --env-color-avatar-figure-sage."
       },
       {
         "cssVariable": "--env-color-avatar-bg-purple",
         "use": "--env-color-avatar-bg-orchid",
         "type": "color",
-        "note": "The avatar hues are named for their colors: purple is orchid."
+        "note": "The avatar hues are named for their colors: purple is orchid. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-orchid and --env-color-avatar-figure-orchid."
       },
       {
         "cssVariable": "--env-color-avatar-bg-red",
         "use": "--env-color-avatar-bg-blush",
         "type": "color",
-        "note": "The avatar hues are named for their colors: red is blush."
+        "note": "The avatar hues are named for their colors: red is blush. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-blush and --env-color-avatar-figure-blush."
       },
       {
         "cssVariable": "--env-color-avatar-bg-slate",
         "use": "--env-color-avatar-bg-oat",
         "type": "color",
-        "note": "The avatar hues are named for their colors: slate is oat."
+        "note": "The avatar hues are named for their colors: slate is oat. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-oat and --env-color-avatar-figure-oat."
       },
       {
         "cssVariable": "--env-color-avatar-bg-teal",
         "use": "--env-color-avatar-bg-seafoam",
         "type": "color",
-        "note": "The avatar hues are named for their colors: teal is seafoam."
+        "note": "The avatar hues are named for their colors: teal is seafoam. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-seafoam and --env-color-avatar-figure-seafoam."
       },
       {
         "cssVariable": "--env-color-avatar-bg-violet",
         "use": "--env-color-avatar-bg-periwinkle",
         "type": "color",
-        "note": "The avatar hues are named for their colors: violet is periwinkle."
+        "note": "The avatar hues are named for their colors: violet is periwinkle. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-periwinkle and --env-color-avatar-figure-periwinkle."
       },
       {
         "cssVariable": "--env-elevation-0-shadow",

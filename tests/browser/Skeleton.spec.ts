@@ -396,3 +396,44 @@ test('text that is there draws as rounded bars over its line boxes, which shimme
     await projects.evaluate((root) => root.style.getPropertyValue('--env-skeleton-text-bars')),
   ).toBe('');
 });
+
+test('a skeleton root that scrolls draws the bars past its box, in either direction', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page);
+  for (const dir of ['ltr', 'rtl']) {
+    const root = page.getByTestId(`scrolling-${dir}`);
+    await expect(root).toHaveAttribute('data-env-skeleton-text', '');
+    const layout = await root.evaluate((element) => {
+      const value = element.style.getPropertyValue('--env-skeleton-text-bars');
+      const bars = [...value.matchAll(/(-?[\d.]+)px (-?[\d.]+)px \/ ([\d.]+)px ([\d.]+)px/g)].map(
+        (match) => match.slice(1).map(Number),
+      );
+      const after = getComputedStyle(element, '::after');
+      return {
+        bars,
+        layer: [after.width, after.height].map(parseFloat),
+        box: [element.clientWidth, element.clientHeight],
+        scroll: [element.scrollWidth, element.scrollHeight],
+      };
+    });
+    const [width, height] = layout.layer;
+    // The content overflows the box both ways, and the layer reaches past it to every bar.
+    expect(layout.scroll[0]).toBeGreaterThan(layout.box[0]);
+    expect(layout.scroll[1]).toBeGreaterThan(layout.box[1]);
+    expect(width).toBeGreaterThan(layout.box[0]);
+    expect(height).toBeGreaterThan(layout.box[1]);
+    expect(layout.bars.length).toBeGreaterThanOrEqual(6);
+    for (const [x, y, w, h] of layout.bars) {
+      expect(x).toBeGreaterThanOrEqual(0);
+      expect(y).toBeGreaterThanOrEqual(0);
+      expect(x + w).toBeLessThanOrEqual(width + 0.5);
+      expect(y + h).toBeLessThanOrEqual(height + 0.5);
+    }
+    // It never makes the root scroll further than its content does.
+    expect(await root.evaluate((element) => [element.scrollWidth, element.scrollHeight])).toEqual(
+      layout.scroll,
+    );
+  }
+});
