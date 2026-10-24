@@ -78,24 +78,6 @@
 .docs-measure code {
   font-size: 0.75rem;
 }
-.docs-spacing-bar {
-  height: 0.75rem;
-  background: var(--env-color-fg-muted);
-  border-radius: var(--env-radius-sm);
-}
-.docs-shape {
-  background: var(--env-color-bg-muted);
-  min-block-size: 6rem;
-  padding: var(--env-space-3);
-  display: grid;
-  place-items: center;
-  text-align: center;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-.docs-shape code {
-  font-size: 0.75rem;
-}
 .docs-icon-toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -164,4 +146,155 @@
 }
 .docs-scale-row > .env-text-field {
   inline-size: 11rem;
+}
+/* A foundation page on the figure template's rules (previews/foundations/Topic.tsx): sections
+   under their h2, each opened by a paragraph, then titled blocks beside their figures, a sub-topic
+   apart from the next. */
+.docs-topic {
+  --docs-subtopic-gap: var(--env-space-7);
+}
+.docs-topic > h2 {
+  margin: 0 0 var(--env-space-4);
+}
+.docs-topic-lead {
+  max-inline-size: 65ch;
+  margin: 0 0 var(--env-space-5);
+}
+.docs-topic-blocks {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--docs-subtopic-gap);
+  min-inline-size: 0;
+}
+.docs-topic-text {
+  display: grid;
+  align-content: start;
+  gap: var(--env-space-2);
+  max-inline-size: 65ch;
+}
+.docs-topic-text :is(h3, h4, p) {
+  margin: 0;
+}
+.docs-topic-block {
+  display: grid;
+  gap: var(--env-space-4);
+  min-inline-size: 0;
+}
+.docs-topic-block.docs-figure-split {
+  gap: var(--env-space-5) var(--env-space-7);
+}
+.docs-topic-figure {
+  display: grid;
+  gap: var(--env-space-4);
+  min-inline-size: 0;
+  margin: 0;
+}
+.docs-topic-figure > .docs-foundation-stage > * {
+  inline-size: auto;
+  max-inline-size: 100%;
+}
+.docs-topic-legend-name {
+  font-weight: var(--env-font-weight-medium);
+}
+.docs-topic-legend p {
+  margin: 0;
+}
+/* The words to use: the tags may wrap on a narrow page. */
+.docs-topic-words .docs-option-tag {
+  white-space: normal;
+  block-size: auto;
+  min-block-size: 1.5rem;
+  padding-block: 0.125rem;
+}
+
+/* A figure with marks measured from its example (Marks.tsx): room on the end side for the
+   numbers, the marked space filled in the accent, and the guides of a row that lines up. */
+.docs-marked-stage {
+  padding-inline: var(--env-space-9);
+}
+.docs-marked {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  max-inline-size: 100%;
+}
+.docs-marked-subject {
+  display: grid;
+  justify-items: center;
+  max-inline-size: 100%;
+}
+.docs-marked-space {
+  fill: color-mix(in oklch, var(--env-color-fg-accent) 30%, transparent);
+}
+.docs-anatomy-lines .docs-marked-guide {
+  stroke: var(--env-color-fg-accent);
+  stroke-dasharray: 4 3;
+}
+.docs-spacing-subject {
+  inline-size: min(24rem, 100%);
+}
+.docs-align-subject {
+  justify-content: center;
+}
+.docs-align-subject > .env-search-field {
+  inline-size: 12rem;
+}
+
+/* The shapes envUI draws: each a small, inert picture of real components on its stage. */
+.docs-shape-stage {
+  min-block-size: 12rem;
+}
+.docs-shape-card {
+  inline-size: 14rem;
+}
+.docs-shape-inner {
+  inline-size: 18rem;
+}
+
+/* The color roles as swatches, on the page: each a block of the role's color with its name and
+   use below, an edge keeping the page's own color visible. */
+.docs-role-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  gap: var(--env-space-6) var(--env-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.docs-role-swatches > li {
+  display: grid;
+  align-content: start;
+  gap: var(--env-space-1);
+}
+.docs-role-swatch {
+  block-size: 4rem;
+  margin-block-end: var(--env-space-2);
+  border-radius: var(--env-radius-lg);
+  border: 1px solid var(--env-color-border-muted);
+}
+.docs-roles {
+  inline-size: min(22rem, 100%);
+}
+
+/* One screen in each theme and contrast: two across, then four where they fit. */
+.docs-themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: var(--env-space-5);
+  inline-size: 100%;
+}
+.docs-themes-stage > .docs-themes {
+  inline-size: 100%;
+}
+.docs-theme-sample {
+  display: grid;
+  justify-items: center;
+  gap: var(--env-space-2);
+}
+.docs-theme-sample > .env-theme {
+  inline-size: 100%;
+}
+/* A shape's name and meaning sit right under its stage, in the run's second row. */
+.docs-figure-run > .docs-topic-figure > figcaption {
+  grid-row: 2;
 }

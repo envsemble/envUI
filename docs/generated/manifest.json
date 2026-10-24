@@ -15106,7 +15106,7 @@
       "name": "colors",
       "title": "Colors & themes",
       "group": "Foundations",
-      "summary": "Semantic colors that carry the same purpose across light and dark themes.",
+      "summary": "Colors named by their role, so every screen works in light, dark and high contrast.",
       "doc": "docs/foundations/colors.md",
       "aliases": [
         "dark mode",
@@ -15149,7 +15149,7 @@
       "name": "spacing",
       "title": "Spacing & shape",
       "group": "Foundations",
-      "summary": "A shared scale for space, corners and controls that grow with content.",
+      "summary": "How space groups things, controls line up and corners say what a thing is.",
       "doc": "docs/foundations/spacing.md",
       "related": [
         "scale",

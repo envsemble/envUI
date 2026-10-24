@@ -35,6 +35,37 @@ Inside a Theme these follow the theme, its [scale](../foundations/scale.md) and 
 | `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                                                                                                                                         |
 | `--env-control-icon-size`                                         | 1 rem: the icon inside controls                                                                                                                                          |
 
+## The words people use
+
+The Site's Spacing & shape page explains space and corners without values, so readers can ask for them in words. Each phrase it teaches maps to one change here:
+
+| Words on the Site                  | What it means in code                                                                               |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Tight, inside a group              | `gap` 1–3: a heading and its description, a label and its value, short lines that read as one block |
+| Roomier, between groups            | `gap` 4–5: the fields of a form, a form and its actions, the groups of a section                    |
+| The most, between sections         | `gap` 6–9: the sections of a page or a settings pane                                                |
+| More room between these            | The next larger step of the gap that parts them, on their parent                                    |
+| Group these closer                 | Wrap them in their own Column or Row with a smaller gap, inside the larger one                      |
+| Separate sections                  | A larger gap between them, never a line                                                             |
+| Line these up                      | One `size` for every control in the row, and `align="center"` on the Row                            |
+| Tighter rows                       | `density="sm"` or `"xs"` on a Table, List or Tree; the text keeps its size                          |
+| Compact                            | `scale="compact"` on the Theme: every control height, gap and corner a step smaller                 |
+| On a surface                       | Surface for a plain pane, Card for a content surface; both keep `--env-radius-surface`              |
+| Components bring their own padding | Don't pad a Button, field or Card from outside; arrange the space between them                      |
+| Fully rounded                      | `--env-radius-full`; see Guidelines below                                                           |
+
+### Corners by what they are
+
+The Site shows four kinds of corner; small marks are a fifth, for code. Their tokens:
+
+| On the Site      | Token and where it is used                                                                                                              |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Surfaces         | `--env-radius-surface`: panes, cards, dialogs, popups and the outside of a row group                                                    |
+| Inside a surface | `--env-radius-lg` for alerts, tables, text areas and drop zones; `--env-radius-sm` for list rows, menu items, tabs, toasts and tooltips |
+| Fully rounded    | `--env-radius-full`: buttons, single-line fields, badges, switches, segmented controls and navigation items                             |
+| Circles          | `50%`: avatars and icon buttons, which are always square                                                                                |
+| Small marks      | `--env-radius-xs`: checkboxes and color swatches, which read as boxes                                                                   |
+
 ## Guidelines
 
 - The parent owns gaps, through Row, Column and Grid; each component owns its padding. Text has no outer margins.

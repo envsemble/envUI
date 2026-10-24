@@ -254,3 +254,44 @@ export function optionPieces(markdown) {
   }
   return pieces;
 }
+
+/**
+ * The kinds of technical text the Site never shows, outside the Code disclosures under its
+ * figures: it is for people looking at envUI, and these belong to the guides in the Docs. Each
+ * pattern finds one kind in plain text, as a reader sees it.
+ */
+const technicalPatterns = [
+  // A custom property or token, such as --env-color-bg-page.
+  ['token', /(?<![\w-])--[a-z][\w-]*/gi],
+  // A part's class or a data attribute, such as env-card-heading or data-env-theme.
+  ['class name', /(?<![\w-])(?:env|docs|data|aria)-[a-z][\w-]*/g],
+  // A hex color, such as #1e1f21.
+  ['hex color', /(?<![\w&#])#(?:[\da-f]{8}|[\da-f]{6}|[\da-f]{3,4})(?![\w-])/gi],
+  // A CSS length or duration, such as 0.25 rem, 32 px or 150ms.
+  ['length', /(?<![\w.])\d*\.?\d+\s?(?:rem|px|em|ch|vh|vw|dvh|svh|lvh|ms|pt)(?![\w-])/g],
+  // A percentage used as a value, such as 50%.
+  ['percentage', /(?<![\w.])\d*\.?\d+\s?%/g],
+  // A contrast ratio, such as 4.5:1.
+  ['ratio', /(?<![\w.])\d+(?:\.\d+)?:1(?!\d)/g],
+  // A prop with its value, or a call, such as variant="ghost", gap={4} or var(--x).
+  ['code', /\b[a-z][\w-]*=["'{]|\b[a-z]\w*\([^)]*\)|=>|[{}]|<\/?[A-Za-z][\w.]*(?:\s[^>]*)?\/?>/g],
+  // A camelCase name, such as onValueChange or useTheme.
+  ['identifier', /(?<![\w-])[a-z]+(?:[A-Z][a-z\d]+)+(?![\w-])/g],
+];
+
+/** Words in camelCase that are plain names, not code. */
+const plainCamelCase = new Set(['macOS', 'iOS', 'iPadOS', 'iPhone', 'iPad', 'envUI']);
+
+/**
+ * The technical text in a piece of plain text, such as a page's rendered words: tokens, class
+ * names, hex colors, lengths, percentages, contrast ratios, props and code, and camelCase names.
+ */
+export function technicalText(text) {
+  const found = [];
+  for (const [kind, pattern] of technicalPatterns)
+    for (const match of text.matchAll(pattern)) {
+      if (kind === 'identifier' && plainCamelCase.has(match[0])) continue;
+      found.push({ kind, text: match[0].trim() });
+    }
+  return found;
+}
