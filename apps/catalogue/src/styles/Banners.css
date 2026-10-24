@@ -1,19 +1,17 @@
 /* The banners at the top of pages (PageHeader.tsx) and the home page's hero (Overview.tsx). Each
-   draws the envUI mark's four shapes large behind its text (BannerShapes.tsx), a pill beside a
-   circle over a circle beside a pill, pushed out into the banner's corners and cut by its edges, so
-   the text sits where the mark's gaps cross. No shadows: the shapes stand apart by their fill and a
-   hairline edge.
+   draws a pattern behind its text (BannerShapes.tsx), at its edges, in hairline outlines. No
+   shadows.
    - A landing page of the Site, the home page, All components and All patterns, is on a tint of the
-     accent, the shapes in deeper tints and the circle at the top end in the accent itself.
-   - Any other page of the Site is quieter: the neutral banner, with the two shapes at its end only,
-     in a neutral fill, the page's icon in the circle.
+     accent, with pills, rounded squares, rounded triangles and plus signs laid on one slant along
+     both ends, outlined in the accent, one pill softly filled.
+   - Any other page of the Site is quieter: the neutral banner, a few of the shapes at its start,
+     outlined in the border color, and the page's icon large, turned and faint at its end.
    - A page of the Docs, the developer reference, reads from the start like a document, its trail
-     in monospace, on the page's own color inside an edge, the shapes drawn as outlines at its end,
-     as on a plan. */
+     in monospace, on the page's own color inside an edge, the envUI mark's circle and pill drawn as
+     outlines at its end, as on a plan. */
 .docs-banner {
   --docs-banner-fill: var(--env-color-bg-default);
-  --docs-banner-shape-fill: var(--env-color-bg-muted);
-  --docs-banner-shape-edge: transparent;
+  --docs-banner-stroke: var(--env-color-border-default);
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -21,42 +19,73 @@
   background: var(--docs-banner-fill);
 }
 
-.docs-banner > :not(.docs-banner-shapes) {
+.docs-banner > :not(.docs-banner-shapes, .docs-page-banner-symbol) {
   position: relative;
   z-index: var(--env-z-raised);
 }
 
-/* The shapes' layer covers the banner and is a container of its size: a circle is about three
-   fifths of the banner's height, so the shapes above and below stand the mark's gap apart, and
-   never more than about a fifth of its width, so a narrow banner keeps its text clear of them. */
+/* The shapes' layer covers the banner and is a container of its size. Its unit, --docs-banner-unit,
+   is a hundredth of the banner's height, and less in a narrow banner, so the shapes keep to its
+   edges, clear of the text. */
 .docs-banner-shapes {
+  --docs-banner-unit: min(1cqh, 0.32cqi);
   position: absolute;
   inset: 0;
   container-type: size;
   pointer-events: none;
 }
 
+/* The Site's shapes: outlines, one of them on a landing page lifted by a soft fill. */
+.docs-banner-outline {
+  position: absolute;
+  block-size: auto;
+  overflow: visible;
+  fill: none;
+  stroke: var(--docs-banner-stroke);
+  stroke-width: var(--docs-banner-stroke-width, 0.0625rem);
+  stroke-linejoin: round;
+}
+
+.docs-banner-outline > * {
+  vector-effect: non-scaling-stroke;
+}
+
+.docs-banner-outline[data-lift] {
+  fill: var(--docs-banner-lift);
+}
+
+/* A Site page's icon: large at the banner's end, turned, faint. */
+.docs-page-banner-symbol {
+  position: absolute;
+  inset-inline-end: -1rem;
+  inset-block-start: 50%;
+  inline-size: clamp(10rem, 28cqi, 18rem);
+  aspect-ratio: 1;
+  transform: translateY(-50%) rotate(-12deg);
+  color: var(--env-color-fg-muted);
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.docs-page-banner-symbol > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* The Docs' shapes: the envUI mark's circle and pill, in outline at the banner's end. */
 .docs-banner-shape {
   --docs-banner-shape: min(62cqh, 22cqi);
   position: absolute;
-  display: grid;
-  place-items: center;
   box-sizing: border-box;
   inline-size: var(--docs-banner-shape);
   block-size: var(--docs-banner-shape);
   border: 0.0625rem solid var(--docs-banner-shape-edge);
   border-radius: calc(var(--docs-banner-shape) / 2);
-  background: var(--docs-banner-shape-fill);
-  color: var(--env-color-fg-muted);
 }
 
 .docs-banner-shape[data-shape='pill'] {
   inline-size: calc(var(--docs-banner-shape) * 1.92);
-}
-
-.docs-banner-shape[data-corner='top-start'] {
-  inset-block-start: -15cqh;
-  inset-inline-start: calc(var(--docs-banner-shape) * -1.12);
 }
 
 .docs-banner-shape[data-corner='top-end'] {
@@ -64,65 +93,26 @@
   inset-inline-end: calc(var(--docs-banner-shape) * -0.25);
 }
 
-.docs-banner-shape[data-corner='bottom-start'] {
-  inset-block-end: -15cqh;
-  inset-inline-start: calc(var(--docs-banner-shape) * -0.25);
-}
-
 .docs-banner-shape[data-corner='bottom-end'] {
   inset-block-end: -15cqh;
   inset-inline-end: calc(var(--docs-banner-shape) * -1.08);
 }
 
-/* A page's icon, in the part of the circle inside the banner. */
-.docs-banner-shape[data-corner='top-end']:not(:empty) {
-  padding-block-start: 15cqh;
-  padding-inline-end: calc(var(--docs-banner-shape) * 0.25);
-}
-
-.docs-banner-shape > svg {
-  inline-size: 36%;
-  block-size: auto;
-}
-
-/* A landing page of the Site. Its text stays on the tint: the shapes keep to the corners. */
+/* A landing page of the Site, on a tint of the accent, its shapes outlined in the accent. */
 .docs-banner[data-banner='landing'] {
   --docs-banner-fill: color-mix(
     in oklch,
     var(--env-color-fg-accent) 7%,
     var(--env-color-bg-default)
   );
-  --docs-banner-shape-fill: color-mix(
-    in oklch,
-    var(--env-color-fg-accent) 14%,
-    var(--env-color-bg-default)
-  );
-  --docs-banner-shape-edge: color-mix(in oklch, var(--env-color-fg-accent) 26%, transparent);
+  --docs-banner-stroke: color-mix(in oklch, var(--env-color-fg-accent) 50%, transparent);
+  --docs-banner-lift: color-mix(in oklch, var(--env-color-fg-accent) 12%, transparent);
   border: 0.0625rem solid color-mix(in oklch, var(--env-color-fg-accent) 16%, transparent);
-}
-
-.docs-banner[data-banner='landing'] .docs-banner-shape[data-corner='top-end'] {
-  --docs-banner-shape-fill: var(--env-color-bg-brand-emphasis);
-  --docs-banner-shape-edge: transparent;
-}
-
-.docs-banner[data-banner='landing'] .docs-banner-shape[data-corner='bottom-start'] {
-  --docs-banner-shape-fill: color-mix(
-    in oklch,
-    var(--env-color-fg-accent) 26%,
-    var(--env-color-bg-default)
-  );
-}
-
-/* Any other page of the Site, and every page of the Docs: the shapes at the banner's end only. */
-.docs-banner:not([data-banner='landing']) .docs-banner-shape[data-corner$='start'] {
-  display: none;
 }
 
 /* The Docs: from the start, on the page's color inside an edge, the shapes in outline. */
 .docs-banner:is([data-banner='docs'], [data-banner='docs-home']) {
   --docs-banner-fill: var(--env-color-bg-page);
-  --docs-banner-shape-fill: transparent;
   --docs-banner-shape-edge: var(--env-color-border-default);
   border: 0.0625rem solid var(--env-color-border-muted);
   padding-inline: clamp(var(--env-space-6), 6cqi, var(--env-space-9));
