@@ -107,8 +107,14 @@ export const referencePages: ReferencePage[] = [
 /** The address of a component or foundation page. */
 export const pageHref = (page: ReferencePage) => routeHref(page.path);
 
-/** The route of a component's page in the Docs: its props, part names and changelog. */
+/**
+ * The route of a component's page in the Docs: its guide to using it in code, then its props, part
+ * names and changelog.
+ */
 export const apiRoute = (id: string) => `docs/components/${id}`;
+
+/** The route of a pattern's page in the Docs: its guide to building it in code. */
+export const patternGuideRoute = (id: string) => `docs/patterns/${id}`;
 
 /** The route of a foundation's guide in the Docs: its written guidance and reference. */
 export const foundationGuideRoute = (id: string) => `docs/foundations/${id}`;
@@ -256,7 +262,7 @@ const docsPages: SitePage[] = [
     section: 'Get started',
     kind: 'docs-home',
     summary:
-      'The developer reference: setup, migration, tokens, and the props, part names and changelog of every component.',
+      'The developer reference: setup, migration, tokens, and how to use every component and pattern in code, with their props and part names.',
   },
   ...startPages,
   ...(field
@@ -316,6 +322,20 @@ const docsPages: SitePage[] = [
         }),
       ),
   ),
+  // Each pattern's guide, in the Site's order: how to build it in code.
+  ...sitePages
+    .filter((page) => page.kind === 'pattern' && page.document)
+    .map(
+      ({ document, title, summary }): SitePage => ({
+        path: patternGuideRoute(document!.id),
+        title,
+        area: 'docs',
+        section: 'Patterns',
+        kind: 'api',
+        summary,
+        document,
+      }),
+    ),
 ];
 
 /** Every page of the Site, then of the Docs, each in reading order, which the pager follows. */
@@ -340,7 +360,7 @@ const referencePageOf = (id: string) => referencePages.find((page) => page.refer
 /**
  * The route of a page by its document id, such as `button`, or by a site page's, such as `tokens`,
  * scrolled to the element `section`. `view` picks the page's part in the Docs where the Site shows
- * the rest: `props` a component's page there, `usage` a foundation's guide.
+ * the rest: `props` a component's or a pattern's page there, `usage` a foundation's guide.
  */
 export function routeOfDocument(
   id: string,
@@ -354,6 +374,8 @@ export function routeOfDocument(
     if (reference.section === 'Components' && view === 'props') return `${apiRoute(id)}${query}`;
     return `${reference.path}${query}`;
   }
+  if (view === 'props' && patternDocuments.some((document) => document.id === id))
+    return `${patternGuideRoute(id)}${query}`;
   if (id === 'index' || id === docsRoute) return `${docsRoute}${query}`;
   if (id === 'overview') return homeRoute;
   const own: Record<string, string> = {

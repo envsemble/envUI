@@ -5,6 +5,7 @@ import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
+import { legendName } from '../../../../scripts/SiteContent.mjs';
 
 /** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
 interface Callout {
@@ -468,11 +469,15 @@ function AnatomyStage({
   );
 }
 
-/** A legend item's Markdown, with the description parts.json gives a part it only names. */
-function legendText({ part, text }: AnatomyLegendItem) {
-  if (text.replace(/`[^`]*`/g, '').trim()) return text;
-  const description = partDescription(part.replace(/::text$/, ''));
-  return description ? `${text}: ${description}` : text;
+/**
+ * A legend item as the figure shows it: the part's name alone, such as Label, in plain words; its
+ * class names and props are on the page's guide in the Docs. An item without a name shows the
+ * description parts.json gives its part, or else what it is written as.
+ */
+function legendText(item: AnatomyLegendItem) {
+  const name = legendName(item);
+  if (name) return name;
+  return partDescription(item.part.replace(/::text$/, '')) ?? item.text;
 }
 
 /**
