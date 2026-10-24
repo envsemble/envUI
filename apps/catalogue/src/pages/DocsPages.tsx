@@ -9,6 +9,7 @@ import { lazyPart } from '../template/LoadBoundary';
 import { partsOf } from '../template/Parts';
 import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
+import { Related } from '../template/Related';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import type { Documentation as Document, Reference } from '../Reference';
 import { Documentation } from './Documentation';
@@ -281,16 +282,17 @@ function PartNames({ components }: { components: readonly string[] }) {
 }
 
 /**
- * What an application adds for a component to be accessible, and what envUI does for it, as the
- * Accessibility section of its page writes them: plain lists, after the props.
+ * What an application adds for a component or pattern to be accessible, and what envUI does for
+ * it, as the Accessibility section of its page writes them: plain lists under a heading, `title`,
+ * of the section's own.
  */
-function Provides({ document }: { document: Document }) {
+function Provides({ document, title, id }: { document: Document; title: string; id: string }) {
   const { envui, app } = providesOf(document.sections ?? []);
   if (!envui && !app) return null;
   return (
-    <Column render={<section />} gap={5} aria-labelledby="provides" className="docs-provides">
-      <Text render={<h2 />} variant="headline" id="provides">
-        Accessibility
+    <Column render={<section />} gap={5} aria-labelledby={id} className="docs-provides">
+      <Text render={<h2 />} variant="headline" id={id}>
+        {title}
       </Text>
       {app && (
         <Column gap={3}>
@@ -313,9 +315,35 @@ function Provides({ document }: { document: Document }) {
 }
 
 /**
+ * What the application and envUI provide for each pattern, under the pattern's name, from the
+ * Accessibility section of its page, in the Site's order: the pattern pages on the Site leave them
+ * out, and patterns have no page of their own in the Docs.
+ */
+export function PatternProvidesPage({ page }: { page: SitePage }) {
+  const patterns = pagesOf('site').flatMap((entry) =>
+    entry.kind === 'pattern' && entry.document ? [entry.document] : [],
+  );
+  return (
+    <>
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <Column gap={8} className="docs-article">
+        {patterns.map((pattern) => (
+          <Provides
+            key={pattern.id}
+            document={pattern}
+            title={pattern.title}
+            id={`pattern-${pattern.id}`}
+          />
+        ))}
+      </Column>
+    </>
+  );
+}
+
+/**
  * A component's page in the Docs: its props, what the application provides, part names and
- * changelog. Field, which has no page on
- * the Site, shows its whole page here, as "Build your own field".
+ * changelog. Field, which has no page on the Site, shows its whole page here, as "Build your own
+ * field", with Related on its band at the end, after the changelog.
  */
 export function ApiPage({ page }: { page: SitePage }) {
   const document = page.document!;
@@ -338,7 +366,7 @@ export function ApiPage({ page }: { page: SitePage }) {
           )
         }
       />
-      {!sitePage && <TemplateContent document={document} provides />}
+      {!sitePage && <TemplateContent document={document} provides related={false} />}
       <Column gap={8} className="docs-article docs-api">
         <Column render={<section />} gap={5} aria-labelledby="props">
           <Text render={<h2 />} variant="headline" id="props">
@@ -346,10 +374,11 @@ export function ApiPage({ page }: { page: SitePage }) {
           </Text>
           <PropsTables reference={reference} />
         </Column>
-        {sitePage && <Provides document={document} />}
+        {sitePage && <Provides document={document} title="Accessibility" id="provides" />}
         <PartNames components={metadata?.components ?? []} />
         <PageChangelog document={document} />
       </Column>
+      {!sitePage && metadata && <Related metadata={metadata} path={document.path} />}
     </>
   );
 }

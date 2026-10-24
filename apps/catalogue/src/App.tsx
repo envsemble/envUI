@@ -30,6 +30,7 @@ import {
   DocsHome,
   FoundationGuidePage,
   GuidePage,
+  PatternProvidesPage,
   SkillsPage,
   TokensPage,
 } from './pages/DocsPages';
@@ -59,6 +60,7 @@ const pageContent: Record<SitePage['kind'], (props: { page: SitePage }) => React
   tokens: TokensPage,
   'foundation-guide': FoundationGuidePage,
   api: ApiPage,
+  'pattern-provides': PatternProvidesPage,
 };
 
 /** The title of a page's tab: the Site's are envUI's, the Docs' envUI Docs'. */

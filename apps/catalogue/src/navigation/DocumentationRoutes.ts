@@ -42,7 +42,8 @@ export type PageKind =
   | 'skills'
   | 'tokens'
   | 'foundation-guide'
-  | 'api';
+  | 'api'
+  | 'pattern-provides';
 
 /** One page of the Site or the Docs, at the route `path`. */
 export interface SitePage {
@@ -271,6 +272,15 @@ const docsPages: SitePage[] = [
         } satisfies SitePage,
       ]
     : []),
+  {
+    path: 'docs/patterns',
+    title: 'Patterns: what you provide',
+    area: 'docs',
+    section: 'Guides',
+    kind: 'pattern-provides',
+    summary:
+      'What the application provides for each pattern to be accessible, and what envUI provides for it, from the pattern pages.',
+  },
   ...foundations.map(
     (reference): SitePage => ({
       path: foundationGuideRoute(reference.id),

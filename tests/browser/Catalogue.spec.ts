@@ -428,6 +428,34 @@ test('every stage is the only frame of its figure', async ({ page }) => {
   }
 });
 
+test("the Docs list what each pattern needs, and end Field's page with Related", async ({
+  page,
+}) => {
+  // Patterns have no page in the Docs: one page lists each pattern's two lists under its name, as
+  // plain lists, from the pattern pages.
+  await page.goto(`${catalogueUrl}/docs/patterns`);
+  const forms = page.getByRole('region', { name: 'Form layout and validation', exact: true });
+  await expect(forms.getByRole('heading', { level: 3 })).toHaveText([
+    'You provide',
+    'envUI provides',
+  ]);
+  await expect(forms.getByRole('listitem').first()).toContainText('noValidate');
+  await expect(page.locator('.docs-article .env-card')).toHaveCount(0);
+  // Field's whole page is in the Docs: its sections, props, part names and changelog, then Related
+  // on its band at the end.
+  await page.goto(`${catalogueUrl}/docs/components/field`);
+  const ends = await page.evaluate(() => {
+    const band = document.querySelector('.docs-band');
+    const changelog = document.querySelector('.docs-changelog');
+    return Boolean(
+      band &&
+        changelog &&
+        changelog.compareDocumentPosition(band) & Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+  });
+  expect(ends).toBe(true);
+});
+
 test('the props in the Docs link each source file at the revision the site was built from', async ({
   page,
 }) => {
@@ -464,12 +492,19 @@ test('the hosted build opens every page of the Site and the Docs without network
   await expect(
     page.locator('.docs-footer').getByRole('navigation', { name: 'Footer' }),
   ).toContainText('Benchmark');
-  for (const { path, title, kind } of allPages) {
+  for (const { path, title, kind, area } of allPages) {
     await goTo(page, path === 'overview' ? '/' : `/${path}`);
     await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(
       kind === 'home' ? 'envUI' : title,
     );
     await expect(page.getByText('This page failed to render')).toHaveCount(0);
+    // A page of the Site links into the Docs only through its API button and the Docs link, not
+    // from its content, the links generated from its frontmatter included, such as Built from.
+    if (area === 'site' && kind !== 'home')
+      await expect(
+        page.locator('.docs-main :is(.docs-article, .docs-band) a[href^="/docs"]'),
+        path,
+      ).toHaveCount(0);
   }
   // A deep link loads its page, in the Docs too.
   await page.goto(`${siteUrl}/docs/setup`);

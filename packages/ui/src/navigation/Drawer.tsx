@@ -9,6 +9,7 @@ import {
   type ComponentPropsWithRef,
   type CSSProperties,
   type ReactNode,
+  type RefObject,
 } from 'react';
 import { Column } from '../foundations/Layout.js';
 import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
@@ -67,8 +68,8 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
    * Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer
    * drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns
    * to `defaultWidth`. Its labels and headings keep to one line: one that doesn't fit ends in an
-   * ellipsis, and a label cut short shows in full in a tooltip. Leave it out of a drawer in a sheet
-   * of a narrow window.
+   * ellipsis, a label cut short shows in full in a tooltip and a heading in its title. Leave it out
+   * of a drawer in a sheet of a narrow window.
    * @default false
    */
   resizable?: boolean;
@@ -108,6 +109,28 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
 }
 
 /**
+ * Whether a one-line label or heading is cut short with an ellipsis, measured as it resizes; never
+ * where labels wrap.
+ */
+function useCut(ref: RefObject<HTMLElement | null>, oneLine: boolean) {
+  const [cut, setCut] = useState(false);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!oneLine || !element) {
+      setCut(false);
+      return;
+    }
+    const measure = () => setCut(element.scrollWidth > element.clientWidth);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, oneLine]);
+  return cut;
+}
+
+/**
  * One destination of the drawer. In a resizable drawer, whose labels keep to one line, a label cut
  * short with an ellipsis shows in full in a tooltip beside the drawer, on hover and keyboard focus.
  * The tooltip stays in place while the label fits, so the item and its focus are kept as the
@@ -121,20 +144,7 @@ function DrawerItem({
   oneLine: boolean;
 }) {
   const label = useRef<HTMLSpanElement>(null);
-  const [cut, setCut] = useState(false);
-  useLayoutEffect(() => {
-    const element = label.current;
-    if (!oneLine || !element) {
-      setCut(false);
-      return;
-    }
-    const measure = () => setCut(element.scrollWidth > element.clientWidth);
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [oneLine]);
+  const cut = useCut(label, oneLine);
   const item = (
     <DestinationItem classes={drawerClasses} destination={destination} labelRef={label} />
   );
@@ -152,7 +162,11 @@ function DrawerItem({
   );
 }
 
-/** A group's heading and its destinations, a list of its own named by the heading. */
+/**
+ * A group's heading and its destinations, a list of its own named by the heading. A heading cut
+ * short in a resizable drawer gives its full text as its title, since a heading takes no focus for a
+ * tooltip.
+ */
 function Section({
   group,
   items,
@@ -165,10 +179,17 @@ function Section({
   oneLine: boolean;
 }) {
   const headingId = useId();
+  const heading = useRef<HTMLHeadingElement>(null);
+  const cut = useCut(heading, oneLine);
   const Heading = `h${level}` as const;
   return (
     <Column render={<li />} className="env-drawer-section" align="stretch" gap={1}>
-      <Heading className="env-drawer-heading" id={headingId}>
+      <Heading
+        ref={heading}
+        className="env-drawer-heading"
+        id={headingId}
+        title={cut ? group : undefined}
+      >
         {group}
       </Heading>
       <Column render={<ul />} aria-labelledby={headingId} align="stretch" gap={1}>

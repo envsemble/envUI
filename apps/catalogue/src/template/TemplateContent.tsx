@@ -46,11 +46,16 @@ export function MetadataBadges({
   );
 }
 
-/** An export as a Markdown link to the page that documents it; pages of docs/ are one folder
- * deep, so ../<path> reaches any of them from any page. */
+/**
+ * An export as a Markdown link to the page of the Site that shows it; pages of docs/ are one folder
+ * deep, so ../<path> reaches any of them from any page. An export documented only in the Docs, such
+ * as Field, is code: the Site links into the Docs only through the API button and the Docs link.
+ */
 function exportLink(name: string) {
   const page = pageOf(name);
-  return page ? `[${name}](../${page.reference.path})` : `\`${name}\``;
+  return page && !page.path.startsWith('docs/')
+    ? `[${name}](../${page.reference.path})`
+    : `\`${name}\``;
 }
 
 /**
@@ -128,17 +133,19 @@ function Section({ reference, section }: { reference: Document; section: Documen
 }
 
 /**
- * Sections in the template's order, then Related on a band of its own across the content pane; the
- * changelog is on the page in the Docs.
+ * Sections in the template's order, then, with `related`, Related on a band of its own across the
+ * content pane; the changelog is on the page in the Docs.
  */
 function Sections({
   reference,
   sections,
   provides,
+  related,
 }: {
   reference: Document;
   sections: DocumentationSection[];
   provides: boolean;
+  related: boolean;
 }) {
   const figures = reference.format === 'figures';
   return (
@@ -154,7 +161,7 @@ function Sections({
             <Section key={section.id} reference={reference} section={section} />
           ))}
       </Column>
-      {sections.some((section) => section.id === 'overview') && reference.metadata && (
+      {related && sections.some((section) => section.id === 'overview') && reference.metadata && (
         <Related metadata={reference.metadata} path={reference.path} />
       )}
     </>
@@ -165,16 +172,25 @@ function Sections({
  * A component or pattern page of the Site: every section in the page's order, then Related; a
  * component's props, part names, what the application provides and changelog are on its page in
  * the Docs. `provides` keeps what envUI and the application provide in Accessibility, for Field,
- * whose whole page is in the Docs.
+ * whose whole page is in the Docs, where `related={false}` leaves Related for the page's end.
  */
 export function TemplateContent({
   document,
   provides = false,
+  related = true,
 }: {
   document: Document;
   provides?: boolean;
+  related?: boolean;
 }) {
-  return <Sections reference={document} sections={document.sections ?? []} provides={provides} />;
+  return (
+    <Sections
+      reference={document}
+      sections={document.sections ?? []}
+      provides={provides}
+      related={related}
+    />
+  );
 }
 
 /**
