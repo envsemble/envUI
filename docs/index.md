@@ -12,6 +12,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
 
+- [Writing](writing.md) — The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.
+
 - [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
 
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
@@ -30,7 +32,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Adapting to width](foundations/responsive.md) — Components follow the space they sit in, and four window classes name where a layout changes.
 - [Icons](foundations/icons.md) — Thousands of Material Symbols that follow their text, outlined or filled.
 - [Accessibility](foundations/accessibility.md) — What every component does for keyboard, screen readers, contrast, motion and touch, and what an app still supplies.
-- [Content guidelines](foundations/content.md) — Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.
 
 ## Layout & surfaces
 
@@ -127,9 +128,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Key figures](patterns/key-figures.md)
 - [Navigation](patterns/navigation.md)
 - [App frame](patterns/app-frame.md)
-- [Account menu](patterns/account-menu.md)
-- [Organization switcher](patterns/organization-switcher.md)
-- [Window frame](patterns/window-frame.md)
+- [Account and organizations](patterns/account-and-organizations.md)
 - [Filtering and search](patterns/filtering.md)
 - [Data tables](patterns/data-tables.md)
 - [Progressive disclosure](patterns/progressive-disclosure.md)

@@ -212,7 +212,7 @@
           "key-figures",
           "navigation",
           "app-frame",
-          "account-menu",
+          "account-and-organizations",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -315,9 +315,7 @@
           "key-figures",
           "navigation",
           "app-frame",
-          "account-menu",
-          "organization-switcher",
-          "window-frame",
+          "account-and-organizations",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -462,19 +460,14 @@
           "use": "Panes"
         },
         {
-          "text": "A whole frame to copy, with the navigation and a top bar.",
+          "text": "A whole frame to copy, with the navigation and a top bar, or an installed app's window.",
           "see": "app-frame"
-        },
-        {
-          "text": "An installed application's window that draws its own title bar.",
-          "see": "window-frame"
         }
       ],
       "related": [
         "page",
         "panes",
-        "app-frame",
-        "window-frame"
+        "app-frame"
       ],
       "exports": [
         "Scaffold",
@@ -678,9 +671,9 @@
       "usedIn": {
         "patterns": [
           "loading",
+          "empty-states",
           "navigation",
-          "app-frame",
-          "window-frame"
+          "app-frame"
         ]
       }
     },
@@ -1180,7 +1173,6 @@
           "empty-states",
           "navigation",
           "app-frame",
-          "window-frame",
           "filtering"
         ]
       }
@@ -1310,8 +1302,7 @@
           "loading",
           "empty-states",
           "key-figures",
-          "navigation",
-          "data-tables"
+          "navigation"
         ]
       }
     },
@@ -2387,9 +2378,7 @@
           "key-figures",
           "navigation",
           "app-frame",
-          "account-menu",
-          "organization-switcher",
-          "window-frame",
+          "account-and-organizations",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -4751,7 +4740,6 @@
           "feedback",
           "empty-states",
           "filtering",
-          "data-tables",
           "progressive-disclosure"
         ]
       }
@@ -4995,8 +4983,7 @@
       },
       "usedIn": {
         "patterns": [
-          "loading",
-          "data-tables"
+          "loading"
         ]
       }
     },
@@ -7170,11 +7157,9 @@
       "usedIn": {
         "patterns": [
           "settings",
-          "feedback",
           "loading",
           "navigation",
-          "app-frame",
-          "window-frame"
+          "app-frame"
         ]
       }
     },
@@ -7383,8 +7368,7 @@
       },
       "usedIn": {
         "patterns": [
-          "navigation",
-          "progressive-disclosure"
+          "navigation"
         ]
       }
     },
@@ -7558,15 +7542,15 @@
           "use": "Menubar"
         },
         {
-          "text": "An installed application's window that draws its own title bar.",
-          "see": "window-frame"
+          "text": "A whole frame to copy, or an installed application's window that draws its own title bar.",
+          "see": "app-frame"
         }
       ],
       "related": [
         "page",
         "toolbar",
         "menubar",
-        "window-frame"
+        "app-frame"
       ],
       "exports": [
         "TopBar"
@@ -7723,10 +7707,10 @@
       "usedIn": {
         "patterns": [
           "loading",
+          "empty-states",
           "navigation",
           "app-frame",
-          "account-menu",
-          "window-frame"
+          "account-and-organizations"
         ]
       }
     },
@@ -10117,6 +10101,7 @@
       },
       "usedIn": {
         "patterns": [
+          "forms",
           "settings",
           "feedback",
           "navigation",
@@ -10236,9 +10221,7 @@
         }
       },
       "usedIn": {
-        "patterns": [
-          "navigation"
-        ]
+        "patterns": []
       }
     },
     {
@@ -10808,7 +10791,9 @@
         }
       },
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "progressive-disclosure"
+        ]
       }
     },
     {
@@ -11202,7 +11187,7 @@
         "patterns": [
           "loading",
           "app-frame",
-          "account-menu",
+          "account-and-organizations",
           "data-tables"
         ]
       }
@@ -13165,8 +13150,8 @@
       ],
       "avoidWhen": [
         {
-          "text": "The signed-in person's menu, with its header and theme submenu, or switching between their organizations.",
-          "see": "account-menu"
+          "text": "The signed-in person's menu, with its header and theme submenu, or an organization switcher.",
+          "see": "account-and-organizations"
         },
         {
           "text": "Choosing a value for a form field.",
@@ -13194,7 +13179,7 @@
         }
       ],
       "related": [
-        "account-menu",
+        "account-and-organizations",
         "select",
         "menubar",
         "command-palette",
@@ -13484,11 +13469,8 @@
       },
       "usedIn": {
         "patterns": [
-          "destructive-actions",
           "app-frame",
-          "account-menu",
-          "organization-switcher",
-          "window-frame",
+          "account-and-organizations",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -13551,7 +13533,7 @@
         {
           "name": "InTitleBar",
           "title": "In title bar",
-          "description": "The window frame pattern shows the whole title bar.",
+          "description": "The app frame pattern shows the whole title bar, in an installed app's window.",
           "file": "docs/examples/menubar/InTitleBar.tsx"
         },
         {
@@ -13688,7 +13670,7 @@
       },
       "usedIn": {
         "patterns": [
-          "window-frame"
+          "app-frame"
         ]
       }
     },
@@ -14299,9 +14281,7 @@
         }
       },
       "usedIn": {
-        "patterns": [
-          "progressive-disclosure"
-        ]
+        "patterns": []
       }
     },
     {
@@ -14573,6 +14553,7 @@
       },
       "usedIn": {
         "patterns": [
+          "forms",
           "loading"
         ]
       }
@@ -14622,15 +14603,13 @@
       "related": [
         "index",
         "setup",
-        "organization-switcher",
+        "account-and-organizations",
         "key-figures",
         "loading",
         "app-frame",
         "scaffold",
         "top-bar",
-        "account-menu",
         "drawer",
-        "window-frame",
         "column",
         "row",
         "grid",
@@ -14665,6 +14644,37 @@
       "summary": "The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.",
       "doc": "docs/agent-tooling.md",
       "related": []
+    },
+    {
+      "name": "writing",
+      "title": "Writing",
+      "group": "Setup and workflows",
+      "summary": "The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.",
+      "doc": "docs/writing.md",
+      "aliases": [
+        "content guidelines",
+        "content design",
+        "writing",
+        "microcopy",
+        "UX writing",
+        "voice and tone",
+        "wording",
+        "sentence case",
+        "capitalisation",
+        "button labels",
+        "action words"
+      ],
+      "related": [
+        "forms",
+        "empty-states",
+        "feedback",
+        "destructive-actions",
+        "button",
+        "setup",
+        "relative-time",
+        "accessibility",
+        "typography"
+      ]
     },
     {
       "name": "dev-mode",
@@ -14837,36 +14847,6 @@
         "toast",
         "colors"
       ]
-    },
-    {
-      "name": "content",
-      "title": "Content guidelines",
-      "group": "Foundations",
-      "summary": "Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.",
-      "doc": "docs/foundations/content.md",
-      "aliases": [
-        "content design",
-        "writing",
-        "microcopy",
-        "UX writing",
-        "voice and tone",
-        "wording",
-        "sentence case",
-        "capitalisation",
-        "error messages",
-        "button labels",
-        "sample data"
-      ],
-      "related": [
-        "setup",
-        "relative-time",
-        "accessibility",
-        "typography",
-        "text-field",
-        "empty-states",
-        "toast",
-        "confirm-dialog"
-      ]
     }
   ],
   "patterns": [
@@ -14884,6 +14864,10 @@
         "error summary",
         "error message",
         "required field",
+        "multi-step form",
+        "stepper",
+        "wizard",
+        "which control",
         "optional field",
         "inline validation",
         "submit"
@@ -14916,6 +14900,8 @@
         "Radio",
         "Checkbox",
         "DatePicker",
+        "Progress",
+        "DescriptionList",
         "Button",
         "Alert",
         "Link",
@@ -14958,13 +14944,19 @@
         {
           "name": "GroupedChoices",
           "title": "Grouped choices",
-          "description": "One choice of several is a RadioGroup; several are checkboxes in a group whose name says what they are for.",
+          "description": "Several checkboxes go in a group whose name says what they are for, as the choices of a RadioGroup do.",
           "file": "docs/examples/forms/GroupedChoices.tsx"
+        },
+        {
+          "name": "LongFormInSteps",
+          "title": "A long form in steps",
+          "description": "A long form splits into a few short steps, each a page of its own with its fields. Progress, split into steps, says where people are; Continue checks the step's fields before moving on, Back keeps every answer, and the last step shows the answers before the form's own action.",
+          "file": "docs/examples/forms/LongFormInSteps.tsx"
         },
         {
           "name": "OneColumn",
           "title": "Do: One column, read top to bottom, with the action after the last field.",
-          "description": "",
+          "description": "A date, a time or a month each have a picker of their own, which people can also type into. | Control | Use for | | ------------ | ----------------------------------------------------------- | | Date picker | A day, such as a due date or a start date. | | Time picker | A time of day, such as when a meeting starts. | | Month picker | A month, such as a report's period or a card's expiry date. |",
           "file": "docs/examples/forms/OneColumn.tsx"
         },
         {
@@ -15065,7 +15057,7 @@
         {
           "name": "DangerZone",
           "title": "Danger zone",
-          "description": "The last section, apart from the rest. Its outlined danger button opens a ConfirmDialog, which asks for the name when the action can't be undone and reaches everyone.",
+          "description": "The last section, apart from the rest, holds what deletes or ends the account or the workspace, confirmed as destructive actions are.",
           "file": "docs/examples/settings/DangerZone.tsx"
         },
         {
@@ -15121,10 +15113,7 @@
       ],
       "composes": [
         "Button",
-        "IconButton",
-        "ConfirmButton",
         "ConfirmDialog",
-        "Menu",
         "List",
         "Checkbox",
         "TextField",
@@ -15143,25 +15132,13 @@
         {
           "name": "UndoInstead",
           "title": "Undo instead",
-          "description": "Asking \"Are you sure?\" before everything trains people to confirm without reading. Archiving here happens at once, and a toast offers Undo.",
+          "description": "Asking \"Are you sure?\" before everything trains people to confirm without reading. Archiving here happens at once, and a toast offers Undo, which puts the item back where it was.",
           "file": "docs/examples/destructive-actions/UndoInstead.tsx"
-        },
-        {
-          "name": "ConfirmInPlace",
-          "title": "Confirm in place",
-          "description": "The first press names the consequence in the button, \"Remove file\"; the second removes. It disarms after four seconds, when focus leaves it and with <kbd>Esc</kbd>.",
-          "file": "docs/examples/destructive-actions/ConfirmInPlace.tsx"
-        },
-        {
-          "name": "ConfirmDelete",
-          "title": "Confirm from a menu",
-          "description": "The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete, and gives focus back to the menu's button as it closes.",
-          "file": "docs/examples/destructive-actions/ConfirmDelete.tsx"
         },
         {
           "name": "TypeToConfirm",
           "title": "Type to confirm",
-          "description": "The confirm button stays enabled: a wrong name keeps the dialog open, shows the field's error and moves focus to it.",
+          "description": "Where an action can't be undone and reaches many people or much work, the dialog asks for the name. Its confirm button stays enabled: a wrong name keeps the dialog open and says what to type.",
           "file": "docs/examples/destructive-actions/TypeToConfirm.tsx"
         },
         {
@@ -15173,7 +15150,7 @@
         {
           "name": "DangerKeptForDelete",
           "title": "Do: The danger tone only on what deletes or ends something.",
-          "description": "",
+          "description": "Match the friction to what is at stake. | Friction | Use for | | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | | Undo in a toast | An action that can be undone, and that people take often. | | Confirm in place | An action that can't be undone, with little at stake, through a ConfirmButton. | | Confirm in a dialog | Deleting something people made, or something that affects others, through a danger ConfirmDialog. | | Type the name | An action that can't be undone and reaches many people or much work. |",
           "file": "docs/examples/destructive-actions/DangerKeptForDelete.tsx"
         },
         {
@@ -15228,7 +15205,6 @@
         "useToast",
         "Alert",
         "Badge",
-        "Drawer",
         "List",
         "DescriptionList",
         "RelativeTime",
@@ -15263,7 +15239,7 @@
         {
           "name": "BackgroundTask",
           "title": "Background work",
-          "description": "When the export ends, a toast with Download reaches people wherever they are, and the page keeps a link, since a toast can be dismissed.",
+          "description": "When the export ends, a toast with Download reaches people wherever they are, and the page keeps a link to the file too.",
           "file": "docs/examples/feedback/BackgroundTask.tsx"
         },
         {
@@ -15273,15 +15249,9 @@
           "file": "docs/examples/feedback/StatusInRows.tsx"
         },
         {
-          "name": "UnreadCount",
-          "title": "Unread counts",
-          "description": "A destination's count is read with its name, such as Inbox, 12 new, and a count of none shows nothing.",
-          "file": "docs/examples/feedback/UnreadCount.tsx"
-        },
-        {
           "name": "StatusInWords",
           "title": "Do: Each status in its own words, with the tone adding to them.",
-          "description": "",
+          "description": "Put each message where it belongs, at the volume it deserves. | Message | Use for | | -------------------- | ----------------------------------------------------------------------------------- | | A field's error | A value in a field that is wrong, as forms show it. | | An Alert on the page | A condition of the page, read with the page. | | An announced Alert | Something that just happened and must interrupt. | | A toast | The outcome of an action people started, announced politely. | | A danger toast | An action that failed where the page can't show it, with Try again. | | A confirmation | A decision people must make, in a ConfirmDialog. | | A badge | The state of a row, read with the row, in a Badge. |",
           "file": "docs/examples/feedback/StatusInWords.tsx"
         },
         {
@@ -15357,37 +15327,37 @@
         {
           "name": "SkeletonList",
           "title": "Skeleton list",
-          "description": "Placeholder items give the components stand-ins to render, and text that hasn't arrived shows as a bar the length of its text style. Show the skeleton once a load has taken 200 ms, so quick loads never flash it.",
+          "description": "Placeholder items give the components stand-ins to render, and text that hasn't arrived shows as a bar the length of its text style. Show the skeleton only once a load takes a noticeable moment, so quick loads never flash it.",
           "file": "docs/examples/loading/SkeletonList.tsx"
         },
         {
           "name": "SearchResultsLoading",
           "title": "No known shape",
-          "description": "A spinner says what is loading beside it, for results whose number and shape aren't known yet.",
+          "description": "A Spinner says what is loading beside it.",
           "file": "docs/examples/loading/SearchResultsLoading.tsx"
         },
         {
           "name": "PendingButton",
           "title": "An action",
-          "description": "The button that saves shows the work in progress; the outcome is announced once it is done.",
+          "description": "The button that saves shows the work in progress.",
           "file": "docs/examples/loading/PendingButton.tsx"
         },
         {
           "name": "UploadProgress",
           "title": "Measurable work",
-          "description": "Progress measures each file and says what has been sent.",
+          "description": "Progress measures each file.",
           "file": "docs/examples/loading/UploadProgress.tsx"
         },
         {
           "name": "PageProgress",
           "title": "A whole page",
-          "description": "After 200 ms the bar along the top bar's bottom edge shows the next page is on its way, and names it.",
+          "description": "The top bar's progress bar shows the next page is on its way.",
           "file": "docs/examples/loading/PageProgress.tsx"
         },
         {
           "name": "SkeletonInPlace",
           "title": "Do: The content's own components as a skeleton, where it will appear.",
-          "description": "",
+          "description": "Show what is coming in its place and shape where you can, and say only that something is on its way where you can't. | Indicator | Use for | | ------------------------ | ------------------------------------------------------- | | A skeleton | Content of a known shape, in its own components. | | A spinner with its label | Content of no known shape, such as search results. | | A spinner beside it | An update to what is already shown. | | A pending button | The result of an action, on the button that started it. | | A progress bar | Work whose end can be measured, such as an upload. | | The top bar's progress | A whole page on its way. |",
           "file": "docs/examples/loading/SkeletonInPlace.tsx"
         },
         {
@@ -15432,12 +15402,18 @@
         "zero state",
         "first use",
         "nothing found",
-        "no access"
+        "no access",
+        "page not found",
+        "not found",
+        "404 page",
+        "offline",
+        "error page"
       ],
       "useWhen": [
         "A list, a table or a page with nothing to show",
         "A search or filters that match nothing",
-        "Content that failed to load, or that people may not see"
+        "Content that failed to load, or that people may not see",
+        "A whole page that can't show, such as one not found"
       ],
       "avoidWhen": [
         {
@@ -15458,6 +15434,9 @@
         "Table",
         "placeholders",
         "Badge",
+        "Scaffold",
+        "TopBar",
+        "Page",
         "Button",
         "Surface",
         "Column",
@@ -15479,7 +15458,7 @@
         {
           "name": "NoResults",
           "title": "No results",
-          "description": "The search and filters stay, a count says how many match, and Clear filters resets them.",
+          "description": "The search and the filters stay, and Clear filters resets them, as in filtering.",
           "file": "docs/examples/empty-states/NoResults.tsx"
         },
         {
@@ -15501,9 +15480,15 @@
           "file": "docs/examples/empty-states/AllDone.tsx"
         },
         {
+          "name": "WholePage",
+          "title": "A whole page",
+          "description": "When the whole page can't show, because its address leads nowhere, the person may not see it or the device is offline, the frame stays and the page says so, with the way on: Go to Home, Request access or Try again.",
+          "file": "docs/examples/empty-states/WholePage.tsx"
+        },
+        {
           "name": "OneAction",
           "title": "Do: One action, the one that ends the state.",
-          "description": "",
+          "description": "Each kind says something different, and offers a different way on. | Kind | Use for | | ------------ | ------------------------------------------------------------ | | First use | Nothing has been made yet. | | No results | A search or a filter matches nothing. | | All done | People cleared a queue, such as their reviews. | | Load failed | The content couldn't load, as a danger Alert. | | No access | The content exists, but not for this person. | | A whole page | The page can't show at all: not found, no access or offline. |",
           "file": "docs/examples/empty-states/OneAction.tsx"
         },
         {
@@ -15546,7 +15531,7 @@
       ],
       "useWhen": [
         "The few figures that sum up a view, such as a dashboard's",
-        "A figure and how it changed, such as +12% from last month"
+        "A figure and how it changed, such as 12 percent up on last month"
       ],
       "avoidWhen": [
         {
@@ -15602,18 +15587,6 @@
           "title": "One figure",
           "description": "A Card frames a single figure.",
           "file": "docs/examples/key-figures/InACard.tsx"
-        },
-        {
-          "name": "TrendInWords",
-          "title": "Do: Say the change in words, with its period.",
-          "description": "",
-          "file": "docs/examples/key-figures/TrendInWords.tsx"
-        },
-        {
-          "name": "TrendWithoutWords",
-          "title": "Don't: A bare percentage: without the icon and color, it doesn't say which way.",
-          "description": "",
-          "file": "docs/examples/key-figures/TrendWithoutWords.tsx"
         },
         {
           "name": "KeyFiguresAnatomy",
@@ -15681,8 +15654,6 @@
         "PageHeader",
         "Tabs",
         "Pager",
-        "Kbd",
-        "useModifierKey",
         "IconButton",
         "Tooltip",
         "CommandPalette",
@@ -15709,7 +15680,7 @@
         {
           "name": "PrimaryNavigation",
           "title": "Primary navigation",
-          "description": "The primary navigation marks the current page, a trail leads back up from deep pages, and quick open finds anything by name.",
+          "description": "The primary navigation marks the current page, a trail leads back up from deep pages, and a search opens anything by name.",
           "file": "docs/examples/navigation/PrimaryNavigation.tsx"
         },
         {
@@ -15725,12 +15696,6 @@
           "file": "docs/examples/navigation/ViewsOfOneThing.tsx"
         },
         {
-          "name": "QuickOpen",
-          "title": "Quick open",
-          "description": "Choosing a result opens it as a link would. An application opens the palette on <kbd>Ctrl</kbd>+<kbd>K</kbd> too, as CommandPalette shows; here the catalogue's own search keeps the keys.",
-          "file": "docs/examples/navigation/QuickOpen.tsx"
-        },
-        {
           "name": "ListAndDetail",
           "title": "List and detail",
           "description": "As narrow as a phone, the detail shows in place of the list, with a back button that names where it goes.",
@@ -15739,7 +15704,7 @@
         {
           "name": "TabsForViews",
           "title": "Do: Tabs for the views of the one thing the page is about.",
-          "description": "",
+          "description": "Each kind of navigation answers its own need, and a page can use several. | Navigation | Use for | | --------------- | ---------------------------------------------------------------------------------------------------------------------------- | | Destinations | The places of the application: one list, which the Scaffold shows as a bar, a rail or a drawer. | | Breadcrumbs | A page two or more levels down, on one line in its PageHeader. | | Tabs | Views of the object a page is about, under its header. | | Pager | Pages read in order, at the end of the content. | | Command palette | Opening anything by name, as CommandPalette shows. | | List and detail | A list whose items open beside it, in Panes. |",
           "file": "docs/examples/navigation/TabsForViews.tsx"
         },
         {
@@ -15772,23 +15737,30 @@
         "app shell",
         "shell",
         "sidebar layout",
-        "main navigation"
+        "main navigation",
+        "WindowFrame",
+        "window frame",
+        "title bar",
+        "Window Controls Overlay",
+        "installed app",
+        "desktop app"
       ],
       "useWhen": [
-        "A handful of destinations, each with a page"
+        "A handful of destinations, each with a page",
+        "An installed app that draws its own title bar"
       ],
       "avoidWhen": [
-        {
-          "text": "A window that draws its own title bar, in an installed application.",
-          "see": "window-frame"
-        },
         {
           "text": "Moving between views of one object, such as its overview and its activity.",
           "use": "Tabs"
         },
         {
-          "text": "Choosing between a bar, a rail and a drawer.",
-          "see": "navigation"
+          "text": "Choosing between a bar, a rail and a drawer by the window's width.",
+          "use": "Scaffold"
+        },
+        {
+          "text": "A page's own title and actions.",
+          "use": "PageHeader"
         }
       ],
       "composes": [
@@ -15799,6 +15771,7 @@
         "Drawer",
         "Sheet",
         "Panes",
+        "Menubar",
         "Tooltip",
         "CommandPalette",
         "Menu",
@@ -15814,9 +15787,9 @@
         "Text"
       ],
       "related": [
-        "window-frame",
         "tabs",
-        "navigation"
+        "scaffold",
+        "page"
       ],
       "doc": "docs/patterns/app-frame.md",
       "examples": [
@@ -15839,6 +15812,12 @@
           "file": "docs/examples/app-frame/WithDetails.tsx"
         },
         {
+          "name": "InstalledWindow",
+          "title": "An installed app's window",
+          "description": "An installed app that draws its own title bar runs it across the whole window, above the navigation, with a Menubar at its start where the app has one. Only the body scrolls below it, so the window's controls never cover a scrollbar.",
+          "file": "docs/examples/app-frame/InstalledWindow.tsx"
+        },
+        {
           "name": "DestinationsInNavigation",
           "title": "Do: Every destination in the navigation, and the page's own action in its header.",
           "description": "",
@@ -15855,23 +15834,17 @@
           "title": "App frame anatomy",
           "description": "",
           "file": "docs/examples/app-frame/AppFrameAnatomy.tsx"
-        },
-        {
-          "name": "FrameByWidth",
-          "title": "Frame by width",
-          "description": "",
-          "file": "docs/examples/app-frame/FrameByWidth.tsx"
         }
       ]
     },
     {
-      "name": "account-menu",
-      "title": "Account menu",
+      "name": "account-and-organizations",
+      "title": "Account and organizations",
       "group": "Patterns",
       "intent": "Find and navigate",
       "status": "beta",
       "since": "1.0.0",
-      "summary": "Show who is signed in and give them their own things, such as account settings, the theme and Sign out, from their avatar.",
+      "summary": "Show who is signed in and where, and give people their own things and their organizations from a menu in the frame.",
       "aliases": [
         "AccountMenu",
         "account menu",
@@ -15880,10 +15853,18 @@
         "avatar menu",
         "sign out",
         "theme submenu",
-        "organization switcher in a menu"
+        "OrganizationSwitcher",
+        "OrganizationMenu",
+        "organization switcher",
+        "organization menu",
+        "workspace switcher",
+        "team switcher",
+        "tenant switcher",
+        "switch organization"
       ],
       "useWhen": [
-        "Account settings, the theme and Sign out on every page"
+        "Account settings, the theme and Sign out on every page",
+        "People who belong to several organizations"
       ],
       "avoidWhen": [
         {
@@ -15891,8 +15872,8 @@
           "see": "navigation"
         },
         {
-          "text": "Switching organizations from a control of its own, such as at the top of the navigation.",
-          "see": "organization-switcher"
+          "text": "The frame the menus sit in, with its top bar and navigation.",
+          "see": "app-frame"
         }
       ],
       "composes": [
@@ -15909,202 +15890,63 @@
       ],
       "related": [
         "navigation",
-        "organization-switcher"
+        "app-frame"
       ],
-      "doc": "docs/patterns/account-menu.md",
+      "doc": "docs/patterns/account-and-organizations.md",
       "examples": [
         {
           "name": "AvatarMenu",
           "title": "Avatar menu",
-          "description": "The account menu is a Menu opened from the person's AvatarButton at the end of the TopBar: a larger first row with their avatar centered above their name and email, then the items, with Sign out last.",
-          "file": "docs/examples/account-menu/AvatarMenu.tsx"
+          "description": "Both are a Menu behind a trigger in the frame. The account menu opens from the person's AvatarButton at the end of the TopBar: their avatar, name and email first, then their own things, with Sign out last.",
+          "file": "docs/examples/account-and-organizations/AvatarMenu.tsx"
         },
         {
           "name": "WithOrganizations",
-          "title": "Organizations",
-          "description": "A submenu switches between the person's organizations; the header names the current one.",
-          "file": "docs/examples/account-menu/WithOrganizations.tsx"
+          "title": "Organizations in the account menu",
+          "description": "A submenu switches between the person's organizations, and names the current one.",
+          "file": "docs/examples/account-and-organizations/WithOrganizations.tsx"
+        },
+        {
+          "name": "SwitchOrganization",
+          "title": "A switcher of its own",
+          "description": "Where people switch often, a button at the top of the navigation Drawer, or at the start of the top bar, names the active organization and opens them all, with the person's role under each and an action that creates one. Before the first organization, that action is a button of its own.",
+          "file": "docs/examples/account-and-organizations/SwitchOrganization.tsx"
         },
         {
           "name": "RowTrigger",
           "title": "A row at the foot of the navigation",
-          "description": "A ghost button with the avatar and the name, as wide as the drawer, and the menu opens above it.",
-          "file": "docs/examples/account-menu/RowTrigger.tsx"
+          "description": "The account menu's trigger can be a row with the avatar and the name, as wide as the drawer; the menu opens above it.",
+          "file": "docs/examples/account-and-organizations/RowTrigger.tsx"
         },
         {
           "name": "AvatarTrigger",
           "title": "Do: The person's own avatar, named by their name, at the end of the top bar.",
           "description": "",
-          "file": "docs/examples/account-menu/AvatarTrigger.tsx"
+          "file": "docs/examples/account-and-organizations/AvatarTrigger.tsx"
         },
         {
           "name": "GenericTrigger",
           "title": "Don't: The same icon for everyone: nothing says who is signed in.",
           "description": "",
-          "file": "docs/examples/account-menu/GenericTrigger.tsx"
-        }
-      ]
-    },
-    {
-      "name": "organization-switcher",
-      "title": "Organization switcher",
-      "group": "Patterns",
-      "intent": "Find and navigate",
-      "status": "beta",
-      "since": "1.0.0",
-      "summary": "Show the active organization and switch between the person's organizations, from a Menu at the top of the navigation or in the top bar.",
-      "aliases": [
-        "OrganizationSwitcher",
-        "OrganizationMenu",
-        "organization switcher",
-        "organization menu",
-        "workspace switcher",
-        "team switcher",
-        "tenant switcher",
-        "switch organization"
-      ],
-      "useWhen": [
-        "People who belong to several organizations",
-        "Switching from a control of its own, such as at the top of the navigation"
-      ],
-      "avoidWhen": [
-        {
-          "text": "The person's own things, such as account settings and Sign out, where a submenu can hold the organizations too.",
-          "see": "account-menu"
-        },
-        {
-          "text": "The application's places, such as Projects and Settings.",
-          "see": "navigation"
-        }
-      ],
-      "composes": [
-        "Menu",
-        "Button",
-        "Column",
-        "Text"
-      ],
-      "related": [
-        "account-menu",
-        "navigation"
-      ],
-      "doc": "docs/patterns/organization-switcher.md",
-      "examples": [
-        {
-          "name": "SwitchOrganization",
-          "title": "Switch organization",
-          "description": "A button names the active organization and opens a Menu of the person's organizations, under a heading, with an action that creates one. It fits the top of a navigation Drawer or the start of the TopBar.",
-          "file": "docs/examples/organization-switcher/SwitchOrganization.tsx"
-        },
-        {
-          "name": "FirstOrganization",
-          "title": "Before the first organization",
-          "description": "Without organizations, the switcher is only the create action, a button of its own.",
-          "file": "docs/examples/organization-switcher/FirstOrganization.tsx"
+          "file": "docs/examples/account-and-organizations/GenericTrigger.tsx"
         },
         {
           "name": "CurrentName",
-          "title": "Do: The trigger names the active organization.",
+          "title": "Do: The switcher names the active organization.",
           "description": "",
-          "file": "docs/examples/organization-switcher/CurrentName.tsx"
+          "file": "docs/examples/account-and-organizations/CurrentName.tsx"
         },
         {
           "name": "GenericLabel",
           "title": "Don't: A generic label: nothing says where people are.",
           "description": "",
-          "file": "docs/examples/organization-switcher/GenericLabel.tsx"
+          "file": "docs/examples/account-and-organizations/GenericLabel.tsx"
         },
         {
           "name": "OrganizationSwitcherAnatomy",
-          "title": "Organization switcher anatomy",
+          "title": "Account and organizations anatomy",
           "description": "",
-          "file": "docs/examples/organization-switcher/OrganizationSwitcherAnatomy.tsx"
-        }
-      ]
-    },
-    {
-      "name": "window-frame",
-      "title": "Window frame",
-      "group": "Patterns",
-      "intent": "Find and navigate",
-      "status": "beta",
-      "since": "1.0.0",
-      "summary": "Frame an installed application's window that draws its own title bar, with the title bar across the top and the content scrolling below it.",
-      "aliases": [
-        "WindowFrame",
-        "window frame",
-        "title bar",
-        "Window Controls Overlay",
-        "installed app",
-        "desktop app",
-        "start page"
-      ],
-      "useWhen": [
-        "An installed app that draws its own title bar"
-      ],
-      "avoidWhen": [
-        {
-          "text": "An application's screen in a browser tab, with its top bar and navigation.",
-          "see": "app-frame"
-        },
-        {
-          "text": "A page's own title and actions.",
-          "use": "PageHeader"
-        }
-      ],
-      "composes": [
-        "Scaffold",
-        "TopBar",
-        "Menubar",
-        "Menu",
-        "Page",
-        "PageHeader",
-        "Button",
-        "IconButton",
-        "Column",
-        "Drawer",
-        "Text"
-      ],
-      "related": [
-        "app-frame",
-        "page"
-      ],
-      "doc": "docs/patterns/window-frame.md",
-      "examples": [
-        {
-          "name": "StartPageWindow",
-          "title": "Start page window",
-          "description": "The title bar, a TopBar, runs across the whole window, and only the Scaffold's body scrolls below it, so the window controls never cover a scrollbar.",
-          "file": "docs/examples/window-frame/StartPageWindow.tsx"
-        },
-        {
-          "name": "WithMenubar",
-          "title": "A menubar in the title bar",
-          "description": "A Menubar at the start of the title bar, and a page whose header sticks at the top of the body.",
-          "file": "docs/examples/window-frame/WithMenubar.tsx"
-        },
-        {
-          "name": "WithNavigation",
-          "title": "Navigation below the title bar",
-          "description": "The navigation, here a Drawer, sits beside the body, below the title bar.",
-          "file": "docs/examples/window-frame/WithNavigation.tsx"
-        },
-        {
-          "name": "QuietTitleBar",
-          "title": "Do: The title and the menubar, with empty space to drag the window by.",
-          "description": "",
-          "file": "docs/examples/window-frame/QuietTitleBar.tsx"
-        },
-        {
-          "name": "CrowdedTitleBar",
-          "title": "Don't: The page's actions in the title bar: no room is left to drag the window.",
-          "description": "",
-          "file": "docs/examples/window-frame/CrowdedTitleBar.tsx"
-        },
-        {
-          "name": "WindowFrameAnatomy",
-          "title": "Window frame anatomy",
-          "description": "",
-          "file": "docs/examples/window-frame/WindowFrameAnatomy.tsx"
+          "file": "docs/examples/account-and-organizations/OrganizationSwitcherAnatomy.tsx"
         }
       ]
     },
@@ -16192,7 +16034,7 @@
         {
           "name": "ActiveFilters",
           "title": "Filters in use",
-          "description": "Each filter in use is a token named after it, \"Status: Open\", that removes it, beside Add filter and Clear filters. envUI has no removable chip yet: each is a small button with a close cross.",
+          "description": "Each filter in use is a token named after it, \"Status: Open\", a small button with a close cross that removes it, beside Add filter and Clear filters.",
           "file": "docs/examples/filtering/ActiveFilters.tsx"
         },
         {
@@ -16278,13 +16120,9 @@
         "Badge",
         "RelativeTime",
         "Pagination",
-        "Select",
-        "SegmentedControl",
         "ConfirmDialog",
         "Toast",
         "useToast",
-        "placeholders",
-        "Surface",
         "Column",
         "Row",
         "Text"
@@ -16301,7 +16139,7 @@
         {
           "name": "SortAndPaginate",
           "title": "Sort and paginate",
-          "description": "The records sit in a Table, with their numbers aligned to compare.",
+          "description": "A Table holds the data, with its own sorting, selection and stacking, and Pagination below it gives the range, \"1–4 of 6\", working while the next set loads.",
           "file": "docs/examples/data-tables/SortAndPaginate.tsx"
         },
         {
@@ -16317,22 +16155,10 @@
           "file": "docs/examples/data-tables/RowActions.tsx"
         },
         {
-          "name": "EmptyAndLoading",
-          "title": "Loading and empty",
-          "description": "A first load that takes a moment shows the table as a skeleton over placeholder rows, as in Loading; with no records, an empty state takes its place.",
-          "file": "docs/examples/data-tables/EmptyAndLoading.tsx"
-        },
-        {
           "name": "DataTableAnatomy",
           "title": "Data tables anatomy",
           "description": "",
           "file": "docs/examples/data-tables/DataTableAnatomy.tsx"
-        },
-        {
-          "name": "NarrowTable",
-          "title": "Narrow table",
-          "description": "",
-          "file": "docs/examples/data-tables/NarrowTable.tsx"
         }
       ]
     },
@@ -16374,9 +16200,8 @@
       ],
       "composes": [
         "Disclosure",
-        "Tabs",
+        "Accordion",
         "Popover",
-        "HoverCard",
         "Tooltip",
         "Sheet",
         "Dialog",
@@ -16422,7 +16247,7 @@
         {
           "name": "OverflowActions",
           "title": "Overflow actions",
-          "description": "Share and Edit stay visible; the rest wait in a More actions menu, a destructive item last.",
+          "description": "Share and Edit stay visible; the rest wait in a Menu named More actions.",
           "file": "docs/examples/progressive-disclosure/OverflowActions.tsx"
         },
         {
@@ -16430,18 +16255,6 @@
           "title": "Explain a term",
           "description": "A help button opens a Popover with a short definition and a link.",
           "file": "docs/examples/progressive-disclosure/ExplainATerm.tsx"
-        },
-        {
-          "name": "OneLevel",
-          "title": "Do: One level: every optional setting behind one summary.",
-          "description": "",
-          "file": "docs/examples/progressive-disclosure/OneLevel.tsx"
-        },
-        {
-          "name": "NestedDisclosures",
-          "title": "Don't: A disclosure in a disclosure: the last setting is two presses away, and easy to miss.",
-          "description": "",
-          "file": "docs/examples/progressive-disclosure/NestedDisclosures.tsx"
         },
         {
           "name": "DisclosureLayers",

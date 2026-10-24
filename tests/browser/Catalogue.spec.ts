@@ -82,6 +82,16 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'components/search-trigger':
       'components/command-palette?section=opening-it-the-button-and-the-shortcut',
     'docs/patterns/search-trigger': 'docs/components/command-palette',
+    // Patterns merged into others open the pattern they joined, on the Site and in the Docs.
+    'patterns/window-frame': 'patterns/app-frame',
+    'docs/patterns/window-frame': 'docs/patterns/app-frame',
+    'components/window-frame': 'patterns/app-frame',
+    'patterns/account-menu': 'patterns/account-and-organizations',
+    'patterns/organization-switcher': 'patterns/account-and-organizations',
+    'docs/patterns/organization-switcher': 'docs/patterns/account-and-organizations',
+    // The content guidelines are the Writing guide in the Docs.
+    'foundations/content': 'docs/writing',
+    'docs/foundations/content': 'docs/writing',
   };
   for (const [from, to] of Object.entries(routes)) expect(normalizeRoute(from), from).toBe(to);
   // Every page of both areas is its own route.
@@ -464,25 +474,44 @@ const plainPages = [
   'foundations/responsive',
   'foundations/icons',
   'foundations/accessibility',
+  // The patterns, each its decision and its compositions.
+  ...[
+    'forms',
+    'settings',
+    'destructive-actions',
+    'feedback',
+    'loading',
+    'empty-states',
+    'key-figures',
+    'navigation',
+    'app-frame',
+    'account-and-organizations',
+    'filtering',
+    'data-tables',
+    'progressive-disclosure',
+  ].map((id) => `patterns/${id}`),
 ];
 
-test('the foundation pages show no technical text, in their words or their figures', async ({
+test('the foundation and pattern pages show no technical text, in their words or their figures', async ({
   page,
 }) => {
   // The Site is for people looking at envUI: no token names, hex colors, lengths, percentages or
-  // code. They belong to each foundation's guide in the Docs.
+  // code. They belong to each foundation's guide and each pattern's page in the Docs.
+  test.slow();
   await page.goto(`${catalogueUrl}/`);
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
-    await expect(page.locator('.docs-topic').last()).toBeVisible();
-    // The marks of a figure are measured once it has laid out.
-    if (await page.locator('.docs-marked').count())
-      await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
-    // Guide opens the foundation's guide in the Docs, as API does for a component.
-    await expect(page.getByRole('link', { name: 'Guide', exact: true })).toHaveAttribute(
-      'href',
-      `/docs/${path}`,
-    );
+    if (path.startsWith('foundations/')) {
+      await expect(page.locator('.docs-topic').last()).toBeVisible();
+      // The marks of a figure are measured once it has laid out.
+      if (await page.locator('.docs-marked').count())
+        await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
+      // Guide opens the foundation's guide in the Docs, as API does for a component.
+      await expect(page.getByRole('link', { name: 'Guide', exact: true })).toHaveAttribute(
+        'href',
+        `/docs/${path}`,
+      );
+    } else await expect(page.locator('.docs-when').first()).toBeVisible();
     expect(technicalOf(await siteWords(page)), `${path} shows technical text`).toEqual([]);
   }
 });

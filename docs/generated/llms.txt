@@ -12,6 +12,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Migrate an interface to envUI](docs/migration.md): Replace existing UI while preserving application behavior.
 - [Customize and extend](docs/customizing.md): Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.
 - [For agents](docs/agent-tooling.md): The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
+- [Writing](docs/writing.md): The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.
 - [Dev mode](docs/dev-mode.md): Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
 
 ## Foundations
@@ -22,7 +23,6 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Adapting to width](docs/foundations/responsive.md): Components follow the space they sit in, and four window classes name where a layout changes.
 - [Icons](docs/foundations/icons.md): Thousands of Material Symbols that follow their text, outlined or filled.
 - [Accessibility](docs/foundations/accessibility.md): What every component does for keyboard, screen readers, contrast, motion and touch, and what an app still supplies.
-- [Content guidelines](docs/foundations/content.md): Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.
 
 ## Components: Layout & surfaces
 
@@ -125,9 +125,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 
 - [Navigation](docs/patterns/navigation.md): Let people move between the places of an application, see where they are, and find their way back.
 - [App frame](docs/patterns/app-frame.md): Frame an application's screens with a Scaffold, a TopBar and the same destinations as a Bar, a Rail or a Drawer, by the width of the window.
-- [Account menu](docs/patterns/account-menu.md): Show who is signed in and give them their own things, such as account settings, the theme and Sign out, from their avatar.
-- [Organization switcher](docs/patterns/organization-switcher.md): Show the active organization and switch between the person's organizations, from a Menu at the top of the navigation or in the top bar.
-- [Window frame](docs/patterns/window-frame.md): Frame an installed application's window that draws its own title bar, with the title bar across the top and the content scrolling below it.
+- [Account and organizations](docs/patterns/account-and-organizations.md): Show who is signed in and where, and give people their own things and their organizations from a menu in the frame.
 - [Filtering and search](docs/patterns/filtering.md): Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
 - [Data tables](docs/patterns/data-tables.md): Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.
 - [Progressive disclosure](docs/patterns/progressive-disclosure.md): Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.

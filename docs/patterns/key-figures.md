@@ -21,7 +21,7 @@ aliases:
   - trend
 useWhen:
   - The few figures that sum up a view, such as a dashboard's
-  - A figure and how it changed, such as +12% from last month
+  - A figure and how it changed, such as 12 percent up on last month
 avoidWhen:
   - text: Many values to compare or sort, such as figures for each project.
     use: Table
@@ -73,13 +73,9 @@ A [Card](../components/card.md) frames a single figure.
 
 ## When to use
 
-```tsx do=TrendInWords caption="Say the change in words, with its period."
+### The change in words
 
-```
-
-```tsx dont=TrendWithoutWords caption="A bare percentage: without the icon and color, it doesn't say which way."
-
-```
+Say how a figure changed in words that say which way, such as "2 fewer", with its period, since a color or an arrow alone says nothing to many people, as [feedback](feedback.md) shows for any status.
 
 ### A few figures
 

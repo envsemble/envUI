@@ -27,6 +27,12 @@ composes: [Switch, Select, Field, Button, Toast, Column] # The exports it combin
 - **`composes`** names every envUI export the page's example files import, and only exports; `npm test` checks both.
 - **`avoidWhen`** is the page's one list of related pages, shown as Related at its end, as on [component pages](component-pages.md#frontmatter). **`see`** names an indexed page, a pattern or component page; **`use`** names an export. An entry has one or the other, and names each once.
 
+## What a pattern says
+
+A pattern covers a need that takes two or more components together, or a choice between components; guidance that would fit in one section of one component page is a variant or an example on that page instead. A pattern keeps only two things: **its decision**, which component or which form to use when, and **its compositions**, the arrangements no single component page shows, such as type to confirm or a long form in steps. It links to each component for that component's own behaviour, such as how long a toast stays or where a confirmation puts focus, and never says it again. Its decision is a `### Which to use` block first under When to use: a sentence, then an [option table](component-pages.md#option-tables) that names each choice and says what it is for, which the Site shows as a legend. The words of its kind of screen, such as an empty state's titles or a form's error messages, are its Content block's, and the [writing guide](writing.md) holds the rules every screen shares.
+
+The Site's When to use shows what a pattern is built from: the component pages of its `composes`, each once, without the hooks, helpers, providers and layout primitives, such as useToast, Column and Text, which the Docs and agents keep.
+
 Register the page in [the index](index.md) under `## Patterns`, with only its title and path; the summary comes from the frontmatter. Patterns are listed in intent order.
 
 A pattern page may instead be on the [figure template](component-pages.md#sections) of component pages, with a `## When to use` section: live figures, do and don't pairs and an anatomy figure, whose `of` names the component it labels. [Loading](patterns/loading.md) is on it, and [Form layout and validation](patterns/forms.md) is the model pattern page in plain language.
@@ -40,7 +46,7 @@ A pattern page follows the same writing rules as a component page: its Site spea
 | Overview             | yes      | One paragraph on how the pattern meets its need, which the summary above it names, then the lead example; never the summary again.       |
 | Anatomy              | yes      | The parts of the composition, numbered, each naming its component and the props that matter.                                             |
 | States and behaviour |          | The flow and its timing: when to validate, when a toast appears and leaves, what happens on failure, and responsive behaviour.           |
-| Content guidelines   | yes      | The pattern's copy rules, linking to the content guidelines rather than repeating them.                                                  |
+| Content guidelines   | yes      | The words of the pattern's kind of screen, which live here once; the writing guide holds the rules every screen shares.                  |
 | Do and don't         |          | A `### Do` and a `### Don't` list.                                                                                                       |
 | Accessibility        | yes      | `### Focus and keyboard`, the flow of focus rather than a table of keys, and `### envUI provides` and `### You provide` lists.           |
 | Examples             | yes      | At least two more live compositions, each under a `###` heading with a sentence or two, so a pattern shows at least three example files. |

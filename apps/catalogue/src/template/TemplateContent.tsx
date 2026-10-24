@@ -102,13 +102,7 @@ function Section({ reference, section }: { reference: Document; section: Documen
         section={section}
         lead={
           section.id === 'usage' &&
-          reference.metadata && (
-            <WhenToUse
-              metadata={reference.metadata}
-              path={reference.path}
-              exportLink={exportLink}
-            />
-          )
+          reference.metadata && <WhenToUse metadata={reference.metadata} path={reference.path} />
         }
       />
     );

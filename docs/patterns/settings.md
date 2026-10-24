@@ -56,7 +56,7 @@ Each setting either applies the moment it changes, or waits with the settings it
 
 ### What says it changed
 
-A switch shows its own state, so most changes need no message. A [toast](../components/toast.md) says only what people can't see on the page, such as becoming visible in a directory. When storing a change fails, put the switch back and say so in a toast with Try again.
+A switch shows its own state, so most changes need no message. A [toast](../components/toast.md) says only what people can't see on the page, such as becoming visible in a directory.
 
 ## Variants
 
@@ -78,7 +78,7 @@ The theme applies at once. The [scale](../foundations/spacing.md), comfortable o
 
 ### Danger zone
 
-The last section, apart from the rest. Its outlined danger button opens a [ConfirmDialog](../components/confirm-dialog.md), which asks for the name when the action can't be undone and reaches everyone.
+The last section, apart from the rest, holds what deletes or ends the account or the workspace, confirmed as [destructive actions](destructive-actions.md) are.
 
 ```tsx example=DangerZone
 
@@ -100,11 +100,7 @@ Group settings by what people want to do, not by how the data is stored. A long 
 
 ### Content
 
-Name a section after what people want to do, and label a switch with the setting itself, worded positively and the same whether it is on or off, with its effect in the row's detail.
-
-- "Email notifications", not "User preferences"
-- "Show me in the directory" as a switch's label
-- Buttons with a verb and an object: "Save profile", "Delete workspace…"
+Name a section after what people want to do, such as "Email notifications", not "User preferences". Label each setting as a [Switch](../components/switch.md)'s label is written, with its effect in the row's detail.
 
 ## Anatomy
 

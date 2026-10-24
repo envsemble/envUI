@@ -4,7 +4,6 @@ import { SpacingPreview } from './foundations/Spacing';
 import { ResponsivePreview } from './foundations/Responsive';
 import { Suspense, useState } from 'react';
 import { AccessibilityPreview } from './foundations/Accessibility';
-import { ContentPreview } from './foundations/Content';
 import { ExampleStage } from './Example';
 import { Preview } from './Preview';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
@@ -54,8 +53,6 @@ function FoundationTopic({ id }: FoundationPreviewProps) {
       return <IconList />;
     case 'accessibility':
       return <AccessibilityPreview />;
-    case 'content':
-      return <ContentPreview />;
     default:
       return null;
   }

@@ -1,5 +1,6 @@
 ---
 aliases:
+  - content guidelines
   - content design
   - writing
   - microcopy
@@ -8,14 +9,13 @@ aliases:
   - wording
   - sentence case
   - capitalisation
-  - error messages
   - button labels
-  - sample data
+  - action words
 ---
 
-# Content guidelines
+# Writing
 
-The words of an interface built with envUI: titles, labels, buttons, messages and sample data. Components and patterns link here for the rules they share.
+The words of an interface built with envUI: titles, labels, buttons and messages. This guide holds the rules every screen shares. The words of one kind of screen live with its pattern: labels and error messages with [forms](patterns/forms.md), empty states with [empty states](patterns/empty-states.md), toasts, alerts and statuses with [feedback](patterns/feedback.md), and confirmations with [destructive actions](patterns/destructive-actions.md). A component's own labels are on its page, such as [Button](components/button.md)'s.
 
 ## Voice
 
@@ -25,7 +25,6 @@ Write as a calm, direct colleague who knows the task: plain words, short sentenc
 - Say what happened and what to do next, without blame, jargon or codes.
 - No exclamation marks, "please", "simply", "just", "easy" or "oops".
 - "We" only where a person or a service really acted: "We sent a code to sam.lee@example.com".
-- Name things as people see them, not by the code behind them: "the ghost variant", never a prop and its value. Code belongs in documentation for developers, set apart from what everyone reads.
 
 | Do                                     | Don't                                            |
 | -------------------------------------- | ------------------------------------------------ |
@@ -85,61 +84,10 @@ Words people confuse, by what they mean:
 | Invite    | Ask someone to join.                                                      | Add, for someone not yet a member      |
 | Share     | Give others access or a link.                                             | Send, Publish                          |
 
-## Labels, descriptions and placeholders
-
-- A label is a short noun phrase without a colon: "Project name".
-- Mark the optional fields, "(optional)", not the required ones.
-- A format or constraint goes in the description, read before people type.
-- A placeholder only for an example value, "name@example.com", or "Choose a team" in an empty select; never the label or instructions.
-
-| Do                                                          | Don't                                                    |
-| ----------------------------------------------------------- | -------------------------------------------------------- |
-| Label "Description (optional)"                              | Label "Description\*", with every required field starred |
-| Label "Handle", description "Lowercase letters and numbers" | Placeholder "Enter a handle (lowercase only)"            |
-
-## Error messages
-
-- Start with the fix, in the field's own terms: "Enter a due date after the start date".
-- No "Error:" prefix, no code on its own and no blame; a code may follow for support, "Reference 4F2A".
-- A form's error summary is titled "There is a problem" and repeats each field's message.
-- A failure of the system says what happened, whether work is safe and what to do.
-
-| Do                                           | Don't                          |
-| -------------------------------------------- | ------------------------------ |
-| Enter an email address like name@example.com | Error: invalid input           |
-| Enter a project name                         | Project name is required!      |
-| Couldn't load projects. Try again.           | Error 503: Service Unavailable |
-
-## Empty states
-
-The title states the fact, the description says why or what next, and one action at most resolves it.
-
-- **First use:** what the place is for, and the first action. "No projects yet" — "Projects bring files, tasks and people together." — "Create project".
-- **No results:** name the query and offer to clear it. "No matching projects" — "No project names contain “roadmap”." — "Clear filters".
-- **Done:** a factual title, without celebration. "No tasks left" — "New tasks assigned to you appear here."
-- **Failed:** the danger tone and a way to try again. "Couldn't load projects" — "Your projects are safe. Check your connection and try again." — "Try again".
-
-## Feedback and status
-
-- A toast: what happened to what, in the past tense, "Website refresh archived.", or the state a setting leaves; one action at most.
-- An Alert: the condition as its title, and one sentence on what to do.
-- Name what is loading, "Loading projects", count in the units people think in, "12 of 40 MB", and promise no time.
-
-## Confirmations
-
-- A dialog's title asks the question with the object's name; the description says the consequence and whether it can be undone.
-- The confirm button repeats the verb and object, "Delete project"; the other stays "Cancel". Never "Are you sure?".
-- An inline confirmation's armed label is short and has no question mark: the verb, or the verb and object, "Remove file".
-
-| Do                                         | Don't                          |
-| ------------------------------------------ | ------------------------------ |
-| Delete Website refresh? — "Delete project" | Are you sure? — "Yes" / "No"   |
-| Armed in place: "Remove file"              | Armed in place: "Remove file?" |
-
 ## Numbers, dates and time
 
-- Format with `Intl` in the locale `useLocale` returns from [EnvUIProvider](../setup.md#locale-strings-and-direction), so they match envUI's own.
-- A recent moment with [RelativeTime](../components/relative-time.md), "3 hours ago"; a date further away, or one people plan by, as a date, "4 Mar 2026".
+- Format with `Intl` in the locale `useLocale` returns from [EnvUIProvider](setup.md#locale-strings-and-direction), so they match envUI's own.
+- A recent moment with [RelativeTime](components/relative-time.md), "3 hours ago"; a date further away, or one people plan by, as a date, "4 Mar 2026".
 - Plurals from the count with a function or `Intl.PluralRules`, never by adding "s".
 - Digits, the locale's separators, and a non-breaking space between a number and its unit: "12 MB".
 
@@ -156,21 +104,11 @@ The title states the fact, the description says why or what next, and one action
 - Room for text to grow by about 30%; no text in images or icons.
 - envUI's own strings through EnvUIProvider's `messages`, in the application's language.
 
-## Sample data
-
-Examples, screenshots and tests use one neutral set of sample data, so they look like a real application without naming one.
-
-- **People:** Alex Morgan, Sam Lee, Priya Shah, Jordan Kim, Maria Garcia and Chen Wei, with email addresses at `example.com`, such as `alex.morgan@example.com`.
-- **Organisation and application:** Northwind.
-- **Things:** projects, such as Website refresh, Quarterly report, Onboarding guide, Mobile release, Data migration and Annual review; documents; tasks; teams.
-- **Dates:** absolute dates in February and March 2026, so relative times read naturally.
-- **No product names and no logos.** envUI never names the products that use it, in code, documentation, comments or sample data. Describe a behaviour instead of naming where it comes from.
-
 ## Related topics
 
-- [Accessibility](../foundations/accessibility.md)
-- [Typography](../foundations/typography.md)
-- [TextField](../components/text-field.md)
-- [Empty states](../patterns/empty-states.md)
-- [Toast](../components/toast.md)
-- [ConfirmDialog](../components/confirm-dialog.md)
+- [Accessibility](foundations/accessibility.md)
+- [Typography](foundations/typography.md)
+- [Form layout and validation](patterns/forms.md)
+- [Empty states](patterns/empty-states.md)
+- [Notifications and feedback](patterns/feedback.md)
+- [Destructive actions](patterns/destructive-actions.md)

@@ -37,8 +37,6 @@ composes:
   - PageHeader
   - Tabs
   - Pager
-  - Kbd
-  - useModifierKey
   - IconButton
   - Tooltip
   - CommandPalette
@@ -59,7 +57,7 @@ composes:
 
 ## Overview
 
-The primary navigation marks the current page, a trail leads back up from deep pages, and quick open finds anything by name.
+The primary navigation marks the current page, a trail leads back up from deep pages, and a search opens anything by name.
 
 ```tsx example=PrimaryNavigation stage=shaded
 
@@ -70,15 +68,6 @@ The primary navigation marks the current page, a trail leads back up from deep p
 After the router shows the new page, the window's title names it, such as "Projects – Northwind". Every place has an address of its own, opened by the application's router; the examples keep the page in state instead.
 
 ## Variants
-
-| Need                                | Use                                                                                                                    |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| The places of the application       | One list of destinations given to Bar, Rail and [Drawer](../components/drawer.md)                                      |
-| A page two or more levels down      | [Breadcrumbs](../components/breadcrumbs.md) on one line in the [PageHeader](../components/page.md)                     |
-| Views of the object a page is about | [Tabs](../components/tabs.md) under the PageHeader                                                                     |
-| Pages read in order                 | A [Pager](../components/pager.md) at the end of the content                                                            |
-| Opening anything by name            | A search button that opens a [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut) |
-| A list whose items open beside it   | List-detail [Panes](../components/panes.md)                                                                            |
 
 ### Hierarchy
 
@@ -96,14 +85,6 @@ Tabs switch the views of one project in place. Its settings are another page, so
 
 ```
 
-### Quick open
-
-Choosing a result opens it as a link would. An application opens the palette on <kbd>Ctrl</kbd>+<kbd>K</kbd> too, as [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut) shows; here the catalogue's own search keeps the keys.
-
-```tsx example=QuickOpen
-
-```
-
 ### List and detail
 
 As narrow as a phone, the detail shows in place of the list, with a back button that names where it goes.
@@ -113,6 +94,19 @@ As narrow as a phone, the detail shows in place of the list, with a back button 
 ```
 
 ## When to use
+
+### Which to use
+
+Each kind of navigation answers its own need, and a page can use several.
+
+| Navigation      | Use for                                                                                                                      |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Destinations    | The places of the application: one list, which the [Scaffold](../components/scaffold.md) shows as a bar, a rail or a drawer. |
+| Breadcrumbs     | A page two or more levels down, on one line in its [PageHeader](../components/page.md).                                      |
+| Tabs            | Views of the object a page is about, under its header.                                                                       |
+| Pager           | Pages read in order, at the end of the content.                                                                              |
+| Command palette | Opening anything by name, as [CommandPalette](../components/command-palette.md) shows.                                       |
+| List and detail | A list whose items open beside it, in [Panes](../components/panes.md).                                                       |
 
 ```tsx do=TabsForViews caption="Tabs for the views of the one thing the page is about."
 
@@ -149,7 +143,7 @@ Not shown: the [Pager](../components/pager.md) at the end of a page read in orde
 
 ## Accessibility
 
-The skip links come first. After a page opens, from a destination, a trail level or a quick-open result, focus moves to its body or heading, so a screen reader reads it from the start. Tabs are one tab stop whose arrow keys move between them.
+After a page opens, from a destination, a trail level or a search result, focus moves to its body or heading, so a screen reader reads it from the start. Tabs are one tab stop whose arrow keys move between them.
 
 ### envUI provides
 
@@ -183,7 +177,7 @@ Pass Breadcrumbs with `wrap={false}` to the PageHeader's `breadcrumbs`, from two
 
 #### Views and quick open
 
-Tabs go under the PageHeader for the views of the object the page is about; a link to another page, such as its settings, goes in the PageHeader's `actions`. A CommandPalette, opened by a [search button](../components/command-palette.md#opening-it-the-button-and-the-shortcut), lists the destinations as items and opens the chosen one through the router.
+Tabs go under the PageHeader for the views of the object the page is about; a link to another page, such as its settings, goes in the PageHeader's `actions`. A CommandPalette, opened by a [search button](../components/command-palette.md#opening-it-the-button-and-the-shortcut) in the TopBar and by ⌘K or Ctrl+K, lists the destinations as items and opens the chosen one through the router.
 
 #### List and detail
 
