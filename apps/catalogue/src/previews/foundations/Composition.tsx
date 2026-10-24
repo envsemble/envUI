@@ -5,9 +5,9 @@ export function CompositionPreview() {
   return (
     <>
       <Example
-        title="Surface and layout on one root"
+        title="Surface and layout on one element"
         size="field"
-        caption="Surface owns fill, padding and corners, and Column the gaps, through render."
+        caption="The surface gives the fill, padding and corners, and the column the gaps, on one element."
       >
         <Surface background="default" padding={5} render={<Column render={<section />} gap={4} />}>
           <Text render={<h3 />} variant="title">

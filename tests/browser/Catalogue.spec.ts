@@ -488,18 +488,19 @@ test('a component page groups its sections into three, the middle one on the ban
   ]);
 });
 
-test("the Docs list what each pattern needs, and end Field's page with Related", async ({
+test("a pattern's guide lists what it needs, and Field's page in the Docs ends with Related", async ({
   page,
 }) => {
-  // Patterns have no page in the Docs: one page lists each pattern's two lists under its name, as
-  // plain lists, from the pattern pages.
+  // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
+  // under Accessibility; the address of the page that once listed them all opens the first guide.
   await page.goto(`${catalogueUrl}/docs/patterns`);
-  const forms = page.getByRole('region', { name: 'Form layout and validation', exact: true });
-  await expect(forms.getByRole('heading', { level: 3 })).toHaveText([
+  await expect(page).toHaveURL(/\/docs\/patterns\/forms$/);
+  const provides = page.getByRole('region', { name: 'Accessibility', exact: true });
+  await expect(provides.getByRole('heading', { level: 3 })).toHaveText([
     'You provide',
     'envUI provides',
   ]);
-  await expect(forms.getByRole('listitem').first()).toContainText('noValidate');
+  await expect(provides.getByRole('listitem').first()).toContainText('noValidate');
   await expect(page.locator('.docs-article .env-card')).toHaveCount(0);
   // Field's whole page is in the Docs: its sections, props, part names and changelog, then Related
   // at the end, on the page rather than the band.

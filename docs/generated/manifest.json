@@ -15138,6 +15138,7 @@
         "Text"
       ],
       "related": [
+        "scale",
         "colors",
         "column",
         "card"
@@ -15430,8 +15431,8 @@
         "danger zone"
       ],
       "useWhen": [
-        "Someone changes a preference that applies at once, such as a notification or the theme.",
-        "Someone edits a few related values that only make sense saved together, such as a profile."
+        "A preference that applies at once, such as a notification or the theme",
+        "A few related values saved together, such as a profile"
       ],
       "avoidWhen": [
         {
@@ -15485,19 +15486,19 @@
         {
           "name": "SaveSection",
           "title": "Save a section",
-          "description": "A section that saves together is a `form`, marked by a Badge while it holds unsaved changes; Cancel puts back what was saved.",
+          "description": "Settings that only make sense together wait for a Save button. A Badge marks the section while it holds unsaved changes, and Cancel puts back what was saved.",
           "file": "docs/examples/settings/SaveSection.tsx"
         },
         {
           "name": "AppearanceChoice",
           "title": "Appearance",
-          "description": "The theme applies at once through `useThemePreference`. The scale is one for the whole app: store it and pass it to the root provider's `scale`, never to one page.",
+          "description": "The theme applies at once. The scale, comfortable or compact, is one for the whole application: it never changes for one page or one section.",
           "file": "docs/examples/settings/AppearanceChoice.tsx"
         },
         {
           "name": "DangerZone",
           "title": "Danger zone",
-          "description": "The last section, apart from the rest: an outline danger Button opens a ConfirmDialog, which asks for the name when the action can't be undone and reaches everyone.",
+          "description": "The last section, apart from the rest. Its outlined danger button opens a ConfirmDialog, which asks for the name when the action can't be undone and reaches everyone.",
           "file": "docs/examples/settings/DangerZone.tsx"
         },
         {
@@ -15538,8 +15539,8 @@
         "bulk delete"
       ],
       "useWhen": [
-        "People delete, remove, archive or end something.",
-        "An action affects other people or can't be undone."
+        "Deleting, removing, archiving or ending something",
+        "An action that affects others or can't be undone"
       ],
       "avoidWhen": [
         {
@@ -15575,19 +15576,19 @@
         {
           "name": "UndoInstead",
           "title": "Undo instead",
-          "description": "Asking \"Are you sure?\" before everything trains people to confirm without reading. Archiving here happens at once, and a toast from useToast offers Undo.",
+          "description": "Asking \"Are you sure?\" before everything trains people to confirm without reading. Archiving here happens at once, and a toast offers Undo.",
           "file": "docs/examples/destructive-actions/UndoInstead.tsx"
         },
         {
           "name": "ConfirmInPlace",
           "title": "Confirm in place",
-          "description": "The first press names the consequence in the button, \"Remove file\"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.",
+          "description": "The first press names the consequence in the button, \"Remove file\"; the second removes. It disarms after four seconds, when focus leaves it and with <kbd>Esc</kbd>.",
           "file": "docs/examples/destructive-actions/ConfirmInPlace.tsx"
         },
         {
           "name": "ConfirmDelete",
           "title": "Confirm from a menu",
-          "description": "The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete. Pass the menu button as `finalFocus`.",
+          "description": "The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete, and gives focus back to the menu's button as it closes.",
           "file": "docs/examples/destructive-actions/ConfirmDelete.tsx"
         },
         {
@@ -15634,8 +15635,8 @@
         "status badge"
       ],
       "useWhen": [
-        "People need to know the outcome of something they did, or of work that ran in the background.",
-        "A page, a row or a destination has a state people should notice."
+        "The outcome of an action, or of work in the background",
+        "A state people should notice, on a page, a row or a destination"
       ],
       "avoidWhen": [
         {
@@ -15683,7 +15684,7 @@
         {
           "name": "SaveConfirmation",
           "title": "Save confirmation",
-          "description": "Each message is announced at most once, and only what calls for action interrupts. The outcome of an action people started is a toast from useToast.",
+          "description": "Each message is announced at most once, and only what calls for action interrupts. The outcome of an action people started is a toast.",
           "file": "docs/examples/feedback/SaveConfirmation.tsx"
         },
         {
@@ -15707,7 +15708,7 @@
         {
           "name": "UnreadCount",
           "title": "Unread counts",
-          "description": "A count Badge's `aria-label` says what it counts, \"12 unread\".",
+          "description": "A destination's count is read with its name, such as Inbox, 12 new, and a count of none shows nothing.",
           "file": "docs/examples/feedback/UnreadCount.tsx"
         },
         {
@@ -15745,8 +15746,8 @@
         "shimmer"
       ],
       "useWhen": [
-        "A page, a region or the result of an action takes long enough that people would notice.",
-        "Work with a measurable end, such as an upload, runs while people wait."
+        "A page, a region or a result that takes a noticeable while",
+        "Work with a measurable end, such as an upload"
       ],
       "avoidWhen": [
         {
@@ -15789,13 +15790,13 @@
         {
           "name": "SkeletonList",
           "title": "Skeleton list",
-          "description": "`items ?? placeholders<Item>(3)` gives the components stand-ins to render; text given as undefined is a bar of its text style's length. Show the skeleton once a load has taken 200 ms.",
+          "description": "Placeholder items give the components stand-ins to render, and text that hasn't arrived shows as a bar the length of its text style. Show the skeleton once a load has taken 200 ms, so quick loads never flash it.",
           "file": "docs/examples/loading/SkeletonList.tsx"
         },
         {
           "name": "SearchResultsLoading",
           "title": "No known shape",
-          "description": "A Spinner with `showLabel` says what is loading beside it, for results whose number and shape aren't known yet.",
+          "description": "A spinner says what is loading beside it, for results whose number and shape aren't known yet.",
           "file": "docs/examples/loading/SearchResultsLoading.tsx"
         },
         {
@@ -15813,7 +15814,7 @@
         {
           "name": "PageProgress",
           "title": "A whole page",
-          "description": "After 200 ms the bar along the top bar's bottom edge shows the next page is on its way, named by `loadingLabel`.",
+          "description": "After 200 ms the bar along the top bar's bottom edge shows the next page is on its way, and names it.",
           "file": "docs/examples/loading/PageProgress.tsx"
         },
         {
@@ -15867,9 +15868,9 @@
         "no access"
       ],
       "useWhen": [
-        "A list, a table or a page has nothing to show, for any reason.",
-        "A search or filters match nothing.",
-        "Content failed to load, or people may not see it."
+        "A list, a table or a page with nothing to show",
+        "A search or filters that match nothing",
+        "Content that failed to load, or that people may not see"
       ],
       "avoidWhen": [
         {
@@ -15905,19 +15906,19 @@
         {
           "name": "FirstUse",
           "title": "First use",
-          "description": "The state takes the place of the list or the table, under the heading and toolbar that stay: an icon, a heading, a sentence and the one action, in a Column of Text and a Button. Until something exists, it holds the create action; then the page's own header action takes over.",
+          "description": "The state takes the place of the list or the table, under the heading and toolbar that stay: an icon, a heading, a sentence and the one action. Until something exists, it holds the create action; then the page's own action takes over.",
           "file": "docs/examples/empty-states/FirstUse.tsx"
         },
         {
           "name": "NoResults",
           "title": "No results",
-          "description": "The search and filters stay, a count in a status says how many match, and Clear filters resets them.",
+          "description": "The search and filters stay, a count says how many match, and Clear filters resets them.",
           "file": "docs/examples/empty-states/NoResults.tsx"
         },
         {
           "name": "LoadFailed",
           "title": "Load failed",
-          "description": "A failure is an Alert with `tone=\"danger\"` and `announce`, in the room the table takes; it says the documents are safe.",
+          "description": "A failure is a danger Alert, announced as it appears, in the room the table takes; it says the documents are safe.",
           "file": "docs/examples/empty-states/LoadFailed.tsx"
         },
         {
@@ -15977,8 +15978,8 @@
         "trend"
       ],
       "useWhen": [
-        "The few figures that sum up a view, such as a dashboard's active projects, tasks done and lead time.",
-        "A figure with how it changed since an earlier period, such as +12% from last month."
+        "The few figures that sum up a view, such as a dashboard's",
+        "A figure and how it changed, such as +12% from last month"
       ],
       "avoidWhen": [
         {
@@ -16020,13 +16021,13 @@
         {
           "name": "ProjectHealth",
           "title": "Project health",
-          "description": "A key figure is a muted label, a large figure in Text and a Badge that says how it changed, with the period beside it. A Surface holds a few of them in a Grid.",
+          "description": "A key figure is a muted label, a large figure and a Badge that says how it changed, with the period beside it. A Surface holds a few of them in a Grid.",
           "file": "docs/examples/key-figures/ProjectHealth.tsx"
         },
         {
           "name": "OnAPane",
           "title": "On a pane",
-          "description": "A group on a pane takes the `muted` fill, so its figures stand apart; the pane's heading names it.",
+          "description": "A group on a pane takes the muted fill, so its figures stand apart; the pane's heading names it.",
           "file": "docs/examples/key-figures/OnAPane.tsx"
         },
         {
@@ -16081,8 +16082,8 @@
         "tabs or navigation"
       ],
       "useWhen": [
-        "An application has several places, and people move between them.",
-        "People need to see where they are, how they got there and how to go back up."
+        "Several places people move between",
+        "Showing where people are and the way back up"
       ],
       "avoidWhen": [
         {
@@ -16207,7 +16208,7 @@
         "main navigation"
       ],
       "useWhen": [
-        "An application has a handful of destinations people move between, and a page for each."
+        "A handful of destinations, each with a page"
       ],
       "avoidWhen": [
         {
@@ -16261,7 +16262,7 @@
         {
           "name": "MenuOnPhones",
           "title": "A menu on phones",
-          "description": "With many destinations, or none with icons, `forms={{ compact: 'none' }}` hides the bar, and a menu button in the top bar opens the same Drawer in a Sheet.",
+          "description": "With many destinations, or none with icons, a phone shows no bar: a menu button in the top bar opens the same Drawer in a Sheet.",
           "file": "docs/examples/app-frame/MenuOnPhones.tsx"
         },
         {
@@ -16315,7 +16316,7 @@
         "organization switcher in a menu"
       ],
       "useWhen": [
-        "People sign in, and need their account settings, the theme and Sign out within reach on every page."
+        "Account settings, the theme and Sign out on every page"
       ],
       "avoidWhen": [
         {
@@ -16360,7 +16361,7 @@
         {
           "name": "RowTrigger",
           "title": "A row at the foot of the navigation",
-          "description": "A ghost Button `fullWidth` with the avatar and the name, as wide as the drawer; the menu opens above it with `side=\"top\"`.",
+          "description": "A ghost button with the avatar and the name, as wide as the drawer, and the menu opens above it.",
           "file": "docs/examples/account-menu/RowTrigger.tsx"
         },
         {
@@ -16396,7 +16397,8 @@
         "switch organization"
       ],
       "useWhen": [
-        "People belong to several organizations, and switch between them from a control of its own, such as at the top of the navigation drawer."
+        "People who belong to several organizations",
+        "Switching from a control of its own, such as at the top of the navigation"
       ],
       "avoidWhen": [
         {
@@ -16423,13 +16425,13 @@
         {
           "name": "SwitchOrganization",
           "title": "Switch organization",
-          "description": "A secondary Button opens a Menu: a first row with the groups icon above the heading Organizations, a radio group of the person's organizations that the heading names, and an action that creates one. The switcher fits the `header` of a navigation Drawer or the start of the TopBar.",
+          "description": "A button names the active organization and opens a Menu of the person's organizations, under a heading, with an action that creates one. It fits the top of a navigation Drawer or the start of the TopBar.",
           "file": "docs/examples/organization-switcher/SwitchOrganization.tsx"
         },
         {
           "name": "FirstOrganization",
           "title": "Before the first organization",
-          "description": "Without organizations, the switcher is only the create action, a Button of its own.",
+          "description": "Without organizations, the switcher is only the create action, a button of its own.",
           "file": "docs/examples/organization-switcher/FirstOrganization.tsx"
         },
         {
@@ -16470,9 +16472,9 @@
         "search shortcut"
       ],
       "useWhen": [
-        "Search or a command palette opens from a button at the top of a sidebar or in a header.",
-        "The application opens search with a keyboard shortcut and shows it where people look for search.",
-        "A narrow header or a rail needs search as an icon."
+        "Opening search or a command palette from a sidebar or a header",
+        "Showing search's keyboard shortcut where people look for it",
+        "Search as an icon, in a narrow header or a rail"
       ],
       "avoidWhen": [
         {
@@ -16507,7 +16509,7 @@
         {
           "name": "InSidebar",
           "title": "In sidebar",
-          "description": "A secondary Button with a Kbd at its `end` reads like a search field. Pressing it, or the shortcut, opens a CommandPalette.",
+          "description": "A secondary Button with the shortcut's keys at its far end reads like a search field. Pressing it, or the shortcut, opens a CommandPalette.",
           "file": "docs/examples/search-trigger/InSidebar.tsx"
         },
         {
@@ -16560,7 +16562,7 @@
         "start page"
       ],
       "useWhen": [
-        "An installed web app or a desktop shell draws its own title bar, with the window controls over the page."
+        "An installed app that draws its own title bar"
       ],
       "avoidWhen": [
         {
@@ -16594,19 +16596,19 @@
         {
           "name": "StartPageWindow",
           "title": "Start page window",
-          "description": "A Scaffold with `topBarSpan=\"full\"` puts a TopBar with `titleBar` across the window, and `scroll=\"body\"` scrolls only the body, so the window controls never cover a scrollbar.",
+          "description": "The title bar, a TopBar, runs across the whole window, and only the Scaffold's body scrolls below it, so the window controls never cover a scrollbar.",
           "file": "docs/examples/window-frame/StartPageWindow.tsx"
         },
         {
           "name": "WithMenubar",
           "title": "A menubar in the title bar",
-          "description": "A Menubar in the TopBar's `start`, and a page whose header sticks at the top of the body.",
+          "description": "A Menubar at the start of the title bar, and a page whose header sticks at the top of the body.",
           "file": "docs/examples/window-frame/WithMenubar.tsx"
         },
         {
           "name": "WithNavigation",
           "title": "Navigation below the title bar",
-          "description": "The Scaffold's `navigation`, here a Drawer, sits beside the body.",
+          "description": "The navigation, here a Drawer, sits beside the body, below the title bar.",
           "file": "docs/examples/window-frame/WithNavigation.tsx"
         },
         {
@@ -16647,7 +16649,8 @@
         "onboarding card"
       ],
       "useWhen": [
-        "A feature or a next step is introduced on a page, such as importing plans or inviting the team, with one action that starts it."
+        "Introducing a feature or a next step, such as inviting the team",
+        "One action that starts it"
       ],
       "avoidWhen": [
         {
@@ -16680,7 +16683,7 @@
         {
           "name": "ImportPlans",
           "title": "Import plans",
-          "description": "The Card holds one Row: a muted icon, a Column of Text, and the Button at the end.",
+          "description": "Everything sits in one Row inside the Card, the icon muted and the Button at the far end, so the action is the last thing people read.",
           "file": "docs/examples/feature-cards/ImportPlans.tsx"
         },
         {
@@ -16717,8 +16720,8 @@
         "no results"
       ],
       "useWhen": [
-        "A list or a table is long enough that people look for some of its items.",
-        "People narrow items by what they are, such as their status, owner or type."
+        "A list or a table long enough to look for items in",
+        "Narrowing items by what they are, such as status, owner or type"
       ],
       "avoidWhen": [
         {
@@ -16769,19 +16772,19 @@
         {
           "name": "SearchAndFilters",
           "title": "Search and filters",
-          "description": "A search and a few filters sit in the PageHeader's `toolbar`, above the results.",
+          "description": "A search and a few filters sit in the PageHeader's toolbar, above the results.",
           "file": "docs/examples/filtering/SearchAndFilters.tsx"
         },
         {
           "name": "FilterPanel",
           "title": "Filters in a popover",
-          "description": "A Filters button, with a count Badge of the filters in use, opens a Popover of checkboxes in groups that apply as they change.",
+          "description": "A Filters button, with a count of the filters in use, opens a Popover of checkboxes in groups that apply as they change.",
           "file": "docs/examples/filtering/FilterPanel.tsx"
         },
         {
           "name": "ActiveFilters",
           "title": "Filters in use",
-          "description": "Each filter in use is a token named after it, \"Status: Open\", that removes it, beside Add filter and Clear filters. envUI has no removable chip yet: each is a small secondary Button with a Close `endIcon`.",
+          "description": "Each filter in use is a token named after it, \"Status: Open\", that removes it, beside Add filter and Clear filters. envUI has no removable chip yet: each is a small button with a close cross.",
           "file": "docs/examples/filtering/ActiveFilters.tsx"
         },
         {
@@ -16829,8 +16832,8 @@
         "responsive table"
       ],
       "useWhen": [
-        "People compare records by several values, such as their owner, status and date.",
-        "People sort records, page through them, or act on several at once."
+        "Records compared by several values, such as owner, status and date",
+        "Sorting records, paging through them or acting on several at once"
       ],
       "avoidWhen": [
         {
@@ -16908,7 +16911,7 @@
         {
           "name": "EmptyAndLoading",
           "title": "Loading and empty",
-          "description": "The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in Loading; with no records, an empty state takes its place.",
+          "description": "A first load that takes a moment shows the table as a skeleton over placeholder rows, as in Loading; with no records, an empty state takes its place.",
           "file": "docs/examples/data-tables/EmptyAndLoading.tsx"
         },
         {
@@ -16944,8 +16947,8 @@
         "help text"
       ],
       "useWhen": [
-        "A page has options, details or actions that most people don't need most of the time.",
-        "A term or a value needs an explanation that would clutter the page if always shown."
+        "Options, details or actions most people rarely need",
+        "An explanation of a term that would clutter the page"
       ],
       "avoidWhen": [
         {
@@ -16999,7 +17002,7 @@
         {
           "name": "ShowMore",
           "title": "Show all",
-          "description": "The button stays after the list and says what a press does, \"Show all 12\", then \"Show fewer\"; `aria-expanded` says the same.",
+          "description": "The button stays after the list and says what a press does, \"Show all 12\", then \"Show fewer\", and tells assistive technology whether the whole list shows.",
           "file": "docs/examples/progressive-disclosure/ShowMore.tsx"
         },
         {

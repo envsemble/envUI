@@ -89,9 +89,8 @@ export function StateLayers() {
   return (
     <Example title="Interaction states" size="wide" explains>
       <Text emphasis="muted">
-        Hover and press take tokens of their own, in every theme. A component given colors of its
-        own through its color properties lays its content color over its container instead, as
-        Material draws state layers, so it keeps its states.
+        Hover and press have colors of their own, in every theme. A component given colors of its
+        own lays its label color over its fill instead, so it keeps its states.
       </Text>
       <MatrixScroll label="Interaction states" className="docs-state-layers">
         <table className="docs-matrix">

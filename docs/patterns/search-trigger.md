@@ -13,9 +13,9 @@ aliases:
   - command palette button
   - search shortcut
 useWhen:
-  - Search or a command palette opens from a button at the top of a sidebar or in a header.
-  - The application opens search with a keyboard shortcut and shows it where people look for search.
-  - A narrow header or a rail needs search as an icon.
+  - Opening search or a command palette from a sidebar or a header
+  - Showing search's keyboard shortcut where people look for it
+  - Search as an icon, in a narrow header or a rail
 avoidWhen:
   - text: People type the search on the page itself and the results filter in place.
     use: SearchField
@@ -40,7 +40,7 @@ composes:
 
 ## Overview
 
-A secondary [Button](../components/button.md) with a [Kbd](../components/kbd.md) at its `end` reads like a search field. Pressing it, or the shortcut, opens a [CommandPalette](../components/command-palette.md).
+A secondary [Button](../components/button.md) with the shortcut's keys at its far end reads like a search field. Pressing it, or the shortcut, opens a [CommandPalette](../components/command-palette.md).
 
 ```tsx example=InSidebar
 
@@ -48,26 +48,7 @@ A secondary [Button](../components/button.md) with a [Kbd](../components/kbd.md)
 
 ### The shortcut
 
-The application listens for the shortcut once, at its root, however many triggers show it, and opens the same search the button does: <kbd>⌘</kbd>+<kbd>K</kbd> on Apple platforms and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, from anywhere in the window, text fields included. A key press that something else already handled, such as an editor's own shortcut, is left alone.
-
-`useModifierKey()` gives the platform's modifier: its `key`, `Meta` or `Control`, for `aria-keyshortcuts` and the listener, and its `label`, ⌘ or Ctrl, for Kbd. It is Ctrl on the server and while the page hydrates, so server-rendered markup matches, and becomes ⌘ on Apple platforms right after. Don't read `navigator` while rendering: it doesn't exist on the server, and markup that differs from the server's fails to hydrate.
-
-```tsx
-const modifier = useModifierKey();
-
-useEffect(() => {
-  const onKeyDown = (event: KeyboardEvent) => {
-    const pressed =
-      modifier.key === 'Meta' ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
-    if (event.defaultPrevented || !pressed || event.altKey || event.shiftKey) return;
-    if (event.key.toLowerCase() !== 'k') return;
-    event.preventDefault();
-    setSearchOpen((open) => !open);
-  };
-  addEventListener('keydown', onKeyDown);
-  return () => removeEventListener('keydown', onKeyDown);
-}, [modifier.key]);
-```
+<kbd>⌘</kbd>+<kbd>K</kbd> on Apple platforms and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere opens the same search as the button, from anywhere in the window, text fields included. A key press that something else already handled, such as an editor's own shortcut, is left alone.
 
 ## Variants
 
@@ -97,16 +78,16 @@ Search is a ghost [IconButton](../components/button.md) named Search, with the l
 
 ```
 
-1. **Trigger** (`env-button`, `variant="secondary"`)
+1. **Trigger** (`env-button`)
 2. **Icon** (`env-button > env-icon`, `startIcon`)
 3. **Label** (`env-button::text`)
 4. **Keys** (`env-button-end`, `end`)
 
-The icon-only trigger is an `env-icon-button` with a tooltip.
+Not shown: the icon-only trigger, an icon button with a tooltip.
 
 ## Adapting to width
 
-With `fullWidth` it fills its container, such as the top of a navigation drawer, with the icon and label at the start and the keys at the end. Keep the label short in a narrow sidebar, and where even that doesn't fit, show the icon alone.
+It fills its container, such as the top of a navigation drawer, with the icon and label at the start and the keys at the end. Keep the label short in a narrow sidebar, and where even that doesn't fit, show the icon alone.
 
 ```tsx example=NarrowSidebar widths="11 18"
 
@@ -133,6 +114,51 @@ With `fullWidth` it fills its container, such as the top of a navigation drawer,
 - `onClick`, which opens the search, and the shortcut's listener, which opens the same one.
 - `aria-keyshortcuts` for the platform, `` `${modifier.key}+K` `` from `useModifierKey()`, and `aria-hidden` on the keys it shows, so the shortcut is announced once.
 - Focus on the search when it opens, and back on the trigger when it closes, which CommandPalette does.
+
+## In code
+
+### Usage
+
+The trigger is a Button with `variant="secondary"`, the Search icon as its `startIcon`, and a Kbd of the keys in its `end` slot, with `aria-hidden` on the Kbd and `aria-keyshortcuts` on the button, so the shortcut is announced once. Its `onClick` opens the CommandPalette. With `fullWidth` it fills its container, such as a Drawer's `header`.
+
+```tsx source=InSidebar
+
+```
+
+#### The shortcut
+
+The application listens for the shortcut once, at its root, however many triggers show it, and opens the same search the button does. It skips an event whose `defaultPrevented` is set, so an editor's own shortcut is left alone.
+
+`useModifierKey()` gives the platform's modifier: its `key`, `Meta` or `Control`, for `aria-keyshortcuts` and the listener, and its `label`, ⌘ or Ctrl, for Kbd. It is Ctrl on the server and while the page hydrates, so server-rendered markup matches, and becomes ⌘ on Apple platforms right after. Don't read `navigator` while rendering: it doesn't exist on the server, and markup that differs from the server's fails to hydrate.
+
+```tsx
+const modifier = useModifierKey();
+
+useEffect(() => {
+  const onKeyDown = (event: KeyboardEvent) => {
+    const pressed =
+      modifier.key === 'Meta' ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+    if (event.defaultPrevented || !pressed || event.altKey || event.shiftKey) return;
+    if (event.key.toLowerCase() !== 'k') return;
+    event.preventDefault();
+    setSearchOpen((open) => !open);
+  };
+  addEventListener('keydown', onKeyDown);
+  return () => removeEventListener('keydown', onKeyDown);
+}, [modifier.key]);
+```
+
+#### Icon only
+
+In a narrow header, the trigger is an IconButton with `variant="ghost"`, `aria-label="Search"` and the same `aria-keyshortcuts`, inside a Tooltip with `side="bottom"` whose `content` holds the label and the Kbd.
+
+```tsx source=IconOnly
+
+```
+
+### Composition
+
+The parts are the button, `env-button`, its icon, `env-button > env-icon`, its label, `env-button::text`, and the keys in its end slot, `env-button-end`. The icon-only trigger is an `env-icon-button` with a tooltip.
 
 ## Changelog
 

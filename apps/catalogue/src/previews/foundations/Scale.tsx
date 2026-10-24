@@ -57,7 +57,7 @@ export function ScalePreview() {
       <Example
         title="Control sizes in each scale"
         size="wide"
-        caption="Every control of one size has the same height in a scale: sm, md and lg are 32, 40 and 48 px in the comfortable scale and 26, 32 and 38 px in the compact one."
+        caption="Every control of one size has the same height in a scale: small, medium and large are 32, 40 and 48 px in the comfortable scale and 26, 32 and 38 px in the compact one."
       >
         <SpecimenGrid size="wide">
           {scales.map((scale) => (
@@ -80,7 +80,7 @@ export function ScalePreview() {
       >
         <SpecimenGrid size="wide">
           {(['sm', 'md'] as const).map((density) => (
-            <Specimen key={density} title={`density="${density}"`}>
+            <Specimen key={density} title={density === 'sm' ? 'Small rows' : 'Medium rows'}>
               <Table.Root aria-label={`Reports, ${density} rows`} density={density}>
                 <Table.Head>
                   <Table.Row>

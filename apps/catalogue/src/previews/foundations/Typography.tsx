@@ -52,7 +52,7 @@ export function TypographyPreview() {
       <Example
         title="Text component"
         size="wide"
-        caption="Visual emphasis and HTML heading level are independent."
+        caption="How large text looks and which heading level it is are chosen apart."
       >
         <ol className="docs-type-list">
           <TextSpecimen

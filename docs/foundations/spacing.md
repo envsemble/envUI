@@ -15,10 +15,10 @@ import { Surface, Column, Text } from '@envsemble/envui';
 
 ### Props & contracts
 
-| Name                | Contract                                                                                     |
-| ------------------- | -------------------------------------------------------------------------------------------- |
-| Spacing steps 0â€“9 | 0, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem in the comfortable scale; smaller in compact |
-| Touch minimum       | 2.75 rem: every control grows to it under a coarse pointer                                   |
+| Name              | Contract                                                                                     |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| Spacing steps 0–9 | 0, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3 and 4 rem in the comfortable scale; smaller in compact |
+| Touch minimum     | 2.75 rem: every control grows to it under a coarse pointer                                   |
 
 ### Tokens for application CSS
 
@@ -26,8 +26,8 @@ Inside a Theme these follow the theme, its [scale](../foundations/scale.md) and 
 
 | Name                                                              | Contract                                                                                                                                                                 |
 | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--env-space-1` â€¦ `--env-space-9`                               | The spacing scale                                                                                                                                                        |
-| `--env-radius-xs` â€¦ `--env-radius-xl`                           | 0.25, 0.5, 0.75 and 1.75 rem                                                                                                                                             |
+| `--env-space-1` … `--env-space-9`                                 | The spacing scale                                                                                                                                                        |
+| `--env-radius-xs` … `--env-radius-xl`                             | 0.25, 0.5, 0.75 and 1.75 rem                                                                                                                                             |
 | `--env-radius-sm`                                                 | 0.5 rem: inner rows, important actions, toasts and thumbnails                                                                                                            |
 | `--env-radius-lg`                                                 | 1 rem: text fields, tables and drop zones                                                                                                                                |
 | `--env-radius-surface`                                            | 1.75 rem: panes, cards and the outside of a row group                                                                                                                    |

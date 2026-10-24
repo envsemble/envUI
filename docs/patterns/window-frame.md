@@ -13,7 +13,7 @@ aliases:
   - desktop app
   - start page
 useWhen:
-  - An installed web app or a desktop shell draws its own title bar, with the window controls over the page.
+  - An installed app that draws its own title bar
 avoidWhen:
   - text: An application's screen in a browser tab, with its top bar and navigation.
     see: app-frame
@@ -37,7 +37,7 @@ composes:
 
 ## Overview
 
-A [Scaffold](../components/scaffold.md) with `topBarSpan="full"` puts a [TopBar](../components/top-bar.md) with `titleBar` across the window, and `scroll="body"` scrolls only the body, so the window controls never cover a scrollbar.
+The title bar, a [TopBar](../components/top-bar.md), runs across the whole window, and only the [Scaffold](../components/scaffold.md)'s body scrolls below it, so the window controls never cover a scrollbar.
 
 ```tsx example=StartPageWindow stage=shaded
 
@@ -51,7 +51,7 @@ In a browser tab the title bar area is undefined, and the TopBar falls back to i
 
 ### A menubar in the title bar
 
-A [Menubar](../components/menubar.md) in the TopBar's `start`, and a page whose header sticks at the top of the body.
+A [Menubar](../components/menubar.md) at the start of the title bar, and a page whose header sticks at the top of the body.
 
 ```tsx example=WithMenubar stage=shaded
 
@@ -59,7 +59,7 @@ A [Menubar](../components/menubar.md) in the TopBar's `start`, and a page whose 
 
 ### Navigation below the title bar
 
-The Scaffold's `navigation`, here a [Drawer](../components/drawer.md), sits beside the body.
+The navigation, here a [Drawer](../components/drawer.md), sits beside the body, below the title bar.
 
 ```tsx example=WithNavigation stage=shaded
 
@@ -77,8 +77,7 @@ The Scaffold's `navigation`, here a [Drawer](../components/drawer.md), sits besi
 
 ### Content
 
-- Title the bar as the window's title would read: the document's or the application's name.
-- Order the menubar's menus as the platform does: File, Edit, View.
+Title the bar as the window's title would read: the document's or the application's name. Order the menubar's menus as the platform does: File, Edit, View.
 
 ## Anatomy
 
@@ -104,6 +103,32 @@ The skip links come first, then the title bar's controls, then the navigation an
 
 - The window's title in `document.title` as well as the bar.
 - Names for icon-only controls in the title bar.
+
+## In code
+
+### Usage
+
+Give the Scaffold `topBarSpan="full"`, so its `topBar` runs across the whole window above the navigation, and `scroll="body"`, so only the body scrolls under it. The `topBar` is a TopBar with `titleBar` and the window's `title`: in a window that draws its own title bar, through the Window Controls Overlay, it fills the title bar area, leaves room for the system's window controls, drags the window by its empty space and centres its title, and its controls are small, with buttons that set no variant ghost. Elsewhere it falls back to its own height across the full width.
+
+```tsx source=StartPageWindow
+
+```
+
+#### A menubar in the title bar
+
+Put a Menubar in the TopBar's `start`. Give the page's PageHeader `sticky`, so it sticks at the top of the scrolling body.
+
+```tsx source=WithMenubar
+
+```
+
+#### Navigation
+
+The Scaffold's `navigation`, such as `{ drawer: <Drawer … /> }`, sits beside the body, under the full-width title bar.
+
+### Composition
+
+The parts are the title bar, `env-top-bar`, from the Scaffold's `topBar`; the menubar, `env-menubar`, in the TopBar's `start`; the title, `env-top-bar-title`, from `title`; and the body, `env-scaffold-body`.
 
 ## Changelog
 

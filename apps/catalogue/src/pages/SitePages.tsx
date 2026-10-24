@@ -83,17 +83,6 @@ export function PatternPage({ page }: { page: SitePage }) {
 }
 
 /**
- * The tokens a foundation's page names in a sentence, as Markdown, where its figures don't already
- * name them: the spacing, colors, stacking order, icons and motion figures show their tokens.
- */
-const foundationTokens: Record<string, string> = {
-  typography:
-    'Type takes the `--env-type-*` and `--env-font-*` tokens, such as `--env-type-body` and `--env-font-weight-medium`.',
-  scale:
-    'Sizes that follow the scale are tokens, such as `--env-control-height-md`, `--env-row-height` and `--env-icon-size-md`, with a comfortable and a compact value.',
-};
-
-/**
  * The credit for the icons, under the Icons page's list: where they come from and their license,
  * linked. It is on this page alone. The package carries the license and its notice
  * (packages/ui/THIRD_PARTY_NOTICES.md).
@@ -105,13 +94,12 @@ const iconsCredit = [
 ].join('\n');
 
 /**
- * A foundation's page on the Site: a short introduction, its visuals and, where its figures don't
- * name them, the tokens it uses in a sentence. Its written guidance is its guide in the Docs.
+ * A foundation's page on the Site: a short introduction and its visuals, in plain words. Its written
+ * guidance, with the tokens and code it uses, is its guide in the Docs.
  */
 export function FoundationPage({ page }: { page: SitePage }) {
   const reference = page.document as Reference;
   const Icon = getReferenceIcon(reference.id, reference.group);
-  const tokens = foundationTokens[reference.id];
   return (
     <>
       <PageHeader
@@ -125,11 +113,6 @@ export function FoundationPage({ page }: { page: SitePage }) {
       {reference.id === 'icons' && (
         <Column gap={4} className="docs-article docs-foundation-notes docs-icons-credit">
           <Documentation markdown={iconsCredit} path={reference.path} />
-        </Column>
-      )}
-      {tokens && (
-        <Column gap={4} className="docs-article docs-foundation-notes">
-          <Documentation markdown={tokens} path={reference.path} />
         </Column>
       )}
     </>
