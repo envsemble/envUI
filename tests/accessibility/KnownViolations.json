@@ -13,6 +13,13 @@
       }
     }
   },
+  "components/link": {
+    "light": {
+      "link-in-text-block": {
+        "article :: a.env-button.env-link": 1
+      }
+    }
+  },
   "components/pager": {
     "light": {
       "landmark-unique": {
