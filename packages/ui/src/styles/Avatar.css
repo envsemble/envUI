@@ -90,8 +90,9 @@
 .env-avatar-fallback {
   display: contents;
 }
-/* Chosen: a ring around the avatar, apart from it by the color of the surface below, and a check at
-   its bottom end, so the choice shows by shape as well as color. */
+/* Chosen: a ring in the accent of a checked box around the avatar, apart from it by the color of
+   the surface below, and a small check in the same accent at its bottom end, so the choice shows by
+   shape as well as color. */
 .env-avatar[data-selected] {
   --env-avatar-selected-gap: var(
     --env-avatar-group-ring-color,
@@ -99,21 +100,21 @@
   );
   box-shadow:
     0 0 0 2px var(--env-avatar-selected-gap),
-    0 0 0 4px var(--env-color-fg-default);
+    0 0 0 4px var(--env-color-bg-brand-emphasis);
 }
 .env-avatar-check {
   position: absolute;
-  inset-block-end: calc(var(--env-avatar-size) * -0.06);
-  inset-inline-end: calc(var(--env-avatar-size) * -0.06);
+  inset-block-end: calc(var(--env-avatar-size) * -0.08);
+  inset-inline-end: calc(var(--env-avatar-size) * -0.08);
   z-index: var(--env-z-raised);
   display: grid;
   place-items: center;
   box-sizing: border-box;
-  inline-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.4));
-  block-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.4));
+  inline-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.36));
+  block-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.36));
   border-radius: 50%;
-  background: var(--env-color-fg-default);
-  color: var(--env-color-bg-page);
+  background: var(--env-color-bg-brand-emphasis);
+  color: var(--env-color-fg-on-emphasis);
   box-shadow: 0 0 0 2px var(--env-avatar-selected-gap);
 }
 .env-avatar-check .env-icon,

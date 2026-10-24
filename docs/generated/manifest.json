@@ -11955,7 +11955,7 @@
         {
           "name": "ChooseReviewers",
           "title": "Choose reviewers",
-          "description": "`selected` shows an avatar as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. A person in an AvatarGroup takes `selected` too.",
+          "description": "`selected` shows an avatar as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. A person in an AvatarGroup takes `selected` too.",
           "file": "docs/examples/avatar/ChooseReviewers.tsx"
         },
         {

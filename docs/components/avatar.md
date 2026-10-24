@@ -64,7 +64,7 @@ Where a pointer can hover, a group rests bunched, each avatar a little off the l
 
 ### Chosen
 
-`selected` shows an avatar as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. A person in an AvatarGroup takes `selected` too.
+`selected` shows an avatar as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. A person in an AvatarGroup takes `selected` too.
 
 ```tsx example=ChooseReviewers
 
