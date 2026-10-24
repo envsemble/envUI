@@ -9,7 +9,7 @@ const pages = [
   { href: '/account/billing', label: 'Billing and invoices', group: 'Account' },
 ];
 
-const storageKey = 'help-drawer-width';
+const storageKey = 'guide-drawer-width';
 
 /**
  * The width people chose on an earlier visit, if any. Storage is the browser's, and can be missing,
@@ -40,7 +40,7 @@ export default function ResizableDrawer() {
   }));
   return (
     <Drawer
-      aria-label="Help"
+      aria-label="Guide"
       destinations={destinations}
       resizable
       width={width}
