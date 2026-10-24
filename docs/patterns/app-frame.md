@@ -13,15 +13,22 @@ aliases:
   - shell
   - sidebar layout
   - main navigation
+  - WindowFrame
+  - window frame
+  - title bar
+  - Window Controls Overlay
+  - installed app
+  - desktop app
 useWhen:
   - A handful of destinations, each with a page
+  - An installed app that draws its own title bar
 avoidWhen:
-  - text: A window that draws its own title bar, in an installed application.
-    see: window-frame
   - text: Moving between views of one object, such as its overview and its activity.
     use: Tabs
-  - text: Choosing between a bar, a rail and a drawer.
-    see: navigation
+  - text: Choosing between a bar, a rail and a drawer by the window's width.
+    use: Scaffold
+  - text: A page's own title and actions.
+    use: PageHeader
 composes:
   - Scaffold
   - TopBar
@@ -30,6 +37,7 @@ composes:
   - Drawer
   - Sheet
   - Panes
+  - Menubar
   - Tooltip
   - CommandPalette
   - Menu
@@ -49,7 +57,7 @@ composes:
 
 ## Overview
 
-The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, [search](search-trigger.md) and the [account menu](account-menu.md), the navigation, and the page in the body.
+The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, search and the [account menu](account-and-organizations.md), the navigation, and the page in the body.
 
 ```tsx example=AppFrame stage=shaded
 
@@ -73,6 +81,14 @@ Side content that is not navigation goes in a supporting pane of [Panes](../comp
 
 ```
 
+### An installed app's window
+
+An installed app that draws its own title bar runs it across the whole window, above the navigation, with a [Menubar](../components/menubar.md) at its start where the app has one. Only the body scrolls below it, so the window's controls never cover a scrollbar.
+
+```tsx example=InstalledWindow stage=shaded
+
+```
+
 ## When to use
 
 ```tsx do=DestinationsInNavigation stage=shaded caption="Every destination in the navigation, and the page's own action in its header."
@@ -83,17 +99,9 @@ Side content that is not navigation goes in a supporting pane of [Panes](../comp
 
 ```
 
-### One list of destinations
-
-The bar, the rail and the drawer show the same destinations, with the current one marked from the router.
-
-### The frame chooses the form
-
-The Scaffold chooses the bar, the rail or the drawer from its own width; don't choose it in script from the window's width.
-
 ### Content
 
-Name each destination with one or two nouns, the words of its page's title. Keep the account menu to the person's own things, ending with Sign out.
+Name each destination with one or two nouns, the words of its page's title. In an installed app, title the bar as the window's title would read, the document's or the application's name, and order the menubar's menus as the platform does: File, Edit, View.
 
 ## Anatomy
 
@@ -108,35 +116,29 @@ Name each destination with one or two nouns, the words of its page's title. Keep
 5. **Page header** (`env-page-header`)
 6. **Page** (`env-page`)
 
-Not shown: the [CommandPalette](../components/command-palette.md) the search opens, as the [search trigger](search-trigger.md) describes.
-
-## Adapting to width
-
-A bar on a narrow window, a rail on a medium one and a drawer from a wide one.
-
-```tsx example=FrameByWidth stage=shaded widths="24 44 60"
-
-```
+Not shown: the [CommandPalette](../components/command-palette.md) the search opens.
 
 ## Accessibility
 
-<kbd>Tab</kbd> reaches the skip links first, then the top bar, the navigation that shows and the body. After a destination opens its page, move focus to the body or the page's heading.
+After a destination opens its page, move focus to the body or the page's heading.
 
 ### envUI provides
 
 - The banner and main landmarks, the skip links, and only the form that shows in the accessibility tree.
 - A `nav` per form, with `aria-current="page"` on the current destination.
+- In an installed app's title bar, controls that stay clickable where the window drags.
 
 ### You provide
 
-- Which destination is current, and `document.title` for each page.
+- Which destination is current, and `document.title` for each page, also in an installed app's window.
 - The page's one `h1`, in its PageHeader.
+- Names for icon-only controls in the title bar.
 
 ## In code
 
 ### Usage
 
-Render one Scaffold at the application's root, around the router's outlet. Its `topBar` is a TopBar with the application's `title` and, in `actions`, the search IconButton in a Tooltip and the account menu's AvatarButton. Its `navigation` takes `bar`, `rail` and `drawer`, a Bar, a Rail and a Drawer given the same array of destinations, with `current` set from the router. The router's page, a Page with its PageHeader, is the Scaffold's children.
+Render one Scaffold at the application's root, around the router's outlet. Its `topBar` is a TopBar with the application's `title` and, in `actions`, the search IconButton in a Tooltip and the account menu's AvatarButton. Its `navigation` takes `bar`, `rail` and `drawer`, a Bar, a Rail and a Drawer given the same array of destinations, with `current` set from the router. The router's page, a Page with its PageHeader, is the Scaffold's children. The Scaffold shows the bar on a `compact` window, the rail on a `medium` one and the drawer from `expanded`, by its own container's width, and `forms` changes the form for a window class; don't choose the form in script from the window's width.
 
 ```tsx source=AppFrame
 
@@ -154,14 +156,20 @@ Render one Scaffold at the application's root, around the router's outlet. Its `
 
 `Panes.Root` with `behavior="supporting"` fills the Scaffold's body: `Panes.Main` holds the page, with a `Panes.Trigger` that opens `Panes.Supporting`, and each pane scrolls on its own.
 
-#### By width
+#### An installed app's window
 
-The Scaffold shows the bar on a `compact` window, the rail on a `medium` one and the drawer from `expanded`, by its own container's width; `forms` changes the form for a window class. Don't choose the form in script from the window's width.
+Give the Scaffold `topBarSpan="full"`, so its `topBar` runs across the whole window above the navigation, and `scroll="body"`, so only the body scrolls under it. The `topBar` is a TopBar with `titleBar` and the window's `title`: in a window that draws its own title bar, through the Window Controls Overlay, it fills the title bar area, leaves room for the system's window controls, drags the window by its empty space and centres its title, and its controls are small, with buttons that set no variant ghost. A Menubar goes in the TopBar's `start`; give the page's PageHeader `sticky` to keep it at the top of the scrolling body.
+
+In a browser tab the title bar area is undefined, and the TopBar falls back to its own height across the full width. Zoomed in, the window reports a smaller area, which the small controls still fit.
+
+```tsx source=InstalledWindow
+
+```
 
 ### Composition
 
-The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a CommandPalette, as the [search trigger](search-trigger.md) shows, and the account menu is the [account menu](account-menu.md) pattern.
+The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a CommandPalette, and the account menu is the [account and organizations](account-and-organizations.md) pattern. In an installed app's window, the title bar is the Scaffold's `env-top-bar`, its menubar `env-menubar` and its title `env-top-bar-title`, above the body, `env-scaffold-body`.
 
 ## Changelog
 
-- **1.0.0**: The app frame is a pattern built from Scaffold, TopBar and the navigation forms, in place of AppShell and the app frame template. The page is on the figure template.
+- **1.0.0**: The app frame is a pattern built from Scaffold, TopBar and the navigation forms, in place of AppShell, the app frame template and the WindowFrame component; the window frame pattern is its installed app's window. The page is on the figure template.

@@ -12,6 +12,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
 
+- [Writing](writing.md) — The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.
+
 - [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
 
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
@@ -32,7 +34,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Composition & extension](foundations/composition.md) — Build product interfaces from shared primitives and existing components.
 - [Icons & assets](foundations/icons.md) — Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](foundations/accessibility.md) — Keyboard access, visible focus and clear guidance across shared controls.
-- [Content guidelines](foundations/content.md) — Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.
 
 ## Layout & surfaces
 
@@ -132,10 +133,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Key figures](patterns/key-figures.md)
 - [Navigation](patterns/navigation.md)
 - [App frame](patterns/app-frame.md)
-- [Account menu](patterns/account-menu.md)
-- [Organization switcher](patterns/organization-switcher.md)
+- [Account and organizations](patterns/account-and-organizations.md)
 - [Search trigger](patterns/search-trigger.md)
-- [Window frame](patterns/window-frame.md)
 - [Feature cards](patterns/feature-cards.md)
 - [Filtering and search](patterns/filtering.md)
 - [Data tables](patterns/data-tables.md)

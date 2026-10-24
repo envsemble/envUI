@@ -63,6 +63,16 @@ test('the addresses of the views before the Site and the Docs split open the pag
     // The Site's changelog is the Docs' now, with its release notes.
     changelog: 'docs/changelog',
     'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
+    // Patterns merged into others open the pattern they joined, on the Site and in the Docs.
+    'patterns/window-frame': 'patterns/app-frame',
+    'docs/patterns/window-frame': 'docs/patterns/app-frame',
+    'components/window-frame': 'patterns/app-frame',
+    'patterns/account-menu': 'patterns/account-and-organizations',
+    'patterns/organization-switcher': 'patterns/account-and-organizations',
+    'docs/patterns/organization-switcher': 'docs/patterns/account-and-organizations',
+    // The content guidelines are the Writing guide in the Docs.
+    'foundations/content': 'docs/writing',
+    'docs/foundations/content': 'docs/writing',
   };
   for (const [from, to] of Object.entries(routes)) expect(normalizeRoute(from), from).toBe(to);
   // Every page of both areas is its own route.
@@ -502,19 +512,41 @@ const technicalOf = (words: string[]) =>
  * The model foundation pages, which show no technical text at all. Every other page of the Site is
  * reported until it is rewritten to the same rule, then joins this list.
  */
-const plainPages = ['foundations/spacing', 'foundations/colors'];
+const plainPages = [
+  'foundations/spacing',
+  'foundations/colors',
+  // The patterns, each its decision and its compositions.
+  ...[
+    'forms',
+    'settings',
+    'destructive-actions',
+    'feedback',
+    'loading',
+    'empty-states',
+    'key-figures',
+    'navigation',
+    'app-frame',
+    'account-and-organizations',
+    'filtering',
+    'data-tables',
+    'progressive-disclosure',
+  ].map((id) => `patterns/${id}`),
+];
 
-test('the model foundation pages show no technical text, in their words or their figures', async ({
+test('the model pages show no technical text, in their words or their figures', async ({
   page,
 }) => {
   // The Site is for people looking at envUI: no token names, hex colors, lengths, percentages or
-  // code. They belong to each foundation's guide in the Docs.
+  // code. They belong to each foundation's guide and each pattern's page in the Docs.
+  test.slow();
   await page.goto(`${catalogueUrl}/`);
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
-    await expect(page.locator('.docs-topic').first()).toBeVisible();
-    // The marks of a figure are measured once it has laid out.
-    await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
+    if (path.startsWith('foundations/')) {
+      await expect(page.locator('.docs-topic').first()).toBeVisible();
+      // The marks of a figure are measured once it has laid out.
+      await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
+    } else await expect(page.locator('.docs-when').first()).toBeVisible();
     expect(technicalOf(await siteWords(page)), `${path} shows technical text`).toEqual([]);
   }
 });

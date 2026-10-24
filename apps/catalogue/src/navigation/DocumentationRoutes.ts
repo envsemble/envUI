@@ -387,12 +387,19 @@ export function routeOfDocument(
 
 /** Component pages that became patterns, by their slug: the pattern each one opens. */
 const componentPatterns: Record<string, string> = {
-  'window-frame': 'window-frame',
-  'account-menu': 'account-menu',
+  'window-frame': 'app-frame',
+  'account-menu': 'account-and-organizations',
   stat: 'key-figures',
   stats: 'key-figures',
   'empty-state': 'empty-states',
   'search-trigger': 'search-trigger',
+};
+
+/** Patterns that merged into another, by their slug: the pattern each one is part of now. */
+const mergedPatterns: Record<string, string> = {
+  'window-frame': 'app-frame',
+  'account-menu': 'account-and-organizations',
+  'organization-switcher': 'account-and-organizations',
 };
 
 /** Whether an element id is a place on a component's page in the Docs: an export's or a prop's. */
@@ -450,6 +457,12 @@ export function normalizeRoute(route: string): string {
   // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
   if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest()}`;
   if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest()}`;
+  // Patterns merged into others open the pattern they joined, on the Site and in the Docs, and the
+  // content guidelines are the Writing guide in the Docs.
+  const merged = /^(docs\/)?patterns\/([a-z-]+)$/.exec(originalPath);
+  if (merged && Object.hasOwn(mergedPatterns, merged[2]!))
+    return `${merged[1] ?? ''}patterns/${mergedPatterns[merged[2]!]}${rest()}`;
+  if (/^(?:docs\/)?foundations\/content(?:\/|$)/.test(originalPath)) return `docs/writing${rest()}`;
   // Components that became patterns open their pattern.
   const slug = originalPath.split('/')[1] ?? '';
   if (originalPath.startsWith('components/') && Object.hasOwn(componentPatterns, slug))

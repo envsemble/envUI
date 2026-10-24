@@ -39,7 +39,7 @@ After a command, Menubar returns focus to where it was, so Copy acts on the fiel
 
 ### In a title bar
 
-The [window frame](../patterns/window-frame.md) pattern shows the whole title bar.
+The [app frame](../patterns/app-frame.md) pattern shows the whole title bar, in an installed app's window.
 
 ```tsx example=InTitleBar
 
@@ -125,7 +125,7 @@ With `accessKeys` on Menubar.Root, holding <kbd>Alt</kbd> underlines each menu's
 
 #### In a title bar
 
-In a window that draws its own title bar, a TopBar with `titleBar`, put the menubar in its `start`, as the [window frame](../patterns/window-frame.md) pattern does.
+In a window that draws its own title bar, a TopBar with `titleBar`, put the menubar in its `start`, as the [app frame](../patterns/app-frame.md) pattern does in an installed app's window.
 
 ```tsx source=InTitleBar
 

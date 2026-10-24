@@ -26,10 +26,8 @@ avoidWhen:
     use: Page
   - text: Two panes side by side inside the body, such as a list and its detail.
     use: Panes
-  - text: A whole frame to copy, with the navigation and a top bar.
+  - text: A whole frame to copy, with the navigation and a top bar, or an installed app's window.
     see: app-frame
-  - text: An installed application's window that draws its own title bar.
-    see: window-frame
 components:
   - Scaffold
   - resolveNavigationForms

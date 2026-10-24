@@ -24,8 +24,8 @@ useWhen:
   - Actions for an area on right click (ContextMenu)
   - Switching between a person's organizations
 avoidWhen:
-  - text: The signed-in person's menu, with its header and theme submenu.
-    see: account-menu
+  - text: The signed-in person's menu, with its header and theme submenu, or an organization switcher.
+    see: account-and-organizations
   - text: Choosing a value for a form field.
     use: Select
   - text: An application menubar, such as File, Edit and View.
@@ -197,7 +197,7 @@ ContextMenu makes its one child the region, which must accept native props and a
 
 #### Account menu
 
-Menu.Header holds the context at the top, such as the signed-in person's avatar, name and e-mail address, under an AvatarButton trigger, as the [account menu](../patterns/account-menu.md) pattern builds it.
+Menu.Header holds the context at the top, such as the signed-in person's avatar, name and e-mail address, under an AvatarButton trigger, as the [account and organizations](../patterns/account-and-organizations.md) pattern builds it.
 
 ```tsx source=AccountMenu
 
