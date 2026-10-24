@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
-import { ExampleTheme } from './ExampleTheme';
 import { ExampleCode, ExampleRender } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
@@ -332,8 +332,8 @@ function enlarge(subject: HTMLElement, always: boolean) {
 }
 
 /**
- * The component in the examples' theme, the one opposite the reader's, following it as it changes,
- * with its callouts measured from its live parts.
+ * The component in the theme the reader has chosen, on the recessed canvas, following it as it
+ * changes, with its callouts measured from its live parts.
  */
 function AnatomyStage({
   page,
@@ -354,6 +354,7 @@ function AnatomyStage({
   /** Whether the callouts name the variants rather than number the parts. */
   variants: boolean;
 }) {
+  const theme = useTheme();
   const stage = useRef<HTMLDivElement>(null);
   const subject = useRef<HTMLDivElement>(null);
   const [callouts, setCallouts] = useState<Callout[]>([]);
@@ -402,7 +403,13 @@ function AnatomyStage({
     };
   }, [legend, open, enlarged, variants]);
   return (
-    <ExampleTheme ref={stage} className="docs-anatomy-stage" data-example={name} data-stage={fill}>
+    <Theme
+      {...theme}
+      ref={stage}
+      className="docs-anatomy-stage"
+      data-example={name}
+      data-stage={fill}
+    >
       {/* A picture of the parts: the live component neither takes focus nor changes under it. A
           variants figure keeps room beside its items for their names. */}
       <div
@@ -457,7 +464,7 @@ function AnatomyStage({
           {label ?? number}
         </span>
       ))}
-    </ExampleTheme>
+    </Theme>
   );
 }
 
@@ -469,7 +476,7 @@ function legendText({ part, text }: AnatomyLegendItem) {
 }
 
 /**
- * An anatomy figure: the live component in the examples' theme, a numbered callout on each part its
+ * An anatomy figure: the live component in the reader's theme, a numbered callout on each part its
  * legend names, by class name, and the legend of part names, with the example's code below. A
  * variants figure names each variant on its callout instead, as anatomy figures number parts, so
  * its legend is for assistive technology alone.

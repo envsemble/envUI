@@ -88,6 +88,8 @@ const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
 // Component tokens that take a different role per theme.
 const row = '--env-color-list-item-bg'; // List rows: the muted surface in both themes
+// The catalogue's section band (apps/catalogue/src/styles/Template.css), a derived color below.
+const catalogueBand = 'catalogue-band';
 const rowHover = '--env-color-list-item-bg-hover';
 const rowPressed = '--env-color-list-item-bg-pressed';
 
@@ -196,7 +198,7 @@ function merged(list: readonly ContrastPair[]): ContrastPair[] {
   return [...byName.values()];
 }
 
-export const pairs: readonly ContrastPair[] = merged([
+const registry: readonly ContrastPair[] = merged([
   // Text on every surface role.
   ...text('--env-color-fg-default', [page, surface, muted, raised, popup]),
   ...text(
@@ -225,11 +227,19 @@ export const pairs: readonly ContrastPair[] = merged([
     'Links and text buttons, also on the action strip of a card, which is the default surface',
   ),
   ...text('--env-color-fg-link-hover', [page, surface, muted]),
-  // The catalogue's section band, the muted fill across a page's content pane under Related: its
-  // heading, names, lines and links, and inline code on its neutral fill.
+  // The catalogue's section band, across a page's content pane under When to use and Anatomy: the
+  // muted fill, kept to an OKLCH lightness of 0.955 at most, so it shows on white in the light
+  // high-contrast theme (`catalogue-band`). Its headings, text, tables and links, and inline code on its neutral fill.
   ...text('--env-color-fg-default', [muted, [fill, muted]], 'The catalogue’s section band'),
   ...text('--env-color-fg-muted', [muted], 'The catalogue’s section band'),
   ...text('--env-color-fg-link', [muted], 'The catalogue’s section band'),
+  ...text(
+    '--env-color-fg-default',
+    [catalogueBand, [fill, catalogueBand]],
+    'The catalogue’s section band',
+  ),
+  ...text('--env-color-fg-muted', [catalogueBand], 'The catalogue’s section band'),
+  ...text('--env-color-fg-link', [catalogueBand], 'The catalogue’s section band'),
   ...text('--env-color-fg-link-pressed', [page, surface, muted]),
   // Where a tint lowers the link blue below 4.5:1 in the light theme, links and text buttons take
   // the link colors for a tint: alerts and rows under the pointer or pressed point fg.link at them,
@@ -926,6 +936,23 @@ export const pairs: readonly ContrastPair[] = merged([
   // An inset ring on a solid fill of its own blue adds an inner ring in the label's color, which
   // the label pairs of the primary, important and destructive fills measure, as text.
 ]);
+
+/**
+ * The catalogue shows envUI's examples on a recessed canvas, a shade deeper than the page, also
+ * where it sits on the section band (apps/catalogue/src/styles/Stage.css). What an example paints
+ * on the page it paints on the canvas instead, so every pair measured on the page is measured on
+ * the canvas too, held to the same requirement.
+ */
+export const pairs: readonly ContrastPair[] = [
+  ...registry,
+  ...registry
+    .filter((pair) => pair.bg.at(-1) === page)
+    .map((pair) => ({
+      ...pair,
+      bg: [...pair.bg.slice(0, -1), 'catalogue-canvas'],
+      note: `An example on the catalogue’s recessed canvas${pair.note ? `: ${pair.note}` : ''}`,
+    })),
+];
 
 /**
  * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
@@ -2263,7 +2290,12 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
  *   data has, from 30% at the lightest to the full tone (CalendarHeatmap.tsx and .css). The
  *   lightest step of the default accent tone is measured.
+ * - The catalogue's section band and the recessed canvas its examples sit on, as
+ *   apps/catalogue/src/styles/Template.css and Stage.css paint them: the band is the muted fill,
+ *   kept to an OKLCH lightness of 0.955 at most; the canvas is 0.035 deeper in OKLCH lightness than the
+ *   page in the light themes and 0.045 in the dark ones.
  */
+
 export const derived: Readonly<Record<string, string>> = {
   'button-end-separator-on-emphasis':
     'color-mix(in srgb, var(--env-color-fg-on-emphasis) 80%, transparent)',
@@ -2281,6 +2313,9 @@ export const derived: Readonly<Record<string, string>> = {
   'badge-outline-important': 'color-mix(in srgb, var(--env-color-fg-on-strong) 55%, transparent)',
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-accent) 30%, var(--env-color-bg-page))',
+  'catalogue-band': 'oklch(from var(--env-color-bg-muted) min(l, 0.955) c h)',
+  'catalogue-canvas':
+    'light-dark(oklch(from var(--env-color-bg-page) calc(l - 0.035) c h), oklch(from var(--env-color-bg-page) calc(l - 0.045) c h))',
 };
 
 /** The CSS color a name in a pair stands for. */

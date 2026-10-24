@@ -70,8 +70,8 @@ function FoundationTopic({ id }: FoundationPreviewProps) {
 export function FoundationPreview(props: FoundationPreviewProps) {
   return (
     <Preview>
-      {/* Every figure sits on a stage, an example's in the theme opposite the catalogue's and an
-          explanation's in the catalogue's own; the icon list is a tool, not a figure. */}
+      {/* Every figure sits on a stage: an example's is the recessed canvas, and an explanation of
+          the system sits on the page; the icon list is a tool, not a figure. */}
       <ExampleStage value={props.id !== 'icons'}>
         <FoundationTopic {...props} />
       </ExampleStage>

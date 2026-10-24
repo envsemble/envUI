@@ -312,9 +312,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
       ).length,
     }));
   await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });
-  // The anatomy numbers each part of the live button beside the part it names, in the examples'
-  // theme, the one opposite the reader's, and keeps them there as the page narrows and the theme
-  // changes.
+  // The anatomy numbers each part of the live button beside the part it names, in the theme the
+  // reader has chosen alone, and keeps them there as the page narrows and the theme changes.
   // The variants figure names each variant with a callout on the start side of its item.
   const variantNames = page.locator('.docs-variants .docs-variant-label');
   await variantNames.first().scrollIntoViewIfNeeded();
@@ -339,11 +338,11 @@ test('a component page shows plain sections, equal cells and the parts of its an
         theme: stage.getAttribute('data-env-theme'),
       };
     });
-  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
   await chooseScheme(page, 'dark');
-  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
   await page.setViewportSize({ width: 420, height: 800 });
-  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
   await expect(page.locator('.docs-anatomy-legend > li')).toHaveCount(4);
 });
 
@@ -380,9 +379,8 @@ test('every stage is the only frame of its figure', async ({ page }) => {
   test.slow();
   // One frame per figure: no stage sits inside another framed or filled box in the article, such
   // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
-  // frame, which holds its stage and its verdict bar, is the figure's one frame. A stage is in the
-  // examples' theme, so it differs from the page; a box filled with the page's color, such as the
-  // theme boundary around a specimen, is the page, not a frame.
+  // frame, which holds its stage and its verdict bar, is the figure's one frame. The band a group of
+  // sections sits on is outside the group, so it is the page there, not a frame.
   const pages = references.filter((reference) => reference.format === 'figures');
   expect(pages.length).toBeGreaterThan(0);
   await page.goto(`${catalogueUrl}/`);
@@ -394,8 +392,6 @@ test('every stage is the only frame of its figure', async ({ page }) => {
       const stages = document.querySelectorAll(
         '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll)',
       );
-      const figures = document.querySelector('.docs-figures')!;
-      const pageColor = getComputedStyle(figures.closest('.env-theme')!).backgroundColor;
       const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
       const found: string[] = [];
       for (const stage of stages) {
@@ -413,9 +409,7 @@ test('every stage is the only frame of its figure', async ({ page }) => {
               !/none|hidden/.test(style.getPropertyValue(`border-${side.toLowerCase()}-style`)),
           );
           const filled =
-            (visible(style.backgroundColor) &&
-              style.backgroundColor !== canvas &&
-              style.backgroundColor !== pageColor) ||
+            (visible(style.backgroundColor) && style.backgroundColor !== canvas) ||
             style.backgroundImage !== 'none' ||
             style.boxShadow !== 'none';
           if (bordered || filled)
@@ -426,6 +420,50 @@ test('every stage is the only frame of its figure', async ({ page }) => {
     });
     expect(framed, `${id} has a stage inside another frame`).toEqual([]);
   }
+});
+
+test('a component page groups its sections into three, the middle one on the band', async ({
+  page,
+}) => {
+  // Overview with Variants; When to use with Anatomy, on the page's one band across the content
+  // pane; Adapting to width with Accessibility; then Related, on the page. A page groups the
+  // sections it has.
+  const groups = () =>
+    page.locator('.docs-section-groups > *').evaluateAll((elements) =>
+      elements.map((element) => ({
+        band: element.classList.contains('docs-band'),
+        sections: [...element.querySelectorAll('[data-section]')].map(
+          (section) => (section as HTMLElement).dataset.section,
+        ),
+      })),
+    );
+  await page.goto(`${catalogueUrl}/components/scaffold`);
+  await expect.poll(groups).toEqual([
+    { band: false, sections: ['overview', 'variants'] },
+    { band: true, sections: ['usage', 'anatomy'] },
+    { band: false, sections: ['width', 'accessibility'] },
+    { band: false, sections: ['related'] },
+  ]);
+  // The band spans the whole content pane, gutters included; its sections keep the column.
+  const widths = await page.evaluate(() => {
+    const width = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
+    return {
+      band: width('.docs-band').width,
+      main: width('.docs-main').width,
+      column: width('.docs-band > .docs-section-group').left,
+      first: width('.docs-section-groups > .docs-section-group').left,
+    };
+  });
+  expect(widths.band).toBe(widths.main);
+  expect(widths.column).toBe(widths.first);
+  // Box has no Variants, Anatomy or Adapting to width, and its Accessibility holds only the lists
+  // that are in the Docs, so the Site has no third group for it.
+  await goTo(page, '/components/box');
+  await expect.poll(groups).toEqual([
+    { band: false, sections: ['overview'] },
+    { band: true, sections: ['usage'] },
+    { band: false, sections: ['related'] },
+  ]);
 });
 
 test("the Docs list what each pattern needs, and end Field's page with Related", async ({
@@ -442,15 +480,16 @@ test("the Docs list what each pattern needs, and end Field's page with Related",
   await expect(forms.getByRole('listitem').first()).toContainText('noValidate');
   await expect(page.locator('.docs-article .env-card')).toHaveCount(0);
   // Field's whole page is in the Docs: its sections, props, part names and changelog, then Related
-  // on its band at the end.
+  // at the end, on the page rather than the band.
   await page.goto(`${catalogueUrl}/docs/components/field`);
   const ends = await page.evaluate(() => {
-    const band = document.querySelector('.docs-band');
+    const related = document.querySelector('.docs-related');
     const changelog = document.querySelector('.docs-changelog');
     return Boolean(
-      band &&
+      related &&
         changelog &&
-        changelog.compareDocumentPosition(band) & Node.DOCUMENT_POSITION_FOLLOWING,
+        !related.closest('.docs-band') &&
+        changelog.compareDocumentPosition(related) & Node.DOCUMENT_POSITION_FOLLOWING,
     );
   });
   expect(ends).toBe(true);
@@ -516,14 +555,14 @@ test('the hosted build opens every page of the Site and the Docs without network
 });
 
 test('single previews retain state when the theme changes', async ({ page }) => {
-  // The 0.x preview of text fields opens the TextField page, whose live examples take the theme
-  // opposite the documentation's.
+  // The 0.x preview of text fields opens the TextField page, whose live examples follow the
+  // documentation's theme.
   await page.goto(`${catalogueUrl}/components/input/preview`);
   const example = page.getByRole('group', { name: 'TextField example', exact: true });
   const projectName = example.getByRole('textbox', { name: 'Project name', exact: true });
   await projectName.fill('Winter release');
   await chooseScheme(page, 'dark');
-  await expect(example).toHaveAttribute('data-env-theme', 'light');
+  await expect(example).toHaveAttribute('data-env-theme', 'dark');
   await expect(projectName).toHaveValue('Winter release');
   for (const width of [1920, 1440, 960, 390]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -579,7 +618,7 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   const disclosure = page.getByRole('group', { name: 'Disclosure example', exact: true });
   await disclosure.locator('summary').click();
   await chooseScheme(page, 'dark');
-  await expect(disclosure).toHaveAttribute('data-env-theme', 'light');
+  await expect(disclosure).toHaveAttribute('data-env-theme', 'dark');
   await expect(disclosure.locator('details')).toHaveAttribute('open', '');
 });
 
@@ -1035,14 +1074,13 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await page.goto(`${catalogueUrl}/components/checkbox/preview`);
   const app = page.locator('.docs-app');
   const panes = page.locator('.docs-preview');
-  // The 0.x preview opens the Checkbox page, whose live example takes the opposite theme and keeps
-  // its state.
+  // The 0.x preview opens the Checkbox page, whose live example follows the theme with its state.
   const example = page.getByRole('group', { name: 'Checkbox example', exact: true });
   const archived = example.getByRole('checkbox', { name: 'Include archived projects' });
   await archived.check();
   await chooseScheme(page, 'dark');
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
-  await expect(example).toHaveAttribute('data-env-theme', 'light');
+  await expect(example).toHaveAttribute('data-env-theme', 'dark');
   await expect(example).toHaveCount(1);
   await expect(archived).toBeChecked();
   await expect(page.locator('.docs-theme-label')).toHaveCount(0);

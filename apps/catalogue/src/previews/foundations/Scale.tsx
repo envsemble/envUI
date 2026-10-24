@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import {
   Button,
   IconButton,
@@ -50,17 +50,8 @@ function SizeRow({ size }: { size: ControlSize }) {
   );
 }
 
-/** The theme of the figure around, at another scale: the examples' theme, read inside the stage. */
-function AtScale({ scale, children }: { scale: ThemeScale; children: ReactNode }) {
-  const theme = useTheme();
-  return (
-    <Theme {...theme} scale={scale}>
-      {children}
-    </Theme>
-  );
-}
-
 export function ScalePreview() {
+  const theme = useTheme();
   return (
     <>
       <Example
@@ -71,13 +62,13 @@ export function ScalePreview() {
         <SpecimenGrid size="wide">
           {scales.map((scale) => (
             <Specimen key={scale} title={scale === 'compact' ? 'Compact' : 'Comfortable'}>
-              <AtScale scale={scale}>
+              <Theme {...theme} scale={scale}>
                 <Column gap={3}>
                   {sizes.map((size) => (
                     <SizeRow key={size} size={size} />
                   ))}
                 </Column>
-              </AtScale>
+              </Theme>
             </Specimen>
           ))}
         </SpecimenGrid>

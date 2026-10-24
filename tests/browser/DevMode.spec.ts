@@ -333,8 +333,8 @@ test("dev mode's own theme switches, persists and leaves the page's alone", asyn
 });
 
 test('dev mode takes the theme of the boundary around its root', async ({ page }) => {
-  // The root sits in a nested theme boundary of the other theme, as an example does on a page of
-  // the other theme: dev mode takes the root's theme, not the document's.
+  // The root sits in a nested theme boundary of the other theme, such as a dark region of a light
+  // page: dev mode takes the root's theme, not the document's.
   await page.goto(`${fixtureUrl}/?fixture=dev-mode&root=.dev-page`);
   await page.waitForFunction(() => window.envui?.layout !== undefined);
   const documentTheme = await page

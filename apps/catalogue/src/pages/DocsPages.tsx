@@ -343,7 +343,7 @@ export function PatternProvidesPage({ page }: { page: SitePage }) {
 /**
  * A component's page in the Docs: its props, what the application provides, part names and
  * changelog. Field, which has no page on the Site, shows its whole page here, as "Build your own
- * field", with Related on its band at the end, after the changelog.
+ * field", with Related at the end, after the changelog.
  */
 export function ApiPage({ page }: { page: SitePage }) {
   const document = page.document!;
@@ -377,8 +377,8 @@ export function ApiPage({ page }: { page: SitePage }) {
         {sitePage && <Provides document={document} title="Accessibility" id="provides" />}
         <PartNames components={metadata?.components ?? []} />
         <PageChangelog document={document} />
+        {!sitePage && metadata && <Related metadata={metadata} path={document.path} />}
       </Column>
-      {!sitePage && metadata && <Related metadata={metadata} path={document.path} />}
     </>
   );
 }

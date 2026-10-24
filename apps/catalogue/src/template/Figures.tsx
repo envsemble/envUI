@@ -1,5 +1,5 @@
 import { Fragment, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from 'react';
-import { Column } from '@envsemble/envui';
+import { Column, Theme, useTheme } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { Close } from '@envsemble/envui/icons/Close';
 import type { DocumentationBlock, DocumentationSection, StageFill } from '../DocumentationTypes';
@@ -7,7 +7,6 @@ import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../Reference';
 import { AnatomyFigure } from './AnatomyFigure';
 import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
-import { ExampleTheme } from './ExampleTheme';
 import { OpenExample } from './OpenExample';
 import { Specimen } from './Specimen';
 
@@ -37,6 +36,7 @@ export function VerdictFigure({
   | { page: string; name: string; children?: never }
   | { page?: never; name?: never; children: ReactNode }
 )) {
+  const theme = useTheme();
   const label = verdict === 'do' ? 'Do' : 'Don’t';
   const id = useId();
   return (
@@ -50,7 +50,7 @@ export function VerdictFigure({
           corners the large radius and the inner ones the small radius. */}
       <div className="docs-verdict-frame env-connected-rows">
         <Column
-          render={<ExampleTheme />}
+          render={<Theme {...theme} />}
           gap={0}
           className="docs-verdict-stage env-connected-row"
           data-example={name}

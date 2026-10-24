@@ -6,14 +6,13 @@ import {
   useState,
   type RefObject,
 } from 'react';
-import { Column, Link, PortalContainer, Text } from '@envsemble/envui';
+import { Column, Link, PortalContainer, Text, Theme, useTheme } from '@envsemble/envui';
 import { Article } from '@envsemble/envui/icons/Article';
 import type { DocumentationMetadata, StageFill } from '../DocumentationTypes';
 import { routeHref } from '../navigation/Address';
 import { pageHref, referencePages, routeOfDocument } from '../navigation/DocumentationRoutes';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
-import { ExampleTheme } from './ExampleTheme';
 import { ExampleRender } from './LiveExample';
 
 /**
@@ -222,17 +221,19 @@ function useFit(
 }
 
 /**
- * A tiny live picture of an alternative, in the examples' theme: its example, inert and scaled down
+ * A tiny live picture of an alternative on the recessed canvas: its example, inert and scaled down
  * to fit, rendered once the tiles near the viewport. Without an example, a page icon.
  */
 function TilePreview({ preview, near }: { preview?: Preview; near: boolean }) {
+  const theme = useTheme();
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLDivElement>(null);
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   const shown = Boolean(preview && near);
   useFit(stage, canvas, shown);
   return (
-    <ExampleTheme
+    <Theme
+      {...theme}
       ref={stage}
       className="docs-related-stage"
       data-example={preview?.name}
@@ -255,7 +256,7 @@ function TilePreview({ preview, near }: { preview?: Preview; near: boolean }) {
           </div>
         )
       )}
-    </ExampleTheme>
+    </Theme>
   );
 }
 
@@ -311,25 +312,18 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
 
 /**
  * Related, the last section of a component or pattern page: a tile for each component or page its
- * frontmatter names, with when to pick it instead. The page turns from its subject to others here,
- * so the section sits on a band, a fill of its own across the whole content pane.
+ * frontmatter names, with when to pick it instead. It ends the page, on the page itself: the page's
+ * one band holds When to use and Anatomy (TemplateContent.tsx).
  */
 export function Related({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
   const alternatives = alternativesOf(metadata);
   if (!alternatives.length) return null;
   return (
-    <div className="docs-band">
-      <Column
-        render={<section />}
-        gap={4}
-        className="docs-band-content docs-related"
-        data-section="related"
-      >
-        <Text render={<h2 />} variant="headline" id="related">
-          Related
-        </Text>
-        <Tiles alternatives={alternatives} path={path} />
-      </Column>
-    </div>
+    <Column render={<section />} gap={4} className="docs-related" data-section="related">
+      <Text render={<h2 />} variant="headline" id="related">
+        Related
+      </Text>
+      <Tiles alternatives={alternatives} path={path} />
+    </Column>
   );
 }
