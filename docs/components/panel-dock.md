@@ -44,11 +44,11 @@ Each panel's header stays in view as its content scrolls, with its title, the ap
 
 ## Variants
 
-| Mode      | Use for                                                    |
-| --------- | ---------------------------------------------------------- |
-| Open      | Working beside the page, at a height people can change.    |
-| Minimized | Setting a panel aside as a tab, with its content kept.     |
-| Maximized | Giving one panel the whole region, behind the open panels. |
+| Mode      | Use for                                                                                       |
+| --------- | --------------------------------------------------------------------------------------------- |
+| Open      | Working beside the page, at a height people can change.                                       |
+| Minimized | Setting a panel aside as a tab over the bottom edge, with its content kept and nothing moved. |
+| Maximized | Giving one panel the whole region, behind the open panels.                                    |
 
 ```tsx example=MaximizedPanel caption="A maximized panel fills the region; Restore returns it to the row."
 
@@ -154,7 +154,7 @@ A minimized panel is a tab. `label` gives the tab a shorter text than the title,
 
 #### Make room
 
-A panel takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `minWidth`, 20 rem, up to `maxWidth`, 48 rem; then the row scrolls sideways. With `overflow="minimize"`, the dock instead asks `onModeChange` to minimize the open panel active longest ago, one at a time, until the rest fit, and to open it again once there is room. It never asks for the active panel, the newest one or the one that holds focus. A panel starts at 85% of the room above the tabs, up to 40 rem, unless `height` sets it, and people resize it between `minHeight`, 15 rem, and `maxHeight`, the room above the tabs; all of them are in pixels. The arrow keys on a resize handle change the height by 16 px, and by 64 px with <kbd>Shift</kbd>.
+A panel takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `minWidth`, 20 rem, up to `maxWidth`, 48 rem; then the row scrolls sideways. With `overflow="minimize"`, the dock instead asks `onModeChange` to minimize the open panel active longest ago, one at a time, until the rest fit, and to open it again once there is room. It never asks for the active panel, the newest one or the one that holds focus. A panel starts at 85% of the dock's room, up to 40 rem, unless `height` sets it, and people resize it between `minHeight`, 15 rem, and `maxHeight`, the dock's room; all of them are in pixels. The tabs float over the bottom of the open panels, so a panel minimized or brought back never moves the others; their content keeps the tabs' height clear at its end, so it scrolls out from beneath them. The arrow keys on a resize handle change the height by 16 px, and by 64 px with <kbd>Shift</kbd>.
 
 ```tsx source=MinimizeWhatDoesNotFit
 
