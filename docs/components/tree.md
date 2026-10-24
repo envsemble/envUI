@@ -15,9 +15,9 @@ aliases:
   - hierarchy
   - nested list
 useWhen:
-  - A hierarchy people expand and collapse, such as folders and files in a workspace's sidebar.
-  - Thousands of rows, such as a large project's files, which the tree keeps fast by rendering only the rows in view.
-  - Rows people preview with a click and open to keep with a double click, as in a desktop editor.
+  - A hierarchy people expand and collapse, such as folders and files
+  - Thousands of rows, such as a large project's files
+  - Rows previewed with a click and opened to keep with a double click
 avoidWhen:
   - text: An application's destinations, such as the pages in a sidebar, one or two levels deep.
     use: Drawer
@@ -35,7 +35,7 @@ components:
 
 ## Overview
 
-The application passes the visible rows in order, each with its `depth`, and owns expansion and selection; the tree owns focus, the keys and scrolling.
+The application passes the visible rows in order, each at its depth, and owns expansion and selection; the tree owns focus, the keys and scrolling.
 
 ```tsx example=FileTree
 
@@ -43,11 +43,11 @@ The application passes the visible rows in order, each with its `depth`, and own
 
 ### Opening and previewing
 
-A click and <kbd>Space</kbd> call `onAction` with `preview: true`, a double click and <kbd>Enter</kbd> with `preview: false`, as an editor previews a file in a tab before keeping it. The tree doesn't select by itself; set `value` from `onAction`.
+A click and <kbd>Space</kbd> preview a row, and a double click and <kbd>Enter</kbd> open it to keep, as an editor previews a file in a tab before keeping it. The tree doesn't select by itself: the application marks the row people opened.
 
 ### Actions in a context menu
 
-With `contextMenu`, right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.
+A right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.
 
 ```tsx example=ContextMenuActions
 
@@ -55,7 +55,7 @@ With `contextMenu`, right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> o
 
 ### Thousands of rows
 
-The tree is as tall as its parent, so give it a parent with a height.
+The tree stays fast by rendering only the rows in view. It is as tall as its parent, so give it a parent with a height.
 
 ```tsx example=ThousandsOfRows
 
@@ -63,21 +63,26 @@ The tree is as tall as its parent, so give it a parent with a height.
 
 ## Variants
 
-| Density | Use for                                               |
-| ------- | ----------------------------------------------------- |
-| `xs`    | The densest lists.                                    |
-| `sm`    | Dense desktop interfaces, such as files. The default. |
-| `md`    | Fewer rows with more room, such as mailboxes.         |
-| `lg`    | The most room, as tall as a touch target.             |
+| Density     | Use for                                               |
+| ----------- | ----------------------------------------------------- |
+| Extra small | The densest lists.                                    |
+| Small       | Dense desktop interfaces, such as files. The default. |
+| Medium      | Fewer rows with more room, such as mailboxes.         |
+| Large       | The most room, as tall as a touch target.             |
 
-```tsx example=RowDensity caption="md, with counts at the end, a description and a disabled row."
+```tsx example=RowDensity caption="Medium, with counts at the end, a description and a disabled row."
 
 ```
 
 ## When to use
 
-- No buttons, links or fields in rows: their actions go in the context menu and a toolbar.
-- Stable ids, such as paths, so focus and selection stay on their rows.
+### Nothing to press in rows
+
+Keep buttons, links and fields out of rows: their actions go in the context menu and a toolbar.
+
+### Stable rows
+
+Give rows stable identities, such as paths, so focus and selection stay on their rows.
 
 ## Anatomy
 
@@ -131,6 +136,52 @@ Rows keep one line: the description gives way first, then the label ends with an
 - An `aria-label` for every tree, and the context menu's name in the application's language.
 - The visible rows, their expansion, the selection, and what opening does.
 - A `textValue` for rows whose label isn't plain text, and a name for a count in `end`.
+
+## In code
+
+### Usage
+
+A Tree takes `items`, the visible rows in order, flattened: an expanded row is followed by its visible descendants. Each row has a stable, unique `id`, such as a path, which it carries as `data-id`; its `depth`, 0 for a top-level row, each level indenting it by 0.75 rem; its `label`; and an optional decorative `icon`, a muted `description`, such as a status or a path, `end` content, such as a Badge with a count, a native `title` tooltip, `textValue` for type-ahead where the label isn't plain text, and `disabled`, which keeps the row reachable by keyboard but stops it opening and expanding. Name the tree with `aria-label`, such as Files.
+
+```tsx source=FileTree
+
+```
+
+#### Expanding
+
+`expandable` gives a row a chevron, and `expanded` shows its children, the rows that follow it in `items`. `onExpandedChange` receives the row and its new state from a press on its chevron, <kbd>→</kbd> on a collapsed row and <kbd>←</kbd> on an expanded one, mirrored in right-to-left text; the application updates `items`, removing a collapsed row's descendants.
+
+#### Opening, previewing and selection
+
+`onAction` receives the row people open and `{ preview }`: `true` on a single click and <kbd>Space</kbd>, `false` on a double click and <kbd>Enter</kbd>. Expandable rows call it too, and disabled rows don't. The tree doesn't select by itself: set `value`, the selected row's id, from `onAction`; that row takes the navigation selection colors and scrolls into view when it changes.
+
+#### Context menu
+
+`contextMenu` returns the menu items for the row people right-click, long-press, or press <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key on, or for the tree's empty area when the row is `null`; without it, the browser's own context menu stays. `contextMenuLabel` names the menu, Actions by default, from EnvUIProvider's `messages.tree.actions`.
+
+```tsx source=ContextMenuActions
+
+```
+
+#### Thousands of rows
+
+The tree renders only the rows in view, and is as tall as its parent: give the parent a height, or the tree one through `style`. `className`, `style` and `ref` reach the tree, the element that scrolls and holds focus.
+
+```tsx source=ThousandsOfRows
+
+```
+
+#### Density
+
+`density` is `xs`, `sm`, the default, `md` or `lg`. It changes only the rows' block padding, never the text or the icons: in the comfortable scale `sm` rows are 1.75 rem tall and `md` rows 2.25 rem, and under a coarse pointer every row is at least 2.75 rem.
+
+```tsx source=RowDensity
+
+```
+
+### Composition
+
+The parts are the tree, `env-tree`, and each row, `env-tree-item`, with its chevron, `env-tree-chevron`, icon, `env-tree-icon`, label, `env-tree-label`, description, `env-tree-description`, and end, `env-tree-end`. Keep buttons, links and fields out of rows, and put their actions in the context menu and a toolbar.
 
 ## Changelog
 

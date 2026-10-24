@@ -9,10 +9,10 @@ aliases:
   - modal dialog
   - popup
 useWhen:
-  - People decide on a consequence before it happens, such as deleting a project, or type a name to confirm it.
-  - A short task needs people's attention before they go on, such as inviting a member or renaming a project.
-  - Content needs more room than a popup, such as a table, a comparison or a longer form (`width="lg"`).
-  - A search-like task shows results that grow below its field (`placement="top"`).
+  - A decision before a consequence, such as deleting a project
+  - A short task that needs attention first, such as inviting a member
+  - Content that needs more room than a popup, such as a comparison
+  - A search-like task whose results grow below its field
 avoidWhen:
   - text: Confirming one action in place that cannot be undone, such as removing a member from a list.
     use: ConfirmButton
@@ -47,7 +47,7 @@ A dialog's actions end with the primary one, after a built-in close button.
 
 ### Pending work
 
-While `pending`, nothing closes the dialog and its close button is disabled. Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.
+While its work runs, nothing closes the dialog and its close button is disabled. Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.
 
 ```tsx example=RenameProject
 
@@ -55,7 +55,7 @@ While `pending`, nothing closes the dialog and its close button is disabled. Sub
 
 ### More actions that close
 
-**DialogClose** closes the dialog after its own `onClick`, such as Don’t save.
+Other buttons can close the dialog after doing their own work, such as Don’t save.
 
 ```tsx example=UnsavedChanges
 
@@ -63,29 +63,37 @@ While `pending`, nothing closes the dialog and its close button is disabled. Sub
 
 ## Variants
 
-| Option               | Use for                                                         |
-| -------------------- | --------------------------------------------------------------- |
-| `placement="center"` | Confirmations, short forms and details. The default.            |
-| `placement="top"`    | Search-like tasks, whose results grow down from a fixed field.  |
-| `width="md"`         | Most dialogs. The default.                                      |
-| `width="lg"`         | Tables, comparisons and longer forms.                           |
-| `modal={false}`      | A dialog beside a page that stays usable, such as an inspector. |
+### Placement
 
-### Wide content
+| Placement    | Use for                                                        |
+| ------------ | -------------------------------------------------------------- |
+| Centered     | Confirmations, short forms and details. The default.           |
+| Near the top | Search-like tasks, whose results grow down from a fixed field. |
 
-```tsx example=ReviewChanges
+```tsx example=FindPlan caption="Near the top: the field stays put as the results grow."
 
 ```
 
-### Near the top
+### Widths
 
-```tsx example=FindPlan
+Both narrow to fit the window.
+
+| Width  | Use for                                           |
+| ------ | ------------------------------------------------- |
+| Medium | 28 rem, for most dialogs. The default.            |
+| Large  | 44 rem, for tables, comparisons and longer forms. |
+
+```tsx example=ReviewChanges caption="A large dialog, for a table of changes."
 
 ```
+
+### Beside the page
+
+A dialog can also leave the page usable beside it, such as an inspector.
 
 ## When to use
 
-```tsx do=CancelAsCloseLabel open caption="closeLabel=Cancel names the built-in button for a decision."
+```tsx do=CancelAsCloseLabel open caption="The built-in button named Cancel, for a decision."
 
 ```
 
@@ -101,7 +109,9 @@ While `pending`, nothing closes the dialog and its close button is disabled. Sub
 
 ```
 
-- Keep one task per dialog, and don't open a dialog from another.
+### One task
+
+Keep one task per dialog, and never open a dialog from another.
 
 ## Anatomy
 
@@ -116,7 +126,7 @@ While `pending`, nothing closes the dialog and its close button is disabled. Sub
 5. **Close button** (`env-dialog-actions > env-button:first-child`, `closeLabel`)
 6. **Action** (`env-dialog-actions > env-button:last-child`, `actions`)
 
-Not shown: the scrim behind a modal dialog, `env-dialog-backdrop`.
+Not shown: the scrim behind a modal dialog.
 
 ## Accessibility
 
@@ -140,6 +150,50 @@ Not shown: the scrim behind a modal dialog, `env-dialog-backdrop`.
 - A `title`, and a `description` where the consequence needs saying.
 - `closeLabel` in the page's language, such as Cancel.
 - `finalFocus` where the trigger is gone, or something other than `trigger` opened the dialog.
+
+## In code
+
+### Usage
+
+A Dialog opens from its `trigger`, such as a Button, and holds its `title`, which names it, a `description`, its content as `children`, and its own `actions`, after the built-in close button, with the primary action last. `closeLabel` names the close button, Close by default from EnvUIProvider's `messages.dialog.close`, or Cancel for a decision. Leave it uncontrolled, or control it with `open` and `onOpenChange`, which receives the requested state and why: the trigger, <kbd>Esc</kbd>, an outside press, the close button or a DialogClose. `defaultOpen` opens it on the first render.
+
+```tsx source=ProjectDetails
+
+```
+
+#### Pending work
+
+`pending` keeps <kbd>Esc</kbd>, outside presses and the close buttons from dismissing the dialog until it returns to `false`, and disables the built-in close button. Put a `<form>` in `children` and make the primary action its submit button, through the `form` attribute, so <kbd>Enter</kbd> in a field submits it too.
+
+```tsx source=RenameProject
+
+```
+
+#### More actions that close
+
+An action closes the dialog only where it is a DialogClose, a Button that closes it after its own `onClick`, or where it sets `open` to `false`. DialogClose takes Button's props and is `secondary` by default.
+
+```tsx source=UnsavedChanges
+
+```
+
+#### Placement, width and modal
+
+`placement` is `center`, the default, or `top`, near the top of the window, so results grow down without moving the field. `width` is `md`, 28 rem and the default, or `lg`, 44 rem; both narrow to fit the window. `modal={false}` leaves the page usable beside the dialog, such as an inspector; by default it traps focus over a backdrop, hides the page from assistive technology, blocks presses on it and locks its scroll. `disablePointerDismissal` keeps it open on presses outside it, and a non-modal one also when focus moves outside.
+
+```tsx
+<Dialog width="lg" title="Review changes" trigger={<Button>Review</Button>}>
+  …
+</Dialog>
+```
+
+#### Focus
+
+`initialFocus` sets where focus goes on opening, as a ref or a function of how it was opened; by default the first focusable element inside, and a confirmation's close button. `finalFocus` sets where it goes on closing, such as the row that opened it, where the trigger is gone or something other than `trigger` opened the dialog.
+
+### Composition
+
+The parts are the surface, `env-dialog-popup`, its heading, `env-dialog-heading`, with the title, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, which start with the close button. The scrim behind a modal dialog is `env-dialog-backdrop`. Keep one task per dialog: show a field's error on the field rather than in a second dialog over the first.
 
 ## Changelog
 

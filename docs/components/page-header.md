@@ -14,9 +14,9 @@ aliases:
   - heading row
   - sticky header
 useWhen:
-  - A page opens with its title and the actions that apply to the whole page, such as New project.
-  - A page needs its trail, a status or a count beside its title, or a row of search and filters under it.
-  - The page's heading should stay in view as the page scrolls.
+  - A page's title and the actions for the whole page, such as New project
+  - A trail, a status or a count beside the title, or search and filters under it
+  - A page heading that stays in view as the page scrolls
 avoidWhen:
   - text: The application's bar across every page, with its name, search and account menu.
     use: TopBar
@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-Put a PageHeader in a [Page](page.md)'s `header`.
+A PageHeader sits at the top of a [Page](page.md).
 
 ```tsx example=WithBreadcrumbs
 
@@ -40,7 +40,7 @@ Put a PageHeader in a [Page](page.md)'s `header`.
 
 ### Search and filters
 
-`toolbar` adds a row below the title for search, filters and view switches. `controlSize="sm"` gives the buttons in `actions` and `toolbar` the small height of a dense page.
+A row below the title holds search, filters and view switches. On a dense page, its buttons and the actions take the small control height.
 
 ```tsx example=WithToolbar
 
@@ -48,7 +48,7 @@ Put a PageHeader in a [Page](page.md)'s `header`.
 
 ### Sticky
 
-With `sticky`, the header stays at the top of the area that scrolls, under a Scaffold's top bar. What takes focus in the page keeps clear of it.
+A header can stay at the top of the area that scrolls, under a Scaffold's top bar. What takes focus in the page keeps clear of it.
 
 ```tsx example=Sticky
 
@@ -64,8 +64,13 @@ With `sticky`, the header stays at the top of the area that scrolls, under a Sca
 
 ```
 
-- One PageHeader per page, with the page's `h1`; set `headingLevel` lower in a pane or a dialog.
-- A toolbar row that holds a text field is a [Row](row.md), not a Toolbar, as [Toolbar's layouts](toolbar.md#layouts) describe.
+### One per page
+
+Give each page one PageHeader, whose title is the page's main heading; in a pane or a dialog, its heading sits a level lower.
+
+### A row with a field
+
+A toolbar row that holds a text field is a [Row](row.md), not a Toolbar, as [Toolbar's layouts](toolbar.md#layouts) describe.
 
 ## Anatomy
 
@@ -101,6 +106,40 @@ The header responds to its own width: below 37.5 rem, the actions move under the
 
 - A title that names the page, and a `headingLevel` that fits the headings around it.
 - Names for icon-only actions and labels for the fields in the toolbar.
+
+## In code
+
+### Usage
+
+Put a PageHeader in a Page's `header`. It takes the page's `title`, which wraps, balanced across its lines, and is never cut short; a `description` under it, in the smaller muted text; `breadcrumbs` above it, usually Breadcrumbs with `wrap={false}`; `start`, before it, such as an Avatar, an icon or a back IconButton; `meta` beside it, such as Badges or a count; and the page's `actions` at the end of the title row, the primary action last.
+
+```tsx source=WithBreadcrumbs
+
+```
+
+#### Heading level
+
+The title is an `h1` by default. Set `headingLevel` lower for a header inside a pane, a dialog or a section under another heading; it looks the same at every level.
+
+#### Toolbar
+
+`toolbar` adds a second row under the title for search, filters and view switches, laid out with `<Row wrap justify="between">`: a row that holds a text field is a Row, not a Toolbar, so the field keeps its arrow keys. `controlSize` is `md`, the default, or `sm` for a dense page, such as one in a small window: it sizes the buttons and icon buttons in `actions` and `toolbar` that set none. Give fields in the toolbar the same `size`.
+
+```tsx source=WithToolbar
+
+```
+
+#### Sticky
+
+`sticky` keeps the header in view at the top of the area that scrolls, over the content under it: under a Scaffold's top bar where the document scrolls, or at the top of a Scaffold's body that scrolls. As a Page's header, what scrolls into view below it, such as a field taking focus, keeps clear of it: the header measures its height, which CSS reckons from its rows until script runs.
+
+```tsx source=Sticky
+
+```
+
+### Composition
+
+The header is a `div`, no landmark, `env-page-header`, with the breadcrumbs, `env-page-header-breadcrumbs`, the start, `env-page-header-start`, the title, `env-page-header-title`, the meta, `env-page-header-meta`, the description, `env-page-header-description`, the actions, `env-page-header-actions`, and the toolbar, `env-page-header-toolbar`. It responds to its own width: below 37.5 rem the actions move under the title and wrap. Put more actions than fit in a Menu as the last one.
 
 ## Changelog
 

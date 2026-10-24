@@ -19,9 +19,9 @@ aliases:
   - facepile
   - people stack
 useWhen:
-  - A person or an organization is pictured beside their name, such as in a list of members or a comment.
-  - The signed-in account opens its menu from a picture in the application's chrome (AvatarButton).
-  - Who is involved matters more than each name where space is short, such as a project's members in a row (AvatarGroup).
+  - A person or an organization beside their name, such as in a list of members
+  - The signed-in account's menu in the application's chrome (AvatarButton)
+  - A few people in a row where space is short, such as a project's members (AvatarGroup)
 avoidWhen:
   - text: An icon for a thing or an action, not a person.
     use: Icon
@@ -48,15 +48,17 @@ Beside a visible name an avatar is decorative; on its own it can be a picture na
 
 ```
 
-```tsx example=ProjectMembers caption="AvatarGroup: a pile of avatars with the count of the rest, which spreads along an arch under the pointer."
+### A group as a pile
+
+AvatarGroup rests as a compact pile, like stacked cards, with the count of the rest in a rounded square. Hovering, tapping or focusing it spreads the avatars along a gentle arch, so each one shows, and it keeps the room its spread takes, so nothing around it moves.
+
+```tsx example=ProjectMembers
 
 ```
 
-A group rests as a compact pile, like cards stacked on each other, each avatar a little off the line and turned, with the count of the rest in a rounded square at the bottom of the pile. It doesn't try to show everyone at once: hovering the pile, tapping it or moving keyboard focus into it spreads the avatars along a gentle arch, so each one shows, and they pile up again when the pointer leaves, after a tap elsewhere or after a short pause. The group always keeps the room its spread takes, so spreading never moves what is around it, and a group at the end of a row piles up at that end. With reduced motion it spreads at once.
-
 ### Chosen
 
-An avatar can show as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. People in a group can show as chosen too.
+An avatar can show as chosen, such as in a list of people to pick from: a ring and a check, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen.
 
 ```tsx example=ChooseReviewers
 
@@ -64,7 +66,7 @@ An avatar can show as chosen, such as in a list of people to pick from: a ring a
 
 ### Pressable avatars
 
-Each avatar in a group can open something, such as the person's profile. While the group is piled, the whole pile is one target: the first hover, tap or keyboard focus spreads it, and only then is each avatar a target of its own, so a press never lands on someone hidden under another. On touch screens each spread avatar is as large as a finger needs. The count lists the people it hides.
+Each avatar in a group can open something, such as the person's profile. While piled, the whole pile is one target that spreads it, so a press never lands on someone hidden under another; spread, each avatar is a target of its own, as large as a finger needs on a touch screen.
 
 ```tsx example=PressableAvatars caption="Hover, tap or focus the pile to spread it, then press a person."
 
@@ -96,13 +98,11 @@ Without a picture, or while it loads or after it fails, an avatar shows the defa
 
 ```
 
-### Colors
+### Colors from the name
 
-The name chooses one of eight colors, the same on every page, and an organization can take another of them as its own. Each is a tonal pair from one pastel palette, powder blue, seafoam, sage, butter, blush, periwinkle, orchid and a warm oat: a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme. The colors only tell people apart.
+The name chooses one of eight pastel colors, the same on every page, and an organization can take another of them as its own: a soft fill with the initials or the figure in a deep shade of the same hue. The colors only tell people apart.
 
 <!-- specimen: Hues -->
-
-One avatar can also take colors of its own, for its fill and for its initials or figure.
 
 ## When to use
 
@@ -114,7 +114,13 @@ One avatar can also take colors of its own, for its fill and for its initials or
 
 ```
 
-Use AvatarButton rather than an avatar inside a button of your own. Show only as many people in a group as fit without wrapping, and give each person their full name, the same everywhere: it names the picture and chooses the initials and the color.
+### Names
+
+Give each person their full name, the same everywhere: it names the picture and chooses the initials and the color.
+
+### Groups and buttons
+
+Show only as many people in a group as fit without wrapping, and use AvatarButton rather than an avatar inside a button of your own.
 
 ## Anatomy
 
@@ -129,6 +135,10 @@ Use AvatarButton rather than an avatar inside a button of your own. Show only as
 5. **Overflow** (`env-avatar-group-overflow`, `max`)
 
 Not shown: a picture, the check of a chosen avatar, a pressable avatar and AvatarButton.
+
+### Colors
+
+One avatar can take colors of its own, for its fill and for its initials or figure, in place of the color its name chooses.
 
 ## Accessibility
 
@@ -167,15 +177,19 @@ Avatar takes the person's or organization's `name`, a picture in `src`, and `fal
 
 #### Chosen
 
-`selected` draws the ring and the check, `env-avatar-check`. It says nothing to assistive technology: the checkbox or option around it does. An AvatarGroup person takes `selected` too, and comes in front of its neighbours so its check shows.
+`selected` draws the ring and the check at its bottom end, `env-avatar-check`. It says nothing to assistive technology: the checkbox or option around it does. An AvatarGroup person takes `selected` too, and comes in front of its neighbours so its check shows.
+
+```tsx source=ChooseReviewers
+
+```
 
 #### Colors
 
-`hue` sets one of the eight colors by name, `powder` to `oat`, in place of the one the name chooses; `avatarHue(name)` returns the one a name chooses.
+`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme.
 
 #### Groups
 
-AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`, `id` and `selected`. `max` sets how many show, and the count chip counts the rest; `total` counts people beyond a preview list. `gather="end"` piles a group at the end of the room its spread takes, for a group that ends a row, such as a list row's action. `formatMore` and `formatLabel`, or `messages.avatarGroup`, set its words.
+AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`, `id` and `selected`. `max` sets how many show, and the count chip counts the rest; `total` counts people beyond a preview list. At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile. The group always keeps the room its spread takes, so spreading never moves what is around it; `gather="end"` piles a group at the end of that room, for a group that ends a row, such as a list row's action. With reduced motion it spreads at once. `formatMore` and `formatLabel`, or `messages.avatarGroup`, set its words.
 
 ```tsx
 <AvatarGroup people={members} max={3} total={12} gather="end" />
@@ -186,6 +200,10 @@ AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`
 `onPersonClick` makes every avatar a button, which receives the person pressed; a person with `href` is a link, through the application's router link from `LinkProvider`.
 
 While the group is piled its avatars and count take no pointer events, and a cover over the group, its `::before`, takes the pointer, so no avatar can be pressed or hovered then; the cover stays for the medium motion duration after the group starts to spread, until the avatars are in place. A hovering pointer spreads the group with `:hover`, and keyboard focus inside with `:focus-visible`; a click's focus, without a focus ring, doesn't hold it spread. Where no pointer hovers, a tap on the pile sets `data-spread` on the group, until a tap outside it or five seconds without a tap in it. Spread, each pressable avatar is a whole target, 2.75 rem on touch screens.
+
+```tsx source=PressableAvatars
+
+```
 
 ### Composition
 

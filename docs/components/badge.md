@@ -26,11 +26,11 @@ aliases:
   - diff count
   - change size
 useWhen:
-  - A short state sits beside the content it describes, such as In review, Blocked or Archived.
-  - A short name or category marks an item, such as a team or a folder (`variant="outline"`).
-  - A piece of neutral metadata sits beside related content, such as a plan or a count of seats.
-  - A number belongs to a label, such as unread messages beside a navigation item or comments on a button (`count`).
-  - The size of a change shows beside a file or a version, such as +12 −3 (DiffStat).
+  - A short state beside what it describes, such as In review or Blocked
+  - A name or a category on an item, such as a team or a folder
+  - Neutral metadata beside related content, such as a plan
+  - A number that belongs to a label, such as unread messages
+  - The size of a change beside a file, such as +12 −3 (DiffStat)
 avoidWhen:
   - text: An action, or a choice people turn on and off, even when it looks like a pill.
     use: Button
@@ -42,7 +42,7 @@ avoidWhen:
     use: Meter
   - text: A headline number with its label and trend, such as on a dashboard.
     see: key-figures
-  - text: A count beside a destination in the navigation, which a Drawer item shows with `count`.
+  - text: A count beside a destination in the navigation, which a Drawer item shows itself.
     use: Drawer
   - text: An identifier or a command in text.
     use: Code
@@ -59,7 +59,7 @@ components:
 
 ```
 
-```tsx example=CountsInButtons caption="With count, a compact count, here inside buttons."
+```tsx example=CountsInButtons caption="Counts: a compact number, here inside buttons."
 
 ```
 
@@ -77,11 +77,13 @@ components:
 2. **Solid**
 3. **Outline**
 
-| Variant   | Use for                                             |
-| --------- | --------------------------------------------------- |
-| `soft`    | Most states, in lists, tables and headings.         |
-| `solid`   | The one state that must stand out, such as Overdue. |
-| `outline` | Names and categories, such as a team or a folder.   |
+| Variant | Use for                                             |
+| ------- | --------------------------------------------------- |
+| Soft    | Most states, in lists, tables and headings.         |
+| Solid   | The one state that must stand out, such as Overdue. |
+| Outline | Names and categories, such as a team or a folder.   |
+
+### Tones
 
 ```tsx variants=Tones
 
@@ -94,16 +96,18 @@ components:
 5. **Danger**
 6. **Done**
 
-| Tone      | Use for                                               |
-| --------- | ----------------------------------------------------- |
-| `neutral` | No urgency, such as Draft, and metadata. The default. |
-| `accent`  | The current or highlighted state, such as In review.  |
-| `success` | Done well or healthy, such as Ready.                  |
-| `warning` | Needs attention soon, such as Blocked.                |
-| `danger`  | Failed or at risk, such as Failed.                    |
-| `done`    | Completed work, such as Merged.                       |
+| Tone    | Use for                                               |
+| ------- | ----------------------------------------------------- |
+| Neutral | No urgency, such as Draft, and metadata. The default. |
+| Accent  | The current or highlighted state, such as In review.  |
+| Success | Done well or healthy, such as Ready.                  |
+| Warning | Needs attention soon, such as Blocked.                |
+| Danger  | Failed or at risk, such as Failed.                    |
+| Done    | Completed work, such as Merged.                       |
 
-A count takes the same tones and variants: neutral and soft by default, and `tone="accent" variant="solid"` for a count that needs attention.
+### Counts
+
+A count takes the same tones and variants: neutral and soft by default, and solid in the accent tone for a count that needs attention.
 
 ## When to use
 
@@ -115,14 +119,17 @@ A count takes the same tones and variants: neutral and soft by default, and `ton
 
 ```
 
-- Give the same state the same word and tone everywhere.
-- Don't let the tone carry the meaning alone: the word says it.
+### Words and tones
+
+Give the same state the same word and tone everywhere, and let the word carry the meaning, never the tone alone.
 
 ### Content
 
-- Show `99+` beyond two digits, with the full count in `aria-label`.
+Show 99+ beyond two digits, and give the full count in the count's name for assistive technology.
 
 ### In navigation
+
+A drawer shows each destination's count at its end, and says it in the destination's name.
 
 ```tsx example=NavigationCounts
 
@@ -138,11 +145,11 @@ A count takes the same tones and variants: neutral and soft by default, and `ton
 2. **Icon** (`env-badge > env-icon`, `icon`)
 3. **Label** (`env-badge-label`, `children`)
 
-A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.
+Not shown: a count, and DiffStat's added and removed lines.
 
 ### Colors
 
-`--env-badge-container`, `--env-badge-content` and `--env-badge-outline` set the colors of one Badge, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+One badge can take colors of its own: its fill, its text and its edge. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 
@@ -164,6 +171,64 @@ A badge stays on one line and ends with an ellipsis where its container is narro
 
 - An `aria-label` on a count whose number doesn't explain itself, such as 12 unread.
 - A status region where a change of count must be announced.
+
+## In code
+
+### Usage
+
+A Badge's label is its `children`, a state, a name or a category in a word or two, with an optional decorative `icon` before it. It stays on one line and ends with an ellipsis where it is wider than its container.
+
+```tsx source=ProjectStatus
+
+```
+
+#### Variants and tones
+
+`variant` is `soft`, the default, which tints the background, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `accent`, `success`, `warning`, `danger` or `done`, the purple of completed work.
+
+```tsx
+<Badge tone="success">Ready</Badge>
+<Badge tone="danger" variant="solid">Overdue</Badge>
+<Badge variant="outline">Design team</Badge>
+```
+
+#### Counts
+
+`count` takes a number, such as `12`, or short text, such as `99+`, in place of a label: a compact round pill in tabular figures. Pass `99+` yourself beyond two digits. Its `aria-label`, such as 12 unread, is read in place of the number. Counts take the same tones and variants; `tone="accent" variant="solid"` draws attention to one.
+
+```tsx source=CountsInButtons
+
+```
+
+#### DiffStat
+
+DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in the danger tone, in the locale's digits. It is named once for assistive technology, such as 12 added lines and 3 removed lines, from EnvUIProvider's `messages.diffStat.label` or its own `formatLabel`.
+
+```tsx source=ChangeSize
+
+```
+
+#### In navigation
+
+A Drawer destination's `count` shows the count at its end and adds it to the destination's name, such as Inbox, 12 new.
+
+```tsx source=NavigationCounts
+
+```
+
+### Composition
+
+The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`. A control, such as a Button, sets the badges, counts and DiffStats inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` properties.
+
+### Customize
+
+`--env-badge-container`, `--env-badge-content` and `--env-badge-outline` set the colors of one Badge, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+
+```tsx
+<Badge style={{ '--env-badge-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}>
+  Beta
+</Badge>
+```
 
 ## Changelog
 

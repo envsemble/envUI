@@ -13,8 +13,8 @@ aliases:
   - percent complete
   - indeterminate progress
 useWhen:
-  - A task whose completion can be measured, such as an upload, an import or an export.
-  - A task that has started but can't be measured yet, such as preparing an export (`value={null}`).
+  - A task whose completion can be measured, such as an upload or an import
+  - A task that has started but can't be measured yet, such as preparing an export
 avoidWhen:
   - text: A measurement within a range, such as seats assigned or storage used.
     use: Meter
@@ -34,7 +34,7 @@ components:
 
 ## Overview
 
-`value` counts the work done, such as 40 of 100.
+The bar counts the work done, such as 40 of 100.
 
 ```tsx example=UploadingFile
 
@@ -42,7 +42,7 @@ components:
 
 ### Amount unknown
 
-With `value={null}`, the indicator sweeps while the amount of work is unknown.
+While the amount of work is unknown, the indicator sweeps along the track.
 
 ```tsx example=PreparingExport
 
@@ -50,7 +50,7 @@ With `value={null}`, the indicator sweeps while the amount of work is unknown.
 
 ### From preparing to done
 
-Start with `value={null}`, show the share once it is known, and replace the bar with the result.
+Start with an unknown amount, show the share once it is known, and replace the bar with the result.
 
 ```tsx example=ExportMembers
 
@@ -60,7 +60,7 @@ Start with `value={null}`, show the share once it is known, and replace the bar 
 
 ### Steps
 
-`segments` splits the track into equal steps that fill in turn.
+The track can split into equal steps that fill in turn.
 
 ```tsx example=SetupSteps
 
@@ -76,8 +76,9 @@ Start with `value={null}`, show the share once it is known, and replace the bar 
 
 ```
 
-- Don't move the bar backwards, or hold it just short of the end.
-- Offer a way to cancel a long task beside the bar.
+### Moving forward
+
+Never move the bar backwards or hold it just short of the end, and offer a way to cancel a long task beside it.
 
 ## Anatomy
 
@@ -91,7 +92,7 @@ Start with `value={null}`, show the share once it is known, and replace the bar 
 4. **Track** (`env-progress-track`)
 5. **Indicator** (`env-progress-indicator`, `value`)
 
-With `segments`, the track holds one `env-progress-segment` per step.
+Not shown: the steps of a split track.
 
 ## Adapting to width
 
@@ -113,6 +114,36 @@ The bar fills its container. The label and the value wrap onto two lines where t
 
 - `aria-valuetext` where the value isn't a percentage, such as 120 of 480 contacts.
 - A status that says when the task ends or fails, since changes of the value aren't announced.
+
+## In code
+
+### Usage
+
+Progress takes `value`, how much of the task is done, between `min`, 0 by default, and `max`, 100 by default, such as 40 of 100. Its `label`, above the bar, names it. `valueText` shows the value at the end of the label's row, formatted by the application; without it, no value shows. `aria-valuetext` is the value as assistive technology reads it, such as 120 of 480 contacts; without it, the value is read as a percentage of the range.
+
+```tsx source=UploadingFile
+
+```
+
+#### Amount unknown
+
+`value={null}` shows an indeterminate bar, which sweeps toward the end of the line, also in right-to-left text, and is read as Loading. Start with `null`, set the value once it is known, and replace the bar with the result.
+
+```tsx source=ExportMembers
+
+```
+
+#### Steps
+
+`segments` splits the track into that many equal steps, such as 4 for a task of four stages, each filling in turn.
+
+```tsx source=SetupSteps
+
+```
+
+### Composition
+
+The parts are the bar, `env-progress`, its label, `env-progress-label`, its value, `env-progress-value`, the track, `env-progress-track`, and the indicator, `env-progress-indicator`; with `segments`, the track holds one `env-progress-segment` per step. `className`, `style`, `ref` and data attributes reach the root. Changes of the value aren't announced, so say in a status when the task ends or fails. A TopBar's `loading` shows a page's progress.
 
 ## Changelog
 
