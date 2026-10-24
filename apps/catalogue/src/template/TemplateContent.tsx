@@ -127,7 +127,10 @@ function Section({ reference, section }: { reference: Document; section: Documen
   );
 }
 
-/** Sections in the template's order, then Related; the changelog follows the page navigation. */
+/**
+ * Sections in the template's order, then Related on a band of its own across the content pane; the
+ * changelog is on the page in the Docs.
+ */
 function Sections({
   reference,
   sections,
@@ -139,20 +142,22 @@ function Sections({
 }) {
   const figures = reference.format === 'figures';
   return (
-    <Column
-      gap={figures ? 9 : 8}
-      className={`docs-article docs-template${figures ? ' docs-figures' : ''}`}
-    >
-      {sections
-        .filter((section) => section.id !== 'changelog')
-        .flatMap((section) => (provides ? section : (siteSection(section) ?? [])))
-        .map((section) => (
-          <Section key={section.id} reference={reference} section={section} />
-        ))}
+    <>
+      <Column
+        gap={figures ? 9 : 8}
+        className={`docs-article docs-template${figures ? ' docs-figures' : ''}`}
+      >
+        {sections
+          .filter((section) => section.id !== 'changelog')
+          .flatMap((section) => (provides ? section : (siteSection(section) ?? [])))
+          .map((section) => (
+            <Section key={section.id} reference={reference} section={section} />
+          ))}
+      </Column>
       {sections.some((section) => section.id === 'overview') && reference.metadata && (
         <Related metadata={reference.metadata} path={reference.path} />
       )}
-    </Column>
+    </>
   );
 }
 

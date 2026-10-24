@@ -225,6 +225,11 @@ export const pairs: readonly ContrastPair[] = merged([
     'Links and text buttons, also on the action strip of a card, which is the default surface',
   ),
   ...text('--env-color-fg-link-hover', [page, surface, muted]),
+  // The catalogue's section band, the muted fill across a page's content pane under Related: its
+  // heading, names, lines and links, and inline code on its neutral fill.
+  ...text('--env-color-fg-default', [muted, [fill, muted]], 'The catalogue’s section band'),
+  ...text('--env-color-fg-muted', [muted], 'The catalogue’s section band'),
+  ...text('--env-color-fg-link', [muted], 'The catalogue’s section band'),
   ...text('--env-color-fg-link-pressed', [page, surface, muted]),
   // Where a tint lowers the link blue below 4.5:1 in the light theme, links and text buttons take
   // the link colors for a tint: alerts and rows under the pointer or pressed point fg.link at them,
