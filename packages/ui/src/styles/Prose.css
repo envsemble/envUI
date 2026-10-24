@@ -2,13 +2,10 @@
    share through the env-prose class: paragraphs, headings, lists, quotes, tables, images and rules
    in envUI's type, spaced as a document. */
 .env-prose {
-  /* The lists' indent, the step between items, and their markers' color, size and gap before the
-     text (below). */
-  --env-prose-list-indent: var(--env-space-4);
-  --env-prose-list-item-gap: var(--env-space-2);
-  --env-prose-list-marker-color: var(--env-color-fg-muted);
-  --env-prose-list-marker-size: 0.375rem;
-  --env-prose-list-marker-gap: var(--env-space-2);
+  /* The lists' rhythm and markers (below): private, so they may change in any release. */
+  --env-prose-list-item-gap: var(--env-space-4);
+  --env-prose-list-marker-size: var(--env-space-5);
+  --env-prose-list-marker-gap: var(--env-space-3);
   min-inline-size: 0;
   font: var(--env-type-body);
   color: var(--env-color-fg-default);
@@ -36,60 +33,86 @@
 .env-prose strong {
   font-weight: var(--env-font-weight-medium);
 }
-/* Lists: envUI's own markers instead of the browser's discs, quiet beside the text. Each item's
-   text starts one indent in; its marker hangs in that indent, a gap before the text, on the middle
-   of the item's first line. A bullet is a small dot in the muted text color, a ring one level in;
-   a number is the muted text color in tabular figures, a letter one level in and a roman numeral
-   two. Items stand a small step apart and a nested list as far from its item's text, so a list
-   reads as one block in the flow of the text around it. Task lists keep their checkboxes
-   (Markdown.css, RichText.css). The custom properties on .env-prose tune them. */
+/* Lists: each item's marker is a small circle in the selected fill, on the middle of the item's
+   first line, and the item's text starts a gap after it; items stand a full step apart, so a list
+   breaks a wall of text into points. A bullet is a small dot in the circle, a number its number in
+   tabular figures. A nested list steps down quietly: closer items, a smaller marker without the
+   fill, a dot or a letter in the muted text color. Task lists keep their checkboxes
+   (Markdown.css, RichText.css).
+   The mark in a bullet's circle is its ::after, a dot unless --env-prose-list-mark masks it to
+   another shape at --env-prose-list-mark-size, as the catalogue's guidance lists do with a check.
+   Both stay private. */
 .env-prose :where(ul, ol) {
-  padding-inline-start: var(--env-prose-list-indent);
-}
-.env-prose :where(li + li),
-.env-prose :where(li) > :where(ul, ol) {
-  margin-block-start: var(--env-prose-list-item-gap);
-}
-.env-prose :where(ul) {
+  padding-inline-start: 0;
   list-style: none;
 }
-.env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li) {
-  position: relative;
+.env-prose :where(li + li) {
+  margin-block-start: var(--env-prose-list-item-gap);
 }
-.env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::before {
+.env-prose :where(li) > :where(ul, ol) {
+  --env-prose-list-item-gap: var(--env-space-2);
+  --env-prose-list-marker-size: var(--env-space-4);
+  margin-block-start: var(--env-space-2);
+}
+.env-prose :where(ul:not(.contains-task-list, [data-type='taskList']), ol) > :where(li) {
+  position: relative;
+  padding-inline-start: calc(var(--env-prose-list-marker-size) + var(--env-prose-list-marker-gap));
+}
+/* The circle, and an ordered item's number in it. Its line height is the item's, so 1lh is the
+   item's first line. */
+.env-prose :where(ul:not(.contains-task-list, [data-type='taskList']), ol) > :where(li)::before {
   position: absolute;
   inset-block-start: calc((1lh - var(--env-prose-list-marker-size)) / 2);
-  inset-inline-start: calc(
-    -1 * (var(--env-prose-list-marker-gap) + var(--env-prose-list-marker-size))
-  );
-  box-sizing: border-box;
+  inset-inline-start: 0;
+  display: grid;
+  place-items: center;
   inline-size: var(--env-prose-list-marker-size);
   block-size: var(--env-prose-list-marker-size);
-  /* The dot is its border, so forced colors paint it in the text's color, as they do borders. */
-  border: calc(var(--env-prose-list-marker-size) / 2) solid var(--env-prose-list-marker-color);
   border-radius: var(--env-radius-full);
+  background-color: var(--env-color-bg-selected);
+  color: var(--env-color-fg-on-selected);
+  font-size: var(--env-font-size-caption);
+  font-weight: var(--env-font-weight-medium);
+  font-variant-numeric: tabular-nums;
   content: '';
 }
-.env-prose :where(li ul:not(.contains-task-list, [data-type='taskList']) > li)::before {
-  border-width: 1px;
+.env-prose :where(ol > li)::before {
+  content: counter(list-item);
 }
-/* Two-digit numbers need a wider indent, which a list takes once it reaches ten items. */
-.env-prose :where(ol:has(> li:nth-child(10))) {
-  padding-inline-start: calc(var(--env-prose-list-indent) + var(--env-prose-list-marker-gap));
+.env-prose :where(li ol > li)::before {
+  content: counter(list-item, lower-alpha);
 }
-.env-prose :where(ol > li) {
-  /* The number sits outside the item and ends in a space: half the gap, with the space, makes it. */
-  padding-inline-start: calc(var(--env-prose-list-marker-gap) / 2);
+/* A bullet's mark, in the middle of its circle. */
+.env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::after {
+  --env-prose-list-mark-box: var(--env-prose-list-mark-size, 0.375rem);
+  position: absolute;
+  inset-block-start: calc((1lh - var(--env-prose-list-mark-box)) / 2);
+  inset-inline-start: calc(
+    (var(--env-prose-list-marker-size) - var(--env-prose-list-mark-box)) / 2
+  );
+  inline-size: var(--env-prose-list-mark-box);
+  block-size: var(--env-prose-list-mark-box);
+  border-radius: var(--env-radius-full);
+  background-color: var(--env-color-fg-on-selected);
+  mask: var(--env-prose-list-mark, none) center / contain no-repeat;
+  content: '';
 }
-.env-prose :where(ol > li)::marker {
-  color: var(--env-prose-list-marker-color);
-  font-variant-numeric: tabular-nums;
+/* One level in, the marker has no fill, and its dot or letter takes the muted text color. */
+.env-prose :where(li) :where(ul, ol) > :where(li)::before {
+  background-color: transparent;
+  color: var(--env-color-fg-muted);
 }
-.env-prose :where(li ol) {
-  list-style-type: lower-alpha;
+.env-prose :where(li ul:not(.contains-task-list, [data-type='taskList']) > li)::after {
+  --env-prose-list-mark-box: 0.375rem;
+  background-color: var(--env-color-fg-muted);
+  mask: none;
 }
-.env-prose :where(li li ol) {
-  list-style-type: lower-roman;
+/* Forced colors paint fills in the canvas color: the mark takes the text's color instead. */
+@media (forced-colors: active) {
+  .env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::after {
+    background-color: CanvasText;
+    forced-color-adjust: none;
+  }
 }
 .env-prose blockquote {
   padding-inline-start: var(--env-space-4);

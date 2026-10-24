@@ -10,7 +10,7 @@ import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } f
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from './OptionLegend';
 import { optionPieces, type OptionTable } from '../../../../scripts/SiteContent.mjs';
-import { PictureMark } from './PictureMark';
+import { InteractiveMark } from './InteractiveMark';
 import { Specimen } from './Specimen';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -69,7 +69,7 @@ export function VerdictFigure({
           ) : (
             <ExampleRender page={page} name={name ?? ''} />
           )}
-          {open && <PictureMark />}
+          <InteractiveMark enabled={!open} />
         </Column>
         <div className="docs-verdict-bar env-connected-row" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}

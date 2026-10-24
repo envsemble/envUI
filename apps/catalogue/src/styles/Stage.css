@@ -323,23 +323,22 @@
   animation: none;
 }
 
-/* The mark of a figure that is only a picture (PictureMark.tsx), such as an anatomy figure or an
-   example shown open: a small image icon in the muted text color at the stage's top end, inside
-   its padding, so it never covers what the stage shows. A live example has none. */
+/* The mark of a stage whose example can be used (InteractiveMark.tsx), such as a live example: a
+   small touch icon in the muted text color at the stage's bottom end, inside its padding, so it
+   never covers what the stage shows. A picture, such as an anatomy figure, has none. */
 :is(
   .docs-live-example,
   .docs-verdict-stage,
   .docs-specimen-grid,
   .docs-matrix-scroll,
-  .docs-foundation-stage,
-  .docs-dev-mode-frame
-):has(> .docs-picture-mark) {
+  .docs-foundation-stage
+):has(> .docs-interactive-mark) {
   position: relative;
 }
 
-.docs-picture-mark {
+.docs-interactive-mark {
   position: absolute;
-  inset-block-start: var(--env-space-2);
+  inset-block-end: var(--env-space-2);
   inset-inline-end: var(--env-space-2);
   display: grid;
   place-items: center;
@@ -349,18 +348,12 @@
   color: var(--env-color-fg-muted);
 }
 
-/* An open sheet at the end side covers that corner: the mark takes the start corner, on the scrim. */
-:has(> .docs-open-example .env-sheet-popup:is([data-side='end'], [data-side='right']))
-  > .docs-picture-mark {
-  inset-inline: var(--env-space-2) auto;
-}
-
-.docs-picture-mark > svg {
+.docs-interactive-mark > svg {
   inline-size: var(--env-icon-size-sm);
   block-size: var(--env-icon-size-sm);
 }
 
-.docs-picture-mark:focus-visible {
+.docs-interactive-mark:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 1px;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
-import { Documentation } from '../pages/Documentation';
+import { Documentation, GuidanceLists } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
 import { FigureSection } from './Figures';
@@ -232,13 +232,16 @@ export function TemplateContent({
   provides?: boolean;
   related?: boolean;
 }) {
+  // A component's or pattern's page is guidance: its lists are check lists.
   return (
-    <Sections
-      reference={document}
-      sections={document.sections ?? []}
-      provides={provides}
-      related={related}
-    />
+    <GuidanceLists value>
+      <Sections
+        reference={document}
+        sections={document.sections ?? []}
+        provides={provides}
+        related={related}
+      />
+    </GuidanceLists>
   );
 }
 

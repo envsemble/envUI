@@ -6,7 +6,6 @@ import { ExampleCode, ExampleRender } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
 import { legendName } from '../../../../scripts/SiteContent.mjs';
-import { PictureMark } from './PictureMark';
 import { OptionLegend } from './OptionLegend';
 import type { OptionTable } from '../../../../scripts/SiteContent.mjs';
 
@@ -468,7 +467,6 @@ function AnatomyStage({
           {label ?? number}
         </span>
       ))}
-      <PictureMark />
     </Theme>
   );
 }

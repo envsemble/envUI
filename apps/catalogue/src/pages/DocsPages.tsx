@@ -13,7 +13,7 @@ import { PropsTables } from '../template/PropsTables';
 import { Related } from '../template/Related';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import type { Documentation as Document, Reference } from '../Reference';
-import { Documentation } from './Documentation';
+import { Documentation, GuidanceLists } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
 import { ReleaseNotes } from './ReleaseNotes';
@@ -226,8 +226,11 @@ export function FoundationGuidePage({ page }: { page: SitePage }) {
         description={page.summary}
         meta={sitePage && <SiteLink path={sitePage.path} />}
       />
+      {/* A foundation's written guidance: its lists are check lists. */}
       <Column gap={7} className="docs-article">
-        <Documentation document={document} />
+        <GuidanceLists value>
+          <Documentation document={document} />
+        </GuidanceLists>
       </Column>
     </>
   );

@@ -290,8 +290,30 @@ test('a component page shows plain sections, equal cells and the parts of its an
     };
   });
   expect(corners).toEqual({ outer: true, inner: true, larger: true });
-  // When to use is a plain list; Related, at the end, has a tile for each alternative, of one
-  // size, each a picture of it, inert and fitted to its stage, once the section nears the viewport.
+  // When to use is a check list, a guidance list, where a component named at an item's end
+  // follows it after a muted dot: the Button family's own page, so not a link.
+  const useWhen = page.locator('.docs-when .docs-guidance li');
+  await expect(useWhen.nth(2)).toHaveText(
+    'A familiar action as an icon alone, in a dense place · IconButton',
+  );
+  await expect(page.locator('.docs-when .docs-list-name')).toHaveText([
+    'IconButton',
+    'ConfirmButton',
+    'CopyButton',
+    'ButtonGroup',
+  ]);
+  await expect(page.locator('.docs-when a')).toHaveCount(0);
+  // A live example carries the touch mark, named as its tooltip says; a picture, such as the
+  // anatomy figure, has none.
+  await expect(
+    page
+      .locator('[data-section="overview"] .docs-live-example')
+      .first()
+      .getByRole('img', { name: 'Interactive: try it' }),
+  ).toBeVisible();
+  await expect(page.locator('.docs-anatomy .docs-interactive-mark')).toHaveCount(0);
+  // Related, at the end, has a tile for each alternative, of one size, each a picture of it,
+  // inert and fitted to its stage, once the section nears the viewport.
   await expect(page.locator('[data-section="usage"] .docs-related-tile')).toHaveCount(0);
   const tiles = page.locator('[data-section="related"] .docs-related-tile');
   await expect(tiles.locator('.docs-related-name')).toHaveText([
