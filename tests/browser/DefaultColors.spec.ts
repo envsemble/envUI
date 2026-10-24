@@ -66,7 +66,11 @@ const states = {
   focus: ['focus', 'focus-visible', 'focus-within'],
 } as const;
 
-/** The colors an element and its parts paint, as one line. */
+/**
+ * The colors an element and its parts paint, as one line. A slider's native range input is left
+ * out: Base UI hides it visually, so it paints nothing, and its colors are the browser's own, which
+ * differ by platform (Chromium colors an enabled range input #101010 on Windows, #9d968e on Linux).
+ */
 function paint(element: Element) {
   const properties = [
     'background-color',
@@ -87,7 +91,10 @@ function paint(element: Element) {
     describe(element),
     describe(element, '::before'),
     describe(element, '::after'),
-    ...[...element.querySelectorAll('*')].slice(0, 40).map((node) => describe(node)),
+    ...[...element.querySelectorAll('*')]
+      .filter((node) => !node.matches('input[type="range"]'))
+      .slice(0, 40)
+      .map((node) => describe(node)),
   ].join('\n');
 }
 
