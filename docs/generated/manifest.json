@@ -2125,7 +2125,7 @@
         {
           "name": "ConfirmInPlace",
           "title": "Confirm in place",
-          "description": "ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.",
+          "description": "ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it. Its armed label is short and has no question mark: the verb, or the verb and object, \"Remove Sam\".",
           "file": "docs/examples/button/ConfirmInPlace.tsx"
         },
         {
@@ -15540,7 +15540,7 @@
         {
           "name": "ConfirmInPlace",
           "title": "Confirm in place",
-          "description": "The first press names the consequence in the button, \"Remove file?\"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.",
+          "description": "The first press names the consequence in the button, \"Remove file\"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.",
           "file": "docs/examples/destructive-actions/ConfirmInPlace.tsx"
         },
         {
@@ -18948,7 +18948,7 @@
           "name": "confirmLabel",
           "type": "ReactNode",
           "required": true,
-          "description": "The label while armed, naming what a second press does, such as “Remove Morgan?”."
+          "description": "The label while armed: what a second press does, short and without a question mark, such as “Remove Morgan”."
         },
         {
           "name": "onConfirm",

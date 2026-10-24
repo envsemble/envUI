@@ -144,7 +144,7 @@ export function AdoptionFixture() {
           </div>
           <Spinner label="Refreshing seats" />
           <ConfirmButton
-            confirmLabel="Remove Morgan?"
+            confirmLabel="Remove Morgan"
             armedDuration={800}
             onConfirm={() => setConfirmed((count) => count + 1)}
             data-testid="confirm-button"
@@ -154,7 +154,7 @@ export function AdoptionFixture() {
           <ConfirmButton
             icon={<Delete />}
             aria-label="Remove Morgan"
-            confirmLabel="Remove Morgan?"
+            confirmLabel="Remove"
             armedDuration={800}
             onConfirm={() => setConfirmed((count) => count + 1)}
             data-testid="confirm-icon-button"

@@ -405,7 +405,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
-      <ConfirmButton variant="ghost" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
+      <ConfirmButton variant="ghost" icon={<Home />} aria-label="Remove" confirmLabel="Remove" onConfirm={() => undefined} />
       <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
       <Column gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Column>
       <Row wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Row>
