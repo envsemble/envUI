@@ -79,13 +79,16 @@
   border-color: var(--env-select-trigger-border-pressed);
 }
 
+/* The chevron points down, and up while the list is open. It flips over its horizontal axis rather
+   than turning half a circle, which swings it through pointing sideways, as a submenu's chevron
+   does, in a frame or two: the list's trigger would twitch as it opens and closes. */
 .env-select-trigger .env-select-icon {
   width: var(--env-icon-size-md);
   height: var(--env-icon-size-md);
-  transform: rotate(90deg);
+  transform: rotate(90deg) scaleX(1);
 }
 .env-select-trigger[aria-expanded='true'] .env-select-icon {
-  transform: rotate(-90deg);
+  transform: rotate(90deg) scaleX(-1);
 }
 /* Small triggers keep the chevron at the control icon size. */
 .env-select-trigger[data-size='sm'] .env-select-icon {
@@ -141,7 +144,7 @@
   }
 }
 
-/* Motion: the trigger's chevron turns. Movement only without a reduced-motion preference. */
+/* Motion: the trigger's chevron flips. Movement only without a reduced-motion preference. */
 @media (prefers-reduced-motion: no-preference) {
   .env-select-trigger .env-select-icon {
     transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);

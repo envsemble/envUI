@@ -1,4 +1,5 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
+import { chevronTips, expectVerticalFlip, slowChevron } from './Chevron';
 import { fixtureUrl } from './Servers';
 
 const comboboxFixture = `${fixtureUrl}/?fixture=combobox`;
@@ -143,6 +144,21 @@ test(
     await expect(owner).not.toHaveValue('X');
   },
 );
+
+test('the chevron flips as the popup opens and closes, never pointing sideways', async ({
+  page,
+}) => {
+  const owner = field(page, 'Owner light');
+  const chevron = wellOf(owner).locator('.env-combobox-trigger');
+  const icon = chevron.locator('.env-icon');
+  await slowChevron(icon);
+  await chevron.click();
+  await expect(page.getByRole('listbox')).toBeVisible();
+  expectVerticalFlip(await chevronTips(icon), 1);
+  await chevron.click();
+  await expect(page.getByRole('listbox')).toHaveCount(0);
+  expectVerticalFlip(await chevronTips(icon), -1);
+});
 
 test('several options show as chips that Backspace, the arrow keys and their buttons remove', async ({
   page,
