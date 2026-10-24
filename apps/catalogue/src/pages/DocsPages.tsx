@@ -32,7 +32,7 @@ const tokenReference = lazyPart(
   'src/pages/TokenReference.tsx',
 );
 
-/** The Docs' home: what they hold, each page of a group in a short list. */
+/** The Docs' home: what they are, said once in its summary, and each group's pages in a short list. */
 export function DocsHome({ page }: { page: SitePage }) {
   const groups = new Map<string, SitePage[]>();
   for (const entry of pagesOf('docs'))
@@ -41,13 +41,6 @@ export function DocsHome({ page }: { page: SitePage }) {
     <>
       <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
       <Column gap={7} className="docs-article">
-        <Text>
-          The Docs are the developer reference for envUI: how to install and set it up, migrate an
-          interface and upgrade with the codemods, the design tokens, dev mode, the tools for coding
-          agents, and how to use every component and pattern in code, with their props, part names
-          and changelog. The <Link href={routeHref('overview')}>Site</Link> shows what each
-          component looks like and when to use it.
-        </Text>
         {[...groups].map(([group, entries]) => (
           <Column key={group} render={<section />} gap={3}>
             <Text render={<h2 />} variant="title">
