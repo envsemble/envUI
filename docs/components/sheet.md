@@ -58,7 +58,7 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 
 ### Resizable
 
-With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width. Its width is then a number of rem: a CSS length as `width`, such as `min(30rem, 90%)`, is ignored, with a warning while developing, and the sheet starts at `defaultWidth`.
+With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, with the same handle as between [Panes](panes.md): a grip of three dots that stays at the middle of the sheet, never a line, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width. Its width is then a number of rem: a CSS length as `width`, such as `min(30rem, 90%)`, is ignored, with a warning while developing, and the sheet starts at `defaultWidth`.
 
 ```tsx example=ResizableDetails
 

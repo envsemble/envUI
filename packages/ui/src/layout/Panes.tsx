@@ -600,6 +600,7 @@ function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
       }
       label={label ?? messages.resize}
       aria-controls={resizedId}
+      grip
       className={classNames('env-panes-divider', className)}
       onDoubleClick={(event) => {
         onDoubleClick?.(event);

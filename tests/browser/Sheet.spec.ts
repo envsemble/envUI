@@ -249,7 +249,7 @@ test.describe('Sheet resizable', () => {
     expect(handleBox.x).toBeCloseTo(sheetBox.x + 1, 0);
     expect(handleBox.height).toBeGreaterThanOrEqual(sheetBox.height - 1);
 
-    // At the end edge, it grows as its start edge moves toward the start.
+    // At the end edge, it grows as its start edge moves toward the start. Keyboard focus rings it.
     await handle.focus();
     await page.keyboard.press('ArrowLeft');
     await expect(handle).toHaveAttribute('aria-valuetext', '25 rem');
@@ -278,11 +278,26 @@ test.describe('Sheet resizable', () => {
     async ({ page }) => {
       await page.setViewportSize({ width: 640, height: 600 });
       await page.goto(sheets);
+    // The same handle as between Panes, as wide as their gap: a grip of three dots, never a line,
+    // which sticks to the middle of the sheet as its content scrolls.
+    const grip = await handle.evaluate((element) => {
+      const after = getComputedStyle(element, '::after');
+      return {
+        grip: element.hasAttribute('data-grip'),
+        dots: after.backgroundImage.match(/radial-gradient/g)?.length,
+        position: after.position,
+        length: parseFloat(after.height),
+      };
+    });
+    expect(grip).toMatchObject({ grip: true, dots: 3, position: 'sticky' });
+    expect(grip.length).toBeLessThan(20);
+    expect(handleBox.width).toBeCloseTo(16, 0);
       const sheet = await open(page, 'Open kept width', 'Kept width');
       const handle = sheet.getByRole('separator');
       // A start sheet's handle is on its end edge; it starts at the width the application keeps.
       const sheetBox = (await sheet.boundingBox())!;
       expect(sheetBox.x).toBeCloseTo(0, 0);
+    await expect(handle).toHaveCSS('outline-style', 'solid');
       expect(sheetBox.width).toBeCloseTo(30 * 16, 0);
       const handleBox = (await handle.boundingBox())!;
       expect(handleBox.x + handleBox.width).toBeCloseTo(sheetBox.width - 1, 0);

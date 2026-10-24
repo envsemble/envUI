@@ -98,10 +98,12 @@
 }
 /* resizable: a side sheet as wide as --env-sheet-width, which the component sets, at every window
    width, but never wider than the window, with an edge on its inner side. Its content runs the
-   sheet's full height and holds the resize handle (ResizeHandle.css), which reaches out over the
-   padding to the inner edge and down the whole sheet, so it scrolls along with the content and
-   stays as tall as the sheet. The handle's line is on that edge. Under a coarse pointer it is
-   wider, as wide as the padding, a touch target that leaves the content alone. */
+   sheet's full height and holds the resize handle (ResizeHandle.css), the same handle as between
+   Panes: as wide as their gap, inside the inner edge over the padding, a grip at its middle and
+   never a line. It runs down the whole sheet and scrolls along with the content, so it stays as
+   tall as the sheet, and its grip sticks to the middle of the sheet's height as the content
+   scrolls. Under a coarse pointer it is as wide as the padding, a touch target that leaves the
+   content alone. */
 .env-sheet-popup[data-resizable]:is([data-side='start'], [data-side='end']) {
   --env-sheet-padding-inline: max(
     var(--env-space-5),
@@ -125,16 +127,18 @@
   min-block-size: 100%;
 }
 .env-sheet-popup[data-resizable] .env-sheet-resize-handle {
+  --env-resize-handle-size: var(--env-space-4);
   position: absolute;
   inset-block: calc(-1 * var(--env-sheet-padding-block-start))
     calc(-1 * var(--env-sheet-padding-block-end));
 }
+.env-sheet-popup[data-resizable] .env-sheet-resize-handle::after {
+  position: sticky;
+}
 .env-sheet-popup[data-resizable][data-side='end'] .env-sheet-resize-handle {
-  --env-resize-handle-line-start: 0rem;
   inset-inline-start: calc(-1 * var(--env-sheet-padding-inline));
 }
 .env-sheet-popup[data-resizable][data-side='start'] .env-sheet-resize-handle {
-  --env-resize-handle-line-start: calc(100% - 2 * var(--env-control-border-width));
   inset-inline-end: calc(-1 * var(--env-sheet-padding-inline));
 }
 @media (pointer: coarse) {

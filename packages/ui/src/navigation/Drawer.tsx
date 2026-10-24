@@ -224,6 +224,7 @@ export function Drawer({
         <ResizeHandle
           {...resize.handleProps}
           label={resizeLabel ?? messages.resize}
+          grip
           className="env-drawer-resize-handle"
         />
       )}

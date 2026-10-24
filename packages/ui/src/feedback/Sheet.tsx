@@ -380,7 +380,7 @@ export function Sheet({
                   {resizable && (
                     // On the content, which runs the sheet's full height and scrolls with it, so
                     // the handle stays as tall as the sheet; the handle reaches out to the edge.
-                    // A drag on it resizes rather than swipes the sheet closed.
+                    // A drag on it resizes rather than swipes the sheet closed, by touch too.
                     <ResizeHandle
                       {...resize.handleProps}
                       label={resizeLabel ?? messages.resize}
@@ -392,6 +392,7 @@ export function Sheet({
               </BaseDrawer.Popup>
             </BaseDrawer.Viewport>
           </ResetControlDefaults>
+                      grip
         </OverlayTheme>
       </BaseDrawer.Portal>
     </BaseDrawer.Root>
