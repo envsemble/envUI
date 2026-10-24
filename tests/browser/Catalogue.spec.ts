@@ -517,8 +517,21 @@ test("a pattern's guide lists what it needs, and Field's page in the Docs ends w
   page,
 }) => {
   // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
-  // under Accessibility; the address of the page that once listed them all opens the first guide.
+  // under Accessibility. The address of the page that once listed them all opens the Docs' home,
+  // whose Patterns list links every pattern's guide.
   await page.goto(`${catalogueUrl}/docs/patterns`);
+  await expect(page).toHaveURL(/\/docs$/);
+  const guides = page
+    .locator('.docs-article section', {
+      has: page.getByRole('heading', { name: 'Patterns', exact: true }),
+    })
+    .getByRole('link');
+  await expect(guides).toHaveText(
+    allPages
+      .filter((entry) => entry.area === 'docs' && entry.section === 'Patterns')
+      .map((entry) => entry.title),
+  );
+  await guides.getByText('Form layout and validation', { exact: true }).click();
   await expect(page).toHaveURL(/\/docs\/patterns\/forms$/);
   const provides = page.getByRole('region', { name: 'Accessibility', exact: true });
   await expect(provides.getByRole('heading', { level: 3 })).toHaveText([

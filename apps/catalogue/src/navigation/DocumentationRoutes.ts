@@ -443,9 +443,9 @@ export function normalizeRoute(route: string): string {
   // A destination's own address opens its first page.
   if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
   if (originalPath === 'patterns') return `${sectionHome('Patterns').path}${rest()}`;
-  // What every pattern needs was one page in the Docs; each pattern's guide says it now.
-  if (originalPath === 'docs/patterns')
-    return `${patternGuideRoute(sectionHome('Patterns').document!.id)}${rest()}`;
+  // What every pattern needs was one page in the Docs; each pattern's guide says it now, and the
+  // Docs' home lists the guides under Patterns.
+  if (originalPath === 'docs/patterns') return `${docsRoute}${rest()}`;
   if (originalPath === 'foundations/tokens') return `docs/tokens${rest()}`;
   // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
   if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest()}`;
