@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 let errors: string[] = [];
@@ -60,10 +60,8 @@ test('the keyboard moves the value by steps, large steps and to the ends', async
   await page.keyboard.press('Home');
   await expect(state).toHaveText('0');
   await expect(page.getByTestId('commits-light')).toContainText('0');
-  // Keyboard focus rings the whole field and shows the handle in full, even at 0 under the label: it
-  // fades there only while the pointer presses the slider.
+  // Keyboard focus rings the whole field.
   await expect(scope.locator('.env-slider-control').first()).toHaveCSS('outline-style', 'solid');
-  await expect(scope.locator('.env-slider-thumb').first()).toHaveCSS('opacity', '1');
 
   // Steps follow step and the range; the large step is a tenth of the range.
   const scale = scope.getByRole('slider', { name: 'Scale' });
@@ -228,42 +226,13 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
       Number.parseFloat(getComputedStyle(e, '::before').inlineSize) * -1,
   );
   expect(Math.abs(fillStart)).toBeLessThanOrEqual(1);
-  // At rest the handle and the ticks are out of sight; under the pointer the handle shows, and the
-  // ticks only while the pointer presses the slider, which the next test covers.
-  const thumb = slider.locator('.env-slider-thumb');
-  const ticks = () =>
-    slider.locator('.env-slider-track').evaluate((e) => getComputedStyle(e, '::after').opacity);
-  await page.mouse.move(0, 0);
-  await expect(thumb).toHaveCSS('opacity', '0');
-  expect(await ticks()).toBe('0');
-  await control.hover();
-  await expect(thumb).toHaveCSS('opacity', '1');
-  expect(await ticks()).toBe('0');
-  // The text never dims. Slider marks where the handle and the fill's end pass under the label or the
-  // value; at rest and with focus they ignore it: the fill ends crisply and the handle shows in full.
-  // Only while pressed do they fade there, which the next test covers.
-  const heading = slider.locator('.env-slider-heading');
-  const veil = () =>
-    control.evaluate((e) => getComputedStyle(e).getPropertyValue('--env-slider-veil').trim());
-  const fillEnd = () => fill.evaluate((e) => getComputedStyle(e, '::after').opacity);
-  expect(await veil()).toBe('0');
-  expect(await fillEnd()).toBe('0');
-  const input = slider.getByRole('slider');
-  await input.focus();
-  await page.keyboard.press('Home');
-  await expect.poll(veil).toBe('1');
-  await expect(thumb).toHaveCSS('opacity', '1');
-  expect(await fillEnd()).toBe('0');
-  await page.keyboard.press('End');
-  await expect.poll(veil).toBe('1');
-  await page.keyboard.press('PageDown');
-  await page.keyboard.press('PageDown');
-  await page.keyboard.press('PageDown');
-  await page.keyboard.press('PageDown');
-  await page.keyboard.press('PageDown');
-  await expect.poll(veil).toBe('0');
-  await expect(thumb).toHaveCSS('opacity', '1');
-  for (const part of [heading, slider.locator('.env-slider-label'), value]) {
+  // The text never dims: the handle and the fill's end fade under it instead, as the tests of the
+  // states below show.
+  for (const part of [
+    slider.locator('.env-slider-heading'),
+    slider.locator('.env-slider-label'),
+    value,
+  ]) {
     await expect(part).toHaveCSS('opacity', '1');
     await expect(part).toHaveCSS('mask-image', 'none');
   }
@@ -271,69 +240,223 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   await expect(slider).toHaveCSS('--env-slider-ticks', '10');
 });
 
-test(
-  'the ticks show only while the pointer presses the slider, never stuck',
-  { tag: '@engines' },
-  async ({ page }) => {
-    const scope = page.getByTestId('sliders-light');
-    const slider = scope.locator('.env-slider').first();
-    const control = slider.locator('.env-slider-control');
-    const ticks = () =>
-      slider.locator('.env-slider-track').evaluate((e) => getComputedStyle(e, '::after').opacity);
-    const box = (await control.boundingBox())!;
-    const y = box.y + box.height / 2;
-    // At rest and under a resting pointer, none.
-    await page.mouse.move(0, 0);
-    expect(await ticks()).toBe('0');
-    await page.mouse.move(box.x + box.width * 0.5, y);
-    await expect(slider.locator('.env-slider-thumb')).toHaveCSS('opacity', '1');
-    expect(await ticks()).toBe('0');
-    // Pressed and dragged, they show, until the pointer lets go, here outside the slider.
-    await page.mouse.down();
-    await expect(control).toHaveAttribute('data-pressed', '');
-    await expect.poll(ticks).toBe('0.35');
-    await page.mouse.move(box.x + box.width * 0.8, y, { steps: 4 });
-    await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 4, { steps: 2 });
-    expect(await ticks()).toBe('0.35');
-    await page.mouse.up();
-    await expect(control).not.toHaveAttribute('data-pressed');
-    await expect.poll(ticks).toBe('0');
-    // Held at the start, under the label, the handle dims and the fill's end fades; let go, the fill
-    // ends crisply and the handle shows in full, though it still sits under the label.
-    const thumb = slider.locator('.env-slider-thumb');
-    const fillEnd = () =>
+/** The parts of the first slider whose look changes with its state, read from computed styles. */
+function stateOf(page: Page) {
+  const slider = page.getByTestId('sliders-light').locator('.env-slider').first();
+  const control = slider.locator('.env-slider-control');
+  return {
+    slider,
+    control,
+    input: slider.getByRole('slider'),
+    thumb: slider.locator('.env-slider-thumb'),
+    ticks: () =>
+      slider.locator('.env-slider-track').evaluate((e) => getComputedStyle(e, '::after').opacity),
+    // The fade at the fill's end: a gradient over its last stretch, out of sight at 0.
+    fillEnd: () =>
       slider
         .locator('.env-slider-indicator')
-        .evaluate((e) => getComputedStyle(e, '::after').opacity);
-    await page.mouse.move(box.x + 2, y);
+        .evaluate((e) => getComputedStyle(e, '::after').opacity),
+    veil: () =>
+      control.evaluate((e) => getComputedStyle(e).getPropertyValue('--env-slider-veil').trim()),
+  };
+}
+
+/** Expects the slider at rest: its text and fill only, with no handle, ticks or fade. */
+async function expectRest(state: ReturnType<typeof stateOf>) {
+  await expect(state.control).not.toHaveAttribute('data-handle');
+  await expect(state.control).not.toHaveAttribute('data-ruler');
+  await expect(state.thumb).toHaveCSS('opacity', '0');
+  await expect.poll(state.ticks).toBe('0');
+  await expect.poll(state.fillEnd).toBe('0');
+}
+
+test('at rest a slider shows its text and fill only, with no handle, ticks or fade', async ({
+  page,
+}) => {
+  const state = stateOf(page);
+  await page.mouse.move(0, 0);
+  await expectRest(state);
+  // Even where the fill ends under the label, it ends crisply.
+  await state.input.focus();
+  await page.keyboard.press('Home');
+  await state.input.blur();
+  await expect.poll(state.veil).toBe('1');
+  await expectRest(state);
+});
+
+test(
+  'hover shows the handle and the ticks, the handle faded where it sits behind the label',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const state = stateOf(page);
+    const box = (await state.control.boundingBox())!;
+    const y = box.y + box.height / 2;
+    // At 40%, clear of the text: the handle in full and the fill's end crisp.
+    await page.mouse.move(box.x + box.width * 0.5, y);
+    await expect(state.control).toHaveAttribute('data-handle', '');
+    await expect(state.control).toHaveAttribute('data-ruler', '');
+    await expect.poll(state.veil).toBe('0');
+    await expect(state.thumb).toHaveCSS('opacity', '1');
+    await expect.poll(state.ticks).toBe('0.35');
+    await expect.poll(state.fillEnd).toBe('0');
+    // Leave, move the value under the label with the keyboard, and hover again: the handle and the
+    // fill's end fade there, while the text stays at full strength.
+    await page.mouse.move(0, 0);
+    await state.input.focus();
+    await page.keyboard.press('Home');
+    await state.input.blur();
+    await page.mouse.move(box.x + box.width * 0.5, y);
+    await expect.poll(state.veil).toBe('1');
+    await expect(state.thumb).toHaveCSS('opacity', '0.25');
+    await expect.poll(state.fillEnd).toBe('1');
+    await expect.poll(state.ticks).toBe('0.35');
+    await expect(state.slider.locator('.env-slider-label')).toHaveCSS('opacity', '1');
+  },
+);
+
+test('the ticks fade under the label and the value, as the handle does', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  const state = stateOf(page);
+  const box = (await state.control.boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.5, box.y + box.height / 2);
+  await expect.poll(state.ticks).toBe('0.35');
+  // Each tick is faint, at a quarter, where it sits within half a line of the label or the value,
+  // and in full between them: read from the measured clear stretch the mask keeps whole.
+  const ticks = await state.slider.evaluate((root) => {
+    const track = root.querySelector('.env-slider-track')!.getBoundingClientRect();
+    const control = root.querySelector<HTMLElement>('.env-slider-control')!;
+    const style = getComputedStyle(control);
+    const clearStart = Number.parseFloat(style.getPropertyValue('--env-slider-clear-start'));
+    const clearEnd = Number.parseFloat(style.getPropertyValue('--env-slider-clear-end'));
+    const parts = Number(getComputedStyle(root).getPropertyValue('--env-slider-ticks'));
+    const texts = [...root.querySelectorAll('.env-slider-label, .env-slider-value')].map((text) => {
+      const at = text.getBoundingClientRect();
+      const margin = Number.parseFloat(getComputedStyle(text).fontSize) / 2;
+      return [at.left - margin - track.left, at.right + margin - track.left];
+    });
+    const mask = getComputedStyle(root.querySelector('.env-slider-track')!, '::after').maskImage;
+    return {
+      mask: mask.startsWith('linear-gradient'),
+      each: Array.from({ length: parts - 1 }, (_, index) => {
+        const at = (track.width * (index + 1)) / parts;
+        return {
+          underText: texts.some(([start, end]) => at >= start! && at <= end!),
+          faint: at < clearStart || at > clearEnd,
+        };
+      }),
+    };
+  });
+  expect(ticks.mask).toBe(true);
+  for (const tick of ticks.each) expect(tick.faint).toBe(tick.underText);
+  expect(ticks.each.some((tick) => tick.faint)).toBe(true);
+  expect(ticks.each.some((tick) => !tick.faint)).toBe(true);
+});
+
+test(
+  'a click moves the value to the pointer and leaves the slider at rest under it',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const state = stateOf(page);
+    const box = (await state.slider.locator('.env-slider-track').boundingBox())!;
+    await page.mouse.click(box.x + box.width * 0.7, box.y + box.height / 2);
+    await expect(state.input).toHaveAttribute('aria-valuenow', '70');
+    await expectRest(state);
+  },
+);
+
+test(
+  'after a drag and release the handle and ticks go until the pointer leaves and comes back',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const state = stateOf(page);
+    const box = (await state.control.boundingBox())!;
+    const y = box.y + box.height / 2;
+    await page.mouse.move(box.x + box.width * 0.5, y);
     await page.mouse.down();
-    await expect(control).toHaveAttribute('data-pressed', '');
-    await expect
-      .poll(() =>
-        control.evaluate((e) => getComputedStyle(e).getPropertyValue('--env-slider-veil').trim()),
-      )
-      .toBe('1');
-    await expect(thumb).toHaveCSS('opacity', '0.25');
-    await expect.poll(fillEnd).toBe('1');
+    await expect(state.control).toHaveAttribute('data-pressed', '');
+    // Dragged under the label, the handle and the fill's end fade there, as on hover.
+    await page.mouse.move(box.x + 2, y, { steps: 4 });
+    await expect(state.input).toHaveAttribute('aria-valuenow', '0');
+    await expect(state.thumb).toHaveCSS('opacity', '0.25');
+    await expect.poll(state.ticks).toBe('0.35');
+    await expect.poll(state.fillEnd).toBe('1');
+    await page.mouse.move(box.x + box.width * 0.6, y, { steps: 4 });
+    await expect(state.thumb).toHaveCSS('opacity', '1');
+    // Released with the pointer still over the slider: back at rest, and moving over it keeps it so.
     await page.mouse.up();
-    await expect(control).not.toHaveAttribute('data-pressed');
-    await expect(thumb).toHaveCSS('opacity', '1');
-    await expect.poll(fillEnd).toBe('0');
-    // The slider keeps focus after the release, and the keyboard brings no ticks back.
-    await expect(slider.getByRole('slider')).toBeFocused();
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('PageDown');
-    expect(await ticks()).toBe('0');
-    await expect(control).not.toHaveAttribute('data-pressed');
+    await expect(state.control).not.toHaveAttribute('data-pressed');
+    await expectRest(state);
+    await page.mouse.move(box.x + box.width * 0.3, y, { steps: 3 });
+    await expectRest(state);
+    // The slider keeps focus after the release, which a pointer gave it, so no handle.
+    await expect(state.input).toBeFocused();
+    // Left and hovered again, they show again.
+    await page.mouse.move(box.x + box.width * 0.3, box.y - 40);
+    await page.mouse.move(box.x + box.width * 0.3, y);
+    await expect(state.control).toHaveAttribute('data-handle', '');
+    await expect(state.thumb).toHaveCSS('opacity', '1');
+    await expect.poll(state.ticks).toBe('0.35');
+    // Released outside the slider, it is at rest, and coming back over it shows them again.
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 4, { steps: 3 });
+    await expect.poll(state.ticks).toBe('0.35');
+    await page.mouse.up();
+    await expectRest(state);
+    await page.mouse.move(box.x + box.width * 0.5, y, { steps: 3 });
+    await expect(state.control).toHaveAttribute('data-ruler', '');
     // A cancelled pointer and a lost capture end the press as a release does.
     for (const end of ['pointercancel', 'lostpointercapture']) {
+      await page.mouse.move(box.x + box.width * 0.5, box.y - 40);
       await page.mouse.move(box.x + box.width * 0.5, y);
       await page.mouse.down();
-      await expect(control).toHaveAttribute('data-pressed', '');
-      await control.dispatchEvent(end, { pointerId: 1, bubbles: true });
-      await expect(control).not.toHaveAttribute('data-pressed');
-      await expect.poll(ticks).toBe('0');
+      await expect(state.control).toHaveAttribute('data-pressed', '');
+      await state.control.dispatchEvent(end, { pointerId: 1, bubbles: true });
+      await expect(state.control).not.toHaveAttribute('data-pressed');
+      await expectRest(state);
       await page.mouse.up();
     }
   },
 );
+
+test(
+  'keyboard focus shows the handle with the focus ring, faded behind text, and no ticks',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const state = stateOf(page);
+    await page.mouse.move(0, 0);
+    // Focused as Tab would, which WebKit, like Safari, keeps from range inputs by default.
+    await state.input.focus();
+    await expect(state.control).toHaveCSS('outline-style', 'solid');
+    await expect(state.control).toHaveAttribute('data-handle', '');
+    await expect(state.control).not.toHaveAttribute('data-ruler');
+    await expect(state.thumb).toHaveCSS('opacity', '1');
+    await page.keyboard.press('Home');
+    await expect(state.input).toHaveAttribute('aria-valuenow', '0');
+    await expect(state.thumb).toHaveCSS('opacity', '0.25');
+    await expect.poll(state.fillEnd).toBe('1');
+    expect(await state.ticks()).toBe('0');
+    // Leaving the slider puts it back at rest.
+    await state.input.blur();
+    await expectRest(state);
+  },
+);
+
+test('a finger shows the handle and the ticks only while it is down', async ({ browser }) => {
+  const context = await browser.newContext({
+    hasTouch: true,
+    viewport: { width: 390, height: 900 },
+  });
+  const page = await context.newPage();
+  await page.goto(`${fixtureUrl}/?fixture=sliders`);
+  const state = stateOf(page);
+  const box = (await state.control.boundingBox())!;
+  const point = { x: Math.round(box.x + box.width * 0.6), y: Math.round(box.y + box.height / 2) };
+  const touch = await context.newCDPSession(page);
+  await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+  await expect(state.control).toHaveAttribute('data-handle', '');
+  await expect(state.control).toHaveAttribute('data-ruler', '');
+  await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await expect(state.control).not.toHaveAttribute('data-pressed');
+  await expectRest(state);
+  await context.close();
+});

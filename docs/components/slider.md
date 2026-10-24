@@ -32,11 +32,19 @@ components:
 
 ## Overview
 
-Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys. A thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it, fading out when it lets go. The label and the value always keep their full strength: while the slider is held, where the handle and the end of the fill pass under them, those fade instead. Once it is let go, the fill simply ends and the handle shows in full, even under the text.
+Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. At rest that is all it shows, and the fill ends crisply.
 
 ```tsx example=LayerOpacity
 
 ```
+
+### Under the pointer
+
+When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps. Where the handle, the end of the fill and the ticks pass under the label or the value, they fade, so the text keeps its full strength. Pressing anywhere moves the value there, and dragging carries it along. Once the slider is let go, the handle and the ticks go away, even with the pointer still over it, and come back when the pointer leaves and returns. On a touch screen they show only while the finger is down.
+
+### With the keyboard
+
+Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded under the text in the same way. The arrow keys move the value; the ticks stay hidden.
 
 ### Save once a change is complete
 
@@ -173,7 +181,7 @@ export default function ManagedLimit() {
 
 ### Composition
 
-`inputRef` reaches the native range input, such as to focus it. The parts are the slider, `env-slider`; the row of the label and the value, `env-slider-heading`, with the label, `env-slider-label`, and the value, `env-slider-value`, in numbers of one width; the field, `env-slider-control`, the track's quiet tint, which takes the pointer, with the fill from the start to the value, `env-slider-indicator`, and the handle, `env-slider-thumb`; and the description, `env-field-description`. Inside the field's rounded ends, the span the value moves along, `env-slider-track`, draws the faint ticks at the steps while the pointer presses the slider, or at the large steps where the steps are many.
+`inputRef` reaches the native range input, such as to focus it. The parts are the slider, `env-slider`; the row of the label and the value, `env-slider-heading`, with the label, `env-slider-label`, and the value, `env-slider-value`, in numbers of one width; the field, `env-slider-control`, the track's quiet tint, which takes the pointer, with the fill from the start to the value, `env-slider-indicator`, and the handle, `env-slider-thumb`; and the description, `env-field-description`. Inside the field's rounded ends, the span the value moves along, `env-slider-track`, draws the faint ticks at the steps, or at the large steps where the steps are many. The field marks what it shows besides its text and fill: `data-handle` while the handle shows, under a hovering or pressing pointer and with keyboard focus, `data-ruler` while the ticks do, under a hovering or pressing pointer, and `data-pressed` while the pointer presses it. A release clears them until the pointer leaves and comes back.
 
 ### Customize
 

@@ -75,7 +75,7 @@ The Site's Typography page names the text styles by their job and teaches these 
 
 ### Lists
 
-Formatted text, which Markdown, RichText and RichTextEditor render in the `env-prose` class, sets its lists apart from the text around them: a bullet is a small dot in the accent color, on the middle of the item's first line, and an ordered item's number is plain, in tabular figures in the muted text color; items stand a full step apart. A nested list steps down quietly, with closer items and a smaller muted dot, or a letter for an ordered item. Task lists keep their checkboxes.
+Formatted text, which Markdown, RichText and RichTextEditor render in the `env-prose` class, sets its lists apart from the text around them: a bullet is a plain small dot in the text color, on the middle of the item's first line, and an ordered item's number is plain, in tabular figures in the muted text color; items stand a full step apart. A nested list steps down quietly, with closer items and a small muted ring, or a letter for an ordered item. Task lists keep their checkboxes.
 
 TypeScript declarations provide the complete public API.
 

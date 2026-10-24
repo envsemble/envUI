@@ -85,9 +85,10 @@ export interface SliderProps
 /**
  * A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form
  * among them, with its label inside at the start, its value at the end and a fill from the start
- * that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a
- * thin handle at the value appears under the pointer and while it has focus, and faint ticks at its
- * steps only while the pointer presses it. An optional description sits below it.
+ * that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys. At
+ * rest it shows only its text and fill; a thin handle at the value and faint ticks at its steps
+ * appear under the pointer and while it is pressed, and go once it is released, and the handle
+ * alone shows with keyboard focus. An optional description sits below it.
  */
 export function Slider({
   label,
@@ -120,18 +121,43 @@ export function Slider({
   const input = useRef<HTMLInputElement>(null);
   const control = useRef<HTMLDivElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? min);
-  // The ticks, a ruler, show only while the pointer presses the slider: from the press until it is
-  // released anywhere, cancelled or loses its capture, or the window loses focus, so they never stay.
+  // What the slider shows beyond its text and fill follows one rule (sliderReveal): the handle and
+  // the ruler of ticks while a pointer hovers or presses it, and the handle alone with keyboard
+  // focus. A release puts it back at rest, though the pointer may still be over it: hover counts
+  // again only once the pointer has left and come back.
   const [pressed, setPressed] = useState(false);
+  const [hover, setHover] = useState<SliderHover>('away');
+  const [keyboard, setKeyboard] = useState(false);
+  useEffect(function followHover() {
+    const element = control.current;
+    if (!element) return;
+    // Native events, as the pointer capture Base UI sets while pressed confuses React's emulated
+    // enter and leave. A touch has no hover: a finger shows the handle only while it is down.
+    const enter = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch') setHover('over');
+    };
+    const leave = () => setHover('away');
+    element.addEventListener('pointerenter', enter);
+    element.addEventListener('pointerleave', leave);
+    return () => {
+      element.removeEventListener('pointerenter', enter);
+      element.removeEventListener('pointerleave', leave);
+    };
+  }, []);
+  // The press lasts until the pointer is released anywhere, cancelled or loses its capture, or the
+  // window loses focus, so the handle and the ruler never stay.
   useLayoutEffect(
-    function releaseRuler() {
+    function endPress() {
       const element = control.current;
       if (!pressed || !element) return;
       const view = element.ownerDocument.defaultView;
-      const release = () => setPressed(false);
+      const release = (event: Event) => {
+        setPressed(false);
+        setHover((current) => afterRelease(current, element, event));
+      };
       // A move without a button means the release went to something that kept it.
       const move = (event: PointerEvent) => {
-        if (event.buttons === 0) release();
+        if (event.buttons === 0) release(event);
       };
       const owner = element.ownerDocument;
       owner.addEventListener('pointerup', release, true);
@@ -149,6 +175,7 @@ export function Slider({
     },
     [pressed],
   );
+  const reveal = sliderReveal({ pressed, hover, keyboard, disabled });
   const current = value ?? uncontrolledValue;
   useEffect(
     function subscribeToFormReset() {
@@ -163,9 +190,9 @@ export function Slider({
     },
     [value, defaultValue, min, form],
   );
-  // Where the fill's end and the handle pass under the label or the value while the slider is
-  // pressed, they fade, so the text stays legible at full strength: measured again as the value moves
-  // and as the slider or its text changes size. At rest the stylesheet ignores the measure.
+  // Where the fill's end and the handle pass under the label or the value, they fade while they show,
+  // so the text stays legible at full strength: measured again as the value moves and as the slider
+  // or its text changes size. At rest the stylesheet ignores the measure.
   useLayoutEffect(
     function veilAtCurrentValue() {
       if (control.current) veilIndicatorUnderText(control.current);
@@ -227,14 +254,24 @@ export function Slider({
             ref={control}
             className="env-slider-control"
             data-pressed={pressed && !disabled ? '' : undefined}
+            data-handle={reveal.handle ? '' : undefined}
+            data-ruler={reveal.ruler ? '' : undefined}
             onPointerDown={(event) => {
+              setKeyboard(false);
               if (!disabled && event.button === 0) setPressed(true);
             }}
+            // Keyboard focus, or a key pressed while focused, shows the handle; a press or leaving
+            // the slider ends it.
+            onFocus={(event) => {
+              if (event.target.matches(':focus-visible')) setKeyboard(true);
+            }}
+            onKeyDown={() => setKeyboard(true)}
+            onBlur={() => setKeyboard(false)}
           >
             <BaseSlider.Track className="env-slider-track">
               <BaseSlider.Indicator className="env-slider-indicator" />
-              {/* The handle: a thin line at the value, which shows under the pointer and on focus,
-                  beneath the label and the value. */}
+              {/* The handle: a thin line at the value, which shows under the pointer, while pressed
+                  and with keyboard focus, beneath the label and the value. */}
               <BaseSlider.Thumb
                 className="env-slider-thumb"
                 inputRef={(node: HTMLInputElement | null) => {
@@ -266,16 +303,69 @@ export function Slider({
 }
 
 /**
- * Marks where the end of the fill and the handle sit under the label or the value, within half a line
- * of either, by setting --env-slider-veil on the control to 1, and to 0 elsewhere; the stylesheet
- * fades them there only while the slider is pressed.
+ * Where a hovering pointer stands: away from the slider; over it, which shows the handle and the
+ * ruler; or over it after releasing it there, which doesn't, until the pointer leaves and comes back.
+ */
+type SliderHover = 'away' | 'over' | 'released';
+
+/**
+ * The rule for what the slider shows besides its text and fill. Pressed, or with a pointer over it
+ * that hasn't released it there since it came, the handle and the ruler of ticks; with keyboard
+ * focus, the handle alone, as the value says the exact amount. Otherwise, at rest, neither.
+ */
+function sliderReveal({
+  pressed,
+  hover,
+  keyboard,
+  disabled,
+}: {
+  pressed: boolean;
+  hover: SliderHover;
+  keyboard: boolean;
+  disabled: boolean;
+}): { handle: boolean; ruler: boolean } {
+  if (disabled) return { handle: false, ruler: false };
+  const pointer = pressed || hover === 'over';
+  return { handle: pointer || keyboard, ruler: pointer };
+}
+
+/**
+ * The hover once a press ends: a release over the slider spends it, so the slider returns to rest
+ * under the pointer; a release elsewhere, or by a finger, leaves the pointer away. Where the event
+ * has no place, as a lost capture or the window's blur, the pointer stays where it was.
+ */
+function afterRelease(current: SliderHover, control: HTMLElement, event: Event): SliderHover {
+  if (!('clientX' in event) || event.type === 'lostpointercapture') {
+    return current === 'away' ? 'away' : 'released';
+  }
+  const pointer = event as PointerEvent;
+  if (pointer.pointerType === 'touch') return 'away';
+  const box = control.getBoundingClientRect();
+  const inside =
+    pointer.clientX >= box.left &&
+    pointer.clientX <= box.right &&
+    pointer.clientY >= box.top &&
+    pointer.clientY <= box.bottom;
+  return inside ? 'released' : 'away';
+}
+
+/**
+ * Marks where the slider's indicators pass under the label or the value, within half a line of
+ * either, so the stylesheet fades them there while they show. --env-slider-veil on the control is 1
+ * where the end of the fill and the handle sit under the text, and 0 elsewhere. For the ticks,
+ * --env-slider-clear-start and --env-slider-clear-end bound the stretch clear of the text, from the
+ * track's left side, physical as the ticks are, so that either direction works.
  */
 function veilIndicatorUnderText(control: HTMLElement) {
   const thumb = control.querySelector('.env-slider-thumb');
-  if (!thumb) return;
+  const track = control.querySelector('.env-slider-track');
+  if (!thumb || !track) return;
   const handle = thumb.getBoundingClientRect();
+  const span = track.getBoundingClientRect();
   const at = handle.left + handle.width / 2;
   let veiled = false;
+  let clearStart = 0;
+  let clearEnd = span.width;
   for (const text of control.querySelectorAll<HTMLElement>(
     '.env-slider-label, .env-slider-value',
   )) {
@@ -283,8 +373,14 @@ function veilIndicatorUnderText(control: HTMLElement) {
     if (box.width === 0) continue;
     const margin = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
     if (at >= box.left - margin && at <= box.right + margin) veiled = true;
+    // The text in the track's left half bounds the clear stretch on the left, the other on the right.
+    if (box.left + box.width / 2 < span.left + span.width / 2)
+      clearStart = Math.max(clearStart, box.right + margin - span.left);
+    else clearEnd = Math.min(clearEnd, box.left - margin - span.left);
   }
   control.style.setProperty('--env-slider-veil', veiled ? '1' : '0');
+  control.style.setProperty('--env-slider-clear-start', `${clearStart}px`);
+  control.style.setProperty('--env-slider-clear-end', `${clearEnd}px`);
 }
 
 /**
