@@ -6,25 +6,49 @@
         "report": "ColorPicker's hint is description in 1.0."
       },
       "variant": {
-        "current": ["outline", "floating", "underline", "ghost"],
-        "report": "ColorPicker's variant is outline, floating, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "report": "ColorPicker has no variant in 1.0: its fields are one compact control. Remove it.",
         "values": {
-          "outlined": {
-            "props": {
-              "variant": "outline"
-            }
-          },
-          "plain": {
-            "props": {
-              "variant": "underline"
-            }
-          },
-          "quiet": {
-            "props": {
-              "variant": "ghost"
-            }
-          }
+          "outlined": {},
+          "plain": {},
+          "quiet": {},
+          "outline": {},
+          "floating": {},
+          "underline": {},
+          "ghost": {}
         }
+      },
+      "ref": {
+        "report": "ColorPicker's ref reaches its root element in 1.0, not the HEX field; a form takes its color from name, through a hidden input."
+      },
+      "required": {
+        "report": "ColorPicker has no required in 1.0: it always holds a color, so a required check could never fail. Where a color must be chosen, keep \"no color yet\" in your own state and validate it with the form."
+      },
+      "size": {
+        "report": "ColorPicker has no size in 1.0: its fields take the control height of the scale. Remove it, or set scale=\"compact\" on a Theme around it."
+      },
+      "autoComplete": {
+        "report": "ColorPicker's fields are React Aria's color fields in 1.0 and take no autoComplete. Remove it."
+      },
+      "autoFocus": {
+        "report": "ColorPicker takes no autoFocus in 1.0: focus its first field from an effect, such as ref.current?.querySelector('input')?.focus(), where focus belongs there."
+      },
+      "startIcon": {
+        "report": "ColorPicker takes no startIcon in 1.0: its HEX field is one of its own fields now. Remove it."
+      },
+      "endAction": {
+        "report": "ColorPicker takes no endAction in 1.0: its HEX field is one of its own fields now. Remove it."
+      },
+      "prefix": {
+        "report": "ColorPicker takes no prefix in 1.0: its HEX field is one of its own fields now. Remove it."
+      },
+      "suffix": {
+        "report": "ColorPicker takes no suffix in 1.0: its HEX field is one of its own fields now. Remove it."
+      },
+      "onFocus": {
+        "report": "ColorPicker's onFocus is on its root in 1.0, not the HEX field: it runs as focus moves into any of its controls, also between them; compare event.relatedTarget with event.currentTarget.contains() to tell focus entering the picker."
+      },
+      "onBlur": {
+        "report": "ColorPicker's onBlur is on its root in 1.0, not the HEX field: it runs as focus moves out of any of its controls, also between them; compare event.relatedTarget with event.currentTarget.contains() to tell focus leaving the picker."
       }
     }
   }

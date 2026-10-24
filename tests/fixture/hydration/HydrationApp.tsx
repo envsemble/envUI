@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Theme,
   TextField,
-  ColorPicker,
   Checkbox,
   Select,
   Dialog,
@@ -36,7 +35,10 @@ import {
   Pagination,
   DatePicker,
   Calendar,
+  Kbd,
+  useModifierKey,
 } from '@envsemble/envui';
+import { ColorPicker } from '@envsemble/envui/color';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
   id: `doc-${index}`,
@@ -47,6 +49,20 @@ const treeItems = Array.from({ length: 40 }, (_, index) => ({
 function NotificationTrigger() {
   const toast = useToast();
   return <Button onClick={() => toast.show({ message: 'Hydrated notice' })}>Notify</Button>;
+}
+
+/** The search trigger pattern: Ctrl on the server and while hydrating, ⌘ after on Apple platforms. */
+function SearchTrigger() {
+  const modifier = useModifierKey();
+  return (
+    <Button
+      variant="secondary"
+      end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
+      aria-keyshortcuts={`${modifier.key}+K`}
+    >
+      Hydrated search
+    </Button>
+  );
 }
 
 export function HydrationApp() {
@@ -296,6 +312,7 @@ export function HydrationApp() {
         />
         <p data-testid="hydrated-person">{person}</p>
         <CopyButton value="Hydrated text" aria-label="Hydrated copy" />
+        <SearchTrigger />
         <Pagination
           aria-label="Hydrated pages"
           page={page}

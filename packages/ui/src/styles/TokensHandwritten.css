@@ -11,9 +11,13 @@
   background: var(--env-color-bg-page);
   color: var(--env-color-fg-default);
 
-  /* Lengths a DTCG dimension (px or rem) can't hold: a viewport clamp and the pill corner. */
+  /* Lengths a DTCG dimension (px or rem) can't hold: a viewport clamp and the full corner. The full
+     corner is capped: half the tallest single-line control, the large height or the touch height,
+     whichever is more. Anything one line tall takes rounded ends, as the browser scales down corners
+     too large for their box, and anything taller, such as a wrapping button or a field whose chips
+     wrap, keeps the same corners and becomes a rounded rectangle rather than a pill. */
   --env-viewport-gutter: clamp(0.75rem, 2vw, 1rem);
-  --env-radius-full: 100vmax;
+  --env-radius-full: calc(max(var(--env-control-height-lg), var(--env-control-height-touch)) / 2);
 }
 
 /* Under a coarse pointer, entered text is 1 rem in every scale: smaller text makes touch browsers

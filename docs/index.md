@@ -8,6 +8,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Migrate an interface to envUI](migration.md) — Replace existing UI while preserving application behavior.
 
+- [Customize colors](customizing-colors.md) — Give one element its own colors through its color properties, or recolor an area with a nested Theme.
+
 - [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
 
 - [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
@@ -49,7 +51,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Actions
 
 - [Button](components/button.md)
-- [SearchTrigger](components/search-trigger.md)
 - [Toolbar](components/toolbar.md)
 - [Link](components/link.md)
 
@@ -133,6 +134,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [App frame](patterns/app-frame.md)
 - [Account menu](patterns/account-menu.md)
 - [Organization switcher](patterns/organization-switcher.md)
+- [Search trigger](patterns/search-trigger.md)
 - [Window frame](patterns/window-frame.md)
 - [Feature cards](patterns/feature-cards.md)
 - [Filtering and search](patterns/filtering.md)

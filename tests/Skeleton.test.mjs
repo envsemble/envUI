@@ -141,7 +141,7 @@ test('the style sheet draws text as bars, shapes and missing text, and keeps sti
     css,
     /\[data-env-skeleton\] :empty::before \{[^}]*display: var\(--env-skeleton-placeholder\);/,
   );
-  // The pulse runs only without a reduced-motion preference.
+  // The shimmer runs only without a reduced-motion preference.
   const motion = css.indexOf('@media (prefers-reduced-motion: no-preference)');
   assert.ok(motion > 0);
   assert.equal(css.indexOf('animation:'), css.indexOf('animation:', motion));

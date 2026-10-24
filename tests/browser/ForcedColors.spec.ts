@@ -47,8 +47,8 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-radio[data-orientation=vertical] >> nth=1',
   ],
   'an invalid field': [
-    '.env-text-field-control:has-text("Invalid")',
-    '.env-text-field-control:has-text("Valid") >> nth=0',
+    '.env-text-field-control:has-text("Invalid") > .env-text-field-border',
+    '.env-text-field-control:has-text("Valid") >> nth=0 >> .env-text-field-border',
   ],
   'a disabled field': [
     '.env-text-field-control:has-text("Disabled")',
@@ -146,6 +146,12 @@ async function open(page: Page) {
   await page.goto(`${fixtureUrl}/forced-colors.html`);
   await page.waitForSelector('body[data-styles-ready] .env-theme');
   expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
+  // The menus held open move focus into their popup once they have opened; let them, or they take
+  // it from the button below.
+  await expect(page.getByRole('menu')).toHaveCount(2);
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement?.getAttribute('role')))
+    .toBe('menu');
   // Keyboard focus on the button whose ring the states compare.
   await page.getByTestId('button-focus').focus();
   await page.keyboard.press('Shift+Tab');
@@ -260,9 +266,11 @@ interface FocusCase {
 }
 
 const focusCases: FocusCase[] = [
-  { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'fill' },
+  // A text tab has no fill: its ring is drawn on the canvas.
+  { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'canvas' },
   { name: 'the selected navigation item', ring: '.env-drawer-item[data-current]', over: 'fill' },
-  { name: 'the chosen segment', ring: '.env-segmented-control-item[data-checked]', over: 'canvas' },
+  // The ring is drawn inside the segment, on its fill, as the control clips what reaches past it.
+  { name: 'the chosen segment', ring: '.env-segmented-control-item[data-checked]', over: 'fill' },
   {
     // The ring goes around the tab's item, close button included.
     name: 'the active document tab',

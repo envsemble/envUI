@@ -36,8 +36,9 @@
   opacity: var(--env-state-disabled-opacity);
 }
 /* Field.Control: a native text input in the outlined field look, at the control height of its size
-   or its container's, with the pill shape of buttons so the two line up in a row. A control given
-   through render takes the same outline. */
+   or its container's, with the rounded ends of buttons so the two line up in a row, and no fill of
+   its own: it takes the background of what it sits on. A control given through render takes the
+   same outline. */
 .env-field-control {
   --env-field-control-border: var(--env-color-border-default);
   box-sizing: border-box;
@@ -52,9 +53,11 @@
     )
     var(--env-space-4);
   border: var(--env-control-border-width) solid var(--env-field-control-border);
+  /* The capped full corner, so a taller control given through render, such as a text area, keeps
+     the corners rather than becoming a pill. */
   border-radius: var(--env-radius-full);
   outline: none;
-  background: var(--env-color-bg-field);
+  background: transparent;
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
   /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */

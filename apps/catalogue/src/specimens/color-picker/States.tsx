@@ -1,4 +1,4 @@
-import { ColorPicker } from '@envsemble/envui';
+import { ColorPicker } from '@envsemble/envui/color';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
 /** Read-only, disabled and invalid pickers beside an editable one. */
@@ -19,7 +19,7 @@ export default function States() {
           <ColorPicker
             label="Brand color"
             defaultValue="#e8c547"
-            error="This color is too light for text on white."
+            error="Too light for text on white; choose a darker color."
           />
         </Specimen>
       </SpecimenGrid>

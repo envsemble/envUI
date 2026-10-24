@@ -27,5 +27,7 @@ export const Content = ({ size }: { size: 'small' | 'large' }) => (
     <Card layout="feature" icon={<span />} title="Invite your team" />
     <SegmentedControl aria-label="Views" options={views} value="open" onValueChange={() => {}} />
     <Avatar name="Jordan Ellis" size={size} />
+    <Avatar name="Mia Chen" hue="teal" />
+    <Avatar name="Noah Park" hue="blue" />
   </>
 );

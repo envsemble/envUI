@@ -34,13 +34,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - feedback
-  - settings
-  - confirm-dialog
-  - toast
-  - button
-  - menu
 ---
 
 # Confirmation and destructive actions
@@ -68,7 +61,7 @@ The item leaves at once; the toast stays until dismissed, since it has an action
 
 ### Confirm in place
 
-The first press names the consequence in the button, "Remove file?"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.
+The first press names the consequence in the button, "Remove file"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.
 
 ```tsx example=ConfirmInPlace
 
@@ -115,6 +108,7 @@ The count is in the button, the question and the confirm button: "Delete 2 docum
 ### Content
 
 - The title is a question that names the object, "Delete Launch brief?"; the description says whether it can be undone; the confirm button repeats the verb, "Delete document"; never "Yes" or "OK".
+- An inline confirmation's armed label is short and has no question mark: the verb, or the verb and object, "Remove file".
 - One verb from trigger to button: Delete when it's gone, Remove when it leaves a place, Archive when it can come back. A trigger that opens a confirmation ends with an ellipsis.
 - The undo toast: "Website refresh archived.", with Undo.
 

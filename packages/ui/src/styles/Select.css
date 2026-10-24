@@ -1,21 +1,52 @@
+/* Color properties: a select's colors, which an application sets on one Select through style or
+   its own CSS: its trigger's fill, label and edge. They don't inherit; the select passes them on to
+   its trigger as Button's, which shows state layers over them. An invalid trigger keeps the error
+   color on its edge. */
+@property --env-select-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-select-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-select-outline {
+  syntax: '*';
+  inherits: false;
+}
+.env-select {
+  /* Invalid while unset, which leaves the trigger's own properties unset. */
+  --env-select-trigger-container: var(--env-select-container);
+  --env-select-trigger-content: var(--env-select-content);
+  --env-select-trigger-outline: var(--env-select-outline);
+}
+
 /* Select: a Button trigger, secondary or outline, with the same colors and states, that opens the
    shared popup (PopupSurface) with a list of rows (ListRow). The trigger starts at the field's start
    and keeps its width. */
 .env-select > .env-select-trigger {
+  --env-button-container: var(--env-select-trigger-container);
+  --env-button-content: var(--env-select-trigger-content);
+  --env-button-outline: var(--env-select-trigger-outline);
   position: relative;
   justify-self: start;
   gap: var(--env-space-2);
 }
 /* A transparent border lets an invalid secondary trigger show the error color without resizing. */
 .env-select-trigger[data-variant='secondary'] {
-  border: var(--env-control-border-width) solid var(--env-select-trigger-border, transparent);
+  border: var(--env-control-border-width) solid
+    var(--env-select-trigger-border, var(--env-button-outline, transparent));
+}
+/* The open trigger keeps the hover state while its list is open. */
+.env-select-trigger[aria-expanded='true']:not(:disabled, :active) {
+  --env-button-layer: calc(var(--env-state-hover-opacity) * 100%);
 }
 .env-select-trigger[data-variant='secondary'][aria-expanded='true']:not(:disabled, :active) {
-  background: var(--env-color-bg-neutral-muted-hover);
+  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted-hover));
 }
 .env-select-trigger[data-variant='outline'][aria-expanded='true']:not(:disabled, :active) {
-  background: var(--env-color-bg-raised-hover);
-  border-color: var(--env-color-border-default-hover);
+  background: var(--env-button-custom-fill, var(--env-color-bg-raised-hover));
+  border-color: var(--env-button-outline, var(--env-color-border-default-hover));
 }
 /* Invalid triggers recolor their border and keep their fill. */
 .env-select-trigger[aria-invalid='true'] {
@@ -26,15 +57,18 @@
 .env-select > .env-select-trigger[aria-invalid='true']:not(:disabled) {
   border-color: var(--env-select-trigger-border);
 }
+.env-select-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
+  --env-button-layer: initial;
+}
 .env-select-trigger[data-variant='secondary'][aria-invalid='true']:is(:hover, :active):not(
     :disabled
   ) {
-  background: var(--env-color-bg-neutral-muted);
+  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted));
 }
 .env-select-trigger[data-variant='outline'][aria-invalid='true']:is(:hover, :active):not(
     :disabled
   ) {
-  background: var(--env-color-bg-raised);
+  background: var(--env-button-custom-fill, var(--env-color-bg-raised));
 }
 @media (hover: hover) {
   .env-select > .env-select-trigger[aria-invalid='true']:hover:not(:disabled) {
@@ -45,13 +79,16 @@
   border-color: var(--env-select-trigger-border-pressed);
 }
 
+/* The chevron points down, and up while the list is open. It flips over its horizontal axis rather
+   than turning half a circle, which swings it through pointing sideways, as a submenu's chevron
+   does, in a frame or two: the list's trigger would twitch as it opens and closes. */
 .env-select-trigger .env-select-icon {
   width: var(--env-icon-size-md);
   height: var(--env-icon-size-md);
-  transform: rotate(90deg);
+  transform: rotate(90deg) scaleX(1);
 }
 .env-select-trigger[aria-expanded='true'] .env-select-icon {
-  transform: rotate(-90deg);
+  transform: rotate(90deg) scaleX(-1);
 }
 /* Small triggers keep the chevron at the control icon size. */
 .env-select-trigger[data-size='sm'] .env-select-icon {
@@ -107,7 +144,7 @@
   }
 }
 
-/* Motion: the trigger's chevron turns. Movement only without a reduced-motion preference. */
+/* Motion: the trigger's chevron flips. Movement only without a reduced-motion preference. */
 @media (prefers-reduced-motion: no-preference) {
   .env-select-trigger .env-select-icon {
     transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);

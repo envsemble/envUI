@@ -36,10 +36,10 @@ const defaultMarkdownCommands: readonly MarkdownCommand[] = [
   'heading',
   'bold',
   'italic',
+  'inline-code',
   'bullet-list',
   'numbered-list',
   'quote',
-  'inline-code',
   'code-block',
   'link',
 ];

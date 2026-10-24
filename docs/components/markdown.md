@@ -29,14 +29,6 @@ avoidWhen:
     use: Composer
   - text: Source code to read or copy on its own.
     use: CodeBlock
-related:
-  - code
-  - rich-text
-  - text-field
-  - composer
-  - kbd
-  - typography
-  - accessibility
 components:
   - Markdown
   - MarkdownEditor
@@ -87,7 +79,7 @@ CommonMark with tables, strikethrough, task lists, automatic links and footnotes
 | `fixed`       | A long document: the source keeps its height. The default. |
 | `content`     | A short description: the source grows with its text.       |
 
-`toolbar` chooses the actions, in a fixed order, and `onRequestLink` opens the application's own link picker.
+`toolbar` chooses the actions, in a fixed order, grouped by kind with a line between groups, and `onRequestLink` opens the application's own link picker.
 
 ```tsx example=LinkPicker
 
@@ -107,14 +99,6 @@ CommonMark with tables, strikethrough, task lists, automatic links and footnotes
 - Don't render untrusted Markdown with a plugin that brings raw HTML back.
 
 ### Content
-
-```tsx do=LinkNamesDestination caption="Link text that names the destination."
-
-```
-
-```tsx dont=ClickHere caption="Click here: out of context, it says nothing."
-
-```
 
 - Give images alternative text in the source.
 
@@ -161,7 +145,8 @@ On Apple keyboards, <kbd>Cmd</kbd> replaces <kbd>Ctrl</kbd>.
 
 ## Changelog
 
-- **1.0.0**: Code in Markdown takes the new code themes, as Code and CodeBlock do. MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline`, `underline` and `ghost`, which the `v1-props` codemod writes. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea. Its toolbar is a Toolbar, with tooltips instead of native titles, and its words come from EnvUIProvider's `messages`, as do Markdown's table and task names. Markdown's root carries `env-prose` beside `env-markdown`. Markdown is stable; MarkdownEditor stays beta.
+- **1.0.0-prerelease.2**: MarkdownEditor's `underline` variant, which `plain` became in the earlier prereleases, is gone; the `v1-props` codemod drops `underline` and `plain` for the default outline.
+- **1.0.0**: Code in Markdown takes the new code themes, as Code and CodeBlock do. MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes, and it drops `plain` for the default outline. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea. Its toolbar is a Toolbar, with tooltips instead of native titles, and its words come from EnvUIProvider's `messages`, as do Markdown's table and task names. Markdown's root carries `env-prose` beside `env-markdown`. Markdown is stable; MarkdownEditor stays beta.
 - **0.7.0**: Code in Markdown takes the code theme of the app theme; `inlineCode` is removed.
 - **0.5.0**: `components`, `remarkPlugins` and `rehypePlugins`; raw HTML is dropped before any rehype plugin runs, except keys written as `<kbd>`, which render as Kbd.
 - **0.1.0**: Markdown and MarkdownEditor.

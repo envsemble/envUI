@@ -1,24 +1,24 @@
 /**
  * Where a route lives in the address. A route is written as a path and a query, such as
- * `components/button/props?section=props-Button-variant`; `section` names the element a route
- * scrolls to.
+ * `docs/components/button?section=props-Button-variant`; `section` names the element a route
+ * scrolls to. The address keeps it in its path, such as `/docs/components/button#props-Button-variant`,
+ * with the section as the fragment: the Site at the root and the Docs under /docs. The server
+ * answers every path without a file with index.html, so a deep link and a refresh load the page.
  *
- * - The hosted catalogue, and the development server, keep routes in the address's path, such as
- *   `/components/button/props#props-Button-variant`, with the section as the fragment. The server
- *   answers every path without a file with index.html, so a deep link and a refresh load the page.
- * - The offline catalogue keeps them in the hash, `#/components/button/props?section=…`. A file
- *   opened from disk, or an archived version in its folder of the hosted site, has no server that
- *   answers another path with it, so a path route could not be refreshed or shared.
- *
- * The hosted catalogue also opens the hash addresses of the offline one and of earlier releases,
- * and replaces them with the path address of the same route.
+ * There is no hash routing: the site never writes a hash route, and reads routes only from the
+ * path. An old hash address, `#/components/button/props?section=…`, from the offline catalogue of
+ * earlier releases, such as a bookmark, is redirected once to the path address of the route it
+ * named (oldHashRoute), and the route is read from the path.
  */
 
-/** Whether routes live in the path; Vite defines the constant, and Node tests leave it out. */
-export const pathRoutes = typeof __ENVUI_PATH_ROUTES__ !== 'undefined' && __ENVUI_PATH_ROUTES__;
+/** The route of the Site's home page, which the root address shows. */
+export const homeRoute = 'overview';
 
-/** The route the overview opens at, which the hosted catalogue's root address shows. */
-export const homeRoute = 'overview/components';
+/** The route of the Docs' home page, which /docs shows. */
+export const docsRoute = 'docs';
+
+/** Whether a route, such as docs/components/button, is a page of the Docs rather than the Site. */
+export const inDocs = (route: string) => /^docs(?:[/?]|$)/.test(route);
 
 function splitRoute(route: string) {
   const separator = route.indexOf('?');
@@ -29,7 +29,6 @@ function splitRoute(route: string) {
 
 /** The address of a route, for a link or the history. */
 export function routeHref(route: string): string {
-  if (!pathRoutes) return `#/${route}`;
   const { path, params } = splitRoute(route);
   const section = params.get('section');
   params.delete('section');
@@ -58,32 +57,35 @@ function routeOfLocation({ pathname, search, hash }: Pick<URL, 'pathname' | 'sea
   return path || !query ? `${path}${query}` : `overview${query}`;
 }
 
-/** The route the address names, as it is written; empty at the root. */
+/** The route the address's path names, as it is written; empty at the root. */
 export function writtenRoute(): string {
-  const { hash } = location;
-  if (!pathRoutes) return hash.replace(/^#\/?/, '');
-  // A hash route, from the offline catalogue or an old bookmark, names the route itself.
-  if (hash.startsWith('#/')) return hash.slice(2);
   return routeOfLocation(location);
+}
+
+/**
+ * The route an old hash address names, such as components/button/props for
+ * `#/components/button/props`, which the address is redirected from; undefined for any other.
+ */
+export function oldHashRoute(): string | undefined {
+  const { hash } = location;
+  return hash.startsWith('#/') ? hash.slice(2) : undefined;
 }
 
 /** The part of the address that routes are written in. */
 export function currentHref() {
-  return pathRoutes ? `${location.pathname}${location.search}${location.hash}` : location.hash;
+  return `${location.pathname}${location.search}${location.hash}`;
 }
 
 /**
- * The route of a link's destination when it is a page of this catalogue, which then opens without
- * loading the page again: another origin, a file such as /versions.json, an archived version under
- * /v1.2/ and the build's /assets/ load as they are.
+ * The route of a link's destination when it is a page of the site, which then opens without
+ * loading the page again: another origin, a file such as /third-party-notices.txt and the build's
+ * /assets/ load as they are.
  */
 export function routeOfLink(href: string): string | undefined {
   const url = new URL(href, location.href);
   if (url.origin !== location.origin) return undefined;
-  // A hash route, written as #/route, opens that route.
-  if (url.hash.startsWith('#/')) return url.hash.slice(2);
   const last = url.pathname.split('/').at(-1) ?? '';
-  if (/^\/(?:assets|v\d+\.\d+)(?:\/|$)/.test(url.pathname) || last.includes('.')) return undefined;
+  if (/^\/assets(?:\/|$)/.test(url.pathname) || last.includes('.')) return undefined;
   return routeOfLocation(url);
 }
 
@@ -179,12 +181,7 @@ export function navigate(route: string, { replace = false }: { replace?: boolean
     revealRoute(route);
     return false;
   }
-  if (pathRoutes) history[replace ? 'replaceState' : 'pushState'](null, '', href);
-  else if (replace) history.replaceState(history.state, '', href);
-  else {
-    location.hash = href;
-    return true;
-  }
+  history[replace ? 'replaceState' : 'pushState'](null, '', href);
   dispatchEvent(new Event(navigationEvent));
   return true;
 }
@@ -192,7 +189,9 @@ export function navigate(route: string, { replace = false }: { replace?: boolean
 /** Replaces the address in place, without announcing it, such as an old address with its route's. */
 export function replaceAddress(route: string) {
   const href = routeHref(route);
-  if (href !== currentHref()) history.replaceState(history.state, '', href);
+  // An old hash address of the same path, such as /#/overview at the root, is still replaced.
+  if (href !== currentHref() || oldHashRoute() !== undefined)
+    history.replaceState(history.state, '', href);
 }
 
 /** Calls `listener` whenever the address changes: by a link, the history or navigate(). */

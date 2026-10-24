@@ -1,8 +1,11 @@
-import { Button, Menu } from '@envsemble/envui';
+import { useId } from 'react';
+import { Button, Column, Menu, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
+import { Groups3 } from '@envsemble/envui/icons/Groups3';
 import { UnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
 
 export default function OrganizationSwitcherAnatomy() {
+  const headingId = useId();
   return (
     <Menu.Root
       aria-label="Organizations"
@@ -14,7 +17,15 @@ export default function OrganizationSwitcherAnatomy() {
         </Button>
       }
     >
-      <Menu.RadioGroup label="Organizations" value="northwind" onValueChange={() => {}}>
+      <Menu.Header>
+        <Column align="center" gap={2} padding={3}>
+          <Groups3 width="2rem" height="2rem" />
+          <Text variant="headline" id={headingId}>
+            Organizations
+          </Text>
+        </Column>
+      </Menu.Header>
+      <Menu.RadioGroup aria-labelledby={headingId} value="northwind" onValueChange={() => {}}>
         <Menu.RadioItem value="northwind" description="Admin">
           Northwind Labs
         </Menu.RadioItem>

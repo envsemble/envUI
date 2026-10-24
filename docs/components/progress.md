@@ -24,14 +24,8 @@ avoidWhen:
     use: Surface
   - text: Loading a page or a route of an application, along the top bar.
     use: TopBar
-  - text: Saying that a task finished or failed.
-    use: Toast
-related:
-  - meter
-  - spinner
-  - loading
-  - scaffold
-  - toast
+  - text: Content loading in its place, in the shape of what is coming.
+    see: loading
 components:
   - Progress
 ---
@@ -84,16 +78,6 @@ Start with `value={null}`, show the share once it is known, and replace the bar 
 
 - Don't move the bar backwards, or hold it just short of the end.
 - Offer a way to cancel a long task beside the bar.
-
-### Content
-
-```tsx do=ImportContacts caption="Name the task, and count items where people count them."
-
-```
-
-```tsx dont=VagueLabel caption="A label that doesn't say what is running."
-
-```
 
 ## Anatomy
 

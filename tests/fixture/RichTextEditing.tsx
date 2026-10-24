@@ -309,7 +309,6 @@ function FieldStates() {
   return (
     <div data-testid="rich-text-field">
       <RichTextEditor label="Ghost notes" variant="ghost" toolbar={false} defaultValue="Ghost" />
-      <RichTextEditor label="Underlined notes" variant="underline" toolbar={false} />
       <RichTextEditor
         label="Invalid notes"
         toolbar={false}

@@ -15,7 +15,7 @@ aliases:
   - hotkey
   - key combination
 useWhen:
-  - Text names a key or a shortcut, such as "Press Ctrl+P to open a document".
+  - Text names a key or a shortcut, such as "Press <kbd>Ctrl</kbd>+<kbd>P</kbd> to open a document".
   - A hint lists the keys a list or a popup handles, such as a footer that says which keys move, open and close.
 avoidWhen:
   - text: The shortcut of a menu item, which also needs to reach assistive technology.
@@ -24,16 +24,11 @@ avoidWhen:
     use: CommandPalette
   - text: Code, a command or a file name in text.
     use: Code
-  - text: A status or a count beside a label.
-    use: Badge
-related:
-  - menu
-  - command-palette
-  - code
-  - markdown
-  - accessibility
 components:
   - Kbd
+  - useModifierKey
+statuses:
+  useModifierKey: beta
 ---
 
 # Kbd
@@ -65,15 +60,7 @@ Kbd shows a key as a key cap, or with `keys`, keys pressed together. It only sho
 
 ### Content
 
-```tsx do=SayWhatItDoes caption="Say what the keys do, in a sentence."
-
-```
-
-```tsx dont=KeysAlone caption="A key and a word: people have to guess the rest."
-
-```
-
-Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, and ←, →, ↑, ↓. Pass the names of the reader's platform, such as ⌘ on Apple keyboards.
+Write keys as the keyboard names them: <kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Esc</kbd>, <kbd>F2</kbd>, capital letters, and <kbd>←</kbd>, <kbd>→</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>. Pass the names of the reader's platform, such as <kbd>⌘</kbd> on Apple keyboards: `useModifierKey()` gives the shortcut modifier's `label`, ⌘ or Ctrl, and its `key`, `Meta` or `Control`, for `aria-keyshortcuts`. It is Ctrl on the server and while the page hydrates, then ⌘ on Apple platforms, so server-rendered markup hydrates; don't read `navigator` while rendering.
 
 ```tsx example=PlatformKeys
 
@@ -94,7 +81,7 @@ Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, an
 ### envUI provides
 
 - Native `<kbd>`: one per key, and one around a combination.
-- The + as text, so a combination reads as written, such as Ctrl+P.
+- The + as text, so a combination reads as written, such as <kbd>Ctrl</kbd>+<kbd>P</kbd>.
 - No focus and no role: keys read as part of their sentence.
 
 ### You provide
@@ -104,5 +91,5 @@ Write keys as the keyboard names them: Ctrl, Shift, Esc, F2, capital letters, an
 
 ## Changelog
 
-- **1.0.0**: The page is `kbd`, after the component.
+- **1.0.0**: `useModifierKey()`, the platform's shortcut modifier, safe to render on the server. The page is `kbd`, after the component.
 - **0.5.0**: Kbd, for a key or, with `keys`, keys pressed together; Markdown renders `<kbd>` as Kbd.

@@ -16,7 +16,7 @@ export interface TabsItem {
   value: string;
   /**
    * The tab's control: a Button, an IconButton, or a component that forwards native button props
-   * and its ref. It keeps its own look; a link is not allowed.
+   * and its ref. It takes the tab's look, a text tab, whatever its variant; a link is not allowed.
    */
   button: ReactElement<ComponentPropsWithRef<'button'>>;
   /** The panel's content, shown while the tab is selected. */
@@ -122,7 +122,7 @@ function TabButton({
 /**
  * Switches between panels of related content in one place: a rail of the buttons you supply, each
  * a tab linked to its panel, with selection from the keyboard and panels that fade as they change.
- * The selected tab keeps its button's own look; the others are quiet on the rail.
+ * Every tab is a text tab, the selected one in the accent color with an indicator under it.
  */
 export function Tabs({
   items,

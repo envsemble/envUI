@@ -15,7 +15,7 @@ aliases:
 useWhen:
   - Showing an icon-only control's name, such as a toolbar's Refresh button, for people who don't recognise the icon.
   - Saying why a control is disabled, such as All seats are assigned, beside the page's own account of it.
-  - Showing a control's keyboard shortcut, such as Bold (Ctrl+B).
+  - Showing a control's keyboard shortcut, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>).
 avoidWhen:
   - text: A preview of a person, a page or an item, with more than a line of text, on hover or focus.
     use: HoverCard
@@ -25,11 +25,6 @@ avoidWhen:
     use: TextField
   - text: Information people need that should stay visible, such as a warning about a limit.
     use: Alert
-related:
-  - button
-  - hover-card
-  - popover
-  - accessibility
 components:
   - Tooltip
 ---
@@ -102,16 +97,6 @@ Text that isn't a control, such as an abbreviation, takes a quiet dotted underli
 
 - Wrap a control that takes focus, never plain text or an icon.
 
-### Content
-
-```tsx do=ShortName open caption="A few words, the same as the control’s accessible name."
-
-```
-
-```tsx dont=LongTooltip open caption="A paragraph people must hold the pointer still to read."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=TooltipAnatomy open
@@ -122,6 +107,10 @@ Text that isn't a control, such as an abbreviation, takes a quiet dotted underli
 2. **Control** (`env-icon-button`, `children`)
 
 Not shown: the wrapper that takes the pointer for a disabled control, `env-tooltip-disabled-target`, and the dotted underline of a text trigger, `env-hover-detail`.
+
+### Colors
+
+`--env-tooltip-container`, `--env-tooltip-content` and `--env-tooltip-outline` set the colors of one Tooltip, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Accessibility
 

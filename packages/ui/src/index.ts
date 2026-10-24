@@ -20,7 +20,6 @@ export * from './actions/ButtonGroup.js';
 export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
-export * from './actions/SearchTrigger.js';
 export * from './actions/SegmentedControl.js';
 export * from './navigation/Bar.js';
 export * from './navigation/Rail.js';
@@ -36,9 +35,9 @@ export * from './content/Badge.js';
 export * from './content/DiffStat.js';
 export * as Table from './content/Table.js';
 export * from './content/Kbd.js';
+export * from './content/useModifierKey.js';
 export * as Field from './forms/Field.js';
 export * from './forms/TextField.js';
-export * from './forms/ColorPicker.js';
 export * from './forms/Textarea.js';
 export * from './forms/Composer.js';
 export * from './forms/Checkbox.js';
@@ -93,7 +92,6 @@ export {
   type RelativeTimeValue,
 } from './content/formatRelativeTime.js';
 export * from './content/Rating.js';
-export * from './content/ColorSwatch.js';
 export * from './content/Message.js';
 export * as Accordion from './content/Accordion.js';
 export * as DescriptionList from './content/DescriptionList.js';

@@ -46,28 +46,14 @@
   grid-column: 1;
 }
 /* The divider shows only while the panes sit side by side. It is the gap between them, never a
-   line: panes that hold surfaces, such as a Surface each, stand apart across it. Three small dots
-   at its middle are the grip that says it moves. Under the pointer they darken; with keyboard
-   focus or while dragging they take the focus color, and focus rings the gap. It is exactly the
-   gap, under a coarse pointer too, and leaves out the resize handle's line. */
+   line: panes that hold surfaces, such as a Surface each, stand apart across it. Its grip, hover
+   and focus are the resize handle's (ResizeHandle.css, data-grip), the same as a side Sheet's and
+   the Drawer's edge. It is exactly the gap, under a coarse pointer too. */
 .env-panes-divider {
-  --env-panes-grip-dot: 0.1875rem;
-  --env-panes-grip-color: var(--env-color-border-default);
   --env-resize-handle-size: var(--env-panes-gap);
-  --env-resize-handle-line: none;
   display: none;
   grid-column: 2;
   grid-row: 1;
-  border-radius: var(--env-radius-full);
-  background:
-    radial-gradient(closest-side, var(--env-panes-grip-color) 80%, transparent) 50%
-      calc(50% - 2 * var(--env-panes-grip-dot)) / var(--env-panes-grip-dot)
-      var(--env-panes-grip-dot) no-repeat,
-    radial-gradient(closest-side, var(--env-panes-grip-color) 80%, transparent) 50% 50% /
-      var(--env-panes-grip-dot) var(--env-panes-grip-dot) no-repeat,
-    radial-gradient(closest-side, var(--env-panes-grip-color) 80%, transparent) 50%
-      calc(50% + 2 * var(--env-panes-grip-dot)) / var(--env-panes-grip-dot)
-      var(--env-panes-grip-dot) no-repeat;
 }
 /* Under a coarse pointer its hit area reaches the touch size across the gap without widening it. */
 @media (pointer: coarse) {
@@ -85,17 +71,6 @@
 }
 .env-panes[data-behavior='list-detail']:not(:has(> .env-panes-divider)) > .env-panes-list {
   margin-inline-end: calc(var(--env-panes-split, 0) * var(--env-panes-gap));
-}
-.env-panes-divider:not([aria-disabled='true']):hover {
-  --env-panes-grip-color: var(--env-color-fg-muted);
-}
-.env-panes-divider:focus-visible,
-.env-panes-divider[data-dragging] {
-  --env-panes-grip-color: var(--env-color-border-focus);
-}
-.env-panes-divider:focus-visible {
-  outline: 2px solid var(--env-color-border-focus);
-  outline-offset: -2px;
 }
 
 /* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
@@ -162,6 +137,14 @@
 .env-panes[data-behavior='list-detail'][data-open] > .env-panes-list,
 .env-panes[data-behavior='list-detail']:not([data-open]) > .env-panes-detail {
   display: none;
+}
+/* The detail alone is a column of the back button and the rest of the pane: what follows the
+   button fills the room below it, so a surface as tall as the pane (min-block-size: 100%) ends at
+   the pane's end rather than overflowing by the button's height. Side by side it is a block. */
+.env-panes[data-behavior='list-detail'][data-open] > .env-panes-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
 }
 /* The back button keeps clear of the pane's corner: its label lines up 1 rem in, where a pane's
    content usually starts, as a text button's label sits on its text's edge. */
@@ -335,17 +318,9 @@
     display: none;
   }
 }
-/* Forced colors: the divider's grip and the sheet's edge take the system's text color, and a
-   focused or dragged grip the selection color. */
+/* Forced colors: the sheet's edge takes the system's text color; the divider's grip is the resize
+   handle's (ResizeHandle.css). */
 @media (forced-colors: active) {
-  .env-panes-divider {
-    --env-panes-grip-color: CanvasText;
-    forced-color-adjust: none;
-  }
-  .env-panes-divider:focus-visible,
-  .env-panes-divider[data-dragging] {
-    --env-panes-grip-color: Highlight;
-  }
   .env-panes-supporting {
     border-color: CanvasText;
   }

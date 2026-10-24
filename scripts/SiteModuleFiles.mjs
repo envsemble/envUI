@@ -3,7 +3,7 @@
 // again before reloading: WebKit keeps a module that failed as failed for the whole tab, across
 // reloads, until its file is fetched again.
 //
-// `vite build --mode site` writes Vite's manifest into dist/site/.vite/; FinalizeSite.mjs turns it
+// `vite build` writes Vite's manifest into dist/site/.vite/; FinalizeSite.mjs turns it
 // into dist/site/module-files.json with writeModuleFiles and removes the manifest.
 import { existsSync } from 'node:fs';
 import { readFile, rm, writeFile } from 'node:fs/promises';
@@ -56,7 +56,7 @@ export async function writeModuleFiles(siteDirectory) {
   if (!existsSync(manifestFile)) {
     if (existsSync(resolve(siteDirectory, moduleFilesName))) return false;
     throw new Error(
-      `${siteDirectory} has neither Vite's manifest nor ${moduleFilesName}: build it with vite build --mode site, as npm run build:site does, first.`,
+      `${siteDirectory} has neither Vite's manifest nor ${moduleFilesName}: build it with vite build, as npm run build:site does, first.`,
     );
   }
   const manifest = JSON.parse(await readFile(manifestFile, 'utf8'));

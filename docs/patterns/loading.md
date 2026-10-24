@@ -41,13 +41,6 @@ composes:
   - Row
   - Text
   - Avatar
-related:
-  - surface
-  - card
-  - spinner
-  - progress
-  - button
-  - scaffold
 ---
 
 # Loading
@@ -149,15 +142,15 @@ After 200 ms the bar along the top bar's bottom edge shows the next page is on i
 4. **Description bars** (`env-card-description`)
 5. **Action shape** (`env-card-footer`)
 
-Not shown: the inert content inside the root, `env-skeleton-content`, which has no box of its own. Every bar and shape pulses in step across the page, and keeps still with a reduced-motion preference.
+Not shown: the inert content inside the root, `env-skeleton-content`, which has no box of its own. A soft highlight sweeps across every bar and shape, and fainter across the skeleton's own surfaces, such as a card or a row, in step across the page, and keeps still with a reduced-motion preference. Bars have small rounded corners, over missing text and text that is there alike, and shapes keep their component's, such as a chip's, an avatar's round one or a card's.
 
 ## Accessibility
 
 ### envUI provides
 
-- One busy region per skeleton, `aria-busy` on its root, whose content is inert: Tab passes over it and assistive technology skips it until it loads.
+- One busy region per skeleton, `aria-busy` on its root, whose content is inert: <kbd>Tab</kbd> passes over it and assistive technology skips it until it loads.
 - A visually hidden status beside a skeleton list, which holds no wrapper, that says what is loading.
-- A skeleton popup, sheet or supporting pane that keeps focus, so Escape still closes it.
+- A skeleton popup, sheet or supporting pane that keeps focus, so <kbd>Esc</kbd> still closes it.
 - A Spinner with `showLabel`, a busy status with its label; a pending Button that keeps its size and ignores presses; Progress with its value.
 
 ### You provide

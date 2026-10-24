@@ -70,7 +70,7 @@ test('the map is written once from the manifest, and a finalised build is left a
   const site = await mkdtemp(join(tmpdir(), 'envui-site-'));
   t.after(() => rm(site, { recursive: true, force: true }));
   // Without Vite's manifest or the map, the site was never built.
-  await assert.rejects(writeModuleFiles(site), /vite build --mode site/);
+  await assert.rejects(writeModuleFiles(site), /vite build/);
   await mkdir(join(site, '.vite'));
   await writeFile(
     join(site, '.vite/manifest.json'),

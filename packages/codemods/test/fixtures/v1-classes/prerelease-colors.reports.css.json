@@ -1,0 +1,6 @@
+[
+  "line 4: --env-alert-tint becomes --env-alert-container, a color property that doesn't inherit: where .my-alert matches a wrapper rather than the .env-alert itself, it no longer reaches the one inside. Set it on the component, such as with \".my-alert .env-alert\", its className or its style.",
+  "line 5: --env-alert-tone becomes --env-alert-icon, a color property that doesn't inherit: where .my-alert matches a wrapper rather than the .env-alert itself, it no longer reaches the one inside. Set it on the component, such as with \".my-alert .env-alert\", its className or its style.",
+  "line 11: --env-toast-fill-hover is removed in 1.0: A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color.",
+  "line 17: --env-toast-edge becomes --env-toast-outline, a color property that doesn't inherit: where .app-toasts matches a wrapper rather than the .env-toast itself, it no longer reaches the one inside. Set it on the component, such as with \".app-toasts .env-toast\", its className or its style."
+]

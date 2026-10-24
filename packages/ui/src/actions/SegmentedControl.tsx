@@ -17,6 +17,7 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/useDirection.js';
 import { useFormatters } from '../internal/useFormatters.js';
+import { Check } from '../icons/Check.js';
 
 /** One item of a SegmentedControl. */
 export interface SegmentedControlItem {
@@ -49,9 +50,9 @@ export interface SegmentedControlProps
   /** The group's accessible name, such as Work items; the control has no visible label. */
   'aria-label': string;
   /**
-   * The rail's height, as on every control: sm, md or lg in the current scale, so it lines up with
-   * buttons and fields of the same size. Without it, the rail takes the control height of its
-   * container, md unless the container sets another.
+   * The height, as on every control: sm, md or lg in the current scale, so it lines up with buttons
+   * and fields of the same size. Without it, it takes the control height of its container, md
+   * unless the container sets another.
    */
   size?: ControlSize;
   /**
@@ -65,8 +66,9 @@ export interface SegmentedControlProps
 }
 
 /**
- * One choice among a few items on a pill rail, such as views or filters of the same content; the
- * chosen item takes the primary colors. A radio group, with one tab stop and arrow keys.
+ * One choice among a few items, such as views or filters of the same content, as connected outlined
+ * segments after Material's segmented buttons: the chosen one takes the selected fill and a check.
+ * A radio group, with one tab stop and arrow keys.
  */
 export function SegmentedControl({
   items,
@@ -134,6 +136,10 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       render={<button type="button" />}
       className="env-segmented-control-item"
     >
+      {/* The chosen segment shows a check, in place of its icon where it has one. */}
+      <span className="env-icon env-segmented-control-item-check" aria-hidden="true">
+        <Check />
+      </span>
       {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
       <span ref={labelRef} className="env-segmented-control-item-label">
         {item.label}

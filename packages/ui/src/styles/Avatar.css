@@ -1,3 +1,15 @@
+/* Color properties: an avatar's colors, which an application sets on one avatar through style or
+   its own CSS: the fill behind its initials or figure, and the initials and figure. They don't
+   inherit, and they win over its hue. */
+@property --env-avatar-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-avatar-content {
+  syntax: '*';
+  inherits: false;
+}
+
 /* Avatars, tooltips and bars reuse the shared palette and corner scale. */
 .env-avatar {
   --env-avatar-size: 2rem;
@@ -7,43 +19,50 @@
   flex: 0 0 auto;
   inline-size: var(--env-avatar-size);
   block-size: var(--env-avatar-size);
-  overflow: hidden;
   border-radius: 50%;
-  /* The solid fill of the avatar's hue, from data-hue, behind white initials or figure. */
-  --env-avatar-fill: var(--env-color-avatar-bg);
+  /* A tonal pair of the avatar's hue, from data-hue: a soft pastel fill behind initials and a
+     figure in a deep shade of the same hue. */
+  --env-avatar-container-default: var(--env-color-avatar-bg);
+  --env-avatar-content-default: var(--env-color-avatar-fg);
+  --env-avatar-fill: var(--env-avatar-container, var(--env-avatar-container-default));
+  --env-avatar-figure-color: var(--env-avatar-content, var(--env-avatar-content-default));
   background: var(--env-avatar-fill);
-  color: var(--env-color-avatar-fg);
+  color: var(--env-avatar-content, var(--env-avatar-content-default));
   font: var(--env-font-weight-semibold) calc(var(--env-avatar-size) * 0.38) / 1
     var(--env-font-family);
   letter-spacing: 0.01em;
   user-select: none;
-  /* Hook: a container draws a ring around its avatars with --env-avatar-ring, a box-shadow, such
-     as an avatar group's ring in the color of the surface below. */
-  box-shadow: var(--env-avatar-ring, none);
 }
-.env-avatar[data-hue='teal'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-teal);
+.env-avatar[data-hue='seafoam'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-seafoam);
+  --env-avatar-content-default: var(--env-color-avatar-fg-seafoam);
 }
-.env-avatar[data-hue='green'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-green);
+.env-avatar[data-hue='sage'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-sage);
+  --env-avatar-content-default: var(--env-color-avatar-fg-sage);
 }
-.env-avatar[data-hue='amber'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-amber);
+.env-avatar[data-hue='butter'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-butter);
+  --env-avatar-content-default: var(--env-color-avatar-fg-butter);
 }
-.env-avatar[data-hue='red'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-red);
+.env-avatar[data-hue='blush'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-blush);
+  --env-avatar-content-default: var(--env-color-avatar-fg-blush);
 }
-.env-avatar[data-hue='violet'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-violet);
+.env-avatar[data-hue='periwinkle'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-periwinkle);
+  --env-avatar-content-default: var(--env-color-avatar-fg-periwinkle);
 }
-.env-avatar[data-hue='purple'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-purple);
+.env-avatar[data-hue='orchid'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-orchid);
+  --env-avatar-content-default: var(--env-color-avatar-fg-orchid);
 }
-.env-avatar[data-hue='slate'] {
-  --env-avatar-fill: var(--env-color-avatar-bg-slate);
+.env-avatar[data-hue='oat'] {
+  --env-avatar-container-default: var(--env-color-avatar-bg-oat);
+  --env-avatar-content-default: var(--env-color-avatar-fg-oat);
 }
-/* A hairline just inside the edge, over the fill or the picture, so a white figure or a light
-   photo keeps its circle on a page of the same color. */
+/* A hairline just inside the edge, over the fill or the picture, so a pastel fill or a light photo
+   keeps its circle on a page of a near color. */
 .env-avatar::after {
   content: '';
   position: absolute;
@@ -68,6 +87,49 @@
 .env-avatar-fallback {
   display: contents;
 }
+/* Chosen: a ring in the accent of a checked box around the avatar, apart from it by the color of
+   the surface below, and a small check in the same accent at its bottom end, so the choice shows by
+   shape as well as color. */
+.env-avatar[data-selected] {
+  --env-avatar-selected-gap: var(
+    --env-avatar-group-ring-color,
+    var(--env-surface-color, var(--env-color-bg-page))
+  );
+  box-shadow:
+    0 0 0 2px var(--env-avatar-selected-gap),
+    0 0 0 4px var(--env-color-bg-brand-emphasis);
+}
+.env-avatar-check {
+  position: absolute;
+  inset-block-end: calc(var(--env-avatar-size) * -0.08);
+  inset-inline-end: calc(var(--env-avatar-size) * -0.08);
+  z-index: var(--env-z-raised);
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  inline-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.36));
+  block-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.36));
+  border-radius: 50%;
+  background: var(--env-color-bg-brand-emphasis);
+  color: var(--env-color-fg-on-emphasis);
+  box-shadow: 0 0 0 2px var(--env-avatar-selected-gap);
+}
+.env-avatar-check .env-icon,
+.env-avatar-check svg {
+  inline-size: 75%;
+  block-size: 75%;
+}
+@media (forced-colors: active) {
+  .env-avatar[data-selected] {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+  .env-avatar-check {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+}
 /* Hook: a container that covers the end of an avatar, such as an avatar group, sets
    --env-avatar-initials-inset-end to that width, so initials center in the part left uncovered. */
 .env-avatar:has(> .env-avatar-fallback-initials) {
@@ -79,6 +141,7 @@
 }
 .env-avatar-person {
   display: block;
+  border-radius: inherit;
   inline-size: 100%;
   block-size: 100%;
 }
@@ -86,11 +149,12 @@
   fill: var(--env-avatar-fill);
 }
 .env-avatar-person-figure {
-  fill: var(--env-color-avatar-figure);
+  fill: var(--env-avatar-figure-color);
 }
 .env-avatar-image {
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
@@ -103,7 +167,8 @@
   forced-color-adjust: none;
   border-color: transparent;
   box-shadow: none;
-  background: var(--env-skeleton-color);
+  --env-skeleton-shape: 1;
+  background: var(--env-skeleton-paint);
 }
 [data-env-skeleton] .env-avatar * {
   visibility: hidden;

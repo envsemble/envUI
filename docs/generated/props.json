@@ -268,6 +268,13 @@
           "required": false,
           "default": "false",
           "description": "Names the avatar as an image by `name`. Without it, the avatar is hidden from assistive technology, for when text beside it already names the person."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the avatar as chosen, such as in a list of people to pick from: a ring around it and a small check at its bottom end, so the choice never rests on color alone. It is a look only: the control around the avatar, such as a checkbox or an option, says it is chosen."
         }
       ],
       "native": [
@@ -324,7 +331,7 @@
     "AvatarGroup": {
       "kind": "component",
       "source": "packages/ui/src/content/AvatarGroup.tsx",
-      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip. A ring in the color of the surface below separates the avatars.",
+      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip.",
       "props": [
         {
           "name": "people",
@@ -344,6 +351,13 @@
           "required": false,
           "default": "'md'",
           "description": "As Avatar: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem."
+        },
+        {
+          "name": "gather",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where a pointer can hover, the group keeps the room its spread takes, so spreading never moves what is around it, and the avatars gather at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
         },
         {
           "name": "total",
@@ -600,6 +614,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -1128,133 +1148,305 @@
     },
     "ColorPicker": {
       "kind": "component",
-      "source": "packages/ui/src/forms/ColorPicker.tsx",
-      "description": "A labelled color area, hue slider and native HEX field; the application owns the result. The area and the hue are sliders for the keyboard and assistive technology, named after the label in the EnvUIProvider's language, such as Accent color saturation and brightness and Accent color hue.",
+      "source": "packages/ui/src/color/ColorPicker.tsx",
+      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
-        {
-          "name": "ref",
-          "type": "Ref<HTMLInputElement>",
-          "required": false,
-          "description": "The HEX field, so that a form library can register it and focus it."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "The picker's class, on its root element."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "Styles of the picker's root element."
-        },
-        {
-          "name": "label",
-          "type": "string",
-          "required": true,
-          "description": "The color's name above the picker; it names the group and, with \"HEX\", the field."
-        },
-        {
-          "name": "value",
-          "type": "string",
-          "required": false,
-          "description": "An opaque six-digit HEX color, with an optional # prefix."
-        },
-        {
-          "name": "defaultValue",
-          "type": "string",
-          "required": false,
-          "default": "'#000000'",
-          "description": "The color an uncontrolled picker starts at, and that a form reset restores; #000000 by default."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": false,
-          "description": "Receives valid colors normalized to lowercase #rrggbb."
-        },
-        {
-          "name": "prefix",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
-        },
-        {
-          "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
-        },
-        {
-          "name": "startIcon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon at the start of the field, such as Search or Mail."
-        },
-        {
-          "name": "error",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
-        },
-        {
-          "name": "endAction",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A control at the end of the field, such as an IconButton that reveals or copies the value; name it with aria-label. A button that sets no variant takes ghost here."
-        },
         {
           "name": "showLabel",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Show the label in the field, where it rests while the field is empty and floats into the outline while the field has focus or a value. Set false for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
+          "description": "Show the label above the picker. Set false where something else names it, such as the popover around it: the label still names the picker for assistive technology."
         },
         {
-          "name": "suffix",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "Short, non-interactive text after the value, such as a unit. It is not part of the value; it shows once the field has focus or a value and is read after the label."
+          "description": "Lasting guidance under the picker, such as where the color shows."
+        },
+        {
+          "name": "error",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A message under the picker that says what is wrong with the color, such as too little contrast."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "The color's name, such as Accent color; it names the picker, and ColorPickerButton's popover and button."
+        },
+        {
+          "name": "value",
+          "type": "ColorValue",
+          "required": false,
+          "description": "The color in a controlled picker: a CSS color string, such as #6750a4, rgb(103, 80, 164) or hsl(256, 34%, 48%), or React Aria's Color; update it from onValueChange."
+        },
+        {
+          "name": "defaultValue",
+          "type": "ColorValue",
+          "required": false,
+          "default": "'#000000'",
+          "description": "The color an uncontrolled picker starts at, and that a form reset restores."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string, color: Color) => void",
+          "required": false,
+          "description": "Receives the color as it changes, as a string in valueFormat, such as #6750a4, and as React Aria's Color, which keeps the hue of a gray and converts to any format."
+        },
+        {
+          "name": "valueFormat",
+          "type": "'hex' | 'rgb' | 'hsl'",
+          "required": false,
+          "default": "'hex'",
+          "description": "The format of the string onValueChange receives and a form submits: hex (#rrggbb, or #rrggbbaa while translucent), rgb (rgb() or rgba()) or hsl (hsl() or hsla())."
+        },
+        {
+          "name": "formats",
+          "type": "readonly ColorFormat[]",
+          "required": false,
+          "default": "['hex', 'rgb', 'hsl']",
+          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+        },
+        {
+          "name": "alpha",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the color has an alpha: a slider and a field for its opacity, and a value with its alpha while translucent. Without it, colors are opaque."
+        },
+        {
+          "name": "eyeDropper",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the eyedropper, which picks a color from the screen, where the browser has one (Chromium-based browsers on the desktop); elsewhere it never shows."
+        },
+        {
+          "name": "copy",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the button that copies the color, as the fields show it."
+        },
+        {
+          "name": "swatches",
+          "type": "readonly ColorPickerSwatch[]",
+          "required": false,
+          "description": "Preset colors to choose from, under the fields: CSS color strings, React Aria's Colors, or `{ color, label }` with a name, such as the colors of a brand."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "Submits the color with a form under this name, as a string in valueFormat."
+        },
+        {
+          "name": "form",
+          "type": "string",
+          "required": false,
+          "description": "The id of the form the color submits with, where the picker sits outside it."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the picker takes no input, faded."
+        },
+        {
+          "name": "readOnly",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether people can read and copy the color, but not change it."
         }
       ],
       "native": [
-        "input"
+        "div"
       ],
       "entries": [
-        "@envsemble/envui"
+        "@envsemble/envui/color"
+      ]
+    },
+    "ColorPickerButton": {
+      "kind": "component",
+      "source": "packages/ui/src/color/ColorPickerButton.tsx",
+      "description": "A compact button that shows a color as a swatch and its value, and opens a ColorPicker in a Popover: the common way to choose a color in a toolbar, a row or a form. The button is named after the label and the color, such as Accent color, #6750A4.",
+      "props": [
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The button's class, beside env-color-picker-button."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the button."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The button's height, as on every control; without it, its container's."
+        },
+        {
+          "name": "side",
+          "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
+          "required": false,
+          "default": "'bottom'",
+          "description": "The side of the button the picker opens on."
+        },
+        {
+          "name": "align",
+          "type": "'start' | 'center' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "How the picker lines up with the button along that side."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the picker starts open, such as in a picture of it."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "The color's name, such as Accent color; it names the picker, and ColorPickerButton's popover and button."
+        },
+        {
+          "name": "value",
+          "type": "ColorValue",
+          "required": false,
+          "description": "The color in a controlled picker: a CSS color string, such as #6750a4, rgb(103, 80, 164) or hsl(256, 34%, 48%), or React Aria's Color; update it from onValueChange."
+        },
+        {
+          "name": "defaultValue",
+          "type": "ColorValue",
+          "required": false,
+          "default": "'#000000'",
+          "description": "The color an uncontrolled picker starts at, and that a form reset restores."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string, color: Color) => void",
+          "required": false,
+          "description": "Receives the color as it changes, as a string in valueFormat, such as #6750a4, and as React Aria's Color, which keeps the hue of a gray and converts to any format."
+        },
+        {
+          "name": "valueFormat",
+          "type": "'hex' | 'rgb' | 'hsl'",
+          "required": false,
+          "default": "'hex'",
+          "description": "The format of the string onValueChange receives and a form submits: hex (#rrggbb, or #rrggbbaa while translucent), rgb (rgb() or rgba()) or hsl (hsl() or hsla())."
+        },
+        {
+          "name": "formats",
+          "type": "readonly ColorFormat[]",
+          "required": false,
+          "default": "['hex', 'rgb', 'hsl']",
+          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+        },
+        {
+          "name": "alpha",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the color has an alpha: a slider and a field for its opacity, and a value with its alpha while translucent. Without it, colors are opaque."
+        },
+        {
+          "name": "eyeDropper",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the eyedropper, which picks a color from the screen, where the browser has one (Chromium-based browsers on the desktop); elsewhere it never shows."
+        },
+        {
+          "name": "copy",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Whether to show the button that copies the color, as the fields show it."
+        },
+        {
+          "name": "swatches",
+          "type": "readonly ColorPickerSwatch[]",
+          "required": false,
+          "description": "Preset colors to choose from, under the fields: CSS color strings, React Aria's Colors, or `{ color, label }` with a name, such as the colors of a brand."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "Submits the color with a form under this name, as a string in valueFormat."
+        },
+        {
+          "name": "form",
+          "type": "string",
+          "required": false,
+          "description": "The id of the form the color submits with, where the picker sits outside it."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the picker takes no input, faded."
+        },
+        {
+          "name": "readOnly",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether people can read and copy the color, but not change it."
+        }
+      ],
+      "native": [],
+      "entries": [
+        "@envsemble/envui/color"
       ]
     },
     "ColorSwatch": {
       "kind": "component",
-      "source": "packages/ui/src/content/ColorSwatch.tsx",
-      "description": "A round sample of a color with a hairline ring, so light and dark colors stay visible on every surface. It is decorative: name the color in the text beside it. As a Button's icon it takes the icon's size, such as on a button that opens a ColorPicker.",
+      "source": "packages/ui/src/color/ColorSwatch.tsx",
+      "description": "A small rounded sample of a color, with a hairline edge that keeps light and dark colors visible on every surface and a checkerboard under a translucent one. With `format`, it writes the color's value beside it, and with `label`, a name. Alone, it is an image named by the color's description, such as dark purple, in the EnvUIProvider's language; as a Button's icon it is decorative, and the button's text names the color.",
       "props": [
         {
           "name": "color",
-          "type": "string",
+          "type": "ColorValue",
           "required": true,
-          "description": "The color it shows, such as #6750a4."
+          "description": "The color it shows: a CSS color string, such as #6750a4, rgb(103, 80, 164) or hsl(256, 34%, 48%), with an optional alpha, or React Aria's Color."
+        },
+        {
+          "name": "format",
+          "type": "'hex' | 'rgb' | 'hsl'",
+          "required": false,
+          "description": "Writes the color beside the sample in this format: hex, such as #6750A4, rgb or hsl. Without it and a label, the sample stands alone, named by the color's description, such as dark purple."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A name beside the sample, before the value, such as the label the color belongs to."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "required": false,
+          "default": "'md'",
+          "description": "The sample's size: sm, 0.75 rem, for dense rows; md, 1 rem, the size of an icon. As a Button's icon it takes the icon's size."
         }
       ],
       "native": [
         "span"
       ],
       "entries": [
-        "@envsemble/envui"
+        "@envsemble/envui/color"
       ]
     },
     "Column": {
@@ -1700,6 +1892,12 @@
       "description": "A button for an action that takes effect at once and cannot be undone. The first press arms it and names the consequence in place; a second press runs it. It disarms after a few seconds, when focus leaves and on Escape.",
       "props": [
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+        },
+        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -1746,7 +1944,7 @@
           "name": "confirmLabel",
           "type": "ReactNode",
           "required": true,
-          "description": "The label while armed, naming what a second press does, such as “Remove Morgan?”."
+          "description": "The label while armed: what a second press does, short and without a question mark, such as “Remove Morgan”."
         },
         {
           "name": "onConfirm",
@@ -2521,6 +2719,12 @@
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
         },
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+        },
+        {
           "name": "pending",
           "type": "boolean",
           "required": false,
@@ -2725,7 +2929,7 @@
     "Drawer": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Drawer.tsx",
-      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop. Its list scrolls where the drawer is shorter than its destinations.",
+      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
       "props": [
         {
           "name": "destinations",
@@ -2765,6 +2969,53 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "resizable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns to `defaultWidth`. Leave it out of a drawer in a sheet of a narrow window."
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "required": false,
+          "description": "The drawer's width in rem while `resizable`, for a drawer the application controls with onWidthChange, such as a width it keeps for the next visit."
+        },
+        {
+          "name": "defaultWidth",
+          "type": "number",
+          "required": false,
+          "default": "17.5",
+          "description": "The width in rem a `resizable` drawer starts at until people resize it, and that a double click on the handle returns it to."
+        },
+        {
+          "name": "onWidthChange",
+          "type": "(width: number, details: { committed: boolean }) => void",
+          "required": false,
+          "description": "Receives each new width of a `resizable` drawer, in rem: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it. Store the committed width to keep it, and pass it back as `width`."
+        },
+        {
+          "name": "minWidth",
+          "type": "number",
+          "required": false,
+          "default": "15",
+          "description": "The smallest width of a `resizable` drawer, in rem."
+        },
+        {
+          "name": "maxWidth",
+          "type": "number",
+          "required": false,
+          "default": "30",
+          "description": "The largest width of a `resizable` drawer, in rem. It never takes more than half its container, such as the Scaffold, or of the window."
+        },
+        {
+          "name": "resizeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Resize navigation', or EnvUIProvider's messages.navigation.resize",
+          "description": "The resize handle's name."
         },
         {
           "name": "skeleton",
@@ -3722,7 +3973,7 @@
           "name": "toolbar",
           "type": "readonly MarkdownCommand[] | false",
           "required": false,
-          "default": "['heading', 'bold', 'italic', 'bullet-list', 'numbered-list', 'quote', 'inline-code', 'code-block', 'link']",
+          "default": "['heading', 'bold', 'italic', 'inline-code', 'bullet-list', 'numbered-list', 'quote', 'code-block', 'link']",
           "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
         },
         {
@@ -3780,7 +4031,7 @@
           "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
         },
         {
           "name": "error",
@@ -5322,7 +5573,7 @@
     "Panes.Divider": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged.",
+      "description": "The divider between the panes, which resizes the supporting pane or the list: the gap between them, with a small grip and no line. It is a focusable separator that the pointer drags and the arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls. A double click returns it to the default width. It shows only while the panes sit side by side, and measures nothing until it is dragged. Place it between two surfaces, each pane's own, such as a Surface as tall as the pane, never beside content on the page.",
       "props": [
         {
           "name": "label",
@@ -5561,6 +5812,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "A decorative icon after the label, such as a ChevronRight for a next step."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
         },
         {
           "name": "pending",
@@ -6169,7 +6426,7 @@
           "type": "Exclude<FieldVariant, 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The document's look, as a text area's: outline, in a bordered box on the field background; underline, without a border or fill, with an underline while it has focus; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
+          "description": "The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
         },
         {
           "name": "extensions",
@@ -6456,7 +6713,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
         },
         {
           "name": "description",
@@ -6466,10 +6723,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
+          "type": "'outline' | 'floating' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
         },
         {
           "name": "error",
@@ -6491,72 +6748,10 @@
         "@envsemble/envui"
       ]
     },
-    "SearchTrigger": {
-      "kind": "component",
-      "source": "packages/ui/src/actions/SearchTrigger.tsx",
-      "description": "The button that opens search or a command palette: a field-like button with its label and the shortcut's keys, or a search icon alone. It presses itself when the shortcut is pressed, and the application opens the search from onClick.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'Search', or EnvUIProvider's messages.searchTrigger.label",
-          "description": "The label, and the name of the icon-only trigger."
-        },
-        {
-          "name": "shortcut",
-          "type": "string | false",
-          "required": false,
-          "default": "'mod+k'",
-          "description": "The keyboard shortcut, shown as keys at the end and announced as aria-keyshortcuts: `mod+k` is ⌘K on Apple platforms and Ctrl+K elsewhere. false shows and handles none."
-        },
-        {
-          "name": "listen",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Press the trigger when the shortcut is pressed anywhere in the window, text fields included. With several triggers listening for one shortcut, the most recently mounted one that is visible and not behind a modal dialog takes it. A disabled trigger, or a key press that something else already handled, such as an editor's own shortcut, leaves the key alone."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Show only the search icon, in a ghost IconButton with the label and shortcut in a tooltip."
-        },
-        {
-          "name": "tooltipSide",
-          "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
-          "required": false,
-          "default": "'bottom'",
-          "description": "The side of the trigger the icon-only tooltip opens on."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "default": "the container's control height, md unless the container sets another",
-          "description": "The height, as on every control."
-        },
-        {
-          "name": "fullWidth",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Fill the width of the container, such as at the top of a navigation drawer."
-        }
-      ],
-      "native": [
-        "button"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "SegmentedControl": {
       "kind": "component",
       "source": "packages/ui/src/actions/SegmentedControl.tsx",
-      "description": "One choice among a few items on a pill rail, such as views or filters of the same content; the chosen item takes the primary colors. A radio group, with one tab stop and arrow keys.",
+      "description": "One choice among a few items, such as views or filters of the same content, as connected outlined segments after Material's segmented buttons: the chosen one takes the selected fill and a check. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
           "name": "items",
@@ -6586,7 +6781,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The rail's height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, the rail takes the control height of its container, md unless the container sets another."
+          "description": "The height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, it takes the control height of its container, md unless the container sets another."
         },
         {
           "name": "fullWidth",
@@ -6730,7 +6925,7 @@
     "Sheet": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Sheet.tsx",
-      "description": "A panel that slides in over the page from an edge of the window, for filters, details, an inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a modal by default, which traps focus and returns it on close, or beside the page with modal false. A side sheet takes the whole width of a compact window, and a swipe toward its edge closes it. className, style, ref and data attributes go to the sheet's surface.",
+      "description": "A panel that slides in over the page from an edge of the window, for filters, details, an inspector or choices: a side sheet from the end or the start edge, or a bottom sheet. It is a modal by default, which traps focus and returns it on close, or beside the page with modal false. A side sheet takes the whole width of a compact window, and a finger's swipe toward its edge closes it; a mouse or a pen never swipes it. With `resizable`, people resize it by its inner edge, with the same handle as between Panes. className, style, ref and data attributes go to the sheet's surface.",
       "props": [
         {
           "name": "open",
@@ -6749,7 +6944,7 @@
           "name": "onOpenChange",
           "type": "(open: boolean, details: DialogOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the requested state, and why, when the sheet asks to open or close: from the trigger, Escape, an outside press, the close button, a swipe toward its edge or a DialogClose. Not called for a dismissal that pending blocks."
+          "description": "Called with the requested state, and why, when the sheet asks to open or close: from the trigger, Escape, an outside press, the close button, a swipe of a finger toward its edge or a DialogClose. Not called for a dismissal that pending blocks."
         },
         {
           "name": "trigger",
@@ -6810,10 +7005,51 @@
         },
         {
           "name": "width",
-          "type": "'md' | 'lg' | (string & {})",
+          "type": "'md' | 'lg' | number | (string & {})",
           "required": false,
           "default": "'md'",
-          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A bottom sheet ignores it."
+          "description": "A side sheet's width: md, 24 rem, for details and filters; lg, 44 rem, for content-heavy panels such as tables and comparisons; or any CSS length, such as min(20rem, 100% - 2rem). md takes the whole width of a compact window, lg of a compact or medium one, where the page beside it would be a sliver. A number is a width in rem: with `resizable`, the width the application controls with onWidthChange, while a CSS length is ignored, and warned of while developing: the sheet starts at `defaultWidth`. A bottom sheet ignores it."
+        },
+        {
+          "name": "resizable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Lets people resize a side sheet by its inner edge, the one toward the page: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth` and never wider than the window, which a double click returns to `defaultWidth`. The sheet is then as wide as it at every window width. A bottom sheet ignores it."
+        },
+        {
+          "name": "defaultWidth",
+          "type": "number",
+          "required": false,
+          "default": "24, or 44 where width is lg",
+          "description": "The width in rem a `resizable` side sheet starts at until people resize it, and that a double click on the handle returns it to."
+        },
+        {
+          "name": "onWidthChange",
+          "type": "(width: number, details: { committed: boolean }) => void",
+          "required": false,
+          "description": "Receives each new width of a `resizable` side sheet, in rem: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it. Store the committed width to keep it, and pass it back as `width`."
+        },
+        {
+          "name": "minWidth",
+          "type": "number",
+          "required": false,
+          "default": "16",
+          "description": "The smallest width of a `resizable` side sheet, in rem."
+        },
+        {
+          "name": "maxWidth",
+          "type": "number",
+          "required": false,
+          "default": "60",
+          "description": "The largest width of a `resizable` side sheet, in rem; it never takes more than the window."
+        },
+        {
+          "name": "resizeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Resize', or EnvUIProvider's messages.dialog.resize",
+          "description": "The resize handle's name."
         },
         {
           "name": "modal",
@@ -6866,19 +7102,19 @@
     "Slider": {
       "kind": "component",
       "source": "packages/ui/src/forms/Slider.tsx",
-      "description": "A value in a range, chosen by dragging a thumb along a track, pressing the track or with the keyboard, with its label and current value above the track and an optional description below.",
+      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it. An optional description sits below it.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The value's name above the track, such as Opacity. It names the slider, and pressing it moves focus to the slider."
+          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "Lasting guidance under the track, such as what the value applies to, linked to the slider as its description."
+          "description": "Lasting guidance under the slider, such as what the value applies to, linked to the slider as its description."
         },
         {
           "name": "value",
@@ -6937,7 +7173,7 @@
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "description": "The value as people read it above the track and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
+          "description": "The value as people read it at the slider's end and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
         },
         {
           "name": "locale",
@@ -7394,7 +7630,7 @@
     "Tabs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Tabs.tsx",
-      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. The selected tab keeps its button's own look; the others are quiet on the rail.",
+      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. Every tab is a text tab, the selected one in the accent color with an indicator under it.",
       "props": [
         {
           "name": "items",
@@ -7529,7 +7765,7 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating and underline variants, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating variant, with an optional start icon, end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -7575,10 +7811,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
+          "type": "'outline' | 'floating' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
         },
         {
           "name": "startIcon",
@@ -7603,7 +7839,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
         },
         {
           "name": "prefix",
@@ -7653,7 +7889,7 @@
           "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
         },
         {
           "name": "onValueChange",
@@ -8635,6 +8871,15 @@
       "source": "packages/ui/src/internal/EnvUIContext.ts",
       "description": "The locale of the nearest EnvUIProvider, for formatting in step with envUI, or undefined where no provider sets one: the runtime's locale applies then.",
       "signature": "(): string | undefined",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useModifierKey": {
+      "kind": "function",
+      "source": "packages/ui/src/content/useModifierKey.ts",
+      "description": "The platform's modifier for shortcuts: ⌘ on Apple platforms, Ctrl elsewhere. The server and the first render in the browser give Ctrl, so the markup hydrates; an Apple browser then renders ⌘.",
+      "signature": "(): ModifierKey",
       "entries": [
         "@envsemble/envui"
       ]

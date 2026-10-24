@@ -1,8 +1,8 @@
 import { lazy, Suspense, useState, type ComponentType } from 'react';
-import { Text } from '@envsemble/envui';
 import { SpecimenHeadingLevel } from '../previews/Example';
 import { Preview } from '../previews/Preview';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
+import { Loading } from './Loading';
 
 /**
  * Catalogue-only specimens: visual references that are not usage examples, such as a matrix of
@@ -43,7 +43,7 @@ export function Specimen({
             setAttempt((count) => count + 1);
           }}
         >
-          <Suspense fallback={<Text role="status">Loading specimen…</Text>}>
+          <Suspense fallback={<Loading what="specimen" />}>
             {/* The specimen is looked up among module-level lazy components, not created here. */}
             {/* eslint-disable-next-line react-hooks/static-components */}
             <Component />

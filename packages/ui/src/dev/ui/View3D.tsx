@@ -38,6 +38,7 @@ import { LeftPanelOpen } from '../../icons/LeftPanelOpen.js';
 import { LightMode } from '../../icons/LightMode.js';
 import { Padding } from '../../icons/Padding.js';
 import { Palette } from '../../icons/Palette.js';
+import { ResponsiveLayout } from '../../icons/ResponsiveLayout.js';
 import { RightPanelOpen } from '../../icons/RightPanelOpen.js';
 import { ScreenRotation } from '../../icons/ScreenRotation.js';
 import { Tune } from '../../icons/Tune.js';
@@ -82,8 +83,10 @@ export interface View3DProps {
   /** Which side columns show, which the toolbar hides and shows. */
   sides: { tree: boolean; inspector: boolean };
   onSidesChange: (sides: { tree: boolean; inspector: boolean }) => void;
-  /** The width the responsive frame lays the page out at, in px, or null for its real width. */
-  /** The size the responsive frame lays the page out at. */
+  /**
+   * The size the responsive frame lays the page out at; the page's own size, with no frame shown,
+   * until the reader turns the frame on.
+   */
   frame: FrameSize;
   onFrameChange: (frame: FrameSize) => void;
   /** The theme of dev mode's own UI, which its toolbar switches; the page keeps its own. */
@@ -161,6 +164,8 @@ export function View3D({
 }: View3DProps) {
   const snapshot = live.geometry;
   const problemsByKey = live.full?.problemsByKey;
+  // The responsive frame shows only once the reader turns it on, or picks a device.
+  const frameOn = frame.width !== null || frame.height !== null;
   const [spacing, setSpacing] = useState(48);
   const [from, setFrom] = useState(0);
   const [to, setTo] = useState<number | null>(null);
@@ -318,7 +323,7 @@ export function View3D({
             height="7"
             patternTransform="rotate(45)"
           >
-            <rect width="3" height="7" fill="var(--env-color-avatar-bg-amber)" fillOpacity="0.45" />
+            <rect width="3" height="7" fill="var(--env-dev-tint-butter)" fillOpacity="0.45" />
           </pattern>
           <pattern
             id="env-dev-gap"
@@ -327,7 +332,7 @@ export function View3D({
             height="6"
             patternTransform="rotate(-45)"
           >
-            <rect width="2" height="6" fill="var(--env-color-avatar-bg-teal)" fillOpacity="0.3" />
+            <rect width="2" height="6" fill="var(--env-dev-tint-seafoam)" fillOpacity="0.3" />
           </pattern>
         </defs>
       </svg>
@@ -363,14 +368,16 @@ export function View3D({
             z={(top - from + 0.75) * spacing + 2}
           />
         ) : null}
-        <Frame
-          width={origin.w}
-          height={origin.h}
-          size={frame}
-          rootPx={snapshot.rootPx}
-          z={(top - from) * spacing + 4}
-          onSizeChange={onFrameChange}
-        />
+        {frameOn ? (
+          <Frame
+            width={origin.w}
+            height={origin.h}
+            size={frame}
+            rootPx={snapshot.rootPx}
+            z={(top - from) * spacing + 4}
+            onSizeChange={onFrameChange}
+          />
+        ) : null}
       </div>
 
       <Toolbar.Root
@@ -421,6 +428,20 @@ export function View3D({
           />
         </Toolbar.Group>
         <Toolbar.Separator />
+        {/* The responsive frame is off until turned on: the page at its own size, with no frame,
+            handles or label. On, it starts at the page's size; the Device menu picks a size. */}
+        <Toolbar.Button
+          icon={<ResponsiveLayout />}
+          label="Responsive frame"
+          pressed={frameOn}
+          onClick={() =>
+            onFrameChange(
+              frameOn
+                ? realSize
+                : { width: Math.round(origin.w), height: Math.round(origin.h), device: null },
+            )
+          }
+        />
         <DeviceMenu
           frame={frame}
           width={origin.w}
@@ -484,9 +505,10 @@ export function View3D({
           <Text variant="body-sm" emphasis="default">
             Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer, or zooms
             where nothing there scrolls; Ctrl+wheel zooms. Click a plane, or a node in the tree, to
-            select it; Only the selected shows it and what is inside it. Drag a handle of the frame,
-            or use the arrow keys on an edge&apos;s, to lay the page out at another size;
-            double-click one for the page&apos;s own size.
+            select it; Only the selected shows it and what is inside it. Turn on Responsive frame,
+            or pick a device, then drag a handle of the frame, or use the arrow keys on an
+            edge&apos;s, to lay the page out at another size; double-click one for the page&apos;s
+            own size.
           </Text>
         </Popover>
         <Toolbar.Separator />
@@ -542,7 +564,7 @@ interface FrameProps {
 const frameEdges: FrameEdge[] = ['start', 'end', 'bottom', 'bottom-start', 'bottom-end'];
 
 /**
- * The responsive frame: the rectangle the page is laid out in, floating above the planes, with
+ * The responsive frame, once turned on: the rectangle the page is laid out in, floating above the planes, with
  * handles on its side and bottom edges and its bottom corners. Dragging a handle, or the arrow
  * keys on an edge's, sets the size the page is laid out at; the label above says it in px and rem
  * with its window class, and the device it came from.

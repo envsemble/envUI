@@ -104,7 +104,7 @@ function EmphasisSample() {
         <Button tone="danger" data-testid="toolbar-danger">
           Delete
         </Button>
-        <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}} data-testid="toolbar-confirm">
+        <ConfirmButton confirmLabel="Remove" onConfirm={() => {}} data-testid="toolbar-confirm">
           Remove
         </ConfirmButton>
         <CopyButton value="text" aria-label="Copy text" data-testid="toolbar-copy" />
@@ -128,7 +128,7 @@ function EmphasisSample() {
         }
       />
       <Row gap={2}>
-        <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}} data-testid="confirm-resting">
+        <ConfirmButton confirmLabel="Remove" onConfirm={() => {}} data-testid="confirm-resting">
           Remove
         </ConfirmButton>
         <CopyButton value="text" aria-label="Copy text" data-testid="copy-resting" />

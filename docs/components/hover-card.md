@@ -19,16 +19,6 @@ avoidWhen:
     use: Tooltip
   - text: Details or a small form that people open on purpose and work in.
     use: Popover
-  - text: A task that needs people's attention before they go on.
-    use: Dialog
-  - text: Information people need to complete a task, which must stay visible.
-    use: Alert
-related:
-  - popover
-  - tooltip
-  - link
-  - avatar
-  - accessibility
 components:
   - HoverCard
 ---
@@ -67,14 +57,6 @@ A trigger that is text rather than a link, such as a span or Text, takes a quiet
 ```
 
 ## When to use
-
-```tsx do=NameAndFacts open stage=raised caption="The name, then one or two facts that help decide."
-
-```
-
-```tsx dont=RepeatsTrigger open stage=raised caption="A card that only repeats what the link says."
-
-```
 
 - Keep the details supplementary: the page the link leads to has them too, as touch screens have no hover.
 - No links, buttons or fields in the card: the keyboard and touch can't reach them.

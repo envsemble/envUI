@@ -26,12 +26,6 @@ avoidWhen:
     use: PanelDock
   - text: Side content that sits beside the main content in a wide window, such as details.
     use: Panes
-related:
-  - panes
-  - dialog
-  - popover
-  - button
-  - panel-dock
 components:
   - Sheet
 ---
@@ -40,7 +34,7 @@ components:
 
 ## Overview
 
-A sheet is a panel at an edge of the window, over the page or beside it, after Material's side and bottom sheets: an item's details, filters, an inspector or a short set of choices. It shares Dialog's surface, title, description and actions, and DialogClose closes it.
+A sheet is a panel at an edge of the window, over the page or beside it, after Material's side and bottom sheets: an item's details, filters, an inspector or a short set of choices. It shares Dialog's surface, title, description and actions, and DialogClose closes it. On a touch screen a swipe toward its edge closes it too; a mouse or a pen never moves the sheet, and a drag inside it selects text.
 
 ```tsx example=FilterPanel open
 
@@ -62,6 +56,14 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 
 ```
 
+### Resizable
+
+With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, with the same handle as between [Panes](panes.md): a grip of three dots that stays at the middle of the sheet, never a line, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width. Its width is then a number of rem: a CSS length as `width`, such as `min(30rem, 90%)`, is ignored, with a warning while developing, and the sheet starts at `defaultWidth`.
+
+```tsx example=ResizableDetails
+
+```
+
 ## Variants
 
 | Option          | Use for                                                        |
@@ -76,14 +78,6 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 `side` is logical: `end` is the right edge in left-to-right text. A `md` side sheet takes the whole width of a compact window, and a `lg` one of a compact or medium window; a bottom sheet is as wide as the window up to 40 rem.
 
 ## When to use
-
-```tsx do=ResultAsAction open caption="A primary action named after its result."
-
-```
-
-```tsx dont=VagueAction open caption="Apply: people can't tell what they will see."
-
-```
 
 - Name the sheet after what it holds, such as Filters or Alex Morgan, with a `title` or an `aria-label`.
 - Keep the close button unless another control in the sheet closes it.
@@ -102,7 +96,7 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 5. **Content** (`env-sheet-popup env-checkbox`, `children`)
 6. **Action** (`env-dialog-actions > env-button`, `actions`)
 
-Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`.
+Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`, and the handle on a resizable sheet's inner edge, `env-sheet-resize-handle`.
 
 ## Accessibility
 
@@ -114,6 +108,8 @@ Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`.
 | <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>        | Moves through the sheet; a modal sheet keeps focus inside, a non-modal one lets it go on. |
 | <kbd>Esc</kbd>                                         | Closes the sheet, or first what is open inside it; nothing while `pending`.               |
 | <kbd>Enter</kbd> or <kbd>Space</kbd> on a close button | Closes the sheet; focus returns to the trigger or `finalFocus`.                           |
+| <kbd>←</kbd>, <kbd>→</kbd> on the resize handle        | Resizes a `resizable` side sheet 1 rem; with <kbd>Shift</kbd>, 5.                         |
+| <kbd>Home</kbd>, <kbd>End</kbd> on the resize handle   | Resizes it to its smallest or largest width.                                              |
 
 ### envUI provides
 
@@ -121,7 +117,8 @@ Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`.
 - Focus moved in on open, kept inside a modal sheet and returned on close.
 - In a modal sheet, the rest of the page hidden, closed to presses and locked from scrolling.
 - A close button for touch screen reader users, who have no <kbd>Esc</kbd>, disabled while `pending`.
-- Its side, slide and swipe in the text direction.
+- Its side, slide and touch swipe in the text direction.
+- With `resizable`, a focusable separator on its inner edge, named Resize, with its width as its value.
 
 ### You provide
 
@@ -130,4 +127,5 @@ Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`.
 
 ## Changelog
 
+- **1.0.0-prerelease.2**: With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, from `defaultWidth`; `width` takes a number of rem, which `onWidthChange` keeps. The handle is `env-sheet-resize-handle`, the same grip as Panes.Divider's. Only a finger swipes a sheet closed; a mouse or a pen no longer moves it.
 - **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.

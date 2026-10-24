@@ -479,8 +479,9 @@ export function migrationNames(data, { isToken, properties }) {
       );
     return { token: id, cssVariable: cssVariable(id) };
   };
-  const extras = ({ component, note }) => ({
+  const extras = ({ component, colorPropertyOf, note }) => ({
     ...(component && { component }),
+    ...(colorPropertyOf && { colorPropertyOf }),
     ...(note && { note }),
   });
   for (const name of data.prefixed ?? []) {

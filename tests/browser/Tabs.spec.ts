@@ -61,7 +61,7 @@ test('a panel keeps the direction around it, not the tab list’s', async ({ pag
 });
 
 test('filling tabs give the selected panel the height left below the list', async ({ page }) => {
-  await page.goto(`${catalogueUrl}/#/components/tabs/overview`);
+  await page.goto(`${catalogueUrl}/components/tabs`);
   const example = page.locator('.docs-live-example[data-example="FillARegion"]');
   const canvas = example.getByRole('tabpanel', { name: 'Canvas' }).locator(':scope > *').first();
   await expect(canvas).toBeVisible();
@@ -103,4 +103,32 @@ test('filling tabs that keep inactive panels mounted display only the selected p
       await expect.poll(() => panelDisplays(page, name)).toEqual(['none', 'none', 'flex']);
     }
   }
+});
+
+test('every tab is a text tab, the selected one with an indicator under it', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=compact-tabs`);
+  const scope = page.getByTestId('compact-tabs-light');
+  const rail = scope.getByRole('tablist');
+  // No rail fill, and no fill or edge on any tab, whatever its button's variant.
+  await expect(rail).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  const tabs = rail.getByRole('tab');
+  for (const tab of await tabs.all()) {
+    await expect(tab).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(tab).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  }
+  const selected = rail.getByRole('tab', { selected: true });
+  const other = rail.getByRole('tab', { selected: false }).first();
+  const indicator = (tab: typeof selected) =>
+    tab.evaluate((element) => {
+      const style = getComputedStyle(element, '::after');
+      return { content: style.content, height: style.blockSize, color: style.backgroundColor };
+    });
+  const shown = await indicator(selected);
+  expect(shown.content).toBe('""');
+  expect(Number.parseFloat(shown.height)).toBeGreaterThan(0);
+  expect((await indicator(other)).content).toBe('none');
+  // The selected label takes the accent's text color, the others the muted one.
+  expect(await selected.evaluate((element) => getComputedStyle(element).color)).not.toBe(
+    await other.evaluate((element) => getComputedStyle(element).color),
+  );
 });

@@ -44,14 +44,6 @@ avoidWhen:
     use: Composer
   - text: Formatted text, such as headings, lists and links.
     use: MarkdownEditor
-related:
-  - select
-  - combobox
-  - date-picker
-  - composer
-  - markdown
-  - column
-  - accessibility
 components:
   - TextField
   - SearchField
@@ -116,18 +108,21 @@ A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
 
-| Variant     | Use for                                                      |
-| ----------- | ------------------------------------------------------------ |
-| `outline`   | In forms, dialogs, panes and toolbars. The default.          |
-| `floating`  | A long form on a page.                                       |
-| `underline` | A value in a document or a header, such as a title.          |
-| `ghost`     | A search in an application's chrome, such as atop a sidebar. |
+1. **Outline**
+2. **Floating**
+3. **Ghost**
 
-Textarea comes outline, underline or ghost.
+| Variant    | Use for                                                      |
+| ---------- | ------------------------------------------------------------ |
+| `outline`  | In forms, dialogs, panes and toolbars. The default.          |
+| `floating` | A long form on a page.                                       |
+| `ghost`    | A search in an application's chrome, such as atop a sidebar. |
+
+Textarea comes outline or ghost. Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it.
 
 ### Sizes
 
@@ -170,14 +165,6 @@ Name the value in a short noun phrase, and keep lasting instructions in the desc
 
 ```
 
-```tsx do=HelpfulError caption="An error that says how to correct the value."
-
-```
-
-```tsx dont=VagueError caption="An error that only says the value is wrong."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=TextFieldAnatomy
@@ -194,6 +181,10 @@ Name the value in a short noun phrase, and keep lasting instructions in the desc
 8. **Description** (`env-field-description`, `description`)
 
 Not shown: the suffix, `env-text-field-suffix`, the error, `env-field-error`, and a Textarea's resize edge, `env-textarea-resize-edge`.
+
+### Colors
+
+`--env-text-field-container`, `--env-text-field-content`, `--env-text-field-outline` and `--env-text-field-indicator` set the colors of one TextField or Textarea, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 
@@ -234,7 +225,8 @@ A field fills its container; set the width there. A long prefix is cut short so 
 
 ## Changelog
 
-- **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating`, `underline` and `ghost`: `outlined` is `outline`, `plain` is `underline` and `quiet` is `ghost`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`.
+- **1.0.0-prerelease.2**: The `underline` variant, which `plain` became in the earlier prereleases, is gone from TextField, SearchField and Textarea; the `v1-props` codemod drops `underline` and `plain` for the default outline. Outline and floating fields have no fill of their own.
+- **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes, and it drops `plain` for the default outline. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`.
 - **1.0.0**: `Input` is `TextField`, with the same props, behaviour and look; the page is `text-field`.
 - **0.6.0**: The `quiet` variant on TextField and SearchField.
 - **0.5.0**: `prefix` and `suffix`; entered text, resting labels, prefixes and suffixes are 1 rem on touch screens; a growing Textarea with `rows` starts at that many lines.

@@ -28,6 +28,7 @@ const entries = [
   ['index.ts', '@envsemble/envui'],
   ['content.ts', '@envsemble/envui/content'],
   ['diff.ts', '@envsemble/envui/diff'],
+  ['color.ts', '@envsemble/envui/color'],
   ['rich-text.ts', '@envsemble/envui/rich-text'],
   ['theme-bootstrap.ts', '@envsemble/envui/theme-bootstrap'],
   ['dev.ts', '@envsemble/envui/dev'],

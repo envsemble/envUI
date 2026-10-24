@@ -3,24 +3,28 @@
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Check } from '../icons/Check.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 
 /** An avatar's size: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem. */
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 
-/** The fills an avatar without a picture takes, each a solid hue under white initials or figure. */
+/**
+ * The hues an avatar without a picture takes, named for their colors: each a pastel fill with the
+ * initials or figure in a deep shade of the same hue.
+ */
 export const avatarHues = [
-  'blue',
-  'teal',
-  'green',
-  'amber',
-  'red',
-  'violet',
-  'purple',
-  'slate',
+  'powder',
+  'seafoam',
+  'sage',
+  'butter',
+  'blush',
+  'periwinkle',
+  'orchid',
+  'oat',
 ] as const;
 
-/** One of the fills of an avatar without a picture. */
+/** One of the hues of an avatar without a picture. */
 export type AvatarHue = (typeof avatarHues)[number];
 
 /**
@@ -63,6 +67,13 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
    * @default false
    */
   named?: boolean;
+  /**
+   * Shows the avatar as chosen, such as in a list of people to pick from: a ring around it and a
+   * small check at its bottom end, so the choice never rests on color alone. It is a look only:
+   * the control around the avatar, such as a checkbox or an option, says it is chosen.
+   * @default false
+   */
+  selected?: boolean;
 }
 
 /** The first letters of the first and last words, or the first two letters of a single word. */
@@ -105,6 +116,7 @@ export function Avatar({
   hue,
   size = 'md',
   named = false,
+  selected = false,
   className,
   ...props
 }: AvatarProps) {
@@ -115,6 +127,7 @@ export function Avatar({
       className={classNames('env-avatar', className)}
       data-size={size}
       data-hue={hue ?? avatarHue(name)}
+      data-selected={selected ? '' : undefined}
       role={named ? 'img' : undefined}
       aria-label={named ? name : undefined}
       aria-hidden={named ? undefined : true}
@@ -133,6 +146,11 @@ export function Avatar({
       >
         {fallback === 'person' ? <PersonPicture /> : getInitials(name, locale)}
       </BaseAvatar.Fallback>
+      {selected && (
+        <span className="env-avatar-check" aria-hidden="true">
+          <Check />
+        </span>
+      )}
     </BaseAvatar.Root>
   );
 }

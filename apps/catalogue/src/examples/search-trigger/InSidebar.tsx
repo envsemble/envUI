@@ -1,17 +1,20 @@
 import { useMemo, useState } from 'react';
 import {
+  Button,
   CommandPalette,
   Drawer,
-  SearchTrigger,
+  Kbd,
   Column,
   Text,
   type CommandPaletteItem,
   type Destination,
+  useModifierKey,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
+import { Search } from '@envsemble/envui/icons/Search';
 
 const documents = ['Roadmap', 'Launch checklist', 'Pricing research', 'Interview notes'];
 
@@ -22,6 +25,7 @@ const destinations: Destination[] = [
 ];
 
 export default function InSidebar() {
+  const modifier = useModifierKey();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [opened, setOpened] = useState('');
@@ -37,8 +41,19 @@ export default function InSidebar() {
       <Drawer
         aria-label="Workspace"
         destinations={destinations}
-        // The catalogue's own search keeps Ctrl+K here; an application's one trigger listens.
-        header={<SearchTrigger fullWidth listen={false} onClick={() => setOpen(true)} />}
+        header={
+          <Button
+            variant="secondary"
+            fullWidth
+            startIcon={<Search />}
+            // The keys show the shortcut, which aria-keyshortcuts announces.
+            end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
+            aria-keyshortcuts={`${modifier.key}+K`}
+            onClick={() => setOpen(true)}
+          >
+            Search
+          </Button>
+        }
       />
       <CommandPalette
         open={open}

@@ -130,6 +130,7 @@ function WindowControls() {
       />
       {!panel.stacked && (
         <WindowControl
+          control="maximize"
           label={maximized ? messages.restore : messages.maximize}
           icon={maximized ? <CloseFullscreen /> : <OpenInFull />}
           onClick={() => panel.changeMode(maximized ? 'open' : 'maximized')}
@@ -148,17 +149,26 @@ function WindowControls() {
 }
 
 function WindowControl({
+  control,
   label,
   icon,
   onClick,
 }: {
+  /** Names the control for the dock's styles, as data-window-control. */
+  control?: string;
   label: string;
   icon: ReactNode;
   onClick: () => void;
 }) {
   return (
     <Tooltip content={label}>
-      <IconButton variant="ghost" icon={icon} aria-label={label} onClick={onClick} />
+      <IconButton
+        variant="ghost"
+        icon={icon}
+        aria-label={label}
+        data-window-control={control}
+        onClick={onClick}
+      />
     </Tooltip>
   );
 }

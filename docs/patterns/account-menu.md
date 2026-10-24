@@ -31,18 +31,13 @@ composes:
   - Text
   - ThemeRadioGroup
   - TopBar
-related:
-  - navigation
-  - menu
-  - avatar
-  - top-bar
 ---
 
 # Account menu
 
 ## Overview
 
-The account menu is a [Menu](../components/menu.md) opened from the person's [AvatarButton](../components/avatar.md) at the end of the [TopBar](../components/top-bar.md): a header with who is signed in, then their own things, ending with Sign out.
+The account menu is a [Menu](../components/menu.md) opened from the person's [AvatarButton](../components/avatar.md) at the end of the [TopBar](../components/top-bar.md): a larger first row with who is signed in, their avatar centered above their name and email, then their own things, ending with Sign out.
 
 ```tsx example=AvatarMenu
 
@@ -103,6 +98,7 @@ A ghost Button `fullWidth` with the avatar and the name, as wide as the drawer; 
 
 - The roles, states and focus handling of [Menu](../components/menu.md), its submenus and radio items.
 - An AvatarButton named by the person's name, with their description in its tooltip.
+- A Menu.Header that is not an item: arrow keys skip it, focus starts on the first item, and the menu keeps its own name.
 
 ### You provide
 

@@ -520,7 +520,7 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   const listed = await server.call('list_components', { category: 'Actions' });
   assert.deepEqual(
     listed.components.map((component) => component.name),
-    ['Button', 'SearchTrigger', 'Toolbar', 'Link'],
+    ['Button', 'Toolbar', 'Link'],
   );
   assert.equal(listed.components[0].import, '@envsemble/envui');
 
@@ -582,14 +582,14 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   );
 
   const examples = await server.call('get_example', { component: 'Dialog' });
-  assert.ok(examples.examples.some((example) => example.name === 'ConfirmDelete'));
+  assert.ok(examples.examples.some((example) => example.name === 'InviteMember'));
   const example = await server.call('get_example', {
     component: 'dialog',
-    example: 'confirmdelete',
+    example: 'invitemember',
   });
   assert.equal(
     example.source,
-    readFileSync(join(examplesDirectory, 'dialog/ConfirmDelete.tsx'), 'utf8'),
+    readFileSync(join(examplesDirectory, 'dialog/InviteMember.tsx'), 'utf8'),
   );
   assert.match(
     (await server.call('get_example', { component: 'Dialog', example: '../../package' })).error,
@@ -784,12 +784,13 @@ test('search and plan rank by names, aliases and situations', () => {
   assert.ok(!frame.candidates.some((item) => /^Pag/.test(item.component)));
   assert.equal(frame.patterns[0]?.name, 'app-frame');
   assert.ok(frame.next.some((step) => /Read the app-frame pattern/.test(step)));
-  // A part a chosen component also matches stays with it.
+  // A part a chosen component also matches stays with it. Collapsing leads to Scaffold too, whose
+  // forms switch the drawer to the rail.
   assert.deepEqual(
     plan(manifest, 'add a collapsible sidebar with navigation links').candidates.map(
       (item) => item.component,
     ),
-    ['Drawer'],
+    ['Drawer', 'Scaffold'],
   );
   const form = plan(manifest, 'a sign-in form with email and password');
   assert.ok(form.candidates.some((item) => item.component === 'TextField'));

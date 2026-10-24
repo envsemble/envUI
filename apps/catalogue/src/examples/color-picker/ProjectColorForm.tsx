@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
-import { Button, ColorPicker, Column, Row, Text } from '@envsemble/envui';
+import { Button, Column, Row, Text } from '@envsemble/envui';
+import { ColorPicker } from '@envsemble/envui/color';
 
 export default function ProjectColorForm() {
   const [applied, setApplied] = useState('');
@@ -11,13 +12,14 @@ export default function ProjectColorForm() {
     <form
       onSubmit={submit}
       onReset={() => setApplied('')}
-      style={{ inlineSize: 'min(100%, 20rem)' }}
+      style={{ inlineSize: 'min(100%, 18rem)' }}
     >
       <Column gap={4}>
         <ColorPicker
           label="Project color"
           name="color"
           defaultValue="#6b4fa3"
+          formats={['hex', 'rgb']}
           description="Shown beside the project in lists."
         />
         <Row wrap align="center" gap={4}>

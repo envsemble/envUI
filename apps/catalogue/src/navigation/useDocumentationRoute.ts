@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { normalizeRoute } from './DocumentationRoutes';
-import { navigate, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
+import {
+  navigate,
+  oldHashRoute,
+  replaceAddress,
+  subscribeToAddress,
+  writtenRoute,
+} from './Address';
 
 function readRoute() {
   return normalizeRoute(writtenRoute() || 'overview');
@@ -15,12 +21,14 @@ export function currentRouteQuery() {
 }
 
 /**
- * An old address, such as a page's 0.x name or a hash route in the hosted catalogue, is replaced in
- * place by the address of the route it leads to, so the address bar, a new bookmark and the history
- * show the page's own address. The root address stays as it is.
+ * An old address, such as a page's 0.x name or a view pages had before the Site and the Docs split,
+ * is replaced in place by the address of the route it leads to, so the address bar, a new bookmark
+ * and the history show the page's own address. An old hash address of the offline catalogue, such
+ * as a bookmark, is redirected the same way, once, to the path of the route it named: routes are
+ * then read from the path alone. The root address stays as it is.
  */
 function correctAddress() {
-  const written = writtenRoute();
+  const written = oldHashRoute() ?? writtenRoute();
   if (written) replaceAddress(normalizeRoute(written));
 }
 
@@ -33,9 +41,9 @@ let lastChangeFromTabs = false;
 export const reachedFromTabs = () => lastChangeFromTabs;
 
 /**
- * Shows another view of the page from its tabs. A view chosen is a step in the history; views
- * passed with the arrow keys replace the entry instead, so Back leaves the page rather than
- * stepping through every view on the way.
+ * Shows another view of a page from its tabs, such as a skill on the agent skills page. A view
+ * chosen is a step in the history; views passed with the arrow keys replace the entry instead, so
+ * Back leaves the page rather than stepping through every view on the way.
  */
 export function showView(route: string, { replace }: { replace: boolean }) {
   viewChangePending = true;
@@ -47,7 +55,7 @@ export function showView(route: string, { replace }: { replace: boolean }) {
 const movingKeys = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']);
 
 /**
- * The props of Tabs whose views are routes, for a page's views and the overview's: a view is shown
+ * The props of Tabs whose views are routes, such as the agent skills page's: a view is shown
  * with showView, so focus stays on the tabs, and one reached with the arrow keys replaces the
  * history entry rather than adding one. `routeOf` gives the route of a tab's value.
  */
@@ -73,9 +81,13 @@ export function useViewTabs(routeOf: (value: string) => string) {
   };
 }
 
-/** The current route, from the address's path in the hosted catalogue or its hash offline. */
+/** The current route, from the address's path. */
 export function useDocumentationRoute() {
-  const [route, setRoute] = useState(readRoute);
+  // An old hash address is redirected before the first render, which reads the path.
+  const [route, setRoute] = useState(() => {
+    if (oldHashRoute() !== undefined) correctAddress();
+    return readRoute();
+  });
   useEffect(() => {
     correctAddress();
     // An address that changed before this effect, such as an old one corrected, is read again.

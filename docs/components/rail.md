@@ -20,13 +20,6 @@ avoidWhen:
     use: Bar
   - text: The same destinations on an expanded or larger window, or with group headings and long labels.
     use: Drawer
-  - text: A deep hierarchy that people expand and collapse, such as folders and files.
-    use: Tree
-related:
-  - bar
-  - drawer
-  - tree
-  - badge
 components:
   - Rail
 ---
@@ -35,7 +28,7 @@ components:
 
 ## Overview
 
-The navigation rail holds an application's main destinations in a narrow column at the start of a medium window. It takes the same destinations as [Bar](bar.md) and [Drawer](drawer.md), and [Scaffold](scaffold.md) shows the form that fits the width.
+The navigation rail holds an application's main destinations in a narrow column at the start of a medium window. It takes the same destinations as [Bar](bar.md) and [Drawer](drawer.md), and [Scaffold](scaffold.md) shows the form that fits the width. A button that narrows the drawer to the rail asks the Scaffold for it through `forms` ([a button that narrows the navigation](scaffold.md#a-button-that-narrows-the-navigation)).
 
 ```tsx example=TabletDestinations
 
@@ -61,14 +54,6 @@ A destination's `group` shows no heading in the rail: grouped destinations follo
 
 ```
 
-```tsx do=OneWordLabels caption="One short word for each destination."
-
-```
-
-```tsx dont=PhraseLabels caption="Phrases: they wrap over several lines in the narrow rail."
-
-```
-
 - Set `current` on one destination from the router; a press doesn't select by itself.
 - `footer` for the account, such as an AvatarButton.
 
@@ -85,6 +70,10 @@ A destination's `group` shows no heading in the rail: grouped destinations follo
 5. **Count** (`env-rail-count`, `count`)
 6. **Label** (`env-rail-label`)
 7. **Footer** (`env-rail-footer`, `footer`)
+
+### Colors
+
+`--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content` set the colors of one Rail, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Accessibility
 

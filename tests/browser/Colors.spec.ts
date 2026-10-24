@@ -48,15 +48,17 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-selected-hover',
     '--env-color-bg-selected-pressed',
   ],
+  // A selected tab is a text tab whatever its button's variant: no fill at rest, and the neutral
+  // state layer under the pointer and pressed.
   'tab-primary': [
-    '--env-color-bg-brand-emphasis',
-    '--env-color-bg-brand-emphasis-hover',
-    '--env-color-bg-brand-emphasis-pressed',
+    '--env-color-bg-neutral-subtle',
+    '--env-color-bg-neutral-subtle-hover',
+    '--env-color-bg-neutral-subtle-pressed',
   ],
   'tab-secondary': [
-    '--env-color-bg-neutral-muted',
-    '--env-color-bg-neutral-muted-hover',
-    '--env-color-bg-neutral-muted-pressed',
+    '--env-color-bg-neutral-subtle',
+    '--env-color-bg-neutral-subtle-hover',
+    '--env-color-bg-neutral-subtle-pressed',
   ],
 };
 
@@ -146,6 +148,29 @@ test('action and navigation fills paint their precomputed hover and pressed toke
   }
 });
 
+test('a nested Theme that overrides the semantic tokens recolors its area alone', async ({
+  page,
+}) => {
+  const inside = page.getByTestId('override-inside');
+  const outside = page.getByTestId('override-outside');
+  await expect(inside).toHaveCSS('background-color', 'rgb(23, 111, 53)');
+  await expect(page.getByTestId('override-switch')).toHaveCSS(
+    'background-color',
+    'rgb(23, 111, 53)',
+  );
+  // The area keeps every state: its own hover and pressed tokens apply.
+  await inside.hover();
+  await expect(inside).toHaveCSS('background-color', 'rgb(17, 90, 42)');
+  await page.mouse.down();
+  await expect(inside).toHaveCSS('background-color', 'rgb(11, 69, 32)');
+  await page.mouse.up();
+  await page.mouse.move(0, 0);
+  // Outside the area, the theme's own brand color stays.
+  const brand = await tokenColor(outside, '--env-color-bg-brand-emphasis');
+  expect(brand).not.toBe('rgb(23, 111, 53)');
+  await expect(outside).toHaveCSS('background-color', brand);
+});
+
 test('compositions reuse primitive colors while unrelated roles stay independent', async ({
   page,
 }) => {
@@ -172,8 +197,9 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       navigationIcon: `[data-testid="${theme}-navigation"] .env-drawer-item:not([data-current]) .env-icon`,
       direction: `[data-testid="${theme}-color-direction"]`,
       field: `[data-testid="${theme}-color-field"]`,
-      fieldWell: `.env-text-field-control:has([data-testid="${theme}-color-field"])`,
-      fieldError: `.env-text-field-control:has([data-testid="${theme}-color-error-field"])`,
+      // A field has no fill of its own; its border is the fieldset over its edge.
+      fieldWell: `.env-text-field-control:has([data-testid="${theme}-color-field"]) > .env-text-field-border`,
+      fieldError: `.env-text-field-control:has([data-testid="${theme}-color-error-field"]) > .env-text-field-border`,
       select: `[data-testid="${theme}-color-select"]`,
       selectLabel: `.env-field:has(> [data-testid="${theme}-color-select"])`,
       selectHint: `.env-field:has(> [data-testid="${theme}-color-select"]) > .env-field-description`,
@@ -222,19 +248,17 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-bg-default', ['pane', 'paneCard']],
       ['--env-color-bg-muted', ['surface', 'card', 'contrastPane', 'radioRow', 'row']],
       ['--env-color-list-item-bg', ['row']],
-      [
-        '--env-color-bg-neutral-muted',
-        ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip'],
-      ],
+      ['--env-color-bg-neutral-muted', ['secondary', 'icon', 'select', 'selectError', 'chip']],
       ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
       ['--env-color-fg-link', ['link', 'textButton']],
-      ['--env-color-bg-brand-emphasis', ['primary', 'tab', 'radio', 'checkbox', 'switch']],
-      ['--env-color-fg-on-emphasis', ['primary', 'tab']],
+      ['--env-color-bg-brand-emphasis', ['primary', 'radio', 'checkbox', 'switch']],
+      ['--env-color-fg-on-emphasis', ['primary']],
+      // The selected tab is a text tab in the accent's text color, whatever its button's variant.
+      ['--env-color-fg-accent', ['tab']],
       ['--env-color-bg-selected', ['navigation']],
       // A neutral badge's text is muted, as InfoChip's metadata became a Badge.
       ['--env-color-fg-muted', ['navigationIcon', 'selectHint', 'chip']],
       ['--env-color-bg-raised', ['direction']],
-      ['--env-color-bg-field', ['fieldWell', 'fieldError']],
       ['--env-color-border-accent-emphasis', ['fieldWell']],
       ['--env-color-fg-danger', ['fieldError', 'selectError']],
       // The default text color is every part's that sets no other, so it has no case of its own.
@@ -255,31 +279,24 @@ test('compositions reuse primitive colors while unrelated roles stay independent
           .getByTestId(`${theme}-color-field`)
           .evaluate((input) => (input as HTMLElement).blur());
     }
-    for (const [label, primitiveId, color] of [
-      ['First tab', `${theme}-button-primary`, '--env-color-bg-brand-emphasis'],
-      ['Second tab', `${theme}-button-secondary`, '--env-color-bg-neutral-muted'],
-    ]) {
+    // A selected tab is a text tab whatever its button's variant: no fill, its label in the
+    // accent's text color, and its indicator in the accent's border color.
+    for (const label of ['First tab', 'Second tab']) {
       const tab = boundary.getByRole('tab', { name: label });
       await tab.press('Enter');
       await expect(tab).toHaveAttribute('aria-selected', 'true');
-      const before = await tab.evaluate((element) => getComputedStyle(element).backgroundColor);
-      const primitive = page.getByTestId(primitiveId);
-      expect(before).toBe(
-        await primitive.evaluate((element) => getComputedStyle(element).backgroundColor),
+      await page.mouse.move(0, 0);
+      await tab.blur();
+      await expect(tab).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      const indicator = () =>
+        tab.evaluate((element) => getComputedStyle(element, '::after').backgroundColor);
+      const before = await indicator();
+      await boundary.evaluate((root) =>
+        (root as HTMLElement).style.setProperty('--env-color-border-accent-emphasis', '#d02780'),
       );
-      await boundary.evaluate(
-        (root, token) => (root as HTMLElement).style.setProperty(token, '#d02780'),
-        color,
-      );
-      expect(await tab.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(
-        before,
-      );
-      expect(await tab.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
-        await primitive.evaluate((element) => getComputedStyle(element).backgroundColor),
-      );
-      await boundary.evaluate(
-        (root, token) => (root as HTMLElement).style.removeProperty(token),
-        color,
+      expect(await indicator()).not.toBe(before);
+      await boundary.evaluate((root) =>
+        (root as HTMLElement).style.removeProperty('--env-color-border-accent-emphasis'),
       );
     }
     const selected = boundary.getByRole('tab', { name: 'Third tab' });

@@ -62,7 +62,7 @@ jobs:
       - name: Check formatting and TypeScript
         if: ${{ steps.changes.outputs.checks != 'false' }}
         run: npm run format:check && npm run typecheck
-      - name: Build the package, the offline catalogue and the hosted catalogue
+      - name: Build the package and the hosted site
         if: ${{ steps.changes.outputs.checks != 'false' }}
         run: npm run build && npm run build:site
       - name: Test package contracts

@@ -1,0 +1,79 @@
+/* The Benchmark and Changelog pages of the Site. */
+
+/* The benchmark's chart: per run, a quiet line of what it measured, then one bar per agent. */
+.docs-bench-chart {
+  display: grid;
+  gap: var(--env-space-6);
+  container-type: inline-size;
+}
+.docs-bench-bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 18rem) minmax(0, 1fr) 3rem;
+  align-items: center;
+  gap: var(--env-space-3);
+}
+.docs-bench-bar {
+  display: block;
+  inline-size: 100%;
+  block-size: 1rem;
+  overflow: visible;
+}
+.docs-bench-bar-track {
+  fill: var(--env-color-bg-neutral-muted);
+}
+.docs-bench-bar-value {
+  fill: var(--env-color-bg-accent-emphasis);
+}
+.docs-bench-bar-value-label {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+/* The scale under the bars, lined up with their track. */
+.docs-bench-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-inline: calc(18rem + var(--env-space-3)) calc(3rem + var(--env-space-3));
+  color: var(--env-color-fg-muted);
+  font-size: var(--env-font-size-caption);
+  font-variant-numeric: tabular-nums;
+}
+/* In a narrow column, an agent's name sits above its bar. */
+@container (width < 36rem) {
+  .docs-bench-bar-row {
+    grid-template-columns: minmax(0, 1fr) 3rem;
+    row-gap: var(--env-space-1);
+  }
+  .docs-bench-bar-label {
+    grid-column: 1 / -1;
+  }
+  .docs-bench-axis {
+    margin-inline: 0 calc(3rem + var(--env-space-3));
+  }
+}
+
+/* The release notes: entries apart by space alone, the version and date as quiet labels. */
+.docs-release-label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--env-space-1) var(--env-space-3);
+  margin: 0;
+  color: var(--env-color-fg-muted);
+  font-weight: var(--env-font-weight-medium);
+}
+.docs-release-version {
+  color: var(--env-color-fg-default);
+  font-variant-numeric: tabular-nums;
+}
+.docs-release-date {
+  font-weight: var(--env-font-weight-regular);
+}
+.docs-release-list {
+  display: grid;
+  gap: var(--env-space-2);
+  max-inline-size: 75ch;
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+.docs-bench-figure {
+  margin: 0;
+}

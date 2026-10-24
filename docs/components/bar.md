@@ -25,12 +25,6 @@ avoidWhen:
     use: Tabs
   - text: Actions, such as New or Share.
     use: Toolbar
-related:
-  - rail
-  - drawer
-  - tabs
-  - menu
-  - badge
 components:
   - Bar
 ---
@@ -57,22 +51,6 @@ Past five destinations, the fifth place is More, which opens the rest in a menu 
 
 ## When to use
 
-```tsx do=ShortLabels caption="One short word for each destination."
-
-```
-
-```tsx dont=LongLabels caption="Long labels: each shares a fifth of a phone and is cut short."
-
-```
-
-```tsx do=OneCurrent caption="One current destination, the page people are on."
-
-```
-
-```tsx dont=TwoCurrent caption="Two current destinations: people can't tell where they are."
-
-```
-
 - Three to five destinations; group headings don't show, so order the array.
 - Set `current` from the router; a press doesn't select by itself.
 
@@ -89,6 +67,10 @@ Past five destinations, the fifth place is More, which opens the rest in a menu 
 5. **Label** (`env-bar-text`)
 
 Not shown: More, `env-bar-more`.
+
+### Colors
+
+`--env-bar-item-container`, `--env-bar-item-content`, `--env-bar-item-icon`, `--env-bar-item-selected` and `--env-bar-item-selected-content` set the colors of one Bar, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 

@@ -110,9 +110,9 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await expect(button).toHaveAttribute('data-variant', 'outline');
 
   await button.click();
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan');
   await expect(button).toHaveAttribute('data-tone', 'danger');
-  await expect(status).toHaveText('Remove Morgan? Press again to confirm.');
+  await expect(status).toHaveText('Remove Morgan. Press again to confirm.');
   await page.clock.runFor(450);
   await button.click();
   await expect(confirmed).toHaveText('1');
@@ -121,19 +121,19 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
 
   // A double click only arms it.
   await button.dblclick();
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan');
   await expect(confirmed).toHaveText('1');
   // Escape, leaving the button and waiting all disarm it.
   await button.press('Escape');
   await expect(button).toHaveText('Remove');
   await button.focus();
   await page.keyboard.press('Enter');
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan');
   await page.keyboard.press('Tab');
   await expect(button).toHaveText('Remove');
   await button.focus();
   await page.keyboard.press('Enter');
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove Morgan');
   await page.clock.runFor(800);
   await expect(button).toHaveText('Remove');
   await expect(confirmed).toHaveText('1');
@@ -162,15 +162,15 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   // Keyboard arming keeps focus on the button while it grows to name the consequence.
   await button.focus();
   await page.keyboard.press('Enter');
-  await expect(button).toHaveAccessibleName('Remove Morgan?');
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveAccessibleName('Remove');
+  await expect(button).toHaveText('Remove');
   await expect(button).toHaveAttribute('data-tone', 'danger');
   await expect(button).not.toHaveClass(/env-icon-button/);
   await expect(button).toBeFocused();
   await expect(button.locator('.env-icon')).toHaveCount(1);
   expect((await button.boundingBox())!.width).toBeGreaterThan(rest.width + 40);
   await expect(page.locator('.env-confirm-button-status').nth(1)).toHaveText(
-    'Remove Morgan? Press again to confirm.',
+    'Remove. Press again to confirm.',
   );
   await page.clock.runFor(450);
   await page.keyboard.press('Enter');
@@ -180,7 +180,7 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   await expect(button).toBeFocused();
 
   await button.click();
-  await expect(button).toHaveText('Remove Morgan?');
+  await expect(button).toHaveText('Remove');
   await button.press('Escape');
   await expect(button).toHaveClass(/env-icon-button/);
   await expect(confirmed).toHaveText('1');
@@ -261,3 +261,143 @@ test(
     expect(Math.abs(label - edge)).toBeLessThan(0.5);
   },
 );
+
+test(
+  'the end slot holds keys in the label color at the far end, with the icon and label at the start',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(fixture);
+    const button = page.getByTestId('end-button');
+    // The keys are hidden and announced by aria-keyshortcuts, so the name is the label alone.
+    await expect(button).toHaveAccessibleName('Search');
+    await expect(button).toHaveAttribute('aria-keyshortcuts', 'Control+K');
+    const end = button.locator('.env-button-end');
+    await expect(end).toHaveText('Ctrl+K');
+    const layout = await button.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      const icon = element.querySelector('.env-icon')!.getBoundingClientRect();
+      const keys = element.querySelector('.env-button-end')!.getBoundingClientRect();
+      const probe = document.createElement('span');
+      probe.style.color = 'color-mix(in srgb, currentColor 80%, transparent)';
+      element.append(probe);
+      const separator = getComputedStyle(probe).color;
+      probe.remove();
+      const cap = getComputedStyle(element.querySelector('.env-button-end .env-kbd')!);
+      return {
+        startGap: icon.left - box.left - parseFloat(style.paddingInlineStart),
+        endGap: box.right - parseFloat(style.paddingInlineEnd) - keys.right,
+        label: style.color,
+        endColor: getComputedStyle(element.querySelector('.env-button-end')!).color,
+        capColor: cap.color,
+        capFill: cap.backgroundColor,
+        separator,
+        separatorColor: getComputedStyle(element.querySelector('.env-kbd-separator')!).color,
+      };
+    });
+    // The icon starts at the padding and the keys end at it, with the room between them.
+    expect(Math.abs(layout.startGap)).toBeLessThan(1);
+    expect(Math.abs(layout.endGap)).toBeLessThan(1);
+    // The slot and its keys take the button's own content color, on no fill of their own, and the
+    // + between the keys is quieter, which the contrast gate measures on every variant.
+    expect(layout.endColor).toBe(layout.label);
+    expect(layout.capColor).toBe(layout.label);
+    expect(layout.capFill).toBe('rgba(0, 0, 0, 0)');
+    expect(layout.separatorColor).toBe(layout.separator);
+  },
+);
+
+/** The sRGB channels, 0 to 255, and alpha of a computed color, rgb() or color(srgb …). */
+function channels(color: string) {
+  const srgb = /^color\(srgb ([\d.e-]+) ([\d.e-]+) ([\d.e-]+)(?: \/ ([\d.e-]+))?\)$/.exec(color);
+  if (srgb) return [...srgb.slice(1, 4).map((value) => Number(value) * 255), Number(srgb[4] ?? 1)];
+  const rgb = /^rgba?\(([\d.]+), ([\d.]+), ([\d.]+)(?:, ([\d.]+))?\)$/.exec(color);
+  if (!rgb) throw new Error(`Cannot read the color ${color}`);
+  return [...rgb.slice(1, 4).map(Number), Number(rgb[4] ?? 1)];
+}
+
+test('a button given its own colors lays state layers of its content color over its container', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=colors`);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const container = [11, 110, 79];
+  const content = [255, 255, 255];
+  // The state opacities are tokens: 8% under the pointer and 10% pressed in the light theme.
+  const opacity = await page.getByTestId('color-overrides').evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      hover: Number(style.getPropertyValue('--env-state-hover-opacity')),
+      pressed: Number(style.getPropertyValue('--env-state-pressed-opacity')),
+    };
+  });
+  expect(opacity).toEqual({ hover: 0.08, pressed: 0.1 });
+  const layered = (share: number) =>
+    container.map((channel, index) => channel * (1 - share) + content[index] * share);
+  /** Waits until the button's fill is `expected`, within rounding. */
+  async function expectFill(button: import('@playwright/test').Locator, expected: number[]) {
+    await expect
+      .poll(async () => {
+        const [r, g, b, alpha] = channels(
+          await button.evaluate((element) => getComputedStyle(element).backgroundColor),
+        );
+        return Math.max(...[r, g, b].map((value, index) => Math.abs(value - expected[index])), 0) <
+          1 && alpha === 1
+          ? 'matches'
+          : `${r} ${g} ${b} / ${alpha}`;
+      })
+      .toBe('matches');
+  }
+  // Every variant takes the container in place of its designed fills, whose states give way to
+  // the state layers.
+  for (const variant of ['primary', 'secondary', 'outline'] as const) {
+    const button = page.getByTestId(`custom-button-${variant}`);
+    await button.evaluate((element) => {
+      element.style.setProperty('--env-button-container', 'rgb(11 110 79)');
+      element.style.setProperty('--env-button-content', 'rgb(255 255 255)');
+    });
+    await expect(button, variant).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expectFill(button, container);
+    await button.hover();
+    await expectFill(button, layered(opacity.hover));
+    await page.mouse.down();
+    await expectFill(button, layered(opacity.pressed));
+    await page.mouse.up();
+    await page.mouse.move(0, 0);
+    await expectFill(button, container);
+  }
+  // Its content alone set, a button keeps its own fill at rest and lays the content over it.
+  const tinted = page.getByTestId('light-button-secondary');
+  await tinted.evaluate((element) =>
+    element.style.setProperty('--env-button-content', 'rgb(11 110 79)'),
+  );
+  const rest = await tinted.evaluate((element) => getComputedStyle(element).backgroundColor);
+  await tinted.hover();
+  const expected = await tinted.evaluate((element) => {
+    const probe = document.createElement('span');
+    probe.style.backgroundColor =
+      'color-mix(in srgb, var(--env-color-bg-neutral-muted), rgb(11 110 79) calc(var(--env-state-hover-opacity) * 100%))';
+    element.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return color;
+  });
+  // Within rounding: the gate that tells a set content mixes in 0% of it.
+  await expect
+    .poll(async () => {
+      const actual = channels(
+        await tinted.evaluate((element) => getComputedStyle(element).backgroundColor),
+      );
+      return channels(expected).every((value, index) => Math.abs(value - actual[index]) < 0.01);
+    })
+    .toBe(true);
+  expect(expected).not.toBe(rest);
+  await page.mouse.move(0, 0);
+  // The color properties don't inherit: set on an element around a button, they color nothing.
+  const outside = page.getByTestId('override-outside');
+  const before = await outside.evaluate((element) => getComputedStyle(element).backgroundColor);
+  await page
+    .getByTestId('color-overrides')
+    .evaluate((element) => element.style.setProperty('--env-button-container', 'rgb(11 110 79)'));
+  await expect(outside).toHaveCSS('background-color', before);
+});

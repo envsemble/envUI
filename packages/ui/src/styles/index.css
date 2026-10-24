@@ -16,7 +16,6 @@
 @import './ResizeHandle.css' layer(env.components);
 @import './ThemeToggle.css' layer(env.components);
 @import './Button.css' layer(env.components);
-@import './SearchTrigger.css' layer(env.components);
 @import './ButtonGroup.css' layer(env.components);
 @import './Toolbar.css' layer(env.components);
 @import './CopyButton.css' layer(env.components);

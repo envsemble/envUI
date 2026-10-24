@@ -35,14 +35,6 @@ avoidWhen:
     use: Menu
   - text: A consequence that needs a choice or typed confirmation before it happens.
     use: Dialog
-related:
-  - link
-  - menu
-  - segmented-control
-  - dialog
-  - animated-number
-  - icons
-  - accessibility
 components:
   - Button
   - IconButton
@@ -89,6 +81,14 @@ Hover, press, keyboard focus and disabled, for each variant.
 
 <!-- specimen: InteractionStates -->
 
+### Colors of its own
+
+One button can take colors of its own through its color properties, such as `--env-button-container` and `--env-button-content`. Its hover, focus and press follow them, as state layers of its label color.
+
+```tsx example=CustomColors
+
+```
+
 ### Pending work
 
 While `pending`, a spinner replaces the content at the same size, and presses do nothing.
@@ -99,7 +99,7 @@ While `pending`, a spinner replaces the content at the same size, and presses do
 
 ### Confirm in place
 
-ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.
+ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it. Its armed label is short and has no question mark: the verb, or the verb and object, "Remove Sam".
 
 ```tsx example=ConfirmInPlace
 
@@ -115,9 +115,15 @@ CopyButton copies its `value` and shows Copied, or Couldn’t copy, for about tw
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Primary**
+2. **Secondary**
+3. **Outline**
+4. **Ghost**
+5. **Text**
 
 | Variant     | Tones                   | Use for                                        |
 | ----------- | ----------------------- | ---------------------------------------------- |
@@ -165,25 +171,9 @@ Keyboard focus draws a ring 2 px outside a button, or on the edge of a ghost but
 
 - `href` for a destination, `onClick` for an action.
 
-```tsx do=CloseAtEnd caption="A close button at the end of the header of what it closes."
-
-```
-
-```tsx dont=CloseAtStart caption="At the start, it reads as part of the content."
-
-```
-
 ### Labels
 
 Start with a verb and say what will happen.
-
-```tsx do=SpecificLabel caption="Name the action and what it affects."
-
-```
-
-```tsx dont=VagueLabel caption="OK or Submit, when a specific verb fits."
-
-```
 
 When the outcome is known, put it in the label.
 
@@ -202,7 +192,11 @@ When the outcome is known, put it in the label.
 3. **Label** (`env-button::text`)
 4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
 
-Not shown: the spinner, `env-button-spinner`, and a ButtonGroup's `env-button-group`.
+Not shown: the spinner, `env-button-spinner`, a ButtonGroup's `env-button-group`, and the end slot, `env-button-end`: quiet content after the label, such as a shortcut's keys in a Kbd, in the button's content color with outlined caps and at the far end of a wide button, as the [search trigger](../patterns/search-trigger.md) shows it.
+
+### Colors
+
+`--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` set the colors of one Button or IconButton, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 
@@ -243,7 +237,7 @@ Labels wrap, and icon-only buttons keep their size. On touch screens every butto
 
 ## Changelog
 
-- **1.0.0**: IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross, which the `v1-structure` codemod writes. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
+- **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross, which the `v1-structure` codemod writes. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
 - **0.6.0**: The `quiet` variant on Button, IconButton and ConfirmButton; CopyButton; ButtonGroup `fullWidth`.
 - **0.5.0**: ConfirmButton `icon`, an icon-only form that grows when armed.
 - **0.4.0**: `pending` on Button and IconButton; ConfirmButton.

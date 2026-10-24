@@ -1,43 +1,67 @@
 import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl } from './Servers';
 import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
-import { dirname, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { chooseScheme } from './CatalogueThemes';
+import { readFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
-import {
-  references,
-  foundations as foundationReferences,
-} from '../../apps/catalogue/src/Reference';
-import {
-  normalizeRoute,
-  referencePages,
-  viewFor,
-} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
+import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
+import { references } from '../../apps/catalogue/src/Reference';
+import { allPages, normalizeRoute } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { displayStorageKeys } from '../../apps/catalogue/src/theme/DisplayStorage';
 
-const offline = pathToFileURL(resolve('dist/envUI.html')).href;
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = references.map(({ id }) => id);
-const foundations = foundationReferences.map(({ id }) => id);
+
+/**
+ * Opens a route of the site without loading it again, as a link in it does: the address changes
+ * and the site shows the route's page.
+ */
+async function goTo(page: Page, path: string) {
+  await page.evaluate((address) => {
+    history.pushState(null, '', address);
+    dispatchEvent(new PopStateEvent('popstate'));
+  }, path);
+}
 
 test('the 0.x routes of renamed pages open the pages under their new names', () => {
   const { docs } = readMap() as { docs: Record<string, string> };
   for (const [from, to] of Object.entries<string>(docs).filter(([key]) => !key.startsWith('$'))) {
     expect(components).toContain(to);
     expect(components).not.toContain(from);
-    const reference = references.find(({ id }) => id === to)!;
-    // A page on the template opens Overview for a Preview link and Guidelines for a Usage link.
+    // A page's views are gone: Preview and Usage open its page, and Props its page in the Docs.
     for (const view of ['preview', 'usage'])
-      expect(normalizeRoute(`components/${from}/${view}`)).toBe(
-        `components/${to}/${viewFor(reference, view)}`,
-      );
+      expect(normalizeRoute(`components/${from}/${view}`)).toBe(`components/${to}`);
+    expect(normalizeRoute(`components/${from}/props`)).toBe(`docs/components/${to}`);
   }
 });
 
-test('offline usage renders shared Markdown guidance and follows relative topic links', async ({
+test('the addresses of the views before the Site and the Docs split open the pages they became', () => {
+  const routes: Record<string, string> = {
+    'components/button/overview': 'components/button',
+    'components/button/props?section=props-Button-variant':
+      'docs/components/button?section=props-Button-variant',
+    'components/button/overview?section=keyboard': 'components/button?section=keyboard',
+    'components/field/overview': 'docs/components/field',
+    'foundations/colors/preview': 'foundations/colors',
+    'foundations/colors/usage': 'docs/foundations/colors',
+    'foundations/tokens': 'docs/tokens',
+    'overview/components': 'overview',
+    'overview/components?section=components-actions': 'components?section=components-actions',
+    'overview/get-started': 'docs/setup',
+    'overview/get-started?skill=migrate&section=local-development': 'docs/agent-skills',
+    'get-started/migration': 'docs/migration',
+    'contributing/library-development': 'overview',
+  };
+  for (const [from, to] of Object.entries(routes)) expect(normalizeRoute(from), from).toBe(to);
+  // Every page of both areas is its own route.
+  for (const { path } of allPages) expect(normalizeRoute(path)).toBe(path);
+});
+
+test("a foundation's guide in the Docs renders shared Markdown and follows relative links", async ({
   page,
 }) => {
-  await page.goto(`${offline}#/foundations/composition/usage`);
+  await page.goto(`${catalogueUrl}/docs/foundations/composition`);
   await expect(page.getByRole('heading', { name: 'Compose one root', exact: true })).toBeVisible();
   await expect(
     page.getByText('Surface supplies fill, padding and corners', { exact: false }),
@@ -47,34 +71,36 @@ test('offline usage renders shared Markdown guidance and follows relative topic 
     .getByRole('link', { name: 'Surface', exact: true })
     .first()
     .click();
-  // Surface is on the template, so a link to its page opens Overview.
-  await expect(page).toHaveURL(/#\/components\/surface\/overview$/);
-  await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
+  // A link to a component opens its page on the Site.
+  await expect(page).toHaveURL(/\/components\/surface$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Surface');
 
-  // A guide in the index opens on a page of its own, in its section of the navigation.
-  await page.goto(`${offline}#/overview/get-started`);
+  // A guide opens on a page of its own in the Docs, current in their navigation.
+  await page.goto(`${catalogueUrl}/docs`);
   await page
-    .locator('#documentation')
+    .locator('.docs-article')
     .getByRole('link', { name: 'Develop envUI locally', exact: true })
     .click();
-  await expect(page).toHaveURL(/#\/get-started\/local-development$/);
+  await expect(page).toHaveURL(/\/docs\/local-development$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Develop envUI locally');
   await expect(page.locator('.docs-article')).toContainText('npm run dev:library');
   await expect(
     page
-      .getByRole('navigation', { name: 'Documentation' })
+      .getByRole('navigation', { name: 'Docs' })
       .getByRole('link', { name: 'Develop envUI locally', exact: true }),
   ).toHaveAttribute('aria-current', 'page');
-  // The address it had on the Get started view leads to the same page.
-  await page.goto(`${offline}#/overview/get-started?document=migration&section=documentation`);
-  await expect(page).toHaveURL(/#\/get-started\/migration$/);
+  // The address it had on the Get started view, as a hash, leads to the same page as a path.
+  await page.goto(
+    `${catalogueUrl}/#/overview/get-started?document=migration&section=documentation`,
+  );
+  await expect(page).toHaveURL(/\/docs\/migration$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Migrate an interface to envUI');
 });
 
 test('palette editing uses public controls and remains temporary and independent between themes', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/foundations/colors/preview`);
+  await page.goto(`${catalogueUrl}/foundations/colors`);
   const app = page.locator('.docs-app');
   const canvasValue = () =>
     app.evaluate((element) =>
@@ -86,16 +112,18 @@ test('palette editing uses public controls and remains temporary and independent
   await swatch.click();
   const dialog = page.getByRole('dialog', { name: 'Page background', exact: true });
   await expect(dialog.locator('.env-color-picker')).toBeVisible();
-  await dialog.getByRole('textbox', { name: 'Page background HEX' }).fill('123456');
+  await dialog.getByRole('textbox', { name: 'Hex' }).fill('123456');
+  await dialog.getByRole('textbox', { name: 'Hex' }).press('Enter');
   await expect.poll(canvasValue).toBe('#123456');
   await dialog.getByRole('button', { name: 'Done', exact: true }).click();
-  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await chooseScheme(page, 'dark');
   expect(await canvasValue()).not.toBe('#123456');
   await swatch.click();
-  await dialog.getByRole('textbox', { name: 'Page background HEX' }).fill('#abcdef');
+  await dialog.getByRole('textbox', { name: 'Hex' }).fill('#abcdef');
+  await dialog.getByRole('textbox', { name: 'Hex' }).press('Enter');
   await expect.poll(canvasValue).toBe('#abcdef');
   await dialog.getByRole('button', { name: 'Done', exact: true }).click();
-  await page.getByRole('button', { name: 'Switch to light theme' }).click();
+  await chooseScheme(page, 'light');
   await expect.poll(canvasValue).toBe('#123456');
   await page.reload();
   await expect.poll(canvasValue).toBe(initialLight);
@@ -104,16 +132,16 @@ test('palette editing uses public controls and remains temporary and independent
 test('live examples keep links in place, show their source, and specimens show forced states', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/components/button/overview`);
-  const hash = await page.evaluate(() => location.hash);
+  await page.goto(`${catalogueUrl}/components/button`);
+  const address = page.url();
   // Links in an example keep their semantics without leaving the documentation.
   const destinations = page.getByRole('group', { name: 'Button links example', exact: true });
   await destinations.getByRole('link', { name: 'Read the guide', exact: true }).press('Enter');
-  expect(await page.evaluate(() => location.hash)).toBe(hash);
+  expect(page.url()).toBe(address);
   await destinations
     .getByRole('link', { name: 'Read help', exact: true })
     .click({ modifiers: ['Control'] });
-  expect(await page.evaluate(() => location.hash)).toBe(hash);
+  expect(page.url()).toBe(address);
   // Every example shows the source of its file, ready to copy. A figure that shares its row opens
   // its code below the row, across the whole content column.
   await page
@@ -135,12 +163,80 @@ test('live examples keep links in place, show their source, and specimens show f
   await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
 });
 
+test("the Colors page's forced interaction states paint what the components' own states paint", async ({
+  page,
+}) => {
+  // The samples take each state's color through public color properties. A component's own hover
+  // and press, forced on its rest sample, must paint the same, so the page can't drift from it.
+  await page.goto(`${catalogueUrl}/foundations/colors`);
+  await page.addStyleTag({
+    content: '*, *::before, *::after { transition: none !important; animation: none !important; }',
+  });
+  const table = page.getByRole('region', { name: 'Interaction states', exact: true });
+  await expect(table).toBeVisible();
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await cdp.send('CSS.enable');
+  const { root } = await cdp.send('DOM.getDocument', { depth: -1 });
+  const nodes = async (selector: string) =>
+    (await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector })).nodeIds;
+  const samples = {
+    'List row': ['.env-list-item', 'background-color'],
+    'Navigation item': ['.env-drawer-item', 'background-color'],
+    Field: ['.env-text-field-control', 'border-top-color'],
+    'Primary button': ['.env-button', 'background-color'],
+    'Secondary button': ['.env-button', 'background-color'],
+    'Outline button': ['.env-button', 'background-color'],
+    'Ghost button': ['.env-button', 'background-color'],
+  } as const;
+  for (const [sample, [part, property]] of Object.entries(samples)) {
+    const cells = table.getByRole('row', { name: sample, exact: false }).getByRole('cell');
+    const paint = (cell: number) =>
+      cells
+        .nth(cell)
+        .locator(part)
+        .first()
+        .evaluate((element, name) => getComputedStyle(element).getPropertyValue(name), property);
+    await cells
+      .nth(0)
+      .locator(part)
+      .first()
+      .evaluate((element) => element.setAttribute('data-forced-target', ''));
+    const [target] = await nodes('[data-forced-target]');
+    // A row is pressed through its target, which the row's style reads.
+    const inner = await nodes('[data-forced-target] [data-row-target]');
+    for (const [cell, state] of [
+      [1, ['hover']],
+      [2, ['hover', 'active']],
+    ] as const) {
+      await cdp.send('CSS.forcePseudoState', { nodeId: target!, forcedPseudoClasses: [...state] });
+      for (const nodeId of inner)
+        await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [...state] });
+      expect(await paint(0), `${sample}, ${state.join(' and ')}`).toBe(await paint(cell));
+    }
+    await cdp.send('CSS.forcePseudoState', { nodeId: target!, forcedPseudoClasses: [] });
+    for (const nodeId of inner)
+      await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [] });
+    await cells
+      .nth(0)
+      .locator(part)
+      .first()
+      .evaluate((element) => element.removeAttribute('data-forced-target'));
+  }
+});
+
 test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/components/button/overview`);
-  // Every section is in the Overview; the props have a view of their own.
-  await expect(page.getByRole('tab')).toHaveText(['Overview', 'Props']);
+  // Wide enough for the overview's three figures to share a row.
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto(`${catalogueUrl}/components/button`);
+  // One page of sections, with no views; the props are on its page in the Docs, which API opens.
+  await expect(page.locator('.docs-page-header').getByRole('tab')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'API', exact: true })).toHaveAttribute(
+    'href',
+    '/docs/components/button',
+  );
   // Ordinary headings in the fixed order, and no questions.
   await expect(page.locator('.docs-figure-section-heading h2')).toHaveText([
     'Overview',
@@ -149,11 +245,11 @@ test('a component page shows plain sections, equal cells and the parts of its an
     'Anatomy',
     'Adapting to width',
     'Accessibility',
-    'Props',
   ]);
   await expect(page.locator('.docs-figures .env-message')).toHaveCount(0);
   // Figures that share a row are cells of one size: equal widths, and stages as tall as the
-  // tallest.
+  // tallest, once their examples have loaded.
+  await expect(page.locator('[data-section="overview"] .docs-loading')).toHaveCount(0);
   const cells = () =>
     page
       .locator('[data-section="overview"] .docs-figure-run')
@@ -184,10 +280,11 @@ test('a component page shows plain sections, equal cells and the parts of its an
     };
   });
   expect(corners).toEqual({ outer: true, inner: true, larger: true });
-  // When to use: a plain list, then a tile for each alternative, of one size, each a picture of
-  // it, inert and fitted to its stage, once the section nears the viewport.
-  const tiles = page.locator('[data-section="usage"] .docs-when-tile');
-  await expect(tiles.locator('.docs-when-name')).toHaveText([
+  // When to use is a plain list; Related, at the end, has a tile for each alternative, of one
+  // size, each a picture of it, inert and fitted to its stage, once the section nears the viewport.
+  await expect(page.locator('[data-section="usage"] .docs-related-tile')).toHaveCount(0);
+  const tiles = page.locator('[data-section="related"] .docs-related-tile');
+  await expect(tiles.locator('.docs-related-name')).toHaveText([
     'Link',
     'SegmentedControl',
     'Switch',
@@ -196,17 +293,23 @@ test('a component page shows plain sections, equal cells and the parts of its an
   ]);
   await tiles.first().scrollIntoViewIfNeeded();
   const tileStages = () =>
-    tiles.locator('.docs-when-stage').evaluateAll((stages) => ({
+    tiles.locator('.docs-related-stage').evaluateAll((stages) => ({
       widths: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().width))).size,
       heights: new Set(stages.map((stage) => Math.round(stage.getBoundingClientRect().height)))
         .size,
-      fitted: stages.filter((stage) => stage.querySelector('.docs-when-canvas[data-fitted][inert]'))
-        .length,
+      fitted: stages.filter((stage) =>
+        stage.querySelector('.docs-related-canvas[data-fitted][inert]'),
+      ).length,
     }));
   await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });
   // The anatomy numbers each part of the live button beside the part it names, in the theme the
   // reader has chosen alone, and keeps them there as the page narrows and the theme changes.
-  const stages = page.locator('.docs-anatomy-stage');
+  // The variants figure names each variant with a callout on the start side of its item.
+  const variantNames = page.locator('.docs-variants .docs-variant-label');
+  await variantNames.first().scrollIntoViewIfNeeded();
+  await expect(variantNames).toHaveText(['Primary', 'Secondary', 'Outline', 'Ghost', 'Text']);
+  await expect(variantNames.first()).toHaveAttribute('data-side', 'left');
+  const stages = page.locator('.docs-anatomy .docs-anatomy-stage');
   await expect(stages).toHaveCount(1);
   const placement = () =>
     stages.evaluate((stage) => {
@@ -226,7 +329,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
       };
     });
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
-  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await chooseScheme(page, 'dark');
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
   await page.setViewportSize({ width: 420, height: 800 });
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
@@ -246,11 +349,9 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
         .filter((block) => block.kind === 'example' && block.role === 'anatomy').length,
     }));
   expect(pages.length).toBeGreaterThan(0);
-  await page.goto(`${catalogueUrl}/#/overview`);
+  await page.goto(`${catalogueUrl}/`);
   for (const { id, figures } of pages) {
-    await page.evaluate((hash) => {
-      location.hash = hash;
-    }, `/components/${id}/overview`);
+    await goTo(page, `/components/${id}`);
     const anatomy = page.locator('.docs-anatomy');
     await expect(anatomy, `${id} shows its anatomy figures`).toHaveCount(figures);
     for (const figure of await anatomy.all()) {
@@ -271,16 +372,15 @@ test('every dotted stage is the only frame of its figure', async ({ page }) => {
   // frame, which holds its stage and its verdict bar, is the figure's one frame.
   const pages = references.filter((reference) => reference.format === 'figures');
   expect(pages.length).toBeGreaterThan(0);
-  await page.goto(`${catalogueUrl}/#/overview`);
+  await page.goto(`${catalogueUrl}/`);
   for (const { id } of pages) {
-    await page.evaluate((hash) => {
-      location.hash = hash;
-    }, `/components/${id}/overview`);
+    await goTo(page, `/components/${id}`);
     await expect(page.locator('.docs-figures .docs-figure-section').first()).toBeVisible();
-    await expect(page.getByText(/^Loading (specimen|example)/)).toHaveCount(0);
+    await expect(page.locator('.docs-loading')).toHaveCount(0);
     const framed = await page.evaluate(() => {
       const stages = document.querySelectorAll(
-        '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-when-stage, .docs-specimen-grid, .docs-matrix-scroll)',
+        // A figure without a stage (stage="none") has no frame to count.
+        ".docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll):not([data-stage='none'], [data-stage='none'] *)",
       );
       const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
       const found: string[] = [];
@@ -312,10 +412,10 @@ test('every dotted stage is the only frame of its figure', async ({ page }) => {
   }
 });
 
-test('the props view links each source file at the revision the catalogue was built from', async ({
+test('the props in the Docs link each source file at the revision the site was built from', async ({
   page,
 }) => {
-  await page.goto(`${offline}#/components/button/props`);
+  await page.goto(`${catalogueUrl}/docs/components/button`);
   const link = page.getByRole('link', { name: 'actions/Button.tsx', exact: true });
   // The release tag of a release build, or the commit of any other: never a moving branch.
   const revision = `(?:v${version.replaceAll('.', '\\.')}|[0-9a-f]{40})`;
@@ -327,42 +427,37 @@ test('the props view links each source file at the revision the catalogue was bu
   );
 });
 
-test('offline reference loads every view without network or script errors', async ({
+test('the hosted build opens every page of the Site and the Docs without network or script errors', async ({
   page,
   context,
 }) => {
-  // It renders every view of every page, about 12 s on a fast machine and over 30 s on a busy runner.
+  // It renders every page of both areas, about 15 s on a fast machine and over 30 s on a busy one.
   test.slow();
+  requireSite();
   const errors: string[] = [];
   const requests: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  // Nothing loads from elsewhere: every request but the site's own is refused.
   await context.route(/^https?:/, (route) => {
     requests.push(route.request().url());
     return route.abort();
   });
-  await page.goto(`${offline}#/overview`);
+  await serveSite(page);
+  await page.goto(`${siteUrl}/`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(
     page.locator('.docs-footer').getByRole('navigation', { name: 'Footer' }),
   ).toContainText('Changelog');
-  // Every view of every page: Preview and Usage, or the views of a page on the template.
-  for (const { path, views } of referencePages) {
-    for (const view of views) {
-      await page.evaluate((hash) => {
-        location.hash = hash;
-      }, `/${path}/${view.id}`);
-      await expect(
-        page.locator('.docs-page-header').getByRole('tab', { selected: true }),
-      ).toHaveText(view.title);
-      if (view.id === 'preview') await expect(page.locator('.docs-preview')).toHaveCount(1);
-    }
+  for (const { path, title, kind } of allPages) {
+    await goTo(page, path === 'overview' ? '/' : `/${path}`);
+    await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(
+      kind === 'home' ? 'envUI' : title,
+    );
+    await expect(page.getByText('This page failed to render')).toHaveCount(0);
   }
-  expect(referencePages.length).toBe(components.length + foundations.length);
-  await page.evaluate(() => {
-    location.hash = '/getting-started/usage';
-  });
-  await expect(page.getByRole('tab', { name: 'Get started', selected: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
+  // A deep link loads its page, in the Docs too.
+  await page.goto(`${siteUrl}/docs/setup`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
   await expect(page.locator('.env-code-block').first()).toContainText('@envsemble:registry');
   expect(errors).toEqual([]);
   expect(requests).toEqual([]);
@@ -372,11 +467,11 @@ test('offline reference loads every view without network or script errors', asyn
 test('single previews retain state when the theme changes', async ({ page }) => {
   // The 0.x preview of text fields opens the TextField page, whose live examples follow the
   // documentation's theme.
-  await page.goto(`${offline}#/components/input/preview`);
+  await page.goto(`${catalogueUrl}/components/input/preview`);
   const example = page.getByRole('group', { name: 'TextField example', exact: true });
   const projectName = example.getByRole('textbox', { name: 'Project name', exact: true });
   await projectName.fill('Winter release');
-  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await chooseScheme(page, 'dark');
   await expect(example).toHaveAttribute('data-env-theme', 'dark');
   await expect(projectName).toHaveValue('Winter release');
   for (const width of [1920, 1440, 960, 390]) {
@@ -388,7 +483,7 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   }
   await expect(projectName).toHaveValue('Winter release');
   const navigationTrigger = page.getByRole('button', { name: 'Open navigation' });
-  const mobileNavigation = page.getByRole('dialog', { name: 'Documentation', exact: true });
+  const mobileNavigation = page.getByRole('dialog', { name: 'Site', exact: true });
   // Opened by a press or from the keyboard, Escape returns focus to the trigger, also in WebKit,
   // where a press focuses no button, and with focus elsewhere before.
   for (const by of ['press', 'keyboard'] as const) {
@@ -421,51 +516,95 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   await expect(mobileNavigation).toHaveCount(0);
   await expect(page.locator('.docs-sidebar')).toBeVisible();
   // The 0.x preview of checkboxes opens the Checkbox page, whose live example keeps its state.
-  await page.evaluate(() => {
-    location.hash = '/components/checkbox/preview';
-  });
+  await goTo(page, '/components/checkbox/preview');
   const archived = page
     .getByRole('group', { name: 'Checkbox example', exact: true })
     .getByRole('checkbox', { name: 'Include archived projects' });
   await archived.check();
-  await page.getByRole('button', { name: 'Switch to light theme' }).click();
+  await chooseScheme(page, 'light');
   await expect(archived).toBeChecked();
   // The 0.x route of disclosures opens the Disclosure page, whose live example keeps its state.
-  await page.evaluate(() => {
-    location.hash = '/components/notes/preview';
-  });
+  await goTo(page, '/components/notes/preview');
   const disclosure = page.getByRole('group', { name: 'Disclosure example', exact: true });
   await disclosure.locator('summary').click();
-  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await chooseScheme(page, 'dark');
   await expect(disclosure).toHaveAttribute('data-env-theme', 'dark');
   await expect(disclosure.locator('details')).toHaveAttribute('open', '');
 });
 
-test('arrowing between views keeps focus on the tabs and adds no history', async ({ page }) => {
-  await page.goto(`${offline}#/components/link/overview`);
-  await page.goto(`${offline}#/components/menu/props`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Menu');
+test('arrowing between the agent skills keeps focus on the tabs and adds no history', async ({
+  page,
+}) => {
+  await page.goto(`${catalogueUrl}/docs/setup`);
+  await page.goto(`${catalogueUrl}/docs/agent-skills?skill=migrate`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Agent skills');
   const before = await page.evaluate(() => history.length);
-  const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
-  await tabs.getByRole('tab', { name: 'Props', exact: true }).focus();
+  const tabs = page.getByRole('tablist', { name: 'Agent skills', exact: true });
+  await tabs.getByRole('tab', { name: 'Migrate to envUI', exact: true }).focus();
   await page.keyboard.press('ArrowLeft');
-  await expect(tabs.getByRole('tab', { name: 'Overview', exact: true })).toBeFocused();
-  expect(await page.evaluate(() => location.hash)).toBe('#/components/menu/overview');
+  await expect(tabs.getByRole('tab', { name: 'Use envUI', exact: true })).toBeFocused();
+  expect(await page.evaluate(() => `${location.pathname}${location.search}`)).toBe(
+    '/docs/agent-skills?skill=use',
+  );
   expect(await page.evaluate(() => history.length)).toBe(before);
-  // Back leaves the page rather than stepping through the views passed on the way.
+  // Back leaves the page rather than stepping through the skills passed on the way.
   await page.goBack();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Link');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
 });
 
-test('the views of a page stay in sight on a narrow screen', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(`${offline}#/components/menu/overview`);
-  const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
-  for (const name of ['Overview', 'Props']) {
-    const box = await tabs.getByRole('tab', { name, exact: true }).boundingBox();
-    expect(box, name).not.toBeNull();
-    expect(box!.x, name).toBeGreaterThanOrEqual(0);
-    expect(box!.x + box!.width, name).toBeLessThanOrEqual(390);
+test('the navigation holds the wordmark and search, the page the other area and Display, and there is no top bar', async ({
+  page,
+}) => {
+  for (const [address, other, brand] of [
+    // On the Site the wordmark tops the rail; the Docs, which have no rail, put it in the drawer.
+    ['/components/menu', 'Docs', 'Site'],
+    ['/docs/components/menu', 'Site', 'Docs'],
+  ] as const) {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(`${catalogueUrl}${address}`);
+    await expect(page.getByRole('banner')).toHaveCount(0);
+    const wordmark = page
+      .getByRole('navigation', { name: brand })
+      .getByRole('link', { name: /^envUI( Docs)? home$/ });
+    const search = page.locator('.docs-sidebar').getByRole('button', { name: /^Search/ });
+    await expect(wordmark, address).toBeInViewport();
+    await expect(search, address).toBeInViewport();
+    // The wordmark and search share the first row.
+    const [mark, field] = await Promise.all([wordmark.boundingBox(), search.boundingBox()]);
+    expect(Math.abs(mark!.y + mark!.height / 2 - (field!.y + field!.height / 2))).toBeLessThan(4);
+    expect(mark!.x + mark!.width).toBeLessThanOrEqual(field!.x);
+    // The other area and the Display menu are ghost buttons at the page's top end.
+    const actions = page.locator('.docs-page-actions');
+    for (const control of [
+      actions.getByRole('link', { name: other, exact: true }),
+      actions.getByRole('button', { name: 'Display', exact: true }),
+    ]) {
+      await expect(control, address).toBeInViewport();
+      expect((await control.boundingBox())!.x, address).toBeGreaterThan(640);
+    }
+    // The theme is in the Display menu alone.
+    await expect(page.getByRole('button', { name: /^Switch to/ })).toHaveCount(0);
+
+    // A narrow window shows the menu button and search at the page's top start, and the other area
+    // and Display as icon buttons at its top end.
+    await page.setViewportSize({ width: 390, height: 844 });
+    const menu = page.getByRole('button', { name: 'Open navigation', exact: true });
+    for (const [control, start] of [
+      [menu, true],
+      [page.locator('.docs-compact-controls').getByRole('button', { name: /^Search/ }), true],
+      [actions.getByRole('link', { name: other, exact: true }), false],
+      [actions.getByRole('button', { name: 'Display', exact: true }), false],
+    ] as const) {
+      const box = await control.boundingBox();
+      expect(box, address).not.toBeNull();
+      expect(box!.x, address).toBeGreaterThanOrEqual(0);
+      expect(box!.x + box!.width, address).toBeLessThanOrEqual(390);
+      expect(box!.x < 195, address).toBe(start);
+    }
+    await menu.click();
+    const sheet = page.getByRole('dialog', { name: address.startsWith('/docs') ? 'Docs' : 'Site' });
+    await expect(sheet.getByRole('button', { name: /^Search/ })).toBeInViewport();
+    await page.keyboard.press('Escape');
   }
 });
 
@@ -474,7 +613,7 @@ test('an example that fails to load says so in place, and loads again on request
 }) => {
   const example = '**/src/examples/button/CreateProject.tsx*';
   await page.route(example, (route) => route.abort());
-  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  await page.goto(`${catalogueUrl}/components/button`);
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
   // The rest of the page is still there.
@@ -501,7 +640,7 @@ test('in the hosted build, an example whose file is missing offers a reload, whi
     failing: (pathname) => failing && files.includes(pathname),
     failure: 'missing',
   });
-  await page.goto(`${siteUrl}/#/components/button/overview`);
+  await page.goto(`${siteUrl}/components/button`);
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
   await expect(hero.getByText('Reloading the page loads the example again.')).toBeVisible();
@@ -530,11 +669,11 @@ async function openFailingButtonPage(page: Page) {
     },
     failure: 'aborted',
   });
-  await page.goto(`${siteUrl}/#/overview`);
+  await page.goto(`${siteUrl}/`);
   await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
-  await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
+  await expect(page.locator('.docs-loading')).toHaveCount(0);
   state = 'failing';
-  await page.evaluate(() => (window.location.hash = '#/components/button/overview'));
+  await goTo(page, '/components/button');
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
   return { hero, set: (next: 'assets' | 'up') => (state = next) };
@@ -558,37 +697,6 @@ test("in the hosted build, a reload whose files can't be fetched keeps the page 
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
 });
 
-/** A build's script with the overview made to throw as it renders, where it is in the script. */
-const breakOverview = (script: string) =>
-  script.replace(/(["'`])Overview views\1/, '(() => { throw new Error("Broken page"); })()');
-
-test('the offline catalogue reloads from an overview that failed, also without a connection', async ({
-  page,
-}, testInfo) => {
-  // A file opened from disk reloads from disk, whatever the browser says of the connection. The
-  // browser says it is offline here; WebKit's emulated offline mode would block the file too.
-  await page.addInitScript(() =>
-    Object.defineProperty(Navigator.prototype, 'onLine', { get: () => false }),
-  );
-  const html = readFileSync(resolve('dist/envUI.html'), 'utf8');
-  const broken = breakOverview(html);
-  expect(broken, 'the overview in dist/envUI.html').not.toBe(html);
-  const file = testInfo.outputPath('envUI.html');
-  mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, broken);
-  await page.goto(`${pathToFileURL(file).href}#/overview`);
-  const main = page.getByRole('main');
-  await expect(main.getByText('Broken page')).toBeVisible();
-  expect(await page.evaluate(() => navigator.onLine)).toBe(false);
-  await page.evaluate(() => Object.assign(window, { stillHere: true }));
-  await Promise.all([
-    page.waitForEvent('load', { timeout: 10_000 }),
-    main.getByRole('button', { name: 'Reload the page', exact: true }).click(),
-  ]);
-  expect(await page.evaluate(() => 'stillHere' in window)).toBe(false);
-  await expect(main.getByText('Broken page')).toBeVisible();
-});
-
 test('code that fails to load is asked for once, not on every render', async ({ page }) => {
   const source = /\/src\/examples\/button\/CreateProject\.tsx\?raw/;
   const warnings: string[] = [];
@@ -596,7 +704,7 @@ test('code that fails to load is asked for once, not on every render', async ({ 
     if (/uncached promise/i.test(message.text())) warnings.push(message.text());
   });
   await page.route(source, (route) => route.abort());
-  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  await page.goto(`${catalogueUrl}/components/button`);
   await page
     .locator('.docs-live-example-entry')
     .first()
@@ -619,7 +727,7 @@ test('code that fails to load is asked for once, not on every render', async ({ 
 test('a retry returns focus once, and later updates leave focus where it is', async ({ page }) => {
   const example = '**/src/examples/button/CreateProject.tsx*';
   await page.route(example, (route) => route.abort());
-  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  await page.goto(`${catalogueUrl}/components/button`);
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
   await page.unroute(example);
@@ -627,17 +735,19 @@ test('a retry returns focus once, and later updates leave focus where it is', as
   await page.keyboard.press('Enter');
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
-  // Focus leaves for the page; the theme changes with a click that moves no focus. The frame's
-  // body scrolls, not the document.
+  // Focus leaves for the page; the theme changes in another window, which moves no focus. The
+  // frame's body scrolls, not the document.
   const body = page.locator('#docs-main');
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   await body.evaluate((element) => element.scrollTo(0, element.scrollHeight));
   const scrolled = await body.evaluate((element) => element.scrollTop);
   expect(scrolled).toBeGreaterThan(1000);
-  await page
-    .locator('.docs-page-controls')
-    .getByRole('button', { name: /^Switch to/ })
-    .evaluate((toggle: HTMLElement) => toggle.click());
+  await page.evaluate((key) => {
+    localStorage.setItem(key, 'dark');
+    dispatchEvent(
+      new StorageEvent('storage', { key, newValue: 'dark', storageArea: localStorage }),
+    );
+  }, displayStorageKeys.theme);
   await expect(page.locator('.docs-app')).toHaveAttribute('data-env-theme', 'dark');
   expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
   expect(await body.evaluate((element) => element.scrollTop)).toBe(scrolled);
@@ -652,7 +762,7 @@ test('an example that fails to render says so in place, and the rest of the page
       body: "export default function CreateProject() { throw new Error('Broken example'); }",
     }),
   );
-  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  await page.goto(`${catalogueUrl}/components/button`);
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('This example failed to render')).toBeVisible();
   await expect(hero.getByText('Broken example')).toBeVisible();
@@ -661,8 +771,8 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(hero.getByRole('button')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   // The other examples and the example's code render.
-  const variants = page.getByRole('group', { name: 'Variants example', exact: true });
-  await expect(variants.getByRole('button').first()).toBeVisible();
+  const toolbar = page.getByRole('group', { name: 'Quiet toolbar example', exact: true });
+  await expect(toolbar.getByRole('button').first()).toBeVisible();
   await page
     .locator('.docs-live-example-entry')
     .first()
@@ -672,8 +782,7 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
   // And the navigation still leads elsewhere.
   await page
-    .getByRole('navigation', { name: 'Documentation' })
-    .first()
+    .getByRole('navigation', { name: 'Components' })
     .getByRole('link', { name: 'Badge', exact: true })
     .click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
@@ -683,9 +792,13 @@ test('the navigation shows the current page, and focus moves to the page only on
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto(`${catalogueUrl}/#/components/tree/overview`);
+  await page.goto(`${catalogueUrl}/components/tree`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tree');
-  const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
+  // The rail marks the page's destination, and the drawer beside it lists the destination's pages.
+  await expect(
+    page.getByRole('navigation', { name: 'Site' }).locator('[aria-current="page"]'),
+  ).toHaveText('Components');
+  const navigation = page.getByRole('navigation', { name: 'Components' });
   // The current page's link is scrolled into view as the navigation mounts.
   const current = navigation.locator('[aria-current="page"]');
   await expect(current).toHaveText(/Tree/);
@@ -696,6 +809,24 @@ test('the navigation shows the current page, and focus moves to the page only on
   await navigation.getByRole('link', { name: 'Button', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   await expect(main).toBeFocused();
+  // A destination of the rail opens its first page, and the drawer lists its pages.
+  await page
+    .getByRole('navigation', { name: 'Site' })
+    .getByRole('link', { name: 'Foundations', exact: true })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
+  await expect(
+    page.getByRole('navigation', { name: 'Foundations' }).getByRole('link', { name: 'Typography' }),
+  ).toBeVisible();
+  // The Docs have a navigation of their own, and the top bar leads back to the Site.
+  await page.locator('.docs-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('envUI Docs');
+  await expect(page.getByRole('navigation', { name: 'Site' })).toHaveCount(0);
+  await expect(
+    page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Design tokens' }),
+  ).toBeVisible();
+  await page.locator('.docs-page-actions').getByRole('link', { name: 'Site', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
 });
 
 test('a page that fails to render says so, and the navigation leads to the others', async ({
@@ -707,7 +838,7 @@ test('a page that fails to render says so, and the navigation leads to the other
       body: "export function Overview() { throw new Error('Broken page'); }",
     }),
   );
-  await page.goto(`${catalogueUrl}/#/overview`);
+  await page.goto(`${catalogueUrl}/`);
   const main = page.getByRole('main');
   await expect(main.getByText('This page failed to render')).toBeVisible();
   await expect(main.getByText('Broken page')).toBeVisible();
@@ -718,15 +849,11 @@ test('a page that fails to render says so, and the navigation leads to the other
   // The page failed as it opened, the first the catalogue loaded, so focus stays at the start of
   // the document, as on any page that loads.
   await expect(main).not.toBeFocused();
-  const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
-  await navigation.getByRole('link', { name: 'Button', exact: true }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  const navigation = page.getByRole('navigation', { name: 'Site' });
+  await navigation.getByRole('link', { name: 'Components', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Components');
   await expect(main.getByText('This page failed to render')).toHaveCount(0);
-  await expect(
-    page
-      .getByRole('group', { name: 'Button example', exact: true })
-      .getByRole('button', { name: 'Create project', exact: true }),
-  ).toBeVisible();
+  await expect(main.getByRole('link', { name: /^Button/ }).first()).toBeVisible();
   // Going back to the page that failed says so again.
   await page.goBack();
   await expect(main.getByText('This page failed to render')).toBeVisible();
@@ -759,8 +886,8 @@ async function breakOnPress(page: Page, file: string, name: string) {
 test('a page that fails after a press takes the focus it dropped, and leads to the overview', async ({
   page,
 }) => {
-  await breakOnPress(page, '**/src/pages/ReferenceContent.tsx', 'ReferenceContent');
-  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  await breakOnPress(page, '**/src/pages/Catalogue.tsx', 'Catalogue');
+  await page.goto(`${catalogueUrl}/components`);
   const main = page.getByRole('main');
   const press = main.getByRole('button', { name: 'Break', exact: true });
   // The page renders with its button, and focus moves to the content once the route has opened.
@@ -778,36 +905,38 @@ test('a page that fails after a press takes the focus it dropped, and leads to t
 });
 
 test(
-  'offline hashes support direct links and back/forward navigation',
+  'paths support direct links, old hash links and back/forward navigation',
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${offline}#/components/select/props`);
+    // The hash address of an earlier release, such as a bookmark, is redirected to its path.
+    await page.goto(`${catalogueUrl}/#/components/select/props`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
-    await page.getByRole('tab', { name: 'Overview', exact: true }).click();
-    await page.getByRole('tab', { name: 'Props', exact: true }).click();
+    await expect(page).toHaveURL(/\/docs\/components\/select$/);
+    await page.getByRole('link', { name: 'See it on the Site', exact: true }).click();
+    await expect(page).toHaveURL(/\/components\/select$/);
+    await page.getByRole('link', { name: 'API', exact: true }).click();
+    await expect(page).toHaveURL(/\/docs\/components\/select$/);
     await page.goBack();
-    await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-      'Overview',
-    );
+    await expect(page).toHaveURL(/\/components\/select$/);
+    await expect(page.locator('.docs-figure-section').first()).toBeVisible();
     await page.goForward();
-    await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-      'Props',
-    );
+    await expect(page).toHaveURL(/\/docs\/components\/select$/);
+    await expect(page.getByRole('heading', { name: 'Props', exact: true })).toBeVisible();
   },
 );
 
-test('offline theme toggle switches the whole page and keeps the canvas full height', async ({
+test('the theme in the Display menu switches the whole page and keeps the canvas full height', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1920, height: 1400 });
-  await page.goto(`${offline}#/components/checkbox/preview`);
+  await page.goto(`${catalogueUrl}/components/checkbox/preview`);
   const app = page.locator('.docs-app');
   const panes = page.locator('.docs-preview');
   // The 0.x preview opens the Checkbox page, whose live example follows the theme with its state.
   const example = page.getByRole('group', { name: 'Checkbox example', exact: true });
   const archived = example.getByRole('checkbox', { name: 'Include archived projects' });
   await archived.check();
-  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await chooseScheme(page, 'dark');
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   await expect(example).toHaveAttribute('data-env-theme', 'dark');
   await expect(example).toHaveCount(1);
@@ -832,9 +961,7 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   }
 
   await page.setViewportSize({ width: 1920, height: 1000 });
-  await page.evaluate(() => {
-    location.hash = '/foundations/colors';
-  });
+  await goTo(page, '/foundations/colors');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
   await expect(panes.first().locator('.docs-swatch code').first()).toHaveText(/^#[0-9a-f]{6}$/);
@@ -848,17 +975,15 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   expect(swatches[0].swatch).toBeGreaterThan(swatches[0].label);
   expect(swatches).toHaveLength(1);
   const darkColor = await panes.locator('.docs-swatch code').first().textContent();
-  await page.getByRole('button', { name: 'Switch to light theme' }).click();
+  await chooseScheme(page, 'light');
   await expect(app).toHaveAttribute('data-env-theme', 'light');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'light');
   await expect(panes.locator('.docs-swatch code').first()).not.toHaveText(darkColor!);
-  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await chooseScheme(page, 'dark');
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
-  await page.evaluate(() => {
-    location.hash = '/getting-started';
-  });
-  await expect(page.getByRole('tab', { name: 'Get started', selected: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Install the private package' })).toBeVisible();
+  // The setup guide, in the Docs, keeps the theme.
+  await goTo(page, '/getting-started');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   await expect(panes).toHaveCount(0);
 });
@@ -875,14 +1000,12 @@ test('figures with open overlays keep them in their stages, inert, and leave the
     )
     .map(({ id }) => id);
   expect(pages).toEqual(expect.arrayContaining(['dialog', 'menu', 'tooltip', 'toast', 'select']));
-  await page.goto(`${catalogueUrl}/#/overview`);
+  await page.goto(`${catalogueUrl}/`);
   for (const id of pages) {
-    await page.evaluate((hash) => {
-      location.hash = hash;
-    }, `/components/${id}/overview`);
+    await goTo(page, `/components/${id}`);
     const rooms = page.locator('.docs-open-example');
     await expect(rooms.first()).toBeVisible();
-    await expect(page.getByText(/^Loading example/)).toHaveCount(0);
+    await expect(page.locator('.docs-loading')).toHaveCount(0);
     // Every open figure shows an overlay, inside its stage, and is a picture: inert.
     await expect
       .poll(
@@ -938,7 +1061,7 @@ test('figures with open overlays keep them in their stages, inert, and leave the
 test('F6 on the Toast page reaches a notification raised there, past the figures @engines', async ({
   page,
 }) => {
-  await page.goto(`${catalogueUrl}/#/components/toast/overview`);
+  await page.goto(`${catalogueUrl}/components/toast`);
   await expect(page.locator('.docs-open-example .env-toast').first()).toBeVisible();
   // While no notification of the page is open, F6 is the browser's: the figures' notices, which
   // are pictures, don't take it.
@@ -956,4 +1079,56 @@ test('F6 on the Toast page reaches a notification raised there, past the figures
   await expect(live).toHaveCount(1);
   await page.keyboard.press('F6');
   await expect(live).toBeFocused();
+});
+
+test("the Benchmark page shows the newest run's scores and a named chart with its data as a table", async ({
+  page,
+}) => {
+  const { latest, runs } = readBenchmark();
+  await page.goto(`${catalogueUrl}/benchmark`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Benchmark');
+  await expect(page.getByRole('heading', { name: 'Latest run', level: 2 })).toBeVisible();
+  const scores = page.getByRole('table', { name: `Scores of run ${latest.id}` });
+  await expect(scores.getByRole('row')).toHaveCount(latest.agents.length + 1);
+  for (const agent of latest.agents)
+    await expect(scores.getByRole('row', { name: agent.label })).toContainText(String(agent.mean));
+
+  // The chart is one image, named by its caption and described by every bar's value.
+  const chart = page.getByRole('img', { name: /^Mean score out of 100 by run and agent/ });
+  await expect(chart).toBeVisible();
+  await expect(chart).toHaveAccessibleDescription(new RegExp(latest.id));
+  // Its data is a table too, one row per agent of each run.
+  await page.getByText("The chart's data as a table").click();
+  const data = page.getByRole('table', { name: 'Mean score by run and agent' });
+  await expect(data).toBeVisible();
+  const bars = runs.reduce((count, run) => count + run.agents.length, 0);
+  await expect(data.getByRole('row')).toHaveCount(bars + 1);
+});
+
+test('the Changelog page lists each release, newest first, and its links reach sections of the Docs', async ({
+  page,
+}) => {
+  const releases = readReleaseNotes();
+  await page.goto(`${catalogueUrl}/changelog`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
+  const versions = page.locator('.docs-releases h2 .docs-release-version');
+  await expect(versions).toHaveText(releases.map((release) => release.version));
+
+  // Every link of the notes leads to a page of the Docs with the section it names.
+  const hrefs = await page
+    .locator('.docs-releases a')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href')!));
+  const sections = new Map<string, Set<string>>();
+  for (const href of hrefs) {
+    expect(href, href).toMatch(/^\/docs\/(?:migration|changelog)(?:#|$)/);
+    const [path, section] = href.split('#');
+    sections.set(path, new Set([...(sections.get(path) ?? []), ...(section ? [section] : [])]));
+  }
+  expect([...sections.keys()].sort()).toEqual(['/docs/changelog', '/docs/migration']);
+  for (const [path, ids] of sections) {
+    await page.goto(`${catalogueUrl}${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    for (const id of ids)
+      await expect(page.locator(`[id="${id}"]`), `${path}#${id}`).toBeAttached();
+  }
 });

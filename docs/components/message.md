@@ -27,17 +27,8 @@ avoidWhen:
     use: List
   - text: A short notification that comes and goes, such as Message sent.
     use: Toast
-  - text: A message about a page or a section, such as a warning before a form.
-    use: Alert
   - text: Formatted text on its own, outside a conversation.
     use: Markdown
-related:
-  - composer
-  - markdown
-  - relative-time
-  - list
-  - loading
-  - accessibility
 components:
   - Message
   - MessageList
@@ -90,14 +81,6 @@ A message is one entry of a conversation, such as a chat message or a comment, i
 - Keep messages oldest first, in a MessageList.
 
 ### Content
-
-```tsx do=AuthorWhereNeeded caption="An author where it tells people apart."
-
-```
-
-```tsx dont=AuthorEverywhere caption="Your own name on your own messages."
-
-```
 
 - Name icon actions after what they do, such as Copy answer.
 

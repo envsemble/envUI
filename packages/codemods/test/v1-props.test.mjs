@@ -38,14 +38,23 @@ const reports = {
     `line 29: Avatar's size has a value the codemod can't move: ${report('Avatar', 'size')}`,
   ],
   'form-vocabulary.tsx': [
+    `line 18: TextField's variant: ${report('TextField', 'variant', 'plain')}`,
     `line 19: TextField's variant has a value the codemod can't move: ${report('TextField', 'variant')}`,
     `line 23: Combobox's items has entries the codemod can't read: ${report('Combobox', 'items')}`,
   ],
   'color-picker.tsx': [
     `line 8: ColorPicker's variant has a value the codemod can't move: ${report('ColorPicker', 'variant')}`,
+    `line 9: ${report('ColorPicker', 'ref')}`,
+    // TextField's props that the old picker passed to its HEX field are reported.
+    `line 10: ${report('ColorPicker', 'required')}`,
+    `line 10: ${report('ColorPicker', 'size')}`,
+    `line 10: ${report('ColorPicker', 'autoComplete')}`,
+    `line 10: ${report('ColorPicker', 'onBlur')}`,
   ],
   'rich-text.tsx': [
-    `line 9: RichTextEditor's variant has a value the codemod can't move: ${report('RichTextEditor', 'variant', undefined, richText)}`,
+    `line 6: RichTextEditor's variant: ${report('RichTextEditor', 'variant', 'plain', richText)}`,
+    `line 7: RichTextEditor's variant: ${report('RichTextEditor', 'variant', 'underline', richText)}`,
+    `line 10: RichTextEditor's variant has a value the codemod can't move: ${report('RichTextEditor', 'variant', undefined, richText)}`,
   ],
   // Data a prop takes, such as Combobox's items, is renamed in an array written in the prop and
   // reported where the codemod can't read it.

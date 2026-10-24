@@ -534,7 +534,7 @@ function envuiExports(appDir, { program, checker, options }) {
   const names = new Set();
   const targets = new Map();
   const containing = join(appDir, 'src/main.tsx');
-  for (const entry of ['', '/content', '/rich-text', '/diff']) {
+  for (const entry of ['', '/content', '/rich-text', '/diff', '/color']) {
     const resolved = ts.resolveModuleName(`${ENVUI}${entry}`, containing, options, ts.sys)
       .resolvedModule?.resolvedFileName;
     const sourceFile = resolved && program.getSourceFile(resolved);

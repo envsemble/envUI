@@ -1,6 +1,7 @@
 // The codemods the CLI runs, with the files each one reads by default, in the order they run:
 // v1-names reads 0.x names before 1.0 reuses one (Row), v1-structure writes the Stacks that v1-stack
-// rewrites, v1-render turns `as` into `render` while the element is still a Stack, and v1-classes
+// rewrites, v1-render turns `as` into `render` while the element is still a Stack, v1-entries moves
+// imports to their 1.0 entry point after v1-props has read them from the old one, and v1-classes
 // reads the style sheets last. Running them all again changes nothing.
 import { fileURLToPath } from 'node:url';
 
@@ -36,6 +37,12 @@ export const transforms = {
     file: fileURLToPath(new URL('./transforms/v1-props.mjs', import.meta.url)),
     description:
       'Move the props 1.0 removed, renamed or changed, such as variant="important" to variant="primary" tone="accent" and Text tone to emphasis, and the properties of objects that calls such as useToast().show take; what cannot move is reported.',
+    extensions: scripts,
+  },
+  'v1-entries': {
+    file: fileURLToPath(new URL('./transforms/v1-entries.mjs', import.meta.url)),
+    description:
+      'Import the exports that moved to another entry point from it: ColorPicker and ColorSwatch, from @envsemble/envui/color; uses through a namespace import are reported.',
     extensions: scripts,
   },
   'v1-classes': {

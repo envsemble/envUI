@@ -36,21 +36,8 @@ avoidWhen:
     use: Drawer
   - text: Content people work in beside a trigger, such as a small form or a color picker.
     use: Popover
-  - text: Switching between views of the same content.
-    use: Tabs
   - text: One or two actions that fit beside the content they act on.
     use: Button
-related:
-  - menubar
-  - command-palette
-  - select
-  - popover
-  - drawer
-  - tree
-  - kbd
-  - tooltip
-  - avatar
-  - scaffold
 components:
   - Menu
   - ContextMenu
@@ -140,14 +127,6 @@ With `href`, an item is a link, through the `LinkProvider`.
 
 ### Content
 
-```tsx do=ConsistentIcons open stage=raised caption="An icon on every item of a set, or on none."
-
-```
-
-```tsx dont=MixedIcons open stage=raised caption="An icon on one item only: it stands out for no reason."
-
-```
-
 - Start an action with a verb, such as Rename, and name a destination after its page.
 - Show a `shortcut` only where the application handles its keys.
 
@@ -166,6 +145,10 @@ With `href`, an item is a link, through the `LinkProvider`.
 7. **Separator** (`env-menu-separator`)
 
 Not shown: a submenu's row, `env-menu-submenu-trigger`, and the check of a choice, `env-menu-item-check`.
+
+### Colors
+
+`--env-menu-item-container`, `--env-menu-item-content` and `--env-menu-item-icon` set the colors of one Menu, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Accessibility
 

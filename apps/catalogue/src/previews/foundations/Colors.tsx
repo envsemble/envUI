@@ -1,14 +1,65 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-import { Button, ColorPicker, Dialog, Column, Text, useTheme } from '@envsemble/envui';
-import { TokenValue } from './TokenValue';
-import { Example, Specimen, SpecimenGrid } from '../Example';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Button, Dialog, Column, Text, useTheme } from '@envsemble/envui';
+import { ColorPicker } from '@envsemble/envui/color';
+import { Example } from '../Example';
 import { colorGroups, colorVariable } from '../../theme/Palette';
 import { usePaletteCustomization } from '../../theme/PaletteCustomization';
+import { StateLayers } from './StateLayers';
 
 interface MeasuredColor {
   css: string;
   hex: string;
-  lightness: number;
+  /** The label's ink: the variable of the one that reads best on the color. */
+  ink: string;
+}
+
+/** The fixed inks of a swatch's label, in docs-swatch, and the pure ones for mid-tones. */
+const inks = [
+  ['--docs-ink-dark', [30, 31, 33]],
+  ['--docs-ink-light', [255, 255, 255]],
+] as const;
+const pureInks = [
+  ['--docs-ink-black', [0, 0, 0]],
+  ['--docs-ink-light', [255, 255, 255]],
+] as const;
+
+/** WCAG relative luminance of an sRGB color. */
+function luminance(rgb: readonly number[]) {
+  const [r, g, b] = rgb.map((channel) => {
+    const value = channel / 255;
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+}
+
+function contrast(a: readonly number[], b: readonly number[]) {
+  const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (light! + 0.05) / (dark! + 0.05);
+}
+
+/**
+ * The ink that reads best on a color: the fixed dark or light one, or, on a mid-tone where neither
+ * reaches the text contrast the theme promises (4.5:1, or 7:1 at high contrast), pure black or
+ * white when that reads better.
+ */
+function inkFor(rgb: readonly number[], target: number) {
+  const best = (choices: typeof inks | typeof pureInks) =>
+    choices
+      .map(([ink, color]) => ({ ink, ratio: contrast(rgb, color) }))
+      .reduce((a, b) => (b.ratio > a.ratio ? b : a));
+  const fixed = best(inks);
+  if (fixed.ratio >= target) return fixed.ink;
+  const pure = best(pureInks);
+  return pure.ratio > fixed.ratio ? pure.ink : fixed.ink;
+}
+
+/** Whether the element shows the high-contrast colors, set on its Theme or asked by the system. */
+function isHighContrast(element: Element) {
+  const contrast = element.closest('.env-theme')?.getAttribute('data-env-contrast');
+  return (
+    contrast === 'high' ||
+    (contrast !== 'standard' && matchMedia('(prefers-contrast: more)').matches)
+  );
 }
 
 function ColorSwatch({
@@ -35,7 +86,7 @@ function ColorSwatch({
           title="Choose a color"
           style={{
             background: `var(${colorVariable(token)})`,
-            color: (value?.lightness ?? 50) > 55 ? 'var(--docs-ink-dark)' : 'var(--docs-ink-light)',
+            color: `var(${value?.ink ?? '--docs-ink-light'})`,
           }}
         >
           <code>{value?.css ?? ''}</code>
@@ -52,12 +103,21 @@ function ColorSwatch({
 }
 
 function ColorPalette() {
-  const { theme } = useTheme();
+  const { theme, contrast: themeContrast } = useTheme();
   const { palettes } = usePaletteCustomization();
   const paletteElement = useRef<HTMLDivElement>(null);
   const [colorValues, setColorValues] = useState<Record<string, MeasuredColor>>({});
+  // The system's contrast preference changes the colors without a change of theme: measure again.
+  const [systemContrast, setSystemContrast] = useState(0);
+  useEffect(() => {
+    const query = matchMedia('(prefers-contrast: more)');
+    const change = () => setSystemContrast((count) => count + 1);
+    query.addEventListener('change', change);
+    return () => query.removeEventListener('change', change);
+  }, []);
   useLayoutEffect(() => {
     if (!paletteElement.current) return;
+    const target = isHighContrast(paletteElement.current) ? 7 : 4.5;
     const computedStyle = getComputedStyle(paletteElement.current);
     const context = document
       .createElement('canvas')
@@ -79,17 +139,17 @@ function ColorPalette() {
         measuredColors[token] = {
           css: computedStyle.getPropertyValue(colorVariable(token)).trim(),
           hex: '#' + rgb.map((channel) => channel.toString(16).padStart(2, '0')).join(''),
-          lightness: ((Math.max(...rgb) + Math.min(...rgb)) / 255) * 50,
+          ink: inkFor(rgb, target),
         };
       }),
     );
     setColorValues(measuredColors);
-  }, [theme, palettes]);
+  }, [theme, themeContrast, systemContrast, palettes]);
   return (
     // Each group is an Example, so the visual baseline captures it; their margins space them.
     <Column ref={paletteElement} gap={0} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
-        <Example key={group} title={group} size="collection">
+        <Example key={group} title={group} size="collection" stage="none">
           <Column gap={0}>
             {tokens.map(([token, label]) => (
               <div className="docs-palette-row" key={label}>
@@ -109,52 +169,11 @@ function ColorPalette() {
   );
 }
 
-function InteractionColors() {
-  const states = [
-    { label: 'Default', token: '--env-color-bg-brand-emphasis' },
-    { label: 'Hover', token: '--env-color-bg-brand-emphasis-hover' },
-    { label: 'Pressed', token: '--env-color-bg-brand-emphasis-pressed' },
-    { label: 'Disabled', token: '--env-color-bg-brand-emphasis' },
-  ];
-
-  return (
-    <Example title="Derived interaction colors" size="collection">
-      <Text emphasis="muted">
-        Hover and pressed are derived when the tokens are built: other grades of the same hue, each
-        a token of its own, so the contrast gate checks the label on every state.
-      </Text>
-      <SpecimenGrid size="compact">
-        {states.map(({ label, token }) => (
-          <Specimen key={label} title={label}>
-            <div
-              className="docs-color-state"
-              aria-hidden="true"
-              style={{
-                background: `var(${token})`,
-                opacity: label === 'Disabled' ? 'var(--env-state-disabled-opacity)' : undefined,
-              }}
-            />
-            <Text variant="caption">
-              {label === 'Disabled' ? (
-                <>
-                  <TokenValue token="--env-state-disabled-opacity" /> opacity
-                </>
-              ) : (
-                <code>{token}</code>
-              )}
-            </Text>
-          </Specimen>
-        ))}
-      </SpecimenGrid>
-    </Example>
-  );
-}
-
 export function ColorsPreview() {
   return (
     <>
       <ColorPalette />
-      <InteractionColors />
+      <StateLayers />
     </>
   );
 }

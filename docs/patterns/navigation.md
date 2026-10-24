@@ -18,12 +18,14 @@ useWhen:
   - An application has several places, and people move between them.
   - People need to see where they are, how they got there and how to go back up.
 avoidWhen:
-  - text: Narrowing a long list or a table to the items people want.
-    see: filtering
   - text: Showing more of the page's content without leaving the page.
     see: progressive-disclosure
   - text: Moving between pages of one long list.
     use: Pagination
+  - text: A list beside the detail of its selected item.
+    use: Panes
+  - text: A whole frame to copy, with the navigation and a top bar.
+    see: app-frame
 composes:
   - Scaffold
   - TopBar
@@ -35,9 +37,13 @@ composes:
   - PageHeader
   - Tabs
   - Pager
-  - SearchTrigger
+  - Kbd
+  - useModifierKey
+  - IconButton
+  - Tooltip
   - CommandPalette
   - Panes
+  - Surface
   - LinkProvider
   - Link
   - List
@@ -47,14 +53,6 @@ composes:
   - Column
   - Row
   - Text
-related:
-  - filtering
-  - loading
-  - scaffold
-  - panes
-  - drawer
-  - app-frame
-  - breadcrumbs
 ---
 
 # Navigation
@@ -79,7 +77,7 @@ After the router shows the new page, move focus to the Scaffold's body or the pa
 | A page two or more levels down      | [Breadcrumbs](../components/breadcrumbs.md) with `wrap={false}` in the [PageHeader](../components/page-header.md)                   |
 | Views of the object a page is about | [Tabs](../components/tabs.md) under the PageHeader                                                                                  |
 | Pages read in order                 | A [Pager](../components/pager.md) at the end of the content                                                                         |
-| Opening anything by name            | A [SearchTrigger](../components/search-trigger.md) that opens a [CommandPalette](../components/command-palette.md)                  |
+| Opening anything by name            | A [search trigger](search-trigger.md) that opens a [CommandPalette](../components/command-palette.md)                               |
 | A list whose items open beside it   | List-detail [Panes](../components/panes.md)                                                                                         |
 
 ### Hierarchy
@@ -100,7 +98,7 @@ Tabs switch the views of one project in place. Its settings are another page, so
 
 ### Quick open
 
-Choosing a result opens it as a link would. Here the trigger takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search.
+Choosing a result opens it as a link would. An application opens the palette on <kbd>Ctrl</kbd>+<kbd>K</kbd> too, as the [search trigger](search-trigger.md) pattern shows; here the catalogue's own search keeps the keys.
 
 ```tsx example=QuickOpen
 
@@ -140,7 +138,7 @@ As narrow as a phone, the detail shows in place of the list, with a back button 
 ```
 
 1. **Primary navigation** (`env-rail`)
-2. **Quick open** (`env-search-trigger`)
+2. **Quick open** (`env-top-bar-actions > env-icon-button`)
 3. **Trail** (`env-breadcrumbs`)
 4. **Views** (`env-tabs-list`)
 

@@ -17,6 +17,8 @@
 // - the state attributes: `data-*` attributes set in JSX on an element with a part class, their
 //   values from the attribute's type, and the `[data-*]` selectors that the style sheets
 //   (src/styles) put on a part class, with the values they compare;
+//   attributes named data-env-ssr-* are private and left out: server markup carries them only until
+//   a component reads its layout in the browser;
 // - the components: every component and namespace the public entries export, whose parts are the
 //   classes that start with `env-<its name in kebab case>`.
 //
@@ -24,6 +26,12 @@
 // the root of a component whose root is not `env-<name>`, the shared groups (anatomy that several
 // components render, such as the list row of menus and selects) and where a class goes when no
 // name places it. A part without a description, or a description without a part, fails.
+//
+// The color properties: each component's public custom properties for its colors, such as
+// --env-button-container, from `colors` in packages/ui/src/parts.json, with what each colors. Each
+// must be registered in the style sheets as a property that doesn't inherit
+// (`@property --env-… { syntax: '*'; inherits: false; }`), and every property registered so must
+// be listed; they are public and versioned like the parts.
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
@@ -52,6 +60,15 @@ const kebab = (name) =>
     .replace(/(?<=[A-Z])(?=[A-Z][a-z])/g, '-')
     .toLowerCase();
 const byText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+
+/**
+ * Whether a state attribute is private: data-env-ssr-*, which server markup carries only until a
+ * component reads its layout in the browser, such as a dock that stacks before it hydrates. Neither
+ * the contract nor the docs list them, and they may change in any release.
+ */
+export function isPrivateState(attribute) {
+  return attribute.startsWith('data-env-ssr-');
+}
 
 /** An `env-*` class in a string, not part of a selector, custom property or data attribute. */
 const classPattern = /(?<![\w.#-])env-[a-z\d]+(?:-[a-z\d]+)*(-?)/g;
@@ -124,7 +141,7 @@ function readSource() {
                     declaration,
                     new Set([...(elementsOfVariable.get(declaration) ?? []), element]),
                   );
-        } else if (name.startsWith('data-')) {
+        } else if (name.startsWith('data-') && !isPrivateState(name)) {
           const element = node.getParent().getParent();
           const list = statesOnElement.get(element) ?? [];
           list.push({ attribute: name, values: attributeValues(node), path });
@@ -291,6 +308,7 @@ function readStyles() {
       for (const match of compound.matchAll(
         /\[\s*(data-[\w-]+)\s*(?:[~|^$*]?=\s*(?:"([^"]*)"|'([^']*)'|([^\]\s]+)))?\s*(?:[is]\s*)?\]/g,
       )) {
+        if (isPrivateState(match[1])) continue;
         const value = match[2] ?? match[3] ?? match[4];
         states.push({
           attribute: match[1],
@@ -311,6 +329,24 @@ function readStyles() {
       for (const selector of splitTopLevel(match[1], /,/)) visit(selector, path);
   }
   return states;
+}
+
+/**
+ * The color properties the style sheets register, as the public color properties are: each
+ * `@property` that doesn't inherit, with the file that registers it.
+ */
+function readColorProperties() {
+  const properties = new Map();
+  for (const name of readdirSync(stylesDirectory).filter((file) => file.endsWith('.css'))) {
+    const css = readFileSync(resolve(stylesDirectory, name), 'utf8').replace(
+      /\/\*[\s\S]*?\*\//g,
+      '',
+    );
+    for (const match of css.matchAll(/@property\s+(--env-[a-z\d-]+)\s*\{([^}]*)\}/g))
+      if (/inherits\s*:\s*false/.test(match[2]))
+        properties.set(match[1], repositoryPath(resolve(stylesDirectory, name)));
+  }
+  return properties;
 }
 
 /** The hand-written part of the contract. */
@@ -401,6 +437,24 @@ export function buildParts({
   };
 
   const descriptions = source.descriptions ?? {};
+  const colors = source.colors ?? {};
+  const registered = readColorProperties();
+  const listedColors = new Set();
+  for (const [group, list] of Object.entries(colors))
+    for (const [property, description] of Object.entries(list)) {
+      listedColors.add(property);
+      if (!registered.has(property))
+        problems.push(
+          `${group}: its color property ${property} is not registered in the style sheets as a property that doesn't inherit`,
+        );
+      if (typeof description !== 'string' || !description.trim())
+        problems.push(`${group}: ${property} has no description in packages/ui/src/parts.json`);
+    }
+  for (const property of registered.keys())
+    if (!listedColors.has(property))
+      problems.push(
+        `${property}, registered in ${registered.get(property)}, is listed under no component's colors in packages/ui/src/parts.json`,
+      );
   const output = { components: {}, shared: {} };
   const usedBy = new Map();
   for (const group of [...groups.values()].sort((a, b) => byText(a.name, b.name))) {
@@ -452,11 +506,20 @@ export function buildParts({
           parts: [...parts].sort(byText),
         })),
       ...(uses.size && { uses: [...uses].sort(byText) }),
+      ...(colors[group.name] && {
+        colors: Object.entries(colors[group.name]).map(([property, description]) => ({
+          property,
+          description,
+        })),
+      }),
     };
     (group.shared ? output.shared : output.components)[group.name] = entry;
   }
   for (const [name, entry] of Object.entries(output.shared))
     entry.usedBy = [...(usedBy.get(name) ?? [])].sort(byText);
+  for (const name of Object.keys(colors))
+    if (!(name in output.components))
+      problems.push(`packages/ui/src/parts.json lists colors of ${name}, which is no component`);
   for (const name of Object.keys(descriptions))
     if (!(name in output.components) && !(name in output.shared))
       problems.push(`packages/ui/src/parts.json describes ${name}, which has no parts`);
@@ -464,7 +527,7 @@ export function buildParts({
   return {
     parts: {
       $comment:
-        'Generated by scripts/GenerateParts.mjs from packages/ui/src and the descriptions in packages/ui/src/parts.json; do not edit. Part classes and state attributes are public and versioned. In a state, values lists what the attribute takes; "" is an attribute set without a value, and an empty list one that takes any value or is selected by its presence alone.',
+        'Generated by scripts/GenerateParts.mjs from packages/ui/src and the descriptions in packages/ui/src/parts.json; do not edit. Part classes, state attributes and color properties are public and versioned. In a state, values lists what the attribute takes; "" is an attribute set without a value, and an empty list one that takes any value or is selected by its presence alone. colors lists the custom properties that set a component’s colors on one instance, through style or CSS; they don’t inherit.',
       schemaVersion: partsSchemaVersion,
       ...output,
     },
@@ -481,8 +544,9 @@ export function readParts(file = partsFile) {
 }
 
 /**
- * Every part class and every state attribute value of a contract, as `Group: name` labels, with the
- * class or attribute each names, the value of a state value, and the parts that carry a state.
+ * Every part class, state attribute value and color property of a contract, as `Group: name`
+ * labels, with the class, attribute or property each names, the value of a state value, and the
+ * parts that carry a state.
  */
 function contractNames(parts) {
   const names = new Map();
@@ -490,6 +554,8 @@ function contractNames(parts) {
     for (const [group, entry] of Object.entries(parts?.[kind] ?? {})) {
       for (const part of entry.parts)
         names.set(`${group}: .${part.class}`, { name: part.class, part: part.class });
+      for (const { property } of entry.colors ?? [])
+        names.set(`${group}: ${property}`, { name: property, color: property });
       for (const state of entry.states) {
         const carried = { name: state.attribute, attribute: state.attribute, parts: state.parts };
         names.set(`${group}: [${state.attribute}]`, carried);
@@ -500,13 +566,18 @@ function contractNames(parts) {
   return names;
 }
 
-/** Each class of a contract, and the values each class's state attributes take (null: any). */
+/**
+ * Each class of a contract, the values each class's state attributes take (null: any) and its color
+ * properties.
+ */
 function contractClasses(parts) {
   const classes = new Set();
   const states = new Map();
+  const colors = new Set();
   for (const kind of ['components', 'shared'])
     for (const entry of Object.values(parts?.[kind] ?? {})) {
       for (const part of entry.parts) classes.add(part.class);
+      for (const { property } of entry.colors ?? []) colors.add(property);
       for (const state of entry.states)
         for (const part of state.parts ?? []) {
           const key = `${part} ${state.attribute}`;
@@ -519,7 +590,7 @@ function contractClasses(parts) {
           );
         }
     }
-  return { classes, states };
+  return { classes, states, colors };
 }
 
 /** Whether a changeset's front matter makes it a major change of @envsemble/envui. */
@@ -532,9 +603,9 @@ const names = (text, name) =>
   );
 
 /**
- * What a contract lost against an older one: each part, state attribute or value that is gone,
- * with whether a major changeset of @envsemble/envui names it: the class; the attribute; or, for a
- * value, the attribute and the value. A part that moved to another group, or a state value whose
+ * What a contract lost against an older one: each part, state attribute or value, or color property
+ * that is gone, with whether a major changeset of @envsemble/envui names it: the class; the
+ * attribute; the property; or, for a value, the attribute and the value. A part that moved to another group, or a state value whose
  * attribute now takes any value, is not gone. Pure, for the tests; `changesets` is the text of each
  * pending changeset.
  */
@@ -545,6 +616,7 @@ export function removedParts(before, after, changesets = []) {
   /** Whether a part, attribute or value is still there, in this group or another. */
   const stays = (item) => {
     if (item.part) return kept.classes.has(item.part);
+    if (item.color) return kept.colors.has(item.color);
     return (item.parts ?? []).some((part) => {
       const values = kept.states.get(`${part} ${item.attribute}`);
       if (values === undefined) return false;
@@ -642,7 +714,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
         );
       if (unrecorded.length) {
         console.error(
-          `Part classes and state attributes are public: a part or state that goes is a breaking change. Name each one above that no major changeset of @envsemble/envui names (a value with its attribute) in such a changeset, with what replaces it.`,
+          `Part classes, state attributes and color properties are public: one that goes is a breaking change. Name each one above that no major changeset of @envsemble/envui names (a value with its attribute) in such a changeset, with what replaces it.`,
         );
         process.exit(1);
       }

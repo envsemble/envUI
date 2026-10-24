@@ -604,17 +604,18 @@ test('the document takes the field look: border, variants, error and a disabled 
     .or(scope.getByRole('textbox', { name: 'Controlled notes' }))
     .first();
   await expect(
-    outline.locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]'),
+    outline.locator(
+      'xpath=ancestor::*[contains(@class, "env-text-field-control")][1]/*[contains(@class, "env-text-field-border")]',
+    ),
   ).toHaveCSS('border-top-color', await color('--env-color-border-default'));
-  // Ghost draws no border or fill at rest; underline has no border either.
+  // Ghost draws no border or fill at rest.
   await expect(box('Ghost notes')).toHaveAttribute('data-variant', 'ghost');
   await expect(box('Ghost notes')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  await expect(box('Underlined notes')).toHaveAttribute('data-variant', 'underline');
   // The error makes the document invalid and its border the error color.
   const invalid = scope.getByRole('textbox', { name: 'Invalid notes' });
   await expect(invalid).toHaveAttribute('aria-invalid', 'true');
   await expect(invalid).toHaveAccessibleDescription('Say what changed. Write at least a sentence.');
-  await expect(box('Invalid notes')).toHaveCSS(
+  await expect(box('Invalid notes').locator(':scope > .env-text-field-border')).toHaveCSS(
     'border-top-color',
     await color('--env-color-fg-danger'),
   );
@@ -689,4 +690,52 @@ test('a controlled editor replaces documents with references and tasks without a
   await editor.getByRole('checkbox', { name: 'Check the totals' }).check();
   await expect(editor.getByRole('checkbox', { name: 'Check the totals' })).toBeChecked();
   expect(errors.filter((text) => /flushSync/.test(text))).toEqual([]);
+});
+
+test('the formatting toolbar is one tab stop, in groups the arrow keys cross', async ({ page }) => {
+  await page.goto(`${fixtureUrl}?fixture=upload`);
+  const scope = page.getByTestId('rich-text-upload');
+  const toolbar = scope.getByRole('toolbar', { name: 'Rich text formatting' });
+  const button = (name: string) => toolbar.getByRole('button', { name, exact: true });
+  /** The toolbar's buttons that Tab stops at. */
+  const tabStops = () =>
+    toolbar
+      .getByRole('button')
+      .evaluateAll((buttons) =>
+        buttons.filter((each) => each.tabIndex === 0).map((each) => each.ariaLabel),
+      );
+  // Text styles, lists, blocks, links and tables, history and the editor's own, a line between each.
+  await expect(toolbar.getByRole('group')).toHaveCount(6);
+  await expect(toolbar.getByRole('separator')).toHaveCount(5);
+  // Marks are toggle buttons.
+  await expect(button('Bold')).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(tabStops).toEqual(['Heading']);
+  await button('Heading').focus();
+  for (const [key, name] of [
+    ['ArrowRight', 'Bold'],
+    ['ArrowRight', 'Italic'],
+    ['ArrowRight', 'Strikethrough'],
+    ['ArrowRight', 'Inline code'],
+    // Across the line into the next group.
+    ['ArrowRight', 'Bulleted list'],
+    ['ArrowLeft', 'Inline code'],
+    ['ArrowLeft', 'Strikethrough'],
+    ['ArrowLeft', 'Italic'],
+    ['ArrowLeft', 'Bold'],
+    ['ArrowLeft', 'Heading'],
+    // The keys go round from the first to the last, passing over Undo and Redo, unavailable.
+    ['ArrowLeft', 'Attach files'],
+    ['ArrowRight', 'Heading'],
+    ['ArrowLeft', 'Attach files'],
+    ['ArrowLeft', 'Insert table'],
+  ] as const) {
+    await page.keyboard.press(key);
+    await expect(button(name)).toBeFocused();
+  }
+  // The button last focused is the one tab stop; Tab leaves the toolbar for the document.
+  await expect.poll(tabStops).toEqual(['Insert table']);
+  await page.keyboard.press('Tab');
+  await expect(scope.getByRole('textbox')).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(button('Insert table')).toBeFocused();
 });

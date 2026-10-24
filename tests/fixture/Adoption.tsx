@@ -6,6 +6,7 @@ import {
   Button,
   ConfirmButton,
   Dialog,
+  Kbd,
   List,
   TextField,
   LinkProvider,
@@ -25,6 +26,7 @@ import {
 import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { Delete } from '@envsemble/envui/icons/Delete';
+import { Search } from '@envsemble/envui/icons/Search';
 
 /** Stands in for a router link: it records client navigation instead of loading a page. */
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
@@ -97,7 +99,15 @@ export function AdoptionFixture() {
               />
             }
           >
-            <Menu.Header>Alex Morgan</Menu.Header>
+            <Menu.Header>
+              <Column align="center" gap={1} padding={2} style={{ textAlign: 'center' }}>
+                <Avatar name="Alex Morgan" size="lg" data-testid="account-avatar" />
+                <Text data-testid="account-name">Alex Morgan</Text>
+                <Text variant="body-sm" emphasis="muted">
+                  alex@example.com
+                </Text>
+              </Column>
+            </Menu.Header>
             <Menu.Item href="/account" onClick={() => setAction('Followed account settings')}>
               Account settings
             </Menu.Item>
@@ -119,9 +129,22 @@ export function AdoptionFixture() {
             Save changes
           </Button>
           <output data-testid="pending-presses">{presses}</output>
+          {/* A wide button with the keys of its shortcut in the end slot, as a search trigger. */}
+          <div style={{ inlineSize: '20rem' }}>
+            <Button
+              variant="secondary"
+              fullWidth
+              startIcon={<Search />}
+              end={<Kbd keys={['Ctrl', 'K']} aria-hidden />}
+              aria-keyshortcuts="Control+K"
+              data-testid="end-button"
+            >
+              Search
+            </Button>
+          </div>
           <Spinner label="Refreshing seats" />
           <ConfirmButton
-            confirmLabel="Remove Morgan?"
+            confirmLabel="Remove Morgan"
             armedDuration={800}
             onConfirm={() => setConfirmed((count) => count + 1)}
             data-testid="confirm-button"
@@ -131,7 +154,7 @@ export function AdoptionFixture() {
           <ConfirmButton
             icon={<Delete />}
             aria-label="Remove Morgan"
-            confirmLabel="Remove Morgan?"
+            confirmLabel="Remove"
             armedDuration={800}
             onConfirm={() => setConfirmed((count) => count + 1)}
             data-testid="confirm-icon-button"

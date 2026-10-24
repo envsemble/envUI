@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Button, Menu } from '@envsemble/envui';
+import { useId, useState } from 'react';
+import { Button, Column, Menu, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
+import { Groups3 } from '@envsemble/envui/icons/Groups3';
 import { UnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
 
 interface Organization {
@@ -11,6 +12,7 @@ interface Organization {
 export default function FirstOrganization() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [current, setCurrent] = useState<string | null>(null);
+  const headingId = useId();
   // An application asks for the name first; here the new organization is Northwind Labs.
   const create = () => {
     setOrganizations([{ id: 'northwind', label: 'Northwind Labs' }]);
@@ -34,7 +36,15 @@ export default function FirstOrganization() {
             </Button>
           }
         >
-          <Menu.RadioGroup label="Organizations" value={current} onValueChange={setCurrent}>
+          <Menu.Header>
+            <Column align="center" gap={2} padding={3}>
+              <Groups3 width="2rem" height="2rem" />
+              <Text variant="headline" id={headingId}>
+                Organizations
+              </Text>
+            </Column>
+          </Menu.Header>
+          <Menu.RadioGroup aria-labelledby={headingId} value={current} onValueChange={setCurrent}>
             {organizations.map(({ id, label }) => (
               <Menu.RadioItem key={id} value={id}>
                 {label}

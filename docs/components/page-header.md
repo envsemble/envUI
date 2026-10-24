@@ -22,16 +22,8 @@ avoidWhen:
     use: TopBar
   - text: The heading of a section inside a page, with its own actions.
     use: Row
-  - text: A heading with metadata and actions around a block of content.
-    use: Card
   - text: Controls for one subject that the arrow keys move between.
     use: Toolbar
-related:
-  - page
-  - breadcrumbs
-  - toolbar
-  - row
-  - button
 components:
   - PageHeader
 ---
@@ -74,16 +66,6 @@ With `sticky`, the header stays at the top of the area that scrolls, under a Sca
 
 - One PageHeader per page, with the page's `h1`; set `headingLevel` lower in a pane or a dialog.
 - A toolbar row that holds a text field is a [Row](row.md), not a Toolbar, as [Toolbar's layouts](toolbar.md#layouts) describe.
-
-### Content
-
-```tsx do=NameTheContent caption="A title that names what the page holds."
-
-```
-
-```tsx dont=InstructionAsTitle caption="An instruction as the title, and a description that repeats it."
-
-```
 
 ## Anatomy
 

@@ -26,21 +26,10 @@ avoidWhen:
     use: MonthPicker
   - text: A moment shown relative to now, such as "3 hours ago".
     use: RelativeTime
-  - text: Activity per day over months, shown as shades.
-    use: CalendarHeatmap
   - text: A free-text date that people type in any format.
     use: TextField
   - text: A choice among a few named periods, such as This week or This month.
     use: SegmentedControl
-related:
-  - time-picker
-  - month-picker
-  - text-field
-  - popover
-  - combobox
-  - calendar-heatmap
-  - relative-time
-  - accessibility
 components:
   - DatePicker
   - Calendar
@@ -92,9 +81,13 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 ## Variants
 
-```tsx example=Variants
+```tsx variants=Variants
 
 ```
+
+1. **Outline**
+2. **Outline, with a time**
+3. **Floating**
 
 | Variant                | Use for                                                 |
 | ---------------------- | ------------------------------------------------------- |
@@ -104,7 +97,7 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 ### Sizes
 
-`sm`, `md` and `lg`, the control heights of the [scale](../foundations/scale.md). With `showLabel={false}`, the placeholder shows in place of the label.
+`sm`, `md` and `lg`, the control heights of the [scale](../foundations/scale.md). With `showLabel={false}`, the placeholder shows in place of the label. The field is 12 rem wide at least, also in a toolbar sized to its content, and in a narrower container it takes the container's width.
 
 ```tsx example=SmallToolbar
 
@@ -120,26 +113,8 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 ```
 
-```tsx do=LimitsExplained caption="Say which days can be chosen in the description."
-
-```
-
-```tsx dont=LimitsUnexplained caption="Unavailable days that people find only in the calendar."
-
-```
-
 - Use two fields for a range, such as First day and Last day.
 - Use `readOnly`, not `disabled`, to show a date people can't change.
-
-### Labels
-
-```tsx do=NamedMoment caption="A label that names the moment."
-
-```
-
-```tsx dont=GenericLabel caption="Date, which says nothing about what happens then."
-
-```
 
 ## Anatomy
 
@@ -199,6 +174,7 @@ Not shown: the times, `env-date-picker-time`, beside the calendar with `granular
 
 ## Changelog
 
+- **1.0.0**: The field keeps its minimum width, 12 rem, in a container sized to its content, such as an inline-flex toolbar, rather than growing after the container measured it and pushing its neighbours onto another row; in a narrower container it still takes the container's width.
 - **1.0.0**: With the minute granularity, the time is chosen on wheels of hours, minutes every `minuteStep` minutes (15) and, on a 12-hour clock, day periods, beside the calendar, in place of the time field under it; turning a wheel sets the time at once. The calendar has no Done button, and `doneLabel` is gone: it closes as a date-only one does. The field and popup are shared with TimePicker and MonthPicker.
 - **1.0.0**: `withTime` is `granularity`, `"day"` or `"minute"`; `hint` is `description`; `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the button, which takes `ref`. The calendar opens on the shared popup, its month buttons are ghost icon buttons, and its labels come from EnvUIProvider's `messages`, as its locale does: `env-date-time-well` is `env-date-picker-control`.
 - **1.0.0**: `DateTimeField` is `DatePicker`, with the `env-date-picker-*` classes; the page is `date-picker`.

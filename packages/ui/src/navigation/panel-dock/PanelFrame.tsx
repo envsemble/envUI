@@ -28,6 +28,11 @@ const resizeLargeStep = 64;
 interface PanelFrameProps {
   panel: PanelDockPanel;
   placement: Placement;
+  /**
+   * Until the dock reads its layout, the panel's placement in a stacked dock, which the dock's
+   * container query shows where it is narrow.
+   */
+  stackedPlacement: Placement | undefined;
   stacked: boolean;
   /** The panel's height in pixels; before the dock measures itself, the requested one, if any. */
   height: number | undefined;
@@ -51,6 +56,7 @@ interface PanelFrameProps {
 export function PanelFrame({
   panel,
   placement,
+  stackedPlacement,
   stacked,
   height,
   bounds,
@@ -74,7 +80,17 @@ export function PanelFrame({
   // takes it from the panel's context wherever it sits in the content.
   const [scrolled, setScrolled] = useState(false);
   const shownHeight = preview ?? height;
-  useEntrance(frame, placement, placement !== 'hidden');
+  // A panel whose placement the dock has not read yet is in place as CSS shows it, without an
+  // entrance of its own.
+  useEntrance(
+    frame,
+    stackedPlacement === undefined ? placement : undefined,
+    placement !== 'hidden',
+  );
+  // Hidden from people in either layout until the dock reads which one shows; where only the
+  // stacked one hides the panel, its container query already hides it from sight and from
+  // assistive technology.
+  const hidden = placement === 'hidden' && (stackedPlacement ?? 'hidden') === 'hidden';
   const context = useMemo<PanelDockPanelContextValue>(
     () => ({
       mode,
@@ -144,10 +160,11 @@ export function PanelFrame({
           className="env-panel-dock-panel"
           aria-label={panel.title}
           tabIndex={-1}
-          inert={placement === 'hidden'}
+          inert={hidden}
           data-panel-id={id}
           data-mode={mode}
           data-placement={placement}
+          data-env-ssr-placement={stackedPlacement}
           data-active={panel.active || undefined}
           data-resizing={preview !== undefined || undefined}
           style={

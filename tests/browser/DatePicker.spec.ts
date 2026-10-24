@@ -650,3 +650,57 @@ test('pressing the label of an open field closes its calendar, as pressing the f
   await wellOf(publish).locator('label').click();
   await expect(openPopup(page)).toBeVisible();
 });
+
+/** Each footer action's label and the number of lines it takes. */
+const actionLines = (popup: Locator) =>
+  popup.locator('.env-date-picker-actions .env-button').evaluateAll((buttons) =>
+    buttons.map((button) => {
+      const range = document.createRange();
+      range.selectNodeContents(button);
+      const tops = new Set([...range.getClientRects()].map((rect) => Math.round(rect.top)));
+      return `${button.textContent}:${tops.size}`;
+    }),
+  );
+
+test('the actions under the calendar keep their labels on one line, also on a phone', async ({
+  page,
+}) => {
+  for (const width of [1440, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const [name, actions] of [
+      ['Publish on light', ['Today:1', 'Clear:1']],
+      ['Meeting light', ['Now:1', 'Clear:1']],
+    ] as const) {
+      await field(page, name).click();
+      await expect.poll(() => actionLines(openPopup(page))).toEqual(actions);
+      await page.keyboard.press('Escape');
+      await expect(openPopup(page)).toHaveCount(0);
+    }
+  }
+});
+
+test(
+  'keeps its minimum width in a container sized to its content, and fits a narrower one',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const toolbar = page.getByTestId('date-picker-toolbar-light');
+    const toolbarField = toolbar.locator('.env-date-picker');
+    const button = toolbar.getByRole('button', { name: 'Schedule' });
+    const [fieldBox, buttonBox] = await Promise.all([
+      toolbarField.boundingBox(),
+      button.boundingBox(),
+    ]);
+    // 12rem at least, and the button beside it on the same row rather than pushed onto another.
+    expect(fieldBox!.width).toBeGreaterThanOrEqual(192);
+    expect(
+      Math.abs(fieldBox!.y + fieldBox!.height / 2 - (buttonBox!.y + buttonBox!.height / 2)),
+    ).toBeLessThan(2);
+    // In a container 8rem wide, the field takes the container's width.
+    const narrow = page.getByTestId('date-picker-narrow-light');
+    const narrowField = narrow.locator('.env-date-picker');
+    await expect
+      .poll(async () => Math.round((await narrowField.boundingBox())!.width))
+      .toBe(Math.round((await narrow.boundingBox())!.width));
+    expect(Math.round((await narrow.boundingBox())!.width)).toBe(128);
+  },
+);

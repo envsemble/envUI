@@ -6,15 +6,15 @@ import {
   Column,
   CommandPalette,
   Drawer,
+  IconButton,
   Menu,
   Page,
   PageHeader,
   Rail,
-  Row,
   Scaffold,
-  SearchTrigger,
   Text,
   ThemeRadioGroup,
+  Tooltip,
   TopBar,
   type CommandPaletteItem,
   type Destination,
@@ -26,6 +26,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Palette } from '@envsemble/envui/icons/Palette';
+import { Search } from '@envsemble/envui/icons/Search';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
@@ -66,15 +67,13 @@ export default function AppFrame() {
       trigger={<AvatarButton name={user.name} description={user.email} />}
     >
       <Menu.Header>
-        <Row align="center" gap={3}>
+        <Column align="center" gap={1} padding={2} style={{ textAlign: 'center' }}>
           <Avatar name={user.name} size="lg" />
-          <Column>
-            <Text>{user.name}</Text>
-            <Text variant="body-sm" emphasis="muted">
-              {user.email}
-            </Text>
-          </Column>
-        </Row>
+          <Text>{user.name}</Text>
+          <Text variant="body-sm" emphasis="muted">
+            {user.email}
+          </Text>
+        </Column>
       </Menu.Header>
       <Menu.Item href="/account" icon={<ManageAccounts />}>
         Account settings
@@ -97,7 +96,14 @@ export default function AppFrame() {
           title="Northwind"
           actions={
             <>
-              <SearchTrigger iconOnly onClick={() => setSearching(true)} />
+              <Tooltip content="Search" side="bottom">
+                <IconButton
+                  variant="ghost"
+                  icon={<Search />}
+                  aria-label="Search"
+                  onClick={() => setSearching(true)}
+                />
+              </Tooltip>
               {account}
             </>
           }

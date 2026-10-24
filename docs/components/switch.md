@@ -25,12 +25,6 @@ avoidWhen:
     use: Button
   - text: An option that turns on or off inside a menu.
     use: Menu
-related:
-  - checkbox
-  - radio
-  - segmented-control
-  - list
-  - accessibility
 components:
   - Switch
 ---
@@ -91,14 +85,6 @@ Name the setting in a short phrase, so that on means yes.
 
 ```
 
-```tsx do=PositiveLabel caption="A label that on means yes to."
-
-```
-
-```tsx dont=NegativeLabel caption="A negative label: on means no."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=SwitchAnatomy
@@ -110,6 +96,10 @@ Name the setting in a short phrase, so that on means yes.
 3. **Label** (`env-switch-label`, `label`)
 
 The thumb is drawn by the track and has no element of its own.
+
+### Colors
+
+`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` set the colors of one Switch, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 

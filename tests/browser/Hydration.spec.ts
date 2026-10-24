@@ -18,6 +18,8 @@ test('public components hydrate server output without recoverable errors', async
   const people = page.getByRole('group', {
     name: '5 people: Alex Morgan, Sam Lee, Priya Shah, 2 more',
   });
+  // The pointer reaches the group first, which spreads it, and then the avatar in its new place.
+  await people.hover();
   await people.getByRole('button', { name: 'Sam Lee' }).click();
   await expect(page.getByTestId('hydrated-person')).toHaveText('Sam Lee');
   await expect(people.locator('.env-avatar-group-overflow')).toHaveText('+3');
@@ -138,10 +140,13 @@ test('public components hydrate server output without recoverable errors', async
   await page.keyboard.press('ArrowRight');
   await expect(activity.getByRole('gridcell', { name: nextName, exact: true })).toBeFocused();
   await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(nextName);
-  const color = page.getByRole('textbox', { name: 'Hydrated color HEX' });
-  await expect(color).toHaveValue('#1a73e8');
+  const color = page
+    .getByRole('group', { name: 'Hydrated color', exact: true })
+    .getByRole('textbox', { name: 'Hex' });
+  await expect(color).toHaveValue('#1A73E8');
   await color.fill('ABCDEF');
-  await expect(color).toHaveValue('#abcdef');
+  await color.press('Enter');
+  await expect(color).toHaveValue('#ABCDEF');
   await expect(page.getByRole('checkbox', { name: 'Hydrated choice' })).toHaveJSProperty(
     'indeterminate',
     true,
@@ -182,6 +187,35 @@ test('public components hydrate server output without recoverable errors', async
     await page.evaluate(() => (window as unknown as { hydrationErrors: string[] }).hydrationErrors),
   ).toEqual([]);
   expect(errors).toEqual([]);
+});
+
+test.describe('on an Apple platform', () => {
+  test.use({
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+  });
+
+  test('the shortcut modifier hydrates as Ctrl, then shows ⌘', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.addInitScript(() => {
+      Object.defineProperty(Navigator.prototype, 'platform', { get: () => 'MacIntel' });
+      Object.defineProperty(Navigator.prototype, 'userAgentData', { get: () => undefined });
+    });
+    await page.goto(pathToFileURL(resolve('.cache/Hydration.html')).href);
+    const search = page.getByRole('button', { name: 'Hydrated search' });
+    await expect(search).toHaveAttribute('aria-keyshortcuts', 'Meta+K');
+    await expect(search.locator('.env-kbd')).toHaveText(['⌘', 'K']);
+    await page.waitForFunction(
+      () => (window as unknown as { hydrationReady?: boolean }).hydrationReady,
+    );
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { hydrationErrors: string[] }).hydrationErrors,
+      ),
+    ).toEqual([]);
+    expect(errors).toEqual([]);
+  });
 });
 
 test.describe('in another language and time zone than the server', () => {

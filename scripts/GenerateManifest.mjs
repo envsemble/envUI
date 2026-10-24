@@ -379,7 +379,7 @@ export function renderLlmsText(manifest) {
     '',
     `${manifest.rule} Each component page has when to use it and what to use instead, accessibility, examples as source and props generated from the TypeScript declarations. manifest.json holds the same as data, and \`npx --no envui mcp\` serves it to agents over MCP.`,
     '',
-    'Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are public and versioned: CSS may target them, and each component below names its root classes. Component tokens, such as `--env-card-padding`, are private; use the system tokens. docs/generated/parts.json lists every part with what it is.',
+    'Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color properties (`--env-<component>-<role>`, such as `--env-button-container`) are public and versioned: CSS may target the classes and attributes, and set the color properties on one instance, and each component below names its root classes. Other component tokens, such as `--env-card-padding`, are private; use the system tokens. docs/generated/parts.json lists every part and color property with what it is.',
     '',
   ];
   const section = (title, items) => {
@@ -420,7 +420,7 @@ export function renderLlmsText(manifest) {
     '- [Full documentation](llms-full.txt): every page above in one file, with examples and props.',
     '- [Manifest](manifest.json): components, exports, props, examples, patterns and tokens as JSON.',
     '- [Props](docs/generated/props.json): the props of every export.',
-    '- [Parts](docs/generated/parts.json): the part classes and state attributes of every component, with what each part is.',
+    '- [Parts](docs/generated/parts.json): the part classes, state attributes and color properties of every component, with what each is.',
     '- [Icons](icon-manifest.json): every icon, imported from `@envsemble/envui/icons/<Name>`.',
   ]);
   return `${lines.join('\n').replace(/\n+$/, '')}\n`;

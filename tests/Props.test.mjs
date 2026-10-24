@@ -39,7 +39,7 @@ test('a default that names a private value shows the value, or nothing', () => {
   // A private list reads as the list it holds.
   assert.equal(
     props('MarkdownEditor').toolbar.default,
-    "['heading', 'bold', 'italic', 'bullet-list', 'numbered-list', 'quote', 'inline-code', 'code-block', 'link']",
+    "['heading', 'bold', 'italic', 'inline-code', 'bullet-list', 'numbered-list', 'quote', 'code-block', 'link']",
   );
   // A default that follows the locale says so in words too.
   assert.equal(

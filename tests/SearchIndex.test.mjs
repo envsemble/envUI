@@ -13,6 +13,7 @@ import {
   cataloguePages,
   readTokens,
   searchDocuments,
+  unlistedPages,
 } from '../scripts/SearchIndex.mjs';
 import { indexOptions, queryOptionsFor, tokenize } from '../scripts/SearchTerms.mjs';
 
@@ -36,8 +37,8 @@ test('words split at punctuation and at camel-case humps, which stay whole too',
 
 test('search covers every page, export, prop and token', () => {
   const ids = new Set(records.map(({ id }) => id));
-  for (const document of documents.filter(({ id }) => id !== 'index'))
-    assert.ok(ids.has(`page:${document.id}`), document.id);
+  for (const document of documents)
+    assert.equal(ids.has(`page:${document.id}`), !unlistedPages.has(document.id), document.id);
   for (const token of tokens.tokens) assert.ok(ids.has(`token:${token.id}`), token.id);
   const pageTitles = new Set(
     records.filter(({ kind }) => kind !== 'export').map(({ title }) => title),
@@ -183,9 +184,31 @@ test('a result carries where it is: its page, view and element', () => {
   assert.equal(token.section, 'token-env-color-fg-muted');
 });
 
-test('the index stays small enough to load with the offline catalogue', () => {
-  // About 0.5 MB, 0.1 MB compressed, in 2026-10; the offline catalogue's budget is 25 MiB.
+test('the index stays small enough to load when search first opens', () => {
+  // About 0.5 MB, 0.1 MB compressed, in 2026-10.
   assert.ok(serialized.length < 1_000_000, `${serialized.length} bytes`);
+});
+
+test('a result names its area: the Site, or the Docs for the reference', () => {
+  const area = (id) => records.find((record) => record.id === id)?.area;
+  assert.equal(area('page:button'), 'site');
+  assert.equal(area('page:loading'), 'site');
+  assert.equal(area('page:colors'), 'site');
+  assert.equal(area('guide:colors'), 'docs');
+  assert.equal(area('page:field'), 'docs');
+  assert.equal(area('page:setup'), 'docs');
+  assert.equal(area('prop:Button.variant'), 'docs');
+  assert.equal(area('export:useTheme'), 'docs');
+  assert.equal(area('token:color.fg.muted'), 'docs');
+  for (const record of records) assert.ok(['site', 'docs'].includes(record.area), record.id);
+  // The site's own pages: the Docs' home, tokens, codemods, the full changelog and skills are in
+  // the Docs.
+  const inDocs = new Set(['docs', 'tokens', 'codemods', 'full-changelog', 'agent-skills']);
+  for (const { page, area: where } of cataloguePages)
+    assert.equal(where, inDocs.has(page) ? 'docs' : 'site', page);
+  // A foundation's page on the Site ranks above its guide in the Docs.
+  assert.deepEqual(best('colors and themes'), ['page:colors']);
+  assert.ok(best('colors and themes', 3).includes('guide:colors'));
 });
 
 test('a pattern or template names its kind, and what it composes finds it', () => {

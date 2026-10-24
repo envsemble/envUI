@@ -5,14 +5,17 @@ import { Slider as BaseSlider } from '@base-ui/react/slider';
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type CSSProperties,
   type ReactNode,
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../foundations/Layout.js';
+import { Text } from '../foundations/Text.js';
 import { setRef } from '../internal/setRef.js';
 import { useLocale } from '../internal/EnvUIContext.js';
 import { useDirectionScope } from '../internal/useDirection.js';
@@ -23,12 +26,11 @@ import { subscribeFormReset } from './internal/subscribeFormReset.js';
 export interface SliderProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
   /**
-   * The value's name above the track, such as Opacity. It names the slider, and pressing it moves
-   * focus to the slider.
+   * The value's name, inside the slider at its start, such as Opacity. It names the slider.
    */
   label: ReactNode;
   /**
-   * Lasting guidance under the track, such as what the value applies to, linked to the slider as
+   * Lasting guidance under the slider, such as what the value applies to, linked to the slider as
    * its description.
    */
   description?: ReactNode;
@@ -64,7 +66,7 @@ export interface SliderProps
    */
   largeStep?: number;
   /**
-   * The value as people read it above the track and assistive technology announces it, such as
+   * The value as people read it at the slider's end and assistive technology announces it, such as
    * (value) => `${value}%`. Without it, the number shows in the locale.
    */
   formatValue?: (value: number) => string;
@@ -81,8 +83,11 @@ export interface SliderProps
 }
 
 /**
- * A value in a range, chosen by dragging a thumb along a track, pressing the track or with the
- * keyboard, with its label and current value above the track and an optional description below.
+ * A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form
+ * among them, with its label inside at the start, its value at the end and a fill from the start
+ * that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a
+ * thin handle at the value appears under the pointer and while it has focus, and faint ticks at its
+ * steps only while the pointer presses it. An optional description sits below it.
  */
 export function Slider({
   label,
@@ -105,6 +110,7 @@ export function Slider({
   ref,
   onFocus,
   'aria-describedby': describedBy,
+  style,
   ...props
 }: SliderProps) {
   // The arrow keys follow the text direction: Base UI reads it from its DirectionProvider.
@@ -112,7 +118,37 @@ export function Slider({
   const id = useId();
   const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
+  const control = useRef<HTMLDivElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? min);
+  // The ticks, a ruler, show only while the pointer presses the slider: from the press until it is
+  // released anywhere, cancelled or loses its capture, or the window loses focus, so they never stay.
+  const [pressed, setPressed] = useState(false);
+  useLayoutEffect(
+    function releaseRuler() {
+      const element = control.current;
+      if (!pressed || !element) return;
+      const view = element.ownerDocument.defaultView;
+      const release = () => setPressed(false);
+      // A move without a button means the release went to something that kept it.
+      const move = (event: PointerEvent) => {
+        if (event.buttons === 0) release();
+      };
+      const owner = element.ownerDocument;
+      owner.addEventListener('pointerup', release, true);
+      owner.addEventListener('pointercancel', release, true);
+      owner.addEventListener('pointermove', move, true);
+      element.addEventListener('lostpointercapture', release);
+      view?.addEventListener('blur', release);
+      return () => {
+        owner.removeEventListener('pointerup', release, true);
+        owner.removeEventListener('pointercancel', release, true);
+        owner.removeEventListener('pointermove', move, true);
+        element.removeEventListener('lostpointercapture', release);
+        view?.removeEventListener('blur', release);
+      };
+    },
+    [pressed],
+  );
   const current = value ?? uncontrolledValue;
   useEffect(
     function subscribeToFormReset() {
@@ -127,6 +163,26 @@ export function Slider({
     },
     [value, defaultValue, min, form],
   );
+  // Where the fill's end and the handle pass under the label or the value, they fade, so the text
+  // stays legible at full strength: measured again as the value moves and as the slider or its text
+  // changes size.
+  useLayoutEffect(
+    function veilAtCurrentValue() {
+      if (control.current) veilIndicatorUnderText(control.current);
+    },
+    [current, label, formatValue],
+  );
+  useEffect(function veilOnResize() {
+    const element = control.current;
+    if (!element || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => veilIndicatorUnderText(element));
+    observer.observe(element);
+    for (const text of element.querySelectorAll('.env-slider-label, .env-slider-value'))
+      observer.observe(text);
+    return () => observer.disconnect();
+  }, []);
+  // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
+  const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
     [describedBy, description != null ? fieldMessageIds(id).description : undefined]
       .filter(Boolean)
@@ -144,6 +200,13 @@ export function Slider({
           onFocus?.(event);
         }}
         className={classNames('env-slider', className)}
+        style={
+          {
+            '--env-slider-ticks': ticks,
+            ...style,
+          } as CSSProperties
+        }
+        data-ticks={ticks > 1 ? '' : undefined}
         value={current}
         onValueChange={(next) => {
           if (value === undefined) setUncontrolledValue(next);
@@ -159,22 +222,19 @@ export function Slider({
         name={name}
         form={form}
       >
-        <FieldFrame
-          id={id}
-          label={
-            <Row wrap justify="between" className="env-slider-heading">
-              <BaseSlider.Label className="env-slider-label">{label}</BaseSlider.Label>
-              {/* The output names the range input it shows, and stays quiet while the value moves. */}
-              <BaseSlider.Value className="env-slider-value">
-                {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
-              </BaseSlider.Value>
-            </Row>
-          }
-          description={description}
-        >
-          <BaseSlider.Control className="env-slider-control">
+        <FieldFrame id={id} description={description}>
+          <BaseSlider.Control
+            ref={control}
+            className="env-slider-control"
+            data-pressed={pressed && !disabled ? '' : undefined}
+            onPointerDown={(event) => {
+              if (!disabled && event.button === 0) setPressed(true);
+            }}
+          >
             <BaseSlider.Track className="env-slider-track">
               <BaseSlider.Indicator className="env-slider-indicator" />
+              {/* The handle: a thin line at the value, which shows under the pointer and on focus,
+                  beneath the label and the value. */}
               <BaseSlider.Thumb
                 className="env-slider-thumb"
                 inputRef={(node: HTMLInputElement | null) => {
@@ -187,9 +247,57 @@ export function Slider({
                 }
               />
             </BaseSlider.Track>
+            {/* The label and the value sit over the track, the fill and the handle, inside the
+                slider, in the type of a field's text, always at full strength. */}
+            <Row align="center" justify="between" gap={3} className="env-slider-heading">
+              <BaseSlider.Label className="env-slider-label" render={<Text render={<div />} />}>
+                {label}
+              </BaseSlider.Label>
+              {/* The output names the range input it shows, and stays quiet while the value moves. */}
+              <BaseSlider.Value className="env-slider-value" render={<Text render={<output />} />}>
+                {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
+              </BaseSlider.Value>
+            </Row>
           </BaseSlider.Control>
         </FieldFrame>
       </BaseSlider.Root>
     </DirectionProvider>
   );
+}
+
+/**
+ * Fades the end of the fill and the handle while they sit under the label or the value, within half
+ * a line of either, by setting --env-slider-veil on the control to 1, and to 0 elsewhere.
+ */
+function veilIndicatorUnderText(control: HTMLElement) {
+  const thumb = control.querySelector('.env-slider-thumb');
+  if (!thumb) return;
+  const handle = thumb.getBoundingClientRect();
+  const at = handle.left + handle.width / 2;
+  let veiled = false;
+  for (const text of control.querySelectorAll<HTMLElement>(
+    '.env-slider-label, .env-slider-value',
+  )) {
+    const box = text.getBoundingClientRect();
+    if (box.width === 0) continue;
+    const margin = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
+    if (at >= box.left - margin && at <= box.right + margin) veiled = true;
+  }
+  control.style.setProperty('--env-slider-veil', veiled ? '1' : '0');
+}
+
+/**
+ * How many equal parts the ticks cut the range into: the steps where there are at most 20, else
+ * the large steps where they cut it evenly into at most 20. Otherwise none, as ticks between the
+ * values the slider takes would mislead; one part draws none either.
+ */
+function tickCount(min: number, max: number, step: number, largeStep: number): number {
+  const range = max - min;
+  if (!(range > 0)) return 0;
+  for (const size of [step, largeStep]) {
+    const parts = range / size;
+    if (size > 0 && Math.abs(parts - Math.round(parts)) < 1e-9 && parts <= 20)
+      return Math.round(parts);
+  }
+  return 0;
 }

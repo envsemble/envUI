@@ -139,5 +139,6 @@
    levels are data that hasn't loaded. */
 [data-env-skeleton] :is(.env-calendar-heatmap-day, .env-calendar-heatmap-swatch) {
   forced-color-adjust: none;
-  background: var(--env-skeleton-color);
+  --env-skeleton-shape: 1;
+  background: var(--env-skeleton-paint);
 }

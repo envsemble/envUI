@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import {
   Theme,
   Button,
@@ -170,6 +171,42 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         />
         <Badge data-testid={`${theme}-color-chip`}>Info</Badge>
       </Column>
+    </Theme>
+  );
+}
+
+/**
+ * Overrides of the semantic tokens on a nested Theme, which recolor its area alone, beside the same
+ * controls outside it; and a button given its own colors through its color properties.
+ */
+export function ColorOverrides() {
+  return (
+    <Theme theme="light" className="fixture-section" data-testid="color-overrides">
+      <h2>Color overrides</h2>
+      <Button data-testid="override-outside">Outside the area</Button>
+      <Theme
+        theme="light"
+        data-testid="override-area"
+        style={
+          {
+            '--env-color-bg-brand-emphasis': '#176f35',
+            '--env-color-bg-brand-emphasis-hover': '#115a2a',
+            '--env-color-bg-brand-emphasis-pressed': '#0b4520',
+          } as CSSProperties
+        }
+      >
+        <Button data-testid="override-inside">Inside the area</Button>
+        <Switch label="Inside the area" defaultChecked data-testid="override-switch" />
+      </Theme>
+      <div data-testid="custom-button-wrapper">
+        <Button data-testid="custom-button-primary">Custom primary</Button>
+        <Button variant="secondary" data-testid="custom-button-secondary">
+          Custom secondary
+        </Button>
+        <Button variant="outline" data-testid="custom-button-outline">
+          Custom outline
+        </Button>
+      </div>
     </Theme>
   );
 }

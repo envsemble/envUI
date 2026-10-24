@@ -15,7 +15,7 @@ export function FormVocabulary({ look, items }) {
   return (
     <>
       <TextField label="Name" description="As on your ID" variant="outline" />
-      <TextField label="Note" variant="underline" />
+      <TextField label="Note" />
       <TextField label="Filter" variant={look} />
       <SearchField label="Search" variant="ghost" description="Names and e-mail" />
       <Textarea label="Bio" variant="ghost" description={<span>Short</span>} />

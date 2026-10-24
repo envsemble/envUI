@@ -29,12 +29,6 @@ avoidWhen:
     use: Progress
   - text: Work that runs after a press, shown on the control that started it.
     use: Button
-related:
-  - alert
-  - dialog
-  - button
-  - progress
-  - accessibility
 components:
   - Toast
   - useToast
@@ -109,14 +103,6 @@ A danger notification stays until it is dismissed, and is announced at once.
 
 ### Content
 
-```tsx do=NameWhatHappened open caption="Say what happened, and to what."
-
-```
-
-```tsx dont=GenericSuccess open caption="A message that only repeats the tone."
-
-```
-
 - Label an action with a short verb, such as Undo or Try again; one action at most.
 
 ## Anatomy
@@ -132,6 +118,10 @@ A danger notification stays until it is dismissed, and is announced at once.
 5. **Dismiss button** (`env-toast-dismiss`, `dismissible`)
 
 Not shown: the count of hidden notifications, `env-toast-queued-count`.
+
+### Colors
+
+`--env-toast-container`, `--env-toast-content` and `--env-toast-outline` set the colors of one Toast, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Accessibility
 

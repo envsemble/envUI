@@ -10,6 +10,11 @@
   /* The height of the header's small controls, which a coarse pointer raises to the touch height. */
   --env-panel-dock-control: var(--env-control-height-sm);
   --env-panel-dock-strip-size: 0rem;
+  /* The dock is the env-panel-dock container, and its font size is stackBelow / 37.5, so 37.5em in
+     its queries is stackBelow (em in a container query is the container's own; panels and tabs set
+     their own text). */
+  container: env-panel-dock / inline-size;
+  font-size: calc(var(--env-panel-dock-stack-below) / 37.5);
   position: absolute;
   inset: 0;
   z-index: calc(var(--env-z-sticky) - 1);
@@ -328,17 +333,69 @@
   outline-offset: -0.125rem;
 }
 
-/* Measures the stackBelow width in the dock's own text size, also wider than the dock, which the
-   column's limit on its children would otherwise cap. It lies before the inline start, where
-   overflow is never scrollable. */
+/* Stacking: below stackBelow, the dock's container query decides it, so the server's markup and the
+   first paint already stack. The probe takes a width where the dock stacks, which PanelDock reads,
+   and observes, to follow with data-stacked, which panels are inert, focus and onStackedChange. */
 .env-panel-dock-probe {
   position: absolute;
-  max-inline-size: none;
   inset-block-start: 0;
-  inset-inline-end: 100%;
+  inset-inline-start: 0;
+  inline-size: 0;
   block-size: 0;
   visibility: hidden;
   pointer-events: none;
+}
+/* Until PanelDock reads its layout, as on the server and while hydrating, the dock has
+   data-env-ssr-pending, and its markup carries both layouts: data-placement and data-tabs as panels
+   sit side by side, and data-env-ssr-placement, data-env-ssr-filled and data-env-ssr-tabs as the dock
+   stacks. Tabs and the strip that only one layout has say which with data-env-ssr-tab-in. */
+@container env-panel-dock (width >= 37.5em) {
+  .env-panel-dock-strip[data-env-ssr-tab-in='stacked'],
+  .env-panel-dock-tab[data-env-ssr-tab-in='stacked'] {
+    display: none;
+  }
+}
+@container env-panel-dock (width < 37.5em) {
+  .env-panel-dock-probe {
+    inline-size: 100%;
+  }
+  .env-panel-dock[data-env-ssr-pending] > .env-panel-dock-row {
+    --env-panel-dock-strip-size: 0rem;
+  }
+  .env-panel-dock[data-env-ssr-tabs] > .env-panel-dock-row {
+    --env-panel-dock-strip-size: calc(var(--env-panel-dock-tab-height) + var(--env-space-2));
+  }
+  /* The panel that fills the region covers it above the tabs; the strip covers the rest. */
+  .env-panel-dock[data-env-ssr-filled] > .env-panel-dock-strip {
+    background: var(--env-color-bg-page);
+    pointer-events: auto;
+  }
+  .env-panel-dock-strip[data-env-ssr-tab-in='wide'],
+  .env-panel-dock-tab[data-env-ssr-tab-in='wide'],
+  .env-panel-dock-panel[data-env-ssr-placement] [data-window-control='maximize'] {
+    display: none;
+  }
+  .env-panel-dock-panel[data-env-ssr-placement='fill'] {
+    position: absolute;
+    inset: 0 0 var(--env-panel-dock-strip-size);
+    z-index: var(--env-z-base);
+    min-inline-size: 0;
+    max-inline-size: none;
+    block-size: auto;
+    border: 0;
+    border-radius: 0;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .env-panel-dock-panel[data-env-ssr-placement='hidden'] {
+    position: absolute;
+    inset: auto 0 0 auto;
+    z-index: calc(var(--env-z-base) - 1);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 @media (pointer: coarse) {

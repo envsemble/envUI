@@ -21,18 +21,12 @@ useWhen:
   - People add a file to a form or a page, such as a logo, by dropping it or choosing it.
   - People attach several files at once, such as documents to a message (`multiple`, `size="sm"`).
 avoidWhen:
-  - text: A text value people type, such as a link to a file.
-    use: TextField
   - text: A single action that opens the file picker in a toolbar, without a drop target.
     use: Button
   - text: Progress of a long upload with a known size.
     use: Progress
-related:
-  - text-field
-  - button
-  - progress
-  - list
-  - loading
+  - text: The files already added, each with its actions.
+    use: List
 components:
   - DropZone
 ---
@@ -79,9 +73,12 @@ With `name`, the form submits the files the zone took, and a reset clears them. 
 
 ## Variants
 
-```tsx example=Sizes
+```tsx variants=Sizes
 
 ```
+
+1. **md**
+2. **sm**
 
 | Size        | Use for                                                 |
 | ----------- | ------------------------------------------------------- |
@@ -104,14 +101,6 @@ With `name`, the form submits the files the zone took, and a reset clears them. 
 ### Labels
 
 Say what to add in the label, and which files fit in the description.
-
-```tsx do=SaysWhatFits caption="What to add, and which files fit."
-
-```
-
-```tsx dont=BareLabel caption="Upload alone: people find out what fits only when a file is refused."
-
-```
 
 ## Anatomy
 

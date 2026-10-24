@@ -19,6 +19,8 @@ export function SheetsFixture() {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<DialogOpenChangeReason | ''>('');
   const main = useRef<HTMLElement>(null);
+  const [sheetWidth, setSheetWidth] = useState(30);
+  const [committedWidth, setCommittedWidth] = useState<number>();
   return (
     <Column gap={4} className="fixture-section">
       <Row wrap gap={3}>
@@ -80,6 +82,59 @@ export function SheetsFixture() {
           <Text>In right-to-left text.</Text>
         </Sheet>
       </div>
+      <Row wrap gap={3}>
+        <Sheet
+          title="Resizable"
+          resizable
+          trigger={<Button variant="secondary">Open resizable</Button>}
+        >
+          <Text>Drag the inner edge.</Text>
+        </Sheet>
+        <Sheet
+          title="Kept width"
+          side="start"
+          resizable
+          width={sheetWidth}
+          onWidthChange={(next, details) => {
+            setSheetWidth(next);
+            if (details.committed) setCommittedWidth(next);
+          }}
+          trigger={<Button variant="secondary">Open kept width</Button>}
+        >
+          {/* Taller than the window, so the sheet scrolls. */}
+          <div style={{ blockSize: '150vh' }}>
+            <Text>A long list.</Text>
+          </div>
+        </Sheet>
+        {/* A CSS length, which a resizable sheet ignores and warns of while developing. */}
+        <Sheet
+          title="Resizable css width"
+          resizable
+          width="min(30rem, 90%)"
+          trigger={<Button variant="secondary">Open resizable css width</Button>}
+        >
+          <Text>Starts at the default width.</Text>
+        </Sheet>
+        <div dir="rtl">
+          <Sheet
+            title="Resizable rtl"
+            resizable
+            trigger={<Button variant="secondary">Open resizable rtl</Button>}
+          >
+            <Text>In right-to-left text.</Text>
+          </Sheet>
+        </div>
+        <Sheet
+          side="bottom"
+          title="Bottom resizable"
+          resizable
+          trigger={<Button variant="secondary">Open bottom resizable</Button>}
+        >
+          <Text>A bottom sheet doesn't resize.</Text>
+        </Sheet>
+        <output data-testid="sheet-width">{sheetWidth}</output>
+        <output data-testid="sheet-committed">{committedWidth ?? ''}</output>
+      </Row>
       <main ref={main} tabIndex={-1} data-testid="sheet-main">
         <output data-testid="sheet-reason">{reason}</output>
       </main>

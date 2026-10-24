@@ -33,7 +33,64 @@
   display: flex;
 }
 
+/* Color properties: a destination's colors, which an application sets on one item through style or
+   its own CSS: container and selected color the pill around its icon, at rest and when current,
+   content its label, icon its icon at rest and selected-content its icon when current. They don't
+   inherit; the item passes them on to its pill, where currentColor in them is the pill's color. */
+@property --env-bar-item-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-bar-item-content {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-bar-item-icon {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-bar-item-selected {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-bar-item-selected-content {
+  syntax: '*';
+  inherits: false;
+}
+
 .env-bar-item {
+  /* With no color property set, the designed fills below apply in every state. The custom fill is
+     valid only while the application sets the container or the content (see Button.css), and
+     then hover, focus and press lay the content color over the container. */
+  --env-bar-item-layer: initial;
+  --env-bar-item-content-gate: color-mix(in srgb, var(--env-bar-item-content) 0%, transparent);
+  --env-bar-item-custom-base: var(--env-bar-item-container, var(--env-bar-item-content-gate));
+  --env-bar-item-custom-layered: color-mix(
+    in srgb,
+    var(--env-bar-item-custom-base),
+    currentColor var(--env-bar-item-layer)
+  );
+  --env-bar-item-custom-fill: var(--env-bar-item-custom-layered, var(--env-bar-item-custom-base));
+  --env-bar-item-selected-gate: color-mix(
+    in srgb,
+    var(--env-bar-item-selected-content) 0%,
+    var(--env-color-bg-selected)
+  );
+  --env-bar-item-selected-base: var(--env-bar-item-selected, var(--env-bar-item-selected-gate));
+  --env-bar-item-selected-layered: color-mix(
+    in srgb,
+    var(--env-bar-item-selected-base),
+    currentColor var(--env-bar-item-layer)
+  );
+  --env-bar-item-selected-fill: var(
+    --env-bar-item-selected-layered,
+    var(--env-bar-item-selected-base)
+  );
+  --env-bar-item-selected-icon: var(
+    --env-bar-item-selected-content,
+    var(--env-color-fg-on-selected)
+  );
+  --env-bar-item-icon-color: var(--env-bar-item-icon, var(--env-color-fg-muted));
   --env-icon-size: var(--env-control-icon-size);
   box-sizing: border-box;
   inline-size: 100%;
@@ -42,7 +99,7 @@
   border: 0;
   border-radius: var(--env-radius-md);
   background: transparent;
-  color: var(--env-color-fg-control);
+  color: var(--env-bar-item-content, var(--env-color-fg-control));
   font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.3 var(--env-font-family);
   text-align: center;
   text-decoration: none;
@@ -57,6 +114,7 @@
   display: grid;
   place-items: center;
   border-radius: var(--env-radius-full);
+  background: var(--env-bar-item-custom-fill, transparent);
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-bar-text {
@@ -85,27 +143,40 @@
   white-space: nowrap;
 }
 .env-bar-item:not([data-current]) .env-icon {
-  color: var(--env-color-fg-muted);
+  color: var(--env-bar-item-icon-color, var(--env-color-fg-muted));
 }
 .env-bar-item:hover .env-bar-icon,
 .env-bar-more[aria-expanded='true'] .env-bar-icon {
-  background: var(--env-color-bg-navigation-hover);
+  background: var(--env-bar-item-custom-fill, var(--env-color-bg-navigation-hover));
+}
+.env-bar-item:hover,
+.env-bar-more[aria-expanded='true'] {
+  --env-bar-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+}
+.env-bar-item:active {
+  --env-bar-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+}
+.env-bar-item[data-current]:hover {
+  --env-bar-item-layer: calc(var(--env-state-hover-opacity) * 75%);
+}
+.env-bar-item[data-current]:active {
+  --env-bar-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
 }
 .env-bar-item:active .env-bar-icon {
-  background: var(--env-color-bg-navigation-pressed);
+  background: var(--env-bar-item-custom-fill, var(--env-color-bg-navigation-pressed));
 }
 .env-bar-item[data-current] {
-  color: var(--env-color-fg-default);
+  color: var(--env-bar-item-content, var(--env-color-fg-default));
 }
 .env-bar-item[data-current] .env-bar-icon {
-  color: var(--env-color-fg-on-selected);
-  background: var(--env-color-bg-selected);
+  color: var(--env-bar-item-selected-icon, var(--env-color-fg-on-selected));
+  background: var(--env-bar-item-selected-fill, var(--env-color-bg-selected));
 }
 .env-bar-item[data-current]:hover .env-bar-icon {
-  background: var(--env-color-bg-selected-hover);
+  background: var(--env-bar-item-selected-fill, var(--env-color-bg-selected-hover));
 }
 .env-bar-item[data-current]:active .env-bar-icon {
-  background: var(--env-color-bg-selected-pressed);
+  background: var(--env-bar-item-selected-fill, var(--env-color-bg-selected-pressed));
 }
 .env-bar-item:focus-visible {
   outline: 2px solid var(--env-color-border-focus);
@@ -158,6 +229,11 @@
   box-shadow: none;
   background: transparent;
 }
+.env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-item,
+.env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-item :not(.env-bar-count) {
+  /* A destination is not a shape: its label draws as a bar. */
+  --env-skeleton-shape: 0;
+}
 .env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-item * {
   visibility: visible;
 }
@@ -170,7 +246,8 @@
 [data-env-skeleton] .env-bar-count {
   forced-color-adjust: none;
   border-color: transparent;
-  background: var(--env-skeleton-color);
+  --env-skeleton-shape: 1;
+  background: var(--env-skeleton-paint);
 }
 [data-env-skeleton] .env-bar-count * {
   visibility: hidden;

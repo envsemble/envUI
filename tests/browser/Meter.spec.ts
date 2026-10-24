@@ -44,3 +44,14 @@ test('meters and progress bars read their values; spinners hide their drawing', 
   await expect(named).toHaveAttribute('data-size', 'sm');
   await expect(named.locator('svg')).toHaveAttribute('aria-hidden', 'true');
 });
+
+test('a track is a quiet tint with no outline, and its indicator fills it', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=meters`);
+  for (const selector of ['.env-meter-track', '.env-progress-track', '.env-progress-segment']) {
+    const track = page.locator(selector).first();
+    await expect(track).toHaveCSS('box-shadow', 'none');
+    await expect(track).toHaveCSS('outline-style', 'none');
+  }
+  const track = page.getByRole('meter', { name: 'Storage used' }).locator('.env-meter-track');
+  await expect(track).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+});

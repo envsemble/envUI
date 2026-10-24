@@ -81,6 +81,14 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
   /** A decorative icon after the label, such as a ChevronRight for a next step. */
   endIcon?: ReactNode;
   /**
+   * Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the
+   * same: it takes the button's content color, keys in it are outlined caps with no fill, and in a
+   * button wider than its content, such as with fullWidth, it stays at the end while the icon and
+   * label stay at the start. Keys shown here take aria-hidden, and the button announces them with
+   * aria-keyshortcuts.
+   */
+  end?: ReactNode;
+  /**
    * Work started by this button is running: a spinner replaces the content without changing the
    * button's size, and the button reports busy and ignores activation until pending ends.
    */

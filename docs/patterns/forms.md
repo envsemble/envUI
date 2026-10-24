@@ -19,10 +19,10 @@ useWhen:
 avoidWhen:
   - text: A single setting that takes effect at once.
     see: settings
-  - text: Confirming a destructive action.
-    use: ConfirmDialog
-  - text: Filtering a list or a table as people choose.
-    use: SearchField
+  - text: Deleting or removing something, with undo or a confirmation.
+    see: destructive-actions
+  - text: Narrowing a list or a table as people choose, without submitting.
+    see: filtering
 composes:
   - Field
   - TextField
@@ -40,13 +40,6 @@ composes:
   - Grid
   - Row
   - Text
-related:
-  - settings
-  - destructive-actions
-  - field
-  - text-field
-  - select
-  - radio
 ---
 
 # Form layout and validation
@@ -103,14 +96,6 @@ One choice of several is a [RadioGroup](../components/radio.md); several are Che
 
 ```
 
-```tsx do=VisibleLabel caption="A label, and the format as a description that stays."
-
-```
-
-```tsx dont=PlaceholderLabel caption="The placeholder as the label: it goes as people type."
-
-```
-
 - Keep submit enabled, and say what is wrong after a submit; a disabled button can't tell people why.
 - Keep what people entered after any error, and set `type` and `autoComplete` on the fields people fill in often.
 - envUI has no stepper yet: split a long form into short pages of your own, each with its submit and a Back link.
@@ -135,7 +120,7 @@ One choice of several is a [RadioGroup](../components/radio.md); several are Che
 
 ## Accessibility
 
-Tab follows the fields in the order they show, and Enter in a text field submits. A refused submit moves focus to the summary, whose links each focus their field; where focus goes straight to the field and is already there, as after Enter, say the error in a status too.
+<kbd>Tab</kbd> follows the fields in the order they show, and <kbd>Enter</kbd> in a text field submits. A refused submit moves focus to the summary, whose links each focus their field; where focus goes straight to the field and is already there, as after <kbd>Enter</kbd>, say the error in a status too.
 
 ### envUI provides
 

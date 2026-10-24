@@ -1,27 +1,21 @@
 import { useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  ColorPicker,
-  Column,
-  Row,
-  Theme,
-  type ThemeValue,
-} from '@envsemble/envui';
+import { Button, Checkbox, Column, Row, Theme } from '@envsemble/envui';
+import { ColorPicker, ColorPickerButton, ColorSwatch } from '@envsemble/envui/color';
 
-export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
+export function ColorPickerFixture() {
   const [color, setColor] = useState('#1a73e8');
   const [changes, setChanges] = useState(0);
+  const [last, setLast] = useState('');
+  const [translucent, setTranslucent] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [preventReset, setPreventReset] = useState(false);
   const [policy, setPolicy] = useState<'accept' | 'reject' | 'clamp'>('accept');
   const [values, setValues] = useState<Record<string, string>>({});
-  const formId = `${theme}-color-form`;
   return (
-    <Theme theme={theme} data-testid={`color-picker-${theme}`}>
+    <Theme theme="light" data-testid="color-picker">
       <Column gap={4} render={<section />} className="fixture-section">
         <form
-          id={formId}
+          id="color-form"
           data-testid="color-form"
           onReset={(event) => {
             if (preventReset) event.preventDefault();
@@ -38,7 +32,7 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
             );
           }}
         >
-          <Column gap={4}>
+          <Column gap={4} style={{ inlineSize: '20rem' }}>
             <ColorPicker
               label="Controlled color"
               name="controlledColor"
@@ -47,6 +41,7 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
               onValueChange={(next) => {
                 if (policy === 'accept') setColor(next);
                 if (policy === 'clamp') setColor('#1a73e8');
+                setLast(next);
                 setChanges((count) => count + 1);
               }}
             />
@@ -54,6 +49,18 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
               label="Uncontrolled color"
               name="uncontrolledColor"
               defaultValue="#34a853"
+              formats={['hex']}
+              eyeDropper={false}
+            />
+            <ColorPicker
+              label="Translucent color"
+              name="translucentColor"
+              defaultValue="#6750a480"
+              alpha
+              valueFormat="rgb"
+              formats={['rgb', 'hsl', 'hex']}
+              swatches={['#ff0000', { color: '#00800080', label: 'Half green' }, '#0000ff']}
+              onValueChange={setTranslucent}
             />
             <ColorPicker
               label="Disabled color"
@@ -62,6 +69,7 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
               disabled
             />
             <ColorPicker label="Read only color" name="readOnlyColor" value="#6750a4" readOnly />
+            <ColorPickerButton label="Button color" name="buttonColor" defaultValue="#2f6f62" />
             <Checkbox
               label="Disable color editing"
               checked={disabled}
@@ -86,9 +94,6 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
               <Button variant="text" onClick={() => setPolicy('clamp')}>
                 Clamp color changes
               </Button>
-              <Button variant="text" onClick={() => setPolicy('accept')}>
-                Accept color changes
-              </Button>
             </Row>
           </Column>
         </form>
@@ -96,9 +101,20 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
           label="External color"
           name="externalColor"
           defaultValue="#112233"
-          form={formId}
+          formats={['hex']}
+          form="color-form"
+          style={{ inlineSize: '20rem' }}
         />
+        <Row gap={4} align="center" data-testid="color-swatches">
+          <ColorSwatch color="#6750a4" format="rgb" label="Violet" />
+          <ColorSwatch color="#ffffff" />
+          <Button variant="secondary" startIcon={<ColorSwatch color="#ffffff" />}>
+            #FFFFFF
+          </Button>
+        </Row>
         <output data-testid="color-changes">{changes}</output>
+        <output data-testid="color-last">{last}</output>
+        <output data-testid="color-translucent">{translucent}</output>
         <output data-testid="color-values">{JSON.stringify(values)}</output>
       </Column>
     </Theme>

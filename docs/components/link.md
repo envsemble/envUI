@@ -13,19 +13,12 @@ useWhen:
   - A destination inside a sentence or a paragraph, such as a guide or a related page.
   - A short list of destinations where buttons would be too heavy, with the underline turned off.
 avoidWhen:
-  - text: An action, such as saving or deleting, even when it looks like text.
-    use: Button
-  - text: The next step of a flow, which should read as an action.
+  - text: An action, such as saving or deleting, even when it looks like text, or the next step of a flow.
     use: Button
   - text: Destinations in an application's navigation, such as a sidebar.
     use: Drawer
   - text: Previous and next pages of a sequence.
     use: Pager
-related:
-  - button
-  - drawer
-  - pager
-  - setup
 components:
   - Link
 ---
@@ -68,14 +61,6 @@ For a link that should look like a button, use Button with `href`.
 ```
 
 ### Labels
-
-```tsx do=NamesDestination caption="Words that name the destination."
-
-```
-
-```tsx dont=ClickHere caption="Click here: it says nothing out of context."
-
-```
 
 - Link a few words, not a whole sentence.
 

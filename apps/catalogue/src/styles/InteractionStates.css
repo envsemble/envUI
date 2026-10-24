@@ -58,3 +58,33 @@
   outline-color: var(--env-color-border-focus);
   outline-offset: 0.0625rem;
 }
+/* Ghost buttons, which the Colors page's interaction states show. */
+.docs-preview .docs-force-hover.env-button:where([data-variant='ghost']) {
+  background: var(--env-color-bg-neutral-subtle-hover);
+  color: var(--env-color-fg-default);
+}
+.docs-preview .docs-force-pressed.env-button:where([data-variant='ghost']) {
+  background: var(--env-color-bg-neutral-subtle-pressed);
+  color: var(--env-color-fg-default);
+}
+/* The Colors page's list rows, navigation items and fields inside a forced state: each takes its
+   state's semantic color through its public color property, as an application would set it, so
+   none of envUI's private component tokens is copied here. */
+.docs-preview .docs-force-hover > .env-list-item[data-interactive] {
+  --env-list-item-container: var(--env-color-list-item-bg-hover);
+}
+.docs-preview .docs-force-pressed > .env-list-item[data-interactive] {
+  --env-list-item-container: var(--env-color-list-item-bg-pressed);
+}
+.docs-preview .docs-force-hover .env-drawer-item {
+  --env-drawer-item-container: var(--env-color-bg-navigation-hover);
+}
+.docs-preview .docs-force-pressed .env-drawer-item {
+  --env-drawer-item-container: var(--env-color-bg-navigation-pressed);
+}
+.docs-preview .docs-force-hover .env-text-field {
+  --env-text-field-outline: var(--env-color-border-accent-emphasis-hover);
+}
+.docs-preview .docs-force-pressed .env-text-field {
+  --env-text-field-outline: var(--env-color-border-accent-emphasis-pressed);
+}

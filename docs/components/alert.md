@@ -24,18 +24,12 @@ avoidWhen:
     use: Toast
   - text: A region without content yet, such as an empty list or no search results.
     see: empty-states
-  - text: An error about one field of a form.
+  - text: An error about one field, shown on the field with its `error`.
     use: TextField
   - text: A status beside a label, such as Draft or Blocked.
     use: Badge
   - text: A decision people must make before going on.
     use: Dialog
-related:
-  - toast
-  - empty-states
-  - badge
-  - dialog
-  - colors
 components:
   - Alert
 ---
@@ -60,9 +54,14 @@ An alert is a message about a page or a section that stays above the content it 
 
 ## Variants
 
-```tsx example=Tones
+```tsx variants=Tones
 
 ```
+
+1. **Info**
+2. **Success**
+3. **Warning**
+4. **Danger**
 
 | Tone      | Use for                                                               |
 | --------- | --------------------------------------------------------------------- |
@@ -92,16 +91,6 @@ An alert is a message about a page or a section that stays above the content it 
 - Remove an alert once it no longer applies.
 - Offer `onDismiss` only where the message can safely be hidden.
 
-### Content
-
-```tsx do=ProblemInTitle caption="The problem in the title, the next step in the action."
-
-```
-
-```tsx dont=GenericTitle caption="A title that only names the tone, and a vague action."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=AlertAnatomy
@@ -114,6 +103,10 @@ An alert is a message about a page or a section that stays above the content it 
 4. **Message** (`env-alert-message`, `children`)
 5. **Action** (`env-alert-action`, `action`)
 6. **Dismiss button** (`env-alert-dismiss`, `onDismiss`)
+
+### Colors
+
+`--env-alert-container`, `--env-alert-content`, `--env-alert-outline` and `--env-alert-icon` set the colors of one Alert, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Accessibility
 

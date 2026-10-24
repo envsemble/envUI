@@ -103,6 +103,26 @@ test('menubar menus open below their trigger and switch on hover and with the ar
   expect(errors).toEqual([]);
 });
 
+test('a menubar menu with defaultOpen starts open and then closes as usual', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto(`${menubarFixture}&open`);
+  const edit = trigger(page, 'Edit');
+  const editMenu = page.getByRole('menu', { name: 'Edit' });
+  await expect(editMenu).toBeVisible();
+  await expect(edit).toHaveAttribute('aria-expanded', 'true');
+  await expect(editMenu.getByRole('menuitem', { name: 'Select all' })).toBeVisible();
+  // Uncontrolled, it closes on Escape and opens again from its trigger.
+  await expect
+    .poll(() => editMenu.evaluate((element) => element.contains(document.activeElement)))
+    .toBe(true);
+  await page.keyboard.press('Escape');
+  await expect(editMenu).toHaveCount(0);
+  await expect(edit).toHaveAttribute('aria-expanded', 'false');
+  await edit.click();
+  await expect(editMenu).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
 test('a disabled menubar menu does not open', async ({ page }) => {
   await page.goto(menubarFixture);
   const help = trigger(page, 'Help');

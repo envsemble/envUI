@@ -31,12 +31,8 @@ avoidWhen:
     see: empty-states
   - text: A feature introduced with an icon, a sentence and the one action that starts it.
     see: feature-cards
-related:
-  - surface
-  - column
-  - list
-  - button
-  - typography
+  - text: Content that needs no surface of its own, such as a form on a page.
+    use: Column
 components:
   - Card
 ---
@@ -93,7 +89,13 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 | `default`  | A quieter fill, such as a settings section.     |
 | `page`     | The page's own color, set apart by its corners. |
 
-<!-- specimen: Backgrounds -->
+```tsx variants=Backgrounds
+
+```
+
+1. **Muted**
+2. **Default**
+3. **Page**
 
 ## When to use
 
@@ -108,14 +110,6 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 - No links or controls inside a link or button card.
 
 ### Content
-
-```tsx do=ShortCard caption="A short title that names the subject, and a sentence or two."
-
-```
-
-```tsx dont=WordyCard caption="A long title and a paragraph: the card stops being scannable."
-
-```
 
 - Put the fact that matters most for choosing in `meta`.
 - Start a link card with its destination's name.
@@ -133,6 +127,10 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 5. **Description** (`env-card-description`, `description`)
 6. **Content** (`env-card-body > env-text:last-child`, `children`)
 7. **Actions** (`env-card-footer`, `actions`)
+
+### Colors
+
+`--env-card-container`, `--env-card-content` and `--env-card-outline` set the colors of one Card, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 

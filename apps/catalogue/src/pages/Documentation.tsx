@@ -2,27 +2,24 @@ import { Link } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/content';
 import { documents, type Documentation as Document } from '../Reference';
 import {
-  findReferencePage,
-  pageHref,
   referencePages,
   routeOfDocument,
-  viewOfHeading,
+  unlistedDocuments,
 } from '../navigation/DocumentationRoutes';
-import { routeHref } from '../navigation/Address';
+import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useDocumentationRoute';
 import { headingSlugger } from '../../../../scripts/SearchAnchors.mjs';
 
-/**
- * The current route scrolled to `section`, keeping its other parameters, in the view that shows
- * the heading on a page on the template.
- */
+/** The repository's copy of a page of docs/ that neither the Site nor the Docs show. */
+const repositoryFile = (path: string) =>
+  `https://github.com/envsemble/envUI/blob/main/docs/${path}`;
+
+/** The current route scrolled to `section`, keeping its other parameters. */
 function sectionOfCurrentRoute(section: string) {
   const [path, query] = currentRoute().split('?');
   const params = new URLSearchParams(query);
   params.set('section', section);
-  const page = findReferencePage(path);
-  const view = page && viewOfHeading(page.reference, section);
-  return `${view ? `${page.path}/${view}` : path}?${params}`;
+  return `${path}?${params}`;
 }
 
 const decodedFragment = (hash: string) => {
@@ -34,9 +31,11 @@ const decodedFragment = (hash: string) => {
 };
 
 /**
- * Keep authored relative Markdown links usable in the self-contained catalogue: a link to another
- * page of docs/ opens that page, at the heading its fragment names, and a link to a heading of the
- * same page, #heading, scrolls to it on the current route.
+ * Keeps authored relative Markdown links usable on the site: a link to another page of docs/ opens
+ * the page that shows it, at the heading its fragment names, and a link to a heading of the same
+ * page, #heading, scrolls to it on the current route. A foundation's written guidance is its guide
+ * in the Docs, so a link to one of its headings, or any link to it from the Docs, opens the guide,
+ * and others its visual page on the Site.
  */
 export function documentationHref(href: string, sourcePath: string) {
   if (/^#./.test(href)) return routeHref(sectionOfCurrentRoute(decodedFragment(href)));
@@ -46,15 +45,12 @@ export function documentationHref(href: string, sourcePath: string) {
     (document) => document.path === url.pathname.slice('/docs/'.length),
   );
   if (!target) return href;
+  if (unlistedDocuments.has(target.id) && target.id !== 'index')
+    return `${repositoryFile(target.path)}${url.hash}`;
   const section = url.hash.length > 1 ? decodedFragment(url.hash) : undefined;
   const page = referencePages.find((entry) => entry.reference.path === target.path);
-  // Links in guidance open the page's own guidance, or the overview of a page on the template; a
-  // link to a heading opens the guidance, where the page's Markdown is.
-  if (page && !section) return pageHref(page, page.reference.sections ? 'overview' : 'usage');
-  const route = routeOfDocument(target.id, {
-    view: page ? (page.reference.sections ? undefined : 'usage') : undefined,
-    section,
-  });
+  const guide = page?.section === 'Foundations' && (section || inDocs(currentRoute()));
+  const route = routeOfDocument(target.id, { view: guide ? 'usage' : undefined, section });
   return route ? routeHref(route) : href;
 }
 

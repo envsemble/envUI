@@ -51,10 +51,9 @@ const browserSpecs = [...needs]
   .filter(([, need]) => !need.live && (affected || (!need.library && !need.whole)))
   .map(([name]) => name);
 const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpecs.includes(name));
-// The catalogue builds take seconds, so the fast tier builds what its specs open.
+// The site build takes seconds, so the fast tier builds it when its specs open it.
 const builds = {
   library: affected && scope.build.library,
-  catalogue: browserSpecs.some((name) => needs.get(name).catalogue),
   site: browserSpecs.some((name) => needs.get(name).site),
 };
 
@@ -210,13 +209,10 @@ const browserTask = (names, projects, label) =>
     },
   );
 const npmScript = (name) => series([task(name, [...bin.npm, 'run', '-s', name])]);
-const catalogueBuilds = [
-  builds.catalogue && npmScript('build:catalogue'),
-  builds.site && npmScript('build:site'),
-].filter(Boolean);
+const catalogueBuilds = [builds.site && npmScript('build:site')].filter(Boolean);
 
 if (!affected) {
-  // The browser specs start once the catalogue builds they open, if any, are done.
+  // The browser specs start once the site build they open, if any, is done.
   const browser = async () => {
     if (!browserSpecs.length) return;
     const built = (await Promise.all(catalogueBuilds)).flat();

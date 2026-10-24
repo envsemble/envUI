@@ -23,8 +23,8 @@
         "report": "TextField's hint is description in 1.0."
       },
       "variant": {
-        "current": ["outline", "floating", "underline", "ghost"],
-        "report": "TextField's variant is outline, floating, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "current": ["outline", "floating", "ghost"],
+        "report": "TextField's variant is outline, floating or ghost in 1.0: outlined is outline, quiet is ghost, and plain and underline, which 1.0.0-prerelease.2 removes, take the default outline.",
         "values": {
           "outlined": {
             "props": {
@@ -32,14 +32,15 @@
             }
           },
           "plain": {
-            "props": {
-              "variant": "underline"
-            }
+            "report": "variant=\"plain\" is gone: the field takes the default outline look, so the prop is dropped."
           },
           "quiet": {
             "props": {
               "variant": "ghost"
             }
+          },
+          "underline": {
+            "report": "variant=\"underline\" is gone in 1.0.0-prerelease.2: the field takes the default outline look, so the prop is dropped."
           }
         }
       },
@@ -69,8 +70,8 @@
         "report": "SearchField's hint is description in 1.0."
       },
       "variant": {
-        "current": ["outline", "floating", "underline", "ghost"],
-        "report": "SearchField's variant is outline, floating, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "current": ["outline", "floating", "ghost"],
+        "report": "SearchField's variant is outline, floating or ghost in 1.0: outlined is outline, quiet is ghost, and plain and underline, which 1.0.0-prerelease.2 removes, take the default outline.",
         "values": {
           "outlined": {
             "props": {
@@ -78,14 +79,15 @@
             }
           },
           "plain": {
-            "props": {
-              "variant": "underline"
-            }
+            "report": "variant=\"plain\" is gone: the field takes the default outline look, so the prop is dropped."
           },
           "quiet": {
             "props": {
               "variant": "ghost"
             }
+          },
+          "underline": {
+            "report": "variant=\"underline\" is gone in 1.0.0-prerelease.2: the field takes the default outline look, so the prop is dropped."
           }
         }
       },
@@ -102,8 +104,8 @@
         "report": "Textarea's hint is description in 1.0."
       },
       "variant": {
-        "current": ["outline", "underline", "ghost"],
-        "report": "Textarea's variant is outline, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "current": ["outline", "ghost"],
+        "report": "Textarea's variant is outline or ghost in 1.0: outlined is outline, quiet is ghost, and plain and underline, which 1.0.0-prerelease.2 removes, take the default outline.",
         "values": {
           "outlined": {
             "props": {
@@ -111,14 +113,15 @@
             }
           },
           "plain": {
-            "props": {
-              "variant": "underline"
-            }
+            "report": "variant=\"plain\" is gone: the field takes the default outline look, so the prop is dropped."
           },
           "quiet": {
             "props": {
               "variant": "ghost"
             }
+          },
+          "underline": {
+            "report": "variant=\"underline\" is gone in 1.0.0-prerelease.2: the field takes the default outline look, so the prop is dropped."
           }
         }
       },
@@ -137,8 +140,8 @@
         "report": "MarkdownEditor's hint is description in 1.0."
       },
       "variant": {
-        "current": ["outline", "underline", "ghost"],
-        "report": "MarkdownEditor's variant is outline, underline or ghost in 1.0: outlined is outline, plain is underline, quiet is ghost.",
+        "current": ["outline", "ghost"],
+        "report": "MarkdownEditor's variant is outline or ghost in 1.0: outlined is outline, quiet is ghost, and plain and underline, which 1.0.0-prerelease.2 removes, take the default outline.",
         "values": {
           "outlined": {
             "props": {
@@ -146,14 +149,15 @@
             }
           },
           "plain": {
-            "props": {
-              "variant": "underline"
-            }
+            "report": "variant=\"plain\" is gone: the field takes the default outline look, so the prop is dropped."
           },
           "quiet": {
             "props": {
               "variant": "ghost"
             }
+          },
+          "underline": {
+            "report": "variant=\"underline\" is gone in 1.0.0-prerelease.2: the field takes the default outline look, so the prop is dropped."
           }
         }
       },

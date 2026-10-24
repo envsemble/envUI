@@ -4,13 +4,13 @@ import { SpacingPreview } from './foundations/Spacing';
 import { ScalePreview } from './foundations/Scale';
 import { ResponsivePreview } from './foundations/Responsive';
 import { Suspense, useState } from 'react';
-import { Text } from '@envsemble/envui';
 import { AccessibilityPreview } from './foundations/Accessibility';
 import { CompositionPreview } from './foundations/Composition';
 import { ContentPreview } from './foundations/Content';
 import { ExampleStage } from './Example';
 import { Preview } from './Preview';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
+import { Loading } from '../template/Loading';
 
 /** The icon list, with every icon, loads with the page that shows it. */
 const iconList = lazyPart(
@@ -21,10 +21,9 @@ const iconList = lazyPart(
 
 interface FoundationPreviewProps {
   id: string;
-  onIconUsage?: (name: string, filled: boolean) => void;
 }
 
-function IconList({ onIconUsage }: Pick<FoundationPreviewProps, 'onIconUsage'>) {
+function IconList() {
   const [, setAttempt] = useState(0);
   const IconsPreview = iconList.component;
   return (
@@ -36,14 +35,14 @@ function IconList({ onIconUsage }: Pick<FoundationPreviewProps, 'onIconUsage'>) 
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={<Text role="status">Loading icons…</Text>}>
-        <IconsPreview onRequestUsage={onIconUsage} />
+      <Suspense fallback={<Loading what="icons" />}>
+        <IconsPreview />
       </Suspense>
     </LoadBoundary>
   );
 }
 
-function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
+function FoundationTopic({ id }: FoundationPreviewProps) {
   switch (id) {
     case 'colors':
       return <ColorsPreview />;
@@ -56,7 +55,7 @@ function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
     case 'responsive':
       return <ResponsivePreview />;
     case 'icons':
-      return <IconList onIconUsage={onIconUsage} />;
+      return <IconList />;
     case 'composition':
       return <CompositionPreview />;
     case 'accessibility':

@@ -1,19 +1,13 @@
-import { Badge, Column, DescriptionList, Link, Text } from '@envsemble/envui';
+import type { ReactNode } from 'react';
+import { Badge, Column, DescriptionList, Text } from '@envsemble/envui';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
-import {
-  pageHref,
-  referencePages,
-  viewOfSection,
-  type ReferencePage,
-  type ReferenceView,
-} from '../navigation/DocumentationRoutes';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
 import { FigureSection } from './Figures';
 import { LiveExample } from './LiveExample';
-import { PropsTables } from './PropsTables';
 import { Specimen } from './Specimen';
-import { pageOf, relatedHref, WhenToUse } from './WhenToUse';
+import { pageOf, Related } from './Related';
+import { WhenToUse } from './WhenToUse';
 
 const statusTones = {
   experimental: 'warning',
@@ -22,8 +16,17 @@ const statusTones = {
   deprecated: 'danger',
 } as const;
 
-/** Status and first release under the title of a page on the template. */
-export function MetadataBadges({ metadata }: { metadata: DocumentationMetadata }) {
+/**
+ * Status and first release under the title of a page on the template, and after them `children`,
+ * such as the link to a component's page in the Docs.
+ */
+export function MetadataBadges({
+  metadata,
+  children,
+}: {
+  metadata: DocumentationMetadata;
+  children?: ReactNode;
+}) {
   return (
     <div className="docs-page-meta">
       <Badge tone={statusTones[metadata.status]}>
@@ -37,20 +40,16 @@ export function MetadataBadges({ metadata }: { metadata: DocumentationMetadata }
       <Text render={<span />} variant="caption">
         Since {metadata.since}
       </Text>
+      {children}
     </div>
   );
-}
-
-/** Status and first release under the title of a component or foundation page. */
-export function TemplateMeta({ page }: { page: ReferencePage }) {
-  return <MetadataBadges metadata={page.reference.metadata!} />;
 }
 
 /** An export as a Markdown link to the page that documents it; pages of docs/ are one folder
  * deep, so ../<path> reaches any of them from any page. */
 function exportLink(name: string) {
   const page = pageOf(name);
-  return page ? `[${name}](../${page.path}.md)` : `\`${name}\``;
+  return page ? `[${name}](../${page.reference.path})` : `\`${name}\``;
 }
 
 /**
@@ -127,59 +126,6 @@ function Section({ reference, section }: { reference: Document; section: Documen
   );
 }
 
-function Related({ reference }: { reference: Document }) {
-  const related = reference.related.flatMap((id) => {
-    const document = documents.find((item) => item.id === id);
-    const href = relatedHref(id);
-    return document && href ? [{ document, href }] : [];
-  });
-  if (!related.length) return null;
-  return (
-    <Column render={<section />} gap={4}>
-      <Text render={<h2 />} variant="headline">
-        Related
-      </Text>
-      <ul className="docs-related-list">
-        {related.map(({ document, href }) => (
-          <li key={document.id}>
-            <Link href={href}>{document.title}</Link>
-            <Text render={<span />} emphasis="muted">
-              {' '}
-              — {document.summary}
-            </Text>
-          </li>
-        ))}
-      </ul>
-    </Column>
-  );
-}
-
-/**
- * The Props section of a page on the figure template, which leads to the Props view: it lists them,
- * generated from the TypeScript declarations.
- */
-function PropsSection({ reference }: { reference: Document }) {
-  const page = referencePages.find((item) => item.reference.id === reference.id);
-  const components = reference.metadata?.components ?? [];
-  if (!page || !components.length) return null;
-  const names = components.map((name) => `\`${name}\``);
-  const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0];
-  return (
-    <section className="docs-figure-section" data-section="props">
-      <div className="docs-figure-section-heading">
-        <Documentation markdown="## Props" path={reference.path} />
-      </div>
-      <Documentation
-        markdown={`Every prop of ${list}, with its type and default.`}
-        path={reference.path}
-      />
-      <Text>
-        <Link href={pageHref(page, 'props')}>Open the props reference</Link>
-      </Text>
-    </section>
-  );
-}
-
 /** Sections in the template's order, then Related; the changelog follows the page navigation. */
 function Sections({
   reference,
@@ -199,32 +145,18 @@ function Sections({
         .map((section) => (
           <Section key={section.id} reference={reference} section={section} />
         ))}
-      {figures && <PropsSection reference={reference} />}
-      {sections.some((section) => section.id === 'overview') && <Related reference={reference} />}
+      {sections.some((section) => section.id === 'overview') && reference.metadata && (
+        <Related metadata={reference.metadata} path={reference.path} />
+      )}
     </Column>
   );
 }
 
-/** One view of a page on the template: the sections it shows, in the template's order. */
-export function TemplateContent({ page, view }: { page: ReferencePage; view: ReferenceView }) {
-  if (view === 'props')
-    return (
-      <Column gap={7} className="docs-article docs-template">
-        <PropsTables reference={page.reference} />
-      </Column>
-    );
-  return (
-    <Sections
-      reference={page.reference}
-      sections={(page.reference.sections ?? []).filter(
-        (section) => viewOfSection(page.reference, section.id) === view,
-      )}
-    />
-  );
-}
-
-/** A pattern page, which has one view: every section in the page's order. */
-export function SingleViewContent({ document }: { document: Document }) {
+/**
+ * A component or pattern page of the Site: every section in the page's order, then Related; a
+ * component's props, part names and changelog are on its page in the Docs.
+ */
+export function TemplateContent({ document }: { document: Document }) {
   return <Sections reference={document} sections={document.sections ?? []} />;
 }
 
@@ -247,13 +179,12 @@ function changelogEntries(markdown: string) {
 }
 
 /**
- * A page's changelog, below the page navigation: quiet side information, each version a muted
- * label beside what changed in it, in small muted type. On a page with views it shows with the
- * view that holds it, on a page with one view always.
+ * A component's changelog, on its page in the Docs: quiet side information, each version a muted
+ * label beside what changed in it, in small muted type.
  */
-export function PageChangelog({ document, view }: { document: Document; view?: ReferenceView }) {
+export function PageChangelog({ document }: { document: Document }) {
   const changelog = document.sections?.find((section) => section.id === 'changelog');
-  if (!changelog || (view && viewOfSection(document, changelog.id) !== view)) return null;
+  if (!changelog) return null;
   const markdown = changelog.blocks
     .map((block) => (block.kind === 'markdown' ? block.markdown : ''))
     .join('\n');

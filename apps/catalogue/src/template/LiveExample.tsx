@@ -15,6 +15,7 @@ import { CodeBlock } from '@envsemble/envui/content';
 import type { StageFill } from '../DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 import { OpenExample } from './OpenExample';
+import { Loading } from './Loading';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
@@ -103,7 +104,7 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={<Text role="status">Loading code…</Text>}>
+      <Suspense fallback={<Loading what="code" />}>
         <Source path={path} name={name} />
       </Suspense>
     </LoadBoundary>
@@ -146,7 +147,7 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
 export function ExampleRender({
   page,
   name,
-  fallback = <Text role="status">Loading example…</Text>,
+  fallback = <Loading what="example" />,
 }: {
   page: string;
   name: string;

@@ -117,7 +117,7 @@
         {
           "id": "confirmation",
           "label": "confirmation step",
-          "envui": ["Dialog", "ConfirmButton"]
+          "envui": ["Dialog", "ConfirmDialog", "ConfirmButton"]
         }
       ]
     },

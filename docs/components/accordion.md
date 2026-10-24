@@ -19,12 +19,6 @@ avoidWhen:
     use: Disclosure
   - text: Switching between views of the same content.
     use: Tabs
-  - text: A hierarchy people expand level by level, such as folders.
-    use: Tree
-related:
-  - disclosure
-  - tabs
-  - tree
 components:
   - Accordion
 ---
@@ -57,14 +51,6 @@ An accordion is a list of sections, each a heading that shows and hides the pane
 
 ## When to use
 
-```tsx do=SayWhatItHolds caption="Titles that say what each section holds, such as the question it answers."
-
-```
-
-```tsx dont=VagueTitles caption="More information or Details: people open each one to find out."
-
-```
-
 - Don't nest accordions; show the next level inside the panel as a list.
 - Keep what people need to finish a task out of closed sections.
 
@@ -92,7 +78,7 @@ Each item, `env-accordion-item`, draws the line under it; its heading's button i
 ### envUI provides
 
 - Each title is a button inside a heading, which reports whether its section is expanded and controls its panel.
-- Tab reaches every heading. The arrow keys, Home and End don't move between them, as the current ARIA accordion pattern advises, so they stay with the page and the panels' content.
+- <kbd>Tab</kbd> reaches every heading. The arrow keys, <kbd>Home</kbd> and <kbd>End</kbd> don't move between them, as the current ARIA accordion pattern advises, so they stay with the page and the panels' content.
 - A focus outline, and headings at least 2.75 rem tall on touch screens.
 
 ### You provide

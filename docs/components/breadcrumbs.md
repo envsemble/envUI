@@ -18,18 +18,10 @@ useWhen:
 avoidWhen:
   - text: The application's main navigation, such as the pages in a sidebar.
     use: Drawer
-  - text: Moving between the items of one level, such as views of the same content.
-    use: Tabs
   - text: Previous and next pages of a sequence.
     use: Pager
   - text: Browsing and expanding a whole hierarchy.
     use: Tree
-related:
-  - drawer
-  - tree
-  - pager
-  - link
-  - setup
 components:
   - Breadcrumbs
 ---

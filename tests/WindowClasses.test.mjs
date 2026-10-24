@@ -39,6 +39,8 @@ const ownThresholds = {
   // A stacking Table's region makes 37.5em its stackBelow through its font size, as em in a
   // container query is the container's own.
   'Table.css': ['37.5em'],
+  // PanelDock does the same with the dock's own stackBelow.
+  'PanelDock.css': ['37.5em'],
 };
 
 test('windowClasses holds the widths of the window-class tokens, from compact up', () => {

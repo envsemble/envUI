@@ -19,6 +19,8 @@ avoidWhen:
     see: forms
   - text: A choice that filters or changes the view of the page people are on.
     use: SegmentedControl
+  - text: Deleting an account or a workspace.
+    see: destructive-actions
 composes:
   - Page
   - PageHeader
@@ -40,13 +42,6 @@ composes:
   - Toast
   - useToast
   - useThemePreference
-related:
-  - forms
-  - destructive-actions
-  - feedback
-  - switch
-  - radio
-  - description-list
 ---
 
 # Settings
@@ -121,7 +116,7 @@ The last section, apart from the rest: an outline danger Button opens a [Confirm
 
 ## Accessibility
 
-Space turns a focused Switch on or off, and focus stays, since nothing moves. Save keeps focus on its button and says the outcome in a status; a refused Save moves focus to the field to fix. The danger zone's dialog takes focus to Cancel and gives it back as it closes.
+<kbd>Space</kbd> turns a focused Switch on or off, and focus stays, since nothing moves. Save keeps focus on its button and says the outcome in a status; a refused Save moves focus to the field to fix. The danger zone's dialog takes focus to Cancel and gives it back as it closes.
 
 ### envUI provides
 

@@ -19,18 +19,10 @@ useWhen:
 avoidWhen:
   - text: A short list of actions behind one control.
     use: Menu
-  - text: Destinations in an application's navigation.
-    use: Drawer
   - text: Running a command by name.
     use: CommandPalette
-  - text: A row of actions that stay visible, such as a toolbar.
-    use: ButtonGroup
-related:
-  - menu
-  - scaffold
-  - command-palette
-  - kbd
-  - accessibility
+  - text: A row of commands that stay visible, such as an editor’s formatting.
+    use: Toolbar
 components:
   - Menubar
 ---
@@ -71,25 +63,18 @@ With `accessKeys`, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, an
 
 ### Content
 
-```tsx do=OneWordNames caption="One word per menu."
-
-```
-
-```tsx dont=LongMenuNames caption="Long menu names that crowd the bar."
-
-```
-
 - Name items as in [Menu](../components/menu.md), with an ellipsis for a command that asks for more, such as Export… in File.
 
 ## Anatomy
 
-```tsx anatomy=MenubarAnatomy
+```tsx anatomy=MenubarAnatomy open
 
 ```
 
 1. **Menubar** (`env-menubar`)
 2. **Trigger** (`env-menubar-trigger`, `label`)
 3. **Access key** (`env-menubar-access-key`, `accessKey`)
+4. **Menu** (`env-menu`, the children, open with `open` or `defaultOpen`)
 
 Each trigger opens a [Menu](../components/menu.md) built from the Menu parts.
 
@@ -109,7 +94,7 @@ Each trigger opens a [Menu](../components/menu.md) built from the Menu parts.
 ### envUI provides
 
 - A `menubar` whose triggers are `menuitem`s with `aria-haspopup` and `aria-expanded`.
-- `aria-keyshortcuts` on triggers with access keys, such as Alt+F.
+- `aria-keyshortcuts` on triggers with access keys, such as <kbd>Alt</kbd>+<kbd>F</kbd>.
 - Focus that roves between triggers and returns to the earlier element after a command.
 
 ### You provide

@@ -18,6 +18,7 @@ export const mapSections = [
   'exports',
   'split',
   'removed',
+  'moved',
   'props',
   'calls',
   'render',
@@ -39,6 +40,7 @@ const sectionDepth = {
   exports: 2,
   split: 2,
   removed: 2,
+  moved: 2,
   props: 2,
   calls: 2,
   render: 2,
@@ -122,6 +124,7 @@ const identifier = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 const part = /^([A-Za-z_$][A-Za-z0-9_$]*)\.([A-Za-z_$][A-Za-z0-9_$]*)$/;
 const className = /^env-[a-z0-9][a-z0-9_-]*$/;
 const slug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const entryPoint = /^@envsemble\/envui(?:\/[a-z][a-z-]*)?$/;
 
 const isObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
 
@@ -222,6 +225,21 @@ export function validateMap(map) {
       claim(entry, name, 'removed');
     }
   }
+  for (const [entry, names] of entriesOf(map.moved)) {
+    if (!isObject(names)) {
+      problems.push(`moved.${entry} must be an object.`);
+      continue;
+    }
+    for (const [name, to] of entriesOf(names)) {
+      const where = `moved.${entry}.${name}`;
+      if (!identifier.test(name)) problems.push(`${where}: ${name} is not a name.`);
+      if (typeof to !== 'string' || !entryPoint.test(to) || to === entry)
+        problems.push(
+          `${where} must name another envUI entry point, such as @envsemble/envui/color.`,
+        );
+      claim(entry, name, 'moved');
+    }
+  }
   const classes = [];
   const reusedClassNames = Array.isArray(map.reusedClasses) ? map.reusedClasses : [];
   for (const [from, to] of entriesOf(map.classes)) {
@@ -312,7 +330,8 @@ const newProperty = /^--env-[a-z0-9]+(?:-[a-z0-9]+)*$/;
 /**
  * Problems with the `tokens` section: each old custom property, without the --env- prefix or a
  * name that 1.0's development gave it, maps to the --env- property that replaces it (`to`), to a
- * fixed color's `value`, or is `removed`, with `to` what to use instead or null.
+ * fixed color's `value`, or is `removed`, with `to` what to use instead or null. `colorPropertyOf`
+ * names the class of the component whose color property `to` is.
  */
 function validateTokens(tokens) {
   const problems = [];
@@ -333,6 +352,11 @@ function validateTokens(tokens) {
     } else if (typeof entry.to !== 'string' || !newProperty.test(entry.to))
       problems.push(`${where} needs "to", an --env- custom property, "value" or "removed".`);
     else if (entry.to === from) problems.push(`${where} maps to itself.`);
+    if (
+      entry.colorPropertyOf !== undefined &&
+      !/^env-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(entry.colorPropertyOf)
+    )
+      problems.push(`${where}: "colorPropertyOf" must be a component's class, such as env-alert.`);
   }
   return problems;
 }
@@ -657,7 +681,8 @@ const sortClasses = (classes) =>
 /**
  * The lookups for a parsed map:
  * - `entries`: per entry point, `renames` (old name to target), `splits` (old name to its prop and
- *   the target for each value), `removed` (old name to its hint and literal), `props` (each
+ *   the target for each value), `removed` (old name to its hint and literal), `moved` (a name
+ *   to the entry point that exports it now), `props` (each
  *   component's changed props, by its 1.0 name, with the replacement of each literal value) and
  *   `namespaces` (the namespace exports that the entry has in 1.0);
  * - `classes`: class renames, longest old name first;
@@ -667,7 +692,8 @@ const sortClasses = (classes) =>
  *   `{ name, within, attributes, report }`; a class reported without `within` or `attributes` is
  *   also kept by the class renames, so a shorter entry that it continues does not rename it;
  * - `tokens`: each custom property before 1.0, without its `--`, to its entry: `to` the 1.0
- *   name (without `--`) that replaces it, with `declaration`, the report for a declaration of a
+ *   name (without `--`) that replaces it, with `colorPropertyOf`, the class of the component
+ *   whose color property it is, which doesn't inherit, `declaration`, the report for a declaration of a
  *   name that shares its target and is not the target's own, or a `report` for a fixed color or a
  *   removed name;
  * - `tokenNames`: the 1.0 names the tokens become, without `--`, which class renames leave alone.
@@ -681,6 +707,7 @@ export function normalizeMap(map) {
         renames: new Map(),
         splits: new Map(),
         removed: new Map(),
+        moved: new Map(),
         props: new Map(),
         calls: new Map(),
         render: new Map(),
@@ -712,6 +739,10 @@ export function normalizeMap(map) {
   for (const [name, names] of entriesOf(map.removed)) {
     const entry = entryFor(name);
     for (const [from, rule] of entriesOf(names)) entry.removed.set(from, rule);
+  }
+  for (const [name, names] of entriesOf(map.moved)) {
+    const entry = entryFor(name);
+    for (const [from, to] of entriesOf(names)) entry.moved.set(from, to);
   }
   const propRules = (names) =>
     new Map(
@@ -796,7 +827,11 @@ export function normalizeMap(map) {
         }, or a custom property of your own.`,
       });
     else {
-      tokens.set(name, { to: entry.to.slice(2), note: entry.note });
+      tokens.set(name, {
+        to: entry.to.slice(2),
+        note: entry.note,
+        colorPropertyOf: entry.colorPropertyOf,
+      });
       tokenNames.add(entry.to.slice(2));
     }
   }

@@ -6,8 +6,8 @@
         "report": "RichTextEditor's hint is description in 1.0."
       },
       "variant": {
-        "current": ["outline", "underline", "ghost"],
-        "report": "RichTextEditor's variant is outline, underline or ghost in 1.0, the field variants: outlined is outline, plain is underline, and quiet, which drew as outlined, is ghost now.",
+        "current": ["outline", "ghost"],
+        "report": "RichTextEditor's variant is outline or ghost in 1.0: outlined is outline, quiet, which drew as outlined, is ghost now, and plain and underline, which 1.0.0-prerelease.2 removes, take the default outline.",
         "values": {
           "outlined": {
             "props": {
@@ -15,14 +15,15 @@
             }
           },
           "plain": {
-            "props": {
-              "variant": "underline"
-            }
+            "report": "variant=\"plain\" is gone: the field takes the default outline look, so the prop is dropped."
           },
           "quiet": {
             "props": {
               "variant": "ghost"
             }
+          },
+          "underline": {
+            "report": "variant=\"underline\" is gone in 1.0.0-prerelease.2: the field takes the default outline look, so the prop is dropped."
           }
         }
       }

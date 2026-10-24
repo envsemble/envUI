@@ -76,7 +76,7 @@ export const tools = [
     name: 'get_component',
     title: 'Get an envUI component',
     description:
-      "A component's summary, aliases, when to use it and what to use instead, its exports with their import paths, its examples, its parts (the part classes and state attributes CSS may target, each with what it is) and related pages. Accepts a component, an export such as IconButton or Menu.Item, a page name or an alias. Set docs to true for the whole page as Markdown.",
+      "A component's summary, aliases, when to use it and what to use instead, its exports with their import paths, its examples, its parts (the part classes and state attributes CSS may target, and the color properties it may set, each with what it is) and related pages. Accepts a component, an export such as IconButton or Menu.Item, a page name or an alias. Set docs to true for the whole page as Markdown.",
     inputSchema: object(
       {
         name: string('A component, export, part, page name or alias.'),

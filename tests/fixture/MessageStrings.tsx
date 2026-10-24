@@ -2,9 +2,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import {
   ConfirmDialog,
   List,
-  SearchTrigger,
   Calendar,
-  ColorPicker,
   Combobox,
   Composer,
   Alert,
@@ -32,6 +30,7 @@ import {
   type EnvUIMessagesInput,
   Spinner,
 } from '@envsemble/envui';
+import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
 import { CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/content';
 import { defaultMessages } from '@envsemble/envui/messages';
 // Content and display, whose strings and numbers follow the provider.
@@ -174,7 +173,7 @@ export function MessageStringsFixture() {
     <ThemePreferenceProvider storageKey="fixture-messages-theme">
       <EnvUIProvider messages={pseudoMessages} locale="en-XA">
         <Column gap={4} data-testid="messages">
-          <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}}>
+          <ConfirmButton confirmLabel="Remove" onConfirm={() => {}}>
             Remove
           </ConfirmButton>
           {/* A blank name leaves it named by its copy label. */}
@@ -228,7 +227,8 @@ export function MessageStringsFixture() {
           <MonthPicker label="Period" clearable defaultValue="2026-10" />
           <Calendar aria-label="Planning" defaultValue="2026-10-14" />
           <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
-          <ColorPicker label="Accent" defaultValue="#336699" />
+          <ColorPicker label="Accent" defaultValue="#336699" swatches={['#336699']} />
+          <ColorPickerButton label="Border" defaultValue="#336699" />
           {/* Layout: the divider between two panes, a detail's back button, and a scaffold's skip
               links. */}
           <Panes.Root behavior="list-detail" open>
@@ -248,9 +248,7 @@ export function MessageStringsFixture() {
             <FeedbackStrings />
           </Toast.Provider>
           <ShellAndEditorStrings />
-          {/* App parts: a search trigger, a reorderable list's handle and announcements, and a
-              confirm dialog. */}
-          <SearchTrigger listen={false} />
+          {/* App parts: a reorderable list's handle and announcements, and a confirm dialog. */}
           <List.Root aria-label="Order" onReorder={() => {}}>
             <List.Item label="First" />
             <List.Item label="Second" />

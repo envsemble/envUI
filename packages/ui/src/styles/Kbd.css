@@ -2,7 +2,7 @@
    text's baseline, so keys line up in prose whatever glyphs they show. A container that shows
    smaller or quieter keys, such as a menu's shortcuts, sets the custom properties below on its own
    element: --env-kbd-size, -padding-inline, -radius, -fg and -font-size for the keys, and
-   --env-kbd-separator-padding-inline and -font for the + between them. */
+   --env-kbd-separator-padding-inline, -fg and -font for the + between them. */
 .env-kbd {
   box-sizing: border-box;
   min-inline-size: var(--env-kbd-size, 1.375rem);
@@ -34,7 +34,7 @@
 }
 .env-kbd-separator {
   padding-inline: var(--env-kbd-separator-padding-inline, 0.1875rem);
-  color: var(--env-kbd-fg, var(--env-color-fg-muted));
+  color: var(--env-kbd-separator-fg, var(--env-kbd-fg, var(--env-color-fg-muted)));
   font: var(--env-kbd-separator-font, var(--env-type-body-small));
 }
 

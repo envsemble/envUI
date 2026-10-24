@@ -1334,6 +1334,24 @@
       "kind": "removed",
       "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
+    "--env-alert-edge": {
+      "kind": "renamed",
+      "cssVariable": "--env-alert-outline",
+      "colorPropertyOf": "env-alert",
+      "note": "An alert's edge is the public color property --env-alert-outline."
+    },
+    "--env-alert-tint": {
+      "kind": "renamed",
+      "cssVariable": "--env-alert-container",
+      "colorPropertyOf": "env-alert",
+      "note": "An alert's tint is the public color property --env-alert-container, set on the alert."
+    },
+    "--env-alert-tone": {
+      "kind": "renamed",
+      "cssVariable": "--env-alert-icon",
+      "colorPropertyOf": "env-alert",
+      "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
+    },
     "--env-app-control-height": {
       "kind": "removed",
       "note": "AppShell is gone: a TopBar with titleBar keeps the small control height."
@@ -1388,6 +1406,48 @@
       "kind": "removed",
       "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
     },
+    "--env-color-avatar-bg-amber": {
+      "kind": "renamed",
+      "token": "color.avatar.bg.butter",
+      "cssVariable": "--env-color-avatar-bg-butter",
+      "note": "The avatar hues are named for their colors: amber is butter. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-butter and --env-color-avatar-figure-butter."
+    },
+    "--env-color-avatar-bg-green": {
+      "kind": "renamed",
+      "token": "color.avatar.bg.sage",
+      "cssVariable": "--env-color-avatar-bg-sage",
+      "note": "The avatar hues are named for their colors: green is sage. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-sage and --env-color-avatar-figure-sage."
+    },
+    "--env-color-avatar-bg-purple": {
+      "kind": "renamed",
+      "token": "color.avatar.bg.orchid",
+      "cssVariable": "--env-color-avatar-bg-orchid",
+      "note": "The avatar hues are named for their colors: purple is orchid. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-orchid and --env-color-avatar-figure-orchid."
+    },
+    "--env-color-avatar-bg-red": {
+      "kind": "renamed",
+      "token": "color.avatar.bg.blush",
+      "cssVariable": "--env-color-avatar-bg-blush",
+      "note": "The avatar hues are named for their colors: red is blush. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-blush and --env-color-avatar-figure-blush."
+    },
+    "--env-color-avatar-bg-slate": {
+      "kind": "renamed",
+      "token": "color.avatar.bg.oat",
+      "cssVariable": "--env-color-avatar-bg-oat",
+      "note": "The avatar hues are named for their colors: slate is oat. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-oat and --env-color-avatar-figure-oat."
+    },
+    "--env-color-avatar-bg-teal": {
+      "kind": "renamed",
+      "token": "color.avatar.bg.seafoam",
+      "cssVariable": "--env-color-avatar-bg-seafoam",
+      "note": "The avatar hues are named for their colors: teal is seafoam. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-seafoam and --env-color-avatar-figure-seafoam."
+    },
+    "--env-color-avatar-bg-violet": {
+      "kind": "renamed",
+      "token": "color.avatar.bg.periwinkle",
+      "cssVariable": "--env-color-avatar-bg-periwinkle",
+      "note": "The avatar hues are named for their colors: violet is periwinkle. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-periwinkle and --env-color-avatar-figure-periwinkle."
+    },
     "--env-elevation-0-shadow": {
       "kind": "removed",
       "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
@@ -1411,6 +1471,12 @@
     "--env-frame-sticky-top": {
       "kind": "removed",
       "note": "AppShell and WindowFrame are gone: sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\". The Scaffold sets --env-scaffold-sticky-top from its top bar's height."
+    },
+    "--env-list-item-fill": {
+      "kind": "renamed",
+      "cssVariable": "--env-list-item-container",
+      "colorPropertyOf": "env-list-item",
+      "note": "A row's fill is the public color property --env-list-item-container, set on the row."
     },
     "--env-sidebar-collapsed-width": {
       "kind": "removed",
@@ -1451,6 +1517,26 @@
     "--env-stack-gap": {
       "kind": "removed",
       "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
+    },
+    "--env-toast-edge": {
+      "kind": "renamed",
+      "cssVariable": "--env-toast-outline",
+      "colorPropertyOf": "env-toast",
+      "note": "A toast's edge is the public color property --env-toast-outline."
+    },
+    "--env-toast-fill": {
+      "kind": "renamed",
+      "cssVariable": "--env-toast-container",
+      "colorPropertyOf": "env-toast",
+      "note": "A toast's fill is the public color property --env-toast-container, set on the toast."
+    },
+    "--env-toast-fill-hover": {
+      "kind": "removed",
+      "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
+    },
+    "--env-toast-fill-pressed": {
+      "kind": "removed",
+      "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
     },
     "--env-topbar-height": {
       "kind": "renamed",

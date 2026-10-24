@@ -1,40 +1,40 @@
 {
-  "components/bar/overview": {
+  "components/bar": {
     "light": {
       "landmark-unique": {
         "article :: nav.env-bar": 1
       }
     }
   },
-  "components/breadcrumbs/overview": {
+  "components/breadcrumbs": {
     "light": {
       "landmark-unique": {
         "article :: nav.env-breadcrumbs": 1
       }
     }
   },
-  "components/pager/overview": {
+  "components/pager": {
     "light": {
       "landmark-unique": {
         "article :: nav.env-pager": 1
       }
     }
   },
-  "components/pagination/overview": {
+  "components/pagination": {
     "light": {
       "landmark-unique": {
         "article :: nav.env-pagination": 1
       }
     }
   },
-  "components/panel-dock/overview": {
+  "components/panel-dock": {
     "light": {
       "landmark-unique": {
         "article :: section.env-panel-dock-panel": 1
       }
     }
   },
-  "components/panes/overview": {
+  "components/panes": {
     "light": {
       "landmark-unique": {
         "article :: div.env-panes-list": 1,
@@ -42,21 +42,21 @@
       }
     }
   },
-  "components/rich-text/overview": {
+  "components/rich-text": {
     "light": {
       "target-size": {
         "article :: input.env-checkbox-input": 2
       }
     }
   },
-  "components/scaffold/overview": {
+  "components/scaffold": {
     "light": {
       "landmark-unique": {
         "article :: nav.env-bar": 1
       }
     }
   },
-  "components/table/overview": {
+  "components/table": {
     "dark": {
       "landmark-unique": {
         "article :: div.env-table-region": 1
@@ -78,7 +78,7 @@
       }
     }
   },
-  "foundations/colors/preview": {
+  "foundations/colors": {
     "dark": {
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.docs-swatch": 11,
@@ -98,13 +98,6 @@
       }
     },
     "dark-hc": {
-      "color-contrast-enhanced": {
-        "Buttons :: button.env-button.docs-swatch code": 1,
-        "Content & loading :: button.env-button.docs-swatch code": 1,
-        "Direction links :: button.env-button.docs-swatch code": 1,
-        "Text & focus :: button.env-button.docs-swatch code": 1,
-        "Text fields :: button.env-button.docs-swatch code": 1
-      },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.docs-swatch": 11,
         "Cards :: button.env-button.docs-swatch": 1,
@@ -123,10 +116,6 @@
       }
     },
     "light": {
-      "color-contrast": {
-        "Buttons :: button.env-button.docs-swatch code": 1,
-        "Text fields :: button.env-button.docs-swatch code": 1
-      },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.docs-swatch": 11,
         "Cards :: button.env-button.docs-swatch": 1,
@@ -149,6 +138,7 @@
         "Buttons :: button.env-button.docs-swatch code": 1,
         "Content & loading :: button.env-button.docs-swatch code": 1,
         "Direction links :: button.env-button.docs-swatch code": 1,
+        "Feedback :: button.env-button.docs-swatch code": 1,
         "Text & focus :: button.env-button.docs-swatch code": 1,
         "Text fields :: button.env-button.docs-swatch code": 1
       },

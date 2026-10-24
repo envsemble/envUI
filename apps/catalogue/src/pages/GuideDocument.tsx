@@ -1,8 +1,8 @@
 import { Fragment, Suspense, useState } from 'react';
-import { Text } from '@envsemble/envui';
 import type { Documentation as Document } from '../Reference';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
 import { Documentation } from './Documentation';
+import { Loading } from '../template/Loading';
 
 /**
  * The live demos a guide page places with a `<!-- demo: Name -->` line, each loaded with the page
@@ -34,7 +34,7 @@ function Demo({ name }: { name: string }) {
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={<Text role="status">Loading the demo…</Text>}>
+      <Suspense fallback={<Loading what="the demo" />}>
         <Part />
       </Suspense>
     </LoadBoundary>

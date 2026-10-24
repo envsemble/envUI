@@ -183,9 +183,15 @@ test('v1-classes renames every token entry, and no class entry renames a 1.0 tok
     // token's own name; any other is reported, and only its uses are renamed.
     const declared =
       sources.get(entry.to).length === 1 || entry.to === `--env-${from.slice(2)}` ? entry.to : from;
-    const css = `.a { ${from}: 1; margin: var(${from}); }\n`;
+    // A color property is declared on its component, which a wrapper's declaration doesn't reach.
+    const selector = `.${entry.colorPropertyOf ?? 'a'}`;
+    const css = `${selector} { ${from}: 1; margin: var(${from}); }\n`;
     const result = runTransform(v1Classes, 'styles.css', css);
-    assert.equal(result.output, `.a { ${declared}: 1; margin: var(${entry.to}); }\n`, from);
+    assert.equal(
+      result.output,
+      `${selector} { ${declared}: 1; margin: var(${entry.to}); }\n`,
+      from,
+    );
     assert.equal(result.reports.length, declared === from ? 1 : 0, from);
   }
   const { tokenNames } = loadMap();

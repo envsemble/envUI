@@ -28,7 +28,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--env-space-1);
-  border-radius: calc(var(--env-field-height) / 2);
+  border-radius: var(--env-radius-full);
   padding-block: calc(
     (var(--env-field-height) - 2 * var(--env-control-border-width) - var(--env-combobox-row)) / 2
   );
@@ -67,11 +67,13 @@
 .env-combobox[data-tall] .env-combobox-end {
   --env-control-height: var(--env-control-height-sm);
 }
+/* The chevron points down, and up while the popup is open, flipping over as Select's does rather
+   than turning through pointing sideways. */
 .env-combobox-trigger .env-icon {
-  transform: rotate(90deg);
+  transform: rotate(90deg) scaleX(1);
 }
 .env-combobox-trigger[data-popup-open] .env-icon {
-  transform: rotate(-90deg);
+  transform: rotate(90deg) scaleX(-1);
 }
 .env-combobox-control:has(> .env-combobox-input:disabled)
   .env-combobox-end
@@ -101,6 +103,17 @@
   --env-combobox-leading-size: 1.25rem;
 }
 
+/* Color properties: a chip's colors, which an application sets on the chips through its own CSS,
+   such as .my-field .env-combobox-chip: its fill and its label. They don't inherit. Its remove
+   button lays the state layer of the label color over it. */
+@property --env-combobox-chip-container {
+  syntax: '*';
+  inherits: false;
+}
+@property --env-combobox-chip-content {
+  syntax: '*';
+  inherits: false;
+}
 /* Chips: each chosen option of a multiple combobox, removable with its button or Backspace. */
 .env-combobox-chip {
   box-sizing: border-box;
@@ -112,8 +125,8 @@
   block-size: var(--env-combobox-row);
   padding-inline: var(--env-space-2) 0.125rem;
   border-radius: var(--env-radius-sm);
-  background: var(--env-color-bg-neutral-muted);
-  color: var(--env-color-fg-default);
+  background: var(--env-combobox-chip-container, var(--env-color-bg-neutral-muted));
+  color: var(--env-combobox-chip-content, var(--env-color-fg-default));
   font: var(--env-body-font-weight) var(--env-font-size-label) / 1.25 var(--env-font-family);
   cursor: default;
   outline: none;
@@ -233,7 +246,7 @@
 }
 
 /* Motion: the chevron, always in the field, doesn't settle in as the field's other actions do,
-   and turns as the list opens without a reduced-motion preference. */
+   and flips as the list opens without a reduced-motion preference. */
 .env-combobox-trigger {
   animation: none;
 }

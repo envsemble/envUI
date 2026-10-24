@@ -140,8 +140,29 @@ export const devStyles = /* css */ `
     outline: 0.125rem solid var(--env-color-border-focus);
     outline-offset: 0.125rem;
   }
+  /* Dev mode's own tints, a soft pastel set for the planes of the 3D view and its padding and gap
+     patterns, lighter in the light theme. They are its own, so no public token they once borrowed
+     can change them. */
+  .env-dev-view {
+    --env-dev-tint-oat: #e7dbce;
+    --env-dev-tint-seafoam: #b8e7de;
+    --env-dev-tint-sage: #cee4c3;
+    --env-dev-tint-periwinkle: #dadaff;
+    --env-dev-tint-butter: #efdca4;
+    --env-dev-tint-blush: #ffd3d4;
+    --env-dev-tint-orchid: #fad2ec;
+  }
+  .env-theme[data-env-theme='dark'] .env-dev-view {
+    --env-dev-tint-oat: #d8ccbf;
+    --env-dev-tint-seafoam: #a7d7cf;
+    --env-dev-tint-sage: #bed4b3;
+    --env-dev-tint-periwinkle: #cacaf3;
+    --env-dev-tint-butter: #e1cc95;
+    --env-dev-tint-blush: #f3c2c4;
+    --env-dev-tint-orchid: #ecc2dd;
+  }
   .env-dev-plane {
-    --env-dev-tint: var(--env-color-avatar-bg-slate);
+    --env-dev-tint: var(--env-dev-tint-oat);
     position: absolute;
     left: 0;
     top: 0;
@@ -152,16 +173,16 @@ export const devStyles = /* css */ `
     outline-offset: -1px;
     border-radius: 2px;
   }
-  .env-dev-plane[data-kind='row'] { --env-dev-tint: var(--env-color-avatar-bg-teal); }
-  .env-dev-plane[data-kind='column'] { --env-dev-tint: var(--env-color-avatar-bg-green); }
-  .env-dev-plane[data-kind='grid'] { --env-dev-tint: var(--env-color-avatar-bg-violet); }
-  .env-dev-plane:is([data-kind='scaffold'], [data-kind='panes']) { --env-dev-tint: var(--env-color-avatar-bg-amber); }
-  .env-dev-plane[data-kind='page'] { --env-dev-tint: var(--env-color-avatar-bg-red); }
-  .env-dev-plane[data-overlay] { --env-dev-tint: var(--env-color-avatar-bg-purple); }
-  .env-dev-view[data-color='window'] .env-dev-plane[data-window='compact'] { --env-dev-tint: var(--env-color-avatar-bg-red); }
-  .env-dev-view[data-color='window'] .env-dev-plane[data-window='medium'] { --env-dev-tint: var(--env-color-avatar-bg-amber); }
-  .env-dev-view[data-color='window'] .env-dev-plane[data-window='expanded'] { --env-dev-tint: var(--env-color-avatar-bg-green); }
-  .env-dev-view[data-color='window'] .env-dev-plane[data-window='large'] { --env-dev-tint: var(--env-color-avatar-bg-teal); }
+  .env-dev-plane[data-kind='row'] { --env-dev-tint: var(--env-dev-tint-seafoam); }
+  .env-dev-plane[data-kind='column'] { --env-dev-tint: var(--env-dev-tint-sage); }
+  .env-dev-plane[data-kind='grid'] { --env-dev-tint: var(--env-dev-tint-periwinkle); }
+  .env-dev-plane:is([data-kind='scaffold'], [data-kind='panes']) { --env-dev-tint: var(--env-dev-tint-butter); }
+  .env-dev-plane[data-kind='page'] { --env-dev-tint: var(--env-dev-tint-blush); }
+  .env-dev-plane[data-overlay] { --env-dev-tint: var(--env-dev-tint-orchid); }
+  .env-dev-view[data-color='window'] .env-dev-plane[data-window='compact'] { --env-dev-tint: var(--env-dev-tint-blush); }
+  .env-dev-view[data-color='window'] .env-dev-plane[data-window='medium'] { --env-dev-tint: var(--env-dev-tint-butter); }
+  .env-dev-view[data-color='window'] .env-dev-plane[data-window='expanded'] { --env-dev-tint: var(--env-dev-tint-sage); }
+  .env-dev-view[data-color='window'] .env-dev-plane[data-window='large'] { --env-dev-tint: var(--env-dev-tint-seafoam); }
   .env-dev-view[data-color='window'] .env-dev-plane:not([data-container]) { outline-style: dotted; }
   .env-dev-plane[data-problems] {
     outline: 2px solid var(--env-color-border-danger-emphasis);
@@ -315,10 +336,10 @@ export const devStyles = /* css */ `
   .env-dev-ruler-band[data-current] {
     background: color-mix(in oklab, var(--env-dev-tint) 70%, transparent);
   }
-  .env-dev-ruler-band[data-window='compact'] { --env-dev-tint: var(--env-color-avatar-bg-red); }
-  .env-dev-ruler-band[data-window='medium'] { --env-dev-tint: var(--env-color-avatar-bg-amber); }
-  .env-dev-ruler-band[data-window='expanded'] { --env-dev-tint: var(--env-color-avatar-bg-green); }
-  .env-dev-ruler-band[data-window='large'] { --env-dev-tint: var(--env-color-avatar-bg-teal); }
+  .env-dev-ruler-band[data-window='compact'] { --env-dev-tint: var(--env-dev-tint-blush); }
+  .env-dev-ruler-band[data-window='medium'] { --env-dev-tint: var(--env-dev-tint-butter); }
+  .env-dev-ruler-band[data-window='expanded'] { --env-dev-tint: var(--env-dev-tint-sage); }
+  .env-dev-ruler-band[data-window='large'] { --env-dev-tint: var(--env-dev-tint-seafoam); }
   .env-dev-ruler-line {
     position: absolute;
     inset-block-start: -1.5rem;

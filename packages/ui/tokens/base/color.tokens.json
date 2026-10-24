@@ -69,15 +69,23 @@
           "$description": "A highlighted row in a popup.",
           "$value": "{palette.neutral.4}"
         },
-        "pressed": { "$description": "A pressed row in a popup.", "$value": "{palette.neutral.8}" }
+        "pressed": {
+          "$description": "A pressed row in a popup.",
+          "$value": "{palette.neutral.8}"
+        }
       },
-      "field": { "$description": "Text fields and other inputs.", "$value": "{palette.neutral.0}" },
+      "field": {
+        "$description": "A well that keeps a fill of its own, such as the color picker's value button and code and references in rich text. Text fields have none: they take the background of what they sit on.",
+        "$value": "{palette.neutral.0}"
+      },
       "overlay": {
         "$root": {
           "$description": "The scrim behind dialogs and the command palette: the dark page color at 55%.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/neutral/92/$value/components" },
+            "components": {
+              "$ref": "#/palette/neutral/92/$value/components"
+            },
             "alpha": 0.55
           }
         },
@@ -85,7 +93,9 @@
           "$description": "The lighter scrim behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/neutral/92/$value/components" },
+            "components": {
+              "$ref": "#/palette/neutral/92/$value/components"
+            },
             "alpha": 0.3
           }
         }
@@ -117,10 +127,12 @@
       "neutral": {
         "muted": {
           "$root": {
-            "$description": "The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
+            "$description": "The translucent neutral fill of secondary buttons, chips, switch tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "components": {
+                "$ref": "#/palette/neutral/92/$value/components"
+              },
               "alpha": 0.1
             }
           },
@@ -128,7 +140,9 @@
             "$description": "The neutral fill under the pointer.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "components": {
+                "$ref": "#/palette/neutral/92/$value/components"
+              },
               "alpha": 0.17
             }
           },
@@ -136,7 +150,9 @@
             "$description": "The neutral fill while pressed.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "components": {
+                "$ref": "#/palette/neutral/92/$value/components"
+              },
               "alpha": 0.25
             }
           }
@@ -144,13 +160,19 @@
         "subtle": {
           "$root": {
             "$description": "Controls without a fill at rest, such as quiet buttons, inactive tabs and menubar triggers.",
-            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0, 0, 0],
+              "alpha": 0
+            }
           },
           "hover": {
             "$description": "The state layer over a control without a fill, under the pointer.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "components": {
+                "$ref": "#/palette/neutral/92/$value/components"
+              },
               "alpha": 0.08
             }
           },
@@ -158,7 +180,9 @@
             "$description": "The state layer over a control without a fill, while pressed.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "components": {
+                "$ref": "#/palette/neutral/92/$value/components"
+              },
               "alpha": 0.1
             }
           }
@@ -201,7 +225,9 @@
           "$description": "The translucent halo of a slider thumb that is dragged: the blue of the thumb at 16%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/blue/50/$value/components" },
+            "components": {
+              "$ref": "#/palette/blue/50/$value/components"
+            },
             "alpha": 0.16
           }
         },
@@ -229,7 +255,9 @@
           "$description": "The translucent accent tint of info alerts, and of soft accent badges in dark and at high contrast; in light they take color.bg.accent.badge.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/blue/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/blue/60/$value/components"
+            },
             "alpha": 0.12
           }
         },
@@ -237,20 +265,28 @@
           "$description": "The tint of a soft accent badge. In light it is the accent blue at 5%, fainter than color.bg.accent.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.accent.muted.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/blue/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/blue/60/$value/components"
+            },
             "alpha": 0.05
           }
         },
         "subtle": {
           "$root": {
             "$description": "Controls in the accent tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
-            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0, 0, 0],
+              "alpha": 0
+            }
           },
           "hover": {
             "$description": "The state layer of a control without a fill in the accent tone, such as an info alert’s dismiss button, under the pointer: the accent text color at 14%, in every theme and at high contrast.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/blue/60/$value/components" },
+              "components": {
+                "$ref": "#/palette/blue/60/$value/components"
+              },
               "alpha": 0.14
             }
           },
@@ -258,7 +294,9 @@
             "$description": "The accent state layer while pressed: the accent text color at 22%.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/blue/60/$value/components" },
+              "components": {
+                "$ref": "#/palette/blue/60/$value/components"
+              },
               "alpha": 0.22
             }
           }
@@ -273,20 +311,28 @@
           "$description": "The translucent success tint of badges and alerts.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/green/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/green/60/$value/components"
+            },
             "alpha": 0.12
           }
         },
         "subtle": {
           "$root": {
             "$description": "Controls in the success tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
-            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0, 0, 0],
+              "alpha": 0
+            }
           },
           "hover": {
             "$description": "The state layer of a control without a fill in the success tone, such as a success alert’s dismiss button, under the pointer: the success text color at 14%, in every theme and at high contrast.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/green/60/$value/components" },
+              "components": {
+                "$ref": "#/palette/green/60/$value/components"
+              },
               "alpha": 0.14
             }
           },
@@ -294,7 +340,9 @@
             "$description": "The success state layer while pressed: the success text color at 22%.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/green/60/$value/components" },
+              "components": {
+                "$ref": "#/palette/green/60/$value/components"
+              },
               "alpha": 0.22
             }
           }
@@ -323,20 +371,28 @@
           "$description": "The translucent warning tint of badges and alerts.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/amber/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/amber/60/$value/components"
+            },
             "alpha": 0.12
           }
         },
         "subtle": {
           "$root": {
             "$description": "Controls in the warning tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
-            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0, 0, 0],
+              "alpha": 0
+            }
           },
           "hover": {
             "$description": "The state layer of a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer: the warning text color at 14%, in every theme and at high contrast.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/amber/60/$value/components" },
+              "components": {
+                "$ref": "#/palette/amber/60/$value/components"
+              },
               "alpha": 0.14
             }
           },
@@ -344,7 +400,9 @@
             "$description": "The warning state layer while pressed: the warning text color at 22%.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/amber/60/$value/components" },
+              "components": {
+                "$ref": "#/palette/amber/60/$value/components"
+              },
               "alpha": 0.22
             }
           }
@@ -359,20 +417,28 @@
           "$description": "The translucent danger tint of badges and alerts.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/red/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/red/60/$value/components"
+            },
             "alpha": 0.12
           }
         },
         "subtle": {
           "$root": {
             "$description": "Controls in the danger tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
-            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0, 0, 0],
+              "alpha": 0
+            }
           },
           "hover": {
             "$description": "The state layer of a control without a fill in the danger tone, such as an error alert’s dismiss button, under the pointer: the danger text color at 14%, in every theme and at high contrast.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/red/60/$value/components" },
+              "components": {
+                "$ref": "#/palette/red/60/$value/components"
+              },
               "alpha": 0.14
             }
           },
@@ -380,7 +446,9 @@
             "$description": "The danger state layer while pressed: the danger text color at 22%.",
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/red/60/$value/components" },
+              "components": {
+                "$ref": "#/palette/red/60/$value/components"
+              },
               "alpha": 0.22
             }
           }
@@ -409,7 +477,9 @@
           "$description": "The translucent done tint of badges.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/violet/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/violet/60/$value/components"
+            },
             "alpha": 0.12
           }
         }
@@ -450,7 +520,9 @@
         "$description": "The page color at half strength, which leans a pill on a button’s fill back toward the page instead of adding another fill, as a diff stat in a tab does.",
         "$value": {
           "colorSpace": "oklch",
-          "components": { "$ref": "#/palette/neutral/0/$value/components" },
+          "components": {
+            "$ref": "#/palette/neutral/0/$value/components"
+          },
           "alpha": 0.5
         }
       }
@@ -483,8 +555,14 @@
           "$description": "Links and text buttons: at least 4.5:1 on every surface and row.",
           "$value": "{palette.blue.60}"
         },
-        "hover": { "$description": "A link under the pointer.", "$value": "{palette.blue.65}" },
-        "pressed": { "$description": "A link while pressed.", "$value": "{palette.blue.70}" }
+        "hover": {
+          "$description": "A link under the pointer.",
+          "$value": "{palette.blue.65}"
+        },
+        "pressed": {
+          "$description": "A link while pressed.",
+          "$value": "{palette.blue.70}"
+        }
       },
       "link-on-tint": {
         "$root": {
@@ -508,13 +586,22 @@
         "$description": "Text and indicators on bg.selected and its states.",
         "$value": "{palette.blue.65}"
       },
-      "success": { "$description": "Success text and icons.", "$value": "{palette.green.65}" },
-      "warning": { "$description": "Warning text and icons.", "$value": "{palette.amber.65}" },
+      "success": {
+        "$description": "Success text and icons.",
+        "$value": "{palette.green.65}"
+      },
+      "warning": {
+        "$description": "Warning text and icons.",
+        "$value": "{palette.amber.65}"
+      },
       "danger": {
         "$description": "Danger text and icons, and field errors.",
         "$value": "{palette.red.65}"
       },
-      "done": { "$description": "Done text and icons.", "$value": "{palette.violet.65}" },
+      "done": {
+        "$description": "Done text and icons.",
+        "$value": "{palette.violet.65}"
+      },
       "on-emphasis": {
         "$description": "Text and icons on the emphasis fills: white in light, dark in dark.",
         "$value": "{palette.neutral.0}"
@@ -558,7 +645,9 @@
           "$description": "A decorative edge in the accent tone, around an outlined badge: the accent text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/blue/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/blue/60/$value/components"
+            },
             "alpha": 0.55
           }
         },
@@ -566,7 +655,9 @@
           "$description": "The faint edge of an info alert: the accent text color at 28%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/blue/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/blue/60/$value/components"
+            },
             "alpha": 0.28
           }
         },
@@ -590,7 +681,9 @@
           "$description": "A decorative edge in the danger tone, around an outlined badge and a message that failed to send: the danger text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/red/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/red/60/$value/components"
+            },
             "alpha": 0.55
           }
         },
@@ -598,7 +691,9 @@
           "$description": "The faint edge of an error alert: the danger text color at 28%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/red/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/red/60/$value/components"
+            },
             "alpha": 0.28
           }
         },
@@ -626,7 +721,9 @@
           "$description": "A decorative edge in the neutral tone, around an outlined badge: the muted text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/neutral/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/neutral/60/$value/components"
+            },
             "alpha": 0.55
           }
         },
@@ -640,7 +737,9 @@
           "$description": "A decorative edge in the success tone, around an outlined badge: the success text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/green/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/green/60/$value/components"
+            },
             "alpha": 0.55
           }
         },
@@ -648,7 +747,9 @@
           "$description": "The faint edge of a success alert: the success text color at 28%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/green/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/green/60/$value/components"
+            },
             "alpha": 0.28
           }
         },
@@ -662,7 +763,9 @@
           "$description": "A decorative edge in the warning tone, around an outlined badge: the warning text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/amber/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/amber/60/$value/components"
+            },
             "alpha": 0.55
           }
         },
@@ -670,7 +773,9 @@
           "$description": "The faint edge of a warning alert: the warning text color at 28%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/amber/60/$value/components" },
+            "components": {
+              "$ref": "#/palette/amber/60/$value/components"
+            },
             "alpha": 0.28
           }
         }
@@ -689,7 +794,9 @@
         "$description": "A decorative edge in the done tone, around an outlined badge: the done text color at 55%, in every theme and at high contrast.",
         "$value": {
           "colorSpace": "oklch",
-          "components": { "$ref": "#/palette/violet/60/$value/components" },
+          "components": {
+            "$ref": "#/palette/violet/60/$value/components"
+          },
           "alpha": 0.55
         }
       },
@@ -697,7 +804,9 @@
         "$description": "A neutral inner edge that defines content of any color, such as the color picker’s area: black at 5% in both themes.",
         "$value": {
           "colorSpace": "oklch",
-          "components": { "$ref": "#/palette/neutral/100/$value/components" },
+          "components": {
+            "$ref": "#/palette/neutral/100/$value/components"
+          },
           "alpha": 0.05
         }
       }
@@ -708,73 +817,288 @@
         "$root": {
           "$description": "The fill of a list item: the muted surface in both themes, so items stand apart from the page and from a surface; high contrast keeps the default surface in light.",
           "$value": "{color.bg.muted}",
-          "$extensions": { "com.envsemble.envui": { "component": "List items" } }
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "List items"
+            }
+          }
         },
         "hover": {
           "$description": "A list item under the pointer.",
           "$value": "{color.bg.muted.hover}",
-          "$extensions": { "com.envsemble.envui": { "component": "List items" } }
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "List items"
+            }
+          }
         },
         "pressed": {
           "$description": "A list item while pressed.",
           "$value": "{color.bg.muted.pressed}",
-          "$extensions": { "com.envsemble.envui": { "component": "List items" } }
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "List items"
+            }
+          }
+        }
+      }
+    },
+    "skeleton": {
+      "$description": "Component tokens of skeletons, whose bars and shapes take the neutral fill under the pointer.",
+      "shine": {
+        "$description": "The soft highlight that sweeps across a skeleton's bars and shapes: lighter than their fill on every surface, the raised surface in the light theme and the default border's gray in the dark.",
+        "$value": "{color.bg.raised}",
+        "$extensions": {
+          "com.envsemble.envui": {
+            "component": "Skeletons"
+          }
         }
       }
     },
     "avatar": {
-      "$description": "Component tokens of avatars without an image: a solid fill in one of eight hues, which the avatar takes from its name, with white initials or a white figure.",
+      "$description": "Component tokens of avatars without an image: a soft pastel fill in one of eight hues, which the avatar takes from its name, with initials and a figure in a deep shade of the same hue: a tonal pair.",
       "bg": {
         "$root": {
-          "$description": "The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue=\"blue\".",
-          "$value": "{palette.blue.60}",
-          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+          "$description": "The default fill, the powder hue: the fill of an avatar whose hue nothing sets.",
+          "$value": "{color.avatar.bg.powder}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
         },
-        "teal": {
-          "$description": "The teal fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.teal.60}",
-          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "powder": {
+          "$description": "The powder blue pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.powder.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
         },
-        "green": {
-          "$description": "The green fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.green.60}",
-          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "seafoam": {
+          "$description": "The seafoam pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.seafoam.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
         },
-        "amber": {
-          "$description": "The amber fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.amber.60}",
-          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "sage": {
+          "$description": "The sage pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.sage.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
         },
-        "red": {
-          "$description": "The red fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.red.60}",
-          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "butter": {
+          "$description": "The butter yellow pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.butter.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
         },
-        "violet": {
-          "$description": "The violet fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.violet.60}",
-          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "blush": {
+          "$description": "The blush pink pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.blush.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
         },
-        "purple": {
-          "$description": "The purple fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.purple.60}",
-          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "periwinkle": {
+          "$description": "The periwinkle pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.periwinkle.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
         },
-        "slate": {
-          "$description": "The slate fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.slate.60}",
-          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "orchid": {
+          "$description": "The orchid pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.orchid.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "oat": {
+          "$description": "The warm oat pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.oat.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
         }
       },
       "figure": {
-        "$description": "The default figure of an avatar without an image, on any of its fills.",
-        "$value": "{palette.neutral.0}",
-        "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "$description": "The default figure of an avatar without an image, the same deep shade as its initials, at least 3:1 on its fill.",
+        "$root": {
+          "$description": "The default figure, on the powder fill.",
+          "$value": "{color.avatar.figure.powder}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "powder": {
+          "$value": "{color.avatar.fg.powder}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "seafoam": {
+          "$value": "{color.avatar.fg.seafoam}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "sage": {
+          "$value": "{color.avatar.fg.sage}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "butter": {
+          "$value": "{color.avatar.fg.butter}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "blush": {
+          "$value": "{color.avatar.fg.blush}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "periwinkle": {
+          "$value": "{color.avatar.fg.periwinkle}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "orchid": {
+          "$value": "{color.avatar.fg.orchid}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "oat": {
+          "$value": "{color.avatar.fg.oat}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        }
       },
       "fg": {
-        "$description": "The initials of an avatar, at least 4.5:1 on every fill, and 7:1 at high contrast.",
-        "$value": "{palette.neutral.0}",
-        "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "$description": "The initials of an avatar, in a deep shade of its fill's hue: at least 4.5:1 on its fill, and 7:1 at high contrast.",
+        "$root": {
+          "$description": "The default initials, on the powder fill.",
+          "$value": "{color.avatar.fg.powder}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "powder": {
+          "$value": "{palette.powder.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the powder fill."
+        },
+        "seafoam": {
+          "$value": "{palette.seafoam.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the seafoam fill."
+        },
+        "sage": {
+          "$value": "{palette.sage.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the sage fill."
+        },
+        "butter": {
+          "$value": "{palette.butter.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the butter fill."
+        },
+        "blush": {
+          "$value": "{palette.blush.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the blush fill."
+        },
+        "periwinkle": {
+          "$value": "{palette.periwinkle.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the periwinkle fill."
+        },
+        "orchid": {
+          "$value": "{palette.orchid.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the orchid fill."
+        },
+        "oat": {
+          "$value": "{palette.oat.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the oat fill."
+        }
       }
     }
   }

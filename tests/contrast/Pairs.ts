@@ -48,6 +48,17 @@ export interface ContrastPair {
 
 const tones = ['neutral', 'accent', 'success', 'warning', 'danger', 'done'] as const;
 const alertTones = ['accent', 'success', 'warning', 'danger'] as const;
+/** The avatar hues, each a pair of its own; the unsuffixed tokens are the powder hue's. */
+const avatarHues = [
+  'powder',
+  'seafoam',
+  'sage',
+  'butter',
+  'blush',
+  'periwinkle',
+  'orchid',
+  'oat',
+] as const;
 
 /** The text color of each status tone; the neutral tone is muted text. */
 const toneText = (tone: (typeof tones)[number]) =>
@@ -106,6 +117,14 @@ const nonText = (
   note?: string,
   extra?: Pick<ContrastPair, 'contrast' | 'minimum' | 'rationale'>,
 ) => on('non-text', fg, backgrounds, note, extra);
+/** The + between keys in a button's end slot, in the button's content color `--env-color-fg-<role>`. */
+const buttonEndSeparator = (role: string, backgrounds: readonly Background[]) =>
+  on(
+    'non-text',
+    `button-end-separator-${role}`,
+    backgrounds,
+    `The + between the keys in the end slot of a button whose label is --env-color-fg-${role}`,
+  );
 const focus = (fg: string, backgrounds: readonly Background[], note?: string) =>
   on('focus', fg, backgrounds, note);
 /** `fill` must look different from each background: a state from its own rest or its surface. */
@@ -188,7 +207,7 @@ export const pairs: readonly ContrastPair[] = merged([
   ...text(
     '--env-color-fg-control',
     [page, surface],
-    'Navigation labels, meter and slider values, the thumb of a switch that is off',
+    'Navigation labels, meter values, the thumb of a switch that is off',
   ),
   ...text('--env-color-fg-default', [row, rowHover, rowPressed], 'List rows'),
   ...text('--env-color-fg-muted', [row, rowHover, rowPressed], 'List row details'),
@@ -354,6 +373,35 @@ export const pairs: readonly ContrastPair[] = merged([
   ),
   ...text('--env-color-border-accent-emphasis', [field], 'The label of a focused field'),
   ...text('--env-color-fg-danger', [field], 'The label and message of an invalid field'),
+  // A field has no fill of its own: its text, label and border sit on the surface beneath it.
+  ...text(
+    '--env-color-fg-accent',
+    [page, surface, muted, raised, popup],
+    'The label of a focused field, on the surface the field sits on',
+  ),
+  ...nonText(
+    '--env-color-border-accent-emphasis',
+    [muted, raised],
+    'The border of a focused field on a card or in a dialog',
+  ),
+  ...text(
+    '--env-color-fg-danger',
+    [page, surface, raised, popup],
+    'The label of an invalid field, on the surface the field sits on',
+  ),
+  ...nonText(
+    '--env-color-border-danger-emphasis',
+    [muted, popup],
+    'The border of an invalid field on a card or in a popover',
+  ),
+  ...text(
+    '--env-color-fg-default',
+    [
+      [fill, muted],
+      [fill, popup],
+    ],
+    'Combobox chips in a field on a card or in a popover',
+  ),
   ...text(
     '--env-color-fg-danger',
     [muted],
@@ -382,7 +430,7 @@ export const pairs: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-border-default',
     [field, page, surface, muted, raised, popup],
-    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers, the track of a switch that is off and the tracks of Progress and Meter; DropZone and the empty stars of a Rating take it too',
+    'The only boundary of outlined fields, the composer, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
   ),
   ...nonText(
     '--env-color-border-danger-emphasis',
@@ -700,15 +748,26 @@ export const pairs: readonly ContrastPair[] = merged([
     'Chips',
   ),
   ...text('--env-color-fg-default', [[fill, field]], 'Combobox chips'),
-  ...text(
-    '--env-color-avatar-fg',
-    [
-      '--env-color-avatar-bg',
-      ...['teal', 'green', 'amber', 'red', 'violet', 'purple', 'slate'].map(
-        (hue) => `--env-color-avatar-bg-${hue}`,
-      ),
-    ],
-    'Avatar initials on every hue',
+  // Avatars are tonal pairs: each hue's initials, and its figure, a deep shade on its pastel fill.
+  ...text('--env-color-avatar-fg', ['--env-color-avatar-bg'], 'Avatar initials on their hue'),
+  ...avatarHues.flatMap((hue) =>
+    text(
+      `--env-color-avatar-fg-${hue}`,
+      [`--env-color-avatar-bg-${hue}`],
+      'Avatar initials on their hue',
+    ),
+  ),
+  ...nonText(
+    '--env-color-avatar-figure',
+    ['--env-color-avatar-bg'],
+    'The avatar figure on its hue',
+  ),
+  ...avatarHues.flatMap((hue) =>
+    nonText(
+      `--env-color-avatar-figure-${hue}`,
+      [`--env-color-avatar-bg-${hue}`],
+      'The avatar figure on its hue',
+    ),
   ),
   ...text(
     '--env-color-fg-default',
@@ -719,7 +778,42 @@ export const pairs: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-bg-brand-emphasis',
     [page, surface, muted, raised, [fill, page], [fill, surface]],
-    'Spinners, slider thumbs and indicators, and meter indicators on their track',
+    'Spinners, and meter indicators on their track',
+  ),
+  // Slider: a field whose track is the neutral fill, with a stronger fill from the start to the
+  // value; the label, the value and the handle sit on both.
+  ...text(
+    '--env-color-fg-default',
+    [
+      ['--env-color-bg-neutral-subtle-pressed', fill, page],
+      ['--env-color-bg-neutral-subtle-pressed', fill, surface],
+      ['--env-color-bg-neutral-subtle-pressed', fill, muted],
+      ['--env-color-bg-neutral-subtle-pressed', fill, raised],
+      ['--env-color-bg-neutral-subtle-pressed', fill, popup],
+    ],
+    'The label, the value and the handle of a slider on its fill',
+  ),
+  ...different(
+    '--env-color-bg-neutral-subtle-pressed',
+    [
+      [fill, page],
+      [fill, surface],
+      [fill, muted],
+      [fill, raised],
+      [fill, popup],
+    ],
+    'The fill of a slider against its track',
+  ),
+  ...nonText(
+    '--env-color-bg-brand-emphasis',
+    [
+      [layerHover, page],
+      [layerHover, surface],
+      [layerHover, muted],
+      [layerHover, raised],
+      [layerHover, popup],
+    ],
+    'The indicators of Meter and Progress on their track, a quiet tint with no outline, on every surface',
   ),
   ...distinct(
     'heatmap-accent-lowest',
@@ -746,6 +840,59 @@ export const pairs: readonly ContrastPair[] = merged([
         'Decorative: the pill’s text is the button’s label color, which the important button pairs measure at 4.5:1; the outline only groups it. Held to 1.5:1, and 3:1 in high contrast, so it stays visible.',
     },
   ),
+
+  // The + between the keys in a button's end slot: the button's content color at 80%, decorative,
+  // since the keys around it name the shortcut. The keys and any text in the slot are the label's
+  // color on no fill of their own, which the button pairs above measure.
+  ...buttonEndSeparator('on-emphasis', [
+    '--env-color-bg-brand-emphasis',
+    '--env-color-bg-brand-emphasis-hover',
+    '--env-color-bg-brand-emphasis-pressed',
+  ]),
+  ...buttonEndSeparator('control', [
+    [fill, page],
+    ['--env-color-bg-neutral-muted-hover', page],
+    ['--env-color-bg-neutral-muted-pressed', page],
+    [fill, surface],
+    ['--env-color-bg-neutral-muted-hover', surface],
+    ['--env-color-bg-neutral-muted-pressed', surface],
+    [fill, muted],
+    ['--env-color-bg-neutral-muted-hover', muted],
+    ['--env-color-bg-neutral-muted-pressed', muted],
+    [fill, raised],
+    ['--env-color-bg-neutral-muted-hover', raised],
+    ['--env-color-bg-neutral-muted-pressed', raised],
+  ]),
+  ...buttonEndSeparator('accent', [
+    raised,
+    '--env-color-bg-raised-hover',
+    '--env-color-bg-raised-pressed',
+  ]),
+  ...buttonEndSeparator('on-strong', [
+    '--env-color-bg-danger-strong',
+    '--env-color-bg-danger-strong-hover',
+    '--env-color-bg-danger-strong-pressed',
+    '--env-color-bg-important-strong',
+    '--env-color-bg-important-strong-hover',
+    '--env-color-bg-important-strong-pressed',
+  ]),
+  ...buttonEndSeparator('muted', [page, surface, muted, raised]),
+  ...buttonEndSeparator('default', [
+    [layerHover, page],
+    [layerPressed, page],
+    [layerHover, surface],
+    [layerPressed, surface],
+  ]),
+  ...buttonEndSeparator('link', [page, surface, muted, raised]),
+  ...buttonEndSeparator('danger', [
+    raised,
+    '--env-color-bg-raised-hover',
+    '--env-color-bg-raised-pressed',
+    [layerHover, page],
+    [layerPressed, page],
+    [layerHover, surface],
+    [layerPressed, surface],
+  ]),
 
   // Focus rings, against what they are drawn on.
   ...focus(
@@ -782,6 +929,41 @@ export const pairs: readonly ContrastPair[] = merged([
  * `pairs` without an entry, and on a dropped pair that is still declared.
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-teal',
+    rationale:
+      'Avatars are tonal pairs now: the teal fill carries its own deep initials, --env-color-avatar-fg-teal, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-green',
+    rationale:
+      'Avatars are tonal pairs now: the green fill carries its own deep initials, --env-color-avatar-fg-green, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-amber',
+    rationale:
+      'Avatars are tonal pairs now: the amber fill carries its own deep initials, --env-color-avatar-fg-amber, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-red',
+    rationale:
+      'Avatars are tonal pairs now: the red fill carries its own deep initials, --env-color-avatar-fg-red, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-violet',
+    rationale:
+      'Avatars are tonal pairs now: the violet fill carries its own deep initials, --env-color-avatar-fg-violet, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-purple',
+    rationale:
+      'Avatars are tonal pairs now: the purple fill carries its own deep initials, --env-color-avatar-fg-purple, measured on it as text, rather than the white initials every hue shared.',
+  },
+  {
+    pair: '--env-color-avatar-fg on --env-color-avatar-bg-slate',
+    rationale:
+      'Avatars are tonal pairs now: the slate fill carries its own deep initials, --env-color-avatar-fg-slate, measured on it as text, rather than the white initials every hue shared.',
+  },
   {
     pair: '--color-focus-ring on --color-primary-action',
     rationale:
@@ -1922,6 +2104,76 @@ const renamedTokenPairs: readonly (readonly [from: string, to: string])[] = [
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
   {
+    from: '--env-color-avatar-fg-teal on --env-color-avatar-bg-teal',
+    to: '--env-color-avatar-fg-seafoam on --env-color-avatar-bg-seafoam',
+    rationale: 'The avatar hues are named for their colors: teal is seafoam.',
+  },
+  {
+    from: '--env-color-avatar-fg-green on --env-color-avatar-bg-green',
+    to: '--env-color-avatar-fg-sage on --env-color-avatar-bg-sage',
+    rationale: 'The avatar hues are named for their colors: green is sage.',
+  },
+  {
+    from: '--env-color-avatar-fg-amber on --env-color-avatar-bg-amber',
+    to: '--env-color-avatar-fg-butter on --env-color-avatar-bg-butter',
+    rationale: 'The avatar hues are named for their colors: amber is butter.',
+  },
+  {
+    from: '--env-color-avatar-fg-red on --env-color-avatar-bg-red',
+    to: '--env-color-avatar-fg-blush on --env-color-avatar-bg-blush',
+    rationale: 'The avatar hues are named for their colors: red is blush.',
+  },
+  {
+    from: '--env-color-avatar-fg-violet on --env-color-avatar-bg-violet',
+    to: '--env-color-avatar-fg-periwinkle on --env-color-avatar-bg-periwinkle',
+    rationale: 'The avatar hues are named for their colors: violet is periwinkle.',
+  },
+  {
+    from: '--env-color-avatar-fg-purple on --env-color-avatar-bg-purple',
+    to: '--env-color-avatar-fg-orchid on --env-color-avatar-bg-orchid',
+    rationale: 'The avatar hues are named for their colors: purple is orchid.',
+  },
+  {
+    from: '--env-color-avatar-fg-slate on --env-color-avatar-bg-slate',
+    to: '--env-color-avatar-fg-oat on --env-color-avatar-bg-oat',
+    rationale: 'The avatar hues are named for their colors: slate is oat.',
+  },
+  {
+    from: '--env-color-avatar-figure-teal on --env-color-avatar-bg-teal',
+    to: '--env-color-avatar-figure-seafoam on --env-color-avatar-bg-seafoam',
+    rationale: 'The avatar hues are named for their colors: teal is seafoam.',
+  },
+  {
+    from: '--env-color-avatar-figure-green on --env-color-avatar-bg-green',
+    to: '--env-color-avatar-figure-sage on --env-color-avatar-bg-sage',
+    rationale: 'The avatar hues are named for their colors: green is sage.',
+  },
+  {
+    from: '--env-color-avatar-figure-amber on --env-color-avatar-bg-amber',
+    to: '--env-color-avatar-figure-butter on --env-color-avatar-bg-butter',
+    rationale: 'The avatar hues are named for their colors: amber is butter.',
+  },
+  {
+    from: '--env-color-avatar-figure-red on --env-color-avatar-bg-red',
+    to: '--env-color-avatar-figure-blush on --env-color-avatar-bg-blush',
+    rationale: 'The avatar hues are named for their colors: red is blush.',
+  },
+  {
+    from: '--env-color-avatar-figure-violet on --env-color-avatar-bg-violet',
+    to: '--env-color-avatar-figure-periwinkle on --env-color-avatar-bg-periwinkle',
+    rationale: 'The avatar hues are named for their colors: violet is periwinkle.',
+  },
+  {
+    from: '--env-color-avatar-figure-purple on --env-color-avatar-bg-purple',
+    to: '--env-color-avatar-figure-orchid on --env-color-avatar-bg-orchid',
+    rationale: 'The avatar hues are named for their colors: purple is orchid.',
+  },
+  {
+    from: '--env-color-avatar-figure-slate on --env-color-avatar-bg-slate',
+    to: '--env-color-avatar-figure-oat on --env-color-avatar-bg-oat',
+    rationale: 'The avatar hues are named for their colors: slate is oat.',
+  },
+  {
     from: '--color-fg-control on --color-navigation-quiet-hover',
     to: '--color-fg-control on --color-bg-navigation-hover',
     rationale:
@@ -1999,6 +2251,8 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * name, measured as the browser resolves them. Every other hover, pressed and translucent color is
  * a token of its own; add a token rather than an entry here.
  *
+ * - The + between the keys in a button's end slot is 80% of the button's label color, `currentColor`
+ *   (Button.css sets Kbd.css's hooks); each label color a variant, tone and state takes is measured.
  * - A badge or counter inside a primary or important button is outlined in 55% of the button's label
  *   color, `currentColor`, which only the button knows (Button.css sets Badge.css's hooks).
  * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
@@ -2006,6 +2260,18 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  *   lightest step of the default accent tone is measured.
  */
 export const derived: Readonly<Record<string, string>> = {
+  'button-end-separator-on-emphasis':
+    'color-mix(in srgb, var(--env-color-fg-on-emphasis) 80%, transparent)',
+  'button-end-separator-control':
+    'color-mix(in srgb, var(--env-color-fg-control) 80%, transparent)',
+  'button-end-separator-accent': 'color-mix(in srgb, var(--env-color-fg-accent) 80%, transparent)',
+  'button-end-separator-on-strong':
+    'color-mix(in srgb, var(--env-color-fg-on-strong) 80%, transparent)',
+  'button-end-separator-muted': 'color-mix(in srgb, var(--env-color-fg-muted) 80%, transparent)',
+  'button-end-separator-default':
+    'color-mix(in srgb, var(--env-color-fg-default) 80%, transparent)',
+  'button-end-separator-link': 'color-mix(in srgb, var(--env-color-fg-link) 80%, transparent)',
+  'button-end-separator-danger': 'color-mix(in srgb, var(--env-color-fg-danger) 80%, transparent)',
   'badge-outline-primary': 'color-mix(in srgb, var(--env-color-fg-on-emphasis) 55%, transparent)',
   'badge-outline-important': 'color-mix(in srgb, var(--env-color-fg-on-strong) 55%, transparent)',
   'heatmap-accent-lowest':

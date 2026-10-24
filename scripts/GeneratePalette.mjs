@@ -85,6 +85,17 @@ export const hues = {
   red: { description: 'Danger and errors.', seeds: ['#f5a9a3', '#b42318'] },
   violet: { description: 'Done: completed work.', seeds: ['#d1b1f6', '#7639c6'] },
   purple: { description: 'The accent purple of important actions.', seeds: ['#9b4ab8'] },
+  // The pastel hues of avatars, one palette rather than the hues above softened: a light seed for
+  // the fill and a deep one for the initials and figure, each a shade of the same hue, at a shared
+  // soft chroma so a group of avatars reads as one set.
+  powder: { description: 'The powder blue of avatars.', seeds: ['#c2e4f8', '#2d5883'] },
+  seafoam: { description: 'The seafoam of avatars.', seeds: ['#bae9e0', '#16615f'] },
+  sage: { description: 'The sage of avatars.', seeds: ['#d0e6c5', '#425e3b'] },
+  butter: { description: 'The butter yellow of avatars.', seeds: ['#f0dda5', '#704d1c'] },
+  blush: { description: 'The blush pink of avatars.', seeds: ['#ffd0d2', '#843b3e'] },
+  periwinkle: { description: 'The periwinkle of avatars.', seeds: ['#d9d9ff', '#504c8a'] },
+  orchid: { description: 'The orchid of avatars.', seeds: ['#f8d0ea', '#783f61'] },
+  oat: { description: 'The warm oat neutral of avatars.', seeds: ['#e8dccf', '#625245'] },
 };
 
 /** The relative luminance at the exact value of a grade. */

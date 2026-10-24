@@ -37,3 +37,13 @@
   gap: var(--env-space-5);
   container-type: inline-size;
 }
+/* The home page's four destinations share a row where it is wide enough, else two to a row. */
+.docs-explore-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+/* The home page's one sentence on what envUI is, in a measure that reads as a line or two. */
+.docs-overview-lead {
+  max-inline-size: 46ch;
+  text-align: center;
+  text-wrap: balance;
+}

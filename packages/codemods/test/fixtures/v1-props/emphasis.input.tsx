@@ -8,7 +8,7 @@ export function Emphasis({ variant, tone }) {
         Delete
       </Button>
       <IconButton variant="quiet" icon={<span />} aria-label="Settings" />
-      <ConfirmButton variant="outlined" confirmLabel="Remove?" onConfirm={() => {}}>
+      <ConfirmButton variant="outlined" confirmLabel="Remove" onConfirm={() => {}}>
         Remove
       </ConfirmButton>
       <Button variant={variant}>Save</Button>

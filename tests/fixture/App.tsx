@@ -5,7 +5,8 @@ import './Fixture.css';
 import { FormsFixture } from './Forms.js';
 import { DialogFixture } from './Dialog.js';
 import { ToastTriggers, StrictToastFixture } from './Toasts.js';
-import { ColorControls } from './Colors.js';
+import { ColorControls, ColorOverrides } from './Colors.js';
+import { DefaultColors } from './DefaultColors.js';
 import { NavigationFixture } from './Navigation.js';
 import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
@@ -60,6 +61,7 @@ import { TimePickersFixture } from './TimePickers.js';
 import { MonthPickersFixture } from './MonthPickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { SheetsFixture } from './Sheets.js';
+import { ResizableDrawersFixture } from './ResizableDrawers.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
@@ -75,7 +77,6 @@ import { DirectionFixture } from './Direction.js';
 import { PageHeadersFixture } from './PageHeaders.js';
 import { DescriptionListsFixture } from './DescriptionLists.js';
 import { ContainerSizeFixture } from './ContainerSize.js';
-import { SearchTriggersFixture } from './SearchTriggers.js';
 import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
 import { PortalContainersFixture } from './PortalContainers.js';
 import { ListsFixture } from './Lists.js';
@@ -111,12 +112,12 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'document-tabs-rerender': DocumentTabsRerenderFixture,
   pagers: PagersFixture,
   sheets: SheetsFixture,
+  'resizable-drawers': ResizableDrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
   'page-headers': PageHeadersFixture,
   'description-lists': DescriptionListsFixture,
   'container-size': ContainerSizeFixture,
-  'search-triggers': SearchTriggersFixture,
   'confirm-dialogs': ConfirmDialogsFixture,
   lists: ListsFixture,
   'time-pickers': TimePickersFixture,
@@ -174,8 +175,11 @@ export default function App() {
             <>
               <ColorControls theme="light" />
               <ColorControls theme="dark" />
+              <ColorOverrides />
             </>
           )}
+          {/* Open popups: only on its own page, so they cover nothing else. */}
+          {fixture === 'default-colors' && <DefaultColors />}
           {includes('navigation') && (
             <>
               <NavigationFixture theme="light" />
@@ -191,12 +195,7 @@ export default function App() {
           {includes('layout') && <LayoutFixture />}
           {includes('cards') && <CardsFixture />}
           {includes('disclosures') && <DisclosuresFixture />}
-          {includes('color-picker') && (
-            <>
-              <ColorPickerFixture theme="light" />
-              <ColorPickerFixture theme="dark" />
-            </>
-          )}
+          {includes('color-picker') && <ColorPickerFixture />}
           {includes('markdown') && <MarkdownEditingFixture />}
           {includes('markdown-extensions') && <MarkdownExtensionsFixture />}
           {includes('tree') && (

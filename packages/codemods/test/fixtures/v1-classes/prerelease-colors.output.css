@@ -1,0 +1,21 @@
+/* Component tokens of 1.0.0-prerelease.1 that are color properties in prerelease.2, or that are
+   gone. The color properties don't inherit, so one declared on a wrapper is reported. */
+.my-alert {
+  --env-alert-container: var(--env-color-bg-muted);
+  --env-alert-icon: var(--env-color-fg-accent);
+}
+.my-list .env-list-item {
+  --env-list-item-container: var(--env-color-bg-raised);
+}
+.my-toast {
+  --env-toast-fill-hover: var(--env-color-bg-neutral-strong-hover);
+  border-color: var(--env-toast-outline);
+  background: var(--env-toast-container);
+}
+.app-toasts,
+.env-toast.mine {
+  --env-toast-outline: var(--env-color-border-default);
+}
+.env-alert {
+  --env-alert-container: var(--env-color-bg-raised);
+}

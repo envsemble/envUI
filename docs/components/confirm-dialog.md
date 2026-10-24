@@ -22,11 +22,8 @@ avoidWhen:
     use: Dialog
   - text: Undoing an action after it ran, such as an archived item.
     use: Toast
-related:
-  - dialog
-  - menu
-  - alert
-  - button
+  - text: A warning that needs no answer, shown in the page.
+    use: Alert
 components:
   - ConfirmDialog
 ---

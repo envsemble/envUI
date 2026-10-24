@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { chevronTips, expectVerticalFlip, slowChevron } from './Chevron';
 import { fixtureUrl } from './Servers';
 
 /** Contrast between two opaque CSS colors, as WCAG computes it. */
@@ -240,6 +241,88 @@ test('Select supports keyboard commit, typeahead, Escape, and native form reset'
   expect(scroll.content).toBeGreaterThan(scroll.height);
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
+});
+
+test('a Select whose queued focus is lost moves focus to the highlighted option once open', async ({
+  page,
+}) => {
+  // On a busy page, Base UI's queued move of focus to the option is now and then lost. Stand in
+  // for that by ignoring the first focus call an option gets.
+  await page.evaluate(() => {
+    const focus = HTMLElement.prototype.focus;
+    let lost = false;
+    HTMLElement.prototype.focus = function (this: HTMLElement, options?: FocusOptions) {
+      if (this.getAttribute('role') === 'option' && !lost) {
+        lost = true;
+        return;
+      }
+      focus.call(this, options);
+    };
+  });
+  const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
+  await trigger.focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('listbox')).toBeVisible();
+  await expect(page.getByRole('option', { name: 'Starter', exact: true })).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(trigger).toHaveText('Team');
+});
+
+test('a Select opened with the pointer leaves focus where Base UI puts it', async ({ page }) => {
+  // The safety net above is for keyboard opens only. Record who focuses an option, and let none
+  // take focus, so focus stays on the trigger as the list opens: only Base UI may move it.
+  await page.evaluate(() => {
+    const callers: string[] = [];
+    (window as unknown as { optionFocusCallers: string[] }).optionFocusCallers = callers;
+    const focus = HTMLElement.prototype.focus;
+    HTMLElement.prototype.focus = function (this: HTMLElement, options?: FocusOptions) {
+      if (this.getAttribute('role') === 'option') callers.push(new Error().stack ?? '');
+      else focus.call(this, options);
+    };
+  });
+  const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
+  await trigger.click();
+  const popup = page.locator('.env-select-popup');
+  await expect(page.getByRole('listbox')).toBeVisible();
+  // The safety net runs once the list has opened, when its animations finish.
+  await expect
+    .poll(() => popup.evaluate((element) => element.getAnimations({ subtree: true }).length))
+    .toBe(0);
+  await expect(trigger).toBeFocused();
+  const callers = await page.evaluate(
+    () => (window as unknown as { optionFocusCallers: string[] }).optionFocusCallers,
+  );
+  expect(callers.filter((stack) => stack.includes('Select.tsx'))).toEqual([]);
+  await page.keyboard.press('Escape');
+});
+
+test("a Select's chevron flips as the list opens and closes, never pointing sideways", async ({
+  page,
+}) => {
+  // A half turn swings the chevron through pointing right in a frame or two, a twitch beside the
+  // opening list. It flips over instead.
+  const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
+  const icon = trigger.locator('.env-select-icon');
+  await slowChevron(icon);
+  await trigger.click();
+  await expect(page.getByRole('listbox')).toBeVisible();
+  expectVerticalFlip(await chevronTips(icon), 1);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('listbox')).toHaveCount(0);
+  expectVerticalFlip(await chevronTips(icon), -1);
+  // With reduced motion it points the other way at once, at the style sheet's own duration.
+  await icon.evaluate((element: HTMLElement) =>
+    element.style.removeProperty('transition-duration'),
+  );
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await trigger.click();
+  await expect(page.getByRole('listbox')).toBeVisible();
+  expect(await icon.evaluate((element) => element.getAnimations().length)).toBe(0);
+  expect(
+    await icon.evaluate((element) => new DOMMatrix(getComputedStyle(element).transform).b),
+  ).toBeCloseTo(-1, 2);
+  await page.keyboard.press('Escape');
 });
 
 test('Select triggers are button styles, and the open list stands apart from a pane', async ({

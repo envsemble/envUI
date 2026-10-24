@@ -35,13 +35,6 @@ avoidWhen:
     use: Radio
   - text: Content about one subject that stands on its own.
     use: Card
-related:
-  - card
-  - table
-  - drawer
-  - surface
-  - radio
-  - spacing
 components:
   - List
 ---
@@ -112,14 +105,6 @@ A checkbox in `start` chooses rows for an action on several at once.
 
 ### Content
 
-```tsx do=SameActions caption="The same kind of action at the end of every row."
-
-```
-
-```tsx dont=MixedActions caption="A different action on each row: people can't scan them."
-
-```
-
 - Keep the description to one fact that tells items apart, such as who changed it and when.
 - Name a repeated action after its row, such as More actions for Roadmap.
 
@@ -136,6 +121,10 @@ A checkbox in `start` chooses rows for an action on several at once.
 5. **Content** (`env-list-item-content`, `label`)
 6. **Description** (`env-list-item-content > small`, `description`)
 7. **Action** (`env-list-item > env-button:last-child`, `action`)
+
+### Colors
+
+`--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected` and `--env-list-item-selected-content` set the colors of one List, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 

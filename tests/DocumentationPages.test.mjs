@@ -13,8 +13,7 @@ import {
 } from '../scripts/GenerateDocumentation.mjs';
 
 /**
- * Component pages not on the template yet. They keep their hand-written props tables and their
- * catalogue preview in apps/catalogue/src/previews (the switch in ComponentPreview.tsx). Convert a
+ * Component pages not on the template yet, which keep their hand-written props tables. Convert a
  * page as docs/component-pages.md describes, then remove it here; the list only shrinks.
  */
 const unconverted = [];
@@ -27,7 +26,7 @@ const undocumentedExports = [];
  * each icon by its own path, as the setup guide asks, rather than through the icons barrel.
  */
 const publicModules =
-  /^(?:react|@envsemble\/envui(?:\/(?:content|diff|rich-text|icons\/[A-Za-z\d]+))?)$/;
+  /^(?:react|@envsemble\/envui(?:\/(?:content|diff|rich-text|color|icons\/[A-Za-z\d]+))?)$/;
 
 /**
  * Every module a source loads: static imports and re-exports, imports for their side effects, and
@@ -81,6 +80,22 @@ test('every public export is documented on exactly one page', () => {
     assert.ok(props.exports[name], `A page lists ${name}, which envUI does not export.`);
 });
 
+test("every component's page names each of its color properties", () => {
+  const parts = JSON.parse(
+    readFileSync(new URL('../docs/generated/parts.json', import.meta.url), 'utf8'),
+  );
+  for (const [name, entry] of Object.entries(parts.components)) {
+    if (!entry.colors?.length) continue;
+    const page = documents.find((document) => document.frontmatter?.components?.includes(name));
+    assert.ok(page, `${name} has color properties but no page`);
+    for (const { property } of entry.colors)
+      assert.ok(
+        page.markdown.includes(`\`${property}\``),
+        `${page.path} names ${name}'s color property ${property}, under Anatomy's Colors`,
+      );
+  }
+});
+
 test('every alternative a page suggests has a page to link to', () => {
   // As the catalogue links them: a part such as Menu.Item goes to its namespace's page.
   const documented = new Set(
@@ -102,15 +117,6 @@ test('pages not on the template are listed, and only those', () => {
     [...unconverted].sort(),
     'A converted page leaves `unconverted` in this test; a new page starts on the template.',
   );
-});
-
-test('only pages not on the template keep a preview family in ComponentPreview.tsx', () => {
-  const source = readFileSync(
-    new URL('../apps/catalogue/src/previews/ComponentPreview.tsx', import.meta.url),
-    'utf8',
-  );
-  const cases = [...source.matchAll(/case '([a-z-]+)':/g)].map((match) => match[1]);
-  assert.deepEqual(cases.sort(), [...unconverted].sort());
 });
 
 test('pages on the template list no props by hand', () => {

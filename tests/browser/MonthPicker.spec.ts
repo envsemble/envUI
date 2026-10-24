@@ -223,3 +223,27 @@ test('disabled, read-only and invalid fields', async ({ page }) => {
   await expect(invalid).toHaveAttribute('aria-invalid', 'true');
   await expect(invalid).toHaveAccessibleDescription('Choose a later month.');
 });
+
+test('the actions under the months keep their labels on one line, also on a phone', async ({
+  page,
+}) => {
+  for (const width of [1440, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.getByRole('combobox', { name: 'Report month', exact: true }).click();
+    const popup = page.locator('.env-date-picker-popup[data-open]');
+    await expect
+      .poll(() =>
+        popup.locator('.env-date-picker-actions .env-button').evaluateAll((buttons) =>
+          buttons.map((button) => {
+            const range = document.createRange();
+            range.selectNodeContents(button);
+            const tops = new Set([...range.getClientRects()].map((rect) => Math.round(rect.top)));
+            return `${button.textContent}:${tops.size}`;
+          }),
+        ),
+      )
+      .toEqual(['This month:1', 'Clear:1']);
+    await page.keyboard.press('Escape');
+    await expect(popup).toHaveCount(0);
+  }
+});

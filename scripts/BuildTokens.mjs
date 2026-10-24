@@ -42,6 +42,7 @@ export function migrationMapSection(migration) {
           ? { value: entry.value }
           : { to: entry.cssVariable }),
       ...(entry.component && { component: entry.component }),
+      ...(entry.colorPropertyOf && { colorPropertyOf: entry.colorPropertyOf }),
       ...(entry.note && { note: entry.note }),
     };
   return section;

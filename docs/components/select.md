@@ -29,14 +29,6 @@ avoidWhen:
     use: Menu
   - text: A date, or a date and time.
     use: DatePicker
-related:
-  - combobox
-  - radio
-  - segmented-control
-  - menu
-  - text-field
-  - list
-  - accessibility
 components:
   - Select
 ---
@@ -75,9 +67,12 @@ A row's title names its select with `aria-label`.
 
 ## Variants
 
-```tsx example=TriggerStyles
+```tsx variants=TriggerStyles
 
 ```
+
+1. **Secondary**
+2. **Outline**
 
 | Variant     | Use for                                           |
 | ----------- | ------------------------------------------------- |
@@ -117,14 +112,6 @@ A row's title names its select with `aria-label`.
 
 Name the select with a short noun, and say in a disabled option's label why it is unavailable.
 
-```tsx do=ErrorSaysWhatToDo caption="An error that says what to do."
-
-```
-
-```tsx dont=ErrorSaysWhatFailed caption="An error that only says what failed."
-
-```
-
 ## Anatomy
 
 ```tsx anatomy=SelectAnatomy
@@ -145,6 +132,10 @@ Name the select with a short noun, and say in a disabled option's label why it i
 1. **List** (`env-select-popup`)
 2. **Option** (`env-select-item`, `items`)
 3. **Check** (`env-select-item-indicator`)
+
+### Colors
+
+`--env-select-container`, `--env-select-content` and `--env-select-outline` set the colors of one Select, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Accessibility
 

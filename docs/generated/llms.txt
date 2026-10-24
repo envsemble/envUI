@@ -4,12 +4,13 @@
 
 Search envUI before writing any UI element; propose an envUI addition instead of a local copy. Each component page has when to use it and what to use instead, accessibility, examples as source and props generated from the TypeScript declarations. manifest.json holds the same as data, and `npx --no envui mcp` serves it to agents over MCP.
 
-Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are public and versioned: CSS may target them, and each component below names its root classes. Component tokens, such as `--env-card-padding`, are private; use the system tokens. docs/generated/parts.json lists every part with what it is.
+Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color properties (`--env-<component>-<role>`, such as `--env-button-container`) are public and versioned: CSS may target the classes and attributes, and set the color properties on one instance, and each component below names its root classes. Other component tokens, such as `--env-card-padding`, are private; use the system tokens. docs/generated/parts.json lists every part and color property with what it is.
 
 ## Setup and workflows
 
 - [Install the private package](docs/setup.md): Registry access, styles, themes and public entry points.
 - [Migrate an interface to envUI](docs/migration.md): Replace existing UI while preserving application behavior.
+- [Customize colors](docs/customizing-colors.md): Give one element its own colors through its color properties, or recolor an area with a nested Theme.
 - [For agents](docs/agent-tooling.md): The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
 - [Dev mode](docs/dev-mode.md): Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
 
@@ -42,13 +43,12 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 ## Components: Actions
 
 - [Button](docs/components/button.md): Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group. Also: IconButton, ConfirmButton, CopyButton, ButtonGroup. Parts: `.env-button`, `.env-icon-button`, `.env-confirm-button`, `.env-copy-button`, `.env-button-group`.
-- [SearchTrigger](docs/components/search-trigger.md): The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon. Parts: `.env-search-trigger`.
 - [Toolbar](docs/components/toolbar.md): A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys. Parts: `.env-toolbar`.
 - [Link](docs/components/link.md): A destination inside running text, underlined by default, routed by the application. Parts: `.env-link`.
 
 ## Components: Forms & selection
 
-- [ColorPicker](docs/components/color-picker.md): A color area, a hue slider and a HEX field for choosing an opaque color, and a color swatch that shows one. Also: ColorSwatch. Parts: `.env-color-picker`, `.env-color-swatch`.
+- [ColorPicker](docs/components/color-picker.md): A compact color picker on React Aria's color hooks, with hex, RGB and HSL, optional alpha, copy, an eyedropper and preset swatches; a button that opens it in a popover; and a color swatch that shows a color in a format. Also: ColorPickerButton, ColorSwatch. Parts: `.env-color-picker`, `.env-color-picker-button`, `.env-color-swatch`.
 - [TextField](docs/components/text-field.md): Single-line inputs, search fields and multiline textareas share labels, guidance and states. Also: SearchField, Textarea. Parts: `.env-text-field`.
 - [Field](docs/components/field.md): The parts of a labelled form field, a label, a control, a description and an error, for a control envUI has no field for. Parts: `.env-field`.
 - [Composer](docs/components/composer.md): The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply. Parts: `.env-composer`.
@@ -56,12 +56,12 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Switch](docs/components/switch.md): An on/off setting that takes effect as soon as it changes. Parts: `.env-switch`.
 - [Radio](docs/components/radio.md): One choice from a few options shown together, side by side or as selectable rows. Also: RadioGroup. Parts: `.env-radio-group`, `.env-radio`.
 - [Select](docs/components/select.md): One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error. Parts: `.env-select`.
-- [SegmentedControl](docs/components/segmented-control.md): One choice among a few items on a pill rail, such as views or filters of the same content. Parts: `.env-segmented-control`.
+- [SegmentedControl](docs/components/segmented-control.md): One choice among a few items, as connected outlined segments, such as views or filters of the same content. Parts: `.env-segmented-control`.
 - [Combobox](docs/components/combobox.md): A text field that filters a list of options as people type, to choose one option or, as chips, several. Parts: `.env-combobox`.
 - [DatePicker](docs/components/date-picker.md): A field that opens a calendar to choose a date, or a date and time, and the calendar on its own. Also: Calendar. Parts: `.env-date-picker`, `.env-calendar`.
 - [TimePicker](docs/components/time-picker.md): A field that opens wheels of hours and minutes to choose a time of day, on the locale's own clock. Parts: `.env-time-picker`.
 - [MonthPicker](docs/components/month-picker.md): A field that opens a year of months to choose a month, such as a billing or reporting period. Parts: `.env-month-picker`.
-- [Slider](docs/components/slider.md): A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard. Parts: `.env-slider`.
+- [Slider](docs/components/slider.md): A value in a known range, chosen by pressing or dragging along a field, or with the keyboard. Parts: `.env-slider`.
 - [DropZone](docs/components/drop-zone.md): An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files. Parts: `.env-drop-zone`.
 
 ## Components: Navigation
@@ -69,7 +69,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Bar](docs/components/bar.md): The navigation bar for compact windows, such as phones, with three to five destinations, each an icon above its label. Parts: `.env-bar`.
 - [Rail](docs/components/rail.md): The navigation rail for medium windows, such as tablets, a narrow column of destinations, each an icon above a short label. Parts: `.env-rail`.
 - [Drawer](docs/components/drawer.md): The navigation drawer for expanded and larger windows, a column of destinations with icons, labels, counts and group headings. Parts: `.env-drawer`.
-- [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a rail of buttons. Parts: `.env-tabs`.
+- [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a row of text tabs. Parts: `.env-tabs`.
 - [Pager](docs/components/pager.md): Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content. Parts: `.env-pager`.
 - [TopBar](docs/components/top-bar.md): The bar at the top of an application or a screen, with start content, a title that truncates first and actions, which can stick, show page progress or be the window's title bar. Parts: `.env-top-bar`.
 - [Tree](docs/components/tree.md): A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu. Parts: `.env-tree`.
@@ -86,7 +86,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Badge](docs/components/badge.md): Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change. Also: DiffStat. Parts: `.env-badge`, `.env-diff-stat`.
 - [Table](docs/components/table.md): Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers. Parts: `.env-table`.
 - [DescriptionList](docs/components/description-list.md): The facts about one thing, as labels and their values, beside each other or stacked by the list's own width. Parts: `.env-description-list`.
-- [Kbd](docs/components/kbd.md): Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus. Parts: `.env-kbd`.
+- [Kbd](docs/components/kbd.md): Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus. Also: useModifierKey. Parts: `.env-kbd`.
 - [AnimatedNumber](docs/components/animated-number.md): A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed. Parts: `.env-animated-number`.
 - [Rating](docs/components/rating.md): A read-only rating as stars filled in half steps, named once for assistive technology. Parts: `.env-rating`.
 - [RelativeTime](docs/components/relative-time.md): A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip. Also: formatRelativeTime. Parts: `.env-relative-time`.
@@ -132,6 +132,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [App frame](docs/patterns/app-frame.md): Frame an application's screens with a Scaffold, a TopBar and the same destinations as a Bar, a Rail or a Drawer, by the width of the window.
 - [Account menu](docs/patterns/account-menu.md): Show who is signed in and give them their own things, such as account settings, the theme and Sign out, from their avatar.
 - [Organization switcher](docs/patterns/organization-switcher.md): Show the active organization and switch between the person's organizations, from a Menu at the top of the navigation or in the top bar.
+- [Search trigger](docs/patterns/search-trigger.md): The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, built from a Button with the search icon, its label and the keys, or an IconButton in a narrow header.
 - [Window frame](docs/patterns/window-frame.md): Frame an installed application's window that draws its own title bar, with the title bar across the top and the content scrolling below it.
 - [Feature cards](docs/patterns/feature-cards.md): Introduce a feature with an icon, a heading, a sentence and the one action that starts it, in a Card.
 - [Filtering and search](docs/patterns/filtering.md): Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
@@ -143,5 +144,5 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Full documentation](llms-full.txt): every page above in one file, with examples and props.
 - [Manifest](manifest.json): components, exports, props, examples, patterns and tokens as JSON.
 - [Props](docs/generated/props.json): the props of every export.
-- [Parts](docs/generated/parts.json): the part classes and state attributes of every component, with what each part is.
+- [Parts](docs/generated/parts.json): the part classes, state attributes and color properties of every component, with what each is.
 - [Icons](icon-manifest.json): every icon, imported from `@envsemble/envui/icons/<Name>`.

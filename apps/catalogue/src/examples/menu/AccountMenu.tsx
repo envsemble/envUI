@@ -18,10 +18,12 @@ export default function AccountMenu() {
         }
       >
         <Menu.Header>
-          <Column gap={1} align="center">
+          <Column align="center" gap={1} padding={2} style={{ textAlign: 'center' }}>
             <Avatar name="Alex Morgan" size="lg" />
             <Text>Alex Morgan</Text>
-            <Text variant="body-sm">alex@example.com</Text>
+            <Text variant="body-sm" emphasis="muted">
+              alex@example.com
+            </Text>
           </Column>
         </Menu.Header>
         <Menu.Item href="/account" icon={<ManageAccounts />}>

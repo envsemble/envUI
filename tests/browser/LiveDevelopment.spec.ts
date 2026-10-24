@@ -9,14 +9,14 @@ test('public component, stylesheet, new export and Markdown documentation update
   const buttonSource = resolve('packages/ui/src/actions/internal/ButtonBase.tsx');
   const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
-  const example = resolve('apps/catalogue/src/examples/text-field/Variants.tsx');
+  const example = resolve('apps/catalogue/src/examples/text-field/FieldsBesideButtons.tsx');
   const documentation = resolve('docs/components/text-field.md');
   const newComponent = resolve('packages/ui/src/LiveAcceptance.tsx');
   const paths = [buttonSource, stylesheet, index, example, documentation];
   const originals = await Promise.all(paths.map((path) => readFile(path, 'utf8')));
   const version = await readFile('packages/ui/package.json', 'utf8');
   try {
-    await page.goto(`${catalogueUrl}/#/components/text-field/overview`);
+    await page.goto(`${catalogueUrl}/components/text-field`);
     await page.evaluate(() => {
       (window as unknown as { liveProof: string }).liveProof = 'same-document';
     });
@@ -26,7 +26,10 @@ test('public component, stylesheet, new export and Markdown documentation update
       .getByRole('textbox', { name: 'Project name', exact: true })
       .and(page.locator('[name="project"]'));
     await projectName.fill('Preserved draft');
-    const overviewTab = page.getByRole('tab', { name: 'Overview', exact: true });
+    // A Button of the site's own: the page's link to the Docs.
+    const docsLink = page
+      .locator('.docs-page-actions')
+      .getByRole('link', { name: 'Docs', exact: true });
     await writeFile(
       buttonSource,
       originals[0].replace(
@@ -34,9 +37,9 @@ test('public component, stylesheet, new export and Markdown documentation update
         '<ActionElement$1{...props} data-env-live="updated"',
       ),
     );
-    await expect(overviewTab).toHaveAttribute('data-env-live', 'updated');
+    await expect(docsLink).toHaveAttribute('data-env-live', 'updated');
     await writeFile(stylesheet, `${originals[1]}\n.env-button { padding-inline-start: 1.5rem; }\n`);
-    await expect(overviewTab).toHaveCSS('padding-left', '24px');
+    await expect(docsLink).toHaveCSS('padding-left', '24px');
     await expect(projectName).toHaveValue('Preserved draft');
     expect(await page.evaluate(() => (window as unknown as { liveProof: string }).liveProof)).toBe(
       'same-document',
@@ -58,7 +61,7 @@ test('public component, stylesheet, new export and Markdown documentation update
     await writeFile(example, editedExample);
     await expect(
       page
-        .getByRole('group', { name: 'Variants example', exact: true })
+        .getByRole('group', { name: 'Sizes example', exact: true })
         .getByTestId('live-new-component'),
     ).toHaveText('New shared component');
     // A guideline added to the Markdown shows on the page.

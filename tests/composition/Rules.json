@@ -18,6 +18,7 @@
       "forms/internal/markdown/": "composites",
       "navigation/panel-dock/": "shell",
       "diff/": "composites",
+      "color/": "composites",
       "rich-text/": "composites",
       "dev/": "shell"
     },
@@ -25,6 +26,7 @@
       "index.ts": "entries",
       "content.ts": "entries",
       "diff.ts": "entries",
+      "color.ts": "entries",
       "rich-text.ts": "entries",
       "theme-bootstrap.ts": "entries",
       "dev.ts": "entries",
@@ -41,7 +43,6 @@
       "actions/ButtonGroup.tsx": "base",
       "actions/ConfirmButton.tsx": "composites",
       "actions/CopyButton.tsx": "composites",
-      "actions/SearchTrigger.tsx": "composites",
       "actions/Link.tsx": "composites",
       "actions/SegmentedControl.tsx": "base",
       "actions/Toolbar.tsx": "composites",
@@ -54,7 +55,6 @@
       "content/Card.tsx": "base",
       "content/Code.tsx": "base",
       "content/CodeBlock.tsx": "composites",
-      "content/ColorSwatch.tsx": "base",
       "content/DescriptionList.tsx": "base",
       "content/DiffStat.tsx": "base",
       "content/Disclosure.tsx": "base",
@@ -90,7 +90,6 @@
       "feedback/toast/useToastController.ts": "composites",
       "forms/Calendar.tsx": "composites",
       "forms/Checkbox.tsx": "base",
-      "forms/ColorPicker.tsx": "composites",
       "forms/Combobox.tsx": "composites",
       "forms/Composer.tsx": "composites",
       "forms/DatePicker.tsx": "composites",
@@ -173,7 +172,11 @@
       "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "internal/FileInput.tsx": ["input"],
       "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
-      "forms/internal/ColorPlane.tsx": ["role=\"slider\""],
+      "color/ColorPickerButton.tsx": ["button"],
+      "color/internal/ColorArea.tsx": ["input"],
+      "color/internal/ColorFields.tsx": ["input"],
+      "color/internal/ColorSlider.tsx": ["input"],
+      "color/internal/SwatchList.tsx": ["role=\"listbox\"", "role=\"option\""],
       "dev/ui/FrameHandle.tsx": ["role=\"slider\""],
       "feedback/Tooltip.tsx": [
         "role=\"button\"",
@@ -383,7 +386,17 @@
         "styles": ["Popup.css"]
       },
       "ColorPicker": {
-        "modules": ["forms/internal/ColorPlane.tsx"]
+        "modules": [
+          "color/ColorPickerButton.tsx",
+          "color/internal/ColorArea.tsx",
+          "color/internal/ColorSlider.tsx",
+          "color/internal/ColorFields.tsx",
+          "color/internal/ColorLocale.tsx",
+          "color/internal/SwatchList.tsx",
+          "color/internal/colorValue.ts",
+          "color/internal/useColorState.ts",
+          "color/internal/useEyeDropper.ts"
+        ]
       },
       "DatePicker": {
         "modules": [
@@ -465,6 +478,12 @@
           "note": "Under a coarse pointer a field's end actions keep their size, and an empty pseudo-element reaches their hit area to the touch height within the field."
         },
         {
+          "stylesheet": "DatePicker.css",
+          "classes": ["env-button"],
+          "properties": ["white-space", "overflow-wrap"],
+          "note": "The actions under a date, month or time popup, such as Today, Now and Clear, keep their labels on one line, so a row too narrow for them wraps whole buttons rather than the words inside one."
+        },
+        {
           "stylesheet": "Code.css",
           "classes": ["env-spinner"],
           "note": "A code diff pads its loading state."
@@ -509,6 +528,18 @@
           ],
           "properties": ["z-index", "overflow"],
           "note": "Where the document scrolls, Panes in the body are as tall as their content, so a Scaffold fixes their supporting sheet and its scrim to the window at the modal layers, as a Sheet is, and lets the panes grow with the page rather than scroll; it never restyles them."
+        },
+        {
+          "stylesheet": "Sheet.css",
+          "classes": ["env-dialog-content"],
+          "properties": [],
+          "note": "A resizable side sheet makes its content, which scrolls with the sheet, at least as tall as the sheet and the containing block of its resize handle, so the handle runs down the whole edge; it never restyles the content."
+        },
+        {
+          "stylesheet": "ColorSwatch.css",
+          "classes": ["env-icon-button"],
+          "properties": ["background", "border-radius"],
+          "note": "An icon button in the default secondary variant that holds a swatch alone, read with :has(), is a rounded square with no fill at rest, so no round fill clashes with the square sample; it keeps Button's custom fill and its state fills on hover, focus and press."
         }
       ]
     }

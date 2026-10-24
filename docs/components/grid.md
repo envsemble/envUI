@@ -26,12 +26,10 @@ avoidWhen:
     use: Table
   - text: Two panes people resize, or a list beside its detail.
     use: Panes
-related:
-  - column
-  - row
-  - box
-  - card
-  - responsive
+  - text: One block with an inset or a size container, and no columns.
+    use: Box
+  - text: A layout that changes by the window class rather than by what fits.
+    see: responsive
 components:
   - Grid
 ---

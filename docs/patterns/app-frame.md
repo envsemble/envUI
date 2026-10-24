@@ -20,6 +20,8 @@ avoidWhen:
     see: window-frame
   - text: Moving between views of one object, such as its overview and its activity.
     use: Tabs
+  - text: Choosing between a bar, a rail and a drawer.
+    see: navigation
 composes:
   - Scaffold
   - TopBar
@@ -28,7 +30,7 @@ composes:
   - Drawer
   - Sheet
   - Panes
-  - SearchTrigger
+  - Tooltip
   - CommandPalette
   - Menu
   - AvatarButton
@@ -41,19 +43,13 @@ composes:
   - Row
   - Column
   - Text
-related:
-  - scaffold
-  - top-bar
-  - drawer
-  - navigation
-  - account-menu
 ---
 
 # App frame
 
 ## Overview
 
-The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, search and the [account menu](account-menu.md), one array of destinations, and the page in the body.
+The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, [search](search-trigger.md) and the [account menu](account-menu.md), one array of destinations, and the page in the body.
 
 ```tsx example=AppFrame stage=shaded
 
@@ -102,7 +98,7 @@ Side content that is not navigation goes in a supporting pane of [Panes](../comp
 ```
 
 1. **Top bar** (`env-top-bar`)
-2. **Search** (`env-search-trigger`)
+2. **Search** (`env-top-bar-actions > env-icon-button`), the [search trigger](search-trigger.md)
 3. **Account menu** (`env-avatar-button`)
 4. **Navigation** (`env-rail`)
 5. **Page header** (`env-page-header`)
@@ -120,7 +116,7 @@ The bar on a compact width, the rail on a medium one and the drawer from expande
 
 ## Accessibility
 
-Tab reaches the skip links first, then the top bar, the navigation that shows and the body. After a destination opens its page, move focus to the body or the page's heading.
+<kbd>Tab</kbd> reaches the skip links first, then the top bar, the navigation that shows and the body. After a destination opens its page, move focus to the body or the page's heading.
 
 ### envUI provides
 
