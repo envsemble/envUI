@@ -14636,22 +14636,27 @@
         "grid",
         "box",
         "panes",
-        "scale",
+        "spacing",
         "card",
         "spinner",
         "empty-states",
         "command-palette",
-        "customizing-colors",
+        "customizing",
         "colors"
       ]
     },
     {
-      "name": "customizing-colors",
-      "title": "Customize colors",
+      "name": "customizing",
+      "title": "Customize and extend",
       "group": "Setup and workflows",
-      "summary": "Give one element its own colors through its color properties, or recolor an area with a nested Theme.",
-      "doc": "docs/customizing-colors.md",
-      "related": []
+      "summary": "Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.",
+      "doc": "docs/customizing.md",
+      "related": [
+        "surface",
+        "row",
+        "column",
+        "grid"
+      ]
     },
     {
       "name": "agent-tooling",
@@ -14693,10 +14698,10 @@
         "contrast"
       ],
       "related": [
-        "scale",
+        "spacing",
         "setup",
+        "customizing",
         "migration",
-        "customizing-colors",
         "surface",
         "button",
         "drawer",
@@ -14709,13 +14714,13 @@
       "name": "typography",
       "title": "Typography",
       "group": "Foundations",
-      "summary": "Shared styles for headings, body copy and supporting text.",
+      "summary": "A few text styles, each with one job, from a page's hero line to small notes.",
       "doc": "docs/foundations/typography.md",
       "exports": [
         "Text"
       ],
       "related": [
-        "scale",
+        "spacing",
         "colors",
         "column",
         "card"
@@ -14723,43 +14728,42 @@
     },
     {
       "name": "spacing",
-      "title": "Spacing & shape",
+      "title": "Spacing & density",
       "group": "Foundations",
-      "summary": "How space groups things, controls line up and corners say what a thing is.",
+      "summary": "How space groups things, controls line up, the compact scale and tighter rows, and what corners say.",
       "doc": "docs/foundations/spacing.md",
-      "related": [
+      "aliases": [
         "scale",
+        "density",
+        "compact",
+        "comfortable",
+        "control size",
+        "row density",
+        "corners",
+        "radius",
+        "touch target"
+      ],
+      "related": [
+        "typography",
         "responsive",
         "column",
         "row",
         "grid",
         "surface",
         "card",
-        "list",
-        "composition"
-      ]
-    },
-    {
-      "name": "scale",
-      "title": "Scale & density",
-      "group": "Foundations",
-      "summary": "The comfortable and compact app scales, control sizes and the row density of data components.",
-      "doc": "docs/foundations/scale.md",
-      "related": [
-        "spacing",
-        "typography",
-        "colors",
         "button",
         "text-field",
         "table",
-        "tree"
+        "list",
+        "tree",
+        "customizing"
       ]
     },
     {
       "name": "responsive",
-      "title": "Layout & stacking",
+      "title": "Adapting to width",
       "group": "Foundations",
-      "summary": "Window classes, container queries, measuring a container and the stacking order of frames and popups.",
+      "summary": "Components follow the space they sit in, and four window classes name where a layout changes.",
       "doc": "docs/foundations/responsive.md",
       "exports": [
         "useContainerSize"
@@ -14787,7 +14791,8 @@
       ],
       "related": [
         "spacing",
-        "scale",
+        "panes",
+        "page",
         "dialog",
         "menu",
         "tooltip",
@@ -14795,26 +14800,10 @@
       ]
     },
     {
-      "name": "composition",
-      "title": "Composition & extension",
-      "group": "Foundations",
-      "summary": "Build product interfaces from shared primitives and existing components.",
-      "doc": "docs/foundations/composition.md",
-      "related": [
-        "surface",
-        "row",
-        "column",
-        "grid",
-        "card",
-        "spacing",
-        "colors"
-      ]
-    },
-    {
       "name": "icons",
-      "title": "Icons & assets",
+      "title": "Icons",
       "group": "Foundations",
-      "summary": "Local Material Symbols and official brand assets, ready to use.",
+      "summary": "Thousands of Material Symbols that follow their text, outlined or filled.",
       "doc": "docs/foundations/icons.md",
       "exports": [
         "Icon"
@@ -14823,9 +14812,7 @@
         "icon",
         "Material Symbols",
         "symbol",
-        "logo",
-        "BrandLogo",
-        "EnvUILogo"
+        "logo"
       ],
       "related": [
         "button",
@@ -14838,14 +14825,17 @@
       "name": "accessibility",
       "title": "Accessibility",
       "group": "Foundations",
-      "summary": "Keyboard access, visible focus and clear guidance across shared controls.",
+      "summary": "What every component does for keyboard, screen readers, contrast, motion and touch, and what an app still supplies.",
       "doc": "docs/foundations/accessibility.md",
       "related": [
+        "spacing",
+        "customizing",
         "text-field",
         "select",
         "tabs",
         "dialog",
-        "toast"
+        "toast",
+        "colors"
       ]
     },
     {

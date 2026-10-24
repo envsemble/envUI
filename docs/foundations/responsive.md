@@ -131,7 +131,7 @@ TypeScript declarations provide the complete public API.
 
 - [Spacing & density](../foundations/spacing.md)
 - [Panes](../components/panes.md)
-- [PageHeader](../components/page-header.md)
+- [Page](../components/page.md)
 - [Dialog](../components/dialog.md)
 - [Menu](../components/menu.md)
 - [Tooltip](../components/tooltip.md)
