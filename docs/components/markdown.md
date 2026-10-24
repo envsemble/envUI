@@ -18,8 +18,8 @@ aliases:
   - text editor
   - write and preview
 useWhen:
-  - Content written in Markdown is shown, such as a saved description, a note or a document.
-  - People write formatted prose as Markdown, with a toolbar and a preview of the result (MarkdownEditor).
+  - Content written in Markdown, such as a saved note or a document
+  - Writing formatted prose, with a toolbar and a preview (MarkdownEditor)
 avoidWhen:
   - text: Plain text over several lines, without formatting.
     use: Textarea
@@ -38,15 +38,13 @@ components:
 
 ## Overview
 
-Markdown and MarkdownEditor come from `@envsemble/envui/content`.
-
 ```tsx example=ProjectNote
 
 ```
 
 ### Write and preview
 
-MarkdownEditor is a textarea with a formatting toolbar, undo and redo, and a Preview tab that renders with `previewProps`.
+MarkdownEditor is a text area with a formatting toolbar, undo and redo, and a Preview tab that shows the text as it will read.
 
 ```tsx example=EditDescription
 
@@ -54,7 +52,7 @@ MarkdownEditor is a textarea with a formatting toolbar, undo and redo, and a Pre
 
 ### Links
 
-`renderLink` renders links, such as to open some in a panel; modified clicks stay the browser's.
+Links can open the application's own way, such as in a panel, while clicks with a modifier key stay the browser's.
 
 ```tsx example=OpenInPanel
 
@@ -62,7 +60,7 @@ MarkdownEditor is a textarea with a formatting toolbar, undo and redo, and a Pre
 
 ### Your own elements
 
-`components` replaces how an element renders, here a quote as an Alert; `remarkPlugins` and `rehypePlugins` extend the rest.
+The application can change how an element renders, here a quote as an Alert, and extend what the Markdown can hold.
 
 ```tsx example=CustomElements
 
@@ -70,18 +68,26 @@ MarkdownEditor is a textarea with a formatting toolbar, undo and redo, and a Pre
 
 ### What it renders
 
-CommonMark with tables, strikethrough, task lists, automatic links and footnotes. Raw HTML is ignored, except keys written as `<kbd>`, which render as Kbd.
+Common Markdown with tables, strikethrough, task lists, automatic links and footnotes. Raw HTML is ignored, except keys, which render as Kbd.
+
+### Lists
 
 Lists take envUI's own markers rather than the browser's: a small tinted circle beside each item's first line, with a dot or the item's number in it, and room between items. A nested list's markers are quieter, without the circle's fill.
 
 ## Variants
 
-| Editor sizing | Use for                                                    |
-| ------------- | ---------------------------------------------------------- |
-| `fixed`       | A long document: the source keeps its height. The default. |
-| `content`     | A short description: the source grows with its text.       |
+### Editor sizing
 
-`toolbar` chooses the actions, in a fixed order, grouped by kind with a line between groups, and `onRequestLink` opens the application's own link picker.
+An editor keeps its height for a long document, or grows with its text for a short one.
+
+| Editor sizing       | Use for                                                    |
+| ------------------- | ---------------------------------------------------------- |
+| Fixed height        | A long document: the source keeps its height. The default. |
+| Grows with its text | A short description.                                       |
+
+### Toolbar
+
+The application chooses the toolbar's actions, which keep a fixed order, grouped by kind with a line between groups, and can offer a link picker of its own.
 
 ```tsx example=LinkPicker
 
@@ -89,12 +95,17 @@ Lists take envUI's own markers rather than the browser's: a small tinted circle 
 
 ## When to use
 
-- Set `headingOffset` so the document's first heading sits one level below the page's.
-- Don't render untrusted Markdown with a plugin that brings raw HTML back.
+### Headings
+
+Shift the document's headings so that its first sits one level below the page's own.
+
+### Untrusted text
+
+Markdown people write never brings raw HTML back: keep it out, also through extensions.
 
 ### Content
 
-- Give images alternative text in the source.
+Give images alternative text in the source.
 
 ## Anatomy
 
@@ -108,11 +119,13 @@ Lists take envUI's own markers rather than the browser's: a small tinted circle 
 4. **Source** (`env-markdown-source`)
 5. **Description** (`env-field-description`, `description`)
 
-A rendered document is `env-markdown`, and a table in it scrolls in `env-markdown-table`.
+A rendered document is a single part, in which each table scrolls in a region of its own.
 
 ## Accessibility
 
 ### Keyboard
+
+On Apple keyboards, <kbd>Cmd</kbd> replaces <kbd>Ctrl</kbd>.
 
 | Key                                                                         | Action                                                 |
 | --------------------------------------------------------------------------- | ------------------------------------------------------ |
@@ -121,8 +134,6 @@ A rendered document is `env-markdown`, and a table in it scrolls in `env-markdow
 | <kbd>Ctrl</kbd>+<kbd>B</kbd>, <kbd>I</kbd>, <kbd>K</kbd>                    | Bold, italic or a link, in the source.                 |
 | <kbd>Ctrl</kbd>+<kbd>Z</kbd>                                                | Undoes.                                                |
 | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>, <kbd>Ctrl</kbd>+<kbd>Y</kbd> | Redoes.                                                |
-
-On Apple keyboards, <kbd>Cmd</kbd> replaces <kbd>Ctrl</kbd>.
 
 ### envUI provides
 
@@ -136,6 +147,52 @@ On Apple keyboards, <kbd>Cmd</kbd> replaces <kbd>Ctrl</kbd>.
 - A `label` for MarkdownEditor.
 - Alternative text for images, and link text that names its destination.
 - Translated words through EnvUIProvider's `messages`.
+
+## In code
+
+### Usage
+
+Markdown and MarkdownEditor come from `@envsemble/envui/content`. Markdown renders the string in `children`: CommonMark with tables, strikethrough, task lists, automatic links and footnotes. Raw HTML is ignored, except keys written as `<kbd>`, which render as Kbd. `headingOffset` adds to the document's heading levels, capped at h6: set it so the first heading sits one level below the page's. `codeCopyable` gives each code block a copy button.
+
+```tsx source=ProjectNote
+
+```
+
+#### Links
+
+`renderLink` renders each link from its safe `href` and native anchor props, such as to open some in a panel; keep a real anchor with its destination, so modified clicks stay the browser's.
+
+```tsx source=OpenInPanel
+
+```
+
+#### Your own elements
+
+`components` replaces how an element renders, merged over envUI's own, with the application's winning; native props such as `id` and `className` reach the element. `remarkPlugins` run after envUI's own Markdown extensions, and `rehypePlugins` after raw HTML is dropped; envUI adds no rehype plugins of its own. Don't render untrusted Markdown with a plugin that brings raw HTML back.
+
+```tsx source=CustomElements
+
+```
+
+#### The editor
+
+MarkdownEditor is a Textarea with a toolbar and Write and Preview tabs. Leave it uncontrolled with `defaultValue`, which a form reset restores, or control it with `value` and `onValueChange`, which receives the whole source after typing, formatting, undo or redo; replacing `value` clears the undo history. It takes Textarea's `label`, `description`, `error` and `rows`, and `variant` is `outline`, the default, or `ghost`. `sizing` is `fixed`, the default, which keeps the height and scrolls, or `content`, which grows with the text. `preview={false}` hides the tabs, and `previewProps` passes `headingOffset`, `renderLink` and `codeCopyable` to the Markdown of the preview.
+
+```tsx source=EditDescription
+
+```
+
+#### Toolbar and link picker
+
+`toolbar` lists the actions, of `heading`, `bold`, `italic`, `inline-code`, `bullet-list`, `numbered-list`, `quote`, `code-block` and `link`, shown in that order, grouped by kind; undo and redo come with a visible toolbar, and `toolbar={false}` hides it. `onRequestLink` opens the application's own link picker: it receives the `selectedText` and returns a MarkdownLink, `{ label, href }`, or `null` to cancel, also as a promise.
+
+```tsx source=LinkPicker
+
+```
+
+### Composition
+
+The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the toolbar, a Toolbar in `env-editor-toolbar`, the source, `env-markdown-source`, and the description, `env-field-description`. `className` and `style` reach the root, and `ref` and the other native props the textarea. A rendered document is `env-markdown`, with `env-prose`, and a table in it scrolls in `env-markdown-table`. Lists in it take envUI's list markers, a tinted circle with a dot or the item's number.
 
 ## Changelog
 

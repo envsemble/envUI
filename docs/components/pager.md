@@ -15,8 +15,8 @@ aliases:
   - up next
   - next page link
 useWhen:
-  - The pages of an ordered sequence, such as a guide, a handbook or release notes, link to their neighbours after the content.
-  - A reader moves on to the next page of reading content, and may go back a page.
+  - Links to the neighbouring pages of a guide, a handbook or release notes
+  - Moving on to the next page of reading, or back a page
 avoidWhen:
   - text: Moving through the pages of a long list or table.
     use: Pagination
@@ -48,7 +48,7 @@ At either end of the sequence, leave out the missing destination: a single link 
 
 ### Compose the parts
 
-Pager.Previous and Pager.Next as children of Pager.Root make the same pair, and also stand alone.
+The previous and next links are parts of their own too, which make the same pair together and also stand alone.
 
 ```tsx example=ComposedParts
 
@@ -64,8 +64,9 @@ Pager.Previous and Pager.Next as children of Pager.Root make the same pair, and 
 
 ```
 
-- Keep the order of the sequence the same as in the navigation that lists its pages.
-- Don't mix the `previous` and `next` props with the parts in one pager.
+### Order
+
+Keep the order of the sequence the same as in the navigation that lists its pages.
 
 ## Anatomy
 
@@ -106,6 +107,28 @@ The links sit side by side while they fit; in less room each takes a centred row
 
 - An `aria-label` that names the sequence where the page has several navigation landmarks.
 - The routing behind `href`, through `LinkProvider`.
+
+## In code
+
+### Usage
+
+Pager.Root takes the `previous` and `next` destinations, each the props of its link: an `href`, which renders through the application's router link from `LinkProvider`, the destination's title as `children`, and an optional decorative `icon`, such as ArrowBack before the previous title and ArrowForward after the next. On the first or last page of the sequence, leave one out or pass `null`, and the single link stays centred. `aria-label` names the landmark where a page has several.
+
+```tsx source=PreviousAndNext
+
+```
+
+#### Compose the parts
+
+Pager.Previous and Pager.Next, as children of Pager.Root, make the same pair, and also stand alone. They render between the `previous` prop's link and the `next` prop's, but don't mix the props and the parts in one pager. Each link's `rel` is `prev` or `next` by default.
+
+```tsx source=ComposedParts
+
+```
+
+### Composition
+
+The pager is the `nav` landmark `env-pager`; each link is `env-pager-link-previous` or `env-pager-link-next`, with its icon, its direction label, `env-pager-link-label`, and the title, `env-pager-link-title`. The direction labels and the landmark's name come from EnvUIProvider's `messages.pager`.
 
 ## Changelog
 

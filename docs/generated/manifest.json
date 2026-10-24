@@ -252,9 +252,9 @@
         "stacked actions"
       ],
       "useWhen": [
-        "Content runs top to bottom with even space between, such as a heading, text and a form.",
-        "Sections and their contents need different spacing, by nesting columns with different gaps.",
-        "Actions in a narrow pane need the whole width for their labels, stacked with fullWidth buttons."
+        "Content from top to bottom with even space, such as a heading, text and a form",
+        "Sections and their contents spaced apart differently, as nested columns",
+        "Actions stacked across the whole width of a narrow pane"
       ],
       "avoidWhen": [
         {
@@ -292,13 +292,13 @@
         {
           "name": "ProjectDetails",
           "title": "Project details",
-          "description": "Like Row, Grid and Box, Column sizes to its content and never paints, and its children need no margins.",
+          "description": "Like Row, Grid and Box, Column sizes to its content and has no fill or edge of its own, and its children need no margins.",
           "file": "docs/examples/column/ProjectDetails.tsx"
         },
         {
           "name": "CenteredContent",
           "title": "Alignment",
-          "description": "`align` keeps each child at its own width, at the `start`, `center` or `end`; the default, `stretch`, makes each as wide as the column. Buttons, chips and badges keep their own width in any case.",
+          "description": "Each child is as wide as the column by default, or keeps its own width at the start, the middle or the end. Buttons, chips and badges keep their own width in any case.",
           "file": "docs/examples/column/CenteredContent.tsx"
         },
         {
@@ -3888,8 +3888,8 @@
         "comment box"
       ],
       "useWhen": [
-        "People write a message in a conversation, such as a chat, a comment thread or a prompt, and send it with Enter.",
-        "A reply runs after a message is sent and people may stop it (`running`, `onStop`)."
+        "A message in a conversation, such as a chat, a comment or a prompt",
+        "A reply that runs after a send, which people may stop"
       ],
       "avoidWhen": [
         {
@@ -3927,24 +3927,24 @@
         {
           "name": "PendingSend",
           "title": "Pending send",
-          "description": "While `pending`, the next send waits; the field stays editable and keeps focus.",
+          "description": "While a send is in progress, the next one waits; the field stays editable and keeps focus.",
           "file": "docs/examples/composer/PendingSend.tsx"
         },
         {
           "name": "FormSubmit",
           "title": "Form submit",
-          "description": "Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the form, which sends the text under `name`.",
+          "description": "A composer can send through its form instead: <kbd>Enter</kbd> and the send button submit the form, with the text among its values.",
           "file": "docs/examples/composer/FormSubmit.tsx"
         },
         {
           "name": "StartAndFooter",
-          "title": "Start and footer",
-          "description": "",
+          "title": "Layouts",
+          "description": "A composer is its field alone, or has a row below the field with controls at its start and the send button at its end, and a note under it.",
           "file": "docs/examples/composer/StartAndFooter.tsx"
         },
         {
           "name": "PendingStaysEditable",
-          "title": "Do: pending while a send is in progress, so people can keep writing.",
+          "title": "Do: Wait while a send is in progress, so people can keep writing.",
           "description": "",
           "file": "docs/examples/composer/PendingStaysEditable.tsx"
         },
@@ -4200,8 +4200,8 @@
         "setting toggle"
       ],
       "useWhen": [
-        "A setting turns on or off and takes effect at once, such as e-mail notifications or showing completed tasks.",
-        "Each row of a settings list turns one setting on or off."
+        "A setting that applies at once, such as e-mail notifications",
+        "One setting in each row of a settings list"
       ],
       "avoidWhen": [
         {
@@ -4245,13 +4245,13 @@
         {
           "name": "ShowCompleted",
           "title": "Show completed",
-          "description": "Apply the setting from `onCheckedChange`.",
+          "description": "The setting applies as soon as the switch changes, with no Save button.",
           "file": "docs/examples/switch/ShowCompleted.tsx"
         },
         {
           "name": "SettingsRows",
           "title": "Settings rows",
-          "description": "In a row, the row's title names the switch with `aria-labelledby`, and its detail describes it.",
+          "description": "In a row, the row's title names the switch, and its detail describes it.",
           "file": "docs/examples/switch/SettingsRows.tsx"
         },
         {
@@ -4615,8 +4615,8 @@
         "choose from a list"
       ],
       "useWhen": [
-        "People choose one of several known options, such as a role, a sort order or a time zone, and the choice can stay collapsed.",
-        "A setting in a row or a toolbar takes one of a few values, such as an e-mail digest's frequency or a zoom level."
+        "One of several known options, such as a role, a sort order or a time zone",
+        "A setting in a row or a toolbar, such as a digest's frequency or a zoom level"
       ],
       "avoidWhen": [
         {
@@ -4660,13 +4660,13 @@
         {
           "name": "InviteMember",
           "title": "Invite member",
-          "description": "With `name`, a hidden input submits the chosen value, and a form reset restores `defaultValue`.",
+          "description": "The chosen value is sent with its form, and resetting the form restores the choice it started with.",
           "file": "docs/examples/select/InviteMember.tsx"
         },
         {
           "name": "SettingRows",
           "title": "Setting rows",
-          "description": "A row's title names its select with `aria-label`.",
+          "description": "A row's title names the select in it, so the select shows no label of its own.",
           "file": "docs/examples/select/SettingRows.tsx"
         },
         {
@@ -4678,7 +4678,7 @@
         {
           "name": "SmallToolbar",
           "title": "Sizes",
-          "description": "`sm`, `md` and `lg`, the control heights of the scale, so a select lines up with the buttons beside it.",
+          "description": "Small, medium and large, the control heights of the scale, so a select lines up with the buttons beside it.",
           "file": "docs/examples/select/SmallToolbar.tsx"
         },
         {
@@ -5212,9 +5212,9 @@
         "people picker"
       ],
       "useWhen": [
-        "People choose one option from a list long enough to search, such as an owner among a team's members.",
-        "People choose several options from such a list, which show as chips in the field (`multiple`).",
-        "The options come from a search, such as contacts on a server (`filter={null}`)."
+        "One option from a list long enough to search, such as an owner",
+        "Several options from such a list, shown as chips",
+        "Options found by a search, such as contacts on a server"
       ],
       "avoidWhen": [
         {
@@ -5257,19 +5257,19 @@
         {
           "name": "Reviewers",
           "title": "Reviewers",
-          "description": "With `multiple`, the list stays open as people choose.",
+          "description": "Where people choose several options, each shows as a chip in the field, and the list stays open as they choose.",
           "file": "docs/examples/combobox/Reviewers.tsx"
         },
         {
           "name": "ServerSearch",
           "title": "Server search",
-          "description": "With `filter={null}`, the list doesn't filter the options itself; `loading` shows a spinner while the application searches.",
+          "description": "The application can find the options itself, such as on a server, and a spinner shows while it searches.",
           "file": "docs/examples/combobox/ServerSearch.tsx"
         },
         {
           "name": "RequiredInForm",
           "title": "Required in form",
-          "description": "`name` submits the value, or one entry for each chip. Validation and its `error` belong to the application.",
+          "description": "The field sends its value with the form, or one entry for each chip. Checking the value and showing its error belong to the application.",
           "file": "docs/examples/combobox/RequiredInForm.tsx"
         },
         {
@@ -5281,12 +5281,12 @@
         {
           "name": "SmallToolbar",
           "title": "Sizes",
-          "description": "`sm`, `md` and `lg`, the control heights of the scale. With `showLabel={false}`, a placeholder and an `aria-label` name it.",
+          "description": "Small, medium and large, the control heights of the scale. A field without a visible label, such as in a toolbar, says what to type in its placeholder.",
           "file": "docs/examples/combobox/SmallToolbar.tsx"
         },
         {
           "name": "ClearableOptional",
-          "title": "Do: clearable where the value is optional.",
+          "title": "Do: A clear button where the value is optional.",
           "description": "",
           "file": "docs/examples/combobox/ClearableOptional.tsx"
         },
@@ -6044,8 +6044,8 @@
         "hour picker"
       ],
       "useWhen": [
-        "People choose a time of day without a date, such as when a shift starts or a daily reminder goes off.",
-        "The times that make sense fall on steps, such as every quarter or half hour (`minuteStep`)."
+        "A time of day without a date, such as when a shift starts",
+        "Times on steps, such as every quarter or half hour"
       ],
       "avoidWhen": [
         {
@@ -6084,19 +6084,19 @@
         {
           "name": "OfficeHours",
           "title": "Office hours",
-          "description": "`min`, `max` and `minuteStep` offer only the times that can be booked.",
+          "description": "Only the times that can be booked are offered: between an earliest and a latest time, on steps such as every half hour.",
           "file": "docs/examples/time-picker/OfficeHours.tsx"
         },
         {
           "name": "ClockConventions",
           "title": "Clock conventions",
-          "description": "The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 24-hour clock.",
+          "description": "The same value on a 12-hour and a 24-hour clock; the value itself stays on the 24-hour clock.",
           "file": "docs/examples/time-picker/ClockConventions.tsx"
         },
         {
           "name": "ShiftForm",
           "title": "Shift form",
-          "description": "`name` submits the time as `HH:mm`, without a date or a zone. Combining it with a date belongs to the application.",
+          "description": "The form sends the time alone, without a date or a time zone. Combining it with a date belongs to the application.",
           "file": "docs/examples/time-picker/ShiftForm.tsx"
         },
         {
@@ -7771,8 +7771,8 @@
         "next page link"
       ],
       "useWhen": [
-        "The pages of an ordered sequence, such as a guide, a handbook or release notes, link to their neighbours after the content.",
-        "A reader moves on to the next page of reading content, and may go back a page."
+        "Links to the neighbouring pages of a guide, a handbook or release notes",
+        "Moving on to the next page of reading, or back a page"
       ],
       "avoidWhen": [
         {
@@ -7815,7 +7815,7 @@
         {
           "name": "ComposedParts",
           "title": "Composed parts",
-          "description": "Pager.Previous and Pager.Next as children of Pager.Root make the same pair, and also stand alone.",
+          "description": "The previous and next links are parts of their own too, which make the same pair together and also stand alone.",
           "file": "docs/examples/pager/ComposedParts.tsx"
         },
         {
@@ -9480,8 +9480,8 @@
         "write and preview"
       ],
       "useWhen": [
-        "Content written in Markdown is shown, such as a saved description, a note or a document.",
-        "People write formatted prose as Markdown, with a toolbar and a preview of the result (MarkdownEditor)."
+        "Content written in Markdown, such as a saved note or a document",
+        "Writing formatted prose, with a toolbar and a preview (MarkdownEditor)"
       ],
       "avoidWhen": [
         {
@@ -9515,31 +9515,31 @@
         {
           "name": "ProjectNote",
           "title": "Project note",
-          "description": "Markdown and MarkdownEditor come from `@envsemble/envui/content`.",
+          "description": "",
           "file": "docs/examples/markdown/ProjectNote.tsx"
         },
         {
           "name": "EditDescription",
           "title": "Edit description",
-          "description": "MarkdownEditor is a textarea with a formatting toolbar, undo and redo, and a Preview tab that renders with `previewProps`.",
+          "description": "MarkdownEditor is a text area with a formatting toolbar, undo and redo, and a Preview tab that shows the text as it will read.",
           "file": "docs/examples/markdown/EditDescription.tsx"
         },
         {
           "name": "OpenInPanel",
           "title": "Open in panel",
-          "description": "`renderLink` renders links, such as to open some in a panel; modified clicks stay the browser's.",
+          "description": "Links can open the application's own way, such as in a panel, while clicks with a modifier key stay the browser's.",
           "file": "docs/examples/markdown/OpenInPanel.tsx"
         },
         {
           "name": "CustomElements",
           "title": "Custom elements",
-          "description": "`components` replaces how an element renders, here a quote as an Alert; `remarkPlugins` and `rehypePlugins` extend the rest.",
+          "description": "The application can change how an element renders, here a quote as an Alert, and extend what the Markdown can hold.",
           "file": "docs/examples/markdown/CustomElements.tsx"
         },
         {
           "name": "LinkPicker",
-          "title": "Link picker",
-          "description": "",
+          "title": "Toolbar",
+          "description": "The application chooses the toolbar's actions, which keep a fixed order, grouped by kind with a line between groups, and can offer a link picker of its own.",
           "file": "docs/examples/markdown/LinkPicker.tsx"
         },
         {
@@ -9637,9 +9637,9 @@
         "file diff"
       ],
       "useWhen": [
-        "Text names a command, a value, a file or an identifier, such as `npm run build` (Code).",
-        "Source, commands or output of several lines are shown to read or copy, such as an install step (CodeBlock).",
-        "People review the changes between two versions of a file, such as a draft against its saved version (CodeDiff)."
+        "A command, a value or a file name in a sentence (Code)",
+        "Source, commands or output to read or copy (CodeBlock)",
+        "The changes between two versions of a file (CodeDiff)"
       ],
       "avoidWhen": [
         {
@@ -9675,36 +9675,36 @@
         {
           "name": "HighlightedSource",
           "title": "Highlighted source",
-          "description": "Code shows source as selectable text that never runs. Code and CodeBlock come from `@envsemble/envui/content`, CodeDiff from `@envsemble/envui/diff`.",
+          "description": "Code shows source as selectable text that never runs.",
           "file": "docs/examples/code/HighlightedSource.tsx"
         },
         {
           "name": "InlineCode",
           "title": "Inline code",
-          "description": "Code sits inside a sentence, for a command, a value or a file name.",
+          "description": "Inline code sits in a sentence on a faint fill of its own, so a command or a file name stands apart from the words around it.",
           "file": "docs/examples/code/InlineCode.tsx"
         },
         {
           "name": "PlainOutput",
           "title": "Plain output",
-          "description": "envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill and blocks and diffs on a layer of the text color of their own, both translucent, so they stand a step apart from the page, a pane, a card, a muted fill or a popup alike. A diff takes the same code theme and token colors as a block, and tints its added and removed lines with their change color over that layer, faintly enough that every token keeps its contrast there. A block shows its plain source first and colors it once the highlighter loads.",
+          "description": "Code takes its colors from the app theme, light or dark, and stronger ones under high contrast, so every colored word stays readable. Blocks and diffs sit on a faint layer of their own that stands apart from the page, a pane, a card or a popup alike. A block shows its plain source first and colors it once the highlighter loads.",
           "file": "docs/examples/code/PlainOutput.tsx"
         },
         {
           "name": "SettingsDiff",
           "title": "Settings diff",
-          "description": "CodeDiff shows what changed between two versions of a file; `countDiffLines` counts the lines for a DiffStat.",
+          "description": "CodeDiff shows what changed between two versions of a file, with the same colors as a block and its added and removed lines faintly tinted. The counts of added and removed lines can feed a DiffStat.",
           "file": "docs/examples/code/SettingsDiff.tsx"
         },
         {
           "name": "WrapLongLines",
-          "title": "Wrap long lines",
-          "description": "",
+          "title": "Long lines",
+          "description": "A block keeps the source's layout and scrolls long lines sideways, or wraps them where it holds prose.",
           "file": "docs/examples/code/WrapLongLines.tsx"
         },
         {
           "name": "CommandToCopy",
-          "title": "Do: Commands exactly as people type them, with copyable.",
+          "title": "Do: Commands exactly as people type them, with a copy button.",
           "description": "",
           "file": "docs/examples/code/CommandToCopy.tsx"
         },
@@ -10055,9 +10055,9 @@
         "TableCell"
       ],
       "useWhen": [
-        "People compare values across rows and columns, such as invoices by client, date and amount.",
-        "People scan, sort or select records that share the same fields, such as files, orders or members.",
-        "Figures read best side by side with their totals, such as hours and amounts per invoice."
+        "Values compared across rows and columns, such as invoices by client and date",
+        "Records with the same fields to scan, sort or select, such as files or orders",
+        "Figures side by side with their totals, such as hours per invoice"
       ],
       "avoidWhen": [
         {
@@ -10102,42 +10102,42 @@
         {
           "name": "SortableColumns",
           "title": "Sortable columns",
-          "description": "A header with `onSortChange` becomes a sort button. The application sorts the rows and gives each sortable header its `sortDirection`.",
+          "description": "A header can sort the rows by its column: the application sorts them, and each sortable header shows the order.",
           "file": "docs/examples/table/SortableColumns.tsx"
         },
         {
           "name": "SelectRows",
           "title": "Select rows",
-          "description": "`selected` reports a row's state and takes the selection colors; a Checkbox labelled with the row's name selects it. Pass `selected={false}` to the other rows.",
+          "description": "A selected row takes the selection colors, and a checkbox labelled with the row's name selects it.",
           "file": "docs/examples/table/SelectRows.tsx"
         },
         {
           "name": "ResizableColumns",
           "title": "Resizable columns",
-          "description": "With `resizableColumns` and column widths in percent, the boundary at the end of a header drags, or moves with the arrow keys; a double click restores the starting widths.",
+          "description": "People can resize columns by dragging the boundary at the end of a header, or with the arrow keys; a double click restores the starting widths.",
           "file": "docs/examples/table/ResizableColumns.tsx"
         },
         {
           "name": "StickyHeader",
           "title": "Sticky header",
-          "description": "`stickyHeader` keeps the header row in view while the rows scroll beneath it; give the region a height.",
+          "description": "The header row can stay in view while the rows scroll beneath it, in a region of a set height.",
           "file": "docs/examples/table/StickyHeader.tsx"
         },
         {
           "name": "RowDensity",
-          "title": "Row density",
-          "description": "",
+          "title": "Density",
+          "description": "Density changes only the rows' padding; controls in cells keep the small height.",
           "file": "docs/examples/table/RowDensity.tsx"
         },
         {
           "name": "NumericColumns",
-          "title": "Numeric columns",
-          "description": "",
+          "title": "Cells",
+          "description": "A cell can line its content up for comparing, keep it on one line, or head its row.",
           "file": "docs/examples/table/NumericColumns.tsx"
         },
         {
           "name": "NumbersAligned",
-          "title": "Do: numeric, so the digits line up down the column.",
+          "title": "Do: Numbers aligned to the end, so the digits line up down the column.",
           "description": "",
           "file": "docs/examples/table/NumbersAligned.tsx"
         },
@@ -10173,8 +10173,8 @@
         },
         {
           "name": "SortWhileStacked",
-          "title": "Sort while stacked",
-          "description": "",
+          "title": "Sorting while stacked",
+          "description": "While the header row is hidden, the application can offer the order another way, here with a select.",
           "file": "docs/examples/table/SortWhileStacked.tsx"
         }
       ],
@@ -10672,8 +10672,8 @@
         "ticker"
       ],
       "useWhen": [
-        "A count changes while people make choices elsewhere, such as matching results in a button's label.",
-        "A figure follows a setting people change, such as seats left or a price per billing period."
+        "A count that changes as people choose, such as results in a button's label",
+        "A figure that follows a setting, such as seats left or a price per period"
       ],
       "avoidWhen": [
         {
@@ -10706,7 +10706,7 @@
         {
           "name": "CustomFormat",
           "title": "Custom format",
-          "description": "`formatValue` writes the value, such as a currency. By default it follows EnvUIProvider's `locale`.",
+          "description": "The number can be written in any format, such as a currency. By default it is written as the application's language writes numbers.",
           "file": "docs/examples/animated-number/CustomFormat.tsx"
         },
         {
@@ -10907,9 +10907,9 @@
         "formatRelativeTime"
       ],
       "useWhen": [
-        "How long ago or how soon matters more than the exact moment, such as when a report changed or when a review is due.",
-        "Activity and lists where times update while the page stays open, such as Draft saved 2 minutes ago.",
-        "A string that says how long ago, for a place that takes only text, such as an option label or an accessible name (formatRelativeTime)."
+        "How long ago or how soon, more than the exact moment, such as a review due",
+        "Times that stay current while the page is open, such as Draft saved 2 minutes ago",
+        "How long ago as plain text, such as in an option's label (formatRelativeTime)"
       ],
       "avoidWhen": [
         {
@@ -10932,7 +10932,7 @@
         {
           "name": "DraftSaved",
           "title": "Draft saved",
-          "description": "`value` takes a Date, milliseconds since 1970 or a date string, such as an ISO 8601 timestamp.",
+          "description": "",
           "file": "docs/examples/relative-time/DraftSaved.tsx"
         },
         {
@@ -10944,7 +10944,7 @@
         {
           "name": "VersionLabels",
           "title": "Version labels",
-          "description": "`formatRelativeTime` returns the same text as a string. It doesn't update by itself.",
+          "description": "The same text comes as plain text too, for a place that takes only text, such as an option's label. It doesn't update by itself.",
           "file": "docs/examples/relative-time/VersionLabels.tsx"
         },
         {
@@ -11243,8 +11243,8 @@
         "toggle details"
       ],
       "useWhen": [
-        "Optional guidance or details that most people don't need, such as how a setting works.",
-        "Settings that most people leave alone, such as advanced options in a form."
+        "Optional guidance most people don't need, such as how a setting works",
+        "Settings most people leave alone, such as advanced options"
       ],
       "avoidWhen": [
         {
@@ -11277,19 +11277,19 @@
         {
           "name": "VisibilityHelp",
           "title": "Visibility help",
-          "description": "Finding text in a closed disclosure's panel opens it, where the browser supports it.",
+          "description": "Finding text in a closed disclosure's details opens it, where the browser supports it.",
           "file": "docs/examples/disclosure/VisibilityHelp.tsx"
         },
         {
           "name": "FrequentQuestions",
           "title": "Frequent questions",
-          "description": "Disclosures that share a `name` open one at a time, where the browser supports it.",
+          "description": "Disclosures in a set can open one at a time, where the browser supports it.",
           "file": "docs/examples/disclosure/FrequentQuestions.tsx"
         },
         {
           "name": "OpenOnError",
           "title": "Open on error",
-          "description": "`open` and `onOpenChange` control it, such as to open it when a field inside has an error.",
+          "description": "The application can open a disclosure itself, such as when a field inside has an error.",
           "file": "docs/examples/disclosure/OpenOnError.tsx"
         },
         {
@@ -11641,9 +11641,9 @@
         "log"
       ],
       "useWhen": [
-        "A conversation between the person using the app and others, such as a chat with a person or an assistant.",
-        "A thread of comments in the order they were written, each with its author and time.",
-        "A reply that streams in or messages that load while people read, which assistive technology should announce politely."
+        "A conversation with a person or an assistant",
+        "A thread of comments, each with its author and time",
+        "A reply that streams in while people read"
       ],
       "avoidWhen": [
         {
@@ -11683,12 +11683,12 @@
         {
           "name": "DeliveryStatus",
           "title": "Delivery status",
-          "description": "`status` shows Sending, or Not sent; offer Retry beside a message that failed.",
+          "description": "A message can show that it is on its way, or that it wasn't sent; offer Retry beside one that failed.",
           "file": "docs/examples/message/DeliveryStatus.tsx"
         },
         {
           "name": "FormattedAnswer",
-          "title": "Formatted answer",
+          "title": "Message variants",
           "description": "",
           "file": "docs/examples/message/FormattedAnswer.tsx"
         },
@@ -11700,7 +11700,7 @@
         },
         {
           "name": "SelfForOthers",
-          "title": "Don't: self for someone else, to put them on a side: self means you.",
+          "title": "Don't: Someone else's message in your bubble, to put them on a side: the bubble means you.",
           "description": "",
           "file": "docs/examples/message/SelfForOthers.tsx"
         },
@@ -13312,8 +13312,8 @@
         "omnibox"
       ],
       "useWhen": [
-        "People jump to a document, a page or a person by name, from anywhere in the application.",
-        "People run a command by name, such as one that has no visible control or a shortcut they don't remember."
+        "Jumping to a document, a page or a person by name, from anywhere",
+        "Running a command by name, such as one without a visible control"
       ],
       "avoidWhen": [
         {
@@ -13352,7 +13352,7 @@
         {
           "name": "RunCommand",
           "title": "Run command",
-          "description": "`end` holds a shortcut or a Badge; `hints` show the keys in the footer.",
+          "description": "An item can end with its shortcut or a badge, and hints below the list say what keys do.",
           "file": "docs/examples/command-palette/RunCommand.tsx"
         },
         {
@@ -13924,8 +13924,8 @@
         "access keys"
       ],
       "useWhen": [
-        "A document-centred application has many commands, grouped as a desktop application groups them, such as File, Edit, View and Help.",
-        "A window draws its own title bar and holds the application's menus at its start (with TopBar's `titleBar`)."
+        "Many commands in a document-centred application, grouped as File, Edit, View and Help",
+        "The application's menus at the start of a title bar the window draws itself"
       ],
       "avoidWhen": [
         {

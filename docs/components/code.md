@@ -19,9 +19,9 @@ aliases:
   - diff viewer
   - file diff
 useWhen:
-  - Text names a command, a value, a file or an identifier, such as `npm run build` (Code).
-  - Source, commands or output of several lines are shown to read or copy, such as an install step (CodeBlock).
-  - People review the changes between two versions of a file, such as a draft against its saved version (CodeDiff).
+  - A command, a value or a file name in a sentence (Code)
+  - Source, commands or output to read or copy (CodeBlock)
+  - The changes between two versions of a file (CodeDiff)
 avoidWhen:
   - text: Keys of a shortcut.
     use: Kbd
@@ -42,7 +42,7 @@ components:
 
 ## Overview
 
-Code shows source as selectable text that never runs. Code and CodeBlock come from `@envsemble/envui/content`, CodeDiff from `@envsemble/envui/diff`.
+Code shows source as selectable text that never runs.
 
 ```tsx example=HighlightedSource
 
@@ -50,7 +50,7 @@ Code shows source as selectable text that never runs. Code and CodeBlock come fr
 
 ### Inline code
 
-Code sits inside a sentence, for a command, a value or a file name.
+Inline code sits in a sentence on a faint fill of its own, so a command or a file name stands apart from the words around it.
 
 ```tsx example=InlineCode
 
@@ -58,7 +58,7 @@ Code sits inside a sentence, for a command, a value or a file name.
 
 ### Highlighting
 
-envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill and blocks and diffs on a layer of the text color of their own, both translucent, so they stand a step apart from the page, a pane, a card, a muted fill or a popup alike. A diff takes the same code theme and token colors as a block, and tints its added and removed lines with their change color over that layer, faintly enough that every token keeps its contrast there. A block shows its plain source first and colors it once the highlighter loads.
+Code takes its colors from the app theme, light or dark, and stronger ones under high contrast, so every colored word stays readable. Blocks and diffs sit on a faint layer of their own that stands apart from the page, a pane, a card or a popup alike. A block shows its plain source first and colors it once the highlighter loads.
 
 ```tsx example=PlainOutput caption="Without a language, the source stays plain text."
 
@@ -66,7 +66,7 @@ envUI picks the code theme from the app theme: Shiki's `github-light-default` in
 
 ### Diffs
 
-CodeDiff shows what changed between two versions of a file; `countDiffLines` counts the lines for a DiffStat.
+CodeDiff shows what changed between two versions of a file, with the same colors as a block and its added and removed lines faintly tinted. The counts of added and removed lines can feed a DiffStat.
 
 ```tsx example=SettingsDiff
 
@@ -74,20 +74,31 @@ CodeDiff shows what changed between two versions of a file; `countDiffLines` cou
 
 ## Variants
 
-| Layout    | Use for                                                       |
-| --------- | ------------------------------------------------------------- |
-| (default) | A CodeBlock whose layout matters: long lines scroll sideways. |
-| `wrap`    | A CodeBlock of prose, such as text in JSON: long lines wrap.  |
-| `auto`    | CodeDiff side by side where it is wide enough. The default.   |
-| `unified` | CodeDiff in one column at any width.                          |
+### Long lines
 
-```tsx example=WrapLongLines
+A block keeps the source's layout and scrolls long lines sideways, or wraps them where it holds prose.
+
+```tsx example=WrapLongLines caption="Wrapped lines: copying keeps the source's own line breaks."
 
 ```
 
+| Long lines | Use for                                           |
+| ---------- | ------------------------------------------------- |
+| Scroll     | A block whose layout matters. The default.        |
+| Wrap       | A block of prose, such as text in a JSON setting. |
+
+### Diff layouts
+
+A diff sets the two versions side by side where it is wide enough, or keeps one column at any width.
+
+| Diff layout  | Use for                                             |
+| ------------ | --------------------------------------------------- |
+| Side by side | Most diffs, in one column when narrow. The default. |
+| One column   | A diff read top to bottom at any width.             |
+
 ## When to use
 
-```tsx do=CommandToCopy caption="Commands exactly as people type them, with copyable."
+```tsx do=CommandToCopy caption="Commands exactly as people type them, with a copy button."
 
 ```
 
@@ -95,8 +106,13 @@ CodeDiff shows what changed between two versions of a file; `countDiffLines` cou
 
 ```
 
-- Don't style code or pick its colors: envUI follows the app theme.
-- Keep blocks short, and link to the whole file.
+### Colors
+
+Leave the colors of code to envUI, which follows the app theme.
+
+### Length
+
+Keep blocks short, and link to the whole file.
 
 ## Anatomy
 
@@ -109,11 +125,11 @@ CodeDiff shows what changed between two versions of a file; `countDiffLines` cou
 3. **Copy button** (`env-code-block-heading > button`, `copyable`)
 4. **Source** (`env-code-block > pre`, `children`)
 
-Inline code is one part, `env-code`.
+Inline code is a single part.
 
 ## Adapting to width
 
-A CodeDiff shows the two versions side by side from 56 rem, and one column below.
+A diff shows the two versions side by side from 56 rem, and one column below.
 
 ```tsx example=DiffColumns widths="36 60"
 
@@ -141,6 +157,40 @@ A CodeDiff shows the two versions side by side from 56 rem, and one column below
 - A `label` on each block where a page has several.
 - Text around a diff that says what changed.
 - Translated words through EnvUIProvider's `messages.codeBlock` and `messages.codeDiff`.
+
+## In code
+
+### Usage
+
+Code and CodeBlock come from `@envsemble/envui/content`, and CodeDiff and `countDiffLines` from `@envsemble/envui/diff`. Code wraps a command, a value or a file name inside text.
+
+```tsx source=InlineCode
+
+```
+
+#### Code blocks
+
+CodeBlock takes the source as one string in `children`, shown, highlighted and copied as it is. `language` picks the highlighting, such as `tsx`, `json` or `sh`; without one, or with one it doesn't know, the source stays plain text. `label` names the block in its heading and for assistive technology, such as a file name, and `copyable` adds the copy button. Long lines scroll sideways; `wrap` wraps them instead, and copying keeps the original line breaks.
+
+```tsx source=HighlightedSource
+
+```
+
+#### Diffs
+
+CodeDiff takes `before` and `after`, and a `filename`, which names the file in its header and chooses the language; `language` overrides it. `header={false}` leaves out the header with its name and change counts, and `expandUnchanged` shows the unchanged lines between changes instead of folding them. `layout` is `auto`, the default, side by side from 56 rem of width, or `unified`, one column at any width. `countDiffLines(before, after, filename)` returns the `additions` and `deletions` for a DiffStat.
+
+```tsx source=SettingsDiff
+
+```
+
+#### Highlighting
+
+envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill, and blocks and diffs on a translucent layer of the text color, so they stand a step apart from any surface. A diff takes the same code theme and token colors as a block, and tints its added and removed lines with their change color over that layer, faintly enough that every token keeps its contrast. Code has no theme or color props of its own.
+
+### Composition
+
+Inline code is one part, `env-code`. A block is `env-code-block`: its heading, `env-code-block-heading`, holds the label and the copy button, and the source is its `pre`; the copy result is announced from `env-code-block-copy-status`.
 
 ## Changelog
 

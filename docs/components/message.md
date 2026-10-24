@@ -17,9 +17,9 @@ aliases:
   - comment thread
   - log
 useWhen:
-  - A conversation between the person using the app and others, such as a chat with a person or an assistant.
-  - A thread of comments in the order they were written, each with its author and time.
-  - A reply that streams in or messages that load while people read, which assistive technology should announce politely.
+  - A conversation with a person or an assistant
+  - A thread of comments, each with its author and time
+  - A reply that streams in while people read
 avoidWhen:
   - text: The field where people write and send the next message.
     use: Composer
@@ -46,7 +46,7 @@ Each Message sits in a MessageList, which holds the conversation.
 
 ### Delivery status
 
-`status` shows Sending, or Not sent; offer Retry beside a message that failed.
+A message can show that it is on its way, or that it wasn't sent; offer Retry beside one that failed.
 
 ```tsx example=DeliveryStatus
 
@@ -54,18 +54,21 @@ Each Message sits in a MessageList, which holds the conversation.
 
 ### Streaming
 
-`busy` on MessageList reports a reply that streams in, or earlier messages that load, until it is cleared. The list doesn't scroll by itself: keeping the newest message in view is the application's.
+While a reply streams in, or earlier messages load, the list tells assistive technology to wait until the change is done. The list doesn't scroll by itself: keeping the newest message in view is the application's.
 
 ## Variants
 
-| From    | Use for                                                   |
-| ------- | --------------------------------------------------------- |
-| `self`  | The person using the app: a compact bubble at the end.    |
-| `other` | Anyone else, such as an assistant: full width, no bubble. |
-
-```tsx example=FormattedAnswer caption="Someone else's message keeps the full width, for a formatted answer."
+```tsx variants=FormattedAnswer
 
 ```
+
+1. **Yours**
+2. **Someone else's**
+
+| From           | Use for                                                                                |
+| -------------- | -------------------------------------------------------------------------------------- |
+| Yours          | The person using the app: a compact bubble at the end.                                 |
+| Someone else's | Anyone else, such as an assistant: full width, no bubble, room for a formatted answer. |
 
 ## When to use
 
@@ -73,16 +76,17 @@ Each Message sits in a MessageList, which holds the conversation.
 
 ```
 
-```tsx dont=SelfForOthers caption="self for someone else, to put them on a side: self means you."
+```tsx dont=SelfForOthers caption="Someone else's message in your bubble, to put them on a side: the bubble means you."
 
 ```
 
-- Don't move focus to new messages: the list announces them.
-- Keep messages oldest first, in a MessageList.
+### Order and focus
+
+Keep messages oldest first, in one list, and leave focus where it is as new ones arrive: the list announces them.
 
 ### Content
 
-- Name icon actions after what they do, such as Copy answer.
+Name icon actions after what they do, such as Copy answer.
 
 ## Anatomy
 
@@ -120,6 +124,38 @@ Your own bubble grows to three quarters of the list, and to at least 16 rem in a
 - `busy` while a reply streams in.
 - Names for icon-only actions, and Retry for a failed message.
 - Scrolling, without moving focus.
+
+## In code
+
+### Usage
+
+A MessageList holds the conversation, oldest first, and each Message in it takes `from`: `self` for the person using the app, a compact bubble at the inline end, or `other` for anyone else, such as an assistant or another participant, full-width content with no bubble. `author` names who wrote it, `meta` holds supporting facts beside the author, such as a RelativeTime, and `children` the message: plain text keeps its line breaks, and formatted content, such as Markdown, fills the width of a message from someone else. Never set `from="self"` on someone else's message to put it on a side.
+
+```tsx source=Conversation
+
+```
+
+#### Actions and status
+
+`actions` holds small actions below the message, such as Copy or Retry: buttons without a variant or size of their own are small ghost buttons. `status` is `sending`, with a spinner and Sending, or `failed`, with an error icon and Not sent; `statusLabel` replaces the words, which otherwise come from EnvUIProvider's `messages.message`.
+
+```tsx source=DeliveryStatus
+
+```
+
+#### Streaming
+
+`busy` on MessageList reports `aria-busy` while a reply streams in or earlier messages load, until it is cleared. The list doesn't scroll by itself: keep the newest message in view yourself, without moving focus.
+
+```tsx
+<MessageList aria-label="Conversation with Sam Lee" busy={streaming}>
+  …
+</MessageList>
+```
+
+### Composition
+
+The list is `env-message-list`, and each message `env-message`, with its author, `env-message-author`, and meta, `env-message-meta`, in its header, then its content, `env-message-content`, its actions, `env-message-actions`, and its status, `env-message-status`. `skeleton` shows a message as its own skeleton while it loads. Message and MessageList can render in React Server Components.
 
 ## Changelog
 
