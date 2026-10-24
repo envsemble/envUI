@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import {
   Button,
   Drawer,
@@ -80,6 +80,56 @@ function useCurrentInView() {
   return element;
 }
 
+/**
+ * Each area's drawer at the start of a wide window: the width it starts at and its bounds, in rem.
+ * The Docs' drawer holds the wordmark and search on its first row, so it starts wider.
+ */
+const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWidth: number }> = {
+  site: { defaultWidth: 15, minWidth: 13, maxWidth: 24 },
+  docs: { defaultWidth: 21, minWidth: 18, maxWidth: 30 },
+};
+
+/** Where the catalogue keeps the width the reader gives each area's drawer, in localStorage. */
+const drawerWidthKey = (area: Area) => `envui-catalogue-drawer-width-${area}`;
+
+/** The width the reader gave the area's drawer on an earlier visit, within its bounds. */
+function storedDrawerWidth(area: Area) {
+  const { defaultWidth, minWidth, maxWidth } = drawerWidths[area];
+  let stored: number | undefined;
+  try {
+    stored = Number.parseFloat(localStorage.getItem(drawerWidthKey(area)) ?? '');
+  } catch {
+    // Storage the browser refuses, as in some private windows, keeps the default.
+  }
+  return stored !== undefined && Number.isFinite(stored)
+    ? Math.min(maxWidth, Math.max(minWidth, stored))
+    : defaultWidth;
+}
+
+/**
+ * The resizable drawer of a wide window, whose width the reader drags and the catalogue keeps for
+ * the next visit; read before the first render, so nothing moves as the page loads. The drawer in
+ * the sheet of a narrower window takes the sheet's width and isn't resizable.
+ */
+function useDrawerWidth(area: Area, inSheet: boolean): Partial<ComponentProps<typeof Drawer>> {
+  const [width, setWidth] = useState(() => storedDrawerWidth(area));
+  if (inSheet) return {};
+  return {
+    resizable: true,
+    ...drawerWidths[area],
+    width,
+    onWidthChange: (next, { committed }) => {
+      setWidth(next);
+      if (!committed) return;
+      try {
+        localStorage.setItem(drawerWidthKey(area), String(next));
+      } catch {
+        // The width holds for this visit only.
+      }
+    },
+  };
+}
+
 interface NavigationProps {
   /** The page shown, whose destination and page the navigation marks as current. */
   page?: SitePage;
@@ -127,6 +177,7 @@ export function SiteNavigation({
   onSearch,
 }: NavigationProps) {
   const element = useCurrentInView();
+  const drawerWidth = useDrawerWidth('site', inSheet);
   const section = (page?.area === 'site' ? page.section : 'Overview') as SiteSection;
   const pages = pagesOf('site').filter((entry) => entry.section === section);
   return (
@@ -142,6 +193,7 @@ export function SiteNavigation({
         className="docs-sidebar"
         header={<SearchButton onClick={onSearch} className="docs-drawer-search" />}
         destinations={pageDestinations(pages, routePath, onChoose)}
+        {...drawerWidth}
       />
     </div>
   );
@@ -158,12 +210,13 @@ export function DocsNavigation({
   onSearch,
 }: NavigationProps) {
   const element = useCurrentInView();
+  const drawerWidth = useDrawerWidth('docs', inSheet);
   const pages = pagesOf('docs').map((page) => ({ ...page, group: page.section }));
   return (
     <div ref={element} className="docs-navigation" data-in-sheet={inSheet || undefined}>
       <Drawer
         aria-label="Docs"
-        className="docs-sidebar docs-docs-drawer"
+        className="docs-sidebar"
         header={
           <div className="docs-drawer-top">
             <Brand area="docs" />
@@ -171,6 +224,7 @@ export function DocsNavigation({
           </div>
         }
         destinations={pageDestinations(pages, routePath, onChoose)}
+        {...drawerWidth}
       />
     </div>
   );
