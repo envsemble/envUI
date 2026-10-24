@@ -1,0 +1,185 @@
+// Text that is there in a skeleton, such as a heading that doesn't wait for data, drawn as bars like
+// the rest: a rounded bar over each line of it, which shimmers with the other bars. CSS alone draws
+// such text as a line through it, square and in one color, which stays as the fallback until this
+// runs, as on a server. Here, a skeleton's root draws every bar in one pseudo-element over its
+// content (Skeleton.css, [data-env-skeleton-text]::after), masked by a rounded rectangle at each
+// line box of its text, which the script measures and sets as --env-skeleton-text-bars. Nothing is
+// added to the content, so its layout and selectors don't change.
+
+/** The attribute that marks a root whose text bars the script draws, which hides the line through. */
+export const skeletonTextAttribute = 'data-env-skeleton-text';
+
+interface Tracked {
+  resize: ResizeObserver | undefined;
+  mutations: MutationObserver;
+  /** The inline position the root had, where the script made it a containing block. */
+  position: string | undefined;
+}
+
+const tracked = new Map<HTMLElement, Tracked>();
+let retained = 0;
+let frame = 0;
+
+/** How thick a bar is, of its text's font size, and the gap two bars on a line close. */
+const barHeight = 0.8;
+const joinGap = 0.4;
+
+/**
+ * Draws the bars of every skeleton on the page while at least one SkeletonScope that is a skeleton
+ * is mounted; the function it returns lets go.
+ */
+export function retainSkeletonText(): () => void {
+  if (typeof window === 'undefined') return () => {};
+  retained += 1;
+  if (retained === 1) listen(true);
+  schedule();
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    retained -= 1;
+    if (retained === 0) listen(false);
+    schedule();
+  };
+}
+
+function listen(on: boolean) {
+  const method = on ? 'addEventListener' : 'removeEventListener';
+  window[method]('resize', schedule);
+  // Scrolling inside a skeleton moves its text against its root.
+  document[method]('scroll', schedule, true);
+  document.fonts?.[method]('loadingdone', schedule);
+}
+
+function schedule() {
+  if (frame || typeof requestAnimationFrame === 'undefined') return;
+  frame = requestAnimationFrame(() => {
+    frame = 0;
+    sync();
+  });
+}
+
+function sync() {
+  const roots =
+    retained > 0 ? [...document.querySelectorAll<HTMLElement>('[data-env-skeleton]')] : [];
+  for (const [root, state] of tracked)
+    if (!root.isConnected || !roots.includes(root)) untrack(root, state);
+  for (const root of roots) {
+    if (!tracked.has(root)) track(root);
+    draw(root);
+  }
+}
+
+function track(root: HTMLElement) {
+  root.setAttribute(skeletonTextAttribute, '');
+  // The bars are laid out over the root's padding box, which a static root can't hold.
+  let position: string | undefined;
+  if (getComputedStyle(root).position === 'static') {
+    position = root.style.position;
+    root.style.position = 'relative';
+  }
+  const resize = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(schedule);
+  resize?.observe(root);
+  const mutations = new MutationObserver((records) => {
+    // The bars the script sets on the root's style change nothing to measure.
+    if (records.some((record) => !(record.target === root && record.attributeName === 'style')))
+      schedule();
+  });
+  mutations.observe(root, {
+    subtree: true,
+    childList: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['class', 'style', 'hidden', 'data-env-skeleton'],
+  });
+  tracked.set(root, { resize, mutations, position });
+}
+
+function untrack(root: HTMLElement, state: Tracked) {
+  state.resize?.disconnect();
+  state.mutations.disconnect();
+  tracked.delete(root);
+  root.removeAttribute(skeletonTextAttribute);
+  root.style.removeProperty('--env-skeleton-text-bars');
+  if (state.position !== undefined) root.style.position = state.position;
+}
+
+interface Bar {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  gap: number;
+}
+
+/** The part of a rectangle that the element's clipping ancestors, up to the root, leave visible. */
+function visibleSpan(element: Element, root: HTMLElement, left: number, right: number) {
+  for (let at: Element | null = element; at && at !== root; at = at.parentElement) {
+    const style = getComputedStyle(at);
+    if (style.overflowX === 'visible') continue;
+    const box = at.getBoundingClientRect();
+    left = Math.max(left, box.left);
+    right = Math.min(right, box.right);
+  }
+  return [left, right] as const;
+}
+
+/** Measures the root's text and sets the bars it draws. */
+function draw(root: HTMLElement) {
+  const box = root.getBoundingClientRect();
+  const originX = box.left + root.clientLeft - root.scrollLeft;
+  const originY = box.top + root.clientTop - root.scrollTop;
+  const bars: Bar[] = [];
+  const range = document.createRange();
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node as Text;
+    if (!text.data.trim()) continue;
+    const parent = text.parentElement;
+    // A nested skeleton draws its own text, and the status beside a list is read, not shown.
+    if (!parent || parent.closest('[data-env-skeleton]') !== root) continue;
+    if (parent.closest('.env-skeleton-status')) continue;
+    const style = getComputedStyle(parent);
+    // A shape, such as a button or a badge, is filled, and what it holds isn't drawn.
+    if (style.getPropertyValue('--env-skeleton-shape').trim() === '1') continue;
+    if (style.visibility !== 'visible') continue;
+    const fontSize = Number.parseFloat(style.fontSize) || 16;
+    range.selectNodeContents(text);
+    for (const rect of range.getClientRects()) {
+      if (rect.width < 1 || rect.height < 1) continue;
+      const [left, right] = visibleSpan(parent, root, rect.left, rect.right);
+      if (right - left < 1) continue;
+      const height = Math.min(rect.height, fontSize * barHeight);
+      bars.push({
+        x: left - originX,
+        y: rect.top + (rect.height - height) / 2 - originY,
+        width: right - left,
+        height,
+        gap: fontSize * joinGap,
+      });
+    }
+  }
+  range.detach();
+  // Bars on one line that nearly touch, such as words in two elements, join into one.
+  bars.sort((a, b) => Math.round(a.y) - Math.round(b.y) || a.x - b.x);
+  const joined: Bar[] = [];
+  for (const bar of bars) {
+    const last = joined.at(-1);
+    if (
+      last &&
+      Math.abs(last.y - bar.y) < 1 &&
+      Math.abs(last.height - bar.height) < 1 &&
+      bar.x <= last.x + last.width + Math.max(last.gap, bar.gap)
+    )
+      last.width = Math.max(last.width, bar.x + bar.width - last.x);
+    else joined.push({ ...bar });
+  }
+  const round = (value: number) => Math.round(value * 100) / 100;
+  const layers = joined.map(
+    (bar) =>
+      `var(--env-skeleton-rect) ${round(bar.x)}px ${round(bar.y)}px / ${round(bar.width)}px ${round(bar.height)}px no-repeat`,
+  );
+  const value = layers.length > 0 ? layers.join(', ') : 'linear-gradient(transparent 0 0)';
+  if (root.style.getPropertyValue('--env-skeleton-text-bars') !== value)
+    root.style.setProperty('--env-skeleton-text-bars', value);
+}

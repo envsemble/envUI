@@ -35,7 +35,7 @@ export function AffixesFixture({ theme }: { theme: ThemeValue }) {
         />
         <TextField showLabel label="Share" name="share" suffix="%" defaultValue="40" />
         <TextField
-          variant="underline"
+          variant="floating"
           label="Handle"
           name="handle"
           prefix="@"

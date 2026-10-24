@@ -20,6 +20,11 @@ export interface AvatarGroupPerson {
   id?: string | number;
   /** A destination for this person: the avatar becomes a link with a name tooltip. */
   href?: string;
+  /**
+   * Shows the person's avatar as chosen: a ring and a check. A look only: say what is chosen in
+   * the control around the group, such as an option or the group's label.
+   */
+  selected?: boolean;
 }
 
 export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
@@ -159,7 +164,13 @@ function AvatarGroupItem({
   onPersonClick: AvatarGroupProps['onPersonClick'];
 }) {
   const avatar = (
-    <Avatar name={person.name} src={person.src} fallback={person.fallback} size={size} />
+    <Avatar
+      name={person.name}
+      src={person.src}
+      fallback={person.fallback}
+      size={size}
+      selected={person.selected}
+    />
   );
   if (!person.href && !onPersonClick) return avatar;
   const onClick =

@@ -2,7 +2,7 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "radius": {
     "$type": "dimension",
-    "$description": "One corner scale for every component inside a theme boundary, from none to xl, and the roles that name a step of it. The full corner, 100vmax, is no DTCG dimension and stays in TokensHandwritten.css as --env-radius-full.",
+    "$description": "One corner scale for every component inside a theme boundary, from none to xl, and the roles that name a step of it. The full corner, half the tallest single-line control, is a calculation DTCG cannot hold and stays in TokensHandwritten.css as --env-radius-full.",
     "none": { "$value": { "value": 0, "unit": "rem" } },
     "xs": { "$value": { "value": 0.25, "unit": "rem" } },
     "sm": {

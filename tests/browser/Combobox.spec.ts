@@ -437,18 +437,29 @@ test('narrow containers wrap chips within the field, and the popup fits a phone'
     const items = [...element.querySelectorAll('.env-combobox-chip')].map((chip) =>
       chip.getBoundingClientRect(),
     );
+    const style = getComputedStyle(element);
+    // The capped full corner: half the tallest single-line control.
+    const probe = document.createElement('div');
+    probe.style.blockSize = 'var(--env-radius-full)';
+    element.append(probe);
+    const full = probe.getBoundingClientRect().height;
+    probe.remove();
     return {
       box: { left: box.left, right: box.right, height: box.height },
       rows: new Set(items.map((item) => Math.round(item.top))).size,
       inside: items.every((item) => item.left >= box.left && item.right <= box.right),
+      radius: Number.parseFloat(style.borderTopLeftRadius),
+      full,
     };
   });
   const container = (await narrow.boundingBox())!;
   expect(layout.box.right - layout.box.left).toBeLessThanOrEqual(container.width + 1);
   expect(layout.rows).toBeGreaterThan(1);
   expect(layout.inside).toBe(true);
-  // A wrapped compact field keeps its rounded ends rather than a stadium.
+  // A wrapped field keeps the capped full corner rather than becoming a pill.
   expect(layout.box.height).toBeGreaterThan(32);
+  expect(layout.radius).toBeCloseTo(layout.full, 0);
+  expect(layout.radius).toBeLessThan(layout.box.height / 2 - 4);
 
   await page.setViewportSize({ width: 390, height: 700 });
   const author = field(page, 'Author light');

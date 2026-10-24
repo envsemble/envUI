@@ -397,6 +397,34 @@
       "cssVariable": "--env-alert-icon",
       "colorPropertyOf": "env-alert",
       "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
+    },
+    "--env-color-avatar-bg-teal": {
+      "replacement": "color.avatar.bg.seafoam",
+      "note": "The avatar hues are named for their colors: teal is seafoam."
+    },
+    "--env-color-avatar-bg-green": {
+      "replacement": "color.avatar.bg.sage",
+      "note": "The avatar hues are named for their colors: green is sage."
+    },
+    "--env-color-avatar-bg-amber": {
+      "replacement": "color.avatar.bg.butter",
+      "note": "The avatar hues are named for their colors: amber is butter."
+    },
+    "--env-color-avatar-bg-red": {
+      "replacement": "color.avatar.bg.blush",
+      "note": "The avatar hues are named for their colors: red is blush."
+    },
+    "--env-color-avatar-bg-violet": {
+      "replacement": "color.avatar.bg.periwinkle",
+      "note": "The avatar hues are named for their colors: violet is periwinkle."
+    },
+    "--env-color-avatar-bg-purple": {
+      "replacement": "color.avatar.bg.orchid",
+      "note": "The avatar hues are named for their colors: purple is orchid."
+    },
+    "--env-color-avatar-bg-slate": {
+      "replacement": "color.avatar.bg.oat",
+      "note": "The avatar hues are named for their colors: slate is oat."
     }
   },
   "aliases": {

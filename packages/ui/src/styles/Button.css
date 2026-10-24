@@ -31,7 +31,9 @@
     )
     var(--env-space-3);
   border: var(--env-control-border-width) solid transparent;
-  border-radius: 100vmax;
+  /* The capped full corner: rounded ends at one line, and the same corners, a rounded rectangle,
+     when a label wraps onto more lines. */
+  border-radius: var(--env-radius-full);
   font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
   white-space: normal;
   overflow-wrap: anywhere;
@@ -583,7 +585,8 @@
   forced-color-adjust: none;
   border-color: transparent;
   box-shadow: none;
-  background: var(--env-skeleton-color);
+  --env-skeleton-shape: 1;
+  background: var(--env-skeleton-paint);
 }
 [data-env-skeleton] .env-button * {
   visibility: hidden;

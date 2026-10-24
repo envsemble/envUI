@@ -3480,6 +3480,10 @@
               "description": "The text field."
             },
             {
+              "class": "env-text-field-border",
+              "description": "The border over the well's edge, which a floated label opens behind it."
+            },
+            {
               "class": "env-text-field-control",
               "description": "The well around the input and its adornments."
             },
@@ -3609,8 +3613,7 @@
             {
               "attribute": "data-variant",
               "values": [
-                "ghost",
-                "underline"
+                "ghost"
               ],
               "parts": [
                 "env-text-field-control"
@@ -4933,7 +4936,7 @@
       "category": "Forms & selection",
       "status": "stable",
       "since": "0.5.0",
-      "summary": "One choice among a few items on a pill rail, such as views or filters of the same content.",
+      "summary": "One choice among a few items, as connected outlined segments, such as views or filters of the same content.",
       "aliases": [
         "segmented button",
         "segmented buttons",
@@ -4986,7 +4989,7 @@
         {
           "name": "WorkItems",
           "title": "Work items",
-          "description": "A segmented control switches between a few views or filters of the same content, and the choice applies at once.",
+          "description": "A segmented control switches between a few views or filters of the same content, and the choice applies at once. After Material's segmented buttons, it is connected segments in one outline, the chosen one in the selected fill with a check before its label; it picks a value, where Tabs, text tabs with an indicator, switch panels.",
           "file": "docs/examples/segmented-control/WorkItems.tsx"
         },
         {
@@ -5026,11 +5029,15 @@
           "parts": [
             {
               "class": "env-segmented-control",
-              "description": "The segmented control."
+              "description": "The segmented control: connected segments in one outline."
             },
             {
               "class": "env-segmented-control-item",
               "description": "One segment."
+            },
+            {
+              "class": "env-segmented-control-item-check",
+              "description": "The check on the chosen segment, in place of its icon."
             },
             {
               "class": "env-segmented-control-item-count",
@@ -5080,7 +5087,11 @@
           "colors": [
             {
               "property": "--env-segmented-control-container",
-              "description": "The rail behind the options."
+              "description": "The fill behind the options, transparent by default."
+            },
+            {
+              "property": "--env-segmented-control-outline",
+              "description": "The outline around and between the segments."
             },
             {
               "property": "--env-segmented-control-content",
@@ -6492,7 +6503,7 @@
       "category": "Forms & selection",
       "status": "stable",
       "since": "0.5.0",
-      "summary": "A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.",
+      "summary": "A value in a known range, chosen by pressing or dragging along a field, or with the keyboard.",
       "aliases": [
         "range",
         "range slider",
@@ -6537,19 +6548,19 @@
         {
           "name": "LayerOpacity",
           "title": "Layer opacity",
-          "description": "A slider chooses a value in a range by dragging a thumb, pressing the track or with the keyboard.",
+          "description": "A slider chooses a value in a range. It is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys, and a thin handle and faint ticks at its steps appear under the pointer and while it has focus. The label and the value always keep their full strength: where the handle and the end of the fill pass under them, those fade instead.",
           "file": "docs/examples/slider/LayerOpacity.tsx"
         },
         {
           "name": "SaveOnRelease",
           "title": "Save on release",
-          "description": "`onValueChange` follows the thumb as it moves; `onValueCommitted` reports the value once, when the thumb is released or after a key. Save from it.",
+          "description": "`onValueChange` follows the value as it moves; `onValueCommitted` reports it once, when the pointer is released or after a key. Save from it.",
           "file": "docs/examples/slider/SaveOnRelease.tsx"
         },
         {
           "name": "SessionTimeout",
           "title": "Session timeout",
-          "description": "`min`, `max` and `step` set the values, and `name` submits the value with the form.",
+          "description": "`min`, `max` and `step` set the values, and `name` submits the value with the form. The slider lines up with the fields around it.",
           "file": "docs/examples/slider/SessionTimeout.tsx"
         },
         {
@@ -6593,27 +6604,27 @@
             },
             {
               "class": "env-slider-control",
-              "description": "The control that takes the pointer."
+              "description": "The field: the track's tint, which takes the pointer."
             },
             {
               "class": "env-slider-heading",
-              "description": "The row with the label and the value."
+              "description": "The row of the label and the value, over the track."
             },
             {
               "class": "env-slider-indicator",
-              "description": "The filled part of the track."
+              "description": "The fill from the start to the value."
             },
             {
               "class": "env-slider-label",
-              "description": "The label."
+              "description": "The label, inside at the start."
             },
             {
               "class": "env-slider-thumb",
-              "description": "The thumb."
+              "description": "The handle: a thin line at the value, under the pointer and on focus."
             },
             {
               "class": "env-slider-track",
-              "description": "The track."
+              "description": "The span the value moves along, inside the rounded ends, with the ticks."
             },
             {
               "class": "env-slider-value",
@@ -6632,18 +6643,31 @@
               "attribute": "data-dragging",
               "values": [],
               "parts": [
-                "env-slider-thumb"
+                "env-slider-control"
+              ]
+            },
+            {
+              "attribute": "data-ticks",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-slider"
               ]
             }
           ],
           "colors": [
             {
               "property": "--env-slider-container",
-              "description": "The track."
+              "description": "The track: the field's tint."
             },
             {
               "property": "--env-slider-indicator",
-              "description": "The filled part and the thumb, and the thumb's halo at 16%."
+              "description": "The fill that shows the value."
+            },
+            {
+              "property": "--env-slider-content",
+              "description": "The label, the value, the handle and the ticks."
             }
           ]
         }
@@ -7413,7 +7437,7 @@
       "category": "Navigation",
       "status": "stable",
       "since": "0.1.0",
-      "summary": "Switches between panels of related content in one place, from a rail of buttons.",
+      "summary": "Switches between panels of related content in one place, from a row of text tabs.",
       "aliases": [
         "tab bar",
         "tab list",
@@ -7460,7 +7484,7 @@
         {
           "name": "ProjectViews",
           "title": "Project views",
-          "description": "Tabs switch between panels of related content in one place. Each item gives a `button`, which becomes the tab, and the panel's `content`; the selected tab keeps its button's look.",
+          "description": "Tabs switch between panels of related content in one place. Each item gives a `button`, which becomes the tab, and the panel's `content`. After Material's tabs, every tab is a text tab, whatever its button's variant: the selected one in the accent color with an indicator under it, the others muted. It switches panels, where a SegmentedControl, connected outlined segments, picks a value.",
           "file": "docs/examples/tabs/ProjectViews.tsx"
         },
         {
@@ -7540,7 +7564,7 @@
             },
             {
               "class": "env-tabs-tab",
-              "description": "One tab."
+              "description": "One tab: a text tab, the selected one with an indicator under it."
             }
           ],
           "states": [
@@ -7598,11 +7622,19 @@
           "colors": [
             {
               "property": "--env-tabs-container",
-              "description": "The rail behind the tabs."
+              "description": "The rail behind the tabs, transparent by default."
             },
             {
               "property": "--env-tabs-content",
-              "description": "The labels of the tabs not selected, and the color of their state layers; the selected tab keeps its button’s colors."
+              "description": "The labels of the tabs not selected, and the color of their state layers."
+            },
+            {
+              "property": "--env-tabs-selected-content",
+              "description": "The selected tab's label."
+            },
+            {
+              "property": "--env-tabs-indicator",
+              "description": "The indicator under the selected tab."
             }
           ]
         }
@@ -11287,6 +11319,12 @@
           "file": "docs/examples/avatar/ProjectMembers.tsx"
         },
         {
+          "name": "ChooseReviewers",
+          "title": "Choose reviewers",
+          "description": "`selected` shows an avatar as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. A person in an AvatarGroup takes `selected` too.",
+          "file": "docs/examples/avatar/ChooseReviewers.tsx"
+        },
+        {
           "name": "PressableAvatars",
           "title": "Pressable avatars",
           "description": "With `onPersonClick` each avatar in a group is a button; a person with `href` is a link. The count lists the people it hides.",
@@ -11332,6 +11370,10 @@
               "description": "The avatar: an image, initials or a figure in a circle."
             },
             {
+              "class": "env-avatar-check",
+              "description": "The check at the bottom end of a chosen avatar."
+            },
+            {
               "class": "env-avatar-fallback",
               "description": "What shows without an image: initials or a figure."
             },
@@ -11364,14 +11406,23 @@
             {
               "attribute": "data-hue",
               "values": [
-                "amber",
-                "blue",
-                "green",
-                "purple",
-                "red",
-                "slate",
-                "teal",
-                "violet"
+                "blush",
+                "butter",
+                "oat",
+                "orchid",
+                "periwinkle",
+                "powder",
+                "sage",
+                "seafoam"
+              ],
+              "parts": [
+                "env-avatar"
+              ]
+            },
+            {
+              "attribute": "data-selected",
+              "values": [
+                ""
               ],
               "parts": [
                 "env-avatar"
@@ -17131,6 +17182,13 @@
           "required": false,
           "default": "false",
           "description": "Names the avatar as an image by `name`. Without it, the avatar is hidden from assistive technology, for when text beside it already names the person."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the avatar as chosen, such as in a list of people to pick from: a ring around it and a small check at its bottom end, so the choice never rests on color alone. It is a look only: the control around the avatar, such as a checkbox or an option, says it is chosen."
         }
       ],
       "native": [
@@ -20847,7 +20905,7 @@
           "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
         },
         {
           "name": "error",
@@ -23248,7 +23306,7 @@
           "type": "Exclude<FieldVariant, 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The document's look, as a text area's: outline, in a bordered box on the field background; underline, without a border or fill, with an underline while it has focus; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
+          "description": "The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
         },
         {
           "name": "extensions",
@@ -23535,7 +23593,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
         },
         {
           "name": "description",
@@ -23545,10 +23603,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
+          "type": "'outline' | 'floating' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
         },
         {
           "name": "error",
@@ -23573,7 +23631,7 @@
     "SegmentedControl": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One choice among a few items on a pill rail, such as views or filters of the same content; the chosen item takes the primary colors. A radio group, with one tab stop and arrow keys.",
+      "description": "One choice among a few items, such as views or filters of the same content, as connected outlined segments after Material's segmented buttons: the chosen one takes the selected fill and a check. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
           "name": "items",
@@ -23603,7 +23661,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The rail's height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, the rail takes the control height of its container, md unless the container sets another."
+          "description": "The height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, it takes the control height of its container, md unless the container sets another."
         },
         {
           "name": "fullWidth",
@@ -23883,19 +23941,19 @@
     "Slider": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A value in a range, chosen by dragging a thumb along a track, pressing the track or with the keyboard, with its label and current value above the track and an optional description below.",
+      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle and faint ticks at its steps appear under the pointer and while it has focus. An optional description sits below it.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The value's name above the track, such as Opacity. It names the slider, and pressing it moves focus to the slider."
+          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "Lasting guidance under the track, such as what the value applies to, linked to the slider as its description."
+          "description": "Lasting guidance under the slider, such as what the value applies to, linked to the slider as its description."
         },
         {
           "name": "value",
@@ -23954,7 +24012,7 @@
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "description": "The value as people read it above the track and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
+          "description": "The value as people read it at the slider's end and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
         },
         {
           "name": "locale",
@@ -24411,7 +24469,7 @@
     "Tabs": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. The selected tab keeps its button's own look; the others are quiet on the rail.",
+      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. Every tab is a text tab, the selected one in the accent color with an indicator under it.",
       "props": [
         {
           "name": "items",
@@ -24546,7 +24604,7 @@
     "TextField": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating and underline variants, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating variant, with an optional start icon, end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -24592,10 +24650,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
+          "type": "'outline' | 'floating' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
         },
         {
           "name": "startIcon",
@@ -24620,7 +24678,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
         },
         {
           "name": "prefix",
@@ -24670,7 +24728,7 @@
           "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
         },
         {
           "name": "onValueChange",
@@ -25741,111 +25799,317 @@
         "id": "color.avatar.bg",
         "cssVariable": "--env-color-avatar-bg",
         "type": "color",
-        "description": "The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue=\"blue\".",
+        "description": "The default fill, the powder hue: the fill of an avatar whose hue nothing sets.",
         "values": {
-          "light": "#005cc8",
-          "dark": "#005cc8",
-          "light-high-contrast": "#004aa2",
-          "dark-high-contrast": "#004aa2"
+          "light": "#c0e2f6",
+          "dark": "#afd3e9",
+          "light-high-contrast": "#c0e2f6",
+          "dark-high-contrast": "#afd3e9"
         }
       },
       {
-        "id": "color.avatar.bg.amber",
-        "cssVariable": "--env-color-avatar-bg-amber",
+        "id": "color.avatar.bg.blush",
+        "cssVariable": "--env-color-avatar-bg-blush",
         "type": "color",
-        "description": "The amber fill, one of the hues an avatar takes from its name.",
+        "description": "The blush pink pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#8a5504",
-          "dark": "#8a5504",
-          "light-high-contrast": "#704300",
-          "dark-high-contrast": "#704300"
+          "light": "#ffd3d4",
+          "dark": "#f3c2c4",
+          "light-high-contrast": "#ffd3d4",
+          "dark-high-contrast": "#f3c2c4"
         }
       },
       {
-        "id": "color.avatar.bg.green",
-        "cssVariable": "--env-color-avatar-bg-green",
+        "id": "color.avatar.bg.butter",
+        "cssVariable": "--env-color-avatar-bg-butter",
         "type": "color",
-        "description": "The green fill, one of the hues an avatar takes from its name.",
+        "description": "The butter yellow pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#176f35",
-          "dark": "#176f35",
-          "light-high-contrast": "#005a25",
-          "dark-high-contrast": "#005a25"
+          "light": "#efdca4",
+          "dark": "#e1cc95",
+          "light-high-contrast": "#efdca4",
+          "dark-high-contrast": "#e1cc95"
         }
       },
       {
-        "id": "color.avatar.bg.purple",
-        "cssVariable": "--env-color-avatar-bg-purple",
+        "id": "color.avatar.bg.oat",
+        "cssVariable": "--env-color-avatar-bg-oat",
         "type": "color",
-        "description": "The purple fill, one of the hues an avatar takes from its name.",
+        "description": "The warm oat pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#8e3caa",
-          "dark": "#8e3caa",
-          "light-high-contrast": "#782594",
-          "dark-high-contrast": "#782594"
+          "light": "#e7dbce",
+          "dark": "#d8ccbf",
+          "light-high-contrast": "#e7dbce",
+          "dark-high-contrast": "#d8ccbf"
         }
       },
       {
-        "id": "color.avatar.bg.red",
-        "cssVariable": "--env-color-avatar-bg-red",
+        "id": "color.avatar.bg.orchid",
+        "cssVariable": "--env-color-avatar-bg-orchid",
         "type": "color",
-        "description": "The red fill, one of the hues an avatar takes from its name.",
+        "description": "The orchid pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#b72b20",
-          "dark": "#b72b20",
-          "light-high-contrast": "#9f0300",
-          "dark-high-contrast": "#9f0300"
+          "light": "#fad2ec",
+          "dark": "#ecc2dd",
+          "light-high-contrast": "#fad2ec",
+          "dark-high-contrast": "#ecc2dd"
         }
       },
       {
-        "id": "color.avatar.bg.slate",
-        "cssVariable": "--env-color-avatar-bg-slate",
+        "id": "color.avatar.bg.periwinkle",
+        "cssVariable": "--env-color-avatar-bg-periwinkle",
         "type": "color",
-        "description": "The slate fill, one of the hues an avatar takes from its name.",
+        "description": "The periwinkle pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#4e627e",
-          "dark": "#4e627e",
-          "light-high-contrast": "#3c4e69",
-          "dark-high-contrast": "#3c4e69"
+          "light": "#dadaff",
+          "dark": "#cacaf3",
+          "light-high-contrast": "#dadaff",
+          "dark-high-contrast": "#cacaf3"
         }
       },
       {
-        "id": "color.avatar.bg.teal",
-        "cssVariable": "--env-color-avatar-bg-teal",
+        "id": "color.avatar.bg.powder",
+        "cssVariable": "--env-color-avatar-bg-powder",
         "type": "color",
-        "description": "The teal fill, one of the hues an avatar takes from its name.",
+        "description": "The powder blue pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#236d52",
-          "dark": "#236d52",
-          "light-high-contrast": "#03593f",
-          "dark-high-contrast": "#03593f"
+          "light": "#c0e2f6",
+          "dark": "#afd3e9",
+          "light-high-contrast": "#c0e2f6",
+          "dark-high-contrast": "#afd3e9"
         }
       },
       {
-        "id": "color.avatar.bg.violet",
-        "cssVariable": "--env-color-avatar-bg-violet",
+        "id": "color.avatar.bg.sage",
+        "cssVariable": "--env-color-avatar-bg-sage",
         "type": "color",
-        "description": "The violet fill, one of the hues an avatar takes from its name.",
+        "description": "The sage pastel fill, one of the hues an avatar takes from its name.",
         "values": {
-          "light": "#7a3fc8",
-          "dark": "#7a3fc8",
-          "light-high-contrast": "#6725b4",
-          "dark-high-contrast": "#6725b4"
+          "light": "#cee4c3",
+          "dark": "#bed4b3",
+          "light-high-contrast": "#cee4c3",
+          "dark-high-contrast": "#bed4b3"
+        }
+      },
+      {
+        "id": "color.avatar.bg.seafoam",
+        "cssVariable": "--env-color-avatar-bg-seafoam",
+        "type": "color",
+        "description": "The seafoam pastel fill, one of the hues an avatar takes from its name.",
+        "values": {
+          "light": "#b8e7de",
+          "dark": "#a7d7cf",
+          "light-high-contrast": "#b8e7de",
+          "dark-high-contrast": "#a7d7cf"
         }
       },
       {
         "id": "color.avatar.fg",
         "cssVariable": "--env-color-avatar-fg",
         "type": "color",
-        "description": "The initials of an avatar, at least 4.5:1 on every fill, and 7:1 at high contrast.",
-        "value": "#ffffff"
+        "description": "The default initials, on the powder fill.",
+        "values": {
+          "light": "#39648d",
+          "dark": "#2f5a84",
+          "light-high-contrast": "#0f3b64",
+          "dark-high-contrast": "#002e56"
+        }
+      },
+      {
+        "id": "color.avatar.fg.blush",
+        "cssVariable": "--env-color-avatar-fg-blush",
+        "type": "color",
+        "description": "The initials on the blush fill.",
+        "values": {
+          "light": "#924c4f",
+          "dark": "#894144",
+          "light-high-contrast": "#682227",
+          "dark-high-contrast": "#59131b"
+        }
+      },
+      {
+        "id": "color.avatar.fg.butter",
+        "cssVariable": "--env-color-avatar-fg-butter",
+        "type": "color",
+        "description": "The initials on the butter fill.",
+        "values": {
+          "light": "#7c5b2a",
+          "dark": "#73501f",
+          "light-high-contrast": "#523300",
+          "dark-high-contrast": "#422800"
+        }
+      },
+      {
+        "id": "color.avatar.fg.oat",
+        "cssVariable": "--env-color-avatar-fg-oat",
+        "type": "color",
+        "description": "The initials on the oat fill.",
+        "values": {
+          "light": "#6e5e51",
+          "dark": "#645447",
+          "light-high-contrast": "#46372b",
+          "dark-high-contrast": "#392b1f"
+        }
+      },
+      {
+        "id": "color.avatar.fg.orchid",
+        "cssVariable": "--env-color-avatar-fg-orchid",
+        "type": "color",
+        "description": "The initials on the orchid fill.",
+        "values": {
+          "light": "#864f70",
+          "dark": "#7d4566",
+          "light-high-contrast": "#5d2648",
+          "dark-high-contrast": "#4e193b"
+        }
+      },
+      {
+        "id": "color.avatar.fg.periwinkle",
+        "cssVariable": "--env-color-avatar-fg-periwinkle",
+        "type": "color",
+        "description": "The initials on the periwinkle fill.",
+        "values": {
+          "light": "#5d5a96",
+          "dark": "#54508d",
+          "light-high-contrast": "#38326d",
+          "dark-high-contrast": "#2c255f"
+        }
+      },
+      {
+        "id": "color.avatar.fg.powder",
+        "cssVariable": "--env-color-avatar-fg-powder",
+        "type": "color",
+        "description": "The initials on the powder fill.",
+        "values": {
+          "light": "#39648d",
+          "dark": "#2f5a84",
+          "light-high-contrast": "#0f3b64",
+          "dark-high-contrast": "#002e56"
+        }
+      },
+      {
+        "id": "color.avatar.fg.sage",
+        "cssVariable": "--env-color-avatar-fg-sage",
+        "type": "color",
+        "description": "The initials on the sage fill.",
+        "values": {
+          "light": "#4d6845",
+          "dark": "#425e3b",
+          "light-high-contrast": "#26401f",
+          "dark-high-contrast": "#193312"
+        }
+      },
+      {
+        "id": "color.avatar.fg.seafoam",
+        "cssVariable": "--env-color-avatar-fg-seafoam",
+        "type": "color",
+        "description": "The initials on the seafoam fill.",
+        "values": {
+          "light": "#266b68",
+          "dark": "#16615f",
+          "light-high-contrast": "#004140",
+          "dark-high-contrast": "#003432"
+        }
       },
       {
         "id": "color.avatar.figure",
         "cssVariable": "--env-color-avatar-figure",
         "type": "color",
-        "description": "The default figure of an avatar without an image, on any of its fills.",
-        "value": "#ffffff"
+        "description": "The default figure, on the powder fill.",
+        "values": {
+          "light": "#39648d",
+          "dark": "#2f5a84",
+          "light-high-contrast": "#0f3b64",
+          "dark-high-contrast": "#002e56"
+        }
+      },
+      {
+        "id": "color.avatar.figure.blush",
+        "cssVariable": "--env-color-avatar-figure-blush",
+        "type": "color",
+        "values": {
+          "light": "#924c4f",
+          "dark": "#894144",
+          "light-high-contrast": "#682227",
+          "dark-high-contrast": "#59131b"
+        }
+      },
+      {
+        "id": "color.avatar.figure.butter",
+        "cssVariable": "--env-color-avatar-figure-butter",
+        "type": "color",
+        "values": {
+          "light": "#7c5b2a",
+          "dark": "#73501f",
+          "light-high-contrast": "#523300",
+          "dark-high-contrast": "#422800"
+        }
+      },
+      {
+        "id": "color.avatar.figure.oat",
+        "cssVariable": "--env-color-avatar-figure-oat",
+        "type": "color",
+        "values": {
+          "light": "#6e5e51",
+          "dark": "#645447",
+          "light-high-contrast": "#46372b",
+          "dark-high-contrast": "#392b1f"
+        }
+      },
+      {
+        "id": "color.avatar.figure.orchid",
+        "cssVariable": "--env-color-avatar-figure-orchid",
+        "type": "color",
+        "values": {
+          "light": "#864f70",
+          "dark": "#7d4566",
+          "light-high-contrast": "#5d2648",
+          "dark-high-contrast": "#4e193b"
+        }
+      },
+      {
+        "id": "color.avatar.figure.periwinkle",
+        "cssVariable": "--env-color-avatar-figure-periwinkle",
+        "type": "color",
+        "values": {
+          "light": "#5d5a96",
+          "dark": "#54508d",
+          "light-high-contrast": "#38326d",
+          "dark-high-contrast": "#2c255f"
+        }
+      },
+      {
+        "id": "color.avatar.figure.powder",
+        "cssVariable": "--env-color-avatar-figure-powder",
+        "type": "color",
+        "values": {
+          "light": "#39648d",
+          "dark": "#2f5a84",
+          "light-high-contrast": "#0f3b64",
+          "dark-high-contrast": "#002e56"
+        }
+      },
+      {
+        "id": "color.avatar.figure.sage",
+        "cssVariable": "--env-color-avatar-figure-sage",
+        "type": "color",
+        "values": {
+          "light": "#4d6845",
+          "dark": "#425e3b",
+          "light-high-contrast": "#26401f",
+          "dark-high-contrast": "#193312"
+        }
+      },
+      {
+        "id": "color.avatar.figure.seafoam",
+        "cssVariable": "--env-color-avatar-figure-seafoam",
+        "type": "color",
+        "values": {
+          "light": "#266b68",
+          "dark": "#16615f",
+          "light-high-contrast": "#004140",
+          "dark-high-contrast": "#003432"
+        }
       },
       {
         "id": "color.bg.accent.badge",
@@ -26153,7 +26417,7 @@
         "id": "color.bg.field",
         "cssVariable": "--env-color-bg-field",
         "type": "color",
-        "description": "Text fields and other inputs.",
+        "description": "A well that keeps a fill of its own, such as the color picker's value button and code and references in rich text. Text fields have none: they take the background of what they sit on.",
         "values": {
           "light": "#ffffff",
           "dark": "#1e1f21",
@@ -26321,7 +26585,7 @@
         "id": "color.bg.neutral.muted",
         "cssVariable": "--env-color-bg-neutral-muted",
         "type": "color",
-        "description": "The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
+        "description": "The translucent neutral fill of secondary buttons, chips, switch tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
         "values": {
           "light": "rgb(30 31 33 / 0.1)",
           "dark": "rgb(232 234 238 / 0.125)",
@@ -27307,6 +27571,18 @@
           "dark": "#4b4d51",
           "light-high-contrast": "#dbdde1",
           "dark-high-contrast": "#424447"
+        }
+      },
+      {
+        "id": "color.skeleton.shine",
+        "cssVariable": "--env-color-skeleton-shine",
+        "type": "color",
+        "description": "The soft highlight that sweeps across a skeleton's bars and shapes: lighter than their fill on every surface, the raised surface in the light theme and the default border's gray in the dark.",
+        "values": {
+          "light": "#eff1f5",
+          "dark": "#898c91",
+          "light-high-contrast": "#ffffff",
+          "dark-high-contrast": "#a1a4a9"
         }
       },
       {
@@ -29450,6 +29726,48 @@
         "cssVariable": "--env-breakpoint-xl",
         "removed": true,
         "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-amber",
+        "use": "--env-color-avatar-bg-butter",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: amber is butter."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-green",
+        "use": "--env-color-avatar-bg-sage",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: green is sage."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-purple",
+        "use": "--env-color-avatar-bg-orchid",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: purple is orchid."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-red",
+        "use": "--env-color-avatar-bg-blush",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: red is blush."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-slate",
+        "use": "--env-color-avatar-bg-oat",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: slate is oat."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-teal",
+        "use": "--env-color-avatar-bg-seafoam",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: teal is seafoam."
+      },
+      {
+        "cssVariable": "--env-color-avatar-bg-violet",
+        "use": "--env-color-avatar-bg-periwinkle",
+        "type": "color",
+        "note": "The avatar hues are named for their colors: violet is periwinkle."
       },
       {
         "cssVariable": "--env-elevation-0-shadow",

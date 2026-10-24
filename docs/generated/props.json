@@ -268,6 +268,13 @@
           "required": false,
           "default": "false",
           "description": "Names the avatar as an image by `name`. Without it, the avatar is hidden from assistive technology, for when text beside it already names the person."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the avatar as chosen, such as in a list of people to pick from: a ring around it and a small check at its bottom end, so the choice never rests on color alone. It is a look only: the control around the avatar, such as a checkbox or an option, says it is chosen."
         }
       ],
       "native": [
@@ -3970,7 +3977,7 @@
           "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
         },
         {
           "name": "error",
@@ -6365,7 +6372,7 @@
           "type": "Exclude<FieldVariant, 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The document's look, as a text area's: outline, in a bordered box on the field background; underline, without a border or fill, with an underline while it has focus; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
+          "description": "The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
         },
         {
           "name": "extensions",
@@ -6652,7 +6659,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
         },
         {
           "name": "description",
@@ -6662,10 +6669,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
+          "type": "'outline' | 'floating' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
         },
         {
           "name": "error",
@@ -6690,7 +6697,7 @@
     "SegmentedControl": {
       "kind": "component",
       "source": "packages/ui/src/actions/SegmentedControl.tsx",
-      "description": "One choice among a few items on a pill rail, such as views or filters of the same content; the chosen item takes the primary colors. A radio group, with one tab stop and arrow keys.",
+      "description": "One choice among a few items, such as views or filters of the same content, as connected outlined segments after Material's segmented buttons: the chosen one takes the selected fill and a check. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
           "name": "items",
@@ -6720,7 +6727,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The rail's height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, the rail takes the control height of its container, md unless the container sets another."
+          "description": "The height, as on every control: sm, md or lg in the current scale, so it lines up with buttons and fields of the same size. Without it, it takes the control height of its container, md unless the container sets another."
         },
         {
           "name": "fullWidth",
@@ -7000,19 +7007,19 @@
     "Slider": {
       "kind": "component",
       "source": "packages/ui/src/forms/Slider.tsx",
-      "description": "A value in a range, chosen by dragging a thumb along a track, pressing the track or with the keyboard, with its label and current value above the track and an optional description below.",
+      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle and faint ticks at its steps appear under the pointer and while it has focus. An optional description sits below it.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The value's name above the track, such as Opacity. It names the slider, and pressing it moves focus to the slider."
+          "description": "The value's name, inside the slider at its start, such as Opacity. It names the slider."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "Lasting guidance under the track, such as what the value applies to, linked to the slider as its description."
+          "description": "Lasting guidance under the slider, such as what the value applies to, linked to the slider as its description."
         },
         {
           "name": "value",
@@ -7071,7 +7078,7 @@
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "description": "The value as people read it above the track and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
+          "description": "The value as people read it at the slider's end and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
         },
         {
           "name": "locale",
@@ -7528,7 +7535,7 @@
     "Tabs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Tabs.tsx",
-      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. The selected tab keeps its button's own look; the others are quiet on the rail.",
+      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. Every tab is a text tab, the selected one in the accent color with an indicator under it.",
       "props": [
         {
           "name": "items",
@@ -7663,7 +7670,7 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating and underline variants, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating variant, with an optional start icon, end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -7709,10 +7716,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
+          "type": "'outline' | 'floating' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
         },
         {
           "name": "startIcon",
@@ -7737,7 +7744,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
         },
         {
           "name": "prefix",
@@ -7787,7 +7794,7 @@
           "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
         },
         {
           "name": "onValueChange",

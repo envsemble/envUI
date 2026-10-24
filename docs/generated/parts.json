@@ -197,6 +197,10 @@
           "description": "The avatar: an image, initials or a figure in a circle."
         },
         {
+          "class": "env-avatar-check",
+          "description": "The check at the bottom end of a chosen avatar."
+        },
+        {
           "class": "env-avatar-fallback",
           "description": "What shows without an image: initials or a figure."
         },
@@ -229,14 +233,23 @@
         {
           "attribute": "data-hue",
           "values": [
-            "amber",
-            "blue",
-            "green",
-            "purple",
-            "red",
-            "slate",
-            "teal",
-            "violet"
+            "blush",
+            "butter",
+            "oat",
+            "orchid",
+            "periwinkle",
+            "powder",
+            "sage",
+            "seafoam"
+          ],
+          "parts": [
+            "env-avatar"
+          ]
+        },
+        {
+          "attribute": "data-selected",
+          "values": [
+            ""
           ],
           "parts": [
             "env-avatar"
@@ -254,6 +267,9 @@
             "env-avatar"
           ]
         }
+      ],
+      "uses": [
+        "Icon"
       ],
       "colors": [
         {
@@ -4188,11 +4204,15 @@
       "parts": [
         {
           "class": "env-segmented-control",
-          "description": "The segmented control."
+          "description": "The segmented control: connected segments in one outline."
         },
         {
           "class": "env-segmented-control-item",
           "description": "One segment."
+        },
+        {
+          "class": "env-segmented-control-item-check",
+          "description": "The check on the chosen segment, in place of its icon."
         },
         {
           "class": "env-segmented-control-item-count",
@@ -4249,7 +4269,11 @@
       "colors": [
         {
           "property": "--env-segmented-control-container",
-          "description": "The rail behind the options."
+          "description": "The fill behind the options, transparent by default."
+        },
+        {
+          "property": "--env-segmented-control-outline",
+          "description": "The outline around and between the segments."
         },
         {
           "property": "--env-segmented-control-content",
@@ -4456,27 +4480,27 @@
         },
         {
           "class": "env-slider-control",
-          "description": "The control that takes the pointer."
+          "description": "The field: the track's tint, which takes the pointer."
         },
         {
           "class": "env-slider-heading",
-          "description": "The row with the label and the value."
+          "description": "The row of the label and the value, over the track."
         },
         {
           "class": "env-slider-indicator",
-          "description": "The filled part of the track."
+          "description": "The fill from the start to the value."
         },
         {
           "class": "env-slider-label",
-          "description": "The label."
+          "description": "The label, inside at the start."
         },
         {
           "class": "env-slider-thumb",
-          "description": "The thumb."
+          "description": "The handle: a thin line at the value, under the pointer and on focus."
         },
         {
           "class": "env-slider-track",
-          "description": "The track."
+          "description": "The span the value moves along, inside the rounded ends, with the ticks."
         },
         {
           "class": "env-slider-value",
@@ -4495,23 +4519,37 @@
           "attribute": "data-dragging",
           "values": [],
           "parts": [
-            "env-slider-thumb"
+            "env-slider-control"
+          ]
+        },
+        {
+          "attribute": "data-ticks",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-slider"
           ]
         }
       ],
       "uses": [
         "Field",
         "Icon",
+        "Text",
         "TextField"
       ],
       "colors": [
         {
           "property": "--env-slider-container",
-          "description": "The track."
+          "description": "The track: the field's tint."
         },
         {
           "property": "--env-slider-indicator",
-          "description": "The filled part and the thumb, and the thumb's halo at 16%."
+          "description": "The fill that shows the value."
+        },
+        {
+          "property": "--env-slider-content",
+          "description": "The label, the value, the handle and the ticks."
         }
       ]
     },
@@ -4851,7 +4889,7 @@
         },
         {
           "class": "env-tabs-tab",
-          "description": "One tab."
+          "description": "One tab: a text tab, the selected one with an indicator under it."
         }
       ],
       "states": [
@@ -4912,11 +4950,19 @@
       "colors": [
         {
           "property": "--env-tabs-container",
-          "description": "The rail behind the tabs."
+          "description": "The rail behind the tabs, transparent by default."
         },
         {
           "property": "--env-tabs-content",
-          "description": "The labels of the tabs not selected, and the color of their state layers; the selected tab keeps its button’s colors."
+          "description": "The labels of the tabs not selected, and the color of their state layers."
+        },
+        {
+          "property": "--env-tabs-selected-content",
+          "description": "The selected tab's label."
+        },
+        {
+          "property": "--env-tabs-indicator",
+          "description": "The indicator under the selected tab."
         }
       ]
     },
@@ -4966,6 +5012,10 @@
         {
           "class": "env-text-field",
           "description": "The text field."
+        },
+        {
+          "class": "env-text-field-border",
+          "description": "The border over the well's edge, which a floated label opens behind it."
         },
         {
           "class": "env-text-field-control",
@@ -5097,8 +5147,7 @@
         {
           "attribute": "data-variant",
           "values": [
-            "ghost",
-            "underline"
+            "ghost"
           ],
           "parts": [
             "env-text-field-control"

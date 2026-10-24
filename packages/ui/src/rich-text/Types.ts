@@ -188,9 +188,8 @@ export interface RichTextEditorProps
   /** Lets people choose several files at once with Attach files. */
   multiple?: boolean;
   /**
-   * The document's look, as a text area's: outline, in a bordered box on the field background;
-   * underline, without a border or fill, with an underline while it has focus; or ghost, only its
-   * text at rest, with a soft fill under the pointer and while it has focus. The document is always
+   * The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost,
+   * only its text at rest, with a soft fill under the pointer and while it has focus. The document is always
    * tall, with its label above it, so it has no floating variant.
    * @default 'outline'
    */

@@ -140,6 +140,7 @@
   margin: 0;
   padding: var(--env-space-1) var(--env-space-3);
   border: 0;
+  /* The capped full corner, so a label that wraps keeps the corners. */
   border-radius: var(--env-radius-full);
   background: var(--env-drawer-item-custom-fill, transparent);
   color: var(--env-drawer-item-content, var(--env-color-fg-control));
@@ -260,6 +261,13 @@
   box-shadow: none;
   background: transparent;
 }
+.env-drawer:is([data-env-skeleton], [data-env-skeleton] *) .env-drawer-item,
+.env-drawer:is([data-env-skeleton], [data-env-skeleton] *)
+  .env-drawer-item
+  :not(.env-drawer-count) {
+  /* A destination is not a shape: its label draws as a bar. */
+  --env-skeleton-shape: 0;
+}
 .env-drawer:is([data-env-skeleton], [data-env-skeleton] *) .env-drawer-item * {
   visibility: visible;
 }
@@ -269,7 +277,8 @@
 [data-env-skeleton] .env-drawer-count {
   forced-color-adjust: none;
   border-color: transparent;
-  background: var(--env-skeleton-color);
+  --env-skeleton-shape: 1;
+  background: var(--env-skeleton-paint);
 }
 [data-env-skeleton] .env-drawer-count * {
   visibility: hidden;

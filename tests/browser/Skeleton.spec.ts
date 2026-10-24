@@ -59,19 +59,12 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   expect(await style(page, '[data-testid="raw"]', '-webkit-text-fill-color')).toBe(
     'rgba(0, 0, 0, 0)',
   );
-  const color = await style(page, '[data-testid="projects"]', '--env-skeleton-color');
-  // A control is a filled shape of the skeleton's color.
+  // A control is a filled shape of the skeleton's paint: its fill with a soft highlight across it,
+  // laid out on the window so it crosses every skeleton as one, and its own rounded corners.
   const button = '[data-testid="projects"] .env-button';
-  expect(await style(page, button, 'background-color')).toBe(
-    await page.evaluate((value) => {
-      const probe = document.createElement('i');
-      probe.style.color = value;
-      document.body.append(probe);
-      const resolved = getComputedStyle(probe).color;
-      probe.remove();
-      return resolved;
-    }, color),
-  );
+  expect(await style(page, button, 'background-image')).toMatch(/^linear-gradient\(/);
+  expect(await style(page, button, 'background-attachment')).toBe('fixed');
+  expect(Number.parseFloat(await style(page, button, 'border-top-left-radius'))).toBeGreaterThan(0);
   // What a shape holds, such as an avatar's initials, isn't drawn.
   expect(await style(page, '[data-testid="owner-row"] .env-avatar *', 'visibility')).toBe('hidden');
 
@@ -79,20 +72,27 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   const heading = '[data-testid="project-card"] .env-card-heading';
   await expect(page.locator(heading).first()).toBeEmpty();
   expect(await style(page, heading, 'display', '::before')).toBe('inline-block');
-  expect(await style(page, heading, 'inline-size', '::before')).toBe('160px');
+  // A bar has small rounded corners on every line: its mask is a rounded rectangle per line.
+  expect(await style(page, heading, 'mask-image', '::before')).toMatch(/data:image\/svg\+xml.*rx/);
+  expect(await style(page, heading, 'background-image', '::before')).toMatch(/^linear-gradient\(/);
   const description = '[data-testid="project-card"] .env-card-description';
-  // Running text: three lines.
+  // A card's supporting sentence: one line, as tall as the line it stands for.
   expect(
     Number.parseFloat(await style(page, description, 'block-size', '::before')) /
       Number.parseFloat(await style(page, description, 'line-height')),
-  ).toBeCloseTo(3);
+  ).toBeCloseTo(1);
+  // The title and the meta share one row, as they do once the text loads.
+  const header = page.locator('[data-testid="project-card"] .env-card-header').first();
+  const lineHeight = Number.parseFloat(await style(page, heading, 'line-height'));
+  expect((await header.boundingBox())!.height).toBeLessThanOrEqual(lineHeight + 1);
+  const skeletonCard = (await page.getByTestId('project-card').first().boundingBox())!;
   expect(await style(page, '[data-testid="name-cell"]', 'display', '::before')).toBe(
     'inline-block',
   );
   // A count badge is a filled shape too, whatever its variant: no fill or edge of its own.
-  const shape = await style(page, '[data-testid="badge-skeleton"]', 'background-color');
+  const shape = await style(page, '[data-testid="badge-skeleton"]', 'background-image');
   for (const count of ['count-solid-skeleton', 'count-outline-skeleton']) {
-    expect(await style(page, `[data-testid="${count}"]`, 'background-color')).toBe(shape);
+    expect(await style(page, `[data-testid="${count}"]`, 'background-image')).toBe(shape);
     expect(await style(page, `[data-testid="${count}"]`, 'border-top-color')).toBe(
       'rgba(0, 0, 0, 0)',
     );
@@ -128,6 +128,9 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   await expect(projects.locator('> .env-skeleton-content')).toHaveCount(0);
   await expect(page.getByTestId('reader')).toHaveText('loaded');
   await expect(page.locator(heading).first()).toHaveText('Launch brief');
+  // The card keeps its size as its text loads.
+  const loadedCard = (await page.getByTestId('project-card').first().boundingBox())!;
+  expect(Math.abs(loadedCard.height - skeletonCard.height)).toBeLessThanOrEqual(1);
   expect(await style(page, '[data-testid="projects"]', 'text-decoration-line')).toBe('none');
   // A given slot that stays empty takes no room outside a skeleton.
   await page.getByRole('button', { name: 'Unload' }).click();
@@ -136,7 +139,7 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   expect(await style(page, heading, 'display')).toBe('none');
 });
 
-test('the pulse runs in step across the page, and stays still with reduced motion', async ({
+test('the shimmer runs in step across the page, and stays still with reduced motion', async ({
   page,
 }) => {
   await open(page);
@@ -144,14 +147,14 @@ test('the pulse runs in step across the page, and stays still with reduced motio
     page.evaluate(() =>
       document
         .getAnimations()
-        .filter((animation) => (animation as CSSAnimation).animationName === 'env-skeleton-pulse')
+        .filter((animation) => (animation as CSSAnimation).animationName === 'env-skeleton-shimmer')
         .map((animation) => animation.startTime),
     );
   // The surface over placeholders and the card that is a skeleton itself, started at once.
   await expect.poll(async () => (await animations()).length).toBeGreaterThanOrEqual(2);
   expect(new Set(await animations())).toEqual(new Set([0]));
-  // A control's shape takes the pulse's color as it is: no transition of its own starts again on
-  // every frame of the pulse and lags behind it.
+  // A control's shape takes the paint as it is: no transition of its own starts again on every
+  // frame of the sweep and lags behind it.
   expect(
     await page.evaluate(
       () =>
@@ -310,8 +313,8 @@ test('navigation as a skeleton: icons are shapes, labels bars, no current fill',
     expect(await style(page, `[data-testid="${id}"] .${label}`, 'display', '::before')).toBe(
       'inline-block',
     );
-    expect(await style(page, `[data-testid="${id}"] .env-icon`, 'background-color')).not.toBe(
-      'rgba(0, 0, 0, 0)',
+    expect(await style(page, `[data-testid="${id}"] .env-icon`, 'background-image')).toMatch(
+      /^linear-gradient/,
     );
   }
 });
@@ -335,10 +338,61 @@ test('in forced colors, bars and shapes stay visible in the system gray', async 
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
   await open(page);
   const heading = '[data-testid="project-card"] .env-card-heading';
-  const bar = await style(page, heading, 'background-color', '::before');
-  expect(bar).not.toBe('rgba(0, 0, 0, 0)');
-  expect(await style(page, '[data-testid="projects"]', 'text-decoration-color')).not.toBe(
-    'rgba(0, 0, 0, 0)',
+  // The paint is the system gray throughout, the highlight included.
+  const bar = await style(page, heading, 'background-image', '::before');
+  expect(bar).toMatch(/^linear-gradient/);
+  expect(bar).not.toContain('rgba(0, 0, 0, 0)');
+  // Text that is there is drawn by the bar layer over the content, in the system gray too.
+  const layer = await style(page, '[data-testid="projects"]', 'background-image', '::after');
+  expect(layer).toMatch(/^linear-gradient/);
+  expect(layer).not.toContain('rgba(0, 0, 0, 0)');
+  expect(await style(page, '[data-testid="projects"] .env-avatar', 'background-image')).toBe(bar);
+});
+
+test('text that is there draws as rounded bars over its line boxes, which shimmer with the rest', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page);
+  const projects = page.getByTestId('projects');
+  // The script marks the root once it has measured its text, and the line through goes.
+  await expect(projects).toHaveAttribute('data-env-skeleton-text', '');
+  expect(await style(page, '[data-testid="projects"]', '--env-skeleton-color')).toBe('transparent');
+  // One rounded bar per line box of the heading that is there, laid over it in the bar layer.
+  const bars = await projects.evaluate((root) => {
+    const value = root.style.getPropertyValue('--env-skeleton-text-bars');
+    const layers = [...value.matchAll(/(-?[\d.]+)px (-?[\d.]+)px \/ ([\d.]+)px ([\d.]+)px/g)].map(
+      (match) => match.slice(1).map(Number),
+    );
+    const heading = root.querySelector('h2')!;
+    const range = document.createRange();
+    range.selectNodeContents(heading);
+    const line = range.getBoundingClientRect();
+    const box = root.getBoundingClientRect();
+    return {
+      layers,
+      heading: [line.left - box.left - root.clientLeft, line.width],
+    };
+  });
+  const [x, width] = bars.heading;
+  expect(bars.layers.some(([left, , w]) => Math.abs(left - x) < 1 && Math.abs(w - width) < 1)).toBe(
+    true,
   );
-  expect(await style(page, '[data-testid="projects"] .env-avatar', 'background-color')).toBe(bar);
+  const after = await projects.evaluate((root) => {
+    const style = getComputedStyle(root, '::after');
+    return { mask: style.maskImage, paint: style.backgroundImage, position: style.position };
+  });
+  expect(after.mask).toContain('data:image/svg+xml');
+  expect(after.paint).toMatch(/^linear-gradient/);
+  expect(after.position).toBe('absolute');
+  // The surface itself carries the highlight over its fill.
+  expect(await style(page, '[data-testid="projects"]', 'background-image')).toMatch(
+    /linear-gradient/,
+  );
+  // Loaded, the bars and the marks go.
+  await page.getByRole('button', { name: 'Load' }).click();
+  await expect(projects).not.toHaveAttribute('data-env-skeleton-text');
+  expect(
+    await projects.evaluate((root) => root.style.getPropertyValue('--env-skeleton-text-bars')),
+  ).toBe('');
 });

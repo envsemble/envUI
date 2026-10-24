@@ -1,0 +1,5 @@
+---
+'@envsemble/envui': minor
+---
+
+Avatars without a picture take a new pastel palette of tonal pairs: each of the eight hues is a soft fill, `--env-color-avatar-bg-{hue}`, with initials and a figure in a deep shade of the same hue, new tokens `--env-color-avatar-fg-{hue}` and `--env-color-avatar-figure-{hue}`, rather than white. The colors are powder blue, seafoam, sage, butter, blush, periwinkle, orchid and a warm oat. Initials keep 4.5:1 on their fill and 7:1 at high contrast; the dark theme takes a slightly deeper fill. A new prop, `selected`, shows an avatar as chosen with a ring and a check at its bottom end in the accent of a checked box (a new part, `env-avatar-check`), a look only that the control around it announces; an AvatarGroup person takes `selected` too. Where a pointer can hover, AvatarGroup rests bunched, each avatar a little off the line and turned by its place, and spreads into a row with gaps along a gentle arch under the pointer or while focus is inside, showing the count of the rest, with the motion tokens and at once with a reduced-motion preference.

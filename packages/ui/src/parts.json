@@ -80,6 +80,7 @@
     },
     "Avatar": {
       "env-avatar": "The avatar: an image, initials or a figure in a circle.",
+      "env-avatar-check": "The check at the bottom end of a chosen avatar.",
       "env-avatar-fallback": "What shows without an image: initials or a figure.",
       "env-avatar-fallback-initials": "The fallback that shows initials.",
       "env-avatar-fallback-person": "The fallback that shows a person's figure.",
@@ -626,8 +627,9 @@
       "env-scaffold-body": "The body, the main region, which scrolls."
     },
     "SegmentedControl": {
-      "env-segmented-control": "The segmented control.",
+      "env-segmented-control": "The segmented control: connected segments in one outline.",
       "env-segmented-control-item": "One segment.",
+      "env-segmented-control-item-check": "The check on the chosen segment, in place of its icon.",
       "env-segmented-control-item-count": "A segment's count.",
       "env-segmented-control-item-label": "A segment's label."
     },
@@ -652,12 +654,12 @@
     },
     "Slider": {
       "env-slider": "The slider.",
-      "env-slider-control": "The control that takes the pointer.",
-      "env-slider-heading": "The row with the label and the value.",
-      "env-slider-indicator": "The filled part of the track.",
-      "env-slider-label": "The label.",
-      "env-slider-thumb": "The thumb.",
-      "env-slider-track": "The track.",
+      "env-slider-control": "The field: the track's tint, which takes the pointer.",
+      "env-slider-heading": "The row of the label and the value, over the track.",
+      "env-slider-indicator": "The fill from the start to the value.",
+      "env-slider-label": "The label, inside at the start.",
+      "env-slider-thumb": "The handle: a thin line at the value, under the pointer and on focus.",
+      "env-slider-track": "The span the value moves along, inside the rounded ends, with the ticks.",
       "env-slider-value": "The value as text."
     },
     "Spinner": {
@@ -693,13 +695,14 @@
       "env-tabs-list": "The list of tabs.",
       "env-tabs-panel": "One panel.",
       "env-tabs-panels": "The panels.",
-      "env-tabs-tab": "One tab."
+      "env-tabs-tab": "One tab: a text tab, the selected one with an indicator under it."
     },
     "Text": {
       "env-text": "Text in one of the type styles."
     },
     "TextField": {
       "env-text-field": "The text field.",
+      "env-text-field-border": "The border over the well's edge, which a floated label opens behind it.",
       "env-text-field-control": "The well around the input and its adornments.",
       "env-text-field-end": "The buttons at the end of the well.",
       "env-text-field-input": "The input.",
@@ -849,7 +852,8 @@
       "--env-rail-item-selected-content": "The icon of the current destination."
     },
     "SegmentedControl": {
-      "--env-segmented-control-container": "The rail behind the options.",
+      "--env-segmented-control-container": "The fill behind the options, transparent by default.",
+      "--env-segmented-control-outline": "The outline around and between the segments.",
       "--env-segmented-control-content": "The labels of the options not chosen, and the color of their state layers.",
       "--env-segmented-control-selected": "The chosen option's fill; set, it takes state layers instead of the designed hover and press fills.",
       "--env-segmented-control-selected-content": "The chosen option's label."
@@ -860,8 +864,9 @@
       "--env-select-outline": "The trigger's edge, where its variant draws one."
     },
     "Slider": {
-      "--env-slider-container": "The track.",
-      "--env-slider-indicator": "The filled part and the thumb, and the thumb's halo at 16%."
+      "--env-slider-container": "The track: the field's tint.",
+      "--env-slider-indicator": "The fill that shows the value.",
+      "--env-slider-content": "The label, the value, the handle and the ticks."
     },
     "Surface": {
       "--env-surface-container": "The surface's fill, which its contents take as the color beneath them.",
@@ -876,8 +881,10 @@
       "--env-switch-selected-content": "The thumb while on."
     },
     "Tabs": {
-      "--env-tabs-container": "The rail behind the tabs.",
-      "--env-tabs-content": "The labels of the tabs not selected, and the color of their state layers; the selected tab keeps its button’s colors."
+      "--env-tabs-container": "The rail behind the tabs, transparent by default.",
+      "--env-tabs-content": "The labels of the tabs not selected, and the color of their state layers.",
+      "--env-tabs-selected-content": "The selected tab's label.",
+      "--env-tabs-indicator": "The indicator under the selected tab."
     },
     "TextField": {
       "--env-text-field-container": "The well behind the entered text.",

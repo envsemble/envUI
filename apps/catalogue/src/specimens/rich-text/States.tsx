@@ -11,10 +11,10 @@ export default function States() {
         <Specimen title="Outline">
           <RichTextEditor label="Outline notes" defaultValue={notes} toolbar={false} />
         </Specimen>
-        <Specimen title="Underline">
+        <Specimen title="Ghost">
           <RichTextEditor
-            label="Underline notes"
-            variant="underline"
+            label="Ghost notes"
+            variant="ghost"
             defaultValue={notes}
             toolbar={false}
           />

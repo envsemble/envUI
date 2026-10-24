@@ -1,9 +1,12 @@
-/* A slider: the label and its current value above a track, with a thumb that follows the value. The
-   indicator and thumb take the control blue; the rest of the track is the translucent fill. */
+/* A slider as a field: as tall as the fields and with their corners, so it sits in a form among
+   them. The whole control is the track, a quiet tint, with the label inside at its start, the value
+   at its end, in a field's type, and a stronger fill from the start that shows the value. A thin handle at
+   the value and faint ticks at the steps appear under the pointer and while it has focus; the value
+   text says the exact amount. The text always keeps its full strength: where the fill's end and the
+   handle pass under the label or the value, they fade instead. */
 /* Color properties: a slider's colors, which an application sets on one slider through style or its
-   own CSS: container the track and indicator its filled part and thumb. They don't inherit; the
-   slider passes them on to its parts. The thumb's halo on hover and while dragged is a state layer:
-   the indicator at 16%, as Material draws a dragged state. */
+   own CSS: container the track, indicator the fill that shows the value, and content the label, the
+   value, the handle and the ticks. They don't inherit; the slider passes them on to its parts. */
 @property --env-slider-container {
   syntax: '*';
   inherits: false;
@@ -12,109 +15,197 @@
   syntax: '*';
   inherits: false;
 }
+@property --env-slider-content {
+  syntax: '*';
+  inherits: false;
+}
+/* 1 while the fill's end and the handle sit under the label or the value, which Slider measures,
+   else 0; a number, so the fade between them eases. */
+@property --env-slider-veil {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
 
 .env-slider {
-  --env-slider-thumb-size: 1.25rem;
+  /* A field's height: the control height, or the touch height under a coarse pointer. */
+  --env-slider-height: var(--env-control-height);
+  /* The track starts and ends where the rounded ends straighten, so the handle never sits in a
+     corner; the fill reaches back to the start. */
+  --env-slider-inset: calc(var(--env-slider-height) / 2);
   --env-slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
-  --env-slider-fill: var(--env-slider-indicator, var(--env-color-bg-brand-emphasis));
-  /* Valid only while the application sets the indicator (see Button.css). */
-  --env-slider-custom-halo: color-mix(in srgb, var(--env-slider-indicator) 16%, transparent);
-  --env-slider-halo: var(--env-slider-custom-halo, var(--env-color-bg-brand-muted));
+  --env-slider-fill: var(--env-slider-indicator, var(--env-color-bg-neutral-subtle-pressed));
+  --env-slider-ink: var(--env-slider-content, var(--env-color-fg-default));
   min-inline-size: 0;
 }
-.env-slider-heading {
-  align-items: baseline;
-  gap: var(--env-space-1) var(--env-space-3);
-}
-.env-slider-label {
-  min-inline-size: 0;
-  cursor: default;
-}
-.env-slider-value {
-  color: var(--env-color-fg-control);
-  font-variant-numeric: tabular-nums;
-  font-weight: var(--env-font-weight-medium);
-}
-/* The control is the pressable row around the track; its padding keeps the thumb inside it. */
+/* The control is the field: the pressable track, with the label and the value over it. */
+/* The track and the row of the label and the value share one cell, so the slider is as wide as its
+   label and value where nothing stretches it, as a field is, and fills its container otherwise. */
 .env-slider-control {
+  position: relative;
   box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  block-size: calc(var(--env-slider-thumb-size) + var(--env-space-2));
-  padding-inline: calc(var(--env-slider-thumb-size) / 2);
-  cursor: pointer;
-  touch-action: none;
-}
-.env-slider-track {
-  flex: 1 1 auto;
-  block-size: 0.375rem;
+  display: grid;
+  grid-template: 'slider' 100% / minmax(0, auto);
+  block-size: var(--env-slider-height);
+  /* Base UI measures the value along the control's content box, which the track fills. */
+  padding-inline: var(--env-slider-inset);
+  overflow: hidden;
   border-radius: var(--env-radius-full);
   background: var(--env-slider-track, var(--env-color-bg-neutral-muted));
+  cursor: pointer;
+  touch-action: none;
+  isolation: isolate;
+  transition: --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease);
 }
+.env-slider-track {
+  grid-area: slider;
+  block-size: 100%;
+}
+/* The fill runs from the slider's start, under its rounded end, to the value. */
 .env-slider-indicator {
-  border-radius: inherit;
-  background: var(--env-slider-fill, var(--env-color-bg-brand-emphasis));
+  background: var(--env-slider-fill, var(--env-color-bg-neutral-subtle-pressed));
 }
+.env-slider-indicator::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 100%;
+  inline-size: var(--env-slider-inset);
+  background: inherit;
+}
+/* Under the label or the value, the fill's end fades into the track, so no edge cuts through the
+   text: a veil of the track's color over its last stretch, reaching back under the rounded start
+   where the fill is short. */
+.env-slider-indicator::after {
+  --env-slider-indicator-direction: to right;
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: var(--env-space-6);
+  background: linear-gradient(
+    var(--env-slider-indicator-direction),
+    transparent,
+    color-mix(in srgb, var(--env-slider-track) 80%, transparent)
+  );
+  opacity: var(--env-slider-veil);
+  pointer-events: none;
+}
+.env-slider-indicator:dir(rtl)::after {
+  --env-slider-indicator-direction: to left;
+}
+/* The handle: a thin line at the value, beneath the label and the value. */
 .env-slider-thumb {
   box-sizing: border-box;
-  inline-size: var(--env-slider-thumb-size);
-  block-size: var(--env-slider-thumb-size);
-  border-radius: 50%;
-  background: var(--env-slider-fill, var(--env-color-bg-brand-emphasis));
-  transition: box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
+  inline-size: calc(2 * var(--env-control-border-width));
+  block-size: 55%;
+  border-radius: var(--env-radius-full);
+  background: var(--env-slider-ink, var(--env-color-fg-default));
+  opacity: 0;
+  transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-/* A halo in the control blue shows the thumb under the pointer and while it is dragged. */
-.env-slider-control:hover .env-slider-thumb,
-.env-slider-thumb[data-dragging] {
-  box-shadow: 0 0 0 0.375rem var(--env-slider-halo);
+/* Ticks at the steps, or the large steps where they are many, between the ends: as many lines as
+   the parts the slider sets (--env-slider-ticks) less one. The parts are equal, so the ticks sit
+   in the same places in either direction. */
+.env-slider[data-ticks] .env-slider-track::after {
+  content: '';
+  position: absolute;
+  inset-block: 35%;
+  /* Physical sides on purpose: the ticks are symmetric, so they need no direction. */
+  left: calc(100% / var(--env-slider-ticks));
+  right: 0;
+  background: linear-gradient(
+      to right,
+      var(--env-slider-ink) 0 var(--env-control-border-width),
+      transparent 0
+    )
+    0 0 / calc(100% / (var(--env-slider-ticks) - 1)) 100% repeat-x;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-slider-thumb:has(:focus-visible) {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
+/* The label and the value, over the track, the fill and the handle, in the field's padding. */
+.env-slider-heading {
+  position: relative;
+  grid-area: slider;
+  /* Across the whole field, its rounded ends included. */
+  margin-inline: calc(-1 * var(--env-slider-inset));
+  z-index: var(--env-z-raised);
+  padding-inline: var(--env-space-4);
+  pointer-events: none;
 }
-/* The heading fades with the track, at the opacity of every disabled control; the group says it is
+/* The label, in the text color, as muted text would lose its contrast on the fill; cut short where
+   the slider is narrow. */
+.env-slider-heading > .env-slider-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--env-slider-content, var(--env-color-fg-default));
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* The value, as entered text, with numbers of one width so it doesn't shift as it changes. */
+.env-slider-heading > .env-slider-value {
+  flex: 0 0 auto;
+  font-weight: var(--env-font-weight-medium);
+  color: var(--env-slider-content, var(--env-color-fg-default));
+  font-variant-numeric: tabular-nums;
+}
+/* Under the pointer, while dragged and while it has focus, the handle and the ticks show; the handle
+   faint while it passes under the label or the value. */
+.env-slider-control:is(:hover, :focus-within, [data-dragging]) .env-slider-thumb {
+  opacity: calc(1 - 0.75 * var(--env-slider-veil));
+}
+.env-slider-control:is(:hover, :focus-within, [data-dragging]) .env-slider-track::after {
+  opacity: 0.35;
+}
+/* Keyboard focus rings the whole field, as on a button. */
+.env-slider-control:has(:focus-visible) {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: 2px;
+}
+/* Disabled, the slider fades, at the opacity of every disabled control; the group says it is
    disabled (aria-disabled), so the faded label and value read as part of an inactive control. */
-.env-slider[data-disabled] :is(.env-slider-heading, .env-slider-control) {
-  opacity: var(--env-state-disabled-opacity);
-}
 .env-slider[data-disabled] .env-slider-control {
+  opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
-.env-slider[data-disabled] .env-slider-thumb {
-  box-shadow: none;
+.env-slider[data-disabled] .env-slider-thumb,
+.env-slider[data-disabled] .env-slider-track::after {
+  opacity: 0;
 }
-/* Coarse pointers get a taller row and a larger thumb with a touch-sized target around it. */
+/* Coarse pointers get the touch height, as every field. */
 @media (pointer: coarse) {
   .env-slider {
-    --env-slider-thumb-size: 1.5rem;
-  }
-  .env-slider-control {
-    block-size: var(--env-control-height-touch);
-  }
-  .env-slider-thumb::before {
-    content: '';
-    position: absolute;
-    inset: calc((var(--env-control-height-touch) - var(--env-slider-thumb-size)) / -2);
-    border-radius: 50%;
+    --env-slider-height: max(var(--env-control-height), var(--env-control-height-touch));
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-slider-thumb {
+  .env-slider-thumb,
+  .env-slider-track::after {
     transition: none;
   }
 }
 
-/* Forced colors: the system paints no fills or shadows, so the track is drawn in the text color,
-   and the indicator and thumb in the selection color. */
+/* Forced colors: the system paints no fills, so the field is outlined in the text color, the fill
+   is a bar of the selection color along its bottom, under the label, and the handle takes the text
+   color. */
 @media (forced-colors: active) {
-  .env-slider-track {
-    background-color: CanvasText;
+  .env-slider-control {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
   }
   .env-slider-indicator,
-  .env-slider-thumb {
-    background-color: Highlight;
+  .env-slider-indicator::before {
+    forced-color-adjust: none;
+    background: none;
+    box-shadow: inset 0 -4px Highlight;
   }
-  .env-slider[data-disabled] :is(.env-slider-indicator, .env-slider-thumb) {
-    background-color: GrayText;
+  .env-slider-thumb {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+  .env-slider[data-disabled] .env-slider-indicator,
+  .env-slider[data-disabled] .env-slider-indicator::before {
+    box-shadow: inset 0 -4px GrayText;
   }
 }

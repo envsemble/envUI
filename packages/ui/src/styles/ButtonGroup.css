@@ -25,8 +25,9 @@
       :nth-child(1 of .env-button:not([hidden])):nth-last-child(1 of .env-button:not([hidden]))
     )
   ) {
-  /* A finite pill radius keeps the browser from scaling down the inner corners. It follows the
-     height the button draws at, which a coarse pointer raises to the touch height. */
+  /* Exactly half the button's height, not the capped full corner, which can be more: corners that
+     add up to more than the height would make the browser scale down the small inner ones too. It
+     follows the height the button draws at, which a coarse pointer raises to the touch height. */
   border-radius: calc(var(--env-button-height) / 2);
 }
 

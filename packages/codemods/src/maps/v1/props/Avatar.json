@@ -23,6 +23,52 @@
           }
         }
       },
+      "hue": {
+        "current": ["powder", "seafoam", "sage", "butter", "blush", "periwinkle", "orchid", "oat"],
+        "report": "Avatar's hues are named for their colors in 1.0: blue is powder, teal seafoam, green sage, amber butter, red blush, violet periwinkle, purple orchid and slate oat.",
+        "values": {
+          "blue": {
+            "props": {
+              "hue": "powder"
+            }
+          },
+          "teal": {
+            "props": {
+              "hue": "seafoam"
+            }
+          },
+          "green": {
+            "props": {
+              "hue": "sage"
+            }
+          },
+          "amber": {
+            "props": {
+              "hue": "butter"
+            }
+          },
+          "red": {
+            "props": {
+              "hue": "blush"
+            }
+          },
+          "violet": {
+            "props": {
+              "hue": "periwinkle"
+            }
+          },
+          "purple": {
+            "props": {
+              "hue": "orchid"
+            }
+          },
+          "slate": {
+            "props": {
+              "hue": "oat"
+            }
+          }
+        }
+      },
       "label": {
         "to": "named",
         "report": "Avatar's label, which named the avatar as an image by its name, is named in 1.0."

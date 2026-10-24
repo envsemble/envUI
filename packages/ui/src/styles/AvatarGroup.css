@@ -35,6 +35,92 @@
 .env-avatar-group > * + * {
   margin-inline-start: calc(-1 * var(--env-avatar-group-overlap));
 }
+
+/* Where there is a pointer that hovers, the group rests bunched: the avatars overlap more, each a
+   little off the line and turned, by its place, the same on every render and from a server, and
+   the count of the rest waits behind the last. Under the pointer, or while focus is inside, they
+   spread apart along a gentle arch, the middle highest and the ends a little lower and turned out,
+   and the count shows; the keyboard reaches it as before, which spreads the group too. */
+@media (hover: hover) and (pointer: fine) {
+  .env-avatar-group {
+    --env-avatar-group-bunch: calc(var(--env-avatar-group-size) * 0.4);
+    --env-avatar-group-gap: calc(var(--env-avatar-group-size) * 0.15);
+    /* The way the ends turn out: mirrored in right-to-left text. */
+    --env-avatar-group-turn-out: 1;
+  }
+  .env-avatar-group:dir(rtl) {
+    --env-avatar-group-turn-out: -1;
+  }
+  .env-avatar-group > * {
+    --env-avatar-group-lift: 0rem;
+    --env-avatar-group-turn: 0deg;
+    translate: 0 var(--env-avatar-group-lift);
+    rotate: calc(var(--env-avatar-group-turn) * var(--env-avatar-group-turn-out));
+  }
+  .env-avatar-group > * + * {
+    margin-inline-start: calc(-1 * var(--env-avatar-group-bunch));
+  }
+  .env-avatar-group > :not(:last-child) {
+    --env-avatar-initials-inset-end: calc(
+      var(--env-avatar-group-bunch) + var(--env-avatar-group-ring-width)
+    );
+  }
+  /* At rest, small offsets that vary by place. */
+  .env-avatar-group > :nth-child(3n + 1) {
+    --env-avatar-group-lift: calc(var(--env-avatar-group-size) * -0.03);
+    --env-avatar-group-turn: -4deg;
+  }
+  .env-avatar-group > :nth-child(3n + 2) {
+    --env-avatar-group-lift: calc(var(--env-avatar-group-size) * 0.04);
+    --env-avatar-group-turn: 3deg;
+  }
+  .env-avatar-group > :nth-child(3n) {
+    --env-avatar-group-lift: calc(var(--env-avatar-group-size) * -0.01);
+    --env-avatar-group-turn: -1deg;
+  }
+  /* At rest, the count waits behind the last avatar, out of sight. */
+  .env-avatar-group > .env-avatar-group-overflow {
+    margin-inline-start: calc(-1 * var(--env-avatar-group-size));
+    opacity: 0;
+    scale: 0.6;
+  }
+  /* Spread: an even row with gaps along an arch, and the count shown. */
+  .env-avatar-group:is(:hover, :focus-within) > * + *,
+  .env-avatar-group:is(:hover, :focus-within) > .env-avatar-group-overflow {
+    margin-inline-start: var(--env-avatar-group-gap);
+  }
+  .env-avatar-group:is(:hover, :focus-within) > * {
+    --env-avatar-group-lift: 0rem;
+    --env-avatar-group-turn: 0deg;
+    --env-avatar-initials-inset-end: 0rem;
+  }
+  .env-avatar-group:is(:hover, :focus-within) > :is(:nth-child(2), :nth-last-child(2)) {
+    --env-avatar-group-lift: calc(var(--env-avatar-group-size) * 0.05);
+  }
+  .env-avatar-group:is(:hover, :focus-within) > :nth-child(2) {
+    --env-avatar-group-turn: -3deg;
+  }
+  .env-avatar-group:is(:hover, :focus-within) > :nth-last-child(2) {
+    --env-avatar-group-turn: 3deg;
+  }
+  .env-avatar-group:is(:hover, :focus-within) > :is(:first-child, :last-child) {
+    --env-avatar-group-lift: calc(var(--env-avatar-group-size) * 0.14);
+  }
+  .env-avatar-group:is(:hover, :focus-within) > :first-child {
+    --env-avatar-group-turn: -8deg;
+  }
+  .env-avatar-group:is(:hover, :focus-within) > :last-child {
+    --env-avatar-group-turn: 8deg;
+  }
+  .env-avatar-group:is(:hover, :focus-within) > :only-child {
+    --env-avatar-group-lift: 0rem;
+    --env-avatar-group-turn: 0deg;
+  }
+  .env-avatar-group:is(:hover, :focus-within) > .env-avatar-group-overflow {
+    opacity: 1;
+    scale: 1;
+  }
+}
 /* Initials center in the part of the circle that the next avatar and its ring leave uncovered,
    through Avatar's hook. */
 .env-avatar-group > :not(:last-child) {
@@ -89,7 +175,7 @@
   min-inline-size: var(--env-avatar-group-size);
   block-size: var(--env-avatar-group-size);
   padding-inline: calc(var(--env-avatar-group-size) / 6);
-  border-radius: 100vmax;
+  border-radius: var(--env-radius-full);
   /* The neutral fill over the ring color: opaque, since the count overlaps the avatars. */
   background: linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted))
     var(--env-avatar-group-ring-color);
@@ -137,5 +223,14 @@
 @media (prefers-reduced-motion: reduce) {
   .env-avatar-group-item::after {
     transition: none;
+  }
+}
+/* Motion: the group spreads and bunches with the medium duration, after a pressable avatar's own
+   press; with a reduced-motion preference it changes at once. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .env-avatar-group > * {
+    transition-property: margin-inline-start, translate, rotate, opacity, scale, transform;
+    transition-duration: var(--env-motion-duration-medium);
+    transition-timing-function: var(--env-motion-ease);
   }
 }

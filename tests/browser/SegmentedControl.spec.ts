@@ -20,16 +20,23 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
         .getByRole('radio', { name: 'Alle 1.200' }),
     ).toBeVisible();
 
-    // The chosen segment takes the primary action colors.
+    // Connected outlined segments: one outline around them and a line between two. The chosen one
+    // takes the selected fill and shows a check, which the others don't.
     const fill = await open.evaluate((element) => {
       const probe = document.createElement('span');
-      probe.style.backgroundColor = 'var(--env-color-bg-brand-emphasis)';
+      probe.style.backgroundColor = 'var(--env-color-bg-selected)';
       element.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();
       return color;
     });
     await expect(open).toHaveCSS('background-color', fill);
+    await expect(open.locator('.env-segmented-control-item-check')).toBeVisible();
+    await expect(blocked.locator('.env-segmented-control-item-check')).toBeHidden();
+    await expect(group).toHaveCSS('outline-style', 'solid');
+    await expect(open).toHaveCSS('border-inline-start-color', 'rgba(0, 0, 0, 0)');
+    await expect(blocked).not.toHaveCSS('border-inline-start-color', 'rgba(0, 0, 0, 0)');
+    await expect(blocked).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 
     await blocked.click();
     await expect(value).toHaveText(/^blocked/);

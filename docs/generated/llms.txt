@@ -56,12 +56,12 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Switch](docs/components/switch.md): An on/off setting that takes effect as soon as it changes. Parts: `.env-switch`.
 - [Radio](docs/components/radio.md): One choice from a few options shown together, side by side or as selectable rows. Also: RadioGroup. Parts: `.env-radio-group`, `.env-radio`.
 - [Select](docs/components/select.md): One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error. Parts: `.env-select`.
-- [SegmentedControl](docs/components/segmented-control.md): One choice among a few items on a pill rail, such as views or filters of the same content. Parts: `.env-segmented-control`.
+- [SegmentedControl](docs/components/segmented-control.md): One choice among a few items, as connected outlined segments, such as views or filters of the same content. Parts: `.env-segmented-control`.
 - [Combobox](docs/components/combobox.md): A text field that filters a list of options as people type, to choose one option or, as chips, several. Parts: `.env-combobox`.
 - [DatePicker](docs/components/date-picker.md): A field that opens a calendar to choose a date, or a date and time, and the calendar on its own. Also: Calendar. Parts: `.env-date-picker`, `.env-calendar`.
 - [TimePicker](docs/components/time-picker.md): A field that opens wheels of hours and minutes to choose a time of day, on the locale's own clock. Parts: `.env-time-picker`.
 - [MonthPicker](docs/components/month-picker.md): A field that opens a year of months to choose a month, such as a billing or reporting period. Parts: `.env-month-picker`.
-- [Slider](docs/components/slider.md): A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard. Parts: `.env-slider`.
+- [Slider](docs/components/slider.md): A value in a known range, chosen by pressing or dragging along a field, or with the keyboard. Parts: `.env-slider`.
 - [DropZone](docs/components/drop-zone.md): An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files. Parts: `.env-drop-zone`.
 
 ## Components: Navigation
@@ -69,7 +69,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Bar](docs/components/bar.md): The navigation bar for compact windows, such as phones, with three to five destinations, each an icon above its label. Parts: `.env-bar`.
 - [Rail](docs/components/rail.md): The navigation rail for medium windows, such as tablets, a narrow column of destinations, each an icon above a short label. Parts: `.env-rail`.
 - [Drawer](docs/components/drawer.md): The navigation drawer for expanded and larger windows, a column of destinations with icons, labels, counts and group headings. Parts: `.env-drawer`.
-- [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a rail of buttons. Parts: `.env-tabs`.
+- [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a row of text tabs. Parts: `.env-tabs`.
 - [Pager](docs/components/pager.md): Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content. Parts: `.env-pager`.
 - [TopBar](docs/components/top-bar.md): The bar at the top of an application or a screen, with start content, a title that truncates first and actions, which can stick, show page progress or be the window's title bar. Parts: `.env-top-bar`.
 - [Tree](docs/components/tree.md): A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu. Parts: `.env-tree`.

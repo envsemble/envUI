@@ -52,9 +52,17 @@
 .env-surface:where([data-radius='sm']) {
   --env-surface-radius: var(--env-radius-sm);
 }
+/* Rounded ends for a surface one row of controls tall, such as a toolbar: the capped full corner and
+   its padding, so a surface whose controls wrap onto more rows keeps the corners. */
 .env-surface:where([data-radius='full']) {
-  --env-surface-radius: var(--env-radius-full);
+  --env-surface-radius: calc(var(--env-radius-full) + var(--env-surface-padding));
 }
 .env-surface:where([data-radius='none']) {
   --env-surface-radius: 0rem;
+}
+
+/* In a skeleton, a surface carries the skeleton's highlight over its fill (Skeleton.css). */
+[data-env-skeleton] .env-surface {
+  background-image: var(--env-skeleton-glow);
+  background-attachment: fixed;
 }

@@ -48,7 +48,17 @@ An avatar is a round picture of a person or an organization. Beside a visible na
 
 ```
 
-```tsx example=ProjectMembers caption="AvatarGroup: overlapping avatars, and a count of the rest."
+```tsx example=ProjectMembers caption="AvatarGroup: bunched avatars, which spread along an arch under the pointer and show the count of the rest."
+
+```
+
+Where a pointer can hover, a group rests bunched, each avatar a little off the line and turned, and spreads into a row with gaps along a gentle arch under the pointer or while focus is inside, showing the count of the rest; the keyboard reaches the count, which spreads it too. On touch screens it stays a plain overlapping row with the count shown. With a reduced-motion preference it spreads at once.
+
+### Chosen
+
+`selected` shows an avatar as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. A person in an AvatarGroup takes `selected` too.
+
+```tsx example=ChooseReviewers
 
 ```
 
@@ -88,7 +98,7 @@ Without a picture, or while it loads or after it fails, an avatar shows the defa
 
 ### Colors
 
-The name chooses one of eight colors, the same on every page; `hue` sets another, such as an organization's own. The colors only tell people apart.
+The name chooses one of eight colors, the same on every page; `hue` sets another, such as an organization's own. Each is a tonal pair from one pastel palette, powder blue, seafoam, sage, butter, blush, periwinkle, orchid and a warm oat: a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme. `hue` takes their names, `powder` to `oat`; the powder hue is also the unsuffixed tokens, `--env-color-avatar-bg`, `-fg` and `-figure`. The colors only tell people apart.
 
 <!-- specimen: Hues -->
 
@@ -120,7 +130,7 @@ The name chooses one of eight colors, the same on every page; `hue` sets another
 4. **Person picture** (`env-avatar-person`)
 5. **Overflow** (`env-avatar-group-overflow`, `max`)
 
-Not shown: a picture, `env-avatar-image`; a pressable avatar, `env-avatar-group-item`; and AvatarButton, `env-avatar-button`.
+Not shown: a picture, `env-avatar-image`; the check of a chosen avatar, `env-avatar-check`; a pressable avatar, `env-avatar-group-item`; and AvatarButton, `env-avatar-button`.
 
 ## Accessibility
 
@@ -147,6 +157,7 @@ Not shown: a picture, `env-avatar-image`; a pressable avatar, `env-avatar-group-
 
 ## Changelog
 
+- **1.0.0-prerelease.2**: The eight colors are a new pastel palette of tonal pairs: a soft fill with initials and a figure in a deep shade of the same hue, rather than white. The hues are named for their colors, in `hue`, `data-hue` and the tokens: `blue` is `powder`, `teal` `seafoam`, `green` `sage`, `amber` `butter`, `red` `blush`, `violet` `periwinkle`, `purple` `orchid` and `slate` `oat`; `v1-props` rewrites a literal `hue`. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover and spreads along an arch under the pointer or with focus inside, showing the count of the rest.
 - **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits, and it rings its avatars through the `--env-avatar-ring` hook. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
 - **0.6.0**: AvatarGroup.
 - **0.4.0**: AvatarButton; initials use the avatar blue of the default person picture.

@@ -157,7 +157,7 @@
 }
 [data-env-skeleton] .env-list-item-content > small {
   --env-skeleton-placeholder: inline-block;
-  --env-skeleton-length: 14rem;
+  --env-skeleton-length: 10rem;
 }
 /* On a muted Surface that holds only lists, a pane of their own, the rows take the raised fill, so
    they stand out from it. A surface with more in it, such as a card with a heading, keeps the row
@@ -271,4 +271,10 @@
     outline: 2px solid CanvasText;
     outline-offset: -2px;
   }
+}
+
+/* In a skeleton, a row carries the skeleton's highlight over its fill (Skeleton.css). */
+[data-env-skeleton] .env-list-item {
+  background-image: var(--env-skeleton-glow);
+  background-attachment: fixed;
 }

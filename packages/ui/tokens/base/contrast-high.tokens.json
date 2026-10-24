@@ -6,115 +6,191 @@
     "color": {
       "list-item": {
         "bg": {
-          "$root": { "$value": "{palette.neutral.4}" },
-          "hover": { "$value": "{palette.neutral.8}" },
-          "pressed": { "$value": "{palette.neutral.10}" }
+          "$root": {
+            "$value": "{palette.neutral.4}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.8}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.10}"
+          }
         }
       },
       "bg": {
         "selected": {
-          "$root": { "$value": "{palette.blue.11}" },
-          "hover": { "$value": "{palette.blue.13}" },
-          "pressed": { "$value": "{palette.blue.14}" }
+          "$root": {
+            "$value": "{palette.blue.11}"
+          },
+          "hover": {
+            "$value": "{palette.blue.13}"
+          },
+          "pressed": {
+            "$value": "{palette.blue.14}"
+          }
         },
         "navigation": {
-          "hover": { "$value": "{palette.neutral.13}" },
-          "pressed": { "$value": "{palette.neutral.15}" }
+          "hover": {
+            "$value": "{palette.neutral.13}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.15}"
+          }
         },
         "page": {
-          "hover": { "$value": "{palette.neutral.4}" },
-          "pressed": { "$value": "{palette.neutral.8}" }
+          "hover": {
+            "$value": "{palette.neutral.4}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.8}"
+          }
         },
         "default": {
-          "hover": { "$value": "{palette.neutral.8}" },
-          "pressed": { "$value": "{palette.neutral.10}" }
+          "hover": {
+            "$value": "{palette.neutral.8}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.10}"
+          }
         },
         "muted": {
-          "$root": { "$value": "{palette.neutral.2}" },
-          "hover": { "$value": "{palette.neutral.6}" },
-          "pressed": { "$value": "{palette.neutral.8}" }
+          "$root": {
+            "$value": "{palette.neutral.2}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.6}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.8}"
+          }
         },
         "raised": {
-          "$root": { "$value": "{palette.neutral.0}" },
-          "hover": { "$value": "{palette.neutral.4}" },
-          "pressed": { "$value": "{palette.neutral.8}" }
+          "$root": {
+            "$value": "{palette.neutral.0}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.4}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.8}"
+          }
         },
         "popup": {
-          "$root": { "$value": "{palette.neutral.0}" },
-          "hover": { "$value": "{palette.neutral.4}" },
-          "pressed": { "$value": "{palette.neutral.8}" }
+          "$root": {
+            "$value": "{palette.neutral.0}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.4}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.8}"
+          }
         },
         "neutral": {
           "muted": {
             "$root": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/neutral/92/$value/components" },
+                "components": {
+                  "$ref": "#/palette/neutral/92/$value/components"
+                },
                 "alpha": 0.06
               }
             },
             "hover": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/neutral/92/$value/components" },
+                "components": {
+                  "$ref": "#/palette/neutral/92/$value/components"
+                },
                 "alpha": 0.12
               }
             },
             "pressed": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/neutral/92/$value/components" },
+                "components": {
+                  "$ref": "#/palette/neutral/92/$value/components"
+                },
                 "alpha": 0.18
               }
             }
           },
-          "emphasis": { "$value": "{palette.neutral.80}" },
+          "emphasis": {
+            "$value": "{palette.neutral.80}"
+          },
           "subtle": {
             "hover": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/neutral/92/$value/components" },
+                "components": {
+                  "$ref": "#/palette/neutral/92/$value/components"
+                },
                 "alpha": 0.06
               }
             },
             "pressed": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/neutral/92/$value/components" },
+                "components": {
+                  "$ref": "#/palette/neutral/92/$value/components"
+                },
                 "alpha": 0.08
               }
             }
           },
           "strong": {
-            "hover": { "$value": "{palette.neutral.84}" },
-            "pressed": { "$value": "{palette.neutral.88}" }
+            "hover": {
+              "$value": "{palette.neutral.84}"
+            },
+            "pressed": {
+              "$value": "{palette.neutral.88}"
+            }
           }
         },
         "brand": {
           "emphasis": {
-            "$root": { "$value": "{palette.blue.75}" },
-            "hover": { "$value": "{palette.blue.80}" },
-            "pressed": { "$value": "{palette.blue.84}" }
+            "$root": {
+              "$value": "{palette.blue.75}"
+            },
+            "hover": {
+              "$value": "{palette.blue.80}"
+            },
+            "pressed": {
+              "$value": "{palette.blue.84}"
+            }
           },
           "strong": {
-            "$root": { "$value": "{palette.blue.75}" },
-            "hover": { "$value": "{palette.blue.80}" },
-            "pressed": { "$value": "{palette.blue.84}" }
+            "$root": {
+              "$value": "{palette.blue.75}"
+            },
+            "hover": {
+              "$value": "{palette.blue.80}"
+            },
+            "pressed": {
+              "$value": "{palette.blue.84}"
+            }
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/blue/75/$value/components" },
+              "components": {
+                "$ref": "#/palette/blue/75/$value/components"
+              },
               "alpha": 0.16
             }
           }
         },
         "accent": {
-          "emphasis": { "$value": "{palette.blue.80}" },
+          "emphasis": {
+            "$value": "{palette.blue.80}"
+          },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/blue/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/blue/80/$value/components"
+              },
               "alpha": 0.08
             }
           },
@@ -122,25 +198,33 @@
             "hover": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/blue/80/$value/components" },
+                "components": {
+                  "$ref": "#/palette/blue/80/$value/components"
+                },
                 "alpha": 0.14
               }
             },
             "pressed": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/blue/80/$value/components" },
+                "components": {
+                  "$ref": "#/palette/blue/80/$value/components"
+                },
                 "alpha": 0.22
               }
             }
           }
         },
         "success": {
-          "emphasis": { "$value": "{palette.green.80}" },
+          "emphasis": {
+            "$value": "{palette.green.80}"
+          },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/green/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/green/80/$value/components"
+              },
               "alpha": 0.08
             }
           },
@@ -148,30 +232,44 @@
             "hover": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/green/80/$value/components" },
+                "components": {
+                  "$ref": "#/palette/green/80/$value/components"
+                },
                 "alpha": 0.14
               }
             },
             "pressed": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/green/80/$value/components" },
+                "components": {
+                  "$ref": "#/palette/green/80/$value/components"
+                },
                 "alpha": 0.22
               }
             }
           },
           "strong": {
-            "$root": { "$value": "{palette.teal.75}" },
-            "hover": { "$value": "{palette.teal.80}" },
-            "pressed": { "$value": "{palette.teal.84}" }
+            "$root": {
+              "$value": "{palette.teal.75}"
+            },
+            "hover": {
+              "$value": "{palette.teal.80}"
+            },
+            "pressed": {
+              "$value": "{palette.teal.84}"
+            }
           }
         },
         "warning": {
-          "emphasis": { "$value": "{palette.amber.80}" },
+          "emphasis": {
+            "$value": "{palette.amber.80}"
+          },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/amber/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/amber/80/$value/components"
+              },
               "alpha": 0.08
             }
           },
@@ -179,25 +277,33 @@
             "hover": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/amber/80/$value/components" },
+                "components": {
+                  "$ref": "#/palette/amber/80/$value/components"
+                },
                 "alpha": 0.14
               }
             },
             "pressed": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/amber/80/$value/components" },
+                "components": {
+                  "$ref": "#/palette/amber/80/$value/components"
+                },
                 "alpha": 0.22
               }
             }
           }
         },
         "danger": {
-          "emphasis": { "$value": "{palette.red.80}" },
+          "emphasis": {
+            "$value": "{palette.red.80}"
+          },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/red/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/red/80/$value/components"
+              },
               "alpha": 0.08
             }
           },
@@ -205,178 +311,344 @@
             "hover": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/red/80/$value/components" },
+                "components": {
+                  "$ref": "#/palette/red/80/$value/components"
+                },
                 "alpha": 0.14
               }
             },
             "pressed": {
               "$value": {
                 "colorSpace": "oklch",
-                "components": { "$ref": "#/palette/red/80/$value/components" },
+                "components": {
+                  "$ref": "#/palette/red/80/$value/components"
+                },
                 "alpha": 0.22
               }
             }
           },
           "strong": {
-            "$root": { "$value": "{palette.red.75}" },
-            "hover": { "$value": "{palette.red.80}" },
-            "pressed": { "$value": "{palette.red.84}" }
+            "$root": {
+              "$value": "{palette.red.75}"
+            },
+            "hover": {
+              "$value": "{palette.red.80}"
+            },
+            "pressed": {
+              "$value": "{palette.red.84}"
+            }
           }
         },
         "done": {
-          "emphasis": { "$value": "{palette.violet.80}" },
+          "emphasis": {
+            "$value": "{palette.violet.80}"
+          },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/violet/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/violet/80/$value/components"
+              },
               "alpha": 0.08
             }
           }
         },
         "info": {
           "strong": {
-            "$root": { "$value": "{palette.steel.75}" },
-            "hover": { "$value": "{palette.steel.80}" },
-            "pressed": { "$value": "{palette.steel.84}" }
+            "$root": {
+              "$value": "{palette.steel.75}"
+            },
+            "hover": {
+              "$value": "{palette.steel.80}"
+            },
+            "pressed": {
+              "$value": "{palette.steel.84}"
+            }
           }
         },
         "important": {
           "strong": {
-            "$root": { "$value": "{palette.purple.75}" },
-            "hover": { "$value": "{palette.purple.80}" },
-            "pressed": { "$value": "{palette.purple.84}" }
+            "$root": {
+              "$value": "{palette.purple.75}"
+            },
+            "hover": {
+              "$value": "{palette.purple.80}"
+            },
+            "pressed": {
+              "$value": "{palette.purple.84}"
+            }
           }
         }
       },
       "fg": {
-        "default": { "$value": "{palette.neutral.96}" },
+        "default": {
+          "$value": "{palette.neutral.96}"
+        },
         "muted": {
-          "$root": { "$value": "{palette.neutral.84}" },
-          "hover": { "$value": "{palette.neutral.88}" },
-          "pressed": { "$value": "{palette.neutral.92}" }
+          "$root": {
+            "$value": "{palette.neutral.84}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.88}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.92}"
+          }
         },
-        "control": { "$value": "{palette.neutral.88}" },
+        "control": {
+          "$value": "{palette.neutral.88}"
+        },
         "link": {
-          "$root": { "$value": "{palette.blue.80}" },
-          "hover": { "$value": "{palette.blue.84}" },
-          "pressed": { "$value": "{palette.blue.88}" }
+          "$root": {
+            "$value": "{palette.blue.80}"
+          },
+          "hover": {
+            "$value": "{palette.blue.84}"
+          },
+          "pressed": {
+            "$value": "{palette.blue.88}"
+          }
         },
-        "accent": { "$value": "{palette.blue.80}" },
-        "on-selected": { "$value": "{palette.blue.84}" },
-        "success": { "$value": "{palette.green.80}" },
-        "warning": { "$value": "{palette.amber.80}" },
-        "danger": { "$value": "{palette.red.80}" },
-        "done": { "$value": "{palette.violet.80}" },
-        "on-emphasis": { "$value": "{palette.neutral.0}" }
+        "accent": {
+          "$value": "{palette.blue.80}"
+        },
+        "on-selected": {
+          "$value": "{palette.blue.84}"
+        },
+        "success": {
+          "$value": "{palette.green.80}"
+        },
+        "warning": {
+          "$value": "{palette.amber.80}"
+        },
+        "danger": {
+          "$value": "{palette.red.80}"
+        },
+        "done": {
+          "$value": "{palette.violet.80}"
+        },
+        "on-emphasis": {
+          "$value": "{palette.neutral.0}"
+        }
       },
       "border": {
         "default": {
-          "$root": { "$value": "{palette.neutral.55}" },
-          "hover": { "$value": "{palette.neutral.60}" },
-          "pressed": { "$value": "{palette.neutral.65}" }
+          "$root": {
+            "$value": "{palette.neutral.55}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.60}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.65}"
+          }
         },
         "muted": {
-          "$root": { "$value": "{palette.neutral.55}" },
-          "hover": { "$value": "{palette.neutral.60}" },
-          "pressed": { "$value": "{palette.neutral.65}" }
+          "$root": {
+            "$value": "{palette.neutral.55}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.60}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.65}"
+          }
         },
         "accent": {
           "$root": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/blue/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/blue/80/$value/components"
+              },
               "alpha": 0.55
             }
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/blue/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/blue/80/$value/components"
+              },
               "alpha": 0.28
             }
           },
           "emphasis": {
-            "$root": { "$value": "{palette.blue.75}" },
-            "hover": { "$value": "{palette.blue.80}" },
-            "pressed": { "$value": "{palette.blue.84}" }
+            "$root": {
+              "$value": "{palette.blue.75}"
+            },
+            "hover": {
+              "$value": "{palette.blue.80}"
+            },
+            "pressed": {
+              "$value": "{palette.blue.84}"
+            }
           }
         },
         "danger": {
           "$root": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/red/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/red/80/$value/components"
+              },
               "alpha": 0.55
             }
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/red/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/red/80/$value/components"
+              },
               "alpha": 0.28
             }
           },
-          "strong": { "$value": "{palette.red.84}" },
+          "strong": {
+            "$value": "{palette.red.84}"
+          },
           "emphasis": {
-            "$root": { "$value": "{palette.red.80}" },
-            "hover": { "$value": "{palette.red.84}" },
-            "pressed": { "$value": "{palette.red.88}" }
+            "$root": {
+              "$value": "{palette.red.80}"
+            },
+            "hover": {
+              "$value": "{palette.red.84}"
+            },
+            "pressed": {
+              "$value": "{palette.red.88}"
+            }
           }
         },
         "neutral": {
           "$root": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/neutral/84/$value/components" },
+              "components": {
+                "$ref": "#/palette/neutral/84/$value/components"
+              },
               "alpha": 0.55
             }
           },
-          "strong": { "$value": "{palette.neutral.84}" }
+          "strong": {
+            "$value": "{palette.neutral.84}"
+          }
         },
         "success": {
           "$root": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/green/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/green/80/$value/components"
+              },
               "alpha": 0.55
             }
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/green/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/green/80/$value/components"
+              },
               "alpha": 0.28
             }
           },
-          "strong": { "$value": "{palette.teal.84}" }
+          "strong": {
+            "$value": "{palette.teal.84}"
+          }
         },
         "warning": {
           "$root": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/amber/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/amber/80/$value/components"
+              },
               "alpha": 0.55
             }
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
-              "components": { "$ref": "#/palette/amber/80/$value/components" },
+              "components": {
+                "$ref": "#/palette/amber/80/$value/components"
+              },
               "alpha": 0.28
             }
           }
         },
-        "focus": { "$value": "{palette.blue.65}" },
+        "focus": {
+          "$value": "{palette.blue.65}"
+        },
         "scrim": {
           "$description": "The edge of a dialog against the scrim: 4.5:1 against the gray of the page under the scrim, which only near-black reaches in light.",
           "$value": "{palette.neutral.96}"
         },
-        "info": { "strong": { "$value": "{palette.steel.84}" } },
+        "info": {
+          "strong": {
+            "$value": "{palette.steel.84}"
+          }
+        },
         "done": {
           "$value": {
             "colorSpace": "oklch",
-            "components": { "$ref": "#/palette/violet/80/$value/components" },
+            "components": {
+              "$ref": "#/palette/violet/80/$value/components"
+            },
             "alpha": 0.55
+          }
+        }
+      },
+      "avatar": {
+        "bg": {
+          "powder": {
+            "$value": "{palette.powder.10}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.10}"
+          },
+          "sage": {
+            "$value": "{palette.sage.10}"
+          },
+          "butter": {
+            "$value": "{palette.butter.10}"
+          },
+          "blush": {
+            "$value": "{palette.blush.10}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.10}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.10}"
+          },
+          "oat": {
+            "$value": "{palette.oat.10}"
+          }
+        },
+        "fg": {
+          "powder": {
+            "$value": "{palette.powder.80}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.80}"
+          },
+          "sage": {
+            "$value": "{palette.sage.80}"
+          },
+          "butter": {
+            "$value": "{palette.butter.80}"
+          },
+          "blush": {
+            "$value": "{palette.blush.80}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.80}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.80}"
+          },
+          "oat": {
+            "$value": "{palette.oat.80}"
           }
         }
       }

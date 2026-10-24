@@ -28,7 +28,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--env-space-1);
-  border-radius: calc(var(--env-field-height) / 2);
+  border-radius: var(--env-radius-full);
   padding-block: calc(
     (var(--env-field-height) - 2 * var(--env-control-border-width) - var(--env-combobox-row)) / 2
   );

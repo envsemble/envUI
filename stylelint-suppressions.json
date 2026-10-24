@@ -97,7 +97,7 @@
   },
   "packages/ui/src/styles/TextField.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 18
+      "count": 14
     }
   },
   "packages/ui/src/styles/List.css": {
@@ -174,19 +174,9 @@
       "count": 7
     }
   },
-  "packages/ui/src/styles/SegmentedControl.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 2
-    }
-  },
   "packages/ui/src/styles/Select.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
-    }
-  },
-  "packages/ui/src/styles/Slider.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 4
     }
   },
   "packages/ui/src/styles/Table.css": {
@@ -196,7 +186,7 @@
   },
   "packages/ui/src/styles/Tabs.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 4
+      "count": 2
     }
   },
   "packages/ui/src/styles/Text.css": {

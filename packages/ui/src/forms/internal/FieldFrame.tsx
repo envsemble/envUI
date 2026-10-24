@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  isValidElement,
   type ComponentPropsWithoutRef,
   type CSSProperties,
   type MouseEvent,
@@ -38,15 +39,16 @@ export interface FieldProps {
 }
 
 /** A field's look. */
-export type FieldVariant = 'outline' | 'floating' | 'underline' | 'ghost';
+export type FieldVariant = 'outline' | 'floating' | 'ghost';
 
 export interface TextFieldAppearanceProps {
   /**
    * The field's look: outline, with a thin border, at the control height; floating, an outlined
    * field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a
-   * page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost,
-   * only its text and start icon at rest, with a soft fill under the pointer and while focused and
-   * a placeholder that clears on focus, for a search at the top of a sidebar or a list.
+   * page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and
+   * while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a
+   * list. Outline and floating fields have no fill of their own: they take the background of what
+   * they sit on.
    * @default 'outline'
    */
   variant?: FieldVariant;
@@ -56,8 +58,7 @@ export interface FieldSizeProps {
   /**
    * The height, as on every control: sm, md or lg in the current scale. Without it, the field takes
    * the control height of its container, md unless the container sets another, as a table cell
-   * does. A button beside a field takes the field's size. Floating and underline fields have their
-   * own height.
+   * does. A button beside a field takes the field's size. A floating field has its own height.
    */
   size?: ControlSize;
 }
@@ -109,6 +110,11 @@ function focusControl(event: MouseEvent<HTMLElement>) {
   }
 }
 
+/** The text of a field's label element, for the notch its floated label cuts in the border. */
+function labelText(label: ReactNode): ReactNode {
+  return isValidElement<{ children?: ReactNode }>(label) ? label.props.children : label;
+}
+
 /** Whether a text field shows its label: unless showLabel is false. */
 export function isLabelShown({ showLabel }: TextFieldDecorationProps) {
   return showLabel ?? true;
@@ -116,7 +122,7 @@ export function isLabelShown({ showLabel }: TextFieldDecorationProps) {
 
 /** Whether a field is tall: its label sits above the value rather than at the control height. */
 export function isTallField(variant: TextFieldAppearanceProps['variant'], multiline = false) {
-  return multiline || variant === 'floating' || variant === 'underline';
+  return multiline || variant === 'floating';
 }
 
 /** The control box as a plain element; composed controls render it through their own primitive. */
@@ -188,6 +194,14 @@ export function FieldFrame({
           'data-suffix': suffix != null || undefined,
           children: (
             <>
+              {/* The border, drawn over the control's own, which stays transparent. A floated label
+                  cuts a notch in it through the legend, a hidden copy of the label, so the field
+                  needs no fill of its own to hide the line behind the label. */}
+              <fieldset aria-hidden="true" className="env-text-field-border">
+                <legend>
+                  {isLabelShown({ showLabel }) && label != null && <span>{labelText(label)}</span>}
+                </legend>
+              </fieldset>
               {/* The control names the prefix and suffix in its description, so they are read once. */}
               {prefix != null && (
                 <span

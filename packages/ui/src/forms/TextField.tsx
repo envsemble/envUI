@@ -33,8 +33,7 @@ export interface TextFieldProps
 
 /**
  * A labelled single-line text input: a native input with a floating label, a description and an
- * error, at the control height in an outline or ghost look, or taller as the floating and underline
- * variants, with an optional start icon, end action, prefix and suffix.
+ * error, at the control height in an outline or ghost look, or taller as the floating variant, with an optional start icon, end action, prefix and suffix.
  */
 export function TextField({
   ref,

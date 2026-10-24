@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { common } from './messages/common.js';
+import { retainSkeletonText } from './skeletonText.js';
 
 const SkeletonContext = createContext(false);
 
@@ -15,7 +16,7 @@ export function useSkeleton(): boolean {
 }
 
 /**
- * Puts every skeleton's pulse in step: each root runs its own animation, started when it
+ * Puts every skeleton's shimmer in step: each root runs its own animation, started when it
  * rendered, so their start times are moved to the document timeline's start.
  */
 export function alignPulses() {
@@ -32,14 +33,17 @@ export function alignPulses() {
 }
 
 /**
- * Tells the components inside a skeleton that they are in one, and keeps its pulse in step with
+ * Tells the components inside a skeleton that they are in one, and keeps its shimmer in step with
  * the others on the page. Every component that takes `skeleton` renders it around its content.
  */
 export function SkeletonScope({ skeleton, children }: { skeleton: boolean; children?: ReactNode }) {
   const inherited = useContext(SkeletonContext);
   const active = skeleton || inherited;
   useEffect(() => {
-    if (skeleton) alignPulses();
+    if (!skeleton) return;
+    alignPulses();
+    // Text that is there draws as rounded, shimmering bars, as missing text does.
+    return retainSkeletonText();
   }, [skeleton]);
   return <SkeletonContext value={active}>{children}</SkeletonContext>;
 }
