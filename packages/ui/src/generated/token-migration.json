@@ -1410,43 +1410,43 @@
       "kind": "renamed",
       "token": "color.avatar.bg.butter",
       "cssVariable": "--env-color-avatar-bg-butter",
-      "note": "The avatar hues are named for their colors: amber is butter."
+      "note": "The avatar hues are named for their colors: amber is butter. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-butter and --env-color-avatar-figure-butter."
     },
     "--env-color-avatar-bg-green": {
       "kind": "renamed",
       "token": "color.avatar.bg.sage",
       "cssVariable": "--env-color-avatar-bg-sage",
-      "note": "The avatar hues are named for their colors: green is sage."
+      "note": "The avatar hues are named for their colors: green is sage. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-sage and --env-color-avatar-figure-sage."
     },
     "--env-color-avatar-bg-purple": {
       "kind": "renamed",
       "token": "color.avatar.bg.orchid",
       "cssVariable": "--env-color-avatar-bg-orchid",
-      "note": "The avatar hues are named for their colors: purple is orchid."
+      "note": "The avatar hues are named for their colors: purple is orchid. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-orchid and --env-color-avatar-figure-orchid."
     },
     "--env-color-avatar-bg-red": {
       "kind": "renamed",
       "token": "color.avatar.bg.blush",
       "cssVariable": "--env-color-avatar-bg-blush",
-      "note": "The avatar hues are named for their colors: red is blush."
+      "note": "The avatar hues are named for their colors: red is blush. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-blush and --env-color-avatar-figure-blush."
     },
     "--env-color-avatar-bg-slate": {
       "kind": "renamed",
       "token": "color.avatar.bg.oat",
       "cssVariable": "--env-color-avatar-bg-oat",
-      "note": "The avatar hues are named for their colors: slate is oat."
+      "note": "The avatar hues are named for their colors: slate is oat. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-oat and --env-color-avatar-figure-oat."
     },
     "--env-color-avatar-bg-teal": {
       "kind": "renamed",
       "token": "color.avatar.bg.seafoam",
       "cssVariable": "--env-color-avatar-bg-seafoam",
-      "note": "The avatar hues are named for their colors: teal is seafoam."
+      "note": "The avatar hues are named for their colors: teal is seafoam. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-seafoam and --env-color-avatar-figure-seafoam."
     },
     "--env-color-avatar-bg-violet": {
       "kind": "renamed",
       "token": "color.avatar.bg.periwinkle",
       "cssVariable": "--env-color-avatar-bg-periwinkle",
-      "note": "The avatar hues are named for their colors: violet is periwinkle."
+      "note": "The avatar hues are named for their colors: violet is periwinkle. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-periwinkle and --env-color-avatar-figure-periwinkle."
     },
     "--env-elevation-0-shadow": {
       "kind": "removed",
