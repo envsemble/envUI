@@ -228,6 +228,10 @@ body {
   max-inline-size: 100%;
 }
 .docs-page-banner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  container-type: inline-size;
   padding-block: clamp(2.5rem, 5vw, 4rem);
 }
 .docs-page-banner-content {
@@ -247,6 +251,23 @@ body {
 .docs-page-banner-description {
   max-inline-size: 42ch;
   text-wrap: balance;
+}
+/* A Site page's icon: large at the banner's end, turned, faint. */
+.docs-page-banner-symbol {
+  position: absolute;
+  inset-inline-end: -1rem;
+  inset-block-start: 50%;
+  inline-size: clamp(10rem, 28cqi, 18rem);
+  aspect-ratio: 1;
+  transform: translateY(-50%) rotate(-12deg);
+  color: var(--env-color-fg-muted);
+  opacity: 0.1;
+  pointer-events: none;
+}
+.docs-page-banner-symbol > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .docs-page-navigation {
   padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);

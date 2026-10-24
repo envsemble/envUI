@@ -1,6 +1,9 @@
 import { Button, Column } from '@envsemble/envui';
 import { Api } from '@envsemble/envui/icons/Api';
 import { MenuBook } from '@envsemble/envui/icons/MenuBook';
+import { Widgets } from '@envsemble/envui/icons/Widgets';
+import { Pattern } from '@envsemble/envui/icons/Pattern';
+import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
 import { PageHeader } from '../layout/PageHeader';
 import {
   apiRoute,
@@ -9,7 +12,7 @@ import {
   type SitePage,
 } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
-import { getReferenceIcon } from '../navigation/TopicIcons';
+import { getPatternIcon, getReferenceIcon } from '../navigation/TopicIcons';
 import { FoundationPreview } from '../previews/FoundationPreview';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import type { Reference } from '../Reference';
@@ -88,12 +91,15 @@ export function ComponentPage({ page }: { page: SitePage }) {
  */
 export function PatternPage({ page }: { page: SitePage }) {
   const document = page.document!;
+  const Icon = getPatternIcon(document.id);
   return (
     <>
       <PageHeader
         title={page.title}
         breadcrumb={page.group ? `Patterns / ${page.group}` : 'Patterns'}
         description={page.summary}
+        // eslint-disable-next-line react-hooks/static-components
+        symbol={<Icon />}
         meta={
           document.metadata && (
             <MetadataBadges metadata={document.metadata} plain>
@@ -153,7 +159,7 @@ export function ComponentsPage({ page }: { page: SitePage }) {
         title={page.title}
         breadcrumb="Components"
         description={page.summary}
-        kind="landing"
+        symbol={<Widgets />}
       />
       <Column gap={7} className="docs-article docs-overview">
         <Catalogue />
@@ -170,7 +176,7 @@ export function PatternsPage({ page }: { page: SitePage }) {
         title={page.title}
         breadcrumb="Patterns"
         description={page.summary}
-        kind="landing"
+        symbol={<Pattern />}
       />
       <Column gap={7} className="docs-article docs-overview">
         <PatternCatalogue />
@@ -186,7 +192,12 @@ export function PatternsPage({ page }: { page: SitePage }) {
 export function BenchmarkPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Overview" description={page.summary} />
+      <PageHeader
+        title={page.title}
+        breadcrumb="Overview"
+        description={page.summary}
+        symbol={<Leaderboard />}
+      />
       <Benchmark />
     </>
   );

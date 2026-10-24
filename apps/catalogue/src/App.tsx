@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from '@envsemble/envui';
 import { Menu as MenuIcon } from '@envsemble/envui/icons/Menu';
+import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 import { findPage, type Area, type SitePage } from './navigation/DocumentationRoutes';
 import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
@@ -131,7 +132,11 @@ function Site() {
     <Content key={page.path} page={page} />
   ) : (
     <>
-      <PageHeader title="Page not found" breadcrumb={area === 'docs' ? 'Docs' : 'envUI'} />
+      <PageHeader
+        title="Page not found"
+        breadcrumb={area === 'docs' ? 'Docs' : 'envUI'}
+        symbol={<SearchOff />}
+      />
       <Column gap={7} className="docs-article">
         <Text>
           <Link href={routeHref(area === 'docs' ? docsRoute : homeRoute)}>
