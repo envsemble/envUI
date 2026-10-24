@@ -18,7 +18,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | envUI provides | Native control semantics, connected field guidance, keyboard behaviour, modal focus and announcements; each component's page lists its own |
 | You provide    | Labels and icon action names, headings, reading order, validation messages and recovery actions                                            |
-| Focus          | Text fields recolor their border or underline; other controls take the shared 0.125 rem ring                                               |
+| Focus          | Text fields recolor their border; other controls take the shared 0.125 rem ring                                                            |
 | Reduced motion | `prefers-reduced-motion` keeps only opacity changes; spinners turn slowly                                                                  |
 | Forced colors  | States a fill or shadow carried take system colors, such as Highlight and GrayText; swatches and heatmaps keep theirs                      |
 

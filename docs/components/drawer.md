@@ -137,4 +137,5 @@ Not shown: the handle on a resizable drawer's end edge, `env-drawer-resize-handl
 
 ## Changelog
 
-- **1.0.0**: Drawer, the navigation drawer, with Bar and Rail; together they replace NavList. With `resizable`, people resize it by its end edge. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.
+- **1.0.0-prerelease.2**: With `resizable`, people resize it by its end edge, between `minWidth` and `maxWidth` and never past half its container, from `defaultWidth`; `width` and `onWidthChange` keep it. The handle is `env-drawer-resize-handle`.
+- **1.0.0**: Drawer, the navigation drawer, with Bar and Rail; together they replace NavList. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.
