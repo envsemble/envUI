@@ -56,12 +56,15 @@ test('an avatar group names everyone and counts the people it does not show', as
 });
 
 test('the overflow chip lists the hidden names on hover and keyboard focus', async ({ page }) => {
+  // The group spreads at once under the pointer, so the chip holds still to be pointed at.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(fixture);
   const scope = page.getByTestId('avatar-groups-light');
   const names = page.locator('.env-avatar-group-tooltip > span');
   const chip = scope.getByTestId('decorative').locator('.env-avatar-group-overflow');
   // A count, not text: no dotted underline marks it.
   await expect(chip).not.toHaveClass(/\benv-hover-detail\b/);
+  await scope.getByTestId('decorative').hover();
   await chip.hover();
   await expect(names).toHaveText(['Jordan Rivera', 'Taylor Kim']);
   await page.keyboard.press('Escape');
@@ -85,6 +88,7 @@ test('the overflow chip lists the hidden names on hover and keyboard focus', asy
   await expect(names).toHaveCount(0);
   await expect(previewChip).toBeFocused();
 
+  await scope.getByTestId('localized').hover();
   await scope.getByTestId('localized').locator('.env-avatar-group-overflow').hover();
   await expect(names).toHaveText(['3 weitere']);
 });
@@ -92,6 +96,7 @@ test('the overflow chip lists the hidden names on hover and keyboard focus', asy
 test('pressable avatars are buttons and links named after each person, with name tooltips', async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(fixture);
   const scope = page.getByTestId('avatar-groups-light');
   const group = scope.getByRole('group', { name: 'Pressable people light' });
@@ -179,9 +184,12 @@ test('the ring takes the color of the surface below in both themes', async ({ pa
   }
 });
 
-test('avatars overlap by an eighth, line up with small controls and keep their size', async ({
-  page,
+test('without a hovering pointer, avatars overlap by an eighth, line up with small controls and keep their size', async ({
+  browser,
 }) => {
+  // On touch screens, which have no hover to spread a bunched group, the group is a plain row.
+  const context = await browser.newContext({ hasTouch: true });
+  const page = await context.newPage();
   await page.goto(fixture);
   const scope = page.getByTestId('avatar-groups-light');
   // Each avatar is 2 rem and covers an eighth of the one before; later ones lie on top.
@@ -235,27 +243,75 @@ test('avatars overlap by an eighth, line up with small controls and keep their s
   ]);
   await expect(scope.getByTestId('rtl').locator('.env-avatar-group-overflow')).toHaveText('+2');
 
-  // In a small toolbar a standard group is as tall as the 2 rem controls, and a small group
-  // sits on the same center line.
-  const toolbar = scope.getByTestId('toolbar');
-  const button = (await toolbar.getByRole('button', { name: 'Report settings' }).boundingBox())!;
-  const group = (await scope.getByTestId('toolbar-group').boundingBox())!;
-  const smallGroup = (await scope.getByTestId('toolbar-small').boundingBox())!;
-  expect(button.height).toBeCloseTo(32, 0);
-  expect(group.height).toBeCloseTo(32, 0);
-  expect(smallGroup.height).toBeCloseTo(24, 0);
-  for (const box of [group, smallGroup])
-    expect(Math.abs(box.y + box.height / 2 - (button.y + button.height / 2))).toBeLessThan(1);
-  for (const item of await scope.getByTestId('toolbar-group').getByRole('button').all()) {
-    const box = (await item.boundingBox())!;
-    expect(Math.round(box.height)).toBe(32);
-  }
-
   // A narrow row overflows its label rather than squeezing or wrapping the group.
   const narrow = await boxes(scope.getByTestId('narrow-group'));
   expect(new Set(narrow.map((box) => box.top)).size).toBe(1);
   expect(narrow.map((box) => box.width)).toEqual([32, 32, 32, 32]);
   expect((await scope.getByTestId('narrow-group').boundingBox())!.width).toBeCloseTo(116, 0);
+  await context.close();
+});
+
+test('a group rests bunched, and spreads along an arch under the pointer and with focus inside', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(fixture);
+  const scope = page.getByTestId('avatar-groups-light');
+  const group = scope.getByTestId('decorative');
+  const chip = group.locator('.env-avatar-group-overflow');
+  const layout = () =>
+    group.evaluate((element) =>
+      [...element.querySelectorAll<HTMLElement>(':scope > .env-avatar')].map((avatar) => {
+        const style = getComputedStyle(avatar);
+        return {
+          start: Number.parseFloat(style.marginInlineStart),
+          lift: Number.parseFloat(style.translate.split(' ')[1] ?? '0') || 0,
+          turn: Number.parseFloat(style.rotate) || 0,
+        };
+      }),
+    );
+  await page.mouse.move(0, 0);
+  // At rest the avatars overlap by more than an eighth, each a little off the line and turned by
+  // its place, the same on every load, and the count waits out of sight.
+  const rest = await layout();
+  expect(rest.slice(1).every((avatar) => avatar.start < -32 / 8)).toBe(true);
+  expect(new Set(rest.map((avatar) => avatar.turn)).size).toBeGreaterThan(1);
+  await expect(chip).toHaveCSS('opacity', '0');
+  // Under the pointer they spread into a row with gaps, along an arch: the ends lower and turned
+  // out, the middle highest, and the count shows.
+  await group.hover();
+  const spread = await layout();
+  expect(spread.slice(1).every((avatar) => avatar.start > 0)).toBe(true);
+  expect(spread[0]!.lift).toBeGreaterThan(spread[1]!.lift);
+  expect(spread[0]!.turn).toBeLessThan(0);
+  await expect(chip).toHaveCSS('opacity', '1');
+  // It bunches back once the pointer leaves.
+  await page.mouse.move(0, 0);
+  await expect(chip).toHaveCSS('opacity', '0');
+  expect(await layout()).toEqual(rest);
+  // The keyboard reaches the count, which spreads the group and shows it.
+  await page.keyboard.press('Tab');
+  await expect(chip).toBeFocused();
+  await expect(chip).toHaveCSS('opacity', '1');
+  expect((await layout()).slice(1).every((avatar) => avatar.start > 0)).toBe(true);
+});
+
+test('the spread moves with the motion tokens, and at once with reduced motion', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const avatar = page
+    .getByTestId('avatar-groups-light')
+    .getByTestId('decorative')
+    .locator('.env-avatar')
+    .nth(1);
+  expect(
+    await avatar.evaluate((element) => getComputedStyle(element).transitionProperty),
+  ).toContain('margin-inline-start');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  expect(await avatar.evaluate((element) => getComputedStyle(element).transitionDuration)).toBe(
+    '0s',
+  );
 });
 
 test('on touch screens pressable avatars are touch-sized targets side by side', async ({
@@ -301,4 +357,24 @@ test('on touch screens pressable avatars are touch-sized targets side by side', 
   await scope.getByRole('button', { name: 'Sam Lee' }).first().tap();
   await expect(scope.getByTestId('pressed')).toHaveText('Sam Lee');
   await context.close();
+});
+
+test('a group lines up with small controls in a toolbar', async ({ page }) => {
+  await page.goto(fixture);
+  const scope = page.getByTestId('avatar-groups-light');
+  // In a small toolbar a standard group is as tall as the 2 rem controls, and a small group
+  // sits on the same center line.
+  const toolbar = scope.getByTestId('toolbar');
+  const button = (await toolbar.getByRole('button', { name: 'Report settings' }).boundingBox())!;
+  const group = (await scope.getByTestId('toolbar-group').boundingBox())!;
+  const smallGroup = (await scope.getByTestId('toolbar-small').boundingBox())!;
+  expect(button.height).toBeCloseTo(32, 0);
+  expect(group.height).toBeCloseTo(32, 0);
+  expect(smallGroup.height).toBeCloseTo(24, 0);
+  for (const box of [group, smallGroup])
+    expect(Math.abs(box.y + box.height / 2 - (button.y + button.height / 2))).toBeLessThan(1);
+  for (const item of await scope.getByTestId('toolbar-group').getByRole('button').all()) {
+    // Its own height, which a bunched avatar's slight turn doesn't change.
+    expect(await item.evaluate((element) => (element as HTMLElement).offsetHeight)).toBe(32);
+  }
 });
