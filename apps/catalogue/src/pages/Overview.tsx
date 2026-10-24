@@ -53,7 +53,7 @@ export function Overview() {
           className="docs-overview-hero docs-banner"
           data-banner="landing"
         >
-          <BannerShapes />
+          <BannerShapes kind="landing" />
           {/* The wordmark, with the package's version under it as a quiet subheading, read from
               packages/ui/package.json as the site builds. */}
           <Column gap={3} align="center" className="docs-overview-brand">
