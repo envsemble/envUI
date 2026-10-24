@@ -667,7 +667,7 @@ const figureBody = [
   '',
   '```',
   '',
-  '```tsx dont=OnSubmit open stage=raised caption="Don\'t use a switch in a form that applies on submit."',
+  '```tsx dont=OnSubmit open stage=shaded caption="Don\'t use a switch in a form that applies on submit."',
   '',
   '```',
   '',
@@ -736,9 +736,9 @@ test('a component page with a When to use section is on the figure template', as
     // The flag open shows the example's overlays open; other figures leave it out.
     assert.equal(figure('OnSubmit').open, true);
     assert.equal(figure('Instant').open, undefined);
-    // stage=raised fills the stage with the raised background, stage=shaded with a shade darker
-    // than the page's and the navigation's; other figures keep the page's.
-    assert.equal(figure('OnSubmit').stage, 'raised');
+    // stage=shaded fills the stage with a shade darker than the page's and the navigation's;
+    // other figures keep the page's.
+    assert.equal(figure('OnSubmit').stage, 'shaded');
     assert.equal(figure('Narrow').stage, 'shaded');
     assert.equal(figure('Instant').stage, undefined);
 
@@ -751,7 +751,7 @@ test('a component page with a When to use section is on the figure template', as
       ),
     );
     assert.ok(
-      compiled.includes('```tsx dont=OnSubmit open stage=raised caption="Don\'t use a switch'),
+      compiled.includes('```tsx dont=OnSubmit open stage=shaded caption="Don\'t use a switch'),
     );
     assert.match(
       compiled,
@@ -784,11 +784,17 @@ test('a page on the figure template rejects what breaks its form', async () => {
       /anatomy Parts takes no size/,
     );
     await rejects(
-      body.replace('dont=OnSubmit open stage=raised', 'dont=OnSubmit open=yes'),
+      body.replace('dont=OnSubmit open stage=shaded', 'dont=OnSubmit open=yes'),
       /write the flag open alone/,
     );
     await rejects(body.replace('anatomy=Parts', 'anatomy=Parts of'), /has of without a value/);
-    await rejects(body.replace('stage=raised', 'stage=dark'), /has stage="dark"/);
+    await rejects(body.replace('stage=shaded caption', 'stage=dark caption'), /has stage="dark"/);
+    // The page's own fill is the default, and a figure is always on a stage.
+    for (const fill of ['raised', 'none'])
+      await rejects(
+        body.replace('stage=shaded caption', `stage=${fill} caption`),
+        new RegExp(`has stage="${fill}"`),
+      );
     // A double quote inside a caption, escaped or not, is pointed at rather than called malformed.
     for (const quote of ['"', '\\"'])
       await rejects(

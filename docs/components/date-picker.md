@@ -130,7 +130,7 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 6. **Calendar icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-```tsx anatomy=DatePickerPopupAnatomy open stage=raised
+```tsx anatomy=DatePickerPopupAnatomy open
 
 ```
 

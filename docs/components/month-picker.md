@@ -92,7 +92,7 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 6. **Calendar icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-```tsx anatomy=MonthPickerPopupAnatomy open stage=raised
+```tsx anatomy=MonthPickerPopupAnatomy open
 
 ```
 

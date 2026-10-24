@@ -1,11 +1,11 @@
 import { Radio, RadioGroup } from '@envsemble/envui';
-import { Example } from '../../previews/Example';
+import { Example, MatrixScroll } from '../../previews/Example';
 
 /** Unchosen and chosen, enabled and disabled. */
 export default function States() {
   return (
     <Example size="wide">
-      <div className="docs-matrix-scroll" tabIndex={0} role="region" aria-label="Radio states">
+      <MatrixScroll label="Radio states">
         <table className="docs-matrix">
           <thead>
             <tr>
@@ -34,7 +34,7 @@ export default function States() {
             ))}
           </tbody>
         </table>
-      </div>
+      </MatrixScroll>
     </Example>
   );
 }

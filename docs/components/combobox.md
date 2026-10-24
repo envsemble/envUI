@@ -131,7 +131,7 @@ Name the field after what people choose, and use the placeholder for what to typ
 7. **Clear** (`env-combobox-clear`, `clearable`)
 8. **Trigger** (`env-combobox-trigger`)
 
-```tsx anatomy=ComboboxListAnatomy open stage=raised
+```tsx anatomy=ComboboxListAnatomy open
 
 ```
 

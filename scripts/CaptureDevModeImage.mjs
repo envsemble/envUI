@@ -1,5 +1,7 @@
 // Captures the dev mode page's picture: dev mode's 3D view of the demo application, in the light
-// and the dark theme, as apps/catalogue/src/demos/dev-mode/dev-mode-3d-{light,dark}.webp. It opens
+// and the dark theme, as apps/catalogue/src/demos/dev-mode/dev-mode-3d-{light,dark}.webp. The demo
+// is an example, which takes the theme opposite the catalogue's, so the light picture is taken in
+// the dark catalogue and the dark one in the light catalogue; dev mode takes the demo's. It opens
 // the real dev mode in the catalogue, hides dev mode's own panels and controls, so the picture
 // holds only the view's planes, and crops to them at twice the CSS size.
 //
@@ -27,7 +29,8 @@ try {
     const context = await browser.newContext({
       viewport: { width: 1600, height: 1000 },
       deviceScaleFactor: scale,
-      colorScheme: theme,
+      // The catalogue in the other theme shows the demo in this one.
+      colorScheme: theme === 'light' ? 'dark' : 'light',
       reducedMotion: 'reduce',
     });
     const tab = await context.newPage();

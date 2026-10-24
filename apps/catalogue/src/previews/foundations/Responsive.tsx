@@ -27,6 +27,7 @@ export function ResponsivePreview() {
       <Example
         title="Window classes"
         size="content"
+        explains
         caption="Container widths in rem, from the theme boundary, the env-window container; components follow their own container."
       >
         <Column gap={3}>
@@ -42,6 +43,7 @@ export function ResponsivePreview() {
       <Example
         title="Stacking order"
         size="content"
+        explains
         caption="Every z-index comes from these levels, lowest first."
       >
         <Column gap={3}>

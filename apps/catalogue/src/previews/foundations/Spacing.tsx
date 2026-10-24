@@ -15,6 +15,7 @@ export function SpacingPreview() {
       <Example
         title="Spacing scale"
         size="field"
+        explains
         caption="Parents own gaps; components own padding. Both use this scale."
       >
         <Column gap={3}>
@@ -27,7 +28,7 @@ export function SpacingPreview() {
           ))}
         </Column>
       </Example>
-      <Example title="Corner scale" size="wide">
+      <Example title="Corner scale" size="wide" explains>
         <SpecimenGrid size="compact">
           {[
             ['var(--env-radius-surface)', 'Panes & outer rows', '--env-radius-surface'],

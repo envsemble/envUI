@@ -6,7 +6,7 @@ const backgrounds = ['default', 'muted', 'page', 'raised'] as const;
 /** Every background, on the page and on a pane. */
 export default function Backgrounds() {
   return (
-    <Example size="collection" stage="none">
+    <Example size="collection">
       <SpecimenGrid size="compact">
         {backgrounds.map((background) => (
           <Specimen key={background} title={background}>
