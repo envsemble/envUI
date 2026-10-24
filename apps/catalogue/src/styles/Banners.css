@@ -1,76 +1,18 @@
-/* The banners at the top of pages (PageHeader.tsx) and the home page's hero (Overview.tsx). Each
-   draws a pattern behind its text (BannerShapes.tsx), at its edges, in hairline outlines. No
-   shadows.
-   - A landing page of the Site, the home page, All components and All patterns, is on a tint of the
-     accent, with pills, rounded squares, rounded triangles and plus signs laid on one slant along
-     both ends, outlined in the accent, one pill softly filled.
-   - Any other page of the Site is quieter: the neutral banner, a few of the shapes at its start,
-     outlined in the border color, and the page's icon large, turned and faint at its end.
-   - A page of the Docs, the developer reference, reads from the start like a document, its trail
-     in monospace, on the page's own color inside an edge, the envUI mark's circle and pill drawn as
-     outlines at its end, as on a plan. */
-.docs-banner {
-  --docs-banner-fill: var(--env-color-bg-default);
-  --docs-banner-stroke: var(--env-color-border-default);
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  container-type: inline-size;
-  background: var(--docs-banner-fill);
-}
-
-.docs-banner > :not(.docs-banner-shapes, .docs-page-banner-symbol) {
+/* The Docs' banners (PageHeader.tsx): a page of the Docs, the developer reference, reads from the
+   start like a document, its trail in monospace, on the page's own color inside an edge, the envUI
+   mark's circle and pill drawn as outlines at its end, as on a plan (BannerShapes.tsx). No shadows.
+   The banner itself, which the Site's share, is in Shell.css. */
+.docs-banner > :not(.docs-banner-shapes) {
   position: relative;
   z-index: var(--env-z-raised);
 }
 
-/* The shapes' layer covers the banner and is a container of its size. Its unit, --docs-banner-unit,
-   is a hundredth of the banner's height, and less in a narrow banner, so the shapes keep to its
-   edges, clear of the text. */
+/* The shapes' layer covers the banner and is a container of its size. */
 .docs-banner-shapes {
-  --docs-banner-unit: min(1cqh, 0.32cqi);
   position: absolute;
   inset: 0;
   container-type: size;
   pointer-events: none;
-}
-
-/* The Site's shapes: outlines, one of them on a landing page lifted by a soft fill. */
-.docs-banner-outline {
-  position: absolute;
-  block-size: auto;
-  overflow: visible;
-  fill: none;
-  stroke: var(--docs-banner-stroke);
-  stroke-width: var(--docs-banner-stroke-width, 0.0625rem);
-  stroke-linejoin: round;
-}
-
-.docs-banner-outline > * {
-  vector-effect: non-scaling-stroke;
-}
-
-.docs-banner-outline[data-lift] {
-  fill: var(--docs-banner-lift);
-}
-
-/* A Site page's icon: large at the banner's end, turned, faint. */
-.docs-page-banner-symbol {
-  position: absolute;
-  inset-inline-end: -1rem;
-  inset-block-start: 50%;
-  inline-size: clamp(10rem, 28cqi, 18rem);
-  aspect-ratio: 1;
-  transform: translateY(-50%) rotate(-12deg);
-  color: var(--env-color-fg-muted);
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-.docs-page-banner-symbol > svg {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
 }
 
 /* The Docs' shapes: the envUI mark's circle and pill, in outline at the banner's end. */
@@ -98,23 +40,11 @@
   inset-inline-end: calc(var(--docs-banner-shape) * -1.08);
 }
 
-/* A landing page of the Site, on a tint of the accent, its shapes outlined in the accent. */
-.docs-banner[data-banner='landing'] {
-  --docs-banner-fill: color-mix(
-    in oklch,
-    var(--env-color-fg-accent) 7%,
-    var(--env-color-bg-default)
-  );
-  --docs-banner-stroke: color-mix(in oklch, var(--env-color-fg-accent) 50%, transparent);
-  --docs-banner-lift: color-mix(in oklch, var(--env-color-fg-accent) 12%, transparent);
-  border: 0.0625rem solid color-mix(in oklch, var(--env-color-fg-accent) 16%, transparent);
-}
-
 /* The Docs: from the start, on the page's color inside an edge, the shapes in outline. */
 .docs-banner:is([data-banner='docs'], [data-banner='docs-home']) {
-  --docs-banner-fill: var(--env-color-bg-page);
   --docs-banner-shape-edge: var(--env-color-border-default);
   border: 0.0625rem solid var(--env-color-border-muted);
+  background: var(--env-color-bg-page);
   padding-inline: clamp(var(--env-space-6), 6cqi, var(--env-space-9));
 }
 
