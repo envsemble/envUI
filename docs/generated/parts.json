@@ -3966,6 +3966,7 @@
       ],
       "states": [],
       "uses": [
+        "HoverDetail",
         "Popup",
         "Skeleton",
         "Theme",
@@ -5887,6 +5888,7 @@
       "states": [],
       "usedBy": [
         "HoverCard",
+        "RelativeTime",
         "Text",
         "Tooltip"
       ]

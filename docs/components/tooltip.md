@@ -55,7 +55,7 @@ Write the shortcut after the control's name, such as Bold (<kbd>Ctrl</kbd>+<kbd>
 
 ### Text
 
-Text that isn't a control, such as an abbreviation, takes a quiet dotted underline that says it shows more on hover or focus, and takes keyboard focus so the keyboard opens the tooltip too. Buttons, icon buttons and links keep their own look.
+Text that isn't a control, such as an abbreviation, takes a quiet underline of round, well-spaced dots that says it shows more on hover or focus, and takes keyboard focus so the keyboard opens the tooltip too. The pointer stays the arrow over it, not the text cursor. Hover cards and relative times on text take the same underline. Buttons, icon buttons and links keep their own look.
 
 ```tsx example=TextAbbreviation
 

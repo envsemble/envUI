@@ -524,14 +524,11 @@ test('a text trigger takes a quiet dotted underline, a button trigger none', asy
   await expect(text).toHaveClass(/\benv-hover-detail\b/);
   const style = await text.evaluate((element) => {
     const computed = getComputedStyle(element);
-    return {
-      line: computed.textDecorationLine,
-      decoration: computed.textDecorationStyle,
-      cursor: computed.cursor,
-    };
+    return { dots: computed.backgroundImage, cursor: computed.cursor };
   });
-  expect(style).toMatchObject({ line: 'underline', decoration: 'dotted' });
-  expect(style.cursor).not.toBe('help');
+  // Round dots below the text, the rule HoverCard and RelativeTime share, and the arrow pointer.
+  expect(style.dots).toContain('radial-gradient(circle closest-side');
+  expect(style.cursor).toBe('default');
   await text.focus();
   await expect(page.getByRole('tooltip')).toHaveText('Central European Time');
 
