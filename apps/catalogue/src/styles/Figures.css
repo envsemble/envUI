@@ -245,7 +245,7 @@
 .docs-anatomy,
 .docs-variants {
   display: grid;
-  gap: var(--env-space-4);
+  gap: var(--env-space-6);
   min-inline-size: 0;
   margin: 0;
 }
@@ -334,13 +334,14 @@
 
 .docs-anatomy-caption {
   display: grid;
-  gap: var(--env-space-4);
+  gap: var(--env-space-6);
 }
 
 .docs-anatomy-legend {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
-  gap: var(--env-space-3) var(--env-space-6);
+  /* Room between the entries, so each name and its explanation read as one item. */
+  gap: var(--env-space-5) var(--env-space-8);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -350,7 +351,7 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
-  gap: var(--env-space-3);
+  gap: var(--env-space-4);
 }
 
 .docs-anatomy-legend p {
@@ -364,7 +365,8 @@
 .docs-option-legend {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
-  gap: var(--env-space-4) var(--env-space-6);
+  /* Room between the entries, so each tag and its explanation read as one item. */
+  gap: var(--env-space-5) var(--env-space-8);
   align-items: start;
   margin: 0;
 }
@@ -373,7 +375,7 @@
   display: grid;
   grid-column: span 2;
   grid-template-columns: subgrid;
-  column-gap: var(--env-space-3);
+  column-gap: var(--env-space-4);
   align-items: start;
 }
 
