@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl } from './Servers';
 import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
 import { chooseScheme } from './CatalogueThemes';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
 import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
@@ -441,6 +441,31 @@ test('every stage is the only frame of its figure', async ({ page }) => {
       return found;
     });
     expect(framed, `${id} has a stage inside another frame`).toEqual([]);
+  }
+});
+
+test("a specimen's titles and captions name options in words, not values", async ({ page }) => {
+  // The Site speaks plain language in its specimens too: Small rather than sm, Step 1 rather than
+  // gap={1}. A value starts in lower case or is written as code, with =, braces, quotes or --.
+  const pages = readdirSync('docs/components')
+    .filter((file) => readFileSync(`docs/components/${file}`, 'utf8').includes('<!-- specimen:'))
+    .map((file) => file.replace(/\.md$/, ''));
+  expect(pages.length).toBeGreaterThan(0);
+  await page.goto(`${catalogueUrl}/`);
+  for (const id of pages) {
+    await goTo(page, `/components/${id}`);
+    await expect(
+      page.locator('.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll)').first(),
+    ).toBeVisible();
+    const texts = await page
+      .locator(
+        '.docs-figures :is(.docs-specimen > :is(h3, h4, h5, .env-text[data-variant="caption"]), .docs-matrix-scroll th)',
+      )
+      .allTextContents();
+    const raw = texts
+      .map((text) => text.trim())
+      .filter((text) => text && (/^[a-z]/.test(text) || /[={}"`]|--/.test(text)));
+    expect(raw, `${id} names options by their values`).toEqual([]);
   }
 });
 
