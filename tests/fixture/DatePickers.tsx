@@ -4,6 +4,7 @@ import {
   Calendar,
   DatePicker,
   Dialog,
+  Row,
   Surface,
   Theme,
   type ThemeValue,
@@ -173,6 +174,30 @@ export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
           defaultValue="2026-10-22T14:00"
         />
       </Dialog>
+      {/* A toolbar sized to its content keeps the field and its button on one row, and a container
+          narrower than the field's minimum width shrinks it. */}
+      <div style={{ display: 'flex' }}>
+        <Surface
+          background="default"
+          padding={1}
+          radius="full"
+          data-testid={`date-picker-toolbar-${theme}`}
+          render={<Row wrap align="center" gap={4} />}
+        >
+          <DatePicker
+            size="sm"
+            showLabel={false}
+            aria-label={`Toolbar due ${theme}`}
+            placeholder="Due"
+          />
+          <Button variant="outline" size="sm">
+            Schedule
+          </Button>
+        </Surface>
+      </div>
+      <div style={{ inlineSize: '8rem' }} data-testid={`date-picker-narrow-${theme}`}>
+        <DatePicker showLabel={false} aria-label={`Narrow ${theme}`} placeholder="Due" />
+      </div>
     </Theme>
   );
 }

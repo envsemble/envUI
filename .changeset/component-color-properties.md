@@ -1,5 +1,5 @@
 ---
-'@envsemble/envui': minor
+'@envsemble/envui': major
 '@envsemble/envui-codemods': minor
 ---
 
@@ -11,3 +11,5 @@ Any single element can take colors of its own, Material's way. envUI's own color
 - **Renamed component tokens.** `--env-list-item-fill` is `--env-list-item-container`; `--env-alert-tint`, `--env-alert-edge` and `--env-alert-tone` are `--env-alert-container`, `--env-alert-outline` and `--env-alert-icon`; `--env-toast-fill` and `--env-toast-edge` are `--env-toast-container` and `--env-toast-outline`. The old tokens inherited and the color properties don't: a token set on a wrapper reached the component inside it, and its color property set there colors nothing, so set it on the component itself. `envui-codemods v1-classes` renames them, also where a renamed class gives one of the old names, and reports each declaration in a rule whose selector doesn't end at the component, such as `.my-alert` rather than `.my-alert .env-alert`; a style object or `setProperty` call on a wrapper element it can't tell, and the migration guide says so.
 - **Removed component tokens.** A toast's hover and pressed tokens, `--env-toast-fill-hover` and `--env-toast-fill-pressed`, are gone: set `--env-toast-container`, and the dismiss button's hover and press become layers of the toast's text color. `v1-classes` reports them.
 - **`--env-badge-outline` changed meaning.** In prerelease.1 it was a private border shorthand, such as `0.0625rem solid <color>`; now it is the badge's public outline color. Write `--env-badge-outline: <color>`: a shorthand is an invalid color, and the badge draws no edge.
+
+Migration guide: [Color properties and state layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md#color-properties-and-state-layers).

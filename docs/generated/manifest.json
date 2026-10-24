@@ -2341,6 +2341,7 @@
             {
               "attribute": "data-variant",
               "values": [
+                "secondary",
                 "text"
               ],
               "parts": [
@@ -2889,7 +2890,7 @@
         {
           "name": "Swatches",
           "title": "Swatches",
-          "description": "ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`.",
+          "description": "ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`. As the icon of an IconButton in its default variant, the button draws no round fill behind the square sample: it is a rounded square whose fill shows on hover, keyboard focus and press, and while its popup is open.",
           "file": "docs/examples/color-picker/Swatches.tsx"
         },
         {
@@ -5684,7 +5685,7 @@
         {
           "name": "SmallToolbar",
           "title": "Sizes",
-          "description": "`sm`, `md` and `lg`, the control heights of the scale. With `showLabel={false}`, the placeholder shows in place of the label.",
+          "description": "`sm`, `md` and `lg`, the control heights of the scale. With `showLabel={false}`, the placeholder shows in place of the label. The field is 12 rem wide at least, also in a toolbar sized to its content, and in a narrower container it takes the container's width.",
           "file": "docs/examples/date-picker/SmallToolbar.tsx"
         },
         {

@@ -15,16 +15,19 @@ the full changelog is packages/ui/CHANGELOG.md, shown in the Docs.
 
 ## 1.0.0-prerelease.2 — Upcoming
 
-- ColorPicker is rebuilt to be compact, with hex, RGB and HSL fields, optional alpha, copy and an eyedropper, and moves with its swatches to its own entry, `@envsemble/envui/color`.
-- The rich text and Markdown editors draw their formatting buttons as one Toolbar in groups.
-- DatePicker, MonthPicker and TimePicker keep their footer actions on one line, and the time wheels turn one row a notch.
-- Button takes `end`, for quiet content after its label such as a shortcut's keys.
-- A new codemod, `v1-entries`, moves the color imports to their new entry.
+- The catalogue is two parts: the Site introduces envUI with its components, patterns and foundations, and the Docs, under /docs, are the developer reference, with each component's props, part names and changelog.
+- Every component takes public color properties, such as `--env-button-container`, to color one instance, and its hover, focus and press follow the colors you set.
+- ColorPicker is rebuilt on React Aria in its own entry, `@envsemble/envui/color`, compact with hex, RGB and HSL fields, alpha, copy and an eyedropper; the pickers keep their footer actions on one line, and the editors draw their formatting buttons as one Toolbar in groups.
+- A calmer look: Slider is a field, SegmentedControl is connected segments unlike Tabs, fields take the background of what they sit on, the full corner is capped so tall elements become rounded rectangles, and skeletons shimmer.
+- Avatars take a pastel palette and can show as selected, AvatarGroup spreads along an arch on hover, Drawer and side Sheets resize by their edge with `resizable`, and PanelDock is marked experimental.
 
 ### Breaking changes
 
 - ColorPicker and ColorSwatch are no longer in the main entry; [import them from `@envsemble/envui/color`](/docs/migration#color-picker-and-swatches).
-- SearchTrigger is [a pattern built from Button](/docs/migration#folded-components-and-patterns), not a component.
+- SearchTrigger is [a pattern of a Button with the shortcut's keys in its `end` slot](/docs/migration#folded-components-and-patterns), not a component.
+- The avatar hues are [named for their colors](/docs/migration#content-and-display): `teal` is `seafoam`, and so on, in `hue`, `data-hue` and the avatar tokens.
+- The underline variant of the text fields and editors is [gone](/docs/migration#fields-and-choice-controls).
+- The component tokens of List rows, Alert and Toast are [color properties](/docs/migration#color-properties-and-state-layers), which don't inherit: set them on the component itself.
 
 ## 1.0.0-prerelease.1 — 2026-10-23
 
