@@ -81,12 +81,6 @@ The whole card is one button. It holds only short text, with no headings, lists 
 
 ### Backgrounds
 
-| Background | Use for                                         |
-| ---------- | ----------------------------------------------- |
-| Muted      | A card on the page or in a pane. The default.   |
-| Default    | A quieter fill, such as a settings section.     |
-| Page       | The page's own color, set apart by its corners. |
-
 ```tsx variants=Backgrounds
 
 ```
@@ -94,6 +88,12 @@ The whole card is one button. It holds only short text, with no headings, lists 
 1. **Muted**
 2. **Default**
 3. **Page**
+
+| Background | Use for                                         |
+| ---------- | ----------------------------------------------- |
+| Muted      | A card on the page or in a pane. The default.   |
+| Default    | A quieter fill, such as a settings section.     |
+| Page       | The page's own color, set apart by its corners. |
 
 ## When to use
 
@@ -105,11 +105,9 @@ The whole card is one button. It holds only short text, with no headings, lists 
 
 ```
 
-A link or button card holds no links or controls of its own.
-
 ### Content
 
-Put the fact that matters most for choosing beside the title, and start a link card with its destination's name.
+Put the fact that matters most for choosing beside the title, and start a link card with its destination's name. A link or button card holds no links or controls of its own.
 
 ## Anatomy
 

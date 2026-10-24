@@ -12,3 +12,23 @@ export declare function providesOf(sections: readonly DocumentationSection[]): {
   app: string | undefined;
 };
 export declare function legendName(item: AnatomyLegendItem): string | undefined;
+
+export declare const optionUseHeading: 'Use for';
+export interface OptionTableOption {
+  name: string;
+  nameTokens: unknown[];
+  details: { title: string; markdown: string }[];
+  use: string;
+}
+export interface OptionTable {
+  column: string;
+  options: OptionTableOption[];
+}
+export declare function optionTable(token: unknown): OptionTable | undefined;
+export declare function optionTableProblems(table: OptionTable): string[];
+export declare function siteStructure(document: {
+  sections?: readonly DocumentationSection[];
+}): { where: string; kind: 'after a figure' | 'a second paragraph'; text: string }[];
+export declare function optionPieces(
+  markdown: string,
+): ({ markdown: string } | { options: OptionTable; raw: string })[];

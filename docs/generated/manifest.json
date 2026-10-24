@@ -1906,7 +1906,7 @@
         {
           "name": "Backgrounds",
           "title": "Card variants",
-          "description": "| Background | Use for | | ---------- | ----------------------------------------------- | | Muted | A card on the page or in a pane. The default. | | Default | A quieter fill, such as a settings section. | | Page | The page's own color, set apart by its corners. |",
+          "description": "",
           "file": "docs/examples/card/Backgrounds.tsx"
         },
         {
@@ -2145,14 +2145,14 @@
         },
         {
           "name": "QuietToolbar",
-          "title": "Quiet toolbar",
-          "description": "",
+          "title": "In a toolbar",
+          "description": "A button without a variant of its own takes its container's, such as ghost in a toolbar.",
           "file": "docs/examples/button/QuietToolbar.tsx"
         },
         {
           "name": "ButtonLinks",
-          "title": "Button links",
-          "description": "",
+          "title": "Links",
+          "description": "A button that goes somewhere is a link, and one that does something is a button.",
           "file": "docs/examples/button/ButtonLinks.tsx"
         },
         {
@@ -2182,7 +2182,7 @@
         {
           "name": "SayWhatWillHappen",
           "title": "Labels",
-          "description": "Start with a verb and say what will happen. When the outcome is known, put it in the label.",
+          "description": "Start with a verb and say what will happen, and when the outcome is known, put it in the label.",
           "file": "docs/examples/button/SayWhatWillHappen.tsx"
         },
         {

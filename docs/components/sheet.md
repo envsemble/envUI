@@ -66,15 +66,24 @@ People can resize a side sheet by its inner edge, by pointer or with the arrow k
 
 ## Variants
 
-| Option          | Use for                                                 |
+### Sides
+
+The end is the right edge in left-to-right text, and the left in right-to-left text.
+
+| Side            | Use for                                                 |
 | --------------- | ------------------------------------------------------- |
 | From the end    | Details, settings, filters and inspectors. The default. |
 | From the start  | Panels about what sits at the start of the page.        |
 | From the bottom | A short set of choices or actions.                      |
-| Medium width    | 24 rem, for details and filters. The default.           |
-| Large width     | 44 rem, for tables, comparisons and longer forms.       |
 
-The end is the right edge in left-to-right text, and the left in right-to-left text. A medium side sheet takes the whole width of a compact window, and a large one of a compact or medium window; a bottom sheet is as wide as the window, up to 40 rem.
+### Widths
+
+A medium side sheet takes the whole width of a compact window, and a large one of a compact or medium window; a bottom sheet is as wide as the window, up to 40 rem.
+
+| Width  | Use for                                           |
+| ------ | ------------------------------------------------- |
+| Medium | 24 rem, for details and filters. The default.     |
+| Large  | 44 rem, for tables, comparisons and longer forms. |
 
 ## When to use
 

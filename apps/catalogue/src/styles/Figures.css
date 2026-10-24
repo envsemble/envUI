@@ -40,7 +40,8 @@
     .docs-anatomy,
     .docs-variants,
     .docs-verdict,
-    .docs-example
+    .docs-example,
+    .docs-option-legend
   ) {
   margin-block-start: calc(var(--env-space-4) - var(--docs-subtopic-gap));
 }
@@ -289,7 +290,8 @@
 }
 
 .docs-anatomy-badge,
-.docs-anatomy-number {
+.docs-anatomy-number,
+.docs-option-tag {
   display: grid;
   place-items: center;
   inline-size: 1.5rem;
@@ -309,8 +311,10 @@
 }
 
 /* A variants figure's callouts: each variant's name in place of a number, on the start side of
-   items one under another, or above items side by side (AnatomyFigure.tsx). */
-.docs-variant-label {
+   items one under another, or above items side by side (AnatomyFigure.tsx), and the same tags in
+   an option legend. */
+.docs-variant-label,
+.docs-option-tag {
   inline-size: auto;
   padding-inline: var(--env-space-3);
   white-space: nowrap;
@@ -351,6 +355,55 @@
 
 .docs-anatomy-legend p {
   margin: 0;
+}
+
+/* An option table on the Site, such as a component's variants or sizes: a legend laid out as an
+   anatomy figure's is, each option's name in the tag a variants figure's callouts use, followed by
+   what it is for (OptionLegend.tsx). The tags of a column share its widest tag's width, so what
+   each option is for starts on one line down the column; two columns where they fit. */
+.docs-option-legend {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--env-space-4) var(--env-space-6);
+  align-items: start;
+  margin: 0;
+}
+
+.docs-option {
+  display: grid;
+  grid-column: span 2;
+  grid-template-columns: subgrid;
+  column-gap: var(--env-space-3);
+  align-items: start;
+}
+
+.docs-option > dt {
+  display: grid;
+  justify-items: start;
+}
+
+.docs-option > dd {
+  display: grid;
+  gap: var(--env-space-1);
+  margin: 0;
+  /* The text's first line sits on the tag's centre line. */
+  padding-block-start: calc((1.5rem - 1lh) / 2);
+}
+
+.docs-option > dd p {
+  margin: 0;
+}
+
+.docs-option-detail,
+.docs-option-detail p {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+
+@container (width >= 48rem) {
+  .docs-option-legend:has(> :nth-child(2)) {
+    grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr);
+  }
 }
 
 @container (width < 30rem) {

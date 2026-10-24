@@ -7,6 +7,13 @@ import {
   libraryVersions,
   readDocumentation,
 } from '../scripts/GenerateDocumentation.mjs';
+import { marked } from 'marked';
+import {
+  optionPieces,
+  optionTable,
+  optionTableProblems,
+  siteStructure,
+} from '../scripts/SiteContent.mjs';
 
 test('focused Markdown discovery preserves examples and rejects broken documentation', async () => {
   const cache = resolve('.cache');
@@ -778,6 +785,28 @@ test('a page on the figure template rejects what breaks its form', async () => {
       body.replace(' caption="Use a switch for a setting that applies at once."', ''),
       /do Instant needs caption/,
     );
+    // An option table, whose last column is Use for, shows on the Site as a legend of tags: each
+    // names its option in a few plain words, once, and says what it is for.
+    const options = (rows) =>
+      body.replace(
+        'Name the setting, not the action.',
+        `Name the setting, not the action.\n\n| Size | Use for |\n| ---- | ------- |\n${rows}\n`,
+      );
+    await rejects(
+      options('| [Small](#small) | A dense list. |'),
+      /When to use: row 1 of the Size table names its option with a link/,
+    );
+    await rejects(
+      options('| Small | A dense list. |\n| Small | A table. |'),
+      /row 2 of the Size table names Small again/,
+    );
+    await rejects(options('| Small |  |'), /row 1 of the Size table says nothing under Use for/);
+    await rejects(
+      options('| The small one, for dense lists. | A dense list. |'),
+      /names its option "The small one, for dense lists\.": a name of a few words/,
+    );
+    await writeFile(page, switchFrontmatter + options('| Small | A dense list. |'));
+    assert.doesNotThrow(read);
     await rejects(body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
     await rejects(
       body.replace('anatomy=Parts', 'anatomy=Parts size=lg'),
@@ -957,4 +986,97 @@ test('"## In code" is the developer-only part, opened by the generated Import', 
     );
     assert.throws(read, /must start with the part's name in bold/);
   });
+});
+
+test('an option table is read for the Site as a legend', () => {
+  const [table] = marked.lexer(
+    [
+      '| Variant | Tones | Use for |',
+      '| ------- | ----- | ------- |',
+      '| **Primary** | Neutral, accent | The main action of a group. |',
+      '| `ghost` | Neutral | A toolbar. |',
+      '',
+    ].join('\n'),
+  );
+  const options = optionTable(table);
+  assert.equal(options.column, 'Variant');
+  assert.deepEqual(
+    options.options.map(({ name, details, use }) => ({ name, details, use })),
+    [
+      {
+        name: 'Primary',
+        details: [{ title: 'Tones', markdown: 'Neutral, accent' }],
+        use: 'The main action of a group.',
+      },
+      { name: 'ghost', details: [{ title: 'Tones', markdown: 'Neutral' }], use: 'A toolbar.' },
+    ],
+  );
+  assert.deepEqual(optionTableProblems(options), []);
+  // Only a table whose last column is Use for is an option table.
+  assert.equal(
+    optionTable(marked.lexer('| Key | Action |\n| --- | --- |\n| Tab | Moves. |\n')[0]),
+    undefined,
+  );
+  // The Site's Markdown is cut at its option tables, keeping each table's source.
+  const source = 'Intro.\n\n| Size | Use for |\n| --- | --- |\n| Small | Lists. |\n\nAfter.\n';
+  const pieces = optionPieces(source);
+  assert.deepEqual(
+    pieces.map((piece) => ('options' in piece ? piece.options.options[0].name : piece.markdown)),
+    ['Intro.\n\n', 'Small', 'After.\n'],
+  );
+  assert.equal(
+    pieces.map((piece) => ('options' in piece ? piece.raw : piece.markdown)).join(''),
+    source,
+  );
+});
+
+test('Site text with no structure is found: loose after a figure, or a second paragraph', () => {
+  const markdown = (text) => ({ kind: 'markdown', markdown: text });
+  const figure = (role) => ({ kind: 'example', name: 'Figure', heading: 'Figure', role });
+  const found = siteStructure({
+    sections: [
+      {
+        id: 'usage',
+        title: 'When to use',
+        blocks: [
+          markdown('## When to use\n\nOne paragraph opens the section.\n\n'),
+          figure('do'),
+          figure('dont'),
+          markdown(
+            'A lone sentence after the pairs.\n\n### Labels\n\nStart with a verb.\n\nPut the outcome in it.\n\n',
+          ),
+          figure(),
+        ],
+      },
+      {
+        id: 'anatomy',
+        title: 'Anatomy',
+        // The sentence after an anatomy legend names what the figure can't show; it belongs to it.
+        blocks: [
+          markdown('## Anatomy\n\n'),
+          figure('anatomy'),
+          markdown('Not shown: the spinner.\n'),
+        ],
+      },
+      {
+        id: 'variants',
+        title: 'Variants',
+        blocks: [
+          markdown(
+            '## Variants\n\n| Size | Use for |\n| --- | --- |\n| Small | Lists. |\n\nLoose after the legend.\n\n### Tones\n\nIn a block.\n',
+          ),
+        ],
+      },
+      // The developer-only part is not the Site's.
+      { id: 'code', title: 'In code', blocks: [markdown('## In code\n\nOne.\n\nTwo.\n')] },
+    ],
+  });
+  assert.deepEqual(
+    found.map(({ where, kind, text }) => `${where}, ${kind}: ${text}`),
+    [
+      'When to use, after a figure: A lone sentence after the pairs.',
+      'When to use, a second paragraph: Put the outcome in it.',
+      'Variants, after a figure: Loose after the legend.',
+    ],
+  );
 });

@@ -145,7 +145,7 @@ test('live examples keep links in place, show their source, and specimens show f
   await page.goto(`${catalogueUrl}/components/button`);
   const address = page.url();
   // Links in an example keep their semantics without leaving the documentation.
-  const destinations = page.getByRole('group', { name: 'Button links example', exact: true });
+  const destinations = page.getByRole('group', { name: 'Links example', exact: true });
   await destinations.getByRole('link', { name: 'Read the guide', exact: true }).press('Enter');
   expect(page.url()).toBe(address);
   await destinations
@@ -894,7 +894,7 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(hero.getByRole('button')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   // The other examples and the example's code render.
-  const toolbar = page.getByRole('group', { name: 'Quiet toolbar example', exact: true });
+  const toolbar = page.getByRole('group', { name: 'In a toolbar example', exact: true });
   await expect(toolbar.getByRole('button').first()).toBeVisible();
   await page
     .locator('.docs-live-example-entry')

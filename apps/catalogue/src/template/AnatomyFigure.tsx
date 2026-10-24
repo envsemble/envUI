@@ -7,6 +7,8 @@ import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
 import { legendName } from '../../../../scripts/SiteContent.mjs';
 import { PictureMark } from './PictureMark';
+import { OptionLegend } from './OptionLegend';
+import type { OptionTable } from '../../../../scripts/SiteContent.mjs';
 
 /** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
 interface Callout {
@@ -485,8 +487,9 @@ function legendText(item: AnatomyLegendItem) {
 /**
  * An anatomy figure: the live component in the reader's theme, a numbered callout on each part its
  * legend names, by class name, and the legend of part names, with the example's code below. A
- * variants figure names each variant on its callout instead, as anatomy figures number parts, so
- * its legend is for assistive technology alone.
+ * variants figure names each variant on its callout instead, as anatomy figures number parts, and
+ * shows the option table after it as its legend, each name in its callout's tag followed by what it
+ * is for; without one, its names are for assistive technology alone.
  */
 export function AnatomyFigure({
   page,
@@ -499,6 +502,7 @@ export function AnatomyFigure({
   enlarge: enlarged = false,
   stage,
   variants = false,
+  options,
 }: {
   page: string;
   name: string;
@@ -514,6 +518,8 @@ export function AnatomyFigure({
   stage?: StageFill;
   /** A variants figure: a callout with each variant's name on the example's items. */
   variants?: boolean;
+  /** A variants figure's option table, shown as its legend. */
+  options?: OptionTable;
 }) {
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   return (
@@ -529,7 +535,8 @@ export function AnatomyFigure({
       />
       <figcaption className="docs-anatomy-caption">
         {caption && <p className="docs-figure-caption">{caption}</p>}
-        {variants && (
+        {variants && options && <OptionLegend table={options} path={`components/${page}.md`} />}
+        {variants && !options && (
           <ul className="docs-visually-hidden">
             {items.map((item, index) => (
               <li key={`${index}-${item.label}`}>{item.label}</li>

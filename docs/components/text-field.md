@@ -119,10 +119,12 @@ A text area keeps its height and scrolls, and people resize it by its bottom edg
 | Variant  | Use for                                                      |
 | -------- | ------------------------------------------------------------ |
 | Outline  | In forms, dialogs, panes and toolbars. The default.          |
-| Floating | A long form on a page.                                       |
+| Floating | A long form on a page. Not for a text area.                  |
 | Ghost    | A search in an application's chrome, such as atop a sidebar. |
 
-A text area comes as outline or ghost. Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it. A field can be given a fill of its own where it needs one.
+### Fill
+
+Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it. A field can be given a fill of its own where it needs one.
 
 ### Sizes
 
@@ -149,6 +151,8 @@ Outline and ghost fields come in the three control heights of the [scale](../fou
 ```tsx dont=GhostForm caption="Ghost fields in a form: nothing shows where to type."
 
 ```
+
+### Values and errors
 
 Say what kind of value each field takes, such as an e-mail address, so the browser can fill it in and show the right keyboard. Show an error once people leave the field or submit, and remove it as soon as the value fits.
 

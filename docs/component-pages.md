@@ -44,16 +44,16 @@ Register the page in [the index](index.md) under its group, with only its title 
 
 A component page is a reference page in the traditional style: ordinary headings, short direct text and live figures, in a fixed order so readers and agents know where to look. After the `# Title`, a page has these `##` sections in this order. Omit an optional one where it doesn't apply. The build fails on another heading, a wrong order or a missing required section. A component page with a `## When to use` section is on this template; one without is on the [section template](#pages-on-the-section-template).
 
-| Section           | Required | Holds                                                                                                                 |
-| ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
-| Overview          | yes      | What the summary above it doesn't say, its family as figures, and `###` subsections on what it does on its own.       |
-| Variants          |          | Variants, tones, layouts and sizes: a table of the values, examples and specimens.                                    |
-| When to use       | yes      | Do and don't pairs and the few rules they don't show; a `### Labels` or `### Content` subsection on writing its text. |
-| Anatomy           |          | An anatomy figure with its legend, and one sentence naming parts the figure can't show.                               |
-| Adapting to width |          | A sentence and an example at several widths.                                                                          |
-| Accessibility     | yes      | A `### Keyboard` table (Key, Action) where it handles keys, and `### envUI provides` and `### You provide` lists.     |
-| In code           |          | The developer-only part: how to use it in code, in `### Usage`, `### Composition` and `### Customize`.                |
-| Changelog         |          | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                          |
+| Section           | Required | Holds                                                                                                                      |
+| ----------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Overview          | yes      | What the summary above it doesn't say, its family as figures, and `###` subsections on what it does on its own.            |
+| Variants          |          | Variants, tones, layouts and sizes: a variants figure, its option table, which the Site shows as a legend, and examples.   |
+| When to use       | yes      | Do and don't pairs, the few rules they don't show in titled blocks, and a `### Labels` or `### Content` block on its text. |
+| Anatomy           |          | An anatomy figure with its legend, and one sentence naming parts the figure can't show.                                    |
+| Adapting to width |          | A sentence and an example at several widths.                                                                               |
+| Accessibility     | yes      | A `### Keyboard` table (Key, Action) where it handles keys, and `### envUI provides` and `### You provide` lists.          |
+| In code           |          | The developer-only part: how to use it in code, in `### Usage`, `### Composition` and `### Customize`.                     |
+| Changelog         |          | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                               |
 
 The build adds **Props** and **Related**, from `avoidWhen`, before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. On the website the page's sections up to Accessibility are its page on the Site, and its page in the Docs, which the Site's page links to as API, is its guide to using it in code: In code, what envUI and the application provide, then its props, part names and color properties as reference, and its changelog. The Site leaves out In code, Accessibility's `### envUI provides` and `### You provide`, and the whole of Accessibility where nothing else is in it. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
 
@@ -64,6 +64,16 @@ The Site is for people looking at envUI, not for developers: it shows and introd
 - **No inline code.** Name no props, values, part classes, tokens or container names, such as `variant="ghost"` or `--env-card-container`. Say in plain words what matters: "the ghost variant", "one card can take colors of its own", "a sheet from the bottom". Component names, such as SearchField, are names, not code. The developer detail goes in [In code](#in-code-the-developer-only-part). `npm test` fails on a code span in the Site's text of a converted page, `plainPages` in `tests/DocumentationPages.test.mjs`: its sections, captions, anatomy legend names, `useWhen` and `avoidWhen`; it reports the count left on the other pages.
 - **Options in words.** A table of variants, tones, sides or sizes names each option as people see it, such as Outline, Floating and Ghost, or From the bottom, never its value.
 - **Lists sparingly.** A list is for a few short items, usually not full sentences, such as `useWhen`. Write rules as a sentence or two, or as a do and don't pair, rather than as a list of sentences.
+
+### Text in titled blocks
+
+Every piece of text on the Site belongs to a titled block: a heading and one short paragraph, beside or above its figure where it has one, as Colors of its own, Pending work and Confirm in place are written on [Button](components/button.md). A section's own heading titles the paragraph that opens it; any other text is a `###` subsection of its own.
+
+- **No loose sentences.** A paragraph after a figure, a do and don't pair, a legend or a list, with no heading between them, is loose, and so is one between two figures: give it a heading, or fold it into the block it belongs to. The one exception is the sentence right after an anatomy legend that names the parts the figure can't show.
+- **One paragraph per block.** Two short paragraphs under one heading, such as two one-line rules under Labels, are one paragraph, or two blocks with headings of their own.
+- **envUI's type scale.** A block's heading is a title, its paragraph body text, and a figure's caption the small muted text under it, as the [typography](foundations/typography.md) foundation sets them. The catalogue styles them; don't fake a heading with bold text or HTML.
+
+`npm test` finds loose text in the Site's sections, with `siteStructure` in `scripts/SiteContent.mjs`: it fails on a page in `plainPages` and reports the count on the others.
 
 ### Write little
 
@@ -81,8 +91,8 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 | When to use it                                | The frontmatter's `useWhen`, which When to use shows first.                                             |
 | What to use instead                           | The frontmatter's `avoidWhen`, which Related shows at the end of the page.                              |
 | A judgment, such as one primary button        | A do and don't pair whose captions are the rule. A pair never pictures a `useWhen` or `avoidWhen` item. |
-| Rules no picture shows                        | A sentence or two after the pairs.                                                                      |
-| Variants, tones and sizes                     | One table of the options in words and what each is for.                                                 |
+| Rules no picture shows                        | A titled block after the pairs: a `###` heading and a sentence or two.                                  |
+| Variants, tones and sizes                     | One option table of the options in words and what each is for, which the Site shows as a legend.        |
 | What it does on its own, such as pending      | A `###` subsection of Overview, a sentence beside its figure.                                           |
 | Its parts                                     | The anatomy legend, which the Site shows as names only; the class names are for In code.                |
 | That it takes colors of its own               | A `### Colors` subsection of Anatomy, in words; the properties go in In code's Customize.               |
@@ -94,7 +104,7 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 
 Choose the form that teaches each point best rather than a column of paragraphs: a live example for how it looks and behaves, a do and don't pair for a judgment, an anatomy figure for parts, an example at several widths for how it adapts, a table for values, a short list for rules. The catalogue lays out some patterns for you:
 
-- **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a sentence between figures that should not share a row.
+- **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a titled block between figures that should not share a row.
 - **A subsection beside its figure**: a `###` subsection of text, with no table or list at its start, followed by exactly one figure, sits beside that figure on a wide page, such as each kind of card under Variants.
 - **When to use** starts with the frontmatter's `useWhen`, a short plain list under Use it when, and on a pattern page with what it is built from. Write what follows it, not the same points again.
 - **Related** ends the page, from the frontmatter's `avoidWhen`: a tile for each component or page an entry names, its lead example small and inert on its canvas, with its name and the entry's text below. The tiles render once the section nears the viewport. A page with an open anatomy figure, such as Dialog or Menu, is shown by that figure instead; a page without an example shows a page icon on the same stage. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three.
@@ -152,7 +162,7 @@ A popup, a menu, a tooltip, a dialog, a sheet or a toast renders in a portal, ou
 
 ### Do and don't pairs
 
-Put a `do` fence and a `dont` fence after each other, so they sit side by side; write two pairs one after the other, and they line up two to a row. Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three. A caption is the rule in a few plain words, such as "One primary button per group, at the end of its actions."; don't repeat it below. Each is a whole example file an application could copy, the don't included. Avoid a don't that the accessibility scan would flag, such as a button inside a link; say that in a rule instead. Rules that don't need a picture are a sentence or two below the pairs.
+Put a `do` fence and a `dont` fence after each other, so they sit side by side; write two pairs one after the other, and they line up two to a row. Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three. A caption is the rule in a few plain words, such as "One primary button per group, at the end of its actions."; don't repeat it below. Each is a whole example file an application could copy, the don't included. Avoid a don't that the accessibility scan would flag, such as a button inside a link; say that in a rule instead. Rules that don't need a picture go below the pairs in [titled blocks](#text-in-titled-blocks), each a `###` heading and a sentence or two.
 
 ### Anatomy figures
 
@@ -189,7 +199,29 @@ A figure that shows named variants, tones or sizes side by side names each with 
 2. **Floating**
 ````
 
-Each name labels the example's next item: a child of its root, such as a field in a Column, or of the one element the root holds. An item may name what it labels with a part reference instead, such as ``**Ghost** (`env-text-field[data-variant='ghost']`)``. Items one under another take their names on the start side, items side by side above them; write a long run, such as six tones, one under another, so it never wraps. The names are the figure's alone: the variants table below names each option in the same words and says what it is for, and In code gives its value.
+Each name labels the example's next item: a child of its root, such as a field in a Column, or of the one element the root holds. An item may name what it labels with a part reference instead, such as ``**Ghost** (`env-text-field[data-variant='ghost']`)``. Items one under another take their names on the start side, items side by side above them; write a long run, such as six tones, one under another, so it never wraps. The names are the figure's alone: the option table below names each option in the same words and says what it is for, and In code gives its value.
+
+### Option tables
+
+Variants, tones, sizes, sides and layouts are written as an option table: a Markdown table whose first column names each option in words, as people see it, and whose last column, headed **Use for**, says what it is for. A column between them adds a detail, such as the tones each variant takes. The table is the source, which the packaged page and agents read as it is; the Site shows it as a legend, laid out as an anatomy figure's legend is, each option's name in the same tag a variants figure's callouts use, followed by what it is for, with its details below in small muted text. Right after a variants figure's legend, it is that figure's legend, under its stage.
+
+````md
+```tsx variants=Variants
+
+```
+
+1. **Outline**
+2. **Floating**
+
+| Variant  | Use for                                             |
+| -------- | --------------------------------------------------- |
+| Outline  | In forms, dialogs, panes and toolbars. The default. |
+| Floating | A long form on a page.                              |
+````
+
+- **Names are tags.** Each option's name is a few words of plain text, such as Outline or From the bottom, named once, with no link, image or HTML, and each option says what it is for; the build checks both. After a variants figure, the names are the figure's, in its order, which `npm test` checks on the pages in `plainPages`.
+- **One kind per table.** Sides and widths are two tables, each in its own titled block, as on [Sheet](components/sheet.md); a sentence about them is the block's paragraph, before the table, never loose after it.
+- **Other tables stay tables.** Only a table whose last column is Use for is a legend; a keyboard table or a comparison, such as a pattern's table of needs, stays a table.
 
 ## In code: the developer-only part
 
@@ -304,10 +336,10 @@ Native DOM props are summarised by element, so document only the props envUI dec
 To convert a page on the section template to the figure template:
 
 1. Read the component's source, its CSS for the part class names, and its browser tests in `tests/browser`.
-2. Move each section's content into the section of the figure template that holds it: Variants and sizes into Variants; States and behaviour into `###` subsections of Overview, or into Variants where a state belongs to one variant; Content guidelines into a `### Labels` or `### Content` subsection of When to use; Do and don't into pairs under When to use, with the rules no picture needs as a short list; Examples into the sections they illustrate, as figures with a caption or under a `###` subsection. Keep what a reader needs, check it against the code, and drop what a figure, the props reference or another section already says.
+2. Move each section's content into the section of the figure template that holds it: Variants and sizes into Variants; States and behaviour into `###` subsections of Overview, or into Variants where a state belongs to one variant; Content guidelines into a `### Labels` or `### Content` subsection of When to use; Do and don't into pairs under When to use, with the rules no picture needs in titled blocks; Examples into the sections they illustrate, as figures with a caption or under a `###` subsection. Keep what a reader needs, check it against the code, and drop what a figure, the props reference or another section already says.
 3. Keep every heading another page links to, such as `#confirm-in-place`, as a `###` subsection: the build fails on a link to a heading that is gone.
 4. Write the new example files: the do and don't pairs, the anatomy example and, where the component adapts, an example for `widths`. Keep specimens where they show what code can't, such as forced hover and pressed states.
-5. Cut the page down: each thing once, in its place in [the table](#write-little), and no sentence a figure already shows. Run `npm run check`, and look at the page in the catalogue at a narrow and a wide width, in light and dark: cells that share a row of one size, the callouts on their parts, one for each legend item, figures centred on their stages, open code across the column and nothing overflowing. Check the outline too, in the browser's accessibility tree or with a headings list: one `h2` per section and nothing else at that level, so no specimen or example adds an `h2` of its own. Update browser tests that visited the page's old views; on the figure template, every heading is on its page.
+5. Cut the page down: each thing once, in its place in [the table](#write-little), no sentence a figure already shows, and every sentence in a [titled block](#text-in-titled-blocks). Run `npm run check`, and look at the page in the catalogue at a narrow and a wide width, in light and dark: cells that share a row of one size, the callouts on their parts, one for each legend item, figures centred on their stages, open code across the column and nothing overflowing. Check the outline too, in the browser's accessibility tree or with a headings list: one `h2` per section and nothing else at that level, so no specimen or example adds an `h2` of its own. Update browser tests that visited the page's old views; on the figure template, every heading is on its page.
 
 ### From the earliest pages
 

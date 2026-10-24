@@ -71,11 +71,9 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 
 ```
 
-On touch screens, an icon button drawn smaller than the touch size, such as a close button in a chip or a tab, can still reach the touch size with its hit area. Alert, Toast, Combobox chips, DocumentTabs and PanelDock's tabs do this for their own close buttons.
-
 ### States
 
-Hover, press, keyboard focus and disabled, for each variant.
+Hover, press, keyboard focus and disabled, for each variant. Keyboard focus draws a ring just outside the button; a text button's ring reaches a little past its label, which stays in line with the text around it.
 
 <!-- specimen: InteractionStates -->
 
@@ -131,15 +129,23 @@ CopyButton copies a value and shows Copied, or Couldn’t copy, for about two se
 | Ghost     | Neutral, danger         | An application's chrome, such as a toolbar.  |
 | Text      | Neutral, danger         | A link-like action, underlined where needed. |
 
-The accent tone is for a rare, consequential action, and the danger tone for one that deletes or ends something. A button without a variant of its own takes its container's, such as ghost in a toolbar.
+### Tones
 
-Keyboard focus draws a ring 2 px outside a button, or on the edge of a ghost button's state layer. A text button's hit area and ring reach 0.25 rem past its label, which a negative margin takes back, so its label lines up with the text around it.
+The accent tone is for a rare, consequential action, and the danger tone for one that deletes or ends something.
 
-```tsx example=QuietToolbar caption="Ghost buttons in an application's chrome."
+### In a toolbar
+
+A button without a variant of its own takes its container's, such as ghost in a toolbar.
+
+```tsx example=QuietToolbar
 
 ```
 
-```tsx example=ButtonLinks caption="A button that goes to a destination is a native link."
+### Links
+
+A button that goes somewhere is a link, and one that does something is a button.
+
+```tsx example=ButtonLinks
 
 ```
 
@@ -167,13 +173,9 @@ Small, medium and large, the control heights of the [scale](../foundations/scale
 
 ```
 
-A button that goes somewhere is a link, and one that does something is a button.
-
 ### Labels
 
-Start with a verb and say what will happen.
-
-When the outcome is known, put it in the label.
+Start with a verb and say what will happen, and when the outcome is known, put it in the label.
 
 ```tsx example=SayWhatWillHappen
 
@@ -198,7 +200,7 @@ One button can take colors of its own: its fill, its label, its edge, and its fi
 
 ## Adapting to width
 
-Labels wrap, and icon-only buttons keep their size. On touch screens every button grows to at least 2.75 rem.
+Labels wrap, and icon-only buttons keep their size. On touch screens every button grows to at least 2.75 rem, and an icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with its hit area.
 
 ```tsx example=NarrowActions widths="16 30"
 

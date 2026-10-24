@@ -8,6 +8,8 @@ import type { Documentation as Document } from '../Reference';
 import { AnatomyFigure } from './AnatomyFigure';
 import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
+import { SiteMarkdown } from './OptionLegend';
+import { optionPieces, type OptionTable } from '../../../../scripts/SiteContent.mjs';
 import { PictureMark } from './PictureMark';
 import { Specimen } from './Specimen';
 
@@ -82,8 +84,19 @@ export function VerdictFigure({
   );
 }
 
-/** One figure of a section, by its kind. */
-function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
+/**
+ * One figure of a section, by its kind. `options` is the option table right after a variants
+ * figure, which it shows as its legend.
+ */
+function Figure({
+  page,
+  block,
+  options,
+}: {
+  page: Document;
+  block: ExampleBlock;
+  options?: OptionTable;
+}) {
   if (block.role === 'do' || block.role === 'dont')
     return (
       <VerdictFigure
@@ -108,6 +121,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
         enlarge={block.enlarge}
         stage={block.stage}
         variants={block.role === 'variants'}
+        options={options}
       />
     );
   return (
@@ -197,12 +211,31 @@ export function FigureSection({
   const first = blocks[0];
   const [title, ...intro] = first?.kind === 'markdown' ? first.markdown.split('\n') : [''];
   if (first?.kind === 'markdown') blocks[0] = { kind: 'markdown', markdown: intro.join('\n') };
+  // An option table right after a variants figure is the figure's legend: each variant's name in
+  // the tag its callout shows, followed by what it is for.
+  const options = new Map<string, OptionTable>();
+  blocks.forEach((block, index) => {
+    const next = blocks[index + 1];
+    if (block.kind !== 'example' || block.role !== 'variants' || next?.kind !== 'markdown') return;
+    const pieces = optionPieces(next.markdown);
+    const lead = pieces.findIndex((piece) => !('markdown' in piece) || piece.markdown.trim());
+    const table = pieces[lead];
+    if (!table || !('options' in table)) return;
+    options.set(block.name, table.options);
+    blocks[index + 1] = {
+      kind: 'markdown',
+      markdown: pieces
+        .slice(lead + 1)
+        .map((piece) => ('markdown' in piece ? piece.markdown : piece.raw))
+        .join(''),
+    };
+  });
   const groups = groupFigures(blocks);
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
   const content: ReactNode[] = lead ? [<Fragment key="lead">{lead}</Fragment>] : [];
   const markdown = (key: number, text: string) => (
-    <Documentation key={key} markdown={text} path={reference.path} />
+    <SiteMarkdown key={key} markdown={text} path={reference.path} />
   );
   groups.forEach((group, index) => {
     const text = beside.get(index);
@@ -241,7 +274,9 @@ export function FigureSection({
         beside.set(index + 1, split[1]);
       } else content.push(markdown(index, group.markdown));
     } else if (group.kind === 'example')
-      content.push(<Figure key={index} page={reference} block={group} />);
+      content.push(
+        <Figure key={index} page={reference} block={group} options={options.get(group.name)} />,
+      );
     else if (group.kind === 'specimen')
       content.push(<Specimen key={index} page={reference.id} name={group.name} headingLevel={3} />);
   });
