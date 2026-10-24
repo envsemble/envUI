@@ -352,6 +352,15 @@
           "parts": [
             "env-avatar-group"
           ]
+        },
+        {
+          "attribute": "data-spread",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-avatar-group"
+          ]
         }
       ],
       "uses": [

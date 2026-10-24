@@ -1,10 +1,19 @@
 'use client';
 
-import type { ComponentPropsWithRef, CSSProperties, MouseEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type CSSProperties,
+  type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 import { Avatar, type AvatarProps, type AvatarSize } from './Avatar.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
+import { setRef } from '../internal/setRef.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { avatarGroup as avatarGroupMessages } from '../foundations/messages/avatarGroup.js';
@@ -38,15 +47,19 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
    */
   size?: AvatarSize;
   /**
-   * Where a pointer can hover, the group keeps the room its spread takes, so spreading never moves
-   * what is around it, and the avatars gather at rest toward one end of that room: start, or end for
-   * a group at the end of a row, such as a list row's action.
+   * The group keeps the room its spread takes, so spreading never moves what is around it, and the
+   * pile gathers at rest toward one end of that room: start, or end for a group at the end of a
+   * row, such as a list row's action.
    * @default 'start'
    */
   gather?: 'start' | 'end';
   /** How many people there are in all, when people is only a preview of them. */
   total?: number;
-  /** Makes every avatar a button with a name tooltip; receives the person pressed. */
+  /**
+   * Makes every avatar a button with a name tooltip; receives the person pressed. The avatars are
+   * targets only while the group is spread: at rest the pile is one target, which hover, a tap or
+   * keyboard focus spreads.
+   */
   onPersonClick?: (person: AvatarGroupPerson, event: MouseEvent<HTMLElement>) => void;
   /**
    * Text for people beyond the list, in the overflow tooltip and the group's name. It overrides
@@ -64,9 +77,12 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
   formatLabel?: (count: number, names: readonly string[]) => string;
 }
 
+/** How long a group spread by a tap stays spread without another tap in it. */
+const tapSpreadDuration = 5000;
+
 /**
- * Overlapping avatars for a set of people, such as the members of a project, with a chip that
- * counts the rest and lists them in its tooltip.
+ * A pile of avatars for a set of people, such as the members of a project, with a chip that counts
+ * the rest and lists them in its tooltip. Hover, a tap or keyboard focus spreads it.
  */
 export function AvatarGroup({
   people,
@@ -80,8 +96,30 @@ export function AvatarGroup({
   className,
   style,
   'aria-label': label,
+  ref,
+  onClick,
+  onPointerDown,
+  onPointerLeave,
   ...props
 }: AvatarGroupProps) {
+  // Spread by a tap, where no pointer hovers: until a tap outside, a pause or a mouse leaving it.
+  const [tapped, setTapped] = useState(false);
+  // Each tap inside a tapped group restarts the pause.
+  const [taps, setTaps] = useState(0);
+  const groupRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!tapped) return;
+    const bunch = () => setTapped(false);
+    const timer = setTimeout(bunch, tapSpreadDuration);
+    const outside = (event: PointerEvent) => {
+      if (!groupRef.current?.contains(event.target as Node)) bunch();
+    };
+    document.addEventListener('pointerdown', outside, true);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('pointerdown', outside, true);
+    };
+  }, [tapped, taps]);
   // A format prop wins over the provider's messages, which win over the English defaults.
   const messages = useMessages('avatarGroup', avatarGroupMessages);
   const formatters = useFormatters();
@@ -131,12 +169,33 @@ export function AvatarGroup({
     <div
       role="group"
       {...props}
+      ref={(node) => {
+        groupRef.current = node;
+        setRef(ref, node);
+      }}
       aria-label={label ?? formatLabel(count, names)}
       className={classNames('env-avatar-group', className)}
       style={style}
       data-size={size}
       data-gather={gather === 'end' ? 'end' : undefined}
       data-interactive={interactive ? '' : undefined}
+      data-spread={tapped ? '' : undefined}
+      // At rest the pile is one target, the group itself under the style sheet's cover: a tap on it
+      // spreads the group, and only then do taps reach the avatars.
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.target === event.currentTarget) setTapped(true);
+      }}
+      onPointerDown={(event) => {
+        onPointerDown?.(event);
+        if (tapped) setTaps((value) => value + 1);
+      }}
+      onPointerLeave={(event: ReactPointerEvent<HTMLDivElement>) => {
+        onPointerLeave?.(event);
+        // A mouse that clicked the pile spreads it by hover alone once it leaves; touch leaves
+        // after every tap, so it keeps the spread.
+        if (event.pointerType === 'mouse') setTapped(false);
+      }}
     >
       {shown.map((person, index) => (
         <AvatarGroupItem
