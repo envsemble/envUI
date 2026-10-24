@@ -123,3 +123,93 @@
 .docs-related-line .env-markdown > * {
   margin: 0;
 }
+
+/* A page's specimen in a tile, for a page without an example, such as a foundation's
+   (PageSpecimens.tsx): drawn with tokens, scaled to fit the stage as an example is. */
+.docs-page-specimen-icons {
+  color: var(--env-color-fg-default);
+}
+
+.docs-page-specimen-swatches > span {
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border-radius: var(--env-radius-lg);
+  background: var(--env-color-bg-neutral-emphasis);
+}
+.docs-page-specimen-swatches > [data-role='brand'] {
+  background: var(--env-color-bg-brand-emphasis);
+}
+.docs-page-specimen-swatches > [data-role='accent'] {
+  background: var(--env-color-bg-accent-emphasis);
+}
+.docs-page-specimen-swatches > [data-role='success'] {
+  background: var(--env-color-bg-success-emphasis);
+}
+.docs-page-specimen-swatches > [data-role='warning'] {
+  background: var(--env-color-bg-warning-emphasis);
+}
+.docs-page-specimen-swatches > [data-role='danger'] {
+  background: var(--env-color-bg-danger-emphasis);
+}
+
+.docs-page-specimen-spacing > span {
+  block-size: var(--env-space-3);
+  border-radius: var(--env-radius-xs);
+  background: var(--env-color-bg-accent-emphasis);
+}
+.docs-page-specimen-spacing > [data-step='1'] {
+  inline-size: calc(4 * var(--env-space-1));
+}
+.docs-page-specimen-spacing > [data-step='2'] {
+  inline-size: calc(4 * var(--env-space-2));
+}
+.docs-page-specimen-spacing > [data-step='3'] {
+  inline-size: calc(4 * var(--env-space-3));
+}
+.docs-page-specimen-spacing > [data-step='4'] {
+  inline-size: calc(4 * var(--env-space-4));
+}
+.docs-page-specimen-spacing > [data-step='5'] {
+  inline-size: calc(4 * var(--env-space-5));
+}
+.docs-page-specimen-spacing > [data-step='6'] {
+  inline-size: calc(4 * var(--env-space-6));
+}
+.docs-page-specimen-spacing > [data-step='7'] {
+  inline-size: calc(4 * var(--env-space-7));
+}
+.docs-page-specimen-spacing > [data-step='8'] {
+  inline-size: calc(4 * var(--env-space-8));
+}
+
+.docs-page-specimen-windows > span {
+  display: grid;
+  place-items: end center;
+  padding: var(--env-space-1);
+  border: 0.125rem solid var(--env-color-border-default);
+  border-radius: var(--env-radius-md);
+  background: var(--env-color-bg-default);
+  white-space: nowrap;
+}
+.docs-page-specimen-windows > [data-size='compact'] {
+  inline-size: 4.5rem;
+  block-size: 7rem;
+}
+.docs-page-specimen-windows > [data-size='medium'] {
+  inline-size: 7rem;
+  block-size: 8rem;
+}
+.docs-page-specimen-windows > [data-size='expanded'] {
+  inline-size: 11rem;
+  block-size: 7rem;
+}
+
+/* The focus ring keyboard use shows, drawn on the button at rest. */
+.docs-page-specimen-focus {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: 0.125rem;
+}
+
+.docs-page-specimen-content {
+  text-align: center;
+}

@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { Badge, Column, DescriptionList, Text } from '@envsemble/envui';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
@@ -10,6 +10,7 @@ import { siteSection } from './Provides';
 import { docsOnlySections } from '../../../../scripts/SiteContent.mjs';
 import { pageOf, Related } from './Related';
 import { WhenToUse } from './WhenToUse';
+import { subscribeToAddress } from '../navigation/Address';
 
 const statusTones = {
   experimental: 'warning',
@@ -259,11 +260,24 @@ function changelogEntries(markdown: string) {
   return entries.length ? entries : undefined;
 }
 
+/** Whether the address names a page's changelog, as `#changelog` does. */
+const namesChangelog = () => location.hash === '#changelog';
+
 /**
- * A component's changelog, on its page in the Docs: quiet side information, each version a muted
- * label beside what changed in it, in small muted type.
+ * A component's changelog, on its page in the Docs: quiet side information, rarely needed, so it
+ * sits collapsed in a disclosure titled with its heading. An address that names it opens it, on
+ * loading the page and on following a link to it; each version is a muted label beside what
+ * changed in it, in small muted type.
  */
 export function PageChangelog({ document }: { document: Document }) {
+  const [open, setOpen] = useState(namesChangelog);
+  useEffect(
+    () =>
+      subscribeToAddress(() => {
+        if (namesChangelog()) setOpen(true);
+      }),
+    [],
+  );
   const changelog = document.sections?.find((section) => section.id === 'changelog');
   if (!changelog) return null;
   const markdown = changelog.blocks
@@ -278,21 +292,28 @@ export function PageChangelog({ document }: { document: Document }) {
       data-section={changelog.id}
       aria-labelledby="changelog"
     >
-      <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
-        {changelog.title}
-      </Text>
-      {entries ? (
-        <DescriptionList.Root className="docs-changelog-entries">
-          {entries.map(({ version, text }, index) => (
-            <DescriptionList.Item key={`${index}-${version}`} label={version}>
-              <Documentation markdown={text} path={document.path} />
-            </DescriptionList.Item>
-          ))}
-        </DescriptionList.Root>
-      ) : (
-        // A changelog written another way shows as its Markdown, below the same heading.
-        <Documentation markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
-      )}
+      <Disclosure
+        open={open}
+        onOpenChange={setOpen}
+        title={
+          <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
+            {changelog.title}
+          </Text>
+        }
+      >
+        {entries ? (
+          <DescriptionList.Root className="docs-changelog-entries">
+            {entries.map(({ version, text }, index) => (
+              <DescriptionList.Item key={`${index}-${version}`} label={version}>
+                <Documentation markdown={text} path={document.path} />
+              </DescriptionList.Item>
+            ))}
+          </DescriptionList.Root>
+        ) : (
+          // A changelog written another way shows as its Markdown, below the same heading.
+          <Documentation markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
+        )}
+      </Disclosure>
     </Column>
   );
 }

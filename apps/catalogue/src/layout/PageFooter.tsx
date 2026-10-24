@@ -60,8 +60,8 @@ const columns: { title: string; links: FooterLink[] }[] = [
 
 /**
  * The foot of every page of the Site and the Docs, on the navigation's pane color: the wordmark in
- * a column of its own, then the main destinations of both in columns that wrap onto more rows in a narrow page,
- * and under them the credit for the icons. Its links are quiet text until hovered.
+ * a column of its own, then the main destinations of both in columns that wrap onto more rows in a
+ * narrow page. Its links are quiet text until hovered. The credit for the icons is on the Icons page.
  */
 export function PageFooter() {
   return (
@@ -107,12 +107,6 @@ export function PageFooter() {
             ))}
           </Grid>
         </Row>
-        {/* The icons are Material Symbols, under the Apache License 2.0
-            (packages/ui/THIRD_PARTY_NOTICES.md). */}
-        <Text variant="caption" emphasis="muted" className="docs-footer-credit">
-          Icons are <Link href="https://m3.material.io/styles/icons">Material Symbols</Link>, under
-          the <Link href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</Link>.
-        </Text>
       </Column>
     </footer>
   );

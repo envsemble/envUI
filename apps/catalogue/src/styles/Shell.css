@@ -80,18 +80,29 @@ body {
   min-inline-size: 0;
 }
 /* The rail and the drawer start on one row: the wordmark at the top of the rail, search at the
-   top of the drawer. */
+   top of the drawer, as wide as its content and centred in the drawer. Their first items start
+   level too: the rail's list is its gap (space 4) and the header's space 2 below the header, so
+   the drawer's, whose gap is space 3, takes the difference below its header. */
 .docs-rail .env-rail-header {
   margin-block-end: var(--env-space-2);
+}
+.docs-sidebar > .env-drawer-header {
+  align-items: center;
+  margin-block-end: calc(var(--env-space-4) + var(--env-space-2) - var(--env-space-3));
+}
+.docs-drawer-search {
+  max-inline-size: 100%;
 }
 .docs-drawer-top {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
   gap: var(--env-space-3);
+  align-self: stretch;
 }
 .docs-drawer-top .docs-drawer-search {
-  flex: 1;
-  min-inline-size: 0;
+  flex: none;
 }
 .docs-drawer-top .docs-brand {
   flex: none;
@@ -269,7 +280,9 @@ body {
   color: inherit;
   font: inherit;
 }
+/* The changelog is collapsed in a disclosure, its heading the summary's title. */
 .docs-changelog .docs-changelog-title {
+  flex: none;
   color: var(--env-color-fg-default);
   font-weight: var(--env-font-weight-medium);
 }
@@ -291,8 +304,7 @@ body {
   font-size: 0.88em;
 }
 /* The foot of every page, set apart from the page by space alone: the wordmark, the catalogue's
-   destinations in columns, as many as fit and wrapping onto more rows in a narrow page, and the
-   credit for the icons under them. Its links are quiet text that comes forward when hovered. */
+   destinations in columns, as many as fit and wrapping onto more rows in a narrow page. Its links are quiet text that comes forward when hovered. */
 .docs-footer {
   container: docs-footer / inline-size;
   background: var(--env-color-bg-default);
@@ -326,11 +338,8 @@ body {
   padding: 0;
   list-style: none;
 }
-.docs-footer-credit {
-  margin: 0;
-}
-/* The footer's links are muted; the credit's stay underlined, as links in running text are. */
-:is(.docs-footer-links, .docs-footer-credit) .env-link {
+/* The footer's links are muted. */
+.docs-footer-links .env-link {
   color: var(--env-color-fg-muted);
 }
 .docs-footer-links .env-link:hover {

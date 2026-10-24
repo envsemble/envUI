@@ -94,6 +94,17 @@ const foundationTokens: Record<string, string> = {
 };
 
 /**
+ * The credit for the icons, under the Icons page's list: where they come from and their license,
+ * linked. It is on this page alone. The package carries the license and its notice
+ * (packages/ui/THIRD_PARTY_NOTICES.md).
+ */
+const iconsCredit = [
+  '## Where the icons come from',
+  '',
+  "envUI's icons are [Material Symbols](https://m3.material.io/styles/icons), from Material Design, in their Rounded style. They are free to use under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), and the package includes the license.",
+].join('\n');
+
+/**
  * A foundation's page on the Site: a short introduction, its visuals and, where its figures don't
  * name them, the tokens it uses in a sentence. Its written guidance is its guide in the Docs.
  */
@@ -111,6 +122,11 @@ export function FoundationPage({ page }: { page: SitePage }) {
         symbol={<Icon />}
       />
       <FoundationPreview id={reference.id} />
+      {reference.id === 'icons' && (
+        <Column gap={4} className="docs-article docs-foundation-notes docs-icons-credit">
+          <Documentation markdown={iconsCredit} path={reference.path} />
+        </Column>
+      )}
       {tokens && (
         <Column gap={4} className="docs-article docs-foundation-notes">
           <Documentation markdown={tokens} path={reference.path} />
