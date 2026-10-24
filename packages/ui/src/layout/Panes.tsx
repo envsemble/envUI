@@ -571,7 +571,8 @@ function Detail({ label, className, children, ref, ...props }: PaneProps) {
  * them, with a small grip and no line. It is a focusable separator that the pointer drags and the
  * arrow keys move, 1 rem a step, 5 with Shift, which names the pane it resizes in aria-controls.
  * A double click returns it to the default width. It shows only while the panes sit side by side,
- * and measures nothing until it is dragged.
+ * and measures nothing until it is dragged. Place it between two surfaces, each pane's own, such as
+ * a Surface as tall as the pane, never beside content on the page.
  */
 function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
   const { behavior, size, min, max, change, reset, resizedId } = usePanes('Divider');
@@ -599,8 +600,8 @@ function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
         })
       }
       label={label ?? messages.resize}
-      aria-controls={resizedId}
       grip
+      aria-controls={resizedId}
       className={classNames('env-panes-divider', className)}
       onDoubleClick={(event) => {
         onDoubleClick?.(event);
