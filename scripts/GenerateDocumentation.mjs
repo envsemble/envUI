@@ -78,11 +78,7 @@ export const statuses = ['experimental', 'beta', 'stable', 'deprecated'];
  */
 export const guideExportStatus = 'stable';
 /** What people are doing, in order: a pattern page's intent groups it in the catalogue and agents. */
-export const intents = [
-  'Collect and change information',
-  'Keep people informed',
-  'Find and navigate',
-];
+export const intents = ['Enter and change data', 'Keep people informed', 'Find and navigate'];
 /** The kind of a page of docs/, by its folder. */
 export function pageKindOf(path) {
   if (path.startsWith('components/')) return 'component';

@@ -20,7 +20,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Typography](docs/foundations/typography.md): Shared styles for headings, body copy and supporting text.
 - [Spacing & shape](docs/foundations/spacing.md): A shared scale for space, corners and controls that grow with content.
 - [Scale & density](docs/foundations/scale.md): The comfortable and compact app scales, control sizes and the row density of data components.
-- [Responsive layout & stacking](docs/foundations/responsive.md): Window classes, container queries, measuring a container and the stacking order of frames and popups.
+- [Layout & stacking](docs/foundations/responsive.md): Window classes, container queries, measuring a container and the stacking order of frames and popups.
 - [Composition & extension](docs/foundations/composition.md): Build product interfaces from shared primitives and existing components.
 - [Icons & assets](docs/foundations/icons.md): Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](docs/foundations/accessibility.md): Keyboard access, visible focus and clear guidance across shared controls.
@@ -113,11 +113,11 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Meter](docs/components/meter.md): A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar. Parts: `.env-meter`.
 - [Progress](docs/components/progress.md): How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown. Parts: `.env-progress`.
 
-## Patterns: Collect and change information
+## Patterns: Enter and change data
 
 - [Form layout and validation](docs/patterns/forms.md): Ask for information in a form, check it, and help people fix what's wrong.
 - [Settings](docs/patterns/settings.md): Let people change how the application works for them, and see each change apply.
-- [Confirmation and destructive actions](docs/patterns/destructive-actions.md): Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.
+- [Destructive actions](docs/patterns/destructive-actions.md): Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.
 
 ## Patterns: Keep people informed
 

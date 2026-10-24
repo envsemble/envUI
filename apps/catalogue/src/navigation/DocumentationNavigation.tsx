@@ -16,7 +16,6 @@ import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
 import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
-import { History } from '@envsemble/envui/icons/History';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu } from '../theme/DisplaySettings';
@@ -33,11 +32,10 @@ import { docsRoute, homeRoute, routeHref } from './Address';
 /** The icon of each of the Site's destinations in its rail. */
 const sectionIcons: Record<SiteSection, typeof Home> = {
   Overview: Home,
+  Foundations: Palette,
   Components: Widgets,
   Patterns: Pattern,
-  Foundations: Palette,
   Benchmark: Leaderboard,
-  Changelog: History,
 };
 
 /** The Site's destinations, for its rail: each opens its first page. */
@@ -85,7 +83,7 @@ function useCurrentInView() {
  * The Docs' drawer holds the wordmark and search on its first row, so it starts wider.
  */
 const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWidth: number }> = {
-  site: { defaultWidth: 15, minWidth: 13, maxWidth: 24 },
+  site: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
   docs: { defaultWidth: 21, minWidth: 18, maxWidth: 30 },
 };
 
@@ -163,8 +161,8 @@ function Brand({ area }: { area: Area }) {
 }
 
 /**
- * The Site's navigation, one pane: a Rail of its destinations, Overview, Components, Patterns,
- * Foundations, Benchmark and Changelog, under the envUI wordmark, beside a Drawer of the chosen
+ * The Site's navigation, one pane: a Rail of its destinations, Overview, Foundations, Components,
+ * Patterns and Benchmark, under the envUI wordmark, beside a Drawer of the chosen
  * destination's pages under search, both on the navigation's background with no seam or line
  * between them. A rail item opens its destination's first page; in the sheet of a narrower window
  * it leaves the sheet open, so a page can be chosen.

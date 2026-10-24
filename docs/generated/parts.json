@@ -2244,8 +2244,11 @@
       ],
       "uses": [
         "Icon",
+        "Popup",
         "ResizeHandle",
-        "Skeleton"
+        "Skeleton",
+        "Theme",
+        "Tooltip"
       ],
       "colors": [
         {
@@ -6025,6 +6028,7 @@
         "Combobox",
         "CopyButton",
         "DatePicker",
+        "Drawer",
         "HoverCard",
         "Menu",
         "Menubar",

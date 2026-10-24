@@ -47,7 +47,7 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Scale & density](../foundations/scale.md)
-- [Responsive layout & stacking](../foundations/responsive.md)
+- [Layout & stacking](../foundations/responsive.md)
 - [Column](../components/column.md)
 - [Row](../components/row.md)
 - [Grid](../components/grid.md)

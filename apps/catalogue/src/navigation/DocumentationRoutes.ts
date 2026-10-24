@@ -14,27 +14,27 @@ import { docsRoute, homeRoute, routeHref } from './Address';
  */
 export type Area = 'site' | 'docs';
 
-/** The Site's destinations in its rail, in order; the drawer beside it lists their pages. */
+/**
+ * The Site's destinations in its rail, in order; the drawer beside it lists their pages. The
+ * changelog is in the Docs.
+ */
 export const siteSections = [
   'Overview',
+  'Foundations',
   'Components',
   'Patterns',
-  'Foundations',
   'Benchmark',
-  'Changelog',
 ] as const;
 export type SiteSection = (typeof siteSections)[number];
 
 /** What a page shows, which decides how it renders. */
 export type PageKind =
   | 'home'
-  | 'get-started'
   | 'components'
   | 'component'
   | 'pattern'
   | 'foundation'
   | 'benchmark'
-  | 'changelog'
   | 'docs-home'
   | 'guide'
   | 'codemods'
@@ -126,14 +126,19 @@ const sitePages: SitePage[] = [
     section: 'Overview',
     kind: 'home',
   },
-  {
-    path: 'get-started',
-    title: 'Get started',
-    area: 'site',
-    section: 'Overview',
-    kind: 'get-started',
-    summary: 'Install envUI, connect its styles and theme, and find your way into the Docs.',
-  },
+  ...referencePages
+    .filter(({ section }) => section === 'Foundations')
+    .map(
+      ({ reference, path }): SitePage => ({
+        path,
+        title: reference.title,
+        area: 'site',
+        section: 'Foundations',
+        kind: 'foundation',
+        summary: reference.summary,
+        document: reference as Documentation,
+      }),
+    ),
   {
     path: 'components',
     title: 'Components',
@@ -171,19 +176,6 @@ const sitePages: SitePage[] = [
       document,
     }),
   ),
-  ...referencePages
-    .filter(({ section }) => section === 'Foundations')
-    .map(
-      ({ reference, path }): SitePage => ({
-        path,
-        title: reference.title,
-        area: 'site',
-        section: 'Foundations',
-        kind: 'foundation',
-        summary: reference.summary,
-        document: reference as Documentation,
-      }),
-    ),
   {
     path: 'benchmark',
     title: 'Benchmark',
@@ -191,14 +183,6 @@ const sitePages: SitePage[] = [
     section: 'Benchmark',
     kind: 'benchmark',
     summary: 'How coding agents do when they build interfaces with envUI.',
-  },
-  {
-    path: 'changelog',
-    title: 'Changelog',
-    area: 'site',
-    section: 'Changelog',
-    kind: 'changelog',
-    summary: 'What changed in each release of @envsemble/envui.',
   },
 ];
 
@@ -240,7 +224,8 @@ const startPages: SitePage[] = guideDocuments.flatMap((document) => {
         area: 'docs',
         section: 'Get started',
         kind: 'docs-changelog',
-        summary: 'Every change in each release of @envsemble/envui, with how to migrate.',
+        summary:
+          'What changed in each release of @envsemble/envui: its highlights, then every change with how to migrate.',
       },
     ];
   if (document.id === 'agent-tooling')
@@ -362,10 +347,10 @@ export function routeOfDocument(
   if (id === 'index' || id === docsRoute) return `${docsRoute}${query}`;
   if (id === 'overview') return homeRoute;
   const own: Record<string, string> = {
-    'get-started': 'get-started',
+    'get-started': 'docs/setup',
     components: 'components',
     benchmark: 'benchmark',
-    changelog: 'changelog',
+    changelog: 'docs/changelog',
     tokens: 'docs/tokens',
     codemods: 'docs/codemods',
     'full-changelog': 'docs/changelog',
@@ -402,14 +387,19 @@ export function normalizeRoute(route: string): string {
   const section = search.get('section');
   if (!originalPath) return `${homeRoute}${rest()}`;
   // The overview's views: the components and Get started, which held the setup guide, the agents'
-  // skills and the guides by their document's id.
+  // skills and the guides by their document's id. The Site's Get started page that followed is the
+  // setup guide too.
   if (/^overview\/components(?:\/|$)/.test(originalPath))
     return section && section !== 'overview-components'
       ? `components${rest()}`
       : section
         ? 'components'
         : homeRoute;
-  if (/^(?:overview\/get-started|overview\/usage|getting-started)(?:\/|$)/.test(originalPath)) {
+  if (
+    /^(?:overview\/get-started|overview\/usage|getting-started)(?:\/|$)|^get-started$/.test(
+      originalPath,
+    )
+  ) {
     const shown = search.get('document');
     search.delete('document');
     if (shown) {
@@ -426,6 +416,8 @@ export function normalizeRoute(route: string): string {
   const guide = /^get-started\/(.+)$/.exec(originalPath)?.[1];
   if (guide) return routeOfDocument(guide, { section: section ?? undefined }) ?? docsRoute;
   if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
+  // The Site's changelog moved to the Docs, with its release notes.
+  if (originalPath === 'changelog') return `docs/changelog${rest()}`;
   // A destination's own address opens its first page.
   if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
   if (originalPath === 'patterns') return `${sectionHome('Patterns').path}${rest()}`;

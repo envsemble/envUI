@@ -18,11 +18,9 @@ import { PageFooter } from './layout/PageFooter';
 import { Overview } from './pages/Overview';
 import {
   BenchmarkPage,
-  ChangelogPage,
   ComponentPage,
   ComponentsPage,
   FoundationPage,
-  GetStartedPage,
   PatternPage,
 } from './pages/SitePages';
 import {
@@ -48,13 +46,11 @@ import { DocumentationSearch } from './search/DocumentationSearch';
 /** What each kind of page renders. */
 const pageContent: Record<SitePage['kind'], (props: { page: SitePage }) => ReactNode> = {
   home: Overview,
-  'get-started': GetStartedPage,
   components: ComponentsPage,
   component: ComponentPage,
   pattern: PatternPage,
   foundation: FoundationPage,
   benchmark: BenchmarkPage,
-  changelog: ChangelogPage,
   'docs-home': DocsHome,
   guide: GuidePage,
   codemods: CodemodsPage,

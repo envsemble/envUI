@@ -92,7 +92,7 @@ test('search finds components by alias, props and tokens by name, and pages befo
   assert.deepEqual(best('button'), ['page:button']);
   assert.ok(best('loading', 3).includes('page:loading'));
   // A typo in a longer word still finds it.
-  assert.deepEqual(best('chnagelog'), ['page:changelog']);
+  assert.deepEqual(best('chnagelog'), ['page:full-changelog']);
 });
 
 test('a whole name ranks first: an export, a prop by its export, a token', () => {

@@ -3,7 +3,7 @@ title: Form layout and validation
 summary: Ask for information in a form, check it, and help people fix what's wrong.
 status: beta
 since: 1.0.0
-intent: Collect and change information
+intent: Enter and change data
 aliases:
   - form
   - form validation

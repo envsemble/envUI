@@ -42,11 +42,16 @@ exportAliases:
     - shadow root
     - iframe
     - overlay preview
+aliases:
+  - install
+  - quick start
+  - get started
+  - getting started
 ---
 
 # Install the private package
 
-Requires React and React DOM 19. Select the intended envUI release and use the documentation shipped with that version.
+envUI is a private package of React components, design tokens and patterns: install it with an exact version, import its styles once, and compose its components. It requires React and React DOM 19. Select the intended envUI release and use the documentation shipped with that version.
 
 ## Registry access
 

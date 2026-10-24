@@ -25,7 +25,7 @@ aliases:
   - layers
 ---
 
-# Responsive layout & stacking
+# Layout & stacking
 
 ## React usage
 

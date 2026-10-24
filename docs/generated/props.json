@@ -2968,7 +2968,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns to `defaultWidth`. Leave it out of a drawer in a sheet of a narrow window."
+          "description": "Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns to `defaultWidth`. Its labels and headings keep to one line: one that doesn't fit ends in an ellipsis, and a label cut short shows in full in a tooltip. Leave it out of a drawer in a sheet of a narrow window."
         },
         {
           "name": "width",

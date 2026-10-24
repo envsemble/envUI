@@ -7,7 +7,12 @@ import { readMap } from '../../packages/codemods/src/map.mjs';
 import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
 import { references } from '../../apps/catalogue/src/Reference';
-import { allPages, normalizeRoute } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import {
+  allPages,
+  normalizeRoute,
+  sectionHome,
+  siteSections,
+} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 import { displayStorageKeys } from '../../apps/catalogue/src/theme/DisplayStorage';
 
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
@@ -51,7 +56,12 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'overview/get-started': 'docs/setup',
     'overview/get-started?skill=migrate&section=local-development': 'docs/agent-skills',
     'get-started/migration': 'docs/migration',
+    // The Site's Get started page is the setup guide.
+    'get-started': 'docs/setup',
     'contributing/library-development': 'overview',
+    // The Site's changelog is the Docs' now, with its release notes.
+    changelog: 'docs/changelog',
+    'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
   };
   for (const [from, to] of Object.entries(routes)) expect(normalizeRoute(from), from).toBe(to);
   // Every page of both areas is its own route.
@@ -794,6 +804,58 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
 });
 
+test("the overview's hero shows the package's version under the wordmark, and says what envUI is", async ({
+  page,
+}) => {
+  await page.goto(`${catalogueUrl}/`);
+  const hero = page.locator('.docs-overview-hero');
+  await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
+  // The version is packages/ui/package.json's, as a quiet subheading rather than a link.
+  const versionLine = hero.locator('.docs-overview-version');
+  await expect(versionLine).toHaveText(`v${version}`);
+  await expect(versionLine.getByRole('link')).toHaveCount(0);
+  await expect(hero).toContainText('envUI is a design system for React apps.');
+  for (const name of ['Browse components', 'Read the Docs'])
+    await expect(hero.getByRole('link', { name, exact: true })).toBeVisible();
+});
+
+test('the footer of the Site and the Docs credits Material Symbols with their license', async ({
+  page,
+}) => {
+  for (const path of ['', 'docs']) {
+    await page.goto(`${catalogueUrl}/${path}`);
+    const credit = page.locator('.docs-footer-credit');
+    await expect(credit, path).toHaveText(
+      'Icons are Material Symbols, under the Apache License 2.0.',
+    );
+    await expect(credit.getByRole('link', { name: 'Apache License 2.0' })).toHaveAttribute(
+      'href',
+      'https://www.apache.org/licenses/LICENSE-2.0',
+    );
+  }
+});
+
+test("every label and heading of the Site's and the Docs' drawers fits on one line at the default width", async ({
+  page,
+}) => {
+  // A fresh page has no width stored, so each drawer starts at its default width.
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  for (const path of [...siteSections.map((section) => sectionHome(section).path), 'docs']) {
+    await page.goto(`${catalogueUrl}/${path}`);
+    const drawer = page.locator('.docs-sidebar');
+    await expect(drawer.locator('.env-drawer-item').first()).toBeVisible();
+    // The drawer keeps each on one line, cut short where it doesn't fit: none may be cut.
+    const cut = await drawer
+      .locator('.env-drawer-label, .env-drawer-heading')
+      .evaluateAll((elements) =>
+        elements
+          .filter((element) => element.scrollWidth > element.clientWidth)
+          .map((element) => element.textContent),
+      );
+    expect(cut, path).toEqual([]);
+  }
+});
+
 test('the navigation shows the current page, and focus moves to the page only on a route change', async ({
   page,
 }) => {
@@ -1112,13 +1174,17 @@ test("the Benchmark page shows the newest run's scores and a named chart with it
   await expect(data.getByRole('row')).toHaveCount(bars + 1);
 });
 
-test('the Changelog page lists each release, newest first, and its links reach sections of the Docs', async ({
+test("the Docs' Changelog page lists each release's highlights, newest first, and their links reach sections of the Docs", async ({
   page,
 }) => {
   const releases = readReleaseNotes();
+  // The Site's old address opens it.
   await page.goto(`${catalogueUrl}/changelog`);
+  await expect(page).toHaveURL(`${catalogueUrl}/docs/changelog`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
-  const versions = page.locator('.docs-releases h2 .docs-release-version');
+  await expect(page.getByRole('heading', { level: 2, name: 'Highlights' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'Every change' })).toBeVisible();
+  const versions = page.locator('.docs-releases h3 .docs-release-version');
   await expect(versions).toHaveText(releases.map((release) => release.version));
 
   // Every link of the notes leads to a page of the Docs with the section it names.

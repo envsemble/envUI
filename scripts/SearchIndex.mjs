@@ -46,12 +46,6 @@ export const tokensFile = fileURLToPath(
 export const cataloguePages = [
   { page: 'overview', title: 'Overview', area: 'site', aliases: ['home', 'introduction'] },
   {
-    page: 'get-started',
-    title: 'Get started',
-    area: 'site',
-    aliases: ['install', 'quick start', 'getting started'],
-  },
-  {
     page: 'components',
     title: 'Components',
     area: 'site',
@@ -62,12 +56,6 @@ export const cataloguePages = [
     title: 'Benchmark',
     area: 'site',
     aliases: ['agent benchmark', 'scores', 'evaluation'],
-  },
-  {
-    page: 'changelog',
-    title: 'Changelog',
-    area: 'site',
-    aliases: ['release notes', 'releases', 'versions'],
   },
   {
     page: 'docs',
@@ -89,9 +77,9 @@ export const cataloguePages = [
   },
   {
     page: 'full-changelog',
-    title: 'Every change by release',
+    title: 'Changelog',
     area: 'docs',
-    aliases: ['full changelog', 'all changes'],
+    aliases: ['release notes', 'releases', 'versions', 'full changelog', 'all changes'],
   },
   {
     page: 'agent-skills',

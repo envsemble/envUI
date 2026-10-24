@@ -70,7 +70,7 @@ The application passes the same destinations to each form, and a group is a head
 
 ### Resizable
 
-With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage.
+With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, between `minWidth` and `maxWidth`, and never past half its container. Its labels and group headings keep to one line, so its items keep their height as it narrows: one that doesn't fit ends in an ellipsis, and a label cut short shows in full in a tooltip. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage.
 
 ```tsx example=ResizableDrawer
 
@@ -87,7 +87,7 @@ With `resizable`, people resize the drawer by its end edge, by pointer or the ar
 ```
 
 - Set `current` on one destination from the router; a press doesn't select by itself.
-- Short labels: a long one is cut short with an ellipsis.
+- Short labels, which fit on one line: a long one wraps, or in a resizable drawer is cut short with an ellipsis.
 
 ## Anatomy
 

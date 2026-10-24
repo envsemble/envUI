@@ -1066,7 +1066,7 @@ test('the pattern tools answer from the manifest', () => {
   assert.ok(
     informed.length && informed.every((pattern) => pattern.intent === 'Keep people informed'),
   );
-  assert.match(call('list_patterns', { intent: 'Nope' }).error, /"intent" must be one of Collect/);
+  assert.match(call('list_patterns', { intent: 'Nope' }).error, /"intent" must be one of Enter/);
   const loading = call('get_pattern', { name: 'loading indicator', docs: true });
   assert.equal(loading.value.name, 'loading');
   assert.equal(loading.value.requested, 'loading indicator');
