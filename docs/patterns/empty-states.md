@@ -13,10 +13,16 @@ aliases:
   - first use
   - nothing found
   - no access
+  - page not found
+  - not found
+  - 404 page
+  - offline
+  - error page
 useWhen:
   - A list, a table or a page with nothing to show
   - A search or filters that match nothing
   - Content that failed to load, or that people may not see
+  - A whole page that can't show, such as one not found
 avoidWhen:
   - text: Content that is still loading.
     see: loading
@@ -31,6 +37,9 @@ composes:
   - Table
   - placeholders
   - Badge
+  - Scaffold
+  - TopBar
+  - Page
   - Button
   - Surface
   - Column
@@ -50,17 +59,9 @@ The state takes the place of the list or the table, under the heading and toolba
 
 ## Variants
 
-| Kind       | When                                        | Title                                    | Action               |
-| ---------- | ------------------------------------------- | ---------------------------------------- | -------------------- |
-| First use  | Nothing has been made yet                   | "No projects yet", and why they help     | Create the first one |
-| No results | A search or a filter matches nothing        | "No matching projects", naming the query | Clear filters        |
-| Done       | People cleared a queue                      | "No reviews waiting"                     | None                 |
-| Failed     | The content couldn't load (an Alert)        | "Couldn't load documents"                | Try again            |
-| No access  | The content exists, but not for this person | "You don't have access to this project"  | Request access       |
-
 ### No results
 
-The search and filters stay, a count says how many match, and Clear filters resets them.
+The search and the filters stay, and Clear filters resets them, as in [filtering](filtering.md).
 
 ```tsx example=NoResults
 
@@ -90,7 +91,28 @@ When the last review is approved, the queue says so, and what comes next.
 
 ```
 
+### A whole page
+
+When the whole page can't show, because its address leads nowhere, the person may not see it or the device is offline, the frame stays and the page says so, with the way on: Go to Home, Request access or Try again.
+
+```tsx example=WholePage stage=shaded
+
+```
+
 ## When to use
+
+### Which to use
+
+Each kind says something different, and offers a different way on.
+
+| Kind         | Use for                                                      |
+| ------------ | ------------------------------------------------------------ |
+| First use    | Nothing has been made yet.                                   |
+| No results   | A search or a filter matches nothing.                        |
+| All done     | People cleared a queue, such as their reviews.               |
+| Load failed  | The content couldn't load, as a danger Alert.                |
+| No access    | The content exists, but not for this person.                 |
+| A whole page | The page can't show at all: not found, no access or offline. |
 
 ```tsx do=OneAction caption="One action, the one that ends the state."
 
@@ -106,7 +128,7 @@ Centre the state, with a large icon, where it takes a region's place and the reg
 
 ### Content
 
-The title states the fact and the description says why or what next, as [content](../foundations/content.md) describes. Name the query in curly quotes, "Nothing matches “roadmap” with these filters.", and keep a done state factual: "No reviews waiting", not "All caught up! Great job!".
+The title states the fact, the description says why or what next, and one action at most resolves it. First use says what the place is for, "No projects yet", and offers "Create project"; no results names the query in curly quotes, "Nothing matches “roadmap” with these filters.", and offers "Clear filters"; a done state stays factual, "No reviews waiting", never "All caught up! Great job!"; a failure says the work is safe, "Your documents are safe. Check your connection and try again.", and offers "Try again"; and a whole page says what happened in its title, "Page not found", "You don't have access to this page" or "You're offline".
 
 ## Anatomy
 
@@ -134,6 +156,7 @@ An empty state doesn't take focus; <kbd>Tab</kbd> reaches its action after the t
 - A danger Alert with `announce` for content that failed to load, so it is announced; a neutral state isn't.
 - The right kind of state, its words and its one action.
 - A count of results in a `role="status"` text beside a search, since a neutral state isn't announced.
+- For a whole page, the page's one `h1` and `document.title` saying what happened, such as "Page not found – Northwind".
 
 ## In code
 
@@ -161,6 +184,14 @@ A failure is an Alert with `tone="danger"` and `announce`, its Try again Button 
 
 ```
 
+#### A whole page
+
+Keep the Scaffold and its navigation, and render the state as the router's page: the same Column, centred in the body, with the page's `h1` as its heading. Not found offers a Link or Button to the home page, no access a Request access Button, and offline a Try again Button that loads the page again once the connection is back.
+
+```tsx source=WholePage
+
+```
+
 ## Changelog
 
-- **1.0.0**: Empty states are built from Column, Text and Button, in place of the EmptyState component. The page is on the figure template.
+- **1.0.0**: Empty states are built from Column, Text and Button, in place of the EmptyState component. The page is on the figure template, with a whole page and the empty states of the content guidelines.

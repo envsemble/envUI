@@ -22,10 +22,7 @@ avoidWhen:
     see: feedback
 composes:
   - Button
-  - IconButton
-  - ConfirmButton
   - ConfirmDialog
-  - Menu
   - List
   - Checkbox
   - TextField
@@ -40,44 +37,17 @@ composes:
 
 ## Overview
 
-Asking "Are you sure?" before everything trains people to confirm without reading. Archiving here happens at once, and a [toast](../components/toast.md) offers Undo.
+Asking "Are you sure?" before everything trains people to confirm without reading. Archiving here happens at once, and a [toast](../components/toast.md) offers Undo, which puts the item back where it was.
 
 ```tsx example=UndoInstead
 
 ```
 
-### Undo
-
-The toast stays until dismissed, since it has an action, and Undo puts the item back where it was. Keep what was archived reachable elsewhere too, as a toast can be dismissed.
-
 ## Variants
-
-| The action                                           | Use                                                                   |
-| ---------------------------------------------------- | --------------------------------------------------------------------- |
-| Can be undone, and people take it often              | Act at once, with Undo in a toast                                     |
-| Can't be undone, but little is at stake              | A [ConfirmButton](../components/button.md#confirm-in-place), in place |
-| Deletes something people made, or affects others     | A danger [ConfirmDialog](../components/confirm-dialog.md)             |
-| Can't be undone and reaches many people or much work | The dialog with a typed name                                          |
-
-### Confirm in place
-
-The first press names the consequence in the button, "Remove file"; the second removes. It disarms after four seconds, when focus leaves it and with <kbd>Esc</kbd>.
-
-```tsx example=ConfirmInPlace
-
-```
-
-### Confirm from a menu
-
-The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete, and gives focus back to the menu's button as it closes.
-
-```tsx example=ConfirmDelete
-
-```
 
 ### Type to confirm
 
-The confirm button stays enabled: a wrong name keeps the dialog open, shows the field's error and moves focus to it.
+Where an action can't be undone and reaches many people or much work, the dialog asks for the name. Its confirm button stays enabled: a wrong name keeps the dialog open and says what to type.
 
 ```tsx example=TypeToConfirm
 
@@ -93,6 +63,17 @@ The count is in the button, the question and the confirm button: "Delete 2 docum
 
 ## When to use
 
+### Which to use
+
+Match the friction to what is at stake.
+
+| Friction            | Use for                                                                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Undo in a toast     | An action that can be undone, and that people take often.                                                                            |
+| Confirm in place    | An action that can't be undone, with little at stake, through a [ConfirmButton](../components/button.md).                            |
+| Confirm in a dialog | Deleting something people made, or something that affects others, through a danger [ConfirmDialog](../components/confirm-dialog.md). |
+| Type the name       | An action that can't be undone and reaches many people or much work.                                                                 |
+
 ```tsx do=DangerKeptForDelete caption="The danger tone only on what deletes or ends something."
 
 ```
@@ -101,26 +82,13 @@ The count is in the button, the question and the confirm button: "Delete 2 docum
 
 ```
 
-### When it fails
-
-The dialog waits while the action runs, and stays open with an error when it fails, so people can try again or cancel.
-
-### In a menu
-
-envUI has no danger tone for a menu item yet: label it with the consequence, and put it last, after a separator.
-
 ### Content
 
-The title is a question that names the object, the description says whether it can be undone, and the confirm button repeats the verb, never "Yes" or "OK". Use one verb from trigger to button: Delete when it's gone, Remove when it leaves a place, Archive when it can come back.
-
-- "Delete Launch brief?" as the title, "Delete document" as the button
-- An armed label with no question mark, "Remove file"
-- An ellipsis on a trigger that opens a confirmation
-- "Website refresh archived.", with Undo
+A confirmation's title asks the question with the object's name, "Delete Website refresh?", and its description says the consequence and whether it can be undone. The confirm button repeats the verb and the object, "Delete project", and the other stays Cancel: never "Are you sure?", "Yes" or "OK". A button armed in place is short and has no question mark, "Remove file". Use one verb from the trigger, which ends in an ellipsis when it opens a confirmation, to the button: Delete when it's gone, Remove when it leaves a place, Archive when it can come back. The undo toast names what happened, "Website refresh archived.".
 
 ## Accessibility
 
-A confirmation dialog keeps focus inside and gives it back to the control that opened it, or the one the application names. When the action removes its own control, move focus to the next row, or the list. The undo toast doesn't take focus; <kbd>F6</kbd> reaches it.
+When the action removes its own control, move focus to the next row, or to the list.
 
 ### envUI provides
 
@@ -138,27 +106,15 @@ A confirmation dialog keeps focus inside and gives it back to the control that o
 
 ### Usage
 
-Act at once and offer Undo: `useToast().show({ message, action: { label: 'Undo', onClick } })` returns the toast's id, and the action's `onClick` puts the item back and calls `toast.dismiss(id)`. A toast with an `action` stays until dismissed. Move focus to the next row, or the list, with `tabIndex={-1}`, when the action removes its own control.
+Act at once and offer Undo: `useToast().show({ message, action: { label: 'Undo', onClick } })` returns the toast's id, and the action's `onClick` puts the item back and calls `toast.dismiss(id)`. A toast with an `action` stays until dismissed, so keep what was archived reachable elsewhere too. Move focus to the next row, or the list, with `tabIndex={-1}`, when the action removes its own control.
 
 ```tsx source=UndoInstead
 
 ```
 
-#### Confirm in place
+#### Confirm in place or in a dialog
 
-A ConfirmButton runs `onConfirm` on its second press and shows `confirmLabel`, such as "Remove file", while armed. It disarms after `armedDuration`, 4000 ms by default, on blur and on <kbd>Esc</kbd>.
-
-```tsx source=ConfirmInPlace
-
-```
-
-#### Confirm in a dialog
-
-A ConfirmDialog with `tone="danger"` takes a `title`, a `description` and a `confirmLabel`, and puts focus on Cancel. Opened from a Menu.Item, pass the menu's trigger as `finalFocus`, so focus goes back to it. Return the action's promise from `onConfirm`: the dialog waits, pending, and stays open with `error` set when it fails. Label a destructive Menu.Item with its consequence, last after a Menu.Separator, since Menu.Item has no danger tone yet.
-
-```tsx source=ConfirmDelete
-
-```
+A ConfirmButton runs `onConfirm` on its second press and shows `confirmLabel`, such as "Remove file", while armed. A ConfirmDialog with `tone="danger"` takes a `title`, a `description` and a `confirmLabel`, and puts focus on Cancel. Opened from a Menu.Item, pass the menu's trigger as `finalFocus`, and put the item last, after a Menu.Separator, labelled with its consequence. Return the action's promise from `onConfirm`: the dialog waits, pending, and stays open with `error` set when it fails.
 
 #### Type to confirm
 
@@ -178,4 +134,4 @@ Lay the items out as a List, each List.Item taking its trigger as its `action`: 
 
 ## Changelog
 
-- **1.0.0**: The page is on the figure template.
+- **1.0.0**: The page is on the figure template, with the confirmations of the content guidelines; confirming in place and from a menu are on Button and ConfirmDialog.

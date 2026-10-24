@@ -73,7 +73,7 @@ A Filters button, with a count of the filters in use, opens a [Popover](../compo
 
 ### Filters in use
 
-Each filter in use is a token named after it, "Status: Open", that removes it, beside Add filter and Clear filters. envUI has no removable chip yet: each is a small button with a close cross.
+Each filter in use is a token named after it, "Status: Open", a small button with a close cross that removes it, beside Add filter and Clear filters.
 
 ```tsx example=ActiveFilters
 
@@ -112,10 +112,6 @@ Label the search with what it searches, "Search projects", and name the option f
 3. **Filter** (`env-select`)
 4. **More filters** (`env-badge[data-count]`)
 5. **Count** (`env-page-header ~ env-text`)
-
-### Not a toolbar
-
-The header's toolbar is no [Toolbar](../components/toolbar.md): every control keeps its tab stop, and the search its arrow keys.
 
 ## Adapting to width
 
@@ -157,7 +153,7 @@ The Filters button is a small secondary Button, the trigger of a Popover with a 
 
 #### Filters in use
 
-envUI has no removable filter token yet: each is a Button with `variant="secondary"`, `size="sm"` and a Close `endIcon`, whose `aria-label`, "Remove filter Status: Open", says what pressing it does and includes its visible text. The tokens sit in a Row with `role="group"` and an `aria-label`, beside a Menu for Add filter and a Clear filters Button. When a token goes, focus moves to the next token, or to the search.
+Each token is a Button with `variant="secondary"`, `size="sm"` and a Close `endIcon`, whose `aria-label`, "Remove filter Status: Open", says what pressing it does and includes its visible text. The tokens sit in a Row with `role="group"` and an `aria-label`, beside a Menu for Add filter and a Clear filters Button. When a token goes, focus moves to the next token, or to the search.
 
 ```tsx source=ActiveFilters
 

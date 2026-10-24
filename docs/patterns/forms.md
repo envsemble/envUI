@@ -10,6 +10,10 @@ aliases:
   - error summary
   - error message
   - required field
+  - multi-step form
+  - stepper
+  - wizard
+  - which control
   - optional field
   - inline validation
   - submit
@@ -33,6 +37,8 @@ composes:
   - Radio
   - Checkbox
   - DatePicker
+  - Progress
+  - DescriptionList
   - Button
   - Alert
   - Link
@@ -80,13 +86,44 @@ After a refused submit, a danger Alert titled "There is a problem" lists each er
 
 ### Grouped choices
 
-One choice of several is a [RadioGroup](../components/radio.md); several are checkboxes in a group whose name says what they are for.
+Several checkboxes go in a group whose name says what they are for, as the choices of a [RadioGroup](../components/radio.md) do.
 
 ```tsx example=GroupedChoices
 
 ```
 
+### A long form in steps
+
+A long form splits into a few short steps, each a page of its own with its fields. [Progress](../components/progress.md), split into steps, says where people are; Continue checks the step's fields before moving on, Back keeps every answer, and the last step shows the answers before the form's own action.
+
+```tsx example=LongFormInSteps
+
+```
+
 ## When to use
+
+### Which control?
+
+Ask for a choice with the control that shows it best.
+
+| Control           | Use for                                                                                      |
+| ----------------- | -------------------------------------------------------------------------------------------- |
+| Checkbox          | A yes or no that waits for the submit, or several choices of a few.                          |
+| Switch            | A setting that applies at once, outside a form people submit, as in [settings](settings.md). |
+| Radio group       | One choice of a few, all in view, where people compare them.                                 |
+| Segmented control | One choice of a few short options that changes a view at once, such as a layout.             |
+| Select            | One choice of many, or of a few where room is short.                                         |
+| Combobox          | One choice of a long list that people type to find, such as a time zone or a person.         |
+
+### Dates and times
+
+A date, a time or a month each have a picker of their own, which people can also type into.
+
+| Control      | Use for                                                     |
+| ------------ | ----------------------------------------------------------- |
+| Date picker  | A day, such as a due date or a start date.                  |
+| Time picker  | A time of day, such as when a meeting starts.               |
+| Month picker | A month, such as a report's period or a card's expiry date. |
 
 ```tsx do=OneColumn caption="One column, read top to bottom, with the action after the last field."
 
@@ -100,17 +137,13 @@ One choice of several is a [RadioGroup](../components/radio.md); several are che
 
 Keep the submit button enabled, and say what is wrong after a submit: a disabled button can't tell people why. Keep what people entered after any error.
 
-### Long forms
+### Labels
 
-envUI has no stepper yet, so split a long form into short pages of your own, each with its submit and a Back link.
+A label is a short noun phrase with no colon, such as "Project name". Mark the optional fields, "Description (optional)", never the required ones with a star. A format or a limit goes in the description, read before people type, and a placeholder holds only an example value, such as name@example.com, never the label or instructions. The submit button says what it does, "Create project", never "Submit".
 
-### Content
+### Error messages
 
-Write errors that say how to fix the value, the same in the field and in the summary, as [content](../foundations/content.md) describes.
-
-- Submit named for what it does, "Create project", never "Submit"
-- "(optional)" on optional fields, not marks on required ones
-- Errors such as "Enter an email address like name@example.com"
+An error starts with the fix, in the field's own words, such as "Enter a due date after the start date" or "Enter an email address like name@example.com", never "Error: invalid input" or "Project name is required!". It blames no one and shows no code, though a reference may follow for support. The summary is titled "There is a problem" and repeats each field's message word for word.
 
 ## Anatomy
 
@@ -172,10 +205,18 @@ One choice of several is a RadioGroup, a `fieldset` with its `legend` from `labe
 
 ```
 
+#### A long form in steps
+
+Keep every step's answers in state above the steps, so Back keeps them. Progress takes `segments` and `max` of the number of steps, `value` of the current one and `aria-valuetext`, such as "Step 2 of 3: Team". Each step's submit, a `type="submit"` Button labelled Continue, checks only that step's fields; moving on focuses the step's heading, a Text with `tabIndex={-1}` and a ref. Back is a secondary Button after it, and the last step shows the answers in a DescriptionList before the form's own action.
+
+```tsx source=LongFormInSteps
+
+```
+
 ### Composition
 
-Lay the form out as one Column, kept to a width that reads easily, such as `maxInlineSize: '32rem'`, with the actions in a Row after the last field, the primary action last. A Grid suits only short fields that belong together, such as a city and a postal code. Each field is a TextField, Textarea, Select, Combobox, DatePicker, RadioGroup or Checkbox, with its `label`, its lasting `description` and its `error`; Field's parts build any other.
+Lay the form out as one Column, kept to a width that reads easily, such as `maxInlineSize: '32rem'`, with the actions in a Row after the last field, the primary action last. A Grid suits only short fields that belong together, such as a city and a postal code. Each field is a TextField, Textarea, Select, Combobox, DatePicker, RadioGroup or Checkbox, with its `label`, its lasting `description` and its `error`; Field's parts build any other. A long form in steps is one `form` whose fields change with the step, under a Progress with `segments`.
 
 ## Changelog
 
-- **1.0.0**: The page is on the figure template.
+- **1.0.0**: The page is on the figure template, with a long form in steps, which controls to choose, and the labels and error messages of the content guidelines.

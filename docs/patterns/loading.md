@@ -55,7 +55,7 @@ Where the shape is known, the page renders its own components as skeletons over 
 
 ### Placeholder items
 
-Placeholder items give the components stand-ins to render, and text that hasn't arrived shows as a bar the length of its text style. Show the skeleton once a load has taken 200 ms, so quick loads never flash it.
+Placeholder items give the components stand-ins to render, and text that hasn't arrived shows as a bar the length of its text style. Show the skeleton only once a load takes a noticeable moment, so quick loads never flash it.
 
 ```tsx example=SkeletonList
 
@@ -63,18 +63,9 @@ Placeholder items give the components stand-ins to render, and text that hasn't 
 
 ## Variants
 
-| What is loading                | Show                                           |
-| ------------------------------ | ---------------------------------------------- |
-| Content of a known shape       | Its own components as a skeleton               |
-| Content of no known shape      | A spinner with its label beside it             |
-| An update to what is shown     | A spinner beside it                            |
-| The result of an action        | The button that started it, shown as working   |
-| Work whose end can be measured | A progress bar with its value                  |
-| A whole page                   | A progress bar along the top bar's bottom edge |
-
 ### No known shape
 
-A spinner says what is loading beside it, for results whose number and shape aren't known yet.
+A [Spinner](../components/spinner.md) says what is loading beside it.
 
 ```tsx example=SearchResultsLoading
 
@@ -82,7 +73,7 @@ A spinner says what is loading beside it, for results whose number and shape are
 
 ### An action
 
-The button that saves shows the work in progress; the outcome is announced once it is done.
+The [button](../components/button.md) that saves shows the work in progress.
 
 ```tsx example=PendingButton
 
@@ -90,7 +81,7 @@ The button that saves shows the work in progress; the outcome is announced once 
 
 ### Measurable work
 
-Progress measures each file and says what has been sent.
+[Progress](../components/progress.md) measures each file.
 
 ```tsx example=UploadProgress
 
@@ -98,13 +89,26 @@ Progress measures each file and says what has been sent.
 
 ### A whole page
 
-After 200 ms the bar along the top bar's bottom edge shows the next page is on its way, and names it.
+The [top bar](../components/top-bar.md)'s progress bar shows the next page is on its way.
 
 ```tsx example=PageProgress stage=shaded
 
 ```
 
 ## When to use
+
+### Which to use
+
+Show what is coming in its place and shape where you can, and say only that something is on its way where you can't.
+
+| Indicator                | Use for                                                 |
+| ------------------------ | ------------------------------------------------------- |
+| A skeleton               | Content of a known shape, in its own components.        |
+| A spinner with its label | Content of no known shape, such as search results.      |
+| A spinner beside it      | An update to what is already shown.                     |
+| A pending button         | The result of an action, on the button that started it. |
+| A progress bar           | Work whose end can be measured, such as an upload.      |
+| The top bar's progress   | A whole page on its way.                                |
 
 ```tsx do=SkeletonInPlace caption="The content's own components as a skeleton, where it will appear."
 
@@ -128,7 +132,7 @@ Give images and video their shape before they load, so they hold their place; de
 
 ### Content
 
-Name what is loading, and never promise a time, such as "Almost there".
+Name what is loading, count in the units people think in, such as "12 of 40 MB", and never promise a time, such as "Almost there".
 
 - "Loading projects"
 - "Uploading annual-review.pdf"

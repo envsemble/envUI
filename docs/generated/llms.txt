@@ -12,6 +12,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Migrate an interface to envUI](docs/migration.md): Replace existing UI while preserving application behavior.
 - [Customize colors](docs/customizing-colors.md): Give one element its own colors through its color properties, or recolor an area with a nested Theme.
 - [For agents](docs/agent-tooling.md): The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
+- [Writing](docs/writing.md): The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.
 - [Dev mode](docs/dev-mode.md): Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
 
 ## Foundations
@@ -24,7 +25,6 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 - [Composition & extension](docs/foundations/composition.md): Build product interfaces from shared primitives and existing components.
 - [Icons & assets](docs/foundations/icons.md): Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](docs/foundations/accessibility.md): Keyboard access, visible focus and clear guidance across shared controls.
-- [Content guidelines](docs/foundations/content.md): Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.
 
 ## Components: Layout & surfaces
 
@@ -130,10 +130,8 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 
 - [Navigation](docs/patterns/navigation.md): Let people move between the places of an application, see where they are, and find their way back.
 - [App frame](docs/patterns/app-frame.md): Frame an application's screens with a Scaffold, a TopBar and the same destinations as a Bar, a Rail or a Drawer, by the width of the window.
-- [Account menu](docs/patterns/account-menu.md): Show who is signed in and give them their own things, such as account settings, the theme and Sign out, from their avatar.
-- [Organization switcher](docs/patterns/organization-switcher.md): Show the active organization and switch between the person's organizations, from a Menu at the top of the navigation or in the top bar.
+- [Account and organizations](docs/patterns/account-and-organizations.md): Show who is signed in and where, and give people their own things and their organizations from a menu in the frame.
 - [Search trigger](docs/patterns/search-trigger.md): The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, built from a Button with the search icon, its label and the keys, or an IconButton in a narrow header.
-- [Window frame](docs/patterns/window-frame.md): Frame an installed application's window that draws its own title bar, with the title bar across the top and the content scrolling below it.
 - [Feature cards](docs/patterns/feature-cards.md): Introduce a feature with an icon, a heading, a sentence and the one action that starts it, in a Card.
 - [Filtering and search](docs/patterns/filtering.md): Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
 - [Data tables](docs/patterns/data-tables.md): Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.
