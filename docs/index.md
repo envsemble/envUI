@@ -58,7 +58,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [MonthPicker](components/month-picker.md)
 - [ColorPicker](components/color-picker.md)
 - [DropZone](components/drop-zone.md)
-- [Composer](components/composer.md)
 - [RichText](components/rich-text.md)
 
 ## Navigation
@@ -90,6 +89,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Code](components/code.md)
 - [Kbd](components/kbd.md)
 - [Message](components/message.md)
+- [Composer](components/composer.md)
 - [Accordion](components/accordion.md)
 - [Disclosure](components/disclosure.md)
 

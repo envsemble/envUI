@@ -3,7 +3,7 @@ title: Composer
 summary: The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.
 status: stable
 since: 0.5.0
-category: Forms & selection
+category: Text & content
 aliases:
   - ChatInput
   - PromptInput
