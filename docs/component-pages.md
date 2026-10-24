@@ -1,6 +1,6 @@
 # Write a component page
 
-Every component has one page in `docs/components/`, named after the component in kebab case and the singular: `text-field.md` for TextField, `button.md` for Button and its family. The same Markdown feeds the catalogue, the package and agents, so a page is written once. A page is on the [figure template](#sections): ordinary sections of live figures and a few short sentences, visual first. [Button](components/button.md) and [Card](components/card.md) are the model pages; read them before writing another. Pattern and template pages use the same template with their own frontmatter: [write a pattern or template page](pattern-pages.md).
+Every component has one page in `docs/components/`, named after the component in kebab case and the singular: `text-field.md` for TextField, `button.md` for Button and its family. The same Markdown feeds the catalogue, the package and agents, so a page is written once. A page is on the [figure template](#sections): ordinary sections of live figures and a few short sentences, visual first, in plain language for people looking at envUI, then [In code](#in-code-the-developer-only-part), the part for people who build with it. [Button](components/button.md), [Card](components/card.md), [TextField](components/text-field.md) and [Sheet](components/sheet.md) are the model pages; read them before writing another. Pattern and template pages use the same template with their own frontmatter: [write a pattern or template page](pattern-pages.md).
 
 ## Frontmatter
 
@@ -19,8 +19,8 @@ aliases: # Words people and agents search for, including earlier names; at least
   - Input
   - text input
   - text box
-useWhen: # Situations the component is for.
-  - Someone types a single line, such as a name or an address.
+useWhen: # Situations the component is for: short items, usually not sentences.
+  - A short value on one line, such as a name
 avoidWhen: # The page's one list of related components and pages: a need it doesn't meet, and what does.
   - text: Text that runs over several lines.
     use: Textarea
@@ -52,15 +52,24 @@ A component page is a reference page in the traditional style: ordinary headings
 | Anatomy           |          | An anatomy figure with its legend, and one sentence naming parts the figure can't show.                               |
 | Adapting to width |          | A sentence and an example at several widths.                                                                          |
 | Accessibility     | yes      | A `### Keyboard` table (Key, Action) where it handles keys, and `### envUI provides` and `### You provide` lists.     |
+| In code           |          | The developer-only part: how to use it in code, in `### Usage`, `### Composition` and `### Customize`.                |
 | Changelog         |          | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                          |
 
-The build adds **Props** and **Related**, from `avoidWhen`, before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. On the website the page's sections are its page on the Site, and its props, what envUI and the application provide, part names and changelog are its page in the Docs, which the Site's page links to as API. The Site leaves out Accessibility's `### envUI provides` and `### You provide`, and the whole section where nothing else is in it; the page in the Docs shows them as plain lists after the props. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
+The build adds **Props** and **Related**, from `avoidWhen`, before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. On the website the page's sections up to Accessibility are its page on the Site, and its page in the Docs, which the Site's page links to as API, is its guide to using it in code: In code, what envUI and the application provide, then its props, part names and color properties as reference, and its changelog. The Site leaves out In code, Accessibility's `### envUI provides` and `### You provide`, and the whole of Accessibility where nothing else is in it. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
+
+### Plain language on the Site
+
+The Site is for people looking at envUI, not for developers: it shows and introduces, and the Docs teach how to build with it. Outside the Code disclosures under its figures, a page's Site shows no code:
+
+- **No inline code.** Name no props, values, part classes, tokens or container names, such as `variant="ghost"` or `--env-card-container`. Say in plain words what matters: "the ghost variant", "one card can take colors of its own", "a sheet from the bottom". Component names, such as SearchField, are names, not code. The developer detail goes in [In code](#in-code-the-developer-only-part). `npm test` fails on a code span in the Site's text of a converted page, `plainPages` in `tests/DocumentationPages.test.mjs`: its sections, captions, anatomy legend names, `useWhen` and `avoidWhen`; it reports the count left on the other pages.
+- **Options in words.** A table of variants, tones, sides or sizes names each option as people see it, such as Outline, Floating and Ghost, or From the bottom, never its value.
+- **Lists sparingly.** A list is for a few short items, usually not full sentences, such as `useWhen`. Write rules as a sentence or two, or as a do and don't pair, rather than as a list of sentences.
 
 ### Write little
 
 The docs are mainly visual. Let the figures, the do and don't pairs and the anatomy teach, and write a sentence or two around them:
 
-- **Show, then say little.** Cut every sentence a figure already shows, such as what a variant looks like, its colors or its corners. A sentence beside a figure says what the figure can't: the prop that makes it, or the rule it illustrates.
+- **Show, then say little.** Cut every sentence a figure already shows, such as what a variant looks like, its colors or its corners. A sentence beside a figure says what the figure can't, such as the rule it illustrates; the prop that makes it belongs in In code.
 - **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section. The banner shows the summary right above Overview, so Overview starts with what the summary doesn't say, such as how the component works or the prop that matters, or with its first figure; `npm test` fails on an Overview whose first sentence says the summary again. Nor does a sentence repeat a `useWhen` or `avoidWhen` entry, which When to use and Related show.
 - **Short over complete.** Leave out what the generated props reference holds, such as each prop's values and defaults, and what the code does for itself, such as an exact delay or padding, unless a reader chooses it.
 - **No links into the Docs.** The Site reaches the Docs only through a page's API button and the Docs link at the top of every page. Link other component, pattern and foundation pages, a foundation without a heading, since its headings are in its guide in the Docs, and say a point of a Docs page, such as setup or Customize colors, without the link. `npm test` checks it; the changelog and the lists of what envUI and the application provide, which the Docs show, may link anywhere.
@@ -72,13 +81,14 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 | When to use it                                | The frontmatter's `useWhen`, which When to use shows first.                                             |
 | What to use instead                           | The frontmatter's `avoidWhen`, which Related shows at the end of the page.                              |
 | A judgment, such as one primary button        | A do and don't pair whose captions are the rule. A pair never pictures a `useWhen` or `avoidWhen` item. |
-| Rules no picture shows                        | A short list after the pairs, two or three items at most.                                               |
-| Variants, tones and sizes                     | One table of the values and what each is for.                                                           |
+| Rules no picture shows                        | A sentence or two after the pairs.                                                                      |
+| Variants, tones and sizes                     | One table of the options in words and what each is for.                                                 |
 | What it does on its own, such as pending      | A `###` subsection of Overview, a sentence beside its figure.                                           |
-| Its parts and their class names               | The anatomy legend, names only.                                                                         |
-| Its color properties                          | A `### Colors` subsection of Anatomy: the properties in a sentence, with no link into the Docs.         |
+| Its parts                                     | The anatomy legend, which the Site shows as names only; the class names are for In code.                |
+| That it takes colors of its own               | A `### Colors` subsection of Anatomy, in words; the properties go in In code's Customize.               |
 | How it adapts to width                        | A sentence and an example at several widths.                                                            |
 | Keys, roles and what the application must add | Accessibility: keys in its Keyboard table, roles and what the application adds in its two lists.        |
+| How to use it in code                         | In code: props and values, short code, how its parts compose, its color properties and tokens.          |
 | Props                                         | Generated on the component's page in the Docs; never in prose.                                          |
 | Releases                                      | Changelog.                                                                                              |
 
@@ -142,11 +152,11 @@ A popup, a menu, a tooltip, a dialog, a sheet or a toast renders in a portal, ou
 
 ### Do and don't pairs
 
-Put a `do` fence and a `dont` fence after each other, so they sit side by side; write two pairs one after the other, and they line up two to a row. Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three. A caption is the rule in a few words, such as "One primary button per group, at the end of its actions."; don't repeat it in a list below. Each is a whole example file an application could copy, the don't included. Avoid a don't that the accessibility scan would flag, such as a button inside a link; say that in a rule instead. Rules that don't need a picture stay a list below the pairs.
+Put a `do` fence and a `dont` fence after each other, so they sit side by side; write two pairs one after the other, and they line up two to a row. Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three. A caption is the rule in a few plain words, such as "One primary button per group, at the end of its actions."; don't repeat it below. Each is a whole example file an application could copy, the don't included. Avoid a don't that the accessibility scan would flag, such as a button inside a link; say that in a rule instead. Rules that don't need a picture are a sentence or two below the pairs.
 
 ### Anatomy figures
 
-An ordered list right after an anatomy fence is its legend. Each item names its part by class name in a code span, and the catalogue puts that item's number on the part, measured from the live component; the callouts follow the figure as it resizes and as the theme changes. The legend holds names only: what a part looks like is in the figure, and what it does belongs in the section that covers it.
+An ordered list right after an anatomy fence is its legend. Each item starts with the part's name in bold, which is all the Site shows of it, and names the part by class name in a code span, which the package and agents keep; the catalogue puts that item's number on the part, measured from the live component; the callouts follow the figure as it resizes and as the theme changes. The legend holds names only: what a part looks like is in the figure, and what it does belongs in the section that covers it.
 
 ````md
 ```tsx anatomy=CardAnatomy
@@ -158,13 +168,13 @@ An ordered list right after an anatomy fence is its legend. Each item names its 
 3. `env-card-footer`
 ````
 
-- The first code span that starts with `env-` is the part; a second code span may name the prop that fills it. Start each item with the part's name in bold, and write nothing after the parentheses.
+- The first code span that starts with `env-` is the part; a second code span may name the prop that fills it. Start each item with the part's name in bold, which the build checks, and write nothing after the parentheses.
 - A part reference is a class name such as `env-card-heading`, or a selector of class names written without their dot, such as `env-button > env-icon:first-child` for a button's start icon. `::text` at the end points at the element's own text rather than its box, such as `env-button::text` for a label that has no element of its own.
-- An item that holds only the code span takes its description from `docs/generated/parts.json`. A fence without a list numbers every part `parts.json` lists for the page's component, or for the one `of="Name"` names.
+- A fence without a list numbers every part `parts.json` lists for the page's component, or for the one `of="Name"` names, each shown by its description there.
 - `docs/generated/parts.json` is generated from the library: under `components`, each component by its export name, with its `root` class, its `parts` (`class` and `description`) and its `states` (`attribute`, `values` and the `parts` that carry it); under `shared`, the groups of parts several components share, such as `ConnectedRows`. Read a component's entry there before writing its legend.
 - The build fails on a legend class that neither packages/ui's CSS nor `parts.json` has, and on a fence without a legend whose component has no parts there. A part the example doesn't render leaves its number off the figure, which the catalogue's browser test that counts every anatomy figure's callouts catches.
 - The catalogue shows a small subject, such as a badge or a checkbox, half as large again where its stage has room, so its callouts don't crowd. The flag `enlarge` on an anatomy fence does the same for a larger subject whose parts sit close together, such as a bar's item or a table's header cells.
-- Make the anatomy example small and complete, with every part the legend names present once: the root first, then the parts in reading order. Name parts the figure can't show in one sentence below it, such as "Not shown: the spinner, `env-button-spinner`."
+- Make the anatomy example small and complete, with every part the legend names present once: the root first, then the parts in reading order. Name parts the figure can't show in one plain sentence below it, such as "Not shown: the spinner.", and their classes in In code.
 
 ### Variants figures
 
@@ -179,7 +189,42 @@ A figure that shows named variants, tones or sizes side by side names each with 
 2. **Floating**
 ````
 
-Each name labels the example's next item: a child of its root, such as a field in a Column, or of the one element the root holds. An item may name what it labels with a part reference instead, such as ``**Ghost** (`env-text-field[data-variant='ghost']`)``. Items one under another take their names on the start side, items side by side above them; write a long run, such as six tones, one under another, so it never wraps. The names are the figure's alone: the variants table below says what each is for.
+Each name labels the example's next item: a child of its root, such as a field in a Column, or of the one element the root holds. An item may name what it labels with a part reference instead, such as ``**Ghost** (`env-text-field[data-variant='ghost']`)``. Items one under another take their names on the start side, items side by side above them; write a long run, such as six tones, one under another, so it never wraps. The names are the figure's alone: the variants table below names each option in the same words and says what it is for, and In code gives its value.
+
+## In code: the developer-only part
+
+Nothing a developer or an agent needs is lost to plain language: it goes in the page's last authored section, `## In code`, after Accessibility and before Changelog. The Site leaves it out; the page's guide in the Docs shows it first, and the packaged page, `llms-full.txt` and the agents' tools keep it in place. Write it in the same file as the rest, as the code that goes with what the Site says:
+
+````md
+## In code
+
+### Usage
+
+`variant` is `outline`, the default, `floating` or `ghost`.
+
+```tsx source=Variants
+
+```
+
+#### Errors
+
+`error` marks the field invalid and sets `aria-invalid`.
+
+### Composition
+
+TextField is built from Field's parts: …
+
+### Customize
+
+`--env-text-field-container` gives one field a fill, through `style` or CSS.
+````
+
+- **Its `###` subsections, in this order:** `### Usage`, required, with short code examples of its common uses and options and the props and values that make them; `### Composition`, how its parts and the components around it fit together, with the part classes; and `### Customize`, its color properties, tokens, and the part classes and state attributes CSS may target. Use `####` headings inside them, which the Docs show a level up. The build fails on another `###`, a wrong order, a missing Usage, or text before the first subsection.
+- **`### Import` is generated** from the exports the page documents, or a pattern's `composes`, and opens the section; don't write it. A page without In code gets it too, in the Docs and the package.
+- **Code.** Write a snippet of a few lines in an ordinary `tsx` fence, or show an example file of the page as code with an empty `tsx source=Name` fence, which the build fills in, rather than copying it. In code holds no figures or specimens, and a `source` fence anywhere else fails the build.
+- **What moves here** is everything the Site no longer says: props and values, such as `side="bottom"` or `modal={false}`; class names, such as those of the parts an anatomy figure can't show; color properties and tokens; and the exact behaviour of a prop, such as a default width in rem. Accessibility's `### envUI provides` and `### You provide` stay where they are, also for developers only.
+
+A component's page in the Docs shows, in order: Import, Usage, Composition and Customize from In code; Accessibility, what the application and envUI provide; then Props, Part names and Color properties as reference, generated from the source; and Changelog.
 
 ## Pages on the section template
 
