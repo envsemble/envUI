@@ -213,9 +213,11 @@ function useFit(
     resize.observe(canvasElement);
     // The example renders once its module loads, and its overlays open into a canvas that keeps
     // its size; a popup is placed by its style a frame or two later, without changing size. The
-    // canvas's own changes are the fit's.
+    // canvas's own attributes are the fit's; what is added to it or removed from it, such as the
+    // example as its module loads, is the preview's, and fits it again.
     const changes = new MutationObserver((records) => {
-      if (records.some((record) => record.target !== canvasElement)) update();
+      if (records.some((record) => record.type === 'childList' || record.target !== canvasElement))
+        update();
     });
     changes.observe(canvasElement, {
       childList: true,
