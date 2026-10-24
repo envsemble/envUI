@@ -1,5 +1,5 @@
 // Spinner's markup: hidden without a label, a progress bar named by one, and with showLabel a busy
-// status with its label beside the arc, Loading by default in the provider's language.
+// status with its label beside the shape, Loading by default in the provider's language.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
@@ -37,7 +37,7 @@ test('a spinner without a label is hidden, and with one a progress bar it names'
   assert.doesNotMatch(named, /env-spinner-label/);
 });
 
-test('with showLabel, a busy status shows the label beside the arc', () => {
+test('with showLabel, a busy status shows the label beside the shape', () => {
   const markup = renderToStaticMarkup(h(Spinner, { label: 'Loading project', showLabel: true }));
   assert.match(
     markup,
@@ -61,4 +61,16 @@ test("without a label, showLabel says Loading, in the provider's language", () =
     ),
   );
   assert.match(translated, /<span class="env-spinner-label">Wird geladen<\/span>/);
+});
+
+test('it draws one shape, and contained a circle behind it', () => {
+  const bare = renderToStaticMarkup(h(Spinner));
+  assert.equal(bare.match(/<path class="env-spinner-shape" d="M[^"]+Z">/g)?.length, 1);
+  assert.doesNotMatch(bare, /data-contained|env-spinner-container/);
+  const contained = renderToStaticMarkup(h(Spinner, { contained: true, size: 'lg' }));
+  assert.match(contained, /data-size="lg" data-contained="">/);
+  assert.match(
+    contained,
+    /<circle class="env-spinner-container"[^>]*><\/circle><path class="env-spinner-shape"/,
+  );
 });

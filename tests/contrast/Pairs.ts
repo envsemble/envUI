@@ -794,6 +794,11 @@ const registry: readonly ContrastPair[] = merged([
     [page, surface, muted, raised, [fill, page], [fill, surface]],
     'Spinners, and meter indicators on their track',
   ),
+  ...nonText(
+    '--env-color-bg-brand-emphasis',
+    [['--env-color-bg-brand-muted', surface]],
+    'A contained spinner’s shape on its circle, the tint laid on the default surface',
+  ),
   // Slider: a field whose track is the neutral fill, with a stronger fill from the start to the
   // value; the label, the value and the handle sit on both.
   ...text(
