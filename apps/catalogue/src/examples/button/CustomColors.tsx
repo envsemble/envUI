@@ -3,7 +3,7 @@ import { Button, Row } from '@envsemble/envui';
 
 /** One button's own colors: its container and its label, which its state layers take. */
 const forest = {
-  '--env-button-container': '#0b6e4f',
+  '--env-button-container': '#0a5c42',
   '--env-button-content': '#ffffff',
 } as CSSProperties;
 

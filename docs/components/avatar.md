@@ -52,7 +52,7 @@ An avatar is a round picture of a person or an organization. Beside a visible na
 
 ```
 
-Where a pointer can hover, a group rests bunched, each avatar a little off the line and turned, and spreads into a row with gaps along a gentle arch under the pointer or while focus is inside, showing the count of the rest; the keyboard reaches the count, which spreads it too. On touch screens it stays a plain overlapping row with the count shown. With a reduced-motion preference it spreads at once.
+Where a pointer can hover, a group rests bunched, each avatar a little off the line and turned, and spreads into a row with gaps along a gentle arch under the pointer or while focus is inside, showing the count of the rest; the keyboard reaches the count, which spreads it too. Pressable avatars bunch less, so each keeps a target of at least 1.5 rem uncovered at rest. On touch screens it stays a plain overlapping row with the count shown. With a reduced-motion preference it spreads at once.
 
 ### Chosen
 

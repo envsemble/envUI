@@ -26,6 +26,9 @@
   --docs-ink-dark: #1e1f21;
   /* stylelint-disable-next-line color-no-hex -- fixed ink, see above */
   --docs-ink-light: #ffffff;
+  /* On a mid-tone, where the dark ink reads too faintly: see Colors.tsx. */
+  /* stylelint-disable-next-line color-no-hex -- fixed ink, see above */
+  --docs-ink-black: #000000;
   inline-size: 100%;
   block-size: 100%;
   border-radius: 0;
