@@ -15,6 +15,7 @@ import { CodeBlock } from '@envsemble/envui/content';
 import type { StageFill } from '../DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 import { OpenExample } from './OpenExample';
+import { PictureMark } from './PictureMark';
 import { Loading } from './Loading';
 
 /**
@@ -271,6 +272,7 @@ export function LiveExample({
           {...keepLinksInPlace}
         >
           {render}
+          {open && <PictureMark />}
         </Column>
       )}
       {caption && (

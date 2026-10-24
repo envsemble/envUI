@@ -174,7 +174,10 @@
 
 /* Four specimens never leave one alone on a row: four across where they fit, else two pairs, else
    one column. Each step switches at the width its columns need, as runs of figures do. */
-.docs-figures .docs-specimen-grid:has(> :nth-child(4):last-child) {
+.docs-figures
+  .docs-specimen-grid:has(
+    > .docs-specimen:nth-child(4 of .docs-specimen):nth-last-child(1 of .docs-specimen)
+  ) {
   --docs-specimen-gap: var(--env-space-6);
   --docs-specimen-four: calc(4 * var(--docs-specimen-min) + 3 * var(--docs-specimen-gap));
   --docs-specimen-two: calc(2 * var(--docs-specimen-min) + var(--docs-specimen-gap));
@@ -318,6 +321,48 @@
 .docs-overlay-layer * {
   transition: none;
   animation: none;
+}
+
+/* The mark of a figure that is only a picture (PictureMark.tsx), such as an anatomy figure or an
+   example shown open: a small image icon in the muted text color at the stage's top end, inside
+   its padding, so it never covers what the stage shows. A live example has none. */
+:is(
+  .docs-live-example,
+  .docs-verdict-stage,
+  .docs-specimen-grid,
+  .docs-matrix-scroll,
+  .docs-foundation-stage,
+  .docs-dev-mode-frame
+):has(> .docs-picture-mark) {
+  position: relative;
+}
+
+.docs-picture-mark {
+  position: absolute;
+  inset-block-start: var(--env-space-2);
+  inset-inline-end: var(--env-space-2);
+  display: grid;
+  place-items: center;
+  inline-size: var(--env-space-5);
+  block-size: var(--env-space-5);
+  border-radius: var(--env-radius-full);
+  color: var(--env-color-fg-muted);
+}
+
+/* An open sheet at the end side covers that corner: the mark takes the start corner, on the scrim. */
+:has(> .docs-open-example .env-sheet-popup:is([data-side='end'], [data-side='right']))
+  > .docs-picture-mark {
+  inset-inline: var(--env-space-2) auto;
+}
+
+.docs-picture-mark > svg {
+  inline-size: var(--env-icon-size-sm);
+  block-size: var(--env-icon-size-sm);
+}
+
+.docs-picture-mark:focus-visible {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: 1px;
 }
 
 /* Forced colors paint the canvas in Canvas, like the page: a frame keeps each example apart. A

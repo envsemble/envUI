@@ -38,6 +38,13 @@ import { Column, Text } from '@envsemble/envui';
 - Text adds no outer spacing: a Column, a Row or the component around it owns the gaps.
 - The 0.7 names are gone: page-heading is headline, section-heading is title, supporting is body-sm, `tone` is `emphasis` and `as` is `render`.
 
+### Lists
+
+Formatted text, which Markdown, RichText and RichTextEditor render in the `env-prose` class, gives its lists envUI's own markers in place of the browser's: a small dot in the muted text color, a ring one level in, and numbers in the muted color with tabular figures, then letters and roman numerals one and two levels in. Each marker hangs in the list's indent, on the middle of its item's first line, and items stand a small step apart. Custom properties on `env-prose` tune them: `--env-prose-list-marker-color`, `--env-prose-list-marker-size`, `--env-prose-list-marker-gap`, `--env-prose-list-indent` and `--env-prose-list-item-gap`.
+
+- Use a list sparingly, for a few short items that read better apart, usually not full sentences.
+- Prefer a sentence or a short paragraph to a list of one or two items.
+
 TypeScript declarations provide the complete public API.
 
 ## Related topics

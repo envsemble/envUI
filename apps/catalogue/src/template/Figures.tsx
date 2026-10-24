@@ -8,6 +8,7 @@ import type { Documentation as Document } from '../Reference';
 import { AnatomyFigure } from './AnatomyFigure';
 import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
+import { PictureMark } from './PictureMark';
 import { Specimen } from './Specimen';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -66,6 +67,7 @@ export function VerdictFigure({
           ) : (
             <ExampleRender page={page} name={name ?? ''} />
           )}
+          {open && <PictureMark />}
         </Column>
         <div className="docs-verdict-bar env-connected-row" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}

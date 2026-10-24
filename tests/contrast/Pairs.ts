@@ -227,9 +227,8 @@ const registry: readonly ContrastPair[] = merged([
     'Links and text buttons, also on the action strip of a card, which is the default surface',
   ),
   ...text('--env-color-fg-link-hover', [page, surface, muted]),
-  // The catalogue's section band, across a page's content pane under When to use and Anatomy: the
-  // muted fill, kept to an OKLCH lightness of 0.955 at most, so it shows on white in the light
-  // high-contrast theme (`catalogue-band`). Its headings, text, tables and links, and inline code on its neutral fill.
+  // The catalogue's section band, across a page's content pane under When to use and Anatomy: a
+  // small step beyond the navigation's fill (`catalogue-band`). Its headings, text, tables and links, and inline code on its neutral fill.
   ...text('--env-color-fg-default', [muted, [fill, muted]], 'The catalogue’s section band'),
   ...text('--env-color-fg-muted', [muted], 'The catalogue’s section band'),
   ...text('--env-color-fg-link', [muted], 'The catalogue’s section band'),
@@ -2291,8 +2290,9 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  *   data has, from 30% at the lightest to the full tone (CalendarHeatmap.tsx and .css). The
  *   lightest step of the default accent tone is measured.
  * - The catalogue's section band and the recessed canvas its examples sit on, as
- *   apps/catalogue/src/styles/Template.css and Stage.css paint them: the band is the muted fill,
- *   kept to an OKLCH lightness of 0.955 at most; the canvas is 0.035 deeper in OKLCH lightness than the
+ *   apps/catalogue/src/styles/Template.css and Stage.css paint them: the band is the muted fill's
+ *   hue at an OKLCH lightness of 0.945 in the light theme, 0.955 in the light high-contrast theme and
+ *   0.30 in the dark ones, a small step beyond the navigation's fill; the canvas is 0.035 deeper in OKLCH lightness than the
  *   page in the light themes and 0.045 in the dark ones.
  */
 
@@ -2313,7 +2313,8 @@ export const derived: Readonly<Record<string, string>> = {
   'badge-outline-important': 'color-mix(in srgb, var(--env-color-fg-on-strong) 55%, transparent)',
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-accent) 30%, var(--env-color-bg-page))',
-  'catalogue-band': 'oklch(from var(--env-color-bg-muted) min(l, 0.955) c h)',
+  'catalogue-band':
+    'light-dark(oklch(from var(--env-color-bg-muted) clamp(0.945, l, 0.955) c h), oklch(from var(--env-color-bg-muted) min(l, 0.3) c h))',
   'catalogue-canvas':
     'light-dark(oklch(from var(--env-color-bg-page) calc(l - 0.035) c h), oklch(from var(--env-color-bg-page) calc(l - 0.045) c h))',
 };

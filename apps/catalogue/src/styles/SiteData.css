@@ -68,11 +68,7 @@
   font-weight: var(--env-font-weight-regular);
 }
 .docs-release-list {
-  display: grid;
-  gap: var(--env-space-2);
   max-inline-size: 75ch;
-  margin: 0;
-  padding-inline-start: 1.25rem;
 }
 .docs-bench-figure {
   margin: 0;
