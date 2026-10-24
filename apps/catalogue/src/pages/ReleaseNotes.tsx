@@ -22,6 +22,21 @@ function Pieces({ pieces }: { pieces: InlinePiece[] }): ReactNode {
   ));
 }
 
+/** A release's highlights or breaking changes, in envUI's list style, which prose gives its lists. */
+function ReleaseList({ items }: { items: InlinePiece[][] }) {
+  return (
+    <div className="env-prose docs-release-list">
+      <ul>
+        {items.map((item, index) => (
+          <li key={index}>
+            <Pieces pieces={item} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 /** A release's slug, which its heading takes as an id: 1-0-0-prerelease-1. */
 const releaseId = (version: string) => `release-${version.replace(/[^\w]+/g, '-')}`;
 
@@ -43,25 +58,13 @@ function ReleaseEntry({ release }: { release: Release }) {
           )}
         </span>
       </Text>
-      <ul className="docs-release-list">
-        {release.highlights.map((highlight, index) => (
-          <li key={index}>
-            <Pieces pieces={highlight} />
-          </li>
-        ))}
-      </ul>
+      <ReleaseList items={release.highlights} />
       {release.breaking.length > 0 && (
         <Column gap={2}>
           <Text render={<h4 />} variant="body-sm" className="docs-release-label">
             Breaking changes
           </Text>
-          <ul className="docs-release-list">
-            {release.breaking.map((change, index) => (
-              <li key={index}>
-                <Pieces pieces={change} />
-              </li>
-            ))}
-          </ul>
+          <ReleaseList items={release.breaking} />
         </Column>
       )}
     </Column>
