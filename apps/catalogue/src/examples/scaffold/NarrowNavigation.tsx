@@ -57,9 +57,9 @@ export default function NarrowNavigation() {
         />
       }
       navigation={{
-        bar: <Bar destinations={destinations} />,
-        rail: <Rail destinations={destinations} />,
-        drawer: <Drawer destinations={destinations} />,
+        bar: <Bar aria-label="Main, narrowable" destinations={destinations} />,
+        rail: <Rail aria-label="Main, narrowable" destinations={destinations} />,
+        drawer: <Drawer aria-label="Main, narrowable" destinations={destinations} />,
       }}
     >
       <Page header={<PageHeader title="Projects" headingLevel={3} />}>

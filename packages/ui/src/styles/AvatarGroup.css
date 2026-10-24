@@ -59,6 +59,16 @@
   .env-avatar-group:dir(rtl) {
     --env-avatar-group-turn-out: -1;
   }
+  /* Pressable avatars bunch only as far as leaves each one the minimum target uncovered at rest,
+     with a twentieth of the size to spare for the next avatar's turn, which widens its box; small
+     ones overlap by the eighth they take without a hovering pointer. */
+  .env-avatar-group[data-interactive] {
+    --env-avatar-group-bunch: clamp(
+      var(--env-avatar-group-overlap),
+      calc(var(--env-avatar-group-size) * 0.95 - var(--env-control-target-min)),
+      calc(var(--env-avatar-group-size) * 0.4)
+    );
+  }
   .env-avatar-group > * {
     --env-avatar-group-lift: 0rem;
     --env-avatar-group-turn: 0deg;
@@ -86,11 +96,13 @@
     --env-avatar-group-lift: calc(var(--env-avatar-group-size) * -0.01);
     --env-avatar-group-turn: -1deg;
   }
-  /* At rest, the count waits behind the last avatar, out of sight. */
+  /* At rest, the count waits behind the last avatar, out of sight, and lets the pointer through
+     to it: drawn after the avatar, it would otherwise take the avatar's hover and clicks. */
   .env-avatar-group > .env-avatar-group-overflow {
     margin-inline-start: calc(-1 * var(--env-avatar-group-size));
     opacity: 0;
     scale: 0.6;
+    pointer-events: none;
   }
   /* Spread: an even row with gaps along an arch, and the count shown. */
   .env-avatar-group:is(:hover, :focus-within) > * + *,
@@ -127,6 +139,7 @@
   .env-avatar-group:is(:hover, :focus-within) > .env-avatar-group-overflow {
     opacity: 1;
     scale: 1;
+    pointer-events: auto;
   }
 }
 /* A pressable avatar: a button or link the size of the picture, with a state layer over it. */

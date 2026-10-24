@@ -98,13 +98,6 @@
       }
     },
     "dark-hc": {
-      "color-contrast-enhanced": {
-        "Buttons :: button.env-button.docs-swatch code": 1,
-        "Content & loading :: button.env-button.docs-swatch code": 1,
-        "Direction links :: button.env-button.docs-swatch code": 1,
-        "Text & focus :: button.env-button.docs-swatch code": 1,
-        "Text fields :: button.env-button.docs-swatch code": 1
-      },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.docs-swatch": 11,
         "Cards :: button.env-button.docs-swatch": 1,
@@ -123,10 +116,6 @@
       }
     },
     "light": {
-      "color-contrast": {
-        "Buttons :: button.env-button.docs-swatch code": 1,
-        "Text fields :: button.env-button.docs-swatch code": 1
-      },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.docs-swatch": 11,
         "Cards :: button.env-button.docs-swatch": 1,
@@ -149,6 +138,7 @@
         "Buttons :: button.env-button.docs-swatch code": 1,
         "Content & loading :: button.env-button.docs-swatch code": 1,
         "Direction links :: button.env-button.docs-swatch code": 1,
+        "Feedback :: button.env-button.docs-swatch code": 1,
         "Text & focus :: button.env-button.docs-swatch code": 1,
         "Text fields :: button.env-button.docs-swatch code": 1
       },
