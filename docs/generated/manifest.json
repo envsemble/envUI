@@ -1826,9 +1826,9 @@
         "ActionCard"
       ],
       "useWhen": [
-        "Content about one subject stands apart from the page, such as a project's summary.",
-        "A summary needs its own actions along the bottom, such as Share and Open (`actions`).",
-        "The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `onClick`)."
+        "Content about one subject, such as a project's summary",
+        "A summary with its own actions, such as Share and Open",
+        "A whole surface that leads to one place or starts one action"
       ],
       "avoidWhen": [
         {
@@ -1882,31 +1882,31 @@
         {
           "name": "CardLoading",
           "title": "Card loading",
-          "description": "`skeleton` shows the card as its own skeleton until its content arrives: text becomes bars and controls filled shapes. Render it over placeholder items, as Loading shows; a title or description given as undefined is a bar of its usual length.",
+          "description": "While its content loads, a card shows as its own skeleton: text becomes bars and controls become filled shapes, as Loading shows.",
           "file": "docs/examples/card/CardLoading.tsx"
         },
         {
           "name": "ActionStrip",
           "title": "Content card",
-          "description": "The default: `title`, `meta`, `description`, and `actions` in a strip along the bottom.",
+          "description": "The default: a title, a short fact beside it, a description, its content, and actions in a strip along the bottom.",
           "file": "docs/examples/card/ActionStrip.tsx"
         },
         {
           "name": "Destinations",
           "title": "Link card",
-          "description": "With `href`, the whole card is one link.",
+          "description": "The whole card is one link.",
           "file": "docs/examples/card/Destinations.tsx"
         },
         {
           "name": "StartOptions",
           "title": "Button card",
-          "description": "With `onClick`, the whole card is one button. It holds only phrasing content, such as spans.",
+          "description": "The whole card is one button. It holds only short text, with no headings, lists or controls.",
           "file": "docs/examples/card/StartOptions.tsx"
         },
         {
           "name": "Backgrounds",
           "title": "Card variants",
-          "description": "| Background | Use for | | ---------- | ----------------------------------------------- | | `muted` | A card on the page or in a pane. The default. | | `default` | A quieter fill, such as a settings section. | | `page` | The page's own color, set apart by its corners. |",
+          "description": "| Background | Use for | | ---------- | ----------------------------------------------- | | Muted | A card on the page or in a pane. The default. | | Default | A quieter fill, such as a settings section. | | Page | The page's own color, set apart by its corners. |",
           "file": "docs/examples/card/Backgrounds.tsx"
         },
         {
@@ -2023,7 +2023,7 @@
       "category": "Actions",
       "status": "stable",
       "since": "0.1.0",
-      "summary": "Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group.",
+      "summary": "Starts an action, or goes to a destination as a link, alone, icon-only, confirmed in place, copying a value or connected in a group.",
       "aliases": [
         "action",
         "call to action",
@@ -2039,12 +2039,12 @@
         "toolbar button"
       ],
       "useWhen": [
-        "Someone starts an action, such as saving, creating or sending.",
-        "A prominent destination, such as the next step of a flow, should look like an action.",
-        "An icon alone names a familiar action in a dense place, such as a toolbar (IconButton).",
-        "An action takes effect at once and cannot be undone, such as removing someone's access (ConfirmButton).",
-        "People copy a value to paste elsewhere, such as a link, an ID or a command (CopyButton).",
-        "Related actions belong together, such as the main action and a menu of alternatives (ButtonGroup)."
+        "Starting an action, such as saving or sending",
+        "A prominent destination, such as the next step of a flow",
+        "A familiar action as an icon alone, in a dense place (IconButton)",
+        "An action that takes effect at once and can't be undone (ConfirmButton)",
+        "Copying a value, such as a link or an ID (CopyButton)",
+        "Related actions that belong together (ButtonGroup)"
       ],
       "avoidWhen": [
         {
@@ -2116,13 +2116,13 @@
         {
           "name": "CustomColors",
           "title": "Custom colors",
-          "description": "One button can take colors of its own through its color properties, such as `--env-button-container` and `--env-button-content`. Its hover, focus and press follow them, as state layers of its label color.",
+          "description": "One button can take colors of its own, such as its fill and its label. Its hover, focus and press follow them, as layers of its label color.",
           "file": "docs/examples/button/CustomColors.tsx"
         },
         {
           "name": "PendingAction",
           "title": "Pending action",
-          "description": "While `pending`, a spinner replaces the content at the same size, and presses do nothing.",
+          "description": "While its work runs, a spinner replaces the content at the same size, and presses do nothing.",
           "file": "docs/examples/button/PendingAction.tsx"
         },
         {
@@ -2134,7 +2134,7 @@
         {
           "name": "CopyValue",
           "title": "Copy value",
-          "description": "CopyButton copies its `value` and shows Copied, or Couldn’t copy, for about two seconds.",
+          "description": "CopyButton copies a value and shows Copied, or Couldn’t copy, for about two seconds.",
           "file": "docs/examples/button/CopyValue.tsx"
         },
         {
@@ -3337,10 +3337,10 @@
         "description field"
       ],
       "useWhen": [
-        "Someone types a short value on one line, such as a name, an e-mail address or a number.",
-        "A value has a fixed start or a unit beside it, such as an address after a domain or a size in GB.",
-        "People search or filter a list, a table or a sidebar by typing (SearchField).",
-        "Someone writes text over several lines, such as a description or notes (Textarea)."
+        "A short value on one line, such as a name or an e-mail address",
+        "A value with a fixed start or a unit, such as a size in GB",
+        "Searching a list, a table or a sidebar (SearchField)",
+        "Text over several lines, such as notes (Textarea)"
       ],
       "avoidWhen": [
         {
@@ -3416,7 +3416,7 @@
         {
           "name": "Validation",
           "title": "Validation",
-          "description": "`error` marks the field invalid and shows under the description. Say how to correct the value.",
+          "description": "An error marks the field invalid and shows under its description. Say how to correct the value.",
           "file": "docs/examples/text-field/Validation.tsx"
         },
         {
@@ -3428,13 +3428,13 @@
         {
           "name": "IconAndAction",
           "title": "Icon and action",
-          "description": "`startIcon` is decorative; `endAction` holds a control, such as an IconButton, which takes the field's ghost look.",
+          "description": "An icon at the start only decorates the field. The end can hold a control, such as a button that shows the password, which takes a quiet look to sit inside the field.",
           "file": "docs/examples/text-field/IconAndAction.tsx"
         },
         {
           "name": "TextareaSizing",
           "title": "Textarea sizing",
-          "description": "A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the arrow keys. With `sizing=\"content\"` it grows with its text.",
+          "description": "A text area keeps its height and scrolls, and people resize it by its bottom edge, by dragging or with the arrow keys. It can grow with its text instead.",
           "file": "docs/examples/text-field/TextareaSizing.tsx"
         },
         {
@@ -3446,12 +3446,12 @@
         {
           "name": "FieldsBesideButtons",
           "title": "Sizes",
-          "description": "Outline and ghost fields take the control heights of the scale, `sm`, `md` and `lg`, so they line up with buttons of the same size.",
+          "description": "Outline and ghost fields come in the three control heights of the scale, small, medium and large, so they line up with buttons of the same size.",
           "file": "docs/examples/text-field/FieldsBesideButtons.tsx"
         },
         {
           "name": "ReadOnlyValue",
-          "title": "Do: readOnly for a value people can see and copy but not change.",
+          "title": "Do: Read-only for a value people can see and copy but not change.",
           "description": "",
           "file": "docs/examples/text-field/ReadOnlyValue.tsx"
         },
@@ -12935,9 +12935,9 @@
         "Dialog placement right"
       ],
       "useWhen": [
-        "An item's details or settings open beside the list they belong to, modal or with the page usable beside them.",
-        "Filters for a list or a table, applied when people close the panel.",
-        "A short set of choices from the bottom of the window, such as the ways to share."
+        "An item's details or settings, beside the list they belong to",
+        "Filters for a list or a table, applied on closing",
+        "A short set of choices from the bottom, such as the ways to share"
       ],
       "avoidWhen": [
         {
@@ -12970,25 +12970,25 @@
         {
           "name": "FilterPanel",
           "title": "Filter panel",
-          "description": "Sheet shares Dialog's surface, title, description and actions, and DialogClose closes it. On a touch screen a swipe toward its edge closes it too; a mouse or a pen never moves the sheet, and a drag inside it selects text.",
+          "description": "A sheet has a dialog's surface, title, description and actions. On a touch screen a swipe toward its edge closes it too; a mouse or a pen never moves the sheet, and a drag inside it selects text.",
           "file": "docs/examples/sheet/FilterPanel.tsx"
         },
         {
           "name": "InspectorPanel",
           "title": "Inspector panel",
-          "description": "With `modal={false}` the page stays usable beside the sheet; `disablePointerDismissal` keeps it open while people choose another row, and `finalFocus` returns focus to the row it showed last.",
+          "description": "The page can stay usable beside the sheet. The sheet then stays open while people choose another row, and when it closes, focus returns to the row it showed last.",
           "file": "docs/examples/sheet/InspectorPanel.tsx"
         },
         {
           "name": "ShareChoices",
           "title": "Share choices",
-          "description": "A `side=\"bottom\"` sheet is as tall as its content.",
+          "description": "A sheet from the bottom is as tall as its content.",
           "file": "docs/examples/sheet/ShareChoices.tsx"
         },
         {
           "name": "ResizableDetails",
           "title": "Resizable details",
-          "description": "With `resizable`, people resize a side sheet by its inner edge, by pointer or the arrow keys, with the same handle as between Panes: a grip of three dots that stays at the middle of the sheet, never a line, between `minWidth` and `maxWidth`, and never past the window. `width` and `onWidthChange` let the application keep the width. Its width is then a number of rem: a CSS length as `width`, such as `min(30rem, 90%)`, is ignored, with a warning while developing, and the sheet starts at `defaultWidth`.",
+          "description": "People can resize a side sheet by its inner edge, by pointer or with the arrow keys, with the same handle as between Panes: a grip of three dots that stays at the middle of the sheet, never a line. It stays between a smallest and a largest width, and never grows past the window. The application can keep the width people chose.",
           "file": "docs/examples/sheet/ResizableDetails.tsx"
         },
         {
@@ -15312,8 +15312,8 @@
         "submit"
       ],
       "useWhen": [
-        "Someone gives or changes several pieces of information at once, and submits them together.",
-        "A form refuses what people entered and they need to find and fix each problem."
+        "Several answers, given and submitted together",
+        "Finding and fixing what a form refused"
       ],
       "avoidWhen": [
         {
@@ -15363,25 +15363,25 @@
         {
           "name": "ValidationTiming",
           "title": "Validation timing",
-          "description": "On submit first: show each field's `error`, and move focus to the error summary, or straight to the field when there is only one. Then as people leave a field they have typed in. Never while they type, though an error goes as soon as the value is right.",
+          "description": "On submit first: show each field's error, and move focus to the error summary, or straight to the field when there is only one. Then as people leave a field they have typed in. Never while they type, though an error goes as soon as the value is right.",
           "file": "docs/examples/forms/ValidationTiming.tsx"
         },
         {
           "name": "ServerError",
           "title": "Server error",
-          "description": "The submit Button is `pending` while the form is sent: it keeps its size and ignores presses. When the server refuses or can't be reached, keep everything people entered, and move focus to an Alert at the top that says what to do.",
+          "description": "While the form is sent, its submit button shows that it is working: it keeps its size and ignores presses. When the server refuses or can't be reached, keep everything people entered, and move focus to an Alert at the top that says what to do.",
           "file": "docs/examples/forms/ServerError.tsx"
         },
         {
           "name": "ErrorSummary",
           "title": "Error summary",
-          "description": "After a refused submit, a danger Alert titled \"There is a problem\" lists each error as a Link that moves focus to its field. Leave it without `announce`, so it is read once, as it takes focus.",
+          "description": "After a refused submit, a danger Alert titled \"There is a problem\" lists each error as a Link that moves focus to its field. It is read once, as it takes focus, with no announcement of its own.",
           "file": "docs/examples/forms/ErrorSummary.tsx"
         },
         {
           "name": "GroupedChoices",
           "title": "Grouped choices",
-          "description": "One choice of several is a RadioGroup; several are Checkboxes in a native `fieldset` whose `legend` names them.",
+          "description": "One choice of several is a RadioGroup; several are checkboxes in a group whose name says what they are for.",
           "file": "docs/examples/forms/GroupedChoices.tsx"
         },
         {

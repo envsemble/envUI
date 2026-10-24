@@ -11,6 +11,8 @@ interface PartGroup {
   root: string;
   parts: { class: string; description: string }[];
   states: { attribute: string; values: string[]; parts: string[] }[];
+  /** The color properties that set one instance's colors, each with what it colors. */
+  colors?: { property: string; description: string }[];
 }
 
 interface PartsFile {

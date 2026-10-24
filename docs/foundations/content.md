@@ -25,6 +25,7 @@ Write as a calm, direct colleague who knows the task: plain words, short sentenc
 - Say what happened and what to do next, without blame, jargon or codes.
 - No exclamation marks, "please", "simply", "just", "easy" or "oops".
 - "We" only where a person or a service really acted: "We sent a code to sam.lee@example.com".
+- Name things as people see them, not by the code behind them: "the ghost variant", never a prop and its value. Code belongs in documentation for developers, set apart from what everyone reads.
 
 | Do                                     | Don't                                            |
 | -------------------------------------- | ------------------------------------------------ |
@@ -45,6 +46,10 @@ Write as a calm, direct colleague who knows the task: plain words, short sentenc
 | Create project        | Create New Project     |
 | Notification settings | Notification Settings: |
 | Rename…               | Rename...              |
+
+## Lists
+
+A list is for a few short, parallel items, usually not full sentences, such as the things a plan includes. Use one sparingly: a column of sentences reads as a wall of text, so write a point that needs a sentence as a sentence, and a few rules as a short paragraph. More than five or six items, or items with several facts each, are a table.
 
 ## Buttons and actions
 

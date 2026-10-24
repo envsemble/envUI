@@ -14,8 +14,8 @@ aliases:
   - inline validation
   - submit
 useWhen:
-  - Someone gives or changes several pieces of information at once, and submits them together.
-  - A form refuses what people entered and they need to find and fix each problem.
+  - Several answers, given and submitted together
+  - Finding and fixing what a form refused
 avoidWhen:
   - text: A single setting that takes effect at once.
     see: settings
@@ -54,7 +54,7 @@ The aim is a form people get right on the first submit.
 
 ### When to check
 
-On submit first: show each field's `error`, and move focus to the error summary, or straight to the field when there is only one. Then as people leave a field they have typed in. Never while they type, though an error goes as soon as the value is right.
+On submit first: show each field's error, and move focus to the error summary, or straight to the field when there is only one. Then as people leave a field they have typed in. Never while they type, though an error goes as soon as the value is right.
 
 ```tsx example=ValidationTiming
 
@@ -62,7 +62,7 @@ On submit first: show each field's `error`, and move focus to the error summary,
 
 ### Sending
 
-The submit Button is `pending` while the form is sent: it keeps its size and ignores presses. When the server refuses or can't be reached, keep everything people entered, and move focus to an [Alert](../components/alert.md) at the top that says what to do.
+While the form is sent, its submit button shows that it is working: it keeps its size and ignores presses. When the server refuses or can't be reached, keep everything people entered, and move focus to an [Alert](../components/alert.md) at the top that says what to do.
 
 ```tsx example=ServerError
 
@@ -72,7 +72,7 @@ The submit Button is `pending` while the form is sent: it keeps its size and ign
 
 ### Error summary
 
-After a refused submit, a danger Alert titled "There is a problem" lists each error as a [Link](../components/link.md) that moves focus to its field. Leave it without `announce`, so it is read once, as it takes focus.
+After a refused submit, a danger Alert titled "There is a problem" lists each error as a [Link](../components/link.md) that moves focus to its field. It is read once, as it takes focus, with no announcement of its own.
 
 ```tsx example=ErrorSummary
 
@@ -80,7 +80,7 @@ After a refused submit, a danger Alert titled "There is a problem" lists each er
 
 ### Grouped choices
 
-One choice of several is a [RadioGroup](../components/radio.md); several are Checkboxes in a native `fieldset` whose `legend` names them.
+One choice of several is a [RadioGroup](../components/radio.md); several are checkboxes in a group whose name says what they are for.
 
 ```tsx example=GroupedChoices
 
@@ -96,15 +96,15 @@ One choice of several is a [RadioGroup](../components/radio.md); several are Che
 
 ```
 
-- Keep submit enabled, and say what is wrong after a submit; a disabled button can't tell people why.
-- Keep what people entered after any error, and set `type` and `autoComplete` on the fields people fill in often.
-- envUI has no stepper yet: split a long form into short pages of your own, each with its submit and a Back link.
+Keep the submit button enabled, and say what is wrong after a submit: a disabled button can't tell people why. Keep what people entered after any error. envUI has no stepper yet, so split a long form into short pages of your own, each with its submit and a Back link.
 
 ### Content
 
-- Name the submit button after what it does, "Create project", never "Submit".
-- Mark the optional fields, "(optional)", rather than the required ones.
-- Errors say how to fix the value, "Enter an email address like name@example.com", the same in the field and the summary ([content](../foundations/content.md)).
+Write errors that say how to fix the value, the same in the field and in the summary, as [content](../foundations/content.md) describes.
+
+- Submit named for what it does, "Create project", never "Submit"
+- "(optional)" on optional fields, not marks on required ones
+- Errors such as "Enter an email address like name@example.com"
 
 ## Anatomy
 
@@ -133,6 +133,42 @@ One choice of several is a [RadioGroup](../components/radio.md); several are Che
 - `noValidate`, the checks and their messages, and focus after a refused submit: `tabIndex={-1}` and a ref on the summary.
 - Links in the summary whose `onClick` focuses their field.
 - A `fieldset` and `legend` around a group of checkboxes, and a `role="status"` message once saved.
+
+## In code
+
+### Usage
+
+A form is a native `<form noValidate onSubmit={…}>`: the application runs the checks, so the browser's own bubbles stay out. On submit, set each field's `error`, then move focus to the error summary, or to the field when only one is wrong. After a submit, check a field again as people leave it, through `onBlur`, and clear its `error` as soon as the value fits, never adding one while they type.
+
+```tsx source=ErrorSummary
+
+```
+
+#### Sending
+
+Set `pending` on the submit Button, which has `type="submit"`, while the form is sent. When the server refuses or can't be reached, keep the values, show a danger Alert at the top with `tabIndex={-1}` and a ref, and focus it.
+
+```tsx
+<Button type="submit" pending={sending}>
+  Create project
+</Button>
+```
+
+#### Error summary
+
+The summary is a danger Alert with `tabIndex={-1}` and a ref, focused after each refused submit. Leave it without `announce`, so it has no role and is read once, as it takes focus; give its title `role="heading"` so people can find it again. Each error is a Link whose `onClick` focuses its field, through the field's `ref`.
+
+#### Grouped choices and browser help
+
+One choice of several is a RadioGroup, a `fieldset` with its `legend` from `label`; several Checkboxes go in a native `fieldset` whose `legend` names them. Set `type` and `autoComplete` on the fields people fill in often, such as `autoComplete="email"`, and say "Saved" in a `role="status"` message once the form is sent.
+
+```tsx source=GroupedChoices
+
+```
+
+### Composition
+
+Lay the form out as one Column, kept to a width that reads easily, such as `maxInlineSize: '32rem'`, with the actions in a Row after the last field, the primary action last. A Grid suits only short fields that belong together, such as a city and a postal code. Each field is a TextField, Textarea, Select, Combobox, DatePicker, RadioGroup or Checkbox, with its `label`, its lasting `description` and its `error`; Field's parts build any other.
 
 ## Changelog
 

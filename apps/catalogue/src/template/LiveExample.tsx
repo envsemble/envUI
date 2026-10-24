@@ -88,14 +88,15 @@ function Source({ path, name }: { path: string; name: string }) {
  */
 export const CodeSlot = createContext<HTMLElement | null>(null);
 
-/** An example's source in a Code disclosure, with a copy button; a template preview shows it too. */
-export function ExampleCode({ page, name }: { page: string; name: string }) {
+/**
+ * An example's source as an open code block with a copy button, loaded with the page that shows it:
+ * the code of a page's guide in the Docs, which shows an example file as code.
+ */
+export function ExampleSource({ page, name }: { page: string; name: string }) {
   // A retry renders the code afresh from its file loaded again.
   const [, setAttempt] = useState(0);
-  const slot = useContext(CodeSlot);
-  const [open, setOpen] = useState(false);
   const path = examplePath(page, name);
-  const code = (
+  return (
     <LoadBoundary
       what="code"
       modules={[`src/examples/${page}/${name}.tsx?raw`]}
@@ -109,6 +110,13 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
       </Suspense>
     </LoadBoundary>
   );
+}
+
+/** An example's source in a Code disclosure, with a copy button; a template preview shows it too. */
+export function ExampleCode({ page, name }: { page: string; name: string }) {
+  const slot = useContext(CodeSlot);
+  const [open, setOpen] = useState(false);
+  const code = <ExampleSource page={page} name={name} />;
   const title = (
     <>
       Code<span className="docs-visually-hidden">, {name}.tsx</span>

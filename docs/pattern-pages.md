@@ -29,7 +29,9 @@ composes: [Switch, Select, Field, Button, Toast, Column] # The exports it combin
 
 Register the page in [the index](index.md) under `## Patterns`, with only its title and path; the summary comes from the frontmatter. Patterns are listed in intent order.
 
-A pattern page may instead be on the [figure template](component-pages.md#sections) of component pages, with a `## When to use` section: live figures, do and don't pairs and an anatomy figure, whose `of` names the component it labels. [Loading](patterns/loading.md) is on it.
+A pattern page may instead be on the [figure template](component-pages.md#sections) of component pages, with a `## When to use` section: live figures, do and don't pairs and an anatomy figure, whose `of` names the component it labels. [Loading](patterns/loading.md) is on it, and [Form layout and validation](patterns/forms.md) is the model pattern page in plain language.
+
+A pattern page follows the same writing rules as a component page: its Site speaks [plain language](component-pages.md#plain-language-on-the-site), with no inline code outside the Code disclosures, options named in words and lists used sparingly, for short items. What developers need goes in its [developer-only part](component-pages.md#in-code-the-developer-only-part), `## In code`, after Accessibility: `### Usage`, how to build the composition in code, with the props that matter and an example file shown as code; `### Composition`, how its components fit together; and `### Customize` where it has one. Its generated Import names what the pattern `composes`. The Site's pattern page links to its guide in the Docs, `/docs/patterns/<id>`, as API: In code, what the application and envUI provide, and its changelog.
 
 ## Pattern sections
 
@@ -44,4 +46,4 @@ A pattern page may instead be on the [figure template](component-pages.md#sectio
 | Examples             | yes      | At least two more live compositions, each under a `###` heading with a sentence or two, so a pattern shows at least three example files. |
 | Changelog            |          | Releases that changed the pattern.                                                                                                       |
 
-Related is generated from `avoidWhen`. A pattern shows each composition in context, so its examples differ from the component pages' ones. The Site leaves out the `### envUI provides` and `### You provide` lists, as on component pages. The Docs show them on one page, Patterns: what you provide (`/docs/patterns`), each pattern's two lists under its name, read from the pattern pages: edit a list on its pattern's page, and it changes there. The packaged page and the agents' files keep them.
+Related is generated from `avoidWhen`. A pattern shows each composition in context, so its examples differ from the component pages' ones. The Site leaves out the `### envUI provides` and `### You provide` lists, as on component pages. The Docs show them on the pattern's guide, and all of them on one page, Patterns: what you provide (`/docs/patterns`), each pattern's two lists under its name, read from the pattern pages: edit a list on its pattern's page, and it changes there. The packaged page and the agents' files keep them.

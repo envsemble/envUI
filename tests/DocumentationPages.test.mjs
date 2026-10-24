@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { marked } from 'marked';
 import ts from 'typescript';
+import { siteInlineCode } from '../scripts/SiteContent.mjs';
 import {
   examplesDirectory,
   isPropsTable,
@@ -91,7 +92,7 @@ test("every component's page names each of its color properties", () => {
     for (const { property } of entry.colors)
       assert.ok(
         page.markdown.includes(`\`${property}\``),
-        `${page.path} names ${name}'s color property ${property}, under Anatomy's Colors`,
+        `${page.path} names ${name}'s color property ${property}, under In code's Customize`,
       );
   }
 });
@@ -344,12 +345,13 @@ test("a page's Overview doesn't open by saying its summary again", () => {
 });
 
 /**
- * A page's Markdown as the Site shows it: without its changelog and the lists of what envUI and
- * the application provide, which its page in the Docs shows.
+ * A page's Markdown as the Site shows it: without its changelog, its developer-only part, "## In
+ * code", and the lists of what envUI and the application provide, which its page in the Docs shows.
  */
 function siteMarkdown(document) {
   return document.markdown
     .replace(/\n## Changelog\n[\s\S]*$/, '\n')
+    .replace(/\n## In code\n[\s\S]*?(?=\n## |$)/, '\n')
     .replace(/\n### (?:envUI provides|You provide)\n[\s\S]*?(?=\n#{2,3} |$)/g, '\n');
 }
 
@@ -374,4 +376,35 @@ test('a page the Site shows links nowhere in the Docs', () => {
         .map((href) => `${document.path}: ${href}`),
     );
   assert.deepEqual(links, [], 'Link these to a page of the Site, or say it without the link.');
+});
+
+/**
+ * Pages whose Site speaks plain language: no inline code outside the Code disclosures under its
+ * figures, with what developers need in the page's "## In code" and in Accessibility's lists of
+ * what envUI and the application provide. The list grows until it holds every page, and then goes.
+ */
+const plainPages = ['button', 'card', 'text-field', 'sheet', 'forms'];
+
+test("a plain page's Site shows no inline code", (t) => {
+  const found = sectioned
+    .filter((document) => plainPages.includes(document.id))
+    .flatMap((document) =>
+      siteInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
+    );
+  assert.deepEqual(
+    found,
+    [],
+    'The Site speaks plain language: say it in words, and move the code to "## In code".',
+  );
+  // The pages still to rewrite, with the inline code their Site shows; Field's page is in the Docs.
+  const left = sectioned
+    .filter((document) => !plainPages.includes(document.id) && document.id !== 'field')
+    .map((document) => [document.id, siteInlineCode(document).length])
+    .filter(([, count]) => count);
+  t.diagnostic(
+    `Inline code on the Site of the other pages: ${left.reduce((sum, [, count]) => sum + count, 0)} on ${left.length} pages (${left
+      .sort((a, b) => b[1] - a[1])
+      .map(([id, count]) => `${id} ${count}`)
+      .join(', ')}).`,
+  );
 });

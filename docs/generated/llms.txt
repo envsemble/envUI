@@ -42,7 +42,7 @@ Part classes (`.env-<component>-<part>`), state attributes (`data-*`) and color 
 
 ## Components: Actions
 
-- [Button](docs/components/button.md): Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group. Also: IconButton, ConfirmButton, CopyButton, ButtonGroup. Parts: `.env-button`, `.env-icon-button`, `.env-confirm-button`, `.env-copy-button`, `.env-button-group`.
+- [Button](docs/components/button.md): Starts an action, or goes to a destination as a link, alone, icon-only, confirmed in place, copying a value or connected in a group. Also: IconButton, ConfirmButton, CopyButton, ButtonGroup. Parts: `.env-button`, `.env-icon-button`, `.env-confirm-button`, `.env-copy-button`, `.env-button-group`.
 - [Toolbar](docs/components/toolbar.md): A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys. Parts: `.env-toolbar`.
 - [Link](docs/components/link.md): A destination inside running text, underlined by default, routed by the application. Parts: `.env-link`.
 

@@ -7,6 +7,7 @@ import { FigureSection } from './Figures';
 import { LiveExample } from './LiveExample';
 import { Specimen } from './Specimen';
 import { siteSection } from './Provides';
+import { docsOnlySections } from '../../../../scripts/SiteContent.mjs';
 import { pageOf, Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 
@@ -49,13 +50,12 @@ export function MetadataBadges({
 /**
  * An export as a Markdown link to the page of the Site that shows it; pages of docs/ are one folder
  * deep, so ../<path> reaches any of them from any page. An export documented only in the Docs, such
- * as Field, is code: the Site links into the Docs only through the API button and the Docs link.
+ * as Field, is its name alone: the Site links into the Docs only through the API button and the
+ * Docs link, and shows no code outside its figures.
  */
 function exportLink(name: string) {
   const page = pageOf(name);
-  return page && !page.path.startsWith('docs/')
-    ? `[${name}](../${page.reference.path})`
-    : `\`${name}\``;
+  return page && !page.path.startsWith('docs/') ? `[${name}](../${page.reference.path})` : name;
 }
 
 /**
@@ -175,8 +175,9 @@ function Sections({
   provides: boolean;
   related: boolean;
 }) {
+  // The developer-only part, "## In code", and the changelog are on the page's guide in the Docs.
   const shown = sections
-    .filter((section) => section.id !== 'changelog')
+    .filter((section) => !docsOnlySections.has(section.id))
     .flatMap((section) => (provides ? section : (siteSection(section) ?? [])));
   const render = (section: DocumentationSection) => (
     <Section key={section.id} reference={reference} section={section} />

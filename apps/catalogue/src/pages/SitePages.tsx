@@ -1,7 +1,7 @@
 import { Button, Column } from '@envsemble/envui';
 import { Api } from '@envsemble/envui/icons/Api';
 import { PageHeader } from '../layout/PageHeader';
-import { apiRoute, type SitePage } from '../navigation/DocumentationRoutes';
+import { apiRoute, patternGuideRoute, type SitePage } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
 import { getReferenceIcon } from '../navigation/TopicIcons';
 import { FoundationPreview } from '../previews/FoundationPreview';
@@ -11,10 +11,25 @@ import { Catalogue } from './Catalogue';
 import { Documentation } from './Documentation';
 import { Benchmark } from './Benchmark';
 
+/** The link from a page of the Site to its guide in the Docs, how to use it in code. */
+function ApiLink({ path }: { path: string }) {
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      href={routeHref(path)}
+      startIcon={<Api />}
+      className="docs-api-link"
+    >
+      API
+    </Button>
+  );
+}
+
 /**
  * A component's page on the Site: what it looks like and when to use it, in live figures with the
- * code under each, and a link to its page in the Docs, where its props, part names and changelog
- * are.
+ * code under each, and a link to its page in the Docs, its guide to using it in code with its
+ * props, part names and changelog.
  */
 export function ComponentPage({ page }: { page: SitePage }) {
   const document = page.document!;
@@ -32,15 +47,7 @@ export function ComponentPage({ page }: { page: SitePage }) {
         meta={
           document.metadata && (
             <MetadataBadges metadata={document.metadata}>
-              <Button
-                variant="secondary"
-                size="sm"
-                href={routeHref(apiRoute(document.id))}
-                startIcon={<Api />}
-                className="docs-api-link"
-              >
-                API
-              </Button>
+              <ApiLink path={apiRoute(document.id)} />
             </MetadataBadges>
           )
         }
@@ -50,7 +57,10 @@ export function ComponentPage({ page }: { page: SitePage }) {
   );
 }
 
-/** A pattern's page: every section of the template, in the page's order. */
+/**
+ * A pattern's page: every section of the template, in the page's order, and a link to its guide in
+ * the Docs.
+ */
 export function PatternPage({ page }: { page: SitePage }) {
   const document = page.document!;
   return (
@@ -59,7 +69,13 @@ export function PatternPage({ page }: { page: SitePage }) {
         title={page.title}
         breadcrumb={page.group ? `Patterns / ${page.group}` : 'Patterns'}
         description={page.summary}
-        meta={document.metadata && <MetadataBadges metadata={document.metadata} />}
+        meta={
+          document.metadata && (
+            <MetadataBadges metadata={document.metadata}>
+              <ApiLink path={patternGuideRoute(document.id)} />
+            </MetadataBadges>
+          )
+        }
       />
       <TemplateContent document={document} />
     </>

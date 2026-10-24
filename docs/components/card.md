@@ -15,9 +15,9 @@ aliases:
   - ClickableCard
   - ActionCard
 useWhen:
-  - Content about one subject stands apart from the page, such as a project's summary.
-  - A summary needs its own actions along the bottom, such as Share and Open (`actions`).
-  - The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `onClick`).
+  - Content about one subject, such as a project's summary
+  - A summary with its own actions, such as Share and Open
+  - A whole surface that leads to one place or starts one action
 avoidWhen:
   - text: A fill, padding and corners without card semantics or spacing, such as a toolbar's background.
     use: Surface
@@ -47,7 +47,7 @@ components:
 
 ### Loading
 
-`skeleton` shows the card as its own skeleton until its content arrives: text becomes bars and controls filled shapes. Render it over placeholder items, as [Loading](../patterns/loading.md) shows; a title or description given as undefined is a bar of its usual length.
+While its content loads, a card shows as its own skeleton: text becomes bars and controls become filled shapes, as [Loading](../patterns/loading.md) shows.
 
 ```tsx example=CardLoading
 
@@ -57,7 +57,7 @@ components:
 
 ### Content card
 
-The default: `title`, `meta`, `description`, and `actions` in a strip along the bottom.
+The default: a title, a short fact beside it, a description, its content, and actions in a strip along the bottom.
 
 ```tsx example=ActionStrip
 
@@ -65,7 +65,7 @@ The default: `title`, `meta`, `description`, and `actions` in a strip along the 
 
 ### Link card
 
-With `href`, the whole card is one link.
+The whole card is one link.
 
 ```tsx example=Destinations
 
@@ -73,7 +73,7 @@ With `href`, the whole card is one link.
 
 ### Button card
 
-With `onClick`, the whole card is one button. It holds only phrasing content, such as spans.
+The whole card is one button. It holds only short text, with no headings, lists or controls.
 
 ```tsx example=StartOptions
 
@@ -83,9 +83,9 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 
 | Background | Use for                                         |
 | ---------- | ----------------------------------------------- |
-| `muted`    | A card on the page or in a pane. The default.   |
-| `default`  | A quieter fill, such as a settings section.     |
-| `page`     | The page's own color, set apart by its corners. |
+| Muted      | A card on the page or in a pane. The default.   |
+| Default    | A quieter fill, such as a settings section.     |
+| Page       | The page's own color, set apart by its corners. |
 
 ```tsx variants=Backgrounds
 
@@ -105,12 +105,11 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 
 ```
 
-- No links or controls inside a link or button card.
+A link or button card holds no links or controls of its own.
 
 ### Content
 
-- Put the fact that matters most for choosing in `meta`.
-- Start a link card with its destination's name.
+Put the fact that matters most for choosing beside the title, and start a link card with its destination's name.
 
 ## Anatomy
 
@@ -128,7 +127,7 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 
 ### Colors
 
-`--env-card-container`, `--env-card-content` and `--env-card-outline` set the colors of one Card, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+One card can take colors of its own: its surface, its text and an edge. Its hover, focus and press then follow them; with none set, it keeps its own colors.
 
 ## Adapting to width
 
@@ -156,6 +155,67 @@ A card fills its container.
 - `render={<article />}` for a card that stands on its own.
 - No `aria-label` that leaves out the card's visible text.
 - Routing behind `href`, through `LinkProvider`.
+
+## In code
+
+### Usage
+
+A content card takes its `title`, a `meta` fact at the end of the title row, a `description` under it, its content as `children`, and `actions` in a strip along the bottom. Set `render={<article />}` on a card that stands on its own.
+
+```tsx source=ActionStrip
+
+```
+
+#### Link and button cards
+
+With `href`, the whole card is one native link, through the application's router link from `LinkProvider`; with `onClick`, it is one native button. Either holds only phrasing content, such as spans, and no links or controls of its own, and its text names it. `disabled` turns either off.
+
+```tsx
+<Card href="/projects/northwind">
+  <Text render={<span />} variant="title">
+    Northwind launch
+  </Text>
+  <Text render={<span />} emphasis="muted">
+    12 open tasks
+  </Text>
+</Card>
+```
+
+#### Backgrounds
+
+`background` is `muted`, the default, `default` or `page`.
+
+```tsx
+<Card background="default" title="Notifications">
+  <Text emphasis="muted">Email for mentions and a weekly summary.</Text>
+</Card>
+```
+
+#### Loading
+
+`skeleton` shows the card as its own skeleton until its content arrives. Render the same cards over placeholder items, from `placeholders`; a `title` or `description` given as undefined is a bar of its usual length.
+
+```tsx source=CardLoading
+
+```
+
+### Composition
+
+The title is an `h3`; set `headingLevel` to fit the page's outline, and its type stays the title type. Lay out the content with Text, Row and Column, one card per subject, never a card inside a card, and put cards side by side in a Grid. A card fills its container's width.
+
+The parts are the surface, `env-card`, its header, `env-card-header`, with the title, `env-card-heading`, and the meta, `env-card-meta`; the description, `env-card-description`; the body, `env-card-body`; and the actions, `env-card-footer`.
+
+### Customize
+
+`--env-card-container`, `--env-card-content` and `--env-card-outline` set the colors of one Card, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. `padding` sets the inset as a step of the spacing scale, such as `6` for 2 rem, and `0` removes it.
+
+```tsx
+<Card
+  title="Northwind launch"
+  padding={6}
+  style={{ '--env-card-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}
+/>
+```
 
 ## Changelog
 
