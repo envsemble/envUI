@@ -55,12 +55,3 @@
   text-align: center;
   text-wrap: balance;
 }
-/* The home page's whole screen: a live example as wide as the column, read from the start like
-   any example, under its centred heading. */
-.docs-overview-screen {
-  text-align: start;
-}
-.docs-overview-screen-text {
-  max-inline-size: 60ch;
-  text-wrap: balance;
-}
