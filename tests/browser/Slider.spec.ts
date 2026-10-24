@@ -60,9 +60,9 @@ test('the keyboard moves the value by steps, large steps and to the ends', async
   await page.keyboard.press('Home');
   await expect(state).toHaveText('0');
   await expect(page.getByTestId('commits-light')).toContainText('0');
-  // Keyboard focus rings the whole field and shows the handle.
+  // Keyboard focus rings the whole field and shows the handle, faint at 0, under the label.
   await expect(scope.locator('.env-slider-control').first()).toHaveCSS('outline-style', 'solid');
-  await expect(scope.locator('.env-slider-thumb').first()).toHaveCSS('opacity', '1');
+  await expect(scope.locator('.env-slider-thumb').first()).toHaveCSS('opacity', '0.25');
 
   // Steps follow step and the range; the large step is a tenth of the range.
   const scale = scope.getByRole('slider', { name: 'Scale' });
@@ -236,13 +236,34 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   expect(await ticks()).toBe('0');
   await control.hover();
   await expect(thumb).toHaveCSS('opacity', '1');
-  // The text under the handle recedes behind it; the rest keeps its full color.
-  const heading = slider.locator('.env-slider-heading');
-  await expect(heading).toHaveCSS('mask-image', /linear-gradient/);
-  await page.mouse.move(0, 0);
-  await expect(heading).toHaveCSS('mask-image', 'none');
-  await control.hover();
   await expect.poll(ticks).not.toBe('0');
+  // The text never dims: where the handle and the fill's end pass under the label or the value,
+  // they fade instead, and the text above them keeps its full color.
+  const heading = slider.locator('.env-slider-heading');
+  const veil = () =>
+    control.evaluate((e) => getComputedStyle(e).getPropertyValue('--env-slider-veil').trim());
+  const fillEnd = () => fill.evaluate((e) => getComputedStyle(e, '::after').opacity);
+  expect(await veil()).toBe('0');
+  expect(await fillEnd()).toBe('0');
+  const input = slider.getByRole('slider');
+  await input.focus();
+  await page.keyboard.press('Home');
+  await expect.poll(veil).toBe('1');
+  await expect(thumb).toHaveCSS('opacity', '0.25');
+  await expect.poll(fillEnd).toBe('1');
+  await page.keyboard.press('End');
+  await expect.poll(veil).toBe('1');
+  await page.keyboard.press('PageDown');
+  await page.keyboard.press('PageDown');
+  await page.keyboard.press('PageDown');
+  await page.keyboard.press('PageDown');
+  await page.keyboard.press('PageDown');
+  await expect.poll(veil).toBe('0');
+  await expect(thumb).toHaveCSS('opacity', '1');
+  for (const part of [heading, slider.locator('.env-slider-label'), value]) {
+    await expect(part).toHaveCSS('opacity', '1');
+    await expect(part).toHaveCSS('mask-image', 'none');
+  }
   // Ten parts of 0 to 100 by large steps of 10; a range of few steps is cut at every step.
   await expect(slider).toHaveCSS('--env-slider-ticks', '10');
 });

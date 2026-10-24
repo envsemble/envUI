@@ -5,6 +5,7 @@ import { Slider as BaseSlider } from '@base-ui/react/slider';
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -117,6 +118,7 @@ export function Slider({
   const id = useId();
   const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
+  const control = useRef<HTMLDivElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? min);
   const current = value ?? uncontrolledValue;
   useEffect(
@@ -132,6 +134,24 @@ export function Slider({
     },
     [value, defaultValue, min, form],
   );
+  // Where the fill's end and the handle pass under the label or the value, they fade, so the text
+  // stays legible at full strength: measured again as the value moves and as the slider or its text
+  // changes size.
+  useLayoutEffect(
+    function veilAtCurrentValue() {
+      if (control.current) veilIndicatorUnderText(control.current);
+    },
+    [current, label, formatValue],
+  );
+  useEffect(function veilOnResize() {
+    const element = control.current;
+    if (!element || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => veilIndicatorUnderText(element));
+    observer.observe(element);
+    for (const text of element.querySelectorAll('.env-slider-label, .env-slider-value'))
+      observer.observe(text);
+    return () => observer.disconnect();
+  }, []);
   // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
   const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
@@ -154,9 +174,6 @@ export function Slider({
         style={
           {
             '--env-slider-ticks': ticks,
-            // Where the value sits along the track, 0 to 1, which mutes the text under the handle.
-            '--env-slider-position':
-              max > min ? Math.min(1, Math.max(0, (current - min) / (max - min))) : 0,
             ...style,
           } as CSSProperties
         }
@@ -177,10 +194,11 @@ export function Slider({
         form={form}
       >
         <FieldFrame id={id} description={description}>
-          <BaseSlider.Control className="env-slider-control">
+          <BaseSlider.Control ref={control} className="env-slider-control">
             <BaseSlider.Track className="env-slider-track">
               <BaseSlider.Indicator className="env-slider-indicator" />
-              {/* The handle: a thin line at the value, which shows under the pointer and on focus. */}
+              {/* The handle: a thin line at the value, which shows under the pointer and on focus,
+                  beneath the label and the value. */}
               <BaseSlider.Thumb
                 className="env-slider-thumb"
                 inputRef={(node: HTMLInputElement | null) => {
@@ -193,8 +211,8 @@ export function Slider({
                 }
               />
             </BaseSlider.Track>
-            {/* The label and the value sit over the track, inside the slider, in the type of a
-                field's text, at full contrast, as the fill beneath them lightens. */}
+            {/* The label and the value sit over the track, the fill and the handle, inside the
+                slider, in the type of a field's text, always at full strength. */}
             <Row align="center" justify="between" gap={3} className="env-slider-heading">
               <BaseSlider.Label className="env-slider-label" render={<Text render={<div />} />}>
                 {label}
@@ -209,6 +227,27 @@ export function Slider({
       </BaseSlider.Root>
     </DirectionProvider>
   );
+}
+
+/**
+ * Fades the end of the fill and the handle while they sit under the label or the value, within half
+ * a line of either, by setting --env-slider-veil on the control to 1, and to 0 elsewhere.
+ */
+function veilIndicatorUnderText(control: HTMLElement) {
+  const thumb = control.querySelector('.env-slider-thumb');
+  if (!thumb) return;
+  const handle = thumb.getBoundingClientRect();
+  const at = handle.left + handle.width / 2;
+  let veiled = false;
+  for (const text of control.querySelectorAll<HTMLElement>(
+    '.env-slider-label, .env-slider-value',
+  )) {
+    const box = text.getBoundingClientRect();
+    if (box.width === 0) continue;
+    const margin = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
+    if (at >= box.left - margin && at <= box.right + margin) veiled = true;
+  }
+  control.style.setProperty('--env-slider-veil', veiled ? '1' : '0');
 }
 
 /**

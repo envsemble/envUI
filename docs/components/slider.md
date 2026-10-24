@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-A slider chooses a value in a range. It is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys, and a thin handle and faint ticks at its steps appear under the pointer and while it has focus.
+A slider chooses a value in a range. It is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys, and a thin handle and faint ticks at its steps appear under the pointer and while it has focus. The label and the value always keep their full strength: where the handle and the end of the fill pass under them, those fade instead.
 
 ```tsx example=LayerOpacity
 
@@ -102,7 +102,7 @@ Name the value in a short noun, and format it with its unit in `formatValue`; th
 2. **Field** (`env-slider-control`): the track, a quiet tint, which takes the pointer
 3. **Label** (`env-slider-label`, `label`)
 4. **Fill** (`env-slider-indicator`): from the start to the value
-5. **Handle** (`env-slider-thumb`): a thin line at the value, under the pointer and on focus
+5. **Handle** (`env-slider-thumb`): a thin line at the value, under the pointer and on focus, beneath the label and the value, faint where it passes under them
 6. **Value** (`env-slider-value`, `formatValue`), with numbers of one width
 7. **Description** (`env-field-description`, `description`)
 
@@ -145,7 +145,7 @@ A slider fills its container. Where it is narrow, a long label is cut short with
 
 ## Changelog
 
-- **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
+- **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
 - **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, and `hint` is `description`, which the `v1-props` codemod writes. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes.
 - **1.0.0**: Sliders in the dark theme reach 3:1 contrast on every surface.
 - **0.5.0**: Slider, with `formatValue`, `min`, `max`, `step`, `largeStep`, `hint`, `disabled`, `name`, `form` and `onValueCommit`; the thumb grows on touch screens.
