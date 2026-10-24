@@ -34,7 +34,7 @@ components:
 
 ## Overview
 
-A sheet is a panel at an edge of the window, over the page or beside it, after Material's side and bottom sheets: an item's details, filters, an inspector or a short set of choices. It shares Dialog's surface, title, description and actions, and DialogClose closes it.
+A sheet is a panel at an edge of the window, over the page or beside it, after Material's side and bottom sheets: an item's details, filters, an inspector or a short set of choices. It shares Dialog's surface, title, description and actions, and DialogClose closes it. On a touch screen a swipe toward its edge closes it too; a mouse or a pen never moves the sheet, and a drag inside it selects text.
 
 ```tsx example=FilterPanel open
 
@@ -117,7 +117,7 @@ Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`, and the handle 
 - Focus moved in on open, kept inside a modal sheet and returned on close.
 - In a modal sheet, the rest of the page hidden, closed to presses and locked from scrolling.
 - A close button for touch screen reader users, who have no <kbd>Esc</kbd>, disabled while `pending`.
-- Its side, slide and swipe in the text direction.
+- Its side, slide and touch swipe in the text direction.
 - With `resizable`, a focusable separator on its inner edge, named Resize, with its width as its value.
 
 ### You provide
@@ -127,5 +127,5 @@ Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`, and the handle 
 
 ## Changelog
 
-- **1.0.0-prerelease.2**: With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, from `defaultWidth`; `width` takes a number of rem, which `onWidthChange` keeps. The handle is `env-sheet-resize-handle`.
+- **1.0.0-prerelease.2**: With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, from `defaultWidth`; `width` takes a number of rem, which `onWidthChange` keeps. The handle is `env-sheet-resize-handle`, the same grip as Panes.Divider's. Only a finger swipes a sheet closed; a mouse or a pen no longer moves it.
 - **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.
