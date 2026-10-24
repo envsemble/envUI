@@ -2341,6 +2341,7 @@
             {
               "attribute": "data-variant",
               "values": [
+                "secondary",
                 "text"
               ],
               "parts": [
@@ -2889,7 +2890,7 @@
         {
           "name": "Swatches",
           "title": "Swatches",
-          "description": "ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`.",
+          "description": "ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`. As the icon of an IconButton in its default variant, the button draws no round fill behind the square sample: it is a rounded square whose fill shows on hover, keyboard focus and press, and while its popup is open.",
           "file": "docs/examples/color-picker/Swatches.tsx"
         },
         {

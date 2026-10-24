@@ -74,7 +74,7 @@ ColorPickerButton shows the color as a swatch and its value, and opens a picker 
 
 ### Color swatches
 
-ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`.
+ColorSwatch shows a color as a small sample, with its value in a `format` and an optional `label`. As the icon of an IconButton in its default variant, the button draws no round fill behind the square sample: it is a rounded square whose fill shows on hover, keyboard focus and press, and while its popup is open.
 
 ```tsx example=Swatches
 
