@@ -11340,7 +11340,7 @@
       "category": "Content & guidance",
       "status": "stable",
       "since": "0.2.0",
-      "summary": "A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group.",
+      "summary": "A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or piled in a group.",
       "aliases": [
         "profile picture",
         "profile photo",
@@ -11384,7 +11384,7 @@
         {
           "name": "PersonWithName",
           "title": "Person with name",
-          "description": "Beside a visible name an avatar is decorative; with `named` it is an image named after them.",
+          "description": "Beside a visible name an avatar is decorative; on its own it can be a picture named after the person.",
           "file": "docs/examples/avatar/PersonWithName.tsx"
         },
         {
@@ -11402,13 +11402,13 @@
         {
           "name": "ChooseReviewers",
           "title": "Choose reviewers",
-          "description": "`selected` shows an avatar as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. A person in an AvatarGroup takes `selected` too.",
+          "description": "An avatar can show as chosen, such as in a list of people to pick from: a ring around it and a check at its bottom end, in the accent of a checked box, so the choice never rests on color alone. It is a look only: the control around it, such as a checkbox, says it is chosen. People in a group can show as chosen too.",
           "file": "docs/examples/avatar/ChooseReviewers.tsx"
         },
         {
           "name": "PressableAvatars",
           "title": "Pressable avatars",
-          "description": "With `onPersonClick` each avatar in a group is a button; a person with `href` is a link. The count lists the people it hides.",
+          "description": "Each avatar in a group can open something, such as the person's profile. While the group is piled, the whole pile is one target: the first hover, tap or keyboard focus spreads it, and only then is each avatar a target of its own, so a press never lands on someone hidden under another. On touch screens each spread avatar is as large as a finger needs. The count lists the people it hides.",
           "file": "docs/examples/avatar/PressableAvatars.tsx"
         },
         {
@@ -11420,7 +11420,7 @@
         {
           "name": "Fallbacks",
           "title": "Pictures and fallbacks",
-          "description": "Without a picture, or while it loads or after it fails, an avatar shows the default person picture; `fallback=\"initials\"` shows initials, for an organization.",
+          "description": "Without a picture, or while it loads or after it fails, an avatar shows the default person picture, or initials for an organization.",
           "file": "docs/examples/avatar/Fallbacks.tsx"
         },
         {
@@ -11593,6 +11593,15 @@
                 "md",
                 "sm",
                 "xl"
+              ],
+              "parts": [
+                "env-avatar-group"
+              ]
+            },
+            {
+              "attribute": "data-spread",
+              "values": [
+                ""
               ],
               "parts": [
                 "env-avatar-group"
@@ -17363,7 +17372,7 @@
     "AvatarGroup": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip.",
+      "description": "A pile of avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip. Hover, a tap or keyboard focus spreads it.",
       "props": [
         {
           "name": "people",
@@ -17389,7 +17398,7 @@
           "type": "'start' | 'end'",
           "required": false,
           "default": "'start'",
-          "description": "Where a pointer can hover, the group keeps the room its spread takes, so spreading never moves what is around it, and the avatars gather at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
+          "description": "The group keeps the room its spread takes, so spreading never moves what is around it, and the pile gathers at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
         },
         {
           "name": "total",
@@ -17401,7 +17410,7 @@
           "name": "onPersonClick",
           "type": "(person: AvatarGroupPerson, event: MouseEvent<HTMLElement>) => void",
           "required": false,
-          "description": "Makes every avatar a button with a name tooltip; receives the person pressed."
+          "description": "Makes every avatar a button with a name tooltip; receives the person pressed. The avatars are targets only while the group is spread: at rest the pile is one target, which hover, a tap or keyboard focus spreads."
         },
         {
           "name": "formatMore",

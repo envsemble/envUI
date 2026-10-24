@@ -331,7 +331,7 @@
     "AvatarGroup": {
       "kind": "component",
       "source": "packages/ui/src/content/AvatarGroup.tsx",
-      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip.",
+      "description": "A pile of avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip. Hover, a tap or keyboard focus spreads it.",
       "props": [
         {
           "name": "people",
@@ -357,7 +357,7 @@
           "type": "'start' | 'end'",
           "required": false,
           "default": "'start'",
-          "description": "Where a pointer can hover, the group keeps the room its spread takes, so spreading never moves what is around it, and the avatars gather at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
+          "description": "The group keeps the room its spread takes, so spreading never moves what is around it, and the pile gathers at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
         },
         {
           "name": "total",
@@ -369,7 +369,7 @@
           "name": "onPersonClick",
           "type": "(person: AvatarGroupPerson, event: MouseEvent<HTMLElement>) => void",
           "required": false,
-          "description": "Makes every avatar a button with a name tooltip; receives the person pressed."
+          "description": "Makes every avatar a button with a name tooltip; receives the person pressed. The avatars are targets only while the group is spread: at rest the pile is one target, which hover, a tap or keyboard focus spreads."
         },
         {
           "name": "formatMore",
