@@ -43,7 +43,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Scaffold](components/scaffold.md)
 - [Panes](components/panes.md)
 - [Page](components/page.md)
-- [PageHeader](components/page-header.md)
 - [Surface](components/surface.md)
 - [List](components/list.md)
 - [Card](components/card.md)
@@ -74,8 +73,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Navigation
 
-- [Bar](components/bar.md)
-- [Rail](components/rail.md)
 - [Drawer](components/drawer.md)
 - [Tabs](components/tabs.md)
 - [Pager](components/pager.md)
@@ -134,9 +131,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [App frame](patterns/app-frame.md)
 - [Account menu](patterns/account-menu.md)
 - [Organization switcher](patterns/organization-switcher.md)
-- [Search trigger](patterns/search-trigger.md)
 - [Window frame](patterns/window-frame.md)
-- [Feature cards](patterns/feature-cards.md)
 - [Filtering and search](patterns/filtering.md)
 - [Data tables](patterns/data-tables.md)
 - [Progressive disclosure](patterns/progressive-disclosure.md)

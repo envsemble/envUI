@@ -68,13 +68,13 @@ The buttons come in the three control heights of the [scale](../foundations/scal
 
 Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a [Row](row.md), where every control keeps its tab stop and fields keep their arrow keys.
 
-| Bar                                         | Build it with                                          |
-| ------------------------------------------- | ------------------------------------------------------ |
-| Icon commands, such as formatting or tools  | A Toolbar of its buttons                               |
-| A page's search, filters and primary action | A Row in the toolbar of a [PageHeader](page-header.md) |
-| A section's heading with its actions        | A Row that wraps, with the actions at the end          |
-| A table's search and actions                | A Row above the table, in the size of its rows         |
-| Actions in a window's title bar             | A TopBar as a title bar, with small ghost buttons      |
+| Bar                                         | Build it with                                     |
+| ------------------------------------------- | ------------------------------------------------- |
+| Icon commands, such as formatting or tools  | A Toolbar of its buttons                          |
+| A page's search, filters and primary action | A Row in the toolbar of a [PageHeader](page.md)   |
+| A section's heading with its actions        | A Row that wraps, with the actions at the end     |
+| A table's search and actions                | A Row above the table, in the size of its rows    |
+| Actions in a window's title bar             | A TopBar as a title bar, with small ghost buttons |
 
 ```tsx example=PageToolbar caption="A page's toolbar: a Row in PageHeader's toolbar, not a Toolbar."
 

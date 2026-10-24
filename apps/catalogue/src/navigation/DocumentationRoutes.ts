@@ -392,7 +392,26 @@ const componentPatterns: Record<string, string> = {
   stat: 'key-figures',
   stats: 'key-figures',
   'empty-state': 'empty-states',
-  'search-trigger': 'search-trigger',
+};
+
+/**
+ * Pages folded into another page, by their path on the Site: the page that holds them now, and the
+ * section of it that does, if one. Their pages in the Docs open the other's.
+ */
+const foldedPages: Record<string, { page: string; section?: string }> = {
+  'components/bar': { page: 'components/drawer' },
+  'components/rail': { page: 'components/drawer' },
+  'components/page-header': { page: 'components/page' },
+  'patterns/feature-cards': { page: 'components/card', section: 'feature-card' },
+  'patterns/search-trigger': {
+    page: 'components/command-palette',
+    section: 'opening-it-the-button-and-the-shortcut',
+  },
+  // SearchTrigger was a component before it was a pattern.
+  'components/search-trigger': {
+    page: 'components/command-palette',
+    section: 'opening-it-the-button-and-the-shortcut',
+  },
 };
 
 /** Whether an element id is a place on a component's page in the Docs: an export's or a prop's. */
@@ -447,6 +466,17 @@ export function normalizeRoute(route: string): string {
   // Docs' home lists the guides under Patterns.
   if (originalPath === 'docs/patterns') return `${docsRoute}${rest()}`;
   if (originalPath === 'foundations/tokens') return `docs/tokens${rest()}`;
+  // Pages folded into another open it: on the Site at the section that holds them, unless the
+  // address names one, and in the Docs the other's page there.
+  const [, foldedArea, foldedId, foldedView] =
+    /^(?:docs\/)?(components|patterns)\/([^/]+)(?:\/(.+))?$/.exec(originalPath) ?? [];
+  const folded = foldedArea && foldedPages[`${foldedArea}/${foldedId}`];
+  if (folded) {
+    if (originalPath.startsWith('docs/') || foldedView === 'props' || apiSection(section))
+      return `docs/${folded.page}${rest()}`;
+    if (!section && folded.section) search.set('section', folded.section);
+    return `${folded.page}${rest()}`;
+  }
   // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
   if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest()}`;
   if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest()}`;

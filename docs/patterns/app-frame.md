@@ -49,7 +49,7 @@ composes:
 
 ## Overview
 
-The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, [search](search-trigger.md) and the [account menu](account-menu.md), the navigation, and the page in the body.
+The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, [search](../components/command-palette.md#opening-it-the-button-and-the-shortcut) and the [account menu](account-menu.md), the navigation, and the page in the body.
 
 ```tsx example=AppFrame stage=shaded
 
@@ -108,7 +108,7 @@ Name each destination with one or two nouns, the words of its page's title. Keep
 5. **Page header** (`env-page-header`)
 6. **Page** (`env-page`)
 
-Not shown: the [CommandPalette](../components/command-palette.md) the search opens, as the [search trigger](search-trigger.md) describes.
+Not shown: the [CommandPalette](../components/command-palette.md) the search opens.
 
 ## Adapting to width
 
@@ -160,7 +160,7 @@ The Scaffold shows the bar on a `compact` window, the rail on a `medium` one and
 
 ### Composition
 
-The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a CommandPalette, as the [search trigger](search-trigger.md) shows, and the account menu is the [account menu](account-menu.md) pattern.
+The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut), and the account menu is the [account menu](account-menu.md) pattern.
 
 ## Changelog
 

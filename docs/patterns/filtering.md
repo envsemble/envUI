@@ -51,7 +51,7 @@ composes:
 
 ## Overview
 
-A search and a few filters sit in the [PageHeader](../components/page-header.md)'s toolbar, above the results.
+A search and a few filters sit in the [PageHeader](../components/page.md)'s toolbar, above the results.
 
 ```tsx example=SearchAndFilters
 

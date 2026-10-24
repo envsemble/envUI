@@ -1,6 +1,6 @@
 ---
 title: Scaffold
-summary: The invisible structure of an application's screen, with a top bar region, the navigation and the body, which shows the navigation form that fits its own width and keeps the bars in view as the page scrolls.
+summary: The invisible frame of an application's screen, around its top bar, its navigation and the page.
 status: beta
 since: 1.0.0
 category: Layout & surfaces
@@ -39,40 +39,25 @@ components:
 
 ## Overview
 
-The components in Scaffold's regions paint, never Scaffold itself. Give it the [Bar](bar.md), the [Rail](rail.md) and the [Drawer](drawer.md) with the same destinations, and it shows the one that fits its width.
+Scaffold paints nothing itself: what goes in its top bar, its navigation and its body does. The bars stay in view as the page scrolls.
 
 ```tsx example=NavigationForms stage=shaded
 
 ```
 
-### At the application's root
-
-One Scaffold sits at the application's root and stays as the pages change, with the current page, usually a [Page](page.md) or [Panes](panes.md), as its body. The [app frame](../patterns/app-frame.md) pattern puts it together.
-
 ## Variants
 
-### Navigation by window class
+### The navigation for each width
 
-Each window class shows the form that fits it. Where it asks for a form the application didn't give, the nearest given one shows.
+Scaffold shows the [navigation](drawer.md) that fits its own width: the bar on a phone, the rail on a tablet and the drawer on wider windows. The application can choose another form for a width, or none, such as on a phone where the top bar opens the navigation; where it asks for a form it didn't give, the nearest one shows.
 
-| Window class | Width of the Scaffold | Form   |
-| ------------ | --------------------- | ------ |
-| Compact      | Below 37.5 rem        | Bar    |
-| Medium       | 37.5 to 52.5 rem      | Rail   |
-| Expanded     | 52.5 to 75 rem        | Drawer |
-| Large        | From 75 rem           | Drawer |
-
-### Another form, or none
-
-The application can choose another form for a window class, or no navigation at all, such as on a phone where the top bar opens it.
-
-```tsx example=ChooseForms stage=shaded caption="A drawer only, and none on a compact width."
+```tsx example=ChooseForms stage=shaded caption="A drawer only, and none on a phone."
 
 ```
 
 ### A button that narrows the navigation
 
-A button can narrow the navigation to a strip of icons by asking for the [Rail](rail.md) in place of the [Drawer](drawer.md), and the application keeps the choice. Don't build a narrow drawer of your own: the Scaffold already has both forms.
+A button can narrow the navigation to a strip of icons by asking for the rail in place of the drawer, and the application keeps the choice. Don't build a narrow drawer of your own: the Scaffold already has both forms.
 
 ```tsx example=NarrowNavigation stage=shaded
 
@@ -88,29 +73,17 @@ The top bar can run across the whole width, above the rail or the drawer, as a w
 
 ### Backgrounds
 
-The navigation and the top bar each fill a plain rectangle with the navigation's background, flush with the window's edges and the body, with no line between them. Either can sit on the page's background instead, such as a top bar beside a drawer; on a surface, such as a Sheet, both take the surface's color.
+The navigation and the top bar share one fill, flush with the window's edges and the body, with no line between them. Either can sit on the page's background instead, such as a top bar beside a drawer.
 
 ```tsx example=TopBarOnThePage stage=shaded
 
 ```
 
-### Scrolling
-
-By default the page scrolls, as on any website: the top bar and the navigation stay in view, and phones keep their address bar, pull to refresh and scroll restoration. The body alone can scroll under the top bar instead, for a preview, an embedded frame or panes that scroll on their own.
-
 ## When to use
 
-```tsx do=ActionsInPageHeader stage=shaded caption="The page's title and actions in its PageHeader."
+### One for the whole application
 
-```
-
-```tsx dont=ActionsInTopBar stage=shaded caption="The page's title and action in the top bar: the page has no heading."
-
-```
-
-### Let it choose
-
-Give the Scaffold its navigation forms and let it choose by its own width, rather than picking a form from the window's width in the application.
+One Scaffold sits at the application's root and stays as the pages change, with the current page, usually a [Page](page.md) or [Panes](panes.md), as its body.
 
 ## Anatomy
 
@@ -127,7 +100,7 @@ Not shown: the skip links, and the places of the bar and the drawer.
 
 ## Adapting to width
 
-The Scaffold follows its own width, not the window's. Focus in a form that hides moves to the form that shows.
+The Scaffold follows its own width, not the window's. Focus in a navigation that hides moves to the one that shows.
 
 ```tsx example=FormsByWidth stage=shaded widths="24 44 60"
 
@@ -167,7 +140,7 @@ Render one Scaffold at the application's root, around the router's outlet, and k
 
 #### Which form shows
 
-`forms` sets which form shows at each window class, `compact`, `medium`, `expanded` and `large`, or `none`; the default is `{ compact: 'bar', medium: 'rail', expanded: 'drawer', large: 'drawer' }`. `{ compact: 'none' }` suits an application that opens its navigation from the top bar on a phone. Where the form a window class asks for wasn't given, the nearest given form shows: a rail for a drawer and the other way round, then the bar.
+`forms` sets which form shows at each window class, `compact`, `medium`, `expanded` and `large`, or `none`; the default is `{ compact: 'bar', medium: 'rail', expanded: 'drawer', large: 'drawer' }`. The window classes are those of the Scaffold's own width: `compact` below 37.5 rem, `medium` from 37.5 to 52.5 rem, `expanded` from 52.5 to 75 rem and `large` from 75 rem. `{ compact: 'none' }` suits an application that opens its navigation from the top bar on a phone. Where the form a window class asks for wasn't given, the nearest given form shows: a rail for a drawer and the other way round, then the bar.
 
 ```tsx source=ChooseForms
 

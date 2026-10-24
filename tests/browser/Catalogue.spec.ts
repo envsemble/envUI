@@ -63,6 +63,18 @@ test('the addresses of the views before the Site and the Docs split open the pag
     // The Site's changelog is the Docs' now, with its release notes.
     changelog: 'docs/changelog',
     'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
+    // Pages folded into another open it, at the section that holds them, and in the Docs its page.
+    'components/bar': 'components/drawer',
+    'components/rail/props': 'docs/components/drawer',
+    'components/page-header?section=sticky': 'components/page?section=sticky',
+    'docs/components/page-header': 'docs/components/page',
+    'patterns/feature-cards': 'components/card?section=feature-card',
+    'docs/patterns/feature-cards': 'docs/components/card',
+    'patterns/search-trigger':
+      'components/command-palette?section=opening-it-the-button-and-the-shortcut',
+    'components/search-trigger':
+      'components/command-palette?section=opening-it-the-button-and-the-shortcut',
+    'docs/patterns/search-trigger': 'docs/components/command-palette',
   };
   for (const [from, to] of Object.entries(routes)) expect(normalizeRoute(from), from).toBe(to);
   // Every page of both areas is its own route.
