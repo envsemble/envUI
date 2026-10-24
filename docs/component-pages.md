@@ -54,7 +54,7 @@ A component page is a reference page in the traditional style: ordinary headings
 | Accessibility     | yes      | A `### Keyboard` table (Key, Action) where it handles keys, and `### envUI provides` and `### You provide` lists.     |
 | Changelog         |          | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                          |
 
-The build adds **Props** and **Related**, from `avoidWhen`, before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. On the website the page's sections are its page on the Site, and its props, part names and changelog are its page in the Docs, which the Site's page links to as API. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
+The build adds **Props** and **Related**, from `avoidWhen`, before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. On the website the page's sections are its page on the Site, and its props, what envUI and the application provide, part names and changelog are its page in the Docs, which the Site's page links to as API. The Site leaves out Accessibility's `### envUI provides` and `### You provide`, and the whole section where nothing else is in it; the page in the Docs shows them as plain lists after the props. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
 
 ### Write little
 
@@ -77,7 +77,7 @@ The docs are mainly visual. Let the figures, the do and don't pairs and the anat
 | Its parts and their class names               | The anatomy legend, names only.                                                                         |
 | Its color properties                          | Listed on the component's page in the Docs, with a link to [Customize colors](customizing-colors.md).   |
 | How it adapts to width                        | A sentence and an example at several widths.                                                            |
-| Keys, roles and what the application must add | Accessibility.                                                                                          |
+| Keys, roles and what the application must add | Accessibility: keys in its Keyboard table, roles and what the application adds in its two lists.        |
 | Props                                         | Generated on the component's page in the Docs; never in prose.                                          |
 | Releases                                      | Changelog.                                                                                              |
 
@@ -85,7 +85,6 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 
 - **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a sentence between figures that should not share a row.
 - **A subsection beside its figure**: a `###` subsection of text, with no table or list at its start, followed by exactly one figure, sits beside that figure on a wide page, such as each kind of card under Variants.
-- **Lists in columns**: two or more `###` subsections in a row that each hold only a list sit side by side, such as `### envUI provides` and `### You provide`.
 - **When to use** starts with the frontmatter's `useWhen`, a short plain list under Use it when, and on a pattern page with what it is built from. Write what follows it, not the same points again.
 - **Related** ends the page, from the frontmatter's `avoidWhen`: a tile for each component or page an entry names, its lead example small and inert on its stage, in the examples' theme, with its name and the entry's text below. The tiles render once the section nears the viewport. A page with an open anatomy figure, such as Dialog or Menu, is shown by that figure instead; a page without an example shows a page icon on the same stage. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three.
 
@@ -199,7 +198,7 @@ The build adds **Props**, generated from the TypeScript declarations, and **Rela
 
 On a page on the section template, the catalogue shows the sections as tabs: Overview (overview, examples, related, changelog), Guidelines (anatomy to do and don't), Accessibility and Props.
 
-Write the keyboard table from the code and its browser tests, not from the pattern in general: list the keys the component handles, and Tab for how focus enters and leaves. "envUI provides" names the roles, names, announcements and focus handling the component does itself; "You provide" names what the application must add, such as a label or an accessible name.
+Write the keyboard table from the code and its browser tests, not from the pattern in general: list the keys the component handles, and Tab for how focus enters and leaves. "envUI provides" names the roles, names, announcements and focus handling the component does itself; "You provide" names what the application must add, such as a label or an accessible name. Both are for people who build with envUI: the component's page in the Docs shows them, and the Site leaves them out.
 
 ## Examples
 

@@ -44,4 +44,4 @@ A pattern page may instead be on the [figure template](component-pages.md#sectio
 | Examples             | yes      | At least two more live compositions, each under a `###` heading with a sentence or two, so a pattern shows at least three example files.    |
 | Changelog            |          | Releases that changed the pattern.                                                                                                          |
 
-Related is generated from `avoidWhen`. A pattern shows each composition in context, so its examples differ from the component pages' ones.
+Related is generated from `avoidWhen`. A pattern shows each composition in context, so its examples differ from the component pages' ones. The Site leaves out the `### envUI provides` and `### You provide` lists, as on component pages; the packaged page and the agents' files keep them.

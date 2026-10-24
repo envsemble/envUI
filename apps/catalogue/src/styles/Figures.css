@@ -48,20 +48,6 @@
   margin-block-start: var(--env-space-8);
 }
 
-/* Lists side by side, such as what envUI provides and what you provide, in cells of one size. */
-.docs-section-columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  gap: var(--env-space-5);
-}
-
-.docs-section-column {
-  min-inline-size: 0;
-  padding: var(--env-space-5) var(--env-space-6);
-  border-radius: var(--env-radius-surface);
-  background: var(--env-color-bg-muted);
-}
-
 /* A figure: its stage, its caption and its code, close together. */
 .docs-live-example-entry {
   gap: var(--env-space-2);
