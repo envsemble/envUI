@@ -96,7 +96,7 @@ test.describe('Sheet', () => {
   });
 
   test(
-    'a drag toward its edge moves the sheet with the pointer, in either direction',
+    'a mouse drag toward its edge never moves or closes the sheet',
     { tag: '@engines' },
     async ({ page }) => {
       await page.goto(sheets);
@@ -109,26 +109,56 @@ test.describe('Sheet', () => {
         await expect(sheet).toBeVisible();
         await slidIn(sheet);
         const rest = (await sheet.boundingBox())!;
-        // Press on the heading's text, away from the controls, and drag 54 px toward the edge.
+        // Press on the heading's text, away from the controls, and drag well past the distance
+        // that would close it by touch, toward the edge.
         const heading = (await sheet.getByRole('heading', { name }).boundingBox())!;
         const start = { x: heading.x + 4, y: heading.y + heading.height / 2 };
         await page.mouse.move(start.x, start.y);
         await page.mouse.down();
-        for (let step = 1; step <= 6; step += 1)
-          await page.mouse.move(start.x + toward * 9 * step, start.y);
-        await expect(sheet).toHaveAttribute('data-swiping');
-        // The sheet follows the pointer once, toward the edge: about 54 px, well under twice that.
-        // WebKit can start the swipe a step or two late and settle as low as about 21 px, so the
-        // band is wide; what matters is the direction and no doubled move.
-        const moved = async () => Math.round(((await sheet.boundingBox())!.x - rest.x) * toward);
-        await expect.poll(moved).toBeGreaterThan(54 * 0.25);
-        expect(await moved()).toBeLessThan(54 * 1.3);
+        for (let step = 1; step <= 12; step += 1)
+          await page.mouse.move(start.x + toward * 20 * step, start.y);
+        await expect(sheet).not.toHaveAttribute('data-swiping');
+        expect((await sheet.boundingBox())!.x).toBeCloseTo(rest.x, 0);
         await page.mouse.up();
+        await expect(sheet).toBeVisible();
+        expect((await sheet.boundingBox())!.x).toBeCloseTo(rest.x, 0);
         await page.keyboard.press('Escape');
         await expect(page.getByRole('dialog')).toHaveCount(0);
       }
     },
   );
+
+  test('a finger swipe toward its edge moves the sheet with it and closes it', async ({
+    browser,
+    browserName,
+  }) => {
+    // Touch points are sent through the Chrome DevTools Protocol, which only Chromium has.
+    test.skip(browserName !== 'chromium', 'Touch input through CDP');
+    const context = await browser.newContext({ hasTouch: true });
+    const page = await context.newPage();
+    await page.goto(sheets);
+    await page.getByRole('button', { name: 'Open filters' }).tap();
+    const sheet = page.getByRole('dialog', { name: 'Filters' });
+    await expect(sheet).toBeVisible();
+    await slidIn(sheet);
+    const rest = (await sheet.boundingBox())!;
+    const heading = (await sheet.getByRole('heading', { name: 'Filters' }).boundingBox())!;
+    const start = { x: Math.round(heading.x + 4), y: Math.round(heading.y + heading.height / 2) };
+    const cdp = await context.newCDPSession(page);
+    const touch = (type: string, x?: number) =>
+      cdp.send('Input.dispatchTouchEvent', {
+        type,
+        touchPoints: x === undefined ? [] : [{ x, y: start.y }],
+      });
+    await touch('touchStart', start.x);
+    for (let step = 1; step <= 6; step += 1) await touch('touchMove', start.x + 9 * step);
+    await expect(sheet).toHaveAttribute('data-swiping');
+    await expect.poll(async () => (await sheet.boundingBox())!.x - rest.x).toBeGreaterThan(10);
+    for (let step = 7; step <= 30; step += 1) await touch('touchMove', start.x + 9 * step);
+    await touch('touchEnd');
+    await expect(sheet).toBeHidden();
+    await context.close();
+  });
 
   test(
     'opened by touch, it focuses the sheet, not a field inside; by keyboard, the field',
@@ -248,11 +278,26 @@ test.describe('Sheet resizable', () => {
     const handleBox = (await handle.boundingBox())!;
     expect(handleBox.x).toBeCloseTo(sheetBox.x + 1, 0);
     expect(handleBox.height).toBeGreaterThanOrEqual(sheetBox.height - 1);
+    // The same handle as between Panes, as wide as their gap: a grip of three dots, never a line,
+    // which sticks to the middle of the sheet as its content scrolls.
+    const grip = await handle.evaluate((element) => {
+      const after = getComputedStyle(element, '::after');
+      return {
+        grip: element.hasAttribute('data-grip'),
+        dots: after.backgroundImage.match(/radial-gradient/g)?.length,
+        position: after.position,
+        length: parseFloat(after.height),
+      };
+    });
+    expect(grip).toMatchObject({ grip: true, dots: 3, position: 'sticky' });
+    expect(grip.length).toBeLessThan(20);
+    expect(handleBox.width).toBeCloseTo(16, 0);
 
-    // At the end edge, it grows as its start edge moves toward the start.
+    // At the end edge, it grows as its start edge moves toward the start. Keyboard focus rings it.
     await handle.focus();
     await page.keyboard.press('ArrowLeft');
     await expect(handle).toHaveAttribute('aria-valuetext', '25 rem');
+    await expect(handle).toHaveCSS('outline-style', 'solid');
     expect(await width()).toBeCloseTo(25 * 16, 0);
     await page.keyboard.press('Home');
     await expect(handle).toHaveAttribute('aria-valuetext', '16 rem');

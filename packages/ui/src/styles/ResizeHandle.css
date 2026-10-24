@@ -1,6 +1,10 @@
-/* ResizeHandle: a window splitter's handle. The owner places it on the edge it moves; a line shows
-   on hover, after a moment, at once on keyboard focus and while dragging. Three hooks, set on the
-   owner's element: --env-resize-handle-size, its thickness, also under a coarse pointer;
+/* ResizeHandle: a window splitter's handle. The owner places it on the edge it moves. By default a
+   line shows on hover, after a moment, at once on keyboard focus and while dragging, as between a
+   table's columns. With data-grip, for a handle between two surfaces or on a surface's edge, as in
+   Panes, a side Sheet and the Drawer, it is never a line: three small dots at its middle are the
+   grip that says it moves, which darken under the pointer and take the focus color with keyboard
+   focus or while dragging, and focus rings the handle. Hooks, set on the owner's element:
+   --env-resize-handle-size, its thickness, also under a coarse pointer;
    --env-resize-handle-line: none, which leaves the line out for an owner that draws its own grip;
    and --env-resize-handle-line-start, where the line sits across an inline handle, from its start,
    for a handle on a region's edge whose line is on that edge rather than in the middle. */
@@ -43,14 +47,52 @@
   inset-block-start: calc(50% - var(--env-control-border-width));
   block-size: calc(2 * var(--env-control-border-width));
 }
-.env-resize-handle:not([aria-disabled='true']):hover::after {
+.env-resize-handle:not([data-grip], [aria-disabled='true']):hover::after {
   background: var(--env-color-border-muted-hover);
   transition-delay: var(--env-motion-duration-medium);
 }
-.env-resize-handle:focus-visible::after,
-.env-resize-handle[data-dragging]::after {
+.env-resize-handle:not([data-grip]):focus-visible::after,
+.env-resize-handle:not([data-grip])[data-dragging]::after {
   background: var(--env-color-border-focus);
   transition-delay: 0s;
+}
+/* data-grip: the grip, three dots in a column at the handle's middle, on its ::after in place of the
+   line. The grip is a box as tall as its dots, centered across the handle's length, so an owner
+   whose handle is taller than the room it shows in, such as a sheet's that scrolls with its
+   content, can keep it in view with position: sticky on it. */
+.env-resize-handle[data-grip] {
+  --env-resize-handle-grip-dot: 0.1875rem;
+  --env-resize-handle-grip-length: calc(5 * var(--env-resize-handle-grip-dot));
+  --env-resize-handle-grip-color: var(--env-color-border-default);
+  border-radius: var(--env-radius-full);
+}
+.env-resize-handle[data-grip]::after {
+  display: block;
+  /* Both edges, so that a sticky grip keeps to the middle of the room it shows in; an absolute
+     one is as tall as its dots and keeps the start. */
+  inset-block: calc(50% - var(--env-resize-handle-grip-length) / 2);
+  inset-inline: 0;
+  inline-size: auto;
+  block-size: var(--env-resize-handle-grip-length);
+  background:
+    radial-gradient(closest-side, var(--env-resize-handle-grip-color) 80%, transparent) 50% 0 /
+      var(--env-resize-handle-grip-dot) var(--env-resize-handle-grip-dot) no-repeat,
+    radial-gradient(closest-side, var(--env-resize-handle-grip-color) 80%, transparent) 50% 50% /
+      var(--env-resize-handle-grip-dot) var(--env-resize-handle-grip-dot) no-repeat,
+    radial-gradient(closest-side, var(--env-resize-handle-grip-color) 80%, transparent) 50% 100% /
+      var(--env-resize-handle-grip-dot) var(--env-resize-handle-grip-dot) no-repeat;
+  transition: none;
+}
+.env-resize-handle[data-grip]:not([aria-disabled='true']):hover {
+  --env-resize-handle-grip-color: var(--env-color-fg-muted);
+}
+.env-resize-handle[data-grip]:focus-visible,
+.env-resize-handle[data-grip][data-dragging] {
+  --env-resize-handle-grip-color: var(--env-color-border-focus);
+}
+.env-resize-handle[data-grip]:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
 }
 /* Under a coarse pointer the handle's hit area reaches the touch size across its line. */
 @media (pointer: coarse) {
@@ -61,10 +103,18 @@
     block-size: var(--env-resize-handle-size, var(--env-control-height-touch));
   }
 }
-/* Forced colors: the line takes the system's colors. */
+/* Forced colors: the line and the grip take the system's colors. */
 @media (forced-colors: active) {
-  .env-resize-handle:focus-visible::after,
-  .env-resize-handle[data-dragging]::after {
+  .env-resize-handle:not([data-grip]):focus-visible::after,
+  .env-resize-handle:not([data-grip])[data-dragging]::after {
     background: Highlight;
+  }
+  .env-resize-handle[data-grip] {
+    --env-resize-handle-grip-color: CanvasText;
+    forced-color-adjust: none;
+  }
+  .env-resize-handle[data-grip]:focus-visible,
+  .env-resize-handle[data-grip][data-dragging] {
+    --env-resize-handle-grip-color: Highlight;
   }
 }

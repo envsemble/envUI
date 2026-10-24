@@ -41,20 +41,21 @@ test.describe('Panes, supporting', () => {
     const paint = () =>
       divider.evaluate((element) => {
         const style = getComputedStyle(element);
+        const after = getComputedStyle(element, '::after');
         return {
-          line: getComputedStyle(element, '::after').display,
           border: style.borderInlineStartWidth,
-          grip: style.backgroundImage,
-          repeat: style.backgroundRepeat,
+          grip: after.backgroundImage,
+          repeat: after.backgroundRepeat,
+          length: parseFloat(after.height),
           gap: element.getBoundingClientRect().width,
         };
       });
     const resting = await paint();
-    expect(resting.line).toBe('none');
     expect(resting.border).toBe('0px');
     // Three dots in the middle, each drawn once, not a line along the panes.
     expect(resting.grip.match(/radial-gradient/g)).toHaveLength(3);
     expect(resting.repeat).not.toContain('repeat-y');
+    expect(resting.length).toBeLessThan(20);
     expect(resting.gap).toBeCloseTo(16, 0);
     await divider.focus();
     await expect(divider).toHaveCSS('outline-style', 'solid');
@@ -363,6 +364,10 @@ test.describe('Panes, list-detail', () => {
     await expect(root.getByRole('region', { name: 'Website refresh' })).toBeVisible();
     await expect(list).toBeVisible();
     await expect(root.getByRole('button', { name: 'All projects' })).toBeHidden();
+    // The detail's surface, as tall as the pane, ends at the pane's end.
+    const surface = await box(root.getByTestId('detail-surface'));
+    const detailBox = await box(root.getByRole('region', { name: 'Website refresh' }));
+    expect(surface.y + surface.height).toBeCloseTo(detailBox.y + detailBox.height, 0);
     // Focus stays on the row people chose.
     await expect(root.getByRole('button', { name: 'Website refresh' })).toBeFocused();
   });
@@ -380,6 +385,16 @@ test.describe('Panes, list-detail', () => {
     await expect(list).toBeHidden();
     const back = root.getByRole('button', { name: 'All projects' });
     await expect(back).toBeFocused();
+    // A surface as tall as the pane fills the room below the back button: it ends at the pane's
+    // end, and the pane doesn't scroll by the button's height.
+    const backBox = await box(back);
+    const surface = await box(root.getByTestId('detail-surface'));
+    const detailBox = await box(detail);
+    expect(surface.y).toBeGreaterThan(backBox.y + backBox.height - 1);
+    expect(surface.y + surface.height).toBeCloseTo(detailBox.y + detailBox.height, 0);
+    expect(
+      await detail.evaluate((element) => element.scrollHeight - element.clientHeight),
+    ).toBeLessThanOrEqual(0);
     expect((await box(detail)).width).toBeCloseTo(
       (await box(page.getByTestId('list-frame'))).width - 2,
       0,

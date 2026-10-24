@@ -9,11 +9,17 @@ export type ResizeHandleProps = ResizeOptions &
   Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'children'> & {
     /** The handle's name, such as Resize panes. */
     label: string;
+    /**
+     * Shows a grip, three dots at its middle, in place of the line: for a handle between two
+     * surfaces or on a surface's edge, as Panes.Divider, a side Sheet's and the Drawer's.
+     */
+    grip?: boolean;
   };
 
 /**
  * A window splitter's handle on useResize: a focusable separator, named by its label, that shows a
- * line on hover, keyboard focus and while dragging. The owner places it on the edge it moves.
+ * line on hover, keyboard focus and while dragging, or with grip a grip of three dots that darkens
+ * on hover and takes the focus color. The owner places it on the edge it moves.
  *
  *   <ResizeHandle axis="inline" label="Resize panes" value={width} min={16} max={40} unit="rem"
  *     onChange={(next) => setWidth(next)} className="env-panes-divider" />
@@ -32,6 +38,7 @@ export function ResizeHandle({
   valueText,
   disabled,
   label,
+  grip = false,
   className,
   ref,
   ...props
@@ -74,6 +81,7 @@ export function ResizeHandle({
         setRef(ref, node);
       }}
       aria-label={label}
+      data-grip={grip ? '' : undefined}
       className={classNames('env-resize-handle', className)}
     />
   );

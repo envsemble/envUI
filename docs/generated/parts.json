@@ -3586,13 +3586,6 @@
           ]
         },
         {
-          "attribute": "data-dragging",
-          "values": [],
-          "parts": [
-            "env-panes-divider"
-          ]
-        },
-        {
           "attribute": "data-env-layout",
           "values": [
             "panes"
@@ -6086,6 +6079,15 @@
         {
           "attribute": "data-dragging",
           "values": [],
+          "parts": [
+            "env-resize-handle"
+          ]
+        },
+        {
+          "attribute": "data-grip",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-resize-handle"
           ]
