@@ -147,9 +147,9 @@
         "wrap"
       ],
       "useWhen": [
-        "A few actions belong together, such as a form's Cancel and Save, in a row that wraps.",
-        "A heading and its actions share a line, with the actions at the end.",
-        "Small items sit side by side, such as a label and a badge."
+        "A few actions that belong together, such as Cancel and Save",
+        "A heading and its actions on one line",
+        "Small items side by side, such as a label and a badge"
       ],
       "avoidWhen": [
         {
@@ -192,7 +192,7 @@
         },
         {
           "name": "WrappingActions",
-          "title": "Do: wrap, so an action that doesn't fit moves to the next line.",
+          "title": "Do: A row that wraps, so an action that doesn't fit moves to the next line.",
           "description": "",
           "file": "docs/examples/row/WrappingActions.tsx"
         },
@@ -999,8 +999,8 @@
         "main column"
       ],
       "useWhen": [
-        "A page's content needs a readable width in a wide window, such as a form, a document or a dashboard.",
-        "A page has a heading with actions above its content, passed as its header."
+        "A readable width in a wide window, such as for a form or a document",
+        "A page's heading and actions above its content"
       ],
       "avoidWhen": [
         {
@@ -1033,18 +1033,18 @@
         {
           "name": "WithHeader",
           "title": "With header",
-          "description": "Page goes in a Scaffold's body and adds no landmark of its own.",
+          "description": "Page goes in a Scaffold's body, with its header at the top of the same column, and adds no landmark of its own.",
           "file": "docs/examples/page/WithHeader.tsx"
         },
         {
           "name": "Widths",
           "title": "Widths",
-          "description": "",
+          "description": "| Width | Content width | Use for | | ------ | ------------- | -------------------------------------------------- | | Small | 40 rem | A form, a settings page or a sign-in page. | | Medium | 60 rem | A document, an article or the details of one item. | | Large | 76 rem | A dashboard, a list or a table. The default. | | Full | The whole | A board, a canvas or a wide table. |",
           "file": "docs/examples/page/Widths.tsx"
         },
         {
           "name": "HeaderInPage",
-          "title": "Do: The heading in header, in the page's column and gutter.",
+          "title": "Do: The heading in the page's header, in its column and gutter.",
           "description": "",
           "file": "docs/examples/page/HeaderInPage.tsx"
         },
@@ -1307,9 +1307,9 @@
         "loading"
       ],
       "useWhen": [
-        "A region needs a background, an inset and corners, such as a detail pane or a side panel.",
-        "A block should stand apart from what is around it, such as a summary on a pane.",
-        "A toolbar floats over dense content, such as a diagram, with small controls inside."
+        "A region with a background, such as a detail pane or a side panel",
+        "A block that stands apart, such as a summary on a pane",
+        "A toolbar that floats over dense content, such as a diagram"
       ],
       "avoidWhen": [
         {
@@ -1340,7 +1340,7 @@
         {
           "name": "DetailPane",
           "title": "Detail pane",
-          "description": "Lay out what a Surface holds with a Column or a Row through `render`, so the surface and its layout are one element.",
+          "description": "A surface lays out nothing itself: a Column or a Row lays out what it holds, as one element with it.",
           "file": "docs/examples/surface/DetailPane.tsx"
         },
         {
@@ -1352,13 +1352,13 @@
         {
           "name": "SurfaceLoading",
           "title": "Surface loading",
-          "description": "A pane that is a skeleton until its project arrives; its Text, given no text, is a bar of the text style's length.",
+          "description": "A pane can be a skeleton until its content arrives: its text shows as bars of the text's usual length.",
           "file": "docs/examples/surface/SurfaceLoading.tsx"
         },
         {
           "name": "RecolorArea",
-          "title": "Colors",
-          "description": "`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the colors of one surface, through `style` or CSS; a surface inside keeps its own. To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own.",
+          "title": "Recolor area",
+          "description": "One surface can take colors of its own: its fill, its text and an edge, while a surface inside keeps its own. To recolor an area with its controls, give it a theme of its own, with hover and pressed colors too.",
           "file": "docs/examples/surface/RecolorArea.tsx"
         },
         {
@@ -2546,9 +2546,9 @@
         "tool palette"
       ],
       "useWhen": [
-        "A set of controls acts on one subject, such as an editor's formatting or a diagram's view.",
-        "Many icon-only actions sit together and would make a long tab sequence one by one.",
-        "A tool is chosen from a palette and stays chosen, such as a drawing tool."
+        "Controls for one subject, such as an editor's formatting",
+        "Many icon-only actions that would each take a tab stop",
+        "A palette whose chosen tool stays chosen, such as drawing tools"
       ],
       "avoidWhen": [
         {
@@ -2591,25 +2591,25 @@
         {
           "name": "FormattingToolbar",
           "title": "Formatting toolbar",
-          "description": "`Toolbar.Button` is an icon button named by its `label`, which a tooltip shows with its `shortcut`; with `pressed` it is a toggle.",
+          "description": "Each button is an icon, whose name and shortcut show in a tooltip; a button can also be a toggle that stays pressed.",
           "file": "docs/examples/toolbar/FormattingToolbar.tsx"
         },
         {
           "name": "DrawingTools",
-          "title": "Drawing tools",
-          "description": "",
+          "title": "Orientation",
+          "description": "| Orientation | Use for | | ----------- | ----------------------------------------------------------------------------------- | | Horizontal | Most toolbars, moved through with <kbd>←</kbd> and <kbd>→</kbd>. The default. | | Vertical | A palette, such as drawing tools, moved through with <kbd>↑</kbd> and <kbd>↓</kbd>. |",
           "file": "docs/examples/toolbar/DrawingTools.tsx"
         },
         {
           "name": "ViewControls",
-          "title": "View controls",
-          "description": "",
+          "title": "Sizes",
+          "description": "The buttons come in the three control heights of the scale, or take the height of the toolbar's container.",
           "file": "docs/examples/toolbar/ViewControls.tsx"
         },
         {
           "name": "PageToolbar",
           "title": "Layouts",
-          "description": "Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a Row, where every control keeps its tab stop and fields keep their arrow keys. | Bar | Build it with | | ------------------------------------------- | ------------------------------------------------------------- | | Icon commands, such as formatting or tools | `Toolbar.Root` with `Toolbar.Button`s | | A page's search, filters and primary action | PageHeader's `toolbar`, a Row | | A section's heading with its actions | `<Row wrap align=\"center\" justify=\"between\">` | | A table's search and actions | A Row above the table, in the size of its rows | | Actions in a window's title bar | A TopBar with `titleBar`: its `actions`, small ghost buttons |",
+          "description": "Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a Row, where every control keeps its tab stop and fields keep their arrow keys. | Bar | Build it with | | ------------------------------------------- | ------------------------------------------------------ | | Icon commands, such as formatting or tools | A Toolbar of its buttons | | A page's search, filters and primary action | A Row in the toolbar of a PageHeader | | A section's heading with its actions | A Row that wraps, with the actions at the end | | A table's search and actions | A Row above the table, in the size of its rows | | Actions in a window's title bar | A TopBar as a title bar, with small ghost buttons |",
           "file": "docs/examples/toolbar/PageToolbar.tsx"
         },
         {
@@ -2733,7 +2733,7 @@
         {
           "name": "InRunningText",
           "title": "In running text",
-          "description": "Link renders a native `<a>` through the `LinkProvider`'s link component, so the application's router handles it.",
+          "description": "",
           "file": "docs/examples/link/InRunningText.tsx"
         },
         {
@@ -4964,9 +4964,9 @@
         "pill tabs"
       ],
       "useWhen": [
-        "People switch between two to five views or filters of the same content, such as Open, Blocked and Done items, and the choice applies at once.",
-        "A toolbar switches how content is laid out, such as List and Board (`size=\"sm\"`).",
-        "A narrow container, such as a sidebar, holds a choice between two scopes (`fullWidth`)."
+        "Two to five views or filters of the same content, such as Open and Done",
+        "How a toolbar lays out content, such as List and Board",
+        "A choice between two scopes in a narrow container, such as a sidebar"
       ],
       "avoidWhen": [
         {
@@ -5004,7 +5004,7 @@
         {
           "name": "WorkItems",
           "title": "Work items",
-          "description": "`items` holds the options, each with a `value` and a short `label`.",
+          "description": "",
           "file": "docs/examples/segmented-control/WorkItems.tsx"
         },
         {
@@ -6878,8 +6878,8 @@
         "BottomNavigation"
       ],
       "useWhen": [
-        "An application's main destinations on a compact window, such as a phone, where Scaffold places the bar at the bottom.",
-        "Three to five destinations of equal weight that people move between often."
+        "An application's main destinations on a phone",
+        "Three to five destinations people move between often"
       ],
       "avoidWhen": [
         {
@@ -6912,7 +6912,7 @@
         {
           "name": "PhoneDestinations",
           "title": "Phone destinations",
-          "description": "Bar takes the same destinations as Rail and Drawer, and Scaffold shows the form that fits the width.",
+          "description": "Bar takes the same destinations as Rail and Drawer, and Scaffold shows the form that fits the width, the bar at the bottom of a compact window.",
           "file": "docs/examples/bar/PhoneDestinations.tsx"
         },
         {
@@ -7056,8 +7056,8 @@
         "sidebar rail"
       ],
       "useWhen": [
-        "An application's main destinations on a medium window, such as a tablet, where Scaffold places the rail at the window's start.",
-        "Destinations with short labels that fit under their icons."
+        "An application's main destinations on a tablet",
+        "Short labels that fit under their icons"
       ],
       "avoidWhen": [
         {
@@ -7080,13 +7080,13 @@
         {
           "name": "TabletDestinations",
           "title": "Tablet destinations",
-          "description": "Rail takes the same destinations as Bar and Drawer, and Scaffold shows the form that fits the width. A button that narrows the drawer to the rail asks the Scaffold for it through `forms` (a button that narrows the navigation).",
+          "description": "Rail takes the same destinations as Bar and Drawer, and Scaffold shows the form that fits the width, the rail at the start of a medium window. A button can narrow the drawer to the rail in a wider window too, as a button that narrows the navigation shows.",
           "file": "docs/examples/rail/TabletDestinations.tsx"
         },
         {
           "name": "GroupsInOrder",
           "title": "Groups in order",
-          "description": "A destination's `group` shows no heading in the rail: grouped destinations follow one another in the array's order.",
+          "description": "The rail shows no group headings: grouped destinations follow one another in their order.",
           "file": "docs/examples/rail/GroupsInOrder.tsx"
         },
         {
@@ -7554,9 +7554,9 @@
         "view switcher"
       ],
       "useWhen": [
-        "Related views of one subject in one place, such as a project's summary, details and activity.",
-        "Content that splits into sections people look at one at a time, such as the parts of a settings page.",
-        "Views that fill a region, such as a diagram's canvas and its outline (fill)."
+        "Related views of one subject, such as a project's summary and activity",
+        "Sections people look at one at a time, such as a settings page's",
+        "Views that fill a region, such as a diagram's canvas and its outline"
       ],
       "avoidWhen": [
         {
@@ -7589,37 +7589,37 @@
         {
           "name": "ProjectViews",
           "title": "Project views",
-          "description": "Each item gives a `button`, which becomes the tab, and the panel's `content`. Every tab is a text tab, whatever its button's variant.",
+          "description": "",
           "file": "docs/examples/tabs/ProjectViews.tsx"
         },
         {
           "name": "ManualActivation",
           "title": "Manual activation",
-          "description": "By default the arrow keys select the tab they reach. With `activation=\"manual\"` they only move focus and <kbd>Enter</kbd> or <kbd>Space</kbd> selects, for a panel that loads when it shows.",
+          "description": "The arrow keys select the tab they reach. Tabs can instead only move focus there, and <kbd>Enter</kbd> or <kbd>Space</kbd> selects, for a panel that loads when it shows.",
           "file": "docs/examples/tabs/ManualActivation.tsx"
         },
         {
           "name": "SmallRail",
-          "title": "Small rail",
-          "description": "",
+          "title": "Sizes",
+          "description": "| Size | Use for | | ---------------- | ----------------------------------------------------- | | Large | Most tabs, as tall as buttons. The default. | | Small and medium | Toolbars and bars, as tall as a control of that size. |",
           "file": "docs/examples/tabs/SmallRail.tsx"
         },
         {
           "name": "VerticalList",
-          "title": "Vertical list",
-          "description": "",
+          "title": "Vertical",
+          "description": "A column of tabs beside their panels, for the sections of a settings page.",
           "file": "docs/examples/tabs/VerticalList.tsx"
         },
         {
           "name": "FillARegion",
-          "title": "Fill ARegion",
-          "description": "",
+          "title": "Fill a region",
+          "description": "The selected panel takes the height left below the tabs, for a view such as a canvas.",
           "file": "docs/examples/tabs/FillARegion.tsx"
         },
         {
           "name": "ListBesideAHeading",
-          "title": "List beside AHeading",
-          "description": "",
+          "title": "Beside a heading",
+          "description": "The tabs can share a row with a heading, with their panels below.",
           "file": "docs/examples/tabs/ListBesideAHeading.tsx"
         },
         {

@@ -14,8 +14,8 @@ aliases:
   - page layout
   - main column
 useWhen:
-  - A page's content needs a readable width in a wide window, such as a form, a document or a dashboard.
-  - A page has a heading with actions above its content, passed as its header.
+  - A readable width in a wide window, such as for a form or a document
+  - A page's heading and actions above its content
 avoidWhen:
   - text: The frame of an application, with its top bar and navigation.
     use: Scaffold
@@ -33,7 +33,7 @@ components:
 
 ## Overview
 
-Page goes in a [Scaffold](scaffold.md)'s body and adds no landmark of its own.
+Page goes in a [Scaffold](scaffold.md)'s body, with its header at the top of the same column, and adds no landmark of its own.
 
 ```tsx example=WithHeader
 
@@ -41,22 +41,26 @@ Page goes in a [Scaffold](scaffold.md)'s body and adds no landmark of its own.
 
 ## Variants
 
-| Width          | Content width | Use for                                            |
-| -------------- | ------------- | -------------------------------------------------- |
-| `sm`           | 40 rem        | A form, a settings page or a sign-in page.         |
-| `md`           | 60 rem        | A document, an article or the details of one item. |
-| `lg` (default) | 76 rem        | A dashboard, a list or a table.                    |
-| `full`         | The whole     | A board, a canvas or a wide table.                 |
+### Widths
+
+| Width  | Content width | Use for                                            |
+| ------ | ------------- | -------------------------------------------------- |
+| Small  | 40 rem        | A form, a settings page or a sign-in page.         |
+| Medium | 60 rem        | A document, an article or the details of one item. |
+| Large  | 76 rem        | A dashboard, a list or a table. The default.       |
+| Full   | The whole     | A board, a canvas or a wide table.                 |
 
 ```tsx example=Widths
 
 ```
 
-`gutter={false}` leaves the inline edges to the content, such as a full-bleed table.
+### Without the gutter
+
+A page can leave its sides to its content, such as a table that runs to the edges.
 
 ## When to use
 
-```tsx do=HeaderInPage caption="The heading in header, in the page's column and gutter."
+```tsx do=HeaderInPage caption="The heading in the page's header, in its column and gutter."
 
 ```
 
@@ -64,9 +68,9 @@ Page goes in a [Scaffold](scaffold.md)'s body and adds no landmark of its own.
 
 ```
 
-- The width for what the page holds: `sm` for a form, `md` for reading; never `full` for text.
-- One Page per page: a part that needs a width of its own takes it from its content.
-- A Scaffold's body already is the `main`; add none around a Page.
+### Width
+
+One page per page, at the width for what it holds, and never the full width for text. A part that needs a narrower width takes it from its own content.
 
 ## Anatomy
 
@@ -97,6 +101,37 @@ The gutter follows the window class of the region the page sits in: 1 rem at the
 
 - The page's one `h1`, usually its PageHeader's title.
 - `render={<article />}` where the page is one, such as a document.
+
+## In code
+
+### Usage
+
+Page holds the page's content as `children`, and its heading, usually a PageHeader, in `header`, at the top of the same column. Put it in a Scaffold's body, which is already the `main` landmark: add none around a Page.
+
+```tsx source=WithHeader
+
+```
+
+#### Width and gutter
+
+`width` is `sm`, 40 rem, `md`, 60 rem, `lg`, 76 rem and the default, or `full`. `gutter` pads the column's inline edges with the page gutter, 1 rem in a compact region and 1.5 rem from medium; `gutter={false}` leaves them to the content, such as a full-bleed table.
+
+```tsx
+<Page width="sm" header={<PageHeader title="Settings" />}>
+  …
+</Page>
+<Page width="full" gutter={false}>
+  …
+</Page>
+```
+
+#### Element and name
+
+`render` sets the element, a `div` by default, such as `render={<article />}` for a document. `name` names the node for dev mode, as `data-env-name`.
+
+### Composition
+
+The page, `env-page`, holds its header and its content, `env-page-content`, at its width. It never paints, and it is the `env-page` size container for the content inside. `data-width` carries a width other than `lg`, and `data-gutter="none"` a page without the gutter.
 
 ## Changelog
 
