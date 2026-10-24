@@ -122,9 +122,10 @@
 }
 
 /* A foundation's figure without a stage (`stage="none"`), where the subject is a color, such as
-   the palette's swatches: no fill and no inset, so it sits right under its title and lines up with
-   the text, as a section's text does. */
+   the palette's swatches and the state layers that sit on the page: no fill and no inset, so it
+   sits right under its title and lines up with the text, as a section's text does. */
 .docs-foundation-stage[data-stage='none'] {
+  justify-items: start;
   min-block-size: 0;
   padding: 0;
   background: none;

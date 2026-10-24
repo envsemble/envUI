@@ -215,11 +215,10 @@
   gap: 0.125rem;
 }
 
-/* The stage keeps the frame of every stage; its corners are the connected rows'. */
+/* The stage is every stage's card, in the examples' theme; its corners are the connected rows'. */
 .docs-verdict-stage {
   min-block-size: 10rem;
   padding: var(--env-space-7) var(--env-space-6);
-  border: 0.0625rem solid var(--env-color-border-muted);
 }
 
 .docs-verdict-bar {
