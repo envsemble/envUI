@@ -449,6 +449,36 @@ body {
     color: var(--env-color-fg-muted);
   }
 }
+/* The Docs' props tables, envUI's Table: the prop with its default under it, its type with each
+   alternative of a union as a small tag that wraps whole, and the description quieter, so the
+   names and types lead. */
+.docs-props-table td {
+  vertical-align: top;
+}
+.docs-prop-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--env-space-1) var(--env-space-2);
+  font-weight: var(--env-font-weight-medium);
+}
+.docs-prop-default {
+  display: block;
+  margin-block-start: var(--env-space-1);
+}
+.docs-prop-type {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--env-space-1);
+}
+.docs-prop-option {
+  padding: 0 var(--env-space-1);
+  border-radius: var(--env-radius-sm);
+  background: var(--env-color-bg-muted);
+  font-family: var(--docs-code-font-family);
+  font-size: 0.85em;
+  white-space: nowrap;
+}
 /* A list of links, such as a group of the Docs' pages on their home, one to a line. */
 .docs-link-list {
   margin: 0;

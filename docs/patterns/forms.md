@@ -191,7 +191,7 @@ A refused submit moves focus to the summary, whose links each focus their field;
 
 ### Usage
 
-A form is a native `<form noValidate onSubmit={…}>`: the application runs the checks, so the browser's own bubbles stay out. On submit, set each field's `error`, then move focus to the error summary, or to the field when only one is wrong. After a submit, check a field again as people leave it, through `onBlur`, and clear its `error` as soon as the value fits, never adding one while they type.
+A form is a native `<form noValidate onSubmit={…}>`, and the application runs the checks. On submit, set each wrong field's `error` and focus the error summary, or the field when only one is wrong. Then check a field in its `onBlur`, and clear its `error` as soon as the value fits.
 
 ```tsx source=ErrorSummary
 
@@ -199,37 +199,29 @@ A form is a native `<form noValidate onSubmit={…}>`: the application runs the 
 
 #### Sending
 
-Set `pending` on the submit Button, which has `type="submit"`, while the form is sent. When the server refuses or can't be reached, keep the values, show a danger Alert at the top with `tabIndex={-1}` and a ref, and focus it.
-
 ```tsx
 <Button type="submit" pending={sending}>
   Create project
 </Button>
 ```
 
+When the server refuses or can't be reached, keep the values and focus a danger Alert at the top.
+
 #### Error summary
 
-The summary is a danger Alert with `tabIndex={-1}` and a ref, focused after each refused submit. Leave it without `announce`, so it has no role and is read once, as it takes focus; give its title `role="heading"` so people can find it again. Each error is a Link whose `onClick` focuses its field, through the field's `ref`.
+A danger Alert with `tabIndex={-1}` and a ref, without `announce`, so it is read once as it takes focus; its title takes `role="heading"`. Each error is a Link whose `onClick` focuses its field through the field's `ref`.
 
 #### Grouped choices and browser help
 
-One choice of several is a RadioGroup, a `fieldset` with its `legend` from `label`; several Checkboxes go in a native `fieldset` whose `legend` names them. Set `type` and `autoComplete` on the fields people fill in often, such as `autoComplete="email"`, and say "Saved" in a `role="status"` message once the form is sent.
-
-```tsx source=GroupedChoices
-
-```
+A RadioGroup is a `fieldset` whose `legend` is its `label`; Checkboxes go in a native `fieldset` and `legend`. Set `type` and `autoComplete`, such as `autoComplete="email"`, on fields people fill in often.
 
 #### A long form in steps
 
-Keep every step's answers in state above the steps, so Back keeps them. Progress takes `segments` and `max` of the number of steps, `value` of the current one and `aria-valuetext`, such as "Step 2 of 3: Team". Each step's submit, a `type="submit"` Button labelled Continue, checks only that step's fields; moving on focuses the step's heading, a Text with `tabIndex={-1}` and a ref. Back is a secondary Button after it, and the last step shows the answers in a DescriptionList before the form's own action.
-
-```tsx source=LongFormInSteps
-
-```
+Keep every step's answers in state above the steps, so Back keeps them. Progress takes `segments` and `max` of the number of steps, `value` and `aria-valuetext`, such as "Step 2 of 3: Team". Continue, a `type="submit"` Button, checks only its step's fields, then focuses the next step's heading, a Text with `tabIndex={-1}`. The last step shows the answers in a DescriptionList, as the LongFormInSteps example does.
 
 ### Composition
 
-Lay the form out as one Column, kept to a width that reads easily, such as `maxInlineSize: '32rem'`, with the actions in a Row after the last field, the primary action last. A Grid suits only short fields that belong together, such as a city and a postal code. Each field is a TextField, Textarea, Select, Combobox, DatePicker, RadioGroup or Checkbox, with its `label`, its lasting `description` and its `error`; Field's parts build any other. A long form in steps is one `form` whose fields change with the step, under a Progress with `segments`.
+One Column, kept to a width that reads easily, such as `maxInlineSize: '32rem'`, with the actions in a Row after the last field, the primary action last. A Grid suits only short fields that belong together, such as a city and a postal code. Field's parts build a control envUI lacks.
 
 ## Changelog
 
