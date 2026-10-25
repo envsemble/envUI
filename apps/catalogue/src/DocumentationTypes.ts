@@ -62,6 +62,8 @@ export type DocumentationBlock =
       open?: boolean;
       /** Whether an anatomy figure shows its subject half as large again where its stage has room. */
       enlarge?: boolean;
+      /** Whether an example stands alone across the column, rather than beside text or other figures. */
+      wide?: boolean;
       /** The stage's fill where the page's own would hide the subject: `raised` or `shaded`. */
       stage?: StageFill;
       /**

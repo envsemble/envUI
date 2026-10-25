@@ -760,7 +760,7 @@ export function strayQuote(info) {
 }
 /** The attributes each kind of figure takes, and those it needs. */
 const figureAttributes = {
-  example: { allowed: ['caption', 'widths', 'open', 'stage'], required: [] },
+  example: { allowed: ['caption', 'widths', 'open', 'stage', 'wide'], required: [] },
   do: { allowed: ['caption', 'open', 'stage'], required: ['caption'] },
   dont: { allowed: ['caption', 'open', 'stage'], required: ['caption'] },
   anatomy: { allowed: ['caption', 'of', 'open', 'stage', 'enlarge'], required: [] },
@@ -774,10 +774,12 @@ const figureAttributes = {
 const stageFills = ['shaded'];
 /**
  * The attributes that are flags, written without a value: `open` shows the example's overlays
- * open on its stage, contained, and `enlarge` shows an anatomy figure's subject half as large
- * again where its stage has room, so the callouts on its close-set parts don't crowd.
+ * open on its stage, contained; `enlarge` shows an anatomy figure's subject half as large again
+ * where its stage has room, so the callouts on its close-set parts don't crowd; and `wide` keeps an
+ * example across the whole column, alone in its row, rather than beside the text before it, where
+ * it needs the room, such as a popup open beside its trigger.
  */
-const figureFlags = new Set(['open', 'enlarge']);
+const figureFlags = new Set(['open', 'enlarge', 'wide']);
 /** A file name as words: ConnectedButtons is "Connected buttons". */
 const fileWords = (name) =>
   name
@@ -1165,6 +1167,7 @@ function readFigures(document, body, { examples, specimens, partNames, skill }) 
       }
       if (attributes.open === true) block.open = true;
       if (attributes.enlarge === true) block.enlarge = true;
+      if (attributes.wide === true) block.wide = true;
       blocks.push(block);
       if (role === 'anatomy' || role === 'variants') legendOf = block;
       continue;
@@ -1983,6 +1986,7 @@ export function compileDocument(document, documents, { props, examples = example
           block.of && `of=${block.of}`,
           block.open && 'open',
           block.enlarge && 'enlarge',
+          block.wide && 'wide',
           block.stage && `stage=${block.stage}`,
           block.widths && `widths="${block.widths.join(' ')}"`,
           block.caption && `caption="${block.caption}"`,

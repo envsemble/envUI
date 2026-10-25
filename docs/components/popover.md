@@ -56,7 +56,7 @@ A popover is as wide as its content, up to its width.
 
 A popover opens below its trigger, above it or beside it, lined up with the trigger's start, center or end, and flips where there is no room.
 
-```tsx figure=FieldHelp open
+```tsx figure=FieldHelp open wide
 
 ```
 

@@ -192,12 +192,14 @@ function groupFigures(blocks: DocumentationBlock[], page: string) {
   for (const block of blocks) {
     if (block.kind === 'markdown' && !block.markdown.trim()) continue;
     const last = groups.at(-1);
-    // A foundation's figure that needs the whole column, such as a run of pictures, stands alone.
+    // A figure that needs the whole column, such as a foundation's run of pictures or an example
+    // marked wide, stands alone.
     const figure =
       (block.kind === 'example' &&
         block.role !== 'anatomy' &&
         block.role !== 'variants' &&
-        !block.widths) ||
+        !block.widths &&
+        !block.wide) ||
       (block.kind === 'figure' && !foundationFigure(page, block.name)?.wide);
     if (figure && Array.isArray(last)) last.push(block);
     else groups.push(figure ? [block] : block);
