@@ -34,29 +34,25 @@ avoidWhen:
 components:
   - Message
   - MessageList
+examples:
+  Conversation: overview
+  FormattedAnswer: variants
+  MessageAnatomy: anatomy
+  DeliveryStatus: example
+  BubbleWidth: example
+  CommentThread:
+    role: do
+    caption: Comments by others, each with its author, at full width.
+  SelfForOthers:
+    role: dont
+    caption: "Someone else's message in your bubble, to put them on a side: the bubble means you."
 ---
 
 # Message
 
-## Overview
-
-Each Message sits in a MessageList, which holds the conversation.
-
-```tsx example=Conversation
-
-```
-
-### Delivery status
-
-A message can show that it is on its way, or that it wasn't sent; offer Try again beside one that failed.
-
-```tsx example=DeliveryStatus
-
-```
-
 ## Variants
 
-```tsx variants=FormattedAnswer
+```tsx figure=FormattedAnswer
 
 ```
 
@@ -68,27 +64,9 @@ A message can show that it is on its way, or that it wasn't sent; offer Try agai
 | Yours          | The person using the app: a compact bubble at the end.                                 |
 | Someone else's | Anyone else, such as an assistant: full width, no bubble, room for a formatted answer. |
 
-## When to use
-
-```tsx do=CommentThread caption="Comments by others, each with its author, at full width."
-
-```
-
-```tsx dont=SelfForOthers caption="Someone else's message in your bubble, to put them on a side: the bubble means you."
-
-```
-
-### Order and focus
-
-Keep messages oldest first, in one list, and leave focus where it is as new ones arrive: the list announces them.
-
-### Content
-
-Name icon actions after what they do, such as Copy answer.
-
 ## Anatomy
 
-```tsx anatomy=MessageAnatomy
+```tsx figure=MessageAnatomy
 
 ```
 
@@ -100,13 +78,51 @@ Name icon actions after what they do, such as Copy answer.
 6. **Actions** (`env-message-actions`, `actions`)
 7. **Status** (`env-message-status`, `status`)
 
-## Adapting to width
+## Behaviour
+
+### In a list
+
+Each Message sits in a MessageList, which holds the conversation.
+
+### Delivery status
+
+A message can show that it is on its way, or that it wasn't sent.
+
+- Offer Try again beside one that failed.
+
+```tsx figure=DeliveryStatus
+
+```
+
+### Adapting to width
 
 Your own bubble grows to three quarters of the list, and keeps a readable width in a narrow list.
 
-```tsx example=BubbleWidth widths="20 40"
+```tsx figure=BubbleWidth widths="20 40"
 
 ```
+
+## Rules
+
+The bubble means you; everyone else's messages run at full width, in the order they were sent.
+
+```tsx figure=CommentThread
+
+```
+
+```tsx figure=SelfForOthers
+
+```
+
+### Order and focus
+
+Keep messages oldest first, in one list.
+
+- Leave focus where it is as new ones arrive: the list announces them.
+
+### Content
+
+Name icon actions after what they do, such as Copy answer.
 
 ## Accessibility
 
@@ -123,11 +139,17 @@ Your own bubble grows to three quarters of the list, and keeps a readable width 
 - Names for icon-only actions, and Try again for a failed message.
 - Scrolling, without moving focus.
 
-## In code
+## Compose
 
 ### Usage
 
-A MessageList holds the conversation, oldest first, and each Message in it takes `from`: `self` for the person using the app, a compact bubble at the inline end, or `other` for anyone else, such as an assistant or another participant, full-width content with no bubble. Your own bubble grows to three quarters of the list, and to at least 16 rem in a narrow list. `author` names who wrote it, `meta` holds supporting facts beside the author, such as a RelativeTime, and `children` the message: plain text keeps its line breaks, and formatted content, such as Markdown, fills the width of a message from someone else. Never set `from="self"` on someone else's message to put it on a side.
+A MessageList holds the conversation, oldest first, and each Message in it takes `from`:
+
+- `self` for the person using the app, a compact bubble at the inline end; your own bubble grows to three quarters of the list, and to at least 16 rem in a narrow list.
+- `other` for anyone else, such as an assistant or another participant, full-width content with no bubble.
+- Never set `from="self"` on someone else's message to put it on a side.
+
+`author` names who wrote it, `meta` holds supporting facts beside the author, such as a RelativeTime, and `children` the message: plain text keeps its line breaks, and formatted content, such as Markdown, fills the width of a message from someone else.
 
 ```tsx source=Conversation
 
@@ -137,8 +159,22 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 
 `actions` holds small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are small ghost buttons. `status` is `sending`, with a spinner and Sending, or `failed`, with an error icon and Not sent; `statusLabel` replaces the words, which otherwise come from EnvUIProvider's `messages.message`.
 
-```tsx source=DeliveryStatus
-
+```tsx
+<Message
+  from="self"
+  meta="09:41"
+  status={status}
+  actions={
+    status === 'failed' && (
+      <Button variant="text" onClick={retry}>
+        Try again
+      </Button>
+    )
+  }
+>
+  {'Northwind Hall
+12 Harbour Street'}
+</Message>
 ```
 
 #### Streaming
@@ -153,7 +189,11 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 
 ### Composition
 
-The list is `env-message-list`, and each message `env-message`, with its author, `env-message-author`, and meta, `env-message-meta`, in its header, then its content, `env-message-content`, its actions, `env-message-actions`, and its status, `env-message-status`. `skeleton` shows a message as its own skeleton while it loads. Message and MessageList can render in React Server Components.
+`skeleton` shows a message as its own skeleton while it loads. Message and MessageList can render in React Server Components.
+
+### Customize
+
+The list is `env-message-list`, and each message `env-message`, with its author, `env-message-author`, and meta, `env-message-meta`, in its header, then its content, `env-message-content`, its actions, `env-message-actions`, and its status, `env-message-status`.
 
 ## Changelog
 

@@ -21,47 +21,18 @@ avoidWhen:
     use: Tabs
 components:
   - Accordion
+examples:
+  FrequentQuestions: overview
+  AccordionAnatomy: anatomy
+  SeveralOpen: example
+  OpenFromOutside: example
 ---
 
 # Accordion
 
-## Overview
-
-One section is open at a time: opening another closes it.
-
-```tsx example=FrequentQuestions
-
-```
-
-### Several open
-
-An accordion can let people keep several sections open at once.
-
-```tsx example=SeveralOpen
-
-```
-
-### Open from elsewhere
-
-The application can open a section itself, such as from a help button elsewhere on the page.
-
-```tsx example=OpenFromOutside
-
-```
-
-## When to use
-
-### One level
-
-Don't put an accordion inside another; show the next level inside the panel as a list.
-
-### Nothing hidden that people need
-
-Keep what people need to finish a task out of closed sections.
-
 ## Anatomy
 
-```tsx anatomy=AccordionAnatomy
+```tsx figure=AccordionAnatomy
 
 ```
 
@@ -70,6 +41,40 @@ Keep what people need to finish a task out of closed sections.
 3. **Panel** (`env-accordion-content`, `children`)
 
 Each item draws the line under it, and its heading is a button.
+
+## Behaviour
+
+### One open at a time
+
+One section is open at a time: opening another closes it.
+
+### Several open
+
+An accordion can let people keep several sections open at once.
+
+```tsx figure=SeveralOpen
+
+```
+
+### Open from elsewhere
+
+The application can open a section itself, such as from a help button elsewhere on the page.
+
+```tsx figure=OpenFromOutside
+
+```
+
+## Rules
+
+An accordion holds one level of sections, and nothing people need to finish a task.
+
+### One level
+
+Don't put an accordion inside another; show the next level inside the panel as a list.
+
+### Nothing hidden that people need
+
+Keep what people need to finish a task out of closed sections.
 
 ## Accessibility
 
@@ -91,7 +96,7 @@ Each item draws the line under it, and its heading is a button.
 - Titles that say what each section holds.
 - `headingLevel` that fits the page's outline.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -105,8 +110,13 @@ Accordion.Root holds an Accordion.Item for each section, with its heading as `ti
 
 `defaultValue` names the items open at first, by their `value`; or control them with `value` and `onValueChange`, which receives the values of the open items. An item's own `onOpenChange` reports whether it is open.
 
-```tsx source=OpenFromOutside
+```tsx
+const [open, setOpen] = useState<string[]>([]);
 
+<Button onClick={() => setOpen(['billing'])}>Show billing help</Button>
+<Accordion.Root value={open} onValueChange={setOpen}>
+  <Accordion.Item value="billing" title="Billing">…</Accordion.Item>
+</Accordion.Root>
 ```
 
 #### Find in page
@@ -116,6 +126,8 @@ Accordion.Root holds an Accordion.Item for each section, with its heading as `ti
 ### Composition
 
 The headings are `h3`; set `headingLevel` to fit the page's outline, and they look the same at every level. Show the next level inside a panel as a List rather than another accordion.
+
+### Customize
 
 The parts are the accordion, `env-accordion`; each item, `env-accordion-item`, which draws the line under it; its heading's button, `env-accordion-trigger`, with the indicator, `env-accordion-indicator`, and the title, `env-accordion-label`; and the panel, `env-accordion-content`.
 
