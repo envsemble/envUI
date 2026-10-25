@@ -8,6 +8,7 @@ import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { routeHref } from '../navigation/Address';
 import { sectionHome } from '../navigation/DocumentationRoutes';
+import { OverviewShowcase } from './OverviewShowcase';
 
 /**
  * Where the home page leads, each with what it is for rather than what it lists, so a page that
@@ -74,6 +75,7 @@ export function Overview() {
           </Row>
         </Surface>
       </header>
+      <OverviewShowcase />
       <Column gap={8} className="docs-article docs-overview">
         <Column render={<section aria-labelledby="overview-explore" />} gap={5}>
           <Text render={<h2 id="overview-explore" />} variant="headline">
