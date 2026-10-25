@@ -832,12 +832,17 @@ test('each control has one place: no two controls share a name', async ({ page }
   // Nor with a dropdown open: the View dropdown's angles are named once, and nothing else in it
   // repeats one.
   for (const dropdown of ['View', 'Show', 'Responsive', 'View settings']) {
+    const popups = page.locator('[data-env-dev-host] :is([role=dialog], [role=menu])');
     await panel.getByRole('button', { name: dropdown, exact: true }).click();
     await expect(
-      page.locator('[data-env-dev-host] [role=dialog], [data-env-dev-host] [role=menu]'),
+      popups.and(
+        page.getByRole('dialog', { name: dropdown }).or(page.getByRole('menu', { name: dropdown })),
+      ),
     ).toBeVisible();
     unique(await names());
     await page.keyboard.press('Escape');
+    // The next dropdown opens once this one has closed, so the two are never counted together.
+    await expect(popups).toHaveCount(0);
   }
 });
 
