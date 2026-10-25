@@ -15,6 +15,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
+import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu } from '../theme/DisplaySettings';
@@ -139,7 +140,7 @@ interface NavigationProps {
   onSearch: () => void;
 }
 
-/** The envUI wordmark, which leads to the area's home, with "Docs" beside it in the Docs. */
+/** The envUI wordmark, which leads to the area's home, and the envUI Docs lockup in the Docs. */
 function Brand({ area }: { area: Area }) {
   return (
     <Link
@@ -148,12 +149,7 @@ function Brand({ area }: { area: Area }) {
       className="docs-brand"
       aria-label={area === 'docs' ? 'envUI Docs home' : 'envUI home'}
     >
-      <EnvUILogo />
-      {area === 'docs' && (
-        <span className="docs-brand-area" aria-hidden="true">
-          Docs
-        </span>
-      )}
+      {area === 'docs' ? <EnvUIDocsLogo className="docs-brand-docs" /> : <EnvUILogo />}
     </Link>
   );
 }

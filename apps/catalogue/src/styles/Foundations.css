@@ -256,8 +256,7 @@
 
 /* The color roles as swatches, on the page: four even columns of six, two on a narrower page and
    one on a phone. Each column is one continuous strip of square-cornered swatches, three bands for
-   a status, with each name beside its swatch; an edge around the strip keeps a swatch in the
-   page's own color visible. */
+   a status, with each name beside its swatch. */
 .docs-role-groups {
   container-type: inline-size;
 }
@@ -299,13 +298,6 @@
 .docs-role-swatch {
   display: flex;
   block-size: 2.25rem;
-  border-inline: 1px solid var(--env-color-border-muted);
-}
-.docs-role-swatches > li:first-child > .docs-role-swatch {
-  border-block-start: 1px solid var(--env-color-border-muted);
-}
-.docs-role-swatches > li:last-child > .docs-role-swatch {
-  border-block-end: 1px solid var(--env-color-border-muted);
 }
 .docs-role-swatch > span {
   flex: 1;

@@ -1,6 +1,7 @@
 import { Button, Column, DescriptionList, Link, Tabs, Text } from '@envsemble/envui';
 import { Code, Markdown, type MarkdownLinkProps } from '@envsemble/envui/content';
 import { Visibility } from '@envsemble/envui/icons/Visibility';
+import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { PageHeader } from '../layout/PageHeader';
 import { pagesOf, referencePages, type SitePage } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
@@ -41,7 +42,7 @@ export function DocsHome({ page }: { page: SitePage }) {
     <>
       <PageHeader
         title={page.title}
-        breadcrumb="Docs"
+        logo={<EnvUIDocsLogo />}
         description={page.summary}
         kind="docs-home"
       />

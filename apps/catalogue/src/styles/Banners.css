@@ -48,10 +48,6 @@
   padding-inline: clamp(var(--env-space-6), 6cqi, var(--env-space-9));
 }
 
-.docs-banner[data-banner='docs-home'] {
-  --docs-banner-shape-edge: var(--env-color-border-accent-emphasis);
-}
-
 .docs-banner:is([data-banner='docs'], [data-banner='docs-home'])
   :is(.docs-page-banner-content, .docs-page-banner-heading, .docs-page-banner-heading > *) {
   align-items: flex-start;
@@ -70,6 +66,18 @@
 
 .docs-banner:is([data-banner='docs'], [data-banner='docs-home']) .docs-page-banner-title {
   font-size: clamp(1.875rem, calc(1rem + 3cqi), 3rem);
+}
+
+/* The Docs' home shows the envUI Docs lockup as its title, with room before the summary. */
+.docs-page-banner-logo {
+  margin: 0 0 var(--env-space-4);
+  line-height: 0;
+}
+.docs-page-banner-logo > img {
+  display: block;
+  block-size: clamp(1.75rem, calc(1rem + 2.5cqi), 2.75rem);
+  inline-size: auto;
+  max-inline-size: 100%;
 }
 
 .docs-banner:is([data-banner='docs'], [data-banner='docs-home']) .docs-page-banner-breadcrumb {

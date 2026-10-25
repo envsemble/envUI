@@ -16,6 +16,7 @@ export function PageHeader({
   description,
   meta,
   symbol,
+  logo,
   children,
   actions,
   kind = 'site',
@@ -27,6 +28,8 @@ export function PageHeader({
   meta?: ReactNode;
   /** The page's icon, drawn large and faint at the end of a Site banner. */
   symbol?: ReactNode;
+  /** Artwork shown as the title, such as a lockup; the title stays its accessible name. */
+  logo?: ReactNode;
   children?: ReactNode;
   actions?: ReactNode;
   kind?: BannerKind;
@@ -54,9 +57,15 @@ export function PageHeader({
                   {breadcrumb}
                 </Text>
               )}
-              <Text render={<h1 />} variant="headline" className="docs-page-banner-title">
-                {title}
-              </Text>
+              {logo ? (
+                <Text render={<h1 />} aria-label={title} className="docs-page-banner-logo">
+                  {logo}
+                </Text>
+              ) : (
+                <Text render={<h1 />} variant="headline" className="docs-page-banner-title">
+                  {title}
+                </Text>
+              )}
               {description && (
                 <Text emphasis="muted" className="docs-page-banner-description">
                   {description}

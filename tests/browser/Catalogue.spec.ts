@@ -1206,7 +1206,7 @@ test('the navigation shows the current page, and focus moves to the page only on
   ).toBeVisible();
   // The Docs have a navigation of their own, and the top bar leads back to the Site.
   await page.locator('.docs-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('envUI Docs');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI Docs');
   await expect(page.getByRole('navigation', { name: 'Site' })).toHaveCount(0);
   await expect(
     page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Design tokens' }),
@@ -1406,7 +1406,7 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
   // The role swatches show each role in the reader's theme, and follow it.
-  const pageSwatch = panes.first().locator('.docs-role-swatch').first();
+  const pageSwatch = panes.first().locator('.docs-role-swatch > span').first();
   const swatchColor = () =>
     pageSwatch.evaluate((swatch) => getComputedStyle(swatch).backgroundColor);
   const darkColor = await swatchColor();

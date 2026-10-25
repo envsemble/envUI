@@ -35,15 +35,11 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-/* "Docs" by the wordmark in the Docs: a small tag in the accent, in monospace, so the developer
-   reference reads as its own place at once. */
-.docs-brand-area {
-  padding: 0.0625rem var(--env-space-2);
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-bg-accent-muted);
-  color: var(--env-color-fg-accent);
-  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.5
-    var(--docs-code-font-family);
+/* The envUI Docs lockup in the Docs: as tall as the wordmark on the Site, so both sit level. */
+.docs-brand-docs {
+  display: block;
+  block-size: 0.864rem;
+  inline-size: auto;
 }
 /* The navigation at the start of a wide window: the Site's rail beside the drawer of the chosen
    destination's pages, or the Docs' drawer, flush on the navigation's background with no line
@@ -117,6 +113,9 @@ body {
 }
 .docs-drawer-top .docs-brand svg {
   inline-size: 4rem;
+}
+.docs-drawer-top .docs-brand-docs {
+  block-size: 0.768rem;
 }
 /* The other area and the Display menu: ghost buttons at the page's top end that stay in the corner
    as the page scrolls. Their row sticks to the body's top and lets the page show through; the
