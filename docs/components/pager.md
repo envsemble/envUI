@@ -26,51 +26,37 @@ avoidWhen:
     use: Breadcrumbs
 components:
   - Pager
+examples:
+  PreviousAndNext:
+    role: overview
+    caption: Each link shows its destination's title under the label Previous or Up next.
+  ComposedParts: example
+  TitlesOnly:
+    role: do
+    caption: The destination's title, as its page heading reads.
+  DirectionInTitles:
+    role: dont
+    caption: 'Next or Back in the title: the label already says it.'
+  PagerAnatomy: anatomy
+  StepThroughAGuide: example
+  LongTitles: example
 ---
 
 # Pager
 
-## Overview
+## Variants
 
-Each link shows its destination's title under the label Previous or Up next.
-
-```tsx example=PreviousAndNext
-
-```
-
-### Step through a guide
-
-At either end of the sequence, leave out the missing destination: a single link stays centred.
-
-```tsx example=StepThroughAGuide
-
-```
-
-### Compose the parts
+### The links alone
 
 The previous and next links are parts of their own too, which make the same pair together and also stand alone.
 
-```tsx example=ComposedParts
+```tsx figure=ComposedParts
 
 ```
-
-## When to use
-
-```tsx do=TitlesOnly caption="The destination's title, as its page heading reads."
-
-```
-
-```tsx dont=DirectionInTitles caption="Next or Back in the title: the label already says it."
-
-```
-
-### Order
-
-Keep the order of the sequence the same as in the navigation that lists its pages.
 
 ## Anatomy
 
-```tsx anatomy=PagerAnatomy enlarge
+```tsx figure=PagerAnatomy enlarge
 
 ```
 
@@ -80,13 +66,42 @@ Keep the order of the sequence the same as in the navigation that lists its page
 4. **Direction** (`env-pager-link-label`)
 5. **Title** (`env-pager-link-title`, `children`)
 
-## Adapting to width
+## Behaviour
 
-The links sit side by side while they fit; in less room each takes a centred row of its own, and titles wrap between words.
+### Step through a guide
 
-```tsx example=LongTitles widths="16 44"
+At either end of the sequence, leave out the missing destination: a single link stays centred.
+
+```tsx figure=StepThroughAGuide
 
 ```
+
+### Adapting to width
+
+The links sit side by side while they fit.
+
+- In less room each takes a centred row of its own.
+- Titles wrap between words.
+
+```tsx figure=LongTitles widths="16 44"
+
+```
+
+## Rules
+
+A link names its destination by its title, in the order the navigation lists the pages.
+
+```tsx figure=TitlesOnly
+
+```
+
+```tsx figure=DirectionInTitles
+
+```
+
+### Order
+
+Keep the order of the sequence the same as in the navigation that lists its pages.
 
 ## Accessibility
 
@@ -108,27 +123,33 @@ The links sit side by side while they fit; in less room each takes a centred row
 - An `aria-label` that names the sequence where the page has several navigation landmarks.
 - The routing behind `href`, through `LinkProvider`.
 
-## In code
+## Compose
 
 ### Usage
 
-Pager.Root takes the `previous` and `next` destinations, each the props of its link: an `href`, which renders through the application's router link from `LinkProvider`, the destination's title as `children`, and an optional decorative `icon`, such as ArrowBack before the previous title and ArrowForward after the next. On the first or last page of the sequence, leave one out or pass `null`, and the single link stays centred. `aria-label` names the landmark where a page has several.
-
-```tsx source=PreviousAndNext
-
+```tsx
+<Pager.Root
+  previous={{ href: '/guide/projects', children: 'Create a project', icon: <ArrowBack /> }}
+  next={{ href: '/guide/team', children: 'Invite your team', icon: <ArrowForward /> }}
+/>
 ```
 
-#### Compose the parts
+`previous` and `next` each take the props of their link: an `href`, which renders through the router link from `LinkProvider`, the destination's title as `children`, and an optional decorative `icon`, such as ArrowBack before the previous title and ArrowForward after the next. On the first or last page, leave one out or pass `null`. `aria-label` names the landmark where a page has several.
+
+#### The links alone
+
+```tsx
+<Pager.Root>
+  <Pager.Previous href="/guide/projects">Create a project</Pager.Previous>
+  <Pager.Next href="/guide/team">Invite your team</Pager.Next>
+</Pager.Root>
+```
 
 Pager.Previous and Pager.Next, as children of Pager.Root, make the same pair, and also stand alone. They render between the `previous` prop's link and the `next` prop's, but don't mix the props and the parts in one pager. Each link's `rel` is `prev` or `next` by default.
 
-```tsx source=ComposedParts
-
-```
-
 ### Composition
 
-The pager is the `nav` landmark `env-pager`; each link is `env-pager-link-previous` or `env-pager-link-next`, with its icon, its direction label, `env-pager-link-label`, and the title, `env-pager-link-title`. The direction labels and the landmark's name come from EnvUIProvider's `messages.pager`.
+The pager is the `nav` landmark `env-pager`; each link is `env-pager-link-previous` or `env-pager-link-next`. The direction labels and the landmark's name come from EnvUIProvider's `messages.pager`.
 
 ## Changelog
 

@@ -1168,8 +1168,8 @@ test('a lean page ships each example once, its rules and legends, and no changel
   assert.ok(hasLine(table, '## Related'));
   // The lean index leaves out the contributor pages; other pages ship as before.
   assert.ok(!compiled.get('index.md').includes('component-pages.md'));
-  assert.match(compiled.get('components/switch.md'), /^`{3,}tsx do=/m);
-  assert.ok(hasLine(compiled.get('components/switch.md'), '## Changelog'));
+  assert.match(compiled.get('components/field.md'), /^`{3,}tsx do=/m);
+  assert.ok(hasLine(compiled.get('components/field.md'), '## Changelog'));
 });
 
 test('a page in the one-file structure ships the whole file, in its order, with code once', () => {
