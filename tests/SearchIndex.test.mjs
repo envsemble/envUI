@@ -160,12 +160,13 @@ test('an export on a page without a Props view leads to the section that shows i
   assert.deepEqual(place('export:useTheme'), {
     page: 'colors',
     view: 'usage',
-    section: 'react-usage',
+    section: 'usage',
   });
+  // A foundation in the one-file structure shows the props of the exports it documents.
   assert.deepEqual(place('prop:Text.variant'), {
     page: 'typography',
-    view: 'usage',
-    section: 'react-usage',
+    view: 'props',
+    section: 'props-Text-variant',
   });
   // Every export and prop on such a page has a section to go to.
   for (const record of records.filter(({ kind }) => kind === 'export' || kind === 'prop'))
@@ -189,23 +190,23 @@ test('the index stays small enough to load when search first opens', () => {
   assert.ok(serialized.length < 1_000_000, `${serialized.length} bytes`);
 });
 
-test('a result names its area: the Site, or the Docs for the reference', () => {
+test('a result names its area: the Usage guide, or the Docs for the reference', () => {
   const area = (id) => records.find((record) => record.id === id)?.area;
-  assert.equal(area('page:button'), 'site');
-  assert.equal(area('page:loading'), 'site');
-  assert.equal(area('page:colors'), 'site');
+  assert.equal(area('page:button'), 'usage');
+  assert.equal(area('page:loading'), 'usage');
+  assert.equal(area('page:colors'), 'usage');
   assert.equal(area('guide:colors'), 'docs');
   assert.equal(area('page:field'), 'docs');
   assert.equal(area('page:setup'), 'docs');
   assert.equal(area('prop:Button.variant'), 'docs');
   assert.equal(area('export:useTheme'), 'docs');
   assert.equal(area('token:color.fg.muted'), 'docs');
-  for (const record of records) assert.ok(['site', 'docs'].includes(record.area), record.id);
+  for (const record of records) assert.ok(['usage', 'docs'].includes(record.area), record.id);
   // The site's own pages: the Docs' home, tokens, codemods and the full changelog are in the Docs.
   const inDocs = new Set(['docs', 'tokens', 'codemods', 'full-changelog']);
   for (const { page, area: where } of cataloguePages)
-    assert.equal(where, inDocs.has(page) ? 'docs' : 'site', page);
-  // A foundation's page on the Site ranks above its guide in the Docs.
+    assert.equal(where, inDocs.has(page) ? 'docs' : 'usage', page);
+  // A foundation's page in the Usage guide ranks above its guide in the Docs.
   assert.deepEqual(best('colors and themes'), ['page:colors']);
   assert.ok(best('colors and themes', 3).includes('guide:colors'));
 });

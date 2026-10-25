@@ -1,4 +1,6 @@
 ---
+title: Adapting to width
+summary: Components follow the space they sit in, and four window classes name where a layout changes.
 components:
   - useContainerSize
 statuses: # Never released before 1.0, so beta until a release has used them.
@@ -23,11 +25,85 @@ aliases:
   - z-index
   - stacking order
   - layers
+avoidWhen:
+  - text: How space groups things, and the compact scale.
+    see: spacing
+  - text: Two panes that sit side by side once there is room.
+    use: Panes
+  - text: A readable column whose gutters follow the window class.
+    use: Page
+  - text: A task over the page, sized to the window.
+    use: Dialog
+  - text: A list of actions that opens over the page.
+    use: Menu
+  - text: A short label over the page.
+    use: Tooltip
+  - text: A notification over the page.
+    use: Toast
+examples:
+  Widths: example
 ---
 
 # Adapting to width
 
-## React usage
+## Options
+
+### Four window classes
+
+envUI names four widths of window, so you and an agent can say where a layout changes. Each is measured on the window around the app, not on the screen.
+
+| Window class | Use for                                     |
+| ------------ | ------------------------------------------- |
+| Compact      | A phone held upright, or a narrow pane.     |
+| Medium       | A tablet held upright, or a narrow window.  |
+| Expanded     | A tablet held sideways, or a laptop window. |
+| Large        | A desktop window.                           |
+
+## Behaviour
+
+### Components follow their space
+
+An envUI component lays itself out for the space it sits in, not for the screen.
+
+- In a narrow pane it looks as it would on a phone.
+- Where there is room it spreads out, with nothing for an app to adjust.
+
+```tsx figure=Widths
+
+```
+
+1. **In a narrow pane**: The actions move under the name, and each label sits above its value.
+2. **With room to spare**: The same components spread out: the actions beside the name, labels beside values.
+
+### Popups fit the window
+
+Menus, dialogs and sheets size themselves to the window they open in, not to the pane they open from, so they always have room.
+
+### Larger text, narrower class
+
+The window classes follow the reader's text size: with larger text, a window counts as a narrower class, so its layout never gets cramped.
+
+## Rules
+
+Start from the phone: a screen is laid out for the compact class first, and spreads out from a class up.
+
+- Such as a list with its details beside it from expanded up, and above it below.
+
+## Words to use
+
+Ask an agent for a layout that adapts in these words; envUI turns each into a window class or a layout that follows its space.
+
+| Words                      | In code                                                                                   | Use for                                                                                   |
+| -------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| On a phone                 | The `compact` window class, the default layout every query starts from                    | The compact window class: the narrowest layout, which every screen starts from.           |
+| In a narrow pane           | The pane's own width; a region of your own becomes a window with `container="env-window"` | The same layout as on a phone, wherever the pane is.                                      |
+| Side by side from expanded | `@container env-window (width >= 52.5rem)` around the two-column layout                   | Two parts next to each other in a laptop or desktop window, one above the other below it. |
+| Stack on a phone           | The default, one-column layout, before any `width >=` query                               | Puts parts one above the other in the compact window class.                               |
+| Wrap                       | `wrap` on Row, so its children run onto the next line                                     | Lets a row of buttons or tags run onto the next line instead of squeezing.                |
+
+## Compose
+
+### Usage
 
 ```tsx
 import type { ReactNode } from 'react';
@@ -64,9 +140,7 @@ const medium = windowClasses.medium;
 }
 ```
 
-### Props & contracts
-
-| Name                                | Contract                                                                                                      |
+| Name                                | Takes                                                                                                         |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | `windowClasses`                     | `{ compact: '0rem', medium: '37.5rem', expanded: '52.5rem', large: '75rem' }`: where each window class starts |
 | `WindowClass`                       | `'compact'`, `'medium'`, `'expanded'` or `'large'`                                                            |
@@ -74,21 +148,7 @@ const medium = windowClasses.medium;
 | `useContainerSize(target, { box })` | An element's `{ inlineSize, blockSize }` in CSS pixels, measured before it paints; undefined on the server    |
 | `--env-z-base` … `--env-z-tooltip`  | The stacking order of envUI's layers and the application's own, lowest first                                  |
 
-## The words people use
-
-The Site's Adapting to width page names the window classes in words and teaches these phrases. Each maps to one change here:
-
-| Words on the Site             | What it means in code                                                                     |
-| ----------------------------- | ----------------------------------------------------------------------------------------- |
-| Components follow their space | Nothing to do: envUI components query their container, never the viewport                 |
-| On a phone                    | The `compact` window class, the default layout every query starts from                    |
-| In a narrow pane              | The pane's own width; a region of your own becomes a window with `container="env-window"` |
-| Side by side from expanded up | `@container env-window (width >= 52.5rem)` around the two-column layout                   |
-| Stack on a phone              | The default, one-column layout, before any `width >=` query                               |
-| Wrap                          | `wrap` on Row, so its children run onto the next line                                     |
-| Popups fit the window         | Nothing to do: menus, dialogs and sheets measure the window they open in                  |
-
-## Window classes
+#### Window classes
 
 | Window class | Width                  | Where it falls                             |
 | ------------ | ---------------------- | ------------------------------------------ |
@@ -102,13 +162,24 @@ The Site's Adapting to width page names the window classes in words and teaches 
 - `container="env-window"` on a primitive makes a region a window of its own, such as a preview. Don't give envUI's other `env-*` container names to your own.
 - Compact first: write the compact layout as the default and switch up with `width >=`. Where no `env-window` is found, no query matches and the compact layout shows. CSS can't read the `--env-window-class-*` tokens inside a query, so write the width.
 
-## Containers only
+#### The words of the figures
 
-envUI has no width media queries: components respond to their container, so a component in a narrow pane lays out as on a phone. Do the same for a region of your own with `container: my-region / inline-size` and `@container my-region (width >= 37.5rem)`. Media queries not about width stay: pointer, forced colors, reduced motion, contrast and color scheme.
+- **Components follow their space**: nothing to do; envUI components query their container, never the viewport.
+- **Popups fit the window**: nothing to do; menus, dialogs and sheets measure the window they open in.
 
-`useContainerSize` is for what CSS can't do, such as rendering something else when a panel is narrow. Where only styles change, a container query does it without script and without a first render that differs.
+### Composition
 
-## Stacking order
+#### Containers only
+
+envUI has no width media queries: components respond to their container, so a component in a narrow pane lays out as on a phone.
+
+- Do the same for a region of your own with `container: my-region / inline-size` and `@container my-region (width >= 37.5rem)`.
+- Media queries not about width stay: pointer, forced colors, reduced motion, contrast and color scheme.
+- `useContainerSize` is for what CSS can't do, such as rendering something else when a panel is narrow. Where only styles change, a container query does it without script and without a first render that differs.
+
+### Customize
+
+#### Stacking order
 
 | Token             | Value | For                                                                              |
 | ----------------- | ----- | -------------------------------------------------------------------------------- |
@@ -126,13 +197,3 @@ envUI has no width media queries: components respond to their container, so a co
 - envUI's popups are portaled to the end of the document; keep your own layers below `--env-z-overlay`. envUI's Stylelint config reports a literal z-index.
 
 TypeScript declarations provide the complete public API.
-
-## Related topics
-
-- [Spacing & density](../foundations/spacing.md)
-- [Panes](../components/panes.md)
-- [Page](../components/page.md)
-- [Dialog](../components/dialog.md)
-- [Menu](../components/menu.md)
-- [Tooltip](../components/tooltip.md)
-- [Toast](../components/toast.md)

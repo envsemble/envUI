@@ -4,7 +4,7 @@ import { normalizeRoute } from './DocumentationRoutes';
 
 /**
  * The anchor of every envUI destination on the site, through LinkProvider. A plain press on a link
- * to one of its pages, the Site's or the Docs', shows the page without loading the site again; a
+ * to one of its pages, the Usage guide's or the Docs', shows the page without loading the site again; a
  * press with a modifier and a link to a file or another site behave as anchors do. An example's
  * links, which a preview keeps from navigating, stay in place.
  */

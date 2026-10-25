@@ -39,37 +39,55 @@ composes:
   - Text
   - ThemeRadioGroup
   - TopBar
+examples:
+  AvatarMenu: overview
+  WithOrganizations: example
+  SwitchOrganization: example
+  RowTrigger: example
+  OrganizationSwitcherAnatomy: anatomy
+  AvatarTrigger:
+    role: do
+    caption: The person's own avatar, named by their name, at the end of the top bar.
+  GenericTrigger:
+    role: dont
+    caption: 'The same icon for everyone: nothing says who is signed in.'
+  CurrentName:
+    role: do
+    caption: The switcher names the active organization.
+  GenericLabel:
+    role: dont
+    caption: 'A generic label: nothing says where people are.'
 ---
 
 # Account and organizations
 
-## Overview
-
-Both are a [Menu](../components/menu.md) behind a trigger in the frame. The account menu opens from the person's [AvatarButton](../components/avatar.md) at the end of the [TopBar](../components/top-bar.md): their avatar, name and email first, then their own things, with Sign out last.
-
-```tsx example=AvatarMenu
-
-```
-
-### The theme
-
-A Theme submenu applies the choice at once and keeps the menu open, so people see the result, and the application remembers it.
-
 ## Variants
+
+### The account menu
+
+The account menu opens from the person's [AvatarButton](../components/avatar.md) at the end of the [TopBar](../components/top-bar.md).
+
+- Their avatar, name and email come first.
+- Then their own things.
+- Sign out is last.
 
 ### Organizations in the account menu
 
 A submenu switches between the person's organizations, and names the current one.
 
-```tsx example=WithOrganizations
+```tsx figure=WithOrganizations
 
 ```
 
 ### A switcher of its own
 
-Where people switch often, a button at the top of the navigation [Drawer](../components/drawer.md), or at the start of the top bar, names the active organization and opens them all, with the person's role under each and an action that creates one. Before the first organization, that action is a button of its own.
+Where people switch often, a button names the active organization and opens them all.
 
-```tsx example=SwitchOrganization
+- It sits at the top of the navigation [Drawer](../components/drawer.md), or at the start of the top bar.
+- The menu shows the person's role under each organization, and an action that creates one.
+- Before the first organization, that action is a button of its own.
+
+```tsx figure=SwitchOrganization
 
 ```
 
@@ -77,39 +95,13 @@ Where people switch often, a button at the top of the navigation [Drawer](../com
 
 The account menu's trigger can be a row with the avatar and the name, as wide as the drawer; the menu opens above it.
 
-```tsx example=RowTrigger
+```tsx figure=RowTrigger
 
 ```
-
-## When to use
-
-```tsx do=AvatarTrigger caption="The person's own avatar, named by their name, at the end of the top bar."
-
-```
-
-```tsx dont=GenericTrigger caption="The same icon for everyone: nothing says who is signed in."
-
-```
-
-```tsx do=CurrentName caption="The switcher names the active organization."
-
-```
-
-```tsx dont=GenericLabel caption="A generic label: nothing says where people are."
-
-```
-
-### Switching
-
-Switch at once on a choice, and say so where the switch takes time.
-
-### Content
-
-Put the person's own name and email at the top, never "My account", and end with "Sign out", never "Log out". Write organization names as people wrote them, with the person's role, such as Admin, and say "Create organization" in the words the application uses for one.
 
 ## Anatomy
 
-```tsx anatomy=OrganizationSwitcherAnatomy open
+```tsx figure=OrganizationSwitcherAnatomy open
 
 ```
 
@@ -119,7 +111,48 @@ Put the person's own name and email at the top, never "My account", and end with
 4. **Role** (`env-menu-item-description`, `description`)
 5. **Create action** (`env-menu-separator + env-menu-item`)
 
+## Behaviour
+
+### The theme
+
+A Theme submenu applies the choice at once and keeps the menu open, so people see the result, and the application remembers it.
+
+### Switching
+
+Switch at once on a choice, and say so where the switch takes time.
+
+## Rules
+
+Both are a [Menu](../components/menu.md) behind a trigger in the frame, which says who is signed in and where.
+
+```tsx figure=AvatarTrigger
+
+```
+
+```tsx figure=GenericTrigger
+
+```
+
+```tsx figure=CurrentName
+
+```
+
+```tsx figure=GenericLabel
+
+```
+
+### Content
+
+Use the person's and the organizations' own names, never generic ones.
+
+- Put the person's own name and email at the top, never "My account".
+- End with "Sign out", never "Log out".
+- Write organization names as people wrote them, with the person's role, such as Admin.
+- Say "Create organization" in the words the application uses for one.
+
 ## Accessibility
+
+### Focus and keyboard
 
 Both menus take the keys of a [Menu](../components/menu.md), and give focus back to their trigger as they close.
 
@@ -134,11 +167,14 @@ Both menus take the keys of a [Menu](../components/menu.md), and give focus back
 - Each menu's name, Account or Organizations, and the person's name and email.
 - What Sign out does, the account settings page, and the switch itself, with a status where it takes time.
 
-## In code
+## Compose
 
 ### Usage
 
-A `Menu.Root` named `aria-label="Account"`, with `align="end"`, takes as its `trigger` an AvatarButton with the person's `name` and, for its tooltip, their email as `description`. A `Menu.Header` holds a large Avatar, `size="lg"`, centred above the name and email; it is not an item, so focus starts on the first item. Then come the items, such as a `Menu.Item` with `href="/account"`, a `Menu.Submenu` labelled Theme, and Sign out after a `Menu.Separator`.
+A `Menu.Root` named `aria-label="Account"`, with `align="end"`, takes as its `trigger` an AvatarButton with the person's `name` and, for its tooltip, their email as `description`.
+
+- A `Menu.Header` holds a large Avatar, `size="lg"`, centred above the name and email; it is not an item, so focus starts on the first item.
+- Then come the items, such as a `Menu.Item` with `href="/account"`, a `Menu.Submenu` labelled Theme, and Sign out after a `Menu.Separator`.
 
 ```tsx source=AvatarMenu
 
@@ -152,24 +188,64 @@ A ThemeRadioGroup inside the Theme `Menu.Submenu` applies the choice at once and
 
 A `Menu.Submenu` labelled Organization, with the current one as its `description`, holds a `Menu.RadioGroup` with `value` and `onValueChange` and a `Menu.RadioItem` for each organization.
 
-```tsx source=WithOrganizations
-
+```tsx
+<Menu.Submenu label="Organization" icon={<Groups3 />} description={current?.label}>
+  <Menu.RadioGroup value={organization} onValueChange={setOrganization}>
+    {organizations.map(({ id, label }) => (
+      <Menu.RadioItem key={id} value={id}>
+        {label}
+      </Menu.RadioItem>
+    ))}
+  </Menu.RadioGroup>
+</Menu.Submenu>
 ```
 
 #### A switcher of its own
 
-A `Menu.Root` named by `aria-label="Organizations"`, with `align="start"`, takes a secondary Button as its `trigger`, whose label is the active organization's name and whose `endIcon` is UnfoldMore. Its organizations are a `Menu.RadioGroup` whose `value` is the active one; `onValueChange` switches, and a `role="status"` message reports a switch that takes time. With no organizations, render a secondary Button with the Add `startIcon` that creates one, in place of the Menu.
+A `Menu.Root` named by `aria-label="Organizations"`, with `align="start"`, takes a secondary Button as its `trigger`, whose label is the active organization's name and whose `endIcon` is UnfoldMore.
 
-```tsx source=SwitchOrganization
+- Its organizations are a `Menu.RadioGroup` whose `value` is the active one; `onValueChange` switches.
+- A `role="status"` message reports a switch that takes time.
+- With no organizations, render a secondary Button with the Add `startIcon` that creates one, in place of the Menu.
 
+```tsx
+<Menu.Root
+  aria-label="Organizations"
+  align="start"
+  trigger={
+    <Button variant="secondary" endIcon={<UnfoldMore />}>
+      {active.label}
+    </Button>
+  }
+>
+  <Menu.RadioGroup aria-labelledby={headingId} value={current} onValueChange={switchTo}>
+    <Menu.RadioItem value="northwind" description="Admin">
+      Northwind Labs
+    </Menu.RadioItem>
+  </Menu.RadioGroup>
+</Menu.Root>
 ```
 
 #### A row at the foot of the navigation
 
 The trigger is a Button with `variant="ghost"`, `fullWidth` and an `endIcon`, holding a small Avatar, `size="sm"`, and the name in a Row. The menu opens above it with `side="top"` and `align="start"`.
 
-```tsx source=RowTrigger
-
+```tsx
+<Menu.Root
+  aria-label="Account"
+  side="top"
+  align="start"
+  trigger={
+    <Button variant="ghost" fullWidth endIcon={<UnfoldMore />}>
+      <Row align="center" gap={2}>
+        <Avatar name="Priya Shah" size="sm" />
+        <Text>Priya Shah</Text>
+      </Row>
+    </Button>
+  }
+>
+  <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+</Menu.Root>
 ```
 
 ### Composition

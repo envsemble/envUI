@@ -7,19 +7,20 @@ import {
   type Reference,
 } from '../Reference';
 import { docsRoute, homeRoute, routeHref } from './Address';
+import { headingSlug } from '../../../../scripts/SearchAnchors.mjs';
 
 /**
- * The two areas of the site: the Site, at the root, introduces envUI to people, and the Docs, under
- * /docs, are the developer reference.
+ * The two parts of the site: the Usage guide, at the root, shows envUI to people, what each part
+ * looks like and when to use it, and the Docs, under /docs, are the developer reference.
  */
-export type Area = 'site' | 'docs';
+export type Area = 'usage' | 'docs';
 
 /**
- * The Site's destinations in its rail, in order; the drawer beside it lists their pages. Dev mode
- * is a page of the Overview, and the changelog is in the Docs.
+ * The Usage guide's destinations in its rail, in order; the drawer beside it lists their pages. Dev
+ * mode is a page of the Overview, and the changelog is in the Docs.
  */
-export const siteSections = ['Overview', 'Foundations', 'Components', 'Patterns'] as const;
-export type SiteSection = (typeof siteSections)[number];
+export const usageSections = ['Overview', 'Foundations', 'Components', 'Patterns'] as const;
+export type UsageSection = (typeof usageSections)[number];
 
 /** What a page shows, which decides how it renders. */
 export type PageKind =
@@ -36,18 +37,24 @@ export type PageKind =
   | 'docs-changelog'
   | 'tokens'
   | 'foundation-guide'
-  | 'api';
+  | 'reference';
 
-/** One page of the Site or the Docs, at the route `path`. */
-export interface SitePage {
+/** One page of the Usage guide or the Docs, at the route `path`. */
+export interface RoutePage {
   path: string;
   title: string;
   /** The page's name in the navigation, where it differs from its title. */
   label?: string;
   area: Area;
-  /** The Site's rail destination the page belongs to, or the group of the Docs' navigation. */
+  /**
+   * The Usage guide's rail destination the page belongs to, or the top-level group of the Docs'
+   * navigation, such as Guides or Components.
+   */
   section: string;
-  /** The group of the Site's drawer the page is listed in, such as a kind of component. */
+  /**
+   * The group the page is listed in within its section: in the Usage guide's drawer a heading, such
+   * as a kind of component, and in the Docs' navigation a section that opens and closes.
+   */
   group?: string;
   kind: PageKind;
   summary?: string;
@@ -56,8 +63,8 @@ export interface SitePage {
 }
 
 /**
- * A component or foundation page of docs/ with the page that shows it: the Site's, or for Field,
- * which has no page on the Site, its page in the Docs.
+ * A component or foundation page of docs/ with the page that shows it: the Usage guide's, or for
+ * Field, which has no page in the Usage guide, its page in the Docs.
  */
 export interface ReferencePage {
   reference: Reference;
@@ -69,7 +76,7 @@ export interface ReferencePage {
 const docsOnlyComponents = new Set(['field']);
 
 /**
- * Pages of docs/ that neither the Site nor the Docs show: the contributor pages, for people who
+ * Pages of docs/ that neither the Usage guide nor the Docs show: the contributor pages, for people who
  * change envUI itself, which stay in the repository and which the package leaves out
  * (contributorPages in scripts/GenerateDocumentation.mjs), and the agents' index of the pages, which
  * the package ships.
@@ -104,32 +111,32 @@ export const pageHref = (page: ReferencePage) => routeHref(page.path);
  * The route of a component's page in the Docs: its guide to using it in code, then its props, part
  * names and changelog.
  */
-export const apiRoute = (id: string) => `docs/components/${id}`;
+export const componentDocsRoute = (id: string) => `docs/components/${id}`;
 
 /** The route of a pattern's page in the Docs: its guide to building it in code. */
-export const patternGuideRoute = (id: string) => `docs/patterns/${id}`;
+export const patternDocsRoute = (id: string) => `docs/patterns/${id}`;
 
 /** The route of a foundation's guide in the Docs: its written guidance and reference. */
-export const foundationGuideRoute = (id: string) => `docs/foundations/${id}`;
+export const foundationDocsRoute = (id: string) => `docs/foundations/${id}`;
 
 const patternDocuments = documents.filter((document) => document.group === 'Patterns');
 const guideDocuments = documents.filter(
   (document) => document.group === 'Setup and workflows' && !unlistedDocuments.has(document.id),
 );
 
-const sitePages: SitePage[] = [
+const usagePages: RoutePage[] = [
   {
     path: homeRoute,
     title: 'envUI',
     label: 'Introduction',
-    area: 'site',
+    area: 'usage',
     section: 'Overview',
     kind: 'home',
   },
   {
     path: 'dev-mode',
     title: 'Dev mode',
-    area: 'site',
+    area: 'usage',
     section: 'Overview',
     kind: 'dev-mode',
     summary:
@@ -138,10 +145,10 @@ const sitePages: SitePage[] = [
   ...referencePages
     .filter(({ section }) => section === 'Foundations')
     .map(
-      ({ reference, path }): SitePage => ({
+      ({ reference, path }): RoutePage => ({
         path,
         title: reference.title,
-        area: 'site',
+        area: 'usage',
         section: 'Foundations',
         kind: 'foundation',
         summary: reference.summary,
@@ -152,7 +159,7 @@ const sitePages: SitePage[] = [
     path: 'components',
     title: 'Components',
     label: 'All components',
-    area: 'site',
+    area: 'usage',
     section: 'Components',
     kind: 'components',
     summary: 'Every component of envUI, by what it is for.',
@@ -161,10 +168,10 @@ const sitePages: SitePage[] = [
     referencePages
       .filter(({ reference, path }) => reference.group === group && !path.startsWith('docs/'))
       .map(
-        ({ reference, path }): SitePage => ({
+        ({ reference, path }): RoutePage => ({
           path,
           title: reference.title,
-          area: 'site',
+          area: 'usage',
           section: 'Components',
           group,
           kind: 'component',
@@ -177,16 +184,16 @@ const sitePages: SitePage[] = [
     path: 'patterns',
     title: 'Patterns',
     label: 'All patterns',
-    area: 'site',
+    area: 'usage',
     section: 'Patterns',
     kind: 'patterns',
     summary: 'Components put together for what people do, by what they are doing.',
   },
   ...patternDocuments.map(
-    (document): SitePage => ({
+    (document): RoutePage => ({
       path: `patterns/${document.id}`,
       title: document.title,
-      area: 'site',
+      area: 'usage',
       section: 'Patterns',
       group: document.metadata?.intent,
       kind: 'pattern',
@@ -208,7 +215,7 @@ const guideLabels: Record<string, string> = {
  */
 const startGuides = new Set(['setup', 'migration', 'agent-tooling']);
 
-const guidePage = (document: Documentation): SitePage => ({
+const guidePage = (document: Documentation): RoutePage => ({
   path: `docs/${document.id}`,
   title: document.title,
   label: guideLabels[document.id],
@@ -220,7 +227,7 @@ const guidePage = (document: Documentation): SitePage => ({
 });
 
 /** The Docs' pages for getting started, in reading order, with codemods after migration. */
-const startPages: SitePage[] = guideDocuments
+const startPages: RoutePage[] = guideDocuments
   .filter((document) => startGuides.has(document.id))
   .flatMap((document) => {
     const page = guidePage(document);
@@ -241,13 +248,13 @@ const startPages: SitePage[] = guideDocuments
   });
 
 /** The Docs' other guides, in the index's order. */
-const guidePages: SitePage[] = guideDocuments
+const guidePages: RoutePage[] = guideDocuments
   .filter((document) => !startGuides.has(document.id))
   .map(guidePage);
 
 const field = references.find((reference) => docsOnlyComponents.has(reference.id));
 
-const docsPages: SitePage[] = [
+const docsPages: RoutePage[] = [
   {
     path: docsRoute,
     title: 'envUI Docs',
@@ -256,26 +263,26 @@ const docsPages: SitePage[] = [
     section: 'Get started',
     kind: 'docs-home',
     summary:
-      'How to build with envUI in code: setup, guides, tokens, and every component and pattern with its props. The Site shows what each looks like and when to use it.',
+      'How to build with envUI in code: setup, guides, tokens, and every component and pattern with its props. The Usage guide shows what each looks like and when to use it.',
   },
   ...startPages,
   ...guidePages,
   ...(field
     ? [
         {
-          path: apiRoute(field.id),
+          path: componentDocsRoute(field.id),
           title: 'Build your own field',
           area: 'docs',
           section: 'Guides',
-          kind: 'api',
+          kind: 'reference',
           summary: field.summary,
           document: field as Documentation,
-        } satisfies SitePage,
+        } satisfies RoutePage,
       ]
     : []),
   ...foundations.map(
-    (reference): SitePage => ({
-      path: foundationGuideRoute(reference.id),
+    (reference): RoutePage => ({
+      path: foundationDocsRoute(reference.id),
       title: reference.title,
       area: 'docs',
       section: 'Foundations',
@@ -297,27 +304,29 @@ const docsPages: SitePage[] = [
     references
       .filter((reference) => reference.group === group && !docsOnlyComponents.has(reference.id))
       .map(
-        (reference): SitePage => ({
-          path: apiRoute(reference.id),
+        (reference): RoutePage => ({
+          path: componentDocsRoute(reference.id),
           title: reference.title,
           area: 'docs',
-          section: group,
-          kind: 'api',
+          section: 'Components',
+          group,
+          kind: 'reference',
           summary: reference.summary,
           document: reference as Documentation,
         }),
       ),
   ),
-  // Each pattern's guide, in the Site's order: how to build it in code.
-  ...sitePages
+  // Each pattern's guide, in the Usage guide's order and by its intent: how to build it in code.
+  ...usagePages
     .filter((page) => page.kind === 'pattern' && page.document)
     .map(
-      ({ document, title, summary }): SitePage => ({
-        path: patternGuideRoute(document!.id),
+      ({ document, title, summary, group }): RoutePage => ({
+        path: patternDocsRoute(document!.id),
         title,
         area: 'docs',
         section: 'Patterns',
-        kind: 'api',
+        group,
+        kind: 'reference',
         summary,
         document,
       }),
@@ -333,8 +342,8 @@ const docsPages: SitePage[] = [
   },
 ];
 
-/** Every page of the Site, then of the Docs, each in reading order, which the pager follows. */
-export const allPages: SitePage[] = [...sitePages, ...docsPages];
+/** Every page of the Usage guide, then of the Docs, each in reading order, which the pager follows. */
+export const allPages: RoutePage[] = [...usagePages, ...docsPages];
 
 /** The page at a route's path, if there is one. */
 export function findPage(path: string) {
@@ -344,9 +353,112 @@ export function findPage(path: string) {
 /** The pages of an area, in reading order. */
 export const pagesOf = (area: Area) => allPages.filter((page) => page.area === area);
 
-/** The first page of a Site destination, which its rail item opens. */
-export function sectionHome(section: SiteSection) {
-  return sitePages.find((page) => page.section === section)!;
+/** The first page of a Usage guide destination, which its rail item opens. */
+export function sectionHome(section: UsageSection) {
+  return usagePages.find((page) => page.section === section)!;
+}
+
+/** The route of the Docs' page of a subject the Usage guide shows, by the kind of its page there. */
+const docsRouteOf: Partial<Record<PageKind, (id: string) => string>> = {
+  component: componentDocsRoute,
+  pattern: patternDocsRoute,
+  foundation: foundationDocsRoute,
+};
+
+/**
+ * The pages of one subject in the two parts, each the other's counterpart, by their paths: a
+ * component's, pattern's or foundation's page in the Usage guide and its page in the Docs, and dev
+ * mode's page with its guide.
+ */
+const pairs = [
+  ['dev-mode', 'docs/dev-mode'],
+  ...usagePages.flatMap(({ path, kind, document }): [string, string][] => {
+    const docs = document && docsRouteOf[kind];
+    return docs ? [[path, docs(document.id)]] : [];
+  }),
+].filter(([usage, docs]) => findPage(usage) && findPage(docs));
+const counterparts = new Map(
+  pairs.flatMap(([usage, docs]) => [
+    [usage, docs],
+    [docs, usage],
+  ]),
+);
+
+/** The path of the page of the same subject in the other part, if the page has one. */
+export const counterpartOf = (page: RoutePage) => counterparts.get(page.path);
+
+/**
+ * Where a way to the other part leads from a page, such as the switch at its top end: the page of
+ * the same subject there, or, from a page without one, the other part's start: the Docs' home from
+ * the Usage guide, such as from its Overview or a gallery, and the Usage guide's Overview from the
+ * Docs, such as from a guide or the changelog.
+ */
+export function otherPartRoute(page: RoutePage | undefined, area: Area) {
+  return (page && counterpartOf(page)) ?? (area === 'docs' ? homeRoute : docsRoute);
+}
+
+/**
+ * A group of the Docs' navigation, such as Guides, or Actions within Components: its pages, then
+ * its own groups, with the id of its heading on the Docs' home.
+ */
+export interface DocsGroup {
+  label: string;
+  id: string;
+  pages: RoutePage[];
+  groups: DocsGroup[];
+}
+
+/**
+ * The Docs' pages as a tree, in reading order: each section of the navigation, such as Get started
+ * or Components, with its pages and its groups, such as the kinds of component and the patterns'
+ * intents.
+ */
+export const docsTree: DocsGroup[] = (() => {
+  const sections: DocsGroup[] = [];
+  for (const page of docsPages) {
+    let section = sections.find((entry) => entry.label === page.section);
+    if (!section) {
+      section = { label: page.section, id: headingSlug(page.section), pages: [], groups: [] };
+      sections.push(section);
+    }
+    if (!page.group) {
+      section.pages.push(page);
+      continue;
+    }
+    let group = section.groups.find((entry) => entry.label === page.group);
+    if (!group) {
+      const id = `${section.id}-${headingSlug(page.group)}`;
+      group = { label: page.group, id, pages: [], groups: [] };
+      section.groups.push(group);
+    }
+    group.pages.push(page);
+  }
+  return sections;
+})();
+
+/** One level of a page's trail: its name, and the route it leads to. */
+export interface TrailStep {
+  label: string;
+  route: string;
+}
+
+/**
+ * The trail from the Docs' home down to a page of the Docs, for its breadcrumbs: Docs, its section
+ * and its group, each leading to its heading on the Docs' home, then the page itself, such as
+ * Docs / Components / Actions / Button. A section named as its one page, such as Changelog, is left
+ * out.
+ */
+export function docsTrail(page: RoutePage): TrailStep[] {
+  const steps: TrailStep[] = [{ label: 'Docs', route: docsRoute }];
+  if (page.kind === 'docs-home') return steps;
+  const section = docsTree.find((entry) => entry.label === page.section);
+  const atHeading = (id: string) => `${docsRoute}?${new URLSearchParams({ section: id })}`;
+  if (section && section.label !== page.title)
+    steps.push({ label: section.label, route: atHeading(section.id) });
+  const group = section?.groups.find((entry) => entry.label === page.group);
+  if (group) steps.push({ label: group.label, route: atHeading(group.id) });
+  steps.push({ label: page.title, route: page.path });
+  return steps;
 }
 
 /** The component or foundation page of a document id, such as button. */
@@ -354,7 +466,7 @@ const referencePageOf = (id: string) => referencePages.find((page) => page.refer
 
 /**
  * The route of a page by its document id, such as `button`, or by a site page's, such as `tokens`,
- * scrolled to the element `section`. `view` picks the page's part in the Docs where the Site shows
+ * scrolled to the element `section`. `view` picks the page's part in the Docs where the Usage guide shows
  * the rest: `props` a component's or a pattern's page there, `usage` a foundation's guide.
  */
 export function routeOfDocument(
@@ -365,19 +477,20 @@ export function routeOfDocument(
   const reference = referencePageOf(id);
   if (reference) {
     if (reference.section === 'Foundations' && view === 'usage')
-      return `${foundationGuideRoute(id)}${query}`;
-    if (reference.section === 'Components' && view === 'props') return `${apiRoute(id)}${query}`;
+      return `${foundationDocsRoute(id)}${query}`;
+    if (reference.section === 'Components' && view === 'props')
+      return `${componentDocsRoute(id)}${query}`;
     return `${reference.path}${query}`;
   }
   if (view === 'props' && patternDocuments.some((document) => document.id === id))
-    return `${patternGuideRoute(id)}${query}`;
+    return `${patternDocsRoute(id)}${query}`;
   if (id === 'index' || id === docsRoute) return `${docsRoute}${query}`;
   if (id === 'overview') return homeRoute;
   const own: Record<string, string> = {
     'get-started': 'docs/setup',
     components: 'components',
     patterns: 'patterns',
-    // Dev mode's page on the Site; its guide in the Docs is the document dev-mode.
+    // Dev mode's page in the Usage guide; its guide in the Docs is the document dev-mode.
     'dev-mode-overview': 'dev-mode',
     changelog: 'docs/changelog',
     tokens: 'docs/tokens',
@@ -407,7 +520,7 @@ const componentPatterns: Record<string, string> = {
 };
 
 /**
- * Pages folded into another page, by their path on the Site: the page that holds them now, and the
+ * Pages folded into another page, by their path in the Usage guide: the page that holds them now, and the
  * section of it that does, if one. Their pages in the Docs open the other's.
  */
 const foldedPages: Record<string, { page: string; section?: string }> = {
@@ -437,8 +550,8 @@ const mergedPatterns: Record<string, string> = {
 const apiSection = (section: string | null) => section?.startsWith('props-') ?? false;
 
 /**
- * Keeps old addresses working: the views pages had before the Site and the Docs split, the 0.x
- * names of pages and the pages that moved, each opens the page it became.
+ * Keeps old addresses working: the views pages had before the Usage guide and the Docs split, the
+ * 0.x names of pages and the pages that moved, each opens the page it became.
  */
 export function normalizeRoute(route: string): string {
   const [originalPath, ...query] = route.split('?');
@@ -447,8 +560,8 @@ export function normalizeRoute(route: string): string {
   const section = search.get('section');
   if (!originalPath) return `${homeRoute}${rest()}`;
   // The overview's views: the components and Get started, which held the setup guide, the agents'
-  // skills and the guides by their document's id. The Site's Get started page that followed is the
-  // setup guide too.
+  // skills and the guides by their document's id. The Usage guide's Get started page that followed
+  // is the setup guide too.
   if (/^overview\/components(?:\/|$)/.test(originalPath))
     return section && section !== 'overview-components'
       ? `components${rest()}`
@@ -480,7 +593,7 @@ export function normalizeRoute(route: string): string {
   if (originalPath === 'docs/agent-skills') return 'docs/agent-tooling';
   // The agent benchmark is gone: its page opens the overview.
   if (originalPath === 'benchmark') return `${homeRoute}${rest()}`;
-  // The Site's changelog moved to the Docs, with its release notes.
+  // The Usage guide's changelog moved to the Docs, with its release notes.
   if (originalPath === 'changelog') return `docs/changelog${rest()}`;
   // A destination's own address opens its first page.
   if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
@@ -488,7 +601,7 @@ export function normalizeRoute(route: string): string {
   // Docs' home lists the guides under Patterns.
   if (originalPath === 'docs/patterns') return `${docsRoute}${rest()}`;
   if (originalPath === 'foundations/tokens') return `docs/tokens${rest()}`;
-  // Pages folded into another open it: on the Site at the section that holds them, unless the
+  // Pages folded into another open it: in the Usage guide at the section that holds them, unless the
   // address names one, and in the Docs the other's page there.
   const [, foldedArea, foldedId, foldedView] =
     /^(?:docs\/)?(components|patterns)\/([^/]+)(?:\/(.+))?$/.exec(originalPath) ?? [];
@@ -507,7 +620,7 @@ export function normalizeRoute(route: string): string {
   // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
   if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest()}`;
   if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest()}`;
-  // Patterns merged into others open the pattern they joined, on the Site and in the Docs, and the
+  // Patterns merged into others open the pattern they joined, in the Usage guide and the Docs, and the
   // content guidelines are the Writing guide in the Docs.
   const merged = /^(docs\/)?patterns\/([a-z-]+)$/.exec(originalPath);
   if (merged && Object.hasOwn(mergedPatterns, merged[2]!))
@@ -551,7 +664,7 @@ export function normalizeRoute(route: string): string {
     .replace(/^foundations\/scale(?=\/|$)/, 'foundations/spacing');
   if (path.startsWith('patterns/')) return `${path}${rest()}`;
   // A page's views are gone: its props are on its page in the Docs, a foundation's guidance in its
-  // guide there, and every other view is the Site's page.
+  // guide there, and every other view is the Usage guide's page.
   const [area, id, view] = path.split('/');
   const reference = (area === 'components' || area === 'foundations') && referencePageOf(id ?? '');
   if (!reference) return `${path}${rest()}`;

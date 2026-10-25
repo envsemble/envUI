@@ -30,53 +30,31 @@ avoidWhen:
     use: Grid
 components:
   - Table
+examples:
+  ProjectStatus: overview
+  RowDensity: example
+  NumericColumns: example
+  TableAnatomy: anatomy
+  SortableColumns: example
+  SelectRows: example
+  ResizableColumns: example
+  StickyHeader: example
+  StackedRows: example
+  NumbersAligned:
+    role: do
+    caption: Numbers aligned to the end, so the digits line up down the column.
+  NumbersUnaligned:
+    role: dont
+    caption: "Numbers aligned to the start: they can't be compared at a glance."
+  NamedStates:
+    role: do
+    caption: A Badge that names each state.
+  ColorOnly:
+    role: dont
+    caption: States told apart by color alone.
 ---
 
 # Table
-
-## Overview
-
-Table's parts are the native table elements, inside a focusable region.
-
-```tsx example=ProjectStatus
-
-```
-
-### Sort by a column
-
-A header can sort the rows by its column, and each sortable header shows the order.
-
-```tsx example=SortableColumns
-
-```
-
-### Select rows
-
-A selected row takes the selection colors, and a checkbox labelled with the row's name selects it.
-
-```tsx example=SelectRows
-
-```
-
-### Resizable columns
-
-People can resize columns by dragging the boundary at the end of a header, or with the arrow keys; a double click restores the starting widths.
-
-```tsx example=ResizableColumns
-
-```
-
-### Sticky header
-
-The header row can stay in view while the rows scroll beneath it, in a region of a set height.
-
-```tsx example=StickyHeader
-
-```
-
-### Loading
-
-While its rows load, a table shows as its own skeleton, as [Loading](../patterns/loading.md) shows.
 
 ## Variants
 
@@ -84,7 +62,7 @@ While its rows load, a table shows as its own skeleton, as [Loading](../patterns
 
 Density changes only the rows' padding; controls in cells keep the small height.
 
-```tsx example=RowDensity
+```tsx figure=RowDensity
 
 ```
 
@@ -99,7 +77,7 @@ Density changes only the rows' padding; controls in cells keep the small height.
 
 A cell can line its content up for comparing, keep it on one line, or head its row.
 
-```tsx example=NumericColumns
+```tsx figure=NumericColumns
 
 ```
 
@@ -110,21 +88,88 @@ A cell can line its content up for comparing, keep it on one line, or head its r
 | On one line | Short values that read badly broken, such as names and dates. |
 | Row header  | A header cell that heads its row, such as Total.              |
 
-## When to use
+## Anatomy
 
-```tsx do=NumbersAligned caption="Numbers aligned to the end, so the digits line up down the column."
-
-```
-
-```tsx dont=NumbersUnaligned caption="Numbers aligned to the start: they can't be compared at a glance."
+```tsx figure=TableAnatomy enlarge
 
 ```
 
-```tsx do=NamedStates caption="A Badge that names each state."
+1. **Region** (`env-table-region`)
+2. **Caption** (`env-table-caption`, `caption`)
+3. **Header row** (`env-table-head`)
+4. **Header cell** (`env-table-header-cell`)
+5. **Sort button** (`env-table-sort-button`, `onSortChange`)
+6. **Row** (`env-table-body > env-table-row:last-child`)
+7. **Cell** (`env-table-cell:last-child`)
+
+Not shown: a column's resize handle, and a stacked cell's label.
+
+## Behaviour
+
+### Sort by a column
+
+A header can sort the rows by its column, and each sortable header shows the order.
+
+```tsx figure=SortableColumns
 
 ```
 
-```tsx dont=ColorOnly caption="States told apart by color alone."
+### Select rows
+
+A selected row takes the selection colors, and a checkbox labelled with the row's name selects it.
+
+```tsx figure=SelectRows
+
+```
+
+### Resizable columns
+
+People can resize columns by dragging the boundary at the end of a header, or with the arrow keys. A double click restores the starting widths.
+
+```tsx figure=ResizableColumns
+
+```
+
+### Sticky header
+
+The header row can stay in view while the rows scroll beneath it, in a region of a set height.
+
+```tsx figure=StickyHeader
+
+```
+
+### Loading
+
+While its rows load, a table shows as its own skeleton, as [Loading](../patterns/loading.md) shows.
+
+### Adapting to width
+
+By default the columns keep their width and the region scrolls sideways.
+
+- A table can stack its rows instead where it is narrow, such as on a phone.
+- Each row then becomes a block titled by its first cell, with each other value beside its column's name.
+
+```tsx figure=StackedRows widths="22 44"
+
+```
+
+## Rules
+
+Numbers line up and states have names, so rows compare at a glance.
+
+```tsx figure=NumbersAligned
+
+```
+
+```tsx figure=NumbersUnaligned
+
+```
+
+```tsx figure=NamedStates
+
+```
+
+```tsx figure=ColorOnly
 
 ```
 
@@ -139,30 +184,6 @@ A table has no editing cell by cell and no moving between cells with the arrow k
 ### The first cell
 
 Start each row with the cell that identifies it, which titles the row when rows stack.
-
-## Anatomy
-
-```tsx anatomy=TableAnatomy enlarge
-
-```
-
-1. **Region** (`env-table-region`)
-2. **Caption** (`env-table-caption`, `caption`)
-3. **Header row** (`env-table-head`)
-4. **Header cell** (`env-table-header-cell`)
-5. **Sort button** (`env-table-sort-button`, `onSortChange`)
-6. **Row** (`env-table-body > env-table-row:last-child`)
-7. **Cell** (`env-table-cell:last-child`)
-
-Not shown: a column's resize handle, and a stacked cell's label.
-
-## Adapting to width
-
-By default the columns keep their width and the region scrolls sideways. A table can stack its rows instead: where it is narrow, such as on a phone, each row becomes a block titled by its first cell, with each other value beside its column's name.
-
-```tsx example=StackedRows widths="22 44"
-
-```
 
 ## Accessibility
 
@@ -192,169 +213,60 @@ By default the columns keep their width and the region scrolls sideways. A table
 - A `label` on every cell after the first in a stacking table.
 - The sort and resize words in the page's language, through `messages.table`.
 
-## In code
+## Compose
 
 ### Usage
 
-Table.Root renders a native table in a focusable scroll region, with Table.Head and Table.Body, their Table.Row elements, and Table.HeaderCell and Table.Cell in them. Name it with a `caption`, shown above the rows, or with an `aria-label`, or `aria-labelledby` where a heading above names it; the name reaches the region too. Header cells take `scope="col"` by default; set `scope="row"` on one that heads its row, such as Total.
+Table's parts are the native table elements, inside a focusable region. Name every Table.Root with a `caption`, an `aria-label` or `aria-labelledby`; the name reaches its scroll region too. Header cells are `scope="col"`; set `scope="row"` on one that heads its row, such as Total. Put `numeric` on a number column's header cell and cells, and `nowrap` on short values such as names and dates.
 
 ```tsx source=ProjectStatus
 
 ```
 
-#### Cells and density
-
-`numeric` sets tabular figures aligned to the end, for numbers that compare down a column; put it on the header cell too, where a sort arrow then comes before the label. `align` is `start`, or `end` for other content at the end of its cell, such as actions, and the default with `numeric`. `nowrap` keeps short values on one line; with set column widths, what doesn't fit ends with an ellipsis. `density` on Table.Root is `xs`, `sm`, `md`, the default, or `lg`, and changes only the cells' padding; buttons, icon buttons and fields in the cells take the small control height.
-
-```tsx source=NumericColumns
-
-```
+`density` on Table.Root changes only the cells' padding; controls in cells take the small height.
 
 #### Sorting
 
-`onSortChange` on a Table.HeaderCell makes the header a sort button, called with the order pressing asks for. The application sorts the rows and gives each sortable header its `sortDirection`, `ascending`, `descending` or `none`, which sets `aria-sort` and the arrow. `sortLabel` names the button.
+The application sorts the rows. `onSortChange` on a header cell makes it a sort button, called with the order pressing asks for, and `sortDirection` shows the current order on every sortable header:
 
-```tsx source=SortableColumns
-
+```tsx
+<Table.HeaderCell
+  sortDirection={sort.column === 'name' ? sort.direction : 'none'}
+  onSortChange={(direction) => setSort({ column: 'name', direction })}
+>
+  Name
+</Table.HeaderCell>
 ```
 
 #### Selecting and opening rows
 
-`selected` on a Table.Row reports `aria-selected` and takes the selection colors, with a bar at its start; pass `selected={false}` to the other rows, and select a row with a Checkbox labelled with its name. `interactive` highlights a row on hover and while focus is inside it, for rows that open through a link or a button in a cell; it adds no behaviour, and the row takes no click handler of its own.
-
-```tsx source=SelectRows
-
-```
+`selected` on a Table.Row reports `aria-selected`; pass `selected={false}` to the other rows, and select with a Checkbox labelled with the row's name. `interactive` only highlights a row that opens through a link or a button in a cell; the row takes no click handler.
 
 #### Resizable columns
 
-With `resizableColumns`, a handle at the end of each header cell but the last moves the boundary to the next column and keeps the table's width. It needs widths in percent, in column order and adding up to 100: `defaultColumnWidths` where the table owns them, or `columnWidths` with `onColumnWidthsChange`. `minColumnWidths` is the smallest width of each column, 5 percent by default. A double click on a handle restores the starting widths, and `resizeLabel` names it.
+`resizableColumns` needs widths in percent that add up to 100, in column order: `defaultColumnWidths`, or `columnWidths` with `onColumnWidthsChange`.
 
-```tsx source=ResizableColumns
-
+```tsx
+<Table.Root aria-label="Files" resizableColumns defaultColumnWidths={[40, 25, 20, 15]}>
 ```
 
 #### Sticky header and loading
 
-`stickyHeader` keeps the header row at the top of the region while the rows scroll beneath it; the region then scrolls vertically too, so give it a height through `regionClassName` or the surrounding layout. `skeleton` on Table.Root shows the table as its own skeleton until its rows arrive; render its rows over placeholder items.
-
-```tsx source=StickyHeader
-
-```
+`stickyHeader` makes the region scroll vertically, so give it a height through `regionClassName` or its layout. `skeleton` shows the table as its own skeleton over placeholder rows until they arrive.
 
 #### Stacked rows
 
-By default, `narrowLayout` is `scroll`: the columns keep their width and the region scrolls sideways. With `narrowLayout="stack"`, below `stackBelow`, 36 rem of the region's own width by default, a CSS length or a number of pixels, each body row becomes a block titled by its first cell, with each other cell's `label` beside its value, and the header row is visually hidden. A container query decides it, so the server's markup already stacks. `onStackedChange` reports the change, here to offer a Select for the order while the header row is hidden.
+`narrowLayout="stack"` stacks the body rows below `stackBelow`, the region's own width, by a container query, so server markup already stacks. Give every cell after the first a `label`, which titles its value in a stacked row. The header row, and its sort buttons, are hidden while rows stack: `onStackedChange` tells the application, such as to show a Select for the order instead.
 
 ```tsx
-import { useState } from 'react';
-import { Select, Column, Table } from '@envsemble/envui';
-
-const invoices = [
-  { number: 'INV-1041', client: 'Northwind', due: '2026-03-14', amount: 1875 },
-  { number: 'INV-1042', client: 'Alex Morgan', due: '2026-03-02', amount: 600 },
-  { number: 'INV-1043', client: 'Priya Shah', due: '2026-03-28', amount: 4687.5 },
-  { number: 'INV-1044', client: 'Sam Lee', due: '2026-03-09', amount: 1200 },
-];
-
-type Invoice = (typeof invoices)[number];
-type SortColumn = 'client' | 'due' | 'amount';
-type Direction = 'ascending' | 'descending';
-
-const orders = [
-  { value: 'client ascending', label: 'Client, A to Z' },
-  { value: 'client descending', label: 'Client, Z to A' },
-  { value: 'due ascending', label: 'Due, soonest first' },
-  { value: 'due descending', label: 'Due, latest first' },
-  { value: 'amount descending', label: 'Amount, highest first' },
-  { value: 'amount ascending', label: 'Amount, lowest first' },
-];
-
-const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' });
-
-function compare(column: SortColumn) {
-  return (first: Invoice, second: Invoice) =>
-    column === 'amount'
-      ? first.amount - second.amount
-      : first[column].localeCompare(second[column]);
-}
-
-export default function SortWhileStacked() {
-  const [sort, setSort] = useState<{ column: SortColumn; direction: Direction }>({
-    column: 'due',
-    direction: 'ascending',
-  });
-  // While the rows stack, the header row and its sort buttons are hidden.
-  const [stacked, setStacked] = useState(false);
-  const rows = [...invoices].sort((first, second) =>
-    sort.direction === 'ascending'
-      ? compare(sort.column)(first, second)
-      : compare(sort.column)(second, first),
-  );
-  const direction = (column: SortColumn): Table.SortDirection =>
-    sort.column === column ? sort.direction : 'none';
-  const sortBy = (column: SortColumn) => () =>
-    setSort((current) => ({
-      column,
-      direction:
-        current.column === column && current.direction === 'ascending' ? 'descending' : 'ascending',
-    }));
-  return (
-    // As narrow as a phone or a side panel, so the rows stack.
-    <Column gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
-      {stacked && (
-        <Select
-          label="Sort by"
-          value={`${sort.column} ${sort.direction}`}
-          onValueChange={(value) => {
-            const [column, order] = (value ?? '').split(' ');
-            if (column && order)
-              setSort({ column: column as SortColumn, direction: order as Direction });
-          }}
-          items={orders}
-        />
-      )}
-      <Table.Root aria-label="Invoices" narrowLayout="stack" onStackedChange={setStacked}>
-        <Table.Head>
-          <Table.Row>
-            <Table.HeaderCell>Invoice</Table.HeaderCell>
-            <Table.HeaderCell sortDirection={direction('client')} onSortChange={sortBy('client')}>
-              Client
-            </Table.HeaderCell>
-            <Table.HeaderCell sortDirection={direction('due')} onSortChange={sortBy('due')}>
-              Due
-            </Table.HeaderCell>
-            <Table.HeaderCell
-              numeric
-              sortDirection={direction('amount')}
-              onSortChange={sortBy('amount')}
-            >
-              Amount
-            </Table.HeaderCell>
-          </Table.Row>
-        </Table.Head>
-        <Table.Body>
-          {rows.map((invoice) => (
-            <Table.Row key={invoice.number}>
-              <Table.Cell>{invoice.number}</Table.Cell>
-              <Table.Cell label="Client">{invoice.client}</Table.Cell>
-              <Table.Cell label="Due">{date.format(new Date(invoice.due))}</Table.Cell>
-              <Table.Cell label="Amount" numeric>
-                {money.format(invoice.amount)}
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
-    </Column>
-  );
-}
+<Table.Root aria-label="Invoices" narrowLayout="stack" onStackedChange={setStacked}>
+  …
+  <Table.Cell label="Due">{due}</Table.Cell>
 ```
 
 ### Composition
 
-The region is `env-table-region`, around the caption, `env-table-caption`, the header row, `env-table-head`, with its header cells, `env-table-header-cell`, their sort buttons, `env-table-sort-button`, and resize handles, `env-table-column-resize`, and the body, `env-table-body`, with its rows, `env-table-row`, and cells, `env-table-cell`; a stacked cell's label is `env-table-cell-label`. Table is not a spreadsheet: it has no cell-by-cell editing or arrow-key movement between cells.
+Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resize`, and a stacked cell's label, `env-table-cell-label`.
 
 ## Changelog
 

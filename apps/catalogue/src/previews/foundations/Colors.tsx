@@ -13,32 +13,31 @@ import {
   type ThemeContrast,
   type ThemeValue,
 } from '@envsemble/envui';
-import { ExampleStage } from '../Example';
+import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
-import { Block, Figure, NumberedLegend, TagLegend, Topic } from './Topic';
+import { Figure, NumberedLegend, type LegendEntry } from './Topic';
+
+/*
+ * The figures of the Colors & themes foundation. Its words are in docs/foundations/colors.md, the
+ * page's one source, which places each figure by name and gives it its legend: the name of each
+ * numbered mark, group or theme, and what it means.
+ */
+
+/** A figure's words, from the page's Markdown. */
+interface FigureWords {
+  legend: readonly LegendEntry[];
+}
 
 /**
  * A small screen with each color role marked: the page, a surface on it, a filled card inside,
  * text, supporting text, the accent and a status.
  */
-function RolesFigure() {
+function RolesFigure({ legend }: FigureWords) {
   return (
     <Figure
       label="The color roles of a screen"
       className="docs-marked-stage"
-      legend={
-        <NumberedLegend
-          entries={[
-            { name: 'Page', text: 'The background behind everything.' },
-            { name: 'Surface', text: 'Panes, dialogs and menus that sit on the page.' },
-            { name: 'Filled card', text: 'A soft fill for a card or a group inside a surface.' },
-            { name: 'Text', text: 'Headings and the main words.' },
-            { name: 'Supporting text', text: 'Details, captions and hints, a step quieter.' },
-            { name: 'Accent', text: 'The main action, links and what is selected.' },
-            { name: 'Status', text: 'Success, warning, danger and done, always with words.' },
-          ]}
-        />
-      }
+      legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
         <Surface
@@ -85,122 +84,91 @@ function RolesFigure() {
 }
 
 /**
- * Each role's swatch and name, in four groups of six. A status shows
- * its three colors in one swatch: its text, its soft fill and its solid fill.
+ * The colors of each role, in four groups of six, in the legend's order: each group is a legend
+ * entry, its name the group's and its text the names of its roles, separated by commas. A status
+ * shows its three colors in one swatch: its text, its soft fill and its solid fill.
  */
-const roleGroups: readonly {
-  title: string;
-  roles: readonly { name: string; colors: readonly string[] }[];
-}[] = [
-  {
-    title: 'Surfaces',
-    roles: [
-      { name: 'Page', colors: ['bg-page'] },
-      { name: 'Surface', colors: ['bg-default'] },
-      { name: 'Filled surface', colors: ['bg-muted'] },
-      { name: 'Raised surface', colors: ['bg-raised'] },
-      { name: 'Field', colors: ['bg-field'] },
-      { name: 'Backdrop', colors: ['bg-overlay'] },
-    ],
-  },
-  {
-    title: 'Text and lines',
-    roles: [
-      { name: 'Text', colors: ['fg-default'] },
-      { name: 'Supporting text', colors: ['fg-muted'] },
-      { name: 'Link', colors: ['fg-link'] },
-      { name: 'Edges', colors: ['border-default'] },
-      { name: 'Hairlines', colors: ['border-muted'] },
-      { name: 'Focus ring', colors: ['border-focus'] },
-    ],
-  },
-  {
-    title: 'Actions and selection',
-    roles: [
-      { name: 'Accent', colors: ['bg-brand-emphasis'] },
-      { name: 'On the accent', colors: ['fg-on-emphasis'] },
-      { name: 'Quiet action', colors: ['bg-neutral-muted'] },
-      { name: 'Important', colors: ['bg-important-strong'] },
-      { name: 'Selected', colors: ['bg-selected'] },
-      { name: 'On the selected', colors: ['fg-on-selected'] },
-    ],
-  },
-  {
-    title: 'Status',
-    roles: [
-      {
-        name: 'Neutral',
-        colors: ['fg-muted', 'bg-neutral-muted', 'bg-neutral-emphasis'],
-      },
-      {
-        name: 'Accent',
-        colors: ['fg-accent', 'bg-accent-badge', 'bg-accent-emphasis'],
-      },
-      {
-        name: 'Success',
-        colors: ['fg-success', 'bg-success-muted', 'bg-success-emphasis'],
-      },
-      {
-        name: 'Warning',
-        colors: ['fg-warning', 'bg-warning-muted', 'bg-warning-emphasis'],
-      },
-      {
-        name: 'Danger',
-        colors: ['fg-danger', 'bg-danger-muted', 'bg-danger-emphasis'],
-      },
-      {
-        name: 'Done',
-        colors: ['fg-done', 'bg-done-muted', 'bg-done-emphasis'],
-      },
-    ],
-  },
+const roleGroups: readonly (readonly (readonly string[])[])[] = [
+  [['bg-page'], ['bg-default'], ['bg-muted'], ['bg-raised'], ['bg-field'], ['bg-overlay']],
+  [
+    ['fg-default'],
+    ['fg-muted'],
+    ['fg-link'],
+    ['border-default'],
+    ['border-muted'],
+    ['border-focus'],
+  ],
+  [
+    ['bg-brand-emphasis'],
+    ['fg-on-emphasis'],
+    ['bg-neutral-muted'],
+    ['bg-important-strong'],
+    ['bg-selected'],
+    ['fg-on-selected'],
+  ],
+  [
+    ['fg-muted', 'bg-neutral-muted', 'bg-neutral-emphasis'],
+    ['fg-accent', 'bg-accent-badge', 'bg-accent-emphasis'],
+    ['fg-success', 'bg-success-muted', 'bg-success-emphasis'],
+    ['fg-warning', 'bg-warning-muted', 'bg-warning-emphasis'],
+    ['fg-danger', 'bg-danger-muted', 'bg-danger-emphasis'],
+    ['fg-done', 'bg-done-muted', 'bg-done-emphasis'],
+  ],
 ];
 
+/** A role's name from a group's legend text, "Page, Surface, Filled surface…", by its place. */
+const roleName = (text: string | undefined, index: number) =>
+  (text ?? '').replace(/\.$/, '').split(/,\s*/)[index] ?? '';
+
 /** The roles in the reader's theme, each group a continuous strip of swatches: a specimen of the system. */
-function RoleSwatches() {
+function SwatchesFigure({ legend }: FigureWords) {
   return (
     <div className="docs-role-groups">
       <div>
-        {roleGroups.map((group) => (
-          <section key={group.title} className="docs-role-group">
-            <Text render={<h4 />} variant="title">
-              {group.title}
-            </Text>
-            <ul className="docs-role-swatches" aria-label={group.title}>
-              {group.roles.map((role) => (
-                <li key={role.name}>
-                  <span className="docs-role-swatch" aria-hidden="true">
-                    {role.colors.map((color) => (
-                      <span key={color} style={{ background: `var(--env-color-${color})` }} />
-                    ))}
-                  </span>
-                  <Text render={<span />} className="docs-topic-legend-name">
-                    {role.name}
-                  </Text>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        {roleGroups.map((roles, group) => {
+          const title = legend[group]?.name ?? '';
+          return (
+            <section key={group} className="docs-role-group">
+              <Text render={<h4 />} variant="title">
+                {title}
+              </Text>
+              <ul className="docs-role-swatches" aria-label={title}>
+                {roles.map((colors, index) => (
+                  <li key={colors.join()}>
+                    <span className="docs-role-swatch" aria-hidden="true">
+                      {colors.map((color) => (
+                        <span key={color} style={{ background: `var(--env-color-${color})` }} />
+                      ))}
+                    </span>
+                    <Text render={<span />} className="docs-topic-legend-name">
+                      {roleName(legend[group]?.text, index)}
+                    </Text>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-const themes: readonly { name: string; theme: ThemeValue; contrast: ThemeContrast }[] = [
-  { name: 'Light', theme: 'light', contrast: 'standard' },
-  { name: 'Dark', theme: 'dark', contrast: 'standard' },
-  { name: 'Light, high contrast', theme: 'light', contrast: 'high' },
-  { name: 'Dark, high contrast', theme: 'dark', contrast: 'high' },
+/** The theme and contrast of each sample, in the legend's order. */
+const themes: readonly { theme: ThemeValue; contrast: ThemeContrast }[] = [
+  { theme: 'light', contrast: 'standard' },
+  { theme: 'dark', contrast: 'standard' },
+  { theme: 'light', contrast: 'high' },
+  { theme: 'dark', contrast: 'high' },
 ];
 
 /** The same small screen in each theme and contrast, side by side. */
-function ThemesFigure() {
+function ThemesFigure({ legend }: FigureWords) {
   return (
     <Figure label="One screen in each theme" className="docs-themes-stage">
       <div className="docs-themes" inert>
-        {themes.map((each) => (
-          <div key={each.name} className="docs-theme-sample">
+        {themes.map((each, index) => (
+          <div key={`${each.theme}-${each.contrast}`} className="docs-theme-sample">
             <Theme theme={each.theme} contrast={each.contrast}>
               <Surface background="page" padding={4} radius="xl">
                 <Surface background="default" padding={4} radius="xl" render={<Column gap={3} />}>
@@ -217,7 +185,7 @@ function ThemesFigure() {
                 </Surface>
               </Surface>
             </Theme>
-            <Text variant="caption">{each.name}</Text>
+            <Text variant="caption">{legend[index]?.name}</Text>
           </div>
         ))}
       </div>
@@ -283,87 +251,11 @@ function OwnColorsFigure() {
   );
 }
 
-/** The words to ask for color with, and what each means in envUI. */
-const words = [
-  { tag: 'A quieter surface', text: 'A fill closer to the page, so a panel draws less attention.' },
-  { tag: 'A filled card', text: 'A card with the soft fill, for a group inside a surface.' },
-  { tag: 'Supporting text', text: 'Quieter text for details, captions and hints.' },
-  { tag: 'The accent', text: 'The color of the main action, links and what is selected.' },
-  {
-    tag: 'Success or warning',
-    text: 'A tone that says how something stands, with words or an icon.',
-  },
-  { tag: 'A danger button', text: 'A red action for deleting or anything that can’t be undone.' },
-  { tag: 'Its own color', text: 'One element in a color of its own, keeping its hover and press.' },
-  { tag: 'A dark area', text: 'One part of a light page in the dark theme, or the other way.' },
-  {
-    tag: 'High contrast',
-    text: 'Stronger text and edges for people who need them, on every page.',
-  },
-] as const;
-
-export function ColorsPreview() {
-  return (
-    // Each figure here chooses its own stage: an example on the canvas, a specimen on the page.
-    <ExampleStage value={false}>
-      <Topic
-        title="Colors are roles"
-        lead="envUI never colors a screen by hand. Each part takes a role, such as the page, a surface or supporting text, and the theme gives every role its color, so a screen looks right in light, dark and high contrast at once."
-      >
-        <RolesFigure />
-        <Block
-          title="Every role in this theme"
-          text="Each role in the theme you are reading in; a status shows its text, soft fill and solid fill. Switch the theme in the Display menu to see the others."
-          stacked
-        >
-          <RoleSwatches />
-        </Block>
-      </Topic>
-      <Topic
-        title="Light, dark and high contrast"
-        lead="Every role has a color in the light and the dark theme, and a high-contrast version of each, with stronger text and edges. People choose, or the app follows their system, and every screen follows without changes."
-      >
-        <ThemesFigure />
-        <Block
-          title="Try it on this site"
-          text="Choose a theme and a contrast in the Display menu, at the top of the page, and every page and example here follows."
-        />
-      </Topic>
-      <Topic
-        title="What each color means"
-        lead="A tone means the same on every component, on badges, alerts, buttons, toasts and charts alike. A tone always comes with words or an icon, so nobody has to tell colors apart."
-      >
-        <StatusFigure />
-        <TagLegend
-          label="What each tone means"
-          entries={[
-            { tag: 'Neutral', text: 'No particular state, such as archived, and most actions.' },
-            { tag: 'Accent', text: 'The main action, and the current or highlighted state.' },
-            { tag: 'Info', text: 'Something to know, neither good nor bad, such as a tip.' },
-            { tag: 'Success', text: 'Healthy, ready or saved.' },
-            { tag: 'Warning', text: 'Needs attention soon.' },
-            { tag: 'Danger', text: 'Failed, or an action that destroys something.' },
-            { tag: 'Done', text: 'Completed work.' },
-          ]}
-        />
-      </Topic>
-      <Topic
-        title="Colors of its own"
-        lead="Where a screen needs a color the roles don't give, most components, such as buttons, fields, cards, badges, alerts, menus and navigation, can take colors of their own, and one area can take the other theme."
-      >
-        <Block
-          title="One element, one area"
-          text="A button in a brand color keeps its hover and press, made from its own color, and its label stays readable in every state. An area in the other theme, such as a dark banner on a light page, brings all its roles along."
-        >
-          <OwnColorsFigure />
-        </Block>
-      </Topic>
-      <Topic
-        title="Words to use"
-        lead="Ask an agent for color in these words; envUI turns each into a role, so the result works in every theme."
-      >
-        <TagLegend label="Words for color" entries={words} />
-      </Topic>
-    </ExampleStage>
-  );
-}
+/** The figures docs/foundations/colors.md places, by name. */
+export const colorsFigures: Record<string, FoundationFigure> = {
+  Roles: { render: RolesFigure, wide: true },
+  Swatches: { render: SwatchesFigure, wide: true },
+  Themes: { render: ThemesFigure, wide: true },
+  Status: { render: StatusFigure, wide: true },
+  OwnColors: { render: OwnColorsFigure },
+};

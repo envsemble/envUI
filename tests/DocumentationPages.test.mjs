@@ -5,11 +5,14 @@ import { test } from 'node:test';
 import { marked } from 'marked';
 import ts from 'typescript';
 import {
+  longParagraphs,
   optionTable,
+  paragraphLength,
   siteInlineCode,
   siteStructure,
   siteText,
   technicalText,
+  withoutCodeColumns,
 } from '../scripts/SiteContent.mjs';
 import {
   examplesDirectory,
@@ -18,12 +21,6 @@ import {
   readProps,
   specimensDirectory,
 } from '../scripts/GenerateDocumentation.mjs';
-
-/**
- * Component pages not on the template yet, which keep their hand-written props tables. Convert a
- * page as docs/component-pages.md describes, then remove it here; the list only shrinks.
- */
-const unconverted = [];
 
 /** Exports without a page that lists them in its frontmatter; the list only shrinks. */
 const undocumentedExports = [];
@@ -66,7 +63,7 @@ function moduleSpecifiers(source) {
 const props = readProps();
 const documents = readDocumentation();
 const components = documents.filter((document) => document.path.startsWith('components/'));
-/** Pages with the template's sections: component and pattern pages. */
+/** Pages in the one-file structure: component, pattern and foundation pages. */
 const sectioned = documents.filter((document) => document.sections);
 /** Pattern pages, which list what they compose. */
 const compositions = documents.filter((document) => document.frontmatter?.composes);
@@ -98,7 +95,7 @@ test("every component's page names each of its color properties", () => {
     for (const { property } of entry.colors)
       assert.ok(
         page.markdown.includes(`\`${property}\``),
-        `${page.path} names ${name}'s color property ${property}, under In code's Customize`,
+        `${page.path} names ${name}'s color property ${property}, under Compose's Customize`,
       );
   }
 });
@@ -117,17 +114,17 @@ test('every alternative a page suggests has a page to link to', () => {
         );
 });
 
-test('pages not on the template are listed, and only those', () => {
-  const legacy = components.filter((document) => !document.sections).map(({ id }) => id);
-  assert.deepEqual(
-    legacy.sort(),
-    [...unconverted].sort(),
-    'A converted page leaves `unconverted` in this test; a new page starts on the template.',
-  );
+test('every component, pattern and foundation page is in the one-file structure', () => {
+  // The build reads a page of these kinds only in the structure, so none is left outside it.
+  const outside = documents
+    .filter((document) => /^(components|patterns|foundations)\//.test(document.path))
+    .filter((document) => !document.sections || !document.frontmatter?.examples)
+    .map(({ path }) => path);
+  assert.deepEqual(outside, [], 'Write these pages as docs/component-pages.md describes.');
 });
 
-test('pages on the template list no props by hand', () => {
-  for (const document of components.filter((page) => page.sections)) {
+test('pages list no props by hand', () => {
+  for (const document of components) {
     const tables = marked.lexer(document.markdown).filter(isPropsTable);
     assert.equal(tables.length, 0, `${document.path} has a hand-written props table.`);
     assert.ok(
@@ -351,20 +348,23 @@ test("a page's Overview doesn't open by saying its summary again", () => {
 });
 
 /**
- * A page's Markdown as the Site shows it: without its changelog, its developer-only part, "## In
- * code", and the lists of what envUI and the application provide, which its page in the Docs shows.
+ * A page's Markdown as the Usage guide shows it: without its changelog, its developer part, "##
+ * Compose", the lists of what envUI and the application provide, and its tables' In code columns,
+ * which its page in the Docs shows.
  */
 function siteMarkdown(document) {
-  return document.markdown
-    .replace(/\n## Changelog\n[\s\S]*$/, '\n')
-    .replace(/\n## In code\n[\s\S]*?(?=\n## |$)/, '\n')
-    .replace(/\n### (?:envUI provides|You provide)\n[\s\S]*?(?=\n#{2,3} |$)/g, '\n');
+  return withoutCodeColumns(
+    document.markdown
+      .replace(/\n## Changelog\n[\s\S]*$/, '\n')
+      .replace(/\n## Compose\n[\s\S]*?(?=\n## |$)/, '\n')
+      .replace(/\n### (?:envUI provides|You provide)\n[\s\S]*?(?=\n#{2,3} |$)/g, '\n'),
+  );
 }
 
-test('a page the Site shows links nowhere in the Docs', () => {
-  // The Site reaches the Docs only through a page's API button and the Docs link at the top: a
-  // component or pattern page links to other pages of the Site, a foundation's without a heading,
-  // since a foundation's headings are in its guide in the Docs.
+test('a page of the Usage guide links nowhere in the Docs', () => {
+  // The Usage guide reaches the Docs only through a page's Docs button and the Docs link at the
+  // top: a component or pattern page links to other pages of the Usage guide, a foundation's
+  // without a heading, since a foundation's headings are in its page in the Docs.
   const links = sectioned
     .filter((document) => document.id !== 'field')
     .flatMap((document) =>
@@ -381,24 +381,28 @@ test('a page the Site shows links nowhere in the Docs', () => {
         })
         .map((href) => `${document.path}: ${href}`),
     );
-  assert.deepEqual(links, [], 'Link these to a page of the Site, or say it without the link.');
+  assert.deepEqual(
+    links,
+    [],
+    'Link these to a page of the Usage guide, or say it without the link.',
+  );
 });
 
-/** Every page the Site shows: Field's page is in the Docs only. */
+/** Every page the Usage guide shows: Field's page is in the Docs only. */
 const sitePages = () => sectioned.filter((document) => document.id !== 'field');
 
-test("a page's Site shows no inline code", () => {
+test("a page's Usage guide shows no inline code", () => {
   const found = sitePages().flatMap((document) =>
     siteInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
   );
   assert.deepEqual(
     found,
     [],
-    'The Site speaks plain language: say it in words, and move the code to "## In code".',
+    'The Usage guide speaks plain language: say it in words, and move the code to "## Compose".',
   );
 });
 
-test("a page's Site text is in titled blocks", () => {
+test("a page's Usage guide text is in titled blocks", () => {
   const found = sitePages().flatMap((document) =>
     siteStructure(document).map(
       ({ where, kind, text }) => `${document.path}, ${where}, ${kind}: ${text}`,
@@ -407,7 +411,20 @@ test("a page's Site text is in titled blocks", () => {
   assert.deepEqual(
     found,
     [],
-    'Every piece of Site text is in a titled block, a heading and one short paragraph: give loose text a "###" heading, or fold it into the block it belongs to.',
+    'Every piece of Usage guide text is in a titled block, a heading and up to three short paragraphs: give loose text a "###" heading, or fold it into the block it belongs to.',
+  );
+});
+
+test("a page's Usage guide text is in short paragraphs", () => {
+  const found = sitePages().flatMap((document) =>
+    longParagraphs(document).map(
+      ({ where, length, text }) => `${document.path}, ${where}, ${length} characters: ${text}`,
+    ),
+  );
+  assert.deepEqual(
+    found,
+    [],
+    `A paragraph of the Usage guide is at most ${paragraphLength} characters, about three lines: split it into short paragraphs, one point each, or give a point a block of its own.`,
   );
 });
 
@@ -460,26 +477,26 @@ test('technical text is found in words, and plain words are left alone', () => {
   );
 });
 
-/** The technical text in a page's Site Markdown, as plain words: keys are written as <kbd>. */
+/** The technical text in a page's Usage guide Markdown, as plain words: keys are written as <kbd>. */
 const siteTechnicalText = (document) =>
   siteText(document).flatMap(({ markdown, text }) =>
     technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
   );
 
-test("a component page's Site shows no technical text", () => {
-  // The Site is for people looking at envUI: lengths, tokens, percentages and code names go in
-  // the page's In code, which its page in the Docs shows.
+test("a component page's Usage guide shows no technical text", () => {
+  // The Usage guide is for people looking at envUI: lengths, tokens, percentages and code names go
+  // in the page's Compose, which its page in the Docs shows.
   const found = sitePages()
     .filter((document) => document.path.startsWith('components/'))
     .flatMap((document) =>
       siteTechnicalText(document).map(({ kind, text }) => `${document.path}: ${kind} ${text}`),
     );
-  assert.deepEqual(found, [], 'Say it in words, and move the value to "## In code".');
+  assert.deepEqual(found, [], 'Say it in words, and move the value to "## Compose".');
 });
 
-test("the technical text in each page's Site Markdown is counted, for the rewrite to come", (t) => {
-  // Reporting only, like the catalogue's count of the rendered pages: the Site shows no token
-  // names, hex colors, lengths, percentages or code, which belong to the page's guide in the Docs.
+test("the technical text in each page's Usage guide Markdown is counted, for the rewrite to come", (t) => {
+  // Reporting only, like the catalogue's count of the rendered pages: the Usage guide shows no
+  // token names, hex colors, lengths, percentages or code, which belong to the page in the Docs.
   // Inline code is already rejected above; this counts what plain words still carry.
   const counts = sitePages().flatMap((document) => {
     const found = siteTechnicalText(document);
@@ -489,7 +506,7 @@ test("the technical text in each page's Site Markdown is counted, for the rewrit
   });
   t.diagnostic(
     counts.length
-      ? `Technical text in the Site's Markdown:\n${counts.join('\n')}`
-      : 'No technical text in the Site Markdown.',
+      ? `Technical text in the Usage guide's Markdown:\n${counts.join('\n')}`
+      : 'No technical text in the Usage guide Markdown.',
   );
 });

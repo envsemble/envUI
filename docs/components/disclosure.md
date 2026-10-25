@@ -28,23 +28,41 @@ avoidWhen:
     use: Popover
 components:
   - Disclosure
+examples:
+  VisibilityHelp: overview
+  DisclosureAnatomy: anatomy
+  FrequentQuestions: example
+  OpenOnError: example
+  OptionalHelp:
+    role: do
+    caption: Optional guidance in a disclosure, and what the task needs in sight.
+  HiddenRules:
+    role: dont
+    caption: 'Rules people need, hidden: they find them only after an error.'
 ---
 
 # Disclosure
 
-## Overview
+## Anatomy
 
-Finding text in a closed disclosure's details opens it, where the browser supports it.
-
-```tsx example=VisibilityHelp
+```tsx figure=DisclosureAnatomy
 
 ```
+
+1. **Summary** (`env-disclosure > summary`, `title`)
+2. **Panel** (`env-disclosure-panel`, `children`)
+
+## Behaviour
+
+### Find in page
+
+Finding text in a closed disclosure's details opens it, where the browser supports it.
 
 ### One at a time
 
 Disclosures in a set can open one at a time, where the browser supports it.
 
-```tsx example=FrequentQuestions
+```tsx figure=FrequentQuestions
 
 ```
 
@@ -52,32 +70,25 @@ Disclosures in a set can open one at a time, where the browser supports it.
 
 The application can open a disclosure itself, such as when a field inside has an error.
 
-```tsx example=OpenOnError
+```tsx figure=OpenOnError
 
 ```
 
-## When to use
+## Rules
 
-```tsx do=OptionalHelp caption="Optional guidance in a disclosure, and what the task needs in sight."
+A disclosure hides only what most people don't need, one level deep.
+
+```tsx figure=OptionalHelp
 
 ```
 
-```tsx dont=HiddenRules caption="Rules people need, hidden: they find them only after an error."
+```tsx figure=HiddenRules
 
 ```
 
 ### One level
 
 Don't put a disclosure inside another.
-
-## Anatomy
-
-```tsx anatomy=DisclosureAnatomy
-
-```
-
-1. **Summary** (`env-disclosure > summary`, `title`)
-2. **Panel** (`env-disclosure-panel`, `children`)
 
 ## Accessibility
 
@@ -98,7 +109,7 @@ Don't put a disclosure inside another.
 - A summary that says what the details hold.
 - `open` where something inside needs attention.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -112,21 +123,32 @@ A Disclosure is a native `<details>`: `title` is its one-line summary, and `chil
 
 Disclosures that share a `name` open one at a time, where the browser supports it.
 
-```tsx source=FrequentQuestions
-
+```tsx
+<Disclosure name="plan-questions" title="Who can see a shared plan?" defaultOpen>
+  <Text>Everyone in the workspace can read it.</Text>
+</Disclosure>
+<Disclosure name="plan-questions" title="Can I move a plan to another workspace?">
+  …
+</Disclosure>
 ```
 
 #### Open on an error
 
 `open` and `onOpenChange(open)` control it, such as to open it when a field inside has an error. A native `onToggle` still passes through.
 
-```tsx source=OpenOnError
-
+```tsx
+<Disclosure title="Advanced settings" open={advanced} onOpenChange={setAdvanced}>
+  <TextField label="Custom domain" error={error} />
+</Disclosure>
 ```
 
 ### Composition
 
-The summary is `env-disclosure > summary`, and the details are in `env-disclosure-panel`. Never nest a disclosure in another.
+Never nest a disclosure in another.
+
+### Customize
+
+The summary is `env-disclosure > summary`, and the details are in `env-disclosure-panel`.
 
 ## Changelog
 

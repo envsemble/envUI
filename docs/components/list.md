@@ -37,47 +37,25 @@ avoidWhen:
     use: Card
 components:
   - List
+examples:
+  SettingsRows: overview
+  OnAPane: example
+  ExtraContent: example
+  ListAnatomy: anatomy
+  OpenFromRow: example
+  CurrentRow: example
+  CheckedRows: example
+  Reorder: example
+  NarrowRows: example
+  OneTarget:
+    role: do
+    caption: One link per row, which covers the row.
+  SeveralTargets:
+    role: dont
+    caption: 'Several links in a row: a press could open any of them.'
 ---
 
 # List
-
-## Overview
-
-```tsx example=SettingsRows
-
-```
-
-### Rows that open something
-
-A whole row can open what it names, through its one link, while its other controls stay pressable above it.
-
-```tsx example=OpenFromRow
-
-```
-
-### The current row
-
-The row whose details show beside the list is marked as the current one.
-
-```tsx example=CurrentRow
-
-```
-
-### Checked rows
-
-A checkbox at a row's start chooses it for an action on several rows at once.
-
-```tsx example=CheckedRows
-
-```
-
-### Put in order
-
-Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys.
-
-```tsx example=Reorder
-
-```
 
 ## Variants
 
@@ -85,7 +63,7 @@ Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row
 
 In a muted surface that holds only lists, the rows take the raised fill, so they stand out from it.
 
-```tsx example=OnAPane
+```tsx figure=OnAPane
 
 ```
 
@@ -93,7 +71,7 @@ In a muted surface that holds only lists, the rows take the raised fill, so they
 
 More content can follow the description, such as a status.
 
-```tsx example=ExtraContent
+```tsx figure=ExtraContent
 
 ```
 
@@ -101,23 +79,9 @@ More content can follow the description, such as a status.
 
 Rows pack more or less tightly, from extra small to large, which changes only their padding, never the text.
 
-## When to use
-
-```tsx do=OneTarget caption="One link per row, which covers the row."
-
-```
-
-```tsx dont=SeveralTargets caption="Several links in a row: a press could open any of them."
-
-```
-
-### Content
-
-Keep the description to one fact that tells items apart, such as who changed it and when, and name a repeated action after its row, such as More actions for Roadmap.
-
 ## Anatomy
 
-```tsx anatomy=ListAnatomy
+```tsx figure=ListAnatomy
 
 ```
 
@@ -129,13 +93,63 @@ Keep the description to one fact that tells items apart, such as who changed it 
 6. **Description** (`env-list-item-content > small`, `description`)
 7. **Action** (`env-list-item > env-button:last-child`, `action`)
 
-## Adapting to width
+## Behaviour
+
+### Rows that open something
+
+A whole row can open what it names, through its one link, while its other controls stay pressable above it.
+
+```tsx figure=OpenFromRow
+
+```
+
+### The current row
+
+The row whose details show beside the list is marked as the current one.
+
+```tsx figure=CurrentRow
+
+```
+
+### Checked rows
+
+A checkbox at a row's start chooses it for an action on several rows at once.
+
+```tsx figure=CheckedRows
+
+```
+
+### Put in order
+
+Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys.
+
+```tsx figure=Reorder
+
+```
+
+### Adapting to width
 
 Labels and descriptions wrap, and an action that no longer fits beside the text moves below it.
 
-```tsx example=NarrowRows widths="16 32"
+```tsx figure=NarrowRows widths="16 32"
 
 ```
+
+## Rules
+
+A row opens one thing, and its description tells it apart from the others.
+
+```tsx figure=OneTarget
+
+```
+
+```tsx figure=SeveralTargets
+
+```
+
+### Content
+
+Keep the description to one fact that tells items apart, such as who changed it and when. Name a repeated action after its row, such as More actions for Roadmap.
 
 ## Accessibility
 
@@ -163,7 +177,7 @@ Labels and descriptions wrap, and an action that no longer fits beside the text 
 - Names for a start checkbox and for actions, which say which row they act on.
 - `textValue` on a reorderable row whose label isn't plain text, and the move in `onReorder`.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -177,32 +191,66 @@ List.Root is a `ul` of List.Item rows, each with its `label`, a `description` be
 
 With `interactive`, a row reacts to hover, keyboard focus inside it and presses. Mark its one link or button `data-row-target`, which stretches it over the row; give a link `draggable={false}`, so a press that moves a little doesn't drag it. The row's other controls take `position: relative` to stay above it.
 
-```tsx source=OpenFromRow
-
+```tsx
+<List.Item
+  interactive
+  label={
+    <Link href="/plans/roadmap" underline={false} data-row-target draggable={false}>
+      Roadmap
+    </Link>
+  }
+  description="Updated today by Sam Lee"
+  action={
+    <IconButton
+      variant="text"
+      icon={<MoreHoriz />}
+      aria-label="More actions for Roadmap"
+      style={{ position: 'relative' }}
+    />
+  }
+/>
 ```
 
 #### The current and checked rows
 
 `selected` marks the current row, such as the one whose details show beside the list, with the selected fill and `aria-current="true"` on its `data-row-target`, or on the row without one. A row whose `start` checkbox is checked takes the selected fill too; name each checkbox after its row.
 
-```tsx source=CurrentRow
-
+```tsx
+<List.Item interactive selected={id === current} label="Roadmap" />
 ```
 
 #### Put in order
 
 `onReorder` on List.Root gives each row a handle, moved by dragging it, by pressing it or by keyboard, and calls it with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The rows are the list's children, directly or in arrays and fragments: List.Item elements, or elements of a row component that passes the props it doesn't use on to its List.Item. `textValue` names a row whose `label` isn't plain text, for its handle and the announcements.
 
-```tsx source=Reorder
-
+```tsx
+<List.Root
+  aria-label="Agenda"
+  onReorder={(from, to) =>
+    setItems((list) => {
+      const next = [...list];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item!);
+      return next;
+    })
+  }
+>
+  {items.map(({ id, title, length }) => (
+    <List.Item key={id} label={title} description={length} />
+  ))}
+</List.Root>
 ```
 
 #### Density and panes
 
 `density` is `xs`, `sm`, `md`, the default, or `lg`, and changes only the rows' block padding. Put a list directly in `<Surface background="muted" padding={3}>`, a muted Surface that holds only lists, and its rows take the raised fill.
 
-```tsx source=OnAPane
-
+```tsx
+<Surface background="muted" padding={3}>
+  <List.Root aria-label="Notifications" density="sm">
+    …
+  </List.Root>
+</Surface>
 ```
 
 ### Composition

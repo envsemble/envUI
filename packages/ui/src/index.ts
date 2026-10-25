@@ -111,4 +111,5 @@ export * from './navigation/DocumentTabs.js';
 export * as PanelDock from './navigation/panel-dock/PanelDock.js';
 export type { PanelDockMode, PanelDockPanel } from './navigation/panel-dock/Root.js';
 export * from './navigation/Breadcrumbs.js';
+export * from './navigation/TableOfContents.js';
 export * from './navigation/Pagination.js';

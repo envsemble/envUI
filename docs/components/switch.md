@@ -27,15 +27,35 @@ avoidWhen:
     use: Menu
 components:
   - Switch
+examples:
+  NotificationSettings: overview
+  ShowCompleted: example
+  SettingsRows: example
+  SameLabel:
+    role: do
+    caption: One label, whichever way the switch is set.
+  StateInLabel:
+    role: dont
+    caption: A label that changes to say the state, which the track shows.
+  SwitchAnatomy: anatomy
+  LongLabel: example
 ---
 
 # Switch
 
-## Overview
+## Anatomy
 
-```tsx example=NotificationSettings
+```tsx figure=SwitchAnatomy
 
 ```
+
+1. **Switch** (`env-switch`)
+2. **Track** (`env-switch-input`)
+3. **Label** (`env-switch-label`, `label`)
+
+The thumb is drawn by the track and has no element of its own.
+
+## Behaviour
 
 ### States
 
@@ -47,7 +67,9 @@ Pressing the track or its label toggles it.
 
 The setting applies as soon as the switch changes, with no Save button.
 
-```tsx example=ShowCompleted
+- When saving it fails, the switch goes back, with a message that says what went wrong.
+
+```tsx figure=ShowCompleted
 
 ```
 
@@ -55,43 +77,35 @@ The setting applies as soon as the switch changes, with no Save button.
 
 In a row, the row's title names the switch, and its detail describes it.
 
-```tsx example=SettingsRows
+```tsx figure=SettingsRows
 
 ```
 
-## When to use
-
-### Labels
-
-Name the setting in a short phrase, so that on means yes.
-
-```tsx do=SameLabel caption="One label, whichever way the switch is set."
-
-```
-
-```tsx dont=StateInLabel caption="A label that changes to say the state, which the track shows."
-
-```
-
-## Anatomy
-
-```tsx anatomy=SwitchAnatomy
-
-```
-
-1. **Switch** (`env-switch`)
-2. **Track** (`env-switch-input`)
-3. **Label** (`env-switch-label`, `label`)
-
-The thumb is drawn by the track and has no element of its own.
-
-## Adapting to width
+### Adapting to width
 
 The label wraps beside the track.
 
-```tsx example=LongLabel widths="14 30"
+```tsx figure=LongLabel widths="14 30"
 
 ```
+
+## Rules
+
+Name the setting in a short phrase, so that on means yes.
+
+```tsx figure=SameLabel
+
+```
+
+```tsx figure=StateInLabel
+
+```
+
+### Disabled
+
+A disabled switch keeps its setting from changing.
+
+- Say why beside it, such as in the row's detail, and who can change it.
 
 ## Accessibility
 
@@ -114,53 +128,36 @@ The label wraps beside the track.
 - A description linked with `aria-describedby` where a setting needs explaining.
 - An announcement, such as a Toast, where the change happens out of sight or fails.
 
-## In code
+## Compose
 
 ### Usage
 
-A Switch is a native checkbox with `role="switch"`, named by its `label`, which stays the same in both states. Apply the setting from `onCheckedChange`, which receives the new state; control it with `checked`, or leave it uncontrolled with `defaultChecked`, which a form reset restores. When saving the setting fails, set it back and say what went wrong. `name` and the other native props reach the input.
-
-```tsx source=ShowCompleted
-
+```tsx
+<Switch label="Show completed tasks" checked={showCompleted} onCheckedChange={setShowCompleted} />
 ```
+
+A Switch is a native checkbox with `role="switch"`, named by its `label`. Apply the setting from `onCheckedChange`, which receives the new state; control it with `checked`, or leave it uncontrolled with `defaultChecked`, which a form reset restores. When saving fails, set it back. `name` and the other native props reach the input.
 
 #### Disabled
 
-`disabled` keeps the setting from changing. Say why beside it, such as in the row's detail, and who can change it.
-
 ```tsx
-import { useId } from 'react';
-import { Column, Switch, Text } from '@envsemble/envui';
-
-export default function ManagedSetting() {
-  const reason = useId();
-  return (
-    <Column gap={3} align="start">
-      <Switch label="Two-step sign-in" defaultChecked disabled aria-describedby={reason} />
-      <Switch label="Share documents outside Northwind" disabled aria-describedby={reason} />
-      <Text id={reason} variant="body-sm">
-        Your administrator, Sam Lee, manages these settings for everyone at Northwind.
-      </Text>
-    </Column>
-  );
-}
+<Switch label="Two-step sign-in" defaultChecked disabled aria-describedby={reason} />
+<Text id={reason} variant="body-sm">
+  Your administrator, Sam Lee, manages these settings for everyone at Northwind.
+</Text>
 ```
 
 #### Settings in a list
 
-In a List row, the row's title names the switch through `aria-labelledby`, and its detail describes it through `aria-describedby`.
-
-```tsx source=SettingsRows
-
-```
+In a List row, the row's title names the switch through `aria-labelledby`, and its detail describes it through `aria-describedby`, as the SettingsRows example does.
 
 ### Composition
 
-The root, `env-switch`, is the label around the track, `env-switch-input`, and the text, `env-switch-label`; the track draws the thumb, which has no element of its own. `className` and `style` reach the root, and `ref` and the other native props the input.
+The root, `env-switch`, is the label around the track, `env-switch-input`, and the text, `env-switch-label`. `className` and `style` reach the root, and `ref` and the other native props the input.
 
 ### Customize
 
-`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` set the colors of one Switch, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` color one Switch, through `style` or CSS; hover, focus and press follow them.
 
 ## Changelog
 

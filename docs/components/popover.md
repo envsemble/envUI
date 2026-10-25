@@ -30,25 +30,16 @@ avoidWhen:
     use: Dialog
 components:
   - Popover
+examples:
+  DocumentDetails:
+    role: overview
+    open: true
+  FieldHelp: example
+  PopoverAnatomy: anatomy
+  RenameInPlace: example
 ---
 
 # Popover
-
-## Overview
-
-Popover takes focus as it opens, and also closes when focus leaves it; it isn't modal, so the page stays usable.
-
-```tsx example=DocumentDetails open
-
-```
-
-### A small form
-
-An action inside the popover closes it once its work is done, such as Rename.
-
-```tsx example=RenameInPlace open
-
-```
 
 ## Variants
 
@@ -65,27 +56,13 @@ A popover is as wide as its content, up to its width.
 
 A popover opens below its trigger, above it or beside it, lined up with the trigger's start, center or end, and flips where there is no room.
 
-```tsx example=FieldHelp open
+```tsx figure=FieldHelp open wide
 
 ```
 
-## When to use
-
-### Fields
-
-One to three fields at most, with the action last.
-
-### Names
-
-Give every popover a title, or a name for assistive technology where a title would repeat its trigger. Name an icon-only trigger after what the popover holds, such as About billing periods.
-
-### Out of sight
-
-Keep what matters reachable elsewhere: a popover is out of sight until it opens.
-
 ## Anatomy
 
-```tsx anatomy=PopoverAnatomy open
+```tsx figure=PopoverAnatomy open
 
 ```
 
@@ -93,6 +70,40 @@ Keep what matters reachable elsewhere: a popover is out of sight until it opens.
 2. **Title** (`env-popover-title`, `title`)
 3. **Content** (`env-popover > env-text`, `children`)
 4. **Trigger** (`env-icon-button`, `trigger`)
+
+## Behaviour
+
+### Focus
+
+Popover takes focus as it opens, and also closes when focus leaves it.
+
+- It isn't modal, so the page stays usable.
+
+### A small form
+
+An action inside the popover closes it once its work is done, such as Rename.
+
+```tsx figure=RenameInPlace open
+
+```
+
+## Rules
+
+A popover is small, named, and never the only place for what matters.
+
+### Fields
+
+One to three fields at most, with the action last.
+
+### Names
+
+Give every popover a title, or a name for assistive technology where a title would repeat its trigger.
+
+- Name an icon-only trigger after what the popover holds, such as About billing periods.
+
+### Out of sight
+
+Keep what matters reachable elsewhere: a popover is out of sight until it opens.
 
 ## Accessibility
 
@@ -115,7 +126,7 @@ Keep what matters reachable elsewhere: a popover is out of sight until it opens.
 - A `title` or an `aria-label`, and a name for an icon-only trigger.
 - The actions inside, and a call to `close` when one is done.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -129,8 +140,18 @@ A Popover opens from its `trigger`, such as a Button or an IconButton, which mus
 
 A function child receives `close`, for an action inside that closes the popover once it is done, such as a form's submit.
 
-```tsx source=RenameInPlace
-
+```tsx
+<Popover aria-label="Rename document" width="lg" trigger={<Button>Rename</Button>}>
+  {(close) => (
+    <form onSubmit={(event) => rename(event, close)}>
+      <TextField label="Name" name="name" required />
+      <Button variant="secondary" onClick={close}>
+        Cancel
+      </Button>
+      <Button type="submit">Rename</Button>
+    </form>
+  )}
+</Popover>
 ```
 
 #### Controlled
@@ -138,75 +159,47 @@ A function child receives `close`, for an action inside that closes the popover 
 Leave it uncontrolled, with `defaultOpen` to start open, or control it with `open` and `onOpenChange`, which receives the requested state and why: the trigger, <kbd>Esc</kbd>, a press outside, focus leaving it, or `close` as `close-press`.
 
 ```tsx
-import { useState } from 'react';
-import { Button, Checkbox, Popover, Column, Row, Text } from '@envsemble/envui';
-import { FilterList } from '@envsemble/envui/icons/FilterList';
-
-const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
-
-export default function FilterTasks() {
-  const [open, setOpen] = useState(false);
-  const [applied, setApplied] = useState<string[]>([]);
-  const [draft, setDraft] = useState<string[]>([]);
-  const toggle = (person: string, checked: boolean) =>
-    setDraft((current) =>
-      checked ? [...current, person] : current.filter((name) => name !== person),
-    );
-  return (
-    <Column gap={3} align="start">
-      <Popover
-        title="Assignees"
-        align="start"
-        open={open}
-        onOpenChange={(next) => {
-          setOpen(next);
-          // Each time it opens, the popover starts from the filters in use.
-          if (next) setDraft(applied);
-        }}
-        trigger={
-          <Button variant="secondary" startIcon={<FilterList />}>
-            {applied.length ? `Assignees (${applied.length})` : 'Assignees'}
-          </Button>
-        }
-      >
-        <Column gap={3}>
-          {people.map((person) => (
-            <Checkbox
-              key={person}
-              label={person}
-              checked={draft.includes(person)}
-              onCheckedChange={(checked) => toggle(person, checked)}
-            />
-          ))}
-        </Column>
-        <Row wrap align="center" gap={4} justify="end">
-          <Button variant="secondary" onClick={() => setDraft([])}>
-            Clear
-          </Button>
-          <Button
-            onClick={() => {
-              setApplied(draft);
-              setOpen(false);
-            }}
-          >
-            Apply
-          </Button>
-        </Row>
-      </Popover>
-      <Text variant="body-sm">
-        {applied.length ? `Showing tasks for ${applied.join(', ')}.` : 'Showing every task.'}
-      </Text>
-    </Column>
-  );
-}
+<Popover
+  title="Assignees"
+  open={open}
+  onOpenChange={(next) => {
+    setOpen(next);
+    if (next) setDraft(applied); // Each time it opens, start from the filters in use.
+  }}
+  trigger={<Button startIcon={<FilterList />}>Assignees</Button>}
+>
+  {people.map((person) => (
+    <Checkbox
+      key={person}
+      label={person}
+      checked={draft.includes(person)}
+      onCheckedChange={(checked) => toggle(person, checked)}
+    />
+  ))}
+  <Button
+    onClick={() => {
+      setApplied(draft);
+      setOpen(false);
+    }}
+  >
+    Apply
+  </Button>
+</Popover>
 ```
 
 #### Width, side and alignment
 
 `width` is `md`, 20 rem and the default, or `lg`, 28 rem: the widest the popover grows, as wide as its content from 12 rem up, and narrower to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; it flips to the other side without room. `align` is `start`, `center`, the default, or `end`.
 
-```tsx source=FieldHelp
-
+```tsx
+<Popover
+  title="Billing periods"
+  side="right"
+  align="start"
+  trigger={<IconButton variant="text" icon={<Help />} aria-label="About billing periods" />}
+>
+  <Text>Members added later are billed from the next period.</Text>
+</Popover>
 ```
 
 ### Customize

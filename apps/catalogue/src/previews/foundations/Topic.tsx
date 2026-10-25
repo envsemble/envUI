@@ -4,14 +4,22 @@ import { InteractiveMark } from '../../template/InteractiveMark';
 
 /**
  * The parts a foundation page is written in, on the same rules as a component page's: a section
- * under its h2 with the paragraph that opens it, titled blocks of a heading and a short paragraph
+ * under its h2 with the lead that opens it, titled blocks of a heading and a short paragraph or two
  * beside their figure, figures that show envUI at work on the recessed canvas, and the system's
  * own specimens, such as swatches, on the page. Every word in them is plain language for people
  * looking at envUI: no token names, values or units, which the foundation's guide in the Docs
  * holds.
+ *
+ * The parts set the Usage guide's type hierarchy (SiteText.css), so a page never has to: the
+ * section's title large, its lead a step larger than body text, a block's title in the title style
+ * and its paragraphs quieter, in the muted color, and the notes of figures and legends smaller
+ * still, each in a readable measure.
  */
 
-/** A section of a foundation page: its h2 title, the paragraph that opens it, and its blocks. */
+/**
+ * A section of a foundation page: its h2 title, its lead, the one or two sentences that open it and
+ * say what matters most, and its blocks.
+ */
 export function Topic({
   title,
   lead,
@@ -26,15 +34,16 @@ export function Topic({
       <Text render={<h2 />} variant="headline">
         {title}
       </Text>
-      {lead && <Text className="docs-topic-lead">{lead}</Text>}
+      {lead && <Text className="docs-lead docs-topic-lead">{lead}</Text>}
       <div className="docs-topic-blocks">{children}</div>
     </Column>
   );
 }
 
 /**
- * A titled block: a heading and a short paragraph, beside its one figure on a wide page, or above a
- * figure that needs the whole column (`stacked`). Without a figure it is the text alone.
+ * A titled block: a heading and a short paragraph, or a few short ones given as a list, beside its
+ * one figure on a wide page, or above a figure that needs the whole column (`stacked`). Without a
+ * figure it is the text alone. Its paragraphs support the figure, so they are the quieter color.
  */
 export function Block({
   title,
@@ -43,16 +52,21 @@ export function Block({
   stacked = false,
 }: {
   title: string;
-  text: ReactNode;
+  text: ReactNode | readonly ReactNode[];
   children?: ReactNode;
   stacked?: boolean;
 }) {
+  const paragraphs: readonly ReactNode[] = Array.isArray(text) ? text : [text];
   const words = (
     <div className="docs-topic-text">
       <Text render={<h3 />} variant="title">
         {title}
       </Text>
-      <Text render={<p />}>{text}</Text>
+      {paragraphs.map((paragraph, index) => (
+        <Text key={index} render={<p />} emphasis="muted" className="docs-supporting">
+          {paragraph}
+        </Text>
+      ))}
     </div>
   );
   if (!children) return words;
@@ -169,32 +183,5 @@ export function NumberedLegend({ entries }: { entries: readonly LegendEntry[] })
         </li>
       ))}
     </ol>
-  );
-}
-
-/**
- * Words with what they mean, laid out as an option legend: each in the tag a variants figure's
- * callouts use, followed by what it is for or what envUI does.
- */
-export function TagLegend({
-  label,
-  entries,
-}: {
-  label: string;
-  entries: readonly { tag: string; text: string }[];
-}) {
-  return (
-    <dl className="docs-option-legend docs-topic-words" aria-label={label}>
-      {entries.map((entry) => (
-        <div key={entry.tag} className="docs-option">
-          <dt>
-            <span className="docs-option-tag">{entry.tag}</span>
-          </dt>
-          <dd>
-            <Text render={<p />}>{entry.text}</Text>
-          </dd>
-        </div>
-      ))}
-    </dl>
   );
 }

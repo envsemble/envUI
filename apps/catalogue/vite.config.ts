@@ -10,7 +10,7 @@ import {
   specimensDirectory,
 } from '../../scripts/GenerateDocumentation.mjs';
 // `vite build` makes the static site: separate files with content-hashed names that browsers keep
-// cached, the Site at the root and the Docs under /docs, both from one index.html.
+// cached, the Usage guide at the root and the Docs under /docs, both from one index.html.
 import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
 import { createDisplayBootstrapScript, displayStorageKeys } from './src/theme/DisplayStorage.ts';
@@ -20,9 +20,9 @@ import { readReleaseNotes, releaseNotesSources } from '../../scripts/ReleaseNote
 import { siteAgentFiles } from '../../scripts/SiteAgentFiles.mjs';
 
 /**
- * Data the Site's pages read from the repository when the catalogue builds or serves, as virtual
- * modules: the release notes. While serving, a change to their
- * files reloads the page with the new data.
+ * Data the Usage guide's pages read from the repository when the catalogue builds or serves, as
+ * virtual modules: the release notes. While serving, a change to their files reloads the page with
+ * the new data.
  */
 const siteData: Record<string, { read: () => unknown; sources: string[] }> = {
   'virtual:envui-release-notes': { read: readReleaseNotes, sources: releaseNotesSources },

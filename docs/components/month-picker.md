@@ -21,37 +21,20 @@ avoidWhen:
     use: SegmentedControl
 components:
   - MonthPicker
+examples:
+  ReportMonth: overview
+  Variants: variants
+  MonthPickerAnatomy: anatomy
+  MonthPickerPopupAnatomy: anatomy
+  FiscalYear: example
+  ShortFormat: example
 ---
 
 # MonthPicker
 
-## Overview
-
-The month shows in the reader's language, and choosing one closes the popup.
-
-```tsx example=ReportMonth
-
-```
-
-### Within a fiscal year
-
-Months outside the range a field allows are unavailable, and the year buttons stop at them.
-
-```tsx example=FiscalYear
-
-```
-
-### A short format
-
-The field can write the month in a shorter form, such as 07/28.
-
-```tsx example=ShortFormat
-
-```
-
 ## Variants
 
-```tsx variants=Variants
+```tsx figure=Variants
 
 ```
 
@@ -63,15 +46,9 @@ The field can write the month in a shorter form, such as 07/28.
 | Outline  | In forms, dialogs and panes. The default.               |
 | Floating | A long form on a page, as TextField's floating variant. |
 
-## When to use
-
-### Ranges
-
-Use two fields for a range of months, such as From and To.
-
 ## Anatomy
 
-```tsx anatomy=MonthPickerAnatomy
+```tsx figure=MonthPickerAnatomy
 
 ```
 
@@ -83,7 +60,7 @@ Use two fields for a range of months, such as From and To.
 6. **Calendar icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-```tsx anatomy=MonthPickerPopupAnatomy open
+```tsx figure=MonthPickerPopupAnatomy open
 
 ```
 
@@ -93,6 +70,36 @@ Use two fields for a range of months, such as From and To.
 4. **Next year** (`env-month-picker-next`)
 5. **Month** (`env-month-picker-month`)
 6. **Actions** (`env-date-picker-actions`)
+
+## Behaviour
+
+### Choosing a month
+
+The month shows in the reader's language, and choosing one closes the popup.
+
+### Within a fiscal year
+
+Months outside the range a field allows are unavailable, and the year buttons stop at them.
+
+```tsx figure=FiscalYear
+
+```
+
+### A short format
+
+The field can write the month in a shorter form, such as 07/28.
+
+```tsx figure=ShortFormat
+
+```
+
+## Rules
+
+A month picker is for a month where the day doesn't matter, one month to a field.
+
+### Ranges
+
+Use two fields for a range of months, such as From and To.
 
 ## Accessibility
 
@@ -118,11 +125,15 @@ Use two fields for a range of months, such as From and To.
 - Validation and its `error`.
 - The labels in the application's language.
 
-## In code
+## Compose
 
 ### Usage
 
-A MonthPicker takes its `label`, a `description` and an `error`, and its value is a month as `YYYY-MM`. Leave it uncontrolled, with `defaultValue`, which a form reset restores, or control it with `value` and `onValueChange`, which receives the month, or `null` once the field is cleared. `clearable` adds a clear button to the field and the popup.
+A MonthPicker takes its `label`, a `description` and an `error`, and its value is a month as `YYYY-MM`.
+
+- Uncontrolled: `defaultValue`, which a form reset restores.
+- Controlled: `value` and `onValueChange`, which receives the month, or `null` once the field is cleared.
+- `clearable` adds a clear button to the field and the popup.
 
 ```tsx source=ReportMonth
 
@@ -130,14 +141,11 @@ A MonthPicker takes its `label`, a `description` and an `error`, and its value i
 
 #### Range and format
 
-`min` and `max`, as `YYYY-MM`, make earlier and later months unavailable. `formatOptions` takes `Intl.DateTimeFormat` options for the shown value, by default the long month and the year; `locale` is EnvUIProvider's, else the browser's, and months are Gregorian, also in a locale with a calendar of its own.
+`min` and `max`, as `YYYY-MM`, make earlier and later months unavailable, as the FiscalYear example shows. `formatOptions` takes `Intl.DateTimeFormat` options for the shown value, by default the long month and the year, as the ShortFormat example shows; `locale` is EnvUIProvider's, else the browser's, and months are Gregorian, also in a locale with a calendar of its own.
 
-```tsx source=FiscalYear
-
-```
-
-```tsx source=ShortFormat
-
+```tsx
+<MonthPicker label="Budget month" min="2026-04" max="2027-03" />
+<MonthPicker label="Expires" formatOptions={{ month: '2-digit', year: '2-digit' }} />
 ```
 
 #### In a form
@@ -145,33 +153,10 @@ A MonthPicker takes its `label`, a `description` and an `error`, and its value i
 `name` submits the month as `YYYY-MM`, and `required` keeps an empty field's form from submitting. Use `readOnly`, not `disabled`, for a month people can't change.
 
 ```tsx
-import { useState, type FormEvent } from 'react';
-import { Button, MonthPicker, Column, Row, Text } from '@envsemble/envui';
-
-export default function ExpenseForm() {
-  const [sent, setSent] = useState('');
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    setSent(`Expenses for ${String(data.get('period'))} submitted.`);
-  };
-  return (
-    <form onSubmit={submit} onReset={() => setSent('')} style={{ inlineSize: 'min(100%, 16rem)' }}>
-      <Column gap={4}>
-        <MonthPicker label="Period" name="period" placeholder="Choose a month" required />
-        <Row wrap align="center" gap={4}>
-          <Button type="submit">Submit expenses</Button>
-          <Button type="reset" variant="secondary">
-            Reset
-          </Button>
-        </Row>
-        <Text variant="caption" emphasis="muted" role="status">
-          {sent}
-        </Text>
-      </Column>
-    </form>
-  );
-}
+<form onSubmit={submit}>
+  <MonthPicker label="Period" name="period" placeholder="Choose a month" required />
+  <Button type="submit">Submit expenses</Button>
+</form>
 ```
 
 #### Variants, sizes and the popup

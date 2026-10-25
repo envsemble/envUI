@@ -20,6 +20,7 @@ import {
   Select,
   Switch,
   Table,
+  TableOfContents,
   Tabs,
   TextField,
   Theme,
@@ -195,6 +196,16 @@ function Page() {
         ]}
       />
       <Rating value={3} />
+      {/* The first section, at the top of the page, is the current one. */}
+      <TableOfContents
+        aria-label="Sections"
+        items={[
+          { id: 'forced-first', label: 'First section' },
+          { id: 'forced-second', label: 'Second section' },
+        ]}
+      />
+      <p id="forced-first">First section</p>
+      <p id="forced-second">Second section</p>
       <Menubar.Root aria-label="Application menu">
         {/* Held open, so its trigger shows the open state Base UI gives it. */}
         <Menubar.Menu label="File" open>

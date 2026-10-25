@@ -25,35 +25,27 @@ avoidWhen:
 components:
   - RelativeTime
   - formatRelativeTime
+examples:
+  DraftSaved: overview
+  PastAndComing:
+    role: overview
+    caption: Past moments read ago, coming ones in.
+  Formats: variants
+  VersionLabels: example
+  RelativeTimeAnatomy: anatomy
+  ExactDateNearby:
+    role: do
+    caption: Show the date where it matters, with the relative time beside it.
+  DateOnlyInTooltip:
+    role: dont
+    caption: 'The date only in the tooltip: keyboards and screen readers never reach it.'
 ---
 
 # RelativeTime
 
-## Overview
-
-```tsx example=DraftSaved
-
-```
-
-```tsx example=PastAndComing caption="Past moments read ago, coming ones in."
-
-```
-
-### Text for a label
-
-The same text comes as plain text too, for a place that takes only text, such as an option's label. It doesn't update by itself.
-
-```tsx example=VersionLabels
-
-```
-
-### Rounding and languages
-
-The text rounds to the nearest unit and stays a count: 1 day ago, never yesterday. It speaks the application's language, else the browser's, or one of its own, such as German: vor 3 Stunden. Where the exact moment shows nearby, it can leave out its tooltip.
-
 ## Variants
 
-```tsx variants=Formats
+```tsx figure=Formats
 
 ```
 
@@ -67,23 +59,42 @@ The text rounds to the nearest unit and stays a count: 1 day ago, never yesterda
 | Short  | 3 hr. ago   | Dense lists and table cells.      |
 | Narrow | 3h ago      | Toolbars and other tight spots.   |
 
-## When to use
+### Text for a label
 
-```tsx do=ExactDateNearby caption="Show the date where it matters, with the relative time beside it."
+The same text comes as plain text too, for a place that takes only text, such as an option's label. It doesn't update by itself.
 
-```
-
-```tsx dont=DateOnlyInTooltip caption="The date only in the tooltip: keyboards and screen readers never reach it."
+```tsx figure=VersionLabels
 
 ```
 
 ## Anatomy
 
-```tsx anatomy=RelativeTimeAnatomy
+```tsx figure=RelativeTimeAnatomy
 
 ```
 
 1. **Time** (`env-relative-time`, `value`)
+
+## Behaviour
+
+### Rounding and languages
+
+The text rounds to the nearest unit and stays a count: 1 day ago, never yesterday.
+
+- It speaks the application's language, else the browser's, or one of its own, such as German: vor 3 Stunden.
+- Where the exact moment shows nearby, it can leave out its tooltip.
+
+## Rules
+
+The words around a relative time say what happened, and the exact date shows where it matters.
+
+```tsx figure=ExactDateNearby
+
+```
+
+```tsx figure=DateOnlyInTooltip
+
+```
 
 ## Accessibility
 
@@ -105,7 +116,7 @@ The text rounds to the nearest unit and stays a count: 1 day ago, never yesterda
 - The exact date in visible text where it matters.
 - A `locale` that matches the page.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -127,16 +138,23 @@ RelativeTime's `value` is the moment: a Date, milliseconds since 1970 or a date 
 
 `formatRelativeTime(value, options)` returns the same text as a string, with the same `format`, `locale`, `nowLabel` and `now`, for a place that takes only text, such as an option's label or an accessible name. It doesn't update by itself, and runs in React Server Components; RelativeTime is a client component.
 
-```tsx source=VersionLabels
-
+```tsx
+const options = versions.map((version, index) => ({
+  value: version.id,
+  label: `Version ${versions.length - index} · saved ${formatRelativeTime(version.savedAt)}`,
+}));
 ```
 
 #### Exact moments and tests
 
 Where people must read the moment exactly, format the date with `Intl.DateTimeFormat` instead. `now` fixes the moment to compare with, so the text stays as it is: pass the same `now` to the server and the browser where their output must match, as in tests.
 
-```tsx source=ExactDateNearby
+```tsx
+const date = new Intl.DateTimeFormat(undefined, { dateStyle: 'long' }).format(sentAt);
 
+<Text>
+  Invoice sent on {date} (<RelativeTime value={sentAt} tooltip={false} />)
+</Text>;
 ```
 
 ### Composition

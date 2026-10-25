@@ -4,7 +4,7 @@ import { InteractiveMark } from '../template/InteractiveMark';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
- * a section of a page on the figure template. The titles of its parts take the level below.
+ * a section of a page. The titles of its parts take the level below.
  */
 export const SpecimenHeadingLevel = createContext<2 | 3>(2);
 

@@ -12,8 +12,22 @@ import { SiteMarkdown } from './OptionLegend';
 import { optionPieces, type OptionTable } from '../../../../scripts/SiteContent.mjs';
 import { InteractiveMark } from './InteractiveMark';
 import { Specimen } from './Specimen';
+import { foundationFigure } from '../previews/foundations/FoundationFigures';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
+type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
+type FigureBlock = ExampleBlock | FoundationBlock;
+
+/**
+ * A foundation's figure: the catalogue's own, from its page's preview,
+ * with the legend its Markdown gives it.
+ */
+function FoundationFigure({ page, block }: { page: Document; block: FoundationBlock }) {
+  const figure = foundationFigure(page.id, block.name);
+  if (!figure) return null;
+  const Render = figure.render;
+  return <Render legend={block.legend ?? []} caption={block.caption} />;
+}
 
 /**
  * A do or don't figure: the live example in a frame with a green Do or red Don't bar and its one
@@ -94,9 +108,10 @@ function Figure({
   options,
 }: {
   page: Document;
-  block: ExampleBlock;
+  block: FigureBlock;
   options?: OptionTable;
 }) {
+  if (block.kind === 'figure') return <FoundationFigure page={page} block={block} />;
   if (block.role === 'do' || block.role === 'dont')
     return (
       <VerdictFigure
@@ -157,19 +172,35 @@ export function lastSubsection(markdown: string): [string, string] | undefined {
 }
 
 /**
+ * Markdown cut after the paragraph that opens it, when it opens with one: a section's lead, which
+ * the Usage guide sets larger than the text below it (SiteText.css).
+ */
+export function leadParagraph(markdown: string): [string, string] | undefined {
+  const text = markdown.replace(/^(?:[ \t]*\n)+/, '');
+  if (!text.trim() || /^\s{0,3}(#|\||[-*+] |\d+[.)] |`{3,}|~{3,}|<!--)/.test(text))
+    return undefined;
+  const end = text.search(/\n[ \t]*\n/);
+  return end === -1 ? [text, ''] : [text.slice(0, end), text.slice(end)];
+}
+
+/**
  * The blocks of a section in the order they are written, with figures that follow each other, such
  * as a do and a don't, side by side; Markdown that is only blank lines between them doesn't count.
  */
-function groupFigures(blocks: DocumentationBlock[]) {
-  const groups: (DocumentationBlock | ExampleBlock[])[] = [];
+function groupFigures(blocks: DocumentationBlock[], page: string) {
+  const groups: (DocumentationBlock | FigureBlock[])[] = [];
   for (const block of blocks) {
     if (block.kind === 'markdown' && !block.markdown.trim()) continue;
     const last = groups.at(-1);
+    // A figure that needs the whole column, such as a foundation's run of pictures or an example
+    // marked wide, stands alone.
     const figure =
-      block.kind === 'example' &&
-      block.role !== 'anatomy' &&
-      block.role !== 'variants' &&
-      !block.widths;
+      (block.kind === 'example' &&
+        block.role !== 'anatomy' &&
+        block.role !== 'variants' &&
+        !block.widths &&
+        !block.wide) ||
+      (block.kind === 'figure' && !foundationFigure(page, block.name)?.wide);
     if (figure && Array.isArray(last)) last.push(block);
     else groups.push(figure ? [block] : block);
   }
@@ -193,18 +224,21 @@ function SharedRow(props: ComponentPropsWithoutRef<'div'>) {
 }
 
 /**
- * One section of a page on the figure template: its heading, then its content in the order it is
+ * One section of a page: its heading, then its content in the order it is
  * written, with figures that follow each other side by side and a subsection beside its one
- * figure. `lead` comes right after the heading, before the authored content.
+ * figure. `lead` comes right after the heading, before the authored content, or with `leadAfter`
+ * after the section's own lead paragraph, as Use it when follows a page's Rules lead.
  */
 export function FigureSection({
   reference,
   section,
   lead,
+  leadAfter = false,
 }: {
   reference: Document;
   section: DocumentationSection;
   lead?: ReactNode;
+  leadAfter?: boolean;
 }) {
   const blocks = [...section.blocks];
   // The first Markdown block opens with the section's "## Title" line, which the heading shows.
@@ -230,14 +264,26 @@ export function FigureSection({
         .join(''),
     };
   });
-  const groups = groupFigures(blocks);
+  const groups = groupFigures(blocks, reference.id);
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
-  const content: ReactNode[] = lead ? [<Fragment key="lead">{lead}</Fragment>] : [];
+  const content: ReactNode[] = lead && !leadAfter ? [<Fragment key="lead">{lead}</Fragment>] : [];
+  /** Shows `lead` after the section's own lead paragraph, or first where it has none. */
+  let leadShown = !lead || !leadAfter;
+  const showLead = () => {
+    if (!leadShown) content.push(<Fragment key="lead">{lead}</Fragment>);
+    leadShown = true;
+  };
   const markdown = (key: number, text: string) => (
     <SiteMarkdown key={key} markdown={text} path={reference.path} />
   );
   groups.forEach((group, index) => {
+    const opensWithLead =
+      index === 0 &&
+      !Array.isArray(group) &&
+      group.kind === 'markdown' &&
+      leadParagraph(group.markdown);
+    if (!opensWithLead) showLead();
     const text = beside.get(index);
     if (Array.isArray(group) && text !== undefined)
       content.push(
@@ -257,7 +303,9 @@ export function FigureSection({
             key={index}
             className="docs-figure-run"
             data-count={group.length}
-            data-verdicts={group.every((block) => block.role) || undefined}
+            data-verdicts={
+              group.every((block) => block.kind === 'example' && block.role) || undefined
+            }
           >
             {group.map((block) => (
               <Figure key={block.name} page={reference} block={block} />
@@ -266,20 +314,55 @@ export function FigureSection({
         ),
       );
     else if (group.kind === 'markdown') {
+      let text = group.markdown;
+      // The paragraph that opens a section is its lead.
+      const lead = index === 0 && leadParagraph(text);
+      if (lead) {
+        content.push(
+          <Documentation
+            key="section-lead"
+            markdown={lead[0]}
+            path={reference.path}
+            className="docs-lead"
+          />,
+        );
+        text = lead[1];
+        showLead();
+      }
+      // The sentence after an anatomy legend, on the parts the figure can't show, is a note to it.
+      const previous = groups[index - 1];
+      if (
+        previous &&
+        !Array.isArray(previous) &&
+        previous.kind === 'example' &&
+        previous.role === 'anatomy' &&
+        leadParagraph(text)?.[1].trim() === ''
+      ) {
+        content.push(
+          <Documentation
+            key={index}
+            markdown={text}
+            path={reference.path}
+            className="docs-figure-note"
+          />,
+        );
+        return;
+      }
       // A last subsection of text with one figure after it sits beside that figure.
       const next = groups[index + 1];
-      const split = Array.isArray(next) && next.length === 1 && lastSubsection(group.markdown);
+      const split = Array.isArray(next) && next.length === 1 && lastSubsection(text);
       if (split) {
         if (split[0].trim()) content.push(markdown(index, split[0]));
         beside.set(index + 1, split[1]);
-      } else content.push(markdown(index, group.markdown));
-    } else if (group.kind === 'example')
+      } else if (text.trim()) content.push(markdown(index, text));
+    } else if (group.kind === 'example' || group.kind === 'figure')
       content.push(
         <Figure key={index} page={reference} block={group} options={options.get(group.name)} />,
       );
     else if (group.kind === 'specimen')
       content.push(<Specimen key={index} page={reference.id} name={group.name} headingLevel={3} />);
   });
+  showLead();
   // The changelog is its Markdown alone.
   if (section.id === 'changelog')
     return (

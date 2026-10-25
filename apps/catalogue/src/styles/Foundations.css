@@ -95,9 +95,9 @@
     padding-inline-end: 24rem;
   }
 }
-/* A foundation page on the figure template's rules (previews/foundations/Topic.tsx): sections
-   under their h2, each opened by a paragraph, then titled blocks beside their figures, a sub-topic
-   apart from the next. */
+/* Topics of the catalogue's own pages, such as Dev mode, and the parts of foundations' figures
+   (previews/foundations/Topic.tsx): sections under their h2, each opened by a paragraph, then
+   titled blocks beside their figures, a sub-topic apart from the next. */
 .docs-topic {
   --docs-subtopic-gap: var(--env-space-7);
 }
@@ -105,7 +105,6 @@
   margin: 0 0 var(--env-space-4);
 }
 .docs-topic-lead {
-  max-inline-size: 65ch;
   margin: 0 0 var(--env-space-5);
 }
 .docs-topic-blocks {
@@ -146,13 +145,6 @@
 }
 .docs-topic-legend p {
   margin: 0;
-}
-/* The words to use: the tags may wrap on a narrow page. */
-.docs-topic-words .docs-option-tag {
-  white-space: normal;
-  block-size: auto;
-  min-block-size: 1.5rem;
-  padding-block: 0.125rem;
 }
 
 /* A figure with marks measured from its example (Marks.tsx): room on the end side for the

@@ -32,15 +32,21 @@ avoidWhen:
     see: responsive
 components:
   - Grid
+examples:
+  ProjectCards: overview
+  MainAndDetails:
+    role: example
+    caption: 'A template: the main column twice as wide as its details.'
+  ColumnsThatFit: example
+  FittingColumns:
+    role: do
+    caption: A minimum width, so the grid fits the columns to its own width.
+  FixedColumns:
+    role: dont
+    caption: 'Three columns in a narrow pane: each card is squeezed.'
 ---
 
 # Grid
-
-## Overview
-
-```tsx example=ProjectCards
-
-```
 
 ## Variants
 
@@ -50,25 +56,31 @@ components:
 | A set number   | Content in a set number of equal columns at every width.                  |
 | A template     | Columns of different widths, such as a main column and its details.       |
 
-```tsx example=MainAndDetails caption="A template: the main column twice as wide as its details."
+```tsx figure=MainAndDetails
 
 ```
 
-## When to use
+## Behaviour
 
-```tsx do=FittingColumns caption="A minimum width, so the grid fits the columns to its own width."
+### Adapting to width
+
+Given a minimum width, a grid fits as many columns as it can, with no breakpoints of its own.
+
+- The rest of a row stays empty, so every item keeps one width.
+
+```tsx figure=ColumnsThatFit widths="22 50"
 
 ```
 
-```tsx dont=FixedColumns caption="Three columns in a narrow pane: each card is squeezed."
+## Rules
+
+A grid of items fits its columns to the room it has, rather than keeping a set number.
+
+```tsx figure=FittingColumns
 
 ```
 
-## Adapting to width
-
-Given a minimum width, a grid fits as many columns as it can, with no breakpoints of its own; the rest of a row stays empty, so every item keeps one width.
-
-```tsx example=ColumnsThatFit widths="22 50"
+```tsx figure=FixedColumns
 
 ```
 
@@ -83,11 +95,14 @@ Given a minimum width, a grid fits as many columns as it can, with no breakpoint
 
 - A list, with a name, where the items are a list people count.
 
-## In code
+## Compose
 
 ### Usage
 
-Grid lays out its children in `columns`, one by default, with `gap` between rows and columns, a step of the spacing scale, none by default. `align` lines each child up in its cell's height: `stretch`, the default, fills the row, and `start`, `center` and `end` keep it at its own height. Like Box, it takes `render`, `name`, `container` and `padding`.
+Grid lays out its children in `columns`, one by default, with `gap` between rows and columns, a step of the spacing scale, none by default.
+
+- `align` lines each child up in its cell's height: `stretch`, the default, fills the row, and `start`, `center` and `end` keep it at its own height.
+- Like Box, it takes `render`, `name`, `container` and `padding`.
 
 ```tsx source=ProjectCards
 
@@ -101,15 +116,23 @@ Grid lays out its children in `columns`, one by default, with `gap` between rows
 | `columns={3}`                             | Three equal columns at every width.                        |
 | `columns="minmax(0, 2fr) minmax(0, 1fr)"` | A `grid-template-columns` template, such as a main column. |
 
-With a minimum, the grid fits as many equal columns as it can at that width or wider, with empty columns where items run out, so it needs no container query. In a template, write `minmax(0, 1fr)` rather than `1fr`, so long content wraps.
+- With a minimum, the grid fits as many equal columns as it can at that width or wider, with empty columns where items run out, so it needs no container query.
+- In a template, write `minmax(0, 1fr)` rather than `1fr`, so long content wraps.
 
-```tsx source=MainAndDetails
-
+```tsx
+<Grid columns="minmax(0, 2fr) minmax(0, 1fr)" gap={6}>
+  <Column gap={2}>…</Column>
+  <DescriptionList.Root layout="stacked" aria-label="Project details">
+    …
+  </DescriptionList.Root>
+</Grid>
 ```
 
 ### Composition
 
-Keep the visual order the document order: no `grid-row` or `grid-column` that moves what people read or tab through. For items people count, use `render={<ul />}`, with each child a `li`, and name the list.
+Keep the visual order the document order: no `grid-row` or `grid-column` that moves what people read or tab through.
+
+- For items people count, use `render={<ul />}`, with each child a `li`, and name the list.
 
 ## Changelog
 

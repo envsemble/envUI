@@ -119,6 +119,7 @@
       "navigation/Rail.tsx": "base",
       "navigation/Pager.tsx": "base",
       "navigation/Pagination.tsx": "composites",
+      "navigation/TableOfContents.tsx": "base",
       "navigation/Tabs.tsx": "composites",
       "navigation/TopBar.tsx": "composites",
       "navigation/Tree.tsx": "composites",

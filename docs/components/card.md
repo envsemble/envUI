@@ -41,19 +41,24 @@ avoidWhen:
     use: Column
 components:
   - Card
+examples:
+  ProjectSummary: overview
+  ActionStrip: example
+  Destinations: example
+  StartOptions: example
+  ImportPlans: example
+  Backgrounds: variants
+  CardAnatomy: anatomy
+  InviteFeature: example
+  OneCardSections:
+    role: do
+    caption: One card per subject, with Text for its parts.
+  NestedCards:
+    role: dont
+    caption: 'Cards inside cards: the fills and corners stack up.'
 ---
 
 # Card
-
-## Overview
-
-```tsx example=ProjectSummary
-
-```
-
-### Loading
-
-While its content loads, a card can show as its own skeleton, as [Loading](../patterns/loading.md) shows.
 
 ## Variants
 
@@ -61,7 +66,7 @@ While its content loads, a card can show as its own skeleton, as [Loading](../pa
 
 The default: a title, a short fact beside it, a description, its content, and actions in a strip along the bottom.
 
-```tsx example=ActionStrip
+```tsx figure=ActionStrip
 
 ```
 
@@ -69,7 +74,7 @@ The default: a title, a short fact beside it, a description, its content, and ac
 
 The whole card is one link.
 
-```tsx example=Destinations
+```tsx figure=Destinations
 
 ```
 
@@ -77,21 +82,25 @@ The whole card is one link.
 
 The whole card is one button.
 
-```tsx example=StartOptions
+```tsx figure=StartOptions
 
 ```
 
 ### Feature card
 
-An icon, a heading, a sentence and the one button that starts a feature. The heading names the feature, the sentence says what it gives people, and the button starts it with a verb, such as Invite people.
+An icon, a heading, a sentence and the one button that starts a feature.
 
-```tsx example=ImportPlans
+- The heading names the feature.
+- The sentence says what it gives people.
+- The button starts it with a verb, such as Invite people.
+
+```tsx figure=ImportPlans
 
 ```
 
 ### Backgrounds
 
-```tsx variants=Backgrounds
+```tsx figure=Backgrounds
 
 ```
 
@@ -105,23 +114,9 @@ An icon, a heading, a sentence and the one button that starts a feature. The hea
 | Default    | A quieter fill, such as a settings section.     |
 | Page       | The page's own color, set apart by its corners. |
 
-## When to use
-
-```tsx do=OneCardSections caption="One card per subject, with Text for its parts."
-
-```
-
-```tsx dont=NestedCards caption="Cards inside cards: the fills and corners stack up."
-
-```
-
-### Content
-
-Put the fact that matters most for choosing beside the title, and start a link card with its destination's name. A link or button card holds no links or controls of its own.
-
 ## Anatomy
 
-```tsx anatomy=CardAnatomy
+```tsx figure=CardAnatomy
 
 ```
 
@@ -133,13 +128,40 @@ Put the fact that matters most for choosing beside the title, and start a link c
 6. **Content** (`env-card-body > env-text:last-child`, `children`)
 7. **Actions** (`env-card-footer`, `actions`)
 
-## Adapting to width
+## Behaviour
 
-A card fills its container. In a narrow feature card, the button moves below the text.
+### Loading
 
-```tsx example=InviteFeature widths="24 40"
+While its content loads, a card can show as its own skeleton, as [Loading](../patterns/loading.md) shows.
+
+### Adapting to width
+
+A card fills its container.
+
+- In a narrow feature card, the button moves below the text.
+
+```tsx figure=InviteFeature widths="24 40"
 
 ```
+
+## Rules
+
+One card holds one subject, and lays out its parts inside it.
+
+```tsx figure=OneCardSections
+
+```
+
+```tsx figure=NestedCards
+
+```
+
+### Content
+
+Put the fact that matters most for choosing beside the title.
+
+- Start a link card with its destination's name.
+- A link or button card holds no links or controls of its own.
 
 ## Accessibility
 
@@ -164,11 +186,13 @@ A card fills its container. In a narrow feature card, the button moves below the
 - No `aria-label` that leaves out the card's visible text.
 - Routing behind `href`, through `LinkProvider`.
 
-## In code
+## Compose
 
 ### Usage
 
-A content card takes its `title`, a `meta` fact at the end of the title row, a `description` under it, its content as `children`, and `actions` in a strip along the bottom. Set `render={<article />}` on a card that stands on its own.
+A content card takes its `title`, a `meta` fact at the end of the title row, a `description` under it, its content as `children`, and `actions` in a strip along the bottom.
+
+- Set `render={<article />}` on a card that stands on its own.
 
 ```tsx source=ActionStrip
 
@@ -176,7 +200,10 @@ A content card takes its `title`, a `meta` fact at the end of the title row, a `
 
 #### Link and button cards
 
-With `href`, the whole card is one native link, through the application's router link from `LinkProvider`; with `onClick`, it is one native button. Either holds only phrasing content, such as spans, and no links or controls of its own, and its text names it. `disabled` turns either off.
+With `href`, the whole card is one native link, through the application's router link from `LinkProvider`; with `onClick`, it is one native button.
+
+- Either holds only phrasing content, such as spans, and no links or controls of its own, and its text names it.
+- `disabled` turns either off.
 
 ```tsx
 <Card href="/projects/northwind">
@@ -191,10 +218,28 @@ With `href`, the whole card is one native link, through the application's router
 
 #### Feature card
 
-A feature card is a Card holding a Row with `wrap` and `align="center"`: the icon in a muted Text with `render={<span />}`, a Column of a headline Text and a `body-sm` Text, and the Button that starts the feature. The Column takes `flex: '1 1 16rem'`, so the text keeps at least 16 rem and the button wraps below it in a narrower card. Render the heading at the level the outline needs, such as `render={<h3 />}` under a section's `h2`; `variant="headline"` keeps its look. The Button takes `href` where the action goes somewhere. Lay several side by side in a Grid of even columns.
+A feature card is a Card holding a Row with `wrap` and `align="center"`: the icon in a muted Text with `render={<span />}`, a Column of a headline Text and a `body-sm` Text, and the Button that starts the feature.
 
-```tsx source=ImportPlans
+- The Column takes `flex: '1 1 16rem'`, so the text keeps at least 16 rem and the button wraps below it in a narrower card.
+- Render the heading at the level the outline needs, such as `render={<h3 />}` under a section's `h2`; `variant="headline"` keeps its look.
+- The Button takes `href` where the action goes somewhere.
+- Lay several side by side in a Grid of even columns.
 
+```tsx
+<Card>
+  <Row wrap align="center" gap={4}>
+    <Text render={<span />} emphasis="muted">
+      <UploadFile width="1.5rem" height="1.5rem" />
+    </Text>
+    <Column gap={1} style={{ flex: '1 1 16rem' }}>
+      <Text render={<h3 />} variant="headline">
+        Import your plans
+      </Text>
+      <Text variant="body-sm">Bring in spreadsheets and documents from another tool.</Text>
+    </Column>
+    <Button variant="secondary">Import</Button>
+  </Row>
+</Card>
 ```
 
 #### Backgrounds
@@ -209,7 +254,10 @@ A feature card is a Card holding a Row with `wrap` and `align="center"`: the ico
 
 #### Loading
 
-`skeleton` shows the card as its own skeleton until its content arrives: text becomes bars and controls filled shapes. Render the same cards over placeholder items, from `placeholders`; a `title` or `description` given as undefined is a bar of its usual length.
+`skeleton` shows the card as its own skeleton until its content arrives: text becomes bars and controls filled shapes.
+
+- Render the same cards over placeholder items, from `placeholders`.
+- A `title` or `description` given as undefined is a bar of its usual length.
 
 ```tsx
 <Grid columns={2} gap={4}>
@@ -221,13 +269,19 @@ A feature card is a Card holding a Row with `wrap` and `align="center"`: the ico
 
 ### Composition
 
-The title is an `h3`; set `headingLevel` to fit the page's outline, and its type stays the title type. Lay out the content with Text, Row and Column, one card per subject, never a card inside a card, and put cards side by side in a Grid. A card fills its container's width.
+The title is an `h3`; set `headingLevel` to fit the page's outline, and its type stays the title type.
 
-The parts are the surface, `env-card`, its header, `env-card-header`, with the title, `env-card-heading`, and the meta, `env-card-meta`; the description, `env-card-description`; the body, `env-card-body`; and the actions, `env-card-footer`. A feature card's parts are envUI's own components inside it: its icon, `env-card env-text > svg`, its heading, `env-card env-text[data-variant='headline']`, its sentence, `env-card env-text[data-variant='body-sm']`, and its action, `env-card env-button`.
+- Lay out the content with Text, Row and Column, one card per subject, never a card inside a card, and put cards side by side in a Grid.
+- A card fills its container's width.
+- The parts are the surface, `env-card`, its header, `env-card-header`, with the title, `env-card-heading`, and the meta, `env-card-meta`; the description, `env-card-description`; the body, `env-card-body`; and the actions, `env-card-footer`.
+- A feature card's parts are envUI's own components inside it: its icon, `env-card env-text > svg`, its heading, `env-card env-text[data-variant='headline']`, its sentence, `env-card env-text[data-variant='body-sm']`, and its action, `env-card env-button`.
 
 ### Customize
 
-`--env-card-container`, `--env-card-content` and `--env-card-outline` set the colors of one Card, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. `padding` sets the inset as a step of the spacing scale, such as `6` for 2 rem, and `0` removes it.
+`--env-card-container`, `--env-card-content` and `--env-card-outline` set the colors of one Card, through `style` or CSS.
+
+- Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+- `padding` sets the inset as a step of the spacing scale, such as `6` for 2 rem, and `0` removes it.
 
 ```tsx
 <Card

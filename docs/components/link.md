@@ -21,15 +21,21 @@ avoidWhen:
     use: Pager
 components:
   - Link
+examples:
+  InRunningText: overview
+  WithoutUnderline:
+    role: example
+    caption: Without the underline, in a short list of destinations.
+  LinkAnatomy: anatomy
+  UnderlinedInText:
+    role: do
+    caption: The underline in running text.
+  NoUnderlineInText:
+    role: dont
+    caption: 'No underline in a sentence: only its color tells it apart.'
 ---
 
 # Link
-
-## Overview
-
-```tsx example=InRunningText
-
-```
 
 ## Variants
 
@@ -38,7 +44,7 @@ components:
 | On        | Running text. The default.                            |
 | Off       | A list of destinations, where the context marks them. |
 
-```tsx example=WithoutUnderline caption="Without the underline, in a short list of destinations."
+```tsx figure=WithoutUnderline
 
 ```
 
@@ -46,28 +52,30 @@ components:
 
 A destination that should look like a button is a [Button](button.md) that goes somewhere: the same link, in a button's shape.
 
-## When to use
+## Anatomy
 
-```tsx do=UnderlinedInText caption="The underline in running text."
+```tsx figure=LinkAnatomy
 
 ```
 
-```tsx dont=NoUnderlineInText caption="No underline in a sentence: only its color tells it apart."
+1. **Link** (`env-link`, `href`)
+2. **Label** (`env-link::text`, `children`)
+
+## Rules
+
+A link names its destination, and is underlined in running text.
+
+```tsx figure=UnderlinedInText
+
+```
+
+```tsx figure=NoUnderlineInText
 
 ```
 
 ### Labels
 
 Link the few words that name the destination, not a whole sentence.
-
-## Anatomy
-
-```tsx anatomy=LinkAnatomy
-
-```
-
-1. **Link** (`env-link`, `href`)
-2. **Label** (`env-link::text`, `children`)
 
 ## Accessibility
 
@@ -89,11 +97,14 @@ Link the few words that name the destination, not a whole sentence.
 - Link text that names the destination.
 - The router link through `LinkProvider`, as [setup](../setup.md) describes.
 
-## In code
+## Compose
 
 ### Usage
 
-Link is a native `<a>` with its `href`, rendered through the link component of `LinkProvider`, so the application's router handles it, as [setup](../setup.md) describes. Its `children` are the label. `disabled` removes the destination: the link can't be focused or followed, and reports `aria-disabled`.
+Link is a native `<a>` with its `href`, rendered through the link component of `LinkProvider`, so the application's router handles it, as [Connect your router](../setup.md#connect-your-router) describes.
+
+- Its `children` are the label.
+- `disabled` removes the destination: the link can't be focused or followed, and reports `aria-disabled`.
 
 ```tsx source=InRunningText
 
@@ -101,10 +112,12 @@ Link is a native `<a>` with its `href`, rendered through the link component of `
 
 #### Without the underline
 
-`underline` is `true` by default; `underline={false}` leaves it off, in a list of destinations whose context marks them.
+`underline` is `true` by default; `underline={false}` leaves it off, in a list of destinations whose context marks them, as the WithoutUnderline example does.
 
-```tsx source=WithoutUnderline
-
+```tsx
+<Link href="/settings/profile" underline={false}>
+  Profile
+</Link>
 ```
 
 #### Looks like a button

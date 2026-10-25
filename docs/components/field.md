@@ -26,51 +26,24 @@ avoidWhen:
     use: Checkbox
 components:
   - Field
+examples:
+  ProjectName: overview
+  FieldAnatomy: anatomy
+  ValidateOnBlur: example
+  ApplicationControl: example
+  ErrorAfterLeaving:
+    role: do
+    caption: Show an error once people leave the field or submit.
+  ErrorOnArrival:
+    role: dont
+    caption: An error before people have had a chance to type.
 ---
 
 # Field
 
-## Overview
-
-Field ties its parts together for assistive technology, whatever control sits in it.
-
-```tsx example=ProjectName
-
-```
-
-### Validate on blur
-
-A field can check its value with a check of the application's own, which returns an error message or nothing, on submit, on blur or as people type.
-
-```tsx example=ValidateOnBlur
-
-```
-
-### A control of the application's own
-
-The control can be any control, which the label and the description then name and describe.
-
-```tsx example=ApplicationControl
-
-```
-
-## When to use
-
-```tsx do=ErrorAfterLeaving caption="Show an error once people leave the field or submit."
-
-```
-
-```tsx dont=ErrorOnArrival caption="An error before people have had a chance to type."
-
-```
-
-### Description and error
-
-Keep the description while the error shows: the error adds to it.
-
 ## Anatomy
 
-```tsx anatomy=FieldAnatomy
+```tsx figure=FieldAnatomy
 
 ```
 
@@ -79,6 +52,42 @@ Keep the description while the error shows: the error adds to it.
 3. **Control** (`env-field-control`, `Field.Control`)
 4. **Description** (`env-field-description`, `Field.Description`)
 5. **Error** (`env-field-error`, `Field.Error`)
+
+Field ties its parts together for assistive technology, whatever control sits in it.
+
+## Behaviour
+
+### Validate on blur
+
+A field can check its value with a check of the application's own, which returns an error message or nothing, on submit, on blur or as people type.
+
+```tsx figure=ValidateOnBlur
+
+```
+
+### A control of the application's own
+
+The control can be any control, which the label and the description then name and describe.
+
+```tsx figure=ApplicationControl
+
+```
+
+## Rules
+
+An error shows once people have had a chance to answer, and adds to the description.
+
+```tsx figure=ErrorAfterLeaving
+
+```
+
+```tsx figure=ErrorOnArrival
+
+```
+
+### Description and error
+
+Keep the description while the error shows: the error adds to it.
 
 ## Accessibility
 
@@ -99,11 +108,15 @@ Keep the description while the error shows: the error adds to it.
 - A label for every field.
 - A control in `render` that forwards its props and ref to the element people use.
 
-## In code
+## Compose
 
 ### Usage
 
-Field.Root holds a Field.Label, a Field.Control, a Field.Description and a Field.Error, and gives the field its `name` for a form. Field.Control is a native input by default, which takes its native props, such as `required` and `maxLength`, `defaultValue`, or `value` and `onValueChange`, and `size`, `sm`, `md` or `lg`, the control heights.
+Field.Root holds a Field.Label, a Field.Control, a Field.Description and a Field.Error, and gives the field its `name` for a form. Field.Control is a native input by default.
+
+- It takes its native props, such as `required` and `maxLength`.
+- It takes `defaultValue`, or `value` and `onValueChange`.
+- It takes `size`, `sm`, `md` or `lg`, the control heights.
 
 ```tsx source=ProjectName
 
@@ -111,18 +124,31 @@ Field.Root holds a Field.Label, a Field.Control, a Field.Description and a Field
 
 #### Validation
 
-`validate` on Field.Root returns an error message for a value, or nothing for a valid one. `validationMode` checks `onSubmit`, the default, `onBlur` or `onChange`, with `validationDebounceTime` between checks as people type. Without children, Field.Error shows the field's validation message, the one `validate` returns or the browser's; `match` shows an error for one kind of failure only, such as `valueMissing`. `invalid`, `dirty` and `touched` take the state from a form library, and `actionsRef` validates on demand.
+`validate` on Field.Root returns an error message for a value, or nothing for a valid one.
 
-```tsx source=ValidateOnBlur
+- `validationMode` checks `onSubmit`, the default, `onBlur` or `onChange`, with `validationDebounceTime` between checks as people type.
+- Without children, Field.Error shows the field's validation message, the one `validate` returns or the browser's; `match` shows an error for one kind of failure only, such as `valueMissing`.
+- `invalid`, `dirty` and `touched` take the state from a form library, and `actionsRef` validates on demand.
 
+```tsx
+<Field.Root name="handle" validationMode="onBlur" validate={checkAddress}>
+  <Field.Label>Workspace address</Field.Label>
+  <Field.Control />
+  <Field.Error />
+</Field.Root>
 ```
 
 #### Any control
 
-`render` on Field.Control takes any control, which receives the id, the ids of the label and the description, and the ref; it must forward them to the element people use. A control that draws its own frame can take the field's outline off through `style`.
+`render` on Field.Control takes any control, which receives the id, the ids of the label and the description, and the ref; it must forward them to the element people use. A control that draws its own frame can take the field's outline off through `style`, as the ApplicationControl example does.
 
-```tsx source=ApplicationControl
-
+```tsx
+<Field.Control
+  render={<Volume />}
+  value={String(volume)}
+  onValueChange={(next) => setVolume(Number(next))}
+  style={{ border: 0, background: 'none', paddingInline: 0 }}
+/>
 ```
 
 ### Composition

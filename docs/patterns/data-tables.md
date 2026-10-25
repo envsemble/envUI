@@ -46,25 +46,25 @@ composes:
   - Column
   - Row
   - Text
+examples:
+  SortAndPaginate: overview
+  SelectAndBulkActions: example
+  RowActions: example
+  DataTableAnatomy: anatomy
 ---
 
 # Data tables
-
-## Overview
-
-A [Table](../components/table.md) holds the data, with its own sorting, selection and stacking, and [Pagination](../components/pagination.md) below it gives the range, "1–4 of 6", working while the next set loads.
-
-```tsx example=SortAndPaginate
-
-```
 
 ## Variants
 
 ### Select and act on several rows
 
-While rows are selected, a bulk bar shows the count and its actions. Archive acts at once with Undo; Delete asks first.
+While rows are selected, a bulk bar shows the count and its actions.
 
-```tsx example=SelectAndBulkActions
+- Archive acts at once, with Undo.
+- Delete asks first.
+
+```tsx figure=SelectAndBulkActions
 
 ```
 
@@ -72,19 +72,13 @@ While rows are selected, a bulk bar shows the count and its actions. Archive act
 
 The name links to the record; the other actions wait in a [Menu](../components/menu.md) named for the row, "More actions for Website refresh".
 
-```tsx example=RowActions
+```tsx figure=RowActions
 
 ```
 
-## When to use
-
-### Content
-
-Name columns with short nouns, "Open tasks", and put the unit in the name, "Size (MB)", not in every cell. Show recent dates as relative times and further ones as dates, and give the count in bulk actions and their confirmation: "Delete 2 projects?".
-
 ## Anatomy
 
-```tsx anatomy=DataTableAnatomy
+```tsx figure=DataTableAnatomy
 
 ```
 
@@ -94,9 +88,36 @@ Name columns with short nouns, "Open tasks", and put the unit in the name, "Size
 4. **Numbers** (`env-table-cell[data-numeric]`)
 5. **Pagination** (`env-pagination`)
 
+## Behaviour
+
+### Sorting and paging
+
+A [Table](../components/table.md) holds the data, with its own sorting, selection and stacking.
+
+- [Pagination](../components/pagination.md) below it gives the range, "1–4 of 6".
+- It keeps working while the next set loads.
+
+## Rules
+
+A data table says what each column and each action holds in as few words as people need.
+
+### Content
+
+Name columns with short nouns, "Open tasks".
+
+- Put the unit in the name, "Size (MB)", not in every cell.
+- Show recent dates as relative times, and further ones as dates.
+- Give the count in bulk actions and their confirmation: "Delete 2 projects?".
+
 ## Accessibility
 
-<kbd>Tab</kbd> reaches the table's scroll region, then each sort button and control in the cells. Sort and Pagination buttons keep focus as the rows change. When an action clears the selection, focus moves to the header's checkbox; after a row is deleted, to the next row's menu button.
+### Focus and keyboard
+
+<kbd>Tab</kbd> reaches the table's scroll region, then each sort button and control in the cells.
+
+- Sort and Pagination buttons keep focus as the rows change.
+- When an action clears the selection, focus moves to the header's checkbox.
+- After a row is deleted, focus moves to the next row's menu button.
 
 ### envUI provides
 
@@ -110,11 +131,16 @@ Name columns with short nouns, "Open tasks", and put the unit in the name, "Size
 - A checkbox labelled with the row's name in every selectable row.
 - Polite statuses for the sort order and the selection count, and focus after an action removes its control.
 
-## In code
+## Compose
 
 ### Usage
 
-Name the Table.Root with `aria-label`. A sortable Table.HeaderCell takes `sortDirection`, `ascending`, `descending` or `none`, and `onSortChange`, which asks for the other order: the application sorts the rows, goes back to the first page and says the order in a Text with `role="status"`. Numeric columns take `numeric` on the header and the cells; the name is a Link, and recent dates a RelativeTime. Pagination takes `page`, `pageSize`, `total`, `onPageChange` and an `aria-label`, and `pending` while a page loads.
+Name the Table.Root with `aria-label`.
+
+- A sortable Table.HeaderCell takes `sortDirection`, `ascending`, `descending` or `none`, and `onSortChange`, which asks for the other order: the application sorts the rows, goes back to the first page and says the order in a Text with `role="status"`.
+- Numeric columns take `numeric` on the header and the cells.
+- The name is a Link, and recent dates a RelativeTime.
+- Pagination takes `page`, `pageSize`, `total`, `onPageChange` and an `aria-label`, and `pending` while a page loads.
 
 ```tsx source=SortAndPaginate
 
@@ -122,11 +148,39 @@ Name the Table.Root with `aria-label`. A sortable Table.HeaderCell takes `sortDi
 
 #### Selection and bulk actions
 
-Each selectable row has a Checkbox labelled with the row's name and `selected` on its Table.Row; the header's Checkbox is `checked="mixed"` while some are selected. A visually hidden `role="status"` says the count. The bulk bar is a Toolbar named for the selection, with the count in its Toolbar.Button labels, "Archive 2 projects": Archive acts at once with Undo in a toast from `useToast`, and Delete opens a ConfirmDialog. As the bar goes with the selection, focus moves to the header's Checkbox.
+Each selectable row has a Checkbox labelled with the row's name and `selected` on its Table.Row; the header's Checkbox is `checked="mixed"` while some are selected. A visually hidden `role="status"` says the count.
+
+- The bulk bar is a Toolbar named for the selection, with the count in its Toolbar.Button labels, "Archive 2 projects".
+- Archive acts at once with Undo in a toast from `useToast`, and Delete opens a ConfirmDialog.
+- As the bar goes with the selection, focus moves to the header's Checkbox.
+
+```tsx
+<Table.Row selected={selected.includes(project.id)}>
+  <Table.Cell>
+    <Checkbox
+      aria-label={`Select ${project.name}`}
+      checked={selected.includes(project.id)}
+      onCheckedChange={(checked) => toggle(project.id, checked)}
+    />
+  </Table.Cell>
+  <Table.Cell>
+    <Link href={`/projects/${project.id}`}>{project.name}</Link>
+  </Table.Cell>
+</Table.Row>
+```
 
 #### Row actions
 
 The row's other actions are a Menu whose trigger is an IconButton with `aria-label` "More actions for" the row's name. Delete opens a ConfirmDialog whose `finalFocus` is the menu button that opened it, or, once its row is gone, the next row's.
+
+```tsx
+<Menu.Root
+  aria-label={`Actions for ${project.name}`}
+  trigger={<IconButton icon={<MoreVert />} aria-label={`More actions for ${project.name}`} />}
+>
+  <Menu.Item onClick={() => setConfirming(true)}>Delete project…</Menu.Item>
+</Menu.Root>
+```
 
 ## Changelog
 

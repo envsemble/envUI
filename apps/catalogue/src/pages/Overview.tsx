@@ -33,7 +33,7 @@ const destinations = [
   },
 ] as const;
 
-/** The Site's home: what envUI is, and the way to its components, patterns and Docs. */
+/** The Usage guide's home: what envUI is, and the way to its components, patterns and Docs. */
 export function Overview() {
   return (
     <>

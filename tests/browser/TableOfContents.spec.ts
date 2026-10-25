@@ -1,0 +1,144 @@
+import { expect, test, type Locator } from '@playwright/test';
+import { fixtureUrl } from './Servers';
+
+const url = `${fixtureUrl}/?fixture=table-of-contents`;
+const current = (contents: Locator) => contents.locator('[aria-current="location"]');
+
+test('lists the headings of its container, nested by level, with ids from their words', async ({
+  page,
+}) => {
+  await page.goto(url);
+  const contents = page.getByRole('navigation', { name: 'On this page' });
+  // The top level, then each h3 under the h2 above it; the example's heading and the h4 are left
+  // out, and a part hidden from assistive technology is no part of the label.
+  const top = contents.locator(':scope > div > ol > li > a');
+  await expect(top).toHaveText(['Introduction', 'Usage', 'Short end', 'Last']);
+  const nested = contents.locator('ol ol a');
+  await expect(nested).toHaveText(['Install the package', 'Configure']);
+  await expect(nested.first()).toHaveAttribute('href', '#install-the-package');
+  await expect(page.locator('h3#install-the-package')).toHaveText('Install the package');
+  // At the top of the page, before any section has reached the line, the first is current.
+  await expect(current(contents)).toHaveText('Introduction');
+  // A heading added later joins the list in its place.
+  await page.getByRole('button', { name: 'Add a section' }).click();
+  await expect(top).toHaveText(['Introduction', 'Usage', 'Added later', 'Short end', 'Last']);
+});
+
+test(
+  'marks the section the reader is in as the page scrolls, the short last ones at the end',
+  {
+    tag: '@engines',
+  },
+  async ({ page }) => {
+    await page.goto(url);
+    const contents = page.getByRole('navigation', { name: 'On this page' });
+    await expect(current(contents)).toHaveText('Introduction');
+    await page.locator('#usage').evaluate((heading) => heading.scrollIntoView({ block: 'start' }));
+    await expect(current(contents)).toHaveText('Usage');
+    await expect(contents.locator('[aria-current]')).toHaveCount(1);
+    // The last two sections are too short to reach the line: the end of the page makes the last
+    // one current, and a little above it the one before.
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect(current(contents)).toHaveText('Last');
+    await page.evaluate(() => window.scrollBy(0, -40));
+    await expect(current(contents)).toHaveText('Short end');
+    // The sections before the current one are marked passed, and its dash, which grows by its scale,
+    // is the longest.
+    await expect(contents.locator('[data-passed]')).toHaveCount(4);
+    const dash = (link: Locator) =>
+      link.evaluate((element) => parseFloat(getComputedStyle(element, '::before').scale) || 1);
+    const passed = await dash(contents.locator('[data-passed]').first());
+    await expect.poll(() => dash(current(contents))).toBeGreaterThan(passed);
+    // The current section is never set bolder than the rest, so no label rewraps as it moves.
+    const weights = await contents
+      .locator('.env-table-of-contents-link')
+      .evaluateAll((links) => new Set(links.map((link) => getComputedStyle(link).fontWeight)).size);
+    expect(weights).toBe(1);
+    // Passed sections and the current one read in the text color; only those still to come are
+    // quieter.
+    const color = (link: Locator) => link.evaluate((element) => getComputedStyle(element).color);
+    expect(await color(contents.locator('[data-passed]').first())).toBe(
+      await color(current(contents)),
+    );
+  },
+);
+
+test(
+  'a link scrolls its section below the sticky bar, adds it to the address and moves focus',
+  {
+    tag: '@engines',
+  },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(url);
+    const contents = page.getByRole('navigation', { name: 'On this page' });
+    await contents.getByRole('link', { name: 'Configure' }).click();
+    await expect(page).toHaveURL(/#configure$/);
+    await expect(current(contents)).toHaveText('Configure');
+    const heading = page.locator('#configure');
+    await expect(heading).toBeFocused();
+    // At once, under reduced motion, and clear of the bar by the heading's scroll margin.
+    await expect
+      .poll(() => heading.evaluate((element) => element.getBoundingClientRect().top))
+      .toBeCloseTo(72, 0);
+    // The keyboard does the same.
+    await contents.getByRole('link', { name: 'Usage' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#usage')).toBeFocused();
+    await expect(current(contents)).toHaveText('Usage');
+  },
+);
+
+test(
+  'sections of its own follow the box that scrolls them',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(url);
+    const review = page.getByRole('navigation', { name: 'Review' });
+    await expect(review.getByRole('link')).toHaveText(['Summary', 'Results', 'Costs']);
+    await expect(current(review)).toHaveText('Summary');
+    const box = page.getByTestId('review');
+    await box.evaluate((element) => element.scrollTo(0, 20 * 16));
+    await expect(current(review)).toHaveText('Results');
+    // Costs is too short to reach the line: the end of the box makes it current.
+    await box.evaluate((element) => element.scrollTo(0, element.scrollHeight));
+    await expect(current(review)).toHaveText('Costs');
+    // The page's own scrolling leaves it as it is.
+    await page.evaluate(() => window.scrollTo(0, 400));
+    await expect(current(review)).toHaveText('Costs');
+  },
+);
+
+test('a smooth scroll to a section moves the marks through the sections on the way, then rests on it', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto(url);
+  const contents = page.getByRole('navigation', { name: 'On this page' });
+  const order = await contents
+    .locator('.env-table-of-contents-link')
+    .evaluateAll((links) => links.map((link) => link.textContent ?? ''));
+  await contents.getByRole('link', { name: 'Short end' }).click();
+  // Sampled every frame until the page stops scrolling: the current section only ever moves on,
+  // in reading order, and the chosen one is current once it rests.
+  const seen = await page.evaluate(
+    () =>
+      new Promise<string[]>((resolve) => {
+        const labels: string[] = [];
+        let last = -1;
+        let still = 0;
+        const sample = () => {
+          const label = document.querySelector('[aria-current="location"]')?.textContent ?? '';
+          if (labels.at(-1) !== label) labels.push(label);
+          still = window.scrollY === last ? still + 1 : 0;
+          last = window.scrollY;
+          if (still > 30) resolve(labels);
+          else requestAnimationFrame(sample);
+        };
+        sample();
+      }),
+  );
+  const indexes = seen.map((label) => order.indexOf(label));
+  expect(indexes).toEqual([...indexes].sort((x, y) => x - y));
+  await expect(contents.locator('[aria-current="location"]')).toHaveText('Short end');
+});

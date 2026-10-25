@@ -51,21 +51,23 @@ composes:
   - Column
   - Row
   - Text
+examples:
+  PrimaryNavigation:
+    role: overview
+    stage: shaded
+  Hierarchy: example
+  ViewsOfOneThing: example
+  ListAndDetail: example
+  NavigationAnatomy: anatomy
+  TabsForViews:
+    role: do
+    caption: Tabs for the views of the one thing the page is about.
+  TabsForPlaces:
+    role: dont
+    caption: 'Tabs for places of the application: they have no address of their own.'
 ---
 
 # Navigation
-
-## Overview
-
-The primary navigation marks the current page, a trail leads back up from deep pages, and a search opens anything by name.
-
-```tsx example=PrimaryNavigation stage=shaded
-
-```
-
-### Changing the page
-
-After the router shows the new page, the window's title names it, such as "Projects – Northwind". Every place has an address of its own, opened by the application's router; the examples keep the page in state instead.
 
 ## Variants
 
@@ -73,7 +75,7 @@ After the router shows the new page, the window's title names it, such as "Proje
 
 The trail shows the levels above the page, each a link; the page itself is the last level and no link.
 
-```tsx example=Hierarchy
+```tsx figure=Hierarchy
 
 ```
 
@@ -81,7 +83,7 @@ The trail shows the levels above the page, each a link; the page itself is the l
 
 Tabs switch the views of one project in place. Its settings are another page, so they are a link in the header's actions.
 
-```tsx example=ViewsOfOneThing
+```tsx figure=ViewsOfOneThing
 
 ```
 
@@ -89,11 +91,35 @@ Tabs switch the views of one project in place. Its settings are another page, so
 
 As narrow as a phone, the detail shows in place of the list, with a back button that names where it goes.
 
-```tsx example=ListAndDetail
+```tsx figure=ListAndDetail
 
 ```
 
-## When to use
+## Anatomy
+
+```tsx figure=NavigationAnatomy stage="shaded"
+
+```
+
+1. **Primary navigation** (`env-rail`)
+2. **Quick open** (`env-top-bar-actions > env-icon-button`)
+3. **Trail** (`env-breadcrumbs`)
+4. **Views** (`env-tabs-list`)
+
+Not shown: the [Pager](../components/pager.md) at the end of a page read in order.
+
+## Behaviour
+
+### Changing the page
+
+After the router shows the new page, the window's title names it, such as "Projects – Northwind".
+
+- Every place has an address of its own, opened by the application's router.
+- The examples keep the page in state instead.
+
+## Rules
+
+The primary navigation marks the current page, a trail leads back up from deep pages, and a search opens anything by name.
 
 ### Which to use
 
@@ -108,11 +134,11 @@ Each kind of navigation answers its own need, and a page can use several.
 | Command palette | Opening anything by name, as [CommandPalette](../components/command-palette.md) shows.                                       |
 | List and detail | A list whose items open beside it, in [Panes](../components/panes.md).                                                       |
 
-```tsx do=TabsForViews caption="Tabs for the views of the one thing the page is about."
+```tsx figure=TabsForViews
 
 ```
 
-```tsx dont=TabsForPlaces caption="Tabs for places of the application: they have no address of their own."
+```tsx figure=TabsForPlaces
 
 ```
 
@@ -126,22 +152,14 @@ On a page below a place, such as one project, keep the place current and let the
 
 ### Content
 
-Name each place with a short noun, the word of its page's title, and the navigation after its role, "Main", rather than its look. Name a link after its destination: "Project settings", not "More".
+Name each place with a short noun, the word of its page's title.
 
-## Anatomy
-
-```tsx anatomy=NavigationAnatomy stage=shaded
-
-```
-
-1. **Primary navigation** (`env-rail`)
-2. **Quick open** (`env-top-bar-actions > env-icon-button`)
-3. **Trail** (`env-breadcrumbs`)
-4. **Views** (`env-tabs-list`)
-
-Not shown: the [Pager](../components/pager.md) at the end of a page read in order.
+- Name the navigation after its role, "Main", rather than its look.
+- Name a link after its destination: "Project settings", not "More".
 
 ## Accessibility
+
+### Focus and keyboard
 
 After a page opens, from a destination, a trail level or a search result, focus moves to its body or heading, so a screen reader reads it from the start. Tabs are one tab stop whose arrow keys move between them.
 
@@ -157,11 +175,15 @@ After a page opens, from a destination, a trail level or a search result, focus 
 - `current` on the place shown, focus after each change of page, and `document.title`.
 - `LinkProvider` with the router's link, and an `href` on every place.
 
-## In code
+## Compose
 
 ### Usage
 
-Build one array of destinations, each with its `label`, `icon` and `href`, `current` on the place shown, and optionally a `count`, a `group` and an `onSelect`. Give the same array to a Bar, a Rail and a Drawer, in the Scaffold's `navigation` as `bar`, `rail` and `drawer`. Render every `href` through the router's link with `LinkProvider`. After the router shows the new page, set `document.title`, such as "Projects – Northwind", and move focus to the body or the page's heading.
+Build one array of destinations, each with its `label`, `icon` and `href`, `current` on the place shown, and optionally a `count`, a `group` and an `onSelect`.
+
+- Give the same array to a Bar, a Rail and a Drawer, in the Scaffold's `navigation` as `bar`, `rail` and `drawer`.
+- Render every `href` through the router's link with `LinkProvider`.
+- After the router shows the new page, set `document.title`, such as "Projects – Northwind", and move focus to the body or the page's heading.
 
 ```tsx source=PrimaryNavigation
 
@@ -171,8 +193,20 @@ Build one array of destinations, each with its `label`, `icon` and `href`, `curr
 
 Pass Breadcrumbs with `wrap={false}` to the PageHeader's `breadcrumbs`, from two levels down. Each level above the page is an item with `label` and `href`; the last item, the page, has only its `label`.
 
-```tsx source=Hierarchy
-
+```tsx
+<PageHeader
+  title="Brand guide"
+  breadcrumbs={
+    <Breadcrumbs
+      wrap={false}
+      items={[
+        { label: 'Projects', href: '/projects' },
+        { label: 'Website refresh', href: '/projects/website-refresh' },
+        { label: 'Brand guide' },
+      ]}
+    />
+  }
+/>
 ```
 
 #### Views and quick open
@@ -183,8 +217,17 @@ Tabs go under the PageHeader for the views of the object the page is about; a li
 
 `Panes.Root` with `behavior="list-detail"` and a `backLabel` that names the list, such as "All projects", holds a `Panes.List`, a `Panes.Divider` and a `Panes.Detail`, each with its `label`.
 
-```tsx source=ListAndDetail
-
+```tsx
+<Panes.Root
+  behavior="list-detail"
+  open={detailShown}
+  onOpenChange={setDetailShown}
+  backLabel="All projects"
+>
+  <Panes.List label="Projects">{list}</Panes.List>
+  <Panes.Divider label="Resize project list" />
+  <Panes.Detail label={chosen.name}>{detail}</Panes.Detail>
+</Panes.Root>
 ```
 
 ### Composition

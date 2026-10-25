@@ -45,21 +45,21 @@ composes:
   - List
   - Text
   - useContainerSize
+examples:
+  SearchAndFilters: overview
+  FilterPanel: example
+  ActiveFilters: example
+  FilteringAnatomy: anatomy
+  NarrowFilters: example
+  AppliedAtOnce:
+    role: do
+    caption: Each choice filters at once, and a count says how many match.
+  WaitsForApply:
+    role: dont
+    caption: 'An Apply button for quick filters: nothing says what will match.'
 ---
 
 # Filtering and search
-
-## Overview
-
-A search and a few filters sit in the [PageHeader](../components/page.md)'s toolbar, above the results.
-
-```tsx example=SearchAndFilters
-
-```
-
-### Keep the state in the address
-
-Write the query and the filters into the address through the router, so a reload, the back button and a shared link show the same results.
 
 ## Variants
 
@@ -67,43 +67,21 @@ Write the query and the filters into the address through the router, so a reload
 
 A Filters button, with a count of the filters in use, opens a [Popover](../components/popover.md) of checkboxes in groups that apply as they change.
 
-```tsx example=FilterPanel
+```tsx figure=FilterPanel
 
 ```
 
 ### Filters in use
 
-Each filter in use is a token named after it, "Status: Open", a small button with a close cross that removes it, beside Add filter and Clear filters.
+Each filter in use is a token named after it, "Status: Open", beside Add filter and Clear filters. A token is a small button with a close cross that removes it.
 
-```tsx example=ActiveFilters
-
-```
-
-## When to use
-
-```tsx do=AppliedAtOnce caption="Each choice filters at once, and a count says how many match."
+```tsx figure=ActiveFilters
 
 ```
-
-```tsx dont=WaitsForApply caption="An Apply button for quick filters: nothing says what will match."
-
-```
-
-### Apply only when slow
-
-Keep an Apply button only for a slow or costly query, and say what it shows: "Show 12 projects".
-
-### Count and search
-
-Count what the filters leave, never one page of a table, and never hide the search in a menu or a sheet.
-
-### Content
-
-Label the search with what it searches, "Search projects", and name the option for all after the filter, "Any status", rather than "All". Count in the units of the items, "3 projects of 6", and say Clear filters for removing them all.
 
 ## Anatomy
 
-```tsx anatomy=FilteringAnatomy
+```tsx figure=FilteringAnatomy
 
 ```
 
@@ -113,17 +91,60 @@ Label the search with what it searches, "Search projects", and name the option f
 4. **More filters** (`env-badge[data-count]`)
 5. **Count** (`env-page-header ~ env-text`)
 
-## Adapting to width
+A search and a few filters sit in the [PageHeader](../components/page.md)'s toolbar, above the results.
+
+## Behaviour
+
+### Keep the state in the address
+
+Write the query and the filters into the address through the router, so a reload, the back button and a shared link show the same results.
+
+### Adapting to width
 
 Narrower than a medium [window](../foundations/responsive.md), the filters move into a [Sheet](../components/sheet.md) opened by a Filters button, with its own count; the search stays in view.
 
-```tsx example=NarrowFilters widths="24 44"
+```tsx figure=NarrowFilters widths="24 44"
 
 ```
 
+## Rules
+
+Each choice filters at once, and a count says how many match.
+
+```tsx figure=AppliedAtOnce
+
+```
+
+```tsx figure=WaitsForApply
+
+```
+
+### Apply only when slow
+
+Keep an Apply button only for a slow or costly query, and say what it shows: "Show 12 projects".
+
+### Count and search
+
+Count what the filters leave, never one page of a table. Never hide the search in a menu or a sheet.
+
+### Content
+
+Name each control after what it does, and count in the items' units.
+
+- Label the search with what it searches, "Search projects".
+- Name the option for all after the filter, "Any status", rather than "All".
+- Count in the units of the items, "3 projects of 6".
+- Say Clear filters for removing them all.
+
 ## Accessibility
 
-Typing filters without moving focus, and the count is announced politely. The popover takes focus as it opens; <kbd>Tab</kbd> past its last checkbox closes it, and <kbd>Esc</kbd> returns focus to its button. When Clear filters or a token goes, focus moves to the search, or to the next token.
+### Focus and keyboard
+
+Typing filters without moving focus, and the count is announced politely.
+
+- The popover takes focus as it opens.
+- <kbd>Tab</kbd> past its last checkbox closes it, and <kbd>Esc</kbd> returns focus to its button.
+- When Clear filters or a token goes, focus moves to the search, or to the next token.
 
 ### envUI provides
 
@@ -137,7 +158,7 @@ Typing filters without moving focus, and the count is announced politely. The po
 - A `fieldset` and `legend` around each group of checkboxes.
 - Token names that say what pressing them does, "Remove filter Status: Open".
 
-## In code
+## Compose
 
 ### Usage
 
@@ -153,20 +174,40 @@ The Filters button is a small secondary Button, the trigger of a Popover with a 
 
 #### Filters in use
 
-Each token is a Button with `variant="secondary"`, `size="sm"` and a Close `endIcon`, whose `aria-label`, "Remove filter Status: Open", says what pressing it does and includes its visible text. The tokens sit in a Row with `role="group"` and an `aria-label`, beside a Menu for Add filter and a Clear filters Button. When a token goes, focus moves to the next token, or to the search.
+Each token is a Button with `variant="secondary"`, `size="sm"` and a Close `endIcon`, whose `aria-label`, "Remove filter Status: Open", says what pressing it does and includes its visible text. The tokens sit in a Row with `role="group"` and an `aria-label`, beside a Menu for Add filter and a Clear filters Button. When a token goes, focus moves to the next token, or to the search, as the ActiveFilters example does.
 
-```tsx source=ActiveFilters
-
+```tsx
+<Button
+  variant="secondary"
+  size="sm"
+  endIcon={<Close />}
+  aria-label="Remove filter Status: Open"
+  onClick={() => remove('status')}
+>
+  Status: Open
+</Button>
 ```
 
 ### Composition
 
 #### Filters in a sheet on narrow screens
 
-Measure the filters' own width with `useContainerSize` and compare it with `windowClasses.medium`: below it, the filters move into a Sheet opened by a Filters button with its own count Badge, and a DialogClose, "Show 12 projects", closes it. The sheet has its own `role="status"` count, there as it opens; the search stays in the toolbar.
+Measure the filters' own width with `useContainerSize` and compare it with `windowClasses.medium`: below it, the filters move into a Sheet opened by a Filters button with its own count Badge, and a DialogClose, "Show 12 projects", closes it. The sheet has its own `role="status"` count, there as it opens; the search stays in the toolbar. The NarrowFilters example builds it.
 
-```tsx source=NarrowFilters
-
+```tsx
+<Sheet
+  title="Filters"
+  closeLabel="Close filters"
+  trigger={
+    <Button variant="secondary" size="sm" startIcon={<FilterList />}>
+      Filters
+      {applied > 0 && <Badge count={applied} aria-label={`${applied} in use`} />}
+    </Button>
+  }
+  actions={<DialogClose variant="primary">Show 12 projects</DialogClose>}
+>
+  {filters}
+</Sheet>
 ```
 
 ## Changelog

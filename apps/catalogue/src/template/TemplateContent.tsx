@@ -1,14 +1,12 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
 import { Documentation, GuidanceLists } from '../pages/Documentation';
-import { documents, type Documentation as Document } from '../Reference';
+import type { Documentation as Document } from '../Reference';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
 import { FigureSection } from './Figures';
-import { LiveExample } from './LiveExample';
-import { Specimen } from './Specimen';
 import { siteSection } from './Provides';
 import { docsOnlySections } from '../../../../scripts/SiteContent.mjs';
-import { pageOf, Related } from './Related';
+import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { subscribeToAddress } from '../navigation/Address';
 
@@ -20,8 +18,8 @@ const statusTones = {
 } as const;
 
 /**
- * Status and first release under the title of a page on the template, and after them `children`,
- * such as the link to a component's page in the Docs.
+ * Status and first release under the title of a component's or pattern's page, and after them
+ * `children`, such as the button to its counterpart in the Usage guide or the Docs.
  */
 export function MetadataBadges({
   metadata,
@@ -29,17 +27,20 @@ export function MetadataBadges({
   children,
 }: {
   metadata: DocumentationMetadata;
-  /** Leave out the statuses of exports that are code, such as a hook, as the Site does. */
+  /** Leave out the statuses of exports that are code, such as a hook, as the Usage guide does. */
   plain?: boolean;
   children?: ReactNode;
 }) {
   return (
     <div className="docs-page-meta">
-      <Badge tone={statusTones[metadata.status]}>
-        {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
-      </Badge>
-      {/* On the Site, a component's status only: a hook or a function, such as useModifierKey, is
-          code, which the Site never names; its page in the Docs shows its status. */}
+      {metadata.status && (
+        <Badge tone={statusTones[metadata.status]}>
+          {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
+        </Badge>
+      )}
+      {/* In the Usage guide, a component's status only: a hook or a function, such as
+          useModifierKey, is code, which the Usage guide never names; its page in the Docs shows
+          its status. */}
       {Object.entries(metadata.statuses ?? {})
         .filter(([name]) => !plain || /^[A-Z]/.test(name))
         .map(([name, status]) => (
@@ -47,102 +48,43 @@ export function MetadataBadges({
             {name}: {status[0].toUpperCase() + status.slice(1)}
           </Badge>
         ))}
-      <Text render={<span />} variant="caption">
-        Since {metadata.since}
-      </Text>
+      {metadata.since && (
+        <Text render={<span />} variant="caption">
+          Since {metadata.since}
+        </Text>
+      )}
       {children}
     </div>
   );
 }
 
-/**
- * An export as a Markdown link to the page of the Site that shows it; pages of docs/ are one folder
- * deep, so ../<path> reaches any of them from any page. An export documented only in the Docs, such
- * as Field, is its name alone: the Site links into the Docs only through the API button and the
- * Docs link, and shows no code outside its figures.
- */
-function exportLink(name: string) {
-  const page = pageOf(name);
-  return page && !page.path.startsWith('docs/') ? `[${name}](../${page.reference.path})` : name;
-}
-
-/**
- * When to use the page's subject and, when not, what to use or read instead; for a pattern or
- * template, also what it is built from.
- */
-function UseAndAvoid({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
-  const markdown = [
-    '### When to use',
-    '',
-    ...metadata.useWhen.map((text) => `- ${text}`),
-    '',
-    '### When not to use',
-    '',
-    ...metadata.avoidWhen.map(({ text, use, see }) => {
-      const target = see && documents.find((document) => document.id === see);
-      const instead = use
-        ? ` Use ${exportLink(use)} instead.`
-        : target
-          ? ` See [${target.title}](../${target.path}).`
-          : '';
-      return `- ${text}${instead}`;
-    }),
-    ...(metadata.composes?.length
-      ? ['', '### Built from', '', metadata.composes.map(exportLink).join(', ')]
-      : []),
-  ].join('\n');
-  return <Documentation markdown={markdown} path={path} />;
-}
-
+/** One section of a page; Rules opens with when to use it, after its own lead. */
 function Section({ reference, section }: { reference: Document; section: DocumentationSection }) {
-  if (reference.format === 'figures')
-    return (
-      <FigureSection
-        reference={reference}
-        section={section}
-        lead={
-          section.id === 'usage' &&
-          reference.metadata && <WhenToUse metadata={reference.metadata} path={reference.path} />
-        }
-      />
-    );
   return (
-    <Column
-      render={<section />}
-      gap={5}
-      className="docs-template-section"
-      data-section={section.id}
-    >
-      {section.blocks.map((block, index) =>
-        block.kind === 'markdown' ? (
-          <Documentation key={index} markdown={block.markdown} path={reference.path} />
-        ) : block.kind === 'example' ? (
-          <LiveExample
-            key={block.name}
-            page={reference.id}
-            name={block.name}
-            title={block.heading}
-          />
-        ) : block.kind === 'specimen' ? (
-          <Specimen key={block.name} page={reference.id} name={block.name} />
-        ) : null,
-      )}
-      {section.id === 'overview' && reference.metadata && !reference.format && (
-        <UseAndAvoid metadata={reference.metadata} path={reference.path} />
-      )}
-    </Column>
+    <FigureSection
+      reference={reference}
+      section={section}
+      leadAfter
+      lead={
+        section.id === 'rules' &&
+        (reference.metadata?.useWhen.length || reference.metadata?.composes?.length) ? (
+          <WhenToUse metadata={reference.metadata} path={reference.path} />
+        ) : undefined
+      }
+    />
   );
 }
 
 /**
- * The three larger sections of a component or pattern page, each a group of its sections, by id:
- * what it is and its variants; when to use it and its parts, on the page's one band; how it adapts
- * and its accessibility. A section the list doesn't name joins the group of the section before it.
+ * The three larger sections of a page, each a group of its sections, by id: what it is, its
+ * variants or options, its parts and how it behaves; its rules, which open with when to use it,
+ * alone on the band; its accessibility and the words to use. A section the list doesn't name joins
+ * the group of the section before it.
  */
 const sectionGroups: readonly (readonly string[])[] = [
-  ['overview', 'variants'],
-  ['usage', 'anatomy'],
-  ['width', 'accessibility'],
+  ['overview', 'variants', 'anatomy', 'behaviour'],
+  ['rules'],
+  ['accessibility', 'words'],
 ];
 
 /** The group that sits on the band. */
@@ -161,49 +103,43 @@ function groupSections(sections: readonly DocumentationSection[]) {
 }
 
 /**
- * Sections in the template's order, then, with `related`, Related; the changelog is on the page in
- * the Docs. On the figure template, the sections come in their three groups, far apart, the second
- * on a band across the whole content pane; a group without sections, and a page's band where it
- * has neither When to use nor Anatomy, are left out.
+ * Sections in the page's order, in their three groups, far apart, the second on a band across the
+ * whole content pane, then, with `related`, Related; Compose and the changelog are on the page in
+ * the Docs. A group without sections, and a page's band where it has none of its sections, are
+ * left out.
  */
 function Sections({
   reference,
   sections,
   provides,
   related,
+  bands,
 }: {
   reference: Document;
   sections: DocumentationSection[];
   provides: boolean;
   related: boolean;
+  bands: boolean;
 }) {
-  // The developer-only part, "## In code", and the changelog are on the page's guide in the Docs.
   const shown = sections
     .filter((section) => !docsOnlySections.has(section.id))
     .flatMap((section) => (provides ? section : (siteSection(section) ?? [])));
-  const render = (section: DocumentationSection) => (
-    <Section key={section.id} reference={reference} section={section} />
-  );
   const end = related &&
     sections.some((section) => section.id === 'overview') &&
     reference.metadata && <Related metadata={reference.metadata} path={reference.path} />;
-  if (reference.format !== 'figures')
-    return (
-      <Column gap={8} className="docs-article docs-template">
-        {shown.map(render)}
-        {end}
-      </Column>
-    );
   return (
     <div className="docs-section-groups">
       {groupSections(shown).map((group, index) => {
         if (!group.length) return null;
         const content = (
           <div key={index} className="docs-article docs-template docs-figures docs-section-group">
-            {group.map(render)}
+            {group.map((section) => (
+              <Section key={section.id} reference={reference} section={section} />
+            ))}
           </div>
         );
-        return index === bandGroup ? (
+        // A foundation's page sits on the page, without the band, as a page in the Docs does.
+        return bands && index === bandGroup && !reference.path.startsWith('foundations/') ? (
           <div key={index} className="docs-band">
             {content}
           </div>
@@ -219,19 +155,22 @@ function Sections({
 }
 
 /**
- * A component or pattern page of the Site: every section in the page's order, then Related; a
- * component's props, part names, what the application provides and changelog are on its page in
- * the Docs. `provides` keeps what envUI and the application provide in Accessibility, for Field,
- * whose whole page is in the Docs, where `related={false}` leaves Related for the page's end.
+ * A component, pattern or foundation page of the Usage guide: its sections in order, then Related;
+ * a component's props, part names, what the application provides and changelog are on its page in
+ * the Docs. For Field, whose whole page is in the Docs, `provides` keeps what envUI and the
+ * application provide in Accessibility, `related={false}` leaves out Related and `bands={false}`
+ * the band: the Docs have neither.
  */
 export function TemplateContent({
   document,
   provides = false,
   related = true,
+  bands = true,
 }: {
   document: Document;
   provides?: boolean;
   related?: boolean;
+  bands?: boolean;
 }) {
   // A component's or pattern's page is guidance: its lists are check lists.
   return (
@@ -241,6 +180,7 @@ export function TemplateContent({
         sections={document.sections ?? []}
         provides={provides}
         related={related}
+        bands={bands}
       />
     </GuidanceLists>
   );

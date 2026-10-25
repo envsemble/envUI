@@ -71,9 +71,16 @@ function forgetSource(path: string) {
   );
 }
 
-/** Links in an example keep their semantics without navigating away from the documentation. */
+/**
+ * Links in an example keep their semantics without navigating away from the documentation. A link
+ * to a part of the page, such as a table of contents' link to its section, stays on it and works.
+ */
 function preventNavigation(event: MouseEvent<HTMLDivElement>) {
-  if (event.target instanceof Element && event.target.closest('a[href]')) event.preventDefault();
+  const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+  if (!link) return;
+  const href = link.getAttribute('href') ?? '';
+  if (href.length > 1 && href.startsWith('#') && document.getElementById(href.slice(1))) return;
+  event.preventDefault();
 }
 
 function Source({ path, name }: { path: string; name: string }) {
@@ -154,7 +161,7 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
 
 /**
  * An example file rendered live, loaded with the page and loaded again on a retry: the body of a
- * live example and of each figure of a page on the figure template.
+ * live example and of each figure of a page.
  */
 export function ExampleRender({
   page,

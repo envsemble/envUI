@@ -39,67 +39,109 @@ composes:
   - Grid
   - Row
   - Text
+examples:
+  AssistantChat: overview
+  BetweenPeople: example
+  ConversationAnatomy: anatomy
+  FirstMessage: example
+  StoppedReply: example
+  FailedSend: example
+  ReplyAsItArrives:
+    role: do
+    caption: The reply in the log as it arrives, so people read while it is written.
+  WholeReplyAtOnce:
+    role: dont
+    caption: 'A spinner until the whole reply is ready: people wait with nothing to read.'
 ---
 
 # Conversation
-
-## Overview
-
-The log of [messages](../components/message.md) takes the space and scrolls, and the [composer](../components/composer.md) stays at its foot, so the draft is always in reach. An assistant's answers are [formatted text](../components/markdown.md), with Copy once they are complete.
-
-```tsx example=AssistantChat
-
-```
-
-### The first message
-
-Before anything is said, the log's place holds a short question and a few suggestions. Pressing one sends it as the first message; the composer is there from the start.
-
-```tsx example=FirstMessage
-
-```
-
-### A reply as it arrives
-
-An assistant's reply shows in the log at once and grows as it is written. While it runs, the composer's send button is Stop, and Copy waits until the reply is complete.
-
-### Stopping a reply
-
-Stop keeps what has arrived, marked as stopped, with Try again beside it. People can also simply write their next message.
-
-```tsx example=StoppedReply
-
-```
-
-### When a send fails
-
-The message stays in the log where it was written, marked as not sent, with Try again beside it. Nothing people wrote is lost, and the composer is free for the next message.
-
-```tsx example=FailedSend
-
-```
-
-### Scrolling
-
-While people are at the end of the log, each new line keeps the newest in view. Once they scroll up to read, the log stays where they are, and a Latest button takes them back to the end.
 
 ## Variants
 
 ### Between people
 
-Each message from someone else names its author and time. Replies arrive whole, so there is nothing to stop, and a message on its way says so until the server takes it.
+Each message from someone else names its author and time.
 
-```tsx example=BetweenPeople
+- Replies arrive whole, so there is nothing to stop.
+- A message on its way says so until the server takes it.
 
-```
-
-## When to use
-
-```tsx do=ReplyAsItArrives caption="The reply in the log as it arrives, so people read while it is written."
+```tsx figure=BetweenPeople
 
 ```
 
-```tsx dont=WholeReplyAtOnce caption="A spinner until the whole reply is ready: people wait with nothing to read."
+## Anatomy
+
+```tsx figure=ConversationAnatomy
+
+```
+
+1. **Log** (`env-message-list`)
+2. **Formatted reply** (`env-markdown`)
+3. **Reply actions** (`env-message-actions`)
+4. **Your message** (`env-message:last-child`)
+5. **Composer** (`env-composer`)
+6. **Send or stop** (`env-composer-action`)
+
+The log of [messages](../components/message.md) takes the space and scrolls, and the [composer](../components/composer.md) stays at its foot, so the draft is always in reach.
+
+- An assistant's answers are [formatted text](../components/markdown.md).
+- Copy comes once an answer is complete.
+
+## Behaviour
+
+### The first message
+
+Before anything is said, the log's place holds a short question and a few suggestions.
+
+- Pressing one sends it as the first message.
+- The composer is there from the start.
+
+```tsx figure=FirstMessage
+
+```
+
+### A reply as it arrives
+
+An assistant's reply shows in the log at once and grows as it is written.
+
+- While it runs, the composer's send button is Stop.
+- Copy waits until the reply is complete.
+
+### Stopping a reply
+
+Stop keeps what has arrived, marked as stopped, with Try again beside it. People can also simply write their next message.
+
+```tsx figure=StoppedReply
+
+```
+
+### When a send fails
+
+The message stays in the log where it was written, marked as not sent, with Try again beside it.
+
+- Nothing people wrote is lost.
+- The composer is free for the next message.
+
+```tsx figure=FailedSend
+
+```
+
+### Scrolling
+
+While people are at the end of the log, each new line keeps the newest in view.
+
+- Once they scroll up to read, the log stays where they are.
+- A Latest button takes them back to the end.
+
+## Rules
+
+A conversation shows what happens to a reply in the log itself, where people are reading.
+
+```tsx figure=ReplyAsItArrives
+
+```
+
+```tsx figure=WholeReplyAtOnce
 
 ```
 
@@ -119,22 +161,15 @@ Name the assistant plainly, and say in words what happens around a reply.
 - "Stopped" on a reply people stopped, with "Try again"
 - "Copy answer" as the name of the copy action
 
-## Anatomy
-
-```tsx anatomy=ConversationAnatomy
-
-```
-
-1. **Log** (`env-message-list`)
-2. **Formatted reply** (`env-markdown`)
-3. **Reply actions** (`env-message-actions`)
-4. **Your message** (`env-message:last-child`)
-5. **Composer** (`env-composer`)
-6. **Send or stop** (`env-composer-action`)
-
 ## Accessibility
 
-Focus stays in the composer: after a send, while a reply runs and after Stop, so people keep writing without looking for the field. The log announces each new message once it is complete, and <kbd>Tab</kbd> reaches the log and its actions before the composer; where an action leaves as it is pressed, such as Try again, focus goes back to the composer.
+### Focus and keyboard
+
+Focus stays in the composer after a send, while a reply runs and after Stop, so people keep writing without looking for the field.
+
+- The log announces each new message once it is complete.
+- <kbd>Tab</kbd> reaches the log and its actions before the composer.
+- Where an action leaves as it is pressed, such as Try again, focus goes back to the composer.
 
 ### envUI provides
 
@@ -148,11 +183,15 @@ Focus stays in the composer: after a send, while a reply runs and after Stop, so
 - `busy` on the log and `running` on the composer while a reply streams, and stopping the request in `onStop`.
 - Keeping the newest message in view without moving focus, `tabIndex={0}` on a log that scrolls, and focus on the composer when an action leaves, such as Try again or a suggestion.
 
-## In code
+## Compose
 
 ### Usage
 
-A conversation is a MessageList above a Composer, in a Column of a set height: the list takes the space and scrolls, and the composer sits at its foot. Each entry is a Message, `from="self"` for the person using the app and `from="other"` for an assistant or anyone else, and an assistant's text renders through Markdown, from `@envsemble/envui/content`. CopyButton in `actions` copies a complete answer.
+A conversation is a MessageList above a Composer, in a Column of a set height: the list takes the space and scrolls, and the composer sits at its foot.
+
+- Each entry is a Message, `from="self"` for the person using the app and `from="other"` for an assistant or anyone else.
+- An assistant's text renders through Markdown, from `@envsemble/envui/content`.
+- CopyButton in `actions` copies a complete answer.
 
 ```tsx source=AssistantChat
 
@@ -196,10 +235,28 @@ async function ask(question: string) {
 
 #### A failed send
 
-Keep a message that couldn't be sent in the log, with `status="failed"` and a Try again Button in `actions`; set `status="sending"` while it goes again, and clear it once the server takes it. Try again leaves with the failure, so move focus to the composer through its `ref`.
+Keep a message that couldn't be sent in the log, with `status="failed"` and a Try again Button in `actions`; set `status="sending"` while it goes again, and clear it once the server takes it. Try again leaves with the failure, so move focus to the composer through its `ref`, as the FailedSend example does.
 
-```tsx source=FailedSend
-
+```tsx
+<Message
+  from="self"
+  status={entry.status}
+  actions={
+    entry.status === 'failed' && (
+      <Button
+        variant="text"
+        onClick={() => {
+          deliver(entry.id);
+          composer.current?.focus();
+        }}
+      >
+        Try again
+      </Button>
+    )
+  }
+>
+  {entry.text}
+</Message>
 ```
 
 #### Scrolling
@@ -226,10 +283,27 @@ useLayoutEffect(() => {
 
 #### The first message
 
-Render the MessageList from the start, empty, so the log exists before the first message and announces it. Put the welcome in the same Grid cell, a heading and suggestion Buttons in a Row; a suggestion sends its text and focuses the composer, since the suggestions leave with the first message.
+Render the MessageList from the start, empty, so the log exists before the first message and announces it.
 
-```tsx source=FirstMessage
+- Put the welcome in the same Grid cell, a heading and suggestion Buttons in a Row.
+- A suggestion sends its text and focuses the composer, since the suggestions leave with the first message.
 
+```tsx
+<Grid style={{ gridTemplateRows: 'minmax(0, 1fr)' }}>
+  <MessageList aria-label="Conversation with the assistant" style={{ gridArea: '1 / 1' }}>
+    {messages}
+  </MessageList>
+  {entries.length === 0 && (
+    <Column align="center" justify="center" gap={4} style={{ gridArea: '1 / 1' }}>
+      <Text variant="title" render={<h3 />}>
+        What can I help with?
+      </Text>
+      <Row wrap gap={2} justify="center">
+        {suggestionButtons}
+      </Row>
+    </Column>
+  )}
+</Grid>
 ```
 
 ### Composition

@@ -26,53 +26,34 @@ avoidWhen:
     use: Tree
 components:
   - DocumentTabs
+examples:
+  OpenDocuments: overview
+  CloseAllButton: example
+  DocumentTabsAnatomy: anatomy
+  ManyTabs: example
+  NameAsLabel:
+    role: do
+    caption: The document's name as the label, its location as the title.
+  PathAsLabel:
+    role: dont
+    caption: 'Locations as labels: every tab starts the same, and names are cut off.'
 ---
 
 # DocumentTabs
 
-## Overview
-
-```tsx example=OpenDocuments
-
-```
-
-### Closing
-
-The close button, a middle click, <kbd>Delete</kbd> or <kbd>Backspace</kbd>, and Close in a tab's context menu close a tab, and focus moves to the tab that becomes active. The context menu can also offer Close all tabs.
-
-### Preview and reorder
-
-A preview tab shows its label in italics until a double click keeps it. Where tabs can be put in order, a tab dragged with a mouse or pen shows where it will land, and the context menu offers Move left and Move right.
+## Variants
 
 ### Buttons after the tabs
 
 The application's own content can follow the tabs, outside the strip that scrolls.
 
-```tsx example=CloseAllButton
+```tsx figure=CloseAllButton
 
 ```
-
-## When to use
-
-```tsx do=NameAsLabel caption="The document's name as the label, its location as the title."
-
-```
-
-```tsx dont=PathAsLabel caption="Locations as labels: every tab starts the same, and names are cut off."
-
-```
-
-### When a tab closes
-
-Activate a neighbour when the active tab closes, and offer a way back when the last one closes. Ask before closing a document with unsaved changes.
-
-### Inside a tab
-
-A tab holds its icon, its name and its close button, and no other controls.
 
 ## Anatomy
 
-```tsx anatomy=DocumentTabsAnatomy
+```tsx figure=DocumentTabsAnatomy
 
 ```
 
@@ -84,13 +65,56 @@ A tab holds its icon, its name and its close button, and no other controls.
 6. **Close button** (`env-document-tabs-close`)
 7. **End** (`env-document-tabs-end`, `end`)
 
-## Adapting to width
+## Behaviour
 
-The strip takes the width it is given and scrolls sideways where its tabs don't fit; tabs fade at an edge they run past, and the active one scrolls into view.
+### Closing
 
-```tsx example=ManyTabs widths="22 48"
+Several ways close a tab, and focus moves to the tab that becomes active.
+
+- The close button, a middle click, <kbd>Delete</kbd> or <kbd>Backspace</kbd>.
+- Close in a tab's context menu, which can also offer Close all tabs.
+- On touch screens the close buttons always show.
+
+### Preview and reorder
+
+A preview tab shows its label in italics until a double click keeps it.
+
+- Where tabs can be put in order, a tab dragged with a mouse or pen shows where it will land.
+- The context menu then offers Move left and Move right.
+
+### Adapting to width
+
+The strip takes the width it is given and scrolls sideways where its tabs don't fit.
+
+- Tabs fade at an edge they run past.
+- The active tab scrolls into view.
+
+```tsx figure=ManyTabs widths="22 48"
 
 ```
+
+## Rules
+
+A tab names its document, and closing one never loses work.
+
+```tsx figure=NameAsLabel
+
+```
+
+```tsx figure=PathAsLabel
+
+```
+
+### When a tab closes
+
+Activate a neighbour when the active tab closes.
+
+- Offer a way back when the last one closes.
+- Ask before closing a document with unsaved changes.
+
+### Inside a tab
+
+A tab holds its icon, its name and its close button, and no other controls.
 
 ## Accessibility
 
@@ -116,33 +140,35 @@ The strip takes the width it is given and scrolls sideways where its tabs don't 
 - An `aria-label` for the strip, and the `tabpanel` with `panelId`, named after the active document.
 - The labels in the application's language, through `messages.documentTabs`.
 
-## In code
+## Compose
 
 ### Usage
 
-DocumentTabs takes the open documents as `items`, in tab order, each with an `id`, its `label`, an optional `icon`, a `title`, the native tooltip, such as the full path, and `preview`. The application keeps the active tab in `value`, or `null`, and updates it from `onValueChange`. `onClose` is called from a tab's close button, a middle click, <kbd>Delete</kbd> or <kbd>Backspace</kbd>, and Close in its context menu: remove the tab there, activate a neighbour when it was active, and ask first about unsaved changes. Name the strip with `aria-label`, and render the active document's `tabpanel` with the id given as `panelId`.
-
-```tsx source=OpenDocuments
-
+```tsx
+<DocumentTabs
+  aria-label="Open documents"
+  items={documents}
+  value={active}
+  onValueChange={setActive}
+  onClose={close}
+  panelId="document-panel"
+/>
+<div role="tabpanel" id="document-panel" aria-label={activeDocument.label}>…</div>
 ```
+
+`items` are the open documents in tab order, each with an `id`, its `label`, an optional `icon`, a `title`, the native tooltip, such as the full path, and `preview`. `value` is the active tab's id, or `null`. `onClose` is called from every way of closing a tab: remove the tab there, activate a neighbour when it was active, and ask first about unsaved changes.
 
 #### Preview, pin and reorder
 
-A `preview` tab shows its label in italics until a double click calls `onPin`, where the application clears `preview`. With `onReorder`, a tab dragged with a mouse or pen, or moved with Move left or Move right in its context menu, reports every tab's id in the new order; without it, the tabs keep their order.
+A `preview` tab's double click calls `onPin`, where the application clears `preview`. With `onReorder`, a drag or Move left and Move right report every tab's id in the new order; without it, the tabs keep their order.
 
 #### Close all and after the tabs
 
-Each tab opens a context menu with Close on right click, long press, the <kbd>Menu</kbd> key and <kbd>Shift</kbd>+<kbd>F10</kbd>. `onCloseAll` adds Close all tabs to it, and the strip around the tabs opens it too. `end` holds content after the tabs, outside the strip that scrolls, such as a button that closes them all.
-
-```tsx source=CloseAllButton
-
-```
+Each tab opens a context menu with Close on right click, long press, the <kbd>Menu</kbd> key and <kbd>Shift</kbd>+<kbd>F10</kbd>. `onCloseAll` adds Close all tabs to it, and the strip around the tabs opens it too. `end` holds content after the tabs, outside the strip that scrolls, as the CloseAllButton example does.
 
 ### Composition
 
-`closeLabel`, a function of the tab's label, `closeAllLabel` and `contextMenuLabel` name the close actions and the menu, from EnvUIProvider's `messages.documentTabs` by default. `className`, `style` and `ref` reach the strip, the tab list.
-
-The parts are the strip, `env-document-tabs`; each tab's item, `env-document-tabs-item`, which lays out the tab, `env-document-tabs-tab`, with its icon and label, `env-document-tabs-tab-label`, beside its close button, `env-document-tabs-close`, an IconButton with a cross hidden from assistive technology; and the end, `env-document-tabs-end`.
+`closeLabel`, a function of the tab's label, `closeAllLabel` and `contextMenuLabel` name the close actions and the menu, from EnvUIProvider's `messages.documentTabs` by default. `className`, `style` and `ref` reach the strip, the tab list. Each item, `env-document-tabs-item`, lays out its tab beside its close button, an IconButton with a cross hidden from assistive technology.
 
 ## Changelog
 
