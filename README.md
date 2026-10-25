@@ -27,7 +27,7 @@ _Actual envUI components in the local catalogue. The preview follows your light 
 - **Everyday interactions:** actions, navigation, native form controls, selection, color picking, dialogs and toasts, with Base UI underpinning complex interactions.
 - **Content tools:** Markdown, code highlighting and Tiptap rich text on separate entry points.
 - **Local assets:** Inter and the official Material Symbols Rounded icons, with no font or icon CDN required.
-- **A website:** the Usage guide shows every component with live examples and their code, and when to use it, and the Docs at `/docs` hold the developer reference.
+- **A website:** the catalogue shows every component with live examples and their code, and when to use it, and the Docs at `/docs` hold the developer reference.
 
 ## Start using envUI
 

@@ -10,7 +10,7 @@ import { renderLlmsText, renderSkill } from '../../scripts/SiteAgentFiles.mjs';
 import { documents, references } from '../../apps/catalogue/src/Reference';
 
 /**
- * Every component and pattern page of the Usage guide, by its address; Field's whole page is in
+ * Every component and pattern page of the catalogue, by its address; Field's whole page is in
  * the Docs.
  */
 const figurePages = documents
@@ -26,7 +26,7 @@ import {
   otherPartRoute,
   pagesOf,
   sectionHome,
-  usageSections,
+  catalogueSections,
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 import { componentGroups } from '../../apps/catalogue/src/Reference';
 import { displayStorageKeys } from '../../apps/catalogue/src/theme/DisplayStorage';
@@ -57,7 +57,7 @@ test('the 0.x routes of renamed pages open the pages under their new names', () 
   }
 });
 
-test('the addresses of the views before the Usage guide and the Docs split open the pages they became', () => {
+test('the addresses of the views before the catalogue and the Docs split open the pages they became', () => {
   const routes: Record<string, string> = {
     'components/button/overview': 'components/button',
     'components/button/props?section=props-Button-variant':
@@ -83,10 +83,10 @@ test('the addresses of the views before the Usage guide and the Docs split open 
     // The agent benchmark went, and its page opens the overview.
     benchmark: 'overview',
     'get-started/migration': 'docs/migration',
-    // The Usage guide's Get started page is the setup guide.
+    // The catalogue's Get started page is the setup guide.
     'get-started': 'docs/setup',
     'contributing/library-development': 'overview',
-    // The Usage guide's changelog is the Docs' now, with its release notes.
+    // The catalogue's changelog is the Docs' now, with its release notes.
     changelog: 'docs/changelog',
     'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
     // Pages folded into another open it, at the section that holds them, and in the Docs its page.
@@ -101,7 +101,7 @@ test('the addresses of the views before the Usage guide and the Docs split open 
     'components/search-trigger':
       'components/command-palette?section=opening-it-the-button-and-the-shortcut',
     'docs/patterns/search-trigger': 'docs/components/command-palette',
-    // Patterns merged into others open the pattern they joined, in the Usage guide and in the Docs.
+    // Patterns merged into others open the pattern they joined, in the catalogue and in the Docs.
     'patterns/window-frame': 'patterns/app-frame',
     'docs/patterns/window-frame': 'docs/patterns/app-frame',
     'components/window-frame': 'patterns/app-frame',
@@ -118,20 +118,21 @@ test('the addresses of the views before the Usage guide and the Docs split open 
 });
 
 test("each page of a subject leads to its page in the other part, and a page without one to the other part's start", () => {
-  const paired = (kinds: string[]) => pagesOf('usage').filter(({ kind }) => kinds.includes(kind));
-  // Every component, pattern and foundation in the Usage guide has its page in the Docs, which
+  const paired = (kinds: string[]) =>
+    pagesOf('catalogue').filter(({ kind }) => kinds.includes(kind));
+  // Every component, pattern and foundation in the catalogue has its page in the Docs, which
   // leads back to it.
   for (const page of paired(['component', 'pattern', 'foundation', 'dev-mode'])) {
     const docs = counterpartOf(page);
     expect(docs, page.path).toBe(`docs/${page.path}`);
     expect(findPage(docs!)?.area, page.path).toBe('docs');
     expect(counterpartOf(findPage(docs!)!), docs).toBe(page.path);
-    expect(otherPartRoute(page, 'usage')).toBe(docs);
+    expect(otherPartRoute(page, 'catalogue')).toBe(docs);
   }
-  // The Usage guide's Overview and galleries lead to the Docs' home.
+  // The catalogue's Overview and galleries lead to the Docs' home.
   for (const page of paired(['home', 'components', 'patterns'])) {
     expect(counterpartOf(page), page.path).toBeUndefined();
-    expect(otherPartRoute(page, 'usage'), page.path).toBe('docs');
+    expect(otherPartRoute(page, 'catalogue'), page.path).toBe('docs');
   }
   // A page of the Docs alone, such as a guide, the changelog or Field's, leads to the Overview.
   for (const path of [
@@ -144,7 +145,7 @@ test("each page of a subject leads to its page in the other part, and a page wit
     expect(otherPartRoute(findPage(path), 'docs'), path).toBe('overview');
   // A page that isn't there leads to the other part's start.
   expect(otherPartRoute(undefined, 'docs')).toBe('overview');
-  expect(otherPartRoute(undefined, 'usage')).toBe('docs');
+  expect(otherPartRoute(undefined, 'catalogue')).toBe('docs');
 });
 
 test("the Docs' navigation is a tree of sections and groups, and each page's trail follows it", () => {
@@ -157,7 +158,7 @@ test("the Docs' navigation is a tree of sections and groups, and each page's tra
     'Changelog',
   ]);
   const section = (label: string) => docsTree.find((entry) => entry.label === label)!;
-  // Components by their group, in the Usage guide's order, and patterns by their intent.
+  // Components by their group, in the catalogue's order, and patterns by their intent.
   expect(section('Components').pages).toEqual([]);
   expect(section('Components').groups.map(({ label }) => label)).toEqual(
     componentGroups.filter((group) => section('Components').groups.some((g) => g.label === group)),
@@ -204,7 +205,7 @@ test('a guide in the Docs renders shared Markdown and follows relative links', a
     .getByRole('link', { name: 'Surface', exact: true })
     .first()
     .click();
-  // A link to a component opens its page in the Usage guide.
+  // A link to a component opens its page in the catalogue.
   await expect(page).toHaveURL(/\/components\/surface$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Surface');
 
@@ -506,7 +507,7 @@ test('every stage is the only frame of its figure', async ({ page }) => {
 });
 
 test("a specimen's titles and captions name options in words, not values", async ({ page }) => {
-  // The Usage guide speaks plain language in its specimens too: Small rather than sm, Step 1 rather
+  // The catalogue speaks plain language in its specimens too: Small rather than sm, Step 1 rather
   // than gap={1}. A value starts in lower case or is written as code, with =, braces, quotes or --.
   const pages = readdirSync('docs/components')
     .filter((file) => readFileSync(`docs/components/${file}`, 'utf8').includes('<!-- specimen:'))
@@ -531,7 +532,7 @@ test("a specimen's titles and captions name options in words, not values", async
 });
 
 /**
- * The words a page of the Usage guide shows and names, as a reader and a screen reader meet them:
+ * The words a page of the catalogue shows and names, as a reader and a screen reader meet them:
  * every text and the names, titles and placeholders of its content, outside the Code disclosures
  * under its figures and outside the examples they show, which are envUI at work with an
  * application's own sample text. Foundation figures, specimens, captions, swatches and legends all
@@ -560,7 +561,7 @@ const technicalOf = (words: string[]) =>
 
 /**
  * The pages that show no technical text at all: every foundation, dev mode's page and every
- * pattern. Every other page of the Usage guide is reported until it is rewritten to the same rule,
+ * pattern. Every other page of the catalogue is reported until it is rewritten to the same rule,
  * then joins this list.
  */
 const plainPages = [
@@ -595,7 +596,7 @@ const plainPages = [
 test('the foundation and pattern pages show no technical text, in their words or their figures', async ({
   page,
 }) => {
-  // The Usage guide is for people looking at envUI: no token names, hex colors, lengths, percentages or
+  // The catalogue is for people looking at envUI: no token names, hex colors, lengths, percentages or
   // code. They belong to each foundation's guide and each pattern's page in the Docs.
   test.slow();
   await page.goto(`${catalogueUrl}/`);
@@ -616,9 +617,9 @@ test('the foundation and pattern pages show no technical text, in their words or
   }
 });
 
-/** The component pages of the Usage guide held to the plain-language rule. */
+/** The component pages of the catalogue held to the plain-language rule. */
 const plainComponentPages = allPages.filter(
-  ({ kind, area }) => area === 'usage' && kind === 'component',
+  ({ kind, area }) => area === 'catalogue' && kind === 'component',
 );
 
 test('component pages show no technical text, in their words or their figures', async ({
@@ -636,7 +637,7 @@ test('component pages show no technical text, in their words or their figures', 
   expect(found, "Say it in words, and move the value to the page's In code.").toEqual([]);
 });
 
-test('the technical text on every other page of the Usage guide is counted, for the rewrite to come', async ({
+test('the technical text on every other page of the catalogue is counted, for the rewrite to come', async ({
   page,
 }, testInfo) => {
   // Reporting only: the counts say how far each page is from the model pages' rule.
@@ -644,7 +645,7 @@ test('the technical text on every other page of the Usage guide is counted, for 
   await page.goto(`${catalogueUrl}/`);
   const counts: string[] = [];
   for (const { path, title, kind, area } of allPages) {
-    if (area !== 'usage' || plainPages.includes(path)) continue;
+    if (area !== 'catalogue' || plainPages.includes(path)) continue;
     if (plainComponentPages.some((plain) => plain.path === path)) continue;
     await goTo(page, path === 'overview' ? '/' : `/${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
@@ -658,11 +659,11 @@ test('the technical text on every other page of the Usage guide is counted, for 
     );
   }
   const report = counts.length ? counts.join('\n') : 'No technical text on any page.';
-  console.log(`Technical text in the Usage guide, by page:\n${report}`);
+  console.log(`Technical text in the catalogue, by page:\n${report}`);
   await testInfo.attach('technical-text.txt', { body: report, contentType: 'text/plain' });
 });
 
-/** The pages set in the Usage guide's type hierarchy so far, the samples of the typography rework. */
+/** The pages set in the catalogue's type hierarchy so far, the samples of the typography rework. */
 const typographyPages = [
   'foundations/spacing',
   'foundations/typography',
@@ -670,7 +671,7 @@ const typographyPages = [
   'patterns/forms',
 ];
 
-test("the Usage guide's text keeps a readable measure, and opens each section with a larger lead", async ({
+test("the catalogue's text keeps a readable measure, and opens each section with a larger lead", async ({
   page,
 }) => {
   // Running text wraps at about 70 characters, never one long line across the page; a section's
@@ -749,7 +750,7 @@ test('a component page groups its sections into three, the middle one on the ban
   expect(widths.band).toBe(widths.main);
   expect(widths.column).toBe(widths.first);
   // Box has no Variants, Anatomy or Behaviour, and its Accessibility holds only the lists that
-  // are in the Docs, so the Usage guide has no group after its Rules.
+  // are in the Docs, so the catalogue has no group after its Rules.
   await goTo(page, '/components/box');
   await expect.poll(groups).toEqual([
     { band: false, sections: ['overview'] },
@@ -778,7 +779,7 @@ test('a component page groups its sections into three, the middle one on the ban
   await expect.poll(columns).toEqual({ columns: 1, tops: 6 });
 });
 
-test("a page's guide in the Docs complements its page in the Usage guide, and Field's shows its whole page", async ({
+test("a page's guide in the Docs complements its page in the catalogue, and Field's shows its whole page", async ({
   page,
 }) => {
   // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
@@ -799,7 +800,7 @@ test("a page's guide in the Docs complements its page in the Usage guide, and Fi
   await guides.getByText('Form layout and validation', { exact: true }).click();
   await expect(page).toHaveURL(/\/docs\/patterns\/forms$/);
   // The Docs show the developer part alone: Compose, what envUI and the application provide,
-  // which the Usage guide leaves out, and the changelog. None of the Usage guide's sections, its
+  // which the catalogue leaves out, and the changelog. None of the catalogue's sections, its
   // figures, Related or the band.
   const main = page.locator('.docs-page-column');
   await expect(main.getByRole('heading', { level: 2 })).toHaveText([
@@ -818,8 +819,8 @@ test("a page's guide in the Docs complements its page in the Usage guide, and Fi
       '.docs-band, .docs-related, .docs-figure-section, .docs-live-example, .docs-article .env-card',
     ),
   ).toHaveCount(0);
-  // A foundation's guide maps the words of its page in the Usage guide to code, the column the
-  // Usage guide leaves out, without the words' meanings, which it shows.
+  // A foundation's guide maps the words of its page in the catalogue to code, the column the
+  // catalogue leaves out, without the words' meanings, which it shows.
   await page.goto(`${catalogueUrl}/docs/foundations/spacing`);
   await expect(main.getByRole('heading', { level: 2 })).toHaveText([
     'Usage',
@@ -830,7 +831,7 @@ test("a page's guide in the Docs complements its page in the Usage guide, and Fi
   const words = page.locator('section[aria-labelledby="words-in-code"] table');
   await expect(words.getByRole('columnheader')).toHaveText(['Words', 'In code']);
   await expect(page.locator('.docs-band, .docs-related, .docs-figure-section')).toHaveCount(0);
-  // Field, which has no page in the Usage guide, shows its whole page in the Docs, its sections,
+  // Field, which has no page in the catalogue, shows its whole page in the Docs, its sections,
   // then props, part names and changelog, on the page without the band, and without Related.
   await page.goto(`${catalogueUrl}/docs/components/field`);
   await expect(page.locator('.docs-changelog')).toHaveCount(1);
@@ -873,7 +874,7 @@ test('the props in the Docs link each source file at the revision the site was b
   );
 });
 
-test('the hosted build opens every page of the Usage guide and the Docs without network or script errors', async ({
+test('the hosted build opens every page of the catalogue and the Docs without network or script errors', async ({
   page,
   context,
 }) => {
@@ -900,10 +901,10 @@ test('the hosted build opens every page of the Usage guide and the Docs without 
       kind === 'home' ? 'envUI' : title,
     );
     await expect(page.getByText('This page failed to render')).toHaveCount(0);
-    // A page of the Usage guide links into the Docs only through its banner's Docs button and the
+    // A page of the catalogue links into the Docs only through its banner's Docs button and the
     // Docs link at its top end, not from its content, the links generated from its frontmatter
     // included, such as Built from.
-    if (area === 'usage' && kind !== 'home')
+    if (area === 'catalogue' && kind !== 'home')
       await expect(
         page.locator('.docs-main :is(.docs-article, .docs-band) a[href^="/docs"]'),
         path,
@@ -950,7 +951,7 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   }
   await expect(projectName).toHaveValue('Winter release');
   const navigationTrigger = page.getByRole('button', { name: 'Open navigation' });
-  const mobileNavigation = page.getByRole('dialog', { name: 'Usage guide', exact: true });
+  const mobileNavigation = page.getByRole('dialog', { name: 'Catalogue', exact: true });
   // Opened by a press or from the keyboard, Escape returns focus to the trigger, also in WebKit,
   // where a press focuses no button, and with focus elsewhere before.
   for (const by of ['press', 'keyboard'] as const) {
@@ -1003,10 +1004,10 @@ test('the navigation holds the wordmark and search, the page the other area and 
   page,
 }) => {
   for (const [address, other, brand] of [
-    // In the Usage guide the wordmark tops the rail; the Docs, which have no rail, put it in the
+    // In the catalogue the wordmark tops the rail; the Docs, which have no rail, put it in the
     // drawer.
-    ['/components/menu', 'Docs', 'Usage guide'],
-    ['/docs/components/menu', 'Usage guide', 'Docs'],
+    ['/components/menu', 'Docs', 'Catalogue'],
+    ['/docs/components/menu', 'Catalogue', 'Docs'],
   ] as const) {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(`${catalogueUrl}${address}`);
@@ -1021,13 +1022,13 @@ test('the navigation holds the wordmark and search, the page the other area and 
     const [mark, field] = await Promise.all([wordmark.boundingBox(), search.boundingBox()]);
     expect(Math.abs(mark!.y + mark!.height / 2 - (field!.y + field!.height / 2))).toBeLessThan(4);
     expect(mark!.x + mark!.width).toBeLessThanOrEqual(field!.x);
-    // Search is as wide as its content; in the Usage guide it is centred in the drawer, and the
+    // Search is as wide as its content; in the catalogue it is centred in the drawer, and the
     // drawer's first item starts level with the rail's first destination.
     const drawer = (await page.locator('.docs-sidebar').boundingBox())!;
     expect(field!.width).toBeLessThan(drawer.width - 24);
     // The list may be scrolled to the current page: where it starts is where its first item does.
     const first = (await page.locator('.docs-sidebar .env-drawer-list').boundingBox())!;
-    if (brand === 'Usage guide') {
+    if (brand === 'Catalogue') {
       const left = field!.x - drawer.x;
       const right = drawer.x + drawer.width - (field!.x + field!.width);
       expect(Math.abs(left - right), address).toBeLessThan(2);
@@ -1064,7 +1065,7 @@ test('the navigation holds the wordmark and search, the page the other area and 
     }
     await menu.click();
     const sheet = page.getByRole('dialog', {
-      name: address.startsWith('/docs') ? 'Docs' : 'Usage guide',
+      name: address.startsWith('/docs') ? 'Docs' : 'Catalogue',
     });
     await expect(sheet.getByRole('button', { name: /^Search/ })).toBeInViewport();
     await page.keyboard.press('Escape');
@@ -1352,12 +1353,12 @@ test('every tile of the galleries of components and patterns is fitted, shown wh
   }
 });
 
-test("every label and heading of the Usage guide's and the Docs' drawers fits on one line at the default width", async ({
+test("every label and heading of the catalogue's and the Docs' drawers fits on one line at the default width", async ({
   page,
 }) => {
   // A fresh page has no width stored, so each drawer starts at its default width.
   await page.setViewportSize({ width: 1440, height: 1000 });
-  for (const path of [...usageSections.map((section) => sectionHome(section).path), 'docs']) {
+  for (const path of [...catalogueSections.map((section) => sectionHome(section).path), 'docs']) {
     await page.goto(`${catalogueUrl}/${path}`);
     const drawer = page.locator('.docs-sidebar');
     await expect(drawer.locator('.env-drawer-item').first()).toBeVisible();
@@ -1381,7 +1382,7 @@ test('the navigation shows the current page, and focus moves to the page only on
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tree');
   // The rail marks the page's destination, and the drawer beside it lists the destination's pages.
   await expect(
-    page.getByRole('navigation', { name: 'Usage guide' }).locator('[aria-current="page"]'),
+    page.getByRole('navigation', { name: 'Catalogue' }).locator('[aria-current="page"]'),
   ).toHaveText('Components');
   const navigation = page.getByRole('navigation', { name: 'Components' });
   // The current page's link is scrolled into view as the navigation mounts.
@@ -1396,7 +1397,7 @@ test('the navigation shows the current page, and focus moves to the page only on
   await expect(main).toBeFocused();
   // A destination of the rail opens its first page, and the drawer lists its pages.
   await page
-    .getByRole('navigation', { name: 'Usage guide' })
+    .getByRole('navigation', { name: 'Catalogue' })
     .getByRole('link', { name: 'Foundations', exact: true })
     .click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
@@ -1408,19 +1409,19 @@ test('the navigation shows the current page, and focus moves to the page only on
   await page.locator('.docs-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
   await expect(page).toHaveURL(`${catalogueUrl}/docs/foundations/colors`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
-  await expect(page.getByRole('navigation', { name: 'Usage guide' })).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: 'Catalogue' })).toHaveCount(0);
   await expect(
     page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Design tokens' }),
   ).toBeVisible();
   await page
     .locator('.docs-page-actions')
-    .getByRole('link', { name: 'Usage guide', exact: true })
+    .getByRole('link', { name: 'Catalogue', exact: true })
     .click();
   await expect(page).toHaveURL(`${catalogueUrl}/foundations/colors`);
-  await expect(page.getByRole('navigation', { name: 'Usage guide' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
 });
 
-test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section, its contents beside it, and the way to its page in the Usage guide', async ({
+test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section, its contents beside it, and the way to its page in the catalogue', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -1433,12 +1434,12 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   const trail = banner.getByRole('navigation', { name: 'Breadcrumb' });
   await expect(trail.getByRole('link')).toHaveText(['Docs', 'Components', 'Actions']);
   await expect(trail.locator('[aria-current="page"]')).toHaveText('Button');
-  await expect(banner.getByRole('link', { name: 'Usage guide', exact: true })).toHaveAttribute(
+  await expect(banner.getByRole('link', { name: 'Catalogue', exact: true })).toHaveAttribute(
     'href',
     '/components/button',
   );
   await expect(
-    page.locator('.docs-page-actions').getByRole('link', { name: 'Usage guide', exact: true }),
+    page.locator('.docs-page-actions').getByRole('link', { name: 'Catalogue', exact: true }),
   ).toHaveAttribute('href', '/components/button');
   // The navigation opens the section of the current page, and keeps the others closed.
   const navigation = page.getByRole('navigation', { name: 'Docs' });
@@ -1613,7 +1614,7 @@ test('a page that fails to render says so, and the navigation leads to the other
   // The page failed as it opened, the first the catalogue loaded, so focus stays at the start of
   // the document, as on any page that loads.
   await expect(main).not.toBeFocused();
-  const navigation = page.getByRole('navigation', { name: 'Usage guide' });
+  const navigation = page.getByRole('navigation', { name: 'Catalogue' });
   await navigation.getByRole('link', { name: 'Components', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Components');
   await expect(main.getByText('This page failed to render')).toHaveCount(0);
@@ -1677,7 +1678,7 @@ test(
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
     await expect(page).toHaveURL(/\/docs\/components\/select$/);
     const banner = page.locator('.docs-page-header');
-    await banner.getByRole('link', { name: 'Usage guide', exact: true }).click();
+    await banner.getByRole('link', { name: 'Catalogue', exact: true }).click();
     await expect(page).toHaveURL(/\/components\/select$/);
     await banner.getByRole('link', { name: 'Docs', exact: true }).click();
     await expect(page).toHaveURL(/\/docs\/components\/select$/);
@@ -1842,7 +1843,7 @@ test("the Docs' Changelog page lists each release's highlights, newest first, an
   page,
 }) => {
   const releases = readReleaseNotes();
-  // The Usage guide's old address opens it.
+  // The catalogue's old address opens it.
   await page.goto(`${catalogueUrl}/changelog`);
   await expect(page).toHaveURL(`${catalogueUrl}/docs/changelog`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');

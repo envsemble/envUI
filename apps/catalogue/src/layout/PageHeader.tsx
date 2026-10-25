@@ -5,12 +5,12 @@ import type { TrailStep } from '../navigation/DocumentationRoutes';
 import { BannerShapes } from './BannerShapes';
 
 /**
- * The kinds of banner: a page's of the Usage guide, the plain banner with the page's icon large and
+ * The kinds of banner: a page's of the catalogue, the plain banner with the page's icon large and
  * faint at its end (Shell.css); and a page's of the Docs, the developer reference, read from the
  * start like a document, under its breadcrumbs, the envUI mark's shapes drawn as outlines
  * (Banners.css).
  */
-export type BannerKind = 'usage' | 'docs-home' | 'docs';
+export type BannerKind = 'catalogue' | 'docs-home' | 'docs';
 
 /** Documentation banner composed from the library's card, text and layout primitives. */
 export function PageHeader({
@@ -23,7 +23,7 @@ export function PageHeader({
   logo,
   children,
   actions,
-  kind = 'usage',
+  kind = 'catalogue',
 }: {
   title: string;
   /** Where the page is, as a quiet line above the title, such as Components / Actions. */
@@ -36,7 +36,7 @@ export function PageHeader({
   description?: string;
   /** Facts about the page under its description, such as a component's status. */
   meta?: ReactNode;
-  /** The page's icon, drawn large and faint at the end of a Usage guide banner. */
+  /** The page's icon, drawn large and faint at the end of a catalogue banner. */
   symbol?: ReactNode;
   /** Artwork shown as the title, such as a lockup; the title stays its accessible name. */
   logo?: ReactNode;
@@ -44,7 +44,7 @@ export function PageHeader({
   actions?: ReactNode;
   kind?: BannerKind;
 }) {
-  const docs = kind !== 'usage';
+  const docs = kind !== 'catalogue';
   return (
     <header className="docs-page-header">
       <Card

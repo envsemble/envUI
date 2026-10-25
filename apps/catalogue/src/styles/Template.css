@@ -51,7 +51,7 @@
 }
 
 /* A page in the Docs is a guide in several sections, from Import to the changelog: as far apart as
-   the sections of a group in the Usage guide. */
+   the sections of a group in the catalogue. */
 .docs-api.docs-api {
   row-gap: var(--env-space-9);
 }

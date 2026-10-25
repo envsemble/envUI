@@ -5,16 +5,16 @@ import { routeHref } from './Address';
 import { counterpartOf, type Area, type RoutePage } from './DocumentationRoutes';
 
 /**
- * The other part from a page of one, by its name and icon: the Docs, in code, from the Usage guide,
- * and the Usage guide from the Docs.
+ * The other part from a page of one, by its name and icon: the Docs, in code, from the catalogue,
+ * and the catalogue from the Docs.
  */
 export function otherPart(area: Area) {
-  return area === 'docs' ? { label: 'Usage guide', Icon: MenuBook } : { label: 'Docs', Icon: Code };
+  return area === 'docs' ? { label: 'Catalogue', Icon: MenuBook } : { label: 'Docs', Icon: Code };
 }
 
 /**
  * The button in a page's banner that leads to the page of the same subject in the other part: Docs
- * on a component's, pattern's or foundation's page in the Usage guide, and Usage guide on its page
+ * on a component's, pattern's or foundation's page in the catalogue, and Catalogue on its page
  * in the Docs. A page without one shows none.
  */
 export function OtherPartButton({ page }: { page: RoutePage }) {

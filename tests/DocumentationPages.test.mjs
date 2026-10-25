@@ -348,7 +348,7 @@ test("a page's Overview doesn't open by saying its summary again", () => {
 });
 
 /**
- * A page's Markdown as the Usage guide shows it: without its changelog, its developer part, "##
+ * A page's Markdown as the catalogue shows it: without its changelog, its developer part, "##
  * Compose", the lists of what envUI and the application provide, and its tables' In code columns,
  * which its page in the Docs shows.
  */
@@ -361,9 +361,9 @@ function siteMarkdown(document) {
   );
 }
 
-test('a page of the Usage guide links nowhere in the Docs', () => {
-  // The Usage guide reaches the Docs only through a page's Docs button and the Docs link at the
-  // top: a component or pattern page links to other pages of the Usage guide, a foundation's
+test('a page of the catalogue links nowhere in the Docs', () => {
+  // The catalogue reaches the Docs only through a page's Docs button and the Docs link at the
+  // top: a component or pattern page links to other pages of the catalogue, a foundation's
   // without a heading, since a foundation's headings are in its page in the Docs.
   const links = sectioned
     .filter((document) => document.id !== 'field')
@@ -381,28 +381,24 @@ test('a page of the Usage guide links nowhere in the Docs', () => {
         })
         .map((href) => `${document.path}: ${href}`),
     );
-  assert.deepEqual(
-    links,
-    [],
-    'Link these to a page of the Usage guide, or say it without the link.',
-  );
+  assert.deepEqual(links, [], 'Link these to a page of the catalogue, or say it without the link.');
 });
 
-/** Every page the Usage guide shows: Field's page is in the Docs only. */
+/** Every page the catalogue shows: Field's page is in the Docs only. */
 const sitePages = () => sectioned.filter((document) => document.id !== 'field');
 
-test("a page's Usage guide shows no inline code", () => {
+test("a page's catalogue shows no inline code", () => {
   const found = sitePages().flatMap((document) =>
     siteInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
   );
   assert.deepEqual(
     found,
     [],
-    'The Usage guide speaks plain language: say it in words, and move the code to "## Compose".',
+    'The catalogue speaks plain language: say it in words, and move the code to "## Compose".',
   );
 });
 
-test("a page's Usage guide text is in titled blocks", () => {
+test("a page's catalogue text is in titled blocks", () => {
   const found = sitePages().flatMap((document) =>
     siteStructure(document).map(
       ({ where, kind, text }) => `${document.path}, ${where}, ${kind}: ${text}`,
@@ -411,11 +407,11 @@ test("a page's Usage guide text is in titled blocks", () => {
   assert.deepEqual(
     found,
     [],
-    'Every piece of Usage guide text is in a titled block, a heading and up to three short paragraphs: give loose text a "###" heading, or fold it into the block it belongs to.',
+    'Every piece of catalogue text is in a titled block, a heading and up to three short paragraphs: give loose text a "###" heading, or fold it into the block it belongs to.',
   );
 });
 
-test("a page's Usage guide text is in short paragraphs", () => {
+test("a page's catalogue text is in short paragraphs", () => {
   const found = sitePages().flatMap((document) =>
     longParagraphs(document).map(
       ({ where, length, text }) => `${document.path}, ${where}, ${length} characters: ${text}`,
@@ -424,7 +420,7 @@ test("a page's Usage guide text is in short paragraphs", () => {
   assert.deepEqual(
     found,
     [],
-    `A paragraph of the Usage guide is at most ${paragraphLength} characters, about three lines: split it into short paragraphs, one point each, or give a point a block of its own.`,
+    `A paragraph of the catalogue is at most ${paragraphLength} characters, about three lines: split it into short paragraphs, one point each, or give a point a block of its own.`,
   );
 });
 
@@ -477,14 +473,14 @@ test('technical text is found in words, and plain words are left alone', () => {
   );
 });
 
-/** The technical text in a page's Usage guide Markdown, as plain words: keys are written as <kbd>. */
+/** The technical text in a page's catalogue Markdown, as plain words: keys are written as <kbd>. */
 const siteTechnicalText = (document) =>
   siteText(document).flatMap(({ markdown, text }) =>
     technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
   );
 
-test("a component page's Usage guide shows no technical text", () => {
-  // The Usage guide is for people looking at envUI: lengths, tokens, percentages and code names go
+test("a component page's catalogue shows no technical text", () => {
+  // The catalogue is for people looking at envUI: lengths, tokens, percentages and code names go
   // in the page's Compose, which its page in the Docs shows.
   const found = sitePages()
     .filter((document) => document.path.startsWith('components/'))
@@ -494,8 +490,8 @@ test("a component page's Usage guide shows no technical text", () => {
   assert.deepEqual(found, [], 'Say it in words, and move the value to "## Compose".');
 });
 
-test("the technical text in each page's Usage guide Markdown is counted, for the rewrite to come", (t) => {
-  // Reporting only, like the catalogue's count of the rendered pages: the Usage guide shows no
+test("the technical text in each page's catalogue Markdown is counted, for the rewrite to come", (t) => {
+  // Reporting only, like Catalogue.spec.ts's count of the rendered pages: the catalogue shows no
   // token names, hex colors, lengths, percentages or code, which belong to the page in the Docs.
   // Inline code is already rejected above; this counts what plain words still carry.
   const counts = sitePages().flatMap((document) => {
@@ -506,7 +502,7 @@ test("the technical text in each page's Usage guide Markdown is counted, for the
   });
   t.diagnostic(
     counts.length
-      ? `Technical text in the Usage guide's Markdown:\n${counts.join('\n')}`
-      : 'No technical text in the Usage guide Markdown.',
+      ? `Technical text in the catalogue's Markdown:\n${counts.join('\n')}`
+      : 'No technical text in the catalogue Markdown.',
   );
 });

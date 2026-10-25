@@ -22,26 +22,26 @@ import {
   otherPartRoute,
   pagesOf,
   sectionHome,
-  usageSections,
+  catalogueSections,
   type Area,
   type DocsGroup,
   type RoutePage,
-  type UsageSection,
+  type CatalogueSection,
 } from './DocumentationRoutes';
 import { docsRoute, homeRoute, routeHref } from './Address';
 import { otherPart } from './OtherPart';
 
-/** The icon of each of the Usage guide's destinations in its rail. */
-const sectionIcons: Record<UsageSection, typeof Home> = {
+/** The icon of each of the catalogue's destinations in its rail. */
+const sectionIcons: Record<CatalogueSection, typeof Home> = {
   Overview: Home,
   Foundations: Palette,
   Components: Widgets,
   Patterns: Pattern,
 };
 
-/** The Usage guide's destinations, for its rail: each opens its first page. */
-export function usageDestinations(current: string | undefined, onChoose?: () => void) {
-  return usageSections.map((section): Destination => {
+/** The catalogue's destinations, for its rail: each opens its first page. */
+export function catalogueDestinations(current: string | undefined, onChoose?: () => void) {
+  return catalogueSections.map((section): Destination => {
     const Icon = sectionIcons[section];
     return {
       label: section,
@@ -53,7 +53,7 @@ export function usageDestinations(current: string | undefined, onChoose?: () => 
   });
 }
 
-/** The pages of one of the Usage guide's destinations, for its drawer. */
+/** The pages of one of the catalogue's destinations, for its drawer. */
 export function pageDestinations(
   pages: readonly RoutePage[],
   currentPath: string,
@@ -114,7 +114,7 @@ export function docsDestinations(currentPath: string, onChoose?: () => void): Dr
  * The Docs' drawer holds the wordmark and search on its first row, so it starts wider.
  */
 const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWidth: number }> = {
-  usage: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
+  catalogue: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
   docs: { defaultWidth: 21, minWidth: 18, maxWidth: 30 },
 };
 
@@ -123,7 +123,7 @@ const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWi
  * the names the parts had before, so a width kept then still holds.
  */
 const drawerWidthKey = (area: Area) =>
-  `envui-catalogue-drawer-width-${area === 'usage' ? 'site' : area}`;
+  `envui-catalogue-drawer-width-${area === 'catalogue' ? 'site' : area}`;
 
 /** The width the reader gave the area's drawer on an earlier visit, within its bounds. */
 function storedDrawerWidth(area: Area) {
@@ -191,13 +191,13 @@ function Brand({ area }: { area: Area }) {
 }
 
 /**
- * The Usage guide's navigation, one pane: a Rail of its destinations, Overview, Foundations,
+ * The catalogue's navigation, one pane: a Rail of its destinations, Overview, Foundations,
  * Components and Patterns, under the envUI wordmark, beside a Drawer of the chosen
  * destination's pages under search, both on the navigation's background with no seam or line
  * between them. A rail item opens its destination's first page; in the sheet of a narrower window
  * it leaves the sheet open, so a page can be chosen.
  */
-export function UsageNavigation({
+export function CatalogueNavigation({
   page,
   routePath,
   inSheet = false,
@@ -205,16 +205,16 @@ export function UsageNavigation({
   onSearch,
 }: NavigationProps) {
   const element = useCurrentInView();
-  const drawerWidth = useDrawerWidth('usage', inSheet);
-  const section = (page?.area === 'usage' ? page.section : 'Overview') as UsageSection;
-  const pages = pagesOf('usage').filter((entry) => entry.section === section);
+  const drawerWidth = useDrawerWidth('catalogue', inSheet);
+  const section = (page?.area === 'catalogue' ? page.section : 'Overview') as CatalogueSection;
+  const pages = pagesOf('catalogue').filter((entry) => entry.section === section);
   return (
     <div ref={element} className="docs-navigation" data-in-sheet={inSheet || undefined}>
       <Rail
-        aria-label="Usage guide"
+        aria-label="Catalogue"
         className="docs-rail"
-        header={<Brand area="usage" />}
-        destinations={usageDestinations(page?.area === 'usage' ? section : undefined)}
+        header={<Brand area="catalogue" />}
+        destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
       />
       <Drawer
         aria-label={section}
@@ -259,8 +259,8 @@ export function DocsNavigation({
 
 /**
  * The page's own controls at its top end, quiet ghost buttons that stay in the corner as the page
- * scrolls, on a small pill of the page's color: the other part, the Docs from the Usage guide and
- * the Usage guide from the Docs, at the page of the same subject there (otherPartRoute), and the
+ * scrolls, on a small pill of the page's color: the other part, the Docs from the catalogue and
+ * the catalogue from the Docs, at the page of the same subject there (otherPartRoute), and the
  * Display menu, where the theme, contrast and scale are. Below an expanded window they are icon
  * buttons with tooltips.
  */

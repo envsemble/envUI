@@ -130,7 +130,7 @@ function ButtonFigure() {
 }
 
 /**
- * Dev mode's page in the Usage guide: what it shows, what it helps you notice and how to open it, in
+ * Dev mode's page in the catalogue: what it shows, what it helps you notice and how to open it, in
  * pictures of the real dev mode and plain words, with the real dev mode to try on a small
  * application. Its guide in the Docs, which Docs opens, holds the readout, the options and code.
  */

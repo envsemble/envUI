@@ -1,6 +1,6 @@
 /**
  * The site's search and navigation: search in envUI's CommandPalette, opened with ⌘K or Ctrl+K,
- * which finds pages of the Usage guide and the Docs and names the part of each; path routes in the hosted
+ * which finds pages of the catalogue and the Docs and names the part of each; path routes in the hosted
  * build, served through the hosted Worker script, with deep links into both areas, refreshes and
  * the redirects from old hash addresses. tests/SearchIndex.test.mjs checks that every result leads to a section.
  */
@@ -105,20 +105,18 @@ test.describe('search', () => {
     await expect(page.locator('[id="props-Button-startIcon"]')).toBeFocused();
   });
 
-  test('finds pages of the Usage guide and of the Docs, each named by its part', async ({
-    page,
-  }) => {
+  test('finds pages of the catalogue and of the Docs, each named by its part', async ({ page }) => {
     await openCatalogue(page, `${catalogueUrl}/docs`);
     await search(page, 'colors and themes');
-    await expect(option(page, 'page:colors')).toContainText('Usage guide · Foundations');
+    await expect(option(page, 'page:colors')).toContainText('Catalogue · Foundations');
     await expect(option(page, 'guide:colors')).toContainText('Docs · Foundation guide');
     await option(page, 'guide:colors').click();
     await expect(page).toHaveURL(`${catalogueUrl}/docs/foundations/colors`);
     await search(page, 'button');
-    await expect(option(page, 'page:button')).toContainText('Usage guide · Actions');
+    await expect(option(page, 'page:button')).toContainText('Catalogue · Actions');
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(`${catalogueUrl}/components/button`);
-    await expect(page.getByRole('navigation', { name: 'Usage guide' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
   });
 
   test('a link to a heading opens the page that shows it', async ({ page }) => {
@@ -151,7 +149,7 @@ test.describe('hosted build', () => {
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
       await expect(page).toHaveURL(`${siteUrl}/docs/components/button#props-Button-variant`);
       await expect(page.locator('[id="props-Button-variant"]')).toBeInViewport();
-      // A route with a trailing slash is the same page, in the Usage guide and the Docs.
+      // A route with a trailing slash is the same page, in the catalogue and the Docs.
       await page.goto(`${siteUrl}/docs/tokens/`);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Design tokens');
       await expect(page).toHaveURL(`${siteUrl}/docs/tokens`);
@@ -176,7 +174,7 @@ test.describe('hosted build', () => {
           asset: await answer(new URL(script.src).pathname),
         };
       });
-      // A page without a file answers with index.html, in the Usage guide and the Docs; /assets/
+      // A page without a file answers with index.html, in the catalogue and the Docs; /assets/
       // never does.
       expect(answers.route).toMatchObject({ status: 200, type: 'text/html' });
       expect(answers.docs).toMatchObject({ status: 200, type: 'text/html' });
@@ -210,7 +208,7 @@ test.describe('hosted build', () => {
     await serveSite(page);
     await openCatalogue(page, `${siteUrl}/`);
     await page.evaluate(() => ((window as unknown as { loaded: boolean }).loaded = true));
-    const rail = page.getByRole('navigation', { name: 'Usage guide' });
+    const rail = page.getByRole('navigation', { name: 'Catalogue' });
     await rail.getByRole('link', { name: 'Components', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/components`);
     const navigation = page.getByRole('navigation', { name: 'Components' });
@@ -227,10 +225,10 @@ test.describe('hosted build', () => {
       .getByRole('link', { name: 'Docs', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/docs/components/dialog`);
-    // The switch at the top end leads back to the same subject in the Usage guide.
+    // The switch at the top end leads back to the same subject in the catalogue.
     await page
       .locator('.docs-page-actions')
-      .getByRole('link', { name: 'Usage guide', exact: true })
+      .getByRole('link', { name: 'Catalogue', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
     // Dev mode is a page of the Overview, beside its introduction.
@@ -318,14 +316,14 @@ test('a token found in search opens the token reference in the Docs', async ({ p
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(`${catalogueUrl}/docs/tokens#token-env-color-fg-muted`);
   await expect(page.locator('#token-env-color-fg-muted')).toBeInViewport();
-  // The token reference has no page in the Usage guide: the switch leads to its Overview.
+  // The token reference has no page in the catalogue: the switch leads to its Overview.
   await page
     .locator('.docs-page-actions')
-    .getByRole('link', { name: 'Usage guide', exact: true })
+    .getByRole('link', { name: 'Catalogue', exact: true })
     .click();
   await expect(page).toHaveURL(`${catalogueUrl}/`);
   await page
-    .getByRole('navigation', { name: 'Usage guide' })
+    .getByRole('navigation', { name: 'Catalogue' })
     .getByRole('link', { name: 'Patterns', exact: true })
     .click();
   await page

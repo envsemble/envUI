@@ -2,7 +2,7 @@
 
 ## 1.0.0-prerelease.4 — 2026-10-25
 
-The fourth prerelease of envUI 1.0. Its documentation is one file per page, which the Usage guide shows to people, the Docs to developers and the package to coding agents, with each example's code once; one prompt and a hosted skill set envUI up with a coding agent in place of the package's own agent tooling; dev mode opens in a tab of its own, rebuilt on today's envUI; and Drawer gains nested sections and TableOfContents is new. It removes the `envui` command, its MCP server, the packaged skills and the agent plugin: the [migration guide](https://github.com/envsemble/envUI/blob/main/docs/migration.md) says what replaces them.
+The fourth prerelease of envUI 1.0. Its documentation is one file per page, which the catalogue shows to people, the Docs to developers and the package to coding agents, with each example's code once; one prompt and a hosted skill set envUI up with a coding agent in place of the package's own agent tooling; dev mode opens in a tab of its own, rebuilt on today's envUI; and Drawer gains nested sections and TableOfContents is new. It removes the `envui` command, its MCP server, the packaged skills and the agent plugin: the [migration guide](https://github.com/envsemble/envUI/blob/main/docs/migration.md) says what replaces them.
 
 ### Major Changes
 

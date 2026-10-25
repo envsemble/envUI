@@ -1,13 +1,13 @@
-// What the Usage guide shows of a component, pattern or foundation page, and what it leaves to the
-// page in the Docs. The Usage guide speaks plain language to people looking at envUI; a page's
+// What the catalogue shows of a component, pattern or foundation page, and what it leaves to the
+// page in the Docs. The catalogue speaks plain language to people looking at envUI; a page's
 // developer part, its "## Compose" section and Accessibility's lists of what envUI and the
 // application provide, is for people who build with it, and so are the changelog and the props.
-// The catalogue renders the Usage guide from these rules, and `npm test` checks its text against
+// The catalogue app renders the catalogue from these rules, and `npm test` checks its text against
 // them: no inline code outside the Code disclosures under its figures.
 import { marked } from 'marked';
 
 /**
- * The sections of a page the Usage guide leaves out, which its page in the Docs shows: "##
+ * The sections of a page the catalogue leaves out, which its page in the Docs shows: "##
  * Compose", the developer part, and the changelog.
  */
 export const docsOnlySections = new Set(['code', 'changelog']);
@@ -47,10 +47,10 @@ export function withoutProvides(markdown) {
 export const codeColumnHeading = 'In code';
 
 /**
- * Markdown with the columns of its tables headed In code left out, as the Usage guide shows it: a
+ * Markdown with the columns of its tables headed In code left out, as the catalogue shows it: a
  * table
  * may pair what people read with the code it means, such as the words to use and their props, and
- * the Usage guide, which shows no code, reads only the rest.
+ * the catalogue, which shows no code, reads only the rest.
  */
 export function withoutCodeColumns(markdown) {
   if (!markdown.includes(codeColumnHeading)) return markdown;
@@ -78,9 +78,9 @@ export function withoutCodeColumns(markdown) {
 }
 
 /**
- * What the Usage guide leaves out of Markdown's tables, as the Docs show it: each table with an In
+ * What the catalogue leaves out of Markdown's tables, as the Docs show it: each table with an In
  * code column, cut to its first column and that one, such as the words people use and the props
- * each means; the rest of the Markdown, which the Usage guide shows, is left out.
+ * each means; the rest of the Markdown, which the catalogue shows, is left out.
  */
 export function codeColumns(markdown) {
   if (!markdown.includes(codeColumnHeading)) return '';
@@ -102,7 +102,7 @@ export function codeColumns(markdown) {
     .join('\n\n');
 }
 
-/** A section's Markdown as the Usage guide shows it: without what envUI and the application provide. */
+/** A section's Markdown as the catalogue shows it: without what envUI and the application provide. */
 export function siteMarkdown(section, markdown) {
   return withoutCodeColumns(
     providesSections.has(section.id) ? withoutProvides(markdown) : markdown,
@@ -124,7 +124,7 @@ export function providesOf(sections) {
 }
 
 /**
- * The name an anatomy legend item gives its part, which is all the Usage guide shows of it: the
+ * The name an anatomy legend item gives its part, which is all the catalogue shows of it: the
  * bold words it starts with, such as Label for `**Label** (`env-text-field-label`, `label`)`. The
  * class names and props after it are for the page in the Docs and for agents.
  */
@@ -133,7 +133,7 @@ export function legendName(item) {
 }
 
 /**
- * The text of a page as the Usage guide shows it, each piece with where it is: the summary, what it
+ * The text of a page as the catalogue shows it, each piece with where it is: the summary, what it
  * is for and what to use instead, from the frontmatter, then the Markdown of its sections without
  * the developer part, with each figure's caption and each anatomy legend's names. Figures, their
  * code and specimens are not text.
@@ -188,7 +188,7 @@ export function inlineCodeOf(markdown) {
   return found;
 }
 
-/** Each piece of inline code a page shows in the Usage guide, with where it is. */
+/** Each piece of inline code a page shows in the catalogue, with where it is. */
 export function siteInlineCode(document) {
   return siteText(document).flatMap(({ where, markdown, text }) =>
     (markdown !== undefined
@@ -213,7 +213,7 @@ function plainText(tokens) {
 /**
  * An option table, such as a component's variants, tones or sizes, from a lexed Markdown table: the
  * first column names each option, the last, headed Use for, says what it is for, and any columns
- * between them add a detail, such as the tones a variant takes. The Usage guide shows it as a
+ * between them add a detail, such as the tones a variant takes. The catalogue shows it as a
  * legend, each option's name in a tag followed by what it is for, as an anatomy figure's legend
  * shows its parts; the packaged page and the Docs keep the table. Anything else is undefined.
  */
@@ -251,7 +251,7 @@ export function optionTableProblems(table) {
       problems.push(`${at} names its option with a link, an image or HTML; write its name alone`);
     else if (option.name.split(' ').length > 5 || /[.:;!?]$/.test(option.name))
       problems.push(
-        `${at} names its option "${option.name}": a name of a few words, such as Outline or From the bottom, which the Usage guide shows as a tag`,
+        `${at} names its option "${option.name}": a name of a few words, such as Outline or From the bottom, which the catalogue shows as a tag`,
       );
     if (seen.has(option.name)) problems.push(`${at} names ${option.name} again`);
     seen.add(option.name);
@@ -270,7 +270,7 @@ const opening = (text) => {
 export const blockParagraphs = 3;
 
 /**
- * Where a page's Usage guide text has no structure. Every piece of text belongs to a titled block:
+ * Where a page's catalogue text has no structure. Every piece of text belongs to a titled block:
  * a heading and a short paragraph or a few, with its figure where it has one, as a section's
  * opening or a `###` subsection is written. Two kinds of loose text break that:
  *
@@ -320,7 +320,7 @@ export function siteStructure(document) {
   return found;
 }
 
-/** The longest paragraph of the Usage guide's text, in characters as people read them: about 3 lines. */
+/** The longest paragraph of the catalogue's text, in characters as people read them: about 3 lines. */
 export const paragraphLength = 240;
 
 /** A paragraph's text as people read it: links as their words, without tags or emphasis marks. */
@@ -333,7 +333,7 @@ const readText = (markdown) =>
     .trim();
 
 /**
- * The paragraphs of a page's Usage guide text longer than `paragraphLength`. The Usage guide sets
+ * The paragraphs of a page's catalogue text longer than `paragraphLength`. The catalogue sets
  * running text in a readable measure, so a long paragraph is a tall block of gray: split it into
  * short paragraphs, each one point, or move a point to a block of its own.
  */
@@ -357,7 +357,7 @@ export function longParagraphs(document) {
 
 /**
  * Markdown cut at its option tables, in order: runs of Markdown, and each option table parsed,
- * which the Usage guide shows as a legend.
+ * which the catalogue shows as a legend.
  */
 export function optionPieces(markdown) {
   const pieces = [];
@@ -372,7 +372,7 @@ export function optionPieces(markdown) {
 }
 
 /**
- * The kinds of technical text the Usage guide never shows, outside the Code disclosures under its
+ * The kinds of technical text the catalogue never shows, outside the Code disclosures under its
  * figures: it is for people looking at envUI, and these belong to the guides in the Docs. Each
  * pattern finds one kind in plain text, as a reader sees it.
  */

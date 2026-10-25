@@ -10,7 +10,7 @@ import { InteractiveMark } from '../../template/InteractiveMark';
  * looking at envUI: no token names, values or units, which the foundation's guide in the Docs
  * holds.
  *
- * The parts set the Usage guide's type hierarchy (SiteText.css), so a page never has to: the
+ * The parts set the catalogue's type hierarchy (SiteText.css), so a page never has to: the
  * section's title large, its lead a step larger than body text, a block's title in the title style
  * and its paragraphs quieter, in the muted color, and the notes of figures and legends smaller
  * still, each in a readable measure.

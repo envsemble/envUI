@@ -542,7 +542,7 @@ test('the structure checks the frontmatter, the figures and the text of a page',
       /Rules has a blockquote/,
     );
     await rejects(frontmatter + body.replace('specimen: States', 'specimen: Matrix'), /no file/);
-    // An option table, whose last column is Use for, shows in the Usage guide as a legend of tags:
+    // An option table, whose last column is Use for, shows in the catalogue as a legend of tags:
     // each names its option in a few plain words, once, and says what it is for.
     const options = (rows) =>
       frontmatter +
@@ -1003,7 +1003,7 @@ test('pattern pages are validated as their kind', async () => {
   });
 });
 
-test('an option table is read for the Usage guide as a legend', () => {
+test('an option table is read for the catalogue as a legend', () => {
   const [table] = marked.lexer(
     [
       '| Variant | Tones | Use for |',
@@ -1032,7 +1032,7 @@ test('an option table is read for the Usage guide as a legend', () => {
     optionTable(marked.lexer('| Key | Action |\n| --- | --- |\n| Tab | Moves. |\n')[0]),
     undefined,
   );
-  // The Usage guide's Markdown is cut at its option tables, keeping each table's source.
+  // The catalogue's Markdown is cut at its option tables, keeping each table's source.
   const source = 'Intro.\n\n| Size | Use for |\n| --- | --- |\n| Small | Lists. |\n\nAfter.\n';
   const pieces = optionPieces(source);
   assert.deepEqual(
@@ -1045,7 +1045,7 @@ test('an option table is read for the Usage guide as a legend', () => {
   );
 });
 
-test('Usage guide text with no structure is found: loose after a figure, or a fourth paragraph', () => {
+test('Catalogue text with no structure is found: loose after a figure, or a fourth paragraph', () => {
   const markdown = (text) => ({ kind: 'markdown', markdown: text });
   const figure = (role) => ({ kind: 'example', name: 'Figure', heading: 'Figure', role });
   const found = siteStructure({
@@ -1082,7 +1082,7 @@ test('Usage guide text with no structure is found: loose after a figure, or a fo
           ),
         ],
       },
-      // The developer part is not the Usage guide's.
+      // The developer part is not the catalogue's.
       { id: 'code', title: 'Compose', blocks: [markdown('## Compose\n\nOne.\n\nTwo.\n')] },
     ],
   });
@@ -1096,7 +1096,7 @@ test('Usage guide text with no structure is found: loose after a figure, or a fo
   );
 });
 
-test('long paragraphs of Usage guide text are found, measured as people read them', () => {
+test('long paragraphs of catalogue text are found, measured as people read them', () => {
   const markdown = (text) => ({ kind: 'markdown', markdown: text });
   const long = `${'A sentence of words. '.repeat(12)}`.trim();
   const found = longParagraphs({
@@ -1202,7 +1202,7 @@ test('a page ships the whole file, in its order, with code once', () => {
   );
   assert.ok(hasLine(button, 'avoidWhen:'));
   assert.ok(compiled.has('examples/button/CreateProject.tsx'));
-  // The sections in the Usage guide's order, the plain ones first and Compose last, then the props.
+  // The sections in the catalogue's order, the plain ones first and Compose last, then the props.
   const headings = [...button.matchAll(/^## (.*)$/gm)].map(([, title]) => title);
   assert.deepEqual(headings, [
     'Variants',

@@ -19,7 +19,7 @@ const statusTones = {
 
 /**
  * Status and first release under the title of a component's or pattern's page, and after them
- * `children`, such as the button to its counterpart in the Usage guide or the Docs.
+ * `children`, such as the button to its counterpart in the catalogue or the Docs.
  */
 export function MetadataBadges({
   metadata,
@@ -27,7 +27,7 @@ export function MetadataBadges({
   children,
 }: {
   metadata: DocumentationMetadata;
-  /** Leave out the statuses of exports that are code, such as a hook, as the Usage guide does. */
+  /** Leave out the statuses of exports that are code, such as a hook, as the catalogue does. */
   plain?: boolean;
   children?: ReactNode;
 }) {
@@ -38,8 +38,8 @@ export function MetadataBadges({
           {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
         </Badge>
       )}
-      {/* In the Usage guide, a component's status only: a hook or a function, such as
-          useModifierKey, is code, which the Usage guide never names; its page in the Docs shows
+      {/* In the catalogue, a component's status only: a hook or a function, such as
+          useModifierKey, is code, which the catalogue never names; its page in the Docs shows
           its status. */}
       {Object.entries(metadata.statuses ?? {})
         .filter(([name]) => !plain || /^[A-Z]/.test(name))
@@ -155,7 +155,7 @@ function Sections({
 }
 
 /**
- * A component, pattern or foundation page of the Usage guide: its sections in order, then Related;
+ * A component, pattern or foundation page of the catalogue: its sections in order, then Related;
  * a component's props, part names, what the application provides and changelog are on its page in
  * the Docs. For Field, whose whole page is in the Docs, `provides` keeps what envUI and the
  * application provide in Accessibility, `related={false}` leaves out Related and `bands={false}`
