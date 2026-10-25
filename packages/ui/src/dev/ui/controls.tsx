@@ -1,5 +1,3 @@
-'use client';
-
 // Dev mode's small shared controls: an icon button whose name shows in a tooltip at once, as every
 // icon-only control of dev mode does, and the buttons that hide and show its sidebars.
 

@@ -1,5 +1,3 @@
-'use client';
-
 // The 3D view's legend, floating in its bottom corner with no pane: what the planes' colors mean,
 // by kind of node or by window class.
 

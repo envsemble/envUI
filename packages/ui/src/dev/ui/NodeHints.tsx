@@ -1,5 +1,3 @@
-'use client';
-
 // What the 3D view says about the node under the pointer: a card beside the pointer with its size,
 // container and problems, and, colored by window class, a ruler over it.
 
