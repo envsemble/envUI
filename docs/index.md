@@ -58,6 +58,7 @@ A component or pattern page opens with how it looks and when to use it, the desi
 - [Drawer](components/drawer.md)
 - [Tabs](components/tabs.md)
 - [Breadcrumbs](components/breadcrumbs.md)
+- [TableOfContents](components/table-of-contents.md)
 - [Pager](components/pager.md)
 - [Pagination](components/pagination.md)
 - [Tree](components/tree.md)

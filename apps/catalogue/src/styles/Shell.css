@@ -527,7 +527,8 @@ body {
 .docs-agent-logos > svg + svg {
   margin-inline-start: -0.375rem;
 }
-/* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge. */
-.docs-main [id] {
+/* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge.
+   An example's own sections keep the margins it gives them, such as below its sticky header. */
+.docs-main [id]:not(.docs-live-example *) {
   scroll-margin-block-start: var(--env-space-6);
 }
