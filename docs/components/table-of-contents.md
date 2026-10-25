@@ -81,7 +81,7 @@ Not shown: the sections before the current one, whose dashes are darker.
 A short dash before each section, like a ruler, marks where the reader is.
 
 - The dashes swell in a smooth wave around the reader's place as the page scrolls.
-- The current section's dash is the longest and darkest, the next ones growing as the reader nears them, and the one under the pointer longer too.
+- The current section's dash is the longest and darkest, in the text color, the next ones growing as the reader nears them, and the one under the pointer longer too.
 - Sections not yet reached are quieter, so the list reads as how far the reader has come.
 
 ### Going to a section
@@ -90,7 +90,7 @@ A link scrolls its section to the top, below anything that stays there, such as 
 
 ### Adapting to width
 
-Long labels wrap onto more lines, and the current section's pill grows to their height.
+Long labels wrap onto more lines, each dash beside its label's first line.
 
 ```tsx figure=LongLabels widths="12 20"
 
@@ -140,7 +140,7 @@ Use the headings' own words, or a short name a reader would find on the page.
 - A `nav` landmark named On this page, from `messages.tableOfContents`, around nested ordered lists of links.
 - `aria-current="location"` on the link of the section the reader is in.
 - Links that scroll smoothly, or at once where reduced motion is preferred, add the section to the address and move focus to it, so reading and the keyboard go on from there.
-- Dots drawn by the style sheet alone, which assistive technology doesn't read.
+- Dashes drawn by the style sheet alone, which assistive technology doesn't read.
 
 ### You provide
 

@@ -132,7 +132,7 @@
 }
 
 /* Forced colors: the system paints the links, so the current one takes its selection color and
-   the dots its text and gray. */
+   the dashes its text and gray. */
 @media (forced-colors: active) {
   .env-table-of-contents-link[aria-current='location'] {
     forced-color-adjust: none;
