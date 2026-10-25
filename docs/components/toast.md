@@ -32,41 +32,23 @@ avoidWhen:
 components:
   - Toast
   - useToast
+examples:
+  SaveChanges: overview
+  Tones: example
+  TopCenter: example
+  ToastAnatomy: anatomy
+  UndoArchive: example
+  RetryAfterError: example
+  ExportReady: example
+  OneForMany:
+    role: do
+    caption: One notification for an action on many items.
+  OnePerItem:
+    role: dont
+    caption: 'A notification for each item: they stack up and hide each other.'
 ---
 
 # Toast
-
-## Overview
-
-Its timer pauses while the pointer rests on it or it has focus.
-
-```tsx example=SaveChanges
-
-```
-
-### Undo an action
-
-A notification with an action stays until its action has run or people dismiss it.
-
-```tsx example=UndoArchive
-
-```
-
-### Try again after an error
-
-A danger notification stays until it is dismissed, and is announced at once.
-
-```tsx example=RetryAfterError
-
-```
-
-### Work that finished elsewhere
-
-A notification can stay until people dismiss it.
-
-```tsx example=ExportReady
-
-```
 
 ## Variants
 
@@ -79,7 +61,7 @@ A notification can stay until people dismiss it.
 | Info    | Something worth noticing that needs no action.         |
 | Danger  | An action that failed.                                 |
 
-```tsx example=Tones
+```tsx figure=Tones
 
 ```
 
@@ -92,31 +74,13 @@ Past a limit, older notifications wait behind a count, and danger notifications 
 | Bottom end | Most applications, at the bottom corner at the end of the line. The default. |
 | Top center | An application whose bottom corner is taken.                                 |
 
-```tsx example=TopCenter
+```tsx figure=TopCenter
 
 ```
-
-## When to use
-
-```tsx do=OneForMany open caption="One notification for an action on many items."
-
-```
-
-```tsx dont=OnePerItem open caption="A notification for each item: they stack up and hide each other."
-
-```
-
-### Reachable in the page
-
-Keep what a notification offers reachable in the page too: it closes by itself.
-
-### Content
-
-Label an action with a short verb, such as Undo or Try again, and give a notification one action at most.
 
 ## Anatomy
 
-```tsx anatomy=ToastAnatomy open
+```tsx figure=ToastAnatomy open
 
 ```
 
@@ -127,6 +91,52 @@ Label an action with a short verb, such as Undo or Try again, and give a notific
 5. **Dismiss button** (`env-toast-dismiss`, `dismissible`)
 
 Not shown: the count of hidden notifications.
+
+## Behaviour
+
+### How long it stays
+
+Its timer pauses while the pointer rests on it or it has focus.
+
+### Undo an action
+
+A notification with an action stays until its action has run or people dismiss it.
+
+```tsx figure=UndoArchive
+
+```
+
+### Try again after an error
+
+A danger notification stays until it is dismissed, and is announced at once.
+
+```tsx figure=RetryAfterError
+
+```
+
+### Work that finished elsewhere
+
+A notification can stay until people dismiss it.
+
+```tsx figure=ExportReady
+
+```
+
+## Rules
+
+Keep what a notification offers reachable in the page too: it closes by itself.
+
+```tsx figure=OneForMany open
+
+```
+
+```tsx figure=OnePerItem open
+
+```
+
+### Content
+
+Label an action with a short verb, such as Undo or Try again, and give a notification one action at most.
 
 ## Accessibility
 
@@ -152,7 +162,7 @@ Not shown: the count of hidden notifications.
 - A message that makes sense read on its own.
 - `dismiss(id)` once an action has run.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -172,18 +182,35 @@ toast.show({ tone: 'danger', message: 'Changes couldn’t be saved.' });
 
 #### Actions and duration
 
-`action` is one button, with its `label` and its `onClick`; the notification stays until it is dismissed, so call `dismiss` with the id `show` returned once the action has run. `duration` is how long it stays, in milliseconds: 5000 by default, or `Infinity` for danger notifications and those with an action. It counts only while the notification is visible, pauses on hover and keyboard focus, and starts again in full when it returns from behind the count; `Infinity` or `0` keeps it until it is dismissed, and a negative number throws a `RangeError`. `dismissible={false}` leaves out the dismiss button; it still closes after its duration, with <kbd>Esc</kbd> while focused and with `dismiss`.
+`action` is one button, with its `label` and its `onClick`; the notification stays until it is dismissed, so call `dismiss` with the id `show` returned once the action has run.
 
-```tsx source=UndoArchive
+- `duration` is how long it stays, in milliseconds: 5000 by default, or `Infinity` for danger notifications and those with an action.
+- It counts only while the notification is visible, pauses on hover and keyboard focus, and starts again in full when it returns from behind the count.
+- `Infinity` or `0` keeps it until it is dismissed, and a negative number throws a `RangeError`.
+- `dismissible={false}` leaves out the dismiss button; it still closes after its duration, with <kbd>Esc</kbd> while focused and with `dismiss`.
 
+```tsx
+const id = toast.show({
+  message: `${name} archived.`,
+  action: {
+    label: 'Undo',
+    onClick: () => {
+      restore(name);
+      // The action doesn't close the notification by itself.
+      toast.dismiss(id);
+    },
+  },
+});
 ```
 
 #### Placement and limit
 
 Toast.Provider's `defaultPlacement` is `bottom-end`, stacking upward from the bottom corner at the end of the line in the text direction, or `top-center`; `placement` on one notification overrides it. `visibleLimit`, 3 by default, is how many each placement shows at once.
 
-```tsx source=TopCenter
-
+```tsx
+<Toast.Provider defaultPlacement="top-center" visibleLimit={2}>
+  <App />
+</Toast.Provider>
 ```
 
 ### Composition

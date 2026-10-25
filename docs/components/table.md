@@ -30,53 +30,31 @@ avoidWhen:
     use: Grid
 components:
   - Table
+examples:
+  ProjectStatus: overview
+  RowDensity: example
+  NumericColumns: example
+  TableAnatomy: anatomy
+  SortableColumns: example
+  SelectRows: example
+  ResizableColumns: example
+  StickyHeader: example
+  StackedRows: example
+  NumbersAligned:
+    role: do
+    caption: Numbers aligned to the end, so the digits line up down the column.
+  NumbersUnaligned:
+    role: dont
+    caption: "Numbers aligned to the start: they can't be compared at a glance."
+  NamedStates:
+    role: do
+    caption: A Badge that names each state.
+  ColorOnly:
+    role: dont
+    caption: States told apart by color alone.
 ---
 
 # Table
-
-## Overview
-
-Table's parts are the native table elements, inside a focusable region.
-
-```tsx example=ProjectStatus
-
-```
-
-### Sort by a column
-
-A header can sort the rows by its column, and each sortable header shows the order.
-
-```tsx example=SortableColumns
-
-```
-
-### Select rows
-
-A selected row takes the selection colors, and a checkbox labelled with the row's name selects it.
-
-```tsx example=SelectRows
-
-```
-
-### Resizable columns
-
-People can resize columns by dragging the boundary at the end of a header, or with the arrow keys; a double click restores the starting widths.
-
-```tsx example=ResizableColumns
-
-```
-
-### Sticky header
-
-The header row can stay in view while the rows scroll beneath it, in a region of a set height.
-
-```tsx example=StickyHeader
-
-```
-
-### Loading
-
-While its rows load, a table shows as its own skeleton, as [Loading](../patterns/loading.md) shows.
 
 ## Variants
 
@@ -84,7 +62,7 @@ While its rows load, a table shows as its own skeleton, as [Loading](../patterns
 
 Density changes only the rows' padding; controls in cells keep the small height.
 
-```tsx example=RowDensity
+```tsx figure=RowDensity
 
 ```
 
@@ -99,7 +77,7 @@ Density changes only the rows' padding; controls in cells keep the small height.
 
 A cell can line its content up for comparing, keep it on one line, or head its row.
 
-```tsx example=NumericColumns
+```tsx figure=NumericColumns
 
 ```
 
@@ -110,21 +88,88 @@ A cell can line its content up for comparing, keep it on one line, or head its r
 | On one line | Short values that read badly broken, such as names and dates. |
 | Row header  | A header cell that heads its row, such as Total.              |
 
-## When to use
+## Anatomy
 
-```tsx do=NumbersAligned caption="Numbers aligned to the end, so the digits line up down the column."
-
-```
-
-```tsx dont=NumbersUnaligned caption="Numbers aligned to the start: they can't be compared at a glance."
+```tsx figure=TableAnatomy enlarge
 
 ```
 
-```tsx do=NamedStates caption="A Badge that names each state."
+1. **Region** (`env-table-region`)
+2. **Caption** (`env-table-caption`, `caption`)
+3. **Header row** (`env-table-head`)
+4. **Header cell** (`env-table-header-cell`)
+5. **Sort button** (`env-table-sort-button`, `onSortChange`)
+6. **Row** (`env-table-body > env-table-row:last-child`)
+7. **Cell** (`env-table-cell:last-child`)
+
+Not shown: a column's resize handle, and a stacked cell's label.
+
+## Behaviour
+
+### Sort by a column
+
+A header can sort the rows by its column, and each sortable header shows the order.
+
+```tsx figure=SortableColumns
 
 ```
 
-```tsx dont=ColorOnly caption="States told apart by color alone."
+### Select rows
+
+A selected row takes the selection colors, and a checkbox labelled with the row's name selects it.
+
+```tsx figure=SelectRows
+
+```
+
+### Resizable columns
+
+People can resize columns by dragging the boundary at the end of a header, or with the arrow keys. A double click restores the starting widths.
+
+```tsx figure=ResizableColumns
+
+```
+
+### Sticky header
+
+The header row can stay in view while the rows scroll beneath it, in a region of a set height.
+
+```tsx figure=StickyHeader
+
+```
+
+### Loading
+
+While its rows load, a table shows as its own skeleton, as [Loading](../patterns/loading.md) shows.
+
+### Adapting to width
+
+By default the columns keep their width and the region scrolls sideways.
+
+- A table can stack its rows instead where it is narrow, such as on a phone.
+- Each row then becomes a block titled by its first cell, with each other value beside its column's name.
+
+```tsx figure=StackedRows widths="22 44"
+
+```
+
+## Rules
+
+Numbers line up and states have names, so rows compare at a glance.
+
+```tsx figure=NumbersAligned
+
+```
+
+```tsx figure=NumbersUnaligned
+
+```
+
+```tsx figure=NamedStates
+
+```
+
+```tsx figure=ColorOnly
 
 ```
 
@@ -139,30 +184,6 @@ A table has no editing cell by cell and no moving between cells with the arrow k
 ### The first cell
 
 Start each row with the cell that identifies it, which titles the row when rows stack.
-
-## Anatomy
-
-```tsx anatomy=TableAnatomy enlarge
-
-```
-
-1. **Region** (`env-table-region`)
-2. **Caption** (`env-table-caption`, `caption`)
-3. **Header row** (`env-table-head`)
-4. **Header cell** (`env-table-header-cell`)
-5. **Sort button** (`env-table-sort-button`, `onSortChange`)
-6. **Row** (`env-table-body > env-table-row:last-child`)
-7. **Cell** (`env-table-cell:last-child`)
-
-Not shown: a column's resize handle, and a stacked cell's label.
-
-## Adapting to width
-
-By default the columns keep their width and the region scrolls sideways. A table can stack its rows instead: where it is narrow, such as on a phone, each row becomes a block titled by its first cell, with each other value beside its column's name.
-
-```tsx example=StackedRows widths="22 44"
-
-```
 
 ## Accessibility
 
@@ -192,11 +213,11 @@ By default the columns keep their width and the region scrolls sideways. A table
 - A `label` on every cell after the first in a stacking table.
 - The sort and resize words in the page's language, through `messages.table`.
 
-## In code
+## Compose
 
 ### Usage
 
-Name every Table.Root with a `caption`, an `aria-label` or `aria-labelledby`; the name reaches its scroll region too. Header cells are `scope="col"`; set `scope="row"` on one that heads its row, such as Total. Put `numeric` on a number column's header cell and cells, and `nowrap` on short values such as names and dates.
+Table's parts are the native table elements, inside a focusable region. Name every Table.Root with a `caption`, an `aria-label` or `aria-labelledby`; the name reaches its scroll region too. Header cells are `scope="col"`; set `scope="row"` on one that heads its row, such as Total. Put `numeric` on a number column's header cell and cells, and `nowrap` on short values such as names and dates.
 
 ```tsx source=ProjectStatus
 

@@ -1152,20 +1152,29 @@ test("a guide's statuses and exportAliases name only the exports it lists", asyn
 /** Whether `text` has `line` as one whole line. */
 const hasLine = (text, line) => text.split('\n').includes(line);
 
-test('a lean page ships each example once, its rules and legends, and no changelog', () => {
+test('Table ships each example once, by name in its frontmatter, its rules and legends, and no changelog', () => {
   const compiled = compileDocumentation();
   const table = compiled.get('components/table.md');
   assert.ok(leanPages.has('components/table.md'));
-  // A figure is a line naming its file, which still ships; In code keeps its own code.
-  assert.ok(hasLine(table, '- Example: [ProjectStatus](../examples/table/ProjectStatus.tsx)'));
+  // Table is in the one-file structure: its examples are listed in the frontmatter, with their
+  // roles and captions, and still ship; a run of figures is a line naming them; Compose keeps the
+  // code of its one source example.
+  assert.ok(hasLine(table, '  ProjectStatus: overview'));
   assert.ok(compiled.has('examples/table/ProjectStatus.tsx'));
-  assert.doesNotMatch(table, /^`{3,}tsx (?:example|do|dont|anatomy|variants)=/m);
-  assert.ok(table.includes('\n- Do: Numbers aligned to the end, so the digits line up'));
-  assert.ok(hasLine(table, "- Don't: States told apart by color alone."));
+  assert.doesNotMatch(table, /^`{3,}tsx (?:example|do|dont|anatomy|variants|figure)=/m);
+  assert.match(table, /^`{3,}tsx source=ProjectStatus$/m);
+  assert.ok(
+    hasLine(
+      table,
+      "Examples: NumbersAligned (do), NumbersUnaligned (don't), NamedStates (do), ColorOnly (don't).",
+    ),
+  );
+  assert.ok(
+    hasLine(table, '  ColorOnly: { role: dont, caption: "States told apart by color alone." }'),
+  );
   assert.ok(hasLine(table, '1. **Region** (`env-table-region`)'));
   assert.ok(hasLine(table, 'Native props: `<table>`.'));
-  assert.doesNotMatch(table, /^avoidWhen:|^## Changelog/m);
-  assert.ok(hasLine(table, '## Related'));
+  assert.doesNotMatch(table, /^## (?:Changelog|Related)/m);
   // The lean index leaves out the contributor pages; other pages ship as before.
   assert.ok(!compiled.get('index.md').includes('component-pages.md'));
   assert.match(compiled.get('components/switch.md'), /^`{3,}tsx do=/m);

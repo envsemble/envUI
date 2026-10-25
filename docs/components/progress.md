@@ -28,33 +28,22 @@ avoidWhen:
     see: loading
 components:
   - Progress
+examples:
+  UploadingFile: overview
+  SetupSteps: example
+  ProgressAnatomy: anatomy
+  PreparingExport: example
+  ExportMembers: example
+  LongTaskName: example
+  OneBarForBatch:
+    role: do
+    caption: One bar for one task, however many items it covers.
+  BarPerFile:
+    role: dont
+    caption: A bar for every file of one task, as when they upload together.
 ---
 
 # Progress
-
-## Overview
-
-The bar counts the work done, such as 40 of 100.
-
-```tsx example=UploadingFile
-
-```
-
-### Amount unknown
-
-While the amount of work is unknown, the indicator sweeps along the track.
-
-```tsx example=PreparingExport
-
-```
-
-### From preparing to done
-
-Start with an unknown amount, show the share once it is known, and replace the bar with the result.
-
-```tsx example=ExportMembers
-
-```
 
 ## Variants
 
@@ -62,27 +51,13 @@ Start with an unknown amount, show the share once it is known, and replace the b
 
 The track can split into equal steps that fill in turn.
 
-```tsx example=SetupSteps
+```tsx figure=SetupSteps
 
 ```
-
-## When to use
-
-```tsx do=OneBarForBatch caption="One bar for one task, however many items it covers."
-
-```
-
-```tsx dont=BarPerFile caption="A bar for every file of one task, as when they upload together."
-
-```
-
-### Moving forward
-
-Never move the bar backwards or hold it just short of the end, and offer a way to cancel a long task beside it.
 
 ## Anatomy
 
-```tsx anatomy=ProgressAnatomy
+```tsx figure=ProgressAnatomy
 
 ```
 
@@ -94,13 +69,51 @@ Never move the bar backwards or hold it just short of the end, and offer a way t
 
 Not shown: the steps of a split track.
 
-## Adapting to width
+## Behaviour
+
+### Amount known
+
+The bar counts the work done, such as 40 of 100.
+
+### Amount unknown
+
+While the amount of work is unknown, the indicator sweeps along the track.
+
+```tsx figure=PreparingExport
+
+```
+
+### From preparing to done
+
+Start with an unknown amount, show the share once it is known, and replace the bar with the result.
+
+```tsx figure=ExportMembers
+
+```
+
+### Adapting to width
 
 The bar fills its container. The label and the value wrap onto two lines where they don't fit.
 
-```tsx example=LongTaskName widths="12 24"
+```tsx figure=LongTaskName widths="12 24"
 
 ```
+
+## Rules
+
+One bar stands for one task.
+
+```tsx figure=OneBarForBatch
+
+```
+
+```tsx figure=BarPerFile
+
+```
+
+### Moving forward
+
+Never move the bar backwards or hold it just short of the end, and offer a way to cancel a long task beside it.
 
 ## Accessibility
 
@@ -115,7 +128,7 @@ The bar fills its container. The label and the value wrap onto two lines where t
 - `aria-valuetext` where the value isn't a percentage, such as 120 of 480 contacts.
 - A status that says when the task ends or fails, since changes of the value aren't announced.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -129,16 +142,20 @@ Progress takes `value`, how much of the task is done, between `min`, 0 by defaul
 
 `value={null}` shows an indeterminate bar, which sweeps toward the end of the line, also in right-to-left text, and is read as Loading. Start with `null`, set the value once it is known, and replace the bar with the result.
 
-```tsx source=ExportMembers
-
+```tsx
+<Progress
+  label={preparing ? 'Preparing export' : 'Exporting members'}
+  value={preparing ? null : percent}
+  valueText={preparing ? undefined : `${percent}%`}
+/>
 ```
 
 #### Steps
 
 `segments` splits the track into that many equal steps, such as 4 for a task of four stages, each filling in turn.
 
-```tsx source=SetupSteps
-
+```tsx
+<Progress label="Setting up the workspace" value={2} max={4} segments={4} valueText="Step 2 of 4" />
 ```
 
 ### Composition
