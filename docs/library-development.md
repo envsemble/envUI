@@ -46,7 +46,7 @@ A component's style sheet also holds its motion and its forced-colors rules:
 
 ## One documentation source
 
-Edit the relevant Markdown page under `docs/`; add a focused page when a new topic needs one. Register it in [the index](index.md) beneath its existing family. The index defines catalogue grouping and reading order, and page titles must match their entries. A component page carries its summary and metadata in frontmatter and follows the page template, with examples as files and props generated from the TypeScript declarations: [write a component page](component-pages.md) describes it, and how to convert a page that predates it. Other entries have a title, relative path and one-line purpose.
+Edit the relevant Markdown page under `docs/`; add a focused page when a new topic needs one. Register it in [the index](index.md) beneath its existing family. The index defines catalogue grouping and reading order, and page titles must match their entries. A component, pattern or foundation page is in the one-file structure: its summary, metadata and examples in frontmatter, its sections in a fixed order, its text as a lead and one-fact rules, examples as files and props generated from the TypeScript declarations. [Write a component page](component-pages.md) describes it, and the build fails on a page outside it. Other entries have a title, relative path and one-line purpose.
 
 Keep examples, behavior and contracts in the Markdown page and its example files. The build generates the catalogue's internal TypeScript data from these files, and compiles the packaged documentation with the examples and props tables filled in; edit the maintained Markdown, examples and TSDoc, not generated files.
 

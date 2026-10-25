@@ -2,7 +2,7 @@
 
 Read only the pages the task needs; each entry says what it is for. For a screen, read its pattern first, under Patterns at the end, then the pages of the components it names.
 
-A component or pattern page opens with how it looks and when to use it, the design rules, then `## In code`: imports, usage, composition and customizing. A page whose frontmatter lists its `examples`, each file with its role and caption, reads in one order: Variants or Options, Anatomy, Behaviour, Rules, Accessibility, Words to use, then `## Compose`, its code. Accessibility's **You provide** lists what the application must add, and **Props** lists envUI's own props; every component also takes its element's native props, such as `ref`, `className` and `aria-*`. Every example is a file in `examples/<page>/<Name>.tsx`. The TypeScript declarations hold the exact types.
+Every component, pattern and foundation page reads in one order: its frontmatter, with what it is for, what to use instead and its `examples`, each file with its role and caption; then Variants (Options on a foundation), Anatomy, Behaviour, Rules, Accessibility and Words to use, each block a short lead and its rules; then `## Compose`, its code: imports, usage, composition and customizing. Accessibility's **You provide** lists what the application must add, and **Props** lists envUI's own props; every component also takes its element's native props, such as `ref`, `className` and `aria-*`. Every example is a file in `examples/<page>/<Name>.tsx`. The TypeScript declarations hold the exact types.
 
 ## Setup and workflows
 
@@ -14,8 +14,8 @@ A component or pattern page opens with how it looks and when to use it, the desi
 - [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
 - [Extend the shared library](library-development.md) — Public API changes, changesets, catalogue specimens and acceptance checks.
-- [Write a component page](component-pages.md) — The page template, frontmatter, generated props and example files, and how to convert a page.
-- [Write a pattern page](pattern-pages.md) — The frontmatter, sections and files of pattern pages.
+- [Write a component page](component-pages.md) — The one-file structure, its frontmatter, figures and writing rules, generated props and example files.
+- [Write a pattern page](pattern-pages.md) — What a pattern says, and its frontmatter and sections in the one-file structure.
 
 ## Foundations
 
