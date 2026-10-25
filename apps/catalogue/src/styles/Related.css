@@ -68,8 +68,6 @@
   aspect-ratio: 16 / 10;
   max-block-size: 10rem;
   overflow: clip;
-  /* Every tile, in Related and the galleries alike, lifts off the page a little (Stage.css). */
-  box-shadow: var(--docs-card-shadow);
 }
 
 /* The window the example lays out in, at a width it was written for, then scaled down and centred

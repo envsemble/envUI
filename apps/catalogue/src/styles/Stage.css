@@ -5,12 +5,12 @@
    read as the catalogue's. A figure that explains
    the system rather than showing envUI at work, on a foundation page, sits on the page itself.
    Both centre what they show. A device of the documentation, kept out of envUI. */
-/* A very faint shadow that keeps a card's edges visible on the page: every tile, in Related and
-   the galleries, and the Overview's fan of cards, the catalogue's only shadows, by request. It resolves in the theme of the
+/* A very faint shadow that keeps a card's edges visible on the page: every recessed canvas: the
+   examples, the tiles of Related and the galleries, and the Overview's fan of cards, the catalogue's only shadows, by request. It resolves in the theme of the
    element that uses it. */
 :root {
   /* stylelint-disable declaration-property-value-disallowed-list -- the catalogue's one shadow,
-     for its tiles and the Overview's cards alone. */
+     for its examples, tiles and the Overview's cards alone. */
   --docs-card-shadow:
     0 0 0.125rem light-dark(oklch(0% 0 0 / 0.08), oklch(0% 0 0 / 0.35)),
     0 0.25rem 0.75rem light-dark(oklch(0% 0 0 / 0.06), oklch(0% 0 0 / 0.3));
@@ -57,6 +57,8 @@
     ),
     oklch(from var(--docs-canvas-under, var(--env-color-bg-page)) calc(l - 0.045) c h)
   );
+  /* Every canvas, an example's, a tile's or a card's, lifts off the page a little. */
+  box-shadow: var(--docs-card-shadow);
 }
 
 /* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its

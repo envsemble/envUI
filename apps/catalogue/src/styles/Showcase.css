@@ -32,8 +32,7 @@
   block-size: var(--docs-showcase-card-size);
   padding: var(--env-space-5);
   border-radius: var(--env-radius-xl);
-  /* Its fill is the recessed canvas every example sits on (Stage.css). */
-  box-shadow: var(--docs-card-shadow);
+  /* Its fill and faint shadow are the recessed canvas every example sits on (Stage.css). */
   transform-origin: 50% 100%;
   transform: translate(var(--docs-showcase-fan-x), var(--docs-showcase-fan-y))
     rotate(var(--docs-showcase-fan-rotate));
