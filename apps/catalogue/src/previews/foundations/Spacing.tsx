@@ -389,7 +389,10 @@ export function SpacingPreview() {
         />
         <Block
           title="Tighter rows"
-          text="Tables, lists and trees can pack their rows closer on their own, in either scale. Only the space in each row changes; the text keeps its size."
+          text={[
+            'Tables, lists and trees can pack their rows closer on their own, in either scale.',
+            'Only the space in each row changes; the text keeps its size.',
+          ]}
           stacked
         >
           <RowsFigure />
@@ -406,7 +409,10 @@ export function SpacingPreview() {
         <ShapesFigure />
         <Block
           title="Tall things keep sensible corners"
-          text="A button one line tall has round ends. When its label wraps, or a field fills with people, the same corners make a rounded rectangle instead of a stretched pill."
+          text={[
+            'A button one line tall has round ends.',
+            'When its label wraps, or a field fills with people, the same corners make a rounded rectangle instead of a stretched pill.',
+          ]}
         >
           <TallFigure />
         </Block>

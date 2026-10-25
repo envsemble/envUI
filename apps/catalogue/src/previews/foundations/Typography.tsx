@@ -92,6 +92,59 @@ function StyleList() {
   );
 }
 
+/**
+ * A short screen whose text reads in order: a lead in the main color, the detail after it quieter,
+ * and a section's note in the small style.
+ */
+function HierarchyFigure() {
+  return (
+    <Figure
+      label="A lead, then quieter detail"
+      className="docs-marked-stage"
+      legend={
+        <NumberedLegend
+          entries={[
+            { name: 'Lead', text: 'What matters most, first, in the main color.' },
+            { name: 'Supporting text', text: 'The detail after it, in the quieter color.' },
+            { name: 'Small body', text: 'A note under a title, a step smaller.' },
+          ]}
+        />
+      }
+    >
+      <MarkedSubject>
+        <Surface
+          background="default"
+          padding={6}
+          radius="xl"
+          className="docs-type-screen"
+          render={<Column gap={5} />}
+        >
+          <Column gap={2}>
+            <Text render={<p />} variant="headline">
+              Billing
+            </Text>
+            <Text data-docs-mark="1">
+              Your plan renews on the first of July for the whole team.
+            </Text>
+            <Text emphasis="muted" data-docs-mark="2">
+              The owner of the workspace gets a receipt after each payment, and can change the card
+              or the plan at any time.
+            </Text>
+          </Column>
+          <Column gap={1}>
+            <Text render={<p />} variant="title">
+              Payment method
+            </Text>
+            <Text variant="body-sm" data-docs-mark="3">
+              The card we charge each month
+            </Text>
+          </Column>
+        </Surface>
+      </MarkedSubject>
+    </Figure>
+  );
+}
+
 /** The same size of text in the main color and the quieter one. */
 function EmphasisFigure() {
   return (
@@ -112,6 +165,14 @@ const words = [
   { tag: 'Supporting text', text: 'Text a step smaller and quieter, for details and hints.' },
   { tag: 'A caption', text: 'A small, quiet note under a figure or a chart.' },
   { tag: 'Quieter text', text: 'The same size in the quieter color of supporting text.' },
+  {
+    tag: 'A lead',
+    text: 'The sentence or two that open a page or a section, in the main color, before quieter detail.',
+  },
+  {
+    tag: 'Short paragraphs',
+    text: 'Running text in paragraphs of a few lines, each line a comfortable length.',
+  },
 ] as const;
 
 export function TypographyPreview() {
@@ -143,12 +204,41 @@ export function TypographyPreview() {
         </Block>
       </Topic>
       <Topic
-        title="One typeface, two weights"
-        lead="Everything is set in one typeface, at a regular weight for reading and a medium weight for headings and labels. A bold weight is kept for the strongest emphasis in a small space, such as today in a calendar."
+        title="Text that reads well"
+        lead="Running text reads best in short paragraphs whose lines stop at a comfortable length. The sentence that matters comes first; the detail after it is quieter."
       >
         <Block
+          title="A lead, then quieter detail"
+          text={[
+            'Open a page or a section with a sentence or two in the main color that say what matters.',
+            'Set the detail after it in the quieter color, or a step smaller, so people can read the start and skip the rest.',
+          ]}
+        >
+          <HierarchyFigure />
+        </Block>
+        <Block
+          title="Lines a comfortable length"
+          text="A line holds about as many words as a line of a book. However wide the window, a paragraph wraps at that length, so the eye finds the start of the next line easily."
+        />
+        <Block
+          title="Short paragraphs"
+          text="A paragraph makes one point in a few lines. Two points are two paragraphs, which read faster than one long block."
+        />
+      </Topic>
+      <Topic
+        title="One typeface, two weights"
+        lead="Everything is set in one typeface, at a regular weight for reading and a medium weight for headings and labels."
+      >
+        <Block
+          title="Bold, rarely"
+          text="A bold weight is kept for the strongest emphasis in a small space, such as today in a calendar."
+        />
+        <Block
           title="Text follows the reader"
-          text="Text grows with the text size people choose in their browser, and the compact scale makes every style a step smaller. Choose Compact under Scale in the Display menu to see it on this site."
+          text={[
+            'Text grows with the text size people choose in their browser, and the compact scale makes every style a step smaller.',
+            'Choose Compact under Scale in the Display menu to see it on this site.',
+          ]}
         />
         <Block
           title="Space belongs to the layout"
