@@ -1,5 +1,5 @@
-/* The Site's type hierarchy, which its parts set so a page never has to (Topic.tsx, FigureSection
-   in Figures.tsx): a section's title large; its lead, the paragraph that opens it, a step larger
+/* The Usage guide's type hierarchy, which its parts set so a page never has to (Topic.tsx,
+   FigureSection in Figures.tsx): a section's title large; its lead, the paragraph that opens it, a step larger
    than body text in the main color; a block's title in the title style; the paragraphs that
    support a figure or a heading in body text, in the quieter muted color; and the notes of figures
    and legends smaller still. Every piece of running text keeps a readable measure, about 70

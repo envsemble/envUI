@@ -35,14 +35,14 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-/* The envUI Docs lockup in the Docs: as tall as the wordmark on the Site, so both sit level. */
+/* The envUI Docs lockup in the Docs: as tall as the Usage guide's wordmark, so both sit level. */
 .docs-brand-docs {
   display: block;
   block-size: 0.864rem;
   inline-size: auto;
 }
-/* The navigation at the start of a wide window: the Site's rail beside the drawer of the chosen
-   destination's pages, or the Docs' drawer, flush on the navigation's background with no line
+/* The navigation at the start of a wide window: the Usage guide's rail beside the drawer of the
+   chosen destination's pages, or the Docs' drawer, flush on the navigation's background with no line
    between them, as tall as the window. The drawer keeps its top and foot in view and scrolls its
    list; the reader resizes it by its end edge, and the catalogue keeps the width it starts at and
    its bounds (DocumentationNavigation.tsx). In the sheet of a narrower window they take the
@@ -303,7 +303,7 @@ body {
   max-inline-size: 42ch;
   text-wrap: balance;
 }
-/* A Site page's icon: large at the banner's end, turned, faint. */
+/* A Usage guide page's icon: large at the banner's end, turned, faint. */
 .docs-page-banner-symbol {
   position: absolute;
   inset-inline-end: -1rem;

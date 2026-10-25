@@ -57,7 +57,7 @@ test('the 0.x routes of renamed pages open the pages under their new names', () 
   }
 });
 
-test('the addresses of the views before the Site and the Docs split open the pages they became', () => {
+test('the addresses of the views before the Usage guide and the Docs split open the pages they became', () => {
   const routes: Record<string, string> = {
     'components/button/overview': 'components/button',
     'components/button/props?section=props-Button-variant':
@@ -83,10 +83,10 @@ test('the addresses of the views before the Site and the Docs split open the pag
     // The agent benchmark went, and its page opens the overview.
     benchmark: 'overview',
     'get-started/migration': 'docs/migration',
-    // The Site's Get started page is the setup guide.
+    // The Usage guide's Get started page is the setup guide.
     'get-started': 'docs/setup',
     'contributing/library-development': 'overview',
-    // The Site's changelog is the Docs' now, with its release notes.
+    // The Usage guide's changelog is the Docs' now, with its release notes.
     changelog: 'docs/changelog',
     'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
     // Pages folded into another open it, at the section that holds them, and in the Docs its page.
@@ -101,7 +101,7 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'components/search-trigger':
       'components/command-palette?section=opening-it-the-button-and-the-shortcut',
     'docs/patterns/search-trigger': 'docs/components/command-palette',
-    // Patterns merged into others open the pattern they joined, on the Site and in the Docs.
+    // Patterns merged into others open the pattern they joined, in the Usage guide and in the Docs.
     'patterns/window-frame': 'patterns/app-frame',
     'docs/patterns/window-frame': 'docs/patterns/app-frame',
     'components/window-frame': 'patterns/app-frame',
@@ -204,7 +204,7 @@ test('a guide in the Docs renders shared Markdown and follows relative links', a
     .getByRole('link', { name: 'Surface', exact: true })
     .first()
     .click();
-  // A link to a component opens its page on the Site.
+  // A link to a component opens its page in the Usage guide.
   await expect(page).toHaveURL(/\/components\/surface$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Surface');
 
@@ -506,8 +506,8 @@ test('every stage is the only frame of its figure', async ({ page }) => {
 });
 
 test("a specimen's titles and captions name options in words, not values", async ({ page }) => {
-  // The Site speaks plain language in its specimens too: Small rather than sm, Step 1 rather than
-  // gap={1}. A value starts in lower case or is written as code, with =, braces, quotes or --.
+  // The Usage guide speaks plain language in its specimens too: Small rather than sm, Step 1 rather
+  // than gap={1}. A value starts in lower case or is written as code, with =, braces, quotes or --.
   const pages = readdirSync('docs/components')
     .filter((file) => readFileSync(`docs/components/${file}`, 'utf8').includes('<!-- specimen:'))
     .map((file) => file.replace(/\.md$/, ''));
@@ -531,10 +531,11 @@ test("a specimen's titles and captions name options in words, not values", async
 });
 
 /**
- * The words a page of the Site shows and names, as a reader and a screen reader meet them: every
- * text and the names, titles and placeholders of its content, outside the Code disclosures under
- * its figures and outside the examples they show, which are envUI at work with an application's
- * own sample text. Foundation figures, specimens, captions, swatches and legends all count.
+ * The words a page of the Usage guide shows and names, as a reader and a screen reader meet them:
+ * every text and the names, titles and placeholders of its content, outside the Code disclosures
+ * under its figures and outside the examples they show, which are envUI at work with an
+ * application's own sample text. Foundation figures, specimens, captions, swatches and legends all
+ * count.
  */
 async function siteWords(page: Page) {
   return page.locator('.docs-main').evaluate((main) => {
@@ -559,8 +560,8 @@ const technicalOf = (words: string[]) =>
 
 /**
  * The pages that show no technical text at all: every foundation, dev mode's page and every
- * pattern. Every other page of the Site is reported until it is rewritten to the same rule, then
- * joins this list.
+ * pattern. Every other page of the Usage guide is reported until it is rewritten to the same rule,
+ * then joins this list.
  */
 const plainPages = [
   'foundations/colors',
@@ -594,7 +595,7 @@ const plainPages = [
 test('the foundation and pattern pages show no technical text, in their words or their figures', async ({
   page,
 }) => {
-  // The Site is for people looking at envUI: no token names, hex colors, lengths, percentages or
+  // The Usage guide is for people looking at envUI: no token names, hex colors, lengths, percentages or
   // code. They belong to each foundation's guide and each pattern's page in the Docs.
   test.slow();
   await page.goto(`${catalogueUrl}/`);
@@ -615,7 +616,7 @@ test('the foundation and pattern pages show no technical text, in their words or
   }
 });
 
-/** The component pages of the Site held to the plain-language rule. */
+/** The component pages of the Usage guide held to the plain-language rule. */
 const plainComponentPages = allPages.filter(
   ({ kind, area }) => area === 'usage' && kind === 'component',
 );
@@ -635,7 +636,7 @@ test('component pages show no technical text, in their words or their figures', 
   expect(found, "Say it in words, and move the value to the page's In code.").toEqual([]);
 });
 
-test('the technical text on every other page of the Site is counted, for the rewrite to come', async ({
+test('the technical text on every other page of the Usage guide is counted, for the rewrite to come', async ({
   page,
 }, testInfo) => {
   // Reporting only: the counts say how far each page is from the model pages' rule.
@@ -657,11 +658,11 @@ test('the technical text on every other page of the Site is counted, for the rew
     );
   }
   const report = counts.length ? counts.join('\n') : 'No technical text on any page.';
-  console.log(`Technical text on the Site, by page:\n${report}`);
+  console.log(`Technical text in the Usage guide, by page:\n${report}`);
   await testInfo.attach('technical-text.txt', { body: report, contentType: 'text/plain' });
 });
 
-/** The pages set in the Site's type hierarchy so far, the samples of the typography rework. */
+/** The pages set in the Usage guide's type hierarchy so far, the samples of the typography rework. */
 const typographyPages = [
   'foundations/spacing',
   'foundations/typography',
@@ -669,7 +670,7 @@ const typographyPages = [
   'patterns/forms',
 ];
 
-test("the Site's text keeps a readable measure, and opens each section with a larger lead", async ({
+test("the Usage guide's text keeps a readable measure, and opens each section with a larger lead", async ({
   page,
 }) => {
   // Running text wraps at about 70 characters, never one long line across the page; a section's
@@ -872,7 +873,7 @@ test('the props in the Docs link each source file at the revision the site was b
   );
 });
 
-test('the hosted build opens every page of the Site and the Docs without network or script errors', async ({
+test('the hosted build opens every page of the Usage guide and the Docs without network or script errors', async ({
   page,
   context,
 }) => {

@@ -5,7 +5,7 @@
 //
 // - 3d: the Docs' dev mode page's picture, the view's planes alone, with the node tree, the
 //   inspector, the toolbar and the legend out of the picture, cropped to the planes;
-// - the Site's dev mode page's pictures of dev mode at work: whole, the whole of it with a card
+// - the Usage guide's dev mode page's pictures of dev mode at work: whole, the whole of it with a card
 //   selected; toolbar, the view's toolbar with its View dropdown open; spacing, a card alone, its padding and gaps hatched;
 //   problems, the node tree on a phone, its problems counted; inspector, the selected card's details
 //   with its problem, down to where its tokens start; frame, the page on a phone, straight on.
@@ -156,7 +156,7 @@ async function captureView(browser, theme) {
   await context.close();
 }
 
-/** Dev mode at work on the demo application, in the pictures the Site's dev mode page shows. */
+/** Dev mode at work on the demo application, in the pictures the Usage guide's dev mode page shows. */
 async function captureAtWork(browser, theme) {
   const { context, tab } = await openDevMode(browser, theme, window);
   const card = tab.getByRole('treeitem', { name: /^column "env-card"/ }).first();

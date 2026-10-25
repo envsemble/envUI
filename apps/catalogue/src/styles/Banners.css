@@ -1,7 +1,7 @@
 /* The Docs' banners (PageHeader.tsx): a page of the Docs, the developer reference, reads from the
    start like a document, its trail in monospace, on the page's own color inside an edge, the envUI
    mark's circle and pill drawn as outlines at its end, as on a plan (BannerShapes.tsx). No shadows.
-   The banner itself, which the Site's share, is in Shell.css. */
+   The banner itself, which the Usage guide's pages share, is in Shell.css. */
 .docs-banner > :not(.docs-banner-shapes) {
   position: relative;
   z-index: var(--env-z-raised);

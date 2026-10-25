@@ -550,8 +550,8 @@ const mergedPatterns: Record<string, string> = {
 const apiSection = (section: string | null) => section?.startsWith('props-') ?? false;
 
 /**
- * Keeps old addresses working: the views pages had before the Site and the Docs split, the 0.x
- * names of pages and the pages that moved, each opens the page it became.
+ * Keeps old addresses working: the views pages had before the Usage guide and the Docs split, the
+ * 0.x names of pages and the pages that moved, each opens the page it became.
  */
 export function normalizeRoute(route: string): string {
   const [originalPath, ...query] = route.split('?');
@@ -560,8 +560,8 @@ export function normalizeRoute(route: string): string {
   const section = search.get('section');
   if (!originalPath) return `${homeRoute}${rest()}`;
   // The overview's views: the components and Get started, which held the setup guide, the agents'
-  // skills and the guides by their document's id. The Site's Get started page that followed is the
-  // setup guide too.
+  // skills and the guides by their document's id. The Usage guide's Get started page that followed
+  // is the setup guide too.
   if (/^overview\/components(?:\/|$)/.test(originalPath))
     return section && section !== 'overview-components'
       ? `components${rest()}`
@@ -593,7 +593,7 @@ export function normalizeRoute(route: string): string {
   if (originalPath === 'docs/agent-skills') return 'docs/agent-tooling';
   // The agent benchmark is gone: its page opens the overview.
   if (originalPath === 'benchmark') return `${homeRoute}${rest()}`;
-  // The Site's changelog moved to the Docs, with its release notes.
+  // The Usage guide's changelog moved to the Docs, with its release notes.
   if (originalPath === 'changelog') return `docs/changelog${rest()}`;
   // A destination's own address opens its first page.
   if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
