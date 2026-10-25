@@ -62,63 +62,33 @@ components:
   - Drawer
   - Rail
   - Bar
+examples:
+  AppDestinations: overview
+  TabletDestinations:
+    role: overview
+    caption: 'Rail: each destination an icon above a short label, for a tablet.'
+  PhoneDestinations:
+    role: overview
+    caption: 'Bar: three to five destinations along the bottom of a phone.'
+  GuideSections: example
+  DrawerAnatomy: anatomy
+  RailAnatomy: anatomy
+  BarAnatomy: anatomy
+  SectionAnatomy: anatomy
+  OneListThreeForms: example
+  NestedSections: example
+  MoreDestinations: example
+  ResizableDrawer: example
+  SharedWidth: example
+  GroupsTogether:
+    role: do
+    caption: A group's destinations next to each other.
+  GroupsApart:
+    role: dont
+    caption: 'A group split up: its heading shows twice.'
 ---
 
 # Drawer
-
-## Overview
-
-```tsx example=AppDestinations
-
-```
-
-```tsx example=TabletDestinations caption="Rail: each destination an icon above a short label, for a tablet."
-
-```
-
-```tsx example=PhoneDestinations caption="Bar: three to five destinations along the bottom of a phone."
-
-```
-
-### One list, three forms
-
-The drawer, the rail and the bar take the same list of destinations, and [Scaffold](scaffold.md) shows the one that fits its width. A group is a heading in the drawer only: the rail and the bar show its destinations one after another. Nested sections are the drawer's too: the rail and the bar show the top level, and mark the destination whose section holds the current page.
-
-```tsx example=OneListThreeForms
-
-```
-
-### Nested sections
-
-A destination can hold others, such as the pages of a chapter: they sit under it, indented, in a section that opens and closes with its chevron. The section that holds the current page is open, and a section without a page of its own is only a heading.
-
-```tsx example=NestedSections
-
-```
-
-### Without icons
-
-A drawer's destinations can go without icons, such as the sections of a guide; the rail and the bar need them.
-
-```tsx example=GuideSections
-
-```
-
-### More than five
-
-Past five destinations, the bar's fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.
-
-```tsx example=MoreDestinations
-
-```
-
-### Resizable
-
-People can resize the drawer by its end edge, with the same grip as between [Panes](panes.md). As it narrows, a label that no longer fits ends in an ellipsis and shows in full in a tooltip.
-
-```tsx example=ResizableDrawer
-
-```
 
 ## Variants
 
@@ -131,13 +101,123 @@ Each form is a plain rectangle along the window's edge. On a surface, such as a 
 | Navigation | The navigation's own fill, shared with the top bar. The default. |
 | Page       | The page's color, such as beside a top bar with a fill.          |
 
-## When to use
+### Without icons
 
-```tsx do=GroupsTogether caption="A group's destinations next to each other."
+A drawer's destinations can go without icons, such as the sections of a guide; the rail and the bar need them.
+
+```tsx figure=GuideSections
 
 ```
 
-```tsx dont=GroupsApart caption="A group split up: its heading shows twice."
+## Anatomy
+
+```tsx figure=DrawerAnatomy
+
+```
+
+1. **Drawer** (`env-drawer`)
+2. **Header** (`env-drawer-header`, `header`)
+3. **Item** (`env-drawer-item`)
+4. **Label** (`env-drawer-label`)
+5. **Count** (`env-drawer-count`, `count`)
+6. **Group** (`env-drawer-section`, `group`)
+7. **Heading** (`env-drawer-heading`)
+8. **Footer** (`env-drawer-footer`, `footer`)
+
+```tsx figure=RailAnatomy
+
+```
+
+1. **Rail** (`env-rail`)
+2. **Header** (`env-rail-header`, `header`)
+3. **Item** (`env-rail-item`)
+4. **Indicator** (`env-rail-indicator`)
+5. **Count** (`env-rail-count`, `count`)
+6. **Label** (`env-rail-label`)
+7. **Footer** (`env-rail-footer`, `footer`)
+
+```tsx figure=BarAnatomy enlarge
+
+```
+
+1. **Bar** (`env-bar`)
+2. **Item** (`env-bar li:nth-child(2) > env-bar-item`)
+3. **Indicator** (`env-bar-icon`)
+4. **Count** (`env-bar-count`, `count`)
+5. **Label** (`env-bar-text`)
+
+```tsx figure=SectionAnatomy
+
+```
+
+1. **Section** (`env-drawer-branch`)
+2. **Item** (`env-drawer-branch-row > env-drawer-item`)
+3. **Section button** (`env-drawer-toggle`)
+4. **Chevron** (`env-drawer-toggle > env-drawer-chevron`)
+5. **Nested destinations** (`env-drawer-children`)
+
+Not shown: the handle on a resizable drawer's end edge, and the bar's More.
+
+## Behaviour
+
+### One list, three forms
+
+The drawer, the rail and the bar take the same list of destinations, and [Scaffold](scaffold.md) shows the one that fits its width.
+
+- A group is a heading in the drawer only: the rail and the bar show its destinations one after another.
+- Nested sections are the drawer's too: the rail and the bar show the top level, and mark the destination whose section holds the current page.
+
+```tsx figure=OneListThreeForms
+
+```
+
+### Nested sections
+
+A destination can hold others, such as the pages of a chapter: they sit under it, indented, in a section that opens and closes with its chevron.
+
+- The section that holds the current page is open.
+- A section without a page of its own is only a heading.
+
+```tsx figure=NestedSections
+
+```
+
+### More than five
+
+Past five destinations, the bar's fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.
+
+```tsx figure=MoreDestinations
+
+```
+
+### Resizable
+
+People can resize the drawer by its end edge, with the same grip as between [Panes](panes.md).
+
+- As it narrows, a label that no longer fits ends in an ellipsis and shows in full in a tooltip.
+- A group heading cut short shows its full text on hover.
+
+```tsx figure=ResizableDrawer
+
+```
+
+### Adapting to width
+
+The bar's destinations share its width equally, and their labels stay on one line.
+
+```tsx figure=SharedWidth widths="20 36"
+
+```
+
+## Rules
+
+Mark where people are, keep groups together, and keep labels short.
+
+```tsx figure=GroupsTogether
+
+```
+
+```tsx figure=GroupsApart
 
 ```
 
@@ -151,68 +231,19 @@ The drawer's and the rail's header holds the application's name, search or the m
 
 ### Sections
 
-Give a section a page of its own where it has an overview to show, and keep to two levels, three at most: a deeper outline belongs on the page itself.
+Give a section a page of its own where it has an overview to show.
+
+- Keep to two levels, three at most: a deeper outline belongs on the page itself.
 
 ### Labels
 
 Keep labels to a word or two, so they fit on one line in the drawer and under their icons in the rail and the bar.
 
-## Anatomy
+### Resizable
 
-```tsx anatomy=DrawerAnatomy
+Keep a resizable drawer on its own background, so its handle is the edge of a surface.
 
-```
-
-1. **Drawer** (`env-drawer`)
-2. **Header** (`env-drawer-header`, `header`)
-3. **Item** (`env-drawer-item`)
-4. **Label** (`env-drawer-label`)
-5. **Count** (`env-drawer-count`, `count`)
-6. **Group** (`env-drawer-section`, `group`)
-7. **Heading** (`env-drawer-heading`)
-8. **Footer** (`env-drawer-footer`, `footer`)
-
-```tsx anatomy=RailAnatomy
-
-```
-
-1. **Rail** (`env-rail`)
-2. **Header** (`env-rail-header`, `header`)
-3. **Item** (`env-rail-item`)
-4. **Indicator** (`env-rail-indicator`)
-5. **Count** (`env-rail-count`, `count`)
-6. **Label** (`env-rail-label`)
-7. **Footer** (`env-rail-footer`, `footer`)
-
-```tsx anatomy=BarAnatomy enlarge
-
-```
-
-1. **Bar** (`env-bar`)
-2. **Item** (`env-bar li:nth-child(2) > env-bar-item`)
-3. **Indicator** (`env-bar-icon`)
-4. **Count** (`env-bar-count`, `count`)
-5. **Label** (`env-bar-text`)
-
-```tsx anatomy=SectionAnatomy
-
-```
-
-1. **Section** (`env-drawer-branch`)
-2. **Item** (`env-drawer-branch-row > env-drawer-item`)
-3. **Section button** (`env-drawer-toggle`)
-4. **Chevron** (`env-drawer-toggle > env-drawer-chevron`)
-5. **Nested destinations** (`env-drawer-children`)
-
-Not shown: the handle on a resizable drawer's end edge, and the bar's More.
-
-## Adapting to width
-
-The bar's destinations share its width equally, and their labels stay on one line.
-
-```tsx example=SharedWidth widths="20 36"
-
-```
+- Leave a drawer in a sheet of a narrow window at its own width.
 
 ## Accessibility
 
@@ -245,66 +276,62 @@ The bar's destinations share its width equally, and their labels stay on one lin
 - Unique labels, and `messages.navigation` in the application's language.
 - Names for the controls in the header and the footer.
 
-## In code
+## Compose
 
 ### Usage
 
-Drawer, Rail and Bar take `destinations`, one array of `Destination`s, each with its `label`, an `icon`, a `count` and a `group`. With `href`, a destination is a native link, through the application's router link from `LinkProvider`, and `onSelect` runs as it is followed; with `onSelect` alone it is a button, for a view without an address. Set `current` on one destination, from the router: a press doesn't select one by itself. `header` and `footer` hold content above and below the destinations of a Drawer or a Rail, such as the application's name and the account's menu. [Scaffold](scaffold.md) shows the form that fits its width, at the window's start or, for the bar, at its bottom.
+```tsx
+const destinations: Destination[] = [
+  { label: 'Inbox', href: '/inbox', icon: <Inbox />, count: 12, current: true },
+  { label: 'Projects', href: '/projects', icon: <Folder />, group: 'Work' },
+];
 
-```tsx source=AppDestinations
-
+<Drawer destinations={destinations} header={<Text>Northwind</Text>} footer={account} />;
 ```
+
+Drawer, Rail and Bar take `destinations`, one array of `Destination`s, each with its `label`, an `icon`, a `count` and a `group`. With `href`, a destination is a native link, through the router link from `LinkProvider`, and `onSelect` runs as it is followed; with `onSelect` alone it is a button, for a view without an address. Set `current` on one destination, from the router: a press doesn't select one by itself. `header` and `footer` hold content above and below the destinations of a Drawer or a Rail. Scaffold shows the form that fits its width, at the window's start or, for the bar, at its bottom.
 
 #### One list, three forms
 
 Pass the same array to each form. A heading starts each run of destinations of one `group` in the drawer, at `headingLevel`, 2 by default, so keep a group's destinations next to each other; the rail and the bar show no headings, so order the array. A `DrawerDestination` may leave its `icon` out: leave it out of every destination of a list, or of none. Rail and Bar need icons.
 
-```tsx source=OneListThreeForms
-
-```
-
 #### Nested sections
 
-A destination's `children` are destinations nested under it, at any depth: Drawer shows them indented, in a section that opens and closes. A section with `href` or `onSelect` is a destination itself, with a button at its end that opens and closes it; one with neither is only its heading, a button that does. Drawer reads `group` at the top level only. Rail and Bar show the top level: there a destination whose `children` hold the current one takes the current fill and reports `aria-current="true"`, so give the top level an `href` where the same array goes to them.
+```tsx
+const projects: DrawerDestination = {
+  label: 'Projects',
+  href: '/guide/projects',
+  children: [
+    { label: 'Create a project', href: '/guide/projects/create' },
+    { label: 'Sharing', children: [{ label: 'Invite your team', href: '/guide/projects/invite' }] },
+  ],
+};
+```
+
+A destination's `children` nest under it, at any depth. A section with `href` or `onSelect` is a destination itself, with a button at its end that opens and closes it; one with neither is only its heading, a button that does. Drawer reads `group` at the top level only. In Rail and Bar, a destination whose `children` hold the current one takes the current fill and reports `aria-current="true"`, so give the top level an `href` where the same array goes to them.
 
 The sections that hold the current destination open as it becomes current; the drawer keeps the rest as people open and close them, from `defaultExpanded`. To keep them yourself, such as for the next visit, pass `expanded` and update it from `onExpandedChange`, which also asks to open the sections of a new current destination. Both name a section by its `href`, or its label where it has none, so keep those labels unique.
-
-```tsx source=NestedSections
-
-```
 
 ```tsx
 const [expanded, setExpanded] = useState<string[]>([]);
 <Drawer destinations={destinations} expanded={expanded} onExpandedChange={setExpanded} />;
 ```
 
-#### Rail
+#### Rail and Bar
 
-A Rail's labels are short enough to fit under their icons. `header` holds the main action or a button that opens the navigation, and `footer` the account's AvatarButton. Scaffold gives the rail the window's height.
-
-```tsx source=TabletDestinations
-
-```
-
-#### Bar
-
-Give a Bar three to five destinations: past five it shows the first four and More, which opens the rest in a menu.
-
-```tsx source=MoreDestinations
-
-```
+A Rail's `header` holds the main action or a button that opens the navigation, and `footer` the account's AvatarButton; Scaffold gives the rail the window's height. Give a Bar three to five destinations: past five it shows the first four and More.
 
 #### Background and name
-
-`background` is `default`, the navigation's fill, the same as TopBar's, as a plain rectangle, or `page`, the page's background; on a surface, such as a Sheet, both take the surface's color. `aria-label` names the landmark, Main by default from EnvUIProvider's `messages.navigation`; give each navigation landmark of a page its own.
 
 ```tsx
 <Bar background="page" aria-label="Project" destinations={destinations} />
 ```
 
+`background` is `default`, the navigation's fill, the same as TopBar's, or `page`, the page's background. `aria-label` names the landmark, Main by default from EnvUIProvider's `messages.navigation`; give each navigation landmark of a page its own.
+
 #### Resizable
 
-With `resizable`, people resize a Drawer by its end edge, between `minWidth` and `maxWidth`, 15 and 30 rem by default, and never past half its container or the window; the arrow keys move the handle 1 rem, and 5 with <kbd>Shift</kbd>. It starts at `defaultWidth`, 17.5 rem, which a double click on the handle returns to. `width` and `onWidthChange` let the application keep the width for the next visit, in rem: `onWidthChange` reports each width while dragging, and with `committed` true as a drag ends, a key moves the handle or a double click resets it. A `width` that isn't a finite number is ignored. `resizeLabel` names the handle.
+With `resizable`, people resize a Drawer between `minWidth` and `maxWidth`, 15 and 30 rem by default, and never past half its container or the window; the arrow keys move the handle 1 rem, and 5 with <kbd>Shift</kbd>. It starts at `defaultWidth`, 17.5 rem, which a double click on the handle returns to. `width` and `onWidthChange` let the application keep the width for the next visit, in rem: `onWidthChange` reports each width while dragging, and with `committed` true as a drag ends, a key moves the handle or a double click resets it. A `width` that isn't a finite number is ignored. `resizeLabel` names the handle.
 
 The example keeps the width in the browser's storage. It reads it once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number.
 
@@ -312,21 +339,15 @@ The example keeps the width in the browser's storage. It reads it once the drawe
 
 ```
 
-A heading cut short takes no focus, so it gives its full text as its `title`, shown on hover. Keep a resizable drawer on its own background rather than `background="page"`, so its handle is the edge of a surface and doesn't float beside the page's content, and leave `resizable` off a drawer in a sheet of a narrow window.
+A heading cut short takes no focus, so it gives its full text as its `title`. Keep a resizable drawer off `background="page"`, so its handle doesn't float beside the page's content, and leave `resizable` off a drawer in a sheet of a narrow window.
 
 ### Composition
 
-The drawer's parts are the drawer, `env-drawer`, its header, `env-drawer-header`, each group, `env-drawer-section`, with its heading, `env-drawer-heading`, each item, `env-drawer-item`, with its label, `env-drawer-label`, and count, `env-drawer-count`, each section, `env-drawer-branch`, with its row, `env-drawer-branch-row`, the button at the end of its link, `env-drawer-toggle`, its chevron, `env-drawer-chevron`, and its nested destinations, `env-drawer-children`, the footer, `env-drawer-footer`, and the handle on a resizable drawer's end edge, `env-drawer-resize-handle`, the same grip as Panes.Divider's.
-
-The rail's are the rail, `env-rail`; its header, `env-rail-header`; its list of destinations, `env-rail-list`, which scrolls where the rail is shorter; each destination, `env-rail-item`, with its indicator, `env-rail-indicator`, its count, `env-rail-count`, and its label, `env-rail-label`; and its footer, `env-rail-footer`.
-
-The bar's are the bar, `env-bar`; its row of destinations, `env-bar-list`; each destination, `env-bar-item`, with its indicator, `env-bar-icon`, its count, `env-bar-count`, and its label, `env-bar-text`; and More, `env-bar-more`.
-
-The current item of each has `data-current`, a section's button `aria-expanded`, and a form on the page's background `data-background="page"`.
+The parts the anatomy doesn't show: a section's row, `env-drawer-branch-row`, and the handle on a resizable drawer's end edge, `env-drawer-resize-handle`, the same grip as Panes.Divider's; the rail's list of destinations, `env-rail-list`, which scrolls where the rail is shorter; the bar's row of destinations, `env-bar-list`, and More, `env-bar-more`. The current item of each has `data-current`, a section's button `aria-expanded`, and a form on the page's background `data-background="page"`.
 
 ### Customize
 
-`--env-drawer-item-container`, `--env-drawer-item-content`, `--env-drawer-item-icon`, `--env-drawer-item-selected` and `--env-drawer-item-selected-content` set the colors of one Drawer's items, through `style` or CSS: their fill, their label, their icon, and the current item's fill and its label and icon. Rail takes `--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content`, and Bar `--env-bar-item-container`, `--env-bar-item-content`, `--env-bar-item-icon`, `--env-bar-item-selected` and `--env-bar-item-selected-content`. Hover, focus and press then follow them, as state layers; with none set, each keeps its own colors.
+`--env-drawer-item-container`, `--env-drawer-item-content`, `--env-drawer-item-icon`, `--env-drawer-item-selected` and `--env-drawer-item-selected-content` color one Drawer's items, through `style` or CSS: their fill, their label, their icon, and the current item's fill and its label and icon. Rail takes `--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content`, and Bar `--env-bar-item-container`, `--env-bar-item-content`, `--env-bar-item-icon`, `--env-bar-item-selected` and `--env-bar-item-selected-content`. Hover, focus and press follow them; with none set, each keeps its own colors.
 
 ## Changelog
 
