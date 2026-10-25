@@ -5004,7 +5004,7 @@
         },
         {
           "class": "env-table-of-contents-body",
-          "description": "The track and the list beside it."
+          "description": "Around the list."
         },
         {
           "class": "env-table-of-contents-item",
@@ -5012,33 +5012,32 @@
         },
         {
           "class": "env-table-of-contents-link",
-          "description": "A section's link."
+          "description": "A section's link, its dot drawn before it."
         },
         {
           "class": "env-table-of-contents-list",
           "description": "A level of sections."
-        },
-        {
-          "class": "env-table-of-contents-marker",
-          "description": "The marker on the track beside the current section."
-        },
-        {
-          "class": "env-table-of-contents-track",
-          "description": "The track beside the links, drawn once they are measured."
-        },
-        {
-          "class": "env-table-of-contents-track-line",
-          "description": "The track's line, which steps in with each level."
         }
       ],
       "states": [
         {
-          "attribute": "data-hidden",
+          "attribute": "data-design",
+          "values": [
+            "pill",
+            "progress",
+            "quiet"
+          ],
+          "parts": [
+            "env-table-of-contents"
+          ]
+        },
+        {
+          "attribute": "data-passed",
           "values": [
             ""
           ],
           "parts": [
-            "env-table-of-contents-marker"
+            "env-table-of-contents-link"
           ]
         }
       ]

@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type CSSProperties,
   type MouseEvent,
   type RefObject,
 } from 'react';
@@ -20,12 +21,10 @@ import {
   flatten,
   outline,
   slug,
-  trackPath,
   uniqueId,
   type HeadingEntry,
   type SectionPosition,
   type TableOfContentsItem,
-  type TrackPath,
 } from './internal/contentsOutline.js';
 
 export type { TableOfContentsItem } from './internal/contentsOutline.js';
@@ -147,25 +146,40 @@ function signature(items: readonly TableOfContentsItem[]): string {
 interface ListProps {
   items: readonly TableOfContentsItem[];
   current: string | undefined;
+  /** The sections before the current one, in reading order: those the reader has passed. */
+  passed: ReadonlySet<string>;
+  /** How deep this level is nested: 0 for the top. */
+  depth: number;
   onNavigate: (event: MouseEvent<HTMLElement>, id: string) => void;
 }
 
 /** One level of the outline: its links, each with the level nested under it. */
-function List({ items, current, onNavigate }: ListProps) {
+function List({ items, current, passed, depth, onNavigate }: ListProps) {
   return (
-    <ol className="env-table-of-contents-list">
+    <ol
+      className="env-table-of-contents-list"
+      // The level's depth, which the links take their indent from.
+      style={depth > 0 ? ({ '--env-table-of-contents-depth': depth } as CSSProperties) : undefined}
+    >
       {items.map((item) => (
         <li key={item.id} className="env-table-of-contents-item">
           <ActionElement
             className="env-table-of-contents-link"
             href={`#${item.id}`}
             aria-current={item.id === current ? 'location' : undefined}
+            data-passed={passed.has(item.id) ? '' : undefined}
             onClick={(event) => onNavigate(event, item.id)}
           >
             {item.label}
           </ActionElement>
           {item.children && item.children.length > 0 && (
-            <List items={item.children} current={current} onNavigate={onNavigate} />
+            <List
+              items={item.children}
+              current={current}
+              passed={passed}
+              depth={depth + 1}
+              onNavigate={onNavigate}
+            />
           )}
         </li>
       ))}
@@ -191,7 +205,6 @@ export function TableOfContents({
   const [readItems, setReadItems] = useState<readonly TableOfContentsItem[]>([]);
   const items = givenItems ?? readItems;
   const [current, setCurrent] = useState<string>();
-  const [track, setTrack] = useState<TrackPath | null>(null);
   // A section a link scrolls to stays current until the reader scrolls on.
   const chosen = useRef<{ id: string; settled: boolean } | null>(null);
   const settle = useRef(0);
@@ -241,39 +254,6 @@ export function TableOfContents({
       cancelAnimationFrame(frame);
     };
   }, [givenItems, container, levelKey]);
-
-  // The track beside the links, measured from them, again whenever they wrap or move.
-  useLayoutEffect(() => {
-    const nav = root.current;
-    if (!nav || ids === '') {
-      setTrack(null);
-      return;
-    }
-    const measure = () => {
-      const box = nav.getBoundingClientRect();
-      const rtl = getComputedStyle(nav).direction === 'rtl';
-      // The track is drawn in the body's own pixels, so a scale an ancestor's transform applies,
-      // as where a page shows the component enlarged, is taken out of what is measured.
-      const scale = nav.offsetWidth > 0 ? box.width / nav.offsetWidth || 1 : 1;
-      // Half the marker's width, two hairlines, so the marker isn't clipped at the start edge.
-      const half = 1;
-      const rows = [...nav.querySelectorAll('.env-table-of-contents-link')].map((link) => {
-        const rect = link.getBoundingClientRect();
-        return {
-          x: (rtl ? rect.right - box.left : rect.left - box.left) / scale + (rtl ? -half : half),
-          top: (rect.top - box.top) / scale,
-          bottom: (rect.bottom - box.top) / scale,
-        };
-      });
-      const next = trackPath(rows);
-      setTrack((previous) => (previous?.d === next.d ? previous : next));
-    };
-    measure();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(nav);
-    return () => observer.disconnect();
-  }, [ids]);
 
   // The current section, from where the area that holds the sections has scrolled.
   useEffect(() => {
@@ -378,9 +358,10 @@ export function TableOfContents({
     [settleLater],
   );
 
-  const segment = current
-    ? track?.segments[flat.findIndex((entry) => entry.id === current)]
-    : undefined;
+  const passed = useMemo(() => {
+    const index = current ? flat.findIndex((entry) => entry.id === current) : -1;
+    return new Set(flat.slice(0, Math.max(0, index)).map((entry) => entry.id));
+  }, [flat, current]);
 
   return (
     <nav
@@ -390,25 +371,7 @@ export function TableOfContents({
       hidden={items.length === 0 ? true : props.hidden}
     >
       <div className="env-table-of-contents-body" ref={root}>
-        {track && (
-          <svg className="env-table-of-contents-track" aria-hidden="true" focusable="false">
-            <path className="env-table-of-contents-track-line" d={track.d} />
-            <path
-              className="env-table-of-contents-marker"
-              d={track.d}
-              data-hidden={segment ? undefined : ''}
-              style={
-                segment
-                  ? {
-                      strokeDasharray: `${segment.end - segment.start} ${track.length + 1}`,
-                      strokeDashoffset: -segment.start,
-                    }
-                  : undefined
-              }
-            />
-          </svg>
-        )}
-        <List items={items} current={current} onNavigate={navigate} />
+        <List items={items} current={current} passed={passed} depth={0} onNavigate={navigate} />
       </div>
     </nav>
   );

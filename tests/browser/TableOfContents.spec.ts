@@ -42,10 +42,15 @@ test(
     await expect(current(contents)).toHaveText('Last');
     await page.evaluate(() => window.scrollBy(0, -40));
     await expect(current(contents)).toHaveText('Short end');
-    // The marker stands beside the current link: its visible stretch is as tall as the link's.
-    const marker = contents.locator('.env-table-of-contents-marker');
-    await expect(marker).not.toHaveAttribute('data-hidden');
-    await expect(marker).toHaveCSS('stroke-dasharray', /^\d/);
+    // The sections before the current one are marked passed, and its dot is a pill down its label.
+    await expect(contents.locator('[data-passed]')).toHaveCount(4);
+    const mark = (property: 'blockSize' | 'inlineSize') =>
+      current(contents).evaluate(
+        (element, name) => parseFloat(getComputedStyle(element, '::before')[name]),
+        property,
+      );
+    const dot = await mark('inlineSize');
+    await expect.poll(() => mark('blockSize')).toBeGreaterThan(dot * 2);
   },
 );
 

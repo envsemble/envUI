@@ -1,99 +1,184 @@
-/* TableOfContents: the page's sections as small, quiet links, nested by indent, beside a hairline
-   track that follows the indents; an accent marker on the track stands beside the current section
-   and moves along it to the next. */
+/* TableOfContents: the page's sections as small links, nested by indent, with the section the
+   reader is in marked in envUI's own shapes, never a line: three designs, for review, until one is
+   chosen. data-design on the component picks one; without it, the default.
+   - progress (the default): a column of small dots, one before each section, those passed darker;
+     the current section's dot stretches into a pill as tall as its label, after the mark's pills.
+   - pill: rows like the Drawer's at a smaller size, the current one in the selected fill.
+   - quiet: a quiet text list, the current section stronger with a small accent dot before it. */
 .env-table-of-contents {
+  /* How far each level sits in from the one above it, and the size of a dot. */
+  --env-table-of-contents-indent: var(--env-space-3);
+  --env-table-of-contents-dot: 0.375rem;
   min-inline-size: 0;
   font: var(--env-type-body-small);
 }
 .env-table-of-contents[hidden] {
   display: none;
 }
-.env-table-of-contents-body {
-  position: relative;
-}
 .env-table-of-contents-list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-/* Each level in from the one above it: the track steps in with it. */
-.env-table-of-contents-list .env-table-of-contents-list {
-  padding-inline-start: var(--env-space-3);
-}
 .env-table-of-contents-link {
+  /* The link's indent, from its level's depth, which the component sets on each nested list. */
+  --env-table-of-contents-inset: calc(
+    var(--env-table-of-contents-depth, 0) * var(--env-table-of-contents-indent)
+  );
+  position: relative;
   display: block;
   padding-block: var(--env-space-1);
-  padding-inline: var(--env-space-3) var(--env-space-1);
+  /* Room before the label for a dot and a gap after it. */
+  padding-inline: calc(
+      var(--env-space-1) + var(--env-table-of-contents-dot) + var(--env-space-2) +
+        var(--env-table-of-contents-inset)
+    )
+    var(--env-space-2);
   border-radius: var(--env-radius-sm);
   color: var(--env-color-fg-muted);
   text-decoration: none;
   /* Long labels wrap, and a long word breaks rather than overflowing the column. */
   overflow-wrap: break-word;
-  transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-table-of-contents-link:hover {
   color: var(--env-color-fg-muted-hover);
-}
-.env-table-of-contents-link[aria-current='location'] {
-  color: var(--env-color-fg-default);
 }
 .env-table-of-contents-link:focus-visible {
   outline: 2px solid var(--env-color-border-focus);
   outline-offset: -2px;
 }
-/* The track and its marker, drawn in pixels measured from the links, over the list's start edge. */
-.env-table-of-contents-track {
+
+/* progress, the default: each link's dot at the column's start, whatever its level, centred on its
+   first line, a nested section's smaller; to come in the muted edge color, passed in the muted text
+   color. The current section's label is the text color and medium, and its dot grows into a pill
+   down the whole label. */
+.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
+  .env-table-of-contents-link::before {
+  content: '';
   position: absolute;
-  inset: 0;
-  inline-size: 100%;
-  block-size: 100%;
-  overflow: visible;
-  pointer-events: none;
-  fill: none;
+  /* The dot's size: a nested section's smaller, in the same column. */
+  --env-table-of-contents-mark: var(--env-table-of-contents-dot);
+  inset-inline-start: calc(
+    var(--env-space-1) + (var(--env-table-of-contents-dot) - var(--env-table-of-contents-mark)) / 2
+  );
+  inset-block-start: calc(var(--env-space-1) + (1lh - var(--env-table-of-contents-mark)) / 2);
+  inline-size: var(--env-table-of-contents-mark);
+  block-size: var(--env-table-of-contents-mark);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-border-muted);
 }
-.env-table-of-contents-track-line {
-  stroke: var(--env-color-border-muted);
-  stroke-width: var(--env-control-border-width);
+.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
+  .env-table-of-contents-list
+  .env-table-of-contents-list
+  .env-table-of-contents-link::before {
+  --env-table-of-contents-mark: calc(var(--env-table-of-contents-dot) * 2 / 3);
 }
-.env-table-of-contents-marker {
-  stroke: var(--env-color-border-accent-emphasis);
-  stroke-width: calc(2 * var(--env-control-border-width));
-  stroke-linecap: round;
-  opacity: 1;
-  transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
+  .env-table-of-contents-link[data-passed]::before {
+  background: var(--env-color-fg-muted);
 }
-.env-table-of-contents-marker[data-hidden] {
+.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
+  .env-table-of-contents-link[aria-current='location'] {
+  color: var(--env-color-fg-default);
+  font-weight: var(--env-font-weight-medium);
+}
+.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
+  .env-table-of-contents-link[aria-current='location']::before {
+  --env-table-of-contents-mark: var(--env-table-of-contents-dot);
+  inset-block-start: var(--env-space-1);
+  block-size: calc(100% - 2 * var(--env-space-1));
+  background: var(--env-color-border-accent-emphasis);
+}
+
+/* pill: rows like the Drawer's destinations at the size of small text, each a pill from its indent
+   to the column's end; the current one in the selected fill, as the Drawer marks its page. */
+.env-table-of-contents[data-design='pill'] .env-table-of-contents-list {
+  display: grid;
+  gap: calc(var(--env-space-1) / 2);
+}
+.env-table-of-contents[data-design='pill'] .env-table-of-contents-link {
+  margin-inline-start: var(--env-table-of-contents-inset);
+  padding-inline: var(--env-space-3);
+  border-radius: var(--env-radius-full);
+}
+.env-table-of-contents[data-design='pill'] .env-table-of-contents-link:hover {
+  background: var(--env-color-bg-neutral-subtle-hover);
+  color: var(--env-color-fg-default);
+}
+.env-table-of-contents[data-design='pill'] .env-table-of-contents-link:active {
+  background: var(--env-color-bg-neutral-subtle-pressed);
+}
+.env-table-of-contents[data-design='pill'] .env-table-of-contents-link[aria-current='location'] {
+  background: var(--env-color-bg-selected);
+  color: var(--env-color-fg-on-selected);
+}
+.env-table-of-contents[data-design='pill']
+  .env-table-of-contents-link[aria-current='location']:hover {
+  background: var(--env-color-bg-selected-hover);
+}
+.env-table-of-contents[data-design='pill']
+  .env-table-of-contents-link[aria-current='location']:active {
+  background: var(--env-color-bg-selected-pressed);
+}
+
+/* quiet: muted text, nested by indent alone; the current section in the text color and medium,
+   with a small accent dot before it, at its indent, which fades in. */
+.env-table-of-contents[data-design='quiet'] .env-table-of-contents-link::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: calc(var(--env-space-1) + var(--env-table-of-contents-inset));
+  inset-block-start: calc(var(--env-space-1) + (1lh - var(--env-table-of-contents-dot)) / 2);
+  inline-size: var(--env-table-of-contents-dot);
+  block-size: var(--env-table-of-contents-dot);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-border-accent-emphasis);
   opacity: 0;
+  scale: 0.5;
 }
-/* Motion: the marker slides along the track to the next section, only without a reduced-motion
-   preference; otherwise it moves at once. */
+.env-table-of-contents[data-design='quiet'] .env-table-of-contents-link[aria-current='location'] {
+  color: var(--env-color-fg-default);
+  font-weight: var(--env-font-weight-medium);
+}
+.env-table-of-contents[data-design='quiet']
+  .env-table-of-contents-link[aria-current='location']::before {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Motion: colors fade and the marks move to the next section, only without a reduced-motion
+   preference; otherwise they change at once. */
 @media (prefers-reduced-motion: no-preference) {
-  .env-table-of-contents-marker {
-    transition-property: opacity, stroke-dasharray, stroke-dashoffset;
+  .env-table-of-contents-link {
+    transition:
+      color var(--env-motion-duration-fast) var(--env-motion-ease),
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+  .env-table-of-contents-link::before {
+    transition-property: opacity, scale, background-color, inset-block-start, block-size;
     transition-duration: var(--env-motion-duration-medium);
     transition-timing-function: var(--env-motion-ease-standard);
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .env-table-of-contents-link {
-    transition: none;
-  }
-}
 
-/* Forced colors: the system paints the links, so the current one and the marker take its
-   selection color, and the track its gray. */
+/* Forced colors: the system paints the links, so the current one takes its selection color, in
+   the pill as its fill, and the dots its text and gray. */
 @media (forced-colors: active) {
   .env-table-of-contents-link[aria-current='location'] {
     forced-color-adjust: none;
     color: Highlight;
   }
-  .env-table-of-contents-track {
+  .env-table-of-contents[data-design='pill'] .env-table-of-contents-link[aria-current='location'] {
+    background: Highlight;
+    color: HighlightText;
+  }
+  .env-table-of-contents-link::before {
     forced-color-adjust: none;
+    background: GrayText;
   }
-  .env-table-of-contents-track-line {
-    stroke: GrayText;
+  .env-table-of-contents-link[data-passed]::before {
+    background: CanvasText;
   }
-  .env-table-of-contents-marker {
-    stroke: Highlight;
+  .env-table-of-contents-link[aria-current='location']::before {
+    background: Highlight;
   }
 }

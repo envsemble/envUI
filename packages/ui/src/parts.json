@@ -700,13 +700,10 @@
     },
     "TableOfContents": {
       "env-table-of-contents": "The navigation of the page's sections.",
-      "env-table-of-contents-body": "The track and the list beside it.",
+      "env-table-of-contents-body": "Around the list.",
       "env-table-of-contents-item": "One section, with the sections nested in it.",
-      "env-table-of-contents-link": "A section's link.",
-      "env-table-of-contents-list": "A level of sections.",
-      "env-table-of-contents-marker": "The marker on the track beside the current section.",
-      "env-table-of-contents-track": "The track beside the links, drawn once they are measured.",
-      "env-table-of-contents-track-line": "The track's line, which steps in with each level."
+      "env-table-of-contents-link": "A section's link, its dot drawn before it.",
+      "env-table-of-contents-list": "A level of sections."
     },
     "Tabs": {
       "env-tabs": "The tabs.",
