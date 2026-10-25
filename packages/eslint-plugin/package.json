@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/eslint-plugin-envui",
-  "version": "1.0.0-prerelease.0",
+  "version": "1.0.0-prerelease.3",
   "description": "ESLint rules that point people and coding agents to envUI components instead of hand-rolled controls and raw colors",
   "homepage": "https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin#readme",
   "bugs": {
