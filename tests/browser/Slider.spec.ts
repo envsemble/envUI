@@ -217,15 +217,10 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
     ).toEqual(type);
   await expect(value).toHaveCSS('font-variant-numeric', 'tabular-nums');
   await expect(value).toHaveClass(/(^| )env-text( |$)/);
-  // The fill runs from the slider's own start to the value, 40% of the way along the track.
-  const fill = slider.locator('.env-slider-indicator');
-  const fillStart = await fill.evaluate(
-    (e) =>
-      e.getBoundingClientRect().left -
-      e.closest('.env-slider-control')!.getBoundingClientRect().left +
-      Number.parseFloat(getComputedStyle(e, '::before').inlineSize) * -1,
-  );
-  expect(Math.abs(fillStart)).toBeLessThanOrEqual(1);
+  // The fill runs from the slider's own start to the value, 40% of the whole field.
+  const fill = (await slider.locator('.env-slider-indicator').boundingBox())!;
+  expect(Math.abs(fill.x - box.x)).toBeLessThanOrEqual(0.5);
+  expect(fill.width / box.width).toBeCloseTo(0.4, 2);
   // The text never dims: the handle and the fill's end fade under it instead, as the tests of the
   // states below show.
   for (const part of [
@@ -459,4 +454,85 @@ test('a finger shows the handle and the ticks only while it is down', async ({ b
   await expect(state.control).not.toHaveAttribute('data-pressed');
   await expectRest(state);
   await context.close();
+});
+
+test('the fill is empty at the minimum, the whole field at the maximum and in proportion between, in either direction', async ({
+  page,
+}) => {
+  const scope = page.getByTestId('sliders-light');
+  for (const direction of ['ltr', 'rtl'] as const) {
+    await scope.evaluate((e, dir) => e.setAttribute('dir', dir), direction);
+    // Scale, from 50 to 200 by tens: its minimum isn't 0, so the fill follows the range, not the number.
+    const slider = scope.locator('.env-slider').nth(2);
+    const input = slider.getByRole('slider');
+    const control = slider.locator('.env-slider-control');
+    const fill = slider.locator('.env-slider-indicator');
+    const thumb = slider.locator('.env-slider-thumb');
+    await input.focus();
+    const box = (await control.boundingBox())!;
+    const inset = box.height / 4;
+    const start = (x: number, width: number) =>
+      direction === 'ltr' ? x - box.x : box.x + box.width - (x + width);
+    await page.keyboard.press('Home');
+    await expect(input).toHaveAttribute('aria-valuenow', '50');
+    await expect(control).toHaveAttribute('data-handle', '');
+    await expect.poll(async () => (await fill.boundingBox())?.width ?? 0).toBeLessThanOrEqual(0.5);
+    // Nothing paints the fill beyond its box, such as under the rounded start.
+    expect(await fill.evaluate((e) => getComputedStyle(e, '::before').content)).toBe('none');
+    // The handle keeps clear of the rounded end, inside the field.
+    let handle = (await thumb.boundingBox())!;
+    expect(start(handle.x, handle.width) + handle.width / 2).toBeCloseTo(inset, 0);
+    await page.keyboard.press('End');
+    await expect(input).toHaveAttribute('aria-valuenow', '200');
+    await expect
+      .poll(async () => {
+        const full = (await fill.boundingBox())!;
+        return Math.max(Math.abs(full.x - box.x), Math.abs(full.width - box.width));
+      })
+      .toBeLessThanOrEqual(0.5);
+    handle = (await thumb.boundingBox())!;
+    expect(start(handle.x, handle.width) + handle.width / 2).toBeCloseTo(box.width - inset, 0);
+    // 80 is a fifth of the way from 50 to 200: a fifth of the field, from the start, with the handle
+    // at the fill's end.
+    await page.keyboard.press('Home');
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('ArrowUp');
+    await expect(input).toHaveAttribute('aria-valuenow', '80');
+    await expect
+      .poll(async () => {
+        const part = (await fill.boundingBox())!;
+        return Math.max(Math.abs(start(part.x, part.width)), Math.abs(part.width - box.width / 5));
+      })
+      .toBeLessThanOrEqual(0.5);
+    handle = (await thumb.boundingBox())!;
+    expect(start(handle.x, handle.width) + handle.width / 2).toBeCloseTo(box.width / 5, 0);
+  }
+});
+
+test('a slider selects no text when dragged or double-clicked, and its label still names it', async ({
+  page,
+}) => {
+  const scope = page.getByTestId('sliders-light');
+  const slider = scope.locator('.env-slider').first();
+  for (const part of ['.env-slider-control', '.env-slider-label', '.env-slider-value'])
+    await expect(slider.locator(part)).toHaveCSS('user-select', 'none');
+  const selected = () => page.evaluate(() => window.getSelection()?.toString() ?? '');
+  const label = (await slider.locator('.env-slider-label').boundingBox())!;
+  await page.mouse.dblclick(label.x + label.width / 2, label.y + label.height / 2);
+  expect(await selected()).toBe('');
+  const value = (await slider.locator('.env-slider-value').boundingBox())!;
+  await page.mouse.dblclick(value.x + value.width / 2, value.y + value.height / 2);
+  expect(await selected()).toBe('');
+  // A drag along it selects none of its text either.
+  const box = (await slider.locator('.env-slider-control').boundingBox())!;
+  await page.mouse.move(box.x + 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width - 2, box.y + box.height / 2, { steps: 5 });
+  await page.mouse.up();
+  expect(await selected()).not.toMatch(/Opacity|%/);
+  await expect(slider.getByRole('slider', { name: 'Opacity' })).toHaveAttribute(
+    'aria-valuetext',
+    /%$/,
+  );
 });

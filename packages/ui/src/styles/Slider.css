@@ -32,9 +32,10 @@
 .env-slider {
   /* A field's height: the control height, or the touch height under a coarse pointer. */
   --env-slider-height: var(--env-control-height);
-  /* The track starts and ends where the rounded ends straighten, so the handle never sits in a
-     corner; the fill reaches back to the start. */
-  --env-slider-inset: calc(var(--env-slider-height) / 2);
+  /* The track spans the whole field, so the fill is empty at the minimum, full at the maximum and
+     in proportion between, and ends where the pointer chooses the value. Near the ends the handle
+     keeps this far from the rounded edge, so the corner never cuts it short. */
+  --env-slider-handle-inset: calc(var(--env-slider-height) / 4);
   --env-slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
   --env-slider-fill: var(--env-slider-indicator, var(--env-color-bg-neutral-subtle-pressed));
   --env-slider-ink: var(--env-slider-content, var(--env-color-fg-default));
@@ -49,35 +50,32 @@
   display: grid;
   grid-template: 'slider' 100% / minmax(0, auto);
   block-size: var(--env-slider-height);
-  /* Base UI measures the value along the control's content box, which the track fills. */
-  padding-inline: var(--env-slider-inset);
   overflow: hidden;
   border-radius: var(--env-radius-full);
   background: var(--env-slider-track, var(--env-color-bg-neutral-muted));
   cursor: pointer;
   touch-action: none;
+  /* Dragging or double-clicking selects no text: the label and the value stay as they are, and
+     assistive technology still reads them. */
+  -webkit-user-select: none;
+  user-select: none;
   isolation: isolate;
   transition: --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-slider-track {
   grid-area: slider;
   block-size: 100%;
+  /* The handle measures its distance from the ends against the track's width. */
+  container-type: inline-size;
 }
-/* The fill runs from the slider's start, under its rounded end, to the value. */
+/* The fill runs from the slider's start to the value: none at the minimum, the whole field at the
+   maximum. */
 .env-slider-indicator {
   background: var(--env-slider-fill, var(--env-color-bg-neutral-subtle-pressed));
 }
-.env-slider-indicator::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  inset-inline-end: 100%;
-  inline-size: var(--env-slider-inset);
-  background: inherit;
-}
 /* While the handle shows, under the label or the value, the fill's end fades into the track, so no
-   edge cuts through the text: a veil of the track's color over its last stretch, reaching back under
-   the rounded start where the fill is short. At rest the fill ends crisply. */
+   edge cuts through the text: a veil of the track's color over its last stretch, cut off at the
+   start where the fill is short. At rest the fill ends crisply. */
 .env-slider-indicator::after {
   --env-slider-indicator-direction: to right;
   content: '';
@@ -100,15 +98,36 @@
 .env-slider-indicator:dir(rtl)::after {
   --env-slider-indicator-direction: to left;
 }
-/* The handle: a thin line at the value, beneath the label and the value. */
+/* The handle: a thin line at the value, at the fill's end, beneath the label and the value. Within
+   the handle's inset of either end it stops short of the rounded edge: Slider sets the value's
+   fraction of the range (--env-slider-fraction), and the handle moves back by what it lacks of the
+   inset, physically, so to the left in right-to-left text. */
 .env-slider-thumb {
+  --env-slider-thumb-side: 1;
+  --env-slider-thumb-at: calc(var(--env-slider-fraction, 0) * 100cqi);
   box-sizing: border-box;
   inline-size: calc(2 * var(--env-control-border-width));
   block-size: 55%;
   border-radius: var(--env-radius-full);
   background: var(--env-slider-ink, var(--env-color-fg-default));
   opacity: 0;
+  transform: translateX(
+    calc(
+      var(--env-slider-thumb-side) *
+        (
+          clamp(
+              var(--env-slider-handle-inset),
+              var(--env-slider-thumb-at),
+              100cqi - var(--env-slider-handle-inset)
+            ) -
+            var(--env-slider-thumb-at)
+        )
+    )
+  );
   transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-slider-thumb:dir(rtl) {
+  --env-slider-thumb-side: -1;
 }
 /* Ticks at the steps, or the large steps where they are many, between the ends: as many lines as
    the parts the slider sets (--env-slider-ticks) less one. The parts are equal, so the ticks sit
@@ -146,8 +165,6 @@
 .env-slider-heading {
   position: relative;
   grid-area: slider;
-  /* Across the whole field, its rounded ends included. */
-  margin-inline: calc(-1 * var(--env-slider-inset));
   z-index: var(--env-z-raised);
   padding-inline: var(--env-space-4);
   pointer-events: none;
@@ -215,8 +232,7 @@
     outline: 1px solid CanvasText;
     outline-offset: -1px;
   }
-  .env-slider-indicator,
-  .env-slider-indicator::before {
+  .env-slider-indicator {
     forced-color-adjust: none;
     background: none;
     box-shadow: inset 0 -4px Highlight;
@@ -225,8 +241,7 @@
     forced-color-adjust: none;
     background-color: CanvasText;
   }
-  .env-slider[data-disabled] .env-slider-indicator,
-  .env-slider[data-disabled] .env-slider-indicator::before {
+  .env-slider[data-disabled] .env-slider-indicator {
     box-shadow: inset 0 -4px GrayText;
   }
 }
