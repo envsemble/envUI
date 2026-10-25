@@ -5,7 +5,9 @@ import { test } from 'node:test';
 import { marked } from 'marked';
 import ts from 'typescript';
 import {
+  longParagraphs,
   optionTable,
+  paragraphLength,
   siteInlineCode,
   siteStructure,
   siteText,
@@ -407,7 +409,28 @@ test("a page's Site text is in titled blocks", () => {
   assert.deepEqual(
     found,
     [],
-    'Every piece of Site text is in a titled block, a heading and one short paragraph: give loose text a "###" heading, or fold it into the block it belongs to.',
+    'Every piece of Site text is in a titled block, a heading and up to three short paragraphs: give loose text a "###" heading, or fold it into the block it belongs to.',
+  );
+});
+
+/**
+ * The pages whose Site text is written in short paragraphs, the samples of the typography rework;
+ * the rest join them as they are reworked, and then the list goes.
+ */
+const shortParagraphPages = new Set(['button', 'forms']);
+
+test("a page's Site text is in short paragraphs", () => {
+  const found = sitePages()
+    .filter((document) => shortParagraphPages.has(document.id))
+    .flatMap((document) =>
+      longParagraphs(document).map(
+        ({ where, length, text }) => `${document.path}, ${where}, ${length} characters: ${text}`,
+      ),
+    );
+  assert.deepEqual(
+    found,
+    [],
+    `A paragraph of the Site is at most ${paragraphLength} characters, about three lines: split it into short paragraphs, one point each, or give a point a block of its own.`,
   );
 });
 

@@ -9,9 +9,11 @@ import {
 } from '../scripts/GenerateDocumentation.mjs';
 import { marked } from 'marked';
 import {
+  longParagraphs,
   optionPieces,
   optionTable,
   optionTableProblems,
+  paragraphLength,
   siteStructure,
 } from '../scripts/SiteContent.mjs';
 
@@ -1030,7 +1032,7 @@ test('an option table is read for the Site as a legend', () => {
   );
 });
 
-test('Site text with no structure is found: loose after a figure, or a second paragraph', () => {
+test('Site text with no structure is found: loose after a figure, or a fourth paragraph', () => {
   const markdown = (text) => ({ kind: 'markdown', markdown: text });
   const figure = (role) => ({ kind: 'example', name: 'Figure', heading: 'Figure', role });
   const found = siteStructure({
@@ -1043,7 +1045,7 @@ test('Site text with no structure is found: loose after a figure, or a second pa
           figure('do'),
           figure('dont'),
           markdown(
-            'A lone sentence after the pairs.\n\n### Labels\n\nStart with a verb.\n\nPut the outcome in it.\n\n',
+            'A lone sentence after the pairs.\n\n### Labels\n\nStart with a verb.\n\nPut the outcome in it.\n\nKeep it short.\n\nOne too many.\n\n',
           ),
           figure(),
         ],
@@ -1075,10 +1077,49 @@ test('Site text with no structure is found: loose after a figure, or a second pa
     found.map(({ where, kind, text }) => `${where}, ${kind}: ${text}`),
     [
       'When to use, after a figure: A lone sentence after the pairs.',
-      'When to use, a second paragraph: Put the outcome in it.',
+      'When to use, too many paragraphs: One too many.',
       'Variants, after a figure: Loose after the legend.',
     ],
   );
+});
+
+test('long paragraphs of Site text are found, measured as people read them', () => {
+  const markdown = (text) => ({ kind: 'markdown', markdown: text });
+  const long = `${'A sentence of words. '.repeat(12)}`.trim();
+  const found = longParagraphs({
+    sections: [
+      {
+        id: 'usage',
+        title: 'When to use',
+        blocks: [
+          // A link counts as its words, not its address.
+          markdown(
+            `## When to use
+
+Short, with [a link](${'../components/x.md'.repeat(20)}).
+
+${long}
+`,
+          ),
+        ],
+      },
+      {
+        id: 'code',
+        title: 'In code',
+        blocks: [
+          markdown(`## In code
+
+${long}
+`),
+        ],
+      },
+    ],
+  });
+  assert.deepEqual(
+    found.map(({ where, length }) => `${where}: ${length}`),
+    [`When to use: ${long.length}`],
+  );
+  assert.ok(long.length > paragraphLength);
 });
 
 test("a guide's statuses and exportAliases name only the exports it lists", async () => {

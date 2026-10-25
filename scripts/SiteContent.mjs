@@ -187,17 +187,20 @@ const opening = (text) => {
   return words.length > 8 ? `${words.slice(0, 8).join(' ')}…` : words.join(' ');
 };
 
+/** The most paragraphs a titled block holds. */
+export const blockParagraphs = 3;
+
 /**
  * Where a page's Site text has no structure. Every piece of text belongs to a titled block: a
- * heading and one short paragraph, with its figure where it has one, as a section's opening or a
- * `###` subsection is written. Two kinds of loose text break that:
+ * heading and a short paragraph or a few, with its figure where it has one, as a section's opening
+ * or a `###` subsection is written. Two kinds of loose text break that:
  *
  * - **after a figure**: a paragraph after a figure, a table or a list with no heading between them,
  *   such as a lone sentence after the do and don't pairs, or between two figures. The one
  *   paragraph right after an anatomy figure's legend, which names the parts it can't show, belongs
  *   to the figure.
- * - **a second paragraph**: a block holds one paragraph; two short ones are one paragraph, or two
- *   blocks with headings of their own.
+ * - **too many paragraphs**: a block holds at most three short paragraphs; more are two blocks
+ *   with headings of their own.
  */
 export function siteStructure(document) {
   const found = [];
@@ -224,15 +227,51 @@ export function siteStructure(document) {
         } else if (token.type === 'paragraph') {
           if (figure && !anatomyNote)
             found.push({ where: section.title, kind: 'after a figure', text: opening(token.text) });
-          else if (paragraphs)
+          else if (paragraphs >= blockParagraphs)
             found.push({
               where: section.title,
-              kind: 'a second paragraph',
+              kind: 'too many paragraphs',
               text: opening(token.text),
             });
           paragraphs++;
           if (anatomyNote) figure = true;
         } else figure = true;
+      }
+    }
+  }
+  return found;
+}
+
+/** The longest paragraph of the Site's text, in characters as people read them: about 3 lines. */
+export const paragraphLength = 240;
+
+/** A paragraph's text as people read it: links as their words, without tags or emphasis marks. */
+const readText = (markdown) =>
+  markdown
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/<[^>]+>/g, '')
+    .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/**
+ * The paragraphs of a page's Site text longer than `paragraphLength`. The Site sets running text in
+ * a readable measure, so a long paragraph is a tall block of gray: split it into short paragraphs,
+ * each one point, or move a point to a block of its own.
+ */
+export function longParagraphs(document) {
+  const found = [];
+  for (const section of document.sections ?? []) {
+    if (docsOnlySections.has(section.id)) continue;
+    for (const block of section.blocks) {
+      if (block.kind !== 'markdown') continue;
+      const markdown =
+        section.id === 'accessibility' ? withoutProvides(block.markdown) : block.markdown;
+      for (const token of marked.lexer(markdown)) {
+        if (token.type !== 'paragraph') continue;
+        const text = readText(token.text);
+        if (text.length > paragraphLength)
+          found.push({ where: section.title, length: text.length, text: opening(text) });
       }
     }
   }
