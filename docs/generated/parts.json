@@ -5021,17 +5021,6 @@
       ],
       "states": [
         {
-          "attribute": "data-design",
-          "values": [
-            "pill",
-            "progress",
-            "quiet"
-          ],
-          "parts": [
-            "env-table-of-contents"
-          ]
-        },
-        {
           "attribute": "data-passed",
           "values": [
             ""

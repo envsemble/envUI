@@ -1,10 +1,8 @@
-/* TableOfContents: the page's sections as small links, nested by indent, with the section the
-   reader is in marked in envUI's own shapes, never a line: three designs, for review, until one is
-   chosen. data-design on the component picks one; without it, the default.
-   - progress (the default): a column of small dots, one before each section, those passed darker;
-     the current section's dot stretches into a pill as tall as its label, after the mark's pills.
-   - pill: rows like the Drawer's at a smaller size, the current one in the selected fill.
-   - quiet: a quiet text list, the current section stronger with a small accent dot before it. */
+/* TableOfContents: the page's sections as small links, nested by indent, with the reader's place
+   marked in envUI's own shapes, never a line. A column of small dots, one before each section: the
+   sections the reader has passed in the text color with darker dots, the current one in the text
+   color and medium with its dot stretched into an accent pill as tall as its label, after the
+   mark's pills, and the sections still to come quieter, in the muted text color with paler dots. */
 .env-table-of-contents {
   /* How far each level sits in from the one above it, and the size of a dot. */
   --env-table-of-contents-indent: var(--env-space-3);
@@ -48,12 +46,11 @@
   outline-offset: -2px;
 }
 
-/* progress, the default: each link's dot at the column's start, whatever its level, centred on its
-   first line, a nested section's smaller; to come in the muted edge color, passed in the muted text
-   color. The current section's label is the text color and medium, and its dot grows into a pill
-   down the whole label. */
-.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
-  .env-table-of-contents-link::before {
+/* Each link's dot at the column's start, whatever its level, centred on its first line, a nested
+   section's smaller: to come in the muted edge color, passed in the muted text color. A passed
+   section's label is the text color; the current one's is the text color and medium, its dot grown
+   into a pill down the whole label. */
+.env-table-of-contents .env-table-of-contents-link::before {
   content: '';
   position: absolute;
   /* The dot's size: a nested section's smaller, in the same column. */
@@ -67,82 +64,44 @@
   border-radius: var(--env-radius-full);
   background: var(--env-color-border-muted);
 }
-.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
+.env-table-of-contents
   .env-table-of-contents-list
   .env-table-of-contents-list
   .env-table-of-contents-link::before {
   --env-table-of-contents-mark: calc(var(--env-table-of-contents-dot) * 2 / 3);
 }
-.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
-  .env-table-of-contents-link[data-passed]::before {
+/* The sections still to come, quieter than muted text yet still 4.5:1 on the page and on a
+   surface in both themes; at high contrast they keep the muted text color. */
+.env-table-of-contents .env-table-of-contents-link:not([data-passed], [aria-current]) {
+  color: color-mix(in srgb, var(--env-color-fg-muted) 80%, transparent);
+}
+:where([data-env-contrast='high'])
+  .env-table-of-contents
+  .env-table-of-contents-link:not([data-passed], [aria-current]) {
+  color: var(--env-color-fg-muted);
+}
+@media (prefers-contrast: more) {
+  :where(.env-theme:not([data-env-contrast='standard']))
+    .env-table-of-contents
+    .env-table-of-contents-link:not([data-passed], [aria-current]) {
+    color: var(--env-color-fg-muted);
+  }
+}
+.env-table-of-contents .env-table-of-contents-link[data-passed] {
+  color: var(--env-color-fg-default);
+}
+.env-table-of-contents .env-table-of-contents-link[data-passed]::before {
   background: var(--env-color-fg-muted);
 }
-.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
-  .env-table-of-contents-link[aria-current='location'] {
+.env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
   color: var(--env-color-fg-default);
   font-weight: var(--env-font-weight-medium);
 }
-.env-table-of-contents:is(:not([data-design]), [data-design='progress'])
-  .env-table-of-contents-link[aria-current='location']::before {
+.env-table-of-contents .env-table-of-contents-link[aria-current='location']::before {
   --env-table-of-contents-mark: var(--env-table-of-contents-dot);
   inset-block-start: var(--env-space-1);
   block-size: calc(100% - 2 * var(--env-space-1));
   background: var(--env-color-border-accent-emphasis);
-}
-
-/* pill: rows like the Drawer's destinations at the size of small text, each a pill from its indent
-   to the column's end; the current one in the selected fill, as the Drawer marks its page. */
-.env-table-of-contents[data-design='pill'] .env-table-of-contents-list {
-  display: grid;
-  gap: calc(var(--env-space-1) / 2);
-}
-.env-table-of-contents[data-design='pill'] .env-table-of-contents-link {
-  margin-inline-start: var(--env-table-of-contents-inset);
-  padding-inline: var(--env-space-3);
-  border-radius: var(--env-radius-full);
-}
-.env-table-of-contents[data-design='pill'] .env-table-of-contents-link:hover {
-  background: var(--env-color-bg-neutral-subtle-hover);
-  color: var(--env-color-fg-default);
-}
-.env-table-of-contents[data-design='pill'] .env-table-of-contents-link:active {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-}
-.env-table-of-contents[data-design='pill'] .env-table-of-contents-link[aria-current='location'] {
-  background: var(--env-color-bg-selected);
-  color: var(--env-color-fg-on-selected);
-}
-.env-table-of-contents[data-design='pill']
-  .env-table-of-contents-link[aria-current='location']:hover {
-  background: var(--env-color-bg-selected-hover);
-}
-.env-table-of-contents[data-design='pill']
-  .env-table-of-contents-link[aria-current='location']:active {
-  background: var(--env-color-bg-selected-pressed);
-}
-
-/* quiet: muted text, nested by indent alone; the current section in the text color and medium,
-   with a small accent dot before it, at its indent, which fades in. */
-.env-table-of-contents[data-design='quiet'] .env-table-of-contents-link::before {
-  content: '';
-  position: absolute;
-  inset-inline-start: calc(var(--env-space-1) + var(--env-table-of-contents-inset));
-  inset-block-start: calc(var(--env-space-1) + (1lh - var(--env-table-of-contents-dot)) / 2);
-  inline-size: var(--env-table-of-contents-dot);
-  block-size: var(--env-table-of-contents-dot);
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-border-accent-emphasis);
-  opacity: 0;
-  scale: 0.5;
-}
-.env-table-of-contents[data-design='quiet'] .env-table-of-contents-link[aria-current='location'] {
-  color: var(--env-color-fg-default);
-  font-weight: var(--env-font-weight-medium);
-}
-.env-table-of-contents[data-design='quiet']
-  .env-table-of-contents-link[aria-current='location']::before {
-  opacity: 1;
-  scale: 1;
 }
 
 /* Motion: colors fade and the marks move to the next section, only without a reduced-motion
@@ -160,16 +119,12 @@
   }
 }
 
-/* Forced colors: the system paints the links, so the current one takes its selection color, in
-   the pill as its fill, and the dots its text and gray. */
+/* Forced colors: the system paints the links, so the current one takes its selection color and
+   the dots its text and gray. */
 @media (forced-colors: active) {
   .env-table-of-contents-link[aria-current='location'] {
     forced-color-adjust: none;
     color: Highlight;
-  }
-  .env-table-of-contents[data-design='pill'] .env-table-of-contents-link[aria-current='location'] {
-    background: Highlight;
-    color: HighlightText;
   }
   .env-table-of-contents-link::before {
     forced-color-adjust: none;

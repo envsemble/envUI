@@ -35,17 +35,9 @@ components:
 
 ## Overview
 
-It lists the page's headings on its own, nesting each under the one above it, and marks the section the reader is in: a dot before each section, darker once passed, and the current one's grows into a pill. A link scrolls its section to the top, below anything that stays there, such as a header.
+It lists the page's headings on its own, nesting each under the one above it, and marks the section the reader is in: a dot before each section, darker once passed, and the current one's grows into a pill. Sections not yet reached are quieter, so the list reads as how far the reader has come. A link scrolls its section to the top, below anything that stays there, such as a header.
 
 ```tsx example=DocsArticle
-
-```
-
-### Three designs, for review
-
-Pick one: the other two go once it is chosen.
-
-```tsx example=DesignOptions
 
 ```
 
@@ -141,9 +133,7 @@ The current section is the last one whose start, less its scroll margin, has pas
 
 ### Composition
 
-The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link, `env-table-of-contents-link`, with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`. Each link's dot is its `::before`, which moves to the next section unless reduced motion is preferred. Its name comes from EnvUIProvider's `messages.tableOfContents`.
-
-While the designs are under review, `data-design` on the component picks one: `progress`, the default, `pill` or `quiet`.
+The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link, `env-table-of-contents-link`, with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter. Each link's dot is its `::before`, which moves to the next section unless reduced motion is preferred. Its name comes from EnvUIProvider's `messages.tableOfContents`.
 
 ## Changelog
 
