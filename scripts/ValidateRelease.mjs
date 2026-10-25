@@ -25,17 +25,6 @@ for (const directory of ['eslint-plugin', 'stylelint-config']) {
   if (version !== libraryPackage.version)
     throw new Error(`${name} ${version} must have the release version ${libraryPackage.version}.`);
 }
-// The agent plugin that this repository's marketplace serves carries the library's version, so
-// clients fetch it again with each release (`npm run changeset:version` sets it).
-for (const manifest of ['.claude-plugin', '.codex-plugin']) {
-  const { version } = JSON.parse(
-    await readFile(new URL(`../plugin/${manifest}/plugin.json`, import.meta.url), 'utf8'),
-  );
-  if (version !== libraryPackage.version)
-    throw new Error(
-      `plugin/${manifest}/plugin.json ${version} must have the release version ${libraryPackage.version}; run npm run plugin:generate.`,
-    );
-}
 if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(libraryPackage.version))
   throw new Error('Invalid version.');
 const prerelease = libraryPackage.version.includes('-');

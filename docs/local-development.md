@@ -4,7 +4,7 @@ Use this workflow when the task authorizes co-development in an envUI checkout a
 
 1. Run `npm ci` in envUI.
 2. Temporarily run `npm install <path-to-envUI>/packages/ui --no-save --install-links=false` from the application, adjusting the path. `--no-save` keeps the manifest and lockfile on the published version.
-3. Run `npm run dev:library` in envUI. It rebuilds the compiled package and its type declarations, documentation and packaged skills after each change.
+3. Run `npm run dev:library` in envUI. It rebuilds the compiled package and its type declarations and documentation after each change.
 4. Configure Vite for source mode (below) and start the application with it enabled.
 5. Use ordinary public imports. Before delivery, return to the published package and validate the packaged consumer path.
 

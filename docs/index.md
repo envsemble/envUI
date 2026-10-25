@@ -10,7 +10,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Customize and extend](customizing.md) — Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.
 
-- [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
+- [For agents](agent-tooling.md) — Set envUI up with a coding agent from one prompt, and point it to the docs in the package.
 
 - [Writing](writing.md) — The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.
 

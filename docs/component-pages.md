@@ -33,10 +33,10 @@ components: # The exports the page documents; each export has exactly one page.
 ---
 ```
 
-- `statuses` gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable; the catalogue shows it beside the page's, and the manifest and `llms.txt` carry it.
+- `statuses` gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable; the catalogue shows it beside the page's.
 - `avoidWhen` is the page's one list of related components and pages, its **Related** section: each entry names an export in `use` or an indexed page in `see`, never both, with a line saying when to pick it instead. The catalogue links it to the page that documents it, and agents read it as "need this, use that". Name each export or page once, and not both an export and its page; the build fails on a relation named twice. An entry may name a member of the page's own family, such as Textarea on the TextField page. Relate only what a reader might pick instead: a page that is only used alongside, such as Accessibility or Icons, is linked from the sentence that needs it, if anywhere.
 - List a family's members, such as IconButton on the button page, in `components`; the page then documents them in its sections. A namespace, such as `Menu`, covers all its parts; list the namespace, never a part such as `Menu.Item`.
-- Foundation and workflow pages may list the components they document, such as `Text` on the typography page, with only `components`, `aliases`, `exportAliases` and `statuses`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page, for exports without a component page of their own. The exports such a page documents are `stable` in the manifest and the MCP server; `statuses` gives one another status, such as `useContainerSize: beta`.
+- Foundation and workflow pages may list the components they document, such as `Text` on the typography page, with only `components`, `aliases`, `exportAliases` and `statuses`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page, for exports without a component page of their own. The exports such a page documents are `stable`; `statuses` gives one another status, such as `useContainerSize: beta`.
 
 Register the page in [the index](index.md) under its group, with only its title and path: `- [TextField](components/text-field.md)`. The index orders the pages; the summary comes from the frontmatter.
 
@@ -228,7 +228,7 @@ Variants, tones, sizes, sides and layouts are written as an option table: a Mark
 
 ## In code: the developer-only part
 
-Nothing a developer or an agent needs is lost to plain language: it goes in the page's last authored section, `## In code`, after Accessibility and before Changelog. The Site leaves it out; the page's guide in the Docs shows it first, and the packaged page, `llms-full.txt` and the agents' tools keep it in place. Write it in the same file as the rest, as the code that goes with what the Site says:
+Nothing a developer or an agent needs is lost to plain language: it goes in the page's last authored section, `## In code`, after Accessibility and before Changelog. The Site leaves it out; the page's guide in the Docs shows it first, and the packaged page, which agents read, keeps it in place. Write it in the same file as the rest, as the code that goes with what the Site says:
 
 ````md
 ## In code
@@ -353,7 +353,6 @@ The Props section and `docs/generated/props.json` come from the component's Type
 - Write a TSDoc comment on every prop of the component's props interface: what it does, its values and its default where the code can't show it.
 - Add `@default` where the default is computed, such as `@default 'outlined', or 'secondary' with icon`, and `@deprecated` with what to use instead.
 - Run `npm run docs:props` and commit `docs/generated/props.json`. `npm run docs:check` and `npm test` fail while it is stale.
-- Then run `npm run docs:manifest` and commit `docs/generated/manifest.json` and `llms.txt`, which agents read; they follow every change to a page's frontmatter, examples and props.
 
 Native DOM props are summarised by element, so document only the props envUI declares or narrows.
 

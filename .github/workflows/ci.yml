@@ -3,7 +3,7 @@ name: CI
 # the envsemble organization variable CI_LINUX_RUNNER names. Pull requests into main are the
 # releases: the full `npm run verify` runs for them in its own workflow (verify.yml), so this job
 # only scans them with Betterleaks. Merging one publishes its version (release.yml). There is no
-# documentation-only skip: the README, docs/, the changesets and the skills ship in the package, and
+# documentation-only skip: the README, docs/ and the changesets ship in the package, and
 # Prettier and the tests read the contributors' guides too.
 on:
   pull_request:

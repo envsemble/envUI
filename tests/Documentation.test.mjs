@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+import { cp, mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
 import {
   compileDocument,
@@ -1079,4 +1079,29 @@ test('Site text with no structure is found: loose after a figure, or a second pa
       'Variants, after a figure: Loose after the legend.',
     ],
   );
+});
+
+test("a guide's statuses and exportAliases name only the exports it lists", async () => {
+  const cache = resolve('.cache');
+  await mkdir(cache, { recursive: true });
+  const directory = await mkdtemp(join(cache, 'guide-'));
+  try {
+    await cp(resolve('docs'), directory, { recursive: true });
+    const setup = join(directory, 'setup.md');
+    const source = await readFile(resolve('docs/setup.md'), 'utf8');
+    const read = () => readDocumentation(directory, { versions: undefined });
+    // A guide's exports are stable, so a status that says so repeats the default.
+    await writeFile(
+      setup,
+      source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: stable\n'),
+    );
+    assert.throws(read, /statuses of LinkProvider repeats the default status of a guide's exports/);
+    await writeFile(
+      setup,
+      source.replace('exportAliases:\n', 'exportAliases:\n  Button:\n    - push\n'),
+    );
+    assert.throws(read, /exportAliases names Button, which components does not list/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });

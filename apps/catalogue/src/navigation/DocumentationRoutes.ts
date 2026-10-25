@@ -16,7 +16,7 @@ export type Area = 'site' | 'docs';
 
 /**
  * The Site's destinations in its rail, in order; the drawer beside it lists their pages. Dev mode
- * and the benchmark are pages of the Overview, and the changelog is in the Docs.
+ * is a page of the Overview, and the changelog is in the Docs.
  */
 export const siteSections = ['Overview', 'Foundations', 'Components', 'Patterns'] as const;
 export type SiteSection = (typeof siteSections)[number];
@@ -30,12 +30,10 @@ export type PageKind =
   | 'pattern'
   | 'foundation'
   | 'dev-mode'
-  | 'benchmark'
   | 'docs-home'
   | 'guide'
   | 'codemods'
   | 'docs-changelog'
-  | 'skills'
   | 'tokens'
   | 'foundation-guide'
   | 'api';
@@ -137,14 +135,6 @@ const sitePages: SitePage[] = [
     summary:
       'A view of a page taken apart, layer by layer, that shows how it is built and what is wrong with it.',
   },
-  {
-    path: 'benchmark',
-    title: 'Benchmark',
-    area: 'site',
-    section: 'Overview',
-    kind: 'benchmark',
-    summary: 'How coding agents do when they build interfaces with envUI.',
-  },
   ...referencePages
     .filter(({ section }) => section === 'Foundations')
     .map(
@@ -245,19 +235,6 @@ const startPages: SitePage[] = guideDocuments
           kind: 'codemods',
           summary:
             'Upgrade an application from envUI 0.x to 1.0 with @envsemble/envui-codemods, which renames what it can and reports the rest.',
-        },
-      ];
-    if (document.id === 'agent-tooling')
-      return [
-        page,
-        {
-          path: 'docs/agent-skills',
-          title: 'Agent skills',
-          area: 'docs',
-          section: 'Get started',
-          kind: 'skills',
-          summary:
-            'The skills that teach coding agents to use envUI and to migrate an interface to it.',
         },
       ];
     return [page];
@@ -400,14 +377,14 @@ export function routeOfDocument(
     'get-started': 'docs/setup',
     components: 'components',
     patterns: 'patterns',
-    benchmark: 'benchmark',
     // Dev mode's page on the Site; its guide in the Docs is the document dev-mode.
     'dev-mode-overview': 'dev-mode',
     changelog: 'docs/changelog',
     tokens: 'docs/tokens',
     codemods: 'docs/codemods',
     'full-changelog': 'docs/changelog',
-    'agent-skills': 'docs/agent-skills',
+    // The agent skills are gone; the guide for agents says what replaced them.
+    'agent-skills': 'docs/agent-tooling',
     // Pages merged into others.
     'customizing-colors': 'docs/customizing',
     composition: 'docs/customizing',
@@ -489,7 +466,7 @@ export function normalizeRoute(route: string): string {
       search.delete('section');
       return routeOfDocument(shown) ?? docsRoute;
     }
-    if (search.has('skill') || section === 'local-development') return 'docs/agent-skills';
+    if (search.has('skill') || section === 'local-development') return 'docs/agent-tooling';
     if (section === 'documentation') return docsRoute;
     if (section === 'setup') search.delete('section');
     return `docs/setup${rest()}`;
@@ -499,6 +476,10 @@ export function normalizeRoute(route: string): string {
   const guide = /^get-started\/(.+)$/.exec(originalPath)?.[1];
   if (guide) return routeOfDocument(guide, { section: section ?? undefined }) ?? docsRoute;
   if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
+  // The agent skills' page is gone with the skills: the guide for agents replaces them.
+  if (originalPath === 'docs/agent-skills') return 'docs/agent-tooling';
+  // The agent benchmark is gone: its page opens the overview.
+  if (originalPath === 'benchmark') return `${homeRoute}${rest()}`;
   // The Site's changelog moved to the Docs, with its release notes.
   if (originalPath === 'changelog') return `docs/changelog${rest()}`;
   // A destination's own address opens its first page.

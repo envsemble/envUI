@@ -458,6 +458,13 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
   gap: var(--env-space-2) var(--env-space-5);
 }
+/* The Docs' home's prompt for a coding agent, about as wide as a line of its text. */
+.docs-agent-prompt {
+  max-inline-size: 40rem;
+}
+.docs-agent-prompt > p {
+  margin: 0;
+}
 /* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge. */
 .docs-main [id] {
   scroll-margin-block-start: var(--env-space-6);

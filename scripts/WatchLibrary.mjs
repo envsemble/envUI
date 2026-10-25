@@ -33,7 +33,6 @@ function scheduleRebuild() {
 for (const directory of [
   '../packages/ui/src/',
   '../packages/ui/tokens/',
-  '../.agents/skills/',
   '../docs/',
   '../apps/catalogue/src/examples/',
   '../assets/',

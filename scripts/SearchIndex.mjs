@@ -65,12 +65,6 @@ export const cataloguePages = [
     aliases: ['dev mode', 'layout inspector', '3D view', 'check a layout'],
   },
   {
-    page: 'benchmark',
-    title: 'Benchmark',
-    area: 'site',
-    aliases: ['agent benchmark', 'scores', 'evaluation'],
-  },
-  {
     page: 'docs',
     title: 'Docs',
     area: 'docs',
@@ -93,12 +87,6 @@ export const cataloguePages = [
     title: 'Changelog',
     area: 'docs',
     aliases: ['release notes', 'releases', 'versions', 'full changelog', 'all changes'],
-  },
-  {
-    page: 'agent-skills',
-    title: 'Agent skills',
-    area: 'docs',
-    aliases: ['skills', 'envui-use', 'envui-migrate'],
   },
 ];
 

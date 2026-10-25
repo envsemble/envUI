@@ -16,19 +16,24 @@ import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/Th
 import { createDisplayBootstrapScript, displayStorageKeys } from './src/theme/DisplayStorage.ts';
 import { checkoutMarker } from '../../scripts/CheckoutMarker.mjs';
 import { resetClosedConnections } from '../../scripts/ServerSockets.mjs';
-import { benchmarkResultsDirectory, readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes, releaseNotesSources } from '../../scripts/ReleaseNotes.mjs';
+import { siteAgentFiles } from '../../scripts/SiteAgentFiles.mjs';
 
 /**
  * Data the Site's pages read from the repository when the catalogue builds or serves, as virtual
- * modules: the benchmark's saved runs and the release notes. While serving, a change to their
+ * modules: the release notes. While serving, a change to their
  * files reloads the page with the new data.
  */
 const siteData: Record<string, { read: () => unknown; sources: string[] }> = {
-  'virtual:envui-benchmark': { read: readBenchmark, sources: [benchmarkResultsDirectory] },
   'virtual:envui-release-notes': { read: readReleaseNotes, sources: releaseNotesSources },
 };
 const resolvedId = (id: string) => `\0${id}`;
+
+/** The files for coding agents at the site's root, with the type each is served as. */
+const agentFileTypes = {
+  'SKILL.md': 'text/markdown; charset=utf-8',
+  'llms.txt': 'text/plain; charset=utf-8',
+};
 
 /**
  * The revision the catalogue's links to source files point at: the release tag when the build is
@@ -131,6 +136,23 @@ export default defineConfig(() => {
               server.ws.send({ type: 'full-reload' });
             }
           });
+        },
+      },
+      {
+        // SKILL.md and llms.txt at the site's root, for coding agents: scripts/SiteAgentFiles.mjs.
+        // Served fresh while developing, and written into the build.
+        name: 'envui-agent-files',
+        configureServer(server) {
+          server.middlewares.use((request, response, next) => {
+            const name = request.url?.split('?')[0]?.slice(1) ?? '';
+            if (!Object.hasOwn(agentFileTypes, name)) return next();
+            response.setHeader('Content-Type', agentFileTypes[name]!);
+            response.end(siteAgentFiles()[name as keyof typeof agentFileTypes]);
+          });
+        },
+        generateBundle() {
+          for (const [fileName, source] of Object.entries(siteAgentFiles()))
+            this.emitFile({ type: 'asset', fileName, source });
         },
       },
       react(),

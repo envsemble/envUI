@@ -2,7 +2,6 @@ import { Button, Card, Column, Surface, Text } from '@envsemble/envui';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
-import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { routeHref } from '../navigation/Address';
@@ -31,12 +30,6 @@ const destinations = [
     route: 'patterns',
     icon: Pattern,
     text: 'Components put together for what people do, such as filling in a form.',
-  },
-  {
-    title: 'Benchmark',
-    route: 'benchmark',
-    icon: Leaderboard,
-    text: 'How well coding agents build interfaces with envUI.',
   },
 ] as const;
 

@@ -38,9 +38,8 @@ export default defineConfig(
     'packages/ui/src/icons/**',
     'apps/catalogue/src/brand/EnvUILogo.tsx',
     'apps/catalogue/src/generated/**',
-    // Packaged copies of the README, skills and documentation.
+    // Packaged copies of the documentation.
     'packages/ui/docs/**',
-    'packages/ui/skills/**',
     // Codemod fixtures: inputs and expected outputs, compared byte for byte.
     'packages/codemods/test/fixtures/**',
   ]),

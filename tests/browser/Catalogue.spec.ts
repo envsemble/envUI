@@ -4,9 +4,9 @@ import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
 import { chooseScheme } from './CatalogueThemes';
 import { readdirSync, readFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
-import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
 import { technicalText } from '../../scripts/SiteContent.mjs';
+import { renderLlmsText, renderSkill } from '../../scripts/SiteAgentFiles.mjs';
 import { references } from '../../apps/catalogue/src/Reference';
 import {
   allPages,
@@ -62,7 +62,11 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'overview/components': 'overview',
     'overview/components?section=components-actions': 'components?section=components-actions',
     'overview/get-started': 'docs/setup',
-    'overview/get-started?skill=migrate&section=local-development': 'docs/agent-skills',
+    'overview/get-started?skill=migrate&section=local-development': 'docs/agent-tooling',
+    // The agent skills' page went with the skills.
+    'docs/agent-skills': 'docs/agent-tooling',
+    // The agent benchmark went, and its page opens the overview.
+    benchmark: 'overview',
     'get-started/migration': 'docs/migration',
     // The Site's Get started page is the setup guide.
     'get-started': 'docs/setup',
@@ -709,7 +713,7 @@ test('the hosted build opens every page of the Site and the Docs without network
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(
     page.locator('.docs-footer').getByRole('navigation', { name: 'Footer' }),
-  ).toContainText('Benchmark');
+  ).toContainText('For agents');
   for (const { path, title, kind, area } of allPages) {
     await goTo(page, path === 'overview' ? '/' : `/${path}`);
     await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(
@@ -728,6 +732,19 @@ test('the hosted build opens every page of the Site and the Docs without network
   await page.goto(`${siteUrl}/docs/setup`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
   await expect(page.locator('.env-code-block').first()).toContainText('@envsemble:registry');
+  // The files for coding agents are at the root, as text rather than the page.
+  const agentFiles = await page.evaluate(async () =>
+    Promise.all(
+      ['/SKILL.md', '/llms.txt'].map(async (path) => {
+        const response = await fetch(path);
+        return { type: response.headers.get('Content-Type'), text: await response.text() };
+      }),
+    ),
+  );
+  expect(agentFiles).toEqual([
+    { type: 'text/markdown; charset=utf-8', text: renderSkill() },
+    { type: 'text/plain; charset=utf-8', text: renderLlmsText() },
+  ]);
   expect(errors).toEqual([]);
   expect(requests).toEqual([]);
   expect(await page.evaluate(() => document.fonts.check('1rem "envUI Inter"'))).toBe(true);
@@ -799,26 +816,6 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   await chooseScheme(page, 'dark');
   await expect(disclosure).toHaveAttribute('data-env-theme', 'dark');
   await expect(disclosure.locator('details')).toHaveAttribute('open', '');
-});
-
-test('arrowing between the agent skills keeps focus on the tabs and adds no history', async ({
-  page,
-}) => {
-  await page.goto(`${catalogueUrl}/docs/setup`);
-  await page.goto(`${catalogueUrl}/docs/agent-skills?skill=migrate`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Agent skills');
-  const before = await page.evaluate(() => history.length);
-  const tabs = page.getByRole('tablist', { name: 'Agent skills', exact: true });
-  await tabs.getByRole('tab', { name: 'Migrate to envUI', exact: true }).focus();
-  await page.keyboard.press('ArrowLeft');
-  await expect(tabs.getByRole('tab', { name: 'Use envUI', exact: true })).toBeFocused();
-  expect(await page.evaluate(() => `${location.pathname}${location.search}`)).toBe(
-    '/docs/agent-skills?skill=use',
-  );
-  expect(await page.evaluate(() => history.length)).toBe(before);
-  // Back leaves the page rather than stepping through the skills passed on the way.
-  await page.goBack();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
 });
 
 test('the navigation holds the wordmark and search, the page the other area and Display, and there is no top bar', async ({
@@ -1082,6 +1079,25 @@ test("the overview's hero shows the package's version under the wordmark, and le
   await expect(versionLine.getByRole('link')).toHaveCount(0);
   await expect(hero.getByRole('link')).toHaveCount(1);
   await expect(hero.getByRole('link', { name: 'Browse components', exact: true })).toBeVisible();
+});
+
+test("the Docs' home gives a prompt to copy that sets envUI up through the skill the site serves", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto(`${catalogueUrl}/docs`);
+  const setup = page.getByRole('region', { name: 'Set up with your agent' });
+  const prompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
+  await expect(setup).toContainText(prompt);
+  await setup.getByRole('button', { name: 'Copy prompt' }).click();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(prompt);
+  // The development server serves the skill and llms.txt as the build writes them.
+  const skill = await page.request.get(`${catalogueUrl}/SKILL.md`);
+  expect(skill.headers()['content-type']).toBe('text/markdown; charset=utf-8');
+  expect(await skill.text()).toBe(renderSkill());
+  const llms = await page.request.get(`${catalogueUrl}/llms.txt`);
+  expect(await llms.text()).toBe(renderLlmsText());
 });
 
 test('the Icons page credits Material Symbols with their license, and the footer does not', async ({
@@ -1513,35 +1529,6 @@ test('F6 on the Toast page reaches a notification raised there, past the figures
   await expect(live).toHaveCount(1);
   await page.keyboard.press('F6');
   await expect(live).toBeFocused();
-});
-
-test("the Benchmark page shows the newest run's scores and a named chart, with every run in detail under it", async ({
-  page,
-}) => {
-  const { latest, runs } = readBenchmark();
-  await page.goto(`${catalogueUrl}/benchmark`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Benchmark');
-  await expect(page.getByRole('heading', { name: 'Latest run', level: 2 })).toBeVisible();
-  const scores = page.getByRole('table', { name: `Scores of run ${latest.id}` });
-  await expect(scores.getByRole('row')).toHaveCount(latest.agents.length + 1);
-  for (const agent of latest.agents)
-    await expect(scores.getByRole('row', { name: agent.label })).toContainText(String(agent.mean));
-
-  // The chart is one image, named by its caption and described by every bar's value.
-  const chart = page.getByRole('img', { name: /^Mean score out of 100 by run and agent/ });
-  await expect(chart).toBeVisible();
-  await expect(chart).toHaveAccessibleDescription(
-    new RegExp(latest.agents.map((agent) => `${agent.label} ${agent.mean}`).join(', ')),
-  );
-  // Run ids and commits are out of sight until asked for: every run in detail, one row per agent of
-  // each run, which is the chart's data as a table too.
-  await expect(page.getByText(latest.id, { exact: true }).first()).toBeHidden();
-  await page.getByText('Every run in detail').click();
-  const data = page.getByRole('table', { name: 'Every run with its scores' });
-  await expect(data).toBeVisible();
-  const bars = runs.reduce((count, run) => count + run.agents.length, 0);
-  await expect(data.getByRole('row')).toHaveCount(bars + 1);
-  await expect(data).toContainText(latest.id);
 });
 
 test("the Docs' Changelog page lists each release's highlights, newest first, and their links reach sections of the Docs", async ({

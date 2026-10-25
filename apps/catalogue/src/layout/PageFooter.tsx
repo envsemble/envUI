@@ -24,7 +24,6 @@ const columns: { title: string; links: FooterLink[] }[] = [
     title: 'Overview',
     links: [
       { label: 'Introduction', href: routeHref(homeRoute) },
-      { label: 'Benchmark', href: routeHref('benchmark') },
       { label: 'Source', href: repository },
     ],
   },

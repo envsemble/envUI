@@ -1,11 +1,19 @@
-import { Button, Column, DescriptionList, Link, Tabs, Text } from '@envsemble/envui';
-import { Code, Markdown, type MarkdownLinkProps } from '@envsemble/envui/content';
+import {
+  Button,
+  Column,
+  CopyButton,
+  DescriptionList,
+  Link,
+  Row,
+  Surface,
+  Text,
+} from '@envsemble/envui';
+import { Code, Markdown } from '@envsemble/envui/content';
 import { Visibility } from '@envsemble/envui/icons/Visibility';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { PageHeader } from '../layout/PageHeader';
 import { pagesOf, referencePages, type SitePage } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
-import { currentRouteQuery, useViewTabs } from '../navigation/useDocumentationRoute';
 import { lazyPart } from '../template/LoadBoundary';
 import { ExampleSource } from '../template/LiveExample';
 import { partsOf } from '../template/Parts';
@@ -23,8 +31,6 @@ import { ReleaseNotes } from './ReleaseNotes';
 import { subsections } from '../../../../scripts/SiteContent.mjs';
 import { headingSlug } from '../../../../scripts/SearchAnchors.mjs';
 import codemodsReadme from '../../../../packages/codemods/README.md?raw';
-import usageSkill from '../../../../.agents/skills/envui-use/SKILL.md?raw';
-import migrationSkill from '../../../../.agents/skills/envui-migrate/SKILL.md?raw';
 
 /** The token reference, a large page that loads with the page that shows it. */
 const tokenReference = lazyPart(
@@ -33,7 +39,13 @@ const tokenReference = lazyPart(
   'src/pages/TokenReference.tsx',
 );
 
-/** The Docs' home: what they are, said once in its summary, and each group's pages in a short list. */
+/** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
+export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
+
+/**
+ * The Docs' home: what they are, said once in its summary, the prompt that sets envUI up with a
+ * coding agent, and each group's pages in a short list.
+ */
 export function DocsHome({ page }: { page: SitePage }) {
   const groups = new Map<string, SitePage[]>();
   for (const entry of pagesOf('docs'))
@@ -47,6 +59,25 @@ export function DocsHome({ page }: { page: SitePage }) {
         kind="docs-home"
       />
       <Column gap={7} className="docs-article">
+        <Column render={<section aria-labelledby="agent-setup" />} gap={3}>
+          <Text render={<h2 id="agent-setup" />} variant="title">
+            Set up with your agent
+          </Text>
+          <Text render={<p />}>
+            Paste this into your coding agent. It shows you a short checklist, then installs envUI
+            with its styles and theme, points your AGENTS.md to envUI's docs and turns on its lint
+            rules. You can skip any step.
+          </Text>
+          <Surface
+            background="muted"
+            padding={3}
+            render={<Row gap={3} align="center" justify="between" />}
+            className="docs-agent-prompt"
+          >
+            <Text render={<p />}>{setupPrompt}</Text>
+            <CopyButton value={setupPrompt} aria-label="Copy prompt" />
+          </Surface>
+        </Column>
         {[...groups].map(([group, entries]) => (
           <Column key={group} render={<section />} gap={3}>
             <Text render={<h2 />} variant="title">
@@ -85,71 +116,6 @@ export function CodemodsPage({ page }: { page: SitePage }) {
       <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
       <Column gap={7} className="docs-article">
         <Markdown codeCopyable>{codemodsReadme.replace(/^# [^\n]*\n+/, '')}</Markdown>
-      </Column>
-    </>
-  );
-}
-
-function skillBody(source: string) {
-  return source.replace(/^---\r?\n[\s\S]*?\r?\n---\s*/, '');
-}
-
-/** The skills shown, by the folder their links name, such as `../envui-migrate/SKILL.md`. */
-const skillTabsByFolder: Record<string, string> = {
-  'envui-use': 'use',
-  'envui-migrate': 'migrate',
-};
-
-/** A skill's link to another skill opens its tab; one to a skill not shown, its file. */
-function renderSkillLink({ href, ...props }: MarkdownLinkProps) {
-  const folder = href?.match(/^\.\.\/([^/]+)\/SKILL\.md$/)?.[1];
-  if (!folder) return <Link {...props} href={href} />;
-  const skill = skillTabsByFolder[folder];
-  return (
-    <Link
-      {...props}
-      href={
-        skill
-          ? routeHref(`docs/agent-skills?skill=${skill}`)
-          : `https://github.com/envsemble/envUI/blob/main/.agents/skills/${folder}/SKILL.md`
-      }
-    />
-  );
-}
-
-/** The skills the package ships for coding agents, from the same Markdown the agents read. */
-export function SkillsPage({ page }: { page: SitePage }) {
-  const selected = currentRouteQuery().get('skill') === 'migrate' ? 'migrate' : 'use';
-  const tabs = useViewTabs((value) => `docs/agent-skills?skill=${value}`);
-  return (
-    <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
-      <Column gap={7} className="docs-article">
-        <Tabs
-          aria-label="Agent skills"
-          value={selected}
-          {...tabs}
-          items={[
-            {
-              value: 'use',
-              button: <Button>Use envUI</Button>,
-              content: (
-                <Markdown headingOffset={1} codeCopyable renderLink={renderSkillLink}>
-                  {skillBody(usageSkill)}
-                </Markdown>
-              ),
-            },
-            {
-              value: 'migrate',
-              button: <Button>Migrate to envUI</Button>,
-              content: (
-                <Markdown headingOffset={1} codeCopyable renderLink={renderSkillLink}>
-                  {skillBody(migrationSkill)}
-                </Markdown>
-              ),
-            },
-          ]}
-        />
       </Column>
     </>
   );

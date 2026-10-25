@@ -226,14 +226,13 @@ test.describe('hosted build', () => {
       .locator('.docs-page-actions')
       .getByRole('link', { name: 'Site', exact: true })
       .click();
-    // The Benchmark is a page of the Overview, beside its introduction.
+    // Dev mode is a page of the Overview, beside its introduction.
     await page
       .getByRole('navigation', { name: 'Overview' })
-      .getByRole('link', { name: 'Benchmark', exact: true })
+      .getByRole('link', { name: 'Dev mode', exact: true })
       .click();
-    await expect(page).toHaveURL(`${siteUrl}/benchmark`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Benchmark');
-    await expect(page.getByRole('heading', { level: 2 }).first()).toBeVisible();
+    await expect(page).toHaveURL(`${siteUrl}/dev-mode`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dev mode');
     await page.goBack();
     await expect(page).toHaveURL(`${siteUrl}/`);
     await page.goBack();
