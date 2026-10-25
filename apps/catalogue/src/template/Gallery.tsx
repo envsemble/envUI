@@ -8,7 +8,8 @@ import { previewOf, TilePreview, useNear, type Preview } from './Related';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
 export interface GalleryGroup {
-  title: string;
+  /** Its heading; a gallery of one untitled group shows its tiles alone. */
+  title?: string;
   /** The id of its heading, which the footer and other pages link to. */
   id: string;
   pages: SitePage[];
@@ -47,10 +48,15 @@ function windowOf(page: SitePage) {
   );
 }
 
-/** One page's tile: its preview on the recessed canvas, rendered once near the viewport, and its name. */
-function GalleryTile({ page }: { page: SitePage }) {
+/**
+ * One page's tile: its preview on the recessed canvas, rendered once near the viewport, its name and,
+ * quieter, what it is for. The name is a heading one level under the gallery's group, or under the
+ * page's title where the gallery has no groups.
+ */
+function GalleryTile({ page, level }: { page: SitePage; level: 2 | 3 }) {
   const tile = useRef<HTMLLIElement>(null);
   const near = useNear(tile);
+  const Heading = level === 2 ? 'h2' : 'h3';
   return (
     <li ref={tile} className="docs-gallery-tile" style={windowOf(page)}>
       <TilePreview
@@ -59,35 +65,51 @@ function GalleryTile({ page }: { page: SitePage }) {
         className="docs-related-stage docs-gallery-stage"
         whole
       />
-      {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
-      <Text render={<h3 />} variant="body" className="docs-gallery-name">
-        <Link href={routeHref(page.path)} underline={false} className="docs-gallery-link">
-          {page.label ?? page.title}
-        </Link>
-      </Text>
+      <div className="docs-gallery-text">
+        {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
+        <Text render={<Heading />} variant="body" className="docs-gallery-name">
+          <Link href={routeHref(page.path)} underline={false} className="docs-gallery-link">
+            {page.label ?? page.title}
+          </Link>
+        </Text>
+        {page.summary && (
+          <Text render={<p />} variant="body-sm" emphasis="muted" className="docs-gallery-summary">
+            {page.summary}
+          </Text>
+        )}
+      </div>
     </li>
   );
 }
 
 /**
  * A gallery of pages, such as every component or every pattern: by group, a tile for each page
- * with a small live picture of it, inert, on the recessed canvas every example sits on.
+ * with a small live picture of it, inert, on the recessed canvas every example sits on. Each
+ * group's heading is a step above its tiles' names, and the groups stand well apart.
  */
 export function Gallery({ groups }: { groups: GalleryGroup[] }) {
   return (
-    <Column gap={8} className="docs-gallery">
-      {groups.map((group) => (
-        <Column render={<section aria-labelledby={group.id} />} gap={5} key={group.id}>
-          <Text render={<h2 />} variant="title" id={group.id}>
-            {group.title}
-          </Text>
-          <ul className="docs-gallery-grid">
+    <Column gap={9} className="docs-gallery">
+      {groups.map((group) =>
+        group.title ? (
+          <Column render={<section aria-labelledby={group.id} />} gap={5} key={group.id}>
+            <Text render={<h2 />} variant="headline" id={group.id} className="docs-gallery-group">
+              {group.title}
+            </Text>
+            <ul className="docs-gallery-grid">
+              {group.pages.map((page) => (
+                <GalleryTile key={page.path} page={page} level={3} />
+              ))}
+            </ul>
+          </Column>
+        ) : (
+          <ul className="docs-gallery-grid" key={group.id}>
             {group.pages.map((page) => (
-              <GalleryTile key={page.path} page={page} />
+              <GalleryTile key={page.path} page={page} level={2} />
             ))}
           </ul>
-        </Column>
-      ))}
+        ),
+      )}
     </Column>
   );
 }

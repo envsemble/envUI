@@ -155,12 +155,7 @@ export function FoundationPage({ page }: { page: SitePage }) {
 export function ComponentsPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader
-        title={page.title}
-        breadcrumb="Components"
-        description={page.summary}
-        symbol={<Widgets />}
-      />
+      <PageHeader title={page.title} description={page.summary} symbol={<Widgets />} />
       <Column gap={7} className="docs-article docs-overview">
         <Catalogue />
       </Column>
@@ -172,12 +167,7 @@ export function ComponentsPage({ page }: { page: SitePage }) {
 export function PatternsPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader
-        title={page.title}
-        breadcrumb="Patterns"
-        description={page.summary}
-        symbol={<Pattern />}
-      />
+      <PageHeader title={page.title} description={page.summary} symbol={<Pattern />} />
       <Column gap={7} className="docs-article docs-overview">
         <PatternCatalogue />
       </Column>

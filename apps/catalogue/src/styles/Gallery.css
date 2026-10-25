@@ -8,7 +8,7 @@
 .docs-gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
-  gap: var(--env-space-6) var(--env-space-5);
+  gap: var(--env-space-7) var(--env-space-5);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -40,9 +40,29 @@
   min-block-size: 0;
 }
 
+/* Under the picture, the name and, quieter and smaller, what the page is for, in at most two
+   lines. */
+.docs-gallery-text {
+  display: grid;
+  gap: var(--env-space-1);
+}
+
 .docs-gallery-name {
   margin: 0;
   font-weight: var(--env-font-weight-medium);
+}
+
+.docs-gallery-summary {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.docs-gallery-group {
+  margin: 0;
 }
 
 .docs-gallery-link {
