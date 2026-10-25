@@ -255,8 +255,9 @@
 }
 
 /* The color roles as swatches, on the page: four even columns of six, two on a narrower page and
-   one on a phone. Each role is a small square-cornered swatch, three bands for a status, with its name and use beside it; an
-   edge keeps a swatch in the page's own color visible. */
+   one on a phone. Each column is one continuous strip of square-cornered swatches, three bands for
+   a status, with each name beside its swatch; an edge around the strip keeps a swatch in the
+   page's own color visible. */
 .docs-role-groups {
   container-type: inline-size;
 }
@@ -285,7 +286,6 @@
 }
 .docs-role-swatches {
   display: grid;
-  gap: var(--env-space-3);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -297,11 +297,15 @@
   align-items: center;
 }
 .docs-role-swatch {
-  grid-row: span 2;
   display: flex;
-  block-size: 2rem;
-  overflow: hidden;
-  border: 1px solid var(--env-color-border-muted);
+  block-size: 2.25rem;
+  border-inline: 1px solid var(--env-color-border-muted);
+}
+.docs-role-swatches > li:first-child > .docs-role-swatch {
+  border-block-start: 1px solid var(--env-color-border-muted);
+}
+.docs-role-swatches > li:last-child > .docs-role-swatch {
+  border-block-end: 1px solid var(--env-color-border-muted);
 }
 .docs-role-swatch > span {
   flex: 1;

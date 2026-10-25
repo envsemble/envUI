@@ -85,44 +85,44 @@ function RolesFigure() {
 }
 
 /**
- * Each role's swatch, named by what it is and what it is for, in four groups of six. A status shows
+ * Each role's swatch and name, in four groups of six. A status shows
  * its three colors in one swatch: its text, its soft fill and its solid fill.
  */
 const roleGroups: readonly {
   title: string;
-  roles: readonly { name: string; use: string; colors: readonly string[] }[];
+  roles: readonly { name: string; colors: readonly string[] }[];
 }[] = [
   {
     title: 'Surfaces',
     roles: [
-      { name: 'Page', use: 'The background behind everything', colors: ['bg-page'] },
-      { name: 'Surface', use: 'Panes, dialogs and menus', colors: ['bg-default'] },
-      { name: 'Filled surface', use: 'Cards and tab rails', colors: ['bg-muted'] },
-      { name: 'Raised surface', use: 'A row or button that stands out', colors: ['bg-raised'] },
-      { name: 'Field', use: 'Inside text fields', colors: ['bg-field'] },
-      { name: 'Backdrop', use: 'Dims the page behind a dialog', colors: ['bg-overlay'] },
+      { name: 'Page', colors: ['bg-page'] },
+      { name: 'Surface', colors: ['bg-default'] },
+      { name: 'Filled surface', colors: ['bg-muted'] },
+      { name: 'Raised surface', colors: ['bg-raised'] },
+      { name: 'Field', colors: ['bg-field'] },
+      { name: 'Backdrop', colors: ['bg-overlay'] },
     ],
   },
   {
     title: 'Text and lines',
     roles: [
-      { name: 'Text', use: 'Headings and body text', colors: ['fg-default'] },
-      { name: 'Supporting text', use: 'Details, captions and icons', colors: ['fg-muted'] },
-      { name: 'Link', use: 'Links and text buttons', colors: ['fg-link'] },
-      { name: 'Edges', use: 'Fields and outline buttons', colors: ['border-default'] },
-      { name: 'Hairlines', use: 'Tables, menus and cards', colors: ['border-muted'] },
-      { name: 'Focus ring', use: 'What the keyboard is on', colors: ['border-focus'] },
+      { name: 'Text', colors: ['fg-default'] },
+      { name: 'Supporting text', colors: ['fg-muted'] },
+      { name: 'Link', colors: ['fg-link'] },
+      { name: 'Edges', colors: ['border-default'] },
+      { name: 'Hairlines', colors: ['border-muted'] },
+      { name: 'Focus ring', colors: ['border-focus'] },
     ],
   },
   {
     title: 'Actions and selection',
     roles: [
-      { name: 'Accent', use: 'The main action', colors: ['bg-brand-emphasis'] },
-      { name: 'On the accent', use: 'Its label and icon', colors: ['fg-on-emphasis'] },
-      { name: 'Quiet action', use: 'Secondary buttons', colors: ['bg-neutral-muted'] },
-      { name: 'Important', use: 'An action that must stand out', colors: ['bg-important-strong'] },
-      { name: 'Selected', use: 'What is chosen in navigation', colors: ['bg-selected'] },
-      { name: 'On the selected', use: 'Its label and icon', colors: ['fg-on-selected'] },
+      { name: 'Accent', colors: ['bg-brand-emphasis'] },
+      { name: 'On the accent', colors: ['fg-on-emphasis'] },
+      { name: 'Quiet action', colors: ['bg-neutral-muted'] },
+      { name: 'Important', colors: ['bg-important-strong'] },
+      { name: 'Selected', colors: ['bg-selected'] },
+      { name: 'On the selected', colors: ['fg-on-selected'] },
     ],
   },
   {
@@ -130,39 +130,33 @@ const roleGroups: readonly {
     roles: [
       {
         name: 'Neutral',
-        use: 'No particular state',
         colors: ['fg-muted', 'bg-neutral-muted', 'bg-neutral-emphasis'],
       },
       {
         name: 'Accent',
-        use: 'Current or highlighted',
         colors: ['fg-accent', 'bg-accent-badge', 'bg-accent-emphasis'],
       },
       {
         name: 'Success',
-        use: 'Healthy or ready',
         colors: ['fg-success', 'bg-success-muted', 'bg-success-emphasis'],
       },
       {
         name: 'Warning',
-        use: 'Needs attention',
         colors: ['fg-warning', 'bg-warning-muted', 'bg-warning-emphasis'],
       },
       {
         name: 'Danger',
-        use: 'Failed or destructive',
         colors: ['fg-danger', 'bg-danger-muted', 'bg-danger-emphasis'],
       },
       {
         name: 'Done',
-        use: 'Completed work',
         colors: ['fg-done', 'bg-done-muted', 'bg-done-emphasis'],
       },
     ],
   },
 ];
 
-/** The roles as swatches in the reader's theme, in even columns: a specimen of the system. */
+/** The roles in the reader's theme, each group a continuous strip of swatches: a specimen of the system. */
 function RoleSwatches() {
   return (
     <div className="docs-role-groups">
@@ -182,9 +176,6 @@ function RoleSwatches() {
                   </span>
                   <Text render={<span />} className="docs-topic-legend-name">
                     {role.name}
-                  </Text>
-                  <Text render={<span />} variant="body-sm" emphasis="muted">
-                    {role.use}
                   </Text>
                 </li>
               ))}
@@ -322,7 +313,7 @@ export function ColorsPreview() {
         <RolesFigure />
         <Block
           title="Every role in this theme"
-          text="Each swatch shows a role in the theme you are reading in, and a status shows its text, its soft fill and its solid fill. Switch the theme in the Display menu, and each takes the color its role has there."
+          text="Each role in the theme you are reading in; a status shows its text, soft fill and solid fill. Switch the theme in the Display menu to see the others."
           stacked
         >
           <RoleSwatches />
