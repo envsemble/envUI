@@ -25,8 +25,19 @@ const columns: { title: string; links: FooterLink[] }[] = [
     links: [
       { label: 'Introduction', href: routeHref(homeRoute) },
       { label: 'Benchmark', href: routeHref('benchmark') },
-      { label: 'Docs', href: routeHref(docsRoute) },
       { label: 'Source', href: repository },
+    ],
+  },
+  {
+    title: 'Docs',
+    links: [
+      { label: 'Introduction', href: routeHref(docsRoute) },
+      { label: 'Install and set up', href: routeHref('docs/setup') },
+      { label: 'Migrate to envUI', href: routeHref('docs/migration') },
+      { label: 'For agents', href: routeHref('docs/agent-tooling') },
+      { label: 'Customize', href: routeHref('docs/customizing') },
+      { label: 'Design tokens', href: routeHref('docs/tokens') },
+      { label: 'Changelog', href: routeHref('docs/changelog') },
     ],
   },
   {

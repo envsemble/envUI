@@ -354,8 +354,27 @@ body {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
-/* In a compact page the wordmark sits above the columns, and the columns pair up two to a row,
-   so none runs long on its own. */
+/* The five columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
+   above them, and they keep one row, then go three and two, then pair up two to a row in a compact
+   page, so none is left on a row of its own. */
+@container docs-footer (width >= 37.5rem) {
+  .docs-footer-columns {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+@container docs-footer (width < 66rem) {
+  .docs-footer-main {
+    flex-direction: column;
+  }
+  .docs-footer-columns {
+    align-self: stretch;
+  }
+}
+@container docs-footer (37.5rem <= width < 54rem) {
+  .docs-footer-columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 @container docs-footer (width < 37.5rem) {
   .docs-footer-main {
     flex-direction: column;
