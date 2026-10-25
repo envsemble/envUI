@@ -24,9 +24,17 @@ const team = [
  * The cards in the pocket, from the back of the stack to the front: a few of envUI's components
  * at their most pleasing, live, with no purpose beyond being looked at.
  */
-const cards: { id: string; content: ReactNode }[] = [
+const cards: {
+  id: string;
+  /** Where it rests in the pocket, and where it lands when the stack fans out: rem and degrees. */
+  rest: [x: number, rotate: number];
+  fan: [x: number, y: number, rotate: number];
+  content: ReactNode;
+}[] = [
   {
     id: 'status',
+    rest: [-1.4, -6],
+    fan: [-14.5, -3, -13],
     content: (
       <Column gap={3}>
         <Text variant="body-sm" emphasis="muted" render={<span />}>
@@ -43,6 +51,8 @@ const cards: { id: string; content: ReactNode }[] = [
   },
   {
     id: 'settings',
+    rest: [-0.4, -2.5],
+    fan: [-7.5, -7.5, -4],
     content: (
       <Column gap={3}>
         <Slider label="Opacity" defaultValue={40} formatValue={(value) => `${value}%`} />
@@ -52,6 +62,8 @@ const cards: { id: string; content: ReactNode }[] = [
   },
   {
     id: 'usage',
+    rest: [1.1, 3.5],
+    fan: [8.5, -6.5, 7],
     content: (
       <Column gap={4}>
         <Meter label="Storage" value={7.2} max={10} valueText="7.2 of 10 GB" />
@@ -61,22 +73,28 @@ const cards: { id: string; content: ReactNode }[] = [
   },
   {
     id: 'figure',
+    rest: [-0.6, -1],
+    fan: [14.5, -2, 15],
     content: (
       <Column gap={1}>
         <Text variant="body-sm" emphasis="muted" render={<span />}>
           Tasks done this year
         </Text>
         <Row gap={3} align="center">
-          <Text variant="display" render={<span />}>
+          <Text variant="headline" render={<span />} className="docs-showcase-figure">
             <AnimatedNumber value={1280} />
           </Text>
-          <Badge tone="success">+12%</Badge>
+          <Badge tone="success" className="docs-showcase-trend">
+            +12%
+          </Badge>
         </Row>
       </Column>
     ),
   },
   {
     id: 'team',
+    rest: [0.3, 1.5],
+    fan: [0.5, -8.5, 2],
     content: (
       <Column gap={3}>
         <Text variant="body-sm" emphasis="muted" render={<span />}>
@@ -89,8 +107,8 @@ const cards: { id: string; content: ReactNode }[] = [
 ];
 
 /**
- * The Overview's showcase, under its banner: a pocket holding a stack of cards, each a few live
- * components. The cards rise out of the pocket as the page opens, and fan out while the pointer is
+ * The Overview's showcase, under its banner: a pocket holding a stack of square cards, each a few
+ * live components, resting and fanning out at uneven angles, as cards dropped in by hand. The cards rise out of the pocket as the page opens, and fan out while the pointer is
  * over them. It is decoration only: hidden from assistive technology, its components inert, so only the
  * pointer's hover reaches it.
  */
@@ -105,17 +123,18 @@ export function OverviewShowcase() {
             style={
               {
                 '--docs-showcase-index': index,
-                '--docs-showcase-offset': index - (cards.length - 1),
-                '--docs-showcase-spread': index - (cards.length - 1) / 2,
+                '--docs-showcase-rest-x': `${card.rest[0]}rem`,
+                '--docs-showcase-rest-rotate': `${card.rest[1]}deg`,
+                '--docs-showcase-fan-x': `${card.fan[0]}rem`,
+                '--docs-showcase-fan-y': `${card.fan[1]}rem`,
+                '--docs-showcase-fan-rotate': `${card.fan[2]}deg`,
               } as CSSProperties
             }
           >
             <div inert>{card.content}</div>
           </div>
         ))}
-        <div className="docs-showcase-pocket">
-          <span className="docs-showcase-label">Made with envUI</span>
-        </div>
+        <div className="docs-showcase-pocket" />
       </div>
     </div>
   );

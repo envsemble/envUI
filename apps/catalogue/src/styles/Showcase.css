@@ -1,8 +1,8 @@
 /* The Overview's showcase (OverviewShowcase.tsx): a pocket holding a stack of cards, under the
    banner, with plenty of the page around it. At rest the cards lean back behind one another and
-   show their tops above the pocket; they rise out of it as the page opens, and fan out while the
-   pointer is over the stack. The cards and the pocket are told apart by their fills and edges,
-   with no shadows. */
+   show their tops above the pocket at uneven angles; they rise out of it as the page opens, and fan out while the
+   pointer is over the stack. The cards and the pocket have no edges; a very faint shadow keeps
+   theirs visible where they overlap, the one exception to the catalogue's no-shadow rule. */
 .docs-showcase {
   display: grid;
   place-items: center;
@@ -12,67 +12,56 @@
 }
 
 .docs-showcase-stack {
-  --docs-showcase-card-width: 17rem;
-  --docs-showcase-card-height: 12rem;
+  --docs-showcase-card-size: 13rem;
   --docs-showcase-pocket-height: 9rem;
+  /* stylelint-disable declaration-property-value-disallowed-list -- a very faint
+     shadow, on this decoration alone, shows the cards' edges where they overlap. */
+  --docs-showcase-shadow:
+    0 0 0.125rem light-dark(oklch(0% 0 0 / 0.08), oklch(0% 0 0 / 0.35)),
+    0 0.25rem 0.75rem light-dark(oklch(0% 0 0 / 0.06), oklch(0% 0 0 / 0.3));
+  /* stylelint-enable declaration-property-value-disallowed-list */
   position: relative;
   inline-size: min(100%, 24rem);
-  block-size: 18rem;
+  block-size: 20.5rem;
 }
 
 .docs-showcase-card {
   position: absolute;
-  inset-block-end: calc(var(--docs-showcase-pocket-height) - 4.5rem);
-  inset-inline-start: calc(50% - var(--docs-showcase-card-width) / 2);
+  inset-block-end: calc(
+    var(--docs-showcase-pocket-height) + 7.5rem - var(--docs-showcase-card-size)
+  );
+  inset-inline-start: calc(50% - var(--docs-showcase-card-size) / 2);
   box-sizing: border-box;
-  inline-size: var(--docs-showcase-card-width);
-  block-size: var(--docs-showcase-card-height);
+  inline-size: var(--docs-showcase-card-size);
+  block-size: var(--docs-showcase-card-size);
   padding: var(--env-space-5);
-  border: 1px solid var(--env-color-border-muted);
   border-radius: var(--env-radius-xl);
-  background: var(--env-color-bg-default);
+  /* Its fill is the recessed canvas every example sits on (Stage.css). */
+  box-shadow: var(--docs-showcase-shadow);
   transform-origin: 50% 100%;
-  /* At rest: each card behind the front one sits a little further left and leans back. */
-  transform: translateX(calc(var(--docs-showcase-offset) * 0.6rem))
-    rotate(calc(var(--docs-showcase-offset) * 2.5deg));
+  /* At rest: each card at its own slight angle and offset, as if dropped in by hand. */
+  transform: translateX(var(--docs-showcase-rest-x)) rotate(var(--docs-showcase-rest-rotate));
   transition: transform var(--env-motion-duration-slow) var(--env-motion-ease-standard);
   transition-delay: calc((4 - var(--docs-showcase-index)) * 30ms);
 }
 
-/* The pocket, in front of the cards' lower part: a filled surface with its label. */
+/* The pocket, in front of the cards' lower part: a plain filled surface. */
 .docs-showcase-pocket {
   position: absolute;
   inset-inline: 0;
   inset-block-end: 0;
-  display: grid;
-  place-items: end center;
   block-size: var(--docs-showcase-pocket-height);
-  padding-block-end: var(--env-space-6);
   box-sizing: border-box;
-  border: 1px solid var(--env-color-border-muted);
   border-radius: var(--env-radius-xl);
   background: var(--env-color-bg-muted);
+  box-shadow: var(--docs-showcase-shadow);
 }
 
-.docs-showcase-label {
-  padding: var(--env-space-1) var(--env-space-3);
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-bg-neutral-emphasis);
-  color: var(--env-color-fg-on-emphasis);
-  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.5
-    var(--docs-code-font-family);
-}
-
-/* Over the stack, the cards rise and fan out from the pocket, the outer ones furthest. */
+/* Over the stack, the cards rise and fan out from the pocket, each to its own place. */
 @media (hover: hover) {
   .docs-showcase-stack:hover .docs-showcase-card {
-    transform: translate(
-        calc(var(--docs-showcase-spread) * 6rem),
-        calc(
-          -5rem + max(var(--docs-showcase-spread), calc(var(--docs-showcase-spread) * -1)) * 0.9rem
-        )
-      )
-      rotate(calc(var(--docs-showcase-spread) * 7deg));
+    transform: translate(var(--docs-showcase-fan-x), var(--docs-showcase-fan-y))
+      rotate(var(--docs-showcase-fan-rotate));
     transition-delay: calc(var(--docs-showcase-index) * 30ms);
   }
 }
@@ -96,4 +85,15 @@
   .docs-showcase-card {
     transition: none;
   }
+}
+
+/* The key figure, large but within its square card. */
+.docs-showcase-figure {
+  font-size: 2rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.docs-showcase-trend {
+  flex: none;
 }

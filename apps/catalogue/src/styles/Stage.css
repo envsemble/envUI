@@ -36,7 +36,8 @@
 .docs-anatomy-stage,
 .docs-related-stage,
 .docs-foundation-stage[data-figure='example'],
-.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
+.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll),
+.docs-showcase-card {
   background-color: light-dark(
     oklch(
       from var(--docs-canvas-under, var(--env-color-bg-page))
