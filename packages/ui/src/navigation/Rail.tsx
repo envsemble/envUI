@@ -25,7 +25,9 @@ const railClasses: DestinationClasses = {
 export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array Bar and Drawer take, each an icon above a short
-   * label. Groups don't show: the destinations follow one another in the array's order.
+   * label. Groups don't show: the destinations follow one another in the array's order. Nested
+   * destinations don't show either: a destination whose `children` hold the current one takes the
+   * current fill.
    */
   destinations: readonly Destination[];
   /**
@@ -90,7 +92,7 @@ export function Rail({
           <Column render={<ul />} className="env-rail-list" align="stretch" gap={1}>
             {destinations.map((destination) => (
               <li key={destinationKey(destination)}>
-                <DestinationItem classes={railClasses} destination={destination} />
+                <DestinationItem classes={railClasses} destination={destination} topLevel />
               </li>
             ))}
           </Column>
