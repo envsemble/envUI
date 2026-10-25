@@ -36,6 +36,8 @@ export const devStyles = /* css */ `
   :where(.env-dev-panel) {
     position: fixed;
     inset: 0;
+    overflow: hidden;
+    overscroll-behavior: contain;
     background: var(--env-color-bg-page);
     color: var(--env-color-fg-default);
     pointer-events: auto;
@@ -113,21 +115,27 @@ export const devStyles = /* css */ `
     font-size: 0.9em;
     overflow-wrap: anywhere;
   }
-  /* As tall as its text: a flex item that scrolls would shrink to nothing in a short column. It
-     scrolls its long lines sideways, on the muted fill code blocks take. */
+  /* The readout, on the muted fill code blocks take, as wide as the sidebar: each line wraps within
+     it, its continuation hanging two characters in from the line's own indent. As tall as its
+     text: a flex item that scrolls would shrink to nothing in a short column. */
   :where(.env-dev-readout) {
     flex: none;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    box-sizing: border-box;
     margin: 0;
     padding: var(--env-space-2) var(--env-space-3);
-    overflow: auto;
-    white-space: pre;
+    white-space: normal;
     font-family: var(--env-code-font-family, ui-monospace, monospace);
     font-size: var(--env-code-font-size, 0.8125rem);
     line-height: 1.5;
     background: var(--env-color-bg-muted);
     border-radius: var(--env-radius-md);
   }
-  :where(.env-dev-readout[data-wrap]) {
+  :where(.env-dev-readout-line) {
+    display: block;
+    padding-inline-start: calc((var(--env-dev-indent, 0) + 2) * 1ch);
+    text-indent: -2ch;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
@@ -158,12 +166,6 @@ export const devStyles = /* css */ `
     transform-style: preserve-3d;
     transform-origin: 50% 50%;
   }
-  /* Picking an angle turns the view there, where motion is welcome; dragging follows the pointer. */
-  @media (prefers-reduced-motion: no-preference) {
-    :where(.env-dev-scene[data-turning]) {
-      transition: transform var(--env-motion-duration-slow) var(--env-motion-ease-standard);
-    }
-  }
   :where(.env-dev-floor) {
     position: absolute;
     inset: 0;
@@ -192,31 +194,34 @@ export const devStyles = /* css */ `
   :where(.env-dev-corner[data-side='end']) {
     inset-inline-end: var(--env-space-2);
   }
+  /* The performance panel, which View settings turns on, in the bottom end corner, above the
+     legend. */
+  .env-dev-performance {
+    inset-block: auto var(--env-space-8);
+    inset-inline-end: var(--env-space-2);
+    pointer-events: none;
+  }
 
-  /* The responsive frame: the rectangle the page is laid out in, above the planes, a quiet outline
-     at the page's real width and the focus color at a width it sets. Its line, handles and label
-     keep their size on screen at any zoom. */
+  /* The responsive frame: the rectangle the page is laid out in, above the planes, outlined in the
+     focus color. Its line, handles and label keep their size on screen at any zoom. */
   :where(.env-dev-frame) {
     --env-dev-unzoom: calc(1 / var(--env-dev-zoom, 1));
     position: absolute;
     inset: 0;
-    border: calc(1px * var(--env-dev-unzoom)) solid var(--env-color-border-default);
+    border: calc(1.5px * var(--env-dev-unzoom)) solid var(--env-color-border-focus);
     border-radius: var(--env-radius-xs);
     pointer-events: none;
-  }
-  :where(.env-dev-frame[data-set]) {
-    border: calc(1.5px * var(--env-dev-unzoom)) solid var(--env-color-border-focus);
   }
   :where(.env-dev-frame-label) {
     position: absolute;
     inset-block-end: 100%;
     inset-inline-start: 50%;
+    margin: 0;
     translate: -50% 0;
     scale: var(--env-dev-unzoom);
     transform-origin: 50% 100%;
     padding-block-end: var(--env-space-2);
     white-space: nowrap;
-    pointer-events: auto;
   }
   :where(.env-dev-frame-handle) {
     position: absolute;
@@ -226,7 +231,7 @@ export const devStyles = /* css */ `
     translate: -50% -50%;
     scale: var(--env-dev-unzoom);
     border-radius: var(--env-radius-full);
-    background: var(--env-color-fg-muted);
+    background: var(--env-color-border-focus);
     cursor: ew-resize;
     touch-action: none;
     pointer-events: auto;
@@ -259,9 +264,6 @@ export const devStyles = /* css */ `
   :where(.env-dev-frame-handle[data-edge='bottom-end']) {
     inset-inline-start: 100%;
     cursor: nwse-resize;
-  }
-  :where(.env-dev-frame-handle:hover, .env-dev-frame[data-set] .env-dev-frame-handle) {
-    background: var(--env-color-border-focus);
   }
   :where(.env-dev-frame-handle:focus-visible) {
     outline: 0.125rem solid var(--env-color-border-focus);

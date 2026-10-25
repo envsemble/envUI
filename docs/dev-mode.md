@@ -113,12 +113,12 @@ Open dev mode on the application at the top of this page to try it.
 
 Every visible layout node is a plane, lifted one level per step of nesting; sticky, absolute and fixed nodes sit half a level higher, and open overlays float above the page. Each plane carries a picture of what its node holds, with padding and gaps hatched and each child outlined.
 
-The toolbar over the view has four dropdowns, each an icon whose name shows at once on hover: View turns the view, Show chooses what the planes show, Responsive sets the page's size and View settings holds the spacing and levels. View's icon is the angle the view is at; it opens the angles laid out as they look at the page, Top above Front, Left and Right beside it and Tilted, which looks from above and to the right, in the top right corner, with Fit below them. How to move around is the button in the view's top right corner, and a legend in its bottom corner says what the colors mean.
+The toolbar over the view has four dropdowns, each an icon whose name shows at once on hover: View turns the view, Show chooses what the planes show, Responsive sets the page's size and View settings holds the spacing and levels. View opens the angles laid out as they look at the page, Top above Front, Left and Right beside it and Tilted, which looks from above and to the right, in the top right corner, the one the view is at marked. Each turns the view there with the whole page in view, so picking the angle the view is at brings the page back after zooming or panning. Each control has one place. How to move around is the button in the view's top right corner, and a legend in its bottom corner says what the colors mean.
 
 | Do this                                            | To                                                                            |
 | -------------------------------------------------- | ----------------------------------------------------------------------------- |
 | Drag, <kbd>Shift</kbd>+drag, <kbd>Ctrl</kbd>+wheel | Turn, pan and zoom; the wheel scrolls the page under the pointer, else zooms. |
-| View: an angle, or Fit                             | Look tilted, from the front, the top or a side; bring it all back.            |
+| View: an angle                                     | Look tilted, from the front, the top or a side, with the whole page in view.  |
 | Show: Names, Padding and gaps                      | Show or hide the planes' names, and the hatching of padding and gaps.         |
 | Click a plane, or a node in the tree               | Select the node; the inspector shows it.                                      |
 | Show: Only the selected                            | Show only the selected node and what is inside it.                            |
@@ -127,13 +127,18 @@ The toolbar over the view has four dropdowns, each an icon whose name shows at o
 | Responsive: Responsive frame                       | Show the frame, and drag its handles to lay the page out at another size.     |
 | Responsive: Device, Orientation                    | Lay the page out at a phone's, tablet's or screen's size, upright or turned.  |
 | View settings: spacing, from and to level          | Show a range of levels, with the spacing between them.                        |
+| View settings: Performance                         | Show the frame rate, and how often and how long dev mode measures the page.   |
 | A sidebar's button in its top corner               | Hide or show the sidebar; the view takes its room.                            |
 
 ### The responsive frame
 
 The page is laid out at its real size, with no frame, until you turn on Responsive frame in the toolbar's Responsive dropdown. Then a frame above the planes marks the page's size, labelled in px and rem with its window class and the device it came from. Drag a handle on its left, right or bottom edge, or a bottom corner, to lay the page out at another size, as a browser's responsive mode does: dev mode resizes the page's root, as `at()` does, measures it again and rebuilds the planes, while the window and the view keep their size. Given a height, the root takes it and scrolls what is taller, as a window would; a page shorter than the frame leaves the rest of it empty. A width snaps to the window class boundaries; with focus on an edge's handle, the arrow keys step by 1 rem and <kbd>Shift</kbd>+arrow by 5 rem.
 
-While the frame is on, Device, in the same dropdown, lists common phones, tablets, laptops and screens at their CSS viewport sizes; dragging afterwards makes the frame a free one, Responsive. Orientation turns the frame upright or on its side, swapping the width and the height. The inspector and the readout follow the size. The frame's ×, a double-click on a handle or Responsive frame again turns the frame off and brings the page back to its own size, and closing dev mode does too.
+While the frame is on, Device, in the same dropdown, lists common phones, tablets, laptops and screens at their CSS viewport sizes; dragging afterwards makes the frame one of any size, Any size. Orientation turns the frame upright or on its side, swapping the width and the height. The inspector and the readout follow the size. Responsive frame again turns the frame off and brings the page back to its own size, and closing dev mode does too.
+
+### Keeping up with the page
+
+The planes follow the page as it changes, at most once an animation frame: a resize, a scroll, a transition that ends, content that changes. The pictures on the planes are copied once the page settles, a few each frame, so dragging the frame or a sidebar stays smooth; while the page is being resized, a plane whose picture is of another size shows its outline, name and spacing alone. The frame lays the root out at any size, wider or taller than the window and whatever holds the root: the planes are whole, cut off only by what clips inside the root. Performance, in View settings, shows the frame rate and the measurements' cost.
 
 ### Dev mode's theme
 
@@ -145,9 +150,9 @@ A red outline marks a node with problems; coloured by window class, a solid outl
 
 - **Nodes**, the sidebar beside the view: the nodes as a tree, with problems counted and containers marked. Hovering a node lights up its plane; clicking it selects it.
 - **Details**, a tab of the inspector across the view: the selected node's part, component and description, its size, window class and `data-*` states, its container and which queries hold, its problems, the `--env-*` tokens its styles use with their values, and its line of the readout.
-- **Readout**, the inspector's other tab: the text of `describe()`, kept current, with a copy button.
+- **Readout**, the inspector's other tab: the text of `describe()`, kept current, with a copy button. Each line wraps to the sidebar's width, indented under its own start; the copy is the text as it is.
 
-Each sidebar has a button in its header, in the window's top corner on its side, that hides it; while it is hidden the button stays in that corner, over the view, to show it again. Drag a sidebar's inner edge, by the same grip as a resizable [Drawer](components/drawer.md)'s, to make it wider or narrower: the arrow keys on the grip step by 1 rem, <kbd>Shift</kbd>+arrow by 5 rem, and a double-click gives it its first width back. Dev mode remembers the widths and which sidebars are hidden in this browser.
+Each sidebar has a button in its header, in the window's top corner on its side, that hides it; while it is hidden the button stays in that corner, over the view, to show it again. Drag a sidebar's inner edge, by the same grip as a resizable [Drawer](components/drawer.md)'s, to make it wider or narrower, up to all the window leaves beside the other sidebar and a narrow view: the arrow keys on the grip step by 1 rem, <kbd>Shift</kbd>+arrow by 5 rem, and a double-click gives it its first width back. Dev mode remembers the widths and which sidebars are hidden in this browser.
 
 ## Skeleton shift
 

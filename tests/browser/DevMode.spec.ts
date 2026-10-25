@@ -28,7 +28,7 @@ async function openOver(page: Page) {
   return panel;
 }
 
-/** Picks an angle, or Fit, in the toolbar's View dropdown. */
+/** Picks an angle in the toolbar's View dropdown, which also brings the whole page into view. */
 async function turnTo(page: Page, panel: Locator, name: string) {
   await panel
     .getByRole('toolbar', { name: '3D view' })
@@ -240,10 +240,19 @@ test(
       'aria-pressed',
       'false',
     );
-    // Fit turns it back to the tilted view, the whole page in view.
-    await page.getByRole('group', { name: 'Angles' }).getByRole('button', { name: 'Top' }).click();
-    await turnTo(page, panel, 'Fit');
-    await expect(scene).toHaveAttribute('style', /rotateX\(38deg\) rotateY\(-22deg\)/);
+    // Picking the angle the view is at again brings the whole page back after zooming.
+    await page.keyboard.press('Escape');
+    const zoom = async () =>
+      Number(/scale\(([\d.]+)\)/.exec((await scene.getAttribute('style')) ?? '')?.[1]);
+    const fittedZoom = await zoom();
+    const view = (await panel.locator('.env-dev-view').boundingBox())!;
+    await page.mouse.move(view.x + 40, view.y + view.height - 40);
+    await page.keyboard.down('Control');
+    for (let turn = 0; turn < 3; turn += 1) await page.mouse.wheel(0, -100);
+    await page.keyboard.up('Control');
+    await expect.poll(zoom).toBeGreaterThan(fittedZoom * 1.2);
+    await turnTo(page, panel, 'Tilted');
+    await expect.poll(zoom).toBeCloseTo(fittedZoom, 3);
     // The toolbar's buttons show their names at once, with no wait.
     await toolbar.getByRole('button', { name: 'Show', exact: true }).hover();
     await expect(page.getByRole('tooltip')).toHaveText('Show', { timeout: 300 });
@@ -413,8 +422,14 @@ test(
     await expect.poll(rootWidth).toBe(587);
     // Dragging the right edge to the left narrows it, with the whole frame in view, once the view
     // has turned there.
-    await turnTo(page, panel, 'Fit');
-    await expect(scene).not.toHaveAttribute('data-turning');
+    await turnTo(page, panel, 'Tilted');
+    await expect
+      .poll(async () => {
+        const before = await scene.getAttribute('style');
+        await page.waitForTimeout(50);
+        return before === (await scene.getAttribute('style'));
+      })
+      .toBe(true);
     const box = (await right.boundingBox())!;
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();
@@ -422,8 +437,10 @@ test(
     await page.mouse.up();
     await expect.poll(rootWidth).toBeLessThan(587);
 
-    // Back to the page's own size: the frame goes, and the root's style is as it was.
-    await panel.getByRole('button', { name: "Back to the page's own size" }).click();
+    // Responsive frame off: the frame goes, and the root's style is as it was.
+    await responsive.click();
+    await toggle.click();
+    await page.keyboard.press('Escape');
     await expect.poll(rootSize).toBe(own);
     await expect(frame).toHaveCount(0);
     expect(await root.evaluate((element) => element.hasAttribute('style'))).toBe(false);
@@ -666,10 +683,13 @@ test(
     await wheelOver(menu);
     await atEnd(menu);
     await expect(menu.getByRole('menuitemradio').last()).toBeInViewport();
-    // Escape closes the device menu, then the Responsive one.
+    // Escape closes the device menu, then the Responsive one, or both at once in some engines;
+    // dev mode stays open.
     await page.keyboard.press('Escape');
-    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    if (await page.getByRole('menu').count()) await page.keyboard.press('Escape');
     await expect(page.getByRole('menu')).toHaveCount(0);
+    await expect(panel).toBeVisible();
     // The wheel past the columns' ends, or where nothing in dev mode scrolls, leaves the page under
     // it where it was.
     await wheelOver(panel.getByRole('heading', { name: 'Nodes' }));
@@ -768,7 +788,7 @@ test(
     // With a height from a device, the root scrolls in it, as a window would.
     await pickDevice(page, panel, /^iPhone SE/);
     await expect(root).toHaveCSS('overflow-y', 'auto');
-    await turnTo(page, panel, 'Fit');
+    await turnTo(page, panel, 'Tilted');
     await restOn('row "painted"');
     await page.mouse.wheel(0, 200);
     await expect.poll(() => scrollTop(root)).toBeGreaterThan(0);
@@ -784,3 +804,103 @@ test(
     await expect.poll(() => scrollTop(scaffold)).toBeGreaterThan(0);
   },
 );
+
+test('each control has one place: no two controls share a name', async ({ page }) => {
+  await open(page);
+  const panel = await openOver(page);
+  /** The names of the buttons and menu items showing, in the panel and its popups. */
+  const names = () =>
+    page
+      .locator('[data-env-dev-host]')
+      .getByRole('button')
+      .or(page.locator('[data-env-dev-host]').getByRole('menuitem'))
+      .or(page.locator('[data-env-dev-host]').getByRole('menuitemcheckbox'))
+      .or(page.locator('[data-env-dev-host]').getByRole('menuitemradio'))
+      .evaluateAll((elements) =>
+        elements
+          .filter((element) => element.getClientRects().length > 0)
+          .map(
+            (element) =>
+              element.getAttribute('aria-label') ??
+              element.textContent?.replace(/\s+/g, ' ').trim() ??
+              '',
+          ),
+      );
+  const unique = (list: string[]) => expect(list.length).toBe(new Set(list).size);
+  await expect(panel.locator('.env-dev-plane[data-plane]')).toHaveCount(15);
+  unique(await names());
+  // Nor with a dropdown open: the View dropdown's angles are named once, and nothing else in it
+  // repeats one.
+  for (const dropdown of ['View', 'Show', 'Responsive', 'View settings']) {
+    await panel.getByRole('button', { name: dropdown, exact: true }).click();
+    await expect(
+      page.locator('[data-env-dev-host] [role=dialog], [data-env-dev-host] [role=menu]'),
+    ).toBeVisible();
+    unique(await names());
+    await page.keyboard.press('Escape');
+  }
+});
+
+test(
+  'the frame lays the page out wider than the window, whole, and its planes keep their surfaces',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await open(page);
+    const panel = await openOver(page);
+    await pickDevice(page, panel, /^Full HD/);
+    // The root is 1920 px wide in a window of 1280: its planes are as wide, cut off by nothing
+    // around the root.
+    const widest = () =>
+      panel
+        .locator('.env-dev-plane[data-plane]')
+        .evaluateAll((planes) =>
+          Math.max(...planes.map((plane) => parseFloat((plane as HTMLElement).style.width))),
+        );
+    await expect.poll(widest).toBe(1920);
+    // Once the page settles, every plane carries a copy of its node at the node's size.
+    await expect
+      .poll(() =>
+        panel.locator('.env-dev-plane[data-plane]').evaluateAll(
+          (planes) =>
+            planes.filter((plane) => {
+              const surface = plane.querySelector<HTMLElement>('.env-dev-surface');
+              return (
+                surface &&
+                Math.abs(
+                  parseFloat(surface.style.width) - parseFloat((plane as HTMLElement).style.width),
+                ) > 1
+              );
+            }).length,
+        ),
+      )
+      .toBe(0);
+  },
+);
+
+test('a sidebar widens well past half the window, and the readout fits it', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 720 });
+  await open(page);
+  const panel = await openOver(page);
+  const inspector = panel.getByRole('complementary', { name: 'Dev mode inspector' });
+  const handle = (await panel
+    .getByRole('separator', { name: 'Resize the inspector' })
+    .boundingBox())!;
+  await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(300, handle.y + handle.height / 2, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => (await inspector.boundingBox())!.width).toBeGreaterThan(720);
+  // Narrowed again, the readout's lines wrap inside it: nothing runs past its edge.
+  await inspector.getByRole('separator', { name: 'Resize the inspector' }).dblclick();
+  await panel.getByRole('tab', { name: 'Readout' }).click();
+  const readout = panel.getByRole('tabpanel', { name: 'Readout' }).locator('pre');
+  await expect(readout).toContainText('scaffold "app"');
+  const fits = await readout.evaluate((element) => ({
+    overflow: element.scrollWidth - element.clientWidth,
+    inside:
+      element.getBoundingClientRect().right <=
+      element.closest('aside')!.getBoundingClientRect().right,
+  }));
+  expect(fits).toEqual({ overflow: 0, inside: true });
+});

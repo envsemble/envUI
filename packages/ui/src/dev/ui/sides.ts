@@ -12,10 +12,13 @@ export interface Sides {
 
 export const sidesKey = 'envui-dev-sidebars';
 
-/** The width each sidebar starts at, and its least and largest, in rem. */
+/**
+ * The width each sidebar starts at, and its least and largest, in rem. The room the window leaves
+ * beside the other sidebar and the view limits it first.
+ */
 export const sideWidths = {
-  tree: { default: 16, min: 12, max: 32 },
-  inspector: { default: 22, min: 16, max: 40 },
+  tree: { default: 16, min: 12, max: 200 },
+  inspector: { default: 22, min: 16, max: 200 },
 } as const;
 
 const fallback: Sides = {

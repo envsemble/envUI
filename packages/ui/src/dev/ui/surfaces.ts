@@ -108,22 +108,28 @@ const stripped = [
 /** Elements a copy holds as an empty box of their size: they would load or play again. */
 const replaced = new Set(['IFRAME', 'VIDEO', 'AUDIO', 'CANVAS', 'OBJECT', 'EMBED']);
 
+/**
+ * Freezes an element's computed values of some properties inline on its copy, written as one
+ * declaration list rather than property by property.
+ */
 function freeze(original: Element, copy: HTMLElement, properties: string[]) {
   const style = getComputedStyle(original);
-  for (const property of properties)
-    copy.style.setProperty(property, style.getPropertyValue(property));
-  copy.style.setProperty('container-type', 'normal');
-  copy.style.setProperty('transition', 'none');
-  copy.style.setProperty('animation', 'none');
-  if (
-    style.display !== 'inline' &&
-    style.display !== 'contents' &&
-    original instanceof HTMLElement
-  ) {
-    copy.style.boxSizing = 'border-box';
-    copy.style.width = `${original.offsetWidth}px`;
-    copy.style.height = `${original.offsetHeight}px`;
+  const declarations: string[] = [];
+  for (const property of properties) {
+    const value = style.getPropertyValue(property);
+    if (value) declarations.push(`${property}:${value}`);
   }
+  declarations.push('container-type:normal', 'transition:none', 'animation:none');
+  if (style.display !== 'inline' && style.display !== 'contents' && original instanceof HTMLElement)
+    declarations.push(
+      'box-sizing:border-box',
+      `width:${original.offsetWidth}px`,
+      `height:${original.offsetHeight}px`,
+    );
+  // After the copy's own inline style, such as custom properties a component sets inline, which
+  // the frozen values override.
+  const own = copy.style.cssText;
+  copy.style.cssText = own ? `${own};${declarations.join(';')}` : declarations.join(';');
 }
 
 /** Scroll offsets to set once a copy is in the document. */

@@ -5,7 +5,7 @@
 // envUI's components, inside its own Theme at the compact scale of a desktop tool, and the readout
 // leaves it out.
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { IconButton } from '../../actions/Button.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import { Row } from '../../foundations/Layout.js';
@@ -15,9 +15,10 @@ import { ViewInAr } from '../../icons/ViewInAr.js';
 import { resizeRoot } from '../api.js';
 import { resolveRoot } from '../measure.js';
 import { Inspector, NodeTree } from './Inspector.js';
-import { realSize, type FrameSize } from './FrameHandle.js';
+import { realSize, type FrameSize } from './Frame.js';
+import type { Side } from './controls.js';
 import { loadEditorTheme, saveEditorTheme, type EditorTheme } from './editorTheme.js';
-import { containWheel } from './scrolling.js';
+import { containWheel } from './wheel.js';
 import { loadSides, saveSides, type Sides } from './sides.js';
 import { useLivePage } from './useLivePage.js';
 import { View3D } from './View3D.js';
@@ -72,22 +73,28 @@ export function DevMode({ controller }: { controller: DevModeController }) {
   // page's theme as it opens. The page keeps its own.
   const [editor, setEditor] = useState(loadEditorTheme);
   const [page, setPage] = useState(() => pageTheme(controller.root));
-  useEffect(
-    () =>
-      controller.subscribe((next) => {
-        if (next) setPage(pageTheme(controller.root));
-        setOpen(next);
-      }),
-    [controller],
+  useEffect(() => {
+    const follow = (next: boolean) => {
+      if (next) setPage(pageTheme(controller.root));
+      setOpen(next);
+    };
+    // open() or close() called before this first effect, as right after installDevMode(), counts.
+    if (controller.open !== open) follow(controller.open);
+    return controller.subscribe(follow);
+    // Only the controller's state when it subscribes counts; later changes come through it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [controller]);
+  const editorTheme = useMemo(
+    () => ({
+      value: editor,
+      onChange: (next: EditorTheme) => {
+        if (next.theme === 'page') setPage(pageTheme(controller.root));
+        setEditor(next);
+        saveEditorTheme(next);
+      },
+    }),
+    [editor, controller.root],
   );
-  const editorTheme = {
-    value: editor,
-    onChange: (next: EditorTheme) => {
-      if (next.theme === 'page') setPage(pageTheme(controller.root));
-      setEditor(next);
-      saveEditorTheme(next);
-    },
-  };
   return (
     <PortalContainer container={controller.host}>
       <Theme
@@ -151,15 +158,32 @@ function Panel({
   );
   const live = useLivePage(root);
   const [selected, setSelected] = useState<number | null>(null);
-  const [treeHover, setTreeHover] = useState<number | null>(null);
-  // Which sidebars show and how wide they are, kept in this browser for the next dev mode.
-  const [sides, setSidesState] = useState(loadSides);
-  const setSides = (change: (current: Sides) => Sides) =>
-    setSidesState((current) => {
-      const next = change(current);
-      saveSides(next);
-      return next;
-    });
+  // The node tree marks a node's plane as hovered through the view, without rendering either.
+  const highlight = useRef<(key: number | null) => void>(() => {});
+  const onTreeHover = useCallback((key: number | null) => highlight.current(key), []);
+  // Which sidebars show, and how wide they were left, kept in this browser for the next dev mode.
+  // Each sidebar keeps its width while it is dragged, and stores it once the drag ends.
+  const [stored] = useState(loadSides);
+  const [shown, setShown] = useState({ tree: stored.tree, inspector: stored.inspector });
+  const store = useCallback(
+    (change: Partial<Sides>) => saveSides({ ...loadSides(), ...change }),
+    [],
+  );
+  const setSide = useCallback(
+    (side: Side, show: boolean) => {
+      setShown((current) => ({ ...current, [side]: show }));
+      store({ [side]: show });
+    },
+    [store],
+  );
+  const onShow = useCallback((side: Side) => setSide(side, true), [setSide]);
+  const hideTree = useCallback(() => setSide('tree', false), [setSide]);
+  const hideInspector = useCallback(() => setSide('inspector', false), [setSide]);
+  const storeTreeWidth = useCallback((width: number) => store({ treeWidth: width }), [store]);
+  const storeInspectorWidth = useCallback(
+    (width: number) => store({ inspectorWidth: width }),
+    [store],
+  );
   // The size the responsive frame lays the page out at.
   const [frame, setFrame] = useState<FrameSize>(realSize);
   const panel = useRef<HTMLDivElement>(null);
@@ -201,15 +225,15 @@ function Panel({
         controller.setOpen(false);
       }}
     >
-      {sides.tree ? (
+      {shown.tree ? (
         <NodeTree
-          live={live}
+          full={live.full}
           selected={selected}
           onSelect={setSelected}
-          onTreeHover={setTreeHover}
-          width={sides.treeWidth}
-          onWidthChange={(width) => setSides((current) => ({ ...current, treeWidth: width }))}
-          onHide={() => setSides((current) => ({ ...current, tree: false }))}
+          onTreeHover={onTreeHover}
+          defaultWidth={stored.treeWidth}
+          onWidthCommit={storeTreeWidth}
+          onHide={hideTree}
           editorTheme={editorTheme}
         />
       ) : null}
@@ -217,20 +241,20 @@ function Panel({
         live={live}
         selected={selected}
         onSelect={setSelected}
-        treeHover={treeHover}
-        sides={sides}
-        onShow={(side) => setSides((current) => ({ ...current, [side]: true }))}
+        highlight={highlight}
+        sides={shown}
+        onShow={onShow}
         frame={frame}
         onFrameChange={setFrame}
         root={root}
       />
-      {sides.inspector ? (
+      {shown.inspector ? (
         <Inspector
-          live={live}
+          full={live.full}
           selected={selected}
-          width={sides.inspectorWidth}
-          onWidthChange={(width) => setSides((current) => ({ ...current, inspectorWidth: width }))}
-          onHide={() => setSides((current) => ({ ...current, inspector: false }))}
+          defaultWidth={stored.inspectorWidth}
+          onWidthCommit={storeInspectorWidth}
+          onHide={hideInspector}
         />
       ) : null}
     </Row>

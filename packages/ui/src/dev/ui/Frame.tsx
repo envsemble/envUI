@@ -1,12 +1,14 @@
 'use client';
 
-// The handles of dev mode's responsive frame, on its side edges, its bottom edge and its bottom
-// corners. The frame floats in the 3D view; dragging a handle follows the pointer along the frame
-// as it is seen, at any turn of the view, and the arrow keys step an edge's handle. Like a colour
-// plane, it is a control of its own that no envUI component draws.
+// Dev mode's responsive frame: the rectangle the page is laid out in, floating above the planes of
+// the 3D view, labelled with its size, and its handles on its side edges, its bottom edge and its
+// bottom corners. Dragging a handle follows the pointer along the frame as it is seen, at any turn
+// of the view, and the arrow keys step an edge's handle. Like a colour plane, it is a control of
+// its own that no envUI component draws.
 
 import { useEffect, useRef, type HTMLAttributes, type KeyboardEvent } from 'react';
-import { windowClasses } from '../units.js';
+import { Text } from '../../foundations/Text.js';
+import { round, windowClasses, windowClassOf } from '../units.js';
 
 /** The smallest and largest the frame lays the page out at, in rem. */
 export const frameMin = 15;
@@ -44,7 +46,7 @@ const names: Record<FrameEdge, string> = {
   'bottom-end': 'Page size, bottom right corner',
 };
 
-export interface FrameHandleProps {
+interface FrameHandleProps {
   edge: FrameEdge;
   /** The page's size now, in px. */
   width: number;
@@ -68,15 +70,7 @@ function centre(element: Element) {
  * frame's width and height run on screen. An edge's handle is a slider for its size; a corner's
  * moves both, with the pointer only, the edges giving the keyboard the same.
  */
-export function FrameHandle({
-  edge,
-  width,
-  height,
-  size,
-  rootPx,
-  text,
-  onSizeChange,
-}: FrameHandleProps) {
+function FrameHandle({ edge, width, height, size, rootPx, text, onSizeChange }: FrameHandleProps) {
   const direction = directions[edge];
   const vertical = edge === 'bottom';
   const corner = direction.x !== 0 && direction.y !== 0;
@@ -157,7 +151,6 @@ export function FrameHandle({
     onPointerCancel: () => {
       drag.current = null;
     },
-    onDoubleClick: () => onSizeChange(realSize),
   };
   // A corner moves both edges with the pointer; the edges' handles give the keyboard the same.
   if (corner)
@@ -194,5 +187,61 @@ export function FrameHandle({
       {...pointer}
       onKeyDown={onKeyDown}
     />
+  );
+}
+
+const frameEdges: FrameEdge[] = ['start', 'end', 'bottom', 'bottom-start', 'bottom-end'];
+
+/**
+ * The responsive frame, while it is on: the rectangle the page is laid out in, at its size now,
+ * floating above the planes, with handles on its side and bottom edges and its bottom corners.
+ * The label above says its size in px and rem with its window class, and the device it came from.
+ * Responsive frame, in the toolbar, turns it off.
+ */
+export function Frame({
+  width,
+  height,
+  z,
+  size,
+  rootPx,
+  onSizeChange,
+}: {
+  /** The page's size now, in px. */
+  width: number;
+  height: number;
+  /** How high it floats: above every plane, where its handles and label are never covered. */
+  z: number;
+  /** The size the frame sets. */
+  size: FrameSize;
+  rootPx: number;
+  onSizeChange: (size: FrameSize) => void;
+}) {
+  const windowClass = windowClassOf(width / rootPx);
+  const text = [
+    size.device,
+    `${Math.round(width)}×${Math.round(height)}px`,
+    `${round(width / rootPx)}×${round(height / rootPx)}rem`,
+    windowClass,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  return (
+    <div className="env-dev-frame" style={{ transform: `translateZ(${z}px)` }}>
+      <Text variant="body-sm" emphasis="default" className="env-dev-frame-label">
+        {text}
+      </Text>
+      {frameEdges.map((edge) => (
+        <FrameHandle
+          key={edge}
+          edge={edge}
+          width={width}
+          height={height}
+          size={size}
+          rootPx={rootPx}
+          text={text}
+          onSizeChange={onSizeChange}
+        />
+      ))}
+    </div>
   );
 }
