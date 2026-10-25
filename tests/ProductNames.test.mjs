@@ -58,6 +58,8 @@ const sources = [
   { directory: 'apps/catalogue/src', extensions: ['.css'], read: 'whole' },
   { directory: 'apps/catalogue/site', extensions: ['.mjs'], read: 'code' },
   { path: 'apps/catalogue/site/_headers', read: 'whole' },
+  // The setup skill the hosted site serves to coding agents.
+  { path: 'apps/catalogue/site/SKILL.md', read: 'whole' },
   // The test fixtures' sample data and copy.
   { directory: 'tests/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
   { directory: 'tests/fixture', extensions: ['.css', '.html'], read: 'whole' },

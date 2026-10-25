@@ -1,4 +1,14 @@
-import { Button, Column, DescriptionList, Link, Tabs, Text } from '@envsemble/envui';
+import {
+  Button,
+  Column,
+  CopyButton,
+  DescriptionList,
+  Link,
+  Row,
+  Surface,
+  Tabs,
+  Text,
+} from '@envsemble/envui';
 import { Code, Markdown, type MarkdownLinkProps } from '@envsemble/envui/content';
 import { Visibility } from '@envsemble/envui/icons/Visibility';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
@@ -33,7 +43,13 @@ const tokenReference = lazyPart(
   'src/pages/TokenReference.tsx',
 );
 
-/** The Docs' home: what they are, said once in its summary, and each group's pages in a short list. */
+/** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
+export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
+
+/**
+ * The Docs' home: what they are, said once in its summary, the prompt that sets envUI up with a
+ * coding agent, and each group's pages in a short list.
+ */
 export function DocsHome({ page }: { page: SitePage }) {
   const groups = new Map<string, SitePage[]>();
   for (const entry of pagesOf('docs'))
@@ -47,6 +63,25 @@ export function DocsHome({ page }: { page: SitePage }) {
         kind="docs-home"
       />
       <Column gap={7} className="docs-article">
+        <Column render={<section aria-labelledby="agent-setup" />} gap={3}>
+          <Text render={<h2 id="agent-setup" />} variant="title">
+            Set up with your agent
+          </Text>
+          <Text render={<p />}>
+            Paste this into your coding agent. It shows you a short checklist, then installs envUI
+            with its styles and theme, points your AGENTS.md to envUI's docs and turns on its lint
+            rules. You can skip any step.
+          </Text>
+          <Surface
+            background="muted"
+            padding={3}
+            render={<Row gap={3} align="center" justify="between" />}
+            className="docs-agent-prompt"
+          >
+            <Text render={<p />}>{setupPrompt}</Text>
+            <CopyButton value={setupPrompt} aria-label="Copy prompt" />
+          </Surface>
+        </Column>
         {[...groups].map(([group, entries]) => (
           <Column key={group} render={<section />} gap={3}>
             <Text render={<h2 />} variant="title">

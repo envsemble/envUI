@@ -7,6 +7,7 @@ import { readMap } from '../../packages/codemods/src/map.mjs';
 import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
 import { technicalText } from '../../scripts/SiteContent.mjs';
+import { renderLlmsText, renderSkill } from '../../scripts/SiteAgentFiles.mjs';
 import { references } from '../../apps/catalogue/src/Reference';
 import {
   allPages,
@@ -728,6 +729,19 @@ test('the hosted build opens every page of the Site and the Docs without network
   await page.goto(`${siteUrl}/docs/setup`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
   await expect(page.locator('.env-code-block').first()).toContainText('@envsemble:registry');
+  // The files for coding agents are at the root, as text rather than the page.
+  const agentFiles = await page.evaluate(async () =>
+    Promise.all(
+      ['/SKILL.md', '/llms.txt'].map(async (path) => {
+        const response = await fetch(path);
+        return { type: response.headers.get('Content-Type'), text: await response.text() };
+      }),
+    ),
+  );
+  expect(agentFiles).toEqual([
+    { type: 'text/markdown; charset=utf-8', text: renderSkill() },
+    { type: 'text/plain; charset=utf-8', text: renderLlmsText() },
+  ]);
   expect(errors).toEqual([]);
   expect(requests).toEqual([]);
   expect(await page.evaluate(() => document.fonts.check('1rem "envUI Inter"'))).toBe(true);
@@ -1082,6 +1096,25 @@ test("the overview's hero shows the package's version under the wordmark, and le
   await expect(versionLine.getByRole('link')).toHaveCount(0);
   await expect(hero.getByRole('link')).toHaveCount(1);
   await expect(hero.getByRole('link', { name: 'Browse components', exact: true })).toBeVisible();
+});
+
+test("the Docs' home gives a prompt to copy that sets envUI up through the skill the site serves", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto(`${catalogueUrl}/docs`);
+  const setup = page.getByRole('region', { name: 'Set up with your agent' });
+  const prompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
+  await expect(setup).toContainText(prompt);
+  await setup.getByRole('button', { name: 'Copy prompt' }).click();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(prompt);
+  // The development server serves the skill and llms.txt as the build writes them.
+  const skill = await page.request.get(`${catalogueUrl}/SKILL.md`);
+  expect(skill.headers()['content-type']).toBe('text/markdown; charset=utf-8');
+  expect(await skill.text()).toBe(renderSkill());
+  const llms = await page.request.get(`${catalogueUrl}/llms.txt`);
+  expect(await llms.text()).toBe(renderLlmsText());
 });
 
 test('the Icons page credits Material Symbols with their license, and the footer does not', async ({
