@@ -19,12 +19,12 @@ A component or pattern page opens with how it looks and when to use it, the desi
 
 ## Foundations
 
-- [Colors & themes](foundations/colors.md) — Colors named by their role, so every screen works in light, dark and high contrast.
-- [Typography](foundations/typography.md) — A few text styles, each with one job, from a page's hero line to small notes.
+- [Colors & themes](foundations/colors.md)
+- [Typography](foundations/typography.md)
 - [Spacing & density](foundations/spacing.md)
-- [Adapting to width](foundations/responsive.md) — Components follow the space they sit in, and four window classes name where a layout changes.
-- [Icons](foundations/icons.md) — Thousands of Material Symbols that follow their text, outlined or filled.
-- [Accessibility](foundations/accessibility.md) — What every component does for keyboard, screen readers, contrast, motion and touch, and what an app still supplies.
+- [Adapting to width](foundations/responsive.md)
+- [Icons](foundations/icons.md)
+- [Accessibility](foundations/accessibility.md)
 
 ## Actions
 

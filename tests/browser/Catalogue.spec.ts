@@ -724,9 +724,9 @@ test('a component page groups its sections into three, the middle one on the ban
     );
   await page.goto(`${catalogueUrl}/components/scaffold`);
   await expect.poll(groups).toEqual([
-    { band: false, sections: ['overview', 'variants'] },
-    { band: true, sections: ['usage', 'anatomy'] },
-    { band: false, sections: ['width', 'accessibility'] },
+    { band: false, sections: ['overview', 'variants', 'anatomy', 'behaviour'] },
+    { band: true, sections: ['rules'] },
+    { band: false, sections: ['accessibility'] },
     { band: false, sections: ['related'] },
   ]);
   // The band spans the whole content pane, gutters included; its sections keep the column.
@@ -741,12 +741,12 @@ test('a component page groups its sections into three, the middle one on the ban
   });
   expect(widths.band).toBe(widths.main);
   expect(widths.column).toBe(widths.first);
-  // Box has no Variants, Anatomy or Adapting to width, and its Accessibility holds only the lists
-  // that are in the Docs, so the Site has no third group for it.
+  // Box has no Variants, Anatomy or Behaviour, and its Accessibility holds only the lists that
+  // are in the Docs, so the Usage guide has no group after its Rules.
   await goTo(page, '/components/box');
   await expect.poll(groups).toEqual([
     { band: false, sections: ['overview'] },
-    { band: true, sections: ['usage'] },
+    { band: true, sections: ['rules'] },
     { band: false, sections: ['related'] },
   ]);
   // A page in the one-file structure: what it is, its variants, parts and behaviour; its rules,
@@ -1721,15 +1721,13 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await page.setViewportSize({ width: 1920, height: 1000 });
   await goTo(page, '/foundations/colors');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
-  await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
   // The role swatches show each role in the reader's theme, and follow it.
-  const pageSwatch = panes.first().locator('.docs-role-swatch > span').first();
+  const pageSwatch = page.locator('.docs-role-swatch > span').first();
   const swatchColor = () =>
     pageSwatch.evaluate((swatch) => getComputedStyle(swatch).backgroundColor);
   const darkColor = await swatchColor();
   await chooseScheme(page, 'light');
   await expect(app).toHaveAttribute('data-env-theme', 'light');
-  await expect(panes.first()).toHaveAttribute('data-env-theme', 'light');
   await expect.poll(swatchColor).not.toBe(darkColor);
   await chooseScheme(page, 'dark');
   await expect(app).toHaveAttribute('data-env-theme', 'dark');

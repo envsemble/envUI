@@ -307,6 +307,8 @@ const foundationFrontmatter = {
   useWhen: { type: 'strings' },
   avoidWhen: { type: 'avoid' },
   components: { type: 'strings' },
+  /** The status of an export that differs from stable, such as a beta hook. */
+  statuses: { type: 'statuses' },
   examples: { type: 'examples', required: true },
 };
 /** The frontmatter of each page kind that has its own; other pages take otherFrontmatter only. */

@@ -29,25 +29,27 @@ avoidWhen:
     use: Surface
 components:
   - Box
+examples:
+  InsetRegion: overview
+  OneInset:
+    role: do
+    caption: One inset on the region, and a Column inside for the gaps.
+  BoxPerChild:
+    role: dont
+    caption: 'A padded box around each child: every gap is different.'
 ---
 
 # Box
 
-## Overview
+## Rules
 
-Like [Row](row.md), [Column](column.md) and [Grid](grid.md), Box sizes to its content and never paints.
+Box gives a region an inset and nothing else: like [Row](row.md), [Column](column.md) and [Grid](grid.md), it sizes to its content and never paints.
 
-```tsx example=InsetRegion
-
-```
-
-## When to use
-
-```tsx do=OneInset caption="One inset on the region, and a Column inside for the gaps."
+```tsx figure=OneInset
 
 ```
 
-```tsx dont=BoxPerChild caption="A padded box around each child: every gap is different."
+```tsx figure=BoxPerChild
 
 ```
 
@@ -62,11 +64,14 @@ Like [Row](row.md), [Column](column.md) and [Grid](grid.md), Box sizes to its co
 
 - A heading and a name for a box that is a region, such as `aria-labelledby` on a section.
 
-## In code
+## Compose
 
 ### Usage
 
-Box renders a `div`, or the element in `render`, such as `render={<section />}`, which takes its attributes. `padding` sets its inset on every side, a step of the spacing scale, none by default. `name` names the region for dev mode and agents, as `data-env-name`.
+Box renders a `div`, or the element in `render`, such as `render={<section />}`, which takes its attributes.
+
+- `padding` sets its inset on every side, a step of the spacing scale, none by default.
+- `name` names the region for dev mode and agents, as `data-env-name`.
 
 ```tsx source=InsetRegion
 
@@ -74,38 +79,31 @@ Box renders a `div`, or the element in `render`, such as `render={<section />}`,
 
 #### Size container
 
-`container="summary"` makes the box a size container that the application's style sheet can query, such as `@container summary (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content, so give one in a flex row a width of its own.
+`container="summary"` makes the box a size container that the application's style sheet can query, such as `@container summary (width >= 37.5rem)`.
+
+- A container is as wide as its context gives it, never as its content, so give one in a flex row a width of its own.
+- The `env-*` container names are envUI's own. Use `container="env-window"` only for a preview frame whose content should lay out at the box's width, as a window of its own.
 
 ```tsx
-import { Box, Column, Grid, Text } from '@envsemble/envui';
-
-const figures = [
-  ['Open tasks', '24'],
-  ['Done this week', '9'],
-  ['Overdue', '2'],
-];
-
-export default function SizeContainer() {
-  return (
-    // A container the application's own style sheet can query, such as
-    // @container summary (width >= 37.5rem) { … }; the box is as wide as its context gives it.
-    <Box container="summary">
-      <Grid columns="repeat(auto-fit, minmax(min(100%, 9rem), 1fr))" gap={4}>
-        {figures.map(([label, value]) => (
-          <Column key={label} gap={1}>
-            <Text variant="body-sm" emphasis="muted">
-              {label}
-            </Text>
-            <Text variant="headline">{value}</Text>
-          </Column>
-        ))}
-      </Grid>
-    </Box>
-  );
-}
+<Box container="summary">
+  <Grid columns="repeat(auto-fit, minmax(min(100%, 9rem), 1fr))" gap={4}>
+    {figures.map(([label, value]) => (
+      <Column key={label} gap={1}>
+        <Text variant="body-sm" emphasis="muted">
+          {label}
+        </Text>
+        <Text variant="headline">{value}</Text>
+      </Column>
+    ))}
+  </Grid>
+</Box>
 ```
 
-The `env-*` container names are envUI's own. Use `container="env-window"` only for a preview frame whose content should lay out at the box's width, as a window of its own.
+```css
+@container summary (width >= 37.5rem) {
+  /* The application's own rules for a wide summary. */
+}
+```
 
 ### Composition
 

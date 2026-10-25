@@ -33,15 +33,18 @@ avoidWhen:
     use: Card
 components:
   - Column
+examples:
+  ProjectDetails: overview
+  CenteredContent: example
+  NestedSpacing:
+    role: do
+    caption: A larger gap between sections and a smaller one inside them.
+  OneGapForAll:
+    role: dont
+    caption: 'One gap for everything: the sections run together.'
 ---
 
 # Column
-
-## Overview
-
-```tsx example=ProjectDetails
-
-```
 
 ## Variants
 
@@ -61,19 +64,23 @@ The space between the children is a step of the [spacing scale](../foundations/s
 
 ### Alignment
 
-Each child is as wide as the column by default, or keeps its own width at the start, the middle or the end. Buttons, chips and badges keep their own width in any case.
+Each child is as wide as the column by default, or keeps its own width at the start, the middle or the end.
 
-```tsx example=CenteredContent
+- Buttons, chips and badges keep their own width in any case.
 
-```
-
-## When to use
-
-```tsx do=NestedSpacing caption="A larger gap between sections and a smaller one inside them."
+```tsx figure=CenteredContent
 
 ```
 
-```tsx dont=OneGapForAll caption="One gap for everything: the sections run together."
+## Rules
+
+Space says what belongs together: a larger gap between sections, and a smaller one inside them.
+
+```tsx figure=NestedSpacing
+
+```
+
+```tsx figure=OneGapForAll
 
 ```
 
@@ -92,15 +99,18 @@ A Column paints nothing: a fill, a border or corners come from a [Surface](surfa
 
 - A heading and a name for a column that is a region, such as `aria-labelledby` on a section.
 
-## In code
+## Compose
 
 ### Usage
-
-`gap` is a step of the spacing scale, from `1`, 0.25 rem, to `9`, 4 rem, and `0`; a Column has none by default. `align` is `stretch`, the default, which makes each child as wide as the column, or `start`, `center` or `end`, which keep each child at its own width; buttons, chips and badges keep theirs in any case. `justify` places the children along the column where there is room to spare: `start`, the default, `center`, `end` or `between`. `padding` insets it by a step of the same scale.
 
 ```tsx source=ProjectDetails
 
 ```
+
+- `gap` is a step of the spacing scale, from `1`, 0.25 rem, to `9`, 4 rem, and `0`; a Column has none by default.
+- `align` is `stretch`, the default, which makes each child as wide as the column, or `start`, `center` or `end`, which keep each child at its own width; buttons, chips and badges keep theirs in any case.
+- `justify` places the children along the column where there is room to spare: `start`, the default, `center`, `end` or `between`.
+- `padding` insets it by a step of the same scale.
 
 #### Stacked actions
 
@@ -117,7 +127,10 @@ In a narrow pane, stack the actions in a Column and give each Button `fullWidth`
 
 ### Composition
 
-`render` gives the column its element, such as `render={<section />}` or `render={<form />}`, or lays out another component without a wrapper: a Surface with `render={<Column gap={4} />}` has the Surface's fill, inset and corners and the Column's layout. Nest columns with different gaps for sections and their contents, a larger gap between them and a smaller one inside.
+`render` gives the column its element, such as `render={<section />}` or `render={<form />}`, or lays out another component without a wrapper.
+
+- A Surface with `render={<Column gap={4} />}` has the Surface's fill, inset and corners and the Column's layout.
+- Nest columns with different gaps for sections and their contents, a larger gap between them and a smaller one inside.
 
 ```tsx
 <Surface background="default" padding={5} render={<Column render={<section />} gap={4} />}>

@@ -34,15 +34,18 @@ avoidWhen:
     use: Box
 components:
   - Row
+examples:
+  FormActions: overview
+  WrappingActions:
+    role: do
+    caption: A row that wraps, so an action that doesn't fit moves to the next line.
+  SqueezedActions:
+    role: dont
+    caption: 'No wrap in a narrow pane: the labels break inside their buttons.'
+  SectionHeading: example
 ---
 
 # Row
-
-## Overview
-
-```tsx example=FormActions
-
-```
 
 ## Variants
 
@@ -62,27 +65,33 @@ The gap between the children is a step of the [spacing scale](../foundations/spa
 | Step 3 | A toolbar's controls.      |
 | Step 4 | Actions, such as a form's. |
 
-## When to use
+## Behaviour
 
-```tsx do=WrappingActions caption="A row that wraps, so an action that doesn't fit moves to the next line."
+### Adapting to width
+
+A row that wraps runs onto more lines; it never turns into a column by itself.
+
+- For that, change the layout at a [window class](../foundations/responsive.md).
+
+```tsx figure=SectionHeading widths="12 30"
 
 ```
 
-```tsx dont=SqueezedActions caption="No wrap in a narrow pane: the labels break inside their buttons."
+## Rules
+
+A row that may get narrow wraps, so its children keep their shape.
+
+```tsx figure=WrappingActions
+
+```
+
+```tsx figure=SqueezedActions
 
 ```
 
 ### Alignment
 
 Center controls of different heights on their line, such as a heading and a small button.
-
-## Adapting to width
-
-A row that wraps runs onto more lines; it never turns into a column by itself. For that, change the layout at a [window class](../foundations/responsive.md).
-
-```tsx example=SectionHeading widths="12 30"
-
-```
 
 ## Accessibility
 
@@ -95,11 +104,14 @@ A row that wraps runs onto more lines; it never turns into a column by itself. F
 
 - `role="group"` and an `aria-label` on a row of actions that needs a shared name.
 
-## In code
+## Compose
 
 ### Usage
 
-Row lays out its children side by side, in the reading direction. `gap` is the space between them, a step of the spacing scale from `0` to `9`, none by default: `2` between a label and its badge, `3` between a toolbar's controls, `4` between actions. `wrap` lets the row run onto more lines when its children don't fit.
+Row lays out its children side by side, in the reading direction.
+
+- `gap` is the space between them, a step of the spacing scale from `0` to `9`, none by default: `2` between a label and its badge, `3` between a toolbar's controls, `4` between actions.
+- `wrap` lets the row run onto more lines when its children don't fit.
 
 ```tsx source=FormActions
 
@@ -107,15 +119,30 @@ Row lays out its children side by side, in the reading direction. `gap` is the s
 
 #### Align and justify
 
-`align` lines the children up across the line: `stretch`, the default, makes each as tall as the row, except controls such as buttons, which keep their own size; `start`, `center` and `end` keep each at its own size, and `center` suits controls of different heights. `justify` places them along the line when there is room to spare: `start`, the default, `center`, `end`, or `between`, out to the edges, such as a heading and its action.
+`align` lines the children up across the line, and `justify` places them along it when there is room to spare.
 
-```tsx source=SectionHeading
+- `align`: `stretch`, the default, makes each as tall as the row, except controls such as buttons, which keep their own size; `start`, `center` and `end` keep each at its own size, and `center` suits controls of different heights.
+- `justify`: `start`, the default, `center`, `end`, or `between`, out to the edges, such as a heading and its action.
 
+```tsx
+<Row wrap align="center" justify="between" gap={3}>
+  <Row align="center" gap={2}>
+    <Text render={<h3 />} variant="title">
+      Members
+    </Text>
+    <Badge>12</Badge>
+  </Row>
+  <Button variant="secondary" size="sm" startIcon={<Add />}>
+    Invite people
+  </Button>
+</Row>
 ```
 
 #### Element, inset and name
 
-`render` gives the row its meaning, such as `render={<footer />}` or `render={<ul />}`, or lays out another component without a wrapper, such as a Surface; `ref` reaches the rendered element. `padding` sets an inset on every side, a step of the spacing scale, none by default. `name` names the node for dev mode, as `data-env-name`.
+- `render` gives the row its meaning, such as `render={<footer />}` or `render={<ul />}`, or lays out another component without a wrapper, such as a Surface; `ref` reaches the rendered element.
+- `padding` sets an inset on every side, a step of the spacing scale, none by default.
+- `name` names the node for dev mode, as `data-env-name`.
 
 #### A row that becomes a column
 
