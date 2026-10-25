@@ -1,11 +1,12 @@
-import { Button, Card, Column, Surface, Text } from '@envsemble/envui';
+import { Badge, Button, Card, Column, Row, Surface, Text } from '@envsemble/envui';
+import { Code } from '@envsemble/envui/icons/Code';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
-import { routeHref } from '../navigation/Address';
-import { sectionHome } from '../navigation/DocumentationRoutes';
+import { docsRoute, routeHref } from '../navigation/Address';
+import { pagesOf, sectionHome } from '../navigation/DocumentationRoutes';
 import { OverviewShowcase } from './OverviewShowcase';
 
 /**
@@ -33,6 +34,15 @@ const destinations = [
   },
 ] as const;
 
+/**
+ * How much the catalogue shows, counted from its pages as the site builds, so the hero's line of
+ * facts never goes out of date: its components, patterns and foundations.
+ */
+const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => ({
+  kind,
+  count: pagesOf('usage').filter((page) => page.kind === kind).length,
+}));
+
 /** The Usage guide's home: what envUI is, and the way to its components, patterns and Docs. */
 export function Overview() {
   return (
@@ -44,19 +54,37 @@ export function Overview() {
           render={<Column gap={6} align="center" />}
           className="docs-overview-hero"
         >
-          {/* The wordmark, with the package's version under it as a quiet subheading, read from
-              packages/ui/package.json as the site builds. */}
-          <Column gap={3} align="center" className="docs-overview-brand">
+          {/* The wordmark, and what envUI is in one line under it. */}
+          <Column gap={4} align="center" className="docs-overview-brand">
             <Text render={<h1 />} aria-label="envUI" className="docs-overview-title">
               <EnvUILogo className="docs-overview-logo" />
             </Text>
-            <Text variant="title" emphasis="muted" className="docs-overview-version">
-              v{version}
+            <Text variant="title" emphasis="muted" className="docs-overview-lede">
+              A React design system: components, patterns and the foundations they share, ready for
+              light, dark and high contrast.
             </Text>
           </Column>
-          <Button href={routeHref('components')} startIcon={<Widgets />}>
-            Browse components
-          </Button>
+          {/* The two ways on: into the components to see them, or into the Docs to build. */}
+          <Row gap={3} wrap justify="center">
+            <Button href={routeHref('components')} startIcon={<Widgets />}>
+              Browse components
+            </Button>
+            <Button variant="secondary" href={routeHref(docsRoute)} startIcon={<Code />}>
+              Read the Docs
+            </Button>
+          </Row>
+          {/* Quiet facts under them: the package's version, read from packages/ui/package.json,
+              and how much the catalogue shows. */}
+          <Row gap={3} wrap justify="center" align="center" className="docs-overview-facts">
+            <Badge className="docs-overview-version">v{version}</Badge>
+            <Text variant="caption" emphasis="muted" render={<span />}>
+              {counts.map(({ kind, count }) => (
+                <span key={kind}>
+                  {count} {kind}s
+                </span>
+              ))}
+            </Text>
+          </Row>
         </Surface>
       </header>
       <OverviewShowcase />

@@ -2,6 +2,7 @@ import { Column } from '@envsemble/envui';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { PageHeader } from '../layout/PageHeader';
+import { catalogueTrail } from '../navigation/CatalogueTrail';
 import type { RoutePage } from '../navigation/DocumentationRoutes';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { getPatternIcon, getReferenceIcon } from '../navigation/TopicIcons';
@@ -24,8 +25,9 @@ export function ComponentPage({ page }: { page: RoutePage }) {
     <>
       <PageHeader
         title={page.title}
-        breadcrumb={`Components / ${page.group}`}
+        trail={catalogueTrail(page)}
         description={page.summary}
+        subject={{ id: reference.id, group: reference.group }}
         // The icon is looked up among module-level components, not created here.
         // eslint-disable-next-line react-hooks/static-components
         symbol={<Icon />}
@@ -53,8 +55,9 @@ export function PatternPage({ page }: { page: RoutePage }) {
     <>
       <PageHeader
         title={page.title}
-        breadcrumb={page.group ? `Patterns / ${page.group}` : 'Patterns'}
+        trail={catalogueTrail(page)}
         description={page.summary}
+        subject={{ id: document.id, group: 'Patterns' }}
         // eslint-disable-next-line react-hooks/static-components
         symbol={<Icon />}
         meta={
@@ -92,8 +95,9 @@ export function FoundationPage({ page }: { page: RoutePage }) {
     <>
       <PageHeader
         title={page.title}
-        breadcrumb="Foundations"
+        trail={catalogueTrail(page)}
         description={page.summary}
+        subject={{ id: reference.id, group: 'Foundations' }}
         // eslint-disable-next-line react-hooks/static-components
         symbol={<Icon />}
         meta={<OtherPartButton page={page} />}
@@ -113,7 +117,13 @@ export function FoundationPage({ page }: { page: RoutePage }) {
 export function ComponentsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader title={page.title} description={page.summary} symbol={<Widgets />} />
+      <PageHeader
+        title={page.title}
+        trail={catalogueTrail(page)}
+        description={page.summary}
+        symbol={<Widgets />}
+        subject={{ id: 'components' }}
+      />
       <Column gap={7} className="docs-article docs-overview">
         <Catalogue />
       </Column>
@@ -125,7 +135,13 @@ export function ComponentsPage({ page }: { page: RoutePage }) {
 export function PatternsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader title={page.title} description={page.summary} symbol={<Pattern />} />
+      <PageHeader
+        title={page.title}
+        trail={catalogueTrail(page)}
+        description={page.summary}
+        symbol={<Pattern />}
+        subject={{ id: 'patterns' }}
+      />
       <Column gap={7} className="docs-article docs-overview">
         <PatternCatalogue />
       </Column>

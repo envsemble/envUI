@@ -540,7 +540,7 @@ test("a specimen's titles and captions name options in words, not values", async
 async function siteWords(page: Page) {
   return page.locator('.docs-main').evaluate((main) => {
     const skipped =
-      '.docs-live-example-code, .docs-code-slot, pre, .env-code-block, .docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-stage, .docs-open-example, [hidden]';
+      '.docs-live-example-code, .docs-code-slot, pre, .env-code-block, .docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-stage, .docs-open-example, [hidden], .docs-banner-motif';
     const words: string[] = [];
     const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode())
@@ -1251,18 +1251,47 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
 });
 
-test("the overview's hero shows the package's version under the wordmark, and leads to the components", async ({
+test("the overview's hero says what envUI is, leads to the components and the Docs, and shows the package's version", async ({
   page,
 }) => {
   await page.goto(`${catalogueUrl}/`);
   const hero = page.locator('.docs-overview-hero');
   await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
-  // The version is packages/ui/package.json's, as a quiet subheading rather than a link.
+  await expect(hero.locator('.docs-overview-lede')).toContainText('A React design system');
+  // The version is packages/ui/package.json's, as a quiet badge rather than a link, beside the
+  // catalogue's counts.
   const versionLine = hero.locator('.docs-overview-version');
   await expect(versionLine).toHaveText(`v${version}`);
   await expect(versionLine.getByRole('link')).toHaveCount(0);
-  await expect(hero.getByRole('link')).toHaveCount(1);
-  await expect(hero.getByRole('link', { name: 'Browse components', exact: true })).toBeVisible();
+  await expect(hero.locator('.docs-overview-facts')).toContainText(
+    `${references.filter(({ id }) => id !== 'field').length} components`,
+  );
+  await expect(hero.getByRole('link')).toHaveText(['Browse components', 'Read the Docs']);
+  await expect(hero.getByRole('link', { name: 'Read the Docs', exact: true })).toHaveAttribute(
+    'href',
+    '/docs',
+  );
+});
+
+test("a catalogue page's banner reads from the start under its breadcrumbs, its motif hidden and inert", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${catalogueUrl}/components/slider`);
+  const banner = page.locator('.docs-page-banner');
+  const trail = banner.getByRole('navigation', { name: 'Breadcrumb' });
+  await expect(trail.getByRole('link')).toHaveText(['envUI', 'Components', 'Forms & selection']);
+  await expect(trail.getByRole('link', { name: 'Forms & selection' })).toHaveAttribute(
+    'href',
+    '/components#components-forms-selection',
+  );
+  await expect(trail.locator('[aria-current="page"]')).toHaveText('Slider');
+  await expect(banner.locator('.docs-page-banner-content')).toHaveCSS('text-align', 'start');
+  // The motif is drawn from the page's subject, out of the accessibility tree and the tab order.
+  const motif = banner.locator('.docs-banner-motif');
+  await expect(motif).toHaveAttribute('aria-hidden', 'true');
+  await expect(motif).toHaveAttribute('inert', '');
+  await expect(motif.locator('[data-motif="tracks"]')).toHaveAttribute('data-variant', 'thumbs');
 });
 
 test("the Docs' home gives a prompt to copy that sets envUI up through the skill the site serves", async ({
