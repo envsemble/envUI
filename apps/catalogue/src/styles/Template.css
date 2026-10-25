@@ -65,17 +65,18 @@
 /* The band: the second group, When to use and Anatomy, on a fill of its own that spans the whole
    content pane, gutters included, the one band of a page. Its edges sit halfway between its
    content and the groups around it, so they stand as far apart as two groups. The fill is a small
-   step from the page, just beyond the navigation's fill beside it, so it reads as a region of the
-   page rather than a surface: the muted fill's hue at an OKLCH lightness of 0.945 in the light
-   theme, 0.013 deeper than the navigation, and 0.30 in the dark themes, 0.02 lighter than it. In
-   the light high-contrast theme it is 0.955, as deep as it can be while code keeps 7:1 on it.
+   step from the page, so it reads as a region of the page rather than a surface: in the light
+   themes the muted fill's hue at an OKLCH lightness of 0.945, 0.013 deeper than the navigation
+   beside it, and 0.955 in the light high-contrast theme, as deep as it can be while code keeps 7:1
+   on it. In the dark themes it is deeper than the page, by 0.02, halfway to the examples' canvas,
+   which stays the deepest.
    Text, links and inline code keep their contrast on it (`catalogue-band` in
    tests/contrast/Pairs.ts, which repeats this formula); examples on it sit on a canvas of the
    page's color in the light themes and on the page's canvas in the dark ones (Stage.css). */
 .docs-band {
   --docs-band-fill: light-dark(
     oklch(from var(--env-color-bg-muted) clamp(0.945, l, 0.955) c h),
-    oklch(from var(--env-color-bg-muted) min(l, 0.3) c h)
+    oklch(from var(--env-color-bg-page) calc(l - 0.02) c h)
   );
   /* The light themes' canvas on the band is the page's color (Stage.css). */
   --docs-canvas-depth: 0;
