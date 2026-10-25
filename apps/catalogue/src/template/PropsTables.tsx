@@ -85,7 +85,7 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
   if (entry.kind === 'namespace') return null;
   return (
     <Column render={<section />} gap={4} aria-labelledby={exportSection(name)}>
-      <Text render={<h2 />} variant="title" id={exportSection(name)}>
+      <Text render={<h3 />} variant="title" id={exportSection(name)}>
         <PlainCode>{name}</PlainCode>
       </Text>
       {entry.description && <Text>{entry.description}</Text>}

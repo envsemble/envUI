@@ -2,12 +2,12 @@ import type { CSSProperties } from 'react';
 import { Column, IconButton, Kbd, Surface, Text, useTheme } from '@envsemble/envui';
 import { ViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import { PageHeader } from '../layout/PageHeader';
-import type { SitePage } from '../navigation/DocumentationRoutes';
+import type { RoutePage } from '../navigation/DocumentationRoutes';
 import { ExampleStage } from '../previews/Example';
 import { Preview } from '../previews/Preview';
 import { Block, Figure, Topic } from '../previews/foundations/Topic';
 import { Demo } from './GuideDocument';
-import { GuideLink } from './SitePages';
+import { OtherPartButton } from '../navigation/OtherPart';
 // Pictures of the real dev mode at work on the demo application, captured by
 // scripts/CaptureDevModeImage.mjs (npm run docs:dev-mode-image) in each theme.
 import wholeLight from '../demos/dev-mode/dev-mode-whole-light.webp';
@@ -130,11 +130,11 @@ function ButtonFigure() {
 }
 
 /**
- * Dev mode's page on the Site: what it shows, what it helps you notice and how to open it, in
+ * Dev mode's page in the Usage guide: what it shows, what it helps you notice and how to open it, in
  * pictures of the real dev mode and plain words, with the real dev mode to try on a small
- * application. Its guide in the Docs, which Guide opens, holds the readout, the options and code.
+ * application. Its guide in the Docs, which Docs opens, holds the readout, the options and code.
  */
-export function DevModePage({ page }: { page: SitePage }) {
+export function DevModePage({ page }: { page: RoutePage }) {
   return (
     <>
       <PageHeader
@@ -142,7 +142,7 @@ export function DevModePage({ page }: { page: SitePage }) {
         breadcrumb="Overview"
         description={page.summary}
         symbol={<ViewInAr />}
-        meta={<GuideLink path="docs/dev-mode" />}
+        meta={<OtherPartButton page={page} />}
       />
       <Preview>
         <ExampleStage value={false}>

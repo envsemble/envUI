@@ -6,6 +6,6 @@ import { Gallery } from '../template/Gallery';
  * order the index lists the patterns.
  */
 export function PatternCatalogue() {
-  const pages = pagesOf('site').filter((entry) => entry.kind === 'pattern');
+  const pages = pagesOf('usage').filter((entry) => entry.kind === 'pattern');
   return <Gallery groups={[{ id: 'patterns', pages }]} />;
 }

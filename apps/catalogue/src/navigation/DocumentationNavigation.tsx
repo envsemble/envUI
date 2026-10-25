@@ -9,8 +9,6 @@ import {
   type Destination,
   type DrawerDestination,
 } from '@envsemble/envui';
-import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
-import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
@@ -20,26 +18,30 @@ import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu } from '../theme/DisplaySettings';
 import {
+  docsTree,
+  otherPartRoute,
   pagesOf,
   sectionHome,
-  siteSections,
+  usageSections,
   type Area,
-  type SitePage,
-  type SiteSection,
+  type DocsGroup,
+  type RoutePage,
+  type UsageSection,
 } from './DocumentationRoutes';
 import { docsRoute, homeRoute, routeHref } from './Address';
+import { otherPart } from './OtherPart';
 
-/** The icon of each of the Site's destinations in its rail. */
-const sectionIcons: Record<SiteSection, typeof Home> = {
+/** The icon of each of the Usage guide's destinations in its rail. */
+const sectionIcons: Record<UsageSection, typeof Home> = {
   Overview: Home,
   Foundations: Palette,
   Components: Widgets,
   Patterns: Pattern,
 };
 
-/** The Site's destinations, for its rail: each opens its first page. */
-export function siteDestinations(current: string | undefined, onChoose?: () => void) {
-  return siteSections.map((section): Destination => {
+/** The Usage guide's destinations, for its rail: each opens its first page. */
+export function usageDestinations(current: string | undefined, onChoose?: () => void) {
+  return usageSections.map((section): Destination => {
     const Icon = sectionIcons[section];
     return {
       label: section,
@@ -51,9 +53,9 @@ export function siteDestinations(current: string | undefined, onChoose?: () => v
   });
 }
 
-/** The pages of one of the Site's destinations, or of the Docs, for a drawer. */
+/** The pages of one of the Usage guide's destinations, for its drawer. */
 export function pageDestinations(
-  pages: readonly SitePage[],
+  pages: readonly RoutePage[],
   currentPath: string,
   onChoose?: () => void,
 ): DrawerDestination[] {
@@ -78,16 +80,50 @@ function useCurrentInView() {
 }
 
 /**
- * Each area's drawer at the start of a wide window: the width it starts at and its bounds, in rem.
+ * The Docs' navigation: each section, such as Get started or Components, as a group under its
+ * heading, its pages, then its groups, such as the kinds of component and the patterns' intents,
+ * each a section of their pages that opens and closes, open while it holds the current page. A
+ * section that is one page of its name, such as Changelog, is that page alone, under no heading.
+ */
+export function docsDestinations(currentPath: string, onChoose?: () => void): DrawerDestination[] {
+  const link = (page: RoutePage, group?: string): DrawerDestination => ({
+    group,
+    label: page.label ?? page.title,
+    href: routeHref(page.path),
+    current: page.path === currentPath,
+    onSelect: onChoose,
+  });
+  const lone = (section: DocsGroup) =>
+    !section.groups.length &&
+    section.pages.length === 1 &&
+    section.pages[0]!.title === section.label;
+  return docsTree.flatMap((section) => [
+    ...section.pages.map((page) => link(page, lone(section) ? undefined : section.label)),
+    ...section.groups.map(
+      (group): DrawerDestination => ({
+        group: section.label,
+        label: group.label,
+        children: group.pages.map((page) => link(page)),
+      }),
+    ),
+  ]);
+}
+
+/**
+ * Each part's drawer at the start of a wide window: the width it starts at and its bounds, in rem.
  * The Docs' drawer holds the wordmark and search on its first row, so it starts wider.
  */
 const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWidth: number }> = {
-  site: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
+  usage: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
   docs: { defaultWidth: 21, minWidth: 18, maxWidth: 30 },
 };
 
-/** Where the catalogue keeps the width the reader gives each area's drawer, in localStorage. */
-const drawerWidthKey = (area: Area) => `envui-catalogue-drawer-width-${area}`;
+/**
+ * Where the catalogue keeps the width the reader gives each part's drawer, in localStorage: under
+ * the names the parts had before, so a width kept then still holds.
+ */
+const drawerWidthKey = (area: Area) =>
+  `envui-catalogue-drawer-width-${area === 'usage' ? 'site' : area}`;
 
 /** The width the reader gave the area's drawer on an earlier visit, within its bounds. */
 function storedDrawerWidth(area: Area) {
@@ -129,7 +165,7 @@ function useDrawerWidth(area: Area, inSheet: boolean): Partial<ComponentProps<ty
 
 interface NavigationProps {
   /** The page shown, whose destination and page the navigation marks as current. */
-  page?: SitePage;
+  page?: RoutePage;
   /** The route's path, such as components/button. */
   routePath: string;
   /** Whether the navigation is in the sheet of a narrower window. */
@@ -155,13 +191,13 @@ function Brand({ area }: { area: Area }) {
 }
 
 /**
- * The Site's navigation, one pane: a Rail of its destinations, Overview, Foundations, Components
- * and Patterns, under the envUI wordmark, beside a Drawer of the chosen
+ * The Usage guide's navigation, one pane: a Rail of its destinations, Overview, Foundations,
+ * Components and Patterns, under the envUI wordmark, beside a Drawer of the chosen
  * destination's pages under search, both on the navigation's background with no seam or line
  * between them. A rail item opens its destination's first page; in the sheet of a narrower window
  * it leaves the sheet open, so a page can be chosen.
  */
-export function SiteNavigation({
+export function UsageNavigation({
   page,
   routePath,
   inSheet = false,
@@ -169,16 +205,16 @@ export function SiteNavigation({
   onSearch,
 }: NavigationProps) {
   const element = useCurrentInView();
-  const drawerWidth = useDrawerWidth('site', inSheet);
-  const section = (page?.area === 'site' ? page.section : 'Overview') as SiteSection;
-  const pages = pagesOf('site').filter((entry) => entry.section === section);
+  const drawerWidth = useDrawerWidth('usage', inSheet);
+  const section = (page?.area === 'usage' ? page.section : 'Overview') as UsageSection;
+  const pages = pagesOf('usage').filter((entry) => entry.section === section);
   return (
     <div ref={element} className="docs-navigation" data-in-sheet={inSheet || undefined}>
       <Rail
-        aria-label="Site"
+        aria-label="Usage guide"
         className="docs-rail"
-        header={<Brand area="site" />}
-        destinations={siteDestinations(page?.area === 'site' ? section : undefined)}
+        header={<Brand area="usage" />}
+        destinations={usageDestinations(page?.area === 'usage' ? section : undefined)}
       />
       <Drawer
         aria-label={section}
@@ -192,8 +228,8 @@ export function SiteNavigation({
 }
 
 /**
- * The Docs' navigation: a Drawer of every page of the Docs, by its group, with the wordmark and
- * search side by side at its top.
+ * The Docs' navigation: a Drawer of every page of the Docs, as a tree of their sections and groups
+ * (docsDestinations), with the wordmark and search side by side at its top.
  */
 export function DocsNavigation({
   routePath,
@@ -203,7 +239,6 @@ export function DocsNavigation({
 }: NavigationProps) {
   const element = useCurrentInView();
   const drawerWidth = useDrawerWidth('docs', inSheet);
-  const pages = pagesOf('docs').map((page) => ({ ...page, group: page.section }));
   return (
     <div ref={element} className="docs-navigation" data-in-sheet={inSheet || undefined}>
       <Drawer
@@ -215,7 +250,7 @@ export function DocsNavigation({
             <SearchButton onClick={onSearch} className="docs-drawer-search" />
           </div>
         }
-        destinations={pageDestinations(pages, routePath, onChoose)}
+        destinations={docsDestinations(routePath, onChoose)}
         {...drawerWidth}
       />
     </div>
@@ -224,15 +259,14 @@ export function DocsNavigation({
 
 /**
  * The page's own controls at its top end, quiet ghost buttons that stay in the corner as the page
- * scrolls, on a small pill of the page's color: the other
- * area, the Docs from the Site and the Site from the Docs, and the Display menu, where the theme,
- * contrast and scale are. Below an expanded window they are icon buttons with tooltips.
+ * scrolls, on a small pill of the page's color: the other part, the Docs from the Usage guide and
+ * the Usage guide from the Docs, at the page of the same subject there (otherPartRoute), and the
+ * Display menu, where the theme, contrast and scale are. Below an expanded window they are icon
+ * buttons with tooltips.
  */
-export function PageActions({ area }: { area: Area }) {
-  const [label, href, Icon] =
-    area === 'docs'
-      ? (['Site', routeHref(homeRoute), ArrowBack] as const)
-      : (['Docs', routeHref(docsRoute), MenuBook] as const);
+export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {
+  const { label, Icon } = otherPart(area);
+  const href = routeHref(otherPartRoute(page, area));
   return (
     <div className="docs-page-actions">
       <div className="docs-page-actions-bar">

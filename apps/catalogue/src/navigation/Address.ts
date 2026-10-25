@@ -2,8 +2,11 @@
  * Where a route lives in the address. A route is written as a path and a query, such as
  * `docs/components/button?section=props-Button-variant`; `section` names the element a route
  * scrolls to. The address keeps it in its path, such as `/docs/components/button#props-Button-variant`,
- * with the section as the fragment: the Site at the root and the Docs under /docs. The server
- * answers every path without a file with index.html, so a deep link and a refresh load the page.
+ * with the section as the fragment: the Usage guide at the root and the Docs under /docs. The
+ * fragment is the one form of a section's address that links, copied addresses, search and the
+ * pages' contents share; an address that names the section in its query, `?section=…`, as earlier
+ * releases wrote some, opens the same place and is rewritten to the fragment. The server answers
+ * every path without a file with index.html, so a deep link and a refresh load the page.
  *
  * There is no hash routing: the site never writes a hash route, and reads routes only from the
  * path. An old hash address, `#/components/button/props?section=…`, from the offline catalogue of
@@ -11,13 +14,16 @@
  * named (oldHashRoute), and the route is read from the path.
  */
 
-/** The route of the Site's home page, which the root address shows. */
+/** The route of the Usage guide's home page, which the root address shows. */
 export const homeRoute = 'overview';
 
 /** The route of the Docs' home page, which /docs shows. */
 export const docsRoute = 'docs';
 
-/** Whether a route, such as docs/components/button, is a page of the Docs rather than the Site. */
+/**
+ * Whether a route, such as docs/components/button, is a page of the Docs rather than the Usage
+ * guide.
+ */
 export const inDocs = (route: string) => /^docs(?:[/?]|$)/.test(route);
 
 function splitRoute(route: string) {
@@ -169,6 +175,32 @@ export function revealRoute(route: string) {
 const navigationEvent = 'envui:navigate';
 
 /**
+ * The address a part of the page wrote and showed itself, which the route follows without showing
+ * it again (announceShownAddress).
+ */
+let shownAddress: string | undefined;
+
+/**
+ * Announces an address a part of the page wrote in the history itself, having shown its place
+ * already, such as a link of the page's contents that scrolled to its section: the route follows
+ * it, so the address, Back and the next link agree, without scrolling or moving focus again.
+ */
+export function announceShownAddress() {
+  shownAddress = currentHref();
+  dispatchEvent(new Event(navigationEvent));
+}
+
+/**
+ * Whether the address is one a part of the page has shown already, which a route change then
+ * leaves in place; it holds for that change alone.
+ */
+export function takeShownAddress() {
+  const shown = shownAddress !== undefined && shownAddress === currentHref();
+  shownAddress = undefined;
+  return shown;
+}
+
+/**
  * Shows a route: a step in the history, or in place of the current entry with replace. When the
  * address already names it, its place shows again, as revealRoute shows it, and navigate returns
  * false.
@@ -181,6 +213,7 @@ export function navigate(route: string, { replace = false }: { replace?: boolean
     revealRoute(route);
     return false;
   }
+  shownAddress = undefined;
   history[replace ? 'replaceState' : 'pushState'](null, '', href);
   dispatchEvent(new Event(navigationEvent));
   return true;
