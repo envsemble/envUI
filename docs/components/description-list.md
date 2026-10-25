@@ -28,23 +28,17 @@ avoidWhen:
     see: key-figures
 components:
   - DescriptionList
+examples:
+  Facts: overview
+  Stacked:
+    role: example
+    caption: The stacked layout, in body text.
+  ControlsAligned: example
+  DescriptionListAnatomy: anatomy
+  FactsAtWidths: example
 ---
 
 # DescriptionList
-
-## Overview
-
-```tsx example=Facts
-
-```
-
-### With controls
-
-Values can be controls, such as switches, and each label sits on its control's line.
-
-```tsx example=ControlsAligned
-
-```
 
 ## Variants
 
@@ -58,19 +52,21 @@ Values can be controls, such as switches, and each label sits on its control's l
 
 Smaller text, the default, suits a card or a pane, and body text a page of details.
 
-```tsx example=Stacked caption="The stacked layout, in body text."
+```tsx figure=Stacked
 
 ```
 
-## When to use
+### With controls
 
-### Values
+Values can be controls, such as switches, and each label sits on its control's line.
 
-Keep headings and long paragraphs out of values and link to them instead, and don't put a description list inside another.
+```tsx figure=ControlsAligned
+
+```
 
 ## Anatomy
 
-```tsx anatomy=DescriptionListAnatomy
+```tsx figure=DescriptionListAnatomy
 
 ```
 
@@ -79,13 +75,21 @@ Keep headings and long paragraphs out of values and link to them instead, and do
 3. **Label** (`env-description-list-label`, `label`)
 4. **Value** (`env-description-list-value`, `children`)
 
-## Adapting to width
+## Behaviour
+
+### Adapting to width
 
 In the automatic layout, labels move above their values where the list is narrow.
 
-```tsx example=FactsAtWidths widths="16 30"
+```tsx figure=FactsAtWidths widths="16 30"
 
 ```
+
+## Rules
+
+### Values
+
+Keep headings and long paragraphs out of values and link to them instead, and don't put a description list inside another.
 
 ## Accessibility
 
@@ -99,7 +103,7 @@ In the automatic layout, labels move above their values where the list is narrow
 - An `aria-label` on each list where a page has several.
 - A name on each control in a value: the label beside it isn't one.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -113,16 +117,23 @@ DescriptionList.Root is a `dl`, and each DescriptionList.Item a term and its val
 
 `layout` is `auto`, the default, `inline` or `stacked`. Inline puts each label beside its value, in a column as wide as the longest label; stacked puts it above; auto is inline, and stacked where the list's own width is below 24 rem. `size` is `sm`, the default, the smaller body text, for facts beside other content, such as in a sidebar or a card, or `md`, body text, for a page of details.
 
-```tsx source=Stacked
-
+```tsx
+<DescriptionList.Root layout="stacked" size="md" aria-label="Contact">
+  <DescriptionList.Item label="Email">priya.shah@example.com</DescriptionList.Item>
+  <DescriptionList.Item label="Address">12 Harbour Street, Northwind Bay</DescriptionList.Item>
+</DescriptionList.Root>
 ```
 
 #### Controls
 
 `controls` on the Root is for values that hold controls, such as a Select or a Switch: each row is at least as tall as a small control, and its label sits on the control's first line. Give each control a name of its own, such as an `aria-label`: the label beside it isn't one.
 
-```tsx source=ControlsAligned
-
+```tsx
+<DescriptionList.Root controls aria-label="Sharing">
+  <DescriptionList.Item label="Comments">
+    <Switch aria-label="Allow comments" defaultChecked />
+  </DescriptionList.Item>
+</DescriptionList.Root>
 ```
 
 ### Composition

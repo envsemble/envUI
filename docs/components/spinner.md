@@ -30,21 +30,17 @@ avoidWhen:
     see: loading
 components:
   - Spinner
+examples:
+  LoadingPreview: overview
+  Sizes: variants
+  SpinnerAnatomy: anatomy
 ---
 
 # Spinner
 
-## Overview
-
-With reduced motion, the arc keeps turning, more slowly.
-
-```tsx example=LoadingPreview
-
-```
-
 ## Variants
 
-```tsx variants=Sizes
+```tsx figure=Sizes
 
 ```
 
@@ -58,11 +54,9 @@ With reduced motion, the arc keeps turning, more slowly.
 | Medium | A panel or a card that is updating. The default.         |
 | Large  | The middle of a region whose content is on its way.      |
 
-## When to use
-
 ## Anatomy
 
-```tsx anatomy=SpinnerAnatomy
+```tsx figure=SpinnerAnatomy
 
 ```
 
@@ -70,6 +64,16 @@ With reduced motion, the arc keeps turning, more slowly.
 2. **Arc** (`env-spinner-arc`)
 
 Not shown: the label beside the arc, where it shows.
+
+## Behaviour
+
+### Reduced motion
+
+With reduced motion, the arc keeps turning, more slowly.
+
+## Rules
+
+When the work ends, the result or the error takes the spinner's place.
 
 ## Accessibility
 
@@ -85,7 +89,7 @@ Not shown: the label beside the arc, where it shows.
 - `aria-busy` on the region that updates, and a status where people wait for a result.
 - The result or the error in place of the spinner when the work ends.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -97,15 +101,10 @@ A Spinner's `label` names the work it stands for, such as Updating tasks, and na
 
 #### With its label
 
-`showLabel` shows the label beside the spinner, in a busy status line that centres the two in its row, for loading with no known shape. Without a `label` it says Loading, in the provider's language.
+`showLabel` shows the label beside the spinner, in a busy status line that centres the two in its row, for loading with no known shape, such as results whose number and shape aren't known until they arrive. Without a `label` it says Loading, in the provider's language.
 
 ```tsx
-import { Spinner } from '@envsemble/envui';
-
-export default function SearchingDocuments() {
-  // Results whose number and shape aren't known until they arrive.
-  return <Spinner label="Searching documents" showLabel />;
-}
+<Spinner label="Searching documents" showLabel />
 ```
 
 ### Composition

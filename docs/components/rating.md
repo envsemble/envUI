@@ -25,27 +25,22 @@ avoidWhen:
     see: key-figures
 components:
   - Rating
+examples:
+  ReviewScore: overview
+  Scales:
+    role: example
+    caption: With the number, on scales of five and of ten stars.
+  RatingAnatomy: anatomy
+  ApplicationLabel: example
+  WhoRated:
+    role: do
+    caption: Say whose rating it is and how many people gave it.
+  UnsourcedStars:
+    role: dont
+    caption: "Stars with no source: people can't tell how much they count."
 ---
 
 # Rating
-
-## Overview
-
-```tsx example=ReviewScore
-
-```
-
-### Rounding
-
-The stars, the number and the name show the value to the nearest half star: 4.3 shows as 4.5. A value outside the scale shows as its nearest end.
-
-### In another language
-
-The name and the number follow the application's language, such as 4,5 in German.
-
-```tsx example=ApplicationLabel
-
-```
 
 ## Variants
 
@@ -55,27 +50,13 @@ The name and the number follow the application's language, such as 4,5 in German
 | With the number | A summary people compare.           |
 | Another scale   | Other than five steps, such as ten. |
 
-```tsx example=Scales caption="With the number, on scales of five and of ten stars."
+```tsx figure=Scales
 
 ```
-
-## When to use
-
-```tsx do=WhoRated caption="Say whose rating it is and how many people gave it."
-
-```
-
-```tsx dont=UnsourcedStars caption="Stars with no source: people can't tell how much they count."
-
-```
-
-### One scale
-
-Keep to one scale on a page, so ratings compare at a glance.
 
 ## Anatomy
 
-```tsx anatomy=RatingAnatomy
+```tsx figure=RatingAnatomy
 
 ```
 
@@ -84,6 +65,36 @@ Keep to one scale on a page, so ratings compare at a glance.
 3. **Filled star** (`env-rating-star[data-fill='full']`)
 4. **Half star** (`env-rating-star-half`)
 5. **Empty star** (`env-rating-star:last-child`)
+
+## Behaviour
+
+### Rounding
+
+The stars, the number and the name show the value to the nearest half star: 4.3 shows as 4.5. A value outside the scale shows as its nearest end.
+
+### In another language
+
+The name and the number follow the application's language, such as 4,5 in German.
+
+```tsx figure=ApplicationLabel
+
+```
+
+## Rules
+
+A rating only shows a score people gave; to ask for one, use a separate input.
+
+```tsx figure=WhoRated
+
+```
+
+```tsx figure=UnsourcedStars
+
+```
+
+### One scale
+
+Keep to one scale on a page, so ratings compare at a glance.
 
 ## Accessibility
 
@@ -99,7 +110,7 @@ Keep to one scale on a page, so ratings compare at a glance.
 - `messages.rating.label` in the page's language.
 - A separate input, such as a RadioGroup, where people give a rating.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -113,8 +124,16 @@ A Rating shows `value`, from 0 to `max`, such as 4.5, rounded to the nearest hal
 
 The stars are one image, named such as 4.5 out of 5 stars, from EnvUIProvider's `messages.rating.label`, or `formatLabel` for one rating, which receives the shown value and the number of stars. The number from `showValue` is hidden from assistive technology, since the name says it.
 
-```tsx source=ApplicationLabel
+```tsx
+const messages = {
+  rating: {
+    label: ({ value, max }: { value: string; max: string }) => `Rated ${value} out of ${max} stars`,
+  },
+};
 
+<EnvUIProvider messages={messages}>
+  <Rating value={4.5} showValue />
+</EnvUIProvider>;
 ```
 
 ### Composition
