@@ -1,5 +1,4 @@
-import { Button, Card, Column, Row, Surface, Text } from '@envsemble/envui';
-import { MenuBook } from '@envsemble/envui/icons/MenuBook';
+import { Button, Card, Column, Surface, Text } from '@envsemble/envui';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
@@ -62,17 +61,9 @@ export function Overview() {
               v{version}
             </Text>
           </Column>
-          <Text variant="title" className="docs-overview-lead">
-            envUI is a design system for React apps.
-          </Text>
-          <Row gap={3} wrap justify="center">
-            <Button href={routeHref('components')} startIcon={<Widgets />}>
-              Browse components
-            </Button>
-            <Button variant="secondary" href={routeHref('docs')} startIcon={<MenuBook />}>
-              Read the Docs
-            </Button>
-          </Row>
+          <Button href={routeHref('components')} startIcon={<Widgets />}>
+            Browse components
+          </Button>
         </Surface>
       </header>
       <OverviewShowcase />

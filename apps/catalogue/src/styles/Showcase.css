@@ -1,19 +1,18 @@
-/* The Overview's showcase (OverviewShowcase.tsx): a pocket holding a stack of cards, under the
-   banner, with plenty of the page around it. At rest the cards lean back behind one another and
-   show their tops above the pocket at uneven angles; they rise out of it as the page opens, and fan out while the
-   pointer is over the stack. The cards and the pocket have no edges; a very faint shadow keeps
-   theirs visible where they overlap, the one exception to the catalogue's no-shadow rule. */
+/* The Overview's showcase (OverviewShowcase.tsx): under the banner, with plenty of the page around
+   it, a still fan of square cards at uneven angles. The cards take the recessed canvas every example
+   sits on, with no edge; a very faint shadow keeps their edges visible where they overlap, the one
+   exception to the catalogue's no-shadow rule. On a narrower page the whole fan is drawn smaller. */
 .docs-showcase {
+  container-type: inline-size;
   display: grid;
   place-items: center;
   padding: var(--env-space-9) var(--docs-gutter);
-  /* The fanned cards may reach past a narrow page's sides; they never widen it. */
+  /* The fan never widens the page. */
   overflow-x: clip;
 }
 
 .docs-showcase-stack {
   --docs-showcase-card-size: 13rem;
-  --docs-showcase-pocket-height: 9rem;
   /* stylelint-disable declaration-property-value-disallowed-list -- a very faint
      shadow, on this decoration alone, shows the cards' edges where they overlap. */
   --docs-showcase-shadow:
@@ -21,15 +20,18 @@
     0 0.25rem 0.75rem light-dark(oklch(0% 0 0 / 0.06), oklch(0% 0 0 / 0.3));
   /* stylelint-enable declaration-property-value-disallowed-list */
   position: relative;
-  inline-size: min(100%, 24rem);
-  block-size: 20.5rem;
+  inline-size: 42rem;
+  block-size: 21rem;
+  /* Centred on the page even where it is wider than the page, before it is drawn smaller. */
+  justify-self: start;
+  margin-inline: calc((100cqi - 42rem) / 2);
+  transform-origin: 50% 0;
 }
 
+/* Each card from the fan's foot, at its own place and angle. */
 .docs-showcase-card {
   position: absolute;
-  inset-block-end: calc(
-    var(--docs-showcase-pocket-height) + 7.5rem - var(--docs-showcase-card-size)
-  );
+  inset-block-end: 0;
   inset-inline-start: calc(50% - var(--docs-showcase-card-size) / 2);
   box-sizing: border-box;
   inline-size: var(--docs-showcase-card-size);
@@ -39,51 +41,21 @@
   /* Its fill is the recessed canvas every example sits on (Stage.css). */
   box-shadow: var(--docs-showcase-shadow);
   transform-origin: 50% 100%;
-  /* At rest: each card at its own slight angle and offset, as if dropped in by hand. */
-  transform: translateX(var(--docs-showcase-rest-x)) rotate(var(--docs-showcase-rest-rotate));
-  transition: transform var(--env-motion-duration-slow) var(--env-motion-ease-standard);
-  transition-delay: calc((4 - var(--docs-showcase-index)) * 30ms);
+  transform: translate(var(--docs-showcase-fan-x), var(--docs-showcase-fan-y))
+    rotate(var(--docs-showcase-fan-rotate));
 }
 
-/* The pocket, in front of the cards' lower part: a plain filled surface. */
-.docs-showcase-pocket {
-  position: absolute;
-  inset-inline: 0;
-  inset-block-end: 0;
-  block-size: var(--docs-showcase-pocket-height);
-  box-sizing: border-box;
-  border-radius: var(--env-radius-xl);
-  background: var(--env-color-bg-muted);
-  box-shadow: var(--docs-showcase-shadow);
-}
-
-/* Over the stack, the cards rise and fan out from the pocket, each to its own place. */
-@media (hover: hover) {
-  .docs-showcase-stack:hover .docs-showcase-card {
-    transform: translate(var(--docs-showcase-fan-x), var(--docs-showcase-fan-y))
-      rotate(var(--docs-showcase-fan-rotate));
-    transition-delay: calc(var(--docs-showcase-index) * 30ms);
+/* A narrower page draws the fan smaller, giving back the room it no longer takes. */
+@container (width < 46rem) {
+  .docs-showcase-stack {
+    margin-block-end: calc(21rem * -0.3);
+    scale: 0.7;
   }
 }
-
-/* As the page opens, the cards rise out of the pocket one after another. */
-@media (prefers-reduced-motion: no-preference) {
-  .docs-showcase-card {
-    animation: docs-showcase-rise var(--env-motion-duration-slow) var(--env-motion-ease-enter)
-      backwards;
-    animation-delay: calc(150ms + var(--docs-showcase-index) * 70ms);
-  }
-}
-
-@keyframes docs-showcase-rise {
-  from {
-    transform: translateY(6rem);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .docs-showcase-card {
-    transition: none;
+@container (width < 32rem) {
+  .docs-showcase-stack {
+    margin-block-end: calc(21rem * -0.5);
+    scale: 0.5;
   }
 }
 

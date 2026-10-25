@@ -49,9 +49,3 @@
 .docs-overview-version {
   margin: 0;
 }
-/* The home page's one sentence on what envUI is, in a measure that reads as a line or two. */
-.docs-overview-lead {
-  max-inline-size: 46ch;
-  text-align: center;
-  text-wrap: balance;
-}

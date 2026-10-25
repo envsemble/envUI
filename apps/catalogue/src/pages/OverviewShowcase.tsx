@@ -22,18 +22,16 @@ const team = [
 
 /**
  * The cards in the pocket, from the back of the stack to the front: a few of envUI's components
- * at their most pleasing, live, with no purpose beyond being looked at.
+ * at their most pleasing, with no purpose beyond being looked at.
  */
 const cards: {
   id: string;
-  /** Where it rests in the pocket, and where it lands when the stack fans out: rem and degrees. */
-  rest: [x: number, rotate: number];
+  /** Where it lies in the fan, from the fan's foot: rem and degrees. */
   fan: [x: number, y: number, rotate: number];
   content: ReactNode;
 }[] = [
   {
     id: 'status',
-    rest: [-1.4, -6],
     fan: [-14.5, -3, -13],
     content: (
       <Column gap={3}>
@@ -51,7 +49,6 @@ const cards: {
   },
   {
     id: 'settings',
-    rest: [-0.4, -2.5],
     fan: [-7.5, -7.5, -4],
     content: (
       <Column gap={3}>
@@ -62,7 +59,6 @@ const cards: {
   },
   {
     id: 'usage',
-    rest: [1.1, 3.5],
     fan: [8.5, -6.5, 7],
     content: (
       <Column gap={4}>
@@ -73,7 +69,6 @@ const cards: {
   },
   {
     id: 'figure',
-    rest: [-0.6, -1],
     fan: [14.5, -2, 15],
     content: (
       <Column gap={1}>
@@ -93,7 +88,6 @@ const cards: {
   },
   {
     id: 'team',
-    rest: [0.3, 1.5],
     fan: [0.5, -8.5, 2],
     content: (
       <Column gap={3}>
@@ -107,34 +101,29 @@ const cards: {
 ];
 
 /**
- * The Overview's showcase, under its banner: a pocket holding a stack of square cards, each a few
- * live components, resting and fanning out at uneven angles, as cards dropped in by hand. The cards rise out of the pocket as the page opens, and fan out while the pointer is
- * over them. It is decoration only: hidden from assistive technology, its components inert, so only the
- * pointer's hover reaches it.
+ * The Overview's showcase, under its banner: a fan of square cards, each a few live components,
+ * lying at uneven angles as if spread by hand. It is a still picture: hidden from assistive
+ * technology, and its components inert.
  */
 export function OverviewShowcase() {
   return (
-    <div className="docs-showcase" aria-hidden="true">
+    <div className="docs-showcase" aria-hidden="true" inert>
       <div className="docs-showcase-stack">
-        {cards.map((card, index) => (
+        {cards.map((card) => (
           <div
             key={card.id}
             className="docs-showcase-card"
             style={
               {
-                '--docs-showcase-index': index,
-                '--docs-showcase-rest-x': `${card.rest[0]}rem`,
-                '--docs-showcase-rest-rotate': `${card.rest[1]}deg`,
                 '--docs-showcase-fan-x': `${card.fan[0]}rem`,
                 '--docs-showcase-fan-y': `${card.fan[1]}rem`,
                 '--docs-showcase-fan-rotate': `${card.fan[2]}deg`,
               } as CSSProperties
             }
           >
-            <div inert>{card.content}</div>
+            {card.content}
           </div>
         ))}
-        <div className="docs-showcase-pocket" />
       </div>
     </div>
   );

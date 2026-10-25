@@ -1070,7 +1070,7 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
 });
 
-test("the overview's hero shows the package's version under the wordmark, and says what envUI is", async ({
+test("the overview's hero shows the package's version under the wordmark, and leads to the components", async ({
   page,
 }) => {
   await page.goto(`${catalogueUrl}/`);
@@ -1080,9 +1080,8 @@ test("the overview's hero shows the package's version under the wordmark, and sa
   const versionLine = hero.locator('.docs-overview-version');
   await expect(versionLine).toHaveText(`v${version}`);
   await expect(versionLine.getByRole('link')).toHaveCount(0);
-  await expect(hero).toContainText('envUI is a design system for React apps.');
-  for (const name of ['Browse components', 'Read the Docs'])
-    await expect(hero.getByRole('link', { name, exact: true })).toBeVisible();
+  await expect(hero.getByRole('link')).toHaveCount(1);
+  await expect(hero.getByRole('link', { name: 'Browse components', exact: true })).toBeVisible();
 });
 
 test('the Icons page credits Material Symbols with their license, and the footer does not', async ({
