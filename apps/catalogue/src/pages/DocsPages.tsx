@@ -17,7 +17,6 @@ import { ExampleSource } from '../template/LiveExample';
 import { partsOf } from '../template/Parts';
 import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
-import { Related } from '../template/Related';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import type { Documentation as Document, Reference } from '../Reference';
 import { Documentation, GuidanceLists } from './Documentation';
@@ -26,7 +25,7 @@ import { LoadedPart } from './LoadedPart';
 import { ColorPalette } from '../previews/foundations/ColorPalette';
 import { SpecimenHeadingLevel } from '../previews/Example';
 import { ReleaseNotes } from './ReleaseNotes';
-import { subsections } from '../../../../scripts/SiteContent.mjs';
+import { codeColumns, subsections } from '../../../../scripts/SiteContent.mjs';
 import { headingSlug } from '../../../../scripts/SearchAnchors.mjs';
 import codemodsReadme from '../../../../packages/codemods/README.md?raw';
 
@@ -238,43 +237,46 @@ function PaletteSection() {
   );
 }
 
+/** Markdown without its "## Related topics", which the Docs leave out. */
+function withoutRelatedTopics(markdown: string) {
+  return markdown.replace(/^## Related topics\n[\s\S]*?(?=^## |(?![\s\S]))/m, '');
+}
+
 /**
- * A foundation's written guidance and reference, whose visuals are its page in the Usage guide.
+ * A foundation's page in the Docs, the developer part its page in the Usage guide leaves out. In
+ * the one-file structure, the same file as the Usage guide's page: Compose, what the application
+ * and envUI provide, and the words of the page mapped to code. On the earlier template, its written
+ * guidance and reference, whose visuals are its page in the Usage guide. Neither shows Related.
  */
 export function FoundationGuidePage({ page }: { page: RoutePage }) {
   const document = page.document!;
-  // A foundation in the one-file structure: the same file as its page in the Usage guide, with
-  // Compose, its developer part, and Related.
+  const header = (
+    <PageHeader
+      title={page.title}
+      kind="docs"
+      trail={docsTrail(page)}
+      description={page.summary}
+      meta={<OtherPartButton page={page} />}
+    />
+  );
   if (document.format === 'skill')
     return (
       <>
-        <PageHeader
-          title={page.title}
-          kind="docs"
-          trail={docsTrail(page)}
-          description={page.summary}
-          meta={<OtherPartButton page={page} />}
-        />
-        <TemplateContent document={document} provides related={false} />
+        {header}
         <Column gap={8} className="docs-article docs-api">
           <CodeGuide document={document} />
-          {document.metadata && <Related metadata={document.metadata} path={document.path} />}
+          <WordsInCode document={document} />
+          <Provides document={document} title="Accessibility" id="provides" />
         </Column>
       </>
     );
   return (
     <>
-      <PageHeader
-        title={page.title}
-        kind="docs"
-        trail={docsTrail(page)}
-        description={page.summary}
-        meta={<OtherPartButton page={page} />}
-      />
+      {header}
       {/* A foundation's written guidance: its lists are check lists. */}
       <Column gap={7} className="docs-article">
         <GuidanceLists value>
-          <Documentation document={document} />
+          <Documentation markdown={withoutRelatedTopics(document.markdown)} path={document.path} />
         </GuidanceLists>
         {document.id === 'colors' && <PaletteSection />}
       </Column>
@@ -304,8 +306,8 @@ function PartNames({ components }: { components: readonly string[] }) {
   });
   if (!entries.length) return null;
   return (
-    <Column render={<section />} gap={5} aria-labelledby="parts">
-      <Text render={<h2 />} variant="headline" id="parts">
+    <Column render={<section />} gap={5} aria-labelledby="part-names">
+      <Text render={<h2 />} variant="headline" id="part-names">
         Part names
       </Text>
       <Text emphasis="muted">
@@ -440,6 +442,29 @@ function CodeGuide({ document }: { document: Document }) {
   });
 }
 
+/**
+ * The words a page gives people, from its "## Words to use", each with the code it means: the
+ * table's In code column, which the Usage guide leaves out, beside the words. Nothing where the
+ * page has no such column.
+ */
+function WordsInCode({ document }: { document: Document }) {
+  const section = document.sections?.find((item) => item.id === 'words');
+  const markdown = codeColumns(
+    (section?.blocks ?? [])
+      .map((block) => (block.kind === 'markdown' ? block.markdown : ''))
+      .join('\n'),
+  );
+  if (!markdown) return null;
+  return (
+    <Column render={<section />} gap={5} aria-labelledby="words-in-code">
+      <Text render={<h2 />} variant="headline" id="words-in-code">
+        Words in code
+      </Text>
+      <Documentation markdown={markdown} path={document.path} />
+    </Column>
+  );
+}
+
 /** The color properties of the exports a page documents, from docs/generated/parts.json. */
 function ColorProperties({ components }: { components: readonly string[] }) {
   const entries = components.flatMap((name) => {
@@ -448,8 +473,8 @@ function ColorProperties({ components }: { components: readonly string[] }) {
   });
   if (!entries.length) return null;
   return (
-    <Column render={<section />} gap={5} aria-labelledby="colors">
-      <Text render={<h2 />} variant="headline" id="colors">
+    <Column render={<section />} gap={5} aria-labelledby="color-properties">
+      <Text render={<h2 />} variant="headline" id="color-properties">
         Color properties
       </Text>
       <Text emphasis="muted">
@@ -477,11 +502,13 @@ function ColorProperties({ components }: { components: readonly string[] }) {
 }
 
 /**
- * A component's or a pattern's page in the Docs, its guide to using it in code: how to import it,
- * its common uses, how its parts compose and how to customize it, from the page's "## In code";
- * what the application and envUI provide; then, as reference, its props, part names and color
- * properties, and its changelog. Field, which has no page in the Usage guide, shows its whole page here,
- * as "Build your own field", with Related at the end, after the changelog.
+ * A component's or a pattern's page in the Docs, its guide to using it in code, which complements
+ * its page in the Usage guide rather than repeating it: how to import it, its common uses, how its
+ * parts compose and how to customize it, from the page's Compose or "## In code"; what the
+ * application and envUI provide, which the Usage guide leaves out; then, as reference, its props,
+ * part names and color properties, and its changelog. No figures of the Usage guide, no Related
+ * and no band. Field, which has no page in the Usage guide, shows its whole page here, on the
+ * page, as "Build your own field".
  */
 export function DocsReferencePage({ page }: { page: RoutePage }) {
   const document = page.document!;
@@ -504,16 +531,13 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
           )
         }
       />
-      {/* Field, which has no page in the Usage guide, and a page in the one-file structure show
-          the whole file, what envUI and the application provide in place. */}
-      {(!usagePage || document.format === 'skill') && (
-        <TemplateContent document={document} provides related={false} />
-      )}
+      {/* Field, which has no page in the Usage guide, shows the whole file, what envUI and the
+          application provide in place. */}
+      {!usagePage && <TemplateContent document={document} provides related={false} bands={false} />}
       <Column gap={8} className="docs-article docs-api">
         <CodeGuide document={document} />
-        {usagePage && document.format !== 'skill' && (
-          <Provides document={document} title="Accessibility" id="provides" />
-        )}
+        {usagePage && <WordsInCode document={document} />}
+        {usagePage && <Provides document={document} title="Accessibility" id="provides" />}
         {!pattern && (
           <Column render={<section />} gap={5} aria-labelledby="props">
             <Text render={<h2 />} variant="headline" id="props">
@@ -525,9 +549,6 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
         <PartNames components={metadata?.components ?? []} />
         <ColorProperties components={metadata?.components ?? []} />
         <PageChangelog document={document} />
-        {(!usagePage || document.format === 'skill') && metadata && (
-          <Related metadata={metadata} path={document.path} />
-        )}
       </Column>
     </>
   );

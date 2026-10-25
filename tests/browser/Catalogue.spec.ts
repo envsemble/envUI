@@ -750,7 +750,7 @@ test('a component page groups its sections into three, the middle one on the ban
   ]);
 });
 
-test("a pattern's guide lists what it needs, and Field's page in the Docs ends with Related", async ({
+test("a page's guide in the Docs complements its page in the Usage guide, and Field's shows its whole page", async ({
   page,
 }) => {
   // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
@@ -770,26 +770,44 @@ test("a pattern's guide lists what it needs, and Field's page in the Docs ends w
   );
   await guides.getByText('Form layout and validation', { exact: true }).click();
   await expect(page).toHaveURL(/\/docs\/patterns\/forms$/);
-  // Forms is in the one-file structure: its lists are under Behaviour, in the page's order.
-  const provides = page.locator('[data-section="behaviour"]');
+  // The Docs show the developer part alone: Compose, what envUI and the application provide,
+  // which the Usage guide leaves out, and the changelog. None of the Usage guide's sections, its
+  // figures, Related or the band.
+  const main = page.locator('.docs-page-column');
+  await expect(main.getByRole('heading', { level: 2 })).toHaveText([
+    'Import',
+    'Usage',
+    'Composition',
+    'Accessibility',
+    'Changelog',
+  ]);
+  const provides = page.locator('.docs-provides');
   for (const name of ['envUI provides', 'You provide'])
     await expect(provides.getByRole('heading', { level: 3, name, exact: true })).toBeVisible();
   await expect(provides.getByRole('listitem').filter({ hasText: 'noValidate' })).toHaveCount(1);
-  await expect(page.locator('.docs-article .env-card')).toHaveCount(0);
-  // Field's whole page is in the Docs: its sections, props, part names and changelog, then Related
-  // at the end, on the page rather than the band.
+  await expect(
+    page.locator(
+      '.docs-band, .docs-related, .docs-figure-section, .docs-live-example, .docs-article .env-card',
+    ),
+  ).toHaveCount(0);
+  // A foundation's guide maps the words of its page in the Usage guide to code, the column the
+  // Usage guide leaves out, without the words' meanings, which it shows.
+  await page.goto(`${catalogueUrl}/docs/foundations/spacing`);
+  await expect(main.getByRole('heading', { level: 2 })).toHaveText([
+    'Usage',
+    'Composition',
+    'Customize',
+    'Words in code',
+  ]);
+  const words = page.locator('section[aria-labelledby="words-in-code"] table');
+  await expect(words.getByRole('columnheader')).toHaveText(['Words', 'In code']);
+  await expect(page.locator('.docs-band, .docs-related, .docs-figure-section')).toHaveCount(0);
+  // Field, which has no page in the Usage guide, shows its whole page in the Docs, its sections,
+  // then props, part names and changelog, on the page without the band, and without Related.
   await page.goto(`${catalogueUrl}/docs/components/field`);
-  const ends = await page.evaluate(() => {
-    const related = document.querySelector('.docs-related');
-    const changelog = document.querySelector('.docs-changelog');
-    return Boolean(
-      related &&
-        changelog &&
-        !related.closest('.docs-band') &&
-        changelog.compareDocumentPosition(related) & Node.DOCUMENT_POSITION_FOLLOWING,
-    );
-  });
-  expect(ends).toBe(true);
+  await expect(page.locator('.docs-changelog')).toHaveCount(1);
+  await expect(page.locator('[data-section="overview"]')).toHaveCount(1);
+  await expect(page.locator('.docs-band, .docs-related')).toHaveCount(0);
 });
 
 test("a page's changelog in the Docs is collapsed, and a link to it opens it", async ({ page }) => {
@@ -1434,6 +1452,62 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await page.setViewportSize({ width: 1024, height: 900 });
   await expect(contents).toBeHidden();
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+});
+
+test('every page of the Docs lists its own sections beside it, each once, at addresses of their own', async ({
+  page,
+}) => {
+  // It opens every page of the Docs, about 20 s.
+  test.slow();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${catalogueUrl}/docs`);
+  const contents = page.getByRole('navigation', { name: 'On this page' });
+  for (const { path, title, kind } of pagesOf('docs')) {
+    if (kind === 'docs-home') continue;
+    await goTo(page, `/${path}`);
+    await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(title);
+    await expect(page.locator('.docs-page-column .docs-loading'), path).toHaveCount(0);
+    await expect(async () => {
+      const report = await contents.evaluate((navigation) => {
+        const links = (list: Element) =>
+          [...list.children].flatMap((item) => {
+            const link = item.querySelector(':scope > a');
+            return link ? [link] : [];
+          });
+        const hrefs = [...navigation.querySelectorAll('a')].map((link) =>
+          link.getAttribute('href'),
+        );
+        const repeated = (values: (string | null)[]) =>
+          values.filter((value, index) => values.indexOf(value) !== index);
+        // The page's own sections, not an example's or a figure's.
+        const sections = [
+          ...document.querySelectorAll<HTMLElement>('.docs-page-column h2[id]'),
+        ].filter(
+          (heading) =>
+            !heading.closest('.docs-live-example, .docs-open-example, .docs-specimen, .env-dialog'),
+        );
+        return {
+          // Each level lists a heading's label and address once, and the whole list each address once.
+          repeatedLabels: [...navigation.querySelectorAll('ol, ul')].flatMap((list) =>
+            repeated(links(list).map((link) => link.textContent)),
+          ),
+          repeatedAddresses: repeated(hrefs),
+          // Each address leads to one element of the page.
+          ambiguous: hrefs.filter(
+            (href) =>
+              document.querySelectorAll(`[id="${CSS.escape(href!.slice(1))}"]`).length !== 1,
+          ),
+          // The top level is the page's sections, in its order.
+          top: links(navigation.querySelector('ol, ul')!).map((link) => link.getAttribute('href')),
+          sections: sections.map((heading) => `#${heading.id}`),
+        };
+      });
+      expect(report.repeatedLabels, path).toEqual([]);
+      expect(report.repeatedAddresses, path).toEqual([]);
+      expect(report.ambiguous, path).toEqual([]);
+      expect(report.top, path).toEqual(report.sections);
+    }).toPass({ timeout: 5000 });
+  }
 });
 
 test("the pager and the drawer open a page at its top, and a section's address at the section", async ({

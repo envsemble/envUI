@@ -89,7 +89,9 @@ const contentsHeading = (heading: HTMLElement) =>
   !heading.closest('.docs-live-example, .docs-open-example, .docs-specimen, .env-dialog') &&
   !(
     heading.localName === 'h3' &&
-    heading.closest('.docs-provides, [aria-labelledby="parts"], [aria-labelledby="colors"]')
+    heading.closest(
+      '.docs-provides, [aria-labelledby="part-names"], [aria-labelledby="color-properties"]',
+    )
   );
 
 /**

@@ -79,6 +79,31 @@ export function withoutCodeColumns(markdown) {
     .join('');
 }
 
+/**
+ * What the Usage guide leaves out of Markdown's tables, as the Docs show it: each table with an In
+ * code column, cut to its first column and that one, such as the words people use and the props
+ * each means; the rest of the Markdown, which the Usage guide shows, is left out.
+ */
+export function codeColumns(markdown) {
+  if (!markdown.includes(codeColumnHeading)) return '';
+  return marked
+    .lexer(markdown)
+    .flatMap((token) => {
+      if (token.type !== 'table') return [];
+      const code = token.header.findIndex((cell) => cell.text.trim() === codeColumnHeading);
+      if (code < 1) return [];
+      const row = (cells) => `| ${cells[0].text.trim()} | ${cells[code].text.trim()} |`;
+      return [
+        [
+          row(token.header),
+          row(token.header.map(() => ({ text: '---' }))),
+          ...token.rows.map(row),
+        ].join('\n'),
+      ];
+    })
+    .join('\n\n');
+}
+
 /** A section's Markdown as the Site shows it: without what envUI and the application provide. */
 export function siteMarkdown(section, markdown) {
   return withoutCodeColumns(
