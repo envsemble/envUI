@@ -33,5 +33,5 @@ await writeFile(
   `@envsemble/envui ${version}\nThird-party notices\n\n${await collectCatalogueNotices(repositoryRoot)}\n`,
 );
 console.log(
-  `Built dist/site for @envsemble/envui ${version}: the Site at / and the Docs at /docs; serve it with npm run site:serve.`,
+  `Built dist/site for @envsemble/envui ${version}: the Usage guide at / and the Docs at /docs; serve it with npm run site:serve.`,
 );

@@ -7,12 +7,13 @@ import {
   LinkProvider,
   Scaffold,
   Sheet,
+  TableOfContents,
   Text,
   Tooltip,
 } from '@envsemble/envui';
 import { Menu as MenuIcon } from '@envsemble/envui/icons/Menu';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
-import { findPage, type Area, type SitePage } from './navigation/DocumentationRoutes';
+import { findPage, type Area, type RoutePage } from './navigation/DocumentationRoutes';
 import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { PageFooter } from './layout/PageFooter';
@@ -26,7 +27,7 @@ import {
   PatternPage,
 } from './pages/SitePages';
 import {
-  ApiPage,
+  DocsReferencePage,
   ChangelogDocsPage,
   CodemodsPage,
   DocsHome,
@@ -34,10 +35,18 @@ import {
   GuidePage,
   TokensPage,
 } from './pages/DocsPages';
-import { DocsNavigation, PageActions, SiteNavigation } from './navigation/DocumentationNavigation';
+import { DocsNavigation, PageActions, UsageNavigation } from './navigation/DocumentationNavigation';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
-import { docsRoute, homeRoute, inDocs, routeHref, revealSection } from './navigation/Address';
+import {
+  announceShownAddress,
+  docsRoute,
+  homeRoute,
+  inDocs,
+  revealSection,
+  routeHref,
+  takeShownAddress,
+} from './navigation/Address';
 import { isSearchShortcut } from './search/SearchShortcut';
 import { SearchButton } from './search/SearchButton';
 import { useDocumentationRoute } from './navigation/useDocumentationRoute';
@@ -45,7 +54,7 @@ import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { DocumentationSearch } from './search/DocumentationSearch';
 
 /** What each kind of page renders. */
-const pageContent: Record<SitePage['kind'], (props: { page: SitePage }) => ReactNode> = {
+const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => ReactNode> = {
   home: Overview,
   components: ComponentsPage,
   patterns: PatternsPage,
@@ -59,11 +68,11 @@ const pageContent: Record<SitePage['kind'], (props: { page: SitePage }) => React
   'docs-changelog': ChangelogDocsPage,
   tokens: TokensPage,
   'foundation-guide': FoundationGuidePage,
-  api: ApiPage,
+  reference: DocsReferencePage,
 };
 
-/** The title of a page's tab: the Site's are envUI's, the Docs' envUI Docs'. */
-function documentTitle(page: SitePage | undefined, area: Area) {
+/** The title of a page's tab: the Usage guide's are envUI's, the Docs' envUI Docs'. */
+function documentTitle(page: RoutePage | undefined, area: Area) {
   const site = area === 'docs' ? 'envUI Docs' : 'envUI';
   if (!page) return `Page not found · ${site}`;
   if (page.kind === 'home' || page.kind === 'docs-home') return site;
@@ -71,12 +80,49 @@ function documentTitle(page: SitePage | undefined, area: Area) {
 }
 
 /**
- * The site: the Site, at the root, which introduces envUI, with a rail of its destinations and a
- * drawer of the chosen one's pages, and the Docs, under /docs, the developer reference with a
- * navigation of their own. The navigation holds the wordmark and search at its top, and the page
- * has the way to the other area and the Display menu at its top end.
+ * Whether a heading belongs in the page's contents: one of the page's own, not an example's or a
+ * figure's, which show components rather than the page's sections. Each export's props are listed
+ * under Props; the exports' part names and color properties, and the two lists under
+ * Accessibility, are their sections' alone, so the contents don't repeat the exports three times.
  */
-function Site() {
+const contentsHeading = (heading: HTMLElement) =>
+  !heading.closest('.docs-live-example, .docs-open-example, .docs-specimen, .env-dialog') &&
+  !(
+    heading.localName === 'h3' &&
+    heading.closest('.docs-provides, [aria-labelledby="parts"], [aria-labelledby="colors"]')
+  );
+
+/**
+ * The page's contents beside it in the Docs, on a window wide enough for a column of them: its h2
+ * and h3 headings, such as each export's props under Props, with the section the reader is in
+ * marked. A link writes the section's fragment to the address, the same as a search result or a
+ * copied address names it, and the route follows without scrolling again.
+ */
+function DocsContents({ page }: { page: RoutePage }) {
+  return (
+    <aside className="docs-contents">
+      <TableOfContents
+        key={page.path}
+        className="docs-contents-list"
+        container=".docs-page-column"
+        filter={contentsHeading}
+        onClick={(event) => {
+          if (event.defaultPrevented && (event.target as Element).closest('a[href^="#"]'))
+            announceShownAddress();
+        }}
+      />
+    </aside>
+  );
+}
+
+/**
+ * The site: the Usage guide, at the root, which shows envUI to people, with a rail of its
+ * destinations and a drawer of the chosen one's pages, and the Docs, under /docs, the developer
+ * reference with a navigation of their own and each page's contents beside it. The navigation
+ * holds the wordmark and search at its top, and the page has the way to the same subject in the
+ * other part and the Display menu at its top end.
+ */
+function Shell() {
   const route = useDocumentationRoute();
   const [searchOpen, setSearchOpen] = useState(false);
   const [navigationOpen, setNavigationOpen] = useState(false);
@@ -88,8 +134,10 @@ function Site() {
   const firstLoad = useRef(true);
   const routePath = route.split('?')[0];
   const page = findPage(routePath);
-  const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'site');
+  const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'usage');
   const title = documentTitle(page, area);
+  // Every page of the Docs but their home, an index of them, lists its contents beside it.
+  const contents = page && area === 'docs' && page.kind !== 'docs-home';
   useEffect(() => {
     // ⌘K, or Ctrl+K, opens search from anywhere, text fields included, and closes it again; an
     // editor that handles the keys itself, such as for a link, keeps them.
@@ -103,6 +151,8 @@ function Site() {
   }, []);
   useEffect(() => {
     document.title = title;
+    // An address that a link of the page's contents wrote has shown its section already.
+    if (takeShownAddress()) return;
     if (firstLoad.current) firstLoad.current = false;
     else mainElement.current?.focus({ preventScroll: true });
     const section = new URLSearchParams(route.split('?')[1]).get('section');
@@ -160,7 +210,7 @@ function Site() {
           }
         : openSearch,
     };
-    return area === 'docs' ? <DocsNavigation {...props} /> : <SiteNavigation {...props} />;
+    return area === 'docs' ? <DocsNavigation {...props} /> : <UsageNavigation {...props} />;
   };
   return (
     <Scaffold
@@ -192,17 +242,24 @@ function Site() {
         </div>
       </div>
       <div className="docs-main">
-        <PageActions area={area} />
-        <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
-          {content}
-        </PageBoundary>
-        {page && <PageNavigation page={page} />}
+        <PageActions page={page} area={area} />
+        <div className="docs-page-layout">
+          <div className="docs-page-grid" data-contents={contents || undefined}>
+            <div className="docs-page-column">
+              <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
+                {content}
+              </PageBoundary>
+              {page && <PageNavigation page={page} />}
+            </div>
+            {contents && <DocsContents page={page} />}
+          </div>
+        </div>
         <PageFooter />
       </div>
       <Sheet
         className="docs-navigation-sheet"
         side="start"
-        aria-label={area === 'docs' ? 'Docs' : 'Site'}
+        aria-label={area === 'docs' ? 'Docs' : 'Usage guide'}
         width={area === 'docs' ? 'min(18rem, 100%)' : 'min(22rem, 100%)'}
         open={navigationOpen}
         onOpenChange={(open) => {
@@ -230,7 +287,7 @@ export default function App() {
     <EnvUIProvider locale={pageLocale}>
       <DisplaySettingsProvider className="docs-app">
         <LinkProvider component={RouterLink}>
-          <Site />
+          <Shell />
         </LinkProvider>
       </DisplaySettingsProvider>
     </EnvUIProvider>

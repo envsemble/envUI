@@ -1,20 +1,17 @@
-import {
-  Button,
-  Column,
-  CopyButton,
-  DescriptionList,
-  Link,
-  Row,
-  Surface,
-  Text,
-} from '@envsemble/envui';
+import { Column, CopyButton, DescriptionList, Link, Row, Surface, Text } from '@envsemble/envui';
 import { Code, Markdown } from '@envsemble/envui/content';
-import { Visibility } from '@envsemble/envui/icons/Visibility';
 import { AgentLogos } from '../brand/AgentLogos';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { PageHeader } from '../layout/PageHeader';
-import { pagesOf, referencePages, type SitePage } from '../navigation/DocumentationRoutes';
+import {
+  docsTrail,
+  docsTree,
+  pagesOf,
+  type DocsGroup,
+  type RoutePage,
+} from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
+import { OtherPartButton } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
 import { ExampleSource } from '../template/LiveExample';
 import { partsOf } from '../template/Parts';
@@ -43,14 +40,49 @@ const tokenReference = lazyPart(
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
 export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
 
+/** A group's pages, one link to each, in a short list. */
+function PageLinks({ pages }: { pages: readonly RoutePage[] }) {
+  return (
+    <ul className="docs-link-list">
+      {pages.map((entry) => (
+        <li key={entry.path}>
+          <Link href={routeHref(entry.path)}>{entry.label ?? entry.title}</Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * A section of the Docs' home, as their navigation has it: its pages, then its groups, each under
+ * a heading of its own, which a page's breadcrumbs lead to.
+ */
+function HomeSection({ section, home }: { section: DocsGroup; home: RoutePage }) {
+  const pages = section.pages.filter((entry) => entry !== home);
+  return (
+    <Column render={<section aria-labelledby={section.id} />} gap={4}>
+      <Text render={<h2 id={section.id} />} variant="title">
+        {section.label}
+      </Text>
+      {pages.length > 0 && <PageLinks pages={pages} />}
+      {section.groups.map((group) => (
+        <Column key={group.id} render={<section aria-labelledby={group.id} />} gap={2}>
+          <Text render={<h3 id={group.id} />} variant="body-sm" emphasis="muted">
+            {group.label}
+          </Text>
+          <PageLinks pages={group.pages} />
+        </Column>
+      ))}
+    </Column>
+  );
+}
+
 /**
  * The Docs' home: what they are, said once in its summary, the prompt that sets envUI up with a
- * coding agent, and each group's pages in a short list.
+ * coding agent, and each section's pages in short lists, by their groups, as the navigation has
+ * them.
  */
-export function DocsHome({ page }: { page: SitePage }) {
-  const groups = new Map<string, SitePage[]>();
-  for (const entry of pagesOf('docs'))
-    if (entry !== page) groups.set(entry.section, [...(groups.get(entry.section) ?? []), entry]);
+export function DocsHome({ page }: { page: RoutePage }) {
   return (
     <>
       <PageHeader
@@ -87,19 +119,8 @@ export function DocsHome({ page }: { page: SitePage }) {
             <CopyButton value={setupPrompt} variant="ghost" size="sm" aria-label="Copy prompt" />
           </Surface>
         </Column>
-        {[...groups].map(([group, entries]) => (
-          <Column key={group} render={<section />} gap={3}>
-            <Text render={<h2 />} variant="title">
-              {group}
-            </Text>
-            <ul className="docs-link-list">
-              {entries.map((entry) => (
-                <li key={entry.path}>
-                  <Link href={routeHref(entry.path)}>{entry.label ?? entry.title}</Link>
-                </li>
-              ))}
-            </ul>
-          </Column>
+        {docsTree.map((section) => (
+          <HomeSection key={section.id} section={section} home={page} />
         ))}
       </Column>
     </>
@@ -107,10 +128,16 @@ export function DocsHome({ page }: { page: SitePage }) {
 }
 
 /** A guide of docs/, such as setup or migration, with its live demos in place. */
-export function GuidePage({ page }: { page: SitePage }) {
+export function GuidePage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
+      <PageHeader
+        title={page.title}
+        trail={docsTrail(page)}
+        description={page.summary}
+        kind="docs"
+        meta={<OtherPartButton page={page} />}
+      />
       <Column gap={7} className="docs-article">
         <GuideDocument document={page.document!} />
       </Column>
@@ -119,10 +146,15 @@ export function GuidePage({ page }: { page: SitePage }) {
 }
 
 /** The codemods' README, as the package ships it, without its title. */
-export function CodemodsPage({ page }: { page: SitePage }) {
+export function CodemodsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
+      <PageHeader
+        title={page.title}
+        trail={docsTrail(page)}
+        description={page.summary}
+        kind="docs"
+      />
       <Column gap={7} className="docs-article">
         <Markdown codeCopyable>{codemodsReadme.replace(/^# [^\n]*\n+/, '')}</Markdown>
       </Column>
@@ -131,12 +163,12 @@ export function CodemodsPage({ page }: { page: SitePage }) {
 }
 
 /** Every design token, with its value in each theme and scale. */
-export function TokensPage({ page }: { page: SitePage }) {
+export function TokensPage({ page }: { page: RoutePage }) {
   return (
     <>
       <PageHeader
         title={page.title}
-        breadcrumb="Docs / Foundations"
+        trail={docsTrail(page)}
         description={page.summary}
         kind="docs"
       />
@@ -158,10 +190,15 @@ const changelog = lazyPart(
  * What changed in each release of @envsemble/envui: the release notes, a few lines on each release
  * with what it breaks, then every change as the releases write them.
  */
-export function ChangelogDocsPage({ page }: { page: SitePage }) {
+export function ChangelogDocsPage({ page }: { page: RoutePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
+      <PageHeader
+        title={page.title}
+        trail={docsTrail(page)}
+        description={page.summary}
+        kind="docs"
+      />
       <Column gap={8} className="docs-article">
         <Column gap={6} render={<section aria-labelledby="highlights" />}>
           <Text render={<h2 id="highlights" />} variant="headline">
@@ -177,21 +214,6 @@ export function ChangelogDocsPage({ page }: { page: SitePage }) {
         </Column>
       </Column>
     </>
-  );
-}
-
-/** A link from a page of the Docs to the page of the Site that shows the same subject. */
-function SiteLink({ path }: { path: string }) {
-  return (
-    <Button
-      variant="secondary"
-      size="sm"
-      href={routeHref(path)}
-      startIcon={<Visibility />}
-      className="docs-site-link"
-    >
-      See it on the Site
-    </Button>
   );
 }
 
@@ -216,18 +238,19 @@ function PaletteSection() {
   );
 }
 
-/** A foundation's written guidance and reference, whose visuals are its page on the Site. */
-export function FoundationGuidePage({ page }: { page: SitePage }) {
+/**
+ * A foundation's written guidance and reference, whose visuals are its page in the Usage guide.
+ */
+export function FoundationGuidePage({ page }: { page: RoutePage }) {
   const document = page.document!;
-  const sitePage = referencePages.find((entry) => entry.reference.id === document.id);
   return (
     <>
       <PageHeader
         title={page.title}
         kind="docs"
-        breadcrumb="Docs / Foundations"
+        trail={docsTrail(page)}
         description={page.summary}
-        meta={sitePage && <SiteLink path={sitePage.path} />}
+        meta={<OtherPartButton page={page} />}
       />
       {/* A foundation's written guidance: its lists are check lists. */}
       <Column gap={7} className="docs-article">
@@ -438,34 +461,34 @@ function ColorProperties({ components }: { components: readonly string[] }) {
  * A component's or a pattern's page in the Docs, its guide to using it in code: how to import it,
  * its common uses, how its parts compose and how to customize it, from the page's "## In code";
  * what the application and envUI provide; then, as reference, its props, part names and color
- * properties, and its changelog. Field, which has no page on the Site, shows its whole page here,
+ * properties, and its changelog. Field, which has no page in the Usage guide, shows its whole page here,
  * as "Build your own field", with Related at the end, after the changelog.
  */
-export function ApiPage({ page }: { page: SitePage }) {
+export function DocsReferencePage({ page }: { page: RoutePage }) {
   const document = page.document!;
   const reference = document as Reference;
-  const sitePage = pagesOf('site').find((entry) => entry.document?.id === document.id);
+  const usagePage = pagesOf('usage').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
-  const pattern = sitePage?.kind === 'pattern';
+  const pattern = usagePage?.kind === 'pattern';
   return (
     <>
       <PageHeader
         title={page.title}
         kind="docs"
-        breadcrumb={`Docs / ${pattern ? 'Patterns' : reference.group}`}
+        trail={docsTrail(page)}
         description={page.summary}
         meta={
           metadata && (
             <MetadataBadges metadata={metadata}>
-              {sitePage && <SiteLink path={sitePage.path} />}
+              <OtherPartButton page={page} />
             </MetadataBadges>
           )
         }
       />
-      {!sitePage && <TemplateContent document={document} provides related={false} />}
+      {!usagePage && <TemplateContent document={document} provides related={false} />}
       <Column gap={8} className="docs-article docs-api">
         <CodeGuide document={document} />
-        {sitePage && <Provides document={document} title="Accessibility" id="provides" />}
+        {usagePage && <Provides document={document} title="Accessibility" id="provides" />}
         {!pattern && (
           <Column render={<section />} gap={5} aria-labelledby="props">
             <Text render={<h2 />} variant="headline" id="props">
@@ -477,7 +500,7 @@ export function ApiPage({ page }: { page: SitePage }) {
         <PartNames components={metadata?.components ?? []} />
         <ColorProperties components={metadata?.components ?? []} />
         <PageChangelog document={document} />
-        {!sitePage && metadata && <Related metadata={metadata} path={document.path} />}
+        {!usagePage && metadata && <Related metadata={metadata} path={document.path} />}
       </Column>
     </>
   );

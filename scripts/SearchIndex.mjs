@@ -1,12 +1,12 @@
 // The site's search: one document per page, export, prop and token, from the same sources as the
 // site and the packaged docs (docs/, docs/generated/props.json and the token list), and the
 // MiniSearch index the site loads, written to apps/catalogue/src/generated/SearchIndex.json by
-// GenerateDocumentation.mjs. The site opens it with ⌘K or Ctrl+K, on the Site and in the Docs.
+// GenerateDocumentation.mjs. The site opens it with ⌘K or Ctrl+K, in the Usage guide and the Docs.
 //
 // searchDocuments() is plain data, so other tools can index the same documents: each names the page
 // it is found on by its document id (the file name in docs/, or a site page such as `tokens`), the
-// area that shows it, the Site or the Docs, and, where it is part of a page, the page's view and the
-// element id of its place there. A view picks the Docs' part of a subject the Site shows too:
+// area that shows it, the Usage guide or the Docs, and, where it is part of a page, the page's view and the
+// element id of its place there. A view picks the Docs' part of a subject the Usage guide shows too:
 // `props` a component's page in the Docs, `usage` a foundation's guide there.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -36,7 +36,7 @@ export const tokensFile = fileURLToPath(
  *   owner: string;
  *   text: string;
  *   page: string;
- *   area: 'site' | 'docs';
+ *   area: 'usage' | 'docs';
  *   view?: 'props' | 'usage';
  *   section?: string;
  * }} SearchDocument
@@ -44,24 +44,24 @@ export const tokensFile = fileURLToPath(
 
 /** Pages of the site that no file in docs/ writes, each in its area. */
 export const cataloguePages = [
-  { page: 'overview', title: 'Overview', area: 'site', aliases: ['home', 'introduction'] },
+  { page: 'overview', title: 'Overview', area: 'usage', aliases: ['home', 'introduction'] },
   {
     page: 'components',
     title: 'Components',
-    area: 'site',
+    area: 'usage',
     aliases: ['all components', 'component list', 'catalogue'],
   },
   {
     page: 'patterns',
     title: 'Patterns',
-    area: 'site',
+    area: 'usage',
     aliases: ['all patterns', 'pattern list', 'pattern gallery'],
   },
-  // Dev mode's page on the Site, beside its guide in the Docs, the document dev-mode.
+  // Dev mode's page in the Usage guide, beside its guide in the Docs, the document dev-mode.
   {
     page: 'dev-mode-overview',
     title: 'Dev mode',
-    area: 'site',
+    area: 'usage',
     aliases: ['dev mode', 'layout inspector', '3D view', 'check a layout'],
   },
   {
@@ -92,7 +92,7 @@ export const cataloguePages = [
 
 /**
  * Pages of docs/ for people who change envUI itself, and the agents' index of the pages, which
- * neither the Site nor the Docs show, so search finds none of them.
+ * neither the Usage guide nor the Docs show, so search finds none of them.
  */
 export const unlistedPages = new Set([
   'index',
@@ -216,9 +216,9 @@ export function searchDocuments({ documents, props, tokens }) {
       owner: '',
       text: [document.summary, ...(frontmatter.useWhen ?? [])].join('\n'),
       page: document.id,
-      area: kind === 'guide' || docsOnlyPages.has(document.id) ? 'docs' : 'site',
+      area: kind === 'guide' || docsOnlyPages.has(document.id) ? 'docs' : 'usage',
     });
-    // A foundation's written guidance is its guide in the Docs, beside its page on the Site.
+    // A foundation's written guidance is its guide in the Docs, beside its page in the Usage guide.
     if (kind === 'foundation')
       results.push({
         id: `guide:${document.id}`,
@@ -330,7 +330,7 @@ export function buildSearchIndex({ documents, props, tokens = readTokens() }) {
  * its name too (color.fg.muted). A query that is one of them ranks the document first.
  */
 function withNames(document) {
-  // A foundation's guide in the Docs shares its page's title; the page on the Site takes the name.
+  // A foundation's guide in the Docs shares its page's title; the page in the Usage guide takes the name.
   if (document.id.startsWith('guide:')) return { ...document, names: [] };
   const parted = !['export', 'prop', 'token'].includes(document.kind);
   const names = [

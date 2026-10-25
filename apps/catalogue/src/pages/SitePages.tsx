@@ -1,16 +1,9 @@
-import { Button, Column } from '@envsemble/envui';
-import { Api } from '@envsemble/envui/icons/Api';
-import { MenuBook } from '@envsemble/envui/icons/MenuBook';
+import { Column } from '@envsemble/envui';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { PageHeader } from '../layout/PageHeader';
-import {
-  apiRoute,
-  foundationGuideRoute,
-  patternGuideRoute,
-  type SitePage,
-} from '../navigation/DocumentationRoutes';
-import { routeHref } from '../navigation/Address';
+import type { RoutePage } from '../navigation/DocumentationRoutes';
+import { OtherPartButton } from '../navigation/OtherPart';
 import { getPatternIcon, getReferenceIcon } from '../navigation/TopicIcons';
 import { FoundationPreview } from '../previews/FoundationPreview';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
@@ -19,45 +12,12 @@ import { Catalogue } from './Catalogue';
 import { PatternCatalogue } from './PatternCatalogue';
 import { Documentation } from './Documentation';
 
-/** The link from a page of the Site to its guide in the Docs, how to use it in code. */
-function ApiLink({ path }: { path: string }) {
-  return (
-    <Button
-      variant="secondary"
-      size="sm"
-      href={routeHref(path)}
-      startIcon={<Api />}
-      className="docs-api-link"
-    >
-      API
-    </Button>
-  );
-}
-
 /**
- * The link from a foundation's page on the Site to its guide in the Docs: the tokens, values and code
- * behind its plain words.
+ * A component's page in the Usage guide: what it looks like and when to use it, in live figures
+ * with the code under each, and a link to its page in the Docs, its guide to using it in code with
+ * its props, part names and changelog.
  */
-export function GuideLink({ path }: { path: string }) {
-  return (
-    <Button
-      variant="secondary"
-      size="sm"
-      href={routeHref(path)}
-      startIcon={<MenuBook />}
-      className="docs-guide-link"
-    >
-      Guide
-    </Button>
-  );
-}
-
-/**
- * A component's page on the Site: what it looks like and when to use it, in live figures with the
- * code under each, and a link to its page in the Docs, its guide to using it in code with its
- * props, part names and changelog.
- */
-export function ComponentPage({ page }: { page: SitePage }) {
+export function ComponentPage({ page }: { page: RoutePage }) {
   const document = page.document!;
   const reference = document as Reference;
   const Icon = getReferenceIcon(reference.id, reference.group);
@@ -73,7 +33,7 @@ export function ComponentPage({ page }: { page: SitePage }) {
         meta={
           document.metadata && (
             <MetadataBadges metadata={document.metadata} plain>
-              <ApiLink path={apiRoute(document.id)} />
+              <OtherPartButton page={page} />
             </MetadataBadges>
           )
         }
@@ -87,7 +47,7 @@ export function ComponentPage({ page }: { page: SitePage }) {
  * A pattern's page: every section of the template, in the page's order, and a link to its guide in
  * the Docs.
  */
-export function PatternPage({ page }: { page: SitePage }) {
+export function PatternPage({ page }: { page: RoutePage }) {
   const document = page.document!;
   const Icon = getPatternIcon(document.id);
   return (
@@ -101,7 +61,7 @@ export function PatternPage({ page }: { page: SitePage }) {
         meta={
           document.metadata && (
             <MetadataBadges metadata={document.metadata} plain>
-              <ApiLink path={patternGuideRoute(document.id)} />
+              <OtherPartButton page={page} />
             </MetadataBadges>
           )
         }
@@ -123,10 +83,10 @@ const iconsCredit = [
 ].join('\n');
 
 /**
- * A foundation's page on the Site: how envUI handles its subject, in pictures and plain words. Its
- * guide in the Docs, which Guide opens, holds the tokens and code behind them.
+ * A foundation's page in the Usage guide: how envUI handles its subject, in pictures and plain
+ * words. Its page in the Docs, which Docs opens, holds the tokens and code behind them.
  */
-export function FoundationPage({ page }: { page: SitePage }) {
+export function FoundationPage({ page }: { page: RoutePage }) {
   const reference = page.document as Reference;
   const Icon = getReferenceIcon(reference.id, reference.group);
   return (
@@ -137,7 +97,7 @@ export function FoundationPage({ page }: { page: SitePage }) {
         description={page.summary}
         // eslint-disable-next-line react-hooks/static-components
         symbol={<Icon />}
-        meta={<GuideLink path={foundationGuideRoute(reference.id)} />}
+        meta={<OtherPartButton page={page} />}
       />
       <FoundationPreview id={reference.id} />
       {reference.id === 'icons' && (
@@ -150,7 +110,7 @@ export function FoundationPage({ page }: { page: SitePage }) {
 }
 
 /** Every component, by what it is for. */
-export function ComponentsPage({ page }: { page: SitePage }) {
+export function ComponentsPage({ page }: { page: RoutePage }) {
   return (
     <>
       <PageHeader title={page.title} description={page.summary} symbol={<Widgets />} />
@@ -162,7 +122,7 @@ export function ComponentsPage({ page }: { page: SitePage }) {
 }
 
 /** Every pattern, by what people are doing. */
-export function PatternsPage({ page }: { page: SitePage }) {
+export function PatternsPage({ page }: { page: RoutePage }) {
   return (
     <>
       <PageHeader title={page.title} description={page.summary} symbol={<Pattern />} />
