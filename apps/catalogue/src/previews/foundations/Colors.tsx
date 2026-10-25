@@ -84,42 +84,115 @@ function RolesFigure() {
   );
 }
 
-/** Each role's swatch, named by what it is and what it is for. */
-const roles = [
-  { name: 'Page', use: 'The background behind everything', color: 'bg-page' },
-  { name: 'Surface', use: 'Panes, dialogs and menus', color: 'bg-default' },
-  { name: 'Filled surface', use: 'Cards and tab rails', color: 'bg-muted' },
-  { name: 'Text', use: 'Headings and body text', color: 'fg-default' },
-  { name: 'Supporting text', use: 'Details, captions and icons', color: 'fg-muted' },
-  { name: 'Edges', use: 'The outline of fields and outline buttons', color: 'border-default' },
-  { name: 'Accent', use: 'The main action', color: 'bg-brand-emphasis' },
-  { name: 'Selected', use: 'What is chosen in navigation and lists', color: 'bg-selected' },
-  { name: 'Success', use: 'Healthy or ready', color: 'fg-success' },
-  { name: 'Warning', use: 'Needs attention', color: 'fg-warning' },
-  { name: 'Danger', use: 'Failed or destructive', color: 'fg-danger' },
-  { name: 'Done', use: 'Completed work', color: 'fg-done' },
-] as const;
+/**
+ * Each role's swatch, named by what it is and what it is for, in four groups of six. A status shows
+ * its three colors in one swatch: its text, its soft fill and its solid fill.
+ */
+const roleGroups: readonly {
+  title: string;
+  roles: readonly { name: string; use: string; colors: readonly string[] }[];
+}[] = [
+  {
+    title: 'Surfaces',
+    roles: [
+      { name: 'Page', use: 'The background behind everything', colors: ['bg-page'] },
+      { name: 'Surface', use: 'Panes, dialogs and menus', colors: ['bg-default'] },
+      { name: 'Filled surface', use: 'Cards and tab rails', colors: ['bg-muted'] },
+      { name: 'Raised surface', use: 'A row or button that stands out', colors: ['bg-raised'] },
+      { name: 'Field', use: 'Inside text fields', colors: ['bg-field'] },
+      { name: 'Backdrop', use: 'Dims the page behind a dialog', colors: ['bg-overlay'] },
+    ],
+  },
+  {
+    title: 'Text and lines',
+    roles: [
+      { name: 'Text', use: 'Headings and body text', colors: ['fg-default'] },
+      { name: 'Supporting text', use: 'Details, captions and icons', colors: ['fg-muted'] },
+      { name: 'Link', use: 'Links and text buttons', colors: ['fg-link'] },
+      { name: 'Edges', use: 'Fields and outline buttons', colors: ['border-default'] },
+      { name: 'Hairlines', use: 'Tables, menus and cards', colors: ['border-muted'] },
+      { name: 'Focus ring', use: 'What the keyboard is on', colors: ['border-focus'] },
+    ],
+  },
+  {
+    title: 'Actions and selection',
+    roles: [
+      { name: 'Accent', use: 'The main action', colors: ['bg-brand-emphasis'] },
+      { name: 'On the accent', use: 'Its label and icon', colors: ['fg-on-emphasis'] },
+      { name: 'Quiet action', use: 'Secondary buttons', colors: ['bg-neutral-muted'] },
+      { name: 'Important', use: 'An action that must stand out', colors: ['bg-important-strong'] },
+      { name: 'Selected', use: 'What is chosen in navigation', colors: ['bg-selected'] },
+      { name: 'On the selected', use: 'Its label and icon', colors: ['fg-on-selected'] },
+    ],
+  },
+  {
+    title: 'Status',
+    roles: [
+      {
+        name: 'Neutral',
+        use: 'No particular state',
+        colors: ['fg-muted', 'bg-neutral-muted', 'bg-neutral-emphasis'],
+      },
+      {
+        name: 'Accent',
+        use: 'Current or highlighted',
+        colors: ['fg-accent', 'bg-accent-badge', 'bg-accent-emphasis'],
+      },
+      {
+        name: 'Success',
+        use: 'Healthy or ready',
+        colors: ['fg-success', 'bg-success-muted', 'bg-success-emphasis'],
+      },
+      {
+        name: 'Warning',
+        use: 'Needs attention',
+        colors: ['fg-warning', 'bg-warning-muted', 'bg-warning-emphasis'],
+      },
+      {
+        name: 'Danger',
+        use: 'Failed or destructive',
+        colors: ['fg-danger', 'bg-danger-muted', 'bg-danger-emphasis'],
+      },
+      {
+        name: 'Done',
+        use: 'Completed work',
+        colors: ['fg-done', 'bg-done-muted', 'bg-done-emphasis'],
+      },
+    ],
+  },
+];
 
-/** The roles as swatches in the reader's theme: a specimen of the system, on the page. */
+/** The roles as swatches in the reader's theme, in even columns: a specimen of the system. */
 function RoleSwatches() {
   return (
-    <ul className="docs-role-swatches" aria-label="Color roles">
-      {roles.map((role) => (
-        <li key={role.name}>
-          <span
-            className="docs-role-swatch"
-            style={{ background: `var(--env-color-${role.color})` }}
-            aria-hidden="true"
-          />
-          <Text render={<span />} className="docs-topic-legend-name">
-            {role.name}
-          </Text>
-          <Text render={<span />} variant="body-sm" emphasis="muted">
-            {role.use}
-          </Text>
-        </li>
-      ))}
-    </ul>
+    <div className="docs-role-groups">
+      <div>
+        {roleGroups.map((group) => (
+          <section key={group.title} className="docs-role-group">
+            <Text render={<h4 />} variant="title">
+              {group.title}
+            </Text>
+            <ul className="docs-role-swatches" aria-label={group.title}>
+              {group.roles.map((role) => (
+                <li key={role.name}>
+                  <span className="docs-role-swatch" aria-hidden="true">
+                    {role.colors.map((color) => (
+                      <span key={color} style={{ background: `var(--env-color-${color})` }} />
+                    ))}
+                  </span>
+                  <Text render={<span />} className="docs-topic-legend-name">
+                    {role.name}
+                  </Text>
+                  <Text render={<span />} variant="body-sm" emphasis="muted">
+                    {role.use}
+                  </Text>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -249,7 +322,7 @@ export function ColorsPreview() {
         <RolesFigure />
         <Block
           title="Every role in this theme"
-          text="Each swatch shows a role in the theme you are reading in. Switch the theme in the Display menu, and each takes the color its role has there."
+          text="Each swatch shows a role in the theme you are reading in, and a status shows its text, its soft fill and its solid fill. Switch the theme in the Display menu, and each takes the color its role has there."
           stacked
         >
           <RoleSwatches />
