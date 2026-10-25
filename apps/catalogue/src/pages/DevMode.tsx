@@ -44,8 +44,8 @@ const shots = {
     light: toolbarLight,
     dark: toolbarDark,
     width: 304,
-    height: 189,
-    alt: "Dev mode's toolbar of four dropdowns, the first open: the view's angles laid out as they look at the page, Top above Front, Left and Right beside it, Tilted in the top right corner, and Fit below them.",
+    height: 157,
+    alt: "Dev mode's toolbar of four dropdowns, the first open: the view's angles laid out as they look at the page, Top above Front, Left and Right beside it, and Tilted in the top right corner.",
   },
   inspector: {
     light: inspectorLight,
@@ -57,8 +57,8 @@ const shots = {
   spacing: {
     light: spacingLight,
     dark: spacingDark,
-    width: 318,
-    height: 299,
+    width: 223,
+    height: 211,
     alt: 'One card alone, close up and tilted: the padding around its content and the gaps between its parts are hatched.',
   },
   problems: {
@@ -71,8 +71,8 @@ const shots = {
   frame: {
     light: frameLight,
     dark: frameDark,
-    width: 394,
-    height: 680,
+    width: 362,
+    height: 668,
     alt: "The application laid out at a phone's size, inside a frame with handles on its edges: its three columns of cards are outlined in red, their words broken over many short lines.",
   },
 } satisfies Record<string, Shot>;

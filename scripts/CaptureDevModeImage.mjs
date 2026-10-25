@@ -98,7 +98,7 @@ async function openDevMode(browser, theme, viewport) {
   return { context, tab };
 }
 
-/** Picks an angle, or Fit, in the toolbar's View dropdown. */
+/** Picks an angle in the toolbar's View dropdown, with the whole page in view. */
 async function turnTo(tab, name) {
   await tab.getByRole('button', { name: 'View', exact: true }).click();
   await tab
@@ -128,13 +128,13 @@ async function captureView(browser, theme) {
   await tab.getByRole('button', { name: 'Hide the inspector' }).click();
   await tab.locator('.env-dev-sidebar').first().waitFor({ state: 'detached' });
   // The whole application in view, its levels pulled further apart than by default.
-  await turnTo(tab, 'Fit');
+  await turnTo(tab, 'Tilted');
   await tab.getByRole('button', { name: 'View settings', exact: true }).click();
   const spacing = tab.getByRole('slider', { name: 'Spacing between levels' });
   await spacing.focus();
   for (let step = 0; step < 24; step++) await tab.keyboard.press('ArrowRight');
   await tab.keyboard.press('Escape');
-  await turnTo(tab, 'Fit');
+  await turnTo(tab, 'Tilted');
   // The view's floating toolbar and corner buttons, its legend and the card under the pointer stay out of the
   // picture; the view keeps its size.
   await tab.addStyleTag({
@@ -167,7 +167,7 @@ async function captureAtWork(browser, theme) {
 
   // The whole of dev mode, a card selected: the tree, the view and the inspector.
   await select();
-  await turnTo(tab, 'Fit');
+  await turnTo(tab, 'Tilted');
   await settle(tab);
   await save(tab, await tab.screenshot(), 'whole', theme);
 
@@ -201,7 +201,7 @@ async function captureAtWork(browser, theme) {
 
   // The card alone, close up, its padding and gaps hatched.
   await show(tab, 'Only the selected');
-  await turnTo(tab, 'Fit');
+  await turnTo(tab, 'Tilted');
   // Ctrl+wheel zooms toward the pointer, a tenth a step: the card about twice and a half as big.
   const alone = await planesBox(tab, 0);
   await tab.mouse.move(alone.x + alone.width / 2, alone.y + alone.height / 2);
@@ -227,7 +227,7 @@ async function captureAtWork(browser, theme) {
     .filter({ hasText: /^iPhone 15393/ })
     .click();
   await select();
-  await turnTo(tab, 'Fit');
+  await turnTo(tab, 'Tilted');
   await settle(tab);
   const tree = await tab.locator('aside[data-side="tree"]').boundingBox();
   const lastRow = await tab.locator('.env-dev-tree [role=treeitem]').last().boundingBox();
@@ -251,7 +251,7 @@ async function captureAtWork(browser, theme) {
   );
 
   // The page on a phone, straight on, with the frame and its size above it.
-  // Fit would tilt the view again.
+  // Tilted would tilt the view again.
   await turnTo(tab, 'Front');
   await settle(tab);
   const frame = await tab.locator('.env-dev-frame').boundingBox();
