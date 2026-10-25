@@ -100,7 +100,7 @@ const contentsHeading = (heading: HTMLElement) =>
  */
 function DocsContents({ page }: { page: RoutePage }) {
   return (
-    <aside className="docs-contents">
+    <div className="docs-contents">
       <TableOfContents
         key={page.path}
         className="docs-contents-list"
@@ -111,7 +111,7 @@ function DocsContents({ page }: { page: RoutePage }) {
             announceShownAddress();
         }}
       />
-    </aside>
+    </div>
   );
 }
 
