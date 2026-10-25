@@ -1149,27 +1149,63 @@ test("a guide's statuses and exportAliases name only the exports it lists", asyn
   }
 });
 
+/** Whether `text` has `line` as one whole line. */
+const hasLine = (text, line) => text.split('\n').includes(line);
+
 test('a lean page ships each example once, its rules and legends, and no changelog', () => {
   const compiled = compileDocumentation();
-  const button = compiled.get('components/button.md');
-  assert.ok(leanPages.has('components/button.md'));
+  const table = compiled.get('components/table.md');
+  assert.ok(leanPages.has('components/table.md'));
   // A figure is a line naming its file, which still ships; In code keeps its own code.
-  assert.match(
-    button,
-    /^- Example: \[CreateProject\]\(\.\.\/examples\/button\/CreateProject\.tsx\)$/m,
-  );
-  assert.ok(compiled.has('examples/button/CreateProject.tsx'));
-  assert.doesNotMatch(button, /^`{3,}tsx (?:example|do|dont|anatomy|variants)=/m);
-  assert.match(button, /^- Do: One primary button per group, at the end of its actions\. /m);
-  assert.match(button, /^- Don't: Several primary buttons: none of them stands out\.$/m);
-  assert.match(button, /^1\. \*\*Container\*\* \(`env-button`\)$/m);
-  // A family member's props said word for word on Button are named, not repeated.
-  assert.match(button, /^Also `end`, `size`, .* as on Button\.$/m);
-  assert.match(button, /^Native props: `<button>` or `<a>`\.$/m);
-  assert.doesNotMatch(button, /^avoidWhen:|^## Changelog/m);
-  assert.match(button, /^## Related$/m);
+  assert.ok(hasLine(table, '- Example: [ProjectStatus](../examples/table/ProjectStatus.tsx)'));
+  assert.ok(compiled.has('examples/table/ProjectStatus.tsx'));
+  assert.doesNotMatch(table, /^`{3,}tsx (?:example|do|dont|anatomy|variants)=/m);
+  assert.ok(table.includes('\n- Do: Numbers aligned to the end, so the digits line up'));
+  assert.ok(hasLine(table, "- Don't: States told apart by color alone."));
+  assert.ok(hasLine(table, '1. **Region** (`env-table-region`)'));
+  assert.ok(hasLine(table, 'Native props: `<table>`.'));
+  assert.doesNotMatch(table, /^avoidWhen:|^## Changelog/m);
+  assert.ok(hasLine(table, '## Related'));
   // The lean index leaves out the contributor pages; other pages ship as before.
-  assert.doesNotMatch(compiled.get('index.md'), /component-pages\.md/);
+  assert.ok(!compiled.get('index.md').includes('component-pages.md'));
   assert.match(compiled.get('components/switch.md'), /^`{3,}tsx do=/m);
-  assert.match(compiled.get('components/switch.md'), /^## Changelog$/m);
+  assert.ok(hasLine(compiled.get('components/switch.md'), '## Changelog'));
+});
+
+test('a page in the one-file structure ships the whole file, in its order, with code once', () => {
+  const compiled = compileDocumentation();
+  const button = compiled.get('components/button.md');
+  // The frontmatter lists every example once, with its role and caption, and what to use instead.
+  assert.ok(hasLine(button, 'examples: # Each file is examples/button/<Name>.tsx.'));
+  assert.ok(hasLine(button, '  CreateProject: overview'));
+  assert.ok(
+    hasLine(
+      button,
+      '  OnePrimaryAction: { role: do, caption: "One primary button per group, at the end of its actions." }',
+    ),
+  );
+  assert.ok(hasLine(button, 'avoidWhen:'));
+  assert.ok(compiled.has('examples/button/CreateProject.tsx'));
+  // The sections in their order, the plain ones first and Compose last, then the props.
+  const headings = [...button.matchAll(/^## (.*)$/gm)].map(([, title]) => title);
+  assert.deepEqual(headings, ['Rules', 'Anatomy', 'Variants', 'Behaviour', 'Compose', 'Props']);
+  // A run of figures is a line that names them; no figure's code ships in the page.
+  assert.ok(
+    hasLine(
+      button,
+      "Examples: OnePrimaryAction (do), SeveralPrimaryActions (don't), ExplainWhatIsMissing (do), DisabledUntilValid (don't).",
+    ),
+  );
+  assert.doesNotMatch(button, /^`{3,}tsx (?:figure|example|do|dont|anatomy|variants)=/m);
+  assert.ok(hasLine(button, '1. **Container** (`env-button`)'));
+  assert.ok(hasLine(button, '### You provide'));
+  assert.match(button, /^Also `end`, `size`, .* as on Button\.$/m);
+  // A pattern's canonical example ships once, in full, in Compose.
+  const forms = compiled.get('patterns/forms.md');
+  assert.equal(forms.match(/^`{3,}tsx source=ErrorSummary$/gm)?.length, 1);
+  // A foundation's figures are the catalogue's: their legends ship, and the frontmatter lists none.
+  const spacing = compiled.get('foundations/spacing.md');
+  assert.ok(spacing.includes('\n1. **Tight, inside a group**: '));
+  assert.doesNotMatch(spacing, /^examples:/m);
+  assert.ok(spacing.includes('\n| More room between these | The next larger step'));
 });

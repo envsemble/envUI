@@ -417,7 +417,7 @@ test("a page's Site text is in titled blocks", () => {
  * The pages whose Site text is written in short paragraphs, the samples of the typography rework;
  * the rest join them as they are reworked, and then the list goes.
  */
-const shortParagraphPages = new Set(['button', 'forms']);
+const shortParagraphPages = new Set(['button', 'forms', 'spacing']);
 
 test("a page's Site text is in short paragraphs", () => {
   const found = sitePages()

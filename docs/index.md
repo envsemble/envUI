@@ -2,7 +2,7 @@
 
 Read only the pages the task needs; each entry says what it is for. For a screen, read its pattern first, under Patterns at the end, then the pages of the components it names.
 
-A component or pattern page opens with how it looks and when to use it, the design rules, then `## In code`: imports, usage, composition and customizing. Accessibility's **You provide** lists what the application must add, and **Props** lists envUI's own props; every component also takes its element's native props, such as `ref`, `className` and `aria-*`. Every example is a file in `examples/<page>/<Name>.tsx`. The TypeScript declarations hold the exact types.
+A component or pattern page opens with how it looks and when to use it, the design rules, then `## In code`: imports, usage, composition and customizing. A page whose frontmatter lists its `examples`, each file with its role and caption, reads in one order: Rules, Anatomy, Variants or Options, Behaviour, then `## Compose`, its code. Accessibility's **You provide** lists what the application must add, and **Props** lists envUI's own props; every component also takes its element's native props, such as `ref`, `className` and `aria-*`. Every example is a file in `examples/<page>/<Name>.tsx`. The TypeScript declarations hold the exact types.
 
 ## Setup and workflows
 
@@ -21,7 +21,7 @@ A component or pattern page opens with how it looks and when to use it, the desi
 
 - [Colors & themes](foundations/colors.md) — Colors named by their role, so every screen works in light, dark and high contrast.
 - [Typography](foundations/typography.md) — A few text styles, each with one job, from a page's hero line to small notes.
-- [Spacing & density](foundations/spacing.md) — How space groups things, controls line up, the compact scale and tighter rows, and what corners say.
+- [Spacing & density](foundations/spacing.md)
 - [Adapting to width](foundations/responsive.md) — Components follow the space they sit in, and four window classes name where a layout changes.
 - [Icons](foundations/icons.md) — Thousands of Material Symbols that follow their text, outlined or filled.
 - [Accessibility](foundations/accessibility.md) — What every component does for keyboard, screen readers, contrast, motion and touch, and what an app still supplies.

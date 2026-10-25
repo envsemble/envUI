@@ -62,3 +62,21 @@
 :where(.docs-figure-section) > :is(.docs-anatomy, .docs-variants) + .docs-figure-note {
   margin-block-start: calc(var(--env-space-4) - var(--docs-subtopic-gap));
 }
+
+/* The rules of a block on a page in the one-file structure, the bullets after its lead: plain dots
+   in the quieter color of supporting text, close together, so a block reads as its point and then
+   its rules. What a page is for, under Use it when, keeps its check list. */
+:where(.docs-skill .docs-figure-section .env-markdown:not(.docs-when *)) > ul {
+  --env-prose-list-item-gap: var(--env-space-2);
+  --env-prose-list-marker-fill: transparent;
+  --env-prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
+  --env-prose-list-marker-gap: var(--env-space-2);
+  --env-prose-list-mark: none;
+  --env-prose-list-mark-size: 0.3125rem;
+  --env-prose-list-mark-color: var(--env-color-fg-muted);
+  line-height: 1.5;
+  color: var(--env-color-fg-muted);
+}
+:where(.docs-skill .docs-figures .env-markdown) > p + ul {
+  margin-block-start: var(--env-space-2);
+}

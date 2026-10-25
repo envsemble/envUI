@@ -219,13 +219,13 @@ test('a component page shows plain sections, equal cells and the parts of its an
     '/docs/components/button',
   );
   // Ordinary headings in the fixed order, and no questions.
+  // Button is in the one-file structure, whose sections every kind of page shares.
   await expect(page.locator('.docs-figure-section-heading h2')).toHaveText([
     'Overview',
-    'Variants',
-    'When to use',
+    'Rules',
     'Anatomy',
-    'Adapting to width',
-    'Accessibility',
+    'Variants',
+    'Behaviour',
   ]);
   await expect(page.locator('.docs-figures .env-message')).toHaveCount(0);
   // Figures that share a row are cells of one size: equal widths, and stages as tall as the
@@ -511,7 +511,8 @@ test('the foundation and pattern pages show no technical text, in their words or
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
     if (path.startsWith('foundations/') || path === 'dev-mode') {
-      await expect(page.locator('.docs-topic').last()).toBeVisible();
+      // A foundation's sections: its preview's topics, or its Markdown's in the one-file structure.
+      await expect(page.locator('.docs-topic, .docs-figure-section').last()).toBeVisible();
       // The marks of a figure are measured once it has laid out.
       if (await page.locator('.docs-marked').count())
         await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
@@ -687,12 +688,11 @@ test("a pattern's guide lists what it needs, and Field's page in the Docs ends w
   );
   await guides.getByText('Form layout and validation', { exact: true }).click();
   await expect(page).toHaveURL(/\/docs\/patterns\/forms$/);
-  const provides = page.getByRole('region', { name: 'Accessibility', exact: true });
-  await expect(provides.getByRole('heading', { level: 3 })).toHaveText([
-    'You provide',
-    'envUI provides',
-  ]);
-  await expect(provides.getByRole('listitem').first()).toContainText('noValidate');
+  // Forms is in the one-file structure: its lists are under Behaviour, in the page's order.
+  const provides = page.locator('[data-section="behaviour"]');
+  for (const name of ['envUI provides', 'You provide'])
+    await expect(provides.getByRole('heading', { level: 3, name, exact: true })).toBeVisible();
+  await expect(provides.getByRole('listitem').filter({ hasText: 'noValidate' })).toHaveCount(1);
   await expect(page.locator('.docs-article .env-card')).toHaveCount(0);
   // Field's whole page is in the Docs: its sections, props, part names and changelog, then Related
   // at the end, on the page rather than the band.
