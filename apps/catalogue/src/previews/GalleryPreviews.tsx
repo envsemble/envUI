@@ -26,6 +26,7 @@ import {
   Spinner,
   Surface,
   Table,
+  TableOfContents,
   Text,
   TextField,
   Toast,
@@ -435,6 +436,41 @@ function AccountPreview() {
   );
 }
 
+function TableOfContentsPreview() {
+  // The guide's sections beside its contents, which mark the first, where the reader starts.
+  const sections = [
+    { id: 'gallery-contents-install', title: 'Install' },
+    { id: 'gallery-contents-configure', title: 'Configure' },
+    { id: 'gallery-contents-deploy', title: 'Deploy' },
+  ];
+  return (
+    <Row gap={4} align="start" style={{ inlineSize: '100%' }}>
+      <Column gap={3} style={{ flex: 1, minInlineSize: 0 }}>
+        {sections.map(({ id, title }) => (
+          <Column key={id} id={id} gap={1}>
+            <Text variant="title" render={<h4 />}>
+              {title}
+            </Text>
+            <Text variant="body-sm">A few lines of the guide.</Text>
+          </Column>
+        ))}
+      </Column>
+      <TableOfContents
+        aria-label="Sections of the guide"
+        style={{ inlineSize: '8rem' }}
+        items={[
+          {
+            id: 'gallery-contents-install',
+            label: 'Install',
+            children: [{ id: 'gallery-contents-configure', label: 'Configure' }],
+          },
+          { id: 'gallery-contents-deploy', label: 'Deploy' },
+        ]}
+      />
+    </Row>
+  );
+}
+
 /** The window of an overlay over a page, larger than the gallery's, in its proportions. */
 const overlay = { width: 24, height: 18 };
 
@@ -467,6 +503,7 @@ export const galleryPreviews: Record<string, GalleryPreview> = {
   page: { render: PagePreview },
   panes: { example: 'PanesAnatomy', window: { width: 38, height: 20 } },
   'top-bar': { render: TopBarPreview },
+  'table-of-contents': { render: TableOfContentsPreview },
   'panel-dock': { example: 'PanelDockAnatomy', window: overlay },
   grid: { render: GridPreview },
   forms: { render: FormPreview },

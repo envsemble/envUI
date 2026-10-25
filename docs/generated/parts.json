@@ -4994,6 +4994,55 @@
         "Skeleton"
       ]
     },
+    "TableOfContents": {
+      "root": "env-table-of-contents",
+      "source": "packages/ui/src/navigation/TableOfContents.tsx",
+      "parts": [
+        {
+          "class": "env-table-of-contents",
+          "description": "The navigation of the page's sections."
+        },
+        {
+          "class": "env-table-of-contents-body",
+          "description": "The track and the list beside it."
+        },
+        {
+          "class": "env-table-of-contents-item",
+          "description": "One section, with the sections nested in it."
+        },
+        {
+          "class": "env-table-of-contents-link",
+          "description": "A section's link."
+        },
+        {
+          "class": "env-table-of-contents-list",
+          "description": "A level of sections."
+        },
+        {
+          "class": "env-table-of-contents-marker",
+          "description": "The marker on the track beside the current section."
+        },
+        {
+          "class": "env-table-of-contents-track",
+          "description": "The track beside the links, drawn once they are measured."
+        },
+        {
+          "class": "env-table-of-contents-track-line",
+          "description": "The track's line, which steps in with each level."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-hidden",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-table-of-contents-marker"
+          ]
+        }
+      ]
+    },
     "Tabs": {
       "root": "env-tabs",
       "source": "packages/ui/src/navigation/Tabs.tsx",

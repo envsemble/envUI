@@ -45,6 +45,7 @@ import {
 import { DataDisplayFixture } from './DataDisplay.js';
 import { TablesFixture } from './Tables.js';
 import { PagersFixture } from './Pagers.js';
+import { TableOfContentsFixture } from './TableOfContents.js';
 import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
@@ -116,6 +117,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'rtl-document-tabs': RtlDocumentTabsFixture,
   'document-tabs-rerender': DocumentTabsRerenderFixture,
   pagers: PagersFixture,
+  'table-of-contents': TableOfContentsFixture,
   sheets: SheetsFixture,
   'resizable-drawers': ResizableDrawersFixture,
   'nested-drawers': NestedDrawersFixture,

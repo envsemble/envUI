@@ -26,6 +26,7 @@ export const aliases = {
   Alert: ['Dialog'],
   Overlays: ['Dialog'],
   Breadcrumbs: ['DataDisplay'],
+  contentsOutline: ['TableOfContents'],
   Kbd: ['DataDisplay'],
   Progress: ['Meter'],
   Spinner: ['Meter', 'Skeleton'],

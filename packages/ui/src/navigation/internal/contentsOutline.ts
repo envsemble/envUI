@@ -1,0 +1,186 @@
+import type { ReactNode } from 'react';
+
+/** One entry of a table of contents: a section of the page, and the sections nested in it. */
+export interface TableOfContentsItem {
+  /** The id of the element the entry leads to: a heading, or any section of the page with an id. */
+  id: string;
+  /** The entry's text, such as the heading's words or a shorter name for a section. */
+  label: ReactNode;
+  /** The sections nested under this one, such as a heading's subsections. */
+  children?: readonly TableOfContentsItem[];
+}
+
+/** A heading read from the page: its id, its text and its level. */
+export interface HeadingEntry {
+  id: string;
+  label: string;
+  level: number;
+}
+
+/** An entry in reading order, with how deep it is nested. */
+export interface FlatEntry {
+  id: string;
+  depth: number;
+}
+
+/**
+ * Nests headings by level: each heading goes under the last one above it of a lower level, so an
+ * h3 sits under the h2 before it, and one with no such heading above it stays at the top.
+ */
+export function outline(headings: readonly HeadingEntry[]): TableOfContentsItem[] {
+  const root: TableOfContentsItem[] = [];
+  const open: { level: number; children: TableOfContentsItem[] }[] = [];
+  for (const heading of headings) {
+    while (open.length > 0 && open[open.length - 1]!.level >= heading.level) open.pop();
+    const children: TableOfContentsItem[] = [];
+    const item = { id: heading.id, label: heading.label, children };
+    (open.length > 0 ? open[open.length - 1]!.children : root).push(item);
+    open.push({ level: heading.level, children });
+  }
+  return root.map(withoutEmptyChildren);
+}
+
+function withoutEmptyChildren(item: TableOfContentsItem): TableOfContentsItem {
+  return item.children && item.children.length > 0
+    ? { ...item, children: item.children.map(withoutEmptyChildren) }
+    : { id: item.id, label: item.label };
+}
+
+/** The entries in reading order, each with its depth. */
+export function flatten(items: readonly TableOfContentsItem[], depth = 0): FlatEntry[] {
+  return items.flatMap((item) => [
+    { id: item.id, depth },
+    ...flatten(item.children ?? [], depth + 1),
+  ]);
+}
+
+/**
+ * An id for a heading that has none, from its words: lower case, letters and digits joined by
+ * hyphens, accents dropped; `section` where no letter is left.
+ */
+export function slug(text: string): string {
+  const words = text
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, '-')
+    .replace(/^-+|-+$/g, '');
+  return words || 'section';
+}
+
+/** The first of `base`, `base-2`, `base-3`… that `taken` doesn't hold. */
+export function uniqueId(base: string, taken: (id: string) => boolean): string {
+  if (!taken(base)) return base;
+  let count = 2;
+  while (taken(`${base}-${count}`)) count += 1;
+  return `${base}-${count}`;
+}
+
+/** Where a section starts, measured from where a link to it scrolls it to: 0 is right there. */
+export interface SectionPosition {
+  id: string;
+  top: number;
+}
+
+/** The area that scrolls: the height a section can be read in, and how far it has scrolled. */
+export interface ScrollView {
+  /** The height below the scroll padding, such as under a sticky top bar. */
+  height: number;
+  /** How far it has scrolled from its top. */
+  scrolled: number;
+  /** How far it can scroll in all. */
+  range: number;
+}
+
+/** How far down the view the reading line sits: a quarter. */
+const readingLine = 0.25;
+
+/**
+ * The section the reader is in: the last one whose start has passed the reading line, a quarter of
+ * the way down the view; at the top of the page, before any has, the first. Sections too near the
+ * end of the page to reach the line, such as short last ones, share the scrolling left after the
+ * last one that does, evenly, so each becomes current in turn and the last one at the very end.
+ */
+export function currentSection(
+  sections: readonly SectionPosition[],
+  view: ScrollView,
+): string | undefined {
+  if (sections.length === 0) return undefined;
+  const line = view.height * readingLine;
+  const range = Math.max(0, view.range);
+  // How far the area must have scrolled for each section to reach the line.
+  const reached = sections.map((section) => view.scrolled + section.top - line);
+  const late = reached.filter((at) => at > range).length;
+  if (late > 0 && range > 0) {
+    const early = reached.filter((at) => at <= range);
+    const from = Math.max(0, ...early);
+    let count = 0;
+    reached.forEach((at, index) => {
+      if (at <= range) return;
+      count += 1;
+      reached[index] = from + ((range - from) * count) / late;
+    });
+  }
+  let current = sections[0]!.id;
+  // A pixel of slack, for a section a link has just scrolled to a fraction short of its place.
+  reached.forEach((at, index) => {
+    if (at <= view.scrolled + 1) current = sections[index]!.id;
+  });
+  return current;
+}
+
+/** A link's place beside the track: its start edge and its top and bottom, in pixels. */
+export interface TrackRow {
+  x: number;
+  top: number;
+  bottom: number;
+}
+
+/** The track's path, and where each row's stretch of it starts and ends along it. */
+export interface TrackPath {
+  d: string;
+  length: number;
+  segments: { start: number; end: number }[];
+}
+
+/**
+ * The line beside the links: down the start edge of each, and across on a slant where the next is
+ * indented more or less, as the levels nest. Each row's stretch is its straight part, which the
+ * marker covers while that row is current.
+ */
+export function trackPath(rows: readonly TrackRow[]): TrackPath {
+  const points: [number, number][] = [];
+  const marks: { start: number; end: number }[] = [];
+  rows.forEach((row, index) => {
+    const previous = rows[index - 1];
+    const next = rows[index + 1];
+    const height = row.bottom - row.top;
+    const bendIn =
+      previous && previous.x !== row.x ? Math.min(Math.abs(previous.x - row.x) / 2, height / 4) : 0;
+    const bendOut =
+      next && next.x !== row.x ? Math.min(Math.abs(next.x - row.x) / 2, height / 4) : 0;
+    marks.push({ start: points.length, end: points.length + 1 });
+    points.push([row.x, row.top + bendIn], [row.x, row.bottom - bendOut]);
+  });
+  const along: number[] = [];
+  let length = 0;
+  points.forEach(([x, y], index) => {
+    if (index > 0) {
+      const [px, py] = points[index - 1]!;
+      length += Math.hypot(x - px, y - py);
+    }
+    along.push(length);
+  });
+  const round = (value: number) => Math.round(value * 100) / 100;
+  const d = points
+    .map(([x, y], index) => `${index === 0 ? 'M' : 'L'}${round(x)} ${round(y)}`)
+    .join(' ');
+  return {
+    d,
+    length: round(length),
+    segments: marks.map(({ start, end }) => ({
+      start: round(along[start]!),
+      end: round(along[end]!),
+    })),
+  };
+}

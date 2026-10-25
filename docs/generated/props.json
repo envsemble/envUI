@@ -7644,6 +7644,58 @@
         "@envsemble/envui"
       ]
     },
+    "TableOfContents": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/TableOfContents.tsx",
+      "description": "The page's sections as links, nested by level, with the one the reader is in marked as they scroll: the headings in a container by default, or sections of your own.",
+      "props": [
+        {
+          "name": "items",
+          "type": "readonly TableOfContentsItem[]",
+          "required": false,
+          "description": "The sections to list, nested through `children`, each leading to the element with its `id`: a heading or any other part of the page, under a label of your own. Without it, the component lists the headings it finds in `container`, after it mounts."
+        },
+        {
+          "name": "container",
+          "type": "RefObject<HTMLElement | null> | string",
+          "required": false,
+          "default": "The page's `main` element, or the body without one",
+          "description": "Where to find the headings, without `items`: an element's ref or a CSS selector."
+        },
+        {
+          "name": "levels",
+          "type": "readonly TableOfContentsHeadingLevel[]",
+          "required": false,
+          "default": "[2, 3]",
+          "description": "The heading levels to list, without `items`. A heading nests under the one above it of a lower level. A heading without an id gets one from its words."
+        },
+        {
+          "name": "filter",
+          "type": "(heading: HTMLElement) => boolean",
+          "required": false,
+          "description": "Leaves out the headings it returns false for, without `items`, such as an example's own."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "'On this page', or EnvUIProvider's messages.tableOfContents.label",
+          "description": "The accessible name of the navigation landmark."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "Classes for the `nav` element."
+        }
+      ],
+      "native": [
+        "nav"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Tabs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Tabs.tsx",
