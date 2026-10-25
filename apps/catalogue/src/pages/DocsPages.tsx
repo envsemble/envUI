@@ -10,6 +10,7 @@ import {
 } from '@envsemble/envui';
 import { Code, Markdown } from '@envsemble/envui/content';
 import { Visibility } from '@envsemble/envui/icons/Visibility';
+import { AgentLogos } from '../brand/AgentLogos';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { PageHeader } from '../layout/PageHeader';
 import { pagesOf, referencePages, type SitePage } from '../navigation/DocumentationRoutes';
@@ -59,23 +60,31 @@ export function DocsHome({ page }: { page: SitePage }) {
         kind="docs-home"
       />
       <Column gap={7} className="docs-article">
-        <Column render={<section aria-labelledby="agent-setup" />} gap={3}>
+        <Column
+          render={<section aria-labelledby="agent-setup" />}
+          gap={3}
+          align="center"
+          className="docs-agent-setup"
+        >
           <Text render={<h2 id="agent-setup" />} variant="title">
             Set up with your agent
           </Text>
-          <Text render={<p />}>
+          <Text render={<p />} className="docs-agent-setup-text">
             Paste this into your coding agent. It shows you a short checklist, then installs envUI
             with its styles and theme, points your AGENTS.md to envUI's docs and turns on its lint
             rules. You can skip any step.
           </Text>
           <Surface
             background="muted"
-            padding={3}
-            render={<Row gap={3} align="center" justify="between" />}
+            padding={1}
+            render={<Row gap={3} align="center" />}
             className="docs-agent-prompt"
           >
-            <Text render={<p />}>{setupPrompt}</Text>
-            <CopyButton value={setupPrompt} aria-label="Copy prompt" />
+            <AgentLogos className="docs-agent-logos" />
+            <Text render={<code />} className="docs-agent-prompt-text">
+              {setupPrompt}
+            </Text>
+            <CopyButton value={setupPrompt} variant="ghost" size="sm" aria-label="Copy prompt" />
           </Surface>
         </Column>
         {[...groups].map(([group, entries]) => (

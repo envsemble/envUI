@@ -459,11 +459,43 @@ body {
   gap: var(--env-space-2) var(--env-space-5);
 }
 /* The Docs' home's prompt for a coding agent, about as wide as a line of its text. */
-.docs-agent-prompt {
-  max-inline-size: 40rem;
+/* The Docs home's setup prompt: centred, with room below it before the pages, as a compact pill:
+   the agents' marks, the prompt in monospace and a ghost copy button. */
+.docs-agent-setup {
+  padding-block-end: var(--env-space-7);
+  text-align: center;
 }
-.docs-agent-prompt > p {
+.docs-agent-setup > * {
   margin: 0;
+}
+.docs-agent-setup-text {
+  max-inline-size: 38rem;
+  text-wrap: balance;
+}
+.docs-agent-prompt {
+  max-inline-size: 100%;
+  margin-block-start: var(--env-space-2);
+  padding-inline-start: var(--env-space-3);
+  border-radius: var(--env-radius-full);
+}
+.docs-agent-prompt-text {
+  overflow: hidden;
+  font: var(--env-font-size-body-small) / 1.5 var(--docs-code-font-family);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.docs-agent-logos {
+  display: flex;
+  flex: none;
+  isolation: isolate;
+}
+.docs-agent-logos > svg {
+  position: relative;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+.docs-agent-logos > svg + svg {
+  margin-inline-start: -0.375rem;
 }
 /* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge. */
 .docs-main [id] {
