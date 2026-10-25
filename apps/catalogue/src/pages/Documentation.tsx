@@ -171,8 +171,14 @@ const componentNames =
 
 const rehypePlugins = [headingIds];
 
-/** A page's Markdown, or a part of it such as one section, with its links resolved. */
-export function Documentation(props: { document: Document } | { markdown: string; path: string }) {
+/**
+ * A page's Markdown, or a part of it such as one section, with its links resolved. `className` gives
+ * it a role in the Site's type hierarchy, such as `docs-lead` for a section's opening paragraph
+ * (SiteText.css).
+ */
+export function Documentation(
+  props: ({ document: Document } | { markdown: string; path: string }) & { className?: string },
+) {
   const [markdown, path] =
     'document' in props
       ? [props.document.markdown, props.document.path]
@@ -185,7 +191,9 @@ export function Documentation(props: { document: Document } | { markdown: string
   return (
     <Markdown
       codeCopyable
-      className={guidance ? 'docs-guidance' : undefined}
+      className={
+        [guidance && 'docs-guidance', props.className].filter(Boolean).join(' ') || undefined
+      }
       rehypePlugins={plugins}
       renderLink={({ href, ...link }: MarkdownLinkProps) => (
         <Link {...link} href={documentationHref(href, path)} />
