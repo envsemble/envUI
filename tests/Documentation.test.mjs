@@ -4,6 +4,8 @@ import { cp, mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
 import {
   compileDocument,
+  compileDocumentation,
+  leanPages,
   libraryVersions,
   readDocumentation,
 } from '../scripts/GenerateDocumentation.mjs';
@@ -1104,4 +1106,29 @@ test("a guide's statuses and exportAliases name only the exports it lists", asyn
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test('a lean page ships each example once, its rules and legends, and no changelog', () => {
+  const compiled = compileDocumentation();
+  const button = compiled.get('components/button.md');
+  assert.ok(leanPages.has('components/button.md'));
+  // A figure is a line naming its file, which still ships; In code keeps its own code.
+  assert.match(
+    button,
+    /^- Example: \[CreateProject\]\(\.\.\/examples\/button\/CreateProject\.tsx\)$/m,
+  );
+  assert.ok(compiled.has('examples/button/CreateProject.tsx'));
+  assert.doesNotMatch(button, /^`{3,}tsx (?:example|do|dont|anatomy|variants)=/m);
+  assert.match(button, /^- Do: One primary button per group, at the end of its actions\. /m);
+  assert.match(button, /^- Don't: Several primary buttons: none of them stands out\.$/m);
+  assert.match(button, /^1\. \*\*Container\*\* \(`env-button`\)$/m);
+  // A family member's props said word for word on Button are named, not repeated.
+  assert.match(button, /^Also `end`, `size`, .* as on Button\.$/m);
+  assert.match(button, /^Native props: `<button>` or `<a>`\.$/m);
+  assert.doesNotMatch(button, /^avoidWhen:|^## Changelog/m);
+  assert.match(button, /^## Related$/m);
+  // The lean index leaves out the contributor pages; other pages ship as before.
+  assert.doesNotMatch(compiled.get('index.md'), /component-pages\.md/);
+  assert.match(compiled.get('components/switch.md'), /^`{3,}tsx do=/m);
+  assert.match(compiled.get('components/switch.md'), /^## Changelog$/m);
 });

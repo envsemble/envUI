@@ -43,6 +43,23 @@ export const contributorPages = new Set([
 ]);
 const repositoryDocumentation = 'https://github.com/envsemble/envUI/blob/main/docs/';
 
+/**
+ * Pages that ship lean, a trial of a leaner packaged page for agents (work-0023) before every page
+ * takes it. On a lean page each example's source ships once: in "## In code", where a `source`
+ * fence shows it, and as a file in docs/examples/ always; a figure is a line naming its file and
+ * caption, a do or don't pair two lines of its rules, an anatomy figure its legend and a variants
+ * figure its option table. Props a family member shares word for word with an export before it
+ * are named, not repeated; the frontmatter leaves out avoidWhen, which Related shows; and the
+ * Changelog stays on the Docs and in the package's CHANGELOG.md. The lean index leaves out the
+ * contributor pages. The Site and the Docs are unchanged.
+ */
+export const leanPages = new Set([
+  'index.md',
+  'components/button.md',
+  'components/table.md',
+  'patterns/forms.md',
+]);
+
 /** A packaged page's links to contributor pages, pointed at the repository's copies on main. */
 export function linkContributorPages(markdown, path) {
   return markdown.replace(/\]\(([^)\s#:]+\.md)(#[^)\s]*)?\)/g, (link, href, hash = '') => {
@@ -1399,13 +1416,19 @@ export function documentedExports(names, props) {
 const cell = (text) => String(text).replace(/\|/g, '\\|').replace(/\s+/g, ' ').trim();
 const codeCell = (text) => `\`${cell(text)}\``;
 
-function nativeSentence(elements) {
+const orList = (items) =>
+  items.length === 1 ? items[0] : `${items.slice(0, -1).join(', ')} or ${items.at(-1)}`;
+const andList = (items) =>
+  items.length === 1 ? items[0] : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
+
+function nativeSentence(elements, lean = false) {
   if (!elements.length) return '';
   const tags = elements.map((element) =>
     element === 'element' ? 'HTML element' : `\`<${element}>\``,
   );
-  const list = tags.length === 1 ? tags[0] : `${tags.slice(0, -1).join(', ')} or ${tags.at(-1)}`;
-  return `Also accepts the native props of ${list}, such as \`ref\`, \`className\` and \`aria-*\` attributes.`;
+  // The lean index says once what native props are; a lean table names only the element.
+  if (lean) return `Native props: ${orList(tags)}.`;
+  return `Also accepts the native props of ${orList(tags)}, such as \`ref\`, \`className\` and \`aria-*\` attributes.`;
 }
 
 /** The description of a prop as its table shows it, with when it is required or deprecated. */
@@ -1425,9 +1448,13 @@ export function propDescription(prop) {
 }
 
 /** The generated Props section of a page, as Markdown. */
-export function renderProps(names, props, headingDepth = 2) {
+export function renderProps(names, props, headingDepth = 2, { lean = false } = {}) {
   const heading = '#'.repeat(headingDepth);
   const lines = [`${heading} Props`, ''];
+  // On a lean page, the export that first lists a prop, by its name, type, default and description.
+  const firstWith = new Map();
+  const propKey = (prop) =>
+    JSON.stringify([prop.name, prop.required, prop.type, prop.default, propDescription(prop)]);
   for (const name of documentedExports(names, props)) {
     const entry = props.exports[name];
     if (entry.kind === 'namespace') continue;
@@ -1437,13 +1464,33 @@ export function renderProps(names, props, headingDepth = 2) {
       lines.push('```ts', `${name}${entry.signature}`, '```', '');
       continue;
     }
-    const native = nativeSentence(entry.native);
+    const native = nativeSentence(entry.native, lean);
     if (!entry.props.length) {
       lines.push(native ? `No props of its own. ${native}` : 'Takes no props.', '');
       continue;
     }
+    // A prop said word for word on an export above is named after the table, not repeated.
+    const shared = new Map();
+    const own = lean
+      ? entry.props.filter((prop) => {
+          const owner = firstWith.get(propKey(prop));
+          if (!owner) {
+            firstWith.set(propKey(prop), name);
+            return true;
+          }
+          shared.set(owner, [...(shared.get(owner) ?? []), codeCell(prop.name)]);
+          return false;
+        })
+      : entry.props;
+    const sharedSentence = [...shared]
+      .map(([owner, list]) => `${andList(list)}, as on ${owner}`)
+      .join('; ');
+    if (!own.length) {
+      lines.push(`Takes ${sharedSentence}.${native ? ` ${native}` : ''}`, '');
+      continue;
+    }
     lines.push('| Prop | Type | Default | Description |', '| --- | --- | --- | --- |');
-    for (const prop of entry.props)
+    for (const prop of own)
       lines.push(
         `| ${codeCell(prop.name)}${prop.required ? ' (required)' : ''} | ${codeCell(prop.type)} | ${
           prop.default !== undefined
@@ -1454,6 +1501,7 @@ export function renderProps(names, props, headingDepth = 2) {
         } | ${cell(propDescription(prop))} |`,
       );
     lines.push('');
+    if (sharedSentence) lines.push(`Also ${sharedSentence}.`, '');
     if (native) lines.push(native, '');
   }
   return lines.join('\n');
@@ -1506,32 +1554,61 @@ export function exampleSource(page, name, directory = examplesDirectory) {
  * (catalogue-only) left out, and the generated Props and Related sections in their place.
  */
 export function compileDocument(document, documents, { props, examples = examplesDirectory } = {}) {
-  const head = document.frontmatter ? `---\n${document.yaml}\n---\n\n` : '';
+  const lean = leanPages.has(document.path);
+  // avoidWhen is the source of Related, which a lean page shows as its only list of them.
+  const yaml = lean ? document.yaml?.replace(/^avoidWhen:\n(?:[ \t].*\n?)*/m, '') : document.yaml;
+  const head = document.frontmatter ? `---\n${yaml.replace(/\n*$/, '')}\n---\n\n` : '';
   const title = `# ${document.title}\n\n`;
   if (document.id === 'index') {
-    const markdown = document.markdown.replace(
-      /^- \[([^\]]+)\]\(([^)]+\.md)\)$/gm,
-      (line, text, path) => {
+    const markdown = document.markdown
+      .replace(/^- \[([^\]]+)\]\(([^)]+\.md)\)(.*)$/gm, (line, text, path, rest) => {
+        // The lean index leaves out the pages for people who work on envUI itself.
+        if (lean && contributorPages.has(path)) return '';
         const target = documents.find((entry) => entry.path === path);
-        return target?.frontmatter ? `${line} — ${target.summary}` : line;
-      },
-    );
+        return target?.frontmatter && !rest ? `${line} — ${target.summary}` : line;
+      })
+      .replace(/\n{3,}/g, '\n\n');
     return `${title}${markdown}`;
   }
   const propsSection =
     props && document.frontmatter?.components
-      ? renderProps(document.frontmatter.components, props)
+      ? renderProps(document.frontmatter.components, props, 2, { lean })
       : '';
   // A page not yet on the template ships as it is written. Its own "Props & contracts" table says
   // what each prop is for; the generated tables, without the descriptions its TSDoc does not have
   // yet, would only repeat it. Their types and defaults ship in generated/props.json, and the
   // page gets them in place of its table when it moves to the template.
   if (!document.sections) return `${head}${title}${document.markdown}`;
+  const exampleLink = (name) =>
+    `[${name}](${posix.relative(posix.dirname(document.path), `examples/${document.id}/${name}.tsx`)})`;
+  /**
+   * A figure of a lean page: what it teaches, without its source, which ships as its file. A do or
+   * don't pair is its two rules; an anatomy figure its legend of parts; a variants figure the
+   * option table that follows it, or else its legend of names.
+   */
+  const leanFigure = (block, next) => {
+    const legend = block.legend
+      ? `\n${block.legend.map((item, index) => `${index + 1}. ${item.text}`).join('\n')}\n\n`
+      : '';
+    if (block.role === 'do') return `- Do: ${block.caption} (${exampleLink(block.name)})\n`;
+    if (block.role === 'dont') return `- Don't: ${block.caption}\n`;
+    if (block.role === 'anatomy') return legend;
+    if (block.role === 'variants')
+      return next?.kind === 'markdown' && next.markdown.trimStart().startsWith('|') ? '' : legend;
+    const widths = block.widths ? `, at ${andList(block.widths.map(String))} rem wide` : '';
+    const caption = block.caption ? ` — ${block.caption}` : '';
+    return `- Example: ${exampleLink(block.name)}${caption}${widths}\n${legend}`;
+  };
+  // Figures in a row, lines of a lean page, make one list.
+  const leanLines = (text) =>
+    text.replace(/^(- (?:Do|Don't|Example): .*)\n\n(?=- (?:Do|Don't|Example): )/gm, '$1\n');
   const parts = [];
   const write = (section) => {
     let text = '';
-    for (const block of section.blocks) {
+    for (const [index, block] of section.blocks.entries()) {
       if (block.kind === 'markdown') text += block.markdown;
+      else if (block.kind === 'example' && lean)
+        text += leanFigure(block, section.blocks[index + 1]);
       else if (block.kind === 'source') {
         // An example file shown as code in "## In code", its source filled in.
         const source = exampleSource(document.id, block.name, examples).replace(/\n*$/, '\n');
@@ -1558,7 +1635,8 @@ export function compileDocument(document, documents, { props, examples = example
           text += `\n${block.legend.map((item, index) => `${index + 1}. ${item.text}`).join('\n')}\n\n`;
       }
     }
-    return text.replace(/\n{3,}/g, '\n\n').replace(/\s*$/, '\n');
+    const spaced = text.replace(/\n{3,}/g, '\n\n').replace(/\s*$/, '\n');
+    return lean ? leanLines(leanLines(spaced)) : spaced;
   };
   for (const section of document.format === 'figures' ? figureSections : templateSections) {
     if (section.id === 'props') {
@@ -1570,6 +1648,8 @@ export function compileDocument(document, documents, { props, examples = example
         parts.push(renderRelated(document, documents));
       continue;
     }
+    // A lean page's releases are on the Docs and in the package's CHANGELOG.md.
+    if (lean && section.id === 'changelog') continue;
     const authored = document.sections.find((item) => item.id === section.id);
     if (authored) parts.push(write(authored));
   }
