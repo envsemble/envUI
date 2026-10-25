@@ -160,12 +160,13 @@ test('an export on a page without a Props view leads to the section that shows i
   assert.deepEqual(place('export:useTheme'), {
     page: 'colors',
     view: 'usage',
-    section: 'react-usage',
+    section: 'usage',
   });
+  // A foundation in the one-file structure shows the props of the exports it documents.
   assert.deepEqual(place('prop:Text.variant'), {
     page: 'typography',
-    view: 'usage',
-    section: 'react-usage',
+    view: 'props',
+    section: 'props-Text-variant',
   });
   // Every export and prop on such a page has a section to go to.
   for (const record of records.filter(({ kind }) => kind === 'export' || kind === 'prop'))

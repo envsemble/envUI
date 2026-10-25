@@ -1,3 +1,4 @@
+import { Suspense, useState } from 'react';
 import { Alert, Button, Column, IconButton, Row } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Delete } from '@envsemble/envui/icons/Delete';
@@ -8,9 +9,15 @@ import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { Person } from '@envsemble/envui/icons/Person';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { Star } from '@envsemble/envui/icons/Star';
-import { ExampleStage } from '../Example';
-import { IconCatalogue } from './IconCatalogue';
-import { Block, Figure, FigureRun, TagLegend, Topic } from './Topic';
+import { LoadBoundary, lazyPart } from '../../template/LoadBoundary';
+import { Loading } from '../../template/Loading';
+import type { FoundationFigure } from './FoundationFigures';
+import { Figure, FigureRun, type LegendEntry } from './Topic';
+
+/*
+ * The figures of the Icons foundation. Its words are in docs/foundations/icons.md, the page's one
+ * source, which places each figure by name and gives it its legend.
+ */
 
 /** Icons in buttons, an icon button and a message, each in the color of its words. */
 function FollowTextFigure() {
@@ -35,85 +42,55 @@ function FollowTextFigure() {
 
 const sample = [Home, Inbox, Star, Person, Settings] as const;
 
-/** The same icons outlined and filled. */
-function FormsFigure() {
+/** The same icons outlined and filled, named by the legend in that order. */
+function OutlinedAndFilledFigure({ legend }: { legend: readonly LegendEntry[] }) {
   return (
     <FigureRun
       className="docs-icons-forms"
-      figures={[
-        {
-          name: 'Outlined',
-          text: 'The usual form, light beside text.',
-          picture: (
-            <Row gap={4} justify="center">
-              {sample.map((Symbol, index) => (
-                <Symbol key={index} width="2rem" height="2rem" />
-              ))}
-            </Row>
-          ),
-        },
-        {
-          name: 'Filled',
-          text: 'For what is selected, or an icon that stands alone.',
-          picture: (
-            <Row gap={4} justify="center">
-              {sample.map((Symbol, index) => (
-                <Symbol key={index} filled width="2rem" height="2rem" />
-              ))}
-            </Row>
-          ),
-        },
-      ]}
+      figures={[false, true].map((filled, index) => ({
+        name: legend[index]?.name ?? '',
+        text: legend[index]?.text ?? '',
+        picture: (
+          <Row gap={4} justify="center">
+            {sample.map((Symbol, key) => (
+              <Symbol key={key} filled={filled} width="2rem" height="2rem" />
+            ))}
+          </Row>
+        ),
+      }))}
     />
   );
 }
 
-/** The words to ask for icons with, and what envUI does for each. */
-const words = [
-  {
-    tag: 'An icon button',
-    text: 'A button that is only an icon, with a name that screen readers say.',
-  },
-  { tag: 'An icon before the label', text: 'An icon at the start of a button or a menu item.' },
-  { tag: 'A filled icon', text: 'The filled form, for what is selected or stands alone.' },
-  {
-    tag: 'Our own logo',
-    text: "The app's own mark drawn as an icon, so it takes the color of the text around it.",
-  },
-] as const;
+/** Every icon, a tool rather than a figure: its list loads when it is shown. */
+const iconList = lazyPart(
+  () => import('./IconCatalogue'),
+  (module) => module.IconCatalogue,
+  'src/previews/foundations/IconCatalogue.tsx',
+);
 
-export function IconsPreview() {
+function CatalogueFigure() {
+  const [, setAttempt] = useState(0);
+  const IconCatalogue = iconList.component;
   return (
-    // Each figure here chooses its own stage: an example on the canvas, the list on the page.
-    <ExampleStage value={false}>
-      <Topic
-        title="Icons follow their text"
-        lead="An icon takes the color and the size of the words around it, so in a button, a menu or a message it always matches its label, in every theme."
-      >
-        <FollowTextFigure />
-        <Block
-          title="A name when it stands alone"
-          text="An icon beside a label adds nothing for a screen reader, so it stays silent. An icon that stands alone, such as a button that is only an icon, gets a name of its own."
-        />
-      </Topic>
-      <Topic
-        title="Outlined and filled"
-        lead="Every icon comes in two forms. Navigation and tabs fill the icon of the place that is selected, so it stands out from the rest."
-      >
-        <FormsFigure />
-      </Topic>
-      <Topic
-        title="Every icon"
-        lead="Thousands of icons come with envUI. Search them by name, switch to filled, and choose one to see how to use it."
-      >
+    <LoadBoundary
+      what="icon list"
+      modules={iconList.modules}
+      onRetry={() => {
+        iconList.retry();
+        setAttempt((count) => count + 1);
+      }}
+    >
+      <Suspense fallback={<Loading what="icons" />}>
         <IconCatalogue />
-      </Topic>
-      <Topic
-        title="Words to use"
-        lead="Ask an agent for icons in these words, and name the icon you chose from the list above."
-      >
-        <TagLegend label="Words for icons" entries={words} />
-      </Topic>
-    </ExampleStage>
+      </Suspense>
+    </LoadBoundary>
   );
 }
+
+/** The figures docs/foundations/icons.md places, by name. */
+export const iconsFigures: Record<string, FoundationFigure> = {
+  FollowText: { render: FollowTextFigure },
+  OutlinedAndFilled: { render: OutlinedAndFilledFigure, wide: true },
+  Catalogue: { render: CatalogueFigure, wide: true },
+};

@@ -267,6 +267,7 @@ export function FoundationGuidePage({ page }: { page: RoutePage }) {
           <CodeGuide document={document} />
           <WordsInCode document={document} />
           <Provides document={document} title="Accessibility" id="provides" />
+          {document.id === 'colors' && <PaletteSection />}
         </Column>
       </>
     );
