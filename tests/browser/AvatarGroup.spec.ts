@@ -14,6 +14,43 @@ async function boxes(group: Locator) {
   );
 }
 
+/**
+ * Each item's center and its own width, which a turn doesn't change, and its place in the row it
+ * keeps, before any move.
+ */
+async function places(group: Locator) {
+  await expect(group).toBeVisible();
+  return group.locator(':scope > *').evaluateAll((items) =>
+    items.map((item) => {
+      const box = item.getBoundingClientRect();
+      return {
+        center: box.x + box.width / 2,
+        width: (item as HTMLElement).offsetWidth,
+        left: (item as HTMLElement).offsetLeft,
+      };
+    }),
+  );
+}
+
+/** Whether the pointer reaches each avatar and the chip at its center, rather than the group. */
+function hits(group: Locator) {
+  return group.evaluate((element) =>
+    [...element.children].map((item) => {
+      const box = item.getBoundingClientRect();
+      return item.contains(
+        document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2),
+      );
+    }),
+  );
+}
+
+/**
+ * The group without its cover, and its items taking the pointer, to check what lies over what in
+ * the pile.
+ */
+const uncovered =
+  '.env-avatar-group::before { display: none; } .env-avatar-group > * { pointer-events: auto; }';
+
 test('an avatar group names everyone and counts the people it does not show', async ({ page }) => {
   await page.goto(fixture);
   const scope = page.getByTestId('avatar-groups-light');
@@ -105,24 +142,18 @@ test('pressable avatars are buttons and links named after each person, with name
   expect(
     await buttons.evaluateAll((items) => items.map((item) => item.getAttribute('aria-label'))),
   ).toEqual(['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Rivera']);
-  // At rest a pressable group bunches only as far as leaves each avatar a 24 px target, and the
-  // count lies under the last avatar, which keeps its presses, and shows past its end.
-  const jordan = group.getByRole('button', { name: 'Jordan Rivera' });
-  await jordan.scrollIntoViewIfNeeded();
-  const rest = (await boxes(group)).slice(0, 4);
-  for (const [index, box] of rest.slice(1).entries())
-    expect(box.x - rest[index]!.x).toBeGreaterThanOrEqual(24);
-  const reachable = await jordan.evaluate((element) => {
-    const box = element.getBoundingClientRect();
-    const target = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
-    return element.contains(target);
-  });
-  expect(reachable).toBe(true);
-  const countShows = await group.locator('.env-avatar-group-overflow').evaluate((element) => {
-    const box = element.getBoundingClientRect();
-    return element.contains(document.elementFromPoint(box.right - 4, box.top + box.height / 2));
-  });
-  expect(countShows).toBe(true);
+  // At rest the pile is one target: no avatar or count can be pressed or hovered anywhere over it,
+  // only the group, which the pointer spreads.
+  await group.scrollIntoViewIfNeeded();
+  await page.mouse.move(0, 0);
+  expect(await hits(group)).toEqual([false, false, false, false, false]);
+  // Spread, each avatar is a whole target of at least 24 px that nothing covers.
+  await group.hover();
+  expect(await hits(group)).toEqual([true, true, true, true, true]);
+  const spread = (await boxes(group)).slice(0, 4);
+  for (const [index, box] of spread.slice(1).entries())
+    expect(box.x - (spread[index]!.x + spread[index]!.width)).toBeGreaterThan(0);
+  for (const box of spread) expect(box.width).toBeGreaterThanOrEqual(24);
   const tooltip = page.locator('.env-tooltip');
   const alex = group.getByRole('button', { name: 'Alex Morgan' });
   await alex.hover();
@@ -209,18 +240,18 @@ test('nothing rings the avatars or the count, and a chosen avatar’s gap takes 
   }
 });
 
-test('without a hovering pointer, avatars overlap by an eighth, line up with small controls and keep their size', async ({
-  browser,
-}) => {
-  // On touch screens, which have no hover to spread a bunched group, the group is a plain row.
-  const context = await browser.newContext({ hasTouch: true });
-  const page = await context.newPage();
+test('a group rests as a pile and keeps the spread row as its box', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(fixture);
+  await page.mouse.move(0, 0);
   const scope = page.getByTestId('avatar-groups-light');
-  // Each avatar is 2 rem and covers an eighth of the one before; later ones lie on top.
-  const decorative = await boxes(scope.getByTestId('decorative'));
-  expect(decorative.map((box) => box.x - decorative[0]!.x)).toEqual([0, 28, 56, 84]);
-  expect(decorative.map((box) => box.width)).toEqual([32, 32, 32, 32]);
+  // Each 2 rem avatar starts about a third of its size after the one under it, later ones on top,
+  // and keeps its size.
+  const decorative = await places(scope.getByTestId('decorative'));
+  for (const [index, item] of decorative.slice(1, 3).entries())
+    expect(item.center - decorative[index]!.center).toBeLessThan(32 * 0.4);
+  expect(decorative.map((item) => item.width)).toEqual([32, 32, 32, 32]);
+  await page.addStyleTag({ content: uncovered });
   const coveredByNext = await scope
     .getByTestId('decorative')
     .locator('.env-avatar')
@@ -228,48 +259,27 @@ test('without a hovering pointer, avatars overlap by an eighth, line up with sma
     .evaluate((avatar) => {
       const box = avatar.getBoundingClientRect();
       const target = document.elementFromPoint(box.right - 3, box.top + box.height / 2)!;
-      return avatar.parentElement!.children[1]!.contains(target);
+      // Later avatars lie on it.
+      return !avatar.contains(target) && avatar.parentElement!.contains(target);
     });
   expect(coveredByNext).toBe(true);
-  // Each avatar's initials end before the next avatar begins, in both sizes.
-  for (const id of ['initials', 'initials-small']) {
-    const clearances = await scope
-      .getByTestId(id)
-      .locator('.env-avatar')
-      .evaluateAll((avatars) =>
-        avatars.slice(0, -1).flatMap((avatar) => {
-          const text = [...avatar.querySelectorAll('*'), avatar]
-            .flatMap((element) => [...element.childNodes])
-            .find((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim());
-          if (!text) return [];
-          const range = document.createRange();
-          range.selectNodeContents(text);
-          const item = avatar.parentElement!.classList.contains('env-avatar-group')
-            ? avatar
-            : avatar.parentElement!;
-          const next = item.nextElementSibling!;
-          return [next.getBoundingClientRect().left - range.getBoundingClientRect().right];
-        }),
-      );
-    expect(clearances.length, id).toBeGreaterThan(0);
-    for (const clearance of clearances) expect(clearance, id).toBeGreaterThanOrEqual(0);
-  }
-  const small = await boxes(scope.getByTestId('preview'));
-  expect(small.map((box) => box.x - small[0]!.x)).toEqual([0, 21, 42]);
 
-  // Right to left, the avatars run from the right.
-  const rtl = await boxes(scope.getByTestId('rtl'));
-  expect(rtl.map((box) => rtl[0]!.x + rtl[0]!.width - (box.x + box.width))).toEqual([
-    0, 28, 56, 84,
-  ]);
+  // Right to left, the pile runs from the right.
+  const rtl = await places(scope.getByTestId('rtl'));
+  const back = rtl.map((item) => rtl[0]!.center - item.center);
+  for (const [index, distance] of back.slice(1).entries())
+    expect(distance).toBeGreaterThan(back[index]!);
+  expect(back[1]).toBeLessThan(32 * 0.4);
   await expect(scope.getByTestId('rtl').locator('.env-avatar-group-overflow')).toHaveText('+2');
 
-  // A narrow row overflows its label rather than squeezing or wrapping the group.
-  const narrow = await boxes(scope.getByTestId('narrow-group'));
-  expect(new Set(narrow.map((box) => box.top)).size).toBe(1);
-  expect(narrow.map((box) => box.width)).toEqual([32, 32, 32, 32]);
-  expect((await scope.getByTestId('narrow-group').boundingBox())!.width).toBeCloseTo(116, 0);
-  await context.close();
+  // A narrow row overflows its label rather than squeezing or wrapping the group, which keeps the
+  // room of its spread row: three avatars and the count with gaps of 0.15 of their size.
+  const narrow = await places(scope.getByTestId('narrow-group'));
+  expect(narrow.map((item) => item.width)).toEqual([32, 32, 32, 32]);
+  expect((await scope.getByTestId('narrow-group').boundingBox())!.width).toBeCloseTo(
+    4 * 32 + 3 * 32 * 0.15,
+    0,
+  );
 });
 
 test('a group rests bunched, and spreads along an arch under the pointer and with focus inside', async ({
@@ -296,16 +306,23 @@ test('a group rests bunched, and spreads along an arch under the pointer and wit
   const steps = (items: { center: number }[]) =>
     items.slice(1).map((item, index) => item.center - items[index]!.center);
   await page.mouse.move(0, 0);
-  // At rest the avatars overlap by more than an eighth, each a little off the line and turned by
-  // its place, the same on every load. The count shows, under the last avatar by an eighth, and
-  // upright.
+  // At rest the avatars lie in a pile, each starting less than half its size after the one under
+  // it, a little off the line and turned by its place, the same on every load. The count shows,
+  // upright and a quarter under the last avatar, its figures clear of it.
   const rest = await layout();
   const restSteps = steps(rest);
-  expect(restSteps.slice(0, -1).every((step) => step < 32 - 32 / 8)).toBe(true);
-  expect(restSteps.at(-1)).toBeCloseTo(32 - 32 / 8, 0);
+  expect(restSteps.slice(0, -1).every((step) => step < 32 * 0.4)).toBe(true);
+  // The last avatar's own small nudge moves it by up to a pixel.
+  expect(Math.abs(restSteps.at(-1)! - (32 - 32 / 4))).toBeLessThan(1.5);
   expect(new Set(rest.slice(0, -1).map((item) => item.turn)).size).toBeGreaterThan(1);
   expect(rest.at(-1)!.turn).toBe(0);
   await expect(chip).toHaveCSS('opacity', '1');
+  const clearance = await chip.evaluate((element) => {
+    const last = element.previousElementSibling!.getBoundingClientRect();
+    return element.firstElementChild!.getBoundingClientRect().left - last.right;
+  });
+  expect(clearance).toBeGreaterThanOrEqual(0);
+  await page.addStyleTag({ content: uncovered });
   const under = await chip.evaluate((element) => {
     const box = element.getBoundingClientRect();
     const covered = document.elementFromPoint(box.left + 2, box.top + box.height / 2);
@@ -313,6 +330,7 @@ test('a group rests bunched, and spreads along an arch under the pointer and wit
     return { covered: !element.contains(covered), clear: element.contains(clear) };
   });
   expect(under).toEqual({ covered: true, clear: true });
+  await page.evaluate(() => document.querySelector('style:last-of-type')?.remove());
   // Under the pointer they spread into a row with gaps, along an arch: the ends lower and turned
   // out, the middle highest. The count stays upright.
   await group.hover();
@@ -396,13 +414,19 @@ test('the spread moves with the motion tokens, and at once with reduced motion',
   expect(
     await avatar.evaluate((element) => getComputedStyle(element).transitionProperty),
   ).toContain('translate');
+  // While the avatars move, the pile stays one target; once they are in place each is its own.
+  const group = page.getByTestId('avatar-groups-light').getByTestId('pressable');
+  await page.mouse.move(0, 0);
+  await group.hover({ position: { x: 4, y: 16 } });
+  expect(await hits(group)).toEqual([false, false, false, false, false]);
+  await expect.poll(() => hits(group)).toEqual([true, true, true, true, true]);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   expect(await avatar.evaluate((element) => getComputedStyle(element).transitionDuration)).toBe(
     '0s',
   );
 });
 
-test('on touch screens pressable avatars are touch-sized targets side by side', async ({
+test('on touch screens a tap spreads the pile, later taps press touch-sized avatars, and a tap outside or a pause bunches it @engines', async ({
   browser,
 }) => {
   const context = await browser.newContext({
@@ -410,40 +434,80 @@ test('on touch screens pressable avatars are touch-sized targets side by side', 
     viewport: { width: 390, height: 844 },
   });
   const page = await context.newPage();
+  await page.clock.install();
   await page.goto(fixture);
   expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const scope = page.getByTestId('avatar-groups-light');
   // A small AvatarButton's halo grows to the 2.75 rem touch target.
   const avatarButton = (await scope.getByTestId('avatar-button-small').boundingBox())!;
   expect(avatarButton.width).toBeGreaterThanOrEqual(44);
   expect(avatarButton.height).toBeGreaterThanOrEqual(44);
-  // Each pressable avatar is a target of the touch height, its picture and state layer in the
-  // middle, and none covers another.
-  const small = await boxes(scope.getByTestId('small-pressable'));
-  expect(small.map((box) => box.x - small[0]!.x)).toEqual([0, 44, 88, 132]);
-  const standard = await boxes(scope.getByTestId('pressable'));
-  expect(standard.map((box) => box.x - standard[0]!.x).slice(0, 4)).toEqual([0, 44, 88, 132]);
-  const targets = await scope
+
+  const group = scope.getByTestId('pressable');
+  await group.scrollIntoViewIfNeeded();
+  // At rest it is a pile, and the pile is one target: a tap on it presses no one, and spreads it.
+  const pile = await boxes(group);
+  const rest = await places(group);
+  expect(rest[1]!.center - rest[0]!.center).toBeLessThan(32 * 0.4);
+  expect(await hits(group)).toEqual([false, false, false, false, false]);
+  const first = pile.at(-2)!;
+  await page.touchscreen.tap(first.x + first.width / 2, first.top + 22);
+  await expect(scope.getByTestId('pressed')).toHaveText('');
+  await expect(group).toHaveAttribute('data-spread', '');
+  // Spread, each pressable avatar is a target of the touch height, its picture and state layer in
+  // the middle, side by side.
+  const standard = await places(group);
+  expect(standard.map((item) => item.left - standard[0]!.left).slice(0, 4)).toEqual([
+    0, 44, 88, 132,
+  ]);
+  for (const item of standard)
+    expect(item.center - item.width / 2 - item.left).toBeCloseTo(
+      standard[0]!.center - standard[0]!.width / 2 - standard[0]!.left,
+      0,
+    );
+  expect(await hits(group)).toEqual([true, true, true, true, true]);
+  const targets = await group
     .locator('.env-avatar-group-item')
     .evaluateAll((items) =>
       items.map((item) => [
         item.getBoundingClientRect().width,
         item.getBoundingClientRect().height,
         parseFloat(getComputedStyle(item, '::after').width),
-        item.querySelector('.env-avatar')!.getBoundingClientRect().width,
+        item.querySelector<HTMLElement>('.env-avatar')!.offsetWidth,
       ]),
     );
-  expect(targets.length).toBeGreaterThan(6);
+  expect(targets).toHaveLength(4);
   for (const [width, height, layer, avatar] of targets) {
     expect(width).toBeGreaterThanOrEqual(44);
     expect(height).toBeGreaterThanOrEqual(44);
     expect(layer).toBe(avatar);
   }
-  // Decorative avatars keep their overlap.
-  const decorative = await boxes(scope.getByTestId('preview'));
-  expect(decorative.map((box) => box.x - decorative[0]!.x)).toEqual([0, 21, 42]);
-  await scope.getByRole('button', { name: 'Sam Lee' }).first().tap();
+  // The next tap presses the avatar under it, and the group stays spread.
+  await group.getByRole('button', { name: 'Sam Lee' }).tap();
   await expect(scope.getByTestId('pressed')).toHaveText('Sam Lee');
+  await expect(group).toHaveAttribute('data-spread', '');
+  // A tap outside bunches it.
+  await page.touchscreen.tap(380, 10);
+  await expect(group).not.toHaveAttribute('data-spread');
+  expect(await hits(group)).toEqual([false, false, false, false, false]);
+  // So does a pause of five seconds without a tap in it.
+  await page.touchscreen.tap(first.x + first.width / 2, first.top + 22);
+  await expect(group).toHaveAttribute('data-spread', '');
+  await page.clock.runFor(4900);
+  await expect(group).toHaveAttribute('data-spread', '');
+  await page.clock.runFor(200);
+  await expect(group).not.toHaveAttribute('data-spread');
+
+  // A small pressable group spreads into touch targets too.
+  const small = scope.getByTestId('small-pressable');
+  await small.scrollIntoViewIfNeeded();
+  await small.tap({ position: { x: 8, y: 12 } });
+  await expect(small).toHaveAttribute('data-spread', '');
+  const smallSpread = await places(small);
+  expect(smallSpread.map((item) => item.left - smallSpread[0]!.left).slice(0, 3)).toEqual([
+    0, 44, 88,
+  ]);
   await context.close();
 });
 
@@ -467,51 +531,14 @@ test('a group lines up with small controls in a toolbar', async ({ page }) => {
   }
 });
 
-test('with a fine pointer, initials center in what the bunch leaves, and spread in the whole circle', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(fixture);
-  const group = page.getByTestId('avatar-groups-light').getByTestId('initials');
-  const insets = () =>
-    group
-      .locator(':scope > .env-avatar')
-      .evaluateAll((avatars) =>
-        avatars.map((avatar) =>
-          getComputedStyle(avatar).getPropertyValue('--env-avatar-initials-inset-end').trim(),
-        ),
-      );
-  await page.mouse.move(0, 0);
-  // Bunched, each but the last leaves room for the next avatar's larger overlap: 0.4 of 2 rem, more
-  // than the eighth a group without hover overlaps by.
-  const rest = await insets();
-  const restPx = await group
-    .locator(':scope > .env-avatar')
-    .first()
-    .evaluate((avatar) => {
-      const probe = document.createElement('div');
-      probe.style.inlineSize = getComputedStyle(avatar).getPropertyValue(
-        '--env-avatar-initials-inset-end',
-      );
-      avatar.append(probe);
-      const width = probe.getBoundingClientRect().width;
-      probe.remove();
-      return width;
-    });
-  expect(restPx).toBeCloseTo(32 * 0.4, 0);
-  expect(rest.at(-1)).toBe('');
-  // Spread, nothing covers them, and the initials center in the whole circle.
-  await group.hover();
-  await expect.poll(insets).toEqual(rest.map(() => '0rem'));
-});
-
-test('a chosen avatar keeps its check over the next one, and a large count chip stays round', async ({
+test('a chosen avatar keeps its check over the next one, and the count is a rounded square', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(fixture);
   const group = page.getByTestId('avatar-groups-light').getByTestId('selected-xl');
   await page.mouse.move(0, 0);
+  await page.addStyleTag({ content: uncovered });
   const check = group.locator('.env-avatar-check');
   await expect(check).toHaveCount(1);
   // The middle of the check's end, where the next avatar overlaps it, is the check's.
@@ -521,13 +548,33 @@ test('a chosen avatar keeps its check over the next one, and a large count chip 
     return element.contains(target);
   });
   expect(onTop).toBe(true);
-  // The count chip is round at the extra large size, as the avatars are: half its height.
-  const chip = group.locator('.env-avatar-group-overflow');
-  const { radius, height } = await chip.evaluate((element) => ({
-    radius: Number.parseFloat(getComputedStyle(element).borderStartStartRadius),
-    height: (element as HTMLElement).offsetHeight,
-  }));
-  expect(radius).toBeCloseTo(height / 2, 0);
+  // The count is a rounded square as tall as the avatars, its corners from the corner scale: the
+  // extra large step at the extra large size, the small one at the standard size.
+  const corners = (locator: Locator, token: string) =>
+    locator.evaluate((element, token) => {
+      const probe = document.createElement('div');
+      probe.style.borderRadius = `var(${token})`;
+      element.append(probe);
+      const expected = getComputedStyle(probe).borderStartStartRadius;
+      probe.remove();
+      return {
+        radius: getComputedStyle(element).borderStartStartRadius,
+        expected,
+        height: (element as HTMLElement).offsetHeight,
+      };
+    }, token);
+  const xl = await corners(group.locator('.env-avatar-group-overflow'), '--env-radius-xl');
+  expect(xl.radius).toBe(xl.expected);
+  expect(xl.height).toBe(88);
+  expect(Number.parseFloat(xl.radius)).toBeLessThan(xl.height / 2);
+  const md = await corners(
+    page
+      .getByTestId('avatar-groups-light')
+      .getByTestId('decorative')
+      .locator('.env-avatar-group-overflow'),
+    '--env-radius-sm',
+  );
+  expect(md).toEqual({ radius: md.expected, expected: md.expected, height: 32 });
 });
 
 test('the count is set as initials are, in a neutral fill, and comes in front with keyboard focus', async ({

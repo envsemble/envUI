@@ -3,7 +3,7 @@ title: Tooltip
 summary: A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled.
 status: stable
 since: 0.2.0
-category: Feedback & overlays
+category: Overlays
 aliases:
   - hint
   - tip
@@ -13,9 +13,9 @@ aliases:
   - hover text
   - hover label
 useWhen:
-  - Showing an icon-only control's name, such as a toolbar's Refresh button, for people who don't recognise the icon.
-  - Saying why a control is disabled, such as All seats are assigned, beside the page's own account of it.
-  - Showing a control's keyboard shortcut, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>).
+  - An icon-only control's name, such as Refresh
+  - Why a control is disabled, beside the page's own account of it
+  - A control's keyboard shortcut, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>)
 avoidWhen:
   - text: A preview of a person, a page or an item, with more than a line of text, on hover or focus.
     use: HoverCard
@@ -33,15 +33,13 @@ components:
 
 ## Overview
 
-A tooltip is a short label beside a control, shown while the pointer rests on it or it has keyboard focus.
-
 ```tsx example=IconActions
 
 ```
 
 ### Menu trigger
 
-A Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog, and stays closed while their popup is open.
+A tooltip can name the button that opens a menu, a popover, a dialog or a sheet, and stays closed while what it opens is open.
 
 ```tsx example=MenuTrigger
 
@@ -49,7 +47,7 @@ A Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or Confirm
 
 ### Keyboard shortcuts
 
-Write the shortcut after the name, and give the control `aria-keyshortcuts`.
+Write the shortcut after the control's name, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>).
 
 ```tsx example=ShortcutHints
 
@@ -57,7 +55,7 @@ Write the shortcut after the name, and give the control `aria-keyshortcuts`.
 
 ### Text
 
-Text that isn't a control, such as an abbreviation, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; buttons, icon buttons and links keep their own look. Make it focusable with `tabIndex={0}`, so keyboard focus opens the tooltip too.
+Text that isn't a control, such as an abbreviation, takes a quiet underline of round, well-spaced dots that says it shows more on hover or focus, and takes keyboard focus so the keyboard opens the tooltip too. The pointer stays the arrow over it, not the text cursor. Hover cards and relative times on text take the same underline. Buttons, icon buttons and links keep their own look.
 
 ```tsx example=TextAbbreviation
 
@@ -65,15 +63,17 @@ Text that isn't a control, such as an abbreviation, takes a quiet dotted underli
 
 ## Variants
 
-| Side                         | Use for                                                       |
-| ---------------------------- | ------------------------------------------------------------- |
-| `top`                        | Most controls. The default.                                   |
-| `bottom`                     | Controls at the top of a window or a pane, such as a toolbar. |
-| `inline-start`, `inline-end` | A vertical rail, toward the content, in either direction.     |
+### Sides
 
-### Beside a rail
+Where the window has no room, a tooltip flips to the other side.
 
-```tsx example=RailOfIcons
+| Side   | Use for                                                       |
+| ------ | ------------------------------------------------------------- |
+| Top    | Most controls. The default.                                   |
+| Bottom | Controls at the top of a window or a pane, such as a toolbar. |
+| Beside | A vertical rail, toward the content, in either direction.     |
+
+```tsx example=RailOfIcons caption="Beside a rail of icons, toward the content."
 
 ```
 
@@ -95,7 +95,9 @@ Text that isn't a control, such as an abbreviation, takes a quiet dotted underli
 
 ```
 
-- Wrap a control that takes focus, never plain text or an icon.
+### Something to focus
+
+A tooltip belongs to something people can focus, such as a button, never to an icon alone.
 
 ## Anatomy
 
@@ -106,11 +108,7 @@ Text that isn't a control, such as an abbreviation, takes a quiet dotted underli
 1. **Tooltip** (`env-tooltip`, `content`)
 2. **Control** (`env-icon-button`, `children`)
 
-Not shown: the wrapper that takes the pointer for a disabled control, `env-tooltip-disabled-target`, and the dotted underline of a text trigger, `env-hover-detail`.
-
-### Colors
-
-`--env-tooltip-container`, `--env-tooltip-content` and `--env-tooltip-outline` set the colors of one Tooltip, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+Not shown: the wrapper that lets a disabled control show a tooltip, and the dotted underline of text.
 
 ## Accessibility
 
@@ -132,6 +130,52 @@ Not shown: the wrapper that takes the pointer for a disabled control, `env-toolt
 - An accessible name on the control, such as `aria-label` on an icon-only button.
 - The reason a control is disabled in the page too.
 - A child that takes the trigger's props and ref, such as a Button or an IconButton.
+
+## In code
+
+### Usage
+
+Tooltip wraps the one control it describes, its `children`, such as an IconButton, which takes the trigger's props and ref; `content` is its text. While it is open, a control with a name of its own is described by it, through `aria-describedby`, so name an icon-only control with `aria-label` too. The pointer rests on the control for `delay`, 400 ms by default, before it opens, and keyboard focus opens it at once; `defaultOpen` starts it open.
+
+```tsx source=IconActions
+
+```
+
+#### Side
+
+`side` is `top`, the default, `bottom`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction. Where the window has no room, it flips to the other side.
+
+```tsx source=RailOfIcons
+
+```
+
+#### Menu trigger
+
+A Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog: its native props and `ref` reach the control, and it stays closed while their popup is open and as focus returns to the control. Around a HoverCard it shows nothing.
+
+```tsx source=MenuTrigger
+
+```
+
+#### Keyboard shortcuts
+
+Write the shortcut after the name in `content`, and give the control `aria-keyshortcuts` in ARIA's key names, such as `Control+B`.
+
+```tsx source=ShortcutHints
+
+```
+
+#### Text and disabled controls
+
+Text that isn't a control takes the dotted underline, `env-hover-detail`; give it `tabIndex={0}`, so keyboard focus opens the tooltip too. A disabled control sits in a wrapper, `env-tooltip-disabled-target`, that takes the pointer and focus for it, and carries its role, name, state and `aria-disabled`.
+
+```tsx source=TextAbbreviation
+
+```
+
+### Customize
+
+`--env-tooltip-container`, `--env-tooltip-content` and `--env-tooltip-outline` set the fill, the text and the edge of one Tooltip, through `style` or CSS. `popupClassName` adds a class to the popup, `env-tooltip`, beside its own; its positioner is `env-tooltip-positioner`.
 
 ## Changelog
 

@@ -3,7 +3,7 @@ title: Alert
 summary: An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
 status: stable
 since: 0.5.0
-category: Feedback & overlays
+category: Feedback
 aliases:
   - Notice
   - banner
@@ -16,15 +16,15 @@ aliases:
   - warning message
   - error message
 useWhen:
-  - A message about a page or a section stays until it no longer applies, such as a paused sync or a blocked release.
-  - Something that just happened failed and the message should stay beside what it concerns, such as a save that didn't go through (`announce`).
-  - A section needs a warning before people act in it, such as storage that is almost full.
+  - A message that stays until it no longer applies, such as a paused sync
+  - A failure beside what it concerns, such as a save that didn't go through
+  - A warning before people act in a section, such as storage almost full
 avoidWhen:
   - text: Brief feedback after an action, such as Saved or Invitation sent.
     use: Toast
   - text: A region without content yet, such as an empty list or no search results.
     see: empty-states
-  - text: An error about one field, shown on the field with its `error`.
+  - text: An error about one field, shown on the field.
     use: TextField
   - text: A status beside a label, such as Draft or Blocked.
     use: Badge
@@ -38,7 +38,7 @@ components:
 
 ## Overview
 
-An alert is a message about a page or a section that stays above the content it concerns until it no longer applies.
+An alert sits above the content it concerns.
 
 ```tsx example=BlockedRelease
 
@@ -46,7 +46,7 @@ An alert is a message about a page or a section that stays above the content it 
 
 ### Announce a failure
 
-`announce` reads a warning or danger alert at once, for one that appears because of something people just did. Info and success alerts are always read politely.
+A warning or a danger alert that appears because of something people just did, such as a save that failed, can be read out at once. Info and success alerts are always read politely, without interrupting.
 
 ```tsx example=SaveFailed
 
@@ -63,16 +63,16 @@ An alert is a message about a page or a section that stays above the content it 
 3. **Warning**
 4. **Danger**
 
-| Tone      | Use for                                                               |
-| --------- | --------------------------------------------------------------------- |
-| `info`    | Something to know about the page, such as a paused sync. The default. |
-| `success` | A result that stays relevant, where a toast would leave too soon.     |
-| `warning` | A problem to come unless people act, such as storage almost full.     |
-| `danger`  | Something that failed or stopped working.                             |
+| Tone    | Use for                                                           |
+| ------- | ----------------------------------------------------------------- |
+| Info    | Something to know about the page. The default.                    |
+| Success | A result that stays relevant, where a toast would leave too soon. |
+| Warning | A problem to come unless people act.                              |
+| Danger  | Something that failed or stopped working.                         |
 
 ### Another icon, or none
 
-`icon` replaces the tone's icon, and `icon={false}` leaves it out.
+An alert can take another icon in place of its tone's, or none at all.
 
 ```tsx example=CustomIcon
 
@@ -88,8 +88,9 @@ An alert is a message about a page or a section that stays above the content it 
 
 ```
 
-- Remove an alert once it no longer applies.
-- Offer `onDismiss` only where the message can safely be hidden.
+### Removing an alert
+
+Remove an alert once it no longer applies, and let people dismiss it only where the message can safely be hidden.
 
 ## Anatomy
 
@@ -103,10 +104,6 @@ An alert is a message about a page or a section that stays above the content it 
 4. **Message** (`env-alert-message`, `children`)
 5. **Action** (`env-alert-action`, `action`)
 6. **Dismiss button** (`env-alert-dismiss`, `onDismiss`)
-
-### Colors
-
-`--env-alert-container`, `--env-alert-content`, `--env-alert-outline` and `--env-alert-icon` set the colors of one Alert, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Accessibility
 
@@ -128,6 +125,60 @@ An alert is a message about a page or a section that stays above the content it 
 - A message that makes sense without its color and icon.
 - `announce` only on an alert that appears because of something that just happened, never on one there when the page loads.
 - Focus for after a dismissal, such as on the control the alert concerned.
+
+## In code
+
+### Usage
+
+An Alert takes its `tone`, a short `title`, the message as `children`, and an `action` below the message, such as a Button or a Link. Put it above the content it concerns, and remove it once it no longer applies.
+
+```tsx source=BlockedRelease
+
+```
+
+#### Tones
+
+`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure. It sets the tint, the border and the icon.
+
+```tsx
+<Alert title="Sync paused">Changes are saved on this device until you reconnect.</Alert>
+<Alert tone="danger" title="Couldn’t publish">Try again, or check the build log.</Alert>
+```
+
+#### Announce a failure
+
+Info and success alerts take the `status` role and are read politely. `announce` gives a warning or danger alert the `alert` role, so it is read at once; set it only on an alert that appears because of something people just did, never on one there when the page loads.
+
+```tsx source=SaveFailed
+
+```
+
+#### Icon
+
+`icon` replaces the tone's icon, and `icon={false}` leaves it out.
+
+```tsx source=CustomIcon
+
+```
+
+#### Dismiss
+
+`onDismiss` shows a dismiss button that calls it; the application removes the alert, and moves focus, such as to the control the alert concerned. Offer it only where the message can safely be hidden. `dismissLabel` names the button, Dismiss by default or EnvUIProvider's `messages.alert.dismiss`, and is also its tooltip.
+
+### Composition
+
+The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title, `env-alert-title`, the message, `env-alert-message`, the action, `env-alert-action`, and the dismiss button, `env-alert-dismiss`, an IconButton with a cross.
+
+### Customize
+
+`--env-alert-container`, `--env-alert-content`, `--env-alert-outline` and `--env-alert-icon` set the colors of one Alert, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+
+```tsx
+<Alert
+  title="Trial ends in 3 days"
+  style={{ '--env-alert-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}
+/>
+```
 
 ## Changelog
 

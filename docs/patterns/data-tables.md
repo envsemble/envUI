@@ -3,7 +3,7 @@ title: Data tables
 summary: Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.
 status: beta
 since: 1.0.0
-intent: Find and navigate
+intent: Work with lists and tables
 aliases:
   - data table
   - data grid
@@ -14,8 +14,8 @@ aliases:
   - table pagination
   - responsive table
 useWhen:
-  - People compare records by several values, such as their owner, status and date.
-  - People sort records, page through them, or act on several at once.
+  - Records compared by several values, such as owner, status and date
+  - Sorting records, paging through them or acting on several at once
 avoidWhen:
   - text: Items with one or two values each, such as a list of documents and their editors.
     use: List
@@ -40,13 +40,9 @@ composes:
   - Badge
   - RelativeTime
   - Pagination
-  - Select
-  - SegmentedControl
   - ConfirmDialog
   - Toast
   - useToast
-  - placeholders
-  - Surface
   - Column
   - Row
   - Text
@@ -56,21 +52,17 @@ composes:
 
 ## Overview
 
-A data table shows records people compare, sort and act on: one link per row on the record's name, sortable columns, numbers aligned to compare, a page of rows at a time, and selection that leads to actions on several rows.
+A [Table](../components/table.md) holds the data, with its own sorting, selection and stacking, and [Pagination](../components/pagination.md) below it gives the range, "1–4 of 6", working while the next set loads.
 
 ```tsx example=SortAndPaginate
 
 ```
 
-### Sorting and paging
-
-A press on a sortable header asks for the other order; the application sorts, goes back to the first page and announces the order in a polite status, "Sorted by updated, descending". [Pagination](../components/pagination.md) shows the range, "1–4 of 6", and takes `pending` while a page loads.
-
 ## Variants
 
 ### Select and act on several rows
 
-While rows are selected, a bulk bar shows the count and actions that name it, "Archive 2 projects". Archive acts at once with Undo; Delete asks first, as in [destructive actions](destructive-actions.md).
+While rows are selected, a bulk bar shows the count and its actions. Archive acts at once with Undo; Delete asks first.
 
 ```tsx example=SelectAndBulkActions
 
@@ -84,25 +76,11 @@ The name links to the record; the other actions wait in a [Menu](../components/m
 
 ```
 
-### Loading and empty
-
-The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in [Loading](loading.md); with no records, an [empty state](empty-states.md) takes its place.
-
-```tsx example=EmptyAndLoading
-
-```
-
 ## When to use
-
-- Give each row one link, on its name, rather than making the whole row a click target.
-- Select rows with a checkbox beside `selected`; a press on the row alone is announced unevenly.
-- Match the controls above the table to its `density`: `size="sm"` over small rows.
 
 ### Content
 
-- Name columns with short nouns, "Open tasks", and put the unit in the name, "Size (MB)", not in every cell.
-- Recent dates as relative times, further ones as dates.
-- The count in bulk actions and their confirmation: "Delete 2 projects?".
+Name columns with short nouns, "Open tasks", and put the unit in the name, "Size (MB)", not in every cell. Show recent dates as relative times and further ones as dates, and give the count in bulk actions and their confirmation: "Delete 2 projects?".
 
 ## Anatomy
 
@@ -116,14 +94,6 @@ The first load shows the table as a skeleton over placeholder rows after 200 ms,
 4. **Numbers** (`env-table-cell[data-numeric]`)
 5. **Pagination** (`env-pagination`)
 
-## Adapting to width
-
-With `narrowLayout="stack"`, a narrow table shows each row as a block with its cells' labels, and a Select and an IconButton above it sort the rows while they stack.
-
-```tsx example=NarrowTable
-
-```
-
 ## Accessibility
 
 <kbd>Tab</kbd> reaches the table's scroll region, then each sort button and control in the cells. Sort and Pagination buttons keep focus as the rows change. When an action clears the selection, focus moves to the header's checkbox; after a row is deleted, to the next row's menu button.
@@ -133,15 +103,31 @@ With `narrowLayout="stack"`, a narrow table shows each row as a block with its c
 - A native table in a focusable region named by its `aria-label` or `caption`, scrolled with the arrow keys.
 - `aria-sort` on sortable headers, `aria-selected` on selected rows and `aria-checked="mixed"` on the header's checkbox.
 - Pagination in a navigation landmark, whose range is announced.
-- Table roles kept while the rows stack.
 
 ### You provide
 
 - A name for every table, the sorting and paging, and `sortDirection` on the sorted header.
 - A checkbox labelled with the row's name in every selectable row.
 - Polite statuses for the sort order and the selection count, and focus after an action removes its control.
-- A `label` on every cell after the first in a stacking table.
+
+## In code
+
+### Usage
+
+Name the Table.Root with `aria-label`. A sortable Table.HeaderCell takes `sortDirection`, `ascending`, `descending` or `none`, and `onSortChange`, which asks for the other order: the application sorts the rows, goes back to the first page and says the order in a Text with `role="status"`. Numeric columns take `numeric` on the header and the cells; the name is a Link, and recent dates a RelativeTime. Pagination takes `page`, `pageSize`, `total`, `onPageChange` and an `aria-label`, and `pending` while a page loads.
+
+```tsx source=SortAndPaginate
+
+```
+
+#### Selection and bulk actions
+
+Each selectable row has a Checkbox labelled with the row's name and `selected` on its Table.Row; the header's Checkbox is `checked="mixed"` while some are selected. A visually hidden `role="status"` says the count. The bulk bar is a Toolbar named for the selection, with the count in its Toolbar.Button labels, "Archive 2 projects": Archive acts at once with Undo in a toast from `useToast`, and Delete opens a ConfirmDialog. As the bar goes with the selection, focus moves to the header's Checkbox.
+
+#### Row actions
+
+The row's other actions are a Menu whose trigger is an IconButton with `aria-label` "More actions for" the row's name. Delete opens a ConfirmDialog whose `finalFocus` is the menu button that opened it, or, once its row is gone, the next row's.
 
 ## Changelog
 
-- **1.0.0**: The page is on the figure template.
+- **1.0.0**: The page is on the figure template; sorting, selecting, loading and stacking rows are on Table.

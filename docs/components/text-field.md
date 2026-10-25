@@ -21,10 +21,10 @@ aliases:
   - multiline text
   - description field
 useWhen:
-  - Someone types a short value on one line, such as a name, an e-mail address or a number.
-  - A value has a fixed start or a unit beside it, such as an address after a domain or a size in GB.
-  - People search or filter a list, a table or a sidebar by typing (SearchField).
-  - Someone writes text over several lines, such as a description or notes (Textarea).
+  - A short value on one line, such as a name or an e-mail address
+  - A value with a fixed start or a unit, such as a size in GB
+  - Searching a list, a table or a sidebar (SearchField)
+  - Text over several lines, such as notes (Textarea)
 avoidWhen:
   - text: Text that runs over several lines.
     use: Textarea
@@ -76,7 +76,7 @@ The label rests in an empty field and floats into the outline on focus or with a
 
 ### Show an error
 
-`error` marks the field invalid and shows under the description. Say how to correct the value.
+An error marks the field invalid and shows under its description. Say how to correct the value.
 
 ```tsx example=Validation
 
@@ -92,7 +92,7 @@ Short text in line with the value, which forms don't submit. Pressing it places 
 
 ### Icon and end action
 
-`startIcon` is decorative; `endAction` holds a control, such as an IconButton, which takes the field's ghost look.
+An icon at the start only decorates the field. The end can hold a control, such as a button that shows the password, which takes a quiet look to sit inside the field.
 
 ```tsx example=IconAndAction
 
@@ -100,7 +100,7 @@ Short text in line with the value, which forms don't submit. Pressing it places 
 
 ### Textarea sizing
 
-A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the arrow keys. With `sizing="content"` it grows with its text.
+A text area keeps its height and scrolls, and people resize it by its bottom edge, by dragging or with the arrow keys. It can grow with its text instead.
 
 ```tsx example=TextareaSizing
 
@@ -116,17 +116,19 @@ A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the
 2. **Floating**
 3. **Ghost**
 
-| Variant    | Use for                                                      |
-| ---------- | ------------------------------------------------------------ |
-| `outline`  | In forms, dialogs, panes and toolbars. The default.          |
-| `floating` | A long form on a page.                                       |
-| `ghost`    | A search in an application's chrome, such as atop a sidebar. |
+| Variant  | Use for                                                      |
+| -------- | ------------------------------------------------------------ |
+| Outline  | In forms, dialogs, panes and toolbars. The default.          |
+| Floating | A long form on a page. Not for a text area.                  |
+| Ghost    | A search in an application's chrome, such as atop a sidebar. |
 
-Textarea comes outline or ghost. Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it.
+### Fill
+
+Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog, and a floated label opens the border behind it. A field can be given a fill of its own where it needs one.
 
 ### Sizes
 
-Outline and ghost fields take the control heights of the [scale](../foundations/scale.md), `sm`, `md` and `lg`, so they line up with buttons of the same size.
+Outline and ghost fields come in the three control heights of the [scale](../foundations/spacing.md), small, medium and large, so they line up with buttons of the same size.
 
 ```tsx example=FieldsBesideButtons
 
@@ -134,7 +136,7 @@ Outline and ghost fields take the control heights of the [scale](../foundations/
 
 ## When to use
 
-```tsx do=ReadOnlyValue caption="readOnly for a value people can see and copy but not change."
+```tsx do=ReadOnlyValue caption="Read-only for a value people can see and copy but not change."
 
 ```
 
@@ -150,8 +152,9 @@ Outline and ghost fields take the control heights of the [scale](../foundations/
 
 ```
 
-- Set `type`, `autoComplete` and `inputMode` to fit the value, such as `type="email"` with `autoComplete="email"`.
-- Show an error once people leave the field or submit, and remove it once the value fits.
+### Kinds of value
+
+Say what kind of value each field takes, such as an e-mail address, so the browser can fill it in and show the right keyboard.
 
 ### Labels
 
@@ -180,11 +183,7 @@ Name the value in a short noun phrase, and keep lasting instructions in the desc
 7. **End action** (`env-text-field-end`, `endAction`)
 8. **Description** (`env-field-description`, `description`)
 
-Not shown: the suffix, `env-text-field-suffix`, the error, `env-field-error`, and a Textarea's resize edge, `env-textarea-resize-edge`.
-
-### Colors
-
-`--env-text-field-container`, `--env-text-field-content`, `--env-text-field-outline` and `--env-text-field-indicator` set the colors of one TextField or Textarea, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+Not shown: the suffix, the error and a text area's resize edge.
 
 ## Adapting to width
 
@@ -222,6 +221,75 @@ A field fills its container; set the width there. A long prefix is cut short so 
 - Validation, the `error` text, and focus on the first invalid field.
 - An announcement of results when a search filters as people type.
 - The clear and resize labels in the application's language, through EnvUIProvider's `messages`.
+
+## In code
+
+### Usage
+
+A TextField is a native `<input>` with its `label`, `description` and `error`. Give it a `name` for its form, and leave it uncontrolled, with `defaultValue`, or control it with `value` and `onValueChange`, which receives the string as people type.
+
+```tsx source=ProjectName
+
+```
+
+#### Errors
+
+`error` marks the field invalid, sets `aria-invalid` and shows under the description. Check on blur and on submit, never while people type, and clear it as soon as the value fits.
+
+```tsx source=Validation
+
+```
+
+#### Variants and sizes
+
+`variant` is `outline`, the default, `floating` or `ghost`; Textarea takes `outline` or `ghost`. `size` is `sm`, `md` or `lg`, the control heights; without it, a field takes its container's, so it lines up with the buttons beside it. `showLabel={false}` keeps the label for assistive technology only.
+
+```tsx
+<TextField label="Project name" name="project" />
+<TextField variant="floating" label="Owner" name="owner" />
+<TextField variant="ghost" label="Find projects" showLabel={false} startIcon={<Search />} />
+<TextField size="sm" label="Filter" name="filter" />
+```
+
+#### Prefix, suffix, icon and end action
+
+`prefix` and `suffix` are short text in line with the value, not part of it, and forms don't submit them. `startIcon` is decorative. `endAction` holds a control, such as an IconButton, which takes the ghost variant where it sets none; name an icon-only one with `aria-label`.
+
+```tsx source=IconAndAction
+
+```
+
+#### Values the browser can help with
+
+Set `type`, `autoComplete` and `inputMode` to fit the value, such as `type="email"` with `autoComplete="email"`. Use `readOnly` for a value people can see and copy but not change: a `disabled` field can't be focused, copied or submitted.
+
+#### SearchField and Textarea
+
+SearchField takes `value` and `onValueChange`, or `defaultValue`; its clear button and <kbd>Esc</kbd> empty the query. Its `label` names it, and shows only with `showLabel`. Textarea keeps its height and scrolls with `sizing="fixed"`, the default, or grows with its text with `sizing="content"`; `rows` sets its height, or the lines it starts at.
+
+```tsx source=TextareaSizing
+
+```
+
+### Composition
+
+TextField, SearchField and Textarea are built from Field's parts: the root, `env-field` with `env-text-field`; the label; the control, `env-text-field-control`, which holds the start icon, `env-text-field-start`, the prefix, `env-text-field-prefix`, the input, `env-text-field-input`, the suffix, `env-text-field-suffix`, and the end action, `env-text-field-end`; then the description, `env-field-description`, and the error, `env-field-error`. A Textarea's resize edge is `env-textarea-resize-edge`. Build a field of your own from the same parts, as [Build your own field](field.md) shows.
+
+A field fills its container's width, so set the width on the container, or on the field through `style`. Put fields in a native `<form>`, in a Column or a Grid: the inputs are native, so submission, reset and autofill work, and `ref` reaches the input for a form library.
+
+### Customize
+
+`--env-text-field-container`, `--env-text-field-content`, `--env-text-field-outline` and `--env-text-field-indicator` set the colors of one TextField or Textarea, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. Outline and floating fields have no fill of their own, so `--env-text-field-container` gives one a fill.
+
+```tsx
+<TextField
+  label="Project name"
+  name="project"
+  style={{ '--env-text-field-container': 'var(--env-color-bg-field)' } as CSSProperties}
+/>
+```
+
+`className` and `style` reach the field's root, and `ref` and the other native props the input. CSS may target the part classes and their state attributes, such as `data-invalid` on the control, listed under Part names below.
 
 ## Changelog
 

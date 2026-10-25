@@ -24,7 +24,7 @@ export default function DeliveryStatus() {
         actions={
           status === 'failed' && (
             <Button variant="text" onClick={retry}>
-              Retry
+              Try again
             </Button>
           )
         }

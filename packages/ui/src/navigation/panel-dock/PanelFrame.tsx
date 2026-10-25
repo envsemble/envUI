@@ -120,7 +120,7 @@ export function PanelFrame({
     step: resizeStep,
     largeStep: resizeLargeStep,
     disabled: !resizable,
-    // Read as the share of the room above the tabs.
+    // Read as the share of the room in the dock.
     valueText:
       bounds && bounds.room > 0
         ? (value) => `${Math.round((value / bounds.room) * 100)}%`

@@ -331,7 +331,7 @@
     "AvatarGroup": {
       "kind": "component",
       "source": "packages/ui/src/content/AvatarGroup.tsx",
-      "description": "Overlapping avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip.",
+      "description": "A pile of avatars for a set of people, such as the members of a project, with a chip that counts the rest and lists them in its tooltip. Hover, a tap or keyboard focus spreads it.",
       "props": [
         {
           "name": "people",
@@ -357,7 +357,7 @@
           "type": "'start' | 'end'",
           "required": false,
           "default": "'start'",
-          "description": "Where a pointer can hover, the group keeps the room its spread takes, so spreading never moves what is around it, and the avatars gather at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
+          "description": "The group keeps the room its spread takes, so spreading never moves what is around it, and the pile gathers at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
         },
         {
           "name": "total",
@@ -369,7 +369,7 @@
           "name": "onPersonClick",
           "type": "(person: AvatarGroupPerson, event: MouseEvent<HTMLElement>) => void",
           "required": false,
-          "description": "Makes every avatar a button with a name tooltip; receives the person pressed."
+          "description": "Makes every avatar a button with a name tooltip; receives the person pressed. The avatars are targets only while the group is spread: at rest the pile is one target, which hover, a tap or keyboard focus spreads."
         },
         {
           "name": "formatMore",
@@ -1149,7 +1149,7 @@
     "ColorPicker": {
       "kind": "component",
       "source": "packages/ui/src/color/ColorPicker.tsx",
-      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
+      "description": "A compact color picker on React Aria's color hooks: a square saturation and brightness area with a vertical hue slider, and an alpha slider with `alpha`, at its side; under them, a format select, the browser's eyedropper where it has one, a copy button, and fields for the chosen format, or the fields of several `formats` together, each with its own copy button; and preset swatches. Every part works with the keyboard; the channels and the area are named in the EnvUIProvider's language.",
       "props": [
         {
           "name": "showLabel",
@@ -1206,8 +1206,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
@@ -1350,8 +1349,7 @@
           "name": "formats",
           "type": "readonly ColorFormat[]",
           "required": false,
-          "default": "['hex', 'rgb', 'hsl']",
-          "description": "The formats people can type the color in, in the order the format select lists them; the first is shown first. With one, there is no select."
+          "description": "The formats whose fields show together, one under another in this order, such as `['hex', 'rgb', 'hsl']`. With one, the picker shows that format alone; without the prop, it shows one format at a time, hex first, with a select that switches to RGB or HSL."
         },
         {
           "name": "alpha",
@@ -2975,7 +2973,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns to `defaultWidth`. Leave it out of a drawer in a sheet of a narrow window."
+          "description": "Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns to `defaultWidth`. Its labels and headings keep to one line: one that doesn't fit ends in an ellipsis, a label cut short shows in full in a tooltip and a heading in its title. Leave it out of a drawer in a sheet of a narrow window."
         },
         {
           "name": "width",
@@ -4723,7 +4721,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Small actions below the message, such as Copy or Retry: buttons without a variant or size of their own are ghost buttons at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
+          "description": "Small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are ghost buttons at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
         },
         {
           "name": "status",
@@ -7102,7 +7100,7 @@
     "Slider": {
       "kind": "component",
       "source": "packages/ui/src/forms/Slider.tsx",
-      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys; a thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it. An optional description sits below it.",
+      "description": "A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form among them, with its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys. At rest it shows only its text and fill; a thin handle at the value and faint ticks at its steps appear under the pointer and while it is pressed, and go once it is released, and the handle alone shows with keyboard focus. An optional description sits below it.",
       "props": [
         {
           "name": "label",

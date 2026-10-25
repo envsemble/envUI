@@ -112,6 +112,9 @@ test('the tooltip shows the date and time on hover, in the theme of the page', a
   await expect(tooltip).toHaveText('16.10.2026, 12:00');
   await page.mouse.move(0, 0);
   await expect(tooltip).toHaveCount(0);
+  // A time with a tooltip takes the dotted underline of text with more on hover; one without, none.
+  await expect(scope.getByTestId('fixed')).toHaveClass(/\benv-hover-detail\b/);
+  await expect(scope.getByTestId('no-tooltip')).not.toHaveClass(/\benv-hover-detail\b/);
   // Without a tooltip nothing opens; the time is never a tab stop.
   await scope.getByTestId('no-tooltip').hover();
   await page.clock.runFor(600);

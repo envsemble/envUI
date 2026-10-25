@@ -8,6 +8,9 @@ import type { Documentation as Document } from '../Reference';
 import { AnatomyFigure } from './AnatomyFigure';
 import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
+import { SiteMarkdown } from './OptionLegend';
+import { optionPieces, type OptionTable } from '../../../../scripts/SiteContent.mjs';
+import { InteractiveMark } from './InteractiveMark';
 import { Specimen } from './Specimen';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -66,6 +69,7 @@ export function VerdictFigure({
           ) : (
             <ExampleRender page={page} name={name ?? ''} />
           )}
+          <InteractiveMark enabled={!open} />
         </Column>
         <div className="docs-verdict-bar env-connected-row" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}
@@ -80,8 +84,19 @@ export function VerdictFigure({
   );
 }
 
-/** One figure of a section, by its kind. */
-function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
+/**
+ * One figure of a section, by its kind. `options` is the option table right after a variants
+ * figure, which it shows as its legend.
+ */
+function Figure({
+  page,
+  block,
+  options,
+}: {
+  page: Document;
+  block: ExampleBlock;
+  options?: OptionTable;
+}) {
   if (block.role === 'do' || block.role === 'dont')
     return (
       <VerdictFigure
@@ -106,6 +121,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
         enlarge={block.enlarge}
         stage={block.stage}
         variants={block.role === 'variants'}
+        options={options}
       />
     );
   return (
@@ -119,54 +135,6 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
       stage={block.stage}
     />
   );
-}
-
-/**
- * Markdown cut where a run of `###` subsections each holds only a list, such as what envUI provides
- * and what you provide: such a run is laid out in columns, the rest as it is written.
- */
-export function splitColumns(markdown: string): (string | string[])[] {
-  const chunks: string[] = [''];
-  let fence: string | undefined;
-  for (const line of markdown.split('\n')) {
-    const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/)?.[1];
-    if (marker && (!fence || (marker[0] === fence[0] && marker.length >= fence.length)))
-      fence = fence ? undefined : marker;
-    if (!fence && /^### /.test(line)) chunks.push('');
-    chunks[chunks.length - 1] += `${line}\n`;
-  }
-  const listOnly = (chunk: string) => {
-    if (!/^### /.test(chunk)) return false;
-    const body = chunk
-      .split('\n')
-      .slice(1)
-      .filter((line) => line.trim());
-    return (
-      body.length > 0 &&
-      /^([-*+]|\d+[.)]) /.test(body[0]) &&
-      body.every((line) => /^(\s+\S|[-*+] |\d+[.)] )/.test(line))
-    );
-  };
-  const pieces: (string | string[])[] = [];
-  for (const chunk of chunks) {
-    const last = pieces.at(-1);
-    if (listOnly(chunk)) {
-      if (Array.isArray(last)) last.push(chunk);
-      else pieces.push([chunk]);
-    } else if (typeof last === 'string') pieces[pieces.length - 1] = last + chunk;
-    else pieces.push(chunk);
-  }
-  // A single list stays in the flow; two or more sit side by side.
-  return pieces
-    .flatMap((piece) => (Array.isArray(piece) && piece.length < 2 ? piece : [piece]))
-    .reduce<(string | string[])[]>((merged, piece) => {
-      const last = merged.at(-1);
-      if (typeof piece === 'string' && typeof last === 'string')
-        merged[merged.length - 1] = last + piece;
-      else merged.push(piece);
-      return merged;
-    }, [])
-    .filter((piece) => typeof piece !== 'string' || piece.trim());
 }
 
 /**
@@ -186,27 +154,6 @@ export function lastSubsection(markdown: string): [string, string] | undefined {
   if (!body.length || body.some((line) => /^\s*(\||`{3,}|~{3,})/.test(line))) return undefined;
   if (/^([-*+]|\d+[.)]) /.test(body[0])) return undefined;
   return [lines.slice(0, start).join('\n'), lines.slice(start).join('\n')];
-}
-
-/** A section's Markdown, with runs of lists in columns. */
-export function SectionColumns({ markdown, path }: { markdown: string; path: string }) {
-  return (
-    <>
-      {splitColumns(markdown).map((piece, index) =>
-        typeof piece === 'string' ? (
-          <Documentation key={index} markdown={piece} path={path} />
-        ) : (
-          <div key={index} className="docs-section-columns">
-            {piece.map((column, part) => (
-              <div key={part} className="docs-section-column">
-                <Documentation markdown={column} path={path} />
-              </div>
-            ))}
-          </div>
-        ),
-      )}
-    </>
-  );
 }
 
 /**
@@ -264,12 +211,31 @@ export function FigureSection({
   const first = blocks[0];
   const [title, ...intro] = first?.kind === 'markdown' ? first.markdown.split('\n') : [''];
   if (first?.kind === 'markdown') blocks[0] = { kind: 'markdown', markdown: intro.join('\n') };
+  // An option table right after a variants figure is the figure's legend: each variant's name in
+  // the tag its callout shows, followed by what it is for.
+  const options = new Map<string, OptionTable>();
+  blocks.forEach((block, index) => {
+    const next = blocks[index + 1];
+    if (block.kind !== 'example' || block.role !== 'variants' || next?.kind !== 'markdown') return;
+    const pieces = optionPieces(next.markdown);
+    const lead = pieces.findIndex((piece) => !('markdown' in piece) || piece.markdown.trim());
+    const table = pieces[lead];
+    if (!table || !('options' in table)) return;
+    options.set(block.name, table.options);
+    blocks[index + 1] = {
+      kind: 'markdown',
+      markdown: pieces
+        .slice(lead + 1)
+        .map((piece) => ('markdown' in piece ? piece.markdown : piece.raw))
+        .join(''),
+    };
+  });
   const groups = groupFigures(blocks);
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
   const content: ReactNode[] = lead ? [<Fragment key="lead">{lead}</Fragment>] : [];
   const markdown = (key: number, text: string) => (
-    <SectionColumns key={key} markdown={text} path={reference.path} />
+    <SiteMarkdown key={key} markdown={text} path={reference.path} />
   );
   groups.forEach((group, index) => {
     const text = beside.get(index);
@@ -308,7 +274,9 @@ export function FigureSection({
         beside.set(index + 1, split[1]);
       } else content.push(markdown(index, group.markdown));
     } else if (group.kind === 'example')
-      content.push(<Figure key={index} page={reference} block={group} />);
+      content.push(
+        <Figure key={index} page={reference} block={group} options={options.get(group.name)} />,
+      );
     else if (group.kind === 'specimen')
       content.push(<Specimen key={index} page={reference.id} name={group.name} headingLevel={3} />);
   });

@@ -1,10 +1,11 @@
 /* A slider as a field: as tall as the fields and with their corners, so it sits in a form among
    them. The whole control is the track, a quiet tint, with the label inside at its start, the value
-   at its end, in a field's type, and a stronger fill from the start that shows the value. A thin
-   handle at the value appears under the pointer and while it has focus, and faint ticks at the
-   steps, a ruler, only while the pointer presses it; the value text says the exact amount. The text
-   always keeps its full strength: where the fill's end and the handle pass under the label or the
-   value, they fade instead. */
+   at its end, in a field's type, and a stronger fill from the start that shows the value. At rest
+   that is all: the fill ends crisply. Slider decides what shows besides (sliderReveal) and marks it
+   on the control: a thin handle at the value and faint ticks at the steps, a ruler, under a hovering
+   pointer and while pressed (data-handle, data-ruler), until a release, and the handle alone with
+   keyboard focus (data-handle). The text always keeps its full strength: while they show, where the
+   handle, the fill's end and the ticks pass under the label or the value, they fade instead. */
 /* Color properties: a slider's colors, which an application sets on one slider through style or its
    own CSS: container the track, indicator the fill that shows the value, and content the label, the
    value, the handle and the ticks. They don't inherit; the slider passes them on to its parts. */
@@ -21,7 +22,7 @@
   inherits: false;
 }
 /* 1 while the fill's end and the handle sit under the label or the value, which Slider measures,
-   else 0; a number, so the fade between them eases. */
+   else 0; a number, so the fade between them eases. It takes effect only while the handle shows. */
 @property --env-slider-veil {
   syntax: '<number>';
   inherits: true;
@@ -74,9 +75,9 @@
   inline-size: var(--env-slider-inset);
   background: inherit;
 }
-/* Under the label or the value, the fill's end fades into the track, so no edge cuts through the
-   text: a veil of the track's color over its last stretch, reaching back under the rounded start
-   where the fill is short. */
+/* While the handle shows, under the label or the value, the fill's end fades into the track, so no
+   edge cuts through the text: a veil of the track's color over its last stretch, reaching back under
+   the rounded start where the fill is short. At rest the fill ends crisply. */
 .env-slider-indicator::after {
   --env-slider-indicator-direction: to right;
   content: '';
@@ -89,8 +90,12 @@
     transparent,
     color-mix(in srgb, var(--env-slider-track) 80%, transparent)
   );
-  opacity: var(--env-slider-veil);
+  opacity: 0;
   pointer-events: none;
+  transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-slider-control[data-handle] .env-slider-indicator::after {
+  opacity: var(--env-slider-veil);
 }
 .env-slider-indicator:dir(rtl)::after {
   --env-slider-indicator-direction: to left;
@@ -124,6 +129,18 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  /* Under the label and the value the ticks fade to a quarter, as the handle does: a mask at a
+     quarter outside the clear stretch between them, which Slider measures from the track's left
+     side. Its stops are in this box, which starts one part along the track. */
+  --env-slider-part: calc(100% / (var(--env-slider-ticks) - 1));
+  --env-slider-tick-faint: color-mix(in srgb, var(--env-color-fg-default) 25%, transparent);
+  mask-image: linear-gradient(
+    to right,
+    var(--env-slider-tick-faint) calc(var(--env-slider-clear-start, 0%) - var(--env-slider-part)),
+    /* Any opaque color: the mask keeps what lies under its opaque part. */
+      var(--env-color-fg-default) 0 calc(var(--env-slider-clear-end, 200%) - var(--env-slider-part)),
+    var(--env-slider-tick-faint) 0
+  );
 }
 /* The label and the value, over the track, the fill and the handle, in the field's padding. */
 .env-slider-heading {
@@ -151,15 +168,14 @@
   color: var(--env-slider-content, var(--env-color-fg-default));
   font-variant-numeric: tabular-nums;
 }
-/* Under the pointer, while pressed and while it has focus, the handle shows, faint while it passes
-   under the label or the value. */
-.env-slider-control:is(:hover, :focus-within, [data-pressed]) .env-slider-thumb {
+/* The handle shows where Slider marks it, under a hovering pointer, while pressed and with keyboard
+   focus, and is faint where it passes under the label or the value. */
+.env-slider-control[data-handle] .env-slider-thumb {
   opacity: calc(1 - 0.75 * var(--env-slider-veil));
 }
-/* The ticks show only while the pointer presses the slider (data-pressed, which Slider sets from the
-   press to the release), and fade out when it lets go: not under a resting pointer, nor with the
-   keyboard. */
-.env-slider-control[data-pressed] .env-slider-track::after {
+/* The ticks show where Slider marks the ruler, under a hovering pointer and while pressed, and fade
+   out on release: not with the keyboard. */
+.env-slider-control[data-ruler] .env-slider-track::after {
   opacity: 0.35;
 }
 /* Keyboard focus rings the whole field, as on a button. */
@@ -185,6 +201,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .env-slider-thumb,
+  .env-slider-indicator::after,
   .env-slider-track::after {
     transition: none;
   }

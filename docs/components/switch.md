@@ -12,8 +12,8 @@ aliases:
   - on/off setting
   - setting toggle
 useWhen:
-  - A setting turns on or off and takes effect at once, such as e-mail notifications or showing completed tasks.
-  - Each row of a settings list turns one setting on or off.
+  - A setting that applies at once, such as e-mail notifications
+  - One setting in each row of a settings list
 avoidWhen:
   - text: A choice that waits for a Save or Submit button, such as accepting terms, or one of several options people tick.
     use: Checkbox
@@ -33,8 +33,6 @@ components:
 
 ## Overview
 
-A switch turns a setting on or off, and the change takes effect at once.
-
 ```tsx example=NotificationSettings
 
 ```
@@ -47,7 +45,7 @@ Pressing the track or its label toggles it.
 
 ### Apply at once
 
-The application applies the setting as soon as the switch changes; there is nothing to save.
+The setting applies as soon as the switch changes, with no Save button.
 
 ```tsx example=ShowCompleted
 
@@ -55,23 +53,13 @@ The application applies the setting as soon as the switch changes; there is noth
 
 ### Settings in a list
 
-In a row, the row's title names the switch with `aria-labelledby`, and its detail describes it.
+In a row, the row's title names the switch, and its detail describes it.
 
 ```tsx example=SettingsRows
 
 ```
 
 ## When to use
-
-```tsx do=ManagedSetting caption="Say why a setting can't change, and who can change it."
-
-```
-
-```tsx dont=DisabledWithoutReason caption="Disabled switches that don’t say why."
-
-```
-
-- When saving a setting fails, turn the switch back and say what went wrong.
 
 ### Labels
 
@@ -96,10 +84,6 @@ Name the setting in a short phrase, so that on means yes.
 3. **Label** (`env-switch-label`, `label`)
 
 The thumb is drawn by the track and has no element of its own.
-
-### Colors
-
-`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` set the colors of one Switch, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 
@@ -129,6 +113,54 @@ The label wraps beside the track.
 - A `label`, or `aria-labelledby` where the name shows elsewhere.
 - A description linked with `aria-describedby` where a setting needs explaining.
 - An announcement, such as a Toast, where the change happens out of sight or fails.
+
+## In code
+
+### Usage
+
+A Switch is a native checkbox with `role="switch"`, named by its `label`, which stays the same in both states. Apply the setting from `onCheckedChange`, which receives the new state; control it with `checked`, or leave it uncontrolled with `defaultChecked`, which a form reset restores. When saving the setting fails, set it back and say what went wrong. `name` and the other native props reach the input.
+
+```tsx source=ShowCompleted
+
+```
+
+#### Disabled
+
+`disabled` keeps the setting from changing. Say why beside it, such as in the row's detail, and who can change it.
+
+```tsx
+import { useId } from 'react';
+import { Column, Switch, Text } from '@envsemble/envui';
+
+export default function ManagedSetting() {
+  const reason = useId();
+  return (
+    <Column gap={3} align="start">
+      <Switch label="Two-step sign-in" defaultChecked disabled aria-describedby={reason} />
+      <Switch label="Share documents outside Northwind" disabled aria-describedby={reason} />
+      <Text id={reason} variant="body-sm">
+        Your administrator, Sam Lee, manages these settings for everyone at Northwind.
+      </Text>
+    </Column>
+  );
+}
+```
+
+#### Settings in a list
+
+In a List row, the row's title names the switch through `aria-labelledby`, and its detail describes it through `aria-describedby`.
+
+```tsx source=SettingsRows
+
+```
+
+### Composition
+
+The root, `env-switch`, is the label around the track, `env-switch-input`, and the text, `env-switch-label`; the track draws the thumb, which has no element of its own. `className` and `style` reach the root, and `ref` and the other native props the input.
+
+### Customize
+
+`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` set the colors of one Switch, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Changelog
 

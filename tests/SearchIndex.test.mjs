@@ -92,7 +92,7 @@ test('search finds components by alias, props and tokens by name, and pages befo
   assert.deepEqual(best('button'), ['page:button']);
   assert.ok(best('loading', 3).includes('page:loading'));
   // A typo in a longer word still finds it.
-  assert.deepEqual(best('chnagelog'), ['page:changelog']);
+  assert.deepEqual(best('chnagelog'), ['page:full-changelog']);
 });
 
 test('a whole name ranks first: an export, a prop by its export, a token', () => {
@@ -116,17 +116,17 @@ test('a page an alias names ranks above the props of that name', () => {
   assert.deepEqual(best('modal'), ['page:dialog']);
   assert.deepEqual(best('hint'), ['page:tooltip']);
   assert.deepEqual(best('shortcut'), ['page:kbd']);
-  assert.deepEqual(best('placeholder'), ['page:surface']);
+  assert.deepEqual(best('placeholder'), ['page:loading']);
   assert.deepEqual(best('topbar'), ['page:top-bar']);
   assert.deepEqual(best('dark mode'), ['page:colors']);
   // An export's own name counts more than a page's alias of it.
   assert.deepEqual(best('icon'), ['export:Icon']);
   assert.ok(best('icon', 3).includes('page:icons'));
-  // A page whose title names the topic, as Spacing & shape names spacing, ranks above pages and
+  // A page whose title names the topic, as Spacing & density names spacing, ranks above pages and
   // props that only mention it.
   assert.deepEqual(best('spacing'), ['page:spacing']);
-  assert.deepEqual(best('scale'), ['page:scale']);
-  assert.deepEqual(best('density'), ['page:scale']);
+  assert.deepEqual(best('scale'), ['page:spacing']);
+  assert.deepEqual(best('density'), ['page:spacing']);
   assert.deepEqual(best('contrast'), ['page:colors']);
   // An export's name written out finds the export before the page that lists it as an alias.
   assert.deepEqual(best('copy button'), ['export:CopyButton']);
@@ -230,8 +230,12 @@ const goldenQueries = [
   { query: 'sign in', first: 'page:sign-in-page' },
   { query: 'login page', first: 'page:sign-in-page' },
   { query: 'dashboard', first: 'page:dashboard-page' },
-  { query: '404', first: 'page:error-pages' },
-  { query: 'not found', first: 'page:error-pages' },
+  { query: '404', first: 'page:empty-states' },
+  { query: 'not found', first: 'page:empty-states' },
+  { query: 'stepper', first: 'page:forms' },
+  { query: 'account menu', first: 'page:account-and-organizations' },
+  { query: 'workspace switcher', first: 'page:account-and-organizations' },
+  { query: 'installed app', first: 'page:app-frame' },
   { query: 'empty state', first: 'page:empty-states' },
   { query: 'stat', first: 'page:key-figures' },
   { query: 'undo delete', first: 'page:destructive-actions' },

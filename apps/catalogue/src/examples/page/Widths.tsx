@@ -3,6 +3,8 @@ import { Page, SegmentedControl, Column, Surface, Text, type PageWidth } from '@
 
 const widths: readonly PageWidth[] = ['sm', 'md', 'lg', 'full'];
 
+const names: Record<PageWidth, string> = { sm: 'Small', md: 'Medium', lg: 'Large', full: 'Full' };
+
 const uses: Record<PageWidth, string> = {
   sm: 'A form or a settings page: 40 rem at most.',
   md: 'A document or the details of one item: 60 rem at most.',
@@ -18,7 +20,7 @@ export default function Widths() {
         aria-label="Page width"
         value={width}
         onValueChange={(value) => setWidth(widths.find((each) => each === value) ?? 'lg')}
-        items={widths.map((value) => ({ value, label: value }))}
+        items={widths.map((value) => ({ value, label: names[value] }))}
       />
       <Surface background="muted">
         <Page width={width}>

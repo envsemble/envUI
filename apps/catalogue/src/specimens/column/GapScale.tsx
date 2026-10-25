@@ -19,7 +19,7 @@ export default function GapScale() {
     <Example size="collection">
       <SpecimenGrid size="compact">
         {steps.map(({ step, rem }) => (
-          <Specimen key={step} title={`gap={${step}}`} caption={rem}>
+          <Specimen key={step} title={`Step ${step}`} caption={rem}>
             <Column gap={step}>
               <Surface background="muted" radius="sm" padding={2}>
                 <Text>First</Text>

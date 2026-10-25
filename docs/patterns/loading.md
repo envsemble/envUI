@@ -16,9 +16,11 @@ aliases:
   - skeleton screen
   - shimmer
 useWhen:
-  - A page, a region or the result of an action takes long enough that people would notice.
-  - Work with a measurable end, such as an upload, runs while people wait.
+  - A page, a region or a result that takes a noticeable while
+  - Work with a measurable end, such as an upload
 avoidWhen:
+  - text: Files uploading, each with its own progress.
+    see: file-upload
   - text: Content that turned out empty, or that failed to load.
     see: empty-states
 composes:
@@ -47,7 +49,7 @@ composes:
 
 ## Overview
 
-Loading shows that something is on its way, in the place and the shape of what is coming. Where the shape is known, the page renders its own components as skeletons over placeholder items, so its code is the same loading and loaded.
+Where the shape is known, the page renders its own components as skeletons over placeholder items, so its code is the same loading and loaded.
 
 ```tsx example=CardsLoading
 
@@ -55,7 +57,7 @@ Loading shows that something is on its way, in the place and the shape of what i
 
 ### Placeholder items
 
-`items ?? placeholders<Item>(3)` gives the components stand-ins to render; text given as undefined is a bar of its text style's length. Show the skeleton once a load has taken 200 ms.
+Placeholder items give the components stand-ins to render, and text that hasn't arrived shows as a bar the length of its text style. Show the skeleton only once a load takes a noticeable moment, so quick loads never flash it.
 
 ```tsx example=SkeletonList
 
@@ -63,18 +65,9 @@ Loading shows that something is on its way, in the place and the shape of what i
 
 ## Variants
 
-| What is loading                | Show                                                  |
-| ------------------------------ | ----------------------------------------------------- |
-| Content of a known shape       | Its components with `skeleton`, over `placeholders()` |
-| Content of no known shape      | A Spinner with `showLabel`, beside its label          |
-| An update to what is shown     | A Spinner beside it                                   |
-| The result of an action        | `pending` on the Button that started it               |
-| Work whose end can be measured | Progress with a `value`                               |
-| A whole page                   | `loading` on the TopBar                               |
-
 ### No known shape
 
-A Spinner with `showLabel` says what is loading beside it, for results whose number and shape aren't known yet.
+A [Spinner](../components/spinner.md) says what is loading beside it.
 
 ```tsx example=SearchResultsLoading
 
@@ -82,7 +75,7 @@ A Spinner with `showLabel` says what is loading beside it, for results whose num
 
 ### An action
 
-The button that saves shows the work in progress; the outcome is announced once it is done.
+The [button](../components/button.md) that saves shows the work in progress.
 
 ```tsx example=PendingButton
 
@@ -90,7 +83,7 @@ The button that saves shows the work in progress; the outcome is announced once 
 
 ### Measurable work
 
-Progress measures each file and says what has been sent.
+[Progress](../components/progress.md) measures each file.
 
 ```tsx example=UploadProgress
 
@@ -98,13 +91,26 @@ Progress measures each file and says what has been sent.
 
 ### A whole page
 
-After 200 ms the bar along the top bar's bottom edge shows the next page is on its way, named by `loadingLabel`.
+The [top bar](../components/top-bar.md)'s progress bar shows the next page is on its way.
 
 ```tsx example=PageProgress stage=shaded
 
 ```
 
 ## When to use
+
+### Which to use
+
+Show what is coming in its place and shape where you can, and say only that something is on its way where you can't.
+
+| Indicator                | Use for                                                 |
+| ------------------------ | ------------------------------------------------------- |
+| A skeleton               | Content of a known shape, in its own components.        |
+| A spinner with its label | Content of no known shape, such as search results.      |
+| A spinner beside it      | An update to what is already shown.                     |
+| A pending button         | The result of an action, on the button that started it. |
+| A progress bar           | Work whose end can be measured, such as an upload.      |
+| The top bar's progress   | A whole page on its way.                                |
 
 ```tsx do=SkeletonInPlace caption="The content's own components as a skeleton, where it will appear."
 
@@ -122,13 +128,16 @@ After 200 ms the bar along the top bar's bottom edge shows the next page is on i
 
 ```
 
-- Give media an aspect ratio, with `width` and `height` or `aspect-ratio`, so it holds its place; dev mode's `envui.layout.skeletonShift()` reports what moves.
-- When content fails or turns out empty, show an [empty state](empty-states.md) in its place.
+### Media
+
+Give images and video their shape before they load, so they hold their place; dev mode reports what moves as content lands.
 
 ### Content
 
-- Name what is loading: "Loading projects", "Uploading annual-review.pdf".
-- Don't promise a time, such as "Almost there".
+Name what is loading, count in the units people think in, such as "12 of 40 MB", and never promise a time, such as "Almost there".
+
+- "Loading projects"
+- "Uploading annual-review.pdf"
 
 ## Anatomy
 
@@ -142,7 +151,11 @@ After 200 ms the bar along the top bar's bottom edge shows the next page is on i
 4. **Description bars** (`env-card-description`)
 5. **Action shape** (`env-card-footer`)
 
-Not shown: the inert content inside the root, `env-skeleton-content`, which has no box of its own. A soft highlight sweeps across every bar and shape, and fainter across the skeleton's own surfaces, such as a card or a row, in step across the page, and keeps still with a reduced-motion preference. Bars have small rounded corners, over missing text and text that is there alike, and shapes keep their component's, such as a chip's, an avatar's round one or a card's.
+Not shown: the inert content inside the root, which has no box of its own.
+
+### Highlight
+
+A soft highlight sweeps across every bar and shape, and more faintly across the skeleton's own surfaces, such as a card or a row, in step across the page. It keeps still for people who ask for reduced motion.
 
 ## Accessibility
 
@@ -158,6 +171,43 @@ Not shown: the inert content inside the root, `env-skeleton-content`, which has 
 - A label that names what is loading, on every indicator.
 - A status message where the wait is long, since the skeleton's content isn't read.
 - The delay before a skeleton or spinner appears.
+
+## In code
+
+### Usage
+
+Render the page's own components with `skeleton` while the data loads, over `placeholders<Item>(count)`: `items ?? placeholders<Item>(3)` gives them stand-ins to map over, and a text prop given as `undefined` renders as a bar of its text style's length. Wait 200 ms before showing the skeleton, through a timer of the application's own, and keep its space meanwhile.
+
+```tsx source=CardsLoading
+
+```
+
+```tsx source=SkeletonList
+
+```
+
+#### Indicators
+
+| What is loading                | Code                                                                   |
+| ------------------------------ | ---------------------------------------------------------------------- |
+| Content of a known shape       | Its components with `skeleton`, over `placeholders()`                  |
+| Content of no known shape      | `<Spinner label="Searching documents" showLabel />`                    |
+| An update to what is shown     | `<Spinner size="sm" label="…" />` beside it, `aria-busy` on the region |
+| The result of an action        | `pending` on the Button that started it                                |
+| Work whose end can be measured | `<Progress label={file.name} value={percent} />`                       |
+| A whole page                   | `loading` on the TopBar, named by `loadingLabel`                       |
+
+```tsx source=PageProgress
+
+```
+
+#### Media
+
+Give media an aspect ratio, with `width` and `height` or the CSS `aspect-ratio`, so it holds its place. Dev mode's `envui.layout.skeletonShift()` reports what moves as content replaces its skeleton.
+
+### Composition
+
+A skeleton's root takes `aria-busy` and its content is inert, in `env-skeleton-content`, which has no box of its own. Bars have small rounded corners, over missing text and text that is there alike, and shapes keep their component's corners, such as a chip's, an avatar's round one or a card's. A skeleton List holds no wrapper, and beside it a visually hidden status says what is loading.
 
 ## Changelog
 

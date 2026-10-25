@@ -3,7 +3,7 @@ title: Rating
 summary: A read-only rating as stars filled in half steps, named once for assistive technology.
 status: stable
 since: 0.7.0
-category: Content & guidance
+category: Data display
 aliases:
   - stars
   - star rating
@@ -12,8 +12,8 @@ aliases:
   - review stars
   - score
 useWhen:
-  - Showing a rating people gave, such as a review score or the average of many reviews.
-  - A compact summary of quality beside a name in a list, a card or a table row.
+  - A rating people gave, such as a review score or an average of many
+  - A compact summary of quality beside a name in a list, a card or a row
 avoidWhen:
   - text: Asking someone to give a rating; offer a few labelled choices instead.
     use: RadioGroup
@@ -31,8 +31,6 @@ components:
 
 ## Overview
 
-A rating shows a score people gave as stars, in half steps. It only shows a rating; it never asks for one.
-
 ```tsx example=ReviewScore
 
 ```
@@ -43,7 +41,7 @@ The stars, the number and the name show the value to the nearest half star: 4.3 
 
 ### In another language
 
-`messages.rating.label` on EnvUIProvider writes the name, and the provider's locale the number, such as 4,5 in German.
+The name and the number follow the application's language, such as 4,5 in German.
 
 ```tsx example=ApplicationLabel
 
@@ -51,15 +49,15 @@ The stars, the number and the name show the value to the nearest half star: 4.3 
 
 ## Variants
 
-```tsx example=Scales
+| Form            | Use for                             |
+| --------------- | ----------------------------------- |
+| Stars only      | A list of individual reviews.       |
+| With the number | A summary people compare.           |
+| Another scale   | Other than five steps, such as ten. |
+
+```tsx example=Scales caption="With the number, on scales of five and of ten stars."
 
 ```
-
-| Form            | Use for                                             |
-| --------------- | --------------------------------------------------- |
-| Stars only      | A list of individual reviews.                       |
-| With the number | A summary people compare (`showValue`).             |
-| Another scale   | Other than five steps, such as ten with `max={10}`. |
 
 ## When to use
 
@@ -71,7 +69,9 @@ The stars, the number and the name show the value to the nearest half star: 4.3 
 
 ```
 
-- Keep to one scale on a page, so ratings compare at a glance.
+### One scale
+
+Keep to one scale on a page, so ratings compare at a glance.
 
 ## Anatomy
 
@@ -98,6 +98,28 @@ The stars, the number and the name show the value to the nearest half star: 4.3 
 - Text that says whose rating it is.
 - `messages.rating.label` in the page's language.
 - A separate input, such as a RadioGroup, where people give a rating.
+
+## In code
+
+### Usage
+
+A Rating shows `value`, from 0 to `max`, such as 4.5, rounded to the nearest half star and kept within the scale; a value that is not a number shows no stars. `max` is the number of stars, 5 by default, as a whole number. `showValue` shows the rounded value as a number before the stars, in tabular digits and the locale's number format. A Rating only shows a rating: to ask for one, use a separate input, such as a RadioGroup.
+
+```tsx source=Scales
+
+```
+
+#### Name and language
+
+The stars are one image, named such as 4.5 out of 5 stars, from EnvUIProvider's `messages.rating.label`, or `formatLabel` for one rating, which receives the shown value and the number of stars. The number from `showValue` is hidden from assistive technology, since the name says it.
+
+```tsx source=ApplicationLabel
+
+```
+
+### Composition
+
+The parts are the number, `env-rating-value`, and the stars, `env-rating-stars`, each an `env-rating-star` with `data-fill`, `full` or `half`, and a half star's filled half, `env-rating-star-half`. Say beside it whose rating it is and how many people gave it.
 
 ## Changelog
 

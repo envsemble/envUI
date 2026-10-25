@@ -15,8 +15,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
-import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
-import { History } from '@envsemble/envui/icons/History';
+import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu } from '../theme/DisplaySettings';
@@ -33,11 +32,9 @@ import { docsRoute, homeRoute, routeHref } from './Address';
 /** The icon of each of the Site's destinations in its rail. */
 const sectionIcons: Record<SiteSection, typeof Home> = {
   Overview: Home,
+  Foundations: Palette,
   Components: Widgets,
   Patterns: Pattern,
-  Foundations: Palette,
-  Benchmark: Leaderboard,
-  Changelog: History,
 };
 
 /** The Site's destinations, for its rail: each opens its first page. */
@@ -85,7 +82,7 @@ function useCurrentInView() {
  * The Docs' drawer holds the wordmark and search on its first row, so it starts wider.
  */
 const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWidth: number }> = {
-  site: { defaultWidth: 15, minWidth: 13, maxWidth: 24 },
+  site: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
   docs: { defaultWidth: 21, minWidth: 18, maxWidth: 30 },
 };
 
@@ -143,7 +140,7 @@ interface NavigationProps {
   onSearch: () => void;
 }
 
-/** The envUI wordmark, which leads to the area's home, with "Docs" beside it in the Docs. */
+/** The envUI wordmark, which leads to the area's home, and the envUI Docs lockup in the Docs. */
 function Brand({ area }: { area: Area }) {
   return (
     <Link
@@ -152,19 +149,14 @@ function Brand({ area }: { area: Area }) {
       className="docs-brand"
       aria-label={area === 'docs' ? 'envUI Docs home' : 'envUI home'}
     >
-      <EnvUILogo />
-      {area === 'docs' && (
-        <span className="docs-brand-area" aria-hidden="true">
-          Docs
-        </span>
-      )}
+      {area === 'docs' ? <EnvUIDocsLogo className="docs-brand-docs" /> : <EnvUILogo />}
     </Link>
   );
 }
 
 /**
- * The Site's navigation, one pane: a Rail of its destinations, Overview, Components, Patterns,
- * Foundations, Benchmark and Changelog, under the envUI wordmark, beside a Drawer of the chosen
+ * The Site's navigation, one pane: a Rail of its destinations, Overview, Foundations, Components
+ * and Patterns, under the envUI wordmark, beside a Drawer of the chosen
  * destination's pages under search, both on the navigation's background with no seam or line
  * between them. A rail item opens its destination's first page; in the sheet of a narrower window
  * it leaves the sheet open, so a page can be chosen.

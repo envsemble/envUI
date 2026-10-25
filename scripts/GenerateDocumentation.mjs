@@ -24,6 +24,7 @@ import { marked } from 'marked';
 import { parse as parseYaml } from 'yaml';
 import { headingsOf } from './MarkdownHeadings.mjs';
 import { headingSlugger } from './SearchAnchors.mjs';
+import { optionTable, optionTableProblems } from './SiteContent.mjs';
 import { writeSearchIndex } from './SearchIndex.mjs';
 
 export const documentationDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
@@ -64,12 +65,14 @@ const changesetDirectory = fileURLToPath(new URL('../.changeset/', import.meta.u
 
 /** The index's component groups; a component page's category is one of them. */
 export const componentGroups = [
-  'Layout & surfaces',
   'Actions',
   'Forms & selection',
   'Navigation',
-  'Content & guidance',
-  'Feedback & overlays',
+  'Data display',
+  'Text & content',
+  'Feedback',
+  'Overlays',
+  'App frame & layout',
 ];
 export const statuses = ['experimental', 'beta', 'stable', 'deprecated'];
 /**
@@ -79,9 +82,10 @@ export const statuses = ['experimental', 'beta', 'stable', 'deprecated'];
 export const guideExportStatus = 'stable';
 /** What people are doing, in order: a pattern page's intent groups it in the catalogue and agents. */
 export const intents = [
-  'Collect and change information',
+  'Enter and change data',
   'Keep people informed',
-  'Find and navigate',
+  'Work with lists and tables',
+  'Frame the application',
 ];
 /** The kind of a page of docs/, by its folder. */
 export function pageKindOf(path) {
@@ -133,10 +137,71 @@ export const figureSections = [
   { id: 'anatomy', title: 'Anatomy' },
   { id: 'width', title: 'Adapting to width' },
   { id: 'accessibility', title: 'Accessibility', required: true },
+  { id: 'code', title: 'In code' },
   { id: 'props', title: 'Props', generated: true },
   { id: 'related', title: 'Related', generated: true },
   { id: 'changelog', title: 'Changelog' },
 ];
+
+/**
+ * The developer-only part of a page on the figure template: its "## In code" section, which the
+ * Site leaves out and the page's guide in the Docs, the package and agents show. It holds these
+ * `###` subsections, in this order, after the generated Import; Usage is required. Its code is
+ * Markdown fences of a few lines, or an example file of the page shown as code, in an empty
+ * ```tsx source=Name``` fence.
+ */
+export const codeSubsections = [
+  { title: 'Usage', required: true, holds: 'short code examples of its common uses and options' },
+  { title: 'Composition', holds: 'how its parts and the components around it fit together' },
+  { title: 'Customize', holds: 'its color properties, tokens and part classes for CSS' },
+];
+const sourcePattern = /^tsx\s+source=(\S+)\s*$/;
+
+/**
+ * The generated start of "## In code": how to import what the page documents or, on a pattern
+ * page, what it composes, from the entries props.json gives each export.
+ */
+export function importMarkdown(names, props) {
+  const byEntry = new Map();
+  for (const name of names) {
+    const entry = props?.exports[name]?.entries[0];
+    if (entry) byEntry.set(entry, [...(byEntry.get(entry) ?? []), name]);
+  }
+  if (!byEntry.size) return '';
+  const lines = [...byEntry].map(([entry, list]) => {
+    const sorted = [...list].sort((a, b) => a.localeCompare(b, 'en'));
+    const single = `import { ${sorted.join(', ')} } from '${entry}';`;
+    return single.length <= 100
+      ? single
+      : `import {\n${sorted.map((name) => `  ${name},`).join('\n')}\n} from '${entry}';`;
+  });
+  return `### Import\n\n\`\`\`tsx\n${lines.join('\n')}\n\`\`\`\n\n`;
+}
+
+/**
+ * The page's sections with "## In code" opening on the generated Import, and the section added,
+ * after Accessibility, where the page writes none.
+ */
+function withImport(sections, names, props) {
+  const imports = importMarkdown(names, props);
+  if (!imports) return sections;
+  const index = sections.findIndex((section) => section.id === 'code');
+  if (index === -1) {
+    const after = sections.findIndex((section) => section.id === 'accessibility');
+    const code = {
+      id: 'code',
+      title: 'In code',
+      blocks: [{ kind: 'markdown', markdown: `## In code\n\n${imports}` }],
+    };
+    return [...sections.slice(0, after + 1), code, ...sections.slice(after + 1)];
+  }
+  const [first, ...rest] = sections[index].blocks;
+  const markdown = first.markdown.replace(/^## In code\n+/, `## In code\n\n${imports}`);
+  return sections.with(index, {
+    ...sections[index],
+    blocks: [{ ...first, markdown }, ...rest],
+  });
+}
 
 /**
  * Frontmatter of a component page. `template` fields are required once the page is on the
@@ -263,18 +328,6 @@ export function libraryVersions({
     '0.0.0';
   if (largest) versions.add(bumped(base, largest));
   return versions;
-}
-
-/**
- * The version the catalogue documents: the newest of libraryVersions, which is the release the
- * pending changesets lead to, such as 1.0.0 before 1.0.0 is published; the library's own version
- * outside the repository.
- */
-export function documentedVersion() {
-  const versions = libraryVersions();
-  if (versions?.size) return [...versions].sort(compareVersions).at(-1);
-  const manifest = fileURLToPath(new URL('../packages/ui/package.json', import.meta.url));
-  return JSON.parse(readFileSync(manifest, 'utf8')).version;
 }
 
 export function readProps(directory = documentationDirectory) {
@@ -582,13 +635,11 @@ const figureAttributes = {
   variants: { allowed: ['caption', 'stage'], required: [] },
 };
 /**
- * The fills a figure's stage takes besides the default, the page's: `stage="raised"` where the
- * subject has the page's color, such as an open popup in the light theme, and would not show;
- * `stage="shaded"`, a shade darker than the page's and the navigation's backgrounds, where the
- * subject shows both, such as a Scaffold; `stage="none"`, no dots and no frame, where the subject
- * is a color or the page itself, such as the page's backgrounds.
+ * The fills a figure's stage takes besides the default, the canvas recessed from what it sits on:
+ * `stage="shaded"`, a canvas deeper than both the page's and the navigation's backgrounds, where
+ * the subject is a whole window that shows both, such as a Scaffold.
  */
-const stageFills = ['raised', 'shaded', 'none'];
+const stageFills = ['shaded'];
 /**
  * The attributes that are flags, written without a value: `open` shows the example's overlays
  * open on its stage, contained, and `enlarge` shows an anatomy figure's subject half as large
@@ -655,8 +706,52 @@ function readFigures(document, body, { examples, specimens, partNames }) {
   let subheading;
   /** The anatomy or variants figure an ordered list right after it is the legend of. */
   let legendOf;
+  /** The `###` subsections of "## In code" so far, by their index in codeSubsections. */
+  const codeOrder = [];
   for (const token of tokens) {
     problems.push(...headingProblems(token));
+    if (current?.id === 'code' && !(token.type === 'heading' && token.depth === 2)) {
+      // The developer-only part: `###` subsections of codeSubsections, in order, holding Markdown
+      // and example files shown as code.
+      current.tokens.push(token);
+      if (token.type === 'heading' && token.depth === 3) {
+        const index = codeSubsections.findIndex((item) => item.title === token.text);
+        if (token.text === 'Import')
+          problems.push('"### Import" of "## In code" is generated; remove it');
+        else if (index === -1)
+          problems.push(
+            `"### ${token.text}" is not a subsection of "## In code" (${codeSubsections.map((item) => item.title).join(', ')}); use a "####" heading inside one`,
+          );
+        else if (codeOrder.includes(index)) problems.push(`"### ${token.text}" appears twice`);
+        else if (codeOrder.some((other) => other > index))
+          problems.push(
+            `"### ${token.text}" must come before "### ${codeSubsections[Math.max(...codeOrder)].title}" in "## In code"`,
+          );
+        codeOrder.push(index);
+      } else if (token.type !== 'space' && !codeOrder.length)
+        problems.push('"## In code" starts with a "###" subsection, such as "### Usage"');
+      if (token.type === 'code' && sourcePattern.test(token.lang ?? '')) {
+        const name = token.lang.match(sourcePattern)[1];
+        if (!examples.has(name))
+          problems.push(
+            `source ${name} has no file apps/catalogue/src/examples/${document.id}/${name}.tsx`,
+          );
+        if (token.text.trim())
+          problems.push(`the fence of source ${name} must be empty; the build fills in its file`);
+        current.blocks.push({ kind: 'source', name });
+        continue;
+      }
+      if (token.type === 'code' && /^tsx\s+(?:example|do|dont|anatomy|variants)=/.test(token.lang))
+        problems.push(
+          `"## In code" shows code, not figures: show an example's source with \`tsx source=Name\`, not \`${token.lang}\``,
+        );
+      if (token.type === 'html' && specimenPattern.test(token.raw.trim()))
+        problems.push('"## In code" shows code, not specimens');
+      const last = current.blocks.at(-1);
+      if (last?.kind === 'markdown') last.markdown += token.raw;
+      else current.blocks.push({ kind: 'markdown', markdown: token.raw });
+      continue;
+    }
     if (token.type === 'heading' && token.depth === 2) {
       const section = figureSections.find((item) => item.title === token.text);
       if (!section) {
@@ -705,6 +800,12 @@ function readFigures(document, body, { examples, specimens, partNames }) {
     if (token.type === 'heading' && token.depth === 3) subheading = token.text;
     if (isPropsTable(token))
       problems.push(`${current.title} lists props in a table; the Props section is generated`);
+    // An option table, whose last column is Use for, shows on the Site as a legend of tags.
+    const options = optionTable(token);
+    if (options)
+      problems.push(
+        ...optionTableProblems(options).map((problem) => `${current.title}: ${problem}`),
+      );
     if (legendOf?.role === 'variants' && token.type === 'list' && token.ordered) {
       // A variants figure's legend: each variant's name in bold, labelling the example's items in
       // order, or the item a part reference names.
@@ -733,18 +834,32 @@ function readFigures(document, body, { examples, specimens, partNames }) {
           problems.push(
             `item ${index + 1} of the legend of anatomy ${legendOf.name} names no part, such as \`env-button\``,
           );
+        // The Site shows the part's name alone; its class names and props are for developers.
+        const name = item.text.match(/^\*\*([^*]+)\*\*/)?.[1];
+        if (!name)
+          problems.push(
+            `item ${index + 1} of the legend of anatomy ${legendOf.name} must start with the part's name in bold, such as **Label**, which is all the Site shows of it`,
+          );
         // Every class it names is one envUI styles or lists as a part.
         for (const name of (part ?? '').replace(/::text$/, '').match(/env-[\w-]+/g) ?? [])
           if (!partNames.classes.has(name))
             problems.push(
               `item ${index + 1} of the legend of anatomy ${legendOf.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
             );
-        return { part: part ?? '', text: item.text.replace(/\s+/g, ' ').trim() };
+        return {
+          part: part ?? '',
+          text: item.text.replace(/\s+/g, ' ').trim(),
+          ...(name && { name }),
+        };
       });
       legendOf = undefined;
       continue;
     }
     legendOf = undefined;
+    if (token.type === 'code' && sourcePattern.test(token.lang ?? ''))
+      problems.push(
+        `\`${token.lang}\` in "## ${current.title}": an example's source as code belongs in "## In code"`,
+      );
     if (
       token.type === 'code' &&
       /^tsx\s+(?:example|do|dont|anatomy|variants)=/.test(token.lang ?? '')
@@ -827,7 +942,7 @@ function readFigures(document, body, { examples, specimens, partNames }) {
         if (stageFills.includes(attributes.stage)) block.stage = attributes.stage;
         else
           problems.push(
-            `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(', ')}, or nothing for the dotted stage in the page's color`,
+            `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(', ')}, or nothing for the stage in the page's color`,
           );
       }
       if (attributes.open === true) block.open = true;
@@ -865,6 +980,10 @@ function readFigures(document, body, { examples, specimens, partNames }) {
   for (const section of figureSections)
     if (section.required && !sections.some((item) => item.id === section.id))
       problems.push(`"## ${section.title}" is required`);
+  if (sections.some((item) => item.id === 'code'))
+    for (const [index, item] of codeSubsections.entries())
+      if (item.required && !codeOrder.includes(index))
+        problems.push(`"## In code" needs a "### ${item.title}" subsection: ${item.holds}`);
   const overview = sections.find((item) => item.id === 'overview');
   if (overview && !overview.blocks.some((block) => block.kind === 'example'))
     problems.push(
@@ -1169,11 +1288,15 @@ export function readDocumentation(
       // Component and pattern pages may be on the figure template.
       if (template && (component || kind === 'pattern') && usesFigures(tokens)) {
         document.format = 'figures';
-        document.sections = readFigures(document, markdown, {
-          examples: filesOf(examples, id),
-          specimens: filesOf(specimens, id),
-          partNames,
-        });
+        document.sections = withImport(
+          readFigures(document, markdown, {
+            examples: filesOf(examples, id),
+            specimens: filesOf(specimens, id),
+            partNames,
+          }),
+          frontmatter.components ?? frontmatter.composes ?? [],
+          props,
+        );
       } else if (template)
         document.sections = readTemplate(document, markdown, {
           examples: filesOf(examples, id),
@@ -1409,7 +1532,12 @@ export function compileDocument(document, documents, { props, examples = example
     let text = '';
     for (const block of section.blocks) {
       if (block.kind === 'markdown') text += block.markdown;
-      else if (block.kind === 'example') {
+      else if (block.kind === 'source') {
+        // An example file shown as code in "## In code", its source filled in.
+        const source = exampleSource(document.id, block.name, examples).replace(/\n*$/, '\n');
+        const fence = fenceFor(source);
+        text += `${fence}tsx source=${block.name}\n${source}${fence}\n`;
+      } else if (block.kind === 'example') {
         // The fence outlasts any backticks in the source, and closes on a line of its own.
         const source = exampleSource(document.id, block.name, examples).replace(/\n*$/, '\n');
         const fence = fenceFor(source);
@@ -1499,7 +1627,11 @@ export function generateDocumentation() {
   const entries = documents.map((document) => {
     const { yaml: _yaml, frontmatter, sections, ...entry } = document;
     const kind = pageKindOf(document.path);
-    if (!frontmatter || !sectionedKinds.has(kind)) return entry;
+    if (!frontmatter) return entry;
+    // A page off the template, such as a foundation's, names the exports it documents, such as
+    // Icon, so a page that relates to one links to it.
+    if (!sectionedKinds.has(kind))
+      return frontmatter.components ? { ...entry, components: frontmatter.components } : entry;
     const metadata = {
       status: frontmatter.status,
       since: frontmatter.since,
@@ -1535,7 +1667,7 @@ export function generateDocumentation() {
       }),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../DocumentationTypes';\n\n/** The version these pages document: the next release while changesets are pending. */\nexport const documentedVersion = ${JSON.stringify(documentedVersion())};\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../DocumentationTypes';\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
   mkdirSync(dirname(generatedFile), { recursive: true });
   if (!existsSync(generatedFile) || readFileSync(generatedFile, 'utf8') !== source)
     writeFileSync(generatedFile, source);

@@ -3,7 +3,7 @@ title: Menu
 summary: Actions and destinations, opened from a trigger or a right click.
 status: stable
 since: 0.3.0
-category: Feedback & overlays
+category: Actions
 aliases:
   - dropdown menu
   - context menu
@@ -18,14 +18,13 @@ aliases:
   - theme menu
   - theme choice
 useWhen:
-  - A short list of actions behind one control, such as a row's or a toolbar's More actions.
-  - A few destinations that share a trigger, such as the account pages behind the avatar.
-  - Options that change a view, such as a sort order or whether hidden files show, as radio and checkbox items.
-  - Actions for an area or its rows on right click, beside the visible controls that offer them too (ContextMenu).
-  - Switching between the organizations a person belongs to, as the organization switcher pattern shows.
+  - A short list of actions behind one control, such as More actions
+  - A few destinations behind one control, such as the account's pages
+  - Options that change a view, such as a sort order
+  - Actions for an area on right click (ContextMenu)
 avoidWhen:
-  - text: The signed-in person's menu, with its header and theme submenu.
-    see: account-menu
+  - text: The signed-in person's menu, with its header and theme submenu, or an organization switcher.
+    see: account-and-organizations
   - text: Choosing a value for a form field.
     use: Select
   - text: An application menubar, such as File, Edit and View.
@@ -48,25 +47,15 @@ components:
 
 ## Overview
 
-A menu shows a short list of actions or destinations from one control, on a temporary surface. **Menu.Root** opens **Menu.Item** rows from its `trigger`, and the other parts build the rest.
-
 ```tsx example=IconsAndShortcuts
 
 ```
 
 ### Context menu
 
-**ContextMenu** opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>. Offer the same actions in a visible button too.
+ContextMenu opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>.
 
 ```tsx example=ContextMenuForRows
-
-```
-
-### Account menu
-
-An AvatarButton trigger and a **Menu.Header** with the account. The full menu, with the theme and the organizations, is the [account menu](../patterns/account-menu.md) pattern, and a switch between organizations of its own the [organization switcher](../patterns/organization-switcher.md).
-
-```tsx example=AccountMenu
 
 ```
 
@@ -74,7 +63,7 @@ An AvatarButton trigger and a **Menu.Header** with the account. The full menu, w
 
 ### Groups and separators
 
-**Menu.Group** puts items under a heading; **Menu.Separator** splits sets without one.
+Groups put items under a heading, and separators split sets without one.
 
 ```tsx example=GroupsAndSeparators
 
@@ -82,7 +71,7 @@ An AvatarButton trigger and a **Menu.Header** with the account. The full menu, w
 
 ### Radio and checkbox items
 
-A **Menu.RadioItem** checks one choice and closes the menu; a **Menu.CheckboxItem** toggles and keeps it open. **ThemeRadioGroup** is the theme choice as radio items.
+A radio item checks one choice and closes the menu, and a checkbox item toggles and keeps it open. ThemeRadioGroup is the theme choice as radio items.
 
 ```tsx example=Choices
 
@@ -90,7 +79,7 @@ A **Menu.RadioItem** checks one choice and closes the menu; a **Menu.CheckboxIte
 
 ### Submenus
 
-A **Menu.Submenu** row opens a nested menu beside it, on hover or with <kbd>→</kbd>.
+A submenu's row opens a nested menu beside it, on hover or with <kbd>→</kbd>.
 
 ```tsx example=Submenus
 
@@ -98,7 +87,7 @@ A **Menu.Submenu** row opens a nested menu beside it, on hover or with <kbd>→<
 
 ### Destinations
 
-With `href`, an item is a link, through the `LinkProvider`.
+An item can go to a page, as a link the application's router follows.
 
 ```tsx example=Destinations
 
@@ -106,33 +95,33 @@ With `href`, an item is a link, through the `LinkProvider`.
 
 ## When to use
 
-```tsx do=FrequentFirst open stage=raised caption="Frequent actions first, and a destructive one last, apart."
+```tsx do=FrequentFirst open caption="Frequent actions first, and a destructive one last, apart."
 
 ```
 
-```tsx dont=DeleteFirst open stage=raised caption="Delete first, where the keyboard lands."
+```tsx dont=DeleteFirst open caption="Delete first, where the keyboard lands."
 
 ```
 
-```tsx do=DisabledWithReason open stage=raised caption="Keep an unavailable item, disabled, with a description of why."
+```tsx do=DisabledWithReason open caption="Keep an unavailable item, disabled, with a description of why."
 
 ```
 
-```tsx dont=HiddenItem open stage=raised caption="An item that disappears, so people wonder where it went."
+```tsx dont=HiddenItem open caption="An item that disappears, so people wonder where it went."
 
 ```
 
-- Keep submenus to one level, and frequent commands out of them.
-- No fields or other controls inside a menu.
+### Submenus and controls
+
+Keep submenus to one level, with frequent commands out of them, and put no fields or other controls inside a menu.
 
 ### Content
 
-- Start an action with a verb, such as Rename, and name a destination after its page.
-- Show a `shortcut` only where the application handles its keys.
+Start an action with a verb, such as Rename, and name a destination after its page. Show a shortcut only where the application handles its keys.
 
 ## Anatomy
 
-```tsx anatomy=MenuAnatomy open stage=raised
+```tsx anatomy=MenuAnatomy open
 
 ```
 
@@ -144,11 +133,7 @@ With `href`, an item is a link, through the `LinkProvider`.
 6. **Description** (`env-menu-item-description`, `description`)
 7. **Separator** (`env-menu-separator`)
 
-Not shown: a submenu's row, `env-menu-submenu-trigger`, and the check of a choice, `env-menu-item-check`.
-
-### Colors
-
-`--env-menu-item-container`, `--env-menu-item-content` and `--env-menu-item-icon` set the colors of one Menu, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+Not shown: a submenu's row and the check of a choice.
 
 ## Accessibility
 
@@ -174,6 +159,97 @@ Not shown: a submenu's row, `env-menu-submenu-trigger`, and the check of a choic
 - An `aria-label` for every Menu.Root and ContextMenu, and for an icon-only trigger.
 - A visible control for every action of a context menu.
 - Focus for after an action removes the trigger, such as on the next row.
+
+## In code
+
+### Usage
+
+Menu.Root opens from its `trigger`, such as a Button, an IconButton or an AvatarButton, which receives the menu button semantics and must accept native props and a ref; `aria-label` names the menu. Its children are Menu.Header, Menu.Item, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem, Menu.Submenu and Menu.Separator. A Menu.Item runs its `onClick` and takes its label as `children`, a decorative `icon`, a muted `description`, read as its description, a `shortcut`, such as `Ctrl+D`, shown as Kbd keys and announced as `aria-keyshortcuts`, and `end` content, such as a Badge, which is part of its name; `disabled` keeps it in place, dimmed, with `aria-disabled`.
+
+```tsx source=IconsAndShortcuts
+
+```
+
+#### Opening
+
+`side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction, and it flips where the window has no room; `align` is `start`, `center` or `end`, the default. Leave the menu uncontrolled, with `defaultOpen` to start open, or control it with `open` and `onOpenChange`. `className`, `ref`, `style` and the other native props reach the popup.
+
+#### Context menu
+
+ContextMenu makes its one child the region, which must accept native props and a ref, and takes the menu's parts as `content`, or a function that receives the element the menu opened on and returns them; one that returns `null` leaves the menu closed there. `disabled` keeps the browser's own context menu; `open`, `onOpenChange` and `anchorPoint` open it from another control at a point. Offer every action as a visible control too.
+
+```tsx source=ContextMenuForRows
+
+```
+
+#### Account menu
+
+Menu.Header holds the context at the top, such as the signed-in person's avatar, name and e-mail address, under an AvatarButton trigger, as the [account and organizations](../patterns/account-and-organizations.md) pattern builds it.
+
+```tsx
+import { Avatar, AvatarButton, Column, Menu, Row, Text } from '@envsemble/envui';
+import { Logout } from '@envsemble/envui/icons/Logout';
+import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { Settings } from '@envsemble/envui/icons/Settings';
+
+export default function AccountMenu() {
+  return (
+    // The avatar sits at the end of a topbar, so the menu lines up with the trigger's end.
+    <Row justify="end" style={{ inlineSize: 'min(100%, 20rem)' }}>
+      <Menu.Root
+        aria-label="Account"
+        trigger={
+          <AvatarButton
+            name="Alex Morgan"
+            description="alex@example.com"
+            aria-label="Open account menu"
+          />
+        }
+      >
+        <Menu.Header>
+          <Column align="center" gap={1} padding={2} style={{ textAlign: 'center' }}>
+            <Avatar name="Alex Morgan" size="lg" />
+            <Text>Alex Morgan</Text>
+            <Text variant="body-sm" emphasis="muted">
+              alex@example.com
+            </Text>
+          </Column>
+        </Menu.Header>
+        <Menu.Item href="/account" icon={<ManageAccounts />}>
+          Account settings
+        </Menu.Item>
+        <Menu.Item icon={<Settings />}>Preferences</Menu.Item>
+        <Menu.Separator />
+        <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+      </Menu.Root>
+    </Row>
+  );
+}
+```
+
+#### Groups, choices and submenus
+
+Menu.Group puts items under its `label`; Menu.Separator splits sets without one. Menu.RadioGroup holds Menu.RadioItems, each with a `value`, and takes `value`, `onValueChange` and a `label`, or `aria-labelledby`; a radio item closes the menu unless `closeOnClick={false}`. Menu.CheckboxItem takes `checked` and `onCheckedChange`, and keeps the menu open unless `closeOnClick`. ThemeRadioGroup is the theme choice as radio items, from the nearest ThemePreferenceProvider, or from `value` and `onValueChange`; it keeps the menu open so people see the theme change. Menu.Submenu is a row with its `label` that opens its children beside it; `open`, `defaultOpen` and `onOpenChange` suit loading its items as it opens.
+
+```tsx source=Choices
+
+```
+
+#### Destinations
+
+With `href`, a Menu.Item is a link, through the link component of `LinkProvider`, and the menu closes as it is followed; its `onClick` runs as it is followed, `target` and `rel` are a native link's, and a disabled one renders no link. `aria-current="page"` marks the page shown now.
+
+```tsx source=Destinations
+
+```
+
+### Composition
+
+The parts are the popup, `env-menu`, and its positioner, `env-menu-positioner`; the header, `env-menu-header`; a group, `env-menu-group`, with its label, `env-menu-group-label`; each item, `env-menu-item`, with `data-highlighted` and `data-disabled`, its label and description in `env-menu-item-text`, `env-menu-item-label` and `env-menu-item-description`, and its end, `env-menu-item-end`, with the shortcut, `env-menu-item-shortcut`; a radio or checkbox item, `env-menu-choice`, with `data-checked` and its check in `env-menu-item-check` and `env-menu-item-check-mark`; a submenu's row, `env-menu-submenu-trigger`, with its chevron, `env-menu-submenu-chevron`; and the separator, `env-menu-separator`.
+
+### Customize
+
+`--env-menu-item-container`, `--env-menu-item-content` and `--env-menu-item-icon` set the colors of one Menu's items, through `style` or CSS: their fill, their labels and their leading icons. The highlight and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Changelog
 

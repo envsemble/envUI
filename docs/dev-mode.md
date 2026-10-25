@@ -136,7 +136,7 @@ Device lists common phones, tablets, laptops and screens at their CSS viewport s
 
 ### Dev mode's theme
 
-Dev mode's own UI, its toolbar, side columns, popovers and the view's background, takes the page's theme as it opens. Dev mode theme in the toolbar sets it to light or dark instead, with or without high contrast, and remembers the choice in this browser across reloads; Same as the page goes back. The page keeps its own theme, and the planes show it as it is.
+Dev mode's own UI, its toolbar, side columns, popovers and the view's background, takes the page's theme as it opens: the theme of the boundary around its `root`, so a page in a nested `Theme` of another theme than the document's has dev mode in its theme too. Dev mode theme in the toolbar sets it to light or dark instead, with or without high contrast, and remembers the choice in this browser across reloads; Same as the page goes back. The page keeps its own theme, and the planes show it as it is.
 
 A red outline marks a node with problems; coloured by window class, a solid outline is a size container.
 

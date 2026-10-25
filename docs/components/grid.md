@@ -3,7 +3,7 @@ title: Grid
 summary: Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - columns
   - grid layout
@@ -14,9 +14,9 @@ aliases:
   - auto-fill
   - responsive grid
 useWhen:
-  - Items of one kind fill the width in as many columns as fit, such as cards or stats.
-  - A main column sits beside a narrower one, such as a summary and its details.
-  - Content lines up in a set number of equal columns.
+  - Items of one kind in as many columns as fit, such as cards or stats
+  - A main column beside a narrower one, such as a summary and its details
+  - Content lined up in a set number of equal columns
 avoidWhen:
   - text: Content top to bottom, one item per line.
     use: Column
@@ -38,19 +38,17 @@ components:
 
 ## Overview
 
-Grid lays out its children in columns, the same step of the spacing scale apart. Like [Row](row.md), [Column](column.md) and [Box](box.md), it sizes to its content and never paints.
-
 ```tsx example=ProjectCards
 
 ```
 
 ## Variants
 
-| Columns                                   | Lays out                                                   |
-| ----------------------------------------- | ---------------------------------------------------------- |
-| `columns={{ min: '14rem' }}`              | As many equal columns as fit at 14 rem; one when narrow.   |
-| `columns={3}`                             | Three equal columns at every width.                        |
-| `columns="minmax(0, 2fr) minmax(0, 1fr)"` | A `grid-template-columns` template, such as a main column. |
+| Columns        | Use for                                                                   |
+| -------------- | ------------------------------------------------------------------------- |
+| As many as fit | Items of one kind, each at least a minimum width; one column when narrow. |
+| A set number   | Content in a set number of equal columns at every width.                  |
+| A template     | Columns of different widths, such as a main column and its details.       |
 
 ```tsx example=MainAndDetails caption="A template: the main column twice as wide as its details."
 
@@ -66,13 +64,9 @@ Grid lays out its children in columns, the same step of the spacing scale apart.
 
 ```
 
-- Write `minmax(0, 1fr)` in a template rather than `1fr`, so long content wraps.
-- Keep the visual order the document order: no `grid-row` or `grid-column` that moves what people read or tab through.
-- `render={<ul />}`, with each child a `li`, for items people count.
-
 ## Adapting to width
 
-With a minimum, a grid needs no container query: as many columns as fit, and the rest of a row stays empty, so every item keeps one width.
+Given a minimum width, a grid fits as many columns as it can, with no breakpoints of its own; the rest of a row stays empty, so every item keeps one width.
 
 ```tsx example=ColumnsThatFit widths="22 50"
 
@@ -88,6 +82,34 @@ With a minimum, a grid needs no container query: as many columns as fit, and the
 ### You provide
 
 - A list, with a name, where the items are a list people count.
+
+## In code
+
+### Usage
+
+Grid lays out its children in `columns`, one by default, with `gap` between rows and columns, a step of the spacing scale, none by default. `align` lines each child up in its cell's height: `stretch`, the default, fills the row, and `start`, `center` and `end` keep it at its own height. Like Box, it takes `render`, `name`, `container` and `padding`.
+
+```tsx source=ProjectCards
+
+```
+
+#### Columns
+
+| Columns                                   | Lays out                                                   |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| `columns={{ min: '14rem' }}`              | As many equal columns as fit at 14 rem; one when narrow.   |
+| `columns={3}`                             | Three equal columns at every width.                        |
+| `columns="minmax(0, 2fr) minmax(0, 1fr)"` | A `grid-template-columns` template, such as a main column. |
+
+With a minimum, the grid fits as many equal columns as it can at that width or wider, with empty columns where items run out, so it needs no container query. In a template, write `minmax(0, 1fr)` rather than `1fr`, so long content wraps.
+
+```tsx source=MainAndDetails
+
+```
+
+### Composition
+
+Keep the visual order the document order: no `grid-row` or `grid-column` that moves what people read or tab through. For items people count, use `render={<ul />}`, with each child a `li`, and name the list.
 
 ## Changelog
 

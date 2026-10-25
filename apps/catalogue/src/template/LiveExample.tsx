@@ -15,6 +15,7 @@ import { CodeBlock } from '@envsemble/envui/content';
 import type { StageFill } from '../DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 import { OpenExample } from './OpenExample';
+import { InteractiveMark } from './InteractiveMark';
 import { Loading } from './Loading';
 
 /**
@@ -35,6 +36,9 @@ const sources = new Map<string, Promise<string>>();
 const sourceLoads = new Map<string, () => Promise<string>>();
 
 export const examplePath = (page: string, name: string) => `../examples/${page}/${name}.tsx`;
+
+/** Whether a page has an example file of the name, such as one a gallery picks for its tile. */
+export const hasExample = (page: string, name: string) => examples.has(examplePath(page, name));
 
 /**
  * The source of an example, loaded once and kept for every later render. A load that fails is kept
@@ -88,14 +92,15 @@ function Source({ path, name }: { path: string; name: string }) {
  */
 export const CodeSlot = createContext<HTMLElement | null>(null);
 
-/** An example's source in a Code disclosure, with a copy button; a template preview shows it too. */
-export function ExampleCode({ page, name }: { page: string; name: string }) {
+/**
+ * An example's source as an open code block with a copy button, loaded with the page that shows it:
+ * the code of a page's guide in the Docs, which shows an example file as code.
+ */
+export function ExampleSource({ page, name }: { page: string; name: string }) {
   // A retry renders the code afresh from its file loaded again.
   const [, setAttempt] = useState(0);
-  const slot = useContext(CodeSlot);
-  const [open, setOpen] = useState(false);
   const path = examplePath(page, name);
-  const code = (
+  return (
     <LoadBoundary
       what="code"
       modules={[`src/examples/${page}/${name}.tsx?raw`]}
@@ -109,6 +114,13 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
       </Suspense>
     </LoadBoundary>
   );
+}
+
+/** An example's source in a Code disclosure, with a copy button; a template preview shows it too. */
+export function ExampleCode({ page, name }: { page: string; name: string }) {
+  const slot = useContext(CodeSlot);
+  const [open, setOpen] = useState(false);
+  const code = <ExampleSource page={page} name={name} />;
   const title = (
     <>
       Code<span className="docs-visually-hidden">, {name}.tsx</span>
@@ -185,8 +197,9 @@ export const keepLinksInPlace = {
 };
 
 /**
- * An example rendered live in the documentation's theme, with its source and a copy button; with
- * `widths`, in a frame of each width, one to a row, and with `caption`, a sentence below it.
+ * An example rendered live in the documentation's theme, on the recessed canvas, with its source
+ * and a copy button; with `widths`, in a frame of each width, one to a row, and with `caption`, a
+ * sentence below it.
  */
 export function LiveExample({
   page,
@@ -242,6 +255,7 @@ export function LiveExample({
                 <div className="docs-width-box" style={{ inlineSize: `${width}rem` }}>
                   {render}
                 </div>
+                <InteractiveMark enabled={!open} />
               </Column>
               <Text render={<figcaption />} variant="caption" emphasis="muted">
                 {width} rem wide
@@ -262,6 +276,7 @@ export function LiveExample({
           {...keepLinksInPlace}
         >
           {render}
+          <InteractiveMark enabled={!open} />
         </Column>
       )}
       {caption && (

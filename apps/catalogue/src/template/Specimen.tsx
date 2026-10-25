@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, type ComponentType } from 'react';
-import { SpecimenHeadingLevel } from '../previews/Example';
+import { SpecimenHeadingLevel, SpecimenStage } from '../previews/Example';
 import { Preview } from '../previews/Preview';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 import { Loading } from './Loading';
@@ -44,9 +44,11 @@ export function Specimen({
           }}
         >
           <Suspense fallback={<Loading what="specimen" />}>
-            {/* The specimen is looked up among module-level lazy components, not created here. */}
-            {/* eslint-disable-next-line react-hooks/static-components */}
-            <Component />
+            <SpecimenStage value>
+              {/* The specimen is looked up among module-level lazy components, not created here. */}
+              {/* eslint-disable-next-line react-hooks/static-components */}
+              <Component />
+            </SpecimenStage>
           </Suspense>
         </LoadBoundary>
       </Preview>

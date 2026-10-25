@@ -332,6 +332,24 @@ test("dev mode's own theme switches, persists and leaves the page's alone", asyn
   await expect(editor).toHaveAttribute('data-env-theme', pageTheme!);
 });
 
+test('dev mode takes the theme of the boundary around its root', async ({ page }) => {
+  // The root sits in a nested theme boundary of the other theme, such as a dark region of a light
+  // page: dev mode takes the root's theme, not the document's.
+  await page.goto(`${fixtureUrl}/?fixture=dev-mode&root=.dev-page`);
+  await page.waitForFunction(() => window.envui?.layout !== undefined);
+  const documentTheme = await page
+    .locator('.env-theme:not([data-env-dev] *)')
+    .first()
+    .getAttribute('data-env-theme');
+  const other = documentTheme === 'dark' ? 'light' : 'dark';
+  await page.locator('.dev-scaffold').evaluate((element, theme) => {
+    element.classList.add('env-theme');
+    element.setAttribute('data-env-theme', theme);
+  }, other);
+  await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
+  await expect(page.locator('.env-dev')).toHaveAttribute('data-env-theme', other);
+});
+
 test('the side columns hide and show, and the view takes their room', async ({ page }) => {
   await open(page);
   await page.getByRole('button', { name: 'Dev mode', exact: true }).click();

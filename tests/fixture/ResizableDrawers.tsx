@@ -7,6 +7,16 @@ const destinations: DrawerDestination[] = [
   { label: 'Archive', href: '#archive' },
 ];
 
+/** Destinations whose label and heading are cut short once the drawer is narrowed. */
+const longDestinations: DrawerDestination[] = [
+  { label: 'Inbox', href: '#inbox', group: 'Shared across the organization', current: true },
+  {
+    label: 'Reviews waiting for the whole team',
+    href: '#reviews',
+    group: 'Shared across the organization',
+  },
+];
+
 /** A drawer beside some content in a container of a given width, as in a Scaffold. */
 function Frame({ width, dir, children }: { width: string; dir?: 'rtl'; children: ReactNode }) {
   return (
@@ -29,7 +39,8 @@ function Frame({ width, dir, children }: { width: string; dir?: 'rtl'; children:
 /**
  * Resizable drawers, mounted with ?fixture=resizable-drawers: one that keeps its own width, one
  * the application controls in a narrower container, which halves its room, one in right-to-left
- * text, one that isn't resizable, and one given a width that is no number.
+ * text, one that isn't resizable, one whose long label and heading it cuts short as it narrows,
+ * and one given a width that is no number.
  */
 export function ResizableDrawersFixture() {
   const [width, setWidth] = useState(20);
@@ -59,6 +70,15 @@ export function ResizableDrawersFixture() {
       </Frame>
       <Frame width="64rem">
         <Drawer aria-label="Fixed" destinations={destinations} />
+      </Frame>
+      <Frame width="64rem">
+        <Drawer
+          aria-label="Long labels"
+          destinations={longDestinations}
+          resizable
+          defaultWidth={22}
+          minWidth={10}
+        />
       </Frame>
       {/* A width that is no number, as from a stored value that didn't parse: ignored. */}
       <Frame width="64rem">

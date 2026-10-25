@@ -2,12 +2,18 @@ import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl } from './Servers';
 import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
 import { chooseScheme } from './CatalogueThemes';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
 import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
+import { technicalText } from '../../scripts/SiteContent.mjs';
 import { references } from '../../apps/catalogue/src/Reference';
-import { allPages, normalizeRoute } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import {
+  allPages,
+  normalizeRoute,
+  sectionHome,
+  siteSections,
+} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 import { displayStorageKeys } from '../../apps/catalogue/src/theme/DisplayStorage';
 
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
@@ -46,22 +52,54 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'foundations/colors/preview': 'foundations/colors',
     'foundations/colors/usage': 'docs/foundations/colors',
     'foundations/tokens': 'docs/tokens',
+    // Nine foundations became six: merged pages open the page they joined.
+    'foundations/scale': 'foundations/spacing',
+    'foundations/scale/usage': 'docs/foundations/spacing',
+    'docs/foundations/scale': 'docs/foundations/spacing',
+    'foundations/composition': 'docs/customizing',
+    'docs/foundations/composition': 'docs/customizing',
+    'docs/customizing-colors': 'docs/customizing',
     'overview/components': 'overview',
     'overview/components?section=components-actions': 'components?section=components-actions',
     'overview/get-started': 'docs/setup',
     'overview/get-started?skill=migrate&section=local-development': 'docs/agent-skills',
     'get-started/migration': 'docs/migration',
+    // The Site's Get started page is the setup guide.
+    'get-started': 'docs/setup',
     'contributing/library-development': 'overview',
+    // The Site's changelog is the Docs' now, with its release notes.
+    changelog: 'docs/changelog',
+    'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
+    // Pages folded into another open it, at the section that holds them, and in the Docs its page.
+    'components/bar': 'components/drawer',
+    'components/rail/props': 'docs/components/drawer',
+    'components/page-header?section=sticky': 'components/page?section=sticky',
+    'docs/components/page-header': 'docs/components/page',
+    'patterns/feature-cards': 'components/card?section=feature-card',
+    'docs/patterns/feature-cards': 'docs/components/card',
+    'patterns/search-trigger':
+      'components/command-palette?section=opening-it-the-button-and-the-shortcut',
+    'components/search-trigger':
+      'components/command-palette?section=opening-it-the-button-and-the-shortcut',
+    'docs/patterns/search-trigger': 'docs/components/command-palette',
+    // Patterns merged into others open the pattern they joined, on the Site and in the Docs.
+    'patterns/window-frame': 'patterns/app-frame',
+    'docs/patterns/window-frame': 'docs/patterns/app-frame',
+    'components/window-frame': 'patterns/app-frame',
+    'patterns/account-menu': 'patterns/account-and-organizations',
+    'patterns/organization-switcher': 'patterns/account-and-organizations',
+    'docs/patterns/organization-switcher': 'docs/patterns/account-and-organizations',
+    // The content guidelines are the Writing guide in the Docs.
+    'foundations/content': 'docs/writing',
+    'docs/foundations/content': 'docs/writing',
   };
   for (const [from, to] of Object.entries(routes)) expect(normalizeRoute(from), from).toBe(to);
   // Every page of both areas is its own route.
   for (const { path } of allPages) expect(normalizeRoute(path)).toBe(path);
 });
 
-test("a foundation's guide in the Docs renders shared Markdown and follows relative links", async ({
-  page,
-}) => {
-  await page.goto(`${catalogueUrl}/docs/foundations/composition`);
+test('a guide in the Docs renders shared Markdown and follows relative links', async ({ page }) => {
+  await page.goto(`${catalogueUrl}/docs/customizing`);
   await expect(page.getByRole('heading', { name: 'Compose one root', exact: true })).toBeVisible();
   await expect(
     page.getByText('Surface supplies fill, padding and corners', { exact: false }),
@@ -100,14 +138,15 @@ test("a foundation's guide in the Docs renders shared Markdown and follows relat
 test('palette editing uses public controls and remains temporary and independent between themes', async ({
   page,
 }) => {
-  await page.goto(`${catalogueUrl}/foundations/colors`);
+  // The editable palette, with its tokens and values, is on the colors guide in the Docs.
+  await page.goto(`${catalogueUrl}/docs/foundations/colors`);
   const app = page.locator('.docs-app');
   const canvasValue = () =>
     app.evaluate((element) =>
       getComputedStyle(element).getPropertyValue('--env-color-bg-page').trim(),
     );
   const initialLight = await canvasValue();
-  const swatch = page.getByRole('button', { name: 'Pick page background color', exact: true });
+  const swatch = page.getByRole('button', { name: /^#[\da-f]{6} page background: pick a color$/ });
   await expect(swatch).toHaveClass(/env-button/);
   await swatch.click();
   const dialog = page.getByRole('dialog', { name: 'Page background', exact: true });
@@ -135,7 +174,7 @@ test('live examples keep links in place, show their source, and specimens show f
   await page.goto(`${catalogueUrl}/components/button`);
   const address = page.url();
   // Links in an example keep their semantics without leaving the documentation.
-  const destinations = page.getByRole('group', { name: 'Button links example', exact: true });
+  const destinations = page.getByRole('group', { name: 'Links example', exact: true });
   await destinations.getByRole('link', { name: 'Read the guide', exact: true }).press('Enter');
   expect(page.url()).toBe(address);
   await destinations
@@ -161,68 +200,6 @@ test('live examples keep links in place, show their source, and specimens show f
   // Catalogue-only specimens, such as the forced interaction states, sit in the section they
   // illustrate on the figure template.
   await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
-});
-
-test("the Colors page's forced interaction states paint what the components' own states paint", async ({
-  page,
-}) => {
-  // The samples take each state's color through public color properties. A component's own hover
-  // and press, forced on its rest sample, must paint the same, so the page can't drift from it.
-  await page.goto(`${catalogueUrl}/foundations/colors`);
-  await page.addStyleTag({
-    content: '*, *::before, *::after { transition: none !important; animation: none !important; }',
-  });
-  const table = page.getByRole('region', { name: 'Interaction states', exact: true });
-  await expect(table).toBeVisible();
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send('DOM.enable');
-  await cdp.send('CSS.enable');
-  const { root } = await cdp.send('DOM.getDocument', { depth: -1 });
-  const nodes = async (selector: string) =>
-    (await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector })).nodeIds;
-  const samples = {
-    'List row': ['.env-list-item', 'background-color'],
-    'Navigation item': ['.env-drawer-item', 'background-color'],
-    Field: ['.env-text-field-control', 'border-top-color'],
-    'Primary button': ['.env-button', 'background-color'],
-    'Secondary button': ['.env-button', 'background-color'],
-    'Outline button': ['.env-button', 'background-color'],
-    'Ghost button': ['.env-button', 'background-color'],
-  } as const;
-  for (const [sample, [part, property]] of Object.entries(samples)) {
-    const cells = table.getByRole('row', { name: sample, exact: false }).getByRole('cell');
-    const paint = (cell: number) =>
-      cells
-        .nth(cell)
-        .locator(part)
-        .first()
-        .evaluate((element, name) => getComputedStyle(element).getPropertyValue(name), property);
-    await cells
-      .nth(0)
-      .locator(part)
-      .first()
-      .evaluate((element) => element.setAttribute('data-forced-target', ''));
-    const [target] = await nodes('[data-forced-target]');
-    // A row is pressed through its target, which the row's style reads.
-    const inner = await nodes('[data-forced-target] [data-row-target]');
-    for (const [cell, state] of [
-      [1, ['hover']],
-      [2, ['hover', 'active']],
-    ] as const) {
-      await cdp.send('CSS.forcePseudoState', { nodeId: target!, forcedPseudoClasses: [...state] });
-      for (const nodeId of inner)
-        await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [...state] });
-      expect(await paint(0), `${sample}, ${state.join(' and ')}`).toBe(await paint(cell));
-    }
-    await cdp.send('CSS.forcePseudoState', { nodeId: target!, forcedPseudoClasses: [] });
-    for (const nodeId of inner)
-      await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [] });
-    await cells
-      .nth(0)
-      .locator(part)
-      .first()
-      .evaluate((element) => element.removeAttribute('data-forced-target'));
-  }
 });
 
 test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
@@ -280,8 +257,30 @@ test('a component page shows plain sections, equal cells and the parts of its an
     };
   });
   expect(corners).toEqual({ outer: true, inner: true, larger: true });
-  // When to use is a plain list; Related, at the end, has a tile for each alternative, of one
-  // size, each a picture of it, inert and fitted to its stage, once the section nears the viewport.
+  // When to use is a check list, a guidance list, where a component named at an item's end
+  // follows it after a muted dot: the Button family's own page, so not a link.
+  const useWhen = page.locator('.docs-when .docs-guidance li');
+  await expect(useWhen.nth(2)).toHaveText(
+    'A familiar action as an icon alone, in a dense place · IconButton',
+  );
+  await expect(page.locator('.docs-when .docs-list-name')).toHaveText([
+    'IconButton',
+    'ConfirmButton',
+    'CopyButton',
+    'ButtonGroup',
+  ]);
+  await expect(page.locator('.docs-when a')).toHaveCount(0);
+  // A live example carries the touch mark, named as its tooltip says; a picture, such as the
+  // anatomy figure, has none.
+  await expect(
+    page
+      .locator('[data-section="overview"] .docs-live-example')
+      .first()
+      .getByRole('img', { name: 'Interactive: try it' }),
+  ).toBeVisible();
+  await expect(page.locator('.docs-anatomy .docs-interactive-mark')).toHaveCount(0);
+  // Related, at the end, has a tile for each alternative, of one size, each a picture of it,
+  // inert and fitted to its stage, once the section nears the viewport.
   await expect(page.locator('[data-section="usage"] .docs-related-tile')).toHaveCount(0);
   const tiles = page.locator('[data-section="related"] .docs-related-tile');
   await expect(tiles.locator('.docs-related-name')).toHaveText([
@@ -364,12 +363,13 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
   }
 });
 
-test('every dotted stage is the only frame of its figure', async ({ page }) => {
+test('every stage is the only frame of its figure', async ({ page }) => {
   // It visits every page on the figure template, whose examples load as each opens.
   test.slow();
   // One frame per figure: no stage sits inside another framed or filled box in the article, such
   // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
-  // frame, which holds its stage and its verdict bar, is the figure's one frame.
+  // frame, which holds its stage and its verdict bar, is the figure's one frame. The band a group of
+  // sections sits on is outside the group, so it is the page there, not a frame.
   const pages = references.filter((reference) => reference.format === 'figures');
   expect(pages.length).toBeGreaterThan(0);
   await page.goto(`${catalogueUrl}/`);
@@ -379,8 +379,7 @@ test('every dotted stage is the only frame of its figure', async ({ page }) => {
     await expect(page.locator('.docs-loading')).toHaveCount(0);
     const framed = await page.evaluate(() => {
       const stages = document.querySelectorAll(
-        // A figure without a stage (stage="none") has no frame to count.
-        ".docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll):not([data-stage='none'], [data-stage='none'] *)",
+        '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-related-stage, .docs-specimen-grid, .docs-matrix-scroll)',
       );
       const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
       const found: string[] = [];
@@ -410,6 +409,269 @@ test('every dotted stage is the only frame of its figure', async ({ page }) => {
     });
     expect(framed, `${id} has a stage inside another frame`).toEqual([]);
   }
+});
+
+test("a specimen's titles and captions name options in words, not values", async ({ page }) => {
+  // The Site speaks plain language in its specimens too: Small rather than sm, Step 1 rather than
+  // gap={1}. A value starts in lower case or is written as code, with =, braces, quotes or --.
+  const pages = readdirSync('docs/components')
+    .filter((file) => readFileSync(`docs/components/${file}`, 'utf8').includes('<!-- specimen:'))
+    .map((file) => file.replace(/\.md$/, ''));
+  expect(pages.length).toBeGreaterThan(0);
+  await page.goto(`${catalogueUrl}/`);
+  for (const id of pages) {
+    await goTo(page, `/components/${id}`);
+    await expect(
+      page.locator('.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll)').first(),
+    ).toBeVisible();
+    const texts = await page
+      .locator(
+        '.docs-figures :is(.docs-specimen > :is(h3, h4, h5, .env-text[data-variant="caption"]), .docs-matrix-scroll th)',
+      )
+      .allTextContents();
+    const raw = texts
+      .map((text) => text.trim())
+      .filter((text) => text && (/^[a-z]/.test(text) || /[={}"`]|--/.test(text)));
+    expect(raw, `${id} names options by their values`).toEqual([]);
+  }
+});
+
+/**
+ * The words a page of the Site shows and names, as a reader and a screen reader meet them: every
+ * text and the names, titles and placeholders of its content, outside the Code disclosures under
+ * its figures and outside the examples they show, which are envUI at work with an application's
+ * own sample text. Foundation figures, specimens, captions, swatches and legends all count.
+ */
+async function siteWords(page: Page) {
+  return page.locator('.docs-main').evaluate((main) => {
+    const skipped =
+      '.docs-live-example-code, .docs-code-slot, pre, .env-code-block, .docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-stage, .docs-open-example, [hidden]';
+    const words: string[] = [];
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode())
+      if (node.textContent?.trim() && !node.parentElement?.closest(skipped))
+        words.push(node.textContent.trim());
+    for (const element of main.querySelectorAll('[aria-label], [title], [alt], [placeholder]'))
+      if (!element.closest(skipped))
+        for (const name of ['aria-label', 'title', 'alt', 'placeholder'])
+          if (element.getAttribute(name)) words.push(element.getAttribute(name)!);
+    return words;
+  });
+}
+
+/** The technical text in a page's words, each as "kind: text". */
+const technicalOf = (words: string[]) =>
+  words.flatMap((text) => technicalText(text).map((found) => `${found.kind}: ${found.text}`));
+
+/**
+ * The pages that show no technical text at all: every foundation, dev mode's page and every
+ * pattern. Every other page of the Site is reported until it is rewritten to the same rule, then
+ * joins this list.
+ */
+const plainPages = [
+  'foundations/colors',
+  'foundations/typography',
+  'foundations/spacing',
+  'foundations/responsive',
+  'foundations/icons',
+  'foundations/accessibility',
+  // Dev mode's page, written as a foundation's is, with its guide in the Docs.
+  'dev-mode',
+  // The patterns, each its decision and its compositions.
+  ...[
+    'forms',
+    'settings',
+    'destructive-actions',
+    'feedback',
+    'loading',
+    'empty-states',
+    'key-figures',
+    'navigation',
+    'app-frame',
+    'account-and-organizations',
+    'filtering',
+    'data-tables',
+    'progressive-disclosure',
+    'conversation',
+    'file-upload',
+  ].map((id) => `patterns/${id}`),
+];
+
+test('the foundation and pattern pages show no technical text, in their words or their figures', async ({
+  page,
+}) => {
+  // The Site is for people looking at envUI: no token names, hex colors, lengths, percentages or
+  // code. They belong to each foundation's guide and each pattern's page in the Docs.
+  test.slow();
+  await page.goto(`${catalogueUrl}/`);
+  for (const path of plainPages) {
+    await goTo(page, `/${path}`);
+    if (path.startsWith('foundations/') || path === 'dev-mode') {
+      await expect(page.locator('.docs-topic').last()).toBeVisible();
+      // The marks of a figure are measured once it has laid out.
+      if (await page.locator('.docs-marked').count())
+        await expect(page.locator('.docs-anatomy-badge').first()).toBeVisible();
+      // Guide opens the foundation's guide in the Docs, as API does for a component.
+      await expect(page.getByRole('link', { name: 'Guide', exact: true })).toHaveAttribute(
+        'href',
+        `/docs/${path}`,
+      );
+    } else await expect(page.locator('.docs-when').first()).toBeVisible();
+    expect(technicalOf(await siteWords(page)), `${path} shows technical text`).toEqual([]);
+  }
+});
+
+/** The component pages of the Site held to the plain-language rule. */
+const plainComponentPages = allPages.filter(
+  ({ kind, area }) => area === 'site' && kind === 'component',
+);
+
+test('component pages show no technical text, in their words or their figures', async ({
+  page,
+}) => {
+  // Lengths, tokens, percentages and code names belong to the page's In code, in the Docs.
+  test.slow();
+  await page.goto(`${catalogueUrl}/`);
+  const found: string[] = [];
+  for (const { path, title } of plainComponentPages) {
+    await goTo(page, `/${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(title);
+    for (const entry of technicalOf(await siteWords(page))) found.push(`${path}: ${entry}`);
+  }
+  expect(found, "Say it in words, and move the value to the page's In code.").toEqual([]);
+});
+
+test('the technical text on every other page of the Site is counted, for the rewrite to come', async ({
+  page,
+}, testInfo) => {
+  // Reporting only: the counts say how far each page is from the model pages' rule.
+  test.slow();
+  await page.goto(`${catalogueUrl}/`);
+  const counts: string[] = [];
+  for (const { path, title, kind, area } of allPages) {
+    if (area !== 'site' || plainPages.includes(path)) continue;
+    if (plainComponentPages.some((plain) => plain.path === path)) continue;
+    await goTo(page, path === 'overview' ? '/' : `/${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(
+      kind === 'home' ? 'envUI' : title,
+    );
+    const found = technicalOf(await siteWords(page));
+    if (!found.length) continue;
+    const kinds = Map.groupBy(found, (entry) => entry.split(':')[0]!);
+    counts.push(
+      `${path}: ${found.length} (${[...kinds].map(([name, list]) => `${name} ${list.length}`).join(', ')})`,
+    );
+  }
+  const report = counts.length ? counts.join('\n') : 'No technical text on any page.';
+  console.log(`Technical text on the Site, by page:\n${report}`);
+  await testInfo.attach('technical-text.txt', { body: report, contentType: 'text/plain' });
+});
+
+test('a component page groups its sections into three, the middle one on the band', async ({
+  page,
+}) => {
+  // Overview with Variants; When to use with Anatomy, on the page's one band across the content
+  // pane; Adapting to width with Accessibility; then Related, on the page. A page groups the
+  // sections it has.
+  const groups = () =>
+    page.locator('.docs-section-groups > *').evaluateAll((elements) =>
+      elements.map((element) => ({
+        band: element.classList.contains('docs-band'),
+        sections: [...element.querySelectorAll('[data-section]')].map(
+          (section) => (section as HTMLElement).dataset.section,
+        ),
+      })),
+    );
+  await page.goto(`${catalogueUrl}/components/scaffold`);
+  await expect.poll(groups).toEqual([
+    { band: false, sections: ['overview', 'variants'] },
+    { band: true, sections: ['usage', 'anatomy'] },
+    { band: false, sections: ['width', 'accessibility'] },
+    { band: false, sections: ['related'] },
+  ]);
+  // The band spans the whole content pane, gutters included; its sections keep the column.
+  const widths = await page.evaluate(() => {
+    const width = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
+    return {
+      band: width('.docs-band').width,
+      main: width('.docs-main').width,
+      column: width('.docs-band > .docs-section-group').left,
+      first: width('.docs-section-groups > .docs-section-group').left,
+    };
+  });
+  expect(widths.band).toBe(widths.main);
+  expect(widths.column).toBe(widths.first);
+  // Box has no Variants, Anatomy or Adapting to width, and its Accessibility holds only the lists
+  // that are in the Docs, so the Site has no third group for it.
+  await goTo(page, '/components/box');
+  await expect.poll(groups).toEqual([
+    { band: false, sections: ['overview'] },
+    { band: true, sections: ['usage'] },
+    { band: false, sections: ['related'] },
+  ]);
+});
+
+test("a pattern's guide lists what it needs, and Field's page in the Docs ends with Related", async ({
+  page,
+}) => {
+  // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
+  // under Accessibility. The address of the page that once listed them all opens the Docs' home,
+  // whose Patterns list links every pattern's guide.
+  await page.goto(`${catalogueUrl}/docs/patterns`);
+  await expect(page).toHaveURL(/\/docs$/);
+  const guides = page
+    .locator('.docs-article section', {
+      has: page.getByRole('heading', { name: 'Patterns', exact: true }),
+    })
+    .getByRole('link');
+  await expect(guides).toHaveText(
+    allPages
+      .filter((entry) => entry.area === 'docs' && entry.section === 'Patterns')
+      .map((entry) => entry.title),
+  );
+  await guides.getByText('Form layout and validation', { exact: true }).click();
+  await expect(page).toHaveURL(/\/docs\/patterns\/forms$/);
+  const provides = page.getByRole('region', { name: 'Accessibility', exact: true });
+  await expect(provides.getByRole('heading', { level: 3 })).toHaveText([
+    'You provide',
+    'envUI provides',
+  ]);
+  await expect(provides.getByRole('listitem').first()).toContainText('noValidate');
+  await expect(page.locator('.docs-article .env-card')).toHaveCount(0);
+  // Field's whole page is in the Docs: its sections, props, part names and changelog, then Related
+  // at the end, on the page rather than the band.
+  await page.goto(`${catalogueUrl}/docs/components/field`);
+  const ends = await page.evaluate(() => {
+    const related = document.querySelector('.docs-related');
+    const changelog = document.querySelector('.docs-changelog');
+    return Boolean(
+      related &&
+        changelog &&
+        !related.closest('.docs-band') &&
+        changelog.compareDocumentPosition(related) & Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+  });
+  expect(ends).toBe(true);
+});
+
+test("a page's changelog in the Docs is collapsed, and a link to it opens it", async ({ page }) => {
+  await page.goto(`${catalogueUrl}/docs/components/button`);
+  const changelog = page.locator('.docs-changelog details');
+  await expect(changelog.locator('summary')).toHaveText('Changelog');
+  await expect(changelog).not.toHaveAttribute('open');
+  await expect(changelog.locator('.docs-changelog-entries')).toBeHidden();
+  // Following a link to it on the page opens it, as loading its address does.
+  await page.evaluate(() => {
+    const link = document.createElement('a');
+    link.href = '/docs/components/button#changelog';
+    document.querySelector('#docs-main')!.append(link);
+    link.click();
+    link.remove();
+  });
+  await expect(changelog).toHaveAttribute('open');
+  await page.goto(`${catalogueUrl}/docs/patterns/forms#changelog`);
+  await expect(page.locator('.docs-changelog details')).toHaveAttribute('open');
+  await expect(page.locator('#changelog')).toBeInViewport();
 });
 
 test('the props in the Docs link each source file at the revision the site was built from', async ({
@@ -447,13 +709,20 @@ test('the hosted build opens every page of the Site and the Docs without network
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(
     page.locator('.docs-footer').getByRole('navigation', { name: 'Footer' }),
-  ).toContainText('Changelog');
-  for (const { path, title, kind } of allPages) {
+  ).toContainText('Benchmark');
+  for (const { path, title, kind, area } of allPages) {
     await goTo(page, path === 'overview' ? '/' : `/${path}`);
     await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(
       kind === 'home' ? 'envUI' : title,
     );
     await expect(page.getByText('This page failed to render')).toHaveCount(0);
+    // A page of the Site links into the Docs only through its API button and the Docs link, not
+    // from its content, the links generated from its frontmatter included, such as Built from.
+    if (area === 'site' && kind !== 'home')
+      await expect(
+        page.locator('.docs-main :is(.docs-article, .docs-band) a[href^="/docs"]'),
+        path,
+      ).toHaveCount(0);
   }
   // A deep link loads its page, in the Docs too.
   await page.goto(`${siteUrl}/docs/setup`);
@@ -573,6 +842,19 @@ test('the navigation holds the wordmark and search, the page the other area and 
     const [mark, field] = await Promise.all([wordmark.boundingBox(), search.boundingBox()]);
     expect(Math.abs(mark!.y + mark!.height / 2 - (field!.y + field!.height / 2))).toBeLessThan(4);
     expect(mark!.x + mark!.width).toBeLessThanOrEqual(field!.x);
+    // Search is as wide as its content; on the Site it is centred in the drawer, and the drawer's
+    // first item starts level with the rail's first destination.
+    const drawer = (await page.locator('.docs-sidebar').boundingBox())!;
+    expect(field!.width).toBeLessThan(drawer.width - 24);
+    // The list may be scrolled to the current page: where it starts is where its first item does.
+    const first = (await page.locator('.docs-sidebar .env-drawer-list').boundingBox())!;
+    if (brand === 'Site') {
+      const left = field!.x - drawer.x;
+      const right = drawer.x + drawer.width - (field!.x + field!.width);
+      expect(Math.abs(left - right), address).toBeLessThan(2);
+      const destination = (await page.locator('.docs-rail .env-rail-item').first().boundingBox())!;
+      expect(Math.abs(first.y - destination.y), address).toBeLessThan(1);
+    }
     // The other area and the Display menu are ghost buttons at the page's top end.
     const actions = page.locator('.docs-page-actions');
     for (const control of [
@@ -771,7 +1053,7 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(hero.getByRole('button')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   // The other examples and the example's code render.
-  const toolbar = page.getByRole('group', { name: 'Quiet toolbar example', exact: true });
+  const toolbar = page.getByRole('group', { name: 'In a toolbar example', exact: true });
   await expect(toolbar.getByRole('button').first()).toBeVisible();
   await page
     .locator('.docs-live-example-entry')
@@ -786,6 +1068,109 @@ test('an example that fails to render says so in place, and the rest of the page
     .getByRole('link', { name: 'Badge', exact: true })
     .click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
+});
+
+test("the overview's hero shows the package's version under the wordmark, and leads to the components", async ({
+  page,
+}) => {
+  await page.goto(`${catalogueUrl}/`);
+  const hero = page.locator('.docs-overview-hero');
+  await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
+  // The version is packages/ui/package.json's, as a quiet subheading rather than a link.
+  const versionLine = hero.locator('.docs-overview-version');
+  await expect(versionLine).toHaveText(`v${version}`);
+  await expect(versionLine.getByRole('link')).toHaveCount(0);
+  await expect(hero.getByRole('link')).toHaveCount(1);
+  await expect(hero.getByRole('link', { name: 'Browse components', exact: true })).toBeVisible();
+});
+
+test('the Icons page credits Material Symbols with their license, and the footer does not', async ({
+  page,
+}) => {
+  await page.goto(`${catalogueUrl}/foundations/icons`);
+  const credit = page.locator('.docs-icons-credit');
+  await expect(credit.getByRole('heading', { name: 'Where the icons come from' })).toBeVisible();
+  await expect(credit.getByRole('link', { name: 'Material Symbols' })).toHaveAttribute(
+    'href',
+    'https://m3.material.io/styles/icons',
+  );
+  await expect(credit.getByRole('link', { name: 'Apache License 2.0' })).toHaveAttribute(
+    'href',
+    'https://www.apache.org/licenses/LICENSE-2.0',
+  );
+  await expect(page.locator('.docs-footer')).not.toContainText('Material Symbols');
+});
+
+test('a Related tile of a page without an example shows its specimen', async ({ page }) => {
+  // Icon is documented on the Icons foundation's page, which has no example: its tile links there
+  // and shows a few of the icons, fitted to its stage as an example is.
+  await page.goto(`${catalogueUrl}/components/avatar`);
+  const tile = page.locator('.docs-related-tile').filter({ hasText: /^Icon/ });
+  await tile.scrollIntoViewIfNeeded();
+  await expect(tile.getByRole('link', { name: 'Icon', exact: true })).toHaveAttribute(
+    'href',
+    '/foundations/icons',
+  );
+  await expect(tile.locator('.docs-related-stage')).toHaveAttribute('data-specimen', 'icons');
+  await expect(tile.locator('.docs-related-canvas[data-fitted] svg')).toHaveCount(6);
+  await expect(page.locator('.docs-related-placeholder')).toHaveCount(0);
+});
+
+test('every tile of the galleries of components and patterns is fitted, shown whole on its stage', async ({
+  page,
+}) => {
+  // A tile's example loads as it nears the viewport and comes into its canvas after the fit has
+  // started to watch it; each must still be fitted, and show what it holds inside its stage.
+  const tiles = page.locator('.docs-gallery-tile');
+  const unfitted = () =>
+    tiles.evaluateAll((items) =>
+      items.flatMap((tile) => {
+        const name = tile.querySelector('.docs-gallery-name')?.textContent ?? '';
+        const stage = tile.querySelector('.docs-related-stage')!.getBoundingClientRect();
+        const canvas = tile.querySelector<HTMLElement>('.docs-related-canvas[data-fitted]');
+        if (!canvas || !/scale\(/.test(canvas.style.transform)) return [`${name}: not fitted`];
+        const shown = [...canvas.querySelectorAll('*')]
+          .filter((element) => element.checkVisibility({ visibilityProperty: true }))
+          .map((element) => element.getBoundingClientRect())
+          .filter((box) => box.width >= 1 && box.height >= 1);
+        if (!shown.length) return [`${name}: empty`];
+        const outside =
+          Math.min(...shown.map((box) => box.left)) < stage.left - 1 ||
+          Math.min(...shown.map((box) => box.top)) < stage.top - 1 ||
+          Math.max(...shown.map((box) => box.right)) > stage.right + 1 ||
+          Math.max(...shown.map((box) => box.bottom)) > stage.bottom + 1;
+        return outside ? [`${name}: clipped`] : [];
+      }),
+    );
+  for (const route of ['/components', '/patterns']) {
+    await page.goto(`${catalogueUrl}${route}`);
+    await expect(tiles.first()).toBeVisible();
+    const count = await tiles.count();
+    expect(count).toBeGreaterThan(route === '/components' ? 60 : 10);
+    for (let index = 0; index < count; index += 4) await tiles.nth(index).scrollIntoViewIfNeeded();
+    await expect.poll(unfitted, { message: route }).toEqual([]);
+  }
+});
+
+test("every label and heading of the Site's and the Docs' drawers fits on one line at the default width", async ({
+  page,
+}) => {
+  // A fresh page has no width stored, so each drawer starts at its default width.
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  for (const path of [...siteSections.map((section) => sectionHome(section).path), 'docs']) {
+    await page.goto(`${catalogueUrl}/${path}`);
+    const drawer = page.locator('.docs-sidebar');
+    await expect(drawer.locator('.env-drawer-item').first()).toBeVisible();
+    // The drawer keeps each on one line, cut short where it doesn't fit: none may be cut.
+    const cut = await drawer
+      .locator('.env-drawer-label, .env-drawer-heading')
+      .evaluateAll((elements) =>
+        elements
+          .filter((element) => element.scrollWidth > element.clientWidth)
+          .map((element) => element.textContent),
+      );
+    expect(cut, path).toEqual([]);
+  }
 });
 
 test('the navigation shows the current page, and focus moves to the page only on a route change', async ({
@@ -820,13 +1205,68 @@ test('the navigation shows the current page, and focus moves to the page only on
   ).toBeVisible();
   // The Docs have a navigation of their own, and the top bar leads back to the Site.
   await page.locator('.docs-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('envUI Docs');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI Docs');
   await expect(page.getByRole('navigation', { name: 'Site' })).toHaveCount(0);
   await expect(
     page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Design tokens' }),
   ).toBeVisible();
   await page.locator('.docs-page-actions').getByRole('link', { name: 'Site', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
+});
+
+test("the pager and the drawer open a page at its top, and a section's address at the section", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const body = page.locator('#docs-main');
+  const bottom = () => body.evaluate((element) => element.scrollTo(0, element.scrollHeight));
+  // Select's page shows its list open, partway down; the list scrolling its chosen option into
+  // view once moved the whole page there.
+  const listShown = () =>
+    expect(page.locator('.docs-open-example .env-select-popup').first()).toBeVisible();
+  await page.goto(`${catalogueUrl}/components/combobox`);
+  await expect(page.locator('.docs-page-navigation')).toBeVisible();
+  await bottom();
+  await page
+    .locator('.docs-page-navigation')
+    .getByRole('link', { name: /Select/ })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
+  await listShown();
+  await expect(page.locator('.docs-loading')).toHaveCount(0);
+  expect(await body.evaluate((element) => element.scrollTop)).toBe(0);
+  // A page chosen in the drawer, from the foot of another, opens at its top too.
+  await page
+    .getByRole('navigation', { name: 'Components' })
+    .getByRole('link', { name: 'Combobox', exact: true })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Combobox');
+  await bottom();
+  await page
+    .getByRole('navigation', { name: 'Components' })
+    .getByRole('link', { name: 'Select', exact: true })
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
+  await listShown();
+  await expect(page.locator('.docs-loading')).toHaveCount(0);
+  expect(await body.evaluate((element) => element.scrollTop)).toBe(0);
+  // An address with a section, past the open list, still lands on the section.
+  await goTo(page, '/components/combobox');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Combobox');
+  await goTo(page, '/components/select#accessibility');
+  await listShown();
+  await expect(page.locator('.docs-loading')).toHaveCount(0);
+  const heading = page.locator('#accessibility');
+  await expect
+    .poll(() =>
+      heading.evaluate(
+        (element) =>
+          element.getBoundingClientRect().top -
+          document.getElementById('docs-main')!.getBoundingClientRect().top,
+      ),
+    )
+    .toBeLessThan(80);
+  await expect(heading).toBeInViewport();
 });
 
 test('a page that fails to render says so, and the navigation leads to the others', async ({
@@ -964,21 +1404,15 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await goTo(page, '/foundations/colors');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'dark');
-  await expect(panes.first().locator('.docs-swatch code').first()).toHaveText(/^#[0-9a-f]{6}$/);
-  const swatches = await panes.evaluateAll((columns) =>
-    columns.map((column) => {
-      const label = column.querySelector('.docs-palette-label')!.getBoundingClientRect();
-      const swatch = column.querySelector('.docs-swatch')!.getBoundingClientRect();
-      return { label: label.x, swatch: swatch.x, left: swatch.left, right: swatch.right };
-    }),
-  );
-  expect(swatches[0].swatch).toBeGreaterThan(swatches[0].label);
-  expect(swatches).toHaveLength(1);
-  const darkColor = await panes.locator('.docs-swatch code').first().textContent();
+  // The role swatches show each role in the reader's theme, and follow it.
+  const pageSwatch = panes.first().locator('.docs-role-swatch > span').first();
+  const swatchColor = () =>
+    pageSwatch.evaluate((swatch) => getComputedStyle(swatch).backgroundColor);
+  const darkColor = await swatchColor();
   await chooseScheme(page, 'light');
   await expect(app).toHaveAttribute('data-env-theme', 'light');
   await expect(panes.first()).toHaveAttribute('data-env-theme', 'light');
-  await expect(panes.locator('.docs-swatch code').first()).not.toHaveText(darkColor!);
+  await expect.poll(swatchColor).not.toBe(darkColor);
   await chooseScheme(page, 'dark');
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   // The setup guide, in the Docs, keeps the theme.
@@ -1081,7 +1515,7 @@ test('F6 on the Toast page reaches a notification raised there, past the figures
   await expect(live).toBeFocused();
 });
 
-test("the Benchmark page shows the newest run's scores and a named chart with its data as a table", async ({
+test("the Benchmark page shows the newest run's scores and a named chart, with every run in detail under it", async ({
   page,
 }) => {
   const { latest, runs } = readBenchmark();
@@ -1096,22 +1530,31 @@ test("the Benchmark page shows the newest run's scores and a named chart with it
   // The chart is one image, named by its caption and described by every bar's value.
   const chart = page.getByRole('img', { name: /^Mean score out of 100 by run and agent/ });
   await expect(chart).toBeVisible();
-  await expect(chart).toHaveAccessibleDescription(new RegExp(latest.id));
-  // Its data is a table too, one row per agent of each run.
-  await page.getByText("The chart's data as a table").click();
-  const data = page.getByRole('table', { name: 'Mean score by run and agent' });
+  await expect(chart).toHaveAccessibleDescription(
+    new RegExp(latest.agents.map((agent) => `${agent.label} ${agent.mean}`).join(', ')),
+  );
+  // Run ids and commits are out of sight until asked for: every run in detail, one row per agent of
+  // each run, which is the chart's data as a table too.
+  await expect(page.getByText(latest.id, { exact: true }).first()).toBeHidden();
+  await page.getByText('Every run in detail').click();
+  const data = page.getByRole('table', { name: 'Every run with its scores' });
   await expect(data).toBeVisible();
   const bars = runs.reduce((count, run) => count + run.agents.length, 0);
   await expect(data.getByRole('row')).toHaveCount(bars + 1);
+  await expect(data).toContainText(latest.id);
 });
 
-test('the Changelog page lists each release, newest first, and its links reach sections of the Docs', async ({
+test("the Docs' Changelog page lists each release's highlights, newest first, and their links reach sections of the Docs", async ({
   page,
 }) => {
   const releases = readReleaseNotes();
+  // The Site's old address opens it.
   await page.goto(`${catalogueUrl}/changelog`);
+  await expect(page).toHaveURL(`${catalogueUrl}/docs/changelog`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
-  const versions = page.locator('.docs-releases h2 .docs-release-version');
+  await expect(page.getByRole('heading', { level: 2, name: 'Highlights' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'Every change' })).toBeVisible();
+  const versions = page.locator('.docs-releases h3 .docs-release-version');
   await expect(versions).toHaveText(releases.map((release) => release.version));
 
   // Every link of the notes leads to a page of the Docs with the section it names.

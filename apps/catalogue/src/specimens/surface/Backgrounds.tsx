@@ -1,15 +1,20 @@
 import { Surface, Text } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
-const backgrounds = ['default', 'muted', 'page', 'raised'] as const;
+const backgrounds = [
+  { background: 'default', title: 'Default' },
+  { background: 'muted', title: 'Muted' },
+  { background: 'page', title: 'Page' },
+  { background: 'raised', title: 'Raised' },
+] as const;
 
 /** Every background, on the page and on a pane. */
 export default function Backgrounds() {
   return (
-    <Example size="collection" stage="none">
+    <Example size="collection">
       <SpecimenGrid size="compact">
-        {backgrounds.map((background) => (
-          <Specimen key={background} title={background}>
+        {backgrounds.map(({ background, title }) => (
+          <Specimen key={background} title={title}>
             <Surface background={background} padding={4}>
               <Text>On the page</Text>
             </Surface>

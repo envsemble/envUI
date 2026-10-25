@@ -24,9 +24,20 @@ const columns: { title: string; links: FooterLink[] }[] = [
     title: 'Overview',
     links: [
       { label: 'Introduction', href: routeHref(homeRoute) },
-      { label: 'Get started', href: routeHref('get-started') },
       { label: 'Benchmark', href: routeHref('benchmark') },
-      { label: 'Changelog', href: routeHref('changelog') },
+      { label: 'Source', href: repository },
+    ],
+  },
+  {
+    title: 'Docs',
+    links: [
+      { label: 'Introduction', href: routeHref(docsRoute) },
+      { label: 'Install and set up', href: routeHref('docs/setup') },
+      { label: 'Migrate to envUI', href: routeHref('docs/migration') },
+      { label: 'For agents', href: routeHref('docs/agent-tooling') },
+      { label: 'Customize', href: routeHref('docs/customizing') },
+      { label: 'Design tokens', href: routeHref('docs/tokens') },
+      { label: 'Changelog', href: routeHref('docs/changelog') },
     ],
   },
   {
@@ -34,8 +45,8 @@ const columns: { title: string; links: FooterLink[] }[] = [
     links: pagesById([
       ['colors', 'Colors & themes'],
       ['typography', 'Typography'],
-      ['spacing', 'Spacing & shape'],
-      ['responsive', 'Responsive layout'],
+      ['spacing', 'Spacing & density'],
+      ['responsive', 'Adapting to width'],
       ['accessibility', 'Accessibility'],
     ]),
   },
@@ -57,71 +68,58 @@ const columns: { title: string; links: FooterLink[] }[] = [
       ['data-tables', 'Data tables'],
     ]),
   },
-  {
-    title: 'Docs',
-    links: [
-      { label: 'Introduction', href: routeHref(docsRoute) },
-      ...pagesById([
-        ['setup', 'Install and set up'],
-        ['migration', 'Migrate to envUI'],
-        ['codemods', 'Codemods'],
-        ['tokens', 'Design tokens'],
-        ['agent-tooling', 'For agents'],
-        ['dev-mode', 'Dev mode'],
-      ]),
-      { label: 'Source', href: repository },
-    ],
-  },
 ];
 
 /**
  * The foot of every page of the Site and the Docs, on the navigation's pane color: the wordmark in
- * a column of its own, then the main destinations of both in columns that wrap onto more rows in a narrow page.
- * Its links are quiet text until hovered.
+ * a column of its own, then the main destinations of both in columns that wrap onto more rows in a
+ * narrow page. Its links are quiet text until hovered. The credit for the icons is on the Icons page.
  */
 export function PageFooter() {
   return (
     <footer className="docs-footer">
-      <Row gap={7} align="start" className="docs-footer-inner">
-        <Link
-          href={routeHref(homeRoute)}
-          underline={false}
-          className="docs-footer-brand"
-          aria-label="envUI home"
-        >
-          <EnvUILogo />
-        </Link>
-        <Grid
-          render={<nav aria-label="Footer" />}
-          columns={{ min: '9rem' }}
-          gap={6}
-          className="docs-footer-columns"
-        >
-          {columns.map(({ title, links }) => (
-            <Column key={title} gap={3} align="start">
-              <Text
-                render={<h2 />}
-                variant="body-sm"
-                emphasis="default"
-                className="docs-footer-title"
-              >
-                {title}
-              </Text>
-              <Column render={<ul />} gap={2} align="start" className="docs-footer-links">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <Text variant="body-sm">
-                      <Link href={link.href} underline={false}>
-                        {link.label}
-                      </Link>
-                    </Text>
-                  </li>
-                ))}
+      <Column gap={7} className="docs-footer-inner">
+        <Row gap={7} align="start" className="docs-footer-main">
+          <Link
+            href={routeHref(homeRoute)}
+            underline={false}
+            className="docs-footer-brand"
+            aria-label="envUI home"
+          >
+            <EnvUILogo />
+          </Link>
+          <Grid
+            render={<nav aria-label="Footer" />}
+            columns={{ min: '9rem' }}
+            gap={6}
+            className="docs-footer-columns"
+          >
+            {columns.map(({ title, links }) => (
+              <Column key={title} gap={3} align="start">
+                <Text
+                  render={<h2 />}
+                  variant="body-sm"
+                  emphasis="default"
+                  className="docs-footer-title"
+                >
+                  {title}
+                </Text>
+                <Column render={<ul />} gap={2} align="start" className="docs-footer-links">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      <Text variant="body-sm">
+                        <Link href={link.href} underline={false}>
+                          {link.label}
+                        </Link>
+                      </Text>
+                    </li>
+                  ))}
+                </Column>
               </Column>
-            </Column>
-          ))}
-        </Grid>
-      </Row>
+            ))}
+          </Grid>
+        </Row>
+      </Column>
     </footer>
   );
 }

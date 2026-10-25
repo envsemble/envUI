@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode, Ref } from 'react';
 import { ActionElement } from '../../internal/ActionElement.js';
 import { Column, Row } from '../../foundations/Layout.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
@@ -142,9 +142,16 @@ export const useNavigationMessages = () => useMessages('navigation', navigation)
 export function DestinationItem({
   classes,
   destination,
-}: {
+  labelRef,
+  ref,
+  ...props
+}: Omit<HTMLAttributes<HTMLElement>, 'children'> & {
   classes: DestinationClasses;
   destination: DrawerDestination;
+  /** The label's element, such as to tell whether it is cut short. */
+  labelRef?: Ref<HTMLSpanElement>;
+  /** The control's element, for a tooltip that renders it as its trigger. */
+  ref?: Ref<HTMLElement>;
 }) {
   const messages = useNavigationMessages();
   const { label, icon, count, current = false, href, onSelect } = destination;
@@ -168,6 +175,9 @@ export function DestinationItem({
       <ActionElement href={href} onClick={onSelect} />
     );
   const shared = {
+    // A tooltip's trigger props, such as its pointer and focus handlers.
+    ...props,
+    ref,
     render: control,
     className: classes.item,
     'data-current': current ? '' : undefined,
@@ -180,7 +190,9 @@ export function DestinationItem({
   return classes.indicator === undefined ? (
     <Row {...shared} align="center" gap={3}>
       {icons}
-      <span className={classes.label}>{label}</span>
+      <span className={classes.label} ref={labelRef}>
+        {label}
+      </span>
       {apart}
       {badge}
     </Row>

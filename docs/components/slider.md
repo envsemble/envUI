@@ -13,8 +13,8 @@ aliases:
   - track bar
   - volume slider
 useWhen:
-  - People adjust a value by eye within a known range, such as opacity, volume or zoom, and see the result as they move it.
-  - The exact number matters less than its place in the range, and the value shows beside the label as it changes.
+  - A value adjusted by eye in a known range, such as opacity, volume or zoom
+  - A value whose place in the range matters more than the exact number
 avoidWhen:
   - text: People know the exact number they want, such as a price or a quantity.
     use: TextField
@@ -32,33 +32,33 @@ components:
 
 ## Overview
 
-A slider chooses a value in a range. It is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. Pressing or dragging anywhere in it chooses a value, as do the arrow keys. A thin handle at the value appears under the pointer and while it has focus, and faint ticks at its steps only while the pointer presses it, fading out when it lets go. The label and the value always keep their full strength: where the handle and the end of the fill pass under them, those fade instead.
+Slider is a field, as tall as the fields and with their corners, so it sits in a form among them: its label inside at the start, its value at the end and a fill from the start that shows it. At rest that is all it shows, and the fill ends crisply.
 
 ```tsx example=LayerOpacity
 
 ```
 
+### Under the pointer
+
+When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps. Where the handle, the end of the fill and the ticks pass under the label or the value, they fade, so the text keeps its full strength. Pressing anywhere moves the value there, and dragging carries it along. Once the slider is let go, the handle and the ticks go away, even with the pointer still over it, and come back when the pointer leaves and returns. On a touch screen they show only while the finger is down.
+
+### With the keyboard
+
+Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded under the text in the same way. The arrow keys move the value; the ticks stay hidden.
+
 ### Save once a change is complete
 
-`onValueChange` follows the value as it moves; `onValueCommitted` reports it once, when the pointer is released or after a key. Save from it.
+The value follows the pointer as it moves, and is reported once more when the pointer lets go or after a key. Save it then.
 
 ```tsx example=SaveOnRelease
 
 ```
 
-### Steps in a form
+### Steps
 
-`min`, `max` and `step` set the values, and `name` submits the value with the form. The slider lines up with the fields around it.
+A slider has a lowest and a highest value and a step between values.
 
 ```tsx example=SessionTimeout
-
-```
-
-### A value people can't change
-
-A disabled slider keeps its value visible; the description says who sets it.
-
-```tsx example=ManagedLimit
 
 ```
 
@@ -72,11 +72,13 @@ A disabled slider keeps its value visible; the description says who sets it.
 
 ```
 
-- Show the effect where people can see it as the value changes.
+### Show the effect
+
+Show the effect where people can see it as the value changes.
 
 ### Labels
 
-Name the value in a short noun, and format it with its unit in `formatValue`; the same text is announced.
+Show the value with its unit, such as 30 minutes; the same text is announced.
 
 ## Anatomy
 
@@ -85,18 +87,14 @@ Name the value in a short noun, and format it with its unit in `formatValue`; th
 ```
 
 1. **Slider** (`env-slider`)
-2. **Field** (`env-slider-control`): the track, a quiet tint, which takes the pointer
+2. **Field** (`env-slider-control`)
 3. **Label** (`env-slider-label`, `label`)
-4. **Fill** (`env-slider-indicator`): from the start to the value
-5. **Handle** (`env-slider-thumb`): a thin line at the value, under the pointer and on focus, beneath the label and the value, faint where it passes under them
-6. **Value** (`env-slider-value`, `formatValue`), with numbers of one width
+4. **Fill** (`env-slider-indicator`)
+5. **Handle** (`env-slider-thumb`)
+6. **Value** (`env-slider-value`, `formatValue`)
 7. **Description** (`env-field-description`, `description`)
 
-Not shown: the span the value moves along, `env-slider-track`, inside the field's rounded ends, which draws the faint ticks at the steps while the pointer presses the slider, or at the large steps where the steps are many, and the row of the label and the value, `env-slider-heading`.
-
-### Colors
-
-`--env-slider-container` sets the track's tint, `--env-slider-indicator` the fill and `--env-slider-content` the label, the value, the handle and the ticks of one Slider, through `style` or CSS; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+Not shown: the span the value moves along, which draws the faint ticks, and the row of the label and the value.
 
 ## Adapting to width
 
@@ -128,6 +126,66 @@ A slider fills its container. Where it is narrow, a long label is cut short with
 - A `label`, or `aria-label` on a slider without one.
 - A `formatValue` with the unit, in the application's language.
 - The effect of the value, and saving it.
+
+## In code
+
+### Usage
+
+A Slider takes its `label`, inside it at the start, and a `description` under it. Leave it uncontrolled, with `defaultValue`, the minimum by default, or control it with `value` and `onValueChange`, which receives the value as often as the handle moves. `formatValue` formats the value with its unit, such as `` (value) => `${value}%` ``, as it shows at the end and is announced; without it, the number shows in the `locale`, EnvUIProvider's by default.
+
+```tsx source=LayerOpacity
+
+```
+
+#### Save once a change is complete
+
+`onValueCommitted` reports the value once a change is complete: when the pointer is released or the track pressed, and after each key. Save from it.
+
+```tsx source=SaveOnRelease
+
+```
+
+#### Steps in a form
+
+`min` and `max`, 0 and 100 by default, set the range, and `step`, 1 by default, the distance between values, counted from `min`. `largeStep`, a tenth of the range in whole steps by default, is the change of <kbd>Page Up</kbd>, <kbd>Page Down</kbd> and an arrow with <kbd>Shift</kbd>. `name` submits the value with a form, `form` names a form the slider sits outside of, and a reset returns to `defaultValue`.
+
+```tsx source=SessionTimeout
+
+```
+
+#### Disabled
+
+`disabled` dims the slider: it can't be focused or moved, and forms leave it out. Say in the `description` who sets the value.
+
+```tsx
+import { Slider } from '@envsemble/envui';
+
+export default function ManagedLimit() {
+  return (
+    // As wide as a form column.
+    <div style={{ inlineSize: 'min(100%, 24rem)' }}>
+      <Slider
+        label="Storage per member"
+        description="Sam Lee, your administrator, sets this limit for everyone at Northwind."
+        min={5}
+        max={100}
+        step={5}
+        defaultValue={20}
+        formatValue={(value) => `${value} GB`}
+        disabled
+      />
+    </div>
+  );
+}
+```
+
+### Composition
+
+`inputRef` reaches the native range input, such as to focus it. The parts are the slider, `env-slider`; the row of the label and the value, `env-slider-heading`, with the label, `env-slider-label`, and the value, `env-slider-value`, in numbers of one width; the field, `env-slider-control`, the track's quiet tint, which takes the pointer, with the fill from the start to the value, `env-slider-indicator`, and the handle, `env-slider-thumb`; and the description, `env-field-description`. Inside the field's rounded ends, the span the value moves along, `env-slider-track`, draws the faint ticks at the steps, or at the large steps where the steps are many. The field marks what it shows besides its text and fill: `data-handle` while the handle shows, under a hovering or pressing pointer and with keyboard focus, `data-ruler` while the ticks do, under a hovering or pressing pointer, and `data-pressed` while the pointer presses it. A release clears them until the pointer leaves and comes back.
+
+### Customize
+
+`--env-slider-container` sets the track's tint, `--env-slider-indicator` the fill and `--env-slider-content` the label, the value, the handle and the ticks of one Slider, through `style` or CSS; with none set, it keeps its own colors.
 
 ## Changelog
 

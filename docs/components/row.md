@@ -3,7 +3,7 @@ title: Row
 summary: Row lays out content side by side with even gaps, and wraps when it doesn't fit, such as a form's actions.
 status: beta
 since: 1.0.0
-category: Layout & surfaces
+category: App frame & layout
 aliases:
   - Stack
   - hstack
@@ -16,12 +16,11 @@ aliases:
   - button row
   - button set
   - form actions
-  - toolbar
   - wrap
 useWhen:
-  - A few actions belong together, such as a form's Cancel and Save, in a row that wraps.
-  - A heading and its actions share a line, with the actions at the end.
-  - Small items sit side by side, such as a label and a badge.
+  - A few actions that belong together, such as Cancel and Save
+  - A heading and its actions on one line
+  - Small items side by side, such as a label and a badge
 avoidWhen:
   - text: Content top to bottom.
     use: Column
@@ -41,8 +40,6 @@ components:
 
 ## Overview
 
-Row lays out its children side by side, the same step of the spacing scale apart. Like [Column](column.md), [Grid](grid.md) and [Box](box.md), it sizes to its content and never paints.
-
 ```tsx example=FormActions
 
 ```
@@ -51,15 +48,23 @@ Row lays out its children side by side, the same step of the spacing scale apart
 
 ### Justify
 
-`justify` places the children along the row when it has room to spare. `between` puts the first and the last at the edges, such as a heading and its action.
+Where the row has room to spare, its children sit at the start, in the center, at the end, or spread to the edges, such as a heading and its action.
 
 <!-- specimen: Justify -->
 
-`gap` takes the steps of the [spacing scale](../foundations/spacing.md): 2 between a label and its badge, 3 between a toolbar's controls, 4 between actions.
+### Gaps
+
+The gap between the children is a step of the [spacing scale](../foundations/spacing.md).
+
+| Gap    | Use for                    |
+| ------ | -------------------------- |
+| Step 2 | A label and its badge.     |
+| Step 3 | A toolbar's controls.      |
+| Step 4 | Actions, such as a form's. |
 
 ## When to use
 
-```tsx do=WrappingActions caption="wrap, so an action that doesn't fit moves to the next line."
+```tsx do=WrappingActions caption="A row that wraps, so an action that doesn't fit moves to the next line."
 
 ```
 
@@ -67,12 +72,13 @@ Row lays out its children side by side, the same step of the spacing scale apart
 
 ```
 
-- `align="center"` for controls of different heights, such as a heading and a small button.
-- Buttons that act as one control are a [ButtonGroup](button.md); a row of controls the arrow keys move through is a [Toolbar](toolbar.md).
+### Alignment
+
+Center controls of different heights on their line, such as a heading and a small button.
 
 ## Adapting to width
 
-With `wrap`, a row runs onto more lines; it never turns into a column by itself. For that, write a container query at a [window class](../foundations/responsive.md).
+A row that wraps runs onto more lines; it never turns into a column by itself. For that, change the layout at a [window class](../foundations/responsive.md).
 
 ```tsx example=SectionHeading widths="12 30"
 
@@ -88,6 +94,32 @@ With `wrap`, a row runs onto more lines; it never turns into a column by itself.
 ### You provide
 
 - `role="group"` and an `aria-label` on a row of actions that needs a shared name.
+
+## In code
+
+### Usage
+
+Row lays out its children side by side, in the reading direction. `gap` is the space between them, a step of the spacing scale from `0` to `9`, none by default: `2` between a label and its badge, `3` between a toolbar's controls, `4` between actions. `wrap` lets the row run onto more lines when its children don't fit.
+
+```tsx source=FormActions
+
+```
+
+#### Align and justify
+
+`align` lines the children up across the line: `stretch`, the default, makes each as tall as the row, except controls such as buttons, which keep their own size; `start`, `center` and `end` keep each at its own size, and `center` suits controls of different heights. `justify` places them along the line when there is room to spare: `start`, the default, `center`, `end`, or `between`, out to the edges, such as a heading and its action.
+
+```tsx source=SectionHeading
+
+```
+
+#### Element, inset and name
+
+`render` gives the row its meaning, such as `render={<footer />}` or `render={<ul />}`, or lays out another component without a wrapper, such as a Surface; `ref` reaches the rendered element. `padding` sets an inset on every side, a step of the spacing scale, none by default. `name` names the node for dev mode, as `data-env-name`.
+
+#### A row that becomes a column
+
+A row never turns into a column by itself. `container` makes it a size container of that name, so CSS can change the layout at a window class, such as `container="filters"` with `@container filters (width >= 37.5rem)`.
 
 ## Changelog
 

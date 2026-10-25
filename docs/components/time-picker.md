@@ -12,8 +12,8 @@ aliases:
   - clock picker
   - hour picker
 useWhen:
-  - People choose a time of day without a date, such as when a shift starts or a daily reminder goes off.
-  - The times that make sense fall on steps, such as every quarter or half hour (`minuteStep`).
+  - A time of day without a date, such as when a shift starts
+  - Times on steps, such as every quarter or half hour
 avoidWhen:
   - text: A date and a time together, such as when a meeting starts.
     use: DatePicker
@@ -31,7 +31,7 @@ components:
 
 ## Overview
 
-A time picker is a field that opens wheels to choose a time of day, in the reader's locale.
+Where people write AM and PM, a third wheel holds them.
 
 ```tsx example=StartTime
 
@@ -39,7 +39,7 @@ A time picker is a field that opens wheels to choose a time of day, in the reade
 
 ### Within office hours
 
-`min`, `max` and `minuteStep` offer only the times that can be booked.
+Only the times that can be booked are offered: between an earliest and a latest time, on steps such as every half hour.
 
 ```tsx example=OfficeHours
 
@@ -47,17 +47,9 @@ A time picker is a field that opens wheels to choose a time of day, in the reade
 
 ### The locale's clock
 
-The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 24-hour clock.
+The same value on a 12-hour and a 24-hour clock; the value itself stays on the 24-hour clock.
 
 ```tsx example=ClockConventions
-
-```
-
-### In a form
-
-`name` submits the time as `HH:mm`, without a date or a zone. Combining it with a date belongs to the application.
-
-```tsx example=ShiftForm
 
 ```
 
@@ -70,17 +62,12 @@ The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 
 1. **Outline**
 2. **Floating**
 
-| Variant              | Use for                                                 |
-| -------------------- | ------------------------------------------------------- |
-| Default              | A time of day, on wheels that stay open as they turn.   |
-| `variant="floating"` | A long form on a page, as TextField's floating variant. |
-
-`sm`, `md` and `lg` set the field's height, the control heights of the [scale](../foundations/scale.md).
+| Variant  | Use for                                                            |
+| -------- | ------------------------------------------------------------------ |
+| Outline  | A time of day, on wheels that stay open as they turn. The default. |
+| Floating | A long form on a page, as TextField's floating variant.            |
 
 ## When to use
-
-- Use `readOnly`, not `disabled`, to show a time people can't change.
-- For one moment, a day and a time, use a single DatePicker with `granularity="minute"`.
 
 ## Anatomy
 
@@ -96,7 +83,7 @@ The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 
 6. **Clock icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-```tsx anatomy=TimePickerPopupAnatomy open stage=raised
+```tsx anatomy=TimePickerPopupAnatomy open
 
 ```
 
@@ -127,6 +114,83 @@ The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 
 - A `label`, or `aria-label` on a field without one.
 - Validation and its `error`.
 - The labels in the application's language.
+
+## In code
+
+### Usage
+
+TimePicker's value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, 12- or 24-hour, and `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time.
+
+```tsx source=StartTime
+
+```
+
+#### Available times
+
+`min` and `max`, as `HH:mm`, are the earliest and latest times. `minuteStep` is the minutes between the times the list offers, from 1 to 60, 15 by default; a value between them still shows, in its place.
+
+```tsx source=OfficeHours
+
+```
+
+#### In a form
+
+`name` submits the time as `HH:mm`, without a date or a zone, and a form reset restores `defaultValue`; `required` keeps an empty field's form from submitting and focuses it. Use `readOnly`, not `disabled`, to show a time people can't change. For one moment, a day and a time, use a single DatePicker with `granularity="minute"`.
+
+```tsx
+import { useState, type FormEvent } from 'react';
+import { Button, Column, Row, Text, TimePicker } from '@envsemble/envui';
+
+export default function ShiftForm() {
+  const [error, setError] = useState<string>();
+  const [sent, setSent] = useState('');
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const [from, to] = [String(data.get('from')), String(data.get('to'))];
+    // Values are HH:mm on the 24-hour clock, so they compare as text.
+    const invalid = from && to && to <= from;
+    setError(invalid ? 'Choose an end after the start.' : undefined);
+    setSent(invalid ? '' : `Shift from ${from} to ${to}.`);
+  };
+  return (
+    <form
+      onSubmit={submit}
+      onReset={() => {
+        setError(undefined);
+        setSent('');
+      }}
+      style={{ inlineSize: 'min(100%, 16rem)' }}
+    >
+      <Column gap={4}>
+        <TimePicker label="From" name="from" defaultValue="09:00" required />
+        <TimePicker label="To" name="to" defaultValue="17:00" required error={error} />
+        <Row wrap align="center" gap={4}>
+          <Button type="submit">Save shift</Button>
+          <Button type="reset" variant="secondary">
+            Reset
+          </Button>
+        </Row>
+        <Text variant="caption" emphasis="muted" role="status">
+          {sent}
+        </Text>
+      </Column>
+    </form>
+  );
+}
+```
+
+#### Variants and sizes
+
+`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `showLabel={false}` hides the label, with a `placeholder` while the field is empty.
+
+```tsx source=Variants
+
+```
+
+### Composition
+
+TimePicker shares DatePicker's field: the root, `env-time-picker`, holds the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the clock icon, `env-date-picker-icon`, then the description. The popup, `env-time-picker-popup`, holds a wheel, `env-time-list-column`, for hours, minutes and, on a 12-hour clock, the day period, each row an `env-time-list-row`, the chosen one with `data-centred`, and the actions, `env-date-picker-actions`. `className` and `style` reach the root, and `ref` the field's button.
 
 ## Changelog
 

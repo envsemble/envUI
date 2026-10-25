@@ -520,7 +520,7 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   const listed = await server.call('list_components', { category: 'Actions' });
   assert.deepEqual(
     listed.components.map((component) => component.name),
-    ['Button', 'Toolbar', 'Link'],
+    ['Button', 'Link', 'Toolbar', 'Menu', 'Menubar', 'CommandPalette'],
   );
   assert.equal(listed.components[0].import, '@envsemble/envui');
 
@@ -1066,7 +1066,7 @@ test('the pattern tools answer from the manifest', () => {
   assert.ok(
     informed.length && informed.every((pattern) => pattern.intent === 'Keep people informed'),
   );
-  assert.match(call('list_patterns', { intent: 'Nope' }).error, /"intent" must be one of Collect/);
+  assert.match(call('list_patterns', { intent: 'Nope' }).error, /"intent" must be one of Enter/);
   const loading = call('get_pattern', { name: 'loading indicator', docs: true });
   assert.equal(loading.value.name, 'loading');
   assert.equal(loading.value.requested, 'loading indicator');

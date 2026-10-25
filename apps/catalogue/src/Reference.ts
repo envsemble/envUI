@@ -2,15 +2,17 @@ import { documents } from './generated/Documentation';
 
 export { documents };
 export const componentGroups = [
-  'Layout & surfaces',
   'Actions',
   'Forms & selection',
   'Navigation',
-  'Content & guidance',
-  'Feedback & overlays',
+  'Data display',
+  'Text & content',
+  'Feedback',
+  'Overlays',
+  'App frame & layout',
 ] as const;
 export type ComponentGroup = (typeof componentGroups)[number];
-/** The id of a component group's heading on the overview, such as components-layout-surfaces. */
+/** The id of a component group's heading on the overview, such as components-app-frame-layout. */
 export const componentGroupId = (group: string) =>
   `components-${group.toLowerCase().replace(/[^a-z]+/g, '-')}`;
 export type Documentation = (typeof documents)[number];

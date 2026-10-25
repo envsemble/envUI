@@ -18,6 +18,8 @@ import { ScaffoldFixture, ScrollKeysFixture } from './Scaffolds.js';
 import { ScaffoldPanesFixture } from './ScaffoldPanes.js';
 import { PanesFixture } from './Panes.js';
 import { CodeBlockFixture } from './CodeBlocks.js';
+import { CodeDiffFixture } from './CodeDiffs.js';
+import { FieldsFixture } from './Fields.js';
 import { MarkdownFixture } from './Markdowns.js';
 import { MenusFixture } from './Menus.js';
 import { MenubarFixture } from './Menubars.js';
@@ -94,6 +96,8 @@ import {
 /** Fixtures that fill the viewport, or need it to themselves, are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
   'code-block': CodeBlockFixture,
+  'code-diff': CodeDiffFixture,
+  fields: FieldsFixture,
   'markdown-tables': MarkdownFixture,
   scaffold: ScaffoldFixture,
   'scroll-keys': ScrollKeysFixture,

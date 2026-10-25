@@ -352,6 +352,15 @@
           "parts": [
             "env-avatar-group"
           ]
+        },
+        {
+          "attribute": "data-spread",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-avatar-group"
+          ]
         }
       ],
       "uses": [
@@ -1120,7 +1129,7 @@
         },
         {
           "class": "env-color-picker-fields",
-          "description": "The fields of the chosen format."
+          "description": "The fields of the chosen format, or of one format's row."
         },
         {
           "class": "env-color-picker-format",
@@ -1141,6 +1150,10 @@
         {
           "class": "env-color-picker-popover",
           "description": "The popover of a ColorPickerButton, around its picker."
+        },
+        {
+          "class": "env-color-picker-row",
+          "description": "A format's row where several formats show together: its fields and its copy button."
         },
         {
           "class": "env-color-picker-slider",
@@ -1224,11 +1237,30 @@
           ]
         },
         {
+          "attribute": "data-eye-dropper",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-color-picker-values"
+          ]
+        },
+        {
           "attribute": "data-format",
           "values": [
             "hex",
             "hsl",
             "rgb"
+          ],
+          "parts": [
+            "env-color-picker-row",
+            "env-color-picker-values"
+          ]
+        },
+        {
+          "attribute": "data-formats",
+          "values": [
+            "together"
           ],
           "parts": [
             "env-color-picker-values"
@@ -1313,6 +1345,12 @@
         "Popup",
         "Skeleton",
         "Theme"
+      ],
+      "colors": [
+        {
+          "property": "--env-color-picker-button-container",
+          "description": "The fill behind the swatch and the value, transparent by default."
+        }
       ]
     },
     "ColorSwatch": {
@@ -2253,8 +2291,11 @@
       ],
       "uses": [
         "Icon",
+        "Popup",
         "ResizeHandle",
-        "Skeleton"
+        "Skeleton",
+        "Theme",
+        "Tooltip"
       ],
       "colors": [
         {
@@ -3925,6 +3966,7 @@
       ],
       "states": [],
       "uses": [
+        "HoverDetail",
         "Popup",
         "Skeleton",
         "Theme",
@@ -4547,7 +4589,25 @@
           ]
         },
         {
+          "attribute": "data-handle",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-slider-control"
+          ]
+        },
+        {
           "attribute": "data-pressed",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-slider-control"
+          ]
+        },
+        {
+          "attribute": "data-ruler",
           "values": [
             ""
           ],
@@ -5846,6 +5906,7 @@
       "states": [],
       "usedBy": [
         "HoverCard",
+        "RelativeTime",
         "Text",
         "Tooltip"
       ]
@@ -6030,6 +6091,7 @@
         "Combobox",
         "CopyButton",
         "DatePicker",
+        "Drawer",
         "HoverCard",
         "Menu",
         "Menubar",

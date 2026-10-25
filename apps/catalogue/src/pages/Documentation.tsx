@@ -1,3 +1,4 @@
+import { createContext, useContext, useMemo } from 'react';
 import { Link } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/content';
 import { documents, type Documentation as Document } from '../Reference';
@@ -80,6 +81,94 @@ const headingIds: NonNullable<MarkdownProps['rehypePlugins']>[number] = () => (t
   visit(tree as Parameters<typeof visit>[0]);
 };
 
+/**
+ * Whether the Markdown below is guidance, as the pages of components, patterns and foundations are:
+ * its lists are then check lists, each item's circle holding a check instead of envUI's dot
+ * (`docs-guidance`, Template.css), and a component named at an item's end follows a muted dot.
+ */
+export const GuidanceLists = createContext(false);
+
+type HastNode = {
+  type: string;
+  tagName?: string;
+  value?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+};
+
+/** A component named in parentheses at the end of an item, as "(IconButton)" or "(Calendar).". */
+const trailingName = /\s*\(([A-Z][A-Za-z]*)\)\.?\s*$/;
+
+/** The page that documents a component, and so its address, where it has one on the Site. */
+const componentPage = (name: string) =>
+  referencePages.find(
+    (page) =>
+      !page.path.startsWith('docs/') &&
+      (page.reference.metadata?.components ?? page.reference.components)?.includes(name),
+  );
+
+/**
+ * The text an item ends with: its own last text, before a list nested in it, or its paragraph's,
+ * where its text is a paragraph.
+ */
+function itemEnd(item: HastNode): { parent: HastNode; index: number } | undefined {
+  const children = item.children ?? [];
+  for (let index = children.length - 1; index >= 0; index--) {
+    const child = children[index];
+    if (child.type === 'text' && !child.value?.trim()) continue;
+    if (child.type === 'element' && /^(ul|ol)$/.test(child.tagName ?? '')) continue;
+    if (child.type === 'text') return { parent: item, index };
+    if (child.type === 'element' && child.tagName === 'p') return itemEnd(child);
+    return undefined;
+  }
+  return undefined;
+}
+
+/**
+ * A rehype plugin for guidance lists: a component named at an item's end, "(IconButton)", follows
+ * the item after a muted middle dot, as "… in a dense place · IconButton", and links to its page
+ * where it has one other than the page `path` shows.
+ */
+const componentNames =
+  (path: string): NonNullable<MarkdownProps['rehypePlugins']>[number] =>
+  () =>
+  (tree) => {
+    const visit = (node: HastNode) => {
+      if (node.type === 'element' && node.tagName === 'li') {
+        const end = itemEnd(node);
+        const text = end?.parent.children![end.index];
+        const match = text?.value && trailingName.exec(text.value);
+        const page = match && componentPage(match[1]);
+        if (end && text && match && (page || /[a-z][A-Z]/.test(match[1]))) {
+          text.value = text.value!.slice(0, match.index);
+          const own = page && page.reference.path === path;
+          const name: HastNode = {
+            type: 'element',
+            tagName: page && !own ? 'a' : 'span',
+            properties:
+              page && !own
+                ? { href: `../${page.reference.path}` }
+                : { className: ['docs-list-name'] },
+            children: [{ type: 'text', value: match[1] }],
+          };
+          end.parent.children!.splice(
+            end.index + 1,
+            0,
+            {
+              type: 'element',
+              tagName: 'span',
+              properties: { className: ['docs-list-name-dot'], ariaHidden: 'true' },
+              children: [{ type: 'text', value: ' · ' }],
+            },
+            name,
+          );
+        }
+      }
+      for (const child of node.children ?? []) visit(child);
+    };
+    visit(tree as HastNode);
+  };
+
 const rehypePlugins = [headingIds];
 
 /** A page's Markdown, or a part of it such as one section, with its links resolved. */
@@ -88,10 +177,16 @@ export function Documentation(props: { document: Document } | { markdown: string
     'document' in props
       ? [props.document.markdown, props.document.path]
       : [props.markdown, props.path];
+  const guidance = useContext(GuidanceLists);
+  const plugins = useMemo(
+    () => (guidance ? [headingIds, componentNames(path)] : rehypePlugins),
+    [guidance, path],
+  );
   return (
     <Markdown
       codeCopyable
-      rehypePlugins={rehypePlugins}
+      className={guidance ? 'docs-guidance' : undefined}
+      rehypePlugins={plugins}
       renderLink={({ href, ...link }: MarkdownLinkProps) => (
         <Link {...link} href={documentationHref(href, path)} />
       )}

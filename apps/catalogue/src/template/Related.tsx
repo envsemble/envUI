@@ -4,6 +4,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type ComponentType,
   type RefObject,
 } from 'react';
 import { Column, Link, PortalContainer, Text, Theme, useTheme } from '@envsemble/envui';
@@ -14,14 +15,18 @@ import { pageHref, referencePages, routeOfDocument } from '../navigation/Documen
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import { ExampleRender } from './LiveExample';
+import { hasPageSpecimen, PageSpecimen } from './PageSpecimens';
 
 /**
  * The page that documents a component, for the components a page relates to and the exports a
- * pattern combines: a part such as Menu.Item is documented on the page of its namespace.
+ * pattern combines: a part such as Menu.Item is documented on the page of its namespace, and an
+ * export such as Icon on the foundation's page that names it.
  */
 export function pageOf(component: string) {
   const namespace = component.split('.')[0];
-  return referencePages.find((page) => page.reference.metadata?.components.includes(namespace));
+  return referencePages.find((page) =>
+    (page.reference.metadata?.components ?? page.reference.components)?.includes(namespace),
+  );
 }
 
 /** The address of a related page: a component's or foundation's page, or any other page's route. */
@@ -33,12 +38,16 @@ export function relatedHref(id: string) {
 }
 
 /** The example a tile previews: a page's file, and whether its overlays are shown open. */
-interface Preview {
+export interface Preview {
   page: string;
   name: string;
   open: boolean;
   /** The fill its figure's stage takes, where the page's would hide it. */
   stage?: StageFill;
+  /** A page without an example, such as a foundation's: the id of its specimen (PageSpecimens.tsx). */
+  specimen?: string;
+  /** A composition drawn for the tile instead of an example, such as a gallery's (GalleryPreviews.tsx). */
+  composition?: ComponentType;
 }
 
 /** Letters alone, lower case, to match an export's name with a figure's heading or file. */
@@ -48,7 +57,8 @@ const squash = (text: string) => text.toLowerCase().replace(/[^a-z\d]/g, '');
  * What a tile shows of a page: where its component floats over the page, such as a dialog or a
  * menu, its anatomy figure, which shows it open; else the Overview's first example, its lead
  * example. For an export that isn't the page's first, such as Textarea on the TextField page, the
- * first example named after it, where there is one.
+ * first example named after it, where there is one. A page without one, such as a foundation's,
+ * shows its specimen.
  */
 export function previewOf(document: Document, component?: string): Preview | undefined {
   const blocks = (document.sections ?? []).flatMap((section) =>
@@ -68,7 +78,10 @@ export function previewOf(document: Document, component?: string): Preview | und
     ?.find((section) => section.id === 'overview')
     ?.blocks.find((block) => block.kind === 'example' && !block.role);
   const chosen = named || (!own && anatomy?.open ? anatomy : lead);
-  if (!chosen || chosen.kind !== 'example') return undefined;
+  if (!chosen || chosen.kind !== 'example')
+    return hasPageSpecimen(document.id)
+      ? { page: document.id, name: document.id, open: false, specimen: document.id }
+      : undefined;
   return {
     page: document.id,
     name: chosen.name,
@@ -158,6 +171,7 @@ function useFit(
   stage: RefObject<HTMLElement | null>,
   canvas: RefObject<HTMLElement | null>,
   on: boolean,
+  whole: boolean,
 ) {
   useLayoutEffect(() => {
     const stageElement = stage.current;
@@ -172,6 +186,13 @@ function useFit(
     const fit = () => {
       const boxes = shownBoxes(canvasElement);
       if (!boxes.length) return;
+      // A gallery's window counts whole, so every tile of it is drawn at one scale, and only what
+      // overflows it is scaled further.
+      if (whole)
+        boxes.push({
+          element: canvasElement,
+          box: new DOMRect(0, 0, canvasElement.offsetWidth, canvasElement.offsetHeight),
+        });
       const left = Math.min(...boxes.map(({ box }) => box.left));
       const top = Math.min(...boxes.map(({ box }) => box.top));
       const right = Math.max(...boxes.map(({ box }) => box.right));
@@ -192,9 +213,11 @@ function useFit(
     resize.observe(canvasElement);
     // The example renders once its module loads, and its overlays open into a canvas that keeps
     // its size; a popup is placed by its style a frame or two later, without changing size. The
-    // canvas's own changes are the fit's.
+    // canvas's own attributes are the fit's; what is added to it or removed from it, such as the
+    // example as its module loads, is the preview's, and fits it again.
     const changes = new MutationObserver((records) => {
-      if (records.some((record) => record.target !== canvasElement)) update();
+      if (records.some((record) => record.type === 'childList' || record.target !== canvasElement))
+        update();
     });
     changes.observe(canvasElement, {
       childList: true,
@@ -217,26 +240,50 @@ function useFit(
       changes.disconnect();
       resize.disconnect();
     };
-  }, [stage, canvas, on]);
+  }, [stage, canvas, on, whole]);
 }
 
 /**
- * A tiny live picture of an alternative on the dotted stage: its example, inert and scaled down
- * to fit, rendered once the tiles near the viewport. Without an example, a page icon.
+ * A tiny live picture of an alternative on the recessed canvas: its example, inert and scaled down
+ * to fit, rendered once the tiles near the viewport; for a page without one, its specimen, in the
+ * same way. Without either, a page icon. A gallery's tile passes its own stage class and, where a
+ * composition of its own reads better than the page's example, that composition.
  */
-function TilePreview({ preview, near }: { preview?: Preview; near: boolean }) {
+export function TilePreview({
+  preview,
+  near,
+  className = 'docs-related-stage',
+  whole = false,
+}: {
+  preview?: Preview;
+  near: boolean;
+  className?: string;
+  /** Whether the window it lays out in counts whole as it is fitted, as a gallery's does. */
+  whole?: boolean;
+}) {
+  const Composition = preview?.composition;
   const theme = useTheme();
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLDivElement>(null);
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   const shown = Boolean(preview && near);
-  useFit(stage, canvas, shown);
+  const subject =
+    preview &&
+    (Composition ? (
+      <Composition />
+    ) : preview.specimen ? (
+      <PageSpecimen id={preview.specimen} />
+    ) : (
+      <ExampleRender page={preview.page} name={preview.name} fallback={null} />
+    ));
+  useFit(stage, canvas, shown, whole);
   return (
     <Theme
       {...theme}
       ref={stage}
-      className="docs-related-stage"
-      data-example={preview?.name}
+      className={className}
+      data-example={preview?.specimen || Composition ? undefined : preview?.name}
+      data-specimen={preview?.specimen}
       data-stage={preview?.stage}
       data-empty={preview ? undefined : ''}
     >
@@ -247,10 +294,10 @@ function TilePreview({ preview, near }: { preview?: Preview; near: boolean }) {
           <div ref={canvas} className="docs-related-canvas" inert aria-hidden>
             {preview.open ? (
               <PortalContainer container={layer} contained>
-                <ExampleRender page={preview.page} name={preview.name} fallback={null} />
+                {subject}
               </PortalContainer>
             ) : (
-              <ExampleRender page={preview.page} name={preview.name} fallback={null} />
+              subject
             )}
             {preview.open && <div ref={setLayer} className="docs-overlay-layer" />}
           </div>
@@ -261,7 +308,7 @@ function TilePreview({ preview, near }: { preview?: Preview; near: boolean }) {
 }
 
 /** Whether an element is near the viewport, once: the tiles render their examples from then on. */
-function useNear(element: RefObject<HTMLElement | null>) {
+export function useNear(element: RefObject<HTMLElement | null>) {
   const [near, setNear] = useState(false);
   useEffect(() => {
     const target = element.current;
@@ -312,7 +359,8 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
 
 /**
  * Related, the last section of a component or pattern page: a tile for each component or page its
- * frontmatter names, with when to pick it instead.
+ * frontmatter names, with when to pick it instead. It ends the page, on the page itself: the page's
+ * one band holds When to use and Anatomy (TemplateContent.tsx).
  */
 export function Related({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
   const alternatives = alternativesOf(metadata);

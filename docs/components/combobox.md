@@ -19,9 +19,9 @@ aliases:
   - chips input
   - people picker
 useWhen:
-  - People choose one option from a list long enough to search, such as an owner among a team's members.
-  - People choose several options from such a list, which show as chips in the field (`multiple`).
-  - The options come from a search, such as contacts on a server (`filter={null}`).
+  - One option from a list long enough to search, such as an owner
+  - Several options from such a list, shown as chips
+  - Options found by a search, such as contacts on a server
 avoidWhen:
   - text: Choosing one of a handful of options, which people can scan without typing.
     use: Select
@@ -41,8 +41,6 @@ components:
 
 ## Overview
 
-A combobox is a text field with a list of options: typing filters the list, and <kbd>Enter</kbd> chooses the first match.
-
 ```tsx example=ChooseOwner
 
 ```
@@ -55,7 +53,7 @@ A read-only field can be focused and its list browsed, but its value can't chang
 
 ### Several reviewers
 
-With `multiple`, chosen options are chips in the field, and the list stays open. <kbd>Backspace</kbd> in the empty text removes the last chip.
+Where people choose several options, each shows as a chip in the field, and the list stays open as they choose.
 
 ```tsx example=Reviewers
 
@@ -63,7 +61,7 @@ With `multiple`, chosen options are chips in the field, and the list stays open.
 
 ### Search on a server
 
-With `filter={null}` the list shows the options the application finds for the typed text; `loading` shows a spinner while it searches.
+The application can find the options itself, such as on a server, and a spinner shows while it searches.
 
 ```tsx example=ServerSearch
 
@@ -71,7 +69,7 @@ With `filter={null}` the list shows the options the application finds for the ty
 
 ### In a form
 
-`name` submits the value, or one entry for each chip. Validation and its `error` belong to the application.
+A required field shows its error when the form is sent without a value.
 
 ```tsx example=RequiredInForm
 
@@ -86,22 +84,14 @@ With `filter={null}` the list shows the options the application finds for the ty
 1. **Outline**
 2. **Floating**
 
-| Variant    | Use for                                                 |
-| ---------- | ------------------------------------------------------- |
-| `outline`  | In forms, dialogs and toolbars. The default.            |
-| `floating` | A long form on a page, as TextField's floating variant. |
-
-### Sizes
-
-`sm`, `md` and `lg`, the control heights of the [scale](../foundations/scale.md). With `showLabel={false}`, a placeholder and an `aria-label` name it.
-
-```tsx example=SmallToolbar
-
-```
+| Variant  | Use for                                                 |
+| -------- | ------------------------------------------------------- |
+| Outline  | In forms, dialogs and toolbars. The default.            |
+| Floating | A long form on a page, as TextField's floating variant. |
 
 ## When to use
 
-```tsx do=ClearableOptional caption="clearable where the value is optional."
+```tsx do=ClearableOptional caption="A clear button where the value is optional."
 
 ```
 
@@ -109,12 +99,17 @@ With `filter={null}` the list shows the options the application finds for the ty
 
 ```
 
-- Give options that share a label a description, such as an e-mail address.
-- Don't take free text as the value; offer it as an option, or use a TextField.
+### Options
+
+Give options that share a label a description, such as an e-mail address. Text people type is never the value: offer it as an option instead.
 
 ### Labels
 
-Name the field after what people choose, and use the placeholder for what to type.
+Name the field after what people choose, and use the placeholder for what to type. A field without a visible label, such as in a toolbar, says what to type in its placeholder.
+
+```tsx example=SmallToolbar
+
+```
 
 ## Anatomy
 
@@ -131,7 +126,7 @@ Name the field after what people choose, and use the placeholder for what to typ
 7. **Clear** (`env-combobox-clear`, `clearable`)
 8. **Trigger** (`env-combobox-trigger`)
 
-```tsx anatomy=ComboboxListAnatomy open stage=raised
+```tsx anatomy=ComboboxListAnatomy open
 
 ```
 
@@ -139,10 +134,6 @@ Name the field after what people choose, and use the placeholder for what to typ
 2. **Option** (`env-combobox-item`, `items`)
 3. **Leading content** (`env-combobox-item env-avatar`, `start`)
 4. **Check** (`env-combobox-item-indicator`)
-
-### Colors
-
-`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 
@@ -179,6 +170,56 @@ A field fills its container, and chips wrap onto more rows.
 - The options, and with `filter={null}` the search behind them.
 - Validation and its `error` message.
 - `clearLabel`, `removeLabel`, `loadingLabel` and `emptyLabel` in the application's language.
+
+## In code
+
+### Usage
+
+Combobox takes its options as `items`, each with a `value` and a `label`, and optionally a `description` and `start` content, such as an Avatar; a ComboboxGroup puts items under a heading. Control it with `value`, `null` for none, and `onValueChange`, which receives the value and its item, or leave it uncontrolled with `defaultValue`. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button while there is a value, and <kbd>Esc</kbd> on the closed field clears it too.
+
+```tsx source=ChooseOwner
+
+```
+
+#### Several options
+
+With `multiple`, `value` is an array of values, each shown as a chip with a remove button, and the list stays open as people choose.
+
+```tsx source=Reviewers
+
+```
+
+#### Search on a server
+
+By default the list shows the options whose label or description contains the typed text, ignoring case and accents, in `locale`; `filter` takes a function of your own. With `filter={null}` it shows `items` as given: search from `onInputValueChange`, which receives the typed text, and set `loading` while the search runs, which shows `loadingLabel` instead of `emptyLabel`. `onOpenChange` can load the options as the list opens.
+
+```tsx source=ServerSearch
+
+```
+
+#### In a form
+
+`name` submits the value, or one entry for each chip, and a form reset restores `defaultValue`. `readOnly` lets people focus the field and browse the list without changing the value. Validation and its `error` belong to the application.
+
+```tsx source=RequiredInForm
+
+```
+
+#### Variants and sizes
+
+`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. With `showLabel={false}`, a `placeholder` and an `aria-label` name it.
+
+```tsx source=SmallToolbar
+
+```
+
+### Composition
+
+The field is `env-field` with `env-combobox`: the control, `env-combobox-control`, holds the chips, `env-combobox-chip`, with their labels, `env-combobox-chip-label`, and remove buttons, `env-combobox-chip-remove`, IconButtons with a cross; then the input, `env-combobox-input`, the clear button, `env-combobox-clear`, and the trigger, `env-combobox-trigger`. The list is the shared popup, `env-combobox-popup`, and its options are its rows, `env-combobox-item`, with the check, `env-combobox-item-indicator`. `className` and `style` reach the field's root, and `ref` the input.
+
+### Customize
+
+`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox's chips, through `style` or CSS. Their hover, focus and press then follow them, as state layers; with none set, they keep their own colors.
 
 ## Changelog
 

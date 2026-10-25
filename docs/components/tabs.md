@@ -14,9 +14,9 @@ aliases:
   - TabsItem
   - view switcher
 useWhen:
-  - Related views of one subject in one place, such as a project's summary, details and activity.
-  - Content that splits into sections people look at one at a time, such as the parts of a settings page.
-  - Views that fill a region, such as a diagram's canvas and its outline (fill).
+  - Related views of one subject, such as a project's summary and activity
+  - Sections people look at one at a time, such as a settings page's
+  - Views that fill a region, such as a diagram's canvas and its outline
 avoidWhen:
   - text: A filter or mode that changes the content below, such as a list's sort order or a chart's range.
     use: SegmentedControl
@@ -34,46 +34,44 @@ components:
 
 ## Overview
 
-Tabs switch between panels of related content in one place. Each item gives a `button`, which becomes the tab, and the panel's `content`. After Material's tabs, every tab is a text tab, whatever its button's variant: the selected one in the accent color with an indicator under it, the others muted. It switches panels, where a [SegmentedControl](segmented-control.md), connected outlined segments, picks a value.
-
 ```tsx example=ProjectViews
 
 ```
 
-### Manual activation
-
-By default the arrow keys select the tab they reach. With `activation="manual"` they only move focus and <kbd>Enter</kbd> or <kbd>Space</kbd> selects, for a panel that loads when it shows.
-
-```tsx example=ManualActivation
-
-```
-
-### Keep panels mounted
-
-Only the selected panel shows. With `keepMounted` the others stay mounted and hidden, so a draft or a scroll position survives switching.
-
 ## Variants
 
-| Option                   | Use for                                                             |
-| ------------------------ | ------------------------------------------------------------------- |
-| `size="lg"`              | Most tabs, as tall as buttons. The default.                         |
-| `size="sm"` or `"md"`    | Toolbars and bars, as tall as a control of that size.               |
-| `orientation="vertical"` | A column of sections, such as a settings page's.                    |
-| `fill`                   | Views that fill a region: the selected panel takes the height left. |
+### Sizes
 
-```tsx example=SmallRail caption="size sm, with a count in a tab."
+| Size             | Use for                                               |
+| ---------------- | ----------------------------------------------------- |
+| Large            | Most tabs, as tall as buttons. The default.           |
+| Small and medium | Toolbars and bars, as tall as a control of that size. |
 
-```
-
-```tsx example=VerticalList caption="A vertical rail, with the Tabs laid out as a row."
+```tsx example=SmallRail caption="Small tabs, with a count in a tab."
 
 ```
 
-```tsx example=FillARegion caption="fill: the panel takes the height left below the rail."
+### Vertical
+
+A column of tabs beside their panels, for the sections of a settings page.
+
+```tsx example=VerticalList
 
 ```
 
-```tsx example=ListBesideAHeading caption="renderList places the rail beside a heading."
+### Fill a region
+
+The selected panel takes the height left below the tabs, for a view such as a canvas.
+
+```tsx example=FillARegion
+
+```
+
+### Beside a heading
+
+The tabs can share a row with a heading, with their panels below.
+
+```tsx example=ListBesideAHeading
 
 ```
 
@@ -87,8 +85,9 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 
 ```
 
-- Tabs are buttons, never links; the rail draws each as a text tab, whatever its variant.
-- Content people compare stays in one panel.
+### One panel at a time
+
+Keep content people compare in one panel. Every tab is a button that shows its panel, never a link to another page.
 
 ## Anatomy
 
@@ -98,12 +97,8 @@ Only the selected panel shows. With `keepMounted` the others stay mounted and hi
 
 1. **Tabs** (`env-tabs`)
 2. **Rail** (`env-tabs-list`)
-3. **Tab** (`env-tabs-tab`, `button`): a text tab, the selected one with its indicator under it
+3. **Tab** (`env-tabs-tab`, `button`)
 4. **Panel** (`env-tabs-panel`, `content`)
-
-### Colors
-
-`--env-tabs-container`, `--env-tabs-content`, `--env-tabs-selected-content` and `--env-tabs-indicator` set the colors of one Tabs, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
 
 ## Adapting to width
 
@@ -137,6 +132,87 @@ Tabs keep their size: a rail with more tabs than fit scrolls sideways.
 - An `aria-label` on every Tabs and every icon-only tab.
 - A heading inside a panel where it starts a section.
 - The selected tab in the URL, where people should link to it.
+
+## In code
+
+### Usage
+
+Tabs takes `items`, each a `TabsItem` with its `value`, its `button`, which becomes the tab, and the panel's `content`; `disabled` dims a tab and reports `aria-disabled`, and the arrow keys still reach it. The button is a Button, an IconButton or a component that forwards native button props and its ref, never a link, and every tab is a text tab, whatever its button's variant. `aria-label` names the tab list. Leave the tabs uncontrolled, starting on `defaultValue`, the first enabled tab by default, or control them with `value` and `onValueChange`.
+
+```tsx source=ProjectViews
+
+```
+
+#### Activation and mounting
+
+`activation` is `automatic`, the default, which selects a tab as the arrow keys reach it, or `manual`, where <kbd>Enter</kbd> or <kbd>Space</kbd> selects. Only the selected panel is mounted; `keepMounted` keeps the others mounted and hidden, so their state survives switching.
+
+```tsx
+import { useEffect, useState } from 'react';
+import { Button, Spinner, Tabs, Text } from '@envsemble/envui';
+
+const reports = ['Revenue', 'Customers', 'Refunds'];
+
+/** A report that loads once, the first time its tab is chosen, as from a server. */
+function Report({ name, ready, onLoad }: { name: string; ready: boolean; onLoad: () => void }) {
+  useEffect(() => {
+    if (ready) return;
+    const timer = setTimeout(onLoad, 800);
+    return () => clearTimeout(timer);
+  }, [ready, onLoad]);
+  return ready ? (
+    <Text>The {name.toLowerCase()} report for March is ready.</Text>
+  ) : (
+    <Spinner label={`Loading the ${name.toLowerCase()} report`} />
+  );
+}
+
+export default function ManualActivation() {
+  // The first report is ready; the others load when their tab is chosen.
+  const [loaded, setLoaded] = useState(() => new Set(['Revenue']));
+  return (
+    <Tabs
+      aria-label="Reports"
+      activation="manual"
+      items={reports.map((name) => ({
+        value: name.toLowerCase(),
+        button: <Button>{name}</Button>,
+        content: (
+          <Report
+            name={name}
+            ready={loaded.has(name)}
+            onLoad={() => setLoaded((current) => new Set(current).add(name))}
+          />
+        ),
+      }))}
+    />
+  );
+}
+```
+
+#### Size, orientation and fill
+
+`size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons. `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>; the panels stay below the list either way, so lay the Tabs out as a row through `style` to put a vertical list beside them. With `fill`, the selected panel takes the height left below the list; give the Tabs a height, for example as a flex child.
+
+```tsx source=VerticalList
+
+```
+
+#### A layout of your own
+
+`renderList` places the tab list in a layout of your own, such as beside a heading: it receives the list and returns what to render in its place, with the list in it once; the panels stay below. `listClassName` and `panelClassName` add classes to the list and to every panel.
+
+```tsx source=ListBesideAHeading
+
+```
+
+### Composition
+
+The parts are the tabs, `env-tabs`, with `data-fill` when they fill a region; the rail, `env-tabs-list`, with `data-orientation="vertical"` in a column; each tab, `env-tabs-tab`, with `data-active` while selected; and the panels, `env-tabs-panels`, each an `env-tabs-panel`. Keep the selected tab in the URL where people should link to it.
+
+### Customize
+
+`--env-tabs-container`, `--env-tabs-content`, `--env-tabs-selected-content` and `--env-tabs-indicator` set the colors of one Tabs, through `style` or CSS. The rail has no fill unless `--env-tabs-container` sets one. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Changelog
 

@@ -1,5 +1,5 @@
 import { Checkbox } from '@envsemble/envui';
-import { Example } from '../../previews/Example';
+import { Example, MatrixScroll } from '../../previews/Example';
 
 const states = [
   { title: 'Unchecked', checked: false },
@@ -11,7 +11,7 @@ const states = [
 export default function States() {
   return (
     <Example size="wide">
-      <div className="docs-matrix-scroll" tabIndex={0} role="region" aria-label="Checkbox states">
+      <MatrixScroll label="Checkbox states">
         <table className="docs-matrix">
           <thead>
             <tr>
@@ -36,7 +36,7 @@ export default function States() {
             ))}
           </tbody>
         </table>
-      </div>
+      </MatrixScroll>
     </Example>
   );
 }

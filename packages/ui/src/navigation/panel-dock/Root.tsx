@@ -55,12 +55,12 @@ export interface PanelDockPanel {
   title: string;
   /**
    * open: side by side with the other open panels at the bottom inline-end; minimized: a tab in
-   * the strip along the bottom; maximized: filling the region.
+   * the strip that floats over the bottom edge; maximized: filling the region.
    */
   mode: PanelDockMode;
   /**
-   * Height of the open panel in pixels. Without it, the panel starts at 85% of the room above the
-   * tabs, up to 40 rem, and keeps the height people choose.
+   * Height of the open panel in pixels. Without it, the panel starts at 85% of the room in the
+   * dock, up to 40 rem, and keeps the height people choose.
    */
   height?: number;
   /** Width of the open panel where the row has room, in pixels; 32 rem by default. */
@@ -71,7 +71,7 @@ export interface PanelDockPanel {
   maxWidth?: number;
   /** The lowest height people can resize the panel to, in pixels; 15 rem by default. */
   minHeight?: number;
-  /** The greatest height people can resize the panel to, in pixels; the room above the tabs. */
+  /** The greatest height people can resize the panel to, in pixels; the room in the dock. */
   maxHeight?: number;
   /** The panel people work in: in front of the other open panels, and shown by a stacked dock. */
   active?: boolean;
@@ -178,7 +178,7 @@ interface MinimizedForRoom {
 interface Measurements {
   /** Pixels per rem. */
   rem: number;
-  /** The block size open panels have above the tabs, in pixels. */
+  /** The block size open panels have in the dock, in pixels. */
   room: number;
 }
 
@@ -554,7 +554,7 @@ export function Root<T extends PanelDockPanel>({
   }
 
   // The dock measures itself: it reads whether its container query stacks it, below stackBelow, and
-  // open panels fit the room above the tabs. A rem or em threshold follows the text size.
+  // open panels fit its height, as the tabs float over their bottom edge. A rem or em threshold follows the text size.
   useLayoutEffect(() => {
     const element = root.current;
     const threshold = probe.current;
@@ -569,8 +569,7 @@ export function Root<T extends PanelDockPanel>({
       const fontSize = view?.getComputedStyle(element.ownerDocument.documentElement).fontSize;
       const rem = parseFloat(fontSize ?? '') || 16;
       const gutter = parseFloat(view?.getComputedStyle(rowElement).paddingBlockStart ?? '') || 0;
-      const tabsSize = strip.current?.offsetHeight ?? 0;
-      const room = Math.max(0, element.clientHeight - tabsSize - gutter);
+      const room = Math.max(0, element.clientHeight - gutter);
       setMeasurements((current) =>
         current?.rem === rem && current.room === room ? current : { rem, room },
       );
@@ -595,14 +594,13 @@ export function Root<T extends PanelDockPanel>({
     // The probe changes size as the query starts or stops stacking the dock, also where only the
     // text size changes.
     observer.observe(threshold);
-    if (strip.current) observer.observe(strip.current);
     return () => {
       observer.disconnect();
       cancelAnimationFrame(frameRequest);
     };
     // Stacking changes the row's padding above open panels in front of a maximized one, and with it
     // their room, without resizing anything the observer watches.
-  }, [stackBelow, hasStrip, filled, stacked, overflow, setStacked, setOverflowing]);
+  }, [stackBelow, filled, stacked, overflow, setStacked, setOverflowing]);
 
   useStackedReport(stacked, onStackedChange);
 

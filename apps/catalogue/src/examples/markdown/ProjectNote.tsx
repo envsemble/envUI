@@ -8,6 +8,11 @@ Prepare **Northwind** for the spring launch.
 - Review the [launch plan](/documents/launch-plan) before sharing it.
   - Keep the original notes.
 
+On launch day:
+
+1. Publish the pricing page.
+2. Send the release notes.
+
 > Share the plan once the review is done.
 
 | Task | Owner | Status |

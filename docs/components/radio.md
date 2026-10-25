@@ -14,9 +14,9 @@ aliases:
   - choice group
   - single choice
 useWhen:
-  - People choose exactly one of two to five options, and seeing them all helps them choose, such as who can open a project.
-  - Each option needs a sentence that explains it, such as a role or a visibility (`orientation="vertical"`).
-  - A choice in a form or a dialog that takes effect when the form is saved.
+  - Exactly one of two to five options, all in view, such as who can open a project
+  - Options that each need a sentence to explain them, such as roles
+  - A choice in a form that takes effect when the form is saved
 avoidWhen:
   - text: More options than fit comfortably, or options people already know, such as a country or a time zone.
     use: Select
@@ -37,7 +37,7 @@ components:
 
 ## Overview
 
-A radio group shows a few options and lets people choose exactly one.
+Each Radio sits in a RadioGroup, whose label names the choice.
 
 ```tsx example=ProjectAccess
 
@@ -51,34 +51,26 @@ Choosing an option clears the one chosen before; people can't clear a choice, on
 
 ### A required choice
 
-With `required` and nothing chosen, the form asks for a choice. Link the error to the group with `aria-describedby`.
+A required group with nothing chosen asks for a choice before the form is sent, and its error is tied to the group.
 
 ```tsx example=RequiredChoice
 
 ```
 
-### A choice that can't change here
-
-`disabled` on the group keeps its choice visible; a sentence says where to change it.
-
-```tsx example=InheritedAccess
-
-```
-
 ## Variants
 
-```tsx example=VisibilityRows
+| Layout    | Use for                                                         |
+| --------- | --------------------------------------------------------------- |
+| In a line | Short options people tell apart by name. The default.           |
+| In rows   | Options that need a sentence each, in rows that fill the width. |
+
+```tsx example=VisibilityRows caption="In rows, each option with a description."
 
 ```
-
-| Orientation  | Use for                                                         |
-| ------------ | --------------------------------------------------------------- |
-| `horizontal` | Short options people tell apart by name. The default.           |
-| `vertical`   | Options that need a sentence each, in rows that fill the width. |
 
 ## When to use
 
-```tsx do=DescribedRows caption="Rows with a description where options need explaining."
+```tsx do=DescribedRows caption="Short labels, with each explanation in a description."
 
 ```
 
@@ -86,12 +78,13 @@ With `required` and nothing chosen, the form asks for a choice. Link the error t
 
 ```
 
-- Choose a default where one option suits most people, and none where people must decide.
-- No links or buttons in a label or a description: pressing anywhere on an option chooses it.
+### Defaults
 
-### Labels
+Choose a default where one option suits most people, and none where people must decide.
 
-Name the group with a short noun, and give options short, parallel names.
+### Nothing to press inside
+
+Keep links and buttons out of labels and descriptions: pressing anywhere on an option chooses it.
 
 ## Anatomy
 
@@ -106,13 +99,9 @@ Name the group with a short noun, and give options short, parallel names.
 5. **Description** (`env-radio-description`, `description`)
 6. **Radio** (`env-radio-input`)
 
-### Colors
-
-`--env-radio-container`, `--env-radio-content` and `--env-radio-selected` set the colors of one Radio, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
-
 ## Adapting to width
 
-Horizontal options wrap onto more lines; rows fill the width.
+Options in a line wrap onto more lines, and rows fill the width.
 
 ```tsx example=WrappingOptions widths="14 30"
 
@@ -139,6 +128,74 @@ Horizontal options wrap onto more lines; rows fill the width.
 - A `label` for the group, or `aria-label`.
 - A `name` for a group in a form.
 - Errors linked with `aria-describedby`, and focus on the group when a form is refused.
+
+## In code
+
+### Usage
+
+A RadioGroup holds Radio options and is a native `<fieldset>`: its `label`, the legend, names the choice, or `aria-label` where it has none. Each Radio has a `value`, which the group reports and a form submits, its `label`, and an optional `description`, a short muted line read with its name. Leave the group uncontrolled, with `defaultValue`, which a form reset returns to, or control it with `value` and `onValueChange`; without either, no option is chosen until people choose one. Set `name` in a form; without it the group takes a unique generated one.
+
+```tsx source=ProjectAccess
+
+```
+
+#### Orientation
+
+`orientation` is `horizontal`, the default, radios before their labels side by side, which wrap onto more lines, or `vertical`, connected selectable rows that fill the width, for options with a description.
+
+```tsx source=VisibilityRows
+
+```
+
+#### Required and disabled
+
+`required` asks for a choice before the form submits, through native constraint validation. Show the error under the group, linked with `aria-describedby`, and move focus to the group when a form is refused. `disabled` disables every option: the group keeps its choice visible, but can't be focused or changed. Say where to change it in a sentence beside it.
+
+```tsx
+import { useId } from 'react';
+import { Radio, RadioGroup, Column, Text } from '@envsemble/envui';
+
+export default function InheritedAccess() {
+  const reason = useId();
+  return (
+    <Column gap={3} align="start">
+      <RadioGroup
+        label="Access"
+        name="inherited-access"
+        value="team"
+        disabled
+        aria-describedby={reason}
+      >
+        <Radio value="team" label="Team" />
+        <Radio value="private" label="Private" />
+      </RadioGroup>
+      <Text id={reason} variant="body-sm">
+        This folder takes its access from Northwind launch. Change it there.
+      </Text>
+    </Column>
+  );
+}
+```
+
+```tsx source=RequiredChoice
+
+```
+
+### Composition
+
+The parts are the group, `env-radio-group`, with `data-orientation` and its legend, `env-radio-group > legend`; each option, `env-radio`, the label around the radio and its text; the description, `env-radio-description`; and the native radio, `env-radio-input`. A Radio's `className` and `style` reach its root, and `ref` and the other native props the input, so a form library can register and focus it.
+
+### Customize
+
+`--env-radio-container`, `--env-radio-content` and `--env-radio-selected` set the colors of one Radio, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+
+```tsx
+<Radio
+  value="team"
+  label="My team"
+  style={{ '--env-radio-selected': 'var(--env-color-fg-success)' } as CSSProperties}
+/>
+```
 
 ## Changelog
 

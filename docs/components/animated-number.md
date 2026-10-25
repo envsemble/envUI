@@ -3,7 +3,7 @@ title: AnimatedNumber
 summary: A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.
 status: stable
 since: 0.4.0
-category: Content & guidance
+category: Data display
 aliases:
   - animated counter
   - counter
@@ -14,8 +14,8 @@ aliases:
   - odometer
   - ticker
 useWhen:
-  - A count changes while people make choices elsewhere, such as matching results in a button's label.
-  - A figure follows a setting people change, such as seats left or a price per billing period.
+  - A count that changes as people choose, such as results in a button's label
+  - A figure that follows a setting, such as seats left or a price per period
 avoidWhen:
   - text: 'A count that doesn’t change while people look at it: plain text.'
     use: Text
@@ -31,7 +31,7 @@ components:
 
 ## Overview
 
-AnimatedNumber shows a number in text and rolls it to its new value: up as it grows, down as it shrinks. Its text is always the current value.
+AnimatedNumber rolls up as the value grows and down as it shrinks.
 
 ```tsx example=ShowResults
 
@@ -39,7 +39,7 @@ AnimatedNumber shows a number in text and rolls it to its new value: up as it gr
 
 ### A formatted value
 
-`formatValue` writes the value, such as a currency. By default it follows EnvUIProvider's `locale`.
+The number can be written in any format, such as a currency. By default it is written as the application's language writes numbers.
 
 ```tsx example=CustomFormat
 
@@ -59,8 +59,9 @@ With a reduced-motion preference, the new value only fades in.
 
 ```
 
-- Don't roll counts that change on their own, such as a live total.
-- Keep the words in the same sentence, and match them to the number: 1 seat, 3 seats.
+### Words
+
+Keep the words in the same sentence as the number, and match them to it: 1 seat, 3 seats.
 
 ## Anatomy
 
@@ -82,6 +83,28 @@ With a reduced-motion preference, the new value only fades in.
 
 - A status region where the change must be announced; AnimatedNumber isn't one.
 - A `formatValue` in the reader's language.
+
+## In code
+
+### Usage
+
+AnimatedNumber shows its `value` as text inside a sentence or a label; when `value` changes, the new number rolls in, up as it grows and down as it shrinks, and with reduced motion it only fades in. Keep the words beside it in the same element, and match them to the number.
+
+```tsx source=ShowResults
+
+```
+
+#### A formatted value
+
+`formatValue` writes the value as text, such as a currency through `Intl.NumberFormat`. Without it, AnimatedNumber uses the number format of EnvUIProvider's `locale`, or else the browser's.
+
+```tsx source=CustomFormat
+
+```
+
+### Composition
+
+AnimatedNumber is the root, `env-animated-number`, around the value, `env-animated-number-value`.
 
 ## Changelog
 

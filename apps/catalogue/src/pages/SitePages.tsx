@@ -1,23 +1,63 @@
-import { Button, Column, Link, Row, Text } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { Button, Column } from '@envsemble/envui';
 import { Api } from '@envsemble/envui/icons/Api';
 import { MenuBook } from '@envsemble/envui/icons/MenuBook';
+import { Widgets } from '@envsemble/envui/icons/Widgets';
+import { Pattern } from '@envsemble/envui/icons/Pattern';
+import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
 import { PageHeader } from '../layout/PageHeader';
-import { apiRoute, foundationGuideRoute, type SitePage } from '../navigation/DocumentationRoutes';
+import {
+  apiRoute,
+  foundationGuideRoute,
+  patternGuideRoute,
+  type SitePage,
+} from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
-import { getReferenceIcon } from '../navigation/TopicIcons';
+import { getPatternIcon, getReferenceIcon } from '../navigation/TopicIcons';
 import { FoundationPreview } from '../previews/FoundationPreview';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import type { Reference } from '../Reference';
 import { Catalogue } from './Catalogue';
+import { PatternCatalogue } from './PatternCatalogue';
 import { Documentation } from './Documentation';
 import { Benchmark } from './Benchmark';
-import { ReleaseNotes } from './ReleaseNotes';
+
+/** The link from a page of the Site to its guide in the Docs, how to use it in code. */
+function ApiLink({ path }: { path: string }) {
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      href={routeHref(path)}
+      startIcon={<Api />}
+      className="docs-api-link"
+    >
+      API
+    </Button>
+  );
+}
+
+/**
+ * The link from a foundation's page on the Site to its guide in the Docs: the tokens, values and code
+ * behind its plain words.
+ */
+export function GuideLink({ path }: { path: string }) {
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      href={routeHref(path)}
+      startIcon={<MenuBook />}
+      className="docs-guide-link"
+    >
+      Guide
+    </Button>
+  );
+}
 
 /**
  * A component's page on the Site: what it looks like and when to use it, in live figures with the
- * code under each, and a link to its page in the Docs, where its props, part names and changelog
- * are.
+ * code under each, and a link to its page in the Docs, its guide to using it in code with its
+ * props, part names and changelog.
  */
 export function ComponentPage({ page }: { page: SitePage }) {
   const document = page.document!;
@@ -34,16 +74,8 @@ export function ComponentPage({ page }: { page: SitePage }) {
         symbol={<Icon />}
         meta={
           document.metadata && (
-            <MetadataBadges metadata={document.metadata}>
-              <Button
-                variant="secondary"
-                size="sm"
-                href={routeHref(apiRoute(document.id))}
-                startIcon={<Api />}
-                className="docs-api-link"
-              >
-                API
-              </Button>
+            <MetadataBadges metadata={document.metadata} plain>
+              <ApiLink path={apiRoute(document.id)} />
             </MetadataBadges>
           )
         }
@@ -53,16 +85,28 @@ export function ComponentPage({ page }: { page: SitePage }) {
   );
 }
 
-/** A pattern's page: every section of the template, in the page's order. */
+/**
+ * A pattern's page: every section of the template, in the page's order, and a link to its guide in
+ * the Docs.
+ */
 export function PatternPage({ page }: { page: SitePage }) {
   const document = page.document!;
+  const Icon = getPatternIcon(document.id);
   return (
     <>
       <PageHeader
         title={page.title}
         breadcrumb={page.group ? `Patterns / ${page.group}` : 'Patterns'}
         description={page.summary}
-        meta={document.metadata && <MetadataBadges metadata={document.metadata} />}
+        // eslint-disable-next-line react-hooks/static-components
+        symbol={<Icon />}
+        meta={
+          document.metadata && (
+            <MetadataBadges metadata={document.metadata} plain>
+              <ApiLink path={patternGuideRoute(document.id)} />
+            </MetadataBadges>
+          )
+        }
       />
       <TemplateContent document={document} />
     </>
@@ -70,33 +114,23 @@ export function PatternPage({ page }: { page: SitePage }) {
 }
 
 /**
- * The tokens each foundation's page names in a sentence: the custom properties, as Markdown, of
- * what the page shows. A foundation without tokens of its own names none.
+ * The credit for the icons, under the Icons page's list: where they come from and their license,
+ * linked. It is on this page alone. The package carries the license and its notice
+ * (packages/ui/THIRD_PARTY_NOTICES.md).
  */
-const foundationTokens: Record<string, string> = {
-  colors:
-    'The colors are the `--env-color-*` tokens: roles such as `--env-color-bg-page` and `--env-color-fg-muted`, each with a value in every theme.',
-  typography:
-    'Type takes the `--env-type-*` and `--env-font-*` tokens, such as `--env-type-body` and `--env-font-weight-medium`.',
-  spacing:
-    'Space and corners take the `--env-space-*` and `--env-radius-*` tokens, such as `--env-space-4` and `--env-radius-surface`.',
-  scale:
-    'Sizes that follow the scale are tokens, such as `--env-control-height-md`, `--env-row-height` and `--env-icon-size-md`, with a comfortable and a compact value.',
-  responsive:
-    'The stacking order takes the `--env-z-*` tokens, such as `--env-z-sticky` and `--env-z-popover`.',
-  icons: 'Icons take their size from the `--env-icon-*` tokens and their color from the text.',
-  accessibility:
-    'Motion takes the `--env-motion-*` tokens, and an unavailable control `--env-state-disabled-opacity`.',
-};
+const iconsCredit = [
+  '## Where the icons come from',
+  '',
+  "envUI's icons are [Material Symbols](https://m3.material.io/styles/icons), from Material Design, in their Rounded style. They are free to use under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), and the package includes the license.",
+].join('\n');
 
 /**
- * A foundation's page on the Site: a short introduction, its visuals, the tokens it uses in a
- * sentence and a link to its guide in the Docs, where the written guidance is.
+ * A foundation's page on the Site: how envUI handles its subject, in pictures and plain words. Its
+ * guide in the Docs, which Guide opens, holds the tokens and code behind them.
  */
 export function FoundationPage({ page }: { page: SitePage }) {
   const reference = page.document as Reference;
   const Icon = getReferenceIcon(reference.id, reference.group);
-  const tokens = foundationTokens[reference.id];
   return (
     <>
       <PageHeader
@@ -105,16 +139,14 @@ export function FoundationPage({ page }: { page: SitePage }) {
         description={page.summary}
         // eslint-disable-next-line react-hooks/static-components
         symbol={<Icon />}
+        meta={<GuideLink path={foundationGuideRoute(reference.id)} />}
       />
       <FoundationPreview id={reference.id} />
-      <Column gap={4} className="docs-article docs-foundation-notes">
-        {tokens && <Documentation markdown={tokens} path={reference.path} />}
-        <Text>
-          <Link href={routeHref(foundationGuideRoute(reference.id))}>
-            Read the {page.title.toLowerCase()} guide in the Docs
-          </Link>
-        </Text>
-      </Column>
+      {reference.id === 'icons' && (
+        <Column gap={4} className="docs-article docs-foundation-notes docs-icons-credit">
+          <Documentation markdown={iconsCredit} path={reference.path} />
+        </Column>
+      )}
     </>
   );
 }
@@ -123,7 +155,7 @@ export function FoundationPage({ page }: { page: SitePage }) {
 export function ComponentsPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Components" description={page.summary} />
+      <PageHeader title={page.title} description={page.summary} symbol={<Widgets />} />
       <Column gap={7} className="docs-article docs-overview">
         <Catalogue />
       </Column>
@@ -131,45 +163,13 @@ export function ComponentsPage({ page }: { page: SitePage }) {
   );
 }
 
-/** Getting started on the Site: the install in a few lines, and the way into the Docs. */
-export function GetStartedPage({ page }: { page: SitePage }) {
+/** Every pattern, by what people are doing. */
+export function PatternsPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Overview" description={page.summary} />
-      <Column gap={6} className="docs-article">
-        <Text>
-          envUI is a private package of React components, design tokens and patterns for building
-          applications. Install it with an exact version, import its styles once, and compose its
-          components.
-        </Text>
-        <CodeBlock language="sh" label="Install" copyable>
-          {'npm install --save-exact @envsemble/envui@<version>'}
-        </CodeBlock>
-        <CodeBlock language="tsx" label="Use" copyable>
-          {`import { Theme, Button } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import '@envsemble/envui/styles.css';
-
-export function App() {
-  return (
-    <Theme theme="light">
-      <Button startIcon={<Add />}>Create item</Button>
-    </Theme>
-  );
-}`}
-        </CodeBlock>
-        <Text>
-          The Docs hold the rest: registry access, themes and routers, migrating an interface,
-          codemods, the tokens, and every component&apos;s props.
-        </Text>
-        <Row gap={3} wrap>
-          <Button href={routeHref('docs/setup')} startIcon={<MenuBook />}>
-            Install and set up
-          </Button>
-          <Button variant="secondary" href={routeHref('docs')}>
-            Open the Docs
-          </Button>
-        </Row>
+      <PageHeader title={page.title} description={page.summary} symbol={<Pattern />} />
+      <Column gap={7} className="docs-article docs-overview">
+        <PatternCatalogue />
       </Column>
     </>
   );
@@ -182,18 +182,13 @@ export function App() {
 export function BenchmarkPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Benchmark" description={page.summary} />
+      <PageHeader
+        title={page.title}
+        breadcrumb="Overview"
+        description={page.summary}
+        symbol={<Leaderboard />}
+      />
       <Benchmark />
-    </>
-  );
-}
-
-/** The release notes: a few lines on each release; the full changelog is in the Docs. */
-export function ChangelogPage({ page }: { page: SitePage }) {
-  return (
-    <>
-      <PageHeader title={page.title} breadcrumb="Changelog" description={page.summary} />
-      <ReleaseNotes />
     </>
   );
 }

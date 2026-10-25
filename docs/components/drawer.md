@@ -1,6 +1,6 @@
 ---
 title: Drawer
-summary: The navigation drawer for expanded and larger windows, a column of destinations with icons, labels, counts and group headings.
+summary: An application's main destinations, as a drawer with group headings and counts on wider windows, a rail on tablets or a bar on phones.
 status: beta
 since: 1.0.0
 category: Navigation
@@ -21,60 +21,100 @@ aliases:
   - nav links
   - navigation links
   - navigation
+  - navigation rail
+  - side rail
+  - icon rail
+  - collapsed sidebar
+  - icon sidebar
+  - NavigationRail
+  - sidebar rail
+  - navigation bar
+  - bottom navigation
+  - bottom bar
+  - tab bar
+  - bottom tabs
+  - mobile navigation
+  - NavigationBar
+  - BottomNavigation
 useWhen:
-  - An application's main destinations on an expanded or larger window, where Scaffold places the drawer at the window's start.
-  - Many destinations, in groups under headings, with counts.
-  - The sections of a guide or of the settings beside their content, with or without icons.
+  - An application's main destinations, on a laptop or a wider window
+  - Many destinations, in groups under headings, with counts
+  - The sections of a guide or of the settings, beside their content
+  - The same destinations on a tablet, each an icon above a short label (Rail)
+  - Three to five destinations on a phone, along the bottom of the window (Bar)
 avoidWhen:
-  - text: The same destinations on a compact window, such as a phone.
-    use: Bar
-  - text: The same destinations on a medium window, such as a tablet.
-    use: Rail
   - text: Switching between views of the same content in one place.
     use: Tabs
   - text: A deep hierarchy that people expand and collapse, such as folders and files.
     use: Tree
   - text: The path from the top of a hierarchy down to the current page.
     use: Breadcrumbs
+  - text: Actions, such as New or Share.
+    use: Toolbar
 components:
   - Drawer
+  - Rail
+  - Bar
 ---
 
 # Drawer
 
 ## Overview
 
-The navigation drawer holds an application's destinations in a column at the start of an expanded or larger window, with group headings and counts. It takes the same destinations as [Bar](bar.md) and [Rail](rail.md), and [Scaffold](scaffold.md) shows the form that fits the width.
-
 ```tsx example=AppDestinations
 
 ```
 
-It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s; `background="page"` puts it on the page's background instead. On a surface, such as a [Sheet](sheet.md), it takes that surface's color either way.
-
-### Without icons
-
-A `DrawerDestination` may leave its icon out, for the sections of a guide or of the settings; the Bar and the Rail need icons.
-
-```tsx example=GuideSections
+```tsx example=TabletDestinations caption="Rail: each destination an icon above a short label, for a tablet."
 
 ```
 
-### One array, three forms
+```tsx example=PhoneDestinations caption="Bar: three to five destinations along the bottom of a phone."
 
-The application passes the same destinations to each form, and a group is a heading in the drawer only.
+```
+
+### One list, three forms
+
+The drawer, the rail and the bar take the same list of destinations, and [Scaffold](scaffold.md) shows the one that fits its width. A group is a heading in the drawer only: the rail and the bar show its destinations one after another.
 
 ```tsx example=OneListThreeForms
 
 ```
 
+### Without icons
+
+A drawer's destinations can go without icons, such as the sections of a guide; the rail and the bar need them.
+
+```tsx example=GuideSections
+
+```
+
+### More than five
+
+Past five destinations, the bar's fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.
+
+```tsx example=MoreDestinations
+
+```
+
 ### Resizable
 
-With `resizable`, people resize the drawer by its end edge, by pointer or the arrow keys, with the same handle as between [Panes](panes.md), a grip of three dots on that edge, between `minWidth` and `maxWidth`, and never past half its container. `width` and `onWidthChange` let the application keep the width for the next visit, here in the browser's storage, which it reads once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number. A `width` that isn't a finite number is ignored. Keep a resizable drawer on its own background rather than `background="page"`, so its handle is the edge of a surface and doesn't float beside the page's content.
+People can resize the drawer by its end edge, with the same grip as between [Panes](panes.md). As it narrows, a label that no longer fits ends in an ellipsis and shows in full in a tooltip.
 
 ```tsx example=ResizableDrawer
 
 ```
+
+## Variants
+
+### Backgrounds
+
+Each form is a plain rectangle along the window's edge. On a surface, such as a [Sheet](sheet.md), it takes that surface's color.
+
+| Background | Use for                                                          |
+| ---------- | ---------------------------------------------------------------- |
+| Navigation | The navigation's own fill, shared with the top bar. The default. |
+| Page       | The page's color, such as beside a top bar with a fill.          |
 
 ## When to use
 
@@ -86,8 +126,17 @@ With `resizable`, people resize the drawer by its end edge, by pointer or the ar
 
 ```
 
-- Set `current` on one destination from the router; a press doesn't select by itself.
-- Short labels: a long one is cut short with an ellipsis.
+### The current destination
+
+Mark the one destination people are on, from the address they are at.
+
+### Header and footer
+
+The drawer's and the rail's header holds the application's name, search or the main action, and the footer the account, such as an AvatarButton.
+
+### Labels
+
+Keep labels to a word or two, so they fit on one line in the drawer and under their icons in the rail and the bar.
 
 ## Anatomy
 
@@ -104,38 +153,138 @@ With `resizable`, people resize the drawer by its end edge, by pointer or the ar
 7. **Heading** (`env-drawer-heading`)
 8. **Footer** (`env-drawer-footer`, `footer`)
 
-Not shown: the handle on a resizable drawer's end edge, `env-drawer-resize-handle`.
+```tsx anatomy=RailAnatomy
 
-### Colors
+```
 
-`--env-drawer-item-container`, `--env-drawer-item-content`, `--env-drawer-item-icon`, `--env-drawer-item-selected` and `--env-drawer-item-selected-content` set the colors of one Drawer, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors. [Customize colors](../customizing-colors.md) describes the roles.
+1. **Rail** (`env-rail`)
+2. **Header** (`env-rail-header`, `header`)
+3. **Item** (`env-rail-item`)
+4. **Indicator** (`env-rail-indicator`)
+5. **Count** (`env-rail-count`, `count`)
+6. **Label** (`env-rail-label`)
+7. **Footer** (`env-rail-footer`, `footer`)
+
+```tsx anatomy=BarAnatomy enlarge
+
+```
+
+1. **Bar** (`env-bar`)
+2. **Item** (`env-bar li:nth-child(2) > env-bar-item`)
+3. **Indicator** (`env-bar-icon`)
+4. **Count** (`env-bar-count`, `count`)
+5. **Label** (`env-bar-text`)
+
+Not shown: the handle on a resizable drawer's end edge, and the bar's More.
+
+## Adapting to width
+
+The bar's destinations share its width equally, and their labels stay on one line.
+
+```tsx example=SharedWidth widths="20 36"
+
+```
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                             | Action                                                         |
-| ----------------------------------------------- | -------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to the next or previous destination; each is a tab stop. |
-| <kbd>Enter</kbd>                                | Follows a link, or selects a destination without `href`.       |
-| <kbd>Space</kbd>                                | Selects a destination without `href`.                          |
-| <kbd>←</kbd>, <kbd>→</kbd> on the resize handle | Resizes a `resizable` drawer 1 rem; with <kbd>Shift</kbd>, 5.  |
-| <kbd>Home</kbd>, <kbd>End</kbd> on the handle   | Resizes it to its smallest or largest width.                   |
+| Key                                             | Action                                                                    |
+| ----------------------------------------------- | ------------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to the next or previous destination; each is a tab stop.            |
+| <kbd>Enter</kbd>                                | Follows a link, or selects a destination that is a button; opens More.    |
+| <kbd>Space</kbd>                                | Selects a destination that is a button; opens More.                       |
+| <kbd>↑</kbd>, <kbd>↓</kbd> in More's menu       | Move between the destinations in the menu.                                |
+| <kbd>Esc</kbd> in More's menu                   | Closes the menu and returns focus to More.                                |
+| <kbd>←</kbd>, <kbd>→</kbd> on the resize handle | Narrows or widens a resizable drawer a step; with <kbd>Shift</kbd>, more. |
+| <kbd>Home</kbd>, <kbd>End</kbd> on the handle   | Resizes it to its smallest or largest width.                              |
 
 ### envUI provides
 
 - A `nav` landmark named Main, of native links and buttons, with `aria-current="page"` on the current one.
-- Group headings at `headingLevel`, each naming its group's list.
-- A count in its destination's name, such as Inbox, 12 new, and a 2.75 rem touch target on coarse pointers.
-- With `resizable`, a focusable separator on its end edge, named Resize navigation, with its width as its value.
+- A count in its destination's name, such as Inbox, 12 new.
+- The drawer's group headings at `headingLevel`, each naming its group's list.
+- The bar's More as a menu button, named with its counts and whether it holds the current page.
+- Items at least 2.75 rem tall in the bar, and a 2.75 rem touch target in the drawer on coarse pointers.
+- With `resizable`, a focusable separator on the drawer's end edge, named Resize navigation, with its width as its value.
 
 ### You provide
 
 - `current` from the router, and the routing behind `href` through `LinkProvider`.
 - An `aria-label` on each navigation landmark when a page has more than one.
 - Unique labels, and `messages.navigation` in the application's language.
+- Names for the controls in the header and the footer.
+
+## In code
+
+### Usage
+
+Drawer, Rail and Bar take `destinations`, one array of `Destination`s, each with its `label`, an `icon`, a `count` and a `group`. With `href`, a destination is a native link, through the application's router link from `LinkProvider`, and `onSelect` runs as it is followed; with `onSelect` alone it is a button, for a view without an address. Set `current` on one destination, from the router: a press doesn't select one by itself. `header` and `footer` hold content above and below the destinations of a Drawer or a Rail, such as the application's name and the account's menu. [Scaffold](scaffold.md) shows the form that fits its width, at the window's start or, for the bar, at its bottom.
+
+```tsx source=AppDestinations
+
+```
+
+#### One list, three forms
+
+Pass the same array to each form. A heading starts each run of destinations of one `group` in the drawer, at `headingLevel`, 2 by default, so keep a group's destinations next to each other; the rail and the bar show no headings, so order the array. A `DrawerDestination` may leave its `icon` out: leave it out of every destination of a list, or of none. Rail and Bar need icons.
+
+```tsx source=OneListThreeForms
+
+```
+
+#### Rail
+
+A Rail's labels are short enough to fit under their icons. `header` holds the main action or a button that opens the navigation, and `footer` the account's AvatarButton. Scaffold gives the rail the window's height.
+
+```tsx source=TabletDestinations
+
+```
+
+#### Bar
+
+Give a Bar three to five destinations: past five it shows the first four and More, which opens the rest in a menu.
+
+```tsx source=MoreDestinations
+
+```
+
+#### Background and name
+
+`background` is `default`, the navigation's fill, the same as TopBar's, as a plain rectangle, or `page`, the page's background; on a surface, such as a Sheet, both take the surface's color. `aria-label` names the landmark, Main by default from EnvUIProvider's `messages.navigation`; give each navigation landmark of a page its own.
+
+```tsx
+<Bar background="page" aria-label="Project" destinations={destinations} />
+```
+
+#### Resizable
+
+With `resizable`, people resize a Drawer by its end edge, between `minWidth` and `maxWidth`, 15 and 30 rem by default, and never past half its container or the window; the arrow keys move the handle 1 rem, and 5 with <kbd>Shift</kbd>. It starts at `defaultWidth`, 17.5 rem, which a double click on the handle returns to. `width` and `onWidthChange` let the application keep the width for the next visit, in rem: `onWidthChange` reports each width while dragging, and with `committed` true as a drag ends, a key moves the handle or a double click resets it. A `width` that isn't a finite number is ignored. `resizeLabel` names the handle.
+
+The example keeps the width in the browser's storage. It reads it once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number.
+
+```tsx source=ResizableDrawer
+
+```
+
+A heading cut short takes no focus, so it gives its full text as its `title`, shown on hover. Keep a resizable drawer on its own background rather than `background="page"`, so its handle is the edge of a surface and doesn't float beside the page's content, and leave `resizable` off a drawer in a sheet of a narrow window.
+
+### Composition
+
+The drawer's parts are the drawer, `env-drawer`, its header, `env-drawer-header`, each group, `env-drawer-section`, with its heading, `env-drawer-heading`, each item, `env-drawer-item`, with its label, `env-drawer-label`, and count, `env-drawer-count`, the footer, `env-drawer-footer`, and the handle on a resizable drawer's end edge, `env-drawer-resize-handle`, the same grip as Panes.Divider's.
+
+The rail's are the rail, `env-rail`; its header, `env-rail-header`; its list of destinations, `env-rail-list`, which scrolls where the rail is shorter; each destination, `env-rail-item`, with its indicator, `env-rail-indicator`, its count, `env-rail-count`, and its label, `env-rail-label`; and its footer, `env-rail-footer`.
+
+The bar's are the bar, `env-bar`; its row of destinations, `env-bar-list`; each destination, `env-bar-item`, with its indicator, `env-bar-icon`, its count, `env-bar-count`, and its label, `env-bar-text`; and More, `env-bar-more`.
+
+The current item of each has `data-current`, and a form on the page's background `data-background="page"`.
+
+### Customize
+
+`--env-drawer-item-container`, `--env-drawer-item-content`, `--env-drawer-item-icon`, `--env-drawer-item-selected` and `--env-drawer-item-selected-content` set the colors of one Drawer's items, through `style` or CSS: their fill, their label, their icon, and the current item's fill and its label and icon. Rail takes `--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content`, and Bar `--env-bar-item-container`, `--env-bar-item-content`, `--env-bar-item-icon`, `--env-bar-item-selected` and `--env-bar-item-selected-content`. Hover, focus and press then follow them, as state layers; with none set, each keeps its own colors.
 
 ## Changelog
 
+- **1.0.0-prerelease.3**: A resizable Drawer keeps each label and group heading on one line as it narrows: one that doesn't fit ends in an ellipsis, a label cut short shows in full in a tooltip, and a heading cut short gives its full text as its title. Bar and Rail are documented on this page, `drawer`, which their pages' addresses open.
 - **1.0.0-prerelease.2**: With `resizable`, people resize it by its end edge, between `minWidth` and `maxWidth` and never past half its container, from `defaultWidth`; `width` and `onWidthChange` keep it. The handle is `env-drawer-resize-handle`, the same grip as Panes.Divider's.
-- **1.0.0**: Drawer, the navigation drawer, with Bar and Rail; together they replace NavList. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.
+- **1.0.0**: Drawer, the navigation drawer, Rail, the navigation rail, and Bar, the navigation bar; together they replace NavList and the sidebar's rail. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.

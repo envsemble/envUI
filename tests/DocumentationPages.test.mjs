@@ -5,6 +5,13 @@ import { test } from 'node:test';
 import { marked } from 'marked';
 import ts from 'typescript';
 import {
+  optionTable,
+  siteInlineCode,
+  siteStructure,
+  siteText,
+  technicalText,
+} from '../scripts/SiteContent.mjs';
+import {
   examplesDirectory,
   isPropsTable,
   readDocumentation,
@@ -91,7 +98,7 @@ test("every component's page names each of its color properties", () => {
     for (const { property } of entry.colors)
       assert.ok(
         page.markdown.includes(`\`${property}\``),
-        `${page.path} names ${name}'s color property ${property}, under Anatomy's Colors`,
+        `${page.path} names ${name}'s color property ${property}, under In code's Customize`,
       );
   }
 });
@@ -284,4 +291,205 @@ test('every page an avoidWhen entry sends readers to is indexed', () => {
 test('the docs publish at least 8 patterns', () => {
   const count = documents.filter((document) => document.group === 'Patterns').length;
   assert.ok(count >= 8, `${count} patterns; 1.0 needs 8.`);
+});
+
+/** Words too common to say whether two sentences say the same thing. */
+const commonWords = new Set(
+  'a an the and or of to in on for with its it is as by at from that this be are which what who than into one their your can own such when where how all any so not no but if has have each'.split(
+    ' ',
+  ),
+);
+
+/**
+ * The words that carry a sentence's meaning, without code, link targets or common words, and
+ * without a plural's ending, so "panels" and "panel" count as one.
+ */
+function meaningfulWords(text) {
+  const words = text
+    .replace(/`[^`]*`/g, ' ')
+    .replace(/\]\([^)]*\)/g, ' ')
+    .toLowerCase()
+    .match(/[a-z][a-z’'-]*/g);
+  return new Set(
+    (words ?? [])
+      .filter((word) => !commonWords.has(word))
+      .map((word) => word.replace(/(?<=..)(es|s)$/, '')),
+  );
+}
+
+/** The first sentence of a page's Overview, where the section opens with text. */
+function overviewOpening(document) {
+  const first = document.sections.find((section) => section.id === 'overview')?.blocks[0];
+  if (first?.kind !== 'markdown') return '';
+  const paragraph =
+    first.markdown
+      .replace(/^## .*\n/, '')
+      .trim()
+      .split(/\n\s*\n/)[0] ?? '';
+  if (/^(#|\||[-*+] |\d+[.)] |```|<!--)/.test(paragraph)) return '';
+  return paragraph.replace(/\n/g, ' ').split(/(?<=[.!?])\s+(?=[A-Z<`[*])/)[0];
+}
+
+test("a page's Overview doesn't open by saying its summary again", () => {
+  // The banner shows the summary right above the Overview, so the Overview starts with what the
+  // banner doesn't say.
+  const repeats = sectioned.flatMap((document) => {
+    // Naming the page's subject repeats nothing.
+    const title = meaningfulWords(document.title);
+    const opening = meaningfulWords(overviewOpening(document)).difference(title);
+    const summary = meaningfulWords(document.summary);
+    const shared = [...opening].filter((word) => summary.has(word));
+    return shared.length >= 3 && shared.length / opening.size >= 0.35
+      ? [`${document.path} (${shared.join(', ')})`]
+      : [];
+  });
+  assert.deepEqual(
+    repeats,
+    [],
+    "These Overviews open by saying the summary again; start with what the banner doesn't say.",
+  );
+});
+
+/**
+ * A page's Markdown as the Site shows it: without its changelog, its developer-only part, "## In
+ * code", and the lists of what envUI and the application provide, which its page in the Docs shows.
+ */
+function siteMarkdown(document) {
+  return document.markdown
+    .replace(/\n## Changelog\n[\s\S]*$/, '\n')
+    .replace(/\n## In code\n[\s\S]*?(?=\n## |$)/, '\n')
+    .replace(/\n### (?:envUI provides|You provide)\n[\s\S]*?(?=\n#{2,3} |$)/g, '\n');
+}
+
+test('a page the Site shows links nowhere in the Docs', () => {
+  // The Site reaches the Docs only through a page's API button and the Docs link at the top: a
+  // component or pattern page links to other pages of the Site, a foundation's without a heading,
+  // since a foundation's headings are in its guide in the Docs.
+  const links = sectioned
+    .filter((document) => document.id !== 'field')
+    .flatMap((document) =>
+      [...siteMarkdown(document).matchAll(/\]\(([^)\s]+)\)/g)]
+        .map(([, href]) => href)
+        .filter((href) => !/^(?:[a-z][a-z\d+.-]*:|#)/i.test(href))
+        .filter((href) => {
+          const [path, fragment] = new URL(href, `https://envui.invalid/docs/${document.path}`).href
+            .slice('https://envui.invalid/docs/'.length)
+            .split('#');
+          if (path === 'components/field.md') return true;
+          if (/^(components|patterns)\/[a-z-]+\.md$/.test(path)) return false;
+          return !(/^foundations\/[a-z-]+\.md$/.test(path) && !fragment);
+        })
+        .map((href) => `${document.path}: ${href}`),
+    );
+  assert.deepEqual(links, [], 'Link these to a page of the Site, or say it without the link.');
+});
+
+/** Every page the Site shows: Field's page is in the Docs only. */
+const sitePages = () => sectioned.filter((document) => document.id !== 'field');
+
+test("a page's Site shows no inline code", () => {
+  const found = sitePages().flatMap((document) =>
+    siteInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
+  );
+  assert.deepEqual(
+    found,
+    [],
+    'The Site speaks plain language: say it in words, and move the code to "## In code".',
+  );
+});
+
+test("a page's Site text is in titled blocks", () => {
+  const found = sitePages().flatMap((document) =>
+    siteStructure(document).map(
+      ({ where, kind, text }) => `${document.path}, ${where}, ${kind}: ${text}`,
+    ),
+  );
+  assert.deepEqual(
+    found,
+    [],
+    'Every piece of Site text is in a titled block, a heading and one short paragraph: give loose text a "###" heading, or fold it into the block it belongs to.',
+  );
+});
+
+/**
+ * The option tables right after a variants figure whose names are not the figure's, in its order:
+ * the legend shows each name in the tag the figure's callout shows.
+ */
+function unmatchedOptions(document) {
+  const found = [];
+  for (const section of document.sections ?? [])
+    section.blocks.forEach((block, index) => {
+      const next = section.blocks[index + 1];
+      if (block.role !== 'variants' || next?.kind !== 'markdown') return;
+      const table = optionTable(
+        marked.lexer(next.markdown).find((token) => token.type !== 'space'),
+      );
+      if (!table) return;
+      const names = table.options.map(({ name }) => name);
+      const labels = (block.legend ?? []).map(({ label }) => label);
+      if (names.join('|') !== labels.join('|'))
+        found.push(`${section.title}: ${names.join(', ')} for ${labels.join(', ')}`);
+    });
+  return found;
+}
+
+test("an option table after a variants figure names the figure's variants", () => {
+  const found = sectioned.flatMap((document) =>
+    unmatchedOptions(document).map((text) => `${document.path}, ${text}`),
+  );
+  assert.deepEqual(
+    found,
+    [],
+    "Name the options as the variants figure's legend does, in its order.",
+  );
+});
+
+test('technical text is found in words, and plain words are left alone', () => {
+  const kinds = (text) => technicalText(text).map(({ kind }) => kind);
+  assert.deepEqual(kinds('Use --env-color-bg-page here'), ['token']);
+  assert.deepEqual(kinds('The env-card-heading part'), ['class name']);
+  assert.deepEqual(kinds('#1e1f21 or #fff'), ['hex color', 'hex color']);
+  assert.deepEqual(kinds('0.25 rem, 32px and 150ms'), ['length', 'length', 'length']);
+  assert.deepEqual(kinds('A 50% radius'), ['percentage']);
+  assert.deepEqual(kinds('At least 4.5:1'), ['ratio']);
+  assert.deepEqual(kinds('Set variant="ghost"'), ['code']);
+  assert.deepEqual(kinds('Call onValueChange'), ['identifier']);
+  assert.deepEqual(
+    kinds('More room between sections, step 1, 4 people, version 1.0.0, Ctrl + K, envUI on macOS.'),
+    [],
+  );
+});
+
+/** The technical text in a page's Site Markdown, as plain words: keys are written as <kbd>. */
+const siteTechnicalText = (document) =>
+  siteText(document).flatMap(({ markdown, text }) =>
+    technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
+  );
+
+test("a component page's Site shows no technical text", () => {
+  // The Site is for people looking at envUI: lengths, tokens, percentages and code names go in
+  // the page's In code, which its page in the Docs shows.
+  const found = sitePages()
+    .filter((document) => document.path.startsWith('components/'))
+    .flatMap((document) =>
+      siteTechnicalText(document).map(({ kind, text }) => `${document.path}: ${kind} ${text}`),
+    );
+  assert.deepEqual(found, [], 'Say it in words, and move the value to "## In code".');
+});
+
+test("the technical text in each page's Site Markdown is counted, for the rewrite to come", (t) => {
+  // Reporting only, like the catalogue's count of the rendered pages: the Site shows no token
+  // names, hex colors, lengths, percentages or code, which belong to the page's guide in the Docs.
+  // Inline code is already rejected above; this counts what plain words still carry.
+  const counts = sitePages().flatMap((document) => {
+    const found = siteTechnicalText(document);
+    return found.length
+      ? [`${document.path}: ${found.length} (${found.map(({ text }) => text).join(', ')})`]
+      : [];
+  });
+  t.diagnostic(
+    counts.length
+      ? `Technical text in the Site's Markdown:\n${counts.join('\n')}`
+      : 'No technical text in the Site Markdown.',
+  );
 });

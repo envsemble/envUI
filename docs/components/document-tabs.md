@@ -1,6 +1,6 @@
 ---
 title: DocumentTabs
-summary: Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document.
+summary: Editor-style tabs for open documents, which people switch, close, pin and close all.
 status: stable
 since: 0.5.0
 category: Navigation
@@ -15,8 +15,8 @@ aliases:
   - workspace tabs
   - preview tab
 useWhen:
-  - People open several documents or files and switch between them, such as in an editor or a workspace.
-  - Tabs open and close as people work, and one may be a preview until it is kept (`preview`, `onPin`).
+  - Switching between several open documents or files, such as in an editor
+  - Tabs that open and close as people work, one perhaps a preview until kept
 avoidWhen:
   - text: Switching between a fixed set of views of the same content, such as Overview and Settings.
     use: Tabs
@@ -32,23 +32,21 @@ components:
 
 ## Overview
 
-Document tabs are the strip of open documents above an editor, one tab per document, each with a close button. The application owns the documents, the active one and its panel; the strip renders the tabs.
-
 ```tsx example=OpenDocuments
 
 ```
 
 ### Closing
 
-The close button, a middle click, <kbd>Delete</kbd> or <kbd>Backspace</kbd>, and Close in a tab's context menu call `onClose`; focus moves to the tab that becomes active. With `onCloseAll`, the context menu offers Close all tabs.
+The close button, a middle click, <kbd>Delete</kbd> or <kbd>Backspace</kbd>, and Close in a tab's context menu close a tab, and focus moves to the tab that becomes active. The context menu can also offer Close all tabs.
 
 ### Preview and reorder
 
-A `preview` tab shows its label in italics until a double click calls `onPin`. With `onReorder`, a tab dragged with a mouse or pen shows where it will land, and the context menu offers Move left and Move right.
+A preview tab shows its label in italics until a double click keeps it. Where tabs can be put in order, a tab dragged with a mouse or pen shows where it will land, and the context menu offers Move left and Move right.
 
 ### Buttons after the tabs
 
-`end` puts the application's own content after the tabs, outside the strip that scrolls.
+The application's own content can follow the tabs, outside the strip that scrolls.
 
 ```tsx example=CloseAllButton
 
@@ -64,9 +62,13 @@ A `preview` tab shows its label in italics until a double click calls `onPin`. W
 
 ```
 
-- Activate a neighbour when the active tab closes, and offer a way back when the last one closes.
-- Ask before closing a document with unsaved changes, in `onClose`.
-- No other controls inside a tab.
+### When a tab closes
+
+Activate a neighbour when the active tab closes, and offer a way back when the last one closes. Ask before closing a document with unsaved changes.
+
+### Inside a tab
+
+A tab holds its icon, its name and its close button, and no other controls.
 
 ## Anatomy
 
@@ -113,6 +115,34 @@ The strip takes the width it is given and scrolls sideways where its tabs don't 
 
 - An `aria-label` for the strip, and the `tabpanel` with `panelId`, named after the active document.
 - The labels in the application's language, through `messages.documentTabs`.
+
+## In code
+
+### Usage
+
+DocumentTabs takes the open documents as `items`, in tab order, each with an `id`, its `label`, an optional `icon`, a `title`, the native tooltip, such as the full path, and `preview`. The application keeps the active tab in `value`, or `null`, and updates it from `onValueChange`. `onClose` is called from a tab's close button, a middle click, <kbd>Delete</kbd> or <kbd>Backspace</kbd>, and Close in its context menu: remove the tab there, activate a neighbour when it was active, and ask first about unsaved changes. Name the strip with `aria-label`, and render the active document's `tabpanel` with the id given as `panelId`.
+
+```tsx source=OpenDocuments
+
+```
+
+#### Preview, pin and reorder
+
+A `preview` tab shows its label in italics until a double click calls `onPin`, where the application clears `preview`. With `onReorder`, a tab dragged with a mouse or pen, or moved with Move left or Move right in its context menu, reports every tab's id in the new order; without it, the tabs keep their order.
+
+#### Close all and after the tabs
+
+Each tab opens a context menu with Close on right click, long press, the <kbd>Menu</kbd> key and <kbd>Shift</kbd>+<kbd>F10</kbd>. `onCloseAll` adds Close all tabs to it, and the strip around the tabs opens it too. `end` holds content after the tabs, outside the strip that scrolls, such as a button that closes them all.
+
+```tsx source=CloseAllButton
+
+```
+
+### Composition
+
+`closeLabel`, a function of the tab's label, `closeAllLabel` and `contextMenuLabel` name the close actions and the menu, from EnvUIProvider's `messages.documentTabs` by default. `className`, `style` and `ref` reach the strip, the tab list.
+
+The parts are the strip, `env-document-tabs`; each tab's item, `env-document-tabs-item`, which lays out the tab, `env-document-tabs-tab`, with its icon and label, `env-document-tabs-tab-label`, beside its close button, `env-document-tabs-close`, an IconButton with a cross hidden from assistive technology; and the end, `env-document-tabs-end`.
 
 ## Changelog
 

@@ -7,9 +7,11 @@
   gap: var(--env-space-4);
 }
 
-/* Specimens inside an article share its gutter instead of adding their own. */
+/* Specimens inside an article share its gutter instead of adding their own, and its background,
+   the page's or the band's: only their canvas is filled. */
 .docs-article .docs-preview {
   padding: 0;
+  background: none;
 }
 
 /* Props tables wrap code between words, so a column is never narrower than its longest word. */
@@ -20,4 +22,88 @@
 /* The same for code in the guidance tables of a page on the template. */
 .docs-template .env-markdown-table code {
   overflow-wrap: break-word;
+}
+
+/* A page is parts, not one stream. A component or pattern page groups its sections into three
+   larger ones (TemplateContent.tsx), which stand far apart, twice the largest step of the spacing
+   scale; the sections within a group sit closer, the largest step, and what is inside a section
+   closer still (Figures.css). */
+.docs-section-groups {
+  --docs-group-gap: calc(var(--env-space-9) * 2);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--docs-group-gap);
+  padding-block-end: 3rem;
+}
+
+.docs-section-groups .docs-section-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  row-gap: var(--env-space-9);
+  padding-block-end: 0;
+}
+
+/* The same on a foundation's page, whose sections are its figures, each under its h2, and on a
+   component's page in the Docs. */
+.docs-example:has(> h2) {
+  margin-block-end: calc(var(--env-space-9) * 2);
+}
+
+/* A page in the Docs is a guide in several sections, from Import to the changelog: as far apart as
+   the sections of a group on the Site. */
+.docs-api.docs-api {
+  row-gap: var(--env-space-9);
+}
+
+.docs-example > h2,
+.docs-related > h2 {
+  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.015em;
+}
+
+/* The band: the second group, When to use and Anatomy, on a fill of its own that spans the whole
+   content pane, gutters included, the one band of a page. Its edges sit halfway between its
+   content and the groups around it, so they stand as far apart as two groups. The fill is a small
+   step from the page, just beyond the navigation's fill beside it, so it reads as a region of the
+   page rather than a surface: the muted fill's hue at an OKLCH lightness of 0.945 in the light
+   theme, 0.013 deeper than the navigation, and 0.30 in the dark themes, 0.02 lighter than it. In
+   the light high-contrast theme it is 0.955, as deep as it can be while code keeps 7:1 on it.
+   Text, links and inline code keep their contrast on it (`catalogue-band` in
+   tests/contrast/Pairs.ts, which repeats this formula); examples on it sit on a canvas of the
+   page's color in the light themes and on the page's canvas in the dark ones (Stage.css). */
+.docs-band {
+  --docs-band-fill: light-dark(
+    oklch(from var(--env-color-bg-muted) clamp(0.945, l, 0.955) c h),
+    oklch(from var(--env-color-bg-muted) min(l, 0.3) c h)
+  );
+  /* The light themes' canvas on the band is the page's color (Stage.css). */
+  --docs-canvas-depth: 0;
+  margin-block: calc(var(--env-space-9) - var(--docs-group-gap));
+  padding-block: var(--env-space-9);
+  background: var(--docs-band-fill);
+}
+
+/* A band that ends the page, where nothing follows it, keeps the page's padding below it. */
+.docs-band:last-child {
+  margin-block-end: 0;
+}
+
+/* Guidance lists, on the pages of components, patterns and foundations (GuidanceLists in
+   Documentation.tsx): envUI's list, with a check in a small accent-tinted circle instead of its dot,
+   the Material Symbols check. A list nested in one keeps envUI's quiet dot. */
+.docs-guidance {
+  --env-prose-list-marker-size: var(--env-space-5);
+  --env-prose-list-marker-gap: var(--env-space-3);
+  --env-prose-list-marker-fill: var(--env-color-bg-selected);
+  --env-prose-list-mark-color: var(--env-color-fg-on-selected);
+  --env-prose-list-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath d='m382-354 339-339q12-12 28-12t28 12q12 12 12 28.5T777-636L410-268q-12 12-28 12t-28-12L182-440q-12-12-11.5-28.5T183-497q12-12 28.5-12t28.5 12l142 143Z'/%3E%3C/svg%3E");
+  --env-prose-list-mark-size: 1rem;
+}
+
+/* A component named at an item's end follows it after a muted middle dot, in the muted color too
+   where it isn't a link. */
+.docs-list-name-dot,
+.docs-list-name {
+  color: var(--env-color-fg-muted);
 }

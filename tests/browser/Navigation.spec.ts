@@ -389,6 +389,54 @@ test.describe('Drawer resizable', () => {
     },
   );
 
+  test(
+    'keeps each label and heading on one line, and shows a label cut short in a tooltip and a heading in its title',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(resizable);
+      const drawer = page.getByRole('navigation', { name: 'Long labels' });
+      const item = drawer.getByRole('link', { name: 'Reviews waiting for the whole team' });
+      const label = item.locator('.env-drawer-label');
+      const heading = drawer.locator('.env-drawer-heading');
+      const isCut = (element: Locator) =>
+        element.evaluate((node) => node.scrollWidth > node.clientWidth);
+      const tooltip = page.getByRole('tooltip');
+      // Wide enough, nothing is cut and no tooltip opens.
+      const height = (await item.boundingBox())!.height;
+      expect(await isCut(label)).toBe(false);
+      await expect(heading).not.toHaveAttribute('title');
+      await item.hover();
+      await expect(tooltip).toHaveCount(0);
+      // Narrowed, the label and heading end in an ellipsis on one line, and the item keeps its height.
+      const handle = drawer.getByRole('separator');
+      await handle.focus();
+      await page.keyboard.press('Home');
+      await expect(handle).toHaveAttribute('aria-valuetext', '10 rem');
+      await expect.poll(() => isCut(label)).toBe(true);
+      expect(await isCut(heading)).toBe(true);
+      for (const element of [label, heading]) {
+        await expect(element).toHaveCSS('text-overflow', 'ellipsis');
+        await expect(element).toHaveCSS('white-space', 'nowrap');
+      }
+      expect((await item.boundingBox())!.height).toBeCloseTo(height, 0);
+      // A heading cut short gives its full text as its title, as it takes no focus for a tooltip.
+      await expect(heading).toHaveAttribute('title', (await heading.textContent())!);
+      // The full label shows in a tooltip, on hover and on keyboard focus, and names nothing new.
+      await item.hover();
+      await expect(tooltip).toHaveText('Reviews waiting for the whole team');
+      await page.mouse.move(0, 0);
+      await expect(tooltip).toHaveCount(0);
+      await item.focus();
+      await expect(tooltip).toHaveText('Reviews waiting for the whole team');
+      await expect(item).toHaveAccessibleName('Reviews waiting for the whole team');
+      // A label that isn't cut, Inbox, opens none.
+      await handle.focus();
+      await expect(tooltip).toHaveCount(0);
+      await drawer.getByRole('link', { name: 'Inbox' }).hover();
+      await expect(tooltip).toHaveCount(0);
+    },
+  );
+
   test('a width that is no number is ignored, and the drawer keeps its default', async ({
     page,
   }) => {

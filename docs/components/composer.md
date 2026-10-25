@@ -3,7 +3,7 @@ title: Composer
 summary: The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.
 status: stable
 since: 0.5.0
-category: Forms & selection
+category: Text & content
 aliases:
   - ChatInput
   - PromptInput
@@ -16,9 +16,11 @@ aliases:
   - reply field
   - comment box
 useWhen:
-  - People write a message in a conversation, such as a chat, a comment thread or a prompt, and send it with Enter.
-  - A reply runs after a message is sent and people may stop it (`running`, `onStop`).
+  - A message in a conversation, such as a chat, a comment or a prompt
+  - A reply that runs after a send, which people may stop
 avoidWhen:
+  - text: A whole conversation, with the log above the composer and a reply that streams in.
+    see: conversation
   - text: Text over several lines in a form, where Enter starts a new line.
     use: Textarea
   - text: One line of text in a form.
@@ -35,42 +37,36 @@ components:
 
 ## Overview
 
-A composer is where people write a message and send it with <kbd>Enter</kbd>; <kbd>Shift</kbd>+<kbd>Enter</kbd> starts a new line. While a reply runs, the send button stops it.
-
 ```tsx example=AskAnything
 
 ```
 
 ### Pending send
 
-While `pending`, the next send waits; the field stays editable and keeps focus.
+While a send is in progress, the next one waits; the field stays editable and keeps focus.
 
 ```tsx example=PendingSend
 
 ```
 
-### Sent by its form
-
-Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the form, which sends the text under `name`.
-
-```tsx example=FormSubmit
-
-```
-
 ## Variants
+
+### Layouts
+
+A composer is its field alone, or has a row below the field with controls at its start and the send button at its end, and a note under it.
 
 ```tsx example=StartAndFooter
 
 ```
 
-| Layout       | Use for                                                                |
-| ------------ | ---------------------------------------------------------------------- |
-| Field alone  | A chat or a prompt. The default.                                       |
-| With `start` | Attachments or a choice of model, in a row with the send button below. |
+| Layout           | Use for                                                         |
+| ---------------- | --------------------------------------------------------------- |
+| Field alone      | A chat or a prompt. The default.                                |
+| With a start row | Attachments or a choice of model, beside the send button below. |
 
 ## When to use
 
-```tsx do=PendingStaysEditable caption="pending while a send is in progress, so people can keep writing."
+```tsx do=PendingStaysEditable caption="Wait while a send is in progress, so people can keep writing."
 
 ```
 
@@ -78,8 +74,9 @@ Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the form, which 
 
 ```
 
-- Place the composer below the conversation it adds to.
-- Show a message that couldn't be sent in the conversation, with its status.
+### In a conversation
+
+Place the composer below the conversation it adds to, and show a message that couldn't be sent in the conversation, with its status.
 
 ## Anatomy
 
@@ -96,7 +93,7 @@ Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the form, which 
 
 ## Adapting to width
 
-A composer fills its container, and its field grows with its text from `minRows` to `maxRows` lines, then scrolls.
+A composer fills its container, and its field grows with its text up to a set number of lines, then scrolls.
 
 ```tsx example=GrowingDraft widths="18 36"
 
@@ -125,6 +122,65 @@ A composer fills its container, and its field grows with its text from `minRows`
 - An `aria-label` that names the field.
 - An announcement of the reply, or of a message that couldn't be sent.
 - `sendLabel` and `stopLabel` in the application's language.
+
+## In code
+
+### Usage
+
+A Composer is a native textarea with no visible label, so name it with `aria-label` or `aria-labelledby`. <kbd>Enter</kbd> or the send button passes the text to `onSubmit`; blank text never sends, and neither does a disabled, running or pending composer. Leave it uncontrolled, with `defaultValue`, and it clears after each send and when its form resets; or control it with `value` and `onValueChange`, and clear it yourself.
+
+```tsx source=AskAnything
+
+```
+
+#### Pending and running
+
+`pending` marks a send in progress: sending is unavailable while the field stays editable and keeps focus, so use it rather than `disabled`. `running` marks a reply on its way: the send button becomes a stop button, which calls `onStop` and stays available when the field is disabled, and <kbd>Enter</kbd> doesn't send.
+
+```tsx source=PendingSend
+
+```
+
+#### Sent by its form
+
+Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the composer's form, which sends the text under its `name`.
+
+```tsx
+import { useState, type FormEvent } from 'react';
+import { Composer, Column, Text } from '@envsemble/envui';
+
+export default function FormSubmit() {
+  const [sent, setSent] = useState('');
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Without onSubmit, Enter and the send button submit the form, which sends the field by name.
+    setSent(String(new FormData(event.currentTarget).get('note')));
+    event.currentTarget.reset();
+  };
+  return (
+    <form onSubmit={submit} style={{ inlineSize: 'min(100%, 32rem)' }}>
+      <Column gap={3}>
+        <Composer name="note" aria-label="Note" placeholder="Add a note to the plan" />
+        <Text variant="caption" emphasis="muted" role="status">
+          {sent && `Added: ${sent}`}
+        </Text>
+      </Column>
+    </form>
+  );
+}
+```
+
+#### Rows, start and footer
+
+The field shows `minRows` lines while empty, 1 by default, and grows to `maxRows`, 8 by default, before it scrolls. `start` holds content at the start of the action row, such as an attach button or the name of a model, and `footer` supporting text below the composer, which describes the field. `sendLabel` and `stopLabel` name the button.
+
+```tsx source=StartAndFooter
+
+```
+
+### Composition
+
+The composer, `env-composer`, is on the raised popup surface, `env-composer-surface`, which holds the input, `env-composer-input`, the start content, `env-composer-start`, and the send button, `env-composer-action`; the footer, `env-composer-footer`, sits below it. Place it below the MessageList it adds to.
 
 ## Changelog
 

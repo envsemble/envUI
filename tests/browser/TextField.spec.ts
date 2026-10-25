@@ -1,10 +1,23 @@
-import { test, expect, type Locator } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 const affixes = `${fixtureUrl}/?fixture=affixes`;
 const adoption = `${fixtureUrl}/?fixture=adoption`;
 
 const themes = ['light', 'dark'] as const;
+
+/**
+ * Opens a fixture once its web font is in: the tests compare the boxes of the text, which the font
+ * moves when it arrives after the page has loaded, as on a busy machine.
+ */
+async function open(page: Page, url: string) {
+  await page.goto(url);
+  await page.evaluate(async () => {
+    // Loaded by name, so the wait holds even before the fixture has rendered any text.
+    await document.fonts.load('1em "envUI Inter"');
+    await document.fonts.ready;
+  });
+}
 
 /** Where an element's text is painted, without its padding. */
 async function textBox(element: Locator) {
@@ -32,7 +45,7 @@ test.afterEach(() => {
 });
 
 test('a prefix shows with the value inside the field and is read with it', async ({ page }) => {
-  await page.goto(affixes);
+  await open(page, affixes);
   const scope = page.getByTestId('affixes-light');
   const address = scope.getByRole('textbox', { name: 'Address', exact: true });
   await expect(address).toHaveAccessibleDescription('https://example.com/');
@@ -67,7 +80,7 @@ test('a prefix shows with the value inside the field and is read with it', async
 test('a suffix follows the value and keeps the hint and error in the description', async ({
   page,
 }) => {
-  await page.goto(affixes);
+  await open(page, affixes);
   const scope = page.getByTestId('affixes-light');
   const size = scope.getByRole('spinbutton', { name: 'Size', exact: true });
   await expect(size).toHaveAccessibleDescription('MB Up to 10');
@@ -101,7 +114,7 @@ test('a suffix follows the value and keeps the hint and error in the description
 test('compact fields hold a prefix and suffix between the icon and the end action', async ({
   page,
 }) => {
-  await page.goto(affixes);
+  await open(page, affixes);
   const scope = page.getByTestId('affixes-light');
   const price = scope.getByRole('textbox', { name: 'Price', exact: true });
   await expect(price).toHaveAccessibleDescription('€ per month');
@@ -137,7 +150,7 @@ test('compact fields hold a prefix and suffix between the icon and the end actio
 });
 
 test('a long prefix is cut short so the value keeps its room', async ({ page }) => {
-  await page.goto(affixes);
+  await open(page, affixes);
   const link = page.getByTestId('affixes-light').getByRole('textbox', { name: 'Link' });
   const prefix = affix(link, 'prefix');
   await expect(prefix).toHaveCSS('text-overflow', 'ellipsis');
@@ -154,7 +167,7 @@ test('a long prefix is cut short so the value keeps its room', async ({ page }) 
 test('a quiet field is only its text at rest, takes a soft fill on hover and focus, and clears its placeholder once focused', async ({
   page,
 }) => {
-  await page.goto(affixes);
+  await open(page, affixes);
   for (const theme of themes) {
     const field = page
       .getByTestId(`affixes-${theme}`)
@@ -187,7 +200,7 @@ test('a quiet field is only its text at rest, takes a soft fill on hover and foc
 });
 
 test('SearchField clears with its button and with Escape inside a dialog', async ({ page }) => {
-  await page.goto(adoption);
+  await open(page, adoption);
   const search = page.getByRole('searchbox', { name: 'Search members' });
   await expect(search).toHaveAttribute('placeholder', 'Search by name');
   await expect(page.getByRole('button', { name: 'Clear search' })).toHaveCount(0);
@@ -227,7 +240,7 @@ test('SearchField clears with its button and with Escape inside a dialog', async
 test('compact fields can float their label into the outline and keep the button height', async ({
   page,
 }) => {
-  await page.goto(adoption);
+  await open(page, adoption);
   const field = page.getByTestId('compact-label');
   const well = field.locator('xpath=..');
   const label = well.locator('label');
@@ -254,7 +267,7 @@ test('compact fields can float their label into the outline and keep the button 
 test('an outline field has no fill of its own, and its floated label cuts a notch in the border', async ({
   page,
 }) => {
-  await page.goto(affixes);
+  await open(page, affixes);
   const field = page.getByTestId('affixes-dark').getByRole('textbox', { name: 'Address' });
   const control = field.locator('xpath=..');
   const border = control.locator(':scope > .env-text-field-border');
@@ -282,7 +295,7 @@ test('an outline field has no fill of its own, and its floated label cuts a notc
 test('right to left, the floated label cuts its notch under itself, with a start icon too', async ({
   page,
 }) => {
-  await page.goto(affixes);
+  await open(page, affixes);
   for (const name of ['Street', 'City']) {
     const field = page.getByTestId('affixes-light').getByRole('textbox', { name });
     const control = field.locator('xpath=..');

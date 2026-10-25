@@ -27,28 +27,24 @@ components:
 
 ## Overview
 
-Link is a native `<a>` for a destination inside running text. It renders through the `LinkProvider`'s link component, so the application's router handles it.
-
 ```tsx example=InRunningText
 
 ```
 
-### Disabled
-
-A `disabled` link has no destination: it can't be focused or followed.
-
 ## Variants
 
-```tsx example=WithoutUnderline caption="underline={false}, for a short list that already reads as links."
+| Underline | Use for                                               |
+| --------- | ----------------------------------------------------- |
+| On        | Running text. The default.                            |
+| Off       | A list of destinations, where the context marks them. |
+
+```tsx example=WithoutUnderline caption="Without the underline, in a short list of destinations."
 
 ```
 
-| Underline           | Use for                                               |
-| ------------------- | ----------------------------------------------------- |
-| On                  | Running text. The default.                            |
-| `underline={false}` | A list of destinations, where the context marks them. |
+### Looks like a button
 
-For a link that should look like a button, use Button with `href`.
+A destination that should look like a button is a [Button](button.md) that goes somewhere: the same link, in a button's shape.
 
 ## When to use
 
@@ -62,7 +58,7 @@ For a link that should look like a button, use Button with `href`.
 
 ### Labels
 
-- Link a few words, not a whole sentence.
+Link the few words that name the destination, not a whole sentence.
 
 ## Anatomy
 
@@ -92,6 +88,36 @@ For a link that should look like a button, use Button with `href`.
 
 - Link text that names the destination.
 - The router link through `LinkProvider`, as [setup](../setup.md) describes.
+
+## In code
+
+### Usage
+
+Link is a native `<a>` with its `href`, rendered through the link component of `LinkProvider`, so the application's router handles it, as [setup](../setup.md) describes. Its `children` are the label. `disabled` removes the destination: the link can't be focused or followed, and reports `aria-disabled`.
+
+```tsx source=InRunningText
+
+```
+
+#### Without the underline
+
+`underline` is `true` by default; `underline={false}` leaves it off, in a list of destinations whose context marks them.
+
+```tsx source=WithoutUnderline
+
+```
+
+#### Looks like a button
+
+A Button with `href` is the same native link, through the same `LinkProvider`, in a button's shape.
+
+```tsx
+<Button href="/projects/new">New project</Button>
+```
+
+### Customize
+
+Link is a text Button with the class `env-link`, whose `data-underline` says whether it is underlined; CSS may target both. It takes the text button's colors.
 
 ## Changelog
 

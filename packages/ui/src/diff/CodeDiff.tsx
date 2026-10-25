@@ -14,9 +14,10 @@ import { Button } from '../actions/Button.js';
 import {
   codeThemeName,
   codeThemeStyle,
+  diffTintOpacity,
   type CodeContrast,
 } from '../content/internal/CodeColors.js';
-import { diffTheme } from '../content/internal/CodeThemes.js';
+import { codeTheme, diffTintColors, type DiffTintColors } from '../content/internal/CodeThemes.js';
 import { useCodeContrast } from '../content/internal/useCodeContrast.js';
 import { Column } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
@@ -47,29 +48,51 @@ export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 }
 
 /**
- * Diffs paints its own background from the theme's editor color; it takes the diff background
- * instead, as the style sheet chooses it for the contrast.
+ * Diffs paints its own background from the theme's editor color, and mixes its line tints, gutter
+ * and separators from it. It takes a transparent one instead, so that the diff sits on the code
+ * block's layer, which its root paints over whatever surface it is on, and each line's and word's
+ * tint is its color at an opacity over that layer: the colors that keep the code theme's tokens
+ * readable there.
  */
-const DIFF_BACKGROUND_CSS = `:host { --diffs-light-bg: var(--env-code-background-now, var(--env-code-diff-background)); --diffs-dark-bg: var(--env-code-background-now, var(--env-code-diff-background)); }`;
+function diffCSS({ addition, deletion }: DiffTintColors) {
+  const percent = (opacity: number) => `${Math.round(opacity * 100)}%`;
+  const word = (color: string) =>
+    `color-mix(in srgb, ${color} ${percent(diffTintOpacity.word)}, transparent)`;
+  const kept = percent(1 - diffTintOpacity.line);
+  return `:host {
+  --diffs-light-bg: transparent;
+  --diffs-dark-bg: transparent;
+  --diffs-bg-addition-override: ${addition};
+  --diffs-bg-addition-number-override: ${addition};
+  --diffs-bg-addition-emphasis-override: ${word(addition)};
+  --diffs-bg-deletion-override: ${deletion};
+  --diffs-bg-deletion-number-override: ${deletion};
+  --diffs-bg-deletion-emphasis-override: ${word(deletion)};
+}
+[data-line], [data-no-newline], [data-gutter-buffer], [data-column-number] {
+  --mix-light: ${kept};
+  --mix-dark: ${kept};
+}`;
+}
 
 /** Side by side from this many rem of the diff's own width. */
 const SPLIT_FROM_REM = 56;
 
-/** The names of the readable code themes of code diffs for a contrast, light and dark. */
+/** The names of the code themes for a contrast, light and dark, the ones code blocks take. */
 const diffThemeNames = (contrast: CodeContrast) => ({
-  light: codeThemeName('diff', 'light', contrast),
-  dark: codeThemeName('diff', 'dark', contrast),
+  light: codeThemeName('light', contrast),
+  dark: codeThemeName('dark', contrast),
 });
 let themesRegistered = false;
-/** Registers the diff themes with Diffs once, under their names; each is built when Diffs asks. */
+/** Registers the code themes with Diffs once, under their names; each is built when Diffs asks. */
 function registerThemes() {
   if (themesRegistered) return;
   themesRegistered = true;
   for (const contrast of ['standard', 'high'] as const)
     for (const scheme of ['light', 'dark'] as const)
       registerCustomTheme(
-        codeThemeName('diff', scheme, contrast),
-        async () => diffTheme(scheme, contrast) as never,
+        codeThemeName(scheme, contrast),
+        async () => codeTheme(scheme, contrast) as never,
       );
 }
 
@@ -84,7 +107,7 @@ const loadedContrasts = new Set<CodeContrast>();
 function prepareHighlighter(language: string, contrast: CodeContrast) {
   if (loadedLanguages.has(language) && loadedContrasts.has(contrast) && highlighterReady)
     return highlighterReady;
-  // The code themes, readable on changed lines too; the app theme chooses between them.
+  // The code themes of code blocks; the app theme chooses between them.
   registerThemes();
   const contrasts = new Set([...loadedContrasts, contrast]);
   highlighterReady = preloadHighlighter({
@@ -122,19 +145,28 @@ export function CodeDiff({
   const { theme } = useTheme();
   const messages = useMessages('codeDiff', codeDiffMessages);
   const lang = language ?? languageOf(filename);
-  const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const contrast = useCodeContrast(rootRef);
+  // The highlighter with the language and the code themes, and the tints of the app theme. As the
+  // theme or contrast changes, the diff keeps the ones it shows until the new ones load, so it
+  // stays mounted, with its expanded lines and scroll: only the first load, or another language,
+  // shows the spinner.
+  const [shown, setShown] = useState<{
+    lang: string;
+    theme: typeof theme;
+    contrast: CodeContrast;
+    css: string;
+  } | null>(null);
+  const loaded = shown?.lang === lang;
   const [wide, setWide] = useState(false);
 
   useEffect(() => {
     let active = true;
-    setLoaded(false);
-    prepareHighlighter(lang, contrast).then(
-      () => {
-        if (active) setLoaded(true);
+    Promise.all([prepareHighlighter(lang, contrast), diffTintColors(theme, contrast)]).then(
+      ([, colors]) => {
+        if (active) setShown({ lang, theme, contrast, css: diffCSS(colors) });
       },
       () => {
         if (active) setFailed(true);
@@ -143,7 +175,7 @@ export function CodeDiff({
     return () => {
       active = false;
     };
-  }, [lang, contrast, attempt]);
+  }, [lang, theme, contrast, attempt]);
 
   // Split and unified are different markup from Diffs, which CSS can't switch between, so the
   // width is measured: as the diff loads, before it paints, so it never shows the other layout
@@ -183,12 +215,12 @@ export function CodeDiff({
   }, [filename, lang, before, after]);
 
   return (
-    // On the code theme's own background, as a code block is: Diffs leaves its background clear.
+    // On the code block's layer, which the style sheet paints: Diffs leaves its background clear.
     <div
       {...props}
       ref={rootRef}
       className={classNames('env-code-diff', className)}
-      style={{ ...codeThemeStyle(theme), ...style }}
+      style={{ ...codeThemeStyle(shown?.theme ?? theme), ...style }}
       aria-busy={!loaded && !failed ? true : undefined}
     >
       {failed ? (
@@ -216,7 +248,7 @@ export function CodeDiff({
             {messages.retry}
           </Button>
         </Column>
-      ) : !loaded ? (
+      ) : !loaded || !shown ? (
         <Spinner label={messages.loading} showLabel />
       ) : before === after ? (
         <File
@@ -224,10 +256,10 @@ export function CodeDiff({
           disableWorkerPool
           options={{
             overflow: 'wrap',
-            theme: diffThemeNames(contrast),
-            themeType: theme,
+            theme: diffThemeNames(shown.contrast),
+            themeType: shown.theme,
             disableFileHeader: !header,
-            unsafeCSS: DIFF_BACKGROUND_CSS,
+            unsafeCSS: shown.css,
           }}
         />
       ) : (
@@ -237,11 +269,11 @@ export function CodeDiff({
           options={{
             diffStyle: wide ? 'split' : 'unified',
             overflow: 'wrap',
-            theme: diffThemeNames(contrast),
-            themeType: theme,
+            theme: diffThemeNames(shown.contrast),
+            themeType: shown.theme,
             disableFileHeader: !header,
             expandUnchanged,
-            unsafeCSS: DIFF_BACKGROUND_CSS,
+            unsafeCSS: shown.css,
           }}
         />
       )}

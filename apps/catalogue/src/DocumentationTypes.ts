@@ -36,8 +36,8 @@ export type ExportEntry =
   | (ExportBase & { kind: 'namespace'; parts: string[] })
   | (ExportBase & { kind: 'function'; signature: string });
 
-/** A fill a figure's stage takes instead of the page's, or none: no dots and no frame. */
-export type StageFill = 'raised' | 'shaded' | 'none';
+/** A fill a figure's stage takes instead of the canvas recessed from the page or the band. */
+export type StageFill = 'shaded';
 
 export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }
@@ -71,7 +71,12 @@ export type DocumentationBlock =
       legend?: AnatomyLegendItem[];
     }
   /** A catalogue-only specimen in apps/catalogue/src/specimens/<page>/<name>.tsx. */
-  | { kind: 'specimen'; name: string };
+  | { kind: 'specimen'; name: string }
+  /**
+   * An example file of the page shown as code, not live, in "## In code", the developer-only part
+   * that the page's guide in the Docs shows.
+   */
+  | { kind: 'source'; name: string };
 
 /** One numbered part of an anatomy figure. */
 export interface AnatomyLegendItem {
@@ -82,6 +87,8 @@ export interface AnatomyLegendItem {
    * takes its description from docs/generated/parts.json.
    */
   text: string;
+  /** In an anatomy figure, the part's name, its bold start, which is all the Site shows of it. */
+  name?: string;
   /**
    * In a variants figure, the variant's name, shown on its callout; the item it labels is the part,
    * or else the example's item in the legend's order.
@@ -99,6 +106,7 @@ export type TemplateSectionId =
   | 'content'
   | 'do-and-dont'
   | 'accessibility'
+  | 'code'
   | 'examples'
   | 'changelog';
 
@@ -138,6 +146,8 @@ export interface DocumentationEntry {
   /** The page's Markdown after its title. */
   markdown: string;
   metadata?: DocumentationMetadata;
+  /** The exports a page off the template documents, such as Icon on the Icons foundation's. */
+  components?: string[];
   /** A component page on the figure template: short text and live figures in every section. */
   format?: 'figures';
   /** The sections of a page on the template; absent on pages not on it, such as guides. */

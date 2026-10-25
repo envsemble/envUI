@@ -1,30 +1,33 @@
 /* Component pages on the figure template: ordinary sections of short text and live figures, with
    a rhythm of space. What belongs together sits close: a heading and its first content, text and
-   the figure it introduces, a figure's stage, caption and code. Unrelated parts sit clearly apart:
-   one sub-topic from the next, and one section from the next, which the article's gap sets. */
+   the figure it introduces, a figure's stage, caption and code. Unrelated parts sit apart: one
+   sub-topic clearly from the next, and one section far from the next, which the article's gap
+   sets (Template.css). */
 .docs-figures {
   container-type: inline-size;
 }
 
 .docs-figure-section {
+  /* The space between sub-topics of a section: clearly apart, and far closer than two sections,
+     which the article's gap sets (Template.css). */
+  --docs-subtopic-gap: var(--env-space-7);
   /* A link to a section stops below the sticky display controls. */
   scroll-margin-block-start: var(--env-space-9);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  /* The space between sub-topics of a section. */
-  row-gap: var(--env-space-8);
+  row-gap: var(--docs-subtopic-gap);
   min-inline-size: 0;
 }
 
 .docs-figure-section-heading h2 {
   margin: 0;
-  font: var(--env-font-weight-medium) 1.5rem / 1.25 var(--env-font-family);
-  letter-spacing: -0.01em;
+  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.015em;
 }
 
 /* A heading sits close to what it heads. */
 .docs-figure-section-heading + * {
-  margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
+  margin-block-start: calc(var(--env-space-4) - var(--docs-subtopic-gap));
 }
 
 /* Text sits close to the figure it introduces, but not to a subsection that starts with its own
@@ -37,29 +40,16 @@
     .docs-anatomy,
     .docs-variants,
     .docs-verdict,
-    .docs-example
+    .docs-example,
+    .docs-option-legend
   ) {
-  margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
+  margin-block-start: calc(var(--env-space-4) - var(--docs-subtopic-gap));
 }
 
 /* A subsection that follows text, a list or a table in the same run of Markdown sits as far from
    it as from a figure. */
 .docs-figure-section .env-markdown > h3:not(:first-child) {
-  margin-block-start: var(--env-space-8);
-}
-
-/* Lists side by side, such as what envUI provides and what you provide, in cells of one size. */
-.docs-section-columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  gap: var(--env-space-5);
-}
-
-.docs-section-column {
-  min-inline-size: 0;
-  padding: var(--env-space-5) var(--env-space-6);
-  border-radius: var(--env-radius-surface);
-  background: var(--env-color-bg-muted);
+  margin-block-start: var(--docs-subtopic-gap);
 }
 
 /* A figure: its stage, its caption and its code, close together. */
@@ -215,11 +205,10 @@
   gap: 0.125rem;
 }
 
-/* The stage keeps the frame of every stage; its corners are the connected rows'. */
+/* The stage is every stage's recessed canvas (Stage.css); its corners are the connected rows'. */
 .docs-verdict-stage {
   min-block-size: 10rem;
   padding: var(--env-space-7) var(--env-space-6);
-  border: 0.0625rem solid var(--env-color-border-muted);
 }
 
 .docs-verdict-bar {
@@ -251,12 +240,12 @@
   font: var(--env-type-body);
 }
 
-/* An anatomy figure: the component in the reader's theme on the dotted stage, with numbered
+/* An anatomy figure: the component in the reader's theme on its recessed canvas, with numbered
    callouts on its parts, measured from the live parts, and the legend of part names below. */
 .docs-anatomy,
 .docs-variants {
   display: grid;
-  gap: var(--env-space-4);
+  gap: var(--env-space-6);
   min-inline-size: 0;
   margin: 0;
 }
@@ -301,7 +290,8 @@
 }
 
 .docs-anatomy-badge,
-.docs-anatomy-number {
+.docs-anatomy-number,
+.docs-option-tag {
   display: grid;
   place-items: center;
   inline-size: 1.5rem;
@@ -321,8 +311,10 @@
 }
 
 /* A variants figure's callouts: each variant's name in place of a number, on the start side of
-   items one under another, or above items side by side (AnatomyFigure.tsx). */
-.docs-variant-label {
+   items one under another, or above items side by side (AnatomyFigure.tsx), and the same tags in
+   an option legend. */
+.docs-variant-label,
+.docs-option-tag {
   inline-size: auto;
   padding-inline: var(--env-space-3);
   white-space: nowrap;
@@ -342,13 +334,14 @@
 
 .docs-anatomy-caption {
   display: grid;
-  gap: var(--env-space-4);
+  gap: var(--env-space-6);
 }
 
 .docs-anatomy-legend {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
-  gap: var(--env-space-3) var(--env-space-6);
+  /* Room between the entries, so each name and its explanation read as one item. */
+  gap: var(--env-space-5) var(--env-space-8);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -358,11 +351,61 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
-  gap: var(--env-space-3);
+  gap: var(--env-space-4);
 }
 
 .docs-anatomy-legend p {
   margin: 0;
+}
+
+/* An option table on the Site, such as a component's variants or sizes: a legend laid out as an
+   anatomy figure's is, each option's name in the tag a variants figure's callouts use, followed by
+   what it is for (OptionLegend.tsx). The tags of a column share its widest tag's width, so what
+   each option is for starts on one line down the column; two columns where they fit. */
+.docs-option-legend {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  /* Room between the entries, so each tag and its explanation read as one item. */
+  gap: var(--env-space-5) var(--env-space-8);
+  align-items: start;
+  margin: 0;
+}
+
+.docs-option {
+  display: grid;
+  grid-column: span 2;
+  grid-template-columns: subgrid;
+  column-gap: var(--env-space-4);
+  align-items: start;
+}
+
+.docs-option > dt {
+  display: grid;
+  justify-items: start;
+}
+
+.docs-option > dd {
+  display: grid;
+  gap: var(--env-space-1);
+  margin: 0;
+  /* The text's first line sits on the tag's centre line. */
+  padding-block-start: calc((1.5rem - 1lh) / 2);
+}
+
+.docs-option > dd p {
+  margin: 0;
+}
+
+.docs-option-detail,
+.docs-option-detail p {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+
+@container (width >= 48rem) {
+  .docs-option-legend:has(> :nth-child(2)) {
+    grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr);
+  }
 }
 
 @container (width < 30rem) {
@@ -391,4 +434,26 @@
   inline-size: 100%;
   block-size: auto;
   border-radius: var(--env-radius-surface);
+}
+
+/* The dev mode page's pictures of dev mode at work, on the recessed canvas, each at its own size
+   (`--docs-shot-width`, half the file's) or the stage's width where that is narrower. */
+.docs-foundation-stage > .docs-dev-mode-shot {
+  display: block;
+  justify-self: center;
+  inline-size: min(100%, var(--docs-shot-width, 100%));
+  block-size: auto;
+  border-radius: var(--env-radius-md);
+}
+
+/* A page of an application with the dev mode button in its bottom corner, as dev mode places it. */
+.docs-dev-mode-corner {
+  position: relative;
+  min-block-size: 10rem;
+}
+.docs-dev-mode-button {
+  position: absolute;
+  inset-block-end: var(--env-space-4);
+  inset-inline-end: var(--env-space-4);
+  border-radius: var(--env-radius-full);
 }

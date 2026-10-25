@@ -1,13 +1,16 @@
-import type { ReactNode } from 'react';
-import { Badge, Column, DescriptionList, Text } from '@envsemble/envui';
-import { Documentation } from '../pages/Documentation';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
+import { Documentation, GuidanceLists } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
 import { FigureSection } from './Figures';
 import { LiveExample } from './LiveExample';
 import { Specimen } from './Specimen';
+import { siteSection } from './Provides';
+import { docsOnlySections } from '../../../../scripts/SiteContent.mjs';
 import { pageOf, Related } from './Related';
 import { WhenToUse } from './WhenToUse';
+import { subscribeToAddress } from '../navigation/Address';
 
 const statusTones = {
   experimental: 'warning',
@@ -22,9 +25,12 @@ const statusTones = {
  */
 export function MetadataBadges({
   metadata,
+  plain = false,
   children,
 }: {
   metadata: DocumentationMetadata;
+  /** Leave out the statuses of exports that are code, such as a hook, as the Site does. */
+  plain?: boolean;
   children?: ReactNode;
 }) {
   return (
@@ -32,11 +38,15 @@ export function MetadataBadges({
       <Badge tone={statusTones[metadata.status]}>
         {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
       </Badge>
-      {Object.entries(metadata.statuses ?? {}).map(([name, status]) => (
-        <Badge key={name} tone={statusTones[status]}>
-          {name}: {status[0].toUpperCase() + status.slice(1)}
-        </Badge>
-      ))}
+      {/* On the Site, a component's status only: a hook or a function, such as useModifierKey, is
+          code, which the Site never names; its page in the Docs shows its status. */}
+      {Object.entries(metadata.statuses ?? {})
+        .filter(([name]) => !plain || /^[A-Z]/.test(name))
+        .map(([name, status]) => (
+          <Badge key={name} tone={statusTones[status]}>
+            {name}: {status[0].toUpperCase() + status.slice(1)}
+          </Badge>
+        ))}
       <Text render={<span />} variant="caption">
         Since {metadata.since}
       </Text>
@@ -45,11 +55,15 @@ export function MetadataBadges({
   );
 }
 
-/** An export as a Markdown link to the page that documents it; pages of docs/ are one folder
- * deep, so ../<path> reaches any of them from any page. */
+/**
+ * An export as a Markdown link to the page of the Site that shows it; pages of docs/ are one folder
+ * deep, so ../<path> reaches any of them from any page. An export documented only in the Docs, such
+ * as Field, is its name alone: the Site links into the Docs only through the API button and the
+ * Docs link, and shows no code outside its figures.
+ */
 function exportLink(name: string) {
   const page = pageOf(name);
-  return page ? `[${name}](../${page.reference.path})` : `\`${name}\``;
+  return page && !page.path.startsWith('docs/') ? `[${name}](../${page.reference.path})` : name;
 }
 
 /**
@@ -88,13 +102,7 @@ function Section({ reference, section }: { reference: Document; section: Documen
         section={section}
         lead={
           section.id === 'usage' &&
-          reference.metadata && (
-            <WhenToUse
-              metadata={reference.metadata}
-              path={reference.path}
-              exportLink={exportLink}
-            />
-          )
+          reference.metadata && <WhenToUse metadata={reference.metadata} path={reference.path} />
         }
       />
     );
@@ -126,38 +134,116 @@ function Section({ reference, section }: { reference: Document; section: Documen
   );
 }
 
-/** Sections in the template's order, then Related; the changelog follows the page navigation. */
+/**
+ * The three larger sections of a component or pattern page, each a group of its sections, by id:
+ * what it is and its variants; when to use it and its parts, on the page's one band; how it adapts
+ * and its accessibility. A section the list doesn't name joins the group of the section before it.
+ */
+const sectionGroups: readonly (readonly string[])[] = [
+  ['overview', 'variants'],
+  ['usage', 'anatomy'],
+  ['width', 'accessibility'],
+];
+
+/** The group that sits on the band. */
+const bandGroup = 1;
+
+/** A page's sections in their groups, in the page's order; a group may be empty. */
+function groupSections(sections: readonly DocumentationSection[]) {
+  const groups: DocumentationSection[][] = sectionGroups.map(() => []);
+  let group = 0;
+  for (const section of sections) {
+    const named = sectionGroups.findIndex((ids) => ids.includes(section.id));
+    if (named >= 0) group = named;
+    groups[group].push(section);
+  }
+  return groups;
+}
+
+/**
+ * Sections in the template's order, then, with `related`, Related; the changelog is on the page in
+ * the Docs. On the figure template, the sections come in their three groups, far apart, the second
+ * on a band across the whole content pane; a group without sections, and a page's band where it
+ * has neither When to use nor Anatomy, are left out.
+ */
 function Sections({
   reference,
   sections,
+  provides,
+  related,
 }: {
   reference: Document;
   sections: DocumentationSection[];
+  provides: boolean;
+  related: boolean;
 }) {
-  const figures = reference.format === 'figures';
+  // The developer-only part, "## In code", and the changelog are on the page's guide in the Docs.
+  const shown = sections
+    .filter((section) => !docsOnlySections.has(section.id))
+    .flatMap((section) => (provides ? section : (siteSection(section) ?? [])));
+  const render = (section: DocumentationSection) => (
+    <Section key={section.id} reference={reference} section={section} />
+  );
+  const end = related &&
+    sections.some((section) => section.id === 'overview') &&
+    reference.metadata && <Related metadata={reference.metadata} path={reference.path} />;
+  if (reference.format !== 'figures')
+    return (
+      <Column gap={8} className="docs-article docs-template">
+        {shown.map(render)}
+        {end}
+      </Column>
+    );
   return (
-    <Column
-      gap={figures ? 9 : 8}
-      className={`docs-article docs-template${figures ? ' docs-figures' : ''}`}
-    >
-      {sections
-        .filter((section) => section.id !== 'changelog')
-        .map((section) => (
-          <Section key={section.id} reference={reference} section={section} />
-        ))}
-      {sections.some((section) => section.id === 'overview') && reference.metadata && (
-        <Related metadata={reference.metadata} path={reference.path} />
+    <div className="docs-section-groups">
+      {groupSections(shown).map((group, index) => {
+        if (!group.length) return null;
+        const content = (
+          <div key={index} className="docs-article docs-template docs-figures docs-section-group">
+            {group.map(render)}
+          </div>
+        );
+        return index === bandGroup ? (
+          <div key={index} className="docs-band">
+            {content}
+          </div>
+        ) : (
+          content
+        );
+      })}
+      {end && (
+        <div className="docs-article docs-template docs-figures docs-section-group">{end}</div>
       )}
-    </Column>
+    </div>
   );
 }
 
 /**
  * A component or pattern page of the Site: every section in the page's order, then Related; a
- * component's props, part names and changelog are on its page in the Docs.
+ * component's props, part names, what the application provides and changelog are on its page in
+ * the Docs. `provides` keeps what envUI and the application provide in Accessibility, for Field,
+ * whose whole page is in the Docs, where `related={false}` leaves Related for the page's end.
  */
-export function TemplateContent({ document }: { document: Document }) {
-  return <Sections reference={document} sections={document.sections ?? []} />;
+export function TemplateContent({
+  document,
+  provides = false,
+  related = true,
+}: {
+  document: Document;
+  provides?: boolean;
+  related?: boolean;
+}) {
+  // A component's or pattern's page is guidance: its lists are check lists.
+  return (
+    <GuidanceLists value>
+      <Sections
+        reference={document}
+        sections={document.sections ?? []}
+        provides={provides}
+        related={related}
+      />
+    </GuidanceLists>
+  );
 }
 
 /**
@@ -178,11 +264,24 @@ function changelogEntries(markdown: string) {
   return entries.length ? entries : undefined;
 }
 
+/** Whether the address names a page's changelog, as `#changelog` does. */
+const namesChangelog = () => location.hash === '#changelog';
+
 /**
- * A component's changelog, on its page in the Docs: quiet side information, each version a muted
- * label beside what changed in it, in small muted type.
+ * A component's changelog, on its page in the Docs: quiet side information, rarely needed, so it
+ * sits collapsed in a disclosure titled with its heading. An address that names it opens it, on
+ * loading the page and on following a link to it; each version is a muted label beside what
+ * changed in it, in small muted type.
  */
 export function PageChangelog({ document }: { document: Document }) {
+  const [open, setOpen] = useState(namesChangelog);
+  useEffect(
+    () =>
+      subscribeToAddress(() => {
+        if (namesChangelog()) setOpen(true);
+      }),
+    [],
+  );
   const changelog = document.sections?.find((section) => section.id === 'changelog');
   if (!changelog) return null;
   const markdown = changelog.blocks
@@ -197,21 +296,28 @@ export function PageChangelog({ document }: { document: Document }) {
       data-section={changelog.id}
       aria-labelledby="changelog"
     >
-      <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
-        {changelog.title}
-      </Text>
-      {entries ? (
-        <DescriptionList.Root className="docs-changelog-entries">
-          {entries.map(({ version, text }, index) => (
-            <DescriptionList.Item key={`${index}-${version}`} label={version}>
-              <Documentation markdown={text} path={document.path} />
-            </DescriptionList.Item>
-          ))}
-        </DescriptionList.Root>
-      ) : (
-        // A changelog written another way shows as its Markdown, below the same heading.
-        <Documentation markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
-      )}
+      <Disclosure
+        open={open}
+        onOpenChange={setOpen}
+        title={
+          <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
+            {changelog.title}
+          </Text>
+        }
+      >
+        {entries ? (
+          <DescriptionList.Root className="docs-changelog-entries">
+            {entries.map(({ version, text }, index) => (
+              <DescriptionList.Item key={`${index}-${version}`} label={version}>
+                <Documentation markdown={text} path={document.path} />
+              </DescriptionList.Item>
+            ))}
+          </DescriptionList.Root>
+        ) : (
+          // A changelog written another way shows as its Markdown, below the same heading.
+          <Documentation markdown={markdown.replace(/^#{2,} .*$/m, '')} path={document.path} />
+        )}
+      </Disclosure>
     </Column>
   );
 }

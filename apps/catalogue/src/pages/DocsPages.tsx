@@ -1,18 +1,27 @@
 import { Button, Column, DescriptionList, Link, Tabs, Text } from '@envsemble/envui';
 import { Code, Markdown, type MarkdownLinkProps } from '@envsemble/envui/content';
 import { Visibility } from '@envsemble/envui/icons/Visibility';
+import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { PageHeader } from '../layout/PageHeader';
 import { pagesOf, referencePages, type SitePage } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
 import { currentRouteQuery, useViewTabs } from '../navigation/useDocumentationRoute';
 import { lazyPart } from '../template/LoadBoundary';
+import { ExampleSource } from '../template/LiveExample';
 import { partsOf } from '../template/Parts';
+import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
+import { Related } from '../template/Related';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
-import type { Reference } from '../Reference';
-import { Documentation } from './Documentation';
+import type { Documentation as Document, Reference } from '../Reference';
+import { Documentation, GuidanceLists } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
+import { ColorPalette } from '../previews/foundations/ColorPalette';
+import { SpecimenHeadingLevel } from '../previews/Example';
+import { ReleaseNotes } from './ReleaseNotes';
+import { subsections } from '../../../../scripts/SiteContent.mjs';
+import { headingSlug } from '../../../../scripts/SearchAnchors.mjs';
 import codemodsReadme from '../../../../packages/codemods/README.md?raw';
 import usageSkill from '../../../../.agents/skills/envui-use/SKILL.md?raw';
 import migrationSkill from '../../../../.agents/skills/envui-migrate/SKILL.md?raw';
@@ -24,22 +33,20 @@ const tokenReference = lazyPart(
   'src/pages/TokenReference.tsx',
 );
 
-/** The Docs' home: what they hold, each page of a group in a short list. */
+/** The Docs' home: what they are, said once in its summary, and each group's pages in a short list. */
 export function DocsHome({ page }: { page: SitePage }) {
   const groups = new Map<string, SitePage[]>();
   for (const entry of pagesOf('docs'))
     if (entry !== page) groups.set(entry.section, [...(groups.get(entry.section) ?? []), entry]);
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <PageHeader
+        title={page.title}
+        logo={<EnvUIDocsLogo />}
+        description={page.summary}
+        kind="docs-home"
+      />
       <Column gap={7} className="docs-article">
-        <Text>
-          The Docs are the developer reference for envUI: how to install and set it up, migrate an
-          interface and upgrade with the codemods, the design tokens, dev mode, the tools for coding
-          agents, and every component&apos;s props, part names and changelog. The{' '}
-          <Link href={routeHref('overview')}>Site</Link> shows what each component looks like and
-          when to use it.
-        </Text>
         {[...groups].map(([group, entries]) => (
           <Column key={group} render={<section />} gap={3}>
             <Text render={<h2 />} variant="title">
@@ -63,7 +70,7 @@ export function DocsHome({ page }: { page: SitePage }) {
 export function GuidePage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
       <Column gap={7} className="docs-article">
         <GuideDocument document={page.document!} />
       </Column>
@@ -75,7 +82,7 @@ export function GuidePage({ page }: { page: SitePage }) {
 export function CodemodsPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
       <Column gap={7} className="docs-article">
         <Markdown codeCopyable>{codemodsReadme.replace(/^# [^\n]*\n+/, '')}</Markdown>
       </Column>
@@ -116,7 +123,7 @@ export function SkillsPage({ page }: { page: SitePage }) {
   const tabs = useViewTabs((value) => `docs/agent-skills?skill=${value}`);
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
       <Column gap={7} className="docs-article">
         <Tabs
           aria-label="Agent skills"
@@ -152,7 +159,12 @@ export function SkillsPage({ page }: { page: SitePage }) {
 export function TokensPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs / Foundations" description={page.summary} />
+      <PageHeader
+        title={page.title}
+        breadcrumb="Docs / Foundations"
+        description={page.summary}
+        kind="docs"
+      />
       <Column gap={7} className="docs-article">
         <LoadedPart part={tokenReference} what="token reference" />
       </Column>
@@ -167,13 +179,27 @@ const changelog = lazyPart(
   'src/pages/Changelog.tsx',
 );
 
-/** Every change in each release of @envsemble/envui, as the releases write them. */
+/**
+ * What changed in each release of @envsemble/envui: the release notes, a few lines on each release
+ * with what it breaks, then every change as the releases write them.
+ */
 export function ChangelogDocsPage({ page }: { page: SitePage }) {
   return (
     <>
-      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} />
-      <Column gap={7} className="docs-article">
-        <LoadedPart part={changelog} what="changelog" />
+      <PageHeader title={page.title} breadcrumb="Docs" description={page.summary} kind="docs" />
+      <Column gap={8} className="docs-article">
+        <Column gap={6} render={<section aria-labelledby="highlights" />}>
+          <Text render={<h2 id="highlights" />} variant="headline">
+            Highlights
+          </Text>
+          <ReleaseNotes />
+        </Column>
+        <Column gap={6} render={<section aria-labelledby="every-change" />}>
+          <Text render={<h2 id="every-change" />} variant="headline">
+            Every change
+          </Text>
+          <LoadedPart part={changelog} what="changelog" />
+        </Column>
       </Column>
     </>
   );
@@ -194,6 +220,27 @@ function SiteLink({ path }: { path: string }) {
   );
 }
 
+/**
+ * The colors guide's editable palette: every role a component paints, by its token, with its value
+ * in the current theme, each a swatch that picks another color for this visit.
+ */
+function PaletteSection() {
+  return (
+    <Column render={<section />} gap={5} aria-labelledby="palette">
+      <Text render={<h2 />} variant="headline" id="palette">
+        Try the palette
+      </Text>
+      <Text emphasis="muted">
+        Each swatch shows a token&apos;s value in the theme you are reading in. Press one to pick
+        another color: the whole catalogue follows, in this theme only, until you reload.
+      </Text>
+      <SpecimenHeadingLevel value={3}>
+        <ColorPalette />
+      </SpecimenHeadingLevel>
+    </Column>
+  );
+}
+
 /** A foundation's written guidance and reference, whose visuals are its page on the Site. */
 export function FoundationGuidePage({ page }: { page: SitePage }) {
   const document = page.document!;
@@ -202,12 +249,17 @@ export function FoundationGuidePage({ page }: { page: SitePage }) {
     <>
       <PageHeader
         title={page.title}
+        kind="docs"
         breadcrumb="Docs / Foundations"
         description={page.summary}
         meta={sitePage && <SiteLink path={sitePage.path} />}
       />
+      {/* A foundation's written guidance: its lists are check lists. */}
       <Column gap={7} className="docs-article">
-        <Documentation document={document} />
+        <GuidanceLists value>
+          <Documentation document={document} />
+        </GuidanceLists>
+        {document.id === 'colors' && <PaletteSection />}
       </Column>
     </>
   );
@@ -265,21 +317,158 @@ function PartNames({ components }: { components: readonly string[] }) {
 }
 
 /**
- * A component's page in the Docs: its props, part names and changelog. Field, which has no page on
- * the Site, shows its whole page here, as "Build your own field".
+ * What an application adds for a component or pattern to be accessible, and what envUI does for
+ * it, as the Accessibility section of its page writes them: plain lists under a heading, `title`,
+ * of the section's own.
+ */
+function Provides({ document, title, id }: { document: Document; title: string; id: string }) {
+  const { envui, app } = providesOf(document.sections ?? []);
+  if (!envui && !app) return null;
+  return (
+    <Column render={<section />} gap={5} aria-labelledby={id} className="docs-provides">
+      <Text render={<h2 />} variant="headline" id={id}>
+        {title}
+      </Text>
+      {app && (
+        <Column gap={3}>
+          <Text render={<h3 />} variant="title">
+            You provide
+          </Text>
+          <Documentation markdown={app} path={document.path} />
+        </Column>
+      )}
+      {envui && (
+        <Column gap={3}>
+          <Text render={<h3 />} variant="title">
+            envUI provides
+          </Text>
+          <Documentation markdown={envui} path={document.path} />
+        </Column>
+      )}
+    </Column>
+  );
+}
+
+/** Markdown with its `####` and deeper headings raised a level, outside code fences. */
+function raisedHeadings(markdown: string) {
+  let fence: string | undefined;
+  return markdown
+    .split('\n')
+    .map((line) => {
+      const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/)?.[1];
+      if (marker && (!fence || (marker[0] === fence[0] && marker.length >= fence.length)))
+        fence = fence ? undefined : marker;
+      return !fence && /^#{4,6} /.test(line) ? line.slice(1) : line;
+    })
+    .join('\n');
+}
+
+type GuidePart = { kind: 'markdown'; markdown: string } | { kind: 'source'; name: string };
+
+/**
+ * A page's developer-only part, its "## In code" section, cut into its `###` subsections: the
+ * generated Import, then Usage, Composition and Customize as the page writes them.
+ */
+function guideSubsections(document: Document) {
+  const section = document.sections?.find((item) => item.id === 'code');
+  const parts: { title: string; content: GuidePart[] }[] = [];
+  for (const block of section?.blocks ?? []) {
+    if (block.kind === 'source') parts.at(-1)?.content.push(block);
+    if (block.kind !== 'markdown') continue;
+    for (const chunk of subsections(block.markdown)) {
+      const title = /^### (.*)/.exec(chunk)?.[1].trim();
+      if (title) parts.push({ title, content: [] });
+      const body = chunk.replace(/^#{2,3} .*\n/, '');
+      if (body.trim()) parts.at(-1)?.content.push({ kind: 'markdown', markdown: body });
+    }
+  }
+  return parts;
+}
+
+/**
+ * The guide at the top of a page in the Docs, from the page's "## In code": how to import it, its
+ * common uses in code, how its parts compose and how to customize it, each a section of its own,
+ * with an example file of the page shown as code where the page names one.
+ */
+function CodeGuide({ document }: { document: Document }) {
+  return guideSubsections(document).map(({ title, content }) => {
+    const id = headingSlug(title);
+    return (
+      <Column key={title} render={<section />} gap={5} aria-labelledby={id} className="docs-guide">
+        <Text render={<h2 />} variant="headline" id={id}>
+          {title}
+        </Text>
+        {content.map((part, index) =>
+          part.kind === 'source' ? (
+            <ExampleSource key={index} page={document.id} name={part.name} />
+          ) : (
+            <Documentation
+              key={index}
+              markdown={raisedHeadings(part.markdown)}
+              path={document.path}
+            />
+          ),
+        )}
+      </Column>
+    );
+  });
+}
+
+/** The color properties of the exports a page documents, from docs/generated/parts.json. */
+function ColorProperties({ components }: { components: readonly string[] }) {
+  const entries = components.flatMap((name) => {
+    const colors = partsOf(name)?.colors ?? [];
+    return colors.length ? [{ name, colors }] : [];
+  });
+  if (!entries.length) return null;
+  return (
+    <Column render={<section />} gap={5} aria-labelledby="colors">
+      <Text render={<h2 />} variant="headline" id="colors">
+        Color properties
+      </Text>
+      <Text emphasis="muted">
+        Each sets a color of one instance, through <Code>style</Code> or CSS; its hover, focus and
+        press follow it. They are public and versioned.
+      </Text>
+      {entries.map(({ name, colors }) => (
+        <Column key={name} gap={3}>
+          {entries.length > 1 && (
+            <Text render={<h3 />} variant="title">
+              <Code>{name}</Code>
+            </Text>
+          )}
+          <DescriptionList.Root className="docs-parts">
+            {colors.map((color) => (
+              <DescriptionList.Item key={color.property} label={<Code>{color.property}</Code>}>
+                {color.description}
+              </DescriptionList.Item>
+            ))}
+          </DescriptionList.Root>
+        </Column>
+      ))}
+    </Column>
+  );
+}
+
+/**
+ * A component's or a pattern's page in the Docs, its guide to using it in code: how to import it,
+ * its common uses, how its parts compose and how to customize it, from the page's "## In code";
+ * what the application and envUI provide; then, as reference, its props, part names and color
+ * properties, and its changelog. Field, which has no page on the Site, shows its whole page here,
+ * as "Build your own field", with Related at the end, after the changelog.
  */
 export function ApiPage({ page }: { page: SitePage }) {
   const document = page.document!;
   const reference = document as Reference;
-  const sitePage = referencePages.find(
-    (entry) => entry.reference.id === document.id && !entry.path.startsWith('docs/'),
-  );
+  const sitePage = pagesOf('site').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
+  const pattern = sitePage?.kind === 'pattern';
   return (
     <>
       <PageHeader
         title={page.title}
-        breadcrumb={`Docs / ${reference.group}`}
+        kind="docs"
+        breadcrumb={`Docs / ${pattern ? 'Patterns' : reference.group}`}
         description={page.summary}
         meta={
           metadata && (
@@ -289,16 +478,22 @@ export function ApiPage({ page }: { page: SitePage }) {
           )
         }
       />
-      {!sitePage && <TemplateContent document={document} />}
+      {!sitePage && <TemplateContent document={document} provides related={false} />}
       <Column gap={8} className="docs-article docs-api">
-        <Column render={<section />} gap={5} aria-labelledby="props">
-          <Text render={<h2 />} variant="headline" id="props">
-            Props
-          </Text>
-          <PropsTables reference={reference} />
-        </Column>
+        <CodeGuide document={document} />
+        {sitePage && <Provides document={document} title="Accessibility" id="provides" />}
+        {!pattern && (
+          <Column render={<section />} gap={5} aria-labelledby="props">
+            <Text render={<h2 />} variant="headline" id="props">
+              Props
+            </Text>
+            <PropsTables reference={reference} />
+          </Column>
+        )}
         <PartNames components={metadata?.components ?? []} />
+        <ColorProperties components={metadata?.components ?? []} />
         <PageChangelog document={document} />
+        {!sitePage && metadata && <Related metadata={metadata} path={document.path} />}
       </Column>
     </>
   );

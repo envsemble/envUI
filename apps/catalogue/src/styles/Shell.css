@@ -8,6 +8,8 @@ body {
 .docs-app {
   --docs-content-width: 72rem;
   --docs-gutter: clamp(0.75rem, 3vw, 3rem);
+  /* The monospace of code, which the Docs also set their banners' trails in. */
+  --docs-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
   min-height: 100dvh;
 }
 .docs-app *,
@@ -33,10 +35,11 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-.docs-brand-area {
-  font: var(--env-type-body);
-  font-weight: var(--env-font-weight-medium);
-  color: var(--env-color-fg-muted);
+/* The envUI Docs lockup in the Docs: as tall as the wordmark on the Site, so both sit level. */
+.docs-brand-docs {
+  display: block;
+  block-size: 0.864rem;
+  inline-size: auto;
 }
 /* The navigation at the start of a wide window: the Site's rail beside the drawer of the chosen
    destination's pages, or the Docs' drawer, flush on the navigation's background with no line
@@ -80,18 +83,29 @@ body {
   min-inline-size: 0;
 }
 /* The rail and the drawer start on one row: the wordmark at the top of the rail, search at the
-   top of the drawer. */
+   top of the drawer, as wide as its content and centred in the drawer. Their first items start
+   level too: the rail's list is its gap (space 4) and the header's space 2 below the header, so
+   the drawer's, whose gap is space 3, takes the difference below its header. */
 .docs-rail .env-rail-header {
   margin-block-end: var(--env-space-2);
+}
+.docs-sidebar > .env-drawer-header {
+  align-items: center;
+  margin-block-end: calc(var(--env-space-4) + var(--env-space-2) - var(--env-space-3));
+}
+.docs-drawer-search {
+  max-inline-size: 100%;
 }
 .docs-drawer-top {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
   gap: var(--env-space-3);
+  align-self: stretch;
 }
 .docs-drawer-top .docs-drawer-search {
-  flex: 1;
-  min-inline-size: 0;
+  flex: none;
 }
 .docs-drawer-top .docs-brand {
   flex: none;
@@ -99,6 +113,9 @@ body {
 }
 .docs-drawer-top .docs-brand svg {
   inline-size: 4rem;
+}
+.docs-drawer-top .docs-brand-docs {
+  block-size: 0.768rem;
 }
 /* The other area and the Display menu: ghost buttons at the page's top end that stay in the corner
    as the page scrolls. Their row sticks to the body's top and lets the page show through; the
@@ -167,7 +184,6 @@ body {
   flex-direction: column;
   min-block-size: 100%;
 }
-.docs-page-header,
 .docs-preview,
 .docs-article,
 .docs-overview,
@@ -175,13 +191,32 @@ body {
   inline-size: min(100%, var(--docs-content-width));
   margin-inline: auto;
 }
+/* The banner at the top of a page, or the home page's hero, is as wide as the content column
+   where the gutters beside it are narrow. Where the pane is wider than the column and its gutters,
+   it reaches into the gutters on both sides, by a fifth of the pane's width beyond them, up to
+   twice the largest step of the spacing scale: about 7rem in a pane of 108rem, the full 8rem from
+   112rem. It never reaches more than two fifths of the way to the pane's edge, and never across the
+   whole pane as the band does. The header spans the pane, so its width is the container's. */
 .docs-page-header {
-  padding: var(--env-space-5) var(--docs-gutter) var(--env-space-4);
+  container: docs-page-header / inline-size;
+  padding-block: var(--env-space-5) var(--env-space-4);
   margin-block-end: var(--env-space-8);
 }
 .docs-page-banner,
 .docs-overview-hero {
+  --docs-banner-reach: 0rem;
+  inline-size: calc(
+    min(100cqi, var(--docs-content-width)) - 2 * var(--docs-gutter) + 2 * var(--docs-banner-reach)
+  );
+  margin-inline: auto;
   padding-block: var(--env-space-9);
+}
+/* 72rem is --docs-content-width, which a container query can't read. */
+@container docs-page-header (width > 72rem) {
+  .docs-page-banner,
+  .docs-overview-hero {
+    --docs-banner-reach: min((100cqi - var(--docs-content-width)) / 5, var(--env-space-9) * 2);
+  }
 }
 .docs-page-banner-heading {
   display: flex;
@@ -216,6 +251,7 @@ body {
   max-inline-size: 42ch;
   text-wrap: balance;
 }
+/* A Site page's icon: large at the banner's end, turned, faint. */
 .docs-page-banner-symbol {
   position: absolute;
   inset-inline-end: -1rem;
@@ -251,7 +287,9 @@ body {
   color: inherit;
   font: inherit;
 }
+/* The changelog is collapsed in a disclosure, its heading the summary's title. */
 .docs-changelog .docs-changelog-title {
+  flex: none;
   color: var(--env-color-fg-default);
   font-weight: var(--env-font-weight-medium);
 }
@@ -273,8 +311,7 @@ body {
   font-size: 0.88em;
 }
 /* The foot of every page, set apart from the page by space alone: the wordmark, the catalogue's
-   destinations in columns, as many as fit and wrapping onto more rows in a narrow page, and the
-   version. Its links are quiet text that comes forward when hovered. */
+   destinations in columns, as many as fit and wrapping onto more rows in a narrow page. Its links are quiet text that comes forward when hovered. */
 .docs-footer {
   container: docs-footer / inline-size;
   background: var(--env-color-bg-default);
@@ -308,6 +345,7 @@ body {
   padding: 0;
   list-style: none;
 }
+/* The footer's links are muted. */
 .docs-footer-links .env-link {
   color: var(--env-color-fg-muted);
 }
@@ -316,10 +354,29 @@ body {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
-/* In a compact page the wordmark sits above the columns, and the columns pair up two to a row,
-   so none runs long on its own. */
+/* The five columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
+   above them, and they keep one row, then go three and two, then pair up two to a row in a compact
+   page, so none is left on a row of its own. */
+@container docs-footer (width >= 37.5rem) {
+  .docs-footer-columns {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+@container docs-footer (width < 66rem) {
+  .docs-footer-main {
+    flex-direction: column;
+  }
+  .docs-footer-columns {
+    align-self: stretch;
+  }
+}
+@container docs-footer (37.5rem <= width < 54rem) {
+  .docs-footer-columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 @container docs-footer (width < 37.5rem) {
-  .docs-footer-inner {
+  .docs-footer-main {
     flex-direction: column;
   }
   .docs-footer-columns {
@@ -345,7 +402,7 @@ body {
   vertical-align: top;
 }
 .docs-plain-code {
-  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-family: var(--docs-code-font-family);
   font-size: 0.9em;
   overflow-wrap: break-word;
 }

@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
+import { InteractiveMark } from '../template/InteractiveMark';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
@@ -15,10 +16,29 @@ export const SpecimenHeadingLevel = createContext<2 | 3>(2);
 const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
 
 /**
- * Whether an Example shows its content on the dotted stage, as a foundation page's preview does;
- * its caption stays below the stage.
+ * Whether an Example shows its content on a stage, as a foundation page's preview does; its caption
+ * stays below the stage.
  */
 export const ExampleStage = createContext(false);
+
+/**
+ * Whether a SpecimenGrid or MatrixScroll is a component's specimen on its own stage, as a page's
+ * specimen is (template/Specimen.tsx); one inside it, or in a foundation's figure, is not.
+ */
+export const SpecimenStage = createContext(false);
+
+/**
+ * A foundation's figure that shows envUI at work, on its stage, marked as interactive where
+ * something in it can be used.
+ */
+function FoundationStage({ children }: { children: ReactNode }) {
+  return (
+    <div className="docs-foundation-stage" data-figure="example">
+      {children}
+      <InteractiveMark />
+    </div>
+  );
+}
 
 /** Documentation specimen framing; product UI is composed from public envUI components. */
 export function Example({
@@ -29,7 +49,7 @@ export function Example({
   className,
   gap = 4,
   size = 'content',
-  stage,
+  explains = false,
 }: {
   title?: string;
   actions?: ReactNode;
@@ -38,8 +58,12 @@ export function Example({
   className?: string;
   gap?: SpaceStep;
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
-  /** `none` leaves the dotted stage out, where the subject is a color or the page itself. */
-  stage?: 'none';
+  /**
+   * Whether the figure explains the system, such as a scale of tokens or the palette, rather than
+   * shows envUI at work: it then sits on the page itself, under its title and in line with the
+   * text, rather than on the recessed canvas of an example.
+   */
+  explains?: boolean;
 }) {
   const level = useContext(SpecimenHeadingLevel);
   const Heading = `h${level}` as const;
@@ -49,7 +73,6 @@ export function Example({
       render={<section />}
       gap={gap}
       data-size={size}
-      data-stage={stage}
       className={['docs-example', className].filter(Boolean).join(' ')}
     >
       {title && actions ? (
@@ -65,10 +88,12 @@ export function Example({
         </Text>
       ) : null}
       <PartHeadingLevel value={title ? ((level + 1) as 3 | 4) : level}>
-        {staged ? (
-          <div className="docs-foundation-stage" data-stage={stage}>
+        {staged && explains ? (
+          <div className="docs-foundation-stage" data-figure="explanation">
             {children}
           </div>
+        ) : staged ? (
+          <FoundationStage>{children}</FoundationStage>
         ) : (
           children
         )}
@@ -82,7 +107,11 @@ export function Example({
   );
 }
 
-/** Related specimens share a responsive grid; the components keep their own styling. */
+/**
+ * Related specimens share a responsive grid; the components keep their own styling. On its own, as
+ * a component's specimen, the grid is an example on the recessed canvas (Stage.css); inside a
+ * figure, it takes the figure's.
+ */
 export function SpecimenGrid({
   children,
   size = 'field',
@@ -90,9 +119,11 @@ export function SpecimenGrid({
   children: ReactNode;
   size?: 'compact' | 'field' | 'card' | 'wide';
 }) {
+  const staged = useContext(SpecimenStage);
   return (
     <div className="docs-specimen-grid" data-size={size}>
-      {children}
+      <SpecimenStage value={false}>{children}</SpecimenStage>
+      <InteractiveMark enabled={staged} />
     </div>
   );
 }
@@ -117,5 +148,32 @@ export function Specimen({
       {children}
       {caption && <Text variant="caption">{caption}</Text>}
     </Column>
+  );
+}
+
+/**
+ * A matrix of states that scrolls sideways where it is wider than the page, by keyboard too. As a
+ * component's specimen it is an example on the recessed canvas, as SpecimenGrid is.
+ */
+export function MatrixScroll({
+  label,
+  className,
+  children,
+}: {
+  label: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  const staged = useContext(SpecimenStage);
+  return (
+    <div
+      className={['docs-matrix-scroll', className].filter(Boolean).join(' ')}
+      tabIndex={0}
+      role="region"
+      aria-label={label}
+    >
+      <SpecimenStage value={false}>{children}</SpecimenStage>
+      <InteractiveMark enabled={staged} />
+    </div>
   );
 }

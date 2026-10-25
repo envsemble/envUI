@@ -1,9 +1,9 @@
 ---
-title: Confirmation and destructive actions
+title: Destructive actions
 summary: Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.
 status: beta
 since: 1.0.0
-intent: Collect and change information
+intent: Enter and change data
 aliases:
   - destructive action
   - delete confirmation
@@ -13,8 +13,8 @@ aliases:
   - type to confirm
   - bulk delete
 useWhen:
-  - People delete, remove, archive or end something.
-  - An action affects other people or can't be undone.
+  - Deleting, removing, archiving or ending something
+  - An action that affects others or can't be undone
 avoidWhen:
   - text: A decision that needs fields or several choices, beyond a confirmation.
     use: Dialog
@@ -22,10 +22,7 @@ avoidWhen:
     see: feedback
 composes:
   - Button
-  - IconButton
-  - ConfirmButton
   - ConfirmDialog
-  - Menu
   - List
   - Checkbox
   - TextField
@@ -36,48 +33,21 @@ composes:
   - Text
 ---
 
-# Confirmation and destructive actions
+# Destructive actions
 
 ## Overview
 
-A destructive action gets only as much friction as it needs: asking "Are you sure?" before everything trains people to confirm without reading. Archiving here happens at once, and a toast from [useToast](../components/toast.md) offers Undo.
+Asking "Are you sure?" before everything trains people to confirm without reading. Archiving here happens at once, and a [toast](../components/toast.md) offers Undo, which puts the item back where it was.
 
 ```tsx example=UndoInstead
 
 ```
 
-### Undo
-
-The item leaves at once; the toast stays until dismissed, since it has an action, and Undo puts the item back where it was. Keep what was archived reachable elsewhere too, as a toast can be dismissed.
-
 ## Variants
-
-| The action                                           | Use                                                                   |
-| ---------------------------------------------------- | --------------------------------------------------------------------- |
-| Can be undone, and people take it often              | Act at once, with Undo in a toast                                     |
-| Can't be undone, but little is at stake              | A [ConfirmButton](../components/button.md#confirm-in-place), in place |
-| Deletes something people made, or affects others     | A [ConfirmDialog](../components/confirm-dialog.md) `tone="danger"`    |
-| Can't be undone and reaches many people or much work | The dialog with a typed name                                          |
-
-### Confirm in place
-
-The first press names the consequence in the button, "Remove file"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.
-
-```tsx example=ConfirmInPlace
-
-```
-
-### Confirm from a menu
-
-The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete. Pass the menu button as `finalFocus`; after the delete, move focus to the next row.
-
-```tsx example=ConfirmDelete
-
-```
 
 ### Type to confirm
 
-The confirm button stays enabled: a wrong name keeps the dialog open, shows the field's error and moves focus to it.
+Where an action can't be undone and reaches many people or much work, the dialog asks for the name. Its confirm button stays enabled: a wrong name keeps the dialog open and says what to type.
 
 ```tsx example=TypeToConfirm
 
@@ -93,6 +63,17 @@ The count is in the button, the question and the confirm button: "Delete 2 docum
 
 ## When to use
 
+### Which to use
+
+Match the friction to what is at stake.
+
+| Friction            | Use for                                                                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Undo in a toast     | An action that can be undone, and that people take often.                                                                            |
+| Confirm in place    | An action that can't be undone, with little at stake, through a [ConfirmButton](../components/button.md).                            |
+| Confirm in a dialog | Deleting something people made, or something that affects others, through a danger [ConfirmDialog](../components/confirm-dialog.md). |
+| Type the name       | An action that can't be undone and reaches many people or much work.                                                                 |
+
 ```tsx do=DangerKeptForDelete caption="The danger tone only on what deletes or ends something."
 
 ```
@@ -101,20 +82,13 @@ The count is in the button, the question and the confirm button: "Delete 2 docum
 
 ```
 
-- Don't confirm what Undo can reverse.
-- Return the action's promise from `onConfirm`, so the dialog waits, pending, and stays open with `error` when it fails.
-- envUI has no danger tone for a menu item yet: label it with the consequence, last after a separator.
-
 ### Content
 
-- The title is a question that names the object, "Delete Launch brief?"; the description says whether it can be undone; the confirm button repeats the verb, "Delete document"; never "Yes" or "OK".
-- An inline confirmation's armed label is short and has no question mark: the verb, or the verb and object, "Remove file".
-- One verb from trigger to button: Delete when it's gone, Remove when it leaves a place, Archive when it can come back. A trigger that opens a confirmation ends with an ellipsis.
-- The undo toast: "Website refresh archived.", with Undo.
+A confirmation's title asks the question with the object's name, "Delete Website refresh?", and its description says the consequence and whether it can be undone. The confirm button repeats the verb and the object, "Delete project", and the other stays Cancel: never "Are you sure?", "Yes" or "OK". A button armed in place is short and has no question mark, "Remove file". Use one verb from the trigger, which ends in an ellipsis when it opens a confirmation, to the button: Delete when it's gone, Remove when it leaves a place, Archive when it can come back. The undo toast names what happened, "Website refresh archived.".
 
 ## Accessibility
 
-A confirmation dialog takes focus to Cancel, keeps it inside and returns it to `finalFocus`, else the trigger. When the action removes its own control, move focus to the next row, or the list. The undo toast doesn't take focus; <kbd>F6</kbd> reaches it.
+When the action removes its own control, move focus to the next row, or to the list.
 
 ### envUI provides
 
@@ -128,6 +102,36 @@ A confirmation dialog takes focus to Cancel, keeps it inside and returns it to `
 - `finalFocus`, and focus for when the action removes its own control.
 - Dismissing the undo toast once Undo has run, with `dismiss(id)`.
 
+## In code
+
+### Usage
+
+Act at once and offer Undo: `useToast().show({ message, action: { label: 'Undo', onClick } })` returns the toast's id, and the action's `onClick` puts the item back and calls `toast.dismiss(id)`. A toast with an `action` stays until dismissed, so keep what was archived reachable elsewhere too. Move focus to the next row, or the list, with `tabIndex={-1}`, when the action removes its own control.
+
+```tsx source=UndoInstead
+
+```
+
+#### Confirm in place or in a dialog
+
+A ConfirmButton runs `onConfirm` on its second press and shows `confirmLabel`, such as "Remove file", while armed. A ConfirmDialog with `tone="danger"` takes a `title`, a `description` and a `confirmLabel`, and puts focus on Cancel. Opened from a Menu.Item, pass the menu's trigger as `finalFocus`, and put the item last, after a Menu.Separator, labelled with its consequence. Return the action's promise from `onConfirm`: the dialog waits, pending, and stays open with `error` set when it fails.
+
+#### Type to confirm
+
+Put a TextField for the name inside the ConfirmDialog. In `onOpenChange`, ignore the close whose `details.reason` is `'imperative-action'` while the name doesn't match, and in `onConfirm` set the field's `error` and focus it through its `ref`; keep the confirm button enabled.
+
+```tsx source=TypeToConfirm
+
+```
+
+### Composition
+
+Lay the items out as a List, each List.Item taking its trigger as its `action`: a Button, an IconButton named with `aria-label`, a ConfirmButton or a Menu. Bulk delete selects rows with Checkboxes and names the count in an outline danger Button, the dialog's `title` and its `confirmLabel`. The danger tone, `tone="danger"`, goes only on what deletes or ends something.
+
+```tsx source=BulkDelete
+
+```
+
 ## Changelog
 
-- **1.0.0**: The page is on the figure template.
+- **1.0.0**: The page is on the figure template, with the confirmations of the content guidelines; confirming in place and from a menu are on Button and ConfirmDialog.

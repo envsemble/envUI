@@ -3,7 +3,7 @@ title: HoverCard
 summary: A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview.
 status: stable
 since: 0.6.0
-category: Feedback & overlays
+category: Overlays
 aliases:
   - PreviewCard
   - preview card
@@ -13,7 +13,7 @@ aliases:
   - person card
   - peek
 useWhen:
-  - A link or a name refers to something people may want a glance at before following it, such as a document's summary or a person's role.
+  - A glance at what a link or a name refers to, such as a document's summary or a person's role
 avoidWhen:
   - text: A short hint that names a control.
     use: Tooltip
@@ -27,15 +27,15 @@ components:
 
 ## Overview
 
-A hover card shows supplementary details beside its trigger, usually a link, once the pointer rests on it or keyboard focus reaches it, like a preview of the page the link leads to. Focus stays on the trigger, and the card stays open while the pointer moves onto it.
+The pointer can move from the trigger onto the card without closing it, and focus stays on the trigger.
 
-```tsx example=DocumentPreview open stage=raised
+```tsx example=DocumentPreview open
 
 ```
 
 ### Text with more details
 
-A trigger that is text rather than a link, such as a span or Text, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; links, buttons and avatars keep their own look. Make the text focusable with `tabIndex={0}`, so keyboard focus opens the card too; envUI warns in the console while developing when it isn't.
+Text that isn't a link can open a card too, with the dotted underline and the focus a [tooltip on text](tooltip.md#text) takes.
 
 ```tsx example=TextDetails
 
@@ -43,33 +43,49 @@ A trigger that is text rather than a link, such as a span or Text, takes a quiet
 
 ## Variants
 
-| Width | Use for                                                         |
-| ----- | --------------------------------------------------------------- |
-| `md`  | A short summary, such as a document's last change. The default. |
-| `lg`  | Richer details, such as a person with an avatar and a role.     |
+### Widths
 
-```tsx example=PersonDetails open stage=raised caption="lg, with an avatar beside the name."
+The card is as wide as its content, up to its width, and narrows to fit the window.
+
+| Width  | Use for                                                         |
+| ------ | --------------------------------------------------------------- |
+| Medium | A short summary, such as a document's last change. The default. |
+| Large  | Richer details, such as a person with an avatar and a role.     |
+
+```tsx example=PersonDetails open caption="Large, with an avatar beside the name."
 
 ```
 
-```tsx example=Placement open stage=raised caption="side top and align start, for a link near the bottom of a pane."
+### Placement
+
+The card opens below its trigger, centred on it, or on another side or lined up with one end, such as above a link near the bottom of a pane.
+
+```tsx example=Placement open
 
 ```
 
 ## When to use
 
-- Keep the details supplementary: the page the link leads to has them too, as touch screens have no hover.
-- No links, buttons or fields in the card: the keyboard and touch can't reach them.
-- No Tooltip around a HoverCard or as its trigger; put what it would say in the card.
+### Details that are also elsewhere
+
+Keep the details supplementary: the page the link leads to has them too.
+
+### Nothing to press
+
+No links, buttons or fields in the card: the keyboard and touch can't reach them.
+
+### No tooltip as well
+
+No [Tooltip](tooltip.md) around a hover card or as its trigger; put what it would say in the card.
 
 ## Anatomy
 
-```tsx anatomy=HoverCardAnatomy open stage=raised
+```tsx anatomy=HoverCardAnatomy open
 
 ```
 
 1. **Card** (`env-hover-card`, `children`)
-2. **Trigger** (`env-link`, `trigger`); a text trigger takes `env-hover-detail`
+2. **Trigger** (`env-link`, `trigger`)
 
 ## Accessibility
 
@@ -91,6 +107,36 @@ A trigger that is text rather than a link, such as a span or Text, takes a quiet
 - A trigger that works on its own, such as a link to a page with the same details.
 - `tabIndex={0}` on a text trigger, so keyboard focus reaches it.
 - Headings and emphasis inside the card, such as Text in the title type.
+
+## In code
+
+### Usage
+
+A HoverCard opens its details, `children`, beside its `trigger`, which receives the ref, on hover after `delay`, 600 ms by default, and at once on keyboard focus; it closes `closeDelay`, 300 ms, after the pointer leaves the trigger and the card. Leave it uncontrolled, or control it with `open` and `onOpenChange`; `defaultOpen` opens it on the first render.
+
+```tsx source=DocumentPreview
+
+```
+
+#### Text triggers
+
+A trigger that is text rather than a link, such as a span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`. Make it focusable with `tabIndex={0}`, so keyboard focus opens the card too; envUI warns in the console while developing when it isn't. A link or another control keeps its own look.
+
+```tsx source=TextDetails
+
+```
+
+#### Width and placement
+
+`width` is the widest the card grows: `md`, 20 rem and the default, or `lg`, 28 rem. It is as wide as its content from 12 rem up, and narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; `align` is `center`, the default, `start` or `end`.
+
+```tsx source=Placement
+
+```
+
+### Composition
+
+The card, `env-hover-card`, renders on PopupSurface in its trigger's theme and text direction, above dialogs, and takes `className`, `style`, `ref` and data attributes. Put a heading in it as Text in the title type, and keep links, buttons and fields out of it. A Tooltip around a HoverCard, or as its `trigger`, shows no tooltip.
 
 ## Changelog
 

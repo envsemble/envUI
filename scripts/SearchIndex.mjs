@@ -46,28 +46,29 @@ export const tokensFile = fileURLToPath(
 export const cataloguePages = [
   { page: 'overview', title: 'Overview', area: 'site', aliases: ['home', 'introduction'] },
   {
-    page: 'get-started',
-    title: 'Get started',
-    area: 'site',
-    aliases: ['install', 'quick start', 'getting started'],
-  },
-  {
     page: 'components',
     title: 'Components',
     area: 'site',
     aliases: ['all components', 'component list', 'catalogue'],
   },
   {
+    page: 'patterns',
+    title: 'Patterns',
+    area: 'site',
+    aliases: ['all patterns', 'pattern list', 'pattern gallery'],
+  },
+  // Dev mode's page on the Site, beside its guide in the Docs, the document dev-mode.
+  {
+    page: 'dev-mode-overview',
+    title: 'Dev mode',
+    area: 'site',
+    aliases: ['dev mode', 'layout inspector', '3D view', 'check a layout'],
+  },
+  {
     page: 'benchmark',
     title: 'Benchmark',
     area: 'site',
     aliases: ['agent benchmark', 'scores', 'evaluation'],
-  },
-  {
-    page: 'changelog',
-    title: 'Changelog',
-    area: 'site',
-    aliases: ['release notes', 'releases', 'versions'],
   },
   {
     page: 'docs',
@@ -89,9 +90,9 @@ export const cataloguePages = [
   },
   {
     page: 'full-changelog',
-    title: 'Every change by release',
+    title: 'Changelog',
     area: 'docs',
-    aliases: ['full changelog', 'all changes'],
+    aliases: ['release notes', 'releases', 'versions', 'full changelog', 'all changes'],
   },
   {
     page: 'agent-skills',

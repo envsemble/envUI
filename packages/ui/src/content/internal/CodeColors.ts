@@ -27,7 +27,7 @@ interface CodeColors {
    */
   surfaces: readonly string[];
   /**
-   * Code blocks: a translucent layer of the text color, so that a block is a step from any surface,
+   * Code blocks and diffs: a translucent layer of the text color, so that a block is a step from any surface,
    * as one level of the background ladder is from the next, in the light theme darker and in the
    * dark one lighter. Under high contrast in the dark theme, the theme's editor background, darker
    * than every surface: over a lighter one, no token could reach 7:1.
@@ -35,11 +35,6 @@ interface CodeColors {
   block: CodeLayer;
   /** Inline code: the neutral muted fill (`--env-color-bg-neutral-muted`). */
   inline: CodeLayer;
-  /**
-   * Diffs: the muted canvas of the themes' own design system (`bgColor-muted`), opaque, since
-   * Diffs mixes its line tints from it; under high contrast in the dark theme, as blocks.
-   */
-  diff: string;
   /** Text: the theme's foreground, moved where it falls short on a block or inline code. */
   foreground: string;
 }
@@ -60,14 +55,12 @@ const colors: Record<ThemeValue, Record<CodeContrast, CodeColors>> = {
       surfaces: ['#ffffff', '#eff1f5', '#e2e4e8'],
       block: { color: light, alpha: 0.06 },
       inline: { color: light, alpha: 0.1 },
-      diff: '#f6f8fa',
       foreground: '#1f2328',
     },
     high: {
       surfaces: ['#ffffff', '#eff1f5', '#f6f8fc'],
       block: { color: light, alpha: 0.06 },
       inline: { color: light, alpha: 0.06 },
-      diff: '#e7ecf0',
       foreground: '#0e1116',
     },
   },
@@ -76,14 +69,12 @@ const colors: Record<ThemeValue, Record<CodeContrast, CodeColors>> = {
       surfaces: ['#1e1f21', '#28292b', '#343638'],
       block: { color: dark, alpha: 0.05 },
       inline: { color: dark, alpha: 0.125 },
-      diff: '#2d333b',
       foreground: '#b2c0cd',
     },
     high: {
       surfaces: ['#1e1f21', '#28292b', '#303234', '#343638'],
       block: { color: '#0a0c10', alpha: 1 },
       inline: { color: dark, alpha: 0.08 },
-      diff: '#0a0c10',
       foreground: '#f0f3f6',
     },
   },
@@ -107,9 +98,19 @@ export function codeBackgrounds(
   return [...new Set(surfaces.map((surface) => over(layer.color, layer.alpha, surface)))];
 }
 
-/** The background of code diffs in an app theme and contrast. */
-export function diffBackground(scheme: ThemeValue, contrast: CodeContrast = 'standard') {
-  return colors[scheme][contrast].diff;
+/**
+ * The opacities of a diff's tints: a changed line's color over the block's layer, and a changed
+ * word's over its line. Diffs mixes them from a transparent background, so they show over whatever
+ * the block sits on.
+ */
+export const diffTintOpacity = { line: 0.3, word: 0.4 };
+
+/** What a diff's changed lines and words look like over each of `blocks`, tinted with `tint`. */
+export function diffTintsOver(blocks: readonly string[], tint: string) {
+  return blocks.flatMap((block) => {
+    const line = over(tint, diffTintOpacity.line, block);
+    return [line, over(tint, diffTintOpacity.word, line)];
+  });
 }
 
 /** A layer as a CSS color. */
@@ -119,9 +120,9 @@ function layerColor({ color, alpha }: CodeLayer) {
   return `rgb(${r} ${g} ${b} / ${alpha})`;
 }
 
-/** The name envUI registers a code theme under, for code blocks or for diffs. */
-export const codeThemeName = (kind: 'code' | 'diff', scheme: ThemeValue, contrast: CodeContrast) =>
-  `envui-github${kind === 'diff' ? '-diff' : ''}-${scheme}${contrast === 'high' ? '-high' : ''}`;
+/** The name envUI registers a code theme under, for code blocks and diffs alike. */
+export const codeThemeName = (scheme: ThemeValue, contrast: CodeContrast) =>
+  `envui-github-${scheme}${contrast === 'high' ? '-high' : ''}`;
 
 /**
  * The code theme's colors for the app theme, standard and high-contrast, as CSS custom properties:
@@ -133,8 +134,6 @@ export function codeThemeStyle(theme: ThemeValue): CSSProperties {
   return {
     '--env-code-background': layerColor(standard.block),
     '--env-code-background-high': layerColor(high.block),
-    '--env-code-diff-background': standard.diff,
-    '--env-code-diff-background-high': high.diff,
     '--env-code-foreground': standard.foreground,
     '--env-code-foreground-high': high.foreground,
     colorScheme: theme,

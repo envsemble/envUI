@@ -3,7 +3,7 @@ title: Accordion
 summary: A list of sections separated by full-width hairlines, each a heading with a plus or minus that shows and hides its panel.
 status: beta
 since: 1.0.0
-category: Content & guidance
+category: Text & content
 aliases:
   - accordion
   - collapsible sections
@@ -12,8 +12,8 @@ aliases:
   - FAQ
   - expansion panels
 useWhen:
-  - A list of questions or topics that people open one or a few at a time, such as frequently asked questions.
-  - Long reference or settings content split into sections that people scan by their headings.
+  - Questions or topics opened one or a few at a time, such as an FAQ
+  - Long reference or settings content, scanned by its headings
 avoidWhen:
   - text: One optional detail next to other content.
     use: Disclosure
@@ -27,7 +27,7 @@ components:
 
 ## Overview
 
-An accordion is a list of sections, each a heading that shows and hides the panel below it. One section is open at a time.
+One section is open at a time: opening another closes it.
 
 ```tsx example=FrequentQuestions
 
@@ -35,7 +35,7 @@ An accordion is a list of sections, each a heading that shows and hides the pane
 
 ### Several open
 
-`multiple` lets people keep several sections open at once.
+An accordion can let people keep several sections open at once.
 
 ```tsx example=SeveralOpen
 
@@ -43,7 +43,7 @@ An accordion is a list of sections, each a heading that shows and hides the pane
 
 ### Open from elsewhere
 
-`value` and `onValueChange` control which sections are open.
+The application can open a section itself, such as from a help button elsewhere on the page.
 
 ```tsx example=OpenFromOutside
 
@@ -51,8 +51,13 @@ An accordion is a list of sections, each a heading that shows and hides the pane
 
 ## When to use
 
-- Don't nest accordions; show the next level inside the panel as a list.
-- Keep what people need to finish a task out of closed sections.
+### One level
+
+Don't put an accordion inside another; show the next level inside the panel as a list.
+
+### Nothing hidden that people need
+
+Keep what people need to finish a task out of closed sections.
 
 ## Anatomy
 
@@ -64,7 +69,7 @@ An accordion is a list of sections, each a heading that shows and hides the pane
 2. **Title** (`env-accordion-label`, `title`)
 3. **Panel** (`env-accordion-content`, `children`)
 
-Each item, `env-accordion-item`, draws the line under it; its heading's button is `env-accordion-trigger`.
+Each item draws the line under it, and its heading is a button.
 
 ## Accessibility
 
@@ -85,6 +90,34 @@ Each item, `env-accordion-item`, draws the line under it; its heading's button i
 
 - Titles that say what each section holds.
 - `headingLevel` that fits the page's outline.
+
+## In code
+
+### Usage
+
+Accordion.Root holds an Accordion.Item for each section, with its heading as `title` and its panel as `children`. One item is open at a time; `multiple` lets several stay open. `disabled` on the root or an item turns it off.
+
+```tsx source=FrequentQuestions
+
+```
+
+#### Open items
+
+`defaultValue` names the items open at first, by their `value`; or control them with `value` and `onValueChange`, which receives the values of the open items. An item's own `onOpenChange` reports whether it is open.
+
+```tsx source=OpenFromOutside
+
+```
+
+#### Find in page
+
+`hiddenUntilFound` keeps closed panels in the page, so the browser's find in page reaches their text and opens the item that holds it, where the browser supports it.
+
+### Composition
+
+The headings are `h3`; set `headingLevel` to fit the page's outline, and they look the same at every level. Show the next level inside a panel as a List rather than another accordion.
+
+The parts are the accordion, `env-accordion`; each item, `env-accordion-item`, which draws the line under it; its heading's button, `env-accordion-trigger`, with the indicator, `env-accordion-indicator`, and the title, `env-accordion-label`; and the panel, `env-accordion-content`.
 
 ## Changelog
 

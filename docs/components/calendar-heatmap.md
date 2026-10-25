@@ -3,7 +3,7 @@ title: CalendarHeatmap
 summary: A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day.
 status: stable
 since: 0.5.0
-category: Content & guidance
+category: Data display
 aliases:
   - Heatmap
   - calendar heat map
@@ -14,7 +14,8 @@ aliases:
   - streak calendar
   - year in review
 useWhen:
-  - A count per day over weeks or months shows a pattern, such as activity or deployments, where the pattern matters more than each number.
+  - A count per day over weeks or months, such as deployments
+  - A pattern that matters more than each day's number
 avoidWhen:
   - text: Exact figures people compare or read one by one.
     use: Table
@@ -30,15 +31,13 @@ components:
 
 ## Overview
 
-A calendar heatmap shows a value for each day as a shade of one tone, weeks as columns. Each day is named with its date and value, shown in a tooltip.
-
 ```tsx example=Deployments
 
 ```
 
 ### Color by rank
 
-`thresholds` sets where each step starts, such as quantiles of the data, so a few very busy days don't leave the rest pale.
+Each color step can start where the application chooses, such as at quantiles of the data, so a few very busy days don't leave the rest pale.
 
 ```tsx example=ColorByRank
 
@@ -46,7 +45,7 @@ A calendar heatmap shows a value for each day as a shade of one tone, weeks as c
 
 ### A tooltip of your own
 
-`formatTooltip` lays out the tooltip; the day's name keeps its date and value.
+The application can lay out the tooltip itself; each day's name keeps its date and value.
 
 ```tsx example=CustomTooltip
 
@@ -54,7 +53,7 @@ A calendar heatmap shows a value for each day as a shade of one tone, weeks as c
 
 ### Languages
 
-EnvUIProvider's `locale` names the months, weekdays and dates, and `messages.calendarHeatmap` writes the legend. `weekStart={1}` starts weeks on Monday.
+The months, weekdays, dates and the legend follow the application's language, and weeks can start on Monday.
 
 ```tsx example=ApplicationStrings
 
@@ -62,29 +61,19 @@ EnvUIProvider's `locale` names the months, weekdays and dates, and `messages.cal
 
 ## Variants
 
-| Tone      | Use for                                       |
-| --------- | --------------------------------------------- |
-| `accent`  | Activity without a judgment. The default.     |
-| `success` | Something good to have more of.               |
-| `warning` | Something that needs attention.               |
-| `danger`  | Something to have less of, such as incidents. |
-| `done`    | Completed work.                               |
-| `neutral` | A quiet count beside other charts.            |
+### Tones
 
-`levels` sets the number of color steps, the empty one included; five by default.
+A heatmap is drawn in one tone, the accent by default, or any status tone, which [Colors & themes](../foundations/colors.md) describes.
+
+### Color steps
+
+Five steps by default, the empty one included; a heatmap can have as few as two or as many as ten.
 
 ## When to use
 
-```tsx do=IncidentsInDanger caption="A tone that says what more means: danger for incidents."
+### Names
 
-```
-
-```tsx dont=IncidentsInSuccess caption="Incidents in the success tone: a bad week reads as a good one."
-
-```
-
-- Name it after what it counts and when, such as Deployments in the last year.
-- Give each day a `label` with its unit, such as 4 deployments.
+Name the heatmap after what it counts and when, such as Deployments in the last year, and give each day a value with its unit, such as 4 deployments.
 
 ## Anatomy
 
@@ -98,11 +87,11 @@ EnvUIProvider's `locale` names the months, weekdays and dates, and `messages.cal
 4. **Legend** (`env-calendar-heatmap-legend`)
 5. **Swatch** (`env-calendar-heatmap-swatch`)
 
-Not shown: the tooltip, `env-calendar-heatmap-tooltip`.
+Not shown: the tooltip.
 
 ## Adapting to width
 
-The heatmap is never wider than its container: a narrow one scrolls the weeks, starting at the latest. On touch screens, days grow to 1.25 rem.
+The heatmap is never wider than its container: a narrow one scrolls the weeks, starting at the latest. On touch screens, days grow to fit a fingertip.
 
 ```tsx example=ScrollingWeeks widths="16 36"
 
@@ -132,6 +121,48 @@ The heatmap is never wider than its container: a narrow one scrolls the weeks, s
 
 - A name for the heatmap, and values whose names say their unit.
 - The exact figures elsewhere, where people compare them.
+
+## In code
+
+### Usage
+
+CalendarHeatmap takes `data`, one entry per day with its `date`, as YYYY-MM-DD, its `value`, which chooses the color step, and a `label` with the value in words and its unit, such as 4 deployments. Days without an entry count as 0. `startDate` and `endDate` set the days shown, from the earliest to the latest day in `data` by default. Name the grid with `aria-label`, or `aria-labelledby` for a visible heading.
+
+```tsx source=Deployments
+
+```
+
+#### Tones and color steps
+
+`tone` is `accent`, the default, `success`, `warning`, `danger`, `done` or `neutral`: the tone the colors are mixed from. `levels` sets the color steps, the empty one included, from 2 to 10, and 5 by default; `maxValue` sets the value that takes the strongest color, the largest value shown by default.
+
+#### Color by rank
+
+`thresholds` sets the lowest value of each color step above the empty one, in ascending order, up to nine, such as quantiles of the data; they replace `levels` and `maxValue`.
+
+```tsx source=ColorByRank
+
+```
+
+#### Tooltip
+
+`formatTooltip` receives the day, with its `date`, `value`, `label` and `level`, the color step from 0, and returns the tooltip's content; the day's accessible name keeps its date and value. `formatValue` and `formatDate` write a value and a date.
+
+```tsx source=CustomTooltip
+
+```
+
+#### Languages
+
+EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`, and `messages.calendarHeatmap` writes the legend's Less and More; `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` set them for one heatmap. `weekStart={1}` starts weeks on Monday, and `0`, Sunday, is the default.
+
+```tsx source=ApplicationStrings
+
+```
+
+### Composition
+
+The parts are the month names, `env-calendar-heatmap-month`, the weekday names, `env-calendar-heatmap-weekday`, the days, `env-calendar-heatmap-day`, and the legend, `env-calendar-heatmap-legend`, with a swatch, `env-calendar-heatmap-swatch`, for each step. The tooltip is `env-calendar-heatmap-tooltip`, the shared tooltip popup. Put the exact figures elsewhere, such as a Table, where people compare them.
 
 ## Changelog
 

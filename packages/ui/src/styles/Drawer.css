@@ -74,6 +74,15 @@
   inline-size: var(--env-drawer-width);
   max-inline-size: min(var(--env-drawer-max-width), 50cqi);
 }
+/* A resizable drawer keeps each label and heading on one line, so its items keep their height as
+   people narrow it: what doesn't fit ends in an ellipsis, a label cut short shows in full in a
+   tooltip and a heading in its title (Drawer.tsx). */
+.env-drawer[data-resizable] :is(.env-drawer-label, .env-drawer-heading) {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-wrap: normal;
+}
 .env-drawer > .env-drawer-resize-handle {
   --env-resize-handle-size: var(--env-space-3);
   position: absolute;

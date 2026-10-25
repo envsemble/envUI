@@ -1,6 +1,6 @@
 ---
 title: Toolbar
-summary: A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys.
+summary: A bar of icon buttons for one subject, such as an editor's formatting, in a row or a column.
 status: beta
 since: 1.0.0
 category: Actions
@@ -11,9 +11,9 @@ aliases:
   - button bar
   - tool palette
 useWhen:
-  - A set of controls acts on one subject, such as an editor's formatting or a diagram's view.
-  - Many icon-only actions sit together and would make a long tab sequence one by one.
-  - A tool is chosen from a palette and stays chosen, such as a drawing tool.
+  - Controls for one subject, such as an editor's formatting
+  - Many icon-only actions that would each take a tab stop
+  - A palette whose chosen tool stays chosen, such as drawing tools
 avoidWhen:
   - text: A form's or a dialog's actions, which keep a tab stop each.
     use: Row
@@ -33,7 +33,7 @@ components:
 
 ## Overview
 
-A toolbar holds the controls for one subject, such as an editor's formatting, as one tab stop that the arrow keys move through. `Toolbar.Button` is an icon button named by its `label`, which a tooltip shows with its `shortcut`; with `pressed` it is a toggle.
+Each button is an icon, whose name and shortcut show in a tooltip; a button can also be a toggle that stays pressed.
 
 ```tsx example=FormattingToolbar
 
@@ -41,48 +41,46 @@ A toolbar holds the controls for one subject, such as an editor's formatting, as
 
 ### Buttons of your own
 
-Buttons inside a toolbar take the `ghost` variant unless they set another. A Button of the application's own, such as a menu's trigger, keeps its own tab stop, outside the arrow keys' path.
+A button of the application's own, such as a menu's trigger, keeps its own tab stop, outside the arrow keys' path.
 
 ## Variants
 
-| Orientation  | Use for                                                          |
-| ------------ | ---------------------------------------------------------------- |
-| `horizontal` | Most toolbars; <kbd>←</kbd> and <kbd>→</kbd> move. The default.  |
-| `vertical`   | A palette, such as drawing tools; <kbd>↑</kbd> and <kbd>↓</kbd>. |
+### Orientation
+
+| Orientation | Use for                           |
+| ----------- | --------------------------------- |
+| Horizontal  | Most toolbars. The default.       |
+| Vertical    | A palette, such as drawing tools. |
 
 ```tsx example=DrawingTools caption="A vertical toolbar of toggles, where one tool stays chosen."
 
 ```
 
-```tsx example=ViewControls caption="size=sm, on a pill Surface that floats over a diagram."
+### Over content
+
+A toolbar can float over dense content, such as a diagram, on a fully rounded surface with small buttons.
+
+```tsx example=ViewControls
 
 ```
 
 ### Layouts
 
-Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a [Row](../components/row.md), where every control keeps its tab stop and fields keep their arrow keys.
+Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a [Row](row.md), where every control keeps its tab stop and fields keep their arrow keys.
 
-| Bar                                         | Build it with                                                 |
-| ------------------------------------------- | ------------------------------------------------------------- |
-| Icon commands, such as formatting or tools  | `Toolbar.Root` with `Toolbar.Button`s                         |
-| A page's search, filters and primary action | [PageHeader](../components/page-header.md)'s `toolbar`, a Row |
-| A section's heading with its actions        | `<Row wrap align="center" justify="between">`                 |
-| A table's search and actions                | A Row above the table, in the size of its rows                |
-| Actions in a window's title bar             | A TopBar with `titleBar`: its `actions`, small ghost buttons  |
+| Bar                                         | Build it with                                     |
+| ------------------------------------------- | ------------------------------------------------- |
+| Icon commands, such as formatting or tools  | A Toolbar of its buttons                          |
+| A page's search, filters and primary action | A Row in the toolbar of a [PageHeader](page.md)   |
+| A section's heading with its actions        | A Row that wraps, with the actions at the end     |
+| A table's search and actions                | A Row above the table, in the size of its rows    |
+| Actions in a window's title bar             | A TopBar as a title bar, with small ghost buttons |
 
 ```tsx example=PageToolbar caption="A page's toolbar: a Row in PageHeader's toolbar, not a Toolbar."
 
 ```
 
 ## When to use
-
-```tsx do=GroupedControls caption="Related controls in groups, with separators between them."
-
-```
-
-```tsx dont=UngroupedControls caption="Controls in no order: people search the whole row."
-
-```
 
 ```tsx do=SameIconPressed caption="A toggle keeps its icon, pressed or not."
 
@@ -92,12 +90,13 @@ Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled
 
 ```
 
-- Mirror important actions in a menu or a shortcut.
+### Another way to each action
+
+Offer the important actions in a menu or a shortcut too.
 
 ### Labels
 
-- Name each button after its action, such as Bold, not its icon.
-- Name the toolbar after its subject, such as Formatting.
+Name each button after its action, such as Bold rather than its icon, and the toolbar after its subject, such as Formatting.
 
 ## Anatomy
 
@@ -110,7 +109,7 @@ Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled
 3. **Button** (`env-toolbar-button`, `icon`)
 4. **Separator** (`env-toolbar-separator`)
 
-Not shown: the tooltip, `env-toolbar-tooltip`.
+Not shown: the tooltip.
 
 ## Accessibility
 
@@ -134,6 +133,40 @@ Not shown: the tooltip, `env-toolbar-tooltip`.
 
 - An `aria-label` on the toolbar, and on groups that share a name.
 - The behaviour behind each button and shortcut.
+
+## In code
+
+### Usage
+
+Toolbar.Root, named by its `aria-label`, holds Toolbar.Button, Toolbar.Link, Toolbar.Group and Toolbar.Separator. A Toolbar.Button takes its `icon` and its `label`, which names it and shows in its tooltip with its `shortcut`, such as `Ctrl+B`, announced as `aria-keyshortcuts`; with `pressed` it is a toggle, announced as pressed and drawn selected. Its `variant` is Button's, `ghost` by default from the toolbar, and `pending` replaces the icon with a spinner. A Toolbar.Link takes an `href`, through the link component of `LinkProvider`, with its `icon` and `label`. A Toolbar.Group, named by its own `aria-label`, holds controls that belong together.
+
+```tsx source=FormattingToolbar
+
+```
+
+#### Orientation and size
+
+`orientation` is `horizontal`, the default, or `vertical`, and sets which arrow keys move. `size` is `sm`, `md` or `lg`; without it the buttons take their container's control height. `loopFocus`, on by default, moves from the last control to the first and back. `disabled` on Toolbar.Root or a Toolbar.Group disables every control inside.
+
+```tsx source=ViewControls
+
+```
+
+#### Buttons of your own
+
+Buttons inside a toolbar take the `ghost` variant unless they set another. A Button of the application's own, such as a Menu.Root's trigger, keeps its own tab stop, outside the arrow keys' path.
+
+#### Other bars
+
+A bar with a field, a Select or labelled actions is a Row: `<Row wrap align="center" justify="between">` for a section's heading and its actions, PageHeader's `toolbar` for a page's search, filters and primary action, and a TopBar with `titleBar` for a window's title bar, with small ghost buttons in its `actions`.
+
+```tsx source=PageToolbar
+
+```
+
+### Composition
+
+The parts are the toolbar, `env-toolbar`; its groups, `env-toolbar-group`; its buttons and links, `env-toolbar-button`; its separators, `env-toolbar-separator`; and a button's tooltip, `env-toolbar-tooltip`. `render` on Toolbar.Root or Toolbar.Group renders it as another element, such as a ButtonGroup that connects its buttons, or onto a Surface that floats it.
 
 ## Changelog
 

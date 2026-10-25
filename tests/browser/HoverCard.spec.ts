@@ -139,20 +139,20 @@ test('a text trigger takes a quiet dotted underline, a button trigger none', asy
     const style = await text.evaluate((element) => {
       const computed = getComputedStyle(element);
       return {
-        line: computed.textDecorationLine,
-        decoration: computed.textDecorationStyle,
-        color: computed.textDecorationColor,
+        dots: computed.backgroundImage,
+        size: computed.backgroundSize.split(' ').map(parseFloat),
         textColor: computed.color,
-        offset: parseFloat(computed.textUnderlineOffset) / parseFloat(computed.fontSize),
         cursor: computed.cursor,
       };
     });
-    expect(style.line).toBe('underline');
-    expect(style.decoration).toBe('dotted');
-    expect(style.offset).toBeCloseTo(0.25, 2);
-    expect(style.cursor).not.toBe('help');
+    // Round dots, spaced well apart, drawn below the text, with the pointer the arrow over it.
+    expect(style.dots).toMatch(/^radial-gradient\(circle closest-side, (rgb\([^)]*\))/);
+    const [pitch, dot] = style.size;
+    expect(dot).toBeGreaterThanOrEqual(1.5);
+    expect(pitch / dot).toBeGreaterThan(2.5);
+    expect(style.cursor).toBe('default');
     // Quiet: the muted text color, not the text's own.
-    expect(style.color).not.toBe(style.textColor);
+    expect(style.dots).not.toContain(style.textColor);
 
     for (const control of [
       scope.getByRole('button', { name: `Details ${theme}` }),
@@ -160,8 +160,8 @@ test('a text trigger takes a quiet dotted underline, a button trigger none', asy
     ]) {
       await expect(control).not.toHaveClass(/\benv-hover-detail\b/);
       expect(
-        await control.evaluate((element) => getComputedStyle(element).textDecorationStyle),
-      ).not.toBe('dotted');
+        await control.evaluate((element) => getComputedStyle(element).backgroundImage),
+      ).not.toContain('radial-gradient');
     }
     const button = scope.getByRole('button', { name: `Details ${theme}` });
     expect(await button.evaluate((element) => getComputedStyle(element).textDecorationLine)).toBe(

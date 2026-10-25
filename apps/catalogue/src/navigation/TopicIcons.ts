@@ -59,26 +59,37 @@ import { DockToBottom } from '@envsemble/envui/icons/DockToBottom';
 import { ViewSidebar } from '@envsemble/envui/icons/ViewSidebar';
 import { Schedule } from '@envsemble/envui/icons/Schedule';
 import { LastPage } from '@envsemble/envui/icons/LastPage';
+import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { Delete } from '@envsemble/envui/icons/Delete';
+import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { Feedback } from '@envsemble/envui/icons/Feedback';
+import { UploadFile } from '@envsemble/envui/icons/UploadFile';
+import { FilterList } from '@envsemble/envui/icons/FilterList';
+import { EditNote } from '@envsemble/envui/icons/EditNote';
+import { Monitoring } from '@envsemble/envui/icons/Monitoring';
+import { UnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
+import { Settings } from '@envsemble/envui/icons/Settings';
+import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { type Reference } from '../Reference';
 
 export const foundationIcons: Record<string, typeof Palette> = {
   colors: Palette,
   typography: TextFields,
   spacing: ViewList,
-  scale: ViewList,
   responsive: Devices,
   icons: Category,
-  composition: ViewList,
   accessibility: TouchApp,
 };
 const groupIcons = {
   Foundations: Category,
-  'Layout & surfaces': ViewList,
   Actions: TouchApp,
   'Forms & selection': TextFields,
   Navigation: Home,
-  'Content & guidance': Category,
-  'Feedback & overlays': Info,
+  'Data display': TableChart,
+  'Text & content': Article,
+  Feedback: Info,
+  Overlays: WebAsset,
+  'App frame & layout': SpaceDashboard,
 } satisfies Record<Reference['group'], typeof Apps>;
 export function getComponentIcon(group: Reference['group']) {
   return groupIcons[group];
@@ -152,4 +163,27 @@ const referenceIcons: Record<string, typeof Palette> = {
 /** A decorative symbol for the individual reference topic. */
 export function getReferenceIcon(id: string, group: Reference['group']) {
   return referenceIcons[id] ?? foundationIcons[id] ?? getComponentIcon(group);
+}
+
+const patternIcons: Record<string, typeof Palette> = {
+  'account-and-organizations': ManageAccounts,
+  'app-frame': SpaceDashboard,
+  conversation: Forum,
+  'data-tables': TableChart,
+  'destructive-actions': Delete,
+  'empty-states': Inbox,
+  feedback: Feedback,
+  'file-upload': UploadFile,
+  filtering: FilterList,
+  forms: EditNote,
+  'key-figures': Monitoring,
+  loading: HourglassEmpty,
+  navigation: Explore,
+  'progressive-disclosure': UnfoldMore,
+  settings: Settings,
+};
+
+/** A decorative symbol for a pattern, or the Patterns destination's for one without its own. */
+export function getPatternIcon(id: string) {
+  return patternIcons[id] ?? Pattern;
 }

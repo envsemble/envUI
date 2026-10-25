@@ -4,6 +4,7 @@ import { useCallback, useContext, useSyncExternalStore, type ComponentPropsWithR
 import { Tooltip } from '../feedback/Tooltip.js';
 import { TooltipNestingContext } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
+import { hoverDetailClass } from '../internal/hoverDetail.js';
 import { useEnvUI } from '../internal/EnvUIContext.js';
 import { useHydrated } from '../internal/useHydrated.js';
 import { subscribeToClock } from './internal/relativeTimeClock.js';
@@ -70,12 +71,15 @@ export function RelativeTime({
   const text = useSyncExternalStore(subscribe, read, read);
   const hydrated = useHydrated();
   if (!Number.isFinite(time)) return null;
+  const withTooltip = tooltip && !nested;
   const element = (
     <time
       dir="auto"
       {...props}
       dateTime={new Date(time).toISOString()}
-      className={classNames('env-relative-time', className)}
+      // With a tooltip of its own, the time takes the dotted underline of text with more on hover,
+      // which Tooltip gives text it recognises but not another component's part.
+      className={classNames('env-relative-time', withTooltip && hoverDetailClass, className)}
       // The server's clock, time zone or language can differ from the browser's. The text then
       // differs while hydrating, which is expected: it is rendered as a separate text node until
       // hydration ends, then replaced by the browser's text, so the server's never lingers.
@@ -84,7 +88,7 @@ export function RelativeTime({
       {hydrated ? text : [text]}
     </time>
   );
-  if (!tooltip || nested) return element;
+  if (!withTooltip) return element;
   return <Tooltip content={<DateAndTime time={time} locale={locale} />}>{element}</Tooltip>;
 }
 

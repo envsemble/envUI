@@ -15,8 +15,8 @@ Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes libra
 
 The catalogue app (`apps/catalogue`) builds the website, in two areas that each feel like a site of their own:
 
-- **The Site**, at the root, introduces envUI: what it is, what each part looks like and when to use it. Its rail holds the destinations Overview, Components, Patterns, Foundations, Benchmark and Changelog, and the drawer beside it lists the chosen destination's pages. Component and pattern pages show live figures with the code under each; a component's page links to its page in the Docs with "API". Foundation pages show the visuals with a short introduction and the tokens they use.
-- **The Docs**, under `/docs`, are the developer reference, with a navigation of their own: setup, migration, codemods, agent tooling and skills, dev mode, each foundation's written guide, the design tokens, "Build your own field", and each component's props, part names and changelog.
+- **The Site**, at the root, introduces envUI: what it is, what each part looks like and when to use it. Its rail holds the destinations Overview, Components, Patterns, Foundations, Benchmark and Changelog, and the drawer beside it lists the chosen destination's pages. Component and pattern pages speak plain language and show live figures with the code under each; a component's or pattern's page links to its page in the Docs with "API". Foundation pages explain how envUI handles a subject, such as space or color, in real examples and plain words, and teach the words to ask an agent for it; they name no tokens or values, which each foundation's guide in the Docs holds.
+- **The Docs**, under `/docs`, are the developer reference, with a navigation of their own: setup, migration, codemods, agent tooling and skills, dev mode, each foundation's written guide, the design tokens, "Build your own field", and each component's and pattern's guide to using it in code, from the "In code" section of its page, with its props, part names and changelog.
 
 There is no top bar. The rail and the drawer read as one pane: the wordmark tops the rail and search the drawer, on one row; the Docs, which have no rail, put both at the top of their drawer. Ghost buttons at the page's top end lead to the other area and open the Display menu, which stores the reader's theme, contrast and scale in localStorage. Below 52.5 rem the navigation opens in a sheet from a small menu button at the page's top start, beside search, and the other area and Display become icon buttons. `apps/catalogue/src/navigation/DocumentationRoutes.ts` lists the pages of both. The repository's own guides, this file and [library development](docs/library-development.md), with [writing component](docs/component-pages.md) and [pattern pages](docs/pattern-pages.md), are not on the site.
 
@@ -164,7 +164,7 @@ The GitHub release's notes are the version's changelog section, so its first par
 
 - One or two sentences on what the release brings for people who use envUI, in the style of the earlier releases: the headline components and changes, not a list.
 - For 1.0.0, say that it is the first stable release, that it breaks code written for 0.x, that `@envsemble/envui-codemods` makes most of the changes, and link the [migration guide](docs/migration.md) by its absolute URL on `main`.
-- Name no products or applications, as in changesets.
+- Name no application built on envUI, as in changesets.
 - Leave the generated entries below as Changesets wrote them. Fix a wrong entry where it stands rather than rewriting the section.
 
 ### Release by merging into main

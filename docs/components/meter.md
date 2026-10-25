@@ -3,7 +3,7 @@ title: Meter
 summary: A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar.
 status: stable
 since: 0.2.0
-category: Feedback & overlays
+category: Data display
 aliases:
   - gauge
   - usage bar
@@ -13,8 +13,8 @@ aliases:
   - level
   - meters
 useWhen:
-  - A quantity within a known range, such as the seats assigned of a plan's five or the storage used of a quota.
-  - Several limits people compare at a glance, such as a plan's seats, projects and requests.
+  - A quantity within a known range, such as storage used of a quota
+  - Several limits compared at a glance, such as a plan's seats and projects
 avoidWhen:
   - text: How much of a task is done, such as an upload or an import.
     use: Progress
@@ -32,7 +32,7 @@ components:
 
 ## Overview
 
-A meter shows a measurement within a known range, such as the seats assigned of a plan.
+A value outside the range shows as its nearest end.
 
 ```tsx example=SeatsAssigned
 
@@ -50,7 +50,7 @@ A meter shows a measurement within a known range, such as the seats assigned of 
 
 ### Content
 
-- Name what is measured in `label`, such as Seats assigned.
+Name what is measured in the label, such as Seats assigned.
 
 ## Anatomy
 
@@ -84,6 +84,20 @@ A meter fills its container. The label and the value wrap onto two lines where t
 
 - `aria-valuetext` with the unit in words, such as 2 of 5 seats; without it, the value is read as a percentage.
 - Text that says when a limit is reached.
+
+## In code
+
+### Usage
+
+A Meter takes its `value` between `min`, 0 by default, and `max`, 100 by default; a value outside the range shows, and is reported, as the nearest end. Its `label`, above the bar, names it, such as Seats assigned. `valueText` shows the value at the end of the label's row, formatted by the application, such as 2 of 5; without it, no value shows. `aria-valuetext` is the value as assistive technology reads it, with its unit in words, such as 2 of 5 seats; without it, the value is read as a percentage of the range.
+
+```tsx source=SeatsAssigned
+
+```
+
+### Composition
+
+The parts are the meter, `env-meter`, its label, `env-meter-label`, its value, `env-meter-value`, the track, `env-meter-track`, and the indicator, `env-meter-indicator`. `className`, `style`, `ref` and data attributes reach the root, and the numbers follow the provider's locale. The meter has no warning color of its own, so say in text when a limit is reached.
 
 ## Changelog
 

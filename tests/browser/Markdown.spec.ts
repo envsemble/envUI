@@ -41,6 +41,80 @@ test('a rule is a hairline across the whole text column', async ({ page }) => {
   expect(own).toBeCloseTo(column, 0);
 });
 
+test('list markers are plain: a dot in the text color or a muted number on the first line, quieter one level in', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const markers = await page
+    .getByTestId('lists')
+    .locator('li')
+    .evaluateAll((items) =>
+      items.map((item) => {
+        const bullet = item.parentElement!.localName === 'ul';
+        // A bullet is the item's ::after, a number its ::before.
+        const marker = getComputedStyle(item, bullet ? '::after' : '::before');
+        const line = parseFloat(getComputedStyle(item).lineHeight);
+        // The dot's middle, from its offset in the item, against the middle of the first line; a
+        // number sits on the first line itself.
+        const middle = parseFloat(marker.top) + parseFloat(marker.height) / 2;
+        const probe = document.createElement('span');
+        item.append(probe);
+        probe.style.color = 'var(--env-color-fg-default)';
+        const text = getComputedStyle(probe).color;
+        probe.style.color = 'var(--env-color-fg-muted)';
+        const muted = getComputedStyle(probe).color;
+        probe.remove();
+        // A dot is filled; a ring, one level in, is only its border.
+        const ring = bullet && marker.backgroundColor === 'rgba(0, 0, 0, 0)';
+        const color = !bullet
+          ? marker.color
+          : ring
+            ? marker.borderTopColor
+            : marker.backgroundColor;
+        return {
+          content: marker.content,
+          shape: !bullet ? 'number' : ring ? 'ring' : 'dot',
+          size: bullet ? marker.width : undefined,
+          // No circle behind any marker.
+          circle: getComputedStyle(item, '::before').backgroundColor !== 'rgba(0, 0, 0, 0)',
+          tone: color === text ? 'text' : color === muted ? 'muted' : color,
+          onFirstLine: bullet ? Math.abs(middle - line / 2) < 0.5 : parseFloat(marker.top) === 0,
+        };
+      }),
+    );
+  expect(markers).toEqual([
+    { content: '""', shape: 'dot', size: '5px', circle: false, tone: 'text', onFirstLine: true },
+    { content: '""', shape: 'dot', size: '5px', circle: false, tone: 'text', onFirstLine: true },
+    { content: '""', shape: 'ring', size: '5px', circle: false, tone: 'muted', onFirstLine: true },
+    {
+      content: 'counter(list-item) "."',
+      shape: 'number',
+      circle: false,
+      tone: 'muted',
+      onFirstLine: true,
+    },
+    {
+      content: 'counter(list-item) "."',
+      shape: 'number',
+      circle: false,
+      tone: 'muted',
+      onFirstLine: true,
+    },
+    {
+      content: 'counter(list-item, lower-alpha) "."',
+      shape: 'number',
+      circle: false,
+      tone: 'muted',
+      onFirstLine: true,
+    },
+  ]);
+  // Task lists keep their checkboxes and draw no marker.
+  await expect(page.getByTestId('english').locator('.task-list-item').first()).toHaveCSS(
+    'padding-inline-start',
+    '0px',
+  );
+});
+
 test(
   'inline code in a table cell breaks only where it would overflow, not inside its word',
   { tag: '@engines' },

@@ -34,4 +34,4 @@ The browser tests start or reuse the catalogue on 8770 and the fixture on 8766, 
 
 - Running, building, hosting and releasing envUI: [CONTRIBUTING.md](CONTRIBUTING.md).
 - Changing the library, its tokens, documentation and checks: [docs/library-development.md](docs/library-development.md).
-- envUI never names the products that use it, in code, docs, comments or sample data.
+- envUI never names the applications built on it, in code, docs, comments or sample data: its first versions gathered what those applications needed, and naming them makes a component read as built for one. Other products, such as the design systems envUI follows, may be named.
