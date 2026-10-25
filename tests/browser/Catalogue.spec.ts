@@ -305,10 +305,11 @@ test('a component page shows plain sections, equal cells and the parts of its an
   // Button is in the one-file structure, whose sections every kind of page shares.
   await expect(page.locator('.docs-figure-section-heading h2')).toHaveText([
     'Overview',
-    'Rules',
-    'Anatomy',
     'Variants',
+    'Anatomy',
     'Behaviour',
+    'Rules',
+    'Accessibility',
   ]);
   await expect(page.locator('.docs-figures .env-message')).toHaveCount(0);
   // Figures that share a row are cells of one size: equal widths, and stages as tall as the
@@ -748,6 +749,26 @@ test('a component page groups its sections into three, the middle one on the ban
     { band: true, sections: ['usage'] },
     { band: false, sections: ['related'] },
   ]);
+  // A page in the one-file structure: what it is, its variants, parts and behaviour; its rules,
+  // which open with Use it when, alone on the band; its accessibility.
+  await goTo(page, '/components/button');
+  await expect.poll(groups).toEqual([
+    { band: false, sections: ['overview', 'variants', 'anatomy', 'behaviour'] },
+    { band: true, sections: ['rules'] },
+    { band: false, sections: ['accessibility'] },
+    { band: false, sections: ['related'] },
+  ]);
+  // Its Use it when list of six runs in two columns of three where there is room, one when narrow.
+  const columns = () =>
+    page.locator('[data-section="rules"] .docs-when-columns ul').evaluate((list) => ({
+      columns: getComputedStyle(list).gridTemplateColumns.split(' ').length,
+      tops: new Set([...list.children].map((item) => Math.round(item.getBoundingClientRect().top)))
+        .size,
+    }));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect.poll(columns).toEqual({ columns: 2, tops: 3 });
+  await page.setViewportSize({ width: 420, height: 900 });
+  await expect.poll(columns).toEqual({ columns: 1, tops: 6 });
 });
 
 test("a page's guide in the Docs complements its page in the Usage guide, and Field's shows its whole page", async ({

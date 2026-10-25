@@ -2,10 +2,9 @@ import type { DocumentationSection } from '../DocumentationTypes';
 import { providesOf, siteMarkdown, withoutProvides } from '../../../../scripts/SiteContent.mjs';
 
 /**
- * The subsections of a page's Accessibility, or Behaviour in the one-file structure, that say what
- * envUI provides and what the application provides are for people who build with envUI, so the
- * page's guide in the Docs shows them, and the Site, which shows what it looks like and when to use
- * it, leaves them out, as it leaves out a table's In code column. scripts/SiteContent.mjs holds the
+ * The subsections of a page's Accessibility that say what envUI provides and what the application
+ * provides are for people who build with envUI, so the page's guide in the Docs shows them, and
+ * the Site, which shows what it looks like and when to use it, leaves them out, as it leaves out a table's In code column. scripts/SiteContent.mjs holds the
  * rules, which the plain-language test reads too.
  */
 export { providesOf, withoutProvides };

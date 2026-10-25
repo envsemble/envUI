@@ -15,11 +15,8 @@ export const docsOnlySections = new Set(['code', 'changelog']);
 /** The subsections of Accessibility that say what envUI and the application provide. */
 export const providesHeadings = { envui: 'envUI provides', app: 'You provide' };
 
-/**
- * The sections that hold those lists: Accessibility, or Behaviour on a page in the one-file
- * structure.
- */
-export const providesSections = new Set(['accessibility', 'behaviour']);
+/** The section that holds those lists, on either kind of page. */
+export const providesSections = new Set(['accessibility']);
 
 /** Markdown cut at its `###` and `##` headings, outside code fences. */
 export function subsections(markdown) {

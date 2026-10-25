@@ -1186,9 +1186,17 @@ test('a page in the one-file structure ships the whole file, in its order, with 
   );
   assert.ok(hasLine(button, 'avoidWhen:'));
   assert.ok(compiled.has('examples/button/CreateProject.tsx'));
-  // The sections in their order, the plain ones first and Compose last, then the props.
+  // The sections in the Usage guide's order, the plain ones first and Compose last, then the props.
   const headings = [...button.matchAll(/^## (.*)$/gm)].map(([, title]) => title);
-  assert.deepEqual(headings, ['Rules', 'Anatomy', 'Variants', 'Behaviour', 'Compose', 'Props']);
+  assert.deepEqual(headings, [
+    'Variants',
+    'Anatomy',
+    'Behaviour',
+    'Rules',
+    'Accessibility',
+    'Compose',
+    'Props',
+  ]);
   // A run of figures is a line that names them; no figure's code ships in the page.
   assert.ok(
     hasLine(

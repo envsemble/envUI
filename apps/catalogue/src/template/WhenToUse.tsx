@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { DocumentationMetadata } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { pageOf } from './Related';
@@ -26,9 +27,10 @@ export function visibleComponents(composes: string[]) {
 }
 
 /**
- * The start of When to use on a page on the figure template, from its frontmatter: a short list of
- * what it is for and, for a pattern, the components it is built from. What to use instead is in
- * Related, at the end of the page.
+ * The start of When to use on a page on the figure template, and of Rules in the one-file
+ * structure, from its frontmatter: a short list of what it is for, in two columns on a page in the
+ * one-file structure where it is long and there is room, and, for a pattern, the components it is
+ * built from. What to use instead is in Related, at the end of the page.
  */
 export function WhenToUse({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
   const list = (items: string[]) => items.map((text) => `- ${text}`).join('\n');
@@ -36,7 +38,16 @@ export function WhenToUse({ metadata, path }: { metadata: DocumentationMetadata;
   const built = visibleComponents(metadata.composes ?? []);
   return (
     <div className="docs-when">
-      <Documentation markdown={`### Use it when\n\n${list(metadata.useWhen)}`} path={path} />
+      {/* More than three items run in two columns where there is room, each read top to bottom,
+          with the first half on the left (WhenToUse.css). */}
+      <div
+        className={
+          metadata.useWhen.length > 3 ? 'docs-when-use docs-when-columns' : 'docs-when-use'
+        }
+        style={{ '--docs-when-rows': Math.ceil(metadata.useWhen.length / 2) } as CSSProperties}
+      >
+        <Documentation markdown={`### Use it when\n\n${list(metadata.useWhen)}`} path={path} />
+      </div>
       {built.length ? (
         <Documentation
           markdown={`### Built from\n\n${built.map(({ title, path: page }) => `[${title}](../${page})`).join(', ')}`}

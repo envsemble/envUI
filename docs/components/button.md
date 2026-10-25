@@ -81,62 +81,6 @@ examples:
 
 # Button
 
-## Rules
-
-A button says what will happen, and only the main action of a group stands out.
-
-```tsx figure=OnePrimaryAction
-
-```
-
-```tsx figure=SeveralPrimaryActions
-
-```
-
-```tsx figure=ExplainWhatIsMissing
-
-```
-
-```tsx figure=DisabledUntilValid
-
-```
-
-### Labels
-
-Start with a verb and say what will happen, and when the outcome is known, put it in the label.
-
-```tsx figure=SayWhatWillHappen
-
-```
-
-### Close and remove
-
-An IconButton with the Close cross closes, dismisses or removes what it sits in.
-
-- Name it Close, in the application's language.
-- Where several sit together, name what each removes.
-
-```tsx figure=DismissTip
-
-```
-
-```tsx figure=RemovePeople
-
-```
-
-## Anatomy
-
-```tsx figure=ButtonAnatomy
-
-```
-
-1. **Container** (`env-button`)
-2. **Start icon** (`env-button > env-icon:first-child`, `startIcon`)
-3. **Label** (`env-button::text`)
-4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
-
-Not shown: the spinner, a group's frame, and the end slot, quiet content after the label, such as a shortcut's keys, at the far end of a wide button, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) shows it.
-
 ## Variants
 
 ```tsx figure=Variants
@@ -178,6 +122,19 @@ A button can go to a page instead of acting; [Link](link.md) says when a destina
 Small, medium and large, the control heights of the [scale](../foundations/spacing.md). A button without a size of its own takes its container's, such as small in a table cell.
 
 <!-- specimen: Sizes -->
+
+## Anatomy
+
+```tsx figure=ButtonAnatomy
+
+```
+
+1. **Container** (`env-button`)
+2. **Start icon** (`env-button > env-icon:first-child`, `startIcon`)
+3. **Label** (`env-button::text`)
+4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
+
+Not shown: the spinner, a group's frame, and the end slot, quiet content after the label, such as a shortcut's keys, at the far end of a wide button, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) shows it.
 
 ## Behaviour
 
@@ -231,6 +188,51 @@ Labels wrap, and icon-only buttons keep their size.
 ```tsx figure=FillSidebar
 
 ```
+
+## Rules
+
+A button says what will happen, and only the main action of a group stands out.
+
+```tsx figure=OnePrimaryAction
+
+```
+
+```tsx figure=SeveralPrimaryActions
+
+```
+
+```tsx figure=ExplainWhatIsMissing
+
+```
+
+```tsx figure=DisabledUntilValid
+
+```
+
+### Labels
+
+Start with a verb and say what will happen, and when the outcome is known, put it in the label.
+
+```tsx figure=SayWhatWillHappen
+
+```
+
+### Close and remove
+
+An IconButton with the Close cross closes, dismisses or removes what it sits in.
+
+- Name it Close, in the application's language.
+- Where several sit together, name what each removes.
+
+```tsx figure=DismissTip
+
+```
+
+```tsx figure=RemovePeople
+
+```
+
+## Accessibility
 
 ### Keyboard
 
