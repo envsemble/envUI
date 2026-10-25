@@ -1,42 +1,143 @@
 // Dev mode's own style sheet, added to the document while dev mode is installed: it ships in the
-// dev entry alone, never in styles.css. The look comes from envUI's components and tokens; these
-// rules arrange dev mode's panels and draw the 3D view.
+// dev entry alone, never in styles.css. dev mode is built of envUI's components and layout
+// primitives, which style themselves; these rules place its panes and floating controls and draw
+// the 3D view, from envUI's tokens.
+//
+// The rules are in envUI's components layer, after the components' own: a selector of dev mode's
+// own parts is :where(), of no specificity, as the layout primitives' are, so it wins only by
+// coming later; one that adjusts a part of an envUI component it renders, such as a resize
+// handle's place, takes a second class, as the component's own rule does. The first line repeats
+// envUI's layer order, so the components' layer keeps its place whichever style sheet loads first.
 
 export const devStyles = /* css */ `
-@layer env.dev {
-  [data-env-dev-host] {
+@layer env.reset, env.tokens, env.base, env.components, env.utilities;
+@layer env.components {
+  :where([data-env-dev-host]) {
     position: fixed;
     inset: 0;
     z-index: calc(var(--env-z-tooltip, 1000) + 100);
     pointer-events: none;
   }
-  .env-dev {
+  :where(.env-dev) {
     display: contents;
   }
   /* Dev mode's own popups portal into the host, beside its UI, and take the pointer there. */
-  [data-env-dev-host] > :not(.env-dev) {
+  :where([data-env-dev-host] > :not(.env-dev)) {
     pointer-events: auto;
   }
-  .env-dev-toggle {
+  :where(.env-dev-toggle) {
     position: fixed;
     inset-block-end: var(--env-space-4);
     inset-inline-end: var(--env-space-4);
     pointer-events: auto;
-    border-radius: var(--env-radius-full);
   }
-  .env-dev-panel {
+  /* The panel covers the whole window: the sidebars on the navigation's background, the view on
+     the page's between them, set apart by their fills with no line between. */
+  :where(.env-dev-panel) {
     position: fixed;
     inset: 0;
-    display: flex;
     background: var(--env-color-bg-page);
     color: var(--env-color-fg-default);
     pointer-events: auto;
     contain: strict;
   }
-  .env-dev-panel:focus {
+  :where(.env-dev-panel:focus) {
     outline: none;
   }
-  .env-dev-view {
+
+  /* The sidebars: flush, square panes as wide as people drag them, each with the grip of a
+     resizable Drawer on its inner edge, inside it. */
+  :where(.env-dev-sidebar) {
+    position: relative;
+    flex: none;
+    inline-size: var(--env-dev-sidebar-width);
+    min-block-size: 0;
+  }
+  .env-dev-sidebar > .env-dev-sidebar-resize {
+    --env-resize-handle-size: var(--env-space-3);
+    position: absolute;
+    inset-block: 0;
+  }
+  .env-dev-sidebar[data-side='tree'] > .env-dev-sidebar-resize {
+    inset-inline-end: 0;
+  }
+  .env-dev-sidebar[data-side='inspector'] > .env-dev-sidebar-resize {
+    inset-inline-start: 0;
+  }
+  @media (pointer: coarse) {
+    .env-dev-sidebar > .env-dev-sidebar-resize {
+      --env-resize-handle-size: var(--env-space-5);
+    }
+  }
+  /* The header's toggle sits in the window's top corner on the sidebar's side, where it stays
+     floating over the view while the sidebar is hidden. */
+  :where(.env-dev-sidebar-head) {
+    flex: none;
+    padding: var(--env-space-2) var(--env-space-3);
+  }
+  :where(.env-dev-sidebar[data-side='inspector'] .env-dev-sidebar-head) {
+    padding-inline-start: var(--env-space-4);
+  }
+  :where(.env-dev-sidebar-foot) {
+    flex: none;
+    margin-block-start: auto;
+    padding: var(--env-space-2) var(--env-space-3);
+  }
+  :where(.env-dev-sidebar-note) {
+    padding-inline: var(--env-space-3);
+  }
+  /* The tree scrolls itself; it keeps clear of the resize handle on its end edge. */
+  :where(.env-dev-tree) {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    padding-inline-end: var(--env-space-2);
+  }
+  :where(.env-dev-tabs) {
+    flex: 1 1 auto;
+    min-block-size: 0;
+  }
+  /* The inspector's panel scrolls what its tab holds, the readout too, and keeps the wheel at its
+     ends from scrolling the page under dev mode. */
+  :where(.env-dev-tab-panel) {
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 0 var(--env-space-3) var(--env-space-3) var(--env-space-4);
+  }
+  :where(.env-dev-wrap) {
+    overflow-wrap: anywhere;
+  }
+  /* Code in dev mode's own panels, in the code type: the Code component lives in the content entry,
+     whose optional peers an app may not have installed. */
+  :where(.env-dev-code) {
+    font-family: var(--env-code-font-family, ui-monospace, monospace);
+    font-size: 0.9em;
+    overflow-wrap: anywhere;
+  }
+  /* As tall as its text: a flex item that scrolls would shrink to nothing in a short column. It
+     scrolls its long lines sideways, on the muted fill code blocks take. */
+  :where(.env-dev-readout) {
+    flex: none;
+    margin: 0;
+    padding: var(--env-space-2) var(--env-space-3);
+    overflow: auto;
+    white-space: pre;
+    font-family: var(--env-code-font-family, ui-monospace, monospace);
+    font-size: var(--env-code-font-size, 0.8125rem);
+    line-height: 1.5;
+    background: var(--env-color-bg-muted);
+    border-radius: var(--env-radius-md);
+  }
+  :where(.env-dev-readout[data-wrap]) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  :where(.env-dev-problem) {
+    color: var(--env-color-fg-danger);
+  }
+
+  /* The 3D view, a size container its floating controls follow. */
+  :where(.env-dev-view) {
+    container: env-dev-view / inline-size;
     position: relative;
     flex: 1 1 auto;
     min-inline-size: 0;
@@ -44,42 +145,69 @@ export const devStyles = /* css */ `
     perspective: 125rem;
     cursor: grab;
     touch-action: none;
+    -webkit-user-select: none;
     user-select: none;
   }
-  .env-dev-view[data-dragging] {
+  :where(.env-dev-view[data-dragging]) {
     cursor: grabbing;
   }
-  .env-dev-scene {
+  :where(.env-dev-scene) {
     position: absolute;
     left: 50%;
     top: 50%;
     transform-style: preserve-3d;
     transform-origin: 50% 50%;
   }
-  .env-dev-scene[data-dragging] .env-dev-plane {
-    transition: none;
+  /* Picking an angle turns the view there, where motion is welcome; dragging follows the pointer. */
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.env-dev-scene[data-turning]) {
+      transition: transform var(--env-motion-duration-slow) var(--env-motion-ease-standard);
+    }
   }
-  .env-dev-floor {
+  :where(.env-dev-floor) {
     position: absolute;
     inset: 0;
-    border: 1px dashed var(--env-color-border-default);
-    border-radius: var(--env-radius-sm);
+    border: var(--env-control-border-width) dashed var(--env-color-border-default);
+    border-radius: var(--env-radius-xs);
   }
+
+  /* The view's floating controls: surfaces with the edge of a floating layer and no shadow, the
+     toolbar at the top's middle, the corners' buttons in the top corners. */
+  .env-dev-float {
+    --env-surface-outline: var(--env-elevation-2-border);
+    position: absolute;
+    z-index: 1;
+    inset-block-start: var(--env-space-2);
+    max-inline-size: calc(100% - 2 * var(--env-space-2));
+    cursor: auto;
+  }
+  :where(.env-dev-toolbar) {
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    inline-size: max-content;
+  }
+  :where(.env-dev-corner[data-side='start']) {
+    inset-inline-start: var(--env-space-2);
+  }
+  :where(.env-dev-corner[data-side='end']) {
+    inset-inline-end: var(--env-space-2);
+  }
+
   /* The responsive frame: the rectangle the page is laid out in, above the planes, a quiet outline
      at the page's real width and the focus color at a width it sets. Its line, handles and label
      keep their size on screen at any zoom. */
-  .env-dev-frame {
+  :where(.env-dev-frame) {
     --env-dev-unzoom: calc(1 / var(--env-dev-zoom, 1));
     position: absolute;
     inset: 0;
     border: calc(1px * var(--env-dev-unzoom)) solid var(--env-color-border-default);
-    border-radius: var(--env-radius-sm);
+    border-radius: var(--env-radius-xs);
     pointer-events: none;
   }
-  .env-dev-frame[data-set] {
+  :where(.env-dev-frame[data-set]) {
     border: calc(1.5px * var(--env-dev-unzoom)) solid var(--env-color-border-focus);
   }
-  .env-dev-frame-label {
+  :where(.env-dev-frame-label) {
     position: absolute;
     inset-block-end: 100%;
     inset-inline-start: 50%;
@@ -90,11 +218,11 @@ export const devStyles = /* css */ `
     white-space: nowrap;
     pointer-events: auto;
   }
-  .env-dev-frame-handle {
+  :where(.env-dev-frame-handle) {
     position: absolute;
     inset-block-start: 50%;
-    inline-size: 0.5rem;
-    block-size: 2.5rem;
+    inline-size: var(--env-space-2);
+    block-size: var(--env-space-7);
     translate: -50% -50%;
     scale: var(--env-dev-unzoom);
     border-radius: var(--env-radius-full);
@@ -103,47 +231,47 @@ export const devStyles = /* css */ `
     touch-action: none;
     pointer-events: auto;
   }
-  .env-dev-frame-handle[data-edge='start'] {
+  :where(.env-dev-frame-handle[data-edge='start']) {
     inset-inline-start: 0;
   }
-  .env-dev-frame-handle[data-edge='end'] {
+  :where(.env-dev-frame-handle[data-edge='end']) {
     inset-inline-start: 100%;
   }
-  .env-dev-frame-handle[data-edge^='bottom'] {
+  :where(.env-dev-frame-handle[data-edge^='bottom']) {
     inset-block-start: 100%;
   }
-  .env-dev-frame-handle[data-edge='bottom'] {
+  :where(.env-dev-frame-handle[data-edge='bottom']) {
     inset-inline-start: 50%;
-    inline-size: 2.5rem;
-    block-size: 0.5rem;
+    inline-size: var(--env-space-7);
+    block-size: var(--env-space-2);
     cursor: ns-resize;
   }
   /* A corner's handle is a small square, which moves both edges. */
-  .env-dev-frame-handle:is([data-edge='bottom-start'], [data-edge='bottom-end']) {
-    inline-size: 0.75rem;
-    block-size: 0.75rem;
-    border-radius: 0.1875rem;
+  :where(.env-dev-frame-handle:is([data-edge='bottom-start'], [data-edge='bottom-end'])) {
+    inline-size: var(--env-space-3);
+    block-size: var(--env-space-3);
+    border-radius: var(--env-radius-xs);
   }
-  .env-dev-frame-handle[data-edge='bottom-start'] {
+  :where(.env-dev-frame-handle[data-edge='bottom-start']) {
     inset-inline-start: 0;
     cursor: nesw-resize;
   }
-  .env-dev-frame-handle[data-edge='bottom-end'] {
+  :where(.env-dev-frame-handle[data-edge='bottom-end']) {
     inset-inline-start: 100%;
     cursor: nwse-resize;
   }
-  .env-dev-frame-handle:hover,
-  .env-dev-frame[data-set] .env-dev-frame-handle {
+  :where(.env-dev-frame-handle:hover, .env-dev-frame[data-set] .env-dev-frame-handle) {
     background: var(--env-color-border-focus);
   }
-  .env-dev-frame-handle:focus-visible {
+  :where(.env-dev-frame-handle:focus-visible) {
     outline: 0.125rem solid var(--env-color-border-focus);
     outline-offset: 0.125rem;
   }
+
   /* Dev mode's own tints, a soft pastel set for the planes of the 3D view and its padding and gap
      patterns, lighter in the light theme. They are its own, so no public token they once borrowed
      can change them. */
-  .env-dev-view {
+  :where(.env-dev-view) {
     --env-dev-tint-oat: #e7dbce;
     --env-dev-tint-seafoam: #b8e7de;
     --env-dev-tint-sage: #cee4c3;
@@ -152,7 +280,7 @@ export const devStyles = /* css */ `
     --env-dev-tint-blush: #ffd3d4;
     --env-dev-tint-orchid: #fad2ec;
   }
-  .env-theme[data-env-theme='dark'] .env-dev-view {
+  :where(.env-theme[data-env-theme='dark'] .env-dev-view) {
     --env-dev-tint-oat: #d8ccbf;
     --env-dev-tint-seafoam: #a7d7cf;
     --env-dev-tint-sage: #bed4b3;
@@ -161,7 +289,7 @@ export const devStyles = /* css */ `
     --env-dev-tint-blush: #f3c2c4;
     --env-dev-tint-orchid: #ecc2dd;
   }
-  .env-dev-plane {
+  :where(.env-dev-plane) {
     --env-dev-tint: var(--env-dev-tint-oat);
     position: absolute;
     left: 0;
@@ -173,251 +301,152 @@ export const devStyles = /* css */ `
     outline-offset: -1px;
     border-radius: 2px;
   }
-  .env-dev-plane[data-kind='row'] { --env-dev-tint: var(--env-dev-tint-seafoam); }
-  .env-dev-plane[data-kind='column'] { --env-dev-tint: var(--env-dev-tint-sage); }
-  .env-dev-plane[data-kind='grid'] { --env-dev-tint: var(--env-dev-tint-periwinkle); }
-  .env-dev-plane:is([data-kind='scaffold'], [data-kind='panes']) { --env-dev-tint: var(--env-dev-tint-butter); }
-  .env-dev-plane[data-kind='page'] { --env-dev-tint: var(--env-dev-tint-blush); }
-  .env-dev-plane[data-overlay] { --env-dev-tint: var(--env-dev-tint-orchid); }
-  .env-dev-view[data-color='window'] .env-dev-plane[data-window='compact'] { --env-dev-tint: var(--env-dev-tint-blush); }
-  .env-dev-view[data-color='window'] .env-dev-plane[data-window='medium'] { --env-dev-tint: var(--env-dev-tint-butter); }
-  .env-dev-view[data-color='window'] .env-dev-plane[data-window='expanded'] { --env-dev-tint: var(--env-dev-tint-sage); }
-  .env-dev-view[data-color='window'] .env-dev-plane[data-window='large'] { --env-dev-tint: var(--env-dev-tint-seafoam); }
-  .env-dev-view[data-color='window'] .env-dev-plane:not([data-container]) { outline-style: dotted; }
-  .env-dev-plane[data-problems] {
+  :where(.env-dev-plane[data-kind='row']) { --env-dev-tint: var(--env-dev-tint-seafoam); }
+  :where(.env-dev-plane[data-kind='column']) { --env-dev-tint: var(--env-dev-tint-sage); }
+  :where(.env-dev-plane[data-kind='grid']) { --env-dev-tint: var(--env-dev-tint-periwinkle); }
+  :where(.env-dev-plane:is([data-kind='scaffold'], [data-kind='panes'])) { --env-dev-tint: var(--env-dev-tint-butter); }
+  :where(.env-dev-plane[data-kind='page']) { --env-dev-tint: var(--env-dev-tint-blush); }
+  :where(.env-dev-plane[data-overlay]) { --env-dev-tint: var(--env-dev-tint-orchid); }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='compact']) { --env-dev-tint: var(--env-dev-tint-blush); }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='medium']) { --env-dev-tint: var(--env-dev-tint-butter); }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='expanded']) { --env-dev-tint: var(--env-dev-tint-sage); }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane[data-window='large']) { --env-dev-tint: var(--env-dev-tint-seafoam); }
+  :where(.env-dev-view[data-color='window'] .env-dev-plane:not([data-container])) { outline-style: dotted; }
+  :where(.env-dev-plane[data-problems]) {
     outline: 2px solid var(--env-color-border-danger-emphasis);
   }
-  .env-dev-plane[data-hovered] {
+  :where(.env-dev-plane[data-hovered]) {
     background: color-mix(in oklab, var(--env-dev-tint) 22%, transparent);
     outline-width: 2px;
   }
-  .env-dev-plane[data-selected] {
+  :where(.env-dev-plane[data-selected]) {
     outline: 3px solid var(--env-color-border-focus);
   }
-  .env-dev-content {
+  :where(.env-dev-content, .env-dev-surface, .env-dev-spacing) {
     position: absolute;
     left: 0;
     top: 0;
     pointer-events: none;
   }
-  .env-dev-surface {
-    position: absolute;
-    left: 0;
-    top: 0;
+  :where(.env-dev-surface) {
     overflow: hidden;
     opacity: 0.9;
-    pointer-events: none;
   }
-  .env-dev-spacing {
-    position: absolute;
-    left: 0;
-    top: 0;
-    pointer-events: none;
+  :where(.env-dev-spacing) {
     overflow: visible;
   }
-  .env-dev-spacing [data-padding] { fill: url(#env-dev-padding); }
-  .env-dev-spacing [data-gap] { fill: url(#env-dev-gap); }
-  .env-dev-spacing [data-child] {
+  :where(.env-dev-spacing [data-padding]) { fill: url(#env-dev-padding); }
+  :where(.env-dev-spacing [data-gap]) { fill: url(#env-dev-gap); }
+  :where(.env-dev-spacing [data-child]) {
     fill: none;
     stroke: var(--env-color-fg-muted);
     stroke-dasharray: 2 3;
     stroke-opacity: 0.6;
   }
-  .env-dev-name {
+  :where(.env-dev-name) {
     position: absolute;
     inset-block-start: 0;
     inset-inline-start: 0;
     max-inline-size: 100%;
-    padding: 0 0.25rem;
+    padding: 0 var(--env-space-1);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font: var(--env-type-caption, 600 0.6875rem/1rem sans-serif);
+    font: var(--env-type-body-small);
+    font-size: var(--env-font-size-caption);
+    font-weight: var(--env-font-weight-medium);
     color: var(--env-color-fg-on-strong);
     background: color-mix(in oklab, var(--env-dev-tint) 90%, black);
     border-end-end-radius: 2px;
     pointer-events: none;
   }
-  .env-dev-card {
+  /* The hovered plane's card follows the pointer, on a popup's fill and edge. */
+  :where(.env-dev-card) {
     position: absolute;
     z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: var(--env-space-1);
     max-inline-size: 24rem;
     padding: var(--env-space-2) var(--env-space-3);
     background: var(--env-color-bg-popup);
     border: var(--env-control-border-width) solid var(--env-elevation-2-border);
     border-radius: var(--env-radius-md);
     pointer-events: none;
-    font: var(--env-type-body-small);
-  }
-  .env-dev-card strong,
-  .env-dev-heading {
-    font-weight: var(--env-font-weight-medium);
-  }
-  /* The view's floating controls: popup surfaces, set apart by their fill and edge, no shadow. */
-  .env-dev-float {
-    position: absolute;
-    z-index: 1;
-    box-sizing: border-box;
-    max-inline-size: calc(100% - 2 * var(--env-space-3));
-    padding: var(--env-space-1);
-    background: var(--env-color-bg-popup);
-    border: var(--env-control-border-width) solid var(--env-elevation-2-border);
-    border-radius: var(--env-radius-surface);
-    cursor: auto;
-  }
-  /* One row; a view too narrow for it wraps it rather than cutting it off. */
-  .env-dev-toolbar {
-    inset-block-start: var(--env-space-3);
-    inset-inline-start: 50%;
-    translate: -50% 0;
-    inline-size: max-content;
-    flex-wrap: wrap;
-    justify-content: center;
   }
   /* The legend floats over the view with no pane: quiet small text in a corner, where the planes
-     seldom reach. The frame's label is small text too. */
-  .env-dev-legend,
-  .env-dev-frame-label {
+     seldom reach, and none in a narrow view, which needs the room. The frame's label is small text
+     too. */
+  :where(.env-dev-legend, .env-dev-frame-label) {
     font: var(--env-type-body-small);
     font-size: var(--env-font-size-caption);
   }
-  /* Dev mode's popovers sit closer around their content than an application's. */
-  .env-dev-popover {
-    gap: var(--env-space-2);
-    padding: var(--env-space-3);
-  }
-  .env-dev-legend {
+  :where(.env-dev-legend) {
     position: absolute;
     inset-block-end: var(--env-space-3);
-    inset-inline-start: var(--env-space-4);
-    inset-inline-end: var(--env-space-4);
+    inset-inline: var(--env-space-4);
     color: var(--env-color-fg-muted);
     pointer-events: none;
   }
-  .env-dev-swatch {
+  @container env-dev-view (inline-size < 30rem) {
+    :where(.env-dev-legend) {
+      display: none;
+    }
+  }
+  :where(.env-dev-swatch) {
     position: static;
-    inline-size: 0.75rem;
-    block-size: 0.75rem;
+    inline-size: var(--env-space-3);
+    block-size: var(--env-space-3);
     outline-width: 1.5px;
     background: color-mix(in oklab, var(--env-dev-tint) 45%, transparent);
   }
   /* The outline entries show an outline alone: solid for a container, dotted for the rest. */
-  .env-dev-swatch[data-window='none'] {
+  :where(.env-dev-swatch[data-window='none']) {
     background: none;
   }
-  .env-dev-quiet {
-    color: var(--env-color-fg-muted);
-  }
-  .env-dev-problem {
-    color: var(--env-color-fg-danger);
-  }
-  .env-dev-ruler {
+  :where(.env-dev-ruler) {
     position: absolute;
     left: 0;
     top: 0;
     pointer-events: none;
     transform-style: flat;
   }
-  .env-dev-ruler-band {
+  :where(.env-dev-ruler-band) {
     position: absolute;
     inset-block-start: -1.5rem;
     block-size: 1.25rem;
-    padding-inline: 0.25rem;
+    padding-inline: var(--env-space-1);
     overflow: hidden;
     white-space: nowrap;
-    font: var(--env-type-caption, 0.6875rem/1.25rem sans-serif);
+    font: var(--env-type-body-small);
+    font-size: var(--env-font-size-caption);
     line-height: 1.25rem;
     background: color-mix(in oklab, var(--env-dev-tint) 35%, transparent);
     border-inline-start: 1px solid var(--env-dev-tint);
   }
-  .env-dev-ruler-band[data-current] {
+  :where(.env-dev-ruler-band[data-current]) {
     background: color-mix(in oklab, var(--env-dev-tint) 70%, transparent);
   }
-  .env-dev-ruler-band[data-window='compact'] { --env-dev-tint: var(--env-dev-tint-blush); }
-  .env-dev-ruler-band[data-window='medium'] { --env-dev-tint: var(--env-dev-tint-butter); }
-  .env-dev-ruler-band[data-window='expanded'] { --env-dev-tint: var(--env-dev-tint-sage); }
-  .env-dev-ruler-band[data-window='large'] { --env-dev-tint: var(--env-dev-tint-seafoam); }
-  .env-dev-ruler-line {
+  :where(.env-dev-ruler-band[data-window='compact']) { --env-dev-tint: var(--env-dev-tint-blush); }
+  :where(.env-dev-ruler-band[data-window='medium']) { --env-dev-tint: var(--env-dev-tint-butter); }
+  :where(.env-dev-ruler-band[data-window='expanded']) { --env-dev-tint: var(--env-dev-tint-sage); }
+  :where(.env-dev-ruler-band[data-window='large']) { --env-dev-tint: var(--env-dev-tint-seafoam); }
+  :where(.env-dev-ruler-line) {
     position: absolute;
     inset-block-start: -1.5rem;
     border-inline-start: 2px dashed var(--env-color-fg-default);
   }
-  .env-dev-ruler-line span,
-  .env-dev-ruler-now span {
+  :where(.env-dev-ruler-line span, .env-dev-ruler-now span) {
     position: absolute;
     inset-block-start: -1.25rem;
-    inset-inline-start: 0.25rem;
+    inset-inline-start: var(--env-space-1);
+    padding-inline: var(--env-space-1);
     white-space: nowrap;
-    font: var(--env-type-caption, 0.6875rem/1rem sans-serif);
+    font: var(--env-type-body-small);
+    font-size: var(--env-font-size-caption);
     background: var(--env-color-bg-raised);
-    padding-inline: 0.25rem;
   }
-  .env-dev-ruler-now {
+  :where(.env-dev-ruler-now) {
     position: absolute;
     inset-block-start: -1.5rem;
     border-inline-start: 2px solid var(--env-color-border-focus);
-  }
-  /* Inline code in dev mode's own panels: the Code component lives in the content entry, whose
-     optional peers an app may not have installed. */
-  .env-dev-code {
-    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
-    font-size: 0.9em;
-  }
-  /* The sidebars: flush, square panes on the navigation's color. Their heads line up with the
-     tree's rows and the tabs' panel. */
-  .env-dev-sidebar {
-    flex: none;
-    min-block-size: 0;
-    padding-block: var(--env-space-3);
-  }
-  .env-dev-sidebar[data-side='tree'] {
-    inline-size: min(15rem, 20vw);
-  }
-  .env-dev-sidebar[data-side='inspector'] {
-    inline-size: min(21rem, 27vw);
-    padding-block-start: var(--env-space-1);
-  }
-  .env-dev-hide {
-    margin-inline-start: auto;
-  }
-  .env-dev-sidebar-head,
-  .env-dev-sidebar-note {
-    padding-inline: var(--env-space-3);
-  }
-  .env-dev-tree {
-    flex: 1 1 auto;
-    min-block-size: 0;
-  }
-  /* The inspector's column scrolls what its tab holds, the readout too, and keeps the wheel at its
-     ends from scrolling the page under dev mode. */
-  .env-dev-tab-panel {
-    flex: 1 1 auto;
-    min-block-size: 0;
-    padding: var(--env-space-3);
-    overflow: auto;
-    overscroll-behavior: contain;
-  }
-  .env-dev-tokens {
-    font: var(--env-type-body-small);
-  }
-  /* As tall as its text: a flex item that scrolls would shrink to nothing in a short column. It
-     scrolls its long lines sideways. */
-  .env-dev-readout {
-    flex: none;
-    margin: 0;
-    padding: var(--env-space-2) var(--env-space-3);
-    overflow: auto;
-    white-space: pre;
-    font: 0.75rem/1.125rem var(--env-font-family-mono, ui-monospace, monospace);
-    background: var(--env-color-bg-muted);
-    border-radius: var(--env-radius-md);
-  }
-  .env-dev-readout[data-wrap] {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
   }
 }
 `;

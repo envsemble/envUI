@@ -1,6 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { Button, Dialog } from '@envsemble/envui';
-import { installDevMode } from '@envsemble/envui/dev';
+import { installDevMode, type DevModeHandle } from '@envsemble/envui/dev';
+
+declare global {
+  interface Window {
+    /** The fixture's dev mode, for the specs to open over the page with open(). */
+    envuiDevMode?: DevModeHandle;
+  }
+}
 
 // Layout nodes as the primitives and scaffolds render them, written out by hand: a scaffold that
 // switches arrangement at 37.5rem, a page, a row of identical cards, and a few faults for the
@@ -31,15 +38,19 @@ const styles = `
 `;
 
 /**
- * A page for dev mode: its readout, its checks at other widths, and its toggle. `&root=<selector>`
- * gives dev mode a root of its own, as the docs' demo does.
+ * A page for dev mode: its readout, its checks at other widths, and its button. `&root=<selector>`
+ * gives dev mode a root of its own, as the docs' demo does; `window.envuiDevMode` is its handle.
  */
 export function DevModeFixture() {
   const popover = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const root = new URLSearchParams(window.location.search).get('root') ?? undefined;
     const devMode = installDevMode({ parts: { schemaVersion: 1, components: {} }, root });
-    return () => devMode.uninstall();
+    window.envuiDevMode = devMode;
+    return () => {
+      devMode.uninstall();
+      delete window.envuiDevMode;
+    };
   }, []);
   return (
     <>

@@ -1,5 +1,7 @@
 // Installs dev mode in a page: the readout as `envui.layout` on the window, and the toggle that
-// opens the 3D view and the inspector.
+// opens the 3D view and the inspector in a tab of their own: the page's address with the
+// `envui-dev` query parameter, which the installer in that tab reads to open dev mode over the
+// whole window, for as long as the tab stays open.
 
 import { createRoot, type Root } from 'react-dom/client';
 import { layout, type LayoutApi } from './api.js';
@@ -15,11 +17,16 @@ export interface DevModeOptions {
    * that fails. Names don't depend on it.
    */
   parts?: PartsFile | string | URL;
-  /** Show the toggle button in the corner. @default true */
+  /** Show the button in the corner that opens dev mode in a new tab. @default true */
   button?: boolean;
-  /** Toggle dev mode with Alt+Shift+D; false turns the shortcut off. @default true */
+  /** Open dev mode in a new tab with Alt+Shift+D; false turns the shortcut off. @default true */
   shortcut?: boolean;
-  /** Open the 3D view and the inspector at once. @default false */
+  /**
+   * Open the 3D view and the inspector over this page at once, as `open()` does. A page opened
+   * with the `envui-dev` query parameter, as the button and the shortcut open it, opens them in
+   * any case.
+   * @default false
+   */
   open?: boolean;
   /** The element dev mode's UI measures, or a selector for it; the readout's default otherwise. */
   root?: Element | string;
@@ -31,8 +38,16 @@ export interface DevModeHandle {
   layout: LayoutApi;
   /** Settles once the parts' descriptions have loaded, or failed to. */
   ready: Promise<void>;
+  /**
+   * Opens the page's address in a new tab with dev mode open over the whole window, as the button
+   * and Alt+Shift+D do; where the browser blocks the tab, it opens dev mode over this page.
+   */
+  openInNewTab(): void;
+  /** Opens the 3D view and the inspector over this page, which Esc closes again. */
   open(): void;
+  /** Closes the 3D view and the inspector opened over this page. */
   close(): void;
+  /** Opens or closes the 3D view and the inspector over this page. */
   toggle(): void;
   /** Removes the toggle, the shortcut, the style sheet and `envui.layout`. */
   uninstall(): void;
@@ -47,7 +62,29 @@ declare global {
 
 let installed: DevModeHandle | null = null;
 
-/** Whether a key press toggles dev mode: Alt+Shift+D, outside text entry. */
+/** The query parameter that marks a page opened as dev mode's tab. */
+const devModeParameter = 'envui-dev';
+
+/** Whether this page was opened as dev mode's tab, with the envui-dev query parameter. */
+function isDevModeTab(): boolean {
+  try {
+    return new URLSearchParams(window.location?.search ?? '').has(devModeParameter);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The page's address with the envui-dev query parameter after its own, which keep their encoding.
+ */
+function devModeAddress(href: string): string {
+  const url = new URL(href);
+  if (!new URLSearchParams(url.search).has(devModeParameter))
+    url.search = url.search ? `${url.search}&${devModeParameter}` : devModeParameter;
+  return url.href;
+}
+
+/** Whether a key press opens dev mode: Alt+Shift+D, outside text entry. */
 function isShortcut(event: KeyboardEvent): boolean {
   if (!event.altKey || !event.shiftKey || event.ctrlKey || event.metaKey || event.code !== 'KeyD')
     return false;
@@ -59,9 +96,10 @@ function isShortcut(event: KeyboardEvent): boolean {
 }
 
 /**
- * Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a toggle button
- * in the corner and Alt+Shift+D, which open the 3D view and the inspector over the page. Load it in
- * development only, so production builds contain none of it:
+ * Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a button in the
+ * corner and Alt+Shift+D, which open the page in a new tab with the 3D view and the inspector over
+ * the whole window. Closing that tab ends dev mode; the page it came from stays as it was. Load it
+ * in development only, so production builds contain none of it:
  *
  *   if (import.meta.env.DEV) {
  *     void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode());
@@ -76,6 +114,7 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
     return {
       layout,
       ready: Promise.resolve(),
+      openInNewTab: noop,
       open: noop,
       close: noop,
       toggle: noop,
@@ -111,9 +150,19 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
   document.body.append(host);
 
   const listeners = new Set<(open: boolean) => void>();
+  // In dev mode's own tab, dev mode is open from the start and stays open: the tab is dev mode, and
+  // closing it ends it. It has no button there, and the shortcut does nothing.
+  const tab = isDevModeTab();
+  const openInNewTab = () => {
+    const opened = window.open(devModeAddress(window.location.href), '_blank');
+    // A blocked tab leaves dev mode over this page instead.
+    if (opened) opened.opener = null;
+    else controller.setOpen(true);
+  };
   const controller: DevModeController = {
-    open: options.open ?? false,
-    button: options.button ?? true,
+    open: tab || (options.open ?? false),
+    tab,
+    button: !tab && (options.button ?? true),
     shortcut: options.shortcut === false ? null : 'Alt+Shift+D',
     root: options.root,
     host,
@@ -125,6 +174,7 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
       controller.open = open;
       for (const listener of listeners) listener(open);
     },
+    openInNewTab,
   };
   const root: Root = createRoot(host);
   root.render(<DevMode controller={controller} />);
@@ -132,7 +182,7 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
   const onKey = (event: KeyboardEvent) => {
     if (!isShortcut(event)) return;
     event.preventDefault();
-    controller.setOpen(!controller.open);
+    if (!tab) openInNewTab();
   };
   if (controller.shortcut) window.addEventListener('keydown', onKey);
 
@@ -147,6 +197,7 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
   const handle: DevModeHandle = {
     layout,
     ready,
+    openInNewTab,
     open: () => controller.setOpen(true),
     close: () => controller.setOpen(false),
     toggle: () => controller.setOpen(!controller.open),
