@@ -2219,6 +2219,22 @@
           "description": "The navigation drawer: a nav landmark, a column with the header, the list and the footer."
         },
         {
+          "class": "env-drawer-branch",
+          "description": "A section: a destination with destinations nested under it, which open and close below it."
+        },
+        {
+          "class": "env-drawer-branch-row",
+          "description": "A section's row: the destination's link or button, with the section's button over its end."
+        },
+        {
+          "class": "env-drawer-chevron",
+          "description": "A section's chevron, which points down, and up while the section is open."
+        },
+        {
+          "class": "env-drawer-children",
+          "description": "The list of a section's nested destinations, indented, hidden until found while closed."
+        },
+        {
           "class": "env-drawer-count",
           "description": "A destination's count, at the item's end; 999+ above 999."
         },
@@ -2253,6 +2269,10 @@
         {
           "class": "env-drawer-section",
           "description": "A group: its heading and the list of its destinations."
+        },
+        {
+          "class": "env-drawer-toggle",
+          "description": "The button at the end of a section's link that opens and closes the section."
         }
       ],
       "states": [
@@ -2273,6 +2293,13 @@
           ]
         },
         {
+          "attribute": "data-ending-style",
+          "values": [],
+          "parts": [
+            "env-drawer-children"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
           "parts": [
@@ -2286,6 +2313,13 @@
           ],
           "parts": [
             "env-drawer"
+          ]
+        },
+        {
+          "attribute": "data-starting-style",
+          "values": [],
+          "parts": [
+            "env-drawer-children"
           ]
         }
       ],

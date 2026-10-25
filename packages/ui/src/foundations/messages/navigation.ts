@@ -14,6 +14,11 @@ export const navigation = {
    * count, such as More, 5 new, current page inside.
    */
   moreCurrent: ({ name }: { name: string }) => `${name}, current page inside`,
+  /**
+   * Names the button beside a Drawer destination that opens and closes the destinations nested
+   * under it, such as Guides contents; its aria-expanded says whether they show.
+   */
+  contents: ({ label }: { label: string }) => `${label} contents`,
   /** Names the handle that resizes a resizable Drawer. */
   resize: 'Resize navigation',
   /** The resize handle's value: the Drawer's width in rem, such as 17.5 rem, in the locale's digits. */

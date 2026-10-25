@@ -14,6 +14,7 @@ import {
   countedName,
   destinationKey,
   DestinationItem,
+  holdsCurrent,
   shownCount,
   useNavigationMessages,
   type Destination,
@@ -35,7 +36,9 @@ const barClasses: DestinationClasses = {
 export interface BarProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past
-   * 5 it shows the first 4 and a More item that opens the rest in a menu. Groups don't show.
+   * 5 it shows the first 4 and a More item that opens the rest in a menu. Groups and nested
+   * destinations don't show: a destination whose `children` hold the current one takes the current
+   * fill.
    */
   destinations: readonly Destination[];
   /**
@@ -78,7 +81,9 @@ export function Bar({
     0,
   );
   const restShown = shownCount(restCount);
-  const restCurrent = rest.some((destination) => destination.current);
+  const restCurrent = rest.some(
+    (destination) => destination.current === true || holdsCurrent(destination.children),
+  );
   const restName = countedName(messages.more, restCount, messages) ?? messages.more;
   // As on the destinations, the current state is an attribute of the item, and its name says it.
   const moreState = {
@@ -99,7 +104,7 @@ export function Bar({
         <Row render={<ul />} className="env-bar-list">
           {shown.map((destination) => (
             <li key={destinationKey(destination)}>
-              <DestinationItem classes={barClasses} destination={destination} />
+              <DestinationItem classes={barClasses} destination={destination} topLevel />
             </li>
           ))}
           {overflow && (
@@ -133,10 +138,15 @@ export function Bar({
               >
                 {rest.map((destination) => {
                   const count = shownCount(destination.count);
+                  const inside = !destination.current && holdsCurrent(destination.children);
                   // Named as the other destinations are, such as Inbox, 3 new, with the badge hidden.
                   const shared = {
                     icon: destination.icon,
-                    'aria-current': destination.current ? ('page' as const) : undefined,
+                    'aria-current': destination.current
+                      ? ('page' as const)
+                      : inside
+                        ? ('true' as const)
+                        : undefined,
                     'aria-label': countedName(destination.label, destination.count, messages),
                     end:
                       count === undefined ? undefined : <Badge count={count} aria-hidden="true" />,

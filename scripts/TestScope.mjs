@@ -43,6 +43,7 @@ export const aliases = {
   Rail: ['Navigation'],
   Drawer: ['Navigation'],
   ResizableDrawers: ['Navigation'],
+  NestedDrawers: ['Navigation'],
   useResizableWidth: ['Navigation', 'Sheet'],
   Destinations: ['Navigation'],
   Segments: ['SegmentedControl'],
