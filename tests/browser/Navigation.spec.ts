@@ -471,3 +471,151 @@ test.describe('Drawer resizable', () => {
     await expect(handle).toHaveAttribute('aria-valuetext', '19.5 rem');
   });
 });
+
+test.describe('Drawer nested sections', () => {
+  // Drawers with sections, in tests/fixture/NestedDrawers.tsx.
+  const nested = `${fixtureUrl}/?fixture=nested-drawers`;
+
+  test('the current page’s sections start open, the rest closed with their links in the page', async ({
+    page,
+  }) => {
+    await page.goto(nested);
+    const drawer = page.getByRole('navigation', { name: 'Guide' });
+    // A section with a page of its own is a link, with a button at its end.
+    const signIn = drawer.getByRole('link', { name: 'Sign-in', exact: true });
+    await expect(signIn).toHaveAttribute('href', '#sign-in');
+    const signInButton = drawer.getByRole('button', { name: 'Sign-in contents' });
+    await expect(signInButton).toHaveAttribute('aria-expanded', 'true');
+    const passkeys = drawer.getByRole('link', { name: 'Passkeys' });
+    await expect(passkeys).toBeVisible();
+    await expect(passkeys).toHaveAttribute('aria-current', 'page');
+    await expect(passkeys).toHaveAttribute('href', '#passkeys');
+    // Nested destinations sit in, indented.
+    const indent = (await passkeys.boundingBox())!.x - (await signIn.boundingBox())!.x;
+    expect(indent).toBeGreaterThan(8);
+    // The open section's button controls the list of its nested destinations.
+    const controls = await signInButton.getAttribute('aria-controls');
+    await expect(drawer.locator(`[id="${controls}"]`)).toContainText('Passkeys');
+    // A section without a page is only its heading, a button; closed, its links stay in the page,
+    // hidden until found.
+    const billing = drawer.getByRole('button', { name: 'Billing', exact: true });
+    await expect(billing).toHaveAttribute('aria-expanded', 'false');
+    const invoices = drawer.locator('a[href="#invoices"]');
+    await expect(invoices).toHaveCount(1);
+    await expect(invoices).toBeHidden();
+    await expect(invoices.locator('xpath=ancestor::ul[1]')).toHaveAttribute(
+      'hidden',
+      'until-found',
+    );
+    // Only the current page reports aria-current.
+    await expect(drawer.locator('[aria-current]')).toHaveCount(1);
+  });
+
+  test(
+    'a section opens and closes from its button, by pointer and keyboard, and its chevron flips',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(nested);
+      const drawer = page.getByRole('navigation', { name: 'Guide' });
+      const billing = drawer.getByRole('button', { name: 'Billing', exact: true });
+      const chevron = billing.locator('.env-drawer-chevron');
+      const transform = () => chevron.evaluate((element) => getComputedStyle(element).transform);
+      // Closed, the chevron points down, and it flips over to point up as Select's does.
+      const closed = await transform();
+      await billing.click();
+      await expect(billing).toHaveAttribute('aria-expanded', 'true');
+      await expect(drawer.getByRole('link', { name: 'Plans' })).toBeVisible();
+      await expect.poll(transform).not.toBe(closed);
+      await billing.click();
+      await expect(billing).toHaveAttribute('aria-expanded', 'false');
+      await expect(drawer.getByRole('link', { name: 'Plans' })).toBeHidden();
+      await expect.poll(transform).toBe(closed);
+      // Keyboard: the section's link, its button, then its open destinations, each a tab stop.
+      const signIn = drawer.getByRole('link', { name: 'Sign-in', exact: true });
+      const signInButton = drawer.getByRole('button', { name: 'Sign-in contents' });
+      const passwords = drawer.getByRole('link', { name: 'Passwords' });
+      await signIn.focus();
+      await page.keyboard.press('Tab');
+      await expect(signInButton).toBeFocused();
+      await page.keyboard.press('Tab');
+      await expect(passwords).toBeFocused();
+      await page.keyboard.press('Shift+Tab');
+      await page.keyboard.press('Enter');
+      await expect(signInButton).toHaveAttribute('aria-expanded', 'false');
+      await expect(passwords).toBeHidden();
+      // Closed, Tab passes its destinations by.
+      await page.keyboard.press('Tab');
+      await expect(billing).toBeFocused();
+      await page.keyboard.press('Space');
+      await expect(billing).toHaveAttribute('aria-expanded', 'true');
+      // The button's focus ring stays inside it, clear of the link's label.
+      await signInButton.focus();
+      const ring = await signInButton.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return { width: style.outlineWidth, offset: style.outlineOffset };
+      });
+      expect(ring).toEqual({ width: '2px', offset: '-2px' });
+      const label = (await signIn.locator('.env-drawer-label').boundingBox())!;
+      expect(label.x + label.width).toBeLessThanOrEqual((await signInButton.boundingBox())!.x);
+    },
+  );
+
+  test('a section opens as the current page moves into it, the drawer’s own or the application’s', async ({
+    page,
+  }) => {
+    await page.goto(nested);
+    const own = page.getByRole('navigation', { name: 'Guide' });
+    await page.getByRole('button', { name: 'Go to invoices' }).click();
+    await expect(own.getByRole('button', { name: 'Billing', exact: true })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    await expect(own.getByRole('link', { name: 'Invoices' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    // The sections opened before stay open.
+    await expect(own.getByRole('button', { name: 'Sign-in contents' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+    // The application's: onExpandedChange asks for the sections, two levels deep.
+    const controlled = page.getByRole('navigation', { name: 'Controlled' });
+    const expanded = page.getByTestId('expanded');
+    await expect(expanded).toHaveText('');
+    await page.getByRole('button', { name: 'Go to retries' }).click();
+    await expect(expanded).toHaveText('Integrations, #webhooks');
+    await expect(controlled.getByRole('link', { name: 'Retries' })).toBeVisible();
+    await controlled.getByRole('button', { name: 'Integrations', exact: true }).click();
+    await expect(expanded).toHaveText('#webhooks');
+    await expect(controlled.getByRole('link', { name: 'Webhooks' })).toBeHidden();
+  });
+
+  test('Rail and Bar show the top level, marking the destination whose section holds the current one', async ({
+    page,
+  }) => {
+    await page.goto(nested);
+    for (const name of ['Top rail', 'Top bar']) {
+      const nav = page.getByRole('navigation', { name });
+      const guide = nav.getByRole('link', { name: 'Guide' });
+      await expect(guide).toHaveAttribute('aria-current', 'true');
+      await expect(guide).toHaveAttribute('data-current', '');
+      await expect(nav.getByRole('link', { name: 'Home' })).not.toHaveAttribute('aria-current');
+      await expect(nav.getByText('Passkeys')).toHaveCount(0);
+    }
+  });
+
+  test('under reduced motion, a section and its chevron change at once', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(nested);
+    const drawer = page.getByRole('navigation', { name: 'Guide' });
+    const durations = await drawer
+      .locator('.env-drawer-children, .env-drawer-chevron')
+      .evaluateAll((elements) =>
+        elements.map((element) => getComputedStyle(element).transitionDuration),
+      );
+    expect(durations.length).toBeGreaterThan(0);
+    for (const duration of durations)
+      expect(duration.split(', ').every((each) => each === '0s')).toBe(true);
+  });
+});
