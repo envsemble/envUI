@@ -49,6 +49,11 @@ test(
       link.evaluate((element) => parseFloat(getComputedStyle(element, '::before').scale) || 1);
     const passed = await dash(contents.locator('[data-passed]').first());
     await expect.poll(() => dash(current(contents))).toBeGreaterThan(passed);
+    // The current section is never set bolder than the rest, so no label rewraps as it moves.
+    const weights = await contents
+      .locator('.env-table-of-contents-link')
+      .evaluateAll((links) => new Set(links.map((link) => getComputedStyle(link).fontWeight)).size);
+    expect(weights).toBe(1);
   },
 );
 

@@ -2,7 +2,7 @@
    marked by a column of short dashes, one before each section, like a ruler: the current section's
    the longest, in the text color, its neighbours' a little longer, and the one under the pointer growing
    too; the sections the reader has passed in the text color with darker dashes, the current one in
-   the text color and medium, and those still to come quieter, with paler dashes. */
+   the text color, never bolder, so no label rewraps as the reader moves, and those still to come quieter, with paler dashes. */
 .env-table-of-contents {
   /* How far each level sits in from the one above it; the current section's dash, which is also
      the dashes' column, the others a share of it; and a dash's thickness. */
@@ -51,8 +51,8 @@
 /* Each link's dash at the column's start, the same at every level, centred on its first line: to
    come in the muted edge color, passed in the muted text color. The current
    section's is the longest, in the text color, and thicker; the sections beside it and the one under
-   the pointer take a longer dash. A passed section's label is the text color; the current one's is
-   the text color and medium. */
+   the pointer take a longer dash. A passed section's label and the current one's are the text color, at
+   the same weight, so no label rewraps as the reader moves. */
 .env-table-of-contents .env-table-of-contents-link::before {
   content: '';
   position: absolute;
@@ -116,7 +116,6 @@
 }
 .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
   color: var(--env-color-fg-default);
-  font-weight: var(--env-font-weight-medium);
 }
 
 /* Motion: colors fade and the marks move to the next section, only without a reduced-motion
