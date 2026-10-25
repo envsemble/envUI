@@ -1,7 +1,7 @@
 /* The Overview's showcase (OverviewShowcase.tsx): under the banner, with plenty of the page around
    it, a still fan of square cards at uneven angles. The cards take the recessed canvas every example
-   sits on, with no edge; a very faint shadow keeps their edges visible where they overlap, the one
-   exception to the catalogue's no-shadow rule. On a narrower page the whole fan is drawn smaller. */
+   sits on, with no edge; a very faint shadow (Stage.css) keeps their edges visible where they
+   overlap. On a narrower page the whole fan is drawn smaller. */
 .docs-showcase {
   container-type: inline-size;
   display: grid;
@@ -13,12 +13,6 @@
 
 .docs-showcase-stack {
   --docs-showcase-card-size: 13rem;
-  /* stylelint-disable declaration-property-value-disallowed-list -- a very faint
-     shadow, on this decoration alone, shows the cards' edges where they overlap. */
-  --docs-showcase-shadow:
-    0 0 0.125rem light-dark(oklch(0% 0 0 / 0.08), oklch(0% 0 0 / 0.35)),
-    0 0.25rem 0.75rem light-dark(oklch(0% 0 0 / 0.06), oklch(0% 0 0 / 0.3));
-  /* stylelint-enable declaration-property-value-disallowed-list */
   position: relative;
   inline-size: 42rem;
   block-size: 21rem;
@@ -39,7 +33,7 @@
   padding: var(--env-space-5);
   border-radius: var(--env-radius-xl);
   /* Its fill is the recessed canvas every example sits on (Stage.css). */
-  box-shadow: var(--docs-showcase-shadow);
+  box-shadow: var(--docs-card-shadow);
   transform-origin: 50% 100%;
   transform: translate(var(--docs-showcase-fan-x), var(--docs-showcase-fan-y))
     rotate(var(--docs-showcase-fan-rotate));
