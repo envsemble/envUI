@@ -35,9 +35,17 @@ components:
 
 ## Overview
 
-It lists the page's headings on its own, nesting each under the one above it, and the marker beside the list moves to the section the reader is in. A link scrolls its section to the top, below anything that stays there, such as a header.
+It lists the page's headings on its own, nesting each under the one above it, and marks the section the reader is in: a dot before each section, darker once passed, and the current one's grows into a pill. A link scrolls its section to the top, below anything that stays there, such as a header.
 
 ```tsx example=DocsArticle
+
+```
+
+### Three designs, for review
+
+Pick one: the other two go once it is chosen.
+
+```tsx example=DesignOptions
 
 ```
 
@@ -76,12 +84,12 @@ Use the headings' own words, or a short name a reader would find on the page.
 1. **Contents** (`env-table-of-contents`)
 2. **Link** (`env-table-of-contents-link`)
 3. **Current section** (`env-table-of-contents-link[aria-current='location']`)
-4. **Track** (`env-table-of-contents-track-line`)
-5. **Marker** (`env-table-of-contents-marker`)
+
+Not shown: the sections before the current one, whose dots are darker.
 
 ## Adapting to width
 
-Long labels wrap onto more lines, and the marker grows to their height.
+Long labels wrap onto more lines, and the current section's pill grows to their height.
 
 ```tsx example=LongLabels widths="12 20"
 
@@ -101,7 +109,7 @@ Long labels wrap onto more lines, and the marker grows to their height.
 - A `nav` landmark named On this page, from `messages.tableOfContents`, around nested ordered lists of links.
 - `aria-current="location"` on the link of the section the reader is in.
 - Links that scroll smoothly, or at once where reduced motion is preferred, add the section to the address and move focus to it, so reading and the keyboard go on from there.
-- The track and the marker hidden from assistive technology.
+- Dots drawn by the style sheet alone, which assistive technology doesn't read.
 
 ### You provide
 
@@ -133,7 +141,9 @@ The current section is the last one whose start, less its scroll margin, has pas
 
 ### Composition
 
-The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the track and the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link, `env-table-of-contents-link`, with its level below it. The track is an SVG, `env-table-of-contents-track`, drawn once the links are measured: its line, `env-table-of-contents-track-line`, and the marker, `env-table-of-contents-marker`, which slides along it unless reduced motion is preferred. Its name comes from EnvUIProvider's `messages.tableOfContents`.
+The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link, `env-table-of-contents-link`, with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`. Each link's dot is its `::before`, which moves to the next section unless reduced motion is preferred. Its name comes from EnvUIProvider's `messages.tableOfContents`.
+
+While the designs are under review, `data-design` on the component picks one: `progress`, the default, `pill` or `quiet`.
 
 ## Changelog
 

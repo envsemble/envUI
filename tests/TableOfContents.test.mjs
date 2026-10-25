@@ -1,5 +1,5 @@
 // TableOfContents: the outline it builds from headings, the current section it finds from where
-// the page has scrolled, the track it draws beside the links, and its server markup, which lists
+// the page has scrolled, and its server markup, which lists
 // the sections given as items and marks none until the page hydrates.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -30,16 +30,8 @@ await build({
   outfile: output,
   logLevel: 'error',
 });
-const {
-  TableOfContents,
-  EnvUIProvider,
-  outline,
-  flatten,
-  slug,
-  uniqueId,
-  currentSection,
-  trackPath,
-} = await import(pathToFileURL(output).href);
+const { TableOfContents, EnvUIProvider, outline, flatten, slug, uniqueId, currentSection } =
+  await import(pathToFileURL(output).href);
 
 test('headings nest under the last heading above them of a lower level', () => {
   const items = outline([
@@ -132,22 +124,6 @@ test('sections too short to reach the line take turns over the last of the scrol
   assert.equal(at(1000), 'd');
 });
 
-test('the track runs down each link and slants where the indent changes', () => {
-  const path = trackPath([
-    { x: 1, top: 0, bottom: 28 },
-    { x: 13, top: 28, bottom: 56 },
-    { x: 1, top: 56, bottom: 84 },
-  ]);
-  assert.equal(path.d, 'M1 0 L1 22 L13 34 L13 50 L1 62 L1 84');
-  assert.deepEqual(
-    path.segments.map(({ start, end }) => Math.round(end - start)),
-    [22, 16, 22],
-  );
-  const slant = Math.hypot(12, 12);
-  assert.equal(path.segments[1].start, Math.round((22 + slant) * 100) / 100);
-  assert.equal(path.length, Math.round((60 + 2 * slant) * 100) / 100);
-});
-
 test('the server renders the sections given as items, nested, and marks none current', () => {
   const markup = renderToStaticMarkup(
     h(TableOfContents, {
@@ -160,12 +136,10 @@ test('the server renders the sections given as items, nested, and marks none cur
   assert.match(markup, /^<nav aria-label="On this page" class="env-table-of-contents">/);
   assert.match(
     markup,
-    /href="#setup">Setup<\/a><ol class="env-table-of-contents-list"><li class="env-table-of-contents-item"><a class="env-table-of-contents-link" href="#install">Install<\/a><\/li><\/ol><\/li>/,
+    /href="#setup">Setup<\/a><ol class="env-table-of-contents-list" style="--env-table-of-contents-depth:1"><li class="env-table-of-contents-item"><a class="env-table-of-contents-link" href="#install">Install<\/a><\/li><\/ol><\/li>/,
   );
   assert.match(markup, /href="#usage">Usage<\/a>/);
-  assert.doesNotMatch(markup, /aria-current/);
-  // The track is drawn once the links are measured, in the browser.
-  assert.doesNotMatch(markup, /<svg/);
+  assert.doesNotMatch(markup, /aria-current|data-passed/);
 });
 
 test('without items, the server renders the landmark hidden, named in the provider language', () => {
