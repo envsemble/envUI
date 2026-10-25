@@ -8514,6 +8514,13 @@
           "description": "Whether the arrow keys move from the last control to the first and back."
         },
         {
+          "name": "tooltipDelay",
+          "type": "number",
+          "required": false,
+          "default": "400",
+          "description": "Milliseconds the pointer rests on a button or link before its tooltip opens, as Tooltip's delay; keyboard focus opens it at once. 0 shows every name at once, for a toolbar people scan by pointing, such as a canvas's view controls."
+        },
+        {
           "name": "render",
           "type": "ReactElement",
           "required": false,
@@ -8813,7 +8820,7 @@
     "installDevMode": {
       "kind": "function",
       "source": "packages/ui/src/dev/install.tsx",
-      "description": "Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a toggle button in the corner and Alt+Shift+D, which open the 3D view and the inspector over the page. Load it in development only, so production builds contain none of it: if (import.meta.env.DEV) { void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode()); } Calling it again returns the dev mode already installed, until it is uninstalled.",
+      "description": "Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a button in the corner and Alt+Shift+D, which open the page in a new tab with the 3D view and the inspector over the whole window. Closing that tab ends dev mode; the page it came from stays as it was. Load it in development only, so production builds contain none of it: if (import.meta.env.DEV) { void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode()); } Calling it again returns the dev mode already installed, until it is uninstalled.",
       "signature": "(options?: DevModeOptions): DevModeHandle",
       "entries": [
         "@envsemble/envui/dev"
