@@ -1,6 +1,5 @@
 import { Component, createRef, type ReactNode } from 'react';
 import { Alert, Button, Link, Column } from '@envsemble/envui';
-import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
 import { errorMessage, focusDropped, focusedElement, reloadPage } from '../template/LoadBoundary';
 import { PageHeader } from './PageHeader';
 import { homeRoute, routeHref } from '../navigation/Address';
@@ -57,7 +56,7 @@ export class PageBoundary extends Component<PageBoundaryProps, PageBoundaryState
     const overview = this.props.route.split(/[/?]/)[0] === 'overview';
     return (
       <Column gap={7} className="docs-article">
-        <PageHeader title={this.props.title} breadcrumb="envUI" symbol={<ErrorIcon />} />
+        <PageHeader title={this.props.title} breadcrumb="envUI" />
         <Alert
           ref={this.alert}
           tabIndex={-1}

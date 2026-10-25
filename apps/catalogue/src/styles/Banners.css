@@ -1,10 +1,10 @@
 /* The banners of the catalogue and the Docs (PageHeader.tsx). Every page's banner reads from the
    start like a document, under its breadcrumbs, with a picture hidden from assistive technology at
-   its end. A page of the Docs, the developer reference, is on the page's own color inside an edge,
-   the envUI mark's circle and pill drawn as outlines at its end, as on a plan (BannerShapes.tsx); a
-   page of the catalogue is on a fill, with a motif drawn from what the page shows at its end
-   (BannerMotif.tsx, BannerMotifs.css). No shadows. The banner's width, which the home page's hero
-   shares, is in Shell.css. */
+   its end: the envUI mark's circle and pill (BannerShapes.tsx). A page of the Docs, the developer
+   reference, is on the page's own color inside an edge, its shapes drawn as outlines, as on a plan;
+   a page of the catalogue is on a fill, its shapes filled, or, on the few pages with one, a motif
+   drawn from what the page shows (BannerMotif.tsx, BannerMotifs.css). No shadows. The banner's
+   width, which the home page's hero shares, is in Shell.css. */
 .docs-banner > :not(.docs-banner-shapes, .docs-banner-motif) {
   position: relative;
   z-index: var(--env-z-raised);
@@ -50,6 +50,14 @@
 .docs-banner[data-banner='catalogue'] {
   border: 0;
   background: var(--env-color-bg-default);
+}
+
+/* The catalogue's shapes: filled in the muted fill, a step from the banner's, with no edge. They
+   sit behind the text only where the banner is narrow, and the text keeps its contrast on them
+   (`muted` in tests/contrast/Pairs.ts). */
+.docs-banner[data-banner='catalogue'] .docs-banner-shape {
+  border: 0;
+  background: var(--env-color-bg-muted);
 }
 
 /* The shapes' layer covers the banner and is a container of its size. */

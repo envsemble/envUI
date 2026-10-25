@@ -2,14 +2,14 @@ import type { ReactNode } from 'react';
 import { Breadcrumbs, Card, Column, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
 import type { TrailStep } from '../navigation/DocumentationRoutes';
-import { BannerMotif, type BannerSubject } from './BannerMotif';
+import { BannerMotif, motifOf } from './BannerMotif';
 import { BannerShapes } from './BannerShapes';
 
 /**
- * The kinds of banner, each read from the start like a document, under its breadcrumbs
- * (Banners.css): a page's of the catalogue, on a fill, with a motif drawn from what the page shows
- * at its end (BannerMotif.tsx); and a page's of the Docs, the developer reference, on the page's
- * color inside an edge, the envUI mark's shapes drawn as outlines at its end.
+ * The kinds of banner, each read from the start like a document, under its breadcrumbs, the envUI
+ * mark's shapes at its end (Banners.css): a page's of the catalogue on a fill, its shapes filled,
+ * or for the few with one a motif drawn from what the page shows (BannerMotif.tsx); and a page's
+ * of the Docs, the developer reference, on the page's color inside an edge, its shapes in outline.
  */
 export type BannerKind = 'catalogue' | 'docs-home' | 'docs';
 
@@ -20,7 +20,6 @@ export function PageHeader({
   trail,
   description,
   meta,
-  symbol,
   subject,
   logo,
   children,
@@ -38,17 +37,15 @@ export function PageHeader({
   description?: string;
   /** Facts about the page under its description, such as a component's status. */
   meta?: ReactNode;
-  /** The page's icon, which a catalogue banner's motif falls back to. */
-  symbol?: ReactNode;
-  /** What a catalogue page shows, which picks the motif at its banner's end. */
-  subject?: BannerSubject;
+  /** The id of what a catalogue page shows, which gives the few that have one their motif. */
+  subject?: string;
   /** Artwork shown as the title, such as a lockup; the title stays its accessible name. */
   logo?: ReactNode;
   children?: ReactNode;
   actions?: ReactNode;
   kind?: BannerKind;
 }) {
-  const docs = kind !== 'catalogue';
+  const motif = kind === 'catalogue' ? motifOf(subject) : undefined;
   return (
     <header className="docs-page-header">
       <Card
@@ -57,7 +54,7 @@ export function PageHeader({
         className="docs-page-banner docs-banner"
         data-banner={kind}
       >
-        {docs ? <BannerShapes /> : <BannerMotif subject={subject} symbol={symbol} />}
+        {motif ? <BannerMotif motif={motif} /> : <BannerShapes />}
         <Column gap={6} className="docs-page-banner-content">
           <div className="docs-page-banner-heading">
             <Column gap={3}>

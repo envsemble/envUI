@@ -1279,7 +1279,7 @@ test("the overview's hero says what envUI is, leads to the components and the Do
   );
 });
 
-test("a catalogue page's banner reads from the start under its breadcrumbs, its motif hidden and inert", async ({
+test("a catalogue page's banner reads from the start under its breadcrumbs, its picture hidden", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -1293,11 +1293,19 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   );
   await expect(trail.locator('[aria-current="page"]')).toHaveText('Slider');
   await expect(banner.locator('.docs-page-banner-content')).toHaveCSS('text-align', 'start');
-  // The motif is drawn from the page's subject, out of the accessibility tree and the tab order.
-  const motif = banner.locator('.docs-banner-motif');
+  // Its picture is the envUI mark's shapes, filled, out of the accessibility tree.
+  const shapes = banner.locator('.docs-banner-shapes');
+  await expect(shapes).toHaveAttribute('aria-hidden', 'true');
+  await expect(shapes.locator('.docs-banner-shape').first()).toHaveCSS('border-top-width', '0px');
+  await expect(banner.locator('.docs-banner-motif')).toHaveCount(0);
+  // The few pages with a motif of their own, such as Colors & themes, draw it out of the
+  // accessibility tree and the tab order.
+  await page.goto(`${catalogueUrl}/foundations/colors`);
+  const motif = page.locator('.docs-page-banner .docs-banner-motif');
   await expect(motif).toHaveAttribute('aria-hidden', 'true');
   await expect(motif).toHaveAttribute('inert', '');
-  await expect(motif.locator('[data-motif="tracks"]')).toHaveAttribute('data-variant', 'thumbs');
+  await expect(motif.locator('[data-motif="swatches"] .docs-motif-swatch')).toHaveCount(6);
+  await expect(page.locator('.docs-page-banner .docs-banner-shapes')).toHaveCount(0);
 });
 
 test("the Docs' home gives a prompt to copy that sets envUI up through the skill the site serves", async ({

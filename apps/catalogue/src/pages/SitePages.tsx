@@ -1,11 +1,8 @@
 import { Column } from '@envsemble/envui';
-import { Widgets } from '@envsemble/envui/icons/Widgets';
-import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { PageHeader } from '../layout/PageHeader';
 import { catalogueTrail } from '../navigation/CatalogueTrail';
 import type { RoutePage } from '../navigation/DocumentationRoutes';
 import { OtherPartButton } from '../navigation/OtherPart';
-import { getPatternIcon, getReferenceIcon } from '../navigation/TopicIcons';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import type { Reference } from '../Reference';
 import { Catalogue } from './Catalogue';
@@ -20,17 +17,13 @@ import { Documentation } from './Documentation';
 export function ComponentPage({ page }: { page: RoutePage }) {
   const document = page.document!;
   const reference = document as Reference;
-  const Icon = getReferenceIcon(reference.id, reference.group);
   return (
     <>
       <PageHeader
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        subject={{ id: reference.id, group: reference.group }}
-        // The icon is looked up among module-level components, not created here.
-        // eslint-disable-next-line react-hooks/static-components
-        symbol={<Icon />}
+        subject={reference.id}
         meta={
           document.metadata && (
             <MetadataBadges metadata={document.metadata} plain>
@@ -50,16 +43,13 @@ export function ComponentPage({ page }: { page: RoutePage }) {
  */
 export function PatternPage({ page }: { page: RoutePage }) {
   const document = page.document!;
-  const Icon = getPatternIcon(document.id);
   return (
     <>
       <PageHeader
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        subject={{ id: document.id, group: 'Patterns' }}
-        // eslint-disable-next-line react-hooks/static-components
-        symbol={<Icon />}
+        subject={document.id}
         meta={
           document.metadata && (
             <MetadataBadges metadata={document.metadata} plain>
@@ -90,16 +80,13 @@ const iconsCredit = [
  */
 export function FoundationPage({ page }: { page: RoutePage }) {
   const reference = page.document as Reference;
-  const Icon = getReferenceIcon(reference.id, reference.group);
   return (
     <>
       <PageHeader
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        subject={{ id: reference.id, group: 'Foundations' }}
-        // eslint-disable-next-line react-hooks/static-components
-        symbol={<Icon />}
+        subject={reference.id}
         meta={<OtherPartButton page={page} />}
       />
       {/* A foundation is its Markdown, with its figures in place. */}
@@ -121,8 +108,7 @@ export function ComponentsPage({ page }: { page: RoutePage }) {
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        symbol={<Widgets />}
-        subject={{ id: 'components' }}
+        subject="components"
       />
       <Column gap={7} className="docs-article docs-overview">
         <Catalogue />
@@ -139,8 +125,7 @@ export function PatternsPage({ page }: { page: RoutePage }) {
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        symbol={<Pattern />}
-        subject={{ id: 'patterns' }}
+        subject="patterns"
       />
       <Column gap={7} className="docs-article docs-overview">
         <PatternCatalogue />
