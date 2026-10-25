@@ -184,13 +184,14 @@ body {
   flex-direction: column;
   min-block-size: 100%;
 }
-/* The page, and in the Docs its contents beside it: a column at the page's end, as wide as a short
-   heading, on a pane wide enough for it beside a readable page; the page's banner and sections
+/* The page, and in the Docs its contents beside it: a column at the page's end, as wide as its
+   longest label needs, so each section stays on one line, from 13rem up to 22rem, on a pane wide
+   enough for it beside a readable page; the page's banner and sections
    take the rest. The contents stay in view below the corner's controls as the page scrolls, and
    scroll on their own where they are taller than the window. A narrower pane leaves them out, as
    the page's own headings say as much. The pager stays at the foot of a short page. */
 .docs-page-layout {
-  --docs-contents-width: 15rem;
+  --docs-contents-width: 22rem;
   /* Below the corner's controls: their row's padding and the pill's height, with room. */
   --docs-contents-top: 4.5rem;
   container: docs-page-layout / inline-size;
@@ -215,12 +216,15 @@ body {
 @container docs-page-layout (width >= 56rem) {
   .docs-page-grid[data-contents] {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--docs-contents-width);
+    grid-template-columns: minmax(0, 1fr) auto;
     inline-size: min(100%, var(--docs-content-width) + var(--docs-contents-width));
     margin-inline: auto;
   }
   .docs-page-grid[data-contents] > .docs-contents {
     display: block;
+    inline-size: max-content;
+    min-inline-size: 13rem;
+    max-inline-size: var(--docs-contents-width);
     padding-inline-end: var(--docs-gutter);
   }
 }

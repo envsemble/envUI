@@ -59,6 +59,14 @@ A section need not be a heading: name any part of the page, such as a card or a 
 
 ```
 
+```tsx do=OneLineLabels caption="Each section on one line: give the column the room its labels need, and keep headings short."
+
+```
+
+```tsx dont=WrappingLabels caption="Labels squeezed onto two lines: the column reads as a wall of text, and the place is hard to follow."
+
+```
+
 ### Beside the content
 
 Place it in a column beside the content, at the top and staying in view as the page scrolls. Leave it out where the page is too narrow for the column, or has fewer than three sections.
