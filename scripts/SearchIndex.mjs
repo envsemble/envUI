@@ -62,13 +62,6 @@ export const standalonePages = [
     area: 'catalogue',
     aliases: ['all patterns', 'pattern list', 'pattern gallery'],
   },
-  // Dev mode's page in the catalogue, beside its guide in the Docs, the document dev-mode.
-  {
-    page: 'dev-mode-overview',
-    title: 'Dev mode',
-    area: 'catalogue',
-    aliases: ['dev mode', 'layout inspector', '3D view', 'check a layout'],
-  },
   {
     page: 'docs',
     title: 'Docs',

@@ -25,6 +25,7 @@ import {
   normalizeRoute,
   otherPartRoute,
   pagesOf,
+  routeOfDocument,
   sectionHome,
   catalogueSections,
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
@@ -89,6 +90,9 @@ test('the addresses of the views before the catalogue and the Docs split open th
     // The catalogue's changelog is the Docs' now, with its release notes.
     changelog: 'docs/changelog',
     'changelog?section=release-0-7-0': 'docs/changelog?section=release-0-7-0',
+    // Dev mode's page in the catalogue folded into its guide in the Docs.
+    'dev-mode': 'docs/dev-mode',
+    'dev-mode?section=opening-it': 'docs/dev-mode?section=opening-it',
     // Pages folded into another open it, at the section that holds them, and in the Docs its page.
     'components/bar': 'components/drawer',
     'components/rail/props': 'docs/components/drawer',
@@ -113,6 +117,8 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'docs/foundations/content': 'docs/writing',
   };
   for (const [from, to] of Object.entries(routes)) expect(normalizeRoute(from), from).toBe(to);
+  // A link to dev mode's page in the catalogue opens its guide in the Docs.
+  expect(routeOfDocument('dev-mode-overview')).toBe('docs/dev-mode');
   // Every page of both areas is its own route.
   for (const { path } of allPages) expect(normalizeRoute(path)).toBe(path);
 });
@@ -122,7 +128,7 @@ test("each page of a subject leads to its page in the other part, and a page wit
     pagesOf('catalogue').filter(({ kind }) => kinds.includes(kind));
   // Every component, pattern and foundation in the catalogue has its page in the Docs, which
   // leads back to it.
-  for (const page of paired(['component', 'pattern', 'foundation', 'dev-mode'])) {
+  for (const page of paired(['component', 'pattern', 'foundation'])) {
     const docs = counterpartOf(page);
     expect(docs, page.path).toBe(`docs/${page.path}`);
     expect(findPage(docs!)?.area, page.path).toBe('docs');
@@ -138,6 +144,8 @@ test("each page of a subject leads to its page in the other part, and a page wit
   for (const path of [
     'docs',
     'docs/setup',
+    // Dev mode is the Docs' alone: its page in the catalogue folded into its guide.
+    'docs/dev-mode',
     'docs/changelog',
     'docs/tokens',
     'docs/components/field',
@@ -560,9 +568,8 @@ const technicalOf = (words: string[]) =>
   words.flatMap((text) => technicalText(text).map((found) => `${found.kind}: ${found.text}`));
 
 /**
- * The pages that show no technical text at all: every foundation, dev mode's page and every
- * pattern. Every other page of the catalogue is reported until it is rewritten to the same rule,
- * then joins this list.
+ * The pages that show no technical text at all: every foundation and every pattern. Every other
+ * page of the catalogue is reported until it is rewritten to the same rule, then joins this list.
  */
 const plainPages = [
   'foundations/colors',
@@ -571,8 +578,6 @@ const plainPages = [
   'foundations/responsive',
   'foundations/icons',
   'foundations/accessibility',
-  // Dev mode's page, written as a foundation's is, with its guide in the Docs.
-  'dev-mode',
   // The patterns, each its decision and its compositions.
   ...[
     'forms',
@@ -602,8 +607,8 @@ test('the foundation and pattern pages show no technical text, in their words or
   await page.goto(`${catalogueUrl}/`);
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
-    if (path.startsWith('foundations/') || path === 'dev-mode') {
-      // A foundation's sections, from its Markdown; Dev mode's topics.
+    if (path.startsWith('foundations/')) {
+      // A foundation's sections, from its Markdown.
       await expect(page.locator('.docs-topic, .docs-figure-section').last()).toBeVisible();
       // The marks of a figure are measured once it has laid out.
       if (await page.locator('.docs-marked').count())

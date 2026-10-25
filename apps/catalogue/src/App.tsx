@@ -18,7 +18,6 @@ import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { PageFooter } from './layout/PageFooter';
 import { Overview } from './pages/Overview';
-import { DevModePage } from './pages/DevMode';
 import {
   ComponentPage,
   ComponentsPage,
@@ -65,7 +64,6 @@ const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => Rea
   component: ComponentPage,
   pattern: PatternPage,
   foundation: FoundationPage,
-  'dev-mode': DevModePage,
   'docs-home': DocsHome,
   guide: GuidePage,
   codemods: CodemodsPage,

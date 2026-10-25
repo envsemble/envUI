@@ -17,7 +17,7 @@ export type Area = 'catalogue' | 'docs';
 
 /**
  * The catalogue's destinations in its rail, in order; the drawer beside it lists their pages. Dev
- * mode is a page of the Overview, and the changelog is in the Docs.
+ * mode and the changelog are in the Docs.
  */
 export const catalogueSections = ['Overview', 'Foundations', 'Components', 'Patterns'] as const;
 export type CatalogueSection = (typeof catalogueSections)[number];
@@ -30,7 +30,6 @@ export type PageKind =
   | 'patterns'
   | 'pattern'
   | 'foundation'
-  | 'dev-mode'
   | 'docs-home'
   | 'guide'
   | 'codemods'
@@ -132,15 +131,6 @@ const cataloguePages: RoutePage[] = [
     area: 'catalogue',
     section: 'Overview',
     kind: 'home',
-  },
-  {
-    path: 'dev-mode',
-    title: 'Dev mode',
-    area: 'catalogue',
-    section: 'Overview',
-    kind: 'dev-mode',
-    summary:
-      'A view of a page taken apart, layer by layer, that shows how it is built and what is wrong with it.',
   },
   ...referencePages
     .filter(({ section }) => section === 'Foundations')
@@ -367,11 +357,9 @@ const docsRouteOf: Partial<Record<PageKind, (id: string) => string>> = {
 
 /**
  * The pages of one subject in the two parts, each the other's counterpart, by their paths: a
- * component's, pattern's or foundation's page in the catalogue and its page in the Docs, and dev
- * mode's page with its guide.
+ * component's, pattern's or foundation's page in the catalogue and its page in the Docs.
  */
 const pairs = [
-  ['dev-mode', 'docs/dev-mode'],
   ...cataloguePages.flatMap(({ path, kind, document }): [string, string][] => {
     const docs = document && docsRouteOf[kind];
     return docs ? [[path, docs(document.id)]] : [];
@@ -490,8 +478,8 @@ export function routeOfDocument(
     'get-started': 'docs/setup',
     components: 'components',
     patterns: 'patterns',
-    // Dev mode's page in the catalogue; its guide in the Docs is the document dev-mode.
-    'dev-mode-overview': 'dev-mode',
+    // Dev mode's page in the catalogue, folded into its guide in the Docs.
+    'dev-mode-overview': 'docs/dev-mode',
     changelog: 'docs/changelog',
     tokens: 'docs/tokens',
     codemods: 'docs/codemods',
@@ -595,6 +583,8 @@ export function normalizeRoute(route: string): string {
   if (originalPath === 'benchmark') return `${homeRoute}${rest()}`;
   // The catalogue's changelog moved to the Docs, with its release notes.
   if (originalPath === 'changelog') return `docs/changelog${rest()}`;
+  // Dev mode's page in the catalogue folded into its guide in the Docs, which shows its pictures.
+  if (originalPath === 'dev-mode') return `docs/dev-mode${rest()}`;
   // A destination's own address opens its first page.
   if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
   // What every pattern needs was one page in the Docs; each pattern's guide says it now, and the

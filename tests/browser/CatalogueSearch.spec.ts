@@ -231,15 +231,7 @@ test.describe('hosted build', () => {
       .getByRole('link', { name: 'Catalogue', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
-    // Dev mode is a page of the Overview, beside its introduction.
     await rail.getByRole('link', { name: 'Overview', exact: true }).click();
-    await page
-      .getByRole('navigation', { name: 'Overview' })
-      .getByRole('link', { name: 'Dev mode', exact: true })
-      .click();
-    await expect(page).toHaveURL(`${siteUrl}/dev-mode`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dev mode');
-    await page.goBack();
     await expect(page).toHaveURL(`${siteUrl}/`);
     await page.goBack();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
