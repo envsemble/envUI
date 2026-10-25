@@ -26,33 +26,29 @@ avoidWhen:
     use: Alert
 components:
   - ConfirmDialog
+examples:
+  DeleteProject: overview
+  ArchiveProject:
+    role: example
+    caption: The neutral tone, for archiving.
+  ConfirmDialogAnatomy: anatomy
+  AsyncWithError: example
+  FromMenu: example
+  DangerForDelete:
+    role: do
+    caption: The danger tone for an action that deletes.
+  NeutralForDelete:
+    role: dont
+    caption: 'A neutral deletion: focus starts on Delete, so a hurried Enter deletes.'
+  NameTheConsequence:
+    role: do
+    caption: Buttons that name what each choice does.
+  YesNo:
+    role: dont
+    caption: 'Yes and No: people read the question again to choose.'
 ---
 
 # ConfirmDialog
-
-## Overview
-
-A press outside doesn't close a ConfirmDialog.
-
-```tsx example=DeleteProject
-
-```
-
-### An action that can fail
-
-The dialog waits for its action, showing that it is working, and stays open with the error when the action fails, so people can try again.
-
-```tsx example=AsyncWithError
-
-```
-
-### From a menu
-
-A menu item can open the dialog, and focus returns to the menu's button when it closes.
-
-```tsx example=FromMenu
-
-```
 
 ## Variants
 
@@ -61,35 +57,13 @@ A menu item can open the dialog, and focus returns to the menu's button when it 
 | Neutral | An action people can get back from, such as archiving. The default. |
 | Danger  | An action that deletes or ends something.                           |
 
-```tsx example=ArchiveProject caption="The neutral tone, for archiving."
-
-```
-
-## When to use
-
-```tsx do=DangerForDelete open caption="The danger tone for an action that deletes."
-
-```
-
-```tsx dont=NeutralForDelete open caption="A neutral deletion: focus starts on Delete, so a hurried Enter deletes."
-
-```
-
-### Content
-
-Ask the question in the title, and name the consequence on the confirm button.
-
-```tsx do=NameTheConsequence open caption="Buttons that name what each choice does."
-
-```
-
-```tsx dont=YesNo open caption="Yes and No: people read the question again to choose."
+```tsx figure=ArchiveProject
 
 ```
 
 ## Anatomy
 
-```tsx anatomy=ConfirmDialogAnatomy open
+```tsx figure=ConfirmDialogAnatomy open
 
 ```
 
@@ -100,6 +74,54 @@ Ask the question in the title, and name the consequence on the confirm button.
 5. **Confirm** (`env-dialog-actions > env-button:last-child`, `confirmLabel`)
 
 Not shown: the error of a failed action, above the buttons.
+
+## Behaviour
+
+### Closing
+
+A press outside doesn't close a ConfirmDialog.
+
+### An action that can fail
+
+The dialog waits for its action, showing that it is working.
+
+- When the action fails, it stays open with the error, so people can try again.
+
+```tsx figure=AsyncWithError
+
+```
+
+### From a menu
+
+A menu item can open the dialog, and focus returns to the menu's button when it closes.
+
+```tsx figure=FromMenu
+
+```
+
+## Rules
+
+Match the tone to the consequence, and let the buttons say what each choice does.
+
+```tsx figure=DangerForDelete open
+
+```
+
+```tsx figure=NeutralForDelete open
+
+```
+
+### Content
+
+Ask the question in the title, and name the consequence on the confirm button.
+
+```tsx figure=NameTheConsequence open
+
+```
+
+```tsx figure=YesNo open
+
+```
 
 ## Accessibility
 
@@ -122,11 +144,15 @@ Not shown: the error of a failed action, above the buttons.
 - A `title` that asks the question, and a `confirmLabel` that names the consequence.
 - `finalFocus` where the trigger is gone or something other than `trigger` opened the dialog.
 
-## In code
+## Compose
 
 ### Usage
 
-A ConfirmDialog opens from its `trigger`, such as a Button. Its `title` asks the question, such as “Delete Northwind launch?”, its `description` says what confirming does and whether it can be undone, and `confirmLabel` names the consequence, such as Delete project. `cancelLabel` is Cancel by default, from EnvUIProvider's `messages.confirmDialog.cancel`. `children` holds more content between the heading and the actions, such as the one field a confirmation holds, where <kbd>Enter</kbd> confirms. A press outside doesn't close it.
+A ConfirmDialog opens from its `trigger`, such as a Button. Its `title` asks the question, such as “Delete Northwind launch?”, its `description` says what confirming does and whether it can be undone, and `confirmLabel` names the consequence, such as Delete project.
+
+- `cancelLabel` is Cancel by default, from EnvUIProvider's `messages.confirmDialog.cancel`.
+- `children` holds more content between the heading and the actions, such as the one field a confirmation holds, where <kbd>Enter</kbd> confirms.
+- A press outside doesn't close it.
 
 ```tsx source=DeleteProject
 
@@ -149,21 +175,44 @@ A ConfirmDialog opens from its `trigger`, such as a Button. Its `title` asks the
 
 #### An action that can fail
 
-`onConfirm` runs the action, once per opening: further presses, such as a double-click's second, are ignored until it fails. The dialog closes when it returns; when it returns a promise, the confirm button is pending, with `aria-busy`, nothing dismisses the dialog, and it closes once the promise resolves. A rejected promise or a thrown error keeps it open and goes to `reportError`; show what went wrong with `error`, a danger Alert above the actions that is announced. The dialog is a form, so hold no form of your own in it; use Dialog for one.
+`onConfirm` runs the action, once per opening: further presses, such as a double-click's second, are ignored until it fails.
 
-```tsx source=AsyncWithError
+- The dialog closes when it returns; when it returns a promise, the confirm button is pending, with `aria-busy`, nothing dismisses the dialog, and it closes once the promise resolves.
+- A rejected promise or a thrown error keeps it open and goes to `reportError`; show what went wrong with `error`, a danger Alert above the actions that is announced.
+- The dialog is a form, so hold no form of your own in it; use Dialog for one.
 
+```tsx
+<ConfirmDialog
+  trigger={<Button variant="secondary">Archive project</Button>}
+  title="Archive Northwind launch?"
+  confirmLabel="Archive project"
+  error={error || undefined}
+  onConfirm={() => {
+    setError('');
+    return archive(); // A promise; a rejected one keeps the dialog open.
+  }}
+/>
 ```
 
 #### From a menu
 
 Without a `trigger`, open it with `open` and `onOpenChange`, which receives the requested state and why: from the trigger, <kbd>Esc</kbd>, Cancel or after `onConfirm` finishes. `defaultOpen` opens an uncontrolled one on the first render. `finalFocus` sets where focus goes on closing, such as the menu's button, since the menu item is gone; by default it returns to the trigger.
 
-```tsx source=FromMenu
+```tsx
+<Menu.Item onClick={() => setOpen(true)}>Delete project…</Menu.Item>
 
+<ConfirmDialog
+  open={open}
+  onOpenChange={setOpen}
+  finalFocus={menuButton}
+  tone="danger"
+  title="Delete Northwind launch?"
+  confirmLabel="Delete project"
+  onConfirm={deleteProject}
+/>
 ```
 
-### Composition
+### Customize
 
 A ConfirmDialog is an alert dialog with Dialog's parts: the surface, `env-dialog-popup`, the question, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, with Cancel first and the confirm button last. The error is an Alert, `env-alert`, above the actions.
 

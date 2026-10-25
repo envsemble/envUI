@@ -33,33 +33,32 @@ avoidWhen:
 components:
   - Dialog
   - DialogClose
+examples:
+  ProjectDetails: overview
+  FindPlan:
+    role: example
+    caption: 'Near the top: the field stays put as the results grow.'
+  ReviewChanges:
+    role: example
+    caption: A large dialog, for a table of changes.
+  DialogAnatomy: anatomy
+  RenameProject: example
+  UnsavedChanges: example
+  CancelAsCloseLabel:
+    role: do
+    caption: The built-in button named Cancel, for a decision.
+  ExtraCancelButton:
+    role: dont
+    caption: A Cancel of your own beside the built-in Close.
+  InviteMember:
+    role: do
+    caption: A field's error on the field.
+  ErrorInSecondDialog:
+    role: dont
+    caption: An error in a second dialog over the first.
 ---
 
 # Dialog
-
-## Overview
-
-A dialog's actions end with the primary one, after a built-in close button.
-
-```tsx example=ProjectDetails
-
-```
-
-### Pending work
-
-While its work runs, nothing closes the dialog and its close button is disabled. Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.
-
-```tsx example=RenameProject
-
-```
-
-### More actions that close
-
-Other buttons can close the dialog after doing their own work, such as Don’t save.
-
-```tsx example=UnsavedChanges
-
-```
 
 ## Variants
 
@@ -70,7 +69,7 @@ Other buttons can close the dialog after doing their own work, such as Don’t s
 | Centered     | Confirmations, short forms and details. The default.           |
 | Near the top | Search-like tasks, whose results grow down from a fixed field. |
 
-```tsx example=FindPlan caption="Near the top: the field stays put as the results grow."
+```tsx figure=FindPlan
 
 ```
 
@@ -83,31 +82,13 @@ Both narrow to fit the window.
 | Medium | Most dialogs. The default.            |
 | Large  | Tables, comparisons and longer forms. |
 
-```tsx example=ReviewChanges caption="A large dialog, for a table of changes."
-
-```
-
-## When to use
-
-```tsx do=CancelAsCloseLabel open caption="The built-in button named Cancel, for a decision."
-
-```
-
-```tsx dont=ExtraCancelButton open caption="A Cancel of your own beside the built-in Close."
-
-```
-
-```tsx do=InviteMember open caption="A field's error on the field."
-
-```
-
-```tsx dont=ErrorInSecondDialog open caption="An error in a second dialog over the first."
+```tsx figure=ReviewChanges
 
 ```
 
 ## Anatomy
 
-```tsx anatomy=DialogAnatomy open
+```tsx figure=DialogAnatomy open
 
 ```
 
@@ -119,6 +100,50 @@ Both narrow to fit the window.
 6. **Action** (`env-dialog-actions > env-button:last-child`, `actions`)
 
 Not shown: the scrim behind a modal dialog.
+
+## Behaviour
+
+### Actions
+
+A dialog's actions end with the primary one, after a built-in close button.
+
+### Pending work
+
+While its work runs, nothing closes the dialog and its close button is disabled.
+
+- Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.
+
+```tsx figure=RenameProject
+
+```
+
+### More actions that close
+
+Other buttons can close the dialog after doing their own work, such as Don’t save.
+
+```tsx figure=UnsavedChanges
+
+```
+
+## Rules
+
+One task per dialog, closed by its built-in button.
+
+```tsx figure=CancelAsCloseLabel open
+
+```
+
+```tsx figure=ExtraCancelButton open
+
+```
+
+```tsx figure=InviteMember open
+
+```
+
+```tsx figure=ErrorInSecondDialog open
+
+```
 
 ## Accessibility
 
@@ -143,11 +168,15 @@ Not shown: the scrim behind a modal dialog.
 - `closeLabel` in the page's language, such as Cancel.
 - `finalFocus` where the trigger is gone, or something other than `trigger` opened the dialog.
 
-## In code
+## Compose
 
 ### Usage
 
-A Dialog opens from its `trigger`, such as a Button, and holds its `title`, which names it, a `description`, its content as `children`, and its own `actions`, after the built-in close button, with the primary action last. `closeLabel` names the close button, Close by default from EnvUIProvider's `messages.dialog.close`, or Cancel for a decision. Leave it uncontrolled, or control it with `open` and `onOpenChange`, which receives the requested state and why: the trigger, <kbd>Esc</kbd>, an outside press, the close button or a DialogClose. `defaultOpen` opens it on the first render.
+A Dialog opens from its `trigger`, such as a Button, and holds its `title`, which names it, a `description`, its content as `children`, and its own `actions`, after the built-in close button, with the primary action last.
+
+- `closeLabel` names the close button, Close by default from EnvUIProvider's `messages.dialog.close`, or Cancel for a decision.
+- Leave it uncontrolled, or control it with `open` and `onOpenChange`, which receives the requested state and why: the trigger, <kbd>Esc</kbd>, an outside press, the close button or a DialogClose.
+- `defaultOpen` opens it on the first render.
 
 ```tsx source=ProjectDetails
 
@@ -157,16 +186,40 @@ A Dialog opens from its `trigger`, such as a Button, and holds its `title`, whic
 
 `pending` keeps <kbd>Esc</kbd>, outside presses and the close buttons from dismissing the dialog until it returns to `false`, and disables the built-in close button. Put a `<form>` in `children` and make the primary action its submit button, through the `form` attribute, so <kbd>Enter</kbd> in a field submits it too.
 
-```tsx source=RenameProject
-
+```tsx
+<Dialog
+  title="Rename project"
+  closeLabel="Cancel"
+  pending={saving}
+  actions={
+    <Button type="submit" form={formId} pending={saving}>
+      Save name
+    </Button>
+  }
+>
+  <form id={formId} onSubmit={save}>
+    <TextField label="Project name" readOnly={saving} />
+  </form>
+</Dialog>
 ```
 
 #### More actions that close
 
 An action closes the dialog only where it is a DialogClose, a Button that closes it after its own `onClick`, or where it sets `open` to `false`. DialogClose takes Button's props and is `secondary` by default.
 
-```tsx source=UnsavedChanges
-
+```tsx
+<Dialog
+  title="Save changes to Launch plan?"
+  closeLabel="Cancel"
+  actions={
+    <>
+      <DialogClose onClick={discard}>Don’t save</DialogClose>
+      <DialogClose variant="primary" onClick={save}>
+        Save
+      </DialogClose>
+    </>
+  }
+/>
 ```
 
 #### Placement, width and modal
@@ -185,7 +238,11 @@ An action closes the dialog only where it is a DialogClose, a Button that closes
 
 ### Composition
 
-The parts are the surface, `env-dialog-popup`, its heading, `env-dialog-heading`, with the title, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, which start with the close button. The scrim behind a modal dialog is `env-dialog-backdrop`. Keep one task per dialog: show a field's error on the field rather than in a second dialog over the first.
+Keep one task per dialog: show a field's error on the field rather than in a second dialog over the first.
+
+### Customize
+
+The parts are the surface, `env-dialog-popup`, its heading, `env-dialog-heading`, with the title, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, which start with the close button. The scrim behind a modal dialog is `env-dialog-backdrop`.
 
 ## Changelog
 

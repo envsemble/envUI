@@ -4,11 +4,7 @@ export default function DocumentPreview() {
   return (
     <Text>
       The launch depends on the{' '}
-      <HoverCard
-        // Shown open in the docs; without defaultOpen, it opens on hover and focus.
-        defaultOpen
-        trigger={<Link href="/documents/roadmap">roadmap</Link>}
-      >
+      <HoverCard trigger={<Link href="/documents/roadmap">roadmap</Link>}>
         <Column gap={2}>
           <Text render={<strong />} variant="title">
             Roadmap
