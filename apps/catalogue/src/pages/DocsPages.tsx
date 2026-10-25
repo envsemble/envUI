@@ -240,6 +240,20 @@ export function FoundationGuidePage({ page }: { page: SitePage }) {
   );
 }
 
+/**
+ * The values a state attribute takes: each as code, except the empty value of an attribute set
+ * without one, which reads as Present; with no values listed, any value or presence alone selects it.
+ */
+function StateValues({ values }: { values: readonly string[] }) {
+  if (!values.length) return <>Any value, or present</>;
+  return values.map((value, index) => (
+    <span key={value}>
+      {index > 0 && ' · '}
+      {value === '' ? 'Present' : <Code>{value}</Code>}
+    </span>
+  ));
+}
+
 /** The part names and state attributes of the exports a page documents, as simple lists. */
 function PartNames({ components }: { components: readonly string[] }) {
   const entries = components.flatMap((name) => {
@@ -271,17 +285,12 @@ function PartNames({ components }: { components: readonly string[] }) {
             ))}
             {parts.states.map((state) => (
               <DescriptionList.Item key={state.attribute} label={<Code>{state.attribute}</Code>}>
-                {state.values.length
-                  ? state.values.map((value, index) => (
-                      <span key={value}>
-                        {index > 0 && ' · '}
-                        <Code>{value}</Code>
-                      </span>
-                    ))
-                  : 'Present or absent'}
-                {state.parts.length > 1 || state.parts[0] !== parts.root
-                  ? ` on ${state.parts.join(', ')}`
-                  : ''}
+                <StateValues values={state.values} />
+                {state.parts.length > 1 || state.parts[0] !== parts.root ? (
+                  <Text render={<span />} emphasis="muted">
+                    {` on ${state.parts.join(', ')}`}
+                  </Text>
+                ) : null}
               </DescriptionList.Item>
             ))}
           </DescriptionList.Root>
