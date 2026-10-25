@@ -43,29 +43,29 @@ const shots = {
   toolbar: {
     light: toolbarLight,
     dark: toolbarDark,
-    width: 644,
-    height: 52,
-    alt: "Dev mode's toolbar: buttons to turn the view, fit it, show names and spacing, pick a size and a theme, and close dev mode.",
+    width: 304,
+    height: 189,
+    alt: "Dev mode's toolbar of four dropdowns, the first open: the view's angles laid out as they look at the page, Top above Front, Left and Right beside it, Tilted in the top right corner, and Fit below them.",
   },
   inspector: {
     light: inspectorLight,
     dark: inspectorDark,
-    width: 336,
-    height: 322,
+    width: 352,
+    height: 329,
     alt: 'The details of a selected card: what it is, its size and window class, and its one problem in red, a sentence saying its text is squeezed and how to give it room.',
   },
   spacing: {
     light: spacingLight,
     dark: spacingDark,
-    width: 332,
-    height: 312,
+    width: 318,
+    height: 299,
     alt: 'One card alone, close up and tilted: the padding around its content and the gaps between its parts are hatched.',
   },
   problems: {
     light: problemsLight,
     dark: problemsDark,
-    width: 240,
-    height: 702,
+    width: 256,
+    height: 698,
     alt: 'The list of the boxes of a page, headed by six problems: each card and its header is marked with one.',
   },
   frame: {
@@ -166,7 +166,7 @@ export function DevModePage({ page }: { page: SitePage }) {
             <Block
               stacked
               title="A toolbar over the view"
-              text="Look at the page tilted, straight on, from the top or from a side, show the boxes' names and their spacing, lay the page out at another size, and show dev mode light or dark."
+              text="Four dropdowns, each named as you point at it: look at the page tilted, from the front, the top or a side, choose what the layers show, and lay the page out at a phone's or a tablet's size."
             >
               <ShotFigure shot={shots.toolbar} label="Dev mode's toolbar" />
             </Block>
@@ -208,9 +208,9 @@ export function DevModePage({ page }: { page: SitePage }) {
               title="Press the dev mode button"
               text={
                 <>
-                  The round button in the bottom corner of the page opens dev mode, and so does{' '}
-                  <Kbd keys={['Alt', 'Shift', 'D']} />. Press <Kbd>Esc</Kbd>, or the button again,
-                  to close it.
+                  The round button in the bottom corner of the page opens dev mode in a new tab, and
+                  so does <Kbd keys={['Alt', 'Shift', 'D']} />. The page you were on stays as it
+                  was; close the tab when you are done.
                 </>
               }
             >

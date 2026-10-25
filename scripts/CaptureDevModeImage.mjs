@@ -6,7 +6,7 @@
 // - 3d: the Docs' dev mode page's picture, the view's planes alone, with the node tree, the
 //   inspector, the toolbar and the legend out of the picture, cropped to the planes;
 // - the Site's dev mode page's pictures of dev mode at work: whole, the whole of it with a card
-//   selected; toolbar, the view's toolbar; spacing, a card alone, its padding and gaps hatched;
+//   selected; toolbar, the view's toolbar with its View dropdown open; spacing, a card alone, its padding and gaps hatched;
 //   problems, the node tree on a phone, its problems counted; inspector, the selected card's details
 //   with its problem, down to where its tokens start; frame, the page on a phone, straight on.
 //
@@ -98,6 +98,22 @@ async function openDevMode(browser, theme, viewport) {
   return { context, tab };
 }
 
+/** Picks an angle, or Fit, in the toolbar's View dropdown. */
+async function turnTo(tab, name) {
+  await tab.getByRole('button', { name: 'View', exact: true }).click();
+  await tab
+    .getByRole('dialog', { name: 'View' })
+    .getByRole('button', { name, exact: true })
+    .click();
+}
+
+/** Turns a check item of the toolbar's Show dropdown on or off, and closes the dropdown. */
+async function show(tab, name) {
+  await tab.getByRole('button', { name: 'Show', exact: true }).click();
+  await tab.getByRole('menuitemcheckbox', { name: new RegExp(`^${name}`) }).click();
+  await tab.keyboard.press('Escape');
+}
+
 /** Waits for the view to settle after a change, with the pointer out of the way. */
 async function settle(tab) {
   await tab.mouse.move(0, 0);
@@ -107,21 +123,19 @@ async function settle(tab) {
 /** Dev mode's 3D view of the demo application alone, as the Docs' dev mode page shows it. */
 async function captureView(browser, theme) {
   const { context, tab } = await openDevMode(browser, theme, { width: 1600, height: 1000 });
-  // The node tree and the inspector are closed, so the view takes the whole window.
-  for (const panel of ['Nodes', 'Inspector']) {
-    const toggle = tab.getByRole('button', { name: panel, exact: true });
-    if ((await toggle.getAttribute('aria-pressed')) === 'true') await toggle.click();
-  }
+  // The node tree and the inspector are hidden, so the view takes the whole window.
+  await tab.getByRole('button', { name: 'Hide the nodes' }).click();
+  await tab.getByRole('button', { name: 'Hide the inspector' }).click();
   await tab.locator('.env-dev-sidebar').first().waitFor({ state: 'detached' });
   // The whole application in view, its levels pulled further apart than by default.
-  await tab.getByRole('button', { name: 'Fit', exact: true }).click();
+  await turnTo(tab, 'Fit');
   await tab.getByRole('button', { name: 'View settings', exact: true }).click();
   const spacing = tab.getByRole('slider', { name: 'Spacing between levels' });
   await spacing.focus();
   for (let step = 0; step < 24; step++) await tab.keyboard.press('ArrowRight');
   await tab.keyboard.press('Escape');
-  await tab.getByRole('button', { name: 'Fit', exact: true }).click();
-  // The view's floating toolbar, its legend and the card under the pointer stay out of the
+  await turnTo(tab, 'Fit');
+  // The view's floating toolbar and corner buttons, its legend and the card under the pointer stay out of the
   // picture; the view keeps its size.
   await tab.addStyleTag({
     content:
@@ -145,7 +159,6 @@ async function captureView(browser, theme) {
 /** Dev mode at work on the demo application, in the pictures the Site's dev mode page shows. */
 async function captureAtWork(browser, theme) {
   const { context, tab } = await openDevMode(browser, theme, window);
-  const toolbar = (name) => tab.getByRole('button', { name, exact: true });
   const card = tab.getByRole('treeitem', { name: /^column "env-card"/ }).first();
   // Clicking the selected node again would clear the selection.
   const select = async () => {
@@ -154,27 +167,41 @@ async function captureAtWork(browser, theme) {
 
   // The whole of dev mode, a card selected: the tree, the view and the inspector.
   await select();
-  await toolbar('Fit').click();
+  await turnTo(tab, 'Fit');
   await settle(tab);
   await save(tab, await tab.screenshot(), 'whole', theme);
 
-  // The view's toolbar.
-  const bar = await tab.locator('.env-dev-float').boundingBox();
+  // The view's toolbar, its View dropdown open on the angles.
+  await tab.getByRole('button', { name: 'View', exact: true }).click();
+  const angles = tab.getByRole('dialog', { name: 'View' });
+  await angles.waitFor();
+  await tab.mouse.move(0, 0);
+  await tab.waitForTimeout(400);
+  const bar = await tab.locator('.env-dev-toolbar').boundingBox();
+  const dropdown = await angles.boundingBox();
+  const barLeft = Math.min(bar.x, dropdown.x) - 12;
+  const barRight = Math.max(bar.x + bar.width, dropdown.x + dropdown.width) + 12;
   await save(
     tab,
     await tab.screenshot({
       clip: inside(
-        { x: bar.x - 8, y: bar.y - 8, width: bar.width + 16, height: bar.height + 16 },
+        {
+          x: barLeft,
+          y: bar.y - 8,
+          width: barRight - barLeft,
+          height: dropdown.y + dropdown.height + 12 - bar.y + 8,
+        },
         window,
       ),
     }),
     'toolbar',
     theme,
   );
+  await tab.keyboard.press('Escape');
 
   // The card alone, close up, its padding and gaps hatched.
-  await toolbar('Only the selected').click();
-  await toolbar('Fit').click();
+  await show(tab, 'Only the selected');
+  await turnTo(tab, 'Fit');
   // Ctrl+wheel zooms toward the pointer, a tenth a step: the card about twice and a half as big.
   const alone = await planesBox(tab, 0);
   await tab.mouse.move(alone.x + alone.width / 2, alone.y + alone.height / 2);
@@ -188,17 +215,19 @@ async function captureAtWork(browser, theme) {
     'spacing',
     theme,
   );
-  await toolbar('Only the selected').click();
+  await show(tab, 'Only the selected');
 
   // The page on a phone: three columns of cards squeezed, their problems counted in the tree and
   // the selected card's problem in the inspector.
-  await toolbar('Device').click();
+  await tab.getByRole('button', { name: 'Responsive', exact: true }).click();
+  await tab.getByRole('menuitemcheckbox', { name: /^Responsive frame/ }).click();
+  await tab.getByRole('menuitem', { name: /^Device/ }).click();
   await tab
     .locator('[role=menuitemradio]')
     .filter({ hasText: /^iPhone 15393/ })
     .click();
   await select();
-  await toolbar('Fit').click();
+  await turnTo(tab, 'Fit');
   await settle(tab);
   const tree = await tab.locator('aside[data-side="tree"]').boundingBox();
   const lastRow = await tab.locator('.env-dev-tree [role=treeitem]').last().boundingBox();
@@ -223,7 +252,7 @@ async function captureAtWork(browser, theme) {
 
   // The page on a phone, straight on, with the frame and its size above it.
   // Fit would tilt the view again.
-  await toolbar('Straight on').click();
+  await turnTo(tab, 'Front');
   await settle(tab);
   const frame = await tab.locator('.env-dev-frame').boundingBox();
   const label = await tab.locator('.env-dev-frame-label').boundingBox();
