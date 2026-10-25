@@ -1,9 +1,9 @@
 /* The galleries of components and patterns (Gallery.tsx): by group, a tile for each page, its
    live picture on the recessed canvas every example sits on, inert and scaled to fit, with its
    name under it. Tiles are of one size, so the pictures line up in rows. */
-/* The groups stand well apart, so each reads as a section of its own. */
+/* The groups stand well apart, about half a tile, so each reads as a section of its own. */
 .docs-gallery {
-  row-gap: calc(var(--env-space-9) * 1.5);
+  row-gap: calc(var(--env-space-9) * 2.5);
   text-align: start;
 }
 
