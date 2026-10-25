@@ -224,16 +224,19 @@ function SharedRow(props: ComponentPropsWithoutRef<'div'>) {
 /**
  * One section of a page on the figure template: its heading, then its content in the order it is
  * written, with figures that follow each other side by side and a subsection beside its one
- * figure. `lead` comes right after the heading, before the authored content.
+ * figure. `lead` comes right after the heading, before the authored content, or with `leadAfter`
+ * after the section's own lead paragraph, as Use it when follows a page's Rules lead.
  */
 export function FigureSection({
   reference,
   section,
   lead,
+  leadAfter = false,
 }: {
   reference: Document;
   section: DocumentationSection;
   lead?: ReactNode;
+  leadAfter?: boolean;
 }) {
   const blocks = [...section.blocks];
   // The first Markdown block opens with the section's "## Title" line, which the heading shows.
@@ -262,11 +265,23 @@ export function FigureSection({
   const groups = groupFigures(blocks, reference.id);
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
-  const content: ReactNode[] = lead ? [<Fragment key="lead">{lead}</Fragment>] : [];
+  const content: ReactNode[] = lead && !leadAfter ? [<Fragment key="lead">{lead}</Fragment>] : [];
+  /** Shows `lead` after the section's own lead paragraph, or first where it has none. */
+  let leadShown = !lead || !leadAfter;
+  const showLead = () => {
+    if (!leadShown) content.push(<Fragment key="lead">{lead}</Fragment>);
+    leadShown = true;
+  };
   const markdown = (key: number, text: string) => (
     <SiteMarkdown key={key} markdown={text} path={reference.path} />
   );
   groups.forEach((group, index) => {
+    const opensWithLead =
+      index === 0 &&
+      !Array.isArray(group) &&
+      group.kind === 'markdown' &&
+      leadParagraph(group.markdown);
+    if (!opensWithLead) showLead();
     const text = beside.get(index);
     if (Array.isArray(group) && text !== undefined)
       content.push(
@@ -310,6 +325,7 @@ export function FigureSection({
           />,
         );
         text = lead[1];
+        showLead();
       }
       // The sentence after an anatomy legend, on the parts the figure can't show, is a note to it.
       const previous = groups[index - 1];
@@ -344,6 +360,7 @@ export function FigureSection({
     else if (group.kind === 'specimen')
       content.push(<Specimen key={index} page={reference.id} name={group.name} headingLevel={3} />);
   });
+  showLead();
   // The changelog is its Markdown alone.
   if (section.id === 'changelog')
     return (

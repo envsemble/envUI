@@ -2,6 +2,34 @@
 
 Every component has one page in `docs/components/`, named after the component in kebab case and the singular: `text-field.md` for TextField, `button.md` for Button and its family. The same Markdown feeds the catalogue, the package and agents, so a page is written once. A page is on the [figure template](#sections): ordinary sections of live figures and a few short sentences, visual first, in plain language for people looking at envUI, then [In code](#in-code-the-developer-only-part), the part for people who build with it. [Button](components/button.md), [Card](components/card.md), [TextField](components/text-field.md) and [Sheet](components/sheet.md) are the model pages; read them before writing another. Pattern and template pages use the same template with their own frontmatter: [write a pattern or template page](pattern-pages.md).
 
+## One file per page
+
+A page's Markdown is the one source for three readers: the Usage guide shows its plain sections with figures, the Docs show the same file with its code, props and parts, and agents read the whole file as the package ships it, with each example's code once. [Button](components/button.md), [Form layout and validation](patterns/forms.md) and [Spacing & density](foundations/spacing.md) are written this way, the one-file structure, and the other pages move to it after review; the sections below describe the figure template the rest are on, whose figures, legends, option tables and plain-language rules the structure keeps.
+
+A page is in the one-file structure when its frontmatter lists its examples. Component, pattern and foundation pages then share one order, so an agent can stop reading once it has what it needs:
+
+1. **Frontmatter**: what it is (`title`, `summary`, `aliases`), when to use it (`useWhen`) and what instead (`avoidWhen`), and `examples`, each example once by its file name, with its role and, where it has one, its caption.
+2. **`## Rules`**: a short lead, the do and don't figures, and titled blocks of rules. The Usage guide opens it with Use it when and Built from.
+3. **`## Anatomy`**: the anatomy figure and its legend.
+4. **`## Variants`**, **`## Options`** on a foundation: the variants figure and its option table, and the options in titled blocks.
+5. **`## Behaviour`**: states, what it does on its own, adapting to width, keys and accessibility, then `### envUI provides` and `### You provide`, which only the Docs and agents read. A component or pattern page needs both lists.
+6. **`## Words to use`**, optional: the phrases people ask for, as an option table; a column headed In code gives the props each phrase means, which only the Docs and agents read.
+7. **`## Compose`**: the developer part, as [In code](#in-code-the-developer-only-part) is: the generated Import, `### Usage` with the canonical example, as a `source` fence or a short snippet, `### Composition`, how the parts combine, and `### Customize`, with everything technical the Usage guide leaves out.
+8. **`## Changelog`**, optional. Props are generated after Compose; Related from `avoidWhen`.
+
+```yaml
+examples:
+  CreateProject: overview # A role alone.
+  OnePrimaryAction: # Or a role and a caption.
+    role: do
+    caption: One primary button per group, at the end of its actions.
+```
+
+- **Roles**: `overview`, shown side by side at the top of the page as its Overview, never placed in the body; `example`; `variants` and `anatomy`, with the legend that follows them; and `do` and `dont`, whose caption is their rule and so required.
+- **Placing a figure**: an empty fence `tsx figure=Name`, with the figure template's attributes after it, such as `widths="16 30"`, `open` or `of="Field"`. Its role and caption come from the frontmatter; every example but the overview's is placed once. On a foundation page a figure is the catalogue's own, from its page's preview (`previews/foundations/FoundationFigures.ts`), and the numbered list after it is its legend, `1. **Name**: what it means`, each mark's or each picture's words.
+- **Rule-style text**: a block is a heading, one short lead that says its point, then its rules as bullets, one fact each, which the Usage guide sets as quiet dots below the lead. A block with one more point keeps it as a second sentence; never a bullet alone. Keep every fact when shortening: "Error: invalid input" becomes a bullet of its own, not a lost example.
+- **What ships**: the frontmatter as written, with each example's caption on one line; a run of figures becomes one line that names them, such as `Examples: OnePrimaryAction (do), SeveralPrimaryActions (don't).`; an anatomy figure is its legend, a variants figure its option table and a foundation's figure its legend; Compose keeps its code. The changelog and Related stay on the Docs, since `avoidWhen` is in the frontmatter.
+
 ## Frontmatter
 
 A component page opens with YAML frontmatter. The build validates it and fails on an unknown field, a missing one or a wrong value.
@@ -345,6 +373,8 @@ A foundation page, such as Spacing & density or Colors & themes, explains how en
 - **The same structure as other pages.** Sections under `##` titles, each opened by one short paragraph; titled blocks of a heading and a short paragraph beside their figure; examples on the recessed canvas, with the finger mark where they can be used; a specimen of the system itself, such as the role swatches, on the page; and lists only where they are short. The building blocks are in `apps/catalogue/src/previews/foundations/Topic.tsx` and the measured marks in `Marks.tsx`. Spacing & density and Colors & themes are the model pages.
 
 A foundation's guide in the Docs is its Markdown in `docs/foundations/`: everything its Site page leaves out, with the props, tokens and values, and the words of its Site page mapped to them.
+
+A foundation in the [one-file structure](#one-file-per-page), as Spacing & density is, writes its Usage guide's words in its Markdown too: its topics as titled blocks under Rules, Options and Behaviour, the legends of its figures after their fences, its Words to use as an option table whose In code column maps each phrase to its props, and its tokens and values under Compose. Its preview in `apps/catalogue/src/previews/foundations/` keeps only the figures, which take their words from the legend, and registers them by name in `FoundationFigures.ts`. Its frontmatter has `title`, `summary`, `aliases`, its figures under `examples` and its related pages under `avoidWhen`, and its index entry no summary. Its Usage guide sits on the page, without the band, and its guide in the Docs is the same file with Compose and Related.
 
 ## Props
 

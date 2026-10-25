@@ -83,6 +83,8 @@ examples:
 
 ## Rules
 
+A button says what will happen, and only the main action of a group stands out.
+
 ```tsx figure=OnePrimaryAction
 
 ```

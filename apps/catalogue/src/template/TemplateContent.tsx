@@ -104,6 +104,7 @@ function Section({ reference, section }: { reference: Document; section: Documen
       <FigureSection
         reference={reference}
         section={section}
+        leadAfter={reference.format === 'skill'}
         lead={
           // When to use opens with what the page is for, and in the one-file structure the rules.
           section.id === (reference.format === 'skill' ? 'rules' : 'usage') &&
