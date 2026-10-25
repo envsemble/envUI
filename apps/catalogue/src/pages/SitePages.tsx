@@ -5,7 +5,6 @@ import { PageHeader } from '../layout/PageHeader';
 import type { RoutePage } from '../navigation/DocumentationRoutes';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { getPatternIcon, getReferenceIcon } from '../navigation/TopicIcons';
-import { FoundationPreview } from '../previews/FoundationPreview';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import type { Reference } from '../Reference';
 import { Catalogue } from './Catalogue';
@@ -99,12 +98,8 @@ export function FoundationPage({ page }: { page: RoutePage }) {
         symbol={<Icon />}
         meta={<OtherPartButton page={page} />}
       />
-      {/* A foundation in the one-file structure is its Markdown, with its figures in place. */}
-      {reference.format === 'skill' ? (
-        <TemplateContent document={page.document!} related={false} />
-      ) : (
-        <FoundationPreview id={reference.id} />
-      )}
+      {/* A foundation is its Markdown, with its figures in place. */}
+      <TemplateContent document={page.document!} related={false} />
       {reference.id === 'icons' && (
         <Column gap={4} className="docs-article docs-foundation-notes docs-icons-credit">
           <Documentation markdown={iconsCredit} path={reference.path} />

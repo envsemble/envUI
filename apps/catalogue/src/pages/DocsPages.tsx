@@ -19,7 +19,7 @@ import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import type { Documentation as Document, Reference } from '../Reference';
-import { Documentation, GuidanceLists } from './Documentation';
+import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
 import { ColorPalette } from '../previews/foundations/ColorPalette';
@@ -237,48 +237,26 @@ function PaletteSection() {
   );
 }
 
-/** Markdown without its "## Related topics", which the Docs leave out. */
-function withoutRelatedTopics(markdown: string) {
-  return markdown.replace(/^## Related topics\n[\s\S]*?(?=^## |(?![\s\S]))/m, '');
-}
-
 /**
- * A foundation's page in the Docs, the developer part its page in the Usage guide leaves out. In
- * the one-file structure, the same file as the Usage guide's page: Compose, what the application
- * and envUI provide, and the words of the page mapped to code. On the earlier template, its written
- * guidance and reference, whose visuals are its page in the Usage guide. Neither shows Related.
+ * A foundation's page in the Docs, the developer part its page in the Usage guide leaves out, from
+ * the same file: Compose, the words of the page mapped to code, and what the application and envUI
+ * provide. No Related.
  */
 export function FoundationGuidePage({ page }: { page: RoutePage }) {
   const document = page.document!;
-  const header = (
-    <PageHeader
-      title={page.title}
-      kind="docs"
-      trail={docsTrail(page)}
-      description={page.summary}
-      meta={<OtherPartButton page={page} />}
-    />
-  );
-  if (document.format === 'skill')
-    return (
-      <>
-        {header}
-        <Column gap={8} className="docs-article docs-api">
-          <CodeGuide document={document} />
-          <WordsInCode document={document} />
-          <Provides document={document} title="Accessibility" id="provides" />
-          {document.id === 'colors' && <PaletteSection />}
-        </Column>
-      </>
-    );
   return (
     <>
-      {header}
-      {/* A foundation's written guidance: its lists are check lists. */}
-      <Column gap={7} className="docs-article">
-        <GuidanceLists value>
-          <Documentation markdown={withoutRelatedTopics(document.markdown)} path={document.path} />
-        </GuidanceLists>
+      <PageHeader
+        title={page.title}
+        kind="docs"
+        trail={docsTrail(page)}
+        description={page.summary}
+        meta={<OtherPartButton page={page} />}
+      />
+      <Column gap={8} className="docs-article docs-api">
+        <CodeGuide document={document} />
+        <WordsInCode document={document} />
+        <Provides document={document} title="Accessibility" id="provides" />
         {document.id === 'colors' && <PaletteSection />}
       </Column>
     </>
@@ -395,7 +373,7 @@ function raisedHeadings(markdown: string) {
 type GuidePart = { kind: 'markdown'; markdown: string } | { kind: 'source'; name: string };
 
 /**
- * A page's developer-only part, its "## In code" section, cut into its `###` subsections: the
+ * A page's developer part, its "## Compose" section, cut into its `###` subsections: the
  * generated Import, then Usage, Composition and Customize as the page writes them.
  */
 function guideSubsections(document: Document) {
@@ -415,7 +393,7 @@ function guideSubsections(document: Document) {
 }
 
 /**
- * The guide at the top of a page in the Docs, from the page's "## In code": how to import it, its
+ * The guide at the top of a page in the Docs, from the page's "## Compose": how to import it, its
  * common uses in code, how its parts compose and how to customize it, each a section of its own,
  * with an example file of the page shown as code where the page names one.
  */
@@ -505,7 +483,7 @@ function ColorProperties({ components }: { components: readonly string[] }) {
 /**
  * A component's or a pattern's page in the Docs, its guide to using it in code, which complements
  * its page in the Usage guide rather than repeating it: how to import it, its common uses, how its
- * parts compose and how to customize it, from the page's Compose or "## In code"; what the
+ * parts compose and how to customize it, from the page's Compose; what the
  * application and envUI provide, which the Usage guide leaves out; then, as reference, its props,
  * part names and color properties, and its changelog. No figures of the Usage guide, no Related
  * and no band. Field, which has no page in the Usage guide, shows its whole page here, on the

@@ -8,7 +8,7 @@ import { spacingFigures } from './Spacing';
 import { typographyFigures } from './Typography';
 
 /**
- * A foundation's figure for a page in the one-file structure: the picture alone, which the page's
+ * A foundation's figure: the picture alone, which the page's
  * Markdown places by name (```tsx figure=Name```) and gives its words, the legend that follows the
  * fence: each numbered mark's, or each picture's, name and what it means. `wide` keeps it across
  * the whole column rather than beside the text before it.

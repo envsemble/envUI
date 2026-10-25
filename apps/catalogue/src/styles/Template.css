@@ -19,7 +19,7 @@
   overflow-wrap: break-word;
 }
 
-/* The same for code in the guidance tables of a page on the template. */
+/* The same for code in the guidance tables of a page. */
 .docs-template .env-markdown-table code {
   overflow-wrap: break-word;
 }

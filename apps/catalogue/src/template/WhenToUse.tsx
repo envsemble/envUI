@@ -27,10 +27,9 @@ export function visibleComponents(composes: string[]) {
 }
 
 /**
- * The start of When to use on a page on the figure template, and of Rules in the one-file
- * structure, from its frontmatter: a short list of what it is for, in two columns on a page in the
- * one-file structure where it is long and there is room, and, for a pattern, the components it is
- * built from. What to use instead is in Related, at the end of the page.
+ * The start of a page's Rules, from its frontmatter: a short list of what it is for under Use it
+ * when, in two columns where it is long and there is room, and, for a pattern, the components it
+ * is built from. What to use instead is in Related, at the end of the page.
  */
 export function WhenToUse({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
   const list = (items: string[]) => items.map((text) => `- ${text}`).join('\n');

@@ -7,7 +7,15 @@ import { readMap } from '../../packages/codemods/src/map.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
 import { technicalText } from '../../scripts/SiteContent.mjs';
 import { renderLlmsText, renderSkill } from '../../scripts/SiteAgentFiles.mjs';
-import { references } from '../../apps/catalogue/src/Reference';
+import { documents, references } from '../../apps/catalogue/src/Reference';
+
+/**
+ * Every component and pattern page of the Usage guide, by its address; Field's whole page is in
+ * the Docs.
+ */
+const figurePages = documents
+  .filter((document) => /^(components|patterns)\//.test(document.path) && document.id !== 'field')
+  .map((document) => ({ ...document, route: `/${document.path.replace(/\.md$/, '')}` }));
 import {
   allPages,
   counterpartOf,
@@ -285,7 +293,7 @@ test('live examples keep links in place, show their source, and specimens show f
   }));
   expect(widths.panel).toBe(widths.column);
   // Catalogue-only specimens, such as the forced interaction states, sit in the section they
-  // illustrate on the figure template.
+  // illustrate.
   await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
 });
 
@@ -302,7 +310,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
     page.locator('.docs-page-header').getByRole('link', { name: 'Docs', exact: true }),
   ).toHaveAttribute('href', '/docs/components/button');
   // Ordinary headings in the fixed order, and no questions.
-  // Button is in the one-file structure, whose sections every kind of page shares.
+  // The one-file structure's sections, which every kind of page shares.
   await expect(page.locator('.docs-figure-section-heading h2')).toHaveText([
     'Overview',
     'Variants',
@@ -424,21 +432,20 @@ test('a component page shows plain sections, equal cells and the parts of its an
 });
 
 test('every anatomy figure numbers each part its legend names', async ({ page }) => {
-  // It visits every page on the figure template, whose examples load as each opens.
+  // It visits every component and pattern page, whose examples load as each opens.
   test.slow();
   // A legend part the example doesn't render would leave its number off the figure.
-  const pages = references
-    .filter((reference) => reference.format === 'figures')
-    .map((reference) => ({
-      id: reference.id,
-      figures: (reference.sections ?? [])
-        .flatMap((section) => section.blocks)
-        .filter((block) => block.kind === 'example' && block.role === 'anatomy').length,
-    }));
+  const pages = figurePages.map((document) => ({
+    id: document.id,
+    route: document.route,
+    figures: (document.sections ?? [])
+      .flatMap((section) => section.blocks)
+      .filter((block) => block.kind === 'example' && block.role === 'anatomy').length,
+  }));
   expect(pages.length).toBeGreaterThan(0);
   await page.goto(`${catalogueUrl}/`);
-  for (const { id, figures } of pages) {
-    await goTo(page, `/components/${id}`);
+  for (const { id, route, figures } of pages) {
+    await goTo(page, route);
     const anatomy = page.locator('.docs-anatomy');
     await expect(anatomy, `${id} shows its anatomy figures`).toHaveCount(figures);
     for (const figure of await anatomy.all()) {
@@ -452,17 +459,16 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
 });
 
 test('every stage is the only frame of its figure', async ({ page }) => {
-  // It visits every page on the figure template, whose examples load as each opens.
+  // It visits every component and pattern page, whose examples load as each opens.
   test.slow();
   // One frame per figure: no stage sits inside another framed or filled box in the article, such
   // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
   // frame, which holds its stage and its verdict bar, is the figure's one frame. The band a group of
   // sections sits on is outside the group, so it is the page there, not a frame.
-  const pages = references.filter((reference) => reference.format === 'figures');
-  expect(pages.length).toBeGreaterThan(0);
+  expect(figurePages.length).toBeGreaterThan(0);
   await page.goto(`${catalogueUrl}/`);
-  for (const { id } of pages) {
-    await goTo(page, `/components/${id}`);
+  for (const { id, route } of figurePages) {
+    await goTo(page, route);
     await expect(page.locator('.docs-figures .docs-figure-section').first()).toBeVisible();
     await expect(page.locator('.docs-loading')).toHaveCount(0);
     const framed = await page.evaluate(() => {
@@ -595,7 +601,7 @@ test('the foundation and pattern pages show no technical text, in their words or
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
     if (path.startsWith('foundations/') || path === 'dev-mode') {
-      // A foundation's sections: its preview's topics, or its Markdown's in the one-file structure.
+      // A foundation's sections, from its Markdown; Dev mode's topics.
       await expect(page.locator('.docs-topic, .docs-figure-section').last()).toBeVisible();
       // The marks of a figure are measured once it has laid out.
       if (await page.locator('.docs-marked').count())
@@ -749,8 +755,8 @@ test('a component page groups its sections into three, the middle one on the ban
     { band: true, sections: ['rules'] },
     { band: false, sections: ['related'] },
   ]);
-  // A page in the one-file structure: what it is, its variants, parts and behaviour; its rules,
-  // which open with Use it when, alone on the band; its accessibility.
+  // A page with every group: what it is, its variants, parts and behaviour; its rules, which
+  // open with Use it when, alone on the band; its accessibility.
   await goTo(page, '/components/button');
   await expect.poll(groups).toEqual([
     { band: false, sections: ['overview', 'variants', 'anatomy', 'behaviour'] },

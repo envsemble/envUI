@@ -161,7 +161,7 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
 
 /**
  * An example file rendered live, loaded with the page and loaded again on a retry: the body of a
- * live example and of each figure of a page on the figure template.
+ * live example and of each figure of a page.
  */
 export function ExampleRender({
   page,

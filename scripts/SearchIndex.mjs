@@ -243,7 +243,7 @@ export function searchDocuments({ documents, props, tokens }) {
     // as an export that leads to its first part's props.
     if (entry.kind === 'namespace' && pages.has(name)) continue;
     const home = homes.get(name) ?? setup;
-    // Only a page on the template has a Props view with a place for each export and prop; on
+    // Only a component or pattern page has a Props view with a place for each export and prop; on
     // another page, both lead to the section that shows the export.
     const where = home.sections ? undefined : placeOf(name, home, documents);
     const place = where && placeRoute(where);

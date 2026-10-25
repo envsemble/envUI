@@ -14,7 +14,7 @@ const specimens = new Map(
   Object.entries(loaders).map(([path, load]) => [path, lazy(loadModule(load))]),
 );
 
-/** A page's specimen; `headingLevel` is the level of its title, 3 inside a section of a page on the figure template. */
+/** A page's specimen; `headingLevel` is the level of its title, 3 inside a section of a page. */
 export function Specimen({
   page,
   name,

@@ -185,32 +185,3 @@ export function NumberedLegend({ entries }: { entries: readonly LegendEntry[] })
     </ol>
   );
 }
-
-/**
- * Words with what they mean, laid out as an option legend: each in the tag a variants figure's
- * callouts use, followed by what it is for or what envUI does.
- */
-export function TagLegend({
-  label,
-  entries,
-}: {
-  label: string;
-  entries: readonly { tag: string; text: string }[];
-}) {
-  return (
-    <dl className="docs-option-legend docs-topic-words" aria-label={label}>
-      {entries.map((entry) => (
-        <div key={entry.tag} className="docs-option">
-          <dt>
-            <span className="docs-option-tag">{entry.tag}</span>
-          </dt>
-          <dd>
-            <Text render={<p />} emphasis="muted">
-              {entry.text}
-            </Text>
-          </dd>
-        </div>
-      ))}
-    </dl>
-  );
-}

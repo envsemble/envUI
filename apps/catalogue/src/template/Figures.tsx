@@ -19,7 +19,7 @@ type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
 type FigureBlock = ExampleBlock | FoundationBlock;
 
 /**
- * A foundation's figure in the one-file structure: the catalogue's own, from its page's preview,
+ * A foundation's figure: the catalogue's own, from its page's preview,
  * with the legend its Markdown gives it.
  */
 function FoundationFigure({ page, block }: { page: Document; block: FoundationBlock }) {
@@ -224,7 +224,7 @@ function SharedRow(props: ComponentPropsWithoutRef<'div'>) {
 }
 
 /**
- * One section of a page on the figure template: its heading, then its content in the order it is
+ * One section of a page: its heading, then its content in the order it is
  * written, with figures that follow each other side by side and a subsection beside its one
  * figure. `lead` comes right after the heading, before the authored content, or with `leadAfter`
  * after the section's own lead paragraph, as Use it when follows a page's Rules lead.

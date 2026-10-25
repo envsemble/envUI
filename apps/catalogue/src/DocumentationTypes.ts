@@ -42,9 +42,8 @@ export type StageFill = 'shaded';
 export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }
   /**
-   * A file in apps/catalogue/src/examples/<page>/<name>.tsx, under its ### heading. On a page on the
-   * figure template it is a figure: a live example, a do or a don't figure, an anatomy figure or a
-   * variants figure.
+   * A file in apps/catalogue/src/examples/<page>/<name>.tsx, placed as a figure: a live example, a
+   * do or a don't figure, an anatomy figure or a variants figure.
    */
   | {
       kind: 'example';
@@ -73,7 +72,7 @@ export type DocumentationBlock =
       legend?: AnatomyLegendItem[];
     }
   /**
-   * A foundation's figure in the one-file structure: one of the catalogue's own, from its page's
+   * A foundation's figure: one of the catalogue's own, from its page's
    * preview (previews/foundations), by name, with the legend that follows it, each mark's or
    * picture's name and what it means.
    */
@@ -88,8 +87,8 @@ export type DocumentationBlock =
   /** A catalogue-only specimen in apps/catalogue/src/specimens/<page>/<name>.tsx. */
   | { kind: 'specimen'; name: string }
   /**
-   * An example file of the page shown as code, not live, in "## In code", the developer-only part
-   * that the page's guide in the Docs shows.
+   * An example file of the page shown as code, not live, in "## Compose", the developer part that
+   * the page in the Docs shows.
    */
   | { kind: 'source'; name: string };
 
@@ -102,7 +101,7 @@ export interface AnatomyLegendItem {
    * takes its description from docs/generated/parts.json.
    */
   text: string;
-  /** In an anatomy figure, the part's name, its bold start, which is all the Site shows of it. */
+  /** In an anatomy figure, the part's name, its bold start, which is all the Usage guide shows of it. */
   name?: string;
   /**
    * In a variants figure, the variant's name, shown on its callout; the item it labels is the part,
@@ -165,15 +164,13 @@ export interface DocumentationEntry {
   /** The page's Markdown after its title. */
   markdown: string;
   metadata?: DocumentationMetadata;
-  /** The exports a page off the template documents, such as Icon on the Icons foundation's. */
+  /** The exports a guide documents, such as LinkProvider on setup's. */
   components?: string[];
   /**
-   * A component page on the figure template: short text and live figures in every section; or a
-   * page in the one-file structure, whose frontmatter lists its examples (`skill`).
+   * The sections of a component, pattern or foundation page, in the one-file structure; absent on
+   * guides.
    */
-  format?: 'figures' | 'skill';
-  /** The sections of a page on the template; absent on pages not on it, such as guides. */
   sections?: DocumentationSection[];
-  /** The exports a page on the template documents, with namespaces expanded to their parts. */
+  /** The exports a component page documents, with namespaces expanded to their parts. */
   props?: Record<string, ExportEntry>;
 }
