@@ -130,7 +130,7 @@ Ask an agent for color in these words; envUI turns each into a role, so the resu
 | The accent         | `--env-color-bg-brand-emphasis`, the primary button's fill; `--env-color-fg-accent` and `fg-link` in text                                                                                                                                                                                                             | The color of the main action, links and what is selected.        |
 | Success or warning | `tone` on Badge, Alert, Toast, Button and the components that take one: Badge takes neutral, accent, success, warning, danger and done; Alert info, success, warning and danger; Toast neutral, info, success and danger; Button neutral, accent and danger. In your own CSS, `--env-color-fg-{tone}` and their tints | A tone that says how something stands, with words or an icon.    |
 | A danger button    | `tone="danger"` on Button                                                                                                                                                                                                                                                                                             | A red action for deleting or anything that can’t be undone.      |
-| Its own color      | The component's color properties, such as `--env-button-container`; most components have them, listed on each one's page in the Docs under Color properties; as Customize and extend, in the Docs, says                                                                                                               | One element in a color of its own, keeping its hover and press.  |
+| Its own color      | The component's color properties, such as `--env-button-container`; most components have them, listed on each one's page in the Docs under Color properties; see [Customize and extend](../customizing.md)                                                                                                            | One element in a color of its own, keeping its hover and press.  |
 | A dark area        | A nested `<Theme theme="dark">`, or `light` on a dark page                                                                                                                                                                                                                                                            | One part of a light page in the dark theme, or the other way.    |
 | High contrast      | `contrast="high"` on Theme, or `system`, the default, which follows the reader's system                                                                                                                                                                                                                               | Stronger text and edges for people who need them, on every page. |
 
@@ -162,7 +162,7 @@ function ThemeLabel() {
 | Theme contrast          | `high`; `standard`, even when the system asks for more; or `system`, the default, which follows `prefers-contrast: more`; inherited from the enclosing Theme |
 | Theme scale             | comfortable or compact, the app's [scale](spacing.md); inherited from the enclosing Theme                                                                    |
 | useTheme()              | `{ theme, contrast, scale }` of the nearest Theme, also across envUI's portals                                                                               |
-| ThemePreferenceProvider | Stores the preference, follows the system and other windows, and themes the document root; as the setup guide says                                           |
+| ThemePreferenceProvider | Stores the preference, follows the system and other windows, and themes the document root; see [setup](../setup.md)                                          |
 | useThemePreference()    | `preference` (light, dark or system), the resolved `theme`, `setPreference` and `toggleTheme`                                                                |
 | ThemeToggle             | An IconButton that switches between light and dark                                                                                                           |
 
@@ -208,7 +208,7 @@ Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emp
 - **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
 - **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
 
-The colors come from an internal palette of ten hues, and the pastel hues of avatars, in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The 0.7 names are gone; the migration guide's Tokens section lists what replaces each.
+The colors come from an internal palette of ten hues, and the pastel hues of avatars, in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The 0.7 names are gone; the [migration guide](../migration.md#tokens) lists what replaces each.
 
 #### States and contrast
 
@@ -228,6 +228,6 @@ The colors come from an internal palette of ten hues, and the pastel hues of ava
 
 ### Customize
 
-Each component has public color properties, such as `--env-button-container`, for colors of its own on one instance, and a nested Theme that overrides the semantic tokens recolors a whole area. Customize and extend, in the Docs, describes both.
+Each component has public color properties, such as `--env-button-container`, for colors of its own on one instance, and a nested Theme that overrides the semantic tokens recolors a whole area. [Customize and extend](../customizing.md) describes both.
 
 TypeScript declarations provide the complete public API.

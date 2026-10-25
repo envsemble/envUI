@@ -108,7 +108,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 - **Keyboard**: nothing to do in envUI's components; keep the DOM order the same as the visible order in your own layout.
 - **Visible focus**: nothing to do; don't remove the focus ring or `outline` in application CSS.
 - **Screen readers**: native elements and ARIA in every component; give each the name only the application knows.
-- **Contrast**: measured for envUI's own colors; check colors you set yourself, as Customize and extend, in the Docs, says.
+- **Contrast**: measured for envUI's own colors; check colors you set yourself, as [Customize and extend](../customizing.md) says.
 - **Reduced motion**: built in; use the motion tokens in your own animations and keep only opacity under `prefers-reduced-motion`.
 - **Forced colors**: built in; use system colors under `forced-colors: active` in your own CSS.
 - **Touch**: built in; grow your own targets as Touch on [Spacing & density](spacing.md) shows.

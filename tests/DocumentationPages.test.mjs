@@ -12,6 +12,7 @@ import {
   siteStructure,
   siteText,
   technicalText,
+  withoutCodeColumns,
 } from '../scripts/SiteContent.mjs';
 import {
   examplesDirectory,
@@ -353,14 +354,17 @@ test("a page's Overview doesn't open by saying its summary again", () => {
 });
 
 /**
- * A page's Markdown as the Site shows it: without its changelog, its developer-only part, "## In
- * code", and the lists of what envUI and the application provide, which its page in the Docs shows.
+ * A page's Markdown as the Usage guide shows it: without its changelog, its developer part, "##
+ * Compose", the lists of what envUI and the application provide, and its tables' In code columns,
+ * which its page in the Docs shows.
  */
 function siteMarkdown(document) {
-  return document.markdown
-    .replace(/\n## Changelog\n[\s\S]*$/, '\n')
-    .replace(/\n## In code\n[\s\S]*?(?=\n## |$)/, '\n')
-    .replace(/\n### (?:envUI provides|You provide)\n[\s\S]*?(?=\n#{2,3} |$)/g, '\n');
+  return withoutCodeColumns(
+    document.markdown
+      .replace(/\n## Changelog\n[\s\S]*$/, '\n')
+      .replace(/\n## Compose\n[\s\S]*?(?=\n## |$)/, '\n')
+      .replace(/\n### (?:envUI provides|You provide)\n[\s\S]*?(?=\n#{2,3} |$)/g, '\n'),
+  );
 }
 
 test('a page the Site shows links nowhere in the Docs', () => {

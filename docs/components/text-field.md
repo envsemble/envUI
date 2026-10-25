@@ -304,7 +304,7 @@ SearchField takes `value` and `onValueChange`, or `defaultValue`; its `label` sh
 
 ### Composition
 
-TextField, SearchField and Textarea are built from Field's parts: the root, `env-field` with `env-text-field`, the control and its contents, then the description and the error, `env-field-error`. The suffix is `env-text-field-suffix`, and a Textarea's resize edge `env-textarea-resize-edge`. Build a field of your own from the same parts, with Field.
+TextField, SearchField and Textarea are built from Field's parts: the root, `env-field` with `env-text-field`, the control and its contents, then the description and the error, `env-field-error`. The suffix is `env-text-field-suffix`, and a Textarea's resize edge `env-textarea-resize-edge`. Build a field of your own from the same parts, as [Build your own field](field.md) shows.
 
 A field fills its container's width, so set the width on the container, or on the field through `style`. Put fields in a native `<form>`, in a Column or a Grid: the inputs are native, so submission, reset and autofill work, and `ref` reaches the input for a form library.
 

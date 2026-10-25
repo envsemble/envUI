@@ -101,7 +101,7 @@ Link the few words that name the destination, not a whole sentence.
 
 ### Usage
 
-Link is a native `<a>` with its `href`, rendered through the link component of `LinkProvider`, so the application's router handles it, as the setup guide describes.
+Link is a native `<a>` with its `href`, rendered through the link component of `LinkProvider`, so the application's router handles it, as [Connect your router](../setup.md#connect-your-router) describes.
 
 - Its `children` are the label.
 - `disabled` removes the destination: the link can't be focused or followed, and reports `aria-disabled`.
