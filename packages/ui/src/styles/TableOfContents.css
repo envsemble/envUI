@@ -1,0 +1,99 @@
+/* TableOfContents: the page's sections as small, quiet links, nested by indent, beside a hairline
+   track that follows the indents; an accent marker on the track stands beside the current section
+   and moves along it to the next. */
+.env-table-of-contents {
+  min-inline-size: 0;
+  font: var(--env-type-body-small);
+}
+.env-table-of-contents[hidden] {
+  display: none;
+}
+.env-table-of-contents-body {
+  position: relative;
+}
+.env-table-of-contents-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Each level in from the one above it: the track steps in with it. */
+.env-table-of-contents-list .env-table-of-contents-list {
+  padding-inline-start: var(--env-space-3);
+}
+.env-table-of-contents-link {
+  display: block;
+  padding-block: var(--env-space-1);
+  padding-inline: var(--env-space-3) var(--env-space-1);
+  border-radius: var(--env-radius-sm);
+  color: var(--env-color-fg-muted);
+  text-decoration: none;
+  /* Long labels wrap, and a long word breaks rather than overflowing the column. */
+  overflow-wrap: break-word;
+  transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-table-of-contents-link:hover {
+  color: var(--env-color-fg-muted-hover);
+}
+.env-table-of-contents-link[aria-current='location'] {
+  color: var(--env-color-fg-default);
+}
+.env-table-of-contents-link:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
+}
+/* The track and its marker, drawn in pixels measured from the links, over the list's start edge. */
+.env-table-of-contents-track {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+}
+.env-table-of-contents-track-line {
+  stroke: var(--env-color-border-muted);
+  stroke-width: var(--env-control-border-width);
+}
+.env-table-of-contents-marker {
+  stroke: var(--env-color-border-accent-emphasis);
+  stroke-width: calc(2 * var(--env-control-border-width));
+  stroke-linecap: round;
+  opacity: 1;
+  transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-table-of-contents-marker[data-hidden] {
+  opacity: 0;
+}
+/* Motion: the marker slides along the track to the next section, only without a reduced-motion
+   preference; otherwise it moves at once. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-table-of-contents-marker {
+    transition-property: opacity, stroke-dasharray, stroke-dashoffset;
+    transition-duration: var(--env-motion-duration-medium);
+    transition-timing-function: var(--env-motion-ease-standard);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-table-of-contents-link {
+    transition: none;
+  }
+}
+
+/* Forced colors: the system paints the links, so the current one and the marker take its
+   selection color, and the track its gray. */
+@media (forced-colors: active) {
+  .env-table-of-contents-link[aria-current='location'] {
+    forced-color-adjust: none;
+    color: Highlight;
+  }
+  .env-table-of-contents-track {
+    forced-color-adjust: none;
+  }
+  .env-table-of-contents-track-line {
+    stroke: GrayText;
+  }
+  .env-table-of-contents-marker {
+    stroke: Highlight;
+  }
+}
