@@ -16,7 +16,7 @@ export type Area = 'site' | 'docs';
 
 /**
  * The Site's destinations in its rail, in order; the drawer beside it lists their pages. Dev mode
- * and the benchmark are pages of the Overview, and the changelog is in the Docs.
+ * is a page of the Overview, and the changelog is in the Docs.
  */
 export const siteSections = ['Overview', 'Foundations', 'Components', 'Patterns'] as const;
 export type SiteSection = (typeof siteSections)[number];
@@ -30,7 +30,6 @@ export type PageKind =
   | 'pattern'
   | 'foundation'
   | 'dev-mode'
-  | 'benchmark'
   | 'docs-home'
   | 'guide'
   | 'codemods'
@@ -135,14 +134,6 @@ const sitePages: SitePage[] = [
     kind: 'dev-mode',
     summary:
       'A view of a page taken apart, layer by layer, that shows how it is built and what is wrong with it.',
-  },
-  {
-    path: 'benchmark',
-    title: 'Benchmark',
-    area: 'site',
-    section: 'Overview',
-    kind: 'benchmark',
-    summary: 'How coding agents do when they build interfaces with envUI.',
   },
   ...referencePages
     .filter(({ section }) => section === 'Foundations')
@@ -386,7 +377,6 @@ export function routeOfDocument(
     'get-started': 'docs/setup',
     components: 'components',
     patterns: 'patterns',
-    benchmark: 'benchmark',
     // Dev mode's page on the Site; its guide in the Docs is the document dev-mode.
     'dev-mode-overview': 'dev-mode',
     changelog: 'docs/changelog',
@@ -488,6 +478,8 @@ export function normalizeRoute(route: string): string {
   if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
   // The agent skills' page is gone with the skills: the guide for agents replaces them.
   if (originalPath === 'docs/agent-skills') return 'docs/agent-tooling';
+  // The agent benchmark is gone: its page opens the overview.
+  if (originalPath === 'benchmark') return `${homeRoute}${rest()}`;
   // The Site's changelog moved to the Docs, with its release notes.
   if (originalPath === 'changelog') return `docs/changelog${rest()}`;
   // A destination's own address opens its first page.

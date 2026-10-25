@@ -65,12 +65,6 @@ export const cataloguePages = [
     aliases: ['dev mode', 'layout inspector', '3D view', 'check a layout'],
   },
   {
-    page: 'benchmark',
-    title: 'Benchmark',
-    area: 'site',
-    aliases: ['agent benchmark', 'scores', 'evaluation'],
-  },
-  {
     page: 'docs',
     title: 'Docs',
     area: 'docs',

@@ -37,7 +37,7 @@
   gap: var(--env-space-5);
   container-type: inline-size;
 }
-/* The home page's four destinations share a row where it is wide enough, else two to a row. */
+/* The home page's three destinations share a row where it is wide enough. */
 .docs-explore-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
 }

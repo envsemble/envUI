@@ -4,7 +4,6 @@ import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
 import { chooseScheme } from './CatalogueThemes';
 import { readdirSync, readFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
-import { readBenchmark } from '../../scripts/BenchmarkResults.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
 import { technicalText } from '../../scripts/SiteContent.mjs';
 import { renderLlmsText, renderSkill } from '../../scripts/SiteAgentFiles.mjs';
@@ -66,6 +65,8 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'overview/get-started?skill=migrate&section=local-development': 'docs/agent-tooling',
     // The agent skills' page went with the skills.
     'docs/agent-skills': 'docs/agent-tooling',
+    // The agent benchmark went, and its page opens the overview.
+    benchmark: 'overview',
     'get-started/migration': 'docs/migration',
     // The Site's Get started page is the setup guide.
     'get-started': 'docs/setup',
@@ -712,7 +713,7 @@ test('the hosted build opens every page of the Site and the Docs without network
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(
     page.locator('.docs-footer').getByRole('navigation', { name: 'Footer' }),
-  ).toContainText('Benchmark');
+  ).toContainText('For agents');
   for (const { path, title, kind, area } of allPages) {
     await goTo(page, path === 'overview' ? '/' : `/${path}`);
     await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(
@@ -1528,35 +1529,6 @@ test('F6 on the Toast page reaches a notification raised there, past the figures
   await expect(live).toHaveCount(1);
   await page.keyboard.press('F6');
   await expect(live).toBeFocused();
-});
-
-test("the Benchmark page shows the newest run's scores and a named chart, with every run in detail under it", async ({
-  page,
-}) => {
-  const { latest, runs } = readBenchmark();
-  await page.goto(`${catalogueUrl}/benchmark`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Benchmark');
-  await expect(page.getByRole('heading', { name: 'Latest run', level: 2 })).toBeVisible();
-  const scores = page.getByRole('table', { name: `Scores of run ${latest.id}` });
-  await expect(scores.getByRole('row')).toHaveCount(latest.agents.length + 1);
-  for (const agent of latest.agents)
-    await expect(scores.getByRole('row', { name: agent.label })).toContainText(String(agent.mean));
-
-  // The chart is one image, named by its caption and described by every bar's value.
-  const chart = page.getByRole('img', { name: /^Mean score out of 100 by run and agent/ });
-  await expect(chart).toBeVisible();
-  await expect(chart).toHaveAccessibleDescription(
-    new RegExp(latest.agents.map((agent) => `${agent.label} ${agent.mean}`).join(', ')),
-  );
-  // Run ids and commits are out of sight until asked for: every run in detail, one row per agent of
-  // each run, which is the chart's data as a table too.
-  await expect(page.getByText(latest.id, { exact: true }).first()).toBeHidden();
-  await page.getByText('Every run in detail').click();
-  const data = page.getByRole('table', { name: 'Every run with its scores' });
-  await expect(data).toBeVisible();
-  const bars = runs.reduce((count, run) => count + run.agents.length, 0);
-  await expect(data.getByRole('row')).toHaveCount(bars + 1);
-  await expect(data).toContainText(latest.id);
 });
 
 test("the Docs' Changelog page lists each release's highlights, newest first, and their links reach sections of the Docs", async ({

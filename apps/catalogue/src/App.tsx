@@ -19,7 +19,6 @@ import { PageFooter } from './layout/PageFooter';
 import { Overview } from './pages/Overview';
 import { DevModePage } from './pages/DevMode';
 import {
-  BenchmarkPage,
   ComponentPage,
   ComponentsPage,
   PatternsPage,
@@ -54,7 +53,6 @@ const pageContent: Record<SitePage['kind'], (props: { page: SitePage }) => React
   pattern: PatternPage,
   foundation: FoundationPage,
   'dev-mode': DevModePage,
-  benchmark: BenchmarkPage,
   'docs-home': DocsHome,
   guide: GuidePage,
   codemods: CodemodsPage,

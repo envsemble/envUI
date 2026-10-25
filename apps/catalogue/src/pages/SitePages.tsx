@@ -3,7 +3,6 @@ import { Api } from '@envsemble/envui/icons/Api';
 import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
-import { Leaderboard } from '@envsemble/envui/icons/Leaderboard';
 import { PageHeader } from '../layout/PageHeader';
 import {
   apiRoute,
@@ -19,7 +18,6 @@ import type { Reference } from '../Reference';
 import { Catalogue } from './Catalogue';
 import { PatternCatalogue } from './PatternCatalogue';
 import { Documentation } from './Documentation';
-import { Benchmark } from './Benchmark';
 
 /** The link from a page of the Site to its guide in the Docs, how to use it in code. */
 function ApiLink({ path }: { path: string }) {
@@ -171,24 +169,6 @@ export function PatternsPage({ page }: { page: SitePage }) {
       <Column gap={7} className="docs-article docs-overview">
         <PatternCatalogue />
       </Column>
-    </>
-  );
-}
-
-/**
- * The benchmark's page: what it measures, the newest run's scores and the scores of every run, read
- * from bench/results when the site builds.
- */
-export function BenchmarkPage({ page }: { page: SitePage }) {
-  return (
-    <>
-      <PageHeader
-        title={page.title}
-        breadcrumb="Overview"
-        description={page.summary}
-        symbol={<Leaderboard />}
-      />
-      <Benchmark />
     </>
   );
 }

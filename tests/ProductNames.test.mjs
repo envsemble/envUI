@@ -58,12 +58,6 @@ const sources = [
   // The test fixtures' sample data and copy.
   { directory: 'tests/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
   { directory: 'tests/fixture', extensions: ['.css', '.html'], read: 'whole' },
-  // The agent benchmark: its tasks, the app the agents work in, and its runner.
-  { path: 'bench/README.md', read: 'whole' },
-  { path: 'bench/tasks.json', read: 'whole' },
-  { directory: 'bench/fixture', extensions: ['.md', '.css', '.html', '.json'], read: 'whole' },
-  { directory: 'bench/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
-  { directory: 'bench', extensions: ['.mjs'], read: 'code' },
   // The codemods package, its rename map and the code its fixtures show.
   { path: 'packages/codemods/README.md', read: 'whole' },
   { directory: 'packages/codemods/src', extensions: ['.json'], read: 'whole' },
@@ -98,9 +92,6 @@ const generated = [
   'packages/ui/src/icons/',
   'apps/catalogue/src/brand/EnvUILogo.tsx',
   'apps/catalogue/src/generated/',
-  // Results of benchmark runs, and the lists of third-party packages its scorer recognizes.
-  'bench/results/',
-  'bench/scoring/',
 ];
 
 test('shipped text, documentation and sample data name no products', async () => {
@@ -144,7 +135,7 @@ async function sourceFiles() {
     for (const path of await listFiles(source.directory)) {
       if (!source.extensions.some((extension) => path.endsWith(extension))) continue;
       if (generated.some((prefix) => path.startsWith(prefix))) continue;
-      // Installed packages and builds, such as the benchmark app's.
+      // Installed packages and builds.
       if (/(?:^|\/)(?:node_modules|dist)\//.test(path)) continue;
       files.push({ path, read: source.read });
     }

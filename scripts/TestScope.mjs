@@ -127,7 +127,7 @@ export const exceptions = [
   [/^packages\/ui\/src\/foundations\/messages\//, ['Messages']],
   [/^packages\/ui\/src\/dev(?:\.ts$|\/)/, ['DevMode']],
   [
-    /^apps\/catalogue\/|^bench\/results\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|Search\w*|MarkdownHeadings|FinalizeSite|SiteModuleFiles|SiteAgentFiles|BenchmarkResults|ReleaseNotes)\.m?[jt]s$/,
+    /^apps\/catalogue\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|Search\w*|MarkdownHeadings|FinalizeSite|SiteModuleFiles|SiteAgentFiles|ReleaseNotes)\.m?[jt]s$/,
     catalogue,
   ],
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
@@ -387,7 +387,6 @@ export function unitTestFiles(root = repositoryRoot) {
     ...walk(root, 'packages', /\.test\.mjs$/).filter((file) =>
       /^packages\/[^/]+\/test\/[^/]+$/.test(file),
     ),
-    ...walk(root, 'bench/test', /\.test\.mjs$/),
   ].sort();
   const built = files.filter((file) => /packages\/ui\/dist|\['pack'/.test(read(root, file)));
   return { built, fast: files.filter((file) => !built.includes(file)) };
