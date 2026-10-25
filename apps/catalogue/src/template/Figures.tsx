@@ -157,6 +157,18 @@ export function lastSubsection(markdown: string): [string, string] | undefined {
 }
 
 /**
+ * Markdown cut after the paragraph that opens it, when it opens with one: a section's lead, which
+ * the Site sets larger than the text below it (SiteText.css).
+ */
+export function leadParagraph(markdown: string): [string, string] | undefined {
+  const text = markdown.replace(/^(?:[ \t]*\n)+/, '');
+  if (!text.trim() || /^\s{0,3}(#|\||[-*+] |\d+[.)] |`{3,}|~{3,}|<!--)/.test(text))
+    return undefined;
+  const end = text.search(/\n[ \t]*\n/);
+  return end === -1 ? [text, ''] : [text.slice(0, end), text.slice(end)];
+}
+
+/**
  * The blocks of a section in the order they are written, with figures that follow each other, such
  * as a do and a don't, side by side; Markdown that is only blank lines between them doesn't count.
  */
@@ -266,13 +278,46 @@ export function FigureSection({
         ),
       );
     else if (group.kind === 'markdown') {
+      let text = group.markdown;
+      // The paragraph that opens a section is its lead.
+      const lead = index === 0 && leadParagraph(text);
+      if (lead) {
+        content.push(
+          <Documentation
+            key="section-lead"
+            markdown={lead[0]}
+            path={reference.path}
+            className="docs-lead"
+          />,
+        );
+        text = lead[1];
+      }
+      // The sentence after an anatomy legend, on the parts the figure can't show, is a note to it.
+      const previous = groups[index - 1];
+      if (
+        previous &&
+        !Array.isArray(previous) &&
+        previous.kind === 'example' &&
+        previous.role === 'anatomy' &&
+        leadParagraph(text)?.[1].trim() === ''
+      ) {
+        content.push(
+          <Documentation
+            key={index}
+            markdown={text}
+            path={reference.path}
+            className="docs-figure-note"
+          />,
+        );
+        return;
+      }
       // A last subsection of text with one figure after it sits beside that figure.
       const next = groups[index + 1];
-      const split = Array.isArray(next) && next.length === 1 && lastSubsection(group.markdown);
+      const split = Array.isArray(next) && next.length === 1 && lastSubsection(text);
       if (split) {
         if (split[0].trim()) content.push(markdown(index, split[0]));
         beside.set(index + 1, split[1]);
-      } else content.push(markdown(index, group.markdown));
+      } else if (text.trim()) content.push(markdown(index, text));
     } else if (group.kind === 'example')
       content.push(
         <Figure key={index} page={reference} block={group} options={options.get(group.name)} />,

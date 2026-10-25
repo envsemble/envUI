@@ -105,7 +105,6 @@
   margin: 0 0 var(--env-space-4);
 }
 .docs-topic-lead {
-  max-inline-size: 65ch;
   margin: 0 0 var(--env-space-5);
 }
 .docs-topic-blocks {

@@ -571,6 +571,58 @@ test('the technical text on every other page of the Site is counted, for the rew
   await testInfo.attach('technical-text.txt', { body: report, contentType: 'text/plain' });
 });
 
+/** The pages set in the Site's type hierarchy so far, the samples of the typography rework. */
+const typographyPages = [
+  'foundations/spacing',
+  'foundations/typography',
+  'components/button',
+  'patterns/forms',
+];
+
+test("the Site's text keeps a readable measure, and opens each section with a larger lead", async ({
+  page,
+}) => {
+  // Running text wraps at about 70 characters, never one long line across the page; a section's
+  // lead is larger than the quieter text that supports it.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${catalogueUrl}/`);
+  for (const path of typographyPages) {
+    await goTo(page, `/${path}`);
+    const lead = page.locator('.docs-lead').first();
+    await expect(lead).toBeVisible();
+    const found = await page.evaluate(() => {
+      const text = [
+        ...document.querySelectorAll<HTMLElement>(
+          '.docs-lead, .docs-supporting, .docs-figures .env-markdown > p',
+        ),
+      ].filter((element) => !element.closest('[data-figure], .docs-shared-row'));
+      const long = text.flatMap((element) => {
+        const lines = Math.round(
+          element.getBoundingClientRect().height / parseFloat(getComputedStyle(element).lineHeight),
+        );
+        const characters = element.textContent!.trim().length / Math.max(lines, 1);
+        return characters > 80 ? [`${Math.round(characters)}: ${element.textContent!.trim()}`] : [];
+      });
+      const style = (selector: string) => {
+        const element = document.querySelector(selector);
+        return (
+          element && getComputedStyle(element.matches('p') ? element : element.querySelector('p')!)
+        );
+      };
+      const leadStyle = style('.docs-lead')!;
+      const supporting = style(
+        '.docs-supporting, .docs-figures .env-markdown:not(.docs-lead) > p',
+      )!;
+      return {
+        long,
+        larger: parseFloat(leadStyle.fontSize) > parseFloat(supporting.fontSize),
+        quieter: leadStyle.color !== supporting.color,
+      };
+    });
+    expect(found, path).toEqual({ long: [], larger: true, quieter: true });
+  }
+});
+
 test('a component page groups its sections into three, the middle one on the band', async ({
   page,
 }) => {

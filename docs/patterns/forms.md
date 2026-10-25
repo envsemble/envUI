@@ -60,7 +60,9 @@ The aim is a form people get right on the first submit.
 
 ### When to check
 
-On submit first: show each field's error, and move focus to the error summary, or straight to the field when there is only one. Then as people leave a field they have typed in. Never while they type, though an error goes as soon as the value is right.
+On submit first: show each field's error, and move focus to the error summary, or straight to the field when there is only one.
+
+Then as people leave a field they have typed in. Never while they type, though an error goes as soon as the value is right.
 
 ```tsx example=ValidationTiming
 
@@ -68,7 +70,9 @@ On submit first: show each field's error, and move focus to the error summary, o
 
 ### Sending
 
-While the form is sent, its submit button shows that it is working: it keeps its size and ignores presses. When the server refuses or can't be reached, keep everything people entered, and move focus to an [Alert](../components/alert.md) at the top that says what to do.
+While the form is sent, its submit button shows that it is working: it keeps its size and ignores presses.
+
+When the server refuses or can't be reached, keep everything people entered, and move focus to an [Alert](../components/alert.md) at the top that says what to do.
 
 ```tsx example=ServerError
 
@@ -94,7 +98,9 @@ Several checkboxes go in a group whose name says what they are for, as the choic
 
 ### A long form in steps
 
-A long form splits into a few short steps, each a page of its own with its fields. [Progress](../components/progress.md), split into steps, says where people are; Continue checks the step's fields before moving on, Back keeps every answer, and the last step shows the answers before the form's own action.
+A long form splits into a few short steps, each a page of its own with its fields.
+
+[Progress](../components/progress.md), split into steps, says where people are; Continue checks the step's fields before moving on, Back keeps every answer, and the last step shows the answers before the form's own action.
 
 ```tsx example=LongFormInSteps
 
@@ -139,11 +145,17 @@ Keep the submit button enabled, and say what is wrong after a submit: a disabled
 
 ### Labels
 
-A label is a short noun phrase with no colon, such as "Project name". Mark the optional fields, "Description (optional)", never the required ones with a star. A format or a limit goes in the description, read before people type, and a placeholder holds only an example value, such as name@example.com, never the label or instructions. The submit button says what it does, "Create project", never "Submit".
+A label is a short noun phrase with no colon, such as "Project name". Mark the optional fields, "Description (optional)", never the required ones with a star.
+
+A format or a limit goes in the description, read before people type, and a placeholder holds only an example value, such as name@example.com, never the label or instructions.
+
+The submit button says what it does, "Create project", never "Submit".
 
 ### Error messages
 
-An error starts with the fix, in the field's own words, such as "Enter a due date after the start date" or "Enter an email address like name@example.com", never "Error: invalid input" or "Project name is required!". It blames no one and shows no code, though a reference may follow for support. The summary is titled "There is a problem" and repeats each field's message word for word.
+An error starts with the fix, in the field's own words, such as "Enter a due date after the start date" or "Enter an email address like name@example.com", never "Error: invalid input" or "Project name is required!".
+
+It blames no one and shows no code, though a reference may follow for support. The summary is titled "There is a problem" and repeats each field's message word for word.
 
 ## Anatomy
 
@@ -159,7 +171,9 @@ An error starts with the fix, in the field's own words, such as "Enter a due dat
 
 ## Accessibility
 
-<kbd>Tab</kbd> follows the fields in the order they show, and <kbd>Enter</kbd> in a text field submits. A refused submit moves focus to the summary, whose links each focus their field; where focus goes straight to the field and is already there, as after <kbd>Enter</kbd>, say the error in a status too.
+<kbd>Tab</kbd> follows the fields in the order they show, and <kbd>Enter</kbd> in a text field submits.
+
+A refused submit moves focus to the summary, whose links each focus their field; where focus goes straight to the field and is already there, as after <kbd>Enter</kbd>, say the error in a status too.
 
 ### envUI provides
 

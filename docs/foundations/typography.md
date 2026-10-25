@@ -62,6 +62,8 @@ The Site's Typography page names the text styles by their job and teaches these 
 | Supporting text             | `variant="body-sm"`, muted by default                                         |
 | A caption                   | `variant="caption"`                                                           |
 | Quieter text                | `emphasis="muted"` on Text of any variant                                     |
+| A lead                      | The first paragraph as body in the default color; the detail after it muted   |
+| Short paragraphs            | A few lines each, with `max-inline-size: 56ch` on running text                |
 | Text follows the reader     | Nothing to do: type is in rem and follows the scale                           |
 | Space belongs to the layout | Text has no margins; set `gap` on the Column or Row around it                 |
 
@@ -71,6 +73,8 @@ The Site's Typography page names the text styles by their job and teaches these 
 - One display text per view at most, for a page's hero; it scales from 1.75 to 2.75 rem and balances its lines.
 - Inter at regular (400) and medium (500), from `--env-font-weight-*`; semibold (600) only for the strongest emphasis in a small space, such as today in a calendar.
 - Text adds no outer spacing: a Column, a Row or the component around it owns the gaps.
+- Vary the text by its role rather than setting everything as body: open with what matters in the default color, and set supporting text, such as a description under a title, details and hints, `emphasis="muted"` or `body-sm`.
+- Keep running text to a readable measure, about 60–75 characters a line: give paragraphs and Markdown a `max-inline-size` of about `56ch`, since Text and Markdown fill their container. Write short paragraphs, one point each, a few lines long.
 - The 0.7 names are gone: page-heading is headline, section-heading is title, supporting is body-sm, `tone` is `emphasis` and `as` is `render`.
 
 ### Lists

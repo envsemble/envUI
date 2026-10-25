@@ -61,7 +61,9 @@ components:
 
 ### Close and remove
 
-An IconButton with the Close cross closes, dismisses or removes what it sits in. Name it Close in the application's language, or say what it removes where several sit together.
+An IconButton with the Close cross closes, dismisses or removes what it sits in.
+
+Name it Close in the application's language, or say what it removes where several sit together.
 
 ```tsx example=DismissTip
 
@@ -73,7 +75,9 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 
 ### States
 
-Hover, press, keyboard focus and disabled, for each variant. Keyboard focus draws a ring just outside the button; a text button's ring reaches a little past its label, which stays in line with the text around it.
+Hover, press, keyboard focus and disabled, for each variant.
+
+Keyboard focus draws a ring just outside the button; a text button's ring reaches a little past its label, which stays in line with the text around it.
 
 <!-- specimen: InteractionStates -->
 
@@ -87,7 +91,9 @@ While its work runs, a spinner replaces the content at the same size, and presse
 
 ### Confirm in place
 
-ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it. Its armed label is short and has no question mark: the verb, or the verb and object, "Remove Sam".
+ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.
+
+Its armed label is short and has no question mark: the verb, or the verb and object, "Remove Sam".
 
 ```tsx example=ConfirmInPlace
 
@@ -184,7 +190,9 @@ Not shown: the spinner, a group's frame, and the end slot, quiet content after t
 
 ## Adapting to width
 
-Labels wrap, and icon-only buttons keep their size. On touch screens every button grows to the size of a fingertip, and an icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
+Labels wrap, and icon-only buttons keep their size.
+
+On touch screens every button grows to the size of a fingertip, and an icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
 
 ```tsx example=NarrowActions widths="16 30"
 

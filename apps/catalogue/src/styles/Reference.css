@@ -1,8 +1,8 @@
 .docs-article {
   padding: 0 var(--docs-gutter) 3rem;
 }
-.docs-article p {
-  max-width: 75ch;
+:where(.docs-article) p {
+  max-inline-size: 75ch;
 }
 .docs-overview {
   padding: 0 var(--docs-gutter) var(--env-space-8);

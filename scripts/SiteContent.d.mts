@@ -28,7 +28,12 @@ export declare function optionTable(token: unknown): OptionTable | undefined;
 export declare function optionTableProblems(table: OptionTable): string[];
 export declare function siteStructure(document: {
   sections?: readonly DocumentationSection[];
-}): { where: string; kind: 'after a figure' | 'a second paragraph'; text: string }[];
+}): { where: string; kind: 'after a figure' | 'too many paragraphs'; text: string }[];
+export declare const blockParagraphs: number;
+export declare const paragraphLength: number;
+export declare function longParagraphs(document: {
+  sections?: readonly DocumentationSection[];
+}): { where: string; length: number; text: string }[];
 export declare function optionPieces(
   markdown: string,
 ): ({ markdown: string } | { options: OptionTable; raw: string })[];
