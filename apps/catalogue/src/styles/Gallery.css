@@ -1,7 +1,9 @@
 /* The galleries of components and patterns (Gallery.tsx): by group, a tile for each page, its
    live picture on the recessed canvas every example sits on, inert and scaled to fit, with its
    name under it. Tiles are of one size, so the pictures line up in rows. */
+/* The groups stand well apart, so each reads as a section of its own. */
 .docs-gallery {
+  row-gap: calc(var(--env-space-9) * 1.5);
   text-align: start;
 }
 
@@ -40,25 +42,8 @@
   min-block-size: 0;
 }
 
-/* Under the picture, the name and, quieter and smaller, what the page is for, in at most two
-   lines. */
-.docs-gallery-text {
-  display: grid;
-  gap: var(--env-space-1);
-}
-
 .docs-gallery-name {
   margin: 0;
-  font-weight: var(--env-font-weight-medium);
-}
-
-.docs-gallery-summary {
-  display: -webkit-box;
-  margin: 0;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
 }
 
 .docs-gallery-group {
@@ -66,7 +51,7 @@
 }
 
 .docs-gallery-link {
-  color: var(--env-color-fg-default);
+  color: var(--env-color-fg-muted);
 }
 
 /* The name's link covers the tile, so the whole picture leads to the page. */

@@ -49,9 +49,9 @@ function windowOf(page: SitePage) {
 }
 
 /**
- * One page's tile: its preview on the recessed canvas, rendered once near the viewport, its name and,
- * quieter, what it is for. The name is a heading one level under the gallery's group, or under the
- * page's title where the gallery has no groups.
+ * One page's tile: its preview on the recessed canvas, rendered once near the viewport, and its name
+ * in small, quiet text, so the group headings lead. The name is a heading one level under the
+ * gallery's group, or under the page's title where the gallery has no groups.
  */
 function GalleryTile({ page, level }: { page: SitePage; level: 2 | 3 }) {
   const tile = useRef<HTMLLIElement>(null);
@@ -65,31 +65,24 @@ function GalleryTile({ page, level }: { page: SitePage; level: 2 | 3 }) {
         className="docs-related-stage docs-gallery-stage"
         whole
       />
-      <div className="docs-gallery-text">
-        {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
-        <Text render={<Heading />} variant="body" className="docs-gallery-name">
-          <Link href={routeHref(page.path)} underline={false} className="docs-gallery-link">
-            {page.label ?? page.title}
-          </Link>
-        </Text>
-        {page.summary && (
-          <Text render={<p />} variant="body-sm" emphasis="muted" className="docs-gallery-summary">
-            {page.summary}
-          </Text>
-        )}
-      </div>
+      {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
+      <Text render={<Heading />} variant="body-sm" emphasis="muted" className="docs-gallery-name">
+        <Link href={routeHref(page.path)} underline={false} className="docs-gallery-link">
+          {page.label ?? page.title}
+        </Link>
+      </Text>
     </li>
   );
 }
 
 /**
  * A gallery of pages, such as every component or every pattern: by group, a tile for each page
- * with a small live picture of it, inert, on the recessed canvas every example sits on. Each
- * group's heading is a step above its tiles' names, and the groups stand well apart.
+ * with a small live picture of it, inert, on the recessed canvas every example sits on. The groups'
+ * headings lead, their tiles' names are quiet, and the groups stand well apart (Gallery.css).
  */
 export function Gallery({ groups }: { groups: GalleryGroup[] }) {
   return (
-    <Column gap={9} className="docs-gallery">
+    <Column gap={0} className="docs-gallery">
       {groups.map((group) =>
         group.title ? (
           <Column render={<section aria-labelledby={group.id} />} gap={5} key={group.id}>
