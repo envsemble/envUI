@@ -18,6 +18,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { tableOfContents } from '../foundations/messages/tableOfContents.js';
 import {
   currentSection,
+  readingPosition,
   flatten,
   outline,
   slug,
@@ -187,6 +188,9 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
   );
 }
 
+/** How many sections away from the reader's place a dash still grows: three. */
+const waveSpread = 3;
+
 /**
  * The page's sections as links, nested by level, with the one the reader is in marked as they
  * scroll: the headings in a container by default, or sections of your own.
@@ -205,16 +209,20 @@ export function TableOfContents({
   const [readItems, setReadItems] = useState<readonly TableOfContentsItem[]>([]);
   const items = givenItems ?? readItems;
   const [current, setCurrent] = useState<string>();
-  // A section a link scrolls to stays current until the reader scrolls on.
+  // A section a link scrolls to: while the page scrolls there, the marks follow the scroll through
+  // the sections between; once scrolling pauses, the chosen section is current, also where the page
+  // can't bring it to the reading line, until the reader scrolls on.
   const chosen = useRef<{ id: string; settled: boolean } | null>(null);
   const settle = useRef(0);
-  // The choice settles once scrolling pauses, or soon after the press where nothing scrolls.
+  // Measures again on the next frame: set by the effect that tracks the scrolling.
+  const refresh = useRef<() => void>(() => {});
   const settleLater = useCallback((delay: number) => {
     clearTimeout(settle.current);
     const choice = chosen.current;
     if (!choice) return;
     settle.current = window.setTimeout(() => {
       choice.settled = true;
+      refresh.current();
     }, delay);
   }, []);
   useEffect(() => () => clearTimeout(settle.current), []);
@@ -265,10 +273,24 @@ export function TableOfContents({
     const first = document.getElementById(sectionIds[0]!);
     const doc = first?.ownerDocument ?? document;
     let frame = 0;
+    // Each link's reach, from 1 at the reader's place easing to 0 three sections away, which
+    // its dash grows and darkens with: set on the links directly, every frame the page scrolls, without
+    // rendering the list again.
+    const wave = (position: number) => {
+      const links = root.current?.querySelectorAll<HTMLElement>('.env-table-of-contents-link');
+      links?.forEach((link, index) => {
+        // A smooth bell: full at the reader's place, easing to nothing at the spread.
+        const distance = Math.min(1, Math.abs(index - position) / waveSpread);
+        const reach = Math.cos((distance * Math.PI) / 2) ** 2;
+        link.style.setProperty('--env-table-of-contents-reach', reach.toFixed(3));
+      });
+    };
     const update = () => {
       frame = 0;
-      if (chosen.current) {
-        setCurrent(chosen.current.id);
+      const choice = chosen.current;
+      if (choice?.settled) {
+        setCurrent(choice.id);
+        wave(sectionIds.indexOf(choice.id));
         return;
       }
       const elements = sectionIds
@@ -292,12 +314,22 @@ export function TableOfContents({
           padding -
           (parseFloat(getComputedStyle(element).scrollMarginTop) || 0),
       }));
-      const next = currentSection(sections, {
+      const view = {
         height: Math.max(0, height - padding),
         scrolled: scrolling.scrollTop,
         range: scrolling.scrollHeight - scrolling.clientHeight,
-      });
+      };
+      let next = currentSection(sections, view);
+      let position = readingPosition(sections, view);
+      if (choice) {
+        // On the way to a chosen section, the marks never pass it, though the page may scroll on
+        // to its end, where a later section would be current.
+        const chosenIndex = sectionIds.indexOf(choice.id);
+        if (position > chosenIndex) position = chosenIndex;
+        if (next && sectionIds.indexOf(next) > chosenIndex) next = choice.id;
+      }
       setCurrent(next);
+      wave(position);
     };
     const schedule = () => {
       if (frame === 0) frame = requestAnimationFrame(update);
@@ -307,14 +339,16 @@ export function TableOfContents({
       if (target instanceof Element && first && !target.contains(first)) return;
       const choice = chosen.current;
       if (choice && !choice.settled) {
-        // A scroll a link started: its section stays current until scrolling pauses.
+        // A scroll a link started: the marks follow it, and the choice settles once it pauses.
         settleLater(settleDelay);
+        schedule();
         return;
       }
       chosen.current = null;
       schedule();
     };
     const onResize = () => schedule();
+    refresh.current = schedule;
     schedule();
     doc.addEventListener('scroll', onScroll, { capture: true, passive: true });
     window.addEventListener('resize', onResize);
@@ -345,7 +379,6 @@ export function TableOfContents({
       event.preventDefault();
       const choice = { id, settled: false };
       chosen.current = choice;
-      setCurrent(id);
       target.scrollIntoView({
         behavior: prefersReducedMotion() ? 'instant' : 'smooth',
         block: 'start',

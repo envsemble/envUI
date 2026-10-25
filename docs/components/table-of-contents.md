@@ -35,7 +35,7 @@ components:
 
 ## Overview
 
-It lists the page's headings on its own, nesting each under the one above it, and marks the section the reader is in: a short dash before each section, like a ruler, darker once passed; the current one's the longest and darkest, and those beside it and under the pointer a little longer. Sections not yet reached are quieter, so the list reads as how far the reader has come. A link scrolls its section to the top, below anything that stays there, such as a header.
+It lists the page's headings on its own, nesting each under the one above it, and marks the section the reader is in: a short dash before each section, like a ruler, which swells in a smooth wave around the reader's place as the page scrolls: the current section's the longest and darkest, the next ones growing as the reader nears them, and the one under the pointer longer too. Sections not yet reached are quieter, so the list reads as how far the reader has come. A link scrolls its section to the top, below anything that stays there, such as a header.
 
 ```tsx example=DocsArticle
 

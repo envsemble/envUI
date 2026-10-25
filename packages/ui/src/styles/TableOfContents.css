@@ -48,48 +48,56 @@
   outline-offset: -2px;
 }
 
-/* Each link's dash at the column's start, the same at every level, centred on its first line: to
-   come in the muted edge color, passed in the muted text color. The current
-   section's is the longest, in the text color, and thicker; the sections beside it and the one under
-   the pointer take a longer dash. A passed section's label and the current one's are the text color, at
-   the same weight, so no label rewraps as the reader moves. */
+/* Each link's dash at the column's start, the same at every level, centred on its first line. The
+   dashes swell like a wave around the reader's place as the page scrolls: each grows longer,
+   thicker and darker with its reach, which the component sets every frame from 1 at the reader's
+   place to 0 three sections away, so the current section's dash is the longest and darkest
+   and the next one already grows as the reader nears it. At rest a dash takes the muted edge color,
+   or once passed the muted text color, and blends into the text color as its reach grows. Before
+   the component has measured, the current section's dash is full; the one under the pointer grows
+   too. The labels change color at once, never gradually and never weight, so none rewraps as the
+   reader moves: passed and current ones in the text color, those still to come quieter. */
 .env-table-of-contents .env-table-of-contents-link::before {
   content: '';
   position: absolute;
-  /* The dash's share of the column: drawn full length and scaled from its start, so it grows
-     without laying anything out again. */
-  --env-table-of-contents-mark: 0.5;
+  --env-table-of-contents-rest: var(--env-color-border-muted);
+  --env-table-of-contents-mark: calc(0.25 + 0.75 * var(--env-table-of-contents-reach, 0));
   inset-inline-start: var(--env-space-1);
   inset-block-start: calc(
-    var(--env-space-1) + (1lh - var(--env-table-of-contents-dash-thickness)) / 2
+    var(--env-space-1) + (1lh - 2 * var(--env-table-of-contents-dash-thickness)) / 2
   );
+  /* Drawn at its fullest and scaled from its start, so it grows without laying anything out. */
   inline-size: var(--env-table-of-contents-dash);
-  block-size: var(--env-table-of-contents-dash-thickness);
+  block-size: calc(2 * var(--env-table-of-contents-dash-thickness));
   transform-origin: 0 50%;
-  scale: var(--env-table-of-contents-mark) 1;
+  scale: var(--env-table-of-contents-mark);
   border-radius: var(--env-radius-full);
-  background: var(--env-color-border-muted);
+  background: color-mix(
+    in oklch,
+    var(--env-color-fg-default) calc(var(--env-table-of-contents-reach, 0) * 100%),
+    var(--env-table-of-contents-rest)
+  );
 }
 .env-table-of-contents-link:dir(rtl)::before {
   transform-origin: 100% 50%;
 }
-.env-table-of-contents
-  .env-table-of-contents-item:has(+ .env-table-of-contents-item > [aria-current='location'])
-  > .env-table-of-contents-link::before,
-.env-table-of-contents
-  .env-table-of-contents-item:has(> [aria-current='location'])
-  + .env-table-of-contents-item
-  > .env-table-of-contents-link::before,
-.env-table-of-contents .env-table-of-contents-link:hover::before {
-  --env-table-of-contents-mark: 0.7;
+.env-table-of-contents .env-table-of-contents-link[data-passed]::before {
+  --env-table-of-contents-rest: var(--env-color-fg-muted);
 }
 .env-table-of-contents .env-table-of-contents-link[aria-current='location']::before {
-  --env-table-of-contents-mark: 1;
-  inset-block-start: calc(
-    var(--env-space-1) + (1lh - 2 * var(--env-table-of-contents-dash-thickness)) / 2
+  --env-table-of-contents-mark: calc(0.25 + 0.75 * var(--env-table-of-contents-reach, 1));
+  background: color-mix(
+    in oklch,
+    var(--env-color-fg-default) calc(var(--env-table-of-contents-reach, 1) * 100%),
+    var(--env-table-of-contents-rest)
   );
-  block-size: calc(2 * var(--env-table-of-contents-dash-thickness));
-  background: var(--env-color-fg-default);
+}
+.env-table-of-contents .env-table-of-contents-link:hover::before {
+  --env-table-of-contents-mark: max(0.6, calc(0.25 + 0.75 * var(--env-table-of-contents-reach, 0)));
+}
+.env-table-of-contents .env-table-of-contents-link[data-passed],
+.env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
+  color: var(--env-color-fg-default);
 }
 /* The sections still to come, quieter than muted text yet still 4.5:1 on the page and on a
    surface in both themes; at high contrast they keep the muted text color. */
@@ -108,28 +116,18 @@
     color: var(--env-color-fg-muted);
   }
 }
-.env-table-of-contents .env-table-of-contents-link[data-passed] {
-  color: var(--env-color-fg-default);
-}
-.env-table-of-contents .env-table-of-contents-link[data-passed]::before {
-  background: var(--env-color-fg-muted);
-}
 .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
   color: var(--env-color-fg-default);
 }
 
-/* Motion: colors fade and the marks move to the next section, only without a reduced-motion
-   preference; otherwise they change at once. */
+/* Motion: only without a reduced-motion preference; otherwise the dashes follow the scroll at once. */
 @media (prefers-reduced-motion: no-preference) {
-  .env-table-of-contents-link {
-    transition:
-      color var(--env-motion-duration-fast) var(--env-motion-ease),
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-  }
+  /* The dashes follow the scroll every frame; a short ease lets a mouse wheel's steps glide
+     instead of jumping. */
   .env-table-of-contents-link::before {
-    transition-property: scale, background-color, inset-block-start, block-size;
-    transition-duration: var(--env-motion-duration-medium);
-    transition-timing-function: var(--env-motion-ease-standard);
+    transition:
+      scale var(--env-motion-duration-fast) var(--env-motion-ease-standard),
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-standard);
   }
 }
 

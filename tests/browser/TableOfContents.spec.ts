@@ -54,6 +54,12 @@ test(
       .locator('.env-table-of-contents-link')
       .evaluateAll((links) => new Set(links.map((link) => getComputedStyle(link).fontWeight)).size);
     expect(weights).toBe(1);
+    // Passed sections and the current one read in the text color; only those still to come are
+    // quieter.
+    const color = (link: Locator) => link.evaluate((element) => getComputedStyle(element).color);
+    expect(await color(contents.locator('[data-passed]').first())).toBe(
+      await color(current(contents)),
+    );
   },
 );
 
@@ -103,27 +109,36 @@ test(
   },
 );
 
-test('a smooth scroll to a section keeps it current all the way', async ({ page }) => {
+test('a smooth scroll to a section moves the marks through the sections on the way, then rests on it', async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto(url);
   const contents = page.getByRole('navigation', { name: 'On this page' });
+  const order = await contents
+    .locator('.env-table-of-contents-link')
+    .evaluateAll((links) => links.map((link) => link.textContent ?? ''));
   await contents.getByRole('link', { name: 'Short end' }).click();
-  // Sampled every frame until the page stops scrolling: the sections passed on the way never are.
+  // Sampled every frame until the page stops scrolling: the current section only ever moves on,
+  // in reading order, and the chosen one is current once it rests.
   const seen = await page.evaluate(
     () =>
       new Promise<string[]>((resolve) => {
-        const labels = new Set<string>();
+        const labels: string[] = [];
         let last = -1;
         let still = 0;
         const sample = () => {
-          labels.add(document.querySelector('[aria-current="location"]')?.textContent ?? '');
+          const label = document.querySelector('[aria-current="location"]')?.textContent ?? '';
+          if (labels.at(-1) !== label) labels.push(label);
           still = window.scrollY === last ? still + 1 : 0;
           last = window.scrollY;
-          if (still > 10) resolve([...labels]);
+          if (still > 30) resolve(labels);
           else requestAnimationFrame(sample);
         };
         sample();
       }),
   );
-  expect(seen).toEqual(['Short end']);
+  const indexes = seen.map((label) => order.indexOf(label));
+  expect(indexes).toEqual([...indexes].sort((x, y) => x - y));
+  await expect(contents.locator('[aria-current="location"]')).toHaveText('Short end');
 });
