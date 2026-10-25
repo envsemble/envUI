@@ -190,11 +190,13 @@ function Sections({
   sections,
   provides,
   related,
+  bands,
 }: {
   reference: Document;
   sections: DocumentationSection[];
   provides: boolean;
   related: boolean;
+  bands: boolean;
 }) {
   // The developer-only part, "## In code", and the changelog are on the page's guide in the Docs.
   const shown = sections
@@ -226,8 +228,8 @@ function Sections({
             {group.map(render)}
           </div>
         );
-        // A foundation's page sits on the page, without the band.
-        return index === bandGroup && !reference.path.startsWith('foundations/') ? (
+        // A foundation's page sits on the page, without the band, as a page in the Docs does.
+        return bands && index === bandGroup && !reference.path.startsWith('foundations/') ? (
           <div key={index} className="docs-band">
             {content}
           </div>
@@ -243,19 +245,22 @@ function Sections({
 }
 
 /**
- * A component or pattern page of the Site: every section in the page's order, then Related; a
- * component's props, part names, what the application provides and changelog are on its page in
- * the Docs. `provides` keeps what envUI and the application provide in Accessibility, for Field,
- * whose whole page is in the Docs, where `related={false}` leaves Related for the page's end.
+ * A component or pattern page of the Usage guide: every section in the page's order, then Related;
+ * a component's props, part names, what the application provides and changelog are on its page in
+ * the Docs. For Field, whose whole page is in the Docs, `provides` keeps what envUI and the
+ * application provide in Accessibility, `related={false}` leaves out Related and `bands={false}`
+ * the band: the Docs have neither.
  */
 export function TemplateContent({
   document,
   provides = false,
   related = true,
+  bands = true,
 }: {
   document: Document;
   provides?: boolean;
   related?: boolean;
+  bands?: boolean;
 }) {
   // A component's or pattern's page is guidance: its lists are check lists.
   return (
@@ -265,6 +270,7 @@ export function TemplateContent({
         sections={document.sections ?? []}
         provides={provides}
         related={related}
+        bands={bands}
       />
     </GuidanceLists>
   );
