@@ -63,7 +63,9 @@ test('the addresses of the views before the Site and the Docs split open the pag
     'overview/components': 'overview',
     'overview/components?section=components-actions': 'components?section=components-actions',
     'overview/get-started': 'docs/setup',
-    'overview/get-started?skill=migrate&section=local-development': 'docs/agent-skills',
+    'overview/get-started?skill=migrate&section=local-development': 'docs/agent-tooling',
+    // The agent skills' page went with the skills.
+    'docs/agent-skills': 'docs/agent-tooling',
     'get-started/migration': 'docs/migration',
     // The Site's Get started page is the setup guide.
     'get-started': 'docs/setup',
@@ -813,26 +815,6 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   await chooseScheme(page, 'dark');
   await expect(disclosure).toHaveAttribute('data-env-theme', 'dark');
   await expect(disclosure.locator('details')).toHaveAttribute('open', '');
-});
-
-test('arrowing between the agent skills keeps focus on the tabs and adds no history', async ({
-  page,
-}) => {
-  await page.goto(`${catalogueUrl}/docs/setup`);
-  await page.goto(`${catalogueUrl}/docs/agent-skills?skill=migrate`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Agent skills');
-  const before = await page.evaluate(() => history.length);
-  const tabs = page.getByRole('tablist', { name: 'Agent skills', exact: true });
-  await tabs.getByRole('tab', { name: 'Migrate to envUI', exact: true }).focus();
-  await page.keyboard.press('ArrowLeft');
-  await expect(tabs.getByRole('tab', { name: 'Use envUI', exact: true })).toBeFocused();
-  expect(await page.evaluate(() => `${location.pathname}${location.search}`)).toBe(
-    '/docs/agent-skills?skill=use',
-  );
-  expect(await page.evaluate(() => history.length)).toBe(before);
-  // Back leaves the page rather than stepping through the skills passed on the way.
-  await page.goBack();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
 });
 
 test('the navigation holds the wordmark and search, the page the other area and Display, and there is no top bar', async ({

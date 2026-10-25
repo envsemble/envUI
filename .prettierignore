@@ -2,11 +2,7 @@ packages/ui/src/icons
 packages/ui/src/assets
 packages/ui/icon-manifest.json
 packages/ui/README.md
-packages/ui/skills
 packages/ui/docs
-packages/ui/manifest.json
-packages/ui/llms.txt
-packages/ui/llms-full.txt
 apps/catalogue/src/generated
 packages/codemods/test/fixtures
 apps/catalogue/src/brand/EnvUILogo.tsx

@@ -402,7 +402,7 @@ Gzipped, `Table.Cell` alone is 3.7 KB with esbuild and 0.6 KB with Vite.
 
 ## Coding agents
 
-Run `npx --no envui agents` once to put the envUI index into the project's `AGENTS.md`, and register `node node_modules/@envsemble/envui/bin/envui.mjs mcp` as an MCP server in the project. The three skills ship under `skills/`; copy them into the project, keeping their version aligned with the package. Installing the npm package registers none of these by itself. [For agents](agent-tooling.md) describes them.
+A coding agent can do this setup with you: give it the prompt `Set up envUI in my app: envui.envsemble.com/SKILL.md`. It also adds a short pointer to these docs to the project's `AGENTS.md` and turns on envUI's lint rules, each of which you may skip. [For agents](agent-tooling.md) describes it.
 
 ## Related workflows
 

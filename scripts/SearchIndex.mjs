@@ -94,12 +94,6 @@ export const cataloguePages = [
     area: 'docs',
     aliases: ['release notes', 'releases', 'versions', 'full changelog', 'all changes'],
   },
-  {
-    page: 'agent-skills',
-    title: 'Agent skills',
-    area: 'docs',
-    aliases: ['skills', 'envui-use', 'envui-migrate'],
-  },
 ];
 
 /**

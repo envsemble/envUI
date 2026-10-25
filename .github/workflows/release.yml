@@ -67,7 +67,7 @@ jobs:
             cat "$RUNNER_TEMP/view.err"
             exit 1
           fi
-      # The packages, the catalogue's dependency and the plugin manifests carry the version, and the
+      # The packages and the catalogue's dependency carry the version, and the
       # CHANGELOG has a section for it.
       - name: Validate the release
         if: ${{ steps.version.outputs.release == 'true' }}

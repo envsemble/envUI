@@ -35,7 +35,6 @@ export type PageKind =
   | 'guide'
   | 'codemods'
   | 'docs-changelog'
-  | 'skills'
   | 'tokens'
   | 'foundation-guide'
   | 'api';
@@ -247,19 +246,6 @@ const startPages: SitePage[] = guideDocuments
             'Upgrade an application from envUI 0.x to 1.0 with @envsemble/envui-codemods, which renames what it can and reports the rest.',
         },
       ];
-    if (document.id === 'agent-tooling')
-      return [
-        page,
-        {
-          path: 'docs/agent-skills',
-          title: 'Agent skills',
-          area: 'docs',
-          section: 'Get started',
-          kind: 'skills',
-          summary:
-            'The skills that teach coding agents to use envUI and to migrate an interface to it.',
-        },
-      ];
     return [page];
   });
 
@@ -407,7 +393,8 @@ export function routeOfDocument(
     tokens: 'docs/tokens',
     codemods: 'docs/codemods',
     'full-changelog': 'docs/changelog',
-    'agent-skills': 'docs/agent-skills',
+    // The agent skills are gone; the guide for agents says what replaced them.
+    'agent-skills': 'docs/agent-tooling',
     // Pages merged into others.
     'customizing-colors': 'docs/customizing',
     composition: 'docs/customizing',
@@ -489,7 +476,7 @@ export function normalizeRoute(route: string): string {
       search.delete('section');
       return routeOfDocument(shown) ?? docsRoute;
     }
-    if (search.has('skill') || section === 'local-development') return 'docs/agent-skills';
+    if (search.has('skill') || section === 'local-development') return 'docs/agent-tooling';
     if (section === 'documentation') return docsRoute;
     if (section === 'setup') search.delete('section');
     return `docs/setup${rest()}`;
@@ -499,6 +486,8 @@ export function normalizeRoute(route: string): string {
   const guide = /^get-started\/(.+)$/.exec(originalPath)?.[1];
   if (guide) return routeOfDocument(guide, { section: section ?? undefined }) ?? docsRoute;
   if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
+  // The agent skills' page is gone with the skills: the guide for agents replaces them.
+  if (originalPath === 'docs/agent-skills') return 'docs/agent-tooling';
   // The Site's changelog moved to the Docs, with its release notes.
   if (originalPath === 'changelog') return `docs/changelog${rest()}`;
   // A destination's own address opens its first page.

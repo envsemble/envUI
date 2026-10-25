@@ -20,18 +20,10 @@
     "url": "git+https://github.com/envsemble/envUI.git",
     "directory": "packages/ui"
   },
-  "bin": {
-    "envui": "./bin/envui.mjs"
-  },
   "files": [
     "dist",
-    "bin",
     "README.md",
-    "skills",
     "docs",
-    "manifest.json",
-    "llms.txt",
-    "llms-full.txt",
     "CHANGELOG.md",
     "THIRD_PARTY_NOTICES.md",
     "licenses",

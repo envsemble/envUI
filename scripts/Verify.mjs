@@ -61,7 +61,6 @@ const [phase1, built] = await Promise.all([
     task('docs:check props', node('scripts/ExtractProps.mjs', '--check')),
     task('docs:check parts', node('scripts/GenerateParts.mjs', '--check')),
     task('docs:check pages', node('scripts/GenerateDocumentation.mjs', '--check')),
-    task('docs:check manifest', node('scripts/GenerateManifest.mjs', '--check')),
     task('lint', [...bin.eslint, '.', '--cache', '--cache-location', '.cache/eslint/']),
     task('lint:css', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/catalogue/src/**/*.css']),
     task('format:check', [...bin.prettier, '--check', '.']),

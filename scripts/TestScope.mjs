@@ -127,7 +127,7 @@ export const exceptions = [
   [/^packages\/ui\/src\/foundations\/messages\//, ['Messages']],
   [/^packages\/ui\/src\/dev(?:\.ts$|\/)/, ['DevMode']],
   [
-    /^apps\/catalogue\/|^bench\/results\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest|Search\w*|MarkdownHeadings|FinalizeSite|SiteModuleFiles|SiteAgentFiles|BenchmarkResults|ReleaseNotes)\.m?[jt]s$/,
+    /^apps\/catalogue\/|^bench\/results\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|Search\w*|MarkdownHeadings|FinalizeSite|SiteModuleFiles|SiteAgentFiles|BenchmarkResults|ReleaseNotes)\.m?[jt]s$/,
     catalogue,
   ],
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
@@ -260,13 +260,13 @@ export function selectScope(paths, root = repositoryRoot) {
     )
       scope.generated.add('icons');
     if (
-      /^packages\/ui\/src\/.*\.(?:tsx?|css|json)$|^docs\/|^apps\/catalogue\/|^\.changeset\/|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateParts|GenerateManifest)\.mjs$/.test(
+      /^packages\/ui\/src\/.*\.(?:tsx?|css|json)$|^docs\/|^apps\/catalogue\/|^\.changeset\/|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateParts)\.mjs$/.test(
         path,
       )
     )
       scope.generated.add('docs');
     if (
-      /^packages\/ui\/(?:src\/|package\.json|bin\/|README)|^README\.md$|^\.agents\/skills\/|^scripts\/(?:BuildLibrary|ClientModules|DependencyNotices|ValidateRelease)\.mjs$/.test(
+      /^packages\/ui\/(?:src\/|package\.json|README)|^README\.md$|^scripts\/(?:BuildLibrary|ClientModules|DependencyNotices|ValidateRelease)\.mjs$/.test(
         path,
       )
     )

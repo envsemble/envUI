@@ -7,11 +7,7 @@ output/playwright/
 .cache/
 *.tgz
 /packages/ui/README.md
-/packages/ui/skills/
 /packages/ui/docs/
-/packages/ui/manifest.json
-/packages/ui/llms.txt
-/packages/ui/llms-full.txt
 /apps/catalogue/src/generated/
 .wrangler/
 

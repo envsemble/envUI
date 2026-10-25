@@ -33,7 +33,6 @@ import {
   DocsHome,
   FoundationGuidePage,
   GuidePage,
-  SkillsPage,
   TokensPage,
 } from './pages/DocsPages';
 import { DocsNavigation, PageActions, SiteNavigation } from './navigation/DocumentationNavigation';
@@ -42,7 +41,7 @@ import { RouterLink } from './navigation/RouterLink';
 import { docsRoute, homeRoute, inDocs, routeHref, revealSection } from './navigation/Address';
 import { isSearchShortcut } from './search/SearchShortcut';
 import { SearchButton } from './search/SearchButton';
-import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
+import { useDocumentationRoute } from './navigation/useDocumentationRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { DocumentationSearch } from './search/DocumentationSearch';
 
@@ -60,7 +59,6 @@ const pageContent: Record<SitePage['kind'], (props: { page: SitePage }) => React
   guide: GuidePage,
   codemods: CodemodsPage,
   'docs-changelog': ChangelogDocsPage,
-  skills: SkillsPage,
   tokens: TokensPage,
   'foundation-guide': FoundationGuidePage,
   api: ApiPage,
@@ -107,8 +105,6 @@ function Site() {
   }, []);
   useEffect(() => {
     document.title = title;
-    // Moving between a page's views, such as the agent skills, keeps focus on its tabs.
-    if (reachedFromTabs()) return;
     if (firstLoad.current) firstLoad.current = false;
     else mainElement.current?.focus({ preventScroll: true });
     const section = new URLSearchParams(route.split('?')[1]).get('section');

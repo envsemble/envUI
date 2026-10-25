@@ -46,11 +46,6 @@ const sources = [
   { path: 'packages/ui/CHANGELOG.md', read: 'whole' },
   { directory: '.changeset', extensions: ['.md'], read: 'whole' },
   { directory: 'docs', extensions: ['.md'], read: 'whole' },
-  { directory: '.agents/skills', extensions: ['.md'], read: 'whole' },
-  // The agent plugin and the marketplaces that list it.
-  { directory: 'plugin', extensions: ['.md', '.json'], read: 'whole' },
-  { path: '.claude-plugin/marketplace.json', read: 'whole' },
-  { path: '.agents/plugins/marketplace.json', read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.css'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.ts', '.tsx'], read: 'code' },
   // The catalogue's sample data, copy and styles, and the hosted catalogue's Worker and headers.

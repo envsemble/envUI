@@ -201,9 +201,8 @@ test('a result names its area: the Site, or the Docs for the reference', () => {
   assert.equal(area('export:useTheme'), 'docs');
   assert.equal(area('token:color.fg.muted'), 'docs');
   for (const record of records) assert.ok(['site', 'docs'].includes(record.area), record.id);
-  // The site's own pages: the Docs' home, tokens, codemods, the full changelog and skills are in
-  // the Docs.
-  const inDocs = new Set(['docs', 'tokens', 'codemods', 'full-changelog', 'agent-skills']);
+  // The site's own pages: the Docs' home, tokens, codemods and the full changelog are in the Docs.
+  const inDocs = new Set(['docs', 'tokens', 'codemods', 'full-changelog']);
   for (const { page, area: where } of cataloguePages)
     assert.equal(where, inDocs.has(page) ? 'docs' : 'site', page);
   // A foundation's page on the Site ranks above its guide in the Docs.

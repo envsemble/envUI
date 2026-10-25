@@ -175,7 +175,6 @@ if (scope.generated.has('docs'))
       ),
     ),
     task('docs:check pages', node('scripts/GenerateDocumentation.mjs', '--check')),
-    task('docs:check manifest', node('scripts/GenerateManifest.mjs', '--check')),
   );
 if (scope.generated.has('icons'))
   staticTasks.push(task('icons:check', node('scripts/GenerateIcons.mjs', '--check')));
