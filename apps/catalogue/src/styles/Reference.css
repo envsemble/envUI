@@ -41,11 +41,23 @@
 .docs-explore-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
 }
-/* The wordmark and the package's version under it, a quiet subheading, as wide as the hero, so
-   the wordmark takes its own width. */
+/* The wordmark and what envUI is under it, as wide as the hero, so the wordmark takes its own
+   width; the line keeps to a measure that breaks it into two balanced lines. */
 .docs-overview-brand {
   inline-size: 100%;
 }
-.docs-overview-version {
+.docs-overview-lede {
+  max-inline-size: 34rem;
   margin: 0;
+  text-wrap: balance;
+}
+/* The facts under the hero's buttons: the version as a quiet badge, then the counts in one line, a
+   middle dot between them. In a narrow hero the counts go under the version and stay one line. */
+.docs-overview-facts {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.docs-overview-facts span > * + *::before {
+  margin-inline: var(--env-space-2);
+  content: '·';
 }

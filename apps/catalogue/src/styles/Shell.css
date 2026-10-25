@@ -270,10 +270,12 @@ body {
     --docs-banner-reach: min((100cqi - var(--docs-content-width)) / 5, var(--env-space-9) * 2);
   }
 }
+/* A banner's text reads from the start like a document, under its breadcrumbs, and its actions,
+   where it has any, follow at the end of the heading's row (Banners.css draws each kind). */
 .docs-page-banner-heading {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: var(--env-space-4);
   max-inline-size: 100%;
@@ -289,11 +291,10 @@ body {
   position: relative;
   z-index: var(--env-z-raised);
   inline-size: 100%;
-  text-align: center;
+  text-align: start;
 }
 .docs-page-banner-title {
   max-inline-size: 22ch;
-  font-size: clamp(1.875rem, calc(1.125rem + 4cqi), 3.5rem);
   font-weight: var(--env-font-weight-medium);
   line-height: 1.1;
   letter-spacing: -0.035em;
@@ -302,23 +303,6 @@ body {
 .docs-page-banner-description {
   max-inline-size: 42ch;
   text-wrap: balance;
-}
-/* A catalogue page's icon: large at the banner's end, turned, faint. */
-.docs-page-banner-symbol {
-  position: absolute;
-  inset-inline-end: -1rem;
-  inset-block-start: 50%;
-  inline-size: clamp(10rem, 28cqi, 18rem);
-  aspect-ratio: 1;
-  transform: translateY(-50%) rotate(-12deg);
-  color: var(--env-color-fg-muted);
-  opacity: 0.1;
-  pointer-events: none;
-}
-.docs-page-banner-symbol > svg {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 .docs-page-navigation {
   padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);

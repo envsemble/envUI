@@ -1,0 +1,1349 @@
+/* The motifs at the end of the catalogue's banners (BannerMotif.tsx): each a small arrangement of
+   the parts the page's subject is made of, drawn in envUI's own tokens, so it follows the theme and
+   the palette. Its stage covers the banner's end and is a container of its size; the arrangement is
+   drawn in em of a unit that follows the stage's size, turned slightly, and faded toward the
+   banner's text, so the text keeps its full contrast on the plain fill. It is decoration: of no
+   size in the banner's layout, out of the pointer's way, and hidden from assistive technology. */
+/* stylelint-disable unit-disallowed-list -- a motif is a drawing in em, the unit its stage sets,
+   so the whole drawing scales with the banner as one picture, as no rem or token could. */
+.docs-banner-motif {
+  /* The motifs' colors: lines of text, the paper of a surface on the fill, its edge, the neutral
+     fill of a control, and the accent. */
+  --docs-motif-ink: color-mix(in srgb, var(--env-color-fg-muted) 30%, transparent);
+  --docs-motif-ink-strong: color-mix(in srgb, var(--env-color-fg-muted) 55%, transparent);
+  --docs-motif-paper: var(--env-color-bg-page);
+  --docs-motif-edge: var(--env-color-border-muted);
+  --docs-motif-fill: var(--env-color-bg-neutral-muted);
+  --docs-motif-accent: var(--env-color-bg-accent-emphasis);
+  --docs-motif-tint: var(--env-color-bg-accent-muted);
+  /* An opaque color for the fade's mask, which reads only its alpha. */
+  --docs-motif-opaque: var(--env-color-fg-default);
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  display: grid;
+  place-items: center;
+  inline-size: min(54%, 40rem);
+  overflow: hidden;
+  container-type: size;
+  pointer-events: none;
+  mask-image: linear-gradient(to right, transparent, var(--docs-motif-opaque) 45%);
+}
+
+.docs-banner-motif:dir(rtl) {
+  mask-image: linear-gradient(to left, transparent, var(--docs-motif-opaque) 45%);
+}
+
+/* The arrangement: in a unit that fits about nineteen of it in the banner's height, turned a
+   little and set toward the banner's end. A motif may draw itself larger. */
+.docs-motif-art {
+  --docs-motif-scale: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1em;
+  font-size: calc(min(100cqh / 19, 100cqi / 24) * var(--docs-motif-scale));
+  line-height: 1;
+  rotate: -8deg;
+  translate: 12% 0;
+}
+
+/* A line of text, as a rounded bar. */
+.docs-motif-line {
+  display: block;
+  flex: none;
+  inline-size: var(--w);
+  block-size: 0.55em;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-ink);
+}
+
+/* Motion: as the page opens, each piece settles into place in turn, once. Only transforms and
+   opacity move, none of the page's layout; without a preference for motion it is drawn at rest. */
+@media (prefers-reduced-motion: no-preference) {
+  .docs-motif-art > *,
+  .docs-motif-blocks > *,
+  .docs-motif-panel > * {
+    animation: docs-motif-enter calc(var(--env-motion-duration-slow) * 4)
+      var(--env-motion-ease-enter) calc(var(--n, 0) * 70ms) backwards;
+  }
+}
+
+@keyframes docs-motif-enter {
+  from {
+    opacity: 0;
+    translate: 0 1.5em;
+  }
+}
+
+/* Tracks: a slider's, with its fill and a thumb at its value; a meter's and a progress bar's,
+   thinner, filled with the accent. */
+.docs-motif-art[data-motif='tracks'] {
+  gap: 1.3em;
+}
+
+.docs-motif-track {
+  position: relative;
+  display: block;
+  inline-size: 20em;
+  block-size: 1.1em;
+  margin-inline-start: var(--offset, 0);
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-fill);
+}
+
+.docs-motif-track-fill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: var(--value);
+  border-radius: inherit;
+  background: var(--docs-motif-ink);
+  transform-origin: 0 50%;
+}
+
+.docs-motif-track[data-accent] .docs-motif-track-fill {
+  background: var(--docs-motif-accent);
+}
+
+.docs-motif-art[data-variant='thumbs'] .docs-motif-track {
+  block-size: 1.6em;
+}
+
+.docs-motif-art[data-variant='progress'] .docs-motif-track {
+  block-size: 0.6em;
+}
+
+.docs-motif-track-thumb {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: var(--value);
+  box-sizing: border-box;
+  inline-size: 2.6em;
+  block-size: 2.6em;
+  margin-block-start: -1.3em;
+  margin-inline-start: -1.3em;
+  border: 0.16em solid var(--env-color-border-default);
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-track[data-accent] .docs-motif-track-thumb {
+  border-color: var(--docs-motif-accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .docs-motif-track-fill {
+    animation: docs-motif-fill calc(var(--env-motion-duration-slow) * 5)
+      var(--env-motion-ease-enter) calc(var(--n, 0) * 70ms + 120ms) backwards;
+  }
+
+  .docs-motif-track-thumb {
+    animation: docs-motif-thumb calc(var(--env-motion-duration-slow) * 5)
+      var(--env-motion-ease-enter) calc(var(--n, 0) * 70ms + 120ms) backwards;
+  }
+}
+
+@keyframes docs-motif-fill {
+  from {
+    scale: 0 1;
+  }
+}
+
+@keyframes docs-motif-thumb {
+  from {
+    inset-inline-start: 0;
+  }
+}
+
+/* Toggles: switches, checkboxes and radios with their labels, some on, in a slope. */
+.docs-motif-art[data-motif='toggles'] {
+  gap: 1.1em;
+}
+
+.docs-motif-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  margin-inline-start: calc(var(--n) * 0.9em);
+}
+
+.docs-motif-toggle {
+  position: relative;
+  flex: none;
+  box-sizing: border-box;
+  inline-size: 2em;
+  block-size: 2em;
+  border: 0.16em solid var(--env-color-border-neutral-strong);
+  border-radius: 0.5em;
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-toggle[data-kind='radio'] {
+  border-radius: var(--env-radius-full);
+}
+
+.docs-motif-toggle[data-kind='switch'] {
+  inline-size: 3.6em;
+  border: 0;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-ink-strong);
+}
+
+.docs-motif-toggle[data-on]:not([data-kind='radio']) {
+  border-color: var(--docs-motif-accent);
+  background: var(--docs-motif-accent);
+}
+
+.docs-motif-toggle[data-on][data-kind='radio'] {
+  border-color: var(--docs-motif-accent);
+}
+
+/* The switch's knob, the checkbox's check and the radio's dot. */
+.docs-motif-toggle::after {
+  position: absolute;
+  content: '';
+}
+
+.docs-motif-toggle[data-kind='switch']::after {
+  inset-block-start: 0.25em;
+  inset-inline-start: 0.25em;
+  inline-size: 1.5em;
+  block-size: 1.5em;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-paper);
+  transition: translate var(--env-motion-duration-slow) var(--env-motion-ease);
+}
+
+.docs-motif-toggle[data-kind='switch'][data-on]::after {
+  translate: 1.6em 0;
+}
+
+.docs-motif-toggle[data-kind='checkbox'][data-on]::after {
+  inset-block-start: 0.28em;
+  inset-inline-start: 0.52em;
+  inline-size: 0.45em;
+  block-size: 0.85em;
+  border: solid var(--env-color-fg-on-emphasis);
+  border-width: 0 0.18em 0.18em 0;
+  rotate: 45deg;
+}
+
+.docs-motif-toggle[data-kind='radio'][data-on]::after {
+  inset: 0.35em;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .docs-motif-toggle[data-kind='switch'][data-on]::after {
+    animation: docs-motif-knob calc(var(--env-motion-duration-slow) * 3)
+      var(--env-motion-ease-enter) calc(var(--n, 0) * 70ms + 300ms) backwards;
+  }
+}
+
+@keyframes docs-motif-knob {
+  from {
+    translate: 0 0;
+  }
+}
+
+/* Avatars: rows that overlap, each avatar ringed in the banner's fill, as a group draws them. */
+.docs-motif-art[data-motif='avatars'] {
+  gap: 0;
+}
+
+.docs-motif-avatar-row {
+  display: flex;
+  margin-block-start: -0.5em;
+  margin-inline-start: calc(var(--n) * 1.8em);
+}
+
+.docs-motif-avatar {
+  display: grid;
+  place-items: center;
+  inline-size: 3.2em;
+  block-size: 3.2em;
+  margin-inline-end: -0.7em;
+  border-radius: var(--env-radius-full);
+  outline: 0.16em solid var(--env-color-bg-default);
+  background: var(--hue-bg);
+  color: var(--hue-fg);
+  font: var(--env-font-weight-medium) 1.25em / 1 var(--env-font-family);
+}
+
+/* Swatches: a fan of color chips, one for each tone, from its muted fill down to its text. */
+.docs-motif-art[data-motif='swatches'] {
+  display: grid;
+  rotate: 0deg;
+  translate: 8% 12%;
+}
+
+.docs-motif-swatch {
+  display: flex;
+  flex-direction: column;
+  grid-area: 1 / 1;
+  inline-size: 3.6em;
+  block-size: 15em;
+  overflow: hidden;
+  border-radius: 0.9em;
+  outline: 0.16em solid var(--env-color-bg-default);
+  transform-origin: 50% 90%;
+  rotate: var(--turn);
+}
+
+.docs-motif-swatch > span {
+  flex: 1;
+}
+
+.docs-motif-swatch > :nth-child(1) {
+  background: var(--muted);
+}
+
+.docs-motif-swatch > :nth-child(2) {
+  background: color-mix(in oklab, var(--muted), var(--emphasis));
+}
+
+.docs-motif-swatch > :nth-child(3) {
+  background: var(--emphasis);
+}
+
+.docs-motif-swatch > :nth-child(4) {
+  background: var(--strong);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .docs-motif-art[data-motif='swatches'] > * {
+    animation-name: docs-motif-fan;
+  }
+}
+
+@keyframes docs-motif-fan {
+  from {
+    opacity: 0;
+    rotate: 0deg;
+  }
+}
+
+/* Steps: the spacing scale as a rhythm, each square a quarter larger than its step, on a shared
+   baseline. */
+.docs-motif-art[data-motif='steps'] {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 0.5rem;
+  rotate: 0deg;
+  translate: 14% 0;
+}
+
+.docs-motif-step {
+  flex: none;
+  inline-size: calc(var(--size) * 1.25);
+  block-size: calc(var(--size) * 1.25);
+  border: 0.0625rem solid var(--env-color-border-accent-muted);
+  border-radius: min(var(--size) / 2, var(--env-radius-md));
+  background: var(--docs-motif-tint);
+}
+
+/* Blocks: laid out in a grid, a row or a column, their gaps hatched in the accent's tint. */
+.docs-motif-blocks {
+  display: grid;
+  grid-template-columns: repeat(3, 5.5em);
+  grid-auto-rows: 3.6em;
+  gap: 0.9em;
+  padding: 0.9em;
+  border-radius: 1.2em;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--docs-motif-tint) 0 0.2em,
+    transparent 0.2em 0.6em
+  );
+}
+
+.docs-motif-blocks[data-variant='row'] {
+  grid-template-columns: repeat(4, 4em);
+  grid-auto-rows: 8em;
+}
+
+.docs-motif-blocks[data-variant='column'] {
+  grid-template-columns: 15em;
+  grid-auto-rows: 2.5em;
+}
+
+.docs-motif-block {
+  border: 0.0625rem solid var(--docs-motif-edge);
+  border-radius: 0.6em;
+  background: var(--docs-motif-paper);
+}
+
+/* Type: the scale's sizes on one baseline; figures; prose with its links; or code. */
+.docs-motif-art[data-motif='type'] {
+  rotate: 0deg;
+}
+
+.docs-motif-art[data-motif='type']:not([data-variant]) {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.25em;
+  translate: 6% 0;
+}
+
+.docs-motif-glyph-type {
+  color: var(--docs-motif-ink-strong);
+  font: var(--env-font-weight-medium) calc(var(--size) * 1em) / 1 var(--env-font-family);
+  letter-spacing: -0.04em;
+}
+
+.docs-motif-glyph-type:first-child {
+  color: color-mix(in srgb, var(--env-color-fg-accent) 70%, transparent);
+}
+
+.docs-motif-art[data-variant='figures'] {
+  gap: 0.15em;
+  rotate: -6deg;
+}
+
+.docs-motif-figure {
+  color: var(--docs-motif-ink-strong);
+  font: var(--env-font-weight-medium) 3.2em / 1 var(--env-font-family);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.docs-motif-figure:first-child {
+  font-size: 5em;
+}
+
+.docs-motif-figure:nth-child(2) {
+  margin-inline-start: 2.2em;
+  color: color-mix(in srgb, var(--env-color-fg-success) 75%, transparent);
+}
+
+.docs-motif-figure:nth-child(4) {
+  margin-inline-start: 1.6em;
+}
+
+.docs-motif-art[data-variant='code'] {
+  gap: 0.9em;
+  padding: 1.6em 1.8em;
+  border-radius: 1em;
+  background: var(--docs-motif-paper);
+  rotate: -6deg;
+}
+
+.docs-motif-code-line {
+  display: flex;
+  gap: 0.6em;
+  margin-inline-start: var(--indent);
+}
+
+.docs-motif-code-line > span {
+  inline-size: var(--w);
+  block-size: 0.65em;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-ink-strong);
+}
+
+.docs-motif-code-line > [data-tone='accent'] {
+  background: color-mix(in srgb, var(--env-color-fg-accent) 60%, transparent);
+}
+
+.docs-motif-code-line > [data-tone='done'] {
+  background: color-mix(in srgb, var(--env-color-fg-done) 60%, transparent);
+}
+
+.docs-motif-code-line > [data-tone='success'] {
+  background: color-mix(in srgb, var(--env-color-fg-success) 60%, transparent);
+}
+
+.docs-motif-prose {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.docs-motif-prose-heading {
+  inline-size: 11em;
+  block-size: 1.3em;
+  margin-block-end: 0.4em;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-ink-strong);
+}
+
+.docs-motif-prose-line {
+  display: flex;
+  gap: 0.5em;
+}
+
+/* A link, in the link's color. */
+.docs-motif-line[data-link] {
+  background: color-mix(in srgb, var(--env-color-fg-link) 60%, transparent);
+}
+
+/* Buttons: pills in rows, primary in the accent, secondary on the neutral fill, ghost in outline,
+   and icon buttons; or the controls drawn like them. */
+.docs-motif-art[data-motif='buttons'] {
+  gap: 1em;
+}
+
+.docs-motif-button-row {
+  display: flex;
+  gap: 0.8em;
+  margin-inline-start: calc(var(--n) * 1.4em);
+}
+
+.docs-motif-button {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-inline-size: 2.6em;
+  block-size: 2.6em;
+  padding-inline: 1.2em;
+  border: 0.12em solid transparent;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-fill);
+}
+
+.docs-motif-button[data-kind='primary'] {
+  background: var(--docs-motif-accent);
+}
+
+.docs-motif-button[data-kind='primary'][data-tone='danger'] {
+  background: var(--env-color-bg-danger-strong);
+}
+
+.docs-motif-button[data-kind='primary'] > .docs-motif-line {
+  background: color-mix(in srgb, var(--env-color-fg-on-emphasis) 70%, transparent);
+}
+
+.docs-motif-button[data-kind='ghost'] {
+  border-color: var(--env-color-border-default);
+  background: transparent;
+}
+
+.docs-motif-button[data-kind='icon'] {
+  padding: 0;
+}
+
+.docs-motif-button[data-kind='icon']::after {
+  inline-size: 1em;
+  block-size: 1em;
+  border-radius: 0.3em;
+  background: var(--docs-motif-ink-strong);
+  content: '';
+}
+
+/* Accessibility's: the focus ring, offset from the button it is on. */
+.docs-motif-button[data-focus] {
+  outline: 0.16em solid var(--env-color-border-focus);
+  outline-offset: 0.22em;
+}
+
+.docs-motif-art[data-variant='keys'] {
+  flex-flow: row wrap;
+  inline-size: 17em;
+  gap: 0.7em;
+  --docs-motif-scale: 1.15;
+}
+
+.docs-motif-key {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  min-inline-size: 2.6em;
+  block-size: 2.6em;
+  padding-inline: 0.7em;
+  border: 0.1em solid var(--env-color-border-default);
+  border-block-end-width: 0.3em;
+  border-radius: 0.6em;
+  background: var(--docs-motif-paper);
+  color: var(--docs-motif-ink-strong);
+  font: var(--env-font-weight-medium) 1em / 1 var(--env-font-family);
+}
+
+.docs-motif-pages {
+  display: flex;
+  gap: 0.4em;
+}
+
+.docs-motif-art[data-variant='pages'] {
+  --docs-motif-scale: 1.3;
+}
+
+.docs-motif-page {
+  display: grid;
+  place-items: center;
+  inline-size: 2.4em;
+  block-size: 2.4em;
+  border-radius: var(--env-radius-full);
+  color: var(--docs-motif-ink-strong);
+  font: var(--env-font-weight-medium) 1em / 1 var(--env-font-family);
+}
+
+.docs-motif-page[data-current] {
+  background: var(--docs-motif-accent);
+  color: var(--env-color-fg-on-emphasis);
+}
+
+.docs-motif-crumbs {
+  display: flex;
+  align-items: center;
+  margin-inline-start: calc(var(--n) * 1.6em);
+}
+
+.docs-motif-crumb {
+  display: flex;
+  align-items: center;
+}
+
+/* The separator between crumbs: a chevron. */
+.docs-motif-crumb + .docs-motif-crumb::before {
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  margin-inline: 0.6em 0.8em;
+  border: solid var(--docs-motif-ink-strong);
+  border-width: 0.14em 0.14em 0 0;
+  rotate: 45deg;
+  content: '';
+}
+
+.docs-motif-crumb:last-child > .docs-motif-line {
+  background: var(--docs-motif-ink-strong);
+}
+
+.docs-motif-segments {
+  display: flex;
+  gap: 0.2em;
+  padding: 0.3em;
+  margin-inline-start: calc(var(--n) * 1.6em);
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-fill);
+}
+
+.docs-motif-segment {
+  display: flex;
+  align-items: center;
+  block-size: 2.2em;
+  padding-inline: 1em;
+  border-radius: var(--env-radius-full);
+}
+
+.docs-motif-segment[data-selected] {
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-segment[data-selected] > .docs-motif-line {
+  background: var(--docs-motif-ink-strong);
+}
+
+/* Fields: a label over each box, one focused with its caret, one a select with its chevron, or a
+   search with its chips; or a drop zone with files coming in. */
+.docs-motif-art[data-motif='fields'] {
+  --docs-motif-scale: 0.9;
+  gap: 1em;
+}
+
+.docs-motif-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  margin-inline-start: calc(var(--n) * 1.2em);
+}
+
+.docs-motif-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  box-sizing: border-box;
+  inline-size: 17em;
+  block-size: 2.8em;
+  padding-inline: 1em;
+  border: 0.1em solid var(--env-color-border-default);
+  border-radius: 0.7em;
+  background: var(--env-color-bg-field);
+}
+
+.docs-motif-field[data-focus] {
+  border-color: var(--env-color-border-focus);
+  outline: 0.1em solid var(--env-color-border-focus);
+}
+
+/* The focused field's caret, after its text. */
+.docs-motif-field[data-focus]::after {
+  inline-size: 0.12em;
+  block-size: 1.3em;
+  margin-inline-start: -0.4em;
+  background: var(--env-color-fg-default);
+  content: '';
+}
+
+.docs-motif-field[data-select]::after {
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  margin-inline-start: auto;
+  border: solid var(--docs-motif-ink-strong);
+  border-width: 0 0.14em 0.14em 0;
+  translate: 0 -0.15em;
+  rotate: 45deg;
+  content: '';
+}
+
+.docs-motif-field[data-search] {
+  border-radius: var(--env-radius-full);
+}
+
+/* The search field's magnifier: a ring and its handle. */
+.docs-motif-field[data-search]::before {
+  flex: none;
+  box-sizing: border-box;
+  inline-size: 1em;
+  block-size: 1em;
+  border: 0.15em solid var(--docs-motif-ink-strong);
+  border-radius: var(--env-radius-full);
+  content: '';
+}
+
+.docs-motif-chips {
+  display: flex;
+  gap: 0.5em;
+  margin-block-start: 0.3em;
+}
+
+.docs-motif-chip {
+  display: flex;
+  align-items: center;
+  block-size: 2em;
+  padding-inline: 0.8em;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-fill);
+}
+
+.docs-motif-chip:first-child {
+  background: var(--env-color-bg-selected);
+}
+
+.docs-motif-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9em;
+  box-sizing: border-box;
+  inline-size: 19em;
+  padding: 1.5em;
+  border: 0.14em dashed var(--env-color-border-default);
+  border-radius: 1.1em;
+}
+
+.docs-motif-drop-arrow {
+  position: relative;
+  inline-size: 2.6em;
+  block-size: 2.6em;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-tint);
+}
+
+/* The arrow up: a chevron over its shaft. */
+.docs-motif-drop-arrow::before,
+.docs-motif-drop-arrow::after {
+  position: absolute;
+  inset-inline-start: 50%;
+  content: '';
+}
+
+.docs-motif-drop-arrow::before {
+  inset-block: 0.65em;
+  inline-size: 0.16em;
+  margin-inline-start: -0.08em;
+  background: var(--env-color-fg-accent);
+}
+
+.docs-motif-drop-arrow::after {
+  inset-block-start: 0.7em;
+  inline-size: 0.6em;
+  block-size: 0.6em;
+  margin-inline-start: -0.3em;
+  border: solid var(--env-color-fg-accent);
+  border-width: 0.16em 0 0 0.16em;
+  rotate: 45deg;
+}
+
+.docs-motif-file {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  box-sizing: border-box;
+  inline-size: 100%;
+  padding: 0.8em 1em;
+  border-radius: 0.7em;
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-file > .docs-motif-track {
+  inline-size: 100%;
+  block-size: 0.5em;
+}
+
+.docs-motif-file .docs-motif-track-fill {
+  background: var(--docs-motif-accent);
+}
+
+/* Rows on a panel: a list's, with one selected; a menu's; a tree's, indented; a table's, under
+   its header; terms'; or disclosures', with their chevrons. */
+.docs-motif-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  box-sizing: border-box;
+  inline-size: 20em;
+  padding: 0.5em;
+  border: 0.0625rem solid var(--docs-motif-edge);
+  border-radius: 1em;
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  block-size: 2.6em;
+  padding-inline: calc(0.8em + var(--depth, 0) * 2em) 0.8em;
+  border-radius: 0.6em;
+}
+
+.docs-motif-row > .docs-motif-line:last-child {
+  margin-inline-start: auto;
+}
+
+.docs-motif-row-lead {
+  flex: none;
+  inline-size: 1.5em;
+  block-size: 1.5em;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-fill);
+}
+
+.docs-motif-row[data-selected] {
+  background: var(--env-color-bg-selected);
+}
+
+.docs-motif-row[data-selected] > .docs-motif-line {
+  background: color-mix(in srgb, var(--env-color-fg-on-selected) 45%, transparent);
+}
+
+.docs-motif-panel[data-variant='menu'] {
+  inline-size: 15em;
+}
+
+/* A tree's and a disclosure's chevrons. */
+.docs-motif-panel:is([data-variant='tree'], [data-variant='disclosure']) .docs-motif-row-lead {
+  inline-size: 0.55em;
+  block-size: 0.55em;
+  margin-inline: 0.3em 0.2em;
+  border: solid var(--docs-motif-ink-strong);
+  border-width: 0 0.14em 0.14em 0;
+  border-radius: 0;
+  background: none;
+  rotate: -45deg;
+}
+
+.docs-motif-row[data-open] .docs-motif-row-lead {
+  rotate: 45deg;
+}
+
+.docs-motif-panel[data-variant='disclosure'] .docs-motif-row {
+  border-block-end: 0.0625rem solid var(--docs-motif-edge);
+  border-radius: 0;
+}
+
+.docs-motif-panel[data-variant='terms'] .docs-motif-row-lead {
+  display: none;
+}
+
+.docs-motif-panel[data-variant='terms'] .docs-motif-row > .docs-motif-line:nth-child(2) {
+  inline-size: 4em;
+  background: var(--docs-motif-ink-strong);
+}
+
+.docs-motif-panel[data-variant='table'] {
+  gap: 0;
+  inline-size: 22em;
+  padding: 0.3em 0.6em;
+}
+
+.docs-motif-panel[data-variant='table'] .docs-motif-row {
+  justify-content: space-between;
+  block-size: 2.4em;
+  border-block-end: 0.0625rem solid var(--docs-motif-edge);
+  border-radius: 0;
+}
+
+.docs-motif-panel[data-variant='table'] .docs-motif-row:last-child {
+  border-block-end: 0;
+}
+
+.docs-motif-row[data-head] > .docs-motif-line {
+  background: var(--docs-motif-ink-strong);
+}
+
+/* Surfaces: cards laid over one another, the front one with its action; alerts and toasts in
+   their tones; or tooltips over what they name. */
+.docs-motif-art[data-motif='surfaces']:not([data-variant]) {
+  display: grid;
+}
+
+.docs-motif-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  grid-area: 1 / 1;
+  box-sizing: border-box;
+  inline-size: 15em;
+  padding: 1.4em;
+  margin-block-start: calc(var(--n) * 2.2em);
+  margin-inline-start: calc(var(--n) * 2.8em);
+  border: 0.0625rem solid var(--docs-motif-edge);
+  border-radius: 1em;
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-card > .docs-motif-line:first-child {
+  block-size: 0.8em;
+  background: var(--docs-motif-ink-strong);
+}
+
+.docs-motif-card > .docs-motif-button {
+  align-self: flex-end;
+  min-inline-size: 4.5em;
+  block-size: 2em;
+  margin-block-start: 0.4em;
+}
+
+.docs-motif-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  box-sizing: border-box;
+  inline-size: 18em;
+  padding: 0.9em 1.1em;
+  margin-inline-start: calc(var(--n) * 1.2em);
+  border-radius: 0.8em;
+  background: var(--notice-fill);
+}
+
+.docs-motif-notice[data-tone='accent'] {
+  --notice-fill: var(--env-color-bg-accent-muted);
+  --notice-mark: var(--env-color-fg-accent);
+}
+
+.docs-motif-notice[data-tone='success'] {
+  --notice-fill: var(--env-color-bg-success-muted);
+  --notice-mark: var(--env-color-fg-success);
+}
+
+.docs-motif-notice[data-tone='warning'] {
+  --notice-fill: var(--env-color-bg-warning-muted);
+  --notice-mark: var(--env-color-fg-warning);
+}
+
+.docs-motif-notice[data-tone='danger'] {
+  --notice-fill: var(--env-color-bg-danger-muted);
+  --notice-mark: var(--env-color-fg-danger);
+}
+
+.docs-motif-notice[data-variant='toasts'] {
+  border: 0.0625rem solid var(--docs-motif-edge);
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-notice-mark {
+  flex: none;
+  inline-size: 1.4em;
+  block-size: 1.4em;
+  border-radius: var(--env-radius-full);
+  background: var(--notice-mark);
+}
+
+.docs-motif-art[data-variant='tips'] {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 1.6em;
+}
+
+.docs-motif-tip-pair {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9em;
+  margin-block-end: calc(var(--n) * 2.6em);
+}
+
+.docs-motif-tip {
+  position: relative;
+  display: flex;
+  padding: 0.75em 1em;
+  border-radius: 0.6em;
+  background: var(--env-color-fg-default);
+}
+
+/* The tooltip's tail, toward what it names. */
+.docs-motif-tip::after {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-start: 50%;
+  margin-inline-start: -0.45em;
+  border: 0.45em solid transparent;
+  border-block-start-color: var(--env-color-fg-default);
+  content: '';
+}
+
+.docs-motif-tip > .docs-motif-line {
+  background: color-mix(in srgb, var(--env-color-bg-page) 60%, transparent);
+}
+
+/* A window: its bar, its navigation and its panes; its tabs; a drawer over the dimmed page; a
+   dock; or the same page at three widths. */
+.docs-motif-window {
+  display: grid;
+  grid-template:
+    'bar bar' 2.4em
+    'side main' 1fr / 6em 1fr;
+  box-sizing: border-box;
+  inline-size: 24em;
+  block-size: 15em;
+  overflow: hidden;
+  border: 0.0625rem solid var(--docs-motif-edge);
+  border-radius: 1em;
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-window-bar {
+  display: flex;
+  grid-area: bar;
+  align-items: flex-end;
+  gap: 0.3em;
+  padding-inline: 0.8em;
+  border-block-end: 0.0625rem solid var(--docs-motif-edge);
+}
+
+.docs-motif-window-side {
+  display: flex;
+  flex-direction: column;
+  grid-area: side;
+  gap: 0.9em;
+  padding: 1em 0.9em;
+  border-inline-end: 0.0625rem solid var(--docs-motif-edge);
+}
+
+.docs-motif-window-main {
+  display: grid;
+  grid-area: main;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8em;
+  padding: 1em;
+}
+
+.docs-motif-window-pane {
+  border-radius: 0.6em;
+  background: var(--docs-motif-fill);
+}
+
+.docs-motif-window-pane:first-child {
+  grid-column: 1 / -1;
+}
+
+.docs-motif-window[data-variant='tabs'] {
+  grid-template:
+    'bar' 2.6em
+    'main' 1fr / 1fr;
+}
+
+.docs-motif-window-tab {
+  inline-size: 5em;
+  block-size: 1.8em;
+  border-radius: 0.5em 0.5em 0 0;
+  background: var(--docs-motif-fill);
+}
+
+.docs-motif-window-tab[data-selected] {
+  background: var(--docs-motif-tint);
+}
+
+.docs-motif-window[data-variant='drawer'] {
+  grid-template-columns: 9em 1fr;
+}
+
+.docs-motif-window[data-variant='drawer'] .docs-motif-window-side {
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-window[data-variant='drawer'] .docs-motif-window-main {
+  background: var(--env-color-bg-overlay-muted);
+}
+
+.docs-motif-window[data-variant='panes'] .docs-motif-window-main {
+  grid-template-columns: 1fr;
+}
+
+.docs-motif-window[data-variant='panes'] .docs-motif-window-pane:first-child {
+  grid-row: span 2;
+}
+
+.docs-motif-window[data-variant='dock'] .docs-motif-window-pane:last-child {
+  grid-column: 1 / -1;
+  background: var(--docs-motif-tint);
+}
+
+.docs-motif-art[data-variant='devices'] {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 1em;
+  rotate: 0deg;
+  translate: 0 0;
+}
+
+.docs-motif-device {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  box-sizing: border-box;
+  padding: 0 0.8em;
+  overflow: hidden;
+  border: 0.16em solid var(--env-color-border-default);
+  border-radius: 0.9em;
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-device > .docs-motif-window-bar {
+  block-size: 1.6em;
+  margin-inline: -0.8em;
+}
+
+.docs-motif-device[data-device='desktop'] {
+  inline-size: 15em;
+  block-size: 10em;
+}
+
+.docs-motif-device[data-device='tablet'] {
+  inline-size: 8em;
+  block-size: 11em;
+}
+
+.docs-motif-device[data-device='phone'] {
+  inline-size: 4.6em;
+  block-size: 8.5em;
+  border-radius: 1em;
+}
+
+/* Rings: a spinner's arcs at three sizes, on their tracks, turning slowly at their own speeds. */
+.docs-motif-art[data-motif='rings'] {
+  rotate: 0deg;
+}
+
+.docs-motif-rings {
+  inline-size: 15em;
+  block-size: 15em;
+  overflow: visible;
+}
+
+.docs-motif-rings g {
+  transform-origin: 50% 50%;
+  transform-box: view-box;
+  rotate: calc(var(--n) * 110deg - 90deg);
+}
+
+.docs-motif-ring-track,
+.docs-motif-ring-arc {
+  fill: none;
+  stroke-width: 9;
+}
+
+.docs-motif-ring-track {
+  stroke: var(--docs-motif-fill);
+}
+
+.docs-motif-ring-arc {
+  stroke: var(--docs-motif-accent);
+  stroke-linecap: round;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .docs-motif-rings g {
+    animation: docs-motif-turn calc(18s + var(--n) * 7s) linear infinite;
+  }
+}
+
+@keyframes docs-motif-turn {
+  to {
+    rotate: calc(var(--n) * 110deg + 270deg);
+  }
+}
+
+/* Badges: envUI's own, in every tone, gathered loosely. */
+.docs-motif-art[data-motif='badges'] {
+  flex-flow: row wrap;
+  inline-size: 17em;
+  gap: 1.1em 0.9em;
+}
+
+.docs-motif-badge {
+  display: flex;
+  zoom: 1.5;
+}
+
+.docs-motif-badge:nth-child(3n + 2) {
+  margin-inline-start: 1em;
+}
+
+/* A calendar heatmap: weeks of days in five steps of the accent. */
+.docs-motif-art[data-motif='heatmap'] {
+  display: grid;
+  grid-template-rows: repeat(7, 1.15em);
+  grid-auto-columns: 1.15em;
+  grid-auto-flow: column;
+  align-items: stretch;
+  gap: 0.3em;
+}
+
+.docs-motif-day {
+  border-radius: 0.25em;
+  background: color-mix(
+    in oklab,
+    var(--docs-motif-accent) calc(var(--level) * 24%),
+    var(--env-color-bg-neutral-muted)
+  );
+}
+
+/* A conversation: messages from either side, one's own in the selection's tint, the composer
+   under them with its send button. */
+.docs-motif-art[data-motif='chat'] {
+  inline-size: 19em;
+  gap: 0.8em;
+}
+
+.docs-motif-message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 0.9em 1.1em;
+  border-radius: 1.1em 1.1em 1.1em 0.3em;
+  background: var(--docs-motif-fill);
+}
+
+.docs-motif-message[data-own] {
+  align-self: flex-end;
+  border-radius: 1.1em 1.1em 0.3em;
+  background: var(--env-color-bg-selected);
+}
+
+.docs-motif-composer {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  inline-size: 100%;
+  padding: 0.5em 0.5em 0.5em 1.2em;
+  margin-block-start: 0.4em;
+  border: 0.1em solid var(--env-color-border-default);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-field);
+}
+
+.docs-motif-send {
+  inline-size: 2em;
+  block-size: 2em;
+  margin-inline-start: auto;
+  border-radius: var(--env-radius-full);
+  background: var(--docs-motif-accent);
+}
+
+/* A gallery's tiles, each holding a small motif of its own, as the pages of all components and all
+   patterns hold one for each. */
+.docs-motif-art[data-motif='collage'] {
+  --docs-motif-scale: 0.85;
+  display: grid;
+  grid-template-columns: repeat(3, 8.5em);
+  grid-auto-rows: 7em;
+  gap: 0.9em;
+}
+
+.docs-motif-tile {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 0.9em;
+  background: var(--docs-motif-paper);
+}
+
+.docs-motif-tile > .docs-motif-art {
+  font-size: 0.36em;
+  rotate: 0deg;
+  translate: none;
+}
+
+.docs-motif-tile .docs-motif-badge {
+  zoom: 0.6;
+}
+
+/* The page's own icon, at a few sizes in a loose lattice, the largest in the accent. */
+.docs-motif-art[data-motif='glyphs'] {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  place-items: center;
+  gap: 1.2em 1.6em;
+}
+
+.docs-motif-glyph {
+  display: grid;
+  color: var(--docs-motif-ink-strong);
+}
+
+.docs-motif-glyph > svg {
+  inline-size: var(--glyph, 3em);
+  block-size: var(--glyph, 3em);
+}
+
+.docs-motif-glyph:nth-child(1) {
+  --glyph: 6.5em;
+  grid-row: span 2;
+  color: color-mix(in srgb, var(--env-color-fg-accent) 60%, transparent);
+}
+
+.docs-motif-glyph:nth-child(3n + 2) {
+  --glyph: 2.2em;
+}
+
+.docs-motif-glyph:nth-child(3n + 3) {
+  --glyph: 4em;
+}
+
+/* In a narrow pane, where the text spans the banner, the motif takes a band of its own across the
+   banner's top, faded toward its start and its foot, and the text starts below it, so nothing is
+   ever drawn under the text. */
+@container docs-page-header (width < 38rem) {
+  .docs-banner[data-banner='catalogue']:has(.docs-banner-motif) {
+    padding-block-start: 8.5rem;
+  }
+
+  .docs-banner-motif {
+    inset-block-end: auto;
+    inline-size: 100%;
+    block-size: 9rem;
+    mask-image:
+      linear-gradient(to right, transparent, var(--docs-motif-opaque) 35%),
+      linear-gradient(to bottom, var(--docs-motif-opaque) 60%, transparent);
+    mask-composite: intersect;
+  }
+
+  .docs-banner-motif:dir(rtl) {
+    mask-image:
+      linear-gradient(to left, transparent, var(--docs-motif-opaque) 35%),
+      linear-gradient(to bottom, var(--docs-motif-opaque) 60%, transparent);
+  }
+
+  .docs-motif-art {
+    font-size: calc(100cqh / 13 * var(--docs-motif-scale));
+    translate: 10% 0;
+  }
+}

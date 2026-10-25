@@ -2,13 +2,14 @@ import type { ReactNode } from 'react';
 import { Breadcrumbs, Card, Column, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
 import type { TrailStep } from '../navigation/DocumentationRoutes';
+import { BannerMotif, type BannerSubject } from './BannerMotif';
 import { BannerShapes } from './BannerShapes';
 
 /**
- * The kinds of banner: a page's of the catalogue, the plain banner with the page's icon large and
- * faint at its end (Shell.css); and a page's of the Docs, the developer reference, read from the
- * start like a document, under its breadcrumbs, the envUI mark's shapes drawn as outlines
- * (Banners.css).
+ * The kinds of banner, each read from the start like a document, under its breadcrumbs
+ * (Banners.css): a page's of the catalogue, on a fill, with a motif drawn from what the page shows
+ * at its end (BannerMotif.tsx); and a page's of the Docs, the developer reference, on the page's
+ * color inside an edge, the envUI mark's shapes drawn as outlines at its end.
  */
 export type BannerKind = 'catalogue' | 'docs-home' | 'docs';
 
@@ -20,6 +21,7 @@ export function PageHeader({
   description,
   meta,
   symbol,
+  subject,
   logo,
   children,
   actions,
@@ -36,8 +38,10 @@ export function PageHeader({
   description?: string;
   /** Facts about the page under its description, such as a component's status. */
   meta?: ReactNode;
-  /** The page's icon, drawn large and faint at the end of a catalogue banner. */
+  /** The page's icon, which a catalogue banner's motif falls back to. */
   symbol?: ReactNode;
+  /** What a catalogue page shows, which picks the motif at its banner's end. */
+  subject?: BannerSubject;
   /** Artwork shown as the title, such as a lockup; the title stays its accessible name. */
   logo?: ReactNode;
   children?: ReactNode;
@@ -50,18 +54,13 @@ export function PageHeader({
       <Card
         background="default"
         padding={6}
-        className={docs ? 'docs-page-banner docs-banner' : 'docs-page-banner'}
-        data-banner={docs ? kind : undefined}
+        className="docs-page-banner docs-banner"
+        data-banner={kind}
       >
-        {docs && <BannerShapes />}
-        {symbol && !docs && (
-          <span className="docs-page-banner-symbol" aria-hidden="true">
-            {symbol}
-          </span>
-        )}
-        <Column gap={6} align="center" className="docs-page-banner-content">
+        {docs ? <BannerShapes /> : <BannerMotif subject={subject} symbol={symbol} />}
+        <Column gap={6} className="docs-page-banner-content">
           <div className="docs-page-banner-heading">
-            <Column gap={3} align="center">
+            <Column gap={3}>
               {trail ? (
                 <Breadcrumbs
                   className="docs-page-banner-breadcrumbs"
