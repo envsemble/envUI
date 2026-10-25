@@ -472,6 +472,27 @@ test.describe('Drawer resizable', () => {
   });
 });
 
+/**
+ * A destination in a closed section: its section is hidden until found. In a
+ * browser that knows hidden="until-found" the link is hidden; WebKit skips the section's content
+ * instead, which Playwright still counts as visible, so the section itself is checked: hidden, and
+ * its content not rendered.
+ */
+async function expectClosed(link: Locator) {
+  await expect
+    .poll(() =>
+      link.evaluate((element) => {
+        const section = element.closest('.env-drawer-children');
+        if (!section?.hasAttribute('hidden')) return false;
+        const style = getComputedStyle(section);
+        return (
+          style.display === 'none' || style.getPropertyValue('content-visibility') === 'hidden'
+        );
+      }),
+    )
+    .toBe(true);
+}
+
 test.describe('Drawer nested sections', () => {
   // Drawers with sections, in tests/fixture/NestedDrawers.tsx.
   const nested = `${fixtureUrl}/?fixture=nested-drawers`;
@@ -502,7 +523,7 @@ test.describe('Drawer nested sections', () => {
     await expect(billing).toHaveAttribute('aria-expanded', 'false');
     const invoices = drawer.locator('a[href="#invoices"]');
     await expect(invoices).toHaveCount(1);
-    await expect(invoices).toBeHidden();
+    await expectClosed(invoices);
     await expect(invoices.locator('xpath=ancestor::ul[1]')).toHaveAttribute(
       'hidden',
       'until-found',
@@ -514,7 +535,9 @@ test.describe('Drawer nested sections', () => {
   test(
     'a section opens and closes from its button, by pointer and keyboard, and its chevron flips',
     { tag: '@engines' },
-    async ({ page }) => {
+    async ({ page, browserName }) => {
+      // WebKit's Tab reaches only fields, as Safari's does by default; Alt+Tab reaches its buttons.
+      const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
       await page.goto(nested);
       const drawer = page.getByRole('navigation', { name: 'Guide' });
       const billing = drawer.getByRole('button', { name: 'Billing', exact: true });
@@ -528,23 +551,26 @@ test.describe('Drawer nested sections', () => {
       await expect.poll(transform).not.toBe(closed);
       await billing.click();
       await expect(billing).toHaveAttribute('aria-expanded', 'false');
-      await expect(drawer.getByRole('link', { name: 'Plans' })).toBeHidden();
+      await expectClosed(drawer.locator('a[href="#plans"]'));
       await expect.poll(transform).toBe(closed);
       // Keyboard: the section's link, its button, then its open destinations, each a tab stop.
       const signIn = drawer.getByRole('link', { name: 'Sign-in', exact: true });
       const signInButton = drawer.getByRole('button', { name: 'Sign-in contents' });
       const passwords = drawer.getByRole('link', { name: 'Passwords' });
       await signIn.focus();
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(tab);
       await expect(signInButton).toBeFocused();
-      await page.keyboard.press('Tab');
-      await expect(passwords).toBeFocused();
-      await page.keyboard.press('Shift+Tab');
+      // WebKit's Tab never reaches a link, even with Alt, so there only the buttons are checked.
+      if (browserName !== 'webkit') {
+        await page.keyboard.press(tab);
+        await expect(passwords).toBeFocused();
+        await page.keyboard.press(`Shift+${tab}`);
+      }
       await page.keyboard.press('Enter');
       await expect(signInButton).toHaveAttribute('aria-expanded', 'false');
-      await expect(passwords).toBeHidden();
+      await expectClosed(drawer.locator('a[href="#passwords"]'));
       // Closed, Tab passes its destinations by.
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(tab);
       await expect(billing).toBeFocused();
       await page.keyboard.press('Space');
       await expect(billing).toHaveAttribute('aria-expanded', 'true');
@@ -588,7 +614,7 @@ test.describe('Drawer nested sections', () => {
     await expect(controlled.getByRole('link', { name: 'Retries' })).toBeVisible();
     await controlled.getByRole('button', { name: 'Integrations', exact: true }).click();
     await expect(expanded).toHaveText('#webhooks');
-    await expect(controlled.getByRole('link', { name: 'Webhooks' })).toBeHidden();
+    await expectClosed(controlled.locator('a[href="#webhooks"]'));
   });
 
   test('Rail and Bar show the top level, marking the destination whose section holds the current one', async ({

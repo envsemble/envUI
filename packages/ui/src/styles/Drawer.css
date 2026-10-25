@@ -339,6 +339,12 @@
 .env-drawer-children[hidden]:not([hidden='until-found']) {
   display: none;
 }
+/* A browser that doesn't know hidden="until-found", such as WebKit, would let the panel's own
+   display show a closed section: its content isn't rendered, as the browsers that know it do,
+   which still lets them find it. */
+.env-drawer-children[hidden='until-found'] {
+  content-visibility: hidden;
+}
 /* Under a coarse pointer, items grow to the touch height in every scale, as buttons do, and the
    button at the end of a section's link with them. */
 @media (pointer: coarse) {

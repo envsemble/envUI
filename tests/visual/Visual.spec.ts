@@ -495,6 +495,19 @@ test.describe('catalogue', () => {
             await expect(matrix).toBeHidden();
           }
         }
+        // A foundation page in the one-file structure shows the catalogue's own figures, each
+        // named after its label, such as Spacing's measured settings card.
+        if (!specimens) {
+          await open(visited[0]!);
+          for (const figure of await page
+            .locator('.docs-template figure.docs-topic-figure')
+            .all()) {
+            if (!(await figure.isVisible())) continue;
+            const label = (await figure.getAttribute('aria-label')) ?? '';
+            await take(figure, `${theme.name}-${name(slug(label))}.png`);
+            specimens++;
+          }
+        }
         // A page without a specimen gives its first live example, named after its file.
         for (const view of specimens ? [] : visited) {
           await open(view);

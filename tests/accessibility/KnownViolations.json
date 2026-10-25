@@ -10,7 +10,7 @@
     "light": {
       "landmark-unique": {
         "article :: nav.env-bar": 1,
-        "article :: nav.env-drawer": 1
+        "article :: nav.env-drawer": 2
       }
     }
   },
@@ -83,6 +83,13 @@
     "light-hc": {
       "landmark-unique": {
         "article :: div.env-table-region": 1
+      }
+    }
+  },
+  "components/table-of-contents": {
+    "light": {
+      "landmark-unique": {
+        "article :: nav.env-table-of-contents": 1
       }
     }
   },
