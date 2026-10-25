@@ -32,7 +32,9 @@ components:
   - Scaffold
   - resolveNavigationForms
 examples:
-  NavigationForms: overview
+  NavigationForms:
+    role: overview
+    stage: shaded
   ChooseForms:
     role: example
     caption: A drawer only, and none on a phone.

@@ -189,16 +189,28 @@ export const exampleRoles = ['overview', 'example', 'variants', 'anatomy', 'do',
 
 /**
  * A page's examples as its frontmatter lists them, by name: a role alone, such as
- * `CreateProject: overview`, or a role and a caption.
+ * `CreateProject: overview`, or a role and a caption. An overview example, which no fence places,
+ * takes here the framing a fence gives a figure: `open: true` shows its overlays open on its stage,
+ * and `stage: shaded` the deeper stage of a whole window.
  */
 export function examplesOf(frontmatter) {
   return Object.fromEntries(
     Object.entries(frontmatter?.examples ?? {}).map(([name, value]) => [
       name,
-      typeof value === 'string' ? { role: value } : { role: value?.role, caption: value?.caption },
+      typeof value === 'string'
+        ? { role: value }
+        : {
+            role: value?.role,
+            caption: value?.caption,
+            ...(value?.open !== undefined && { open: value.open }),
+            ...(value?.stage !== undefined && { stage: value.stage }),
+          },
     ]),
   );
 }
+
+/** The fields of an example's entry in the frontmatter; open and stage are an overview's alone. */
+const exampleFields = ['role', 'caption', 'open', 'stage'];
 
 /**
  * The developer-only part of a page on the figure template: its "## In code" section, which the
@@ -502,7 +514,8 @@ function validateFrontmatter(frontmatter, path, { kind, template, versions }) {
         );
       else
         for (const [name, entry] of Object.entries(value)) {
-          const { role, caption } = typeof entry === 'string' ? { role: entry } : (entry ?? {});
+          const { role, caption, open, stage } =
+            typeof entry === 'string' ? { role: entry } : (entry ?? {});
           if (!/^[A-Z][A-Za-z\d]*$/.test(name))
             problems.push(`${key} names ${name}; name an example by its PascalCase file name`);
           if (!exampleRoles.includes(role))
@@ -512,9 +525,20 @@ function validateFrontmatter(frontmatter, path, { kind, template, versions }) {
           if (
             entry &&
             typeof entry === 'object' &&
-            Object.keys(entry).some((field) => !['role', 'caption'].includes(field))
+            Object.keys(entry).some((field) => !exampleFields.includes(field))
           )
-            problems.push(`${key} gives ${name} a field other than role and caption`);
+            problems.push(`${key} gives ${name} a field other than ${exampleFields.join(', ')}`);
+          // An overview is framed here, since no fence places it; other figures on their fence.
+          if ((open !== undefined || stage !== undefined) && role !== 'overview')
+            problems.push(
+              `${key} gives ${name} open or stage, which only an overview example takes here; write them on its fence`,
+            );
+          if (open !== undefined && open !== true)
+            problems.push(`${key} gives ${name} open: ${open}; write open: true, or leave it out`);
+          if (stage !== undefined && !stageFills.includes(stage))
+            problems.push(
+              `${key} gives ${name} stage: ${stage}; a stage takes ${stageFills.join(', ')}, or nothing for the stage in the page's color`,
+            );
           if (caption !== undefined && (typeof caption !== 'string' || !caption.trim()))
             problems.push(`${key} gives ${name} an empty caption`);
           if ((role === 'do' || role === 'dont') && !caption)
@@ -1184,7 +1208,9 @@ function readFigures(document, body, { examples, specimens, partNames, skill }) 
     // shows; a component or pattern shows what it is with at least one, and says what envUI and
     // the application provide under Accessibility.
     const entries = Object.entries(catalog);
-    for (const [name, { role }] of entries) {
+    for (const [name, { role, open, stage }] of entries) {
+      if (foundation && (open || stage))
+        problems.push(`figure ${name} takes no open or stage on a foundation page`);
       if (role !== 'overview' && !placed.has(name))
         problems.push(`example ${name} is listed in the frontmatter but placed nowhere`);
       if (!foundation && !examples.has(name))
@@ -1223,11 +1249,13 @@ function readFigures(document, body, { examples, specimens, partNames, skill }) 
     title: 'Overview',
     blocks: [
       { kind: 'markdown', markdown: '## Overview\n\n' },
-      ...overviews.map(([name, { caption }], index) => ({
+      ...overviews.map(([name, { caption, open, stage }], index) => ({
         kind: foundation ? 'figure' : 'example',
         name,
         heading: index === 0 ? document.title : fileWords(name),
         ...(caption && { caption }),
+        ...(open && { open: true }),
+        ...(stage && { stage }),
       })),
     ],
   };

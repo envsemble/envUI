@@ -31,7 +31,9 @@ avoidWhen:
 components:
   - Popover
 examples:
-  DocumentDetails: overview
+  DocumentDetails:
+    role: overview
+    open: true
   FieldHelp: example
   PopoverAnatomy: anatomy
   RenameInPlace: example

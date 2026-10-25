@@ -5,6 +5,8 @@ export default function DocumentDetails() {
   return (
     <Column gap={4} align="start">
       <Popover
+        // Shown open in the docs; without defaultOpen, it opens from its trigger.
+        defaultOpen
         title="Launch plan.md"
         trigger={
           <Button variant="secondary" startIcon={<Info />}>

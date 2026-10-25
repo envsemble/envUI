@@ -52,7 +52,9 @@ composes:
   - Column
   - Text
 examples:
-  AppFrame: overview
+  AppFrame:
+    role: overview
+    stage: shaded
   WithDetails: example
   InstalledWindow: example
   MenuOnPhones: example

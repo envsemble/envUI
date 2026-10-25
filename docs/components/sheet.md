@@ -29,7 +29,9 @@ avoidWhen:
 components:
   - Sheet
 examples:
-  FilterPanel: overview
+  FilterPanel:
+    role: overview
+    open: true
   ShareChoices: example
   SheetAnatomy: anatomy
   InspectorPanel: example

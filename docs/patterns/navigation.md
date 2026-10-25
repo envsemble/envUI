@@ -52,7 +52,9 @@ composes:
   - Row
   - Text
 examples:
-  PrimaryNavigation: overview
+  PrimaryNavigation:
+    role: overview
+    stage: shaded
   Hierarchy: example
   ViewsOfOneThing: example
   ListAndDetail: example

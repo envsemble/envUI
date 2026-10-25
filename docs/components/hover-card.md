@@ -22,7 +22,9 @@ avoidWhen:
 components:
   - HoverCard
 examples:
-  DocumentPreview: overview
+  DocumentPreview:
+    role: overview
+    open: true
   PersonDetails:
     role: example
     caption: Large, with an avatar beside the name.
