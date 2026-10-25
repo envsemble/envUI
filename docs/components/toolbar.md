@@ -58,7 +58,7 @@ A button of the application's own, such as a menu's trigger, keeps its own tab s
 
 ### Over content
 
-A toolbar can float over dense content, such as a diagram, on a fully rounded surface with small buttons.
+A toolbar can float over dense content, such as a diagram, on a fully rounded surface with small buttons. Where people scan its icons by pointing at them, its buttons can show their names at once, with no wait.
 
 ```tsx example=ViewControls
 
@@ -146,7 +146,7 @@ Toolbar.Root, named by its `aria-label`, holds Toolbar.Button, Toolbar.Link, Too
 
 #### Orientation and size
 
-`orientation` is `horizontal`, the default, or `vertical`, and sets which arrow keys move. `size` is `sm`, `md` or `lg`; without it the buttons take their container's control height. `loopFocus`, on by default, moves from the last control to the first and back. `disabled` on Toolbar.Root or a Toolbar.Group disables every control inside.
+`orientation` is `horizontal`, the default, or `vertical`, and sets which arrow keys move. `size` is `sm`, `md` or `lg`; without it the buttons take their container's control height. `loopFocus`, on by default, moves from the last control to the first and back. `tooltipDelay` is how long, in milliseconds, the pointer rests on a button or link before its tooltip opens, 400 by default, as Tooltip's `delay`; keyboard focus opens it at once. `disabled` on Toolbar.Root or a Toolbar.Group disables every control inside.
 
 ```tsx source=ViewControls
 
@@ -154,7 +154,7 @@ Toolbar.Root, named by its `aria-label`, holds Toolbar.Button, Toolbar.Link, Too
 
 #### Buttons of your own
 
-Buttons inside a toolbar take the `ghost` variant unless they set another. A Button of the application's own, such as a Menu.Root's trigger, keeps its own tab stop, outside the arrow keys' path.
+Buttons inside a toolbar take the `ghost` variant unless they set another. A Button of the application's own keeps its own tab stop, outside the arrow keys' path. A Toolbar.Button can be the `trigger` of a Menu.Root or a Popover, for a dropdown in the toolbar: it stays in the arrow keys' path, with its name in its tooltip, which stays closed while its popup is open.
 
 #### Other bars
 
@@ -170,4 +170,5 @@ The parts are the toolbar, `env-toolbar`; its groups, `env-toolbar-group`; its b
 
 ## Changelog
 
+- **1.0.0-prerelease.4**: `tooltipDelay` on Toolbar.Root sets how long the pointer rests on a button or link before its tooltip opens; 0 shows every name at once.
 - **1.0.0**: Toolbar, on Base UI's Toolbar.
