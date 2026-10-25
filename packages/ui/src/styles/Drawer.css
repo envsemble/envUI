@@ -312,7 +312,8 @@
   transform: rotate(90deg) scaleX(1);
 }
 /* Its trigger, the heading's row or the link's button, says the section is open. */
-:is(.env-drawer-item, .env-drawer-toggle)[aria-expanded='true'] > .env-drawer-chevron {
+.env-drawer-item[aria-expanded='true'] > .env-drawer-chevron,
+.env-drawer-toggle[aria-expanded='true'] > .env-drawer-chevron {
   transform: rotate(90deg) scaleX(-1);
 }
 /* The nested destinations grow to their height as the section opens and shrink as it closes. A
