@@ -64,6 +64,72 @@ examples:
 
 # Form layout and validation
 
+## Variants
+
+### Error summary
+
+After a refused submit, a danger [Alert](../components/alert.md) titled "There is a problem" lists each error as a [Link](../components/link.md) that moves focus to its field. It is read once, as it takes focus, with no announcement of its own.
+
+```tsx figure=ErrorSummary
+
+```
+
+### Grouped choices
+
+Several checkboxes go in a group whose name says what they are for, as the choices of a [RadioGroup](../components/radio.md) do.
+
+```tsx figure=GroupedChoices
+
+```
+
+### A long form in steps
+
+A long form splits into a few short steps, each a page of its own with its fields.
+
+- [Progress](../components/progress.md), split into steps, says where people are.
+- Continue checks the step's fields before moving on, and Back keeps every answer.
+- The last step shows the answers before the form's own action.
+
+```tsx figure=LongFormInSteps
+
+```
+
+## Anatomy
+
+```tsx figure=FormAnatomy
+
+```
+
+1. **Error summary** (`env-alert`)
+2. **Field and its label** (`env-text-field-control`, `label`)
+3. **Description** (`env-field-description`, `description`)
+4. **Error** (`env-field-error`, `error`)
+5. **Primary action** (`env-button:not(env-link)`)
+
+## Behaviour
+
+### When to check
+
+On submit first: show each field's error, and move focus to the error summary, or straight to the field when there is only one.
+
+- Then as people leave a field they have typed in.
+- Never while they type, though an error goes as soon as the value is right.
+
+```tsx figure=ValidationTiming
+
+```
+
+### Sending
+
+While the form is sent, its submit button shows that it is working: it keeps its size and ignores presses.
+
+- When the server refuses or can't be reached, keep everything people entered.
+- Move focus to an [Alert](../components/alert.md) at the top that says what to do.
+
+```tsx figure=ServerError
+
+```
+
 ## Rules
 
 The aim is a form people get right on the first submit.
@@ -123,71 +189,7 @@ Start with the fix, in the field's own words, such as "Enter a due date after th
 - Blame no one and show no code; a reference may follow for support.
 - The summary is titled "There is a problem" and repeats each field's message word for word.
 
-## Anatomy
-
-```tsx figure=FormAnatomy
-
-```
-
-1. **Error summary** (`env-alert`)
-2. **Field and its label** (`env-text-field-control`, `label`)
-3. **Description** (`env-field-description`, `description`)
-4. **Error** (`env-field-error`, `error`)
-5. **Primary action** (`env-button:not(env-link)`)
-
-## Variants
-
-### Error summary
-
-After a refused submit, a danger [Alert](../components/alert.md) titled "There is a problem" lists each error as a [Link](../components/link.md) that moves focus to its field. It is read once, as it takes focus, with no announcement of its own.
-
-```tsx figure=ErrorSummary
-
-```
-
-### Grouped choices
-
-Several checkboxes go in a group whose name says what they are for, as the choices of a [RadioGroup](../components/radio.md) do.
-
-```tsx figure=GroupedChoices
-
-```
-
-### A long form in steps
-
-A long form splits into a few short steps, each a page of its own with its fields.
-
-- [Progress](../components/progress.md), split into steps, says where people are.
-- Continue checks the step's fields before moving on, and Back keeps every answer.
-- The last step shows the answers before the form's own action.
-
-```tsx figure=LongFormInSteps
-
-```
-
-## Behaviour
-
-### When to check
-
-On submit first: show each field's error, and move focus to the error summary, or straight to the field when there is only one.
-
-- Then as people leave a field they have typed in.
-- Never while they type, though an error goes as soon as the value is right.
-
-```tsx figure=ValidationTiming
-
-```
-
-### Sending
-
-While the form is sent, its submit button shows that it is working: it keeps its size and ignores presses.
-
-- When the server refuses or can't be reached, keep everything people entered.
-- Move focus to an [Alert](../components/alert.md) at the top that says what to do.
-
-```tsx figure=ServerError
-
-```
+## Accessibility
 
 ### Focus and keyboard
 

@@ -163,18 +163,20 @@ export const figureSections = [
 
 /**
  * The sections of a page in the one-file structure (work-0023), the same for a component, a
- * pattern and a foundation, in the order a reader needs them, so an agent can stop early: what it
- * is and its examples in the frontmatter, then its rules, its parts, its variants or options, how
- * it behaves, and how to compose it in code. Overview is generated from the frontmatter's overview
- * examples; Props and Related, as on the figure template. A foundation calls its variants Options
- * and may end its plain part with the words people use. docs/component-pages.md describes it.
+ * pattern and a foundation, in the order the Usage guide shows them and an agent reads them: what
+ * it is and its examples in the frontmatter, then its variants or options, its parts, how it
+ * behaves, ending with how it adapts to width, its rules, which open with when to use it, its
+ * accessibility, the words people use, and how to compose it in code. Overview is generated from
+ * the frontmatter's overview examples; Props and Related, as on the figure template. A foundation
+ * calls its variants Options. docs/component-pages.md describes it.
  */
 export const skillSections = [
   { id: 'overview', title: 'Overview', generated: true },
-  { id: 'rules', title: 'Rules', required: true },
-  { id: 'anatomy', title: 'Anatomy' },
   { id: 'variants', title: 'Variants', foundationTitle: 'Options' },
+  { id: 'anatomy', title: 'Anatomy' },
   { id: 'behaviour', title: 'Behaviour' },
+  { id: 'rules', title: 'Rules', required: true },
+  { id: 'accessibility', title: 'Accessibility' },
   { id: 'words', title: 'Words to use' },
   { id: 'code', title: 'Compose' },
   { id: 'props', title: 'Props', generated: true },
@@ -1178,7 +1180,7 @@ function readFigures(document, body, { examples, specimens, partNames, skill }) 
   if (skill) {
     // Every example the frontmatter lists is placed once, but the overview's, which the Overview
     // shows; a component or pattern shows what it is with at least one, and says what envUI and
-    // the application provide under Behaviour.
+    // the application provide under Accessibility.
     const entries = Object.entries(catalog);
     for (const [name, { role }] of entries) {
       if (role !== 'overview' && !placed.has(name))
@@ -1191,9 +1193,10 @@ function readFigures(document, body, { examples, specimens, partNames, skill }) 
     if (!foundation) {
       if (!entries.some(([, { role }]) => role === 'overview'))
         problems.push('the frontmatter lists no overview example, which shows what it is');
-      const behaviour = sections.find((item) => item.id === 'behaviour');
-      if (!behaviour) problems.push('"## Behaviour" is required, with what envUI and you provide');
-      else problems.push(...accessibilityProblems(behaviour.tokens, 'component', 'Behaviour'));
+      const accessibility = sections.find((item) => item.id === 'accessibility');
+      if (!accessibility)
+        problems.push('"## Accessibility" is required, with what envUI and you provide');
+      else problems.push(...accessibilityProblems(accessibility.tokens, 'component'));
     }
   } else {
     const overview = sections.find((item) => item.id === 'overview');
@@ -1454,8 +1457,7 @@ export function readDocumentation(
       const composition = kind === 'pattern';
       const tokens = marked.lexer(markdown);
       const firstSection = tokens.find((t) => t.type === 'heading' && t.depth === 2);
-      // A page in the one-file structure lists its examples in its frontmatter and opens on its
-      // rules, whatever its kind.
+      // A page in the one-file structure lists its examples in its frontmatter, whatever its kind.
       const skill = Boolean(frontmatter && 'examples' in frontmatter);
       const template = skill || composition || (component && firstSection?.text === 'Overview');
       // A page that uses the template's parts is on the template, whatever its first section.
@@ -1472,11 +1474,10 @@ export function readDocumentation(
       });
       const templateParts =
         usesTemplate || (frontmatter && ('useWhen' in frontmatter || 'avoidWhen' in frontmatter));
-      if (skill && firstSection?.text !== 'Rules')
+      // Its sections and their order are checked with its figures (readFigures).
+      if (skill && !firstSection)
         throw new Error(
-          `${path} is in the one-file structure, so its first section must be "## Rules", not ${
-            firstSection ? `"## ${firstSection.text}"` : 'missing'
-          }.`,
+          `${path} is in the one-file structure, so its sections follow the title, from "## Variants" to "## Compose".`,
         );
       if (
         !skill &&

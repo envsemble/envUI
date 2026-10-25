@@ -49,37 +49,6 @@ examples:
 
 # Spacing & density
 
-## Rules
-
-envUI spaces things by how closely they belong: close inside a group, further apart between groups, and furthest between sections. You never pick a distance; you say what belongs together.
-
-```tsx figure=Grouping
-
-```
-
-1. **Tight, inside a group**: A title and its description, or a label and its field, read as one thing.
-2. **Roomier, between groups**: One field and the next, or a form and its buttons, stay apart but together.
-3. **The most, between sections**: Profile and notifications are separate topics, so the widest space parts them.
-
-### Components bring their own padding
-
-The space inside a button, a field or a card is part of the component, so it looks the same wherever it goes. What a screen arranges is the space between things.
-
-### Things line up
-
-Fields, menus, toggles and buttons of one size are exactly as tall as each other, so a toolbar or a form row lines up without any adjusting.
-
-```tsx figure=Align
-
-```
-
-### Small, medium and large
-
-Controls come in three sizes, and the controls of one size line up.
-
-- Medium is the default.
-- Small suits a table row or a dense toolbar.
-
 ## Options
 
 How dense the whole app is, how tight the rows of a table are, and the corners that say what each thing is.
@@ -136,6 +105,37 @@ A button one line tall has round ends. When its label wraps, or a field fills wi
 ```tsx figure=Tall
 
 ```
+
+## Rules
+
+envUI spaces things by how closely they belong: close inside a group, further apart between groups, and furthest between sections. You never pick a distance; you say what belongs together.
+
+```tsx figure=Grouping
+
+```
+
+1. **Tight, inside a group**: A title and its description, or a label and its field, read as one thing.
+2. **Roomier, between groups**: One field and the next, or a form and its buttons, stay apart but together.
+3. **The most, between sections**: Profile and notifications are separate topics, so the widest space parts them.
+
+### Components bring their own padding
+
+The space inside a button, a field or a card is part of the component, so it looks the same wherever it goes. What a screen arranges is the space between things.
+
+### Things line up
+
+Fields, menus, toggles and buttons of one size are exactly as tall as each other, so a toolbar or a form row lines up without any adjusting.
+
+```tsx figure=Align
+
+```
+
+### Small, medium and large
+
+Controls come in three sizes, and the controls of one size line up.
+
+- Medium is the default.
+- Small suits a table row or a dense toolbar.
 
 ## Words to use
 

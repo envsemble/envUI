@@ -154,13 +154,14 @@ const sectionGroups: readonly (readonly string[])[] = [
 ];
 
 /**
- * The same for a page in the one-file structure: what it is; its rules and its parts, on the band;
- * its variants or options, how it behaves and the words to use.
+ * The same for a page in the one-file structure: what it is, its variants or options, its parts and
+ * how it behaves; its rules, which open with when to use it, alone on the band; its accessibility
+ * and the words to use.
  */
 const skillGroups: readonly (readonly string[])[] = [
-  ['overview'],
-  ['rules', 'anatomy'],
-  ['variants', 'behaviour', 'words'],
+  ['overview', 'variants', 'anatomy', 'behaviour'],
+  ['rules'],
+  ['accessibility', 'words'],
 ];
 
 /** The group that sits on the band. */
@@ -183,7 +184,7 @@ function groupSections(sections: readonly DocumentationSection[], skill = false)
  * Sections in the template's order, then, with `related`, Related; the changelog is on the page in
  * the Docs. On the figure template, the sections come in their three groups, far apart, the second
  * on a band across the whole content pane; a group without sections, and a page's band where it
- * has neither When to use nor Anatomy, are left out.
+ * has none of its sections, are left out.
  */
 function Sections({
   reference,

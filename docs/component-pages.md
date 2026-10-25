@@ -6,16 +6,17 @@ Every component has one page in `docs/components/`, named after the component in
 
 A page's Markdown is the one source for three readers: the Usage guide shows its plain sections with figures, the Docs show the developer part it leaves out, so the two complement each other and neither repeats the other, and agents read the whole file as the package ships it, with each example's code once. [Button](components/button.md), [Form layout and validation](patterns/forms.md) and [Spacing & density](foundations/spacing.md) are written this way, the one-file structure, and the other pages move to it after review; the sections below describe the figure template the rest are on, whose figures, legends, option tables and plain-language rules the structure keeps.
 
-A page is in the one-file structure when its frontmatter lists its examples. Component, pattern and foundation pages then share one order, so an agent can stop reading once it has what it needs:
+A page is in the one-file structure when its frontmatter lists its examples. Component, pattern and foundation pages then share one order, the Usage guide's, so an agent reads the file as people see the page:
 
 1. **Frontmatter**: what it is (`title`, `summary`, `aliases`), when to use it (`useWhen`) and what instead (`avoidWhen`), and `examples`, each example once by its file name, with its role and, where it has one, its caption.
-2. **`## Rules`**: a short lead, the do and don't figures, and titled blocks of rules. The Usage guide opens it with Use it when and Built from.
+2. **`## Variants`**, **`## Options`** on a foundation: the variants figure and its option table, and the options in titled blocks. The generated Overview comes before it.
 3. **`## Anatomy`**: the anatomy figure and its legend.
-4. **`## Variants`**, **`## Options`** on a foundation: the variants figure and its option table, and the options in titled blocks.
-5. **`## Behaviour`**: states, what it does on its own, adapting to width, keys and accessibility, then `### envUI provides` and `### You provide`, which only the Docs and agents read. A component or pattern page needs both lists.
-6. **`## Words to use`**, optional: the phrases people ask for, as an option table; a column headed In code gives the props each phrase means, which only the Docs and agents read.
-7. **`## Compose`**: the developer part, as [In code](#in-code-the-developer-only-part) is: the generated Import, `### Usage` with the canonical example, as a `source` fence or a short snippet, `### Composition`, how the parts combine, and `### Customize`, with everything technical the Usage guide leaves out.
-8. **`## Changelog`**, optional. Props are generated after Compose; Related from `avoidWhen`.
+4. **`## Behaviour`**: states and what it does on its own, ending with `### Adapting to width`.
+5. **`## Rules`**: a short lead, the do and don't figures, and titled blocks of rules. The Usage guide opens it with Use it when, in two columns where the list has more than three items and there is room, and Built from, and sets it alone on the page's band.
+6. **`## Accessibility`**: `### Keyboard`, a Key and Action table, or the focus and keys in a block of their own, then `### envUI provides` and `### You provide`, which only the Docs and agents read. A component or pattern page needs both lists; a foundation has the section only where it has something to say.
+7. **`## Words to use`**, optional: the phrases people ask for, as an option table; a column headed In code gives the props each phrase means, which only the Docs and agents read.
+8. **`## Compose`**: the developer part, as [In code](#in-code-the-developer-only-part) is: the generated Import, `### Usage` with the canonical example, as a `source` fence or a short snippet, `### Composition`, how the parts combine, and `### Customize`, with everything technical the Usage guide leaves out.
+9. **`## Changelog`**, optional. Props are generated after Compose; Related from `avoidWhen`.
 
 ```yaml
 examples:
