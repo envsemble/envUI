@@ -1,27 +1,20 @@
 # envUI documentation
 
-Choose the pages needed for the current task. Each entry gives its purpose and path; follow related links only when that behavior is involved. Use public TypeScript declarations for exact types.
+Read only the pages the task needs; each entry says what it is for. For a screen, read its pattern first, under Patterns at the end, then the pages of the components it names.
+
+A component or pattern page opens with how it looks and when to use it, the design rules, then `## In code`: imports, usage, composition and customizing. Accessibility's **You provide** lists what the application must add, and **Props** lists envUI's own props; every component also takes its element's native props, such as `ref`, `className` and `aria-*`. Every example is a file in `examples/<page>/<Name>.tsx`. The TypeScript declarations hold the exact types.
 
 ## Setup and workflows
 
 - [Install the private package](setup.md) — Registry access, styles, themes and public entry points.
-
 - [Migrate an interface to envUI](migration.md) — Replace existing UI while preserving application behavior.
-
 - [Customize and extend](customizing.md) — Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.
-
 - [For agents](agent-tooling.md) — Set envUI up with a coding agent from one prompt, and point it to the docs in the package.
-
 - [Writing](writing.md) — The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.
-
 - [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
-
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
-
 - [Extend the shared library](library-development.md) — Public API changes, changesets, catalogue specimens and acceptance checks.
-
 - [Write a component page](component-pages.md) — The page template, frontmatter, generated props and example files, and how to convert a page.
-
 - [Write a pattern page](pattern-pages.md) — The frontmatter, sections and files of pattern pages.
 
 ## Foundations
