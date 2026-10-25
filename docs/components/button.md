@@ -223,99 +223,53 @@ Labels wrap, and icon-only buttons keep their size. On touch screens every butto
 
 ### Usage
 
-A Button runs `onClick`, or with `href` it is a native link, through the application's router link from `LinkProvider`. `startIcon` and `endIcon` take decorative icons. Set `type="submit"` on the button that submits a form; envUI's buttons are `type="button"` otherwise.
-
-```tsx source=CreateProject
-
-```
-
-#### Variants, tones and sizes
-
-`variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `accent` on a primary button only, and `danger` on any but secondary. `underline` underlines a text button. `size` is `sm`, `md` or `lg`. Without a `variant` or a `size`, a button takes its container's, such as `ghost` in a Toolbar and `sm` in a table cell.
-
 ```tsx
-<Button>Save</Button>
+<Button onClick={save}>Save</Button>
 <Button variant="secondary">Cancel</Button>
 <Button tone="danger">Delete project</Button>
-<Button variant="text" href="/guide" underline>
-  Read the guide
-</Button>
-<Button size="sm" variant="outline">
-  Edit
-</Button>
+<Button href="/projects">Open projects</Button>
+<Button startIcon={<Add />}>Create project</Button>
+<IconButton icon={<Settings />} aria-label="Project settings" />
+<Button pending={saving} onClick={save}>Save changes</Button>
 ```
 
-#### Icon buttons
+A button without a `variant` or a `size` takes its container's, such as `ghost` in a Toolbar and `sm` in a table cell; an IconButton is otherwise `secondary`. With `href` it renders the router link from `LinkProvider`.
 
-IconButton takes its `icon` and an `aria-label`, which names it for assistive technology. Without a `variant` it takes its container's, and else `secondary`. With the Close icon it closes, dismisses or removes what it sits in.
-
-```tsx source=Icons
-
-```
-
-#### Pending work
-
-`pending` replaces the content with a spinner at the same size, sets `aria-busy` and ignores presses, on Button and IconButton.
-
-```tsx source=PendingAction
-
-```
-
-#### Confirm in place
-
-ConfirmButton runs `onConfirm` on the second press, while armed, and shows `confirmLabel` then. It stays armed for `armedDuration`, 4000 ms by default. With `icon` and an `aria-label` it is a round icon-only button at rest that grows when armed. Move focus on yourself when the confirmed action removes the button.
+#### Confirm and copy
 
 ```tsx
 <ConfirmButton confirmLabel="Remove Sam" onConfirm={() => remove('sam')}>
   Remove
 </ConfirmButton>
+<CopyButton value={shareLink} aria-label="Copy link" />
 ```
 
-#### Copy to the clipboard
-
-CopyButton copies its `value`, a string or a function that returns one, also as a promise, and runs `onCopy` with it. `write` writes through a clipboard of the application's own. Without children it is icon-only, named by `aria-label`; `copyLabel`, `copiedLabel` and `failedLabel` set its words.
-
-```tsx source=CopyValue
-
-```
+ConfirmButton with `icon` and an `aria-label` is icon-only until armed. When the confirmed action removes the button, move focus to what takes its place, as the ConfirmInPlace example does. CopyButton's `write` copies through a clipboard of the application's own.
 
 ### Composition
 
-ButtonGroup joins related buttons in a row or, with `orientation="vertical"`, a column in which every button is as wide as the group; name it with `aria-label`. `fullWidth` makes a button or a group fill its container. `end` holds quiet content at the far end, after the label, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
-
-```tsx source=ConnectedButtons
-
+```tsx
+<ButtonGroup aria-label="Project actions">
+  <Button>Open</Button>
+  <Button>Edit</Button>
+</ButtonGroup>
 ```
 
-The parts are the container, `env-button`, its icons, `env-button > env-icon:first-child` and `env-button > env-icon:last-child`, the spinner, `env-button-spinner`, the end slot, `env-button-end`, and a ButtonGroup's `env-button-group`.
+`orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
 
 ### Customize
 
-`--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` set the colors of one Button or IconButton, through `style` or CSS. Its hover, focus and press then follow them, as state layers of its label color; with none set, it keeps its own colors.
+`--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` color one Button or IconButton, through `style` or CSS; hover, focus and press follow them.
 
 ```tsx
-import type { CSSProperties } from 'react';
-import { Button, Row } from '@envsemble/envui';
-
-/** One button's own colors: its container and its label, which its state layers take. */
-const forest = {
-  '--env-button-container': '#0a5c42',
-  '--env-button-content': '#ffffff',
-} as CSSProperties;
-
-export default function CustomColors() {
-  return (
-    <Row gap={2} wrap>
-      <Button variant="primary" style={forest}>
-        Start trial
-      </Button>
-      <Button variant="secondary">Not now</Button>
-    </Row>
-  );
-}
+<Button
+  style={{ '--env-button-container': '#0a5c42', '--env-button-content': '#fff' } as CSSProperties}
+>
+  Start trial
+</Button>
 ```
 
-Under a coarse pointer, an icon button drawn smaller than the touch size reaches the 2.75 rem touch size with its hit area when its container sets `--env-icon-button-hit-area: var(--env-control-height-touch)` on it or around it. Alert, Toast, Combobox chips, DocumentTabs and PanelDock's tabs set it on their own close buttons.
+Parts the anatomy doesn't show: the spinner, `env-button-spinner`, the end slot, `env-button-end`, and the group, `env-button-group`. A container that sets `--env-icon-button-hit-area: var(--env-control-height-touch)` gives its smaller icon buttons the touch size under a coarse pointer, as Alert and Toast do for their close buttons.
 
 ## Changelog
 
