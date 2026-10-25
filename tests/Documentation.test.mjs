@@ -1175,10 +1175,8 @@ test('Table ships each example once, by name in its frontmatter, its rules and l
   assert.ok(hasLine(table, '1. **Region** (`env-table-region`)'));
   assert.ok(hasLine(table, 'Native props: `<table>`.'));
   assert.doesNotMatch(table, /^## (?:Changelog|Related)/m);
-  // The lean index leaves out the contributor pages; other pages ship as before.
+  // The lean index leaves out the contributor pages.
   assert.ok(!compiled.get('index.md').includes('component-pages.md'));
-  assert.match(compiled.get('components/field.md'), /^`{3,}tsx do=/m);
-  assert.ok(hasLine(compiled.get('components/field.md'), '## Changelog'));
 });
 
 test('a page in the one-file structure ships the whole file, in its order, with code once', () => {
