@@ -1,7 +1,7 @@
 import { Column, Grid, Link, Row, Text } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { componentGroupId, componentGroups } from '../Reference';
-import { homeRoute, routeHref } from '../navigation/Address';
+import { docsRoute, homeRoute, routeHref } from '../navigation/Address';
 import { routeOfDocument } from '../navigation/DocumentationRoutes';
 
 const repository = 'https://github.com/envsemble/envUI';
@@ -25,6 +25,7 @@ const columns: { title: string; links: FooterLink[] }[] = [
     links: [
       { label: 'Introduction', href: routeHref(homeRoute) },
       { label: 'Benchmark', href: routeHref('benchmark') },
+      { label: 'Docs', href: routeHref(docsRoute) },
       { label: 'Source', href: repository },
     ],
   },
