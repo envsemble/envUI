@@ -12,7 +12,7 @@ import { PatternCatalogue } from './PatternCatalogue';
 import { Documentation } from './Documentation';
 
 /**
- * A component's page in the Usage guide: what it looks like and when to use it, in live figures
+ * A component's page in the catalogue: what it looks like and when to use it, in live figures
  * with the code under each, and a link to its page in the Docs, its guide to using it in code with
  * its props, part names and changelog.
  */
@@ -82,7 +82,7 @@ const iconsCredit = [
 ].join('\n');
 
 /**
- * A foundation's page in the Usage guide: how envUI handles its subject, in pictures and plain
+ * A foundation's page in the catalogue: how envUI handles its subject, in pictures and plain
  * words. Its page in the Docs, which Docs opens, holds the tokens and code behind them.
  */
 export function FoundationPage({ page }: { page: RoutePage }) {

@@ -11,7 +11,7 @@ import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useDocumentationRoute';
 import { headingSlugger } from '../../../../scripts/SearchAnchors.mjs';
 
-/** The repository's copy of a page of docs/ that neither the Usage guide nor the Docs show. */
+/** The repository's copy of a page of docs/ that neither the catalogue nor the Docs show. */
 const repositoryFile = (path: string) =>
   `https://github.com/envsemble/envUI/blob/main/docs/${path}`;
 
@@ -36,7 +36,7 @@ const decodedFragment = (hash: string) => {
  * the page that shows it, at the heading its fragment names, and a link to a heading of the same
  * page, #heading, scrolls to it on the current route. A foundation's written guidance is its guide
  * in the Docs, so a link to one of its headings, or any link to it from the Docs, opens the guide,
- * and others its visual page in the Usage guide.
+ * and others its visual page in the catalogue.
  */
 export function documentationHref(href: string, sourcePath: string) {
   if (/^#./.test(href)) return routeHref(sectionOfCurrentRoute(decodedFragment(href)));
@@ -99,7 +99,7 @@ type HastNode = {
 /** A component named in parentheses at the end of an item, as "(IconButton)" or "(Calendar).". */
 const trailingName = /\s*\(([A-Z][A-Za-z]*)\)\.?\s*$/;
 
-/** The page that documents a component, and so its address, where it has one in the Usage guide. */
+/** The page that documents a component, and so its address, where it has one in the catalogue. */
 const componentPage = (name: string) =>
   referencePages.find(
     (page) =>
@@ -173,7 +173,7 @@ const rehypePlugins = [headingIds];
 
 /**
  * A page's Markdown, or a part of it such as one section, with its links resolved. `className`
- * gives it a role in the Usage guide's type hierarchy, such as `docs-lead` for a section's opening
+ * gives it a role in the catalogue's type hierarchy, such as `docs-lead` for a section's opening
  * paragraph (SiteText.css).
  */
 export function Documentation(

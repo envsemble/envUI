@@ -57,7 +57,7 @@ const icons: Record<SearchResult['kind'], ReactNode> = {
   token: <Palette />,
 };
 /** The name of each part of the site, which a result's description starts with. */
-const areas: Record<SearchResult['area'], string> = { usage: 'Usage guide', docs: 'Docs' };
+const areas: Record<SearchResult['area'], string> = { catalogue: 'Catalogue', docs: 'Docs' };
 
 /** Results considered, and shown in each group. */
 const resultLimit = 60;
@@ -84,7 +84,7 @@ type IndexState =
   | { status: 'failed' };
 
 /**
- * Searches the Usage guide and the Docs in envUI's CommandPalette: components by their names and aliases,
+ * Searches the catalogue and the Docs in envUI's CommandPalette: components by their names and aliases,
  * their props, the tokens and the foundations, patterns and guides, each result saying which area
  * it is in. A result opens its page, and the prop or token on it; with Ctrl or ⌘ held, in a new
  * tab.
@@ -122,7 +122,7 @@ export function DocumentationSearch({
       results.map((result) => ({
         id: result.id,
         label: result.title,
-        // Which part the result is in, the Usage guide or the Docs, then what it is.
+        // Which part the result is in, the catalogue or the Docs, then what it is.
         description: `${areas[result.area]} · ${result.detail}`,
         icon: icons[result.kind],
         group: groups[result.kind],

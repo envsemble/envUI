@@ -4,7 +4,7 @@ import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { pagesOf, type RoutePage } from './DocumentationRoutes';
 import { routeHref } from './Address';
 
-/** The previous and next pages of the page's part, the Usage guide or the Docs, in reading order. */
+/** The previous and next pages of the page's part, the catalogue or the Docs, in reading order. */
 export function PageNavigation({ page }: { page: RoutePage }) {
   const pages = pagesOf(page.area);
   const index = pages.indexOf(page);

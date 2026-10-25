@@ -1,5 +1,5 @@
 /**
- * Accessibility gate: axe scans every page of the Usage guide and the Docs in light, and the theme
+ * Accessibility gate: axe scans every page of the catalogue and the Docs in light, and the theme
  * sample of samplePages (tests/browser/CatalogueThemes.ts) in dark and both high-contrast themes
  * too, and compares the violations with KnownViolations.json. A new violation fails, and so does a
  * listed one that no longer occurs, so the list only shrinks. Run `npm run test:a11y`; after fixing
@@ -52,7 +52,7 @@ const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  */
 const highContrastRules = { 'color-contrast-enhanced': { enabled: true } };
 
-/** Every page of the Usage guide and the Docs, with the themes it is scanned in. */
+/** Every page of the catalogue and the Docs, with the themes it is scanned in. */
 const pages = allPages.map(({ path, title }) => ({
   path,
   title,
@@ -115,7 +115,7 @@ function updating(testInfo: TestInfo) {
 
 async function settle(page: Page) {
   await page.locator('#docs-main').waitFor();
-  // The Usage guide's Loading spinner (.docs-loading) marks a part that is still loading: an
+  // The catalogue's Loading spinner (.docs-loading) marks a part that is still loading: an
   // example, its code, a specimen, a demo or the icon list; a part from LoadedPart says "Loading
   // the …".
   await page

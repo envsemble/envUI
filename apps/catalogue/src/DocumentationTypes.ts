@@ -101,7 +101,7 @@ export interface AnatomyLegendItem {
    * takes its description from docs/generated/parts.json.
    */
   text: string;
-  /** In an anatomy figure, the part's name, its bold start, which is all the Usage guide shows of it. */
+  /** In an anatomy figure, the part's name, its bold start, which is all the catalogue shows of it. */
   name?: string;
   /**
    * In a variants figure, the variant's name, shown on its callout; the item it labels is the part,

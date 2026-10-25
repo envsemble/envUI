@@ -1,4 +1,4 @@
-// The Usage guide's data from the repository: the release notes, which the Docs' Changelog page
+// The catalogue's data from the repository: the release notes, which the Docs' Changelog page
 // reads when the catalogue builds.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';

@@ -236,15 +236,15 @@ Inside a Theme these tokens follow the theme, its scale and the reader's text si
 
 #### Corners by what they are
 
-The Usage guide shows four kinds of corner; small marks are a fifth, for code. Their tokens:
+The catalogue shows four kinds of corner; small marks are a fifth, for code. Their tokens:
 
-| In the Usage guide | Token and where it is used                                                                                                              |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Surfaces           | `--env-radius-surface`: panes, cards, dialogs, popups and the outside of a row group                                                    |
-| Inside a surface   | `--env-radius-lg` for alerts, tables, text areas and drop zones; `--env-radius-sm` for list rows, menu items, tabs, toasts and tooltips |
-| Fully rounded      | `--env-radius-full`: buttons, single-line fields, badges, switches, segmented controls and navigation items                             |
-| Circles            | `50%`: avatars and icon buttons, which are always square                                                                                |
-| Small marks        | `--env-radius-xs`: checkboxes and color swatches, which read as boxes                                                                   |
+| In the catalogue | Token and where it is used                                                                                                              |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Surfaces         | `--env-radius-surface`: panes, cards, dialogs, popups and the outside of a row group                                                    |
+| Inside a surface | `--env-radius-lg` for alerts, tables, text areas and drop zones; `--env-radius-sm` for list rows, menu items, tabs, toasts and tooltips |
+| Fully rounded    | `--env-radius-full`: buttons, single-line fields, badges, switches, segmented controls and navigation items                             |
+| Circles          | `50%`: avatars and icon buttons, which are always square                                                                                |
+| Small marks      | `--env-radius-xs`: checkboxes and color swatches, which read as boxes                                                                   |
 
 #### Sizes in each scale
 

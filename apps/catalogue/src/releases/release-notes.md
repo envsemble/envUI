@@ -15,7 +15,7 @@ scripts/ReleaseNotes.mjs reads and checks this file; the full changelog is packa
 
 ## 1.0.0-prerelease.2 — Upcoming
 
-- The catalogue is two parts: the Usage guide introduces envUI with its components, patterns and foundations, and the Docs, under /docs, are the developer reference, with each component's props, part names and changelog.
+- The website is two parts: the catalogue introduces envUI with its components, patterns and foundations, and the Docs, under /docs, are the developer reference, with each component's props, part names and changelog.
 - Every component takes public color properties, such as `--env-button-container`, to color one instance, and its hover, focus and press follow the colors you set.
 - ColorPicker is rebuilt on React Aria in its own entry, `@envsemble/envui/color`, compact with hex, RGB and HSL fields, alpha, copy and an eyedropper; the pickers keep their footer actions on one line, and the editors draw their formatting buttons as one Toolbar in groups.
 - A calmer look: Slider is a field, SegmentedControl is connected segments unlike Tabs, fields take the background of what they sit on, the full corner is capped so tall elements become rounded rectangles, and skeletons shimmer.

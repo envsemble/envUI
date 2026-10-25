@@ -2,7 +2,7 @@ import { Documentation } from '../pages/Documentation';
 import { optionPieces, type OptionTable } from '../../../../scripts/SiteContent.mjs';
 
 /**
- * An option table as the Usage guide shows it: a legend, laid out as an anatomy figure's legend is,
+ * An option table as the catalogue shows it: a legend, laid out as an anatomy figure's legend is,
  * each option's name in the tag a variants figure's callouts use, followed by what it is for, and
  * below that any detail the table adds, such as the tones a variant takes. The Markdown keeps the
  * table, which the packaged page and agents read; its first column names the options, its last, Use

@@ -238,7 +238,7 @@ function PaletteSection() {
 }
 
 /**
- * A foundation's page in the Docs, the developer part its page in the Usage guide leaves out, from
+ * A foundation's page in the Docs, the developer part its page in the catalogue leaves out, from
  * the same file: Compose, the words of the page mapped to code, and what the application and envUI
  * provide. No Related.
  */
@@ -423,7 +423,7 @@ function CodeGuide({ document }: { document: Document }) {
 
 /**
  * The words a page gives people, from its "## Words to use", each with the code it means: the
- * table's In code column, which the Usage guide leaves out, beside the words. Nothing where the
+ * table's In code column, which the catalogue leaves out, beside the words. Nothing where the
  * page has no such column.
  */
 function WordsInCode({ document }: { document: Document }) {
@@ -482,19 +482,19 @@ function ColorProperties({ components }: { components: readonly string[] }) {
 
 /**
  * A component's or a pattern's page in the Docs, its guide to using it in code, which complements
- * its page in the Usage guide rather than repeating it: how to import it, its common uses, how its
+ * its page in the catalogue rather than repeating it: how to import it, its common uses, how its
  * parts compose and how to customize it, from the page's Compose; what the
- * application and envUI provide, which the Usage guide leaves out; then, as reference, its props,
- * part names and color properties, and its changelog. No figures of the Usage guide, no Related
- * and no band. Field, which has no page in the Usage guide, shows its whole page here, on the
+ * application and envUI provide, which the catalogue leaves out; then, as reference, its props,
+ * part names and color properties, and its changelog. No figures of the catalogue, no Related
+ * and no band. Field, which has no page in the catalogue, shows its whole page here, on the
  * page, as "Build your own field".
  */
 export function DocsReferencePage({ page }: { page: RoutePage }) {
   const document = page.document!;
   const reference = document as Reference;
-  const usagePage = pagesOf('usage').find((entry) => entry.document?.id === document.id);
+  const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
-  const pattern = usagePage?.kind === 'pattern';
+  const pattern = cataloguePage?.kind === 'pattern';
   return (
     <>
       <PageHeader
@@ -510,13 +510,15 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
           )
         }
       />
-      {/* Field, which has no page in the Usage guide, shows the whole file, what envUI and the
+      {/* Field, which has no page in the catalogue, shows the whole file, what envUI and the
           application provide in place. */}
-      {!usagePage && <TemplateContent document={document} provides related={false} bands={false} />}
+      {!cataloguePage && (
+        <TemplateContent document={document} provides related={false} bands={false} />
+      )}
       <Column gap={8} className="docs-article docs-api">
         <CodeGuide document={document} />
-        {usagePage && <WordsInCode document={document} />}
-        {usagePage && <Provides document={document} title="Accessibility" id="provides" />}
+        {cataloguePage && <WordsInCode document={document} />}
+        {cataloguePage && <Provides document={document} title="Accessibility" id="provides" />}
         {!pattern && (
           <Column render={<section />} gap={5} aria-labelledby="props">
             <Text render={<h2 />} variant="headline" id="props">

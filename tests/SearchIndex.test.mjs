@@ -10,7 +10,7 @@ import { headingsOf } from '../scripts/MarkdownHeadings.mjs';
 import { exportSection, propSection, tokenSection } from '../scripts/SearchAnchors.mjs';
 import {
   buildSearchIndex,
-  cataloguePages,
+  standalonePages,
   readTokens,
   searchDocuments,
   unlistedPages,
@@ -51,7 +51,7 @@ test('search covers every page, export, prop and token', () => {
       for (const prop of entry.props) assert.ok(ids.has(`prop:${name}.${prop.name}`), name);
   }
   assert.equal(ids.size, records.length, 'every search document has an id of its own');
-  for (const { page } of cataloguePages) assert.ok(index.has(`page:${page}`), page);
+  for (const { page } of standalonePages) assert.ok(index.has(`page:${page}`), page);
 });
 
 test('every search result leads to a page there is, and to an element that page renders', () => {
@@ -73,7 +73,7 @@ test('every search result leads to a page there is, and to an element that page 
     );
   for (const { id, page, view, section } of records) {
     const document = pages.get(page);
-    assert.ok(document || cataloguePages.some((entry) => entry.page === page), `${id}: ${page}`);
+    assert.ok(document || standalonePages.some((entry) => entry.page === page), `${id}: ${page}`);
     if (!section) continue;
     const ids = page === 'tokens' ? tokenRows : elements(document, view);
     assert.ok(ids.has(section), `${id}: ${page} renders no #${section}`);
@@ -190,23 +190,23 @@ test('the index stays small enough to load when search first opens', () => {
   assert.ok(serialized.length < 1_000_000, `${serialized.length} bytes`);
 });
 
-test('a result names its area: the Usage guide, or the Docs for the reference', () => {
+test('a result names its area: the catalogue, or the Docs for the reference', () => {
   const area = (id) => records.find((record) => record.id === id)?.area;
-  assert.equal(area('page:button'), 'usage');
-  assert.equal(area('page:loading'), 'usage');
-  assert.equal(area('page:colors'), 'usage');
+  assert.equal(area('page:button'), 'catalogue');
+  assert.equal(area('page:loading'), 'catalogue');
+  assert.equal(area('page:colors'), 'catalogue');
   assert.equal(area('guide:colors'), 'docs');
   assert.equal(area('page:field'), 'docs');
   assert.equal(area('page:setup'), 'docs');
   assert.equal(area('prop:Button.variant'), 'docs');
   assert.equal(area('export:useTheme'), 'docs');
   assert.equal(area('token:color.fg.muted'), 'docs');
-  for (const record of records) assert.ok(['usage', 'docs'].includes(record.area), record.id);
+  for (const record of records) assert.ok(['catalogue', 'docs'].includes(record.area), record.id);
   // The site's own pages: the Docs' home, tokens, codemods and the full changelog are in the Docs.
   const inDocs = new Set(['docs', 'tokens', 'codemods', 'full-changelog']);
-  for (const { page, area: where } of cataloguePages)
-    assert.equal(where, inDocs.has(page) ? 'docs' : 'usage', page);
-  // A foundation's page in the Usage guide ranks above its guide in the Docs.
+  for (const { page, area: where } of standalonePages)
+    assert.equal(where, inDocs.has(page) ? 'docs' : 'catalogue', page);
+  // A foundation's page in the catalogue ranks above its guide in the Docs.
   assert.deepEqual(best('colors and themes'), ['page:colors']);
   assert.ok(best('colors and themes', 3).includes('guide:colors'));
 });

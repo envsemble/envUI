@@ -280,7 +280,7 @@ async function finishAnimations(page: Page) {
 
 /** Wait until fonts, lazy content and finite animations have finished. */
 async function settle(page: Page) {
-  // The Usage guide's Loading spinner (.docs-loading) marks a part that is still loading: an
+  // The catalogue's Loading spinner (.docs-loading) marks a part that is still loading: an
   // example, its code, a specimen, a demo or the icon list; a part from LoadedPart says "Loading
   // the …".
   await page

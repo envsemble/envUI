@@ -110,7 +110,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 
 ### Composition
 
-- Copy an icon's import from the list on the Icons page of the Usage guide. Import each icon by its subpath, never from the `@envsemble/envui/icons` barrel, which makes the bundler read every icon.
+- Copy an icon's import from the list on the Icons page of the catalogue. Import each icon by its subpath, never from the `@envsemble/envui/icons` barrel, which makes the bundler read every icon.
 - Icons take the color of their text. Decorative icons stay hidden from assistive technology; icon-only controls need an accessible name.
 - envUI ships no logos: draw the application's own with `Icon` where it should follow the text color.
 

@@ -35,7 +35,11 @@ import {
   GuidePage,
   TokensPage,
 } from './pages/DocsPages';
-import { DocsNavigation, PageActions, UsageNavigation } from './navigation/DocumentationNavigation';
+import {
+  DocsNavigation,
+  PageActions,
+  CatalogueNavigation,
+} from './navigation/DocumentationNavigation';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
 import {
@@ -71,7 +75,7 @@ const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => Rea
   reference: DocsReferencePage,
 };
 
-/** The title of a page's tab: the Usage guide's are envUI's, the Docs' envUI Docs'. */
+/** The title of a page's tab: the catalogue's are envUI's, the Docs' envUI Docs'. */
 function documentTitle(page: RoutePage | undefined, area: Area) {
   const site = area === 'docs' ? 'envUI Docs' : 'envUI';
   if (!page) return `Page not found · ${site}`;
@@ -118,7 +122,7 @@ function DocsContents({ page }: { page: RoutePage }) {
 }
 
 /**
- * The site: the Usage guide, at the root, which shows envUI to people, with a rail of its
+ * The site: the catalogue, at the root, which shows envUI to people, with a rail of its
  * destinations and a drawer of the chosen one's pages, and the Docs, under /docs, the developer
  * reference with a navigation of their own and each page's contents beside it. The navigation
  * holds the wordmark and search at its top, and the page has the way to the same subject in the
@@ -136,7 +140,7 @@ function Shell() {
   const firstLoad = useRef(true);
   const routePath = route.split('?')[0];
   const page = findPage(routePath);
-  const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'usage');
+  const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'catalogue');
   const title = documentTitle(page, area);
   // Every page of the Docs but their home, an index of them, lists its contents beside it.
   const contents = page && area === 'docs' && page.kind !== 'docs-home';
@@ -212,7 +216,7 @@ function Shell() {
           }
         : openSearch,
     };
-    return area === 'docs' ? <DocsNavigation {...props} /> : <UsageNavigation {...props} />;
+    return area === 'docs' ? <DocsNavigation {...props} /> : <CatalogueNavigation {...props} />;
   };
   return (
     <Scaffold
@@ -261,7 +265,7 @@ function Shell() {
       <Sheet
         className="docs-navigation-sheet"
         side="start"
-        aria-label={area === 'docs' ? 'Docs' : 'Usage guide'}
+        aria-label={area === 'docs' ? 'Docs' : 'Catalogue'}
         width={area === 'docs' ? 'min(18rem, 100%)' : 'min(22rem, 100%)'}
         open={navigationOpen}
         onOpenChange={(open) => {

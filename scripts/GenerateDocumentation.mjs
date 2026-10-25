@@ -34,7 +34,7 @@ export const documentationDirectory = fileURLToPath(new URL('../docs/', import.m
 /**
  * Pages the package leaves out, whose links in its pages lead to the copies on main instead, and
  * which the packaged index doesn't list: the contributor pages, for people who work on envUI
- * itself, which neither the Usage guide nor the Docs show
+ * itself, which neither the catalogue nor the Docs show
  * (unlistedDocuments in apps/catalogue/src/navigation/DocumentationRoutes.ts), and local
  * development, which needs a checkout of envUI and which the Docs show.
  */
@@ -118,7 +118,7 @@ const kindFolders = {
 
 /**
  * The sections of a page in the one-file structure, the same for a component, a pattern and a
- * foundation, in the order the Usage guide shows them and an agent reads them: what it is and its
+ * foundation, in the order the catalogue shows them and an agent reads them: what it is and its
  * examples in the frontmatter, then its variants or options, its parts, how it behaves, ending with
  * how it adapts to width, its rules, which open with when to use it, its accessibility, the words
  * people use, and how to compose it in code. Overview is generated from the frontmatter's overview
@@ -168,7 +168,7 @@ export function examplesOf(frontmatter) {
 const exampleFields = ['role', 'caption', 'open', 'stage'];
 
 /**
- * The developer part of a page: its "## Compose" section, which the Usage guide leaves out and the
+ * The developer part of a page: its "## Compose" section, which the catalogue leaves out and the
  * page in the Docs, the package and agents show. It holds these `###` subsections, in this order,
  * after the generated Import; Usage is required. Its code is Markdown fences of a few lines, or an
  * example file of the page shown as code, in an empty ```tsx source=Name``` fence.
@@ -834,7 +834,7 @@ function readPage(document, body, { kind, catalog, examples, specimens, partName
     if (token.type === 'heading' && token.depth === 3) subheading = token.text;
     if (isPropsTable(token))
       problems.push(`${current.title} lists props in a table; the Props section is generated`);
-    // An option table, whose last column is Use for, shows in the Usage guide as a legend of tags.
+    // An option table, whose last column is Use for, shows in the catalogue as a legend of tags.
     const options = optionTable(token);
     if (options)
       problems.push(
@@ -882,12 +882,12 @@ function readPage(document, body, { kind, catalog, examples, specimens, partName
           problems.push(
             `item ${index + 1} of the legend of anatomy ${legendOf.name} names no part, such as \`env-button\``,
           );
-        // The Usage guide shows the part's name alone; its class names and props are for
+        // The catalogue shows the part's name alone; its class names and props are for
         // developers.
         const name = item.text.match(/^\*\*([^*]+)\*\*/)?.[1];
         if (!name)
           problems.push(
-            `item ${index + 1} of the legend of anatomy ${legendOf.name} must start with the part's name in bold, such as **Label**, which is all the Usage guide shows of it`,
+            `item ${index + 1} of the legend of anatomy ${legendOf.name} must start with the part's name in bold, such as **Label**, which is all the catalogue shows of it`,
           );
         // Every class it names is one envUI styles or lists as a part.
         for (const name of (part ?? '').replace(/::text$/, '').match(/env-[\w-]+/g) ?? [])
@@ -1448,7 +1448,7 @@ export function exampleSource(page, name, directory = examplesDirectory) {
 
 /**
  * The frontmatter of a page as it ships: as written, with each example once, by its role and
- * caption, under a comment that says where its file is; how the Usage guide frames an overview is
+ * caption, under a comment that says where its file is; how the catalogue frames an overview is
  * left out. A foundation's figures are the catalogue's, with no file, and its legends say what
  * they show, so they are left out.
  */
