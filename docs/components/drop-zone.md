@@ -31,33 +31,25 @@ avoidWhen:
     use: List
 components:
   - DropZone
+examples:
+  LogoUpload: overview
+  Sizes: variants
+  DropZoneAnatomy: anatomy
+  AttachDocuments: example
+  NarrowZone: example
+  SaysWhatIsHappening:
+    role: do
+    caption: While pending, a label that says what is happening.
+  SilentPending:
+    role: dont
+    caption: A spinner beside a label that still asks for a file.
 ---
 
 # DropZone
 
-## Overview
-
-```tsx example=LogoUpload
-
-```
-
-### States
-
-A zone can take only some kinds of file, and turns the others away. While the application works on the files, a spinner replaces the icon and the zone takes no more.
-
-<!-- specimen: States -->
-
-### Attach several files
-
-A zone can take several files at once. The application lists the files it took, each with Remove.
-
-```tsx example=AttachDocuments
-
-```
-
 ## Variants
 
-```tsx variants=Sizes
+```tsx figure=Sizes
 
 ```
 
@@ -69,13 +61,54 @@ A zone can take several files at once. The application lists the files it took, 
 | Medium | A file that is the main content of a form. The default. |
 | Small  | Attachments in a dense form or a row.                   |
 
-## When to use
+## Anatomy
 
-```tsx do=SaysWhatIsHappening caption="While pending, a label that says what is happening."
+```tsx figure=DropZoneAnatomy
 
 ```
 
-```tsx dont=SilentPending caption="A spinner beside a label that still asks for a file."
+1. **Drop zone** (`env-drop-zone`)
+2. **Target** (`env-drop-zone-target`)
+3. **Icon** (`env-drop-zone-icon`, `icon`)
+4. **Label** (`env-drop-zone-label`, `label`)
+5. **Description** (`env-drop-zone-description`, `description`)
+
+## Behaviour
+
+### States
+
+A zone can take only some kinds of file, and turns the others away.
+
+- While the application works on the files, a spinner replaces the icon.
+- While pending, the zone takes no more.
+
+<!-- specimen: States -->
+
+### Attach several files
+
+A zone can take several files at once. The application lists the files it took, each with Remove.
+
+```tsx figure=AttachDocuments
+
+```
+
+### Adapting to width
+
+A zone fills its container, and its text wraps.
+
+```tsx figure=NarrowZone widths="14 30"
+
+```
+
+## Rules
+
+A drop zone says what to add and what is happening, and the files chosen show beside it.
+
+```tsx figure=SaysWhatIsHappening
+
+```
+
+```tsx figure=SilentPending
 
 ```
 
@@ -90,26 +123,6 @@ The whole zone is one button, so it holds no links or other controls.
 ### Labels
 
 Say what to add in the label, and which files fit in the description.
-
-## Anatomy
-
-```tsx anatomy=DropZoneAnatomy
-
-```
-
-1. **Drop zone** (`env-drop-zone`)
-2. **Target** (`env-drop-zone-target`)
-3. **Icon** (`env-drop-zone-icon`, `icon`)
-4. **Label** (`env-drop-zone-label`, `label`)
-5. **Description** (`env-drop-zone-description`, `description`)
-
-## Adapting to width
-
-A zone fills its container, and its text wraps.
-
-```tsx example=NarrowZone widths="14 30"
-
-```
 
 ## Accessibility
 
@@ -132,11 +145,15 @@ A zone fills its container, and its text wraps.
 - Checks of size and contents, and the `error` message.
 - An announcement when an upload finishes, and the list of chosen files.
 
-## In code
+## Compose
 
 ### Usage
 
-A DropZone takes dropped files and opens the file picker when pressed. `label` says what to add and `description` which files fit; together they name the zone. `onDropAccepted` receives the files it takes. `icon` replaces the upload icon.
+A DropZone takes dropped files and opens the file picker when pressed.
+
+- `label` says what to add and `description` which files fit; together they name the zone.
+- `onDropAccepted` receives the files it takes.
+- `icon` replaces the upload icon.
 
 ```tsx source=LogoUpload
 
@@ -146,50 +163,30 @@ A DropZone takes dropped files and opens the file picker when pressed. `label` s
 
 `accept` filters dropped and chosen files, as the native attribute does, with MIME types such as `image/png`, groups such as `image/*` and extensions such as `.webp`; any file by default. Without `multiple` the zone takes the first file. Files that don't fit, and those after the first without `multiple`, go to `onDropRejected`. Check size and contents yourself, and show the message in `error`, which takes the error color on the zone's outline. `disabled` turns the zone off; it still keeps the browser from opening dropped files.
 
-```tsx source=AttachDocuments
-
+```tsx
+<DropZone
+  multiple
+  accept="application/pdf,.pdf"
+  label="Drop documents here, or browse"
+  description="PDF up to 10 MB each"
+  error={error}
+  onDropAccepted={(files) => setDocuments((current) => [...current, ...files])}
+  onDropRejected={() => setError('Only PDF files can be attached.')}
+/>
 ```
 
 #### Pending work
 
-While `pending`, a spinner replaces the icon, the zone reports `aria-busy` and takes no new files. Change the label to say what is happening.
+While `pending`, a spinner replaces the icon, the zone reports `aria-busy` and takes no new files. Change the label to say what is happening, and announce when the upload finishes, such as in a `role="status"` text.
 
 ```tsx
-import { useEffect, useRef, useState } from 'react';
-import { DropZone, Column, Text } from '@envsemble/envui';
-
-export default function UploadProgress() {
-  const [uploading, setUploading] = useState<string>();
-  const [done, setDone] = useState('');
-  const timer = useRef<number>(undefined);
-  useEffect(() => () => window.clearTimeout(timer.current), []);
-
-  const upload = ([file]: File[]) => {
-    setUploading(file.name);
-    setDone('');
-    // Stands in for the upload to a server.
-    timer.current = window.setTimeout(() => {
-      setUploading(undefined);
-      setDone(`${file.name} is uploaded.`);
-    }, 1500);
-  };
-
-  return (
-    // As wide as a form column.
-    <Column gap={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
-      <DropZone
-        pending={uploading != null}
-        label={uploading ? `Uploading ${uploading}` : 'Drop a report here, or browse'}
-        description={uploading ? 'This takes a moment' : 'PDF up to 10 MB'}
-        accept="application/pdf,.pdf"
-        onDropAccepted={upload}
-      />
-      <Text variant="caption" emphasis="muted" role="status">
-        {done}
-      </Text>
-    </Column>
-  );
-}
+<DropZone
+  pending={uploading != null}
+  label={uploading ? `Uploading ${uploading}` : 'Drop a report here, or browse'}
+  description={uploading ? 'This takes a moment' : 'PDF up to 10 MB'}
+  accept="application/pdf,.pdf"
+  onDropAccepted={upload}
+/>
 ```
 
 #### Sizes
@@ -198,47 +195,20 @@ export default function UploadProgress() {
 
 #### In a form
 
-With `name`, a native form submits the last files the zone took, dropped ones too, and a reset clears them. `files` hands the zone the files the application keeps, such as after a Remove, and replaces the ones it took. `form` names a form the zone sits outside of, and `inputRef` reaches the native file input, to open the picker from a Replace button.
+With `name`, a native form submits the last files the zone took, dropped ones too, and a reset clears them; `new FormData(form).getAll('attachments')` reads them, with an empty entry when there are none. `files` hands the zone the files the application keeps, such as after a Remove, and replaces the ones it took. `form` names a form the zone sits outside of, and `inputRef` reaches the native file input, to open the picker from a Replace button.
 
 ```tsx
-import { useState, type FormEvent } from 'react';
-import { Button, DropZone, Column, Row, Text, TextField } from '@envsemble/envui';
-
-export default function InAForm() {
-  const [sent, setSent] = useState('');
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // A named zone submits the last files it took, dropped ones too.
-    const files = new FormData(event.currentTarget)
-      .getAll('attachments')
-      .filter((entry): entry is File => entry instanceof File && entry.name !== '');
-    setSent(files.length ? `Sent with ${files.map((file) => file.name).join(', ')}.` : 'Sent.');
-  };
-  return (
-    <form onSubmit={submit} onReset={() => setSent('')} style={{ inlineSize: 'min(100%, 28rem)' }}>
-      <Column gap={4}>
-        <TextField label="Subject" name="subject" defaultValue="Quarterly figures" />
-        <DropZone
-          size="sm"
-          multiple
-          name="attachments"
-          label="Attach files"
-          description="Sent with the message"
-          onDropAccepted={() => setSent('')}
-        />
-        <Row wrap align="center" gap={4}>
-          <Button type="submit">Send</Button>
-          <Button type="reset" variant="secondary">
-            Reset
-          </Button>
-        </Row>
-        <Text variant="caption" emphasis="muted" role="status">
-          {sent}
-        </Text>
-      </Column>
-    </form>
-  );
-}
+<form onSubmit={send}>
+  <TextField label="Subject" name="subject" />
+  <DropZone
+    size="sm"
+    multiple
+    name="attachments"
+    label="Attach files"
+    description="Sent with the message"
+  />
+  <Button type="submit">Send</Button>
+</form>
 ```
 
 ### Composition
