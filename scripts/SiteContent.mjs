@@ -15,6 +15,12 @@ export const docsOnlySections = new Set(['code', 'changelog']);
 /** The subsections of Accessibility that say what envUI and the application provide. */
 export const providesHeadings = { envui: 'envUI provides', app: 'You provide' };
 
+/**
+ * The sections that hold those lists: Accessibility, or Behaviour on a page in the one-file
+ * structure.
+ */
+export const providesSections = new Set(['accessibility', 'behaviour']);
+
 /** Markdown cut at its `###` and `##` headings, outside code fences. */
 export function subsections(markdown) {
   const chunks = [''];
@@ -40,9 +46,49 @@ export function withoutProvides(markdown) {
     .replace(/\n+$/, '\n');
 }
 
+/** The heading of a table's column that only the Docs and agents read, such as a word's code. */
+export const codeColumnHeading = 'In code';
+
+/**
+ * Markdown with the columns of its tables headed In code left out, as the Site shows it: a table
+ * may pair what people read with the code it means, such as the words to use and their props, and
+ * the Site, which shows no code, reads only the rest.
+ */
+export function withoutCodeColumns(markdown) {
+  if (!markdown.includes(codeColumnHeading)) return markdown;
+  return marked
+    .lexer(markdown)
+    .map((token) => {
+      if (token.type !== 'table') return token.raw;
+      const keep = token.header.map((cell) => cell.text.trim() !== codeColumnHeading);
+      if (keep.every(Boolean)) return token.raw;
+      const row = (cells) =>
+        `| ${cells
+          .filter((_, index) => keep[index])
+          .map((cell) => cell.text.trim())
+          .join(' | ')} |`;
+      const trailing = token.raw.match(/\n*$/)[0];
+      return (
+        [
+          row(token.header),
+          row(token.header.map(() => ({ text: '---' }))),
+          ...token.rows.map(row),
+        ].join('\n') + (trailing || '\n')
+      );
+    })
+    .join('');
+}
+
+/** A section's Markdown as the Site shows it: without what envUI and the application provide. */
+export function siteMarkdown(section, markdown) {
+  return withoutCodeColumns(
+    providesSections.has(section.id) ? withoutProvides(markdown) : markdown,
+  );
+}
+
 /** What envUI provides and what the application provides, each a Markdown list, from a page. */
 export function providesOf(sections) {
-  const accessibility = sections.find((section) => section.id === 'accessibility');
+  const accessibility = sections.find((section) => providesSections.has(section.id));
   const markdown = (accessibility?.blocks ?? [])
     .map((block) => (block.kind === 'markdown' ? block.markdown : ''))
     .join('\n');
@@ -81,9 +127,19 @@ export function siteText(document) {
       if (block.kind === 'markdown')
         pieces.push({
           where: section.title,
-          markdown:
-            section.id === 'accessibility' ? withoutProvides(block.markdown) : block.markdown,
+          markdown: siteMarkdown(section, block.markdown),
         });
+      if (block.kind === 'figure') {
+        // A foundation's figure: its caption and its legend's names and meanings.
+        if (block.caption)
+          pieces.push({ where: `${section.title}, ${block.name}`, text: block.caption });
+        for (const item of block.legend ?? [])
+          pieces.push({
+            where: `${section.title}, ${block.name}`,
+            markdown: `${item.name}: ${item.text}`,
+          });
+        continue;
+      }
       if (block.kind !== 'example') continue;
       // A caption is shown as it is written, so code in it shows its backticks.
       if (block.caption)
@@ -215,8 +271,7 @@ export function siteStructure(document) {
         afterAnatomy = block.kind === 'example' && block.role === 'anatomy';
         continue;
       }
-      const markdown =
-        section.id === 'accessibility' ? withoutProvides(block.markdown) : block.markdown;
+      const markdown = siteMarkdown(section, block.markdown);
       for (const token of marked.lexer(markdown)) {
         if (token.type === 'space') continue;
         const anatomyNote = afterAnatomy;
@@ -265,8 +320,7 @@ export function longParagraphs(document) {
     if (docsOnlySections.has(section.id)) continue;
     for (const block of section.blocks) {
       if (block.kind !== 'markdown') continue;
-      const markdown =
-        section.id === 'accessibility' ? withoutProvides(block.markdown) : block.markdown;
+      const markdown = siteMarkdown(section, block.markdown);
       for (const token of marked.lexer(markdown)) {
         if (token.type !== 'paragraph') continue;
         const text = readText(token.text);

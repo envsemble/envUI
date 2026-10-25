@@ -1,6 +1,5 @@
 import { ColorsPreview } from './foundations/Colors';
 import { TypographyPreview } from './foundations/Typography';
-import { SpacingPreview } from './foundations/Spacing';
 import { ResponsivePreview } from './foundations/Responsive';
 import { Suspense, useState } from 'react';
 import { AccessibilityPreview } from './foundations/Accessibility';
@@ -45,8 +44,6 @@ function FoundationTopic({ id }: FoundationPreviewProps) {
       return <ColorsPreview />;
     case 'typography':
       return <TypographyPreview />;
-    case 'spacing':
-      return <SpacingPreview />;
     case 'responsive':
       return <ResponsivePreview />;
     case 'icons':

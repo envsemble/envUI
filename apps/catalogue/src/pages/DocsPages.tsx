@@ -220,6 +220,25 @@ function PaletteSection() {
 export function FoundationGuidePage({ page }: { page: SitePage }) {
   const document = page.document!;
   const sitePage = referencePages.find((entry) => entry.reference.id === document.id);
+  // A foundation in the one-file structure: the same file as its page on the Site, with Compose,
+  // its developer part, and Related.
+  if (document.format === 'skill')
+    return (
+      <>
+        <PageHeader
+          title={page.title}
+          kind="docs"
+          breadcrumb="Docs / Foundations"
+          description={page.summary}
+          meta={sitePage && <SiteLink path={sitePage.path} />}
+        />
+        <TemplateContent document={document} provides related={false} />
+        <Column gap={8} className="docs-article docs-api">
+          <CodeGuide document={document} />
+          {document.metadata && <Related metadata={document.metadata} path={document.path} />}
+        </Column>
+      </>
+    );
   return (
     <>
       <PageHeader
@@ -462,10 +481,16 @@ export function ApiPage({ page }: { page: SitePage }) {
           )
         }
       />
-      {!sitePage && <TemplateContent document={document} provides related={false} />}
+      {/* Field, which has no page on the Site, and a page in the one-file structure show the whole
+          file, what envUI and the application provide in place. */}
+      {(!sitePage || document.format === 'skill') && (
+        <TemplateContent document={document} provides related={false} />
+      )}
       <Column gap={8} className="docs-article docs-api">
         <CodeGuide document={document} />
-        {sitePage && <Provides document={document} title="Accessibility" id="provides" />}
+        {sitePage && document.format !== 'skill' && (
+          <Provides document={document} title="Accessibility" id="provides" />
+        )}
         {!pattern && (
           <Column render={<section />} gap={5} aria-labelledby="props">
             <Text render={<h2 />} variant="headline" id="props">
@@ -477,7 +502,9 @@ export function ApiPage({ page }: { page: SitePage }) {
         <PartNames components={metadata?.components ?? []} />
         <ColorProperties components={metadata?.components ?? []} />
         <PageChangelog document={document} />
-        {!sitePage && metadata && <Related metadata={metadata} path={document.path} />}
+        {(!sitePage || document.format === 'skill') && metadata && (
+          <Related metadata={metadata} path={document.path} />
+        )}
       </Column>
     </>
   );

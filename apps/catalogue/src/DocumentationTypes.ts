@@ -70,6 +70,19 @@ export type DocumentationBlock =
        */
       legend?: AnatomyLegendItem[];
     }
+  /**
+   * A foundation's figure in the one-file structure: one of the catalogue's own, from its page's
+   * preview (previews/foundations), by name, with the legend that follows it, each mark's or
+   * picture's name and what it means.
+   */
+  | {
+      kind: 'figure';
+      name: string;
+      heading: string;
+      role?: string;
+      caption?: string;
+      legend?: { name: string; text: string }[];
+    }
   /** A catalogue-only specimen in apps/catalogue/src/specimens/<page>/<name>.tsx. */
   | { kind: 'specimen'; name: string }
   /**
@@ -108,6 +121,9 @@ export type TemplateSectionId =
   | 'accessibility'
   | 'code'
   | 'examples'
+  | 'rules'
+  | 'behaviour'
+  | 'words'
   | 'changelog';
 
 export interface DocumentationSection {
@@ -120,10 +136,11 @@ export interface DocumentationSection {
 
 /** A component or pattern page's frontmatter beyond its title, summary and category. */
 export interface DocumentationMetadata {
-  status: 'experimental' | 'beta' | 'stable' | 'deprecated';
+  /** A component's or a pattern's; a foundation has none. */
+  status?: 'experimental' | 'beta' | 'stable' | 'deprecated';
   /** The status of an export that differs from the page's. */
   statuses?: Record<string, 'experimental' | 'beta' | 'stable' | 'deprecated'>;
-  since: string;
+  since?: string;
   aliases: string[];
   useWhen: string[];
   /** Situations that call for something else, with the component to use or the page to read. */
@@ -148,8 +165,11 @@ export interface DocumentationEntry {
   metadata?: DocumentationMetadata;
   /** The exports a page off the template documents, such as Icon on the Icons foundation's. */
   components?: string[];
-  /** A component page on the figure template: short text and live figures in every section. */
-  format?: 'figures';
+  /**
+   * A component page on the figure template: short text and live figures in every section; or a
+   * page in the one-file structure, whose frontmatter lists its examples (`skill`).
+   */
+  format?: 'figures' | 'skill';
   /** The sections of a page on the template; absent on pages not on it, such as guides. */
   sections?: DocumentationSection[];
   /** The exports a page on the template documents, with namespaces expanded to their parts. */

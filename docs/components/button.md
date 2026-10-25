@@ -41,21 +41,69 @@ components:
   - ConfirmButton
   - CopyButton
   - ButtonGroup
+examples:
+  CreateProject: overview
+  Icons:
+    role: overview
+    caption: 'IconButton: an icon alone, with a name for assistive technology.'
+  ConnectedButtons:
+    role: overview
+    caption: 'ButtonGroup: related buttons joined in a row or a column.'
+  OnePrimaryAction:
+    role: do
+    caption: One primary button per group, at the end of its actions.
+  SeveralPrimaryActions:
+    role: dont
+    caption: 'Several primary buttons: none of them stands out.'
+  ExplainWhatIsMissing:
+    role: do
+    caption: Let people press it, then show what is missing.
+  DisabledUntilValid:
+    role: dont
+    caption: A disabled button that doesn’t say why.
+  SayWhatWillHappen: example
+  DismissTip: example
+  RemovePeople:
+    role: example
+    caption: Beside others like it, each button names what it removes.
+  ButtonAnatomy: anatomy
+  Variants: variants
+  QuietToolbar: example
+  ButtonLinks: example
+  PendingAction: example
+  ConfirmInPlace: example
+  CopyValue: example
+  NarrowActions: example
+  FillSidebar:
+    role: example
+    caption: A button or a group can fill its container.
 ---
 
 # Button
 
-## Overview
+## Rules
 
-```tsx example=CreateProject
-
-```
-
-```tsx example=Icons caption="IconButton: an icon alone, with a name for assistive technology."
+```tsx figure=OnePrimaryAction
 
 ```
 
-```tsx example=ConnectedButtons caption="ButtonGroup: related buttons joined in a row or a column."
+```tsx figure=SeveralPrimaryActions
+
+```
+
+```tsx figure=ExplainWhatIsMissing
+
+```
+
+```tsx figure=DisabledUntilValid
+
+```
+
+### Labels
+
+Start with a verb and say what will happen, and when the outcome is known, put it in the label.
+
+```tsx figure=SayWhatWillHappen
 
 ```
 
@@ -63,53 +111,33 @@ components:
 
 An IconButton with the Close cross closes, dismisses or removes what it sits in.
 
-Name it Close in the application's language, or say what it removes where several sit together.
+- Name it Close, in the application's language.
+- Where several sit together, name what each removes.
 
-```tsx example=DismissTip
-
-```
-
-```tsx example=RemovePeople caption="Beside others like it, each button names what it removes."
+```tsx figure=DismissTip
 
 ```
 
-### States
-
-Hover, press, keyboard focus and disabled, for each variant.
-
-Keyboard focus draws a ring just outside the button; a text button's ring reaches a little past its label, which stays in line with the text around it.
-
-<!-- specimen: InteractionStates -->
-
-### Pending work
-
-While its work runs, a spinner replaces the content at the same size, and presses do nothing.
-
-```tsx example=PendingAction
+```tsx figure=RemovePeople
 
 ```
 
-### Confirm in place
+## Anatomy
 
-ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.
-
-Its armed label is short and has no question mark: the verb, or the verb and object, "Remove Sam".
-
-```tsx example=ConfirmInPlace
+```tsx figure=ButtonAnatomy
 
 ```
 
-### Copy to the clipboard
+1. **Container** (`env-button`)
+2. **Start icon** (`env-button > env-icon:first-child`, `startIcon`)
+3. **Label** (`env-button::text`)
+4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
 
-CopyButton copies a value and shows Copied, or Couldn’t copy, for about two seconds.
-
-```tsx example=CopyValue
-
-```
+Not shown: the spinner, a group's frame, and the end slot, quiet content after the label, such as a shortcut's keys, at the far end of a wide button, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) shows it.
 
 ## Variants
 
-```tsx variants=Variants
+```tsx figure=Variants
 
 ```
 
@@ -131,7 +159,7 @@ CopyButton copies a value and shows Copied, or Couldn’t copy, for about two se
 
 A button without a variant of its own takes its container's, such as ghost in a toolbar.
 
-```tsx example=QuietToolbar
+```tsx figure=QuietToolbar
 
 ```
 
@@ -139,7 +167,7 @@ A button without a variant of its own takes its container's, such as ghost in a 
 
 A button can go to a page instead of acting; [Link](link.md) says when a destination takes a button's shape.
 
-```tsx example=ButtonLinks
+```tsx figure=ButtonLinks
 
 ```
 
@@ -149,60 +177,58 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 
 <!-- specimen: Sizes -->
 
-## When to use
+## Behaviour
 
-```tsx do=OnePrimaryAction caption="One primary button per group, at the end of its actions."
+### States
 
-```
+Hover, press, keyboard focus and disabled, for each variant.
 
-```tsx dont=SeveralPrimaryActions caption="Several primary buttons: none of them stands out."
+- Keyboard focus draws a ring just outside the button.
+- A text button's ring reaches a little past its label, which stays in line with the text around it.
 
-```
+<!-- specimen: InteractionStates -->
 
-```tsx do=ExplainWhatIsMissing caption="Let people press it, then show what is missing."
+### Pending work
 
-```
+While its work runs, a spinner replaces the content at the same size, and presses do nothing.
 
-```tsx dont=DisabledUntilValid caption="A disabled button that doesn’t say why."
-
-```
-
-### Labels
-
-Start with a verb and say what will happen, and when the outcome is known, put it in the label.
-
-```tsx example=SayWhatWillHappen
+```tsx figure=PendingAction
 
 ```
 
-## Anatomy
+### Confirm in place
 
-```tsx anatomy=ButtonAnatomy
+ConfirmButton arms on the first press and acts on the second.
+
+- <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.
+- Its armed label is short, with no question mark: the verb, or the verb and object, "Remove Sam".
+
+```tsx figure=ConfirmInPlace
 
 ```
 
-1. **Container** (`env-button`)
-2. **Start icon** (`env-button > env-icon:first-child`, `startIcon`)
-3. **Label** (`env-button::text`)
-4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
+### Copy to the clipboard
 
-Not shown: the spinner, a group's frame, and the end slot, quiet content after the label, such as a shortcut's keys, at the far end of a wide button, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) shows it.
+CopyButton copies a value and shows Copied, or Couldn’t copy, for about two seconds.
 
-## Adapting to width
+```tsx figure=CopyValue
+
+```
+
+### Adapting to width
 
 Labels wrap, and icon-only buttons keep their size.
 
-On touch screens every button grows to the size of a fingertip, and an icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
+- On touch screens every button grows to the size of a fingertip.
+- An icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
 
-```tsx example=NarrowActions widths="16 30"
-
-```
-
-```tsx example=FillSidebar caption="A button or a group can fill its container."
+```tsx figure=NarrowActions widths="16 30"
 
 ```
 
-## Accessibility
+```tsx figure=FillSidebar
+
+```
 
 ### Keyboard
 
@@ -227,7 +253,7 @@ On touch screens every button grows to the size of a fingertip, and an icon butt
 - Routing behind `href`, through `LinkProvider`.
 - Focus for after a confirmed action removes the button.
 
-## In code
+## Compose
 
 ### Usage
 

@@ -139,7 +139,12 @@ export function FoundationPage({ page }: { page: SitePage }) {
         symbol={<Icon />}
         meta={<GuideLink path={foundationGuideRoute(reference.id)} />}
       />
-      <FoundationPreview id={reference.id} />
+      {/* A foundation in the one-file structure is its Markdown, with its figures in place. */}
+      {reference.format === 'skill' ? (
+        <TemplateContent document={page.document!} related={false} />
+      ) : (
+        <FoundationPreview id={reference.id} />
+      )}
       {reference.id === 'icons' && (
         <Column gap={4} className="docs-article docs-foundation-notes docs-icons-credit">
           <Documentation markdown={iconsCredit} path={reference.path} />

@@ -58,6 +58,7 @@ export const leanPages = new Set([
   'components/button.md',
   'components/table.md',
   'patterns/forms.md',
+  'foundations/spacing.md',
 ]);
 
 /** A packaged page's links to contributor pages, pointed at the repository's copies on main. */
@@ -161,6 +162,43 @@ export const figureSections = [
 ];
 
 /**
+ * The sections of a page in the one-file structure (work-0023), the same for a component, a
+ * pattern and a foundation, in the order a reader needs them, so an agent can stop early: what it
+ * is and its examples in the frontmatter, then its rules, its parts, its variants or options, how
+ * it behaves, and how to compose it in code. Overview is generated from the frontmatter's overview
+ * examples; Props and Related, as on the figure template. A foundation calls its variants Options
+ * and may end its plain part with the words people use. docs/component-pages.md describes it.
+ */
+export const skillSections = [
+  { id: 'overview', title: 'Overview', generated: true },
+  { id: 'rules', title: 'Rules', required: true },
+  { id: 'anatomy', title: 'Anatomy' },
+  { id: 'variants', title: 'Variants', foundationTitle: 'Options' },
+  { id: 'behaviour', title: 'Behaviour' },
+  { id: 'words', title: 'Words to use' },
+  { id: 'code', title: 'Compose' },
+  { id: 'props', title: 'Props', generated: true },
+  { id: 'related', title: 'Related', generated: true },
+  { id: 'changelog', title: 'Changelog' },
+];
+
+/** The roles an example of a page in the one-file structure plays, as its frontmatter lists it. */
+export const exampleRoles = ['overview', 'example', 'variants', 'anatomy', 'do', 'dont'];
+
+/**
+ * A page's examples as its frontmatter lists them, by name: a role alone, such as
+ * `CreateProject: overview`, or a role and a caption.
+ */
+export function examplesOf(frontmatter) {
+  return Object.fromEntries(
+    Object.entries(frontmatter?.examples ?? {}).map(([name, value]) => [
+      name,
+      typeof value === 'string' ? { role: value } : { role: value?.role, caption: value?.caption },
+    ]),
+  );
+}
+
+/**
  * The developer-only part of a page on the figure template: its "## In code" section, which the
  * Site leaves out and the page's guide in the Docs, the package and agents show. It holds these
  * `###` subsections, in this order, after the generated Import; Usage is required. Its code is
@@ -199,21 +237,23 @@ export function importMarkdown(names, props) {
  * The page's sections with "## In code" opening on the generated Import, and the section added,
  * after Accessibility, where the page writes none.
  */
-function withImport(sections, names, props) {
+function withImport(sections, names, props, title = 'In code') {
   const imports = importMarkdown(names, props);
   if (!imports) return sections;
   const index = sections.findIndex((section) => section.id === 'code');
   if (index === -1) {
-    const after = sections.findIndex((section) => section.id === 'accessibility');
+    const after = sections.findLastIndex((section) =>
+      ['accessibility', 'rules', 'anatomy', 'variants', 'behaviour', 'words'].includes(section.id),
+    );
     const code = {
       id: 'code',
-      title: 'In code',
-      blocks: [{ kind: 'markdown', markdown: `## In code\n\n${imports}` }],
+      title,
+      blocks: [{ kind: 'markdown', markdown: `## ${title}\n\n${imports}` }],
     };
     return [...sections.slice(0, after + 1), code, ...sections.slice(after + 1)];
   }
   const [first, ...rest] = sections[index].blocks;
-  const markdown = first.markdown.replace(/^## In code\n+/, `## In code\n\n${imports}`);
+  const markdown = first.markdown.replace(/^## (In code|Compose)\n+/, `## $1\n\n${imports}`);
   return sections.with(index, {
     ...sections[index],
     blocks: [{ ...first, markdown }, ...rest],
@@ -237,6 +277,8 @@ export const frontmatterSchema = {
   /** The page's one list of related components and pages: what to use for a need it doesn't meet. */
   avoidWhen: { type: 'avoid', template: true },
   components: { type: 'strings', required: true, nonEmpty: true },
+  /** A page in the one-file structure: each example file once, by name, with its role and caption. */
+  examples: { type: 'examples' },
 };
 /** Frontmatter of a pattern page: required as a whole, with what it composes. */
 const compositionFrontmatter = {
@@ -249,6 +291,21 @@ const compositionFrontmatter = {
   avoidWhen: { type: 'avoid', required: true },
   /** The exports, namespaces rather than parts, that the page's compositions combine. */
   composes: { type: 'strings', required: true, nonEmpty: true },
+  examples: { type: 'examples' },
+};
+/**
+ * Frontmatter of a foundation page in the one-file structure: what it is, the words people search
+ * for, its related pages and its figures, which are the catalogue's (previews/foundations), each
+ * once with its role and caption.
+ */
+const foundationFrontmatter = {
+  title: { type: 'string', required: true },
+  summary: { type: 'string', required: true },
+  aliases: { type: 'strings', required: true, nonEmpty: true },
+  useWhen: { type: 'strings' },
+  avoidWhen: { type: 'avoid' },
+  components: { type: 'strings' },
+  examples: { type: 'examples', required: true },
 };
 /** The frontmatter of each page kind that has its own; other pages take otherFrontmatter only. */
 export const pageSchemas = {
@@ -258,6 +315,8 @@ export const pageSchemas = {
     intent: { type: 'string', required: true, values: intents },
   },
 };
+/** The frontmatter of a page whose kind has none of its own, once it is in the one-file structure. */
+const skillSchemas = { foundation: foundationFrontmatter };
 const otherFrontmatter = new Set(['components', 'aliases', 'exportAliases', 'statuses']);
 /** A page whose slug cannot follow its title until the component it documents is merged. */
 const slugExceptions = new Set(['chips']);
@@ -369,7 +428,7 @@ export function splitFrontmatter(source, path) {
 
 function validateFrontmatter(frontmatter, path, { kind, template, versions }) {
   const problems = [];
-  const schema = pageSchemas[kind];
+  const schema = pageSchemas[kind] ?? ('examples' in frontmatter ? skillSchemas[kind] : undefined);
   if (!schema) {
     for (const key of Object.keys(frontmatter))
       if (!otherFrontmatter.has(key))
@@ -432,6 +491,31 @@ function validateFrontmatter(frontmatter, path, { kind, template, versions }) {
         problems.push(
           `${key} must be a list of { text, use } or { text, see } entries, use naming the export to use instead and see the page to read instead`,
         );
+    } else if (rule.type === 'examples') {
+      if (!value || typeof value !== 'object' || Array.isArray(value))
+        problems.push(
+          `${key} must map each example's name to its role, or to its role and caption`,
+        );
+      else
+        for (const [name, entry] of Object.entries(value)) {
+          const { role, caption } = typeof entry === 'string' ? { role: entry } : (entry ?? {});
+          if (!/^[A-Z][A-Za-z\d]*$/.test(name))
+            problems.push(`${key} names ${name}; name an example by its PascalCase file name`);
+          if (!exampleRoles.includes(role))
+            problems.push(
+              `${key} gives ${name} the role ${role}; one of ${exampleRoles.join(', ')}`,
+            );
+          if (
+            entry &&
+            typeof entry === 'object' &&
+            Object.keys(entry).some((field) => !['role', 'caption'].includes(field))
+          )
+            problems.push(`${key} gives ${name} a field other than role and caption`);
+          if (caption !== undefined && (typeof caption !== 'string' || !caption.trim()))
+            problems.push(`${key} gives ${name} an empty caption`);
+          if ((role === 'do' || role === 'dont') && !caption)
+            problems.push(`${key} gives the ${role} figure ${name} no caption, its rule`);
+        }
     } else if (rule.type === 'statuses') {
       const listed = Array.isArray(frontmatter.components) ? frontmatter.components : [];
       if (!value || typeof value !== 'object' || Array.isArray(value))
@@ -563,7 +647,7 @@ export const patternExampleMinimum = 3;
  * What an Accessibility section lacks: the `###` lists its kind needs, and a Key and Action table
  * under `### Keyboard`.
  */
-function accessibilityProblems(tokens, kind) {
+function accessibilityProblems(tokens, kind, title = 'Accessibility') {
   const problems = [];
   const headings = tokens
     .filter((token) => token.type === 'heading' && token.depth === 3)
@@ -576,7 +660,7 @@ function accessibilityProblems(tokens, kind) {
       .slice(start + 1)
       .find((token) => token.type === 'list' || token.type === 'heading');
     if (start === -1 || list?.type !== 'list' || !list.items.some((item) => item.text.trim()))
-      problems.push(`"## Accessibility" needs a "### ${required}" list`);
+      problems.push(`"## ${title}" needs a "### ${required}" list`);
   }
   if (headings.includes('Keyboard')) {
     const start = tokens.findIndex(
@@ -617,6 +701,9 @@ function headingProblems(token) {
  * ```tsx anatomy=Name``` or a variants figure ```tsx variants=Name```, each with optional
  * attributes, written name="value", and flags, such as `open`, written as their name alone.
  */
+/** A figure placed by name in the one-file structure: ```tsx figure=Name```, with attributes. */
+const skillFigurePattern =
+  /^tsx\s+figure=([A-Za-z]\w*)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^\s"]+))?)*)\s*$/;
 const figurePattern =
   /^tsx\s+(example|do|dont|anatomy|variants)=(\S+)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^\s"]+))?)*)\s*$/;
 /**
@@ -713,10 +800,20 @@ export function usesFigures(tokens) {
  * The blocks of a component page on the figure template: per section, Markdown, live figures with
  * their legends, and specimens.
  */
-function readFigures(document, body, { examples, specimens, partNames }) {
+function readFigures(document, body, { examples, specimens, partNames, skill }) {
   const tokens = marked.lexer(body);
   if (tokens.map((token) => token.raw).join('') !== body)
     throw new Error(`Could not split ${document.path} into sections.`);
+  // A page in the one-file structure has its sections, and lists its examples in its frontmatter,
+  // whose figures it places by name: ```tsx figure=Name```. A foundation's figures are the
+  // catalogue's, not example files.
+  const foundation = skill?.kind === 'foundation';
+  const structure = (skill ? skillSections : figureSections).map((item) => ({
+    ...item,
+    title: (foundation && item.foundationTitle) || item.title,
+  }));
+  const catalog = skill?.catalog ?? {};
+  const placed = new Set();
   const sections = [];
   const problems = [];
   let current;
@@ -770,10 +867,10 @@ function readFigures(document, body, { examples, specimens, partNames }) {
       continue;
     }
     if (token.type === 'heading' && token.depth === 2) {
-      const section = figureSections.find((item) => item.title === token.text);
+      const section = structure.find((item) => item.title === token.text);
       if (!section) {
         problems.push(
-          `"## ${token.text}" is not a section of a component page (${figureSections
+          `"## ${token.text}" is not a section of a ${skill ? `${skill.kind} page in the one-file structure` : 'component page'} (${structure
             .filter((item) => !item.generated)
             .map((item) => item.title)
             .join(', ')})`,
@@ -786,8 +883,7 @@ function readFigures(document, body, { examples, specimens, partNames }) {
       const previous = sections.at(-1);
       if (
         previous &&
-        figureSections.indexOf(section) <
-          figureSections.findIndex((item) => item.id === previous.id)
+        structure.indexOf(section) < structure.findIndex((item) => item.id === previous.id)
       )
         problems.push(`"## ${token.text}" must come before "## ${previous.title}"`);
       current = { id: section.id, title: section.title, blocks: [], tokens: [] };
@@ -823,6 +919,20 @@ function readFigures(document, body, { examples, specimens, partNames }) {
       problems.push(
         ...optionTableProblems(options).map((problem) => `${current.title}: ${problem}`),
       );
+    if (legendOf?.kind === 'figure' && token.type === 'list' && token.ordered) {
+      // A foundation figure's legend: what each numbered mark, or each picture of a run, shows,
+      // its name in bold and then what it means, such as **Tight, inside a group**: A title….
+      legendOf.legend = token.items.map((item, index) => {
+        const match = item.text.replace(/\s+/g, ' ').match(/^\*\*([^*]+)\*\*:?\s*(.*)$/);
+        if (!match)
+          problems.push(
+            `item ${index + 1} of the legend of figure ${legendOf.name} must start with its name in bold, such as **Compact**: and what it means`,
+          );
+        return { name: match?.[1] ?? '', text: match?.[2].trim() ?? item.text };
+      });
+      legendOf = undefined;
+      continue;
+    }
     if (legendOf?.role === 'variants' && token.type === 'list' && token.ordered) {
       // A variants figure's legend: each variant's name in bold, labelling the example's items in
       // order, or the item a part reference names.
@@ -877,11 +987,68 @@ function readFigures(document, body, { examples, specimens, partNames }) {
       problems.push(
         `\`${token.lang}\` in "## ${current.title}": an example's source as code belongs in "## In code"`,
       );
+    // In the one-file structure a figure is placed by name; the frontmatter gives its role and
+    // caption.
+    const lang = token.type === 'code' ? (token.lang ?? '') : '';
+    const skillFigure = skill && lang.match(skillFigurePattern);
+    if (skill && /^tsx\s+(?:example|do|dont|anatomy|variants)=/.test(lang)) {
+      problems.push(
+        `\`${lang}\`: a page in the one-file structure places a figure as \`tsx figure=Name\`, and lists its role and caption under examples in its frontmatter`,
+      );
+      continue;
+    }
+    if (skill && /^tsx\s+figure=/.test(lang) && !skillFigure) {
+      problems.push(
+        `the fence \`${lang}\` is malformed: write \`tsx figure=Name\`, with attributes as name="value" and flags, such as open, as their name alone`,
+      );
+      continue;
+    }
+    const listed = skillFigure && catalog[skillFigure[1]];
+    if (skillFigure) {
+      const name = skillFigure[1];
+      if (placed.has(name)) problems.push(`figure ${name} is placed twice; place it once`);
+      placed.add(name);
+      if (!listed) {
+        problems.push(`figure ${name} is not listed under examples in the frontmatter`);
+        continue;
+      }
+      if (listed.role === 'overview') {
+        problems.push(
+          `figure ${name} is an overview example, which the Overview shows from the frontmatter; don't place it`,
+        );
+        continue;
+      }
+      if (token.text.trim())
+        problems.push(`the fence of figure ${name} must be empty; the build fills in its file`);
+    }
+    if (skillFigure && foundation) {
+      // A foundation's figure is the catalogue's own, from its page's preview, with the legend
+      // that follows it; it has no example file.
+      if (skillFigure[2].trim())
+        problems.push(`figure ${skillFigure[1]} takes no attributes on a foundation page`);
+      const block = {
+        kind: 'figure',
+        name: skillFigure[1],
+        heading: subheading ?? fileWords(skillFigure[1]),
+        role: listed.role,
+        ...(listed.caption && { caption: listed.caption }),
+      };
+      blocks.push(block);
+      legendOf = block;
+      continue;
+    }
     if (
-      token.type === 'code' &&
-      /^tsx\s+(?:example|do|dont|anatomy|variants)=/.test(token.lang ?? '')
+      skillFigure ||
+      (token.type === 'code' && /^tsx\s+(?:example|do|dont|anatomy|variants)=/.test(lang))
     ) {
-      const match = (token.lang ?? '').match(figurePattern);
+      const match = skillFigure
+        ? [
+            lang,
+            listed.role === 'example' ? 'example' : listed.role,
+            skillFigure[1],
+            skillFigure[2],
+          ]
+        : lang.match(figurePattern);
       const quote = match ? undefined : strayQuote(token.lang);
       if (quote) {
         problems.push(
@@ -910,6 +1077,12 @@ function readFigures(document, body, { examples, specimens, partNames }) {
           problems.push(`${role} ${name} has ${key} without a value; write ${key}="…"`);
         if (key in attributes) problems.push(`${role} ${name} repeats ${key}`);
         attributes[key] = value ? (quoted ?? plain).trim() : true;
+      }
+      if (skillFigure) {
+        if ('caption' in attributes)
+          problems.push(`figure ${name} has a caption on its fence; it goes under examples`);
+        delete attributes.caption;
+        if (listed.caption) attributes.caption = listed.caption;
       }
       for (const key of figureAttributes[role].required)
         if (!attributes[key]) problems.push(`${role} ${name} needs ${key}="…", one sentence`);
@@ -994,25 +1167,66 @@ function readFigures(document, body, { examples, specimens, partNames }) {
             `anatomy ${block.name} has no legend, and docs/generated/parts.json lists no parts of ${component}${block.of ? '' : '; write a legend or name the component with of="Name"'}`,
           );
       }
-  for (const section of figureSections)
+  for (const section of structure)
     if (section.required && !sections.some((item) => item.id === section.id))
       problems.push(`"## ${section.title}" is required`);
+  const codeTitle = structure.find((item) => item.id === 'code').title;
   if (sections.some((item) => item.id === 'code'))
     for (const [index, item] of codeSubsections.entries())
       if (item.required && !codeOrder.includes(index))
-        problems.push(`"## In code" needs a "### ${item.title}" subsection: ${item.holds}`);
-  const overview = sections.find((item) => item.id === 'overview');
-  if (overview && !overview.blocks.some((block) => block.kind === 'example'))
-    problems.push(
-      '"## Overview" shows what the component looks like: at least one ```tsx example=Name```',
-    );
-  const accessibility = sections.find((item) => item.id === 'accessibility');
-  if (accessibility) problems.push(...accessibilityProblems(accessibility.tokens, 'component'));
+        problems.push(`"## ${codeTitle}" needs a "### ${item.title}" subsection: ${item.holds}`);
+  if (skill) {
+    // Every example the frontmatter lists is placed once, but the overview's, which the Overview
+    // shows; a component or pattern shows what it is with at least one, and says what envUI and
+    // the application provide under Behaviour.
+    const entries = Object.entries(catalog);
+    for (const [name, { role }] of entries) {
+      if (role !== 'overview' && !placed.has(name))
+        problems.push(`example ${name} is listed in the frontmatter but placed nowhere`);
+      if (!foundation && !examples.has(name))
+        problems.push(
+          `example ${name} has no file apps/catalogue/src/examples/${document.id}/${name}.tsx`,
+        );
+    }
+    if (!foundation) {
+      if (!entries.some(([, { role }]) => role === 'overview'))
+        problems.push('the frontmatter lists no overview example, which shows what it is');
+      const behaviour = sections.find((item) => item.id === 'behaviour');
+      if (!behaviour) problems.push('"## Behaviour" is required, with what envUI and you provide');
+      else problems.push(...accessibilityProblems(behaviour.tokens, 'component', 'Behaviour'));
+    }
+  } else {
+    const overview = sections.find((item) => item.id === 'overview');
+    if (overview && !overview.blocks.some((block) => block.kind === 'example'))
+      problems.push(
+        '"## Overview" shows what the component looks like: at least one ```tsx example=Name```',
+      );
+    const accessibility = sections.find((item) => item.id === 'accessibility');
+    if (accessibility) problems.push(...accessibilityProblems(accessibility.tokens, 'component'));
+  }
   if (problems.length)
     throw new Error(
-      `${document.path} does not follow the figure template:\n  - ${problems.join('\n  - ')}`,
+      `${document.path} does not follow the ${skill ? 'one-file structure' : 'figure template'}:\n  - ${problems.join('\n  - ')}`,
     );
-  return sections.map(({ id, title, blocks }) => ({ id, title, blocks }));
+  const result = sections.map(({ id, title, blocks }) => ({ id, title, blocks }));
+  if (!skill) return result;
+  // The Overview: the frontmatter's overview examples, side by side, the first named after the page.
+  const overviews = Object.entries(catalog).filter(([, { role }]) => role === 'overview');
+  if (!overviews.length) return result;
+  const overview = {
+    id: 'overview',
+    title: 'Overview',
+    blocks: [
+      { kind: 'markdown', markdown: '## Overview\n\n' },
+      ...overviews.map(([name, { caption }], index) => ({
+        kind: foundation ? 'figure' : 'example',
+        name,
+        heading: index === 0 ? document.title : fileWords(name),
+        ...(caption && { caption }),
+      })),
+    ],
+  };
+  return [overview, ...result];
 }
 
 /**
@@ -1240,7 +1454,10 @@ export function readDocumentation(
       const composition = kind === 'pattern';
       const tokens = marked.lexer(markdown);
       const firstSection = tokens.find((t) => t.type === 'heading' && t.depth === 2);
-      const template = composition || (component && firstSection?.text === 'Overview');
+      // A page in the one-file structure lists its examples in its frontmatter and opens on its
+      // rules, whatever its kind.
+      const skill = Boolean(frontmatter && 'examples' in frontmatter);
+      const template = skill || composition || (component && firstSection?.text === 'Overview');
       // A page that uses the template's parts is on the template, whatever its first section.
       // They are read from the tokens, as the page renders: a fence indented by a few spaces is a
       // fence, and one shown inside another fence is text.
@@ -1255,9 +1472,16 @@ export function readDocumentation(
       });
       const templateParts =
         usesTemplate || (frontmatter && ('useWhen' in frontmatter || 'avoidWhen' in frontmatter));
+      if (skill && firstSection?.text !== 'Rules')
+        throw new Error(
+          `${path} is in the one-file structure, so its first section must be "## Rules", not ${
+            firstSection ? `"## ${firstSection.text}"` : 'missing'
+          }.`,
+        );
       if (
-        (component && !template && templateParts) ||
-        (composition && firstSection?.text !== 'Overview')
+        !skill &&
+        ((component && !template && templateParts) ||
+          (composition && firstSection?.text !== 'Overview'))
       )
         throw new Error(
           `${path} ${composition ? `is a ${kind} page, on` : 'uses'} the page template, so its first section must be "## Overview", not ${
@@ -1267,7 +1491,7 @@ export function readDocumentation(
       if (sectionedKinds.has(kind) && !frontmatter)
         throw new Error(`${kind[0].toUpperCase()}${kind.slice(1)} page ${path} needs frontmatter.`);
       if (frontmatter) validateFrontmatter(frontmatter, path, { kind, template, versions });
-      if (sectionedKinds.has(kind)) {
+      if (sectionedKinds.has(kind) || skill) {
         if (frontmatter.title !== title)
           throw new Error(`Frontmatter title of ${path} differs from its index entry.`);
         if (component && frontmatter.category !== group)
@@ -1302,8 +1526,21 @@ export function readDocumentation(
         markdown,
         ...(frontmatter && { frontmatter, yaml }),
       };
-      // Component and pattern pages may be on the figure template.
-      if (template && (component || kind === 'pattern') && usesFigures(tokens)) {
+      if (skill) {
+        document.format = 'skill';
+        document.sections = withImport(
+          readFigures(document, markdown, {
+            examples: filesOf(examples, id),
+            specimens: filesOf(specimens, id),
+            partNames,
+            skill: { kind, catalog: examplesOf(frontmatter) },
+          }),
+          frontmatter.components ?? frontmatter.composes ?? [],
+          props,
+          'Compose',
+        );
+      } else if (template && (component || kind === 'pattern') && usesFigures(tokens)) {
+        // Component and pattern pages may be on the figure template.
         document.format = 'figures';
         document.sections = withImport(
           readFigures(document, markdown, {
@@ -1364,9 +1601,14 @@ export function readDocumentation(
       );
     // A component or pattern page relates to the pages its avoidWhen names; another page to those
     // its Related topics list links.
-    document.related = sectionedKinds.has(pageKindOf(document.path))
-      ? [...new Set(relations.flatMap(({ page }) => (page && page !== document.id ? [page] : [])))]
-      : listed;
+    document.related =
+      sectionedKinds.has(pageKindOf(document.path)) || document.format === 'skill'
+        ? [
+            ...new Set(
+              relations.flatMap(({ page }) => (page && page !== document.id ? [page] : [])),
+            ),
+          ]
+        : listed;
     if (document.related.includes(document.id))
       throw new Error(`${document.path} lists itself in related.`);
     for (const id of document.related)
@@ -1550,11 +1792,95 @@ export function exampleSource(page, name, directory = examplesDirectory) {
 }
 
 /**
+ * The frontmatter of a page in the one-file structure as it ships: as written, with each example
+ * once, by its role and caption, under a comment that says where its file is. A foundation's
+ * figures are the catalogue's, with no file, and its legends say what they show, so they are left
+ * out.
+ */
+function skillYaml(document) {
+  const foundation = pageKindOf(document.path) === 'foundation';
+  const entries = foundation ? [] : Object.entries(examplesOf(document.frontmatter));
+  const lines = entries.map(
+    ([name, { role, caption }]) =>
+      `  ${name}: ${caption ? `{ role: ${role}, caption: ${JSON.stringify(caption)} }` : role}`,
+  );
+  const examples = lines.length
+    ? `examples: # Each file is examples/${document.id}/<Name>.tsx.\n${lines.join('\n')}\n`
+    : '';
+  return `${document.yaml.replace(/\n*$/, '\n').replace(/^examples:[^\n]*\n(?:[ \t]+[^\n]*\n)*/m, examples)}`;
+}
+
+/**
+ * The Markdown of a page in the one-file structure as it ships, for agents: the whole file, in its
+ * order, with each example's code once. The frontmatter lists every example with its role and
+ * caption, and says what to use instead, so Related isn't repeated at the end; the Overview's
+ * examples are there. In the body, a run of figures is one line that names them, an anatomy figure
+ * its legend, a variants figure its option table and a foundation's figure its legend; Compose
+ * holds the canonical example's source in full. The props are the lean ones, and the releases are
+ * in the package's CHANGELOG.md.
+ */
+function compileSkill(document, { props, examples, title }) {
+  const head = `---\n${skillYaml(document).replace(/\n*$/, '')}\n---\n\n`;
+  const legendLines = (legend, named = false) =>
+    legend
+      .map((item, index) =>
+        named ? `${index + 1}. **${item.name}**: ${item.text}` : `${index + 1}. ${item.text}`,
+      )
+      .join('\n');
+  const write = (section) => {
+    let text = '';
+    let run = [];
+    const flush = () => {
+      if (run.length) text += `${run.length > 1 ? 'Examples' : 'Example'}: ${run.join(', ')}.\n\n`;
+      run = [];
+    };
+    for (const [index, block] of section.blocks.entries()) {
+      if (block.kind === 'markdown') {
+        if (!block.markdown.trim() && run.length) continue;
+        flush();
+        text += block.markdown;
+      } else if (block.kind === 'source') {
+        flush();
+        const source = exampleSource(document.id, block.name, examples).replace(/\n*$/, '\n');
+        const fence = fenceFor(source);
+        text += `${fence}tsx source=${block.name}\n${source}${fence}\n`;
+      } else if (block.kind === 'figure') {
+        flush();
+        if (block.legend) text += `\n${legendLines(block.legend, true)}\n\n`;
+      } else if (block.kind === 'example' && block.role === 'anatomy') {
+        flush();
+        if (block.legend) text += `\n${legendLines(block.legend)}\n\n`;
+      } else if (block.kind === 'example' && block.role === 'variants') {
+        flush();
+        const next = section.blocks[index + 1];
+        const table = next?.kind === 'markdown' && next.markdown.trimStart().startsWith('|');
+        if (block.legend && !table) text += `\n${legendLines(block.legend)}\n\n`;
+      } else if (block.kind === 'example')
+        // A do or a don't says so; its rule is its caption, in the frontmatter.
+        run.push(
+          block.role ? `${block.name} (${block.role === 'dont' ? "don't" : 'do'})` : block.name,
+        );
+    }
+    flush();
+    return text.replace(/\n{3,}/g, '\n\n').replace(/\s*$/, '\n');
+  };
+  const parts = [];
+  for (const section of document.sections) {
+    if (['overview', 'related', 'changelog'].includes(section.id)) continue;
+    parts.push(write(section));
+    if (section.id === 'code' && props) parts.push(props);
+  }
+  if (props && !document.sections.some((section) => section.id === 'code')) parts.push(props);
+  return `${head}${title}${parts.join('\n')}`.replace(/\n*$/, '\n');
+}
+
+/**
  * The Markdown of a page as it ships: frontmatter, examples filled in from their files, specimens
  * (catalogue-only) left out, and the generated Props and Related sections in their place.
  */
 export function compileDocument(document, documents, { props, examples = examplesDirectory } = {}) {
-  const lean = leanPages.has(document.path);
+  // A page in the one-file structure ships lean too, by its own rules (compileSkill).
+  const lean = leanPages.has(document.path) || document.format === 'skill';
   // avoidWhen is the source of Related, which a lean page shows as its only list of them.
   const yaml = lean ? document.yaml?.replace(/^avoidWhen:\n(?:[ \t].*\n?)*/m, '') : document.yaml;
   const head = document.frontmatter ? `---\n${yaml.replace(/\n*$/, '')}\n---\n\n` : '';
@@ -1579,6 +1905,8 @@ export function compileDocument(document, documents, { props, examples = example
   // yet, would only repeat it. Their types and defaults ship in generated/props.json, and the
   // page gets them in place of its table when it moves to the template.
   if (!document.sections) return `${head}${title}${document.markdown}`;
+  if (document.format === 'skill')
+    return compileSkill(document, { props: propsSection, examples, title });
   const exampleLink = (name) =>
     `[${name}](${posix.relative(posix.dirname(document.path), `examples/${document.id}/${name}.tsx`)})`;
   /**
@@ -1710,11 +2038,11 @@ export function generateDocumentation() {
     if (!frontmatter) return entry;
     // A page off the template, such as a foundation's, names the exports it documents, such as
     // Icon, so a page that relates to one links to it.
-    if (!sectionedKinds.has(kind))
+    if (!sectionedKinds.has(kind) && !sections)
       return frontmatter.components ? { ...entry, components: frontmatter.components } : entry;
     const metadata = {
-      status: frontmatter.status,
-      since: frontmatter.since,
+      ...(frontmatter.status && { status: frontmatter.status }),
+      ...(frontmatter.since && { since: frontmatter.since }),
       aliases: frontmatter.aliases ?? [],
       useWhen: frontmatter.useWhen ?? [],
       avoidWhen: frontmatter.avoidWhen ?? [],

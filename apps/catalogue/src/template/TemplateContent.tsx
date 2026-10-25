@@ -35,9 +35,11 @@ export function MetadataBadges({
 }) {
   return (
     <div className="docs-page-meta">
-      <Badge tone={statusTones[metadata.status]}>
-        {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
-      </Badge>
+      {metadata.status && (
+        <Badge tone={statusTones[metadata.status]}>
+          {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
+        </Badge>
+      )}
       {/* On the Site, a component's status only: a hook or a function, such as useModifierKey, is
           code, which the Site never names; its page in the Docs shows its status. */}
       {Object.entries(metadata.statuses ?? {})
@@ -47,9 +49,11 @@ export function MetadataBadges({
             {name}: {status[0].toUpperCase() + status.slice(1)}
           </Badge>
         ))}
-      <Text render={<span />} variant="caption">
-        Since {metadata.since}
-      </Text>
+      {metadata.since && (
+        <Text render={<span />} variant="caption">
+          Since {metadata.since}
+        </Text>
+      )}
       {children}
     </div>
   );
@@ -95,14 +99,17 @@ function UseAndAvoid({ metadata, path }: { metadata: DocumentationMetadata; path
 }
 
 function Section({ reference, section }: { reference: Document; section: DocumentationSection }) {
-  if (reference.format === 'figures')
+  if (reference.format)
     return (
       <FigureSection
         reference={reference}
         section={section}
         lead={
-          section.id === 'usage' &&
-          reference.metadata && <WhenToUse metadata={reference.metadata} path={reference.path} />
+          // When to use opens with what the page is for, and in the one-file structure the rules.
+          section.id === (reference.format === 'skill' ? 'rules' : 'usage') &&
+          (reference.metadata?.useWhen.length || reference.metadata?.composes?.length) ? (
+            <WhenToUse metadata={reference.metadata} path={reference.path} />
+          ) : undefined
         }
       />
     );
@@ -145,15 +152,26 @@ const sectionGroups: readonly (readonly string[])[] = [
   ['width', 'accessibility'],
 ];
 
+/**
+ * The same for a page in the one-file structure: what it is; its rules and its parts, on the band;
+ * its variants or options, how it behaves and the words to use.
+ */
+const skillGroups: readonly (readonly string[])[] = [
+  ['overview'],
+  ['rules', 'anatomy'],
+  ['variants', 'behaviour', 'words'],
+];
+
 /** The group that sits on the band. */
 const bandGroup = 1;
 
 /** A page's sections in their groups, in the page's order; a group may be empty. */
-function groupSections(sections: readonly DocumentationSection[]) {
-  const groups: DocumentationSection[][] = sectionGroups.map(() => []);
+function groupSections(sections: readonly DocumentationSection[], skill = false) {
+  const order = skill ? skillGroups : sectionGroups;
+  const groups: DocumentationSection[][] = order.map(() => []);
   let group = 0;
   for (const section of sections) {
-    const named = sectionGroups.findIndex((ids) => ids.includes(section.id));
+    const named = order.findIndex((ids) => ids.includes(section.id));
     if (named >= 0) group = named;
     groups[group].push(section);
   }
@@ -187,7 +205,7 @@ function Sections({
   const end = related &&
     sections.some((section) => section.id === 'overview') &&
     reference.metadata && <Related metadata={reference.metadata} path={reference.path} />;
-  if (reference.format !== 'figures')
+  if (!reference.format)
     return (
       <Column gap={8} className="docs-article docs-template">
         {shown.map(render)}
@@ -195,15 +213,20 @@ function Sections({
       </Column>
     );
   return (
-    <div className="docs-section-groups">
-      {groupSections(shown).map((group, index) => {
+    <div
+      className={
+        reference.format === 'skill' ? 'docs-section-groups docs-skill' : 'docs-section-groups'
+      }
+    >
+      {groupSections(shown, reference.format === 'skill').map((group, index) => {
         if (!group.length) return null;
         const content = (
           <div key={index} className="docs-article docs-template docs-figures docs-section-group">
             {group.map(render)}
           </div>
         );
-        return index === bandGroup ? (
+        // A foundation's page sits on the page, without the band.
+        return index === bandGroup && !reference.path.startsWith('foundations/') ? (
           <div key={index} className="docs-band">
             {content}
           </div>
