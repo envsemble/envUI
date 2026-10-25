@@ -1,12 +1,14 @@
 /* TableOfContents: the page's sections as small links, nested by indent, with the reader's place
-   marked in envUI's own shapes, never a line. A column of small dots, one before each section: the
-   sections the reader has passed in the text color with darker dots, the current one in the text
-   color and medium with its dot stretched into an accent pill as tall as its label, after the
-   mark's pills, and the sections still to come quieter, in the muted text color with paler dots. */
+   marked by a column of short dashes, one before each section, like a ruler: the current section's
+   the longest, in the text color, its neighbours' a little longer, and the one under the pointer growing
+   too; the sections the reader has passed in the text color with darker dashes, the current one in
+   the text color and medium, and those still to come quieter, with paler dashes. */
 .env-table-of-contents {
-  /* How far each level sits in from the one above it, and the size of a dot. */
+  /* How far each level sits in from the one above it; the current section's dash, which is also
+     the dashes' column, the others a share of it; and a dash's thickness. */
   --env-table-of-contents-indent: var(--env-space-3);
-  --env-table-of-contents-dot: 0.375rem;
+  --env-table-of-contents-dash: 1.25rem;
+  --env-table-of-contents-dash-thickness: 0.125rem;
   min-inline-size: 0;
   font: var(--env-type-body-small);
 }
@@ -26,9 +28,9 @@
   position: relative;
   display: block;
   padding-block: var(--env-space-1);
-  /* Room before the label for a dot and a gap after it. */
+  /* Room before the label for the dashes' column and a gap after it. */
   padding-inline: calc(
-      var(--env-space-1) + var(--env-table-of-contents-dot) + var(--env-space-2) +
+      var(--env-space-1) + var(--env-table-of-contents-dash) + var(--env-space-2) +
         var(--env-table-of-contents-inset)
     )
     var(--env-space-2);
@@ -46,29 +48,48 @@
   outline-offset: -2px;
 }
 
-/* Each link's dot at the column's start, whatever its level, centred on its first line, a nested
-   section's smaller: to come in the muted edge color, passed in the muted text color. A passed
-   section's label is the text color; the current one's is the text color and medium, its dot grown
-   into a pill down the whole label. */
+/* Each link's dash at the column's start, the same at every level, centred on its first line: to
+   come in the muted edge color, passed in the muted text color. The current
+   section's is the longest, in the text color, and thicker; the sections beside it and the one under
+   the pointer take a longer dash. A passed section's label is the text color; the current one's is
+   the text color and medium. */
 .env-table-of-contents .env-table-of-contents-link::before {
   content: '';
   position: absolute;
-  /* The dot's size: a nested section's smaller, in the same column. */
-  --env-table-of-contents-mark: var(--env-table-of-contents-dot);
-  inset-inline-start: calc(
-    var(--env-space-1) + (var(--env-table-of-contents-dot) - var(--env-table-of-contents-mark)) / 2
+  /* The dash's share of the column: drawn full length and scaled from its start, so it grows
+     without laying anything out again. */
+  --env-table-of-contents-mark: 0.5;
+  inset-inline-start: var(--env-space-1);
+  inset-block-start: calc(
+    var(--env-space-1) + (1lh - var(--env-table-of-contents-dash-thickness)) / 2
   );
-  inset-block-start: calc(var(--env-space-1) + (1lh - var(--env-table-of-contents-mark)) / 2);
-  inline-size: var(--env-table-of-contents-mark);
-  block-size: var(--env-table-of-contents-mark);
+  inline-size: var(--env-table-of-contents-dash);
+  block-size: var(--env-table-of-contents-dash-thickness);
+  transform-origin: 0 50%;
+  scale: var(--env-table-of-contents-mark) 1;
   border-radius: var(--env-radius-full);
   background: var(--env-color-border-muted);
 }
+.env-table-of-contents-link:dir(rtl)::before {
+  transform-origin: 100% 50%;
+}
 .env-table-of-contents
-  .env-table-of-contents-list
-  .env-table-of-contents-list
-  .env-table-of-contents-link::before {
-  --env-table-of-contents-mark: calc(var(--env-table-of-contents-dot) * 2 / 3);
+  .env-table-of-contents-item:has(+ .env-table-of-contents-item > [aria-current='location'])
+  > .env-table-of-contents-link::before,
+.env-table-of-contents
+  .env-table-of-contents-item:has(> [aria-current='location'])
+  + .env-table-of-contents-item
+  > .env-table-of-contents-link::before,
+.env-table-of-contents .env-table-of-contents-link:hover::before {
+  --env-table-of-contents-mark: 0.7;
+}
+.env-table-of-contents .env-table-of-contents-link[aria-current='location']::before {
+  --env-table-of-contents-mark: 1;
+  inset-block-start: calc(
+    var(--env-space-1) + (1lh - 2 * var(--env-table-of-contents-dash-thickness)) / 2
+  );
+  block-size: calc(2 * var(--env-table-of-contents-dash-thickness));
+  background: var(--env-color-fg-default);
 }
 /* The sections still to come, quieter than muted text yet still 4.5:1 on the page and on a
    surface in both themes; at high contrast they keep the muted text color. */
@@ -97,12 +118,6 @@
   color: var(--env-color-fg-default);
   font-weight: var(--env-font-weight-medium);
 }
-.env-table-of-contents .env-table-of-contents-link[aria-current='location']::before {
-  --env-table-of-contents-mark: var(--env-table-of-contents-dot);
-  inset-block-start: var(--env-space-1);
-  block-size: calc(100% - 2 * var(--env-space-1));
-  background: var(--env-color-border-accent-emphasis);
-}
 
 /* Motion: colors fade and the marks move to the next section, only without a reduced-motion
    preference; otherwise they change at once. */
@@ -113,7 +128,7 @@
       background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-table-of-contents-link::before {
-    transition-property: opacity, scale, background-color, inset-block-start, block-size;
+    transition-property: scale, background-color, inset-block-start, block-size;
     transition-duration: var(--env-motion-duration-medium);
     transition-timing-function: var(--env-motion-ease-standard);
   }

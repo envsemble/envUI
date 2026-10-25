@@ -35,7 +35,7 @@ components:
 
 ## Overview
 
-It lists the page's headings on its own, nesting each under the one above it, and marks the section the reader is in: a dot before each section, darker once passed, and the current one's grows into a pill. Sections not yet reached are quieter, so the list reads as how far the reader has come. A link scrolls its section to the top, below anything that stays there, such as a header.
+It lists the page's headings on its own, nesting each under the one above it, and marks the section the reader is in: a short dash before each section, like a ruler, darker once passed; the current one's the longest and darkest, and those beside it and under the pointer a little longer. Sections not yet reached are quieter, so the list reads as how far the reader has come. A link scrolls its section to the top, below anything that stays there, such as a header.
 
 ```tsx example=DocsArticle
 
@@ -77,7 +77,7 @@ Use the headings' own words, or a short name a reader would find on the page.
 2. **Link** (`env-table-of-contents-link`)
 3. **Current section** (`env-table-of-contents-link[aria-current='location']`)
 
-Not shown: the sections before the current one, whose dots are darker.
+Not shown: the sections before the current one, whose dashes are darker.
 
 ## Adapting to width
 
@@ -133,7 +133,7 @@ The current section is the last one whose start, less its scroll margin, has pas
 
 ### Composition
 
-The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link, `env-table-of-contents-link`, with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter. Each link's dot is its `::before`, which moves to the next section unless reduced motion is preferred. Its name comes from EnvUIProvider's `messages.tableOfContents`.
+The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link, `env-table-of-contents-link`, with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter. Each link's dash is its `::before`, which grows and shrinks as the current section moves unless reduced motion is preferred. Its name comes from EnvUIProvider's `messages.tableOfContents`.
 
 ## Changelog
 

@@ -42,15 +42,13 @@ test(
     await expect(current(contents)).toHaveText('Last');
     await page.evaluate(() => window.scrollBy(0, -40));
     await expect(current(contents)).toHaveText('Short end');
-    // The sections before the current one are marked passed, and its dot is a pill down its label.
+    // The sections before the current one are marked passed, and its dash, which grows by its scale,
+    // is the longest.
     await expect(contents.locator('[data-passed]')).toHaveCount(4);
-    const mark = (property: 'blockSize' | 'inlineSize') =>
-      current(contents).evaluate(
-        (element, name) => parseFloat(getComputedStyle(element, '::before')[name]),
-        property,
-      );
-    const dot = await mark('inlineSize');
-    await expect.poll(() => mark('blockSize')).toBeGreaterThan(dot * 2);
+    const dash = (link: Locator) =>
+      link.evaluate((element) => parseFloat(getComputedStyle(element, '::before').scale) || 1);
+    const passed = await dash(contents.locator('[data-passed]').first());
+    await expect.poll(() => dash(current(contents))).toBeGreaterThan(passed);
   },
 );
 
