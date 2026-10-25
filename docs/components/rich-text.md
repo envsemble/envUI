@@ -39,47 +39,22 @@ components:
   - RichText
   - RichTextEditor
   - createRichTextExtensions
+examples:
+  EditAndPreview: overview
+  RichTextAnatomy: anatomy
+  SavedContent: example
+  References: example
+  SlashCommands: example
+  UploadsAndLinks: example
+  FewCommands:
+    role: do
+    caption: The commands the content needs, such as three for a comment.
+  EveryCommand:
+    role: dont
+    caption: 'Every command for a comment: the toolbar outweighs the text.'
 ---
 
 # RichText
-
-## Overview
-
-```tsx example=EditAndPreview
-
-```
-
-### Show saved content
-
-RichText shows saved text again as it was written, also on a server, and opens its references and links through the application.
-
-```tsx example=SavedContent
-
-```
-
-### References
-
-Typing a source's trigger, such as @, opens its suggestions, and the reference stays linked to what it names.
-
-```tsx example=References
-
-```
-
-### Slash commands
-
-Typing / offers blocks, such as headings and lists, then the application's own commands.
-
-```tsx example=SlashCommands
-
-```
-
-### Attachments and links
-
-The application can let people attach files, and replace the link dialog with a picker of its own.
-
-```tsx example=UploadsAndLinks
-
-```
 
 ## Variants
 
@@ -92,25 +67,15 @@ The application can let people attach files, and replace the link dialog with a 
 
 ### Toolbar
 
-The toolbar shows the commands the content needs, in order, or none. Commands of one kind share a group, with a line between groups: text styles, lists, blocks, and links and tables; Undo and Redo, and Attach files, follow in groups of their own. Formatting on at the caret, such as bold, shows as a pressed toggle.
+The toolbar shows the commands the content needs, in order, or none.
 
-## When to use
-
-```tsx do=FewCommands caption="The commands the content needs, such as three for a comment."
-
-```
-
-```tsx dont=EveryCommand caption="Every command for a comment: the toolbar outweighs the text."
-
-```
-
-### Content
-
-Give image attachments a label that describes the image: it becomes the alternative text.
+- Commands of one kind share a group, with a line between groups: text styles, lists, blocks, and links and tables.
+- Undo and Redo, and Attach files, follow in groups of their own.
+- Formatting on at the caret, such as bold, shows as a pressed toggle.
 
 ## Anatomy
 
-```tsx anatomy=RichTextAnatomy
+```tsx figure=RichTextAnatomy
 
 ```
 
@@ -122,6 +87,63 @@ Give image attachments a label that describes the image: it becomes the alternat
 6. **Description** (`env-field-description`, `description`)
 
 Not shown: the suggestions and the status.
+
+## Behaviour
+
+### Show saved content
+
+RichText shows saved text again as it was written, also on a server, and opens its references and links through the application.
+
+```tsx figure=SavedContent
+
+```
+
+### References
+
+Typing a source's trigger, such as @, opens its suggestions, and the reference stays linked to what it names.
+
+```tsx figure=References
+
+```
+
+### Slash commands
+
+Typing / offers blocks, such as headings and lists, then the application's own commands.
+
+```tsx figure=SlashCommands
+
+```
+
+### Attachments and links
+
+The application can let people attach files, and replace the link dialog with a picker of its own.
+
+```tsx figure=UploadsAndLinks
+
+```
+
+### What it keeps
+
+Headings, emphasis, strikethrough, code, lists and task lists, quotes, links, images, simple tables and references.
+
+- Raw HTML shows as text.
+- Other syntax, such as footnotes, needs an extension or [Markdown](markdown.md).
+
+## Rules
+
+Offer the commands the content needs, and describe every image.
+
+```tsx figure=FewCommands
+
+```
+
+```tsx figure=EveryCommand
+
+```
+
+### Content
+
+Give image attachments a label that describes the image: it becomes the alternative text.
 
 ## Accessibility
 
@@ -161,117 +183,76 @@ On Apple keyboards, <kbd>⌘</kbd> replaces <kbd>Ctrl</kbd> and <kbd>⌥</kbd> r
 - Lookups, uploads, navigation and saving.
 - Translated words through EnvUIProvider's `messages`.
 
-## In code
+## Compose
 
 ### Usage
 
-RichTextEditor and RichText come from the optional `@envsemble/envui/rich-text` entry, which needs Tiptap and marked, installed by the application. The editor is a field with its `label`, `description` and `error`, and its value is Markdown: leave it uncontrolled, with `defaultValue`, or control it with `value` and `onValueChange`, which receives the Markdown after every edit, normalized by the editor's schema. `placeholder` shows in an empty document; `readOnly` shows it without editing, and `disabled` turns it off and leaves its value out of a form.
+```tsx
+import { RichText, RichTextEditor } from '@envsemble/envui/rich-text';
 
-```tsx source=EditAndPreview
-
+<RichTextEditor label="Meeting notes" value={notes} onValueChange={setNotes} />
+<RichText>{notes}</RichText>
 ```
+
+RichTextEditor and RichText come from the optional `@envsemble/envui/rich-text` entry, which needs Tiptap and marked, installed by the application. The editor is a field with its `label`, `description` and `error`, and its value is Markdown: leave it uncontrolled, with `defaultValue`, or control it with `value` and `onValueChange`, which receives the Markdown after every edit, normalized by the editor's schema. `placeholder` shows in an empty document; `readOnly` shows it without editing, and `disabled` turns it off and leaves its value out of a form.
 
 #### Show saved content
 
 RichText renders the Markdown in its `children`, also on a server. Pass it the editor's `extensions`. `onReferenceClick` and `onLinkClick` open references and links; `renderReference` renders a reference's content, such as an avatar beside the name, in both.
 
-```tsx source=SavedContent
-
-```
-
 #### Toolbar and variants
 
-`toolbar` takes the commands to show, in order, or `false` for none; Undo and Redo, and Attach files with `onUpload`, follow them. `variant` is `outline`, the default, or `ghost`, only the text at rest.
+`toolbar` takes the commands to show, in order, or `false` for none; Undo and Redo, and Attach files with `onUpload`, follow them. `variant` is `outline`, the default, or `ghost`.
 
 #### References and slash commands
 
-`references` takes the kinds of references people insert by typing a trigger, each a source with its `char`, such as `@`, a `label` and an `items` lookup. The Markdown keeps each reference's ID. `slashCommands` offers blocks on /: `true` for heading, the lists, quote, code block and table, or an array that adds the application's commands after them. Keep `references`, `extensions` and `slashCommands` the same between renders, such as at module scope: a new array starts a new session and loses undo.
+```tsx
+// At module scope, so the sources stay the same between renders.
+const references: RichTextReferenceSource[] = [
+  { char: '@', label: 'People', items: searchPeople },
+  { char: '#', label: 'Topics', items: searchTopics },
+];
 
-```tsx source=References
-
+<RichTextEditor label="Comment" references={references} slashCommands />;
 ```
+
+Each source has its `char`, a `label` and an `items` lookup, which receives the `query` and a `signal` that aborts when it changes. The Markdown keeps each reference's ID. `slashCommands` is `true` for heading, the lists, quote, code block and table, or an array that adds the application's commands after them. Keep `references`, `extensions` and `slashCommands` the same between renders: a new array starts a new session and loses undo.
 
 #### Attachments and links
 
 `onUpload` adds Attach files to the toolbar and uploads each chosen file, returning where it lives, `null` to skip it, or a promise of either; `accept` and `multiple` set what it offers. `onRequestLink` replaces the link dialog with the application's picker, returning the link or `null`.
 
-```tsx source=UploadsAndLinks
-
-```
-
 #### Commands from outside
+
+```tsx
+const editorRef = useRef<RichTextEditorHandle>(null);
+
+<RichTextEditor ref={editorRef} label="Reply" />
+<Button
+  onClick={() =>
+    editorRef.current?.editor?.chain().focus('end').insertContent(' — Alex Morgan').run()
+  }
+>
+  Add signature
+</Button>
+```
 
 `ref.current.editor` is the Tiptap editor, so the application can change the document with its commands.
 
-```tsx
-import { useRef } from 'react';
-import { Button, Column } from '@envsemble/envui';
-import { RichTextEditor, type RichTextEditorHandle } from '@envsemble/envui/rich-text';
-
-export default function EditorCommands() {
-  const editorRef = useRef<RichTextEditorHandle>(null);
-  return (
-    <Column gap={4}>
-      <RichTextEditor ref={editorRef} label="Reply" defaultValue="Thanks, the dates work for us." />
-      <Button
-        variant="secondary"
-        onClick={() =>
-          // Tiptap's commands change the document from outside the editor.
-          editorRef.current?.editor?.chain().focus('end').insertContent(' — Alex Morgan').run()
-        }
-      >
-        Add signature
-      </Button>
-    </Column>
-  );
-}
-```
-
 #### In a form
+
+```tsx
+<form onSubmit={publish} noValidate>
+  <RichTextEditor name="notes" label="Release notes" error={error} />
+  <Button type="submit">Publish</Button>
+</form>
+```
 
 With `name`, a native form submits the Markdown through a hidden input, and `form` names a form the editor sits outside of. `error` says what to fix.
 
-```tsx
-import { useState, type FormEvent } from 'react';
-import { Button, Column, Text } from '@envsemble/envui';
-import { RichTextEditor } from '@envsemble/envui/rich-text';
-
-export default function ReleaseNotesForm() {
-  const [error, setError] = useState<string>();
-  const [published, setPublished] = useState('');
-  function publish(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    // The editor submits its Markdown under its name.
-    const notes = String(new FormData(event.currentTarget).get('notes') ?? '').trim();
-    setError(notes ? undefined : 'Write what changed before publishing.');
-    setPublished(notes ? 'Release notes published.' : '');
-  }
-  return (
-    <Column gap={4} render={<form onSubmit={publish} noValidate />}>
-      <RichTextEditor
-        name="notes"
-        label="Release notes"
-        description="Shown to everyone in the workspace."
-        error={error}
-        placeholder="What changed in this release?"
-        toolbar={['heading', 'bold', 'italic', 'bullet-list', 'link']}
-      />
-      <Button type="submit">Publish</Button>
-      <Text variant="body-sm" role="status">
-        {published}
-      </Text>
-    </Column>
-  );
-}
-```
-
-#### The Markdown it keeps
-
-Headings, emphasis, strikethrough, code, lists and task lists, quotes, links, images, simple tables and references. Raw HTML shows as text; other syntax, such as footnotes, needs an extension or [Markdown](markdown.md).
-
 ### Composition
 
-`extensions` adds Tiptap extensions to the schema the editor and RichText share, such as a custom mark, which must parse and write Markdown; pass the same ones to both. `createRichTextExtensions` returns that shared set, with `options.extensions` after it, for another Tiptap integration that needs the same schema. The parts are the editor, `env-rich-text-editor`, its toolbar, `env-editor-toolbar`, the Toolbar MarkdownEditor shares, the document, `env-rich-text-editor-content`, with references, `env-rich-text-reference`, and tasks, `env-rich-text-task`, the description, `env-field-description`, the suggestions, `env-rich-text-suggestions`, and the status, `env-editor-status`.
+`extensions` adds Tiptap extensions to the schema the editor and RichText share, such as a custom mark, which must parse and write Markdown; pass the same ones to both. `createRichTextExtensions` returns that shared set, with `options.extensions` after it, for another Tiptap integration that needs the same schema. The toolbar is the Toolbar MarkdownEditor shares; the suggestions are `env-rich-text-suggestions`, and the status `env-editor-status`.
 
 ## Changelog
 

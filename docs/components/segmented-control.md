@@ -31,45 +31,32 @@ avoidWhen:
     use: ButtonGroup
 components:
   - SegmentedControl
+examples:
+  WorkItems: overview
+  SmallToolbar:
+    role: example
+    caption: Small, in a toolbar beside a small button.
+  SegmentedControlAnatomy: anatomy
+  FullWidthScope: example
 ---
 
 # SegmentedControl
-
-## Overview
-
-```tsx example=WorkItems
-
-```
-
-### States
-
-Each option can show an icon and a count. One option can be disabled, which the arrow keys skip, or the whole control.
-
-<!-- specimen: States -->
 
 ## Variants
 
 ### Sizes
 
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). Without a size of its own it takes its container's.
+
 <!-- specimen: Sizes -->
 
-```tsx example=SmallToolbar caption="Small, in a toolbar beside a small button."
+```tsx figure=SmallToolbar
 
 ```
 
-## When to use
-
-### Order
-
-Put the most used option first, and start on it.
-
-### Labels
-
-Name each option with a word or two for its view, and name the whole control after what it switches, for assistive technology.
-
 ## Anatomy
 
-```tsx anatomy=SegmentedControlAnatomy
+```tsx figure=SegmentedControlAnatomy
 
 ```
 
@@ -80,13 +67,41 @@ Name each option with a word or two for its view, and name the whole control aft
 5. **Label** (`env-segmented-control-item-label`, `label`)
 6. **Count** (`env-segmented-control-item-count`, `count`)
 
-## Adapting to width
+## Behaviour
 
-The control is as wide as its options, or fills its container and splits it evenly; a label too long for its share ends with an ellipsis and shows whole in a tooltip.
+### States
 
-```tsx example=FullWidthScope widths="14 26"
+Each option can show an icon and a count.
+
+- One option can be disabled, which the arrow keys skip, or the whole control.
+- The chosen option shows a check in place of its icon.
+
+<!-- specimen: States -->
+
+### Adapting to width
+
+The control is as wide as its options, or fills its container and splits it evenly.
+
+- A label too long for its share ends with an ellipsis and shows whole in a tooltip.
+- In a container too narrow for its options, a control as wide as its options scrolls.
+
+```tsx figure=FullWidthScope widths="14 26"
 
 ```
+
+## Rules
+
+The option used most comes first, and each is named in a word or two.
+
+### Order
+
+Put the most used option first, and start on it.
+
+### Labels
+
+Name each option with a word or two for its view.
+
+- Name the whole control after what it switches, for assistive technology.
 
 ## Accessibility
 
@@ -109,31 +124,35 @@ The control is as wide as its options, or fills its container and splits it even
 - An `aria-label` that names what the control switches.
 - The content that follows the choice.
 
-## In code
+## Compose
 
 ### Usage
 
-SegmentedControl takes `items`, two to five `SegmentedControlItem`s in the order they show, each with its `value` and a short `label`, a `count`, read as part of its name, such as Open 12, a decorative `icon`, and `disabled`, which the arrow keys skip. It is always controlled: set `value` and update it from `onValueChange`. `aria-label` names it, since it has no visible label, and `disabled` turns off the whole control.
-
-```tsx source=WorkItems
-
+```tsx
+<SegmentedControl
+  aria-label="Work items"
+  value={status}
+  onValueChange={setStatus}
+  items={[
+    { value: 'open', label: 'Open', count: 12 },
+    { value: 'done', label: 'Done', count: 4 },
+  ]}
+/>
 ```
+
+It is always controlled: set `value` and update it from `onValueChange`. `items` are two to five `SegmentedControlItem`s in the order they show, each with its `value`, a short `label`, and optionally a `count`, read as part of its name, a decorative `icon` and `disabled`. `aria-label` names the control, which has no visible label; `disabled` turns off the whole control.
 
 #### Size and width
 
-`size` is `sm`, `md` or `lg`, the control heights; without it the control takes its container's, `md` unless the container sets another. Without `fullWidth` it is as wide as its items and scrolls in a container too narrow for them; with `fullWidth` it fills the width, split evenly, and a label too long for its share shows whole in a tooltip, or wraps on touch screens.
-
-```tsx source=SmallToolbar
-
-```
+`size` is `sm`, `md` or `lg`; without it the control takes its container's, `md` unless the container sets another. Without `fullWidth` it is as wide as its items and scrolls in a container too narrow for them; with `fullWidth` it fills the width, split evenly, and a label too long for its share shows whole in a tooltip, or wraps on touch screens.
 
 ### Composition
 
-The parts are the outline, `env-segmented-control`, with `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, with `data-checked` while chosen and `data-disabled`; the check on the chosen segment, in place of its icon, `env-segmented-control-item-check`; and a segment's label, `env-segmented-control-item-label`, and count, `env-segmented-control-item-count`.
+The outline, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen and `data-disabled`. The check, `env-segmented-control-item-check`, takes the chosen segment's icon's place.
 
 ### Customize
 
-`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-outline`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` set the colors of one SegmentedControl, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-outline`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` color one SegmentedControl, through `style` or CSS; hover, focus and press follow them.
 
 ## Changelog
 

@@ -29,29 +29,23 @@ avoidWhen:
     use: Accordion
 components:
   - Tree
+examples:
+  FileTree: overview
+  RowDensity:
+    role: example
+    caption: Medium, with counts at the end, a description and a disabled row.
+  TreeAnatomy: anatomy
+  ContextMenuActions: example
+  NarrowTree: example
 ---
 
 # Tree
 
-## Overview
-
-```tsx example=FileTree
-
-```
-
-### Opening and previewing
-
-A click and <kbd>Space</kbd> preview a row, and a double click and <kbd>Enter</kbd> open it to keep, as an editor previews a file in a tab before keeping it.
-
-### Actions in a context menu
-
-A right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.
-
-```tsx example=ContextMenuActions
-
-```
-
 ## Variants
+
+### Density
+
+Density changes only the room around a row's text, never the text or the icons.
 
 | Density     | Use for                                               |
 | ----------- | ----------------------------------------------------- |
@@ -60,19 +54,13 @@ A right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</k
 | Medium      | Fewer rows with more room, such as mailboxes.         |
 | Large       | The most room, as tall as a touch target.             |
 
-```tsx example=RowDensity caption="Medium, with counts at the end, a description and a disabled row."
+```tsx figure=RowDensity
 
 ```
 
-## When to use
-
-### Nothing to press in rows
-
-Keep buttons, links and fields out of rows: their actions go in the context menu and a toolbar.
-
 ## Anatomy
 
-```tsx anatomy=TreeAnatomy enlarge
+```tsx figure=TreeAnatomy enlarge
 
 ```
 
@@ -84,13 +72,43 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
 6. **End** (`env-tree-end`, `end`)
 7. **Description** (`env-tree-description`, `description`)
 
-## Adapting to width
+## Behaviour
+
+### Opening and previewing
+
+A click and <kbd>Space</kbd> preview a row, and a double click and <kbd>Enter</kbd> open it to keep, as an editor previews a file in a tab before keeping it.
+
+- A disabled row can be reached with the keyboard, but doesn't open or expand.
+
+### Actions in a context menu
+
+A right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.
+
+```tsx figure=ContextMenuActions
+
+```
+
+### Thousands of rows
+
+The tree draws only the rows in view, so it stays quick with tens of thousands of rows.
+
+- It is as tall as the space it is given, and scrolls itself.
+
+### Adapting to width
 
 Rows keep one line: the description gives way first, then the label ends with an ellipsis.
 
-```tsx example=NarrowTree widths="12 24"
+```tsx figure=NarrowTree widths="12 24"
 
 ```
+
+## Rules
+
+A row is one item of the hierarchy, and its actions live outside it.
+
+### Nothing to press in rows
+
+Keep buttons, links and fields out of rows: their actions go in the context menu and a toolbar.
 
 ## Accessibility
 
@@ -123,15 +141,24 @@ Rows keep one line: the description gives way first, then the label ends with an
 - The visible rows, their expansion, the selection, and what opening does.
 - A `textValue` for rows whose label isn't plain text, and a name for a count in `end`.
 
-## In code
+## Compose
 
 ### Usage
 
-A Tree takes `items`, the visible rows in order, flattened: an expanded row is followed by its visible descendants. Each row has a stable, unique `id`, such as a path, which it carries as `data-id`; its `depth`, 0 for a top-level row, each level indenting it by 0.75 rem; its `label`; and an optional decorative `icon`, a muted `description`, such as a status or a path, `end` content, such as a Badge with a count, a native `title` tooltip, `textValue` for type-ahead where the label isn't plain text, and `disabled`, which keeps the row reachable by keyboard but stops it opening and expanding. Name the tree with `aria-label`, such as Files.
-
-```tsx source=FileTree
-
+```tsx
+<Tree
+  aria-label="Files"
+  items={[
+    { id: 'src', depth: 0, label: 'src', icon: <Folder />, expandable: true, expanded: true },
+    { id: 'src/index.ts', depth: 1, label: 'index.ts', icon: <Description /> },
+  ]}
+  value={selected}
+  onAction={(row) => setSelected(row.id)}
+  onExpandedChange={(row, open) => toggle(row.id, open)}
+/>
 ```
+
+`items` are the visible rows in order, flattened: an expanded row is followed by its visible descendants. Each row has a stable, unique `id`, such as a path, which it carries as `data-id`; its `depth`, 0 for a top-level row, each level indenting it by 0.75 rem; its `label`; and an optional decorative `icon`, a muted `description`, such as a status or a path, `end` content, such as a Badge with a count, a native `title` tooltip, `textValue` for type-ahead where the label isn't plain text, and `disabled`.
 
 #### Expanding
 
@@ -143,98 +170,25 @@ A Tree takes `items`, the visible rows in order, flattened: an expanded row is f
 
 #### Context menu
 
-`contextMenu` returns the menu items for the row people right-click, long-press, or press <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key on, or for the tree's empty area when the row is `null`; without it, the browser's own context menu stays. `contextMenuLabel` names the menu, Actions by default, from EnvUIProvider's `messages.tree.actions`.
-
-```tsx source=ContextMenuActions
-
-```
+`contextMenu` returns the menu items for the row, or for the tree's empty area when the row is `null`; without it, the browser's own context menu stays. `contextMenuLabel` names the menu, Actions by default, from EnvUIProvider's `messages.tree.actions`.
 
 #### Thousands of rows
 
-The tree renders only the rows in view, and is as tall as its parent: give the parent a height, or the tree one through `style`. `className`, `style` and `ref` reach the tree, the element that scrolls and holds focus.
-
 ```tsx
-import { useMemo, useState } from 'react';
-import { Button, Column, Row, Text, Tree, type TreeItem } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Folder } from '@envsemble/envui/icons/Folder';
-
-/** 50 folders of 200 logs each: over 10,000 rows when every folder is open. */
-const folders = Array.from({ length: 50 }, (_, index) => `Week ${index + 1}`);
-const logsPerFolder = 200;
-
-export default function ThousandsOfRows() {
-  const [expanded, setExpanded] = useState(() => new Set(['Week 1']));
-  const [selected, setSelected] = useState<string | null>(null);
-  const rows = useMemo(
-    () =>
-      folders.flatMap((folder) => {
-        const open = expanded.has(folder);
-        const row: TreeItem = {
-          id: folder,
-          depth: 0,
-          label: folder,
-          icon: <Folder />,
-          expandable: true,
-          expanded: open,
-        };
-        if (!open) return [row];
-        const logs: TreeItem[] = Array.from({ length: logsPerFolder }, (_, index) => ({
-          id: `${folder}/${index + 1}`,
-          depth: 1,
-          label: `Build ${index + 1}.log`,
-          icon: <Description />,
-        }));
-        return [row, ...logs];
-      }),
-    [expanded],
-  );
-  const setFolder = (folder: string, open: boolean) =>
-    setExpanded((current) => {
-      const next = new Set(current);
-      if (open) next.add(folder);
-      else next.delete(folder);
-      return next;
-    });
-  return (
-    <Column gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
-      <Row wrap align="center" gap={4}>
-        <Button variant="secondary" onClick={() => setExpanded(new Set(folders))}>
-          Expand all
-        </Button>
-        <Button variant="secondary" onClick={() => setExpanded(new Set())}>
-          Collapse all
-        </Button>
-      </Row>
-      {/* The tree fills its parent's height and scrolls itself. */}
-      <div style={{ blockSize: '16rem' }}>
-        <Tree
-          aria-label="Build logs"
-          items={rows}
-          value={selected}
-          onAction={(row) =>
-            row.expandable ? setFolder(row.id, !row.expanded) : setSelected(row.id)
-          }
-          onExpandedChange={(row, open) => setFolder(row.id, open)}
-        />
-      </div>
-      <Text variant="caption">{rows.length.toLocaleString('en')} visible rows</Text>
-    </Column>
-  );
-}
+<div style={{ blockSize: '16rem' }}>
+  <Tree
+    aria-label="Build logs"
+    items={rows}
+    onExpandedChange={(row, open) => toggle(row.id, open)}
+  />
+</div>
 ```
+
+The tree renders only the rows in view, and is as tall as its parent: give the parent a height, or the tree one through `style`. Build `rows` in a `useMemo` from the expanded set, such as 50 folders of 200 logs each, over 10,000 rows when all are open. `className`, `style` and `ref` reach the tree, the element that scrolls and holds focus.
 
 #### Density
 
-`density` is `xs`, `sm`, the default, `md` or `lg`. It changes only the rows' block padding, never the text or the icons: in the comfortable scale `sm` rows are 1.75 rem tall and `md` rows 2.25 rem, and under a coarse pointer every row is at least 2.75 rem.
-
-```tsx source=RowDensity
-
-```
-
-### Composition
-
-The parts are the tree, `env-tree`, and each row, `env-tree-item`, with its chevron, `env-tree-chevron`, icon, `env-tree-icon`, label, `env-tree-label`, description, `env-tree-description`, and end, `env-tree-end`. Keep buttons, links and fields out of rows, and put their actions in the context menu and a toolbar.
+`density` is `xs`, `sm`, the default, `md` or `lg`, the rows' block padding: in the comfortable scale `sm` rows are 1.75 rem tall and `md` rows 2.25 rem, and under a coarse pointer every row is at least 2.75 rem.
 
 ## Changelog
 

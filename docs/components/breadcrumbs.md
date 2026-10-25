@@ -24,23 +24,35 @@ avoidWhen:
     use: Tree
 components:
   - Breadcrumbs
+examples:
+  DocumentTrail:
+    role: overview
+    caption: A trail from a workspace through its folders to the open document; the current page is always last, and never a link.
+  WithoutUrls: example
+  LevelWithoutPage: example
+  OneLine: example
+  BreadcrumbsAnatomy: anatomy
+  WrappingTrail: example
+  RecognisedTop:
+    role: do
+    caption: Start at the level people know as the top, such as the workspace.
+  AddressAsTrail:
+    role: dont
+    caption: "The address as the trail: a domain and ids people don't know."
 ---
 
 # Breadcrumbs
 
-## Overview
-
-A trail runs from a workspace through its folders to the open document; the current page is always last, and never a link.
-
-```tsx example=DocumentTrail
-
-```
+## Variants
 
 ### Applications without addresses
 
-Levels can be buttons rather than links. Pressing one shortens the trail, and the application moves focus, here to the folder's title.
+Levels can be buttons rather than links.
 
-```tsx example=WithoutUrls
+- Pressing one shortens the trail.
+- The application moves focus, here to the folder's title.
+
+```tsx figure=WithoutUrls
 
 ```
 
@@ -48,11 +60,9 @@ Levels can be buttons rather than links. Pressing one shortens the trail, and th
 
 A level that can't be opened is plain text.
 
-```tsx example=LevelWithoutPage
+```tsx figure=LevelWithoutPage
 
 ```
-
-## Variants
 
 ### Wrapping
 
@@ -63,21 +73,48 @@ A trail above a page wraps; one in a bar stays on one line.
 | Wraps    | A trail above a page's content. The default.                         |
 | One line | A bar that stays one line tall: the current page is cut short first. |
 
-```tsx example=OneLine
+```tsx figure=OneLine
 
 ```
+
+## Anatomy
+
+```tsx figure=BreadcrumbsAnatomy
+
+```
+
+1. **Trail** (`env-breadcrumbs`)
+2. **Level** (`env-breadcrumbs-link`, `href`)
+3. **Separator** (`env-breadcrumbs-separator`)
+4. **Current page** (`env-breadcrumbs-current`)
+
+## Behaviour
 
 ### Long labels
 
 A long label ends with an ellipsis, and a tooltip shows it in full on hover and on keyboard focus.
 
-## When to use
+- On one line, the current page is cut short first, and earlier levels keep their width.
 
-```tsx do=RecognisedTop caption="Start at the level people know as the top, such as the workspace."
+### Adapting to width
+
+The trail wraps onto more lines when it runs out of room.
+
+- Its chevrons mirror in right-to-left text.
+
+```tsx figure=WrappingTrail widths="14 36"
 
 ```
 
-```tsx dont=AddressAsTrail caption="The address as the trail: a domain and ids people don't know."
+## Rules
+
+The trail starts where people know the top to be, and names each level as they know it.
+
+```tsx figure=RecognisedTop
+
+```
+
+```tsx figure=AddressAsTrail
 
 ```
 
@@ -87,26 +124,9 @@ Name each level as it is named elsewhere, and the current page as the page's hea
 
 ### Beside the navigation
 
-Pair the trail with the main navigation: it never replaces it, and a trail of one level shows nothing.
+Pair the trail with the main navigation: it never replaces it.
 
-## Anatomy
-
-```tsx anatomy=BreadcrumbsAnatomy
-
-```
-
-1. **Trail** (`env-breadcrumbs`)
-2. **Level** (`env-breadcrumbs-link`, `href`)
-3. **Separator** (`env-breadcrumbs-separator`)
-4. **Current page** (`env-breadcrumbs-current`)
-
-## Adapting to width
-
-The trail wraps onto more lines when it runs out of room, and its chevrons mirror in right-to-left text.
-
-```tsx example=WrappingTrail widths="14 36"
-
-```
+- A trail of one level shows nothing.
 
 ## Accessibility
 
@@ -130,37 +150,33 @@ The trail wraps onto more lines when it runs out of room, and its chevrons mirro
 - An `aria-label` that tells two trails on a page apart.
 - Where focus goes after a level is pressed, such as the new page's heading.
 
-## In code
+## Compose
 
 ### Usage
 
-Breadcrumbs takes its levels as `items`, from the top down to the current page, the last item, which is never a link. Each has its `label`; with `href` it is a link, through the application's router link from `LinkProvider`; with `onClick` it is a button; with neither it is plain text, for a level that can't be opened.
-
-```tsx source=DocumentTrail
-
+```tsx
+<Breadcrumbs
+  items={[
+    { label: 'Northwind', href: '/' },
+    { label: 'Launch', href: '/launch' },
+    { label: 'Launch brief' },
+  ]}
+/>
 ```
+
+`items` run from the top down to the current page, the last item, which is never a link. Each has its `label`; with `href` it is a link, through the router link from `LinkProvider`; with `onClick` it is a button; with neither it is plain text.
 
 #### Without addresses
 
-Give levels `onClick` where the application has no URLs. Pressing one makes it the current page, which is not a control, so move focus yourself, such as to the new title.
-
-```tsx source=WithoutUrls
-
-```
+Give levels `onClick` where the application has no URLs. Pressing one makes it the current page, which is not a control, so move focus yourself, such as to the new title, as the WithoutUrls example does.
 
 #### One line
 
-`wrap` is true by default, and the trail wraps onto more lines when it runs out of room. `wrap={false}` keeps it on one line, for a bar or a header: the current page is cut short first, and earlier levels keep their width. A label beyond 20 rem ends with an ellipsis, with a tooltip on hover and keyboard focus.
-
-```tsx source=OneLine
-
-```
+`wrap` is true by default. `wrap={false}` keeps the trail on one line, for a bar or a header. A label beyond 20 rem ends with an ellipsis, with a tooltip on hover and keyboard focus.
 
 ### Composition
 
-The landmark is named Breadcrumb, from EnvUIProvider's `messages.breadcrumbs`; set `aria-label` to tell two trails on a page apart. Pair it with the main navigation, such as a Drawer, never in its place.
-
-The parts are the trail, `env-breadcrumbs`, its items, `env-breadcrumbs-item`, each level's link or button, `env-breadcrumbs-link`, the separators, `env-breadcrumbs-separator`, and the current page, `env-breadcrumbs-current`.
+The landmark is named Breadcrumb, from EnvUIProvider's `messages.breadcrumbs`; `aria-label` tells two trails on a page apart. Pair it with the main navigation, such as a Drawer. Each level sits in an item, `env-breadcrumbs-item`.
 
 ## Changelog
 

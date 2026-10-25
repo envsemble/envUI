@@ -1177,8 +1177,8 @@ test('Table ships each example once, by name in its frontmatter, its rules and l
   assert.doesNotMatch(table, /^## (?:Changelog|Related)/m);
   // The lean index leaves out the contributor pages; other pages ship as before.
   assert.ok(!compiled.get('index.md').includes('component-pages.md'));
-  assert.match(compiled.get('components/switch.md'), /^`{3,}tsx do=/m);
-  assert.ok(hasLine(compiled.get('components/switch.md'), '## Changelog'));
+  assert.match(compiled.get('components/field.md'), /^`{3,}tsx do=/m);
+  assert.ok(hasLine(compiled.get('components/field.md'), '## Changelog'));
 });
 
 test('a page in the one-file structure ships the whole file, in its order, with code once', () => {
