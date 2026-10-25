@@ -198,6 +198,9 @@ test('a result names its area: the Usage guide, or the Docs for the reference', 
   assert.equal(area('guide:colors'), 'docs');
   assert.equal(area('page:field'), 'docs');
   assert.equal(area('page:setup'), 'docs');
+  // Dev mode is the Docs' alone: its page on the Site folded into its guide.
+  assert.equal(area('page:dev-mode'), 'docs');
+  assert.equal(area('page:dev-mode-overview'), undefined);
   assert.equal(area('prop:Button.variant'), 'docs');
   assert.equal(area('export:useTheme'), 'docs');
   assert.equal(area('token:color.fg.muted'), 'docs');

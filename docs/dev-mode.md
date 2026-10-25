@@ -4,19 +4,42 @@ components:
 aliases:
   - layout readout
   - envui.layout
+  - layout inspector
+  - 3D view
+  - check a layout
 ---
 
 # Dev mode
 
-Dev mode describes and checks a page's layout while you develop it: as text for agents, and in 3D with an inspector for people. It reads the rendered page, changing nothing but the root's width while `at()` measures, and lives in its own entry point, `@envsemble/envui/dev`, so a production build contains none of it.
+Dev mode takes a page apart, layer by layer, to show how it is built and what is wrong with it. It describes and checks a page's layout while you develop it: as text for agents, and in 3D with an inspector for people. It reads the rendered page, changing nothing but the root's width while `at()` measures, and lives in its own entry point, `@envsemble/envui/dev`, so a production build contains none of it.
 
 Below is dev mode's 3D view of a small application. Try dev mode opens the real dev mode over it at once, with `root` set to the application: its three fixed columns squeeze the cards at a narrow width, and the problems name them.
 
 <!-- demo: DevModeDemo -->
 
+## What it helps you notice
+
+Mistakes that hide in a finished screen stand out once its boxes are pulled apart, and dev mode names the ones it can find:
+
+- **Uneven spacing.** The padding inside each box and the gaps between boxes are hatched, so a gap wider or narrower than its neighbours shows at a glance.
+- **Squeezed or spilling content.** A box whose text is squeezed into a narrow column, or whose content spills out of it, is outlined in red, and the node tree counts the problems of each box.
+- **A layout that breaks at a width.** Lay the page out at a phone's or a tablet's size, or drag the frame's edges, and watch it change.
+
+<!-- demo: DevModeSpacingPicture -->
+
+<!-- demo: DevModeProblemsPicture -->
+
+<!-- demo: DevModeFramePicture -->
+
+A coding agent reads the same page as text, with the same problems, at any width, and fixes what it finds: ask it to check a page with dev mode at a phone's width and a wide screen's.
+
 ## Opening it
 
 The Dev mode button in the corner of the page, or <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> outside a field, opens the page in a new tab with dev mode over the whole window: the node tree on one side, the 3D view in the middle and the inspector on the other side. The tab's address is the page's with the `envui-dev` query parameter, which `installDevMode()` reads there, and its title starts with Dev mode. The page you came from stays as it was. Dev mode's tab has no close button, and <kbd>Esc</kbd> doesn't leave it: close the tab to end dev mode, or reload it to measure the page afresh.
+
+<!-- demo: DevModeButtonPicture -->
+
+<!-- demo: DevModeWholePicture -->
 
 From code, the handle `installDevMode()` returns opens dev mode the same way with `openInNewTab()`, or over the page itself with `open()`, as the example above and a test do; opened over the page, <kbd>Esc</kbd> or `close()` closes it and gives focus back.
 
@@ -115,6 +138,8 @@ Every visible layout node is a plane, lifted one level per step of nesting; stic
 
 The toolbar over the view has four dropdowns, each an icon whose name shows at once on hover: View turns the view, Show chooses what the planes show, Responsive sets the page's size and View settings holds the spacing and levels. View opens the angles laid out as they look at the page, Top above Front, Left and Right beside it and Tilted, which looks from above and to the right, in the top right corner, the one the view is at marked. Each turns the view there with the whole page in view, so picking the angle the view is at brings the page back after zooming or panning. Each control has one place. How to move around is the button in the view's top right corner, and a legend in its bottom corner says what the colors mean.
 
+<!-- demo: DevModeToolbarPicture -->
+
 | Do this                                            | To                                                                            |
 | -------------------------------------------------- | ----------------------------------------------------------------------------- |
 | Drag, <kbd>Shift</kbd>+drag, <kbd>Ctrl</kbd>+wheel | Turn, pan and zoom; the wheel scrolls the page under the pointer, else zooms. |
@@ -151,6 +176,8 @@ A red outline marks a node with problems; coloured by window class, a solid outl
 - **Nodes**, the sidebar beside the view: the nodes as a tree, with problems counted and containers marked. Hovering a node lights up its plane; clicking it selects it.
 - **Details**, a tab of the inspector across the view: the selected node's part, component and description, its size, window class and `data-*` states, its container and which queries hold, its problems, the `--env-*` tokens its styles use with their values, and its line of the readout.
 - **Readout**, the inspector's other tab: the text of `describe()`, kept current, with a copy button. Each line wraps to the sidebar's width, indented under its own start; the copy is the text as it is.
+
+<!-- demo: DevModeInspectorPicture -->
 
 Each sidebar has a button in its header, in the window's top corner on its side, that hides it; while it is hidden the button stays in that corner, over the view, to show it again. Drag a sidebar's inner edge, by the same grip as a resizable [Drawer](components/drawer.md)'s, to make it wider or narrower, up to all the window leaves beside the other sidebar and a narrow view: the arrow keys on the grip step by 1 rem, <kbd>Shift</kbd>+arrow by 5 rem, and a double-click gives it its first width back. Dev mode remembers the widths and which sidebars are hidden in this browser.
 

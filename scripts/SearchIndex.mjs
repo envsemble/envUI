@@ -57,13 +57,6 @@ export const cataloguePages = [
     area: 'usage',
     aliases: ['all patterns', 'pattern list', 'pattern gallery'],
   },
-  // Dev mode's page in the Usage guide, beside its guide in the Docs, the document dev-mode.
-  {
-    page: 'dev-mode-overview',
-    title: 'Dev mode',
-    area: 'usage',
-    aliases: ['dev mode', 'layout inspector', '3D view', 'check a layout'],
-  },
   {
     page: 'docs',
     title: 'Docs',
