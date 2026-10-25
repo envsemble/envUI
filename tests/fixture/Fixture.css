@@ -486,4 +486,5 @@ body:has(.fixture-layout-check) {
   padding: 0;
   border: 0;
   background: none;
+  box-shadow: none;
 }
