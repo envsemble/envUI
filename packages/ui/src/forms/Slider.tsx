@@ -230,6 +230,7 @@ export function Slider({
         style={
           {
             '--env-slider-ticks': ticks,
+            '--env-slider-fraction': fractionOf(current, min, max),
             ...style,
           } as CSSProperties
         }
@@ -381,6 +382,15 @@ function veilIndicatorUnderText(control: HTMLElement) {
   control.style.setProperty('--env-slider-veil', veiled ? '1' : '0');
   control.style.setProperty('--env-slider-clear-start', `${clearStart}px`);
   control.style.setProperty('--env-slider-clear-end', `${clearEnd}px`);
+}
+
+/**
+ * The value's place in the range, from 0 at min to 1 at max, which keeps the handle clear of the
+ * rounded ends; 0 where the range is empty.
+ */
+function fractionOf(value: number, min: number, max: number): number {
+  if (!(max > min)) return 0;
+  return Math.min(1, Math.max(0, (value - min) / (max - min)));
 }
 
 /**
