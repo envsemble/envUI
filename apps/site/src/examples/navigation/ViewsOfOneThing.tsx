@@ -3,7 +3,7 @@ import { Badge, Button, List, PageHeader, Column, Tabs, Text } from '@envsemble/
 import { Settings } from '@envsemble/envui/icons/Settings';
 
 export default function ViewsOfOneThing() {
-  const [view, setView] = useState<string | null>('tasks');
+  const [view, setView] = useState<string | null>('overview');
   return (
     <Column gap={4}>
       <PageHeader
