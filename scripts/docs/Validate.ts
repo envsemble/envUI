@@ -336,8 +336,8 @@ const stylesDirectory = fileURLToPath(new URL('../../packages/ui/src/styles/', i
  * sheets and of docs/generated/parts.json, and that file's components by export name, each with
  * its parts, for a figure without a legend.
  */
-export function readPartNames(directory = documentationDirectory) {
-  const classes = new Set();
+export function readPartNames(directory = documentationDirectory): PartNames {
+  const classes = new Set<string>();
   if (existsSync(stylesDirectory))
     for (const name of readdirSync(stylesDirectory).filter((file) => file.endsWith('.css')))
       for (const [, found] of readFileSync(resolve(stylesDirectory, name), 'utf8').matchAll(

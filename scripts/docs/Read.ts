@@ -19,8 +19,32 @@ import {
   specimensDirectory,
   splitFrontmatter,
   withImport,
+  type Frontmatter,
+  type PropsFile,
 } from './Schema.ts';
-import { readPage, readPartNames, validateFrontmatter } from './Validate.ts';
+import {
+  readPage,
+  readPartNames,
+  validateFrontmatter,
+  type PartNames,
+  type ReadSection,
+} from './Validate.ts';
+
+/** A page of docs/ as readDocumentation reads it. */
+export interface DocumentRecord {
+  id: string;
+  title: string;
+  group: string;
+  path: string;
+  summary: string;
+  /** The ids of the pages it relates to. */
+  related: string[];
+  markdown: string;
+  frontmatter?: Frontmatter;
+  yaml?: string;
+  /** A page in the one-file structure's sections. */
+  sections?: ReadSection[];
+}
 
 /** A link's fragment with its percent escapes decoded, or as it is where they are malformed. */
 export function decoded(fragment) {
@@ -33,7 +57,10 @@ export function decoded(fragment) {
 
 /** The component or pattern page that documents an export; a part such as Menu.Item is on its
  * namespace's. */
-export function pageOfExport(documents, name) {
+export function pageOfExport(
+  documents: readonly DocumentRecord[],
+  name: string,
+): DocumentRecord | undefined {
   return documents.find(
     (entry) =>
       exportKinds.has(pageKindOf(entry.path)) &&
@@ -42,7 +69,7 @@ export function pageOfExport(documents, name) {
 }
 
 /** File names, without .tsx, in a page's example or specimen folder. */
-function filesOf(directory, page) {
+function filesOf(directory: string, page: string): Set<string> {
   const folder = resolve(directory, page);
   if (!existsSync(folder)) return new Set();
   return new Set(
@@ -64,12 +91,18 @@ export function readDocumentation(
     specimens = specimensDirectory,
     versions = directory === documentationDirectory ? libraryVersions() : undefined,
     partNames = readPartNames(directory),
+  }: {
+    props?: PropsFile;
+    examples?: string;
+    specimens?: string;
+    versions?: Set<string>;
+    partNames?: PartNames;
   } = {},
-) {
+): DocumentRecord[] {
   // Pages saved with CRLF line endings read as LF, as Git checks them out.
-  const read = (file) => readFileSync(file, 'utf8').replace(/\r\n?/g, '\n');
+  const read = (file: string) => readFileSync(file, 'utf8').replace(/\r\n?/g, '\n');
   const index = read(resolve(directory, 'index.md'));
-  const documents = [
+  const documents: DocumentRecord[] = [
     {
       id: 'index',
       title: 'envUI documentation',
@@ -126,17 +159,17 @@ export function readDocumentation(
         throw new Error(
           `${kind[0].toUpperCase()}${kind.slice(1)} page ${path} needs frontmatter: it is in the one-file structure (docs/component-pages.md).`,
         );
-      if (structured && !('examples' in frontmatter))
+      if (structured && !('examples' in frontmatter!))
         throw new Error(
           `${path} is not in the one-file structure: its frontmatter lists no examples, each once with its role (docs/component-pages.md).`,
         );
       if (frontmatter) validateFrontmatter(frontmatter, path, { kind, versions });
       if (structured) {
-        if (frontmatter.title !== title)
+        if (frontmatter!.title !== title)
           throw new Error(`Frontmatter title of ${path} differs from its index entry.`);
-        if (component && frontmatter.category !== group)
+        if (component && frontmatter!.category !== group)
           throw new Error(
-            `Category of ${path} is ${frontmatter.category}, but the index lists it under ${group}.`,
+            `Category of ${path} is ${frontmatter!.category}, but the index lists it under ${group}.`,
           );
         if (indexSummary)
           throw new Error(
@@ -144,7 +177,11 @@ export function readDocumentation(
           );
         if (component && kebab(title) !== id && !slugExceptions.has(id))
           throw new Error(`${path} must be named ${kebab(title)}.md after its title.`);
-        if (component && !frontmatter.components.includes(title.split('.')[0]) && exported?.[title])
+        if (
+          component &&
+          !frontmatter!.components.includes(title.split('.')[0]) &&
+          exported?.[title]
+        )
           throw new Error(`${path} must list ${title}, its own component, in components.`);
       } else if (!indexSummary) throw new Error(`Invalid documentation index entry: ${item.text}`);
       for (const name of frontmatter?.components ?? [])
@@ -156,7 +193,7 @@ export function readDocumentation(
       for (const { use } of frontmatter?.avoidWhen ?? [])
         if (use && exported && !exported[use])
           throw new Error(`${path} suggests ${use} in avoidWhen, but envUI exports no ${use}.`);
-      const document = {
+      const document: DocumentRecord = {
         id,
         title,
         group,
@@ -175,7 +212,7 @@ export function readDocumentation(
             specimens: filesOf(specimens, id),
             partNames,
           }),
-          frontmatter.components ?? frontmatter.composes ?? [],
+          frontmatter!.components ?? frontmatter!.composes ?? [],
           props,
         );
       documents.push(document);
@@ -184,7 +221,7 @@ export function readDocumentation(
   for (const document of documents) {
     // A page's avoidWhen is its one list of related components and pages, its Related section:
     // each entry names an export to use or a page to read, and each relation is named once.
-    const relations = [];
+    const relations: { key: string; page: string | undefined }[] = [];
     for (const { use, see } of document.frontmatter?.avoidWhen ?? []) {
       if (see && (see === document.id || !documents.some((entry) => entry.id === see)))
         throw new Error(
@@ -233,7 +270,7 @@ export function readDocumentation(
     marked.walkTokens(marked.lexer(document.markdown), (token) => {
       if (token.type !== 'link' || /^[a-z][a-z\d+.-]*:/i.test(token.href)) return;
       const [path, fragment] = token.href.split('#');
-      let linked = document;
+      let linked: DocumentRecord | undefined = document;
       if (path) {
         const target = resolve(directory, dirname(document.path), path);
         if (!contained(directory, target) || !existsSync(target))

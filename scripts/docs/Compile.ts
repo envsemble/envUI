@@ -1,6 +1,6 @@
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { readDocumentation } from './Read.ts';
+import { readDocumentation, type DocumentRecord } from './Read.ts';
 import {
   contributorPages,
   documentationDirectory,
@@ -9,6 +9,7 @@ import {
   linkContributorPages,
   pageKindOf,
   readProps,
+  type PropsFile,
 } from './Schema.ts';
 import { cell, fenceFor } from './Validate.ts';
 
@@ -135,7 +136,7 @@ function shippedYaml(document) {
   const examples = lines.length
     ? `examples: # Each file is examples/${document.id}/<Name>.tsx.\n${lines.join('\n')}\n`
     : '';
-  return `${document.yaml.replace(/\n*$/, '\n').replace(/^examples:[^\n]*\n(?:[ \t]+[^\n]*\n)*/m, examples)}`;
+  return `${(document.yaml ?? '').replace(/\n*$/, '\n').replace(/^examples:[^\n]*\n(?:[ \t]+[^\n]*\n)*/m, examples)}`;
 }
 
 /**
@@ -158,7 +159,7 @@ function compilePage(document, { props, examples, title }) {
       .join('\n');
   const write = (section) => {
     let text = '';
-    let run = [];
+    let run: string[] = [];
     const flush = () => {
       if (run.length) text += `${run.length > 1 ? 'Examples' : 'Example'}: ${run.join(', ')}.\n\n`;
       run = [];
@@ -208,7 +209,11 @@ function compilePage(document, { props, examples, title }) {
  * it, with its props; the index with each page's summary and without the contributor pages; and a
  * guide as it is written.
  */
-export function compileDocument(document, documents, { props, examples = examplesDirectory } = {}) {
+export function compileDocument(
+  document: DocumentRecord,
+  documents: readonly DocumentRecord[],
+  { props, examples = examplesDirectory }: { props?: PropsFile; examples?: string } = {},
+): string {
   const title = `# ${document.title}\n\n`;
   if (document.id === 'index') {
     const markdown = document.markdown
@@ -222,12 +227,14 @@ export function compileDocument(document, documents, { props, examples = example
   }
   if (document.sections) {
     const propsSection =
-      props && document.frontmatter.components
+      props && document.frontmatter?.components
         ? renderProps(document.frontmatter.components, props)
         : '';
     return compilePage(document, { props: propsSection, examples, title });
   }
-  const head = document.frontmatter ? `---\n${document.yaml.replace(/\n*$/, '')}\n---\n\n` : '';
+  const head = document.frontmatter
+    ? `---\n${(document.yaml ?? '').replace(/\n*$/, '')}\n---\n\n`
+    : '';
   return `${head}${title}${document.markdown}`;
 }
 
@@ -237,10 +244,13 @@ export function compileDocument(document, documents, { props, examples = example
  */
 export function compileDocumentation(
   directory = documentationDirectory,
-  { props = readProps(directory), examples = examplesDirectory } = {},
-) {
+  {
+    props = readProps(directory),
+    examples = examplesDirectory,
+  }: { props?: PropsFile; examples?: string } = {},
+): Map<string, string> {
   const documents = readDocumentation(directory, { props, examples });
-  const files = new Map();
+  const files = new Map<string, string>();
   for (const document of documents)
     if (!contributorPages.has(document.path))
       files.set(

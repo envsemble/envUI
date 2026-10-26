@@ -100,7 +100,7 @@ export function generateDocumentation() {
         props: Object.fromEntries(
           documentedExports(frontmatter.components, props).map((name) => [
             name,
-            props.exports[name],
+            props!.exports[name],
           ]),
         ),
       }),

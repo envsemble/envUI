@@ -36,8 +36,54 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Node, Project } from 'ts-morph';
+import {
+  Node,
+  Project,
+  type JsxAttribute,
+  type TemplateExpression,
+  type TemplateSpan,
+  type Type,
+} from 'ts-morph';
+
+/** A data attribute a part takes: its values, the classes of its element, and where it is set. */
+/** A component's or shared anatomy's entry in docs/generated/parts.json. */
+interface PartsEntry {
+  root: string | null;
+  source?: string;
+  parts: { class: string; description: string | null }[];
+  states: { attribute: string; values: string[]; parts: string[] }[];
+  uses?: string[];
+  usedBy?: string[];
+  colors?: { property: string; description: string }[];
+}
+
+/** docs/generated/parts.json: the part contract. */
+export interface PartsContract {
+  $comment?: string;
+  schemaVersion?: number;
+  components: Record<string, PartsEntry>;
+  shared: Record<string, PartsEntry>;
+}
+
+/** A name of a contract: a part, a color property, a state attribute, or one of its values. */
+interface ContractItem {
+  name: string;
+  part?: string;
+  color?: string;
+  attribute?: string;
+  parts?: string[];
+  value?: string;
+}
+
+interface StateRecord {
+  attribute: string;
+  /** Undefined where its values can't be listed, such as a number. */
+  values?: Set<string>;
+  classes?: string[];
+  path: string;
+}
 import { baseCandidates } from '../test/TestScope.ts';
+import type { PropsFile } from './Schema.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const libraryDirectory = resolve(root, 'packages/ui');
@@ -51,33 +97,33 @@ const changesetDirectory = resolve(root, '.changeset');
 
 export const partsSchemaVersion = 1;
 
-const posix = (path) => path.split(sep).join('/');
-const repositoryPath = (file) => posix(relative(root, file));
+const posix = (path: string) => path.split(sep).join('/');
+const repositoryPath = (file: string) => posix(relative(root, file));
 /** `AvatarGroup` is `avatar-group`, `CodeDiff` `code-diff`. */
-const kebab = (name) =>
+const kebab = (name: string) =>
   name
     .replace(/(?<=[a-z\d])(?=[A-Z])/g, '-')
     .replace(/(?<=[A-Z])(?=[A-Z][a-z])/g, '-')
     .toLowerCase();
-const byText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
 /**
  * Whether a state attribute is private: data-env-ssr-*, which server markup carries only until a
  * component reads its layout in the browser, such as a dock that stacks before it hydrates. Neither
  * the contract nor the docs list them, and they may change in any release.
  */
-export function isPrivateState(attribute) {
+export function isPrivateState(attribute: string) {
   return attribute.startsWith('data-env-ssr-');
 }
 
 /** An `env-*` class in a string, not part of a selector, custom property or data attribute. */
 const classPattern = /(?<![\w.#-])env-[a-z\d]+(?:-[a-z\d]+)*(-?)/g;
 /** Attribute and property names whose values are class names. */
-const isClassName = (name) => /^(?:class|className|\w+ClassName)$/.test(name);
+const isClassName = (name: string) => /^(?:class|className|\w+ClassName)$/.test(name);
 
 /** The string values a type can take, or undefined when it takes any string or number. */
-function literalValues(type) {
-  const values = new Set();
+function literalValues(type: Type): Set<string> | undefined {
+  const values = new Set<string>();
   for (const member of type.isUnion() ? type.getUnionTypes() : [type]) {
     if (member.isUndefined() || member.isNull() || member.isNever()) continue;
     if (member.isStringLiteral() || member.isNumberLiteral())
@@ -95,21 +141,21 @@ function literalValues(type) {
  */
 function readSource() {
   const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
-  const classes = new Map();
+  const classes = new Map<string, { files: Set<string> }>();
   const warnings: string[] = [];
   /** The JSX element whose attribute holds a node, if any. */
-  const elementOf = (node) => {
+  const elementOf = (node: Node) => {
     const attribute = node.getFirstAncestor(
       (ancestor) => Node.isJsxAttribute(ancestor) && isClassName(ancestor.getNameNode().getText()),
     );
     return attribute?.getParent()?.getParent();
   };
-  const classesOnElement = new Map();
-  const statesOnElement = new Map();
+  const classesOnElement = new Map<Node, Set<string>>();
+  const statesOnElement = new Map<Node, StateRecord[]>();
   // The elements whose class name reads a variable, by the variable's declaration, such as
   // `const className = 'env-x'` before `<span className={className}>`.
-  const elementsOfVariable = new Map();
-  const elementsOf = (node) => {
+  const elementsOfVariable = new Map<Node, Set<Node>>();
+  const elementsOf = (node: Node): Node[] => {
     const element = elementOf(node);
     if (element) return [element];
     const declaration = node.getFirstAncestor(Node.isVariableDeclaration);
@@ -126,14 +172,14 @@ function readSource() {
     );
   for (const file of files) {
     const path = repositoryPath(file.getFilePath());
-    const anchors = [];
+    const anchors: (Node | undefined)[] = [];
     file.forEachDescendant((node) => {
       if (Node.isJsxAttribute(node)) {
         const name = node.getNameNode().getText();
         if (isClassName(name) && node.getInitializer()) {
           anchors.push(node.getInitializer());
-          const element = node.getParent().getParent();
-          for (const identifier of node.getInitializer().getDescendants())
+          const element = node.getParent().getParent()!;
+          for (const identifier of node.getInitializer()!.getDescendants())
             if (Node.isIdentifier(identifier))
               for (const declaration of identifier.getSymbol()?.getDeclarations() ?? [])
                 if (Node.isVariableDeclaration(declaration))
@@ -142,7 +188,7 @@ function readSource() {
                     new Set([...(elementsOfVariable.get(declaration) ?? []), element]),
                   );
         } else if (name.startsWith('data-') && !isPrivateState(name)) {
-          const element = node.getParent().getParent();
+          const element = node.getParent().getParent()!;
           const list = statesOnElement.get(element) ?? [];
           list.push({ attribute: name, values: attributeValues(node), path });
           statesOnElement.set(element, list);
@@ -158,13 +204,13 @@ function readSource() {
       )
         anchors.push(node.getInitializer());
     });
-    const seen = new Set();
-    const add = (name, node) => {
-      const entry = classes.get(name) ?? { files: new Set() };
+    const seen = new Set<Node>();
+    const add = (name: string, node: Node) => {
+      const entry = classes.get(name) ?? { files: new Set<string>() };
       entry.files.add(path);
       classes.set(name, entry);
       for (const element of elementsOf(node)) {
-        const set = classesOnElement.get(element) ?? new Set();
+        const set = classesOnElement.get(element) ?? new Set<string>();
         set.add(name);
         classesOnElement.set(element, set);
       }
@@ -175,8 +221,8 @@ function readSource() {
       for (const node of pieces) {
         if (seen.has(node)) continue;
         seen.add(node);
-        let text;
-        let next;
+        let text: string;
+        let next: Node | undefined;
         if (
           Node.isStringLiteral(node) ||
           Node.isNoSubstitutionTemplateLiteral(node) ||
@@ -187,10 +233,10 @@ function readSource() {
           text = node.getLiteralText();
           // The expression that follows the piece completes a class that ends in `-`.
           if (Node.isTemplateHead(node))
-            next = node.getParent().getTemplateSpans()[0]?.getExpression();
+            next = (node.getParent() as TemplateExpression).getTemplateSpans()[0]?.getExpression();
           else {
-            const span = node.getParent();
-            const spans = span.getParent().getTemplateSpans();
+            const span = node.getParent() as TemplateSpan;
+            const spans = (span.getParent() as TemplateExpression).getTemplateSpans();
             next = spans[spans.indexOf(span) + 1]?.getExpression();
           }
         } else continue;
@@ -211,7 +257,7 @@ function readSource() {
       }
     }
   }
-  const states = [];
+  const states: StateRecord[] = [];
   for (const [element, list] of statesOnElement) {
     const names = classesOnElement.get(element);
     if (!names) continue;
@@ -225,7 +271,7 @@ function readSource() {
       file
         .getImportDeclarations()
         .map((declaration) => declaration.getModuleSpecifierSourceFile())
-        .filter(Boolean)
+        .filter((imported) => imported !== undefined)
         .map((imported) => repositoryPath(imported.getFilePath())),
     ]),
   );
@@ -240,7 +286,7 @@ function readSource() {
           (declaration) => !declaration.isTypeOnly() && declaration.getModuleSpecifierSourceFile(),
         )
         .map((declaration) => ({
-          source: repositoryPath(declaration.getModuleSpecifierSourceFile().getFilePath()),
+          source: repositoryPath(declaration.getModuleSpecifierSourceFile()!.getFilePath()),
           names: declaration
             .getNamedImports()
             .filter((specifier) => !specifier.isTypeOnly())
@@ -253,20 +299,20 @@ function readSource() {
 }
 
 /** The values a JSX data attribute takes: its literal, or the string values of its type. */
-function attributeValues(attribute) {
+function attributeValues(attribute: JsxAttribute): Set<string> | undefined {
   const initializer = attribute.getInitializer();
   // `<div data-open>` renders data-open="true".
   if (!initializer) return new Set(['true']);
   if (Node.isStringLiteral(initializer)) return new Set([initializer.getLiteralText()]);
-  const expression = initializer.getExpression?.();
+  const expression = Node.isJsxExpression(initializer) ? initializer.getExpression() : undefined;
   return expression ? literalValues(expression.getType()) : undefined;
 }
 
 /** Splits a selector list or a selector at `separators` outside brackets, parentheses and strings. */
-function splitTopLevel(text, separators) {
+function splitTopLevel(text: string, separators: RegExp) {
   const parts: string[] = [];
   let depth = 0;
-  let quote = null;
+  let quote: string | null = null;
   let start = 0;
   for (let index = 0; index < text.length; index += 1) {
     const character = text[index];
@@ -291,9 +337,9 @@ function splitTopLevel(text, separators) {
  * are read as selectors of their own.
  */
 function readStyles() {
-  const states = [];
+  const states: StateRecord[] = [];
   const files = readdirSync(stylesDirectory).filter((name) => name.endsWith('.css'));
-  const visit = (selector, path) => {
+  const visit = (selector: string, path: string) => {
     const inner: string[] = [];
     const own = selector.replace(/:has\(((?:[^()]|\((?:[^()]|\([^()]*\))*\))*)\)/g, (_, body) => {
       inner.push(body);
@@ -349,8 +395,12 @@ function readColorProperties() {
   return properties;
 }
 
+/** packages/ui/src/parts.json: the hand-written part of the contract. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- hand-written JSON, checked as buildParts reads it
+export type PartsSource = Record<string, any>;
+
 /** The hand-written part of the contract. */
-export function readPartsSource(file = partsSourceFile) {
+export function readPartsSource(file = partsSourceFile): PartsSource {
   return JSON.parse(readFileSync(file, 'utf8'));
 }
 
@@ -358,25 +408,30 @@ export function readPartsSource(file = partsSourceFile) {
 export function buildParts({
   source = readPartsSource(),
   props = JSON.parse(readFileSync(propsFile, 'utf8')),
-} = {}) {
+}: { source?: PartsSource; props?: PropsFile } = {}) {
   const { classes, states: sourceStates, imports, renders, warnings } = readSource();
   const styleStates = readStyles();
   const problems = [...warnings];
 
   // The groups: every exported component and namespace, and the shared anatomy.
-  const groups = new Map();
+  const groups = new Map<
+    string,
+    { name: string; prefix: string; source?: string; root?: string | null; shared: boolean }
+  >();
   for (const [name, entry] of Object.entries(props.exports)) {
     if (name.includes('.') || !['component', 'namespace'].includes(entry.kind)) continue;
     groups.set(name, { name, prefix: `env-${kebab(name)}`, source: entry.source, shared: false });
   }
-  for (const [name, entry] of Object.entries(source.shared ?? {}))
+  for (const [name, entry] of Object.entries<{ prefix: string; root?: string }>(
+    source.shared ?? {},
+  ))
     groups.set(name, { name, prefix: entry.prefix, root: entry.root ?? null, shared: true });
   const byPrefix = [...groups.values()].sort((a, b) => b.prefix.length - a.prefix.length);
-  const groupOf = (name) =>
+  const groupOf = (name: string): string | undefined =>
     source.placed?.[name] ??
     byPrefix.find((group) => name === group.prefix || name.startsWith(`${group.prefix}-`))?.name;
 
-  const members = new Map();
+  const members = new Map<string, string[]>();
   for (const name of [...classes.keys()].sort(byText)) {
     const group = groupOf(name);
     if (!group || !groups.has(group)) {
@@ -389,16 +444,21 @@ export function buildParts({
   }
 
   // States, by group and attribute.
-  const groupStates = new Map();
+  const groupStates = new Map<
+    string,
+    Map<string, { values: Set<string>; free: boolean; parts: Set<string> }>
+  >();
   for (const state of [...sourceStates, ...styleStates]) {
-    for (const name of state.classes) {
+    for (const name of state.classes ?? []) {
       if (!classes.has(name)) continue;
-      const group = groupOf(name);
-      const byAttribute = groupStates.get(group) ?? new Map();
+      const group = groupOf(name)!;
+      const byAttribute =
+        groupStates.get(group) ??
+        new Map<string, { values: Set<string>; free: boolean; parts: Set<string> }>();
       const entry = byAttribute.get(state.attribute) ?? {
-        values: new Set(),
+        values: new Set<string>(),
         free: false,
-        parts: new Set(),
+        parts: new Set<string>(),
       };
       if (state.values === undefined) entry.free = true;
       else for (const value of state.values) entry.values.add(value);
@@ -409,16 +469,16 @@ export function buildParts({
   }
 
   // Which groups each group's files render: its own files and the internal modules they import.
-  const filesOf = new Map();
+  const filesOf = new Map<string, Set<string>>();
   for (const [name, list] of members)
     for (const className of list)
-      for (const file of classes.get(className).files)
+      for (const file of classes.get(className)!.files)
         filesOf.set(file, new Set([...(filesOf.get(file) ?? []), name]));
   const componentSources = new Set(
     [...groups.values()].map((group) => group.source).filter(Boolean),
   );
   // The groups whose parts each component module renders, by the module.
-  const groupsBySource = new Map();
+  const groupsBySource = new Map<string, string[]>();
   for (const group of groups.values())
     if (group.source && (members.get(group.name)?.length ?? 0) > 0)
       groupsBySource.set(group.source, [...(groupsBySource.get(group.source) ?? []), group.name]);
@@ -439,8 +499,8 @@ export function buildParts({
   const descriptions = source.descriptions ?? {};
   const colors = source.colors ?? {};
   const registered = readColorProperties();
-  const listedColors = new Set();
-  for (const [group, list] of Object.entries(colors))
+  const listedColors = new Set<string>();
+  for (const [group, list] of Object.entries<Record<string, string>>(colors))
     for (const [property, description] of Object.entries(list)) {
       listedColors.add(property);
       if (!registered.has(property))
@@ -455,8 +515,8 @@ export function buildParts({
       problems.push(
         `${property}, registered in ${registered.get(property)}, is listed under no component's colors in packages/ui/src/parts.json`,
       );
-  const output = { components: {}, shared: {} };
-  const usedBy = new Map();
+  const output: Pick<PartsContract, 'components' | 'shared'> = { components: {}, shared: {} };
+  const usedBy = new Map<string, Set<string>>();
   for (const group of [...groups.values()].sort((a, b) => byText(a.name, b.name))) {
     const list = members.get(group.name) ?? [];
     const rootClass =
@@ -482,11 +542,11 @@ export function buildParts({
     const ordered = [...list].sort((a, b) =>
       a === rootClass ? -1 : b === rootClass ? 1 : byText(a, b),
     );
-    const uses = new Set();
+    const uses = new Set<string>();
     if (group.source)
       for (const file of reachable(group.source)) {
         for (const other of filesOf.get(file) ?? [])
-          if (groups.get(other).source !== group.source) uses.add(other);
+          if (groups.get(other)!.source !== group.source) uses.add(other);
         // The components its files import and render, such as Bar's Menu and Badge.
         for (const { source: next, names, namespace } of renders.get(file) ?? [])
           if (next !== group.source)
@@ -494,7 +554,7 @@ export function buildParts({
               if (namespace || names.includes(other)) uses.add(other);
       }
     for (const name of uses) usedBy.set(name, new Set([...(usedBy.get(name) ?? []), group.name]));
-    const entry = {
+    const entry: PartsEntry = {
       root: rootClass,
       ...(group.source && { source: group.source }),
       parts: ordered.map((name) => ({ class: name, description: written[name] ?? null })),
@@ -507,7 +567,7 @@ export function buildParts({
         })),
       ...(uses.size && { uses: [...uses].sort(byText) }),
       ...(colors[group.name] && {
-        colors: Object.entries(colors[group.name]).map(([property, description]) => ({
+        colors: Object.entries<string>(colors[group.name]).map(([property, description]) => ({
           property,
           description,
         })),
@@ -535,11 +595,11 @@ export function buildParts({
   };
 }
 
-export function serializeParts(parts) {
+export function serializeParts(parts: PartsContract) {
   return `${JSON.stringify(parts, null, 2)}\n`;
 }
 
-export function readParts(file = partsFile) {
+export function readParts(file = partsFile): PartsContract {
   return JSON.parse(readFileSync(file, 'utf8'));
 }
 
@@ -548,9 +608,9 @@ export function readParts(file = partsFile) {
  * labels, with the class, attribute or property each names, the value of a state value, and the
  * parts that carry a state.
  */
-function contractNames(parts) {
-  const names = new Map();
-  for (const kind of ['components', 'shared'])
+function contractNames(parts: PartsContract | undefined) {
+  const names = new Map<string, ContractItem>();
+  for (const kind of ['components', 'shared'] as const)
     for (const [group, entry] of Object.entries(parts?.[kind] ?? {})) {
       for (const part of entry.parts)
         names.set(`${group}: .${part.class}`, { name: part.class, part: part.class });
@@ -570,11 +630,12 @@ function contractNames(parts) {
  * Each class of a contract, the values each class's state attributes take (null: any) and its color
  * properties.
  */
-function contractClasses(parts) {
-  const classes = new Set();
-  const states = new Map();
-  const colors = new Set();
-  for (const kind of ['components', 'shared'])
+function contractClasses(parts: PartsContract | undefined) {
+  const classes = new Set<string>();
+  /** Each part's state attribute and the values it takes, null for any. */
+  const states = new Map<string, Set<string> | null>();
+  const colors = new Set<string>();
+  for (const kind of ['components', 'shared'] as const)
     for (const entry of Object.values(parts?.[kind] ?? {})) {
       for (const part of entry.parts) classes.add(part.class);
       for (const { property } of entry.colors ?? []) colors.add(property);
@@ -594,10 +655,10 @@ function contractClasses(parts) {
 }
 
 /** Whether a changeset's front matter makes it a major change of @envsemble/envui. */
-const isMajor = (changeset) =>
+const isMajor = (changeset: string) =>
   /^---\r?\n[\s\S]*?^\s*['"]?@envsemble\/envui['"]?\s*:\s*major\s*$[\s\S]*?^---/m.test(changeset);
 /** Whether a text names a name whole, so a changeset about env-card-header doesn't name env-card. */
-const names = (text, name) =>
+const names = (text: string, name: string) =>
   new RegExp(String.raw`(?<![\w-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\w-])`).test(
     text,
   );
@@ -609,12 +670,16 @@ const names = (text, name) =>
  * attribute now takes any value, is not gone. Pure, for the tests; `changesets` is the text of each
  * pending changeset.
  */
-export function removedParts(before, after, changesets = []) {
+export function removedParts(
+  before: PartsContract | undefined,
+  after: PartsContract,
+  changesets: string | string[] = [],
+) {
   const now = contractNames(after);
   const kept = contractClasses(after);
   const major = (Array.isArray(changesets) ? changesets : [changesets]).filter(isMajor);
   /** Whether a part, attribute or value is still there, in this group or another. */
-  const stays = (item) => {
+  const stays = (item: ContractItem) => {
     if (item.part) return kept.classes.has(item.part);
     if (item.color) return kept.colors.has(item.color);
     return (item.parts ?? []).some((part) => {
@@ -623,7 +688,7 @@ export function removedParts(before, after, changesets = []) {
       return item.value === undefined || values === null || values.has(item.value);
     });
   };
-  const removed = [];
+  const removed: { label: string; name: string; recorded: boolean }[] = [];
   for (const [label, item] of contractNames(before))
     if (!now.has(label) && !stays(item))
       removed.push({
@@ -651,10 +716,14 @@ function git(args) {
  * The contract at the merge-base with the integration branch, from the first of the check tiers'
  * bases whose merge-base has it, and what each base skipped lacked.
  */
-function baseParts(base) {
+function baseParts(base: string | undefined): {
+  ref: string | undefined;
+  parts: PartsContract | undefined;
+  skipped: string[];
+} {
   const skipped: string[] = [];
   for (const ref of baseCandidates(base)) {
-    let mergeBase;
+    let mergeBase: string;
     try {
       mergeBase = git(['merge-base', 'HEAD', ref]).trim();
     } catch {
