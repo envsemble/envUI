@@ -33,7 +33,9 @@ components:
   - Toast
   - useToast
 examples:
-  SaveChanges: overview
+  SaveChanges:
+    role: overview
+    motion: true
   Tones: example
   TopCenter: example
   ToastAnatomy: anatomy

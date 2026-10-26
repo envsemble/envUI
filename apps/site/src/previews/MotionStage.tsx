@@ -4,7 +4,7 @@ import { Pause } from '@envsemble/envui/icons/Pause';
 import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '../DocumentationTypes';
 import { useDisplaySettings } from '../theme/DisplaySettings';
-import { Playback, useInView } from './Motion';
+import { Playback, PreviewOverlays, useInView } from './Motion';
 
 /**
  * The stage of an animated figure on a page, such as a slider stretching past its ends: the live
@@ -15,15 +15,22 @@ import { Playback, useInView } from './Motion';
  * is all a reader can use in it. `foundation` sets it on a foundation figure's stage rather than
  * an example's, with `className` for that figure's own layout, and `stage` is the fill an
  * example's fence gives it.
+ *
+ * Its overlays, such as a menu, a dialog or a tooltip, open live inside the stage, as a tile's do
+ * (PreviewOverlays): a dialog's scrim covers the stage, not the page, and nothing leaves it.
+ * `height`, a CSS length, keeps the stage as tall as what opens in it from the start, so the
+ * figure keeps one height as it plays.
  */
 export function MotionStage({
   label,
+  height,
   children,
   foundation = false,
   className,
   stage: fill,
 }: {
   label: string;
+  height?: string;
   children: ReactNode;
   foundation?: boolean;
   className?: string;
@@ -49,10 +56,11 @@ export function MotionStage({
         .join(' ')}
       data-figure={foundation ? 'example' : undefined}
       data-stage={fill}
+      style={height ? { minBlockSize: height } : undefined}
     >
       <div ref={setSubject} inert aria-hidden className="catalogue-motion-subject">
         <Playback playing={inView && !paused} rest="hold" root={subject}>
-          {children}
+          <PreviewOverlays>{children}</PreviewOverlays>
         </Playback>
       </div>
       <Tooltip content={action}>

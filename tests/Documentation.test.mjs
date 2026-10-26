@@ -229,7 +229,7 @@ async function pageFixture(run) {
   const versions = new Set(['0.1.0', '0.2.0']);
   const read = () => readDocumentation(docs, { props: switchProps, examples, specimens, versions });
   try {
-    await run({ page, read, examples, docs });
+    await run({ page, read, examples, specimens, docs });
   } finally {
     const contained = relative(cache, fixture);
     assert.ok(contained && !contained.startsWith('..') && !isAbsolute(contained));
@@ -324,7 +324,7 @@ test('a page is read into its sections, figures, legends and specimens', async (
 });
 
 test('the build fails a page that is not in the one-file structure', async () => {
-  await pageFixture(async ({ page, read, docs }) => {
+  await pageFixture(async ({ page, read, docs, specimens }) => {
     const rejects = async (source, pattern) => {
       await writeFile(page, source);
       assert.throws(read, pattern);
@@ -410,12 +410,23 @@ test('the build fails a page that is not in the one-file structure', async () =>
     await rejects(
       frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    wide: true') +
         body,
-      /gives Narrow a field other than role, caption, open, stage/,
+      /gives Narrow a field other than role, caption, open, stage, motion/,
     );
     await rejects(
       frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    open: true') +
         body,
-      /gives Narrow open or stage, which only an overview example takes here/,
+      /gives Narrow open, stage or motion, which only an overview example takes here/,
+    );
+    // An example the catalogue plays needs its specimen of the same name.
+    await rejects(
+      frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    motion: true') +
+        body,
+      /example Basic has motion but no specimen apps\/site\/src\/specimens\/switch\/Basic\.tsx/,
+    );
+    await rejects(
+      frontmatter +
+        body.replace('figure=Narrow widths="16 30"', 'figure=Narrow motion widths="16 30"'),
+      /example Narrow has motion but no specimen/,
     );
     await rejects(
       frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    open: yes') +
@@ -441,6 +452,22 @@ test('the build fails a page that is not in the one-file structure', async () =>
       open: true,
       stage: 'shaded',
     });
+    // With its specimen, an example the catalogue plays says so, in the Overview and on its fence.
+    await writeFile(join(specimens, 'switch', 'Basic.tsx'), 'export default function Basic() {}\n');
+    await writeFile(
+      join(specimens, 'switch', 'Narrow.tsx'),
+      'export default function Narrow() {}\n',
+    );
+    await writeFile(
+      page,
+      frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    motion: true') +
+        body.replace('figure=Narrow widths="16 30"', 'figure=Narrow motion widths="16 30"'),
+    );
+    const motions = read()[1]
+      .sections.flatMap((section) => section.blocks)
+      .filter((block) => block.motion)
+      .map((block) => block.name);
+    assert.deepEqual(motions, ['Basic', 'Narrow']);
     // A pattern or foundation page is in the structure too.
     await mkdir(join(docs, 'foundations'), { recursive: true });
     await writeFile(

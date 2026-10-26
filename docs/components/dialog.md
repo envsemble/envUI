@@ -34,7 +34,9 @@ components:
   - Dialog
   - DialogClose
 examples:
-  ProjectDetails: overview
+  ProjectDetails:
+    role: overview
+    motion: true
   FindPlan: example
   ReviewChanges: example
   DialogAnatomy: anatomy

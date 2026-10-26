@@ -1,0 +1,316 @@
+/*
+ * The text a pointer no one sees selects by dragging across it, as a mouse does
+ * (VirtualPointer.ts). A preview is inert, so neither the page's selection nor focus can reach it,
+ * and the reader's own selection on the page is theirs to keep:
+ * - in a text field, the selection is the field's own (setSelectionRange), which a component reads
+ *   as it would a person's, such as a formatting button; an unfocused field doesn't paint it, so a
+ *   copy of the field's text over it, transparent but the selected part, paints it in the
+ *   selection's colours (`.catalogue-field-selection`, Stage.css);
+ * - in content, it is a range in a highlight of the catalogue's (`::highlight(catalogue-selection)`),
+ *   painted as a selection is.
+ */
+
+/** A point in the viewport. */
+interface Point {
+  x: number;
+  y: number;
+}
+
+/** Fields whose text a drag selects. */
+const selectableFields =
+  'input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"], [type="color"], [type="file"]), textarea';
+
+type Field = HTMLInputElement | HTMLTextAreaElement;
+
+/** The name of the highlight that paints the selections in content. */
+const highlightName = 'catalogue-selection';
+
+/** The catalogue's highlight, made the first time it is needed, where the browser has highlights. */
+function highlight() {
+  if (typeof CSS === 'undefined' || !('highlights' in CSS) || typeof Highlight === 'undefined')
+    return null;
+  let found = CSS.highlights.get(highlightName);
+  if (!found) {
+    found = new Highlight();
+    CSS.highlights.set(highlightName, found);
+  }
+  return found;
+}
+
+/**
+ * Where the caret would go for a point in a preview: a node and an offset in it, as a press puts it
+ * there. The browser finds no caret in what is inert, as a preview is, so it is found for a moment
+ * as if the preview weren't, which changes nothing it shows or sends.
+ */
+function caretAt(point: Point, scope: Element) {
+  const doc = document as Document & {
+    caretPositionFromPoint?: (x: number, y: number) => CaretPosition | null;
+    caretRangeFromPoint?: (x: number, y: number) => Range | null;
+  };
+  const inert = scope.closest<HTMLElement>('[inert]');
+  if (inert) inert.inert = false;
+  try {
+    if (doc.caretPositionFromPoint) {
+      const position = doc.caretPositionFromPoint(point.x, point.y);
+      return position && { node: position.offsetNode, offset: position.offset };
+    }
+    const range = doc.caretRangeFromPoint?.(point.x, point.y);
+    return range ? { node: range.startContainer, offset: range.startOffset } : null;
+  } finally {
+    if (inert) inert.inert = true;
+  }
+}
+
+/** A point brought inside a box, a pixel in from its edges. */
+function clampTo(point: Point, box: DOMRect): Point {
+  return {
+    x: Math.min(Math.max(point.x, box.left + 1), box.right - 1),
+    y: Math.min(Math.max(point.y, box.top + 1), box.bottom - 1),
+  };
+}
+
+/**
+ * The offset in a field's value nearest a point, as a press or a drag there puts the caret: a
+ * point outside the field is taken at its nearest edge. Where the browser doesn't say, a line's
+ * offset is measured from its text.
+ */
+function fieldOffsetAt(field: Field, point: Point) {
+  const box = field.getBoundingClientRect();
+  const inside = clampTo(point, box);
+  const caret = caretAt(inside, field);
+  if (caret?.node === field) return Math.min(caret.offset, field.value.length);
+  if (field instanceof HTMLTextAreaElement)
+    return point.y < box.top ? 0 : point.y > box.bottom ? field.value.length : field.selectionEnd;
+  // Measured: the characters whose middle is before the point.
+  const style = getComputedStyle(field);
+  const context = document.createElement('canvas').getContext('2d');
+  if (!context) return field.value.length;
+  context.font = style.font;
+  const scale = box.width / field.offsetWidth || 1;
+  const x =
+    (inside.x - box.left) / scale -
+    parseFloat(style.borderLeftWidth) -
+    parseFloat(style.paddingLeft) +
+    field.scrollLeft;
+  const characters = [...field.value];
+  let width = 0;
+  for (let index = 0; index < characters.length; index++) {
+    const next = context.measureText(characters.slice(0, index + 1).join('')).width;
+    if (x < (width + next) / 2) return characters.slice(0, index).join('').length;
+    width = next;
+  }
+  return field.value.length;
+}
+
+/** The properties a copy of a field's text takes from the field, so its text lies on the field's. */
+const copied = [
+  'boxSizing',
+  'fontFamily',
+  'fontSize',
+  'fontWeight',
+  'fontStyle',
+  'fontStretch',
+  'fontVariant',
+  'fontFeatureSettings',
+  'fontVariationSettings',
+  'fontKerning',
+  'letterSpacing',
+  'wordSpacing',
+  'lineHeight',
+  'textAlign',
+  'textIndent',
+  'textTransform',
+  'tabSize',
+  'direction',
+  'paddingTop',
+  'paddingRight',
+  'paddingBottom',
+  'paddingLeft',
+  'borderTopWidth',
+  'borderRightWidth',
+  'borderBottomWidth',
+  'borderLeftWidth',
+  'borderTopLeftRadius',
+  'borderTopRightRadius',
+  'borderBottomLeftRadius',
+  'borderBottomRightRadius',
+] as const;
+
+/**
+ * Paints a field's selection over it: a copy of its text, in the field's place and box, whose
+ * selected part takes the selection's colours and whose rest is transparent, so the field shows
+ * through. It is in the preview's overlay layer, over what the preview shows, or where it has none,
+ * in the box the field is placed in, so the component's own elements stay as they are.
+ */
+function paintField(
+  field: Field,
+  start: number,
+  end: number,
+  mirror: HTMLElement | null,
+  scope: Element,
+) {
+  const copy = mirror ?? document.createElement('div');
+  if (!mirror) {
+    copy.className = 'catalogue-field-selection';
+    copy.setAttribute('aria-hidden', 'true');
+    copy.append(document.createElement('div'));
+  }
+  const layer = scope.querySelector<HTMLElement>(':scope > .catalogue-overlay-layer');
+  const holder = layer ?? (field.offsetParent as HTMLElement | null) ?? scope;
+  if (copy.parentElement !== holder) holder.append(copy);
+  const style = getComputedStyle(field);
+  for (const property of copied) copy.style[property] = style[property];
+  copy.style.borderStyle = 'solid';
+  copy.style.borderColor = 'transparent';
+  if (layer) {
+    // In layout pixels, as the preview may be drawn scaled.
+    const frame = layer.getBoundingClientRect();
+    const box = field.getBoundingClientRect();
+    const scale = frame.width / layer.offsetWidth || 1;
+    copy.style.left = `${(box.left - frame.left) / scale - layer.clientLeft}px`;
+    copy.style.top = `${(box.top - frame.top) / scale - layer.clientTop}px`;
+  } else {
+    copy.style.left = `${field.offsetLeft}px`;
+    copy.style.top = `${field.offsetTop}px`;
+  }
+  copy.style.width = `${field.offsetWidth}px`;
+  copy.style.height = `${field.offsetHeight}px`;
+  const area = field instanceof HTMLTextAreaElement;
+  copy.dataset.field = area ? 'textarea' : 'input';
+  // A textarea's scrollbar takes from the width its lines wrap in.
+  if (area) {
+    const scrollbar =
+      field.offsetWidth -
+      field.clientWidth -
+      parseFloat(style.borderLeftWidth) -
+      parseFloat(style.borderRightWidth);
+    copy.style.paddingRight = `${parseFloat(style.paddingRight) + scrollbar}px`;
+  }
+  const lines = copy.firstElementChild as HTMLElement;
+  lines.style.transform = area
+    ? `translateY(${-field.scrollTop}px)`
+    : `translateX(${-field.scrollLeft}px)`;
+  const value = field.value;
+  const selected = document.createElement('span');
+  selected.textContent = value.slice(start, end);
+  lines.replaceChildren(value.slice(0, start), selected, value.slice(end) || '​');
+  return copy;
+}
+
+/** A text position the pointer pressed at or dragged to, in content. */
+interface Caret {
+  node: Node;
+  offset: number;
+}
+
+/** The selection one pointer no one sees makes in its preview. */
+export class PointerSelection {
+  /** The field it selects in, its anchor's offset and its painted copy, while it selects there. */
+  private field: Field | null = null;
+  private fieldAnchor = 0;
+  private mirror: HTMLElement | null = null;
+  /** In content, where the drag began and the range it selects. */
+  private anchor: Caret | null = null;
+  private range: Range | null = null;
+  /** The selected part of the field, while there is one, which typing replaces. */
+  private selected: { field: Field; start: number; end: number } | null = null;
+
+  constructor(private readonly scope: Element) {}
+
+  /**
+   * A press at a point: what was selected is no longer, and the press marks where a drag would
+   * select from, in a field or in text of the preview whose text can be selected.
+   */
+  begin(point: Point, target: Element) {
+    this.clear();
+    const field = target.closest<Field>(selectableFields);
+    if (field && this.scope.contains(field)) {
+      this.field = field;
+      this.fieldAnchor = fieldOffsetAt(field, point);
+      field.setSelectionRange(this.fieldAnchor, this.fieldAnchor);
+      return;
+    }
+    const caret = caretAt(point, this.scope);
+    if (!caret || caret.node.nodeType !== Node.TEXT_NODE || !this.scope.contains(caret.node))
+      return;
+    const parent = caret.node.parentElement;
+    if (!parent || getComputedStyle(parent).userSelect === 'none') return;
+    this.anchor = caret;
+  }
+
+  /** A drag on to a point: the selection runs from where the press was to there. */
+  extend(point: Point) {
+    const field = this.field;
+    if (field) {
+      if (!field.isConnected) return this.clear();
+      const focus = fieldOffsetAt(field, point);
+      const [start, end] = [Math.min(this.fieldAnchor, focus), Math.max(this.fieldAnchor, focus)];
+      field.setSelectionRange(start, end, focus < this.fieldAnchor ? 'backward' : 'forward');
+      this.selected = start < end ? { field, start, end } : null;
+      this.paint();
+      return;
+    }
+    const anchor = this.anchor;
+    if (!anchor) return;
+    const caret = caretAt(point, this.scope);
+    if (!caret || !this.scope.contains(caret.node)) return;
+    const range = document.createRange();
+    range.setStart(anchor.node, anchor.offset);
+    if (range.comparePoint(caret.node, caret.offset) < 0) {
+      range.setStart(caret.node, caret.offset);
+      range.setEnd(anchor.node, anchor.offset);
+    } else range.setEnd(caret.node, caret.offset);
+    const shown = highlight();
+    if (this.range) shown?.delete(this.range);
+    this.range = range;
+    shown?.add(range);
+  }
+
+  /** Paints the field's selection again, as its value or scroll changed. */
+  private paint() {
+    const selected = this.selected;
+    if (!selected) {
+      this.mirror?.remove();
+      this.mirror = null;
+      return;
+    }
+    this.mirror = paintField(selected.field, selected.start, selected.end, this.mirror, this.scope);
+  }
+
+  /**
+   * The value a field takes for text typed into it, as a keyboard types: over its selected part,
+   * or at the caret typing left, or at its end. `text` null deletes: the selected part, or the
+   * character before the caret. Returns the value and where the caret is after it.
+   */
+  typed(field: Field, text: string | null) {
+    const value = field.value;
+    const selected = this.selected?.field === field ? this.selected : null;
+    const caret = this.caret?.field === field ? this.caret.at : value.length;
+    const [start, end] = selected
+      ? [selected.start, selected.end]
+      : text === null
+        ? [Math.max(0, caret - 1), caret]
+        : [caret, caret];
+    const next = value.slice(0, start) + (text ?? '') + value.slice(end);
+    const at = start + (text?.length ?? 0);
+    this.selected = null;
+    this.paint();
+    // Typing that began over a selection goes on at the caret; anywhere else, at the end.
+    this.caret = selected || this.caret?.field === field ? { field, at } : null;
+    return { value: next, at };
+  }
+
+  /** Where typing goes on in a field, after it typed over a selection there. */
+  private caret: { field: Field; at: number } | null = null;
+
+  /** Nothing is selected any more, as a press elsewhere or the preview's end leaves it. */
+  clear() {
+    this.field = null;
+    this.anchor = null;
+    this.selected = null;
+    this.caret = null;
+    this.paint();
+    if (this.range) highlight()?.delete(this.range);
+    this.range = null;
+  }
+}

@@ -21,8 +21,8 @@ export interface PortalContainerProps {
    * overlay's own controls do. Make the container a containing block, such as with
    * `contain: layout`, to keep fixed overlays, such as dialogs and their scrims, inside it, and
    * give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size
-   * container, or else as the window. A ContextMenu, which opens at the pointer, renders into the
-   * container but is otherwise as it is anywhere.
+   * container, or else as the window. A ContextMenu opens there too, at the pointer or below the
+   * focused element, without hiding the page or locking its scroll; a long press doesn't open it.
    * @default false
    */
   contained?: boolean;

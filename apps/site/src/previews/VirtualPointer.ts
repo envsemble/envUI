@@ -11,10 +11,29 @@
  * browser keeps none for a pointer it didn't make.
  */
 
+import { PointerSelection } from './VirtualSelection';
+
 /** A point of the pointer's, in the viewport's coordinates. */
 interface Point {
   x: number;
   y: number;
+}
+
+/** The modifier keys, by their key, and the flag a held one sets on every event. */
+const modifierFlags: Record<string, 'altKey' | 'ctrlKey' | 'shiftKey' | 'metaKey'> = {
+  Alt: 'altKey',
+  Control: 'ctrlKey',
+  Shift: 'shiftKey',
+  Meta: 'metaKey',
+};
+
+/** The physical key a key is typed on, as a keyboard event's `code` names it. */
+function codeOf(key: string) {
+  if (/^[a-z]$/i.test(key)) return `Key${key.toUpperCase()}`;
+  if (/^\d$/.test(key)) return `Digit${key}`;
+  if (key === ' ') return 'Space';
+  if (key in modifierFlags) return `${key}Left`;
+  return key;
 }
 
 const hoverMark = 'data-catalogue-hover';
@@ -136,12 +155,28 @@ export class VirtualPointer {
   private buttons = 0;
   /** Whether the page took the press for itself, which keeps its mouse twins from being sent. */
   private mouseless = false;
+  /** The button held: 0, the main one, or 2, the secondary one, which opens a context menu. */
+  private button = 0;
+  /** The keys held down, such as Alt, whose flags every event carries meanwhile. */
+  private held = new Set<string>();
+  /** What a drag across text selects. */
+  private readonly selection: PointerSelection;
+  /** Whether the press may select text by dragging: no one took it for itself. */
+  private selects = false;
 
   constructor(private readonly scope: Element) {
     keepCaptures();
     holdReaderMoves();
     captures.set(this.id, null);
     mirrorPointerStates();
+    this.selection = new PointerSelection(scope);
+  }
+
+  /** The flags of the modifier keys held, for an event. */
+  private get modifiers() {
+    const flags = { altKey: false, ctrlKey: false, shiftKey: false, metaKey: false };
+    for (const key of this.held) if (key in modifierFlags) flags[modifierFlags[key]!] = true;
+    return flags;
   }
 
   /** The element the pointer is over: the last in the document whose box holds it, as on top. */
@@ -199,14 +234,17 @@ export class VirtualPointer {
       button: -1,
       buttons: this.buttons,
       view: window,
+      ...this.modifiers,
       ...init,
     };
     const sent = target.dispatchEvent(new PointerEvent(type, options));
     // A press the page takes for itself, by preventing its default, sends no mouse events after.
     if (type === 'pointerdown') this.mouseless = !sent;
     const twin = mouseTwin[type];
-    if (twin && !(this.mouseless && /down|move|up/.test(twin)))
-      target.dispatchEvent(new MouseEvent(twin, options));
+    if (twin && !(this.mouseless && /down|move|up/.test(twin))) {
+      const twinSent = target.dispatchEvent(new MouseEvent(twin, options));
+      return sent && twinSent;
+    }
     return sent;
   }
 
@@ -282,6 +320,8 @@ export class VirtualPointer {
     }
     this.over = chain;
     this.send(captures.get(this.id) ?? target, 'pointermove');
+    // A drag across text selects it, unless something took the drag, as a slider's thumb does.
+    if (this.buttons === 1 && this.selects && !captures.get(this.id)) this.selection.extend(point);
   }
 
   /** Whether this pointer may go on now: no other is holding its button down on the page. */
@@ -308,7 +348,7 @@ export class VirtualPointer {
     this.suspended = false;
     const target = this.over[0];
     pressing = this.id;
-    if (target) this.send(target, 'pointerdown', { button: 0 });
+    if (target) this.send(target, 'pointerdown', { button: this.button });
     return true;
   }
 
@@ -316,34 +356,67 @@ export class VirtualPointer {
     return pressing === null || pressing === this.id;
   }
 
-  /** Presses the pointer's button where it is. */
-  press() {
+  /**
+   * Presses the pointer's button where it is: the main one, or with `button` 2 the secondary one,
+   * whose press asks for a context menu, as a right click does. A press of the main one on text
+   * starts a selection that a drag extends, and leaves what was selected unselected.
+   */
+  press(button: 0 | 2 = 0) {
     const target = this.over[0];
     if (!target || this.buttons) return;
     pressing = this.id;
-    this.buttons = 1;
-    this.send(target, 'pointerdown', { button: 0 });
+    this.button = button;
+    this.buttons = button === 2 ? 2 : 1;
+    const sent = this.send(target, 'pointerdown', { button });
     this.pressed = [...this.over];
-    for (const element of this.pressed) mark(element, pressMark, true);
+    if (button === 0) for (const element of this.pressed) mark(element, pressMark, true);
     // A press in a field focuses it, and anywhere else takes focus from the field. A button keeps
     // no focus ring under a pointer, so it isn't marked.
     this.focus(target.closest(textFields));
+    if (button === 2) {
+      // As the secondary button goes down, the context menu is asked for where the pointer is.
+      const point = this.at ?? { x: 0, y: 0 };
+      target.dispatchEvent(
+        new PointerEvent('contextmenu', {
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+          clientX: point.x,
+          clientY: point.y,
+          pointerId: this.id,
+          pointerType: 'mouse',
+          isPrimary: true,
+          button: 2,
+          buttons: 2,
+          view: window,
+          ...this.modifiers,
+        }),
+      );
+      return;
+    }
+    this.selects = sent;
+    if (sent && this.at) this.selection.begin(this.at, target);
+    else this.selection.clear();
   }
 
   /** Releases the button: the press ends, and where it ends on what it began on, it clicks. */
   release() {
     if (!this.buttons) return;
+    const button = this.button;
     this.buttons = 0;
+    this.button = 0;
+    this.selects = false;
     if (pressing === this.id) pressing = null;
     const captured = captures.get(this.id);
     const target = captured ?? this.over[0] ?? this.scope;
-    this.send(target, 'pointerup', { button: 0 });
+    this.send(target, 'pointerup', { button });
     if (captured) {
       captures.set(this.id, null);
       captured.dispatchEvent(new PointerEvent('lostpointercapture', { pointerId: this.id }));
     }
-    // A click goes to the nearest element the press and the release share.
-    const shared = this.pressed.find((element) => this.over.includes(element));
+    // A click goes to the nearest element the press and the release share; the secondary button
+    // asked for its context menu as it went down.
+    const shared = button === 0 && this.pressed.find((element) => this.over.includes(element));
     if (shared) {
       const point = this.at ?? { x: 0, y: 0 };
       keepClipboard(() =>
@@ -357,6 +430,7 @@ export class VirtualPointer {
             clientX: point.x,
             clientY: point.y,
             view: window,
+            ...this.modifiers,
           }),
         ),
       );
@@ -391,16 +465,17 @@ export class VirtualPointer {
     const field = this.scope.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector);
     if (!field) return;
     this.focus(field);
-    const key = text ?? 'Backspace';
-    const keyboard = { key, bubbles: true, cancelable: true, composed: true };
+    const keyboard = this.keyboard(text ?? 'Backspace');
     if (!field.dispatchEvent(new KeyboardEvent('keydown', keyboard))) return;
-    const value = text === null ? field.value.slice(0, -1) : field.value + text;
+    // Over what a drag selected in the field, or at its end.
+    const { value, at } = this.selection.typed(field, text);
     // The value's own setter, under React's, so React sees the change as typing.
     const prototype =
       field instanceof HTMLTextAreaElement
         ? HTMLTextAreaElement.prototype
         : HTMLInputElement.prototype;
     Object.getOwnPropertyDescriptor(prototype, 'value')!.set!.call(field, value);
+    if (at !== value.length) field.setSelectionRange(at, at);
     field.dispatchEvent(
       new InputEvent('input', {
         bubbles: true,
@@ -412,16 +487,127 @@ export class VirtualPointer {
     field.dispatchEvent(new KeyboardEvent('keyup', keyboard));
   }
 
-  /** Presses a key on an element of the preview, or on the field typed into. */
-  key(key: string, selector?: string) {
-    const target = (selector && this.scope.querySelector(selector)) || this.focused || this.scope;
-    const keyboard = { key, bubbles: true, cancelable: true, composed: true };
-    target.dispatchEvent(new KeyboardEvent('keydown', keyboard));
-    target.dispatchEvent(new KeyboardEvent('keyup', keyboard));
+  /** A keyboard event's fields for a key, with the modifier keys held. */
+  private keyboard(key: string) {
+    return {
+      key,
+      code: codeOf(key),
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      ...this.modifiers,
+    };
   }
 
-  /** Takes the pointer off the preview, releasing it first. */
+  /** What a key goes to: an element of the preview, or the field typed into, or the preview. */
+  private keyTarget(selector?: string) {
+    return (selector && this.scope.querySelector(selector)) || this.focused || this.scope;
+  }
+
+  /** Presses a key on an element of the preview, or on the field typed into. */
+  key(key: string, selector?: string) {
+    const target = this.keyTarget(selector);
+    target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
+    target.dispatchEvent(new KeyboardEvent('keyup', this.keyboard(key)));
+  }
+
+  /**
+   * Holds a key down, such as Alt, on an element of the preview or the field typed into: while it
+   * is held, every event the pointer and the keyboard send carries its flag, as Alt with a letter.
+   */
+  keyDown(key: string, selector?: string) {
+    if (this.held.has(key)) return;
+    this.held.add(key);
+    this.keyTarget(selector).dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
+  }
+
+  /** Lets a held key go. */
+  keyUp(key: string, selector?: string) {
+    if (!this.held.delete(key)) return;
+    this.keyTarget(selector).dispatchEvent(new KeyboardEvent('keyup', this.keyboard(key)));
+  }
+
+  /** The box a turn of the wheel scrolls, and where it started, while it turns. */
+  private turn: {
+    target: Element;
+    box: HTMLElement | null;
+    axis: 'x' | 'y';
+    from: number;
+    done: number;
+    snap: string;
+  } | null = null;
+
+  /**
+   * Starts turning the wheel over the element under the pointer: it scrolls the nearest box around
+   * it in the preview that can scroll along the axis, never the page.
+   */
+  startWheel(axis: 'x' | 'y') {
+    this.endWheel();
+    const target = this.over[0];
+    if (!target) return;
+    let box: HTMLElement | null = null;
+    for (
+      let node: Element | null = target;
+      node && node !== this.scope;
+      node = node.parentElement
+    ) {
+      if (!(node instanceof HTMLElement)) continue;
+      const style = getComputedStyle(node);
+      const overflow = axis === 'y' ? style.overflowY : style.overflowX;
+      const room =
+        axis === 'y' ? node.scrollHeight - node.clientHeight : node.scrollWidth - node.clientWidth;
+      if (/auto|scroll/.test(overflow) && room > 0) {
+        box = node;
+        break;
+      }
+    }
+    // A box that snaps would snap at each step of the turn: it snaps once the turn ends.
+    const snap = box?.style.scrollSnapType ?? '';
+    if (box) box.style.scrollSnapType = 'none';
+    const from = box ? (axis === 'y' ? box.scrollTop : box.scrollLeft) : 0;
+    this.turn = { target, box, axis, from, done: 0, snap };
+  }
+
+  /**
+   * Turns the wheel on to `distance` px from where the turn started: the element under the pointer
+   * hears the wheel, and unless it takes the turn for itself, the box scrolls there.
+   */
+  turnWheel(distance: number) {
+    const turn = this.turn;
+    if (!turn) return;
+    const delta = distance - turn.done;
+    turn.done = distance;
+    if (Math.abs(delta) < 0.01) return;
+    const point = this.at ?? { x: 0, y: 0 };
+    const sent = turn.target.dispatchEvent(
+      new WheelEvent('wheel', {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        clientX: point.x,
+        clientY: point.y,
+        deltaX: turn.axis === 'x' ? delta : 0,
+        deltaY: turn.axis === 'y' ? delta : 0,
+        deltaMode: WheelEvent.DOM_DELTA_PIXEL,
+        view: window,
+        ...this.modifiers,
+      }),
+    );
+    if (!sent || !turn.box) return;
+    const to = turn.from + distance;
+    turn.box.scrollTo({ [turn.axis === 'y' ? 'top' : 'left']: to, behavior: 'instant' });
+  }
+
+  /** Ends a turn of the wheel: a box that snaps snaps again. */
+  endWheel() {
+    const turn = this.turn;
+    this.turn = null;
+    if (turn?.box) turn.box.style.scrollSnapType = turn.snap;
+  }
+
+  /** Takes the pointer off the preview, releasing its button and the keys it holds first. */
   leave() {
+    for (const key of [...this.held]) this.keyUp(key);
     if (this.carried) {
       for (const element of this.over) this.sendDrag(element, 'dragleave');
       this.carried = null;
@@ -450,8 +636,10 @@ export class VirtualPointer {
   }
 
   dispose() {
+    this.endWheel();
     this.focus(null);
     this.leave();
+    this.selection.clear();
     captures.delete(this.id);
   }
 }

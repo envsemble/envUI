@@ -42,7 +42,9 @@ components:
   - ContextMenu
   - ThemeRadioGroup
 examples:
-  IconsAndShortcuts: overview
+  IconsAndShortcuts:
+    role: overview
+    motion: true
   ContextMenuForRows: example
   GroupsAndSeparators: example
   Choices: example
@@ -71,7 +73,7 @@ examples:
 
 ContextMenu opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>.
 
-```tsx figure=ContextMenuForRows
+```tsx figure=ContextMenuForRows motion
 
 ```
 

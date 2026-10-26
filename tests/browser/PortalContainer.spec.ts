@@ -75,6 +75,65 @@ test.describe('PortalContainer, contained', () => {
     await expect(layer.getByRole('tooltip')).toHaveCount(0);
   });
 
+  test('a context menu opens at the pointer in the container, without hiding or locking the page @engines', async ({
+    page,
+  }) => {
+    await page.goto(preview);
+    const region = page.getByTestId('context-region');
+    await region.scrollIntoViewIfNeeded();
+    const box = (await region.boundingBox())!;
+    await page.mouse.click(box.x + 60, box.y + 30, { button: 'right' });
+    const menu = page.getByTestId('context-layer').getByRole('menu', { name: 'Document actions' });
+    await expect(menu).toBeVisible();
+    expect(
+      await insidePreview(page, '[data-testid="context-layer"] .env-menu', 'context-preview'),
+    ).toBe(true);
+    // Its first row is under the pointer, as a context menu's is anywhere.
+    const opened = (await menu.boundingBox())!;
+    expect(Math.abs(opened.x - (box.x + 60))).toBeLessThan(12);
+    expect(Math.abs(opened.y - (box.y + 30))).toBeLessThan(12);
+    // The page stays in reach and keeps its scroll.
+    await expect(page.getByTestId('outside')).not.toHaveAttribute('aria-hidden');
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe(
+      'hidden',
+    );
+    expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe('hidden');
+    // A press outside the container leaves it open; Esc on the menu closes it.
+    await page.getByTestId('outside').click();
+    await expect(menu).toBeVisible();
+    await menu.dispatchEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    await expect(menu).toHaveCount(0);
+  });
+
+  test('a contained notice arrives and leaves with its motion, and stays under the pointer', async ({
+    page,
+  }) => {
+    await page.goto(preview);
+    const layer = page.getByTestId('layer');
+    await page.getByRole('button', { name: 'Notify' }).click();
+    const notice = layer.locator('.env-toast', { hasText: 'Invitation sent.' });
+    await expect(notice).toBeVisible();
+    // It came in from its starting style, which it no longer holds.
+    await expect(notice).not.toHaveAttribute('data-starting-style');
+    await expect
+      .poll(() => notice.evaluate((element) => getComputedStyle(element).opacity))
+      .toBe('1');
+    // Under the pointer its time stops: past its 1.2 s it is still there.
+    await notice.hover();
+    await page.waitForTimeout(1800);
+    await expect(notice).toBeVisible();
+    // Once the pointer leaves, it goes, taking its ending style before it is removed.
+    await layer.evaluate((element) => {
+      new MutationObserver((records) => {
+        if (records.some((record) => (record.target as Element).hasAttribute('data-ending-style')))
+          element.dataset.ended = '';
+      }).observe(element, { subtree: true, attributeFilter: ['data-ending-style'] });
+    });
+    await page.mouse.move(1, 1);
+    await expect(notice).toHaveCount(0);
+    await expect(layer).toHaveAttribute('data-ended', '');
+  });
+
   test('F6 leaves the contained toasts alone @engines', async ({ page }) => {
     await page.goto(preview);
     await expect(page.getByTestId('layer').getByText('Changes saved.')).toBeVisible();

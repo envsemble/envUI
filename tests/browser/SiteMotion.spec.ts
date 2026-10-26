@@ -135,3 +135,294 @@ test("the Toast tile's notices stack in place: the first glides from where it wa
   for (const top of tops) expect(top).toBeGreaterThanOrEqual(end - 0.5);
   for (const top of tops) expect(top).toBeLessThanOrEqual(before + 0.5);
 });
+
+/** An animated figure on a page, by the words its pause button's name starts with. */
+const figure = (page: Page, words: string) =>
+  page.locator('.catalogue-motion-stage', {
+    has: page.getByRole('button', { name: new RegExp(`^Pause ${words}`) }),
+  });
+
+/** Whether a box lies inside another, to a pixel. */
+const inside = (
+  box: { x: number; y: number; width: number; height: number },
+  frame: { x: number; y: number; width: number; height: number },
+) =>
+  box.x >= frame.x - 1 &&
+  box.y >= frame.y - 1 &&
+  box.x + box.width <= frame.x + frame.width + 1 &&
+  box.y + box.height <= frame.y + frame.height + 1;
+
+/** How far the page has scrolled: its main region scrolls, never the window. */
+const pageScroll = (page: Page) => page.evaluate(() => document.querySelector('main')!.scrollTop);
+
+test("a figure's dialog opens live inside its stage, its scrim over the stage alone", async ({
+  page,
+}) => {
+  await page.goto(`${siteDevUrl}/components/dialog`);
+  const stage = figure(page, 'the dialog opening');
+  await expect(page.locator('.site-loading')).toHaveCount(0);
+  await stage.scrollIntoViewIfNeeded();
+  const before = (await stage.boundingBox())!;
+  const scrolled = await pageScroll(page);
+  // The pointer no one sees presses View project, and the dialog opens in the stage.
+  const dialog = stage.locator('.env-dialog-popup');
+  await expect(dialog).toBeVisible({ timeout: 4000 });
+  const frame = (await stage.boundingBox())!;
+  expect(inside((await dialog.boundingBox())!, frame)).toBe(true);
+  const scrim = (await stage.locator('.env-dialog-backdrop').boundingBox())!;
+  expect(Math.abs(scrim.width - frame.width)).toBeLessThan(1.5);
+  expect(Math.abs(scrim.height - frame.height)).toBeLessThan(1.5);
+  // The figure keeps its height, the page its place, and the page stays in reach.
+  expect(frame.height).toBe(before.height);
+  expect(await pageScroll(page)).toBe(scrolled);
+  await expect(page.locator('.site-contents')).not.toHaveAttribute('aria-hidden', 'true');
+  // It closes again as the pointer presses Close.
+  await expect(dialog).toHaveCount(0, { timeout: 5000 });
+});
+
+test("a figure's right click opens its context menu inside the stage, and the page stays", async ({
+  page,
+}) => {
+  await page.goto(`${siteDevUrl}/components/menu`);
+  const stage = figure(page, 'the menu opening on a right click');
+  await expect(page.locator('.site-loading')).toHaveCount(0);
+  await stage.scrollIntoViewIfNeeded();
+  const scrolled = await pageScroll(page);
+  const menu = stage.locator('.env-menu');
+  await expect(menu).toBeVisible({ timeout: 4000 });
+  expect(inside((await menu.boundingBox())!, (await stage.boundingBox())!)).toBe(true);
+  await expect(menu.locator('.env-menu-item', { hasText: 'Duplicate' })).toBeVisible();
+  // A preview's context menu neither hides the page nor locks or moves its scroll.
+  await expect(page.locator('.site-contents')).not.toHaveAttribute('aria-hidden', 'true');
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe('');
+  expect(await pageScroll(page)).toBe(scrolled);
+  await expect(menu).toHaveCount(0, { timeout: 4000 });
+});
+
+test("a figure's wheel scrolls the box under the pointer smoothly and back, never the page", async ({
+  page,
+}) => {
+  await page.goto(`${siteDevUrl}/components/table`);
+  const stage = figure(page, 'the rows scrolling');
+  // Every figure above has loaded, so the page holds still.
+  await expect(page.locator('.site-loading')).toHaveCount(0);
+  await stage.scrollIntoViewIfNeeded();
+  const scrolled = await pageScroll(page);
+  const samples = await stage.evaluate(
+    (element) =>
+      new Promise<{ top: number; header: number }[]>((done) => {
+        const region = element.querySelector('.env-table-region')!;
+        const header = element.querySelector('thead th')!;
+        const found: { top: number; header: number }[] = [];
+        const sample = () => {
+          found.push({
+            top: region.scrollTop,
+            header: header.getBoundingClientRect().top - region.getBoundingClientRect().top,
+          });
+          if (found.length < 400) requestAnimationFrame(sample);
+          else done(found);
+        };
+        sample();
+      }),
+  );
+  const tops = samples.map((sample) => sample.top);
+  const deepest = Math.max(...tops);
+  // It scrolls down through the rows a little at a time, and back to the top.
+  expect(deepest).toBeGreaterThan(200);
+  const steps = tops.slice(1).map((top, index) => Math.abs(top - tops[index]!));
+  expect(Math.max(...steps)).toBeLessThan(40);
+  expect(tops.slice(tops.indexOf(deepest)).includes(0)).toBe(true);
+  // The header stays at the region's top throughout, and the page doesn't move.
+  expect(new Set(samples.map((sample) => Math.round(sample.header))).size).toBe(1);
+  expect(await pageScroll(page)).toBe(scrolled);
+});
+
+/**
+ * Runs `run` with a pointer no one sees over a box of the test's own, in a page of the site, so
+ * the pointer's module is the site's. `run` is a function body that gets `box`, `pointer` and
+ * `at(selector, x, y)`, a point of an element as fractions of its box.
+ */
+async function withPointer<T>(page: Page, html: string, run: string): Promise<T> {
+  await page.goto(`${siteDevUrl}/components`);
+  return page.evaluate(
+    async ([html, run]) => {
+      const module = '/src/previews/VirtualPointer.ts';
+      const { VirtualPointer } = await import(/* @vite-ignore */ module);
+      const box = document.createElement('div');
+      box.setAttribute('inert', '');
+      box.style.cssText = 'position: fixed; inset: 0 auto auto 0; width: 600px; z-index: 1000;';
+      box.innerHTML = html;
+      document.body.append(box);
+      const pointer = new VirtualPointer(box);
+      const at = (selector: string, x = 0.5, y = 0.5) => {
+        const rect = box.querySelector(selector)!.getBoundingClientRect();
+        return { x: rect.left + rect.width * x, y: rect.top + rect.height * y };
+      };
+      const body = new Function('box', 'pointer', 'at', `return (async () => {${run}})();`);
+      return body(box, pointer, at);
+    },
+    [html, run] as const,
+  ) as Promise<T>;
+}
+
+test('a right click asks for a context menu, clicks nothing, and holds the page while pressed', async ({
+  page,
+}) => {
+  const result = await withPointer<{ events: string[]; locked: boolean; free: boolean }>(
+    page,
+    '<button id="target">Row</button>',
+    `
+      const events = [];
+      const types = ['pointerdown', 'mousedown', 'contextmenu', 'pointerup', 'mouseup', 'click'];
+      for (const type of types) box.addEventListener(type, (event) => events.push(type + ' ' + event.button));
+      const other = new pointer.constructor(box);
+      pointer.moveTo(at('#target'));
+      pointer.press(2);
+      const locked = !other.canPress;
+      pointer.release();
+      return { events, locked, free: other.canPress };
+    `,
+  );
+  expect(result.events).toEqual([
+    'pointerdown 2',
+    'mousedown 2',
+    'contextmenu 2',
+    'pointerup 2',
+    'mouseup 2',
+  ]);
+  expect(result.locked).toBe(true);
+  expect(result.free).toBe(true);
+});
+
+test('a held key is on every event until it is let go, as Alt with a letter is', async ({
+  page,
+}) => {
+  const events = await withPointer<string[]>(
+    page,
+    '<button id="target">File</button>',
+    `
+      const events = [];
+      const note = (event) =>
+        events.push([event.type, event.key ?? '', event.code ?? '', event.altKey].join(' '));
+      const types = ['keydown', 'keyup', 'click'];
+      for (const type of types) window.addEventListener(type, note, true);
+      pointer.moveTo(at('#target'));
+      pointer.keyDown('Alt');
+      pointer.key('f');
+      pointer.press();
+      pointer.release();
+      pointer.keyUp('Alt');
+      pointer.key('f');
+      pointer.keyDown('Shift');
+      pointer.leave();
+      for (const type of types) window.removeEventListener(type, note, true);
+      return events;
+    `,
+  );
+  expect(events).toEqual([
+    'keydown Alt AltLeft true',
+    'keydown f KeyF true',
+    'keyup f KeyF true',
+    'click   true',
+    'keyup Alt AltLeft false',
+    'keydown f KeyF false',
+    'keyup f KeyF false',
+    'keydown Shift ShiftLeft false',
+    // Leaving lets every held key go.
+    'keyup Shift ShiftLeft false',
+  ]);
+});
+
+test('the wheel scrolls the box under the pointer, unless the element takes the turn', async ({
+  page,
+}) => {
+  const result = await withPointer<{ wheeled: number; top: number; taken: number }>(
+    page,
+    '<div id="list" style="height: 100px; overflow: auto"><div style="height: 500px">Rows</div></div>',
+    `
+      const list = box.querySelector('#list');
+      let wheeled = 0;
+      list.addEventListener('wheel', (event) => (wheeled += event.deltaY));
+      pointer.moveTo(at('#list'));
+      pointer.startWheel('y');
+      for (const distance of [20, 60, 120]) pointer.turnWheel(distance);
+      pointer.endWheel();
+      const top = list.scrollTop;
+      const turned = wheeled;
+      list.addEventListener('wheel', (event) => event.preventDefault());
+      pointer.startWheel('y');
+      pointer.turnWheel(-120);
+      pointer.endWheel();
+      return { wheeled: turned, top, taken: list.scrollTop };
+    `,
+  );
+  expect(result.wheeled).toBe(120);
+  expect(result.top).toBe(120);
+  expect(result.taken).toBe(120);
+});
+
+test("a drag across text selects it, in a field and in content, and keeps the reader's own selection", async ({
+  page,
+}) => {
+  const result = await withPointer<{
+    field: number[];
+    painted: string | null;
+    typed: string;
+    content: string;
+    kept: boolean;
+    cleared: number;
+  }>(
+    page,
+    '<input id="name" value="Quarterly report draft" style="width: 400px; font: 16px monospace; padding: 0 4px; border: 0"><p id="text" style="font: 16px monospace; margin: 8px 0">Website refresh launch</p>',
+    `
+      const heading = document.querySelector('h1');
+      const reader = document.createRange();
+      reader.selectNodeContents(heading);
+      getSelection().removeAllRanges();
+      getSelection().addRange(reader);
+      const readerText = getSelection().toString();
+      const field = box.querySelector('#name');
+      const text = box.querySelector('#text');
+      const character = (() => {
+        const canvas = document.createElement('canvas').getContext('2d');
+        canvas.font = '16px monospace';
+        return canvas.measureText('x').width;
+      })();
+      // From before "report" to after it, in the field.
+      const edge = field.getBoundingClientRect();
+      const y = edge.top + edge.height / 2;
+      pointer.moveTo({ x: edge.left + 4 + character * 10.2, y });
+      pointer.press();
+      pointer.moveTo({ x: edge.left + 4 + character * 13, y });
+      pointer.moveTo({ x: edge.left + 4 + character * 15.8, y });
+      pointer.release();
+      const selected = [field.selectionStart, field.selectionEnd];
+      const painted = document.querySelector('.catalogue-field-selection span')?.textContent ?? null;
+      // Typing goes over the selection.
+      for (const letter of 'summary') pointer.type('#name', letter);
+      const typed = field.value;
+      // From the start of "refresh" to the end of "launch", in content.
+      const line = text.getBoundingClientRect();
+      const middle = line.top + line.height / 2;
+      pointer.moveTo({ x: line.left + character * 8.2, y: middle });
+      pointer.press();
+      pointer.moveTo({ x: line.left + character * 15, y: middle });
+      pointer.moveTo({ x: line.left + character * 21.8, y: middle });
+      pointer.release();
+      const highlight = CSS.highlights.get('catalogue-selection');
+      const content = [...highlight].map((range) => range.toString()).join('|');
+      const kept = getSelection().toString() === readerText;
+      // A press elsewhere leaves nothing selected.
+      pointer.moveTo({ x: line.left + 2, y: middle });
+      pointer.press();
+      pointer.release();
+      return { field: selected, painted, typed, content, kept, cleared: highlight.size };
+    `,
+  );
+  expect(result.field).toEqual([10, 16]);
+  expect(result.painted).toBe('report');
+  expect(result.typed).toBe('Quarterly summary draft');
+  expect(result.content).toBe('refresh launch');
+  expect(result.kept).toBe(true);
+  expect(result.cleared).toBe(0);
+});

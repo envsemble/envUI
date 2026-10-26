@@ -115,6 +115,9 @@ export const aliases: Record<string, string[]> = {
   contrast: ['Contrast'],
   'forced-colors': ['ForcedColors'],
   layers: ['CascadeLayers'],
+  MotionStage: ['SiteMotion'],
+  VirtualPointer: ['SiteMotion'],
+  VirtualSelection: ['SiteMotion'],
 };
 
 /** The specs a token, theme or other shared change runs. */

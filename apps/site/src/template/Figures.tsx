@@ -151,6 +151,7 @@ function Figure({
       classes={block.classes}
       open={block.open}
       stage={block.stage}
+      motion={block.motion}
     />
   );
 }

@@ -134,7 +134,7 @@ People can resize columns by dragging the boundary at the end of a header, or wi
 
 The header row can stay in view while the rows scroll beneath it, in a region of a set height.
 
-```tsx figure=StickyHeader
+```tsx figure=StickyHeader motion
 
 ```
 
