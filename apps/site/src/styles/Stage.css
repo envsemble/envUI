@@ -6,20 +6,46 @@
    the system rather than showing envUI at work, on a foundation page, sits on the page itself.
    Both centre what they show. A device of the documentation, kept out of envUI. */
 /* A very faint shadow that keeps a card's edges visible on the page: every recessed canvas: the
-   examples, the tiles of Related and the galleries, the Overview's fan of cards, and the site's own
-   cards, the catalogue's only shadows, by request. It resolves in the theme of the
-   element that uses it. */
-:root {
-  /* stylelint-disable declaration-property-value-disallowed-list -- the catalogue's one shadow,
-     for its examples, tiles and cards alone, and a subtler one for small cards. */
+   examples, the tiles of Related and the galleries, and the site's own cards, the catalogue's only
+   shadows, by request. Its color follows the card's own, `--catalogue-card-fill`: a shade of it,
+   darker, and stronger the darker the card, so a dark card casts a dark shadow and a light card a
+   light one. Each card sets its fill below, and the shadow is declared on the card itself, so it
+   reads that card's fill. The Docs' outlined banner casts none. */
+.site-live-example,
+.site-verdict-stage,
+.site-anatomy-stage,
+.catalogue-related-stage,
+.site-foundation-stage[data-figure='example'],
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
+.catalogue-showcase-card,
+.site-page-banner[data-banner='catalogue'],
+.catalogue-overview-hero,
+.catalogue-explore-grid > .env-card,
+.catalogue-icon-tile,
+.site-page-navigation .env-pager-link {
   --catalogue-card-shadow:
-    0 0 0.125rem light-dark(oklch(0% 0 0 / 0.08), oklch(0% 0 0 / 0.35)),
-    0 0.25rem 0.75rem light-dark(oklch(0% 0 0 / 0.06), oklch(0% 0 0 / 0.3));
+    0 0 0.125rem
+      oklch(
+        from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
+          calc(0.55 - l * 0.45)
+      ),
+    0 0.25rem 0.75rem
+      oklch(
+        from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
+          calc(0.44 - l * 0.36)
+      );
   /* Half as strong, for a small card such as the pager's at a page's foot. */
   --catalogue-card-shadow-subtle:
-    0 0 0.125rem light-dark(oklch(0% 0 0 / 0.05), oklch(0% 0 0 / 0.25)),
-    0 0.125rem 0.5rem light-dark(oklch(0% 0 0 / 0.035), oklch(0% 0 0 / 0.2));
-  /* stylelint-enable declaration-property-value-disallowed-list */
+    0 0 0.125rem
+      oklch(
+        from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
+          calc(0.34 - l * 0.28)
+      ),
+    0 0.125rem 0.5rem
+      oklch(
+        from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
+          calc(0.26 - l * 0.21)
+      );
 }
 
 .site-live-example,
@@ -53,23 +79,27 @@
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-showcase-card {
   /* contrast: catalogue-canvas */
-  background-color: light-dark(
+  --catalogue-card-fill: light-dark(
     oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.035) c h),
     oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.045) c h)
   );
+  background-color: var(--catalogue-card-fill);
   /* Every canvas, an example's, a tile's or a card's, lifts off the page a little. */
   box-shadow: var(--catalogue-card-shadow);
 }
 
-/* The site's own cards lift off the page as its canvases do: a page's banner, the Overview's hero
-   and its cards, and the icons' tiles; the pager at a page's foot, smaller, half as much. */
-.site-page-banner,
+/* The site's own cards lift off the page as its canvases do, each by its own fill: a catalogue
+   page's banner, the Overview's hero and its cards, and the icons' tiles; the pager at a page's
+   foot, smaller, half as much. */
+.site-page-banner[data-banner='catalogue'],
 .catalogue-overview-hero,
 .catalogue-explore-grid > .env-card,
 .catalogue-icon-tile {
+  --catalogue-card-fill: var(--env-surface-color);
   box-shadow: var(--catalogue-card-shadow);
 }
 .site-page-navigation .env-pager-link {
+  --catalogue-card-fill: var(--env-color-bg-raised);
   box-shadow: var(--catalogue-card-shadow-subtle);
 }
 

@@ -37,9 +37,8 @@
   letter-spacing: 0;
 }
 
-/* The Docs: on the page's color inside an edge, the shapes in outline. */
+/* The Docs: on the page's color inside an edge, with a still LineArt drawing, and no shadow. */
 .site-banner:is([data-banner='docs'], [data-banner='docs-home']) {
-  --site-banner-shape-edge: var(--env-color-border-default);
   border: 0.0625rem solid var(--env-color-border-muted);
   background: var(--env-color-bg-page);
 }
@@ -52,9 +51,10 @@
   background: var(--env-color-bg-default);
 }
 
-/* The catalogue's picture (CatalogueBannerLines.tsx): a LineArt drawing in a box at the banner's
-   end, cropped from its start where the banner is narrow. */
-.catalogue-banner-lines {
+/* The banner's picture (CatalogueBannerLines.tsx, DocsBannerLines.tsx): a LineArt drawing in a box
+   at the banner's end, cropped from its start where the banner is narrow. */
+.catalogue-banner-lines,
+.docs-banner-lines {
   position: absolute;
   inset-block: 0;
   inset-inline-end: 0;
@@ -62,39 +62,14 @@
 }
 
 /* The shapes' layer covers the banner and is a container of its size. It clips the shapes itself,
-   as the banner does: a filled shape reaching past the banner's edge would otherwise count, for
-   the accessibility scan, as the background of what is beside the banner, such as its contents. */
+   as the banner does: a shape reaching past the banner's edge would otherwise count, for the
+   accessibility scan, as part of what is beside the banner, such as its contents. */
 .site-banner-shapes {
   position: absolute;
   inset: 0;
   overflow: hidden;
   container-type: size;
   pointer-events: none;
-}
-
-/* The Docs' shapes: the envUI mark's circle and pill, in outline at the banner's end. */
-.site-banner-shape {
-  --site-banner-shape: min(62cqh, 22cqi);
-  position: absolute;
-  box-sizing: border-box;
-  inline-size: var(--site-banner-shape);
-  block-size: var(--site-banner-shape);
-  border: 0.0625rem solid var(--site-banner-shape-edge);
-  border-radius: calc(var(--site-banner-shape) / 2);
-}
-
-.site-banner-shape[data-shape='pill'] {
-  inline-size: calc(var(--site-banner-shape) * 1.92);
-}
-
-.site-banner-shape[data-corner='top-end'] {
-  inset-block-start: -15cqh;
-  inset-inline-end: calc(var(--site-banner-shape) * -0.25);
-}
-
-.site-banner-shape[data-corner='bottom-end'] {
-  inset-block-end: -15cqh;
-  inset-inline-end: calc(var(--site-banner-shape) * -1.08);
 }
 
 /* The Docs' home shows the envUI Docs lockup as its title, with room before the summary. */

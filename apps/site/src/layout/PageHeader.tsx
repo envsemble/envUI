@@ -3,8 +3,8 @@ import { Breadcrumbs, Card, Column, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
 import type { TrailStep } from '../navigation/SiteRoutes';
 import { BannerMotif, motifOf } from './BannerMotif';
-import { BannerShapes } from './BannerShapes';
 import { CatalogueBannerLines } from './CatalogueBannerLines';
+import { DocsBannerLines } from './DocsBannerLines';
 
 /**
  * The kinds of banner, each read from the start like a document, under its breadcrumbs, the envUI
@@ -60,7 +60,7 @@ export function PageHeader({
         ) : kind === 'catalogue' ? (
           <CatalogueBannerLines subject={subject} />
         ) : (
-          <BannerShapes />
+          <DocsBannerLines title={title} />
         )}
         <Column gap={6} className="site-page-banner-content">
           <div className="site-page-banner-heading">
