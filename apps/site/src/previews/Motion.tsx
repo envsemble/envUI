@@ -163,6 +163,9 @@ export function useTimeline(durations: readonly number[]) {
  * - `type`, text, `into` a selector of a field: typed a character at a time, `every` ms apart;
  *   `erase`, a count: as many characters deleted the same way.
  * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`.
+ * - `focus`, a selector: the keyboard's focus arrives on that element, as a Tab brings it, with
+ *   its focus ring; keys then go to it, and where a key moves focus, as an arrow key along tabs
+ *   does, it follows. `blur` takes it off the preview again.
  * - `keyDown`, `keyUp`, a key such as `Alt`: held down and let go, on the field typed into or on
  *   `on`. A held modifier, Alt, Control, Shift or Meta, is on every event meanwhile, so Alt and a
  *   `key` is Alt with that key.
@@ -184,6 +187,8 @@ export type PointerStep =
   | { type: string; into: string; every?: number }
   | { erase: number; into: string; every?: number }
   | { key: string; on?: string }
+  | { focus: string }
+  | { blur: true }
   | { keyDown: string; on?: string }
   | { keyUp: string; on?: string }
   | { wheel: number; axis?: 'x' | 'y'; duration?: number }
@@ -216,6 +221,8 @@ interface Plan {
       | 'key'
       | 'keyDown'
       | 'keyUp'
+      | 'focus'
+      | 'blur'
       | 'carry'
       | 'drop';
     /** A cue's name, the text typed (null for a deleted character), or the key. */
@@ -288,6 +295,8 @@ function planOf(script: readonly PointerStep[]): Plan {
     else if ('keyUp' in step)
       plan.happenings.push({ time, kind: 'keyUp', cue: step.keyUp, target: step.on });
     else if ('cue' in step) plan.happenings.push({ time, kind: 'cue', cue: step.cue });
+    else if ('focus' in step) plan.happenings.push({ time, kind: 'focus', target: step.focus });
+    else if ('blur' in step) plan.happenings.push({ time, kind: 'blur' });
     else if ('type' in step || 'erase' in step) {
       const characters = 'type' in step ? [...step.type] : Array<null>(step.erase).fill(null);
       for (const text of characters) {
@@ -421,6 +430,10 @@ export function usePointer(
         }
         if (happening.kind === 'keyUp') {
           current.keyUp(happening.cue!, happening.target);
+          continue;
+        }
+        if (happening.kind === 'focus' || happening.kind === 'blur') {
+          current.keyboardFocus(happening.target ?? null);
           continue;
         }
         if (happening.kind === 'carry') {

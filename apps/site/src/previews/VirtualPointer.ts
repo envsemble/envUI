@@ -92,6 +92,25 @@ function keepCaptures() {
   };
 }
 
+/** The previews the keyboard's focus is in, by their scope, and what follows a move of it there. */
+const keyboardFocused = new Map<Element, (element: Element) => void>();
+
+/**
+ * Keeps the keyboard's focus inside a preview that has it: the preview is inert, so where one of
+ * its components moves focus, as an arrow key along tabs does, the pointer's focus follows
+ * instead (VirtualPointer.keyboardFocus). Elsewhere, focus is the browser's, as before.
+ */
+function keepFocus() {
+  const proto = HTMLElement.prototype;
+  if ((proto as { catalogueFocus?: boolean }).catalogueFocus) return;
+  (proto as { catalogueFocus?: boolean }).catalogueFocus = true;
+  const { focus } = proto;
+  proto.focus = function (options?: FocusOptions) {
+    for (const [scope, follow] of keyboardFocused) if (scope.contains(this)) return follow(this);
+    return focus.call(this, options);
+  };
+}
+
 /** The mouse event a pointer event is followed by, as a browser follows it, for older handlers. */
 const mouseTwin: Record<string, string> = {
   pointerover: 'mouseover',
@@ -372,6 +391,7 @@ export class VirtualPointer {
     if (button === 0) for (const element of this.pressed) mark(element, pressMark, true);
     // A press in a field focuses it, and anywhere else takes focus from the field. A button keeps
     // no focus ring under a pointer, so it isn't marked.
+    if (keyboardFocused.has(this.scope)) this.keyboardFocus(null);
     this.focus(target.closest(textFields));
     if (button === 2) {
       // As the secondary button goes down, the context menu is asked for where the pointer is.
@@ -499,12 +519,40 @@ export class VirtualPointer {
     };
   }
 
-  /** What a key goes to: an element of the preview, or the field typed into, or the preview. */
+  /** What a key goes to: an element of the preview, or what is focused, or the preview. */
   private keyTarget(selector?: string) {
     return (selector && this.scope.querySelector(selector)) || this.focused || this.scope;
   }
 
-  /** Presses a key on an element of the preview, or on the field typed into. */
+  /**
+   * The keyboard's focus arrives on an element of the preview, as a Tab brings it, or with
+   * nothing leaves it: the element is marked as focused, as the inert preview can't focus it, and
+   * hears the focus events a browser sends, as does the element it leaves.
+   */
+  keyboardFocus(selector: string | Element | null) {
+    const element =
+      typeof selector === 'string' ? this.scope.querySelector(selector) : (selector ?? null);
+    const from = this.focused;
+    if (from === element) return;
+    this.focus(element);
+    keepFocus();
+    if (element) keyboardFocused.set(this.scope, (next) => this.keyboardFocus(next));
+    else keyboardFocused.delete(this.scope);
+    const events = (target: Element, out: boolean, relatedTarget: Element | null) => {
+      target.dispatchEvent(new FocusEvent(out ? 'blur' : 'focus', { relatedTarget }));
+      target.dispatchEvent(
+        new FocusEvent(out ? 'focusout' : 'focusin', {
+          bubbles: true,
+          composed: true,
+          relatedTarget,
+        }),
+      );
+    };
+    if (from) events(from, true, element);
+    if (element) events(element, false, from);
+  }
+
+  /** Presses a key on an element of the preview, or on the field typed into or focused. */
   key(key: string, selector?: string) {
     const target = this.keyTarget(selector);
     target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
@@ -637,6 +685,7 @@ export class VirtualPointer {
 
   dispose() {
     this.endWheel();
+    keyboardFocused.delete(this.scope);
     this.focus(null);
     this.leave();
     this.selection.clear();

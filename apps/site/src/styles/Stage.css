@@ -440,6 +440,15 @@
   inset-inline-end: var(--env-space-2);
 }
 
+/* A grid of specimens that plays, such as states the pointer goes through: the figure's stage is
+   its canvas, so it has none of its own, and it spans the stage as a still grid does. */
+.site-figures .catalogue-motion-subject :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
+  justify-self: stretch;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
 /* Notifications at a figure's bottom end arrive beside its pause button, which keeps that corner,
    as an application's would beside a control fixed there. */
 .catalogue-motion-subject .env-toast-viewport[data-placement='bottom-end'] {
