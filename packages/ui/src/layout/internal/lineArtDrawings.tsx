@@ -351,3 +351,87 @@ export const lineArtShapes: Record<LineArtDrawing, ReactNode> = {
     </>
   ),
 };
+
+/*
+ * The order in which each drawing's lines draw themselves in, and out, as LineArt's motions do: the
+ * order of its construction, as a draughtsman would set it out, from the lines that frame it to
+ * the finer divisions they lead to. Each beat lists lines by their place among the drawing's
+ * shapes above, from 0; the lines of a beat move together, and the beats follow one another
+ * evenly, so every drawing takes as long.
+ */
+export const lineArtOrder: Record<LineArtDrawing, readonly (readonly number[])[]> = {
+  // The rectangle and its diagonals, then each square's cut with its arc, from the largest.
+  'golden-section': [
+    [0],
+    [17, 18],
+    [1, 2],
+    [3, 4],
+    [5, 6],
+    [7, 8],
+    [9, 10],
+    [11, 12],
+    [13, 14],
+    [15, 16],
+  ],
+  // The square, its midlines and the grid running on, the circle, the diagonals, the triangle.
+  'square-circle-triangle': [[1, 3, 4, 6], [0, 2, 5], [7], [9, 10], [8]],
+  // The squares, from the outermost in.
+  'whirling-squares': [[0], [1], [2], [3], [4], [5], [6], [7]],
+  // The circumcircle, the triangle in it, its axes, and the incircle they meet.
+  'triangle-and-circles': [[1], [0], [3, 4, 5], [2]],
+  // The line, then the circles from the largest, those of one size together.
+  'ford-circles': [[0], [1], [2], [3], [4], [5, 6], [7], [8, 9, 10], [11, 12], [13, 14, 15]],
+  // The rectangle, its diagonals, then each cut with the line from the corner that gives the next.
+  'harmonic-division': [[0, 1, 2, 3], [4, 11], [5, 12], [6, 13], [7, 14], [8, 15], [9, 16], [10]],
+  // The line, the three semicircles from the largest, then the chain from its largest circle.
+  'pappus-chain': [[0], [1], [2, 3], [4], [5], [6], [7], [8], [9], [10], [11], [12], [13]],
+  // The square, then each diagonal, the arc it swings, and the side it raises with the next one.
+  'root-rectangles': [[0, 14, 15, 16], [1], [2], [3, 4], [5], [6, 7], [8], [9, 10], [11], [12, 13]],
+  // The square, its diagonals, the arcs from its corners and the cuts they make.
+  'sacred-cut': [[0], [1, 2], [3, 4, 5, 6], [7, 8, 9, 10]],
+  // The springing line, the arches, the arches of half their span, the circles and the piers.
+  'gothic-tracery': [
+    [0],
+    [1, 2, 10, 11, 19, 20],
+    [3, 4, 5, 6, 12, 13, 14, 15, 21, 22, 23, 24],
+    [7, 16, 25],
+    [8, 9, 17, 18, 26, 27],
+  ],
+  // The square and its diagonal, then each quartering and the circle of the quarter left behind.
+  'quartered-square': [
+    [0],
+    [1],
+    [2, 3],
+    [4],
+    [5, 6],
+    [7],
+    [8, 9],
+    [10],
+    [11, 12],
+    [13],
+    [14, 15],
+    [16],
+  ],
+  // The square's quarters, then every quartering of a level together, four times over.
+  'graded-quadtree': [
+    [0, 1, 2],
+    [3, 4, 5, 6, 25, 26, 27, 28],
+    [7, 8, 9, 10, 11, 12, 15, 16, 29, 30, 33, 34, 43, 44, 45, 46],
+    [13, 14, 17, 18, 19, 20, 21, 22, 23, 24, 31, 32, 35, 36, 37, 38, 39, 40, 41, 42],
+  ],
+  // The string, its ends, the arc over the whole, then each stop with the arc over its length.
+  monochord: [[0], [1, 2], [3], [4, 5], [6, 7], [8, 9]],
+  // The scales' axes, each value both ways from 2 to 10, then the diagonal where they agree.
+  'logarithmic-grid': [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [0]],
+  // The springing line and the first pier, then each arch with the pier it lands on.
+  'pointed-arcade': [
+    [0, 1],
+    [2, 3, 4],
+    [5, 6, 7],
+    [8, 9, 10],
+    [11, 12, 13],
+    [14, 15, 16],
+  ],
+  // The rectangle, its diagonals to the pole, then each halving in turn.
+  'root-two-halving': [[0, 1, 2, 3], [12, 13], [4], [5], [6], [7], [8], [9], [10], [11]],
+};

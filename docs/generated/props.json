@@ -3751,7 +3751,7 @@
     "LineArt": {
       "kind": "component",
       "source": "packages/ui/src/layout/LineArt.tsx",
-      "description": "A geometric drawing in hairlines that fills its container's box, for a banner's end, an empty state or the background of a header: its lines in the muted edge color in every theme, one device pixel wide at any size, and the system's gray text color in forced colors. It covers the box, cropped from its start by default, and is hidden from assistive technology unless a label makes it an image.",
+      "description": "A geometric drawing in hairlines that fills its container's box, for a banner's end, an empty state or the background of a header: its lines in the muted edge color in every theme, one device pixel wide at any size, and the system's gray text color in forced colors. It covers the box, cropped from its start by default, and is hidden from assistive technology unless a label makes it an image. With `motion`, its lines draw themselves in, out, or in and out again.",
       "props": [
         {
           "name": "drawing",
@@ -3771,6 +3771,18 @@
           "type": "string",
           "required": false,
           "description": "What the drawing shows, for a drawing that is content rather than decoration: it makes the drawing an image named by it. Without it, the drawing is hidden from assistive technology."
+        },
+        {
+          "name": "motion",
+          "type": "'appear' | 'disappear' | 'loop' | 'play'",
+          "required": false,
+          "description": "How the drawing moves as it mounts or as this changes, its lines one after another in the order of its construction: `appear` draws them in, from nothing to the whole drawing; `disappear` draws them out, from the whole drawing to nothing, where it stays; `loop` draws them in and out again for as long as it is set, ending each round where the next begins; and `play` runs each line out past its end and draws it in again, the drawing whole throughout, ending on the still. Without it, the drawing is still. Where reduced motion is preferred, the drawing shows where the motion ends at once, and stays whole for `loop`."
+        },
+        {
+          "name": "onMotionEnd",
+          "type": "() => void",
+          "required": false,
+          "description": "Called once `appear`, `disappear` or `play` has finished, at once where reduced motion is preferred, such as to unmount a drawing that has disappeared or to play it again later."
         }
       ],
       "native": [
