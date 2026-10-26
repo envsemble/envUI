@@ -1727,6 +1727,12 @@
           "description": "Filtered and ranked by the application, in display order."
         },
         {
+          "name": "defaultItems",
+          "type": "readonly CommandPaletteItem[]",
+          "required": false,
+          "description": "Shown in place of items while the search field is empty, such as recent documents or suggested pages under a group heading; options like any other."
+        },
+        {
           "name": "onAction",
           "type": "(item: CommandPaletteItem, options: CommandPaletteActionOptions) => void",
           "required": true,
@@ -1749,8 +1755,22 @@
           "name": "emptyLabel",
           "type": "ReactNode",
           "required": false,
-          "default": "'No results', or EnvUIProvider's messages.commandPalette.empty",
-          "description": "Shown in place of the list when there are no items, and announced."
+          "default": "'Type to search' while the search field is empty and 'No results' when its text finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty",
+          "description": "The empty state's title, shown in place of the list when there are no options, and announced."
+        },
+        {
+          "name": "emptyDescription",
+          "type": "ReactNode",
+          "required": false,
+          "default": "None while the search field is empty; when its text finds nothing, 'Nothing matches “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint",
+          "description": "Quieter text under the empty state's title, such as what the palette searches; null shows none."
+        },
+        {
+          "name": "emptyIcon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "Search while the search field is empty, SearchOff when its text finds nothing",
+          "description": "The empty state's decorative icon, above its title; null shows none."
         },
         {
           "name": "hints",

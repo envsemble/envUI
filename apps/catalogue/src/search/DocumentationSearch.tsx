@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Button, CommandPalette, Column, type CommandPaletteItem } from '@envsemble/envui';
+import {
+  Button,
+  CommandPalette,
+  type CommandPaletteItem,
+  type CommandPaletteProps,
+} from '@envsemble/envui';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Extension } from '@envsemble/envui/icons/Extension';
 import { DataObject } from '@envsemble/envui/icons/DataObject';
@@ -7,7 +12,14 @@ import { Palette } from '@envsemble/envui/icons/Palette';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Article } from '@envsemble/envui/icons/Article';
-import { routeOfDocument } from '../navigation/DocumentationRoutes';
+import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
+import {
+  counterpartOf,
+  findPage,
+  routeOfDocument,
+  type RoutePage,
+} from '../navigation/DocumentationRoutes';
+import { otherPart } from '../navigation/OtherPart';
 import { navigate, routeHref } from '../navigation/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../template/LoadBoundary';
 import type { SearchResult } from './SearchIndex';
@@ -59,6 +71,50 @@ const icons: Record<SearchResult['kind'], ReactNode> = {
 /** The name of each part of the site, which a result's description starts with. */
 const areas: Record<SearchResult['area'], string> = { catalogue: 'Catalogue', docs: 'Docs' };
 
+/** What the empty query finds: the start of either part, and the setup guide. */
+const suggestedRoutes = [
+  { route: 'docs/setup', icon: <Article /> },
+  { route: 'components', icon: <Widgets /> },
+  { route: 'patterns', icon: <Pattern /> },
+  { route: 'docs/tokens', icon: <Palette /> },
+];
+
+/**
+ * What search suggests before people type: the page of the same subject in the other part, where
+ * the current page has one, then the setup guide, every component, every pattern and the tokens.
+ * Each suggestion's id is the route it opens.
+ */
+function suggestionsFor(page: RoutePage | undefined): CommandPaletteItem[] {
+  const counterpart = page && counterpartOf(page);
+  const target = counterpart && findPage(counterpart);
+  const suggestions: CommandPaletteItem[] = [];
+  if (target) {
+    const { Icon } = otherPart(page.area);
+    suggestions.push({
+      id: target.path,
+      label: target.title,
+      description:
+        target.area === 'docs'
+          ? 'Docs · This page in code, with its props'
+          : 'Catalogue · This page, with its examples and rules',
+      icon: <Icon />,
+      group: 'Suggested',
+    });
+  }
+  for (const { route, icon } of suggestedRoutes) {
+    const suggested = findPage(route);
+    if (!suggested) continue;
+    suggestions.push({
+      id: suggested.path,
+      label: suggested.label ?? suggested.title,
+      description: `${areas[suggested.area]} · ${suggested.section}`,
+      icon,
+      group: 'Suggested',
+    });
+  }
+  return suggestions;
+}
+
 /** Results considered, and shown in each group. */
 const resultLimit = 60;
 const groupLimit = 8;
@@ -87,14 +143,17 @@ type IndexState =
  * Searches the catalogue and the Docs in envUI's CommandPalette: components by their names and aliases,
  * their props, the tokens and the foundations, patterns and guides, each result saying which area
  * it is in. A result opens its page, and the prop or token on it; with Ctrl or ⌘ held, in a new
- * tab.
+ * tab. Before people type, it suggests a few pages, the current page's counterpart first.
  */
 export function DocumentationSearch({
   open,
   onOpenChange,
+  page,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** The page the reader is on, whose counterpart search suggests. */
+  page: RoutePage | undefined;
 }) {
   const [query, setQuery] = useState('');
   const [index, setIndex] = useState<IndexState>({ status: 'loading' });
@@ -129,31 +188,36 @@ export function DocumentationSearch({
       })),
     [results],
   );
-  let emptyLabel: ReactNode;
-  if (index.status === 'loading') emptyLabel = <Loading what="search" />;
+  const suggestions = useMemo(() => suggestionsFor(page), [page]);
+  // Before people type, the suggestions show. A query shows, while the index loads, the loading
+  // state; after it fails, why, with the way on; and when it finds nothing, what search finds.
+  let empty: Pick<CommandPaletteProps, 'emptyIcon' | 'emptyLabel' | 'emptyDescription'>;
+  if (index.status === 'loading')
+    empty = { emptyIcon: null, emptyLabel: <Loading what="search" />, emptyDescription: null };
   else if (index.status === 'failed')
-    emptyLabel = (
-      <Column gap={3} align="center">
-        Search could not load.
-        {canRetryLoad ? (
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setIndex({ status: 'loading' });
-              setAttempt((count) => count + 1);
-            }}
-          >
-            Try again
-          </Button>
-        ) : (
-          <Button variant="secondary" onClick={() => void reloadPage([indexModule])}>
-            Reload the page
-          </Button>
-        )}
-      </Column>
-    );
-  else if (query.trim()) emptyLabel = `No results for “${query.trim()}”`;
-  else emptyLabel = 'Search components and their aliases, props, tokens, foundations and guides.';
+    empty = {
+      emptyIcon: <ErrorIcon />,
+      emptyLabel: 'Search could not load',
+      emptyDescription: canRetryLoad ? (
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setIndex({ status: 'loading' });
+            setAttempt((count) => count + 1);
+          }}
+        >
+          Try again
+        </Button>
+      ) : (
+        <Button variant="secondary" onClick={() => void reloadPage([indexModule])}>
+          Reload the page
+        </Button>
+      ),
+    };
+  else
+    empty = {
+      emptyDescription: `Nothing matches “${query.trim()}”. Search finds components by name or alias, their props, tokens, foundations, patterns and guides.`,
+    };
   return (
     <CommandPalette
       open={open}
@@ -163,7 +227,8 @@ export function DocumentationSearch({
       inputValue={query}
       onInputValueChange={setQuery}
       items={items}
-      emptyLabel={emptyLabel}
+      defaultItems={suggestions}
+      {...empty}
       hints={[
         { keys: ['Enter'], label: 'Open' },
         { keys: [commandKey, 'Enter'], label: 'Open in a new tab' },
@@ -171,8 +236,10 @@ export function DocumentationSearch({
       ]}
       onAction={(item, { modifier }) => {
         const result = results.find(({ id }) => id === item.id);
-        const route =
-          result && routeOfDocument(result.page, { view: result.view, section: result.section });
+        // A suggestion's id is its route.
+        const route = result
+          ? routeOfDocument(result.page, { view: result.view, section: result.section })
+          : suggestions.find(({ id }) => id === item.id)?.id;
         if (!route) return;
         if (modifier) window.open(new URL(routeHref(route), location.href).href, '_blank');
         // A route the address names already shows its place again and focuses it, as a fresh

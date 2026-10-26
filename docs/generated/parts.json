@@ -1553,6 +1553,18 @@
           "description": "The command palette's dialog."
         },
         {
+          "class": "env-command-palette-empty-description",
+          "description": "The empty state's quieter text under its title."
+        },
+        {
+          "class": "env-command-palette-empty-icon",
+          "description": "The empty state's icon on its circle."
+        },
+        {
+          "class": "env-command-palette-empty-title",
+          "description": "The empty state's title."
+        },
+        {
           "class": "env-command-palette-footer",
           "description": "The footer with the keyboard hints."
         },
@@ -1594,7 +1606,7 @@
         },
         {
           "class": "env-command-palette-status",
-          "description": "The message when nothing matches, and its announcement."
+          "description": "The empty state in place of the list, and the announcement of the number of results."
         }
       ],
       "states": [

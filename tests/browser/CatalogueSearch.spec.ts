@@ -63,7 +63,8 @@ test.describe('search', () => {
       await page.keyboard.press(keys.own);
       await expect(dialog(page)).toBeVisible();
       await expect(field(page)).toBeFocused();
-      await expect(dialog(page)).toContainText('Search components and their aliases');
+      // Before people type, search suggests where to start.
+      await expect(dialog(page).getByRole('group', { name: 'Suggested' })).toBeVisible();
       await page.keyboard.press(keys.own);
       await expect(dialog(page)).toBeHidden();
       // The other platform's modifier leaves the keys to the page, such as Ctrl+K in a Mac text field.
@@ -88,6 +89,36 @@ test.describe('search', () => {
       await expect(button).toBeFocused();
     },
   );
+
+  test('suggests the same page in the other part and where to start, until people type', async ({
+    page,
+  }) => {
+    await openCatalogue(page, `${catalogueUrl}/components/badge`);
+    await page.keyboard.press((await shortcutKeys(page)).own);
+    const suggested = dialog(page).getByRole('group', { name: 'Suggested' });
+    // The page's counterpart in the Docs comes first, highlighted, then the starting points.
+    await expect(suggested.getByRole('option')).toHaveText([
+      /^Badge.*Docs/,
+      /^Install and set up/,
+      /^All components/,
+      /^All patterns/,
+      /^Design tokens/,
+    ]);
+    await expect.poll(() => highlighted(page)).toBe('docs/components/badge');
+    // A query replaces them with its results, and a query that finds nothing says so.
+    await field(page).fill('qwzxv');
+    const status = dialog(page).locator('.env-command-palette-status');
+    await expect(status).toContainText('No results');
+    await expect(status).toContainText('Nothing matches “qwzxv”');
+    await expect(suggested).toHaveCount(0);
+    await field(page).fill('');
+    await expect.poll(() => highlighted(page)).toBe('docs/components/badge');
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(`${catalogueUrl}/docs/components/badge`);
+    // From the Docs, the counterpart is the catalogue's page.
+    await page.keyboard.press((await shortcutKeys(page)).own);
+    await expect(option(page, 'components/badge')).toContainText('Catalogue');
+  });
 
   test("finds a prop and opens its component's page in the Docs at its row", async ({ page }) => {
     await openCatalogue(page, `${catalogueUrl}/`);
@@ -295,7 +326,10 @@ test.describe('hosted build', () => {
     failing = true;
     await openCatalogue(page, `${siteUrl}/docs/components/badge`);
     await page.keyboard.press((await shortcutKeys(page)).own);
-    await expect(dialog(page).getByText('Search could not load.')).toBeVisible();
+    // The suggestions need no index; a query says that search could not load.
+    await expect(option(page, 'components/badge')).toBeVisible();
+    await field(page).fill('badge');
+    await expect(dialog(page).getByText('Search could not load')).toBeVisible();
     await expect(dialog(page).getByRole('button', { name: 'Reload the page' })).toBeVisible();
   });
 });

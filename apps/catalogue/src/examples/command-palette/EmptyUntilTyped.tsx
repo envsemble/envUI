@@ -35,7 +35,6 @@ export default function EmptyUntilTyped() {
         onInputValueChange={setQuery}
         items={items}
         onAction={() => {}}
-        emptyLabel="Type to search"
       />
     </>
   );
