@@ -1,14 +1,22 @@
 import SqueezedActions from '../../examples/row/SqueezedActions';
 import { MotionStage } from '../../previews/MotionStage';
-import { Narrowing } from './Narrowing';
+import { WidthSweep } from '../../previews/WidthSweep';
+import { useNarrowing, widths } from './Narrowing';
+
+function Narrowed() {
+  const at = useNarrowing();
+  return (
+    <WidthSweep widths={widths} at={at}>
+      <SqueezedActions />
+    </WidthSweep>
+  );
+}
 
 /** The actions in a pane that narrows, in step with the other of the pair. */
 export default function SqueezedActionsMotion() {
   return (
     <MotionStage label="the pane narrowing, the labels breaking">
-      <Narrowing>
-        <SqueezedActions />
-      </Narrowing>
+      <Narrowed />
     </MotionStage>
   );
 }

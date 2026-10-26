@@ -470,7 +470,7 @@ export function usePointer(
     let last = performance.now();
     let frame = 0;
     /** Moves the pointer on to a time of the plan, sending what happens on the way. */
-    const advance = (to: number) => {
+    const advance = (to: number, still = false) => {
       const { done } = clock.current;
       for (const happening of plan.happenings) {
         if (happening.time <= done || happening.time > to) continue;
@@ -512,7 +512,9 @@ export function usePointer(
         else if (happening.kind === 'release') current.release();
         else current.leave();
       }
-      if (presentAt(plan, to)) {
+      if (still) {
+        // It stays where it is, whatever moves under it.
+      } else if (presentAt(plan, to)) {
         const at = positionAt(scope, plan, to);
         if (at) current.moveTo(at);
       } else if (current.present) current.leave();
@@ -532,10 +534,21 @@ export function usePointer(
       last = now;
       // While another preview's pointer holds its button down, this one waits: a page has one
       // mouse, and a move without a button, on the document, would end the other's drag. A
-      // script of keys alone, which never moves the pointer, goes on.
+      // script of keys alone, which never moves the pointer, goes on, and so does one where it
+      // only stays where it is meanwhile, waiting or turning the wheel.
+      let still = false;
       if (plan.moves.length > 0 && !current.resume()) {
-        frame = requestAnimationFrame(tick);
-        return;
+        const quiet =
+          next < plan.length &&
+          !plan.moves.some((move) => move.start <= next && move.end >= state.time) &&
+          !plan.happenings.some(
+            (happening) => happening.time > state.time && happening.time <= next,
+          );
+        if (!quiet) {
+          frame = requestAnimationFrame(tick);
+          return;
+        }
+        still = true;
       }
       state.time = next;
       if (state.time >= plan.length) {
@@ -543,7 +556,7 @@ export function usePointer(
         state.time %= plan.length;
         state.done = -1;
       }
-      advance(state.time);
+      advance(state.time, still);
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);

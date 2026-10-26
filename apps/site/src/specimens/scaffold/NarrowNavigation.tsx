@@ -23,9 +23,21 @@ function Fitted({ children }: { children: ReactNode }) {
       setFit({ scale, height: inner.offsetHeight * scale });
     };
     measure();
-    const observer = new ResizeObserver(measure);
+    // Measured again in the next frame as the stage's width changes: the height it sets resizes
+    // what it observes.
+    let request = 0;
+    let width = outer.clientWidth;
+    const observer = new ResizeObserver(() => {
+      if (outer.clientWidth === width) return;
+      width = outer.clientWidth;
+      cancelAnimationFrame(request);
+      request = requestAnimationFrame(measure);
+    });
     observer.observe(outer);
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(request);
+      observer.disconnect();
+    };
   }, []);
   return (
     // As wide as the stage, whatever the window holds: its width doesn't come from the window.
