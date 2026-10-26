@@ -7,8 +7,11 @@ import { useLayoutEffect, useRef, type CSSProperties, type RefObject } from 'rea
  * an item wrapping to the next line, from where it was to where it lands, rather than jumping there.
  */
 
-/** A hairline in a control's border width, in a color of the theme. */
+/** A hairline in a color of the theme. */
 const line = (color: string) => `var(--env-control-border-width) solid var(${color})`;
+
+/** The color of a drawing's construction lines, fainter than what they measure. */
+const construction = '--env-color-border-muted';
 
 /**
  * A piece of content, drawn as its outline over the page's faint fill, so a block that glides past
@@ -26,12 +29,12 @@ export const block = (inlineSize: string, blockSize = '1.25rem'): CSSProperties 
 
 /**
  * A layout box's edges, which it doesn't paint, outlined around what it lays out; its corners
- * follow the blocks' around a padding of space-2.
+ * follow the blocks' around a padding of space-2, so the two are concentric.
  */
 export const frame: CSSProperties = {
   boxSizing: 'border-box',
   border: line('--env-color-border-default'),
-  borderRadius: 'var(--env-radius-md)',
+  borderRadius: 'calc(var(--env-radius-xs) + var(--env-space-2))',
 };
 
 /**
@@ -40,9 +43,59 @@ export const frame: CSSProperties = {
  */
 export const guide: CSSProperties = {
   boxSizing: 'border-box',
-  border: line('--env-color-border-muted'),
+  border: line(construction),
   borderRadius: 'var(--env-radius-sm)',
 };
+
+/**
+ * A dimension, as a drawing marks one: the gap that begins `from` the start of the positioned box
+ * that holds it, `across` an axis, a bracket whose ends continue the edges it measures, standing
+ * `off` the box's start along the other axis.
+ */
+export const dimension = (
+  along: 'inline' | 'block',
+  { from, across, off }: { from: string; across: string; off: string },
+): CSSProperties => {
+  const inline = along === 'inline';
+  const width = 'var(--env-control-border-width)';
+  return {
+    position: 'absolute',
+    boxSizing: 'border-box',
+    [inline ? 'insetInlineStart' : 'insetBlockStart']: `calc(${from} - ${width})`,
+    [inline ? 'inlineSize' : 'blockSize']: `calc(${across} + 2 * ${width})`,
+    [inline ? 'insetBlockStart' : 'insetInlineStart']: off,
+    [inline ? 'blockSize' : 'inlineSize']: 'var(--env-space-1)',
+    [inline ? 'borderInline' : 'borderBlock']: line(construction),
+    [inline ? 'borderBlockStart' : 'borderInlineStart']: line(construction),
+  };
+};
+
+/**
+ * An inset, as a drawing marks one: a fine line `along` an axis from a box's edge to its content's,
+ * placed by `at` within the box.
+ */
+export const inset = (along: 'inline' | 'block', at: CSSProperties): CSSProperties => ({
+  position: 'absolute',
+  [along === 'inline' ? 'borderBlockStart' : 'borderInlineStart']: line(construction),
+  ...at,
+});
+
+/**
+ * A construction line along which blocks line up, drawn behind them across the gaps between them
+ * and a little beyond, as a drawing's alignment guide; `left` is where its line falls.
+ */
+export const alignment = (left: string): CSSProperties => ({
+  position: 'absolute',
+  zIndex: -1,
+  insetBlock: 'var(--env-space-1)',
+  left,
+  inlineSize: 'var(--env-space-1)',
+  borderInlineStart: line(construction),
+});
+
+/** Where a line falls at a fraction across a box's content, between its `padding` on either side. */
+export const across = (fraction: number, padding: string) =>
+  `calc(${padding} + (100% - 2 * ${padding} - var(--env-control-border-width)) * ${fraction})`;
 
 /** The eased motion of what the frames' transitions change, such as a width or a gap. */
 export const easing = 'cubic-bezier(0.4, 0, 0.2, 1)';
@@ -168,8 +221,8 @@ export function useReflow(
         child.style.transform = still
           ? ''
           : `translate(${offset.x}px, ${offset.y}px) scale(${
-              (laid.width + offset.width) / (laid.width || 1)
-            }, ${(laid.height + offset.height) / (laid.height || 1)})`;
+              laid.width ? (laid.width + offset.width) / laid.width : 1
+            }, ${laid.height ? (laid.height + offset.height) / laid.height : 1})`;
       }
       const edges = outline?.current;
       if (edges) {
