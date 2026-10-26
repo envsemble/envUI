@@ -27,7 +27,9 @@ avoidWhen:
 components:
   - ConfirmDialog
 examples:
-  DeleteProject: overview
+  DeleteProject:
+    role: overview
+    motion: true
   ArchiveProject: example
   ConfirmDialogAnatomy: anatomy
   AsyncWithError: example
@@ -71,13 +73,13 @@ examples:
 4. **Cancel** (`env-dialog-actions > env-button:first-child`, `cancelLabel`)
 5. **Confirm** (`env-dialog-actions > env-button:last-child`, `confirmLabel`)
 
-Not shown: the error of a failed action, above the buttons.
-
 ## Behaviour
 
 ### Closing
 
 A press outside doesn't close a ConfirmDialog.
+
+<!-- specimen: PressOutside -->
 
 ### An action that can fail
 
@@ -85,7 +87,7 @@ The dialog waits for its action, showing that it is working.
 
 - When the action fails, it stays open with the error, so people can try again.
 
-```tsx figure=AsyncWithError
+```tsx figure=AsyncWithError motion
 
 ```
 
@@ -93,7 +95,7 @@ The dialog waits for its action, showing that it is working.
 
 A menu item can open the dialog, and focus returns to the menu's button when it closes.
 
-```tsx figure=FromMenu
+```tsx figure=FromMenu motion
 
 ```
 
@@ -101,11 +103,11 @@ A menu item can open the dialog, and focus returns to the menu's button when it 
 
 Match the tone to the consequence, and let the buttons say what each choice does.
 
-```tsx figure=DangerForDelete open
+```tsx figure=DangerForDelete motion
 
 ```
 
-```tsx figure=NeutralForDelete open
+```tsx figure=NeutralForDelete motion
 
 ```
 
