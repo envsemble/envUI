@@ -31,6 +31,7 @@ import {
   FillTabsFixture,
   RtlDocumentTabsFixture,
   RtlTabsFixture,
+  ScrollingTabsFixture,
   TabStatesFixture,
 } from './Tabs.js';
 import { CommandPaletteEmptyFixture, CommandPaletteFixture } from './Palette.js';
@@ -115,6 +116,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'message-strings': MessageStringsFixture,
   direction: DirectionFixture,
   'rtl-tabs': RtlTabsFixture,
+  'scrolling-tabs': ScrollingTabsFixture,
   'rtl-document-tabs': RtlDocumentTabsFixture,
   'document-tabs-rerender': DocumentTabsRerenderFixture,
   pagers: PagersFixture,

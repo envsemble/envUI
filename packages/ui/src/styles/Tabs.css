@@ -44,6 +44,9 @@
   /* Inset focus rings remain visible when a long list needs scrolling. */
   overflow: auto;
   scrollbar-width: thin;
+  /* The tabs' offset parent, so the rail, which scrolls the selected tab into view, measures it
+     from its own start rather than from a positioned ancestor's, and starts with it in view. */
+  position: relative;
 }
 /* The rail has no fill of its own: the tabs sit on what the Tabs sit on. */
 .env-tabs-list.env-surface {

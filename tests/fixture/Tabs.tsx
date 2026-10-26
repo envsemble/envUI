@@ -261,6 +261,34 @@ export function RtlTabsFixture() {
   );
 }
 
+const views = ['Summary', 'Files', 'Activity', 'Members', 'Settings'];
+
+/**
+ * A rail with more tabs than fit, its first tab chosen, in a narrow frame that is positioned and set
+ * in from the page's start, mounted with ?fixture=scrolling-tabs.
+ */
+export function ScrollingTabsFixture() {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        boxSizing: 'border-box',
+        paddingInlineStart: '20rem',
+        inlineSize: '40rem',
+      }}
+    >
+      <Tabs
+        aria-label="Project views"
+        items={views.map((view) => ({
+          value: view,
+          button: <Button>{view}</Button>,
+          content: null,
+        }))}
+      />
+    </div>
+  );
+}
+
 /** An overflowing DocumentTabs strip in right-to-left text, mounted with ?fixture=rtl-document-tabs. */
 export function RtlDocumentTabsFixture() {
   const [value, setValue] = useState<string | null>(initialTabs[0]!.id);
