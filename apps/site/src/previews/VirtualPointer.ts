@@ -173,6 +173,9 @@ function keepClipboard(click: () => void) {
   }
 }
 
+/** How soon a second click makes a double click, in ms, as a desktop's default. */
+const doubleClickTime = 500;
+
 /** Fields a press focuses, as typing goes into them. */
 const textFields =
   'input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"]), textarea, [contenteditable="true"]';
@@ -457,26 +460,32 @@ export class VirtualPointer {
     const shared = button === 0 && this.pressed.find((element) => this.over.includes(element));
     if (shared) {
       const point = this.at ?? { x: 0, y: 0 };
-      keepClipboard(() =>
-        shared.dispatchEvent(
-          new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            composed: true,
-            detail: 1,
-            button: 0,
-            clientX: point.x,
-            clientY: point.y,
-            view: window,
-            ...this.modifiers,
-          }),
-        ),
-      );
+      // A second click on the same element soon after the first is a double click, as a mouse's.
+      const now = performance.now();
+      const second =
+        this.lastClick?.target === shared && now - this.lastClick.time < doubleClickTime;
+      this.lastClick = second ? null : { target: shared, time: now };
+      const init = {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        detail: second ? 2 : 1,
+        button: 0,
+        clientX: point.x,
+        clientY: point.y,
+        view: window,
+        ...this.modifiers,
+      };
+      keepClipboard(() => shared.dispatchEvent(new MouseEvent('click', init)));
+      if (second) shared.dispatchEvent(new MouseEvent('dblclick', init));
     }
     for (const element of this.pressed) mark(element, pressMark, false);
     this.pressed = [];
     this.mouseless = false;
   }
+
+  /** The last click, which a second one soon after on the same element makes a double click. */
+  private lastClick: { target: Element; time: number } | null = null;
 
   /** The field typed into, marked as focused, as an inert preview can't focus it. */
   private focused: Element | null = null;

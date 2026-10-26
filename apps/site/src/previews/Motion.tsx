@@ -208,7 +208,8 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  *   fractions of its box, the middle by default, over `duration` ms, or comes there at once if it
  *   wasn't over the preview. Pressed, it drags; pressed on text, in a field or in content, the drag
  *   selects the text it crosses, as a mouse does, until a press elsewhere.
- * - `press`, `release`: its button; `click` presses and releases it a moment later.
+ * - `press`, `release`: its button; `click` presses and releases it a moment later, and
+ *   `doubleClick` clicks twice, quickly, as a double click.
  * - `rightClick`: its secondary button pressed and released, which opens a context menu where it
  *   is, as a right click does.
  * - `leave`: it goes off the preview, releasing its button and any key held first.
@@ -234,6 +235,7 @@ export type PointerStep =
   | { press: true }
   | { release: true }
   | { click: true }
+  | { doubleClick: true }
   | { rightClick: true }
   | { leave: true }
   | { cue: string }
@@ -290,6 +292,8 @@ interface Plan {
 
 /** How long a click holds the button. */
 const clickHold = 90;
+/** How long a double click waits between its clicks. */
+const doubleClickGap = 110;
 
 /*
  * The pace of every animation, brisk: a script's and a timeline's waits are cut to this share of
@@ -330,6 +334,13 @@ function planOf(script: readonly PointerStep[]): Plan {
       plan.happenings.push({ time, kind: 'press' });
       time += clickHold;
       plan.happenings.push({ time, kind: 'release' });
+    } else if ('doubleClick' in step) {
+      for (const pause of [doubleClickGap, 0]) {
+        plan.happenings.push({ time, kind: 'press' });
+        time += clickHold;
+        plan.happenings.push({ time, kind: 'release' });
+        time += pause;
+      }
     } else if ('rightClick' in step) {
       plan.happenings.push({ time, kind: 'press', button: 2 });
       time += clickHold;
