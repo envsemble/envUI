@@ -51,6 +51,7 @@ composes:
   - Row
   - Column
   - Text
+  - useContainerSize
 examples:
   AppFrame:
     role: overview
