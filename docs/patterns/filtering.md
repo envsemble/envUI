@@ -46,7 +46,9 @@ composes:
   - Text
   - useContainerSize
 examples:
-  SearchAndFilters: overview
+  SearchAndFilters:
+    role: overview
+    motion: true
   FilterPanel: example
   ActiveFilters: example
   FilteringAnatomy: anatomy
@@ -67,7 +69,7 @@ examples:
 
 A Filters button, with a count of the filters in use, opens a [Popover](../components/popover.md) of checkboxes in groups that apply as they change.
 
-```tsx figure=FilterPanel
+```tsx figure=FilterPanel motion
 
 ```
 
@@ -75,7 +77,7 @@ A Filters button, with a count of the filters in use, opens a [Popover](../compo
 
 Each filter in use is a token named after it, "Status: Open", beside Add filter and Clear filters. A token is a small button with a close cross that removes it.
 
-```tsx figure=ActiveFilters
+```tsx figure=ActiveFilters motion
 
 ```
 
@@ -103,7 +105,7 @@ Write the query and the filters into the address through the router, so a reload
 
 Narrower than a medium [window](../foundations/responsive.md), the filters move into a [Sheet](../components/sheet.md) opened by a Filters button, with its own count; the search stays in view.
 
-```tsx figure=NarrowFilters widths="24 44" sweep classes
+```tsx figure=NarrowFilters widths="24 44" sweep classes motion
 
 ```
 
@@ -111,11 +113,11 @@ Narrower than a medium [window](../foundations/responsive.md), the filters move 
 
 Each choice filters at once, and a count says how many match.
 
-```tsx figure=AppliedAtOnce
+```tsx figure=AppliedAtOnce motion
 
 ```
 
-```tsx figure=WaitsForApply
+```tsx figure=WaitsForApply motion
 
 ```
 

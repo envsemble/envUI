@@ -61,6 +61,7 @@ export default function NarrowFilters() {
         <SearchField
           ref={search}
           label="Search projects"
+          placeholder="Search projects"
           size="sm"
           value={query}
           onValueChange={setQuery}
