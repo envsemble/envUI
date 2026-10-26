@@ -64,7 +64,7 @@ While rows are selected, a bulk bar shows the count and its actions.
 - Archive acts at once, with Undo.
 - Delete asks first.
 
-```tsx figure=SelectAndBulkActions
+```tsx figure=SelectAndBulkActions motion
 
 ```
 
@@ -72,7 +72,7 @@ While rows are selected, a bulk bar shows the count and its actions.
 
 The name links to the record; the other actions wait in a [Menu](../components/menu.md) named for the row, "More actions for Website refresh".
 
-```tsx figure=RowActions
+```tsx figure=RowActions motion
 
 ```
 
@@ -96,6 +96,8 @@ A [Table](../components/table.md) holds the data, with its own sorting, selectio
 
 - [Pagination](../components/pagination.md) below it gives the range, "1–4 of 6".
 - It keeps working while the next set loads.
+
+<!-- specimen: SortingAndPaging -->
 
 ## Rules
 
