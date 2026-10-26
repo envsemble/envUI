@@ -531,6 +531,7 @@ export function TilePreview({
     ));
   const tile = Boolean(preview?.tile);
   useFit(stage, canvas, shown, whole || tile, tile, plays);
+  useStillAtRest(canvasElement, tile && !plays);
   return (
     <Theme
       {...theme}
@@ -575,6 +576,43 @@ export function TilePreview({
       )}
     </Theme>
   );
+}
+
+/** Whether an animation loops for ever, as a skeleton's shimmer or a spinner's turn does. */
+const loops = (animation: Animation) =>
+  animation.effect?.getComputedTiming().iterations === Infinity;
+
+/**
+ * Holds a resting tile still: the animations in it that loop for ever, such as a skeleton's
+ * shimmer, pause until it plays, also those that start while it rests. An entrance, which ends,
+ * runs on, so nothing is left halfway in.
+ */
+function useStillAtRest(canvas: HTMLElement | null, resting: boolean) {
+  useEffect(() => {
+    if (!canvas) return;
+    const looping = () => canvas.getAnimations({ subtree: true }).filter(loops);
+    if (!resting) {
+      for (const animation of looping()) animation.play();
+      return;
+    }
+    const pause = () => {
+      for (const animation of looping()) animation.pause();
+    };
+    pause();
+    // A loop that starts later, such as a skeleton drawn anew, pauses as it starts.
+    canvas.addEventListener('animationstart', pause);
+    const changes = new MutationObserver(pause);
+    changes.observe(canvas, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    return () => {
+      canvas.removeEventListener('animationstart', pause);
+      changes.disconnect();
+    };
+  }, [canvas, resting]);
 }
 
 /** Whether an element is near the viewport, once: the tiles render their examples from then on. */

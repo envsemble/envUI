@@ -100,8 +100,23 @@
   visibility: hidden;
 }
 
+/* Once fitted, the picture appears, fading in, rather than from nowhere: by its opacity alone, so
+   the boxes the fit measures keep their place. */
 .catalogue-related-canvas[data-fitted] {
   visibility: visible;
+  animation: catalogue-tile-appear var(--env-motion-duration-medium) var(--env-motion-ease) both;
+}
+
+@keyframes catalogue-tile-appear {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-related-canvas[data-fitted] {
+    animation: none;
+  }
 }
 
 /* Room for an overlay shown open, such as a dialog over the page. */

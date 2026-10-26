@@ -11,7 +11,6 @@ export default function LoadingTile() {
     <Card
       skeleton={!loaded}
       title={loaded ? 'Northwind launch' : undefined}
-      meta="Updated today"
       description={loaded ? 'Pricing and the press kit.' : undefined}
       actions={<Button>Open</Button>}
       style={{ inlineSize: '15rem' }}

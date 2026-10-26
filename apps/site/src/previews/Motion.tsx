@@ -97,13 +97,22 @@ export function usePreviewLayer() {
 export function useTimeline(durations: readonly number[]) {
   const { playing, rest } = use(PlaybackContext);
   const [step, setStep] = useState(0);
+  // Whether it has yet to leave its still since it started playing: it leaves it at once.
+  const fresh = useRef(true);
   // Stopped, a preview that rests at the still goes back to it at once, in the same render.
   if (!playing && rest === 'start' && step !== 0) setStep(0);
-  const duration = durations[step] ?? 0;
+  const duration = (durations[step] ?? 0) * waitPace;
   const count = durations.length;
   useEffect(() => {
-    if (!playing || count < 2) return;
-    const timer = setTimeout(() => setStep((current) => (current + 1) % count), duration);
+    if (!playing || count < 2) {
+      fresh.current = true;
+      return;
+    }
+    const delay = step === 0 && fresh.current ? Math.min(firstWait * 2, duration) : duration;
+    const timer = setTimeout(() => {
+      fresh.current = false;
+      setStep((current) => (current + 1) % count);
+    }, delay);
     return () => clearTimeout(timer);
   }, [playing, step, duration, count]);
   return playing || rest === 'hold' ? step : 0;
@@ -163,6 +172,16 @@ interface Plan {
 /** How long a click holds the button. */
 const clickHold = 90;
 
+/*
+ * The pace of every animation, brisk: a script's and a timeline's waits are cut to this share of
+ * what they are written as, and its moves and typing a little less, so a hand still moves at a
+ * hand's speed. An animation starts at once: what a script waits before its first act is cut to
+ * `firstWait` at most.
+ */
+const waitPace = 0.6;
+const movePace = 0.8;
+const firstWait = 60;
+
 /** How far apart typed characters are, by default: an easy typing pace. */
 const typingPace = 140;
 
@@ -170,11 +189,16 @@ function planOf(script: readonly PointerStep[]): Plan {
   const plan: Plan = { length: 0, moves: [], happenings: [] };
   let time = 0;
   let at: Aim | null = null;
+  let acted = false;
   for (const step of script) {
-    if ('wait' in step) time += step.wait;
-    else if ('to' in step) {
+    if ('wait' in step) {
+      time += acted ? step.wait * waitPace : Math.min(firstWait - time, step.wait * waitPace);
+      continue;
+    }
+    acted = true;
+    if ('to' in step) {
       const to = { selector: step.to, x: step.x ?? 0.5, y: step.y ?? 0.5 };
-      const duration = step.duration ?? 0;
+      const duration = (step.duration ?? 0) * movePace;
       plan.moves.push({ start: time, end: time + duration, from: at, to });
       at = to;
       time += duration;
@@ -188,7 +212,7 @@ function planOf(script: readonly PointerStep[]): Plan {
     else if ('type' in step || 'erase' in step) {
       const characters = 'type' in step ? [...step.type] : Array<null>(step.erase).fill(null);
       for (const text of characters) {
-        time += step.every ?? typingPace;
+        time += (step.every ?? typingPace) * movePace;
         plan.happenings.push({ time, kind: 'type', text, target: step.into });
       }
     } else if ('key' in step)
@@ -336,7 +360,7 @@ export function usePointer(
       last = now;
       // While another preview's pointer holds its button down, this one waits: a page has one
       // mouse, and a move without a button, on the document, would end the other's drag.
-      if (!current.canPress) {
+      if (!current.resume()) {
         frame = requestAnimationFrame(tick);
         return;
       }
@@ -350,7 +374,10 @@ export function usePointer(
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(frame);
+      current.suspend();
+    };
   }, [playing, root, plan]);
 }
 

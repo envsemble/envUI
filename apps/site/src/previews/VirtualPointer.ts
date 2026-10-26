@@ -30,6 +30,22 @@ const focusWithinMark = 'data-catalogue-focus-within';
  */
 let pressing: number | null = null;
 
+/**
+ * Keeps the reader's own mouse moves from the page's listeners while a pointer no one sees holds
+ * its button down: a component following that drag on the document, such as a slider, would take
+ * a move without a button, such as the reader reaching for a pause button, for the drag's end.
+ * Their presses and clicks still go through.
+ */
+function holdReaderMoves() {
+  if ((window as { catalogueHoldsMoves?: boolean }).catalogueHoldsMoves) return;
+  (window as { catalogueHoldsMoves?: boolean }).catalogueHoldsMoves = true;
+  const hold = (event: Event) => {
+    if (event.isTrusted && pressing !== null) event.stopImmediatePropagation();
+  };
+  for (const type of ['pointermove', 'mousemove'])
+    window.addEventListener(type, hold, { capture: true });
+}
+
 /** The ids of the pointers no one sees, and what each has captured. */
 const captures = new Map<number, Element | null>();
 let nextId = 9000;
@@ -123,6 +139,7 @@ export class VirtualPointer {
 
   constructor(private readonly scope: Element) {
     keepCaptures();
+    holdReaderMoves();
     captures.set(this.id, null);
     mirrorPointerStates();
   }
@@ -269,6 +286,33 @@ export class VirtualPointer {
   }
 
   /** Whether this pointer may go on now: no other is holding its button down on the page. */
+  /** Whether its press was let go of the page's lock while its preview was paused. */
+  private suspended = false;
+
+  /**
+   * Its preview is paused: a press it holds lets the page's lock go, so nothing waits on a paused
+   * preview, and the reader's moves reach the page again.
+   */
+  suspend() {
+    if (!this.buttons || pressing !== this.id) return;
+    pressing = null;
+    this.suspended = true;
+  }
+
+  /**
+   * Its preview plays again: a press it held is taken up where it is, as a hand pressing again,
+   * so a drag the page ended meanwhile goes on. Returns whether it may go on, once the lock is free.
+   */
+  resume() {
+    if (!this.suspended) return this.canPress;
+    if (pressing !== null) return false;
+    this.suspended = false;
+    const target = this.over[0];
+    pressing = this.id;
+    if (target) this.send(target, 'pointerdown', { button: 0 });
+    return true;
+  }
+
   get canPress() {
     return pressing === null || pressing === this.id;
   }
