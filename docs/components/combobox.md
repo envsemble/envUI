@@ -36,7 +36,9 @@ avoidWhen:
 components:
   - Combobox
 examples:
-  ChooseOwner: overview
+  ChooseOwner:
+    role: overview
+    motion: true
   Variants: variants
   ComboboxAnatomy: anatomy
   ComboboxListAnatomy: anatomy
@@ -105,7 +107,7 @@ A read-only field can be focused and its list browsed, but its value can't chang
 
 Where people choose several options, each shows as a chip in the field, and the list stays open as they choose.
 
-```tsx figure=Reviewers
+```tsx figure=Reviewers motion
 
 ```
 
@@ -113,7 +115,7 @@ Where people choose several options, each shows as a chip in the field, and the 
 
 The application can find the options itself, such as on a server, and a spinner shows while it searches.
 
-```tsx figure=ServerSearch
+```tsx figure=ServerSearch motion
 
 ```
 
@@ -121,7 +123,7 @@ The application can find the options itself, such as on a server, and a spinner 
 
 A required field shows its error when the form is sent without a value.
 
-```tsx figure=RequiredInForm
+```tsx figure=RequiredInForm motion
 
 ```
 
