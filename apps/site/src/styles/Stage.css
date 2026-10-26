@@ -21,7 +21,6 @@
 .site-page-banner[data-banner='catalogue'],
 .catalogue-overview-hero,
 .catalogue-explore-grid > .env-card,
-.catalogue-icon-tile,
 .site-page-navigation .env-pager-link {
   --catalogue-card-shadow: 0 0.5rem 1.5rem
     oklch(
@@ -77,12 +76,11 @@
 }
 
 /* The site's own cards lift off the page as its canvases do, each by its own fill: a catalogue
-   page's banner, the Overview's hero and its cards, and the icons' tiles; the pager at a page's
-   foot, smaller, half as much. */
+   page's banner, and the Overview's hero and its cards; the pager at a page's foot, smaller, half as
+   much. */
 .site-page-banner[data-banner='catalogue'],
 .catalogue-overview-hero,
-.catalogue-explore-grid > .env-card,
-.catalogue-icon-tile {
+.catalogue-explore-grid > .env-card {
   --catalogue-card-fill: var(--env-surface-color);
   box-shadow: var(--catalogue-card-shadow);
 }

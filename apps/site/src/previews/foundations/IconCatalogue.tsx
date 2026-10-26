@@ -1,5 +1,5 @@
 import { useId, useMemo, useRef, useState } from 'react';
-import { Button, Card, SearchField, Column, Row, Switch, Text, Sheet } from '@envsemble/envui';
+import { Button, SearchField, Column, Row, Switch, Text, Sheet } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 // This browser of every icon loads the full public set. Products use per-icon imports.
 import * as symbols from '@envsemble/envui/icons';
@@ -92,6 +92,7 @@ export function IconCatalogue() {
     <Example size="collection">
       <div className="catalogue-icon-toolbar">
         <SearchField
+          variant="floating"
           label="Search icons"
           showLabel
           value={query}
@@ -106,9 +107,8 @@ export function IconCatalogue() {
         <ul className="catalogue-icon-catalogue" aria-label="Icon catalogue">
           {visibleSymbols.map(({ name, label, Symbol }) => (
             <li key={name}>
-              <Card
-                background={selectedName === name ? 'muted' : 'page'}
-                padding={4}
+              <button
+                type="button"
                 className="catalogue-icon-tile"
                 aria-label={label}
                 aria-pressed={selectedName === name}
@@ -131,7 +131,7 @@ export function IconCatalogue() {
                 >
                   {label}
                 </Text>
-              </Card>
+              </button>
             </li>
           ))}
         </ul>

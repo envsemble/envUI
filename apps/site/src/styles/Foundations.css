@@ -73,12 +73,40 @@
 .catalogue-icon-catalogue li {
   min-inline-size: 0;
 }
+/* An icon and its name, on the page itself rather than on a card: a quiet fill under the pointer,
+   and the muted fill while its details are open. */
 .catalogue-icon-tile {
-  block-size: 100%;
-  min-block-size: 7rem;
-  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--env-space-3);
   align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 6.5rem;
+  padding: var(--env-space-4) var(--env-space-2);
+  border: 0;
+  border-radius: var(--env-radius-lg);
+  background: transparent;
+  color: var(--env-color-fg-default);
+  font: inherit;
   text-align: center;
+  cursor: pointer;
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+@media (hover: hover) {
+  .catalogue-icon-tile:hover {
+    background: var(--env-color-bg-neutral-subtle-hover);
+  }
+}
+.catalogue-icon-tile:active,
+.catalogue-icon-tile[aria-pressed='true'] {
+  background: var(--env-color-bg-neutral-subtle-pressed);
+}
+.catalogue-icon-tile:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: 2px;
 }
 /* Labels wrap only between words; a word longer than the tile ends in an ellipsis, and the label's
    tooltip holds the whole name. */

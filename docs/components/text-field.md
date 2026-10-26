@@ -98,11 +98,11 @@ examples:
 2. **Floating**
 3. **Ghost**
 
-| Variant  | Use for                                                      |
-| -------- | ------------------------------------------------------------ |
-| Outline  | In forms, dialogs, panes and toolbars. The default.          |
-| Floating | A long form on a page. Not for a text area.                  |
-| Ghost    | A search in an application's chrome, such as atop a sidebar. |
+| Variant  | Use for                                                                                                    |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| Outline  | In forms, dialogs, panes and toolbars. The default.                                                        |
+| Floating | A long form on a page, or a field on its own, such as a search above what it filters. Not for a text area. |
+| Ghost    | A search in an application's chrome, such as atop a sidebar.                                               |
 
 ### Fill
 
