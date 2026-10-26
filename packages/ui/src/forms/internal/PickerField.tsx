@@ -14,13 +14,12 @@ import {
 import { setRef } from '../../internal/setRef.js';
 import { useHydrated } from '../../internal/useHydrated.js';
 import { useDirection } from '../../internal/useDirection.js';
-import { PopupSurface } from '../../internal/PopupSurface.js';
 import { keepsOpen, usePortalContainer } from '../../internal/PortalContainerContext.js';
-import { Grid, type SpaceStep } from '../../foundations/Layout.js';
 import { type ControlSize } from '../../foundations/Theme.js';
 import { IconButton } from '../../actions/Button.js';
 import { Close } from '../../icons/Close.js';
 import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './FieldFrame.js';
+import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { subscribeFormReset } from './subscribeFormReset.js';
 import { useFieldMetadata } from './useFieldMetadata.js';
 
@@ -90,23 +89,6 @@ export function usePickerOpen({
   return [open, setOpen] as const;
 }
 
-/** The accessible name of a picker's field, which its popup and the list in it take too. */
-export interface PickerName {
-  'aria-labelledby': string | undefined;
-  'aria-label': string | undefined;
-}
-
-function remPixels(element: Element | null) {
-  if (!element) return 16;
-  return Number.parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
-}
-
-const popupParts = {
-  Portal: BasePopover.Portal,
-  Positioner: BasePopover.Positioner,
-  Popup: BasePopover.Popup,
-};
-
 function ignoreChange() {
   // The visually hidden input only carries the value for native forms.
 }
@@ -114,8 +96,9 @@ function ignoreChange() {
 /**
  * The field of DatePicker, TimePicker and MonthPicker: the shared text field's frame around a
  * combobox button that shows the value in the reader's locale, with a clear button and an icon at
- * its end, a hidden input that carries the value for native forms, and the popup it opens. The
- * owner holds the value and the open state, and renders the popup's content.
+ * its end, a hidden input that carries the value for native forms, and the card it opens,
+ * PickerPopup. The owner holds the value and the open state, and renders the card's body and its
+ * footer's actions.
  */
 export function PickerField({
   ref,
@@ -124,8 +107,8 @@ export function PickerField({
   icon,
   rootClassName,
   popupClassName,
-  popupGap = 3,
-  popupPadding = 4,
+  popupStart,
+  popupEnd,
   initialFocus,
   clearLabel,
   onClear,
@@ -164,12 +147,12 @@ export function PickerField({
   icon: ReactNode;
   /** The owner's classes on the root, beside env-field. */
   rootClassName: string;
-  /** The owner's classes on the popup, beside env-date-picker-popup. */
+  /** The owner's class on the popup, beside env-picker-popup and env-date-picker-popup. */
   popupClassName?: string;
-  /** The space between the popup's parts, a step of the spacing scale. */
-  popupGap?: SpaceStep;
-  /** The popup's inset, a step of the spacing scale. */
-  popupPadding?: SpaceStep;
+  /** The action at the start of the popup's footer, such as Today. */
+  popupStart: ReactNode;
+  /** The actions at the end of the popup's footer, such as Clear. */
+  popupEnd?: ReactNode;
   /** The element focus moves to as the popup opens, from the popup. */
   initialFocus: (popup: HTMLElement | null) => HTMLElement | null;
   /** The clear button's name. */
@@ -180,7 +163,7 @@ export function PickerField({
   onFormReset: () => void;
   open: boolean;
   setOpen: (open: boolean) => void;
-  /** The popup's content, or a function of the name the field and popup share, for its parts. */
+  /** The popup's body, or a function of the name the field and popup share, for its parts. */
   children: ReactNode | ((name: PickerName) => ReactNode);
 }) {
   const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
@@ -347,22 +330,19 @@ export function PickerField({
           onFocus={() => triggerRef.current?.focus()}
         />
       </FieldFrame>
-      <PopupSurface
-        parts={popupParts}
-        side="bottom"
-        align="start"
-        sideOffset={() => remPixels(triggerRef.current) * 0.25}
+      <PickerPopup
+        className={popupClassName}
+        triggerRef={triggerRef}
+        popupRef={popupRef}
         // The portal leaves the field's text direction behind; the popup keeps it.
         dir={direction}
-        className={
-          popupClassName ? `env-date-picker-popup ${popupClassName}` : 'env-date-picker-popup'
-        }
-        layout={<Grid gap={popupGap} padding={popupPadding} />}
-        popupProps={{ ref: popupRef, ...accessibleName }}
-        initialFocus={() => initialFocus(popupRef.current) ?? true}
+        name={accessibleName}
+        initialFocus={initialFocus}
+        start={popupStart}
+        end={popupEnd}
       >
         {typeof children === 'function' ? children(accessibleName) : children}
-      </PopupSurface>
+      </PickerPopup>
     </BasePopover.Root>
   );
 }

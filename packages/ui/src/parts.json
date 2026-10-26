@@ -30,6 +30,10 @@
       "prefix": "env-loading-bar",
       "root": "env-loading-bar"
     },
+    "PickerPopup": {
+      "prefix": "env-picker-popup",
+      "root": "env-picker-popup"
+    },
     "Popup": {
       "prefix": "env-popup",
       "root": "env-popup"
@@ -284,7 +288,7 @@
     },
     "DatePicker": {
       "env-date-picker": "The date field.",
-      "env-date-picker-actions": "The row of actions under the calendar.",
+      "env-date-picker-actions": "The row of actions under the calendar, the picker card's footer.",
       "env-date-picker-actions-end": "The actions at the end of that row.",
       "env-date-picker-clear": "The button that clears the date.",
       "env-date-picker-control": "The field's well.",
@@ -294,7 +298,7 @@
       "env-date-picker-native": "The native input that holds the value for forms.",
       "env-date-picker-panes": "The calendar and the times side by side.",
       "env-date-picker-placeholder": "The text shown without a date.",
-      "env-date-picker-popup": "The popup with the calendar.",
+      "env-date-picker-popup": "The picker card with the calendar, also on TimePicker and MonthPicker.",
       "env-date-picker-time": "The times beside the calendar.",
       "env-date-picker-time-heading": "The heading of the times.",
       "env-date-picker-trigger": "The button that opens the calendar.",
@@ -554,6 +558,12 @@
       "env-panes-close": "The supporting sheet's close button, which shows only while the pane is a sheet.",
       "env-panes-scrim": "The scrim behind the supporting sheet.",
       "env-panes-trigger": "The button in the main pane that opens the supporting sheet, which hides while the panes sit side by side."
+    },
+    "PickerPopup": {
+      "env-picker-popup": "The card DatePicker, TimePicker and MonthPicker open.",
+      "env-picker-popup-body": "The picker's content: a calendar, a time's wheels or a year of months.",
+      "env-picker-popup-footer": "The row of actions under the body.",
+      "env-picker-popup-footer-end": "The actions at the end of that row, such as Clear."
     },
     "Popover": {
       "env-popover": "The popover.",

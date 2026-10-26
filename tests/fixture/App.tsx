@@ -62,6 +62,7 @@ import { PaginationsFixture } from './Paginations.js';
 import { DatePickerFixture } from './DatePickers.js';
 import { TimePickersFixture } from './TimePickers.js';
 import { MonthPickersFixture } from './MonthPickers.js';
+import { PickerPopupsFixture } from './PickerPopups.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { SheetsFixture } from './Sheets.js';
 import { ResizableDrawersFixture } from './ResizableDrawers.js';
@@ -130,6 +131,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   lists: ListsFixture,
   'time-pickers': TimePickersFixture,
   'month-pickers': MonthPickersFixture,
+  'picker-popups': PickerPopupsFixture,
   'dev-mode': DevModeFixture,
   'layout-check': LayoutCheckFixture,
   skeletons: SkeletonsFixture,
