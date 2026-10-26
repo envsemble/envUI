@@ -219,16 +219,19 @@ export class VirtualPointer {
     return this.scope;
   }
 
-  /** Whether an element lets the pointer through only as the overlay layer around it does. */
+  /**
+   * Whether an element lets the pointer through only as the overlay layer around it does: it
+   * takes the pointer once the layer does, where its own rule, such as a sheet's viewport's around
+   * a sheet beside the page, lets it through still.
+   */
   private fromLayer(element: Element) {
-    let top = element;
-    for (
-      let node = element.parentElement;
-      node && node !== this.scope && getComputedStyle(node).pointerEvents === 'none';
-      node = node.parentElement
-    )
-      top = node;
-    return top !== element && top.matches(passThrough);
+    const layer = element.closest(passThrough);
+    if (!(layer instanceof HTMLElement)) return false;
+    const before = layer.style.pointerEvents;
+    layer.style.pointerEvents = 'auto';
+    const inherited = getComputedStyle(element).pointerEvents !== 'none';
+    layer.style.pointerEvents = before;
+    return inherited;
   }
 
   /** The element and those around it, inside the preview, as :hover marks them all. */
