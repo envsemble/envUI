@@ -33,7 +33,7 @@ import {
   RtlTabsFixture,
   TabStatesFixture,
 } from './Tabs.js';
-import { CommandPaletteFixture } from './Palette.js';
+import { CommandPaletteEmptyFixture, CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './Segments.js';
 import { BadgesFixture } from './Badges.js';
 import {
@@ -234,6 +234,7 @@ export default function App() {
             <>
               <CommandPaletteFixture theme="light" />
               <CommandPaletteFixture theme="dark" />
+              <CommandPaletteEmptyFixture />
             </>
           )}
           {includes('segments') && (

@@ -246,6 +246,9 @@
     },
     "CommandPalette": {
       "env-command-palette": "The command palette's dialog.",
+      "env-command-palette-empty-description": "The empty state's quieter text under its title.",
+      "env-command-palette-empty-icon": "The empty state's icon on its circle.",
+      "env-command-palette-empty-title": "The empty state's title.",
       "env-command-palette-footer": "The footer with the keyboard hints.",
       "env-command-palette-footer-content": "The content of the footer.",
       "env-command-palette-group": "A group of commands.",
@@ -256,7 +259,7 @@
       "env-command-palette-list": "The list of commands.",
       "env-command-palette-positioner": "The palette's positioner.",
       "env-command-palette-search": "The row with the search input.",
-      "env-command-palette-status": "The message when nothing matches, and its announcement."
+      "env-command-palette-status": "The empty state in place of the list, and the announcement of the number of results."
     },
     "Composer": {
       "env-composer": "The message composer.",

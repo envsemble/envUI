@@ -17,6 +17,7 @@ import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { commandPalette } from '../foundations/messages/commandPalette.js';
 import { useTheme } from '../foundations/Theme.js';
 import { Search } from '../icons/Search.js';
+import { SearchOff } from '../icons/SearchOff.js';
 import { Kbd } from '../content/Kbd.js';
 import { DialogBackdrop, OverlayTheme } from './internal/DialogParts.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
@@ -72,6 +73,11 @@ export interface CommandPaletteProps
   onInputValueChange: (inputValue: string) => void;
   /** Filtered and ranked by the application, in display order. */
   items: readonly CommandPaletteItem[];
+  /**
+   * Shown in place of items while the search field is empty, such as recent documents or
+   * suggested pages under a group heading; options like any other.
+   */
+  defaultItems?: readonly CommandPaletteItem[];
   /** Enter or a press on an option; Ctrl or Cmd sets modifier. */
   onAction: (item: CommandPaletteItem, options: CommandPaletteActionOptions) => void;
   /**
@@ -82,10 +88,23 @@ export interface CommandPaletteProps
   /** Shown in the empty search field, such as "Search documents by name or folder". */
   placeholder?: string;
   /**
-   * Shown in place of the list when there are no items, and announced.
-   * @default 'No results', or EnvUIProvider's messages.commandPalette.empty
+   * The empty state's title, shown in place of the list when there are no options, and announced.
+   * @default 'Type to search' while the search field is empty and 'No results' when its text
+   * finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty
    */
   emptyLabel?: ReactNode;
+  /**
+   * Quieter text under the empty state's title, such as what the palette searches; null shows
+   * none.
+   * @default None while the search field is empty; when its text finds nothing, 'Nothing matches
+   * “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint
+   */
+  emptyDescription?: ReactNode;
+  /**
+   * The empty state's decorative icon, above its title; null shows none.
+   * @default Search while the search field is empty, SearchOff when its text finds nothing
+   */
+  emptyIcon?: ReactNode;
   /** Key hints below the list, such as { keys: ['Enter'], label: 'Open' }. */
   hints?: readonly CommandPaletteHint[];
   /** Other content below the list, after the hints. */
@@ -125,11 +144,14 @@ export function CommandPalette({
   'aria-label': label,
   inputValue,
   onInputValueChange,
-  items,
+  items: results,
+  defaultItems,
   onAction,
   closeOnAction = true,
   placeholder,
   emptyLabel,
+  emptyDescription,
+  emptyIcon,
   hints,
   footer,
   className,
@@ -142,8 +164,23 @@ export function CommandPalette({
   const input = useRef<HTMLInputElement>(null);
   const highlighted = useRef<{ item?: CommandPaletteItem; index: number }>({ index: -1 });
   const list = useRef<HTMLDivElement>(null);
+  const query = inputValue.trim();
+  // Until people type, the default items, where there are any, show in place of the results.
+  const items = query === '' && defaultItems ? defaultItems : results;
   const sections = sectionsOf(items);
   const grouped = sections.some((section) => section.label !== undefined);
+  // With no options, the empty state invites a search before people type, and says what to try
+  // when the text finds nothing.
+  const empty = items.length === 0;
+  const typed = query !== '';
+  const icon = emptyIcon === undefined ? typed ? <SearchOff /> : <Search /> : emptyIcon;
+  const title = emptyLabel ?? (typed ? messages.empty : messages.emptyQuery);
+  const description =
+    emptyDescription === undefined
+      ? typed
+        ? messages.emptyHint({ query })
+        : null
+      : emptyDescription;
 
   function act(item: CommandPaletteItem, modifier: boolean) {
     if (item.disabled) return;
@@ -266,7 +303,7 @@ export function CommandPalette({
                     render={<Grid />}
                     className="env-command-palette-list"
                     aria-label={label}
-                    hidden={items.length === 0}
+                    hidden={empty}
                   >
                     {grouped
                       ? (section: Section) =>
@@ -294,14 +331,32 @@ export function CommandPalette({
                       : renderItem}
                   </BaseAutocomplete.List>
                   {/* One polite status: the number of results as they change, read by assistive
-                    technology only, or the empty message, shown in place of the list. */}
+                    technology only, or the empty state, shown in place of the list: its title and
+                    description are announced, and its icon is decorative. */}
                   <BaseAutocomplete.Status
                     className="env-command-palette-status"
-                    data-empty={items.length === 0 || undefined}
+                    data-empty={empty || undefined}
                   >
-                    {items.length === 0
-                      ? (emptyLabel ?? messages.empty)
-                      : messages.results({ count: items.length })}
+                    {empty ? (
+                      <>
+                        {icon != null && (
+                          <span className="env-command-palette-empty-icon">
+                            <DecorativeIcon>{icon}</DecorativeIcon>
+                          </span>
+                        )}
+                        <span className="env-command-palette-empty-title">{title}</span>
+                        {description != null && (
+                          <>
+                            {/* A space between the lines, so they are read as two. */}{' '}
+                            <span className="env-command-palette-empty-description">
+                              {description}
+                            </span>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      messages.results({ count: items.length })
+                    )}
                   </BaseAutocomplete.Status>
                 </BaseAutocomplete.Root>
                 {(Boolean(hints?.length) || footer != null) && (

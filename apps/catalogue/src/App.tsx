@@ -278,7 +278,7 @@ function Shell() {
       >
         {navigation(true)}
       </Sheet>
-      <DocumentationSearch open={searchOpen} onOpenChange={setSearchOpen} />
+      <DocumentationSearch open={searchOpen} onOpenChange={setSearchOpen} page={page} />
     </Scaffold>
   );
 }
