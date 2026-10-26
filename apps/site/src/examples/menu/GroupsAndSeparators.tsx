@@ -8,7 +8,13 @@ import { Upload } from '@envsemble/envui/icons/Upload';
 
 export default function GroupsAndSeparators() {
   return (
-    <Menu.Root aria-label="New" align="start" trigger={<Button startIcon={<Add />}>New</Button>}>
+    <Menu.Root
+      aria-label="New"
+      align="start"
+      // Shown open in the docs; without defaultOpen, it opens from its trigger.
+      defaultOpen
+      trigger={<Button startIcon={<Add />}>New</Button>}
+    >
       <Menu.Group label="Documents">
         <Menu.Item icon={<NoteAdd />}>Blank document</Menu.Item>
         <Menu.Item icon={<Description />}>From a template</Menu.Item>

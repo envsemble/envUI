@@ -81,7 +81,7 @@ ContextMenu opens a menu for an area on right click, long press, the <kbd>Menu</
 
 Groups put items under a heading, and separators split sets without one.
 
-```tsx figure=GroupsAndSeparators
+```tsx figure=GroupsAndSeparators open
 
 ```
 
@@ -92,7 +92,7 @@ Items can be choices, checked in place.
 - A radio item checks one choice and closes the menu.
 - A checkbox item toggles and keeps it open.
 
-```tsx figure=Choices
+```tsx figure=Choices motion
 
 ```
 
@@ -100,7 +100,7 @@ Items can be choices, checked in place.
 
 A submenu's row opens a nested menu beside it, on hover or with <kbd>→</kbd>.
 
-```tsx figure=Submenus
+```tsx figure=Submenus motion
 
 ```
 
@@ -108,7 +108,7 @@ A submenu's row opens a nested menu beside it, on hover or with <kbd>→</kbd>.
 
 An item can go to a page, as a link the application's router follows.
 
-```tsx figure=Destinations
+```tsx figure=Destinations open
 
 ```
 
@@ -126,17 +126,15 @@ An item can go to a page, as a link the application's router follows.
 6. **Description** (`env-menu-item-description`, `description`)
 7. **Separator** (`env-menu-separator`)
 
-Not shown: a submenu's row and the check of a choice.
-
 ## Rules
 
 A menu puts what people use most first, and keeps every item in its place.
 
-```tsx figure=FrequentFirst open
+```tsx figure=FrequentFirst motion
 
 ```
 
-```tsx figure=DeleteFirst open
+```tsx figure=DeleteFirst motion
 
 ```
 
