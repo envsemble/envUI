@@ -53,8 +53,6 @@ examples:
 4. **Description** (`env-field-description`, `Field.Description`)
 5. **Error** (`env-field-error`, `Field.Error`)
 
-Field ties its parts together for assistive technology, whatever control sits in it.
-
 ## Behaviour
 
 ### Validate on blur

@@ -83,8 +83,6 @@ Text that isn't a link can open a card too, with the dotted underline and the fo
 
 ## Rules
 
-A hover card adds a glance at details people can also find elsewhere, and holds nothing to press.
-
 ### Details that are also elsewhere
 
 Keep the details supplementary: the page the link leads to has them too.

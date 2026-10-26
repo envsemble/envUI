@@ -35,12 +35,8 @@ components:
   - DialogClose
 examples:
   ProjectDetails: overview
-  FindPlan:
-    role: example
-    caption: 'Near the top: the field stays put as the results grow.'
-  ReviewChanges:
-    role: example
-    caption: A large dialog, for a table of changes.
+  FindPlan: example
+  ReviewChanges: example
   DialogAnatomy: anatomy
   RenameProject: example
   UnsavedChanges: example
@@ -98,8 +94,6 @@ Both narrow to fit the window.
 4. **Content** (`env-text-field`, `children`)
 5. **Close button** (`env-dialog-actions > env-button:first-child`, `closeLabel`)
 6. **Action** (`env-dialog-actions > env-button:last-child`, `actions`)
-
-Not shown: the scrim behind a modal dialog.
 
 ## Behaviour
 

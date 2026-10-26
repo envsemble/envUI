@@ -40,8 +40,6 @@ examples:
 2. **Title** (`env-accordion-label`, `title`)
 3. **Panel** (`env-accordion-content`, `children`)
 
-Each item draws the line under it, and its heading is a button.
-
 ## Behaviour
 
 ### One open at a time
@@ -65,8 +63,6 @@ The application can open a section itself, such as from a help button elsewhere 
 ```
 
 ## Rules
-
-An accordion holds one level of sections, and nothing people need to finish a task.
 
 ### One level
 

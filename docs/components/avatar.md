@@ -103,8 +103,6 @@ The name chooses one of eight pastel colors, the same on every page.
 4. **Person picture** (`env-avatar-person`)
 5. **Overflow** (`env-avatar-group-overflow`, `max`)
 
-Not shown: a picture, the check of a chosen avatar, a pressable avatar and AvatarButton.
-
 ## Behaviour
 
 ### A group as a pile

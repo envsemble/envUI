@@ -46,12 +46,8 @@ examples:
   InSidebar: example
   IconOnly: example
   CommandPaletteAnatomy: anatomy
-  TypeToSearch:
-    role: example
-    caption: With nothing to suggest yet, the palette invites a search and says what it finds.
-  NoResults:
-    role: example
-    caption: When the text finds nothing, the palette quotes it and says what to try.
+  TypeToSearch: example
+  NoResults: example
   NarrowSidebar: example
   ShowRecent:
     role: do
@@ -109,8 +105,6 @@ Search is an icon button named Search, with its label and keys in a [Tooltip](to
 3. **Group heading** (`env-command-palette-heading`)
 4. **Item** (`env-command-palette-item`, `items`)
 5. **Key hints** (`env-command-palette-footer`, `hints`)
-
-Not shown: the empty state, with its icon, title and description, which Behaviour shows.
 
 ## Behaviour
 

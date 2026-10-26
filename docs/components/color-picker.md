@@ -38,7 +38,7 @@ examples:
   MinimalPicker: overview
   EveryFormat:
     role: overview
-    caption: 'Hex, RGB and HSL one at a time, from the format menu, with alpha: the application chooses whether the color has an alpha.'
+    caption: With alpha, one format at a time.
   FormatsTogether: example
   PickerButtonOpen: example
   PresetSwatches: example
@@ -84,6 +84,9 @@ Several formats show their fields on a row each, with a copy button each. They e
 
 ColorPickerButton shows the color as a swatch and its value, and opens a picker in a popover.
 
+- It has no fill of its own: like a field, it takes the background of what it sits on.
+- One button can be given a fill of its own.
+
 ```tsx figure=PickerButtonOpen open
 
 ```
@@ -127,12 +130,6 @@ As the icon of an icon button, it is a rounded square whose fill shows on hover,
 9. **Eyedropper** (`env-color-picker-eye-dropper`)
 10. **Copy** (`env-color-picker-copy`)
 11. **Swatches** (`env-color-picker-swatches`, `swatches`)
-
-Not shown: the description and the error; the rows of several formats shown together; ColorPickerButton and its popover; and the eyedropper where the browser has none.
-
-### Colors
-
-ColorPickerButton has no fill of its own: like a field, it takes the background of what it sits on. One button can be given a fill of its own.
 
 ## Behaviour
 

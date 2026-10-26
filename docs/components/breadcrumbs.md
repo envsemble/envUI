@@ -27,12 +27,12 @@ components:
 examples:
   DocumentTrail:
     role: overview
-    caption: A trail from a workspace through its folders to the open document; the current page is always last, and never a link.
+    caption: From the workspace to the open document.
   WithoutUrls: example
   LevelWithoutPage: example
+  WrappingTrail: example
   OneLine: example
   BreadcrumbsAnatomy: anatomy
-  WrappingTrail: example
   RecognisedTop:
     role: do
     caption: Start at the level people know as the top, such as the workspace.
@@ -66,12 +66,14 @@ A level that can't be opened is plain text.
 
 ### Wrapping
 
-A trail above a page wraps; one in a bar stays on one line.
+| Wrapping | Use for                                                                                         |
+| -------- | ----------------------------------------------------------------------------------------------- |
+| Wraps    | A trail above a page's content: it wraps onto more lines when it runs out of room. The default. |
+| One line | A bar that stays one line tall: the current page is cut short first.                            |
 
-| Wrapping | Use for                                                              |
-| -------- | -------------------------------------------------------------------- |
-| Wraps    | A trail above a page's content. The default.                         |
-| One line | A bar that stays one line tall: the current page is cut short first. |
+```tsx figure=WrappingTrail widths="14 36"
+
+```
 
 ```tsx figure=OneLine
 
@@ -95,16 +97,6 @@ A trail above a page wraps; one in a bar stays on one line.
 A long label ends with an ellipsis, and a tooltip shows it in full on hover and on keyboard focus.
 
 - On one line, the current page is cut short first, and earlier levels keep their width.
-
-### Adapting to width
-
-The trail wraps onto more lines when it runs out of room.
-
-- Its chevrons mirror in right-to-left text.
-
-```tsx figure=WrappingTrail widths="14 36"
-
-```
 
 ## Rules
 
@@ -176,7 +168,7 @@ Give levels `onClick` where the application has no URLs. Pressing one makes it t
 
 ### Composition
 
-The landmark is named Breadcrumb, from EnvUIProvider's `messages.breadcrumbs`; `aria-label` tells two trails on a page apart. Pair it with the main navigation, such as a Drawer. Each level sits in an item, `env-breadcrumbs-item`.
+The landmark is named Breadcrumb, from EnvUIProvider's `messages.breadcrumbs`; `aria-label` tells two trails on a page apart. Pair it with the main navigation, such as a Drawer. Each level sits in an item, `env-breadcrumbs-item`. The chevrons mirror in right-to-left text.
 
 ## Changelog
 

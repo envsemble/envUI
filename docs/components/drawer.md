@@ -156,8 +156,6 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 4. **Chevron** (`env-drawer-toggle > env-drawer-chevron`)
 5. **Nested destinations** (`env-drawer-children`)
 
-Not shown: the handle on a resizable drawer's end edge, and the bar's More.
-
 ## Behaviour
 
 ### One list, three forms
@@ -239,7 +237,7 @@ Give a section a page of its own where it has an overview to show.
 
 Keep labels to a word or two, so they fit on one line in the drawer and under their icons in the rail and the bar.
 
-### Resizable
+### Its own background
 
 Keep a resizable drawer on its own background, so its handle is the edge of a surface.
 
