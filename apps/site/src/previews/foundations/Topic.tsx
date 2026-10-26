@@ -157,7 +157,7 @@ export function FigureRun({
   );
 }
 
-/** One entry of a numbered legend: the number its mark shows, a name and what it means. */
+/** One entry of a numbered legend: the number its mark shows, a name and, where it has one, what it means. */
 export interface LegendEntry {
   name: string;
   text: string;
@@ -176,9 +176,11 @@ export function NumberedLegend({ entries }: { entries: readonly LegendEntry[] })
             <Text render={<p />} className="catalogue-topic-legend-name">
               {entry.name}
             </Text>
-            <Text render={<p />} variant="body-sm" emphasis="muted">
-              {entry.text}
-            </Text>
+            {entry.text && (
+              <Text render={<p />} variant="body-sm" emphasis="muted">
+                {entry.text}
+              </Text>
+            )}
           </div>
         </li>
       ))}

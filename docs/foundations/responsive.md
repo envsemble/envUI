@@ -85,9 +85,7 @@ The window classes follow the reader's text size: with larger text, a window cou
 
 ## Rules
 
-Start from the phone: a screen is laid out for the compact class first, and spreads out from a class up.
-
-- Such as a list with its details beside it from expanded up, and above it below.
+Start from the phone: a screen is laid out for the compact class first, and spreads out from a class up. A list shows its details beside it from Expanded up, and above it below.
 
 ## Words to use
 

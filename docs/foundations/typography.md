@@ -43,11 +43,11 @@ envUI sets text in six styles, from the one large line that opens a page to smal
 
 ```
 
-1. **Headline**: The title of the page.
-2. **Title**: The title of a section, a card or a dialog.
-3. **Body**: Most text: paragraphs, descriptions and values.
-4. **Small body**: Supporting text, a step smaller and quieter.
-5. **Caption**: A note under a figure or a chart, at the small size.
+1. **Headline**
+2. **Title**
+3. **Body**
+4. **Small body**
+5. **Caption**
 
 ### Every style
 

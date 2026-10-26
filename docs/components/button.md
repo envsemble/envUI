@@ -134,7 +134,7 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 3. **Label** (`env-button::text`)
 4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
 
-Not shown: the spinner, a group's frame, and the end slot, quiet content after the label, such as a shortcut's keys, at the far end of a wide button, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) shows it.
+Not shown: the end slot, as on the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut).
 
 ## Behaviour
 
@@ -293,7 +293,7 @@ ConfirmButton with `icon` and an `aria-label` is icon-only until armed. When the
 </ButtonGroup>
 ```
 
-`orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
+`orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, at the far end of a wide button, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
 
 ### Customize
 
