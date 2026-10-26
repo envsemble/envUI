@@ -5,7 +5,7 @@ import { Badge } from '@envsemble/envui';
  * The motifs at the end of the few catalogue banners that have one, each a small arrangement drawn
  * from what the page shows, in envUI's own tokens: a fan of the palette on Colors & themes, and a
  * gallery's tiles on the pages of all components and all patterns. Every other catalogue banner has
- * the envUI mark's shapes, filled (BannerShapes.tsx).
+ * figures in thin lines (CatalogueBannerLines.tsx).
  */
 type Motif = 'swatches' | 'components' | 'patterns';
 

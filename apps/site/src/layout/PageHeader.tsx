@@ -4,6 +4,7 @@ import { routeHref } from '../navigation/Address';
 import type { TrailStep } from '../navigation/SiteRoutes';
 import { BannerMotif, motifOf } from './BannerMotif';
 import { BannerShapes } from './BannerShapes';
+import { CatalogueBannerLines } from './CatalogueBannerLines';
 
 /**
  * The kinds of banner, each read from the start like a document, under its breadcrumbs, the envUI
@@ -54,7 +55,13 @@ export function PageHeader({
         className="site-page-banner site-banner"
         data-banner={kind}
       >
-        {motif ? <BannerMotif motif={motif} /> : <BannerShapes />}
+        {motif ? (
+          <BannerMotif motif={motif} />
+        ) : kind === 'catalogue' ? (
+          <CatalogueBannerLines subject={subject} />
+        ) : (
+          <BannerShapes />
+        )}
         <Column gap={6} className="site-page-banner-content">
           <div className="site-page-banner-heading">
             <Column gap={3}>

@@ -356,10 +356,12 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   );
   await expect(trail.locator('[aria-current="page"]')).toHaveText('Slider');
   await expect(banner.locator('.site-page-banner-content')).toHaveCSS('text-align', 'start');
-  // Its picture is the envUI mark's shapes, filled, out of the accessibility tree.
+  // Its picture is figures in thin lines, unfilled, out of the accessibility tree.
   const shapes = banner.locator('.site-banner-shapes');
   await expect(shapes).toHaveAttribute('aria-hidden', 'true');
-  await expect(shapes.locator('.site-banner-shape').first()).toHaveCSS('border-top-width', '0px');
+  await expect(
+    shapes.locator('.catalogue-banner-lines :is(rect, circle, polygon)').first(),
+  ).toHaveCSS('fill', 'none');
   await expect(banner.locator('.catalogue-banner-motif')).toHaveCount(0);
   // The few pages with a motif of their own, such as Colors & themes, draw it out of the
   // accessibility tree and the tab order.
