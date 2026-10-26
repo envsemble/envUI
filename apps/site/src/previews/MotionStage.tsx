@@ -1,10 +1,16 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { createContext, use, useRef, useState, type ReactNode } from 'react';
 import { IconButton, Tooltip } from '@envsemble/envui';
 import { Pause } from '@envsemble/envui/icons/Pause';
 import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '../DocumentationTypes';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, PreviewOverlays, useInView } from './Motion';
+
+/**
+ * Whether the MotionStages inside are a do or don't figure's stage, joined to its verdict bar,
+ * where the figure plays its example (Figures.tsx).
+ */
+export const VerdictMotion = createContext(false);
 
 /**
  * The stage of an animated figure on a page, such as a slider stretching past its ends: the live
@@ -37,6 +43,7 @@ export function MotionStage({
   stage?: StageFill;
 }) {
   const { motionPaused } = useDisplaySettings();
+  const verdict = use(VerdictMotion);
   // The figure's own choice, and the sidebar's at the time, which it overrides only while that holds.
   const [own, setOwn] = useState<{ paused: boolean; over: boolean } | null>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -48,7 +55,11 @@ export function MotionStage({
     <div
       ref={stage}
       className={[
-        foundation ? 'site-foundation-stage' : 'site-live-example',
+        foundation
+          ? 'site-foundation-stage'
+          : verdict
+            ? 'site-verdict-stage env-connected-row'
+            : 'site-live-example',
         'catalogue-motion-stage',
         className,
       ]
