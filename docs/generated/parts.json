@@ -5531,7 +5531,9 @@
       "states": [
         {
           "attribute": "data-ending-style",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-toast"
           ]
@@ -5571,7 +5573,9 @@
         },
         {
           "attribute": "data-starting-style",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-toast"
           ]
