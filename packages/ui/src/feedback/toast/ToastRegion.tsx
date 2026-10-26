@@ -107,7 +107,7 @@ export function ToastRegion({
     const overflowing =
       !element.hasAttribute('data-settling') &&
       element.scrollHeight > element.clientHeight + 1 &&
-      element.getBoundingClientRect().height >= limit - 1;
+      element.offsetHeight >= limit - 1;
     element.toggleAttribute('data-settling', moving && !overflowing);
   }, []);
   // The viewport mounts in a portal, so its transition listeners follow the element itself.
@@ -137,7 +137,9 @@ export function ToastRegion({
     // move into its place in a single glide, and a notice revealed from the hidden ones takes its
     // turn, instead of the stack growing while the notice fades and shrinking after. Its layout box
     // is pinned, so a running entrance or exit transform carries on from where it is.
-    const before = element.getBoundingClientRect();
+    // Everything is measured in layout px, the viewport's offsets and the notices' within it, never
+    // the drawn boxes, which a transform or zoom around the region scales.
+    const before = { left: element.offsetLeft, top: element.offsetTop };
     const pins = items
       .filter((item) => leavingIds.has(item.dataset.toastId!) && !item.hasAttribute('data-leaving'))
       .map((item) => {
@@ -154,7 +156,12 @@ export function ToastRegion({
       item.style.width = `${right - left}px`;
       item.setAttribute('data-leaving', '');
     }
-    const box = element.getBoundingClientRect();
+    const box = {
+      left: element.offsetLeft,
+      top: element.offsetTop,
+      right: element.offsetLeft + element.offsetWidth,
+      bottom: element.offsetTop + element.offsetHeight,
+    };
     for (const pin of pins) {
       // Physical sides: the measurements are physical, whatever the writing direction.
       if (placement === 'bottom-end') {
