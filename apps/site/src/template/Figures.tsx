@@ -11,7 +11,8 @@ import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from './OptionLegend';
 import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
 import { InteractiveMark } from './InteractiveMark';
-import { Specimen } from './Specimen';
+import { Specimen, SpecimenRender } from './Specimen';
+import { VerdictMotion } from '../previews/MotionStage';
 import { foundationFigure } from '../previews/foundations/FoundationFigures';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -31,8 +32,9 @@ function FoundationFigure({ page, block }: { page: Document; block: FoundationBl
 
 /**
  * A do or don't figure: the live example in a frame with a green Do or red Don't bar and its one
- * sentence below, and the example's code under it. A foundation page's preview passes its sample
- * as `children` instead, which has no code of its own.
+ * sentence below, and the example's code under it. With `motion`, its animated specimen of the same
+ * name plays it on the stage. A foundation page's preview passes its sample as `children` instead,
+ * which has no code of its own.
  */
 export function VerdictFigure({
   page,
@@ -42,11 +44,14 @@ export function VerdictFigure({
   open = false,
   children,
   stage,
+  motion = false,
 }: {
   verdict: 'do' | 'dont';
   caption: string;
   /** Whether the example's overlays are shown open, as a picture. */
   open?: boolean;
+  /** Whether its animated specimen plays it in place of the live stage. */
+  motion?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
 } & (
@@ -66,25 +71,31 @@ export function VerdictFigure({
       {/* The stage and the bar are two connected rows: envUI's connected-row parts give the outer
           corners the large radius and the inner ones the small radius. */}
       <div className="site-verdict-frame env-connected-rows">
-        <Column
-          render={<Theme {...theme} />}
-          gap={0}
-          className="site-verdict-stage env-connected-row"
-          data-example={name}
-          data-stage={stage}
-          {...keepLinksInPlace}
-        >
-          {!page ? (
-            children
-          ) : open ? (
-            <OpenExample name={name ?? ''}>
+        {page && motion ? (
+          <VerdictMotion value>
+            <SpecimenRender page={page} name={name ?? ''} />
+          </VerdictMotion>
+        ) : (
+          <Column
+            render={<Theme {...theme} />}
+            gap={0}
+            className="site-verdict-stage env-connected-row"
+            data-example={name}
+            data-stage={stage}
+            {...keepLinksInPlace}
+          >
+            {!page ? (
+              children
+            ) : open ? (
+              <OpenExample name={name ?? ''}>
+                <ExampleRender page={page} name={name ?? ''} />
+              </OpenExample>
+            ) : (
               <ExampleRender page={page} name={name ?? ''} />
-            </OpenExample>
-          ) : (
-            <ExampleRender page={page} name={name ?? ''} />
-          )}
-          <InteractiveMark enabled={!open} />
-        </Column>
+            )}
+            <InteractiveMark enabled={!open} />
+          </Column>
+        )}
         <div className="site-verdict-bar env-connected-row" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}
           <span>{label}</span>
@@ -121,6 +132,7 @@ function Figure({
         caption={block.caption ?? ''}
         open={block.open}
         stage={block.stage}
+        motion={block.motion}
       />
     );
   if (block.role === 'anatomy' || block.role === 'variants')

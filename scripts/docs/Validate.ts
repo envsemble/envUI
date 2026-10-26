@@ -313,8 +313,8 @@ const figureAttributes: Record<string, { allowed: string[]; required: string[] }
     allowed: ['widths', 'sweep', 'classes', 'open', 'stage', 'wide', 'motion'],
     required: [],
   },
-  do: { allowed: ['open', 'stage'], required: ['caption'] },
-  dont: { allowed: ['open', 'stage'], required: ['caption'] },
+  do: { allowed: ['open', 'stage', 'motion'], required: ['caption'] },
+  dont: { allowed: ['open', 'stage', 'motion'], required: ['caption'] },
   anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width'], required: [] },
   variants: { allowed: ['stage'], required: [] },
 };
