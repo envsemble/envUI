@@ -95,6 +95,21 @@ test("a number within a label's words stays in their line, and a badge keeps the
   ).toHaveCount(1);
 });
 
+test('a text button alone in a box as wide as its content keeps its words in a line', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=button-counts`);
+  const button = page.getByTestId('text-alone-light');
+  await expect(button).toHaveText('Alex Morgan');
+  // Its margins give its padding back, which its largest width allows for.
+  const lines = await button.evaluate((element) => {
+    const words = document.createRange();
+    words.selectNodeContents(element);
+    return new Set([...words.getClientRects()].map((line) => Math.round(line.top))).size;
+  });
+  expect(lines).toBe(1);
+});
+
 test('a pending button keeps its size and name, reports busy and ignores presses', async ({
   page,
   browserName,

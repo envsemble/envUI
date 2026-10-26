@@ -35,6 +35,7 @@ examples:
   NavigationForms:
     role: overview
     stage: shaded
+    motion: true
   ChooseForms:
     role: example
     caption: A drawer only, and none on a phone.
@@ -66,7 +67,7 @@ A button can narrow the navigation to a strip of icons by asking for the rail in
 
 - Don't build a narrow drawer of your own: the Scaffold already has both forms.
 
-```tsx figure=NarrowNavigation stage=shaded
+```tsx figure=NarrowNavigation stage=shaded motion
 
 ```
 
@@ -74,7 +75,7 @@ A button can narrow the navigation to a strip of icons by asking for the rail in
 
 The top bar can run across the whole width, above the rail or the drawer, as a window's title bar needs.
 
-```tsx figure=TitleBarAcross stage=shaded
+```tsx figure=TitleBarAcross stage=shaded widths="40"
 
 ```
 
@@ -84,7 +85,7 @@ The navigation and the top bar share one fill, flush with the window's edges and
 
 - Either can sit on the page's background instead, such as a top bar beside a drawer.
 
-```tsx figure=TopBarOnThePage stage=shaded
+```tsx figure=TopBarOnThePage stage=shaded widths="40"
 
 ```
 

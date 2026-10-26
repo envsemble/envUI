@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { SegmentedControl } from '@envsemble/envui';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
 import { ViewModule } from '@envsemble/envui/icons/ViewModule';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { usePointer, type PointerStep } from '../../previews/Motion';
+import { MotionStage } from '../../previews/MotionStage';
 
 const statuses = [
   { value: 'open', label: 'Open', count: 12 },
@@ -10,52 +13,96 @@ const statuses = [
 ];
 const ignore = () => undefined;
 
-/** Counts, icons, a disabled option and a disabled control. */
+const segment = (label: string, index: number) =>
+  `[aria-label="${label}"] .env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
+
+/*
+ * The pointer chooses List, whose check takes its icon's place as Board gets its icon back, and
+ * then Board again. The keyboard's focus arrives on Day, and the arrow key goes on to Week and
+ * then past the disabled Quarter, back round to Day.
+ */
+const script: PointerStep[] = [
+  { wait: 500 },
+  { to: segment('Layout', 1), x: 0.55, y: 0.6 },
+  { wait: 450 },
+  { click: true },
+  { wait: 1100 },
+  { to: segment('Layout', 2), x: 0.5, y: 0.6, duration: 450 },
+  { wait: 350 },
+  { click: true },
+  { wait: 700 },
+  { leave: true },
+  { wait: 500 },
+  { focus: segment('Period', 1) },
+  { wait: 900 },
+  { key: 'ArrowRight' },
+  { wait: 1000 },
+  { key: 'ArrowRight' },
+  { wait: 1000 },
+  { blur: true },
+  { wait: 900 },
+];
+
+function Choosing() {
+  const [layout, setLayout] = useState('board');
+  const [period, setPeriod] = useState('day');
+  usePointer(script);
+  return (
+    <SpecimenGrid>
+      <Specimen title="With counts">
+        <SegmentedControl
+          aria-label="Work items"
+          value="open"
+          onValueChange={ignore}
+          items={statuses}
+        />
+      </Specimen>
+      <Specimen title="With icons">
+        <SegmentedControl
+          aria-label="Layout"
+          value={layout}
+          onValueChange={setLayout}
+          items={[
+            { value: 'list', label: 'List', icon: <ViewList /> },
+            { value: 'board', label: 'Board', icon: <ViewModule /> },
+          ]}
+        />
+      </Specimen>
+      <Specimen title="A disabled option">
+        <SegmentedControl
+          aria-label="Period"
+          value={period}
+          onValueChange={setPeriod}
+          items={[
+            { value: 'day', label: 'Day' },
+            { value: 'week', label: 'Week' },
+            { value: 'quarter', label: 'Quarter', disabled: true },
+          ]}
+        />
+      </Specimen>
+      <Specimen title="Disabled">
+        <SegmentedControl
+          aria-label="Work items, unavailable"
+          value="blocked"
+          onValueChange={ignore}
+          items={statuses}
+          disabled
+        />
+      </Specimen>
+    </SpecimenGrid>
+  );
+}
+
+/**
+ * Counts, icons, a disabled option and a disabled control: the pointer chooses an option with an
+ * icon, and the arrow keys skip the disabled one.
+ */
 export default function States() {
   return (
     <Example size="collection">
-      <SpecimenGrid>
-        <Specimen title="With counts">
-          <SegmentedControl
-            aria-label="Work items"
-            value="open"
-            onValueChange={ignore}
-            items={statuses}
-          />
-        </Specimen>
-        <Specimen title="With icons">
-          <SegmentedControl
-            aria-label="Layout"
-            value="board"
-            onValueChange={ignore}
-            items={[
-              { value: 'list', label: 'List', icon: <ViewList /> },
-              { value: 'board', label: 'Board', icon: <ViewModule /> },
-            ]}
-          />
-        </Specimen>
-        <Specimen title="A disabled option">
-          <SegmentedControl
-            aria-label="Period"
-            value="week"
-            onValueChange={ignore}
-            items={[
-              { value: 'day', label: 'Day' },
-              { value: 'week', label: 'Week' },
-              { value: 'quarter', label: 'Quarter', disabled: true },
-            ]}
-          />
-        </Specimen>
-        <Specimen title="Disabled">
-          <SegmentedControl
-            aria-label="Work items, unavailable"
-            value="blocked"
-            onValueChange={ignore}
-            items={statuses}
-            disabled
-          />
-        </Specimen>
-      </SpecimenGrid>
+      <MotionStage label="choosing an option, and the arrow keys skipping a disabled one">
+        <Choosing />
+      </MotionStage>
     </Example>
   );
 }

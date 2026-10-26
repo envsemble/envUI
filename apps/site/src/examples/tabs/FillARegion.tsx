@@ -42,8 +42,15 @@ function Outline() {
 
 export default function FillARegion() {
   return (
-    // The region has a height of its own, as an application's layout gives it.
-    <div style={{ display: 'flex', flexDirection: 'column', blockSize: '16rem' }}>
+    // The region has a size of its own, as an application's layout gives it.
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        inlineSize: 'min(100%, 32rem)',
+        blockSize: '16rem',
+      }}
+    >
       <Tabs
         aria-label="Diagram views"
         fill

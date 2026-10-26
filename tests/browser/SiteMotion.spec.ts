@@ -17,9 +17,12 @@ const tile = (page: Page, name: string) =>
 const switchOn = (tileOf: Locator) =>
   tileOf.locator('input').evaluate((input) => (input as HTMLInputElement).checked);
 
-/** The Slider page's figure of a slider under the pointer, whose value starts at 30. */
+/** The Slider page's figure of a slider under the pointer, whose value starts at 30, by its own
+ * pause button's name, which stays its own however its subject redraws. */
 const sliderFigure = (page: Page) =>
-  page.locator('.catalogue-motion-stage', { hasText: 'Volume' }).first();
+  page.locator('.catalogue-motion-stage', {
+    has: page.getByRole('button', { name: /the slider under the pointer$/ }),
+  });
 
 /** What the Slider page's figure under the pointer shows: the value it is at. */
 const figureValue = (page: Page) =>

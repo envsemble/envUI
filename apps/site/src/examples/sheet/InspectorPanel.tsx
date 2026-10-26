@@ -8,6 +8,8 @@ const people = [
 ];
 
 export default function InspectorPanel() {
+  const [open, setOpen] = useState(false);
+  // The person shown, who stays in the sheet while it slides out.
   const [selected, setSelected] = useState<string | null>(null);
   // The button that showed the current person, where focus returns when the panel closes.
   const opener = useRef<HTMLButtonElement | null>(null);
@@ -24,10 +26,11 @@ export default function InspectorPanel() {
               <Button
                 variant="text"
                 data-row-target
-                aria-current={candidate.name === selected || undefined}
+                aria-current={(open && candidate.name === selected) || undefined}
                 onClick={(event) => {
                   opener.current = event.currentTarget;
                   setSelected(candidate.name);
+                  setOpen(true);
                 }}
               >
                 {candidate.name}
@@ -38,10 +41,8 @@ export default function InspectorPanel() {
         ))}
       </List.Root>
       <Sheet
-        open={person !== undefined}
-        onOpenChange={(open) => {
-          if (!open) setSelected(null);
-        }}
+        open={open && person !== undefined}
+        onOpenChange={setOpen}
         modal={false}
         disablePointerDismissal
         finalFocus={opener}

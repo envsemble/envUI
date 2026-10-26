@@ -34,7 +34,7 @@ components:
 examples:
   ProjectVisibility:
     role: overview
-    caption: Typing an option's label in the open list jumps to it.
+    motion: true
   TriggerStyles: variants
   SmallToolbar:
     role: example

@@ -397,6 +397,21 @@
   margin: auto;
 }
 
+/* A command palette in a figure, shown open on its scrim or playing: narrower than the stage and
+   nearer its top than a screen's, so the scrim frames it on every side, as a window frames it. An
+   anatomy figure, which shows no scrim, keeps it as it is. */
+:is(.site-live-example, .site-verdict-stage)
+  .catalogue-open-example
+  .env-command-palette-positioner,
+.catalogue-motion-subject .env-command-palette-positioner {
+  padding-block: var(--env-space-6);
+}
+
+:is(.site-live-example, .site-verdict-stage) .catalogue-open-example .env-command-palette,
+.catalogue-motion-subject .env-command-palette {
+  inline-size: min(28rem, 100% - 2 * var(--env-space-8));
+}
+
 /* The layer envUI's overlays render into, through PortalContainer, over the room. */
 .catalogue-overlay-layer {
   position: absolute;
@@ -474,6 +489,20 @@
   inline-size: var(--env-button-height);
   inset-block-end: var(--env-space-2);
   inset-inline-end: var(--env-space-2);
+}
+
+/* A grid of specimens that plays, such as states the pointer goes through: the figure's stage is
+   its canvas, so it has none of its own, and it spans the stage as a still grid does. */
+.site-figures .catalogue-motion-subject :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
+  justify-self: stretch;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* The keys a figure's keyboard presses (PressedKeys.tsx), over what opens in it, scrim included. */
+.catalogue-pressed-keys {
+  z-index: var(--env-z-tooltip);
 }
 
 /* Notifications at a figure's bottom end arrive beside its pause button, which keeps that corner,

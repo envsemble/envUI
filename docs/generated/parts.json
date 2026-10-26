@@ -2669,6 +2669,28 @@
           "parts": [
             "env-line-art"
           ]
+        },
+        {
+          "attribute": "data-motion",
+          "values": [
+            "appear",
+            "disappear",
+            "loop",
+            "play"
+          ],
+          "parts": [
+            "env-line-art"
+          ]
+        },
+        {
+          "attribute": "data-turn",
+          "values": [
+            "in",
+            "out"
+          ],
+          "parts": [
+            "env-line-art"
+          ]
         }
       ]
     },

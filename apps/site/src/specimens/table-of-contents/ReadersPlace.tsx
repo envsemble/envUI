@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Column, Row, TableOfContents, Text } from '@envsemble/envui';
+import { useRef, type MouseEvent } from 'react';
+import { Column, Row, Surface, TableOfContents, Text } from '@envsemble/envui';
 import { Example } from '../../previews/Example';
 import { usePointer, type PointerStep } from '../../previews/Motion';
 import { MotionStage } from '../../previews/MotionStage';
@@ -12,23 +12,24 @@ const sections = [
   { id: 'catalogue-readers-place-monitor', title: 'Monitor' },
 ];
 
-const entry = (index: number) =>
-  `.env-table-of-contents-link:nth-child(${index} of .env-table-of-contents-link)`;
+/** A section's entry in the contents, by its place in the guide, from 1. */
+const entry = (index: number) => `.env-table-of-contents-link[href="#${sections[index - 1]!.id}"]`;
 
 /*
- * The reader scrolls the guide down a section at a time, to its end, the shape beside the contents
- * gliding with their place as they go; the pointer rests on a later section's entry, which swells
- * it a little; and the guide scrolls back to its start.
+ * The reader scrolls the guide down a section, the shape beside the contents gliding with their
+ * place; the pointer presses Deploy, and the guide scrolls that section to its top, below the
+ * guide's header, which stays; the pointer rests on a later entry, which swells the shape a
+ * little; and the guide scrolls back to its start.
  */
 const script: PointerStep[] = [
   { wait: 900 },
   { cue: 'next' },
-  { wait: 1300 },
-  { cue: 'next' },
-  { wait: 1300 },
-  { cue: 'next' },
-  { wait: 1300 },
-  { to: entry(2) },
+  { wait: 1400 },
+  { to: entry(3), x: 0.3, y: 0.5 },
+  { wait: 500 },
+  { click: true },
+  { wait: 1600 },
+  { to: entry(4), x: 0.3, y: 0.5, duration: 400 },
   { wait: 1100 },
   { leave: true },
   { wait: 400 },
@@ -38,24 +39,61 @@ const script: PointerStep[] = [
 
 function Reading() {
   const guide = useRef<HTMLDivElement>(null);
+  const header = useRef<HTMLDivElement>(null);
   const at = useRef(0);
+  /** Scrolls the guide to a section, its top just below the header. */
+  const show = (index: number) => {
+    const element = guide.current;
+    if (!element) return;
+    at.current = index;
+    const section = element.querySelector<HTMLElement>(`#${sections[index]!.id}`);
+    // The guide is the sections' offset parent, so a section's offset is its scroll position.
+    const top = (section?.offsetTop ?? 0) - (header.current?.offsetHeight ?? 0);
+    element.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  };
   usePointer(script, {
-    onCue: (cue) => {
-      const element = guide.current;
-      if (!element) return;
-      at.current = cue === 'start' ? 0 : Math.min(at.current + 1, sections.length - 1);
-      const section = element.querySelector<HTMLElement>(`#${sections[at.current]!.id}`);
-      // The guide is the sections' offset parent, so a section's offset is its scroll position.
-      element.scrollTo({ top: section?.offsetTop ?? 0, behavior: 'smooth' });
-    },
+    onCue: (cue) => show(cue === 'start' ? 0 : Math.min(at.current + 1, sections.length - 1)),
   });
+  // A link scrolls its section to the top of the page and puts it in the address; on the stage,
+  // the figure scrolls its guide there instead, as the link does the page.
+  const follow = (event: MouseEvent) => {
+    const link = (event.target as Element).closest('a');
+    const index = sections.findIndex(({ id }) => link?.getAttribute('href') === `#${id}`);
+    if (index < 0) return;
+    event.preventDefault();
+    show(index);
+  };
   return (
-    <Row gap={6} align="start">
-      <div
+    <Row gap={6} align="start" onClickCapture={follow}>
+      {/* The guide, a pane that scrolls under its header, which stays. */}
+      <Surface
         ref={guide}
-        style={{ blockSize: '11rem', inlineSize: '15rem', overflowY: 'auto', position: 'relative' }}
+        radius="sm"
+        padding={0}
+        style={{
+          blockSize: '12rem',
+          inlineSize: '16rem',
+          overflowY: 'auto',
+          position: 'relative',
+          paddingInline: 'var(--env-space-4)',
+        }}
       >
-        <Column gap={6} style={{ paddingBlockEnd: '7rem' }}>
+        <div
+          ref={header}
+          // On the pane's own fill, so the sections pass under it.
+          style={{
+            position: 'sticky',
+            insetBlockStart: 0,
+            zIndex: 1,
+            paddingBlock: 'var(--env-space-3)',
+            background: 'inherit',
+          }}
+        >
+          <Text variant="caption" emphasis="muted">
+            Deployment guide
+          </Text>
+        </div>
+        <Column gap={6} style={{ paddingBlockEnd: '8rem' }}>
           {sections.map(({ id, title }) => (
             <Column key={id} id={id} gap={2}>
               <Text variant="title" render={<h3 />}>
@@ -67,7 +105,7 @@ function Reading() {
             </Column>
           ))}
         </Column>
-      </div>
+      </Surface>
       <TableOfContents
         aria-label="Sections of the guide"
         style={{ inlineSize: '9rem' }}

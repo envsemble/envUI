@@ -4,9 +4,9 @@ import { Edit } from '@envsemble/envui/icons/Edit';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
 const sizes: readonly { size: ControlSize; title: string; caption: string }[] = [
-  { size: 'sm', title: 'Small', caption: '2 rem, 1.625 rem compact' },
-  { size: 'md', title: 'Medium', caption: '2.5 rem, 2 rem compact' },
-  { size: 'lg', title: 'Large', caption: '3 rem, 2.375 rem compact' },
+  { size: 'sm', title: 'Small', caption: 'A table row or a dense toolbar' },
+  { size: 'md', title: 'Medium', caption: 'The default' },
+  { size: 'lg', title: 'Large', caption: 'A step larger than medium' },
 ];
 
 /** The three sizes of Button and IconButton, which every control of a size shares. */

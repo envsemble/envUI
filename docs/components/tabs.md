@@ -105,11 +105,13 @@ A tab shows its panel as soon as the arrow keys reach it.
 - Where a panel takes a while to load, a tab can wait to be pressed instead.
 - A disabled tab is dimmed: the arrow keys reach it but don't choose it.
 
+<!-- specimen: ChoosingATab -->
+
 ### Adapting to width
 
 Tabs keep their size: a rail with more tabs than fit scrolls sideways.
 
-```tsx figure=ScrollingRail widths="40 20" sweep
+```tsx figure=ScrollingRail widths="40 20" motion
 
 ```
 

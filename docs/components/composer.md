@@ -32,7 +32,9 @@ avoidWhen:
 components:
   - Composer
 examples:
-  AskAnything: overview
+  AskAnything:
+    role: overview
+    motion: true
   StartAndFooter: example
   ComposerAnatomy: anatomy
   PendingSend: example
@@ -81,7 +83,7 @@ A composer is its field alone, or has a row below the field with controls at its
 
 While a send is in progress, the next one waits; the field stays editable and keeps focus.
 
-```tsx figure=PendingSend
+```tsx figure=PendingSend motion
 
 ```
 
@@ -97,11 +99,11 @@ A composer fills its container, and its field grows with its text up to a set nu
 
 A composer stays ready for the next message, below the conversation it adds to.
 
-```tsx figure=PendingStaysEditable
+```tsx figure=PendingStaysEditable motion
 
 ```
 
-```tsx figure=DisabledWhileSending
+```tsx figure=DisabledWhileSending motion
 
 ```
 

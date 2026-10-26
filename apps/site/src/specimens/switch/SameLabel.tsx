@@ -1,0 +1,20 @@
+import SameLabel from '../../examples/switch/SameLabel';
+import { usePointer } from '../../previews/Motion';
+import { MotionStage } from '../../previews/MotionStage';
+import { toggling } from './Toggling';
+
+const script = toggling(false);
+
+function Toggled() {
+  usePointer(script);
+  return <SameLabel />;
+}
+
+/** The switch turned off and on by a pointer no one sees, in step with its pair. */
+export default function SameLabelMotion() {
+  return (
+    <MotionStage label="the switch turned off and on, its label kept">
+      <Toggled />
+    </MotionStage>
+  );
+}

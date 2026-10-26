@@ -125,6 +125,26 @@ Its lines take the muted edge color in every theme, quiet on any surface, and st
 
 <!-- specimen: Themes -->
 
+### Appearing and disappearing
+
+A drawing can draw itself in, line by line, and draw itself out again, in the order it was constructed: the lines that frame it first, the finer divisions after.
+
+- Appearing goes from nothing to the whole drawing, and disappearing from the whole drawing to nothing.
+- One leads into the other, so they can run in turn for as long as the drawing shows.
+- Each drawing takes as long, however many lines it has.
+
+<!-- specimen: InAndOut -->
+
+### Playing
+
+A drawing can also play: each line runs out past its end and draws itself in again, one after another, and the drawing rests whole.
+
+- It never leaves the screen empty, so it suits a drawing that is already there, such as on hover.
+- Only the lines move: the drawing keeps its place and its size.
+- Where reduced motion is preferred, a drawing shows where its motion ends at once, and a playing or looping drawing stays still.
+
+<!-- specimen: Playing -->
+
 ### Adapting to width
 
 As its box narrows, the drawing keeps its end in view and gives up its start.
@@ -196,6 +216,10 @@ Ask for a drawing in these words.
 | Centred      | `align="center"`                                  | A drawing cropped from both sides, as above a message.       |
 | Per screen   | `lineArtDrawings[index % lineArtDrawings.length]` | A different drawing on each screen, the same on every visit. |
 | Described    | `label="…"`                                       | A drawing that is content, read as an image.                 |
+| Appearing    | `motion="appear"`                                 | A drawing that draws itself in, as it arrives.               |
+| Disappearing | `motion="disappear"`                              | A drawing that draws itself out, as it leaves.               |
+| In and out   | `motion="loop"`                                   | A drawing that appears and disappears by turns, for a wait.  |
+| Playing      | `motion="play"`                                   | A drawing that redraws itself and rests, such as on hover.   |
 
 ## Compose
 
@@ -208,6 +232,31 @@ Ask for a drawing in these words.
 ```
 
 `align` is `end`, the default, `start` or `center`: where the drawing sits as its box crops it, as `preserveAspectRatio` with `slice` on a sheet of 480 by 330. Right to left, the drawing is mirrored. `label` makes it `role="img"`, named by the label; without one it is `aria-hidden`.
+
+#### Motion
+
+`motion` moves the drawing's lines, one beat after another in the order of its construction, as it mounts or as `motion` changes; without it, the drawing is still.
+
+- `appear` draws the lines in, from nothing to the whole drawing, the lines that frame it first.
+- `disappear` draws them out, from the whole drawing to nothing, the other way round, and leaves nothing drawn.
+- `loop` draws them in, holds the drawing whole a moment, and draws them out, for as long as it is set; each turn begins where the last one ends, with nothing drawn.
+- `play` runs each line out past its end and draws it in again, the drawing whole throughout, and ends on the still.
+
+`onMotionEnd` is called once `appear`, `disappear` or `play` has finished, such as to unmount a drawing that has disappeared, or to play it again by setting `motion` to `undefined` and back. Where reduced motion is preferred, each shows where it ends at once and calls `onMotionEnd`, and `loop` keeps the drawing whole.
+
+```tsx
+function EmptyStateArt({ leaving, onGone }: { leaving: boolean; onGone: () => void }) {
+  return (
+    <LineArt
+      drawing="pappus-chain"
+      motion={leaving ? 'disappear' : 'appear'}
+      onMotionEnd={() => {
+        if (leaving) onGone();
+      }}
+    />
+  );
+}
+```
 
 #### A drawing for each screen
 
@@ -225,6 +274,8 @@ In a banner or a header, give the drawing a box at the end and keep the text abo
 
 The root is `env-line-art`, an SVG with `data-drawing` and `data-align`, whose shapes draw with `stroke: var(--env-color-border-muted)`, `stroke-width: 1px` and `vector-effect: non-scaling-stroke`, and `stroke: GrayText` in forced colors. Its `width` and `height` are its box's, `100%` of its container by default; set them, or its `style`, to place it.
 
+In motion, the root also has `data-motion`, and `data-turn`, `in` or `out`, in a loop. A motion takes `--env-line-art-duration`, `calc(var(--env-motion-duration-slow) * 10)` by default, and `play` half as long again; set it on the drawing to slow it down or speed it up. Each line is a dash of `pathLength="1"`, moved by `stroke-dashoffset`, so nothing but the lines moves.
+
 ## Changelog
 
-- **1.0.0**: LineArt, sixteen geometric drawings in hairlines, with `drawing`, `align` and `label`, and `lineArtDrawings`.
+- **1.0.0**: LineArt, sixteen geometric drawings in hairlines, with `drawing`, `align` and `label`, and `lineArtDrawings`; `motion`, `appear`, `disappear`, `loop` or `play`, and `onMotionEnd`.

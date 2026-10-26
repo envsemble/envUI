@@ -1,5 +1,6 @@
 // LineArt's markup: each drawing by its name, covering its box from where it sits, hidden from
-// assistive technology unless a label makes it an image.
+// assistive technology unless a label makes it an image, and its lines ready to move in the order
+// of each drawing's construction.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
@@ -13,7 +14,10 @@ const output = join(repository, '.cache/unit/LineArt.mjs');
 await build({
   absWorkingDir: repository,
   stdin: {
-    contents: "export { LineArt, lineArtDrawings } from './packages/ui/src/layout/LineArt.tsx';",
+    contents: [
+      "export { LineArt, lineArtDrawings } from './packages/ui/src/layout/LineArt.tsx';",
+      "export { lineArtOrder } from './packages/ui/src/layout/internal/lineArtDrawings.tsx';",
+    ].join('\n'),
     resolveDir: repository,
     loader: 'ts',
   },
@@ -25,7 +29,7 @@ await build({
   outfile: output,
   logLevel: 'error',
 });
-const { LineArt, lineArtDrawings } = await import(pathToFileURL(output).href);
+const { LineArt, lineArtDrawings, lineArtOrder } = await import(pathToFileURL(output).href);
 
 test('sixteen drawings, each named in kebab case and drawn in lines of its own', () => {
   assert.equal(lineArtDrawings.length, 16);
@@ -64,4 +68,37 @@ test('it sits at the start or in the centre, and a label makes it an image', () 
   assert.match(labelled, /role="img" aria-label="A chain of circles"/);
   assert.doesNotMatch(labelled, /aria-hidden/);
   assert.match(labelled, /class="env-line-art hero"/);
+});
+
+test("each drawing's order moves every one of its lines once, in beats", () => {
+  for (const drawing of lineArtDrawings) {
+    const markup = renderToStaticMarkup(h(LineArt, { drawing }));
+    const count = (markup.match(/<(rect|circle|line|polygon|path) /g) ?? []).length;
+    const order = lineArtOrder[drawing].flat();
+    assert.deepEqual(
+      [...order].sort((a, b) => a - b),
+      Array.from({ length: count }, (_, index) => index),
+      `${drawing} orders each of its ${count} lines once`,
+    );
+    assert.ok(lineArtOrder[drawing].length >= 4, `${drawing} draws in at least four beats`);
+  }
+});
+
+test('in motion, each line is one long and starts at its place in the order', () => {
+  const still = renderToStaticMarkup(h(LineArt, { drawing: 'monochord' }));
+  assert.doesNotMatch(still, /pathLength|data-motion|--env-line-art-at/);
+  for (const motion of ['appear', 'disappear', 'play', 'loop']) {
+    const markup = renderToStaticMarkup(h(LineArt, { drawing: 'monochord', motion }));
+    assert.match(markup, new RegExp(`data-motion="${motion}"`));
+    assert.equal(
+      /data-turn="in"/.test(markup),
+      motion === 'loop',
+      `${motion} turns only in a loop`,
+    );
+    const lines = markup.match(/<(rect|circle|line|polygon|path) [^>]*>/g);
+    assert.ok(lines.every((line) => /pathLength="1"/.test(line)));
+    // Monochord's string first, then its ends, the arc over the whole and each stop with its arc.
+    const at = lines.map((line) => Number(/--env-line-art-at:\s*([\d.]+)/.exec(line)[1]));
+    assert.deepEqual(at, [0, 0.2, 0.2, 0.4, 0.6, 0.6, 0.8, 0.8, 1, 1]);
+  }
 });

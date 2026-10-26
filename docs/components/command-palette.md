@@ -41,13 +41,14 @@ avoidWhen:
 components:
   - CommandPalette
 examples:
-  GoToDocument: overview
+  GoToDocument:
+    role: overview
+    motion: true
   RunCommand: example
   InSidebar: example
   IconOnly: example
   CommandPaletteAnatomy: anatomy
   TypeToSearch: example
-  NoResults: example
   NarrowSidebar: example
   ShowRecent:
     role: do
@@ -71,7 +72,7 @@ examples:
 
 An item can end with its shortcut or a badge, and hints below the list say what keys do.
 
-```tsx figure=RunCommand
+```tsx figure=RunCommand motion
 
 ```
 
@@ -82,7 +83,7 @@ A secondary [Button](button.md) with the search icon, its label and the shortcut
 - Pressing it opens the palette.
 - So does <kbd>⌘</kbd>+<kbd>K</kbd> on Apple platforms and <kbd>Ctrl</kbd>+<kbd>K</kbd> elsewhere, from anywhere in the window, text fields included.
 
-```tsx figure=InSidebar
+```tsx figure=InSidebar motion
 
 ```
 
@@ -90,7 +91,7 @@ A secondary [Button](button.md) with the search icon, its label and the shortcut
 
 Search is an icon button named Search, with its label and keys in a [Tooltip](tooltip.md) that opens below it.
 
-```tsx figure=IconOnly
+```tsx figure=IconOnly motion
 
 ```
 
@@ -108,19 +109,15 @@ Search is an icon button named Search, with its label and keys in a [Tooltip](to
 
 ## Behaviour
 
-### Before people type
+### Before people type, and when nothing matches
 
-Suggestions show until people type, such as recent items, and choose like any result. With none yet, an invitation says what the palette finds.
+Suggestions show until people type, such as recent items, and choose like any result.
 
-```tsx figure=TypeToSearch open
+- With none yet, an invitation says what the palette finds.
+- When nothing matches, the empty state takes the list's place: it quotes what people typed and suggests checking the spelling or other words.
+- Typing again brings results back.
 
-```
-
-### When nothing matches
-
-The empty state takes the list's place: it quotes what people typed and suggests checking the spelling or other words. Typing again brings results back.
-
-```tsx figure=NoResults open
+```tsx figure=TypeToSearch open motion
 
 ```
 

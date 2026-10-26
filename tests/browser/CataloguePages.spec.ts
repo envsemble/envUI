@@ -248,9 +248,13 @@ test('every stage is the only frame of its figure', async ({ page }) => {
       const stages = document.querySelectorAll(
         '.site-figures :is(.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-related-stage, .catalogue-specimen-grid, .catalogue-matrix-scroll)',
       );
+      // A grid of specimens that plays takes its figure's stage as its canvas, and is no frame.
+      const playing =
+        '.catalogue-motion-subject :is(.catalogue-specimen-grid, .catalogue-matrix-scroll)';
       const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
       const found: string[] = [];
       for (const stage of stages) {
+        if (stage.matches(playing)) continue;
         const canvas = getComputedStyle(stage).backgroundColor;
         for (
           let node = stage.parentElement;

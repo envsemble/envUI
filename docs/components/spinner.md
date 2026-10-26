@@ -31,7 +31,9 @@ avoidWhen:
 components:
   - Spinner
 examples:
-  LoadingPreview: overview
+  LoadingPreview:
+    role: overview
+    motion: true
   Sizes: variants
   SpinnerAnatomy: anatomy
 ---
