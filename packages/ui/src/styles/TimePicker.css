@@ -1,6 +1,5 @@
-/* Time field: DatePicker's field and popup, whose popup holds the wheels of a time above the Now and
-   Clear buttons, closer together than a calendar's. It is wide enough for its buttons on one row,
-   where the window has room. */
-.env-date-picker-popup.env-time-picker-popup {
+/* Time field: DatePicker's field on the picker card, whose body holds the wheels of a time above the
+   Now and Clear buttons. It is wide enough for its buttons on one row, where the window has room. */
+.env-time-picker-popup {
   min-inline-size: min(calc(6 * var(--env-control-height-md)), var(--available-width, 100vw));
 }

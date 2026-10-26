@@ -4,22 +4,23 @@ import { Description } from '@envsemble/envui/icons/Description';
 import { Search } from '@envsemble/envui/icons/Search';
 
 const documents = ['Roadmap.md', 'Pricing research.md', 'Launch checklist.md', 'Budget.md'];
-const recent = documents.slice(0, 3);
+
+const item = (name: string, group: string): CommandPaletteItem => ({
+  id: name,
+  label: name,
+  icon: <Description />,
+  group,
+});
+// Until people type, the recent documents show, as a group of their own.
+const recent = documents.slice(0, 3).map((name) => item(name, 'Recently opened'));
 
 export default function ShowRecent() {
   // Shown open in the docs; start closed, useState(false), to open it from the button.
   const [open, setOpen] = useState(true);
   const [query, setQuery] = useState('');
-  const names = query
-    ? documents.filter((name) => name.toLowerCase().includes(query.toLowerCase()))
-    : recent;
-  const items: CommandPaletteItem[] = names.map((name) => ({
-    id: name,
-    label: name,
-    icon: <Description />,
-    // While the query is empty, the recent documents are a group of their own.
-    group: query ? 'Documents' : 'Recently opened',
-  }));
+  const items = documents
+    .filter((name) => name.toLowerCase().includes(query.trim().toLowerCase()))
+    .map((name) => item(name, 'Documents'));
   return (
     <>
       <Button variant="secondary" startIcon={<Search />} onClick={() => setOpen(true)}>
@@ -36,6 +37,7 @@ export default function ShowRecent() {
         inputValue={query}
         onInputValueChange={setQuery}
         items={items}
+        defaultItems={recent}
         onAction={() => {}}
         emptyLabel="No matching documents"
       />

@@ -27,39 +27,30 @@ avoidWhen:
     use: Alert
 components:
   - Tooltip
+examples:
+  IconActions: overview
+  RailOfIcons:
+    role: example
+    caption: Beside a rail of icons, toward the content.
+  TooltipAnatomy: anatomy
+  MenuTrigger: example
+  ShortcutHints: example
+  TextAbbreviation: example
+  IconOnlyNamed:
+    role: do
+    caption: Name an icon-only control.
+  RepeatsLabel:
+    role: dont
+    caption: A tooltip that repeats a visible label.
+  DisabledReason:
+    role: do
+    caption: Say why a control is disabled in the page too.
+  ReasonOnlyInTooltip:
+    role: dont
+    caption: The reason only in a tooltip, which touch screens never show.
 ---
 
 # Tooltip
-
-## Overview
-
-```tsx example=IconActions
-
-```
-
-### Menu trigger
-
-A tooltip can name the button that opens a menu, a popover, a dialog or a sheet, and stays closed while what it opens is open.
-
-```tsx example=MenuTrigger
-
-```
-
-### Keyboard shortcuts
-
-Write the shortcut after the control's name, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>).
-
-```tsx example=ShortcutHints
-
-```
-
-### Text
-
-Text that isn't a control, such as an abbreviation, takes a quiet underline of round, well-spaced dots that says it shows more on hover or focus, and takes keyboard focus so the keyboard opens the tooltip too. The pointer stays the arrow over it, not the text cursor. Hover cards and relative times on text take the same underline. Buttons, icon buttons and links keep their own look.
-
-```tsx example=TextAbbreviation
-
-```
 
 ## Variants
 
@@ -73,35 +64,13 @@ Where the window has no room, a tooltip flips to the other side.
 | Bottom | Controls at the top of a window or a pane, such as a toolbar. |
 | Beside | A vertical rail, toward the content, in either direction.     |
 
-```tsx example=RailOfIcons caption="Beside a rail of icons, toward the content."
+```tsx figure=RailOfIcons
 
 ```
-
-## When to use
-
-```tsx do=IconOnlyNamed open caption="Name an icon-only control."
-
-```
-
-```tsx dont=RepeatsLabel open caption="A tooltip that repeats a visible label."
-
-```
-
-```tsx do=DisabledReason open caption="Say why a control is disabled in the page too."
-
-```
-
-```tsx dont=ReasonOnlyInTooltip open caption="The reason only in a tooltip, which touch screens never show."
-
-```
-
-### Something to focus
-
-A tooltip belongs to something people can focus, such as a button, never to an icon alone.
 
 ## Anatomy
 
-```tsx anatomy=TooltipAnatomy open
+```tsx figure=TooltipAnatomy open
 
 ```
 
@@ -109,6 +78,63 @@ A tooltip belongs to something people can focus, such as a button, never to an i
 2. **Control** (`env-icon-button`, `children`)
 
 Not shown: the wrapper that lets a disabled control show a tooltip, and the dotted underline of text.
+
+## Behaviour
+
+### Menu trigger
+
+A tooltip can name the button that opens a menu, a popover, a dialog or a sheet.
+
+- It stays closed while what it opens is open.
+
+```tsx figure=MenuTrigger
+
+```
+
+### Keyboard shortcuts
+
+Write the shortcut after the control's name, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>).
+
+```tsx figure=ShortcutHints
+
+```
+
+### Text
+
+Text that isn't a control, such as an abbreviation, takes a quiet underline of round, well-spaced dots that says it shows more on hover or focus.
+
+- It takes keyboard focus, so the keyboard opens the tooltip too.
+- The pointer stays the arrow over it, not the text cursor.
+- Hover cards and relative times on text take the same underline.
+- Buttons, icon buttons and links keep their own look.
+
+```tsx figure=TextAbbreviation
+
+```
+
+## Rules
+
+A tooltip adds a name or a hint to something people can focus, and never holds the only account of anything.
+
+```tsx figure=IconOnlyNamed open
+
+```
+
+```tsx figure=RepeatsLabel open
+
+```
+
+```tsx figure=DisabledReason open
+
+```
+
+```tsx figure=ReasonOnlyInTooltip open
+
+```
+
+### Something to focus
+
+A tooltip belongs to something people can focus, such as a button, never to an icon alone.
 
 ## Accessibility
 
@@ -131,11 +157,14 @@ Not shown: the wrapper that lets a disabled control show a tooltip, and the dott
 - The reason a control is disabled in the page too.
 - A child that takes the trigger's props and ref, such as a Button or an IconButton.
 
-## In code
+## Compose
 
 ### Usage
 
-Tooltip wraps the one control it describes, its `children`, such as an IconButton, which takes the trigger's props and ref; `content` is its text. While it is open, a control with a name of its own is described by it, through `aria-describedby`, so name an icon-only control with `aria-label` too. The pointer rests on the control for `delay`, 400 ms by default, before it opens, and keyboard focus opens it at once; `defaultOpen` starts it open.
+Tooltip wraps the one control it describes, its `children`, such as an IconButton, which takes the trigger's props and ref; `content` is its text.
+
+- While it is open, a control with a name of its own is described by it, through `aria-describedby`, so name an icon-only control with `aria-label` too.
+- The pointer rests on the control for `delay`, 400 ms by default, before it opens, and keyboard focus opens it at once; `defaultOpen` starts it open.
 
 ```tsx source=IconActions
 
@@ -145,32 +174,47 @@ Tooltip wraps the one control it describes, its `children`, such as an IconButto
 
 `side` is `top`, the default, `bottom`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction. Where the window has no room, it flips to the other side.
 
-```tsx source=RailOfIcons
-
+```tsx
+<Tooltip content="Show files" side="inline-end">
+  <IconButton icon={<Folder />} aria-label="Show files" variant="ghost" />
+</Tooltip>
 ```
 
 #### Menu trigger
 
 A Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog: its native props and `ref` reach the control, and it stays closed while their popup is open and as focus returns to the control. Around a HoverCard it shows nothing.
 
-```tsx source=MenuTrigger
-
+```tsx
+<Menu.Root
+  aria-label="Project actions"
+  trigger={
+    <Tooltip content="More actions">
+      <IconButton icon={<MoreVert />} aria-label="More actions" />
+    </Tooltip>
+  }
+>
+  <Menu.Item icon={<Archive />}>Archive</Menu.Item>
+</Menu.Root>
 ```
 
 #### Keyboard shortcuts
 
 Write the shortcut after the name in `content`, and give the control `aria-keyshortcuts` in ARIA's key names, such as `Control+B`.
 
-```tsx source=ShortcutHints
-
+```tsx
+<Tooltip content="Bold (Ctrl+B)" side="bottom">
+  <IconButton icon={<FormatBold />} aria-label="Bold" aria-keyshortcuts="Control+B" />
+</Tooltip>
 ```
 
 #### Text and disabled controls
 
 Text that isn't a control takes the dotted underline, `env-hover-detail`; give it `tabIndex={0}`, so keyboard focus opens the tooltip too. A disabled control sits in a wrapper, `env-tooltip-disabled-target`, that takes the pointer and focus for it, and carries its role, name, state and `aria-disabled`.
 
-```tsx source=TextAbbreviation
-
+```tsx
+<Tooltip content="Central European Time">
+  <abbr tabIndex={0}>CET</abbr>
+</Tooltip>
 ```
 
 ### Customize

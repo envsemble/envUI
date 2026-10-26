@@ -1,4 +1,4 @@
-/* Component pages on the figure template: ordinary sections of short text and live figures, with
+/* Component, pattern and foundation pages: ordinary sections of short text and live figures, with
    a rhythm of space. What belongs together sits close: a heading and its first content, text and
    the figure it introduces, a figure's stage, caption and code. Unrelated parts sit apart: one
    sub-topic clearly from the next, and one section far from the next, which the article's gap
@@ -171,6 +171,22 @@
   outline-offset: var(--env-space-2);
 }
 
+/* A frame wider than its stage, such as beside the page's contents, is drawn smaller to fit, not
+   resized (WidthBox in LiveExample.tsx): its place on the stage takes the scaled size, and the
+   frame, at its own width, is scaled from its start corner into it. */
+.docs-width-fit[data-scaled] {
+  position: relative;
+}
+.docs-width-fit[data-scaled] > .docs-width-box {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  transform-origin: top left;
+}
+.docs-width-fit[data-scaled]:dir(rtl) > .docs-width-box {
+  transform-origin: top right;
+}
+
 /* Code soft-wraps where the content column is narrower than a 100-character line, rather than
    scrolling sideways; examples are formatted to that width. */
 @container (width < 60rem) {
@@ -260,6 +276,32 @@
   justify-items: center;
   inline-size: 100%;
   min-inline-size: 0;
+}
+
+/* A subject that needs a width to show its parts (`width` on its fence): it fills the stage, or,
+   where the stage is narrower, is laid out at that width and drawn smaller from its start corner
+   into the scaled place it takes (FitFrame in AnatomyFigure.tsx). */
+.docs-anatomy-fit {
+  inline-size: 100%;
+}
+
+.docs-anatomy-fit-box {
+  display: grid;
+}
+
+.docs-anatomy-fit[data-scaled] {
+  position: relative;
+}
+
+.docs-anatomy-fit[data-scaled] > .docs-anatomy-fit-box {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  transform-origin: top left;
+}
+
+.docs-anatomy-fit[data-scaled]:dir(rtl) > .docs-anatomy-fit-box {
+  transform-origin: top right;
 }
 
 .docs-anatomy-lines {
@@ -358,8 +400,8 @@
   margin: 0;
 }
 
-/* An option table on the Site, such as a component's variants or sizes: a legend laid out as an
-   anatomy figure's is, each option's name in the tag a variants figure's callouts use, followed by
+/* An option table in the catalogue, such as a component's variants or sizes: a legend laid out
+   as an anatomy figure's is, each option's name in the tag a variants figure's callouts use, followed by
    what it is for (OptionLegend.tsx). The tags of a column share its widest tag's width, so what
    each option is for starts on one line down the column; two columns where they fit. */
 .docs-option-legend {

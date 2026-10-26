@@ -2,9 +2,9 @@ import { componentGroups, componentGroupId } from '../Reference';
 import { pagesOf } from '../navigation/DocumentationRoutes';
 import { Gallery, type GalleryGroup } from '../template/Gallery';
 
-/** Every component of the Site, a tile with its preview for each, by group; Field is in the Docs only. */
+/** Every component of the catalogue, a tile with its preview for each, by group; Field is in the Docs only. */
 export function Catalogue() {
-  const pages = pagesOf('site').filter((page) => page.kind === 'component');
+  const pages = pagesOf('catalogue').filter((page) => page.kind === 'component');
   const groups: GalleryGroup[] = componentGroups.map((group) => ({
     title: group,
     id: componentGroupId(group),

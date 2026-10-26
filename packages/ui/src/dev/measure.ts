@@ -229,10 +229,15 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
     return null;
   };
 
-  // The visible part of each element on the way up, inside every ancestor that clips.
+  // The visible part of each element on the way up, inside every ancestor that clips, up to the
+  // root: what is around the root, and the window, cut nothing off, as a window of the root's
+  // size would show it all. The responsive frame lays the root out wider or taller than what
+  // holds it, or than the window, and its planes are whole.
   const clips = new Map<Element, Box>();
+  const unclipped: Box = { x: -1e7, y: -1e7, w: 2e7, h: 2e7 };
   const clipOf = (element: Element | null): Box => {
     if (!element || element === document.documentElement) return windowBox;
+    if (element !== root && element.contains(root)) return unclipped;
     const known = clips.get(element);
     if (known) return known;
     const style = getComputedStyle(element);

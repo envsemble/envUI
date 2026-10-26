@@ -32,29 +32,25 @@ avoidWhen:
     use: Dialog
 components:
   - Alert
+examples:
+  BlockedRelease: overview
+  Tones: variants
+  CustomIcon: example
+  SaveFailed: example
+  OneAlert:
+    role: do
+    caption: One alert per situation, with its next step.
+  StackedAlerts:
+    role: dont
+    caption: Several alerts about one situation.
+  AlertAnatomy: anatomy
 ---
 
 # Alert
 
-## Overview
-
-An alert sits above the content it concerns.
-
-```tsx example=BlockedRelease
-
-```
-
-### Announce a failure
-
-A warning or a danger alert that appears because of something people just did, such as a save that failed, can be read out at once. Info and success alerts are always read politely, without interrupting.
-
-```tsx example=SaveFailed
-
-```
-
 ## Variants
 
-```tsx variants=Tones
+```tsx figure=Tones
 
 ```
 
@@ -74,27 +70,13 @@ A warning or a danger alert that appears because of something people just did, s
 
 An alert can take another icon in place of its tone's, or none at all.
 
-```tsx example=CustomIcon
+```tsx figure=CustomIcon
 
 ```
-
-## When to use
-
-```tsx do=OneAlert caption="One alert per situation, with its next step."
-
-```
-
-```tsx dont=StackedAlerts caption="Several alerts about one situation."
-
-```
-
-### Removing an alert
-
-Remove an alert once it no longer applies, and let people dismiss it only where the message can safely be hidden.
 
 ## Anatomy
 
-```tsx anatomy=AlertAnatomy
+```tsx figure=AlertAnatomy
 
 ```
 
@@ -104,6 +86,32 @@ Remove an alert once it no longer applies, and let people dismiss it only where 
 4. **Message** (`env-alert-message`, `children`)
 5. **Action** (`env-alert-action`, `action`)
 6. **Dismiss button** (`env-alert-dismiss`, `onDismiss`)
+
+## Behaviour
+
+### Announce a failure
+
+A warning or a danger alert that appears because of something people just did, such as a save that failed, can be read out at once. Info and success alerts are always read politely, without interrupting.
+
+```tsx figure=SaveFailed
+
+```
+
+## Rules
+
+An alert sits above the content it concerns.
+
+```tsx figure=OneAlert
+
+```
+
+```tsx figure=StackedAlerts
+
+```
+
+### Removing an alert
+
+Remove an alert once it no longer applies. Let people dismiss it only where the message can safely be hidden.
 
 ## Accessibility
 
@@ -126,7 +134,7 @@ Remove an alert once it no longer applies, and let people dismiss it only where 
 - `announce` only on an alert that appears because of something that just happened, never on one there when the page loads.
 - Focus for after a dismissal, such as on the control the alert concerned.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -147,18 +155,21 @@ An Alert takes its `tone`, a short `title`, the message as `children`, and an `a
 
 #### Announce a failure
 
-Info and success alerts take the `status` role and are read politely. `announce` gives a warning or danger alert the `alert` role, so it is read at once; set it only on an alert that appears because of something people just did, never on one there when the page loads.
+Info and success alerts take the `status` role and are read politely. `announce` gives a warning or danger alert the `alert` role, so it is read at once; set it only on an alert that appears because of something people just did, never on one there when the page loads. The SaveFailed example shows one after a failed save, and moves focus back to the save button when it is dismissed.
 
-```tsx source=SaveFailed
-
+```tsx
+<Alert tone="danger" title="Couldn’t save the draft" announce onDismiss={dismiss}>
+  Your changes are still in the editor; try again in a moment.
+</Alert>
 ```
 
 #### Icon
 
 `icon` replaces the tone's icon, and `icon={false}` leaves it out.
 
-```tsx source=CustomIcon
-
+```tsx
+<Alert icon={<Construction />} title="Maintenance on Saturday">…</Alert>
+<Alert tone="success" icon={false}>Priya Shah accepted the invitation.</Alert>
 ```
 
 #### Dismiss

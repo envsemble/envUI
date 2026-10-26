@@ -28,17 +28,11 @@ components:
   - placeholders
   - isPlaceholder
   - useSkeleton
+examples:
+  DetailPane: overview
 ---
 
 # Surface
-
-## Overview
-
-A surface lays out nothing itself: a [Column](column.md) or a [Row](row.md) lays out what it holds, as one element with it.
-
-```tsx example=DetailPane
-
-```
 
 ## Variants
 
@@ -64,7 +58,9 @@ A surface lays out nothing itself: a [Column](column.md) or a [Row](row.md) lays
 
 <!-- specimen: Corners -->
 
-## When to use
+## Rules
+
+A surface lays out nothing itself: a [Column](column.md) or a [Row](row.md) lays out what it holds, as one element with it.
 
 ### Spacing
 
@@ -81,11 +77,14 @@ Space what a surface holds with the layout inside it, never with margins of its 
 - A heading for a surface that is a region, and its name, such as `aria-labelledby` on a section.
 - `role="group"` and an `aria-label` on a group of controls; a [Toolbar](toolbar.md) for one the arrow keys move through.
 
-## In code
+## Compose
 
 ### Usage
 
-A Surface gives its content a `background`, an inset and corners. Lay out what it holds through `render`, with a Column or a Row, so the surface and its layout are one element; `render` also gives it its meaning, such as `render={<section />}`, and `ref` reaches the rendered element.
+A Surface gives its content a `background`, an inset and corners.
+
+- Lay out what it holds through `render`, with a Column or a Row, so the surface and its layout are one element.
+- `render` also gives it its meaning, such as `render={<section />}`, and `ref` reaches the rendered element.
 
 ```tsx source=DetailPane
 
@@ -93,65 +92,55 @@ A Surface gives its content a `background`, an inset and corners. Lay out what i
 
 #### Backgrounds, corners and inset
 
-`background` is `default`, the default, `muted`, `page` or `raised`, which matches `default`. `radius` is `xl`, 1.75 rem and the default, `sm`, 0.5 rem, `full`, fully rounded ends, or `none`, square. `padding` sets the inset as a step of the spacing scale, from `1`, 0.25 rem, to `9`, 4 rem, and `0` removes it; without it, the inset grows from 1.25 rem in narrow windows to 1.5 rem from 50 rem wide.
+- `background` is `default`, the default, `muted`, `page` or `raised`, which matches `default`.
+- `radius` is `xl`, 1.75 rem and the default, `sm`, 0.5 rem, `full`, fully rounded ends, or `none`, square.
+- `padding` sets the inset as a step of the spacing scale, from `1`, 0.25 rem, to `9`, 4 rem, and `0` removes it; without it, the inset grows from 1.25 rem in narrow windows to 1.5 rem from 50 rem wide.
+
+A group of controls, as wide as its controls in a Column with `align="start"`:
 
 ```tsx
-import { Button, IconButton, Column, Row, Surface } from '@envsemble/envui';
-import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
-import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
-
-export default function Toolbar() {
-  return (
-    // align="start" keeps the toolbar as wide as its controls.
-    <Column gap={4} align="start">
-      <Surface
-        padding={1}
-        radius="full"
-        role="group"
-        aria-label="Diagram view"
-        render={<Row wrap align="center" gap={4} />}
-      >
-        <IconButton variant="ghost" size="sm" icon={<ZoomOut />} aria-label="Zoom out" />
-        <IconButton variant="ghost" size="sm" icon={<ZoomIn />} aria-label="Zoom in" />
-        <Button variant="secondary" size="sm">
-          Fit to screen
-        </Button>
-      </Surface>
-    </Column>
-  );
-}
+<Surface
+  padding={1}
+  radius="full"
+  role="group"
+  aria-label="Diagram view"
+  render={<Row wrap align="center" gap={4} />}
+>
+  <IconButton variant="ghost" size="sm" icon={<ZoomOut />} aria-label="Zoom out" />
+  <IconButton variant="ghost" size="sm" icon={<ZoomIn />} aria-label="Zoom in" />
+  <Button variant="secondary" size="sm">
+    Fit to screen
+  </Button>
+</Surface>
 ```
 
 #### Loading
 
-`skeleton` shows the surface and everything inside it as a skeleton until its content arrives: text becomes bars of its text style's length, and controls filled shapes. Render the same components over stand-in items, `items ?? placeholders<Project>(3)`, whose fields are undefined; `isPlaceholder(item)` tells a stand-in by its id. A component of the application's own reads `useSkeleton()` to give its skeleton a look of its own, such as a chart's.
+`skeleton` shows the surface and everything inside it as a skeleton until its content arrives: text becomes bars of its text style's length, and controls filled shapes.
+
+- Render the same components over stand-in items, `items ?? placeholders<Project>(3)`, whose fields are undefined; `isPlaceholder(item)` tells a stand-in by its id.
+- A component of the application's own reads `useSkeleton()` to give its skeleton a look of its own, such as a chart's.
 
 ```tsx
-import { Column, Surface, Text } from '@envsemble/envui';
-
-export default function SurfaceLoading({ project }: { project?: { name: string; brief: string } }) {
-  // A detail pane that is a skeleton until its project arrives: the text it will hold is bars.
-  return (
-    <Surface skeleton={!project} style={{ inlineSize: '22rem' }}>
-      <Column gap={3}>
-        <Text render={<h3 />} variant="title">
-          {project?.name}
-        </Text>
-        <Text>{project?.brief}</Text>
-      </Column>
-    </Surface>
-  );
-}
+// A detail pane that is a skeleton until its project arrives: the text it will hold is bars.
+<Surface skeleton={!project} style={{ inlineSize: '22rem' }}>
+  <Column gap={3}>
+    <Text render={<h3 />} variant="title">
+      {project?.name}
+    </Text>
+    <Text>{project?.brief}</Text>
+  </Column>
+</Surface>
 ```
 
 ### Customize
 
-`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the fill, the text and an edge of one surface, through `style` or CSS; a surface inside keeps its own. To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own, such as `--env-color-bg-brand-emphasis` with `-hover` and `-pressed`.
+`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the fill, the text and an edge of one surface, through `style` or CSS; a surface inside keeps its own.
+
+- To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own, such as `--env-color-bg-brand-emphasis` with `-hover` and `-pressed`, for each theme.
+- CSS may target `env-surface`, with `data-background` and `data-radius` for the values other than the defaults.
 
 ```tsx
-import type { CSSProperties } from 'react';
-import { Button, Column, Surface, Switch, Text, Theme, useTheme } from '@envsemble/envui';
-
 /** The brand's roles in green, with their hover and pressed values, for each theme. */
 const green = {
   light: {
@@ -168,23 +157,13 @@ const green = {
   },
 };
 
-export default function RecolorArea() {
-  const { theme } = useTheme();
-  return (
-    <Theme theme={theme} style={green[theme] as CSSProperties}>
-      <Surface background="muted" padding={4} render={<Column gap={3} align="start" />}>
-        <Text variant="title" render={<h3 />}>
-          Greener commutes
-        </Text>
-        <Switch label="Suggest cycling routes" defaultChecked />
-        <Button variant="primary">Plan a route</Button>
-      </Surface>
-    </Theme>
-  );
-}
+const { theme } = useTheme();
+<Theme theme={theme} style={green[theme] as CSSProperties}>
+  <Surface background="muted" padding={4} render={<Column gap={3} align="start" />}>
+    …
+  </Surface>
+</Theme>;
 ```
-
-CSS may target `env-surface`, with `data-background` and `data-radius` for the values other than the defaults.
 
 ## Changelog
 

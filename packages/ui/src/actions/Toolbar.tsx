@@ -37,6 +37,13 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    */
   loopFocus?: boolean;
   /**
+   * Milliseconds the pointer rests on a button or link before its tooltip opens, as Tooltip's
+   * delay; keyboard focus opens it at once. 0 shows every name at once, for a toolbar people scan
+   * by pointing, such as a canvas's view controls.
+   * @default 400
+   */
+  tooltipDelay?: number;
+  /**
    * Another element to render the toolbar as, such as a ButtonGroup that connects its buttons;
    * the toolbar's class, attributes and keyboard handling merge into its props.
    */
@@ -50,6 +57,9 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
  * tooltip doesn't: a disabled button has no tooltip.
  */
 const DisabledContext = createContext(false);
+
+/** How long the pointer rests on a button or link before its tooltip opens, from the root. */
+const TooltipDelayContext = createContext<number | undefined>(undefined);
 
 /** The toolbar's direction, which its groups follow. */
 const OrientationContext = createContext<'horizontal' | 'vertical'>('horizontal');
@@ -76,6 +86,7 @@ function Root({
   size,
   disabled,
   loopFocus = true,
+  tooltipDelay,
   className,
   render,
   children,
@@ -95,11 +106,13 @@ function Root({
       data-size={size}
     >
       <OrientationContext value={orientation}>
-        <DisabledContext value={Boolean(disabled)}>
-          <ControlDefaults variant="ghost" size={size}>
-            {children}
-          </ControlDefaults>
-        </DisabledContext>
+        <TooltipDelayContext value={tooltipDelay}>
+          <DisabledContext value={Boolean(disabled)}>
+            <ControlDefaults variant="ghost" size={size}>
+              {children}
+            </ControlDefaults>
+          </DisabledContext>
+        </TooltipDelayContext>
       </OrientationContext>
     </DirectedToolbarRoot>
   );
@@ -194,6 +207,7 @@ function ToolbarButton({
   ...props
 }: ButtonProps) {
   const off = useContext(DisabledContext) || Boolean(disabled);
+  const delay = useContext(TooltipDelayContext);
   const chords = shortcut ? shortcutChords(shortcut) : [];
   const button = (
     <BaseToolbar.Button
@@ -215,7 +229,13 @@ function ToolbarButton({
       }
     />
   );
-  return off ? button : <Tooltip content={tooltipContent(label, chords)}>{button}</Tooltip>;
+  return off ? (
+    button
+  ) : (
+    <Tooltip content={tooltipContent(label, chords)} delay={delay}>
+      {button}
+    </Tooltip>
+  );
 }
 
 export type LinkProps = Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-label'> & {
@@ -229,8 +249,9 @@ export type LinkProps = Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-labe
 
 /** An icon-only link of a toolbar, named by its label, which a tooltip shows. */
 function Link({ icon, label, className, ...props }: LinkProps) {
+  const delay = useContext(TooltipDelayContext);
   return (
-    <Tooltip content={label}>
+    <Tooltip content={label} delay={delay}>
       <BaseToolbar.Link
         render={
           <IconButton

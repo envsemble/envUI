@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { before, after, test } from 'node:test';
-import { execFileSync, spawn } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readFile, writeFile, mkdir, mkdtemp, rm, lstat, readdir } from 'node:fs/promises';
 import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:path';
@@ -201,9 +201,11 @@ after(async function removeConsumerFixture() {
 test('the packed package ships no logos', () => {
   assert.ok(packedFiles.includes('dist/assets/Inter.woff2'), 'The pack lists its files.');
   const images = packedFiles.filter((path) => /\.(?:svg|png|ico)$/i.test(path));
-  // The README's catalogue captures are the only images the package ships.
+  // The README's captures of the catalogue and the Docs are the only images the package ships.
   assert.deepEqual(
-    images.filter((path) => !/^dist\/assets\/readme\/catalogue-(?:light|dark)\.png$/.test(path)),
+    images.filter(
+      (path) => !/^dist\/assets\/readme\/(?:catalogue|docs)-(?:light|dark)\.png$/.test(path),
+    ),
     [],
   );
   assert.deepEqual(
@@ -783,23 +785,20 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     );
   }
   assert.equal((await readFile(fileURLToPath(ssr.font))).subarray(0, 4).toString(), 'wOF2');
-  for (const filename of [
-    'README.md',
-    'skills/envui-use/SKILL.md',
-    'skills/envui-migrate/SKILL.md',
-    'skills/envui-contribute/SKILL.md',
-    'manifest.json',
-    'llms.txt',
-    'llms-full.txt',
-    'bin/envui.mjs',
-    'THIRD_PARTY_NOTICES.md',
-    'icon-manifest.json',
-  ]) {
+  for (const filename of ['README.md', 'THIRD_PARTY_NOTICES.md', 'icon-manifest.json']) {
     assert.ok(
       (await readFile(join(installedDirectory, filename))).length > 0,
       `Missing packaged guidance: ${filename}`,
     );
   }
+  // The agent tooling of the prereleases is gone: agents read docs/, and the site serves the setup
+  // skill and llms.txt.
+  for (const removed of ['bin', 'skills', 'manifest.json', 'llms.txt', 'llms-full.txt'])
+    assert.equal(existsSync(join(installedDirectory, removed)), false, removed);
+  const installedManifest = JSON.parse(
+    await readFile(join(installedDirectory, 'package.json'), 'utf8'),
+  );
+  assert.equal(installedManifest.bin, undefined);
   assert.match(
     await readFile(join(installedDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'), 'utf8'),
     /@base-ui\/react@1\.8\.0/,
@@ -811,60 +810,6 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   ]) {
     assert.ok((await readFile(join(installedDirectory, 'licenses', filename))).length > 0);
   }
-});
-
-test('the installed MCP server lists the patterns and serves an example from the package', async function () {
-  const messages = [
-    {
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'initialize',
-      params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test' } },
-    },
-    { jsonrpc: '2.0', method: 'notifications/initialized' },
-    {
-      jsonrpc: '2.0',
-      id: 2,
-      method: 'tools/call',
-      params: { name: 'list_patterns', arguments: {} },
-    },
-    {
-      jsonrpc: '2.0',
-      id: 3,
-      method: 'tools/call',
-      params: { name: 'get_example', arguments: { component: 'app-frame', example: 'AppFrame' } },
-    },
-  ];
-  // The server answers each line on stdin and ends when stdin closes.
-  const output = execFileSync(
-    process.execPath,
-    [join(installedDirectory, 'bin/envui.mjs'), 'mcp'],
-    {
-      cwd: consumerDirectory,
-      input: messages.map((message) => JSON.stringify(message)).join('\n') + '\n',
-      encoding: 'utf8',
-      timeout: 20000,
-    },
-  );
-  const answers = new Map(
-    output
-      .split('\n')
-      .filter(Boolean)
-      .map((line) => JSON.parse(line))
-      .map((message) => [message.id, message]),
-  );
-  const value = (id) => JSON.parse(answers.get(id).result.content[0].text);
-  const { patterns } = value(2);
-  assert.ok(
-    patterns.some((pattern) => pattern.name === 'app-frame'),
-    `list_patterns: ${patterns.map((pattern) => pattern.name).join(', ')}`,
-  );
-  const example = value(3);
-  assert.equal(
-    example.source,
-    await readFile(join(installedDirectory, 'docs/examples/app-frame/AppFrame.tsx'), 'utf8'),
-  );
-  assert.match(example.source, /export default function AppFrame\(\)/);
 });
 
 test('explicit official icons preserve filled geometry and accept custom SVG content', async function () {
@@ -881,7 +826,7 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
   );
 });
 
-test('packed skills locate separate versioned documentation and match the release sources', async function () {
+test('the packed README links only what the package ships, and the packed documentation matches its sources', async function () {
   const packagedReadme = await readFile(join(installedDirectory, 'README.md'), 'utf8');
   const readmeResources = [
     ...[...packagedReadme.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)].map((match) => match[1]),
@@ -896,29 +841,6 @@ test('packed skills locate separate versioned documentation and match the releas
       existsSync(resource),
       `README resource is absent from the installed package: ${target}`,
     );
-  }
-  const skillNames = await readdir(join(installedDirectory, 'skills'));
-  for (const skillName of skillNames) {
-    const skillFile = join(installedDirectory, 'skills', skillName, 'SKILL.md');
-    const source = await readFile(skillFile, 'utf8');
-    assert.deepEqual(await readdir(dirname(skillFile)), ['SKILL.md']);
-    assert.equal(
-      source,
-      await readFile(join(repository, '.agents/skills', skillName, 'SKILL.md'), 'utf8'),
-    );
-    for (const [, target] of source.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
-      const resource = resolve(dirname(skillFile), target);
-      const contained = relative(join(installedDirectory, 'skills'), resource);
-      assert.ok(
-        !contained.startsWith('..') && !isAbsolute(contained),
-        `Skill resource escapes its package: ${target}`,
-      );
-      assert.equal(
-        await readFile(resource, 'utf8'),
-        await readFile(join(repository, '.agents/skills', contained), 'utf8'),
-        `Packaged skill resource differs from its maintained source: ${target}`,
-      );
-    }
   }
   // The package ships the compiled pages: examples and generated props filled in, the example
   // sources beside them, and the props of every export as JSON.
@@ -936,106 +858,6 @@ test('packed skills locate separate versioned documentation and match the releas
   assert.deepEqual(
     JSON.parse(await readFile(join(installedDirectory, 'docs/generated/props.json'), 'utf8')),
     JSON.parse(await readFile(join(repository, 'docs/generated/props.json'), 'utf8')),
-  );
-});
-
-test('the installed envui command writes the AGENTS.md index and serves MCP through npx', async function () {
-  // The agent files sit at the package root, the manifest with the version; the packaged docs
-  // leave out the committed copies.
-  const { version } = JSON.parse(
-    await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
-  );
-  const { version: packagedVersion, ...manifest } = JSON.parse(
-    await readFile(join(installedDirectory, 'manifest.json'), 'utf8'),
-  );
-  assert.equal(packagedVersion, version);
-  assert.deepEqual(
-    manifest,
-    JSON.parse(await readFile(join(repository, 'docs/generated/manifest.json'), 'utf8')),
-  );
-  assert.equal(
-    await readFile(join(installedDirectory, 'llms.txt'), 'utf8'),
-    await readFile(join(repository, 'docs/generated/llms.txt'), 'utf8'),
-  );
-  assert.match(
-    await readFile(join(installedDirectory, 'llms-full.txt'), 'utf8'),
-    /<!-- docs\/components\/button\.md -->\n\n# Button\n/,
-  );
-  for (const name of ['manifest.json', 'llms.txt'])
-    assert.equal(existsSync(join(installedDirectory, 'docs/generated', name)), false, name);
-
-  // npx runs the installed bin; --yes=false never fetches a package of that name instead.
-  const npx = ['exec', '--yes=false', '--', 'envui'];
-  const agentsFile = join(consumerDirectory, 'AGENTS.md');
-  await writeFile(agentsFile, '# Consumer\n\nKeep this.\n');
-  assert.match(run(npmCli(), [...npx, 'agents']), /Updated AGENTS\.md with the envUI index/);
-  const written = await readFile(agentsFile, 'utf8');
-  assert.ok(written.startsWith('# Consumer\n\nKeep this.\n\n<!-- BEGIN envui -->\n'));
-  assert.ok(written.includes(`(\`@envsemble/envui\` ${version})`));
-  const block = written.slice(written.indexOf('<!-- BEGIN envui -->'));
-  assert.ok(Buffer.byteLength(block) <= 8192, `The index is ${Buffer.byteLength(block)} bytes.`);
-  assert.match(run(npmCli(), [...npx, 'agents', '--check']), /has the current envUI index/);
-  await writeFile(agentsFile, written.replace('## envUI', '## envUI, edited'));
-  assert.throws(() => run(npmCli(), [...npx, 'agents', '--check']), /outdated envUI index/);
-  run(npmCli(), [...npx, 'agents']);
-  assert.equal(await readFile(agentsFile, 'utf8'), written);
-
-  const server = spawn(process.execPath, [npmCli(), ...npx, 'mcp'], {
-    cwd: consumerDirectory,
-    stdio: ['pipe', 'pipe', 'pipe'],
-    env: {
-      ...Object.fromEntries(Object.entries(process.env).filter(([name]) => !/^npm_/i.test(name))),
-      NODE_OPTIONS: '',
-    },
-  });
-  const responses = [];
-  let buffer = '';
-  let stderr = '';
-  server.stderr.on('data', (chunk) => (stderr += chunk));
-  const exited = new Promise((resolveExit) => server.on('exit', resolveExit));
-  const answered = new Promise((resolveAnswers, reject) => {
-    const timer = setTimeout(
-      () => reject(new Error(`envui mcp did not answer:\n${stderr}`)),
-      60000,
-    );
-    server.stdout.on('data', (chunk) => {
-      buffer += chunk;
-      for (let end = buffer.indexOf('\n'); end !== -1; end = buffer.indexOf('\n')) {
-        responses.push(JSON.parse(buffer.slice(0, end)));
-        buffer = buffer.slice(end + 1);
-      }
-      if (responses.length === 3) {
-        clearTimeout(timer);
-        resolveAnswers();
-      }
-    });
-  });
-  const send = (message) =>
-    server.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', ...message })}\n`);
-  send({
-    id: 1,
-    method: 'initialize',
-    params: {
-      protocolVersion: '2025-11-25',
-      capabilities: {},
-      clientInfo: { name: 'consumer', version: '1' },
-    },
-  });
-  send({ method: 'notifications/initialized' });
-  send({ id: 2, method: 'tools/call', params: { name: 'search', arguments: { query: 'modal' } } });
-  send({
-    id: 3,
-    method: 'tools/call',
-    params: { name: 'get_example', arguments: { component: 'Dialog', example: 'InviteMember' } },
-  });
-  await answered;
-  server.stdin.end();
-  assert.equal(await exited, 0, stderr);
-  assert.equal(responses[0].result.serverInfo.version, version);
-  assert.equal(JSON.parse(responses[1].result.content[0].text).results[0].name, 'Dialog');
-  assert.equal(
-    JSON.parse(responses[2].result.content[0].text).source,
-    await readFile(join(installedDirectory, 'docs/examples/dialog/InviteMember.tsx'), 'utf8'),
   );
 });
 

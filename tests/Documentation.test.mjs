@@ -1,17 +1,20 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+import { cp, mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
 import {
   compileDocument,
+  compileDocumentation,
   libraryVersions,
   readDocumentation,
 } from '../scripts/GenerateDocumentation.mjs';
 import { marked } from 'marked';
 import {
+  longParagraphs,
   optionPieces,
   optionTable,
   optionTableProblems,
+  paragraphLength,
   siteStructure,
 } from '../scripts/SiteContent.mjs';
 
@@ -82,20 +85,66 @@ const switchFrontmatter = [
   '  - text: A choice that applies on submit.',
   '    use: Checkbox',
   'components: [Switch]',
+  'examples:',
+  '  Basic: overview',
+  '  Parts: anatomy',
+  '  Narrow: example',
+  '  Instant:',
+  '    role: do',
+  '    caption: Use a switch for a setting that applies at once.',
+  '  OnSubmit:',
+  '    role: dont',
+  "    caption: Don't use a switch in a form that applies on submit.",
   '---',
   '',
 ].join('\n');
 
+/** A Switch page in the one-file structure: short text, figures placed by name and a legend. */
 const switchBody = [
   '# Switch',
   '',
-  '## Overview',
+  '## Variants',
   '',
-  'Turns a setting on or off.',
+  '### Sizes',
   '',
-  '## States and behaviour',
+  'Two sizes, for a form and a dense list.',
+  '',
+  '## Anatomy',
+  '',
+  '```tsx figure=Parts',
+  '',
+  '```',
+  '',
+  '1. **Track** (`env-switch`): the pill.',
+  '2. **Thumb** (`env-switch-input`)',
+  '',
+  '## Behaviour',
   '',
   '<!-- specimen: States -->',
+  '',
+  '### Adapting to width',
+  '',
+  'The label wraps.',
+  '',
+  '```tsx figure=Narrow widths="16 30" stage=shaded',
+  '',
+  '```',
+  '',
+  '## Rules',
+  '',
+  'A switch applies at once.',
+  '',
+  '```tsx figure=Instant',
+  '',
+  '```',
+  '',
+  '```tsx figure=OnSubmit open stage=shaded',
+  '',
+  '```',
+  '',
+  '### Labels',
+  '',
+  'Name the setting, not the action.',
   '',
   '## Accessibility',
   '',
@@ -113,18 +162,23 @@ const switchBody = [
   '',
   '- A label.',
   '',
-  '## Examples',
+  '## Compose',
   '',
-  '### Basic',
+  '### Usage',
   '',
-  'A labelled switch.',
+  'Give every switch a `label`.',
   '',
-  '```tsx example=Basic',
+  '```tsx source=Basic',
+  '',
   '```',
+  '',
+  '### Customize',
+  '',
+  '`--env-switch-track` sets the track.',
   '',
   '## Changelog',
   '',
-  '- 0.1.0: Added.',
+  '- **0.1.0**: Switch.',
   '',
 ].join('\n');
 
@@ -153,10 +207,10 @@ const switchProps = {
 };
 
 /** A docs/ folder with one component page, its example and specimen files and stand-in props. */
-async function templateFixture(run) {
+async function pageFixture(run) {
   const cache = resolve('.cache');
   await mkdir(cache, { recursive: true });
-  const fixture = await mkdtemp(join(cache, 'template-'));
+  const fixture = await mkdtemp(join(cache, 'page-'));
   const docs = join(fixture, 'docs');
   const examples = join(fixture, 'examples');
   const specimens = join(fixture, 'specimens');
@@ -167,9 +221,11 @@ async function templateFixture(run) {
     join(docs, 'index.md'),
     '# envUI documentation\n\n## Forms & selection\n\n- [Switch](components/switch.md)\n',
   );
-  await writeFile(join(examples, 'switch', 'Basic.tsx'), switchExample);
+  for (const name of ['Basic', 'Parts', 'Narrow', 'Instant', 'OnSubmit'])
+    await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
   await writeFile(join(specimens, 'switch', 'States.tsx'), 'export default function States() {}\n');
   const page = join(docs, 'components', 'switch.md');
+  await writeFile(page, switchFrontmatter + switchBody);
   const versions = new Set(['0.1.0', '0.2.0']);
   const read = () => readDocumentation(docs, { props: switchProps, examples, specimens, versions });
   try {
@@ -181,30 +237,229 @@ async function templateFixture(run) {
   }
 }
 
-test('a page on the template is split into sections, examples and specimens', async () => {
-  await templateFixture(async ({ page, read, examples }) => {
-    await writeFile(page, switchFrontmatter + switchBody);
+test('a page is read into its sections, figures, legends and specimens', async () => {
+  await pageFixture(async ({ read, examples }) => {
     const documents = read();
     const switchPage = documents[1];
     assert.deepEqual(
       switchPage.sections.map((section) => section.id),
-      ['overview', 'states', 'accessibility', 'examples', 'changelog'],
+      [
+        'overview',
+        'variants',
+        'anatomy',
+        'behaviour',
+        'rules',
+        'accessibility',
+        'code',
+        'changelog',
+      ],
     );
     const blocks = switchPage.sections.flatMap((section) => section.blocks);
+    const figure = (name) => blocks.find((block) => block.name === name);
+    // The Overview is generated from the frontmatter's overview examples, named after the page.
+    assert.deepEqual(switchPage.sections[0].blocks.at(-1), {
+      kind: 'example',
+      name: 'Basic',
+      heading: 'Switch',
+    });
     assert.ok(blocks.some((block) => block.kind === 'specimen' && block.name === 'States'));
-    assert.ok(blocks.some((block) => block.kind === 'example' && block.name === 'Basic'));
+    // A figure's role and caption come from the frontmatter, its framing from its fence.
+    assert.deepEqual(
+      [figure('Instant').role, figure('Instant').caption],
+      ['do', 'Use a switch for a setting that applies at once.'],
+    );
+    assert.equal(
+      figure('OnSubmit').heading,
+      "Don't: Don't use a switch in a form that applies on submit.",
+    );
+    assert.deepEqual(figure('Parts').legend, [
+      { part: 'env-switch', text: '**Track** (`env-switch`): the pill.', name: 'Track' },
+      { part: 'env-switch-input', text: '**Thumb** (`env-switch-input`)', name: 'Thumb' },
+    ]);
+    assert.deepEqual(figure('Narrow').widths, [16, 30]);
+    // The flag open shows the example's overlays open; stage=shaded the deeper stage of a whole
+    // window. Other figures leave both out.
+    assert.equal(figure('OnSubmit').open, true);
+    assert.equal(figure('Instant').open, undefined);
+    assert.equal(figure('OnSubmit').stage, 'shaded');
+    assert.equal(figure('Narrow').stage, 'shaded');
+    assert.equal(figure('Instant').stage, undefined);
+    // Compose opens on the generated Import, with an example's source as code.
+    const code = switchPage.sections.find((section) => section.id === 'code');
+    assert.deepEqual(
+      code.blocks.map((block) => block.kind),
+      ['markdown', 'source', 'markdown'],
+    );
+    assert.match(
+      code.blocks[0].markdown,
+      /^## Compose\n\n### Import\n\n```tsx\nimport \{ Switch \} from '@envsemble\/envui';\n```\n\n### Usage\n/,
+    );
 
-    // The packaged page: examples filled in, specimens left out, props and related generated.
+    // The packaged page: the whole file in its order, each example once, by name; specimens left
+    // out; the props after Compose; no Related or changelog, which the frontmatter and the Docs
+    // hold.
     const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
-    assert.ok(compiled.includes(`\`\`\`tsx example=Basic\n${switchExample}\`\`\``));
-    assert.doesNotMatch(compiled, /specimen/);
-    // Related, from avoidWhen: each export or page with when to pick it.
-    assert.match(compiled, /## Related\n\n- `Checkbox`: A choice that applies on submit\.\n/);
+    assert.ok(compiled.includes('examples: # Each file is examples/switch/<Name>.tsx.\n'));
+    assert.ok(compiled.includes('  Basic: overview\n'));
+    assert.ok(
+      compiled.includes(
+        '  Instant: { role: do, caption: "Use a switch for a setting that applies at once." }\n',
+      ),
+    );
+    assert.ok(compiled.includes("\nExamples: Instant (do), OnSubmit (don't).\n"));
+    assert.ok(compiled.includes('\nExample: Narrow.\n'));
+    assert.match(compiled, /^### Labels$/m);
+    assert.match(
+      compiled,
+      /\n1\. \*\*Track\*\* \(`env-switch`\): the pill\.\n2\. \*\*Thumb\*\* \(`env-switch-input`\)\n/,
+    );
+    assert.ok(compiled.includes(`\`\`\`tsx source=Basic\n${switchExample}\`\`\``));
+    assert.doesNotMatch(compiled, /specimen|figure=|^## (?:Overview|Related|Changelog)$/m);
+    assert.deepEqual(
+      [...compiled.matchAll(/^## (.*)$/gm)].map(([, title]) => title),
+      ['Variants', 'Anatomy', 'Behaviour', 'Rules', 'Accessibility', 'Compose', 'Props'],
+    );
+    assert.match(compiled, /^Native props: `<input>`\.$/m);
   });
 });
 
-test('the template rejects pages that break its contract', async () => {
-  await templateFixture(async ({ page, read }) => {
+test('the build fails a page that is not in the one-file structure', async () => {
+  await pageFixture(async ({ page, read, docs }) => {
+    const rejects = async (source, pattern) => {
+      await writeFile(page, source);
+      assert.throws(read, pattern);
+    };
+    const body = switchBody;
+    const frontmatter = switchFrontmatter;
+    // A page of a structured kind lists its examples; without them it is not in the structure.
+    await rejects(
+      frontmatter.replace(/examples:\n[\s\S]*?(?=---)/, '') + body,
+      /components\/switch\.md is not in the one-file structure: its frontmatter lists no examples/,
+    );
+    await rejects(body, /Component page components\/switch\.md needs frontmatter/);
+    // Sections: those the structure knows, once each, in its order, with Rules.
+    await rejects(
+      frontmatter + body.replace('## Variants', '## Usage'),
+      /"## Usage" is not a section of a component page \(Variants, Anatomy, Behaviour, Rules, Accessibility, Words to use, Compose, Changelog\)/,
+    );
+    await rejects(frontmatter + body.replace('## Variants', '## Overview'), /is generated/);
+    await rejects(frontmatter + body.replace('## Changelog', '## Props'), /is generated/);
+    await rejects(
+      frontmatter + body.replace('## Behaviour', '## Rules\n\nAgain.\n\n## Behaviour'),
+      /"## Rules" appears twice/,
+    );
+    await rejects(
+      frontmatter +
+        body.replace(
+          '## Variants\n\n### Sizes\n\nTwo sizes, for a form and a dense list.\n\n',
+          '',
+        ) +
+        '\n## Variants\n\nOne size.\n',
+      /"## Variants" must come before "## Changelog"/,
+    );
+    await rejects(
+      frontmatter + body.replace(/## Rules[\s\S]*?(?=## Accessibility)/, ''),
+      /"## Rules" is required/,
+    );
+    await rejects(
+      frontmatter + body.replace('# Switch\n\n', '# Switch\n\nAn intro.\n\n'),
+      /content must follow a "##" section heading/,
+    );
+    // Examples: each listed once and placed once, but the overview's, which nothing places.
+    await rejects(
+      frontmatter + body.replace('```tsx figure=Instant\n', '```tsx figure=Narrow\n'),
+      /figure Narrow is placed twice[\s\S]*example Instant is listed in the frontmatter but placed nowhere/,
+    );
+    await rejects(
+      frontmatter + body.replace('figure=Instant', 'figure=Extra'),
+      /figure Extra is not listed under examples in the frontmatter/,
+    );
+    await rejects(
+      frontmatter + body.replace('### Labels', '```tsx figure=Basic\n\n```\n\n### Labels'),
+      /figure Basic is an overview example, which the Overview shows from the frontmatter/,
+    );
+    await rejects(
+      frontmatter.replace('  Basic: overview\n', '  Basic: example\n') + body,
+      /example Basic is listed in the frontmatter but placed nowhere[\s\S]*lists no overview example/,
+    );
+    await rejects(
+      frontmatter + body.replace('figure=Instant', 'do=Instant caption="Use it."'),
+      /`tsx do=Instant caption="Use it\."`: place a figure as `tsx figure=Name`/,
+    );
+    await rejects(
+      frontmatter.replace('  Narrow: example\n', '  Narrow: example\n  Missing: example\n') +
+        body.replace('### Labels', '```tsx figure=Missing\n\n```\n\n### Labels'),
+      /figure Missing has no file/,
+    );
+    await rejects(
+      frontmatter + body.replace('figure=Parts\n\n```', 'figure=Parts\n<Switch />\n```'),
+      /the fence of figure Parts must be empty/,
+    );
+    // The frontmatter: an example's entry, a role and a caption, and on an overview its framing.
+    await rejects(
+      frontmatter.replace('  Parts: anatomy', '  Parts: legend') + body,
+      /gives Parts the role legend; one of overview, example, variants, anatomy, do, dont/,
+    );
+    await rejects(
+      frontmatter.replace(
+        "    caption: Don't use a switch in a form that applies on submit.\n",
+        '',
+      ) + body,
+      /gives the dont figure OnSubmit no caption, its rule/,
+    );
+    await rejects(
+      frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    wide: true') +
+        body,
+      /gives Narrow a field other than role, caption, open, stage/,
+    );
+    await rejects(
+      frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    open: true') +
+        body,
+      /gives Narrow open or stage, which only an overview example takes here/,
+    );
+    await rejects(
+      frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    open: yes') +
+        body,
+      /gives Basic open: yes; write open: true/,
+    );
+    await rejects(
+      frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    stage: dark') +
+        body,
+      /gives Basic stage: dark; a stage takes shaded/,
+    );
+    await writeFile(
+      page,
+      frontmatter.replace(
+        '  Basic: overview',
+        '  Basic:\n    role: overview\n    open: true\n    stage: shaded',
+      ) + body,
+    );
+    assert.deepEqual(read()[1].sections[0].blocks.at(-1), {
+      kind: 'example',
+      name: 'Basic',
+      heading: 'Switch',
+      open: true,
+      stage: 'shaded',
+    });
+    // A pattern or foundation page is in the structure too.
+    await mkdir(join(docs, 'foundations'), { recursive: true });
+    await writeFile(
+      join(docs, 'foundations', 'motion.md'),
+      '---\ntitle: Motion\nsummary: How things move.\naliases: [animation]\n---\n\n# Motion\n\n## Rules\n\nMove little.\n',
+    );
+    await writeFile(
+      join(docs, 'index.md'),
+      '# envUI documentation\n\n## Foundations\n\n- [Motion](foundations/motion.md)\n\n## Forms & selection\n\n- [Switch](components/switch.md)\n',
+    );
+    await rejects(
+      frontmatter + body,
+      /foundations\/motion\.md is not in the one-file structure: its frontmatter lists no examples/,
+    );
+  });
+});
+
+test('the structure checks the frontmatter, the figures and the text of a page', async () => {
+  await pageFixture(async ({ page, read }) => {
     const rejects = async (source, pattern) => {
       await writeFile(page, source);
       assert.throws(read, pattern);
@@ -224,29 +479,6 @@ test('the template rejects pages that break its contract', async () => {
       frontmatter.replace('[A setting that applies immediately.]', '[]') + body,
       /useWhen must not be empty/,
     );
-    await rejects(frontmatter + body.replace('## States and behaviour', '## Behaviour'), /not a/);
-    await rejects(frontmatter + body.replace('## Changelog', '## Props'), /is generated/);
-    await rejects(
-      frontmatter + body.replace('## Changelog', '## Anatomy'),
-      /must come before "## Examples"/,
-    );
-    await rejects(frontmatter + body.replace('### You provide', '### Notes'), /You provide/);
-    await rejects(frontmatter + body.replace('| Key | Action |', '| Keys | Result |'), /"Key"/);
-    await rejects(frontmatter + body.replace('example=Basic', 'example=Missing'), /has no file/);
-    await rejects(
-      frontmatter + body.replace('example=Basic\n```', 'example=Basic\n<Switch />\n```'),
-      /must be empty/,
-    );
-    await rejects(frontmatter + body.replace('specimen: States', 'specimen: Matrix'), /no file/);
-    await rejects(
-      frontmatter +
-        body.replace(
-          'Turns a setting on or off.',
-          '| Name | Contract |\n| --- | --- |\n| label | Text |',
-        ),
-      /lists props in a table/,
-    );
-    await rejects(frontmatter + body.replace('```tsx example=Basic', '```tsx'), /example file/);
     // Metadata that says nothing or points nowhere. avoidWhen is the one list of related pages:
     // each entry names an export or a page, once.
     await rejects(
@@ -280,77 +512,221 @@ test('the template rejects pages that break its contract', async () => {
       frontmatter.replace('components: [Switch]', 'components: [Switch, Menu.Item]') + body,
       /Menu\.Item, a part/,
     );
-    // Lists, props and headings the template generates or needs in Markdown.
+    // Accessibility: what envUI and the application provide, and a Key and Action table.
+    await rejects(frontmatter + body.replace('### You provide', '### Notes'), /You provide/);
     await rejects(
       frontmatter +
         body.replace('### envUI provides\n\n- The switch role.\n', '### envUI provides\n'),
       /"### envUI provides" list/,
     );
-    await rejects(
-      frontmatter +
-        body.replace('## Changelog', '| Option | Type |\n| --- | --- |\n| a | b |\n\n## Changelog'),
-      /lists props in a table/,
-    );
-    await rejects(
-      frontmatter + body.replace('## Changelog', '#### Props\n\nsize is sm or md.\n\n## Changelog'),
-      /"#### Props" lists props by hand/,
-    );
-    await rejects(
-      frontmatter + body.replace('## Changelog', '<h2>Notes</h2>\n\n## Changelog'),
-      /headings in Markdown/,
-    );
-    // A page with the template's parts that does not start with its Overview.
+    await rejects(frontmatter + body.replace('| Key | Action |', '| Keys | Result |'), /"Key"/);
+    // Lists, props and headings the structure generates or needs in Markdown.
     await rejects(
       frontmatter +
         body.replace(
-          '## Overview\n\nTurns a setting on or off.\n\n',
-          '## Usage\n\nTurns a setting on or off.\n\n',
+          'Name the setting, not the action.',
+          '| Name | Contract |\n| --- | --- |\n| label | Text |',
         ),
-      /first section must be "## Overview", not "## Usage"/,
+      /lists props in a table/,
+    );
+    await rejects(
+      frontmatter + body.replace('### Labels', '#### Props\n\nsize is sm or md.\n\n### Labels'),
+      /"#### Props" lists props by hand/,
+    );
+    await rejects(
+      frontmatter + body.replace('### Labels', '<h3>Labels</h3>'),
+      /headings in Markdown/,
+    );
+    await rejects(
+      frontmatter + body.replace('Name the setting, not the action.', '> How do I label it?'),
+      /Rules has a blockquote/,
+    );
+    await rejects(frontmatter + body.replace('specimen: States', 'specimen: Matrix'), /no file/);
+    // An option table, whose last column is Use for, shows in the catalogue as a legend of tags:
+    // each names its option in a few plain words, once, and says what it is for.
+    const options = (rows) =>
+      frontmatter +
+      body.replace(
+        'Two sizes, for a form and a dense list.',
+        `Two sizes, for a form and a dense list.\n\n| Size | Use for |\n| ---- | ------- |\n${rows}\n`,
+      );
+    await rejects(
+      options('| [Small](#small) | A dense list. |'),
+      /Variants: row 1 of the Size table names its option with a link/,
+    );
+    await rejects(
+      options('| Small | A dense list. |\n| Small | A table. |'),
+      /row 2 of the Size table names Small again/,
+    );
+    await rejects(options('| Small |  |'), /row 1 of the Size table says nothing under Use for/);
+    await rejects(
+      options('| The small one, for dense lists. | A dense list. |'),
+      /names its option "The small one, for dense lists\.": a name of a few words/,
+    );
+    await writeFile(page, options('| Small | A dense list. |'));
+    assert.doesNotThrow(read);
+    // A figure's fence: the attributes its role takes, as name="value", and flags alone.
+    await rejects(frontmatter + body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
+    await rejects(
+      frontmatter + body.replace('figure=Parts', 'figure=Parts size=lg'),
+      /anatomy Parts takes no size/,
+    );
+    await rejects(
+      frontmatter + body.replace('figure=OnSubmit open', 'figure=OnSubmit open=yes'),
+      /write the flag open alone/,
+    );
+    await rejects(
+      frontmatter + body.replace('figure=Parts', 'figure=Parts of'),
+      /has of without a value/,
+    );
+    await rejects(
+      frontmatter + body.replace('open stage=shaded', 'open stage=dark'),
+      /has stage="dark"/,
+    );
+    await rejects(
+      frontmatter + body.replace('figure=Instant', 'figure=Instant caption="Use it."'),
+      /figure Instant has a caption on its fence; it goes under examples/,
+    );
+    // A double quote inside a value, escaped or not, leaves the fence malformed.
+    await rejects(
+      frontmatter + body.replace('figure=Narrow widths="16 30"', 'figure=Narrow widths="16 "30""'),
+      /the fence `tsx figure=Narrow widths="16 "30"" stage=shaded` is malformed/,
+    );
+    // A legend names parts that exist, each starting with its name in bold.
+    await rejects(
+      frontmatter + body.replace('2. **Thumb** (`env-switch-input`)', '2. The thumb.'),
+      /item 2 of the legend of anatomy Parts names no part/,
+    );
+    await rejects(
+      frontmatter + body.replace('2. **Thumb** (`env-switch-input`)', '2. `env-switch-input`'),
+      /must start with the part's name in bold/,
+    );
+    await rejects(
+      frontmatter +
+        body.replace('2. **Thumb** (`env-switch-input`)', '2. **Knob** (`env-switch-knob`)'),
+      /names env-switch-knob, which neither packages\/ui's CSS nor docs\/generated\/parts\.json has/,
+    );
+    // A variants figure names each variant in bold, in a legend it can't do without.
+    const variants = frontmatter.replace('  Parts: anatomy', '  Parts: variants');
+    await rejects(
+      variants + body.replace('1. **Track** (`env-switch`): the pill.', '1. Track'),
+      /in bold/,
+    );
+    await rejects(
+      variants + body.replace(/1\. \*\*Track\*\*.*\n2\. \*\*Thumb\*\*.*\n/, ''),
+      /variants Parts has no legend/,
+    );
+    await rejects(
+      frontmatter + body.replace(/1\. \*\*Track\*\*.*\n2\. \*\*Thumb\*\*.*\n/, ''),
+      /anatomy Parts has no legend, and docs\/generated\/parts\.json lists no parts of Switch/,
     );
     // Saved with CRLF line endings, the page reads as it does with LF.
     await writeFile(page, (frontmatter + body).replaceAll('\n', '\r\n'));
     assert.deepEqual(
       read()[1].sections.map((section) => section.id),
-      ['overview', 'states', 'accessibility', 'examples', 'changelog'],
+      [
+        'overview',
+        'variants',
+        'anatomy',
+        'behaviour',
+        'rules',
+        'accessibility',
+        'code',
+        'changelog',
+      ],
     );
     await writeFile(page, frontmatter + body);
     assert.doesNotThrow(read);
   });
 });
 
-test('a page not yet on the template ships its own props table only', async () => {
-  await templateFixture(async ({ page, read, examples }) => {
-    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=components:)/, '');
+/** Compose with its usage and an example file shown as code, then a customization. */
+const compose = [
+  '## Compose',
+  '',
+  '### Usage',
+  '',
+  'Give every switch a `label`.',
+  '',
+  '```tsx source=Basic',
+  '',
+  '```',
+  '',
+  '### Customize',
+  '',
+  '`--env-switch-track` sets the track.',
+  '',
+  '',
+].join('\n');
+
+test('"## Compose" is the developer part, opened by the generated Import', async () => {
+  await pageFixture(async ({ page, read }) => {
+    const rejects = async (part, pattern) => {
+      await writeFile(
+        page,
+        switchFrontmatter + switchBody.replace(/## Compose[\s\S]*?(?=## Changelog)/, part),
+      );
+      assert.throws(read, pattern);
+    };
+    await rejects(
+      compose.replace('### Usage', '### Import'),
+      /"### Import" of "## Compose" is generated/,
+    );
+    await rejects(
+      compose.replace('### Usage', '### Recipes'),
+      /"### Recipes" is not a subsection of "## Compose"/,
+    );
+    await rejects(
+      compose.replace('### Usage\n', ''),
+      /"## Compose" starts with a "###" subsection/,
+    );
+    await rejects(
+      compose.replace('### Customize', '### Composition').replace('### Usage', '### Customize'),
+      /"### Composition" must come before "### Customize"/,
+    );
+    await rejects(
+      compose.replace('### Usage', '### Composition'),
+      /"## Compose" needs a "### Usage" subsection/,
+    );
+    await rejects(compose.replace('source=Basic', 'source=Missing'), /source Missing has no file/);
+    await rejects(
+      compose.replace('source=Basic', 'figure=Basic'),
+      /"## Compose" shows code, not figures/,
+    );
+    await rejects(
+      `${compose}<!-- specimen: States -->\n\n`,
+      /"## Compose" shows code, not specimens/,
+    );
+    // An example's source as code belongs in Compose only.
     await writeFile(
       page,
-      `${legacy}# Switch\n\n## React usage\n\n### Props & contracts\n\n| Name | Contract |\n| --- | --- |\n| label | The visible label. |\n`,
+      switchFrontmatter +
+        switchBody.replace('### Labels', '```tsx source=Basic\n\n```\n\n### Labels'),
     );
-    const documents = read();
-    assert.equal(documents[1].sections, undefined);
-    const compiled = compileDocument(documents[1], documents, { props: switchProps, examples });
-    assert.doesNotMatch(compiled, /## Props\n/);
+    assert.throws(read, /an example's source as code belongs in "## Compose"/);
+    // A page without Compose gets one, holding the Import.
+    await writeFile(
+      page,
+      switchFrontmatter + switchBody.replace(/## Compose[\s\S]*?(?=## Changelog)/, ''),
+    );
+    const sections = read()[1].sections;
+    assert.deepEqual(sections.map((section) => section.id).slice(-2), ['code', 'changelog']);
   });
 });
 
-test('a filled-in example keeps its fence closed, with backticks in its source', async () => {
-  await templateFixture(async ({ page, read, examples }) => {
+test('a filled-in source keeps its fence closed, with backticks in its source', async () => {
+  await pageFixture(async ({ page, read, examples }) => {
     const source = "export default function Basic() {\n  return <Code>{'```'}</Code>;\n}\n";
     await writeFile(join(examples, 'switch', 'Basic.tsx'), source);
     // Text right after the empty fence, without a blank line.
     await writeFile(
       page,
       switchFrontmatter +
-        switchBody.replace(
-          '```tsx example=Basic\n```\n',
-          '```tsx example=Basic\n```\nAfter the example.\n',
-        ),
+        switchBody.replace('```tsx source=Basic\n\n```\n', '```tsx source=Basic\n```\nAfter it.\n'),
     );
     const documents = read();
     const compiled = compileDocument(documents[1], documents, { props: switchProps, examples });
-    assert.ok(
-      compiled.includes(`\`\`\`\`tsx example=Basic\n${source}\`\`\`\`\nAfter the example.\n`),
-    );
+    assert.ok(compiled.includes(`\`\`\`\`tsx source=Basic\n${source}\`\`\`\`\nAfter it.\n`));
   });
 });
 
@@ -398,8 +774,8 @@ test('since names a stable release or the version the changesets lead to, also i
   }
 });
 
-test('the template rules read Markdown as it renders', async () => {
-  await templateFixture(async ({ page, read }) => {
+test('the structure reads Markdown as it renders', async () => {
+  await pageFixture(async ({ page, read }) => {
     const accepts = async (source) => {
       await writeFile(page, source);
       assert.doesNotThrow(read);
@@ -408,21 +784,25 @@ test('the template rules read Markdown as it renders', async () => {
     await accepts(
       switchFrontmatter +
         switchBody.replace(
-          'Turns a setting on or off.',
-          '### Props forwarding\n\nOther props go to the input.\n\n| Attribute | Values |\n| --- | --- |\n| role | switch |\n\nTurns a setting on or off.',
+          'Give every switch a `label`.',
+          '#### Props forwarding\n\nOther props go to the input.\n\n| Attribute | Values |\n| --- | --- |\n| role | switch |\n\nGive every switch a `label`.',
         ),
     );
-    const legacy = switchFrontmatter.replace(/useWhen:[\s\S]*?(?=components:)/, '');
-    // An example fence shown inside another fence is text, not an example.
+    // A figure fence shown inside another fence is text, not a figure.
     await accepts(
-      `${legacy}# Switch\n\n## React usage\n\n\`\`\`\`md\n\`\`\`tsx example=Basic\n\`\`\`\n\`\`\`\`\n`,
+      switchFrontmatter +
+        switchBody.replace(
+          'Give every switch a `label`.',
+          'Give every switch a `label`.\n\n````md\n```tsx figure=Instant\n```\n````',
+        ),
     );
-    // An example fence indented by up to three spaces is one.
+    // A figure fence indented by up to three spaces is one.
     await writeFile(
       page,
-      `${legacy}# Switch\n\n## React usage\n\n  \`\`\`tsx example=Basic\n  \`\`\`\n`,
+      switchFrontmatter +
+        switchBody.replace('### Labels', '  ```tsx figure=Instant\n  ```\n\n### Labels'),
     );
-    assert.throws(read, /first section must be "## Overview", not "## React usage"/);
+    assert.throws(read, /figure Instant is placed twice/);
   });
 });
 
@@ -444,6 +824,10 @@ const patternFrontmatter = [
   '  - text: A single choice.',
   '    use: Checkbox',
   'composes: [Switch]',
+  'examples:',
+  '  Lead: overview',
+  '  Grouped: example',
+  '  SavedAtOnce: example',
   '---',
   '',
 ].join('\n');
@@ -451,20 +835,21 @@ const patternFrontmatter = [
 const patternBody = [
   '# Settings',
   '',
-  '## Overview',
+  '## Behaviour',
   '',
-  'Use this pattern to let people change a preference.',
+  '### Saved at once',
   '',
-  '```tsx example=Lead',
+  'Each change applies at once.',
+  '',
+  '```tsx figure=SavedAtOnce',
   '```',
   '',
-  '## Anatomy',
-  '',
-  '1. A Switch per setting.',
-  '',
-  '## Content guidelines',
+  '## Rules',
   '',
   'Name the setting, not the action.',
+  '',
+  '```tsx figure=Grouped',
+  '```',
   '',
   '## Accessibility',
   '',
@@ -480,28 +865,11 @@ const patternBody = [
   '',
   '- A label.',
   '',
-  '## Examples',
-  '',
-  '### Grouped',
-  '',
-  'Settings in groups.',
-  '',
-  '```tsx example=Grouped',
-  '```',
-  '',
-  '### Saved at once',
-  '',
-  'Each change applies at once.',
-  '',
-  '```tsx example=SavedAtOnce',
-  '```',
-  '',
 ].join('\n');
 
 /** A docs/ folder with a component and a pattern page and their example files. */
 async function compositionFixture(run) {
-  await templateFixture(async ({ page, read, examples, docs }) => {
-    await writeFile(page, switchFrontmatter + switchBody);
+  await pageFixture(async ({ read, examples, docs }) => {
     await mkdir(join(docs, 'patterns'), { recursive: true });
     await writeFile(
       join(docs, 'index.md'),
@@ -518,10 +886,9 @@ async function compositionFixture(run) {
         '',
       ].join('\n'),
     );
-    for (const [folder, names] of [['settings', ['Lead', 'Grouped', 'SavedAtOnce']]]) {
-      await mkdir(join(examples, folder), { recursive: true });
-      for (const name of names) await writeFile(join(examples, folder, `${name}.tsx`), lead(name));
-    }
+    await mkdir(join(examples, 'settings'), { recursive: true });
+    for (const name of ['Lead', 'Grouped', 'SavedAtOnce'])
+      await writeFile(join(examples, 'settings', `${name}.tsx`), lead(name));
     const pattern = join(docs, 'patterns', 'settings.md');
     await writeFile(pattern, patternFrontmatter + patternBody);
     await run({ pattern, read, examples, docs });
@@ -534,13 +901,14 @@ test('pattern pages are read into sections and examples', async () => {
     const settings = documents.find((document) => document.id === 'settings');
     assert.deepEqual(
       settings.sections.map((section) => section.id),
-      ['overview', 'anatomy', 'content', 'accessibility', 'examples'],
+      ['overview', 'behaviour', 'rules', 'accessibility', 'code'],
     );
     const blocks = settings.sections.flatMap((section) => section.blocks);
     assert.equal(blocks.filter((block) => block.kind === 'example').length, 3);
-    // The packaged page fills in every example's source.
+    // The packaged page names each example; its files ship beside it.
     const compiled = compileDocument(settings, documents, { examples });
-    assert.ok(compiled.includes(`\`\`\`tsx example=Lead\n${lead('Lead')}\`\`\``));
+    assert.ok(compiled.includes('\nExample: SavedAtOnce.\n'));
+    assert.ok(compiled.includes("import { Switch } from '@envsemble/envui';"));
     assert.doesNotMatch(compiled, /## Props/);
   });
 });
@@ -587,41 +955,27 @@ test('pattern pages are validated as their kind', async () => {
       p.replace('    see: switch', '    see: switch\n    use: Switch') + patternBody,
       /\{ text, see \}/,
     );
-    await writeFile(pattern, patternFrontmatter + patternBody);
-    // Sections: the subset of the kind, with the ones it needs.
+    // The structure is the same as a component's.
     await rejects(
       pattern,
-      p + patternBody.replace('## Content guidelines', '## Variants and sizes'),
-      /not a template section of a pattern page/,
+      p + patternBody.replace('## Rules', '## Content guidelines'),
+      /"## Content guidelines" is not a section of a pattern page/,
     );
     await rejects(
       pattern,
-      p + patternBody.replace('## Anatomy\n\n1. A Switch per setting.\n\n', ''),
-      /"## Anatomy" is required/,
+      p.replace('  Lead: overview', '  Lead: example') +
+        patternBody.replace('## Accessibility', '```tsx figure=Lead\n```\n\n## Accessibility'),
+      /lists no overview example/,
     );
     await rejects(
       pattern,
-      p + patternBody.replace(/### Saved at once[\s\S]*$/, ''),
-      /at least 3 example files, .* it has 2/,
+      p.replace(/examples:\n[\s\S]*?(?=---)/, '') + patternBody,
+      /patterns\/settings\.md is not in the one-file structure/,
     );
     await rejects(
       pattern,
-      p + patternBody.replace('```tsx example=Lead\n```\n', ''),
-      /shows the lead example/,
-    );
-    await rejects(
-      pattern,
-      p + patternBody.replace('example=Grouped', 'template=Grouped'),
-      /the fence `tsx template=Grouped` is malformed/,
-    );
-    await rejects(
-      pattern,
-      p +
-        patternBody.replace(
-          '# Settings\n\n## Overview',
-          '# Settings\n\n## Anatomy\n\nx\n\n## Overview',
-        ),
-      /is a pattern page, on the page template/,
+      p + patternBody.replace('figure=Grouped', 'figure=Grouped layout=app'),
+      /example Grouped takes no layout/,
     );
     await rejects(pattern, patternBody, /Pattern page patterns\/settings\.md needs frontmatter/);
     await writeFile(pattern, patternFrontmatter + patternBody);
@@ -645,350 +999,11 @@ test('pattern pages are validated as their kind', async () => {
       /patterns\/settings\.md is a pattern page.*under "## Actions"; list it under "## Patterns"/,
     );
     await writeFile(index, source);
-    // A fence that names a file but doesn't parse is an error, not a code block.
-    await rejects(
-      pattern,
-      patternFrontmatter + patternBody.replace('example=Grouped', 'example=Grouped layout=app'),
-      /the fence `tsx example=Grouped layout=app` is malformed/,
-    );
-    await writeFile(pattern, patternFrontmatter + patternBody);
     assert.doesNotThrow(read);
   });
 });
 
-/** A Switch page on the figure template: short text, live figures and a legend. */
-const figureBody = [
-  '# Switch',
-  '',
-  '## Overview',
-  '',
-  'Turns a setting on or off.',
-  '',
-  '```tsx example=Basic',
-  '',
-  '```',
-  '',
-  '## When to use',
-  '',
-  '```tsx do=Instant caption="Use a switch for a setting that applies at once."',
-  '',
-  '```',
-  '',
-  '```tsx dont=OnSubmit open stage=shaded caption="Don\'t use a switch in a form that applies on submit."',
-  '',
-  '```',
-  '',
-  '### Labels',
-  '',
-  'Name the setting, not the action.',
-  '',
-  '## Anatomy',
-  '',
-  '```tsx anatomy=Parts',
-  '',
-  '```',
-  '',
-  '1. **Track** (`env-switch`): the pill.',
-  '2. **Thumb** (`env-switch-input`)',
-  '',
-  '## Adapting to width',
-  '',
-  '```tsx example=Narrow widths="16 30" stage=shaded',
-  '',
-  '```',
-  '',
-  '## Accessibility',
-  '',
-  '### envUI provides',
-  '',
-  '- The switch role.',
-  '',
-  '### You provide',
-  '',
-  '- A label.',
-  '',
-  '## Changelog',
-  '',
-  '- **0.1.0**: Switch.',
-  '',
-].join('\n');
-
-test('a component page with a When to use section is on the figure template', async () => {
-  await templateFixture(async ({ page, read, examples }) => {
-    for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
-      await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
-    await writeFile(page, switchFrontmatter + figureBody);
-    const documents = read();
-    const switchPage = documents[1];
-    assert.equal(switchPage.format, 'figures');
-    assert.deepEqual(
-      switchPage.sections.map((section) => section.id),
-      ['overview', 'usage', 'anatomy', 'width', 'accessibility', 'code', 'changelog'],
-    );
-    const blocks = switchPage.sections.flatMap((section) => section.blocks);
-    const figure = (name) => blocks.find((block) => block.name === name);
-    assert.deepEqual(
-      [figure('Instant').role, figure('Instant').caption],
-      ['do', 'Use a switch for a setting that applies at once.'],
-    );
-    assert.equal(
-      figure('OnSubmit').heading,
-      "Don't: Don't use a switch in a form that applies on submit.",
-    );
-    assert.deepEqual(figure('Parts').legend, [
-      { part: 'env-switch', text: '**Track** (`env-switch`): the pill.', name: 'Track' },
-      { part: 'env-switch-input', text: '**Thumb** (`env-switch-input`)', name: 'Thumb' },
-    ]);
-    assert.deepEqual(figure('Narrow').widths, [16, 30]);
-    // The flag open shows the example's overlays open; other figures leave it out.
-    assert.equal(figure('OnSubmit').open, true);
-    assert.equal(figure('Instant').open, undefined);
-    // stage=shaded fills the stage with a shade darker than the page's and the navigation's;
-    // other figures keep the page's.
-    assert.equal(figure('OnSubmit').stage, 'shaded');
-    assert.equal(figure('Narrow').stage, 'shaded');
-    assert.equal(figure('Instant').stage, undefined);
-
-    // The packaged page keeps the figures' kinds and attributes, and the legend.
-    const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
-    assert.match(compiled, /^### Labels$/m);
-    assert.ok(
-      compiled.includes(
-        `\`\`\`tsx do=Instant caption="Use a switch for a setting that applies at once."\n${switchExample}\`\`\``,
-      ),
-    );
-    assert.ok(
-      compiled.includes('```tsx dont=OnSubmit open stage=shaded caption="Don\'t use a switch'),
-    );
-    assert.match(
-      compiled,
-      /```\n\n1\. \*\*Track\*\* \(`env-switch`\): the pill\.\n2\. \*\*Thumb\*\* \(`env-switch-input`\)\n/,
-    );
-    assert.ok(compiled.indexOf('## Accessibility') < compiled.indexOf('## Props'));
-  });
-});
-
-test('a page on the figure template rejects what breaks its form', async () => {
-  await templateFixture(async ({ page, read, examples, docs }) => {
-    for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
-      await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
-    const rejects = async (body, pattern) => {
-      await writeFile(page, switchFrontmatter + body);
-      assert.throws(read, pattern);
-    };
-    const body = figureBody;
-    await rejects(
-      body.replace('Name the setting, not the action.', '> How do I label it?'),
-      /When to use has a blockquote/,
-    );
-    await rejects(
-      body.replace(' caption="Use a switch for a setting that applies at once."', ''),
-      /do Instant needs caption/,
-    );
-    // An option table, whose last column is Use for, shows on the Site as a legend of tags: each
-    // names its option in a few plain words, once, and says what it is for.
-    const options = (rows) =>
-      body.replace(
-        'Name the setting, not the action.',
-        `Name the setting, not the action.\n\n| Size | Use for |\n| ---- | ------- |\n${rows}\n`,
-      );
-    await rejects(
-      options('| [Small](#small) | A dense list. |'),
-      /When to use: row 1 of the Size table names its option with a link/,
-    );
-    await rejects(
-      options('| Small | A dense list. |\n| Small | A table. |'),
-      /row 2 of the Size table names Small again/,
-    );
-    await rejects(options('| Small |  |'), /row 1 of the Size table says nothing under Use for/);
-    await rejects(
-      options('| The small one, for dense lists. | A dense list. |'),
-      /names its option "The small one, for dense lists\.": a name of a few words/,
-    );
-    await writeFile(page, switchFrontmatter + options('| Small | A dense list. |'));
-    assert.doesNotThrow(read);
-    await rejects(body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
-    await rejects(
-      body.replace('anatomy=Parts', 'anatomy=Parts size=lg'),
-      /anatomy Parts takes no size/,
-    );
-    await rejects(
-      body.replace('dont=OnSubmit open stage=shaded', 'dont=OnSubmit open=yes'),
-      /write the flag open alone/,
-    );
-    await rejects(body.replace('anatomy=Parts', 'anatomy=Parts of'), /has of without a value/);
-    await rejects(body.replace('stage=shaded caption', 'stage=dark caption'), /has stage="dark"/);
-    // The page's own fill is the default, and a figure is always on a stage.
-    for (const fill of ['raised', 'none'])
-      await rejects(
-        body.replace('stage=shaded caption', `stage=${fill} caption`),
-        new RegExp(`has stage="${fill}"`),
-      );
-    // A double quote inside a caption, escaped or not, is pointed at rather than called malformed.
-    for (const quote of ['"', '\\"'])
-      await rejects(
-        body.replace('applies at once.', `says ${quote}Save${quote}.`),
-        /the caption of the fence `tsx do=Instant caption="Use a switch for a setting that says "Save"\."` has a double quote inside it, at `"Save"\."`/,
-      );
-    await rejects(
-      body.replace('2. **Thumb** (`env-switch-input`)', '2. The thumb.'),
-      /item 2 of the legend of anatomy Parts names no part/,
-    );
-    await rejects(
-      body.replace('## Adapting to width', '## Width'),
-      /not a section of a component page/,
-    );
-    await rejects(
-      body.replace(/## When to use[\s\S]*?(?=## Anatomy)/, ''),
-      /a page on the figure template has a "## When to use" section/,
-    );
-    await rejects(
-      body.replace('## Changelog', '## Variants\n\nOne size.\n\n## Changelog'),
-      /"## Variants" must come before "## Accessibility"/,
-    );
-    await rejects(body.replace('example=Basic', 'example=Missing'), /has no file/);
-    // A legend names parts that exist, and a figure without one names a component with parts.
-    await rejects(
-      body.replace('2. **Thumb** (`env-switch-input`)', '2. `env-switch-knob`'),
-      /names env-switch-knob, which neither packages\/ui's CSS nor docs\/generated\/parts\.json has/,
-    );
-    // A variants figure names each variant in bold, in a legend it can't do without.
-    const variants = body.replace('anatomy=Parts', 'variants=Parts');
-    await rejects(variants.replace('1. **Track** (`env-switch`)', '1. Track'), /in bold/);
-    await rejects(
-      variants.replace(/1\. \*\*Track\*\*.*\n2\. \*\*Thumb\*\*.*\n/, ''),
-      /variants Parts has no legend/,
-    );
-    const withoutLegend = body.replace(/1\. \*\*Track\*\*.*\n2\. \*\*Thumb\*\*.*\n/, '');
-    await rejects(
-      withoutLegend,
-      /anatomy Parts has no legend, and docs\/generated\/parts\.json lists no parts of Switch/,
-    );
-    await rejects(
-      withoutLegend.replace('anatomy=Parts', 'anatomy=Parts of=Toggle'),
-      /lists no parts of Toggle$/m,
-    );
-    await mkdir(join(docs, 'generated'), { recursive: true });
-    await writeFile(
-      join(docs, 'generated', 'parts.json'),
-      JSON.stringify({
-        schemaVersion: 1,
-        components: {
-          Switch: {
-            root: 'env-switch',
-            source: 'Switch.tsx',
-            parts: [{ class: 'env-switch-knob', description: 'The knob.' }],
-            states: [],
-          },
-        },
-        shared: {},
-      }),
-    );
-    await writeFile(
-      page,
-      switchFrontmatter + withoutLegend.replace('`env-switch-input`', '`env-switch-knob`'),
-    );
-    assert.doesNotThrow(read);
-    // A section-template page that borrows a figure-template section is told what makes one.
-    await rejects(
-      switchBody.replace('## States and behaviour', '## Adapting to width'),
-      /a page on the figure template has a "## When to use" section/,
-    );
-  });
-});
-
-/** A developer-only part: "## In code" with its usage, an example file shown as code. */
-const inCode = [
-  '## In code',
-  '',
-  '### Usage',
-  '',
-  'Give every switch a `label`.',
-  '',
-  '```tsx source=Basic',
-  '',
-  '```',
-  '',
-  '### Customize',
-  '',
-  '`--env-switch-track` sets the track.',
-  '',
-  '',
-].join('\n');
-
-test('"## In code" is the developer-only part, opened by the generated Import', async () => {
-  await templateFixture(async ({ page, read, examples }) => {
-    for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
-      await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
-    await writeFile(
-      page,
-      switchFrontmatter + figureBody.replace('## Changelog', `${inCode}## Changelog`),
-    );
-    const documents = read();
-    const switchPage = documents[1];
-    const code = switchPage.sections.find((section) => section.id === 'code');
-    assert.deepEqual(
-      code.blocks.map((block) => block.kind),
-      ['markdown', 'source', 'markdown'],
-    );
-    assert.match(
-      code.blocks[0].markdown,
-      /^## In code\n\n### Import\n\n```tsx\nimport \{ Switch \} from '@envsemble\/envui';\n```\n\n### Usage\n/,
-    );
-    assert.deepEqual(code.blocks[1], { kind: 'source', name: 'Basic' });
-    // The packaged page keeps it, with the example's source filled in, before the props.
-    const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
-    assert.ok(compiled.includes(`\`\`\`tsx source=Basic\n${switchExample}\`\`\``));
-    assert.ok(compiled.indexOf('## Accessibility') < compiled.indexOf('## In code'));
-    assert.ok(compiled.indexOf('## In code') < compiled.indexOf('## Props'));
-
-    const rejects = async (part, pattern) => {
-      await writeFile(
-        page,
-        switchFrontmatter + figureBody.replace('## Changelog', `${part}## Changelog`),
-      );
-      assert.throws(read, pattern);
-    };
-    await rejects(
-      inCode.replace('### Usage', '### Import'),
-      /"### Import" of "## In code" is generated/,
-    );
-    await rejects(
-      inCode.replace('### Usage', '### Recipes'),
-      /"### Recipes" is not a subsection of "## In code"/,
-    );
-    await rejects(inCode.replace('### Usage\n', ''), /"## In code" starts with a "###" subsection/);
-    await rejects(
-      inCode.replace('### Customize', '### Composition').replace('### Usage', '### Customize'),
-      /"### Composition" must come before "### Customize"/,
-    );
-    await rejects(
-      inCode.replace('### Usage', '### Composition'),
-      /"## In code" needs a "### Usage" subsection/,
-    );
-    await rejects(inCode.replace('source=Basic', 'source=Missing'), /source Missing has no file/);
-    await rejects(
-      inCode.replace('source=Basic', 'example=Basic'),
-      /"## In code" shows code, not figures/,
-    );
-    // An example's source as code belongs in "## In code" only.
-    await writeFile(
-      page,
-      switchFrontmatter +
-        figureBody.replace('### Labels', '```tsx source=Basic\n\n```\n\n### Labels'),
-    );
-    assert.throws(read, /an example's source as code belongs in "## In code"/);
-    // An anatomy legend item starts with its part's name in bold, all the Site shows of it.
-    await writeFile(
-      page,
-      switchFrontmatter +
-        figureBody.replace('2. **Thumb** (`env-switch-input`)', '2. `env-switch-input`'),
-    );
-    assert.throws(read, /must start with the part's name in bold/);
-  });
-});
-
-test('an option table is read for the Site as a legend', () => {
+test('an option table is read for the catalogue as a legend', () => {
   const [table] = marked.lexer(
     [
       '| Variant | Tones | Use for |',
@@ -1017,7 +1032,7 @@ test('an option table is read for the Site as a legend', () => {
     optionTable(marked.lexer('| Key | Action |\n| --- | --- |\n| Tab | Moves. |\n')[0]),
     undefined,
   );
-  // The Site's Markdown is cut at its option tables, keeping each table's source.
+  // The catalogue's Markdown is cut at its option tables, keeping each table's source.
   const source = 'Intro.\n\n| Size | Use for |\n| --- | --- |\n| Small | Lists. |\n\nAfter.\n';
   const pieces = optionPieces(source);
   assert.deepEqual(
@@ -1030,20 +1045,20 @@ test('an option table is read for the Site as a legend', () => {
   );
 });
 
-test('Site text with no structure is found: loose after a figure, or a second paragraph', () => {
+test('Catalogue text with no structure is found: loose after a figure, or a fourth paragraph', () => {
   const markdown = (text) => ({ kind: 'markdown', markdown: text });
   const figure = (role) => ({ kind: 'example', name: 'Figure', heading: 'Figure', role });
   const found = siteStructure({
     sections: [
       {
-        id: 'usage',
-        title: 'When to use',
+        id: 'rules',
+        title: 'Rules',
         blocks: [
-          markdown('## When to use\n\nOne paragraph opens the section.\n\n'),
+          markdown('## Rules\n\nOne paragraph opens the section.\n\n'),
           figure('do'),
           figure('dont'),
           markdown(
-            'A lone sentence after the pairs.\n\n### Labels\n\nStart with a verb.\n\nPut the outcome in it.\n\n',
+            'A lone sentence after the pairs.\n\n### Labels\n\nStart with a verb.\n\nPut the outcome in it.\n\nKeep it short.\n\nOne too many.\n\n',
           ),
           figure(),
         ],
@@ -1067,16 +1082,154 @@ test('Site text with no structure is found: loose after a figure, or a second pa
           ),
         ],
       },
-      // The developer-only part is not the Site's.
-      { id: 'code', title: 'In code', blocks: [markdown('## In code\n\nOne.\n\nTwo.\n')] },
+      // The developer part is not the catalogue's.
+      { id: 'code', title: 'Compose', blocks: [markdown('## Compose\n\nOne.\n\nTwo.\n')] },
     ],
   });
   assert.deepEqual(
     found.map(({ where, kind, text }) => `${where}, ${kind}: ${text}`),
     [
-      'When to use, after a figure: A lone sentence after the pairs.',
-      'When to use, a second paragraph: Put the outcome in it.',
+      'Rules, after a figure: A lone sentence after the pairs.',
+      'Rules, too many paragraphs: One too many.',
       'Variants, after a figure: Loose after the legend.',
     ],
   );
+});
+
+test('long paragraphs of catalogue text are found, measured as people read them', () => {
+  const markdown = (text) => ({ kind: 'markdown', markdown: text });
+  const long = `${'A sentence of words. '.repeat(12)}`.trim();
+  const found = longParagraphs({
+    sections: [
+      {
+        id: 'rules',
+        title: 'Rules',
+        blocks: [
+          // A link counts as its words, not its address.
+          markdown(
+            `## Rules
+
+Short, with [a link](${'../components/x.md'.repeat(20)}).
+
+${long}
+`,
+          ),
+        ],
+      },
+      {
+        id: 'code',
+        title: 'Compose',
+        blocks: [
+          markdown(`## Compose
+
+${long}
+`),
+        ],
+      },
+    ],
+  });
+  assert.deepEqual(
+    found.map(({ where, length }) => `${where}: ${length}`),
+    [`Rules: ${long.length}`],
+  );
+  assert.ok(long.length > paragraphLength);
+});
+
+test("a guide's statuses and exportAliases name only the exports it lists", async () => {
+  const cache = resolve('.cache');
+  await mkdir(cache, { recursive: true });
+  const directory = await mkdtemp(join(cache, 'guide-'));
+  try {
+    await cp(resolve('docs'), directory, { recursive: true });
+    const setup = join(directory, 'setup.md');
+    const source = await readFile(resolve('docs/setup.md'), 'utf8');
+    const read = () => readDocumentation(directory, { versions: undefined });
+    // A guide's exports are stable, so a status that says so repeats the default.
+    await writeFile(
+      setup,
+      source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: stable\n'),
+    );
+    assert.throws(read, /statuses of LinkProvider repeats the default status of a guide's exports/);
+    await writeFile(
+      setup,
+      source.replace('exportAliases:\n', 'exportAliases:\n  Button:\n    - push\n'),
+    );
+    assert.throws(read, /exportAliases names Button, which components does not list/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+/** Whether `text` has `line` as one whole line. */
+const hasLine = (text, line) => text.split('\n').includes(line);
+
+test('Table ships each example once, by name in its frontmatter, its rules and legends, and no changelog', () => {
+  const compiled = compileDocumentation();
+  const table = compiled.get('components/table.md');
+  // Its examples are listed in the frontmatter, with their roles and captions, and still ship; a
+  // run of figures is a line naming them; Compose keeps the code of its one source example.
+  assert.ok(hasLine(table, '  ProjectStatus: overview'));
+  assert.ok(compiled.has('examples/table/ProjectStatus.tsx'));
+  assert.doesNotMatch(table, /^`{3,}tsx (?:example|do|dont|anatomy|variants|figure)=/m);
+  assert.match(table, /^`{3,}tsx source=ProjectStatus$/m);
+  assert.ok(
+    hasLine(
+      table,
+      "Examples: NumbersAligned (do), NumbersUnaligned (don't), NamedStates (do), ColorOnly (don't).",
+    ),
+  );
+  assert.ok(
+    hasLine(table, '  ColorOnly: { role: dont, caption: "States told apart by color alone." }'),
+  );
+  assert.ok(hasLine(table, '1. **Region** (`env-table-region`)'));
+  assert.ok(hasLine(table, 'Native props: `<table>`.'));
+  assert.doesNotMatch(table, /^## (?:Changelog|Related)/m);
+  // The index leaves out the contributor pages.
+  assert.ok(!compiled.get('index.md').includes('component-pages.md'));
+});
+
+test('a page ships the whole file, in its order, with code once', () => {
+  const compiled = compileDocumentation();
+  const button = compiled.get('components/button.md');
+  // The frontmatter lists every example once, with its role and caption, and what to use instead.
+  assert.ok(hasLine(button, 'examples: # Each file is examples/button/<Name>.tsx.'));
+  assert.ok(hasLine(button, '  CreateProject: overview'));
+  assert.ok(
+    hasLine(
+      button,
+      '  OnePrimaryAction: { role: do, caption: "One primary button per group, at the end of its actions." }',
+    ),
+  );
+  assert.ok(hasLine(button, 'avoidWhen:'));
+  assert.ok(compiled.has('examples/button/CreateProject.tsx'));
+  // The sections in the catalogue's order, the plain ones first and Compose last, then the props.
+  const headings = [...button.matchAll(/^## (.*)$/gm)].map(([, title]) => title);
+  assert.deepEqual(headings, [
+    'Variants',
+    'Anatomy',
+    'Behaviour',
+    'Rules',
+    'Accessibility',
+    'Compose',
+    'Props',
+  ]);
+  // A run of figures is a line that names them; no figure's code ships in the page.
+  assert.ok(
+    hasLine(
+      button,
+      "Examples: OnePrimaryAction (do), SeveralPrimaryActions (don't), ExplainWhatIsMissing (do), DisabledUntilValid (don't).",
+    ),
+  );
+  assert.doesNotMatch(button, /^`{3,}tsx (?:figure|example|do|dont|anatomy|variants)=/m);
+  assert.ok(hasLine(button, '1. **Container** (`env-button`)'));
+  assert.ok(hasLine(button, '### You provide'));
+  assert.match(button, /^Also `end`, `size`, .* as on Button\.$/m);
+  // A pattern's canonical example ships once, in full, in Compose.
+  const forms = compiled.get('patterns/forms.md');
+  assert.equal(forms.match(/^`{3,}tsx source=ErrorSummary$/gm)?.length, 1);
+  // A foundation's figures are the catalogue's: their legends ship, and the frontmatter lists none.
+  const spacing = compiled.get('foundations/spacing.md');
+  assert.ok(spacing.includes('\n1. **Tight, inside a group**: '));
+  assert.doesNotMatch(spacing, /^examples:/m);
+  assert.ok(spacing.includes('\n| More room between these | The next larger step'));
 });

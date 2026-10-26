@@ -46,21 +46,21 @@ A component's style sheet also holds its motion and its forced-colors rules:
 
 ## One documentation source
 
-Edit the relevant Markdown page under `docs/`; add a focused page when a new topic needs one. Register it in [the index](index.md) beneath its existing family. The index defines catalogue grouping and reading order, and page titles must match their entries. A component page carries its summary and metadata in frontmatter and follows the page template, with examples as files and props generated from the TypeScript declarations: [write a component page](component-pages.md) describes it, and how to convert a page that predates it. Other entries have a title, relative path and one-line purpose.
+Edit the relevant Markdown page under `docs/`; add a focused page when a new topic needs one. Register it in [the index](index.md) beneath its existing family. The index defines catalogue grouping and reading order, and page titles must match their entries. A component, pattern or foundation page is in the one-file structure: its summary, metadata and examples in frontmatter, its sections in a fixed order, its text as a lead and one-fact rules, examples as files and props generated from the TypeScript declarations. [Write a component page](component-pages.md) describes it, and the build fails on a page outside it. Other entries have a title, relative path and one-line purpose.
 
 Keep examples, behavior and contracts in the Markdown page and its example files. The build generates the catalogue's internal TypeScript data from these files, and compiles the packaged documentation with the examples and props tables filled in; edit the maintained Markdown, examples and TSDoc, not generated files.
 
-The skills contain routing and workflow instructions. Move conditional component details into their owning documentation page. Improve that page when integration reveals a gap rather than adding another guide.
+The setup skill contains setup steps only. Keep component details in their owning documentation page, and improve that page when integration reveals a gap rather than adding another guide.
 
 ## Part names
 
-A component's part classes (`env-<component>-<part>`), state attributes (`data-*`) and color properties (`--env-<component>-<role>`, below) are public and versioned; its other component tokens, the custom properties it declares for itself such as `--env-card-padding`, are private. `npm run docs:parts` (`scripts/GenerateParts.mjs`) writes the contract to `docs/generated/parts.json`, which the manifest, the docs' anatomy figures and dev mode read:
+A component's part classes (`env-<component>-<part>`), state attributes (`data-*`) and color properties (`--env-<component>-<role>`, below) are public and versioned; its other component tokens, the custom properties it declares for itself such as `--env-card-padding`, are private. `npm run docs:parts` (`scripts/GenerateParts.mjs`) writes the contract to `docs/generated/parts.json`, which the docs' anatomy figures and dev mode read, and the package ships:
 
 - It derives the classes from the source: the `env-*` literals in `className`, `classNames(…)`, a `class` property or a variable named for a class, with a class built from a value, such as `` `env-avatar-fallback-${fallback}` ``, expanded over the value's type. A class belongs to the exported component whose name, in kebab case, starts it: `env-card-header` to Card.
 - It derives the states from the `data-*` attributes set in JSX on an element with a part class, with the values of the attribute's type, and from the `[data-*]` selectors the style sheets put on a part class, which add the states Base UI sets. Attributes named `data-env-ssr-*` are private and left out: server markup carries them only until a component reads its layout in the browser, such as PanelDock's while CSS stacks it before hydration. Use the prefix for such attributes alone; they may change in any release.
 - `packages/ui/src/parts.json` holds what can't be derived: a one-line description of every part, by component, the `roots` of components whose root isn't `env-<name>`, the `shared` anatomy several components render, by class prefix, the classes no prefix `placed`, and each component's `colors`, its color properties with what each colors. A new part or color property needs its description there, and the generation fails without it, or when a listed property isn't registered in the style sheets or a registered one isn't listed.
 
-Commit `docs/generated/parts.json` with the change, then run `npm run docs:manifest`. `npm run docs:check` fails while it is stale, and when a part, state attribute or value, or color property that the integration branch lists has gone without a `major` changeset of `@envsemble/envui` that names it: the class, the attribute, the property, or a value with its attribute. A rename or removal is a `major` change with a migration note. A part that moves to another component or shared group, or a state that comes to take any value, is not gone.
+Commit `docs/generated/parts.json` with the change. `npm run docs:check` fails while it is stale, and when a part, state attribute or value, or color property that the integration branch lists has gone without a `major` changeset of `@envsemble/envui` that names it: the class, the attribute, the property, or a value with its attribute. A rename or removal is a `major` change with a migration note. A part that moves to another component or shared group, or a state that comes to take any value, is not gone.
 
 ### Color properties and state layers
 
@@ -76,15 +76,14 @@ A component's colors are public color properties on its root, which an applicati
 
 The contrast gate measures the tokens, which are what envUI paints; the colors an application sets, and their layers, are its own to keep legible.
 
-## Agent files and skills
+## Files for agents
 
-The files agents read come from the documentation's sources, as [For agents](agent-tooling.md) describes. `npm run docs:manifest` (`scripts/GenerateManifest.mjs`) writes `docs/generated/manifest.json` and `docs/generated/llms.txt` from the index, the pages' frontmatter, the example files, `docs/generated/props.json`, `docs/generated/parts.json` and the token list. Commit them with the change: `npm run docs:check` and `npm test` fail while they are stale, so run it after `npm run docs:props`, `npm run docs:parts` or `npm run tokens:build` too. The library build copies both to the package root, the manifest with the version, and writes `llms-full.txt` beside them.
+Agents read the documentation the package ships, as [For agents](agent-tooling.md) describes; nothing else is generated for them in the package. The hosted site serves two files at its root, from `scripts/SiteAgentFiles.mjs`:
 
-The `envui` command is plain JavaScript in `packages/ui/bin`, run as it is from the installed package: `agents.mjs` renders the AGENTS.md index, `mcp.mjs` is the MCP server and `catalog.mjs` the lookups and ranking they share. It uses Node's own modules only, so installing envUI adds no dependency for it. `tests/Agents.test.mjs` holds the index to its 8 KB budget and calls every MCP tool over stdio.
+- `SKILL.md`, the setup skill, is `apps/catalogue/site/SKILL.md` with the version of `@envsemble/envui` in place of each `{{version}}`. Keep it short: it sets envUI up with the user and leads to the docs, which hold everything else. The Docs' home gives the prompt that leads to it, and [For agents](agent-tooling.md) shows the same AGENTS.md block, which `tests/SiteAgentFiles.test.mjs` keeps equal to the skill's.
+- `llms.txt` is generated from the index and each page's summary, linked to the pages of the Docs.
 
-The skills' source is `.agents/skills/`; each folder holds one `SKILL.md`, and the build copies them into the package's `skills/`. The agent plugin in `plugin/` carries a committed copy: run `npm run plugin:generate` after editing them and commit `plugin/skills` with the change, as [For agents](agent-tooling.md#how-a-release-updates-the-plugin) describes. Validate them with the available skill validator after editing them.
-
-[For agents](agent-tooling.md) describes publishing the skills and the MCP server as a plugin.
+The catalogue's development server serves both, and `npm run build:site` writes them into `dist/site`.
 
 ## Record the change
 
@@ -129,7 +128,7 @@ Style violations from before these rules are recorded per file and rule in `styl
 
 The browser suite starts or reuses the catalogue on port 8770 and the test fixture on 8766, with half the cores as workers (`ENVUI_WORKERS` sets a count or share); Firefox and WebKit take at most a third of them each, since they gain little from more and their slowest specs then run out of time. It reuses a server only when the server answers for this checkout; when another checkout or program holds a port, the suite takes ports of this checkout's own. To choose the ports, for example beside another checkout's tests, set them: `ENVUI_CATALOGUE_PORT=8832 ENVUI_FIXTURE_PORT=8833 npm run test:browser`. A run of the accessibility scan alone starts no server.
 
-`npm run test:a11y` scans every page of the Site and the Docs in light, and the theme sample (`samplePages` in `tests/browser/CatalogueThemes.ts`) in dark and both high-contrast themes too, with axe in Chromium, against WCAG 2.2 A and AA and axe’s best practices. Today’s violations are listed in `tests/accessibility/KnownViolations.json` by page, theme, rule and element. A violation not on the list fails, and so does a listed one that no longer occurs. It scans the hosted catalogue, which it builds first with `npm run build:site`, and serves from `dist/site/` inside the browser, so no server, port or connection is involved: the development server, with each module a request of its own, could drop a page’s files when it restarted or the system ran short of sockets, and leave the page blank. After fixing violations, run `npm run test:a11y:update` and commit the shorter list; add to it only for a reviewed reason.
+`npm run test:a11y` scans every page of the catalogue and the Docs in light, and the theme sample (`samplePages` in `tests/browser/CatalogueThemes.ts`) in dark and both high-contrast themes too, with axe in Chromium, against WCAG 2.2 A and AA and axe’s best practices. Today’s violations are listed in `tests/accessibility/KnownViolations.json` by page, theme, rule and element. A violation not on the list fails, and so does a listed one that no longer occurs. It scans the hosted catalogue, which it builds first with `npm run build:site`, and serves from `dist/site/` inside the browser, so no server, port or connection is involved: the development server, with each module a request of its own, could drop a page’s files when it restarted or the system ran short of sockets, and leave the page blank. After fixing violations, run `npm run test:a11y:update` and commit the shorter list; add to it only for a reviewed reason.
 
 `tests/browser/LayoutCheck.spec.ts`, the layout check, opens every figure the component and pattern pages place on its own, on the catalogue's stage in the fixture (`?fixture=layout-check`), and runs dev mode's `layout.at()` at 22, 40, 60 and 80 rem, with the window at each width so open overlays are placed for it. It fails with each problem's width, rule, path and message, and attaches the readouts. A don't figure (`dont=`) shows a mistake on purpose and is left out. A problem an example has on purpose takes an allowance in the spec, for that example, rule and path only, with its reason; an allowance that matches nothing fails.
 
@@ -139,4 +138,4 @@ The browser suite starts or reuses the catalogue on port 8770 and the test fixtu
 
 Exercise meaningful interaction changes in both themes, with keyboard focus and dismissal, native form submit/reset, narrow containers and enlarged text. Check portals, wrapping and local scrolling where affected. Inspect bundle boundaries when optional content or icon imports change.
 
-Validate the skill folders with the available skill validator after editing them. Report changes, checks and remaining gaps.
+Report changes, checks and remaining gaps.

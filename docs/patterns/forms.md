@@ -46,41 +46,31 @@ composes:
   - Grid
   - Row
   - Text
+examples:
+  CreateProject: overview
+  OneColumn:
+    role: do
+    caption: One column, read top to bottom, with the action after the last field.
+  SideBySide:
+    role: dont
+    caption: 'Fields side by side: people miss the one beside their path.'
+  FormAnatomy: anatomy
+  ErrorSummary: example
+  GroupedChoices: example
+  LongFormInSteps: example
+  ValidationTiming: example
+  ServerError: example
 ---
 
 # Form layout and validation
-
-## Overview
-
-The aim is a form people get right on the first submit.
-
-```tsx example=CreateProject
-
-```
-
-### When to check
-
-On submit first: show each field's error, and move focus to the error summary, or straight to the field when there is only one. Then as people leave a field they have typed in. Never while they type, though an error goes as soon as the value is right.
-
-```tsx example=ValidationTiming
-
-```
-
-### Sending
-
-While the form is sent, its submit button shows that it is working: it keeps its size and ignores presses. When the server refuses or can't be reached, keep everything people entered, and move focus to an [Alert](../components/alert.md) at the top that says what to do.
-
-```tsx example=ServerError
-
-```
 
 ## Variants
 
 ### Error summary
 
-After a refused submit, a danger Alert titled "There is a problem" lists each error as a [Link](../components/link.md) that moves focus to its field. It is read once, as it takes focus, with no announcement of its own.
+After a refused submit, a danger [Alert](../components/alert.md) titled "There is a problem" lists each error as a [Link](../components/link.md) that moves focus to its field. It is read once, as it takes focus, with no announcement of its own.
 
-```tsx example=ErrorSummary
+```tsx figure=ErrorSummary
 
 ```
 
@@ -88,19 +78,61 @@ After a refused submit, a danger Alert titled "There is a problem" lists each er
 
 Several checkboxes go in a group whose name says what they are for, as the choices of a [RadioGroup](../components/radio.md) do.
 
-```tsx example=GroupedChoices
+```tsx figure=GroupedChoices
 
 ```
 
 ### A long form in steps
 
-A long form splits into a few short steps, each a page of its own with its fields. [Progress](../components/progress.md), split into steps, says where people are; Continue checks the step's fields before moving on, Back keeps every answer, and the last step shows the answers before the form's own action.
+A long form splits into a few short steps, each a page of its own with its fields.
 
-```tsx example=LongFormInSteps
+- [Progress](../components/progress.md), split into steps, says where people are.
+- Continue checks the step's fields before moving on, and Back keeps every answer.
+- The last step shows the answers before the form's own action.
+
+```tsx figure=LongFormInSteps
 
 ```
 
-## When to use
+## Anatomy
+
+```tsx figure=FormAnatomy
+
+```
+
+1. **Error summary** (`env-alert`)
+2. **Field and its label** (`env-text-field-control`, `label`)
+3. **Description** (`env-field-description`, `description`)
+4. **Error** (`env-field-error`, `error`)
+5. **Primary action** (`env-button:not(env-link)`)
+
+## Behaviour
+
+### When to check
+
+On submit first: show each field's error, and move focus to the error summary, or straight to the field when there is only one.
+
+- Then as people leave a field they have typed in.
+- Never while they type, though an error goes as soon as the value is right.
+
+```tsx figure=ValidationTiming
+
+```
+
+### Sending
+
+While the form is sent, its submit button shows that it is working: it keeps its size and ignores presses.
+
+- When the server refuses or can't be reached, keep everything people entered.
+- Move focus to an [Alert](../components/alert.md) at the top that says what to do.
+
+```tsx figure=ServerError
+
+```
+
+## Rules
+
+The aim is a form people get right on the first submit.
 
 ### Which control?
 
@@ -125,41 +157,46 @@ A date, a time or a month each have a picker of their own, which people can also
 | Time picker  | A time of day, such as when a meeting starts.               |
 | Month picker | A month, such as a report's period or a card's expiry date. |
 
-```tsx do=OneColumn caption="One column, read top to bottom, with the action after the last field."
+```tsx figure=OneColumn
 
 ```
 
-```tsx dont=SideBySide caption="Fields side by side: people miss the one beside their path."
+```tsx figure=SideBySide
 
 ```
 
 ### After an error
 
-Keep the submit button enabled, and say what is wrong after a submit: a disabled button can't tell people why. Keep what people entered after any error.
+Keep the submit button enabled, and say what is wrong after a submit.
+
+- A disabled button can't tell people why.
+- Keep what people entered after any error.
 
 ### Labels
 
-A label is a short noun phrase with no colon, such as "Project name". Mark the optional fields, "Description (optional)", never the required ones with a star. A format or a limit goes in the description, read before people type, and a placeholder holds only an example value, such as name@example.com, never the label or instructions. The submit button says what it does, "Create project", never "Submit".
+A label is a short noun phrase with no colon, such as "Project name".
+
+- Mark the optional fields, "Description (optional)", never the required ones with a star.
+- A format or a limit goes in the description, read before people type.
+- A placeholder holds only an example value, such as name@example.com, never the label or instructions.
+- The submit button says what it does, "Create project", never "Submit".
 
 ### Error messages
 
-An error starts with the fix, in the field's own words, such as "Enter a due date after the start date" or "Enter an email address like name@example.com", never "Error: invalid input" or "Project name is required!". It blames no one and shows no code, though a reference may follow for support. The summary is titled "There is a problem" and repeats each field's message word for word.
+Start with the fix, in the field's own words, such as "Enter a due date after the start date" or "Enter an email address like name@example.com".
 
-## Anatomy
-
-```tsx anatomy=FormAnatomy
-
-```
-
-1. **Error summary** (`env-alert`)
-2. **Field and its label** (`env-text-field-control`, `label`)
-3. **Description** (`env-field-description`, `description`)
-4. **Error** (`env-field-error`, `error`)
-5. **Primary action** (`env-button:not(env-link)`)
+- Never "Error: invalid input" or "Project name is required!".
+- Blame no one and show no code; a reference may follow for support.
+- The summary is titled "There is a problem" and repeats each field's message word for word.
 
 ## Accessibility
 
-<kbd>Tab</kbd> follows the fields in the order they show, and <kbd>Enter</kbd> in a text field submits. A refused submit moves focus to the summary, whose links each focus their field; where focus goes straight to the field and is already there, as after <kbd>Enter</kbd>, say the error in a status too.
+### Focus and keyboard
+
+<kbd>Tab</kbd> follows the fields in the order they show, and <kbd>Enter</kbd> in a text field submits.
+
+- A refused submit moves focus to the summary, whose links each focus their field.
+- Where focus goes straight to the field and is already there, as after <kbd>Enter</kbd>, say the error in a status too.
 
 ### envUI provides
 
@@ -173,11 +210,11 @@ An error starts with the fix, in the field's own words, such as "Enter a due dat
 - Links in the summary whose `onClick` focuses their field.
 - A `fieldset` and `legend` around a group of checkboxes, and a `role="status"` message once saved.
 
-## In code
+## Compose
 
 ### Usage
 
-A form is a native `<form noValidate onSubmit={…}>`: the application runs the checks, so the browser's own bubbles stay out. On submit, set each field's `error`, then move focus to the error summary, or to the field when only one is wrong. After a submit, check a field again as people leave it, through `onBlur`, and clear its `error` as soon as the value fits, never adding one while they type.
+A form is a native `<form noValidate onSubmit={…}>`, and the application runs the checks. On submit, set each wrong field's `error` and focus the error summary, or the field when only one is wrong. Then check a field in its `onBlur`, and clear its `error` as soon as the value fits.
 
 ```tsx source=ErrorSummary
 
@@ -185,37 +222,29 @@ A form is a native `<form noValidate onSubmit={…}>`: the application runs the 
 
 #### Sending
 
-Set `pending` on the submit Button, which has `type="submit"`, while the form is sent. When the server refuses or can't be reached, keep the values, show a danger Alert at the top with `tabIndex={-1}` and a ref, and focus it.
-
 ```tsx
 <Button type="submit" pending={sending}>
   Create project
 </Button>
 ```
 
+When the server refuses or can't be reached, keep the values and focus a danger Alert at the top.
+
 #### Error summary
 
-The summary is a danger Alert with `tabIndex={-1}` and a ref, focused after each refused submit. Leave it without `announce`, so it has no role and is read once, as it takes focus; give its title `role="heading"` so people can find it again. Each error is a Link whose `onClick` focuses its field, through the field's `ref`.
+A danger Alert with `tabIndex={-1}` and a ref, without `announce`, so it is read once as it takes focus; its title takes `role="heading"`. Each error is a Link whose `onClick` focuses its field through the field's `ref`.
 
 #### Grouped choices and browser help
 
-One choice of several is a RadioGroup, a `fieldset` with its `legend` from `label`; several Checkboxes go in a native `fieldset` whose `legend` names them. Set `type` and `autoComplete` on the fields people fill in often, such as `autoComplete="email"`, and say "Saved" in a `role="status"` message once the form is sent.
-
-```tsx source=GroupedChoices
-
-```
+A RadioGroup is a `fieldset` whose `legend` is its `label`; Checkboxes go in a native `fieldset` and `legend`. Set `type` and `autoComplete`, such as `autoComplete="email"`, on fields people fill in often.
 
 #### A long form in steps
 
-Keep every step's answers in state above the steps, so Back keeps them. Progress takes `segments` and `max` of the number of steps, `value` of the current one and `aria-valuetext`, such as "Step 2 of 3: Team". Each step's submit, a `type="submit"` Button labelled Continue, checks only that step's fields; moving on focuses the step's heading, a Text with `tabIndex={-1}` and a ref. Back is a secondary Button after it, and the last step shows the answers in a DescriptionList before the form's own action.
-
-```tsx source=LongFormInSteps
-
-```
+Keep every step's answers in state above the steps, so Back keeps them. Progress takes `segments` and `max` of the number of steps, `value` and `aria-valuetext`, such as "Step 2 of 3: Team". Continue, a `type="submit"` Button, checks only its step's fields, then focuses the next step's heading, a Text with `tabIndex={-1}`. The last step shows the answers in a DescriptionList, as the LongFormInSteps example does.
 
 ### Composition
 
-Lay the form out as one Column, kept to a width that reads easily, such as `maxInlineSize: '32rem'`, with the actions in a Row after the last field, the primary action last. A Grid suits only short fields that belong together, such as a city and a postal code. Each field is a TextField, Textarea, Select, Combobox, DatePicker, RadioGroup or Checkbox, with its `label`, its lasting `description` and its `error`; Field's parts build any other. A long form in steps is one `form` whose fields change with the step, under a Progress with `segments`.
+One Column, kept to a width that reads easily, such as `maxInlineSize: '32rem'`, with the actions in a Row after the last field, the primary action last. A Grid suits only short fields that belong together, such as a city and a postal code. Field's parts build a control envUI lacks.
 
 ## Changelog
 

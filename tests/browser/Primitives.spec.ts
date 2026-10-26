@@ -105,6 +105,17 @@ test.describe('Toolbar', () => {
       await expect(tooltip).toHaveCount(0);
     });
 
+  test('opens its tooltips after tooltipDelay, at once with 0', async ({ page }) => {
+    await open(page);
+    // The default waits 400ms on hover, so a tooltip shown within 250ms came with no wait.
+    for (const name of ['Instant button', 'Instant link']) {
+      await page.getByRole('toolbar', { name: 'Instant names' }).getByLabel(name).hover();
+      await expect(page.locator('.env-tooltip').filter({ hasText: name })).toBeVisible({
+        timeout: 250,
+      });
+    }
+  });
+
   test('names its buttons by label, shows a tooltip with the shortcut and reports pressed', async ({
     page,
   }) => {

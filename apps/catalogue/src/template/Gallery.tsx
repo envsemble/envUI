@@ -1,7 +1,7 @@
 import { useRef, type CSSProperties } from 'react';
 import { Column, Link, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
-import type { SitePage } from '../navigation/DocumentationRoutes';
+import type { RoutePage } from '../navigation/DocumentationRoutes';
 import { galleryPreviews } from '../previews/GalleryPreviews';
 import { hasExample } from './LiveExample';
 import { previewOf, TilePreview, useNear, type Preview } from './Related';
@@ -12,7 +12,7 @@ export interface GalleryGroup {
   title?: string;
   /** The id of its heading, which the footer and other pages link to. */
   id: string;
-  pages: SitePage[];
+  pages: RoutePage[];
 }
 
 /**
@@ -20,7 +20,7 @@ export interface GalleryGroup {
  * there is one (GalleryPreviews.tsx), else what a Related tile shows, the page's lead example or
  * its anatomy.
  */
-export function galleryPreviewOf(page: SitePage): Preview | undefined {
+export function galleryPreviewOf(page: RoutePage): Preview | undefined {
   const document = page.document;
   if (!document) return undefined;
   const chosen = galleryPreviews[document.id];
@@ -37,7 +37,7 @@ export function galleryPreviewOf(page: SitePage): Preview | undefined {
 }
 
 /** The window a tile's picture lays out in, where it needs a larger one than the gallery's. */
-function windowOf(page: SitePage) {
+function windowOf(page: RoutePage) {
   const size = page.document && galleryPreviews[page.document.id]?.window;
   return (
     size &&
@@ -53,7 +53,7 @@ function windowOf(page: SitePage) {
  * in small, quiet text, so the group headings lead. The name is a heading one level under the
  * gallery's group, or under the page's title where the gallery has no groups.
  */
-function GalleryTile({ page, level }: { page: SitePage; level: 2 | 3 }) {
+function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   const tile = useRef<HTMLLIElement>(null);
   const near = useNear(tile);
   const Heading = level === 2 ? 'h2' : 'h3';

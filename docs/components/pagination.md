@@ -22,47 +22,33 @@ avoidWhen:
     use: Pager
 components:
   - Pagination
+examples:
+  PagesOfAList:
+    role: overview
+    caption: The range counts items, as in 1–60 of 245.
+  SmallToolbar:
+    role: example
+    caption: Small text buttons in a toolbar.
+  PaginationAnatomy: anatomy
+  WithoutATotal: example
+  ToolbarRow: example
 ---
 
 # Pagination
 
-## Overview
-
-The range counts items, as in 1–60 of 245. While a page loads, the button pressed shows a spinner and focus stays on it.
-
-```tsx example=PagesOfAList
-
-```
-
-### Without a known total
-
-Until the total is known, the range shows only the page's items.
-
-```tsx example=WithoutATotal
-
-```
-
 ## Variants
 
-The buttons are secondary by default, or text for a quiet toolbar.
+### Quiet buttons
 
-```tsx example=SmallToolbar caption="Small text buttons in a toolbar."
+The buttons are secondary by default, or text for a quiet toolbar, in the control heights of the [scale](../foundations/spacing.md).
+
+```tsx figure=SmallToolbar
 
 ```
-
-## When to use
-
-### After a page loads
-
-Keep focus where it is, and scroll the list to its top.
-
-### Ends and totals
-
-Show the total once it is known. Leave the end buttons to Pagination, which keeps them focusable and unavailable, and hide it where the items fit on one page.
 
 ## Anatomy
 
-```tsx anatomy=PaginationAnatomy
+```tsx figure=PaginationAnatomy
 
 ```
 
@@ -73,13 +59,47 @@ Show the total once it is known. Leave the end buttons to Pagination, which keep
 
 Not shown: the spinner while a page loads.
 
-## Adapting to width
+## Behaviour
 
-In a row, the pager keeps its width while a field beside it shrinks; only a container too narrow for the pager itself wraps the buttons below the range.
+### While a page loads
 
-```tsx example=ToolbarRow widths="18 32"
+The button pressed shows a spinner and focus stays on it.
+
+- Both buttons ignore presses until the page is in.
+- At either end, the button with no page to go to stays focusable and unavailable.
+
+### Without a known total
+
+Until the total is known, the range shows only the page's items.
+
+```tsx figure=WithoutATotal
 
 ```
+
+### Adapting to width
+
+In a row, the pager keeps its width while a field beside it shrinks.
+
+- Only a container too narrow for the pager itself wraps the buttons below the range.
+
+```tsx figure=ToolbarRow widths="18 32"
+
+```
+
+## Rules
+
+People move through a list without losing their place.
+
+### After a page loads
+
+Keep focus where it is, and scroll the list to its top.
+
+### Ends and totals
+
+Show the total once it is known.
+
+- Leave the end buttons to Pagination, which keeps them focusable and unavailable.
+- Hide it where the items fit on one page.
 
 ## Accessibility
 
@@ -103,35 +123,25 @@ In a row, the pager keeps its width while a field beside it shrinks; only a cont
 - `pending` while a page loads, and the page itself.
 - The strings in the application's language, through `messages.pagination`.
 
-## In code
+## Compose
 
 ### Usage
 
-Pagination shows `page`, counted from 1 and kept within the pages that exist, of `pageSize` items. `onPageChange` receives the page before or after when its button is pressed; the application loads that page and passes it back as `page`. While it loads, set `pending`: the button pressed shows a spinner, also when the load starts in an effect, and both buttons ignore presses while focus stays put. Keep focus where it is after the page loads, and scroll the list to its top.
-
-```tsx source=PagesOfAList
-
+```tsx
+<Pagination page={page} pageSize={60} total={245} pending={loading} onPageChange={setPage} />
 ```
+
+`page` counts from 1 and is kept within the pages that exist. `onPageChange` receives the page before or after; the application loads it and passes it back as `page`. While it loads, set `pending`: the button pressed shows a spinner, also when the load starts in an effect.
 
 #### Without a known total
 
-`total` counts all items, when known: the range ends with it, as in 1–60 of 245, and the last page ends the list. Pass it once it is known. Without it, the range shows only the page's items, as in 61–120, and `hasNextPage`, `true` by default, says whether a later page exists, such as from a cursor's has more.
-
-```tsx source=WithoutATotal
-
-```
+`total` counts all items: the range ends with it, and the last page ends the list. Pass it once it is known. Without it, the range shows only the page's items, as in 61–120, and `hasNextPage`, `true` by default, says whether a later page exists, such as from a cursor's has more.
 
 #### Strings
 
 EnvUIProvider's `messages.pagination` sets the names, `label`, `previous` and `next`, and the `range` for every pager inside it, and its `locale` formats the numbers. `aria-label`, `previousLabel`, `nextLabel` and `formatRange` set them for one pager: `formatRange` receives the first and last item shown, the total, the page and the page count.
 
 ```tsx
-import { useState } from 'react';
-import { EnvUIProvider, Pagination } from '@envsemble/envui';
-
-// The application's own strings for every pager inside the provider, in the page's language; an
-// application that translates passes the strings of the reader's language. The numbers follow the
-// locale the provider inherits from the page.
 const messages = {
   pagination: {
     label: 'Result pages',
@@ -142,27 +152,20 @@ const messages = {
   },
 };
 
-export default function ApplicationStrings() {
-  const [page, setPage] = useState(2);
-  return (
-    <EnvUIProvider messages={messages}>
-      <Pagination page={page} pageSize={20} total={1234} onPageChange={setPage} />
-    </EnvUIProvider>
-  );
-}
+<EnvUIProvider messages={messages}>
+  <Pagination page={page} pageSize={20} total={1234} onPageChange={setPage} />
+</EnvUIProvider>;
 ```
+
+An application that translates passes the strings of the reader's language; the numbers follow the locale the provider inherits from the page.
 
 #### Size and variant
 
-`size` is `sm`, `md` or `lg`, the control heights; without it, the buttons take their container's. `variant` is the buttons' look, as on IconButton: `secondary` by default, or `text` for a quiet toolbar. `hideWhenSinglePage` renders nothing while every item fits on one page.
-
-```tsx source=SmallToolbar
-
-```
+`size` is `sm`, `md` or `lg`; without it, the buttons take their container's. `variant` is the buttons' look, as on IconButton: `secondary` by default, or `text`. `hideWhenSinglePage` renders nothing while every item fits on one page.
 
 ### Composition
 
-The pager is a `nav`, `env-pagination`, with the range, `env-pagination-range`, and the previous and next buttons, `env-pagination-button`, the next one last; a loading button shows the spinner, `env-button-spinner`. The end buttons stay focusable with `aria-disabled` where there is no page to go to. In a row, the pager keeps its width while a field beside it shrinks.
+The pager is a `nav`, `env-pagination`, with the range, `env-pagination-range`, and the previous and next buttons, `env-pagination-button`, the next one last; a loading button shows the spinner, `env-button-spinner`. The end buttons stay focusable with `aria-disabled` where there is no page to go to.
 
 ## Changelog
 

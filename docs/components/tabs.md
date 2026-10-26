@@ -28,15 +28,25 @@ avoidWhen:
     use: Accordion
 components:
   - Tabs
+examples:
+  ProjectViews: overview
+  SmallRail:
+    role: example
+    caption: Small tabs, with a count in a tab.
+  VerticalList: example
+  FillARegion: example
+  ListBesideAHeading: example
+  TabsAnatomy: anatomy
+  ScrollingRail: example
+  RelatedViews:
+    role: do
+    caption: Tabs for views of one subject, in any order.
+  StepsAsTabs:
+    role: dont
+    caption: 'Steps that go in order: nothing leads to the next one.'
 ---
 
 # Tabs
-
-## Overview
-
-```tsx example=ProjectViews
-
-```
 
 ## Variants
 
@@ -47,7 +57,7 @@ components:
 | Large            | Most tabs, as tall as buttons. The default.           |
 | Small and medium | Toolbars and bars, as tall as a control of that size. |
 
-```tsx example=SmallRail caption="Small tabs, with a count in a tab."
+```tsx figure=SmallRail
 
 ```
 
@@ -55,7 +65,7 @@ components:
 
 A column of tabs beside their panels, for the sections of a settings page.
 
-```tsx example=VerticalList
+```tsx figure=VerticalList
 
 ```
 
@@ -63,7 +73,7 @@ A column of tabs beside their panels, for the sections of a settings page.
 
 The selected panel takes the height left below the tabs, for a view such as a canvas.
 
-```tsx example=FillARegion
+```tsx figure=FillARegion
 
 ```
 
@@ -71,27 +81,13 @@ The selected panel takes the height left below the tabs, for a view such as a ca
 
 The tabs can share a row with a heading, with their panels below.
 
-```tsx example=ListBesideAHeading
+```tsx figure=ListBesideAHeading
 
 ```
-
-## When to use
-
-```tsx do=RelatedViews caption="Tabs for views of one subject, in any order."
-
-```
-
-```tsx dont=StepsAsTabs caption="Steps that go in order: nothing leads to the next one."
-
-```
-
-### One panel at a time
-
-Keep content people compare in one panel. Every tab is a button that shows its panel, never a link to another page.
 
 ## Anatomy
 
-```tsx anatomy=TabsAnatomy
+```tsx figure=TabsAnatomy
 
 ```
 
@@ -100,13 +96,40 @@ Keep content people compare in one panel. Every tab is a button that shows its p
 3. **Tab** (`env-tabs-tab`, `button`)
 4. **Panel** (`env-tabs-panel`, `content`)
 
-## Adapting to width
+## Behaviour
+
+### Choosing a tab
+
+A tab shows its panel as soon as the arrow keys reach it.
+
+- Where a panel takes a while to load, a tab can wait to be pressed instead.
+- A disabled tab is dimmed: the arrow keys reach it but don't choose it.
+
+### Adapting to width
 
 Tabs keep their size: a rail with more tabs than fit scrolls sideways.
 
-```tsx example=ScrollingRail widths="20 40"
+```tsx figure=ScrollingRail widths="20 40"
 
 ```
+
+## Rules
+
+Tabs show views of one subject, one panel at a time.
+
+```tsx figure=RelatedViews
+
+```
+
+```tsx figure=StepsAsTabs
+
+```
+
+### One panel at a time
+
+Keep content people compare in one panel.
+
+- Every tab is a button that shows its panel, never a link to another page.
 
 ## Accessibility
 
@@ -133,86 +156,61 @@ Tabs keep their size: a rail with more tabs than fit scrolls sideways.
 - A heading inside a panel where it starts a section.
 - The selected tab in the URL, where people should link to it.
 
-## In code
+## Compose
 
 ### Usage
 
-Tabs takes `items`, each a `TabsItem` with its `value`, its `button`, which becomes the tab, and the panel's `content`; `disabled` dims a tab and reports `aria-disabled`, and the arrow keys still reach it. The button is a Button, an IconButton or a component that forwards native button props and its ref, never a link, and every tab is a text tab, whatever its button's variant. `aria-label` names the tab list. Leave the tabs uncontrolled, starting on `defaultValue`, the first enabled tab by default, or control them with `value` and `onValueChange`.
-
-```tsx source=ProjectViews
-
+```tsx
+<Tabs
+  aria-label="Project"
+  defaultValue="summary"
+  items={[
+    { value: 'summary', button: <Button>Summary</Button>, content: <Summary /> },
+    { value: 'activity', button: <Button>Activity</Button>, content: <Activity /> },
+  ]}
+/>
 ```
+
+Each `TabsItem` has its `value`, its `button`, which becomes the tab, and the panel's `content`; `disabled` dims a tab and reports `aria-disabled`. The button is a Button, an IconButton or a component that forwards native button props and its ref, never a link, and every tab is a text tab, whatever its button's variant. `aria-label` names the tab list. Leave the tabs uncontrolled, starting on `defaultValue`, the first enabled tab by default, or control them with `value` and `onValueChange`.
 
 #### Activation and mounting
 
-`activation` is `automatic`, the default, which selects a tab as the arrow keys reach it, or `manual`, where <kbd>Enter</kbd> or <kbd>Space</kbd> selects. Only the selected panel is mounted; `keepMounted` keeps the others mounted and hidden, so their state survives switching.
-
 ```tsx
-import { useEffect, useState } from 'react';
-import { Button, Spinner, Tabs, Text } from '@envsemble/envui';
-
-const reports = ['Revenue', 'Customers', 'Refunds'];
-
-/** A report that loads once, the first time its tab is chosen, as from a server. */
-function Report({ name, ready, onLoad }: { name: string; ready: boolean; onLoad: () => void }) {
-  useEffect(() => {
-    if (ready) return;
-    const timer = setTimeout(onLoad, 800);
-    return () => clearTimeout(timer);
-  }, [ready, onLoad]);
-  return ready ? (
-    <Text>The {name.toLowerCase()} report for March is ready.</Text>
-  ) : (
-    <Spinner label={`Loading the ${name.toLowerCase()} report`} />
-  );
-}
-
-export default function ManualActivation() {
-  // The first report is ready; the others load when their tab is chosen.
-  const [loaded, setLoaded] = useState(() => new Set(['Revenue']));
-  return (
-    <Tabs
-      aria-label="Reports"
-      activation="manual"
-      items={reports.map((name) => ({
-        value: name.toLowerCase(),
-        button: <Button>{name}</Button>,
-        content: (
-          <Report
-            name={name}
-            ready={loaded.has(name)}
-            onLoad={() => setLoaded((current) => new Set(current).add(name))}
-          />
-        ),
-      }))}
-    />
-  );
-}
+<Tabs aria-label="Reports" activation="manual" keepMounted items={reports} />
 ```
+
+`activation` is `automatic`, the default, which selects a tab as the arrow keys reach it, or `manual`, where <kbd>Enter</kbd> or <kbd>Space</kbd> selects, for panels that load when chosen, such as a report from a server. Only the selected panel is mounted; `keepMounted` keeps the others mounted and hidden, so their state survives switching.
 
 #### Size, orientation and fill
 
-`size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons. `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>; the panels stay below the list either way, so lay the Tabs out as a row through `style` to put a vertical list beside them. With `fill`, the selected panel takes the height left below the list; give the Tabs a height, for example as a flex child.
-
-```tsx source=VerticalList
-
-```
+`size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons. `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>; the panels stay below the list either way, so lay the Tabs out as a row through `style` to put a vertical list beside them, as the VerticalList example does. With `fill`, the selected panel takes the height left below the list; give the Tabs a height, for example as a flex child.
 
 #### A layout of your own
 
 `renderList` places the tab list in a layout of your own, such as beside a heading: it receives the list and returns what to render in its place, with the list in it once; the panels stay below. `listClassName` and `panelClassName` add classes to the list and to every panel.
 
-```tsx source=ListBesideAHeading
-
+```tsx
+<Tabs
+  aria-label="Orders"
+  items={items}
+  renderList={(list) => (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Text render={<h3 />} variant="title">
+        Orders
+      </Text>
+      {list}
+    </div>
+  )}
+/>
 ```
 
 ### Composition
 
-The parts are the tabs, `env-tabs`, with `data-fill` when they fill a region; the rail, `env-tabs-list`, with `data-orientation="vertical"` in a column; each tab, `env-tabs-tab`, with `data-active` while selected; and the panels, `env-tabs-panels`, each an `env-tabs-panel`. Keep the selected tab in the URL where people should link to it.
+The tabs, `env-tabs`, carry `data-fill` when they fill a region; the rail, `env-tabs-list`, `data-orientation="vertical"` in a column; each tab, `env-tabs-tab`, `data-active` while selected. The panels sit in `env-tabs-panels`, each an `env-tabs-panel`.
 
 ### Customize
 
-`--env-tabs-container`, `--env-tabs-content`, `--env-tabs-selected-content` and `--env-tabs-indicator` set the colors of one Tabs, through `style` or CSS. The rail has no fill unless `--env-tabs-container` sets one. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+`--env-tabs-container`, `--env-tabs-content`, `--env-tabs-selected-content` and `--env-tabs-indicator` color one Tabs, through `style` or CSS; hover, focus and press follow them. The rail has no fill unless `--env-tabs-container` sets one.
 
 ## Changelog
 

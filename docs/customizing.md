@@ -156,7 +156,7 @@ export function ProjectSummary({ title, description, ...props }: ProjectSummaryP
 
 ## Style a component's parts
 
-Props come first. Where CSS must adjust a component, it targets its parts, `env-<component>-<part>` such as `.env-card-header`, and its `data-*` states, such as `[data-tone='danger']`. Part classes and states are public and versioned; the manifest lists them, and `get_component` returns them. envUI's CSS is in the `env` cascade layer, so an application's rule wins without extra specificity.
+Props come first. Where CSS must adjust a component, it targets its parts, `env-<component>-<part>` such as `.env-card-header`, and its `data-*` states, such as `[data-tone='danger']`. Part classes and states are public and versioned; `docs/generated/parts.json` lists them. envUI's CSS is in the `env` cascade layer, so an application's rule wins without extra specificity.
 
 ```css
 @layer app {

@@ -1,37 +1,30 @@
 # envUI documentation
 
-Choose the pages needed for the current task. Each entry gives its purpose and path; follow related links only when that behavior is involved. Use public TypeScript declarations for exact types.
+Read only the pages the task needs; each entry says what it is for. For a screen, read its pattern first, under Patterns at the end, then the pages of the components it names.
+
+Every component, pattern and foundation page reads in one order: its frontmatter, with what it is for, what to use instead and its `examples`, each file with its role and caption; then Variants (Options on a foundation), Anatomy, Behaviour, Rules, Accessibility and Words to use, each block a short lead and its rules; then `## Compose`, its code: imports, usage, composition and customizing. Accessibility's **You provide** lists what the application must add, and **Props** lists envUI's own props; every component also takes its element's native props, such as `ref`, `className` and `aria-*`. Every example is a file in `examples/<page>/<Name>.tsx`. The TypeScript declarations hold the exact types.
 
 ## Setup and workflows
 
 - [Install the private package](setup.md) — Registry access, styles, themes and public entry points.
-
 - [Migrate an interface to envUI](migration.md) — Replace existing UI while preserving application behavior.
-
 - [Customize and extend](customizing.md) — Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.
-
-- [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
-
+- [For agents](agent-tooling.md) — Set envUI up with a coding agent from one prompt, and point it to the docs in the package.
 - [Writing](writing.md) — The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.
-
 - [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
-
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
-
 - [Extend the shared library](library-development.md) — Public API changes, changesets, catalogue specimens and acceptance checks.
-
-- [Write a component page](component-pages.md) — The page template, frontmatter, generated props and example files, and how to convert a page.
-
-- [Write a pattern page](pattern-pages.md) — The frontmatter, sections and files of pattern pages.
+- [Write a component page](component-pages.md) — The one-file structure, its frontmatter, figures and writing rules, generated props and example files.
+- [Write a pattern page](pattern-pages.md) — What a pattern says, and its frontmatter and sections in the one-file structure.
 
 ## Foundations
 
-- [Colors & themes](foundations/colors.md) — Colors named by their role, so every screen works in light, dark and high contrast.
-- [Typography](foundations/typography.md) — A few text styles, each with one job, from a page's hero line to small notes.
-- [Spacing & density](foundations/spacing.md) — How space groups things, controls line up, the compact scale and tighter rows, and what corners say.
-- [Adapting to width](foundations/responsive.md) — Components follow the space they sit in, and four window classes name where a layout changes.
-- [Icons](foundations/icons.md) — Thousands of Material Symbols that follow their text, outlined or filled.
-- [Accessibility](foundations/accessibility.md) — What every component does for keyboard, screen readers, contrast, motion and touch, and what an app still supplies.
+- [Colors & themes](foundations/colors.md)
+- [Typography](foundations/typography.md)
+- [Spacing & density](foundations/spacing.md)
+- [Adapting to width](foundations/responsive.md)
+- [Icons](foundations/icons.md)
+- [Accessibility](foundations/accessibility.md)
 
 ## Actions
 
@@ -65,6 +58,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Drawer](components/drawer.md)
 - [Tabs](components/tabs.md)
 - [Breadcrumbs](components/breadcrumbs.md)
+- [TableOfContents](components/table-of-contents.md)
 - [Pager](components/pager.md)
 - [Pagination](components/pagination.md)
 - [Tree](components/tree.md)

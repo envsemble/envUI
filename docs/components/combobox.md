@@ -35,49 +35,29 @@ avoidWhen:
     use: CommandPalette
 components:
   - Combobox
+examples:
+  ChooseOwner: overview
+  Variants: variants
+  ComboboxAnatomy: anatomy
+  ComboboxListAnatomy: anatomy
+  Reviewers: example
+  ServerSearch: example
+  RequiredInForm: example
+  WrappingChips: example
+  ClearableOptional:
+    role: do
+    caption: A clear button where the value is optional.
+  StuckOptional:
+    role: dont
+    caption: An optional value that people can change but not remove.
+  SmallToolbar: example
 ---
 
 # Combobox
 
-## Overview
-
-```tsx example=ChooseOwner
-
-```
-
-### States
-
-A read-only field can be focused and its list browsed, but its value can't change.
-
-<!-- specimen: States -->
-
-### Several reviewers
-
-Where people choose several options, each shows as a chip in the field, and the list stays open as they choose.
-
-```tsx example=Reviewers
-
-```
-
-### Search on a server
-
-The application can find the options itself, such as on a server, and a spinner shows while it searches.
-
-```tsx example=ServerSearch
-
-```
-
-### In a form
-
-A required field shows its error when the form is sent without a value.
-
-```tsx example=RequiredInForm
-
-```
-
 ## Variants
 
-```tsx variants=Variants
+```tsx figure=Variants
 
 ```
 
@@ -89,31 +69,9 @@ A required field shows its error when the form is sent without a value.
 | Outline  | In forms, dialogs and toolbars. The default.            |
 | Floating | A long form on a page, as TextField's floating variant. |
 
-## When to use
-
-```tsx do=ClearableOptional caption="A clear button where the value is optional."
-
-```
-
-```tsx dont=StuckOptional caption="An optional value that people can change but not remove."
-
-```
-
-### Options
-
-Give options that share a label a description, such as an e-mail address. Text people type is never the value: offer it as an option instead.
-
-### Labels
-
-Name the field after what people choose, and use the placeholder for what to type. A field without a visible label, such as in a toolbar, says what to type in its placeholder.
-
-```tsx example=SmallToolbar
-
-```
-
 ## Anatomy
 
-```tsx anatomy=ComboboxAnatomy
+```tsx figure=ComboboxAnatomy
 
 ```
 
@@ -126,7 +84,7 @@ Name the field after what people choose, and use the placeholder for what to typ
 7. **Clear** (`env-combobox-clear`, `clearable`)
 8. **Trigger** (`env-combobox-trigger`)
 
-```tsx anatomy=ComboboxListAnatomy open
+```tsx figure=ComboboxListAnatomy open
 
 ```
 
@@ -135,11 +93,72 @@ Name the field after what people choose, and use the placeholder for what to typ
 3. **Leading content** (`env-combobox-item env-avatar`, `start`)
 4. **Check** (`env-combobox-item-indicator`)
 
-## Adapting to width
+## Behaviour
+
+### States
+
+A read-only field can be focused and its list browsed, but its value can't change.
+
+<!-- specimen: States -->
+
+### Several reviewers
+
+Where people choose several options, each shows as a chip in the field, and the list stays open as they choose.
+
+```tsx figure=Reviewers
+
+```
+
+### Search on a server
+
+The application can find the options itself, such as on a server, and a spinner shows while it searches.
+
+```tsx figure=ServerSearch
+
+```
+
+### In a form
+
+A required field shows its error when the form is sent without a value.
+
+```tsx figure=RequiredInForm
+
+```
+
+### Adapting to width
 
 A field fills its container, and chips wrap onto more rows.
 
-```tsx example=WrappingChips widths="16 30"
+```tsx figure=WrappingChips widths="16 30"
+
+```
+
+## Rules
+
+A combobox's value is always one of its options, and an optional value can be cleared.
+
+```tsx figure=ClearableOptional
+
+```
+
+```tsx figure=StuckOptional
+
+```
+
+### Options
+
+Options people could mistake for each other need telling apart, and only options are values.
+
+- Give options that share a label a description, such as an e-mail address.
+- Text people type is never the value: offer it as an option instead.
+
+### Labels
+
+Name the field after what people choose, and use the placeholder for what to type.
+
+A field without a visible label, such as in a toolbar, says what to type in its placeholder.
+
+```tsx figure=SmallToolbar
 
 ```
 
@@ -171,11 +190,15 @@ A field fills its container, and chips wrap onto more rows.
 - Validation and its `error` message.
 - `clearLabel`, `removeLabel`, `loadingLabel` and `emptyLabel` in the application's language.
 
-## In code
+## Compose
 
 ### Usage
 
-Combobox takes its options as `items`, each with a `value` and a `label`, and optionally a `description` and `start` content, such as an Avatar; a ComboboxGroup puts items under a heading. Control it with `value`, `null` for none, and `onValueChange`, which receives the value and its item, or leave it uncontrolled with `defaultValue`. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button while there is a value, and <kbd>Esc</kbd> on the closed field clears it too.
+Combobox takes its options as `items`, each with a `value` and a `label`, and optionally a `description` and `start` content, such as an Avatar; a ComboboxGroup puts items under a heading.
+
+- Control it with `value`, `null` for none, and `onValueChange`, which receives the value and its item, or leave it uncontrolled with `defaultValue`.
+- `label`, `description` and `error` work as on TextField.
+- `clearable` adds a clear button while there is a value, and <kbd>Esc</kbd> on the closed field clears it too.
 
 ```tsx source=ChooseOwner
 
@@ -185,32 +208,73 @@ Combobox takes its options as `items`, each with a `value` and a `label`, and op
 
 With `multiple`, `value` is an array of values, each shown as a chip with a remove button, and the list stays open as people choose.
 
-```tsx source=Reviewers
-
+```tsx
+<Combobox
+  multiple
+  label="Reviewers"
+  placeholder="Add people"
+  items={people}
+  value={reviewers}
+  onValueChange={setReviewers}
+/>
 ```
 
 #### Search on a server
 
-By default the list shows the options whose label or description contains the typed text, ignoring case and accents, in `locale`; `filter` takes a function of your own. With `filter={null}` it shows `items` as given: search from `onInputValueChange`, which receives the typed text, and set `loading` while the search runs, which shows `loadingLabel` instead of `emptyLabel`. `onOpenChange` can load the options as the list opens.
+By default the list shows the options whose label or description contains the typed text, ignoring case and accents, in `locale`; `filter` takes a function of your own.
 
-```tsx source=ServerSearch
+- With `filter={null}` it shows `items` as given: search from `onInputValueChange`, which receives the typed text.
+- Set `loading` while the search runs, which shows `loadingLabel` instead of `emptyLabel`.
+- `onOpenChange` can load the options as the list opens.
 
+```tsx
+<Combobox
+  label="Contact"
+  items={results}
+  filter={null}
+  onInputValueChange={setQuery}
+  loading={searching}
+  loadingLabel="Searching…"
+  emptyLabel={query ? 'No contacts found' : 'Type a name to search'}
+  value={contact}
+  onValueChange={setContact}
+/>
 ```
 
 #### In a form
 
-`name` submits the value, or one entry for each chip, and a form reset restores `defaultValue`. `readOnly` lets people focus the field and browse the list without changing the value. Validation and its `error` belong to the application.
+`name` submits the value, or one entry for each chip, and a form reset restores `defaultValue`.
 
-```tsx source=RequiredInForm
+- `readOnly` lets people focus the field and browse the list without changing the value.
+- Validation and its `error` belong to the application, such as an error set on submit when `new FormData(form).getAll('topics')` is empty.
 
+```tsx
+<Combobox
+  multiple
+  name="topics"
+  label="Topics"
+  items={topics}
+  defaultValue={['accessibility']}
+  required
+  error={error}
+/>
 ```
 
 #### Variants and sizes
 
-`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. With `showLabel={false}`, a `placeholder` and an `aria-label` name it.
+`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label.
 
-```tsx source=SmallToolbar
+- `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height.
+- With `showLabel={false}`, a `placeholder` and an `aria-label` name it.
 
+```tsx
+<Combobox
+  size="sm"
+  showLabel={false}
+  aria-label="Document"
+  placeholder="Document"
+  items={documents}
+/>
 ```
 
 ### Composition

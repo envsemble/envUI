@@ -1,6 +1,6 @@
 # envUI: notes for agents
 
-This file is for agents working on envUI itself. It stays in the repository and is not packaged; the package carries its own agent files, described in `docs/agent-tooling.md`.
+This file is for agents working on envUI itself. It stays in the repository and is not packaged; agents that build with envUI read the docs the package ships, as `docs/agent-tooling.md` describes.
 
 ## Testing: three tiers, never the full suite every turn
 
@@ -29,6 +29,15 @@ This file is for agents working on envUI itself. It stays in the repository and 
 ## Ports and workers
 
 The browser tests start or reuse the catalogue on 8770 and the fixture on 8766, and reuse a server only when it answers for this checkout; when another checkout holds a port, this one takes ports of its own. When another checkout runs its servers or tests, set `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT` to free ports, such as 8832 and 8833. `ENVUI_WORKERS` sets the browser workers (default: half the cores).
+
+## Write envUI's pages in the one-file structure
+
+Every component, pattern and foundation page in `docs/` is one Markdown file that feeds the catalogue, the Docs and the agents' package. Write a new page, or change one, as [docs/component-pages.md](docs/component-pages.md) describes; the build fails on a page outside the structure.
+
+- **The structure.** Frontmatter that lists each example once, with its role and caption, then `## Variants` (`## Options` on a foundation), `## Anatomy`, `## Behaviour`, ending with `### Adapting to width`, `## Rules`, `## Accessibility`, `## Words to use`, `## Compose` and `## Changelog`, in that order. Figures are placed by name, as an empty ` ```tsx figure=Name ` fence.
+- **Rules, not essays.** Each block is a `###` heading, one short lead that says its point, then bullets, one fact each; a single extra point is a second sentence, never a lone bullet. Paragraphs stay under 240 characters. Shorten by form, never by dropping a fact.
+- **Plain words above Compose.** The sections the catalogue shows name no props, values, tokens or classes; Compose holds the code, the props and the values, so agents lose nothing.
+- **Model pages.** [Button](docs/components/button.md), [Form layout and validation](docs/patterns/forms.md) and [Spacing & density](docs/foundations/spacing.md).
 
 ## Everything else
 

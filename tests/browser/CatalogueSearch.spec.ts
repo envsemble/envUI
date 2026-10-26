@@ -1,6 +1,6 @@
 /**
  * The site's search and navigation: search in envUI's CommandPalette, opened with ⌘K or Ctrl+K,
- * which finds pages of the Site and the Docs and names the area of each; path routes in the hosted
+ * which finds pages of the catalogue and the Docs and names the part of each; path routes in the hosted
  * build, served through the hosted Worker script, with deep links into both areas, refreshes and
  * the redirects from old hash addresses. tests/SearchIndex.test.mjs checks that every result leads to a section.
  */
@@ -63,7 +63,8 @@ test.describe('search', () => {
       await page.keyboard.press(keys.own);
       await expect(dialog(page)).toBeVisible();
       await expect(field(page)).toBeFocused();
-      await expect(dialog(page)).toContainText('Search components and their aliases');
+      // Before people type, search suggests where to start.
+      await expect(dialog(page).getByRole('group', { name: 'Suggested' })).toBeVisible();
       await page.keyboard.press(keys.own);
       await expect(dialog(page)).toBeHidden();
       // The other platform's modifier leaves the keys to the page, such as Ctrl+K in a Mac text field.
@@ -89,6 +90,36 @@ test.describe('search', () => {
     },
   );
 
+  test('suggests the same page in the other part and where to start, until people type', async ({
+    page,
+  }) => {
+    await openCatalogue(page, `${catalogueUrl}/components/badge`);
+    await page.keyboard.press((await shortcutKeys(page)).own);
+    const suggested = dialog(page).getByRole('group', { name: 'Suggested' });
+    // The page's counterpart in the Docs comes first, highlighted, then the starting points.
+    await expect(suggested.getByRole('option')).toHaveText([
+      /^Badge.*Docs/,
+      /^Install and set up/,
+      /^All components/,
+      /^All patterns/,
+      /^Design tokens/,
+    ]);
+    await expect.poll(() => highlighted(page)).toBe('docs/components/badge');
+    // A query replaces them with its results, and a query that finds nothing says so.
+    await field(page).fill('qwzxv');
+    const status = dialog(page).locator('.env-command-palette-status');
+    await expect(status).toContainText('No results');
+    await expect(status).toContainText('Nothing matches “qwzxv”');
+    await expect(suggested).toHaveCount(0);
+    await field(page).fill('');
+    await expect.poll(() => highlighted(page)).toBe('docs/components/badge');
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(`${catalogueUrl}/docs/components/badge`);
+    // From the Docs, the counterpart is the catalogue's page.
+    await page.keyboard.press((await shortcutKeys(page)).own);
+    await expect(option(page, 'components/badge')).toContainText('Catalogue');
+  });
+
   test("finds a prop and opens its component's page in the Docs at its row", async ({ page }) => {
     await openCatalogue(page, `${catalogueUrl}/`);
     await search(page, 'start icon');
@@ -105,18 +136,18 @@ test.describe('search', () => {
     await expect(page.locator('[id="props-Button-startIcon"]')).toBeFocused();
   });
 
-  test('finds pages of the Site and of the Docs, each named by its area', async ({ page }) => {
+  test('finds pages of the catalogue and of the Docs, each named by its part', async ({ page }) => {
     await openCatalogue(page, `${catalogueUrl}/docs`);
     await search(page, 'colors and themes');
-    await expect(option(page, 'page:colors')).toContainText('Site · Foundations');
+    await expect(option(page, 'page:colors')).toContainText('Catalogue · Foundations');
     await expect(option(page, 'guide:colors')).toContainText('Docs · Foundation guide');
     await option(page, 'guide:colors').click();
     await expect(page).toHaveURL(`${catalogueUrl}/docs/foundations/colors`);
     await search(page, 'button');
-    await expect(option(page, 'page:button')).toContainText('Site · Actions');
+    await expect(option(page, 'page:button')).toContainText('Catalogue · Actions');
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(`${catalogueUrl}/components/button`);
-    await expect(page.getByRole('navigation', { name: 'Site' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
   });
 
   test('a link to a heading opens the page that shows it', async ({ page }) => {
@@ -149,7 +180,7 @@ test.describe('hosted build', () => {
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
       await expect(page).toHaveURL(`${siteUrl}/docs/components/button#props-Button-variant`);
       await expect(page.locator('[id="props-Button-variant"]')).toBeInViewport();
-      // A route with a trailing slash is the same page, on the Site and in the Docs.
+      // A route with a trailing slash is the same page, in the catalogue and the Docs.
       await page.goto(`${siteUrl}/docs/tokens/`);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Design tokens');
       await expect(page).toHaveURL(`${siteUrl}/docs/tokens`);
@@ -174,7 +205,7 @@ test.describe('hosted build', () => {
           asset: await answer(new URL(script.src).pathname),
         };
       });
-      // A page without a file answers with index.html, on the Site and in the Docs; /assets/
+      // A page without a file answers with index.html, in the catalogue and the Docs; /assets/
       // never does.
       expect(answers.route).toMatchObject({ status: 200, type: 'text/html' });
       expect(answers.docs).toMatchObject({ status: 200, type: 'text/html' });
@@ -208,7 +239,7 @@ test.describe('hosted build', () => {
     await serveSite(page);
     await openCatalogue(page, `${siteUrl}/`);
     await page.evaluate(() => ((window as unknown as { loaded: boolean }).loaded = true));
-    const rail = page.getByRole('navigation', { name: 'Site' });
+    const rail = page.getByRole('navigation', { name: 'Catalogue' });
     await rail.getByRole('link', { name: 'Components', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/components`);
     const navigation = page.getByRole('navigation', { name: 'Components' });
@@ -220,22 +251,21 @@ test.describe('hosted build', () => {
       'aria-current',
       'page',
     );
-    await page.getByRole('link', { name: 'API', exact: true }).click();
+    await page
+      .locator('.docs-page-header')
+      .getByRole('link', { name: 'Docs', exact: true })
+      .click();
     await expect(page).toHaveURL(`${siteUrl}/docs/components/dialog`);
+    // The switch at the top end leads back to the same subject in the catalogue.
     await page
       .locator('.docs-page-actions')
-      .getByRole('link', { name: 'Site', exact: true })
+      .getByRole('link', { name: 'Catalogue', exact: true })
       .click();
-    // The Benchmark is a page of the Overview, beside its introduction.
-    await page
-      .getByRole('navigation', { name: 'Overview' })
-      .getByRole('link', { name: 'Benchmark', exact: true })
-      .click();
-    await expect(page).toHaveURL(`${siteUrl}/benchmark`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Benchmark');
-    await expect(page.getByRole('heading', { level: 2 }).first()).toBeVisible();
-    await page.goBack();
+    await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
+    await rail.getByRole('link', { name: 'Overview', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/`);
+    await page.goBack();
+    await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
     await page.goBack();
     await expect(page).toHaveURL(`${siteUrl}/docs/components/dialog`);
     await page.goBack();
@@ -296,7 +326,10 @@ test.describe('hosted build', () => {
     failing = true;
     await openCatalogue(page, `${siteUrl}/docs/components/badge`);
     await page.keyboard.press((await shortcutKeys(page)).own);
-    await expect(dialog(page).getByText('Search could not load.')).toBeVisible();
+    // The suggestions need no index; a query says that search could not load.
+    await expect(option(page, 'components/badge')).toBeVisible();
+    await field(page).fill('badge');
+    await expect(dialog(page).getByText('Search could not load')).toBeVisible();
     await expect(dialog(page).getByRole('button', { name: 'Reload the page' })).toBeVisible();
   });
 });
@@ -309,9 +342,14 @@ test('a token found in search opens the token reference in the Docs', async ({ p
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(`${catalogueUrl}/docs/tokens#token-env-color-fg-muted`);
   await expect(page.locator('#token-env-color-fg-muted')).toBeInViewport();
-  await page.locator('.docs-page-actions').getByRole('link', { name: 'Site', exact: true }).click();
+  // The token reference has no page in the catalogue: the switch leads to its Overview.
   await page
-    .getByRole('navigation', { name: 'Site' })
+    .locator('.docs-page-actions')
+    .getByRole('link', { name: 'Catalogue', exact: true })
+    .click();
+  await expect(page).toHaveURL(`${catalogueUrl}/`);
+  await page
+    .getByRole('navigation', { name: 'Catalogue' })
     .getByRole('link', { name: 'Patterns', exact: true })
     .click();
   await page

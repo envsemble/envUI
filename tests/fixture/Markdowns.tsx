@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { EnvUIProvider, Column } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
 
@@ -38,6 +39,26 @@ const lists = `- Confirm the pricing
 /**
  * Markdown tables, tasks, inline code in a cell and lists, mounted with ?fixture=markdown-tables.
  */
+/**
+ * Markdown under a parent that renders again, with an inline renderLink, a new function each time,
+ * as an application writes it: its elements stay the same while the link shows the latest one.
+ */
+function RenderedAgain() {
+  const [round, setRound] = useState(0);
+  return (
+    <div data-testid="rendered-again">
+      <button type="button" onClick={() => setRound((count) => count + 1)}>
+        Render again
+      </button>
+      <Markdown renderLink={({ href, ...link }) => <a {...link} href={href} data-round={round} />}>
+        {`## Plans
+
+See [the prices](#prices).`}
+      </Markdown>
+    </div>
+  );
+}
+
 export function MarkdownFixture() {
   return (
     <Column gap={6}>
@@ -65,6 +86,7 @@ export function MarkdownFixture() {
       <div data-testid="narrow" style={{ inlineSize: '12rem' }}>
         <Markdown>{narrow}</Markdown>
       </div>
+      <RenderedAgain />
     </Column>
   );
 }

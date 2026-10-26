@@ -237,16 +237,138 @@
   outline: 2px solid var(--env-color-border-focus);
   outline-offset: -2px;
 }
-/* Under a coarse pointer, items grow to the touch height in every scale, as buttons do. */
+/* A section: a destination with destinations nested under it, which open and close below it,
+   indented, as a list of their own. A destination that is only the section's heading is one item,
+   a button, with the chevron at its end; a link keeps the whole row, and the button that opens and
+   closes the section sits over its end, so the row reads as one item. */
+.env-drawer-branch {
+  /* The round button at the end of a section's link, inside the item's height. */
+  --env-drawer-toggle-size: calc(var(--env-control-height) - 2 * var(--env-space-1));
+  /* How far nested destinations sit in from their section's. */
+  --env-drawer-indent: var(--env-space-4);
+}
+.env-drawer-branch-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+.env-drawer-branch-row > .env-drawer-item {
+  grid-area: 1 / 1 / 2 / 3;
+  /* The label and the count keep clear of the button over the item's end. */
+  padding-inline-end: calc(var(--env-drawer-toggle-size) + var(--env-space-2));
+}
+.env-drawer-toggle {
+  box-sizing: border-box;
+  grid-area: 1 / 2;
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--env-drawer-toggle-size);
+  block-size: var(--env-drawer-toggle-size);
+  margin: var(--env-space-1);
+  padding: 0;
+  border: 0;
+  border-radius: var(--env-radius-full);
+  background: transparent;
+  color: var(--env-color-fg-muted);
+  cursor: pointer;
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+/* Over the current destination, the button takes its content color. */
+.env-drawer-branch-row:has(> [data-current]) > .env-drawer-toggle {
+  color: var(--env-drawer-item-selected-content, var(--env-color-fg-on-selected));
+}
+.env-drawer-toggle:hover {
+  background: color-mix(
+    in srgb,
+    currentColor calc(var(--env-state-hover-opacity) * 100%),
+    transparent
+  );
+}
+.env-drawer-toggle:active {
+  background: color-mix(
+    in srgb,
+    currentColor calc(var(--env-state-pressed-opacity) * 100%),
+    transparent
+  );
+}
+.env-drawer-toggle:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
+}
+/* A section's heading puts its chevron where a link's button has it. */
+.env-drawer-branch > .env-drawer-item {
+  padding-inline-end: calc(
+    var(--env-space-1) + (var(--env-drawer-toggle-size) - var(--env-control-icon-size)) / 2
+  );
+}
+.env-drawer-item > .env-drawer-chevron {
+  margin-inline-start: auto;
+}
+/* The chevron points down, and up while the section is open: it flips over its horizontal axis,
+   as Select's does, rather than turning half a circle. */
+.env-drawer-chevron {
+  inline-size: var(--env-control-icon-size);
+  block-size: var(--env-control-icon-size);
+  transform: rotate(90deg) scaleX(1);
+}
+/* Its trigger, the heading's row or the link's button, says the section is open. */
+.env-drawer-item[aria-expanded='true'] > .env-drawer-chevron,
+.env-drawer-toggle[aria-expanded='true'] > .env-drawer-chevron {
+  transform: rotate(90deg) scaleX(-1);
+}
+/* The nested destinations grow to their height as the section opens and shrink as it closes. A
+   closed section keeps them in the page, hidden until found. */
+.env-drawer-children {
+  display: flex;
+  flex-direction: column;
+  gap: var(--env-space-1);
+  margin: 0;
+  padding: 0;
+  padding-inline-start: var(--env-drawer-indent);
+  list-style: none;
+  block-size: var(--collapsible-panel-height, auto);
+  overflow: hidden;
+  transition: block-size var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+.env-drawer-children > li:first-child {
+  margin-block-start: var(--env-space-1);
+}
+.env-drawer-children:is([data-starting-style], [data-ending-style]) {
+  block-size: 0;
+}
+.env-drawer-children[hidden]:not([hidden='until-found']) {
+  display: none;
+}
+/* A browser that doesn't know hidden="until-found", such as WebKit, would let the panel's own
+   display show a closed section: its content isn't rendered, as the browsers that know it do,
+   which still lets them find it. */
+.env-drawer-children[hidden='until-found'] {
+  content-visibility: hidden;
+}
+/* Under a coarse pointer, items grow to the touch height in every scale, as buttons do, and the
+   button at the end of a section's link with them. */
 @media (pointer: coarse) {
   .env-drawer-item {
     --env-drawer-item-height: max(var(--env-control-height), var(--env-control-height-touch));
   }
+  .env-drawer-branch {
+    --env-drawer-toggle-size: calc(
+      max(var(--env-control-height), var(--env-control-height-touch)) - 2 * var(--env-space-1)
+    );
+  }
 }
 /* Under a reduced-motion preference, fills change at once. */
 @media (prefers-reduced-motion: reduce) {
-  .env-drawer-item {
+  .env-drawer-item,
+  .env-drawer-toggle,
+  .env-drawer-children {
     transition: none;
+  }
+}
+/* Motion: a section's chevron flips, only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-drawer-chevron {
+    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
 }
 /* Motion: an item settles slightly while it is held, only without a reduced-motion preference. */

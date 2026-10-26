@@ -21,7 +21,7 @@ For broad migrations, record a compact mapping in the task or PR: existing owner
 
 ## Choose and connect the version
 
-Use React 19 and inspect envUI's peers/exports. Upgrade framework dependencies only as required by the authorized migration. Select an exact envUI release, retain its lockfile and use matching bundled skills. Follow [setup](setup.md) for registry access, CSS, themes and entry points.
+Use React 19 and inspect envUI's peers/exports. Upgrade framework dependencies only as required by the authorized migration. Select an exact envUI release, retain its lockfile and read the documentation it ships. Follow [setup](setup.md) for registry access, CSS, themes and entry points.
 
 For co-development with an authorized local envUI checkout, follow [local development](local-development.md).
 
@@ -726,7 +726,7 @@ A few components of 1.0.0-prerelease.0 fold into others, and a few become patter
 
 ### Part names and component tokens
 
-A component's part classes, `env-<component>-<part>` such as `.env-card-header`, and its state attributes, `data-*` such as `[data-tone='danger']`, are public and versioned: an application's CSS may target them, and a release that renames or removes one is a major release with a note here. `docs/generated/parts.json` lists every component's parts and states, as do the manifest and the MCP server's `get_component`. So are its color properties, `--env-<component>-<role>` such as `--env-button-container`, which set its colors on one instance ([Customize and extend](customizing.md)). The other custom properties a component declares for itself, its component tokens such as `--env-card-padding` or `--env-badge-fill`, are private and may change in any release: set the system tokens instead.
+A component's part classes, `env-<component>-<part>` such as `.env-card-header`, and its state attributes, `data-*` such as `[data-tone='danger']`, are public and versioned: an application's CSS may target them, and a release that renames or removes one is a major release with a note here. `docs/generated/parts.json` lists every component's parts and states. So are its color properties, `--env-<component>-<role>` such as `--env-button-container`, which set its colors on one instance ([Customize and extend](customizing.md)). The other custom properties a component declares for itself, its component tokens such as `--env-card-padding` or `--env-badge-fill`, are private and may change in any release: set the system tokens instead.
 
 ```css
 /* Before: a component token */
@@ -765,12 +765,20 @@ The old tokens inherited, and the color properties don't: a token set on a wrapp
 
 ### Templates and agent tools
 
-The templates are gone from the documentation: the app frame, index, details, settings, dashboard, sign-in and error pages, their screens and the manifest's `templates`. The MCP server's `list_templates` and `get_template` tools go with them, and `plan` points to the patterns, which `list_patterns`, `get_pattern` and `get_example` serve. An agent instruction or script that called `get_template` calls `get_pattern` instead:
+The templates are gone from the documentation: the app frame, index, details, settings, dashboard, sign-in and error pages, and their screens. The [app frame](patterns/app-frame.md) is a pattern now, and the other patterns cover the rest.
 
-| Before                                | 1.0                                                                                  |
-| ------------------------------------- | ------------------------------------------------------------------------------------ |
-| `get_template({ name: 'app-frame' })` | `get_pattern({ name: 'app-frame' })`, the [app frame pattern](patterns/app-frame.md) |
-| `list_templates()`                    | `list_patterns()`                                                                    |
+The prereleases' agent tooling is gone too: the `envui` command with its `agents` index and `mcp` server, the envui-use, envui-migrate and envui-contribute skills, the `envui` plugin with its marketplaces, and `manifest.json`, `llms.txt` and `llms-full.txt` at the package root. Agents read the documentation the package ships, led there by a few lines in `AGENTS.md`, and the [setup skill](agent-tooling.md) the site hosts sets a project up. Remove what a project kept:
+
+| Kept from a prerelease                                                                                               | What to do                                                                                                                 |
+| -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| The `envui` MCP server, in `.mcp.json`, Codex's `[mcp_servers.envui]` or another client's configuration              | Remove it, such as with `claude mcp remove envui` or `codex mcp remove envui`.                                             |
+| The index `envui agents` wrote between `<!-- BEGIN envui -->` and `<!-- END envui -->` in `AGENTS.md` or `CLAUDE.md` | Replace it with [the pointer](agent-tooling.md#the-agentsmd-pointer), between the same markers.                            |
+| `npx --no envui agents --check` in CI or a script                                                                    | Remove it: the pointer names no version, so it never goes stale.                                                           |
+| The envui-use, envui-migrate and envui-contribute folders in `.agents/skills` or `.claude/skills`                    | Delete them.                                                                                                               |
+| The plugin `envui@envui` and the `envui` marketplace in Claude Code or Codex                                         | Uninstall the plugin and remove the marketplace, such as from Claude Code's `/plugin`.                                     |
+| Code that reads `manifest.json`, `llms.txt` or `llms-full.txt` from the package                                      | Read `docs/index.md` and the pages, `docs/generated/props.json` and `docs/generated/parts.json`, or the type declarations. |
+
+The setup skill does this too: paste `Set up envUI in my app: envui.envsemble.com/SKILL.md` into the agent, and it removes the server and the skills it finds and replaces the index with the pointer.
 
 ### Cascade layers
 

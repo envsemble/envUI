@@ -28,41 +28,17 @@ avoidWhen:
     use: Panes
 components:
   - Sheet
+examples:
+  FilterPanel:
+    role: overview
+    open: true
+  ShareChoices: example
+  SheetAnatomy: anatomy
+  InspectorPanel: example
+  ResizableDetails: example
 ---
 
 # Sheet
-
-## Overview
-
-A sheet has a dialog's surface, title, description and actions. On a touch screen a swipe toward its edge closes it too; a mouse or a pen never moves the sheet, and a drag inside it selects text.
-
-```tsx example=FilterPanel open
-
-```
-
-### Inspector beside the page
-
-The page can stay usable beside the sheet. The sheet then stays open while people choose another row, and when it closes, focus returns to the row it showed last.
-
-```tsx example=InspectorPanel
-
-```
-
-### Choices from the bottom
-
-A sheet from the bottom is as tall as its content.
-
-```tsx example=ShareChoices open
-
-```
-
-### Resizable
-
-People can resize a side sheet by its inner edge, by pointer or with the arrow keys, with the same grip as between [Panes](panes.md). It stays between a smallest and a largest width, and never grows past the window.
-
-```tsx example=ResizableDetails
-
-```
 
 ## Variants
 
@@ -76,22 +52,28 @@ The end is the right edge in left-to-right text, and the left in right-to-left t
 | From the start  | Panels about what sits at the start of the page.        |
 | From the bottom | A short set of choices or actions.                      |
 
+### Choices from the bottom
+
+A sheet from the bottom is as tall as its content.
+
+```tsx figure=ShareChoices open
+
+```
+
 ### Widths
 
-A medium side sheet takes the whole width of a compact window, and a large one of a compact or medium window; a bottom sheet is as wide as the window, up to a comfortable reading width.
+A medium side sheet takes the whole width of a compact window, and a large one of a compact or medium window.
+
+- A bottom sheet is as wide as the window, up to a comfortable reading width.
 
 | Width  | Use for                               |
 | ------ | ------------------------------------- |
 | Medium | Details and filters. The default.     |
 | Large  | Tables, comparisons and longer forms. |
 
-## When to use
-
-Name the sheet after what it holds, such as Filters or Alex Morgan. Keep its close button unless another control in the sheet closes it, and show the next level inside the sheet rather than opening another.
-
 ## Anatomy
 
-```tsx anatomy=SheetAnatomy open
+```tsx figure=SheetAnatomy open
 
 ```
 
@@ -103,6 +85,52 @@ Name the sheet after what it holds, such as Filters or Alex Morgan. Keep its clo
 6. **Action** (`env-dialog-actions > env-button`, `actions`)
 
 Not shown: the scrim behind a modal sheet, and the handle on a resizable sheet's inner edge.
+
+## Behaviour
+
+### A dialog at the edge
+
+A sheet has a dialog's surface, title, description and actions.
+
+- On a touch screen a swipe toward its edge closes it too.
+- A mouse or a pen never moves the sheet, and a drag inside it selects text.
+
+### Inspector beside the page
+
+The page can stay usable beside the sheet.
+
+- The sheet then stays open while people choose another row.
+- When it closes, focus returns to the row it showed last.
+
+```tsx figure=InspectorPanel
+
+```
+
+### Resizable
+
+People can resize a side sheet by its inner edge, by pointer or with the arrow keys, with the same grip as between [Panes](panes.md).
+
+- It stays between a smallest and a largest width, and never grows past the window.
+
+```tsx figure=ResizableDetails
+
+```
+
+## Rules
+
+A sheet is named after what it holds, and shows one level at a time.
+
+### Names
+
+Name the sheet after what it holds, such as Filters or Alex Morgan.
+
+### Closing
+
+Keep its close button unless another control in the sheet closes it.
+
+### One level
+
+Show the next level inside the sheet rather than opening another.
 
 ## Accessibility
 
@@ -131,11 +159,15 @@ Not shown: the scrim behind a modal sheet, and the handle on a resizable sheet's
 - A `title`, or an `aria-label`, and a `closeLabel` where several panels close nearby.
 - `finalFocus` when the trigger is gone, or something other than `trigger` opened the sheet.
 
-## In code
+## Compose
 
 ### Usage
 
-A Sheet opens from its `trigger`, such as a Button, and holds its `title`, a `description`, its content as `children`, which scrolls, and `actions` at the end, the primary action last. DialogClose, a Button, closes it. Leave it uncontrolled, or control it with `open` and `onOpenChange`; `defaultOpen` opens it on the first render. Name it with a `title`, or an `aria-label` where it has none.
+A Sheet opens from its `trigger`, such as a Button, and holds its `title`, a `description`, its content as `children`, which scrolls, and `actions` at the end, the primary action last.
+
+- DialogClose, a Button, closes it.
+- Leave it uncontrolled, or control it with `open` and `onOpenChange`; `defaultOpen` opens it on the first render.
+- Name it with a `title`, or an `aria-label` where it has none.
 
 ```tsx source=FilterPanel
 
@@ -155,16 +187,39 @@ A Sheet opens from its `trigger`, such as a Button, and holds its `title`, a `de
 
 With `modal={false}` the page stays usable beside the sheet. `disablePointerDismissal` keeps it open while people choose another row, and `finalFocus` returns focus to the row it showed last; `initialFocus` picks where focus goes on opening.
 
-```tsx source=InspectorPanel
-
+```tsx
+<Sheet
+  open={person !== undefined}
+  onOpenChange={(open) => !open && setSelected(null)}
+  modal={false}
+  disablePointerDismissal
+  finalFocus={opener}
+  title={person?.name ?? 'Person'}
+  closeLabel="Close details"
+>
+  …
+</Sheet>
 ```
 
 #### Resizable
 
-With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, 16 and 60 rem by default, and never past the window. The arrow keys on the handle resize it 1 rem, 5 rem with <kbd>Shift</kbd>. It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem. A CSS length as `width`, such as `min(30rem, 90%)`, is ignored then, with a warning while developing. `resizeLabel` names the handle.
+With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, 16 and 60 rem by default, and never past the window.
 
-```tsx source=ResizableDetails
+- The arrow keys on the handle resize it 1 rem, 5 rem with <kbd>Shift</kbd>.
+- It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem.
+- A CSS length as `width`, such as `min(30rem, 90%)`, is ignored then, with a warning while developing.
+- `resizeLabel` names the handle.
 
+```tsx
+<Sheet
+  resizable
+  minWidth={20}
+  maxWidth={48}
+  title="Northwind launch"
+  trigger={<Button>Project details</Button>}
+>
+  …
+</Sheet>
 ```
 
 #### Pending work
@@ -173,7 +228,11 @@ While `pending`, <kbd>Esc</kbd>, presses outside, swipes and the close button ca
 
 ### Composition
 
-A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title, `env-dialog-title`, and the close button, an IconButton named by `closeLabel`, which `closeButton={false}` leaves out; the description, `env-dialog-description`; and the actions, `env-dialog-actions`. The panel is `env-sheet-popup`, the scrim behind a modal sheet `env-sheet-backdrop` and the handle on a resizable sheet's inner edge `env-sheet-resize-handle`, the same grip as Panes.Divider's. Put the content in a Column, and show the next level inside the sheet rather than opening another.
+The close button is an IconButton named by `closeLabel`, which `closeButton={false}` leaves out. Put the content in a Column, and show the next level inside the sheet rather than opening another.
+
+### Customize
+
+A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title, `env-dialog-title`, and the close button; the description, `env-dialog-description`; and the actions, `env-dialog-actions`. The panel is `env-sheet-popup`, the scrim behind a modal sheet `env-sheet-backdrop` and the handle on a resizable sheet's inner edge `env-sheet-resize-handle`, the same grip as Panes.Divider's.
 
 ## Changelog
 

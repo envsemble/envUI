@@ -30,6 +30,10 @@
       "prefix": "env-loading-bar",
       "root": "env-loading-bar"
     },
+    "PickerPopup": {
+      "prefix": "env-picker-popup",
+      "root": "env-picker-popup"
+    },
     "Popup": {
       "prefix": "env-popup",
       "root": "env-popup"
@@ -246,6 +250,9 @@
     },
     "CommandPalette": {
       "env-command-palette": "The command palette's dialog.",
+      "env-command-palette-empty-description": "The empty state's quieter text under its title.",
+      "env-command-palette-empty-icon": "The empty state's icon on its circle.",
+      "env-command-palette-empty-title": "The empty state's title.",
       "env-command-palette-footer": "The footer with the keyboard hints.",
       "env-command-palette-footer-content": "The content of the footer.",
       "env-command-palette-group": "A group of commands.",
@@ -256,7 +263,7 @@
       "env-command-palette-list": "The list of commands.",
       "env-command-palette-positioner": "The palette's positioner.",
       "env-command-palette-search": "The row with the search input.",
-      "env-command-palette-status": "The message when nothing matches, and its announcement."
+      "env-command-palette-status": "The empty state in place of the list, and the announcement of the number of results."
     },
     "Composer": {
       "env-composer": "The message composer.",
@@ -284,7 +291,7 @@
     },
     "DatePicker": {
       "env-date-picker": "The date field.",
-      "env-date-picker-actions": "The row of actions under the calendar.",
+      "env-date-picker-actions": "The row of actions under the calendar, the picker card's footer.",
       "env-date-picker-actions-end": "The actions at the end of that row.",
       "env-date-picker-clear": "The button that clears the date.",
       "env-date-picker-control": "The field's well.",
@@ -294,7 +301,7 @@
       "env-date-picker-native": "The native input that holds the value for forms.",
       "env-date-picker-panes": "The calendar and the times side by side.",
       "env-date-picker-placeholder": "The text shown without a date.",
-      "env-date-picker-popup": "The popup with the calendar.",
+      "env-date-picker-popup": "The picker card with the calendar, also on TimePicker and MonthPicker.",
       "env-date-picker-time": "The times beside the calendar.",
       "env-date-picker-time-heading": "The heading of the times.",
       "env-date-picker-trigger": "The button that opens the calendar.",
@@ -483,6 +490,11 @@
       "env-drawer-item": "A destination: a link or button as wide as the drawer, with its icon, label and count.",
       "env-drawer-label": "A destination's label.",
       "env-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
+      "env-drawer-branch": "A section: a destination with destinations nested under it, which open and close below it.",
+      "env-drawer-branch-row": "A section's row: the destination's link or button, with the section's button over its end.",
+      "env-drawer-toggle": "The button at the end of a section's link that opens and closes the section.",
+      "env-drawer-chevron": "A section's chevron, which points down, and up while the section is open.",
+      "env-drawer-children": "The list of a section's nested destinations, indented, hidden until found while closed.",
       "env-drawer-footer": "Content below the destinations, at the bottom of the drawer.",
       "env-drawer-resize-handle": "The handle on a resizable drawer's end edge, a separator that resizes it."
     },
@@ -549,6 +561,12 @@
       "env-panes-close": "The supporting sheet's close button, which shows only while the pane is a sheet.",
       "env-panes-scrim": "The scrim behind the supporting sheet.",
       "env-panes-trigger": "The button in the main pane that opens the supporting sheet, which hides while the panes sit side by side."
+    },
+    "PickerPopup": {
+      "env-picker-popup": "The card DatePicker, TimePicker and MonthPicker open.",
+      "env-picker-popup-body": "The picker's content: a calendar, a time's wheels or a year of months.",
+      "env-picker-popup-footer": "The row of actions under the body.",
+      "env-picker-popup-footer-end": "The actions at the end of that row, such as Clear."
     },
     "Popover": {
       "env-popover": "The popover.",
@@ -692,6 +710,13 @@
       "env-table-region": "The region that scrolls the table.",
       "env-table-row": "A row.",
       "env-table-sort-button": "The button that sorts by a column."
+    },
+    "TableOfContents": {
+      "env-table-of-contents": "The navigation of the page's sections.",
+      "env-table-of-contents-body": "Around the list.",
+      "env-table-of-contents-item": "One section, with the sections nested in it.",
+      "env-table-of-contents-link": "A section's link, its dot drawn before it.",
+      "env-table-of-contents-list": "A level of sections."
     },
     "Tabs": {
       "env-tabs": "The tabs.",

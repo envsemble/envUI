@@ -29,6 +29,7 @@
 @import './Badge.css' layer(env.components);
 @import './Table.css' layer(env.components);
 @import './Breadcrumbs.css' layer(env.components);
+@import './TableOfContents.css' layer(env.components);
 @import './Pagination.css' layer(env.components);
 @import './Kbd.css' layer(env.components);
 @import './List.css' layer(env.components);
@@ -59,6 +60,7 @@
 @import './Combobox.css' layer(env.components);
 @import './Calendar.css' layer(env.components);
 @import './TimeList.css' layer(env.components);
+@import './PickerPopup.css' layer(env.components);
 @import './DatePicker.css' layer(env.components);
 @import './TimePicker.css' layer(env.components);
 @import './MonthPicker.css' layer(env.components);

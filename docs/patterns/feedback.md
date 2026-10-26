@@ -39,17 +39,20 @@ composes:
   - Column
   - Row
   - Text
+examples:
+  SaveConfirmation: overview
+  SectionAlert: example
+  BackgroundTask: example
+  StatusInRows: example
+  StatusInWords:
+    role: do
+    caption: Each status in its own words, with the tone adding to them.
+  StatusInColor:
+    role: dont
+    caption: 'The same word in every tone: only the color tells them apart.'
 ---
 
 # Notifications and feedback
-
-## Overview
-
-Each message is announced at most once, and only what calls for action interrupts. The outcome of an action people started is a [toast](../components/toast.md).
-
-```tsx example=SaveConfirmation
-
-```
 
 ## Variants
 
@@ -57,7 +60,7 @@ Each message is announced at most once, and only what calls for action interrupt
 
 An Alert that is there when the page loads describes it and offers the one thing people can do.
 
-```tsx example=SectionAlert
+```tsx figure=SectionAlert
 
 ```
 
@@ -65,7 +68,7 @@ An Alert that is there when the page loads describes it and offers the one thing
 
 When the export ends, a toast with Download reaches people wherever they are, and the page keeps a link to the file too.
 
-```tsx example=BackgroundTask
+```tsx figure=BackgroundTask
 
 ```
 
@@ -73,15 +76,23 @@ When the export ends, a toast with Download reaches people wherever they are, an
 
 One tone per status, everywhere.
 
-```tsx example=StatusInRows
+```tsx figure=StatusInRows
 
 ```
 
-## When to use
+## Behaviour
+
+### Volume
+
+Each message is announced at most once, and only what calls for action interrupts. The outcome of an action people started is a [toast](../components/toast.md).
+
+## Rules
+
+Put each message where it belongs, at the volume it deserves.
 
 ### Which to use
 
-Put each message where it belongs, at the volume it deserves.
+Each kind of message has its place.
 
 | Message              | Use for                                                                             |
 | -------------------- | ----------------------------------------------------------------------------------- |
@@ -93,28 +104,38 @@ Put each message where it belongs, at the volume it deserves.
 | A confirmation       | A decision people must make, in a [ConfirmDialog](../components/confirm-dialog.md). |
 | A badge              | The state of a row, read with the row, in a [Badge](../components/badge.md).        |
 
-```tsx do=StatusInWords caption="Each status in its own words, with the tone adding to them."
+```tsx figure=StatusInWords
 
 ```
 
-```tsx dont=StatusInColor caption="The same word in every tone: only the color tells them apart."
+```tsx figure=StatusInColor
 
 ```
 
 ### One message per event
 
-Put a message as close as it can be to what it is about, and say it once: a toast or a status text, not both, and a field's error without a toast too.
+Put a message as close as it can be to what it is about, and say it once.
+
+- A toast or a status text, not both.
+- A field's error without a toast too.
 
 ### Content
 
-A toast names what happened to what, in the past tense, "Website refresh archived.", or the state a setting leaves, with one action at most. An Alert's title is the condition, and its one sentence says what to do. A failure says what happened, whether work is safe and what to do, "Couldn't load projects. Try again.", never an error code alone. A status is a word or two, the same everywhere, with no prefix such as Success or Error: the tone says it.
+Each message says what happened, or what to do, in a few words.
 
-- "Invitation sent to jordan.kim@example.com."
-- "On track", "At risk", "Blocked", "Done"
+- A toast names what happened to what, in the past tense, "Website refresh archived." or "Invitation sent to jordan.kim@example.com.", or the state a setting leaves, with one action at most.
+- An Alert's title is the condition, and its one sentence says what to do.
+- A failure says what happened, whether work is safe and what to do, "Couldn't load projects. Try again.", never an error code alone.
+- A status is a word or two, such as "On track", "At risk", "Blocked" or "Done", the same everywhere, with no prefix such as Success or Error: the tone says it.
 
 ## Accessibility
 
-Feedback doesn't move focus, except to the Alert after a refused form or a failed save, and to what replaces a control people used.
+### Focus and keyboard
+
+Feedback doesn't move focus, with two exceptions.
+
+- To the Alert after a refused form or a failed save.
+- To what replaces a control people used.
 
 ### envUI provides
 
@@ -128,11 +149,16 @@ Feedback doesn't move focus, except to the Alert after a refused form or a faile
 - `announce` only on an Alert that appears because something just happened.
 - An `aria-label` on every count whose number alone doesn't say what it counts.
 
-## In code
+## Compose
 
 ### Usage
 
-`useToast()` returns `show`, `dismiss` and `clear`. `show({ tone, message, action })` shows a toast and returns its id; `tone` is `neutral`, `success`, `info` or `danger`. A success or neutral toast closes after its `duration`, 5 seconds by default; a danger toast, and one with an `action`, stays until dismissed unless `duration` is set. The provider's `visibleLimit`, 3 by default, sets how many show at a time. One Toast.Provider at the application's root holds the toasts.
+`useToast()` returns `show`, `dismiss` and `clear`. One Toast.Provider at the application's root holds the toasts.
+
+- `show({ tone, message, action })` shows a toast and returns its id; `tone` is `neutral`, `success`, `info` or `danger`.
+- A success or neutral toast closes after its `duration`, 5 seconds by default.
+- A danger toast, and one with an `action`, stays until dismissed unless `duration` is set.
+- The provider's `visibleLimit`, 3 by default, sets how many show at a time.
 
 ```tsx source=SaveConfirmation
 
@@ -140,18 +166,30 @@ Feedback doesn't move focus, except to the Alert after a refused form or a faile
 
 #### Background work
 
-A toast with an `action`, such as `{ label: 'Download', onClick }`, stays until dismissed; call `toast.dismiss(id)` once it has run. Keep the result on the page too, such as a Link with `download`, since a toast can be dismissed, and say the progress in a `role="status"` message.
+A toast with an `action`, such as `{ label: 'Download', onClick }`, stays until dismissed; call `toast.dismiss(id)` once it has run. Keep the result on the page too, such as a Link with `download`, since a toast can be dismissed, and say the progress in a `role="status"` message, as the BackgroundTask example does.
 
-```tsx source=BackgroundTask
-
+```tsx
+<Link href={`/exports/${file}`} download>
+  Download {file}
+</Link>
 ```
 
 #### Alerts
 
 A field's error is its `error` prop, as on the forms page. An Alert on the page from the start takes a `tone` and an `action`, and no `announce`, so it is read with the page; `announce` gives a warning or danger Alert the alert role, for one that appears because something just happened. After a refused form or failed save, a danger Alert with `tabIndex={-1}` and a ref takes focus.
 
-```tsx source=SectionAlert
-
+```tsx
+<Alert
+  tone="warning"
+  title="This project is read-only"
+  action={
+    <Button variant="secondary" size="sm" onClick={requestAccess}>
+      Request edit access
+    </Button>
+  }
+>
+  Ask Alex Morgan, its owner, for edit access to change it.
+</Alert>
 ```
 
 #### Status and counts
@@ -160,10 +198,12 @@ A Badge's `tone` adds to its words, one tone per status everywhere, such as `suc
 
 ### Composition
 
-Status in rows is a List whose items take a Badge, with a RelativeTime in their description for when they changed; a page's details beside an Alert are a DescriptionList. A notification centre is a Badge with `count` on its trigger, a Popover and a List of the notifications.
+Status in rows is a List whose items take a Badge, with a RelativeTime in their description for when they changed, as the StatusInRows example does; a page's details beside an Alert are a DescriptionList. A notification centre is a Badge with `count` on its trigger, a Popover and a List of the notifications.
 
-```tsx source=StatusInRows
-
+```tsx
+<List.Item label={project.name} description={<RelativeTime value={project.updated} />}>
+  <Badge tone="success">On track</Badge>
+</List.Item>
 ```
 
 ## Changelog

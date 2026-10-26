@@ -33,45 +33,30 @@ avoidWhen:
 components:
   - DatePicker
   - Calendar
+examples:
+  PublishDate: overview
+  PlanningCalendar:
+    role: overview
+    caption: 'Calendar: the month the field opens.'
+  Variants: variants
+  SmallToolbar: example
+  DatePickerAnatomy: anatomy
+  DatePickerPopupAnatomy: anatomy
+  MeetingTime: example
+  WithinRange: example
+  DayOnly:
+    role: do
+    caption: A day alone where the time doesn't matter.
+  NeedlessTime:
+    role: dont
+    caption: A time nobody chose, such as midnight on a due date.
 ---
 
 # DatePicker
 
-## Overview
-
-```tsx example=PublishDate
-
-```
-
-```tsx example=PlanningCalendar caption="Calendar: the month the field opens."
-
-```
-
-### States
-
-A read-only field shows its value, and its calendar doesn't open.
-
-<!-- specimen: States -->
-
-### A date and a time
-
-With a time, the calendar stays open beside the time's wheels, and turning a wheel sets the time at once.
-
-```tsx example=MeetingTime
-
-```
-
-### Within a range
-
-Days outside the allowed range are unavailable, and the month buttons stop at them.
-
-```tsx example=WithinRange
-
-```
-
 ## Variants
 
-```tsx variants=Variants
+```tsx figure=Variants
 
 ```
 
@@ -89,27 +74,13 @@ Days outside the allowed range are unavailable, and the month buttons stop at th
 
 A field without a visible label, such as in a toolbar, shows its placeholder instead, and keeps enough width for a date.
 
-```tsx example=SmallToolbar
+```tsx figure=SmallToolbar
 
 ```
-
-## When to use
-
-```tsx do=DayOnly caption="A day alone where the time doesn't matter."
-
-```
-
-```tsx dont=NeedlessTime caption="A time nobody chose, such as midnight on a due date."
-
-```
-
-### Ranges
-
-Use two fields for a range, such as First day and Last day.
 
 ## Anatomy
 
-```tsx anatomy=DatePickerAnatomy
+```tsx figure=DatePickerAnatomy
 
 ```
 
@@ -121,7 +92,7 @@ Use two fields for a range, such as First day and Last day.
 6. **Calendar icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-```tsx anatomy=DatePickerPopupAnatomy open
+```tsx figure=DatePickerPopupAnatomy open
 
 ```
 
@@ -133,6 +104,46 @@ Use two fields for a range, such as First day and Last day.
 6. **Actions** (`env-date-picker-actions`)
 
 Not shown: the time's wheels beside the calendar, for a field that takes a time.
+
+## Behaviour
+
+### States
+
+A read-only field shows its value, and its calendar doesn't open.
+
+<!-- specimen: States -->
+
+### A date and a time
+
+With a time, the calendar stays open beside the time's wheels, and turning a wheel sets the time at once.
+
+```tsx figure=MeetingTime
+
+```
+
+### Within a range
+
+Days outside the allowed range are unavailable, and the month buttons stop at them.
+
+```tsx figure=WithinRange
+
+```
+
+## Rules
+
+Ask for a time only where it matters, and for a range in two fields.
+
+```tsx figure=DayOnly
+
+```
+
+```tsx figure=NeedlessTime
+
+```
+
+### Ranges
+
+Use two fields for a range, such as First day and Last day.
 
 ## Accessibility
 
@@ -163,11 +174,15 @@ Not shown: the time's wheels beside the calendar, for a field that takes a time.
 - Validation, such as the order of two dates, and its `error`.
 - The labels in the application's language.
 
-## In code
+## Compose
 
 ### Usage
 
-A DatePicker is a field with its `label`, `description` and `error`, whose button opens the calendar. Its value is a day as `YYYY-MM-DD`, or `null` for none: leave it uncontrolled, with `defaultValue`, or control it with `value` and `onValueChange`, which receives `null` once the field is cleared. `clearable` adds a clear button to the field and the calendar.
+A DatePicker is a field with its `label`, `description` and `error`, whose button opens the calendar.
+
+- Its value is a day as `YYYY-MM-DD`, or `null` for none.
+- Leave it uncontrolled, with `defaultValue`, or control it with `value` and `onValueChange`, which receives `null` once the field is cleared.
+- `clearable` adds a clear button to the field and the calendar.
 
 ```tsx source=PublishDate
 
@@ -175,84 +190,72 @@ A DatePicker is a field with its `label`, `description` and `error`, whose butto
 
 #### A date and a time
 
-`granularity` is `day`, the default, or `minute`, for a local date and time as `YYYY-MM-DDTHH:mm`, chosen on wheels of hours, minutes every `minuteStep` minutes, 15 by default, and, on a 12-hour clock, day periods. `defaultTime`, as `HH:mm`, is the time a newly chosen day starts with, 00:00 by default.
+`granularity` is `day`, the default, or `minute`, for a local date and time as `YYYY-MM-DDTHH:mm`.
 
-```tsx source=MeetingTime
+- The time is chosen on wheels of hours, minutes every `minuteStep` minutes, 15 by default, and, on a 12-hour clock, day periods.
+- `defaultTime`, as `HH:mm`, is the time a newly chosen day starts with, 00:00 by default.
 
+```tsx
+<DatePicker
+  label="Meeting"
+  granularity="minute"
+  defaultTime="09:00"
+  minuteStep={30}
+  value={meeting}
+  onValueChange={setMeeting}
+  clearable
+/>
 ```
 
 #### Range and format
 
-`min` and `max`, in the value's format, make earlier and later days unavailable, and the month buttons stop at them. Check the order of two dates yourself, and set `error`. `locale`, EnvUIProvider's by default, sets the shown value and the calendar's names, `weekStart` the first day of the week, from 0 for Sunday, and `formatOptions` the `Intl.DateTimeFormat` options of the shown value.
+`min` and `max`, in the value's format, make earlier and later days unavailable, and the month buttons stop at them. Check the order of two dates yourself, and set `error`.
+
+- `locale`, EnvUIProvider's by default, sets the shown value and the calendar's names.
+- `weekStart` sets the first day of the week, from 0 for Sunday.
+- `formatOptions` sets the `Intl.DateTimeFormat` options of the shown value.
 
 #### In a form
 
-`name` submits the value as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm`, a local date without a zone; converting it to a moment belongs to the application. `required` keeps an empty field from submitting, and a reset restores `defaultValue`. Use `readOnly`, not `disabled`, for a date people can't change.
+`name` submits the value as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm`, a local date without a zone; converting it to a moment belongs to the application.
+
+- `required` keeps an empty field from submitting, and a reset restores `defaultValue`.
+- Use `readOnly`, not `disabled`, for a date people can't change.
+- Values are `YYYY-MM-DD`, so two dates compare as text: on submit, set the last field's `error` where `last < first`.
 
 ```tsx
-import { useState, type FormEvent } from 'react';
-import { Button, DatePicker, Column, Row, Text } from '@envsemble/envui';
-
-export default function LeaveRequest() {
-  const [error, setError] = useState<string>();
-  const [sent, setSent] = useState('');
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const [first, last] = [String(data.get('first')), String(data.get('last'))];
-    // Values are YYYY-MM-DD, so they compare as text.
-    const invalid = first && last && last < first;
-    setError(invalid ? 'Choose a last day on or after the first.' : undefined);
-    setSent(invalid ? '' : `Requested ${first} to ${last}.`);
-  };
-  return (
-    <form
-      onSubmit={submit}
-      onReset={() => {
-        setError(undefined);
-        setSent('');
-      }}
-      style={{ inlineSize: 'min(100%, 20rem)' }}
-    >
-      <Column gap={4}>
-        <DatePicker label="First day" name="first" defaultValue="2026-11-02" required />
-        <DatePicker label="Last day" name="last" defaultValue="2026-11-06" required error={error} />
-        <Row wrap align="center" gap={4}>
-          <Button type="submit">Request leave</Button>
-          <Button type="reset" variant="secondary">
-            Reset
-          </Button>
-        </Row>
-        <Text variant="caption" emphasis="muted" role="status">
-          {sent}
-        </Text>
-      </Column>
-    </form>
-  );
-}
+<form onSubmit={request}>
+  <DatePicker label="First day" name="first" defaultValue="2026-11-02" required />
+  <DatePicker label="Last day" name="last" defaultValue="2026-11-06" required error={error} />
+  <Button type="submit">Request leave</Button>
+</form>
 ```
 
 #### Variants and sizes
 
-`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label, as TextField's. `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. With `showLabel={false}`, `placeholder` shows in place of the label; name the field with `aria-label`. The field is 12 rem wide at least, also in a container sized to its content, and in a narrower container it takes the container's width.
+`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label, as TextField's.
 
-```tsx source=SmallToolbar
+- `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height.
+- With `showLabel={false}`, `placeholder` shows in place of the label; name the field with `aria-label`.
+- The field is 12 rem wide at least, also in a container sized to its content, and in a narrower container it takes the container's width.
 
+```tsx
+<DatePicker size="sm" showLabel={false} aria-label="Due" placeholder="Due" granularity="minute" />
 ```
 
 #### Calendar
 
 Calendar is the month on its own, for a page or a panel: it takes `value`, `defaultValue` and `onValueChange`, `min`, `max`, `weekStart` and `locale`, as the field does.
 
-```tsx source=PlanningCalendar
-
+```tsx
+<Calendar aria-label="Planning" value={day} onValueChange={setDay} />
 ```
 
 ### Composition
 
 `open`, `defaultOpen` and `onOpenChange` control the calendar. `clearLabel`, `todayLabel`, `nowLabel`, `timeLabel`, `previousMonthLabel` and `nextMonthLabel` name its buttons, from EnvUIProvider's `messages` by default. `className` and `style` reach the field's root, and `ref` the button.
 
-The field's parts are the root, `env-field` with `env-date-picker`; the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup, `env-date-picker-popup`, shared with TimePicker and MonthPicker, holds the calendar, with `env-calendar-previous`, `env-calendar-heading`, `env-calendar-next` and `env-calendar-day`; the times, `env-date-picker-time`, beside it with `granularity="minute"`; and the actions, `env-date-picker-actions`.
+The field's parts are the root, `env-field` with `env-date-picker`; the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup is the picker card TimePicker and MonthPicker open too, `env-picker-popup` with `env-date-picker-popup`. Its body, `env-picker-popup-body`, holds the calendar, with `env-calendar-previous`, `env-calendar-heading`, `env-calendar-next` and `env-calendar-day`, and the times, `env-date-picker-time`, beside it with `granularity="minute"`; its footer, `env-picker-popup-footer` with `env-date-picker-actions`, holds the actions, Clear in `env-picker-popup-footer-end` with `env-date-picker-actions-end`.
 
 ## Changelog
 

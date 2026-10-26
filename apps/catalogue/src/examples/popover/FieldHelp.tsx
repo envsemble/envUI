@@ -9,8 +9,10 @@ export default function FieldHelp() {
         // Shown open in the docs; without defaultOpen, it opens from its trigger.
         defaultOpen
         title="Billing periods"
-        side="right"
-        align="start"
+        // Below the help mark, lined up with its end, so the label beside it keeps its room on
+        // a phone too.
+        side="bottom"
+        align="end"
         trigger={<IconButton variant="text" icon={<Help />} aria-label="About billing periods" />}
       >
         <Text>

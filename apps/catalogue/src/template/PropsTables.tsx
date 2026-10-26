@@ -1,5 +1,5 @@
-import { Link, Column, Text } from '@envsemble/envui';
-import { PlainCode, SimpleTable } from './SimpleTable';
+import { Link, Column, Table, Text } from '@envsemble/envui';
+import { PlainCode } from './SimpleTable';
 import type { ExportEntry, PropEntry } from '../DocumentationTypes';
 import type { Reference } from '../Reference';
 // The ids search leads to, as the search index writes them.
@@ -30,11 +30,62 @@ function description(prop: PropEntry) {
     .join(' ');
 }
 
+/**
+ * A type's top-level alternatives, such as 'sm' | 'md' | 'lg', split at the bars outside brackets,
+ * quotes and parentheses; a function, object or generic type stays whole.
+ */
+function alternatives(type: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let quote = '';
+  let part = '';
+  for (const character of type) {
+    if (quote) {
+      if (character === quote) quote = '';
+    } else if (character === "'" || character === '"' || character === '`') quote = character;
+    else if ('([{<'.includes(character)) depth += 1;
+    else if (')]}>'.includes(character)) depth -= 1;
+    else if (character === '|' && depth === 0) {
+      parts.push(part.trim());
+      part = '';
+      continue;
+    }
+    part += character;
+  }
+  parts.push(part.trim());
+  return parts.filter(Boolean);
+}
+
+/** A prop's type: each alternative of a union as its own small tag, so they wrap whole. */
+function PropType({ type }: { type: string }) {
+  const options = alternatives(type);
+  if (options.length < 2) return <PlainCode>{type}</PlainCode>;
+  return (
+    <span className="docs-prop-type">
+      {options.map((option) => (
+        <code key={option} className="docs-prop-option">
+          {option}
+        </code>
+      ))}
+    </span>
+  );
+}
+
+/** A prop's default, under its name, or nothing when it has none. */
+function PropDefault({ prop }: { prop: PropEntry }) {
+  if (prop.default === undefined && !prop.defaultBuiltIn) return null;
+  return (
+    <Text render={<span />} variant="body-sm" emphasis="muted" className="docs-prop-default">
+      Default {prop.default !== undefined ? <PlainCode>{prop.default}</PlainCode> : 'built-in'}
+    </Text>
+  );
+}
+
 function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
   if (entry.kind === 'namespace') return null;
   return (
     <Column render={<section />} gap={4} aria-labelledby={exportSection(name)}>
-      <Text render={<h2 />} variant="title" id={exportSection(name)}>
+      <Text render={<h3 />} variant="title" id={exportSection(name)}>
         <PlainCode>{name}</PlainCode>
       </Text>
       {entry.description && <Text>{entry.description}</Text>}
@@ -43,35 +94,43 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
           <PlainCode>{`${name}${entry.signature}`}</PlainCode>
         </Text>
       ) : entry.props.length ? (
-        <SimpleTable
-          label={`${name} props`}
-          columns={[
-            { title: 'Prop', width: '17%' },
-            { title: 'Type', width: '25%' },
-            { title: 'Default', width: '14%' },
-            { title: 'Description', width: '44%' },
-          ]}
-          rows={entry.props.map((prop) => ({
-            key: prop.name,
-            // Search leads to a prop's row: props-Button-variant.
-            id: propSection(name, prop.name),
-            cells: [
-              <>
-                <PlainCode>{prop.name}</PlainCode>
-                {prop.required && <span className="docs-prop-required"> required</span>}
-              </>,
-              <PlainCode key="type">{prop.type}</PlainCode>,
-              prop.default !== undefined ? (
-                <PlainCode key="default">{prop.default}</PlainCode>
-              ) : prop.defaultBuiltIn ? (
-                'built-in'
-              ) : (
-                '—'
-              ),
-              description(prop),
-            ],
-          }))}
-        />
+        <Table.Root
+          aria-label={`${name} props`}
+          className="docs-props-table"
+          columnWidths={[26, 30, 44]}
+          narrowLayout="stack"
+          stackBelow="40rem"
+        >
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Prop</Table.HeaderCell>
+              <Table.HeaderCell>Type</Table.HeaderCell>
+              <Table.HeaderCell>Description</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            {entry.props.map((prop) => (
+              // Search leads to a prop's row: props-Button-variant.
+              <Table.Row key={prop.name} id={propSection(name, prop.name)}>
+                <Table.Cell>
+                  <span className="docs-prop-name">
+                    <PlainCode>{prop.name}</PlainCode>
+                    {prop.required && <span className="docs-prop-required">required</span>}
+                  </span>
+                  <PropDefault prop={prop} />
+                </Table.Cell>
+                <Table.Cell label="Type">
+                  <PropType type={prop.type} />
+                </Table.Cell>
+                <Table.Cell label="Description">
+                  <Text render={<span />} variant="body-sm" emphasis="muted">
+                    {description(prop)}
+                  </Text>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
       ) : (
         <Text>{entry.native.length ? 'No props of its own.' : 'Takes no props.'}</Text>
       )}

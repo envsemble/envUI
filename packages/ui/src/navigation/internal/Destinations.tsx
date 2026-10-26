@@ -51,12 +51,24 @@ type DestinationTarget =
       onSelect: () => void;
     };
 
+/** The destinations nested under a destination, which Drawer shows as a section that opens. */
+interface NestedDestinations {
+  /**
+   * The destinations under this one, such as the pages of a chapter of a guide: Drawer shows them
+   * under it, indented, in a section that opens and closes, open while it holds the current
+   * destination. Rail and Bar show only the top level, where a destination whose section holds the
+   * current one takes the current fill. Drawer reads `group` at the top level only.
+   */
+  children?: readonly DrawerDestination[];
+}
+
 /**
  * One place in the application that Bar, Rail and Drawer lead to, such as Inbox. The application
  * keeps one array of them and passes the same array to each navigation form it shows.
  */
 export type Destination = DestinationFields &
-  DestinationTarget & {
+  DestinationTarget &
+  NestedDestinations & {
     /**
      * A decorative icon for the destination, such as one of envUI's Material Symbols, which shows
      * filled while the destination is current and outlined otherwise. Bar and Rail show it above
@@ -67,13 +79,24 @@ export type Destination = DestinationFields &
 
 /**
  * A destination as Drawer takes it: a Destination, whose icon Drawer may go without, such as for
- * the sections of a guide; a list for Rail or Bar needs icons.
+ * the sections of a guide, and which may be only the heading of the destinations nested under it;
+ * a list for Rail or Bar needs icons and a target for each destination it shows.
  */
-export type DrawerDestination = DestinationFields &
-  DestinationTarget & {
-    /** A decorative icon before the label; leave it out of every destination of a list, or none. */
-    icon?: ReactNode;
-  };
+export type DrawerDestination = DestinationFields & {
+  /** A decorative icon before the label; leave it out of every destination of a list, or none. */
+  icon?: ReactNode;
+} & (
+    | (DestinationTarget & NestedDestinations)
+    | {
+        href?: undefined;
+        onSelect?: undefined;
+        /**
+         * The destinations under this one, which has no address of its own: it is only the
+         * heading of its section, a button that opens and closes it.
+         */
+        children: readonly DrawerDestination[];
+      }
+  );
 
 /**
  * The part classes of a form's destinations, which each form writes out as literals: an indicator
@@ -114,6 +137,11 @@ export function destinationSections<Item extends { group?: string }>(
 export const destinationKey = (destination: DrawerDestination) =>
   destination.href ?? destination.label;
 
+/** Whether a destination nested under these, at any depth, is the current one. */
+export function holdsCurrent(children: readonly DrawerDestination[] | undefined): boolean {
+  return children?.some((child) => child.current === true || holdsCurrent(child.children)) ?? false;
+}
+
 /** The count as it shows: nothing for none, and 999+ above 999. */
 export function shownCount(count: number | undefined): string | undefined {
   if (count === undefined || !Number.isFinite(count) || count <= 0) return undefined;
@@ -135,7 +163,7 @@ export const useNavigationMessages = () => useMessages('navigation', navigation)
 
 /**
  * One destination's control: a link with href, through the LinkProvider's link component, or a
- * button that runs onSelect. The current one reports aria-current="page" and fills its icon; one
+ * button that runs onSelect, or that only opens and closes the destinations under it. The current one reports aria-current="page" and fills its icon; one
  * with a count is named with it, such as Inbox, 3 new. Bar and Rail put the icon in an indicator,
  * with the count on it, above the label; Drawer puts the icon, the label and the count in a row.
  */
@@ -144,10 +172,19 @@ export function DestinationItem({
   destination,
   labelRef,
   ref,
+  topLevel = false,
+  end,
   ...props
 }: Omit<HTMLAttributes<HTMLElement>, 'children'> & {
   classes: DestinationClasses;
   destination: DrawerDestination;
+  /**
+   * The form shows only the top level, as Rail and Bar do: a destination whose nested destinations
+   * hold the current one takes the current fill, and reports aria-current="true".
+   */
+  topLevel?: boolean;
+  /** Content at the end of a row, after the count, such as a section's chevron. */
+  end?: ReactNode;
   /** The label's element, such as to tell whether it is cut short. */
   labelRef?: Ref<HTMLSpanElement>;
   /** The control's element, for a tooltip that renders it as its trigger. */
@@ -155,10 +192,12 @@ export function DestinationItem({
 }) {
   const messages = useNavigationMessages();
   const { label, icon, count, current = false, href, onSelect } = destination;
+  const inside = topLevel && !current && holdsCurrent(destination.children);
+  const marked = current || inside;
   const shown = shownCount(count);
   const icons =
     icon == null ? null : (
-      <NavigationIconState selected={current}>
+      <NavigationIconState selected={marked}>
         <DecorativeIcon>{icon}</DecorativeIcon>
       </NavigationIconState>
     );
@@ -168,11 +207,14 @@ export function DestinationItem({
       {shown}
     </span>
   );
+  // A section's heading has no onSelect, and takes the click of the trigger that renders it.
   const control =
-    href === undefined ? (
+    href !== undefined ? (
+      <ActionElement href={href} onClick={onSelect} />
+    ) : onSelect !== undefined ? (
       <ActionElement onClick={onSelect} />
     ) : (
-      <ActionElement href={href} onClick={onSelect} />
+      <ActionElement />
     );
   const shared = {
     // A tooltip's trigger props, such as its pointer and focus handlers.
@@ -180,8 +222,8 @@ export function DestinationItem({
     ref,
     render: control,
     className: classes.item,
-    'data-current': current ? '' : undefined,
-    'aria-current': current ? ('page' as const) : undefined,
+    'data-current': marked ? '' : undefined,
+    'aria-current': current ? ('page' as const) : inside ? ('true' as const) : undefined,
     'aria-label': countedName(label, count, messages),
   };
   // The item's text is its label, then its count, apart, in the order its name gives them, such as
@@ -195,6 +237,7 @@ export function DestinationItem({
       </span>
       {apart}
       {badge}
+      {end}
     </Row>
   ) : (
     <Column {...shared} align="center" gap={1}>

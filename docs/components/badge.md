@@ -49,27 +49,31 @@ avoidWhen:
 components:
   - Badge
   - DiffStat
+examples:
+  ProjectStatus: overview
+  CountsInButtons:
+    role: overview
+    caption: 'Counts: a compact number, here inside buttons.'
+  ChangeSize:
+    role: overview
+    caption: 'DiffStat: the size of a change.'
+  Emphasis: variants
+  Tones: variants
+  BadgeAnatomy: anatomy
+  LongState: example
+  SoftInLists:
+    role: do
+    caption: Soft badges in a list, and solid only for the state that must stand out.
+  SolidEverywhere:
+    role: dont
+    caption: 'Solid badges everywhere: none of them stands out.'
 ---
 
 # Badge
 
-## Overview
-
-```tsx example=ProjectStatus
-
-```
-
-```tsx example=CountsInButtons caption="Counts: a compact number, here inside buttons."
-
-```
-
-```tsx example=ChangeSize caption="DiffStat: the size of a change."
-
-```
-
 ## Variants
 
-```tsx variants=Emphasis
+```tsx figure=Emphasis
 
 ```
 
@@ -87,7 +91,7 @@ components:
 
 A badge takes every status tone, which [Colors & themes](../foundations/colors.md) describes.
 
-```tsx variants=Tones
+```tsx figure=Tones
 
 ```
 
@@ -102,13 +106,37 @@ A badge takes every status tone, which [Colors & themes](../foundations/colors.m
 
 A count takes the same tones and variants: neutral and soft by default, and solid in the accent tone for a count that needs attention.
 
-## When to use
+## Anatomy
 
-```tsx do=SoftInLists caption="Soft badges in a list, and solid only for the state that must stand out."
+```tsx figure=BadgeAnatomy
 
 ```
 
-```tsx dont=SolidEverywhere caption="Solid badges everywhere: none of them stands out."
+1. **Pill** (`env-badge`)
+2. **Icon** (`env-badge > env-icon`, `icon`)
+3. **Label** (`env-badge-label`, `children`)
+
+Not shown: a count, and DiffStat's added and removed lines.
+
+## Behaviour
+
+### Adapting to width
+
+A badge stays on one line and ends with an ellipsis where its container is narrower.
+
+```tsx figure=LongState widths="10 20"
+
+```
+
+## Rules
+
+A badge's word carries its meaning, and only the state that must stand out is solid.
+
+```tsx figure=SoftInLists
+
+```
+
+```tsx figure=SolidEverywhere
 
 ```
 
@@ -119,26 +147,6 @@ Give the same state the same word and tone everywhere, and let the word carry th
 ### Content
 
 Show 99+ beyond two digits, and give the full count in the count's name for assistive technology.
-
-## Anatomy
-
-```tsx anatomy=BadgeAnatomy
-
-```
-
-1. **Pill** (`env-badge`)
-2. **Icon** (`env-badge > env-icon`, `icon`)
-3. **Label** (`env-badge-label`, `children`)
-
-Not shown: a count, and DiffStat's added and removed lines.
-
-## Adapting to width
-
-A badge stays on one line and ends with an ellipsis where its container is narrower.
-
-```tsx example=LongState widths="10 20"
-
-```
 
 ## Accessibility
 
@@ -153,7 +161,7 @@ A badge stays on one line and ends with an ellipsis where its container is narro
 - An `aria-label` on a count whose number doesn't explain itself, such as 12 unread.
 - A status region where a change of count must be announced.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -177,16 +185,21 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 
 `count` takes a number, such as `12`, or short text, such as `99+`, in place of a label: a compact round pill in tabular figures. Pass `99+` yourself beyond two digits. Its `aria-label`, such as 12 unread, is read in place of the number. Counts take the same tones and variants; `tone="accent" variant="solid"` draws attention to one.
 
-```tsx source=CountsInButtons
-
+```tsx
+<Button>
+  Comments <Badge count={4} />
+</Button>
+<Button>
+  Review requests <Badge count={2} tone="accent" variant="solid" />
+</Button>
 ```
 
 #### DiffStat
 
 DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in the danger tone, in the locale's digits. It is named once for assistive technology, such as 12 added lines and 3 removed lines, from EnvUIProvider's `messages.diffStat.label` or its own `formatLabel`.
 
-```tsx source=ChangeSize
-
+```tsx
+<DiffStat additions={12} deletions={3} />
 ```
 
 #### In navigation
@@ -194,21 +207,12 @@ DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in
 A Drawer destination's `count` shows the count at its end and adds it to the destination's name, such as Inbox, 12 new.
 
 ```tsx
-import { Drawer, type Destination } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Schedule } from '@envsemble/envui/icons/Schedule';
-
-// The drawer shows each count at the end of its destination and says it in the name: Inbox, 12 new.
 const destinations: Destination[] = [
   { label: 'Inbox', icon: <Inbox />, href: '/inbox', count: 12, current: true },
-  { label: 'Plans', icon: <Description />, href: '/plans', count: 4 },
   { label: 'Later', icon: <Schedule />, href: '/later', count: 1200 },
 ];
 
-export default function NavigationCounts() {
-  return <Drawer aria-label="Workspace" destinations={destinations} />;
-}
+<Drawer aria-label="Workspace" destinations={destinations} />;
 ```
 
 ### Composition

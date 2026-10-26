@@ -26,35 +26,23 @@ avoidWhen:
     use: Rating
 components:
   - Meter
+examples:
+  SeatsAssigned: overview
+  MeterAnatomy: anatomy
+  LongLabel: example
+  PlanUsage:
+    role: do
+    caption: Say in text what a full meter means.
+  FullWithoutWords:
+    role: dont
+    caption: 'A full bar left to speak for itself: it has no warning color.'
 ---
 
 # Meter
 
-## Overview
-
-A value outside the range shows as its nearest end.
-
-```tsx example=SeatsAssigned
-
-```
-
-## When to use
-
-```tsx do=PlanUsage caption="Say in text what a full meter means."
-
-```
-
-```tsx dont=FullWithoutWords caption="A full bar left to speak for itself: it has no warning color."
-
-```
-
-### Content
-
-Name what is measured in the label, such as Seats assigned.
-
 ## Anatomy
 
-```tsx anatomy=MeterAnatomy
+```tsx figure=MeterAnatomy
 
 ```
 
@@ -64,13 +52,35 @@ Name what is measured in the label, such as Seats assigned.
 4. **Track** (`env-meter-track`)
 5. **Indicator** (`env-meter-indicator`, `value`)
 
-## Adapting to width
+## Behaviour
+
+### Out of range
+
+A value outside the range shows as its nearest end.
+
+### Adapting to width
 
 A meter fills its container. The label and the value wrap onto two lines where they don't fit.
 
-```tsx example=LongLabel widths="12 24"
+```tsx figure=LongLabel widths="12 24"
 
 ```
+
+## Rules
+
+A meter has no warning color of its own, so say in text when a limit is reached.
+
+```tsx figure=PlanUsage
+
+```
+
+```tsx figure=FullWithoutWords
+
+```
+
+### Content
+
+Name what is measured in the label, such as Seats assigned.
 
 ## Accessibility
 
@@ -85,7 +95,7 @@ A meter fills its container. The label and the value wrap onto two lines where t
 - `aria-valuetext` with the unit in words, such as 2 of 5 seats; without it, the value is read as a percentage.
 - Text that says when a limit is reached.
 
-## In code
+## Compose
 
 ### Usage
 

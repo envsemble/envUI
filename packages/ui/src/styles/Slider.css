@@ -28,13 +28,21 @@
   inherits: true;
   initial-value: 0;
 }
+/* How far a drag past either end stretches the slider, as a fraction of its length, which Slider
+   sets while the pointer is past the end, and 0 otherwise; a number, so the spring back eases. */
+@property --env-slider-stretch {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
 
 .env-slider {
   /* A field's height: the control height, or the touch height under a coarse pointer. */
   --env-slider-height: var(--env-control-height);
-  /* The track starts and ends where the rounded ends straighten, so the handle never sits in a
-     corner; the fill reaches back to the start. */
-  --env-slider-inset: calc(var(--env-slider-height) / 2);
+  /* The track spans the whole field, so the fill is empty at the minimum, full at the maximum and
+     in proportion between, and ends where the pointer chooses the value. Near the ends the handle
+     keeps this far from the rounded edge, so the corner never cuts it short. */
+  --env-slider-handle-inset: calc(var(--env-slider-height) / 4);
   --env-slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
   --env-slider-fill: var(--env-slider-indicator, var(--env-color-bg-neutral-subtle-pressed));
   --env-slider-ink: var(--env-slider-content, var(--env-color-fg-default));
@@ -49,35 +57,57 @@
   display: grid;
   grid-template: 'slider' 100% / minmax(0, auto);
   block-size: var(--env-slider-height);
-  /* Base UI measures the value along the control's content box, which the track fills. */
-  padding-inline: var(--env-slider-inset);
   overflow: hidden;
   border-radius: var(--env-radius-full);
   background: var(--env-slider-track, var(--env-color-bg-neutral-muted));
   cursor: pointer;
   touch-action: none;
+  /* Dragging or double-clicking selects no text: the label and the value stay as they are, and
+     assistive technology still reads them. */
+  -webkit-user-select: none;
+  user-select: none;
   isolation: isolate;
-  transition: --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease);
+  /* Dragged past an end, the field stretches toward the pointer from its other end, Slider's
+     --env-slider-stretch-origin, and thins a little, as a rubber band would: a scale, so nothing
+     around it moves. While the pointer is past the end, Slider sets --env-slider-stretch-spring to
+     0s, so the stretch follows it at once; let go, it springs back, settling with a slight give. */
+  scale: calc(1 + var(--env-slider-stretch)) calc(1 - var(--env-slider-stretch) / 2);
+  transform-origin: var(--env-slider-stretch-origin, left) center;
+  transition:
+    --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease),
+    --env-slider-stretch
+      var(--env-slider-stretch-spring, calc(var(--env-motion-duration-slow) * 1.5))
+      linear(
+        0,
+        0.08 5%,
+        0.256 10%,
+        0.459 15%,
+        0.646 20%,
+        0.797 25%,
+        0.908 30%,
+        0.981 35%,
+        1.023 40%,
+        1.046 50%,
+        1.033 60%,
+        1.015 70%,
+        1.004 80%,
+        1
+      );
 }
 .env-slider-track {
   grid-area: slider;
   block-size: 100%;
+  /* The handle measures its distance from the ends against the track's width. */
+  container-type: inline-size;
 }
-/* The fill runs from the slider's start, under its rounded end, to the value. */
+/* The fill runs from the slider's start to the value: none at the minimum, the whole field at the
+   maximum. */
 .env-slider-indicator {
   background: var(--env-slider-fill, var(--env-color-bg-neutral-subtle-pressed));
 }
-.env-slider-indicator::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  inset-inline-end: 100%;
-  inline-size: var(--env-slider-inset);
-  background: inherit;
-}
 /* While the handle shows, under the label or the value, the fill's end fades into the track, so no
-   edge cuts through the text: a veil of the track's color over its last stretch, reaching back under
-   the rounded start where the fill is short. At rest the fill ends crisply. */
+   edge cuts through the text: a veil of the track's color over its last stretch, cut off at the
+   start where the fill is short. At rest the fill ends crisply. */
 .env-slider-indicator::after {
   --env-slider-indicator-direction: to right;
   content: '';
@@ -100,15 +130,36 @@
 .env-slider-indicator:dir(rtl)::after {
   --env-slider-indicator-direction: to left;
 }
-/* The handle: a thin line at the value, beneath the label and the value. */
+/* The handle: a thin line at the value, at the fill's end, beneath the label and the value. Within
+   the handle's inset of either end it stops short of the rounded edge: Slider sets the value's
+   fraction of the range (--env-slider-fraction), and the handle moves back by what it lacks of the
+   inset, physically, so to the left in right-to-left text. */
 .env-slider-thumb {
+  --env-slider-thumb-side: 1;
+  --env-slider-thumb-at: calc(var(--env-slider-fraction, 0) * 100cqi);
   box-sizing: border-box;
   inline-size: calc(2 * var(--env-control-border-width));
   block-size: 55%;
   border-radius: var(--env-radius-full);
   background: var(--env-slider-ink, var(--env-color-fg-default));
   opacity: 0;
+  transform: translateX(
+    calc(
+      var(--env-slider-thumb-side) *
+        (
+          clamp(
+              var(--env-slider-handle-inset),
+              var(--env-slider-thumb-at),
+              100cqi - var(--env-slider-handle-inset)
+            ) -
+            var(--env-slider-thumb-at)
+        )
+    )
+  );
   transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-slider-thumb:dir(rtl) {
+  --env-slider-thumb-side: -1;
 }
 /* Ticks at the steps, or the large steps where they are many, between the ends: as many lines as
    the parts the slider sets (--env-slider-ticks) less one. The parts are equal, so the ticks sit
@@ -146,8 +197,6 @@
 .env-slider-heading {
   position: relative;
   grid-area: slider;
-  /* Across the whole field, its rounded ends included. */
-  margin-inline: calc(-1 * var(--env-slider-inset));
   z-index: var(--env-z-raised);
   padding-inline: var(--env-space-4);
   pointer-events: none;
@@ -167,6 +216,20 @@
   font-weight: var(--env-font-weight-medium);
   color: var(--env-slider-content, var(--env-color-fg-default));
   font-variant-numeric: tabular-nums;
+}
+/* The label and the value undo the stretch, so their text keeps its shape and size: each scaled
+   back from its outer side, which travels with the end of the field it sits at. */
+.env-slider-heading > .env-slider-label,
+.env-slider-heading > .env-slider-value {
+  scale: calc(1 / (1 + var(--env-slider-stretch))) calc(1 / (1 - var(--env-slider-stretch) / 2));
+}
+.env-slider-heading > .env-slider-label,
+.env-slider-heading > .env-slider-value:dir(rtl) {
+  transform-origin: left center;
+}
+.env-slider-heading > .env-slider-value,
+.env-slider-heading > .env-slider-label:dir(rtl) {
+  transform-origin: right center;
 }
 /* The handle shows where Slider marks it, under a hovering pointer, while pressed and with keyboard
    focus, and is faint where it passes under the label or the value. */
@@ -205,6 +268,12 @@
   .env-slider-track::after {
     transition: none;
   }
+  /* Under reduced motion the slider never stretches; Slider doesn't set the stretch either. */
+  .env-slider-control,
+  .env-slider-heading > .env-slider-label,
+  .env-slider-heading > .env-slider-value {
+    scale: none;
+  }
 }
 
 /* Forced colors: the system paints no fills, so the field is outlined in the text color, the fill
@@ -215,8 +284,7 @@
     outline: 1px solid CanvasText;
     outline-offset: -1px;
   }
-  .env-slider-indicator,
-  .env-slider-indicator::before {
+  .env-slider-indicator {
     forced-color-adjust: none;
     background: none;
     box-shadow: inset 0 -4px Highlight;
@@ -225,8 +293,7 @@
     forced-color-adjust: none;
     background-color: CanvasText;
   }
-  .env-slider[data-disabled] .env-slider-indicator,
-  .env-slider[data-disabled] .env-slider-indicator::before {
+  .env-slider[data-disabled] .env-slider-indicator {
     box-shadow: inset 0 -4px GrayText;
   }
 }

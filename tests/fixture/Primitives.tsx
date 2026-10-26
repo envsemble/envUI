@@ -76,6 +76,10 @@ function ToolbarSample() {
           <Toolbar.Button icon={<FormatUnderlined />} label="Strike through" />
         </Toolbar.Group>
       </Toolbar.Root>
+      <Toolbar.Root aria-label="Instant names" tooltipDelay={0}>
+        <Toolbar.Button icon={<FormatBold />} label="Instant button" />
+        <Toolbar.Link href="#help" icon={<Help />} label="Instant link" />
+      </Toolbar.Root>
       <button type="button" onClick={() => setBusy((current) => !current)}>
         Toggle busy
       </button>

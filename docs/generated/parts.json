@@ -1553,6 +1553,18 @@
           "description": "The command palette's dialog."
         },
         {
+          "class": "env-command-palette-empty-description",
+          "description": "The empty state's quieter text under its title."
+        },
+        {
+          "class": "env-command-palette-empty-icon",
+          "description": "The empty state's icon on its circle."
+        },
+        {
+          "class": "env-command-palette-empty-title",
+          "description": "The empty state's title."
+        },
+        {
           "class": "env-command-palette-footer",
           "description": "The footer with the keyboard hints."
         },
@@ -1594,7 +1606,7 @@
         },
         {
           "class": "env-command-palette-status",
-          "description": "The message when nothing matches, and its announcement."
+          "description": "The empty state in place of the list, and the announcement of the number of results."
         }
       ],
       "states": [
@@ -1776,7 +1788,7 @@
         },
         {
           "class": "env-date-picker-actions",
-          "description": "The row of actions under the calendar."
+          "description": "The row of actions under the calendar, the picker card's footer."
         },
         {
           "class": "env-date-picker-actions-end",
@@ -1816,7 +1828,7 @@
         },
         {
           "class": "env-date-picker-popup",
-          "description": "The popup with the calendar."
+          "description": "The picker card with the calendar, also on TimePicker and MonthPicker."
         },
         {
           "class": "env-date-picker-time",
@@ -1876,6 +1888,7 @@
         "Field",
         "Icon",
         "IconButton",
+        "PickerPopup",
         "Popup",
         "Skeleton",
         "TextField",
@@ -2219,6 +2232,22 @@
           "description": "The navigation drawer: a nav landmark, a column with the header, the list and the footer."
         },
         {
+          "class": "env-drawer-branch",
+          "description": "A section: a destination with destinations nested under it, which open and close below it."
+        },
+        {
+          "class": "env-drawer-branch-row",
+          "description": "A section's row: the destination's link or button, with the section's button over its end."
+        },
+        {
+          "class": "env-drawer-chevron",
+          "description": "A section's chevron, which points down, and up while the section is open."
+        },
+        {
+          "class": "env-drawer-children",
+          "description": "The list of a section's nested destinations, indented, hidden until found while closed."
+        },
+        {
           "class": "env-drawer-count",
           "description": "A destination's count, at the item's end; 999+ above 999."
         },
@@ -2253,6 +2282,10 @@
         {
           "class": "env-drawer-section",
           "description": "A group: its heading and the list of its destinations."
+        },
+        {
+          "class": "env-drawer-toggle",
+          "description": "The button at the end of a section's link that opens and closes the section."
         }
       ],
       "states": [
@@ -2273,6 +2306,13 @@
           ]
         },
         {
+          "attribute": "data-ending-style",
+          "values": [],
+          "parts": [
+            "env-drawer-children"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
           "parts": [
@@ -2286,6 +2326,13 @@
           ],
           "parts": [
             "env-drawer"
+          ]
+        },
+        {
+          "attribute": "data-starting-style",
+          "values": [],
+          "parts": [
+            "env-drawer-children"
           ]
         }
       ],
@@ -3173,6 +3220,7 @@
         "Field",
         "Icon",
         "IconButton",
+        "PickerPopup",
         "Popup",
         "Skeleton",
         "TextField",
@@ -4960,6 +5008,43 @@
         "Skeleton"
       ]
     },
+    "TableOfContents": {
+      "root": "env-table-of-contents",
+      "source": "packages/ui/src/navigation/TableOfContents.tsx",
+      "parts": [
+        {
+          "class": "env-table-of-contents",
+          "description": "The navigation of the page's sections."
+        },
+        {
+          "class": "env-table-of-contents-body",
+          "description": "Around the list."
+        },
+        {
+          "class": "env-table-of-contents-item",
+          "description": "One section, with the sections nested in it."
+        },
+        {
+          "class": "env-table-of-contents-link",
+          "description": "A section's link, its dot drawn before it."
+        },
+        {
+          "class": "env-table-of-contents-list",
+          "description": "A level of sections."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-passed",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-table-of-contents-link"
+          ]
+        }
+      ]
+    },
     "Tabs": {
       "root": "env-tabs",
       "source": "packages/ui/src/navigation/Tabs.tsx",
@@ -5390,6 +5475,7 @@
         "Field",
         "Icon",
         "IconButton",
+        "PickerPopup",
         "Popup",
         "Skeleton",
         "TextField",
@@ -6029,6 +6115,33 @@
       ],
       "usedBy": [
         "TopBar"
+      ]
+    },
+    "PickerPopup": {
+      "root": "env-picker-popup",
+      "parts": [
+        {
+          "class": "env-picker-popup",
+          "description": "The card DatePicker, TimePicker and MonthPicker open."
+        },
+        {
+          "class": "env-picker-popup-body",
+          "description": "The picker's content: a calendar, a time's wheels or a year of months."
+        },
+        {
+          "class": "env-picker-popup-footer",
+          "description": "The row of actions under the body."
+        },
+        {
+          "class": "env-picker-popup-footer-end",
+          "description": "The actions at the end of that row, such as Clear."
+        }
+      ],
+      "states": [],
+      "usedBy": [
+        "DatePicker",
+        "MonthPicker",
+        "TimePicker"
       ]
     },
     "Popup": {

@@ -3,7 +3,9 @@
 // so Markdown cannot be a server component even without its own useMemo.
 
 import {
+  createContext,
   createElement,
+  useContext,
   useMemo,
   type ComponentPropsWithRef,
   type ComponentPropsWithoutRef,
@@ -152,6 +154,95 @@ type TableProps = ComponentPropsWithoutRef<'table'> & {
   'data-env-table-name'?: unknown;
 };
 
+/** What the elements of one Markdown render take from its props. */
+interface MarkdownOptions {
+  headingOffset: number;
+  renderLink: MarkdownProps['renderLink'];
+  codeCopyable: boolean;
+  messages: MarkdownMessages;
+}
+
+const MarkdownOptionsContext = createContext<MarkdownOptions | null>(null);
+
+function useMarkdownOptions(): MarkdownOptions {
+  const options = useContext(MarkdownOptionsContext);
+  if (!options) throw new Error('A Markdown element rendered outside Markdown.');
+  return options;
+}
+
+/**
+ * envUI's elements for Markdown, each one component for good: they read the props they depend on,
+ * such as `renderLink`, from the Markdown around them, so a new `renderLink` on every render, as an
+ * inline function is, renders the same elements again rather than building every one anew.
+ */
+function heading(level: 1 | 2 | 3 | 4 | 5 | 6): NonNullable<Components['h1']> {
+  return function MarkdownHeading({ node: _node, ...headingProps }) {
+    const { headingOffset } = useMarkdownOptions();
+    return createElement(`h${Math.min(6, level + headingOffset)}`, headingProps);
+  };
+}
+
+const elements: Components = {
+  h1: heading(1),
+  h2: heading(2),
+  h3: heading(3),
+  h4: heading(4),
+  h5: heading(5),
+  h6: heading(6),
+  a: function MarkdownLink({ node: _node, href, ...linkProps }) {
+    const { renderLink } = useMarkdownOptions();
+    if (!href) return <span>{linkProps.children}</span>;
+    return renderLink ? renderLink({ ...linkProps, href }) : <Link {...linkProps} href={href} />;
+  },
+  code: ({ node: _node, ...codeProps }) => <Code {...codeProps} />,
+  kbd: ({ node: _node, ...keyProps }) => <Kbd {...keyProps} />,
+  pre: function MarkdownCodeBlock({ node, children: preChildren }) {
+    const { codeCopyable } = useMarkdownOptions();
+    const code = node?.children.find(
+      (child) => child.type === 'element' && child.tagName === 'code',
+    );
+    if (!code || code.type !== 'element') return <pre>{preChildren}</pre>;
+    const source = code.children
+      .map((child) => (child.type === 'text' ? child.value : ''))
+      .join('');
+    const language = String(code.properties.className ?? '').match(/language-([^,\s]+)/)?.[1];
+    return (
+      <CodeBlock language={language} copyable={codeCopyable}>
+        {source}
+      </CodeBlock>
+    );
+  },
+  table: function MarkdownTable({
+    node: _node,
+    'data-env-table-name': name,
+    ...tableProps
+  }: TableProps) {
+    const { messages } = useMarkdownOptions();
+    return (
+      <div
+        className="env-markdown-table"
+        tabIndex={0}
+        role="region"
+        aria-label={typeof name === 'string' ? name : messages.table}
+      >
+        <table {...tableProps} />
+      </div>
+    );
+  },
+  input: function MarkdownTask({ checked }) {
+    const { messages } = useMarkdownOptions();
+    return (
+      <Checkbox
+        checked={Boolean(checked)}
+        disabled
+        aria-label={checked ? messages.taskDone : messages.taskOpen}
+      />
+    );
+  },
+  img: ({ node: _node, src, ...imageProps }) =>
+    src ? <img {...imageProps} src={src} loading="lazy" /> : <span>{imageProps.alt}</span>,
+};
+
 /**
  * CommonMark prose with tables, task lists and other extensions, in envUI typography and code. The
  * names of its table regions and task checkboxes come from EnvUIProvider's messages.markdown.
@@ -168,65 +259,13 @@ export function Markdown({
   ...props
 }: MarkdownProps) {
   const messages = useMessages('markdown', markdownMessages);
-  const components = useMemo<Components>(() => {
-    const headings: Components = {};
-    for (const level of [1, 2, 3, 4, 5, 6] as const) {
-      headings[`h${level}`] = ({ node: _node, ...headingProps }) =>
-        createElement(`h${Math.min(6, level + headingOffset)}`, headingProps);
-    }
-    return {
-      ...headings,
-      a: ({ node: _node, href, ...linkProps }) =>
-        href ? (
-          renderLink ? (
-            renderLink({ ...linkProps, href })
-          ) : (
-            <Link {...linkProps} href={href} />
-          )
-        ) : (
-          <span>{linkProps.children}</span>
-        ),
-      code: ({ node: _node, ...codeProps }) => <Code {...codeProps} />,
-      kbd: ({ node: _node, ...keyProps }) => <Kbd {...keyProps} />,
-      pre: ({ node, children: preChildren }) => {
-        const code = node?.children.find(
-          (child) => child.type === 'element' && child.tagName === 'code',
-        );
-        if (!code || code.type !== 'element') return <pre>{preChildren}</pre>;
-        const source = code.children
-          .map((child) => (child.type === 'text' ? child.value : ''))
-          .join('');
-        const language = String(code.properties.className ?? '').match(/language-([^,\s]+)/)?.[1];
-        return (
-          <CodeBlock language={language} copyable={codeCopyable}>
-            {source}
-          </CodeBlock>
-        );
-      },
-      table: ({ node: _node, 'data-env-table-name': name, ...tableProps }: TableProps) => (
-        <div
-          className="env-markdown-table"
-          tabIndex={0}
-          role="region"
-          aria-label={typeof name === 'string' ? name : messages.table}
-        >
-          <table {...tableProps} />
-        </div>
-      ),
-      input: ({ checked }) => (
-        <Checkbox
-          checked={Boolean(checked)}
-          disabled
-          aria-label={checked ? messages.taskDone : messages.taskOpen}
-        />
-      ),
-      img: ({ node: _node, src, ...imageProps }) =>
-        src ? <img {...imageProps} src={src} loading="lazy" /> : <span>{imageProps.alt}</span>,
-    };
-  }, [headingOffset, renderLink, codeCopyable, messages]);
+  const options = useMemo<MarkdownOptions>(
+    () => ({ headingOffset, renderLink, codeCopyable, messages }),
+    [headingOffset, renderLink, codeCopyable, messages],
+  );
   const mergedComponents = useMemo(
-    () => (componentOverrides ? { ...components, ...componentOverrides } : components),
-    [components, componentOverrides],
+    () => (componentOverrides ? { ...elements, ...componentOverrides } : elements),
+    [componentOverrides],
   );
   const mergedRehypePlugins = useMemo(
     () => [rehypeTableNames(messages), ...(rehypePlugins ?? [])],
@@ -238,14 +277,16 @@ export function Markdown({
   );
   return (
     <div {...props} className={classNames('env-markdown', 'env-prose', className)}>
-      <ReactMarkdown
-        remarkPlugins={mergedRemarkPlugins}
-        rehypePlugins={mergedRehypePlugins}
-        components={mergedComponents}
-        skipHtml
-      >
-        {children}
-      </ReactMarkdown>
+      <MarkdownOptionsContext.Provider value={options}>
+        <ReactMarkdown
+          remarkPlugins={mergedRemarkPlugins}
+          rehypePlugins={mergedRehypePlugins}
+          components={mergedComponents}
+          skipHtml
+        >
+          {children}
+        </ReactMarkdown>
+      </MarkdownOptionsContext.Provider>
     </div>
   );
 }

@@ -50,7 +50,7 @@ export default {
 
 ### Part classes
 
-envUI's part classes (`env-<component>-<part>`, such as `.env-card-title`) and state attributes (`data-*`, such as `[data-selected]`) are public and versioned: an application may select them to adjust a component, and a release that renames or removes one is a major release. The manifest lists them per component. Component tokens, the custom properties a component declares for itself such as `--env-card-padding`, are private and may change in any release; set the system tokens instead. The config reports nothing about either.
+envUI's part classes (`env-<component>-<part>`, such as `.env-card-title`) and state attributes (`data-*`, such as `[data-selected]`) are public and versioned: an application may select them to adjust a component, and a release that renames or removes one is a major release. The package's `docs/generated/parts.json` lists them per component. Component tokens, the custom properties a component declares for itself such as `--env-card-padding`, are private and may change in any release; set the system tokens instead. The config reports nothing about either.
 
 ### Raw colors
 

@@ -28,25 +28,26 @@ avoidWhen:
 components:
   - Panes
   - readPanesSize
+examples:
+  SupportingPane:
+    role: overview
+    caption: A main pane and a supporting one.
+  ListAndDetail:
+    role: overview
+    caption: A list and its detail.
+  ResizableDetails: example
+  PanesAnatomy: anatomy
+  SupportingByWidth: example
+  ListDetailByWidth: example
+  DetailsButton:
+    role: do
+    caption: A button in the main pane that opens the details where there is no room.
+  NoWayToDetails:
+    role: dont
+    caption: 'No button: in less room, the details can’t be reached.'
 ---
 
 # Panes
-
-## Overview
-
-Panes never paints. Each pane scrolls on its own where the panes have a height, as in a [Scaffold](scaffold.md) whose body scrolls; where the page scrolls, the panes scroll with it.
-
-### A main pane and a supporting one
-
-```tsx example=SupportingPane
-
-```
-
-### A list and its detail
-
-```tsx example=ListAndDetail
-
-```
 
 ## Variants
 
@@ -64,31 +65,13 @@ The panes sit side by side once they are as wide as a medium, an expanded or a l
 
 People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys.
 
-```tsx example=ResizableDetails widths="44"
+```tsx figure=ResizableDetails widths="44"
 
 ```
-
-## When to use
-
-```tsx do=DetailsButton caption="A button in the main pane that opens the details where there is no room."
-
-```
-
-```tsx dont=NoWayToDetails caption="No button: in less room, the details can't be reached."
-
-```
-
-### Between two surfaces
-
-A resizable gap goes between two surfaces, one in each pane. Beside content that floats on the page, such as a list beside bare text, its grip hangs in empty space with nothing to say what it resizes, so leave it out where the panes have no surfaces.
-
-### Navigation and nesting
-
-The application's navigation goes in the [Scaffold](scaffold.md), not in a supporting pane, and the next level shows in the detail rather than in panes inside a pane.
 
 ## Anatomy
 
-```tsx anatomy=PanesAnatomy
+```tsx figure=PanesAnatomy width="38"
 
 ```
 
@@ -99,21 +82,53 @@ The application's navigation goes in the [Scaffold](scaffold.md), not in a suppo
 
 Not shown: the main and supporting panes, the supporting sheet's close button and scrim, the button that opens it, and the detail's back button.
 
-## Adapting to width
+## Behaviour
 
-The panes decide how they sit from their own width alone, before anything runs. A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens; press Details to open it.
+### Scrolling
 
-```tsx example=SupportingByWidth widths="24 44 60"
+Panes never paints, and each pane scrolls on its own where the panes have a height, as in a [Scaffold](scaffold.md) whose body scrolls.
+
+- Where the page scrolls, the panes scroll with it.
+
+### Adapting to width
+
+The panes decide how they sit from their own width alone, before anything runs.
+
+- A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens; press Details to open it.
+- In less room a list and its detail show one at a time: choose a message, and a back button named after the list, here Inbox, returns to it.
+
+```tsx figure=SupportingByWidth widths="24 44 60"
 
 ```
 
-### A list and its detail by width
-
-In less room the list and its detail show one at a time: choose a message, and a back button named after the list, here Inbox, returns to it.
-
-```tsx example=ListDetailByWidth widths="24 60"
+```tsx figure=ListDetailByWidth widths="24 60"
 
 ```
+
+## Rules
+
+Whatever the room, people can reach both panes.
+
+```tsx figure=DetailsButton
+
+```
+
+```tsx figure=NoWayToDetails
+
+```
+
+### Between two surfaces
+
+A resizable gap goes between two surfaces, one in each pane.
+
+- Beside content that floats on the page, such as a list beside bare text, its grip hangs in empty space with nothing to say what it resizes.
+- So leave it out where the panes have no surfaces.
+
+### Navigation and nesting
+
+The application's navigation goes in the [Scaffold](scaffold.md), not in a supporting pane.
+
+- The next level shows in the detail rather than in panes inside a pane.
 
 ## Accessibility
 
@@ -141,11 +156,15 @@ In less room the list and its detail show one at a time: choose a message, and a
 - `open`, and `aria-current` on the list's current row.
 - A Panes.Trigger, or a button of your own, that opens the supporting pane in less room.
 
-## In code
+## Compose
 
 ### Usage
 
-Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supporting, such as a document and its details, and `list-detail` holds Panes.List and Panes.Detail, such as messages and the one chosen, each pair with an optional Panes.Divider between them. Below `splitAt`, the supporting pane is a modal sheet over the main one while `open`, and a list-detail shows the detail instead of the list while `open`. The application keeps `open`, setting it as an item is chosen or the sheet's button is pressed, and `onOpenChange` receives `false` as people close it: <kbd>Esc</kbd>, the close button or a press on the scrim close the sheet, and the back button returns to the list.
+Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supporting, such as a document and its details, and `list-detail` holds Panes.List and Panes.Detail, such as messages and the one chosen, each pair with an optional Panes.Divider between them.
+
+- Below `splitAt`, the supporting pane is a modal sheet over the main one while `open`, and a list-detail shows the detail instead of the list while `open`.
+- The application keeps `open`, setting it as an item is chosen or the sheet's button is pressed.
+- `onOpenChange` receives `false` as people close it: <kbd>Esc</kbd>, the close button or a press on the scrim close the sheet, and the back button returns to the list.
 
 ```tsx source=SupportingPane
 
@@ -153,10 +172,26 @@ Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supportin
 
 #### Names and buttons
 
-Panes.Supporting and Panes.List take a `label`, which names their region; on Panes.Main and Panes.Detail it is optional, and makes the pane a region landmark, for the panes of a page's main layout. Panes.Trigger is a Button, `primary` by default, that opens the supporting sheet and hides while the panes sit side by side. `closeLabel` names the sheet's close button, Close by default, and `backLabel` the back button, Back by default, from EnvUIProvider's `messages.panes`; name where it goes, such as Inbox. Set `aria-current` on the list's current row.
+Panes.Supporting and Panes.List take a `label`, which names their region; on Panes.Main and Panes.Detail it is optional, and makes the pane a region landmark, for the panes of a page's main layout.
 
-```tsx source=ListAndDetail
+- Panes.Trigger is a Button, `primary` by default, that opens the supporting sheet and hides while the panes sit side by side.
+- `closeLabel` names the sheet's close button, Close by default, and `backLabel` the back button, Back by default, from EnvUIProvider's `messages.panes`; name where it goes, such as Inbox.
+- Set `aria-current` on the list's current row.
 
+```tsx
+<Panes.Root behavior="list-detail" open={open} onOpenChange={setOpen} backLabel="Inbox">
+  <Panes.List label="Inbox">
+    <Surface padding={2} style={{ minBlockSize: '100%' }}>
+      <List.Root aria-label="Messages">…</List.Root>
+    </Surface>
+  </Panes.List>
+  <Panes.Divider label="Resize the inbox" />
+  <Panes.Detail label={chosen.subject}>
+    <Surface padding={4} style={{ minBlockSize: '100%' }}>
+      …
+    </Surface>
+  </Panes.Detail>
+</Panes.Root>
 ```
 
 #### Side by side
@@ -165,12 +200,28 @@ Panes.Supporting and Panes.List take a `label`, which names their region; on Pan
 
 #### Resizable
 
-Panes.Divider, named by its `label`, Resize panes by default, resizes the supporting pane or the list, by pointer and the arrow keys; a double click returns it to `defaultSize`, 22.5 rem by default. It stays between `minSize` and `maxSize`, 16 and 40 rem by default, and never leaves the other pane less than 16 rem. The arrow keys move it 1 rem, 5 rem with <kbd>Shift</kbd>, and <kbd>Page Up</kbd> and <kbd>Page Down</kbd> 5 rem. `size` and `onSizeChange`, which receives each width in rem and `committed` once a drag ends or a key moves it, let the application control it. The divider is the gap between two surfaces: give each pane a Surface as tall as the pane, with `min-block-size: 100%`, and where the detail shows alone, its surface fills the room below the back button. Panes keeps the same gap without a divider.
+Panes.Divider, named by its `label`, Resize panes by default, resizes the supporting pane or the list, by pointer and the arrow keys; a double click returns it to `defaultSize`, 22.5 rem by default.
+
+- It stays between `minSize` and `maxSize`, 16 and 40 rem by default, and never leaves the other pane less than 16 rem.
+- The arrow keys move it 1 rem, 5 rem with <kbd>Shift</kbd>, and <kbd>Page Up</kbd> and <kbd>Page Down</kbd> 5 rem.
+- `size` and `onSizeChange`, which receives each width in rem and `committed` once a drag ends or a key moves it, let the application control it.
+- The divider is the gap between two surfaces: give each pane a Surface as tall as the pane, with `min-block-size: 100%`, and where the detail shows alone, its surface fills the room below the back button.
+- Panes keeps the same gap without a divider.
 
 `persist` keeps the width people choose in a cookie of that name. Read it on the server with `readPanesSize(cookieHeader, key)` and pass it as `persistedSize`, so nothing moves as the page hydrates.
 
-```tsx source=ResizableDetails
-
+```tsx
+<Panes.Root
+  behavior="supporting"
+  defaultSize={18}
+  minSize={14}
+  maxSize={28}
+  persist="details-width"
+>
+  <Panes.Main label="Canvas">…</Panes.Main>
+  <Panes.Divider label="Resize details" />
+  <Panes.Supporting label="Canvas details">…</Panes.Supporting>
+</Panes.Root>
 ```
 
 ### Composition

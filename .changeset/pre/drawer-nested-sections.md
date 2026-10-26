@@ -1,0 +1,5 @@
+---
+'@envsemble/envui': minor
+---
+
+Drawer nests destinations in sections that open and close, such as a documentation site's pages: a destination's `children` show under it, indented, with a chevron that flips as Select's does, and the sections that hold the current destination open as it becomes current. A section with `href` or `onSelect` is a link or button with a button at its end, named with the new `messages.navigation.contents`, such as Projects contents; one with neither is only its heading, a button. Each section's button reports `aria-expanded`, and a closed section keeps its links in the page, hidden until found, so search engines follow them and find in page opens it; the expand animation stops under reduced motion. `expanded`, `defaultExpanded` and `onExpandedChange` keep the open sections, named by `href` or label. Rail and Bar show the top level, where a destination whose `children` hold the current one takes the current fill and reports `aria-current="true"`. The new parts are `env-drawer-branch`, `env-drawer-branch-row`, `env-drawer-toggle`, `env-drawer-chevron` and `env-drawer-children`.

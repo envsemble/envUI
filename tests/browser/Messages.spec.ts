@@ -104,10 +104,10 @@ test('no English default is left under a provider that sets every message', asyn
     '⟦scaffold.skipToNavigation⟧',
   ])
     expect(found).toContain(marked);
-  // CommandPalette says that nothing matches through its status.
+  // CommandPalette invites a search through its status before people type.
   await root.getByRole('button', { name: 'Open palette' }).click();
   await expect(page.getByRole('dialog', { name: 'Go to' }).getByRole('status')).toHaveText(
-    '⟦commandPalette.empty⟧',
+    '⟦commandPalette.emptyQuery⟧',
   );
 });
 

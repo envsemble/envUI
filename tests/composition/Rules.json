@@ -96,6 +96,7 @@
       "forms/TimePicker.tsx": "composites",
       "forms/MonthPicker.tsx": "composites",
       "forms/internal/PickerField.tsx": "composites",
+      "forms/internal/PickerPopup.tsx": "base",
       "forms/internal/MonthGrid.tsx": "composites",
       "forms/DropZone.tsx": "composites",
       "forms/Field.tsx": "base",
@@ -119,6 +120,7 @@
       "navigation/Rail.tsx": "base",
       "navigation/Pager.tsx": "base",
       "navigation/Pagination.tsx": "composites",
+      "navigation/TableOfContents.tsx": "base",
       "navigation/Tabs.tsx": "composites",
       "navigation/TopBar.tsx": "composites",
       "navigation/Tree.tsx": "composites",
@@ -177,7 +179,7 @@
       "color/internal/ColorFields.tsx": ["input"],
       "color/internal/ColorSlider.tsx": ["input"],
       "color/internal/SwatchList.tsx": ["role=\"listbox\"", "role=\"option\""],
-      "dev/ui/FrameHandle.tsx": ["role=\"slider\""],
+      "dev/ui/Frame.tsx": ["role=\"slider\""],
       "feedback/Tooltip.tsx": [
         "role=\"button\"",
         "role=\"link\"",
@@ -219,9 +221,14 @@
           "dev/queries.ts",
           "dev/readout.ts",
           "dev/ui/DevMode.tsx",
-          "dev/ui/FrameHandle.tsx",
+          "dev/ui/Frame.tsx",
           "dev/ui/Inspector.tsx",
+          "dev/ui/Legend.tsx",
+          "dev/ui/NodeHints.tsx",
+          "dev/ui/PerformancePanel.tsx",
+          "dev/ui/Plane.tsx",
           "dev/ui/View3D.tsx",
+          "dev/ui/ViewToolbar.tsx",
           "dev/ui/styles.ts",
           "dev/ui/surfaces.ts",
           "dev/ui/useLivePage.ts",
@@ -400,6 +407,7 @@
       "DatePicker": {
         "modules": [
           "forms/internal/PickerField.tsx",
+          "forms/internal/PickerPopup.tsx",
           "forms/internal/TimeList.tsx",
           "forms/internal/MonthGrid.tsx",
           "forms/TimePicker.tsx",
@@ -477,10 +485,10 @@
           "note": "Under a coarse pointer a field's end actions keep their size, and an empty pseudo-element reaches their hit area to the touch height within the field."
         },
         {
-          "stylesheet": "DatePicker.css",
+          "stylesheet": "PickerPopup.css",
           "classes": ["env-button"],
           "properties": ["white-space", "overflow-wrap"],
-          "note": "The actions under a date, month or time popup, such as Today, Now and Clear, keep their labels on one line, so a row too narrow for them wraps whole buttons rather than the words inside one."
+          "note": "The actions in the picker card's footer under a date, month or time, such as Today, Now and Clear, keep their labels on one line, so a row too narrow for them wraps whole buttons rather than the words inside one."
         },
         {
           "stylesheet": "Code.css",

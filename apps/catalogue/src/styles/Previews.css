@@ -8,9 +8,10 @@
   margin: 0 0 var(--env-space-9);
   min-width: 0;
 }
-/* Sections share the frame; only their actual specimens need a size limit. */
+/* Sections share the frame; only their actual specimens need a size limit, and running text its
+   measure, which it sets as --docs-measure (SiteText.css). */
 .docs-example > :not(h2):not(.docs-caption) {
-  max-inline-size: min(100%, var(--docs-example-width));
+  max-inline-size: min(100%, var(--docs-example-width), var(--docs-measure, 100%));
 }
 .docs-example[data-size='compact'] {
   --docs-example-width: 18rem;
@@ -59,8 +60,8 @@
   inline-size: fit-content;
   min-block-size: var(--env-control-height);
 }
-.docs-example p {
-  max-width: 65ch;
+:where(.docs-example) p {
+  max-inline-size: 65ch;
 }
 .docs-matrix-scroll {
   overflow-x: auto;

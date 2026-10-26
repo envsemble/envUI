@@ -31,35 +31,30 @@ avoidWhen:
     use: DatePicker
 components:
   - Select
+examples:
+  ProjectVisibility:
+    role: overview
+    caption: Typing an option's label in the open list jumps to it.
+  TriggerStyles: variants
+  SmallToolbar:
+    role: example
+    caption: A small select beside small buttons in a toolbar.
+  SelectAnatomy: anatomy
+  SelectListAnatomy: anatomy
+  SettingRows: example
+  SensibleDefault:
+    role: do
+    caption: A default where one option suits most people.
+  NeedlessPlaceholder:
+    role: dont
+    caption: A placeholder that makes everyone choose what most would pick.
 ---
 
 # Select
 
-## Overview
-
-Typing an option's label in the open list jumps to it.
-
-```tsx example=ProjectVisibility
-
-```
-
-### States
-
-While nothing is chosen, the trigger shows a placeholder. People can't clear a choice, only make another.
-
-<!-- specimen: States -->
-
-### In list rows
-
-A row's title names the select in it, so the select shows no label of its own.
-
-```tsx example=SettingRows
-
-```
-
 ## Variants
 
-```tsx variants=TriggerStyles
+```tsx figure=TriggerStyles
 
 ```
 
@@ -73,31 +68,15 @@ A row's title names the select in it, so the select shows no label of its own.
 
 ### Sizes
 
-```tsx example=SmallToolbar caption="A small select beside small buttons in a toolbar."
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). Without a size of its own the select takes its container's, so it lines up with the buttons beside it.
+
+```tsx figure=SmallToolbar
 
 ```
-
-## When to use
-
-```tsx do=SensibleDefault caption="A default where one option suits most people."
-
-```
-
-```tsx dont=NeedlessPlaceholder caption="A placeholder that makes everyone choose what most would pick."
-
-```
-
-### Order
-
-Order options naturally, such as by frequency, or alphabetically where there is no order.
-
-### Choosing does nothing else
-
-Choosing an option sets a value: it never moves to another page or runs a destructive action.
 
 ## Anatomy
 
-```tsx anatomy=SelectAnatomy
+```tsx figure=SelectAnatomy
 
 ```
 
@@ -108,13 +87,52 @@ Choosing an option sets a value: it never moves to another page or runs a destru
 5. **Chevron** (`env-select-icon`)
 6. **Description** (`env-field-description`, `description`)
 
-```tsx anatomy=SelectListAnatomy open
+```tsx figure=SelectListAnatomy open
 
 ```
 
 1. **List** (`env-select-popup`)
 2. **Option** (`env-select-item`, `items`)
 3. **Check** (`env-select-item-indicator`)
+
+## Behaviour
+
+### States
+
+While nothing is chosen, the trigger shows a placeholder.
+
+- People can't clear a choice, only make another.
+- An option can be unavailable, so it can't be chosen.
+
+<!-- specimen: States -->
+
+### In list rows
+
+A row's title names the select in it, so the select shows no label of its own.
+
+```tsx figure=SettingRows
+
+```
+
+## Rules
+
+Start on the option most people want, and let choosing do nothing but set the value.
+
+```tsx figure=SensibleDefault
+
+```
+
+```tsx figure=NeedlessPlaceholder
+
+```
+
+### Order
+
+Order options naturally, such as by frequency, or alphabetically where there is no order.
+
+### Choosing does nothing else
+
+Choosing an option sets a value: it never moves to another page or runs a destructive action.
 
 ## Accessibility
 
@@ -142,87 +160,52 @@ Choosing an option sets a value: it never moves to another page or runs a destru
 - A `name` for a select in a form.
 - Validation and the `error` message.
 
-## In code
+## Compose
 
 ### Usage
 
-Select takes its options as `items`, each with a `value`, a `label` and `disabled` where it can't be chosen. Control it with `value` and `onValueChange`, or leave it uncontrolled with `defaultValue`; with neither, nothing is chosen and the trigger shows `placeholder`. People can't clear a choice, only make another. `label`, `description` and `error` work as on TextField.
-
-```tsx source=ProjectVisibility
-
+```tsx
+<Select
+  label="Visibility"
+  items={[
+    { value: 'team', label: 'Team' },
+    { value: 'private', label: 'Private' },
+    { value: 'public', label: 'Public', disabled: true },
+  ]}
+  value={visibility}
+  onValueChange={setVisibility}
+/>
 ```
+
+Each item has a `value`, a `label` and `disabled` where it can't be chosen. Control it with `value` and `onValueChange`, or leave it uncontrolled with `defaultValue`; with neither, nothing is chosen and the trigger shows `placeholder`. `label`, `description` and `error` work as on TextField.
 
 #### In a form
 
-With `name`, a hidden input submits the chosen value, and a form reset restores `defaultValue`. `required` makes the browser refuse the form while nothing is chosen and move focus to the trigger, and `autoComplete` gives the browser's autofill a hint, such as `country`.
-
 ```tsx
-import { useState } from 'react';
-import { Button, Select, Column, Surface, Text, TextField } from '@envsemble/envui';
-
-const roleOptions = [
-  { value: 'viewer', label: 'Viewer' },
-  { value: 'editor', label: 'Editor' },
-  { value: 'admin', label: 'Admin' },
-];
-
-export default function InviteMember() {
-  const [invited, setInvited] = useState('');
-  return (
-    // As wide as a form column.
-    <Surface padding={5} style={{ inlineSize: 'min(100%, 28rem)' }}>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          const data = new FormData(event.currentTarget);
-          const role = roleOptions.find((option) => option.value === data.get('role'));
-          setInvited(`Invited ${String(data.get('email'))} as ${role?.label ?? 'a member'}.`);
-        }}
-      >
-        <Column gap={5}>
-          <TextField label="E-mail address" name="email" type="email" required />
-          <Select
-            variant="outline"
-            label="Role"
-            name="role"
-            description="Admins also manage members and billing."
-            items={roleOptions}
-            defaultValue="editor"
-          />
-          <Column gap={3} align="start">
-            <Button type="submit">Send invitation</Button>
-            <Text role="status">{invited}</Text>
-          </Column>
-        </Column>
-      </form>
-    </Surface>
-  );
-}
+<form onSubmit={invite}>
+  <TextField label="E-mail address" name="email" type="email" required />
+  <Select label="Role" name="role" items={roleOptions} defaultValue="editor" />
+  <Button type="submit">Send invitation</Button>
+</form>
 ```
+
+With `name`, a hidden input submits the chosen value, and a form reset restores `defaultValue`. `required` makes the browser refuse the form while nothing is chosen and move focus to the trigger, and `autoComplete` gives the browser's autofill a hint, such as `country`.
 
 #### In list rows
 
 Where a row's title names the select, give the select that name as its `aria-label`, and the `outline` variant.
 
-```tsx source=SettingRows
-
-```
-
 #### Variants and sizes
 
-`variant` is the trigger's Button variant: `secondary`, a filled pill and the default, for the page, or `outline`, a bordered pill, for panes, dialogs, rows and toolbars. `size` is `sm`, `md` or `lg`; without it, the trigger takes its container's control height, so it lines up with the buttons beside it.
-
-```tsx source=SmallToolbar
-
-```
+`variant` is the trigger's Button variant: `secondary`, a filled pill and the default, or `outline`, a bordered pill. `size` is `sm`, `md` or `lg`; without it, the trigger takes its container's control height.
 
 ### Composition
 
-The field is `env-field` with `env-select`: its label, `env-select-label`, the trigger, `env-select-trigger`, a Button that shows the value and the chevron, `env-select-icon`, then the description and the error. The open list is the shared popup, `env-select-popup`, with its list, `env-select-list`, and its options are its rows, `env-select-item`, with the check, `env-select-item-indicator`. `className` and `style` reach the field's root, and `ref` the trigger; `defaultOpen` opens the list on the first render.
+The field is `env-field` with `env-select`; the trigger is a Button. The open list is the shared popup, with its list, `env-select-list`, and its options are the popup's rows. `className` and `style` reach the field's root, and `ref` the trigger; `defaultOpen` opens the list on the first render.
 
 ### Customize
 
-`--env-select-container`, `--env-select-content` and `--env-select-outline` set the colors of one Select, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+`--env-select-container`, `--env-select-content` and `--env-select-outline` color one Select, through `style` or CSS; hover, focus and press follow them.
 
 ## Changelog
 

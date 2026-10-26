@@ -19,7 +19,7 @@ export const buttonVariants = [
   { variant: 'text', tone: 'danger', label: 'Leave', icon: Close },
 ] as const;
 
-/** A value in words, as the Site names it: capitalised. */
+/** A value in words, as the catalogue names it: capitalised. */
 const inWords = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
 /** The name of a pair, as the matrix's rows show it: the variant, and the tone unless neutral. */

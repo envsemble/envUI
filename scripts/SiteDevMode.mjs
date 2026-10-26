@@ -1,7 +1,8 @@
-// The hosted catalogue loads envUI's dev mode, `@envsemble/envui/dev`, on the dev mode page only:
+// The hosted site loads envUI's dev mode, `@envsemble/envui/dev`, on the Docs' dev mode page only:
 // that page's demo (apps/catalogue/src/demos/dev-mode/DevModeDemo.tsx) imports it lazily, and no
-// other page's files hold any of it. FinalizeSite.mjs checks the build with checkDevModeChunks
-// before it turns Vite's manifest into module-files.json.
+// other file holds any of it, not even the page's pictures of dev mode (DevModePictures.tsx).
+// FinalizeSite.mjs checks the build with checkDevModeChunks before it turns Vite's manifest into
+// module-files.json.
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';

@@ -12,8 +12,8 @@ export interface SearchResult {
   detail: string;
   /** The document id of the page it is on, such as button, or a site page's, such as tokens. */
   page: string;
-  /** The area that shows it: the Site, or the Docs. */
-  area: 'site' | 'docs';
+  /** The part that shows it: the catalogue, or the Docs. */
+  area: 'catalogue' | 'docs';
   /** The page's view it is in, such as props. */
   view?: string;
   /** The id of its element on the page. */

@@ -13,9 +13,21 @@ scripts/ReleaseNotes.mjs reads and checks this file; the full changelog is packa
 - A change, [with a link to its migration](/docs/migration#section).
 -->
 
-## 1.0.0-prerelease.2 — Upcoming
+## 1.0.0-prerelease.4 — 2026-10-25
 
-- The catalogue is two parts: the Site introduces envUI with its components, patterns and foundations, and the Docs, under /docs, are the developer reference, with each component's props, part names and changelog.
+- Every component, pattern and foundation is one page of Markdown, which the catalogue shows to people, the Docs to developers and the package to coding agents; each page lists its contents beside it, and links to its counterpart in the other part.
+- One prompt sets envUI up with a coding agent: `Set up envUI in my app: envui.envsemble.com/SKILL.md`, on the Docs' home, leads it to the setup skill the site hosts.
+- Dev mode opens in a tab of its own, rebuilt on today's envUI, and its guide in the Docs shows it at work.
+- Drawer nests destinations in sections that open and close, and TableOfContents marks the section the reader is in with a wave of dashes.
+- Slider fills from end to end, and stretches like a rubber band when dragged past either end.
+
+### Breaking changes
+
+- The `envui` command, its MCP server, the packaged skills and the agent plugin are gone; [the setup prompt and the `AGENTS.md` pointer replace them](/docs/migration#templates-and-agent-tools).
+
+## 1.0.0-prerelease.3 — 2026-10-25
+
+- The website is two parts: the catalogue introduces envUI with its components, patterns and foundations, and the Docs, under /docs, are the developer reference, with each component's props, part names and changelog.
 - Every component takes public color properties, such as `--env-button-container`, to color one instance, and its hover, focus and press follow the colors you set.
 - ColorPicker is rebuilt on React Aria in its own entry, `@envsemble/envui/color`, compact with hex, RGB and HSL fields, alpha, copy and an eyedropper; the pickers keep their footer actions on one line, and the editors draw their formatting buttons as one Toolbar in groups.
 - A calmer look: Slider is a field, SegmentedControl is connected segments unlike Tabs, fields take the background of what they sit on, the full corner is capped so tall elements become rounded rectangles, and skeletons shimmer.

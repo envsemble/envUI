@@ -85,6 +85,10 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-document-tabs-item:has-text("Active")',
     '.env-document-tabs-item:has-text("Other")',
   ],
+  'the current section of the contents': [
+    '.env-table-of-contents-link[aria-current=location]',
+    '.env-table-of-contents-link:not([aria-current])',
+  ],
   'a filled star': ['.env-rating-star >> nth=0', '.env-rating-star >> nth=4'],
   'a checked menu item': ['[role=menuitemcheckbox] >> nth=0', '[role=menuitemcheckbox] >> nth=1'],
 };

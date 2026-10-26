@@ -111,10 +111,40 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+/* The empty state, in place of the list: a quiet icon on a muted circle, as DropZone draws its
+   icon, then the title and a quieter description, centred. */
 .env-command-palette-status[data-empty] {
-  padding: var(--env-space-5) var(--env-space-4);
-  color: var(--env-color-fg-muted);
+  display: grid;
+  justify-items: center;
+  gap: var(--env-space-1);
+  padding: var(--env-space-7) var(--env-space-4) var(--env-space-5);
+  color: var(--env-color-fg-default);
   text-align: center;
+  overflow-wrap: anywhere;
+}
+.env-command-palette-empty-icon {
+  --env-command-palette-empty-icon-size: 1.5rem;
+  display: grid;
+  place-items: center;
+  inline-size: var(--env-control-height-touch);
+  block-size: var(--env-control-height-touch);
+  margin-block-end: var(--env-space-2);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-neutral-muted);
+  color: var(--env-color-fg-muted);
+}
+.env-command-palette-empty-icon > .env-icon {
+  inline-size: var(--env-command-palette-empty-icon-size);
+  block-size: var(--env-command-palette-empty-icon-size);
+}
+.env-command-palette-empty-title {
+  font-weight: var(--env-font-weight-medium);
+}
+.env-command-palette-empty-description {
+  max-inline-size: 48ch;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+  text-wrap: pretty;
 }
 /* The footer stands apart from the options by space, its small muted text and its keys, with no
    line. */

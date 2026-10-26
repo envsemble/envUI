@@ -1,0 +1,151 @@
+/* TableOfContents: the page's sections as small links, nested by indent, with the reader's place
+   marked by a column of short dashes, one before each section, like a ruler: the current section's
+   the longest, in the text color, its neighbours' a little longer, and the one under the pointer growing
+   too; the sections the reader has passed in the text color with darker dashes, the current one in
+   the text color, never bolder, so no label rewraps as the reader moves, and those still to come quieter, with paler dashes. */
+.env-table-of-contents {
+  /* How far each level sits in from the one above it; the current section's dash, which is also
+     the dashes' column, the others a share of it; and a dash's thickness. */
+  --env-table-of-contents-indent: var(--env-space-3);
+  --env-table-of-contents-dash: 1.25rem;
+  --env-table-of-contents-dash-thickness: 0.125rem;
+  min-inline-size: 0;
+  font: var(--env-type-body-small);
+}
+.env-table-of-contents[hidden] {
+  display: none;
+}
+.env-table-of-contents-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.env-table-of-contents-link {
+  /* The link's indent, from its level's depth, which the component sets on each nested list. */
+  --env-table-of-contents-inset: calc(
+    var(--env-table-of-contents-depth, 0) * var(--env-table-of-contents-indent)
+  );
+  position: relative;
+  display: block;
+  padding-block: var(--env-space-1);
+  /* Room before the label for the dashes' column and a gap after it. */
+  padding-inline: calc(
+      var(--env-space-1) + var(--env-table-of-contents-dash) + var(--env-space-2) +
+        var(--env-table-of-contents-inset)
+    )
+    var(--env-space-2);
+  border-radius: var(--env-radius-sm);
+  color: var(--env-color-fg-muted);
+  text-decoration: none;
+  /* Long labels wrap, and a long word breaks rather than overflowing the column. */
+  overflow-wrap: break-word;
+}
+.env-table-of-contents-link:hover {
+  color: var(--env-color-fg-muted-hover);
+}
+.env-table-of-contents-link:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
+}
+
+/* Each link's dash at the column's start, the same at every level, centred on its first line. The
+   dashes swell like a wave around the reader's place as the page scrolls: each grows longer,
+   thicker and darker with its reach, which the component sets every frame from 1 at the reader's
+   place to 0 three sections away, so the current section's dash is the longest and darkest
+   and the next one already grows as the reader nears it. At rest a dash takes the muted edge color,
+   or once passed the muted text color, and blends into the text color as its reach grows. Before
+   the component has measured, the current section's dash is full; the one under the pointer grows
+   too. The labels change color at once, never gradually and never weight, so none rewraps as the
+   reader moves: passed and current ones in the text color, those still to come quieter. */
+.env-table-of-contents .env-table-of-contents-link::before {
+  content: '';
+  position: absolute;
+  --env-table-of-contents-rest: var(--env-color-border-muted);
+  --env-table-of-contents-mark: calc(0.25 + 0.75 * var(--env-table-of-contents-reach, 0));
+  inset-inline-start: var(--env-space-1);
+  inset-block-start: calc(
+    var(--env-space-1) + (1lh - 2 * var(--env-table-of-contents-dash-thickness)) / 2
+  );
+  /* Drawn at its fullest and scaled from its start, so it grows without laying anything out. */
+  inline-size: var(--env-table-of-contents-dash);
+  block-size: calc(2 * var(--env-table-of-contents-dash-thickness));
+  transform-origin: 0 50%;
+  scale: var(--env-table-of-contents-mark);
+  border-radius: var(--env-radius-full);
+  background: color-mix(
+    in oklch,
+    var(--env-color-fg-default) calc(var(--env-table-of-contents-reach, 0) * 100%),
+    var(--env-table-of-contents-rest)
+  );
+}
+.env-table-of-contents-link:dir(rtl)::before {
+  transform-origin: 100% 50%;
+}
+.env-table-of-contents .env-table-of-contents-link[data-passed]::before {
+  --env-table-of-contents-rest: var(--env-color-fg-muted);
+}
+.env-table-of-contents .env-table-of-contents-link[aria-current='location']::before {
+  --env-table-of-contents-mark: calc(0.25 + 0.75 * var(--env-table-of-contents-reach, 1));
+  background: color-mix(
+    in oklch,
+    var(--env-color-fg-default) calc(var(--env-table-of-contents-reach, 1) * 100%),
+    var(--env-table-of-contents-rest)
+  );
+}
+.env-table-of-contents .env-table-of-contents-link:hover::before {
+  --env-table-of-contents-mark: max(0.6, calc(0.25 + 0.75 * var(--env-table-of-contents-reach, 0)));
+}
+.env-table-of-contents .env-table-of-contents-link[data-passed],
+.env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
+  color: var(--env-color-fg-default);
+}
+/* The sections still to come, quieter than muted text yet still 4.5:1 on the page and on a
+   surface in both themes; at high contrast they keep the muted text color. */
+.env-table-of-contents .env-table-of-contents-link:not([data-passed], [aria-current]) {
+  color: color-mix(in srgb, var(--env-color-fg-muted) 80%, transparent);
+}
+:where([data-env-contrast='high'])
+  .env-table-of-contents
+  .env-table-of-contents-link:not([data-passed], [aria-current]) {
+  color: var(--env-color-fg-muted);
+}
+@media (prefers-contrast: more) {
+  :where(.env-theme:not([data-env-contrast='standard']))
+    .env-table-of-contents
+    .env-table-of-contents-link:not([data-passed], [aria-current]) {
+    color: var(--env-color-fg-muted);
+  }
+}
+.env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
+  color: var(--env-color-fg-default);
+}
+
+/* Motion: only without a reduced-motion preference; otherwise the dashes follow the scroll at once. */
+@media (prefers-reduced-motion: no-preference) {
+  /* The dashes follow the scroll every frame; a short ease lets a mouse wheel's steps glide
+     instead of jumping. */
+  .env-table-of-contents-link::before {
+    transition:
+      scale var(--env-motion-duration-fast) var(--env-motion-ease-standard),
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-standard);
+  }
+}
+
+/* Forced colors: the system paints the links, so the current one takes its selection color and
+   the dashes its text and gray. */
+@media (forced-colors: active) {
+  .env-table-of-contents-link[aria-current='location'] {
+    forced-color-adjust: none;
+    color: Highlight;
+  }
+  .env-table-of-contents-link::before {
+    forced-color-adjust: none;
+    background: GrayText;
+  }
+  .env-table-of-contents-link[data-passed]::before {
+    background: CanvasText;
+  }
+  .env-table-of-contents-link[aria-current='location']::before {
+    background: Highlight;
+  }
+}

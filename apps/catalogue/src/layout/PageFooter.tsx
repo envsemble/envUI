@@ -24,7 +24,6 @@ const columns: { title: string; links: FooterLink[] }[] = [
     title: 'Overview',
     links: [
       { label: 'Introduction', href: routeHref(homeRoute) },
-      { label: 'Benchmark', href: routeHref('benchmark') },
       { label: 'Source', href: repository },
     ],
   },
@@ -71,7 +70,7 @@ const columns: { title: string; links: FooterLink[] }[] = [
 ];
 
 /**
- * The foot of every page of the Site and the Docs, on the navigation's pane color: the wordmark in
+ * The foot of every page of the catalogue and the Docs, on the navigation's pane color: the wordmark in
  * a column of its own, then the main destinations of both in columns that wrap onto more rows in a
  * narrow page. Its links are quiet text until hovered. The credit for the icons is on the Icons page.
  */

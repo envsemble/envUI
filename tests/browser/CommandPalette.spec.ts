@@ -144,7 +144,13 @@ test.describe('CommandPalette', () => {
 
     await trigger.click();
     await dialog.getByRole('combobox').fill('nothing matches this');
-    await expect(dialog.getByRole('status')).toHaveText('No matching documents');
+    // The application's title, with the default hint that quotes the query under it.
+    await expect(dialog.locator('.env-command-palette-empty-title')).toHaveText(
+      'No matching documents',
+    );
+    await expect(dialog.getByRole('status')).toHaveText(
+      'No matching documents Nothing matches “nothing matches this”. Check the spelling or try other words.',
+    );
     await expect(dialog.getByRole('listbox', { includeHidden: true })).toBeHidden();
     await page.keyboard.press('Enter');
     await expect(dialog).toBeVisible();
@@ -156,5 +162,85 @@ test.describe('CommandPalette', () => {
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
     await expect(trigger).toBeFocused();
+  });
+
+  test('the empty states invite a search, say what found nothing, and follow the messages', async ({
+    page,
+  }) => {
+    await page.goto(paletteFixture);
+    const root = page.getByTestId('palette-empty');
+    await root.getByRole('button', { name: 'Open Find a page' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Find a page' });
+    const status = dialog.getByRole('status');
+    const icon = dialog.locator('.env-command-palette-empty-icon');
+    // Before people type, an invitation in place of the list, with the search icon; the icon is
+    // decorative, so only the words are announced.
+    await expect(status).toHaveText('Type to search');
+    await expect(dialog.getByRole('listbox', { includeHidden: true })).toBeHidden();
+    await expect(icon.locator('.env-icon')).toHaveAttribute('aria-hidden', 'true');
+    const search = await icon.innerHTML();
+    // A query that finds nothing says so, quoting it, with another icon.
+    await dialog.getByRole('combobox').fill('  roadmap ');
+    await expect(status).toHaveText(
+      'No results Nothing matches “roadmap”. Check the spelling or try other words.',
+    );
+    await expect(icon.locator('.env-icon')).toHaveAttribute('aria-hidden', 'true');
+    expect(await icon.innerHTML()).not.toBe(search);
+    // Whatever it finds replaces the empty state, and only the count is announced.
+    await dialog.getByRole('combobox').fill('bill');
+    await expect(dialog.getByRole('option', { name: 'Billing' })).toBeVisible();
+    await expect(status).toHaveText('1 result');
+    await expect(icon).toHaveCount(0);
+    await page.keyboard.press('Escape');
+
+    // EnvUIProvider's messages replace the words of both states.
+    await root.getByRole('button', { name: 'Open Najít stránku' }).click();
+    const translated = page.getByRole('dialog', { name: 'Najít stránku' });
+    await expect(translated.getByRole('status')).toHaveText('Začněte psát');
+    await translated.getByRole('combobox').fill('xyz');
+    await expect(translated.getByRole('status')).toHaveText('Nic nenalezeno Pro „xyz“ nic není.');
+  });
+
+  test('default items show until people type, and choose like results', async ({ page }) => {
+    await page.goto(paletteFixture);
+    const root = page.getByTestId('palette-empty');
+    const trigger = root.getByRole('button', { name: 'Open Go to page' });
+    await trigger.click();
+    const dialog = page.getByRole('dialog', { name: 'Go to page' });
+    const input = dialog.getByRole('combobox', { name: 'Go to page' });
+    const active = () =>
+      input.evaluate(
+        (field) =>
+          document.getElementById(field.getAttribute('aria-activedescendant') ?? '')?.dataset
+            .itemId ?? null,
+      );
+    // The default items, in their group, in place of an invitation; the first is highlighted.
+    const group = dialog.getByRole('group', { name: 'Suggested' });
+    await expect(group.getByRole('option')).toHaveText(['Home', 'Settings']);
+    await expect(dialog.getByRole('status')).toHaveText('2 results');
+    await expect.poll(active).toBe('suggested/Home');
+    await page.keyboard.press('ArrowDown');
+    await expect.poll(active).toBe('suggested/Settings');
+    await page.keyboard.press('Control+Enter');
+    await expect(root.getByTestId('log-Go to page')).toHaveText('side suggested/Settings');
+    await expect(dialog).toBeHidden();
+
+    // Typing replaces them with the results, and clearing the text brings them back.
+    await trigger.click();
+    await input.fill('keyboard');
+    await expect(dialog.getByRole('option')).toHaveText(['Keyboard shortcuts']);
+    await expect(dialog.getByRole('group', { name: 'Suggested' })).toHaveCount(0);
+    // A query that finds nothing shows the application's words, without an icon.
+    await input.fill('roadmap');
+    await expect(dialog.getByRole('status')).toHaveText(
+      "No matching pages Try a page's name, such as Billing.",
+    );
+    await expect(dialog.locator('.env-command-palette-empty-icon')).toHaveCount(0);
+    await input.fill('');
+    await expect(dialog.getByRole('option')).toHaveText(['Home', 'Settings']);
+    await expect.poll(active).toBe('suggested/Home');
+    await page.keyboard.press('Enter');
+    await expect(root.getByTestId('log-Go to page')).toHaveText('open suggested/Home');
+    await expect(dialog).toBeHidden();
   });
 });

@@ -217,15 +217,10 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
     ).toEqual(type);
   await expect(value).toHaveCSS('font-variant-numeric', 'tabular-nums');
   await expect(value).toHaveClass(/(^| )env-text( |$)/);
-  // The fill runs from the slider's own start to the value, 40% of the way along the track.
-  const fill = slider.locator('.env-slider-indicator');
-  const fillStart = await fill.evaluate(
-    (e) =>
-      e.getBoundingClientRect().left -
-      e.closest('.env-slider-control')!.getBoundingClientRect().left +
-      Number.parseFloat(getComputedStyle(e, '::before').inlineSize) * -1,
-  );
-  expect(Math.abs(fillStart)).toBeLessThanOrEqual(1);
+  // The fill runs from the slider's own start to the value, 40% of the whole field.
+  const fill = (await slider.locator('.env-slider-indicator').boundingBox())!;
+  expect(Math.abs(fill.x - box.x)).toBeLessThanOrEqual(0.5);
+  expect(fill.width / box.width).toBeCloseTo(0.4, 2);
   // The text never dims: the handle and the fill's end fade under it instead, as the tests of the
   // states below show.
   for (const part of [
@@ -459,4 +454,252 @@ test('a finger shows the handle and the ticks only while it is down', async ({ b
   await expect(state.control).not.toHaveAttribute('data-pressed');
   await expectRest(state);
   await context.close();
+});
+
+test('the fill is empty at the minimum, the whole field at the maximum and in proportion between, in either direction', async ({
+  page,
+}) => {
+  const scope = page.getByTestId('sliders-light');
+  for (const direction of ['ltr', 'rtl'] as const) {
+    await scope.evaluate((e, dir) => e.setAttribute('dir', dir), direction);
+    // Scale, from 50 to 200 by tens: its minimum isn't 0, so the fill follows the range, not the number.
+    const slider = scope.locator('.env-slider').nth(2);
+    const input = slider.getByRole('slider');
+    const control = slider.locator('.env-slider-control');
+    const fill = slider.locator('.env-slider-indicator');
+    const thumb = slider.locator('.env-slider-thumb');
+    await input.focus();
+    const box = (await control.boundingBox())!;
+    const inset = box.height / 4;
+    const start = (x: number, width: number) =>
+      direction === 'ltr' ? x - box.x : box.x + box.width - (x + width);
+    await page.keyboard.press('Home');
+    await expect(input).toHaveAttribute('aria-valuenow', '50');
+    await expect(control).toHaveAttribute('data-handle', '');
+    await expect.poll(async () => (await fill.boundingBox())?.width ?? 0).toBeLessThanOrEqual(0.5);
+    // Nothing paints the fill beyond its box, such as under the rounded start.
+    expect(await fill.evaluate((e) => getComputedStyle(e, '::before').content)).toBe('none');
+    // The handle keeps clear of the rounded end, inside the field.
+    let handle = (await thumb.boundingBox())!;
+    expect(start(handle.x, handle.width) + handle.width / 2).toBeCloseTo(inset, 0);
+    await page.keyboard.press('End');
+    await expect(input).toHaveAttribute('aria-valuenow', '200');
+    await expect
+      .poll(async () => {
+        const full = (await fill.boundingBox())!;
+        return Math.max(Math.abs(full.x - box.x), Math.abs(full.width - box.width));
+      })
+      .toBeLessThanOrEqual(0.5);
+    handle = (await thumb.boundingBox())!;
+    expect(start(handle.x, handle.width) + handle.width / 2).toBeCloseTo(box.width - inset, 0);
+    // 80 is a fifth of the way from 50 to 200: a fifth of the field, from the start, with the handle
+    // at the fill's end.
+    await page.keyboard.press('Home');
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('ArrowUp');
+    await expect(input).toHaveAttribute('aria-valuenow', '80');
+    await expect
+      .poll(async () => {
+        const part = (await fill.boundingBox())!;
+        return Math.max(Math.abs(start(part.x, part.width)), Math.abs(part.width - box.width / 5));
+      })
+      .toBeLessThanOrEqual(0.5);
+    handle = (await thumb.boundingBox())!;
+    expect(start(handle.x, handle.width) + handle.width / 2).toBeCloseTo(box.width / 5, 0);
+  }
+});
+
+test('a slider selects no text when dragged or double-clicked, and its label still names it', async ({
+  page,
+}) => {
+  const scope = page.getByTestId('sliders-light');
+  const slider = scope.locator('.env-slider').first();
+  for (const part of ['.env-slider-control', '.env-slider-label', '.env-slider-value'])
+    await expect(slider.locator(part)).toHaveCSS('user-select', 'none');
+  const selected = () => page.evaluate(() => window.getSelection()?.toString() ?? '');
+  const label = (await slider.locator('.env-slider-label').boundingBox())!;
+  await page.mouse.dblclick(label.x + label.width / 2, label.y + label.height / 2);
+  expect(await selected()).toBe('');
+  const value = (await slider.locator('.env-slider-value').boundingBox())!;
+  await page.mouse.dblclick(value.x + value.width / 2, value.y + value.height / 2);
+  expect(await selected()).toBe('');
+  // A drag along it selects none of its text either.
+  const box = (await slider.locator('.env-slider-control').boundingBox())!;
+  await page.mouse.move(box.x + 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width - 2, box.y + box.height / 2, { steps: 5 });
+  await page.mouse.up();
+  expect(await selected()).not.toMatch(/Opacity|%/);
+  await expect(slider.getByRole('slider', { name: 'Opacity' })).toHaveAttribute(
+    'aria-valuetext',
+    /%$/,
+  );
+});
+
+/**
+ * Where a slider's field and its text are on screen, and how much they show scaled: their width and
+ * height on screen over those they are laid out at.
+ */
+async function boxesOf(slider: ReturnType<Page['locator']>) {
+  return slider.evaluate((root) => {
+    const box = (selector: string) => {
+      const element = root.querySelector(selector)!;
+      const { left, right, width, height } = element.getBoundingClientRect();
+      const laid = getComputedStyle(element);
+      const scaleX = width / Number.parseFloat(laid.width);
+      const scaleY = height / Number.parseFloat(laid.height);
+      return { left, right, width, height, scaleX, scaleY };
+    };
+    return {
+      field: box('.env-slider-control'),
+      label: box('.env-slider-label'),
+      value: box('.env-slider-value'),
+    };
+  });
+}
+
+/** Waits two frames, past the one in which a slider would measure a pointer that moved. */
+async function nextFrames(page: Page) {
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+}
+
+test(
+  'dragging past an end holds the value there and stretches the slider toward the pointer, a little, until let go',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const scope = page.getByTestId('sliders-light');
+    const slider = scope.locator('.env-slider').first();
+    const input = slider.getByRole('slider');
+    // Room beside the slider for the pointer to pass its ends, inside the page, where every engine
+    // follows it.
+    await slider.evaluate((e) => (e.style.marginInline = '320px'));
+    for (const [direction, end] of [
+      ['ltr', 'right'],
+      ['ltr', 'left'],
+      ['rtl', 'left'],
+    ] as const) {
+      await scope.evaluate((e, dir) => e.setAttribute('dir', dir), direction);
+      const rest = await boxesOf(slider);
+      const { field } = rest;
+      // The end the pointer passes, and the value there: the maximum at the end of the reading
+      // direction, the minimum at its start.
+      const edge = end === 'right' ? field.right : field.left;
+      const away = (distance: number) => (end === 'right' ? edge + distance : edge - distance);
+      const atEnd = (end === 'right') === (direction === 'ltr') ? '100' : '0';
+      const y =
+        rest.field.height / 2 + (await slider.locator('.env-slider-control').boundingBox())!.y;
+      // A stretch is the length the field gains on the pointer's side, its other end staying put.
+      const stretch = async () => {
+        const now = (await boxesOf(slider)).field;
+        if (end === 'right') expect(now.left).toBeCloseTo(field.left, 1);
+        else expect(now.right).toBeCloseTo(field.right, 1);
+        return now.width - field.width;
+      };
+      // Its most: 6% of the length, or half the height where that is less.
+      const most = Math.min(field.width * 0.06, field.height / 2);
+
+      await page.mouse.move(field.left + field.width / 2, y);
+      await page.mouse.down();
+      await page.mouse.move(away(30), y, { steps: 8 });
+      await expect(input).toHaveAttribute('aria-valuenow', atEnd);
+      await expect.poll(stretch).toBeGreaterThan(2);
+      const near = await stretch();
+      // It gives less than the pointer travels.
+      expect(near).toBeLessThan(30);
+      await page.mouse.move(away(280), y, { steps: 8 });
+      await expect.poll(stretch).toBeGreaterThan(near);
+      const far = await stretch();
+      expect(far).toBeLessThanOrEqual(most);
+      expect(far).toBeGreaterThan(most * 0.8);
+      await expect(input).toHaveAttribute('aria-valuenow', atEnd);
+      // It thins a little across, by at most 3%.
+      const now = await boxesOf(slider);
+      expect(now.field.height).toBeLessThan(field.height);
+      expect(now.field.height).toBeGreaterThanOrEqual(field.height * 0.97 - 0.01);
+      // The label and the value keep their size, and the text at the end travels with it.
+      expect(now.field.scaleX).toBeGreaterThan(1.01);
+      for (const part of ['label', 'value'] as const) {
+        expect(now[part].scaleX).toBeCloseTo(1, 3);
+        expect(now[part].scaleY).toBeCloseTo(1, 3);
+      }
+      const outer = (box: typeof field) => (end === 'right' ? box.right : box.left);
+      const atTheEnd = (end === 'right') === (direction === 'ltr') ? 'value' : 'label';
+      expect(Math.abs(outer(now[atTheEnd]) - outer(rest[atTheEnd]))).toBeGreaterThan(far * 0.8);
+
+      // Let go, it springs back to its length, eased rather than at once.
+      await page.mouse.up();
+      const springs = await slider
+        .locator('.env-slider-control')
+        .evaluate((e) =>
+          e
+            .getAnimations()
+            .some(
+              (animation) =>
+                (animation as CSSTransition).transitionProperty === '--env-slider-stretch',
+            ),
+        );
+      expect(springs).toBe(true);
+      await slider
+        .locator('.env-slider-control')
+        .evaluate((e) => Promise.all(e.getAnimations().map((animation) => animation.finished)));
+      expect(Math.abs(await stretch())).toBeLessThan(0.05);
+      await expect(input).toHaveAttribute('aria-valuenow', atEnd);
+    }
+  },
+);
+
+test(
+  'a click at the end, the keyboard and a disabled slider stretch nothing',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const scope = page.getByTestId('sliders-light');
+    const slider = scope.locator('.env-slider').first();
+    const input = slider.getByRole('slider');
+    const { field } = await boxesOf(slider);
+    const control = (await slider.locator('.env-slider-control').boundingBox())!;
+    const y = control.y + control.height / 2;
+    const width = async (which = slider) => (await boxesOf(which)).field.width;
+    await page.mouse.click(field.right - 1, y);
+    await expect(input).toHaveAttribute('aria-valuenow', '100');
+    await nextFrames(page);
+    expect(await width()).toBeCloseTo(field.width, 1);
+    for (const key of ['End', 'ArrowRight', 'PageUp', 'Home', 'ArrowLeft']) {
+      await page.keyboard.press(key);
+      await nextFrames(page);
+      expect(await width()).toBeCloseTo(field.width, 1);
+    }
+    // A disabled slider neither moves nor stretches.
+    const balance = scope.locator('.env-slider').nth(3);
+    const rest = (await boxesOf(balance)).field;
+    const box = (await balance.locator('.env-slider-control').boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width + 200, box.y + box.height / 2, { steps: 8 });
+    await nextFrames(page);
+    expect(await width(balance)).toBeCloseTo(rest.width, 1);
+    await page.mouse.up();
+    await expect(balance.getByRole('slider')).toHaveAttribute('aria-valuenow', '50');
+  },
+);
+
+test('under reduced motion a drag past the end holds the value but stretches nothing', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const slider = page.getByTestId('sliders-light').locator('.env-slider').first();
+  const rest = await boxesOf(slider);
+  const box = (await slider.locator('.env-slider-control').boundingBox())!;
+  const y = box.y + box.height / 2;
+  await page.mouse.move(box.x + box.width / 2, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width + 300, y, { steps: 8 });
+  await expect(slider.getByRole('slider')).toHaveAttribute('aria-valuenow', '100');
+  await nextFrames(page);
+  const now = await boxesOf(slider);
+  expect(now.field.width).toBeCloseTo(rest.field.width, 1);
+  expect(now.field.height).toBeCloseTo(rest.field.height, 1);
+  await page.mouse.up();
 });

@@ -25,37 +25,22 @@ avoidWhen:
     use: Select
 components:
   - TimePicker
+examples:
+  StartTime:
+    role: overview
+    caption: Where people write AM and PM, a third wheel holds them.
+  Variants: variants
+  TimePickerAnatomy: anatomy
+  TimePickerPopupAnatomy: anatomy
+  ClockConventions: example
+  OfficeHours: example
 ---
 
 # TimePicker
 
-## Overview
-
-Where people write AM and PM, a third wheel holds them.
-
-```tsx example=StartTime
-
-```
-
-### Within office hours
-
-Only the times that can be booked are offered: between an earliest and a latest time, on steps such as every half hour.
-
-```tsx example=OfficeHours
-
-```
-
-### The locale's clock
-
-The same value on a 12-hour and a 24-hour clock; the value itself stays on the 24-hour clock.
-
-```tsx example=ClockConventions
-
-```
-
 ## Variants
 
-```tsx variants=Variants
+```tsx figure=Variants
 
 ```
 
@@ -67,11 +52,9 @@ The same value on a 12-hour and a 24-hour clock; the value itself stays on the 2
 | Outline  | A time of day, on wheels that stay open as they turn. The default. |
 | Floating | A long form on a page, as TextField's floating variant.            |
 
-## When to use
-
 ## Anatomy
 
-```tsx anatomy=TimePickerAnatomy
+```tsx figure=TimePickerAnatomy
 
 ```
 
@@ -83,7 +66,7 @@ The same value on a 12-hour and a 24-hour clock; the value itself stays on the 2
 6. **Clock icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-```tsx anatomy=TimePickerPopupAnatomy open
+```tsx figure=TimePickerPopupAnatomy open
 
 ```
 
@@ -91,6 +74,37 @@ The same value on a 12-hour and a 24-hour clock; the value itself stays on the 2
 2. **Column** (`env-time-list-column`)
 3. **Time** (`env-time-list-row[data-centred]`)
 4. **Actions** (`env-date-picker-actions`)
+
+## Behaviour
+
+### The locale's clock
+
+The same value on a 12-hour and a 24-hour clock, as people there write it.
+
+- The value itself stays on the 24-hour clock.
+- The popup offers a shortcut to the current time, and a clearable field a clear button.
+
+```tsx figure=ClockConventions
+
+```
+
+## Rules
+
+Offer only the times people can choose.
+
+### Within office hours
+
+Offer the times that can be booked: between an earliest and a latest time, on steps such as every half hour.
+
+- A value between the steps still shows, in its place.
+
+```tsx figure=OfficeHours
+
+```
+
+### A time that can't change
+
+Show it read-only, not disabled.
 
 ## Accessibility
 
@@ -115,82 +129,39 @@ The same value on a 12-hour and a 24-hour clock; the value itself stays on the 2
 - Validation and its `error`.
 - The labels in the application's language.
 
-## In code
+## Compose
 
 ### Usage
 
-TimePicker's value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, 12- or 24-hour, and `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time.
-
-```tsx source=StartTime
-
+```tsx
+<TimePicker label="Starts at" value={start} onValueChange={setStart} clearable />
 ```
+
+The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, and `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time.
 
 #### Available times
 
-`min` and `max`, as `HH:mm`, are the earliest and latest times. `minuteStep` is the minutes between the times the list offers, from 1 to 60, 15 by default; a value between them still shows, in its place.
-
-```tsx source=OfficeHours
-
-```
+`min` and `max`, as `HH:mm`, are the earliest and latest times. `minuteStep` is the minutes between the times the list offers, from 1 to 60, 15 by default.
 
 #### In a form
 
-`name` submits the time as `HH:mm`, without a date or a zone, and a form reset restores `defaultValue`; `required` keeps an empty field's form from submitting and focuses it. Use `readOnly`, not `disabled`, to show a time people can't change. For one moment, a day and a time, use a single DatePicker with `granularity="minute"`.
-
 ```tsx
-import { useState, type FormEvent } from 'react';
-import { Button, Column, Row, Text, TimePicker } from '@envsemble/envui';
-
-export default function ShiftForm() {
-  const [error, setError] = useState<string>();
-  const [sent, setSent] = useState('');
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const [from, to] = [String(data.get('from')), String(data.get('to'))];
-    // Values are HH:mm on the 24-hour clock, so they compare as text.
-    const invalid = from && to && to <= from;
-    setError(invalid ? 'Choose an end after the start.' : undefined);
-    setSent(invalid ? '' : `Shift from ${from} to ${to}.`);
-  };
-  return (
-    <form
-      onSubmit={submit}
-      onReset={() => {
-        setError(undefined);
-        setSent('');
-      }}
-      style={{ inlineSize: 'min(100%, 16rem)' }}
-    >
-      <Column gap={4}>
-        <TimePicker label="From" name="from" defaultValue="09:00" required />
-        <TimePicker label="To" name="to" defaultValue="17:00" required error={error} />
-        <Row wrap align="center" gap={4}>
-          <Button type="submit">Save shift</Button>
-          <Button type="reset" variant="secondary">
-            Reset
-          </Button>
-        </Row>
-        <Text variant="caption" emphasis="muted" role="status">
-          {sent}
-        </Text>
-      </Column>
-    </form>
-  );
-}
+<form onSubmit={submit}>
+  <TimePicker label="From" name="from" defaultValue="09:00" required />
+  <TimePicker label="To" name="to" defaultValue="17:00" required error={error} />
+  <Button type="submit">Save shift</Button>
+</form>
 ```
+
+`name` submits the time as `HH:mm`, without a date or a zone, so two times compare as text; a form reset restores `defaultValue`, and `required` keeps an empty field's form from submitting and focuses it. Use `readOnly`, not `disabled`, to show a time people can't change. For one moment, a day and a time, use a single DatePicker with `granularity="minute"`.
 
 #### Variants and sizes
 
 `variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `showLabel={false}` hides the label, with a `placeholder` while the field is empty.
 
-```tsx source=Variants
-
-```
-
 ### Composition
 
-TimePicker shares DatePicker's field: the root, `env-time-picker`, holds the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the clock icon, `env-date-picker-icon`, then the description. The popup, `env-time-picker-popup`, holds a wheel, `env-time-list-column`, for hours, minutes and, on a 12-hour clock, the day period, each row an `env-time-list-row`, the chosen one with `data-centred`, and the actions, `env-date-picker-actions`. `className` and `style` reach the root, and `ref` the field's button.
+TimePicker shares DatePicker's field and its picker card, `env-picker-popup` with `env-date-picker-popup` and `env-time-picker-popup`: the wheels in its body, `env-picker-popup-body`, and Now and Clear in its footer, `env-picker-popup-footer` with `env-date-picker-actions`. The wheels are for hours, minutes and, on a 12-hour clock, the day period, each row an `env-time-list-row`, the chosen one with `data-centred`. `className` and `style` reach the root, and `ref` the field's button.
 
 ## Changelog
 

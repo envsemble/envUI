@@ -25,52 +25,64 @@ avoidWhen:
     see: key-figures
 components:
   - AnimatedNumber
+examples:
+  ShowResults: overview
+  CustomFormat: example
+  SeatsLeft:
+    role: do
+    caption: Roll the one number a choice changes.
+  EveryNumberRolls:
+    role: dont
+    caption: 'Several numbers rolling at once: none of them draws the eye.'
+  AnimatedNumberAnatomy: anatomy
 ---
 
 # AnimatedNumber
 
-## Overview
-
-AnimatedNumber rolls up as the value grows and down as it shrinks.
-
-```tsx example=ShowResults
-
-```
+## Variants
 
 ### A formatted value
 
 The number can be written in any format, such as a currency. By default it is written as the application's language writes numbers.
 
-```tsx example=CustomFormat
+```tsx figure=CustomFormat
 
 ```
+
+## Anatomy
+
+```tsx figure=AnimatedNumberAnatomy
+
+```
+
+1. **Number** (`env-animated-number`)
+2. **Value** (`env-animated-number-value`, `value`)
+
+## Behaviour
+
+### Rolling to a new value
+
+AnimatedNumber rolls up as the value grows and down as it shrinks.
 
 ### Reduced motion
 
 With a reduced-motion preference, the new value only fades in.
 
-## When to use
+## Rules
 
-```tsx do=SeatsLeft caption="Roll the one number a choice changes."
+Roll one number at a time, with its words beside it.
+
+```tsx figure=SeatsLeft
 
 ```
 
-```tsx dont=EveryNumberRolls caption="Several numbers rolling at once: none of them draws the eye."
+```tsx figure=EveryNumberRolls
 
 ```
 
 ### Words
 
 Keep the words in the same sentence as the number, and match them to it: 1 seat, 3 seats.
-
-## Anatomy
-
-```tsx anatomy=AnimatedNumberAnatomy
-
-```
-
-1. **Number** (`env-animated-number`)
-2. **Value** (`env-animated-number-value`, `value`)
 
 ## Accessibility
 
@@ -84,7 +96,7 @@ Keep the words in the same sentence as the number, and match them to it: 1 seat,
 - A status region where the change must be announced; AnimatedNumber isn't one.
 - A `formatValue` in the reader's language.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -96,10 +108,12 @@ AnimatedNumber shows its `value` as text inside a sentence or a label; when `val
 
 #### A formatted value
 
-`formatValue` writes the value as text, such as a currency through `Intl.NumberFormat`. Without it, AnimatedNumber uses the number format of EnvUIProvider's `locale`, or else the browser's.
+`formatValue` writes the value as text, such as a currency through `Intl.NumberFormat`, as CustomFormat does. Without it, AnimatedNumber uses the number format of EnvUIProvider's `locale`, or else the browser's.
 
-```tsx source=CustomFormat
+```tsx
+const euros = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' });
 
+<AnimatedNumber value={price} formatValue={(value) => euros.format(value)} />;
 ```
 
 ### Composition

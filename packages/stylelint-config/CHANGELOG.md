@@ -1,5 +1,9 @@
 # @envsemble/stylelint-config-envui
 
+## 1.0.0-prerelease.4
+
+No changes in this release.
+
 ## 1.0.0-prerelease.3
 
 ### Major Changes

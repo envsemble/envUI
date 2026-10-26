@@ -15,6 +15,42 @@ export const demos = {
     (module) => module.DevModeDemo,
     'src/demos/dev-mode/DevModeDemo.tsx',
   ),
+  // The guide's pictures of dev mode at work, which load none of it.
+  DevModeButtonPicture: lazyPart(
+    () => import('../demos/dev-mode/DevModePictures'),
+    (module) => module.DevModeButtonPicture,
+    'src/demos/dev-mode/DevModePictures.tsx',
+  ),
+  DevModeWholePicture: lazyPart(
+    () => import('../demos/dev-mode/DevModePictures'),
+    (module) => module.DevModeWholePicture,
+    'src/demos/dev-mode/DevModePictures.tsx',
+  ),
+  DevModeToolbarPicture: lazyPart(
+    () => import('../demos/dev-mode/DevModePictures'),
+    (module) => module.DevModeToolbarPicture,
+    'src/demos/dev-mode/DevModePictures.tsx',
+  ),
+  DevModeSpacingPicture: lazyPart(
+    () => import('../demos/dev-mode/DevModePictures'),
+    (module) => module.DevModeSpacingPicture,
+    'src/demos/dev-mode/DevModePictures.tsx',
+  ),
+  DevModeFramePicture: lazyPart(
+    () => import('../demos/dev-mode/DevModePictures'),
+    (module) => module.DevModeFramePicture,
+    'src/demos/dev-mode/DevModePictures.tsx',
+  ),
+  DevModeInspectorPicture: lazyPart(
+    () => import('../demos/dev-mode/DevModePictures'),
+    (module) => module.DevModeInspectorPicture,
+    'src/demos/dev-mode/DevModePictures.tsx',
+  ),
+  DevModeProblemsPicture: lazyPart(
+    () => import('../demos/dev-mode/DevModePictures'),
+    (module) => module.DevModeProblemsPicture,
+    'src/demos/dev-mode/DevModePictures.tsx',
+  ),
 };
 
 /** A `<!-- demo: Name -->` line; the packaged page keeps it as a comment, which shows nothing. */

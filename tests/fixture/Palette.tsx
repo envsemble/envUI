@@ -1,5 +1,13 @@
 import { useMemo, useState } from 'react';
-import { CommandPalette, Kbd, Theme, type ThemeValue } from '@envsemble/envui';
+import {
+  CommandPalette,
+  EnvUIProvider,
+  Kbd,
+  Theme,
+  type CommandPaletteItem,
+  type CommandPaletteProps,
+  type ThemeValue,
+} from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 
 const recent = ['Roadmap.md', 'Decisions.md'];
@@ -60,5 +68,83 @@ export function CommandPaletteFixture({ theme }: { theme: ThemeValue }) {
       />
       <output data-testid={`palette-log-${theme}`}>{log}</output>
     </Theme>
+  );
+}
+
+const pages = ['Home', 'Settings', 'Billing', 'Keyboard shortcuts'];
+const suggested: CommandPaletteItem[] = ['Home', 'Settings'].map((name) => ({
+  id: `suggested/${name}`,
+  label: name,
+  group: 'Suggested',
+}));
+
+/**
+ * One palette of the empty states: its own trigger, the pages it finds once people type, and the
+ * chosen page in a log under its name.
+ */
+function EmptyPalette({
+  name,
+  ...props
+}: { name: string } & Partial<Omit<CommandPaletteProps, 'items' | 'aria-label'>>) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [log, setLog] = useState('');
+  const term = query.trim().toLowerCase();
+  const items = term
+    ? pages
+        .filter((page) => page.toLowerCase().includes(term))
+        .map((page) => ({ id: `pages/${page}`, label: page }))
+    : [];
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)}>
+        Open {name}
+      </button>
+      <CommandPalette
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next);
+          if (!next) setQuery('');
+        }}
+        aria-label={name}
+        inputValue={query}
+        onInputValueChange={setQuery}
+        items={items}
+        onAction={(item, { modifier }) => setLog(`${modifier ? 'side' : 'open'} ${item.id}`)}
+        {...props}
+      />
+      <output data-testid={`log-${name}`}>{log}</output>
+    </>
+  );
+}
+
+/**
+ * The empty states: the defaults before people type and when nothing matches, the same in another
+ * language from EnvUIProvider's messages, and default items with the application's own words and
+ * no icon.
+ */
+export function CommandPaletteEmptyFixture() {
+  return (
+    <div className="fixture-section" data-testid="palette-empty">
+      <EmptyPalette name="Find a page" />
+      <EnvUIProvider
+        messages={{
+          commandPalette: {
+            emptyQuery: 'Začněte psát',
+            empty: 'Nic nenalezeno',
+            emptyHint: ({ query }) => `Pro „${query}“ nic není.`,
+          },
+        }}
+      >
+        <EmptyPalette name="Najít stránku" />
+      </EnvUIProvider>
+      <EmptyPalette
+        name="Go to page"
+        defaultItems={suggested}
+        emptyLabel="No matching pages"
+        emptyDescription="Try a page's name, such as Billing."
+        emptyIcon={null}
+      />
+    </div>
   );
 }

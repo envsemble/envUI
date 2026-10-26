@@ -25,39 +25,16 @@ avoidWhen:
     use: Calendar
 components:
   - CalendarHeatmap
+examples:
+  Deployments: overview
+  ColorByRank: example
+  CustomTooltip: example
+  HeatmapAnatomy: anatomy
+  ApplicationStrings: example
+  ScrollingWeeks: example
 ---
 
 # CalendarHeatmap
-
-## Overview
-
-```tsx example=Deployments
-
-```
-
-### Color by rank
-
-Each color step can start where the application chooses, such as at quantiles of the data, so a few very busy days don't leave the rest pale.
-
-```tsx example=ColorByRank
-
-```
-
-### A tooltip of your own
-
-The application can lay out the tooltip itself; each day's name keeps its date and value.
-
-```tsx example=CustomTooltip
-
-```
-
-### Languages
-
-The months, weekdays, dates and the legend follow the application's language, and weeks can start on Monday.
-
-```tsx example=ApplicationStrings
-
-```
 
 ## Variants
 
@@ -69,15 +46,25 @@ A heatmap is drawn in one tone, the accent by default, or any status tone, which
 
 Five steps by default, the empty one included; a heatmap can have as few as two or as many as ten.
 
-## When to use
+### Color by rank
 
-### Names
+Each color step can start where the application chooses, such as at quantiles of the data, so a few very busy days don't leave the rest pale.
 
-Name the heatmap after what it counts and when, such as Deployments in the last year, and give each day a value with its unit, such as 4 deployments.
+```tsx figure=ColorByRank
+
+```
+
+### A tooltip of your own
+
+The application can lay out the tooltip itself; each day's name keeps its date and value.
+
+```tsx figure=CustomTooltip
+
+```
 
 ## Anatomy
 
-```tsx anatomy=HeatmapAnatomy
+```tsx figure=HeatmapAnatomy
 
 ```
 
@@ -89,13 +76,31 @@ Name the heatmap after what it counts and when, such as Deployments in the last 
 
 Not shown: the tooltip.
 
-## Adapting to width
+## Behaviour
+
+### Languages
+
+The months, weekdays, dates and the legend follow the application's language, and weeks can start on Monday.
+
+```tsx figure=ApplicationStrings
+
+```
+
+### Adapting to width
 
 The heatmap is never wider than its container: a narrow one scrolls the weeks, starting at the latest. On touch screens, days grow to fit a fingertip.
 
-```tsx example=ScrollingWeeks widths="16 36"
+```tsx figure=ScrollingWeeks widths="16 36"
 
 ```
+
+## Rules
+
+A heatmap shows the pattern; put the exact figures elsewhere, where people compare them.
+
+### Names
+
+Name the heatmap after what it counts and when, such as Deployments in the last year, and give each day a value with its unit, such as 4 deployments.
 
 ## Accessibility
 
@@ -122,7 +127,7 @@ The heatmap is never wider than its container: a narrow one scrolls the weeks, s
 - A name for the heatmap, and values whose names say their unit.
 - The exact figures elsewhere, where people compare them.
 
-## In code
+## Compose
 
 ### Usage
 
@@ -138,26 +143,39 @@ CalendarHeatmap takes `data`, one entry per day with its `date`, as YYYY-MM-DD, 
 
 #### Color by rank
 
-`thresholds` sets the lowest value of each color step above the empty one, in ascending order, up to nine, such as quantiles of the data; they replace `levels` and `maxValue`.
+`thresholds` sets the lowest value of each color step above the empty one, in ascending order, up to nine, such as quantiles of the data, as ColorByRank computes them; they replace `levels` and `maxValue`.
 
-```tsx source=ColorByRank
-
+```tsx
+<CalendarHeatmap aria-label="Edits by rank" data={data} thresholds={[1, 3, 5, 8]} />
 ```
 
 #### Tooltip
 
 `formatTooltip` receives the day, with its `date`, `value`, `label` and `level`, the color step from 0, and returns the tooltip's content; the day's accessible name keeps its date and value. `formatValue` and `formatDate` write a value and a date.
 
-```tsx source=CustomTooltip
-
+```tsx
+<CalendarHeatmap
+  aria-label="Reviews in ten weeks"
+  data={data}
+  formatValue={reviews}
+  formatTooltip={({ date, value }) => (
+    <>
+      <strong>{reviews(value)}</strong>
+      <br />
+      {dates.format(new Date(`${date}T00:00:00Z`))}
+    </>
+  )}
+/>
 ```
 
 #### Languages
 
 EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`, and `messages.calendarHeatmap` writes the legend's Less and More; `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` set them for one heatmap. `weekStart={1}` starts weeks on Monday, and `0`, Sunday, is the default.
 
-```tsx source=ApplicationStrings
-
+```tsx
+<EnvUIProvider messages={{ calendarHeatmap: { less: 'Quieter', more: 'Busier' } }}>
+  <CalendarHeatmap aria-label="Activity in the first quarter" data={data} weekStart={1} />
+</EnvUIProvider>
 ```
 
 ### Composition

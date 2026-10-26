@@ -33,7 +33,7 @@ import {
   RtlTabsFixture,
   TabStatesFixture,
 } from './Tabs.js';
-import { CommandPaletteFixture } from './Palette.js';
+import { CommandPaletteEmptyFixture, CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './Segments.js';
 import { BadgesFixture } from './Badges.js';
 import {
@@ -45,6 +45,7 @@ import {
 import { DataDisplayFixture } from './DataDisplay.js';
 import { TablesFixture } from './Tables.js';
 import { PagersFixture } from './Pagers.js';
+import { TableOfContentsFixture } from './TableOfContents.js';
 import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
@@ -61,9 +62,11 @@ import { PaginationsFixture } from './Paginations.js';
 import { DatePickerFixture } from './DatePickers.js';
 import { TimePickersFixture } from './TimePickers.js';
 import { MonthPickersFixture } from './MonthPickers.js';
+import { PickerPopupsFixture } from './PickerPopups.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { SheetsFixture } from './Sheets.js';
 import { ResizableDrawersFixture } from './ResizableDrawers.js';
+import { NestedDrawersFixture } from './NestedDrawers.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
@@ -115,8 +118,10 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'rtl-document-tabs': RtlDocumentTabsFixture,
   'document-tabs-rerender': DocumentTabsRerenderFixture,
   pagers: PagersFixture,
+  'table-of-contents': TableOfContentsFixture,
   sheets: SheetsFixture,
   'resizable-drawers': ResizableDrawersFixture,
+  'nested-drawers': NestedDrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
   'page-headers': PageHeadersFixture,
@@ -126,6 +131,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   lists: ListsFixture,
   'time-pickers': TimePickersFixture,
   'month-pickers': MonthPickersFixture,
+  'picker-popups': PickerPopupsFixture,
   'dev-mode': DevModeFixture,
   'layout-check': LayoutCheckFixture,
   skeletons: SkeletonsFixture,
@@ -230,6 +236,7 @@ export default function App() {
             <>
               <CommandPaletteFixture theme="light" />
               <CommandPaletteFixture theme="dark" />
+              <CommandPaletteEmptyFixture />
             </>
           )}
           {includes('segments') && (

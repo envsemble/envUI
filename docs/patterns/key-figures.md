@@ -41,17 +41,17 @@ composes:
   - AnimatedNumber
   - Button
   - Card
+examples:
+  ProjectHealth:
+    role: overview
+    caption: A figure that rolls to each new value, as an AnimatedNumber.
+  OnAPane: example
+  InACard: example
+  KeyFiguresAnatomy: anatomy
+  GroupColumns: example
 ---
 
 # Key figures
-
-## Overview
-
-A key figure is a muted label, a large figure and a [Badge](../components/badge.md) that says how it changed, with the period beside it. A [Surface](../components/surface.md) holds a few of them in a [Grid](../components/grid.md).
-
-```tsx example=ProjectHealth caption="A figure that rolls to each new value, as an AnimatedNumber."
-
-```
 
 ## Variants
 
@@ -59,7 +59,7 @@ A key figure is a muted label, a large figure and a [Badge](../components/badge.
 
 A group on a pane takes the muted fill, so its figures stand apart; the pane's heading names it.
 
-```tsx example=OnAPane
+```tsx figure=OnAPane
 
 ```
 
@@ -67,27 +67,13 @@ A group on a pane takes the muted fill, so its figures stand apart; the pane's h
 
 A [Card](../components/card.md) frames a single figure.
 
-```tsx example=InACard
+```tsx figure=InACard
 
 ```
 
-## When to use
-
-### The change in words
-
-Say how a figure changed in words that say which way, such as "2 fewer", with its period, since a color or an arrow alone says nothing to many people, as [feedback](feedback.md) shows for any status.
-
-### A few figures
-
-Keep a group to three to five figures. The trend's color says whether the change is good news: green for good, red for bad, and neutral for no change.
-
-### Content
-
-Labels are short noun phrases, such as Active projects or Lead time. The unit goes in the figure or the description, such as 2.5 days or Median, and figures are formatted in the reader's language, such as 1,284 or €4,120.
-
 ## Anatomy
 
-```tsx anatomy=KeyFiguresAnatomy
+```tsx figure=KeyFiguresAnatomy
 
 ```
 
@@ -97,13 +83,40 @@ Labels are short noun phrases, such as Active projects or Lead time. The unit go
 4. **Trend** (`env-badge`, `tone`, `icon`)
 5. **Description** (`env-badge + env-text`)
 
-## Adapting to width
+A key figure is a muted label, a large figure and a [Badge](../components/badge.md) that says how it changed, with the period beside it. A [Surface](../components/surface.md) holds a few of them in a [Grid](../components/grid.md).
+
+## Behaviour
+
+### Adapting to width
 
 The grid shows as many even columns as fit, and stacks the figures in one column where there is room for only one.
 
-```tsx example=GroupColumns widths="12 26 40"
+```tsx figure=GroupColumns widths="12 26 40"
 
 ```
+
+## Rules
+
+A few figures, each with how it changed said in words.
+
+### The change in words
+
+Say how a figure changed in words that say which way, such as "2 fewer", with its period, as [feedback](feedback.md) shows for any status. A color or an arrow alone says nothing to many people.
+
+### A few figures
+
+Keep a group to three to five figures. The trend's color says whether the change is good news.
+
+- Green for good.
+- Red for bad.
+- Neutral for no change.
+
+### Content
+
+Labels are short noun phrases, such as Active projects or Lead time.
+
+- The unit goes in the figure or the description, such as 2.5 days or Median.
+- Figures are formatted in the reader's language, such as 1,284 or €4,120.
 
 ## Accessibility
 
@@ -119,11 +132,17 @@ The grid shows as many even columns as fit, and stacks the figures in one column
 - A heading level for the group's own heading, where it has one, that fits the page; the figures themselves are not headings.
 - Figures formatted in the reader's language.
 
-## In code
+## Compose
 
 ### Usage
 
-A key figure is a Column of three Texts: the label with `variant="body-sm"` and `emphasis="muted"`, the figure with `variant="headline"` and `fontVariantNumeric: 'tabular-nums'`, so it keeps its width, and a Row with the trend Badge and a muted description. The Badge takes the change in words and an `icon`, such as TrendingUp or TrendingFlat, and its `tone` says whether it is good news: `success`, `danger`, or `neutral` for no change. A figure that changes while people look at it is an AnimatedNumber inside the figure's Text.
+A key figure is a Column of three Texts.
+
+- The label, with `variant="body-sm"` and `emphasis="muted"`.
+- The figure, with `variant="headline"` and `fontVariantNumeric: 'tabular-nums'`, so it keeps its width.
+- A Row with the trend Badge and a muted description.
+
+The Badge takes the change in words and an `icon`, such as TrendingUp or TrendingFlat, and its `tone` says whether it is good news: `success`, `danger`, or `neutral` for no change. A figure that changes while people look at it is an AnimatedNumber inside the figure's Text.
 
 ```tsx source=ProjectHealth
 

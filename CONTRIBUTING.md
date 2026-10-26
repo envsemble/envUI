@@ -13,16 +13,18 @@ npm run dev
 
 Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes library source directly and updates as you edit.
 
-The catalogue app (`apps/catalogue`) builds the website, in two areas that each feel like a site of their own:
+The catalogue app (`apps/catalogue`) builds the website, in two parts that each feel like a site of their own:
 
-- **The Site**, at the root, introduces envUI: what it is, what each part looks like and when to use it. Its rail holds the destinations Overview, Components, Patterns, Foundations, Benchmark and Changelog, and the drawer beside it lists the chosen destination's pages. Component and pattern pages speak plain language and show live figures with the code under each; a component's or pattern's page links to its page in the Docs with "API". Foundation pages explain how envUI handles a subject, such as space or color, in real examples and plain words, and teach the words to ask an agent for it; they name no tokens or values, which each foundation's guide in the Docs holds.
-- **The Docs**, under `/docs`, are the developer reference, with a navigation of their own: setup, migration, codemods, agent tooling and skills, dev mode, each foundation's written guide, the design tokens, "Build your own field", and each component's and pattern's guide to using it in code, from the "In code" section of its page, with its props, part names and changelog.
+- **The catalogue**, at the root, is for people: what envUI is, what each part looks like and when to use it. Its rail holds the destinations Overview, Foundations, Components and Patterns, and the drawer beside it lists the chosen destination's pages, such as Dev mode under Overview. Component and pattern pages speak plain language and show live figures with the code under each. Foundation pages explain how envUI handles a subject, such as space or color, in real examples and plain words, and teach the words to ask an agent for it; they name no tokens or values, which each foundation's page in the Docs holds.
+- **The Docs**, under `/docs`, are the developer reference: setup, with the prompt that sets envUI up through a coding agent, migration, codemods, the guide for agents, dev mode, the design tokens, "Build your own field", and each foundation's, component's and pattern's page on using it in code, from the Compose section of its Markdown, with its props, part names and changelog. Their navigation is a tree: Get started, Guides and Foundations, then Components by their group and Patterns by their intent, each group a section that opens and closes, the current page's open. Each page has breadcrumbs above its title, such as Docs / Components / Actions / Button, and, on a pane wide enough, its contents beside it: its h2 and h3 headings, with each export's props under Props, the reader's place marked.
 
-There is no top bar. The rail and the drawer read as one pane: the wordmark tops the rail and search the drawer, on one row; the Docs, which have no rail, put both at the top of their drawer. Ghost buttons at the page's top end lead to the other area and open the Display menu, which stores the reader's theme, contrast and scale in localStorage. Below 52.5 rem the navigation opens in a sheet from a small menu button at the page's top start, beside search, and the other area and Display become icon buttons. `apps/catalogue/src/navigation/DocumentationRoutes.ts` lists the pages of both. The repository's own guides, this file and [library development](docs/library-development.md), with [writing component](docs/component-pages.md) and [pattern pages](docs/pattern-pages.md), are not on the site.
+The two parts are linked page to page: a component's, pattern's or foundation's page, and dev mode's, has a button in its banner to its page in the other part, Docs in the catalogue and Catalogue in the Docs (`counterpartOf` in `DocumentationRoutes.ts`).
 
-⌘K or Ctrl+K opens search, in envUI's `CommandPalette`: components by their names and frontmatter `aliases`, their props, the design tokens, and the foundations, patterns and guides, each result naming its area, the Site or the Docs; a result opens its page at the prop's or token's row. `scripts/SearchIndex.mjs` builds the MiniSearch index from `docs/`, `docs/generated/props.json` and the token list whenever the documentation is generated, into `apps/catalogue/src/generated/SearchIndex.json`; its `searchDocuments()` gives the same documents to other tools, and `scripts/SearchTerms.mjs` how words are split and matched.
+There is no top bar. The rail and the drawer read as one pane: the wordmark tops the rail and search the drawer, on one row; the Docs, which have no rail, put both at the top of their drawer. Ghost buttons at the page's top end lead to the same subject in the other part, or to its start from a page without one, and open the Display menu, which stores the reader's theme, contrast and scale in localStorage. Below 52.5 rem the navigation opens in a sheet from a small menu button at the page's top start, beside search, and the other part and Display become icon buttons. `apps/catalogue/src/navigation/DocumentationRoutes.ts` lists the pages of both. The repository's own guides, this file and [library development](docs/library-development.md), with [writing component](docs/component-pages.md) and [pattern pages](docs/pattern-pages.md), are not on the site.
 
-Routes live in the address's path, such as `/docs/components/button#props-Button-variant`, in development and in the hosted site; the fragment only names a section. There is no hash routing: the site never writes a hash address. An old hash address of earlier releases' offline catalogue, such as a bookmark of `#/components/button/props`, is redirected once to the path address of the page it named, as are the views pages had before the Site and the Docs split and earlier names of pages.
+⌘K or Ctrl+K opens search, in envUI's `CommandPalette`: components by their names and frontmatter `aliases`, their props, the design tokens, and the foundations, patterns and guides, each result naming its part, the catalogue or the Docs; a result opens its page at the prop's or token's row. `scripts/SearchIndex.mjs` builds the MiniSearch index from `docs/`, `docs/generated/props.json` and the token list whenever the documentation is generated, into `apps/catalogue/src/generated/SearchIndex.json`; its `searchDocuments()` gives the same documents to other tools, and `scripts/SearchTerms.mjs` how words are split and matched.
+
+Routes live in the address's path, such as `/docs/components/button#props-Button-variant`, in development and in the hosted site; the fragment only names a section, the one form that links, search results, copied addresses and the Docs' contents share. An address that names the section in its query, `?section=props-Button-variant`, opens the same place and is rewritten to the fragment. There is no hash routing: the site never writes a hash route. An old hash address of earlier releases' offline catalogue, such as a bookmark of `#/components/button/props`, is redirected once to the path address of the page it named, as are the views pages had before the two parts split and earlier names of pages.
 
 | Command                    | Purpose                                                       |
 | -------------------------- | ------------------------------------------------------------- |
@@ -77,13 +79,9 @@ Some browser specs open the hosted site from `dist/site/`. `npm run verify` and 
 
 ```text
 AGENTS.md            The testing policy and pointers for agents working on envUI
-.agents/skills/      The agent skills, the source of every copy
-.agents/plugins/     A plugin marketplace that lists plugin/
-.claude-plugin/      A plugin marketplace that lists plugin/ (one per client)
-plugin/              The envui agent plugin: manifests, MCP server and a copy of the skills
 docs/                Canonical Markdown documentation and discovery index
-apps/catalogue/      The website: the Site, which introduces envUI, and the Docs at /docs
-  site/              The hosted site's Worker script and response headers
+apps/catalogue/      The website: the catalogue, for people, and the Docs at /docs
+  site/              The hosted site's Worker script, response headers and setup skill
 packages/ui/         The publishable @envsemble/envui package
   src/               Components by family, styles and public entry points
   licenses/          Third-party license texts
@@ -91,23 +89,23 @@ packages/codemods/   @envsemble/envui-codemods: upgrades code from 0.x to 1.0
 packages/eslint-plugin/      @envsemble/eslint-plugin-envui: lint rules for apps
 packages/stylelint-config/   @envsemble/stylelint-config-envui: style rules for apps
 assets/brand/        Original envUI artwork, used by the catalogue only
-assets/readme/       Light/dark captures of the catalogue for the README
+assets/readme/       Light/dark captures of the catalogue and the Docs for the README
 scripts/             Builds, asset generation, local watching and release validation
 tests/               Package contract tests, browser specs and React fixtures
 .github/workflows/   CI, the release pull requests' Verify and the release on merge
 ```
 
-React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, manifests, catalogue data, builds and packaged copies of the README, skills and documentation have explicit sources; edit the source and regenerate.
+React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, catalogue data, builds and packaged copies of the README and documentation have explicit sources; edit the source and regenerate.
 
 ## Hosting
 
-The catalogue app builds envUI's website, for `envui.envsemble.com`: the Site at the root and the Docs under `/docs`, from one static build. It isn't deployed yet; until then it runs locally.
+The catalogue app builds envUI's website, for `envui.envsemble.com`: the catalogue at the root and the Docs under `/docs`, from one static build. It isn't deployed yet; until then it runs locally.
 
-- `npm run build:site` builds it into `dist/site/`: separate files with content-hashed names, so browsers keep them cached, and one `index.html` for both areas. It needs no network. It also writes `module-files.json`, from Vite's manifest: the files behind each part of a page that loads on its own, such as an example. When one fails to load, "Reload the page" fetches them again first, since WebKit otherwise keeps the failed file for the whole tab, and it doesn't reload when the connection seems to be down.
+- `npm run build:site` builds it into `dist/site/`: separate files with content-hashed names, so browsers keep them cached, and one `index.html` for both areas, with `SKILL.md` and `llms.txt` at its root for coding agents ([library development](docs/library-development.md#files-for-agents)). It needs no network. It also writes `module-files.json`, from Vite's manifest: the files behind each part of a page that loads on its own, such as an example. When one fails to load, "Reload the page" fetches them again first, since WebKit otherwise keeps the failed file for the whole tab, and it doesn't reload when the connection seems to be down.
 - `npm run site:dev` builds it and serves it at [localhost:8771](http://127.0.0.1:8771) in Wrangler, the Workers runtime that will host it. `npm run site:dev -- --port <port>` picks another port, and `npm run site:serve` serves the last build again.
   The site shows the latest release; each installed version's Markdown documentation ships in its package. The site is a Cloudflare Worker, configured in `wrangler.jsonc`, that serves `dist/site/` as static assets:
 
-- A path without a file gets `index.html`, so the routes of the Site and of the Docs, which live in the URL path, load from a deep link and on a refresh. Links between their pages change the address without loading the site again.
+- A path without a file gets `index.html`, so the routes of the catalogue and of the Docs, which live in the URL path, load from a deep link and on a refresh. Links between their pages change the address without loading the site again.
 - `apps/catalogue/site/_headers` sets the security headers, and pages are revalidated on every load.
 - A small Worker script runs first for `/assets/` (`run_worker_first`). It serves the hashed files there with a year-long cache, and answers a missing one with 404, also when a browser opens it as a page, so `index.html` is never cached under a file's name. These requests count as Worker requests; other files and page loads never run the script.
 - `workers_dev` and `preview_urls` are `false`, so the site has no `workers.dev` address or Preview URLs until Cloudflare Access protects them; step 5 below turns them on.
@@ -144,17 +142,18 @@ Published versions are immutable. Breaking changes require a new major version a
 
 ### Changelog links
 
-A changeset's entry ends up in `packages/ui/CHANGELOG.md`, on the Site's Changelog page, in the CHANGELOG of the npm tarball and in the GitHub release notes. A relative link resolves differently in each, so changesets link to documentation with an absolute URL to the file on `main`, such as `https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens`, never `../../docs/migration.md#tokens` or `./docs/migration.md#tokens`. The repository is private, and the changelog's readers are envsemble members who can open it. Once a released entry links to a heading in `docs/migration.md`, keep that heading's anchor.
+A changeset's entry ends up in `packages/ui/CHANGELOG.md`, on the Docs' Changelog page, in the CHANGELOG of the npm tarball and in the GitHub release notes. A relative link resolves differently in each, so changesets link to documentation with an absolute URL to the file on `main`, such as `https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens`, never `../../docs/migration.md#tokens` or `./docs/migration.md#tokens`. The repository is private, and the changelog's readers are envsemble members who can open it. Once a released entry links to a heading in `docs/migration.md`, keep that heading's anchor.
 
 ### Prepare the release commit
 
 The release commit is made on the branch that carries the release, such as `envui-1.0`, before it is merged into `dev`:
 
-1. **Leave prerelease mode, for a stable release.** The work towards 1.0 is in Changesets' prerelease mode for `prerelease` (`.changeset/pre.json`), where each `npm run changeset:version` produces the next `1.0.0-prerelease.N` and keeps the changesets it applied in `.changeset/pre/`. For a stable release, run `npx changeset pre exit` first. The order matters: `npm run changeset:version` still in prerelease mode makes another prerelease instead. If that happens, discard the result with `git restore` and `git clean` on `.changeset/`, `packages/`, `apps/catalogue/`, `plugin/` and the lockfile, rather than editing versions by hand.
-2. **Apply the changesets.** `npm run changeset:version` writes the version into the four packages, the dependency in `apps/catalogue/package.json`, the lockfile, the version of the [agent plugin](docs/agent-tooling.md#how-a-release-updates-the-plugin) in `plugin/` and the changelogs, such as the [library's](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. It removes the changesets it applied, or in prerelease mode moves them into `.changeset/pre/`.
+1. **Leave prerelease mode, for a stable release.** The work towards 1.0 is in Changesets' prerelease mode for `prerelease` (`.changeset/pre.json`), where each `npm run changeset:version` produces the next `1.0.0-prerelease.N` and keeps the changesets it applied in `.changeset/pre/`. For a stable release, run `npx changeset pre exit` first. The order matters: `npm run changeset:version` still in prerelease mode makes another prerelease instead. If that happens, discard the result with `git restore` and `git clean` on `.changeset/`, `packages/`, `apps/catalogue/` and the lockfile, rather than editing versions by hand.
+2. **Apply the changesets.** `npm run changeset:version` writes the version into the four packages, the dependency in `apps/catalogue/package.json`, the lockfile and the changelogs, such as the [library's](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. It removes the changesets it applied, or in prerelease mode moves them into `.changeset/pre/`.
 3. **Finish the changelog section.** Add the date to its heading, as in `## 1.0.0 — 2026-10-20`, and the summary below it; see [Release notes](#release-notes).
-4. **Check it.** `GITHUB_REF_NAME=v1.0.0 node scripts/ValidateRelease.mjs` checks what the Release workflow checks before it publishes, with the version's tag: the four packages, the catalogue's dependency and both plugin manifests carry the version, and the changelog has a section for it. With `--release-notes` it prints that section as the release notes will read.
-5. **Commit** the result as one release commit, such as `Release 1.0.0`.
+4. **Check it.** `GITHUB_REF_NAME=v1.0.0 node scripts/ValidateRelease.mjs` checks what the Release workflow checks before it publishes, with the version's tag: the four packages and the catalogue's dependency carry the version, and the changelog has a section for it. With `--release-notes` it prints that section as the release notes will read.
+5. **Retake the README's pictures** when the site's look changed: `npm run docs:readme-images` with the catalogue running (`npm run dev`, or give another catalogue's URL after `--`) writes the light and dark captures of a catalogue page and its Docs page into `assets/readme/`.
+6. **Commit** the result as one release commit, such as `Release 1.0.0`.
 
 A later prerelease line starts with `npx changeset pre enter prerelease`.
 

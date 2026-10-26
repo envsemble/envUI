@@ -1,204 +1,359 @@
 'use client';
 
-// Dev mode's two sidebars: the nodes as a tree on one side of the 3D view, and on the other the
-// inspector, with the selected node in detail and the readout an agent reads.
+// Dev mode's two sidebars: the nodes as a tree on one side of the 3D view, with dev mode's theme at
+// its foot, and on the other the inspector, with the selected node in detail and the readout an
+// agent reads. Each is resizable by its inner edge, with the grip of a resizable Drawer, and hides
+// with the button in its header's outer corner.
 
-import { useId, useMemo, useState, type ReactNode } from 'react';
-import { Button, IconButton } from '../../actions/Button.js';
+import { Fragment, memo, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { Button } from '../../actions/Button.js';
+import { CopyButton } from '../../actions/CopyButton.js';
 import { Badge } from '../../content/Badge.js';
 import * as DescriptionList from '../../content/DescriptionList.js';
-import { Tooltip } from '../../feedback/Tooltip.js';
 import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface } from '../../foundations/Surface.js';
 import { Text } from '../../foundations/Text.js';
-import { LeftPanelClose } from '../../icons/LeftPanelClose.js';
-import { RightPanelClose } from '../../icons/RightPanelClose.js';
-import { DocumentTabs } from '../../navigation/DocumentTabs.js';
+import { Contrast } from '../../icons/Contrast.js';
+import { DarkMode } from '../../icons/DarkMode.js';
+import { LightMode } from '../../icons/LightMode.js';
+import { ResizeHandle } from '../../internal/ResizeHandle.js';
+import { remPixels, useResizableWidth } from '../../internal/useResizableWidth.js';
+import * as Menu from '../../navigation/Menu.js';
+import { Tabs } from '../../navigation/Tabs.js';
 import { Tree, type TreeItem } from '../../navigation/Tree.js';
-import type { NodeData, Snapshot } from '../model.js';
+import type { NodeData } from '../model.js';
 import { knownParts } from '../parts.js';
 import { conditionHolds, queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
 import { tokensUsedBy } from '../usedTokens.js';
 import { toRem, windowClassOf } from '../units.js';
+import { SidebarToggle, type Side } from './controls.js';
+import type { EditorTheme } from './editorTheme.js';
+import { sideWidths } from './sides.js';
 import type { LivePage } from './useLivePage.js';
 
-/** A sidebar: a flush, square pane on the navigation's color, as a Drawer is. */
+/** The full measurement and its readout, which the sidebars show. */
+type Full = NonNullable<LivePage['full']>;
+
+/** The narrowest the 3D view gets as a sidebar widens, in rem. */
+const viewLeast = 16;
+
+/**
+ * The widest a sidebar can be, in rem: all of dev mode's window but the other sidebar and the
+ * narrowest view, so it widens well past half the window.
+ */
+function roomFor(handle: HTMLElement) {
+  const sidebar = handle.closest('.env-dev-sidebar');
+  const panel = handle.closest('.env-dev-panel');
+  if (!sidebar || !panel) return Infinity;
+  let others = 0;
+  for (const other of Array.from(panel.querySelectorAll('.env-dev-sidebar')))
+    if (other !== sidebar) others += other.getBoundingClientRect().width;
+  const rem = remPixels(handle);
+  return (panel.getBoundingClientRect().width - others) / rem - viewLeast;
+}
+
+/**
+ * A sidebar: a flush, square pane on the navigation's background, as a Drawer is, resizable by its
+ * inner edge with the same grip, keyboard and double click as a resizable Drawer's. It keeps its
+ * width while it is dragged, rendering only itself, and hands it on once the drag ends.
+ */
 function Sidebar({
   side,
   label,
+  defaultWidth,
+  onWidthCommit,
   children,
 }: {
-  side: 'tree' | 'inspector';
+  side: Side;
   label: string;
+  /** The width it starts at, in rem, as it was last left. */
+  defaultWidth: number;
+  /** Receives its width in rem once a drag ends, a key moves it or a double click resets it. */
+  onWidthCommit: (width: number) => void;
   children: ReactNode;
 }) {
+  const bounds = sideWidths[side];
+  const [width, setWidth] = useState(defaultWidth);
+  const resize = useResizableWidth({
+    width,
+    defaultWidth: bounds.default,
+    minWidth: bounds.min,
+    maxWidth: bounds.max,
+    onWidthChange: (next, { committed }) => {
+      setWidth(next);
+      if (committed) onWidthCommit(next);
+    },
+    room: roomFor,
+    // The inspector, at the window's end, grows as its handle moves toward the start.
+    reverse: side === 'inspector',
+    widthText: (text) => `${text} rem`,
+  });
   return (
     <Surface
       background="default"
       radius="none"
       padding={0}
-      render={<Column gap={2} render={<aside aria-label={label} />} />}
+      render={<Column gap={0} align="stretch" render={<aside aria-label={label} />} />}
       className="env-dev-sidebar"
       data-side={side}
+      style={{ '--env-dev-sidebar-width': `${resize.width}rem` } as CSSProperties}
     >
       {children}
+      <ResizeHandle
+        {...resize.handleProps}
+        label={side === 'tree' ? 'Resize the nodes' : 'Resize the inspector'}
+        grip
+        className="env-dev-sidebar-resize"
+      />
     </Surface>
   );
 }
 
 export interface NodeTreeProps {
-  live: LivePage;
+  /** The full measurement, or null until the first one. */
+  full: LivePage['full'];
   selected: number | null;
   onSelect: (key: number | null) => void;
   onTreeHover: (key: number | null) => void;
-  /** Hides the tree; the toolbar shows it again. */
+  /** The width it starts at, in rem. */
+  defaultWidth: number;
+  /** Receives its width in rem once people have resized it. */
+  onWidthCommit: (width: number) => void;
+  /** Hides the tree; the same button, left floating over the view, shows it again. */
   onHide: () => void;
+  /** The theme of dev mode's own UI, chosen at the tree's foot; the page keeps its own. */
+  editorTheme: { value: EditorTheme; onChange: (theme: EditorTheme) => void };
 }
 
-/** The nodes as a tree, in a sidebar of their own. */
-export function NodeTree({ live, selected, onSelect, onTreeHover, onHide }: NodeTreeProps) {
-  const full = live.full;
+/** The nodes as a tree, in a sidebar of their own, with dev mode's theme at its foot. */
+export const NodeTree = memo(function NodeTree({
+  full,
+  selected,
+  onSelect,
+  onTreeHover,
+  defaultWidth,
+  onWidthCommit,
+  onHide,
+  editorTheme,
+}: NodeTreeProps) {
   const problemCount = full?.reading.problems.length ?? 0;
   return (
-    <Sidebar side="tree" label="Layout nodes">
+    <Sidebar
+      side="tree"
+      label="Layout nodes"
+      defaultWidth={defaultWidth}
+      onWidthCommit={onWidthCommit}
+    >
       <Row gap={2} align="center" className="env-dev-sidebar-head">
-        <Text variant="body-sm" emphasis="default" render={<h2 />} className="env-dev-heading">
+        <SidebarToggle side="tree" shown onClick={onHide} />
+        <Text variant="title" render={<h2 />}>
           Nodes
         </Text>
         {problemCount ? (
-          <Text variant="body-sm" render={<span />}>
+          <Badge tone="danger" variant="soft">
             {problemCount} {problemCount === 1 ? 'problem' : 'problems'}
-          </Text>
+          </Badge>
         ) : null}
-        <Tooltip content="Hide the nodes">
-          <IconButton
-            variant="ghost"
-            size="sm"
-            icon={<LeftPanelClose />}
-            aria-label="Hide the nodes"
-            onClick={onHide}
-            className="env-dev-hide"
-          />
-        </Tooltip>
       </Row>
       {full ? (
-        <Nodes
-          snapshot={full.snapshot}
-          live={live}
-          selected={selected}
-          onSelect={onSelect}
-          onTreeHover={onTreeHover}
-        />
+        <Nodes full={full} selected={selected} onSelect={onSelect} onTreeHover={onTreeHover} />
       ) : (
         <Text variant="body-sm" className="env-dev-sidebar-note">
           Measuring…
         </Text>
       )}
+      <Row align="center" className="env-dev-sidebar-foot">
+        <EditorThemeMenu {...editorTheme} />
+      </Row>
     </Sidebar>
+  );
+});
+
+const themeIcons: Record<EditorTheme['theme'], ReactNode> = {
+  page: <Contrast />,
+  light: <LightMode />,
+  dark: <DarkMode />,
+};
+
+/** The theme of dev mode's own UI: the page's, light or dark, with or without high contrast. */
+function EditorThemeMenu({
+  value,
+  onChange,
+}: {
+  value: EditorTheme;
+  onChange: (theme: EditorTheme) => void;
+}) {
+  return (
+    <Menu.Root
+      aria-label="Dev mode theme"
+      side="top"
+      align="start"
+      trigger={
+        <Button variant="ghost" size="sm" startIcon={themeIcons[value.theme]}>
+          Dev mode theme
+        </Button>
+      }
+    >
+      <Menu.RadioGroup
+        label="Dev mode theme"
+        value={value.theme}
+        onValueChange={(theme) => onChange({ ...value, theme: theme as EditorTheme['theme'] })}
+      >
+        <Menu.RadioItem value="page" icon={<Contrast />} description="As the page is now">
+          Same as the page
+        </Menu.RadioItem>
+        <Menu.RadioItem value="light" icon={<LightMode />}>
+          Light
+        </Menu.RadioItem>
+        <Menu.RadioItem value="dark" icon={<DarkMode />}>
+          Dark
+        </Menu.RadioItem>
+      </Menu.RadioGroup>
+      <Menu.Separator />
+      <Menu.CheckboxItem
+        checked={value.contrast === 'high'}
+        onCheckedChange={(high) => onChange({ ...value, contrast: high ? 'high' : 'standard' })}
+      >
+        High contrast
+      </Menu.CheckboxItem>
+    </Menu.Root>
   );
 }
 
 export interface InspectorProps {
-  live: LivePage;
+  /** The full measurement, or null until the first one. */
+  full: LivePage['full'];
   selected: number | null;
-  /** Hides the inspector; the toolbar shows it again. */
+  /** The width it starts at, in rem. */
+  defaultWidth: number;
+  /** Receives its width in rem once people have resized it. */
+  onWidthCommit: (width: number) => void;
+  /** Hides the inspector; the same button, left floating over the view, shows it again. */
   onHide: () => void;
 }
 
-const inspectorTabs = [
-  { id: 'details', label: 'Details' },
-  { id: 'readout', label: 'Readout' },
-];
-
 /**
  * The selected node in detail, and the readout, in the sidebar across the view from the tree: two
- * documents in DocumentTabs. Closing one leaves the other; closing both hides the inspector, and
- * showing it again opens both.
+ * tabs, beside the button that hides the inspector.
  */
-export function Inspector({ live, selected, onHide }: InspectorProps) {
-  const [open, setOpen] = useState(inspectorTabs);
+export const Inspector = memo(function Inspector({
+  full,
+  selected,
+  defaultWidth,
+  onWidthCommit,
+  onHide,
+}: InspectorProps) {
   const [tab, setTab] = useState<string | null>('details');
-  const panelId = useId();
-  const full = live.full;
   const current =
     full && selected !== null
       ? full.snapshot.nodes.find((node) => node.key === selected)
       : undefined;
-  const active = open.find((item) => item.id === tab) ?? open[0];
   return (
-    <Sidebar side="inspector" label="Dev mode inspector">
-      <DocumentTabs
+    <Sidebar
+      side="inspector"
+      label="Dev mode inspector"
+      defaultWidth={defaultWidth}
+      onWidthCommit={onWidthCommit}
+    >
+      <Tabs
         aria-label="Inspector"
-        items={open}
-        value={active.id}
+        size="sm"
+        fill
+        value={tab}
         onValueChange={setTab}
-        panelId={panelId}
-        onClose={(id) => {
-          const remaining = open.filter((item) => item.id !== id);
-          if (!remaining.length) return onHide();
-          setOpen(remaining);
-          if (id === active.id) setTab(remaining[0].id);
-        }}
-        end={
-          <Tooltip content="Hide the inspector">
-            <IconButton
-              variant="ghost"
-              size="sm"
-              icon={<RightPanelClose />}
-              aria-label="Hide the inspector"
-              onClick={onHide}
-            />
-          </Tooltip>
-        }
+        className="env-dev-tabs"
+        panelClassName="env-dev-tab-panel"
+        renderList={(list) => (
+          <Row gap={2} align="center" justify="between" className="env-dev-sidebar-head">
+            {list}
+            <SidebarToggle side="inspector" shown onClick={onHide} />
+          </Row>
+        )}
+        items={[
+          {
+            value: 'details',
+            button: <Button>Details</Button>,
+            content:
+              current && full ? (
+                <Details key={current.key} full={full} node={current} />
+              ) : (
+                <Text variant="body-sm">Select a node in the tree or click its plane.</Text>
+              ),
+          },
+          {
+            value: 'readout',
+            button: <Button>Readout</Button>,
+            content: full ? (
+              <Column gap={3}>
+                <Text variant="body-sm">
+                  What <code className="env-dev-code">envui.layout.describe()</code> returns. Try{' '}
+                  <code className="env-dev-code">
+                    envui.layout.at([&apos;22rem&apos;, &apos;40rem&apos;, &apos;60rem&apos;,
+                    &apos;80rem&apos;])
+                  </code>{' '}
+                  in the console.
+                </Text>
+                <Row>
+                  <CopyButton value={full.reading.text} variant="outline" size="sm">
+                    Copy the readout
+                  </CopyButton>
+                </Row>
+                <Readout text={full.reading.text} />
+              </Column>
+            ) : null,
+          },
+        ]}
       />
-      <Column
-        gap={3}
-        id={panelId}
-        role="tabpanel"
-        aria-label={active.label}
-        className="env-dev-tab-panel"
-      >
-        {active.id === 'details' ? (
-          current && full ? (
-            <Details key={current.key} snapshot={full.snapshot} node={current} live={live} />
-          ) : (
-            <Text variant="body-sm">Select a node in the tree or click its plane.</Text>
-          )
-        ) : full ? (
-          <>
-            <Text variant="body-sm">
-              What <code className="env-dev-code">envui.layout.describe()</code> returns. Try{' '}
-              <code className="env-dev-code">
-                envui.layout.at(['22rem', '40rem', '60rem', '80rem'])
-              </code>{' '}
-              in the console.
-            </Text>
-            <CopyReadout text={full.reading.text} />
-            <pre className="env-dev-readout">{full.reading.text}</pre>
-          </>
-        ) : null}
-      </Column>
     </Sidebar>
+  );
+});
+
+/**
+ * The readout's text as it fits the sidebar: each line wraps within it, its continuation indented
+ * under the line's own indent, so nothing runs past the edge and the nesting stays readable. The
+ * text copied is the readout as it is.
+ */
+function Readout({ text }: { text: string }) {
+  const lines = useMemo(
+    () =>
+      text.split('\n').map((line) => {
+        const content = line.trimStart();
+        return { indent: line.length - content.length, content };
+      }),
+    [text],
+  );
+  return (
+    <pre className="env-dev-readout">
+      {lines.map(({ indent, content }, index) => (
+        <span
+          key={index}
+          className="env-dev-readout-line"
+          style={{ '--env-dev-indent': indent } as CSSProperties}
+        >
+          {content || '\u00a0'}
+          {'\n'}
+        </span>
+      ))}
+    </pre>
   );
 }
 
 interface NodesProps {
-  snapshot: Snapshot;
-  live: LivePage;
+  full: Full;
   selected: number | null;
   onSelect: (key: number | null) => void;
   onTreeHover: (key: number | null) => void;
 }
 
-function Nodes({ snapshot, live, selected, onSelect, onTreeHover }: NodesProps) {
+function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
   const [collapsed, setCollapsed] = useState(() => new Set<number>());
-  const problemsByKey = live.full?.problemsByKey;
+  const { snapshot, problemsByKey } = full;
   const items = useMemo(() => {
     const rows: (TreeItem & { node: NodeData })[] = [];
     const visit = (node: NodeData, depth: number) => {
       const open = !collapsed.has(node.key);
-      const problems = problemsByKey?.get(node.key)?.length ?? 0;
+      const problems = problemsByKey.get(node.key)?.length ?? 0;
       rows.push({
         id: String(node.key),
         depth,
@@ -259,16 +414,17 @@ function Nodes({ snapshot, live, selected, onSelect, onTreeHover }: NodesProps) 
   );
 }
 
-/** A heading of the details, quiet and small, as a side column's section headings are. */
+/** A heading of the details, quiet and small, as a Drawer's group headings are. */
 const Heading = ({ children }: { children: ReactNode }) => (
-  <Text variant="body-sm" emphasis="default" render={<h3 />} className="env-dev-heading">
+  <Text variant="caption" render={<h3 />}>
     {children}
   </Text>
 );
 
-function Details({ snapshot, node, live }: { snapshot: Snapshot; node: NodeData; live: LivePage }) {
+function Details({ full, node }: { full: Full; node: NodeData }) {
+  const { snapshot } = full;
   const element = snapshot.elements?.[node.index];
-  const problems = live.full?.problemsByKey.get(node.key) ?? [];
+  const problems = full.problemsByKey.get(node.key) ?? [];
   const part = node.part ? knownParts()?.byClass.get(node.part) : undefined;
   const width = toRem(node.size.w, snapshot.rootPx);
   const queries = node.container ? queriesFor(node.container.name, snapshot.queries) : [];
@@ -282,10 +438,10 @@ function Details({ snapshot, node, live }: { snapshot: Snapshot; node: NodeData;
           !['data-env-layout', 'data-env-name'].includes(attribute.name),
       )
     : [];
-  const line = live.full?.reading.lines[node.index];
+  const line = full.reading.lines[node.index];
   return (
     <Column gap={4} render={<section aria-label={`Details of ${labelOf(node)}`} />}>
-      <Text variant="body-sm" emphasis="default" render={<h2 />} className="env-dev-heading">
+      <Text variant="title" render={<h2 />} className="env-dev-wrap">
         {labelOf(node)}
       </Text>
       <DescriptionList.Root layout="inline">
@@ -348,12 +504,21 @@ function Details({ snapshot, node, live }: { snapshot: Snapshot; node: NodeData;
       {tokens.length ? (
         <Column gap={1}>
           <Heading>Tokens its styles use</Heading>
-          <Grid columns="minmax(0, 1fr) auto" gap={1} className="env-dev-tokens">
+          <Grid columns="minmax(0, 1fr) auto" gap={1}>
             {tokens.map((token) => (
-              <span key={token.name} style={{ display: 'contents' }}>
-                <code className="env-dev-code">{token.name}</code>
-                <span className="env-dev-quiet">{token.value || '(not set)'}</span>
-              </span>
+              <Fragment key={token.name}>
+                <Text
+                  variant="body-sm"
+                  emphasis="default"
+                  render={<code />}
+                  className="env-dev-code"
+                >
+                  {token.name}
+                </Text>
+                <Text variant="body-sm" render={<span />}>
+                  {token.value || '(not set)'}
+                </Text>
+              </Fragment>
             ))}
           </Grid>
         </Column>
@@ -361,35 +526,9 @@ function Details({ snapshot, node, live }: { snapshot: Snapshot; node: NodeData;
       {line ? (
         <Column gap={1}>
           <Heading>Readout line</Heading>
-          <pre className="env-dev-readout" data-wrap="">
-            {line}
-          </pre>
+          <Readout text={line.trimStart()} />
         </Column>
       ) : null}
     </Column>
-  );
-}
-
-/**
- * Copies the readout. A plain button that says when it copied: CopyButton's tooltip would open
- * outside dev mode's UI, where the readout would list it as an overlay of the page.
- */
-function CopyReadout({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <div>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          void navigator.clipboard?.writeText(text).then(() => {
-            setCopied(true);
-            window.setTimeout(() => setCopied(false), 2000);
-          });
-        }}
-      >
-        {copied ? 'Copied' : 'Copy the readout'}
-      </Button>
-    </div>
   );
 }

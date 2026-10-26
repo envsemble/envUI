@@ -25,31 +25,51 @@ avoidWhen:
     use: Toolbar
 components:
   - Menubar
+examples:
+  NotesMenubar: overview
+  InTitleBar: example
+  MenubarAnatomy: anatomy
 ---
 
 # Menubar
 
-## Overview
-
-After a command, Menubar returns focus to where it was, so Copy acts on the field people were in.
-
-```tsx example=NotesMenubar
-
-```
+## Variants
 
 ### In a title bar
 
 The [app frame](../patterns/app-frame.md) pattern shows the whole title bar, in an installed app's window.
 
-```tsx example=InTitleBar
+```tsx figure=InTitleBar
 
 ```
 
+## Anatomy
+
+```tsx figure=MenubarAnatomy open
+
+```
+
+1. **Menubar** (`env-menubar`)
+2. **Trigger** (`env-menubar-trigger`, `label`)
+3. **Access key** (`env-menubar-access-key`, `accessKey`)
+4. **Menu** (`env-menu`, the children, open with `open` or `defaultOpen`)
+
+## Behaviour
+
+### After a command
+
+Menubar returns focus to where it was, so Copy acts on the field people were in.
+
 ### Access keys
 
-A menubar can underline a letter of each menu's name while <kbd>Alt</kbd> is held, and <kbd>Alt</kbd> with the letter opens that menu. One menubar per window has them.
+A menubar can underline a letter of each menu's name while <kbd>Alt</kbd> is held.
 
-## When to use
+- <kbd>Alt</kbd> with the letter opens that menu.
+- One menubar per window has them.
+
+## Rules
+
+A menubar groups many commands, and the most frequent ones stay in view too.
 
 ### Visible controls too
 
@@ -58,17 +78,6 @@ Offer the most frequent commands in visible controls too, not only in the menus.
 ### Content
 
 Name items as in [Menu](../components/menu.md), with an ellipsis for a command that asks for more, such as Export… in File.
-
-## Anatomy
-
-```tsx anatomy=MenubarAnatomy open
-
-```
-
-1. **Menubar** (`env-menubar`)
-2. **Trigger** (`env-menubar-trigger`, `label`)
-3. **Access key** (`env-menubar-access-key`, `accessKey`)
-4. **Menu** (`env-menu`, the children, open with `open` or `defaultOpen`)
 
 ## Accessibility
 
@@ -94,11 +103,15 @@ Name items as in [Menu](../components/menu.md), with an ellipsis for a command t
 - An `aria-label`, such as Application menu.
 - The keys behind every shortcut, and commands that act on `previousFocus` where they edit a field.
 
-## In code
+## Compose
 
 ### Usage
 
-Menubar.Root, named by its `aria-label`, holds a Menubar.Menu for each menu. A Menubar.Menu takes its trigger's `label`, such as File, and its items as children: Menu.Item, Menu.Submenu, Menu.Separator and Menu's other parts, with their shortcuts. `disabled` dims one menu's trigger, or on Menubar.Root every menu. A menu opens on its own, or with `open`, `defaultOpen` and `onOpenChange`.
+Menubar.Root, named by its `aria-label`, holds a Menubar.Menu for each menu.
+
+- A Menubar.Menu takes its trigger's `label`, such as File, and its items as children: Menu.Item, Menu.Submenu, Menu.Separator and Menu's other parts, with their shortcuts.
+- `disabled` dims one menu's trigger, or on Menubar.Root every menu.
+- A menu opens on its own, or with `open`, `defaultOpen` and `onOpenChange`.
 
 ```tsx source=NotesMenubar
 
@@ -121,14 +134,28 @@ The menubar returns focus to where it was after a command. `onOpenChange(open, d
 
 #### Access keys
 
-With `accessKeys` on Menubar.Root, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, a letter of its label such as F for File, <kbd>Alt</kbd> with the letter opens that menu, and <kbd>Alt</kbd> alone moves focus to the menubar and back. They are off by default; turn them on for one menubar per window.
+With `accessKeys` on Menubar.Root, holding <kbd>Alt</kbd> underlines each menu's `accessKey`, a letter of its label such as F for File.
+
+- <kbd>Alt</kbd> with the letter opens that menu.
+- <kbd>Alt</kbd> alone moves focus to the menubar and back.
+- They are off by default; turn them on for one menubar per window.
 
 #### In a title bar
 
-In a window that draws its own title bar, a TopBar with `titleBar`, put the menubar in its `start`, as the [app frame](../patterns/app-frame.md) pattern does in an installed app's window.
+In a window that draws its own title bar, a TopBar with `titleBar`, put the menubar in its `start`, as the [app frame](../patterns/app-frame.md) pattern does in an installed app's window, and the InTitleBar example does.
 
-```tsx source=InTitleBar
-
+```tsx
+<TopBar
+  titleBar
+  title="Roadmap.md"
+  start={
+    <Menubar.Root aria-label="Application menu">
+      <Menubar.Menu label="File">
+        <Menu.Item shortcut="Ctrl+N">New document</Menu.Item>
+      </Menubar.Menu>
+    </Menubar.Root>
+  }
+/>
 ```
 
 ### Composition

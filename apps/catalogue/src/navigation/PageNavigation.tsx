@@ -1,11 +1,11 @@
 import { Pager } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { pagesOf, type SitePage } from './DocumentationRoutes';
+import { pagesOf, type RoutePage } from './DocumentationRoutes';
 import { routeHref } from './Address';
 
-/** The previous and next pages of the page's area, the Site or the Docs, in reading order. */
-export function PageNavigation({ page }: { page: SitePage }) {
+/** The previous and next pages of the page's part, the catalogue or the Docs, in reading order. */
+export function PageNavigation({ page }: { page: RoutePage }) {
   const pages = pagesOf(page.area);
   const index = pages.indexOf(page);
   if (index === -1) return null;

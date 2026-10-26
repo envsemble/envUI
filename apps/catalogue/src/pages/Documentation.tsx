@@ -11,7 +11,7 @@ import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useDocumentationRoute';
 import { headingSlugger } from '../../../../scripts/SearchAnchors.mjs';
 
-/** The repository's copy of a page of docs/ that neither the Site nor the Docs show. */
+/** The repository's copy of a page of docs/ that neither the catalogue nor the Docs show. */
 const repositoryFile = (path: string) =>
   `https://github.com/envsemble/envUI/blob/main/docs/${path}`;
 
@@ -36,7 +36,7 @@ const decodedFragment = (hash: string) => {
  * the page that shows it, at the heading its fragment names, and a link to a heading of the same
  * page, #heading, scrolls to it on the current route. A foundation's written guidance is its guide
  * in the Docs, so a link to one of its headings, or any link to it from the Docs, opens the guide,
- * and others its visual page on the Site.
+ * and others its visual page in the catalogue.
  */
 export function documentationHref(href: string, sourcePath: string) {
   if (/^#./.test(href)) return routeHref(sectionOfCurrentRoute(decodedFragment(href)));
@@ -99,7 +99,7 @@ type HastNode = {
 /** A component named in parentheses at the end of an item, as "(IconButton)" or "(Calendar).". */
 const trailingName = /\s*\(([A-Z][A-Za-z]*)\)\.?\s*$/;
 
-/** The page that documents a component, and so its address, where it has one on the Site. */
+/** The page that documents a component, and so its address, where it has one in the catalogue. */
 const componentPage = (name: string) =>
   referencePages.find(
     (page) =>
@@ -171,8 +171,14 @@ const componentNames =
 
 const rehypePlugins = [headingIds];
 
-/** A page's Markdown, or a part of it such as one section, with its links resolved. */
-export function Documentation(props: { document: Document } | { markdown: string; path: string }) {
+/**
+ * A page's Markdown, or a part of it such as one section, with its links resolved. `className`
+ * gives it a role in the catalogue's type hierarchy, such as `docs-lead` for a section's opening
+ * paragraph (SiteText.css).
+ */
+export function Documentation(
+  props: ({ document: Document } | { markdown: string; path: string }) & { className?: string },
+) {
   const [markdown, path] =
     'document' in props
       ? [props.document.markdown, props.document.path]
@@ -185,7 +191,9 @@ export function Documentation(props: { document: Document } | { markdown: string
   return (
     <Markdown
       codeCopyable
-      className={guidance ? 'docs-guidance' : undefined}
+      className={
+        [guidance && 'docs-guidance', props.className].filter(Boolean).join(' ') || undefined
+      }
       rehypePlugins={plugins}
       renderLink={({ href, ...link }: MarkdownLinkProps) => (
         <Link {...link} href={documentationHref(href, path)} />

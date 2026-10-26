@@ -280,8 +280,9 @@ async function finishAnimations(page: Page) {
 
 /** Wait until fonts, lazy content and finite animations have finished. */
 async function settle(page: Page) {
-  // The Site's Loading spinner (.docs-loading) marks a part that is still loading: an example, its
-  // code, a specimen, a demo or the icon list; a part from LoadedPart says "Loading the …".
+  // The catalogue's Loading spinner (.docs-loading) marks a part that is still loading: an
+  // example, its code, a specimen, a demo or the icon list; a part from LoadedPart says "Loading
+  // the …".
   await page
     .locator('.docs-loading')
     .or(page.getByText(/^Loading .*…$/))
@@ -494,6 +495,19 @@ test.describe('catalogue', () => {
             await expect(matrix).toBeHidden();
           }
         }
+        // A foundation page in the one-file structure shows the catalogue's own figures, each
+        // named after its label, such as Spacing's measured settings card.
+        if (!specimens) {
+          await open(visited[0]!);
+          for (const figure of await page
+            .locator('.docs-template figure.docs-topic-figure')
+            .all()) {
+            if (!(await figure.isVisible())) continue;
+            const label = (await figure.getAttribute('aria-label')) ?? '';
+            await take(figure, `${theme.name}-${name(slug(label))}.png`);
+            specimens++;
+          }
+        }
         // A page without a specimen gives its first live example, named after its file.
         for (const view of specimens ? [] : visited) {
           await open(view);
@@ -546,9 +560,17 @@ test.describe('open lists', () => {
         // an element to measure once the list is open.
         const trigger = await list.trigger(page).elementHandle();
         if (!trigger) throw new Error(`No trigger for the ${list.name} list`);
-        await trigger.evaluate((element) =>
-          element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
-        );
+        const center = () =>
+          trigger.evaluate((element) =>
+            element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
+          );
+        // Examples around the trigger load as they come into view and change the page's height,
+        // which would leave a different part of the page behind a modal popup on each run: they
+        // finish loading, then the trigger is centred again.
+        await center();
+        await expect(page.getByText('Loading example')).toHaveCount(0);
+        await settle(page);
+        await center();
         await page.mouse.move(0, 0);
         // Toasts start their timers as they show, so the clock stops before they open. Nothing
         // waits on a timer yet, so the second it skips to stop changes nothing.

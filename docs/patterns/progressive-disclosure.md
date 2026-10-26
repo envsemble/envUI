@@ -43,25 +43,27 @@ composes:
   - Column
   - Row
   - Text
+examples:
+  AdvancedOptions: overview
+  ShowMore: example
+  DetailsInSheet: example
+  OverflowActions: example
+  ExplainATerm: example
+  DisclosureLayers: anatomy
 ---
 
 # Progressive disclosure
-
-## Overview
-
-Advanced options wait behind a [Disclosure](../components/disclosure.md).
-
-```tsx example=AdvancedOptions
-
-```
 
 ## Variants
 
 ### Show all
 
-The button stays after the list and says what a press does, "Show all 12", then "Show fewer", and tells assistive technology whether the whole list shows.
+The button stays after the list and says what a press does.
 
-```tsx example=ShowMore
+- It reads "Show all 12", then "Show fewer".
+- It tells assistive technology whether the whole list shows.
+
+```tsx figure=ShowMore
 
 ```
 
@@ -69,7 +71,7 @@ The button stays after the list and says what a press does, "Show all 12", then 
 
 The list stays in place under the Sheet, so people continue from the row they opened.
 
-```tsx example=DetailsInSheet
+```tsx figure=DetailsInSheet
 
 ```
 
@@ -77,7 +79,7 @@ The list stays in place under the Sheet, so people continue from the row they op
 
 Share and Edit stay visible; the rest wait in a [Menu](../components/menu.md) named More actions.
 
-```tsx example=OverflowActions
+```tsx figure=OverflowActions
 
 ```
 
@@ -85,11 +87,24 @@ Share and Edit stay visible; the rest wait in a [Menu](../components/menu.md) na
 
 A help button opens a Popover with a short definition and a link.
 
-```tsx example=ExplainATerm
+```tsx figure=ExplainATerm
 
 ```
 
-## When to use
+## Anatomy
+
+```tsx figure=DisclosureLayers
+
+```
+
+1. **Visible layer** (`env-text-field`)
+2. **Summary** (`env-disclosure summary`, `title`)
+3. **Disclosed layer** (`env-disclosure-panel`)
+4. **More actions** (`env-button ~ env-button`)
+
+## Rules
+
+Show what most people need, and keep the rest a step away: advanced options wait behind a [Disclosure](../components/disclosure.md).
 
 ### Which to use
 
@@ -112,22 +127,19 @@ Keep the rest one step away at most: no disclosure in a disclosure, and no menu 
 
 ### Content
 
-Label a disclosure with what it holds, "Advanced options", and say how much more there is: "Show all 12", not "Show more". Name an overflow menu "More actions", or "More actions for Launch brief" in a row.
+Label a disclosure with what it holds, "Advanced options", and say how much more there is.
 
-## Anatomy
-
-```tsx anatomy=DisclosureLayers
-
-```
-
-1. **Visible layer** (`env-text-field`)
-2. **Summary** (`env-disclosure summary`, `title`)
-3. **Disclosed layer** (`env-disclosure-panel`)
-4. **More actions** (`env-button ~ env-button`)
+- Say "Show all 12", not "Show more".
+- Name an overflow menu "More actions", or "More actions for Launch brief" in a row.
 
 ## Accessibility
 
-A Disclosure's summary is a button; <kbd>Enter</kbd> or <kbd>Space</kbd> opens it, and focus stays. Show all keeps focus as the list grows. A Sheet, Menu or Popover moves focus in as it opens and back to its trigger as it closes.
+### Focus and keyboard
+
+A Disclosure's summary is a button; <kbd>Enter</kbd> or <kbd>Space</kbd> opens it, and focus stays.
+
+- Show all keeps focus as the list grows.
+- A Sheet, Menu or Popover moves focus in as it opens and back to its trigger as it closes.
 
 ### envUI provides
 
@@ -138,11 +150,14 @@ A Disclosure's summary is a button; <kbd>Enter</kbd> or <kbd>Space</kbd> opens i
 
 - A name for every icon-only trigger, and `aria-expanded` and `aria-controls` on a Show all button.
 
-## In code
+## Compose
 
 ### Usage
 
-A Disclosure takes its summary as `title` and holds the optional settings; control it with `open` and `onOpenChange` where the application opens it, or start it open with `defaultOpen`. Open it from the application when it holds an invalid field, as the Disclosure page describes.
+A Disclosure takes its summary as `title` and holds the optional settings.
+
+- Control it with `open` and `onOpenChange` where the application opens it, or start it open with `defaultOpen`.
+- Open it from the application when it holds an invalid field, as the Disclosure page describes.
 
 ```tsx source=AdvancedOptions
 
@@ -152,24 +167,50 @@ A Disclosure takes its summary as `title` and holds the optional settings; contr
 
 A text Button after the list, with `aria-expanded` and `aria-controls` naming the list, toggles between the first few items and all of them, and keeps focus as the list grows.
 
-```tsx source=ShowMore
-
+```tsx
+<Button
+  variant="text"
+  aria-expanded={expanded}
+  aria-controls={listId}
+  onClick={() => setExpanded((current) => !current)}
+>
+  {expanded ? 'Show fewer' : `Show all ${activity.length}`}
+</Button>
 ```
 
 #### Details in a sheet
 
 A row's text Button, with `aria-haspopup="dialog"`, opens a Sheet controlled through `open` and `onOpenChange`, with the item's details, such as a stacked DescriptionList, and an `actions` link to its own page. Keep the shown item while the sheet closes, so its content doesn't empty as it slides out.
 
-```tsx source=DetailsInSheet
-
+```tsx
+<Sheet
+  open={open}
+  onOpenChange={setOpen}
+  title={project.name}
+  closeLabel="Close details"
+  actions={<Button href={`/projects/${project.id}`}>Open project</Button>}
+>
+  <DescriptionList.Root layout="stacked">{details}</DescriptionList.Root>
+</Sheet>
 ```
 
 #### Overflow actions
 
 A Menu named by `aria-label` takes a ghost IconButton with the MoreVert icon and `aria-label="More actions"` as its `trigger`, wrapped in a Tooltip that names it. A `Menu.Separator` sets a destructive item apart, last, as on Menu.
 
-```tsx source=OverflowActions
-
+```tsx
+<Menu.Root
+  aria-label="Launch brief actions"
+  trigger={
+    <Tooltip content="More actions">
+      <IconButton variant="ghost" icon={<MoreVert />} aria-label="More actions" />
+    </Tooltip>
+  }
+>
+  <Menu.Item icon={<FileCopy />}>Duplicate</Menu.Item>
+  <Menu.Separator />
+  <Menu.Item icon={<Archive />}>Archive</Menu.Item>
+</Menu.Root>
 ```
 
 #### Explain a term

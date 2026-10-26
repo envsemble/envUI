@@ -453,7 +453,7 @@
           "name": "destinations",
           "type": "readonly Destination[]",
           "required": true,
-          "description": "The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past 5 it shows the first 4 and a More item that opens the rest in a menu. Groups don't show."
+          "description": "The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past 5 it shows the first 4 and a More item that opens the rest in a menu. Groups and nested destinations don't show: a destination whose `children` hold the current one takes the current fill."
         },
         {
           "name": "background",
@@ -1727,6 +1727,12 @@
           "description": "Filtered and ranked by the application, in display order."
         },
         {
+          "name": "defaultItems",
+          "type": "readonly CommandPaletteItem[]",
+          "required": false,
+          "description": "Shown in place of items while the search field is empty, such as recent documents or suggested pages under a group heading; options like any other."
+        },
+        {
           "name": "onAction",
           "type": "(item: CommandPaletteItem, options: CommandPaletteActionOptions) => void",
           "required": true,
@@ -1749,8 +1755,22 @@
           "name": "emptyLabel",
           "type": "ReactNode",
           "required": false,
-          "default": "'No results', or EnvUIProvider's messages.commandPalette.empty",
-          "description": "Shown in place of the list when there are no items, and announced."
+          "default": "'Type to search' while the search field is empty and 'No results' when its text finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty",
+          "description": "The empty state's title, shown in place of the list when there are no options, and announced."
+        },
+        {
+          "name": "emptyDescription",
+          "type": "ReactNode",
+          "required": false,
+          "default": "None while the search field is empty; when its text finds nothing, 'Nothing matches “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint",
+          "description": "Quieter text under the empty state's title, such as what the palette searches; null shows none."
+        },
+        {
+          "name": "emptyIcon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "Search while the search field is empty, SearchOff when its text finds nothing",
+          "description": "The empty state's decorative icon, above its title; null shows none."
         },
         {
           "name": "hints",
@@ -2927,13 +2947,32 @@
     "Drawer": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Drawer.tsx",
-      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
+      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups, and nested destinations in sections that open and close. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination and section button is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
       "props": [
         {
           "name": "destinations",
           "type": "readonly DrawerDestination[]",
           "required": true,
-          "description": "The application's destinations, the same array Bar and Rail take: each a row with its icon, its label and its count. A heading starts each run of destinations of one `group`."
+          "description": "The application's destinations, the same array Bar and Rail take: each a row with its icon, its label and its count. A heading starts each run of destinations of one `group`. A destination with `children` is a section that opens and closes, with them under it, indented."
+        },
+        {
+          "name": "expanded",
+          "type": "readonly string[]",
+          "required": false,
+          "description": "The open sections, for a drawer whose sections the application keeps open, such as for the next visit: each a destination with `children`, named by its `href`, or its label where it has none. Update it from onExpandedChange. Leave it out for the drawer to keep its own."
+        },
+        {
+          "name": "defaultExpanded",
+          "type": "readonly string[]",
+          "required": false,
+          "default": "[]",
+          "description": "The sections open at first, as in `expanded`, for a drawer that keeps its own. The sections that hold the current destination open as well."
+        },
+        {
+          "name": "onExpandedChange",
+          "type": "(expanded: string[]) => void",
+          "required": false,
+          "description": "Receives the open sections, as in `expanded`, as one opens or closes, and as the current destination moves into a closed section, which opens."
         },
         {
           "name": "header",
@@ -6130,7 +6169,7 @@
           "name": "destinations",
           "type": "readonly Destination[]",
           "required": true,
-          "description": "The application's destinations, the same array Bar and Drawer take, each an icon above a short label. Groups don't show: the destinations follow one another in the array's order."
+          "description": "The application's destinations, the same array Bar and Drawer take, each an icon above a short label. Groups don't show: the destinations follow one another in the array's order. Nested destinations don't show either: a destination whose `children` hold the current one takes the current fill."
         },
         {
           "name": "header",
@@ -7625,6 +7664,58 @@
         "@envsemble/envui"
       ]
     },
+    "TableOfContents": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/TableOfContents.tsx",
+      "description": "The page's sections as links, nested by level, with the one the reader is in marked as they scroll: the headings in a container by default, or sections of your own.",
+      "props": [
+        {
+          "name": "items",
+          "type": "readonly TableOfContentsItem[]",
+          "required": false,
+          "description": "The sections to list, nested through `children`, each leading to the element with its `id`: a heading or any other part of the page, under a label of your own. Without it, the component lists the headings it finds in `container`, after it mounts."
+        },
+        {
+          "name": "container",
+          "type": "RefObject<HTMLElement | null> | string",
+          "required": false,
+          "default": "The page's `main` element, or the body without one",
+          "description": "Where to find the headings, without `items`: an element's ref or a CSS selector."
+        },
+        {
+          "name": "levels",
+          "type": "readonly TableOfContentsHeadingLevel[]",
+          "required": false,
+          "default": "[2, 3]",
+          "description": "The heading levels to list, without `items`. A heading nests under the one above it of a lower level. A heading without an id gets one from its words."
+        },
+        {
+          "name": "filter",
+          "type": "(heading: HTMLElement) => boolean",
+          "required": false,
+          "description": "Leaves out the headings it returns false for, without `items`, such as an example's own."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "'On this page', or EnvUIProvider's messages.tableOfContents.label",
+          "description": "The accessible name of the navigation landmark."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "Classes for the `nav` element."
+        }
+      ],
+      "native": [
+        "nav"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Tabs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Tabs.tsx",
@@ -8514,6 +8605,13 @@
           "description": "Whether the arrow keys move from the last control to the first and back."
         },
         {
+          "name": "tooltipDelay",
+          "type": "number",
+          "required": false,
+          "default": "400",
+          "description": "Milliseconds the pointer rests on a button or link before its tooltip opens, as Tooltip's delay; keyboard focus opens it at once. 0 shows every name at once, for a toolbar people scan by pointing, such as a canvas's view controls."
+        },
+        {
           "name": "render",
           "type": "ReactElement",
           "required": false,
@@ -8813,7 +8911,7 @@
     "installDevMode": {
       "kind": "function",
       "source": "packages/ui/src/dev/install.tsx",
-      "description": "Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a toggle button in the corner and Alt+Shift+D, which open the 3D view and the inspector over the page. Load it in development only, so production builds contain none of it: if (import.meta.env.DEV) { void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode()); } Calling it again returns the dev mode already installed, until it is uninstalled.",
+      "description": "Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a button in the corner and Alt+Shift+D, which open the page in a new tab with the 3D view and the inspector over the whole window. Closing that tab ends dev mode; the page it came from stays as it was. Load it in development only, so production builds contain none of it: if (import.meta.env.DEV) { void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode()); } Calling it again returns the dev mode already installed, until it is uninstalled.",
       "signature": "(options?: DevModeOptions): DevModeHandle",
       "entries": [
         "@envsemble/envui/dev"

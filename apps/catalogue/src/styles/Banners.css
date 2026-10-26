@@ -1,16 +1,72 @@
-/* The Docs' banners (PageHeader.tsx): a page of the Docs, the developer reference, reads from the
-   start like a document, its trail in monospace, on the page's own color inside an edge, the envUI
-   mark's circle and pill drawn as outlines at its end, as on a plan (BannerShapes.tsx). No shadows.
-   The banner itself, which the Site's share, is in Shell.css. */
-.docs-banner > :not(.docs-banner-shapes) {
+/* The banners of the catalogue and the Docs (PageHeader.tsx). Every page's banner reads from the
+   start like a document, under its breadcrumbs, with a picture hidden from assistive technology at
+   its end: the envUI mark's circle and pill (BannerShapes.tsx). A page of the Docs, the developer
+   reference, is on the page's own color inside an edge, its shapes drawn as outlines, as on a plan;
+   a page of the catalogue is on a fill, its shapes filled, or, on the few pages with one, a motif
+   drawn from what the page shows (BannerMotif.tsx, BannerMotifs.css). No shadows. The banner's
+   width, which the home page's hero shares, is in Shell.css. */
+.docs-banner > :not(.docs-banner-shapes, .docs-banner-motif) {
   position: relative;
   z-index: var(--env-z-raised);
 }
 
-/* The shapes' layer covers the banner and is a container of its size. */
+/* Every banner: the text from the start, between the same margins, at the same sizes. */
+.docs-banner {
+  padding-inline: clamp(var(--env-space-6), 6cqi, var(--env-space-9));
+}
+
+.docs-banner
+  :is(.docs-page-banner-content, .docs-page-banner-heading, .docs-page-banner-heading > *) {
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: start;
+}
+
+/* The text keeps clear of the picture at the end. */
+.docs-banner .docs-page-banner-heading {
+  max-inline-size: min(100%, 44rem);
+}
+
+.docs-banner .docs-page-banner-title {
+  font-size: clamp(1.875rem, calc(1rem + 3cqi), 3rem);
+}
+
+/* A trail given as a line rather than breadcrumbs, such as a missing page's, is set in monospace. */
+.docs-banner .docs-page-banner-breadcrumb {
+  font-family: var(--docs-code-font-family);
+  letter-spacing: 0;
+}
+
+/* The Docs: on the page's color inside an edge, the shapes in outline. */
+.docs-banner:is([data-banner='docs'], [data-banner='docs-home']) {
+  --docs-banner-shape-edge: var(--env-color-border-default);
+  border: 0.0625rem solid var(--env-color-border-muted);
+  background: var(--env-color-bg-page);
+}
+
+/* The catalogue: on the default surface's fill with no edge, as the home page's hero is. Its text,
+   badges and buttons keep their contrast there as on any default surface (`surface` in
+   tests/contrast/Pairs.ts), in every theme. */
+.docs-banner[data-banner='catalogue'] {
+  border: 0;
+  background: var(--env-color-bg-default);
+}
+
+/* The catalogue's shapes: filled in the muted fill, a step from the banner's, with no edge. They
+   sit behind the text only where the banner is narrow, and the text keeps its contrast on them
+   (`muted` in tests/contrast/Pairs.ts). */
+.docs-banner[data-banner='catalogue'] .docs-banner-shape {
+  border: 0;
+  background: var(--env-color-bg-muted);
+}
+
+/* The shapes' layer covers the banner and is a container of its size. It clips the shapes itself,
+   as the banner does: a filled shape reaching past the banner's edge would otherwise count, for
+   the accessibility scan, as the background of what is beside the banner, such as its contents. */
 .docs-banner-shapes {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   container-type: size;
   pointer-events: none;
 }
@@ -40,34 +96,6 @@
   inset-inline-end: calc(var(--docs-banner-shape) * -1.08);
 }
 
-/* The Docs: from the start, on the page's color inside an edge, the shapes in outline. */
-.docs-banner:is([data-banner='docs'], [data-banner='docs-home']) {
-  --docs-banner-shape-edge: var(--env-color-border-default);
-  border: 0.0625rem solid var(--env-color-border-muted);
-  background: var(--env-color-bg-page);
-  padding-inline: clamp(var(--env-space-6), 6cqi, var(--env-space-9));
-}
-
-.docs-banner:is([data-banner='docs'], [data-banner='docs-home'])
-  :is(.docs-page-banner-content, .docs-page-banner-heading, .docs-page-banner-heading > *) {
-  align-items: flex-start;
-  justify-content: flex-start;
-  text-align: start;
-}
-
-.docs-banner:is([data-banner='docs'], [data-banner='docs-home']) .docs-page-meta {
-  justify-content: flex-start;
-}
-
-/* The Docs' text keeps clear of the shapes at the end. */
-.docs-banner:is([data-banner='docs'], [data-banner='docs-home']) .docs-page-banner-heading {
-  max-inline-size: min(100%, 44rem);
-}
-
-.docs-banner:is([data-banner='docs'], [data-banner='docs-home']) .docs-page-banner-title {
-  font-size: clamp(1.875rem, calc(1rem + 3cqi), 3rem);
-}
-
 /* The Docs' home shows the envUI Docs lockup as its title, with room before the summary. */
 .docs-page-banner-logo {
   margin: 0 0 var(--env-space-4);
@@ -78,9 +106,4 @@
   block-size: clamp(1.75rem, calc(1rem + 2.5cqi), 2.75rem);
   inline-size: auto;
   max-inline-size: 100%;
-}
-
-.docs-banner:is([data-banner='docs'], [data-banner='docs-home']) .docs-page-banner-breadcrumb {
-  font-family: var(--docs-code-font-family);
-  letter-spacing: 0;
 }

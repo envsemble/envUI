@@ -6,7 +6,6 @@ import { execFileSync } from 'node:child_process';
 import { collectDependencyNotices } from './DependencyNotices.mjs';
 import { generateDocumentation, packageDocumentation } from './GenerateDocumentation.mjs';
 import { buildTokens } from './BuildTokens.mjs';
-import { writeAgentFiles } from './GenerateManifest.mjs';
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 const sourceDirectory = resolve(libraryDirectory, 'src');
@@ -75,23 +74,12 @@ for (const output of stylesheetBuild.outputFiles) {
 await cp(resolve(repositoryRoot, 'assets/readme'), resolve(outputDirectory, 'assets/readme'), {
   recursive: true,
 });
-const skillsOutputDirectory = resolve(libraryDirectory, 'skills');
-if (relative(libraryDirectory, skillsOutputDirectory) !== 'skills')
-  throw new Error('Packaged skills must remain within packages/ui/skills.');
-await rm(skillsOutputDirectory, { recursive: true, force: true });
-await cp(resolve(repositoryRoot, '.agents/skills'), skillsOutputDirectory, { recursive: true });
 const documentationOutputDirectory = resolve(libraryDirectory, 'docs');
 if (relative(libraryDirectory, documentationOutputDirectory) !== 'docs')
   throw new Error('Packaged documentation must remain within packages/ui/docs.');
 // The packaged pages are compiled: example files and generated props tables are filled in, and
 // the examples ship beside them in docs/examples.
 packageDocumentation(documentationOutputDirectory);
-// The agent files live at the package root, where the envui command and llms.txt readers look for them,
-// so the packaged docs/ leaves out the committed copies of the manifest and llms.txt.
-for (const name of ['manifest.json', 'llms.txt'])
-  await rm(resolve(documentationOutputDirectory, 'generated', name), { force: true });
-const { version } = JSON.parse(await readFile(resolve(libraryDirectory, 'package.json'), 'utf8'));
-writeAgentFiles(libraryDirectory, { version });
 const readme = await readFile(resolve(repositoryRoot, 'README.md'), 'utf8');
 // The repository README opens with the envUI lockup; the packaged copy leaves it out.
 const packagedReadme = readme.replace(
@@ -103,7 +91,6 @@ if (packagedReadme.includes('assets/brand/'))
 await writeFile(
   resolve(libraryDirectory, 'README.md'),
   packagedReadme
-    .replaceAll('](.agents/skills/', '](skills/')
     .replaceAll('](packages/ui/CHANGELOG.md)', '](CHANGELOG.md)')
     // The maintainers' guide stays in the repository.
     .replaceAll(
@@ -116,5 +103,5 @@ await writeFile(
     .replaceAll('packages/ui/licenses/', 'licenses/'),
 );
 console.log(
-  `Built @envsemble/envui: ${sourceEntryPoints.length} ESM modules, types, CSS, assets, Markdown documentation, the agent manifest and llms.txt, and three agent skills.`,
+  `Built @envsemble/envui: ${sourceEntryPoints.length} ESM modules, types, CSS, assets, and Markdown documentation with its examples.`,
 );
