@@ -19,6 +19,12 @@ import { Search } from '@envsemble/envui/icons/Search';
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '22rem' };
 
+const summaries: Record<string, string> = {
+  Home: 'Welcome back, Alex Morgan.',
+  Inbox: 'Three messages since yesterday.',
+  Projects: 'Website refresh, Quarterly report and four more.',
+};
+
 export default function NavigationForms() {
   const [current, setCurrent] = useState('Home');
   // One array of destinations, which each navigation form takes.
@@ -48,7 +54,7 @@ export default function NavigationForms() {
       }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />}>
-        <Text emphasis="muted">The body scrolls under the top bar.</Text>
+        <Text emphasis="muted">{summaries[current]}</Text>
       </Page>
     </Scaffold>
   );

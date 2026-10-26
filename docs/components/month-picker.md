@@ -13,7 +13,6 @@ aliases:
   - billing period
 useWhen:
   - A month of a year, such as the month a report covers
-  - A period where the day doesn't matter, such as a billing period
 avoidWhen:
   - text: A day, or a day and a time.
     use: DatePicker

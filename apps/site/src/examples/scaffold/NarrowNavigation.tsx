@@ -63,7 +63,7 @@ export default function NarrowNavigation() {
       }}
     >
       <Page header={<PageHeader title="Projects" headingLevel={3} />}>
-        <Text emphasis="muted">The button switches between the drawer and the rail.</Text>
+        <Text emphasis="muted">Website refresh, Quarterly report and four more.</Text>
       </Page>
     </Scaffold>
   );

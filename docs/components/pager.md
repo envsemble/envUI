@@ -99,10 +99,6 @@ A link names its destination by its title, in the order the navigation lists the
 
 ```
 
-### Order
-
-Keep the order of the sequence the same as in the navigation that lists its pages.
-
 ## Accessibility
 
 ### Keyboard

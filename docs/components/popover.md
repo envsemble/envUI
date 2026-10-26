@@ -101,10 +101,6 @@ Give every popover a title, or a name for assistive technology where a title wou
 
 - Name an icon-only trigger after what the popover holds, such as About billing periods.
 
-### Out of sight
-
-Keep what matters reachable elsewhere: a popover is out of sight until it opens.
-
 ## Accessibility
 
 ### Keyboard

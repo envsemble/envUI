@@ -71,10 +71,6 @@ A menubar can underline a letter of each menu's name while <kbd>Alt</kbd> is hel
 
 A menubar groups many commands, and the most frequent ones stay in view too.
 
-### Visible controls too
-
-Offer the most frequent commands in visible controls too, not only in the menus.
-
 ### Content
 
 Name items as in [Menu](../components/menu.md), with an ellipsis for a command that asks for more, such as Export… in File.

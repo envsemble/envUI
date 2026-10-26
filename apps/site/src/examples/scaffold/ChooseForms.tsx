@@ -29,7 +29,7 @@ export default function ChooseForms() {
       }}
     >
       <Page width="sm" header={<PageHeader title="General" headingLevel={3} />}>
-        <Text emphasis="muted">Medium and wider show the drawer; compact shows none.</Text>
+        <Text emphasis="muted">The workspace name, language and time zone for Northwind.</Text>
       </Page>
     </Scaffold>
   );

@@ -66,15 +66,11 @@ Not shown: the span the value moves along, which draws the faint ticks, and the 
 
 Slider is a field, as tall as the fields and with their corners, so it sits in a form among them.
 
-- At rest it shows only its label, its value and the fill, which ends crisply.
-
 ### Under the pointer
 
 When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps.
 
-- Where the handle, the end of the fill and the ticks pass under the label or the value, they fade, so the text keeps its full strength.
 - Pressing anywhere moves the value there, and dragging carries it along.
-- Once the slider is let go, the handle and the ticks go away, even with the pointer still over it, and come back when the pointer leaves and returns.
 - On a touch screen they show only while the finger is down.
 
 <!-- specimen: UnderThePointer -->
@@ -92,7 +88,7 @@ Dragged past either end, the value stays at the minimum or maximum, and the slid
 
 ### With the keyboard
 
-Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded under the text in the same way.
+Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded where it passes under the text.
 
 - The arrow keys move the value; the ticks stay hidden.
 

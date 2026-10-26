@@ -69,9 +69,7 @@ The gap between the children is a step of the [spacing scale](../foundations/spa
 
 ### Adapting to width
 
-A row that wraps runs onto more lines; it never turns into a column by itself.
-
-- For that, change the layout at a [window class](../foundations/responsive.md).
+A row that wraps runs onto more lines; it never turns into a column by itself; change the layout at a [window class](../foundations/responsive.md) for that.
 
 ```tsx figure=SectionHeading widths="12 30"
 

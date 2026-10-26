@@ -67,8 +67,6 @@ The track can split into equal steps that fill in turn.
 4. **Track** (`env-progress-track`)
 5. **Indicator** (`env-progress-indicator`, `value`)
 
-Not shown: the steps of a split track.
-
 ## Behaviour
 
 ### Amount known

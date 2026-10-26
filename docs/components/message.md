@@ -80,10 +80,6 @@ examples:
 
 ## Behaviour
 
-### In a list
-
-Each Message sits in a MessageList, which holds the conversation.
-
 ### Delivery status
 
 A message can show that it is on its way, or that it wasn't sent.

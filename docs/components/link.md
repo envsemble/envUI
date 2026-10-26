@@ -11,7 +11,6 @@ aliases:
   - inline link
 useWhen:
   - A destination inside a sentence or a paragraph, such as a guide or a related page.
-  - A short list of destinations where buttons would be too heavy, with the underline turned off.
 avoidWhen:
   - text: An action, such as saving or deleting, even when it looks like text, or the next step of a flow.
     use: Button
@@ -39,10 +38,10 @@ examples:
 
 ## Variants
 
-| Underline | Use for                                               |
-| --------- | ----------------------------------------------------- |
-| On        | Running text. The default.                            |
-| Off       | A list of destinations, where the context marks them. |
+| Underline | Use for                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------ |
+| On        | Running text. The default.                                                                 |
+| Off       | A short list of destinations, where buttons would be too heavy and the context marks them. |
 
 ```tsx figure=WithoutUnderline
 
