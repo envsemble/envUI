@@ -31,7 +31,7 @@ const visuallyHidden: CSSProperties = {
 function Projects() {
   const toast = useToast();
   const [projects, setProjects] = useState(initialProjects);
-  const [selected, setSelected] = useState<string[]>(['quarterly-report', 'data-migration']);
+  const [selected, setSelected] = useState<string[]>([]);
   const [confirming, setConfirming] = useState(false);
   // The count the dialog asks about; it stays while the dialog closes.
   const [asked, setAsked] = useState(0);
@@ -74,38 +74,44 @@ function Projects() {
       <div role="status" style={visuallyHidden}>
         {selected.length > 0 ? `${projectCount(selected.length)} selected` : 'No projects selected'}
       </div>
-      {selected.length > 0 && (
-        // The bulk bar: the count, then the actions on the selection, at the size of the rows.
-        <Row wrap align="center" gap={3}>
-          <Text>{selected.length} selected</Text>
-          {/* Only icon buttons, so one tab stop with the arrow keys between them. */}
-          <Toolbar.Root aria-label="Selected projects">
-            <Toolbar.Button
-              icon={<Archive />}
-              label={`Archive ${projectCount(selected.length)}`}
-              onClick={archive}
-            />
-            <Toolbar.Button
-              icon={<Delete />}
-              label={`Delete ${projectCount(selected.length)}…`}
-              onClick={(event) => {
-                returnFocus.current = event.currentTarget;
-                setAsked(selected.length);
-                setConfirming(true);
+      {/* Above the table, the count of projects, and while rows are selected the bulk bar in its
+          place: the count, then the actions on the selection, at the size of the rows. It keeps
+          its height, so the table stays where it is. */}
+      <Row wrap align="center" gap={3} style={{ minBlockSize: '2.5rem' }}>
+        {selected.length === 0 ? (
+          <Text emphasis="muted">{projectCount(projects.length)}</Text>
+        ) : (
+          <>
+            <Text>{selected.length} selected</Text>
+            {/* Only icon buttons, so one tab stop with the arrow keys between them. */}
+            <Toolbar.Root aria-label="Selected projects">
+              <Toolbar.Button
+                icon={<Archive />}
+                label={`Archive ${projectCount(selected.length)}`}
+                onClick={archive}
+              />
+              <Toolbar.Button
+                icon={<Delete />}
+                label={`Delete ${projectCount(selected.length)}…`}
+                onClick={(event) => {
+                  returnFocus.current = event.currentTarget;
+                  setAsked(selected.length);
+                  setConfirming(true);
+                }}
+              />
+            </Toolbar.Root>
+            <Button
+              variant="text"
+              onClick={() => {
+                setSelected([]);
+                selectAll.current?.focus();
               }}
-            />
-          </Toolbar.Root>
-          <Button
-            variant="text"
-            onClick={() => {
-              setSelected([]);
-              selectAll.current?.focus();
-            }}
-          >
-            Clear selection
-          </Button>
-        </Row>
-      )}
+            >
+              Clear selection
+            </Button>
+          </>
+        )}
+      </Row>
       {/* A narrow column for the checkboxes; the others share the rest. */}
       <Table.Root aria-label="Team projects" defaultColumnWidths={[8, 50, 42]}>
         <Table.Head>

@@ -199,12 +199,12 @@ Material Design 3's component pages, such as [buttons](https://m3.material.io/co
 
 A figure is an [example file](#examples) listed in the frontmatter and placed with an empty fence that names it, ` ```tsx figure=Name `, anywhere in a section but Compose and the changelog. Its role and caption come from the frontmatter; its framing from the attributes after the name, written as `name="value"`, or `name=value` without spaces, and flags, such as `open`, as their name alone. A value can't hold a double quote, not even as `\"`, so quote with ' or “ ”.
 
-| Role         | Shows                                                                               | Attributes on its fence                                      |
-| ------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `example`    | The example, live on the stage, with its caption below.                             | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide` |
-| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`                                              |
-| `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width`                    |
-| `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                                      |
+| Role         | Shows                                                                               | Attributes on its fence                                                |
+| ------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `example`    | The example, live on the stage, with its caption below.                             | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion` |
+| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`, `motion`                                              |
+| `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width`                              |
+| `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                                                |
 
 Every figure sits on the same stage, centred horizontally and vertically, in the theme, contrast and scale the reader has chosen: a recessed canvas, a well a shade deeper than the page, with a surface's corners and no edge, so the example's own surfaces rise out of it and a reader can always tell an example from the page around it. Under forced colors the canvas takes a frame instead. A specimen sits on it too. The canvas is the catalogue's (`apps/site/src/styles/Stage.css`), not envUI's.
 
@@ -399,6 +399,7 @@ Where a section is about motion, such as a slider stretching past its ends or a 
 - **Its overlays open live in the stage**, as a tile's do: a menu, a dialog, a sheet or a tooltip renders into the stage's layer, contained, and the pointer uses it there; a dialog's scrim covers the stage, not the page. Give `MotionStage` a `height` that holds what opens. Notifications arrive at the stage's bottom end beside the pause button, stay while the pointer rests on them and leave with their motion.
 - **More than a hover and a press.** Besides moving, pressing, typing and keys, the pointer right-clicks (`rightClick`), holds a key such as <kbd>Alt</kbd> (`keyDown`, `keyUp`), turns the wheel over what it is on (`wheel`, in px, over a `duration`), and selects text by pressing on it and dragging, in a field or in content.
 - **In place of an example.** An example the catalogue plays takes `motion`: on its fence, or as `motion: true` in an overview's entry. Its specimen of the same name, `apps/site/src/specimens/<page>/<Name>.tsx`, imports the example and plays it on a `MotionStage`, and the figure keeps the example's caption and code; a do or don't figure keeps its bar too. The Docs and the package keep the example.
+- **A do and a don't in step.** Where a pair plays one sequence side by side, such as a reply growing against a spinner, both specimens take their steps from `useSharedTimeline` with the same clock's name, so they stay in step.
 
 ## Tiles
 

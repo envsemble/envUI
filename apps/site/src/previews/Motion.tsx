@@ -149,6 +149,59 @@ export function useTimeline(durations: readonly number[]) {
 }
 
 /**
+ * The clocks of timelines that play together: the time each has played, counted while any of its
+ * previews plays.
+ */
+const sharedClocks = new Map<string, { played: number; since: number | null; players: number }>();
+
+/**
+ * useTimeline for previews that play one timeline together, such as a do and a don't side by side:
+ * every preview that names the same `clock` takes its step from one clock, so they keep in step
+ * however their timers fall. The clock runs while any of them plays; one paused by itself holds
+ * where it is, and plays on in step with the others.
+ *
+ *     const step = useSharedTimeline('reply', [1100, 140, 140, 2600]);
+ */
+export function useSharedTimeline(clock: string, durations: readonly number[]) {
+  const { playing, rest } = use(PlaybackContext);
+  const [step, setStep] = useState(0);
+  if (!playing && rest === 'start' && step !== 0) setStep(0);
+  const paced = durations.map((duration) => duration * waitPace).join(' ');
+  useEffect(() => {
+    const lengths = paced.split(' ').map(Number);
+    const total = lengths.reduce((sum, length) => sum + length, 0);
+    if (!playing || lengths.length < 2) return;
+    // A new clock leaves the still at once, as a timeline that starts playing does.
+    let shared = sharedClocks.get(clock);
+    if (!shared) {
+      shared = { played: Math.max(0, lengths[0]! - firstWait * 2), since: null, players: 0 };
+      sharedClocks.set(clock, shared);
+    }
+    const own = shared;
+    if (own.players++ === 0) own.since = performance.now();
+    let timer: number;
+    const tick = () => {
+      const time = (own.played + performance.now() - (own.since ?? performance.now())) % total;
+      let start = 0;
+      let index = 0;
+      while (index < lengths.length - 1 && start + lengths[index]! <= time)
+        start += lengths[index++]!;
+      setStep(index);
+      timer = window.setTimeout(tick, start + lengths[index]! - time + 1);
+    };
+    timer = window.setTimeout(tick);
+    return () => {
+      window.clearTimeout(timer);
+      if (--own.players === 0) {
+        own.played += performance.now() - (own.since ?? performance.now());
+        own.since = null;
+      }
+    };
+  }, [playing, clock, paced]);
+  return playing || rest === 'hold' ? step : 0;
+}
+
+/**
  * One step of what the pointer no one sees does, or of what happens around it:
  * - `wait`, ms: it stays as it is, over the preview or not, pressed or not.
  * - `to`, a selector of an element in the preview: it moves to a point of it, `x` and `y` as

@@ -40,7 +40,9 @@ composes:
   - ThemeRadioGroup
   - TopBar
 examples:
-  AvatarMenu: overview
+  AvatarMenu:
+    role: overview
+    motion: true
   WithOrganizations: example
   SwitchOrganization: example
   RowTrigger: example
@@ -75,7 +77,7 @@ The account menu opens from the person's [AvatarButton](../components/avatar.md)
 
 A submenu switches between the person's organizations, and names the current one.
 
-```tsx figure=WithOrganizations
+```tsx figure=WithOrganizations motion
 
 ```
 
@@ -87,7 +89,7 @@ Where people switch often, a button names the active organization and opens them
 - The menu shows the person's role under each organization, and an action that creates one.
 - Before the first organization, that action is a button of its own.
 
-```tsx figure=SwitchOrganization
+```tsx figure=SwitchOrganization motion
 
 ```
 
@@ -95,7 +97,7 @@ Where people switch often, a button names the active organization and opens them
 
 The account menu's trigger can be a row with the avatar and the name, as wide as the drawer; the menu opens above it.
 
-```tsx figure=RowTrigger
+```tsx figure=RowTrigger motion
 
 ```
 
@@ -116,6 +118,8 @@ The account menu's trigger can be a row with the avatar and the name, as wide as
 ### The theme
 
 A Theme submenu applies the choice at once and keeps the menu open, so people see the result, and the application remembers it.
+
+<!-- specimen: ChoosingTheTheme -->
 
 ### Switching
 

@@ -46,7 +46,9 @@ composes:
   - Row
   - Text
 examples:
-  FirstUse: overview
+  FirstUse:
+    role: overview
+    motion: true
   NoResults: example
   LoadFailed: example
   NoAccess: example
@@ -69,7 +71,7 @@ examples:
 
 The search and the filters stay, and Clear filters resets them, as in [filtering](filtering.md).
 
-```tsx figure=NoResults
+```tsx figure=NoResults motion
 
 ```
 
@@ -93,7 +95,7 @@ The state says who to ask, and Request access sends the request.
 
 When the last review is approved, the queue says so, and what comes next.
 
-```tsx figure=AllDone
+```tsx figure=AllDone motion
 
 ```
 
@@ -105,7 +107,7 @@ When the whole page can't show, the frame stays and the page says so, with the w
 - The person may not see it: Request access.
 - The device is offline: Try again.
 
-```tsx figure=WholePage stage=shaded
+```tsx figure=WholePage stage=shaded motion
 
 ```
 

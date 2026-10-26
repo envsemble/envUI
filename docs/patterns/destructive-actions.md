@@ -23,6 +23,7 @@ avoidWhen:
 composes:
   - Button
   - ConfirmDialog
+  - ConfirmButton
   - List
   - Checkbox
   - TextField
@@ -32,9 +33,14 @@ composes:
   - Row
   - Text
 examples:
-  UndoInstead: overview
+  UndoInstead:
+    role: overview
+    motion: true
   TypeToConfirm: example
   BulkDelete: example
+  RemoveFile:
+    role: example
+    caption: Where little is at stake, the button arms in place and a second press removes the file.
   DangerKeptForDelete:
     role: do
     caption: The danger tone only on what deletes or ends something.
@@ -54,7 +60,7 @@ Where an action can't be undone and reaches many people or much work, the dialog
 - Its confirm button stays enabled.
 - A wrong name keeps the dialog open and says what to type.
 
-```tsx figure=TypeToConfirm
+```tsx figure=TypeToConfirm motion
 
 ```
 
@@ -62,7 +68,7 @@ Where an action can't be undone and reaches many people or much work, the dialog
 
 The count is in the button, the question and the confirm button: "Delete 2 documents…".
 
-```tsx figure=BulkDelete
+```tsx figure=BulkDelete motion
 
 ```
 
@@ -86,6 +92,10 @@ Match the friction to what is at stake.
 | Confirm in place    | An action that can't be undone, with little at stake, through a [ConfirmButton](../components/button.md).                            |
 | Confirm in a dialog | Deleting something people made, or something that affects others, through a danger [ConfirmDialog](../components/confirm-dialog.md). |
 | Type the name       | An action that can't be undone and reaches many people or much work.                                                                 |
+
+```tsx figure=RemoveFile wide motion
+
+```
 
 ```tsx figure=DangerKeptForDelete
 

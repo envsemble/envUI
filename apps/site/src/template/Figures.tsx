@@ -32,8 +32,9 @@ function FoundationFigure({ page, block }: { page: Document; block: FoundationBl
 
 /**
  * A do or don't figure: the live example in a frame with a green Do or red Don't bar and its one
- * sentence below, and the example's code under it. A foundation page's preview passes its sample
- * as `children` instead, which has no code of its own.
+ * sentence below, and the example's code under it. With `motion`, its animated specimen of the same
+ * name plays it on the stage. A foundation page's preview passes its sample as `children` instead,
+ * which has no code of its own.
  */
 export function VerdictFigure({
   page,

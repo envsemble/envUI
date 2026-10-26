@@ -43,12 +43,12 @@ export function MotionStage({
   stage?: StageFill;
 }) {
   const { motionPaused } = useDisplaySettings();
+  const verdict = use(VerdictMotion);
   // The figure's own choice, and the sidebar's at the time, which it overrides only while that holds.
   const [own, setOwn] = useState<{ paused: boolean; over: boolean } | null>(null);
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
-  const verdict = use(VerdictMotion);
   const paused = own && own.over === motionPaused ? own.paused : motionPaused;
   const action = paused ? `Play ${label}` : `Pause ${label}`;
   return (

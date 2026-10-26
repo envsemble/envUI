@@ -1,15 +1,5 @@
 import { useState } from 'react';
-import {
-  Avatar,
-  Badge,
-  Link,
-  Pagination,
-  RelativeTime,
-  Column,
-  Row,
-  Table,
-  Text,
-} from '@envsemble/envui';
+import { Avatar, Link, Pagination, RelativeTime, Column, Row, Table, Text } from '@envsemble/envui';
 
 type SortColumn = 'name' | 'updated' | 'tasks';
 type Direction = 'ascending' | 'descending';
@@ -50,7 +40,8 @@ export default function SortAndPaginate() {
   };
 
   return (
-    <Column gap={3}>
+    // As wide as the room it has, with the names whole on one line.
+    <Column gap={3} style={{ inlineSize: '100%' }}>
       <Table.Root aria-label="All projects">
         <Table.Head>
           <Table.Row>
@@ -58,7 +49,6 @@ export default function SortAndPaginate() {
               Name
             </Table.HeaderCell>
             <Table.HeaderCell>Owner</Table.HeaderCell>
-            <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell
               numeric
               sortDirection={direction('tasks')}
@@ -75,7 +65,7 @@ export default function SortAndPaginate() {
           {rows.map((project) => (
             <Table.Row key={project.id} interactive>
               {/* The row's one link opens the project. */}
-              <Table.Cell>
+              <Table.Cell nowrap>
                 <Link href={`/projects/${project.id}`}>{project.name}</Link>
               </Table.Cell>
               <Table.Cell nowrap>
@@ -83,11 +73,6 @@ export default function SortAndPaginate() {
                   <Avatar name={project.owner} size="sm" fallback="initials" />
                   {project.owner}
                 </Row>
-              </Table.Cell>
-              <Table.Cell>
-                <Badge tone={project.status === 'At risk' ? 'warning' : 'success'}>
-                  {project.status}
-                </Badge>
               </Table.Cell>
               {/* Numbers that compare down a column align to the end, in tabular figures. */}
               <Table.Cell numeric>{project.tasks}</Table.Cell>
@@ -115,53 +100,50 @@ export default function SortAndPaginate() {
   );
 }
 
+/** A time some hours before now, as an ISO date, so the sample reads as recent. */
+const ago = (hours: number) => new Date(Date.now() - hours * 3_600_000).toISOString();
+
 const projects = [
   {
     id: 'website-refresh',
     name: 'Website refresh',
     owner: 'Priya Shah',
-    status: 'On track',
     tasks: 12,
-    updated: '2026-03-04T08:15:00Z',
+    updated: ago(2),
   },
   {
     id: 'quarterly-report',
     name: 'Quarterly report',
     owner: 'Sam Lee',
-    status: 'At risk',
     tasks: 5,
-    updated: '2026-03-03T16:40:00Z',
+    updated: ago(26),
   },
   {
     id: 'onboarding-guide',
     name: 'Onboarding guide',
     owner: 'Jordan Kim',
-    status: 'On track',
     tasks: 8,
-    updated: '2026-03-02T11:05:00Z',
+    updated: ago(50),
   },
   {
     id: 'mobile-release',
     name: 'Mobile release',
     owner: 'Chen Wei',
-    status: 'On track',
     tasks: 21,
-    updated: '2026-02-27T09:30:00Z',
+    updated: ago(144),
   },
   {
     id: 'data-migration',
     name: 'Data migration',
     owner: 'Maria Garcia',
-    status: 'At risk',
     tasks: 3,
-    updated: '2026-02-24T14:20:00Z',
+    updated: ago(240),
   },
   {
     id: 'annual-review',
     name: 'Annual review',
     owner: 'Alex Morgan',
-    status: 'On track',
     tasks: 0,
-    updated: '2026-02-18T10:00:00Z',
+    updated: ago(408),
   },
 ];

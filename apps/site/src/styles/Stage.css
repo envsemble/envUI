@@ -159,6 +159,8 @@
       [data-env-container]
     )
   ),
+/* A Scaffold straight on an animated figure's stage stands in for a window there too. */
+.catalogue-motion-subject > .env-scaffold,
 /* A strip of document tabs lays out its bar straight on the stage, its root being contents. */
 :is(.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-canvas)
   > .env-document-tabs-root
@@ -173,7 +175,8 @@
     .site-verdict-stage,
     .site-anatomy-subject,
     .catalogue-width-box,
-    .catalogue-related-canvas
+    .catalogue-related-canvas,
+    .catalogue-motion-subject
   )
   > .env-scaffold,
 /* The dev mode demo's application sits in the element dev mode measures. */
