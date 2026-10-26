@@ -30,6 +30,7 @@
  *
  * A pair is named `<fg> on <bg> over <next layer>`, which is also how Exceptions.json refers to it.
  */
+import { readFileSync } from 'node:fs';
 
 export type ContrastKind = 'text' | 'non-text' | 'focus' | 'difference' | 'distinct';
 
@@ -2288,37 +2289,63 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * name, measured as the browser resolves them. Every other hover, pressed and translucent color is
  * a token of its own; add a token rather than an entry here.
  *
- * - The + between the keys in a button's end slot is 80% of the button's label color, `currentColor`
- *   (Button.css sets Kbd.css's hooks); each label color a variant, tone and state takes is measured.
- * - A badge or counter inside a primary or important button is outlined in 55% of the button's label
- *   color, `currentColor`, which only the button knows (Button.css sets Badge.css's hooks).
+ * - The + between the keys in a button's end slot is a share of the button's label color,
+ *   `currentColor` (Button.css sets Kbd.css's hooks); each label color a variant, tone and state
+ *   takes is measured.
+ * - A badge or counter inside a primary or important button is outlined in a share of the button's
+ *   label color, `currentColor`, which only the button knows (Button.css sets Badge.css's hooks).
  * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
  *   data has, from 30% at the lightest to the full tone (CalendarHeatmap.tsx and .css). The
  *   lightest step of the default accent tone is measured.
  * - The catalogue's recessed canvas its examples sit on, as apps/site/src/styles/Stage.css
- *   paints it: 0.035 deeper than the page in OKLCH lightness in the light themes and 0.045 in the
- *   dark ones.
+ *   paints it.
+ *
+ * The CSS is the one source of a formula it holds: the declaration under a `/* contrast: name *\/`
+ * comment, read by markedColor, with `currentColor` taking each label color the gate measures.
  */
 
+/**
+ * The color of the declaration a CSS file marks with `/* contrast: name *\/`: its value, or the
+ * color function in it, such as the color-mix() of a border shorthand.
+ */
+export function markedColor(file: string, name: string): string {
+  const css = readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8');
+  const marker = css.indexOf(`/* contrast: ${name} */`);
+  if (marker === -1) throw new Error(`${file} marks no declaration /* contrast: ${name} */.`);
+  const declaration = css.slice(marker).match(/\*\/\s*[\w-]+\s*:\s*([^;]+);/);
+  if (!declaration) throw new Error(`No declaration follows /* contrast: ${name} */ in ${file}.`);
+  const value = declaration[1]!
+    .replace(/\s+/g, ' ')
+    .replace(/\(\s+/g, '(')
+    .replace(/\s+\)/g, ')')
+    .trim();
+  const start = value.search(/\b(?:color-mix|light-dark|oklch|rgb|hsl)\(/);
+  let depth = 0;
+  for (let index = start; index < value.length; index++) {
+    if (value[index] === '(') depth++;
+    else if (value[index] === ')' && --depth === 0) return value.slice(start, index + 1);
+  }
+  throw new Error(`The declaration under /* contrast: ${name} */ in ${file} holds no color.`);
+}
+
+/** A formula of a label's color, `currentColor`, for one label color token. */
+const ofLabel = (formula: string, token: string) =>
+  formula.replace(/(^|[^\w-])currentColor(?![\w-])/g, `$1var(${token})`);
+
+const separator = markedColor('packages/ui/src/styles/Button.css', 'button-end-separator');
+const badgeOutline = markedColor('packages/ui/src/styles/Button.css', 'badge-outline');
+
 export const derived: Readonly<Record<string, string>> = {
-  'button-end-separator-on-emphasis':
-    'color-mix(in srgb, var(--env-color-fg-on-emphasis) 80%, transparent)',
-  'button-end-separator-control':
-    'color-mix(in srgb, var(--env-color-fg-control) 80%, transparent)',
-  'button-end-separator-accent': 'color-mix(in srgb, var(--env-color-fg-accent) 80%, transparent)',
-  'button-end-separator-on-strong':
-    'color-mix(in srgb, var(--env-color-fg-on-strong) 80%, transparent)',
-  'button-end-separator-muted': 'color-mix(in srgb, var(--env-color-fg-muted) 80%, transparent)',
-  'button-end-separator-default':
-    'color-mix(in srgb, var(--env-color-fg-default) 80%, transparent)',
-  'button-end-separator-link': 'color-mix(in srgb, var(--env-color-fg-link) 80%, transparent)',
-  'button-end-separator-danger': 'color-mix(in srgb, var(--env-color-fg-danger) 80%, transparent)',
-  'badge-outline-primary': 'color-mix(in srgb, var(--env-color-fg-on-emphasis) 55%, transparent)',
-  'badge-outline-important': 'color-mix(in srgb, var(--env-color-fg-on-strong) 55%, transparent)',
+  ...Object.fromEntries(
+    ['on-emphasis', 'control', 'accent', 'on-strong', 'muted', 'default', 'link', 'danger'].map(
+      (label) => [`button-end-separator-${label}`, ofLabel(separator, `--env-color-fg-${label}`)],
+    ),
+  ),
+  'badge-outline-primary': ofLabel(badgeOutline, '--env-color-fg-on-emphasis'),
+  'badge-outline-important': ofLabel(badgeOutline, '--env-color-fg-on-strong'),
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-accent) 30%, var(--env-color-bg-page))',
-  'catalogue-canvas':
-    'light-dark(oklch(from var(--env-color-bg-page) calc(l - 0.035) c h), oklch(from var(--env-color-bg-page) calc(l - 0.045) c h))',
+  'catalogue-canvas': markedColor('apps/site/src/styles/Stage.css', 'catalogue-canvas'),
 };
 
 /** The CSS color a name in a pair stands for. */

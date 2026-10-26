@@ -12,6 +12,7 @@
      count and diff stat hooks are further down). */
   --env-badge-fg: currentColor;
   --env-badge-bg: transparent;
+  /* contrast: badge-outline */
   --env-badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
   /* The height the button draws at: the control height, or more under a coarse pointer. */
   --env-button-height: var(--env-control-height);
@@ -454,6 +455,7 @@
   --env-kbd-fg: currentColor;
   --env-kbd-bg: transparent;
   --env-kbd-border: color-mix(in srgb, currentColor 45%, transparent);
+  /* contrast: button-end-separator */
   --env-kbd-separator-fg: color-mix(in srgb, currentColor 80%, transparent);
 }
 /* Transparent rather than hidden, so the label stays the button's accessible name. */

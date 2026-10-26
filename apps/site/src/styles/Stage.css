@@ -36,10 +36,10 @@
   border-radius: var(--env-radius-surface);
 }
 
-/* The recessed canvas: the page's background, or `--catalogue-canvas-under`, 0.035 deeper in OKLCH
-   lightness in the light themes and 0.045 in the dark ones, high contrast included. The contrast
-   gate measures every pair an example paints on the page on the canvas too (`catalogue-canvas` in
-   tests/contrast/Pairs.ts, which repeats this formula). */
+/* The recessed canvas: the page's background, or `--catalogue-canvas-under`, a little deeper in
+   OKLCH lightness, more in the dark themes, high contrast included. The contrast gate measures
+   every pair an example paints on the page on the canvas too, reading the formula from here
+   (`catalogue-canvas` in tests/contrast/Pairs.ts). */
 .site-live-example,
 .site-verdict-stage,
 .site-anatomy-stage,
@@ -47,6 +47,7 @@
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-showcase-card {
+  /* contrast: catalogue-canvas */
   background-color: light-dark(
     oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.035) c h),
     oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.045) c h)
