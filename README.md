@@ -16,7 +16,7 @@ envUI brings consistent themes, composition and interaction to React application
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/catalogue-dark.png">
-  <img src="assets/readme/catalogue-light.png" alt="The envUI catalogue showing buttons, icons and navigation in the light theme" width="1440">
+  <img src="assets/readme/catalogue-light.png" alt="The Button page of the envUI catalogue, with its navigation, its examples and the page's contents" width="1440">
 </picture>
 
 _The catalogue: every component, pattern and foundation with live examples, and when to use each. The picture follows your light or dark appearance._
@@ -33,7 +33,7 @@ _The catalogue: every component, pattern and foundation with live examples, and 
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/docs-dark.png">
-  <img src="assets/readme/docs-light.png" alt="A page of the envUI Docs with its navigation, a component's props and the page's contents" width="1440">
+  <img src="assets/readme/docs-light.png" alt="The Button page of the envUI Docs, with its navigation, its code and the page's contents" width="1440">
 </picture>
 
 _The Docs: setup, guides and every component's props, part names and changelog._

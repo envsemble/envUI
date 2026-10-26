@@ -14,8 +14,8 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const catalogue = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
 /** The pages pictured: one of the catalogue and its counterpart in the Docs. */
 const pictures = [
-  { part: 'catalogue', page: 'components/slider' },
-  { part: 'docs', page: 'docs/components/slider' },
+  { part: 'catalogue', page: 'components/button' },
+  { part: 'docs', page: 'docs/components/button' },
 ];
 /** The window the pictures are taken in, as wide as the README shows them. */
 const window = { width: 1440, height: 900 };
@@ -25,12 +25,18 @@ try {
   for (const theme of ['light', 'dark']) {
     const context = await browser.newPage({ viewport: window, colorScheme: theme });
     for (const { part, page } of pictures) {
-      await context.goto(`${catalogue}/${page}`);
+      await context.goto(`${catalogue}/${page}`, { waitUntil: 'networkidle' });
       await context.locator('.docs-page-banner').waitFor();
-      // The fonts and every entrance settle before the picture is taken.
+      // Every example in view has loaded.
+      await context.getByText('Loading example').first().waitFor({ state: 'detached' });
+      // The fonts and every entrance settle before the picture is taken; an animation that runs
+      // forever, or is cancelled as the page settles, isn't waited for.
       await context.evaluate(async () => {
         await document.fonts.ready;
-        await Promise.all(document.getAnimations().map((animation) => animation.finished));
+        const entrances = document
+          .getAnimations()
+          .filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity);
+        await Promise.allSettled(entrances.map((animation) => animation.finished));
       });
       const file = resolve(root, `assets/readme/${part}-${theme}.png`);
       await context.screenshot({ path: file });
