@@ -52,6 +52,8 @@ The end is the right edge in left-to-right text, and the left in right-to-left t
 | From the start  | Panels about what sits at the start of the page.        |
 | From the bottom | A short set of choices or actions.                      |
 
+<!-- specimen: Sides -->
+
 ### Choices from the bottom
 
 A sheet from the bottom is as tall as its content.
@@ -102,7 +104,7 @@ The page can stay usable beside the sheet.
 - The sheet then stays open while people choose another row.
 - When it closes, focus returns to the row it showed last.
 
-```tsx figure=InspectorPanel
+```tsx figure=InspectorPanel motion
 
 ```
 
@@ -112,7 +114,7 @@ People can resize a side sheet by its inner edge, by pointer or with the arrow k
 
 - It stays between a smallest and a largest width, and never grows past the window.
 
-```tsx figure=ResizableDetails
+```tsx figure=ResizableDetails motion
 
 ```
 
