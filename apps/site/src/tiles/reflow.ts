@@ -1,101 +1,145 @@
-import { useLayoutEffect, useRef, type CSSProperties, type RefObject } from 'react';
+import {
+  createElement,
+  useLayoutEffect,
+  useRef,
+  type CSSProperties,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 
 /*
- * The layout tiles' shared pieces, drawn as a line drawing of a layout, as an architect's plan
- * draws a room: the outlines that stand in for content, the outline of the layout box's edges, the
- * faint outline of an area it sets aside, and the glide that carries what a reflow moves, such as
- * an item wrapping to the next line, from where it was to where it lands, rather than jumping there.
+ * The layout tiles' shared pieces, drawn as the catalogue banners' figures are, as a draughtsman
+ * sets out a plan: every line one screen pixel wide at any scale, in the muted edge color, nothing
+ * filled. The outlines stand for a layout box's edges and the content it lays out, a few marks
+ * show what it sets out, such as a gap, an inset or the line its content aligns to, and a glide
+ * carries what a reflow moves, such as an item wrapping to the next line, from where it was to
+ * where it lands, rather than jumping there.
  */
 
-/** A hairline in a color of the theme. */
-const line = (color: string) => `var(--env-control-border-width) solid var(${color})`;
-
-/** The color of a drawing's construction lines, fainter than what they measure. */
-const construction = '--env-color-border-muted';
-
-/**
- * A piece of content, drawn as its outline over the page's faint fill, so a block that glides past
- * another passes in front of it rather than through it.
- */
-export const block = (inlineSize: string, blockSize = '1.25rem'): CSSProperties => ({
-  boxSizing: 'border-box',
-  inlineSize,
-  blockSize,
-  flex: 'none',
-  border: line('--env-color-fg-muted'),
-  borderRadius: 'var(--env-radius-xs)',
-  background: 'var(--env-color-bg-page)',
-});
-
-/**
- * A layout box's edges, which it doesn't paint, outlined around what it lays out; its corners
- * follow the blocks' around a padding of space-2, so the two are concentric.
- */
-export const frame: CSSProperties = {
-  boxSizing: 'border-box',
-  border: line('--env-color-border-default'),
-  borderRadius: 'calc(var(--env-radius-xs) + var(--env-space-2))',
+/** A line of the drawing: a hairline at any scale, in the muted edge color, unfilled. */
+const hairline: CSSProperties = {
+  fill: 'none',
+  stroke: 'var(--env-color-border-muted)',
+  strokeWidth: 1,
+  vectorEffect: 'non-scaling-stroke',
 };
 
-/**
- * A faint outline of an area a layout box sets aside, such as the content within its padding, as
- * a drawing's lighter construction lines.
- */
-export const guide: CSSProperties = {
-  boxSizing: 'border-box',
-  border: line(construction),
-  borderRadius: 'var(--env-radius-sm)',
+/** A drawing over the whole of the positioned box that holds it, its lines on the box's edges. */
+const sheet: CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  inlineSize: '100%',
+  blockSize: '100%',
+  overflow: 'visible',
+  pointerEvents: 'none',
 };
 
+/** A point within the drawing's box, each coordinate a length or a fraction of the box, such as 100%. */
+type Point = readonly [x: string, y: string];
+
+/** The drawing of a box's `lines`, each from one point to the next, or of its edges. */
+function drawing(lines: readonly (readonly [Point, Point])[] | 'edges'): ReactNode {
+  const shapes =
+    lines === 'edges'
+      ? [createElement('rect', { key: 0, width: '100%', height: '100%', style: hairline })]
+      : lines.map(([[x1, y1], [x2, y2]], index) =>
+          createElement('line', { key: index, x1, y1, x2, y2, style: hairline }),
+        );
+  return createElement('svg', { 'aria-hidden': true, focusable: 'false', style: sheet }, shapes);
+}
+
+/** A layout box's edges, drawn over the positioned box that lays out the content. */
+export const edges = () => drawing('edges');
+
+/** A piece of content, `width` by `height`, drawn as its outline. */
+export function Item({ width, height }: { width: string; height: string }) {
+  return createElement(
+    'span',
+    { style: { position: 'relative', flex: 'none', inlineSize: width, blockSize: height } },
+    edges(),
+  );
+}
+
+/** A mark of the drawing, its lines within a box placed by `at` in the positioned box around it. */
+export function Mark({
+  at,
+  lines,
+}: {
+  at: CSSProperties;
+  lines: readonly (readonly [Point, Point])[];
+}) {
+  return createElement('span', { style: { position: 'absolute', ...at } }, drawing(lines));
+}
+
 /**
- * A dimension, as a drawing marks one: the gap that begins `from` the start of the positioned box
- * that holds it, `across` an axis, a bracket whose ends continue the edges it measures, standing
- * `off` the box's start along the other axis.
+ * A gap, as a drawing dimensions one: a bracket whose ends continue the edges it measures, the gap
+ * beginning `from` the start of the box that holds it and running `across` it along an axis,
+ * standing `off` the box's start on the other axis, open toward what it measures.
  */
-export const dimension = (
+export const gap = (
   along: 'inline' | 'block',
   { from, across, off }: { from: string; across: string; off: string },
-): CSSProperties => {
-  const inline = along === 'inline';
-  const width = 'var(--env-control-border-width)';
-  return {
-    position: 'absolute',
-    boxSizing: 'border-box',
-    [inline ? 'insetInlineStart' : 'insetBlockStart']: `calc(${from} - ${width})`,
-    [inline ? 'inlineSize' : 'blockSize']: `calc(${across} + 2 * ${width})`,
-    [inline ? 'insetBlockStart' : 'insetInlineStart']: off,
-    [inline ? 'blockSize' : 'inlineSize']: 'var(--env-space-1)',
-    [inline ? 'borderInline' : 'borderBlock']: line(construction),
-    [inline ? 'borderBlockStart' : 'borderInlineStart']: line(construction),
-  };
-};
+): { at: CSSProperties; lines: readonly (readonly [Point, Point])[] } =>
+  along === 'inline'
+    ? {
+        at: { left: from, width: across, top: off, height: 'var(--env-space-1)' },
+        lines: [
+          [
+            ['0', '100%'],
+            ['0', '0'],
+          ],
+          [
+            ['0', '0'],
+            ['100%', '0'],
+          ],
+          [
+            ['100%', '0'],
+            ['100%', '100%'],
+          ],
+        ],
+      }
+    : {
+        at: { top: from, height: across, left: off, width: 'var(--env-space-1)' },
+        lines: [
+          [
+            ['100%', '0'],
+            ['0', '0'],
+          ],
+          [
+            ['0', '0'],
+            ['0', '100%'],
+          ],
+          [
+            ['0', '100%'],
+            ['100%', '100%'],
+          ],
+        ],
+      };
 
 /**
- * An inset, as a drawing marks one: a fine line `along` an axis from a box's edge to its content's,
- * placed by `at` within the box.
+ * A straight line along the length of its box, down it or across it, through the middle of the
+ * box's other side, which is space-1 wide (`line`), so the box is something to draw in.
  */
-export const inset = (along: 'inline' | 'block', at: CSSProperties): CSSProperties => ({
-  position: 'absolute',
-  [along === 'inline' ? 'borderBlockStart' : 'borderInlineStart']: line(construction),
-  ...at,
-});
+export const along = {
+  block: [
+    [
+      ['50%', '0'],
+      ['50%', '100%'],
+    ],
+  ],
+  inline: [
+    [
+      ['0', '50%'],
+      ['100%', '50%'],
+    ],
+  ],
+} as const satisfies Record<string, readonly (readonly [Point, Point])[]>;
 
-/**
- * A construction line along which blocks line up, drawn behind them across the gaps between them
- * and a little beyond, as a drawing's alignment guide; `left` is where its line falls.
- */
-export const alignment = (left: string): CSSProperties => ({
-  position: 'absolute',
-  zIndex: -1,
-  insetBlock: 'var(--env-space-1)',
-  left,
-  inlineSize: 'var(--env-space-1)',
-  borderInlineStart: line(construction),
-});
-
-/** Where a line falls at a fraction across a box's content, between its `padding` on either side. */
-export const across = (fraction: number, padding: string) =>
-  `calc(${padding} + (100% - 2 * ${padding} - var(--env-control-border-width)) * ${fraction})`;
+/** The box of a straight line down from `top` (`block`) or across from `left` (`inline`), at `at`. */
+export const line = (direction: 'block' | 'inline', at: string): CSSProperties =>
+  direction === 'block'
+    ? { left: at, width: 'var(--env-space-1)', marginLeft: 'calc(var(--env-space-1) / -2)' }
+    : { top: at, height: 'var(--env-space-1)', marginTop: 'calc(var(--env-space-1) / -2)' };
 
 /** The eased motion of what the frames' transitions change, such as a width or a gap. */
 export const easing = 'cubic-bezier(0.4, 0, 0.2, 1)';

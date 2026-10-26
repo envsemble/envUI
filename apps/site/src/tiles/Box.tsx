@@ -1,6 +1,6 @@
 import { Box, Column, type SpaceStep } from '@envsemble/envui';
 import { useTimeline } from '../previews/Motion';
-import { block, easing, frame, guide, inset } from './reflow';
+import { along, easing, edges, Item, line, Mark } from './reflow';
 
 /** The inset, step by step: a small one, a larger one, and back. */
 const paddings: SpaceStep[] = [2, 5];
@@ -9,40 +9,29 @@ const paddings: SpaceStep[] = [2, 5];
 const motion = (property: string) => `${property} 700ms ${easing}`;
 
 /**
- * A box drawn in outline around its content, a heading, a line and an action within a faint
- * outline, the inset between the two marked above and to the left, growing and shrinking again.
+ * A box drawn in hairlines around its content, a heading, a line and an action within the outline
+ * of the area its padding leaves, the inset between the two marked above and to the left, growing
+ * and shrinking again.
  */
 export default function BoxTile() {
   const step = useTimeline([1100, 1800]);
   const padding = `var(--env-space-${paddings[step]})`;
-  const above = inset('block', {
-    insetBlockStart: 0,
-    insetInlineStart: 'calc(50% - var(--env-control-border-width) / 2)',
-    blockSize: padding,
-    transition: motion('block-size'),
-  });
-  const before = inset('inline', {
-    insetInlineStart: 0,
-    insetBlockStart: 'calc(50% - var(--env-control-border-width) / 2)',
-    inlineSize: padding,
-    transition: motion('inline-size'),
-  });
   return (
-    <Box
-      padding={paddings[step]}
-      style={{
-        ...frame,
-        position: 'relative',
-        borderRadius: 'calc(var(--env-radius-sm) + var(--env-space-2))',
-        transition: motion('padding'),
-      }}
-    >
-      <span style={above} />
-      <span style={before} />
-      <Column gap={2} style={{ ...guide, padding: 'var(--env-space-1)' }}>
-        <span style={block('3.5rem', '1rem')} />
-        <span style={block('5rem', '0.75rem')} />
-        <span style={block('2.25rem', '1rem')} />
+    <Box padding={paddings[step]} style={{ position: 'relative', transition: motion('padding') }}>
+      {edges()}
+      <Mark
+        at={{ ...line('block', '50%'), top: 0, height: padding, transition: motion('height') }}
+        lines={along.block}
+      />
+      <Mark
+        at={{ ...line('inline', '50%'), left: 0, width: padding, transition: motion('width') }}
+        lines={along.inline}
+      />
+      <Column gap={2} style={{ position: 'relative', padding: 'var(--env-space-1)' }}>
+        {edges()}
+        <Item width="3.5rem" height="1rem" />
+        <Item width="5rem" height="0.75rem" />
+        <Item width="2.25rem" height="1rem" />
       </Column>
     </Box>
   );
