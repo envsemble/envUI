@@ -237,9 +237,6 @@ function shownBoxes(canvas: HTMLElement) {
   const scale = frame.width / canvas.offsetWidth || 1;
   const area = { width: canvas.offsetWidth, height: canvas.offsetHeight };
   const found: { element: Element; box: DOMRect }[] = [];
-  // The canvas hides until it is first fitted, and what it holds with it: only what hides by
-  // itself is hidden.
-  const shown = getComputedStyle(canvas).visibility;
   // What a box that clips its content, such as a scrolling list, holds outside it doesn't show:
   // each box counts as far as the boxes around it that clip show it.
   const visit = (element: Element, clip: DOMRect | null) => {
@@ -249,7 +246,7 @@ function shownBoxes(canvas: HTMLElement) {
       // What is transparent doesn't show, unless it is on its way in or out, such as a popup
       // starting its entrance: the view is placed for it, rather than without it and back.
       if (style.opacity === '0' && !moving(child)) continue;
-      if (style.visibility === 'hidden' && shown !== 'hidden') continue;
+      if (style.visibility === 'hidden') continue;
       const rect = child.getBoundingClientRect();
       const box = within(
         new DOMRect(
@@ -343,6 +340,10 @@ function useFit(
     // The view: where the canvas is, and where it eases to. Each frame closes a share of the way
     // left, so a target that moves as the preview changes is followed without restarting.
     const view = { x: 0, y: 0, scale: 1, toX: 0, toY: 0, frame: 0, last: 0 };
+    // Before it shows, the frames its fit has held where it is, and the frames it has been fitted
+    // in: a popup is placed by its style a frame or two after it opens, and a preview shown before
+    // then would glide to it as it fades in.
+    const first = { calm: 0, tries: 0 };
     const place = () => {
       const transform = `translate(${-view.x}px, ${-view.y}px) scale(${view.scale})`;
       if (canvasElement.style.transform !== transform) canvasElement.style.transform = transform;
@@ -401,6 +402,26 @@ function useFit(
       if (tile && playingNow.current && view.scale === scale) {
         toX = contain(view.toX, left * scale, right * scale, stageElement.clientWidth / 2 - inset);
         toY = contain(view.toY, top * scale, bottom * scale, stageElement.clientHeight / 2 - inset);
+      }
+      // Until it shows, it is placed at once, and shows only once its place has held for a few
+      // frames, or after half a second, whatever is still moving: it appears in place, as every
+      // preview does, by fading in.
+      if (canvasElement.dataset.fitted === undefined) {
+        const held =
+          first.calm > 0 &&
+          view.scale === scale &&
+          Math.abs(view.x - toX) < 0.5 &&
+          Math.abs(view.y - toY) < 0.5;
+        first.calm = held ? first.calm + 1 : 1;
+        first.tries += 1;
+        view.x = view.toX = toX;
+        view.y = view.toY = toY;
+        view.scale = scale;
+        place();
+        for (const { element } of boxes) resize.observe(element);
+        if (first.calm >= 3 || first.tries >= 30) canvasElement.dataset.fitted = '';
+        else update();
+        return;
       }
       // It follows only a change of a pixel or more: a popup is placed again as the view moves,
       // a fraction away, which would move the view again, in a tremble.

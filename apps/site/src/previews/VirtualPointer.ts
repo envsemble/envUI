@@ -156,8 +156,7 @@ export class VirtualPointer {
       const style = getComputedStyle(element);
       // What is clipped away whole, such as a screen reader's announcer, is no target.
       if (/^inset\((50|100)%/.test(style.clipPath)) continue;
-      if (style.visibility === 'hidden' && getComputedStyle(this.scope).visibility !== 'hidden')
-        continue;
+      if (style.visibility === 'hidden') continue;
       // What lets the pointer through, such as a slider's label over its track, isn't hit; what
       // only takes that from the preview's overlay layer, such as a popup in it, is.
       if (style.pointerEvents === 'none' && !this.fromLayer(element)) continue;

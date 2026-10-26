@@ -81,7 +81,8 @@
 }
 
 /* The window the example lays out in, at a width it was written for, then scaled down and centred
-   (Related.tsx). It contains its fixed overlays, such as a dialog, and hides until it fits. It is
+   (Related.tsx). It contains its fixed overlays, such as a dialog, and is transparent until it
+   fits, rather than hidden, so what hides by itself inside it can be told from what shows. It is
    inert, so no reader's pointer reaches it; a tile's own pointer, which no one sees, follows what
    its parts let through (VirtualPointer.ts). */
 .catalogue-related-canvas {
@@ -97,13 +98,13 @@
   contain: layout;
   transform: scale(1);
   transform-origin: 0 0;
-  visibility: hidden;
+  opacity: 0;
 }
 
 /* Once fitted, the picture appears, fading in, rather than from nowhere: by its opacity alone, so
    the boxes the fit measures keep their place. */
 .catalogue-related-canvas[data-fitted] {
-  visibility: visible;
+  opacity: 1;
   animation: catalogue-tile-appear var(--env-motion-duration-medium) var(--env-motion-ease) both;
 }
 
