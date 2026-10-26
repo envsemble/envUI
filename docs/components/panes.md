@@ -71,7 +71,7 @@ People can resize the supporting pane or the list by the gap between the panes, 
 
 ## Anatomy
 
-```tsx figure=PanesAnatomy
+```tsx figure=PanesAnatomy width="38"
 
 ```
 

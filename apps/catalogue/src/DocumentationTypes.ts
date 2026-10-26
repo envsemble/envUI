@@ -55,6 +55,11 @@ export type DocumentationBlock =
       caption?: string;
       /** The widths, in rem, of the frames an example is shown in, one to a row. */
       widths?: number[];
+      /**
+       * The width, in rem, an anatomy figure's subject needs to show its parts, such as panes side
+       * by side: on a narrower stage it is drawn smaller to fit.
+       */
+      width?: number;
       /** The component of docs/generated/parts.json an anatomy figure without a legend numbers. */
       of?: string;
       /** Whether the figure shows the example's overlays open, contained in its stage. */
