@@ -34,7 +34,9 @@ components:
   - DatePicker
   - Calendar
 examples:
-  PublishDate: overview
+  PublishDate:
+    role: overview
+    motion: true
   PlanningCalendar:
     role: overview
     caption: 'Calendar: the month the field opens.'
@@ -100,10 +102,8 @@ A field without a visible label, such as in a toolbar, shows its placeholder ins
 2. **Previous month** (`env-calendar-previous`)
 3. **Month** (`env-calendar-heading`)
 4. **Next month** (`env-calendar-next`)
-5. **Day** (`env-calendar-day`)
+5. **Day** (`env-calendar-day:last-child`)
 6. **Actions** (`env-date-picker-actions`)
-
-Not shown: the time's wheels beside the calendar, for a field that takes a time.
 
 ## Behaviour
 
@@ -117,7 +117,7 @@ A read-only field shows its value, and its calendar doesn't open.
 
 With a time, the calendar stays open beside the time's wheels, and turning a wheel sets the time at once.
 
-```tsx figure=MeetingTime
+```tsx figure=MeetingTime motion
 
 ```
 
@@ -125,7 +125,7 @@ With a time, the calendar stays open beside the time's wheels, and turning a whe
 
 Days outside the allowed range are unavailable, and the month buttons stop at them.
 
-```tsx figure=WithinRange
+```tsx figure=WithinRange motion
 
 ```
 
