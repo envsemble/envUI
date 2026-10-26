@@ -74,7 +74,7 @@ The default: a title, a short fact beside it, a description, its content, and ac
 
 The whole card is one link.
 
-```tsx figure=Destinations
+```tsx figure=Destinations motion
 
 ```
 
@@ -82,7 +82,7 @@ The whole card is one link.
 
 The whole card is one button.
 
-```tsx figure=StartOptions
+```tsx figure=StartOptions motion
 
 ```
 
@@ -133,6 +133,8 @@ An icon, a heading, a sentence and the one button that starts a feature.
 ### Loading
 
 While its content loads, a card can show as its own skeleton, as [Loading](../patterns/loading.md) shows.
+
+<!-- specimen: SkeletonFirst -->
 
 ### Adapting to width
 
