@@ -49,7 +49,7 @@ examples:
 
 | Variant  | Use for                                                 |
 | -------- | ------------------------------------------------------- |
-| Outline  | Forms, dialogs and panes. The default.                  |
+| Outline  | In forms, dialogs and panes. The default.               |
 | Floating | A long form on a page, as TextField's floating variant. |
 
 ## Anatomy
