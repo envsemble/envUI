@@ -1,5 +1,5 @@
 /**
- * The hosted catalogue from `npm run build:site`, which specs serve from dist/site/ at a made-up
+ * The hosted site from `npm run build:site`, which specs serve from dist/site/ at a made-up
  * address with page.route, through the hosted Worker script and with the headers of its _headers,
  * as Cloudflare serves it: the browser fetches nothing over the network, so no server, port or
  * connection is involved.
@@ -25,7 +25,7 @@ export const contentTypes: Record<string, string> = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
-/** Whether the hosted catalogue is built. */
+/** Whether the hosted site is built. */
 export const siteBuilt = () => existsSync(resolve(site, 'module-files.json'));
 
 /**
@@ -39,7 +39,7 @@ export function requireSite() {
   test.skip(!built, 'Needs the hosted build: npm run build:site');
 }
 
-/** The files of the hosted build that a module, by its path in the catalogue app, loads. */
+/** The files of the hosted build that a module, by its path in the site app, loads. */
 export function moduleFiles(module: string) {
   const files: string[] =
     JSON.parse(readFileSync(resolve(site, 'module-files.json'), 'utf8'))[module] ?? [];

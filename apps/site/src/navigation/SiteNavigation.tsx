@@ -17,6 +17,7 @@ import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu } from '../theme/DisplaySettings';
+import { drawerWidthKey } from '../theme/DisplayStorage';
 import {
   docsTree,
   otherPartRoute,
@@ -117,13 +118,6 @@ const drawerWidths: Record<Area, { defaultWidth: number; minWidth: number; maxWi
   catalogue: { defaultWidth: 16, minWidth: 13, maxWidth: 24 },
   docs: { defaultWidth: 21, minWidth: 18, maxWidth: 30 },
 };
-
-/**
- * Where the catalogue keeps the width the reader gives each part's drawer, in localStorage: under
- * the names the parts had before, so a width kept then still holds.
- */
-const drawerWidthKey = (area: Area) =>
-  `envui-catalogue-drawer-width-${area === 'catalogue' ? 'site' : area}`;
 
 /** The width the reader gave the area's drawer on an earlier visit, within its bounds. */
 function storedDrawerWidth(area: Area) {

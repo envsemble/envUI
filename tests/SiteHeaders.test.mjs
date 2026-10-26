@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { headersFor, parseHeaders, siteHeaders } from '../scripts/SiteHeaders.mjs';
 
-test('the hosted catalogue lets its own pages frame its pages, and no other site', () => {
+test('the hosted site lets its own pages frame its pages, and no other site', () => {
   // The template pages show each screen in an iframe of the site's frame route, ?frame=, which a
   // page load answers with index.html under the rule for every page.
   const headers = headersFor(siteHeaders(), '/index.html');

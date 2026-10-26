@@ -21,7 +21,7 @@ import type { SearchResult } from './SearchIndex';
 import { commandKey } from './SearchShortcut';
 import { Loading } from '../template/Loading';
 
-/** The search index's module, by its path in the catalogue app, as module-files.json names it. */
+/** The search index's module, by its path in the site app, as module-files.json names it. */
 const indexModule = 'src/search/SearchIndex.ts';
 type IndexModule = typeof import('./SearchIndex');
 
@@ -29,7 +29,7 @@ let loadIndexModule: () => Promise<IndexModule> = () => import('./SearchIndex');
 let indexLoad: Promise<IndexModule> | undefined;
 
 /**
- * Loads the index once, on its own file in the hosted catalogue, when search first opens. After a
+ * Loads the index once, on its own file in the hosted site, when search first opens. After a
  * failure, the next load asks for it again, under a new address in development.
  */
 function loadIndex() {

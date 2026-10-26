@@ -48,7 +48,7 @@ const sources = [
   { directory: 'docs', extensions: ['.md'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.css'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.ts', '.tsx'], read: 'code' },
-  // The catalogue's sample data, copy and styles, and the hosted catalogue's Worker and headers.
+  // The catalogue's sample data, copy and styles, and the hosted site's Worker and headers.
   { directory: 'apps/site/src', extensions: ['.ts', '.tsx'], read: 'code' },
   { directory: 'apps/site/src', extensions: ['.css'], read: 'whole' },
   { directory: 'apps/site/hosting', extensions: ['.mjs'], read: 'code' },

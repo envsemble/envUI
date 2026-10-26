@@ -1,4 +1,4 @@
-// The files behind each part of the hosted catalogue that loads on its own, such as an example, its
+// The files behind each part of the hosted site that loads on its own, such as an example, its
 // code or a specimen. When one fails to load, LoadBoundary's "Reload the page" fetches these files
 // again before reloading: WebKit keeps a module that failed as failed for the whole tab, across
 // reloads, until its file is fetched again.

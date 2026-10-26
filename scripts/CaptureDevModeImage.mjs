@@ -1,6 +1,6 @@
-// Captures the pictures of dev mode, in the light and the dark theme, each in the catalogue of that
+// Captures the pictures of dev mode, in the light and the dark theme, each in the site of that
 // theme, whose examples take its theme; dev mode takes the demo's. Each opens the real dev mode on
-// the demo application in the catalogue and saves apps/site/src/demos/dev-mode/dev-mode-<name>-
+// the demo application in the site and saves apps/site/src/demos/dev-mode/dev-mode-<name>-
 // <theme>.webp at twice the CSS size:
 //
 // - 3d: the picture of the dev mode guide's demo, the view's planes alone, with the node tree, the
@@ -11,8 +11,8 @@
 //   inspector, the selected card's details with its problem, down to where its tokens start;
 //   frame, the page on a phone, straight on.
 //
-//   npm run docs:dev-mode-image                    the catalogue at http://127.0.0.1:8770 (npm run dev)
-//   npm run docs:dev-mode-image -- <catalogue URL>  another running catalogue
+//   npm run docs:dev-mode-image                the site at http://127.0.0.1:8770 (npm run dev)
+//   npm run docs:dev-mode-image -- <site URL>  another running site
 //
 // Run it after a change to dev mode's UI or to the demo application, and commit the images.
 import { writeFile } from 'node:fs/promises';
@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const catalogue = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
+const site = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
 const page = 'docs/dev-mode';
 /** The 3D picture's shape, width to height, as DevModeDemo.tsx declares it, and its margin in px. */
 const aspect = 16 / 10;
@@ -90,7 +90,7 @@ async function openDevMode(browser, theme, viewport) {
     reducedMotion: 'reduce',
   });
   const tab = await context.newPage();
-  await tab.goto(`${catalogue}/${page}`);
+  await tab.goto(`${site}/${page}`);
   // Try dev mode puts the application in the picture's place and opens dev mode over it, with
   // the responsive frame off.
   await tab.getByRole('button', { name: 'Try dev mode' }).click({ timeout: 30_000 });

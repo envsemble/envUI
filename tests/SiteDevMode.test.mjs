@@ -1,4 +1,4 @@
-// The hosted catalogue holds dev mode in the dev mode page's files only, and every demo a guide
+// The hosted site holds dev mode in the dev mode page's files only, and every demo a guide
 // page places is one the catalogue has.
 import assert from 'node:assert/strict';
 import { readdir, readFile } from 'node:fs/promises';

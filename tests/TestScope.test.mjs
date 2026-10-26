@@ -135,8 +135,8 @@ test('static checks cover the changed files, and configuration the whole of its 
 
 test('servers follow the specs that need them', () => {
   assert.deepEqual(serversFor(['Tree']), ['fixture']);
-  assert.deepEqual(serversFor(['Catalogue']), ['catalogue']);
-  assert.deepEqual(serversFor(['Tree', 'Catalogue']), ['catalogue', 'fixture']);
+  assert.deepEqual(serversFor(['Catalogue']), ['site']);
+  assert.deepEqual(serversFor(['Tree', 'Catalogue']), ['fixture', 'site']);
   assert.deepEqual(serversFor([]), []);
 });
 

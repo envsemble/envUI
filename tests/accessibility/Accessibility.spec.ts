@@ -301,7 +301,7 @@ function compare(scan: Scan, known: RuleCounts = {}) {
 test.beforeAll(() => {
   if (!siteBuilt())
     throw new Error(
-      'The hosted catalogue is missing: run npm run test:a11y, which builds it first with npm run build:site.',
+      'The hosted site is missing: run npm run test:a11y, which builds it first with npm run build:site.',
     );
 });
 

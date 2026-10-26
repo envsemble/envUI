@@ -2,8 +2,8 @@
 // page of the Docs, each the top of the page in a desktop window, saved as
 // assets/readme/<part>-<theme>.png. The package ships them with its README (BuildLibrary.mjs).
 //
-//   npm run docs:readme-images                    the catalogue at http://127.0.0.1:8770 (npm run dev)
-//   npm run docs:readme-images -- <catalogue URL>  another running catalogue
+//   npm run docs:readme-images                the site at http://127.0.0.1:8770 (npm run dev)
+//   npm run docs:readme-images -- <site URL>  another running site
 //
 // Run it when the site's look changes, such as before a release, and commit the images.
 import { resolve } from 'node:path';
@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const catalogue = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
+const site = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
 /** The pages pictured: one of the catalogue and its counterpart in the Docs. */
 const pictures = [
   { part: 'catalogue', page: 'components/button' },
@@ -25,7 +25,7 @@ try {
   for (const theme of ['light', 'dark']) {
     const context = await browser.newPage({ viewport: window, colorScheme: theme });
     for (const { part, page } of pictures) {
-      await context.goto(`${catalogue}/${page}`, { waitUntil: 'networkidle' });
+      await context.goto(`${site}/${page}`, { waitUntil: 'networkidle' });
       await context.locator('.site-page-banner').waitFor();
       // Every example in view has loaded.
       await context.getByText('Loading example').first().waitFor({ state: 'detached' });

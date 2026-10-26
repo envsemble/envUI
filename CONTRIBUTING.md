@@ -1,6 +1,6 @@
 # Contributing to envUI
 
-This guide is for working on envUI itself: running the catalogue and the checks, hosting the site it builds and cutting releases. It stays in the repository; the package ships the [README](README.md), whose readers use envUI. How to change the library, record a change and what the checks cover is in [library development](docs/library-development.md).
+This guide is for working on envUI itself: running the site and the checks, hosting the site it builds and cutting releases. It stays in the repository; the package ships the [README](README.md), whose readers use envUI. How to change the library, record a change and what the checks cover is in [library development](docs/library-development.md).
 
 ## Explore and develop
 
@@ -13,7 +13,7 @@ npm run dev
 
 Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes library source directly and updates as you edit.
 
-The catalogue app (`apps/site`) builds the website, in two parts that each feel like a site of their own:
+The site app (`apps/site`) builds the website, in two parts that each feel like a site of their own:
 
 - **The catalogue**, at the root, is for people: what envUI is, what each part looks like and when to use it. Its rail holds the destinations Overview, Foundations, Components and Patterns, and the drawer beside it lists the chosen destination's pages, such as Dev mode under Overview. Component and pattern pages speak plain language and show live figures with the code under each. Foundation pages explain how envUI handles a subject, such as space or color, in real examples and plain words, and teach the words to ask an agent for it; they name no tokens or values, which each foundation's page in the Docs holds.
 - **The Docs**, under `/docs`, are the developer reference: setup, with the prompt that sets envUI up through a coding agent, migration, codemods, the guide for agents, dev mode, the design tokens, "Build your own field", and each foundation's, component's and pattern's page on using it in code, from the Compose section of its Markdown, with its props, part names and changelog. Their navigation is a tree: Get started, Guides and Foundations, then Components by their group and Patterns by their intent, each group a section that opens and closes, the current page's open. Each page has breadcrumbs above its title, such as Docs / Components / Actions / Button, and, on a pane wide enough, its contents beside it: its h2 and h3 headings, with each export's props under Props, the reader's place marked.
@@ -99,7 +99,7 @@ React components and scripts use PascalCase filenames; hooks and helpers use cam
 
 ## Hosting
 
-The catalogue app builds envUI's website, for `envui.envsemble.com`: the catalogue at the root and the Docs under `/docs`, from one static build. It isn't deployed yet; until then it runs locally.
+The site app builds envUI's website, for `envui.envsemble.com`: the catalogue at the root and the Docs under `/docs`, from one static build. It isn't deployed yet; until then it runs locally.
 
 - `npm run build:site` builds it into `dist/site/`: separate files with content-hashed names, so browsers keep them cached, and one `index.html` for both areas, with `SKILL.md` and `llms.txt` at its root for coding agents ([library development](docs/library-development.md#files-for-agents)). It needs no network. It also writes `module-files.json`, from Vite's manifest: the files behind each part of a page that loads on its own, such as an example. When one fails to load, "Reload the page" fetches them again first, since WebKit otherwise keeps the failed file for the whole tab, and it doesn't reload when the connection seems to be down.
 - `npm run site:dev` builds it and serves it at [localhost:8771](http://127.0.0.1:8771) in Wrangler, the Workers runtime that will host it. `npm run site:dev -- --port <port>` picks another port, and `npm run site:serve` serves the last build again.

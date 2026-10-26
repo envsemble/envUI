@@ -713,7 +713,7 @@ function envui({ removedFile, handwrittenFile }) {
   };
 }
 
-/** A fresh config, so a long-running build (the catalogue's dev server) reads the tokens anew. */
+/** A fresh config, so a long-running build (the site's dev server) reads the tokens anew. */
 export function createConfig({
   tokensDirectory = defaultTokensDirectory,
   outDir = defaultOutDir,

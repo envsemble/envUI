@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { catalogueUrl, fixtureUrl } from './Servers';
+import { siteDevUrl, fixtureUrl } from './Servers';
 
 /** The computed display of the panel each tab of a tab list controls, in order. */
 function panelDisplays(page: Page, list: string) {
@@ -61,7 +61,7 @@ test('a panel keeps the direction around it, not the tab list’s', async ({ pag
 });
 
 test('filling tabs give the selected panel the height left below the list', async ({ page }) => {
-  await page.goto(`${catalogueUrl}/components/tabs`);
+  await page.goto(`${siteDevUrl}/components/tabs`);
   const example = page.locator('.site-live-example[data-example="FillARegion"]');
   const canvas = example.getByRole('tabpanel', { name: 'Canvas' }).locator(':scope > *').first();
   await expect(canvas).toBeVisible();

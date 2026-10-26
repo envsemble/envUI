@@ -23,7 +23,7 @@ import {
   type Page,
   type TestInfo,
 } from '@playwright/test';
-import { catalogueUrl, fixtureUrl } from '../browser/Servers';
+import { siteDevUrl, fixtureUrl } from '../browser/Servers';
 import {
   allThemes,
   chooseScheme,
@@ -437,7 +437,7 @@ test.describe('catalogue', () => {
       // a component's figures, or Field's in the Docs.
       const visited = [path];
       await page.clock.setFixedTime(now);
-      await page.goto(`${catalogueUrl}/${path}`);
+      await page.goto(`${siteDevUrl}/${path}`);
       await page.locator('.site-page-header').waitFor();
       for (const theme of themesFor(path)) {
         await setTheme(page, theme);
@@ -552,7 +552,7 @@ test.describe('open lists', () => {
         // Timers keep running until just before the popups open, so the page and its animations settle.
         if (list.pauseTimers) await page.clock.install({ time: now });
         else await page.clock.setFixedTime(now);
-        await page.goto(`${catalogueUrl}/${list.route}`);
+        await page.goto(`${siteDevUrl}/${list.route}`);
         await page.locator('.site-page-header').waitFor();
         await setTheme(page, theme);
         await settle(page);

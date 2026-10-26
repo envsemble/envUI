@@ -86,7 +86,7 @@ if (opened.length) console.log(`  builds: ${opened.join(', ')}`);
 if (deferred.length)
   console.log(
     yellow(
-      `  note: ${deferred.join(', ')} edit sources, need the library build or check the whole catalogue: check:affected runs them`,
+      `  note: ${deferred.join(', ')} edit sources, need the library build or check the whole site: check:affected runs them`,
     ),
   );
 for (const [helper, users] of scope.helpers)

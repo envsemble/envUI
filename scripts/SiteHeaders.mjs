@@ -1,4 +1,4 @@
-// Reads apps/site/hosting/_headers, the response headers of the hosted catalogue, as Cloudflare's
+// Reads apps/site/hosting/_headers, the response headers of the hosted site, as Cloudflare's
 // asset server applies them: a rule is a path pattern followed by indented `Name: value` lines, and
 // a response collects the headers of every rule matching its path, in order. `! Name` removes a
 // header an earlier rule set. In a pattern, `*` matches any run of characters and `:name` one path

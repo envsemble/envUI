@@ -289,7 +289,7 @@ export function serversFor(names, root = repositoryRoot) {
   const servers = new Set();
   for (const name of names) {
     const source = read(root, specFile(name));
-    if (/\bcatalogueUrl\b/.test(source)) servers.add('catalogue');
+    if (/\bsiteDevUrl\b/.test(source)) servers.add('site');
     if (/\bfixtureUrl\b/.test(source)) servers.add('fixture');
   }
   return [...servers].sort();

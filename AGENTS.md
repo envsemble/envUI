@@ -28,7 +28,7 @@ This file is for agents working on envUI itself. It stays in the repository and 
 
 ## Ports and workers
 
-The browser tests start or reuse the catalogue on 8770 and the fixture on 8766, and reuse a server only when it answers for this checkout; when another checkout holds a port, this one takes ports of its own. When another checkout runs its servers or tests, set `ENVUI_CATALOGUE_PORT` and `ENVUI_FIXTURE_PORT` to free ports, such as 8832 and 8833. `ENVUI_WORKERS` sets the browser workers (default: half the cores).
+The browser tests start or reuse the site (both its parts) on 8770 and the fixture on 8766, and reuse a server only when it answers for this checkout; when another checkout holds a port, this one takes ports of its own. When another checkout runs its servers or tests, set `ENVUI_SITE_PORT` and `ENVUI_FIXTURE_PORT` to free ports, such as 8832 and 8833. `ENVUI_WORKERS` sets the browser workers (default: half the cores).
 
 ## Write envUI's pages in the one-file structure
 

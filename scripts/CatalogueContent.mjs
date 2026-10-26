@@ -2,7 +2,7 @@
 // page in the Docs. The catalogue speaks plain language to people looking at envUI; a page's
 // developer part, its "## Compose" section and Accessibility's lists of what envUI and the
 // application provide, is for people who build with it, and so are the changelog and the props.
-// The catalogue app renders the catalogue from these rules, and `npm test` checks its text against
+// The site app renders the catalogue from these rules, and `npm test` checks its text against
 // them: no inline code outside the Code disclosures under its figures.
 import { marked } from 'marked';
 

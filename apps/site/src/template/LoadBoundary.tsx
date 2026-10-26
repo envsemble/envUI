@@ -46,7 +46,7 @@ export function reloadModule<T>(
 
 /**
  * A component that loads on its own, for LoadBoundary to show. `module` is the path in the
- * catalogue app of the module `load` imports, such as `src/usage/IconUsage.tsx`, and `modules`
+ * site app of the module `load` imports, such as `src/usage/IconUsage.tsx`, and `modules`
  * passes it on to LoadBoundary. `component` is the lazy component to render. A lazy component
  * that failed to load stays failed, so `retry` replaces it with one that asks for the module again,
  * as reloadModule does, at that path from the app's root, where Vite serves it in development.
@@ -73,7 +73,7 @@ export function lazyPart<M, P extends object>(
 const hostedBuild = import.meta.env.PROD;
 
 /**
- * The files of the hosted catalogue behind each part that loads on its own, from the
+ * The files of the hosted site behind each part that loads on its own, from the
  * module-files.json that scripts/SiteModuleFiles.mjs writes; null when the connection seems down:
  * the map is small, so one that hasn't arrived in 15 seconds counts as down.
  */
@@ -96,7 +96,7 @@ async function moduleFiles(): Promise<Record<string, string[]> | null> {
  * the browser's error page. WebKit keeps a module that failed to load, such as one Vite preloaded
  * with a link, as failed for the whole tab, across reloads, until its file is fetched again; so in
  * the hosted build, the files of `modules` are fetched anew first. Each is a module's path in the
- * catalogue app, such as `src/examples/button/CreateProject.tsx`. The connection seems down when
+ * site app, such as `src/examples/button/CreateProject.tsx`. The connection seems down when
  * module-files.json can't be fetched, or none of those files can; a file that answers, even as not
  * found after a new deploy, shows that it is up. In development it always reloads.
  */
@@ -148,7 +148,7 @@ interface LoadBoundaryProps {
   /** What failed, for the message: an example, its code or a specimen. */
   what: string;
   /**
-   * The modules that load it, by their paths in the catalogue app, such as
+   * The modules that load it, by their paths in the site app, such as
    * `src/examples/button/CreateProject.tsx`: Reload the page fetches their files again first.
    */
   modules: readonly string[];

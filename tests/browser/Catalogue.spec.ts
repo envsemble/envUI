@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { catalogueUrl } from './Servers';
+import { siteDevUrl } from './Servers';
 import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
 import { chooseScheme } from './CatalogueThemes';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -203,7 +203,7 @@ test("the Docs' navigation is a tree of sections and groups, and each page's tra
 });
 
 test('a guide in the Docs renders shared Markdown and follows relative links', async ({ page }) => {
-  await page.goto(`${catalogueUrl}/docs/customizing`);
+  await page.goto(`${siteDevUrl}/docs/customizing`);
   await expect(page.getByRole('heading', { name: 'Compose one root', exact: true })).toBeVisible();
   await expect(
     page.getByText('Surface supplies fill, padding and corners', { exact: false }),
@@ -218,7 +218,7 @@ test('a guide in the Docs renders shared Markdown and follows relative links', a
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Surface');
 
   // A guide opens on a page of its own in the Docs, current in their navigation.
-  await page.goto(`${catalogueUrl}/docs`);
+  await page.goto(`${siteDevUrl}/docs`);
   await page
     .locator('.site-article')
     .getByRole('link', { name: 'Develop envUI locally', exact: true })
@@ -232,9 +232,7 @@ test('a guide in the Docs renders shared Markdown and follows relative links', a
       .getByRole('link', { name: 'Develop envUI locally', exact: true }),
   ).toHaveAttribute('aria-current', 'page');
   // The address it had on the Get started view, as a hash, leads to the same page as a path.
-  await page.goto(
-    `${catalogueUrl}/#/overview/get-started?document=migration&section=documentation`,
-  );
+  await page.goto(`${siteDevUrl}/#/overview/get-started?document=migration&section=documentation`);
   await expect(page).toHaveURL(/\/docs\/migration$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Migrate an interface to envUI');
 });
@@ -243,7 +241,7 @@ test('palette editing uses public controls and remains temporary and independent
   page,
 }) => {
   // The editable palette, with its tokens and values, is on the colors guide in the Docs.
-  await page.goto(`${catalogueUrl}/docs/foundations/colors`);
+  await page.goto(`${siteDevUrl}/docs/foundations/colors`);
   const app = page.locator('.site-app');
   const canvasValue = () =>
     app.evaluate((element) =>
@@ -275,7 +273,7 @@ test('palette editing uses public controls and remains temporary and independent
 test('live examples keep links in place, show their source, and specimens show forced states', async ({
   page,
 }) => {
-  await page.goto(`${catalogueUrl}/components/button`);
+  await page.goto(`${siteDevUrl}/components/button`);
   const address = page.url();
   // Links in an example keep their semantics without leaving the documentation.
   const destinations = page.getByRole('group', { name: 'Links example', exact: true });
@@ -311,7 +309,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
 }) => {
   // Wide enough for the overview's three figures to share a row beside the page's contents.
   await page.setViewportSize({ width: 1920, height: 900 });
-  await page.goto(`${catalogueUrl}/components/button`);
+  await page.goto(`${siteDevUrl}/components/button`);
   // One page of sections, with no views; the props are on its page in the Docs, which the banner's
   // Docs opens.
   await expect(page.locator('.site-page-header').getByRole('tab')).toHaveCount(0);
@@ -455,7 +453,7 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
   // A window wide enough for every figure's parts beside the page's contents: in a narrower
   // column, Panes' figure shows one pane at a time and PanelDock's tucks a part away.
   await page.setViewportSize({ width: 1920, height: 900 });
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   for (const { id, route, figures } of pages) {
     await goTo(page, route);
     const anatomy = page.locator('.site-anatomy');
@@ -477,7 +475,7 @@ test('every stage is the only frame of its figure', async ({ page }) => {
   // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
   // frame, which holds its stage and its verdict bar, is the figure's one frame.
   expect(figurePages.length).toBeGreaterThan(0);
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   for (const { id, route } of figurePages) {
     await goTo(page, route);
     await expect(page.locator('.site-figures .site-figure-section').first()).toBeVisible();
@@ -523,7 +521,7 @@ test("a specimen's titles and captions name options in words, not values", async
     .filter((file) => readFileSync(`docs/components/${file}`, 'utf8').includes('<!-- specimen:'))
     .map((file) => file.replace(/\.md$/, ''));
   expect(pages.length).toBeGreaterThan(0);
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   for (const id of pages) {
     await goTo(page, `/components/${id}`);
     await expect(
@@ -606,7 +604,7 @@ test('the foundation and pattern pages show no technical text, in their words or
   // The catalogue is for people looking at envUI: no token names, hex colors, lengths, percentages or
   // code. They belong to each foundation's guide and each pattern's page in the Docs.
   test.slow();
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   for (const path of plainPages) {
     await goTo(page, `/${path}`);
     if (path.startsWith('foundations/')) {
@@ -634,7 +632,7 @@ test('component pages show no technical text, in their words or their figures', 
 }) => {
   // Lengths, tokens, percentages and code names belong to the page's In code, in the Docs.
   test.slow();
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   const found: string[] = [];
   for (const { path, title } of plainComponentPages) {
     await goTo(page, `/${path}`);
@@ -649,7 +647,7 @@ test('the technical text on every other page of the catalogue is counted, for th
 }, testInfo) => {
   // Reporting only: the counts say how far each page is from the model pages' rule.
   test.slow();
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   const counts: string[] = [];
   for (const { path, title, kind, area } of allPages) {
     if (area !== 'catalogue' || plainPages.includes(path)) continue;
@@ -684,7 +682,7 @@ test("the catalogue's text keeps a readable measure, and opens each section with
   // Running text wraps at about 70 characters, never one long line across the page; a section's
   // lead is larger than the quieter text that supports it.
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   for (const path of typographyPages) {
     await goTo(page, `/${path}`);
     const lead = page.locator('.site-lead').first();
@@ -747,7 +745,7 @@ test('a component page groups its sections into three, all on the page', async (
             ),
           ),
       );
-  await page.goto(`${catalogueUrl}/components/scaffold`);
+  await page.goto(`${siteDevUrl}/components/scaffold`);
   await expect.poll(groups).toEqual([
     { group: true, sections: ['overview', 'variants', 'anatomy', 'behaviour'] },
     { group: true, sections: ['rules'] },
@@ -792,7 +790,7 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
   // under Accessibility. The address of the page that once listed them all opens the Docs' home,
   // whose Patterns list links every pattern's guide.
-  await page.goto(`${catalogueUrl}/docs/patterns`);
+  await page.goto(`${siteDevUrl}/docs/patterns`);
   await expect(page).toHaveURL(/\/docs$/);
   const guides = page
     .locator('.site-article section', {
@@ -828,7 +826,7 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   ).toHaveCount(0);
   // A foundation's guide maps the words of its page in the catalogue to code, the column the
   // catalogue leaves out, without the words' meanings, which it shows.
-  await page.goto(`${catalogueUrl}/docs/foundations/spacing`);
+  await page.goto(`${siteDevUrl}/docs/foundations/spacing`);
   await expect(main.getByRole('heading', { level: 2 })).toHaveText([
     'Usage',
     'Composition',
@@ -840,14 +838,14 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   await expect(page.locator('.catalogue-related, .site-figure-section')).toHaveCount(0);
   // Field, which has no page in the catalogue, shows its whole page in the Docs, its sections,
   // then props, part names and changelog, without Related.
-  await page.goto(`${catalogueUrl}/docs/components/field`);
+  await page.goto(`${siteDevUrl}/docs/components/field`);
   await expect(page.locator('.docs-changelog')).toHaveCount(1);
   await expect(page.locator('[data-section="overview"]')).toHaveCount(1);
   await expect(page.locator('.catalogue-related')).toHaveCount(0);
 });
 
 test("a page's changelog in the Docs is collapsed, and a link to it opens it", async ({ page }) => {
-  await page.goto(`${catalogueUrl}/docs/components/button`);
+  await page.goto(`${siteDevUrl}/docs/components/button`);
   const changelog = page.locator('.docs-changelog details');
   await expect(changelog.locator('summary')).toHaveText('Changelog');
   await expect(changelog).not.toHaveAttribute('open');
@@ -861,7 +859,7 @@ test("a page's changelog in the Docs is collapsed, and a link to it opens it", a
     link.remove();
   });
   await expect(changelog).toHaveAttribute('open');
-  await page.goto(`${catalogueUrl}/docs/patterns/forms#changelog`);
+  await page.goto(`${siteDevUrl}/docs/patterns/forms#changelog`);
   await expect(page.locator('.docs-changelog details')).toHaveAttribute('open');
   await expect(page.locator('#changelog')).toBeInViewport();
 });
@@ -869,7 +867,7 @@ test("a page's changelog in the Docs is collapsed, and a link to it opens it", a
 test('the props in the Docs link each source file at the revision the site was built from', async ({
   page,
 }) => {
-  await page.goto(`${catalogueUrl}/docs/components/button`);
+  await page.goto(`${siteDevUrl}/docs/components/button`);
   const link = page.getByRole('link', { name: 'actions/Button.tsx', exact: true });
   // The release tag of a release build, or the commit of any other: never a moving branch.
   const revision = `(?:v${version.replaceAll('.', '\\.')}|[0-9a-f]{40})`;
@@ -939,7 +937,7 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
 test('single previews retain state when the theme changes', async ({ page }) => {
   // The 0.x preview of text fields opens the TextField page, whose live examples follow the
   // documentation's theme.
-  await page.goto(`${catalogueUrl}/components/input/preview`);
+  await page.goto(`${siteDevUrl}/components/input/preview`);
   const example = page.getByRole('group', { name: 'TextField example', exact: true });
   const projectName = example.getByRole('textbox', { name: 'Project name', exact: true });
   await projectName.fill('Winter release');
@@ -1014,7 +1012,7 @@ test('the navigation holds the wordmark and search, the page the other area and 
     ['/docs/components/menu', 'Catalogue', 'Docs'],
   ] as const) {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto(`${catalogueUrl}${address}`);
+    await page.goto(`${siteDevUrl}${address}`);
     await expect(page.getByRole('banner')).toHaveCount(0);
     const wordmark = page
       .getByRole('navigation', { name: brand })
@@ -1084,7 +1082,7 @@ test('an example that fails to load says so in place, and loads again on request
 }) => {
   const example = '**/src/examples/button/CreateProject.tsx*';
   await page.route(example, (route) => route.abort());
-  await page.goto(`${catalogueUrl}/components/button`);
+  await page.goto(`${siteDevUrl}/components/button`);
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
   // The rest of the page is still there.
@@ -1175,7 +1173,7 @@ test('code that fails to load is asked for once, not on every render', async ({ 
     if (/uncached promise/i.test(message.text())) warnings.push(message.text());
   });
   await page.route(source, (route) => route.abort());
-  await page.goto(`${catalogueUrl}/components/button`);
+  await page.goto(`${siteDevUrl}/components/button`);
   await page
     .locator('.site-live-example-entry')
     .first()
@@ -1198,7 +1196,7 @@ test('code that fails to load is asked for once, not on every render', async ({ 
 test('a retry returns focus once, and later updates leave focus where it is', async ({ page }) => {
   const example = '**/src/examples/button/CreateProject.tsx*';
   await page.route(example, (route) => route.abort());
-  await page.goto(`${catalogueUrl}/components/button`);
+  await page.goto(`${siteDevUrl}/components/button`);
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('The example could not load')).toBeVisible();
   await page.unroute(example);
@@ -1224,6 +1222,29 @@ test('a retry returns focus once, and later updates leave focus where it is', as
   expect(await body.evaluate((element) => element.scrollTop)).toBe(scrolled);
 });
 
+test('settings stored under the keys of before move to their keys now, and still apply', async ({
+  page,
+}) => {
+  // A reader's settings from when the site was called the catalogue, and its drawer the site's.
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', 'yes');
+    localStorage.setItem('envui-catalogue-theme', 'dark');
+    localStorage.setItem('envui-catalogue-scale', 'compact');
+    localStorage.setItem('envui-catalogue-drawer-width-site', '25');
+  });
+  await page.goto(`${siteDevUrl}/components/button`);
+  await expect(page.locator('.site-app')).toHaveAttribute('data-env-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-env-scale', 'compact');
+  const stored = await page.evaluate(() => ({ ...localStorage }));
+  expect(stored).toMatchObject({
+    [displayStorageKeys.theme]: 'dark',
+    [displayStorageKeys.scale]: 'compact',
+    'envui-site-drawer-width-catalogue': '25',
+  });
+  expect(Object.keys(stored).filter((key) => key.startsWith('envui-catalogue-'))).toEqual([]);
+});
+
 test('an example that fails to render says so in place, and the rest of the page works', async ({
   page,
 }) => {
@@ -1233,7 +1254,7 @@ test('an example that fails to render says so in place, and the rest of the page
       body: "export default function CreateProject() { throw new Error('Broken example'); }",
     }),
   );
-  await page.goto(`${catalogueUrl}/components/button`);
+  await page.goto(`${siteDevUrl}/components/button`);
   const hero = page.getByRole('group', { name: 'Button example', exact: true });
   await expect(hero.getByText('This example failed to render')).toBeVisible();
   await expect(hero.getByText('Broken example')).toBeVisible();
@@ -1262,7 +1283,7 @@ test('an example that fails to render says so in place, and the rest of the page
 test("the overview's hero says what envUI is, leads to the components and the Docs, and shows the package's version", async ({
   page,
 }) => {
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   const hero = page.locator('.catalogue-overview-hero');
   await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(hero.locator('.catalogue-overview-lede')).toContainText('A React design system');
@@ -1285,7 +1306,7 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${catalogueUrl}/components/slider`);
+  await page.goto(`${siteDevUrl}/components/slider`);
   const banner = page.locator('.site-page-banner');
   const trail = banner.getByRole('navigation', { name: 'Breadcrumb' });
   await expect(trail.getByRole('link')).toHaveText(['envUI', 'Components', 'Forms & selection']);
@@ -1302,7 +1323,7 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   await expect(banner.locator('.catalogue-banner-motif')).toHaveCount(0);
   // The few pages with a motif of their own, such as Colors & themes, draw it out of the
   // accessibility tree and the tab order.
-  await page.goto(`${catalogueUrl}/foundations/colors`);
+  await page.goto(`${siteDevUrl}/foundations/colors`);
   const motif = page.locator('.site-page-banner .catalogue-banner-motif');
   await expect(motif).toHaveAttribute('aria-hidden', 'true');
   await expect(motif).toHaveAttribute('inert', '');
@@ -1315,24 +1336,24 @@ test("the Docs' home gives a prompt to copy that sets envUI up through the skill
   context,
 }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await page.goto(`${catalogueUrl}/docs`);
+  await page.goto(`${siteDevUrl}/docs`);
   const setup = page.getByRole('region', { name: 'Set up with your agent' });
   const prompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
   await expect(setup).toContainText(prompt);
   await setup.getByRole('button', { name: 'Copy prompt' }).click();
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(prompt);
   // The development server serves the skill and llms.txt as the build writes them.
-  const skill = await page.request.get(`${catalogueUrl}/SKILL.md`);
+  const skill = await page.request.get(`${siteDevUrl}/SKILL.md`);
   expect(skill.headers()['content-type']).toBe('text/markdown; charset=utf-8');
   expect(await skill.text()).toBe(renderSkill());
-  const llms = await page.request.get(`${catalogueUrl}/llms.txt`);
+  const llms = await page.request.get(`${siteDevUrl}/llms.txt`);
   expect(await llms.text()).toBe(renderLlmsText());
 });
 
 test('the Icons page credits Material Symbols with their license, and the footer does not', async ({
   page,
 }) => {
-  await page.goto(`${catalogueUrl}/foundations/icons`);
+  await page.goto(`${siteDevUrl}/foundations/icons`);
   const credit = page.locator('.catalogue-icons-credit');
   await expect(credit.getByRole('heading', { name: 'Where the icons come from' })).toBeVisible();
   await expect(credit.getByRole('link', { name: 'Material Symbols' })).toHaveAttribute(
@@ -1349,7 +1370,7 @@ test('the Icons page credits Material Symbols with their license, and the footer
 test('a Related tile of a page without an example shows its specimen', async ({ page }) => {
   // Icon is documented on the Icons foundation's page, which has no example: its tile links there
   // and shows a few of the icons, fitted to its stage as an example is.
-  await page.goto(`${catalogueUrl}/components/avatar`);
+  await page.goto(`${siteDevUrl}/components/avatar`);
   const tile = page.locator('.catalogue-related-tile').filter({ hasText: /^Icon/ });
   await tile.scrollIntoViewIfNeeded();
   await expect(tile.getByRole('link', { name: 'Icon', exact: true })).toHaveAttribute(
@@ -1388,7 +1409,7 @@ test('every tile of the galleries of components and patterns is fitted, shown wh
       }),
     );
   for (const route of ['/components', '/patterns']) {
-    await page.goto(`${catalogueUrl}${route}`);
+    await page.goto(`${siteDevUrl}${route}`);
     await expect(tiles.first()).toBeVisible();
     const count = await tiles.count();
     expect(count).toBeGreaterThan(route === '/components' ? 60 : 10);
@@ -1403,7 +1424,7 @@ test("every label and heading of the catalogue's and the Docs' drawers fits on o
   // A fresh page has no width stored, so each drawer starts at its default width.
   await page.setViewportSize({ width: 1440, height: 1000 });
   for (const path of [...catalogueSections.map((section) => sectionHome(section).path), 'docs']) {
-    await page.goto(`${catalogueUrl}/${path}`);
+    await page.goto(`${siteDevUrl}/${path}`);
     const drawer = page.locator('.site-sidebar');
     await expect(drawer.locator('.env-drawer-item').first()).toBeVisible();
     // The drawer keeps each on one line, cut short where it doesn't fit: none may be cut.
@@ -1422,7 +1443,7 @@ test('the navigation shows the current page, and focus moves to the page only on
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto(`${catalogueUrl}/components/tree`);
+  await page.goto(`${siteDevUrl}/components/tree`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tree');
   // The rail marks the page's destination, and the drawer beside it lists the destination's pages.
   await expect(
@@ -1451,7 +1472,7 @@ test('the navigation shows the current page, and focus moves to the page only on
   // The Docs have a navigation of their own, and the switch at the top end leads to the same
   // subject in the other part and back.
   await page.locator('.site-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
-  await expect(page).toHaveURL(`${catalogueUrl}/docs/foundations/colors`);
+  await expect(page).toHaveURL(`${siteDevUrl}/docs/foundations/colors`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
   await expect(page.getByRole('navigation', { name: 'Catalogue' })).toHaveCount(0);
   await expect(
@@ -1461,7 +1482,7 @@ test('the navigation shows the current page, and focus moves to the page only on
     .locator('.site-page-actions')
     .getByRole('link', { name: 'Catalogue', exact: true })
     .click();
-  await expect(page).toHaveURL(`${catalogueUrl}/foundations/colors`);
+  await expect(page).toHaveURL(`${siteDevUrl}/foundations/colors`);
   await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
 });
 
@@ -1471,8 +1492,8 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await page.setViewportSize({ width: 1440, height: 900 });
   // An address that names a section in its query, as earlier releases wrote some, opens the
   // section, at the fragment address that links, search and the contents share.
-  await page.goto(`${catalogueUrl}/docs/components/button?section=props-Button-variant`);
-  await expect(page).toHaveURL(`${catalogueUrl}/docs/components/button#props-Button-variant`);
+  await page.goto(`${siteDevUrl}/docs/components/button?section=props-Button-variant`);
+  await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#props-Button-variant`);
   await expect(page.locator('[id="props-Button-variant"]')).toBeFocused();
   const banner = page.locator('.site-page-header');
   const trail = banner.getByRole('navigation', { name: 'Breadcrumb' });
@@ -1510,17 +1531,17 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Button');
   // A link of the contents writes the section's fragment, and the address and Back follow it.
   await contents.getByRole('link', { name: 'Usage', exact: true }).click();
-  await expect(page).toHaveURL(`${catalogueUrl}/docs/components/button#usage`);
+  await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#usage`);
   await expect(page.locator('#usage')).toBeFocused();
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Usage');
   // A breadcrumb leads to its heading on the Docs' home.
   await trail.getByRole('link', { name: 'Actions', exact: true }).click();
-  await expect(page).toHaveURL(`${catalogueUrl}/docs#components-actions`);
+  await expect(page).toHaveURL(`${siteDevUrl}/docs#components-actions`);
   await expect(page.getByRole('heading', { name: 'Actions', level: 3 })).toBeFocused();
   // The home is an index of the Docs, with no contents beside it.
   await expect(contents).toHaveCount(0);
   // A narrower window leaves the contents out.
-  await page.goto(`${catalogueUrl}/docs/setup`);
+  await page.goto(`${siteDevUrl}/docs/setup`);
   await expect(contents).toBeVisible();
   await page.setViewportSize({ width: 1024, height: 900 });
   await expect(contents).toBeHidden();
@@ -1539,7 +1560,7 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
     );
   // A component's page lists its sections, with the rules under Rules, and marks where the reader
   // is; a link scrolls to its section.
-  await page.goto(`${catalogueUrl}/components/button`);
+  await page.goto(`${siteDevUrl}/components/button`);
   await expect(contents).toBeVisible();
   await expect
     .poll(topLevel)
@@ -1550,7 +1571,7 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
   await expect(rules.getByRole('link', { name: 'Use it when', exact: true })).toBeVisible();
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Overview');
   await contents.getByRole('link', { name: 'Rules', exact: true }).click();
-  await expect(page).toHaveURL(`${catalogueUrl}/components/button#rules`);
+  await expect(page).toHaveURL(`${siteDevUrl}/components/button#rules`);
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Rules');
   // The banner, the page's column and the contents beside it are laid out as in the Docs: the
   // banner is its column less the gutters, level with the top of the contents, and the contents
@@ -1605,7 +1626,7 @@ test('every page of the Docs lists its own sections beside it, each once, at add
   // It opens every page of the Docs, about 20 s.
   test.slow();
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(`${catalogueUrl}/docs`);
+  await page.goto(`${siteDevUrl}/docs`);
   const contents = page.getByRole('navigation', { name: 'On this page' });
   for (const { path, title, kind } of pagesOf('docs')) {
     if (kind === 'docs-home') continue;
@@ -1667,7 +1688,7 @@ test("the pager and the drawer open a page at its top, and a section's address a
   // view once moved the whole page there.
   const listShown = () =>
     expect(page.locator('.catalogue-open-example .env-select-popup').first()).toBeVisible();
-  await page.goto(`${catalogueUrl}/components/combobox`);
+  await page.goto(`${siteDevUrl}/components/combobox`);
   await expect(page.locator('.site-page-navigation')).toBeVisible();
   await bottom();
   await page
@@ -1721,7 +1742,7 @@ test('a page that fails to render says so, and the navigation leads to the other
       body: "export function Overview() { throw new Error('Broken page'); }",
     }),
   );
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   const main = page.getByRole('main');
   await expect(main.getByText('This page failed to render')).toBeVisible();
   await expect(main.getByText('Broken page')).toBeVisible();
@@ -1770,7 +1791,7 @@ test('a page that fails after a press takes the focus it dropped, and leads to t
   page,
 }) => {
   await breakOnPress(page, '**/src/pages/Catalogue.tsx', 'Catalogue');
-  await page.goto(`${catalogueUrl}/components`);
+  await page.goto(`${siteDevUrl}/components`);
   const main = page.getByRole('main');
   const press = main.getByRole('button', { name: 'Break', exact: true });
   // The page renders with its button, and focus moves to the content once the route has opened.
@@ -1792,7 +1813,7 @@ test(
   { tag: '@engines' },
   async ({ page }) => {
     // The hash address of an earlier release, such as a bookmark, is redirected to its path.
-    await page.goto(`${catalogueUrl}/#/components/select/props`);
+    await page.goto(`${siteDevUrl}/#/components/select/props`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
     await expect(page).toHaveURL(/\/docs\/components\/select$/);
     const banner = page.locator('.site-page-header');
@@ -1813,7 +1834,7 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   page,
 }) => {
   await page.setViewportSize({ width: 1920, height: 1400 });
-  await page.goto(`${catalogueUrl}/components/checkbox/preview`);
+  await page.goto(`${siteDevUrl}/components/checkbox/preview`);
   const app = page.locator('.site-app');
   const panes = page.locator('.catalogue-preview');
   // The 0.x preview opens the Checkbox page, whose live example follows the theme with its state.
@@ -1876,7 +1897,7 @@ test('figures with open overlays keep them in their stages, inert, and leave the
     )
     .map(({ id }) => id);
   expect(pages).toEqual(expect.arrayContaining(['dialog', 'menu', 'tooltip', 'toast', 'select']));
-  await page.goto(`${catalogueUrl}/`);
+  await page.goto(`${siteDevUrl}/`);
   for (const id of pages) {
     await goTo(page, `/components/${id}`);
     const rooms = page.locator('.catalogue-open-example');
@@ -1939,7 +1960,7 @@ test('figures with open overlays keep them in their stages, inert, and leave the
 test('F6 on the Toast page reaches a notification raised there, past the figures @engines', async ({
   page,
 }) => {
-  await page.goto(`${catalogueUrl}/components/toast`);
+  await page.goto(`${siteDevUrl}/components/toast`);
   await expect(page.locator('.catalogue-open-example .env-toast').first()).toBeVisible();
   // While no notification of the page is open, F6 is the browser's: the figures' notices, which
   // are pictures, don't take it.
@@ -1964,8 +1985,8 @@ test("the Docs' Changelog page lists each release's highlights, newest first, an
 }) => {
   const releases = readReleaseNotes();
   // The catalogue's old address opens it.
-  await page.goto(`${catalogueUrl}/changelog`);
-  await expect(page).toHaveURL(`${catalogueUrl}/docs/changelog`);
+  await page.goto(`${siteDevUrl}/changelog`);
+  await expect(page).toHaveURL(`${siteDevUrl}/docs/changelog`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
   await expect(page.getByRole('heading', { level: 2, name: 'Highlights' })).toBeVisible();
   await expect(page.getByRole('heading', { level: 2, name: 'Every change' })).toBeVisible();
@@ -1984,7 +2005,7 @@ test("the Docs' Changelog page lists each release's highlights, newest first, an
   }
   expect([...sections.keys()].sort()).toEqual(['/docs/changelog', '/docs/migration']);
   for (const [path, ids] of sections) {
-    await page.goto(`${catalogueUrl}${path}`);
+    await page.goto(`${siteDevUrl}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     for (const id of ids)
       await expect(page.locator(`[id="${id}"]`), `${path}#${id}`).toBeAttached();
