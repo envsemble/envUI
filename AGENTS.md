@@ -39,6 +39,10 @@ Every component, pattern and foundation page in `docs/` is one Markdown file tha
 - **Plain words above Compose.** The sections the catalogue shows name no props, values, tokens or classes; Compose holds the code, the props and the values, so agents lose nothing.
 - **Model pages.** [Button](docs/components/button.md), [Form layout and validation](docs/patterns/forms.md) and [Spacing & density](docs/foundations/spacing.md).
 
+## Name things for where they belong
+
+The website (`apps/site`) has two parts. **site** names the whole website: its shell, build and hosting, and what both parts use. **catalogue** names the part at the root, for people looking at envUI. **docs** names the part under /docs, the developer reference. Identifiers, files, CSS classes (`site-`, `catalogue-`, `docs-`) and custom properties follow the same rule, by where they render, so a name says which part it touches.
+
 ## Everything else
 
 - Running, building, hosting and releasing envUI: [CONTRIBUTING.md](CONTRIBUTING.md).

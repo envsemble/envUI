@@ -80,8 +80,9 @@ Some browser specs open the hosted site from `dist/site/`. `npm run verify` and 
 ```text
 AGENTS.md            The testing policy and pointers for agents working on envUI
 docs/                Canonical Markdown documentation and discovery index
-apps/site/      The website: the catalogue, for people, and the Docs at /docs
-  site/              The hosted site's Worker script, response headers and setup skill
+apps/site/           The website: the catalogue, for people, and the Docs at /docs
+  hosting/           The hosted site's Worker script, response headers and setup skill
+  src/shared/        Modules the site and the scripts share: catalogue text rules, search terms
 packages/ui/         The publishable @envsemble/envui package
   src/               Components by family, styles and public entry points
   licenses/          Third-party license texts
@@ -90,10 +91,20 @@ packages/eslint-plugin/      @envsemble/eslint-plugin-envui: lint rules for apps
 packages/stylelint-config/   @envsemble/stylelint-config-envui: style rules for apps
 assets/brand/        Original envUI artwork, used by the catalogue only
 assets/readme/       Light/dark captures of the catalogue and the Docs for the README
-scripts/             Builds, asset generation, local watching and release validation
+scripts/             TypeScript that Node runs as it is, by purpose:
+  build/             The library, tokens, icons, palette and brand assets
+  docs/              The documentation generator, props, parts and the README's pictures
+  site/              The hosted site: finalizing, agent files, headers, search, release notes
+  test/              The checks, verify, the test scope, the visual baseline and ports
+  release/           Release validation
 tests/               Package contract tests, browser specs and React fixtures
 .github/workflows/   CI, the release pull requests' Verify and the release on merge
 ```
+
+The website has two parts, and names say which they belong to: **site** for the whole website
+(its shell, build and hosting, and anything both parts use), **catalogue** for the part at the
+root, and **docs** for the part under /docs. The site's CSS classes and custom properties take
+the same prefixes, `site-`, `catalogue-` and `docs-`, by where they render.
 
 React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, catalogue data, builds and packaged copies of the README and documentation have explicit sources; edit the source and regenerate.
 
