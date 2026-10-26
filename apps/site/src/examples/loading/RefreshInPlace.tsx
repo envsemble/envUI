@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, List, Spinner, Column, Row, Text } from '@envsemble/envui';
 
 const activity = [
-  { id: 'brief', text: 'Alex Morgan updated the launch brief', when: 'Today' },
+  { id: 'brief', text: 'Alex Morgan updated the brief', when: 'Today' },
   { id: 'budget', text: 'Priya Shah approved the budget', when: 'Yesterday' },
-  { id: 'survey', text: 'Sam Lee sent the customer survey', when: 'Monday' },
+  { id: 'survey', text: 'Sam Lee sent the survey', when: 'Monday' },
 ];
 
 export default function RefreshInPlace() {
