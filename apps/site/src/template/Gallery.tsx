@@ -3,6 +3,8 @@ import { Column, Link, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
 import type { RoutePage } from '../navigation/SiteRoutes';
 import { galleryPreviews } from '../previews/GalleryPreviews';
+import { usePlaying } from '../previews/Motion';
+import { tileOf } from '../tiles/Tiles';
 import { hasExample } from './LiveExample';
 import { previewOf, TilePreview, useNear, type Preview } from './Related';
 
@@ -16,13 +18,14 @@ export interface GalleryGroup {
 }
 
 /**
- * What a gallery tile shows of a page: the composition or example chosen for the gallery where
- * there is one (GalleryPreviews.tsx), else what a Related tile shows, the page's lead example or
- * its anatomy.
+ * What a gallery tile shows of a page: its own tile (tiles/Tiles.ts), else the composition or
+ * example chosen for the gallery where there is one (GalleryPreviews.tsx), else what a Related tile
+ * shows, the page's lead example or its anatomy.
  */
 export function galleryPreviewOf(page: RoutePage): Preview | undefined {
   const document = page.document;
   if (!document) return undefined;
+  if (tileOf(document.id)) return previewOf(document);
   const chosen = galleryPreviews[document.id];
   // An example that a page's rework removed leaves the tile its lead example.
   if (!chosen || (chosen.example && !hasExample(document.id, chosen.example)))
@@ -51,17 +54,20 @@ function windowOf(page: RoutePage) {
 /**
  * One page's tile: its preview on the recessed canvas, rendered once near the viewport, and its name
  * in small, quiet text, so the group headings lead. The name is a heading one level under the
- * gallery's group, or under the page's title where the gallery has no groups.
+ * gallery's group, or under the page's title where the gallery has no groups. The preview plays
+ * while the pointer or the keyboard is on the tile.
  */
 function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   const tile = useRef<HTMLLIElement>(null);
   const near = useNear(tile);
+  const [playing, playOn] = usePlaying();
   const Heading = level === 2 ? 'h2' : 'h3';
   return (
-    <li ref={tile} className="catalogue-gallery-tile" style={windowOf(page)}>
+    <li ref={tile} className="catalogue-gallery-tile" style={windowOf(page)} {...playOn}>
       <TilePreview
         preview={galleryPreviewOf(page)}
         near={near}
+        playing={playing}
         className="catalogue-related-stage catalogue-gallery-stage"
         whole
       />

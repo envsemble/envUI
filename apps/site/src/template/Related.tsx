@@ -1,10 +1,13 @@
 import {
   startTransition,
+  Suspense,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
   type ComponentType,
+  type CSSProperties,
+  type ReactNode,
   type RefObject,
 } from 'react';
 import { Column, Link, PortalContainer, Text, Theme, useTheme } from '@envsemble/envui';
@@ -13,6 +16,9 @@ import type { DocumentationMetadata, StageFill } from '../DocumentationTypes';
 import { routeHref } from '../navigation/Address';
 import { pageHref, referencePages, routeOfDocument } from '../navigation/SiteRoutes';
 import { Documentation } from '../pages/Documentation';
+import { Playback, usePlaying } from '../previews/Motion';
+import { useDisplaySettings } from '../theme/DisplaySettings';
+import { tileOf, tileWindows } from '../tiles/Tiles';
 import { documents, type Documentation as Document } from '../Reference';
 import { ExampleRender } from './LiveExample';
 import { hasPageSpecimen, PageSpecimen } from './PageSpecimens';
@@ -46,26 +52,44 @@ export interface Preview {
   stage?: StageFill;
   /** A page without an example, such as a foundation's: the id of its specimen (PageSpecimens.tsx). */
   specimen?: string;
-  /** A composition drawn for the tile instead of an example, such as a gallery's (GalleryPreviews.tsx). */
+  /**
+   * A composition drawn for the tile instead of an example: the page's own tile (tiles/Tiles.ts),
+   * or a gallery's (GalleryPreviews.tsx).
+   */
   composition?: ComponentType;
+  /** Whether the composition is the page's own tile, drawn in the tiles' window (Related.css). */
+  tile?: boolean;
+  /** The window a tile lays out in, in rem, where it needs a larger one than the tiles'. */
+  window?: { width: number; height: number };
 }
 
 /** Letters alone, lower case, to match an export's name with a figure's heading or file. */
 const squash = (text: string) => text.toLowerCase().replace(/[^a-z\d]/g, '');
 
 /**
- * What a tile shows of a page: where its component floats over the page, such as a dialog or a
- * menu, its anatomy figure, which shows it open; else the Overview's first example, its lead
- * example. For an export that isn't the page's first, such as Textarea on the TextField page, the
- * first example named after it, where there is one. A page without one, such as a foundation's,
- * shows its specimen.
+ * What a tile shows of a page: its own tile, where it has one (tiles/Tiles.ts); else where its
+ * component floats over the page, such as a dialog or a menu, its anatomy figure, which shows it
+ * open; else the Overview's first example, its lead example. For an export that isn't the page's
+ * first, such as Textarea on the TextField page, the first example named after it, where there is
+ * one. A page without one, such as a foundation's, shows its specimen.
  */
 export function previewOf(document: Document, component?: string): Preview | undefined {
+  const own = component && document.metadata?.components[0] !== component.split('.')[0];
+  const tile = !own && tileOf(document.id);
+  // A tile's popups, such as a menu it opens as it plays, open inside its canvas.
+  if (tile)
+    return {
+      page: document.id,
+      name: document.id,
+      open: true,
+      composition: tile,
+      tile: true,
+      window: tileWindows[document.id],
+    };
   const blocks = (document.sections ?? []).flatMap((section) =>
     section.blocks.flatMap((block) => (block.kind === 'example' ? [block] : [])),
   );
   const anatomy = blocks.find((block) => block.role === 'anatomy');
-  const own = component && document.metadata?.components[0] !== component.split('.')[0];
   const named =
     own &&
     blocks.find(
@@ -129,6 +153,9 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
 /** The least room, in px, between a preview and its stage's edges. */
 const inset = 16;
 
+/** The most a page's own tile is enlarged: written for its small window, it is drawn large. */
+const most = 2;
+
 /**
  * The boxes a preview shows, in the canvas's own px: each outermost box that has a size and isn't
  * a scrim or a positioner over the whole canvas, such as a dialog's.
@@ -172,7 +199,15 @@ function useFit(
   canvas: RefObject<HTMLElement | null>,
   on: boolean,
   whole: boolean,
+  playing: boolean,
+  tile: boolean,
 ) {
+  // While its animation plays, a preview keeps the fit of its still, so it doesn't move or scale
+  // as it changes; it fits again once it rests.
+  const held = useRef(playing);
+  useLayoutEffect(() => {
+    held.current = playing;
+  }, [playing]);
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const canvasElement = canvas.current;
@@ -183,25 +218,30 @@ function useFit(
       frame = requestAnimationFrame(fit);
     };
     const resize = new ResizeObserver(update);
+    const largest = tile ? most : 1;
     const fit = () => {
+      if (held.current) return;
       const boxes = shownBoxes(canvasElement);
       if (!boxes.length) return;
-      // A gallery's window counts whole, so every tile of it is drawn at one scale, and only what
-      // overflows it is scaled further.
-      if (whole)
-        boxes.push({
-          element: canvasElement,
-          box: new DOMRect(0, 0, canvasElement.offsetWidth, canvasElement.offsetHeight),
-        });
       const left = Math.min(...boxes.map(({ box }) => box.left));
       const top = Math.min(...boxes.map(({ box }) => box.top));
       const right = Math.max(...boxes.map(({ box }) => box.right));
       const bottom = Math.max(...boxes.map(({ box }) => box.bottom));
-      const scale = Math.min(
-        1,
-        (stageElement.clientWidth - 2 * inset) / (right - left),
-        (stageElement.clientHeight - 2 * inset) / (bottom - top),
+      const width = stageElement.clientWidth - 2 * inset;
+      const height = stageElement.clientHeight - 2 * inset;
+      // A window that counts whole, a gallery's or a tile's, sets the scale, so every tile of its
+      // kind is drawn at one scale; a gallery's draws what overflows it smaller. A page's own tile
+      // is written for its window, so its scale is the window's alone: one that followed its
+      // popups would move them, as they are placed again at each scale, and never settle. Either
+      // way, what the preview shows is centred, not its window.
+      const windowScale = Math.min(
+        largest,
+        width / canvasElement.offsetWidth,
+        height / canvasElement.offsetHeight,
       );
+      const scale = tile
+        ? windowScale
+        : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
       const x = ((left + right) / 2) * scale;
       const y = ((top + bottom) / 2) * scale;
       const transform = `translate(${-x}px, ${-y}px) scale(${scale})`;
@@ -240,29 +280,36 @@ function useFit(
       changes.disconnect();
       resize.disconnect();
     };
-  }, [stage, canvas, on, whole]);
+  }, [stage, canvas, on, whole, tile]);
 }
 
 /**
  * A tiny live picture of an alternative on the recessed canvas: its example, inert and scaled down
  * to fit, rendered once the tiles near the viewport; for a page without one, its specimen, in the
- * same way. Without either, a page icon. A gallery's tile passes its own stage class and, where a
- * composition of its own reads better than the page's example, that composition.
+ * same way. Without either, a page icon. A page's own tile, or a gallery's composition, takes the
+ * example's place. A gallery's tile passes its own stage class. While `playing`, unless the
+ * sidebar paused every animation, its animation plays (previews/Motion.tsx), and it rests at its
+ * still once that ends.
  */
 export function TilePreview({
   preview,
   near,
+  playing = false,
   className = 'catalogue-related-stage',
   whole = false,
 }: {
   preview?: Preview;
   near: boolean;
+  /** Whether the pointer or the keyboard is on the tile, which plays its animation. */
+  playing?: boolean;
   className?: string;
   /** Whether the window it lays out in counts whole as it is fitted, as a gallery's does. */
   whole?: boolean;
 }) {
   const Composition = preview?.composition;
   const theme = useTheme();
+  const { motionPaused } = useDisplaySettings();
+  const plays = playing && !motionPaused;
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLDivElement>(null);
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
@@ -270,13 +317,18 @@ export function TilePreview({
   const subject =
     preview &&
     (Composition ? (
-      <Composition />
+      <Suspense fallback={null}>
+        <Playback playing={plays} rest="start">
+          <Composition />
+        </Playback>
+      </Suspense>
     ) : preview.specimen ? (
       <PageSpecimen id={preview.specimen} />
     ) : (
       <ExampleRender page={preview.page} name={preview.name} fallback={null} />
     ));
-  useFit(stage, canvas, shown, whole);
+  const tile = Boolean(preview?.tile);
+  useFit(stage, canvas, shown, whole || tile, plays, tile);
   return (
     <Theme
       {...theme}
@@ -291,7 +343,20 @@ export function TilePreview({
         <Article className="catalogue-related-placeholder" aria-hidden />
       ) : (
         shown && (
-          <div ref={canvas} className="catalogue-related-canvas" inert aria-hidden>
+          <div
+            ref={canvas}
+            className="catalogue-related-canvas"
+            data-tile={preview.tile ? '' : undefined}
+            style={
+              preview.window &&
+              ({
+                '--catalogue-tile-width': `${preview.window.width}rem`,
+                '--catalogue-tile-height': `${preview.window.height}rem`,
+              } as CSSProperties)
+            }
+            inert
+            aria-hidden
+          >
             {preview.open ? (
               <PortalContainer container={layer} contained>
                 {subject}
@@ -328,6 +393,25 @@ export function useNear(element: RefObject<HTMLElement | null>) {
   return near;
 }
 
+/** One alternative's tile, whose preview plays while the pointer or the keyboard is on it. */
+function RelatedTile({
+  preview,
+  near,
+  children,
+}: {
+  preview?: Preview;
+  near: boolean;
+  children: ReactNode;
+}) {
+  const [playing, playOn] = usePlaying();
+  return (
+    <li className="catalogue-related-tile" {...playOn}>
+      <TilePreview preview={preview} near={near} playing={playing} />
+      {children}
+    </li>
+  );
+}
+
 /** The alternatives as tiles of one size: a preview on its stage, the name and its situations. */
 function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: string }) {
   const list = useRef<HTMLUListElement>(null);
@@ -335,8 +419,7 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
   return (
     <ul ref={list} className="catalogue-related-tiles" data-count={alternatives.length}>
       {alternatives.map(({ key, name, href, preview, line }) => (
-        <li key={key} className="catalogue-related-tile">
-          <TilePreview preview={preview} near={near} />
+        <RelatedTile key={key} preview={preview} near={near}>
           {/* The name is the link; it stretches over the picture, so a pointer can follow it from
               there too without a link around the preview, whose example may hold links itself. */}
           <Text render={<span />} className="catalogue-related-name">
@@ -351,7 +434,7 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
           <div className="catalogue-related-line">
             <Documentation markdown={line} path={path} />
           </div>
-        </li>
+        </RelatedTile>
       ))}
     </ul>
   );

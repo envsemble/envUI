@@ -16,7 +16,7 @@ import { Palette } from '@envsemble/envui/icons/Palette';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
-import { DisplayMenu } from '../theme/DisplaySettings';
+import { DisplayMenu, MotionButton } from '../theme/DisplaySettings';
 import { drawerWidthKey } from '../theme/DisplayStorage';
 import {
   docsTree,
@@ -208,6 +208,7 @@ export function CatalogueNavigation({
         aria-label="Catalogue"
         className="catalogue-rail"
         header={<Brand area="catalogue" />}
+        footer={<MotionButton />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
       />
       <Drawer

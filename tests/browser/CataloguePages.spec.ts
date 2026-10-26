@@ -416,10 +416,15 @@ test('every tile of the galleries of components and patterns is fitted, shown wh
         const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
         const canvas = tile.querySelector<HTMLElement>('.catalogue-related-canvas[data-fitted]');
         if (!canvas || !/scale\(/.test(canvas.style.transform)) return [`${name}: not fitted`];
+        // What shows, as the fit measures it: not a layer or positioner over the whole window,
+        // which shows nothing of its own, nor a visually hidden pixel, such as a form's input.
+        const window = canvas.getBoundingClientRect();
+        const scale = window.width / canvas.offsetWidth;
         const shown = [...canvas.querySelectorAll('*')]
           .filter((element) => element.checkVisibility({ visibilityProperty: true }))
           .map((element) => element.getBoundingClientRect())
-          .filter((box) => box.width >= 1 && box.height >= 1);
+          .filter((box) => box.width > scale && box.height > scale)
+          .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
         if (!shown.length) return [`${name}: empty`];
         const outside =
           Math.min(...shown.map((box) => box.left)) < stage.left - 1 ||

@@ -372,6 +372,24 @@
   outline-offset: 1px;
 }
 
+/* An animated figure (MotionStage.tsx): its subject centred on the stage as an example's is, and
+   its pause button at the stage's bottom end, inside its padding, where an example's mark sits. */
+.catalogue-motion-stage {
+  position: relative;
+}
+
+.catalogue-motion-subject {
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+}
+
+.catalogue-motion-pause {
+  position: absolute;
+  inset-block-end: var(--env-space-2);
+  inset-inline-end: var(--env-space-2);
+}
+
 /* Forced colors paint the canvas in Canvas, like the page: a frame keeps each example apart. A
    figure that explains the system sits on the page and takes none. */
 @media (forced-colors: active) {

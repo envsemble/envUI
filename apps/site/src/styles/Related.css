@@ -108,6 +108,17 @@
   min-block-size: 28rem;
 }
 
+/* A page's own tile (tiles/Tiles.ts) lays out in a small window of its own, which counts whole,
+   so every tile is drawn at one scale, large: its component, written for the window, fills much
+   of the stage. Its popups open inside it, with no more room than that. A tile of a wide component,
+   such as a notification, takes a larger window (tileWindows, Tiles.ts), drawn smaller. */
+.catalogue-related-stage > .catalogue-related-canvas[data-tile],
+.catalogue-gallery-stage.catalogue-gallery-stage > .catalogue-related-canvas[data-tile] {
+  inline-size: var(--catalogue-tile-width, 10rem);
+  block-size: var(--catalogue-tile-height, 7.5rem);
+  min-block-size: 0;
+}
+
 /* A picture of the overlay, without the scrim, which would fill the canvas. */
 .catalogue-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
   display: none;

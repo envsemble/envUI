@@ -9,11 +9,14 @@ import {
   type ThemeContrast,
   type ThemeScale,
 } from '@envsemble/envui';
+import { Pause } from '@envsemble/envui/icons/Pause';
+import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { Tune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
 
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
 const scales: readonly ThemeScale[] = ['comfortable', 'compact'];
+const motions = ['playing', 'paused'] as const;
 
 function readStored<T extends string>(key: string, values: readonly T[], fallback: T): T {
   try {
@@ -43,20 +46,34 @@ function requestedScale(): ThemeScale | undefined {
   return scales.find((scale) => scale === requested);
 }
 
+/**
+ * Whether the site's animations start paused: where the reader prefers reduced motion, until they
+ * play them.
+ */
+function initialMotion() {
+  const reduced =
+    typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return readStored(displayStorageKeys.motion, motions, reduced ? 'paused' : 'playing');
+}
+
 interface DisplaySettingsValue {
   contrast: ThemeContrast;
   scale: ThemeScale;
+  /** Whether every animation of the site is paused, the previews' and the figures'. */
+  motionPaused: boolean;
   setContrast: (contrast: ThemeContrast) => void;
   setScale: (scale: ThemeScale) => void;
+  setMotionPaused: (paused: boolean) => void;
 }
 
 const DisplaySettingsContext = createContext<DisplaySettingsValue | null>(null);
 
 /**
- * The catalogue's theme, contrast and scale, as the reader chose them in the Display menu: stored in
- * localStorage, the theme by ThemePreferenceProvider and the others here, and kept in step with the
- * catalogue's other windows. The theme follows the system until the reader picks one, and the
- * contrast follows `prefers-contrast` until then.
+ * The site's theme, contrast and scale, as the reader chose them in the Display menu, and whether
+ * its animations are paused, as they chose with the sidebar's pause button: stored in localStorage,
+ * the theme by ThemePreferenceProvider and the others here, and kept in step with the site's other
+ * windows. The theme follows the system until the reader picks one, the contrast follows
+ * `prefers-contrast` until then, and the animations start paused where reduced motion is preferred.
  */
 export function DisplaySettingsProvider({
   className,
@@ -71,12 +88,14 @@ export function DisplaySettingsProvider({
   const [scale, setScaleState] = useState(
     () => requestedScale() ?? readStored(displayStorageKeys.scale, scales, 'comfortable'),
   );
+  const [motion, setMotionState] = useState(initialMotion);
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {
       if (event.key === displayStorageKeys.contrast)
         setContrastState(readStored(displayStorageKeys.contrast, contrasts, 'system'));
       if (event.key === displayStorageKeys.scale)
         setScaleState(readStored(displayStorageKeys.scale, scales, 'comfortable'));
+      if (event.key === displayStorageKeys.motion) setMotionState(initialMotion());
     };
     addEventListener('storage', onStorage);
     return () => removeEventListener('storage', onStorage);
@@ -85,6 +104,7 @@ export function DisplaySettingsProvider({
     () => ({
       contrast,
       scale,
+      motionPaused: motion === 'paused',
       setContrast(next) {
         setContrastState(next);
         store(displayStorageKeys.contrast, next);
@@ -93,8 +113,13 @@ export function DisplaySettingsProvider({
         setScaleState(next);
         store(displayStorageKeys.scale, next);
       },
+      setMotionPaused(paused) {
+        const next = paused ? 'paused' : 'playing';
+        setMotionState(next);
+        store(displayStorageKeys.motion, next);
+      },
     }),
-    [contrast, scale],
+    [contrast, scale, motion],
   );
   return (
     <DisplaySettingsContext value={value}>
@@ -172,5 +197,24 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         </Menu.RadioItem>
       </Menu.RadioGroup>
     </Menu.Root>
+  );
+}
+
+/**
+ * The sidebar's pause button: pauses every animation of the site, the tiles' and the figures', or
+ * plays them again. A figure's own button overrides it for that figure (MotionStage.tsx).
+ */
+export function MotionButton() {
+  const { motionPaused, setMotionPaused } = useDisplaySettings();
+  const label = motionPaused ? 'Play animations' : 'Pause animations';
+  return (
+    <Tooltip content={label} side="inline-end">
+      <IconButton
+        variant="ghost"
+        icon={motionPaused ? <PlayArrow /> : <Pause />}
+        aria-label={label}
+        onClick={() => setMotionPaused(!motionPaused)}
+      />
+    </Tooltip>
   );
 }
