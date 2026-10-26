@@ -560,9 +560,17 @@ test.describe('open lists', () => {
         // an element to measure once the list is open.
         const trigger = await list.trigger(page).elementHandle();
         if (!trigger) throw new Error(`No trigger for the ${list.name} list`);
-        await trigger.evaluate((element) =>
-          element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
-        );
+        const center = () =>
+          trigger.evaluate((element) =>
+            element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
+          );
+        // Examples around the trigger load as they come into view and change the page's height,
+        // which would leave a different part of the page behind a modal popup on each run: they
+        // finish loading, then the trigger is centred again.
+        await center();
+        await expect(page.getByText('Loading example')).toHaveCount(0);
+        await settle(page);
+        await center();
         await page.mouse.move(0, 0);
         // Toasts start their timers as they show, so the clock stops before they open. Nothing
         // waits on a timer yet, so the second it skips to stop changes nothing.
