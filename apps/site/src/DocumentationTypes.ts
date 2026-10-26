@@ -68,6 +68,11 @@ export type DocumentationBlock =
       enlarge?: boolean;
       /** Whether an example stands alone across the column, rather than beside text or other figures. */
       wide?: boolean;
+      /**
+       * Whether the catalogue plays the example in its place: its animated specimen of the same
+       * name, which uses it as a person would (apps/site/src/specimens/<page>/<Name>.tsx).
+       */
+      motion?: boolean;
       /** The stage's fill where the page's own would hide the subject: `raised` or `shaded`. */
       stage?: StageFill;
       /**

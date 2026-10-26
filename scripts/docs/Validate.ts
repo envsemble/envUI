@@ -112,7 +112,7 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
         );
       else
         for (const [name, entry] of Object.entries(value)) {
-          const { role, caption, open, stage } =
+          const { role, caption, open, stage, motion } =
             typeof entry === 'string' ? { role: entry } : (entry ?? {});
           if (!/^[A-Z][A-Za-z\d]*$/.test(name))
             problems.push(`${key} names ${name}; name an example by its PascalCase file name`);
@@ -127,12 +127,19 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
           )
             problems.push(`${key} gives ${name} a field other than ${exampleFields.join(', ')}`);
           // An overview is framed here, since no fence places it; other figures on their fence.
-          if ((open !== undefined || stage !== undefined) && role !== 'overview')
+          if (
+            (open !== undefined || stage !== undefined || motion !== undefined) &&
+            role !== 'overview'
+          )
             problems.push(
-              `${key} gives ${name} open or stage, which only an overview example takes here; write them on its fence`,
+              `${key} gives ${name} open, stage or motion, which only an overview example takes here; write them on its fence`,
             );
           if (open !== undefined && open !== true)
             problems.push(`${key} gives ${name} open: ${open}; write open: true, or leave it out`);
+          if (motion !== undefined && motion !== true)
+            problems.push(
+              `${key} gives ${name} motion: ${motion}; write motion: true, or leave it out`,
+            );
           if (stage !== undefined && !stageFills.includes(stage))
             problems.push(
               `${key} gives ${name} stage: ${stage}; a stage takes ${stageFills.join(', ')}, or nothing for the stage in the page's color`,
@@ -302,7 +309,7 @@ const figurePattern = /^tsx\s+figure=([A-Za-z]\w*)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^
 const kindFencePattern = /^tsx\s+(?:example|do|dont|anatomy|variants)=/;
 /** The attributes each role's figure takes, and those it needs. */
 const figureAttributes: Record<string, { allowed: string[]; required: string[] }> = {
-  example: { allowed: ['widths', 'open', 'stage', 'wide'], required: [] },
+  example: { allowed: ['widths', 'open', 'stage', 'wide', 'motion'], required: [] },
   do: { allowed: ['open', 'stage'], required: ['caption'] },
   dont: { allowed: ['open', 'stage'], required: ['caption'] },
   anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width'], required: [] },
@@ -319,9 +326,10 @@ const stageFills = ['shaded'];
  * open on its stage, contained; `enlarge` shows an anatomy figure's subject half as large again
  * where its stage has room, so the callouts on its close-set parts don't crowd; and `wide` keeps an
  * example across the whole column, alone in its row, rather than beside the text before it, where
- * it needs the room, such as a popup open beside its trigger.
+ * it needs the room, such as a popup open beside its trigger; `motion` plays the example in the
+ * catalogue: its animated specimen of the same name takes its place.
  */
-const figureFlags = new Set(['open', 'enlarge', 'wide']);
+const figureFlags = new Set(['open', 'enlarge', 'wide', 'motion']);
 /** A file name as words: ConnectedButtons is "Connected buttons". */
 const fileWords = (name: string) =>
   name
@@ -698,6 +706,11 @@ export function readPage(
       if (attributes.open === true) block.open = true;
       if (attributes.enlarge === true) block.enlarge = true;
       if (attributes.wide === true) block.wide = true;
+      if (attributes.motion === true) block.motion = true;
+      if (block.motion && !specimens.has(name))
+        problems.push(
+          `example ${name} has motion but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to play it`,
+        );
       blocks.push(block);
       if (role === 'anatomy' || role === 'variants') legendOf = block;
       continue;
@@ -740,14 +753,18 @@ export function readPage(
   // shows; a component or pattern shows what it is with at least one, and says what envUI and the
   // application provide under Accessibility.
   const entries = Object.entries(catalog);
-  for (const [name, { role, open, stage }] of entries) {
-    if (foundation && (open || stage))
-      problems.push(`figure ${name} takes no open or stage on a foundation page`);
+  for (const [name, { role, open, stage, motion }] of entries) {
+    if (foundation && (open || stage || motion))
+      problems.push(`figure ${name} takes no open, stage or motion on a foundation page`);
     if (role !== 'overview' && !placed.has(name))
       problems.push(`example ${name} is listed in the frontmatter but placed nowhere`);
     if (!foundation && !examples.has(name))
       problems.push(
         `example ${name} has no file apps/site/src/examples/${document.id}/${name}.tsx`,
+      );
+    if (role === 'overview' && motion && !specimens.has(name))
+      problems.push(
+        `example ${name} has motion but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to play it`,
       );
   }
   if (!foundation) {
@@ -771,13 +788,14 @@ export function readPage(
     title: 'Overview',
     blocks: [
       { kind: 'markdown', markdown: '## Overview\n\n' },
-      ...overviews.map(([name, { caption, open, stage }], index) => ({
+      ...overviews.map(([name, { caption, open, stage, motion }], index) => ({
         kind: foundation ? 'figure' : 'example',
         name,
         heading: index === 0 ? document.title : fileWords(name),
         ...(caption && { caption }),
         ...(open && { open: true }),
         ...(stage && { stage }),
+        ...(motion && { motion: true }),
       })),
     ],
   };

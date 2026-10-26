@@ -388,6 +388,9 @@ Where a section is about motion, such as a slider stretching past its ends or a 
 - **It loops**, ending where it began, and plays while it is in view; its pause button, at the stage's bottom end, holds it where it is, and the sidebar's pause holds every animation, the reader's choice kept with the display settings. Where reduced motion is preferred, it starts paused.
 - **The component's own behaviour.** The pointer hovers, presses, drags, clicks and types by the events a mouse and a keyboard send, so the component shows its own hover, drag and transitions; change props only where no person could, such as a reply arriving.
 - **One height throughout**, so the page around it never moves.
+- **Its overlays open live in the stage**, as a tile's do: a menu, a dialog, a sheet or a tooltip renders into the stage's layer, contained, and the pointer uses it there; a dialog's scrim covers the stage, not the page. Give `MotionStage` a `height` that holds what opens. Notifications render live through a `PortalContainer` into `usePreviewLayer()`, as the Toast tile does, and arrive at the stage's bottom end beside the pause button.
+- **More than a hover and a press.** Besides moving, pressing, typing and keys, the pointer right-clicks (`rightClick`), holds a key such as <kbd>Alt</kbd> (`keyDown`, `keyUp`), turns the wheel over what it is on (`wheel`, in px, over a `duration`), and selects text by pressing on it and dragging, in a field or in content.
+- **In place of an example.** An example the catalogue plays takes `motion`: on its fence, or as `motion: true` in an overview's entry. Its specimen of the same name, `apps/site/src/specimens/<page>/<Name>.tsx`, imports the example and plays it on a `MotionStage`, and the figure keeps the example's caption and code; the Docs and the package keep the example.
 
 ## Tiles
 

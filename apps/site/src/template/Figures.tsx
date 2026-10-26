@@ -149,6 +149,7 @@ function Figure({
       widths={block.widths}
       open={block.open}
       stage={block.stage}
+      motion={block.motion}
     />
   );
 }

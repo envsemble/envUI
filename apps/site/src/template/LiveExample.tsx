@@ -19,6 +19,7 @@ import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 import { OpenExample } from './OpenExample';
 import { InteractiveMark } from './InteractiveMark';
 import { Loading } from './Loading';
+import { SpecimenRender } from './Specimen';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
@@ -281,7 +282,8 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
 /**
  * An example rendered live in the documentation's theme, on the recessed canvas, with its source
  * and a copy button; with `widths`, in a frame of each width, one to a row, and with `caption`, a
- * sentence below it.
+ * sentence below it. With `motion`, the stage plays it: its animated specimen of the same name,
+ * which uses the example as a person would, takes the stage's place, above its caption and code.
  */
 export function LiveExample({
   page,
@@ -291,6 +293,7 @@ export function LiveExample({
   widths,
   open = false,
   stage,
+  motion = false,
 }: {
   page: string;
   name: string;
@@ -301,6 +304,8 @@ export function LiveExample({
   open?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
+  /** Whether its animated specimen plays it in place of the live stage. */
+  motion?: boolean;
 }) {
   const theme = useTheme();
   const render = open ? (
@@ -312,7 +317,9 @@ export function LiveExample({
   );
   return (
     <Column gap={3} className="site-live-example-entry">
-      {widths ? (
+      {motion ? (
+        <SpecimenRender page={page} name={name} />
+      ) : widths ? (
         <div
           role="group"
           aria-label={`${title} example`}
