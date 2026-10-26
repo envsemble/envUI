@@ -230,6 +230,61 @@ const sheets: readonly ReactNode[] = [
     <circle cx="75.3" cy="165" r="14.1" />
     <circle cx="54.7" cy="165" r="6.4" />
   </>,
+  // Pythagoras tree: A square carries a 3-4-5 right triangle with a square on each of its legs, and each of those does the same, three times.
+  <>
+    <polygon points="258.1,318 350.4,318 350.4,225.8 258.1,225.8" />
+    <polygon points="258.1,225.8 317.2,181.5 272.9,122.5 213.9,166.8" />
+    <polygon points="213.9,166.8 230.4,110.1 173.7,93.6 157.2,150.2" />
+    <polygon points="157.2,150.2 140.6,106 96.4,122.7 113,166.9" />
+    <polygon points="140.6,106 173.7,93.6 161.3,60.4 128.1,72.9" />
+    <polygon points="230.4,110.1 272.9,122.5 285.3,80 242.8,67.6" />
+    <polygon points="242.8,67.6 275.9,55.1 263.5,22 230.3,34.5" />
+    <polygon points="275.9,55.1 285.3,80 310.2,70.7 300.8,45.8" />
+    <polygon points="317.2,181.5 350.4,225.8 394.6,192.6 361.4,148.3" />
+    <polygon points="361.4,148.3 403.9,160.7 416.3,118.2 373.8,105.8" />
+    <polygon points="373.8,105.8 407,93.4 394.5,60.2 361.4,72.7" />
+    <polygon points="407,93.4 416.3,118.2 441.2,108.9 431.8,84" />
+    <polygon points="403.9,160.7 394.6,192.6 426.5,201.9 435.8,170" />
+    <polygon points="435.8,170 445.1,194.9 470,185.5 460.7,160.7" />
+    <polygon points="445.1,194.9 426.5,201.9 433.5,220.5 452.2,213.5" />
+  </>,
+  // Sierpinski triangle: An equilateral triangle with the triangle joining its midpoints taken out, then the same in each of the three left, three times.
+  <>
+    <polygon points="137.4,310 303.7,22 470,310" />
+    <polygon points="220.6,166 386.9,166 303.7,310" />
+    <polygon points="179,238 262.2,238 220.6,310" />
+    <polygon points="158.2,274 199.8,274 179,310" />
+    <polygon points="199.8,202 241.4,202 220.6,238" />
+    <polygon points="241.4,274 282.9,274 262.2,310" />
+    <polygon points="262.2,94 345.3,94 303.7,166" />
+    <polygon points="241.4,130 282.9,130 262.2,166" />
+    <polygon points="282.9,58 324.5,58 303.7,94" />
+    <polygon points="324.5,130 366.1,130 345.3,166" />
+    <polygon points="345.3,238 428.4,238 386.9,310" />
+    <polygon points="324.5,274 366.1,274 345.3,310" />
+    <polygon points="366.1,202 407.6,202 386.9,238" />
+    <polygon points="407.6,274 449.2,274 428.4,310" />
+  </>,
+  // Quartered square: A square cut into quarters, the corner quarter cut again and on, each quarter left behind holding its circle on the diagonal.
+  <>
+    <rect x="172" y="24" width="282" height="282" />
+    <line x1="172" y1="306" x2="454" y2="24" />
+    <line x1="313" y1="24" x2="313" y2="306" />
+    <line x1="172" y1="165" x2="454" y2="165" />
+    <circle cx="242.5" cy="235.5" r="70.5" />
+    <line x1="383.5" y1="24" x2="383.5" y2="165" />
+    <line x1="313" y1="94.5" x2="454" y2="94.5" />
+    <circle cx="348.3" cy="129.8" r="35.3" />
+    <line x1="418.8" y1="24" x2="418.8" y2="94.5" />
+    <line x1="383.5" y1="59.3" x2="454" y2="59.3" />
+    <circle cx="401.1" cy="76.9" r="17.6" />
+    <line x1="436.4" y1="24" x2="436.4" y2="59.3" />
+    <line x1="418.8" y1="41.6" x2="454" y2="41.6" />
+    <circle cx="427.6" cy="50.4" r="8.8" />
+    <line x1="445.2" y1="24" x2="445.2" y2="41.6" />
+    <line x1="436.4" y1="32.8" x2="454" y2="32.8" />
+    <circle cx="440.8" cy="37.2" r="4.4" />
+  </>,
 ];
 
 /** The sheet a page shows, the same each time: its id's characters summed, in turns. */
