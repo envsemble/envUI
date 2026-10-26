@@ -199,12 +199,12 @@ Material Design 3's component pages, such as [buttons](https://m3.material.io/co
 
 A figure is an [example file](#examples) listed in the frontmatter and placed with an empty fence that names it, ` ```tsx figure=Name `, anywhere in a section but Compose and the changelog. Its role and caption come from the frontmatter; its framing from the attributes after the name, written as `name="value"`, or `name=value` without spaces, and flags, such as `open`, as their name alone. A value can't hold a double quote, not even as `\"`, so quote with ' or “ ”.
 
-| Role         | Shows                                                                               | Attributes on its fence                               |
-| ------------ | ----------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `example`    | The example, live on the stage, with its caption below.                             | `widths`, `sweep`, `classes`, `open`, `stage`, `wide` |
-| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`                                       |
-| `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width`             |
-| `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                               |
+| Role         | Shows                                                                               | Attributes on its fence                                      |
+| ------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `example`    | The example, live on the stage, with its caption below.                             | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide` |
+| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`                                              |
+| `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width`                    |
+| `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                                      |
 
 Every figure sits on the same stage, centred horizontally and vertically, in the theme, contrast and scale the reader has chosen: a recessed canvas, a well a shade deeper than the page, with a surface's corners and no edge, so the example's own surfaces rise out of it and a reader can always tell an example from the page around it. Under forced colors the canvas takes a frame instead. A specimen sits on it too. The canvas is the catalogue's (`apps/site/src/styles/Stage.css`), not envUI's.
 
@@ -235,8 +235,9 @@ A popup, a menu, a tooltip, a dialog, a sheet or a toast renders in a portal, ou
 An Adapting to width figure sweeps instead: `widths="30 16" sweep` shows the example in one frame whose width moves from the first width through the others and back, held a moment at each, on an animated figure's stage with its pause button. The example reflows for real as the frame changes, as its container queries see it, and the frame is an `env-window` container, so window classes follow it too.
 
 - **The first width is the still**, shown where motion is paused or reduced; list the widths in the order the item describes, such as `widths="22 40 64"`, which goes 22, 40, 64, 40 and back.
-- **A faint ruler** above the frame names its width; `classes` adds the window class, such as "40 rem · Medium", for an example that changes at one.
+- **A faint ruler** above the frame names its width; `classes` adds the window class, such as "40 rem · Medium", for an example that changes at one; a foundation's figure, which shows no lengths, names the class alone, with `classes="only"` on `WidthSweep`.
 - **One height and one scale.** The figure keeps the height of the tallest the example gets along the way. The frame is drawn at one scale for the stage, no smaller than 0.8; where the widest width doesn't fit even then, it sweeps only as wide as the stage shows, never clipped.
+- **`fit`** lets the frame be drawn as small as 0.6 to reach its widest width, for an example that changes only at a width wider than the column, such as a diff side by side from 56 rem on [Code](components/code.md).
 - **More than a sweep**, such as opening a sheet at the narrow end, is a specimen: `WidthSweep` (`apps/site/src/previews/WidthSweep.tsx`) on a `MotionStage`, given `at`, the index of the width to move to, from a `useTimeline` step or a `usePointer` cue, and the scripted pointer doing the rest.
 
 ### Wide figures

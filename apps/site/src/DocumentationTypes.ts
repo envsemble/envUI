@@ -63,6 +63,11 @@ export type DocumentationBlock =
       /** Whether that frame's ruler names the window class of its width too. */
       classes?: boolean;
       /**
+       * Whether that frame is drawn smaller where it must to reach its widest width on the stage,
+       * for an example that changes only at a width wider than the column.
+       */
+      fit?: boolean;
+      /**
        * The width, in rem, an anatomy figure's subject needs to show its parts, such as panes side
        * by side: on a narrower stage it is drawn smaller to fit.
        */

@@ -136,7 +136,7 @@
   min-inline-size: 0;
   margin: 0;
 }
-.site-topic-figure > .site-foundation-stage > * {
+.site-topic-figure > .site-foundation-stage > :not(.catalogue-motion-pause) {
   inline-size: auto;
   max-inline-size: 100%;
 }
@@ -201,17 +201,11 @@
   inline-size: min(20rem, 100%);
 }
 
-/* Adapting to width: the same components in a narrow frame and across the column. */
-.catalogue-width-figures {
+/* Adapting to width: the two entries under the sweeping profile, side by side where they fit. */
+.catalogue-width-legend {
   display: grid;
-  gap: var(--env-space-7);
-  min-inline-size: 0;
-}
-.site-topic-figure > .site-foundation-stage > .catalogue-width-sample[data-width='narrow'] {
-  inline-size: min(18rem, 100%);
-}
-.site-topic-figure > .site-foundation-stage > .catalogue-width-sample[data-width='wide'] {
-  inline-size: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--env-space-5);
 }
 
 /* Typography: a small screen of text styles, and every style in a list on the page. */

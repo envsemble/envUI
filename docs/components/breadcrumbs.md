@@ -71,7 +71,7 @@ A level that can't be opened is plain text.
 | Wraps    | A trail above a page's content: it wraps onto more lines when it runs out of room. The default. |
 | One line | A bar that stays one line tall: the current page is cut short first.                            |
 
-```tsx figure=WrappingTrail widths="14 36"
+```tsx figure=WrappingTrail widths="36 14" sweep
 
 ```
 

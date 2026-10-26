@@ -120,7 +120,7 @@ A diff shows the two versions side by side where it is wide, and in one column i
 | Side by side | Most diffs, in one column when narrow. The default. |
 | One column   | A diff read top to bottom at any width.             |
 
-```tsx figure=DiffColumns widths="36 60"
+```tsx figure=DiffColumns widths="36 58" sweep fit
 
 ```
 

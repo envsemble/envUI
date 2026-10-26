@@ -129,7 +129,7 @@ A required field shows its error when the form is sent without a value.
 
 A field fills its container, and chips wrap onto more rows.
 
-```tsx figure=WrappingChips widths="16 30"
+```tsx figure=WrappingChips widths="30 16" sweep
 
 ```
 

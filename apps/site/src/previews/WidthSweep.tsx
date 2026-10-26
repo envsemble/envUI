@@ -14,6 +14,11 @@ import { usePlayback } from './Motion';
 
 /** The least scale a frame is drawn at; a stage narrower than that shows a narrower sweep. */
 const leastScale = 0.8;
+/**
+ * The least scale of a frame that fits its widest width (`fit`), for an example that changes only
+ * at a width wider than the column, such as a diff side by side.
+ */
+const leastFitScale = 0.6;
 /** How long the frame holds at each width, in ms. */
 const holdTime = 1100;
 /** How long it holds at its first width as it starts playing: an animation starts at once. */
@@ -78,19 +83,23 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
  * held where it is when paused. Place it in a MotionStage. With `at`, it sweeps by itself no
  * longer: it moves to the width at that index whenever `at` changes, for a figure that does more
  * at a width, such as opening a sheet at the narrow end, driven by a useTimeline step or a cue.
- * `classes` names the window class beside the width, for an example that changes at one.
+ * `classes` names the window class beside the width, for an example that changes at one, or in
+ * its place with `'only'`, on a page that shows no lengths, such as a foundation's; and
+ * `fit` draws the frame smaller where it must, to 0.6, to reach its widest width on the stage.
  */
 export function WidthSweep({
   widths,
   at,
   hold = holdTime,
   classes = false,
+  fit = false,
   children,
 }: {
   widths: readonly number[];
   at?: number;
   hold?: number;
-  classes?: boolean;
+  classes?: boolean | 'only';
+  fit?: boolean;
   children: ReactNode;
 }) {
   const { playing, rest } = usePlayback();
@@ -100,7 +109,7 @@ export function WidthSweep({
   const ruler = useRef<HTMLDivElement>(null);
   const reading = useRef<HTMLSpanElement>(null);
   /** The scale the frame is drawn at, and the widths it sweeps between on this stage. */
-  const fit = useRef({ scale: 1, stops: widths });
+  const layout = useRef({ scale: 1, stops: widths });
   /** The width the frame shows now, in rem. */
   const shown = useRef(widths[at ?? 0] ?? 0);
   /** Where the sweep is in its loop, in ms of play; below 0 before it first plays. */
@@ -112,14 +121,17 @@ export function WidthSweep({
   /** Draws the frame at a width: its size, the ruler's, and the ruler's words. */
   const draw = (width: number) => {
     shown.current = width;
-    const { scale, stops } = fit.current;
+    const { scale, stops } = layout.current;
     frame.current?.style.setProperty('inline-size', `${width}rem`);
     ruler.current?.style.setProperty('--catalogue-sweep-width', `${width * scale}rem`);
     if (reading.current) {
-      // At a width the page gives, its exact value; on the way, whole rem, which change calmly.
-      const exact = stops.find((stop) => Math.abs(stop - width) < 0.01);
+      // At a width the page gives, its exact value; on the way, and at a width the stage narrowed,
+      // whole rem, which change calmly.
+      const exact = stops.find((stop) => Math.abs(stop - width) < 0.01 && widths.includes(stop));
       const words = `${exact ?? Math.round(width)} rem`;
-      reading.current.textContent = classes ? `${words} · ${classNames[classOf(width)]}` : words;
+      const name = classNames[classOf(width)];
+      reading.current.textContent =
+        classes === 'only' ? name : classes ? `${words} · ${name}` : words;
     }
   };
   const drawRef = useRef(draw);
@@ -142,26 +154,27 @@ export function WidthSweep({
       const edge = parseFloat(outline.outlineOffset) + parseFloat(outline.outlineWidth) || 0;
       const space = room.clientWidth - 2 * edge;
       const widest = Math.max(...stops);
+      const least = fit ? leastFitScale : leastScale;
       let scale = Math.min(1, space / (widest * rem));
       let limit = Infinity;
-      if (scale < leastScale) {
-        scale = leastScale;
+      if (scale < least) {
+        scale = least;
         // In whole rem, so the ruler names the narrower width as it names the others.
-        limit = Math.floor(space / (leastScale * rem));
+        limit = Math.floor(space / (least * rem));
       }
       const shownStops = stops.map((width) => Math.min(width, limit));
-      const least = Math.min(...shownStops);
+      const narrowest = Math.min(...shownStops);
       const most = Math.max(...shownStops);
       let tallest = 0;
-      for (let width = least; width < most + sampleStep; width += sampleStep) {
+      for (let width = narrowest; width < most + sampleStep; width += sampleStep) {
         box.style.inlineSize = `${Math.min(width, most)}rem`;
         tallest = Math.max(tallest, box.offsetHeight);
       }
-      fit.current = { scale, stops: shownStops };
+      layout.current = { scale, stops: shownStops };
       spot.style.setProperty('--catalogue-sweep-widest', `${most * scale}rem`);
       spot.style.setProperty('--catalogue-sweep-height', `${tallest * scale}px`);
       spot.style.setProperty('--catalogue-sweep-scale', String(scale));
-      drawRef.current(Math.min(Math.max(shown.current, least), most));
+      drawRef.current(Math.min(Math.max(shown.current, narrowest), most));
     };
     measure();
     // Measured again in the next frame where the stage's width changes, or the example's content,
@@ -186,12 +199,12 @@ export function WidthSweep({
       resize.disconnect();
       content.disconnect();
     };
-  }, [key]);
+  }, [key, fit]);
 
   // Given `at`, the frame moves to its width whenever it changes.
   useEffect(() => {
     if (at === undefined) return;
-    const to = fit.current.stops[at] ?? shown.current;
+    const to = layout.current.stops[at] ?? shown.current;
     if (to === shown.current) return;
     move.current = { from: shown.current, to, elapsed: 0, duration: travelTime(shown.current, to) };
   }, [at]);
@@ -203,7 +216,7 @@ export function WidthSweep({
       if (rest === 'start') {
         clock.current = -1;
         move.current = null;
-        drawRef.current(fit.current.stops[at ?? 0] ?? shown.current);
+        drawRef.current(layout.current.stops[at ?? 0] ?? shown.current);
       }
       return;
     }
@@ -215,7 +228,7 @@ export function WidthSweep({
       if (at === undefined) {
         if (clock.current < 0) clock.current = hold - firstHold;
         clock.current += passed;
-        drawRef.current(widthAt(clock.current, fit.current.stops, hold));
+        drawRef.current(widthAt(clock.current, layout.current.stops, hold));
       } else if (move.current) {
         const current = move.current;
         current.elapsed = Math.min(current.duration, current.elapsed + passed);

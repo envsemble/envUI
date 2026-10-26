@@ -96,7 +96,7 @@ A zone can take several files at once. The application lists the files it took, 
 
 A zone fills its container, and its text wraps.
 
-```tsx figure=NarrowZone widths="14 30"
+```tsx figure=NarrowZone widths="30 14" sweep
 
 ```
 

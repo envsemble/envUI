@@ -434,8 +434,11 @@
   inline-size: 100%;
 }
 
+/* Its own size, square, which a stage's rule for its content would otherwise take, as on a
+   foundation's stage. */
 .catalogue-motion-pause {
   position: absolute;
+  inline-size: var(--env-button-height);
   inset-block-end: var(--env-space-2);
   inset-inline-end: var(--env-space-2);
 }

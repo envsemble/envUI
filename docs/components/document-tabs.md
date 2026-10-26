@@ -89,7 +89,7 @@ The strip takes the width it is given and scrolls sideways where its tabs don't 
 - Tabs fade at an edge they run past.
 - The active tab scrolls into view.
 
-```tsx figure=ManyTabs widths="22 48"
+```tsx figure=ManyTabs widths="48 22" sweep
 
 ```
 

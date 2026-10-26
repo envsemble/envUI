@@ -81,7 +81,7 @@ Values can be controls, such as switches, and each label sits on its control's l
 
 In the automatic layout, labels move above their values where the list is narrow.
 
-```tsx figure=FactsAtWidths widths="16 30"
+```tsx figure=FactsAtWidths widths="30 16" sweep
 
 ```
 

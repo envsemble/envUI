@@ -89,7 +89,7 @@ While a send is in progress, the next one waits; the field stays editable and ke
 
 A composer fills its container, and its field grows with its text up to a set number of lines, then scrolls.
 
-```tsx figure=GrowingDraft widths="18 36"
+```tsx figure=GrowingDraft widths="36 18" sweep
 
 ```
 

@@ -122,7 +122,7 @@ A count takes the same tones and variants: neutral and soft by default, and soli
 
 A badge stays on one line and ends with an ellipsis where its container is narrower.
 
-```tsx figure=LongState widths="10 20"
+```tsx figure=LongState widths="20 10" sweep
 
 ```
 

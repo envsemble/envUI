@@ -154,7 +154,7 @@ The picker fills its container but stays compact in a wide one, and everything u
 - The format menu, the eyedropper and copy share a row.
 - The fields take the row under it, in equal columns that keep each channel's letter in its place in every format.
 
-```tsx figure=FillWidth widths="15 22"
+```tsx figure=FillWidth widths="22 15" sweep
 
 ```
 

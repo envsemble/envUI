@@ -17,7 +17,7 @@ export default function ManyTabs() {
   const [tabs, setTabs] = useState<DocumentTab[]>(
     names.map((name) => ({ id: name.toLowerCase(), label: `${name}.md` })),
   );
-  const [value, setValue] = useState<string | null>('pricing');
+  const [value, setValue] = useState<string | null>('budget');
   return (
     // The strip scrolls sideways with the wheel, touch or the arrow keys where its tabs don't fit,
     // and they fade at an edge they run past. Drag a tab near an edge to carry it further.

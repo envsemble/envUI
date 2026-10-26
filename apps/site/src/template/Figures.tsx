@@ -149,6 +149,7 @@ function Figure({
       widths={block.widths}
       sweep={block.sweep}
       classes={block.classes}
+      fit={block.fit}
       open={block.open}
       stage={block.stage}
       motion={block.motion}

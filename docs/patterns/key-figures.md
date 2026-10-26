@@ -91,7 +91,7 @@ A key figure is a muted label, a large figure and a [Badge](../components/badge.
 
 The grid shows as many even columns as fit, and stacks the figures in one column where there is room for only one.
 
-```tsx figure=GroupColumns widths="12 26 40"
+```tsx figure=GroupColumns widths="12 30 40" sweep
 
 ```
 

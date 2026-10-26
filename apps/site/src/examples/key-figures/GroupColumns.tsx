@@ -1,10 +1,41 @@
-import { Column, Grid, Surface, Text } from '@envsemble/envui';
+import type { ReactNode } from 'react';
+import { Badge, Column, Grid, Row, Surface, Text, type BadgeTone } from '@envsemble/envui';
+import { TrendingFlat } from '@envsemble/envui/icons/TrendingFlat';
+import { TrendingUp } from '@envsemble/envui/icons/TrendingUp';
 
-const figures = [
-  ['Active projects', '128'],
-  ['Tasks done', '1,284'],
-  ['Lead time', '2.5 days'],
-];
+/** A labelled figure, with how it changed in words and over what period. */
+function KeyFigure({
+  label,
+  value,
+  trend,
+  description,
+}: {
+  label: string;
+  value: string;
+  trend: { icon: ReactNode; label: string; tone: BadgeTone };
+  description?: string;
+}) {
+  return (
+    <Column gap={1}>
+      <Text variant="body-sm" emphasis="muted">
+        {label}
+      </Text>
+      <Text variant="headline" style={{ fontVariantNumeric: 'tabular-nums' }}>
+        {value}
+      </Text>
+      <Row wrap align="center" gap={2}>
+        <Badge tone={trend.tone} icon={trend.icon}>
+          {trend.label}
+        </Badge>
+        {description && (
+          <Text render={<span />} variant="body-sm" emphasis="muted">
+            {description}
+          </Text>
+        )}
+      </Row>
+    </Column>
+  );
+}
 
 export default function GroupColumns() {
   return (
@@ -20,16 +51,23 @@ export default function GroupColumns() {
         />
       }
     >
-      {figures.map(([label, value]) => (
-        <Column key={label} gap={1}>
-          <Text variant="body-sm" emphasis="muted">
-            {label}
-          </Text>
-          <Text variant="headline" style={{ fontVariantNumeric: 'tabular-nums' }}>
-            {value}
-          </Text>
-        </Column>
-      ))}
+      <KeyFigure
+        label="Active projects"
+        value="128"
+        trend={{ icon: <TrendingUp />, label: '+12% from last month', tone: 'success' }}
+        description="Last 30 days"
+      />
+      <KeyFigure
+        label="Tasks done"
+        value="1,284"
+        trend={{ icon: <TrendingUp />, label: '+86 this week', tone: 'success' }}
+      />
+      <KeyFigure
+        label="Lead time"
+        value="2.5 days"
+        trend={{ icon: <TrendingFlat />, label: 'No change', tone: 'neutral' }}
+        description="Median"
+      />
     </Surface>
   );
 }
