@@ -458,3 +458,40 @@
     border: 1px solid CanvasText;
   }
 }
+
+/* Text the pointer no one sees selects by dragging (previews/VirtualSelection.ts), painted as the
+   browser paints a selection: in content, a highlight; in a field, which an inert preview can't
+   focus, a copy of its text over it, transparent but its selected part. */
+::highlight(catalogue-selection) {
+  background-color: Highlight;
+  color: HighlightText;
+}
+
+.catalogue-field-selection {
+  position: absolute;
+  z-index: var(--env-z-tooltip);
+  overflow: hidden;
+  margin: 0;
+  color: transparent;
+  background: none;
+  pointer-events: none;
+}
+
+.catalogue-field-selection > div {
+  white-space: pre;
+}
+
+.catalogue-field-selection[data-field='input'] {
+  display: flex;
+  align-items: center;
+}
+
+.catalogue-field-selection[data-field='textarea'] > div {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.catalogue-field-selection span {
+  color: HighlightText;
+  background-color: Highlight;
+}

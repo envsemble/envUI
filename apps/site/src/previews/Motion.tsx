@@ -144,13 +144,22 @@ export function useTimeline(durations: readonly number[]) {
  * - `wait`, ms: it stays as it is, over the preview or not, pressed or not.
  * - `to`, a selector of an element in the preview: it moves to a point of it, `x` and `y` as
  *   fractions of its box, the middle by default, over `duration` ms, or comes there at once if it
- *   wasn't over the preview. Pressed, it drags.
+ *   wasn't over the preview. Pressed, it drags; pressed on text, in a field or in content, the drag
+ *   selects the text it crosses, as a mouse does, until a press elsewhere.
  * - `press`, `release`: its button; `click` presses and releases it a moment later.
- * - `leave`: it goes off the preview, releasing first.
+ * - `rightClick`: its secondary button pressed and released, which opens a context menu where it
+ *   is, as a right click does.
+ * - `leave`: it goes off the preview, releasing its button and any key held first.
  * - `cue`: a moment the preview acts on (usePointer's `onCue`), such as a notification arriving.
  * - `type`, text, `into` a selector of a field: typed a character at a time, `every` ms apart;
  *   `erase`, a count: as many characters deleted the same way.
  * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`.
+ * - `keyDown`, `keyUp`, a key such as `Alt`: held down and let go, on the field typed into or on
+ *   `on`. A held modifier, Alt, Control, Shift or Meta, is on every event meanwhile, so Alt and a
+ *   `key` is Alt with that key.
+ * - `wheel`, px, down or along `axis` `x` (negative: up, or back): the wheel turned over the
+ *   element under the pointer, which scrolls the nearest box around it in the preview that can
+ *   scroll, smoothly, over `duration` ms.
  * - `carry`, a file's name, `as` its type: the pointer picks up a file, as from the desktop, so
  *   its moves drag it; `drop` drops it where the pointer is.
  */
@@ -160,11 +169,15 @@ export type PointerStep =
   | { press: true }
   | { release: true }
   | { click: true }
+  | { rightClick: true }
   | { leave: true }
   | { cue: string }
   | { type: string; into: string; every?: number }
   | { erase: number; into: string; every?: number }
   | { key: string; on?: string }
+  | { keyDown: string; on?: string }
+  | { keyUp: string; on?: string }
+  | { wheel: number; axis?: 'x' | 'y'; duration?: number }
   | { carry: string; as: string }
   | { drop: true };
 
@@ -175,18 +188,34 @@ interface Aim {
   y: number;
 }
 
-/** What the pointer does over a script's time: its moves, and its presses, releases and leaves. */
+/**
+ * What the pointer does over a script's time: its moves and the turns of its wheel, and its
+ * presses, releases, keys and leaves.
+ */
 interface Plan {
   length: number;
   moves: { start: number; end: number; from: Aim | null; to: Aim }[];
+  wheels: { start: number; end: number; distance: number; axis: 'x' | 'y' }[];
   happenings: {
     time: number;
-    kind: 'press' | 'release' | 'leave' | 'cue' | 'type' | 'key' | 'carry' | 'drop';
+    kind:
+      | 'press'
+      | 'release'
+      | 'leave'
+      | 'cue'
+      | 'type'
+      | 'key'
+      | 'keyDown'
+      | 'keyUp'
+      | 'carry'
+      | 'drop';
     /** A cue's name, the text typed (null for a deleted character), or the key. */
     cue?: string;
     text?: string | null;
     /** The field typed into, or the element a key is pressed on. */
     target?: string;
+    /** The button pressed or released: 2 for the secondary one. */
+    button?: 0 | 2;
   }[];
 }
 
@@ -206,8 +235,11 @@ const firstWait = 60;
 /** How far apart typed characters are, by default: an easy typing pace. */
 const typingPace = 140;
 
+/** How long a turn of the wheel takes, by default. */
+const wheelTurn = 500;
+
 function planOf(script: readonly PointerStep[]): Plan {
-  const plan: Plan = { length: 0, moves: [], happenings: [] };
+  const plan: Plan = { length: 0, moves: [], wheels: [], happenings: [] };
   let time = 0;
   let at: Aim | null = null;
   let acted = false;
@@ -229,7 +261,24 @@ function planOf(script: readonly PointerStep[]): Plan {
       plan.happenings.push({ time, kind: 'press' });
       time += clickHold;
       plan.happenings.push({ time, kind: 'release' });
-    } else if ('cue' in step) plan.happenings.push({ time, kind: 'cue', cue: step.cue });
+    } else if ('rightClick' in step) {
+      plan.happenings.push({ time, kind: 'press', button: 2 });
+      time += clickHold;
+      plan.happenings.push({ time, kind: 'release', button: 2 });
+    } else if ('wheel' in step) {
+      const duration = Math.max(16, (step.duration ?? wheelTurn) * movePace);
+      plan.wheels.push({
+        start: time,
+        end: time + duration,
+        distance: step.wheel,
+        axis: step.axis ?? 'y',
+      });
+      time += duration;
+    } else if ('keyDown' in step)
+      plan.happenings.push({ time, kind: 'keyDown', cue: step.keyDown, target: step.on });
+    else if ('keyUp' in step)
+      plan.happenings.push({ time, kind: 'keyUp', cue: step.keyUp, target: step.on });
+    else if ('cue' in step) plan.happenings.push({ time, kind: 'cue', cue: step.cue });
     else if ('type' in step || 'erase' in step) {
       const characters = 'type' in step ? [...step.type] : Array<null>(step.erase).fill(null);
       for (const text of characters) {
@@ -357,6 +406,14 @@ export function usePointer(
           current.key(happening.cue!, happening.target);
           continue;
         }
+        if (happening.kind === 'keyDown') {
+          current.keyDown(happening.cue!, happening.target);
+          continue;
+        }
+        if (happening.kind === 'keyUp') {
+          current.keyUp(happening.cue!, happening.target);
+          continue;
+        }
         if (happening.kind === 'carry') {
           current.carry(happening.cue!, happening.target!);
           continue;
@@ -365,7 +422,7 @@ export function usePointer(
           current.drop();
           continue;
         }
-        if (happening.kind === 'press') current.press();
+        if (happening.kind === 'press') current.press(happening.button);
         else if (happening.kind === 'release') current.release();
         else current.leave();
       }
@@ -373,6 +430,14 @@ export function usePointer(
         const at = positionAt(scope, plan, to);
         if (at) current.moveTo(at);
       } else if (current.present) current.leave();
+      // The wheel turns where the pointer is now, eased in and out, as a hand's flick.
+      for (const wheel of plan.wheels) {
+        if (wheel.end <= done || wheel.start > to) continue;
+        if (wheel.start > done) current.startWheel(wheel.axis);
+        const progress = Math.min(1, (to - wheel.start) / (wheel.end - wheel.start));
+        current.turnWheel(wheel.distance * ease(progress));
+        if (to >= wheel.end) current.endWheel();
+      }
       clock.current.done = to;
     };
     const tick = (now: number) => {
