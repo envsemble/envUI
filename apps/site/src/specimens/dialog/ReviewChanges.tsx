@@ -1,0 +1,38 @@
+import ReviewChanges from '../../examples/dialog/ReviewChanges';
+import { usePointer, type PointerStep } from '../../previews/Motion';
+import { MotionStage } from '../../previews/MotionStage';
+
+/*
+ * The pointer presses Review changes: the large dialog opens over the stage with its table of
+ * changed documents. The pointer reads down the table a moment, then presses Mark as reviewed.
+ */
+const script: PointerStep[] = [
+  { wait: 500 },
+  { to: '.env-button', x: 0.55, y: 0.6 },
+  { wait: 400 },
+  { click: true },
+  { wait: 900 },
+  { to: '.env-dialog-popup tbody tr:nth-child(1)', x: 0.3, y: 0.5, duration: 600 },
+  { to: '.env-dialog-popup tbody tr:nth-child(3)', x: 0.4, y: 0.5, duration: 900 },
+  { wait: 300 },
+  { to: '.env-dialog-actions .env-button:last-child', x: 0.5, y: 0.6, duration: 550 },
+  { wait: 300 },
+  { click: true },
+  { wait: 400 },
+  { leave: true },
+  { wait: 800 },
+];
+
+function Reviewing() {
+  usePointer(script);
+  return <ReviewChanges />;
+}
+
+/** The large dialog, with its table, opened and closed by a pointer no one sees. */
+export default function ReviewChangesMotion() {
+  return (
+    <MotionStage label="the large dialog opening and closing" height="24rem">
+      <Reviewing />
+    </MotionStage>
+  );
+}
