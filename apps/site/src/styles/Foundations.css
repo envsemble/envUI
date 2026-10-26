@@ -136,7 +136,7 @@
   min-inline-size: 0;
   margin: 0;
 }
-.site-topic-figure > .site-foundation-stage > * {
+.site-topic-figure > .site-foundation-stage > :not(.catalogue-motion-pause) {
   inline-size: auto;
   max-inline-size: 100%;
 }
