@@ -53,8 +53,12 @@ function KeyFigure({
   );
 }
 
+/** Active projects a month ago, which the trend compares with. */
+const lastMonth = 114;
+
 export default function ProjectHealth() {
   const [projects, setProjects] = useState(128);
+  const change = Math.round(((projects - lastMonth) / lastMonth) * 100);
   return (
     <Column gap={4}>
       {/* As many even columns as fit, each at least 11 rem wide; named, so it reads as a group. */}
@@ -72,13 +76,14 @@ export default function ProjectHealth() {
         <KeyFigure
           label="Active projects"
           value={<AnimatedNumber value={projects} />}
-          trend={{ icon: <TrendingUp />, label: '+12% from last month', tone: 'success' }}
+          trend={{ icon: <TrendingUp />, label: `+${change}%`, tone: 'success' }}
           description="Last 30 days"
         />
         <KeyFigure
           label="Tasks done"
           value="1,284"
-          trend={{ icon: <TrendingUp />, label: '+86 this week', tone: 'success' }}
+          trend={{ icon: <TrendingUp />, label: '+86', tone: 'success' }}
+          description="This week"
         />
         <KeyFigure
           label="Lead time"

@@ -45,6 +45,7 @@ examples:
   ProjectHealth:
     role: overview
     caption: A figure that rolls to each new value, as an AnimatedNumber.
+    motion: true
   OnAPane: example
   InACard: example
   KeyFiguresAnatomy: anatomy
