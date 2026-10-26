@@ -7,6 +7,7 @@ import {
   CommandPalette,
   Drawer,
   IconButton,
+  List,
   Menu,
   Page,
   PageHeader,
@@ -44,10 +45,13 @@ export default function AppFrame() {
   const [query, setQuery] = useState('');
 
   // One array of destinations, which every navigation form takes.
-  const destinations: Destination[] = places.map((place) => ({
-    ...place,
-    current: place.href === current,
-    onSelect: () => setCurrent(place.href),
+  const destinations: Destination[] = places.map(({ label, href, icon, group }) => ({
+    label,
+    href,
+    icon,
+    group,
+    current: href === current,
+    onSelect: () => setCurrent(href),
   }));
   const page = places.find((place) => place.href === current) ?? places[0];
 
@@ -116,16 +120,14 @@ export default function AppFrame() {
       }}
     >
       <Page width="lg" header={<PageHeader title={page.label} headingLevel={3} />}>
-        <Column gap={4} padding={5}>
-          <Text render={<span />} emphasis="muted">
-            <Description width="1.5rem" height="1.5rem" />
-          </Text>
-          <Column gap={2}>
-            <Text render={<h4 />} variant="title">
-              Nothing here yet
-            </Text>
-            <Text variant="body-sm">The router renders the page in the Scaffold's body.</Text>
-          </Column>
+        {/* The router renders the current page here; each place stands in with a few items. */}
+        <Column gap={4}>
+          <Text emphasis="muted">{page.lead}</Text>
+          <List.Root aria-label={page.label}>
+            {page.items.map((item) => (
+              <List.Item key={item} label={item} />
+            ))}
+          </List.Root>
         </Column>
       </Page>
       <CommandPalette
@@ -149,9 +151,40 @@ export default function AppFrame() {
 const user = { name: 'Alex Morgan', email: 'alex.morgan@example.com' };
 
 const places = [
-  { label: 'Home', href: '/', icon: <Home /> },
-  { label: 'Projects', href: '/projects', icon: <Category /> },
-  { label: 'Documents', href: '/documents', icon: <Description /> },
-  { label: 'Team', href: '/team', icon: <Group /> },
-  { label: 'Settings', href: '/settings', icon: <Settings />, group: 'Workspace' },
+  {
+    label: 'Home',
+    href: '/',
+    icon: <Home />,
+    lead: 'Good morning, Alex. Here is what you opened lately.',
+    items: ['Quarterly report', 'Website refresh', 'Launch brief'],
+  },
+  {
+    label: 'Projects',
+    href: '/projects',
+    icon: <Category />,
+    lead: 'Three projects are in progress.',
+    items: ['Website refresh', 'Mobile release', 'Data migration'],
+  },
+  {
+    label: 'Documents',
+    href: '/documents',
+    icon: <Description />,
+    lead: 'Shared with you this week.',
+    items: ['Launch brief', 'Budget 2026', 'Meeting notes'],
+  },
+  {
+    label: 'Team',
+    href: '/team',
+    icon: <Group />,
+    lead: 'Six people work in Northwind.',
+    items: ['Priya Shah', 'Sam Lee', 'Jordan Kim'],
+  },
+  {
+    label: 'Settings',
+    href: '/settings',
+    icon: <Settings />,
+    group: 'Workspace',
+    lead: 'Settings for the whole workspace.',
+    items: ['General', 'Members', 'Billing'],
+  },
 ];

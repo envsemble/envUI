@@ -39,7 +39,7 @@ function Cases() {
     <Scaffold
       scroll="body"
       landmarks={false}
-      style={{ inlineSize: '100%', blockSize: '22rem' }}
+      style={{ blockSize: '22rem' }}
       topBar={<TopBar title="Northwind" />}
     >
       <Page>

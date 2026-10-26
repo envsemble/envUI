@@ -75,7 +75,7 @@ examples:
 
 Side content that is not navigation goes in a supporting pane of [Panes](../components/panes.md), in the body.
 
-```tsx figure=WithDetails stage=shaded
+```tsx figure=WithDetails stage=shaded motion
 
 ```
 
