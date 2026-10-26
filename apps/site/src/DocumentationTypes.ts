@@ -56,6 +56,13 @@ export type DocumentationBlock =
       /** The widths, in rem, of the frames an example is shown in, one to a row. */
       widths?: number[];
       /**
+       * Whether the example is shown in one frame whose width sweeps between `widths`, the first
+       * its still, and back, rather than a frame of each.
+       */
+      sweep?: boolean;
+      /** Whether that frame's ruler names the window class of its width too. */
+      classes?: boolean;
+      /**
        * The width, in rem, an anatomy figure's subject needs to show its parts, such as panes side
        * by side: on a narrower stage it is drawn smaller to fit.
        */

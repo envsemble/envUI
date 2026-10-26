@@ -567,6 +567,27 @@ test('the structure checks the frontmatter, the figures and the text of a page',
     assert.doesNotThrow(read);
     // A figure's fence: the attributes its role takes, as name="value", and flags alone.
     await rejects(frontmatter + body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
+    // sweep shows one frame sweeping between at least two widths; classes needs a sweep.
+    await rejects(
+      frontmatter + body.replace('widths="16 30"', 'widths="16" sweep'),
+      /example Narrow has sweep; give the widths it sweeps between/,
+    );
+    await rejects(
+      frontmatter + body.replace('widths="16 30"', 'widths="16 30" classes'),
+      /example Narrow has classes without sweep/,
+    );
+    await writeFile(
+      page,
+      frontmatter + body.replace('widths="16 30"', 'widths="30 16" sweep classes'),
+    );
+    assert.deepEqual(
+      (({ widths, sweep, classes }) => ({ widths, sweep, classes }))(
+        read()[1]
+          .sections.flatMap((section) => section.blocks)
+          .find((block) => block.name === 'Narrow'),
+      ),
+      { widths: [30, 16], sweep: true, classes: true },
+    );
     await rejects(
       frontmatter + body.replace('figure=Parts', 'figure=Parts size=lg'),
       /anatomy Parts takes no size/,

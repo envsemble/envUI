@@ -302,7 +302,7 @@ const figurePattern = /^tsx\s+figure=([A-Za-z]\w*)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^
 const kindFencePattern = /^tsx\s+(?:example|do|dont|anatomy|variants)=/;
 /** The attributes each role's figure takes, and those it needs. */
 const figureAttributes: Record<string, { allowed: string[]; required: string[] }> = {
-  example: { allowed: ['widths', 'open', 'stage', 'wide'], required: [] },
+  example: { allowed: ['widths', 'sweep', 'classes', 'open', 'stage', 'wide'], required: [] },
   do: { allowed: ['open', 'stage'], required: ['caption'] },
   dont: { allowed: ['open', 'stage'], required: ['caption'] },
   anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width'], required: [] },
@@ -319,9 +319,10 @@ const stageFills = ['shaded'];
  * open on its stage, contained; `enlarge` shows an anatomy figure's subject half as large again
  * where its stage has room, so the callouts on its close-set parts don't crowd; and `wide` keeps an
  * example across the whole column, alone in its row, rather than beside the text before it, where
- * it needs the room, such as a popup open beside its trigger.
+ * it needs the room, such as a popup open beside its trigger. With `widths`, `sweep` shows one
+ * frame whose width sweeps between them and back, and `classes` names the window class on its ruler.
  */
-const figureFlags = new Set(['open', 'enlarge', 'wide']);
+const figureFlags = new Set(['open', 'enlarge', 'wide', 'sweep', 'classes']);
 /** A file name as words: ConnectedButtons is "Connected buttons". */
 const fileWords = (name: string) =>
   name
@@ -677,6 +678,24 @@ export function readPage(
             `example ${name} has widths="${attributes.widths}"; give widths in rem, from 10 to 120`,
           );
         block.widths = widths;
+      }
+      if (attributes.sweep === true) {
+        if (!block.widths || block.widths.length < 2)
+          problems.push(
+            `example ${name} has sweep; give the widths it sweeps between, widths="30 16"`,
+          );
+        else if (attributes.open === true)
+          problems.push(
+            `example ${name} has sweep and open; a sweeping frame shows no overlays open`,
+          );
+        else block.sweep = true;
+      }
+      if (attributes.classes === true) {
+        if (attributes.sweep !== true)
+          problems.push(
+            `example ${name} has classes without sweep; only a sweeping frame names them`,
+          );
+        else block.classes = true;
       }
       if (attributes.width !== undefined) {
         const width = Number(attributes.width);

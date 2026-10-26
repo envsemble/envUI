@@ -147,6 +147,8 @@ function Figure({
       title={block.heading}
       caption={block.caption}
       widths={block.widths}
+      sweep={block.sweep}
+      classes={block.classes}
       open={block.open}
       stage={block.stage}
     />

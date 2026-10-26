@@ -187,6 +187,69 @@
   transform-origin: top right;
 }
 
+/* An example in a frame whose width sweeps (`widths` with `sweep` on its fence, WidthSweep.tsx):
+   across its stage, a place as wide as the widest width at the frame's scale, and as tall as the
+   ruler and the tallest the example gets, so the figure keeps one height; in it, the ruler and the
+   frame, both centred, so the frame stays in the middle of the stage as both its edges move. */
+.catalogue-width-sweep {
+  display: grid;
+  justify-items: center;
+  justify-self: stretch;
+  min-inline-size: 0;
+}
+
+.catalogue-width-sweep-place {
+  display: grid;
+  grid-template-rows: auto auto;
+  row-gap: var(--env-space-4);
+  justify-items: center;
+  inline-size: var(--catalogue-sweep-widest, auto);
+  max-inline-size: 100%;
+  /* The frame's outline, at its offset, below the room. */
+  padding-block-end: var(--env-space-2);
+}
+
+.catalogue-width-sweep-room {
+  position: relative;
+  inline-size: 100%;
+  block-size: var(--catalogue-sweep-height, auto);
+}
+
+/* The frame the example responds to: an env-window container, so the window classes are measured
+   on it, outlined as an example's width frame is, and drawn at its scale from its top middle. */
+.catalogue-width-sweep-frame {
+  position: absolute;
+  inset-block-start: 0;
+  left: 50%;
+  container: env-window / inline-size;
+  outline: 0.0625rem dashed var(--env-color-border-default);
+  outline-offset: var(--env-space-2);
+  transform: translateX(-50%) scale(var(--catalogue-sweep-scale, 1));
+  transform-origin: top center;
+}
+
+/* The ruler: a faint dimension line across the frame's outline, its ends marked, with the width
+   in its middle in small muted figures that don't shift as they change. */
+.catalogue-width-ruler {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  column-gap: var(--env-space-2);
+  align-items: center;
+  box-sizing: border-box;
+  inline-size: calc(var(--catalogue-sweep-width, 0rem) + 2 * var(--env-space-2) + 0.125rem);
+  border-inline: 0.0625rem solid var(--env-color-border-muted);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.catalogue-width-ruler::before,
+.catalogue-width-ruler::after {
+  content: '';
+  block-size: 0.0625rem;
+  background: var(--env-color-border-muted);
+}
+
 /* Code soft-wraps where the content column is narrower than a 100-character line, rather than
    scrolling sideways; examples are formatted to that width. */
 @container (width < 60rem) {

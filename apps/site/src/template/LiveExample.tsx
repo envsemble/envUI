@@ -19,6 +19,8 @@ import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 import { OpenExample } from './OpenExample';
 import { InteractiveMark } from './InteractiveMark';
 import { Loading } from './Loading';
+import { MotionStage } from '../previews/MotionStage';
+import { WidthSweep } from '../previews/WidthSweep';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
@@ -280,8 +282,9 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
 
 /**
  * An example rendered live in the documentation's theme, on the recessed canvas, with its source
- * and a copy button; with `widths`, in a frame of each width, one to a row, and with `caption`, a
- * sentence below it.
+ * and a copy button; with `widths`, in a frame of each width, one to a row, or with `sweep`, in
+ * one frame whose width sweeps between them (`classes` names their window classes), and with
+ * `caption`, a sentence below it.
  */
 export function LiveExample({
   page,
@@ -289,6 +292,8 @@ export function LiveExample({
   title,
   caption,
   widths,
+  sweep = false,
+  classes = false,
   open = false,
   stage,
 }: {
@@ -297,6 +302,10 @@ export function LiveExample({
   title: string;
   caption?: string;
   widths?: number[];
+  /** Whether the example is shown in one frame whose width sweeps between `widths`. */
+  sweep?: boolean;
+  /** Whether that frame's ruler names its window class too. */
+  classes?: boolean;
   /** Whether the example's overlays are shown open, as a picture. */
   open?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
@@ -312,7 +321,22 @@ export function LiveExample({
   );
   return (
     <Column gap={3} className="site-live-example-entry">
-      {widths ? (
+      {widths && sweep ? (
+        <Column
+          render={<Theme {...theme} />}
+          gap={0}
+          role="group"
+          aria-label={`${title} example, from ${widths.join(' to ')} rem wide and back`}
+          data-example={name}
+          {...keepLinksInPlace}
+        >
+          <MotionStage label={`the example from ${widths.join(' to ')} rem wide`} stage={stage}>
+            <WidthSweep widths={widths} classes={classes}>
+              {render}
+            </WidthSweep>
+          </MotionStage>
+        </Column>
+      ) : widths ? (
         <div
           role="group"
           aria-label={`${title} example`}
