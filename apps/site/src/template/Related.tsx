@@ -294,10 +294,15 @@ function useFit(
       const scale = tile
         ? windowScale
         : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
-      view.toX = ((left + right) / 2) * scale;
-      view.toY = ((top + bottom) / 2) * scale;
+      const toX = ((left + right) / 2) * scale;
+      const toY = ((top + bottom) / 2) * scale;
       // A tile in place eases to where it is fitted next; anything else is placed at once.
       const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
+      // It follows only a change of a few pixels: a popup placed again as the view moves shifts
+      // by a fraction of one, which would move the view again, and again, in a tremble.
+      if (eases && view.scale === scale && Math.hypot(toX - view.toX, toY - view.toY) < 3) return;
+      view.toX = toX;
+      view.toY = toY;
       if (eases && view.scale === scale) {
         if (!view.frame) {
           view.last = 0;

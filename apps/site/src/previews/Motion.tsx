@@ -34,11 +34,17 @@ interface PlaybackValue {
   root: HTMLElement | null;
 }
 
-const PlaybackContext = createContext<PlaybackValue>({ playing: false, rest: 'start', root: null });
+const PlaybackContext = createContext<
+  PlaybackValue & {
+    /** Takes over going back to the still, from drawing the preview anew; returns the release. */
+    claimRest?: () => () => void;
+  }
+>({ playing: false, rest: 'start', root: null });
 
 /**
  * Plays or stops the animations of a preview. A preview that rests at its start is drawn anew as it
- * stops, so it is its still again, whatever its animation changed.
+ * stops, so it is its still again, whatever its animation changed, unless it goes back to its
+ * still by itself (usePointer's `onRest`), as one whose still would come in with motion again.
  */
 export function Playback({
   playing,
@@ -50,12 +56,20 @@ export function Playback({
 }) {
   const [round, setRound] = useState(0);
   const [wasPlaying, setWasPlaying] = useState(playing);
+  const claims = useRef(0);
+  const [claimRest] = useState(() => () => {
+    claims.current++;
+    return () => {
+      claims.current--;
+    };
+  });
   if (wasPlaying !== playing) {
     setWasPlaying(playing);
-    if (!playing && rest === 'start') setRound(round + 1);
+    // The claims are taken in effects, so they are counted before a stop.
+    if (!playing && rest === 'start' && !claims.current) setRound(round + 1);
   }
   return (
-    <PlaybackContext value={{ playing, rest, root }}>
+    <PlaybackContext value={{ playing, rest, root, claimRest }}>
       <Fragment key={round}>{children}</Fragment>
     </PlaybackContext>
   );
@@ -86,13 +100,14 @@ export function useTimeline(durations: readonly number[]) {
 }
 
 /**
- * One step of what the pointer no one sees does:
+ * One step of what the pointer no one sees does, or of what happens around it:
  * - `wait`, ms: it stays as it is, over the preview or not, pressed or not.
  * - `to`, a selector of an element in the preview: it moves to a point of it, `x` and `y` as
  *   fractions of its box, the middle by default, over `duration` ms, or comes there at once if it
  *   wasn't over the preview. Pressed, it drags.
  * - `press`, `release`: its button; `click` presses and releases it a moment later.
  * - `leave`: it goes off the preview, releasing first.
+ * - `cue`: a moment the preview acts on (usePointer's `onCue`), such as a notification arriving.
  */
 export type PointerStep =
   | { wait: number }
@@ -100,7 +115,8 @@ export type PointerStep =
   | { press: true }
   | { release: true }
   | { click: true }
-  | { leave: true };
+  | { leave: true }
+  | { cue: string };
 
 /** A point of an element of the preview, as fractions of its box. */
 interface Aim {
@@ -113,7 +129,7 @@ interface Aim {
 interface Plan {
   length: number;
   moves: { start: number; end: number; from: Aim | null; to: Aim }[];
-  happenings: { time: number; kind: 'press' | 'release' | 'leave' }[];
+  happenings: { time: number; kind: 'press' | 'release' | 'leave' | 'cue'; cue?: string }[];
 }
 
 /** How long a click holds the button. */
@@ -137,7 +153,8 @@ function planOf(script: readonly PointerStep[]): Plan {
       plan.happenings.push({ time, kind: 'press' });
       time += clickHold;
       plan.happenings.push({ time, kind: 'release' });
-    } else {
+    } else if ('cue' in step) plan.happenings.push({ time, kind: 'cue', cue: step.cue });
+    else {
       plan.happenings.push({ time, kind: 'leave' });
       at = null;
     }
@@ -188,9 +205,23 @@ function positionAt(scope: Element, plan: Plan, time: number) {
  * sends, so the component shows its own hover, press and drag (VirtualPointer.ts). Its clock runs
  * only while the preview plays, so a paused figure holds mid-drag. Write the script to end where it
  * began, off the preview and released, so the loop starts again from the still.
+ * - `onCue` hears its cues, the moments where the preview itself changes.
+ * - `onRest`, where given, takes the preview back to its still as it stops, in place of drawing
+ *   it anew, such as dismissing what a cue showed.
  */
-export function usePointer(script: readonly PointerStep[]) {
-  const { playing, root } = use(PlaybackContext);
+export function usePointer(
+  script: readonly PointerStep[],
+  { onCue, onRest }: { onCue?: (cue: string) => void; onRest?: () => void } = {},
+) {
+  const { playing, rest, root, claimRest } = use(PlaybackContext);
+  const cueTo = useRef(onCue);
+  const restTo = useRef(onRest);
+  useEffect(() => {
+    cueTo.current = onCue;
+    restTo.current = onRest;
+  });
+  const rests = Boolean(onRest);
+  useEffect(() => (rests ? claimRest?.() : undefined), [rests, claimRest]);
   const pointer = useRef<VirtualPointer | null>(null);
   const clock = useRef({ time: 0, done: -1 });
   const [plan] = useState(() => planOf(script));
@@ -201,6 +232,14 @@ export function usePointer(script: readonly PointerStep[]) {
     },
     [],
   );
+  // Stopped, a preview that goes back to its still by itself does: the pointer goes, and the
+  // script starts again from the beginning next time.
+  useEffect(() => {
+    if (playing || rest !== 'start' || !restTo.current) return;
+    pointer.current?.leave();
+    clock.current = { time: 0, done: -1 };
+    restTo.current();
+  }, [playing, rest]);
   useEffect(() => {
     if (!playing || !root) return;
     const scope = root;
@@ -214,6 +253,10 @@ export function usePointer(script: readonly PointerStep[]) {
         if (happening.time <= done || happening.time > to) continue;
         const at = positionAt(scope, plan, happening.time);
         if (at && presentAt(plan, happening.time - 0.001)) current.moveTo(at);
+        if (happening.kind === 'cue') {
+          cueTo.current?.(happening.cue!);
+          continue;
+        }
         if (happening.kind === 'press') current.press();
         else if (happening.kind === 'release') current.release();
         else current.leave();
