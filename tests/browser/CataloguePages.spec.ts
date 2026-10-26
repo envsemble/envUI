@@ -429,6 +429,13 @@ test('every tile of the galleries of components and patterns is fitted, shown wh
             return true;
           const style = getComputedStyle(element);
           if (style.opacity === '0') return false;
+          // Clipped away whole, as a visually hidden announcer is, or inside what is.
+          for (
+            let node: Element | null = element;
+            node && node !== canvas;
+            node = node.parentElement
+          )
+            if (/^inset\((50|100)%/.test(getComputedStyle(node).clipPath)) return false;
           if (!clear(style.backgroundColor) || style.backgroundImage !== 'none') return true;
           if (style.boxShadow !== 'none') return true;
           if (

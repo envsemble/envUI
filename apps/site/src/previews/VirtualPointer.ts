@@ -90,6 +90,8 @@ export class VirtualPointer {
       if (point.x < box.left || point.x > box.right || point.y < box.top || point.y > box.bottom)
         continue;
       const style = getComputedStyle(element);
+      // What is clipped away whole, such as a screen reader's announcer, is no target.
+      if (/^inset\((50|100)%/.test(style.clipPath)) continue;
       if (style.visibility === 'hidden' && getComputedStyle(this.scope).visibility !== 'hidden')
         continue;
       // What lets the pointer through, such as a slider's label over its track, isn't hit; what

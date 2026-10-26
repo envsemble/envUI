@@ -98,3 +98,40 @@ test('a reader who prefers reduced motion starts with every animation paused', a
   expect(await figureValue(page)).toBe('60');
   await context.close();
 });
+
+test("the Toast tile's notices stack in place: the first glides from where it was, never past", async ({
+  page,
+}) => {
+  // The tile draws the live region scaled and moved, so this is also the region's glide under a
+  // transform: it measures layout pixels, not the drawn boxes, or the notice jumps and overshoots.
+  await page.goto(`${siteDevUrl}/components`);
+  const toastTile = tile(page, 'Toast');
+  await toastTile.scrollIntoViewIfNeeded();
+  await expect(
+    toastTile.locator('.catalogue-related-canvas[data-fitted] .env-toast'),
+  ).toBeVisible();
+  await page.waitForTimeout(500);
+  await toastTile.hover();
+  const { before, tops } = await toastTile.evaluate(
+    (element) =>
+      new Promise<{ before: number; tops: number[] }>((done) => {
+        const first = element.querySelector('.env-toast:not([data-tone="success"])')!;
+        // Measured on the canvas, so the view keeping the stack in the stage doesn't count.
+        const canvas = element.querySelector('.catalogue-related-canvas')!;
+        const at = () => first.getBoundingClientRect().top - canvas.getBoundingClientRect().top;
+        const before = at();
+        const tops: number[] = [];
+        const sample = () => {
+          if (element.querySelector('.env-toast[data-tone="success"]')) tops.push(at());
+          if (tops.length < 40) requestAnimationFrame(sample);
+          else done({ before, tops });
+        };
+        sample();
+      }),
+  );
+  const end = tops.at(-1)!;
+  expect(end).toBeLessThan(before - 5);
+  expect(Math.abs(tops[0]! - before)).toBeLessThan(2);
+  for (const top of tops) expect(top).toBeGreaterThanOrEqual(end - 0.5);
+  for (const top of tops) expect(top).toBeLessThanOrEqual(before + 0.5);
+});

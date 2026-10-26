@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Toast, useToast } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { PortalContainer, Toast, useToast } from '@envsemble/envui';
+import { usePointer, usePreviewLayer, type PointerStep } from '../previews/Motion';
 
 const invitation = '.env-toast[data-tone="success"] .env-toast-dismiss';
 
@@ -51,11 +51,19 @@ function Notices() {
   return null;
 }
 
-/** A notification, and another stacking with it. */
+/**
+ * A notification, and another stacking with it, in the live region rather than a picture of one,
+ * so they arrive, glide and leave with their own motion: the region renders into the tile's layer,
+ * whose transform holds it in the tile's corner.
+ */
 export default function ToastTile() {
+  const layer = usePreviewLayer();
+  if (!layer) return null;
   return (
-    <Toast.Provider>
-      <Notices />
-    </Toast.Provider>
+    <PortalContainer container={layer}>
+      <Toast.Provider>
+        <Notices />
+      </Toast.Provider>
+    </PortalContainer>
   );
 }

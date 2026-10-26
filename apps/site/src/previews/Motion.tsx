@@ -76,6 +76,16 @@ export function Playback({
 }
 
 /**
+ * The layer a preview's overlays render into, inside its canvas, for a tile that renders an
+ * overlay live rather than as a picture, such as notifications that arrive and leave with their
+ * own motion.
+ */
+export function usePreviewLayer() {
+  const { root } = use(PlaybackContext);
+  return root?.querySelector<HTMLElement>(':scope > .catalogue-overlay-layer') ?? null;
+}
+
+/**
  * The step a looping animation is at, from 0, the still: each step lasts its duration, in ms, and
  * the last leads back to the first, so an animation is a list of what changes at each step. It
  * advances only while its preview plays (Playback), and stopped, it goes back to the still or

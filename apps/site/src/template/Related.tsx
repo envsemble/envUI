@@ -160,6 +160,12 @@ const most = 2;
 const opaque = (color: string) =>
   color !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(color) && !/\/\s*0\)$/.test(color);
 
+/**
+ * Whether an element is clipped away whole, as a visually hidden one is (`clip-path: inset(50%)`),
+ * such as a notification region's announcer, which only a screen reader reads.
+ */
+export const clippedAway = (style: CSSStyleDeclaration) => /^inset\((50|100)%/.test(style.clipPath);
+
 /** Elements that are their own picture, whatever their style. */
 const pictures = /^(img|svg|canvas|video|input|textarea|select|hr)$/i;
 
@@ -201,7 +207,7 @@ function shownBoxes(canvas: HTMLElement) {
   const visit = (element: Element) => {
     for (const child of element.children) {
       const style = getComputedStyle(child);
-      if (style.display === 'none' || style.opacity === '0') continue;
+      if (style.display === 'none' || style.opacity === '0' || clippedAway(style)) continue;
       if (style.visibility === 'hidden' && shown !== 'hidden') continue;
       const rect = child.getBoundingClientRect();
       const box = new DOMRect(
@@ -229,8 +235,10 @@ function shownBoxes(canvas: HTMLElement) {
  * size a box to what its content measures. It follows the stage's width, the preview as it loads
  * and resizes, and the overlays as they open, are placed and finish their transitions: each change
  * fits it again in the next frame, however late it comes, so no timing decides whether it fits.
- * A page's own tile is drawn at its window's scale and centred on what it paints, still or
- * playing: as it plays, the view eases after what it shows, as a camera would, never jumping.
+ * A page's own tile is drawn at its window's scale. At rest it is centred on what it paints. As it
+ * plays, its view stays where it is, so what happens in it, such as notifications stacking, happens
+ * in place; it moves only when something would leave the stage, easing just far enough to keep it
+ * in, and it eases back to centre the still once the tile rests.
  */
 function useFit(
   stage: RefObject<HTMLElement | null>,
@@ -238,7 +246,15 @@ function useFit(
   on: boolean,
   whole: boolean,
   tile: boolean,
+  playing: boolean,
 ) {
+  const playingNow = useRef(playing);
+  const refit = useRef<(() => void) | null>(null);
+  useLayoutEffect(() => {
+    playingNow.current = playing;
+    // Rested, it is centred again.
+    refit.current?.();
+  }, [playing]);
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const canvasElement = canvas.current;
@@ -248,6 +264,7 @@ function useFit(
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(fit);
     };
+    refit.current = update;
     const resize = new ResizeObserver(update);
     const largest = tile ? most : 1;
     // The view: where the canvas is, and where it eases to. Each frame closes a share of the way
@@ -294,13 +311,17 @@ function useFit(
       const scale = tile
         ? windowScale
         : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
-      const toX = ((left + right) / 2) * scale;
-      const toY = ((top + bottom) / 2) * scale;
       // A tile in place eases to where it is fitted next; anything else is placed at once.
       const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
-      // It follows only a change of a few pixels: a popup placed again as the view moves shifts
-      // by a fraction of one, which would move the view again, and again, in a tremble.
-      if (eases && view.scale === scale && Math.hypot(toX - view.toX, toY - view.toY) < 3) return;
+      let toX = ((left + right) / 2) * scale;
+      let toY = ((top + bottom) / 2) * scale;
+      if (tile && playingNow.current && view.scale === scale) {
+        toX = contain(view.toX, left * scale, right * scale, stageElement.clientWidth / 2 - inset);
+        toY = contain(view.toY, top * scale, bottom * scale, stageElement.clientHeight / 2 - inset);
+      }
+      // It follows only a change of a pixel or more: a popup is placed again as the view moves,
+      // a fraction away, which would move the view again, in a tremble.
+      if (eases && view.scale === scale && Math.hypot(toX - view.toX, toY - view.toY) < 1) return;
       view.toX = toX;
       view.toY = toY;
       if (eases && view.scale === scale) {
@@ -323,9 +344,13 @@ function useFit(
     // its size; a popup is placed by its style a frame or two later, without changing size. The
     // canvas's own attributes are the fit's; what is added to it or removed from it, such as the
     // example as its module loads, is the preview's, and fits it again.
+    // As a tile plays, only what settles moves its view: what is added or removed, a transition or
+    // an animation that ends, a resize. Not each step of a motion, such as a notification sliding
+    // in from the edge, nor a popup placed again as the view moves.
     const changes = new MutationObserver((records) => {
-      if (records.some((record) => record.type === 'childList' || record.target !== canvasElement))
-        update();
+      const added = records.some((record) => record.type === 'childList');
+      if (tile && playingNow.current && !added) return;
+      if (added || records.some((record) => record.target !== canvasElement)) update();
     });
     changes.observe(canvasElement, {
       childList: true,
@@ -348,8 +373,23 @@ function useFit(
       cancelAnimationFrame(view.frame);
       changes.disconnect();
       resize.disconnect();
+      refit.current = null;
     };
   }, [stage, canvas, on, whole, tile]);
+}
+
+/** How far ahead of a stage's edge a tile's view keeps what it shows, once it has to move. */
+const margin = 6;
+
+/**
+ * Where a tile's view goes along one axis while it plays: where it is, while what it shows, from
+ * `low` to `high` around the view's `at`, is inside the stage's `half` either side of its middle;
+ * else just far enough, and a margin, to bring it in; and centred where it can't fit.
+ */
+function contain(at: number, low: number, high: number, half: number) {
+  if (high - low > 2 * (half - margin)) return (low + high) / 2;
+  if (low - at >= -half - 1 && high - at <= half + 1) return at;
+  return Math.min(Math.max(at, high - half + margin), low + half - margin);
 }
 
 /**
@@ -399,7 +439,7 @@ export function TilePreview({
       <ExampleRender page={preview.page} name={preview.name} fallback={null} />
     ));
   const tile = Boolean(preview?.tile);
-  useFit(stage, canvas, shown, whole || tile, tile);
+  useFit(stage, canvas, shown, whole || tile, tile, plays);
   return (
     <Theme
       {...theme}
