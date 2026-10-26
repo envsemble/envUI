@@ -94,9 +94,7 @@ Open panels take their preferred width and shrink to a minimum, then the row scr
 
 ### Adapting to width
 
-Where the dock is narrow, such as on a phone, one panel at a time fills the region like a sheet, and the others wait as tabs, already in the first paint.
-
-- In a narrow panel, the header's actions and controls take a row of their own above the title.
+Where the dock is narrow, such as on a phone, one panel at a time fills the region like a sheet, and the others wait as tabs. In a narrow panel, the header's actions and controls take a row of their own above the title.
 
 ```tsx figure=NarrowRegion widths="24 48"
 

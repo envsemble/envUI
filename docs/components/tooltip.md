@@ -101,12 +101,7 @@ Write the shortcut after the control's name, such as Bold (<kbd>Ctrl</kbd>+<kbd>
 
 ### Text
 
-Text that isn't a control, such as an abbreviation, takes a quiet underline of round, well-spaced dots that says it shows more on hover or focus.
-
-- It takes keyboard focus, so the keyboard opens the tooltip too.
-- The pointer stays the arrow over it, not the text cursor.
-- Hover cards and relative times on text take the same underline.
-- Buttons, icon buttons and links keep their own look.
+Text that isn't a control, such as an abbreviation, takes a quiet underline of round, well-spaced dots that says it shows more on hover or focus. It takes keyboard focus, so the keyboard opens the tooltip too.
 
 ```tsx figure=TextAbbreviation
 
@@ -209,7 +204,7 @@ Write the shortcut after the name in `content`, and give the control `aria-keysh
 
 #### Text and disabled controls
 
-Text that isn't a control takes the dotted underline, `env-hover-detail`; give it `tabIndex={0}`, so keyboard focus opens the tooltip too. A disabled control sits in a wrapper, `env-tooltip-disabled-target`, that takes the pointer and focus for it, and carries its role, name, state and `aria-disabled`.
+Text that isn't a control takes the dotted underline, `env-hover-detail`, with the arrow pointer rather than the text cursor; hover cards and relative times on text take the same underline, and buttons, icon buttons and links keep their own look. Give it `tabIndex={0}`, so keyboard focus opens the tooltip too. A disabled control sits in a wrapper, `env-tooltip-disabled-target`, that takes the pointer and focus for it, and carries its role, name, state and `aria-disabled`.
 
 ```tsx
 <Tooltip content="Central European Time">

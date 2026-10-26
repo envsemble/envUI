@@ -47,10 +47,10 @@ examples:
 1. **Outline**
 2. **Floating**
 
-| Variant  | Use for                                                            |
-| -------- | ------------------------------------------------------------------ |
-| Outline  | A time of day, on wheels that stay open as they turn. The default. |
-| Floating | A long form on a page, as TextField's floating variant.            |
+| Variant  | Use for                                                 |
+| -------- | ------------------------------------------------------- |
+| Outline  | In forms, dialogs and panes. The default.               |
+| Floating | A long form on a page, as TextField's floating variant. |
 
 ## Anatomy
 
@@ -79,10 +79,7 @@ examples:
 
 ### The locale's clock
 
-The same value on a 12-hour and a 24-hour clock, as people there write it.
-
-- The value itself stays on the 24-hour clock.
-- The popup offers a shortcut to the current time, and a clearable field a clear button.
+The same value on a 12-hour and a 24-hour clock, as people there write it. The value itself stays on the 24-hour clock.
 
 ```tsx figure=ClockConventions
 
@@ -137,7 +134,7 @@ Show it read-only, not disabled.
 <TimePicker label="Starts at" value={start} onValueChange={setStart} clearable />
 ```
 
-The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, and `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time.
+The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, and `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time. The popup stays open as its wheels turn.
 
 #### Available times
 

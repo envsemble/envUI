@@ -81,9 +81,6 @@ Not shown: the sections before the current one, beside the shape's fill.
 
 One shape down the side of the list marks where the reader is, like a slider's track.
 
-- It is straight along the list's start and swells toward the labels, widest beside the current section, thin a few sections away.
-- Like a slider's fill, it is darker beside the sections passed, down to the swell's apex, than beside those still to come, whose labels are quieter too, so the list reads as how far the reader has come.
-- It moves with the page as it scrolls, resting on each section and gliding on to the next as the reader nears it.
 - It moves at once, without gliding, where reduced motion is preferred.
 - The section under the pointer swells it a little.
 

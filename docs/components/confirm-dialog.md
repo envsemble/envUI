@@ -28,9 +28,7 @@ components:
   - ConfirmDialog
 examples:
   DeleteProject: overview
-  ArchiveProject:
-    role: example
-    caption: The neutral tone, for archiving.
+  ArchiveProject: example
   ConfirmDialogAnatomy: anatomy
   AsyncWithError: example
   FromMenu: example

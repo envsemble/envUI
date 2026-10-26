@@ -55,7 +55,7 @@ envUI never colors a screen by hand. Each part takes a role, such as the page, a
 
 Each role in the theme you are reading in; a status shows its text, soft fill and solid fill.
 
-- Switch the theme in the Display menu to see the others.
+- Switch the theme and the contrast in the Display menu to see the others.
 
 ```tsx figure=Swatches
 
@@ -80,10 +80,6 @@ Every role has a color in the light and the dark theme, and a high-contrast vers
 2. **Dark**
 3. **Light, high contrast**
 4. **Dark, high contrast**
-
-### Try it on this site
-
-Choose a theme and a contrast in the Display menu, at the top of the page, and every page and example here follows.
 
 ### What each color means
 

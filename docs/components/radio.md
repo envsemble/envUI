@@ -73,8 +73,6 @@ examples:
 5. **Description** (`env-radio-description`, `description`)
 6. **Radio** (`env-radio-input`)
 
-Each Radio sits in a RadioGroup, whose label names the choice.
-
 ## Behaviour
 
 ### States

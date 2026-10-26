@@ -96,10 +96,7 @@ Keep focus where it is, and scroll the list to its top.
 
 ### Ends and totals
 
-Show the total once it is known.
-
-- Leave the end buttons to Pagination, which keeps them focusable and unavailable.
-- Hide it where the items fit on one page.
+Show the total once it is known. Hide Pagination where the items fit on one page.
 
 ## Accessibility
 

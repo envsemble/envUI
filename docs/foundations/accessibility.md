@@ -25,9 +25,7 @@ avoidWhen:
   - text: Colors and their contrast in every theme.
     see: colors
 examples:
-  Keyboard:
-    role: example
-    caption: Tab moves forward and Shift+Tab back; Space checks the box and Enter presses a button.
+  Keyboard: example
 ---
 
 # Accessibility
@@ -41,22 +39,18 @@ Every envUI component works for everyone without extra work, and each component'
 - **Keyboard**: everything works from the keyboard, in the order it shows.
 - **Visible focus**: a clear ring shows where the keyboard is.
 - **Screen readers**: controls, regions and messages are announced by their name and state.
-- **Contrast**: text, edges and focus are checked for contrast in all four themes.
+- **Contrast**: text, edges and focus are checked for contrast in all four [themes](colors.md).
 - **Reduced motion**: when people ask for less motion, things fade instead of move.
 - **Forced colors**: with the system's own high-contrast colors, every state stays visible.
 - **Touch**: on a touchscreen, controls grow big enough for a finger.
 
 ### Try the keyboard
 
-Press Tab to move into the example and through it, and watch the focus follow the keyboard in the order the controls show.
+Tab moves through the controls in the order they show, and Shift+Tab back; Space checks a box and Enter presses a button.
 
 ```tsx figure=Keyboard
 
 ```
-
-### Try high contrast
-
-Choose High under Contrast in the Display menu, at the top of the page, and every page here shows stronger text and edges.
 
 ## Rules
 

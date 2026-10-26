@@ -36,6 +36,11 @@ const lists = `- Confirm the pricing
    1. Draft them
 `;
 
+// Items whose keys run in their line, the first key starting one.
+const keys = `- <kbd>Ctrl</kbd>+<kbd>K</kbd> opens search
+- Press <kbd>Esc</kbd> or <kbd>Enter</kbd>
+`;
+
 /**
  * Markdown tables, tasks, inline code in a cell and lists, mounted with ?fixture=markdown-tables.
  */
@@ -81,6 +86,9 @@ export function MarkdownFixture() {
       </EnvUIProvider>
       <div data-testid="lists">
         <Markdown>{lists}</Markdown>
+      </div>
+      <div data-testid="keys">
+        <Markdown>{keys}</Markdown>
       </div>
       {/* A narrow column, where a cell's code would otherwise break inside its word. */}
       <div data-testid="narrow" style={{ inlineSize: '12rem' }}>

@@ -112,10 +112,7 @@ Not shown: the [Pager](../components/pager.md) at the end of a page read in orde
 
 ### Changing the page
 
-After the router shows the new page, the window's title names it, such as "Projects – Northwind".
-
-- Every place has an address of its own, opened by the application's router.
-- The examples keep the page in state instead.
+After the router shows the new page, the window's title names it, such as "Projects – Northwind". Every place has an address of its own, opened by the application's router.
 
 ## Rules
 

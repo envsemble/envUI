@@ -89,7 +89,6 @@ Items can be choices, checked in place.
 
 - A radio item checks one choice and closes the menu.
 - A checkbox item toggles and keeps it open.
-- ThemeRadioGroup is the theme choice as radio items.
 
 ```tsx figure=Choices
 

@@ -115,6 +115,29 @@ test('list markers are plain: a dot in the text color or a muted number on the f
   );
 });
 
+test('an item with key caps in its line keeps its line, its bullet beside the keys', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const items = await page
+    .getByTestId('keys')
+    .locator('li')
+    .evaluateAll((list) =>
+      list.map((item) => {
+        // The bullet's middle, from the item's top, sits within each key cap's height: a margin on
+        // a key would push the line, and the keys, down below the bullet.
+        const bullet = getComputedStyle(item, '::after');
+        const middle = parseFloat(bullet.top) + parseFloat(bullet.height) / 2;
+        const top = item.getBoundingClientRect().top;
+        return [...item.querySelectorAll('.env-kbd')].every((key) => {
+          const box = key.getBoundingClientRect();
+          return box.top - top < middle && box.bottom - top > middle;
+        });
+      }),
+    );
+  expect(items).toEqual([true, true]);
+});
+
 test(
   'inline code in a table cell breaks only where it would overflow, not inside its word',
   { tag: '@engines' },

@@ -86,16 +86,14 @@ Not shown: the main and supporting panes, the supporting sheet's close button an
 
 ### Scrolling
 
-Panes never paints, and each pane scrolls on its own where the panes have a height, as in a [Scaffold](scaffold.md) whose body scrolls.
-
-- Where the page scrolls, the panes scroll with it.
+Each pane scrolls on its own where the panes have a height, as in a [Scaffold](scaffold.md) whose body scrolls. Where the page scrolls, the panes scroll with it.
 
 ### Adapting to width
 
-The panes decide how they sit from their own width alone, before anything runs.
+The panes decide how they sit from their own width alone.
 
-- A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens; press Details to open it.
-- In less room a list and its detail show one at a time: choose a message, and a back button named after the list, here Inbox, returns to it.
+- A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens.
+- In less room a list and its detail show one at a time, and a back button named after the list, here Team inbox, returns to it.
 
 ```tsx figure=SupportingByWidth widths="24 44 60"
 
@@ -226,7 +224,7 @@ Panes.Divider, named by its `label`, Resize panes by default, resizes the suppor
 
 ### Composition
 
-The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `data-open`; the main pane, `env-panes-main`, and the supporting one, `env-panes-supporting`, with its close button, `env-panes-close`, and its scrim, `env-panes-scrim`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the list, `env-panes-list`, and the detail, `env-panes-detail`, with its back button, `env-panes-back`; and the divider, `env-panes-divider`. `name` names the node for dev mode, as `data-env-name`.
+The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `data-open`; the main pane, `env-panes-main`, and the supporting one, `env-panes-supporting`, with its close button, `env-panes-close`, and its scrim, `env-panes-scrim`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the list, `env-panes-list`, and the detail, `env-panes-detail`, with its back button, `env-panes-back`; and the divider, `env-panes-divider`. Panes paints no background of its own: the surfaces in its panes do. `name` names the node for dev mode, as `data-env-name`.
 
 ## Changelog
 

@@ -3,6 +3,7 @@ import { classNames } from '../../internal/classNames.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 import { ActionElement, type ActionElementProps } from '../../internal/ActionElement.js';
 import { SpinnerArc } from '../../feedback/internal/SpinnerArc.js';
+import { textRuns } from '../../internal/textRuns.js';
 import type { ButtonAppearanceProps, ButtonVariant } from '../Button.js';
 
 export type ButtonBaseProps = ButtonAppearanceProps &
@@ -41,7 +42,9 @@ export function ButtonBase({
   ) : (
     <>
       {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
-      {children}
+      {/* Words and a number in their line, such as Show 12 tasks, stay one line of text, which the
+          button's gap would otherwise space out. */}
+      {textRuns(children, 'env-button-text')}
       {endIcon != null && <DecorativeIcon>{endIcon}</DecorativeIcon>}
       {end != null && <span className="env-button-end">{end}</span>}
     </>

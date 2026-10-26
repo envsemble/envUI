@@ -58,7 +58,7 @@ examples:
 
 ## Rules
 
-Show the keys people really press, named as their keyboard names them.
+Show the keys people really press.
 
 ```tsx figure=ShortcutSequence
 

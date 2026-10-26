@@ -152,9 +152,7 @@ Page goes in a [Scaffold](scaffold.md)'s body, and its header sits at the top of
 
 ### Width
 
-One page per page, at the width for what it holds, and never the full width for text.
-
-- A part that needs a narrower width takes it from its own content.
+One page per page, never the full width for text. A part that needs a narrower width takes it from its own content.
 
 ### One heading
 

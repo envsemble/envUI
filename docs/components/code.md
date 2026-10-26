@@ -75,13 +75,6 @@ A block keeps the source's layout and scrolls long lines sideways, or wraps them
 | Scroll     | A block whose layout matters. The default.        |
 | Wrap       | A block of prose, such as text in a JSON setting. |
 
-### Diff layouts
-
-| Diff layout  | Use for                                             |
-| ------------ | --------------------------------------------------- |
-| Side by side | Most diffs, in one column when narrow. The default. |
-| One column   | A diff read top to bottom at any width.             |
-
 ## Anatomy
 
 ```tsx figure=CodeBlockAnatomy
@@ -93,20 +86,13 @@ A block keeps the source's layout and scrolls long lines sideways, or wraps them
 3. **Copy button** (`env-code-block-heading > button`, `copyable`)
 4. **Source** (`env-code-block > pre`, `children`)
 
-Inline code is a single part.
-
 ## Behaviour
-
-### Text that never runs
-
-Code shows source as selectable text that never runs.
-
-- Inline code sits in a sentence on a faint fill of its own, so a command or a file name stands apart from the words around it.
 
 ### Highlighting
 
 Code takes its colors from the app theme, light or dark, and stronger ones under high contrast, so every colored word stays readable.
 
+- Inline code sits in a sentence on a faint fill of its own, so a command or a file name stands apart from the words around it.
 - Blocks and diffs sit on a faint layer of their own that stands apart from the page, a pane, a card or a popup alike.
 - A block shows its plain source first and colors it once the highlighter loads.
 
@@ -128,6 +114,11 @@ CodeDiff shows what changed between two versions of a file, with the same colors
 ### Adapting to width
 
 A diff shows the two versions side by side where it is wide, and in one column in a narrow pane.
+
+| Diff layout  | Use for                                             |
+| ------------ | --------------------------------------------------- |
+| Side by side | Most diffs, in one column when narrow. The default. |
+| One column   | A diff read top to bottom at any width.             |
 
 ```tsx figure=DiffColumns widths="36 60"
 

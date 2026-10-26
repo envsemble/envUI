@@ -116,8 +116,6 @@ A count takes the same tones and variants: neutral and soft by default, and soli
 2. **Icon** (`env-badge > env-icon`, `icon`)
 3. **Label** (`env-badge-label`, `children`)
 
-Not shown: a count, and DiffStat's added and removed lines.
-
 ## Behaviour
 
 ### Adapting to width

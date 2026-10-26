@@ -2,8 +2,8 @@ import { Surface, Text } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
 const radii = [
-  { radius: 'xl', title: 'Large', caption: '1.75 rem' },
-  { radius: 'sm', title: 'Small', caption: '0.5 rem' },
+  { radius: 'xl', title: 'Large', caption: 'Well rounded' },
+  { radius: 'sm', title: 'Small', caption: 'Slightly rounded' },
   { radius: 'full', title: 'Rounded ends', caption: 'Half the height' },
   { radius: 'none', title: 'Square', caption: 'No rounding' },
 ] as const;

@@ -46,9 +46,7 @@ examples:
 
 ### Its background
 
-The bar is a plain rectangle in the navigation's background, with no line below.
-
-- Or it sits on the page's background instead, opaque when it sticks, while the navigation keeps its own, as [Scaffold](scaffold.md#backgrounds) shows.
+The bar is a plain rectangle in the navigation's background, with no line below. On the page's background instead: see [Scaffold](scaffold.md#backgrounds).
 
 ### Title bar
 

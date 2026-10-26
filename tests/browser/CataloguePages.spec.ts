@@ -87,6 +87,24 @@ test('a component page shows plain sections, equal cells and the parts of its an
         };
       });
   await expect.poll(cells).toEqual({ count: 3, widths: 1, heights: 1 });
+  // The first figure has no caption; side by side, its code lines up with its neighbours', and in
+  // one column it follows its stage as closely as a caption follows theirs, with no empty band.
+  const codeGaps = () =>
+    page
+      .locator('[data-section="overview"] .site-figure-run')
+      .first()
+      .evaluate((run) =>
+        [...run.children].map((figure) => {
+          const [stage, next] = [...figure.children].map((child) => child.getBoundingClientRect());
+          const code = figure.lastElementChild!.getBoundingClientRect();
+          return {
+            top: Math.round(code.top - run.getBoundingClientRect().top),
+            gap: Math.round(next.top - stage.bottom),
+          };
+        }),
+      );
+  const sideBySide = await codeGaps();
+  expect(new Set(sideBySide.map(({ top }) => top)).size).toBe(1);
   // Do and don't figures carry their verdict and one sentence, with the code below.
   const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
   await expect(verdict.locator('.site-verdict-bar')).toHaveText('Do');
@@ -177,6 +195,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
   await page.setViewportSize({ width: 420, height: 800 });
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
+  const column = await codeGaps();
+  expect(new Set(column.map(({ gap }) => gap)).size).toBe(1);
   await expect(page.locator('.site-anatomy-legend > li')).toHaveCount(4);
 });
 

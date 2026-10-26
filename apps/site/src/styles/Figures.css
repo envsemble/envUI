@@ -115,6 +115,17 @@
   grid-row: 3;
 }
 
+/* A figure without a caption, in a run still one column, has no caption row to line up with: its
+   code follows its stage, with no empty band between them. Side by side (below), it keeps the row,
+   so its code lines up with its neighbours'. */
+.site-figure-run > .site-live-example-entry:not(:has(> .site-figure-caption)) {
+  grid-row: span 2;
+}
+
+.site-figure-run > .site-live-example-entry:not(:has(> .site-figure-caption)) > :last-child {
+  grid-row: 2;
+}
+
 /* A subsection's text beside its one figure. */
 .site-figure-split {
   display: grid;
@@ -129,11 +140,32 @@
   .site-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8']) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .site-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8'])
+    > .site-live-example-entry:not(:has(> .site-figure-caption)) {
+    grid-row: span 3;
+  }
+
+  .site-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8'])
+    > .site-live-example-entry:not(:has(> .site-figure-caption))
+    > :last-child {
+    grid-row: 3;
+  }
 }
 
 @container (width >= 58rem) {
   .site-figure-run[data-count='3'] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .site-figure-run[data-count='3'] > .site-live-example-entry:not(:has(> .site-figure-caption)) {
+    grid-row: span 3;
+  }
+
+  .site-figure-run[data-count='3']
+    > .site-live-example-entry:not(:has(> .site-figure-caption))
+    > :last-child {
+    grid-row: 3;
   }
 }
 

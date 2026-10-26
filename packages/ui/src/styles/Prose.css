@@ -14,8 +14,44 @@
 .env-prose :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table, hr) {
   margin: 0;
 }
+/* Blocks in a quote or an item stand a step apart; what runs in their line, such as a second key cap
+   in an item, takes no margin, which would make its line taller. */
 .env-prose > * + *,
-.env-prose :where(blockquote, li) > * + * {
+.env-prose
+  :where(blockquote, li)
+  > *
+  + :not(
+    :where(
+      a,
+      abbr,
+      b,
+      br,
+      button,
+      cite,
+      code,
+      del,
+      dfn,
+      em,
+      i,
+      img,
+      input,
+      ins,
+      kbd,
+      mark,
+      q,
+      s,
+      samp,
+      small,
+      span,
+      strong,
+      sub,
+      sup,
+      svg,
+      time,
+      u,
+      var
+    )
+  ) {
   margin-block-start: var(--env-space-4);
 }
 .env-prose > :where(h1, h2, h3, h4, h5, h6):not(:first-child) {

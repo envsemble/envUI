@@ -60,6 +60,25 @@ test('a panel keeps the direction around it, not the tab list’s', async ({ pag
   await expect(slider).toHaveAttribute('aria-valuenow', '51');
 });
 
+test('a rail with more tabs than fit starts at its chosen first tab @engines', async ({ page }) => {
+  // The rail measures its tabs from its own start: in a positioned frame set in from the page's
+  // start, it once measured them from the frame's and rested scrolled past the chosen tab.
+  await page.goto(`${fixtureUrl}/?fixture=scrolling-tabs`);
+  const list = page.getByRole('tablist', { name: 'Project views' });
+  await expect(list.getByRole('tab', { name: 'Summary' })).toHaveAttribute('aria-selected', 'true');
+  const place = () =>
+    list.evaluate((rail) => {
+      const tab = rail.querySelector('[aria-selected="true"]')!.getBoundingClientRect();
+      const box = rail.getBoundingClientRect();
+      return {
+        overflows: rail.scrollWidth > rail.clientWidth,
+        atStart: rail.scrollLeft === 0,
+        inView: tab.left >= box.left - 0.5 && tab.right <= box.right + 0.5,
+      };
+    });
+  await expect.poll(place).toEqual({ overflows: true, atStart: true, inView: true });
+});
+
 test('filling tabs give the selected panel the height left below the list', async ({ page }) => {
   await page.goto(`${siteDevUrl}/components/tabs`);
   const example = page.locator('.site-live-example[data-example="FillARegion"]');

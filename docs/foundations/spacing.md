@@ -57,16 +57,14 @@ How dense the whole app is, how tight the rows of a table are, and the corners t
 
 The whole of envUI comes in two scales. Compact makes every control, text, corner and space a step smaller at once, so a dense tool stays in proportion. An app uses one scale throughout.
 
+- Choose Compact under Scale in the Display menu to see it on this site.
+
 ```tsx figure=Scales
 
 ```
 
 1. **Comfortable**: The default, with room to breathe: for websites and touch.
 2. **Compact**: Everything a step smaller: for desktop tools people work in all day.
-
-### Try it on this site
-
-Choose Compact under Scale in the Display menu, at the top of the page, and this whole site becomes the compact scale.
 
 ### Tighter rows
 

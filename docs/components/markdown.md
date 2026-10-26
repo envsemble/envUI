@@ -36,7 +36,7 @@ examples:
   ProjectNote: overview
   EditDescription:
     role: overview
-    caption: 'MarkdownEditor: a text area with a formatting toolbar, undo and redo, and a Preview tab that shows the text as it will read.'
+    caption: 'MarkdownEditor: a toolbar, and a preview of the text.'
   LinkPicker: example
   MarkdownEditorAnatomy: anatomy
   OpenInPanel: example
@@ -134,7 +134,7 @@ On Apple keyboards, <kbd>Cmd</kbd> replaces <kbd>Ctrl</kbd>.
 ### You provide
 
 - A `label` for MarkdownEditor.
-- Alternative text for images, and link text that names its destination.
+- Link text that names its destination.
 - Translated words through EnvUIProvider's `messages`.
 
 ## Compose
