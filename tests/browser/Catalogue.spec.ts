@@ -309,8 +309,8 @@ test('live examples keep links in place, show their source, and specimens show f
 test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
   page,
 }) => {
-  // Wide enough for the overview's three figures to share a row.
-  await page.setViewportSize({ width: 1600, height: 900 });
+  // Wide enough for the overview's three figures to share a row beside the page's contents.
+  await page.setViewportSize({ width: 1920, height: 900 });
   await page.goto(`${catalogueUrl}/components/button`);
   // One page of sections, with no views; the props are on its page in the Docs, which the banner's
   // Docs opens.
@@ -452,6 +452,9 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
       .filter((block) => block.kind === 'example' && block.role === 'anatomy').length,
   }));
   expect(pages.length).toBeGreaterThan(0);
+  // A window wide enough for every figure's parts beside the page's contents: in a narrower
+  // column, Panes' figure shows one pane at a time and PanelDock's tucks a part away.
+  await page.setViewportSize({ width: 1920, height: 900 });
   await page.goto(`${catalogueUrl}/`);
   for (const { id, route, figures } of pages) {
     await goTo(page, route);
@@ -723,8 +726,7 @@ test("the catalogue's text keeps a readable measure, and opens each section with
 test('a component page groups its sections into three, the middle one on the band', async ({
   page,
 }) => {
-  // Overview with Variants; When to use with Anatomy, on the page's one band across the content
-  // pane; Adapting to width with Accessibility; then Related, on the page. A page groups the
+  // Overview with Variants; When to use with Anatomy, on the page's one band across its column; Adapting to width with Accessibility; then Related, on the page. A page groups the
   // sections it has.
   const groups = () =>
     page.locator('.docs-section-groups > *').evaluateAll((elements) =>
@@ -742,18 +744,32 @@ test('a component page groups its sections into three, the middle one on the ban
     { band: false, sections: ['accessibility'] },
     { band: false, sections: ['related'] },
   ]);
-  // The band spans the whole content pane, gutters included; its sections keep the column.
-  const widths = await page.evaluate(() => {
-    const width = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
-    return {
-      band: width('.docs-band').width,
-      main: width('.docs-main').width,
-      column: width('.docs-band > .docs-section-group').left,
-      first: width('.docs-section-groups > .docs-section-group').left,
-    };
-  });
-  expect(widths.band).toBe(widths.main);
-  expect(widths.column).toBe(widths.first);
+  // Beside the page's contents, the band spans the page's column, gutters included, and its fill
+  // ends half a gutter short of the contents; its sections keep the column. A pane too narrow for
+  // the contents has the band across the whole of it.
+  const widths = () =>
+    page.evaluate(() => {
+      const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
+      const fill = getComputedStyle(document.querySelector('.docs-band')!, '::before');
+      return {
+        band: box('.docs-band').width,
+        main: box('.docs-main').width,
+        page: box('.docs-page-column').width,
+        fillEnd: fill.content === 'none' ? null : box('.docs-band').right - parseFloat(fill.right),
+        contents: box('.docs-contents').left,
+        column: box('.docs-band > .docs-section-group').left,
+        first: box('.docs-section-groups > .docs-section-group').left,
+      };
+    });
+  const wide = await widths();
+  expect(wide.band).toBe(wide.page);
+  expect(wide.band).toBeLessThan(wide.main);
+  expect(wide.fillEnd).toBeLessThan(wide.contents);
+  expect(wide.column).toBe(wide.first);
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect.poll(async () => (await widths()).band).toBe((await widths()).main);
+  expect((await widths()).fillEnd).toBeNull();
+  await page.setViewportSize({ width: 1440, height: 1000 });
   // Box has no Variants, Anatomy or Behaviour, and its Accessibility holds only the lists that
   // are in the Docs, so the catalogue has no group after its Rules.
   await goTo(page, '/components/box');
@@ -1515,6 +1531,78 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await page.setViewportSize({ width: 1024, height: 900 });
   await expect(contents).toBeHidden();
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+});
+
+test("a catalogue page has its contents beside it from 56rem, in the Docs' column, and a banner as wide as theirs", async ({
+  page,
+}) => {
+  const contents = page.getByRole('navigation', { name: 'On this page' });
+  const topLevel = () =>
+    contents.evaluate((navigation) =>
+      [...navigation.querySelector('ol, ul')!.children].map(
+        (item) => item.querySelector(':scope > a')?.textContent,
+      ),
+    );
+  // A component's page lists its sections, with the rules under Rules, and marks where the reader
+  // is; a link scrolls to its section.
+  await page.goto(`${catalogueUrl}/components/button`);
+  await expect(contents).toBeVisible();
+  await expect
+    .poll(topLevel)
+    .toEqual(['Overview', 'Variants', 'Anatomy', 'Behaviour', 'Rules', 'Accessibility', 'Related']);
+  const rules = contents.getByRole('listitem').filter({
+    has: page.getByRole('link', { name: 'Rules', exact: true }),
+  });
+  await expect(rules.getByRole('link', { name: 'Use it when', exact: true })).toBeVisible();
+  await expect(contents.locator('[aria-current="location"]')).toHaveText('Overview');
+  await contents.getByRole('link', { name: 'Rules', exact: true }).click();
+  await expect(page).toHaveURL(`${catalogueUrl}/components/button#rules`);
+  await expect(contents.locator('[aria-current="location"]')).toHaveText('Rules');
+  // The banner, the page's column and the contents beside it are laid out as in the Docs: the
+  // banner is its column less the gutters, level with the top of the contents, and the contents
+  // take the rest of the pane, so a banner is as wide as the Docs' wherever the pane and the
+  // contents, which fit their longest label, are as wide.
+  const layout = () =>
+    page.evaluate(() => {
+      const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
+      const [banner, column, contents, pane] = [
+        '.docs-page-banner',
+        '.docs-page-column',
+        '.docs-contents',
+        '.docs-page-layout',
+      ].map(box);
+      return {
+        rest: pane.width - banner.width - contents.width,
+        inset: banner.left - column.left,
+        end: column.right - banner.right,
+        level: contents.top - banner.top,
+      };
+    });
+  await contents.getByRole('link', { name: 'Overview', exact: true }).click();
+  await expect(contents.locator('[aria-current="location"]')).toHaveText('Overview');
+  const catalogue = await layout();
+  expect(catalogue.end).toBeCloseTo(catalogue.inset, 1);
+  await goTo(page, '/docs/components/button');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(contents).toBeVisible();
+  await expect(async () => {
+    const docs = await layout();
+    for (const key of Object.keys(catalogue) as (keyof typeof catalogue)[])
+      expect(docs[key], key).toBeCloseTo(catalogue[key], 1);
+  }).toPass();
+  // The index pages list their groups alone, not every tile; the overview has no contents.
+  await goTo(page, '/components');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Components');
+  await expect.poll(topLevel).toEqual(componentGroups);
+  await expect(contents.locator('li li')).toHaveCount(0);
+  await goTo(page, '/');
+  await expect(page.locator('.docs-overview-hero')).toBeVisible();
+  await expect(contents).toHaveCount(0);
+  // A pane narrower than 56rem leaves them out, as in the Docs.
+  await goTo(page, '/patterns/forms');
+  await expect(contents).toBeVisible();
+  await page.setViewportSize({ width: 1180, height: 900 });
+  await expect(contents).toBeHidden();
 });
 
 test('every page of the Docs lists its own sections beside it, each once, at addresses of their own', async ({

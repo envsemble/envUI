@@ -104,7 +104,7 @@ function groupSections(sections: readonly DocumentationSection[]) {
 
 /**
  * Sections in the page's order, in their three groups, far apart, the second on a band across the
- * whole content pane, then, with `related`, Related; Compose and the changelog are on the page in
+ * page's column, then, with `related`, Related; Compose and the changelog are on the page in
  * the Docs. A group without sections, and a page's band where it has none of its sections, are
  * left out.
  */

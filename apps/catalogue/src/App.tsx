@@ -97,18 +97,26 @@ const contentsHeading = (heading: HTMLElement) =>
   );
 
 /**
- * The page's contents beside it in the Docs, on a window wide enough for a column of them: its h2
- * and h3 headings, such as each export's props under Props, with the section the reader is in
+ * The index pages of the catalogue, a gallery of tiles under group headings: their contents list
+ * the groups alone, as a tile's name heads a tile rather than a section of the page.
+ */
+const indexKinds = new Set<RoutePage['kind']>(['components', 'patterns']);
+
+/**
+ * The page's contents beside it, in the catalogue and the Docs alike, on a window wide enough for
+ * a column of them: its h2 and h3 headings, such as a component's rules under Rules or each
+ * export's props under Props, or on an index page its groups, with the section the reader is in
  * marked. A link writes the section's fragment to the address, the same as a search result or a
  * copied address names it, and the route follows without scrolling again.
  */
-function DocsContents({ page }: { page: RoutePage }) {
+function PageContents({ page }: { page: RoutePage }) {
   return (
     <div className="docs-contents">
       <TableOfContents
         key={page.path}
         className="docs-contents-list"
         container=".docs-page-column"
+        levels={indexKinds.has(page.kind) ? [2] : undefined}
         filter={contentsHeading}
         onClick={(event) => {
           if (event.defaultPrevented && (event.target as Element).closest('a[href^="#"]'))
@@ -122,9 +130,9 @@ function DocsContents({ page }: { page: RoutePage }) {
 /**
  * The site: the catalogue, at the root, which shows envUI to people, with a rail of its
  * destinations and a drawer of the chosen one's pages, and the Docs, under /docs, the developer
- * reference with a navigation of their own and each page's contents beside it. The navigation
- * holds the wordmark and search at its top, and the page has the way to the same subject in the
- * other part and the Display menu at its top end.
+ * reference with a navigation of their own; a page of either but their homes has its contents
+ * beside it. The navigation holds the wordmark and search at its top, and the page has the way to
+ * the same subject in the other part and the Display menu at its top end.
  */
 function Shell() {
   const route = useDocumentationRoute();
@@ -140,8 +148,9 @@ function Shell() {
   const page = findPage(routePath);
   const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'catalogue');
   const title = documentTitle(page, area);
-  // Every page of the Docs but their home, an index of them, lists its contents beside it.
-  const contents = page && area === 'docs' && page.kind !== 'docs-home';
+  // Every page lists its contents beside it but the two homes: the catalogue's overview, a hero
+  // and a showcase rather than sections, and the Docs' home, an index of them.
+  const contents = page && page.kind !== 'home' && page.kind !== 'docs-home';
   useEffect(() => {
     // ⌘K, or Ctrl+K, opens search from anywhere, text fields included, and closes it again; an
     // editor that handles the keys itself, such as for a link, keeps them.
@@ -255,7 +264,7 @@ function Shell() {
               </PageBoundary>
               {page && <PageNavigation page={page} />}
             </div>
-            {contents && <DocsContents page={page} />}
+            {contents && <PageContents page={page} />}
           </div>
         </div>
         <PageFooter />
