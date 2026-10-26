@@ -77,7 +77,7 @@ Not shown: the page progress.
 
 The bar never wraps: the title is cut short first, and the start content and actions keep their size.
 
-```tsx figure=TitleFirstToGo widths="20 40"
+```tsx figure=TitleFirstToGo widths="40 20" sweep
 
 ```
 

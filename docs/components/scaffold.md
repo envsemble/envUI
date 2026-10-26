@@ -56,7 +56,7 @@ Scaffold shows the [navigation](drawer.md) that fits its own width: the bar on a
 - The application can choose another form for a width, or none, such as on a phone where the top bar opens the navigation.
 - Where it asks for a form it didn't give, the nearest one shows.
 
-```tsx figure=ChooseForms stage=shaded
+```tsx figure=ChooseForms stage=shaded widths="44 30" sweep classes
 
 ```
 
@@ -113,7 +113,7 @@ The Scaffold follows its own width, not the window's.
 
 - Focus in a navigation that hides moves to the one that shows.
 
-```tsx figure=FormsByWidth stage=shaded widths="24 44 60"
+```tsx figure=FormsByWidth stage=shaded widths="24 44 54" sweep classes
 
 ```
 

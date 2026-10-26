@@ -46,14 +46,12 @@ examples:
   WithHeader: overview
   WithBreadcrumbs: example
   WithToolbar: example
-  Widths: example
   PageAnatomy: anatomy
   PageHeaderAnatomy: anatomy
   Sticky: example
   Gutters:
     role: example
     caption: The muted fill shows the gutter.
-  InANarrowPane: example
 ---
 
 # Page
@@ -87,9 +85,7 @@ A row below the title holds search, filters and view switches.
 | Large  | A dashboard, a list or a table. The default.       |
 | Full   | A board, a canvas or a wide table.                 |
 
-```tsx figure=Widths
-
-```
+<!-- specimen: ColumnWidths -->
 
 ### Without the gutter
 
@@ -138,11 +134,7 @@ The gutter at the page's sides is narrower in a compact region, such as on a pho
 - The title wraps too and is never cut short.
 - More actions than fit go in a [Menu](menu.md) as the last one.
 
-```tsx figure=Gutters widths="24 44"
-
-```
-
-```tsx figure=InANarrowPane widths="22 44"
+```tsx figure=Gutters widths="44 22" sweep classes
 
 ```
 

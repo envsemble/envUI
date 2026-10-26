@@ -51,6 +51,7 @@ composes:
   - Row
   - Column
   - Text
+  - useContainerSize
 examples:
   AppFrame:
     role: overview
@@ -119,7 +120,7 @@ The navigation takes the form the frame's width calls for: a bar on a phone, a r
 - With many destinations, or none with icons, a phone shows no bar.
 - A menu button in the top bar then opens the same Drawer in a [Sheet](../components/sheet.md).
 
-```tsx figure=MenuOnPhones stage=shaded
+```tsx figure=MenuOnPhones stage=shaded widths="22 44" sweep classes
 
 ```
 

@@ -95,11 +95,11 @@ The panes decide how they sit from their own width alone.
 - A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens.
 - In less room a list and its detail show one at a time, and a back button named after the list, here Team inbox, returns to it.
 
-```tsx figure=SupportingByWidth widths="24 44 60"
+```tsx figure=SupportingByWidth widths="24 44 54" sweep classes
 
 ```
 
-```tsx figure=ListDetailByWidth widths="24 60"
+```tsx figure=ListDetailByWidth widths="24 54" sweep classes
 
 ```
 

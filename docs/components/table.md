@@ -149,7 +149,7 @@ By default the columns keep their width and the region scrolls sideways.
 - A table can stack its rows instead where it is narrow, such as on a phone.
 - Each row then becomes a block titled by its first cell, with each other value beside its column's name.
 
-```tsx figure=StackedRows widths="22 44"
+```tsx figure=StackedRows widths="44 22" sweep
 
 ```
 

@@ -194,7 +194,7 @@ A field fills its container; set the width there.
 
 - A long prefix is cut short so the value keeps its room.
 
-```tsx figure=LongAddress widths="16 30"
+```tsx figure=LongAddress widths="30 16" sweep
 
 ```
 

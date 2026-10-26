@@ -94,7 +94,7 @@ A link scrolls its section to the top, below anything that stays there, such as 
 
 Long labels wrap onto more lines, and the shape runs beside all of them.
 
-```tsx figure=LongLabels widths="12 20"
+```tsx figure=LongLabels widths="20 12" sweep
 
 ```
 

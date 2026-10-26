@@ -93,7 +93,7 @@ Start with an unknown amount, show the share once it is known, and replace the b
 
 The bar fills its container. The label and the value wrap onto two lines where they don't fit.
 
-```tsx figure=LongTaskName widths="12 24"
+```tsx figure=LongTaskName widths="12 24" sweep
 
 ```
 

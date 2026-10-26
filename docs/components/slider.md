@@ -120,7 +120,7 @@ A slider fills its container.
 
 - Where it is narrow, a long label is cut short with an ellipsis, and the value keeps its room.
 
-```tsx figure=NarrowSlider widths="14 30"
+```tsx figure=NarrowSlider widths="30 10" sweep
 
 ```
 
