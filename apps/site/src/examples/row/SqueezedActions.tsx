@@ -2,8 +2,8 @@ import { Button, Row } from '@envsemble/envui';
 
 export default function SqueezedActions() {
   return (
-    // A narrow pane: without wrap, the buttons shrink and their labels break.
-    <Row align="center" justify="end" gap={4} style={{ inlineSize: '15rem' }}>
+    // As wide as its pane: without wrap, a narrow pane shrinks the buttons and breaks their labels.
+    <Row align="center" justify="end" gap={4} style={{ inlineSize: '100%' }}>
       <Button variant="secondary">Keep editing</Button>
       <Button>Publish the draft</Button>
     </Row>

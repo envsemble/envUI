@@ -79,11 +79,11 @@ A row that wraps runs onto more lines; it never turns into a column by itself; c
 
 A row that may get narrow wraps, so its children keep their shape.
 
-```tsx figure=WrappingActions
+```tsx figure=WrappingActions motion
 
 ```
 
-```tsx figure=SqueezedActions
+```tsx figure=SqueezedActions motion
 
 ```
 
