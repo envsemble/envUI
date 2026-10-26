@@ -9,6 +9,20 @@ import { existsSync } from 'node:fs';
 import { readFile, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
+/** Vite's build manifest: each module by its key, with its chunk and what it loads. */
+export type ViteManifest = Record<
+  string,
+  {
+    file: string;
+    src?: string;
+    css?: string[];
+    imports?: string[];
+    dynamicImports?: string[];
+    isEntry?: boolean;
+    isDynamicEntry?: boolean;
+  }
+>;
+
 /** Where the map is served from, relative to the site's root. */
 export const moduleFilesName = 'module-files.json';
 
@@ -16,29 +30,24 @@ export const moduleFilesName = 'module-files.json';
  * Maps each lazily loaded module of the catalogue's own source, by its path in the app such as
  * `src/examples/button/CreateProject.tsx` or `…CreateProject.tsx?raw`, to the files its load fetches:
  * its own chunk, and the chunks and styles it imports that the page has not loaded already.
- *
- * @param {Record<string, { file: string, src?: string, css?: string[], imports?: string[], isEntry?: boolean, isDynamicEntry?: boolean }>} manifest
- * @returns {Record<string, string[]>}
  */
-export function moduleFiles(manifest) {
-  /** @param {string} key @param {Set<string>} seen */
-  const closure = (key, seen = new Set()) => {
+export function moduleFiles(manifest: ViteManifest): Record<string, string[]> {
+  const closure = (key: string, seen = new Set<string>()): Set<string> => {
     if (seen.has(key) || !manifest[key]) return seen;
     seen.add(key);
     for (const imported of manifest[key].imports ?? []) closure(imported, seen);
     return seen;
   };
   // What the entry loads arrives with the page, which would not run without it.
-  const page = new Set();
+  const page = new Set<string>();
   for (const [key, chunk] of Object.entries(manifest)) if (chunk.isEntry) closure(key, page);
-  /** @type {Record<string, string[]>} */
-  const map = {};
+  const map: Record<string, string[]> = {};
   for (const [key, chunk] of Object.entries(manifest)) {
     if (!chunk.isDynamicEntry || !key.startsWith('src/')) continue;
     const keys = [...closure(key)].filter((imported) => imported === key || !page.has(imported));
     map[key] = [
       ...new Set(
-        keys.flatMap((imported) => [manifest[imported].file, ...(manifest[imported].css ?? [])]),
+        keys.flatMap((imported) => [manifest[imported]!.file, ...(manifest[imported]!.css ?? [])]),
       ),
     ];
   }

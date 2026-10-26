@@ -24,8 +24,11 @@ export function plainText(tokens) {
  * The headings of a Markdown document, in order, each with the id it takes in the catalogue and
  * its level. Pass the same `slug` to number repeated headings across parts of one document.
  */
-export function headingsOf(markdown, slug = headingSlugger()) {
-  const headings = [];
+export function headingsOf(
+  markdown: string,
+  slug = headingSlugger(),
+): { id: string; depth: number; text: string }[] {
+  const headings: { id: string; depth: number; text: string }[] = [];
   marked.walkTokens(marked.lexer(markdown), (token) => {
     if (token.type === 'heading')
       headings.push({ id: slug(plainText(token.tokens)), depth: token.depth, text: token.text });

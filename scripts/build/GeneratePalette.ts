@@ -147,7 +147,7 @@ function solve(grade, { h, c }) {
   // Rounding to 8 bits can push the luminance out of the band; search nearby lightness for the
   // in-band color closest to the target.
   const l = (low + high) / 2;
-  let best = null;
+  let best: { hex: string; distance: number } | null = null;
   for (let offset = 0; offset <= 0.02; offset += 0.0005) {
     for (const candidate of [l - offset, l + offset]) {
       const hex = colorAt(candidate);
@@ -234,7 +234,9 @@ export function paletteDocument(palette = generatePalette()) {
       },
     },
   };
-  for (const [name, scale] of Object.entries(palette)) {
+  for (const [name, scale] of Object.entries<Record<string, { oklch: number[]; hex: string }>>(
+    palette,
+  )) {
     document.palette[name] = { $description: hues[name].description };
     for (const [grade, color] of Object.entries(scale))
       document.palette[name][grade] = {

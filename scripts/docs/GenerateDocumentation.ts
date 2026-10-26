@@ -111,7 +111,7 @@ export function generateDocumentation() {
   if (!existsSync(generatedFile) || readFileSync(generatedFile, 'utf8') !== source)
     writeFileSync(generatedFile, source);
   // The catalogue's search index, of the same pages, props and the token list.
-  writeSearchIndex({ documents, props });
+  writeSearchIndex({ documents, props: props! });
   return documents;
 }
 

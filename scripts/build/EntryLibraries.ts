@@ -45,11 +45,11 @@ function runtimeImports(code) {
 export async function importedLibraries(repositoryRoot, entry) {
   const source = resolve(repositoryRoot, 'packages/ui/src');
   const start = resolve(source, `${entry === 'main' ? 'index' : entry}.ts`);
-  const libraries = new Set();
-  const seen = new Set();
-  const pending = [start];
+  const libraries = new Set<string>();
+  const seen = new Set<string>();
+  const pending: string[] = [start];
   while (pending.length) {
-    const file = pending.pop();
+    const file = pending.pop()!;
     if (seen.has(file)) continue;
     seen.add(file);
     const code = await readFile(file, 'utf8');

@@ -22,7 +22,7 @@ const window = { width: 1440, height: 900 };
 
 const browser = await chromium.launch();
 try {
-  for (const theme of ['light', 'dark']) {
+  for (const theme of ['light', 'dark'] as const) {
     const context = await browser.newPage({ viewport: window, colorScheme: theme });
     for (const { part, page } of pictures) {
       await context.goto(`${site}/${page}`, { waitUntil: 'networkidle' });

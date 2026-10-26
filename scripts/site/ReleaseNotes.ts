@@ -19,15 +19,30 @@ export const highlightLimit = 5;
  * A line of inline Markdown as pieces the page renders: text, `code` and [links](href), whose
  * text may hold code too.
  */
-export function inlinePieces(text) {
-  const pieces = [];
+/** A piece of a line of the release notes: text, code, or a link whose text has pieces of its own. */
+export type InlinePiece =
+  | { kind: 'text'; text: string }
+  | { kind: 'code'; text: string }
+  | { kind: 'link'; href: string; children: InlinePiece[] };
+
+/** One release's entry in the release notes. */
+export interface ReleaseEntry {
+  version: string;
+  date: string | null;
+  upcoming: boolean;
+  highlights: InlinePiece[][];
+  breaking: InlinePiece[][];
+}
+
+export function inlinePieces(text: string): InlinePiece[] {
+  const pieces: InlinePiece[] = [];
   const pattern = /\[([^\]]+)\]\(([^)\s]+)\)|`([^`]+)`/g;
   let last = 0;
   for (const match of text.matchAll(pattern)) {
     if (match.index > last) pieces.push({ kind: 'text', text: text.slice(last, match.index) });
     if (match[1] !== undefined)
-      pieces.push({ kind: 'link', href: match[2], children: inlinePieces(match[1]) });
-    else pieces.push({ kind: 'code', text: match[3] });
+      pieces.push({ kind: 'link', href: match[2]!, children: inlinePieces(match[1]) });
+    else pieces.push({ kind: 'code', text: match[3]! });
     last = match.index + match[0].length;
   }
   if (last < text.length) pieces.push({ kind: 'text', text: text.slice(last) });
@@ -35,9 +50,9 @@ export function inlinePieces(text) {
 }
 
 /** Reads the release notes' Markdown into entries, in the file's order. */
-export function parseReleaseNotes(markdown) {
-  const releases = [];
-  let list;
+export function parseReleaseNotes(markdown: string): ReleaseEntry[] {
+  const releases: ReleaseEntry[] = [];
+  let list: 'highlights' | 'breaking' = 'highlights';
   const source = markdown.replace(/\r\n?/g, '\n').replace(/<!--[\s\S]*?-->/g, '');
   for (const line of source.split('\n')) {
     const heading = /^## (\S+) — (.+)$/.exec(line);
@@ -65,7 +80,7 @@ export function parseReleaseNotes(markdown) {
     const item = /^- (.+)$/.exec(line);
     if (item) {
       if (!releases.length) throw new Error(`An item before the first release heading: ${line}`);
-      releases.at(-1)[list].push(inlinePieces(item[1].trim()));
+      releases.at(-1)![list].push(inlinePieces(item[1]!.trim()));
     }
   }
   return releases;

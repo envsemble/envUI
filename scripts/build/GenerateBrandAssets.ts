@@ -54,11 +54,11 @@ export function EnvUILogo({ label = 'envUI', ...props }: EnvUILogoProps) {
 }
 `;
   const target = resolve(root, 'apps/site/src/brand/EnvUILogo.tsx');
-  let existing;
+  let existing: string | undefined;
   try {
     existing = await readFile(target, 'utf8');
   } catch (error) {
-    if (error.code !== 'ENOENT') throw error;
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
   }
   if (existing !== output) await writeFile(target, output);
 }

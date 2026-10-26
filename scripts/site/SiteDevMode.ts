@@ -6,6 +6,7 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import type { ViteManifest } from './SiteModuleFiles.ts';
 
 /** The dev entry and the demo that loads it, as Vite's manifest keys them. */
 export const devEntry = '../../packages/ui/src/dev.ts';
@@ -17,27 +18,28 @@ export const devMarker = 'data-env-dev-host';
  * What is wrong with where the build put dev mode, as sentences; none when it is only in its own
  * chunks, which only the demo loads.
  *
- * @param {Record<string, { file: string, imports?: string[], dynamicImports?: string[], isEntry?: boolean, isDynamicEntry?: boolean }>} manifest
- * @param {Record<string, string>} contents Each JavaScript file of the build by its path, such as `assets/dev-1.js`.
- * @returns {string[]}
+ * `contents` holds each JavaScript file of the build by its path, such as `assets/dev-1.js`.
  */
-export function devModeProblems(manifest, contents) {
+export function devModeProblems(
+  manifest: ViteManifest,
+  contents: Record<string, string>,
+): string[] {
   const problems: string[] = [];
   const dev = manifest[devEntry];
   if (!dev?.isDynamicEntry) return [`${devEntry} is not a chunk of its own that loads lazily.`];
   /** @param {string} key @param {Set<string>} seen */
-  const closure = (key, seen = new Set()) => {
+  const closure = (key: string, seen = new Set<string>()): Set<string> => {
     if (seen.has(key) || !manifest[key]) return seen;
     seen.add(key);
     for (const imported of manifest[key].imports ?? []) closure(imported, seen);
     return seen;
   };
   // Dev mode's own chunks: what it imports that nothing else loads with it.
-  const others = new Set();
+  const others = new Set<string>();
   for (const [key, chunk] of Object.entries(manifest))
     if ((chunk.isEntry || chunk.isDynamicEntry) && key !== devEntry) closure(key, others);
   const own = [...closure(devEntry)].filter((key) => !others.has(key));
-  const ownFiles = new Set(own.map((key) => manifest[key].file));
+  const ownFiles = new Set(own.map((key) => manifest[key]!.file));
 
   for (const [key, chunk] of Object.entries(manifest))
     if (chunk.dynamicImports?.includes(devEntry) && key !== devModeDemo)
@@ -62,7 +64,7 @@ export function devModeProblems(manifest, contents) {
 export async function checkDevModeChunks(siteDirectory) {
   const manifestFile = resolve(siteDirectory, '.vite/manifest.json');
   if (!existsSync(manifestFile)) return false;
-  const manifest = JSON.parse(await readFile(manifestFile, 'utf8'));
+  const manifest: ViteManifest = JSON.parse(await readFile(manifestFile, 'utf8'));
   const files = [...new Set(Object.values(manifest).map((chunk) => chunk.file))].filter((file) =>
     file.endsWith('.js'),
   );

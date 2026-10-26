@@ -93,8 +93,8 @@ if (preflight) process.exit(0);
  * already maps the container's root to the host's user.
  */
 const hostUser =
-  process.platform === 'linux' && process.getuid() !== 0 && !info.stdout.includes('rootless')
-    ? `${process.getuid()}:${process.getgid()}`
+  process.platform === 'linux' && process.getuid!() !== 0 && !info.stdout.includes('rootless')
+    ? `${process.getuid!()}:${process.getgid!()}`
     : undefined;
 
 // One set of volumes per checkout, so worktrees with different lockfiles do not reinstall each other.

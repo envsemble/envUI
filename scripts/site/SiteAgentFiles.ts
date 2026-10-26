@@ -23,7 +23,10 @@ const libraryPackageFile = fileURLToPath(
 export const libraryVersion = () => JSON.parse(readFileSync(libraryPackageFile, 'utf8')).version;
 
 /** The setup skill for a version of envUI. */
-export function renderSkill({ version = libraryVersion(), template } = {}) {
+export function renderSkill({
+  version = libraryVersion(),
+  template,
+}: { version?: string; template?: string } = {}) {
   const source = (template ?? readFileSync(skillTemplateFile, 'utf8')).replace(/\r\n?/g, '\n');
   return source.replaceAll('{{version}}', version);
 }

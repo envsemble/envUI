@@ -41,7 +41,8 @@ export async function probe(port, id = checkoutId()) {
     });
     return (await response.text()).trim() === id ? 'ours' : 'other';
   } catch (error) {
-    const code = error?.cause?.code ?? error?.code;
+    const failure = error as { code?: string; cause?: { code?: string } };
+    const code = failure?.cause?.code ?? failure?.code;
     return code === 'ECONNREFUSED' ? 'free' : 'other';
   }
 }
@@ -58,10 +59,10 @@ export function checkoutPort(offset, id = checkoutId()) {
  * by another checkout or program gives way to this checkout's own.
  */
 export async function resolveServers(
-  servers,
+  servers: Record<string, { variable: string; port: number; offset: number }>,
   { ci = Boolean(process.env.CI), log = console.log } = {},
 ) {
-  const resolved = {};
+  const resolved: Record<string, { port: number; reuse: boolean }> = {};
   for (const [name, { variable, port: preferred, offset }] of Object.entries(servers)) {
     if (process.env.ENVUI_SERVERS_RESOLVED) {
       resolved[name] = { port: Number(process.env[variable]), reuse: true };

@@ -43,7 +43,7 @@ async function save(tab, png, name, theme) {
       const canvas = document.createElement('canvas');
       canvas.width = image.naturalWidth;
       canvas.height = image.naturalHeight;
-      canvas.getContext('2d').drawImage(image, 0, 0);
+      canvas.getContext('2d')!.drawImage(image, 0, 0);
       return canvas.toDataURL('image/webp', quality).split(',')[1];
     },
     { data: png.toString('base64'), quality },

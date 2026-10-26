@@ -50,24 +50,46 @@ export const bin = {
  * A task: `run` is [command, ...args]; `env` adds variables. `stream` prints its output as it comes,
  * for the one long task a phase waits on. `optional` failures warn rather than fail.
  */
-export function task(name, run, options = {}) {
+/** A command a check runs, and how it reports. */
+export interface Task {
+  name: string;
+  run: string[];
+  env?: Record<string, string>;
+  stream?: boolean;
+  optional?: boolean;
+  /** Printed after its name, such as how many files it covers. */
+  detail?: string;
+  /** Prints its output also when it passes. */
+  echo?: boolean;
+}
+
+/** How a task went. */
+export interface TaskResult {
+  name: string;
+  ok: boolean;
+  optional?: boolean;
+  ms: number;
+  detail?: string;
+}
+
+export function task(name: string, run: string[], options: Omit<Task, 'name' | 'run'> = {}): Task {
   return { name, run, ...options };
 }
 
-const results = [];
+const results: TaskResult[] = [];
 
 /** Runs one task and records its result. */
-export function runTask(item) {
+export function runTask(item: Task): Promise<TaskResult> {
   const started = performance.now();
   return new Promise((done) => {
-    const [command, ...args] = item.run;
+    const [command, ...args] = item.run as [string, ...string[]];
     const child = spawn(command, args, {
       cwd: repositoryRoot,
       env: { ...process.env, FORCE_COLOR: color ? '1' : '0', ...item.env },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let output = '';
-    const collect = (chunk) => {
+    const collect = (chunk: Buffer | string) => {
       if (item.stream) process.stdout.write(chunk);
       else output += chunk;
     };
@@ -79,7 +101,13 @@ export function runTask(item) {
     child.on('close', (code) => {
       const ms = performance.now() - started;
       const ok = code === 0;
-      const result = { name: item.name, ok, optional: item.optional, ms, detail: item.detail };
+      const result: TaskResult = {
+        name: item.name,
+        ok,
+        optional: item.optional,
+        ms,
+        detail: item.detail,
+      };
       results.push(result);
       const mark = ok ? green('✔') : item.optional ? yellow('!') : red('✖');
       console.log(
@@ -101,14 +129,17 @@ export function runTask(item) {
 }
 
 /** Runs tasks side by side and waits for all of them. */
-export function parallel(tasks) {
-  return Promise.all(tasks.filter(Boolean).map(runTask));
+export function parallel(tasks: readonly (Task | false | undefined)[]) {
+  return Promise.all(tasks.filter((item): item is Task => Boolean(item)).map(runTask));
 }
 
 /** Runs tasks one after another; stops at the first failure unless `keepGoing`. */
-export async function series(tasks, { keepGoing = false } = {}) {
-  const done = [];
-  for (const item of tasks.filter(Boolean)) {
+export async function series(
+  tasks: readonly (Task | false | undefined)[],
+  { keepGoing = false } = {},
+): Promise<TaskResult[]> {
+  const done: TaskResult[] = [];
+  for (const item of tasks.filter((entry): entry is Task => Boolean(entry))) {
     const result = await runTask(item);
     done.push(result);
     if (!result.ok && !result.optional && !keepGoing) break;
@@ -116,7 +147,7 @@ export async function series(tasks, { keepGoing = false } = {}) {
   return done;
 }
 
-function tail(text, lines) {
+function tail(text: string, lines: number) {
   const all = text.trimEnd().split(/\r?\n/);
   return (
     all.length > lines ? [`… ${all.length - lines} earlier lines`, ...all.slice(-lines)] : all

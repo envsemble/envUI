@@ -16,9 +16,8 @@ export const headersFile = fileURLToPath(
  * @param {string} text
  * @returns {{ pattern: string, set: [string, string][], remove: string[] }[]}
  */
-export function parseHeaders(text) {
-  /** @type {{ pattern: string, set: [string, string][], remove: string[] }[]} */
-  const rules = [];
+export function parseHeaders(text: string) {
+  const rules: { pattern: string; set: [string, string][]; remove: string[] }[] = [];
   for (const [index, line] of text.split(/\r?\n/).entries()) {
     if (line.trim() === '' || line.trimStart().startsWith('#')) continue;
     if (!/^\s/.test(line)) {

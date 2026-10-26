@@ -8,11 +8,22 @@
 // --files      check these paths instead of the branch's changes, such as to try the selection
 // --dry-run    print the selection and stop
 import { changedFiles, selectScope, serversFor, specNeeds, unitTestFiles } from './TestScope.ts';
-import { bin, bold, dim, parallel, red, series, summary, task, yellow } from './TestTasks.ts';
+import {
+  bin,
+  bold,
+  dim,
+  parallel,
+  red,
+  series,
+  summary,
+  task,
+  yellow,
+  type Task,
+} from './TestTasks.ts';
 
 const started = performance.now();
 const argv = process.argv.slice(2);
-const option = (name) => {
+const option = (name: string) => {
   const index = argv.indexOf(name);
   return index === -1 ? undefined : argv[index + 1];
 };
@@ -20,9 +31,10 @@ const affected = argv.includes('--affected');
 const dryRun = argv.includes('--dry-run');
 const tier = affected ? 'check:affected' : 'check';
 
-let paths;
-if (option('--files')) {
-  paths = option('--files').split(',').filter(Boolean);
+let paths: string[];
+const files = option('--files');
+if (files) {
+  paths = files.split(',').filter(Boolean);
   console.log(bold(`${tier}: ${paths.length} given files`));
 } else {
   const { base, mergeBase, changes } = changedFiles({ base: option('--base') });
@@ -54,7 +66,7 @@ const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpec
 // The site build takes seconds, so the fast tier builds it when its specs open it.
 const builds = {
   library: affected && scope.build.library,
-  site: browserSpecs.some((name) => needs.get(name).site),
+  site: browserSpecs.some((name) => needs.get(name)!.site),
 };
 
 // What runs, and why.
@@ -75,7 +87,7 @@ const shown = affected ? [...browserSpecs, ...live] : browserSpecs;
 if (shown.length)
   console.log(
     `  browser specs in ${affected ? 'Chromium, and their @engines tests in Firefox and WebKit' : 'Chromium'}:\n${shown
-      .map((name) => `    ${name} ${dim(`← ${[...scope.specs.get(name)].join('; ')}`)}`)
+      .map((name) => `    ${name} ${dim(`← ${[...(scope.specs.get(name) ?? [])].join('; ')}`)}`)
       .join('\n')}`,
   );
 else console.log('  browser specs: none for this change');
@@ -98,8 +110,8 @@ console.log('');
 if (dryRun) process.exit(0);
 
 // Tasks.
-const node = (script, ...args) => [...bin.node, script, ...args];
-const staticTasks = [];
+const node = (script: string, ...args: string[]) => [...bin.node, script, ...args];
+const staticTasks: Task[] = [];
 if (scope.whole.lint)
   staticTasks.push(
     task('eslint', [...bin.eslint, '.', '--cache', '--cache-location', '.cache/eslint/']),
@@ -142,6 +154,7 @@ if (scope.typecheck)
     ['site', 'apps/site/tsconfig.json'],
     ['types', 'tests/types/tsconfig.json'],
     ['fixture', 'tests/fixture/tsconfig.json'],
+    ['scripts', 'scripts/tsconfig.json'],
   ])
     staticTasks.push(
       task(`tsc ${name}`, [
@@ -167,7 +180,7 @@ if (scope.generated.has('docs'))
       node(
         'scripts/docs/GenerateParts.ts',
         '--check',
-        ...(option('--base') ? ['--base', option('--base')] : []),
+        ...(option('--base') ? ['--base', option('--base')!] : []),
       ),
     ),
     task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
@@ -183,7 +196,7 @@ staticTasks.push(
 // The catalogue reads the generated documentation, which is not committed.
 await series([task('generate documentation', node('scripts/docs/GenerateDocumentation.ts'))]);
 
-const browserTask = (names, projects, label) =>
+const browserTask = (names: string[], projects: string[], label: string) =>
   task(
     label,
     [
@@ -203,8 +216,8 @@ const browserTask = (names, projects, label) =>
       detail: `${names.length} specs`,
     },
   );
-const npmScript = (name) => series([task(name, [...bin.npm, 'run', '-s', name])]);
-const catalogueBuilds = [builds.site && npmScript('build:site')].filter(Boolean);
+const npmScript = (name: string) => series([task(name, [...bin.npm, 'run', '-s', name])]);
+const catalogueBuilds = builds.site ? [npmScript('build:site')] : [];
 
 if (!affected) {
   // The browser specs start once the site build they open, if any, is done.

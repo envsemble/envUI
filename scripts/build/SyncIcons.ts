@@ -15,17 +15,29 @@ if (
 ) {
   throw new Error('Usage: node scripts/build/SyncIcons.ts [--revision <full upstream commit SHA>]');
 }
-const previous = await readFile(manifestPath, 'utf8')
+/** An icon of the manifest: its name and its two variants, by fill, with their files' hashes. */
+interface ManifestIcon {
+  name: string;
+  upstreamTreeSha?: string;
+  variants: Record<
+    string,
+    { source: string; sha256: string; upstreamPath?: string; gitBlobSha?: string }
+  >;
+}
+const previous: { upstream: { revision: string }; icons: ManifestIcon[] } | null = await readFile(
+  manifestPath,
+  'utf8',
+)
   .then(JSON.parse)
   .catch(() => null);
 const revision = args[1] ?? previous?.upstream.revision ?? initialRevision;
 const repository = 'https://github.com/google/material-design-icons';
 const api = 'https://api.github.com/repos/google/material-design-icons/git/trees/';
 const raw = `https://raw.githubusercontent.com/google/material-design-icons/${revision}/`;
-const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
-const gitBlobHash = (bytes) =>
+const hash = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
+const gitBlobHash = (bytes: Buffer) =>
   createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
-async function download(url) {
+async function download(url: string): Promise<Buffer> {
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
       const response = await fetch(url, {
@@ -39,6 +51,7 @@ async function download(url) {
       await new Promise((done) => setTimeout(done, 1000 * (attempt + 1)));
     }
   }
+  throw new Error(`Could not download ${url}`);
 }
 async function tree(sha) {
   const result = JSON.parse((await download(api + sha)).toString('utf8'));
@@ -59,7 +72,7 @@ const assets = resolve(packageRoot, 'src/assets/material-symbols-rounded');
 await mkdir(assets, { recursive: true });
 const previousIcons = new Map(previous?.icons.map((icon) => [icon.name, icon]) ?? []);
 let completed = 0;
-const icons = new Array(catalogue.length);
+const icons: ManifestIcon[] = new Array(catalogue.length);
 let cursor = 0;
 async function worker() {
   while (cursor < catalogue.length) {
@@ -73,8 +86,11 @@ async function worker() {
       const saved =
         previous?.upstream.revision === revision &&
         previousIcons.get(entry.path)?.variants[String(fill)];
-      let bytes = saved && (await readFile(resolve(packageRoot, source)).catch(() => null));
-      if (!bytes || hash(bytes) !== saved.sha256) bytes = await download(raw + upstreamPath);
+      let bytes: Buffer | null = saved
+        ? await readFile(resolve(packageRoot, source)).catch(() => null)
+        : null;
+      if (!saved || !bytes || hash(bytes) !== saved.sha256)
+        bytes = await download(raw + upstreamPath);
       if (!bytes.toString('utf8').startsWith('<svg'))
         throw new Error(`Not an SVG: ${upstreamPath}`);
       await writeFile(resolve(packageRoot, source), bytes);

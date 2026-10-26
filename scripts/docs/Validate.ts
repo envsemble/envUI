@@ -17,7 +17,6 @@ import {
   sourcePattern,
   statuses,
   type ExampleEntry,
-  type Frontmatter,
 } from './Schema.ts';
 
 /** A figure of a foundation's page, or an example file placed as a figure. */

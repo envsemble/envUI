@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 export const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
 /** Components and fixtures whose spec has another name: name → the specs about it. */
-export const aliases = {
+export const aliases: Record<string, string[]> = {
   SearchField: ['TextField'],
   Affixes: ['TextField'],
   Select: ['Forms'],
@@ -130,7 +130,7 @@ const catalogue = [
 ];
 
 /** Paths that name no component, by prefix, and the specs they run. */
-export const exceptions = [
+export const exceptions: [RegExp, string[]][] = [
   [
     /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/(?:Tokens\w*|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:BuildTokens|GeneratePalette)\.ts$/,
     shared,
@@ -155,11 +155,12 @@ export const exceptions = [
 /** More specs than this importing a changed helper leaves it to `npm run verify`. */
 const helperBudget = 8;
 
-const specFile = (name) => `tests/browser/${name}.spec.ts`;
-const baseName = (path) => posix.basename(path).replace(/\.(?:spec\.ts|tsx?|css|m?js|html)$/, '');
+const specFile = (name: string) => `tests/browser/${name}.spec.ts`;
+const baseName = (path: string) =>
+  posix.basename(path).replace(/\.(?:spec\.ts|tsx?|css|m?js|html)$/, '');
 
 /** What a spec needs beyond the development servers, read from its source. */
-export function specNeeds(name, root = repositoryRoot) {
+export function specNeeds(name: string, root = repositoryRoot) {
   const source = read(root, specFile(name));
   return {
     // Opens the hosted build, which npm run build:site writes.
@@ -177,19 +178,19 @@ export function specNeeds(name, root = repositoryRoot) {
  * The browser specs a change runs, by name (Button for tests/browser/Button.spec.ts), each with
  * why, and the paths that run none.
  */
-export function specsFor(paths, root = repositoryRoot) {
-  const specs = new Map();
+export function specsFor(paths: readonly string[], root = repositoryRoot) {
+  const specs = new Map<string, Set<string>>();
   const unmatched: string[] = [];
   // By name, as written: a file system that ignores case would find Table.spec.ts for table.
   const written = new Set(walk(root, 'tests/browser', /\.spec\.ts$/).map(baseName));
-  const exists = (name) => written.has(name);
-  const add = (name, reason) => {
+  const exists = (name: string) => written.has(name);
+  const add = (name: string, reason: string) => {
     if (!exists(name)) return false;
     if (!specs.has(name)) specs.set(name, new Set());
-    specs.get(name).add(reason);
+    specs.get(name)!.add(reason);
     return true;
   };
-  const helpers = new Map();
+  const helpers = new Map<string, string[]>();
   for (const path of paths) {
     let found = false;
     if (/^tests\/browser\/[^/]+\.spec\.ts$/.test(path)) found = add(baseName(path), 'changed spec');
@@ -209,7 +210,7 @@ export function specsFor(paths, root = repositoryRoot) {
         .basename(posix.dirname(path))
         .replace(/(?:^|-)([a-z])/g, (_, letter) => letter.toUpperCase());
       const candidates = [name, name.replace(/e?s$/, ''), name.replace(/s$/, ''), folder];
-      const specsOf = (each) =>
+      const specsOf = (each: string) =>
         Object.hasOwn(aliases, each) ? aliases[each] : exists(each) ? [each] : [];
       const component = candidates.find((each) => specsOf(each).length);
       for (const spec of component ? specsOf(component) : [])
@@ -226,14 +227,14 @@ export function specsFor(paths, root = repositoryRoot) {
  * What a change needs, by file: the static checks, the generated-file checks, the browser specs
  * and the builds those open.
  */
-export function selectScope(paths, root = repositoryRoot) {
+export function selectScope(paths: readonly string[], root = repositoryRoot) {
   const scope = {
-    lint: [],
-    css: [],
-    format: [],
+    lint: [] as string[],
+    css: [] as string[],
+    format: [] as string[],
     whole: { lint: false, css: false, format: false },
     typecheck: false,
-    generated: new Set(),
+    generated: new Set<string>(),
     build: { library: false, site: false },
   };
   for (const path of paths) {
@@ -242,7 +243,11 @@ export function selectScope(paths, root = repositoryRoot) {
     if (exists && /^(?:packages\/ui\/src|apps\/site\/src)\/.*\.css$/.test(path))
       scope.css.push(path);
     if (exists) scope.format.push(path);
-    if (/^(?:packages\/ui\/src|apps\/site\/src|tests\/fixture|tests\/types)\/.*\.tsx?$/.test(path))
+    if (
+      /^(?:packages\/ui\/src|apps\/site\/src|tests\/fixture|tests\/types|scripts)\/.*\.tsx?$/.test(
+        path,
+      )
+    )
       scope.typecheck = true;
     if (/(?:^|\/)tsconfig\.json$/.test(path)) scope.typecheck = true;
     // Repository-wide configuration reruns the whole of its check.
@@ -290,8 +295,8 @@ export function selectScope(paths, root = repositoryRoot) {
 }
 
 /** Which development servers the specs need, for ENVUI_SERVERS. */
-export function serversFor(names, root = repositoryRoot) {
-  const servers = new Set();
+export function serversFor(names: readonly string[], root = repositoryRoot) {
+  const servers = new Set<string>();
   for (const name of names) {
     const source = read(root, specFile(name));
     if (/\bsiteDevUrl\b/.test(source)) servers.add('site');
@@ -304,23 +309,30 @@ export function serversFor(names, root = repositoryRoot) {
 // Changed files
 
 /** Parses `git diff --name-status -z` output into { status, path, from } entries. */
-export function parseNameStatus(text) {
+/** A changed file, and for a rename or copy the path it came from. */
+export interface Change {
+  status: string;
+  path: string;
+  from?: string;
+}
+
+export function parseNameStatus(text: string): Change[] {
   const fields = text.split('\0').filter((field) => field !== '');
-  const entries = [];
+  const entries: Change[] = [];
   for (let index = 0; index < fields.length; ) {
-    const status = fields[index++];
+    const status = fields[index++]!;
     if (/^[RC]/.test(status)) {
       const from = fields[index++];
-      const path = fields[index++];
-      entries.push({ status: status[0], from, path });
-    } else entries.push({ status: status[0], path: fields[index++] });
+      const path = fields[index++]!;
+      entries.push({ status: status[0]!, from, path });
+    } else entries.push({ status: status[0]!, path: fields[index++]! });
   }
   return entries;
 }
 
 /** Merges diff entries and untracked paths, one entry per path, sorted. */
-export function mergeChanges(entries, untracked = []) {
-  const byPath = new Map();
+export function mergeChanges(entries: readonly Change[], untracked: readonly string[] = []) {
+  const byPath = new Map<string, Change>();
   for (const entry of entries) byPath.set(entry.path, entry);
   for (const path of untracked) if (!byPath.has(path)) byPath.set(path, { status: 'A', path });
   return [...byPath.values()].sort((a, b) => a.path.localeCompare(b.path));
@@ -329,7 +341,7 @@ export function mergeChanges(entries, untracked = []) {
 /** The integration branches a change is compared with, in order of preference. */
 export const defaultBases = ['origin/envui-1.0', 'origin/dev'];
 
-function git(args, root) {
+function git(args: string[], root: string) {
   return execFileSync('git', args, {
     cwd: root,
     encoding: 'utf8',
@@ -343,11 +355,14 @@ function git(args, root) {
  * untracked ones. The branch is `base`, else ENVUI_BASE, else the first of defaultBases that exists.
  */
 /** The branches to compare with, in order: `base`, else ENVUI_BASE, else defaultBases. */
-export function baseCandidates(base) {
+export function baseCandidates(base?: string): string[] {
   return base ? [base] : process.env.ENVUI_BASE ? [process.env.ENVUI_BASE] : defaultBases;
 }
 
-export function changedFiles({ root = repositoryRoot, base } = {}) {
+export function changedFiles({
+  root = repositoryRoot,
+  base,
+}: { root?: string; base?: string } = {}) {
   const candidates = baseCandidates(base);
   const found = candidates.find((ref) => {
     try {
@@ -371,7 +386,7 @@ export function changedFiles({ root = repositoryRoot, base } = {}) {
   return { base: found, mergeBase, changes: mergeChanges(entries, untracked) };
 }
 
-function walk(root, directory, pattern) {
+function walk(root: string, directory: string, pattern: RegExp): string[] {
   const absolute = resolve(root, directory);
   if (!existsSync(absolute)) return [];
   const found: string[] = [];
@@ -383,7 +398,7 @@ function walk(root, directory, pattern) {
   return found;
 }
 
-const read = (root, path) => readFileSync(resolve(root, path), 'utf8');
+const read = (root: string, path: string) => readFileSync(resolve(root, path), 'utf8');
 
 /**
  * The unit test files, split into those that read the library build (packages/ui/dist, or a packed

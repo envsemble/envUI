@@ -121,7 +121,7 @@ function documentation(declaration) {
       .map((doc) => text(doc.comment))
       .filter(Boolean)
       .join(' '),
-    default: tag('default') ? text(tag('default').comment) : undefined,
+    default: tag('default') ? text(tag('default')!.comment) : undefined,
     deprecated: deprecated ? text(deprecated.comment) || true : undefined,
   };
 }
@@ -241,7 +241,7 @@ export function extractProps() {
    * undefined when one of them cannot be shown that way.
    */
   function inlined(expression, seen) {
-    const replacements = [];
+    const replacements: { start: number; end: number; text: string }[] = [];
     let unresolved = false;
     const visit = (node) => {
       if (unresolved) return;
@@ -430,7 +430,8 @@ export function extractProps() {
     const native = spread.length
       ? spread
       : [...new Set(formProperties.flatMap((properties) => nativeElement(properties)))];
-    const props = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- a prop's record, as props.json holds it
+    const props: Record<string, any>[] = [];
     for (const [name, occurrences] of byName) {
       const present = occurrences.filter((occurrence) => !occurrence.absent);
       if (!present.length) continue;
@@ -453,7 +454,7 @@ export function extractProps() {
         listed.declarations.find((d) => originOf(d) !== 'native');
       const origin = originOf(declaration);
       const { required, requiredWhen } = requirement(name, formProperties);
-      const texts = new Set(
+      const texts = new Set<string>(
         present
           .filter((o) => o.declarations.some((d) => originOf(d) !== 'native'))
           .map((o) => {
@@ -506,9 +507,9 @@ export function extractProps() {
   function requirement(name, formProperties) {
     const find = (properties, candidate) =>
       properties.find((property) => property.name === candidate);
-    const requiredForms = (candidate) =>
-      new Set(
-        formProperties.flatMap((properties, index) => {
+    const requiredForms = (candidate: string) =>
+      new Set<number>(
+        formProperties.flatMap((properties, index): number[] => {
           const property = find(properties, candidate);
           return property && !property.optional && !property.absent ? [index] : [];
         }),
@@ -524,9 +525,9 @@ export function extractProps() {
             (member) => member.isLiteral() || member.flags & ts.TypeFlags.BooleanLiteral,
           )
         : [];
-    const candidates = [...new Set(formProperties.flat().map((property) => property.name))].filter(
-      (candidate) => candidate !== name,
-    );
+    const candidates = [
+      ...new Set<string>(formProperties.flat().map((property) => property.name)),
+    ].filter((candidate) => candidate !== name);
     for (const candidate of candidates) {
       const properties = formProperties.map((properties) => find(properties, candidate));
       const inside = [...requiredIn].map((index) => properties[index]);
