@@ -24,7 +24,7 @@ export interface WaveLayout {
   top: number;
   /** Where it ends: the bottom of the last entry's text. */
   bottom: number;
-  /** Its width at its fullest, which is also its box's: it runs down the box's middle. */
+  /** Its width at its fullest, which is also its box's: it runs down the box's start. */
   full: number;
 }
 
@@ -88,8 +88,9 @@ export function wavePlace(position: number): number {
 const round = (value: number) => Math.round(value * 100) / 100;
 
 /**
- * The shape's outline as SVG path data: down its right edge and back up its left, each a point
- * every two pixels where its width changes, with round ends.
+ * The shape's outline as SVG path data: straight down its start edge, at the box's start, and
+ * swelling only toward its end, so at the reader's place it is as wide as the box; a point every
+ * two pixels where its width changes, with round ends.
  */
 export function wavePath(
   layout: WaveLayout,
@@ -98,41 +99,46 @@ export function wavePath(
 ): string {
   const { anchors, top, bottom, full } = layout;
   if (anchors.length === 0 || !(bottom > top) || !(full > 0)) return '';
-  const middle = full / 2;
-  const half = (y: number) => {
+  const width = (y: number) => {
     const swell = swellAt(entryAt(anchors, y), place, hovers);
-    return (full * (waveThin + (1 - waveThin) * swell)) / 2;
+    return full * (waveThin + (1 - waveThin) * swell);
   };
   // The ends are round, as wide as the shape there, and never overlap.
   const room = (bottom - top) / 2;
-  const startRadius = Math.min(half(top), room);
-  const endRadius = Math.min(half(bottom), room);
+  const startRadius = Math.min(width(top) / 2, room);
+  const endRadius = Math.min(width(bottom) / 2, room);
   const from = top + startRadius;
   const to = bottom - endRadius;
-  // The edge's heights and half-widths, leaving out points inside a run of one width.
+  // The end edge's heights and widths, leaving out points inside a run of one width.
   const edge: [number, number][] = [];
   for (let y = from; y < to + step; y += step) {
     const at = Math.min(y, to);
-    const width = at === from ? startRadius : at === to ? endRadius : half(at);
+    const across = at === from ? startRadius * 2 : at === to ? endRadius * 2 : width(at);
     const last = edge.at(-1);
     const before = edge.at(-2);
-    if (last && before && last[1] === width && before[1] === width) last[0] = at;
-    else edge.push([at, width]);
+    if (last && before && last[1] === across && before[1] === across) last[0] = at;
+    else edge.push([at, across]);
     if (at === to) break;
   }
   const point = (x: number, y: number) => `${round(x)} ${round(y)}`;
-  const right = edge.map(([y, width]) => `L${point(middle + width, y)}`).join('');
-  const left = edge
-    .slice()
-    .reverse()
-    .map(([y, width]) => `L${point(middle - width, y)}`)
-    .join('');
+  const end = edge.map(([y, across]) => `L${point(across, y)}`).join('');
   return (
-    `M${point(middle - startRadius, from)}` +
-    `A${round(startRadius)} ${round(startRadius)} 0 0 1 ${point(middle + startRadius, from)}` +
-    right +
-    `A${round(endRadius)} ${round(endRadius)} 0 0 1 ${point(middle - endRadius, to)}` +
-    left +
+    `M${point(0, from)}` +
+    `A${round(startRadius)} ${round(startRadius)} 0 0 1 ${point(startRadius * 2, from)}` +
+    end +
+    `A${round(endRadius)} ${round(endRadius)} 0 0 1 ${point(0, to)}` +
     'Z'
   );
+}
+
+/**
+ * The height of a fractional entry index, between two entries' middles in proportion: where the
+ * shape changes from the passed sections' color to the coming ones', at its swell's apex.
+ */
+export function heightAt(anchors: readonly number[], index: number): number {
+  if (anchors.length === 0) return 0;
+  const below = Math.max(0, Math.min(anchors.length - 1, Math.floor(index)));
+  const above = Math.min(anchors.length - 1, below + 1);
+  const share = Math.max(0, Math.min(1, index - below));
+  return anchors[below]! + (anchors[above]! - anchors[below]!) * share;
 }

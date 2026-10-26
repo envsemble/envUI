@@ -27,7 +27,7 @@ import {
   type SectionPosition,
   type TableOfContentsItem,
 } from './internal/contentsOutline.js';
-import { swellAt, wavePath, wavePlace, type WaveLayout } from './internal/contentsWave.js';
+import { heightAt, wavePath, wavePlace, type WaveLayout } from './internal/contentsWave.js';
 
 export type { TableOfContentsItem } from './internal/contentsOutline.js';
 
@@ -320,20 +320,12 @@ export function TableOfContents({
         layout = measureWave(body, svg);
         if (!layout) return;
         hovers = layout.anchors.map((_, index) => (index === hovered ? 1 : 0));
-        const anchors = layout.anchors;
         const height = body.offsetHeight || 1;
-        // A stop at each entry and halfway to the next, where the shape's color is measured.
-        svg.querySelectorAll('stop').forEach((stop, index) => {
-          const at = anchors[Math.floor(index / 2)] ?? 0;
-          const next = anchors[Math.floor(index / 2) + 1] ?? at;
-          const y = index % 2 === 0 ? at : (at + next) / 2;
-          stop.setAttribute('offset', (y / height).toFixed(4));
-        });
         const gradient = svg.querySelector('linearGradient');
         if (gradient && !gradient.id) {
           // An id of its own on the page, which no other contents share, also in another root.
           gradient.id = `env-table-of-contents-wave-${Math.random().toString(36).slice(2)}`;
-          svg.querySelector('path')?.setAttribute('fill', `url(#${gradient.id})`);
+          svg.querySelector('path:last-of-type')?.setAttribute('fill', `url(#${gradient.id})`);
         }
         gradient?.setAttribute('y2', String(height));
       }
@@ -356,15 +348,16 @@ export function TableOfContents({
         moving = true;
         return next;
       });
-      svg.querySelector('path')?.setAttribute('d', wavePath(layout, place, hovers));
-      // Each color stop takes the shape's swell where it sits, and whether the reader has passed it.
-      svg.querySelectorAll<SVGStopElement>('stop').forEach((stop, index) => {
-        const at = index / 2;
-        const reach = swellAt(at, place, hovers).toFixed(3);
-        if (stop.style.getPropertyValue('--env-table-of-contents-reach') !== reach) {
-          stop.style.setProperty('--env-table-of-contents-reach', reach);
-        }
-        stop.toggleAttribute('data-read', place !== null && at < place);
+      const outline = wavePath(layout, place, hovers);
+      svg.querySelectorAll('path').forEach((path) => path.setAttribute('d', outline));
+      // The fill over the track ends at the swell's apex, as a slider's at its thumb: the passed
+      // sections above, the coming ones below. Without a place, all is still to come.
+      const apex =
+        place === null
+          ? '0'
+          : (heightAt(layout.anchors, place) / (body.offsetHeight || 1)).toFixed(4);
+      svg.querySelectorAll<SVGStopElement>('stop').forEach((stop) => {
+        if (stop.getAttribute('offset') !== apex) stop.setAttribute('offset', apex);
       });
       if (moving) drawFrame = requestAnimationFrame(draw);
       else drawn = 0;
@@ -541,12 +534,13 @@ export function TableOfContents({
         >
           <defs>
             <linearGradient gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="0">
-              {/* One at each entry and one halfway to the next. */}
-              {Array.from({ length: Math.max(0, flat.length * 2 - 1) }, (_, index) => (
-                <stop key={index} />
-              ))}
+              {/* The fill, then none, both at the apex: a hard edge. */}
+              <stop data-read="" />
+              <stop />
             </linearGradient>
           </defs>
+          {/* The track, the whole shape; the fill over it, down to the apex. */}
+          <path />
           <path />
         </svg>
         <List items={items} current={current} passed={passed} depth={0} onNavigate={navigate} />

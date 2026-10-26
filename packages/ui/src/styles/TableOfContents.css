@@ -52,11 +52,11 @@
 }
 
 /* The shape, in the column at the list's start, the same beside every level, from the first
-   label's top to the last one's bottom. The component draws its outline every frame the reader's
-   place moves, and sets on each of its color stops, at each entry and halfway to the next, its
-   reach: from 1 at the reader's place to 0 three sections away. There it takes the text color,
-   blending into the edge color over the sections passed and the muted edge color over those
-   still to come. The one under the pointer swells it a little. */
+   label's top to the last one's bottom, straight along the column's start and swelling toward its
+   end. The component draws its outline every frame the reader's place moves, twice, as a slider
+   draws its track and its fill over it: the fill ends at the swell's apex, so the sections passed,
+   above it, have both, and those still to come only the track. The one under the pointer swells
+   it a little. */
 .env-table-of-contents-wave {
   position: absolute;
   inset-block: 0;
@@ -66,19 +66,18 @@
   overflow: visible;
   pointer-events: none;
 }
+.env-table-of-contents-wave path:first-of-type {
+  fill: var(--env-color-bg-neutral-muted);
+}
 .env-table-of-contents-wave stop {
-  stop-color: color-mix(
-    in oklch,
-    var(--env-color-fg-default) calc(var(--env-table-of-contents-reach, 0) * 100%),
-    var(--env-color-border-muted)
-  );
+  stop-color: transparent;
 }
 .env-table-of-contents-wave stop[data-read] {
-  stop-color: color-mix(
-    in oklch,
-    var(--env-color-fg-default) calc(var(--env-table-of-contents-reach, 0) * 100%),
-    var(--env-color-border-default)
-  );
+  stop-color: var(--env-color-bg-neutral-subtle-pressed);
+}
+/* In right-to-left text, the straight edge is at the start, on the right. */
+.env-table-of-contents-wave:dir(rtl) {
+  scale: -1 1;
 }
 .env-table-of-contents .env-table-of-contents-link[data-passed],
 .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
@@ -115,7 +114,10 @@
   .env-table-of-contents-wave {
     forced-color-adjust: none;
   }
-  .env-table-of-contents-wave path {
-    fill: CanvasText;
+  .env-table-of-contents-wave path:first-of-type {
+    fill: GrayText;
+  }
+  .env-table-of-contents-wave stop[data-read] {
+    stop-color: CanvasText;
   }
 }

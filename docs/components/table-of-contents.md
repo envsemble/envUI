@@ -73,18 +73,18 @@ A section need not be a heading: name any part of the page, such as a card or a 
 3. **Link** (`env-table-of-contents-link`)
 4. **Current section** (`env-table-of-contents-link[aria-current='location']`)
 
-Not shown: the sections before the current one, beside a darker line.
+Not shown: the sections before the current one, beside the shape's fill.
 
 ## Behaviour
 
 ### The reader's place
 
-One shape down the side of the list marks where the reader is, like a brush stroke.
+One shape down the side of the list marks where the reader is, like a slider's track.
 
-- It is widest beside the current section, in the text color, and runs thin and quieter a few sections away.
+- It is straight along the list's start and swells toward the labels, widest beside the current section, thin a few sections away.
+- Like a slider's fill, it is darker beside the sections passed, down to the swell's apex, than beside those still to come, whose labels are quieter too, so the list reads as how far the reader has come.
 - It moves with the page as it scrolls, resting on each section and gliding on to the next as the reader nears it.
 - It moves at once, without gliding, where reduced motion is preferred.
-- Its line is darker beside the sections passed than beside those still to come, whose labels are quieter too, so the list reads as how far the reader has come.
 - The section under the pointer swells it a little.
 
 <!-- specimen: ReadersPlace -->
@@ -145,7 +145,7 @@ Use the headings' own words, or a short name a reader would find on the page.
 - A `nav` landmark named On this page, from `messages.tableOfContents`, around nested ordered lists of links.
 - `aria-current="location"` on the link of the section the reader is in.
 - Links that scroll smoothly, or at once where reduced motion is preferred, add the section to the address and move focus to it, so reading and the keyboard go on from there.
-- A shape hidden from assistive technology, which reads the current link instead; in forced colors it takes the system's text color, its width still marking the place.
+- A shape hidden from assistive technology, which reads the current link instead; in forced colors it takes the system's gray text color, and the system's text color beside the sections passed, its width still marking the place.
 
 ### You provide
 
@@ -191,10 +191,10 @@ The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, wh
 
 The reader's place is `env-table-of-contents-wave`, an SVG hidden from assistive technology in the body's start column, `--env-table-of-contents-stroke` wide at its fullest, `--env-space-3` by default, and a fifth of that elsewhere. The component draws its outline every frame the place moves, without rendering again, from the links' layout positions.
 
-- Its color is `--env-color-fg-default` at the reader's place, blending into `--env-color-border-default` beside the sections passed and `--env-color-border-muted` beside those to come.
-- It glides after the scroll with a short ease, at once under reduced motion; in forced colors it is `CanvasText`.
+- It is drawn twice, as a slider's track and fill: the whole shape in `--env-color-bg-neutral-muted`, and over it, down to the swell's apex, `--env-color-bg-neutral-subtle-pressed`, the slider's colors. In right-to-left text, its straight edge is on the right.
+- It glides after the scroll with a short ease, at once under reduced motion; in forced colors the track is `GrayText` and the fill `CanvasText`.
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: The reader's place is one shape down the side of the list, like a brush stroke, widest and in the text color beside the current section and running thin a few sections away, instead of a dash before each section. Inside a transformed or zoomed container, the current section is measured in the scrolling area's own pixels.
+- **1.0.0-prerelease.5**: The reader's place is one shape down the side of the list instead of a dash before each section: straight along the list's start and swelling toward the labels beside the current section, thin a few sections away, in a slider's track color, with its fill over the sections passed. Inside a transformed or zoomed container, the current section is measured in the scrolling area's own pixels.
 - **1.0.0**: TableOfContents: the page's headings or sections of your own, nested, with the current section marked as the reader scrolls.

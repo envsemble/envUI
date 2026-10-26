@@ -40,6 +40,7 @@ const {
   uniqueId,
   currentSection,
   swellAt,
+  heightAt,
   wavePath,
   wavePlace,
   waveThin,
@@ -189,17 +190,26 @@ test("the shape swells at the reader's place, half one entry away, and none thre
   assert.equal(swellAt(0, null, []), 0);
 });
 
-test("the shape's outline is widest beside the reader's place, thin away, with round ends", () => {
+test("the shape's outline is straight at its start, widest beside the reader's place, with round ends", () => {
   const layout = { anchors: [10, 40, 70, 100, 130, 160], top: 4, bottom: 166, full: 12 };
   const path = wavePath(layout, 2, []);
   const edge = [...path.matchAll(/L([\d.]+) ([\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]);
-  const right = edge.slice(0, edge.length / 2);
-  const widest = Math.max(...right.map(([x]) => x));
+  const widest = Math.max(...edge.map(([x]) => x));
   assert.equal(widest, 12);
-  assert.ok(Math.abs(right.find(([x]) => x === widest)[1] - 70) <= 1);
-  // Three entries away, as thin as it gets: a fifth of its fullest, about the middle.
-  assert.equal(Math.min(...right.map(([x]) => x)), 6 + (12 * waveThin) / 2);
+  assert.ok(Math.abs(edge.find(([x]) => x === widest)[1] - 70) <= 1);
+  // Three entries away, as thin as it gets: a fifth of its fullest.
+  assert.ok(Math.abs(Math.min(...edge.map(([x]) => x)) - 12 * waveThin) < 0.01);
+  // It starts and ends at the box's start: the closing edge is straight down it.
+  assert.match(path, /^M0 [\d.]+A[^L]*L.*A[\d. ]+ 0 0 1 0 [\d.]+Z$/);
   assert.equal((path.match(/A/g) ?? []).length, 2);
-  assert.match(path, /^M.*Z$/);
   assert.equal(wavePath({ ...layout, anchors: [] }, 0, []), '');
+});
+
+test("the shape's two colors meet at its apex, between entries in proportion", () => {
+  const anchors = [10, 40, 70];
+  assert.equal(heightAt(anchors, 0), 10);
+  assert.equal(heightAt(anchors, 1.5), 55);
+  assert.equal(heightAt(anchors, 2), 70);
+  assert.equal(heightAt(anchors, 5), 70);
+  assert.equal(heightAt([], 1), 0);
 });
