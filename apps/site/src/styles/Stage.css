@@ -56,6 +56,29 @@
   box-shadow: var(--catalogue-card-shadow);
 }
 
+/* A tile under the pointer, or with the keyboard on its link, as its picture comes alive
+   (previews/Motion.tsx): its canvas a shade deeper in the light themes and a shade lighter in the
+   dark ones, eased, with no outline. */
+.catalogue-related-stage {
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+
+@media (hover: hover) {
+  :is(.catalogue-gallery-tile, .catalogue-related-tile):hover .catalogue-related-stage {
+    background-color: light-dark(
+      oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.06) c h),
+      oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.02) c h)
+    );
+  }
+}
+
+:is(.catalogue-gallery-tile, .catalogue-related-tile):has(:focus-visible) .catalogue-related-stage {
+  background-color: light-dark(
+    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.06) c h),
+    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.02) c h)
+  );
+}
+
 /* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its
    navigation, top bar and body, whose edges must show on the canvas. In the dark themes the
    canvas is already deeper than both, the navigation being lighter than the page. In the light
@@ -331,8 +354,9 @@
   pointer-events: none;
 }
 
-/* A picture: the overlays are shown in place, without the motion that brings them in. */
-.catalogue-overlay-layer * {
+/* A picture: the overlays are shown in place, without the motion that brings them in. A page's own
+   tile, which plays, keeps their motion. */
+:not(.catalogue-related-canvas[data-tile]) > .catalogue-overlay-layer * {
   transition: none;
   animation: none;
 }

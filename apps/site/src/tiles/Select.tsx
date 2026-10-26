@@ -1,33 +1,39 @@
 import { Select } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../previews/Motion';
 
 const options = [
   { value: 'team', label: 'Team' },
   { value: 'private', label: 'Private' },
 ];
 
-/*
- * Open on Team, then closed on Private, open on Private and closed on Team, back to the start.
- * Select opens only by itself or with defaultOpen, so each step remounts it, open or closed.
- */
-const steps = [900, 900, 1100, 900];
-const shown = [
-  { value: 'team', open: true },
-  { value: 'private', open: false },
-  { value: 'private', open: true },
-  { value: 'team', open: false },
+const trigger = '.env-select-trigger';
+const option = (index: number) => `.env-select-item:nth-child(${index})`;
+
+/** Opened and Private chosen; opened again and Team chosen, as it began. */
+const script: PointerStep[] = [
+  { wait: 300 },
+  { to: trigger },
+  { wait: 400 },
+  { click: true },
+  { wait: 600 },
+  { to: option(2), duration: 500 },
+  { wait: 300 },
+  { click: true },
+  { wait: 1000 },
+  { to: trigger, duration: 400 },
+  { wait: 200 },
+  { click: true },
+  { wait: 600 },
+  { to: option(1), duration: 500 },
+  { wait: 300 },
+  { click: true },
+  { wait: 600 },
+  { leave: true },
+  { wait: 400 },
 ];
 
-/** A select, open on its options, choosing one and then the other. */
+/** A select. */
 export default function SelectTile() {
-  const { value, open } = shown[useTimeline(steps)]!;
-  return (
-    <Select
-      key={`${value}-${open}`}
-      aria-label="Visibility"
-      items={options}
-      value={value}
-      defaultOpen={open}
-    />
-  );
+  usePointer(script);
+  return <Select aria-label="Visibility" items={options} defaultValue="team" />;
 }

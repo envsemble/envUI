@@ -62,14 +62,9 @@
   content: '';
 }
 
-/* The pointer over a tile, or the keyboard on its link, lifts its picture a little. */
-.catalogue-gallery-tile:has(.catalogue-gallery-link:is(:hover, :focus-visible))
-  .catalogue-gallery-stage {
+/* The keyboard on a tile's link rings its picture, as focus does; the pointer only shades it
+   (Stage.css). */
+.catalogue-gallery-tile:has(.catalogue-gallery-link:focus-visible) .catalogue-gallery-stage {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
-}
-
-.catalogue-gallery-tile:has(.catalogue-gallery-link:hover:not(:focus-visible))
-  .catalogue-gallery-stage {
-  outline-color: var(--env-color-border-default);
 }

@@ -416,12 +416,38 @@ test('every tile of the galleries of components and patterns is fitted, shown wh
         const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
         const canvas = tile.querySelector<HTMLElement>('.catalogue-related-canvas[data-fitted]');
         if (!canvas || !/scale\(/.test(canvas.style.transform)) return [`${name}: not fitted`];
-        // What shows, as the fit measures it: not a layer or positioner over the whole window,
-        // which shows nothing of its own, nor a visually hidden pixel, such as a form's input.
+        // What shows, as the fit measures it (Related.tsx): what paints something of its own,
+        // a fill, an edge, a shadow, text or a picture, and not a visually hidden pixel, such as
+        // a form's input; a box that only lays out others, such as an avatar group's room to
+        // spread, shows nothing.
         const window = canvas.getBoundingClientRect();
         const scale = window.width / canvas.offsetWidth;
+        const clear = (color: string) =>
+          color === 'transparent' || /rgba\([^)]*,\s*0\)$|\/\s*0\)$/.test(color);
+        const paints = (element: Element) => {
+          if (/^(img|svg|canvas|video|input|textarea|select|hr)$/i.test(element.localName))
+            return true;
+          const style = getComputedStyle(element);
+          if (style.opacity === '0') return false;
+          if (!clear(style.backgroundColor) || style.backgroundImage !== 'none') return true;
+          if (style.boxShadow !== 'none') return true;
+          if (
+            ['top', 'right', 'bottom', 'left'].some(
+              (side) =>
+                parseFloat(style.getPropertyValue(`border-${side}-width`)) > 0 &&
+                style.getPropertyValue(`border-${side}-style`) !== 'none' &&
+                !clear(style.getPropertyValue(`border-${side}-color`)),
+            )
+          )
+            return true;
+          return [...element.childNodes].some(
+            (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+          );
+        };
         const shown = [...canvas.querySelectorAll('*')]
           .filter((element) => element.checkVisibility({ visibilityProperty: true }))
+          .filter((element) => !element.closest('svg') || element.localName === 'svg')
+          .filter(paints)
           .map((element) => element.getBoundingClientRect())
           .filter((box) => box.width > scale && box.height > scale)
           .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);

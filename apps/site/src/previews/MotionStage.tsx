@@ -18,13 +18,14 @@ export function MotionStage({ label, children }: { label: string; children: Reac
   // The figure's own choice, and the sidebar's at the time, which it overrides only while that holds.
   const [own, setOwn] = useState<{ paused: boolean; over: boolean } | null>(null);
   const stage = useRef<HTMLDivElement>(null);
+  const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
   const paused = own && own.over === motionPaused ? own.paused : motionPaused;
   const action = paused ? `Play ${label}` : `Pause ${label}`;
   return (
     <div ref={stage} className="site-live-example catalogue-motion-stage">
-      <div inert aria-hidden className="catalogue-motion-subject">
-        <Playback playing={inView && !paused} rest="hold">
+      <div ref={setSubject} inert aria-hidden className="catalogue-motion-subject">
+        <Playback playing={inView && !paused} rest="hold" root={subject}>
           {children}
         </Playback>
       </div>

@@ -1,32 +1,48 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Toast, useToast } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../previews/Motion';
 
-const steps = [500, 1800];
+/** Its action pressed, the notification goes, and a moment later the next comes. */
+const script: PointerStep[] = [
+  { wait: 400 },
+  { to: '.env-toast-action' },
+  { wait: 600 },
+  { click: true },
+  { wait: 200 },
+  { leave: true },
+  { wait: 1200 },
+];
 
-/** A notification, and a second one that arrives above it and leaves again. */
-function Notices() {
+/** A notification of an archived project, with Undo, shown again after its action ran. */
+function Notice() {
   const toast = useToast();
-  const step = useTimeline(steps);
+  const [shown, setShown] = useState(true);
+  usePointer(script);
   useEffect(() => {
+    if (!shown) {
+      const timer = setTimeout(() => setShown(true), 600);
+      return () => clearTimeout(timer);
+    }
     const id = toast.show({
       message: 'Project archived.',
-      action: { label: 'Undo', onClick: () => {} },
+      action: {
+        label: 'Undo',
+        onClick: () => {
+          toast.dismiss(id);
+          setShown(false);
+        },
+      },
     });
     return () => toast.dismiss(id);
-  }, [toast]);
-  useEffect(() => {
-    if (step !== 1) return;
-    const id = toast.show({ tone: 'success', message: 'Invitation sent.', duration: Infinity });
-    return () => toast.dismiss(id);
-  }, [toast, step]);
+  }, [toast, shown]);
   return null;
 }
 
+/** A notification. */
 export default function ToastTile() {
   return (
     <Toast.Provider>
-      <Notices />
+      <Notice />
     </Toast.Provider>
   );
 }

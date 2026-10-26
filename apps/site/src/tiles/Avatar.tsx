@@ -1,6 +1,5 @@
-import type { CSSProperties } from 'react';
 import { AvatarGroup } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../previews/Motion';
 
 const people = [
   { id: 1, name: 'Alex Morgan' },
@@ -8,15 +7,17 @@ const people = [
   { id: 3, name: 'Priya Shah' },
 ];
 
-const steps = [700, 1400];
+/** Hovered, the pile spreads its people apart; left, it gathers again. */
+const script: PointerStep[] = [
+  { wait: 300 },
+  { to: '.env-avatar-group > :first-child' },
+  { wait: 1600 },
+  { leave: true },
+  { wait: 900 },
+];
 
-/*
- * A group of people's avatars, spread apart as a pointer on it spreads them, so they fill the room
- * the group keeps and sit centred in it; then gathered into its pile, and spread again. The
- * stylesheet spreads it by --env-avatar-group-spread, which the tile sets as a pointer would.
- */
+/** A pile of people's avatars. */
 export default function AvatarTile() {
-  const step = useTimeline(steps);
-  const style = { '--env-avatar-group-spread': step === 0 ? 1 : 0 } as CSSProperties;
-  return <AvatarGroup people={people} size="lg" style={style} />;
+  usePointer(script);
+  return <AvatarGroup people={people} size="lg" />;
 }

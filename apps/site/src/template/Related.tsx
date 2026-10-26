@@ -156,32 +156,68 @@ const inset = 16;
 /** The most a page's own tile is enlarged: written for its small window, it is drawn large. */
 const most = 2;
 
+/** Whether a color paints anything: not transparent, nor of no alpha. */
+const opaque = (color: string) =>
+  color !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(color) && !/\/\s*0\)$/.test(color);
+
+/** Elements that are their own picture, whatever their style. */
+const pictures = /^(img|svg|canvas|video|input|textarea|select|hr)$/i;
+
 /**
- * The boxes a preview shows, in the canvas's own px: each outermost box that has a size and isn't
- * a scrim or a positioner over the whole canvas, such as a dialog's.
+ * Whether an element paints something of its own: a fill, an image, an edge, a shadow, text, or a
+ * picture such as an icon. A box that only lays out others, such as an avatar group's row, which
+ * keeps the room its avatars spread into, paints nothing, so what it holds is measured instead.
+ */
+function paints(element: Element, style: CSSStyleDeclaration) {
+  if (pictures.test(element.localName)) return true;
+  if (opaque(style.backgroundColor) || style.backgroundImage !== 'none') return true;
+  if (style.boxShadow !== 'none') return true;
+  for (const side of ['Top', 'Right', 'Bottom', 'Left'] as const)
+    if (
+      parseFloat(style.getPropertyValue(`border-${side.toLowerCase()}-width`)) > 0 &&
+      style.getPropertyValue(`border-${side.toLowerCase()}-style`) !== 'none' &&
+      opaque(style.getPropertyValue(`border-${side.toLowerCase()}-color`))
+    )
+      return true;
+  return [...element.childNodes].some(
+    (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+  );
+}
+
+/**
+ * The boxes a preview paints, in the canvas's own px (paints), so what is centred is what shows
+ * rather than the boxes that lay it out. A scrim or a positioner over the whole canvas, such as a
+ * dialog's, counts only for what it holds; what is hidden, transparent or a visually hidden pixel
+ * doesn't count.
  */
 function shownBoxes(canvas: HTMLElement) {
   const frame = canvas.getBoundingClientRect();
   const scale = frame.width / canvas.offsetWidth || 1;
   const area = { width: canvas.offsetWidth, height: canvas.offsetHeight };
-  const found: { element: HTMLElement; box: DOMRect }[] = [];
+  const found: { element: Element; box: DOMRect }[] = [];
+  // The canvas hides until it is first fitted, and what it holds with it: only what hides by
+  // itself is hidden.
+  const shown = getComputedStyle(canvas).visibility;
   const visit = (element: Element) => {
     for (const child of element.children) {
-      if (!(child instanceof HTMLElement)) continue;
+      const style = getComputedStyle(child);
+      if (style.display === 'none' || style.opacity === '0') continue;
+      if (style.visibility === 'hidden' && shown !== 'hidden') continue;
       const rect = child.getBoundingClientRect();
-      // Content that overflows its box, such as a long label, counts too.
       const box = new DOMRect(
         (rect.left - frame.left) / scale,
         (rect.top - frame.top) / scale,
-        Math.max(rect.width / scale, child.scrollWidth),
-        Math.max(rect.height / scale, child.scrollHeight),
+        rect.width / scale,
+        rect.height / scale,
       );
       const covers =
         box.width >= area.width - 1 &&
         box.height >= area.height - 1 &&
-        /absolute|fixed/.test(getComputedStyle(child).position);
-      if (box.width > 1 && box.height > 1 && !covers) found.push({ element: child, box });
-      else visit(child);
+        /absolute|fixed/.test(style.position);
+      if (box.width > 1 && box.height > 1 && !covers && paints(child, style))
+        found.push({ element: child, box });
+      // A picture's parts are the picture; anything else may hold more that shows.
+      if (!pictures.test(child.localName)) visit(child);
     }
   };
   visit(canvas);
@@ -193,21 +229,16 @@ function shownBoxes(canvas: HTMLElement) {
  * size a box to what its content measures. It follows the stage's width, the preview as it loads
  * and resizes, and the overlays as they open, are placed and finish their transitions: each change
  * fits it again in the next frame, however late it comes, so no timing decides whether it fits.
+ * A page's own tile is drawn at its window's scale and centred on what it paints, still or
+ * playing: as it plays, the view eases after what it shows, as a camera would, never jumping.
  */
 function useFit(
   stage: RefObject<HTMLElement | null>,
   canvas: RefObject<HTMLElement | null>,
   on: boolean,
   whole: boolean,
-  playing: boolean,
   tile: boolean,
 ) {
-  // While its animation plays, a preview keeps the fit of its still, so it doesn't move or scale
-  // as it changes; it fits again once it rests.
-  const held = useRef(playing);
-  useLayoutEffect(() => {
-    held.current = playing;
-  }, [playing]);
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const canvasElement = canvas.current;
@@ -219,8 +250,29 @@ function useFit(
     };
     const resize = new ResizeObserver(update);
     const largest = tile ? most : 1;
+    // The view: where the canvas is, and where it eases to. Each frame closes a share of the way
+    // left, so a target that moves as the preview changes is followed without restarting.
+    const view = { x: 0, y: 0, scale: 1, toX: 0, toY: 0, frame: 0, last: 0 };
+    const place = () => {
+      const transform = `translate(${-view.x}px, ${-view.y}px) scale(${view.scale})`;
+      if (canvasElement.style.transform !== transform) canvasElement.style.transform = transform;
+    };
+    const glide = (now: number) => {
+      const elapsed = Math.min(64, now - (view.last || now - 16));
+      view.last = now;
+      const share = 1 - Math.exp(-elapsed / 110);
+      view.x += (view.toX - view.x) * share;
+      view.y += (view.toY - view.y) * share;
+      const settled = Math.abs(view.toX - view.x) < 0.25 && Math.abs(view.toY - view.y) < 0.25;
+      if (settled) {
+        view.x = view.toX;
+        view.y = view.toY;
+      }
+      place();
+      view.frame = settled ? 0 : requestAnimationFrame(glide);
+    };
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
     const fit = () => {
-      if (held.current) return;
       const boxes = shownBoxes(canvasElement);
       if (!boxes.length) return;
       const left = Math.min(...boxes.map(({ box }) => box.left));
@@ -233,7 +285,7 @@ function useFit(
       // kind is drawn at one scale; a gallery's draws what overflows it smaller. A page's own tile
       // is written for its window, so its scale is the window's alone: one that followed its
       // popups would move them, as they are placed again at each scale, and never settle. Either
-      // way, what the preview shows is centred, not its window.
+      // way, what the preview paints is centred, not its window.
       const windowScale = Math.min(
         largest,
         width / canvasElement.offsetWidth,
@@ -242,10 +294,21 @@ function useFit(
       const scale = tile
         ? windowScale
         : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
-      const x = ((left + right) / 2) * scale;
-      const y = ((top + bottom) / 2) * scale;
-      const transform = `translate(${-x}px, ${-y}px) scale(${scale})`;
-      if (canvasElement.style.transform !== transform) canvasElement.style.transform = transform;
+      view.toX = ((left + right) / 2) * scale;
+      view.toY = ((top + bottom) / 2) * scale;
+      // A tile in place eases to where it is fitted next; anything else is placed at once.
+      const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
+      if (eases && view.scale === scale) {
+        if (!view.frame) {
+          view.last = 0;
+          view.frame = requestAnimationFrame(glide);
+        }
+      } else {
+        view.x = view.toX;
+        view.y = view.toY;
+        view.scale = scale;
+        place();
+      }
       canvasElement.dataset.fitted = '';
       for (const { element } of boxes) resize.observe(element);
     };
@@ -277,6 +340,7 @@ function useFit(
       canvasElement.removeEventListener('transitionend', update);
       canvasElement.removeEventListener('animationend', update);
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(view.frame);
       changes.disconnect();
       resize.disconnect();
     };
@@ -312,13 +376,15 @@ export function TilePreview({
   const plays = playing && !motionPaused;
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLDivElement>(null);
+  // The canvas, for the pointer no one sees, which finds the preview's elements in it.
+  const [canvasElement, setCanvasElement] = useState<HTMLDivElement | null>(null);
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   const shown = Boolean(preview && near);
   const subject =
     preview &&
     (Composition ? (
       <Suspense fallback={null}>
-        <Playback playing={plays} rest="start">
+        <Playback playing={plays} rest="start" root={canvasElement}>
           <Composition />
         </Playback>
       </Suspense>
@@ -328,7 +394,7 @@ export function TilePreview({
       <ExampleRender page={preview.page} name={preview.name} fallback={null} />
     ));
   const tile = Boolean(preview?.tile);
-  useFit(stage, canvas, shown, whole || tile, plays, tile);
+  useFit(stage, canvas, shown, whole || tile, tile);
   return (
     <Theme
       {...theme}
@@ -344,7 +410,10 @@ export function TilePreview({
       ) : (
         shown && (
           <div
-            ref={canvas}
+            ref={(element) => {
+              canvas.current = element;
+              setCanvasElement(element);
+            }}
             className="catalogue-related-canvas"
             data-tile={preview.tile ? '' : undefined}
             style={

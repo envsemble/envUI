@@ -1,11 +1,30 @@
 import { Slider } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../previews/Motion';
 
-const steps = [500, 1200, 1200];
-const values = [40, 80, 20];
+const control = '.env-slider-control';
 
-/** A slider, its value moving up and down. */
+/*
+ * Hovered at its value, which shows the handle and the ruler; pressed there and dragged up, down
+ * and back to where it began, and let go.
+ */
+const script: PointerStep[] = [
+  { wait: 300 },
+  { to: control, x: 0.4 },
+  { wait: 500 },
+  { press: true },
+  { to: control, x: 0.85, duration: 900 },
+  { wait: 250 },
+  { to: control, x: 0.2, duration: 1100 },
+  { wait: 250 },
+  { to: control, x: 0.4, duration: 700 },
+  { release: true },
+  { wait: 500 },
+  { leave: true },
+  { wait: 500 },
+];
+
+/** A slider. */
 export default function SliderTile() {
-  const step = useTimeline(steps);
-  return <Slider label="Volume" value={values[step]} style={{ inlineSize: '9rem' }} />;
+  usePointer(script);
+  return <Slider label="Volume" defaultValue={40} style={{ inlineSize: '9rem' }} />;
 }

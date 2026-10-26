@@ -1,19 +1,24 @@
 import {
   createContext,
+  Fragment,
   use,
   useEffect,
+  useRef,
   useState,
   type FocusEvent,
   type PointerEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
+import { isVirtual, VirtualPointer } from './VirtualPointer';
 
 /*
  * The site's animated previews: a tile's, which plays while the pointer or the keyboard is on it,
  * and an animated figure's on a page, which plays while it is in view unless it is paused. Each is
- * the live component driven through its props by a timeline of steps, so its still is the
- * animation resting on its first step, never a picture. Only timers run, and only while it plays.
+ * the live component, used as a person would use it: a pointer no one sees hovers, presses and
+ * drags it (usePointer), and where something else changes, such as a notification arriving, a
+ * timeline of steps changes its props (useTimeline). Its still is the animation at its start,
+ * never a picture.
  */
 
 /** How the animations inside a preview play. */
@@ -21,23 +26,39 @@ interface PlaybackValue {
   /** Whether they play now. */
   playing: boolean;
   /**
-   * Where they rest once they stop: back at the first step, the still, as a tile does when the
-   * pointer leaves it, or where they are, as a paused figure does.
+   * Where they rest once they stop: back at the start, the still, as a tile does when the pointer
+   * leaves it, or where they are, as a paused figure does.
    */
   rest: 'start' | 'hold';
+  /** The preview's element, which holds the component and its popups. */
+  root: HTMLElement | null;
 }
 
-const PlaybackContext = createContext<PlaybackValue>({ playing: false, rest: 'start' });
+const PlaybackContext = createContext<PlaybackValue>({ playing: false, rest: 'start', root: null });
 
-/** Plays or stops the animations of a preview, its timelines (useTimeline). */
+/**
+ * Plays or stops the animations of a preview. A preview that rests at its start is drawn anew as it
+ * stops, so it is its still again, whatever its animation changed.
+ */
 export function Playback({
   playing,
   rest,
+  root,
   children,
 }: PlaybackValue & {
   children: ReactNode;
 }) {
-  return <PlaybackContext value={{ playing, rest }}>{children}</PlaybackContext>;
+  const [round, setRound] = useState(0);
+  const [wasPlaying, setWasPlaying] = useState(playing);
+  if (wasPlaying !== playing) {
+    setWasPlaying(playing);
+    if (!playing && rest === 'start') setRound(round + 1);
+  }
+  return (
+    <PlaybackContext value={{ playing, rest, root }}>
+      <Fragment key={round}>{children}</Fragment>
+    </PlaybackContext>
+  );
 }
 
 /**
@@ -47,7 +68,7 @@ export function Playback({
  * holds where it is, as its preview rests.
  *
  *     const step = useTimeline([600, 1200]);
- *     return <Switch label="Wi-Fi" checked={step === 1} />;
+ *     return <Toast ... />;
  */
 export function useTimeline(durations: readonly number[]) {
   const { playing, rest } = use(PlaybackContext);
@@ -65,6 +86,162 @@ export function useTimeline(durations: readonly number[]) {
 }
 
 /**
+ * One step of what the pointer no one sees does:
+ * - `wait`, ms: it stays as it is, over the preview or not, pressed or not.
+ * - `to`, a selector of an element in the preview: it moves to a point of it, `x` and `y` as
+ *   fractions of its box, the middle by default, over `duration` ms, or comes there at once if it
+ *   wasn't over the preview. Pressed, it drags.
+ * - `press`, `release`: its button; `click` presses and releases it a moment later.
+ * - `leave`: it goes off the preview, releasing first.
+ */
+export type PointerStep =
+  | { wait: number }
+  | { to: string; x?: number; y?: number; duration?: number }
+  | { press: true }
+  | { release: true }
+  | { click: true }
+  | { leave: true };
+
+/** A point of an element of the preview, as fractions of its box. */
+interface Aim {
+  selector: string;
+  x: number;
+  y: number;
+}
+
+/** What the pointer does over a script's time: its moves, and its presses, releases and leaves. */
+interface Plan {
+  length: number;
+  moves: { start: number; end: number; from: Aim | null; to: Aim }[];
+  happenings: { time: number; kind: 'press' | 'release' | 'leave' }[];
+}
+
+/** How long a click holds the button. */
+const clickHold = 90;
+
+function planOf(script: readonly PointerStep[]): Plan {
+  const plan: Plan = { length: 0, moves: [], happenings: [] };
+  let time = 0;
+  let at: Aim | null = null;
+  for (const step of script) {
+    if ('wait' in step) time += step.wait;
+    else if ('to' in step) {
+      const to = { selector: step.to, x: step.x ?? 0.5, y: step.y ?? 0.5 };
+      const duration = step.duration ?? 0;
+      plan.moves.push({ start: time, end: time + duration, from: at, to });
+      at = to;
+      time += duration;
+    } else if ('press' in step) plan.happenings.push({ time, kind: 'press' });
+    else if ('release' in step) plan.happenings.push({ time, kind: 'release' });
+    else if ('click' in step) {
+      plan.happenings.push({ time, kind: 'press' });
+      time += clickHold;
+      plan.happenings.push({ time, kind: 'release' });
+    } else {
+      plan.happenings.push({ time, kind: 'leave' });
+      at = null;
+    }
+  }
+  plan.length = Math.max(time, 1);
+  return plan;
+}
+
+/** Eases a move in and out, as a hand does. */
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+
+/** Where an aim is in the viewport now, or nothing where its element isn't shown. */
+function pointOf(scope: Element, aim: Aim) {
+  const element = scope.querySelector(aim.selector);
+  if (!element) return null;
+  const box = element.getBoundingClientRect();
+  return { x: box.left + box.width * aim.x, y: box.top + box.height * aim.y };
+}
+
+/** Whether the pointer is over the preview at a time: after a move began and no leave since. */
+function presentAt(plan: Plan, time: number) {
+  const entered = Math.max(
+    -1,
+    ...plan.moves.filter((move) => move.start <= time).map((m) => m.start),
+  );
+  const left = Math.max(
+    -1,
+    ...plan.happenings.filter((h) => h.kind === 'leave' && h.time <= time).map((h) => h.time),
+  );
+  return entered >= 0 && entered > left;
+}
+
+/** Where the pointer is at a time: along its move, or where its last move ended. */
+function positionAt(scope: Element, plan: Plan, time: number) {
+  const move = plan.moves.filter((item) => item.start <= time).at(-1);
+  if (!move) return null;
+  const to = pointOf(scope, move.to);
+  if (time >= move.end || !move.from) return to;
+  const from = pointOf(scope, move.from);
+  if (!from || !to) return to;
+  const progress = ease((time - move.start) / (move.end - move.start));
+  return { x: from.x + (to.x - from.x) * progress, y: from.y + (to.y - from.y) * progress };
+}
+
+/**
+ * Plays a script of what the pointer no one sees does over the preview's live component, in a loop
+ * while the preview plays: it hovers, presses, drags and releases it by the same events a mouse
+ * sends, so the component shows its own hover, press and drag (VirtualPointer.ts). Its clock runs
+ * only while the preview plays, so a paused figure holds mid-drag. Write the script to end where it
+ * began, off the preview and released, so the loop starts again from the still.
+ */
+export function usePointer(script: readonly PointerStep[]) {
+  const { playing, root } = use(PlaybackContext);
+  const pointer = useRef<VirtualPointer | null>(null);
+  const clock = useRef({ time: 0, done: -1 });
+  const [plan] = useState(() => planOf(script));
+  useEffect(
+    () => () => {
+      pointer.current?.dispose();
+      pointer.current = null;
+    },
+    [],
+  );
+  useEffect(() => {
+    if (!playing || !root) return;
+    const scope = root;
+    const current = (pointer.current ??= new VirtualPointer(scope));
+    let last = performance.now();
+    let frame = 0;
+    /** Moves the pointer on to a time of the plan, sending what happens on the way. */
+    const advance = (to: number) => {
+      const { done } = clock.current;
+      for (const happening of plan.happenings) {
+        if (happening.time <= done || happening.time > to) continue;
+        const at = positionAt(scope, plan, happening.time);
+        if (at && presentAt(plan, happening.time - 0.001)) current.moveTo(at);
+        if (happening.kind === 'press') current.press();
+        else if (happening.kind === 'release') current.release();
+        else current.leave();
+      }
+      if (presentAt(plan, to)) {
+        const at = positionAt(scope, plan, to);
+        if (at) current.moveTo(at);
+      } else if (current.present) current.leave();
+      clock.current.done = to;
+    };
+    const tick = (now: number) => {
+      const state = clock.current;
+      state.time += now - last;
+      last = now;
+      if (state.time >= plan.length) {
+        advance(plan.length);
+        state.time %= plan.length;
+        state.done = -1;
+      }
+      advance(state.time);
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [playing, root, plan]);
+}
+
+/**
  * Whether a tile plays: while a pointer rests on it or the keyboard is on its link. A finger's tap
  * follows the link, so touch doesn't play it. Spread the handlers on the tile.
  */
@@ -72,8 +249,13 @@ export function usePlaying() {
   const [pointer, setPointer] = useState(false);
   const [keyboard, setKeyboard] = useState(false);
   const handlers = {
-    onPointerEnter: (event: PointerEvent) => setPointer(event.pointerType !== 'touch'),
-    onPointerLeave: () => setPointer(false),
+    // The pointer no one sees, inside the tile's own preview, isn't the reader's.
+    onPointerEnter: (event: PointerEvent) => {
+      if (!isVirtual(event.nativeEvent)) setPointer(event.pointerType !== 'touch');
+    },
+    onPointerLeave: (event: PointerEvent) => {
+      if (!isVirtual(event.nativeEvent)) setPointer(false);
+    },
     onFocus: (event: FocusEvent) => setKeyboard(event.target.matches(':focus-visible')),
     onBlur: () => setKeyboard(false),
   };
