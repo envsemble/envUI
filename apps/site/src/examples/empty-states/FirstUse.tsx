@@ -21,7 +21,14 @@ export default function FirstUse() {
 
   return (
     <Column gap={4}>
-      <Row wrap align="center" justify="between" gap={3}>
+      {/* As tall as its button from the start, so the heading stays put as the button comes. */}
+      <Row
+        wrap
+        align="center"
+        justify="between"
+        gap={3}
+        style={{ minBlockSize: 'var(--env-control-height-sm)' }}
+      >
         <Text render={<h3 />} variant="title">
           Projects
         </Text>

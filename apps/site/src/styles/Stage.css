@@ -157,7 +157,8 @@
     .site-verdict-stage,
     .site-anatomy-subject,
     .catalogue-width-box,
-    .catalogue-related-canvas
+    .catalogue-related-canvas,
+    .catalogue-motion-subject
   )
   > .env-scaffold,
 /* The dev mode demo's application sits in the element dev mode measures. */

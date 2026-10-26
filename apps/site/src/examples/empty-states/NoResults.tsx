@@ -16,7 +16,7 @@ type Status = 'active' | 'archived';
 
 export default function NoResults() {
   const [query, setQuery] = useState('roadmap');
-  const [status, setStatus] = useState<string | null>('active');
+  const [status, setStatus] = useState<string | null>('all');
   const search = useRef<HTMLInputElement>(null);
   const term = query.trim().toLowerCase();
   const matches = projects.filter(
