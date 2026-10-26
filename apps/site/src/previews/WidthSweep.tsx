@@ -146,7 +146,8 @@ export function WidthSweep({
       let limit = Infinity;
       if (scale < leastScale) {
         scale = leastScale;
-        limit = space / (leastScale * rem);
+        // In whole rem, so the ruler names the narrower width as it names the others.
+        limit = Math.floor(space / (leastScale * rem));
       }
       const shownStops = stops.map((width) => Math.min(width, limit));
       const least = Math.min(...shownStops);
