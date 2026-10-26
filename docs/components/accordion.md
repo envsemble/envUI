@@ -46,6 +46,8 @@ examples:
 
 One section is open at a time: opening another closes it.
 
+<!-- specimen: OneAtATime -->
+
 ### Several open
 
 An accordion can let people keep several sections open at once.
@@ -58,7 +60,7 @@ An accordion can let people keep several sections open at once.
 
 The application can open a section itself, such as from a help button elsewhere on the page.
 
-```tsx figure=OpenFromOutside
+```tsx figure=OpenFromOutside motion
 
 ```
 
