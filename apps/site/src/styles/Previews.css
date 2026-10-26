@@ -92,3 +92,10 @@
 .catalogue-matrix td {
   padding: 1rem 0.75rem;
 }
+
+/* A Box's inset made visible on its animated figure (specimens/box): its edge dashed, as a width
+   frame's is, and the inset easing from one step to the next. */
+.catalogue-inset-box {
+  outline: 0.0625rem dashed var(--env-color-border-default);
+  transition: padding var(--env-motion-duration-slow) var(--env-motion-ease);
+}

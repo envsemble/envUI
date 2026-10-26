@@ -37,14 +37,13 @@ examples:
   AccountButton:
     role: overview
     caption: 'AvatarButton: an avatar as a button, with the name in a tooltip.'
+    motion: true
   Sizes: variants
   Fallbacks: example
   AvatarAnatomy: anatomy
   ProjectMembers: example
   ChooseReviewers: example
-  PressableAvatars:
-    role: example
-    caption: Hover, tap or focus the pile to spread it, then press a person.
+  PressableAvatars: example
   NamesBeside:
     role: do
     caption: The name beside the avatar, wherever there is room.
@@ -112,7 +111,7 @@ AvatarGroup rests as a compact pile, like stacked cards, with the count of the r
 - Hovering, tapping or focusing it spreads the avatars along a gentle arch, so each one shows.
 - It keeps the room its spread takes, so nothing around it moves.
 
-```tsx figure=ProjectMembers
+```tsx figure=ProjectMembers motion
 
 ```
 
@@ -134,7 +133,7 @@ Each avatar in a group can open something, such as the person's profile.
 - While piled, the whole pile is one target that spreads it, so a press never lands on someone hidden under another.
 - Spread, each avatar is a target of its own, as large as a finger needs on a touch screen.
 
-```tsx figure=PressableAvatars
+```tsx figure=PressableAvatars motion
 
 ```
 

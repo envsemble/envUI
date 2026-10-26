@@ -151,7 +151,7 @@ Hover, press, keyboard focus and disabled, for each variant.
 
 While its work runs, a spinner replaces the content at the same size, and presses do nothing.
 
-```tsx figure=PendingAction
+```tsx figure=PendingAction motion
 
 ```
 
@@ -162,7 +162,7 @@ ConfirmButton arms on the first press and acts on the second.
 - <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.
 - Its armed label is short, with no question mark: the verb, or the verb and object, "Remove Sam".
 
-```tsx figure=ConfirmInPlace
+```tsx figure=ConfirmInPlace motion
 
 ```
 
@@ -170,7 +170,7 @@ ConfirmButton arms on the first press and acts on the second.
 
 CopyButton copies a value and shows Copied, or Couldn’t copy, for about two seconds.
 
-```tsx figure=CopyValue
+```tsx figure=CopyValue motion
 
 ```
 
@@ -201,7 +201,7 @@ A button says what will happen, and only the main action of a group stands out.
 
 ```
 
-```tsx figure=ExplainWhatIsMissing
+```tsx figure=ExplainWhatIsMissing motion
 
 ```
 
@@ -213,7 +213,7 @@ A button says what will happen, and only the main action of a group stands out.
 
 Start with a verb and say what will happen, and when the outcome is known, put it in the label.
 
-```tsx figure=SayWhatWillHappen
+```tsx figure=SayWhatWillHappen motion
 
 ```
 

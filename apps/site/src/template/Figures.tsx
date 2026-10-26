@@ -11,7 +11,8 @@ import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from './OptionLegend';
 import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
 import { InteractiveMark } from './InteractiveMark';
-import { Specimen } from './Specimen';
+import { Specimen, SpecimenRender } from './Specimen';
+import { VerdictMotion } from '../previews/MotionStage';
 import { foundationFigure } from '../previews/foundations/FoundationFigures';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -40,6 +41,7 @@ export function VerdictFigure({
   verdict,
   caption,
   open = false,
+  motion = false,
   children,
   stage,
 }: {
@@ -47,6 +49,8 @@ export function VerdictFigure({
   caption: string;
   /** Whether the example's overlays are shown open, as a picture. */
   open?: boolean;
+  /** Whether its animated specimen of the same name plays the example in place of the stage. */
+  motion?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
 } & (
@@ -66,25 +70,31 @@ export function VerdictFigure({
       {/* The stage and the bar are two connected rows: envUI's connected-row parts give the outer
           corners the large radius and the inner ones the small radius. */}
       <div className="site-verdict-frame env-connected-rows">
-        <Column
-          render={<Theme {...theme} />}
-          gap={0}
-          className="site-verdict-stage env-connected-row"
-          data-example={name}
-          data-stage={stage}
-          {...keepLinksInPlace}
-        >
-          {!page ? (
-            children
-          ) : open ? (
-            <OpenExample name={name ?? ''}>
+        {motion && page ? (
+          <VerdictMotion value>
+            <SpecimenRender page={page} name={name ?? ''} />
+          </VerdictMotion>
+        ) : (
+          <Column
+            render={<Theme {...theme} />}
+            gap={0}
+            className="site-verdict-stage env-connected-row"
+            data-example={name}
+            data-stage={stage}
+            {...keepLinksInPlace}
+          >
+            {!page ? (
+              children
+            ) : open ? (
+              <OpenExample name={name ?? ''}>
+                <ExampleRender page={page} name={name ?? ''} />
+              </OpenExample>
+            ) : (
               <ExampleRender page={page} name={name ?? ''} />
-            </OpenExample>
-          ) : (
-            <ExampleRender page={page} name={name ?? ''} />
-          )}
-          <InteractiveMark enabled={!open} />
-        </Column>
+            )}
+            <InteractiveMark enabled={!open} />
+          </Column>
+        )}
         <div className="site-verdict-bar env-connected-row" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}
           <span>{label}</span>
@@ -120,6 +130,7 @@ function Figure({
         verdict={block.role}
         caption={block.caption ?? ''}
         open={block.open}
+        motion={block.motion}
         stage={block.stage}
       />
     );

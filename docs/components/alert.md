@@ -93,7 +93,7 @@ An alert can take another icon in place of its tone's, or none at all.
 
 A warning or a danger alert that appears because of something people just did, such as a save that failed, can be read out at once. Info and success alerts are always read politely, without interrupting.
 
-```tsx figure=SaveFailed
+```tsx figure=SaveFailed motion
 
 ```
 
@@ -112,6 +112,8 @@ An alert sits above the content it concerns.
 ### Removing an alert
 
 Remove an alert once it no longer applies. Let people dismiss it only where the message can safely be hidden.
+
+<!-- specimen: RemovingAlerts -->
 
 ## Accessibility
 

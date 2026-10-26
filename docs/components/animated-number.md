@@ -26,7 +26,9 @@ avoidWhen:
 components:
   - AnimatedNumber
 examples:
-  ShowResults: overview
+  ShowResults:
+    role: overview
+    motion: true
   CustomFormat: example
   SeatsLeft:
     role: do
@@ -45,7 +47,7 @@ examples:
 
 The number can be written in any format, such as a currency. By default it is written as the application's language writes numbers.
 
-```tsx figure=CustomFormat
+```tsx figure=CustomFormat motion
 
 ```
 
@@ -74,11 +76,11 @@ With a reduced-motion preference, the new value only fades in.
 
 Roll one number at a time, with its words beside it.
 
-```tsx figure=SeatsLeft
+```tsx figure=SeatsLeft motion
 
 ```
 
-```tsx figure=EveryNumberRolls
+```tsx figure=EveryNumberRolls motion
 
 ```
 
