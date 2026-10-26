@@ -180,18 +180,12 @@
   inline-size: 12rem;
 }
 
-/* The shapes envUI draws: each a small, inert picture of real components on its stage. */
-.catalogue-shape-stage {
-  min-block-size: 12rem;
-}
-.catalogue-shape-card {
-  inline-size: 14rem;
-}
-.catalogue-shape-inner {
-  inline-size: 18rem;
+/* The corners figure: one small screen with each kind of corner numbered on it. */
+.catalogue-shape-screen {
+  inline-size: min(22rem, 100%);
 }
 
-/* The two scales side by side: the same content, so the sizes compare. */
+/* The dialog in each scale, one at a time, in the middle of the place the larger keeps. */
 /* The scale's own boundary, a Theme, paints no page of its own on the canvas. */
 .catalogue-scale-theme {
   background: none;
@@ -199,6 +193,47 @@
 }
 .catalogue-scale-sample {
   inline-size: min(20rem, 100%);
+}
+.catalogue-scale-steps > * {
+  place-self: center;
+}
+
+/* A table whose rows close up and open out: its cells' padding eases between the densities. */
+.catalogue-rows-steps {
+  inline-size: min(100%, 26rem);
+}
+.catalogue-rows-steps > * {
+  align-self: center;
+}
+.catalogue-breathing-table :is(.env-table-cell, .env-table-header-cell) {
+  transition:
+    padding calc(2 * var(--env-motion-duration-slow)) var(--env-motion-ease),
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+
+/* Tall things: a button whose container narrows, so its label wraps, beside a field that fills
+   with people. The stage holds the list that opens below the field. */
+/* Its content keeps its place at the top as the field grows, rather than centring again. */
+.site-foundation-stage.catalogue-tall-stage {
+  align-content: start;
+  min-block-size: 22rem;
+}
+.catalogue-tall-slot {
+  display: flex;
+  justify-content: flex-end;
+  inline-size: 12rem;
+}
+.catalogue-tall-box {
+  display: flex;
+  justify-content: flex-end;
+  inline-size: 12rem;
+  transition: inline-size calc(2 * var(--env-motion-duration-slow)) var(--env-motion-ease);
+}
+.catalogue-tall-box[data-narrow] {
+  inline-size: 6.5rem;
+}
+.catalogue-tall-field {
+  inline-size: 19rem;
 }
 
 /* Adapting to width: the same components in a narrow frame and across the column. */
