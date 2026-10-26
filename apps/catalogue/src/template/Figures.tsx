@@ -137,6 +137,7 @@ function Figure({
         stage={block.stage}
         variants={block.role === 'variants'}
         options={options}
+        width={block.width}
       />
     );
   return (

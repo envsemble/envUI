@@ -199,12 +199,12 @@ Material Design 3's component pages, such as [buttons](https://m3.material.io/co
 
 A figure is an [example file](#examples) listed in the frontmatter and placed with an empty fence that names it, ` ```tsx figure=Name `, anywhere in a section but Compose and the changelog. Its role and caption come from the frontmatter; its framing from the attributes after the name, written as `name="value"`, or `name=value` without spaces, and flags, such as `open`, as their name alone. A value can't hold a double quote, not even as `\"`, so quote with ' or “ ”.
 
-| Role         | Shows                                                                               | Attributes on its fence           |
-| ------------ | ----------------------------------------------------------------------------------- | --------------------------------- |
-| `example`    | The example, live on the stage, with its caption below.                             | `widths`, `open`, `stage`, `wide` |
-| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`                   |
-| `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`  |
-| `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                           |
+| Role         | Shows                                                                               | Attributes on its fence                   |
+| ------------ | ----------------------------------------------------------------------------------- | ----------------------------------------- |
+| `example`    | The example, live on the stage, with its caption below.                             | `widths`, `open`, `stage`, `wide`         |
+| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`                           |
+| `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width` |
+| `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                   |
 
 Every figure sits on the same stage, centred horizontally and vertically, in the theme, contrast and scale the reader has chosen: a recessed canvas, a well a shade deeper than the page, with a surface's corners and no edge, so the example's own surfaces rise out of it and a reader can always tell an example from the page around it. Under forced colors the canvas takes a frame instead. A specimen sits on it too. The canvas is the catalogue's (`apps/catalogue/src/styles/Stage.css`), not envUI's.
 
@@ -234,7 +234,7 @@ A popup, a menu, a tooltip, a dialog, a sheet or a toast renders in a portal, ou
 
 ### Wide figures
 
-The flag `wide` keeps an example alone in its row, across the whole column, rather than beside the block before it or in a run of figures. Give it to a figure that needs the room, such as a popover open beside its trigger, as Sides on [Popover](components/popover.md) is. A foundation's figure says so in its registration (`FoundationFigures.ts`).
+The flag `wide` keeps an example alone in its row, across the whole column, rather than beside the block before it or in a run of figures. Give it to a figure that needs the room, such as a popover open below its trigger, as Sides on [Popover](components/popover.md) is. A foundation's figure says so in its registration (`FoundationFigures.ts`).
 
 ### Do and don't pairs
 
@@ -265,6 +265,7 @@ An ordered list right after an anatomy figure is its legend. Each item starts wi
 - `docs/generated/parts.json` is generated from the library: under `components`, each component by its export name, with its `root` class, its `parts` (`class` and `description`) and its `states` (`attribute`, `values` and the `parts` that carry it); under `shared`, the groups of parts several components share, such as `ConnectedRows`. Read a component's entry there before writing its legend.
 - The build fails on a legend class that neither packages/ui's CSS nor `parts.json` has, and on a figure without a legend whose component has no parts there. A part the example doesn't render leaves its number off the figure, which the catalogue's browser test that counts every anatomy figure's callouts catches.
 - The catalogue shows a small subject, such as a badge or a checkbox, half as large again where its stage has room, so its callouts don't crowd. The flag `enlarge` does the same for a larger subject whose parts sit close together, such as a bar's item or a table's header cells.
+- A subject that shows all its parts only from a width, such as [Panes](components/panes.md) side by side, takes that width in rem, such as `width="38"`: on a narrower stage, such as beside the page's contents, it is drawn smaller to fit, down to seven tenths, and narrower still it lays out at the stage's width.
 - Make the anatomy example small and complete, with every part the legend names present once: the root first, then the parts in reading order. Name parts the figure can't show in one plain sentence below it, such as "Not shown: the spinner.", and their classes in Compose.
 
 ### Variants figures

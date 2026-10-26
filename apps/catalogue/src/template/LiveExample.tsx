@@ -206,7 +206,7 @@ export const keepLinksInPlace = {
 };
 
 /** The least a width frame is drawn at to fit its stage; one that would need less scrolls. */
-const leastFitScale = 0.7;
+export const leastFitScale = 0.7;
 
 /**
  * A frame of a given width for an example, drawn smaller where its stage is narrower than the

@@ -1,8 +1,8 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
-import { ExampleCode, ExampleRender } from './LiveExample';
+import { ExampleCode, ExampleRender, leastFitScale } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
 import { legendName } from '../../../../scripts/SiteContent.mjs';
@@ -335,6 +335,67 @@ function enlarge(subject: HTMLElement, always: boolean) {
 }
 
 /**
+ * A subject that shows all its parts only from a width, such as panes side by side, laid out at
+ * that width, in rem, and drawn smaller where the stage is narrower, down to `leastFitScale`, as a
+ * width frame is; the callouts measure the parts as drawn. On a stage narrower still, it lays out
+ * at the stage's width, and shows the parts that width has.
+ */
+function FitFrame({ width, children }: { width: number; children: ReactNode }) {
+  const fit = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const [scaled, setScaled] = useState<{ scale: number; width: number; height: number }>();
+  useLayoutEffect(() => {
+    const frame = box.current;
+    const subject = fit.current?.parentElement;
+    if (!frame || !subject) return;
+    const measure = () => {
+      const needed = width * parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const scale = subject.clientWidth / needed;
+      const next =
+        scale < 1 && scale >= leastFitScale
+          ? { scale, width: needed * scale, height: frame.offsetHeight * scale }
+          : undefined;
+      // Unchanged sizes keep the state, so the stage, which grows with the frame, settles.
+      setScaled((current) =>
+        current &&
+        next &&
+        Math.abs(current.width - next.width) < 0.5 &&
+        Math.abs(current.height - next.height) < 0.5
+          ? current
+          : next,
+      );
+    };
+    let request = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(request);
+      request = requestAnimationFrame(measure);
+    });
+    observer.observe(subject);
+    observer.observe(frame);
+    return () => {
+      cancelAnimationFrame(request);
+      observer.disconnect();
+    };
+  }, [width]);
+  return (
+    <div
+      ref={fit}
+      className="docs-anatomy-fit"
+      data-scaled={scaled ? '' : undefined}
+      style={scaled && { inlineSize: scaled.width, blockSize: scaled.height }}
+    >
+      <div
+        ref={box}
+        className="docs-anatomy-fit-box"
+        style={scaled && { inlineSize: `${width}rem`, transform: `scale(${scaled.scale})` }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/**
  * The component in the theme the reader has chosen, on the recessed canvas, following it as it
  * changes, with its callouts measured from its live parts.
  */
@@ -346,6 +407,7 @@ function AnatomyStage({
   enlarged,
   stage: fill,
   variants,
+  width,
 }: {
   page: string;
   name: string;
@@ -356,6 +418,8 @@ function AnatomyStage({
   stage?: StageFill;
   /** Whether the callouts name the variants rather than number the parts. */
   variants: boolean;
+  /** The width, in rem, the subject needs to show its parts. */
+  width?: number;
 }) {
   const theme = useTheme();
   const stage = useRef<HTMLDivElement>(null);
@@ -405,6 +469,13 @@ function AnatomyStage({
       mutation.disconnect();
     };
   }, [legend, open, enlarged, variants]);
+  const render = open ? (
+    <OpenExample name={name}>
+      <ExampleRender page={page} name={name} />
+    </OpenExample>
+  ) : (
+    <ExampleRender page={page} name={name} />
+  );
   return (
     <Theme
       {...theme}
@@ -428,13 +499,7 @@ function AnatomyStage({
             : undefined
         }
       >
-        {open ? (
-          <OpenExample name={name}>
-            <ExampleRender page={page} name={name} />
-          </OpenExample>
-        ) : (
-          <ExampleRender page={page} name={name} />
-        )}
+        {width ? <FitFrame width={width}>{render}</FitFrame> : render}
       </div>
       <svg className="docs-anatomy-lines" aria-hidden="true">
         {callouts.map(({ number, badge, anchor, box }) => (
@@ -501,6 +566,7 @@ export function AnatomyFigure({
   stage,
   variants = false,
   options,
+  width,
 }: {
   page: string;
   name: string;
@@ -518,6 +584,8 @@ export function AnatomyFigure({
   variants?: boolean;
   /** A variants figure's option table, shown as its legend. */
   options?: OptionTable;
+  /** The width, in rem, the subject needs to show its parts: a narrower stage draws it smaller. */
+  width?: number;
 }) {
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   return (
@@ -530,6 +598,7 @@ export function AnatomyFigure({
         enlarged={enlarged}
         stage={stage}
         variants={variants}
+        width={width}
       />
       <figcaption className="docs-anatomy-caption">
         {caption && <p className="docs-figure-caption">{caption}</p>}

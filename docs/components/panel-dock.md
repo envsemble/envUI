@@ -62,7 +62,7 @@ examples:
 
 ## Anatomy
 
-```tsx figure=PanelDockAnatomy
+```tsx figure=PanelDockAnatomy width="41"
 
 ```
 

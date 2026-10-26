@@ -660,7 +660,7 @@ const figureAttributes = {
   example: { allowed: ['widths', 'open', 'stage', 'wide'], required: [] },
   do: { allowed: ['open', 'stage'], required: ['caption'] },
   dont: { allowed: ['open', 'stage'], required: ['caption'] },
-  anatomy: { allowed: ['of', 'open', 'stage', 'enlarge'], required: [] },
+  anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width'], required: [] },
   variants: { allowed: ['stage'], required: [] },
 };
 /**
@@ -1010,6 +1010,14 @@ function readPage(document, body, { kind, catalog, examples, specimens, partName
             `example ${name} has widths="${attributes.widths}"; give widths in rem, from 10 to 120`,
           );
         block.widths = widths;
+      }
+      if (attributes.width !== undefined) {
+        const width = Number(attributes.width);
+        if (!(width >= 10 && width <= 120))
+          problems.push(
+            `${role} ${name} has width="${attributes.width}"; give one width in rem, from 10 to 120`,
+          );
+        block.width = width;
       }
       if (attributes.of !== undefined) block.of = attributes.of;
       if (typeof attributes.stage === 'string') {
