@@ -126,12 +126,21 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
     if (side === 'left') return along && avoid.right <= box.left + 1;
     return along && avoid.left >= box.right - 1;
   };
+  const isRoot = (box: Box) =>
+    box.left - outer.left < 1 &&
+    box.top - outer.top < 1 &&
+    outer.right - box.right < 1 &&
+    outer.bottom - box.bottom < 1;
+  // Parts that all fill the component, such as a number and its value, would crowd its start:
+  // their callouts sit above and below it instead, in turn.
+  const roots = found.filter(({ box }) => isRoot(box)).length;
+  let stacked = 0;
   const placed = found.map(({ number, box }) => {
-    const root =
-      box.left - outer.left < 1 &&
-      box.top - outer.top < 1 &&
-      outer.right - box.right < 1 &&
-      outer.bottom - box.bottom < 1;
+    const root = isRoot(box);
+    if (root && roots > 1) {
+      const side: Side = stacked++ % 2 ? 'bottom' : 'top';
+      return { number, box, root, side };
+    }
     // The nearest side, with the sides above and below preferred by a few pixels.
     const distances = (
       [
