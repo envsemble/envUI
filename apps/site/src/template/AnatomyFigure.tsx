@@ -154,11 +154,25 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
     ).filter(
       ([side], _, all) => !blocked(side, box) || all.every(([other]) => blocked(other, box)),
     );
-    const side: Side = root
+    let side: Side = root
       ? rtl
         ? 'right'
         : 'left'
       : distances.reduce((best, entry) => (entry[1] < best[1] ? entry : best))[0];
+    // A part that holds others called out, as a strip holds its tabs, sits below them where it is
+    // as near below as above, so the callouts of a row of parts don't all crowd its top.
+    const holds = found.some(
+      (other) =>
+        other.number !== number &&
+        other.box.left >= box.left - 0.5 &&
+        other.box.right <= box.right + 0.5 &&
+        other.box.top >= box.top - 0.5 &&
+        other.box.bottom <= box.bottom + 0.5,
+    );
+    const below = distances.find(([name]) => name === 'bottom');
+    const above = distances.find(([name]) => name === 'top');
+    if (side === 'top' && holds && below && above && Math.abs(below[1] - above[1]) < 1)
+      side = 'bottom';
     return { number, box, root, side };
   });
   const callouts: Callout[] = [];
