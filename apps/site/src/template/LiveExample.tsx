@@ -322,20 +322,19 @@ export function LiveExample({
   return (
     <Column gap={3} className="site-live-example-entry">
       {widths && sweep ? (
-        <Column
-          render={<Theme {...theme} />}
-          gap={0}
+        // On the page's own theme: a theme boundary around it would paint over the page.
+        <div
           role="group"
-          aria-label={`${title} example, from ${widths.join(' to ')} rem wide and back`}
+          aria-label={`${title} example, its width changing`}
           data-example={name}
           {...keepLinksInPlace}
         >
-          <MotionStage label={`the example from ${widths.join(' to ')} rem wide`} stage={stage}>
+          <MotionStage label="the example's width changing" stage={stage}>
             <WidthSweep widths={widths} classes={classes}>
               {render}
             </WidthSweep>
           </MotionStage>
-        </Column>
+        </div>
       ) : widths ? (
         <div
           role="group"
