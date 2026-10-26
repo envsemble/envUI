@@ -103,7 +103,7 @@ Write the query and the filters into the address through the router, so a reload
 
 Narrower than a medium [window](../foundations/responsive.md), the filters move into a [Sheet](../components/sheet.md) opened by a Filters button, with its own count; the search stays in view.
 
-```tsx figure=NarrowFilters widths="24 44"
+```tsx figure=NarrowFilters widths="24 44" sweep classes
 
 ```
 

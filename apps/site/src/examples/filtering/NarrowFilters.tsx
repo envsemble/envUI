@@ -56,7 +56,8 @@ export default function NarrowFilters() {
 
   return (
     <Column ref={filters} gap={4}>
-      <Row wrap align="center" gap={3}>
+      {/* From medium the filters keep their size on one line beside the search. */}
+      <Row wrap={!wide} align="center" gap={3}>
         <SearchField
           ref={search}
           label="Search projects"
@@ -68,6 +69,7 @@ export default function NarrowFilters() {
           <>
             <Select
               aria-label="Status"
+              style={{ flexShrink: 0 }}
               size="sm"
               variant="outline"
               items={statuses}
@@ -76,6 +78,7 @@ export default function NarrowFilters() {
             />
             <Select
               aria-label="Owner"
+              style={{ flexShrink: 0 }}
               size="sm"
               variant="outline"
               items={owners}
