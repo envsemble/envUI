@@ -4,11 +4,9 @@ import {
   Badge,
   Box,
   Button,
-  Card,
   Column,
   Combobox,
   IconButton,
-  List,
   Row,
   SearchField,
   SegmentedControl,
@@ -26,10 +24,12 @@ import {
 } from '@envsemble/envui';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { Add } from '@envsemble/envui/icons/Add';
-import type { ReactNode } from 'react';
+import { useState } from 'react';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
-import { Figure, FigureRun, NumberedLegend, type LegendEntry } from './Topic';
+import { usePointer, useTimeline, type PointerStep } from '../Motion';
+import { CornerLabel, StepStack } from './Steps';
+import { Figure, NumberedLegend, type LegendEntry } from './Topic';
 
 /*
  * The figures of the Spacing & density foundation. Its words are in docs/foundations/spacing.md,
@@ -40,24 +40,6 @@ import { Figure, FigureRun, NumberedLegend, type LegendEntry } from './Topic';
 /** A figure's words, from the page's Markdown. */
 interface FigureWords {
   legend: readonly LegendEntry[];
-}
-
-/** Pictures side by side, each named by the legend's entry of the same place. */
-function Run({
-  legend,
-  pictures,
-  className,
-}: FigureWords & { pictures: readonly ReactNode[]; className?: string }) {
-  return (
-    <FigureRun
-      className={className}
-      figures={pictures.map((picture, index) => ({
-        name: legend[index]?.name ?? '',
-        text: legend[index]?.text ?? '',
-        picture,
-      }))}
-    />
-  );
 }
 
 const reviewers: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Ellis'].map(
@@ -146,49 +128,44 @@ function AlignFigure() {
 }
 
 /**
- * The shapes envUI gives what it draws, each a real component: a surface, what sits inside one,
- * what is fully rounded, and circles.
+ * One small screen with the four kinds of corner on it, each numbered: its surface, an alert
+ * inside it, the round ends of a field and a button, and a person's circle.
  */
-const shapes = [
-  <Card
-    key="surfaces"
-    title="Quarterly report"
-    description="Updated today"
-    className="catalogue-shape-card"
-  />,
-  <Surface
-    key="inside"
-    background="default"
-    padding={3}
-    radius="xl"
-    className="catalogue-shape-inner"
-    render={<Column gap={3} />}
-  >
-    <Alert tone="info" title="Two reports need a review" />
-    <List.Root aria-label="Reports">
-      <List.Item label="Accessibility audit" />
-      <List.Item label="Pricing research" />
-    </List.Root>
-  </Surface>,
-  <Column key="rounded" gap={3} align="center">
-    <Row gap={2} align="center">
-      <Button>Save</Button>
-      <Badge tone="accent">New</Badge>
-    </Row>
-    <SearchField label="Search" showLabel={false} />
-  </Column>,
-  <Row key="circles" gap={3} align="center">
-    <Avatar name="Alex Morgan" size="lg" />
-    <Avatar name="Sam Lee" size="lg" />
-    <IconButton variant="secondary" icon={<MoreVert />} aria-label="More" />
-  </Row>,
-];
-
 function ShapesFigure({ legend }: FigureWords) {
-  return <Run legend={legend} pictures={shapes} className="catalogue-shape-stage" />;
+  return (
+    <Figure
+      label="Corners say what a thing is"
+      className="catalogue-marked-stage"
+      legend={<NumberedLegend entries={legend} />}
+    >
+      <MarkedSubject>
+        <Surface
+          background="default"
+          padding={5}
+          radius="xl"
+          className="catalogue-shape-screen"
+          data-catalogue-mark="1"
+          render={<Column gap={4} />}
+        >
+          <Row gap={3} align="center" justify="between">
+            <Text render={<p />} variant="title">
+              Reports
+            </Text>
+            <Avatar name="Priya Shah" data-catalogue-mark="4" />
+          </Row>
+          <SearchField label="Search reports" showLabel={false} placeholder="Search reports" />
+          <Alert tone="info" title="Two reports need a review" data-catalogue-mark="2" />
+          <Row gap={2} align="center" justify="between">
+            <Badge tone="accent">New</Badge>
+            <Button data-catalogue-mark="3">Share</Button>
+          </Row>
+        </Surface>
+      </MarkedSubject>
+    </Figure>
+  );
 }
 
-/** A small dialog's content, the same in each scale, so the two compare. */
+/** A small dialog's content, which the figure shows in each scale. */
 function ScaleSample() {
   return (
     <Surface
@@ -213,21 +190,38 @@ function ScaleSample() {
   );
 }
 
-/** The scales the run compares, in the legend's order. */
+/** The scales the figure switches between, in the legend's order. */
 const scales: readonly ThemeScale[] = ['comfortable', 'compact'];
 
-/** The same content in the comfortable and the compact scale. */
-function ScalesFigure({ legend }: FigureWords) {
+/**
+ * One dialog switching between the comfortable and the compact scale, its controls, text, corners
+ * and gaps stepping together, with the scale named in the corner.
+ */
+function ScaleSteps({ legend }: FigureWords) {
   const theme = useTheme();
+  const step = useTimeline(scales.map(() => 4200));
   return (
-    <Run
-      legend={legend}
-      pictures={scales.map((scale) => (
-        <Theme key={scale} {...theme} scale={scale} className="catalogue-scale-theme">
-          <ScaleSample />
-        </Theme>
-      ))}
-    />
+    <>
+      <CornerLabel>{legend[step]?.name}</CornerLabel>
+      <StepStack
+        className="catalogue-scale-steps"
+        count={scales.length}
+        at={step}
+        render={(index) => (
+          <Theme {...theme} scale={scales[index]} className="catalogue-scale-theme">
+            <ScaleSample />
+          </Theme>
+        )}
+      />
+    </>
+  );
+}
+
+function ScalesFigure({ legend }: FigureWords) {
+  return (
+    <Figure label="Comfortable or compact" motion="the dialog in each scale">
+      <ScaleSteps legend={legend} />
+    </Figure>
   );
 }
 
@@ -237,59 +231,119 @@ const reports = [
   { name: 'Pricing research', owner: 'Alex Morgan' },
 ];
 
-/** The row densities the run compares, in the legend's order. */
+/** The row densities the figure moves between, in the legend's order. */
 const densities: readonly RowDensity[] = ['sm', 'md'];
 
-/** One table with tight rows and with regular ones: only the space in the rows changes. */
-function RowsFigure({ legend }: FigureWords) {
+function ReportsTable({ density }: { density: RowDensity }) {
   return (
-    <Run
-      legend={legend}
-      pictures={densities.map((density, index) => (
-        <Table.Root
-          key={density}
-          aria-label={`Reports, ${(legend[index]?.name ?? density).toLowerCase()}`}
-          density={density}
-        >
-          <Table.Head>
-            <Table.Row>
-              <Table.HeaderCell>Report</Table.HeaderCell>
-              <Table.HeaderCell>Owner</Table.HeaderCell>
-            </Table.Row>
-          </Table.Head>
-          <Table.Body>
-            {reports.map((report) => (
-              <Table.Row key={report.name}>
-                <Table.Cell>{report.name}</Table.Cell>
-                <Table.Cell>{report.owner}</Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
-      ))}
-    />
+    <Table.Root aria-label="Reports" density={density} className="catalogue-breathing-table">
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Report</Table.HeaderCell>
+          <Table.HeaderCell>Owner</Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body>
+        {reports.map((report) => (
+          <Table.Row key={report.name}>
+            <Table.Cell>{report.name}</Table.Cell>
+            <Table.Cell>{report.owner}</Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table.Root>
   );
 }
 
-/** One line tall, round ends; taller, the same corners make a rounded rectangle. */
+/**
+ * One table whose rows close up and open out again, the text keeping its size, with the density
+ * named in the corner. A copy at the regular density, unseen, keeps the figure at its height.
+ */
+function RowSteps({ legend }: FigureWords) {
+  const step = useTimeline(densities.map(() => 3600));
+  return (
+    <>
+      <CornerLabel>{legend[step]?.name}</CornerLabel>
+      <StepStack
+        className="catalogue-rows-steps"
+        count={2}
+        at={1}
+        render={(index) => <ReportsTable density={index ? densities[step]! : 'md'} />}
+      />
+    </>
+  );
+}
+
+function RowsFigure({ legend }: FigureWords) {
+  return (
+    <Figure label="Tighter rows" motion="the rows closing up and opening out">
+      <RowSteps legend={legend} />
+    </Figure>
+  );
+}
+
+const reviewersInput = '.catalogue-tall .env-combobox-input';
+const reviewer = (index: number) => `.env-combobox-item:nth-child(${index} of .env-combobox-item)`;
+
+/**
+ * The pointer adds four reviewers, one by one, and the field grows to a second line and a third;
+ * the button's container then narrows, so its label wraps. The pointer clears the field, the
+ * container widens again, and the figure is back at its start.
+ */
+const tallScript: PointerStep[] = [
+  { wait: 700 },
+  { to: reviewersInput, x: 0.5, y: 0.8 },
+  { wait: 300 },
+  { click: true },
+  { wait: 500 },
+  ...[1, 2, 3, 4].flatMap((index): PointerStep[] => [
+    { to: reviewer(index), x: 0.4, duration: 350 },
+    { wait: 250 },
+    { click: true },
+    { wait: 550 },
+  ]),
+  { to: '.catalogue-tall .env-combobox-trigger', duration: 450 },
+  { wait: 200 },
+  { click: true },
+  { wait: 400 },
+  { to: '.catalogue-tall-save', x: 0.5, y: 0.5, duration: 600 },
+  { cue: 'narrow' },
+  { wait: 2600 },
+  { to: '.catalogue-tall .env-combobox-clear', duration: 600 },
+  { wait: 250 },
+  { click: true },
+  { cue: 'widen' },
+  { wait: 1200 },
+  { leave: true },
+  { wait: 600 },
+];
+
+/** One line tall, round ends; taller, as it fills or wraps, the same corners make a rectangle. */
+function TallSteps() {
+  const [narrow, setNarrow] = useState(false);
+  usePointer(tallScript, { onCue: (cue) => setNarrow(cue === 'narrow') });
+  return (
+    <Row align="start" justify="center" gap={6} className="catalogue-tall">
+      <div className="catalogue-tall-slot">
+        <Box className="catalogue-tall-box" data-narrow={narrow || undefined}>
+          <Button className="catalogue-tall-save">Save the changes</Button>
+        </Box>
+      </div>
+      <Box className="catalogue-tall-field">
+        <Combobox multiple clearable label="Reviewers" placeholder="Add people" items={reviewers} />
+      </Box>
+    </Row>
+  );
+}
+
 function TallFigure() {
   return (
-    <Figure label="Tall things keep sensible corners">
-      <Row wrap align="start" justify="center" gap={6}>
-        <Button>Save</Button>
-        <Box style={{ inlineSize: '9rem' }}>
-          <Button>Save the changes to every page</Button>
-        </Box>
-        <Box style={{ inlineSize: '16rem' }}>
-          <Combobox
-            multiple
-            label="Reviewers"
-            placeholder="Add people"
-            items={reviewers}
-            defaultValue={['alex.morgan', 'sam.lee', 'priya.shah', 'jordan.ellis']}
-          />
-        </Box>
-      </Row>
+    <Figure
+      label="Tall things keep sensible corners"
+      motion="the field filling and the button wrapping"
+      className="catalogue-tall-stage"
+    >
+      <TallSteps />
     </Figure>
   );
 }

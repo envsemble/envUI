@@ -29,16 +29,13 @@ examples:
 
 ### Outlined and filled
 
-Every icon comes in two forms.
+Every icon comes in two forms: outlined, the usual form, light beside text, and filled, for what is selected or an icon that stands alone.
 
 - Navigation and tabs fill the icon of the place that is selected, so it stands out from the rest.
 
 ```tsx figure=OutlinedAndFilled
 
 ```
-
-1. **Outlined**: The usual form, light beside text.
-2. **Filled**: For what is selected, or an icon that stands alone.
 
 ### Every icon
 

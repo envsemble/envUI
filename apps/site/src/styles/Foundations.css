@@ -180,18 +180,12 @@
   inline-size: 12rem;
 }
 
-/* The shapes envUI draws: each a small, inert picture of real components on its stage. */
-.catalogue-shape-stage {
-  min-block-size: 12rem;
-}
-.catalogue-shape-card {
-  inline-size: 14rem;
-}
-.catalogue-shape-inner {
-  inline-size: 18rem;
+/* The corners figure: one small screen with each kind of corner numbered on it. */
+.catalogue-shape-screen {
+  inline-size: min(22rem, 100%);
 }
 
-/* The two scales side by side: the same content, so the sizes compare. */
+/* The dialog in each scale, one at a time, in the middle of the place the larger keeps. */
 /* The scale's own boundary, a Theme, paints no page of its own on the canvas. */
 .catalogue-scale-theme {
   background: none;
@@ -199,6 +193,47 @@
 }
 .catalogue-scale-sample {
   inline-size: min(20rem, 100%);
+}
+.catalogue-scale-steps > * {
+  place-self: center;
+}
+
+/* A table whose rows close up and open out: its cells' padding eases between the densities. */
+.catalogue-rows-steps {
+  inline-size: min(100%, 26rem);
+}
+.catalogue-rows-steps > * {
+  align-self: center;
+}
+.catalogue-breathing-table :is(.env-table-cell, .env-table-header-cell) {
+  transition:
+    padding calc(2 * var(--env-motion-duration-slow)) var(--env-motion-ease),
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+
+/* Tall things: a button whose container narrows, so its label wraps, beside a field that fills
+   with people. The stage holds the list that opens below the field. */
+/* Its content keeps its place at the top as the field grows, rather than centring again. */
+.site-foundation-stage.catalogue-tall-stage {
+  align-content: start;
+  min-block-size: 22rem;
+}
+.catalogue-tall-slot {
+  display: flex;
+  justify-content: flex-end;
+  inline-size: 12rem;
+}
+.catalogue-tall-box {
+  display: flex;
+  justify-content: flex-end;
+  inline-size: 12rem;
+  transition: inline-size calc(2 * var(--env-motion-duration-slow)) var(--env-motion-ease);
+}
+.catalogue-tall-box[data-narrow] {
+  inline-size: 6.5rem;
+}
+.catalogue-tall-field {
+  inline-size: 19rem;
 }
 
 /* Adapting to width: the two entries under the sweeping profile, side by side where they fit. */
@@ -283,7 +318,15 @@
 }
 .catalogue-role-swatch {
   display: flex;
+  box-sizing: border-box;
   block-size: 2.25rem;
+  border: 1px solid var(--env-color-border-muted);
+  border-block-end-width: 0;
+}
+/* Every swatch has a hairline edge, so a white one shows on the white page; one hairline between
+   two swatches, and the strip's last closes it. */
+.catalogue-role-swatches > li:last-child > .catalogue-role-swatch {
+  border-block-end-width: 1px;
 }
 .catalogue-role-swatch > span {
   flex: 1;
@@ -324,4 +367,121 @@
 .catalogue-theme-screen {
   inline-size: min(100%, 26rem);
   border-radius: var(--env-radius-xl);
+}
+
+/* Colors of its own: a card in a green family of its own, its foot in the other theme. Its theme
+   boundaries paint no page of their own: the card's surface is its fill, with a surface's corners. */
+.catalogue-walk {
+  inline-size: min(100%, 27rem);
+  border-radius: var(--env-radius-xl);
+  background: none;
+}
+.catalogue-walk-foot {
+  background: none;
+}
+.catalogue-walk-icon {
+  flex: none;
+  color: var(--env-color-fg-accent);
+}
+
+/* An animated figure's states stacked in one place (Steps.tsx): the place is as large as the
+   largest, and only the current one shows, so the figure keeps one height. */
+.catalogue-step-stack {
+  display: grid;
+}
+.catalogue-step-stack > * {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.catalogue-step-stack > [data-current] {
+  visibility: visible;
+}
+
+/* The label in an animated figure's top start corner, naming the state it shows. */
+.catalogue-corner-label {
+  position: absolute;
+  inset-block-start: var(--env-space-3);
+  inset-inline-start: var(--env-space-4);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A frame of a fixed width, outlined as an example's width frame is, that its content fills. */
+.catalogue-fixed-frame {
+  outline: 0.0625rem dashed var(--env-color-border-default);
+  outline-offset: var(--env-space-2);
+}
+
+/* Typography: a card in a frame of one width at each text size, and a paragraph that stops at its
+   measure, the dashed line, in a frame that widens. */
+.catalogue-text-size-frame {
+  inline-size: min(100%, 22rem);
+}
+.catalogue-text-size-frame > * {
+  align-self: center;
+}
+/* The sweep shows no ruler here, so its frame's outline takes the ruler's place above. */
+.catalogue-measure-stage .catalogue-width-sweep-place {
+  row-gap: 0;
+  padding-block-start: var(--env-space-2);
+}
+.catalogue-measure {
+  font: var(--env-type-body);
+  position: relative;
+  overflow: clip;
+}
+.catalogue-measure-text {
+  max-inline-size: 56ch;
+}
+.catalogue-measure::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 56ch;
+  border-inline-start: 0.0625rem dashed var(--env-color-fg-accent);
+}
+
+/* Larger text, narrower class: a profile in a frame of one width, at each text size, in the
+   middle of the place the largest keeps. */
+.catalogue-class-text-place {
+  display: grid;
+  padding-block-start: var(--env-space-5);
+  justify-items: center;
+  inline-size: 100%;
+}
+.catalogue-class-text-frame {
+  inline-size: 41rem;
+}
+.catalogue-class-text-frame > * {
+  align-self: center;
+}
+
+/* Icons: a bar of destinations as wide as a phone, and buttons that step through their sizes in a
+   row as tall as the largest, beside a message of one width, so the figure keeps one height. */
+.catalogue-icons-bar {
+  inline-size: min(100%, 26rem);
+}
+.catalogue-icons-buttons {
+  min-block-size: var(--env-control-height-lg);
+}
+.catalogue-icons-alert {
+  inline-size: 24rem;
+  max-inline-size: 100%;
+}
+
+/* The key cap naming each key the keyboard figure presses: pressed down a little as it comes. */
+.catalogue-key-cap {
+  animation: catalogue-key-press var(--env-motion-duration-slow) var(--env-motion-ease);
+}
+@keyframes catalogue-key-press {
+  from {
+    opacity: 0.4;
+    transform: translateY(0.125rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-key-cap {
+    animation: none;
+  }
 }

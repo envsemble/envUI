@@ -46,7 +46,7 @@ Every envUI component works for everyone without extra work, and each component'
 
 ### Try the keyboard
 
-Tab moves through the controls in the order they show, and Shift+Tab back; Space checks a box and Enter presses a button.
+Tab moves through the controls in the order they show.
 
 ```tsx figure=Keyboard
 
