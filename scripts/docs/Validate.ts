@@ -302,7 +302,10 @@ const figurePattern = /^tsx\s+figure=([A-Za-z]\w*)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^
 const kindFencePattern = /^tsx\s+(?:example|do|dont|anatomy|variants)=/;
 /** The attributes each role's figure takes, and those it needs. */
 const figureAttributes: Record<string, { allowed: string[]; required: string[] }> = {
-  example: { allowed: ['widths', 'sweep', 'classes', 'open', 'stage', 'wide'], required: [] },
+  example: {
+    allowed: ['widths', 'sweep', 'classes', 'fit', 'open', 'stage', 'wide'],
+    required: [],
+  },
   do: { allowed: ['open', 'stage'], required: ['caption'] },
   dont: { allowed: ['open', 'stage'], required: ['caption'] },
   anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width'], required: [] },
@@ -320,9 +323,10 @@ const stageFills = ['shaded'];
  * where its stage has room, so the callouts on its close-set parts don't crowd; and `wide` keeps an
  * example across the whole column, alone in its row, rather than beside the text before it, where
  * it needs the room, such as a popup open beside its trigger. With `widths`, `sweep` shows one
- * frame whose width sweeps between them and back, and `classes` names the window class on its ruler.
+ * frame whose width sweeps between them and back, `classes` names the window class on its ruler,
+ * and `fit` draws the frame smaller where it must to reach its widest width on the stage.
  */
-const figureFlags = new Set(['open', 'enlarge', 'wide', 'sweep', 'classes']);
+const figureFlags = new Set(['open', 'enlarge', 'wide', 'sweep', 'classes', 'fit']);
 /** A file name as words: ConnectedButtons is "Connected buttons". */
 const fileWords = (name: string) =>
   name
@@ -696,6 +700,13 @@ export function readPage(
             `example ${name} has classes without sweep; only a sweeping frame names them`,
           );
         else block.classes = true;
+      }
+      if (attributes.fit === true) {
+        if (attributes.sweep !== true)
+          problems.push(
+            `example ${name} has fit without sweep; only a sweeping frame is drawn smaller`,
+          );
+        else block.fit = true;
       }
       if (attributes.width !== undefined) {
         const width = Number(attributes.width);

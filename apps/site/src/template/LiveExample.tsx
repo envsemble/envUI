@@ -283,8 +283,8 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
 /**
  * An example rendered live in the documentation's theme, on the recessed canvas, with its source
  * and a copy button; with `widths`, in a frame of each width, one to a row, or with `sweep`, in
- * one frame whose width sweeps between them (`classes` names their window classes), and with
- * `caption`, a sentence below it.
+ * one frame whose width sweeps between them (`classes` names their window classes, `fit` draws it
+ * smaller where it must to reach the widest), and with `caption`, a sentence below it.
  */
 export function LiveExample({
   page,
@@ -294,6 +294,7 @@ export function LiveExample({
   widths,
   sweep = false,
   classes = false,
+  fit = false,
   open = false,
   stage,
 }: {
@@ -306,6 +307,8 @@ export function LiveExample({
   sweep?: boolean;
   /** Whether that frame's ruler names its window class too. */
   classes?: boolean;
+  /** Whether that frame is drawn smaller where it must to reach its widest width. */
+  fit?: boolean;
   /** Whether the example's overlays are shown open, as a picture. */
   open?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
@@ -330,7 +333,7 @@ export function LiveExample({
           {...keepLinksInPlace}
         >
           <MotionStage label="the example's width changing" stage={stage}>
-            <WidthSweep widths={widths} classes={classes}>
+            <WidthSweep widths={widths} classes={classes} fit={fit}>
               {render}
             </WidthSweep>
           </MotionStage>

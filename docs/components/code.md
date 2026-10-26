@@ -129,7 +129,7 @@ CodeDiff shows what changed between two versions of a file, with the same colors
 
 A diff shows the two versions side by side where it is wide, and in one column in a narrow pane.
 
-```tsx figure=DiffColumns widths="36 60"
+```tsx figure=DiffColumns widths="36 58" sweep fit
 
 ```
 
