@@ -8,7 +8,8 @@ export default function DetailsInSheet() {
   const project = projects.find((candidate) => candidate.id === shownId);
   return (
     <>
-      <List.Root aria-label="Projects">
+      {/* The list takes the width of its place on the page, as the sheet opens over it. */}
+      <List.Root aria-label="Projects" style={{ inlineSize: '100%' }}>
         {projects.map((candidate) => (
           <List.Item
             key={candidate.id}
