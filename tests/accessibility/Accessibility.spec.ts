@@ -7,7 +7,8 @@
  * test:a11y:update` and review its diff.
  *
  * Violations are keyed by page, theme, axe rule and a stable target: the catalogue region (the
- * specimen's heading, sidebar, header…) and the element's tag with its env-/docs- classes, counted.
+ * specimen's heading, sidebar, header…) and the element's tag with its env-, site-, catalogue-
+ * and docs- classes, counted.
  * React ids and child positions are left out so unrelated edits do not move the keys.
 
  */
@@ -197,7 +198,7 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
     const targets = await page.evaluate(
       (selectors) => {
         const stable = (element: Element) =>
-          [...element.classList].filter((name) => /^(env|docs)-/.test(name));
+          [...element.classList].filter((name) => /^(env|site|catalogue|docs)-/.test(name));
         const part = (element: Element) =>
           element.localName +
           stable(element)
