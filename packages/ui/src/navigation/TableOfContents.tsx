@@ -336,7 +336,10 @@ export function TableOfContents({
     };
     const onScroll = (event: Event) => {
       const target = event.target;
-      if (target instanceof Element && first && !target.contains(first)) return;
+      // Only a scroll that moves the sections counts. They are looked up again each time: the page
+      // may have rendered them anew since, and a section the effect found first may have left it.
+      const section = doc.getElementById(sectionIds[0]!);
+      if (target instanceof Element && section && !target.contains(section)) return;
       const choice = chosen.current;
       if (choice && !choice.settled) {
         // A scroll a link started: the marks follow it, and the choice settles once it pauses.

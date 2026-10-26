@@ -127,6 +127,19 @@ test(
   },
 );
 
+test('rendered again with a new renderLink, Markdown keeps its elements and uses the new one', async ({
+  page,
+}) => {
+  await page.goto(fixture);
+  const scope = page.getByTestId('rendered-again');
+  const heading = await scope.getByRole('heading', { name: 'Plans' }).elementHandle();
+  await expect(scope.getByRole('link', { name: 'the prices' })).toHaveAttribute('data-round', '0');
+  await scope.getByRole('button', { name: 'Render again' }).click();
+  await expect(scope.getByRole('link', { name: 'the prices' })).toHaveAttribute('data-round', '1');
+  // The heading is the same element: a page's anchors, focus and scroll position survive.
+  expect(await heading!.evaluate((element) => element.isConnected)).toBe(true);
+});
+
 test('Markdown accepts component overrides and remark and rehype plugins', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=markdown-extensions`);
   const scope = page.getByTestId('markdown-extensions');

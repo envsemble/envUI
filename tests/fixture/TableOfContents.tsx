@@ -12,6 +12,8 @@ const short = { blockSize: '3rem', margin: 0 };
 export function TableOfContentsFixture() {
   const article = useRef<HTMLElement>(null);
   const [extra, setExtra] = useState(false);
+  // Renders the review's sections anew, the same ids on new elements, as a page that renders again.
+  const [round, setRound] = useState(0);
   return (
     <div>
       <style>{`.toc-fixture-article :is(h2, h3) { scroll-margin-block-start: 4.5rem; }`}</style>
@@ -27,6 +29,9 @@ export function TableOfContentsFixture() {
       >
         <button type="button" onClick={() => setExtra(true)}>
           Add a section
+        </button>
+        <button type="button" onClick={() => setRound((count) => count + 1)}>
+          Render the review again
         </button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 14rem', gap: '2rem' }}>
@@ -68,15 +73,17 @@ export function TableOfContentsFixture() {
             ]}
           />
           <div data-testid="review" tabIndex={0} style={{ blockSize: '12rem', overflow: 'auto' }}>
-            <section id="review-summary" style={{ blockSize: '20rem' }}>
-              The year in brief.
-            </section>
-            <section id="review-results" style={{ blockSize: '20rem' }}>
-              Revenue and costs.
-            </section>
-            <section id="review-costs" style={{ blockSize: '4rem' }}>
-              Costs went down.
-            </section>
+            <div key={round}>
+              <section id="review-summary" style={{ blockSize: '20rem' }}>
+                The year in brief.
+              </section>
+              <section id="review-results" style={{ blockSize: '20rem' }}>
+                Revenue and costs.
+              </section>
+              <section id="review-costs" style={{ blockSize: '4rem' }}>
+                Costs went down.
+              </section>
+            </div>
           </div>
         </aside>
       </div>

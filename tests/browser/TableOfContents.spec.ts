@@ -106,6 +106,13 @@ test(
     // The page's own scrolling leaves it as it is.
     await page.evaluate(() => window.scrollTo(0, 400));
     await expect(current(review)).toHaveText('Costs');
+    // Sections rendered anew, the same ids on new elements, still follow the box: a link that
+    // writes the address can render the page again, which once left the marks where they were.
+    await page.getByRole('button', { name: 'Render the review again' }).click();
+    await box.evaluate((element) => element.scrollTo(0, 0));
+    await expect(current(review)).toHaveText('Summary');
+    await box.evaluate((element) => element.scrollTo(0, 20 * 16));
+    await expect(current(review)).toHaveText('Results');
   },
 );
 
