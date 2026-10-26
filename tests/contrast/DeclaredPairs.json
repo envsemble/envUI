@@ -2055,13 +2055,6 @@
         "high": 7
       }
     },
-    "--env-color-fg-default on --env-color-bg-neutral-muted over catalogue-band": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
     "--env-color-fg-default on --env-color-bg-neutral-muted over catalogue-canvas": {
       "kind": "text",
       "minimum": {
@@ -2286,13 +2279,6 @@
         "high": 7
       }
     },
-    "--env-color-fg-default on catalogue-band": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
     "--env-color-fg-default on catalogue-canvas": {
       "kind": "text",
       "minimum": {
@@ -2413,13 +2399,6 @@
       }
     },
     "--env-color-fg-link on --env-color-list-item-bg": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-link on catalogue-band": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -3057,13 +3036,6 @@
       }
     },
     "--env-color-fg-muted on --env-color-list-item-bg-pressed": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-muted on catalogue-band": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -4082,7 +4054,11 @@
     "--env-color-avatar-fg on --env-color-avatar-bg-red",
     "--env-color-avatar-fg on --env-color-avatar-bg-slate",
     "--env-color-avatar-fg on --env-color-avatar-bg-teal",
-    "--env-color-avatar-fg on --env-color-avatar-bg-violet"
+    "--env-color-avatar-fg on --env-color-avatar-bg-violet",
+    "--env-color-fg-default on --env-color-bg-neutral-muted over catalogue-band",
+    "--env-color-fg-default on catalogue-band",
+    "--env-color-fg-link on catalogue-band",
+    "--env-color-fg-muted on catalogue-band"
   ],
   "renamed": [
     "--color-action-strip on --color-bg-muted",

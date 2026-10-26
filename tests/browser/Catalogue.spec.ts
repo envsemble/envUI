@@ -475,8 +475,7 @@ test('every stage is the only frame of its figure', async ({ page }) => {
   test.slow();
   // One frame per figure: no stage sits inside another framed or filled box in the article, such
   // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
-  // frame, which holds its stage and its verdict bar, is the figure's one frame. The band a group of
-  // sections sits on is outside the group, so it is the page there, not a frame.
+  // frame, which holds its stage and its verdict bar, is the figure's one frame.
   expect(figurePages.length).toBeGreaterThan(0);
   await page.goto(`${catalogueUrl}/`);
   for (const { id, route } of figurePages) {
@@ -723,70 +722,57 @@ test("the catalogue's text keeps a readable measure, and opens each section with
   }
 });
 
-test('a component page groups its sections into three, the middle one on the band', async ({
-  page,
-}) => {
-  // Overview with Variants; When to use with Anatomy, on the page's one band across its column; Adapting to width with Accessibility; then Related, on the page. A page groups the
-  // sections it has.
+test('a component page groups its sections into three, all on the page', async ({ page }) => {
+  // Overview with Variants, Anatomy and Behaviour; Rules, which opens with Use it when; Accessibility;
+  // then Related. A page groups the sections it has, every group on the page's own background, as
+  // far from the next as any other.
   const groups = () =>
     page.locator('.docs-section-groups > *').evaluateAll((elements) =>
       elements.map((element) => ({
-        band: element.classList.contains('docs-band'),
+        group: element.classList.contains('docs-section-group'),
         sections: [...element.querySelectorAll('[data-section]')].map(
           (section) => (section as HTMLElement).dataset.section,
         ),
       })),
     );
+  const gaps = () =>
+    page
+      .locator('.docs-section-groups > *')
+      .evaluateAll((elements) =>
+        elements
+          .slice(1)
+          .map((element, index) =>
+            Math.round(
+              element.getBoundingClientRect().top - elements[index].getBoundingClientRect().bottom,
+            ),
+          ),
+      );
   await page.goto(`${catalogueUrl}/components/scaffold`);
   await expect.poll(groups).toEqual([
-    { band: false, sections: ['overview', 'variants', 'anatomy', 'behaviour'] },
-    { band: true, sections: ['rules'] },
-    { band: false, sections: ['accessibility'] },
-    { band: false, sections: ['related'] },
+    { group: true, sections: ['overview', 'variants', 'anatomy', 'behaviour'] },
+    { group: true, sections: ['rules'] },
+    { group: true, sections: ['accessibility'] },
+    { group: true, sections: ['related'] },
   ]);
-  // Beside the page's contents, the band spans the page's column, gutters included, and its fill
-  // ends half a gutter short of the contents; its sections keep the column. A pane too narrow for
-  // the contents has the band across the whole of it.
-  const widths = () =>
-    page.evaluate(() => {
-      const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
-      const fill = getComputedStyle(document.querySelector('.docs-band')!, '::before');
-      return {
-        band: box('.docs-band').width,
-        main: box('.docs-main').width,
-        page: box('.docs-page-column').width,
-        fillEnd: fill.content === 'none' ? null : box('.docs-band').right - parseFloat(fill.right),
-        contents: box('.docs-contents').left,
-        column: box('.docs-band > .docs-section-group').left,
-        first: box('.docs-section-groups > .docs-section-group').left,
-      };
-    });
-  const wide = await widths();
-  expect(wide.band).toBe(wide.page);
-  expect(wide.band).toBeLessThan(wide.main);
-  expect(wide.fillEnd).toBeLessThan(wide.contents);
-  expect(wide.column).toBe(wide.first);
-  await page.setViewportSize({ width: 1024, height: 900 });
-  await expect.poll(async () => (await widths()).band).toBe((await widths()).main);
-  expect((await widths()).fillEnd).toBeNull();
-  await page.setViewportSize({ width: 1440, height: 1000 });
+  expect(new Set(await gaps()).size).toBe(1);
   // Box has no Variants, Anatomy or Behaviour, and its Accessibility holds only the lists that
   // are in the Docs, so the catalogue has no group after its Rules.
   await goTo(page, '/components/box');
   await expect.poll(groups).toEqual([
-    { band: false, sections: ['overview'] },
-    { band: true, sections: ['rules'] },
-    { band: false, sections: ['related'] },
+    { group: true, sections: ['overview'] },
+    { group: true, sections: ['rules'] },
+    { group: true, sections: ['related'] },
   ]);
   // A page with every group: what it is, its variants, parts and behaviour; its rules, which
-  // open with Use it when, alone on the band; its accessibility.
+  // open with Use it when; its accessibility.
   await goTo(page, '/components/button');
   await expect.poll(groups).toEqual([
-    { band: false, sections: ['overview', 'variants', 'anatomy', 'behaviour'] },
-    { band: true, sections: ['rules'] },
-    { band: false, sections: ['accessibility'] },
-    { band: false, sections: ['related'] },
+    { group: true, sections: ['overview', 'variants', 'anatomy', 'behaviour'] },
+    { group: true, sections: ['rules'] },
+    { group: true, sections: ['accessibility'] },
+    { group: true, sections: ['related'] },
   ]);
+  expect(new Set(await gaps()).size).toBe(1);
   // Its Use it when list of six runs in two columns of three where there is room, one when narrow.
   const columns = () =>
     page.locator('[data-section="rules"] .docs-when-columns ul').evaluate((list) => ({
@@ -822,7 +808,7 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   await expect(page).toHaveURL(/\/docs\/patterns\/forms$/);
   // The Docs show the developer part alone: Compose, what envUI and the application provide,
   // which the catalogue leaves out, and the changelog. None of the catalogue's sections, its
-  // figures, Related or the band.
+  // figures or Related.
   const main = page.locator('.docs-page-column');
   await expect(main.getByRole('heading', { level: 2 })).toHaveText([
     'Import',
@@ -837,7 +823,7 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   await expect(provides.getByRole('listitem').filter({ hasText: 'noValidate' })).toHaveCount(1);
   await expect(
     page.locator(
-      '.docs-band, .docs-related, .docs-figure-section, .docs-live-example, .docs-article .env-card',
+      '.docs-related, .docs-figure-section, .docs-live-example, .docs-article .env-card',
     ),
   ).toHaveCount(0);
   // A foundation's guide maps the words of its page in the catalogue to code, the column the
@@ -851,13 +837,13 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   ]);
   const words = page.locator('section[aria-labelledby="words-in-code"] table');
   await expect(words.getByRole('columnheader')).toHaveText(['Words', 'In code']);
-  await expect(page.locator('.docs-band, .docs-related, .docs-figure-section')).toHaveCount(0);
+  await expect(page.locator('.docs-related, .docs-figure-section')).toHaveCount(0);
   // Field, which has no page in the catalogue, shows its whole page in the Docs, its sections,
-  // then props, part names and changelog, on the page without the band, and without Related.
+  // then props, part names and changelog, without Related.
   await page.goto(`${catalogueUrl}/docs/components/field`);
   await expect(page.locator('.docs-changelog')).toHaveCount(1);
   await expect(page.locator('[data-section="overview"]')).toHaveCount(1);
-  await expect(page.locator('.docs-band, .docs-related')).toHaveCount(0);
+  await expect(page.locator('.docs-related')).toHaveCount(0);
 });
 
 test("a page's changelog in the Docs is collapsed, and a link to it opens it", async ({ page }) => {
@@ -926,10 +912,7 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
     // Docs link at its top end, not from its content, the links generated from its frontmatter
     // included, such as Built from.
     if (area === 'catalogue' && kind !== 'home')
-      await expect(
-        page.locator('.docs-main :is(.docs-article, .docs-band) a[href^="/docs"]'),
-        path,
-      ).toHaveCount(0);
+      await expect(page.locator('.docs-main .docs-article a[href^="/docs"]'), path).toHaveCount(0);
   }
   // A deep link loads its page, in the Docs too.
   await page.goto(`${siteUrl}/docs/setup`);

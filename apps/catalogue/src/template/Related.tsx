@@ -359,8 +359,7 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
 
 /**
  * Related, the last section of a component or pattern page: a tile for each component or page its
- * frontmatter names, with when to pick it instead. It ends the page, on the page itself: the page's
- * one band holds When to use and Anatomy (TemplateContent.tsx).
+ * frontmatter names, with when to pick it instead. It ends the page (TemplateContent.tsx).
  */
 export function Related({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
   const alternatives = alternativesOf(metadata);

@@ -98,10 +98,10 @@ Register the page in [the index](index.md) under its group, with only its title 
 The catalogue shows the sections up to Words to use in three groups, far apart:
 
 1. What it is: Overview, Variants, Anatomy and Behaviour.
-2. Its Rules, alone on the page's one band. They open with Use it when, the frontmatter's `useWhen`, in two columns where the list has more than three items and there is room, and, on a pattern, Built from.
+2. Its Rules. They open with Use it when, the frontmatter's `useWhen`, in two columns where the list has more than three items and there is room, and, on a pattern, Built from.
 3. Accessibility and Words to use, then Related.
 
-It leaves out Compose, the changelog, Accessibility's `### envUI provides` and `### You provide`, Accessibility where nothing else is in it, and every table column headed In code. A foundation's page sits on the page, without the band.
+It leaves out Compose, the changelog, Accessibility's `### envUI provides` and `### You provide`, Accessibility where nothing else is in it, and every table column headed In code.
 
 ### The Docs
 
@@ -113,7 +113,7 @@ A page in the Docs shows the developer part alone:
 - the In code column of Words to use beside the words, as Words in code;
 - the generated Props, Part names and Color properties, and the changelog, collapsed.
 
-None of the catalogue's sections or figures, no Related and no band; the contents beside the page list these headings alone, each once. [Field](components/field.md), which has no page in the catalogue, shows its whole page in the Docs.
+None of the catalogue's sections or figures and no Related; the contents beside the page list these headings alone, each once. [Field](components/field.md), which has no page in the catalogue, shows its whole page in the Docs.
 
 ### The package
 
@@ -183,7 +183,7 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 - **Cells that share a row are one size.** Figures side by side take equal widths, and their stages are as tall as the tallest, with their captions and Code toggles lined up across the row. Never put cells of different sizes side by side: an example at several widths shows one frame to a row, each centred on its own stage. A row of figures stays one column until all of them fit side by side, so no row is left with an orphan: an even run, do and don't pairs included, two to a row from 38 rem, and a run of three three across from 58 rem; write two or three figures in a row, or four as two pairs, and never five.
 - **Related things sit close, unrelated things apart.** A heading sits close to its first content, text close to the figure it introduces, and a figure's stage, caption and Code toggle close together. One block sits clearly apart from the last, one section further from the next in its group, and one group far further still, so a page reads as parts rather than one stream. The catalogue spaces them with the spacing tokens: 1 rem for what belongs together, 2.5 rem between blocks, 4 rem between the sections of a group, and 8 rem between groups. Section headings are larger than a block's.
 - **No separators.** Space, not lines, separates sections and blocks.
-- **One band, for Rules.** Rules, the group that turns from what the subject is to how to use it, sits on one subtle band: a fill a small step from the page, just beyond the navigation's, across the whole content pane, gutters included, so it reads as a region of the page rather than a surface. It is the one band of a component or pattern page: Related, the groups around it, a foundation page and every page of the Docs sit on the page. The contrast gate measures text, links and inline code on the band's fill. Examples on the band sit on the page's canvas in the dark themes, deeper than the band, and on a canvas of the page's own color in the light ones, lighter than the band.
+- **One background.** Every group sits on the page's own background, Rules included, with no band or fill behind a group; space alone sets the groups apart.
 - **One frame per figure.** A figure's stage is its only frame: never put it inside another framed or filled box, such as a Surface or Card around a specimen grid, or a stage inside a stage. A do or don't figure's stage and its bar are one figure: two blocks joined as envUI's connected rows (`env-connected-rows`), with the outer corners rounded large and the inner ones small. A tile of Related is its stage, with its name and line below it in no box. A catalogue browser test fails on a stage with a bordered, filled or shadowed ancestor in the article.
 
 ## Learn from Material's docs
@@ -216,7 +216,7 @@ Every figure sits on the same stage, centred horizontally and vertically, in the
 
 The canvas is deeper than the page in every theme, so an open popup on it stands out as it does in an application, by its own fill and edge.
 
-- `stage=shaded` is for a figure that shows a whole window, such as a Scaffold with its navigation, top bar and body, whose edges must show on the canvas. In the light themes it recesses the canvas from the navigation's fill instead of the page's, or from the band's on the band; in the dark themes it changes nothing.
+- `stage=shaded` is for a figure that shows a whole window, such as a Scaffold with its navigation, top bar and body, whose edges must show on the canvas. In the light themes it recesses the canvas from the navigation's fill instead of the page's; in the dark themes it changes nothing.
 - A Scaffold on the stage paints the page's background in its body. Don't draw a frame or an edge around the subject instead, and check the figure in light and dark.
 
 ### Open overlays
@@ -391,7 +391,7 @@ A foundation page, such as Spacing & density or Colors & themes, explains how en
 - **The words to use.** Its Words to use is an option table whose In code column maps each phrase to the props and tokens it means, so an agent turns the reader's words into code; the Docs show that column as Words in code.
 - **No technical text** in its plain sections, its figures included: name a swatch by its role and use, such as "Supporting text: details, captions and icons", never by its token or value.
 
-Its frontmatter has `title`, `summary`, `aliases`, its figures under `examples` and its related pages under `avoidWhen`, and may list the exports it documents under `components`; its index entry has no summary. Its page in the catalogue has no band, and its page in the Docs shows Compose, Words in code and, where it has them, what envUI and the application provide.
+Its frontmatter has `title`, `summary`, `aliases`, its figures under `examples` and its related pages under `avoidWhen`, and may list the exports it documents under `components`; its index entry has no summary. Its page in the Docs shows Compose, Words in code and, where it has them, what envUI and the application provide.
 
 ## Props
 

@@ -7,8 +7,8 @@
   gap: var(--env-space-4);
 }
 
-/* Specimens inside an article share its gutter instead of adding their own, and its background,
-   the page's or the band's: only their canvas is filled. */
+/* Specimens inside an article share its gutter instead of adding their own, and the page's
+   background: only their canvas is filled. */
 .docs-article .docs-preview {
   padding: 0;
   background: none;
@@ -29,10 +29,9 @@
    scale; the sections within a group sit closer, the largest step, and what is inside a section
    closer still (Figures.css). */
 .docs-section-groups {
-  --docs-group-gap: calc(var(--env-space-9) * 2);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--docs-group-gap);
+  row-gap: calc(var(--env-space-9) * 2);
   padding-block-end: 3rem;
 }
 
@@ -60,66 +59,6 @@
 .docs-related > h2 {
   font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
   letter-spacing: -0.015em;
-}
-
-/* The band: the second group, When to use and Anatomy, on a fill of its own that spans the whole
-   content pane, gutters included, the one band of a page, or its column where the page's contents
-   are beside it (below). Its edges sit halfway between its content and the groups around it, so
-   they stand as far apart as two groups. The fill is a small step from the page, so it reads as a
-   region of the page rather than a surface: in the light themes the muted fill's hue at an OKLCH
-   lightness of 0.945, 0.013 deeper than the navigation beside it, and 0.955 in the light
-   high-contrast theme, as deep as it can be while code keeps 7:1 on it. In the dark themes it is
-   deeper than the page, by 0.02, halfway to the examples' canvas, which stays the deepest.
-   Text, links and inline code keep their contrast on it (`catalogue-band` in
-   tests/contrast/Pairs.ts, which repeats this formula); examples on it sit on a canvas of the
-   page's color in the light themes and on the page's canvas in the dark ones (Stage.css). */
-.docs-band {
-  --docs-band-fill: light-dark(
-    oklch(from var(--env-color-bg-muted) clamp(0.945, l, 0.955) c h),
-    oklch(from var(--env-color-bg-page) calc(l - 0.02) c h)
-  );
-  /* The light themes' canvas on the band is the page's color (Stage.css). */
-  --docs-canvas-depth: 0;
-  margin-block: calc(var(--env-space-9) - var(--docs-group-gap));
-  padding-block: var(--env-space-9);
-  background: var(--docs-band-fill);
-}
-
-/* A band that ends the page, where nothing follows it, keeps the page's padding below it. */
-.docs-band:last-child {
-  margin-block-end: 0;
-}
-
-/* With the page's contents beside it (Shell.css), the band fills the page's column alone, as the
-   page's sections do, and the contents stay on the page's color, where their quieter labels keep
-   4.5:1, which the band's fill doesn't give them in the light themes. It reaches back to the
-   pane's start, as it does without the contents, past the margin a very wide pane leaves beside
-   the centred column, and ends half a gutter short of the contents, with the rounded corners of a
-   surface, so it reads as the column's and their labels never touch it. Its box keeps the
-   column's width, so its sections line up with those around it; the fill is drawn first, and its
-   sections, positioned after it, over it. */
-@container docs-page-layout (width >= 56rem) {
-  .docs-page-grid[data-contents] .docs-band {
-    /* The margin beside the centred column: what of the pane its width leaves, halved. */
-    --docs-band-reach: max(
-      0rem,
-      (100cqi - var(--docs-content-width) - var(--docs-contents-width)) / 2
-    );
-    position: relative;
-    background: none;
-  }
-  .docs-page-grid[data-contents] .docs-band > * {
-    position: relative;
-  }
-  .docs-page-grid[data-contents] .docs-band::before {
-    position: absolute;
-    inset-block: 0;
-    inset-inline: calc(-1 * var(--docs-band-reach)) calc(var(--docs-gutter) / 2);
-    border-start-end-radius: var(--env-radius-surface);
-    border-end-end-radius: var(--env-radius-surface);
-    background: var(--docs-band-fill);
-    content: '';
-  }
 }
 
 /* Guidance lists, on the pages of components, patterns and foundations (GuidanceLists in

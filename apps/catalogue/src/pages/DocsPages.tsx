@@ -485,8 +485,8 @@ function ColorProperties({ components }: { components: readonly string[] }) {
  * its page in the catalogue rather than repeating it: how to import it, its common uses, how its
  * parts compose and how to customize it, from the page's Compose; what the
  * application and envUI provide, which the catalogue leaves out; then, as reference, its props,
- * part names and color properties, and its changelog. No figures of the catalogue, no Related
- * and no band. Field, which has no page in the catalogue, shows its whole page here, on the
+ * part names and color properties, and its changelog. No figures of the catalogue and no
+ * Related. Field, which has no page in the catalogue, shows its whole page here, on the
  * page, as "Build your own field".
  */
 export function DocsReferencePage({ page }: { page: RoutePage }) {
@@ -512,9 +512,7 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
       />
       {/* Field, which has no page in the catalogue, shows the whole file, what envUI and the
           application provide in place. */}
-      {!cataloguePage && (
-        <TemplateContent document={document} provides related={false} bands={false} />
-      )}
+      {!cataloguePage && <TemplateContent document={document} provides related={false} />}
       <Column gap={8} className="docs-article docs-api">
         <CodeGuide document={document} />
         {cataloguePage && <WordsInCode document={document} />}

@@ -36,7 +36,7 @@ export type ExportEntry =
   | (ExportBase & { kind: 'namespace'; parts: string[] })
   | (ExportBase & { kind: 'function'; signature: string });
 
-/** A fill a figure's stage takes instead of the canvas recessed from the page or the band. */
+/** A fill a figure's stage takes instead of the canvas recessed from the page. */
 export type StageFill = 'shaded';
 
 export type DocumentationBlock =
