@@ -18,8 +18,6 @@ interface Entry {
 export default function FailedSend() {
   const [entries, setEntries] = useState<Entry[]>([
     { id: 1, from: 'other', text: 'Is the venue confirmed for Friday?' },
-    // Shown after a send that couldn't reach the server.
-    { id: 2, from: 'self', text: 'Yes, Northwind Hall from six.', status: 'failed' },
   ]);
   const composer = useRef<HTMLTextAreaElement>(null);
   const timers = useRef<number[]>([]);
@@ -28,10 +26,12 @@ export default function FailedSend() {
   const update = (id: number, change: Partial<Entry>) =>
     setEntries((list) => list.map((entry) => (entry.id === id ? { ...entry, ...change } : entry)));
 
-  function deliver(id: number) {
+  function deliver(id: number, reached: boolean) {
     update(id, { status: 'sending' });
-    // A timer stands in for the server, which takes the message this time.
-    timers.current.push(window.setTimeout(() => update(id, { status: undefined }), 1200));
+    // A timer stands in for the server: here a first send can't reach it, and a second one does.
+    timers.current.push(
+      window.setTimeout(() => update(id, { status: reached ? undefined : 'failed' }), 1200),
+    );
   }
 
   return (
@@ -48,7 +48,7 @@ export default function FailedSend() {
                 <Button
                   variant="text"
                   onClick={() => {
-                    deliver(entry.id);
+                    deliver(entry.id, true);
                     // Try again leaves with the failure, so focus goes back to the composer.
                     composer.current?.focus();
                   }}
@@ -69,7 +69,7 @@ export default function FailedSend() {
         onSubmit={(text) => {
           const id = Date.now();
           setEntries((list) => [...list, { id, from: 'self', text }]);
-          deliver(id);
+          deliver(id, false);
         }}
       />
     </Column>

@@ -1,0 +1,43 @@
+import { useState } from 'react';
+import FirstMessage from '../../examples/conversation/FirstMessage';
+import { usePointer, type PointerStep } from '../../previews/Motion';
+import { MotionStage } from '../../previews/MotionStage';
+import { Renew } from '../../previews/Renew';
+
+const suggestion = '[data-env-layout="row"] > .env-button:nth-child(3)';
+
+/*
+ * The pointer presses "What is still open for the launch?": it becomes the first message, the
+ * suggestions leave, and the reply arrives. Then the conversation starts anew.
+ */
+const script: PointerStep[] = [
+  { wait: 500 },
+  { to: suggestion, x: 0.5, y: 1.8 },
+  { to: suggestion, x: 0.5, y: 0.6, duration: 450 },
+  { wait: 350 },
+  { click: true },
+  { wait: 400 },
+  { leave: true },
+  { wait: 3600 },
+  { cue: 'renew' },
+  { wait: 700 },
+];
+
+function Asking() {
+  const [round, setRound] = useState(0);
+  usePointer(script, { onCue: () => setRound((count) => count + 1) });
+  return (
+    <Renew round={round}>
+      <FirstMessage />
+    </Renew>
+  );
+}
+
+/** The welcome's suggestions, one pressed by a pointer no one sees as the first message. */
+export default function FirstMessageMotion() {
+  return (
+    <MotionStage label="a suggestion sent as the first message">
+      <Asking />
+    </MotionStage>
+  );
+}
