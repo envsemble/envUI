@@ -215,7 +215,9 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  * - `cue`: a moment the preview acts on (usePointer's `onCue`), such as a notification arriving.
  * - `type`, text, `into` a selector of a field: typed a character at a time, `every` ms apart;
  *   `erase`, a count: as many characters deleted the same way.
- * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`.
+ * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`. Tab
+ *   leaves the field typed into, which hears its blur; Enter in a single-line field submits its
+ *   form.
  * - `keyDown`, `keyUp`, a key such as `Alt`: held down and let go, on the field typed into or on
  *   `on`. A held modifier, Alt, Control, Shift or Meta, is on every event meanwhile, so Alt and a
  *   `key` is Alt with that key.
@@ -223,7 +225,8 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  *   element under the pointer, which scrolls the nearest box around it in the preview that can
  *   scroll, smoothly, over `duration` ms.
  * - `carry`, a file's name, `as` its type: the pointer picks up a file, as from the desktop, so
- *   its moves drag it; `drop` drops it where the pointer is.
+ *   its moves drag it; `drop` drops it where the pointer is. Carry again before the drop for
+ *   several files at once. An image (PNG, JPEG or WebP) is a small real picture.
  */
 export type PointerStep =
   | { wait: number }
