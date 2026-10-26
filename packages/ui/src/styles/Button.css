@@ -184,6 +184,9 @@
 
 .env-button:where([data-variant='text']):not(.env-icon-button, [data-full-width]) {
   margin-inline: calc(-1 * var(--env-space-1));
+  /* Its margins give its padding back, so it may be that much wider than its container: alone in
+     a container as wide as its content, such as a list row's name, it keeps its words in a line. */
+  max-inline-size: calc(100% + 2 * var(--env-space-1));
 }
 
 /* A Link in running text has no padding, so it takes no margin back either: the spaces and the
