@@ -1,11 +1,11 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { Grid, Page, PageHeader, Surface, type PageWidth } from '@envsemble/envui';
+import { Grid, Page, Surface, type PageWidth } from '@envsemble/envui';
 import { Example } from '../../previews/Example';
 import { useTimeline } from '../../previews/Motion';
 import { MotionStage } from '../../previews/MotionStage';
 
 /** The window the page sits in, in rem: wider than the large column, so Full reads as wider. */
-const frame = { width: 88, height: 21 };
+const frame = { width: 88, height: 17 };
 
 /** Each width in turn, the column's width in rem, and what the ruler names it. */
 const widths: readonly { width: PageWidth; column: number; words: string }[] = [
@@ -83,11 +83,7 @@ function Widening() {
             padding={0}
             style={{ blockSize: '100%', overflow: 'hidden', containerType: 'inline-size' }}
           >
-            <Page
-              width={width}
-              style={page}
-              header={<PageHeader title="Quarterly report" headingLevel={4} />}
-            >
+            <Page width={width} style={page}>
               <Grid columns="2fr 1fr" gap={4}>
                 <Surface background="muted" radius="sm" style={{ blockSize: '7rem' }} />
                 <Surface background="muted" radius="sm" style={{ blockSize: '7rem' }} />
