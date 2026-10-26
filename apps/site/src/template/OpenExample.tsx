@@ -188,8 +188,11 @@ function fit(room: HTMLElement, layer: HTMLElement) {
     next.bottom = Math.max(0, all.bottom - own.bottom);
     next.left = Math.max(0, own.left - all.left);
   }
+  // A popup is placed at whole pixels, and moving the room by a fraction of one can round it to
+  // the next: padding that followed every such step would set it trembling, a pixel each frame.
+  // Within a pixel, the room stays as it is.
   for (const side of ['top', 'right', 'bottom', 'left'] as const)
-    if (Math.abs(next[side] - padding[side]) > 0.5)
+    if (Math.abs(next[side] - padding[side]) > 1)
       room.style.setProperty(`padding-${side}`, `${next[side]}px`);
   // The room grows, or shrinks back, by what the stage lacks or has to spare.
   if (grow !== undefined && Math.abs(grow) > 0.5) {
