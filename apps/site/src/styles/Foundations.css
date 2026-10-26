@@ -320,3 +320,14 @@
 .site-figure-run > .site-topic-figure > figcaption {
   grid-row: 2;
 }
+
+/* An animated figure's subject takes the stage's whole width, as on a component page. */
+.site-topic-figure > .site-foundation-stage > .catalogue-motion-subject {
+  inline-size: 100%;
+}
+
+/* The screen of the themes figure, at a card's width, above its control, with its page's corners. */
+.catalogue-theme-screen {
+  inline-size: min(100%, 26rem);
+  border-radius: var(--env-radius-xl);
+}

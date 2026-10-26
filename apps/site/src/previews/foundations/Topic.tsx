@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Column, Text } from '@envsemble/envui';
 import { InteractiveMark } from '../../template/InteractiveMark';
+import { MotionStage } from '../MotionStage';
 
 /**
  * The parts a foundation page is written in, on the same rules as a component page's: a section
@@ -81,6 +82,9 @@ export function Block({
 /**
  * A figure that shows envUI at work: its content on the recessed canvas, marked when something in
  * it can be used, with its legend and caption below. `label` names it for assistive technology.
+ * With `motion`, what its pause button names, it is an animated figure, as a component page's
+ * animated specimen is: its content plays on a MotionStage (usePointer, useTimeline, WidthSweep),
+ * a picture with a pause button.
  */
 export function Figure({
   label,
@@ -88,22 +92,30 @@ export function Figure({
   legend,
   caption,
   className,
+  motion,
 }: {
   label: string;
   children: ReactNode;
   legend?: ReactNode;
   caption?: ReactNode;
   className?: string;
+  motion?: string;
 }) {
   return (
     <figure className="site-topic-figure" aria-label={label}>
-      <div
-        className={['site-foundation-stage', className].filter(Boolean).join(' ')}
-        data-figure="example"
-      >
-        {children}
-        <InteractiveMark />
-      </div>
+      {motion ? (
+        <MotionStage label={motion} foundation className={className}>
+          {children}
+        </MotionStage>
+      ) : (
+        <div
+          className={['site-foundation-stage', className].filter(Boolean).join(' ')}
+          data-figure="example"
+        >
+          {children}
+          <InteractiveMark />
+        </div>
+      )}
       {(legend || caption) && (
         <figcaption className="site-anatomy-caption">
           {caption && <p className="site-figure-caption">{caption}</p>}
