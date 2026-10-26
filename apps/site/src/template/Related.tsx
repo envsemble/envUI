@@ -166,6 +166,11 @@ const opaque = (color: string) =>
  */
 export const clippedAway = (style: CSSStyleDeclaration) => /^inset\((50|100)%/.test(style.clipPath);
 
+/** Whether an element is coming or going: starting its entrance, or in a transition or animation. */
+const moving = (element: Element) =>
+  element.closest('[data-starting-style], [data-ending-style]') !== null ||
+  (element.getAnimations?.().length ?? 0) > 0;
+
 /** Elements that are their own picture, whatever their style. */
 const pictures = /^(img|svg|canvas|video|input|textarea|select|hr)$/i;
 
@@ -209,7 +214,10 @@ function shownBoxes(canvas: HTMLElement) {
   const visit = (element: Element, clip: DOMRect | null) => {
     for (const child of element.children) {
       const style = getComputedStyle(child);
-      if (style.display === 'none' || style.opacity === '0' || clippedAway(style)) continue;
+      if (style.display === 'none' || clippedAway(style)) continue;
+      // What is transparent doesn't show, unless it is on its way in or out, such as a popup
+      // starting its entrance: the view is placed for it, rather than without it and back.
+      if (style.opacity === '0' && !moving(child)) continue;
       if (style.visibility === 'hidden' && shown !== 'hidden') continue;
       const rect = child.getBoundingClientRect();
       const box = within(

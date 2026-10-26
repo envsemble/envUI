@@ -81,6 +81,29 @@ function mark(element: Element, name: string, on: boolean) {
   element.toggleAttribute(name, on);
 }
 
+/**
+ * Runs a click with the reader's clipboard kept as it is: a preview's copy button, pressed by the
+ * pointer no one sees, copies nowhere. Its writes resolve, so it shows that it copied.
+ */
+function keepClipboard(click: () => void) {
+  const clipboard = navigator.clipboard as Clipboard | undefined;
+  if (!clipboard) return click();
+  const names = ['writeText', 'write'] as const;
+  // The clipboard's own properties, if any, to put back; its methods are usually its prototype's.
+  const own = names.map((name) => Object.getOwnPropertyDescriptor(clipboard, name));
+  for (const name of names)
+    Object.defineProperty(clipboard, name, { value: () => Promise.resolve(), configurable: true });
+  try {
+    click();
+  } finally {
+    names.forEach((name, index) => {
+      const descriptor = own[index];
+      if (descriptor) Object.defineProperty(clipboard, name, descriptor);
+      else delete (clipboard as unknown as Record<string, unknown>)[name];
+    });
+  }
+}
+
 /** Fields a press focuses, as typing goes into them. */
 const textFields =
   'input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"]), textarea, [contenteditable="true"]';
@@ -219,21 +242,27 @@ export class VirtualPointer {
   /** Moves the pointer to a point, coming over the preview there if it wasn't. */
   moveTo(point: Point) {
     if (this.carried) return this.dragTo(point);
-    const first = !this.at;
+    const from = this.at;
+    // A pointer at rest sends nothing, as a resting mouse doesn't: a tooltip opens once it rests.
+    if (from && Math.abs(point.x - from.x) < 0.05 && Math.abs(point.y - from.y) < 0.05) return;
     this.at = point;
     const target = this.hit(point);
     const chain = this.chain(target);
+    const previous = this.over[0] ?? null;
     const left = this.over.filter((element) => !chain.includes(element));
     const entered = chain.filter((element) => !this.over.includes(element));
-    if (left.length && this.over[0]) this.send(this.over[0], 'pointerout');
+    // Each says where the pointer comes from or goes to, as a mouse's do, so a component that
+    // follows enter and leave by them, such as React's, sees a move inside it as one.
+    if (previous && previous !== target)
+      this.send(previous, 'pointerout', { relatedTarget: target });
     for (const element of left) {
-      this.send(element, 'pointerleave');
+      this.send(element, 'pointerleave', { relatedTarget: target });
       mark(element, hoverMark, false);
     }
-    if (entered.length || first) this.send(target, 'pointerover');
+    if (previous !== target || !from) this.send(target, 'pointerover', { relatedTarget: previous });
     for (const element of entered.reverse()) {
       mark(element, hoverMark, true);
-      this.send(element, 'pointerenter');
+      this.send(element, 'pointerenter', { relatedTarget: previous });
     }
     this.over = chain;
     this.send(captures.get(this.id) ?? target, 'pointermove');
@@ -274,17 +303,19 @@ export class VirtualPointer {
     const shared = this.pressed.find((element) => this.over.includes(element));
     if (shared) {
       const point = this.at ?? { x: 0, y: 0 };
-      shared.dispatchEvent(
-        new MouseEvent('click', {
-          bubbles: true,
-          cancelable: true,
-          composed: true,
-          detail: 1,
-          button: 0,
-          clientX: point.x,
-          clientY: point.y,
-          view: window,
-        }),
+      keepClipboard(() =>
+        shared.dispatchEvent(
+          new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+            detail: 1,
+            button: 0,
+            clientX: point.x,
+            clientY: point.y,
+            view: window,
+          }),
+        ),
       );
     }
     for (const element of this.pressed) mark(element, pressMark, false);
