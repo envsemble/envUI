@@ -3,6 +3,8 @@ import { siteDevUrl } from './Servers';
 import { chooseScheme } from './CatalogueThemes';
 import { documents, references } from '../../apps/site/src/Reference';
 import { version, goTo } from './SiteSpecHelpers';
+import { pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
+import { bannerDrawingIndex, bannerSubject } from '../../apps/site/src/layout/CatalogueBannerOrder';
 
 /**
  * Every component and pattern page of the catalogue, by its address; Field's whole page is in
@@ -376,12 +378,19 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   );
   await expect(trail.locator('[aria-current="page"]')).toHaveText('Slider');
   await expect(banner.locator('.site-page-banner-content')).toHaveCSS('text-align', 'start');
-  // Its picture is figures in thin lines, unfilled, out of the accessibility tree.
+  // Its picture is a LineArt drawing out of the accessibility tree, in a box at the banner's end,
+  // cropped from its start.
   const shapes = banner.locator('.site-banner-shapes');
   await expect(shapes).toHaveAttribute('aria-hidden', 'true');
-  await expect(
-    shapes.locator('.catalogue-banner-lines :is(rect, circle, polygon, path, line)').first(),
-  ).toHaveCSS('fill', 'none');
+  const lines = shapes.locator('.env-line-art.catalogue-banner-lines');
+  await expect(lines).toHaveAttribute('data-align', 'end');
+  await expect(lines.locator(':is(rect, circle, polygon, path, line)').first()).toHaveCSS(
+    'fill',
+    'none',
+  );
+  const [box, bannerBox] = await Promise.all([lines.boundingBox(), banner.boundingBox()]);
+  expect(Math.abs(box!.x + box!.width - (bannerBox!.x + bannerBox!.width))).toBeLessThan(1);
+  expect(box!.width).toBeCloseTo(Math.min(bannerBox!.width * 0.48, 42 * 16), 0);
   await expect(banner.locator('.catalogue-banner-motif')).toHaveCount(0);
   // The few pages with a motif of their own, such as Colors & themes, draw it out of the
   // accessibility tree and the tab order.
@@ -391,6 +400,34 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   await expect(motif).toHaveAttribute('inert', '');
   await expect(motif.locator('[data-motif="swatches"] .catalogue-motif-swatch')).toHaveCount(6);
   await expect(page.locator('.site-page-banner .site-banner-shapes')).toHaveCount(0);
+});
+
+test("neighbouring catalogue pages' banners show different drawings, each page always the same", async ({
+  page,
+}) => {
+  // The drawings take turns along the catalogue's order, the sidebar's and the galleries': no two
+  // neighbours share one, and none recurs within sixteen pages.
+  const drawings = 16; // LineArt's, lineArtDrawings.length
+  const order = pagesOf('catalogue').map((route) => ({
+    path: route.path,
+    drawing: bannerDrawingIndex(bannerSubject(route), drawings),
+  }));
+  for (let index = 0; index < order.length; index += 1) {
+    const run = order.slice(index, index + drawings).map(({ drawing }) => drawing);
+    expect(new Set(run).size, `the sixteen pages from ${order[index]!.path}`).toBe(run.length);
+  }
+  // On the pages themselves: the last of the actions, then the first two of the forms.
+  const start = order.findIndex(({ path }) => path === 'components/command-palette');
+  const shown: string[] = [];
+  for (const { path } of [...order.slice(start, start + 3), order[start]!]) {
+    await page.goto(`${siteDevUrl}/${path}`);
+    const drawing = await page
+      .locator('.site-page-banner .catalogue-banner-lines')
+      .getAttribute('data-drawing');
+    shown.push(drawing!);
+  }
+  expect(new Set(shown.slice(0, 3)).size).toBe(3);
+  expect(shown[3]).toBe(shown[0]);
 });
 
 test('the Icons page credits Material Symbols with their license, and the footer does not', async ({
