@@ -1,10 +1,16 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { createContext, use, useRef, useState, type ReactNode } from 'react';
 import { IconButton, Tooltip } from '@envsemble/envui';
 import { Pause } from '@envsemble/envui/icons/Pause';
 import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '../DocumentationTypes';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, PreviewOverlays, useInView } from './Motion';
+
+/**
+ * Whether an animated figure plays a do or don't figure's example: its stage is then that figure's
+ * (VerdictFigure), joined to its Do or Don't bar.
+ */
+export const VerdictMotion = createContext(false);
 
 /**
  * The stage of an animated figure on a page, such as a slider stretching past its ends: the live
@@ -42,13 +48,18 @@ export function MotionStage({
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
+  const verdict = use(VerdictMotion);
   const paused = own && own.over === motionPaused ? own.paused : motionPaused;
   const action = paused ? `Play ${label}` : `Pause ${label}`;
   return (
     <div
       ref={stage}
       className={[
-        foundation ? 'site-foundation-stage' : 'site-live-example',
+        foundation
+          ? 'site-foundation-stage'
+          : verdict
+            ? 'site-verdict-stage env-connected-row'
+            : 'site-live-example',
         'catalogue-motion-stage',
         className,
       ]
