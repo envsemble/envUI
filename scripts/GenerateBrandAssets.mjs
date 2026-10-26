@@ -53,7 +53,7 @@ export function EnvUILogo({ label = 'envUI', ...props }: EnvUILogoProps) {
   );
 }
 `;
-  const target = resolve(root, 'apps/catalogue/src/brand/EnvUILogo.tsx');
+  const target = resolve(root, 'apps/site/src/brand/EnvUILogo.tsx');
   let existing;
   try {
     existing = await readFile(target, 'utf8');

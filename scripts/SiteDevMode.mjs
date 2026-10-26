@@ -1,5 +1,5 @@
 // The hosted site loads envUI's dev mode, `@envsemble/envui/dev`, on the Docs' dev mode page only:
-// that page's demo (apps/catalogue/src/demos/dev-mode/DevModeDemo.tsx) imports it lazily, and no
+// that page's demo (apps/site/src/demos/dev-mode/DevModeDemo.tsx) imports it lazily, and no
 // other file holds any of it, not even the page's pictures of dev mode (DevModePictures.tsx).
 // FinalizeSite.mjs checks the build with checkDevModeChunks before it turns Vite's manifest into
 // module-files.json.

@@ -12,7 +12,7 @@ import { moduleFiles, requireSite, serveSite, site, siteUrl } from './HostedSite
 import {
   normalizeRoute,
   routeOfDocument,
-} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+} from '../../apps/site/src/navigation/DocumentationRoutes';
 
 const dialog = (page: Page) => page.getByRole('dialog', { name: 'Search envUI' });
 const field = (page: Page) => dialog(page).getByRole('combobox', { name: 'Search envUI' });

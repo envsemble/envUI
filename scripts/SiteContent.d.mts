@@ -1,7 +1,4 @@
-import type {
-  AnatomyLegendItem,
-  DocumentationSection,
-} from '../apps/catalogue/src/DocumentationTypes';
+import type { AnatomyLegendItem, DocumentationSection } from '../apps/site/src/DocumentationTypes';
 
 export declare const docsOnlySections: Set<string>;
 export declare const providesHeadings: { envui: 'envUI provides'; app: 'You provide' };

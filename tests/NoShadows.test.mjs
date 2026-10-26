@@ -39,7 +39,7 @@ async function devMode() {
 }
 
 async function catalogue() {
-  const folder = join(root, 'apps/catalogue/src/styles');
+  const folder = join(root, 'apps/site/src/styles');
   const files = (await readdir(folder)).filter((name) => name.endsWith('.css'));
   return Promise.all(files.map((name) => readFile(join(folder, name), 'utf8')));
 }

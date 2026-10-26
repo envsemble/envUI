@@ -3,9 +3,9 @@ packages/ui/src/assets
 packages/ui/icon-manifest.json
 packages/ui/README.md
 packages/ui/docs
-apps/catalogue/src/generated
+apps/site/src/generated
 packages/codemods/test/fixtures
-apps/catalogue/src/brand/EnvUILogo.tsx
+apps/site/src/brand/EnvUILogo.tsx
 packages/ui/licenses/Runtime-Dependencies-LICENSE.txt
 **/dist
 node_modules

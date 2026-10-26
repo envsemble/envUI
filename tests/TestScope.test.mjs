@@ -106,7 +106,7 @@ test('a changed spec runs itself, and a changed helper the specs that import it'
 });
 
 test('the catalogue runs its specs and live development, with the builds they open', () => {
-  const scope = selectScope(['apps/catalogue/src/main.tsx']);
+  const scope = selectScope(['apps/site/src/main.tsx']);
   assert.deepEqual([...scope.specs.keys()].sort(), [
     'Catalogue',
     'CatalogueSearch',
@@ -120,7 +120,7 @@ test('the catalogue runs its specs and live development, with the builds they op
 
 test('the examples, the pages that place them and dev mode run the layout check', () => {
   assert.deepEqual(specs('docs/components/card.md'), ['LayoutCheck']);
-  assert.ok(specs('apps/catalogue/src/examples/card/ProjectSummary.tsx').includes('LayoutCheck'));
+  assert.ok(specs('apps/site/src/examples/card/ProjectSummary.tsx').includes('LayoutCheck'));
   assert.ok(specs('packages/ui/src/dev/measure.ts').includes('LayoutCheck'));
   assert.equal(specNeeds('LayoutCheck').whole, true);
 });

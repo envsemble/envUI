@@ -34,7 +34,7 @@ for (const directory of [
   '../packages/ui/src/',
   '../packages/ui/tokens/',
   '../docs/',
-  '../apps/catalogue/src/examples/',
+  '../apps/site/src/examples/',
   '../assets/',
 ]) {
   watch(new URL(directory, import.meta.url), { recursive: true }, scheduleRebuild);

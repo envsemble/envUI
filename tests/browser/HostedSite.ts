@@ -7,7 +7,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, resolve } from 'node:path';
-import worker from '../../apps/catalogue/site/Worker.mjs';
+import worker from '../../apps/site/hosting/Worker.mjs';
 import { headersFor, siteHeaders } from '../../scripts/SiteHeaders.mjs';
 
 export const site = resolve('dist/site');

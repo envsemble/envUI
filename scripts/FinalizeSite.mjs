@@ -16,7 +16,7 @@ const siteDirectory = resolve(repositoryRoot, 'dist/site');
 if (process.argv.length > 2) throw new Error('Usage: FinalizeSite.mjs');
 
 await copyFile(
-  resolve(repositoryRoot, 'apps/catalogue/site/_headers'),
+  resolve(repositoryRoot, 'apps/site/hosting/_headers'),
   resolve(siteDirectory, '_headers'),
 );
 // Dev mode loads on its own page only, which the manifest shows before it goes.

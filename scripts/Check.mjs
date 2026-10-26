@@ -123,11 +123,7 @@ else if (scope.lint.length)
   );
 if (scope.whole.css)
   staticTasks.push(
-    task('stylelint', [
-      ...bin.stylelint,
-      'packages/ui/src/**/*.css',
-      'apps/catalogue/src/**/*.css',
-    ]),
+    task('stylelint', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/site/src/**/*.css']),
   );
 else if (scope.css.length)
   staticTasks.push(
@@ -143,7 +139,7 @@ else if (scope.format.length)
 if (scope.typecheck)
   for (const [name, project] of [
     ['ui', 'packages/ui/tsconfig.json'],
-    ['catalogue', 'apps/catalogue/tsconfig.json'],
+    ['site', 'apps/site/tsconfig.json'],
     ['types', 'tests/types/tsconfig.json'],
     ['fixture', 'tests/fixture/tsconfig.json'],
   ])

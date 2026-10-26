@@ -42,7 +42,7 @@ export type StageFill = 'shaded';
 export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }
   /**
-   * A file in apps/catalogue/src/examples/<page>/<name>.tsx, placed as a figure: a live example, a
+   * A file in apps/site/src/examples/<page>/<name>.tsx, placed as a figure: a live example, a
    * do or a don't figure, an anatomy figure or a variants figure.
    */
   | {
@@ -89,7 +89,7 @@ export type DocumentationBlock =
       caption?: string;
       legend?: { name: string; text: string }[];
     }
-  /** A catalogue-only specimen in apps/catalogue/src/specimens/<page>/<name>.tsx. */
+  /** A catalogue-only specimen in apps/site/src/specimens/<page>/<name>.tsx. */
   | { kind: 'specimen'; name: string }
   /**
    * An example file of the page shown as code, not live, in "## Compose", the developer part that

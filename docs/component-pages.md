@@ -206,7 +206,7 @@ A figure is an [example file](#examples) listed in the frontmatter and placed wi
 | `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width` |
 | `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                   |
 
-Every figure sits on the same stage, centred horizontally and vertically, in the theme, contrast and scale the reader has chosen: a recessed canvas, a well a shade deeper than the page, with a surface's corners and no edge, so the example's own surfaces rise out of it and a reader can always tell an example from the page around it. Under forced colors the canvas takes a frame instead. A specimen sits on it too. The canvas is the catalogue's (`apps/catalogue/src/styles/Stage.css`), not envUI's.
+Every figure sits on the same stage, centred horizontally and vertically, in the theme, contrast and scale the reader has chosen: a recessed canvas, a well a shade deeper than the page, with a surface's corners and no edge, so the example's own surfaces rise out of it and a reader can always tell an example from the page around it. Under forced colors the canvas takes a frame instead. A specimen sits on it too. The canvas is the catalogue's (`apps/site/src/styles/Stage.css`), not envUI's.
 
 - **Code under every figure.** The catalogue shows a closed Code toggle with the file's source and a copy button, so every figure can be copied as it is. Open code always spans the whole content column, and soft-wraps where the column is narrower than a 100-character line; keep example lines within the formatter's 100 characters.
 - **A caption is one sentence**, in the frontmatter.
@@ -342,7 +342,7 @@ Write the keyboard table from the code and its browser tests, not from the patte
 
 ## Examples
 
-An example is a file in `apps/catalogue/src/examples/<page>/<Name>.tsx`: a small component, default-exported, that an application could copy as it is.
+An example is a file in `apps/site/src/examples/<page>/<Name>.tsx`: a small component, default-exported, that an application could copy as it is.
 
 - Import only what an application can: `react`, `@envsemble/envui`, its `/content`, `/diff`, `/rich-text` and `/color` entries, and icons from `@envsemble/envui/icons/<Name>`.
 - No catalogue classes (`docs-*`) or helpers. Lay out with envUI's components; where envUI has no layout for it yet, a short inline style with a comment is fine.
@@ -368,7 +368,7 @@ Its words follow the [writing guide](writing.md), as an application's would.
 
 ## Specimens
 
-Some visual references are not examples: a matrix of every variant in every form, or controls forced into their hover and pressed looks. These are specimens in `apps/catalogue/src/specimens/<page>/<Name>.tsx`. They may use the catalogue's helpers in `apps/catalogue/src/previews`, and a page places one with a comment, which the packaged page leaves out:
+Some visual references are not examples: a matrix of every variant in every form, or controls forced into their hover and pressed looks. These are specimens in `apps/site/src/specimens/<page>/<Name>.tsx`. They may use the catalogue's helpers in `apps/site/src/previews`, and a page places one with a comment, which the packaged page leaves out:
 
 ```md
 <!-- specimen: VariantMatrix -->
@@ -387,7 +387,7 @@ A foundation page, such as Spacing & density or Colors & themes, explains how en
 
 - **The same structure.** Its sections are a component's, with Options in place of Variants: its topics as titled blocks under Options, Behaviour and Rules, Accessibility only where it has something to say, its Words to use, and its tokens and values under Compose.
 - **How envUI handles it, in pictures.** Each block explains one idea, such as "space shows what belongs together" or "colors are roles", with a real envUI example, such as a small screen, a form or a toolbar, rather than a ladder of values. Where the idea is in the example's layout, mark it on the example, as Spacing & density numbers the space between groups, with a numbered legend below in plain words.
-- **Its figures are the catalogue's.** They are drawn in its preview in `apps/catalogue/src/previews/foundations/`, which keeps only the figures, take their words from the legend after their fence, `1. **Name**: what it means`, and are registered by name in `FoundationFigures.ts`. They take no attributes on their fence, and the package ships their legends.
+- **Its figures are the catalogue's.** They are drawn in its preview in `apps/site/src/previews/foundations/`, which keeps only the figures, take their words from the legend after their fence, `1. **Name**: what it means`, and are registered by name in `FoundationFigures.ts`. They take no attributes on their fence, and the package ships their legends.
 - **The words to use.** Its Words to use is an option table whose In code column maps each phrase to the props and tokens it means, so an agent turns the reader's words into code; the Docs show that column as Words in code.
 - **No technical text** in its plain sections, its figures included: name a swatch by its role and use, such as "Supporting text: details, captions and icons", never by its token or value.
 

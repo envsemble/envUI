@@ -5,7 +5,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "envui",
-  "main": "./apps/catalogue/site/Worker.mjs",
+  "main": "./apps/site/hosting/Worker.mjs",
   // From 2025-04-01, page loads of unknown paths get index.html without running the script.
   "compatibility_date": "2026-10-12",
   "assets": {

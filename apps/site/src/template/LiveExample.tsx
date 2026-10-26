@@ -22,7 +22,7 @@ import { Loading } from './Loading';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
- * it. An example is apps/catalogue/src/examples/<page>/<Name>.tsx with a default-exported
+ * it. An example is apps/site/src/examples/<page>/<Name>.tsx with a default-exported
  * component; the page's Markdown names it in an empty ```tsx example=Name``` fence.
  */
 const loaders = import.meta.glob<{ default: ComponentType }>('../examples/*/*.tsx');
@@ -180,7 +180,7 @@ export function ExampleRender({
   const path = examplePath(page, name);
   const Example = examples.get(path);
   if (!Example || !sourceLoaders[path])
-    throw new Error(`No example file apps/catalogue/src/examples/${page}/${name}.tsx`);
+    throw new Error(`No example file apps/site/src/examples/${page}/${name}.tsx`);
   return (
     <LoadBoundary
       what="example"

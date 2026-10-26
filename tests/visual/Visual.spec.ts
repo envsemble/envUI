@@ -32,7 +32,7 @@ import {
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/CatalogueThemes';
-import { referencePages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { referencePages } from '../../apps/site/src/navigation/DocumentationRoutes';
 
 /**
  * The density fixture's sections captured, each with a theme its boundaries take from the address:

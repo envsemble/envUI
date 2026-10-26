@@ -78,10 +78,7 @@ test('dev mode anywhere else is a problem', () => {
 });
 
 test('every demo a guide page places is one the catalogue has', async () => {
-  const guide = await readFile(
-    join(repository, 'apps/catalogue/src/pages/GuideDocument.tsx'),
-    'utf8',
-  );
+  const guide = await readFile(join(repository, 'apps/site/src/pages/GuideDocument.tsx'), 'utf8');
   const docs = join(repository, 'docs');
   const placed = [];
   for (const name of (await readdir(docs)).filter((file) => file.endsWith('.md'))) {

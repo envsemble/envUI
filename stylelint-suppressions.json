@@ -210,7 +210,7 @@
       "count": 2
     }
   },
-  "apps/catalogue/src/styles/Reference.css": {
+  "apps/site/src/styles/Reference.css": {
     "no-duplicate-selectors": {
       "count": 1
     }

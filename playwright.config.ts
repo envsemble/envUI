@@ -158,7 +158,7 @@ export default defineConfig({
   webServer: [
     servers.catalogue && {
       command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.catalogue.port} --strictPort --force`,
-      cwd: 'apps/catalogue',
+      cwd: 'apps/site',
       url: `http://127.0.0.1:${servers.catalogue.port}`,
       reuseExistingServer: servers.catalogue.reuse,
     },

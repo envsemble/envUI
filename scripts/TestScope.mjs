@@ -134,15 +134,15 @@ export const exceptions = [
   [/^packages\/ui\/src\/foundations\/messages\//, ['Messages']],
   [/^packages\/ui\/src\/dev(?:\.ts$|\/)/, ['DevMode']],
   [
-    /^apps\/catalogue\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|Search\w*|MarkdownHeadings|FinalizeSite|SiteModuleFiles|SiteAgentFiles|ReleaseNotes)\.m?[jt]s$/,
+    /^apps\/site\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|Search\w*|MarkdownHeadings|FinalizeSite|SiteModuleFiles|SiteAgentFiles|ReleaseNotes)\.m?[jt]s$/,
     catalogue,
   ],
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
-  [/^apps\/catalogue\/src\//, ['LiveDevelopment']],
+  [/^apps\/site\/src\//, ['LiveDevelopment']],
   // The layout check measures every example the pages place, on the catalogue's stage, with dev
   // mode's checks; the affected tier runs it.
   [
-    /^apps\/catalogue\/src\/(?:examples\/|styles\/Stage\.css$)|^docs\/(?:components|patterns)\/|^packages\/ui\/src\/dev(?:\.ts$|\/)/,
+    /^apps\/site\/src\/(?:examples\/|styles\/Stage\.css$)|^docs\/(?:components|patterns)\/|^packages\/ui\/src\/dev(?:\.ts$|\/)/,
     ['LayoutCheck'],
   ],
 ];
@@ -234,14 +234,10 @@ export function selectScope(paths, root = repositoryRoot) {
   for (const path of paths) {
     const exists = existsSync(resolve(root, path));
     if (exists && /\.(?:[cm]?js|tsx?)$/.test(path)) scope.lint.push(path);
-    if (exists && /^(?:packages\/ui\/src|apps\/catalogue\/src)\/.*\.css$/.test(path))
+    if (exists && /^(?:packages\/ui\/src|apps\/site\/src)\/.*\.css$/.test(path))
       scope.css.push(path);
     if (exists) scope.format.push(path);
-    if (
-      /^(?:packages\/ui\/src|apps\/catalogue\/src|tests\/fixture|tests\/types)\/.*\.tsx?$/.test(
-        path,
-      )
-    )
+    if (/^(?:packages\/ui\/src|apps\/site\/src|tests\/fixture|tests\/types)\/.*\.tsx?$/.test(path))
       scope.typecheck = true;
     if (/(?:^|\/)tsconfig\.json$/.test(path)) scope.typecheck = true;
     // Repository-wide configuration reruns the whole of its check.
@@ -267,7 +263,7 @@ export function selectScope(paths, root = repositoryRoot) {
     )
       scope.generated.add('icons');
     if (
-      /^packages\/ui\/src\/.*\.(?:tsx?|css|json)$|^docs\/|^apps\/catalogue\/|^\.changeset\/|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateParts)\.mjs$/.test(
+      /^packages\/ui\/src\/.*\.(?:tsx?|css|json)$|^docs\/|^apps\/site\/|^\.changeset\/|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateParts)\.mjs$/.test(
         path,
       )
     )

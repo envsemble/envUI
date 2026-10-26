@@ -14,7 +14,7 @@ const repository = fileURLToPath(new URL('../', import.meta.url));
 /** The style sheets envUI ships, the catalogue's and dev mode's, which embeds its own. */
 function styleSheets() {
   const sheets = [];
-  for (const directory of ['packages/ui/src/styles', 'apps/catalogue/src/styles'])
+  for (const directory of ['packages/ui/src/styles', 'apps/site/src/styles'])
     for (const name of readdirSync(join(repository, directory)))
       if (name.endsWith('.css') && name !== 'Tokens.css')
         sheets.push({

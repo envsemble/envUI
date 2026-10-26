@@ -59,7 +59,7 @@ export const demoLine = /^<!--\s*demo:\s*([A-Za-z]\w*)\s*-->[ \t]*$/m;
 export function Demo({ name }: { name: string }) {
   const [, setAttempt] = useState(0);
   const part = demos[name as keyof typeof demos];
-  if (!part) throw new Error(`No demo ${name} in apps/catalogue/src/pages/GuideDocument.tsx`);
+  if (!part) throw new Error(`No demo ${name} in apps/site/src/pages/GuideDocument.tsx`);
   const Part = part.component;
   return (
     <LoadBoundary

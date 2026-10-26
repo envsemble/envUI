@@ -2,7 +2,7 @@
 // Docs' home gives people a prompt for, and llms.txt, the index of the Docs in the llmstxt.org
 // format. Neither ships in the package, whose own docs/ agents read once envUI is installed.
 //
-// SKILL.md is apps/catalogue/site/SKILL.md with the version of @envsemble/envui in place of
+// SKILL.md is apps/site/hosting/SKILL.md with the version of @envsemble/envui in place of
 // {{version}}; llms.txt is generated from docs/index.md and each page's summary, linked to the
 // site's pages. The catalogue's Vite config serves both while developing and writes them into
 // dist/site when it builds.
@@ -13,7 +13,7 @@ import { unlistedPages } from './SearchIndex.mjs';
 
 export const siteOrigin = 'https://envui.envsemble.com';
 export const skillTemplateFile = fileURLToPath(
-  new URL('../apps/catalogue/site/SKILL.md', import.meta.url),
+  new URL('../apps/site/hosting/SKILL.md', import.meta.url),
 );
 const libraryPackageFile = fileURLToPath(new URL('../packages/ui/package.json', import.meta.url));
 

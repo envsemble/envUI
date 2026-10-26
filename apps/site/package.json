@@ -1,5 +1,5 @@
 {
-  "name": "@envsemble/envui-catalogue",
+  "name": "@envsemble/envui-site",
   "private": true,
   "type": "module",
   "scripts": {

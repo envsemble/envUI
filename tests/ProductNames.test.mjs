@@ -49,12 +49,12 @@ const sources = [
   { directory: 'packages/ui/src', extensions: ['.css'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.ts', '.tsx'], read: 'code' },
   // The catalogue's sample data, copy and styles, and the hosted catalogue's Worker and headers.
-  { directory: 'apps/catalogue/src', extensions: ['.ts', '.tsx'], read: 'code' },
-  { directory: 'apps/catalogue/src', extensions: ['.css'], read: 'whole' },
-  { directory: 'apps/catalogue/site', extensions: ['.mjs'], read: 'code' },
-  { path: 'apps/catalogue/site/_headers', read: 'whole' },
+  { directory: 'apps/site/src', extensions: ['.ts', '.tsx'], read: 'code' },
+  { directory: 'apps/site/src', extensions: ['.css'], read: 'whole' },
+  { directory: 'apps/site/hosting', extensions: ['.mjs'], read: 'code' },
+  { path: 'apps/site/hosting/_headers', read: 'whole' },
   // The setup skill the hosted site serves to coding agents.
-  { path: 'apps/catalogue/site/SKILL.md', read: 'whole' },
+  { path: 'apps/site/hosting/SKILL.md', read: 'whole' },
   // The test fixtures' sample data and copy.
   { directory: 'tests/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
   { directory: 'tests/fixture', extensions: ['.css', '.html'], read: 'whole' },
@@ -90,8 +90,8 @@ const sources = [
 /** Generated from pinned inputs: Material Symbols names its own icons, such as ChromeMaximize. */
 const generated = [
   'packages/ui/src/icons/',
-  'apps/catalogue/src/brand/EnvUILogo.tsx',
-  'apps/catalogue/src/generated/',
+  'apps/site/src/brand/EnvUILogo.tsx',
+  'apps/site/src/generated/',
 ];
 
 test('shipped text, documentation and sample data name no products', async () => {

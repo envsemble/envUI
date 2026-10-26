@@ -6,7 +6,7 @@ const codemodsPackage = JSON.parse(
   await readFile(new URL('../packages/codemods/package.json', import.meta.url), 'utf8'),
 );
 const cataloguePackage = JSON.parse(
-  await readFile(new URL('../apps/catalogue/package.json', import.meta.url), 'utf8'),
+  await readFile(new URL('../apps/site/package.json', import.meta.url), 'utf8'),
 );
 // The release tag: RELEASE_TAG where a workflow names it, as GitHub sets GITHUB_REF_NAME to the
 // event's ref, else GITHUB_REF_NAME on a tag push or by hand.

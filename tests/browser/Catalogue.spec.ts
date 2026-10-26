@@ -7,7 +7,7 @@ import { readMap } from '../../packages/codemods/src/map.mjs';
 import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
 import { technicalText } from '../../scripts/SiteContent.mjs';
 import { renderLlmsText, renderSkill } from '../../scripts/SiteAgentFiles.mjs';
-import { documents, references } from '../../apps/catalogue/src/Reference';
+import { documents, references } from '../../apps/site/src/Reference';
 
 /**
  * Every component and pattern page of the catalogue, by its address; Field's whole page is in
@@ -28,9 +28,9 @@ import {
   routeOfDocument,
   sectionHome,
   catalogueSections,
-} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
-import { componentGroups } from '../../apps/catalogue/src/Reference';
-import { displayStorageKeys } from '../../apps/catalogue/src/theme/DisplayStorage';
+} from '../../apps/site/src/navigation/DocumentationRoutes';
+import { componentGroups } from '../../apps/site/src/Reference';
+import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
 
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = references.map(({ id }) => id);

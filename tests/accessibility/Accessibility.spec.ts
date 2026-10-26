@@ -23,7 +23,7 @@ import {
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/CatalogueThemes';
-import { allPages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { allPages } from '../../apps/site/src/navigation/DocumentationRoutes';
 
 /** light on every page, and dark, light-hc and dark-hc on the pages of samplePages. */
 type Theme = ThemeName;

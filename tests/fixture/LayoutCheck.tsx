@@ -5,17 +5,17 @@ import { layout } from '@envsemble/envui/dev';
 // The catalogue's stage, so an example sits as its figure does: centred, kept to the stage's width,
 // and filling it where it takes its width from its container. Fixture.css takes away the stage's
 // padding and frame, so the stage is the window the example gets.
-import '../../apps/catalogue/src/styles/Stage.css';
+import '../../apps/site/src/styles/Stage.css';
 
 /**
- * Every catalogue example file, loaded on demand: apps/catalogue/src/examples/<page>/<Name>.tsx,
+ * Every catalogue example file, loaded on demand: apps/site/src/examples/<page>/<Name>.tsx,
  * as the catalogue's LiveExample loads them.
  */
 const loaders = import.meta.glob<{ default: ComponentType }>(
-  '../../apps/catalogue/src/examples/*/*.tsx',
+  '../../apps/site/src/examples/*/*.tsx',
 );
 const params = new URLSearchParams(window.location.search);
-const path = `../../apps/catalogue/src/examples/${params.get('page')}/${params.get('name')}.tsx`;
+const path = `../../apps/site/src/examples/${params.get('page')}/${params.get('name')}.tsx`;
 /** The example the address names, if there is one. */
 const Example = loaders[path] && lazy(loaders[path]);
 

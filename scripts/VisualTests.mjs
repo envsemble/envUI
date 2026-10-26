@@ -103,7 +103,7 @@ const lock = createHash('sha256')
   .update(readFileSync(new URL('../package-lock.json', import.meta.url)))
   .update(`${image} ${platform}`)
   .digest('hex');
-const modules = ['node_modules', 'packages/ui/node_modules', 'apps/catalogue/node_modules'];
+const modules = ['node_modules', 'packages/ui/node_modules', 'apps/site/node_modules'];
 const npmCache = '/npm-cache';
 const volumes = [
   ...modules.flatMap((path) => [
@@ -141,7 +141,7 @@ if (hostUser) {
 for dir in ${modules.join(' ')} ${npmCache}; do
   [ "$(stat -c %u:%g "$dir")" = "$ENVUI_HOST_USER" ] || chown -R "$ENVUI_HOST_USER" "$dir"
 done
-for output in test-results tests/visual/snapshots apps/catalogue/src/generated; do
+for output in test-results tests/visual/snapshots apps/site/src/generated; do
   [ ! -e "$output" ] || find "$output" -user 0 -exec chown "$ENVUI_HOST_USER" {} +
 done
 `,

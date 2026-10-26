@@ -8,7 +8,7 @@ output/playwright/
 *.tgz
 /packages/ui/README.md
 /packages/ui/docs/
-/apps/catalogue/src/generated/
+/apps/site/src/generated/
 .wrangler/
 
 # Local screenshots and scripts.

@@ -1,13 +1,13 @@
-// The release notes, apps/catalogue/src/releases/release-notes.md, the highlights on the Docs'
+// The release notes, apps/site/src/releases/release-notes.md, the highlights on the Docs'
 // Changelog page: one entry per release, newest first, with up to five highlights and the breaking
 // changes, each linking to the migration guide or the full changelog below them. The catalogue reads them when it builds, through the
-// virtual module in apps/catalogue/vite.config.ts, and the checks below hold them to that shape.
+// virtual module in apps/site/vite.config.ts, and the checks below hold them to that shape.
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { headingsOf } from './MarkdownHeadings.mjs';
 
 export const releaseNotesFile = fileURLToPath(
-  new URL('../apps/catalogue/src/releases/release-notes.md', import.meta.url),
+  new URL('../apps/site/src/releases/release-notes.md', import.meta.url),
 );
 const migrationFile = fileURLToPath(new URL('../docs/migration.md', import.meta.url));
 const changelogFile = fileURLToPath(new URL('../packages/ui/CHANGELOG.md', import.meta.url));

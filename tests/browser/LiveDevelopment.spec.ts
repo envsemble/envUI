@@ -9,7 +9,7 @@ test('public component, stylesheet, new export and Markdown documentation update
   const buttonSource = resolve('packages/ui/src/actions/internal/ButtonBase.tsx');
   const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
-  const example = resolve('apps/catalogue/src/examples/text-field/FieldsBesideButtons.tsx');
+  const example = resolve('apps/site/src/examples/text-field/FieldsBesideButtons.tsx');
   const documentation = resolve('docs/components/text-field.md');
   const newComponent = resolve('packages/ui/src/LiveAcceptance.tsx');
   const paths = [buttonSource, stylesheet, index, example, documentation];

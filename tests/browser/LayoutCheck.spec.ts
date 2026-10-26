@@ -12,7 +12,7 @@
  */
 import { test, expect, type Page } from '@playwright/test';
 import type { LayoutProblem, ProblemRule } from '@envsemble/envui/dev';
-import { documents } from '../../apps/catalogue/src/generated/Documentation';
+import { documents } from '../../apps/site/src/generated/Documentation';
 import { fixtureUrl } from './Servers';
 
 /** The widths of the completion check, in rem. */
@@ -151,7 +151,7 @@ for (const page of new Set(figures.map((figure) => figure.page)))
           });
         expect(
           [...errors, ...found],
-          `apps/catalogue/src/examples/${figure.page}/${figure.name}.tsx`,
+          `apps/site/src/examples/${figure.page}/${figure.name}.tsx`,
         ).toEqual([]);
       });
     }

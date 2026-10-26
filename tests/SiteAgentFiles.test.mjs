@@ -106,7 +106,7 @@ test('For agents shows the AGENTS.md block and the prompt the skill and the Docs
   const guide = readFileSync(join(repository, 'docs/agent-tooling.md'), 'utf8');
   assert.ok(block(guide));
   assert.equal(block(guide), block(skill));
-  const docsHome = readFileSync(join(repository, 'apps/catalogue/src/pages/DocsPages.tsx'), 'utf8');
+  const docsHome = readFileSync(join(repository, 'apps/site/src/pages/DocsPages.tsx'), 'utf8');
   const prompt = /setupPrompt = '([^']+)'/.exec(docsHome)?.[1];
   assert.equal(prompt, 'Set up envUI in my app: envui.envsemble.com/SKILL.md');
   assert.ok(guide.includes(`\`\`\`text\n${prompt}\n\`\`\``));

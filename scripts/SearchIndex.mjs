@@ -1,6 +1,6 @@
 // The site's search: one document per page, export, prop and token, from the same sources as the
 // site and the packaged docs (docs/, docs/generated/props.json and the token list), and the
-// MiniSearch index the site loads, written to apps/catalogue/src/generated/SearchIndex.json by
+// MiniSearch index the site loads, written to apps/site/src/generated/SearchIndex.json by
 // GenerateDocumentation.mjs. The site opens it with ⌘K or Ctrl+K, in the catalogue and the Docs.
 //
 // searchDocuments() is plain data, so other tools can index the same documents: each names the page
@@ -18,7 +18,7 @@ import { indexOptions, nameKey } from './SearchTerms.mjs';
 import { exportSection, headingSlugger, propSection, tokenSection } from './SearchAnchors.mjs';
 
 export const searchIndexFile = fileURLToPath(
-  new URL('../apps/catalogue/src/generated/SearchIndex.json', import.meta.url),
+  new URL('../apps/site/src/generated/SearchIndex.json', import.meta.url),
 );
 export const tokensFile = fileURLToPath(
   new URL('../packages/ui/src/generated/tokens.json', import.meta.url),

@@ -924,7 +924,7 @@ const registry: readonly ContrastPair[] = merged([
 
 /**
  * The catalogue shows envUI's examples on a recessed canvas, a shade deeper than the page
- * (apps/catalogue/src/styles/Stage.css). What an example paints
+ * (apps/site/src/styles/Stage.css). What an example paints
  * on the page it paints on the canvas instead, so every pair measured on the page is measured on
  * the canvas too, held to the same requirement.
  */
@@ -2295,7 +2295,7 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
  *   data has, from 30% at the lightest to the full tone (CalendarHeatmap.tsx and .css). The
  *   lightest step of the default accent tone is measured.
- * - The catalogue's recessed canvas its examples sit on, as apps/catalogue/src/styles/Stage.css
+ * - The catalogue's recessed canvas its examples sit on, as apps/site/src/styles/Stage.css
  *   paints it: 0.035 deeper than the page in OKLCH lightness in the light themes and 0.045 in the
  *   dark ones.
  */

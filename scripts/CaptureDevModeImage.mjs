@@ -1,6 +1,6 @@
 // Captures the pictures of dev mode, in the light and the dark theme, each in the catalogue of that
 // theme, whose examples take its theme; dev mode takes the demo's. Each opens the real dev mode on
-// the demo application in the catalogue and saves apps/catalogue/src/demos/dev-mode/dev-mode-<name>-
+// the demo application in the catalogue and saves apps/site/src/demos/dev-mode/dev-mode-<name>-
 // <theme>.webp at twice the CSS size:
 //
 // - 3d: the picture of the dev mode guide's demo, the view's planes alone, with the node tree, the
@@ -48,7 +48,7 @@ async function save(tab, png, name, theme) {
     },
     { data: png.toString('base64'), quality },
   );
-  const file = resolve(root, `apps/catalogue/src/demos/dev-mode/dev-mode-${name}-${theme}.webp`);
+  const file = resolve(root, `apps/site/src/demos/dev-mode/dev-mode-${name}-${theme}.webp`);
   await writeFile(file, Buffer.from(webp, 'base64'));
   console.log(`Wrote ${file} (${Math.round((webp.length * 0.75) / 1024)} KB).`);
 }

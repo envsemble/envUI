@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
  * The workspaces whose runtime dependencies ship: the library's and the hosted site's. The
  * codemods package runs on the developer's machine and its dependencies ship with it, not here.
  */
-const shippingWorkspaces = ['packages/ui', 'apps/catalogue'];
+const shippingWorkspaces = ['packages/ui', 'apps/site'];
 
 /** The lockfile location a dependency of the package at `from` resolves to, as Node finds it. */
 function resolveLocked(packages, from, name) {

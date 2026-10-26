@@ -3,7 +3,7 @@
  * light, and the pages in samplePages in dark, light high contrast and dark high contrast as well.
  */
 import { expect, type Page } from '@playwright/test';
-import { allPages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { allPages } from '../../apps/site/src/navigation/DocumentationRoutes';
 
 export type ThemeName = 'light' | 'dark' | 'light-hc' | 'dark-hc';
 

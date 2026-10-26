@@ -2,7 +2,7 @@
 // enforcing it: they render raw elements on purpose. The counts show how the rules behave on real
 // envUI code, and what is left of the old names after the renames.
 //
-//   node scripts/Dogfood.mjs [directory …]   default: apps/catalogue/src tests/fixture
+//   node scripts/Dogfood.mjs [directory …]   default: apps/site/src tests/fixture
 
 import { ESLint } from 'eslint';
 import { fileURLToPath } from 'node:url';
@@ -11,9 +11,7 @@ import plugin from '../src/index.js';
 
 const repository = fileURLToPath(new URL('../../../', import.meta.url));
 const directories =
-  process.argv.slice(2).length > 0
-    ? process.argv.slice(2)
-    : ['apps/catalogue/src', 'tests/fixture'];
+  process.argv.slice(2).length > 0 ? process.argv.slice(2) : ['apps/site/src', 'tests/fixture'];
 
 const eslint = new ESLint({
   cwd: repository,

@@ -62,7 +62,7 @@ const [phase1, built] = await Promise.all([
     task('docs:check parts', node('scripts/GenerateParts.mjs', '--check')),
     task('docs:check pages', node('scripts/GenerateDocumentation.mjs', '--check')),
     task('lint', [...bin.eslint, '.', '--cache', '--cache-location', '.cache/eslint/']),
-    task('lint:css', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/catalogue/src/**/*.css']),
+    task('lint:css', [...bin.stylelint, 'packages/ui/src/**/*.css', 'apps/site/src/**/*.css']),
     task('format:check', [...bin.prettier, '--check', '.']),
     task('typecheck ui', [
       ...bin.tsc,
@@ -76,7 +76,7 @@ const [phase1, built] = await Promise.all([
     task('typecheck catalogue', [
       ...bin.tsc,
       '-p',
-      'apps/catalogue/tsconfig.json',
+      'apps/site/tsconfig.json',
       '--noEmit',
       '--incremental',
       '--tsBuildInfoFile',

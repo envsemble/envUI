@@ -1,12 +1,12 @@
 // Reads the documentation in docs/: the index, which groups and orders the pages, and each page with
 // its frontmatter. It validates them, generates the catalogue's data
-// (apps/catalogue/src/generated/Documentation.ts) and compiles the Markdown that ships in the
+// (apps/site/src/generated/Documentation.ts) and compiles the Markdown that ships in the
 // package, where example files and generated props tables are filled in.
 //
 // Component, pattern and foundation pages (docs/components, docs/patterns and docs/foundations)
 // are in the one-file structure: YAML frontmatter (see pageSchemas) that lists each example once,
 // with its role and caption, then the `##` sections of pageSections, in their order. An example is
-// a file in apps/catalogue/src/examples/<page>/<Name>.tsx, or on a foundation one of the
+// a file in apps/site/src/examples/<page>/<Name>.tsx, or on a foundation one of the
 // catalogue's figures, placed by an empty fence ```tsx figure=Name```; the Overview, Props and
 // Related are generated, Related from its avoidWhen. The build fails on a page of these kinds that
 // is not in the structure. docs/component-pages.md and docs/pattern-pages.md describe it for
@@ -35,7 +35,7 @@ export const documentationDirectory = fileURLToPath(new URL('../docs/', import.m
  * Pages the package leaves out, whose links in its pages lead to the copies on main instead, and
  * which the packaged index doesn't list: the contributor pages, for people who work on envUI
  * itself, which neither the catalogue nor the Docs show
- * (unlistedDocuments in apps/catalogue/src/navigation/DocumentationRoutes.ts), and local
+ * (unlistedDocuments in apps/site/src/navigation/DocumentationRoutes.ts), and local
  * development, which needs a checkout of envUI and which the Docs show.
  */
 export const contributorPages = new Set([
@@ -55,13 +55,13 @@ export function linkContributorPages(markdown, path) {
 }
 
 export const examplesDirectory = fileURLToPath(
-  new URL('../apps/catalogue/src/examples/', import.meta.url),
+  new URL('../apps/site/src/examples/', import.meta.url),
 );
 export const specimensDirectory = fileURLToPath(
-  new URL('../apps/catalogue/src/specimens/', import.meta.url),
+  new URL('../apps/site/src/specimens/', import.meta.url),
 );
 const generatedFile = fileURLToPath(
-  new URL('../apps/catalogue/src/generated/Documentation.ts', import.meta.url),
+  new URL('../apps/site/src/generated/Documentation.ts', import.meta.url),
 );
 const changelogFile = fileURLToPath(new URL('../packages/ui/CHANGELOG.md', import.meta.url));
 const changesetDirectory = fileURLToPath(new URL('../.changeset/', import.meta.url));
@@ -766,7 +766,7 @@ function readPage(document, body, { kind, catalog, examples, specimens, partName
         const name = token.lang.match(sourcePattern)[1];
         if (!examples.has(name))
           problems.push(
-            `source ${name} has no file apps/catalogue/src/examples/${document.id}/${name}.tsx`,
+            `source ${name} has no file apps/site/src/examples/${document.id}/${name}.tsx`,
           );
         if (token.text.trim())
           problems.push(`the fence of source ${name} must be empty; the build fills in its file`);
@@ -981,7 +981,7 @@ function readPage(document, body, { kind, catalog, examples, specimens, partName
         if (!attributes[key]) problems.push(`${role} ${name} needs a ${key}, one sentence`);
       if (!examples.has(name))
         problems.push(
-          `figure ${name} has no file apps/catalogue/src/examples/${document.id}/${name}.tsx`,
+          `figure ${name} has no file apps/site/src/examples/${document.id}/${name}.tsx`,
         );
       const caption = attributes.caption;
       const block = {
@@ -1038,7 +1038,7 @@ function readPage(document, body, { kind, catalog, examples, specimens, partName
       const name = token.raw.trim().match(specimenPattern)[1];
       if (!specimens.has(name))
         problems.push(
-          `specimen ${name} has no file apps/catalogue/src/specimens/${document.id}/${name}.tsx`,
+          `specimen ${name} has no file apps/site/src/specimens/${document.id}/${name}.tsx`,
         );
       blocks.push({ kind: 'specimen', name });
       continue;
@@ -1078,7 +1078,7 @@ function readPage(document, body, { kind, catalog, examples, specimens, partName
       problems.push(`example ${name} is listed in the frontmatter but placed nowhere`);
     if (!foundation && !examples.has(name))
       problems.push(
-        `example ${name} has no file apps/catalogue/src/examples/${document.id}/${name}.tsx`,
+        `example ${name} has no file apps/site/src/examples/${document.id}/${name}.tsx`,
       );
   }
   if (!foundation) {

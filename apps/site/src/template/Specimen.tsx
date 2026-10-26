@@ -27,7 +27,7 @@ export function Specimen({
   const [, setAttempt] = useState(0);
   const path = `../specimens/${page}/${name}.tsx`;
   const Component = specimens.get(path);
-  if (!Component) throw new Error(`No specimen apps/catalogue/src/specimens/${page}/${name}.tsx`);
+  if (!Component) throw new Error(`No specimen apps/site/src/specimens/${page}/${name}.tsx`);
   return (
     <SpecimenHeadingLevel value={headingLevel}>
       <Preview specimen={name}>
