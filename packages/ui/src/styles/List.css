@@ -189,6 +189,12 @@
 .env-list > .env-list-item[data-interactive] [data-row-target] {
   -webkit-user-drag: none;
 }
+/* A button as the target is as wide as its label, which wraps only where the row is too narrow:
+   a percentage cap would count it as no width in the row's text, which then wraps the label to
+   the description's width. */
+.env-list > .env-list-item[data-interactive] .env-button[data-row-target] {
+  max-inline-size: none;
+}
 .env-list > .env-list-item[data-interactive] [data-row-target]::after {
   content: '';
   position: absolute;
