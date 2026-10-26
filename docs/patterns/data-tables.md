@@ -50,6 +50,7 @@ examples:
   SortAndPaginate: overview
   SelectAndBulkActions: example
   RowActions: example
+  RowsThatStack: example
   DataTableAnatomy: anatomy
 ---
 
@@ -96,6 +97,14 @@ A [Table](../components/table.md) holds the data, with its own sorting, selectio
 
 - [Pagination](../components/pagination.md) below it gives the range, "1–4 of 6".
 - It keeps working while the next set loads.
+
+### Adapting to width
+
+Where the table is narrow, such as on a phone, each row stacks into a block titled by its name, with each value beside its column's name. The pages stay below it.
+
+```tsx figure=RowsThatStack widths="40 20" sweep
+
+```
 
 ## Rules
 
