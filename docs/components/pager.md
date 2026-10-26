@@ -83,7 +83,7 @@ The links sit side by side while they fit.
 - In less room each takes a centred row of its own.
 - Titles wrap between words.
 
-```tsx figure=LongTitles widths="16 44"
+```tsx figure=LongTitles widths="46 16" sweep
 
 ```
 

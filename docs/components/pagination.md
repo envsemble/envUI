@@ -82,7 +82,7 @@ In a row, the pager keeps its width while a field beside it shrinks.
 
 - Only a container too narrow for the pager itself wraps the buttons below the range.
 
-```tsx figure=ToolbarRow widths="18 32"
+```tsx figure=ToolbarRow widths="32 14" sweep
 
 ```
 

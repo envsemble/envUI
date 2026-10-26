@@ -109,7 +109,7 @@ A tab shows its panel as soon as the arrow keys reach it.
 
 Tabs keep their size: a rail with more tabs than fit scrolls sideways.
 
-```tsx figure=ScrollingRail widths="20 40"
+```tsx figure=ScrollingRail widths="40 20" sweep
 
 ```
 

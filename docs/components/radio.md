@@ -95,7 +95,7 @@ A required group with nothing chosen asks for a choice before the form is sent, 
 
 Options in a line wrap onto more lines, and rows fill the width.
 
-```tsx figure=WrappingOptions widths="14 30"
+```tsx figure=WrappingOptions widths="30 14" sweep
 
 ```
 

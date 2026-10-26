@@ -98,7 +98,7 @@ Where the dock is narrow, such as on a phone, one panel at a time fills the regi
 
 - In a narrow panel, the header's actions and controls take a row of their own above the title.
 
-```tsx figure=NarrowRegion widths="24 48"
+```tsx figure=NarrowRegion widths="48 24" sweep
 
 ```
 

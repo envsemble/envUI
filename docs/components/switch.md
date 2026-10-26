@@ -85,7 +85,7 @@ In a row, the row's title names the switch, and its detail describes it.
 
 The label wraps beside the track.
 
-```tsx figure=LongLabel widths="14 30"
+```tsx figure=LongLabel widths="30 14" sweep
 
 ```
 

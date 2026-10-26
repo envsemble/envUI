@@ -98,7 +98,7 @@ The tree draws only the rows in view, so it stays quick with tens of thousands o
 
 Rows keep one line: the description gives way first, then the label ends with an ellipsis.
 
-```tsx figure=NarrowTree widths="12 24"
+```tsx figure=NarrowTree widths="24 12" sweep
 
 ```
 
