@@ -3,6 +3,8 @@
    any size, in the muted edge color, barely there in every theme. Right to left, the drawing is
    mirrored, so it sits at the end and is cropped from the start there too. */
 .env-line-art {
+  /* How long a motion takes (see Motion below). */
+  --env-line-art-duration: calc(var(--env-motion-duration-slow) * 10);
   display: block;
   inline-size: 100%;
   block-size: 100%;
@@ -17,6 +19,105 @@
 }
 .env-line-art:dir(rtl) {
   scale: -1 1;
+}
+
+/* Motion: the lines draw themselves in, out, or in and out by turns, one beat after another in the
+   order of the drawing's construction: in, the lines that frame it first; out, the other way
+   round, so the lines that frame it go last and come back first. Each line is set one long
+   (pathLength) and dashed in ones, so a dash offset (--env-line-art-offset) of 0 draws it whole,
+   1 or -1 not at all, and in between part of it: from its start as the offset falls to 0, and
+   away from its start as it falls from 0. The lines keep their width on screen, which lays their
+   dashes out on screen too, so the dashes are in the drawing's scale, --env-line-art-scale, which
+   LineArt measures. Only the dash moves, so the lines stay crisp hairlines and nothing around
+   them moves. Each motion takes --env-line-art-duration, ten of the slow motion token; each line
+   moves for half of it, starting at its place in the order (--env-line-art-at, from 0 to 1). */
+
+/* Where a line's dash is, in lines' lengths: registered as a number, so it moves smoothly at any
+   scale. The lines have nothing inside to inherit it, so it inherits, as private properties do. */
+@property --env-line-art-offset {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+.env-line-art[data-motion] > * {
+  --env-line-art-dash: var(--env-line-art-scale, 1);
+  stroke-dasharray: var(--env-line-art-dash) var(--env-line-art-dash);
+  stroke-dashoffset: calc(var(--env-line-art-dash) * var(--env-line-art-offset));
+  animation-duration: calc(var(--env-line-art-duration) / 2);
+  animation-delay: calc(var(--env-line-art-duration) / 2 * var(--env-line-art-at, 0));
+  animation-timing-function: var(--env-motion-ease);
+  animation-fill-mode: both;
+}
+.env-line-art[data-motion='appear'] > * {
+  animation-name: env-line-art-appear;
+}
+.env-line-art:is([data-motion='disappear'], [data-turn='out']) > * {
+  animation-name: env-line-art-disappear;
+  animation-delay: calc(var(--env-line-art-duration) / 2 * (1 - var(--env-line-art-at, 0)));
+}
+/* A loop draws the lines in and holds the drawing whole for a quarter of the duration, then draws
+   them out, each turn starting as the last one ends, so the two meet with nothing drawn. */
+.env-line-art[data-turn='in'] > * {
+  animation-name: env-line-art-loop-in;
+  animation-duration: calc(var(--env-line-art-duration) / 4 * 3);
+}
+/* Each line runs out past its end, quickening, and from before its start draws in again, settling:
+   a whole dash period on, so it ends where it began. The lines start over the whole duration
+   rather than half of it, so only a few are on their way at once and the drawing stays whole. */
+.env-line-art[data-motion='play'] > * {
+  animation-name: env-line-art-play;
+  animation-delay: calc(var(--env-line-art-duration) * var(--env-line-art-at, 0));
+}
+
+@keyframes env-line-art-appear {
+  from {
+    --env-line-art-offset: 1;
+  }
+  to {
+    --env-line-art-offset: 0;
+  }
+}
+@keyframes env-line-art-disappear {
+  from {
+    --env-line-art-offset: 0;
+  }
+  to {
+    --env-line-art-offset: -1;
+  }
+}
+@keyframes env-line-art-loop-in {
+  0% {
+    --env-line-art-offset: 1;
+  }
+  66.667%,
+  100% {
+    --env-line-art-offset: 0;
+  }
+}
+@keyframes env-line-art-play {
+  0% {
+    --env-line-art-offset: 0;
+    animation-timing-function: var(--env-motion-ease-exit);
+  }
+  30% {
+    --env-line-art-offset: -1;
+    animation-timing-function: var(--env-motion-ease-enter);
+  }
+  100% {
+    --env-line-art-offset: -2;
+  }
+}
+
+/* Where reduced motion is preferred, the drawing shows where its motion ends at once, so a motion
+   that ends still ends, and a loop stays whole. */
+@media (prefers-reduced-motion: reduce) {
+  .env-line-art[data-motion] > * {
+    animation-duration: 0s;
+    animation-delay: 0s;
+  }
+  .env-line-art[data-motion='loop'] > * {
+    animation: none;
+  }
 }
 
 /* In forced colors, where the muted edge is gone, the lines take the system's gray text color. */
