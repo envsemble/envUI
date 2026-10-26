@@ -1,11 +1,8 @@
-import { useRef, type CSSProperties } from 'react';
+import { useRef } from 'react';
 import { Column, Link, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
 import type { RoutePage } from '../navigation/SiteRoutes';
-import { galleryPreviews } from '../previews/GalleryPreviews';
 import { usePlaying } from '../previews/Motion';
-import { tileOf } from '../tiles/Tiles';
-import { hasExample } from './LiveExample';
 import { previewOf, TilePreview, useNear, type Preview } from './Related';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
@@ -17,38 +14,9 @@ export interface GalleryGroup {
   pages: RoutePage[];
 }
 
-/**
- * What a gallery tile shows of a page: its own tile (tiles/Tiles.ts), else the composition or
- * example chosen for the gallery where there is one (GalleryPreviews.tsx), else what a Related tile
- * shows, the page's lead example or its anatomy.
- */
+/** What a gallery tile shows of a page: its own tile, as a Related tile does (Related.tsx). */
 export function galleryPreviewOf(page: RoutePage): Preview | undefined {
-  const document = page.document;
-  if (!document) return undefined;
-  if (tileOf(document.id)) return previewOf(document);
-  const chosen = galleryPreviews[document.id];
-  // An example that a page's rework removed leaves the tile its lead example.
-  if (!chosen || (chosen.example && !hasExample(document.id, chosen.example)))
-    return previewOf(document);
-  return {
-    page: document.id,
-    name: chosen.example ?? document.id,
-    open: Boolean(chosen.open),
-    stage: chosen.stage,
-    composition: chosen.render,
-  };
-}
-
-/** The window a tile's picture lays out in, where it needs a larger one than the gallery's. */
-function windowOf(page: RoutePage) {
-  const size = page.document && galleryPreviews[page.document.id]?.window;
-  return (
-    size &&
-    ({
-      '--catalogue-gallery-window-width': `${size.width}rem`,
-      '--catalogue-gallery-window-height': `${size.height}rem`,
-    } as CSSProperties)
-  );
+  return page.document && previewOf(page.document);
 }
 
 /**
@@ -63,7 +31,7 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   const [playing, playOn] = usePlaying();
   const Heading = level === 2 ? 'h2' : 'h3';
   return (
-    <li ref={tile} className="catalogue-gallery-tile" style={windowOf(page)} {...playOn}>
+    <li ref={tile} className="catalogue-gallery-tile" {...playOn}>
       <TilePreview
         preview={galleryPreviewOf(page)}
         near={near}

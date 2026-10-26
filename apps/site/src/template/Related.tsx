@@ -1,4 +1,5 @@
 import {
+  Component,
   startTransition,
   Suspense,
   useEffect,
@@ -53,8 +54,7 @@ export interface Preview {
   /** A page without an example, such as a foundation's: the id of its specimen (PageSpecimens.tsx). */
   specimen?: string;
   /**
-   * A composition drawn for the tile instead of an example: the page's own tile (tiles/Tiles.ts),
-   * or a gallery's (GalleryPreviews.tsx).
+   * A composition drawn for the tile instead of an example: the page's own tile (tiles/Tiles.ts).
    */
   composition?: ComponentType;
   /** Whether the composition is the page's own tile, drawn in the tiles' window (Related.css). */
@@ -150,6 +150,20 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
   });
 }
 
+/**
+ * Keeps a tile that fails to render to itself: it shows nothing, and the gallery around it its
+ * other tiles, rather than the page failing.
+ */
+class TileBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
 /** The least room, in px, between a preview and its stage's edges. */
 const inset = 16;
 
@@ -170,6 +184,23 @@ export const clippedAway = (style: CSSStyleDeclaration) => /^inset\((50|100)%/.t
 const moving = (element: Element) =>
   element.closest('[data-starting-style], [data-ending-style]') !== null ||
   (element.getAnimations?.().length ?? 0) > 0;
+
+/**
+ * Whether an element is on its way somewhere: it or a box around it, inside the canvas, starting or
+ * ending its entrance, or in a transition or an animation that ends, unlike a spinner's.
+ */
+function settling(element: Element, canvas: Element) {
+  if (element.closest('[data-starting-style], [data-ending-style]')) return true;
+  for (let node: Element | null = element; node && node !== canvas; node = node.parentElement) {
+    const ends = (node.getAnimations?.() ?? []).some(
+      (animation) =>
+        animation.playState === 'running' &&
+        animation.effect?.getComputedTiming().iterations !== Infinity,
+    );
+    if (ends) return true;
+  }
+  return false;
+}
 
 /** Elements that are their own picture, whatever their style. */
 const pictures = /^(img|svg|canvas|video|input|textarea|select|hr)$/i;
@@ -235,6 +266,24 @@ function shownBoxes(canvas: HTMLElement) {
         /absolute|fixed/.test(style.position);
       if (box.width > 1 && box.height > 1 && !covers && paints(child, style))
         found.push({ element: child, box });
+      // Text counts as far as it runs, also past a box narrower than it, such as a heatmap's
+      // month names over columns of no width.
+      for (const node of child.childNodes) {
+        if (node.nodeType !== Node.TEXT_NODE || !node.textContent?.trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        const drawn = range.getBoundingClientRect();
+        const text = within(
+          new DOMRect(
+            (drawn.left - frame.left) / scale,
+            (drawn.top - frame.top) / scale,
+            drawn.width / scale,
+            drawn.height / scale,
+          ),
+          clip,
+        );
+        if (text.width > 1 && text.height > 1) found.push({ element: child, box: text });
+      }
       // A picture's parts are the picture; anything else may hold more that shows.
       const clips = style.overflowX !== 'visible' || style.overflowY !== 'visible';
       if (!pictures.test(child.localName)) visit(child, clips ? box : clip);
@@ -316,6 +365,16 @@ function useFit(
     const fit = () => {
       const boxes = shownBoxes(canvasElement);
       if (!boxes.length) return;
+      // At rest, a tile in place waits for what is still coming or going, such as a popup rising
+      // into place, and fits once it ends (transitionend): measured on the way, the view would
+      // ease toward it and back.
+      if (
+        tile &&
+        !playingNow.current &&
+        canvasElement.dataset.fitted !== undefined &&
+        boxes.some(({ element }) => settling(element, canvasElement))
+      )
+        return;
       const left = Math.min(...boxes.map(({ box }) => box.left));
       const top = Math.min(...boxes.map(({ box }) => box.top));
       const right = Math.max(...boxes.map(({ box }) => box.right));
@@ -345,7 +404,13 @@ function useFit(
       }
       // It follows only a change of a pixel or more: a popup is placed again as the view moves,
       // a fraction away, which would move the view again, in a tremble.
-      if (eases && view.scale === scale && Math.hypot(toX - view.toX, toY - view.toY) < 1) return;
+      if (
+        eases &&
+        playingNow.current &&
+        view.scale === scale &&
+        Math.hypot(toX - view.toX, toY - view.toY) < 1
+      )
+        return;
       view.toX = toX;
       view.toY = toY;
       if (eases && view.scale === scale) {
@@ -452,11 +517,13 @@ export function TilePreview({
   const subject =
     preview &&
     (Composition ? (
-      <Suspense fallback={null}>
-        <Playback playing={plays} rest="start" root={canvasElement}>
-          <Composition />
-        </Playback>
-      </Suspense>
+      <TileBoundary>
+        <Suspense fallback={null}>
+          <Playback playing={plays} rest="start" root={canvasElement}>
+            <Composition />
+          </Playback>
+        </Suspense>
+      </TileBoundary>
     ) : preview.specimen ? (
       <PageSpecimen id={preview.specimen} />
     ) : (

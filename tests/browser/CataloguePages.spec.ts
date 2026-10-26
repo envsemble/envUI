@@ -451,11 +451,34 @@ test('every tile of the galleries of components and patterns is fitted, shown wh
             (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
           );
         };
+        // A box shows only as far as the boxes around it that clip show it, such as a scrolling
+        // list's rows or a closed panel's content.
+        const clipped = (element: Element) => {
+          let box = element.getBoundingClientRect();
+          for (
+            let node = element.parentElement;
+            node && node !== canvas;
+            node = node.parentElement
+          ) {
+            const style = getComputedStyle(node);
+            if (style.overflowX === 'visible' && style.overflowY === 'visible') continue;
+            const clip = node.getBoundingClientRect();
+            const left = Math.max(box.left, clip.left);
+            const top = Math.max(box.top, clip.top);
+            box = new DOMRect(
+              left,
+              top,
+              Math.max(0, Math.min(box.right, clip.right) - left),
+              Math.max(0, Math.min(box.bottom, clip.bottom) - top),
+            );
+          }
+          return box;
+        };
         const shown = [...canvas.querySelectorAll('*')]
           .filter((element) => element.checkVisibility({ visibilityProperty: true }))
           .filter((element) => !element.closest('svg') || element.localName === 'svg')
           .filter(paints)
-          .map((element) => element.getBoundingClientRect())
+          .map(clipped)
           .filter((box) => box.width > scale && box.height > scale)
           .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
         if (!shown.length) return [`${name}: empty`];
