@@ -373,6 +373,26 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
   await expect(contents).toBeHidden();
 });
 
+test("a catalogue page's contents list none of its figures' headings, a do and don't pair's included", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const contents = page.getByRole('navigation', { name: 'On this page' });
+  // Card's do and don't pairs hold cards with headings of their own.
+  await page.goto(`${siteDevUrl}/components/card`);
+  await expect(contents.getByRole('link', { name: 'Rules', exact: true })).toBeVisible();
+  await expect(page.locator('.site-verdict-stage :is(h2, h3)').first()).toBeAttached();
+  const inFigures = await contents.evaluate((navigation) =>
+    [...navigation.querySelectorAll('a[href^="#"]')].flatMap((link) => {
+      const heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+      return heading?.closest('.site-live-example, .site-verdict-stage, .site-anatomy-stage')
+        ? [link.textContent]
+        : [];
+    }),
+  );
+  expect(inFigures).toEqual([]);
+});
+
 test('the theme in the Display menu switches the whole page and keeps the canvas full height', async ({
   page,
 }) => {
