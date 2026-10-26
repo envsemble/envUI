@@ -117,7 +117,7 @@
   display: grid;
   justify-items: center;
   gap: var(--env-space-1);
-  padding: var(--env-space-7) var(--env-space-4) var(--env-space-6);
+  padding: var(--env-space-7) var(--env-space-4) var(--env-space-5);
   color: var(--env-color-fg-default);
   text-align: center;
   overflow-wrap: anywhere;
@@ -141,7 +141,7 @@
   font-weight: var(--env-font-weight-medium);
 }
 .env-command-palette-empty-description {
-  max-inline-size: 60ch;
+  max-inline-size: 48ch;
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
   text-wrap: pretty;

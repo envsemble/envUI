@@ -208,13 +208,13 @@ Name commands with a verb and what they act on, such as Invite people.
 
 Ask for the palette's states in these words.
 
-| Words            | In code                                                                                       | Use for                                                       |
-| ---------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| Suggestions      | `defaultItems`, with a `group` such as Suggested                                              | Options shown before people type.                             |
-| Recent items     | `defaultItems`, with a `group` such as Recently opened                                        | The items people opened last, before they type.               |
-| Type to search   | The empty state with an empty query: `emptyDescription`, `messages.commandPalette.emptyQuery` | Inviting a search, with what it finds, when nothing suggests. |
-| No results       | `emptyLabel`, `emptyDescription`, `messages.commandPalette.empty` and `emptyHint`             | Saying that the text found nothing, and what to try.          |
-| Without the icon | `emptyIcon={null}`                                                                            | An empty state of words alone, such as one that loads.        |
+| Words            | In code                                                                                       | Use for                                                        |
+| ---------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Suggestions      | `defaultItems`, with a `group` such as Suggested                                              | Options shown before people type.                              |
+| Recent items     | `defaultItems`, with a `group` such as Recently opened                                        | The items people opened last, before they type.                |
+| Type to search   | The empty state with an empty query: `emptyDescription`, `messages.commandPalette.emptyQuery` | Inviting a search, and what it finds, with nothing to suggest. |
+| No results       | `emptyLabel`, `emptyDescription`, `messages.commandPalette.empty` and `emptyHint`             | Saying that the text found nothing, and what to try.           |
+| Without the icon | `emptyIcon={null}`                                                                            | An empty state of words alone, such as one that loads.         |
 
 ## Compose
 
@@ -256,16 +256,19 @@ With no options, the empty state shows in place of the list: an icon on a muted 
 - The icon is decorative and hidden from assistive technology; the title and description are announced.
 
 ```tsx
+const typed = query.trim() !== '';
+
 <CommandPalette
   aria-label="Go to document"
   inputValue={query}
   onInputValueChange={setQuery}
   items={matches}
-  defaultItems={recent.map((document) => ({ ...document, group: 'Recently opened' }))}
-  emptyLabel={query.trim() ? 'No matching documents' : undefined}
-  emptyDescription={query.trim() ? undefined : 'Find a document by its name or folder.'}
+  // Recent documents, each with group: 'Recently opened'.
+  defaultItems={recent}
+  emptyLabel={typed ? 'No matching documents' : undefined}
+  emptyDescription={typed ? undefined : 'Find a document by its name or folder.'}
   {...props}
-/>
+/>;
 ```
 
 #### Commands and key hints
