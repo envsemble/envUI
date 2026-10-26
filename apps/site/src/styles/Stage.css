@@ -372,8 +372,8 @@
 }
 
 /* A picture: the overlays are shown in place, without the motion that brings them in. A page's own
-   tile, which plays, keeps their motion. */
-:not(.catalogue-related-canvas[data-tile]) > .catalogue-overlay-layer * {
+   tile and an animated figure, which play, keep their motion. */
+:not(.catalogue-related-canvas[data-tile], .catalogue-motion-subject) > .catalogue-overlay-layer * {
   transition: none;
   animation: none;
 }
@@ -414,12 +414,21 @@
 }
 
 /* An animated figure (MotionStage.tsx): its subject centred on the stage as an example's is, and
-   its pause button at the stage's bottom end, inside its padding, where an example's mark sits. */
+   its pause button at the stage's bottom end, inside its padding, where an example's mark sits.
+   Its overlays open in a layer over the whole stage, which its layout containment makes their
+   containing block, so a dialog's scrim covers the stage and a notification sits at its edge; it
+   clips them to its corners. The subject is a stacking context of its own, below the pause
+   button, which stays on top of what opens. Nothing in it anchors the page's scrolling: a popup
+   placed as it opens would otherwise move the page with it. */
 .catalogue-motion-stage {
   position: relative;
+  contain: layout;
+  overflow: clip;
+  overflow-anchor: none;
 }
 
 .catalogue-motion-subject {
+  isolation: isolate;
   display: grid;
   place-items: center;
   inline-size: 100%;
@@ -429,6 +438,12 @@
   position: absolute;
   inset-block-end: var(--env-space-2);
   inset-inline-end: var(--env-space-2);
+}
+
+/* Notifications at a figure's bottom end arrive beside its pause button, which keeps that corner,
+   as an application's would beside a control fixed there. */
+.catalogue-motion-subject .env-toast-viewport[data-placement='bottom-end'] {
+  inset-inline-end: calc(2 * var(--env-space-2) + var(--env-control-height-sm));
 }
 
 /* Forced colors paint the canvas in Canvas, like the page: a frame keeps each example apart. A

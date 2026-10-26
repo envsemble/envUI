@@ -217,8 +217,9 @@ function scrollDelta(item: DOMRect, box: HTMLElement, block: ScrollLogicalPositi
  * Keeps an open example's scrolling inside it. A popup shown open scrolls its chosen item into view
  * as it opens, as a select's list does, and the browser's scrollIntoView scrolls every box around
  * the item, the page's body included: a page with such a picture opened partway down, wherever the
- * picture was, and a gallery tile scrolled the page as it rendered. Within an open example,
- * scrollIntoView scrolls only the boxes inside the example, such as the popup's list.
+ * picture was, and a gallery tile scrolled the page as it rendered. Within an open example, or an
+ * animated figure, whose menus highlight their items as the pointer no one sees runs down them,
+ * scrollIntoView scrolls only the boxes inside it, such as the popup's list.
  */
 function keepScrollingInOpenExamples() {
   if (typeof Element === 'undefined') return;
@@ -227,7 +228,7 @@ function keepScrollingInOpenExamples() {
     this: Element,
     options?: boolean | ScrollIntoViewOptions,
   ) {
-    const example = this.closest('.catalogue-open-example');
+    const example = this.closest('.catalogue-open-example, .catalogue-motion-subject');
     if (!example) return native.call(this, options);
     const block =
       typeof options === 'object'

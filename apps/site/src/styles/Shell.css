@@ -2,6 +2,15 @@
 html {
   scroll-behavior: auto;
 }
+
+/* The page scrolls in its main region, never the window, so the window is held still: an overlay
+   that locks the page's scroll, such as a context menu in an animated figure, finds it locked
+   already and leaves it, rather than reserving a scrollbar's gutter that moves the page. */
+@media screen {
+  html {
+    overflow: hidden;
+  }
+}
 body {
   margin: 0;
 }

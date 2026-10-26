@@ -11,13 +11,13 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { Column, Link, PortalContainer, Text, Theme, useTheme } from '@envsemble/envui';
+import { Column, Link, Text, Theme, useTheme } from '@envsemble/envui';
 import { Article } from '@envsemble/envui/icons/Article';
 import type { DocumentationMetadata, StageFill } from '../DocumentationTypes';
 import { routeHref } from '../navigation/Address';
 import { pageHref, referencePages, routeOfDocument } from '../navigation/SiteRoutes';
 import { Documentation } from '../pages/Documentation';
-import { Playback, usePlaying } from '../previews/Motion';
+import { Playback, PreviewOverlays, usePlaying } from '../previews/Motion';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { tileOf, tileWindows } from '../tiles/Tiles';
 import { documents, type Documentation as Document } from '../Reference';
@@ -533,7 +533,6 @@ export function TilePreview({
   const canvas = useRef<HTMLDivElement>(null);
   // The canvas, for the pointer no one sees, which finds the preview's elements in it.
   const [canvasElement, setCanvasElement] = useState<HTMLDivElement | null>(null);
-  const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   const shown = Boolean(preview && near);
   const subject =
     preview &&
@@ -584,14 +583,7 @@ export function TilePreview({
             inert
             aria-hidden
           >
-            {preview.open ? (
-              <PortalContainer container={layer} contained>
-                {subject}
-              </PortalContainer>
-            ) : (
-              subject
-            )}
-            {preview.open && <div ref={setLayer} className="catalogue-overlay-layer" />}
+            {preview.open ? <PreviewOverlays>{subject}</PreviewOverlays> : subject}
           </div>
         )
       )}
