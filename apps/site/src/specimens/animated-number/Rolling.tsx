@@ -11,7 +11,7 @@ function Counting() {
   const step = useTimeline(steps);
   return (
     <Text variant="display" render={<span />}>
-      <AnimatedNumber value={values[step]!} />
+      <AnimatedNumber value={values[step]!} /> tasks
     </Text>
   );
 }
@@ -19,7 +19,7 @@ function Counting() {
 /** AnimatedNumber rolling up as its value grows and down as it shrinks. */
 export default function Rolling() {
   return (
-    <Example size="field">
+    <Example>
       <MotionStage label="the number rolling to its new values">
         <Counting />
       </MotionStage>
