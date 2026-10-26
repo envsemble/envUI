@@ -86,6 +86,8 @@ Dragged past either end, the value stays at the minimum or maximum, and the slid
 - Once let go, it springs back.
 - A press, the keyboard and a disabled slider don't stretch it, nor does it stretch where reduced motion is preferred.
 
+<!-- specimen: PastTheEnds -->
+
 ### With the keyboard
 
 Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded under the text in the same way.

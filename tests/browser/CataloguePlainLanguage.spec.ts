@@ -88,7 +88,11 @@ test("a specimen's titles and captions name options in words, not values", async
   for (const id of pages) {
     await goTo(page, `/components/${id}`);
     await expect(
-      page.locator('.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll)').first(),
+      page
+        .locator(
+          '.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll, .catalogue-motion-stage)',
+        )
+        .first(),
     ).toBeVisible();
     const texts = await page
       .locator(
