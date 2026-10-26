@@ -72,8 +72,8 @@ jobs:
       - name: Validate the release
         if: ${{ steps.version.outputs.release == 'true' }}
         run: |
-          node scripts/ValidateRelease.mjs
-          node scripts/ValidateRelease.mjs --release-notes > "$RUNNER_TEMP/release-notes.md"
+          node scripts/release/ValidateRelease.ts
+          node scripts/release/ValidateRelease.ts --release-notes > "$RUNNER_TEMP/release-notes.md"
       - run: npm ci
         if: ${{ steps.version.outputs.release == 'true' }}
       - run: npm run build
@@ -90,7 +90,7 @@ jobs:
             gh release delete "$TAG" --yes
           fi
           gh release create "$TAG" --draft --target "$SHA" --title "envUI $TAG" \
-            --notes-file "$RUNNER_TEMP/release-notes.md" $(node scripts/ValidateRelease.mjs --release-flag)
+            --notes-file "$RUNNER_TEMP/release-notes.md" $(node scripts/release/ValidateRelease.ts --release-flag)
       # The library first, then the codemods and the lint packages, as in CONTRIBUTING. A version
       # already on the registry, from an earlier attempt, is left as it is.
       - name: Publish the packages
@@ -98,7 +98,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ github.token }}
         run: |
-          dist_tag="$(node scripts/ValidateRelease.mjs --dist-tag)"
+          dist_tag="$(node scripts/release/ValidateRelease.ts --dist-tag)"
           version="${RELEASE_TAG#v}"
           for workspace in @envsemble/envui @envsemble/envui-codemods @envsemble/eslint-plugin-envui @envsemble/stylelint-config-envui; do
             # Only a version the registry doesn't know is published; any other error stops the job.

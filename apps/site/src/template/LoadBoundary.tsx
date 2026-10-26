@@ -74,7 +74,7 @@ const hostedBuild = import.meta.env.PROD;
 
 /**
  * The files of the hosted site behind each part that loads on its own, from the
- * module-files.json that scripts/SiteModuleFiles.mjs writes; null when the connection seems down:
+ * module-files.json that scripts/site/SiteModuleFiles.ts writes; null when the connection seems down:
  * the map is small, so one that hasn't arrived in 15 seconds counts as down.
  */
 async function moduleFiles(): Promise<Record<string, string[]> | null> {

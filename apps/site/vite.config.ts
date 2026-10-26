@@ -8,20 +8,20 @@ import {
   examplesDirectory,
   generateDocumentation,
   specimensDirectory,
-} from '../../scripts/GenerateDocumentation.mjs';
+} from '../../scripts/docs/GenerateDocumentation.ts';
 // `vite build` makes the static site: separate files with content-hashed names that browsers keep
 // cached, the catalogue at the root and the Docs under /docs, both from one index.html.
-import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
+import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
 import {
   createDisplayBootstrapScript,
   createStorageMigrationScript,
   displayStorageKeys,
 } from './src/theme/DisplayStorage.ts';
-import { checkoutMarker } from '../../scripts/CheckoutMarker.mjs';
-import { resetClosedConnections } from '../../scripts/ServerSockets.mjs';
-import { readReleaseNotes, releaseNotesSources } from '../../scripts/ReleaseNotes.mjs';
-import { siteAgentFiles } from '../../scripts/SiteAgentFiles.mjs';
+import { checkoutMarker } from '../../scripts/test/CheckoutMarker.ts';
+import { resetClosedConnections } from '../../scripts/test/ServerSockets.ts';
+import { readReleaseNotes, releaseNotesSources } from '../../scripts/site/ReleaseNotes.ts';
+import { siteAgentFiles } from '../../scripts/site/SiteAgentFiles.ts';
 
 /**
  * Data the site's pages read from the repository when the site app builds or serves, as
@@ -66,7 +66,7 @@ export default defineConfig(() => {
     plugins: [
       // Tells the browser tests which checkout this server serves.
       checkoutMarker(),
-      // The browser tests' closed connections leave no ports behind: scripts/ServerSockets.mjs.
+      // The browser tests' closed connections leave no ports behind: scripts/test/ServerSockets.ts.
       resetClosedConnections(),
       {
         // The stored theme, contrast and scale apply before the catalogue loads, so a dark theme
@@ -144,7 +144,7 @@ export default defineConfig(() => {
         },
       },
       {
-        // SKILL.md and llms.txt at the site's root, for coding agents: scripts/SiteAgentFiles.mjs.
+        // SKILL.md and llms.txt at the site's root, for coding agents: scripts/site/SiteAgentFiles.ts.
         // Served fresh while developing, and written into the build.
         name: 'envui-agent-files',
         configureServer(server) {
@@ -172,7 +172,7 @@ export default defineConfig(() => {
     build: {
       outDir: '../../dist/site',
       emptyOutDir: true,
-      // The site's manifest, which FinalizeSite.mjs turns into module-files.json: the files a
+      // The site's manifest, which FinalizeSite.ts turns into module-files.json: the files a
       // reload fetches again when part of a page failed to load.
       manifest: true,
       target: 'es2022',

@@ -3,7 +3,7 @@ import { ColorSwatch } from '@envsemble/envui/color';
 import { PlainCode, SimpleTable } from '../template/SimpleTable';
 import tokenList from '../../../../packages/ui/src/generated/tokens.json';
 // The ids search leads to, as the search index writes them.
-import { tokenSection } from '../../../../scripts/SearchAnchors.mjs';
+import { tokenSection } from '../shared/SearchAnchors';
 
 type Token = (typeof tokenList.tokens)[number];
 type TokenValue = Token['values']['light'];

@@ -7,7 +7,7 @@ import {
   compileDocumentation,
   libraryVersions,
   readDocumentation,
-} from '../scripts/GenerateDocumentation.mjs';
+} from '../scripts/docs/GenerateDocumentation.ts';
 import { marked } from 'marked';
 import {
   longParagraphs,
@@ -16,7 +16,7 @@ import {
   optionTableProblems,
   paragraphLength,
   catalogueStructure,
-} from '../scripts/CatalogueContent.mjs';
+} from '../apps/site/src/shared/CatalogueContent.ts';
 
 test('focused Markdown discovery preserves examples and rejects broken documentation', async () => {
   const cache = resolve('.cache');

@@ -7,7 +7,7 @@ import { Loading } from '../template/Loading';
 /**
  * The live demos a guide page places with a `<!-- demo: Name -->` line, each loaded with the page
  * that shows it. The dev mode demo loads `@envsemble/envui/dev`, which no other page loads:
- * scripts/SiteDevMode.mjs checks the hosted build for it.
+ * scripts/site/SiteDevMode.ts checks the hosted build for it.
  */
 export const demos = {
   DevModeDemo: lazyPart(

@@ -13,8 +13,8 @@ import {
   specNeeds,
   specsFor,
   unitTestFiles,
-} from '../scripts/TestScope.mjs';
-import { checkoutId, checkoutPort } from '../scripts/CheckoutMarker.mjs';
+} from '../scripts/test/TestScope.ts';
+import { checkoutId, checkoutPort } from '../scripts/test/CheckoutMarker.ts';
 
 const specs = (...paths) => [...specsFor(paths).specs.keys()].sort();
 
@@ -106,7 +106,7 @@ test('a changed spec runs itself, and a changed helper the specs that import it'
 });
 
 test('a module of the documentation generator runs the specs of the site', () => {
-  assert.ok([...selectScope(['scripts/docs/Validate.mjs']).specs.keys()].includes('DocsPages'));
+  assert.ok([...selectScope(['scripts/docs/Validate.ts']).specs.keys()].includes('DocsPages'));
 });
 
 test('the site runs its specs and live development, with the builds they open', () => {

@@ -25,8 +25,8 @@ import { LoadedPart } from './LoadedPart';
 import { ColorPalette } from '../previews/foundations/ColorPalette';
 import { SpecimenHeadingLevel } from '../previews/Example';
 import { ReleaseNotes } from './ReleaseNotes';
-import { codeColumns, subsections } from '../../../../scripts/CatalogueContent.mjs';
-import { headingSlug } from '../../../../scripts/SearchAnchors.mjs';
+import { codeColumns, subsections } from '../shared/CatalogueContent';
+import { headingSlug } from '../shared/SearchAnchors';
 import codemodsReadme from '../../../../packages/codemods/README.md?raw';
 
 /** The token reference, a large page that loads with the page that shows it. */

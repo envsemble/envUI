@@ -6,9 +6,9 @@ import { readFile, writeFile, mkdir, mkdtemp, rm, lstat, readdir } from 'node:fs
 import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
-import { compileDocumentation } from '../scripts/GenerateDocumentation.mjs';
+import { compileDocumentation } from '../scripts/docs/GenerateDocumentation.ts';
 import { readMap } from '../packages/codemods/src/map.mjs';
-import { documentedLibraries } from '../scripts/EntryLibraries.mjs';
+import { documentedLibraries } from '../scripts/build/EntryLibraries.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const cacheDirectory = join(repository, '.cache');

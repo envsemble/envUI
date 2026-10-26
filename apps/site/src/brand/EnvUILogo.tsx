@@ -1,4 +1,4 @@
-// Generated from assets/brand/envUI by scripts/GenerateBrandAssets.mjs.
+// Generated from assets/brand/envUI by scripts/build/GenerateBrandAssets.ts.
 import { Icon, type IconProps } from '@envsemble/envui';
 
 export type EnvUILogoProps = IconProps;

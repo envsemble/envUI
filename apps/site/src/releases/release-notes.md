@@ -5,7 +5,7 @@ The highlights on the Docs' Changelog page: one entry per release of @envsemble/
 first, each with up to five highlights in plain sentences and a short list of breaking changes. Each
 breaking change links to the section of the migration guide that covers it, /docs/migration#…, or
 for a 0.x release to its entry in the full changelog below them, /docs/changelog#….
-scripts/ReleaseNotes.mjs reads and checks this file; the full changelog is packages/ui/CHANGELOG.md.
+scripts/site/ReleaseNotes.ts reads and checks this file; the full changelog is packages/ui/CHANGELOG.md.
 
 ## <version> — <YYYY-MM-DD, or Upcoming>
 - A highlight.

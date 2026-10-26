@@ -7,7 +7,7 @@ import {
   partsFile,
   removedParts,
   serializeParts,
-} from '../scripts/GenerateParts.mjs';
+} from '../scripts/docs/GenerateParts.ts';
 
 const { parts, problems } = buildParts();
 const component = (name) => parts.components[name];

@@ -16,7 +16,7 @@ import { build } from 'esbuild';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const styles = join(root, 'packages/ui/src/styles');
 
-/** The bundled style sheet, as scripts/BuildLibrary.mjs writes dist/styles.css. */
+/** The bundled style sheet, as scripts/build/BuildLibrary.ts writes dist/styles.css. */
 async function shipped() {
   const result = await build({
     entryPoints: [join(styles, 'index.css')],

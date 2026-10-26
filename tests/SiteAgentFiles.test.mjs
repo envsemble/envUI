@@ -1,20 +1,20 @@
 // The files the hosted site serves to coding agents at its root: the setup skill, SKILL.md, and the
-// index of the Docs, llms.txt (scripts/SiteAgentFiles.mjs).
+// index of the Docs, llms.txt (scripts/site/SiteAgentFiles.ts).
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
-import { readDocumentation } from '../scripts/GenerateDocumentation.mjs';
-import { unlistedPages } from '../scripts/SearchIndex.mjs';
+import { readDocumentation } from '../scripts/docs/GenerateDocumentation.ts';
+import { unlistedPages } from '../scripts/site/SearchIndex.ts';
 import {
   libraryVersion,
   pageUrl,
   renderLlmsText,
   renderSkill,
   siteOrigin,
-} from '../scripts/SiteAgentFiles.mjs';
+} from '../scripts/site/SiteAgentFiles.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const version = libraryVersion();

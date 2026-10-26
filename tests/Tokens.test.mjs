@@ -23,7 +23,7 @@ import {
   migrationMapSection,
   withGuideList,
   mapFragmentText,
-} from '../scripts/BuildTokens.mjs';
+} from '../scripts/build/BuildTokens.ts';
 
 // The token build's guards, on copies of the tokens built into a scratch folder, and the custom
 // properties the library's style sheets read.

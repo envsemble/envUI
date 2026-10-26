@@ -13,14 +13,14 @@ import {
   catalogueText,
   technicalText,
   withoutCodeColumns,
-} from '../scripts/CatalogueContent.mjs';
+} from '../apps/site/src/shared/CatalogueContent.ts';
 import {
   examplesDirectory,
   isPropsTable,
   readDocumentation,
   readProps,
   specimensDirectory,
-} from '../scripts/GenerateDocumentation.mjs';
+} from '../scripts/docs/GenerateDocumentation.ts';
 
 /** Exports without a page that lists them in its frontmatter; the list only shrinks. */
 const undocumentedExports = [];

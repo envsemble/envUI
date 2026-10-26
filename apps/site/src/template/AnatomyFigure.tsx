@@ -5,9 +5,9 @@ import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender, leastFitScale } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
-import { legendName } from '../../../../scripts/CatalogueContent.mjs';
+import { legendName } from '../shared/CatalogueContent';
 import { OptionLegend } from './OptionLegend';
-import type { OptionTable } from '../../../../scripts/CatalogueContent.mjs';
+import type { OptionTable } from '../shared/CatalogueContent';
 
 /** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
 interface Callout {

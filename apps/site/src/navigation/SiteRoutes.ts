@@ -7,7 +7,7 @@ import {
   type Reference,
 } from '../Reference';
 import { docsRoute, homeRoute, routeHref } from './Address';
-import { headingSlug } from '../../../../scripts/SearchAnchors.mjs';
+import { headingSlug } from '../shared/SearchAnchors';
 
 /**
  * The two parts of the site: the catalogue, at the root, shows envUI to people, what each part
@@ -77,7 +77,7 @@ const docsOnlyComponents = new Set(['field']);
 /**
  * Pages of docs/ that neither the catalogue nor the Docs show: the contributor pages, for people who
  * change envUI itself, which stay in the repository and which the package leaves out
- * (contributorPages in scripts/GenerateDocumentation.mjs), and the agents' index of the pages, which
+ * (contributorPages in scripts/docs/GenerateDocumentation.ts), and the agents' index of the pages, which
  * the package ships.
  */
 export const unlistedDocuments = new Set([

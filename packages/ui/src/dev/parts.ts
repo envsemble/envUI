@@ -36,7 +36,7 @@ interface PartsEntry {
   states?: { attribute: string; values: string[]; parts: string[] }[];
 }
 
-/** docs/generated/parts.json, as scripts/GenerateParts.mjs writes it. */
+/** docs/generated/parts.json, as scripts/docs/GenerateParts.ts writes it. */
 export interface PartsFile {
   schemaVersion: number;
   components: Record<string, PartsEntry & { source: string; uses?: string[] }>;

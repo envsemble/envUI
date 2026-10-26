@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { siteDevUrl } from './Servers';
 import { requireSite, serveSite, siteUrl } from './HostedSite';
 import { chooseScheme } from './CatalogueThemes';
-import { renderLlmsText, renderSkill } from '../../scripts/SiteAgentFiles.mjs';
+import { renderLlmsText, renderSkill } from '../../scripts/site/SiteAgentFiles.ts';
 import {
   allPages,
   sectionHome,

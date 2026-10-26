@@ -5,7 +5,7 @@ import { documents, type Documentation as Document } from '../Reference';
 import { referencePages, routeOfDocument, unlistedDocuments } from '../navigation/SiteRoutes';
 import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useSiteRoute';
-import { headingSlugger } from '../../../../scripts/SearchAnchors.mjs';
+import { headingSlugger } from '../shared/SearchAnchors';
 
 /** The repository's copy of a page of docs/ that neither the catalogue nor the Docs show. */
 const repositoryFile = (path: string) =>
@@ -59,7 +59,7 @@ function textOf(node: { type: string; value?: string; children?: unknown[] }): s
 
 /**
  * A rehype plugin that gives each heading of a rendered document the id its text makes, as
- * scripts/SearchAnchors.mjs writes them, so links to #heading and search reach it.
+ * apps/site/src/shared/SearchAnchors.ts writes them, so links to #heading and search reach it.
  */
 const headingIds: NonNullable<MarkdownProps['rehypePlugins']>[number] = () => (tree) => {
   const slug = headingSlugger();

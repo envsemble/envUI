@@ -5,7 +5,7 @@ import type { Documentation as Document } from '../Reference';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
 import { FigureSection } from './Figures';
 import { catalogueSection } from './Provides';
-import { docsOnlySections } from '../../../../scripts/CatalogueContent.mjs';
+import { docsOnlySections } from '../shared/CatalogueContent';
 import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { subscribeToAddress } from '../navigation/Address';

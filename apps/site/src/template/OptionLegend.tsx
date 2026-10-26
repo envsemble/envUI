@@ -1,12 +1,12 @@
 import { Documentation } from '../pages/Documentation';
-import { optionPieces, type OptionTable } from '../../../../scripts/CatalogueContent.mjs';
+import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
 
 /**
  * An option table as the catalogue shows it: a legend, laid out as an anatomy figure's legend is,
  * each option's name in the tag a variants figure's callouts use, followed by what it is for, and
  * below that any detail the table adds, such as the tones a variant takes. The Markdown keeps the
  * table, which the packaged page and agents read; its first column names the options, its last, Use
- * for, says what each is for (scripts/CatalogueContent.mjs).
+ * for, says what each is for (apps/site/src/shared/CatalogueContent.ts).
  */
 export function OptionLegend({ table, path }: { table: OptionTable; path: string }) {
   return (

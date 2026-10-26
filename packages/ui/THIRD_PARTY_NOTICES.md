@@ -19,9 +19,9 @@ Numeric leading upstream names receive an `Icon` prefix in their React export,
 for example `10k` becomes `Icon10k`. Other snake case names become PascalCase.
 
 Generation uses verified local files and requires no network.
-Maintainers deliberately run `node scripts/SyncIcons.mjs --revision <full SHA>`
+Maintainers deliberately run `node scripts/build/SyncIcons.ts --revision <full SHA>`
 from the repository root to update the pinned official source, then run
-`node scripts/GenerateIcons.mjs`. A sync without `--revision` restores the existing
+`node scripts/build/GenerateIcons.ts`. A sync without `--revision` restores the existing
 pin. No install lifecycle script downloads or selects a floating catalogue.
 
 ## Inter

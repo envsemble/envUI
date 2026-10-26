@@ -530,7 +530,7 @@ export function migrationNames(data, { isToken, properties }) {
 /**
  * envUI's own plugin: the lint rules, and the generated token modules, a typed TypeScript module, a
  * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles,
- * which scripts/BuildTokens.mjs copies into the codemods' rename map and the migration guide.
+ * which scripts/build/BuildTokens.ts copies into the codemods' rename map and the migration guide.
  * The modules carry each token's value in every theme, as the browser resolves Tokens.css alone:
  * TokensHandwritten.css can change a few of them under a condition, such as the touch sizes of
  * --control-height and --title-bar-height under a coarse pointer, and those values are not in them.

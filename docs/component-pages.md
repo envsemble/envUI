@@ -131,7 +131,7 @@ The changelog stays on the Docs and in the package's CHANGELOG.md, and Related i
 The catalogue is for people looking at envUI, often not developers: they look at what envUI offers, then ask an AI agent to build with it. It shows and introduces, and gives them the words to ask for what they want; the Docs teach how to build with it. Outside the Code disclosures under its figures, a page's catalogue shows no code and no values:
 
 - **No inline code.** Name no props, values, part classes, tokens or container names, such as `variant="ghost"` or `--env-card-container`. Say in plain words what matters: "the ghost variant", "one card can take colors of its own", "a sheet from the bottom". Component names, such as SearchField, are names, not code. `npm test` fails on a code span in the catalogue's text of any page but Field's: its sections, captions, anatomy legend names, `useWhen` and `avoidWhen`.
-- **No technical values.** No token names, hex colors, lengths in rem, px or em, durations, percentages, contrast ratios or other code-like text, in its text, captions, specimen titles and labels, swatches and legends alike. Say what the value does instead, such as "the most space, between sections", and put the value in Compose. A catalogue browser test fails on any on a foundation page and the component pages it holds to the rule, and counts them on the rest; `npm test` fails on any on a component page and counts them in the catalogue's Markdown, both with `technicalText` in `scripts/CatalogueContent.mjs`.
+- **No technical values.** No token names, hex colors, lengths in rem, px or em, durations, percentages, contrast ratios or other code-like text, in its text, captions, specimen titles and labels, swatches and legends alike. Say what the value does instead, such as "the most space, between sections", and put the value in Compose. A catalogue browser test fails on any on a foundation page and the component pages it holds to the rule, and counts them on the rest; `npm test` fails on any on a component page and counts them in the catalogue's Markdown, both with `technicalText` in `apps/site/src/shared/CatalogueContent.ts`.
 - **Options in words.** A table of variants, tones, sides or sizes names each option as people see it, such as Outline, Floating and Ghost, or From the bottom, never its value.
 - **No links into the Docs.** The catalogue reaches the Docs only through a page's Docs button and the Docs link at the top of every page. Link other component, pattern and foundation pages, a foundation without a heading, and say a point of a Docs page, such as setup or Customize colors, without the link. `npm test` checks it; Compose, the changelog and the lists of what envUI and the application provide, which the Docs show, may link anywhere.
 
@@ -143,7 +143,7 @@ Every piece of text in the catalogue belongs to a titled block: a heading and a 
 - **At most three short paragraphs to a block.** More are two blocks with headings of their own.
 - **envUI's type scale.** A section's lead is set a step larger, a block's heading is a title, its rules and supporting text are quieter, and a figure's caption is the small muted text under it, as the [typography](foundations/typography.md) foundation sets them. The catalogue styles them; don't fake a heading with bold text or HTML.
 
-`npm test` fails on loose text and long paragraphs in the catalogue's sections of any page but Field's, with `catalogueStructure` and `longParagraphs` in `scripts/CatalogueContent.mjs`.
+`npm test` fails on loose text and long paragraphs in the catalogue's sections of any page but Field's, with `catalogueStructure` and `longParagraphs` in `apps/site/src/shared/CatalogueContent.ts`.
 
 ## Write little
 
@@ -408,7 +408,7 @@ Native DOM props are summarised by element, so document only the props envUI dec
 1. Read the component's source, its CSS for the part class names, its entry in `parts.json` and its browser tests in `tests/browser`.
 2. Write the example files: the overview, the variants and anatomy examples, the do and don't pairs, and, where the component adapts, an example for `widths`. Keep specimens only where they show what code can't.
 3. Write the frontmatter, listing every example with its role and caption, then the sections in order, each block a lead and its rules, with the developer detail in Compose. Register the page in the index.
-4. Regenerate: `npm run docs:props && npm run docs:parts && node scripts/GenerateDocumentation.mjs`, then run `npm run check`.
+4. Regenerate: `npm run docs:props && npm run docs:parts && node scripts/docs/GenerateDocumentation.ts`, then run `npm run check`.
 5. Look at the page in the catalogue and the Docs at a narrow and a wide width, in light and dark: cells that share a row of one size, the callouts on their parts, figures centred on their stages, open code across the column and nothing overflowing. Check the outline too: one `h2` per section and nothing else at that level.
 
 The [library guide](library-development.md) describes the checks and the changeset a change needs.

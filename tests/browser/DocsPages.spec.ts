@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { siteDevUrl } from './Servers';
 import { chooseScheme } from './CatalogueThemes';
-import { readReleaseNotes } from '../../scripts/ReleaseNotes.mjs';
-import { renderLlmsText, renderSkill } from '../../scripts/SiteAgentFiles.mjs';
+import { readReleaseNotes } from '../../scripts/site/ReleaseNotes.ts';
+import { renderLlmsText, renderSkill } from '../../scripts/site/SiteAgentFiles.ts';
 import { allPages, pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
 import { version, goTo } from './SiteSpecHelpers';
 

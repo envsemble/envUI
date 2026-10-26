@@ -1,5 +1,5 @@
 {
-  "$comment": "The hand-written part of the part contract, which scripts/GenerateParts.mjs merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors.",
+  "$comment": "The hand-written part of the part contract, which scripts/docs/GenerateParts.ts merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors.",
   "roots": {
     "Dialog": "env-dialog-popup",
     "ConfirmDialog": "env-dialog-popup",

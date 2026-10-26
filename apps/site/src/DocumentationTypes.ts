@@ -1,9 +1,9 @@
 /**
  * The shape of the generated documentation data (generated/Documentation.ts), written by
- * scripts/GenerateDocumentation.mjs from docs/ and docs/generated/props.json.
+ * scripts/docs/GenerateDocumentation.ts from docs/ and docs/generated/props.json.
  */
 
-/** One prop of a component, as scripts/ExtractProps.mjs reads it from the TypeScript source. */
+/** One prop of a component, as scripts/docs/ExtractProps.ts reads it from the TypeScript source. */
 export interface PropEntry {
   name: string;
   type: string;

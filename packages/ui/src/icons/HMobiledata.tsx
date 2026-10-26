@@ -1,5 +1,5 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 import { Icon, type MaterialSymbolProps } from '../Icon.js';
 
 export function HMobiledata({ filled: _filled = false, ...props }: MaterialSymbolProps) {

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { headersFor, parseHeaders, siteHeaders } from '../scripts/SiteHeaders.mjs';
+import { headersFor, parseHeaders, siteHeaders } from '../scripts/site/SiteHeaders.ts';
 
 test('the hosted site lets its own pages frame its pages, and no other site', () => {
   // The template pages show each screen in an iframe of the site's frame route, ?frame=, which a

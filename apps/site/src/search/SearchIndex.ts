@@ -1,10 +1,10 @@
 import MiniSearch from 'minisearch';
-// Written by scripts/SearchIndex.mjs when the documentation is generated; read as text, which
+// Written by scripts/site/SearchIndex.ts when the documentation is generated; read as text, which
 // MiniSearch parses on load.
 import serializedIndex from '../generated/SearchIndex.json?raw';
-import { indexOptions, queryOptionsFor } from '../../../../scripts/SearchTerms.mjs';
+import { indexOptions, queryOptionsFor } from '../shared/SearchTerms';
 
-/** What a search finds, as scripts/SearchIndex.mjs describes it. */
+/** What a search finds, as scripts/site/SearchIndex.ts describes it. */
 export interface SearchResult {
   id: string;
   kind: 'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';

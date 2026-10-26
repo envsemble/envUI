@@ -1,7 +1,7 @@
 import { availableParallelism } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
-import { resolveServers } from './scripts/CheckoutMarker.mjs';
+import { resolveServers } from './scripts/test/CheckoutMarker.ts';
 
 /**
  * The development servers this run needs: ENVUI_SERVERS lists them (site, fixture, or none; the
@@ -29,7 +29,7 @@ function wantedServers() {
 const wanted = wantedServers();
 
 // Ports, and whether a server running there belongs to this checkout and can be reused. Specs read
-// the chosen ports through tests/browser/Servers.ts; see scripts/CheckoutMarker.mjs.
+// the chosen ports through tests/browser/Servers.ts; see scripts/test/CheckoutMarker.ts.
 // The site's port was ENVUI_CATALOGUE_PORT before, which still chooses it.
 process.env.ENVUI_SITE_PORT ||= process.env.ENVUI_CATALOGUE_PORT;
 const servers = await resolveServers(

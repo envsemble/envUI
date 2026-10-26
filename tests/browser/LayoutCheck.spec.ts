@@ -8,7 +8,7 @@
  *
  * It renders hundreds of examples, so it runs in the full tier (`npm run verify`), and in the
  * affected tier when the examples, the pages that place them or dev mode's checks change
- * (scripts/TestScope.mjs); the fast tier leaves it to those.
+ * (scripts/test/TestScope.ts); the fast tier leaves it to those.
  */
 import { test, expect, type Page } from '@playwright/test';
 import type { LayoutProblem, ProblemRule } from '@envsemble/envui/dev';

@@ -40,7 +40,7 @@ function topLevel(css) {
   return statements.filter(({ prelude }) => prelude);
 }
 
-/** The bundled style sheet, as scripts/BuildLibrary.mjs writes dist/styles.css. */
+/** The bundled style sheet, as scripts/build/BuildLibrary.ts writes dist/styles.css. */
 async function bundled() {
   const result = await build({
     entryPoints: [join(styles, 'index.css')],

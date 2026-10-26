@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { clientReasonsOf, libraryModules } from '../scripts/ClientModules.mjs';
+import { clientReasonsOf, libraryModules } from '../scripts/build/ClientModules.ts';
 
 // envUI and React Server Components: each module that uses client-only React APIs starts with
 // 'use client', the entry points carry no directive, the build keeps the directives where they
@@ -36,7 +36,11 @@ test("every module that uses client-only APIs, and only such a module, says 'use
   const needless = modules
     .filter((module) => module.reasons.length === 0 && module.client)
     .map((module) => module.file);
-  assert.deepEqual(missing, [], 'Run node scripts/ClientModules.mjs, or npm run icons:generate.');
+  assert.deepEqual(
+    missing,
+    [],
+    'Run node scripts/build/ClientModules.ts, or npm run icons:generate.',
+  );
   assert.deepEqual(needless, [], 'These modules use nothing client-only.');
   for (const entry of entries) {
     const module = modules.find(({ file }) => file.replace(/\.tsx?$/, '') === entry);

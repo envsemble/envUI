@@ -7,7 +7,7 @@ import {
   parseReleaseNotes,
   readReleaseNotes,
   releaseNotesProblems,
-} from '../scripts/ReleaseNotes.mjs';
+} from '../scripts/site/ReleaseNotes.ts';
 
 test('the release notes hold: newest first, five highlights at most, links to sections of the Docs', () => {
   const releases = readReleaseNotes();

@@ -3,7 +3,7 @@ import { Column, IconButton, Surface, Text, useTheme } from '@envsemble/envui';
 import { ViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import { Figure } from '../../previews/foundations/Topic';
 // Pictures of the real dev mode at work on the demo application, captured by
-// scripts/CaptureDevModeImage.mjs (npm run docs:dev-mode-image) in each theme.
+// scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image) in each theme.
 import wholeLight from './dev-mode-whole-light.webp';
 import wholeDark from './dev-mode-whole-dark.webp';
 import toolbarLight from './dev-mode-toolbar-light.webp';

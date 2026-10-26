@@ -5,7 +5,7 @@ import type { DevModeHandle } from '@envsemble/envui/dev';
 import { keepLinksInPlace } from '../../template/LiveExample';
 import { DemoApp } from './DemoApp';
 // The 3D view of the application below, captured from the real dev mode by
-// scripts/CaptureDevModeImage.mjs (npm run docs:dev-mode-image).
+// scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image).
 import viewLight from './dev-mode-3d-light.webp';
 import viewDark from './dev-mode-3d-dark.webp';
 // The parts' descriptions the inspector shows, fetched as dev mode opens.

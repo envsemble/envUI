@@ -4,7 +4,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { moduleFiles, moduleFilesName, writeModuleFiles } from '../scripts/SiteModuleFiles.mjs';
+import { moduleFiles, moduleFilesName, writeModuleFiles } from '../scripts/site/SiteModuleFiles.ts';
 
 test('each lazily loaded catalogue module maps to the files its load fetches', () => {
   const manifest = {
@@ -82,7 +82,7 @@ test('the map is written once from the manifest, and a finalised build is left a
   assert.equal(existsSync(join(site, '.vite')), false);
   const map = await readFile(join(site, moduleFilesName), 'utf8');
   assert.deepEqual(JSON.parse(map), { 'src/usage/IconUsage.tsx': ['assets/IconUsage-1.js'] });
-  // Run again, as FinalizeSite.mjs on its own after npm run build:site, it keeps the map.
+  // Run again, as FinalizeSite.ts on its own after npm run build:site, it keeps the map.
   assert.equal(await writeModuleFiles(site), false);
   assert.equal(await readFile(join(site, moduleFilesName), 'utf8'), map);
 });

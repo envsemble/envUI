@@ -5,7 +5,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { devEntry, devMarker, devModeDemo, devModeProblems } from '../scripts/SiteDevMode.mjs';
+import { devEntry, devMarker, devModeDemo, devModeProblems } from '../scripts/site/SiteDevMode.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 

@@ -5,17 +5,17 @@ import {
   documentedExports,
   readDocumentation,
   readProps,
-} from '../scripts/GenerateDocumentation.mjs';
-import { headingsOf } from '../scripts/MarkdownHeadings.mjs';
-import { exportSection, propSection, tokenSection } from '../scripts/SearchAnchors.mjs';
+} from '../scripts/docs/GenerateDocumentation.ts';
+import { headingsOf } from '../scripts/docs/MarkdownHeadings.ts';
+import { exportSection, propSection, tokenSection } from '../apps/site/src/shared/SearchAnchors.ts';
 import {
   buildSearchIndex,
   standalonePages,
   readTokens,
   searchDocuments,
   unlistedPages,
-} from '../scripts/SearchIndex.mjs';
-import { indexOptions, queryOptionsFor, tokenize } from '../scripts/SearchTerms.mjs';
+} from '../scripts/site/SearchIndex.ts';
+import { indexOptions, queryOptionsFor, tokenize } from '../apps/site/src/shared/SearchTerms.ts';
 
 const props = readProps();
 const documents = readDocumentation(undefined, { props });

@@ -3,9 +3,9 @@ import { PlainCode } from './SimpleTable';
 import type { ExportEntry, PropEntry } from '../DocumentationTypes';
 import type { Reference } from '../Reference';
 // The ids search leads to, as the search index writes them.
-import { exportSection, propSection } from '../../../../scripts/SearchAnchors.mjs';
+import { exportSection, propSection } from '../shared/SearchAnchors';
 
-/** The same sentences as the packaged Markdown's Props section (scripts/GenerateDocumentation.mjs). */
+/** The same sentences as the packaged Markdown's Props section (scripts/docs/GenerateDocumentation.ts). */
 function nativeSentence(elements: string[]) {
   if (!elements.length) return null;
   const tags = elements.map((element) =>

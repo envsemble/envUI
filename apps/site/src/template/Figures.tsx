@@ -9,7 +9,7 @@ import { AnatomyFigure } from './AnatomyFigure';
 import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from './OptionLegend';
-import { optionPieces, type OptionTable } from '../../../../scripts/CatalogueContent.mjs';
+import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
 import { InteractiveMark } from './InteractiveMark';
 import { Specimen } from './Specimen';
 import { foundationFigure } from '../previews/foundations/FoundationFigures';

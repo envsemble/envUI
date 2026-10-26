@@ -1,4 +1,4 @@
-# Response headers of the hosted site. scripts/FinalizeSite.mjs copies this file into
+# Response headers of the hosted site. scripts/site/FinalizeSite.ts copies this file into
 # dist/site, and the Worker in wrangler.jsonc applies it. A response collects the headers of every
 # rule matching its path, in order; "! Name" removes a header an earlier rule set.
 

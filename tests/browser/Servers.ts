@@ -2,7 +2,7 @@
  * Servers the browser suite starts or reuses. playwright.config.ts picks the ports before any spec
  * loads: 8770 for the site in development, both its parts, and 8766 for the fixture, unless another
  * checkout or program holds them, when this checkout takes ports of its own
- * (scripts/CheckoutMarker.mjs). To choose them, set ENVUI_SITE_PORT and ENVUI_FIXTURE_PORT, for
+ * (scripts/test/CheckoutMarker.ts). To choose them, set ENVUI_SITE_PORT and ENVUI_FIXTURE_PORT, for
  * example to 8832 and 8833; ENVUI_CATALOGUE_PORT, the site's port's name before, still counts.
  */
 export const sitePort = Number(

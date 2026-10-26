@@ -1,5 +1,5 @@
 // The primitive palette's guarantees: every color sits in its grade's luminance band, and a grade
-// difference alone gives a contrast ratio, for any two hues. scripts/GeneratePalette.mjs builds the
+// difference alone gives a contrast ratio, for any two hues. scripts/build/GeneratePalette.ts builds the
 // palette; tests/browser/Contrast.spec.ts checks the semantic pairs built from it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,7 +15,7 @@ import {
   luminanceGrade,
   paletteFile,
   writePalette,
-} from '../scripts/GeneratePalette.mjs';
+} from '../scripts/build/GeneratePalette.ts';
 
 const document = JSON.parse(await readFile(paletteFile, 'utf8'));
 /** Every palette color: hue, grade and luminance, read from the committed file. */

@@ -15,7 +15,7 @@ This file is for agents working on envUI itself. It stays in the repository and 
 - **CI** checks every ready pull request: one `CI` job for pull requests into `dev`, and the full `npm run verify` as the Verify workflow for pull requests into `main`, the releases. Don't change `.github/workflows`, start or re-run runs, or change the required checks without asking.
 - **The full tier** runs everything. Don't run it, or `npm run test:browser`, `test:a11y` or `test:visual`, as a routine step: they take minutes, and the tiers above answer for a change.
 - A token, theme or other shared change runs the contrast gate and a small shared set of specs, not everything; the selection says so. Leave the rest to the full tier.
-- A spec runs when the component it is named after changes (`scripts/TestScope.mjs`). When a file's name doesn't name its spec, add it to `aliases` there instead of running everything.
+- A spec runs when the component it is named after changes (`scripts/test/TestScope.ts`). When a file's name doesn't name its spec, add it to `aliases` there instead of running everything.
 - Firefox and WebKit run only the tests tagged `@engines`: tag a test that depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys), and leave the rest to Chromium.
 
 ## Write tests that stay fast
