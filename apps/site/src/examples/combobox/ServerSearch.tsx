@@ -20,11 +20,13 @@ export default function ServerSearch() {
   const [results, setResults] = useState<ComboboxItem[]>([]);
   const [searching, setSearching] = useState(false);
   const [contact, setContact] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const text = query.trim().toLowerCase();
     if (!text) {
-      setResults([]);
+      // A choice ends the query as the list closes: its results stay until it has gone.
+      if (open) setResults([]);
       setSearching(false);
       return;
     }
@@ -35,7 +37,7 @@ export default function ServerSearch() {
       setSearching(false);
     }, 500);
     return () => window.clearTimeout(timer);
-  }, [query]);
+  }, [query, open]);
 
   return (
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
@@ -46,6 +48,7 @@ export default function ServerSearch() {
         loading={searching}
         loadingLabel="Searching…"
         onInputValueChange={setQuery}
+        onOpenChange={setOpen}
         emptyLabel={query.trim() ? 'No contacts found' : 'Type a name to search'}
         value={contact}
         onValueChange={setContact}
