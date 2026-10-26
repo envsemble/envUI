@@ -120,6 +120,12 @@
   min-block-size: 0;
 }
 
+/* A command palette in a tile sits in the tile's window without the room a screen leaves above it,
+   which its stylesheet measures on the browser's window, not the tile's; the view centres it. */
+.catalogue-related-canvas[data-tile] .env-command-palette-positioner {
+  padding-block: var(--env-space-4);
+}
+
 /* A picture of the overlay, without the scrim, which would fill the canvas. */
 .catalogue-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
   display: none;

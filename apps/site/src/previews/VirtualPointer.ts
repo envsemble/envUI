@@ -19,6 +19,8 @@ interface Point {
 
 const hoverMark = 'data-catalogue-hover';
 const pressMark = 'data-catalogue-pressed';
+const focusMark = 'data-catalogue-focus';
+const focusWithinMark = 'data-catalogue-focus-within';
 
 /** The ids of the pointers no one sees, and what each has captured. */
 const captures = new Map<number, Element | null>();
@@ -60,6 +62,10 @@ const mouseTwin: Record<string, string> = {
 
 /** Events that don't bubble: each element the pointer enters or leaves gets its own. */
 const once = new Set(['pointerenter', 'pointerleave', 'mouseenter', 'mouseleave']);
+
+/** Fields a press focuses, as typing goes into them. */
+const textFields =
+  'input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"]), textarea, [contenteditable="true"]';
 
 /** A layer over a whole preview, which no pointer is over: it only holds the preview's popups. */
 const passThrough = '.catalogue-overlay-layer';
@@ -177,6 +183,9 @@ export class VirtualPointer {
     this.send(target, 'pointerdown', { button: 0 });
     this.pressed = [...this.over];
     for (const element of this.pressed) element.setAttribute(pressMark, '');
+    // A press in a field focuses it, and anywhere else takes focus from the field. A button keeps
+    // no focus ring under a pointer, so it isn't marked.
+    this.focus(target.closest(textFields));
   }
 
   /** Releases the button: the press ends, and where it ends on what it began on, it clicks. */
@@ -212,6 +221,60 @@ export class VirtualPointer {
     this.mouseless = false;
   }
 
+  /** The field typed into, marked as focused, as an inert preview can't focus it. */
+  private focused: Element | null = null;
+
+  /** Marks a field as focused, and what holds it as holding focus. */
+  focus(element: Element | null) {
+    if (this.focused === element) return;
+    if (this.focused) {
+      this.focused.removeAttribute(focusMark);
+      for (const node of this.chain(this.focused)) node.removeAttribute(focusWithinMark);
+    }
+    this.focused = element;
+    if (!element) return;
+    element.setAttribute(focusMark, '');
+    for (const node of this.chain(element)) node.setAttribute(focusWithinMark, '');
+  }
+
+  /**
+   * Types into a field of the preview as a keyboard does: a key down, the text going in, which
+   * a component that holds the field's value hears as an input event, and the key up. `text` is
+   * the characters to add, or `null` to delete the last one.
+   */
+  type(selector: string, text: string | null) {
+    const field = this.scope.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector);
+    if (!field) return;
+    this.focus(field);
+    const key = text ?? 'Backspace';
+    const keyboard = { key, bubbles: true, cancelable: true, composed: true };
+    if (!field.dispatchEvent(new KeyboardEvent('keydown', keyboard))) return;
+    const value = text === null ? field.value.slice(0, -1) : field.value + text;
+    // The value's own setter, under React's, so React sees the change as typing.
+    const prototype =
+      field instanceof HTMLTextAreaElement
+        ? HTMLTextAreaElement.prototype
+        : HTMLInputElement.prototype;
+    Object.getOwnPropertyDescriptor(prototype, 'value')!.set!.call(field, value);
+    field.dispatchEvent(
+      new InputEvent('input', {
+        bubbles: true,
+        composed: true,
+        inputType: text === null ? 'deleteContentBackward' : 'insertText',
+        data: text,
+      }),
+    );
+    field.dispatchEvent(new KeyboardEvent('keyup', keyboard));
+  }
+
+  /** Presses a key on an element of the preview, or on the field typed into. */
+  key(key: string, selector?: string) {
+    const target = (selector && this.scope.querySelector(selector)) || this.focused || this.scope;
+    const keyboard = { key, bubbles: true, cancelable: true, composed: true };
+    target.dispatchEvent(new KeyboardEvent('keydown', keyboard));
+    target.dispatchEvent(new KeyboardEvent('keyup', keyboard));
+  }
+
   /** Takes the pointer off the preview, releasing it first. */
   leave() {
     this.release();
@@ -235,6 +298,7 @@ export class VirtualPointer {
   }
 
   dispose() {
+    this.focus(null);
     this.leave();
     captures.delete(this.id);
   }
@@ -252,11 +316,17 @@ function mirrorRules(rules: CSSRuleList, out: string[], wrap: Wrap) {
     if (rule instanceof CSSStyleRule) {
       const selector = rule.selectorText;
       // A rule for what isn't hovered would hold for the marked element still; it is left alone.
-      if (!/:(hover|active)\b/.test(selector) || /:not\([^)]*:(hover|active)/.test(selector))
+      if (
+        !/:(hover|active|focus)/.test(selector) ||
+        /:not\([^)]*:(hover|active|focus)/.test(selector)
+      )
         continue;
       const marked = selector
         .replace(/:hover\b/g, `[${hoverMark}]`)
-        .replace(/:active\b/g, `[${pressMark}]`);
+        .replace(/:active\b/g, `[${pressMark}]`)
+        .replace(/:focus-visible\b/g, `[${focusMark}]`)
+        .replace(/:focus-within\b/g, `[${focusWithinMark}]`)
+        .replace(/:focus\b(?!-)/g, `[${focusMark}]`);
       out.push(wrap(`${marked} { ${rule.style.cssText} }`));
     } else if (rule instanceof CSSMediaRule || rule instanceof CSSSupportsRule) {
       const at = rule instanceof CSSMediaRule ? '@media' : '@supports';

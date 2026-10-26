@@ -118,6 +118,9 @@ export function useTimeline(durations: readonly number[]) {
  * - `press`, `release`: its button; `click` presses and releases it a moment later.
  * - `leave`: it goes off the preview, releasing first.
  * - `cue`: a moment the preview acts on (usePointer's `onCue`), such as a notification arriving.
+ * - `type`, text, `into` a selector of a field: typed a character at a time, `every` ms apart;
+ *   `erase`, a count: as many characters deleted the same way.
+ * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`.
  */
 export type PointerStep =
   | { wait: number }
@@ -126,7 +129,10 @@ export type PointerStep =
   | { release: true }
   | { click: true }
   | { leave: true }
-  | { cue: string };
+  | { cue: string }
+  | { type: string; into: string; every?: number }
+  | { erase: number; into: string; every?: number }
+  | { key: string; on?: string };
 
 /** A point of an element of the preview, as fractions of its box. */
 interface Aim {
@@ -139,11 +145,22 @@ interface Aim {
 interface Plan {
   length: number;
   moves: { start: number; end: number; from: Aim | null; to: Aim }[];
-  happenings: { time: number; kind: 'press' | 'release' | 'leave' | 'cue'; cue?: string }[];
+  happenings: {
+    time: number;
+    kind: 'press' | 'release' | 'leave' | 'cue' | 'type' | 'key';
+    /** A cue's name, the text typed (null for a deleted character), or the key. */
+    cue?: string;
+    text?: string | null;
+    /** The field typed into, or the element a key is pressed on. */
+    target?: string;
+  }[];
 }
 
 /** How long a click holds the button. */
 const clickHold = 90;
+
+/** How far apart typed characters are, by default: an easy typing pace. */
+const typingPace = 140;
 
 function planOf(script: readonly PointerStep[]): Plan {
   const plan: Plan = { length: 0, moves: [], happenings: [] };
@@ -164,6 +181,14 @@ function planOf(script: readonly PointerStep[]): Plan {
       time += clickHold;
       plan.happenings.push({ time, kind: 'release' });
     } else if ('cue' in step) plan.happenings.push({ time, kind: 'cue', cue: step.cue });
+    else if ('type' in step || 'erase' in step) {
+      const characters = 'type' in step ? [...step.type] : Array<null>(step.erase).fill(null);
+      for (const text of characters) {
+        time += step.every ?? typingPace;
+        plan.happenings.push({ time, kind: 'type', text, target: step.into });
+      }
+    } else if ('key' in step)
+      plan.happenings.push({ time, kind: 'key', cue: step.key, target: step.on });
     else {
       plan.happenings.push({ time, kind: 'leave' });
       at = null;
@@ -235,10 +260,13 @@ export function usePointer(
   const pointer = useRef<VirtualPointer | null>(null);
   const clock = useRef({ time: 0, done: -1 });
   const [plan] = useState(() => planOf(script));
+  // The pointer's events go out after React's commit, as a component may answer them by
+  // rendering at once, which React refuses from inside an effect.
   useEffect(
     () => () => {
-      pointer.current?.dispose();
+      const gone = pointer.current;
       pointer.current = null;
+      queueMicrotask(() => gone?.dispose());
     },
     [],
   );
@@ -246,9 +274,11 @@ export function usePointer(
   // script starts again from the beginning next time.
   useEffect(() => {
     if (playing || rest !== 'start' || !restTo.current) return;
-    pointer.current?.leave();
     clock.current = { time: 0, done: -1 };
-    restTo.current();
+    queueMicrotask(() => {
+      pointer.current?.leave();
+      restTo.current?.();
+    });
   }, [playing, rest]);
   useEffect(() => {
     if (!playing || !root) return;
@@ -265,6 +295,14 @@ export function usePointer(
         if (at && presentAt(plan, happening.time - 0.001)) current.moveTo(at);
         if (happening.kind === 'cue') {
           cueTo.current?.(happening.cue!);
+          continue;
+        }
+        if (happening.kind === 'type') {
+          current.type(happening.target!, happening.text ?? null);
+          continue;
+        }
+        if (happening.kind === 'key') {
+          current.key(happening.cue!, happening.target);
           continue;
         }
         if (happening.kind === 'press') current.press();

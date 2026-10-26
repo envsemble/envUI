@@ -19,11 +19,15 @@ const pascal = (id: string) =>
   id.replace(/(^|-)([a-z\d])/g, (_, __: string, letter: string) => letter.toUpperCase());
 
 /**
- * The windows of the tiles of wide components, in rem, larger than the tiles' 10 by 7.5 and drawn
- * smaller, by page id.
+ * The windows of the tiles of components too wide or tall for the tiles' 10 by 7.5 rem, such as a
+ * toolbar or a menu open below its button, drawn smaller, by page id.
  */
 export const tileWindows: Readonly<Record<string, { width: number; height: number }>> = {
   toast: { width: 16, height: 12 },
+  toolbar: { width: 12, height: 9 },
+  menu: { width: 14, height: 10.5 },
+  menubar: { width: 14, height: 10.5 },
+  'command-palette': { width: 20, height: 15 },
 };
 
 /** The tile of a page, by its id, where it has one of its own. */
