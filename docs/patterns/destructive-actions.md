@@ -23,6 +23,7 @@ avoidWhen:
 composes:
   - Button
   - ConfirmDialog
+  - ConfirmButton
   - List
   - Checkbox
   - TextField

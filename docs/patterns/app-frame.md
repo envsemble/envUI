@@ -37,6 +37,7 @@ composes:
   - Drawer
   - Sheet
   - Panes
+  - List
   - Menubar
   - Tooltip
   - CommandPalette
