@@ -22,6 +22,14 @@ const pressMark = 'data-catalogue-pressed';
 const focusMark = 'data-catalogue-focus';
 const focusWithinMark = 'data-catalogue-focus-within';
 
+/**
+ * The id of the pointer holding its button down, if any: a page has one mouse, so a component that follows
+ * a drag on the document, such as a slider, hears every move there, and takes a move without a
+ * button for the end of its drag. While one pointer holds its button, the others wait
+ * (usePointer).
+ */
+let pressing: number | null = null;
+
 /** The ids of the pointers no one sees, and what each has captured. */
 const captures = new Map<number, Element | null>();
 let nextId = 9000;
@@ -231,10 +239,16 @@ export class VirtualPointer {
     this.send(captures.get(this.id) ?? target, 'pointermove');
   }
 
+  /** Whether this pointer may go on now: no other is holding its button down on the page. */
+  get canPress() {
+    return pressing === null || pressing === this.id;
+  }
+
   /** Presses the pointer's button where it is. */
   press() {
     const target = this.over[0];
     if (!target || this.buttons) return;
+    pressing = this.id;
     this.buttons = 1;
     this.send(target, 'pointerdown', { button: 0 });
     this.pressed = [...this.over];
@@ -248,6 +262,7 @@ export class VirtualPointer {
   release() {
     if (!this.buttons) return;
     this.buttons = 0;
+    if (pressing === this.id) pressing = null;
     const captured = captures.get(this.id);
     const target = captured ?? this.over[0] ?? this.scope;
     this.send(target, 'pointerup', { button: 0 });

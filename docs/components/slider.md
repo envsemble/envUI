@@ -77,6 +77,8 @@ When the pointer comes over the slider, a thin handle marks the value and faint 
 - Once the slider is let go, the handle and the ticks go away, even with the pointer still over it, and come back when the pointer leaves and returns.
 - On a touch screen they show only while the finger is down.
 
+<!-- specimen: UnderThePointer -->
+
 ### Past the ends
 
 Dragged past either end, the value stays at the minimum or maximum, and the slider stretches a little toward the pointer.

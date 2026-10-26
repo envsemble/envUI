@@ -84,6 +84,8 @@ A short dash before each section, like a ruler, marks where the reader is.
 - The current section's dash is the longest and darkest, in the text color, the next ones growing as the reader nears them, and the one under the pointer longer too.
 - Sections not yet reached are quieter, so the list reads as how far the reader has come.
 
+<!-- specimen: ReadersPlace -->
+
 ### Going to a section
 
 A link scrolls its section to the top, below anything that stays there, such as a header.

@@ -107,6 +107,8 @@ An assistant's reply shows in the log at once and grows as it is written.
 - While it runs, the composer's send button is Stop.
 - Copy waits until the reply is complete.
 
+<!-- specimen: ReplyAsItArrives -->
+
 ### Stopping a reply
 
 Stop keeps what has arrived, marked as stopped, with Try again beside it. People can also simply write their next message.

@@ -64,6 +64,8 @@ The number can be written in any format, such as a currency. By default it is wr
 
 AnimatedNumber rolls up as the value grows and down as it shrinks.
 
+<!-- specimen: Rolling -->
+
 ### Reduced motion
 
 With a reduced-motion preference, the new value only fades in.

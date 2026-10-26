@@ -332,8 +332,15 @@ export function usePointer(
     };
     const tick = (now: number) => {
       const state = clock.current;
-      state.time += now - last;
+      const next = state.time + (now - last);
       last = now;
+      // While another preview's pointer holds its button down, this one waits: a page has one
+      // mouse, and a move without a button, on the document, would end the other's drag.
+      if (!current.canPress) {
+        frame = requestAnimationFrame(tick);
+        return;
+      }
+      state.time = next;
       if (state.time >= plan.length) {
         advance(plan.length);
         state.time %= plan.length;
