@@ -68,6 +68,8 @@ The picker shows one format at a time, hex first, and the format menu switches t
 - Each channel's field shows its letter, such as R, G and B, beside its number.
 - A color with an alpha keeps it while it is translucent.
 
+<!-- specimen: FormatMenu -->
+
 ### Several formats at once
 
 Several formats show their fields on a row each, with a copy button each. They edit the same color: typing in one moves the others.
@@ -76,7 +78,7 @@ Several formats show their fields on a row each, with a copy button each. They e
 - The letters and numbers line up from row to row.
 - With an alpha, each row ends in it.
 
-```tsx figure=FormatsTogether
+```tsx figure=FormatsTogether motion
 
 ```
 
@@ -87,7 +89,7 @@ ColorPickerButton shows the color as a swatch and its value, and opens a picker 
 - It has no fill of its own: like a field, it takes the background of what it sits on.
 - One button can be given a fill of its own.
 
-```tsx figure=PickerButtonOpen open
+```tsx figure=PickerButtonOpen motion
 
 ```
 
@@ -95,7 +97,7 @@ ColorPickerButton shows the color as a swatch and its value, and opens a picker 
 
 A picker can offer colors to choose from, each with an optional name.
 
-```tsx figure=PresetSwatches
+```tsx figure=PresetSwatches motion
 
 ```
 

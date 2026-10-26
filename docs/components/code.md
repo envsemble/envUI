@@ -43,7 +43,7 @@ examples:
     caption: 'Code: a command, a value or a file name inside a sentence.'
   WrapLongLines:
     role: example
-    caption: "Wrapped lines: copying keeps the source's own line breaks."
+    caption: "Long lines scroll, or wrap: copying keeps the source's own line breaks."
   CodeBlockAnatomy: anatomy
   PlainOutput:
     role: example
@@ -66,7 +66,7 @@ examples:
 
 A block keeps the source's layout and scrolls long lines sideways, or wraps them where it holds prose.
 
-```tsx figure=WrapLongLines
+```tsx figure=WrapLongLines motion
 
 ```
 

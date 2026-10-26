@@ -46,11 +46,13 @@ A heatmap is drawn in one tone, the accent by default, or any status tone, which
 
 Five steps by default, the empty one included; a heatmap can have as few as two or as many as ten.
 
+<!-- specimen: TonesAndSteps -->
+
 ### Color by rank
 
 Each color step can start where the application chooses, such as at quantiles of the data, so a few very busy days don't leave the rest pale.
 
-```tsx figure=ColorByRank
+```tsx figure=ColorByRank motion
 
 ```
 
@@ -58,23 +60,21 @@ Each color step can start where the application chooses, such as at quantiles of
 
 The application can lay out the tooltip itself; each day's name keeps its date and value.
 
-```tsx figure=CustomTooltip
+```tsx figure=CustomTooltip motion
 
 ```
 
 ## Anatomy
 
-```tsx figure=HeatmapAnatomy
+```tsx figure=HeatmapAnatomy enlarge
 
 ```
 
 1. **Month** (`env-calendar-heatmap-month`)
 2. **Weekday** (`env-calendar-heatmap-weekday`)
-3. **Day** (`env-calendar-heatmap-day`)
+3. **Day** (`env-calendar-heatmap-grid tr:nth-child(4) > env-calendar-heatmap-day:last-child`)
 4. **Legend** (`env-calendar-heatmap-legend`)
-5. **Swatch** (`env-calendar-heatmap-swatch`)
-
-Not shown: the tooltip.
+5. **Swatch** (`env-calendar-heatmap-swatch[data-level='3']`)
 
 ## Behaviour
 

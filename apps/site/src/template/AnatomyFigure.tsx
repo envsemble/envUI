@@ -34,6 +34,8 @@ const reach = 28;
 const badgeSize = 24;
 /** The least distance between two badges' centres on one side. */
 const spacing = badgeSize + 4;
+/** How far below its top the root's callout points, at most: past a large corner's curve. */
+const rootInset = 32;
 
 /** The box of a part, or of its own text, relative to the stage. */
 function boxOf(element: Element, text: boolean, origin: DOMRect): Box | undefined {
@@ -166,8 +168,15 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
     const centre = (box: Box) =>
       vertical ? (box.left + box.right) / 2 : (box.top + box.bottom) / 2;
     const extent = vertical ? origin.width : origin.height;
+    // The root's callout sits by its top corner, above its parts' on its side, rather than
+    // halfway down, where a tall component's own parts, such as a card's content, take theirs.
+    const parts = items.filter(({ root }) => !root).map(({ box }) => centre(box));
     const along = spread(
-      items.map(({ box }) => centre(box)),
+      items.map(({ box, root }) =>
+        root && !vertical
+          ? Math.min(centre(box), box.top + rootInset, Math.min(...parts) - spacing)
+          : centre(box),
+      ),
       badgeSize / 2 + 2,
       extent - badgeSize / 2 - 2,
     );

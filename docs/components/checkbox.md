@@ -72,7 +72,7 @@ A parent checks or clears all its children.
 - Checked when every child is.
 - Mixed when some are.
 
-```tsx figure=SelectAll
+```tsx figure=SelectAll motion
 
 ```
 

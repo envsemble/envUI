@@ -2,7 +2,7 @@ import { Card, Text } from '@envsemble/envui';
 
 export default function NestedCards() {
   return (
-    <Card title="Northwind launch" meta="Due 14 November">
+    <Card title="Northwind launch" meta="Due 14 Nov">
       <Card background="default" title="Owner">
         <Text>Priya Shah</Text>
       </Card>
