@@ -252,7 +252,7 @@ body {
    it reaches into the gutters on both sides, by a fifth of the pane's width beyond them, up to
    twice the largest step of the spacing scale: about 7rem in a pane of 108rem, the full 8rem from
    112rem. It never reaches more than two fifths of the way to the pane's edge, and never across the
-   whole pane as the band does. The header spans the pane, so its width is the container's. */
+   whole pane. The header spans the pane, so its width is the container's. */
 .docs-page-header {
   container: docs-page-header / inline-size;
   padding-block: var(--env-space-5) var(--env-space-4);

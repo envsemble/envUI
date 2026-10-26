@@ -37,12 +37,9 @@
 }
 
 /* The recessed canvas: the page's background, or `--docs-canvas-under`, 0.035 deeper in OKLCH
-   lightness in the light themes (`--docs-canvas-depth`) and 0.045 in the dark ones, high contrast
-   included. The contrast gate measures every pair an example paints on the page on the canvas too
-   (`catalogue-canvas` in tests/contrast/Pairs.ts, which repeats this formula). On the band
-   (Template.css) the dark themes' canvas is deeper than the band too. A canvas deeper than the
-   band would take envUI's light colors below their contrast, so there the light themes' canvas
-   is the page's own color, which stands lighter than the band. */
+   lightness in the light themes and 0.045 in the dark ones, high contrast included. The contrast
+   gate measures every pair an example paints on the page on the canvas too (`catalogue-canvas` in
+   tests/contrast/Pairs.ts, which repeats this formula). */
 .docs-live-example,
 .docs-verdict-stage,
 .docs-anatomy-stage,
@@ -51,10 +48,7 @@
 .docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll),
 .docs-showcase-card {
   background-color: light-dark(
-    oklch(
-      from var(--docs-canvas-under, var(--env-color-bg-page))
-        calc(l - var(--docs-canvas-depth, 0.035)) c h
-    ),
+    oklch(from var(--docs-canvas-under, var(--env-color-bg-page)) calc(l - 0.035) c h),
     oklch(from var(--docs-canvas-under, var(--env-color-bg-page)) calc(l - 0.045) c h)
   );
   /* Every canvas, an example's, a tile's or a card's, lifts off the page a little. */
@@ -64,16 +58,14 @@
 /* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its
    navigation, top bar and body, whose edges must show on the canvas. In the dark themes the
    canvas is already deeper than both, the navigation being lighter than the page. In the light
-   themes it is recessed from the navigation's fill instead, the darker of the window's two, or
-   from the band's where it sits on the band, which is deeper still. */
+   themes it is recessed from the navigation's fill instead, the darker of the window's two. */
 :is(
     .docs-live-example,
     .docs-verdict-stage,
     .docs-anatomy-stage,
     .docs-related-stage
   )[data-stage='shaded'][data-env-theme='light'] {
-  --docs-canvas-under: var(--docs-band-fill, var(--env-color-bg-default));
-  --docs-canvas-depth: 0.035;
+  --docs-canvas-under: var(--env-color-bg-default);
 }
 
 /* What the stage shows keeps to its width, however wide its content would be. */

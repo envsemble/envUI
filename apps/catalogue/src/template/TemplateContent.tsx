@@ -77,8 +77,8 @@ function Section({ reference, section }: { reference: Document; section: Documen
 
 /**
  * The three larger sections of a page, each a group of its sections, by id: what it is, its
- * variants or options, its parts and how it behaves; its rules, which open with when to use it,
- * alone on the band; its accessibility and the words to use. A section the list doesn't name joins
+ * variants or options, its parts and how it behaves; its rules, which open with when to use it;
+ * its accessibility and the words to use. A section the list doesn't name joins
  * the group of the section before it.
  */
 const sectionGroups: readonly (readonly string[])[] = [
@@ -86,9 +86,6 @@ const sectionGroups: readonly (readonly string[])[] = [
   ['rules'],
   ['accessibility', 'words'],
 ];
-
-/** The group that sits on the band. */
-const bandGroup = 1;
 
 /** A page's sections in their groups, in the page's order; a group may be empty. */
 function groupSections(sections: readonly DocumentationSection[]) {
@@ -103,23 +100,19 @@ function groupSections(sections: readonly DocumentationSection[]) {
 }
 
 /**
- * Sections in the page's order, in their three groups, far apart, the second on a band across the
- * page's column, then, with `related`, Related; Compose and the changelog are on the page in
- * the Docs. A group without sections, and a page's band where it has none of its sections, are
- * left out.
+ * Sections in the page's order, in their three groups, far apart, then, with `related`, Related;
+ * Compose and the changelog are on the page in the Docs. A group without sections is left out.
  */
 function Sections({
   reference,
   sections,
   provides,
   related,
-  bands,
 }: {
   reference: Document;
   sections: DocumentationSection[];
   provides: boolean;
   related: boolean;
-  bands: boolean;
 }) {
   const shown = sections
     .filter((section) => !docsOnlySections.has(section.id))
@@ -129,24 +122,15 @@ function Sections({
     reference.metadata && <Related metadata={reference.metadata} path={reference.path} />;
   return (
     <div className="docs-section-groups">
-      {groupSections(shown).map((group, index) => {
-        if (!group.length) return null;
-        const content = (
+      {groupSections(shown).map((group, index) =>
+        group.length ? (
           <div key={index} className="docs-article docs-template docs-figures docs-section-group">
             {group.map((section) => (
               <Section key={section.id} reference={reference} section={section} />
             ))}
           </div>
-        );
-        // A foundation's page sits on the page, without the band, as a page in the Docs does.
-        return bands && index === bandGroup && !reference.path.startsWith('foundations/') ? (
-          <div key={index} className="docs-band">
-            {content}
-          </div>
-        ) : (
-          content
-        );
-      })}
+        ) : null,
+      )}
       {end && (
         <div className="docs-article docs-template docs-figures docs-section-group">{end}</div>
       )}
@@ -158,19 +142,17 @@ function Sections({
  * A component, pattern or foundation page of the catalogue: its sections in order, then Related;
  * a component's props, part names, what the application provides and changelog are on its page in
  * the Docs. For Field, whose whole page is in the Docs, `provides` keeps what envUI and the
- * application provide in Accessibility, `related={false}` leaves out Related and `bands={false}`
- * the band: the Docs have neither.
+ * application provide in Accessibility and `related={false}` leaves out Related, which the Docs
+ * don't have.
  */
 export function TemplateContent({
   document,
   provides = false,
   related = true,
-  bands = true,
 }: {
   document: Document;
   provides?: boolean;
   related?: boolean;
-  bands?: boolean;
 }) {
   // A component's or pattern's page is guidance: its lists are check lists.
   return (
@@ -180,7 +162,6 @@ export function TemplateContent({
         sections={document.sections ?? []}
         provides={provides}
         related={related}
-        bands={bands}
       />
     </GuidanceLists>
   );
