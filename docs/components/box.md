@@ -30,7 +30,9 @@ avoidWhen:
 components:
   - Box
 examples:
-  InsetRegion: overview
+  InsetRegion:
+    role: overview
+    motion: true
   OneInset:
     role: do
     caption: One inset on the region, and a Column inside for the gaps.

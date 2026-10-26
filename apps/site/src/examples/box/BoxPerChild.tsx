@@ -8,10 +8,10 @@ export default function BoxPerChild() {
           Invite your team
         </Text>
       </Box>
-      <Box padding={3}>
+      <Box padding={2}>
         <Text>Projects are easier with the people who work on them.</Text>
       </Box>
-      <Box padding={2}>
+      <Box padding={6}>
         <Button variant="secondary">Invite people</Button>
       </Box>
     </Box>
