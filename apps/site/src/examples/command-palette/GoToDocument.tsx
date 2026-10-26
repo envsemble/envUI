@@ -34,7 +34,7 @@ export default function GoToDocument() {
   }, [query]);
 
   return (
-    <Column gap={3} align="start">
+    <Column gap={3} align="center">
       <Button variant="secondary" startIcon={<Search />} onClick={() => setOpen(true)}>
         Go to document
       </Button>
