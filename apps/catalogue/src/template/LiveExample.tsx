@@ -4,6 +4,8 @@ import {
   Suspense,
   use,
   useContext,
+  useLayoutEffect,
+  useRef,
   useState,
   type ComponentType,
   type MouseEvent,
@@ -203,6 +205,79 @@ export const keepLinksInPlace = {
   onAuxClickCapture: preventNavigation,
 };
 
+/** The least a width frame is drawn at to fit its stage; one that would need less scrolls. */
+const leastFitScale = 0.7;
+
+/**
+ * A frame of a given width for an example, drawn smaller where its stage is narrower than the
+ * frame and its outline, down to `leastFitScale`, so the frames of an Adapting to width figure fit
+ * a column beside the page's contents; the example still lays out at the frame's own width, as it
+ * is scaled rather than resized. A frame that would need to be smaller still keeps its size, and
+ * the stage scrolls, as on a phone.
+ */
+function WidthBox({ width, children }: { width: number; children: ReactNode }) {
+  const fit = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const [scaled, setScaled] = useState<{ scale: number; width: number; height: number }>();
+  useLayoutEffect(() => {
+    const frame = box.current;
+    const stage = fit.current?.parentElement;
+    if (!frame || !stage || typeof ResizeObserver === 'undefined') return;
+    const measure = () => {
+      const style = getComputedStyle(stage);
+      const room =
+        stage.clientWidth -
+        parseFloat(style.paddingInlineStart) -
+        parseFloat(style.paddingInlineEnd);
+      // The outline beside the frame, at its offset, needs room on both sides too.
+      const outline = getComputedStyle(frame);
+      const edge = parseFloat(outline.outlineOffset) + parseFloat(outline.outlineWidth);
+      const scale = room / (frame.offsetWidth + 2 * edge);
+      const next =
+        scale < 1 && scale >= leastFitScale
+          ? { scale, width: frame.offsetWidth * scale, height: frame.offsetHeight * scale }
+          : undefined;
+      // Unchanged sizes keep the state, so the stage, which grows with the frame, settles.
+      setScaled((current) =>
+        current &&
+        next &&
+        Math.abs(current.width - next.width) < 0.5 &&
+        Math.abs(current.height - next.height) < 0.5
+          ? current
+          : next,
+      );
+    };
+    // Measured in the next frame, as resizing the frame's place resizes the stage it observes.
+    let frameRequest = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frameRequest);
+      frameRequest = requestAnimationFrame(measure);
+    });
+    observer.observe(stage);
+    observer.observe(frame);
+    return () => {
+      cancelAnimationFrame(frameRequest);
+      observer.disconnect();
+    };
+  }, []);
+  return (
+    <div
+      ref={fit}
+      className="docs-width-fit"
+      data-scaled={scaled ? '' : undefined}
+      style={scaled && { inlineSize: scaled.width, blockSize: scaled.height }}
+    >
+      <div
+        ref={box}
+        className="docs-width-box"
+        style={{ inlineSize: `${width}rem`, transform: scaled && `scale(${scaled.scale})` }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /**
  * An example rendered live in the documentation's theme, on the recessed canvas, with its source
  * and a copy button; with `widths`, in a frame of each width, one to a row, and with `caption`, a
@@ -259,9 +334,7 @@ export function LiveExample({
                 aria-label={`${width} rem wide`}
                 role="group"
               >
-                <div className="docs-width-box" style={{ inlineSize: `${width}rem` }}>
-                  {render}
-                </div>
+                <WidthBox width={width}>{render}</WidthBox>
                 <InteractiveMark enabled={!open} />
               </Column>
               <Text render={<figcaption />} variant="caption" emphasis="muted">
