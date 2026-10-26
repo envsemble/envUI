@@ -27,6 +27,8 @@ examples:
   Styles: example
   Emphasis: example
   Hierarchy: example
+  TextSize: example
+  Measure: example
 ---
 
 # Typography
@@ -87,7 +89,9 @@ Everything is set in one typeface, at a regular weight for reading and a medium 
 
 Text grows with the text size people choose in their browser, and the compact scale makes every style a step smaller.
 
-- Choose Compact under Scale in the Display menu to see it on this site.
+```tsx figure=TextSize
+
+```
 
 ## Rules
 
@@ -112,6 +116,10 @@ Open a page or a section with a sentence or two in the main color that say what 
 A line holds about as many words as a line of a book.
 
 - However wide the window, a paragraph wraps at that length, so the eye finds the start of the next line easily.
+
+```tsx figure=Measure
+
+```
 
 ### Short paragraphs
 

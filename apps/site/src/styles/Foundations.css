@@ -354,3 +354,56 @@
   flex: none;
   color: var(--env-color-fg-accent);
 }
+
+/* An animated figure's states stacked in one place (Steps.tsx): the place is as large as the
+   largest, and only the current one shows, so the figure keeps one height. */
+.catalogue-step-stack {
+  display: grid;
+}
+.catalogue-step-stack > * {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.catalogue-step-stack > [data-current] {
+  visibility: visible;
+}
+
+/* The label in an animated figure's top start corner, naming the state it shows. */
+.catalogue-corner-label {
+  position: absolute;
+  inset-block-start: var(--env-space-3);
+  inset-inline-start: var(--env-space-4);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A frame of a fixed width, outlined as an example's width frame is, that its content fills. */
+.catalogue-fixed-frame {
+  outline: 0.0625rem dashed var(--env-color-border-default);
+  outline-offset: var(--env-space-2);
+}
+
+/* Typography: a card in a frame of one width at each text size, and a paragraph that stops at its
+   measure, the dashed line, in a frame that widens. */
+.catalogue-text-size-frame {
+  inline-size: min(100%, 22rem);
+}
+.catalogue-text-size-frame > * {
+  align-self: center;
+}
+.catalogue-measure {
+  font: var(--env-type-body);
+  position: relative;
+  overflow: clip;
+}
+.catalogue-measure-text {
+  max-inline-size: 56ch;
+}
+.catalogue-measure::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 56ch;
+  border-inline-start: 0.0625rem dashed var(--env-color-fg-accent);
+}

@@ -1,6 +1,19 @@
-import { Badge, Column, Row, Surface, Text, type TextVariant } from '@envsemble/envui';
+import {
+  Badge,
+  Button,
+  Column,
+  Row,
+  Surface,
+  Text,
+  Theme,
+  useTheme,
+  type TextVariant,
+} from '@envsemble/envui';
+import { useTimeline } from '../Motion';
+import { WidthSweep } from '../WidthSweep';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
+import { AtTextSize, CornerLabel, StepStack } from './Steps';
 import { Figure, NumberedLegend, type LegendEntry } from './Topic';
 
 /*
@@ -149,10 +162,104 @@ function EmphasisFigure() {
   );
 }
 
+/** A small card of every kind of text: a title, a paragraph, a note and a button's label. */
+function BookClub() {
+  return (
+    <Surface background="default" padding={5} radius="xl" render={<Column gap={3} />}>
+      <Column gap={1}>
+        <Text render={<p />} variant="title">
+          Book club
+        </Text>
+        <Text>This month we read The Overstory, and meet on Thursday at seven in the library.</Text>
+      </Column>
+      <Row wrap gap={3} align="center" justify="between">
+        <Text variant="body-sm">12 members going</Text>
+        <Button size="sm">Join</Button>
+      </Row>
+    </Surface>
+  );
+}
+
+/** The text sizes the card steps through, then the compact scale, each with its label. */
+const textSteps: readonly { size: number; compact: boolean; label: string }[] = [
+  { size: 1, compact: false, label: 'Text size 100%' },
+  { size: 1.25, compact: false, label: 'Text size 125%' },
+  { size: 1.5, compact: false, label: 'Text size 150%' },
+  { size: 1, compact: true, label: 'Compact' },
+];
+
+/**
+ * The card in a frame of one width as the reader's text size steps up, then in the compact scale:
+ * every style grows and shrinks with the others, and the card rewraps in its frame.
+ */
+function TextSizeSteps() {
+  const theme = useTheme();
+  const step = useTimeline(textSteps.map(() => 2400));
+  return (
+    <>
+      <CornerLabel>{textSteps[step]!.label}</CornerLabel>
+      <StepStack
+        className="catalogue-fixed-frame catalogue-text-size-frame"
+        count={textSteps.length}
+        at={step}
+        render={(index) => {
+          const { size, compact } = textSteps[index]!;
+          return (
+            <Theme
+              {...theme}
+              scale={compact ? 'compact' : theme.scale}
+              className="catalogue-scale-theme"
+            >
+              <AtTextSize size={size}>
+                <BookClub />
+              </AtTextSize>
+            </Theme>
+          );
+        }}
+      />
+    </>
+  );
+}
+
+function TextSizeFigure() {
+  return (
+    <Figure label="Text follows the reader" motion="the card at each text size">
+      <TextSizeSteps />
+    </Figure>
+  );
+}
+
+/**
+ * A paragraph in a frame that widens: it rewraps until its lines reach a comfortable length, the
+ * dashed line, and then stops growing while the frame goes on widening.
+ */
+function MeasureFigure() {
+  return (
+    <Figure label="Lines a comfortable length" motion="the frame widening">
+      <WidthSweep widths={[20, 44]}>
+        <div className="catalogue-measure">
+          <Column gap={2} className="catalogue-measure-text">
+            <Text render={<p />} variant="title">
+              Hollow Wood
+            </Text>
+            <Text>
+              The path leaves the car park by the old mill and climbs gently through beech and oak.
+              After the first kilometre it follows the stream to a wooden bridge, where most walkers
+              stop for tea before the steeper stretch up to the ridge.
+            </Text>
+          </Column>
+        </div>
+      </WidthSweep>
+    </Figure>
+  );
+}
+
 /** The figures docs/foundations/typography.md places, by name. */
 export const typographyFigures: Record<string, FoundationFigure> = {
   Screen: { render: ScreenFigure, wide: true },
   Styles: { render: StylesFigure, wide: true },
   Emphasis: { render: EmphasisFigure },
   Hierarchy: { render: HierarchyFigure },
+  TextSize: { render: TextSizeFigure },
+  Measure: { render: MeasureFigure, wide: true },
 };
