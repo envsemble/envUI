@@ -1,34 +1,40 @@
-import { Column } from '@envsemble/envui';
+import { useRef } from 'react';
+import { Column, type LayoutAlign, type SpaceStep } from '@envsemble/envui';
 import { useTimeline } from '../previews/Motion';
-import { bounds, Construction, diagonals, setOut, sides, type Edges } from './reflow';
+import { block, easing, frame, useReflow } from './reflow';
 
-/** The items' widths, in rem: a heading, a line and a shorter one, as a column often holds. */
-const items = ['4.5rem', '6.5rem', '3.5rem'];
+/** The blocks' widths: a heading, two lines and an action, as a column often holds. */
+const items = ['4.5rem', '6.5rem', '5rem', '2.75rem'];
 
-/** Step by step: the items together in the middle of the column, then spread down it. */
-const spreads = ['center', 'between'] as const;
-
-const parts = (drawing: HTMLElement) => [...drawing.firstElementChild!.children];
-
-/** Each item's edges run across the tile, and the lines through the corners of all three. */
-const draw = (edges: Edges[]) => [
-  ...diagonals(bounds(edges)),
-  ...edges.flatMap((part) => [...setOut(part), ...sides(part)]),
+/** Step by step: at the start, centred, at the end, spaced further apart, and back. */
+const layouts: { align: LayoutAlign; gap: SpaceStep }[] = [
+  { align: 'start', gap: 2 },
+  { align: 'center', gap: 2 },
+  { align: 'end', gap: 2 },
+  { align: 'end', gap: 4 },
 ];
 
-/**
- * A column of three items set out by construction lines, down the tile at their sides and across
- * it at each one's top and bottom, that spread down the column and gather again.
- */
+/** A column of four blocks of different widths, aligned in turn and spaced further apart. */
 export default function ColumnTile() {
-  const step = useTimeline([1000, 1800]);
+  const step = useTimeline([1000, 1300, 1300, 1300]);
+  const column = useRef<HTMLDivElement>(null);
+  useReflow(column, step);
+  const { align, gap } = layouts[step]!;
   return (
-    <Construction parts={parts} draw={draw} step={step}>
-      <Column gap={2} justify={spreads[step]} style={{ blockSize: '6.5rem' }}>
-        {items.map((width, index) => (
-          <span key={index} style={{ flex: 'none', inlineSize: width, blockSize: '1rem' }} />
-        ))}
-      </Column>
-    </Construction>
+    <Column
+      ref={column}
+      align={align}
+      gap={gap}
+      style={{
+        ...frame,
+        inlineSize: '8.5rem',
+        padding: '0.5rem',
+        transition: `gap 600ms ${easing}`,
+      }}
+    >
+      {items.map((width, index) => (
+        <span key={index} style={block(width, index ? '0.75rem' : '1rem')} />
+      ))}
+    </Column>
   );
 }

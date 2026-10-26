@@ -1,49 +1,32 @@
-import { Column, Grid } from '@envsemble/envui';
+import { useRef } from 'react';
+import { Grid } from '@envsemble/envui';
 import { useTimeline } from '../previews/Motion';
-import { bounds, Construction, diagonals, setOut, sides, type Edges } from './reflow';
+import { block, frame, useReflow } from './reflow';
 
-/** The columns, step by step: two, then three across. */
-const columns = [2, 3];
-
-/** The rows the cells fill, column by column. */
-const rows = 3;
-
-const parts = (drawing: HTMLElement) => [...drawing.firstElementChild!.firstElementChild!.children];
-
-/** Each cell's edges run across the tile, and the lines through the grid's corners. */
-const draw = (edges: Edges[]) => [
-  ...diagonals(bounds(edges)),
-  ...edges.flatMap((part) => [...setOut(part), ...sides(part)]),
-];
+/** The columns, step by step: two, then four across. */
+const columns = [2, 4];
 
 /**
- * The cells of a grid set out by construction lines, across and down the tile at their edges,
- * crossing to form them: two columns of three, and a third column splitting off the second, the
- * grid widening around it, and closing again.
+ * Four blocks, drawn in outline, in two equal columns, then four across, the blocks gliding to
+ * their new cells and the outline easing around them, and two again.
  */
 export default function GridTile() {
-  const step = useTimeline([1000, 1800]);
-  const count = columns[step]!;
+  const step = useTimeline([1100, 1800]);
+  const grid = useRef<HTMLDivElement>(null);
+  const outline = useRef<HTMLDivElement>(null);
+  useReflow(grid, step, { speed: 11, outline });
   return (
-    <Construction parts={parts} draw={draw} step={step}>
-      <Column align="center" justify="center" style={{ inlineSize: '7rem', blockSize: '5.5rem' }}>
-        <Grid
-          columns={`repeat(${count}, 1.75rem)`}
-          gap={2}
-          style={{ gridTemplateRows: `repeat(${rows}, 1.25rem)` }}
-        >
-          {/* Every cell in the third column, which lies on the second until it opens. */}
-          {Array.from({ length: 3 * rows }, (_, index) => (
-            <span
-              key={index}
-              style={{
-                gridColumn: Math.min(Math.floor(index / rows) + 1, count),
-                gridRow: (index % rows) + 1,
-              }}
-            />
-          ))}
-        </Grid>
-      </Column>
-    </Construction>
+    <div ref={outline} style={{ ...frame, padding: '0.5rem' }}>
+      <Grid
+        ref={grid}
+        columns={`repeat(${columns[step]}, 1.75rem)`}
+        gap={2}
+        style={{ position: 'relative', inlineSize: 'max-content' }}
+      >
+        {Array.from({ length: 4 }, (_, index) => (
+          <span key={index} style={block('auto', '1.75rem')} />
+        ))}
+      </Grid>
+    </div>
   );
 }

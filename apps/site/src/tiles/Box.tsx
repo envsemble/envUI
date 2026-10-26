@@ -1,47 +1,23 @@
-import { Box } from '@envsemble/envui';
+import { Box, Column, type SpaceStep } from '@envsemble/envui';
 import { useTimeline } from '../previews/Motion';
-import { Construction, setOut, sides, through, type Edges } from './reflow';
+import { block, easing, frame, guide } from './reflow';
 
 /** The inset, step by step: a small one, a larger one, and back. */
-const paddings = [2, 5] as const;
-
-const parts = (drawing: HTMLElement) => {
-  const box = drawing.firstElementChild!;
-  return [box, box.firstElementChild!];
-};
-
-const draw = ([box, content]: Edges[]) => {
-  const corners = (edges: Edges) =>
-    [
-      [edges.left, edges.top],
-      [edges.right, edges.top],
-      [edges.right, edges.bottom],
-      [edges.left, edges.bottom],
-    ] as const;
-  const inner = corners(content!);
-  return [
-    ...setOut(box!),
-    ...setOut(content!),
-    ...corners(box!).map((corner, index) => through(corner, inner[index]!)),
-    ...sides(box!),
-    ...sides(content!),
-  ];
-};
+const paddings: SpaceStep[] = [2, 5];
 
 /**
- * A box set out by construction lines: its edges, and within them its content's, with the lines
- * through their corners showing the inset between them, which grows and shrinks again.
+ * A box drawn in outline around its content, a heading, a line and an action within a faint
+ * outline, the inset between the two growing and shrinking again.
  */
 export default function BoxTile() {
-  const step = useTimeline([1000, 1800]);
+  const step = useTimeline([1100, 1800]);
   return (
-    <Construction parts={parts} draw={draw} step={step}>
-      <Box
-        padding={paddings[step]}
-        style={{ boxSizing: 'border-box', inlineSize: '5.5rem', blockSize: '5.5rem' }}
-      >
-        <div style={{ blockSize: '100%' }} />
-      </Box>
-    </Construction>
+    <Box padding={paddings[step]} style={{ ...frame, transition: `padding 700ms ${easing}` }}>
+      <Column gap={2} style={{ ...guide, padding: 'var(--env-space-1)' }}>
+        <span style={block('3.5rem', '1rem')} />
+        <span style={block('5rem', '0.75rem')} />
+        <span style={block('2.25rem', '1rem')} />
+      </Column>
+    </Box>
   );
 }
