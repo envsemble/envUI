@@ -4,16 +4,17 @@ import { Button, Column, DropZone, List, Progress, Row, Text, Textarea } from '@
 interface Upload {
   id: number;
   name: string;
-  done: boolean;
+  /** How much of the file has been sent, from 0 to 1. */
+  sent: number;
 }
 
 export default function AttachInForm() {
-  const [uploads, setUploads] = useState<Upload[]>([{ id: 1, name: 'site-plan.pdf', done: true }]);
+  const [uploads, setUploads] = useState<Upload[]>([{ id: 1, name: 'site-plan.pdf', sent: 1 }]);
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState('');
   const timers = useRef<number[]>([]);
-  useEffect(() => () => timers.current.forEach((timer) => window.clearTimeout(timer)), []);
-  const uploading = uploads.some((upload) => !upload.done);
+  useEffect(() => () => timers.current.forEach((timer) => window.clearInterval(timer)), []);
+  const uploading = uploads.some((upload) => upload.sent < 1);
 
   // A send waits for the uploads still running, then goes.
   useEffect(() => {
@@ -26,20 +27,22 @@ export default function AttachInForm() {
     const added = files.map((file, index) => ({
       id: Date.now() + index,
       name: file.name,
-      done: false,
+      sent: 0,
     }));
     setUploads((current) => [...current, ...added]);
-    // Files upload as soon as they are added; timers stand in for the uploads.
-    for (const upload of added)
-      timers.current.push(
-        window.setTimeout(
-          () =>
-            setUploads((current) =>
-              current.map((item) => (item.id === upload.id ? { ...item, done: true } : item)),
-            ),
-          2500,
-        ),
-      );
+    // Files upload as soon as they are added; timers stand in for the uploads, a tenth at a time.
+    for (const upload of added) {
+      let tenths = 0;
+      const timer = window.setInterval(() => {
+        tenths += 1;
+        const sent = tenths / 10;
+        if (tenths === 10) window.clearInterval(timer);
+        setUploads((current) =>
+          current.map((item) => (item.id === upload.id ? { ...item, sent } : item)),
+        );
+      }, 450);
+      timers.current.push(timer);
+    }
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -64,10 +67,11 @@ export default function AttachInForm() {
           <List.Root aria-label="Attached files">
             {uploads.map((upload) => (
               <List.Item key={upload.id} label={upload.name}>
-                {!upload.done && (
+                {upload.sent < 1 && (
                   <Progress
                     label="Uploading"
-                    value={null}
+                    value={upload.sent}
+                    max={1}
                     aria-valuetext={`Uploading ${upload.name}`}
                   />
                 )}
