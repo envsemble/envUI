@@ -105,6 +105,29 @@ test.describe('PortalContainer, contained', () => {
     await expect(menu).toHaveCount(0);
   });
 
+  test('a contained notice arrives and leaves with its motion, and stays under the pointer', async ({
+    page,
+  }) => {
+    await page.goto(preview);
+    const layer = page.getByTestId('layer');
+    await page.getByRole('button', { name: 'Notify' }).click();
+    const notice = layer.locator('.env-toast', { hasText: 'Invitation sent.' });
+    await expect(notice).toBeVisible();
+    // It came in from its starting style, which it no longer holds.
+    await expect(notice).not.toHaveAttribute('data-starting-style');
+    await expect
+      .poll(() => notice.evaluate((element) => getComputedStyle(element).opacity))
+      .toBe('1');
+    // Under the pointer its time stops: past its 1.2 s it is still there.
+    await notice.hover();
+    await page.waitForTimeout(1800);
+    await expect(notice).toBeVisible();
+    // Once the pointer leaves, it goes, fading out before it is removed.
+    await page.mouse.move(1, 1);
+    await expect(notice).toHaveAttribute('data-ending-style', '', { timeout: 3000 });
+    await expect(notice).toHaveCount(0);
+  });
+
   test('F6 leaves the contained toasts alone @engines', async ({ page }) => {
     await page.goto(preview);
     await expect(page.getByTestId('layer').getByText('Changes saved.')).toBeVisible();

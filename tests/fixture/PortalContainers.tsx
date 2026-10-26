@@ -24,6 +24,16 @@ function SavedNotice() {
   return null;
 }
 
+/** A button that raises a short notice, which stays while the pointer rests on it. */
+function NotifyButton() {
+  const toast = useToast();
+  return (
+    <Button onClick={() => toast.show({ message: 'Invitation sent.', duration: 1200 })}>
+      Notify
+    </Button>
+  );
+}
+
 /**
  * Preview regions of a page, not inert, whose overlays render into a layer of each through a
  * contained PortalContainer, open as the page loads: a menu, a tooltip and a toast in one, a dialog
@@ -63,6 +73,7 @@ export function PortalContainersFixture() {
               <IconButton icon={<Refresh />} aria-label="Refresh members" />
             </Tooltip>
             <SavedNotice />
+            <NotifyButton />
           </Toast.Provider>
         </PortalContainer>
         <div ref={setLayer} data-testid="layer" />

@@ -588,7 +588,8 @@ test('F6 on the Toast page reaches a notification raised there, past the figures
   );
   await page.keyboard.press('F6');
   await expect(page.locator('body')).toHaveAttribute('data-f6-prevented', 'false');
-  await page.getByRole('button', { name: 'Save changes' }).first().click();
+  // The overview plays its Save changes in a figure; the export example raises a live notice.
+  await page.getByRole('button', { name: 'Export members' }).first().click();
   const live = page
     .locator('.env-toast-viewport:not(.catalogue-open-example .env-toast-viewport)')
     .filter({ has: page.locator('.env-toast') });

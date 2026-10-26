@@ -1,6 +1,5 @@
-import { PortalContainer } from '@envsemble/envui';
 import SaveChanges from '../../examples/toast/SaveChanges';
-import { usePointer, usePreviewLayer, type PointerStep } from '../../previews/Motion';
+import { usePointer, type PointerStep } from '../../previews/Motion';
 import { MotionStage } from '../../previews/MotionStage';
 
 /*
@@ -23,15 +22,7 @@ const script: PointerStep[] = [
 
 function Saving() {
   usePointer(script);
-  const layer = usePreviewLayer();
-  // The notifications render live in the stage's layer, as the Toast tile's do, rather than as
-  // the picture a contained container shows, so they arrive, stay and leave with their own motion.
-  if (!layer) return null;
-  return (
-    <PortalContainer container={layer}>
-      <SaveChanges />
-    </PortalContainer>
-  );
+  return <SaveChanges />;
 }
 
 /** The overview's Save changes, pressed by a pointer no one sees, and its notification. */

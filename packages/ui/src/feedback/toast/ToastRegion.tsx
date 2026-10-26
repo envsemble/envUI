@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Button, IconButton } from '../../actions/Button.js';
 import { Badge } from '../../content/Badge.js';
@@ -28,6 +28,68 @@ function glideOffset(item: HTMLElement) {
 /** A notice's running animations; none where the Web Animations API is missing, such as jsdom. */
 function animationsOf(item: HTMLElement) {
   return item.getAnimations?.() ?? [];
+}
+
+/**
+ * A notice of a contained region's picture: it arrives and leaves with a live notice's motion, from
+ * the toast's starting and ending styles, and its time stops while the pointer rests on it. Once it
+ * has left, `onGone` takes it out of the picture.
+ */
+function PictureNotice({
+  id,
+  tone,
+  limited,
+  ending,
+  controller,
+  onGone,
+  children,
+}: {
+  id: string;
+  tone: ToastEntry['tone'];
+  limited: boolean;
+  ending: boolean;
+  controller: ToastController;
+  onGone: (id: string) => void;
+  children: ReactNode;
+}) {
+  const element = useRef<HTMLDivElement>(null);
+  // A notice closed before it was ever shown, such as one an effect shows and takes back at once,
+  // never arrives.
+  const [arrives] = useState(!ending);
+  // It comes in from its starting style, which its first style holds, as Base UI's notices do.
+  useLayoutEffect(() => {
+    const item = element.current;
+    if (!item) return;
+    void getComputedStyle(item).opacity;
+    item.removeAttribute('data-starting-style');
+  }, []);
+  // Leaving, it fades to its ending style, and is gone once that ends; at once without motion.
+  useEffect(() => {
+    if (!ending) return;
+    const item = element.current;
+    const seconds = item
+      ? Math.max(...getComputedStyle(item).transitionDuration.split(',').map(Number.parseFloat))
+      : 0;
+    const timer = setTimeout(() => onGone(id), (seconds || 0) * 1000);
+    return () => clearTimeout(timer);
+  }, [ending, id, onGone]);
+  if (!arrives) return null;
+  return (
+    <div
+      ref={element}
+      data-toast-id={id}
+      className="env-toast"
+      data-tone={tone}
+      data-limited={limited || undefined}
+      data-starting-style=""
+      data-ending-style={ending ? '' : undefined}
+      role={tone === 'danger' ? 'alert' : 'status'}
+      onMouseEnter={() => controller.pause(id, 'hover')}
+      onMouseLeave={() => controller.resume(id, 'hover')}
+    >
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -71,6 +133,9 @@ export function ToastRegion({
     direction === 'rtl' ? 'left' : 'right',
   ];
   const hiddenCount = limited.size;
+  // The notices of a picture that have left; Base UI's own notices leave by themselves.
+  const [gone, setGone] = useState<ReadonlySet<string>>(() => new Set());
+  const leave = useCallback((id: string) => setGone((current) => new Set(current).add(id)), []);
   useLayoutEffect(
     () =>
       controller.registerPlacementStore(placement, {
@@ -218,7 +283,8 @@ export function ToastRegion({
     placement === 'bottom-end' ? messages.regionBottomEnd : messages.regionTopCenter;
   // In a contained PortalContainer the notices are a picture of the region, part of the container:
   // without Base UI's viewport, whose window-wide F6 would take the page's F6 for a region that is
-  // only shown. They keep their look, action, dismiss button and duration.
+  // only shown. They keep their look, action, dismiss button and duration, arrive and leave with
+  // their motion, and stay while the pointer rests on them.
   if (contained)
     return (
       <BaseToast.Portal container={container}>
@@ -239,17 +305,18 @@ export function ToastRegion({
               />
             )}
             {toastStore.toasts
-              .filter((toast) => toast.transitionStatus !== 'ending')
+              .filter((toast) => !gone.has(toast.id))
               .map((toast) => {
                 const entry = toast.data!;
                 return (
-                  <div
+                  <PictureNotice
                     key={toast.id}
-                    data-toast-id={toast.id}
-                    className="env-toast"
-                    data-tone={entry.tone}
-                    data-limited={limited.has(toast.id) || undefined}
-                    role={entry.tone === 'danger' ? 'alert' : 'status'}
+                    id={toast.id}
+                    tone={entry.tone}
+                    limited={limited.has(toast.id)}
+                    ending={toast.transitionStatus === 'ending'}
+                    controller={controller}
+                    onGone={leave}
                   >
                     <ToastBody
                       tone={entry.tone}
@@ -273,7 +340,7 @@ export function ToastRegion({
                         )
                       }
                     />
-                  </div>
+                  </PictureNotice>
                 );
               })}
           </div>
