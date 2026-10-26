@@ -75,6 +75,36 @@ test.describe('PortalContainer, contained', () => {
     await expect(layer.getByRole('tooltip')).toHaveCount(0);
   });
 
+  test('a context menu opens at the pointer in the container, without hiding or locking the page @engines', async ({
+    page,
+  }) => {
+    await page.goto(preview);
+    const region = page.getByTestId('context-region');
+    await region.scrollIntoViewIfNeeded();
+    const box = (await region.boundingBox())!;
+    await page.mouse.click(box.x + 60, box.y + 30, { button: 'right' });
+    const menu = page.getByTestId('context-layer').getByRole('menu', { name: 'Document actions' });
+    await expect(menu).toBeVisible();
+    expect(
+      await insidePreview(page, '[data-testid="context-layer"] .env-menu', 'context-preview'),
+    ).toBe(true);
+    // Its first row is under the pointer, as a context menu's is anywhere.
+    const opened = (await menu.boundingBox())!;
+    expect(Math.abs(opened.x - (box.x + 60))).toBeLessThan(12);
+    expect(Math.abs(opened.y - (box.y + 30))).toBeLessThan(12);
+    // The page stays in reach and keeps its scroll.
+    await expect(page.getByTestId('outside')).not.toHaveAttribute('aria-hidden');
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe(
+      'hidden',
+    );
+    expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe('hidden');
+    // A press outside the container leaves it open; Esc on the menu closes it.
+    await page.getByTestId('outside').click();
+    await expect(menu).toBeVisible();
+    await menu.dispatchEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    await expect(menu).toHaveCount(0);
+  });
+
   test('F6 leaves the contained toasts alone @engines', async ({ page }) => {
     await page.goto(preview);
     await expect(page.getByTestId('layer').getByText('Changes saved.')).toBeVisible();

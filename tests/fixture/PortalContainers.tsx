@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   Button,
   Combobox,
+  ContextMenu,
   Dialog,
   IconButton,
   Menu,
@@ -26,13 +27,14 @@ function SavedNotice() {
 /**
  * Preview regions of a page, not inert, whose overlays render into a layer of each through a
  * contained PortalContainer, open as the page loads: a menu, a tooltip and a toast in one, a dialog
- * in another, a combobox's list in the third. The page is taller than the window, so its scroll can
- * be checked.
+ * in another, a combobox's list in the third; a fourth holds a context menu, opened by right click.
+ * The page is taller than the window, so its scroll can be checked.
  */
 export function PortalContainersFixture() {
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   const [dialogLayer, setDialogLayer] = useState<HTMLDivElement | null>(null);
   const [comboboxLayer, setComboboxLayer] = useState<HTMLDivElement | null>(null);
+  const [contextLayer, setContextLayer] = useState<HTMLDivElement | null>(null);
   const region = {
     position: 'relative',
     contain: 'layout',
@@ -83,6 +85,16 @@ export function PortalContainersFixture() {
           />
         </PortalContainer>
         <div ref={setComboboxLayer} data-testid="combobox-layer" />
+      </div>
+      <div data-testid="context-preview" style={region}>
+        <PortalContainer container={contextLayer} contained>
+          <ContextMenu aria-label="Document actions" content={<Menu.Item>Duplicate</Menu.Item>}>
+            <div data-testid="context-region" style={{ blockSize: '8rem' }}>
+              Quarterly report
+            </div>
+          </ContextMenu>
+        </PortalContainer>
+        <div ref={setContextLayer} data-testid="context-layer" />
       </div>
       {/* Taller than the window, so the page scrolls. */}
       <div style={{ blockSize: '150vh' }} />
