@@ -32,7 +32,9 @@ avoidWhen:
 components:
   - DropZone
 examples:
-  LogoUpload: overview
+  LogoUpload:
+    role: overview
+    motion: true
   Sizes: variants
   DropZoneAnatomy: anatomy
   AttachDocuments: example
@@ -88,7 +90,7 @@ A zone can take only some kinds of file, and turns the others away.
 
 A zone can take several files at once. The application lists the files it took, each with Remove.
 
-```tsx figure=AttachDocuments
+```tsx figure=AttachDocuments motion
 
 ```
 
