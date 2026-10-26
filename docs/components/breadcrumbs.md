@@ -52,7 +52,7 @@ Levels can be buttons rather than links.
 - Pressing one shortens the trail.
 - The application moves focus, here to the folder's title.
 
-```tsx figure=WithoutUrls
+```tsx figure=WithoutUrls motion
 
 ```
 
@@ -97,6 +97,8 @@ A level that can't be opened is plain text.
 A long label ends with an ellipsis, and a tooltip shows it in full on hover and on keyboard focus.
 
 - On one line, the current page is cut short first, and earlier levels keep their width.
+
+<!-- specimen: LongLabel -->
 
 ## Rules
 
