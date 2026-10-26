@@ -40,6 +40,7 @@
   initial-value: 0;
 }
 .env-line-art[data-motion] > * {
+  --env-line-art-offset: 0;
   --env-line-art-dash: var(--env-line-art-scale, 1);
   stroke-dasharray: var(--env-line-art-dash) var(--env-line-art-dash);
   stroke-dashoffset: calc(var(--env-line-art-dash) * var(--env-line-art-offset));
