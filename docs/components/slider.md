@@ -77,6 +77,15 @@ When the pointer comes over the slider, a thin handle marks the value and faint 
 - Once the slider is let go, the handle and the ticks go away, even with the pointer still over it, and come back when the pointer leaves and returns.
 - On a touch screen they show only while the finger is down.
 
+### Past the ends
+
+Dragged past either end, the value stays at the minimum or maximum, and the slider stretches a little toward the pointer.
+
+- The further the pointer goes, the less it gives, up to a small limit.
+- The label and the value keep their shape and size.
+- Once let go, it springs back.
+- A press, the keyboard and a disabled slider don't stretch it, nor does it stretch where reduced motion is preferred.
+
 ### With the keyboard
 
 Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded under the text in the same way.
