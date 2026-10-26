@@ -43,32 +43,6 @@ const sheets: readonly ReactNode[] = [
     <line x1="216" y1="45" x2="456" y2="285" />
     <line x1="456" y1="45" x2="216" y2="285" />
   </>,
-  // Log-polar grid: Rays every 15° and circles growing by e^(π/12), so every cell is the same shape at a new size.
-  <>
-    <circle cx="480" cy="165" r="36" />
-    <circle cx="480" cy="165" r="46.8" />
-    <circle cx="480" cy="165" r="60.8" />
-    <circle cx="480" cy="165" r="79" />
-    <circle cx="480" cy="165" r="102.6" />
-    <circle cx="480" cy="165" r="133.3" />
-    <circle cx="480" cy="165" r="173.2" />
-    <circle cx="480" cy="165" r="225" />
-    <circle cx="480" cy="165" r="292.3" />
-    <circle cx="480" cy="165" r="379.8" />
-    <line x1="480" y1="201" x2="480" y2="544.8" />
-    <line x1="470.7" y1="199.8" x2="381.7" y2="531.9" />
-    <line x1="462" y1="196.2" x2="290.1" y2="493.9" />
-    <line x1="454.5" y1="190.5" x2="211.4" y2="433.6" />
-    <line x1="448.8" y1="183" x2="151.1" y2="354.9" />
-    <line x1="445.2" y1="174.3" x2="113.1" y2="263.3" />
-    <line x1="444" y1="165" x2="100.2" y2="165" />
-    <line x1="445.2" y1="155.7" x2="113.1" y2="66.7" />
-    <line x1="448.8" y1="147" x2="151.1" y2="-24.9" />
-    <line x1="454.5" y1="139.5" x2="211.4" y2="-103.6" />
-    <line x1="462" y1="133.8" x2="290.1" y2="-163.9" />
-    <line x1="470.7" y1="130.2" x2="381.7" y2="-201.9" />
-    <line x1="480" y1="129" x2="480" y2="-214.8" />
-  </>,
   // Whirling squares: Each square’s corners stand a fifth of the way along the last one’s sides, so the corners trace four spirals.
   <>
     <polygon points="187,22 473,22 473,308 187,308" />
@@ -210,74 +184,6 @@ const sheets: readonly ReactNode[] = [
     <line x1="430" y1="204.1" x2="430" y2="332" />
     <line x1="534" y1="204.1" x2="534" y2="332" />
   </>,
-  // Circles in an angle: Circles that touch both arms of an angle and each other, each larger than the last by the same ratio.
-  <>
-    <line x1="37.6" y1="165" x2="450.9" y2="-2" />
-    <line x1="37.6" y1="165" x2="450.9" y2="332" />
-    <line x1="37.6" y1="165" x2="482" y2="165" />
-    <circle cx="917.7" cy="165" r="329.7" />
-    <circle cx="438" cy="165" r="150" />
-    <circle cx="219.8" cy="165" r="68.2" />
-    <circle cx="120.5" cy="165" r="31" />
-    <circle cx="75.3" cy="165" r="14.1" />
-    <circle cx="54.7" cy="165" r="6.4" />
-  </>,
-  // Pythagoras tree: A square carries a 3-4-5 right triangle with a square on each of its legs, and each of those does the same, four times.
-  <>
-    <polygon points="235.9,365.1 336.9,365.1 336.9,264.1 235.9,264.1" />
-    <polygon points="235.9,264.1 300.6,215.7 252.1,151 187.5,199.5" />
-    <polygon points="187.5,199.5 205.6,137.5 143.5,119.4 125.4,181.4" />
-    <polygon points="125.4,181.4 107.2,133 58.8,151.2 77,199.6" />
-    <polygon points="77,199.6 42.2,177.4 19.9,212.3 54.8,234.5" />
-    <polygon points="42.2,177.4 58.8,151.2 32.7,134.6 16,160.7" />
-    <polygon points="107.2,133 143.5,119.4 129.9,83.1 93.6,96.7" />
-    <polygon points="93.6,96.7 110.3,70.6 84.1,53.9 67.4,80.1" />
-    <polygon points="110.3,70.6 129.9,83.1 142.4,63.5 122.8,51" />
-    <polygon points="205.6,137.5 252.1,151 265.7,104.5 219.1,90.9" />
-    <polygon points="219.1,90.9 255.4,77.3 241.8,41 205.5,54.7" />
-    <polygon points="205.5,54.7 222.2,28.5 196,11.8 179.3,38" />
-    <polygon points="222.2,28.5 241.8,41 254.3,21.4 234.7,8.9" />
-    <polygon points="255.4,77.3 265.7,104.5 292.9,94.3 282.6,67.1" />
-    <polygon points="282.6,67.1 302.3,79.6 314.8,60 295.1,47.4" />
-    <polygon points="302.3,79.6 292.9,94.3 307.6,103.7 317,89" />
-    <polygon points="300.6,215.7 336.9,264.1 385.4,227.8 349,179.3" />
-    <polygon points="349,179.3 395.6,192.9 409.1,146.4 362.6,132.8" />
-    <polygon points="362.6,132.8 398.9,119.1 385.2,82.9 348.9,96.5" />
-    <polygon points="348.9,96.5 365.6,70.3 339.5,53.7 322.8,79.8" />
-    <polygon points="365.6,70.3 385.2,82.9 397.7,63.2 378.1,50.7" />
-    <polygon points="398.9,119.1 409.1,146.4 436.3,136.1 426.1,108.9" />
-    <polygon points="426.1,108.9 445.7,121.4 458.2,101.8 438.6,89.3" />
-    <polygon points="445.7,121.4 436.3,136.1 451.1,145.5 460.4,130.8" />
-    <polygon points="395.6,192.9 385.4,227.8 420.3,238 430.5,203.1" />
-    <polygon points="430.5,203.1 440.7,230.3 467.9,220.1 457.7,192.8" />
-    <polygon points="457.7,192.8 477.3,205.3 489.8,185.7 470.2,173.2" />
-    <polygon points="477.3,205.3 467.9,220.1 482.6,229.4 492,214.7" />
-    <polygon points="440.7,230.3 420.3,238 427.9,258.4 448.4,250.7" />
-    <polygon points="448.4,250.7 439,265.4 453.7,274.8 463.1,260.1" />
-    <polygon points="439,265.4 427.9,258.4 420.9,269.4 431.9,276.5" />
-  </>,
-  // Sierpinski triangle: A triangle with the triangle joining its midpoints taken out, then the same in each of the three left, three times; its sides and levels run on to the edges.
-  <>
-    <line x1="14" y1="-2" x2="14" y2="332" />
-    <line x1="106.6" y1="332" x2="299.4" y2="-2" />
-    <line x1="300.6" y1="-2" x2="482" y2="312.2" />
-    <line x1="14" y1="81" x2="482" y2="81" />
-    <line x1="14" y1="165" x2="482" y2="165" />
-    <line x1="14" y1="249" x2="482" y2="249" />
-    <polygon points="203,165 397,165 300,333" />
-    <polygon points="154.5,249 251.5,249 203,333" />
-    <polygon points="130.3,291 178.8,291 154.5,333" />
-    <polygon points="178.8,207 227.3,207 203,249" />
-    <polygon points="227.3,291 275.8,291 251.5,333" />
-    <polygon points="251.5,81 348.5,81 300,165" />
-    <polygon points="227.3,123 275.8,123 251.5,165" />
-    <polygon points="275.8,39 324.2,39 300,81" />
-    <polygon points="324.2,123 372.7,123 348.5,165" />
-    <polygon points="348.5,249 445.5,249 397,333" />
-    <polygon points="324.2,291 372.7,291 348.5,333" />
-    <polygon points="372.7,207 421.2,207 397,249" />
-    <polygon points="421.2,291 469.7,291 445.5,333" />
-  </>,
   // Quartered square: A square cut into quarters, the corner quarter cut again and on, each quarter left behind holding its circle on the diagonal.
   <>
     <rect x="172" y="24" width="282" height="282" />
@@ -418,6 +324,43 @@ const sheets: readonly ReactNode[] = [
     <circle cx="464.3" cy="259" r="15.7" />
     <circle cx="464.3" cy="290.3" r="15.7" />
     <circle cx="464.3" cy="321.7" r="15.7" />
+  </>,
+  // Pointed arcade: Equilateral arches, each struck from its springing points, every span three fifths of the last.
+  <>
+    <line x1="14" y1="-2" x2="14" y2="332" />
+    <line x1="14" y1="186" x2="482" y2="186" />
+    <path d="M14 186A202.1 202.1 0 0 1 115.1 11" />
+    <path d="M115.1 11A202.1 202.1 0 0 1 216.1 186" />
+    <line x1="216.1" y1="186" x2="216.1" y2="332" />
+    <path d="M216.1 186A121.3 121.3 0 0 1 276.8 81" />
+    <path d="M276.8 81A121.3 121.3 0 0 1 337.4 186" />
+    <line x1="337.4" y1="186" x2="337.4" y2="332" />
+    <path d="M337.4 186A72.8 72.8 0 0 1 373.8 123" />
+    <path d="M373.8 123A72.8 72.8 0 0 1 410.1 186" />
+    <line x1="410.1" y1="186" x2="410.1" y2="332" />
+    <path d="M410.1 186A43.7 43.7 0 0 1 432 148.2" />
+    <path d="M432 148.2A43.7 43.7 0 0 1 453.8 186" />
+    <line x1="453.8" y1="186" x2="453.8" y2="332" />
+    <path d="M453.8 186A26.2 26.2 0 0 1 466.9 163.3" />
+    <path d="M466.9 163.3A26.2 26.2 0 0 1 480 186" />
+    <line x1="480" y1="186" x2="480" y2="332" />
+  </>,
+  // Root-two halving: A √2 rectangle halved, the half halved across, and on round, the cuts run out to the edges and two diagonals crossing at the pole.
+  <>
+    <line x1="21.9" y1="-2" x2="21.9" y2="332" />
+    <line x1="466" y1="-2" x2="466" y2="332" />
+    <line x1="21.9" y1="8" x2="482" y2="8" />
+    <line x1="21.9" y1="322" x2="482" y2="322" />
+    <line x1="244" y1="-2" x2="244" y2="332" />
+    <line x1="21.9" y1="165" x2="482" y2="165" />
+    <line x1="355" y1="-2" x2="355" y2="332" />
+    <line x1="21.9" y1="243.5" x2="482" y2="243.5" />
+    <line x1="299.5" y1="-2" x2="299.5" y2="332" />
+    <line x1="21.9" y1="204.3" x2="482" y2="204.3" />
+    <line x1="327.2" y1="-2" x2="327.2" y2="332" />
+    <line x1="21.9" y1="223.9" x2="482" y2="223.9" />
+    <line x1="21.9" y1="8" x2="480.1" y2="332" />
+    <line x1="21.9" y1="322" x2="251" y2="-2" />
   </>,
 ];
 
