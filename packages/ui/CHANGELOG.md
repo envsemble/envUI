@@ -29,6 +29,7 @@ The fourth prerelease of envUI 1.0. Its documentation is one file per page, whic
 
 - Every component, pattern and foundation page of the documentation ships as one file per page, in one order: the frontmatter lists each example file once, with its role and caption, then Variants (Options on a foundation), Anatomy, Behaviour, Rules, Accessibility, Words to use and Compose, with each example's code once. The foundations gain the words, figures' legends and rules they had only in the catalogue.
 - Slider's fill is empty at the minimum and fills the whole field at the maximum, in proportion between, and ends where the pointer chooses the value; near either end the handle keeps clear of the rounded edge. Dragging or double-clicking a slider no longer selects its label or value.
+- Slider stretches a little when dragged past either end, as a rubber band: the value stays at the minimum or maximum while the field stretches toward the pointer from its other end and thins slightly, giving less the further the pointer goes, up to 6% of its length or half its height, and springs back once let go. The label and the value keep their shape and size. Only a drag stretches it, not a press or the keyboard, nor a disabled slider, and it doesn't stretch where reduced motion is preferred.
 
 ## 1.0.0-prerelease.3 — 2026-10-25
 

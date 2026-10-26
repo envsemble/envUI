@@ -28,6 +28,13 @@
   inherits: true;
   initial-value: 0;
 }
+/* How far a drag past either end stretches the slider, as a fraction of its length, which Slider
+   sets while the pointer is past the end, and 0 otherwise; a number, so the spring back eases. */
+@property --env-slider-stretch {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
 
 .env-slider {
   /* A field's height: the control height, or the touch height under a coarse pointer. */
@@ -60,7 +67,32 @@
   -webkit-user-select: none;
   user-select: none;
   isolation: isolate;
-  transition: --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease);
+  /* Dragged past an end, the field stretches toward the pointer from its other end, Slider's
+     --env-slider-stretch-origin, and thins a little, as a rubber band would: a scale, so nothing
+     around it moves. While the pointer is past the end, Slider sets --env-slider-stretch-spring to
+     0s, so the stretch follows it at once; let go, it springs back, settling with a slight give. */
+  scale: calc(1 + var(--env-slider-stretch)) calc(1 - var(--env-slider-stretch) / 2);
+  transform-origin: var(--env-slider-stretch-origin, left) center;
+  transition:
+    --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease),
+    --env-slider-stretch
+      var(--env-slider-stretch-spring, calc(var(--env-motion-duration-slow) * 1.5))
+      linear(
+        0,
+        0.08 5%,
+        0.256 10%,
+        0.459 15%,
+        0.646 20%,
+        0.797 25%,
+        0.908 30%,
+        0.981 35%,
+        1.023 40%,
+        1.046 50%,
+        1.033 60%,
+        1.015 70%,
+        1.004 80%,
+        1
+      );
 }
 .env-slider-track {
   grid-area: slider;
@@ -185,6 +217,20 @@
   color: var(--env-slider-content, var(--env-color-fg-default));
   font-variant-numeric: tabular-nums;
 }
+/* The label and the value undo the stretch, so their text keeps its shape and size: each scaled
+   back from its outer side, which travels with the end of the field it sits at. */
+.env-slider-heading > .env-slider-label,
+.env-slider-heading > .env-slider-value {
+  scale: calc(1 / (1 + var(--env-slider-stretch))) calc(1 / (1 - var(--env-slider-stretch) / 2));
+}
+.env-slider-heading > .env-slider-label,
+.env-slider-heading > .env-slider-value:dir(rtl) {
+  transform-origin: left center;
+}
+.env-slider-heading > .env-slider-value,
+.env-slider-heading > .env-slider-label:dir(rtl) {
+  transform-origin: right center;
+}
 /* The handle shows where Slider marks it, under a hovering pointer, while pressed and with keyboard
    focus, and is faint where it passes under the label or the value. */
 .env-slider-control[data-handle] .env-slider-thumb {
@@ -221,6 +267,12 @@
   .env-slider-indicator::after,
   .env-slider-track::after {
     transition: none;
+  }
+  /* Under reduced motion the slider never stretches; Slider doesn't set the stretch either. */
+  .env-slider-control,
+  .env-slider-heading > .env-slider-label,
+  .env-slider-heading > .env-slider-value {
+    scale: none;
   }
 }
 
