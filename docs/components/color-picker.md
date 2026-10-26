@@ -89,7 +89,7 @@ ColorPickerButton shows the color as a swatch and its value, and opens a picker 
 - It has no fill of its own: like a field, it takes the background of what it sits on.
 - One button can be given a fill of its own.
 
-```tsx figure=PickerButtonOpen open motion
+```tsx figure=PickerButtonOpen motion
 
 ```
 
