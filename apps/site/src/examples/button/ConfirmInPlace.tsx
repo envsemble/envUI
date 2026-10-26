@@ -9,7 +9,7 @@ export default function ConfirmInPlace() {
   const [draftDeleted, setDraftDeleted] = useState(false);
   const list = useRef<HTMLUListElement>(null);
   const restoreMembers = useRef<HTMLButtonElement>(null);
-  const draft = useRef<HTMLDivElement>(null);
+  const draft = useRef<HTMLUListElement>(null);
   // A confirmed button goes away with what it removed, so focus moves on to what is there now.
   const focusNext = useRef<(() => void) | null>(null);
   useEffect(() => {
@@ -61,20 +61,25 @@ export default function ConfirmInPlace() {
           Restore members
         </Button>
       )}
-      <div ref={draft}>
-        {draftDeleted ? (
-          <Button variant="text" onClick={() => setDraft(false)}>
-            Draft deleted. Restore
-          </Button>
-        ) : (
-          <ConfirmButton
-            icon={<Delete />}
-            aria-label="Delete draft"
-            confirmLabel="Delete draft"
-            onConfirm={() => setDraft(true)}
-          />
-        )}
-      </div>
+      <List.Root ref={draft} aria-label="Drafts" style={{ inlineSize: 'min(100%, 24rem)' }}>
+        <List.Item
+          label={draftDeleted ? 'Q3 notes draft deleted' : 'Q3 notes draft'}
+          action={
+            draftDeleted ? (
+              <Button variant="text" onClick={() => setDraft(false)}>
+                Restore
+              </Button>
+            ) : (
+              <ConfirmButton
+                icon={<Delete />}
+                aria-label="Delete draft"
+                confirmLabel="Delete draft"
+                onConfirm={() => setDraft(true)}
+              />
+            )
+          }
+        />
+      </List.Root>
     </Column>
   );
 }

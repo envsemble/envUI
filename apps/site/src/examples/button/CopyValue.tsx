@@ -5,6 +5,9 @@ const shareLink = 'https://example.com/r/quarterly-report';
 export default function CopyValue() {
   return (
     <Column gap={4} align="start">
+      <CopyButton value="RPT-2041" variant="outline">
+        Copy ID
+      </CopyButton>
       {/* The field takes the room the button leaves. */}
       <div
         style={{
@@ -18,9 +21,6 @@ export default function CopyValue() {
         <TextField label="Share link" value={shareLink} readOnly />
         <CopyButton value={shareLink} aria-label="Copy link" />
       </div>
-      <CopyButton value="RPT-2041" variant="outline">
-        Copy ID
-      </CopyButton>
     </Column>
   );
 }
