@@ -5,9 +5,9 @@
    read as the catalogue's. A figure that explains
    the system rather than showing envUI at work, on a foundation page, sits on the page itself.
    Both centre what they show. A device of the documentation, kept out of envUI. */
-/* A very faint shadow that keeps a card's edges visible on the page: every recessed canvas: the
-   examples, the tiles of Related and the galleries, and the site's own cards, the catalogue's only
-   shadows, by request. Its color follows the card's own, `--catalogue-card-fill`: a shade of it,
+/* A very faint shadow, soft and wide, a little below the card and with no edge of its own, that
+   lifts it off the page: every recessed canvas, the examples, the tiles of Related and the
+   galleries, and the site's own cards, the catalogue's only shadows, by request. Its color follows the card's own, `--catalogue-card-fill`: a shade of it,
    darker, and stronger the darker the card, so a dark card casts a dark shadow and a light card a
    light one. Each card sets its fill below, and the shadow is declared on the card itself, so it
    reads that card's fill. The Docs' outlined banner casts none. */
@@ -23,29 +23,17 @@
 .catalogue-explore-grid > .env-card,
 .catalogue-icon-tile,
 .site-page-navigation .env-pager-link {
-  --catalogue-card-shadow:
-    0 0 0.125rem
-      oklch(
-        from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
-          calc(0.55 - l * 0.45)
-      ),
-    0 0.25rem 0.75rem
-      oklch(
-        from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
-          calc(0.44 - l * 0.36)
-      );
+  --catalogue-card-shadow: 0 0.5rem 1.5rem
+    oklch(
+      from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
+        calc(0.2 - l * 0.17)
+    );
   /* Half as strong, for a small card such as the pager's at a page's foot. */
-  --catalogue-card-shadow-subtle:
-    0 0 0.125rem
-      oklch(
-        from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
-          calc(0.34 - l * 0.28)
-      ),
-    0 0.125rem 0.5rem
-      oklch(
-        from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
-          calc(0.26 - l * 0.21)
-      );
+  --catalogue-card-shadow-subtle: 0 0.25rem 0.75rem
+    oklch(
+      from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
+        calc(0.1 - l * 0.085)
+    );
 }
 
 .site-live-example,
