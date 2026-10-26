@@ -76,6 +76,15 @@ export function Playback({
 }
 
 /**
+ * Whether the preview plays now, and where it rests once it stops, for an animation that keeps its
+ * own clock, such as a width frame's sweep (WidthSweep.tsx), which runs only while it plays.
+ */
+export function usePlayback() {
+  const { playing, rest } = use(PlaybackContext);
+  return { playing, rest };
+}
+
+/**
  * The layer a preview's overlays render into, inside its canvas, for a tile that renders an
  * overlay live rather than as a picture, such as notifications that arrive and leave with their
  * own motion.

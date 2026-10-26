@@ -199,12 +199,12 @@ Material Design 3's component pages, such as [buttons](https://m3.material.io/co
 
 A figure is an [example file](#examples) listed in the frontmatter and placed with an empty fence that names it, ` ```tsx figure=Name `, anywhere in a section but Compose and the changelog. Its role and caption come from the frontmatter; its framing from the attributes after the name, written as `name="value"`, or `name=value` without spaces, and flags, such as `open`, as their name alone. A value can't hold a double quote, not even as `\"`, so quote with ' or “ ”.
 
-| Role         | Shows                                                                               | Attributes on its fence                   |
-| ------------ | ----------------------------------------------------------------------------------- | ----------------------------------------- |
-| `example`    | The example, live on the stage, with its caption below.                             | `widths`, `open`, `stage`, `wide`         |
-| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`                           |
-| `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width` |
-| `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                   |
+| Role         | Shows                                                                               | Attributes on its fence                               |
+| ------------ | ----------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `example`    | The example, live on the stage, with its caption below.                             | `widths`, `sweep`, `classes`, `open`, `stage`, `wide` |
+| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`                                       |
+| `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width`             |
+| `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                               |
 
 Every figure sits on the same stage, centred horizontally and vertically, in the theme, contrast and scale the reader has chosen: a recessed canvas, a well a shade deeper than the page, with a surface's corners and no edge, so the example's own surfaces rise out of it and a reader can always tell an example from the page around it. Under forced colors the canvas takes a frame instead. A specimen sits on it too. The canvas is the catalogue's (`apps/site/src/styles/Stage.css`), not envUI's.
 
@@ -231,6 +231,13 @@ A popup, a menu, a tooltip, a dialog, a sheet or a toast renders in a portal, ou
 ### Examples at several widths
 
 `widths="16 30"` shows the example in a frame of each width in rem, one to a row, each centred on its own stage with its width outlined and labelled, where it responds to that width: its container queries see the frame. Choose widths on either side of where the component changes, such as `widths="24 40"` around a card's 38 rem. Where a frame is wider than the page, its stage scrolls.
+
+An Adapting to width figure sweeps instead: `widths="30 16" sweep` shows the example in one frame whose width moves from the first width through the others and back, held a moment at each, on an animated figure's stage with its pause button. The example reflows for real as the frame changes, as its container queries see it, and the frame is an `env-window` container, so window classes follow it too.
+
+- **The first width is the still**, shown where motion is paused or reduced; list the widths in the order the item describes, such as `widths="22 40 64"`, which goes 22, 40, 64, 40 and back.
+- **A faint ruler** above the frame names its width; `classes` adds the window class, such as "40 rem · Medium", for an example that changes at one.
+- **One height and one scale.** The figure keeps the height of the tallest the example gets along the way. The frame is drawn at one scale for the stage, no smaller than 0.8; where the widest width doesn't fit even then, it sweeps only as wide as the stage shows, never clipped.
+- **More than a sweep**, such as opening a sheet at the narrow end, is a specimen: `WidthSweep` (`apps/site/src/previews/WidthSweep.tsx`) on a `MotionStage`, given `at`, the index of the width to move to, from a `useTimeline` step or a `usePointer` cue, and the scripted pointer doing the rest.
 
 ### Wide figures
 
@@ -405,6 +412,7 @@ A foundation page, such as Spacing & density or Colors & themes, explains how en
 - **The same structure.** Its sections are a component's, with Options in place of Variants: its topics as titled blocks under Options, Behaviour and Rules, Accessibility only where it has something to say, its Words to use, and its tokens and values under Compose.
 - **How envUI handles it, in pictures.** Each block explains one idea, such as "space shows what belongs together" or "colors are roles", with a real envUI example, such as a small screen, a form or a toolbar, rather than a ladder of values. Where the idea is in the example's layout, mark it on the example, as Spacing & density numbers the space between groups, with a numbered legend below in plain words.
 - **Its figures are the catalogue's.** They are drawn in its preview in `apps/site/src/previews/foundations/`, which keeps only the figures, take their words from the legend after their fence, `1. **Name**: what it means`, and are registered by name in `FoundationFigures.ts`. They take no attributes on their fence, and the package ships their legends.
+- **Animated figures too.** Where a block is about a change, its figure plays as a component page's [animated specimen](#animated-specimens) does: `Figure` (`previews/foundations/Topic.tsx`) with `motion`, the words its pause button names, sets it on a `MotionStage`, driven by `usePointer`, `useTimeline` or `WidthSweep`. A nested `Theme` in an animated figure eases between themes, its colors cross-fading briefly, and snaps where reduced motion is preferred, as on Colors & themes, where the pointer chooses each theme on a control under one screen.
 - **The words to use.** Its Words to use is an option table whose In code column maps each phrase to the props and tokens it means, so an agent turns the reader's words into code; the Docs show that column as Words in code.
 - **No technical text** in its plain sections, its figures included: name a swatch by its role and use, such as "Supporting text: details, captions and icons", never by its token or value.
 

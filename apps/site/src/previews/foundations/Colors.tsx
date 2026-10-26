@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import {
   Alert,
   Badge,
@@ -6,13 +6,16 @@ import {
   Card,
   Column,
   Row,
+  SegmentedControl,
   Surface,
   Text,
+  TextField,
   Theme,
   useTheme,
   type ThemeContrast,
   type ThemeValue,
 } from '@envsemble/envui';
+import { usePointer, type PointerStep } from '../Motion';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
 import { Figure, NumberedLegend, type LegendEntry } from './Topic';
@@ -162,33 +165,79 @@ const themes: readonly { theme: ThemeValue; contrast: ThemeContrast }[] = [
   { theme: 'dark', contrast: 'high' },
 ];
 
-/** The same small screen in each theme and contrast, side by side. */
+/** A segment of the theme control, by its place from 1. */
+const segment = (index: number) =>
+  `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
+
+/*
+ * The pointer chooses each theme in turn, about two and a half seconds apart, and Light again,
+ * then leaves: the loop starts again from Light.
+ */
+const themeScript: PointerStep[] = [
+  { wait: 1500 },
+  { to: segment(2) },
+  { wait: 300 },
+  { click: true },
+  ...[3, 4, 1].flatMap((index): PointerStep[] => [
+    { wait: 3300 },
+    { to: segment(index), duration: index === 1 ? 700 : 500 },
+    { wait: 200 },
+    { click: true },
+  ]),
+  { wait: 3300 },
+  { leave: true },
+];
+
+/**
+ * One screen above a control of the four themes, each chosen in turn by the pointer: the screen
+ * eases into each, its page, surface, text, field, badge and buttons alike.
+ */
+function ThemeSteps({ names }: { names: readonly string[] }) {
+  const [chosen, setChosen] = useState('0');
+  usePointer(themeScript);
+  const { theme, contrast } = themes[Number(chosen)]!;
+  return (
+    <Column gap={5} align="center" className="catalogue-theme-steps">
+      <Theme theme={theme} contrast={contrast} className="catalogue-theme-screen">
+        <Surface background="page" padding={5} radius="xl">
+          <Surface background="default" padding={5} radius="xl" render={<Column gap={4} />}>
+            <Row justify="between" align="start" gap={3}>
+              <Column gap={1}>
+                <Text render={<p />} variant="title">
+                  Quarterly report
+                </Text>
+                <Text emphasis="muted">Updated today by Priya Shah</Text>
+              </Column>
+              <Badge tone="success">On track</Badge>
+            </Row>
+            <TextField label="Note for the team" defaultValue="The figures are final." />
+            <Row justify="end" gap={2}>
+              <Button variant="secondary">Preview</Button>
+              <Button>Share</Button>
+            </Row>
+          </Surface>
+        </Surface>
+      </Theme>
+      <SegmentedControl
+        aria-label="Theme"
+        size="sm"
+        value={chosen}
+        onValueChange={setChosen}
+        items={names.map((name, index) => ({ value: String(index), label: name }))}
+      />
+    </Column>
+  );
+}
+
+/** One screen stepping through each theme and contrast, chosen on a control below it. */
 function ThemesFigure({ legend }: FigureWords) {
   return (
-    <Figure label="One screen in each theme" className="catalogue-themes-stage">
-      <div className="catalogue-themes" inert>
-        {themes.map((each, index) => (
-          <div key={`${each.theme}-${each.contrast}`} className="catalogue-theme-sample">
-            <Theme theme={each.theme} contrast={each.contrast}>
-              <Surface background="page" padding={4} radius="xl">
-                <Surface background="default" padding={4} radius="xl" render={<Column gap={3} />}>
-                  <Column gap={1}>
-                    <Text render={<p />} variant="title">
-                      Quarterly report
-                    </Text>
-                    <Text emphasis="muted">Updated today</Text>
-                  </Column>
-                  <Row justify="between" align="center" gap={2}>
-                    <Badge tone="success">On track</Badge>
-                    <Button size="sm">Share</Button>
-                  </Row>
-                </Surface>
-              </Surface>
-            </Theme>
-            <Text variant="caption">{legend[index]?.name}</Text>
-          </div>
-        ))}
-      </div>
+    <Figure
+      label="One screen in each theme"
+      motion="the screen in each theme"
+      className="catalogue-themes-stage"
+    >
+      <ThemeSteps names={legend.map((entry) => entry.name)} />
     </Figure>
   );
 }

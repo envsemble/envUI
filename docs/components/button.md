@@ -181,7 +181,7 @@ Labels wrap, and icon-only buttons keep their size.
 - On touch screens every button grows to the size of a fingertip.
 - An icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
 
-```tsx figure=NarrowActions widths="16 30"
+```tsx figure=NarrowActions widths="30 16" sweep
 
 ```
 

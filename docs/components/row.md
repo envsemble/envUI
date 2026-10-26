@@ -73,7 +73,7 @@ A row that wraps runs onto more lines; it never turns into a column by itself.
 
 - For that, change the layout at a [window class](../foundations/responsive.md).
 
-```tsx figure=SectionHeading widths="12 30"
+```tsx figure=SectionHeading widths="30 12" sweep
 
 ```
 
