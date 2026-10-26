@@ -42,6 +42,7 @@ avoidWhen:
     use: Toast
 examples:
   Widths: example
+  TextSize: example
 ---
 
 # Adapting to width
@@ -82,6 +83,10 @@ Menus, dialogs and sheets size themselves to the window they open in, not to the
 ### Larger text, narrower class
 
 The window classes follow the reader's text size: with larger text, a window counts as a narrower class, so its layout never gets cramped.
+
+```tsx figure=TextSize
+
+```
 
 ## Rules
 

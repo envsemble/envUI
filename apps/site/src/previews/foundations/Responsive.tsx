@@ -9,6 +9,7 @@ import {
   Text,
 } from '@envsemble/envui';
 import type { FoundationFigure } from './FoundationFigures';
+import { ClassTextSizeFigure } from './ResponsiveTextSize';
 import type { LegendEntry } from './Topic';
 
 /*
@@ -76,4 +77,5 @@ function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
 /** The figures docs/foundations/responsive.md places, by name. */
 export const responsiveFigures: Record<string, FoundationFigure> = {
   Widths: { render: WidthsFigure, wide: true },
+  TextSize: { render: ClassTextSizeFigure, wide: true },
 };

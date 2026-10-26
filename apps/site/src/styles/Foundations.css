@@ -442,3 +442,17 @@
   inset-inline-start: 56ch;
   border-inline-start: 0.0625rem dashed var(--env-color-fg-accent);
 }
+
+/* Larger text, narrower class: a profile in a frame of one width, at each text size, in the
+   middle of the place the largest keeps. */
+.catalogue-class-text-place {
+  display: grid;
+  justify-items: center;
+  inline-size: 100%;
+}
+.catalogue-class-text-frame {
+  inline-size: 41rem;
+}
+.catalogue-class-text-frame > * {
+  align-self: center;
+}
