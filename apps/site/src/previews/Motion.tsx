@@ -208,7 +208,8 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  *   fractions of its box, the middle by default, over `duration` ms, or comes there at once if it
  *   wasn't over the preview. Pressed, it drags; pressed on text, in a field or in content, the drag
  *   selects the text it crosses, as a mouse does, until a press elsewhere.
- * - `press`, `release`: its button; `click` presses and releases it a moment later.
+ * - `press`, `release`: its button; `click` presses and releases it a moment later, and
+ *   `doubleClick` clicks twice, quickly, as a double click.
  * - `rightClick`: its secondary button pressed and released, which opens a context menu where it
  *   is, as a right click does.
  * - `leave`: it goes off the preview, releasing its button and any key held first.
@@ -216,6 +217,9 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  * - `type`, text, `into` a selector of a field: typed a character at a time, `every` ms apart;
  *   `erase`, a count: as many characters deleted the same way.
  * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`.
+ * - `focus`, a selector: the keyboard's focus arrives on that element, as a Tab brings it, with
+ *   its focus ring; keys then go to it, and where a key moves focus, as an arrow key along tabs
+ *   does, it follows. `blur` takes it off the preview again.
  * - `keyDown`, `keyUp`, a key such as `Alt`: held down and let go, on the field typed into or on
  *   `on`. A held modifier, Alt, Control, Shift or Meta, is on every event meanwhile, so Alt and a
  *   `key` is Alt with that key.
@@ -231,12 +235,15 @@ export type PointerStep =
   | { press: true }
   | { release: true }
   | { click: true }
+  | { doubleClick: true }
   | { rightClick: true }
   | { leave: true }
   | { cue: string }
   | { type: string; into: string; every?: number }
   | { erase: number; into: string; every?: number }
   | { key: string; on?: string }
+  | { focus: string }
+  | { blur: true }
   | { keyDown: string; on?: string }
   | { keyUp: string; on?: string }
   | { wheel: number; axis?: 'x' | 'y'; duration?: number }
@@ -269,6 +276,8 @@ interface Plan {
       | 'key'
       | 'keyDown'
       | 'keyUp'
+      | 'focus'
+      | 'blur'
       | 'carry'
       | 'drop';
     /** A cue's name, the text typed (null for a deleted character), or the key. */
@@ -283,6 +292,8 @@ interface Plan {
 
 /** How long a click holds the button. */
 const clickHold = 90;
+/** How long a double click waits between its clicks. */
+const doubleClickGap = 110;
 
 /*
  * The pace of every animation, brisk: a script's and a timeline's waits are cut to this share of
@@ -323,6 +334,13 @@ function planOf(script: readonly PointerStep[]): Plan {
       plan.happenings.push({ time, kind: 'press' });
       time += clickHold;
       plan.happenings.push({ time, kind: 'release' });
+    } else if ('doubleClick' in step) {
+      for (const pause of [doubleClickGap, 0]) {
+        plan.happenings.push({ time, kind: 'press' });
+        time += clickHold;
+        plan.happenings.push({ time, kind: 'release' });
+        time += pause;
+      }
     } else if ('rightClick' in step) {
       plan.happenings.push({ time, kind: 'press', button: 2 });
       time += clickHold;
@@ -341,6 +359,8 @@ function planOf(script: readonly PointerStep[]): Plan {
     else if ('keyUp' in step)
       plan.happenings.push({ time, kind: 'keyUp', cue: step.keyUp, target: step.on });
     else if ('cue' in step) plan.happenings.push({ time, kind: 'cue', cue: step.cue });
+    else if ('focus' in step) plan.happenings.push({ time, kind: 'focus', target: step.focus });
+    else if ('blur' in step) plan.happenings.push({ time, kind: 'blur' });
     else if ('type' in step || 'erase' in step) {
       const characters = 'type' in step ? [...step.type] : Array<null>(step.erase).fill(null);
       for (const text of characters) {
@@ -450,7 +470,7 @@ export function usePointer(
     let last = performance.now();
     let frame = 0;
     /** Moves the pointer on to a time of the plan, sending what happens on the way. */
-    const advance = (to: number) => {
+    const advance = (to: number, still = false) => {
       const { done } = clock.current;
       for (const happening of plan.happenings) {
         if (happening.time <= done || happening.time > to) continue;
@@ -476,6 +496,10 @@ export function usePointer(
           current.keyUp(happening.cue!, happening.target);
           continue;
         }
+        if (happening.kind === 'focus' || happening.kind === 'blur') {
+          current.keyboardFocus(happening.target ?? null);
+          continue;
+        }
         if (happening.kind === 'carry') {
           current.carry(happening.cue!, happening.target!);
           continue;
@@ -488,7 +512,9 @@ export function usePointer(
         else if (happening.kind === 'release') current.release();
         else current.leave();
       }
-      if (presentAt(plan, to)) {
+      if (still) {
+        // It stays where it is, whatever moves under it.
+      } else if (presentAt(plan, to)) {
         const at = positionAt(scope, plan, to);
         if (at) current.moveTo(at);
       } else if (current.present) current.leave();
@@ -507,10 +533,22 @@ export function usePointer(
       const next = state.time + (now - last);
       last = now;
       // While another preview's pointer holds its button down, this one waits: a page has one
-      // mouse, and a move without a button, on the document, would end the other's drag.
-      if (!current.resume()) {
-        frame = requestAnimationFrame(tick);
-        return;
+      // mouse, and a move without a button, on the document, would end the other's drag. A
+      // script of keys alone, which never moves the pointer, goes on, and so does one where it
+      // only stays where it is meanwhile, waiting or turning the wheel.
+      let still = false;
+      if (plan.moves.length > 0 && !current.resume()) {
+        const quiet =
+          next < plan.length &&
+          !plan.moves.some((move) => move.start <= next && move.end >= state.time) &&
+          !plan.happenings.some(
+            (happening) => happening.time > state.time && happening.time <= next,
+          );
+        if (!quiet) {
+          frame = requestAnimationFrame(tick);
+          return;
+        }
+        still = true;
       }
       state.time = next;
       if (state.time >= plan.length) {
@@ -518,7 +556,7 @@ export function usePointer(
         state.time %= plan.length;
         state.done = -1;
       }
-      advance(state.time);
+      advance(state.time, still);
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);

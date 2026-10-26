@@ -92,11 +92,13 @@ Reached with the keyboard, the slider shows its focus ring and the handle at the
 
 - The arrow keys move the value; the ticks stay hidden.
 
+<!-- specimen: WithTheKeyboard -->
+
 ### Save once a change is complete
 
 The value follows the pointer as it moves, and is reported once more when the pointer lets go or after a key. Save it then.
 
-```tsx figure=SaveOnRelease
+```tsx figure=SaveOnRelease motion
 
 ```
 

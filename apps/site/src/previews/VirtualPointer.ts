@@ -92,6 +92,40 @@ function keepCaptures() {
   };
 }
 
+/** The previews the keyboard's focus is in, by their scope, and what follows a move of it there. */
+const keyboardFocused = new Map<Element, (element: Element) => void>();
+
+/**
+ * Keeps the keyboard's focus inside a preview that has it: the preview is inert, so where one of
+ * its components moves focus, as an arrow key along tabs does, the pointer's focus follows
+ * instead (VirtualPointer.keyboardFocus), and a component asking whether an element of it matches
+ * :focus or :focus-visible is answered by the pointer's mark, as its stylesheets are
+ * (mirrorPointerStates). Elsewhere, focus is the browser's, as before.
+ */
+function keepFocus() {
+  const proto = HTMLElement.prototype;
+  if ((proto as { catalogueFocus?: boolean }).catalogueFocus) return;
+  (proto as { catalogueFocus?: boolean }).catalogueFocus = true;
+  const { focus } = proto;
+  proto.focus = function (options?: FocusOptions) {
+    for (const [scope, follow] of keyboardFocused) if (scope.contains(this)) return follow(this);
+    return focus.call(this, options);
+  };
+  const { matches } = Element.prototype;
+  Element.prototype.matches = function (selectors: string) {
+    if (selectors.includes(':focus'))
+      for (const scope of keyboardFocused.keys())
+        if (scope.contains(this))
+          return matches.call(
+            this,
+            selectors
+              .replace(/:focus-visible\b/g, `[${focusMark}]`)
+              .replace(/:focus\b(?!-)/g, `[${focusMark}]`),
+          );
+    return matches.call(this, selectors);
+  };
+}
+
 /** The mouse event a pointer event is followed by, as a browser follows it, for older handlers. */
 const mouseTwin: Record<string, string> = {
   pointerover: 'mouseover',
@@ -138,6 +172,9 @@ function keepClipboard(click: () => void) {
     });
   }
 }
+
+/** How soon a second click makes a double click, in ms, as a desktop's default. */
+const doubleClickTime = 500;
 
 /** Fields a press focuses, as typing goes into them. */
 const textFields =
@@ -200,16 +237,19 @@ export class VirtualPointer {
     return this.scope;
   }
 
-  /** Whether an element lets the pointer through only as the overlay layer around it does. */
+  /**
+   * Whether an element lets the pointer through only as the overlay layer around it does: it
+   * takes the pointer once the layer does, where its own rule, such as a sheet's viewport's around
+   * a sheet beside the page, lets it through still.
+   */
   private fromLayer(element: Element) {
-    let top = element;
-    for (
-      let node = element.parentElement;
-      node && node !== this.scope && getComputedStyle(node).pointerEvents === 'none';
-      node = node.parentElement
-    )
-      top = node;
-    return top !== element && top.matches(passThrough);
+    const layer = element.closest(passThrough);
+    if (!(layer instanceof HTMLElement)) return false;
+    const before = layer.style.pointerEvents;
+    layer.style.pointerEvents = 'auto';
+    const inherited = getComputedStyle(element).pointerEvents !== 'none';
+    layer.style.pointerEvents = before;
+    return inherited;
   }
 
   /** The element and those around it, inside the preview, as :hover marks them all. */
@@ -372,6 +412,7 @@ export class VirtualPointer {
     if (button === 0) for (const element of this.pressed) mark(element, pressMark, true);
     // A press in a field focuses it, and anywhere else takes focus from the field. A button keeps
     // no focus ring under a pointer, so it isn't marked.
+    if (keyboardFocused.has(this.scope)) this.keyboardFocus(null);
     this.focus(target.closest(textFields));
     if (button === 2) {
       // As the secondary button goes down, the context menu is asked for where the pointer is.
@@ -419,26 +460,32 @@ export class VirtualPointer {
     const shared = button === 0 && this.pressed.find((element) => this.over.includes(element));
     if (shared) {
       const point = this.at ?? { x: 0, y: 0 };
-      keepClipboard(() =>
-        shared.dispatchEvent(
-          new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            composed: true,
-            detail: 1,
-            button: 0,
-            clientX: point.x,
-            clientY: point.y,
-            view: window,
-            ...this.modifiers,
-          }),
-        ),
-      );
+      // A second click on the same element soon after the first is a double click, as a mouse's.
+      const now = performance.now();
+      const second =
+        this.lastClick?.target === shared && now - this.lastClick.time < doubleClickTime;
+      this.lastClick = second ? null : { target: shared, time: now };
+      const init = {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        detail: second ? 2 : 1,
+        button: 0,
+        clientX: point.x,
+        clientY: point.y,
+        view: window,
+        ...this.modifiers,
+      };
+      keepClipboard(() => shared.dispatchEvent(new MouseEvent('click', init)));
+      if (second) shared.dispatchEvent(new MouseEvent('dblclick', init));
     }
     for (const element of this.pressed) mark(element, pressMark, false);
     this.pressed = [];
     this.mouseless = false;
   }
+
+  /** The last click, which a second one soon after on the same element makes a double click. */
+  private lastClick: { target: Element; time: number } | null = null;
 
   /** The field typed into, marked as focused, as an inert preview can't focus it. */
   private focused: Element | null = null;
@@ -499,12 +546,40 @@ export class VirtualPointer {
     };
   }
 
-  /** What a key goes to: an element of the preview, or the field typed into, or the preview. */
+  /** What a key goes to: an element of the preview, or what is focused, or the preview. */
   private keyTarget(selector?: string) {
     return (selector && this.scope.querySelector(selector)) || this.focused || this.scope;
   }
 
-  /** Presses a key on an element of the preview, or on the field typed into. */
+  /**
+   * The keyboard's focus arrives on an element of the preview, as a Tab brings it, or with
+   * nothing leaves it: the element is marked as focused, as the inert preview can't focus it, and
+   * hears the focus events a browser sends, as does the element it leaves.
+   */
+  keyboardFocus(selector: string | Element | null) {
+    const element =
+      typeof selector === 'string' ? this.scope.querySelector(selector) : (selector ?? null);
+    const from = this.focused;
+    if (from === element) return;
+    this.focus(element);
+    keepFocus();
+    if (element) keyboardFocused.set(this.scope, (next) => this.keyboardFocus(next));
+    else keyboardFocused.delete(this.scope);
+    const events = (target: Element, out: boolean, relatedTarget: Element | null) => {
+      target.dispatchEvent(new FocusEvent(out ? 'blur' : 'focus', { relatedTarget }));
+      target.dispatchEvent(
+        new FocusEvent(out ? 'focusout' : 'focusin', {
+          bubbles: true,
+          composed: true,
+          relatedTarget,
+        }),
+      );
+    };
+    if (from) events(from, true, element);
+    if (element) events(element, false, from);
+  }
+
+  /** Presses a key on an element of the preview, or on the field typed into or focused. */
   key(key: string, selector?: string) {
     const target = this.keyTarget(selector);
     target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
@@ -637,6 +712,7 @@ export class VirtualPointer {
 
   dispose() {
     this.endWheel();
+    keyboardFocused.delete(this.scope);
     this.focus(null);
     this.leave();
     this.selection.clear();

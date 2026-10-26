@@ -85,7 +85,7 @@ The control is as wide as its options, or fills its container and splits it even
 - A label too long for its share ends with an ellipsis and shows whole in a tooltip.
 - In a container too narrow for its options, a control as wide as its options scrolls.
 
-```tsx figure=FullWidthScope widths="26 14" sweep
+```tsx figure=FullWidthScope widths="26 14" motion
 
 ```
 

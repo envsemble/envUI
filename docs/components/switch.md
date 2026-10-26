@@ -69,7 +69,7 @@ The setting applies as soon as the switch changes, with no Save button.
 
 - When saving it fails, the switch goes back, with a message that says what went wrong.
 
-```tsx figure=ShowCompleted
+```tsx figure=ShowCompleted motion
 
 ```
 
@@ -93,11 +93,11 @@ The label wraps beside the track.
 
 Name the setting in a short phrase, so that on means yes.
 
-```tsx figure=SameLabel
+```tsx figure=SameLabel motion
 
 ```
 
-```tsx figure=StateInLabel
+```tsx figure=StateInLabel motion
 
 ```
 

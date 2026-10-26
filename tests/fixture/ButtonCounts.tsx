@@ -87,6 +87,14 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
         Show <AnimatedNumber value={33} /> tasks
       </Button>
       <DiffStat additions={12} deletions={3} data-testid={`diff-stat-${theme}`} />
+      {/* A text button alone in a box as wide as its content, as a list row's name. */}
+      <Row>
+        <div>
+          <Button variant="text" data-testid={`text-alone-${theme}`}>
+            Alex Morgan
+          </Button>
+        </div>
+      </Row>
     </Theme>
   );
 }
