@@ -1,28 +1,49 @@
-import { Bar, Column, Drawer, Rail, Row, type Destination } from '@envsemble/envui';
+import { useState } from 'react';
+import {
+  Bar,
+  Drawer,
+  Page,
+  PageHeader,
+  Rail,
+  Scaffold,
+  Text,
+  TopBar,
+  type Destination,
+} from '@envsemble/envui';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
-// One array, passed to each form; Scaffold shows the one that suits the window's width.
-const destinations: Destination[] = [
-  { label: 'Home', icon: <Home />, href: '/home' },
-  { label: 'Inbox', icon: <Inbox />, href: '/inbox', count: 4, current: true },
-  { label: 'Projects', icon: <Folder />, href: '/projects', group: 'Work' },
-  { label: 'Settings', icon: <Settings />, href: '/settings', group: 'Account' },
-];
-
 export default function OneListThreeForms() {
+  const [current, setCurrent] = useState('Inbox');
+  // One array, passed to each form; Scaffold shows the one that suits its width.
+  const destinations: Destination[] = [
+    { label: 'Home', icon: <Home /> },
+    { label: 'Inbox', icon: <Inbox />, count: 4 },
+    { label: 'Projects', icon: <Folder />, group: 'Work' },
+    { label: 'Settings', icon: <Settings />, group: 'Account' },
+  ].map((destination) => ({
+    ...destination,
+    current: destination.label === current,
+    onSelect: () => setCurrent(destination.label),
+  }));
   return (
-    <Column gap={5}>
-      <Row gap={5} align="start" wrap>
-        <Drawer aria-label="Drawer" destinations={destinations} />
-        <Rail aria-label="Rail" destinations={destinations} />
-      </Row>
-      {/* As wide as a phone. */}
-      <div style={{ inlineSize: 'min(100%, 24rem)' }}>
-        <Bar aria-label="Bar" destinations={destinations} />
-      </div>
-    </Column>
+    // A preview: the body scrolls in a frame 22 rem tall, instead of the window.
+    <Scaffold
+      scroll="body"
+      landmarks={false}
+      style={{ blockSize: '22rem' }}
+      topBar={<TopBar title="Northwind" />}
+      navigation={{
+        drawer: <Drawer aria-label="Main" destinations={destinations} />,
+        rail: <Rail aria-label="Main" destinations={destinations} />,
+        bar: <Bar aria-label="Main" destinations={destinations} />,
+      }}
+    >
+      <Page header={<PageHeader title={current} headingLevel={3} />}>
+        <Text emphasis="muted">Four messages since yesterday.</Text>
+      </Page>
+    </Scaffold>
   );
 }

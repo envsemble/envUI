@@ -3,7 +3,7 @@ import { Drawer, type DrawerDestination } from '@envsemble/envui';
 
 const pages = [
   { href: '/guide/overview', label: 'Overview', group: 'Getting started' },
-  { href: '/guide/install', label: 'Install the app', group: 'Getting started' },
+  { href: '/guide/install', label: 'Install the app on your devices', group: 'Getting started' },
   { href: '/guide/invite', label: 'Invite your team', group: 'Getting started' },
   { href: '/account/profile', label: 'Profile', group: 'Account' },
   { href: '/account/billing', label: 'Billing and invoices', group: 'Account' },
