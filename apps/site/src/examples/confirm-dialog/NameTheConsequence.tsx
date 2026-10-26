@@ -9,8 +9,8 @@ export default function NameTheConsequence() {
       tone="danger"
       title="Remove Sam Lee?"
       description="Sam Lee loses access to Northwind and its projects."
-      confirmLabel="Remove member"
-      cancelLabel="Keep member"
+      confirmLabel="Remove Sam"
+      cancelLabel="Keep Sam"
       onConfirm={() => {}}
     />
   );

@@ -49,7 +49,7 @@ export default function RunCommand() {
     [query],
   );
   return (
-    <Column gap={3} align="start">
+    <Column gap={3} align="center">
       <Button variant="secondary" onClick={() => setOpen(true)}>
         Run a command
       </Button>

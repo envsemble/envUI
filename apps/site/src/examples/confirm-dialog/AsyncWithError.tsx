@@ -21,7 +21,7 @@ export default function AsyncWithError() {
       }, 1200);
     });
   return (
-    <Column gap={4} align="start">
+    <Column gap={4} align="center">
       <ConfirmDialog
         trigger={<Button variant="secondary">Archive project</Button>}
         title="Archive Northwind launch?"

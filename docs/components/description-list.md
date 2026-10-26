@@ -30,9 +30,7 @@ components:
   - DescriptionList
 examples:
   Facts: overview
-  Stacked:
-    role: example
-    caption: The stacked layout, in body text.
+  Sizes: example
   ControlsAligned: example
   DescriptionListAnatomy: anatomy
   FactsAtWidths: example
@@ -48,11 +46,13 @@ examples:
 | Inline    | Beside their values at every width.                  | A wide region that never narrows. |
 | Stacked   | Above their values at every width.                   | Long values, such as addresses.   |
 
+<!-- specimen: Layouts -->
+
 ### Sizes
 
 Smaller text, the default, suits a card or a pane, and body text a page of details.
 
-```tsx figure=Stacked
+```tsx figure=Sizes
 
 ```
 

@@ -1,13 +1,20 @@
+import { useEffect, useRef, useState } from 'react';
 import { Composer } from '@envsemble/envui';
 
-const send = () => undefined;
-
 export default function DisabledWhileSending() {
+  const [sending, setSending] = useState(false);
+  const timer = useRef<number>(undefined);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+  const send = () => {
+    setSending(true);
+    timer.current = window.setTimeout(() => setSending(false), 1500);
+  };
   return (
     <Composer
       aria-label="Message"
-      defaultValue="And the budget for the spring launch?"
-      disabled
+      placeholder="Write a message"
+      // Wrong: disabling the field while sending takes focus away, so people can't keep writing.
+      disabled={sending}
       onSubmit={send}
       style={{ inlineSize: 'min(100%, 26rem)' }}
     />
