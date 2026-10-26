@@ -112,6 +112,7 @@ Every component, pattern and foundation page reads in one order: its frontmatter
 - [PanelDock](components/panel-dock.md)
 - [Surface](components/surface.md)
 - [Card](components/card.md)
+- [LineArt](components/line-art.md)
 - [Box](components/box.md)
 - [Row](components/row.md)
 - [Column](components/column.md)

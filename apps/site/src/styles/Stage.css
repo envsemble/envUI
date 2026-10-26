@@ -250,6 +250,20 @@
   column-gap: var(--catalogue-specimen-gap);
 }
 
+/* Small pictures, such as LineArt's drawings: four across, or two where four don't fit, so a run
+   of four, eight or sixteen never leaves one alone on a row. A title that wraps keeps the
+   pictures of its row in line, below the titles. */
+.site-figures .catalogue-specimen-grid[data-size='small'] {
+  grid-template-columns: repeat(4, minmax(0, var(--catalogue-specimen-width)));
+  align-items: end;
+  column-gap: var(--env-space-5);
+}
+@container (width < 42rem) {
+  .site-figures .catalogue-specimen-grid[data-size='small'] {
+    grid-template-columns: repeat(2, minmax(0, var(--catalogue-specimen-width)));
+  }
+}
+
 .site-figures .catalogue-specimen-grid > * {
   max-inline-size: none;
 }
