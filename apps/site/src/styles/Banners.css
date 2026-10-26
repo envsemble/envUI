@@ -62,7 +62,7 @@
   block-size: 100%;
   inline-size: min(48%, 42rem);
 }
-.catalogue-banner-lines :is(rect, circle, polygon, line) {
+.catalogue-banner-lines :is(rect, circle, ellipse, line, polyline, polygon, path) {
   fill: none;
   stroke: var(--env-color-border-muted);
   stroke-width: 1px;

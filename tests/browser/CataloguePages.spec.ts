@@ -360,7 +360,7 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   const shapes = banner.locator('.site-banner-shapes');
   await expect(shapes).toHaveAttribute('aria-hidden', 'true');
   await expect(
-    shapes.locator('.catalogue-banner-lines :is(rect, circle, polygon)').first(),
+    shapes.locator('.catalogue-banner-lines :is(rect, circle, polygon, path, line)').first(),
   ).toHaveCSS('fill', 'none');
   await expect(banner.locator('.catalogue-banner-motif')).toHaveCount(0);
   // The few pages with a motif of their own, such as Colors & themes, draw it out of the
