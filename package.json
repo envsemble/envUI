@@ -48,7 +48,8 @@
     "docs:check": "node scripts/ExtractProps.mjs --check && node scripts/GenerateParts.mjs --check && node scripts/GenerateDocumentation.mjs --check",
     "changeset": "changeset",
     "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts",
-    "docs:dev-mode-image": "node scripts/CaptureDevModeImage.mjs"
+    "docs:dev-mode-image": "node scripts/CaptureDevModeImage.mjs",
+    "docs:readme-images": "node scripts/CaptureReadmeImages.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

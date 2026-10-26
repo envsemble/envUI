@@ -89,7 +89,7 @@ packages/codemods/   @envsemble/envui-codemods: upgrades code from 0.x to 1.0
 packages/eslint-plugin/      @envsemble/eslint-plugin-envui: lint rules for apps
 packages/stylelint-config/   @envsemble/stylelint-config-envui: style rules for apps
 assets/brand/        Original envUI artwork, used by the catalogue only
-assets/readme/       Light/dark captures of the catalogue for the README
+assets/readme/       Light/dark captures of the catalogue and the Docs for the README
 scripts/             Builds, asset generation, local watching and release validation
 tests/               Package contract tests, browser specs and React fixtures
 .github/workflows/   CI, the release pull requests' Verify and the release on merge
@@ -152,7 +152,8 @@ The release commit is made on the branch that carries the release, such as `envu
 2. **Apply the changesets.** `npm run changeset:version` writes the version into the four packages, the dependency in `apps/catalogue/package.json`, the lockfile and the changelogs, such as the [library's](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. It removes the changesets it applied, or in prerelease mode moves them into `.changeset/pre/`.
 3. **Finish the changelog section.** Add the date to its heading, as in `## 1.0.0 — 2026-10-20`, and the summary below it; see [Release notes](#release-notes).
 4. **Check it.** `GITHUB_REF_NAME=v1.0.0 node scripts/ValidateRelease.mjs` checks what the Release workflow checks before it publishes, with the version's tag: the four packages and the catalogue's dependency carry the version, and the changelog has a section for it. With `--release-notes` it prints that section as the release notes will read.
-5. **Commit** the result as one release commit, such as `Release 1.0.0`.
+5. **Retake the README's pictures** when the site's look changed: `npm run docs:readme-images` with the catalogue running (`npm run dev`, or give another catalogue's URL after `--`) writes the light and dark captures of a catalogue page and its Docs page into `assets/readme/`.
+6. **Commit** the result as one release commit, such as `Release 1.0.0`.
 
 A later prerelease line starts with `npx changeset pre enter prerelease`.
 

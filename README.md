@@ -12,22 +12,31 @@
 
 envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and documentation that people and coding agents read alike.
 
-[For agents](docs/agent-tooling.md) · [Set up](docs/setup.md) · [Migrate an app](docs/migration.md) · [Changelog](packages/ui/CHANGELOG.md) · [CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
+[Set up](docs/setup.md) · [For agents](docs/agent-tooling.md) · [Migrate an app](docs/migration.md) · [Dev mode](docs/dev-mode.md) · [Changelog](packages/ui/CHANGELOG.md)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/catalogue-dark.png">
   <img src="assets/readme/catalogue-light.png" alt="The envUI catalogue showing buttons, icons and navigation in the light theme" width="1440">
 </picture>
 
-_Actual envUI components in the local catalogue. The preview follows your light or dark appearance._
+_The catalogue: every component, pattern and foundation with live examples, and when to use each. The picture follows your light or dark appearance._
 
 ## What’s inside
 
-- **Shared foundations:** scoped light/dark themes, design tokens, Inter, typography, surfaces and layout primitives.
+- **Foundations:** scoped light, dark and high-contrast themes, design tokens, Inter, typography, spacing and density, surfaces and layout primitives.
 - **Everyday interactions:** actions, navigation, native form controls, selection, color picking, dialogs and toasts, with Base UI underpinning complex interactions.
+- **Patterns:** forms and validation, settings, app frames, conversations and more, each composed from the components.
 - **Content tools:** Markdown, code highlighting and Tiptap rich text on separate entry points.
 - **Local assets:** Inter and the official Material Symbols Rounded icons, with no font or icon CDN required.
-- **A website:** the catalogue shows every component with live examples and their code, and when to use it, and the Docs at `/docs` hold the developer reference.
+- **Dev mode:** a page's layout described and checked as text for agents, and taken apart in 3D for people, from its own entry point, `@envsemble/envui/dev`.
+- **A website in two parts:** the catalogue shows each component, pattern and foundation to people, and the Docs at `/docs` are the developer reference: setup, guides, props, part names and the changelog. Each page links to its counterpart in the other part.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/docs-dark.png">
+  <img src="assets/readme/docs-light.png" alt="A page of the envUI Docs with its navigation, a component's props and the page's contents" width="1440">
+</picture>
+
+_The Docs: setup, guides and every component's props, part names and changelog._
 
 ## Start using envUI
 
@@ -37,7 +46,7 @@ Requires React and React DOM 19, Node.js 22.13 or a later 22 release, or Node.js
 npm install --save-exact @envsemble/envui@<version>
 ```
 
-Upgrading an application from envUI 0.x to 1.0? The `@envsemble/envui-codemods` package moves its imports, components, props, types and `env-*` classes to the 1.0 names and reports what needs a decision. Commit first, then run the six transforms in this order, before installing 1.0:
+Upgrading an application from envUI 0.x to 1.0? The `@envsemble/envui-codemods` package moves its imports, components, props, types and `env-*` classes to the 1.0 names and reports what needs a decision. Commit first, then run the seven transforms in this order, before installing 1.0:
 
 ```sh
 npx @envsemble/envui-codemods@<version> v1-names src
@@ -45,6 +54,7 @@ npx @envsemble/envui-codemods@<version> v1-structure src
 npx @envsemble/envui-codemods@<version> v1-render src
 npx @envsemble/envui-codemods@<version> v1-stack src
 npx @envsemble/envui-codemods@<version> v1-props src
+npx @envsemble/envui-codemods@<version> v1-entries src
 npx @envsemble/envui-codemods@<version> v1-classes src
 ```
 
@@ -100,6 +110,7 @@ export function ProjectForm() {
 | `@envsemble/envui/icons/Name` | Individual icon imports             |
 | `@envsemble/envui/content`    | Markdown, code and Markdown editing |
 | `@envsemble/envui/rich-text`  | Rich-text rendering and editing     |
+| `@envsemble/envui/dev`        | Dev mode, in development only       |
 | `@envsemble/envui/styles.css` | Shared styles and local font        |
 
 ## Working with agents
@@ -110,13 +121,13 @@ Coding agents get the same documentation as people. Give one this prompt to set 
 Set up envUI in my app: envui.envsemble.com/SKILL.md
 ```
 
-It follows the setup skill the site hosts: after a short checklist, it installs envUI with its styles and theme, adds a few lines to the project's `AGENTS.md` that point agents to the docs in the package, and turns on the ESLint and Stylelint rules, which flag hand-built controls and raw colors. [For agents](docs/agent-tooling.md) describes it.
+It follows the setup skill the site hosts: after a short checklist, it installs envUI with its styles and theme, adds a few lines to the project's `AGENTS.md` that point agents to the docs in the package, and turns on the ESLint and Stylelint rules (`@envsemble/eslint-plugin-envui`, `@envsemble/stylelint-config-envui`), which flag hand-built controls and raw colors. [For agents](docs/agent-tooling.md) describes it.
 
-Documentation ships under `node_modules/@envsemble/envui/docs/`, with examples and props tables filled in, the example files in `docs/examples/` and every export’s props in `docs/generated/props.json`. Each component page carries frontmatter (summary, status, aliases, when to use it and what to use instead) and a Props section generated from the public TypeScript declarations. Edit the maintained pages under `docs/`; improve the relevant page as integrations reveal gaps.
+Documentation ships under `node_modules/@envsemble/envui/docs/`. Each component, pattern and foundation is one Markdown page, the same file the catalogue and the Docs are built from: what it is, its variants, anatomy and behaviour, its rules, accessibility and words to use, then how to compose it in code, with its props and part names generated from the public TypeScript declarations. The example files are in `docs/examples/`, and every export’s props in `docs/generated/props.json`. Edit the maintained pages under `docs/`, as [the component page guide](docs/component-pages.md) describes, and improve the relevant page as integrations reveal gaps.
 
 ## Versions and license
 
-Published versions are immutable; breaking changes come in a new major version with migration notes. Prereleases are published under their own name as the dist-tag, such as `prerelease` for `1.0.0-prerelease.0` (`npm install @envsemble/envui@prerelease`), and stable releases under `latest`. The [changelog](packages/ui/CHANGELOG.md) describes each release.
+Published versions are immutable; breaking changes come in a new major version with migration notes. Prereleases are published under their own name as the dist-tag, such as `prerelease` for `1.0.0-prerelease.4` (`npm install @envsemble/envui@prerelease`), and stable releases under `latest`. The [changelog](packages/ui/CHANGELOG.md) describes each release.
 
 envUI is proprietary and distributed privately. Bundled third-party assets and dependencies retain their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).
 

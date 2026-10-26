@@ -201,9 +201,11 @@ after(async function removeConsumerFixture() {
 test('the packed package ships no logos', () => {
   assert.ok(packedFiles.includes('dist/assets/Inter.woff2'), 'The pack lists its files.');
   const images = packedFiles.filter((path) => /\.(?:svg|png|ico)$/i.test(path));
-  // The README's catalogue captures are the only images the package ships.
+  // The README's captures of the catalogue and the Docs are the only images the package ships.
   assert.deepEqual(
-    images.filter((path) => !/^dist\/assets\/readme\/catalogue-(?:light|dark)\.png$/.test(path)),
+    images.filter(
+      (path) => !/^dist\/assets\/readme\/(?:catalogue|docs)-(?:light|dark)\.png$/.test(path),
+    ),
     [],
   );
   assert.deepEqual(
