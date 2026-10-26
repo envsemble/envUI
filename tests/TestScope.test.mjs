@@ -105,12 +105,17 @@ test('a changed spec runs itself, and a changed helper the specs that import it'
   assert.deepEqual(specs('tests/browser/Servers.ts'), []);
 });
 
-test('the catalogue runs its specs and live development, with the builds they open', () => {
+test('the site runs its specs and live development, with the builds they open', () => {
   const scope = selectScope(['apps/site/src/main.tsx']);
   assert.deepEqual([...scope.specs.keys()].sort(), [
-    'Catalogue',
+    'CataloguePages',
+    'CataloguePlainLanguage',
     'CatalogueSearch',
+    'DocsPages',
     'LiveDevelopment',
+    'SiteFailures',
+    'SiteRoutes',
+    'SiteShell',
   ]);
   assert.equal(scope.build.site, true);
   assert.equal(specNeeds('LiveDevelopment').live, true);
@@ -135,8 +140,8 @@ test('static checks cover the changed files, and configuration the whole of its 
 
 test('servers follow the specs that need them', () => {
   assert.deepEqual(serversFor(['Tree']), ['fixture']);
-  assert.deepEqual(serversFor(['Catalogue']), ['site']);
-  assert.deepEqual(serversFor(['Tree', 'Catalogue']), ['fixture', 'site']);
+  assert.deepEqual(serversFor(['SiteShell']), ['site']);
+  assert.deepEqual(serversFor(['Tree', 'SiteShell']), ['fixture', 'site']);
   assert.deepEqual(serversFor([]), []);
 });
 

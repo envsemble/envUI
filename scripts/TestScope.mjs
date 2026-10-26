@@ -119,7 +119,15 @@ export const aliases = {
 /** The specs a token, theme or other shared change runs. */
 const shared = ['Contrast', 'Colors', 'ThemeContrast', 'Scale'];
 /** The catalogue's own specs; some open its hosted build. */
-const catalogue = ['Catalogue', 'CatalogueSearch'];
+const catalogue = [
+  'SiteRoutes',
+  'SiteShell',
+  'SiteFailures',
+  'CataloguePages',
+  'CataloguePlainLanguage',
+  'DocsPages',
+  'CatalogueSearch',
+];
 
 /** Paths that name no component, by prefix, and the specs they run. */
 export const exceptions = [

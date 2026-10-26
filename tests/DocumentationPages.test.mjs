@@ -491,7 +491,7 @@ test("a component page's catalogue shows no technical text", () => {
 });
 
 test("the technical text in each page's catalogue Markdown is counted, for the rewrite to come", (t) => {
-  // Reporting only, like Catalogue.spec.ts's count of the rendered pages: the catalogue shows no
+  // Reporting only, like CataloguePlainLanguage.spec.ts's count of the rendered pages: the catalogue shows no
   // token names, hex colors, lengths, percentages or code, which belong to the page in the Docs.
   // Inline code is already rejected above; this counts what plain words still carry.
   const counts = cataloguePages().flatMap((document) => {
