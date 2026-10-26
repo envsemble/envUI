@@ -208,7 +208,8 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  *   fractions of its box, the middle by default, over `duration` ms, or comes there at once if it
  *   wasn't over the preview. Pressed, it drags; pressed on text, in a field or in content, the drag
  *   selects the text it crosses, as a mouse does, until a press elsewhere.
- * - `press`, `release`: its button; `click` presses and releases it a moment later.
+ * - `press`, `release`: its button; `click` presses and releases it a moment later. Two clicks
+ *   in quick succession on one element are a double click.
  * - `rightClick`: its secondary button pressed and released, which opens a context menu where it
  *   is, as a right click does.
  * - `leave`: it goes off the preview, releasing its button and any key held first.

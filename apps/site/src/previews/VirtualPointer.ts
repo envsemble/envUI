@@ -445,26 +445,31 @@ export class VirtualPointer {
     const shared = button === 0 && this.pressed.find((element) => this.over.includes(element));
     if (shared) {
       const point = this.at ?? { x: 0, y: 0 };
-      keepClipboard(() =>
-        shared.dispatchEvent(
-          new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            composed: true,
-            detail: 1,
-            button: 0,
-            clientX: point.x,
-            clientY: point.y,
-            view: window,
-            ...this.modifiers,
-          }),
-        ),
-      );
+      // A second click on the same element soon after the first is a double click, as a mouse's.
+      const now = performance.now();
+      const second = this.lastClick?.element === shared && now - this.lastClick.time < 500;
+      this.lastClick = second ? null : { element: shared, time: now };
+      const options = {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        detail: second ? 2 : 1,
+        button: 0,
+        clientX: point.x,
+        clientY: point.y,
+        view: window,
+        ...this.modifiers,
+      };
+      keepClipboard(() => shared.dispatchEvent(new MouseEvent('click', options)));
+      if (second) shared.dispatchEvent(new MouseEvent('dblclick', options));
     }
     for (const element of this.pressed) mark(element, pressMark, false);
     this.pressed = [];
     this.mouseless = false;
   }
+
+  /** The last click, which a second one soon after on the same element makes a double click. */
+  private lastClick: { element: Element; time: number } | null = null;
 
   /** The field typed into, marked as focused, as an inert preview can't focus it. */
   private focused: Element | null = null;
