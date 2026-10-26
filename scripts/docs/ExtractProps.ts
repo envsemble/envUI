@@ -589,7 +589,7 @@ export function extractProps() {
   function describe(name, declaration, entry) {
     const node = declaration.compilerNode;
     if (Node.isSourceFile(declaration)) {
-      const parts = [];
+      const parts: string[] = [];
       for (const [partName, [partDeclaration]] of declaration.getExportedDeclarations()) {
         if (!isRuntime(partDeclaration)) continue;
         parts.push(`${name}.${partName}`);

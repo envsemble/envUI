@@ -109,7 +109,7 @@ function linkTargets() {
  * a breaking change without a link, or a link to a section the Docs don't have.
  */
 export function releaseNotesProblems(releases, targets = linkTargets()) {
-  const problems = [];
+  const problems: string[] = [];
   releases.forEach((release, index) => {
     const name = `Release ${release.version}`;
     if (!release.highlights.length) problems.push(`${name} has no highlights.`);

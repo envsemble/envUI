@@ -1,7 +1,8 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { marked } from 'marked';
+import { marked, type Token, type Tokens } from 'marked';
+import type { DocumentationBlock } from '../../apps/site/src/DocumentationTypes.ts';
 import { optionTable, optionTableProblems } from '../../apps/site/src/shared/CatalogueContent.ts';
 import {
   codeSubsections,
@@ -15,12 +16,33 @@ import {
   pageSections,
   sourcePattern,
   statuses,
+  type ExampleEntry,
+  type Frontmatter,
 } from './Schema.ts';
 
-export const cell = (text) => String(text).replace(/\|/g, '\\|').replace(/\s+/g, ' ').trim();
+/** A figure of a foundation's page, or an example file placed as a figure. */
+type FigureBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
+type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
+
+/** A section of a page as readPage builds it: its blocks, and in Compose its tokens. */
+export interface ReadSection {
+  id: string;
+  title: string;
+  blocks: DocumentationBlock[];
+  tokens: Token[];
+}
+
+/** The part names readPartNames finds: every class, and each component's parts. */
+export interface PartNames {
+  classes: Set<string>;
+  components: Record<string, string[]>;
+}
+
+export const cell = (text: unknown) =>
+  String(text).replace(/\|/g, '\\|').replace(/\s+/g, ' ').trim();
 
 export function validateFrontmatter(frontmatter, path, { kind, versions }) {
-  const problems = [];
+  const problems: string[] = [];
   const schema = pageSchemas[kind];
   if (!schema) {
     for (const key of Object.keys(frontmatter))
@@ -224,7 +246,7 @@ const providesHeadings = ['envUI provides', 'You provide'];
  * and a Key and Action table under `### Keyboard`.
  */
 function accessibilityProblems(tokens) {
-  const problems = [];
+  const problems: string[] = [];
   const headings = tokens
     .filter((token) => token.type === 'heading' && token.depth === 3)
     .map((token) => token.text);
@@ -254,7 +276,7 @@ function accessibilityProblems(tokens) {
 
 /** Problems of any heading: the title is the only `#`, and props are generated. */
 function headingProblems(token) {
-  const problems = [];
+  const problems: string[] = [];
   if (token.type === 'heading' && token.depth === 1)
     problems.push('only the title is a level-one heading');
   if (token.type === 'html' && /<h[1-6][\s>]/i.test(token.raw))
@@ -280,7 +302,7 @@ const figurePattern = /^tsx\s+figure=([A-Za-z]\w*)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^
 /** A fence that names an example by its kind, as pages wrote figures before: a figure= fence now. */
 const kindFencePattern = /^tsx\s+(?:example|do|dont|anatomy|variants)=/;
 /** The attributes each role's figure takes, and those it needs. */
-const figureAttributes = {
+const figureAttributes: Record<string, { allowed: string[]; required: string[] }> = {
   example: { allowed: ['widths', 'open', 'stage', 'wide'], required: [] },
   do: { allowed: ['open', 'stage'], required: ['caption'] },
   dont: { allowed: ['open', 'stage'], required: ['caption'] },
@@ -302,7 +324,7 @@ const stageFills = ['shaded'];
  */
 const figureFlags = new Set(['open', 'enlarge', 'wide']);
 /** A file name as words: ConnectedButtons is "Connected buttons". */
-const fileWords = (name) =>
+const fileWords = (name: string) =>
   name
     .replace(/(?<=[a-z\d])(?=[A-Z])/g, ' ')
     .replace(/ [A-Z](?=[a-z])/g, (word) => word.toLowerCase());
@@ -324,13 +346,17 @@ export function readPartNames(directory = documentationDirectory) {
         classes.add(found);
   const file = resolve(directory, 'generated/parts.json');
   const json = existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {};
-  const components = {};
+  const components: Record<string, string[]> = {};
   for (const [group, entries] of [
     ['components', json.components],
     ['shared', json.shared],
   ])
-    for (const [name, entry] of Object.entries(entries ?? {})) {
-      const parts = [entry.root, ...(entry.parts ?? []).map((part) => part.class)].filter(Boolean);
+    for (const [name, entry] of Object.entries<{ root?: string; parts?: { class: string }[] }>(
+      entries ?? {},
+    )) {
+      const parts = [entry.root, ...(entry.parts ?? []).map((part) => part.class)].filter(
+        (part): part is string => Boolean(part),
+      );
       for (const part of parts) classes.add(part);
       if (group === 'components') components[name] = parts;
     }
@@ -345,7 +371,23 @@ export function readPartNames(directory = documentationDirectory) {
  * a pattern, an overview example and Accessibility's lists. A foundation's figures are the
  * catalogue's (previews/foundations), not example files.
  */
-export function readPage(document, body, { kind, catalog, examples, specimens, partNames }) {
+export function readPage(
+  document: { id: string; path: string; title: string },
+  body: string,
+  {
+    kind,
+    catalog,
+    examples,
+    specimens,
+    partNames,
+  }: {
+    kind: string;
+    catalog: Record<string, ExampleEntry>;
+    examples: Set<string>;
+    specimens: Set<string>;
+    partNames: PartNames;
+  },
+) {
   const tokens = marked.lexer(body);
   if (tokens.map((token) => token.raw).join('') !== body)
     throw new Error(`Could not split ${document.path} into sections.`);
@@ -354,16 +396,16 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
     ...item,
     title: (foundation && item.foundationTitle) || item.title,
   }));
-  const codeTitle = structure.find((item) => item.id === 'code').title;
-  const placed = new Set();
-  const sections = [];
-  const problems = [];
-  let current;
-  let subheading;
+  const codeTitle = structure.find((item) => item.id === 'code')!.title;
+  const placed = new Set<string>();
+  const sections: ReadSection[] = [];
+  const problems: string[] = [];
+  let current: ReadSection | undefined;
+  let subheading: string | undefined;
   /** The figure an ordered list right after it is the legend of. */
-  let legendOf;
+  let legendOf: FigureBlock | ExampleBlock | undefined;
   /** The `###` subsections of Compose so far, by their index in codeSubsections. */
-  const codeOrder = [];
+  const codeOrder: number[] = [];
   for (const token of tokens) {
     problems.push(...headingProblems(token));
     if (current?.id === 'code' && !(token.type === 'heading' && token.depth === 2)) {
@@ -460,18 +502,18 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
       problems.push(`${current.title} lists props in a table; the Props section is generated`);
     // An option table, whose last column is Use for, shows in the catalogue as a legend of tags.
     const options = optionTable(token);
+    const title = current.title;
     if (options)
-      problems.push(
-        ...optionTableProblems(options).map((problem) => `${current.title}: ${problem}`),
-      );
+      problems.push(...optionTableProblems(options).map((problem) => `${title}: ${problem}`));
     if (legendOf?.kind === 'figure' && token.type === 'list' && token.ordered) {
       // A foundation figure's legend: what each numbered mark, or each picture of a run, shows,
       // its name in bold and then what it means, such as **Tight, inside a group**: A title….
-      legendOf.legend = token.items.map((item, index) => {
+      const figure = legendOf;
+      figure.legend = token.items.map((item, index) => {
         const match = item.text.replace(/\s+/g, ' ').match(/^\*\*([^*]+)\*\*:?\s*(.*)$/);
         if (!match)
           problems.push(
-            `item ${index + 1} of the legend of figure ${legendOf.name} must start with its name in bold, such as **Compact**: and what it means`,
+            `item ${index + 1} of the legend of figure ${figure.name} must start with its name in bold, such as **Compact**: and what it means`,
           );
         return { name: match?.[1] ?? '', text: match?.[2].trim() ?? item.text };
       });
@@ -481,17 +523,18 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
     if (legendOf?.role === 'variants' && token.type === 'list' && token.ordered) {
       // A variants figure's legend: each variant's name in bold, labelling the example's items in
       // order, or the item a part reference names.
-      legendOf.legend = token.items.map((item, index) => {
+      const figure = legendOf;
+      figure.legend = token.items.map((item, index) => {
         const label = item.text.match(/^\*\*([^*]+)\*\*/)?.[1];
         if (!label)
           problems.push(
-            `item ${index + 1} of the legend of variants ${legendOf.name} must start with the variant's name in bold, such as **Outline**`,
+            `item ${index + 1} of the legend of variants ${figure.name} must start with the variant's name in bold, such as **Outline**`,
           );
         const part = item.text.match(/`(env-[^`]+)`/)?.[1] ?? '';
         for (const name of part.match(/env-[\w-]+/g) ?? [])
           if (!partNames.classes.has(name))
             problems.push(
-              `item ${index + 1} of the legend of variants ${legendOf.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
+              `item ${index + 1} of the legend of variants ${figure.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
             );
         return { part, text: item.text.replace(/\s+/g, ' ').trim(), label: label ?? '' };
       });
@@ -500,24 +543,25 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
     }
     if (legendOf && token.type === 'list' && token.ordered) {
       // The anatomy figure's legend: one numbered part per item, by its class name.
-      legendOf.legend = token.items.map((item, index) => {
+      const figure = legendOf;
+      figure.legend = token.items.map((item, index) => {
         const part = item.text.match(/`(env-[^`]+)`/)?.[1];
         if (!part)
           problems.push(
-            `item ${index + 1} of the legend of anatomy ${legendOf.name} names no part, such as \`env-button\``,
+            `item ${index + 1} of the legend of anatomy ${figure.name} names no part, such as \`env-button\``,
           );
         // The catalogue shows the part's name alone; its class names and props are for
         // developers.
         const name = item.text.match(/^\*\*([^*]+)\*\*/)?.[1];
         if (!name)
           problems.push(
-            `item ${index + 1} of the legend of anatomy ${legendOf.name} must start with the part's name in bold, such as **Label**, which is all the catalogue shows of it`,
+            `item ${index + 1} of the legend of anatomy ${figure.name} must start with the part's name in bold, such as **Label**, which is all the catalogue shows of it`,
           );
         // Every class it names is one envUI styles or lists as a part.
         for (const name of (part ?? '').replace(/::text$/, '').match(/env-[\w-]+/g) ?? [])
           if (!partNames.classes.has(name))
             problems.push(
-              `item ${index + 1} of the legend of anatomy ${legendOf.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
+              `item ${index + 1} of the legend of anatomy ${figure.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
             );
         return {
           part: part ?? '',
@@ -562,15 +606,15 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
         );
         continue;
       }
-      if (token.text.trim())
+      if ((token as Tokens.Code).text.trim())
         problems.push(`the fence of figure ${name} must be empty; the build fills in its file`);
-      if (current.id === 'changelog')
+      if (current!.id === 'changelog')
         problems.push(`figure ${name} belongs in a section before the changelog`);
       if (foundation) {
         // A foundation's figure is the catalogue's own, from its page's preview, with the legend
         // that follows it; it has no example file.
         if (rest.trim()) problems.push(`figure ${name} takes no attributes on a foundation page`);
-        const block = {
+        const block: FigureBlock = {
           kind: 'figure',
           name,
           heading: subheading ?? fileWords(name),
@@ -582,7 +626,7 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
         continue;
       }
       const { role } = listed;
-      const attributes = {};
+      const attributes: Record<string, string | true> = {};
       for (const [, key, value, quoted, plain] of rest.matchAll(
         /\s+([a-z]+)(=(?:"([^"]*)"|([^\s"]+)))?/g,
       )) {
@@ -607,8 +651,8 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
         problems.push(
           `figure ${name} has no file apps/site/src/examples/${document.id}/${name}.tsx`,
         );
-      const caption = attributes.caption;
-      const block = {
+      const caption = typeof attributes.caption === 'string' ? attributes.caption : undefined;
+      const block: ExampleBlock = {
         kind: 'example',
         name,
         heading:
@@ -621,11 +665,11 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
                 : role === 'variants'
                   ? `${document.title} variants`
                   : (subheading ?? fileWords(name)),
-        ...(role !== 'example' && { role }),
+        ...(role !== 'example' && { role: role as ExampleBlock['role'] }),
         ...(caption && { caption }),
       };
       if (attributes.widths !== undefined) {
-        const widths = attributes.widths
+        const widths = String(attributes.widths)
           .split(/[\s,]+/)
           .filter(Boolean)
           .map(Number);
@@ -643,9 +687,10 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
           );
         block.width = width;
       }
-      if (attributes.of !== undefined) block.of = attributes.of;
+      if (attributes.of !== undefined) block.of = String(attributes.of);
       if (typeof attributes.stage === 'string') {
-        if (stageFills.includes(attributes.stage)) block.stage = attributes.stage;
+        if (stageFills.includes(attributes.stage))
+          block.stage = attributes.stage as ExampleBlock['stage'];
         else
           problems.push(
             `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(', ')}, or nothing for the stage in the page's color`,
@@ -659,7 +704,7 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
       continue;
     }
     if (token.type === 'html' && specimenPattern.test(token.raw.trim())) {
-      const name = token.raw.trim().match(specimenPattern)[1];
+      const name = token.raw.trim().match(specimenPattern)![1]!;
       if (!specimens.has(name))
         problems.push(
           `specimen ${name} has no file apps/site/src/specimens/${document.id}/${name}.tsx`,
@@ -673,7 +718,8 @@ export function readPage(document, body, { kind, catalog, examples, specimens, p
   // variants figure needs one, the names of its variants.
   for (const section of sections)
     for (const block of section.blocks)
-      if (block.role === 'variants' && !block.legend)
+      if (block.kind !== 'example' && block.kind !== 'figure') continue;
+      else if (block.role === 'variants' && !block.legend)
         problems.push(
           `variants ${block.name} has no legend: follow it with a numbered list of its variants' names in bold, such as 1. **Outline**`,
         );

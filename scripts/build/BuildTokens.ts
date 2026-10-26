@@ -203,7 +203,7 @@ export async function buildTokens({
     const migration = outputs.find(({ path }) => path.endsWith('token-migration.json'));
     outputs.push(...(await migrationCopies(JSON.parse(migration.contents))));
   }
-  const stale = [];
+  const stale: string[] = [];
   for (const { path, contents } of outputs) {
     const text = await formatted(path, contents);
     const existing = await readFile(path, 'utf8').catch((error) => {

@@ -22,7 +22,7 @@ export const devMarker = 'data-env-dev-host';
  * @returns {string[]}
  */
 export function devModeProblems(manifest, contents) {
-  const problems = [];
+  const problems: string[] = [];
   const dev = manifest[devEntry];
   if (!dev?.isDynamicEntry) return [`${devEntry} is not a chunk of its own that loads lazily.`];
   /** @param {string} key @param {Set<string>} seen */

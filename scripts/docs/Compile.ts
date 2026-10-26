@@ -193,7 +193,7 @@ function compilePage(document, { props, examples, title }) {
     flush();
     return text.replace(/\n{3,}/g, '\n\n').replace(/\s*$/, '\n');
   };
-  const parts = [];
+  const parts: string[] = [];
   for (const section of document.sections) {
     if (['overview', 'related', 'changelog'].includes(section.id)) continue;
     parts.push(write(section));

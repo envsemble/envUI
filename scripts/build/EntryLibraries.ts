@@ -31,7 +31,7 @@ function sourceFile(from, specifier) {
  * side-effect imports and dynamic imports.
  */
 function runtimeImports(code) {
-  const specifiers = [];
+  const specifiers: string[] = [];
   for (const [, typeOnly, specifier] of code.matchAll(
     /\b(?:import|export)\s+(type\s+)?[^'";]*?\bfrom\s*['"]([^'"]+)['"]/g,
   ))

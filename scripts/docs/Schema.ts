@@ -99,7 +99,55 @@ export const kindFolders = {
  * examples, Props from the TypeScript declarations of the page's exports and Related from its
  * avoidWhen. A foundation calls its variants Options. docs/component-pages.md describes it.
  */
-export const pageSections = [
+
+/**
+ * A page's frontmatter as parsed YAML: unchecked until validateFrontmatter checks it field by field
+ * against its kind's schema, so its fields are read as the schema says they are.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- parsed YAML, checked at run time
+export type Frontmatter = Record<string, any>;
+
+/** A field of a page's frontmatter as its schema checks it. */
+export interface FrontmatterRule {
+  type: 'string' | 'strings' | 'statuses' | 'avoid' | 'examples';
+  required?: boolean;
+  nonEmpty?: boolean;
+  values?: readonly string[];
+  pattern?: RegExp;
+}
+
+/** The fields a kind of page's frontmatter takes, by name. */
+export type FrontmatterSchema = Record<string, FrontmatterRule>;
+
+/** A section a page in the one-file structure may have, in its order. */
+export interface PageSectionDefinition {
+  id: string;
+  title: string;
+  /** Written by the build, not the page. */
+  generated?: boolean;
+  /** Its title on a foundation's page. */
+  foundationTitle?: string;
+  required?: boolean;
+}
+
+/** An example's entry in a page's frontmatter: its role, and its caption and framing. */
+export interface ExampleEntry {
+  role: string;
+  caption?: string;
+  open?: boolean;
+  stage?: string;
+}
+
+/** The props of every export, as docs/generated/props.json holds them. */
+export interface PropsFile {
+  exports: Record<string, ExportProps>;
+}
+
+/** An export's entry in props.json: the entry points it comes from, and the rest of its record. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; ExtractProps writes it
+export type ExportProps = { entries: string[] } & Record<string, any>;
+
+export const pageSections: readonly PageSectionDefinition[] = [
   { id: 'overview', title: 'Overview', generated: true },
   { id: 'variants', title: 'Variants', foundationTitle: 'Options' },
   { id: 'anatomy', title: 'Anatomy' },
@@ -114,7 +162,14 @@ export const pageSections = [
 ];
 
 /** The roles an example plays, as its page's frontmatter lists it. */
-export const exampleRoles = ['overview', 'example', 'variants', 'anatomy', 'do', 'dont'];
+export const exampleRoles: readonly string[] = [
+  'overview',
+  'example',
+  'variants',
+  'anatomy',
+  'do',
+  'dont',
+];
 
 /**
  * A page's examples as its frontmatter lists them, by name: a role alone, such as
@@ -122,9 +177,9 @@ export const exampleRoles = ['overview', 'example', 'variants', 'anatomy', 'do',
  * takes here the framing a fence gives a figure: `open: true` shows its overlays open on its stage,
  * and `stage: shaded` the deeper stage of a whole window.
  */
-export function examplesOf(frontmatter) {
+export function examplesOf(frontmatter: Frontmatter | undefined): Record<string, ExampleEntry> {
   return Object.fromEntries(
-    Object.entries(frontmatter?.examples ?? {}).map(([name, value]) => [
+    Object.entries<Frontmatter | string>(frontmatter?.examples ?? {}).map(([name, value]) => [
       name,
       typeof value === 'string'
         ? { role: value }
@@ -158,8 +213,8 @@ export const sourcePattern = /^tsx\s+source=(\S+)\s*$/;
  * The generated start of "## Compose": how to import what the page documents or, on a pattern
  * page, what it composes, from the entries props.json gives each export.
  */
-export function importMarkdown(names, props) {
-  const byEntry = new Map();
+export function importMarkdown(names: readonly string[], props: PropsFile | undefined): string {
+  const byEntry = new Map<string, string[]>();
   for (const name of names) {
     const entry = props?.exports[name]?.entries[0];
     if (entry) byEntry.set(entry, [...(byEntry.get(entry) ?? []), name]);
@@ -206,7 +261,7 @@ export function withImport(sections, names, props, title = 'Compose') {
  * Frontmatter of a component page. Guides may only name the exports they document, with
  * otherFrontmatter's fields, whose values this schema checks.
  */
-export const frontmatterSchema = {
+export const frontmatterSchema: FrontmatterSchema = {
   title: { type: 'string', required: true },
   summary: { type: 'string', required: true },
   status: { type: 'string', required: true, values: statuses },
@@ -223,7 +278,7 @@ export const frontmatterSchema = {
   examples: { type: 'examples', required: true },
 };
 /** Frontmatter of a pattern page: required as a whole, with what it composes. */
-const compositionFrontmatter = {
+const compositionFrontmatter: FrontmatterSchema = {
   title: { type: 'string', required: true },
   summary: { type: 'string', required: true },
   status: { type: 'string', required: true, values: statuses },
@@ -240,7 +295,7 @@ const compositionFrontmatter = {
  * its figures, which are the catalogue's (previews/foundations), each once with its role and
  * caption.
  */
-const foundationFrontmatter = {
+const foundationFrontmatter: FrontmatterSchema = {
   title: { type: 'string', required: true },
   summary: { type: 'string', required: true },
   aliases: { type: 'strings', required: true, nonEmpty: true },
@@ -252,7 +307,7 @@ const foundationFrontmatter = {
   examples: { type: 'examples', required: true },
 };
 /** The frontmatter of each kind of page in the one-file structure; guides take otherFrontmatter. */
-export const pageSchemas = {
+export const pageSchemas: Record<string, FrontmatterSchema> = {
   component: frontmatterSchema,
   pattern: {
     ...compositionFrontmatter,
@@ -264,12 +319,12 @@ export const otherFrontmatter = new Set(['components', 'aliases', 'exportAliases
 /** A page whose slug cannot follow its title until the component it documents is merged. */
 export const slugExceptions = new Set(['chips']);
 
-export const kebab = (name) =>
+export const kebab = (name: string) =>
   name
     .replace(/([a-z\d])([A-Z])/g, '$1-$2')
     .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
     .toLowerCase();
-export const contained = (directory, path) => {
+export const contained = (directory: string, path: string) => {
   const inside = relative(directory, path);
   return inside && !inside.startsWith('..') && !isAbsolute(inside);
 };
@@ -278,7 +333,7 @@ export const contained = (directory, path) => {
 const bumpOrder = ['patch', 'minor', 'major'];
 
 /** A version raised by a bump: 1.2.3 by minor is 1.3.0. */
-function bumped(version, bump) {
+function bumped(version: string, bump: string) {
   const [major, minor, patch] = version.split('.').map(Number);
   if (bump === 'major') return `${major + 1}.0.0`;
   if (bump === 'minor') return `${major}.${minor + 1}.0`;
@@ -286,7 +341,7 @@ function bumped(version, bump) {
 }
 
 /** Orders versions such as 0.10.0 after 0.9.0. */
-const compareVersions = (a, b) => {
+const compareVersions = (a: string, b: string) => {
   const [x, y] = [a, b].map((version) => version.split('.').map(Number));
   return x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
 };
@@ -311,7 +366,7 @@ export function libraryVersions({
     .map((match) => match[1])
     .sort(compareVersions);
   const versions = new Set(released);
-  const readJson = (name) => {
+  const readJson = (name: string) => {
     const file = resolve(changesets, name);
     return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
   };
@@ -349,20 +404,25 @@ export function libraryVersions({
   return versions;
 }
 
-export function readProps(directory = documentationDirectory) {
+export function readProps(directory = documentationDirectory): PropsFile | undefined {
   const file = resolve(directory, 'generated/props.json');
   return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
 }
 
 /** Splits `---` YAML frontmatter from a Markdown source. */
-export function splitFrontmatter(source, path) {
+export function splitFrontmatter(
+  source: string,
+  path: string,
+): { frontmatter: Frontmatter | undefined; yaml: string; body: string } {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n(?:\r?\n)*/);
   if (!match) return { frontmatter: undefined, yaml: '', body: source };
-  let frontmatter;
+  let frontmatter: Frontmatter | undefined;
   try {
     frontmatter = parseYaml(match[1], { uniqueKeys: true, strict: true });
   } catch (error) {
-    throw new Error(`Invalid frontmatter in ${path}: ${error.message}`, { cause: error });
+    throw new Error(`Invalid frontmatter in ${path}: ${(error as Error).message}`, {
+      cause: error,
+    });
   }
   if (!frontmatter || typeof frontmatter !== 'object' || Array.isArray(frontmatter))
     throw new Error(`Frontmatter of ${path} must be a mapping.`);

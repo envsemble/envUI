@@ -179,7 +179,7 @@ export function specNeeds(name, root = repositoryRoot) {
  */
 export function specsFor(paths, root = repositoryRoot) {
   const specs = new Map();
-  const unmatched = [];
+  const unmatched: string[] = [];
   // By name, as written: a file system that ignores case would find Table.spec.ts for table.
   const written = new Set(walk(root, 'tests/browser', /\.spec\.ts$/).map(baseName));
   const exists = (name) => written.has(name);
@@ -374,7 +374,7 @@ export function changedFiles({ root = repositoryRoot, base } = {}) {
 function walk(root, directory, pattern) {
   const absolute = resolve(root, directory);
   if (!existsSync(absolute)) return [];
-  const found = [];
+  const found: string[] = [];
   for (const entry of readdirSync(absolute, { withFileTypes: true })) {
     const path = posix.join(directory, entry.name);
     if (entry.isDirectory()) found.push(...walk(root, path, pattern));

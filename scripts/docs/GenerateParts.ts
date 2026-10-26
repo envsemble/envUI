@@ -96,7 +96,7 @@ function literalValues(type) {
 function readSource() {
   const project = new Project({ tsConfigFilePath: resolve(libraryDirectory, 'tsconfig.json') });
   const classes = new Map();
-  const warnings = [];
+  const warnings: string[] = [];
   /** The JSX element whose attribute holds a node, if any. */
   const elementOf = (node) => {
     const attribute = node.getFirstAncestor(
@@ -264,7 +264,7 @@ function attributeValues(attribute) {
 
 /** Splits a selector list or a selector at `separators` outside brackets, parentheses and strings. */
 function splitTopLevel(text, separators) {
-  const parts = [];
+  const parts: string[] = [];
   let depth = 0;
   let quote = null;
   let start = 0;
@@ -294,7 +294,7 @@ function readStyles() {
   const states = [];
   const files = readdirSync(stylesDirectory).filter((name) => name.endsWith('.css'));
   const visit = (selector, path) => {
-    const inner = [];
+    const inner: string[] = [];
     const own = selector.replace(/:has\(((?:[^()]|\((?:[^()]|\([^()]*\))*\))*)\)/g, (_, body) => {
       inner.push(body);
       return '';
@@ -652,7 +652,7 @@ function git(args) {
  * bases whose merge-base has it, and what each base skipped lacked.
  */
 function baseParts(base) {
-  const skipped = [];
+  const skipped: string[] = [];
   for (const ref of baseCandidates(base)) {
     let mergeBase;
     try {

@@ -207,7 +207,7 @@ export function readDocumentation(
         );
 
     let related = false;
-    const listed = [];
+    const listed: string[] = [];
     for (const token of marked.lexer(document.markdown)) {
       if (token.type === 'heading' && token.depth === 2) related = token.text === 'Related topics';
       if (related && token.type === 'list') {

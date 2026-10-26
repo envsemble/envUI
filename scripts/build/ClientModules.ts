@@ -38,7 +38,7 @@ const annotation = /(?:\/\/|\/\*+|^\s*\*)\s*@client-module\b[ \t:—-]*([^\n]*?)
 function commentsOf(sourceFile) {
   const text = sourceFile.getFullText();
   const seen = new Set();
-  const comments = [];
+  const comments: string[] = [];
   const collect = (ranges) => {
     for (const range of ranges ?? [])
       if (!seen.has(range.pos)) {
