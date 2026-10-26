@@ -204,17 +204,22 @@ function shownBoxes(canvas: HTMLElement) {
   // The canvas hides until it is first fitted, and what it holds with it: only what hides by
   // itself is hidden.
   const shown = getComputedStyle(canvas).visibility;
-  const visit = (element: Element) => {
+  // What a box that clips its content, such as a scrolling list, holds outside it doesn't show:
+  // each box counts as far as the boxes around it that clip show it.
+  const visit = (element: Element, clip: DOMRect | null) => {
     for (const child of element.children) {
       const style = getComputedStyle(child);
       if (style.display === 'none' || style.opacity === '0' || clippedAway(style)) continue;
       if (style.visibility === 'hidden' && shown !== 'hidden') continue;
       const rect = child.getBoundingClientRect();
-      const box = new DOMRect(
-        (rect.left - frame.left) / scale,
-        (rect.top - frame.top) / scale,
-        rect.width / scale,
-        rect.height / scale,
+      const box = within(
+        new DOMRect(
+          (rect.left - frame.left) / scale,
+          (rect.top - frame.top) / scale,
+          rect.width / scale,
+          rect.height / scale,
+        ),
+        clip,
       );
       const covers =
         box.width >= area.width - 1 &&
@@ -223,11 +228,22 @@ function shownBoxes(canvas: HTMLElement) {
       if (box.width > 1 && box.height > 1 && !covers && paints(child, style))
         found.push({ element: child, box });
       // A picture's parts are the picture; anything else may hold more that shows.
-      if (!pictures.test(child.localName)) visit(child);
+      const clips = style.overflowX !== 'visible' || style.overflowY !== 'visible';
+      if (!pictures.test(child.localName)) visit(child, clips ? box : clip);
     }
   };
-  visit(canvas);
+  visit(canvas, null);
   return found;
+}
+
+/** The part of a box inside a clip, empty where none is, or the box where nothing clips it. */
+function within(box: DOMRect, clip: DOMRect | null) {
+  if (!clip) return box;
+  const left = Math.max(box.left, clip.left);
+  const top = Math.max(box.top, clip.top);
+  const right = Math.min(box.right, clip.right);
+  const bottom = Math.min(box.bottom, clip.bottom);
+  return new DOMRect(left, top, Math.max(0, right - left), Math.max(0, bottom - top));
 }
 
 /**

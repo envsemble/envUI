@@ -26,8 +26,16 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   toast: { width: 16, height: 12 },
   toolbar: { width: 12, height: 9 },
   menu: { width: 14, height: 10.5 },
+  combobox: { width: 14, height: 10.5 },
+  'segmented-control': { width: 12, height: 9 },
   menubar: { width: 14, height: 10.5 },
   'command-palette': { width: 20, height: 15 },
+  'date-picker': { width: 20, height: 15 },
+  'time-picker': { width: 24, height: 18 },
+  'month-picker': { width: 27, height: 20.25 },
+  'color-picker': { width: 22, height: 16.5 },
+  'drop-zone': { width: 14, height: 10.5 },
+  'rich-text': { width: 18, height: 13.5 },
 };
 
 /** The tile of a page, by its id, where it has one of its own. */

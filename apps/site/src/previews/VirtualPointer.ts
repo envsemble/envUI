@@ -63,6 +63,16 @@ const mouseTwin: Record<string, string> = {
 /** Events that don't bubble: each element the pointer enters or leaves gets its own. */
 const once = new Set(['pointerenter', 'pointerleave', 'mouseenter', 'mouseleave']);
 
+/**
+ * Sets or clears one of the pointer's marks on an element, outside an editable region: an editor
+ * such as ProseMirror redraws what changes in its document, so a mark inside it would replace
+ * the very element pressed. Its frame, outside, still shows hover and focus.
+ */
+function mark(element: Element, name: string, on: boolean) {
+  if (element.closest('[contenteditable="true"]')) return;
+  element.toggleAttribute(name, on);
+}
+
 /** Fields a press focuses, as typing goes into them. */
 const textFields =
   'input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"]), textarea, [contenteditable="true"]';
@@ -153,8 +163,54 @@ export class VirtualPointer {
     return sent;
   }
 
+  /** A file the pointer carries in from outside, as a drag from the desktop does. */
+  private carried: DataTransfer | null = null;
+
+  /** Picks up a file, as a person drags one in from the desktop: its moves are a drag now. */
+  carry(name: string, type: string) {
+    this.carried = new DataTransfer();
+    this.carried.items.add(new File(['envUI'], name, { type }));
+  }
+
+  private sendDrag(target: Element, type: string) {
+    const point = this.at ?? { x: 0, y: 0 };
+    return target.dispatchEvent(
+      new DragEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        clientX: point.x,
+        clientY: point.y,
+        dataTransfer: this.carried,
+      }),
+    );
+  }
+
+  /** Drops the carried file where the pointer is. */
+  drop() {
+    const target = this.over[0];
+    if (!this.carried || !target) return;
+    this.sendDrag(target, 'drop');
+    this.carried = null;
+    this.over = [];
+  }
+
+  /** Moves a carried file over the preview: the elements it enters, leaves and is over hear it. */
+  private dragTo(point: Point) {
+    this.at = point;
+    const target = this.hit(point);
+    const chain = this.chain(target);
+    for (const element of this.over.filter((item) => !chain.includes(item)))
+      this.sendDrag(element, 'dragleave');
+    for (const element of chain.filter((item) => !this.over.includes(item)).reverse())
+      this.sendDrag(element, 'dragenter');
+    this.over = chain;
+    this.sendDrag(target, 'dragover');
+  }
+
   /** Moves the pointer to a point, coming over the preview there if it wasn't. */
   moveTo(point: Point) {
+    if (this.carried) return this.dragTo(point);
     const first = !this.at;
     this.at = point;
     const target = this.hit(point);
@@ -164,11 +220,11 @@ export class VirtualPointer {
     if (left.length && this.over[0]) this.send(this.over[0], 'pointerout');
     for (const element of left) {
       this.send(element, 'pointerleave');
-      element.removeAttribute(hoverMark);
+      mark(element, hoverMark, false);
     }
     if (entered.length || first) this.send(target, 'pointerover');
     for (const element of entered.reverse()) {
-      element.setAttribute(hoverMark, '');
+      mark(element, hoverMark, true);
       this.send(element, 'pointerenter');
     }
     this.over = chain;
@@ -182,7 +238,7 @@ export class VirtualPointer {
     this.buttons = 1;
     this.send(target, 'pointerdown', { button: 0 });
     this.pressed = [...this.over];
-    for (const element of this.pressed) element.setAttribute(pressMark, '');
+    for (const element of this.pressed) mark(element, pressMark, true);
     // A press in a field focuses it, and anywhere else takes focus from the field. A button keeps
     // no focus ring under a pointer, so it isn't marked.
     this.focus(target.closest(textFields));
@@ -216,7 +272,7 @@ export class VirtualPointer {
         }),
       );
     }
-    for (const element of this.pressed) element.removeAttribute(pressMark);
+    for (const element of this.pressed) mark(element, pressMark, false);
     this.pressed = [];
     this.mouseless = false;
   }
@@ -228,13 +284,13 @@ export class VirtualPointer {
   focus(element: Element | null) {
     if (this.focused === element) return;
     if (this.focused) {
-      this.focused.removeAttribute(focusMark);
-      for (const node of this.chain(this.focused)) node.removeAttribute(focusWithinMark);
+      mark(this.focused, focusMark, false);
+      for (const node of this.chain(this.focused)) mark(node, focusWithinMark, false);
     }
     this.focused = element;
     if (!element) return;
-    element.setAttribute(focusMark, '');
-    for (const node of this.chain(element)) node.setAttribute(focusWithinMark, '');
+    mark(element, focusMark, true);
+    for (const node of this.chain(element)) mark(node, focusWithinMark, true);
   }
 
   /**
@@ -277,11 +333,18 @@ export class VirtualPointer {
 
   /** Takes the pointer off the preview, releasing it first. */
   leave() {
+    if (this.carried) {
+      for (const element of this.over) this.sendDrag(element, 'dragleave');
+      this.carried = null;
+      this.over = [];
+      this.at = null;
+      return;
+    }
     this.release();
     if (this.over[0]) this.send(this.over[0], 'pointerout');
     for (const element of this.over) {
       this.send(element, 'pointerleave');
-      element.removeAttribute(hoverMark);
+      mark(element, hoverMark, false);
     }
     this.over = [];
     this.at = null;

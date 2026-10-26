@@ -121,6 +121,8 @@ export function useTimeline(durations: readonly number[]) {
  * - `type`, text, `into` a selector of a field: typed a character at a time, `every` ms apart;
  *   `erase`, a count: as many characters deleted the same way.
  * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`.
+ * - `carry`, a file's name, `as` its type: the pointer picks up a file, as from the desktop, so
+ *   its moves drag it; `drop` drops it where the pointer is.
  */
 export type PointerStep =
   | { wait: number }
@@ -132,7 +134,9 @@ export type PointerStep =
   | { cue: string }
   | { type: string; into: string; every?: number }
   | { erase: number; into: string; every?: number }
-  | { key: string; on?: string };
+  | { key: string; on?: string }
+  | { carry: string; as: string }
+  | { drop: true };
 
 /** A point of an element of the preview, as fractions of its box. */
 interface Aim {
@@ -147,7 +151,7 @@ interface Plan {
   moves: { start: number; end: number; from: Aim | null; to: Aim }[];
   happenings: {
     time: number;
-    kind: 'press' | 'release' | 'leave' | 'cue' | 'type' | 'key';
+    kind: 'press' | 'release' | 'leave' | 'cue' | 'type' | 'key' | 'carry' | 'drop';
     /** A cue's name, the text typed (null for a deleted character), or the key. */
     cue?: string;
     text?: string | null;
@@ -189,6 +193,9 @@ function planOf(script: readonly PointerStep[]): Plan {
       }
     } else if ('key' in step)
       plan.happenings.push({ time, kind: 'key', cue: step.key, target: step.on });
+    else if ('carry' in step)
+      plan.happenings.push({ time, kind: 'carry', cue: step.carry, target: step.as });
+    else if ('drop' in step) plan.happenings.push({ time, kind: 'drop' });
     else {
       plan.happenings.push({ time, kind: 'leave' });
       at = null;
@@ -303,6 +310,14 @@ export function usePointer(
         }
         if (happening.kind === 'key') {
           current.key(happening.cue!, happening.target);
+          continue;
+        }
+        if (happening.kind === 'carry') {
+          current.carry(happening.cue!, happening.target!);
+          continue;
+        }
+        if (happening.kind === 'drop') {
+          current.drop();
           continue;
         }
         if (happening.kind === 'press') current.press();
