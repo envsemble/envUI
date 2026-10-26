@@ -456,3 +456,16 @@
 .catalogue-class-text-frame > * {
   align-self: center;
 }
+
+/* Icons: a bar of destinations as wide as a phone, and buttons that step through their sizes in a
+   row as tall as the largest, beside a message of one width, so the figure keeps one height. */
+.catalogue-icons-bar {
+  inline-size: min(100%, 26rem);
+}
+.catalogue-icons-buttons {
+  min-block-size: var(--env-control-height-lg);
+}
+.catalogue-icons-alert {
+  inline-size: 24rem;
+  max-inline-size: 100%;
+}
