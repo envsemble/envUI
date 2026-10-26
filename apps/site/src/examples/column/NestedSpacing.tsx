@@ -2,8 +2,8 @@ import { Column, Text, TextField } from '@envsemble/envui';
 
 export default function NestedSpacing() {
   return (
-    <Column gap={6}>
-      <Column gap={4}>
+    <Column gap={7}>
+      <Column gap={3}>
         <Column gap={1}>
           <Text render={<h3 />} variant="title">
             Contact
@@ -13,7 +13,7 @@ export default function NestedSpacing() {
         <TextField label="Name" defaultValue="Alex Morgan" />
         <TextField label="E-mail address" type="email" defaultValue="alex@example.com" />
       </Column>
-      <Column gap={4}>
+      <Column gap={3}>
         <Column gap={1}>
           <Text render={<h3 />} variant="title">
             Company
