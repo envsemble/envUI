@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
   Alert,
   Badge,
@@ -8,6 +8,7 @@ import {
   Row,
   SegmentedControl,
   Surface,
+  Switch,
   Text,
   TextField,
   Theme,
@@ -15,6 +16,8 @@ import {
   type ThemeContrast,
   type ThemeValue,
 } from '@envsemble/envui';
+import { Bedtime } from '@envsemble/envui/icons/Bedtime';
+import { Forest } from '@envsemble/envui/icons/Forest';
 import { usePointer, type PointerStep } from '../Motion';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
@@ -265,37 +268,184 @@ function StatusFigure() {
   );
 }
 
-/** One button's own colors, which its hover and press follow. */
-const forest = {
-  '--env-button-container': '#0a5c42',
-  '--env-button-content': '#ffffff',
-} as CSSProperties;
+/**
+ * One green family, as an application gives an area of its own (customizing.md's GreenArea): the
+ * roles the card paints, with their hover and press, in each theme. In the light theme a sage
+ * surface, a moss fill and a forest action; in the dark theme deep forest with a light green
+ * action. At high contrast its text and edges keep the theme's own, stronger colors.
+ */
+const green: Record<ThemeValue, { fills: CSSProperties; lines: CSSProperties }> = {
+  light: {
+    fills: {
+      '--env-color-bg-page': '#f6faf6',
+      '--env-color-bg-default': '#eef4ee',
+      '--env-color-bg-muted': '#dde9de',
+      '--env-color-bg-brand-emphasis': '#0a5c42',
+      '--env-color-bg-brand-emphasis-hover': '#084c37',
+      '--env-color-bg-brand-emphasis-pressed': '#063d2c',
+      '--env-color-fg-on-emphasis': '#ffffff',
+      '--env-color-bg-neutral-muted': 'rgb(10 92 66 / 0.12)',
+      '--env-color-bg-neutral-muted-hover': 'rgb(10 92 66 / 0.19)',
+      '--env-color-bg-neutral-muted-pressed': 'rgb(10 92 66 / 0.27)',
+      '--env-color-bg-neutral-subtle-hover': 'rgb(10 92 66 / 0.08)',
+      '--env-color-bg-neutral-subtle-pressed': 'rgb(10 92 66 / 0.14)',
+      '--env-color-bg-selected': '#c3dfca',
+      '--env-color-bg-selected-hover': '#b9d8c1',
+      '--env-color-bg-selected-pressed': '#afd1b8',
+      '--env-color-fg-on-selected': '#0a4d37',
+      '--env-color-fg-accent': '#0a5c42',
+      '--env-color-fg-control': '#173f30',
+    } as CSSProperties,
+    lines: {
+      '--env-color-fg-muted': '#46594d',
+      '--env-color-border-default': '#74877a',
+      '--env-color-border-muted': '#c3d3c6',
+    } as CSSProperties,
+  },
+  dark: {
+    fills: {
+      '--env-color-bg-page': '#0b1a13',
+      '--env-color-bg-default': '#10241b',
+      '--env-color-bg-muted': '#1a3528',
+      '--env-color-bg-brand-emphasis': '#7ad197',
+      '--env-color-bg-brand-emphasis-hover': '#5fbf80',
+      '--env-color-bg-brand-emphasis-pressed': '#45ad69',
+      '--env-color-fg-on-emphasis': '#10241b',
+      '--env-color-bg-neutral-muted': 'rgb(122 209 151 / 0.14)',
+      '--env-color-bg-neutral-muted-hover': 'rgb(122 209 151 / 0.21)',
+      '--env-color-bg-neutral-muted-pressed': 'rgb(122 209 151 / 0.28)',
+      '--env-color-bg-neutral-subtle-hover': 'rgb(122 209 151 / 0.08)',
+      '--env-color-bg-neutral-subtle-pressed': 'rgb(122 209 151 / 0.14)',
+      '--env-color-bg-selected': '#2c6347',
+      '--env-color-bg-selected-hover': '#326b4e',
+      '--env-color-bg-selected-pressed': '#387355',
+      '--env-color-fg-on-selected': '#c4efd2',
+      '--env-color-fg-accent': '#7ad197',
+      '--env-color-fg-control': '#dcefe2',
+    } as CSSProperties,
+    lines: {
+      '--env-color-fg-muted': '#b2c8ba',
+      '--env-color-border-default': '#7f9b88',
+      '--env-color-border-muted': '#2f4d3d',
+    } as CSSProperties,
+  },
+};
 
-/** One button in a color of its own, and one area in the other theme. */
-function OwnColorsFigure() {
-  const theme = useTheme();
-  const other: ThemeValue = theme.theme === 'dark' ? 'light' : 'dark';
+/** An area in the green family, in a theme, at the reader's contrast. */
+function GreenArea({
+  theme,
+  className,
+  children,
+}: {
+  theme: ThemeValue;
+  className?: string;
+  children: ReactNode;
+}) {
+  const { contrast } = useTheme();
+  const { fills, lines } = green[theme];
   return (
-    <Figure label="Colors of its own">
-      <Column gap={5} align="center">
-        <Row gap={2} wrap justify="center">
-          <Button style={forest}>Start trial</Button>
-          <Button variant="secondary">Not now</Button>
+    <Theme
+      theme={theme}
+      contrast={contrast}
+      className={className}
+      style={contrast === 'high' ? fills : { ...fills, ...lines }}
+    >
+      {children}
+    </Theme>
+  );
+}
+
+/**
+ * The pointer rests on the green action, presses it, then turns the switch off and on again, so
+ * the green's own hover, press and switch play; it leaves with the switch on, as it began.
+ */
+const ownColorsScript: PointerStep[] = [
+  { wait: 900 },
+  { to: '.catalogue-walk-book', x: 0.2, y: 0.8 },
+  { to: '.catalogue-walk-book', x: 0.55, y: 0.5, duration: 450 },
+  { wait: 1100 },
+  { press: true },
+  { wait: 260 },
+  { release: true },
+  { wait: 900 },
+  { to: '.catalogue-walk .env-switch-input', duration: 750 },
+  { wait: 500 },
+  { click: true },
+  { wait: 1500 },
+  { click: true },
+  { wait: 1100 },
+  { leave: true },
+  { wait: 900 },
+];
+
+/**
+ * A card in a green family of its own, a guided walk to book, with its route in a filled card and
+ * its foot, a night walk, in the other theme; the pointer plays its green action and its switch.
+ */
+function ForestWalk() {
+  const page = useTheme();
+  const other: ThemeValue = page.theme === 'dark' ? 'light' : 'dark';
+  const [route, setRoute] = useState('long');
+  usePointer(ownColorsScript);
+  return (
+    <GreenArea theme={page.theme} className="catalogue-walk">
+      <Surface background="default" padding={5} radius="xl" render={<Column gap={4} />}>
+        <Row gap={3} align="start">
+          <Forest className="catalogue-walk-icon" width="1.75rem" height="1.75rem" />
+          <Column gap={1}>
+            <Text render={<p />} variant="title">
+              Guided forest walk
+            </Text>
+            <Text emphasis="muted">Saturday 9:00 · 6 km through Hollow Wood</Text>
+          </Column>
         </Row>
-        <Theme {...theme} theme={other}>
-          <Surface background="page" padding={5} radius="xl" render={<Column gap={3} />}>
-            <Column gap={1}>
-              <Text render={<p />} variant="title">
-                Try the team plan
-              </Text>
-              <Text emphasis="muted">An area in the other theme, on this page.</Text>
-            </Column>
-            <Row gap={2}>
-              <Button size="sm">See plans</Button>
+        <Surface background="muted" padding={4} radius="sm" render={<Column gap={3} />}>
+          <Row gap={3} align="center" justify="between">
+            <Text>Route</Text>
+            <SegmentedControl
+              aria-label="Route"
+              size="sm"
+              value={route}
+              onValueChange={setRoute}
+              items={[
+                { value: 'short', label: 'Short' },
+                { value: 'long', label: 'Long' },
+              ]}
+            />
+          </Row>
+          <Switch label="Bring a dog" defaultChecked />
+        </Surface>
+        <Row gap={2} align="center" justify="between">
+          <Badge tone="success">8 places left</Badge>
+          <Row gap={2}>
+            <Button variant="secondary">Not now</Button>
+            <Button className="catalogue-walk-book">Book a place</Button>
+          </Row>
+        </Row>
+        <GreenArea theme={other} className="catalogue-walk-foot">
+          <Surface
+            background="default"
+            padding={3}
+            radius="sm"
+            render={<Row gap={3} align="center" justify="between" />}
+          >
+            <Row gap={2} align="center">
+              <Bedtime className="catalogue-walk-icon" />
+              <Text>Night walk · Friday 21:00</Text>
             </Row>
+            <Button size="sm">Join</Button>
           </Surface>
-        </Theme>
-      </Column>
+        </GreenArea>
+      </Surface>
+    </GreenArea>
+  );
+}
+
+/** A card in a color family of its own, with an area in the other theme, played by the pointer. */
+function OwnColorsFigure() {
+  return (
+    <Figure label="Colors of its own" motion="the card in its own colors">
+      <ForestWalk />
     </Figure>
   );
 }

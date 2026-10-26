@@ -289,7 +289,15 @@
 }
 .catalogue-role-swatch {
   display: flex;
+  box-sizing: border-box;
   block-size: 2.25rem;
+  border: 1px solid var(--env-color-border-muted);
+  border-block-end-width: 0;
+}
+/* Every swatch has a hairline edge, so a white one shows on the white page; one hairline between
+   two swatches, and the strip's last closes it. */
+.catalogue-role-swatches > li:last-child > .catalogue-role-swatch {
+  border-block-end-width: 1px;
 }
 .catalogue-role-swatch > span {
   flex: 1;
@@ -330,4 +338,19 @@
 .catalogue-theme-screen {
   inline-size: min(100%, 26rem);
   border-radius: var(--env-radius-xl);
+}
+
+/* Colors of its own: a card in a green family of its own, its foot in the other theme. Its theme
+   boundaries paint no page of their own: the card's surface is its fill, with a surface's corners. */
+.catalogue-walk {
+  inline-size: min(100%, 27rem);
+  border-radius: var(--env-radius-xl);
+  background: none;
+}
+.catalogue-walk-foot {
+  background: none;
+}
+.catalogue-walk-icon {
+  flex: none;
+  color: var(--env-color-fg-accent);
 }

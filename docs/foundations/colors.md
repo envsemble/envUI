@@ -103,8 +103,8 @@ A tone means the same on every component, on badges, alerts, buttons, toasts and
 
 Where a screen needs a color the roles don't give, most components, such as buttons, fields, cards, badges, alerts, menus and navigation, can take colors of their own, and one area can take the other theme.
 
-- A button in a brand color keeps its hover and press, made from its own color, and its label stays readable in every state.
-- An area in the other theme, such as a dark banner on a light page, brings all its roles along.
+- An area in a color family of its own, such as a brand's green, keeps the hover and press of its buttons and switches, made from its own colors.
+- An area in the other theme, such as a dark band on a light card, brings all its roles along.
 
 ```tsx figure=OwnColors
 
