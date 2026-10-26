@@ -61,10 +61,12 @@ Each role in the theme you are reading in; a status shows its text, soft fill an
 
 ```
 
-1. **Surfaces**: Page, Surface, Filled surface, Raised surface, Field, Backdrop.
-2. **Text and lines**: Text, Supporting text, Link, Edges, Hairlines, Focus ring.
-3. **Actions and selection**: Accent, On the accent, Quiet action, Important, Selected, On the selected.
-4. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
+1. **Backgrounds**: Page, Surface, Filled surface, Raised surface, Field, Backdrop.
+2. **Text**: Text, Supporting text, Link, On the accent, On the selected.
+3. **Edges**: Edges, Hairlines, Focus ring.
+4. **Accent and selection**: Accent, Quiet action, Important, Selected.
+5. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
+6. **Each status**: Text, Soft fill, Solid fill.
 
 ### Light, dark and high contrast
 
@@ -89,21 +91,19 @@ A tone means the same on every component, on badges, alerts, buttons, toasts and
 
 ```
 
-| Tone    | Use for                                                  |
-| ------- | -------------------------------------------------------- |
-| Neutral | No particular state, such as archived, and most actions. |
-| Accent  | The main action, and the current or highlighted state.   |
-| Info    | Something to know, neither good nor bad, such as a tip.  |
-| Success | Healthy, ready or saved.                                 |
-| Warning | Needs attention soon.                                    |
-| Danger  | Failed, or an action that destroys something.            |
-| Done    | Completed work.                                          |
+1. **Neutral**: No particular state, such as archived, and most actions.
+2. **Accent**: The main action, and the current or highlighted state.
+3. **Info**: Something to know, neither good nor bad, such as a tip.
+4. **Success**: Healthy, ready or saved.
+5. **Warning**: Needs attention soon.
+6. **Danger**: Failed, or an action that destroys something.
+7. **Done**: Completed work.
 
 ### Colors of its own
 
 Where a screen needs a color the roles don't give, most components, such as buttons, fields, cards, badges, alerts, menus and navigation, can take colors of their own, and one area can take the other theme.
 
-- An area in a color family of its own, such as a brand's green, keeps the hover and press of its buttons and switches, made from its own colors.
+- An area in a color family of its own, such as a brand's terracotta, keeps the hover and press of its buttons and switches, made from its own colors.
 - An area in the other theme, such as a dark band on a light card, brings all its roles along.
 
 ```tsx figure=OwnColors
