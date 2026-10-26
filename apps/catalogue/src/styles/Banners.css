@@ -60,10 +60,13 @@
   background: var(--env-color-bg-muted);
 }
 
-/* The shapes' layer covers the banner and is a container of its size. */
+/* The shapes' layer covers the banner and is a container of its size. It clips the shapes itself,
+   as the banner does: a filled shape reaching past the banner's edge would otherwise count, for
+   the accessibility scan, as the background of what is beside the banner, such as its contents. */
 .docs-banner-shapes {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   container-type: size;
   pointer-events: none;
 }
