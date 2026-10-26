@@ -105,6 +105,10 @@ test('a changed spec runs itself, and a changed helper the specs that import it'
   assert.deepEqual(specs('tests/browser/Servers.ts'), []);
 });
 
+test('a module of the documentation generator runs the specs of the site', () => {
+  assert.ok([...selectScope(['scripts/docs/Validate.mjs']).specs.keys()].includes('DocsPages'));
+});
+
 test('the site runs its specs and live development, with the builds they open', () => {
   const scope = selectScope(['apps/site/src/main.tsx']);
   assert.deepEqual([...scope.specs.keys()].sort(), [
