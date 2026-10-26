@@ -98,7 +98,9 @@ const keyboardFocused = new Map<Element, (element: Element) => void>();
 /**
  * Keeps the keyboard's focus inside a preview that has it: the preview is inert, so where one of
  * its components moves focus, as an arrow key along tabs does, the pointer's focus follows
- * instead (VirtualPointer.keyboardFocus). Elsewhere, focus is the browser's, as before.
+ * instead (VirtualPointer.keyboardFocus), and a component asking whether an element of it matches
+ * :focus or :focus-visible is answered by the pointer's mark, as its stylesheets are
+ * (mirrorPointerStates). Elsewhere, focus is the browser's, as before.
  */
 function keepFocus() {
   const proto = HTMLElement.prototype;
@@ -108,6 +110,19 @@ function keepFocus() {
   proto.focus = function (options?: FocusOptions) {
     for (const [scope, follow] of keyboardFocused) if (scope.contains(this)) return follow(this);
     return focus.call(this, options);
+  };
+  const { matches } = Element.prototype;
+  Element.prototype.matches = function (selectors: string) {
+    if (selectors.includes(':focus'))
+      for (const scope of keyboardFocused.keys())
+        if (scope.contains(this))
+          return matches.call(
+            this,
+            selectors
+              .replace(/:focus-visible\b/g, `[${focusMark}]`)
+              .replace(/:focus\b(?!-)/g, `[${focusMark}]`),
+          );
+    return matches.call(this, selectors);
   };
 }
 

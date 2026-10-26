@@ -467,8 +467,9 @@ export function usePointer(
       const next = state.time + (now - last);
       last = now;
       // While another preview's pointer holds its button down, this one waits: a page has one
-      // mouse, and a move without a button, on the document, would end the other's drag.
-      if (!current.resume()) {
+      // mouse, and a move without a button, on the document, would end the other's drag. A
+      // script of keys alone, which never moves the pointer, goes on.
+      if (plan.moves.length > 0 && !current.resume()) {
         frame = requestAnimationFrame(tick);
         return;
       }
