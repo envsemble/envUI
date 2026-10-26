@@ -8,8 +8,9 @@ import {
   Surface,
   Text,
 } from '@envsemble/envui';
+import { WidthSweep } from '../WidthSweep';
 import type { FoundationFigure } from './FoundationFigures';
-import type { LegendEntry } from './Topic';
+import { Figure, type LegendEntry } from './Topic';
 
 /*
  * The figures of the Adapting to width foundation. Its words are in docs/foundations/responsive.md,
@@ -42,34 +43,35 @@ function Profile() {
   );
 }
 
-/** The widths of the two frames, in the legend's order. */
-const widths = ['narrow', 'wide'] as const;
-
 /**
- * The same profile in a narrow frame and a wide one, one above the other, each named by the
- * legend's entry of the same place.
+ * The profile in one frame whose width sweeps from a narrow pane to room to spare and back, its
+ * ruler naming the window class, slowly and held at each end; the legend's two entries, below it,
+ * say what changes at each.
  */
 function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
   return (
-    <div className="catalogue-width-figures">
-      {widths.map((width, index) => (
-        <figure key={width} className="site-topic-figure" aria-label={legend[index]?.name}>
-          <div className="site-foundation-stage" data-figure="example" inert>
-            <div className="catalogue-width-sample" data-width={width}>
-              <Profile />
+    <Figure
+      label="One profile, from a narrow pane to room to spare"
+      motion="the profile from 18 to 44 rem wide"
+      legend={
+        <div className="catalogue-width-legend">
+          {legend.map((entry) => (
+            <div key={entry.name} className="catalogue-topic-text">
+              <Text render={<p />} variant="title">
+                {entry.name}
+              </Text>
+              <Text render={<p />} variant="body-sm" emphasis="muted">
+                {entry.text}
+              </Text>
             </div>
-          </div>
-          <figcaption className="catalogue-topic-text">
-            <Text render={<p />} variant="title">
-              {legend[index]?.name}
-            </Text>
-            <Text variant="body-sm" emphasis="muted">
-              {legend[index]?.text}
-            </Text>
-          </figcaption>
-        </figure>
-      ))}
-    </div>
+          ))}
+        </div>
+      }
+    >
+      <WidthSweep widths={[18, 44]} hold={1600} classes>
+        <Profile />
+      </WidthSweep>
+    </Figure>
   );
 }
 
