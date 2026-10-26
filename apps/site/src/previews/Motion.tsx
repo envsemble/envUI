@@ -11,7 +11,7 @@ import {
   type RefObject,
 } from 'react';
 import { PortalContainer } from '@envsemble/envui';
-import { isVirtual, VirtualPointer } from './VirtualPointer';
+import { isVirtual, VirtualPointer, type CarriedFile } from './VirtualPointer';
 
 /*
  * The site's animated previews: a tile's, which plays while the pointer or the keyboard is on it,
@@ -155,6 +155,28 @@ export function useTimeline(durations: readonly number[]) {
 const sharedClocks = new Map<string, { played: number; since: number | null; players: number }>();
 
 /**
+ * Joins a shared clock while a preview plays on it: `time` is how long the clock has played, and
+ * `leave` stops counting for this preview. A new clock starts `from` that time.
+ */
+function joinClock(clock: string, from: number) {
+  let shared = sharedClocks.get(clock);
+  if (!shared) {
+    shared = { played: from, since: null, players: 0 };
+    sharedClocks.set(clock, shared);
+  }
+  const own = shared;
+  if (own.players++ === 0) own.since = performance.now();
+  return {
+    time: () => own.played + performance.now() - (own.since ?? performance.now()),
+    leave: () => {
+      if (--own.players > 0) return;
+      own.played += performance.now() - (own.since ?? performance.now());
+      own.since = null;
+    },
+  };
+}
+
+/**
  * useTimeline for previews that play one timeline together, such as a do and a don't side by side:
  * every preview that names the same `clock` takes its step from one clock, so they keep in step
  * however their timers fall. The clock runs while any of them plays; one paused by itself holds
@@ -172,16 +194,10 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
     const total = lengths.reduce((sum, length) => sum + length, 0);
     if (!playing || lengths.length < 2) return;
     // A new clock leaves the still at once, as a timeline that starts playing does.
-    let shared = sharedClocks.get(clock);
-    if (!shared) {
-      shared = { played: Math.max(0, lengths[0]! - firstWait * 2), since: null, players: 0 };
-      sharedClocks.set(clock, shared);
-    }
-    const own = shared;
-    if (own.players++ === 0) own.since = performance.now();
+    const own = joinClock(clock, Math.max(0, lengths[0]! - firstWait * 2));
     let timer: number;
     const tick = () => {
-      const time = (own.played + performance.now() - (own.since ?? performance.now())) % total;
+      const time = own.time() % total;
       let start = 0;
       let index = 0;
       while (index < lengths.length - 1 && start + lengths[index]! <= time)
@@ -192,10 +208,7 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
     timer = window.setTimeout(tick);
     return () => {
       window.clearTimeout(timer);
-      if (--own.players === 0) {
-        own.played += performance.now() - (own.since ?? performance.now());
-        own.since = null;
-      }
+      own.leave();
     };
   }, [playing, clock, paced]);
   return playing || rest === 'hold' ? step : 0;
@@ -222,8 +235,8 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  * - `wheel`, px, down or along `axis` `x` (negative: up, or back): the wheel turned over the
  *   element under the pointer, which scrolls the nearest box around it in the preview that can
  *   scroll, smoothly, over `duration` ms.
- * - `carry`, a file's name, `as` its type: the pointer picks up a file, as from the desktop, so
- *   its moves drag it; `drop` drops it where the pointer is.
+ * - `carry`, a file's name, `as` its type and `size` its bytes, or a list of files: the pointer
+ *   picks them up, as from the desktop, so its moves drag them; `drop` drops them where it is.
  */
 export type PointerStep =
   | { wait: number }
@@ -240,7 +253,8 @@ export type PointerStep =
   | { keyDown: string; on?: string }
   | { keyUp: string; on?: string }
   | { wheel: number; axis?: 'x' | 'y'; duration?: number }
-  | { carry: string; as: string }
+  | { carry: string; as: string; size?: number }
+  | { carry: readonly CarriedFile[] }
   | { drop: true };
 
 /** A point of an element of the preview, as fractions of its box. */
@@ -276,6 +290,8 @@ interface Plan {
     text?: string | null;
     /** The field typed into, or the element a key is pressed on. */
     target?: string;
+    /** The files carried. */
+    files?: readonly CarriedFile[];
     /** The button pressed or released: 2 for the secondary one. */
     button?: 0 | 2;
   }[];
@@ -350,7 +366,14 @@ function planOf(script: readonly PointerStep[]): Plan {
     } else if ('key' in step)
       plan.happenings.push({ time, kind: 'key', cue: step.key, target: step.on });
     else if ('carry' in step)
-      plan.happenings.push({ time, kind: 'carry', cue: step.carry, target: step.as });
+      plan.happenings.push({
+        time,
+        kind: 'carry',
+        files:
+          typeof step.carry === 'string' && 'as' in step
+            ? [{ name: step.carry, type: step.as, size: step.size }]
+            : (step.carry as readonly CarriedFile[]),
+      });
     else if ('drop' in step) plan.happenings.push({ time, kind: 'drop' });
     else {
       plan.happenings.push({ time, kind: 'leave' });
@@ -406,10 +429,17 @@ function positionAt(scope: Element, plan: Plan, time: number) {
  * - `onCue` hears its cues, the moments where the preview itself changes.
  * - `onRest`, where given, takes the preview back to its still as it stops, in place of drawing
  *   it anew, such as dismissing what a cue showed.
+ * - `clock`, a name, plays the script on the clock of the previews that name it, as
+ *   useSharedTimeline does, for a do and a don't whose pointers act side by side in step: give
+ *   their scripts the same length.
  */
 export function usePointer(
   script: readonly PointerStep[],
-  { onCue, onRest }: { onCue?: (cue: string) => void; onRest?: () => void } = {},
+  {
+    onCue,
+    onRest,
+    clock: clockName,
+  }: { onCue?: (cue: string) => void; onRest?: () => void; clock?: string } = {},
 ) {
   const { playing, rest, root, claimRest } = use(PlaybackContext);
   const cueTo = useRef(onCue);
@@ -449,6 +479,7 @@ export function usePointer(
     const current = (pointer.current ??= new VirtualPointer(scope));
     let last = performance.now();
     let frame = 0;
+    const together = clockName ? joinClock(clockName, 0) : null;
     /** Moves the pointer on to a time of the plan, sending what happens on the way. */
     const advance = (to: number) => {
       const { done } = clock.current;
@@ -477,7 +508,7 @@ export function usePointer(
           continue;
         }
         if (happening.kind === 'carry') {
-          current.carry(happening.cue!, happening.target!);
+          current.carry(happening.files!);
           continue;
         }
         if (happening.kind === 'drop') {
@@ -504,13 +535,18 @@ export function usePointer(
     };
     const tick = (now: number) => {
       const state = clock.current;
-      const next = state.time + (now - last);
+      const next = together ? together.time() % plan.length : state.time + (now - last);
       last = now;
       // While another preview's pointer holds its button down, this one waits: a page has one
-      // mouse, and a move without a button, on the document, would end the other's drag.
+      // mouse, and a move without a button, on the document, would end the other's drag. On a
+      // shared clock, its time goes on meanwhile.
       if (!current.resume()) {
         frame = requestAnimationFrame(tick);
         return;
+      }
+      if (together && next < state.time) {
+        advance(plan.length);
+        state.done = -1;
       }
       state.time = next;
       if (state.time >= plan.length) {
@@ -524,9 +560,10 @@ export function usePointer(
     frame = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(frame);
+      together?.leave();
       current.suspend();
     };
-  }, [playing, root, plan]);
+  }, [playing, root, plan, clockName]);
 }
 
 /**
