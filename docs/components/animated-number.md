@@ -102,7 +102,7 @@ Keep the words in the same sentence as the number, and match them to it: 1 seat,
 
 ### Usage
 
-AnimatedNumber shows its `value` as text inside a sentence or a label; when `value` changes, the new number rolls in, up as it grows and down as it shrinks, and with reduced motion it only fades in. Keep the words beside it in the same element, and match them to the number.
+AnimatedNumber shows its `value` as text inside a sentence or a label; when `value` changes, the new number rolls in, up as it grows and down as it shrinks, and with reduced motion it only fades in. Keep the words beside it in the same element, and match them to the number; in a Button's label, the words and the number stay one line of text.
 
 ```tsx source=ShowResults
 

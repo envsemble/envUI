@@ -295,6 +295,8 @@ ConfirmButton with `icon` and an `aria-label` is icon-only until armed. When the
 
 `orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, at the far end of a wide button, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
 
+The label's parts are flex items the button's gap spaces apart, such as its words and a Badge. Words with an AnimatedNumber or an inline element, such as `<strong>`, in their line stay one run of text, `env-button-text`, spaced by their own word spaces.
+
 ### Customize
 
 `--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` color one Button or IconButton, through `style` or CSS; hover, focus and press follow them.

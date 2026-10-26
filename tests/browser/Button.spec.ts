@@ -68,6 +68,33 @@ test.describe('on a coarse pointer', () => {
   });
 });
 
+test("a number within a label's words stays in their line, and a badge keeps the button's gap", async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=button-counts`);
+  const button = page.getByTestId('show-tasks-light');
+  await expect(button).toHaveText('Show 33 tasks');
+  const spacing = await button.evaluate((element) => {
+    const number = element.querySelector('.env-animated-number')!.getBoundingClientRect();
+    const words = document.createRange();
+    const text = element.querySelector('.env-button-text')!.firstChild!;
+    words.setStart(text, 0);
+    words.setEnd(text, text.textContent!.trimEnd().length);
+    return {
+      // The space between "Show" and the number: a word space, narrower than the button's gap.
+      space: number.left - words.getBoundingClientRect().right,
+      gap: parseFloat(getComputedStyle(element).columnGap),
+    };
+  });
+  expect(spacing.space).toBeGreaterThan(0);
+  expect(spacing.space).toBeLessThan(spacing.gap);
+  // A badge is an item of its own, the gap from the words before it: only the number's button
+  // holds a run of text.
+  await expect(
+    page.getByTestId('button-counts-light').locator('.env-button .env-button-text'),
+  ).toHaveCount(1);
+});
+
 test('a pending button keeps its size and name, reports busy and ignores presses', async ({
   page,
   browserName,
