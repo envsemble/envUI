@@ -2625,6 +2625,53 @@
       ],
       "states": []
     },
+    "LineArt": {
+      "root": "env-line-art",
+      "source": "packages/ui/src/layout/LineArt.tsx",
+      "parts": [
+        {
+          "class": "env-line-art",
+          "description": "The drawing: an SVG of hairlines that fills its container's box."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-align",
+          "values": [
+            "center",
+            "end",
+            "start"
+          ],
+          "parts": [
+            "env-line-art"
+          ]
+        },
+        {
+          "attribute": "data-drawing",
+          "values": [
+            "ford-circles",
+            "golden-section",
+            "gothic-tracery",
+            "graded-quadtree",
+            "harmonic-division",
+            "logarithmic-grid",
+            "monochord",
+            "pappus-chain",
+            "pointed-arcade",
+            "quartered-square",
+            "root-rectangles",
+            "root-two-halving",
+            "sacred-cut",
+            "square-circle-triangle",
+            "triangle-and-circles",
+            "whirling-squares"
+          ],
+          "parts": [
+            "env-line-art"
+          ]
+        }
+      ]
+    },
     "Link": {
       "root": "env-link",
       "source": "packages/ui/src/actions/Link.tsx",

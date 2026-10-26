@@ -1,0 +1,27 @@
+/* LineArt: a geometric drawing in hairlines that fills its container's box, covering it and
+   cropped from the side away from where it sits, its start by default. Every line is a hairline at
+   any size, in the muted edge color, barely there in every theme. Right to left, the drawing is
+   mirrored, so it sits at the end and is cropped from the start there too. */
+.env-line-art {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: hidden;
+  fill: none;
+  stroke: var(--env-color-border-muted);
+  stroke-width: 1px;
+  pointer-events: none;
+}
+.env-line-art > * {
+  vector-effect: non-scaling-stroke;
+}
+.env-line-art:dir(rtl) {
+  scale: -1 1;
+}
+
+/* In forced colors, where the muted edge is gone, the lines take the system's gray text color. */
+@media (forced-colors: active) {
+  .env-line-art {
+    stroke: GrayText;
+  }
+}

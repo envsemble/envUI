@@ -32,6 +32,10 @@
   align-items: start;
   min-inline-size: 0;
 }
+.catalogue-specimen-grid[data-size='small'] {
+  --catalogue-specimen-min: 8rem;
+  --catalogue-specimen-width: 10rem;
+}
 .catalogue-specimen-grid[data-size='compact'] {
   --catalogue-specimen-min: 12rem;
   --catalogue-specimen-width: 18rem;

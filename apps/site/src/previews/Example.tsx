@@ -117,7 +117,8 @@ export function SpecimenGrid({
   size = 'field',
 }: {
   children: ReactNode;
-  size?: 'compact' | 'field' | 'card' | 'wide';
+  /** small: a run of small pictures, such as drawings, four across, or two where four don't fit. */
+  size?: 'small' | 'compact' | 'field' | 'card' | 'wide';
 }) {
   const staged = useContext(SpecimenStage);
   return (

@@ -52,24 +52,13 @@
   background: var(--env-color-bg-default);
 }
 
-/* The catalogue's picture (CatalogueBannerLines.tsx): figures in thin lines at the banner's end,
-   every line one hairline at any size, in the muted edge color, barely there. Cropped from its start where the
-   banner is narrow; right to left, drawn from the other side. */
+/* The catalogue's picture (CatalogueBannerLines.tsx): a LineArt drawing in a box at the banner's
+   end, cropped from its start where the banner is narrow. */
 .catalogue-banner-lines {
   position: absolute;
   inset-block: 0;
   inset-inline-end: 0;
-  block-size: 100%;
   inline-size: min(48%, 42rem);
-}
-.catalogue-banner-lines :is(rect, circle, ellipse, line, polyline, polygon, path) {
-  fill: none;
-  stroke: var(--env-color-border-muted);
-  stroke-width: 1px;
-  vector-effect: non-scaling-stroke;
-}
-.catalogue-banner-lines:dir(rtl) {
-  scale: -1 1;
 }
 
 /* The shapes' layer covers the banner and is a container of its size. It clips the shapes itself,
