@@ -1,63 +1,63 @@
-.docs-article {
-  padding: 0 var(--docs-gutter) 3rem;
+.site-article {
+  padding: 0 var(--site-gutter) 3rem;
 }
-:where(.docs-article) p {
+:where(.site-article) p {
   max-inline-size: 75ch;
 }
-.docs-overview {
-  padding: 0 var(--docs-gutter) var(--env-space-8);
+.catalogue-overview {
+  padding: 0 var(--site-gutter) var(--env-space-8);
 }
-.docs-overview {
+.catalogue-overview {
   padding-block-start: var(--env-space-5);
   text-align: center;
 }
-.docs-overview-hero {
+.catalogue-overview-hero {
   text-align: center;
 }
-.docs-overview-title {
+.catalogue-overview-title {
   inline-size: min(20rem, 100%);
 }
-.docs-overview-logo {
+.catalogue-overview-logo {
   display: block;
   width: 100%;
   height: auto;
   color: var(--env-color-fg-control);
 }
-.docs-catalogue-content {
+.catalogue-catalogue-content {
   height: 100%;
   text-align: center;
 }
-.docs-catalogue-content > svg {
+.catalogue-catalogue-content > svg {
   flex-shrink: 0;
   color: var(--env-color-fg-muted);
 }
-.docs-catalogue-grid {
+.catalogue-catalogue-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   gap: var(--env-space-5);
   container-type: inline-size;
 }
 /* The home page's three destinations share a row where it is wide enough. */
-.docs-explore-grid {
+.catalogue-explore-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
 }
 /* The wordmark and what envUI is under it, as wide as the hero, so the wordmark takes its own
    width; the line keeps to a measure that breaks it into two balanced lines. */
-.docs-overview-brand {
+.catalogue-overview-brand {
   inline-size: 100%;
 }
-.docs-overview-lede {
+.catalogue-overview-lede {
   max-inline-size: 34rem;
   margin: 0;
   text-wrap: balance;
 }
 /* The facts under the hero's buttons: the version as a quiet badge, then the counts in one line, a
    middle dot between them. In a narrow hero the counts go under the version and stay one line. */
-.docs-overview-facts {
+.catalogue-overview-facts {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.docs-overview-facts span > * + *::before {
+.catalogue-overview-facts span > * + *::before {
   margin-inline: var(--env-space-2);
   content: '·';
 }

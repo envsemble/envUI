@@ -1,6 +1,6 @@
 import type { LinkComponentProps } from '@envsemble/envui';
 import { navigate, routeOfLink } from './Address';
-import { normalizeRoute } from './DocumentationRoutes';
+import { normalizeRoute } from './SiteRoutes';
 
 /**
  * The anchor of every envUI destination on the site, through LinkProvider. A plain press on a link

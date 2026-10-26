@@ -36,7 +36,7 @@ function RolesFigure({ legend }: FigureWords) {
   return (
     <Figure
       label="The color roles of a screen"
-      className="docs-marked-stage"
+      className="catalogue-marked-stage"
       legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
@@ -44,37 +44,37 @@ function RolesFigure({ legend }: FigureWords) {
           background="page"
           padding={5}
           radius="xl"
-          data-docs-mark="1"
-          className="docs-roles"
+          data-catalogue-mark="1"
+          className="catalogue-roles"
         >
           <Surface
             background="default"
             padding={5}
             radius="xl"
-            data-docs-mark="2"
+            data-catalogue-mark="2"
             render={<Column gap={5} />}
           >
             <Column gap={1} align="start">
-              <Text render={<h3 />} variant="title" data-docs-mark="4">
+              <Text render={<h3 />} variant="title" data-catalogue-mark="4">
                 Quarterly report
               </Text>
-              <Text emphasis="muted" data-docs-mark="5">
+              <Text emphasis="muted" data-catalogue-mark="5">
                 Updated today by Priya Shah
               </Text>
             </Column>
             <Card
               background="muted"
               padding={4}
-              data-docs-mark="3"
+              data-catalogue-mark="3"
               headingLevel={4}
               title="Budget"
               description="Within the plan for this quarter"
             />
             <Row justify="between" align="center" gap={3}>
-              <Badge tone="success" data-docs-mark="7">
+              <Badge tone="success" data-catalogue-mark="7">
                 On track
               </Badge>
-              <Button data-docs-mark="6">Share</Button>
+              <Button data-catalogue-mark="6">Share</Button>
             </Row>
           </Surface>
         </Surface>
@@ -123,24 +123,24 @@ const roleName = (text: string | undefined, index: number) =>
 /** The roles in the reader's theme, each group a continuous strip of swatches: a specimen of the system. */
 function SwatchesFigure({ legend }: FigureWords) {
   return (
-    <div className="docs-role-groups">
+    <div className="catalogue-role-groups">
       <div>
         {roleGroups.map((roles, group) => {
           const title = legend[group]?.name ?? '';
           return (
-            <section key={group} className="docs-role-group">
+            <section key={group} className="catalogue-role-group">
               <Text render={<h4 />} variant="title">
                 {title}
               </Text>
-              <ul className="docs-role-swatches" aria-label={title}>
+              <ul className="catalogue-role-swatches" aria-label={title}>
                 {roles.map((colors, index) => (
                   <li key={colors.join()}>
-                    <span className="docs-role-swatch" aria-hidden="true">
+                    <span className="catalogue-role-swatch" aria-hidden="true">
                       {colors.map((color) => (
                         <span key={color} style={{ background: `var(--env-color-${color})` }} />
                       ))}
                     </span>
-                    <Text render={<span />} className="docs-topic-legend-name">
+                    <Text render={<span />} className="catalogue-topic-legend-name">
                       {roleName(legend[group]?.text, index)}
                     </Text>
                   </li>
@@ -165,10 +165,10 @@ const themes: readonly { theme: ThemeValue; contrast: ThemeContrast }[] = [
 /** The same small screen in each theme and contrast, side by side. */
 function ThemesFigure({ legend }: FigureWords) {
   return (
-    <Figure label="One screen in each theme" className="docs-themes-stage">
-      <div className="docs-themes" inert>
+    <Figure label="One screen in each theme" className="catalogue-themes-stage">
+      <div className="catalogue-themes" inert>
         {themes.map((each, index) => (
-          <div key={`${each.theme}-${each.contrast}`} className="docs-theme-sample">
+          <div key={`${each.theme}-${each.contrast}`} className="catalogue-theme-sample">
             <Theme theme={each.theme} contrast={each.contrast}>
               <Surface background="page" padding={4} radius="xl">
                 <Surface background="default" padding={4} radius="xl" render={<Column gap={3} />}>
@@ -196,7 +196,7 @@ function ThemesFigure({ legend }: FigureWords) {
 /** The tones at work: badges in each, a warning, a note and a danger button. */
 function StatusFigure() {
   return (
-    <Figure label="Each tone at work" className="docs-status-stage">
+    <Figure label="Each tone at work" className="catalogue-status-stage">
       <Column gap={4} align="center" inert>
         <Row wrap justify="center" gap={2}>
           <Badge tone="accent">Current</Badge>

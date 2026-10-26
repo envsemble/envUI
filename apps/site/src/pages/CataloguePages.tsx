@@ -1,7 +1,7 @@
 import { Column } from '@envsemble/envui';
 import { PageHeader } from '../layout/PageHeader';
 import { catalogueTrail } from '../navigation/CatalogueTrail';
-import type { RoutePage } from '../navigation/DocumentationRoutes';
+import type { RoutePage } from '../navigation/SiteRoutes';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import type { Reference } from '../Reference';
@@ -92,7 +92,7 @@ export function FoundationPage({ page }: { page: RoutePage }) {
       {/* A foundation is its Markdown, with its figures in place. */}
       <TemplateContent document={page.document!} related={false} />
       {reference.id === 'icons' && (
-        <Column gap={4} className="docs-article docs-foundation-notes docs-icons-credit">
+        <Column gap={4} className="site-article catalogue-foundation-notes catalogue-icons-credit">
           <Documentation markdown={iconsCredit} path={reference.path} />
         </Column>
       )}
@@ -110,7 +110,7 @@ export function ComponentsPage({ page }: { page: RoutePage }) {
         description={page.summary}
         subject="components"
       />
-      <Column gap={7} className="docs-article docs-overview">
+      <Column gap={7} className="site-article catalogue-overview">
         <Catalogue />
       </Column>
     </>
@@ -127,7 +127,7 @@ export function PatternsPage({ page }: { page: RoutePage }) {
         description={page.summary}
         subject="patterns"
       />
-      <Column gap={7} className="docs-article docs-overview">
+      <Column gap={7} className="site-article catalogue-overview">
         <PatternCatalogue />
       </Column>
     </>

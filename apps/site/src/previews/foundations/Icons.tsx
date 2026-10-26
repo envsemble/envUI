@@ -23,7 +23,7 @@ import { Figure, FigureRun, type LegendEntry } from './Topic';
 function FollowTextFigure() {
   return (
     <Figure label="Icons take the color of their text">
-      <Column gap={4} align="center" inert className="docs-icons-sample">
+      <Column gap={4} align="center" inert className="catalogue-icons-sample">
         <Row gap={2} wrap justify="center" align="center">
           <Button startIcon={<Add />}>New report</Button>
           <Button variant="secondary" startIcon={<Edit />}>
@@ -46,7 +46,7 @@ const sample = [Home, Inbox, Star, Person, Settings] as const;
 function OutlinedAndFilledFigure({ legend }: { legend: readonly LegendEntry[] }) {
   return (
     <FigureRun
-      className="docs-icons-forms"
+      className="catalogue-icons-forms"
       figures={[false, true].map((filled, index) => ({
         name: legend[index]?.name ?? '',
         text: legend[index]?.text ?? '',

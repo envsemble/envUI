@@ -99,7 +99,7 @@ function LiveApplication({
       gap={0}
       role="group"
       aria-label="Example application"
-      className="docs-live-example"
+      className="site-live-example"
       // The application's page has the page's color: a shade darker stage shows its edges.
       data-stage="shaded"
       {...keepLinksInPlace}

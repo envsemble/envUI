@@ -65,7 +65,7 @@ export function LayoutCheckFixture() {
       <Column
         container="env-window"
         gap={0}
-        className="docs-live-example fixture-layout-check"
+        className="site-live-example fixture-layout-check"
         data-testid="layout-check-root"
       >
         <ExampleError>

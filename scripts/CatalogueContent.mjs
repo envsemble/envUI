@@ -103,7 +103,7 @@ export function codeColumns(markdown) {
 }
 
 /** A section's Markdown as the catalogue shows it: without what envUI and the application provide. */
-export function siteMarkdown(section, markdown) {
+export function catalogueMarkdown(section, markdown) {
   return withoutCodeColumns(
     providesSections.has(section.id) ? withoutProvides(markdown) : markdown,
   );
@@ -138,7 +138,7 @@ export function legendName(item) {
  * the developer part, with each figure's caption and each anatomy legend's names. Figures, their
  * code and specimens are not text.
  */
-export function siteText(document) {
+export function catalogueText(document) {
   const pieces = [{ where: 'summary', markdown: document.summary ?? '' }];
   const frontmatter = document.frontmatter ?? document.metadata ?? {};
   for (const text of frontmatter.useWhen ?? []) pieces.push({ where: 'useWhen', markdown: text });
@@ -150,7 +150,7 @@ export function siteText(document) {
       if (block.kind === 'markdown')
         pieces.push({
           where: section.title,
-          markdown: siteMarkdown(section, block.markdown),
+          markdown: catalogueMarkdown(section, block.markdown),
         });
       if (block.kind === 'figure') {
         // A foundation's figure: its caption and its legend's names and meanings.
@@ -189,8 +189,8 @@ export function inlineCodeOf(markdown) {
 }
 
 /** Each piece of inline code a page shows in the catalogue, with where it is. */
-export function siteInlineCode(document) {
-  return siteText(document).flatMap(({ where, markdown, text }) =>
+export function catalogueInlineCode(document) {
+  return catalogueText(document).flatMap(({ where, markdown, text }) =>
     (markdown !== undefined
       ? inlineCodeOf(markdown)
       : [...text.matchAll(/`([^`]+)`/g)].map((match) => match[1])
@@ -281,7 +281,7 @@ export const blockParagraphs = 3;
  * - **too many paragraphs**: a block holds at most three short paragraphs; more are two blocks
  *   with headings of their own.
  */
-export function siteStructure(document) {
+export function catalogueStructure(document) {
   const found = [];
   for (const section of document.sections ?? []) {
     if (docsOnlySections.has(section.id)) continue;
@@ -294,7 +294,7 @@ export function siteStructure(document) {
         afterAnatomy = block.kind === 'example' && block.role === 'anatomy';
         continue;
       }
-      const markdown = siteMarkdown(section, block.markdown);
+      const markdown = catalogueMarkdown(section, block.markdown);
       for (const token of marked.lexer(markdown)) {
         if (token.type === 'space') continue;
         const anatomyNote = afterAnatomy;
@@ -343,7 +343,7 @@ export function longParagraphs(document) {
     if (docsOnlySections.has(section.id)) continue;
     for (const block of section.blocks) {
       if (block.kind !== 'markdown') continue;
-      const markdown = siteMarkdown(section, block.markdown);
+      const markdown = catalogueMarkdown(section, block.markdown);
       for (const token of marked.lexer(markdown)) {
         if (token.type !== 'paragraph') continue;
         const text = readText(token.text);

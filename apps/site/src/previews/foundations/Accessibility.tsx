@@ -12,7 +12,7 @@ import { Figure } from './Topic';
 function KeyboardFigure({ caption }: { caption?: string }) {
   return (
     <Figure label="Move through a form with the keyboard" caption={caption}>
-      <Column gap={4} className="docs-keyboard-sample">
+      <Column gap={4} className="catalogue-keyboard-sample">
         <TextField label="Report title" defaultValue="Quarterly report" />
         <Checkbox label="Share with the team" defaultChecked />
         <Row gap={2} justify="end" align="center">

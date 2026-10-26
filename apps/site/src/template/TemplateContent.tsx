@@ -4,8 +4,8 @@ import { Documentation, GuidanceLists } from '../pages/Documentation';
 import type { Documentation as Document } from '../Reference';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
 import { FigureSection } from './Figures';
-import { siteSection } from './Provides';
-import { docsOnlySections } from '../../../../scripts/SiteContent.mjs';
+import { catalogueSection } from './Provides';
+import { docsOnlySections } from '../../../../scripts/CatalogueContent.mjs';
 import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { subscribeToAddress } from '../navigation/Address';
@@ -32,7 +32,7 @@ export function MetadataBadges({
   children?: ReactNode;
 }) {
   return (
-    <div className="docs-page-meta">
+    <div className="site-page-meta">
       {metadata.status && (
         <Badge tone={statusTones[metadata.status]}>
           {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
@@ -116,15 +116,15 @@ function Sections({
 }) {
   const shown = sections
     .filter((section) => !docsOnlySections.has(section.id))
-    .flatMap((section) => (provides ? section : (siteSection(section) ?? [])));
+    .flatMap((section) => (provides ? section : (catalogueSection(section) ?? [])));
   const end = related &&
     sections.some((section) => section.id === 'overview') &&
     reference.metadata && <Related metadata={reference.metadata} path={reference.path} />;
   return (
-    <div className="docs-section-groups">
+    <div className="site-section-groups">
       {groupSections(shown).map((group, index) =>
         group.length ? (
-          <div key={index} className="docs-article docs-template docs-figures docs-section-group">
+          <div key={index} className="site-article site-template site-figures site-section-group">
             {group.map((section) => (
               <Section key={section.id} reference={reference} section={section} />
             ))}
@@ -132,7 +132,7 @@ function Sections({
         ) : null,
       )}
       {end && (
-        <div className="docs-article docs-template docs-figures docs-section-group">{end}</div>
+        <div className="site-article site-template site-figures site-section-group">{end}</div>
       )}
     </div>
   );

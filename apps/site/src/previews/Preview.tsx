@@ -18,7 +18,7 @@ export function Preview({ specimen, children }: { specimen?: string; children: R
     <Column
       render={<Theme {...theme} />}
       gap={0}
-      className="docs-preview"
+      className="catalogue-preview"
       data-specimen={specimen}
       onClickCapture={preventExampleNavigation}
       onAuxClickCapture={preventExampleNavigation}

@@ -3,7 +3,7 @@
  * light, and the pages in samplePages in dark, light high contrast and dark high contrast as well.
  */
 import { expect, type Page } from '@playwright/test';
-import { allPages } from '../../apps/site/src/navigation/DocumentationRoutes';
+import { allPages } from '../../apps/site/src/navigation/SiteRoutes';
 
 export type ThemeName = 'light' | 'dark' | 'light-hc' | 'dark-hc';
 
@@ -76,7 +76,7 @@ export async function chooseScheme(page: Page, scheme: 'light' | 'dark') {
   await menu
     .getByRole('menuitemradio', { name: scheme === 'dark' ? 'Dark' : 'Light', exact: true })
     .click();
-  await page.locator(`.docs-app[data-env-theme="${scheme}"]`).waitFor();
+  await page.locator(`.site-app[data-env-theme="${scheme}"]`).waitFor();
   await page.keyboard.press('Escape');
   await expect(menu).toHaveCount(0);
 }

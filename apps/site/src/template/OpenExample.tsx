@@ -23,10 +23,10 @@ const union = (boxes: Edges[]): Edges => ({
  * the room, which keeps them clear of the stage's padding, where the callouts go.
  */
 const stageOf = (element: HTMLElement) => {
-  const room = element.closest<HTMLElement>('.docs-open-example');
+  const room = element.closest<HTMLElement>('.catalogue-open-example');
   if (room && getComputedStyle(room).contain.includes('layout')) return room;
   return (
-    element.closest<HTMLElement>('.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage') ??
+    element.closest<HTMLElement>('.site-live-example, .site-verdict-stage, .site-anatomy-stage') ??
     element
   );
 };
@@ -147,8 +147,8 @@ function inFlow(room: HTMLElement, layer: Element) {
  * it rather than over it: an anatomy figure's callouts keep clear of it.
  */
 export function openerBox(subject: HTMLElement): Edges | undefined {
-  const room = subject.querySelector<HTMLElement>('.docs-open-example');
-  const layer = room?.querySelector('.docs-overlay-layer');
+  const room = subject.querySelector<HTMLElement>('.catalogue-open-example');
+  const layer = room?.querySelector('.catalogue-overlay-layer');
   if (!room || !layer) return undefined;
   const found = overlays(layer as HTMLElement);
   if (!found.length || found.some((overlay) => placedOnStage(overlay, layer as HTMLElement)))
@@ -227,7 +227,7 @@ function keepScrollingInOpenExamples() {
     this: Element,
     options?: boolean | ScrollIntoViewOptions,
   ) {
-    const example = this.closest('.docs-open-example');
+    const example = this.closest('.catalogue-open-example');
     if (!example) return native.call(this, options);
     const block =
       typeof options === 'object'
@@ -280,11 +280,11 @@ export function OpenExample({ name, children }: { name: string; children: ReactN
     };
   }, [layer]);
   return (
-    <div ref={room} className="docs-open-example" data-open-example={name} inert>
+    <div ref={room} className="catalogue-open-example" data-open-example={name} inert>
       <PortalContainer container={layer} contained>
         {children}
       </PortalContainer>
-      <div ref={setLayer} className="docs-overlay-layer" />
+      <div ref={setLayer} className="catalogue-overlay-layer" />
     </div>
   );
 }

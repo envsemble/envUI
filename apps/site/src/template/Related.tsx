@@ -11,7 +11,7 @@ import { Column, Link, PortalContainer, Text, Theme, useTheme } from '@envsemble
 import { Article } from '@envsemble/envui/icons/Article';
 import type { DocumentationMetadata, StageFill } from '../DocumentationTypes';
 import { routeHref } from '../navigation/Address';
-import { pageHref, referencePages, routeOfDocument } from '../navigation/DocumentationRoutes';
+import { pageHref, referencePages, routeOfDocument } from '../navigation/SiteRoutes';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import { ExampleRender } from './LiveExample';
@@ -252,7 +252,7 @@ function useFit(
 export function TilePreview({
   preview,
   near,
-  className = 'docs-related-stage',
+  className = 'catalogue-related-stage',
   whole = false,
 }: {
   preview?: Preview;
@@ -288,10 +288,10 @@ export function TilePreview({
       data-empty={preview ? undefined : ''}
     >
       {!preview ? (
-        <Article className="docs-related-placeholder" aria-hidden />
+        <Article className="catalogue-related-placeholder" aria-hidden />
       ) : (
         shown && (
-          <div ref={canvas} className="docs-related-canvas" inert aria-hidden>
+          <div ref={canvas} className="catalogue-related-canvas" inert aria-hidden>
             {preview.open ? (
               <PortalContainer container={layer} contained>
                 {subject}
@@ -299,7 +299,7 @@ export function TilePreview({
             ) : (
               subject
             )}
-            {preview.open && <div ref={setLayer} className="docs-overlay-layer" />}
+            {preview.open && <div ref={setLayer} className="catalogue-overlay-layer" />}
           </div>
         )
       )}
@@ -333,22 +333,22 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
   const list = useRef<HTMLUListElement>(null);
   const near = useNear(list);
   return (
-    <ul ref={list} className="docs-related-tiles" data-count={alternatives.length}>
+    <ul ref={list} className="catalogue-related-tiles" data-count={alternatives.length}>
       {alternatives.map(({ key, name, href, preview, line }) => (
-        <li key={key} className="docs-related-tile">
+        <li key={key} className="catalogue-related-tile">
           <TilePreview preview={preview} near={near} />
           {/* The name is the link; it stretches over the picture, so a pointer can follow it from
               there too without a link around the preview, whose example may hold links itself. */}
-          <Text render={<span />} className="docs-related-name">
+          <Text render={<span />} className="catalogue-related-name">
             {href ? (
-              <Link href={href} className="docs-related-link">
+              <Link href={href} className="catalogue-related-link">
                 {name}
               </Link>
             ) : (
               name
             )}
           </Text>
-          <div className="docs-related-line">
+          <div className="catalogue-related-line">
             <Documentation markdown={line} path={path} />
           </div>
         </li>
@@ -365,7 +365,7 @@ export function Related({ metadata, path }: { metadata: DocumentationMetadata; p
   const alternatives = alternativesOf(metadata);
   if (!alternatives.length) return null;
   return (
-    <Column render={<section />} gap={4} className="docs-related" data-section="related">
+    <Column render={<section />} gap={4} className="catalogue-related" data-section="related">
       <Text render={<h2 />} variant="headline" id="related">
         Related
       </Text>

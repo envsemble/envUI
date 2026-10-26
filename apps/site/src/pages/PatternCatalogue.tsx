@@ -1,4 +1,4 @@
-import { pagesOf } from '../navigation/DocumentationRoutes';
+import { pagesOf } from '../navigation/SiteRoutes';
 import { Gallery } from '../template/Gallery';
 
 /**

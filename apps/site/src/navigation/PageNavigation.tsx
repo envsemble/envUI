@@ -1,7 +1,7 @@
 import { Pager } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { pagesOf, type RoutePage } from './DocumentationRoutes';
+import { pagesOf, type RoutePage } from './SiteRoutes';
 import { routeHref } from './Address';
 
 /** The previous and next pages of the page's part, the catalogue or the Docs, in reading order. */
@@ -13,7 +13,7 @@ export function PageNavigation({ page }: { page: RoutePage }) {
   const next = pages[index + 1];
   return (
     <Pager.Root
-      className="docs-page-navigation"
+      className="site-page-navigation"
       previous={
         previous && {
           href: routeHref(previous.path),

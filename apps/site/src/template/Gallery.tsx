@@ -1,7 +1,7 @@
 import { useRef, type CSSProperties } from 'react';
 import { Column, Link, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
-import type { RoutePage } from '../navigation/DocumentationRoutes';
+import type { RoutePage } from '../navigation/SiteRoutes';
 import { galleryPreviews } from '../previews/GalleryPreviews';
 import { hasExample } from './LiveExample';
 import { previewOf, TilePreview, useNear, type Preview } from './Related';
@@ -42,8 +42,8 @@ function windowOf(page: RoutePage) {
   return (
     size &&
     ({
-      '--docs-gallery-window-width': `${size.width}rem`,
-      '--docs-gallery-window-height': `${size.height}rem`,
+      '--catalogue-gallery-window-width': `${size.width}rem`,
+      '--catalogue-gallery-window-height': `${size.height}rem`,
     } as CSSProperties)
   );
 }
@@ -58,16 +58,21 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   const near = useNear(tile);
   const Heading = level === 2 ? 'h2' : 'h3';
   return (
-    <li ref={tile} className="docs-gallery-tile" style={windowOf(page)}>
+    <li ref={tile} className="catalogue-gallery-tile" style={windowOf(page)}>
       <TilePreview
         preview={galleryPreviewOf(page)}
         near={near}
-        className="docs-related-stage docs-gallery-stage"
+        className="catalogue-related-stage catalogue-gallery-stage"
         whole
       />
       {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
-      <Text render={<Heading />} variant="body-sm" emphasis="muted" className="docs-gallery-name">
-        <Link href={routeHref(page.path)} underline={false} className="docs-gallery-link">
+      <Text
+        render={<Heading />}
+        variant="body-sm"
+        emphasis="muted"
+        className="catalogue-gallery-name"
+      >
+        <Link href={routeHref(page.path)} underline={false} className="catalogue-gallery-link">
           {page.label ?? page.title}
         </Link>
       </Text>
@@ -82,21 +87,26 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
  */
 export function Gallery({ groups }: { groups: GalleryGroup[] }) {
   return (
-    <Column gap={0} className="docs-gallery">
+    <Column gap={0} className="catalogue-gallery">
       {groups.map((group) =>
         group.title ? (
           <Column render={<section aria-labelledby={group.id} />} gap={5} key={group.id}>
-            <Text render={<h2 />} variant="headline" id={group.id} className="docs-gallery-group">
+            <Text
+              render={<h2 />}
+              variant="headline"
+              id={group.id}
+              className="catalogue-gallery-group"
+            >
               {group.title}
             </Text>
-            <ul className="docs-gallery-grid">
+            <ul className="catalogue-gallery-grid">
               {group.pages.map((page) => (
                 <GalleryTile key={page.path} page={page} level={3} />
               ))}
             </ul>
           </Column>
         ) : (
-          <ul className="docs-gallery-grid" key={group.id}>
+          <ul className="catalogue-gallery-grid" key={group.id}>
             {group.pages.map((page) => (
               <GalleryTile key={page.path} page={page} level={2} />
             ))}

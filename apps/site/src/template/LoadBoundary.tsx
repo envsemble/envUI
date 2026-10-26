@@ -259,7 +259,7 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
     // Until a retry, the content stands on its own, as the page lays it out.
     if (!wrapped) return content;
     return (
-      <div ref={this.wrapper} tabIndex={-1} className="docs-load-boundary">
+      <div ref={this.wrapper} tabIndex={-1} className="site-load-boundary">
         {content}
       </div>
     );

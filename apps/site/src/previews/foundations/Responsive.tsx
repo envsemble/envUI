@@ -51,15 +51,15 @@ const widths = ['narrow', 'wide'] as const;
  */
 function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
   return (
-    <div className="docs-width-figures">
+    <div className="catalogue-width-figures">
       {widths.map((width, index) => (
-        <figure key={width} className="docs-topic-figure" aria-label={legend[index]?.name}>
-          <div className="docs-foundation-stage" data-figure="example" inert>
-            <div className="docs-width-sample" data-width={width}>
+        <figure key={width} className="site-topic-figure" aria-label={legend[index]?.name}>
+          <div className="site-foundation-stage" data-figure="example" inert>
+            <div className="catalogue-width-sample" data-width={width}>
               <Profile />
             </div>
           </div>
-          <figcaption className="docs-topic-text">
+          <figcaption className="catalogue-topic-text">
             <Text render={<p />} variant="title">
               {legend[index]?.name}
             </Text>

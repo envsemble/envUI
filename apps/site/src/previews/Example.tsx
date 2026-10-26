@@ -33,7 +33,7 @@ export const SpecimenStage = createContext(false);
  */
 function FoundationStage({ children }: { children: ReactNode }) {
   return (
-    <div className="docs-foundation-stage" data-figure="example">
+    <div className="site-foundation-stage" data-figure="example">
       {children}
       <InteractiveMark />
     </div>
@@ -73,10 +73,10 @@ export function Example({
       render={<section />}
       gap={gap}
       data-size={size}
-      className={['docs-example', className].filter(Boolean).join(' ')}
+      className={['site-example', className].filter(Boolean).join(' ')}
     >
       {title && actions ? (
-        <div className="docs-example-heading">
+        <div className="catalogue-example-heading">
           <Text render={<Heading />} variant="headline">
             {title}
           </Text>
@@ -89,7 +89,7 @@ export function Example({
       ) : null}
       <PartHeadingLevel value={title ? ((level + 1) as 3 | 4) : level}>
         {staged && explains ? (
-          <div className="docs-foundation-stage" data-figure="explanation">
+          <div className="site-foundation-stage" data-figure="explanation">
             {children}
           </div>
         ) : staged ? (
@@ -99,7 +99,7 @@ export function Example({
         )}
       </PartHeadingLevel>
       {caption && (
-        <Text variant="caption" className="docs-caption">
+        <Text variant="caption" className="catalogue-caption">
           {caption}
         </Text>
       )}
@@ -121,7 +121,7 @@ export function SpecimenGrid({
 }) {
   const staged = useContext(SpecimenStage);
   return (
-    <div className="docs-specimen-grid" data-size={size}>
+    <div className="catalogue-specimen-grid" data-size={size}>
       <SpecimenStage value={false}>{children}</SpecimenStage>
       <InteractiveMark enabled={staged} />
     </div>
@@ -141,7 +141,7 @@ export function Specimen({
   const level = useContext(PartHeadingLevel) ?? ((specimenLevel + 1) as 3 | 4);
   const Heading = `h${level}` as const;
   return (
-    <Column render={<section />} gap={3} className="docs-specimen">
+    <Column render={<section />} gap={3} className="catalogue-specimen">
       <Text render={<Heading />} variant="title">
         {title}
       </Text>
@@ -167,7 +167,7 @@ export function MatrixScroll({
   const staged = useContext(SpecimenStage);
   return (
     <div
-      className={['docs-matrix-scroll', className].filter(Boolean).join(' ')}
+      className={['catalogue-matrix-scroll', className].filter(Boolean).join(' ')}
       tabIndex={0}
       role="region"
       aria-label={label}

@@ -19,7 +19,7 @@ function ScreenFigure({ legend }: FigureWords) {
   return (
     <Figure
       label="The text styles of a screen"
-      className="docs-marked-stage"
+      className="catalogue-marked-stage"
       legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
@@ -27,27 +27,27 @@ function ScreenFigure({ legend }: FigureWords) {
           background="default"
           padding={6}
           radius="xl"
-          className="docs-type-screen"
+          className="catalogue-type-screen"
           render={<Column gap={6} />}
         >
-          <Text render={<p />} variant="headline" data-docs-mark="1">
+          <Text render={<p />} variant="headline" data-catalogue-mark="1">
             Quarterly report
           </Text>
           <Column gap={2} align="start">
             <Row gap={2} align="center">
-              <Text render={<p />} variant="title" data-docs-mark="2">
+              <Text render={<p />} variant="title" data-catalogue-mark="2">
                 Budget
               </Text>
               <Badge tone="success">On track</Badge>
             </Row>
-            <Text data-docs-mark="3">
+            <Text data-catalogue-mark="3">
               Spending is within the plan, with most of the quarter&apos;s travel already booked.
             </Text>
-            <Text variant="body-sm" data-docs-mark="4">
+            <Text variant="body-sm" data-catalogue-mark="4">
               Updated today by Priya Shah
             </Text>
           </Column>
-          <Text variant="caption" data-docs-mark="5">
+          <Text variant="caption" data-catalogue-mark="5">
             Figures include tax.
           </Text>
         </Surface>
@@ -72,14 +72,14 @@ const variants: readonly TextVariant[] = [
  */
 function StylesFigure({ legend }: FigureWords) {
   return (
-    <ol className="docs-type-styles" aria-label="Text styles">
+    <ol className="catalogue-type-styles" aria-label="Text styles">
       {variants.map((variant, index) => (
         <li key={variant}>
-          <Text render={<span />} variant={variant} className="docs-type-sample">
+          <Text render={<span />} variant={variant} className="catalogue-type-sample">
             Quarterly report
           </Text>
-          <span className="docs-type-name">
-            <Text render={<span />} className="docs-topic-legend-name">
+          <span className="catalogue-type-name">
+            <Text render={<span />} className="catalogue-topic-legend-name">
               {legend[index]?.name}
             </Text>
             <Text render={<span />} variant="body-sm" emphasis="muted">
@@ -100,7 +100,7 @@ function HierarchyFigure({ legend }: FigureWords) {
   return (
     <Figure
       label="A lead, then quieter detail"
-      className="docs-marked-stage"
+      className="catalogue-marked-stage"
       legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
@@ -108,17 +108,17 @@ function HierarchyFigure({ legend }: FigureWords) {
           background="default"
           padding={6}
           radius="xl"
-          className="docs-type-screen"
+          className="catalogue-type-screen"
           render={<Column gap={5} />}
         >
           <Column gap={2}>
             <Text render={<p />} variant="headline">
               Billing
             </Text>
-            <Text data-docs-mark="1">
+            <Text data-catalogue-mark="1">
               Your plan renews on the first of July for the whole team.
             </Text>
-            <Text emphasis="muted" data-docs-mark="2">
+            <Text emphasis="muted" data-catalogue-mark="2">
               The owner of the workspace gets a receipt after each payment, and can change the card
               or the plan at any time.
             </Text>
@@ -127,7 +127,7 @@ function HierarchyFigure({ legend }: FigureWords) {
             <Text render={<p />} variant="title">
               Payment method
             </Text>
-            <Text variant="body-sm" data-docs-mark="3">
+            <Text variant="body-sm" data-catalogue-mark="3">
               The card we charge each month
             </Text>
           </Column>

@@ -76,10 +76,10 @@ const cards: {
           Tasks done this year
         </Text>
         <Row gap={3} align="center">
-          <Text variant="headline" render={<span />} className="docs-showcase-figure">
+          <Text variant="headline" render={<span />} className="catalogue-showcase-figure">
             <AnimatedNumber value={1280} />
           </Text>
-          <Badge tone="success" className="docs-showcase-trend">
+          <Badge tone="success" className="catalogue-showcase-trend">
             +12%
           </Badge>
         </Row>
@@ -107,17 +107,17 @@ const cards: {
  */
 export function OverviewShowcase() {
   return (
-    <div className="docs-showcase" aria-hidden="true" inert>
-      <div className="docs-showcase-stack">
+    <div className="catalogue-showcase" aria-hidden="true" inert>
+      <div className="catalogue-showcase-stack">
         {cards.map((card) => (
           <div
             key={card.id}
-            className="docs-showcase-card"
+            className="catalogue-showcase-card"
             style={
               {
-                '--docs-showcase-fan-x': `${card.fan[0]}rem`,
-                '--docs-showcase-fan-y': `${card.fan[1]}rem`,
-                '--docs-showcase-fan-rotate': `${card.fan[2]}deg`,
+                '--catalogue-showcase-fan-x': `${card.fan[0]}rem`,
+                '--catalogue-showcase-fan-y': `${card.fan[1]}rem`,
+                '--catalogue-showcase-fan-rotate': `${card.fan[2]}deg`,
               } as CSSProperties
             }
           >

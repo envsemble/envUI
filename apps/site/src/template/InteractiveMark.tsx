@@ -11,7 +11,7 @@ const interactive =
 
 /** Whether an element can be used: not inert, not disabled and not taken out of the tab order. */
 function usable(element: Element) {
-  if (element.closest('[inert], .docs-interactive-mark')) return false;
+  if (element.closest('[inert], .site-interactive-mark')) return false;
   if (element.matches(':disabled') || element.getAttribute('tabindex') === '-1') return false;
   return true;
 }
@@ -53,7 +53,7 @@ export function InteractiveMark({ enabled = true }: { enabled?: boolean }) {
       {shown && (
         <Tooltip content={interactiveLabel}>
           <span
-            className="docs-interactive-mark"
+            className="site-interactive-mark"
             role="img"
             aria-label={interactiveLabel}
             tabIndex={0}

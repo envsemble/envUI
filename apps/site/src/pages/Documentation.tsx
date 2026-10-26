@@ -2,13 +2,9 @@ import { createContext, useContext, useMemo } from 'react';
 import { Link } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/content';
 import { documents, type Documentation as Document } from '../Reference';
-import {
-  referencePages,
-  routeOfDocument,
-  unlistedDocuments,
-} from '../navigation/DocumentationRoutes';
+import { referencePages, routeOfDocument, unlistedDocuments } from '../navigation/SiteRoutes';
 import { inDocs, routeHref } from '../navigation/Address';
-import { currentRoute } from '../navigation/useDocumentationRoute';
+import { currentRoute } from '../navigation/useSiteRoute';
 import { headingSlugger } from '../../../../scripts/SearchAnchors.mjs';
 
 /** The repository's copy of a page of docs/ that neither the catalogue nor the Docs show. */
@@ -84,7 +80,7 @@ const headingIds: NonNullable<MarkdownProps['rehypePlugins']>[number] = () => (t
 /**
  * Whether the Markdown below is guidance, as the pages of components, patterns and foundations are:
  * its lists are then check lists, each item's circle holding a check instead of envUI's dot
- * (`docs-guidance`, Template.css), and a component named at an item's end follows a muted dot.
+ * (`site-guidance`, Template.css), and a component named at an item's end follows a muted dot.
  */
 export const GuidanceLists = createContext(false);
 
@@ -148,7 +144,7 @@ const componentNames =
             properties:
               page && !own
                 ? { href: `../${page.reference.path}` }
-                : { className: ['docs-list-name'] },
+                : { className: ['catalogue-list-name'] },
             children: [{ type: 'text', value: match[1] }],
           };
           end.parent.children!.splice(
@@ -157,7 +153,7 @@ const componentNames =
             {
               type: 'element',
               tagName: 'span',
-              properties: { className: ['docs-list-name-dot'], ariaHidden: 'true' },
+              properties: { className: ['catalogue-list-name-dot'], ariaHidden: 'true' },
               children: [{ type: 'text', value: ' · ' }],
             },
             name,
@@ -173,8 +169,8 @@ const rehypePlugins = [headingIds];
 
 /**
  * A page's Markdown, or a part of it such as one section, with its links resolved. `className`
- * gives it a role in the catalogue's type hierarchy, such as `docs-lead` for a section's opening
- * paragraph (SiteText.css).
+ * gives it a role in the catalogue's type hierarchy, such as `site-lead` for a section's opening
+ * paragraph (CatalogueText.css).
  */
 export function Documentation(
   props: ({ document: Document } | { markdown: string; path: string }) & { className?: string },
@@ -192,7 +188,7 @@ export function Documentation(
     <Markdown
       codeCopyable
       className={
-        [guidance && 'docs-guidance', props.className].filter(Boolean).join(' ') || undefined
+        [guidance && 'site-guidance', props.className].filter(Boolean).join(' ') || undefined
       }
       rehypePlugins={plugins}
       renderLink={({ href, ...link }: MarkdownLinkProps) => (

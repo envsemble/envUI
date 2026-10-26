@@ -1,5 +1,5 @@
 import { componentGroups, componentGroupId } from '../Reference';
-import { pagesOf } from '../navigation/DocumentationRoutes';
+import { pagesOf } from '../navigation/SiteRoutes';
 import { Gallery, type GalleryGroup } from '../template/Gallery';
 
 /** Every component of the catalogue, a tile with its preview for each, by group; Field is in the Docs only. */

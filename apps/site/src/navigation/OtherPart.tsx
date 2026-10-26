@@ -2,7 +2,7 @@ import { Button } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/icons/Code';
 import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { routeHref } from './Address';
-import { counterpartOf, type Area, type RoutePage } from './DocumentationRoutes';
+import { counterpartOf, type Area, type RoutePage } from './SiteRoutes';
 
 /**
  * The other part from a page of one, by its name and icon: the Docs, in code, from the catalogue,
@@ -27,7 +27,7 @@ export function OtherPartButton({ page }: { page: RoutePage }) {
       size="sm"
       href={routeHref(route)}
       startIcon={<Icon />}
-      className="docs-other-part-link"
+      className="site-other-part-link"
     >
       {label}
     </Button>

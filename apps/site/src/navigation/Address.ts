@@ -100,7 +100,7 @@ function focusIsUnclaimed() {
   return (
     !focused ||
     focused === document.body ||
-    focused.id === 'docs-main' ||
+    focused.id === 'site-main' ||
     focused.closest('.env-command-palette') !== null
   );
 }
@@ -165,7 +165,7 @@ export function revealRoute(route: string) {
     revealSection(section);
     return;
   }
-  const main = document.getElementById('docs-main');
+  const main = document.getElementById('site-main');
   main?.scrollTo({ top: 0 });
   if (main) focusOn(main);
 }

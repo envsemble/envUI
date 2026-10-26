@@ -30,7 +30,7 @@ export function renderSkill({ version = libraryVersion(), template } = {}) {
 export const pageUrl = (path) => `${siteOrigin}/docs/${path.replace(/\.md$/, '')}`;
 
 /** The pages of the Docs that no file in docs/ writes, linked under Optional. */
-const sitePages = [
+const unwrittenDocsPages = [
   [
     'Design tokens',
     'docs/tokens',
@@ -73,7 +73,7 @@ export function renderLlmsText({ documents = readDocumentation() } = {}) {
     lines.push('');
   }
   lines.push('## Optional', '');
-  for (const [title, path, summary] of sitePages)
+  for (const [title, path, summary] of unwrittenDocsPages)
     lines.push(`- [${title}](${siteOrigin}/${path}): ${summary}`);
   return `${lines.join('\n')}\n`;
 }

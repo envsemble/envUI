@@ -481,7 +481,7 @@ body:has(.density-fixture) {
 body:has(.fixture-layout-check) {
   margin: 0;
 }
-.docs-live-example.fixture-layout-check {
+.site-live-example.fixture-layout-check {
   min-block-size: 0;
   padding: 0;
   border: 0;

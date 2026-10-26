@@ -10,7 +10,7 @@ import { InteractiveMark } from '../../template/InteractiveMark';
  * looking at envUI: no token names, values or units, which the foundation's guide in the Docs
  * holds.
  *
- * The parts set the catalogue's type hierarchy (SiteText.css), so a page never has to: the
+ * The parts set the catalogue's type hierarchy (CatalogueText.css), so a page never has to: the
  * section's title large, its lead a step larger than body text, a block's title in the title style
  * and its paragraphs quieter, in the muted color, and the notes of figures and legends smaller
  * still, each in a readable measure.
@@ -30,12 +30,12 @@ export function Topic({
   children: ReactNode;
 }) {
   return (
-    <Column render={<section />} gap={0} data-size="wide" className="docs-example docs-topic">
+    <Column render={<section />} gap={0} data-size="wide" className="site-example catalogue-topic">
       <Text render={<h2 />} variant="headline">
         {title}
       </Text>
-      {lead && <Text className="docs-lead docs-topic-lead">{lead}</Text>}
-      <div className="docs-topic-blocks">{children}</div>
+      {lead && <Text className="site-lead catalogue-topic-lead">{lead}</Text>}
+      <div className="catalogue-topic-blocks">{children}</div>
     </Column>
   );
 }
@@ -58,12 +58,12 @@ export function Block({
 }) {
   const paragraphs: readonly ReactNode[] = Array.isArray(text) ? text : [text];
   const words = (
-    <div className="docs-topic-text">
+    <div className="catalogue-topic-text">
       <Text render={<h3 />} variant="title">
         {title}
       </Text>
       {paragraphs.map((paragraph, index) => (
-        <Text key={index} render={<p />} emphasis="muted" className="docs-supporting">
+        <Text key={index} render={<p />} emphasis="muted" className="catalogue-supporting">
           {paragraph}
         </Text>
       ))}
@@ -71,7 +71,7 @@ export function Block({
   );
   if (!children) return words;
   return (
-    <div className={stacked ? 'docs-topic-block' : 'docs-topic-block docs-figure-split'}>
+    <div className={stacked ? 'catalogue-topic-block' : 'catalogue-topic-block site-figure-split'}>
       {words}
       {children}
     </div>
@@ -96,17 +96,17 @@ export function Figure({
   className?: string;
 }) {
   return (
-    <figure className="docs-topic-figure" aria-label={label}>
+    <figure className="site-topic-figure" aria-label={label}>
       <div
-        className={['docs-foundation-stage', className].filter(Boolean).join(' ')}
+        className={['site-foundation-stage', className].filter(Boolean).join(' ')}
         data-figure="example"
       >
         {children}
         <InteractiveMark />
       </div>
       {(legend || caption) && (
-        <figcaption className="docs-anatomy-caption">
-          {caption && <p className="docs-figure-caption">{caption}</p>}
+        <figcaption className="site-anatomy-caption">
+          {caption && <p className="site-figure-caption">{caption}</p>}
           {legend}
         </figcaption>
       )}
@@ -133,17 +133,17 @@ export function FigureRun({
   className?: string;
 }) {
   return (
-    <div className="docs-figure-run" data-count={figures.length}>
+    <div className="site-figure-run" data-count={figures.length}>
       {figures.map((figure) => (
-        <figure key={figure.name} className="docs-topic-figure" aria-label={figure.name}>
+        <figure key={figure.name} className="site-topic-figure" aria-label={figure.name}>
           <div
-            className={['docs-foundation-stage', className].filter(Boolean).join(' ')}
+            className={['site-foundation-stage', className].filter(Boolean).join(' ')}
             data-figure="example"
             inert
           >
             {figure.picture}
           </div>
-          <figcaption className="docs-topic-text">
+          <figcaption className="catalogue-topic-text">
             <Text render={<p />} variant="title">
               {figure.name}
             </Text>
@@ -166,14 +166,14 @@ export interface LegendEntry {
 /** A numbered legend under a figure, laid out as an anatomy figure's: each mark's number first. */
 export function NumberedLegend({ entries }: { entries: readonly LegendEntry[] }) {
   return (
-    <ol className="docs-anatomy-legend docs-topic-legend">
+    <ol className="site-anatomy-legend catalogue-topic-legend">
       {entries.map((entry, index) => (
         <li key={entry.name}>
-          <span className="docs-anatomy-number" aria-hidden="true">
+          <span className="site-anatomy-number" aria-hidden="true">
             {index + 1}
           </span>
           <div>
-            <Text render={<p />} className="docs-topic-legend-name">
+            <Text render={<p />} className="catalogue-topic-legend-name">
               {entry.name}
             </Text>
             <Text render={<p />} variant="body-sm" emphasis="muted">

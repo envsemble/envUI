@@ -1,5 +1,5 @@
 /* Pages on the documentation template: status in the banner, live examples and their source. */
-.docs-page-meta {
+.site-page-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -9,18 +9,18 @@
 
 /* Specimens inside an article share its gutter instead of adding their own, and the page's
    background: only their canvas is filled. */
-.docs-article .docs-preview {
+.site-article .catalogue-preview {
   padding: 0;
   background: none;
 }
 
 /* Props tables wrap code between words, so a column is never narrower than its longest word. */
-.docs-prop-code {
+.catalogue-prop-code {
   overflow-wrap: break-word;
 }
 
 /* The same for code in the guidance tables of a page. */
-.docs-template .env-markdown-table code {
+.site-template .env-markdown-table code {
   overflow-wrap: break-word;
 }
 
@@ -28,14 +28,14 @@
    larger ones (TemplateContent.tsx), which stand far apart, twice the largest step of the spacing
    scale; the sections within a group sit closer, the largest step, and what is inside a section
    closer still (Figures.css). */
-.docs-section-groups {
+.site-section-groups {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   row-gap: calc(var(--env-space-9) * 2);
   padding-block-end: 3rem;
 }
 
-.docs-section-groups .docs-section-group {
+.site-section-groups .site-section-group {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
@@ -45,7 +45,7 @@
 
 /* The same on a foundation's page, whose sections are its figures, each under its h2, and on a
    component's page in the Docs. */
-.docs-example:has(> h2) {
+.site-example:has(> h2) {
   margin-block-end: calc(var(--env-space-9) * 2);
 }
 
@@ -55,8 +55,8 @@
   row-gap: var(--env-space-9);
 }
 
-.docs-example > h2,
-.docs-related > h2 {
+.site-example > h2,
+.catalogue-related > h2 {
   font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
   letter-spacing: -0.015em;
 }
@@ -65,7 +65,7 @@
    Documentation.tsx): envUI's list, with a check in a small accent-tinted circle instead of its dot,
    the Material Symbols check, a little smaller than the text's line, centred on its first line. A
    list nested in one keeps envUI's quiet dot. */
-.docs-guidance {
+.site-guidance {
   --env-prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
   --env-prose-list-marker-gap: var(--env-space-3);
   --env-prose-list-marker-fill: var(--env-color-bg-selected);
@@ -76,7 +76,7 @@
 
 /* A component named at an item's end follows it after a muted middle dot, in the muted color too
    where it isn't a link. */
-.docs-list-name-dot,
-.docs-list-name {
+.catalogue-list-name-dot,
+.catalogue-list-name {
   color: var(--env-color-fg-muted);
 }

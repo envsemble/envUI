@@ -1,27 +1,27 @@
 import { Documentation } from '../pages/Documentation';
-import { optionPieces, type OptionTable } from '../../../../scripts/SiteContent.mjs';
+import { optionPieces, type OptionTable } from '../../../../scripts/CatalogueContent.mjs';
 
 /**
  * An option table as the catalogue shows it: a legend, laid out as an anatomy figure's legend is,
  * each option's name in the tag a variants figure's callouts use, followed by what it is for, and
  * below that any detail the table adds, such as the tones a variant takes. The Markdown keeps the
  * table, which the packaged page and agents read; its first column names the options, its last, Use
- * for, says what each is for (scripts/SiteContent.mjs).
+ * for, says what each is for (scripts/CatalogueContent.mjs).
  */
 export function OptionLegend({ table, path }: { table: OptionTable; path: string }) {
   return (
-    <dl className="docs-option-legend" aria-label={table.column}>
+    <dl className="catalogue-option-legend" aria-label={table.column}>
       {table.options.map((option) => (
-        <div key={option.name} className="docs-option">
+        <div key={option.name} className="catalogue-option">
           <dt>
-            <span className="docs-option-tag">{option.name}</span>
+            <span className="catalogue-option-tag">{option.name}</span>
           </dt>
           <dd>
             <Documentation markdown={option.use} path={path} />
             {option.details.map(
               (detail) =>
                 detail.markdown && (
-                  <div key={detail.title} className="docs-option-detail">
+                  <div key={detail.title} className="catalogue-option-detail">
                     <Documentation markdown={`${detail.title}: ${detail.markdown}`} path={path} />
                   </div>
                 ),

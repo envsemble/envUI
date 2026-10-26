@@ -13,12 +13,7 @@ import { Category } from '@envsemble/envui/icons/Category';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Article } from '@envsemble/envui/icons/Article';
 import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
-import {
-  counterpartOf,
-  findPage,
-  routeOfDocument,
-  type RoutePage,
-} from '../navigation/DocumentationRoutes';
+import { counterpartOf, findPage, routeOfDocument, type RoutePage } from '../navigation/SiteRoutes';
 import { otherPart } from '../navigation/OtherPart';
 import { navigate, routeHref } from '../navigation/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../template/LoadBoundary';
@@ -145,7 +140,7 @@ type IndexState =
  * it is in. A result opens its page, and the prop or token on it; with Ctrl or ⌘ held, in a new
  * tab. Before people type, it suggests a few pages, the current page's counterpart first.
  */
-export function DocumentationSearch({
+export function SiteSearch({
   open,
   onOpenChange,
   page,

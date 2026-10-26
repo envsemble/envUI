@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@envsemble/envui';
 import { Menu as MenuIcon } from '@envsemble/envui/icons/Menu';
-import { findPage, type Area, type RoutePage } from './navigation/DocumentationRoutes';
+import { findPage, type Area, type RoutePage } from './navigation/SiteRoutes';
 import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { PageFooter } from './layout/PageFooter';
@@ -23,7 +23,7 @@ import {
   PatternsPage,
   FoundationPage,
   PatternPage,
-} from './pages/SitePages';
+} from './pages/CataloguePages';
 import {
   DocsReferencePage,
   ChangelogDocsPage,
@@ -33,11 +33,7 @@ import {
   GuidePage,
   TokensPage,
 } from './pages/DocsPages';
-import {
-  DocsNavigation,
-  PageActions,
-  CatalogueNavigation,
-} from './navigation/DocumentationNavigation';
+import { DocsNavigation, PageActions, CatalogueNavigation } from './navigation/SiteNavigation';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
 import {
@@ -51,9 +47,9 @@ import {
 } from './navigation/Address';
 import { isSearchShortcut } from './search/SearchShortcut';
 import { SearchButton } from './search/SearchButton';
-import { useDocumentationRoute } from './navigation/useDocumentationRoute';
+import { useSiteRoute } from './navigation/useSiteRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
-import { DocumentationSearch } from './search/DocumentationSearch';
+import { SiteSearch } from './search/SiteSearch';
 
 /** What each kind of page renders. */
 const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => ReactNode> = {
@@ -87,7 +83,9 @@ function documentTitle(page: RoutePage | undefined, area: Area) {
  * Accessibility, are their sections' alone, so the contents don't repeat the exports three times.
  */
 const contentsHeading = (heading: HTMLElement) =>
-  !heading.closest('.docs-live-example, .docs-open-example, .docs-specimen, .env-dialog') &&
+  !heading.closest(
+    '.site-live-example, .catalogue-open-example, .catalogue-specimen, .env-dialog',
+  ) &&
   !(
     heading.localName === 'h3' &&
     heading.closest(
@@ -110,11 +108,11 @@ const indexKinds = new Set<RoutePage['kind']>(['components', 'patterns']);
  */
 function PageContents({ page }: { page: RoutePage }) {
   return (
-    <div className="docs-contents">
+    <div className="site-contents">
       <TableOfContents
         key={page.path}
-        className="docs-contents-list"
-        container=".docs-page-column"
+        className="site-contents-list"
+        container=".site-page-column"
         levels={indexKinds.has(page.kind) ? [2] : undefined}
         filter={contentsHeading}
         onClick={(event) => {
@@ -134,7 +132,7 @@ function PageContents({ page }: { page: RoutePage }) {
  * the same subject in the other part and the Display menu at its top end.
  */
 function Shell() {
-  const route = useDocumentationRoute();
+  const route = useSiteRoute();
   const [searchOpen, setSearchOpen] = useState(false);
   const [navigationOpen, setNavigationOpen] = useState(false);
   // A destination chosen in the navigation's sheet sends focus to the page, not back to the button.
@@ -189,7 +187,7 @@ function Shell() {
   ) : (
     <>
       <PageHeader title="Page not found" breadcrumb={area === 'docs' ? 'Docs' : 'envUI'} />
-      <Column gap={7} className="docs-article">
+      <Column gap={7} className="site-article">
         <Text>
           <Link href={routeHref(area === 'docs' ? docsRoute : homeRoute)}>
             {area === 'docs' ? 'Return to the Docs' : 'Return to the home page'}
@@ -222,12 +220,12 @@ function Shell() {
   };
   return (
     <Scaffold
-      className="docs-frame"
+      className="site-frame"
       data-area={area}
       // The body scrolls rather than the document: the frame scrolls it to a page's top or a
       // section as routes change, and the live examples in it keep their place.
       scroll="body"
-      bodyId="docs-main"
+      bodyId="site-main"
       bodyRef={mainElement}
       // The navigation is at the start of a wide window, and in a sheet that the page's menu button
       // opens in a narrower one. There is no top bar: the navigation holds the wordmark and search.
@@ -236,8 +234,8 @@ function Shell() {
     >
       {/* Below an expanded window, where the navigation is in a sheet, a small pill of the menu
           and search floats at the page's top start. */}
-      <div className="docs-compact-controls">
-        <div className="docs-compact-controls-bar">
+      <div className="site-compact-controls">
+        <div className="site-compact-controls-bar">
           <Tooltip content="Open navigation">
             <IconButton
               icon={<MenuIcon />}
@@ -249,11 +247,11 @@ function Shell() {
           <SearchButton iconOnly onClick={openSearch} />
         </div>
       </div>
-      <div className="docs-main">
+      <div className="site-main">
         <PageActions page={page} area={area} />
-        <div className="docs-page-layout">
-          <div className="docs-page-grid" data-contents={contents || undefined}>
-            <div className="docs-page-column">
+        <div className="site-page-layout">
+          <div className="site-page-grid" data-contents={contents || undefined}>
+            <div className="site-page-column">
               <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
                 {content}
               </PageBoundary>
@@ -265,7 +263,7 @@ function Shell() {
         <PageFooter />
       </div>
       <Sheet
-        className="docs-navigation-sheet"
+        className="site-navigation-sheet"
         side="start"
         aria-label={area === 'docs' ? 'Docs' : 'Catalogue'}
         width={area === 'docs' ? 'min(18rem, 100%)' : 'min(22rem, 100%)'}
@@ -278,7 +276,7 @@ function Shell() {
       >
         {navigation(true)}
       </Sheet>
-      <DocumentationSearch open={searchOpen} onOpenChange={setSearchOpen} page={page} />
+      <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} page={page} />
     </Scaffold>
   );
 }
@@ -293,7 +291,7 @@ const pageLocale = (typeof document === 'undefined' ? '' : document.documentElem
 export default function App() {
   return (
     <EnvUIProvider locale={pageLocale}>
-      <DisplaySettingsProvider className="docs-app">
+      <DisplaySettingsProvider className="site-app">
         <LinkProvider component={RouterLink}>
           <Shell />
         </LinkProvider>

@@ -1,11 +1,6 @@
 import { componentGroupId } from '../Reference';
 import { homeRoute } from './Address';
-import {
-  sectionHome,
-  type RoutePage,
-  type TrailStep,
-  type CatalogueSection,
-} from './DocumentationRoutes';
+import { sectionHome, type RoutePage, type TrailStep, type CatalogueSection } from './SiteRoutes';
 
 /**
  * The trail from the catalogue's home down to one of its pages, for its breadcrumbs, as the Docs'

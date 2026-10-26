@@ -28,7 +28,7 @@ test('public component, stylesheet, new export and Markdown documentation update
     await projectName.fill('Preserved draft');
     // A Button of the site's own: the page's link to the Docs.
     const docsLink = page
-      .locator('.docs-page-actions')
+      .locator('.site-page-actions')
       .getByRole('link', { name: 'Docs', exact: true });
     await writeFile(
       buttonSource,

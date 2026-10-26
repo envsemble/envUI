@@ -5,9 +5,9 @@ import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender, leastFitScale } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
-import { legendName } from '../../../../scripts/SiteContent.mjs';
+import { legendName } from '../../../../scripts/CatalogueContent.mjs';
 import { OptionLegend } from './OptionLegend';
-import type { OptionTable } from '../../../../scripts/SiteContent.mjs';
+import type { OptionTable } from '../../../../scripts/CatalogueContent.mjs';
 
 /** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
 interface Callout {
@@ -204,7 +204,7 @@ interface Room {
 /** A name's width in px, as its callout draws it, measured off-screen in the stage. */
 function labelWidth(stage: HTMLElement, text: string) {
   const probe = document.createElement('span');
-  probe.className = 'docs-anatomy-badge docs-variant-label';
+  probe.className = 'site-anatomy-badge catalogue-variant-label';
   probe.style.visibility = 'hidden';
   probe.textContent = text;
   stage.append(probe);
@@ -380,13 +380,13 @@ function FitFrame({ width, children }: { width: number; children: ReactNode }) {
   return (
     <div
       ref={fit}
-      className="docs-anatomy-fit"
+      className="catalogue-anatomy-fit"
       data-scaled={scaled ? '' : undefined}
       style={scaled && { inlineSize: scaled.width, blockSize: scaled.height }}
     >
       <div
         ref={box}
-        className="docs-anatomy-fit-box"
+        className="catalogue-anatomy-fit-box"
         style={scaled && { inlineSize: `${width}rem`, transform: `scale(${scaled.scale})` }}
       >
         {children}
@@ -480,7 +480,7 @@ function AnatomyStage({
     <Theme
       {...theme}
       ref={stage}
-      className="docs-anatomy-stage"
+      className="site-anatomy-stage"
       data-example={name}
       data-stage={fill}
     >
@@ -488,7 +488,7 @@ function AnatomyStage({
           variants figure keeps room beside its items for their names. */}
       <div
         ref={subject}
-        className="docs-anatomy-subject"
+        className="site-anatomy-subject"
         inert
         style={
           variants
@@ -501,12 +501,12 @@ function AnatomyStage({
       >
         {width ? <FitFrame width={width}>{render}</FitFrame> : render}
       </div>
-      <svg className="docs-anatomy-lines" aria-hidden="true">
+      <svg className="site-anatomy-lines" aria-hidden="true">
         {callouts.map(({ number, badge, anchor, box }) => (
           <g key={number}>
             {box && (
               <rect
-                className="docs-anatomy-box"
+                className="site-anatomy-box"
                 x={box.x}
                 y={box.y}
                 width={box.width}
@@ -522,7 +522,9 @@ function AnatomyStage({
         <span
           key={number}
           className={
-            label === undefined ? 'docs-anatomy-badge' : 'docs-anatomy-badge docs-variant-label'
+            label === undefined
+              ? 'site-anatomy-badge'
+              : 'site-anatomy-badge catalogue-variant-label'
           }
           data-side={side}
           aria-hidden="true"
@@ -589,7 +591,7 @@ export function AnatomyFigure({
 }) {
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   return (
-    <figure className={variants ? 'docs-variants' : 'docs-anatomy'} aria-label={title}>
+    <figure className={variants ? 'catalogue-variants' : 'site-anatomy'} aria-label={title}>
       <AnatomyStage
         page={page}
         name={name}
@@ -600,21 +602,21 @@ export function AnatomyFigure({
         variants={variants}
         width={width}
       />
-      <figcaption className="docs-anatomy-caption">
-        {caption && <p className="docs-figure-caption">{caption}</p>}
+      <figcaption className="site-anatomy-caption">
+        {caption && <p className="site-figure-caption">{caption}</p>}
         {variants && options && <OptionLegend table={options} path={`components/${page}.md`} />}
         {variants && !options && (
-          <ul className="docs-visually-hidden">
+          <ul className="site-visually-hidden">
             {items.map((item, index) => (
               <li key={`${index}-${item.label}`}>{item.label}</li>
             ))}
           </ul>
         )}
         {!variants && items.length > 0 && (
-          <ol className="docs-anatomy-legend">
+          <ol className="site-anatomy-legend">
             {items.map((item, index) => (
               <li key={`${index}-${item.part}`}>
-                <span className="docs-anatomy-number" aria-hidden="true">
+                <span className="site-anatomy-number" aria-hidden="true">
                   {index + 1}
                 </span>
                 <Documentation markdown={legendText(item)} path={`components/${page}.md`} />

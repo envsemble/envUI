@@ -59,7 +59,7 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
     <Column gap={5}>
       <Column gap={3}>
         <Text variant="caption">Material Symbols Rounded · {filled ? 'Filled' : 'Outline'}</Text>
-        <div className="docs-icon-detail-preview">
+        <div className="catalogue-icon-detail-preview">
           <Symbol filled={filled} width="4rem" height="4rem" />
         </div>
       </Column>
@@ -90,7 +90,7 @@ export function IconCatalogue() {
 
   return (
     <Example size="collection">
-      <div className="docs-icon-toolbar">
+      <div className="catalogue-icon-toolbar">
         <SearchField
           label="Search icons"
           showLabel
@@ -103,13 +103,13 @@ export function IconCatalogue() {
         <Switch label="Filled icons" checked={filled} onCheckedChange={setFilled} />
       </div>
       {matches.length ? (
-        <ul className="docs-icon-catalogue" aria-label="Icon catalogue">
+        <ul className="catalogue-icon-catalogue" aria-label="Icon catalogue">
           {visibleSymbols.map(({ name, label, Symbol }) => (
             <li key={name}>
               <Card
                 background={selectedName === name ? 'muted' : 'page'}
                 padding={4}
-                className="docs-icon-tile"
+                className="catalogue-icon-tile"
                 aria-label={label}
                 aria-pressed={selectedName === name}
                 aria-haspopup="dialog"
@@ -126,7 +126,7 @@ export function IconCatalogue() {
                   render={<span />}
                   variant="caption"
                   emphasis="default"
-                  className="docs-icon-label"
+                  className="catalogue-icon-label"
                   title={label}
                 >
                   {label}
@@ -157,7 +157,7 @@ export function IconCatalogue() {
       )}
       <Sheet
         id={detailsId}
-        className="docs-icon-details"
+        className="catalogue-icon-details"
         title={selectedName ?? 'Icon details'}
         modal={false}
         disablePointerDismissal

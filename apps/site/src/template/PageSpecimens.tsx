@@ -18,7 +18,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 /** A few real icons from the set, outline and filled. */
 function IconsSpecimen() {
   return (
-    <Row gap={5} align="center" className="docs-page-specimen-icons">
+    <Row gap={5} align="center" className="catalogue-page-specimen-icons">
       <Home filled width="2.5rem" height="2.5rem" />
       <Search width="2.5rem" height="2.5rem" />
       <Folder width="2.5rem" height="2.5rem" />
@@ -55,7 +55,7 @@ function TypographySpecimen() {
 /** The theme's roles: brand, accent and the status colors. */
 function ColorsSpecimen() {
   return (
-    <Row gap={3} className="docs-page-specimen-swatches">
+    <Row gap={3} className="catalogue-page-specimen-swatches">
       {['brand', 'accent', 'success', 'warning', 'danger', 'neutral'].map((role) => (
         <span key={role} data-role={role} />
       ))}
@@ -66,7 +66,7 @@ function ColorsSpecimen() {
 /** The spacing steps, each a bar as long as its step. */
 function SpacingSpecimen() {
   return (
-    <Column gap={2} className="docs-page-specimen-spacing">
+    <Column gap={2} className="catalogue-page-specimen-spacing">
       {[1, 2, 3, 4, 5, 6, 7, 8].map((step) => (
         <span key={step} data-step={step} />
       ))}
@@ -94,7 +94,7 @@ function ScaleSpecimen() {
 /** The window classes: compact, medium and expanded windows, side by side. */
 function ResponsiveSpecimen() {
   return (
-    <Row gap={4} align="end" className="docs-page-specimen-windows">
+    <Row gap={4} align="end" className="catalogue-page-specimen-windows">
       {['compact', 'medium', 'expanded'].map((size) => (
         <span key={size} data-size={size}>
           <Text variant="caption" render={<span />}>
@@ -133,7 +133,7 @@ function AccessibilitySpecimen() {
   return (
     <Column gap={4} align="start">
       <TextField label="Email" defaultValue="alex.morgan@example.com" />
-      <Button startIcon={<Add />} className="docs-page-specimen-focus">
+      <Button startIcon={<Add />} className="catalogue-page-specimen-focus">
         Add member
       </Button>
     </Column>
@@ -143,7 +143,7 @@ function AccessibilitySpecimen() {
 /** Clear, short words: an empty state's title, its next step and its action. */
 function ContentSpecimen() {
   return (
-    <Column gap={2} align="center" className="docs-page-specimen-content">
+    <Column gap={2} align="center" className="catalogue-page-specimen-content">
       <Text variant="title" render={<span />}>
         No projects yet
       </Text>

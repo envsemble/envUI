@@ -2,7 +2,7 @@ import { Column, Grid, Link, Row, Text } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { componentGroupId, componentGroups } from '../Reference';
 import { docsRoute, homeRoute, routeHref } from '../navigation/Address';
-import { routeOfDocument } from '../navigation/DocumentationRoutes';
+import { routeOfDocument } from '../navigation/SiteRoutes';
 
 const repository = 'https://github.com/envsemble/envUI';
 
@@ -76,13 +76,13 @@ const columns: { title: string; links: FooterLink[] }[] = [
  */
 export function PageFooter() {
   return (
-    <footer className="docs-footer">
-      <Column gap={7} className="docs-footer-inner">
-        <Row gap={7} align="start" className="docs-footer-main">
+    <footer className="site-footer">
+      <Column gap={7} className="site-footer-inner">
+        <Row gap={7} align="start" className="site-footer-main">
           <Link
             href={routeHref(homeRoute)}
             underline={false}
-            className="docs-footer-brand"
+            className="site-footer-brand"
             aria-label="envUI home"
           >
             <EnvUILogo />
@@ -91,7 +91,7 @@ export function PageFooter() {
             render={<nav aria-label="Footer" />}
             columns={{ min: '9rem' }}
             gap={6}
-            className="docs-footer-columns"
+            className="site-footer-columns"
           >
             {columns.map(({ title, links }) => (
               <Column key={title} gap={3} align="start">
@@ -99,11 +99,11 @@ export function PageFooter() {
                   render={<h2 />}
                   variant="body-sm"
                   emphasis="default"
-                  className="docs-footer-title"
+                  className="site-footer-title"
                 >
                   {title}
                 </Text>
-                <Column render={<ul />} gap={2} align="start" className="docs-footer-links">
+                <Column render={<ul />} gap={2} align="start" className="site-footer-links">
                   {links.map((link) => (
                     <li key={link.label}>
                       <Text variant="body-sm">

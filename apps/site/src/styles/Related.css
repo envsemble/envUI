@@ -5,40 +5,50 @@
 /* Tiles of one size. A row is never left with one alone: one column until two fit, even counts
    two to a row, counts of three, five, six and nine three to a row, and once four fit, every count
    in tiles of a quarter of the column, five, six and nine still in rows of three. */
-.docs-related-tiles {
-  --docs-related-gap: var(--env-space-5);
+.catalogue-related-tiles {
+  --catalogue-related-gap: var(--env-space-5);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--env-space-6) var(--docs-related-gap);
+  gap: var(--env-space-6) var(--catalogue-related-gap);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 @container (width >= 24rem) {
-  .docs-related-tiles:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8']) {
+  .catalogue-related-tiles:is(
+    [data-count='2'],
+    [data-count='4'],
+    [data-count='6'],
+    [data-count='8']
+  ) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @container (width >= 36rem) {
-  .docs-related-tiles:is([data-count='3'], [data-count='5'], [data-count='6'], [data-count='9']) {
+  .catalogue-related-tiles:is(
+    [data-count='3'],
+    [data-count='5'],
+    [data-count='6'],
+    [data-count='9']
+  ) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @container (width >= 48rem) {
-  .docs-related-tiles.docs-related-tiles {
+  .catalogue-related-tiles.catalogue-related-tiles {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .docs-related-tiles:is([data-count='5'], [data-count='6'], [data-count='9'])
+  .catalogue-related-tiles:is([data-count='5'], [data-count='6'], [data-count='9'])
     > :nth-child(3n + 1) {
     grid-column-start: 1;
   }
 }
 
-.docs-related-tile {
+.catalogue-related-tile {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -49,18 +59,18 @@
 
 /* The name's link covers the tile's picture and name, so the whole preview leads to the page. The
    lines below keep their own links above it. */
-.docs-related-link::after {
+.catalogue-related-link::after {
   position: absolute;
   inset: 0;
   border-radius: var(--env-radius-surface);
   content: '';
 }
-.docs-related-line {
+.catalogue-related-line {
   position: relative;
 }
 
 /* The stage, as wide as the tile and of one height in a row; what it shows is scaled to fit. */
-.docs-related-stage {
+.catalogue-related-stage {
   position: relative;
   display: grid;
   place-items: center;
@@ -72,7 +82,7 @@
 
 /* The window the example lays out in, at a width it was written for, then scaled down and centred
    (Related.tsx). It contains its fixed overlays, such as a dialog, and hides until it fits. */
-.docs-related-canvas {
+.catalogue-related-canvas {
   position: absolute;
   inset-block-start: 50%;
   inset-inline-start: 50%;
@@ -89,100 +99,100 @@
   pointer-events: none;
 }
 
-.docs-related-canvas[data-fitted] {
+.catalogue-related-canvas[data-fitted] {
   visibility: visible;
 }
 
 /* Room for an overlay shown open, such as a dialog over the page. */
-.docs-related-canvas:has(> .docs-overlay-layer) {
+.catalogue-related-canvas:has(> .catalogue-overlay-layer) {
   min-block-size: 28rem;
 }
 
 /* A picture of the overlay, without the scrim, which would fill the canvas. */
-.docs-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
+.catalogue-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
   display: none;
 }
 
 /* An alternative without an example: a page icon in the middle of the same stage. */
-.docs-related-placeholder {
+.catalogue-related-placeholder {
   inline-size: 2rem;
   block-size: 2rem;
   color: var(--env-color-fg-muted);
 }
 
-.docs-related-name {
+.catalogue-related-name {
   padding-block-start: var(--env-space-2);
   font-weight: var(--env-font-weight-medium);
 }
 
-.docs-related-line .env-markdown {
+.catalogue-related-line .env-markdown {
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
 }
 
-.docs-related-line .env-markdown > * {
+.catalogue-related-line .env-markdown > * {
   margin: 0;
 }
 
 /* A page's specimen in a tile, for a page without an example, such as a foundation's
    (PageSpecimens.tsx): drawn with tokens, scaled to fit the stage as an example is. */
-.docs-page-specimen-icons {
+.catalogue-page-specimen-icons {
   color: var(--env-color-fg-default);
 }
 
-.docs-page-specimen-swatches > span {
+.catalogue-page-specimen-swatches > span {
   inline-size: 3.5rem;
   block-size: 3.5rem;
   border-radius: var(--env-radius-lg);
   background: var(--env-color-bg-neutral-emphasis);
 }
-.docs-page-specimen-swatches > [data-role='brand'] {
+.catalogue-page-specimen-swatches > [data-role='brand'] {
   background: var(--env-color-bg-brand-emphasis);
 }
-.docs-page-specimen-swatches > [data-role='accent'] {
+.catalogue-page-specimen-swatches > [data-role='accent'] {
   background: var(--env-color-bg-accent-emphasis);
 }
-.docs-page-specimen-swatches > [data-role='success'] {
+.catalogue-page-specimen-swatches > [data-role='success'] {
   background: var(--env-color-bg-success-emphasis);
 }
-.docs-page-specimen-swatches > [data-role='warning'] {
+.catalogue-page-specimen-swatches > [data-role='warning'] {
   background: var(--env-color-bg-warning-emphasis);
 }
-.docs-page-specimen-swatches > [data-role='danger'] {
+.catalogue-page-specimen-swatches > [data-role='danger'] {
   background: var(--env-color-bg-danger-emphasis);
 }
 
-.docs-page-specimen-spacing > span {
+.catalogue-page-specimen-spacing > span {
   block-size: var(--env-space-3);
   border-radius: var(--env-radius-xs);
   background: var(--env-color-bg-accent-emphasis);
 }
-.docs-page-specimen-spacing > [data-step='1'] {
+.catalogue-page-specimen-spacing > [data-step='1'] {
   inline-size: calc(4 * var(--env-space-1));
 }
-.docs-page-specimen-spacing > [data-step='2'] {
+.catalogue-page-specimen-spacing > [data-step='2'] {
   inline-size: calc(4 * var(--env-space-2));
 }
-.docs-page-specimen-spacing > [data-step='3'] {
+.catalogue-page-specimen-spacing > [data-step='3'] {
   inline-size: calc(4 * var(--env-space-3));
 }
-.docs-page-specimen-spacing > [data-step='4'] {
+.catalogue-page-specimen-spacing > [data-step='4'] {
   inline-size: calc(4 * var(--env-space-4));
 }
-.docs-page-specimen-spacing > [data-step='5'] {
+.catalogue-page-specimen-spacing > [data-step='5'] {
   inline-size: calc(4 * var(--env-space-5));
 }
-.docs-page-specimen-spacing > [data-step='6'] {
+.catalogue-page-specimen-spacing > [data-step='6'] {
   inline-size: calc(4 * var(--env-space-6));
 }
-.docs-page-specimen-spacing > [data-step='7'] {
+.catalogue-page-specimen-spacing > [data-step='7'] {
   inline-size: calc(4 * var(--env-space-7));
 }
-.docs-page-specimen-spacing > [data-step='8'] {
+.catalogue-page-specimen-spacing > [data-step='8'] {
   inline-size: calc(4 * var(--env-space-8));
 }
 
-.docs-page-specimen-windows > span {
+.catalogue-page-specimen-windows > span {
   display: grid;
   place-items: end center;
   padding: var(--env-space-1);
@@ -191,25 +201,25 @@
   background: var(--env-color-bg-default);
   white-space: nowrap;
 }
-.docs-page-specimen-windows > [data-size='compact'] {
+.catalogue-page-specimen-windows > [data-size='compact'] {
   inline-size: 4.5rem;
   block-size: 7rem;
 }
-.docs-page-specimen-windows > [data-size='medium'] {
+.catalogue-page-specimen-windows > [data-size='medium'] {
   inline-size: 7rem;
   block-size: 8rem;
 }
-.docs-page-specimen-windows > [data-size='expanded'] {
+.catalogue-page-specimen-windows > [data-size='expanded'] {
   inline-size: 11rem;
   block-size: 7rem;
 }
 
 /* The focus ring keyboard use shows, drawn on the button at rest. */
-.docs-page-specimen-focus {
+.catalogue-page-specimen-focus {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 
-.docs-page-specimen-content {
+.catalogue-page-specimen-content {
   text-align: center;
 }

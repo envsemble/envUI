@@ -1,7 +1,7 @@
 /* Applied while the visual baseline takes a screenshot. The menu button and search of a narrow
    window stick to the body's top, so they would float over whichever specimen is scrolled
    beneath them. */
-.docs-compact-controls {
+.site-compact-controls {
   visibility: hidden !important;
 }
 /* The frame's scroll padding would scroll a specimen as tall as the viewport partly out of it,

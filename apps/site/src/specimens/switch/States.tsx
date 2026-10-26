@@ -6,7 +6,7 @@ export default function States() {
   return (
     <Example size="wide">
       <MatrixScroll label="Switch states">
-        <table className="docs-matrix">
+        <table className="catalogue-matrix">
           <thead>
             <tr>
               <th scope="col">State</th>

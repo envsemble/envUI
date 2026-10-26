@@ -32,7 +32,7 @@ import {
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/CatalogueThemes';
-import { referencePages } from '../../apps/site/src/navigation/DocumentationRoutes';
+import { referencePages } from '../../apps/site/src/navigation/SiteRoutes';
 
 /**
  * The density fixture's sections captured, each with a theme its boundaries take from the address:
@@ -96,14 +96,14 @@ interface OpenList {
 }
 
 const liveExample = (page: Page, name: string) =>
-  page.locator(`.docs-live-example[data-example="${name}"]`);
+  page.locator(`.site-live-example[data-example="${name}"]`);
 
 /**
  * The popups the test opened, without those of the figures shown open as pictures, which render
  * into a layer of their own figure.
  */
 const opened = (page: Page, popups: Locator) =>
-  popups.and(page.locator(':not(.docs-open-example *)'));
+  popups.and(page.locator(':not(.catalogue-open-example *)'));
 
 /** Toasts of the tones example, shown in order and captured stacked, with their timers stopped. */
 function toasts(name: string, tones: string[], themes: readonly ThemeName[]): OpenList {
@@ -280,11 +280,11 @@ async function finishAnimations(page: Page) {
 
 /** Wait until fonts, lazy content and finite animations have finished. */
 async function settle(page: Page) {
-  // The catalogue's Loading spinner (.docs-loading) marks a part that is still loading: an
+  // The catalogue's Loading spinner (.site-loading) marks a part that is still loading: an
   // example, its code, a specimen, a demo or the icon list; a part from LoadedPart says "Loading
   // the …".
   await page
-    .locator('.docs-loading')
+    .locator('.site-loading')
     .or(page.getByText(/^Loading .*…$/))
     .first()
     .waitFor({ state: 'detached' });
@@ -312,12 +312,12 @@ async function press(page: Page, control: Locator) {
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
   const { scheme } = theme;
-  if ((await page.locator('.docs-app').getAttribute('data-env-theme')) !== scheme) {
+  if ((await page.locator('.site-app').getAttribute('data-env-theme')) !== scheme) {
     await chooseScheme(page, scheme);
     await page.mouse.move(0, 0);
     await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   }
-  await page.locator(`.docs-app[data-env-theme="${scheme}"]`).waitFor();
+  await page.locator(`.site-app[data-env-theme="${scheme}"]`).waitFor();
 }
 
 /** Names unique within a page: repeated titles get a counter. */
@@ -438,7 +438,7 @@ test.describe('catalogue', () => {
       const visited = [path];
       await page.clock.setFixedTime(now);
       await page.goto(`${catalogueUrl}/${path}`);
-      await page.locator('.docs-page-header').waitFor();
+      await page.locator('.site-page-header').waitFor();
       for (const theme of themesFor(path)) {
         await setTheme(page, theme);
         const name = namer();
@@ -451,14 +451,14 @@ test.describe('catalogue', () => {
         for (const view of visited) {
           await open(view);
           const examples = page.locator(
-            '.docs-preview .docs-example:not(.docs-example .docs-example)',
+            '.catalogue-preview .site-example:not(.site-example .site-example)',
           );
           for (const example of await examples.all()) {
             if (!(await example.isVisible())) continue;
             // An example is named after its title; an untitled one after its specimen, such as
             // InteractionStates, or else its first disclosure or part heading.
             const own = example.locator(
-              ':scope > :is(h2, h3), :scope > .docs-example-heading > :is(h2, h3)',
+              ':scope > :is(h2, h3), :scope > .catalogue-example-heading > :is(h2, h3)',
             );
             const specimen = await example.evaluate(
               (element) => element.closest('[data-specimen]')?.getAttribute('data-specimen') ?? '',
@@ -477,7 +477,7 @@ test.describe('catalogue', () => {
           // The forced hover, pressed, focus and disabled states of InteractionStates.ts, opened
           // where the catalogue keeps them in a closed disclosure.
           const states = page.locator(
-            '.docs-preview [role="region"][aria-label$="interaction states"]',
+            '.catalogue-preview [role="region"][aria-label$="interaction states"]',
           );
           for (const matrix of await states.all()) {
             const label = ((await matrix.getAttribute('aria-label')) ?? '').replace(
@@ -500,7 +500,7 @@ test.describe('catalogue', () => {
         if (!specimens) {
           await open(visited[0]!);
           for (const figure of await page
-            .locator('.docs-template figure.docs-topic-figure')
+            .locator('.site-template figure.site-topic-figure')
             .all()) {
             if (!(await figure.isVisible())) continue;
             const label = (await figure.getAttribute('aria-label')) ?? '';
@@ -511,7 +511,7 @@ test.describe('catalogue', () => {
         // A page without a specimen gives its first live example, named after its file.
         for (const view of specimens ? [] : visited) {
           await open(view);
-          const example = page.locator('.docs-live-example[data-example]').first();
+          const example = page.locator('.site-live-example[data-example]').first();
           if (!(await example.count())) continue;
           const file = (await example.getAttribute('data-example')) ?? '';
           await take(example, `${theme.name}-${name(`example-${slug(file)}`)}.png`);
@@ -553,7 +553,7 @@ test.describe('open lists', () => {
         if (list.pauseTimers) await page.clock.install({ time: now });
         else await page.clock.setFixedTime(now);
         await page.goto(`${catalogueUrl}/${list.route}`);
-        await page.locator('.docs-page-header').waitFor();
+        await page.locator('.site-page-header').waitFor();
         await setTheme(page, theme);
         await settle(page);
         // A modal popup hides the rest of the page from role queries, so the trigger is held as

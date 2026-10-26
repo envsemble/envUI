@@ -6,7 +6,7 @@ import { Palette } from '@envsemble/envui/icons/Palette';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { docsRoute, routeHref } from '../navigation/Address';
-import { pagesOf, sectionHome } from '../navigation/DocumentationRoutes';
+import { pagesOf, sectionHome } from '../navigation/SiteRoutes';
 import { OverviewShowcase } from './OverviewShowcase';
 
 /**
@@ -47,19 +47,19 @@ const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => (
 export function Overview() {
   return (
     <>
-      <header className="docs-page-header">
+      <header className="site-page-header">
         <Surface
           background="default"
           padding={6}
           render={<Column gap={6} align="center" />}
-          className="docs-overview-hero"
+          className="catalogue-overview-hero"
         >
           {/* The wordmark, and what envUI is in one line under it. */}
-          <Column gap={4} align="center" className="docs-overview-brand">
-            <Text render={<h1 />} aria-label="envUI" className="docs-overview-title">
-              <EnvUILogo className="docs-overview-logo" />
+          <Column gap={4} align="center" className="catalogue-overview-brand">
+            <Text render={<h1 />} aria-label="envUI" className="catalogue-overview-title">
+              <EnvUILogo className="catalogue-overview-logo" />
             </Text>
-            <Text variant="title" emphasis="muted" className="docs-overview-lede">
+            <Text variant="title" emphasis="muted" className="catalogue-overview-lede">
               A React design system: components, patterns and the foundations they share, ready for
               light, dark and high contrast.
             </Text>
@@ -75,8 +75,8 @@ export function Overview() {
           </Row>
           {/* Quiet facts under them: the package's version, read from packages/ui/package.json,
               and how much the catalogue shows. */}
-          <Row gap={3} wrap justify="center" align="center" className="docs-overview-facts">
-            <Badge className="docs-overview-version">v{version}</Badge>
+          <Row gap={3} wrap justify="center" align="center" className="catalogue-overview-facts">
+            <Badge className="catalogue-overview-version">v{version}</Badge>
             <Text variant="caption" emphasis="muted" render={<span />}>
               {counts.map(({ kind, count }) => (
                 <span key={kind}>
@@ -88,21 +88,21 @@ export function Overview() {
         </Surface>
       </header>
       <OverviewShowcase />
-      <Column gap={8} className="docs-article docs-overview">
+      <Column gap={8} className="site-article catalogue-overview">
         <Column render={<section aria-labelledby="overview-explore" />} gap={5}>
           <Text render={<h2 id="overview-explore" />} variant="headline">
             Explore
           </Text>
-          <div className="docs-catalogue-grid docs-explore-grid">
+          <div className="catalogue-catalogue-grid catalogue-explore-grid">
             {destinations.map(({ title, route, icon: Icon, text }) => (
               <Card key={title} href={routeHref(route)}>
-                <Column gap={4} align="center" className="docs-catalogue-content">
+                <Column gap={4} align="center" className="catalogue-catalogue-content">
                   <Icon width="1.5rem" height="1.5rem" aria-hidden="true" />
                   <Column gap={2} align="center">
                     <Text render={<h3 />} variant="headline">
                       {title}
                     </Text>
-                    <Text variant="caption" className="docs-caption">
+                    <Text variant="caption" className="catalogue-caption">
                       {text}
                     </Text>
                   </Column>

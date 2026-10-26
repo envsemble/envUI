@@ -4,9 +4,9 @@
  */
 export function BannerShapes() {
   return (
-    <span className="docs-banner-shapes" aria-hidden="true">
-      <span className="docs-banner-shape" data-shape="circle" data-corner="top-end" />
-      <span className="docs-banner-shape" data-shape="pill" data-corner="bottom-end" />
+    <span className="site-banner-shapes" aria-hidden="true">
+      <span className="site-banner-shape" data-shape="circle" data-corner="top-end" />
+      <span className="site-banner-shape" data-shape="pill" data-corner="bottom-end" />
     </span>
   );
 }

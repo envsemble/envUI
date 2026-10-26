@@ -26,7 +26,7 @@ try {
     const context = await browser.newPage({ viewport: window, colorScheme: theme });
     for (const { part, page } of pictures) {
       await context.goto(`${catalogue}/${page}`, { waitUntil: 'networkidle' });
-      await context.locator('.docs-page-banner').waitFor();
+      await context.locator('.site-page-banner').waitFor();
       // Every example in view has loaded.
       await context.getByText('Loading example').first().waitFor({ state: 'detached' });
       // The fonts and every entrance settle before the picture is taken; an animation that runs

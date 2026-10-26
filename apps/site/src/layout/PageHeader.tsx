@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Breadcrumbs, Card, Column, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
-import type { TrailStep } from '../navigation/DocumentationRoutes';
+import type { TrailStep } from '../navigation/SiteRoutes';
 import { BannerMotif, motifOf } from './BannerMotif';
 import { BannerShapes } from './BannerShapes';
 
@@ -47,25 +47,25 @@ export function PageHeader({
 }) {
   const motif = kind === 'catalogue' ? motifOf(subject) : undefined;
   return (
-    <header className="docs-page-header">
+    <header className="site-page-header">
       <Card
         background="default"
         padding={6}
-        className="docs-page-banner docs-banner"
+        className="site-page-banner site-banner"
         data-banner={kind}
       >
         {motif ? <BannerMotif motif={motif} /> : <BannerShapes />}
-        <Column gap={6} className="docs-page-banner-content">
-          <div className="docs-page-banner-heading">
+        <Column gap={6} className="site-page-banner-content">
+          <div className="site-page-banner-heading">
             <Column gap={3}>
               {trail ? (
                 <Breadcrumbs
-                  className="docs-page-banner-breadcrumbs"
+                  className="site-page-banner-breadcrumbs"
                   items={trail.map(({ label, route }) => ({ label, href: routeHref(route) }))}
                 />
               ) : (
                 breadcrumb && (
-                  <Text variant="caption" className="docs-page-banner-breadcrumb">
+                  <Text variant="caption" className="catalogue-page-banner-breadcrumb">
                     {breadcrumb}
                   </Text>
                 )
@@ -75,12 +75,12 @@ export function PageHeader({
                   {logo}
                 </Text>
               ) : (
-                <Text render={<h1 />} variant="headline" className="docs-page-banner-title">
+                <Text render={<h1 />} variant="headline" className="site-page-banner-title">
                   {title}
                 </Text>
               )}
               {description && (
-                <Text emphasis="muted" className="docs-page-banner-description">
+                <Text emphasis="muted" className="site-page-banner-description">
                   {description}
                 </Text>
               )}

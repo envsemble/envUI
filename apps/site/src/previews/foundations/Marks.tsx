@@ -2,9 +2,9 @@ import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
 /**
  * A real envUI example with numbered marks measured from its live layout, as an anatomy figure's
- * callouts are: the space between the children of an element marked `data-docs-space="n"` is
- * filled and numbered n, an element marked `data-docs-mark="n"` is outlined and numbered n, and an
- * element marked `data-docs-guides` gets a guide along its children's top and bottom edges. The marks follow
+ * callouts are: the space between the children of an element marked `data-catalogue-space="n"` is
+ * filled and numbered n, an element marked `data-catalogue-mark="n"` is outlined and numbered n, and an
+ * element marked `data-catalogue-guides` gets a guide along its children's top and bottom edges. The marks follow
  * the example as it resizes and as the theme changes. The example is a picture: it neither takes
  * focus nor changes under the pointer.
  */
@@ -53,8 +53,8 @@ function measure(stage: HTMLElement, subject: HTMLElement) {
   const bounds = box(subject);
   const found: Omit<Mark, 'badge'>[] = [];
   const guides: number[] = [];
-  for (const element of subject.querySelectorAll<HTMLElement>('[data-docs-space]')) {
-    const number = Number(element.dataset.docsSpace);
+  for (const element of subject.querySelectorAll<HTMLElement>('[data-catalogue-space]')) {
+    const number = Number(element.dataset.catalogueSpace);
     const children = [...element.children].filter((child) => child.getClientRects().length);
     // The space runs across the element's content, inside its padding.
     const style = getComputedStyle(element);
@@ -94,11 +94,11 @@ function measure(stage: HTMLElement, subject: HTMLElement) {
   }
   // A part's badge sits on the side of the subject nearer the part, so no line crosses it.
   const centre = bounds.x + bounds.width / 2;
-  for (const element of subject.querySelectorAll<HTMLElement>('[data-docs-mark]')) {
+  for (const element of subject.querySelectorAll<HTMLElement>('[data-catalogue-mark]')) {
     const rect = box(element);
     const side = rect.x + rect.width / 2 < centre - 8 ? 'start' : 'end';
     found.push({
-      number: Number(element.dataset.docsMark),
+      number: Number(element.dataset.catalogueMark),
       rect,
       kind: 'part',
       side,
@@ -108,7 +108,7 @@ function measure(stage: HTMLElement, subject: HTMLElement) {
       },
     });
   }
-  for (const element of subject.querySelectorAll<HTMLElement>('[data-docs-guides]')) {
+  for (const element of subject.querySelectorAll<HTMLElement>('[data-catalogue-guides]')) {
     // The first line of the row: a row that wraps is guided along its first line.
     const all = [...element.children].map(box);
     if (!all.length) continue;
@@ -161,15 +161,15 @@ export function MarkedSubject({ children }: { children: ReactNode }) {
     };
   }, []);
   return (
-    <div ref={stage} className="docs-marked">
-      <div ref={subject} className="docs-marked-subject" inert>
+    <div ref={stage} className="catalogue-marked">
+      <div ref={subject} className="catalogue-marked-subject" inert>
         {children}
       </div>
-      <svg className="docs-anatomy-lines" aria-hidden="true">
+      <svg className="site-anatomy-lines" aria-hidden="true">
         {state.guides.map((y, index) => (
           <line
             key={`guide-${index}`}
-            className="docs-marked-guide"
+            className="catalogue-marked-guide"
             x1="0"
             x2="100%"
             y1={y}
@@ -180,7 +180,7 @@ export function MarkedSubject({ children }: { children: ReactNode }) {
           <g key={index}>
             {kind === 'space' ? (
               <rect
-                className="docs-marked-space"
+                className="catalogue-marked-space"
                 x={rect.x}
                 y={rect.y}
                 width={rect.width}
@@ -188,7 +188,7 @@ export function MarkedSubject({ children }: { children: ReactNode }) {
               />
             ) : (
               <rect
-                className="docs-anatomy-box"
+                className="site-anatomy-box"
                 x={rect.x}
                 y={rect.y}
                 width={rect.width}
@@ -203,7 +203,7 @@ export function MarkedSubject({ children }: { children: ReactNode }) {
       {state.marks.map(({ number, badge }, index) => (
         <span
           key={index}
-          className="docs-anatomy-badge"
+          className="site-anatomy-badge"
           aria-hidden="true"
           style={{ left: badge.x, top: badge.y }}
         >

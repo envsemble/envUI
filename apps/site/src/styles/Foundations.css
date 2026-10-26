@@ -45,23 +45,23 @@
     monospace;
   overflow-wrap: anywhere;
 }
-.docs-icon-toolbar {
+.catalogue-icon-toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--env-space-5);
 }
 @container (max-width: 30rem) {
-  .docs-icon-toolbar {
+  .catalogue-icon-toolbar {
     grid-template-columns: minmax(0, 1fr);
   }
 }
-.docs-icon-detail-preview {
+.catalogue-icon-detail-preview {
   display: grid;
   place-items: center;
   padding-block: var(--env-space-4);
 }
-.docs-icon-catalogue {
+.catalogue-icon-catalogue {
   display: grid;
   /* Wide enough for the names of most icons' longest words, such as Accessibility. */
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 8rem), 1fr));
@@ -70,10 +70,10 @@
   margin: 0;
   padding: 0;
 }
-.docs-icon-catalogue li {
+.catalogue-icon-catalogue li {
   min-inline-size: 0;
 }
-.docs-icon-tile {
+.catalogue-icon-tile {
   block-size: 100%;
   min-block-size: 7rem;
   justify-content: flex-start;
@@ -82,7 +82,7 @@
 }
 /* Labels wrap only between words; a word longer than the tile ends in an ellipsis, and the label's
    tooltip holds the whole name. */
-.docs-icon-label {
+.catalogue-icon-label {
   display: block;
   max-inline-size: 100%;
   overflow: hidden;
@@ -91,232 +91,232 @@
 }
 /* Leave the source grid usable beside its non-modal inspector in a large window. */
 @container env-window (width >= 75rem) {
-  body:has(.docs-icon-details) .docs-main {
+  body:has(.catalogue-icon-details) .site-main {
     padding-inline-end: 24rem;
   }
 }
 /* Topics of the catalogue's own pages, such as Dev mode, and the parts of foundations' figures
    (previews/foundations/Topic.tsx): sections under their h2, each opened by a paragraph, then
    titled blocks beside their figures, a sub-topic apart from the next. */
-.docs-topic {
-  --docs-subtopic-gap: var(--env-space-7);
+.catalogue-topic {
+  --catalogue-subtopic-gap: var(--env-space-7);
 }
-.docs-topic > h2 {
+.catalogue-topic > h2 {
   margin: 0 0 var(--env-space-4);
 }
-.docs-topic-lead {
+.catalogue-topic-lead {
   margin: 0 0 var(--env-space-5);
 }
-.docs-topic-blocks {
+.catalogue-topic-blocks {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--docs-subtopic-gap);
+  row-gap: var(--catalogue-subtopic-gap);
   min-inline-size: 0;
 }
-.docs-topic-text {
+.catalogue-topic-text {
   display: grid;
   align-content: start;
   gap: var(--env-space-2);
   max-inline-size: 65ch;
 }
-.docs-topic-text :is(h3, h4, p) {
+.catalogue-topic-text :is(h3, h4, p) {
   margin: 0;
 }
-.docs-topic-block {
+.catalogue-topic-block {
   display: grid;
   gap: var(--env-space-4);
   min-inline-size: 0;
 }
-.docs-topic-block.docs-figure-split {
+.catalogue-topic-block.site-figure-split {
   gap: var(--env-space-5) var(--env-space-7);
 }
-.docs-topic-figure {
+.site-topic-figure {
   display: grid;
   gap: var(--env-space-4);
   min-inline-size: 0;
   margin: 0;
 }
-.docs-topic-figure > .docs-foundation-stage > * {
+.site-topic-figure > .site-foundation-stage > * {
   inline-size: auto;
   max-inline-size: 100%;
 }
-.docs-topic-legend-name {
+.catalogue-topic-legend-name {
   font-weight: var(--env-font-weight-medium);
 }
-.docs-topic-legend p {
+.catalogue-topic-legend p {
   margin: 0;
 }
 
 /* A figure with marks measured from its example (Marks.tsx): room on the end side for the
    numbers, the marked space filled in the accent, and the guides of a row that lines up. */
-.docs-marked-stage {
+.catalogue-marked-stage {
   padding-inline: var(--env-space-9);
 }
-.docs-marked {
+.catalogue-marked {
   position: relative;
   display: grid;
   justify-items: center;
   max-inline-size: 100%;
 }
-.docs-marked-subject {
+.catalogue-marked-subject {
   display: grid;
   justify-items: center;
   max-inline-size: 100%;
 }
-.docs-marked-space {
+.catalogue-marked-space {
   fill: color-mix(in oklch, var(--env-color-fg-accent) 30%, transparent);
 }
-.docs-anatomy-lines .docs-marked-guide {
+.site-anatomy-lines .catalogue-marked-guide {
   stroke: var(--env-color-fg-accent);
   stroke-dasharray: 4 3;
 }
-.docs-spacing-subject {
+.catalogue-spacing-subject {
   inline-size: min(24rem, 100%);
 }
-.docs-align-subject {
+.catalogue-align-subject {
   justify-content: center;
 }
-.docs-align-subject > .env-search-field {
+.catalogue-align-subject > .env-search-field {
   inline-size: 12rem;
 }
 
 /* The shapes envUI draws: each a small, inert picture of real components on its stage. */
-.docs-shape-stage {
+.catalogue-shape-stage {
   min-block-size: 12rem;
 }
-.docs-shape-card {
+.catalogue-shape-card {
   inline-size: 14rem;
 }
-.docs-shape-inner {
+.catalogue-shape-inner {
   inline-size: 18rem;
 }
 
 /* The two scales side by side: the same content, so the sizes compare. */
 /* The scale's own boundary, a Theme, paints no page of its own on the canvas. */
-.docs-scale-theme {
+.catalogue-scale-theme {
   background: none;
   inline-size: auto;
 }
-.docs-scale-sample {
+.catalogue-scale-sample {
   inline-size: min(20rem, 100%);
 }
 
 /* Adapting to width: the same components in a narrow frame and across the column. */
-.docs-width-figures {
+.catalogue-width-figures {
   display: grid;
   gap: var(--env-space-7);
   min-inline-size: 0;
 }
-.docs-topic-figure > .docs-foundation-stage > .docs-width-sample[data-width='narrow'] {
+.site-topic-figure > .site-foundation-stage > .catalogue-width-sample[data-width='narrow'] {
   inline-size: min(18rem, 100%);
 }
-.docs-topic-figure > .docs-foundation-stage > .docs-width-sample[data-width='wide'] {
+.site-topic-figure > .site-foundation-stage > .catalogue-width-sample[data-width='wide'] {
   inline-size: 100%;
 }
 
 /* Typography: a small screen of text styles, and every style in a list on the page. */
-.docs-type-screen {
+.catalogue-type-screen {
   inline-size: min(26rem, 100%);
 }
-.docs-type-styles {
+.catalogue-type-styles {
   display: grid;
   gap: var(--env-space-5);
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.docs-type-styles > li {
+.catalogue-type-styles > li {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--env-space-2) var(--env-space-6);
   align-items: center;
 }
-.docs-type-name {
+.catalogue-type-name {
   display: grid;
   gap: var(--env-space-1);
 }
 @container (max-width: 38rem) {
-  .docs-type-styles > li {
+  .catalogue-type-styles > li {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
 /* Accessibility: a small form to move through with the keyboard. */
-.docs-keyboard-sample {
+.catalogue-keyboard-sample {
   inline-size: min(22rem, 100%);
 }
 
 /* The color roles as swatches, on the page: four even columns of six, two on a narrower page and
    one on a phone. Each column is one continuous strip of square-cornered swatches, three bands for
    a status, with each name beside its swatch. */
-.docs-role-groups {
+.catalogue-role-groups {
   container-type: inline-size;
 }
-.docs-role-groups > div {
+.catalogue-role-groups > div {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--env-space-6);
 }
 @container (width >= 30rem) {
-  .docs-role-groups > div {
+  .catalogue-role-groups > div {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 @container (width >= 54rem) {
-  .docs-role-groups > div {
+  .catalogue-role-groups > div {
     grid-template-columns: repeat(4, 1fr);
   }
 }
-.docs-role-group {
+.catalogue-role-group {
   display: grid;
   align-content: start;
   gap: var(--env-space-3);
 }
-.docs-role-group > h4 {
+.catalogue-role-group > h4 {
   margin: 0;
 }
-.docs-role-swatches {
+.catalogue-role-swatches {
   display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.docs-role-swatches > li {
+.catalogue-role-swatches > li {
   display: grid;
   grid-template-columns: 3rem 1fr;
   column-gap: var(--env-space-3);
   align-items: center;
 }
-.docs-role-swatch {
+.catalogue-role-swatch {
   display: flex;
   block-size: 2.25rem;
 }
-.docs-role-swatch > span {
+.catalogue-role-swatch > span {
   flex: 1;
 }
-.docs-roles {
+.catalogue-roles {
   inline-size: min(22rem, 100%);
 }
 
 /* One screen in each theme and contrast: two across, then four where they fit. */
-.docs-themes {
+.catalogue-themes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
   gap: var(--env-space-5);
   inline-size: 100%;
 }
-.docs-themes-stage > .docs-themes {
+.catalogue-themes-stage > .catalogue-themes {
   inline-size: 100%;
 }
-.docs-theme-sample {
+.catalogue-theme-sample {
   display: grid;
   justify-items: center;
   gap: var(--env-space-2);
 }
-.docs-theme-sample > .env-theme {
+.catalogue-theme-sample > .env-theme {
   inline-size: 100%;
 }
 /* A shape's name and meaning sit right under its stage, in the run's second row. */
-.docs-figure-run > .docs-topic-figure > figcaption {
+.site-figure-run > .site-topic-figure > figcaption {
   grid-row: 2;
 }

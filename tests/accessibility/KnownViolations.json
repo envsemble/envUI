@@ -3,7 +3,7 @@
     "light": {
       "landmark-unique": {
         "article :: nav.env-breadcrumbs": 1,
-        "header :: nav.env-breadcrumbs.docs-page-banner-breadcrumbs": 1
+        "header :: nav.env-breadcrumbs.site-page-banner-breadcrumbs": 1
       }
     }
   },
@@ -25,7 +25,7 @@
   "components/page": {
     "light": {
       "landmark-unique": {
-        "header :: nav.env-breadcrumbs.docs-page-banner-breadcrumbs": 1
+        "header :: nav.env-breadcrumbs.site-page-banner-breadcrumbs": 1
       }
     }
   },
@@ -111,7 +111,7 @@
   "patterns/navigation": {
     "light": {
       "landmark-unique": {
-        "header :: nav.env-breadcrumbs.docs-page-banner-breadcrumbs": 1
+        "header :: nav.env-breadcrumbs.site-page-banner-breadcrumbs": 1
       }
     }
   }

@@ -55,7 +55,7 @@ export class PageBoundary extends Component<PageBoundaryProps, PageBoundaryState
     // The overview is where the link leads, so there it offers to load the catalogue again.
     const overview = this.props.route.split(/[/?]/)[0] === 'overview';
     return (
-      <Column gap={7} className="docs-article">
+      <Column gap={7} className="site-article">
         <PageHeader title={this.props.title} breadcrumb="envUI" />
         <Alert
           ref={this.alert}

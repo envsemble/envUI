@@ -26,7 +26,7 @@ import { marked } from 'marked';
 import { parse as parseYaml } from 'yaml';
 import { headingsOf } from './MarkdownHeadings.mjs';
 import { headingSlugger } from './SearchAnchors.mjs';
-import { optionTable, optionTableProblems } from './SiteContent.mjs';
+import { optionTable, optionTableProblems } from './CatalogueContent.mjs';
 import { writeSearchIndex } from './SearchIndex.mjs';
 
 export const documentationDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
@@ -35,7 +35,7 @@ export const documentationDirectory = fileURLToPath(new URL('../docs/', import.m
  * Pages the package leaves out, whose links in its pages lead to the copies on main instead, and
  * which the packaged index doesn't list: the contributor pages, for people who work on envUI
  * itself, which neither the catalogue nor the Docs show
- * (unlistedDocuments in apps/site/src/navigation/DocumentationRoutes.ts), and local
+ * (unlistedDocuments in apps/site/src/navigation/SiteRoutes.ts), and local
  * development, which needs a checkout of envUI and which the Docs show.
  */
 export const contributorPages = new Set([

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { normalizeRoute } from './DocumentationRoutes';
+import { normalizeRoute } from './SiteRoutes';
 import { oldHashRoute, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
 
 function readRoute() {
@@ -22,7 +22,7 @@ function correctAddress() {
 }
 
 /** The current route, from the address's path. */
-export function useDocumentationRoute() {
+export function useSiteRoute() {
   // An old hash address is redirected before the first render, which reads the path.
   const [route, setRoute] = useState(() => {
     if (oldHashRoute() !== undefined) correctAddress();

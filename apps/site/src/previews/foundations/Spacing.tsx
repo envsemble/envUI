@@ -76,7 +76,7 @@ function GroupingFigure({ legend }: FigureWords) {
   return (
     <Figure
       label="How space groups a settings card"
-      className="docs-marked-stage"
+      className="catalogue-marked-stage"
       legend={<NumberedLegend entries={legend} />}
     >
       <MarkedSubject>
@@ -84,11 +84,11 @@ function GroupingFigure({ legend }: FigureWords) {
           background="default"
           padding={6}
           radius="xl"
-          className="docs-spacing-subject"
-          render={<Column gap={8} data-docs-space="3" />}
+          className="catalogue-spacing-subject"
+          render={<Column gap={8} data-catalogue-space="3" />}
         >
-          <Column gap={4} data-docs-space="2">
-            <Column gap={1} data-docs-space="1">
+          <Column gap={4} data-catalogue-space="2">
+            <Column gap={1} data-catalogue-space="1">
               <Text render={<h3 />} variant="title">
                 Profile
               </Text>
@@ -97,8 +97,8 @@ function GroupingFigure({ legend }: FigureWords) {
             <TextField label="Name" defaultValue="Priya Shah" />
             <TextField label="Email" defaultValue="priya@example.com" />
           </Column>
-          <Column gap={4} data-docs-space="2">
-            <Column gap={1} data-docs-space="1">
+          <Column gap={4} data-catalogue-space="2">
+            <Column gap={1} data-catalogue-space="1">
               <Text render={<h3 />} variant="title">
                 Notifications
               </Text>
@@ -116,9 +116,9 @@ function GroupingFigure({ legend }: FigureWords) {
 /** A toolbar of five kinds of control at one size, with guides along their tops and bottoms. */
 function AlignFigure() {
   return (
-    <Figure label="Controls of one size line up" className="docs-marked-stage">
+    <Figure label="Controls of one size line up" className="catalogue-marked-stage">
       <MarkedSubject>
-        <Row wrap gap={2} align="center" data-docs-guides className="docs-align-subject">
+        <Row wrap gap={2} align="center" data-catalogue-guides className="catalogue-align-subject">
           <SearchField label="Search reports" showLabel={false} defaultValue="Budget" />
           <Select
             aria-label="Owner"
@@ -154,14 +154,14 @@ const shapes = [
     key="surfaces"
     title="Quarterly report"
     description="Updated today"
-    className="docs-shape-card"
+    className="catalogue-shape-card"
   />,
   <Surface
     key="inside"
     background="default"
     padding={3}
     radius="xl"
-    className="docs-shape-inner"
+    className="catalogue-shape-inner"
     render={<Column gap={3} />}
   >
     <Alert tone="info" title="Two reports need a review" />
@@ -185,7 +185,7 @@ const shapes = [
 ];
 
 function ShapesFigure({ legend }: FigureWords) {
-  return <Run legend={legend} pictures={shapes} className="docs-shape-stage" />;
+  return <Run legend={legend} pictures={shapes} className="catalogue-shape-stage" />;
 }
 
 /** A small dialog's content, the same in each scale, so the two compare. */
@@ -195,7 +195,7 @@ function ScaleSample() {
       background="default"
       padding={5}
       radius="xl"
-      className="docs-scale-sample"
+      className="catalogue-scale-sample"
       render={<Column gap={4} />}
     >
       <Column gap={1}>
@@ -223,7 +223,7 @@ function ScalesFigure({ legend }: FigureWords) {
     <Run
       legend={legend}
       pictures={scales.map((scale) => (
-        <Theme key={scale} {...theme} scale={scale} className="docs-scale-theme">
+        <Theme key={scale} {...theme} scale={scale} className="catalogue-scale-theme">
           <ScaleSample />
         </Theme>
       ))}

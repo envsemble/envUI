@@ -27,7 +27,7 @@ import {
   type DocsGroup,
   type RoutePage,
   type CatalogueSection,
-} from './DocumentationRoutes';
+} from './SiteRoutes';
 import { docsRoute, homeRoute, routeHref } from './Address';
 import { otherPart } from './OtherPart';
 
@@ -182,7 +182,7 @@ function Brand({ area }: { area: Area }) {
     <Link
       href={routeHref(area === 'docs' ? docsRoute : homeRoute)}
       underline={false}
-      className="docs-brand"
+      className="site-brand"
       aria-label={area === 'docs' ? 'envUI Docs home' : 'envUI home'}
     >
       {area === 'docs' ? <EnvUIDocsLogo className="docs-brand-docs" /> : <EnvUILogo />}
@@ -209,17 +209,17 @@ export function CatalogueNavigation({
   const section = (page?.area === 'catalogue' ? page.section : 'Overview') as CatalogueSection;
   const pages = pagesOf('catalogue').filter((entry) => entry.section === section);
   return (
-    <div ref={element} className="docs-navigation" data-in-sheet={inSheet || undefined}>
+    <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
       <Rail
         aria-label="Catalogue"
-        className="docs-rail"
+        className="catalogue-rail"
         header={<Brand area="catalogue" />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
       />
       <Drawer
         aria-label={section}
-        className="docs-sidebar"
-        header={<SearchButton onClick={onSearch} className="docs-drawer-search" />}
+        className="site-sidebar"
+        header={<SearchButton onClick={onSearch} className="site-drawer-search" />}
         destinations={pageDestinations(pages, routePath, onChoose)}
         {...drawerWidth}
       />
@@ -240,14 +240,14 @@ export function DocsNavigation({
   const element = useCurrentInView();
   const drawerWidth = useDrawerWidth('docs', inSheet);
   return (
-    <div ref={element} className="docs-navigation" data-in-sheet={inSheet || undefined}>
+    <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
       <Drawer
         aria-label="Docs"
-        className="docs-sidebar"
+        className="site-sidebar"
         header={
           <div className="docs-drawer-top">
             <Brand area="docs" />
-            <SearchButton onClick={onSearch} className="docs-drawer-search" />
+            <SearchButton onClick={onSearch} className="site-drawer-search" />
           </div>
         }
         destinations={docsDestinations(routePath, onChoose)}
@@ -268,15 +268,15 @@ export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {
   const { label, Icon } = otherPart(area);
   const href = routeHref(otherPartRoute(page, area));
   return (
-    <div className="docs-page-actions">
-      <div className="docs-page-actions-bar">
-        <span className="docs-wide-only">
+    <div className="site-page-actions">
+      <div className="site-page-actions-bar">
+        <span className="site-wide-only">
           <Button variant="ghost" href={href} startIcon={<Icon />}>
             {label}
           </Button>
           <DisplayMenu />
         </span>
-        <span className="docs-narrow-only">
+        <span className="site-narrow-only">
           <Tooltip content={label}>
             <IconButton variant="ghost" href={href} icon={<Icon />} aria-label={label} />
           </Tooltip>

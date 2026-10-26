@@ -15,8 +15,8 @@ import {
   optionTable,
   optionTableProblems,
   paragraphLength,
-  siteStructure,
-} from '../scripts/SiteContent.mjs';
+  catalogueStructure,
+} from '../scripts/CatalogueContent.mjs';
 
 test('focused Markdown discovery preserves examples and rejects broken documentation', async () => {
   const cache = resolve('.cache');
@@ -1048,7 +1048,7 @@ test('an option table is read for the catalogue as a legend', () => {
 test('Catalogue text with no structure is found: loose after a figure, or a fourth paragraph', () => {
   const markdown = (text) => ({ kind: 'markdown', markdown: text });
   const figure = (role) => ({ kind: 'example', name: 'Figure', heading: 'Figure', role });
-  const found = siteStructure({
+  const found = catalogueStructure({
     sections: [
       {
         id: 'rules',

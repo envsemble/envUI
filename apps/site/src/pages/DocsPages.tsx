@@ -9,7 +9,7 @@ import {
   pagesOf,
   type DocsGroup,
   type RoutePage,
-} from '../navigation/DocumentationRoutes';
+} from '../navigation/SiteRoutes';
 import { routeHref } from '../navigation/Address';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
@@ -25,7 +25,7 @@ import { LoadedPart } from './LoadedPart';
 import { ColorPalette } from '../previews/foundations/ColorPalette';
 import { SpecimenHeadingLevel } from '../previews/Example';
 import { ReleaseNotes } from './ReleaseNotes';
-import { codeColumns, subsections } from '../../../../scripts/SiteContent.mjs';
+import { codeColumns, subsections } from '../../../../scripts/CatalogueContent.mjs';
 import { headingSlug } from '../../../../scripts/SearchAnchors.mjs';
 import codemodsReadme from '../../../../packages/codemods/README.md?raw';
 
@@ -90,7 +90,7 @@ export function DocsHome({ page }: { page: RoutePage }) {
         description={page.summary}
         kind="docs-home"
       />
-      <Column gap={7} className="docs-article">
+      <Column gap={7} className="site-article">
         <Column
           render={<section aria-labelledby="agent-setup" />}
           gap={3}
@@ -137,7 +137,7 @@ export function GuidePage({ page }: { page: RoutePage }) {
         kind="docs"
         meta={<OtherPartButton page={page} />}
       />
-      <Column gap={7} className="docs-article">
+      <Column gap={7} className="site-article">
         <GuideDocument document={page.document!} />
       </Column>
     </>
@@ -154,7 +154,7 @@ export function CodemodsPage({ page }: { page: RoutePage }) {
         description={page.summary}
         kind="docs"
       />
-      <Column gap={7} className="docs-article">
+      <Column gap={7} className="site-article">
         <Markdown codeCopyable>{codemodsReadme.replace(/^# [^\n]*\n+/, '')}</Markdown>
       </Column>
     </>
@@ -171,7 +171,7 @@ export function TokensPage({ page }: { page: RoutePage }) {
         description={page.summary}
         kind="docs"
       />
-      <Column gap={7} className="docs-article">
+      <Column gap={7} className="site-article">
         <LoadedPart part={tokenReference} what="token reference" />
       </Column>
     </>
@@ -198,7 +198,7 @@ export function ChangelogDocsPage({ page }: { page: RoutePage }) {
         description={page.summary}
         kind="docs"
       />
-      <Column gap={8} className="docs-article">
+      <Column gap={8} className="site-article">
         <Column gap={6} render={<section aria-labelledby="highlights" />}>
           <Text render={<h2 id="highlights" />} variant="headline">
             Highlights
@@ -253,7 +253,7 @@ export function FoundationGuidePage({ page }: { page: RoutePage }) {
         description={page.summary}
         meta={<OtherPartButton page={page} />}
       />
-      <Column gap={8} className="docs-article docs-api">
+      <Column gap={8} className="site-article docs-api">
         <CodeGuide document={document} />
         <WordsInCode document={document} />
         <Provides document={document} title="Accessibility" id="provides" />
@@ -513,7 +513,7 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
       {/* Field, which has no page in the catalogue, shows the whole file, what envUI and the
           application provide in place. */}
       {!cataloguePage && <TemplateContent document={document} provides related={false} />}
-      <Column gap={8} className="docs-article docs-api">
+      <Column gap={8} className="site-article docs-api">
         <CodeGuide document={document} />
         {cataloguePage && <WordsInCode document={document} />}
         {cataloguePage && <Provides document={document} title="Accessibility" id="provides" />}

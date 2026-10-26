@@ -9,10 +9,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { catalogueUrl } from './Servers';
 import { moduleFiles, requireSite, serveSite, site, siteUrl } from './HostedSite';
-import {
-  normalizeRoute,
-  routeOfDocument,
-} from '../../apps/site/src/navigation/DocumentationRoutes';
+import { normalizeRoute, routeOfDocument } from '../../apps/site/src/navigation/SiteRoutes';
 
 const dialog = (page: Page) => page.getByRole('dialog', { name: 'Search envUI' });
 const field = (page: Page) => dialog(page).getByRole('combobox', { name: 'Search envUI' });
@@ -44,7 +41,7 @@ async function shortcutKeys(page: Page) {
 async function search(page: Page, query: string) {
   await page.keyboard.press((await shortcutKeys(page)).own);
   await expect(field(page)).toBeFocused();
-  await expect(dialog(page).locator('.docs-loading')).toHaveCount(0);
+  await expect(dialog(page).locator('.site-loading')).toHaveCount(0);
   await field(page).fill(query);
 }
 
@@ -76,7 +73,7 @@ test.describe('search', () => {
       await expect(dialog(page)).toBeHidden();
 
       const button = page
-        .locator('.docs-sidebar')
+        .locator('.site-sidebar')
         .getByRole('button', { name: /^Search/ })
         .first();
       await expect(button).toHaveAttribute('aria-keyshortcuts', keys.named);
@@ -246,19 +243,19 @@ test.describe('hosted build', () => {
     await navigation.getByRole('link', { name: 'Dialog', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dialog');
-    await expect(page.locator('#docs-main')).toBeFocused();
+    await expect(page.locator('#site-main')).toBeFocused();
     await expect(navigation.getByRole('link', { name: 'Dialog', exact: true })).toHaveAttribute(
       'aria-current',
       'page',
     );
     await page
-      .locator('.docs-page-header')
+      .locator('.site-page-header')
       .getByRole('link', { name: 'Docs', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/docs/components/dialog`);
     // The switch at the top end leads back to the same subject in the catalogue.
     await page
-      .locator('.docs-page-actions')
+      .locator('.site-page-actions')
       .getByRole('link', { name: 'Catalogue', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
@@ -344,7 +341,7 @@ test('a token found in search opens the token reference in the Docs', async ({ p
   await expect(page.locator('#token-env-color-fg-muted')).toBeInViewport();
   // The token reference has no page in the catalogue: the switch leads to its Overview.
   await page
-    .locator('.docs-page-actions')
+    .locator('.site-page-actions')
     .getByRole('link', { name: 'Catalogue', exact: true })
     .click();
   await expect(page).toHaveURL(`${catalogueUrl}/`);

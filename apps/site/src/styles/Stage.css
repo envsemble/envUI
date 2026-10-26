@@ -11,15 +11,15 @@
 :root {
   /* stylelint-disable declaration-property-value-disallowed-list -- the catalogue's one shadow,
      for its examples, tiles and the Overview's cards alone. */
-  --docs-card-shadow:
+  --catalogue-card-shadow:
     0 0 0.125rem light-dark(oklch(0% 0 0 / 0.08), oklch(0% 0 0 / 0.35)),
     0 0.25rem 0.75rem light-dark(oklch(0% 0 0 / 0.06), oklch(0% 0 0 / 0.3));
   /* stylelint-enable declaration-property-value-disallowed-list */
 }
 
-.docs-live-example,
-.docs-verdict-stage,
-.docs-anatomy-stage {
+.site-live-example,
+.site-verdict-stage,
+.site-anatomy-stage {
   display: grid;
   place-content: center stretch;
   justify-items: center;
@@ -28,31 +28,31 @@
   container-type: inline-size;
 }
 
-.docs-live-example,
-.docs-anatomy-stage,
-.docs-foundation-stage,
-.docs-related-stage,
-.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
+.site-live-example,
+.site-anatomy-stage,
+.site-foundation-stage,
+.catalogue-related-stage,
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
   border-radius: var(--env-radius-surface);
 }
 
-/* The recessed canvas: the page's background, or `--docs-canvas-under`, 0.035 deeper in OKLCH
+/* The recessed canvas: the page's background, or `--catalogue-canvas-under`, 0.035 deeper in OKLCH
    lightness in the light themes and 0.045 in the dark ones, high contrast included. The contrast
    gate measures every pair an example paints on the page on the canvas too (`catalogue-canvas` in
    tests/contrast/Pairs.ts, which repeats this formula). */
-.docs-live-example,
-.docs-verdict-stage,
-.docs-anatomy-stage,
-.docs-related-stage,
-.docs-foundation-stage[data-figure='example'],
-.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll),
-.docs-showcase-card {
+.site-live-example,
+.site-verdict-stage,
+.site-anatomy-stage,
+.catalogue-related-stage,
+.site-foundation-stage[data-figure='example'],
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
+.catalogue-showcase-card {
   background-color: light-dark(
-    oklch(from var(--docs-canvas-under, var(--env-color-bg-page)) calc(l - 0.035) c h),
-    oklch(from var(--docs-canvas-under, var(--env-color-bg-page)) calc(l - 0.045) c h)
+    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.035) c h),
+    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.045) c h)
   );
   /* Every canvas, an example's, a tile's or a card's, lifts off the page a little. */
-  box-shadow: var(--docs-card-shadow);
+  box-shadow: var(--catalogue-card-shadow);
 }
 
 /* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its
@@ -60,16 +60,16 @@
    canvas is already deeper than both, the navigation being lighter than the page. In the light
    themes it is recessed from the navigation's fill instead, the darker of the window's two. */
 :is(
-    .docs-live-example,
-    .docs-verdict-stage,
-    .docs-anatomy-stage,
-    .docs-related-stage
+    .site-live-example,
+    .site-verdict-stage,
+    .site-anatomy-stage,
+    .catalogue-related-stage
   )[data-stage='shaded'][data-env-theme='light'] {
-  --docs-canvas-under: var(--env-color-bg-default);
+  --catalogue-canvas-under: var(--env-color-bg-default);
 }
 
 /* What the stage shows keeps to its width, however wide its content would be. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-canvas) > * {
+:is(.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-canvas) > * {
   max-inline-size: 100%;
 }
 
@@ -77,7 +77,7 @@
    `container` too), a strip of tabs, a window or a skeleton, has none of its own and would
    collapse if centred: an example that is or holds one fills the stage, unless it sets its
    width. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-canvas)
+:is(.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-canvas)
   > :where(
     .env-description-list[data-layout='auto'],
     .env-page,
@@ -103,7 +103,7 @@
     )
   ),
 /* A strip of document tabs lays out its bar straight on the stage, its root being contents. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-related-canvas)
+:is(.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-canvas)
   > .env-document-tabs-root
   > .env-document-tabs-bar {
   inline-size: 100%;
@@ -112,27 +112,27 @@
 /* A Scaffold on the stage stands in for a window, so its body shows what a window's would, the
    page's background. */
 :is(
-    .docs-live-example,
-    .docs-verdict-stage,
-    .docs-anatomy-subject,
-    .docs-width-box,
-    .docs-related-canvas
+    .site-live-example,
+    .site-verdict-stage,
+    .site-anatomy-subject,
+    .catalogue-width-box,
+    .catalogue-related-canvas
   )
   > .env-scaffold,
 /* The dev mode demo's application sits in the element dev mode measures. */
-.docs-live-example > [data-dev-mode-demo] > .env-scaffold {
+.site-live-example > [data-dev-mode-demo] > .env-scaffold {
   background-color: var(--env-color-bg-page);
 }
 
 /* A width frame keeps its own width on the stage; the example fills it. It is a window of its own,
    the env-window container, so what the example holds lays out at the frame's width: container
    queries without a name, such as a Page's gutters, and those on the window see the frame. */
-.docs-width-box {
+.catalogue-width-box {
   display: grid;
   container: env-window / inline-size;
 }
 
-.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
   padding: var(--env-space-6);
 }
 
@@ -140,84 +140,90 @@
    palette's swatches and the state layers: on the page itself, with no fill and no inset, so it
    sits right under its title and lines up with the text, as a section's text does, and never
    reads as an example. */
-.docs-foundation-stage[data-figure='explanation'] {
+.site-foundation-stage[data-figure='explanation'] {
   justify-items: start;
   min-block-size: 0;
   padding: 0;
   background: none;
 }
 
-.docs-live-example {
+.site-live-example {
   min-block-size: 8rem;
   padding: var(--env-space-7) var(--env-space-6);
 }
 
 @container (width < 30rem) {
-  .docs-live-example {
+  .site-live-example {
     padding: var(--env-space-6) var(--env-space-4);
   }
 }
 
 /* A row of items centres them on the stage, also once it wraps, unless the example aligns it. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-related-canvas)
+:is(.site-live-example, .site-verdict-stage, .catalogue-related-canvas)
   > [data-env-layout='row']:not([data-justify]) {
   justify-content: center;
 }
 
 /* A grid of specimens on its stage: the whole grid centred, with even space on its four sides, in
    columns of one width that stop growing at the specimen's width. */
-.docs-figures .docs-specimen-grid {
-  --docs-specimen-track: var(--docs-specimen-width);
+.site-figures .catalogue-specimen-grid {
+  --catalogue-specimen-track: var(--catalogue-specimen-width);
   grid-template-columns: repeat(
     auto-fit,
-    minmax(min(100%, var(--docs-specimen-min)), var(--docs-specimen-track))
+    minmax(min(100%, var(--catalogue-specimen-min)), var(--catalogue-specimen-track))
   );
   justify-content: center;
 }
 
-.docs-figures .docs-specimen-grid[data-size='wide'] {
-  --docs-specimen-track: 1fr;
+.site-figures .catalogue-specimen-grid[data-size='wide'] {
+  --catalogue-specimen-track: 1fr;
 }
 
 /* Four specimens never leave one alone on a row: four across where they fit, else two pairs, else
    one column. Each step switches at the width its columns need, as runs of figures do. */
-.docs-figures
-  .docs-specimen-grid:has(
-    > .docs-specimen:nth-child(4 of .docs-specimen):nth-last-child(1 of .docs-specimen)
+.site-figures
+  .catalogue-specimen-grid:has(
+    > .catalogue-specimen:nth-child(4 of .catalogue-specimen):nth-last-child(
+        1 of .catalogue-specimen
+      )
   ) {
-  --docs-specimen-gap: var(--env-space-6);
-  --docs-specimen-four: calc(4 * var(--docs-specimen-min) + 3 * var(--docs-specimen-gap));
-  --docs-specimen-two: calc(2 * var(--docs-specimen-min) + var(--docs-specimen-gap));
+  --catalogue-specimen-gap: var(--env-space-6);
+  --catalogue-specimen-four: calc(
+    4 * var(--catalogue-specimen-min) + 3 * var(--catalogue-specimen-gap)
+  );
+  --catalogue-specimen-two: calc(2 * var(--catalogue-specimen-min) + var(--catalogue-specimen-gap));
   grid-template-columns: repeat(
     auto-fill,
     minmax(
       max(
         clamp(
-          calc(25% - 0.75 * var(--docs-specimen-gap) - 0.01rem),
-          (var(--docs-specimen-four) - 100%) * 999,
-          calc(50% - 0.5 * var(--docs-specimen-gap) - 0.01rem)
+          calc(25% - 0.75 * var(--catalogue-specimen-gap) - 0.01rem),
+          (var(--catalogue-specimen-four) - 100%) * 999,
+          calc(50% - 0.5 * var(--catalogue-specimen-gap) - 0.01rem)
         ),
-        clamp(0rem, (var(--docs-specimen-two) - 100%) * 999, 100%)
+        clamp(0rem, (var(--catalogue-specimen-two) - 100%) * 999, 100%)
       ),
       1fr
     )
   );
-  column-gap: var(--docs-specimen-gap);
+  column-gap: var(--catalogue-specimen-gap);
 }
 
-.docs-figures .docs-specimen-grid > * {
+.site-figures .catalogue-specimen-grid > * {
   max-inline-size: none;
 }
 
 /* Each specimen's content centred in its column, unless it fills the column, such as cards. */
-.docs-figures .docs-specimen-grid:not([data-size='card'], [data-size='wide']) > .docs-specimen {
+.site-figures
+  .catalogue-specimen-grid:not([data-size='card'], [data-size='wide'])
+  > .catalogue-specimen {
   align-items: center;
   text-align: center;
 }
 
 /* A part that takes its width from its column, such as a text field, fills it. */
-.docs-figures
-  .docs-specimen
+.site-figures
+  .catalogue-specimen
   > :is(
     .env-text-field,
     .env-combobox,
@@ -236,34 +242,34 @@
 /* A matrix on its stage, such as forced states by variant: the table centred with even space on
    its four sides, its columns after the label column of one width, each cell's content centred in
    its column, and each label on the centre line of its row or column. */
-.docs-figures .docs-matrix {
+.site-figures .catalogue-matrix {
   table-layout: fixed;
 }
 
-.docs-figures .docs-matrix :is(th, td) {
+.site-figures .catalogue-matrix :is(th, td) {
   padding: var(--env-space-3) var(--env-space-2);
   text-align: center;
   vertical-align: middle;
 }
 
-.docs-figures .docs-matrix :is(thead th:first-child, tbody th) {
+.site-figures .catalogue-matrix :is(thead th:first-child, tbody th) {
   inline-size: 7rem;
   text-align: start;
 }
 
 /* What a matrix cell shows sits in the middle of its column, also a control that is a block. */
-.docs-figures .docs-matrix td > * {
+.site-figures .catalogue-matrix td > * {
   inline-size: fit-content;
   margin-inline: auto;
 }
 
 /* A foundation page's figures: each Example's content on the stage, centred, at the Example's
    width; its caption below. */
-.docs-example > .docs-foundation-stage:not(h2):not(.docs-caption) {
+.site-example > .site-foundation-stage:not(h2):not(.catalogue-caption) {
   max-inline-size: 100%;
 }
 
-.docs-foundation-stage {
+.site-foundation-stage {
   display: grid;
   justify-items: center;
   align-content: center;
@@ -274,8 +280,8 @@
   container-type: inline-size;
 }
 
-.docs-foundation-stage > * {
-  inline-size: min(100%, var(--docs-example-width));
+.site-foundation-stage > * {
+  inline-size: min(100%, var(--catalogue-example-width));
   min-inline-size: 0;
 }
 
@@ -284,7 +290,7 @@
    (OpenExample.tsx). Its dialogs, sheets and toasts, and their scrims, are placed on the stage,
    which its layout containment makes their containing block, and clips them to its corners.
    The room stacks its overlays below the callouts of an anatomy figure. */
-.docs-open-example {
+.catalogue-open-example {
   position: relative;
   isolation: isolate;
   display: grid;
@@ -294,23 +300,23 @@
   inline-size: 100%;
 }
 
-:is(.docs-live-example, .docs-verdict-stage):has(.docs-open-example) {
+:is(.site-live-example, .site-verdict-stage):has(.catalogue-open-example) {
   contain: layout;
   overflow: clip;
 }
 
 /* In an anatomy figure the room places them, so they keep clear of the stage's padding, where the
    callouts go; the scrim, which would fill only the room, is left out. */
-.docs-anatomy-subject .docs-open-example {
+.site-anatomy-subject .catalogue-open-example {
   contain: layout;
 }
 
-.docs-anatomy-subject .docs-overlay-layer :is(.env-dialog-backdrop, .env-sheet-backdrop) {
+.site-anatomy-subject .catalogue-overlay-layer :is(.env-dialog-backdrop, .env-sheet-backdrop) {
   display: none;
 }
 
 /* Toasts, which an anatomy figure shows without what raised them, sit in its middle. */
-.docs-anatomy-subject .docs-overlay-layer .env-toast-viewport {
+.site-anatomy-subject .catalogue-overlay-layer .env-toast-viewport {
   inset: 0;
   inline-size: fit-content;
   block-size: fit-content;
@@ -318,14 +324,14 @@
 }
 
 /* The layer envUI's overlays render into, through PortalContainer, over the room. */
-.docs-overlay-layer {
+.catalogue-overlay-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
 /* A picture: the overlays are shown in place, without the motion that brings them in. */
-.docs-overlay-layer * {
+.catalogue-overlay-layer * {
   transition: none;
   animation: none;
 }
@@ -334,16 +340,16 @@
    small touch icon in the muted text color at the stage's bottom end, inside its padding, so it
    never covers what the stage shows. A picture, such as an anatomy figure, has none. */
 :is(
-  .docs-live-example,
-  .docs-verdict-stage,
-  .docs-specimen-grid,
-  .docs-matrix-scroll,
-  .docs-foundation-stage
-):has(> .docs-interactive-mark) {
+  .site-live-example,
+  .site-verdict-stage,
+  .catalogue-specimen-grid,
+  .catalogue-matrix-scroll,
+  .site-foundation-stage
+):has(> .site-interactive-mark) {
   position: relative;
 }
 
-.docs-interactive-mark {
+.site-interactive-mark {
   position: absolute;
   inset-block-end: var(--env-space-2);
   inset-inline-end: var(--env-space-2);
@@ -355,12 +361,12 @@
   color: var(--env-color-fg-muted);
 }
 
-.docs-interactive-mark > svg {
+.site-interactive-mark > svg {
   inline-size: var(--env-icon-size-sm);
   block-size: var(--env-icon-size-sm);
 }
 
-.docs-interactive-mark:focus-visible {
+.site-interactive-mark:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 1px;
 }
@@ -368,12 +374,12 @@
 /* Forced colors paint the canvas in Canvas, like the page: a frame keeps each example apart. A
    figure that explains the system sits on the page and takes none. */
 @media (forced-colors: active) {
-  .docs-live-example,
-  .docs-verdict-stage,
-  .docs-anatomy-stage,
-  .docs-foundation-stage[data-figure='example'],
-  .docs-related-stage,
-  .docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
+  .site-live-example,
+  .site-verdict-stage,
+  .site-anatomy-stage,
+  .site-foundation-stage[data-figure='example'],
+  .catalogue-related-stage,
+  .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
     border: 1px solid CanvasText;
   }
 }

@@ -7,7 +7,7 @@ export default function InteractionStates() {
   return (
     <Example size="wide">
       <MatrixScroll label="Button interaction states">
-        <table className="docs-matrix">
+        <table className="catalogue-matrix">
           <thead>
             <tr>
               <th scope="col">Variant</th>

@@ -36,14 +36,14 @@ export function WhenToUse({ metadata, path }: { metadata: DocumentationMetadata;
   // Pages of docs/ are one folder deep, so ../<path> reaches any of them from any page.
   const built = visibleComponents(metadata.composes ?? []);
   return (
-    <div className="docs-when">
+    <div className="site-when">
       {/* More than three items run in two columns where there is room, each read top to bottom,
           with the first half on the left (WhenToUse.css). */}
       <div
         className={
-          metadata.useWhen.length > 3 ? 'docs-when-use docs-when-columns' : 'docs-when-use'
+          metadata.useWhen.length > 3 ? 'site-when-use catalogue-when-columns' : 'site-when-use'
         }
-        style={{ '--docs-when-rows': Math.ceil(metadata.useWhen.length / 2) } as CSSProperties}
+        style={{ '--catalogue-when-rows': Math.ceil(metadata.useWhen.length / 2) } as CSSProperties}
       >
         <Documentation markdown={`### Use it when\n\n${list(metadata.useWhen)}`} path={path} />
       </div>

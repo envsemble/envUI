@@ -88,7 +88,7 @@ function preventNavigation(event: MouseEvent<HTMLDivElement>) {
 function Source({ path, name }: { path: string; name: string }) {
   const source = use(sourceOf(path));
   return (
-    <CodeBlock language="tsx" label={`${name}.tsx`} copyable className="docs-example-source">
+    <CodeBlock language="tsx" label={`${name}.tsx`} copyable className="site-example-source">
       {source.replace(/\n$/, '')}
     </CodeBlock>
   );
@@ -132,12 +132,12 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
   const code = <ExampleSource page={page} name={name} />;
   const title = (
     <>
-      Code<span className="docs-visually-hidden">, {name}.tsx</span>
+      Code<span className="site-visually-hidden">, {name}.tsx</span>
     </>
   );
   if (!slot)
     return (
-      <Disclosure title={title} className="docs-live-example-code">
+      <Disclosure title={title} className="site-live-example-code">
         {code}
       </Disclosure>
     );
@@ -147,12 +147,12 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
         title={title}
         open={open}
         onOpenChange={setOpen}
-        className="docs-live-example-code"
+        className="site-live-example-code"
         data-slotted=""
       />
       {open &&
         createPortal(
-          <section className="docs-code-panel" aria-label={`Code, ${name}.tsx`}>
+          <section className="catalogue-code-panel" aria-label={`Code, ${name}.tsx`}>
             {code}
           </section>,
           slot,
@@ -263,13 +263,13 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
   return (
     <div
       ref={fit}
-      className="docs-width-fit"
+      className="catalogue-width-fit"
       data-scaled={scaled ? '' : undefined}
       style={scaled && { inlineSize: scaled.width, blockSize: scaled.height }}
     >
       <div
         ref={box}
-        className="docs-width-box"
+        className="catalogue-width-box"
         style={{ inlineSize: `${width}rem`, transform: scaled && `scale(${scaled.scale})` }}
       >
         {children}
@@ -311,24 +311,24 @@ export function LiveExample({
     <ExampleRender page={page} name={name} />
   );
   return (
-    <Column gap={3} className="docs-live-example-entry">
+    <Column gap={3} className="site-live-example-entry">
       {widths ? (
         <div
           role="group"
           aria-label={`${title} example`}
-          className="docs-width-strip"
+          className="catalogue-width-strip"
           data-example={name}
           {...keepLinksInPlace}
         >
           {widths.map((width) => (
-            <figure key={width} className="docs-width-frame">
+            <figure key={width} className="catalogue-width-frame">
               {/* The stage scrolls where the frame is wider than the page, so the keyboard can
                   scroll it too. */}
               <Column
                 render={<Theme {...theme} />}
                 container="env-window"
                 gap={0}
-                className="docs-live-example"
+                className="site-live-example"
                 data-stage={stage}
                 tabIndex={0}
                 aria-label={`${width} rem wide`}
@@ -350,7 +350,7 @@ export function LiveExample({
           gap={0}
           role="group"
           aria-label={open ? `${title} example, shown open as a picture` : `${title} example`}
-          className="docs-live-example"
+          className="site-live-example"
           data-example={name}
           data-stage={stage}
           {...keepLinksInPlace}
@@ -360,7 +360,7 @@ export function LiveExample({
         </Column>
       )}
       {caption && (
-        <Text className="docs-figure-caption" emphasis="muted">
+        <Text className="site-figure-caption" emphasis="muted">
           {caption}
         </Text>
       )}

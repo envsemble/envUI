@@ -8,17 +8,17 @@
    hidden from assistive technology. */
 /* stylelint-disable unit-disallowed-list -- a motif is a drawing in em, the unit its stage sets,
    so the whole drawing scales with the banner as one picture, as no rem or token could. */
-.docs-banner-motif {
+.catalogue-banner-motif {
   /* The motifs' colors: lines of text, the paper of a surface on the fill, its edge, the neutral
      fill of a control, and the accent. */
-  --docs-motif-ink: color-mix(in srgb, var(--env-color-fg-muted) 30%, transparent);
-  --docs-motif-ink-strong: color-mix(in srgb, var(--env-color-fg-muted) 55%, transparent);
-  --docs-motif-paper: var(--env-color-bg-page);
-  --docs-motif-edge: var(--env-color-border-muted);
-  --docs-motif-fill: var(--env-color-bg-neutral-muted);
-  --docs-motif-accent: var(--env-color-bg-accent-emphasis);
+  --catalogue-motif-ink: color-mix(in srgb, var(--env-color-fg-muted) 30%, transparent);
+  --catalogue-motif-ink-strong: color-mix(in srgb, var(--env-color-fg-muted) 55%, transparent);
+  --catalogue-motif-paper: var(--env-color-bg-page);
+  --catalogue-motif-edge: var(--env-color-border-muted);
+  --catalogue-motif-fill: var(--env-color-bg-neutral-muted);
+  --catalogue-motif-accent: var(--env-color-bg-accent-emphasis);
   /* An opaque color for the fade's mask, which reads only its alpha. */
-  --docs-motif-opaque: var(--env-color-fg-default);
+  --catalogue-motif-opaque: var(--env-color-fg-default);
   position: absolute;
   inset-block: 0;
   inset-inline-end: 0;
@@ -28,42 +28,42 @@
   overflow: hidden;
   container-type: size;
   pointer-events: none;
-  mask-image: linear-gradient(to right, transparent, var(--docs-motif-opaque) 45%);
+  mask-image: linear-gradient(to right, transparent, var(--catalogue-motif-opaque) 45%);
 }
 
-.docs-banner-motif:dir(rtl) {
-  mask-image: linear-gradient(to left, transparent, var(--docs-motif-opaque) 45%);
+.catalogue-banner-motif:dir(rtl) {
+  mask-image: linear-gradient(to left, transparent, var(--catalogue-motif-opaque) 45%);
 }
 
 /* The arrangement: in a unit that fits about nineteen of it in the banner's height, turned a
    little and set toward the banner's end. A motif may draw itself larger. */
-.docs-motif-art {
-  --docs-motif-scale: 1;
+.catalogue-motif-art {
+  --catalogue-motif-scale: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 1em;
-  font-size: calc(min(100cqh / 19, 100cqi / 24) * var(--docs-motif-scale));
+  font-size: calc(min(100cqh / 19, 100cqi / 24) * var(--catalogue-motif-scale));
   line-height: 1;
   rotate: -8deg;
   translate: 12% 0;
 }
 
 /* A line of text, as a rounded bar. */
-.docs-motif-line {
+.catalogue-motif-line {
   display: block;
   flex: none;
   inline-size: var(--w);
   block-size: 0.55em;
   border-radius: var(--env-radius-full);
-  background: var(--docs-motif-ink);
+  background: var(--catalogue-motif-ink);
 }
 
 /* Motion: as the page opens, each piece settles into place in turn, once. Only transforms and
    opacity move, none of the page's layout; without a preference for motion it is drawn at rest. */
 @media (prefers-reduced-motion: no-preference) {
-  .docs-motif-art > *,
-  .docs-motif-panel > * {
+  .catalogue-motif-art > *,
+  .catalogue-motif-panel > * {
     animation: docs-motif-enter calc(var(--env-motion-duration-slow) * 4)
       var(--env-motion-ease-enter) calc(var(--n, 0) * 70ms) backwards;
   }
@@ -78,39 +78,39 @@
 
 /* Tracks: a slider's, with its fill and a thumb at its value; a meter's and a progress bar's,
    thinner, filled with the accent. */
-.docs-motif-art[data-motif='tracks'] {
+.catalogue-motif-art[data-motif='tracks'] {
   gap: 1.3em;
 }
 
-.docs-motif-track {
+.catalogue-motif-track {
   position: relative;
   display: block;
   inline-size: 20em;
   block-size: 1.1em;
   margin-inline-start: var(--offset, 0);
   border-radius: var(--env-radius-full);
-  background: var(--docs-motif-fill);
+  background: var(--catalogue-motif-fill);
 }
 
-.docs-motif-track-fill {
+.catalogue-motif-track-fill {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
   inline-size: var(--value);
   border-radius: inherit;
-  background: var(--docs-motif-ink);
+  background: var(--catalogue-motif-ink);
   transform-origin: 0 50%;
 }
 
-.docs-motif-track[data-accent] .docs-motif-track-fill {
-  background: var(--docs-motif-accent);
+.catalogue-motif-track[data-accent] .catalogue-motif-track-fill {
+  background: var(--catalogue-motif-accent);
 }
 
-.docs-motif-art[data-variant='thumbs'] .docs-motif-track {
+.catalogue-motif-art[data-variant='thumbs'] .catalogue-motif-track {
   block-size: 1.6em;
 }
 
-.docs-motif-track-thumb {
+.catalogue-motif-track-thumb {
   position: absolute;
   inset-block-start: 50%;
   inset-inline-start: var(--value);
@@ -121,20 +121,20 @@
   margin-inline-start: -1.3em;
   border: 0.16em solid var(--env-color-border-default);
   border-radius: var(--env-radius-full);
-  background: var(--docs-motif-paper);
+  background: var(--catalogue-motif-paper);
 }
 
-.docs-motif-track[data-accent] .docs-motif-track-thumb {
-  border-color: var(--docs-motif-accent);
+.catalogue-motif-track[data-accent] .catalogue-motif-track-thumb {
+  border-color: var(--catalogue-motif-accent);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .docs-motif-track-fill {
+  .catalogue-motif-track-fill {
     animation: docs-motif-fill calc(var(--env-motion-duration-slow) * 5)
       var(--env-motion-ease-enter) calc(var(--n, 0) * 70ms + 120ms) backwards;
   }
 
-  .docs-motif-track-thumb {
+  .catalogue-motif-track-thumb {
     animation: docs-motif-thumb calc(var(--env-motion-duration-slow) * 5)
       var(--env-motion-ease-enter) calc(var(--n, 0) * 70ms + 120ms) backwards;
   }
@@ -153,18 +153,18 @@
 }
 
 /* Toggles: switches, checkboxes and radios with their labels, some on, in a slope. */
-.docs-motif-art[data-motif='toggles'] {
+.catalogue-motif-art[data-motif='toggles'] {
   gap: 1.1em;
 }
 
-.docs-motif-toggle-row {
+.catalogue-motif-toggle-row {
   display: flex;
   align-items: center;
   gap: 0.9em;
   margin-inline-start: calc(var(--n) * 0.9em);
 }
 
-.docs-motif-toggle {
+.catalogue-motif-toggle {
   position: relative;
   flex: none;
   box-sizing: border-box;
@@ -172,50 +172,50 @@
   block-size: 2em;
   border: 0.16em solid var(--env-color-border-neutral-strong);
   border-radius: 0.5em;
-  background: var(--docs-motif-paper);
+  background: var(--catalogue-motif-paper);
 }
 
-.docs-motif-toggle[data-kind='radio'] {
+.catalogue-motif-toggle[data-kind='radio'] {
   border-radius: var(--env-radius-full);
 }
 
-.docs-motif-toggle[data-kind='switch'] {
+.catalogue-motif-toggle[data-kind='switch'] {
   inline-size: 3.6em;
   border: 0;
   border-radius: var(--env-radius-full);
-  background: var(--docs-motif-ink-strong);
+  background: var(--catalogue-motif-ink-strong);
 }
 
-.docs-motif-toggle[data-on]:not([data-kind='radio']) {
-  border-color: var(--docs-motif-accent);
-  background: var(--docs-motif-accent);
+.catalogue-motif-toggle[data-on]:not([data-kind='radio']) {
+  border-color: var(--catalogue-motif-accent);
+  background: var(--catalogue-motif-accent);
 }
 
-.docs-motif-toggle[data-on][data-kind='radio'] {
-  border-color: var(--docs-motif-accent);
+.catalogue-motif-toggle[data-on][data-kind='radio'] {
+  border-color: var(--catalogue-motif-accent);
 }
 
 /* The switch's knob, the checkbox's check and the radio's dot. */
-.docs-motif-toggle::after {
+.catalogue-motif-toggle::after {
   position: absolute;
   content: '';
 }
 
-.docs-motif-toggle[data-kind='switch']::after {
+.catalogue-motif-toggle[data-kind='switch']::after {
   inset-block-start: 0.25em;
   inset-inline-start: 0.25em;
   inline-size: 1.5em;
   block-size: 1.5em;
   border-radius: var(--env-radius-full);
-  background: var(--docs-motif-paper);
+  background: var(--catalogue-motif-paper);
   transition: translate var(--env-motion-duration-slow) var(--env-motion-ease);
 }
 
-.docs-motif-toggle[data-kind='switch'][data-on]::after {
+.catalogue-motif-toggle[data-kind='switch'][data-on]::after {
   translate: 1.6em 0;
 }
 
-.docs-motif-toggle[data-kind='checkbox'][data-on]::after {
+.catalogue-motif-toggle[data-kind='checkbox'][data-on]::after {
   inset-block-start: 0.28em;
   inset-inline-start: 0.52em;
   inline-size: 0.45em;
@@ -225,14 +225,14 @@
   rotate: 45deg;
 }
 
-.docs-motif-toggle[data-kind='radio'][data-on]::after {
+.catalogue-motif-toggle[data-kind='radio'][data-on]::after {
   inset: 0.35em;
   border-radius: var(--env-radius-full);
-  background: var(--docs-motif-accent);
+  background: var(--catalogue-motif-accent);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .docs-motif-toggle[data-kind='switch'][data-on]::after {
+  .catalogue-motif-toggle[data-kind='switch'][data-on]::after {
     animation: docs-motif-knob calc(var(--env-motion-duration-slow) * 3)
       var(--env-motion-ease-enter) calc(var(--n, 0) * 70ms + 300ms) backwards;
   }
@@ -245,17 +245,17 @@
 }
 
 /* Avatars: rows that overlap, each avatar ringed in the banner's fill, as a group draws them. */
-.docs-motif-art[data-motif='avatars'] {
+.catalogue-motif-art[data-motif='avatars'] {
   gap: 0;
 }
 
-.docs-motif-avatar-row {
+.catalogue-motif-avatar-row {
   display: flex;
   margin-block-start: -0.5em;
   margin-inline-start: calc(var(--n) * 1.8em);
 }
 
-.docs-motif-avatar {
+.catalogue-motif-avatar {
   display: grid;
   place-items: center;
   inline-size: 3.2em;
@@ -270,13 +270,13 @@
 
 /* Swatches: a fan of color chips, one for each tone, from its muted fill down to its text,
    upright and centred on its stage, the chips meeting with no edge between them. */
-.docs-motif-art[data-motif='swatches'] {
+.catalogue-motif-art[data-motif='swatches'] {
   display: grid;
   rotate: 0deg;
   translate: none;
 }
 
-.docs-motif-swatch {
+.catalogue-motif-swatch {
   display: flex;
   flex-direction: column;
   grid-area: 1 / 1;
@@ -288,28 +288,28 @@
   rotate: var(--turn);
 }
 
-.docs-motif-swatch > span {
+.catalogue-motif-swatch > span {
   flex: 1;
 }
 
-.docs-motif-swatch > :nth-child(1) {
+.catalogue-motif-swatch > :nth-child(1) {
   background: var(--muted);
 }
 
-.docs-motif-swatch > :nth-child(2) {
+.catalogue-motif-swatch > :nth-child(2) {
   background: color-mix(in oklab, var(--muted), var(--emphasis));
 }
 
-.docs-motif-swatch > :nth-child(3) {
+.catalogue-motif-swatch > :nth-child(3) {
   background: var(--emphasis);
 }
 
-.docs-motif-swatch > :nth-child(4) {
+.catalogue-motif-swatch > :nth-child(4) {
   background: var(--strong);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .docs-motif-art[data-motif='swatches'] > * {
+  .catalogue-motif-art[data-motif='swatches'] > * {
     animation-name: docs-motif-fan;
   }
 }
@@ -323,17 +323,17 @@
 
 /* Buttons: pills in rows, primary in the accent, secondary on the neutral fill, ghost in outline,
    and icon buttons; or the controls drawn like them. */
-.docs-motif-art[data-motif='buttons'] {
+.catalogue-motif-art[data-motif='buttons'] {
   gap: 1em;
 }
 
-.docs-motif-button-row {
+.catalogue-motif-button-row {
   display: flex;
   gap: 0.8em;
   margin-inline-start: calc(var(--n) * 1.4em);
 }
 
-.docs-motif-button {
+.catalogue-motif-button {
   display: flex;
   flex: none;
   align-items: center;
@@ -344,49 +344,49 @@
   padding-inline: 1.2em;
   border: 0.12em solid transparent;
   border-radius: var(--env-radius-full);
-  background: var(--docs-motif-fill);
+  background: var(--catalogue-motif-fill);
 }
 
-.docs-motif-button[data-kind='primary'] {
-  background: var(--docs-motif-accent);
+.catalogue-motif-button[data-kind='primary'] {
+  background: var(--catalogue-motif-accent);
 }
 
-.docs-motif-button[data-kind='primary'] > .docs-motif-line {
+.catalogue-motif-button[data-kind='primary'] > .catalogue-motif-line {
   background: color-mix(in srgb, var(--env-color-fg-on-emphasis) 70%, transparent);
 }
 
-.docs-motif-button[data-kind='ghost'] {
+.catalogue-motif-button[data-kind='ghost'] {
   border-color: var(--env-color-border-default);
   background: transparent;
 }
 
-.docs-motif-button[data-kind='icon'] {
+.catalogue-motif-button[data-kind='icon'] {
   padding: 0;
 }
 
-.docs-motif-button[data-kind='icon']::after {
+.catalogue-motif-button[data-kind='icon']::after {
   inline-size: 1em;
   block-size: 1em;
   border-radius: 0.3em;
-  background: var(--docs-motif-ink-strong);
+  background: var(--catalogue-motif-ink-strong);
   content: '';
 }
 
 /* Fields: a label over each box, one focused with its caret, one a select with its chevron, or a
    search with its chips; or a drop zone with files coming in. */
-.docs-motif-art[data-motif='fields'] {
-  --docs-motif-scale: 0.9;
+.catalogue-motif-art[data-motif='fields'] {
+  --catalogue-motif-scale: 0.9;
   gap: 1em;
 }
 
-.docs-motif-field-group {
+.catalogue-motif-field-group {
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   margin-inline-start: calc(var(--n) * 1.2em);
 }
 
-.docs-motif-field {
+.catalogue-motif-field {
   position: relative;
   display: flex;
   align-items: center;
@@ -400,13 +400,13 @@
   background: var(--env-color-bg-field);
 }
 
-.docs-motif-field[data-focus] {
+.catalogue-motif-field[data-focus] {
   border-color: var(--env-color-border-focus);
   outline: 0.1em solid var(--env-color-border-focus);
 }
 
 /* The focused field's caret, after its text. */
-.docs-motif-field[data-focus]::after {
+.catalogue-motif-field[data-focus]::after {
   inline-size: 0.12em;
   block-size: 1.3em;
   margin-inline-start: -0.4em;
@@ -414,11 +414,11 @@
   content: '';
 }
 
-.docs-motif-field[data-select]::after {
+.catalogue-motif-field[data-select]::after {
   inline-size: 0.5em;
   block-size: 0.5em;
   margin-inline-start: auto;
-  border: solid var(--docs-motif-ink-strong);
+  border: solid var(--catalogue-motif-ink-strong);
   border-width: 0 0.14em 0.14em 0;
   translate: 0 -0.15em;
   rotate: 45deg;
@@ -427,19 +427,19 @@
 
 /* Rows on a panel: a list's, with one selected; a menu's; a tree's, indented; a table's, under
    its header; terms'; or disclosures', with their chevrons. */
-.docs-motif-panel {
+.catalogue-motif-panel {
   display: flex;
   flex-direction: column;
   gap: 0.2em;
   box-sizing: border-box;
   inline-size: 20em;
   padding: 0.5em;
-  border: 0.0625rem solid var(--docs-motif-edge);
+  border: 0.0625rem solid var(--catalogue-motif-edge);
   border-radius: 1em;
-  background: var(--docs-motif-paper);
+  background: var(--catalogue-motif-paper);
 }
 
-.docs-motif-row {
+.catalogue-motif-row {
   display: flex;
   align-items: center;
   gap: 0.8em;
@@ -448,34 +448,34 @@
   border-radius: 0.6em;
 }
 
-.docs-motif-row > .docs-motif-line:last-child {
+.catalogue-motif-row > .catalogue-motif-line:last-child {
   margin-inline-start: auto;
 }
 
-.docs-motif-panel[data-variant='table'] {
+.catalogue-motif-panel[data-variant='table'] {
   gap: 0;
   inline-size: 22em;
   padding: 0.3em 0.6em;
 }
 
-.docs-motif-panel[data-variant='table'] .docs-motif-row {
+.catalogue-motif-panel[data-variant='table'] .catalogue-motif-row {
   justify-content: space-between;
   block-size: 2.4em;
-  border-block-end: 0.0625rem solid var(--docs-motif-edge);
+  border-block-end: 0.0625rem solid var(--catalogue-motif-edge);
   border-radius: 0;
 }
 
-.docs-motif-panel[data-variant='table'] .docs-motif-row:last-child {
+.catalogue-motif-panel[data-variant='table'] .catalogue-motif-row:last-child {
   border-block-end: 0;
 }
 
-.docs-motif-row[data-head] > .docs-motif-line {
-  background: var(--docs-motif-ink-strong);
+.catalogue-motif-row[data-head] > .catalogue-motif-line {
+  background: var(--catalogue-motif-ink-strong);
 }
 
 /* A window: its bar, its navigation and its panes; its tabs; a drawer over the dimmed page; a
    dock; or the same page at three widths. */
-.docs-motif-window {
+.catalogue-motif-window {
   display: grid;
   grid-template:
     'bar bar' 2.4em
@@ -484,30 +484,30 @@
   inline-size: 24em;
   block-size: 15em;
   overflow: hidden;
-  border: 0.0625rem solid var(--docs-motif-edge);
+  border: 0.0625rem solid var(--catalogue-motif-edge);
   border-radius: 1em;
-  background: var(--docs-motif-paper);
+  background: var(--catalogue-motif-paper);
 }
 
-.docs-motif-window-bar {
+.catalogue-motif-window-bar {
   display: flex;
   grid-area: bar;
   align-items: flex-end;
   gap: 0.3em;
   padding-inline: 0.8em;
-  border-block-end: 0.0625rem solid var(--docs-motif-edge);
+  border-block-end: 0.0625rem solid var(--catalogue-motif-edge);
 }
 
-.docs-motif-window-side {
+.catalogue-motif-window-side {
   display: flex;
   flex-direction: column;
   grid-area: side;
   gap: 0.9em;
   padding: 1em 0.9em;
-  border-inline-end: 0.0625rem solid var(--docs-motif-edge);
+  border-inline-end: 0.0625rem solid var(--catalogue-motif-edge);
 }
 
-.docs-motif-window-main {
+.catalogue-motif-window-main {
   display: grid;
   grid-area: main;
   grid-template-columns: 1fr 1fr;
@@ -515,54 +515,54 @@
   padding: 1em;
 }
 
-.docs-motif-window-pane {
+.catalogue-motif-window-pane {
   border-radius: 0.6em;
-  background: var(--docs-motif-fill);
+  background: var(--catalogue-motif-fill);
 }
 
-.docs-motif-window-pane:first-child {
+.catalogue-motif-window-pane:first-child {
   grid-column: 1 / -1;
 }
 
 /* Badges: envUI's own, in every tone, gathered loosely. */
-.docs-motif-art[data-motif='badges'] {
+.catalogue-motif-art[data-motif='badges'] {
   flex-flow: row wrap;
   inline-size: 17em;
   gap: 1.1em 0.9em;
 }
 
-.docs-motif-badge {
+.catalogue-motif-badge {
   display: flex;
   zoom: 1.5;
 }
 
-.docs-motif-badge:nth-child(3n + 2) {
+.catalogue-motif-badge:nth-child(3n + 2) {
   margin-inline-start: 1em;
 }
 
 /* A conversation: messages from either side, one's own in the selection's tint, the composer
    under them with its send button. */
-.docs-motif-art[data-motif='chat'] {
+.catalogue-motif-art[data-motif='chat'] {
   inline-size: 19em;
   gap: 0.8em;
 }
 
-.docs-motif-message {
+.catalogue-motif-message {
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   padding: 0.9em 1.1em;
   border-radius: 1.1em 1.1em 1.1em 0.3em;
-  background: var(--docs-motif-fill);
+  background: var(--catalogue-motif-fill);
 }
 
-.docs-motif-message[data-own] {
+.catalogue-motif-message[data-own] {
   align-self: flex-end;
   border-radius: 1.1em 1.1em 0.3em;
   background: var(--env-color-bg-selected);
 }
 
-.docs-motif-composer {
+.catalogue-motif-composer {
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -574,68 +574,68 @@
   background: var(--env-color-bg-field);
 }
 
-.docs-motif-send {
+.catalogue-motif-send {
   inline-size: 2em;
   block-size: 2em;
   margin-inline-start: auto;
   border-radius: var(--env-radius-full);
-  background: var(--docs-motif-accent);
+  background: var(--catalogue-motif-accent);
 }
 
 /* A gallery's tiles, each holding a small motif of its own, as the pages of all components and all
    patterns hold one for each. */
-.docs-motif-art[data-motif='collage'] {
-  --docs-motif-scale: 0.85;
+.catalogue-motif-art[data-motif='collage'] {
+  --catalogue-motif-scale: 0.85;
   display: grid;
   grid-template-columns: repeat(3, 8.5em);
   grid-auto-rows: 7em;
   gap: 0.9em;
 }
 
-.docs-motif-tile {
+.catalogue-motif-tile {
   display: grid;
   place-items: center;
   overflow: hidden;
   border-radius: 0.9em;
-  background: var(--docs-motif-paper);
+  background: var(--catalogue-motif-paper);
 }
 
-.docs-motif-tile > .docs-motif-art {
+.catalogue-motif-tile > .catalogue-motif-art {
   font-size: 0.36em;
   rotate: 0deg;
   translate: none;
 }
 
-.docs-motif-tile .docs-motif-badge {
+.catalogue-motif-tile .catalogue-motif-badge {
   zoom: 0.6;
 }
 
 /* In a narrow pane, where the text spans the banner, the motif takes a band of its own across the
    banner's top, faded toward its start and its foot, and the text starts below it, so nothing is
    ever drawn under the text. */
-@container docs-page-header (width < 38rem) {
-  .docs-banner[data-banner='catalogue']:has(.docs-banner-motif) {
+@container site-page-header (width < 38rem) {
+  .site-banner[data-banner='catalogue']:has(.catalogue-banner-motif) {
     padding-block-start: 8.5rem;
   }
 
-  .docs-banner-motif {
+  .catalogue-banner-motif {
     inset-block-end: auto;
     inline-size: 100%;
     block-size: 9rem;
     mask-image:
-      linear-gradient(to right, transparent, var(--docs-motif-opaque) 35%),
-      linear-gradient(to bottom, var(--docs-motif-opaque) 60%, transparent);
+      linear-gradient(to right, transparent, var(--catalogue-motif-opaque) 35%),
+      linear-gradient(to bottom, var(--catalogue-motif-opaque) 60%, transparent);
     mask-composite: intersect;
   }
 
-  .docs-banner-motif:dir(rtl) {
+  .catalogue-banner-motif:dir(rtl) {
     mask-image:
-      linear-gradient(to left, transparent, var(--docs-motif-opaque) 35%),
-      linear-gradient(to bottom, var(--docs-motif-opaque) 60%, transparent);
+      linear-gradient(to left, transparent, var(--catalogue-motif-opaque) 35%),
+      linear-gradient(to bottom, var(--catalogue-motif-opaque) 60%, transparent);
   }
 
-  .docs-motif-art {
-    font-size: calc(100cqh / 13 * var(--docs-motif-scale));
+  .catalogue-motif-art {
+    font-size: calc(100cqh / 13 * var(--catalogue-motif-scale));
     translate: 10% 0;
   }
 }

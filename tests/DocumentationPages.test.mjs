@@ -8,12 +8,12 @@ import {
   longParagraphs,
   optionTable,
   paragraphLength,
-  siteInlineCode,
-  siteStructure,
-  siteText,
+  catalogueInlineCode,
+  catalogueStructure,
+  catalogueText,
   technicalText,
   withoutCodeColumns,
-} from '../scripts/SiteContent.mjs';
+} from '../scripts/CatalogueContent.mjs';
 import {
   examplesDirectory,
   isPropsTable,
@@ -352,7 +352,7 @@ test("a page's Overview doesn't open by saying its summary again", () => {
  * Compose", the lists of what envUI and the application provide, and its tables' In code columns,
  * which its page in the Docs shows.
  */
-function siteMarkdown(document) {
+function catalogueMarkdown(document) {
   return withoutCodeColumns(
     document.markdown
       .replace(/\n## Changelog\n[\s\S]*$/, '\n')
@@ -368,7 +368,7 @@ test('a page of the catalogue links nowhere in the Docs', () => {
   const links = sectioned
     .filter((document) => document.id !== 'field')
     .flatMap((document) =>
-      [...siteMarkdown(document).matchAll(/\]\(([^)\s]+)\)/g)]
+      [...catalogueMarkdown(document).matchAll(/\]\(([^)\s]+)\)/g)]
         .map(([, href]) => href)
         .filter((href) => !/^(?:[a-z][a-z\d+.-]*:|#)/i.test(href))
         .filter((href) => {
@@ -385,11 +385,11 @@ test('a page of the catalogue links nowhere in the Docs', () => {
 });
 
 /** Every page the catalogue shows: Field's page is in the Docs only. */
-const sitePages = () => sectioned.filter((document) => document.id !== 'field');
+const cataloguePages = () => sectioned.filter((document) => document.id !== 'field');
 
 test("a page's catalogue shows no inline code", () => {
-  const found = sitePages().flatMap((document) =>
-    siteInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
+  const found = cataloguePages().flatMap((document) =>
+    catalogueInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
   );
   assert.deepEqual(
     found,
@@ -399,8 +399,8 @@ test("a page's catalogue shows no inline code", () => {
 });
 
 test("a page's catalogue text is in titled blocks", () => {
-  const found = sitePages().flatMap((document) =>
-    siteStructure(document).map(
+  const found = cataloguePages().flatMap((document) =>
+    catalogueStructure(document).map(
       ({ where, kind, text }) => `${document.path}, ${where}, ${kind}: ${text}`,
     ),
   );
@@ -412,7 +412,7 @@ test("a page's catalogue text is in titled blocks", () => {
 });
 
 test("a page's catalogue text is in short paragraphs", () => {
-  const found = sitePages().flatMap((document) =>
+  const found = cataloguePages().flatMap((document) =>
     longParagraphs(document).map(
       ({ where, length, text }) => `${document.path}, ${where}, ${length} characters: ${text}`,
     ),
@@ -474,18 +474,18 @@ test('technical text is found in words, and plain words are left alone', () => {
 });
 
 /** The technical text in a page's catalogue Markdown, as plain words: keys are written as <kbd>. */
-const siteTechnicalText = (document) =>
-  siteText(document).flatMap(({ markdown, text }) =>
+const catalogueTechnicalText = (document) =>
+  catalogueText(document).flatMap(({ markdown, text }) =>
     technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
   );
 
 test("a component page's catalogue shows no technical text", () => {
   // The catalogue is for people looking at envUI: lengths, tokens, percentages and code names go
   // in the page's Compose, which its page in the Docs shows.
-  const found = sitePages()
+  const found = cataloguePages()
     .filter((document) => document.path.startsWith('components/'))
     .flatMap((document) =>
-      siteTechnicalText(document).map(({ kind, text }) => `${document.path}: ${kind} ${text}`),
+      catalogueTechnicalText(document).map(({ kind, text }) => `${document.path}: ${kind} ${text}`),
     );
   assert.deepEqual(found, [], 'Say it in words, and move the value to "## Compose".');
 });
@@ -494,8 +494,8 @@ test("the technical text in each page's catalogue Markdown is counted, for the r
   // Reporting only, like Catalogue.spec.ts's count of the rendered pages: the catalogue shows no
   // token names, hex colors, lengths, percentages or code, which belong to the page in the Docs.
   // Inline code is already rejected above; this counts what plain words still carry.
-  const counts = sitePages().flatMap((document) => {
-    const found = siteTechnicalText(document);
+  const counts = cataloguePages().flatMap((document) => {
+    const found = catalogueTechnicalText(document);
     return found.length
       ? [`${document.path}: ${found.length} (${found.map(({ text }) => text).join(', ')})`]
       : [];

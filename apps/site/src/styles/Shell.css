@@ -5,23 +5,23 @@ html {
 body {
   margin: 0;
 }
-.docs-app {
-  --docs-content-width: 72rem;
-  --docs-gutter: clamp(0.75rem, 3vw, 3rem);
+.site-app {
+  --site-content-width: 72rem;
+  --site-gutter: clamp(0.75rem, 3vw, 3rem);
   /* The monospace of code, which the Docs also set their banners' trails in. */
-  --docs-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --site-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
   min-height: 100dvh;
 }
-.docs-app *,
-.docs-app *::before,
-.docs-app *::after {
+.site-app *,
+.site-app *::before,
+.site-app *::after {
   box-sizing: border-box;
 }
 /* The frame is a Scaffold without a top bar: the navigation at its start, or in a sheet that a
    small menu button opens in a narrower window. The wordmark tops the rail, or the Docs' drawer,
    on the row of search, and the page has the way to the other area and the Display menu at its
    top end. */
-.docs-brand {
+.site-brand {
   display: flex;
   align-items: center;
   gap: var(--env-space-2);
@@ -29,7 +29,7 @@ body {
   min-block-size: var(--env-control-height-md);
   color: var(--env-color-fg-default);
 }
-.docs-brand svg {
+.site-brand svg {
   display: block;
   inline-size: 4.5rem;
   block-size: auto;
@@ -45,39 +45,39 @@ body {
    chosen destination's pages, or the Docs' drawer, flush on the navigation's background with no line
    between them, as tall as the window. The drawer keeps its top and foot in view and scrolls its
    list; the reader resizes it by its end edge, and the catalogue keeps the width it starts at and
-   its bounds (DocumentationNavigation.tsx). In the sheet of a narrower window they take the
+   its bounds (SiteNavigation.tsx). In the sheet of a narrower window they take the
    sheet's width and color. */
-.docs-navigation {
+.site-navigation {
   display: flex;
   align-items: stretch;
   block-size: 100%;
   min-block-size: 0;
 }
-.docs-rail {
+.catalogue-rail {
   /* Wide enough for its longest label, Components, on one line. */
   --env-rail-width: 6rem;
   flex: none;
   padding-block: var(--env-space-4);
   overflow-y: auto;
 }
-.docs-sidebar {
+.site-sidebar {
   block-size: 100%;
   padding: var(--env-space-4) var(--env-space-3);
 }
 /* In the sheet, the navigation fills the sheet's height, so the drawer keeps its top and foot in
    view there too and scrolls its list. */
-.docs-navigation-sheet {
+.site-navigation-sheet {
   display: flex;
   flex-direction: column;
 }
-.docs-navigation-sheet .env-dialog-content {
+.site-navigation-sheet .env-dialog-content {
   flex: 1;
   min-block-size: 0;
 }
-.docs-navigation[data-in-sheet] {
+.site-navigation[data-in-sheet] {
   margin: calc(-1 * var(--env-space-4)) 0;
 }
-.docs-navigation[data-in-sheet] .docs-sidebar {
+.site-navigation[data-in-sheet] .site-sidebar {
   flex: 1;
   inline-size: auto;
   min-inline-size: 0;
@@ -86,14 +86,14 @@ body {
    top of the drawer, as wide as its content and centred in the drawer. Their first items start
    level too: the rail's list is its gap (space 4) and the header's space 2 below the header, so
    the drawer's, whose gap is space 3, takes the difference below its header. */
-.docs-rail .env-rail-header {
+.catalogue-rail .env-rail-header {
   margin-block-end: var(--env-space-2);
 }
-.docs-sidebar > .env-drawer-header {
+.site-sidebar > .env-drawer-header {
   align-items: center;
   margin-block-end: calc(var(--env-space-4) + var(--env-space-2) - var(--env-space-3));
 }
-.docs-drawer-search {
+.site-drawer-search {
   max-inline-size: 100%;
 }
 .docs-drawer-top {
@@ -104,14 +104,14 @@ body {
   gap: var(--env-space-3);
   align-self: stretch;
 }
-.docs-drawer-top .docs-drawer-search {
+.docs-drawer-top .site-drawer-search {
   flex: none;
 }
-.docs-drawer-top .docs-brand {
+.docs-drawer-top .site-brand {
   flex: none;
   padding-inline-start: var(--env-space-2);
 }
-.docs-drawer-top .docs-brand svg {
+.docs-drawer-top .site-brand svg {
   inline-size: 4rem;
 }
 .docs-drawer-top .docs-brand-docs {
@@ -121,7 +121,7 @@ body {
    as the page scrolls. Their row sticks to the body's top and lets the page show through; the
    buttons sit on a small pill of the page's color, so content scrolling beneath doesn't run into
    them. Below an expanded window they are icon buttons, across from the menu button and search. */
-.docs-page-actions {
+.site-page-actions {
   position: sticky;
   z-index: var(--env-z-sticky);
   inset-block-start: 0;
@@ -130,7 +130,7 @@ body {
   padding: var(--env-space-3) var(--env-space-4) 0;
   pointer-events: none;
 }
-.docs-page-actions-bar {
+.site-page-actions-bar {
   display: flex;
   gap: var(--env-space-1);
   padding: var(--env-space-1);
@@ -138,33 +138,33 @@ body {
   background: var(--env-color-bg-page);
   pointer-events: auto;
 }
-.docs-page-actions ~ .docs-page-layout .docs-page-header {
+.site-page-actions ~ .site-page-layout .site-page-header {
   padding-block-start: var(--env-space-2);
 }
-.docs-narrow-only {
+.site-narrow-only {
   display: contents;
 }
-.docs-wide-only {
+.site-wide-only {
   display: none;
 }
 @container env-scaffold (width >= 52.5rem) {
-  .docs-narrow-only {
+  .site-narrow-only {
     display: none;
   }
-  .docs-wide-only {
+  .site-wide-only {
     display: contents;
   }
 }
 /* Below an expanded window, where the navigation is in a sheet, the menu button and search float
    as a small pill at the page's top start: a row of no height that sticks to the body's top, so
    the page starts below the pill and scrolls beneath it. */
-.docs-compact-controls {
+.site-compact-controls {
   position: sticky;
   z-index: var(--env-z-sticky);
   inset-block-start: 0;
   block-size: 0;
 }
-.docs-compact-controls-bar {
+.site-compact-controls-bar {
   position: absolute;
   inset-block-start: var(--env-space-2);
   inset-inline-start: var(--env-space-3);
@@ -175,11 +175,11 @@ body {
   background: var(--env-color-bg-page);
 }
 @container env-scaffold (width >= 52.5rem) {
-  .docs-compact-controls {
+  .site-compact-controls {
     display: none;
   }
 }
-.docs-main {
+.site-main {
   display: flex;
   flex-direction: column;
   min-block-size: 100%;
@@ -191,48 +191,48 @@ body {
    stay in view below the corner's controls as the page scrolls, and scroll on their own where they
    are taller than the window. A narrower pane leaves them out, as the page's own headings say as
    much. The pager stays at the foot of a short page. */
-.docs-page-layout {
-  --docs-contents-width: 22rem;
+.site-page-layout {
+  --site-contents-width: 22rem;
   /* Below the corner's controls: their row's padding and the pill's height, with room. */
-  --docs-contents-top: 4.5rem;
-  container: docs-page-layout / inline-size;
+  --site-contents-top: 4.5rem;
+  container: site-page-layout / inline-size;
   display: flex;
   flex: 1;
   flex-direction: column;
 }
-.docs-page-grid {
+.site-page-grid {
   display: flex;
   flex: 1;
   flex-direction: column;
 }
-.docs-page-column {
+.site-page-column {
   display: flex;
   flex: 1;
   flex-direction: column;
   min-inline-size: 0;
 }
-.docs-contents {
+.site-contents {
   display: none;
 }
-@container docs-page-layout (width >= 56rem) {
-  .docs-page-grid[data-contents] {
+@container site-page-layout (width >= 56rem) {
+  .site-page-grid[data-contents] {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    inline-size: min(100%, var(--docs-content-width) + var(--docs-contents-width));
+    inline-size: min(100%, var(--site-content-width) + var(--site-contents-width));
     margin-inline: auto;
   }
-  .docs-page-grid[data-contents] > .docs-contents {
+  .site-page-grid[data-contents] > .site-contents {
     display: block;
     inline-size: max-content;
     min-inline-size: 13rem;
-    max-inline-size: var(--docs-contents-width);
-    padding-inline-end: var(--docs-gutter);
+    max-inline-size: var(--site-contents-width);
+    padding-inline-end: var(--site-gutter);
   }
 }
-.docs-contents-list {
+.site-contents-list {
   position: sticky;
-  inset-block-start: var(--docs-contents-top);
-  max-block-size: calc(100dvh - var(--docs-contents-top) - var(--env-space-6));
+  inset-block-start: var(--site-contents-top);
+  max-block-size: calc(100dvh - var(--site-contents-top) - var(--env-space-6));
   overflow-y: auto;
   /* Level with the top of the page's banner. */
   padding-block: 0 var(--env-space-6);
@@ -240,11 +240,11 @@ body {
      labels on that, not on a banner shape whose box, clipped on screen, reaches beside it. */
   background: var(--env-color-bg-page);
 }
-.docs-preview,
-.docs-article,
-.docs-overview,
-.docs-page-navigation {
-  inline-size: min(100%, var(--docs-content-width));
+.catalogue-preview,
+.site-article,
+.catalogue-overview,
+.site-page-navigation {
+  inline-size: min(100%, var(--site-content-width));
   margin-inline: auto;
 }
 /* The banner at the top of a page, or the home page's hero, is as wide as the content column
@@ -253,30 +253,30 @@ body {
    twice the largest step of the spacing scale: about 7rem in a pane of 108rem, the full 8rem from
    112rem. It never reaches more than two fifths of the way to the pane's edge, and never across the
    whole pane. The header spans the pane, so its width is the container's. */
-.docs-page-header {
-  container: docs-page-header / inline-size;
+.site-page-header {
+  container: site-page-header / inline-size;
   padding-block: var(--env-space-5) var(--env-space-4);
   margin-block-end: var(--env-space-8);
 }
-.docs-page-banner,
-.docs-overview-hero {
-  --docs-banner-reach: 0rem;
+.site-page-banner,
+.catalogue-overview-hero {
+  --site-banner-reach: 0rem;
   inline-size: calc(
-    min(100cqi, var(--docs-content-width)) - 2 * var(--docs-gutter) + 2 * var(--docs-banner-reach)
+    min(100cqi, var(--site-content-width)) - 2 * var(--site-gutter) + 2 * var(--site-banner-reach)
   );
   margin-inline: auto;
   padding-block: var(--env-space-9);
 }
-/* 72rem is --docs-content-width, which a container query can't read. */
-@container docs-page-header (width > 72rem) {
-  .docs-page-banner,
-  .docs-overview-hero {
-    --docs-banner-reach: min((100cqi - var(--docs-content-width)) / 5, var(--env-space-9) * 2);
+/* 72rem is --site-content-width, which a container query can't read. */
+@container site-page-header (width > 72rem) {
+  .site-page-banner,
+  .catalogue-overview-hero {
+    --site-banner-reach: min((100cqi - var(--site-content-width)) / 5, var(--env-space-9) * 2);
   }
 }
 /* A banner's text reads from the start like a document, under its breadcrumbs, and its actions,
    where it has any, follow at the end of the heading's row (Banners.css draws each kind). */
-.docs-page-banner-heading {
+.site-page-banner-heading {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
@@ -284,32 +284,32 @@ body {
   gap: var(--env-space-4);
   max-inline-size: 100%;
 }
-.docs-page-banner {
+.site-page-banner {
   position: relative;
   isolation: isolate;
   overflow: hidden;
   container-type: inline-size;
   padding-block: clamp(2.5rem, 5vw, 4rem);
 }
-.docs-page-banner-content {
+.site-page-banner-content {
   position: relative;
   z-index: var(--env-z-raised);
   inline-size: 100%;
   text-align: start;
 }
-.docs-page-banner-title {
+.site-page-banner-title {
   max-inline-size: 22ch;
   font-weight: var(--env-font-weight-medium);
   line-height: 1.1;
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
-.docs-page-banner-description {
+.site-page-banner-description {
   max-inline-size: 42ch;
   text-wrap: balance;
 }
-.docs-page-navigation {
-  padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);
+.site-page-navigation {
+  padding: var(--env-space-6) var(--site-gutter) var(--env-space-8);
   margin-top: auto;
 }
 /* A component's changelog, last on its page in the Docs, is quiet side information: small muted
@@ -352,44 +352,44 @@ body {
 }
 /* The foot of every page, set apart from the page by space alone: the wordmark, the catalogue's
    destinations in columns, as many as fit and wrapping onto more rows in a narrow page. Its links are quiet text that comes forward when hovered. */
-.docs-footer {
-  container: docs-footer / inline-size;
+.site-footer {
+  container: site-footer / inline-size;
   background: var(--env-color-bg-default);
 }
-.docs-footer-inner {
-  inline-size: min(100%, var(--docs-content-width));
+.site-footer-inner {
+  inline-size: min(100%, var(--site-content-width));
   margin-inline: auto;
-  padding: var(--env-space-7) var(--docs-gutter) var(--env-space-8);
+  padding: var(--env-space-7) var(--site-gutter) var(--env-space-8);
 }
-.docs-footer-brand {
+.site-footer-brand {
   display: block;
   flex: none;
   inline-size: 4.5rem;
 }
-.docs-footer-columns {
+.site-footer-columns {
   flex: 1;
   min-inline-size: 0;
 }
-.docs-footer-brand svg {
+.site-footer-brand svg {
   display: block;
   inline-size: 100%;
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-.docs-footer .docs-footer-title {
+.site-footer .site-footer-title {
   margin: 0;
   font-weight: var(--env-font-weight-medium);
 }
-.docs-footer-links {
+.site-footer-links {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 /* The footer's links are muted. */
-.docs-footer-links .env-link {
+.site-footer-links .env-link {
   color: var(--env-color-fg-muted);
 }
-.docs-footer-links .env-link:hover {
+.site-footer-links .env-link:hover {
   color: var(--env-color-fg-default);
   text-decoration: underline;
   text-underline-offset: 0.2em;
@@ -397,29 +397,29 @@ body {
 /* The five columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
    above them, and they keep one row, then go three and two, then pair up two to a row in a compact
    page, so none is left on a row of its own. */
-@container docs-footer (width >= 37.5rem) {
-  .docs-footer-columns {
+@container site-footer (width >= 37.5rem) {
+  .site-footer-columns {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
-@container docs-footer (width < 66rem) {
-  .docs-footer-main {
+@container site-footer (width < 66rem) {
+  .site-footer-main {
     flex-direction: column;
   }
-  .docs-footer-columns {
+  .site-footer-columns {
     align-self: stretch;
   }
 }
-@container docs-footer (37.5rem <= width < 54rem) {
-  .docs-footer-columns {
+@container site-footer (37.5rem <= width < 54rem) {
+  .site-footer-columns {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-@container docs-footer (width < 37.5rem) {
-  .docs-footer-main {
+@container site-footer (width < 37.5rem) {
+  .site-footer-main {
     flex-direction: column;
   }
-  .docs-footer-columns {
+  .site-footer-columns {
     align-self: stretch;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--env-space-5);
@@ -442,7 +442,7 @@ body {
   vertical-align: top;
 }
 .docs-plain-code {
-  font-family: var(--docs-code-font-family);
+  font-family: var(--site-code-font-family);
   font-size: 0.9em;
   overflow-wrap: break-word;
 }
@@ -515,7 +515,7 @@ body {
   padding: 0 var(--env-space-1);
   border-radius: var(--env-radius-sm);
   background: var(--env-color-bg-muted);
-  font-family: var(--docs-code-font-family);
+  font-family: var(--site-code-font-family);
   font-size: 0.85em;
   white-space: nowrap;
 }
@@ -550,7 +550,7 @@ body {
 }
 .docs-agent-prompt-text {
   overflow: hidden;
-  font: var(--env-font-size-body-small) / 1.5 var(--docs-code-font-family);
+  font: var(--env-font-size-body-small) / 1.5 var(--site-code-font-family);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -569,6 +569,6 @@ body {
 }
 /* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge.
    An example's own sections keep the margins it gives them, such as below its sticky header. */
-.docs-main [id]:not(.docs-live-example *) {
+.site-main [id]:not(.site-live-example *) {
   scroll-margin-block-start: var(--env-space-6);
 }

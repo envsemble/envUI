@@ -11,7 +11,7 @@ import { build } from 'esbuild';
 // beside a box. This test reads the shipped style sheet, dev mode's own and the catalogue's, and
 // rejects every other shadow, also one a custom property carries into box-shadow. The catalogue has
 // one exception, by request: the very faint shadow its example canvases, tiles and the Overview's
-// cards take, `--docs-card-shadow` (Stage.css), a device of the documentation that envUI never ships.
+// cards take, `--catalogue-card-shadow` (Stage.css), a device of the documentation that envUI never ships.
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const styles = join(root, 'packages/ui/src/styles');
@@ -151,7 +151,7 @@ test('no envUI style sheet draws a drop shadow; rings stay', async () => {
   assert.deepEqual(problems([await shipped()]), [], 'The shipped style sheet');
   assert.deepEqual(problems([await shipped(), await devMode()]), [], 'Dev mode’s style sheet');
   assert.deepEqual(
-    problems(await catalogue(), { allowed: ['--docs-card-shadow'] }),
+    problems(await catalogue(), { allowed: ['--catalogue-card-shadow'] }),
     [],
     'The catalogue’s style sheets',
   );

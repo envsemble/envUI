@@ -8,7 +8,7 @@ export declare const providesSections: Set<string>;
 export declare const codeColumnHeading: 'In code';
 export declare function withoutCodeColumns(markdown: string): string;
 export declare function codeColumns(markdown: string): string;
-export declare function siteMarkdown(section: DocumentationSection, markdown: string): string;
+export declare function catalogueMarkdown(section: DocumentationSection, markdown: string): string;
 export declare function providesOf(sections: readonly DocumentationSection[]): {
   envui: string | undefined;
   app: string | undefined;
@@ -28,7 +28,7 @@ export interface OptionTable {
 }
 export declare function optionTable(token: unknown): OptionTable | undefined;
 export declare function optionTableProblems(table: OptionTable): string[];
-export declare function siteStructure(document: {
+export declare function catalogueStructure(document: {
   sections?: readonly DocumentationSection[];
 }): { where: string; kind: 'after a figure' | 'too many paragraphs'; text: string }[];
 export declare const blockParagraphs: number;

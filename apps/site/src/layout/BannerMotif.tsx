@@ -34,7 +34,7 @@ const piece = (n: number, values: Record<string, string | number> = {}) =>
 
 /** A line of text, drawn as a bar of the given width in em. */
 const Line = ({ width }: { width: number }) => (
-  <span className="docs-motif-line" style={{ '--w': `${width}em` } as CSSProperties} />
+  <span className="catalogue-motif-line" style={{ '--w': `${width}em` } as CSSProperties} />
 );
 
 /** Initials on the avatars, as on the examples' sample people. */
@@ -47,7 +47,7 @@ function Swatches() {
   return tones.map((tone, n) => (
     <span
       key={tone}
-      className="docs-motif-swatch"
+      className="catalogue-motif-swatch"
       style={piece(n, {
         '--turn': `${(n - (tones.length - 1) / 2) * 13}deg`,
         '--muted': `var(--env-color-bg-${tone}-muted)`,
@@ -69,15 +69,15 @@ function Tracks({ seed }: { seed: string }) {
   return Array.from({ length: 5 }, (_, n) => (
     <span
       key={n}
-      className="docs-motif-track"
+      className="catalogue-motif-track"
       data-accent={n === 1 || undefined}
       style={piece(n, {
         '--value': `${Math.round(18 + vary(seed, n) * 70)}%`,
         '--offset': `${[3, 0, 5, 1.5, 4][n]}em`,
       })}
     >
-      <span className="docs-motif-track-fill" />
-      <span className="docs-motif-track-thumb" />
+      <span className="catalogue-motif-track-fill" />
+      <span className="catalogue-motif-track-thumb" />
     </span>
   ));
 }
@@ -86,9 +86,9 @@ function Tracks({ seed }: { seed: string }) {
 function Toggles({ seed, kind }: { seed: string; kind?: string }) {
   const kinds = ['switch', 'checkbox', 'radio'];
   return Array.from({ length: 5 }, (_, n) => (
-    <span key={n} className="docs-motif-toggle-row" style={piece(n)}>
+    <span key={n} className="catalogue-motif-toggle-row" style={piece(n)}>
       <span
-        className="docs-motif-toggle"
+        className="catalogue-motif-toggle"
         data-kind={kind ?? kinds[n % 3]}
         data-on={vary(seed, n) > 0.45 || n === 0 || undefined}
       />
@@ -100,13 +100,13 @@ function Toggles({ seed, kind }: { seed: string; kind?: string }) {
 /** Avatars in overlapping rows, each in its hue, as a group shows them. */
 function Avatars({ seed }: { seed: string }) {
   return [4, 5, 4].map((count, row) => (
-    <span key={row} className="docs-motif-avatar-row" style={piece(row)}>
+    <span key={row} className="catalogue-motif-avatar-row" style={piece(row)}>
       {Array.from({ length: count }, (_, n) => {
         const index = (row * 5 + n + Math.floor(vary(seed, 0) * 8)) % initials.length;
         return (
           <span
             key={n}
-            className="docs-motif-avatar"
+            className="catalogue-motif-avatar"
             style={piece(row * 2 + n, {
               '--hue-bg': `var(--env-color-avatar-bg-${hues[index % hues.length]})`,
               '--hue-fg': `var(--env-color-avatar-fg-${hues[index % hues.length]})`,
@@ -129,9 +129,9 @@ function Buttons({ seed }: { seed: string }) {
     ['ghost', 'primary', 'icon'],
   ];
   return rows.map((row, r) => (
-    <span key={r} className="docs-motif-button-row" style={piece(r)}>
+    <span key={r} className="catalogue-motif-button-row" style={piece(r)}>
       {row.map((kind, n) => (
-        <span key={n} className="docs-motif-button" data-kind={kind} style={piece(r + n)}>
+        <span key={n} className="catalogue-motif-button" data-kind={kind} style={piece(r + n)}>
           {kind !== 'icon' && <Line width={3 + vary(seed, r * 3 + n) * 3} />}
         </span>
       ))}
@@ -142,10 +142,10 @@ function Buttons({ seed }: { seed: string }) {
 /** Labels over boxes, one focused with its caret, one a select with its chevron. */
 function Fields({ seed }: { seed: string }) {
   return Array.from({ length: 4 }, (_, n) => (
-    <span key={n} className="docs-motif-field-group" style={piece(n)}>
+    <span key={n} className="catalogue-motif-field-group" style={piece(n)}>
       <Line width={3 + vary(seed, n) * 3} />
       <span
-        className="docs-motif-field"
+        className="catalogue-motif-field"
         data-focus={n === 1 || undefined}
         data-select={n === 2 || undefined}
       >
@@ -158,11 +158,11 @@ function Fields({ seed }: { seed: string }) {
 /** A table on a panel: its head and rows of cells. */
 function Table({ seed }: { seed: string }) {
   return (
-    <span className="docs-motif-panel" data-variant="table">
+    <span className="catalogue-motif-panel" data-variant="table">
       {Array.from({ length: 6 }, (_, n) => (
         <span
           key={n}
-          className="docs-motif-row"
+          className="catalogue-motif-row"
           data-head={n === 0 || undefined}
           style={piece(n, { '--depth': 0 })}
         >
@@ -178,16 +178,16 @@ function Table({ seed }: { seed: string }) {
 /** A window: its bar, its navigation and its panes. */
 function Window({ seed }: { seed: string }) {
   return (
-    <span className="docs-motif-window" style={piece(0)}>
-      <span className="docs-motif-window-bar" style={piece(1)} />
-      <span className="docs-motif-window-side" style={piece(2)}>
+    <span className="catalogue-motif-window" style={piece(0)}>
+      <span className="catalogue-motif-window-bar" style={piece(1)} />
+      <span className="catalogue-motif-window-side" style={piece(2)}>
         {[0, 1, 2, 3].map((n) => (
           <Line key={n} width={2 + vary(seed, n) * 2} />
         ))}
       </span>
-      <span className="docs-motif-window-main" style={piece(3)}>
+      <span className="catalogue-motif-window-main" style={piece(3)}>
         {[0, 1, 2].map((n) => (
-          <span key={n} className="docs-motif-window-pane" style={piece(n + 3)} />
+          <span key={n} className="catalogue-motif-window-pane" style={piece(n + 3)} />
         ))}
       </span>
     </span>
@@ -207,7 +207,7 @@ function Badges() {
     ['success', 'Paid'],
   ] as const;
   return badges.map(([tone, label], n) => (
-    <span key={label} className="docs-motif-badge" style={piece(n)}>
+    <span key={label} className="catalogue-motif-badge" style={piece(n)}>
       <Badge tone={tone}>{label}</Badge>
     </span>
   ));
@@ -220,7 +220,7 @@ function Chat({ seed }: { seed: string }) {
       {[0, 1].map((n) => (
         <span
           key={n}
-          className="docs-motif-message"
+          className="catalogue-motif-message"
           data-own={n === 1 || undefined}
           style={piece(n)}
         >
@@ -228,9 +228,9 @@ function Chat({ seed }: { seed: string }) {
           {n === 0 && <Line width={3 + vary(seed, n + 4) * 4} />}
         </span>
       ))}
-      <span className="docs-motif-composer" style={piece(2)}>
+      <span className="catalogue-motif-composer" style={piece(2)}>
         <Line width={6} />
-        <span className="docs-motif-send" />
+        <span className="catalogue-motif-send" />
       </span>
     </>
   );
@@ -261,8 +261,8 @@ const galleries: Record<'components' | 'patterns', Tile[]> = {
 /** Tiles of a gallery, each a small motif of its own: every component, or every pattern. */
 function Gallery({ of }: { of: 'components' | 'patterns' }) {
   return galleries[of].map(([art, variant, draw], n) => (
-    <span key={n} className="docs-motif-tile" style={piece(n)}>
-      <span className="docs-motif-art" data-motif={art} data-variant={variant}>
+    <span key={n} className="catalogue-motif-tile" style={piece(n)}>
+      <span className="catalogue-motif-art" data-motif={art} data-variant={variant}>
         {draw(`${of}${n}`)}
       </span>
     </span>
@@ -277,8 +277,11 @@ function Gallery({ of }: { of: 'components' | 'patterns' }) {
  */
 export function BannerMotif({ motif }: { motif: Motif }) {
   return (
-    <span className="docs-banner-motif" aria-hidden="true" inert>
-      <span className="docs-motif-art" data-motif={motif === 'swatches' ? 'swatches' : 'collage'}>
+    <span className="catalogue-banner-motif" aria-hidden="true" inert>
+      <span
+        className="catalogue-motif-art"
+        data-motif={motif === 'swatches' ? 'swatches' : 'collage'}
+      >
         {motif === 'swatches' ? <Swatches /> : <Gallery of={motif} />}
       </span>
     </span>

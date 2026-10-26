@@ -9,7 +9,7 @@ import { AnatomyFigure } from './AnatomyFigure';
 import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from './OptionLegend';
-import { optionPieces, type OptionTable } from '../../../../scripts/SiteContent.mjs';
+import { optionPieces, type OptionTable } from '../../../../scripts/CatalogueContent.mjs';
 import { InteractiveMark } from './InteractiveMark';
 import { Specimen } from './Specimen';
 import { foundationFigure } from '../previews/foundations/FoundationFigures';
@@ -59,17 +59,17 @@ export function VerdictFigure({
   return (
     // Named by its bar and its sentence, each read once.
     <figure
-      className="docs-verdict"
+      className="site-verdict"
       data-verdict={verdict}
       aria-labelledby={`${id}-verdict ${id}-caption`}
     >
       {/* The stage and the bar are two connected rows: envUI's connected-row parts give the outer
           corners the large radius and the inner ones the small radius. */}
-      <div className="docs-verdict-frame env-connected-rows">
+      <div className="site-verdict-frame env-connected-rows">
         <Column
           render={<Theme {...theme} />}
           gap={0}
-          className="docs-verdict-stage env-connected-row"
+          className="site-verdict-stage env-connected-row"
           data-example={name}
           data-stage={stage}
           {...keepLinksInPlace}
@@ -85,12 +85,12 @@ export function VerdictFigure({
           )}
           <InteractiveMark enabled={!open} />
         </Column>
-        <div className="docs-verdict-bar env-connected-row" id={`${id}-verdict`}>
+        <div className="site-verdict-bar env-connected-row" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}
           <span>{label}</span>
         </div>
       </div>
-      <figcaption className="docs-verdict-caption" id={`${id}-caption`}>
+      <figcaption className="site-verdict-caption" id={`${id}-caption`}>
         {caption}
       </figcaption>
       {page && <ExampleCode page={page} name={name ?? ''} />}
@@ -174,7 +174,7 @@ export function lastSubsection(markdown: string): [string, string] | undefined {
 
 /**
  * Markdown cut after the paragraph that opens it, when it opens with one: a section's lead, which
- * the catalogue sets larger than the text below it (SiteText.css).
+ * the catalogue sets larger than the text below it (CatalogueText.css).
  */
 export function leadParagraph(markdown: string): [string, string] | undefined {
   const text = markdown.replace(/^(?:[ \t]*\n)+/, '');
@@ -215,11 +215,11 @@ function groupFigures(blocks: DocumentationBlock[], page: string) {
 function SharedRow(props: ComponentPropsWithoutRef<'div'>) {
   const [slot, setSlot] = useState<HTMLDivElement | null>(null);
   return (
-    <div className="docs-shared-row">
+    <div className="site-shared-row">
       <CodeSlot value={slot}>
         <div {...props} />
       </CodeSlot>
-      <div ref={setSlot} className="docs-code-slot" />
+      <div ref={setSlot} className="site-code-slot" />
     </div>
   );
 }
@@ -288,7 +288,7 @@ export function FigureSection({
     const text = beside.get(index);
     if (Array.isArray(group) && text !== undefined)
       content.push(
-        <SharedRow key={index} className="docs-figure-split">
+        <SharedRow key={index} className="site-figure-split">
           <div>
             <Documentation markdown={text} path={reference.path} />
           </div>
@@ -302,7 +302,7 @@ export function FigureSection({
         ) : (
           <SharedRow
             key={index}
-            className="docs-figure-run"
+            className="site-figure-run"
             data-count={group.length}
             data-verdicts={
               group.every((block) => block.kind === 'example' && block.role) || undefined
@@ -324,7 +324,7 @@ export function FigureSection({
             key="section-lead"
             markdown={lead[0]}
             path={reference.path}
-            className="docs-lead"
+            className="site-lead"
           />,
         );
         text = lead[1];
@@ -344,7 +344,7 @@ export function FigureSection({
             key={index}
             markdown={text}
             path={reference.path}
-            className="docs-figure-note"
+            className="site-figure-note"
           />,
         );
         return;
@@ -373,8 +373,8 @@ export function FigureSection({
       </section>
     );
   return (
-    <section className="docs-figure-section" data-section={section.id}>
-      <div className="docs-figure-section-heading">
+    <section className="site-figure-section" data-section={section.id}>
+      <div className="site-figure-section-heading">
         <Documentation markdown={title} path={reference.path} />
       </div>
       {content}

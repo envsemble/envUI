@@ -10,20 +10,20 @@
   }
 }
 @media print {
-  .docs-compact-controls,
-  .docs-sidebar,
-  .docs-rail,
-  .docs-page-navigation,
-  .docs-footer {
+  .site-compact-controls,
+  .site-sidebar,
+  .catalogue-rail,
+  .site-page-navigation,
+  .site-footer {
     display: none;
   }
-  .docs-frame {
+  .site-frame {
     display: block;
   }
-  .docs-preview {
+  .catalogue-preview {
     padding-inline: 1rem;
   }
-  .docs-matrix-scroll {
+  .catalogue-matrix-scroll {
     overflow: visible;
   }
 }
