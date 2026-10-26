@@ -5,7 +5,6 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import { timePicker as timePickerMessages } from '../foundations/messages/timePicker.js';
 import { Button } from '../actions/Button.js';
-import { Row } from '../foundations/Layout.js';
 import { Schedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
@@ -134,9 +133,26 @@ export function TimePicker({
       icon={<Schedule />}
       rootClassName="env-date-picker env-time-picker"
       popupClassName="env-time-picker-popup"
-      popupGap={2}
-      popupPadding={2}
       initialFocus={timeListFirstColumn}
+      popupStart={
+        <Button
+          variant="text"
+          aria-disabled={!nowAvailable || undefined}
+          onClick={() => {
+            if (nowAvailable) commit(now().minutes);
+          }}
+        >
+          {nowLabel ?? messages.now}
+        </Button>
+      }
+      popupEnd={
+        clearable &&
+        serialized && (
+          <Button variant="text" onClick={clear}>
+            {clearLabel ?? messages.clear}
+          </Button>
+        )
+      }
       clearLabel={clearLabel ?? messages.clear}
       onClear={() => commit(null)}
       onFormReset={() => {
@@ -149,42 +165,15 @@ export function TimePicker({
       clearable={clearable}
     >
       {(name) => (
-        <>
-          <TimeList
-            {...name}
-            value={current}
-            onValueChange={commit}
-            minuteStep={minuteStep}
-            min={minMinutes}
-            max={maxMinutes}
-            locale={locale}
-          />
-          <Row wrap align="center" gap={2} className="env-date-picker-actions">
-            <Button
-              variant="text"
-              aria-disabled={!nowAvailable || undefined}
-              onClick={() => {
-                if (nowAvailable) commit(now().minutes);
-              }}
-            >
-              {nowLabel ?? messages.now}
-            </Button>
-            <Row
-              render={<span />}
-              wrap
-              align="center"
-              justify="end"
-              gap={2}
-              className="env-date-picker-actions-end"
-            >
-              {clearable && serialized && (
-                <Button variant="text" onClick={clear}>
-                  {clearLabel ?? messages.clear}
-                </Button>
-              )}
-            </Row>
-          </Row>
-        </>
+        <TimeList
+          {...name}
+          value={current}
+          onValueChange={commit}
+          minuteStep={minuteStep}
+          min={minMinutes}
+          max={maxMinutes}
+          locale={locale}
+        />
       )}
     </PickerField>
   );

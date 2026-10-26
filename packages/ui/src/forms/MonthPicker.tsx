@@ -5,7 +5,6 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import { monthPicker as monthPickerMessages } from '../foundations/messages/monthPicker.js';
 import { Button } from '../actions/Button.js';
-import { Row } from '../foundations/Layout.js';
 import { CalendarMonth } from '../icons/CalendarMonth.js';
 import { MonthGrid, monthGridActive } from './internal/MonthGrid.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
@@ -145,6 +144,25 @@ export function MonthPicker({
       rootClassName="env-date-picker env-month-picker"
       popupClassName="env-month-picker-popup"
       initialFocus={monthGridActive}
+      popupStart={
+        <Button
+          variant="text"
+          aria-disabled={!thisMonthAvailable || undefined}
+          onClick={() => {
+            if (thisMonthAvailable) choose(thisMonth);
+          }}
+        >
+          {thisMonthLabel ?? messages.thisMonth}
+        </Button>
+      }
+      popupEnd={
+        clearable &&
+        serialized && (
+          <Button variant="text" onClick={() => choose(null)}>
+            {clearLabel ?? messages.clear}
+          </Button>
+        )
+      }
       clearLabel={clearLabel ?? messages.clear}
       onClear={() => commit(null)}
       onFormReset={() => {
@@ -165,31 +183,6 @@ export function MonthPicker({
         previousYearLabel={previousYearLabel ?? messages.previousYear}
         nextYearLabel={nextYearLabel ?? messages.nextYear}
       />
-      <Row wrap align="center" gap={2} className="env-date-picker-actions">
-        <Button
-          variant="text"
-          aria-disabled={!thisMonthAvailable || undefined}
-          onClick={() => {
-            if (thisMonthAvailable) choose(thisMonth);
-          }}
-        >
-          {thisMonthLabel ?? messages.thisMonth}
-        </Button>
-        {clearable && serialized && (
-          <Row
-            render={<span />}
-            wrap
-            align="center"
-            justify="end"
-            gap={2}
-            className="env-date-picker-actions-end"
-          >
-            <Button variant="text" onClick={() => choose(null)}>
-              {clearLabel ?? messages.clear}
-            </Button>
-          </Row>
-        )}
-      </Row>
     </PickerField>
   );
 }

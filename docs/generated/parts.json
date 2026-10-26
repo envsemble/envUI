@@ -1788,7 +1788,7 @@
         },
         {
           "class": "env-date-picker-actions",
-          "description": "The row of actions under the calendar."
+          "description": "The row of actions under the calendar, the picker card's footer."
         },
         {
           "class": "env-date-picker-actions-end",
@@ -1828,7 +1828,7 @@
         },
         {
           "class": "env-date-picker-popup",
-          "description": "The popup with the calendar."
+          "description": "The picker card with the calendar, also on TimePicker and MonthPicker."
         },
         {
           "class": "env-date-picker-time",
@@ -1888,6 +1888,7 @@
         "Field",
         "Icon",
         "IconButton",
+        "PickerPopup",
         "Popup",
         "Skeleton",
         "TextField",
@@ -3219,6 +3220,7 @@
         "Field",
         "Icon",
         "IconButton",
+        "PickerPopup",
         "Popup",
         "Skeleton",
         "TextField",
@@ -5473,6 +5475,7 @@
         "Field",
         "Icon",
         "IconButton",
+        "PickerPopup",
         "Popup",
         "Skeleton",
         "TextField",
@@ -6112,6 +6115,33 @@
       ],
       "usedBy": [
         "TopBar"
+      ]
+    },
+    "PickerPopup": {
+      "root": "env-picker-popup",
+      "parts": [
+        {
+          "class": "env-picker-popup",
+          "description": "The card DatePicker, TimePicker and MonthPicker open."
+        },
+        {
+          "class": "env-picker-popup-body",
+          "description": "The picker's content: a calendar, a time's wheels or a year of months."
+        },
+        {
+          "class": "env-picker-popup-footer",
+          "description": "The row of actions under the body."
+        },
+        {
+          "class": "env-picker-popup-footer-end",
+          "description": "The actions at the end of that row, such as Clear."
+        }
+      ],
+      "states": [],
+      "usedBy": [
+        "DatePicker",
+        "MonthPicker",
+        "TimePicker"
       ]
     },
     "Popup": {

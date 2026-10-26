@@ -324,6 +324,25 @@ export function DatePicker({
       icon={withTime ? <CalendarClock /> : <CalendarMonth />}
       rootClassName="env-date-picker"
       initialFocus={calendarActiveDay}
+      popupStart={
+        <Button
+          variant="text"
+          aria-disabled={!nowAvailable || undefined}
+          onClick={() => {
+            if (nowAvailable) chooseNow();
+          }}
+        >
+          {withTime ? (nowLabel ?? messages.now) : (todayLabel ?? messages.today)}
+        </Button>
+      }
+      popupEnd={
+        clearable &&
+        serialized && (
+          <Button variant="text" onClick={clear}>
+            {clearLabel ?? messages.clear}
+          </Button>
+        )
+      }
       clearLabel={clearLabel ?? messages.clear}
       onClear={() => commit(null)}
       onFormReset={() => {
@@ -359,31 +378,6 @@ export function DatePicker({
       ) : (
         calendar
       )}
-      <Row wrap align="center" gap={2} className="env-date-picker-actions">
-        <Button
-          variant="text"
-          aria-disabled={!nowAvailable || undefined}
-          onClick={() => {
-            if (nowAvailable) chooseNow();
-          }}
-        >
-          {withTime ? (nowLabel ?? messages.now) : (todayLabel ?? messages.today)}
-        </Button>
-        <Row
-          render={<span />}
-          wrap
-          align="center"
-          justify="end"
-          gap={2}
-          className="env-date-picker-actions-end"
-        >
-          {clearable && serialized && (
-            <Button variant="text" onClick={clear}>
-              {clearLabel ?? messages.clear}
-            </Button>
-          )}
-        </Row>
-      </Row>
     </PickerField>
   );
 }
