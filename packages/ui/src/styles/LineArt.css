@@ -101,7 +101,7 @@
   }
   30% {
     --env-line-art-offset: -1;
-    animation-timing-function: var(--env-motion-ease-enter);
+    animation-timing-function: var(--env-motion-ease);
   }
   100% {
     --env-line-art-offset: -2;
