@@ -27,6 +27,7 @@ import {
   type SectionPosition,
   type TableOfContentsItem,
 } from './internal/contentsOutline.js';
+import { swellAt, wavePath, wavePlace, type WaveLayout } from './internal/contentsWave.js';
 
 export type { TableOfContentsItem } from './internal/contentsOutline.js';
 
@@ -188,8 +189,28 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
   );
 }
 
-/** How many sections away from the reader's place a dash still grows: three. */
-const waveSpread = 3;
+/** How long the shape takes to catch up with the reader's place: its time constant, in ms. */
+const glide = 60;
+
+/**
+ * Where the entries sit beside the shape, in layout pixels from the top of the list's box, which
+ * holds the shape and is the links' offset parent, so a transform or zoom around it changes nothing.
+ */
+function measureWave(body: HTMLElement, shape: SVGSVGElement): WaveLayout | null {
+  const links = body.querySelectorAll<HTMLElement>('.env-table-of-contents-link');
+  if (links.length === 0) return null;
+  const anchors = Array.from(links, (link) => link.offsetTop + link.offsetHeight / 2);
+  const first = links[0]!;
+  const last = links[links.length - 1]!;
+  const inset = (link: HTMLElement, side: 'paddingTop' | 'paddingBottom') =>
+    parseFloat(getComputedStyle(link)[side]) || 0;
+  return {
+    anchors,
+    top: first.offsetTop + inset(first, 'paddingTop'),
+    bottom: last.offsetTop + last.offsetHeight - inset(last, 'paddingBottom'),
+    full: parseFloat(getComputedStyle(shape).width) || 0,
+  };
+}
 
 /**
  * The page's sections as links, nested by level, with the one the reader is in marked as they
@@ -206,6 +227,7 @@ export function TableOfContents({
 }: TableOfContentsProps) {
   const messages = useMessages('tableOfContents', tableOfContents);
   const root = useRef<HTMLDivElement>(null);
+  const shape = useRef<SVGSVGElement>(null);
   const [readItems, setReadItems] = useState<readonly TableOfContentsItem[]>([]);
   const items = givenItems ?? readItems;
   const [current, setCurrent] = useState<string>();
@@ -263,7 +285,8 @@ export function TableOfContents({
     };
   }, [givenItems, container, levelKey]);
 
-  // The current section, from where the area that holds the sections has scrolled.
+  // The current section, from where the area that holds the sections has scrolled, and the shape
+  // beside the list that marks the reader's place.
   useEffect(() => {
     if (ids === '') {
       setCurrent(undefined);
@@ -272,19 +295,106 @@ export function TableOfContents({
     const sectionIds = ids.split('\n');
     const first = document.getElementById(sectionIds[0]!);
     const doc = first?.ownerDocument ?? document;
+    const reducedMotion =
+      typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : null;
     let frame = 0;
-    // Each link's reach, from 1 at the reader's place easing to 0 three sections away, which
-    // its dash grows and darkens with: set on the links directly, every frame the page scrolls, without
-    // rendering the list again.
-    const wave = (position: number) => {
-      const links = root.current?.querySelectorAll<HTMLElement>('.env-table-of-contents-link');
-      links?.forEach((link, index) => {
-        // A smooth bell: full at the reader's place, easing to nothing at the spread.
-        const distance = Math.min(1, Math.abs(index - position) / waveSpread);
-        const reach = Math.cos((distance * Math.PI) / 2) ** 2;
-        link.style.setProperty('--env-table-of-contents-reach', reach.toFixed(3));
+
+    // The shape: drawn every frame the reader's place moves, by writing its outline and its colors'
+    // reach directly, without rendering the list again. The drawn place glides after the measured
+    // one, so a mouse wheel's steps and a chosen section's jump glide rather than jump; at once
+    // where reduced motion is preferred.
+    let layout: WaveLayout | null = null;
+    let target: number | null = null;
+    let place: number | null = null;
+    // How far each entry's swell under the pointer has grown, and the entry under it.
+    let hovers: number[] = [];
+    let hovered = -1;
+    let drawFrame = 0;
+    let drawn = 0;
+    const draw = (now: number) => {
+      drawFrame = 0;
+      const body = root.current;
+      const svg = shape.current;
+      if (!body || !svg) return;
+      if (!layout) {
+        layout = measureWave(body, svg);
+        if (!layout) return;
+        hovers = layout.anchors.map((_, index) => (index === hovered ? 1 : 0));
+        const anchors = layout.anchors;
+        const height = body.offsetHeight || 1;
+        // A stop at each entry and halfway to the next, where the shape's color is measured.
+        svg.querySelectorAll('stop').forEach((stop, index) => {
+          const at = anchors[Math.floor(index / 2)] ?? 0;
+          const next = anchors[Math.floor(index / 2) + 1] ?? at;
+          const y = index % 2 === 0 ? at : (at + next) / 2;
+          stop.setAttribute('offset', (y / height).toFixed(4));
+        });
+        const gradient = svg.querySelector('linearGradient');
+        if (gradient && !gradient.id) {
+          // An id of its own on the page, which no other contents share, also in another root.
+          gradient.id = `env-table-of-contents-wave-${Math.random().toString(36).slice(2)}`;
+          svg.querySelector('path')?.setAttribute('fill', `url(#${gradient.id})`);
+        }
+        gradient?.setAttribute('y2', String(height));
+      }
+      const instant = reducedMotion?.matches ?? false;
+      // A frame's time since the last drawn, or a frame's at the start of a move.
+      const elapsed = drawn === 0 ? 16 : Math.min(100, Math.max(0, now - drawn));
+      const ease = instant ? 1 : 1 - Math.exp(-elapsed / glide);
+      drawn = now;
+      let moving = false;
+      if (target === null || place === null || instant) place = target;
+      else {
+        place += (target - place) * ease;
+        if (Math.abs(target - place) < 0.002) place = target;
+        else moving = true;
+      }
+      hovers = hovers.map((amount, index) => {
+        const goal = index === hovered ? 1 : 0;
+        const next = instant ? goal : amount + (goal - amount) * ease;
+        if (Math.abs(goal - next) < 0.005) return goal;
+        moving = true;
+        return next;
       });
+      svg.querySelector('path')?.setAttribute('d', wavePath(layout, place, hovers));
+      // Each color stop takes the shape's swell where it sits, and whether the reader has passed it.
+      svg.querySelectorAll<SVGStopElement>('stop').forEach((stop, index) => {
+        const at = index / 2;
+        const reach = swellAt(at, place, hovers).toFixed(3);
+        if (stop.style.getPropertyValue('--env-table-of-contents-reach') !== reach) {
+          stop.style.setProperty('--env-table-of-contents-reach', reach);
+        }
+        stop.toggleAttribute('data-read', place !== null && at < place);
+      });
+      if (moving) drawFrame = requestAnimationFrame(draw);
+      else drawn = 0;
     };
+    const redraw = () => {
+      if (drawFrame === 0) drawFrame = requestAnimationFrame(draw);
+    };
+    const wave = (position: number | null) => {
+      target = position === null ? null : wavePlace(position);
+      cancelAnimationFrame(drawFrame);
+      draw(performance.now());
+    };
+    const remeasure = () => {
+      layout = null;
+      redraw();
+    };
+    // The entry under a mouse swells the shape a little, as a brush pressed there.
+    const hover = (index: number) => {
+      if (hovered === index) return;
+      hovered = index;
+      redraw();
+    };
+    const onPointerOver = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse') return;
+      const link = event.target instanceof Element ? event.target.closest('a') : null;
+      const links = root.current?.querySelectorAll('.env-table-of-contents-link');
+      hover(link && links ? Array.prototype.indexOf.call(links, link) : -1);
+    };
+    const onPointerLeave = () => hover(-1);
+
     const update = () => {
       frame = 0;
       const choice = chosen.current;
@@ -298,19 +408,24 @@ export function TableOfContents({
         .filter((element): element is HTMLElement => element !== null);
       if (elements.length === 0) {
         setCurrent(undefined);
+        wave(null);
         return;
       }
       const scroller = scrollerOf(elements[0]!);
       const scrolling = scroller ?? doc.scrollingElement ?? doc.documentElement;
       const padding =
         parseFloat(getComputedStyle(scroller ?? doc.documentElement).scrollPaddingTop) || 0;
-      const top = scroller ? scroller.getBoundingClientRect().top + scroller.clientTop : 0;
+      // Where the sections are drawn, in layout pixels of the area that scrolls them, as its
+      // scroll position, height and padding are: a transform or zoom around it scales the drawing.
+      const box = scroller?.getBoundingClientRect();
+      const scale =
+        scroller && box && scroller.offsetHeight > 0 ? box.height / scroller.offsetHeight || 1 : 1;
+      const top = scroller && box ? box.top + scroller.clientTop * scale : 0;
       const height = scroller ? scroller.clientHeight : (doc.defaultView?.innerHeight ?? 0);
       const sections: SectionPosition[] = elements.map((element) => ({
         id: element.id,
         top:
-          element.getBoundingClientRect().top -
-          top -
+          (element.getBoundingClientRect().top - top) / scale -
           padding -
           (parseFloat(getComputedStyle(element).scrollMarginTop) || 0),
       }));
@@ -357,11 +472,21 @@ export function TableOfContents({
     window.addEventListener('resize', onResize);
     const resizes = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize);
     if (first?.parentElement) resizes?.observe(first.parentElement);
+    // The list's own size: labels that wrap anew, or a font that loads, move its entries.
+    const body = root.current;
+    const reshapes = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(remeasure);
+    if (body) reshapes?.observe(body);
+    body?.addEventListener('pointerover', onPointerOver);
+    body?.addEventListener('pointerleave', onPointerLeave);
     return () => {
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(drawFrame);
       doc.removeEventListener('scroll', onScroll, { capture: true });
       window.removeEventListener('resize', onResize);
       resizes?.disconnect();
+      reshapes?.disconnect();
+      body?.removeEventListener('pointerover', onPointerOver);
+      body?.removeEventListener('pointerleave', onPointerLeave);
     };
   }, [ids, settleLater]);
 
@@ -407,6 +532,23 @@ export function TableOfContents({
       hidden={items.length === 0 ? true : props.hidden}
     >
       <div className="env-table-of-contents-body" ref={root}>
+        {/* The reader's place: one shape down the list, drawn and colored by the effect above. */}
+        <svg
+          className="env-table-of-contents-wave"
+          ref={shape}
+          aria-hidden="true"
+          focusable="false"
+        >
+          <defs>
+            <linearGradient gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="0">
+              {/* One at each entry and one halfway to the next. */}
+              {Array.from({ length: Math.max(0, flat.length * 2 - 1) }, (_, index) => (
+                <stop key={index} />
+              ))}
+            </linearGradient>
+          </defs>
+          <path />
+        </svg>
         <List items={items} current={current} passed={passed} depth={0} onNavigate={navigate} />
       </div>
     </nav>

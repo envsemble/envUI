@@ -27,6 +27,7 @@ export const aliases: Record<string, string[]> = {
   Overlays: ['Dialog'],
   Breadcrumbs: ['DataDisplay'],
   contentsOutline: ['TableOfContents'],
+  contentsWave: ['TableOfContents'],
   Kbd: ['DataDisplay'],
   Progress: ['Meter'],
   Spinner: ['Meter', 'Skeleton'],

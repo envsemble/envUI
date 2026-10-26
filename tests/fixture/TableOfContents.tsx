@@ -6,8 +6,8 @@ const short = { blockSize: '3rem', margin: 0 };
 
 /**
  * A page under a sticky bar that reads its article's headings, h2 and h3, leaving out an example's
- * own heading and an h4; and sections of its own, cards in a box that scrolls. Mounted with
- * ?fixture=table-of-contents.
+ * own heading and an h4; and sections of its own, cards in a box that scrolls, also in a box drawn
+ * at half its size. Mounted with ?fixture=table-of-contents.
  */
 export function TableOfContentsFixture() {
   const article = useRef<HTMLElement>(null);
@@ -81,6 +81,28 @@ export function TableOfContentsFixture() {
                 Revenue and costs.
               </section>
               <section id="review-costs" style={{ blockSize: '4rem' }}>
+                Costs went down.
+              </section>
+            </div>
+          </div>
+          {/* The same sections at half size, as in a scaled preview of a screen. */}
+          <div style={{ transform: 'scale(0.5)', transformOrigin: '0 0' }}>
+            <TableOfContents
+              aria-label="At half size"
+              items={[
+                { id: 'scaled-summary', label: 'Summary' },
+                { id: 'scaled-results', label: 'Results' },
+                { id: 'scaled-costs', label: 'Costs' },
+              ]}
+            />
+            <div data-testid="scaled" style={{ blockSize: '12rem', overflow: 'auto' }}>
+              <section id="scaled-summary" style={{ blockSize: '20rem' }}>
+                The year in brief.
+              </section>
+              <section id="scaled-results" style={{ blockSize: '20rem' }}>
+                Revenue and costs.
+              </section>
+              <section id="scaled-costs" style={{ blockSize: '4rem' }}>
                 Costs went down.
               </section>
             </div>

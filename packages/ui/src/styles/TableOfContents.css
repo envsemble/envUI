@@ -1,19 +1,23 @@
 /* TableOfContents: the page's sections as small links, nested by indent, with the reader's place
-   marked by a column of short dashes, one before each section, like a ruler: the current section's
-   the longest, in the text color, its neighbours' a little longer, and the one under the pointer growing
-   too; the sections the reader has passed in the text color with darker dashes, the current one in
-   the text color, never bolder, so no label rewraps as the reader moves, and those still to come quieter, with paler dashes. */
+   marked by one shape down the list beside them, like a brush stroke: at its fullest and in the
+   text color at the current section, running thin and quieter a few sections away, darker over the
+   sections the reader has passed, paler over those still to come; the labels of the passed and
+   current sections in the text color, never bolder, so no label rewraps as the reader moves, and
+   those still to come quieter. */
 .env-table-of-contents {
-  /* How far each level sits in from the one above it; the current section's dash, which is also
-     the dashes' column, the others a share of it; and a dash's thickness. */
+  /* How far each level sits in from the one above it, and the shape's width at its fullest, which
+     is also its column's. */
   --env-table-of-contents-indent: var(--env-space-3);
-  --env-table-of-contents-dash: 1.25rem;
-  --env-table-of-contents-dash-thickness: 0.125rem;
+  --env-table-of-contents-stroke: var(--env-space-3);
   min-inline-size: 0;
   font: var(--env-type-body-small);
 }
 .env-table-of-contents[hidden] {
   display: none;
+}
+/* The shape's box, which the links measure their place in. */
+.env-table-of-contents-body {
+  position: relative;
 }
 .env-table-of-contents-list {
   margin: 0;
@@ -25,12 +29,11 @@
   --env-table-of-contents-inset: calc(
     var(--env-table-of-contents-depth, 0) * var(--env-table-of-contents-indent)
   );
-  position: relative;
   display: block;
   padding-block: var(--env-space-1);
-  /* Room before the label for the dashes' column and a gap after it. */
+  /* Room before the label for the shape's column and a gap after it. */
   padding-inline: calc(
-      var(--env-space-1) + var(--env-table-of-contents-dash) + var(--env-space-2) +
+      var(--env-space-1) + var(--env-table-of-contents-stroke) + var(--env-space-3) +
         var(--env-table-of-contents-inset)
     )
     var(--env-space-2);
@@ -48,52 +51,34 @@
   outline-offset: -2px;
 }
 
-/* Each link's dash at the column's start, the same at every level, centred on its first line. The
-   dashes swell like a wave around the reader's place as the page scrolls: each grows longer,
-   thicker and darker with its reach, which the component sets every frame from 1 at the reader's
-   place to 0 three sections away, so the current section's dash is the longest and darkest
-   and the next one already grows as the reader nears it. At rest a dash takes the muted edge color,
-   or once passed the muted text color, and blends into the text color as its reach grows. Before
-   the component has measured, the current section's dash is full; the one under the pointer grows
-   too. The labels change color at once, never gradually and never weight, so none rewraps as the
-   reader moves: passed and current ones in the text color, those still to come quieter. */
-.env-table-of-contents .env-table-of-contents-link::before {
-  content: '';
+/* The shape, in the column at the list's start, the same beside every level, from the first
+   label's top to the last one's bottom. The component draws its outline every frame the reader's
+   place moves, and sets on each of its color stops, at each entry and halfway to the next, its
+   reach: from 1 at the reader's place to 0 three sections away. There it takes the text color,
+   blending into the edge color over the sections passed and the muted edge color over those
+   still to come. The one under the pointer swells it a little. */
+.env-table-of-contents-wave {
   position: absolute;
-  --env-table-of-contents-rest: var(--env-color-border-muted);
-  --env-table-of-contents-mark: calc(0.25 + 0.75 * var(--env-table-of-contents-reach, 0));
+  inset-block: 0;
   inset-inline-start: var(--env-space-1);
-  inset-block-start: calc(
-    var(--env-space-1) + (1lh - 2 * var(--env-table-of-contents-dash-thickness)) / 2
-  );
-  /* Drawn at its fullest and scaled from its start, so it grows without laying anything out. */
-  inline-size: var(--env-table-of-contents-dash);
-  block-size: calc(2 * var(--env-table-of-contents-dash-thickness));
-  transform-origin: 0 50%;
-  scale: var(--env-table-of-contents-mark);
-  border-radius: var(--env-radius-full);
-  background: color-mix(
+  inline-size: var(--env-table-of-contents-stroke);
+  block-size: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.env-table-of-contents-wave stop {
+  stop-color: color-mix(
     in oklch,
     var(--env-color-fg-default) calc(var(--env-table-of-contents-reach, 0) * 100%),
-    var(--env-table-of-contents-rest)
+    var(--env-color-border-muted)
   );
 }
-.env-table-of-contents-link:dir(rtl)::before {
-  transform-origin: 100% 50%;
-}
-.env-table-of-contents .env-table-of-contents-link[data-passed]::before {
-  --env-table-of-contents-rest: var(--env-color-fg-muted);
-}
-.env-table-of-contents .env-table-of-contents-link[aria-current='location']::before {
-  --env-table-of-contents-mark: calc(0.25 + 0.75 * var(--env-table-of-contents-reach, 1));
-  background: color-mix(
+.env-table-of-contents-wave stop[data-read] {
+  stop-color: color-mix(
     in oklch,
-    var(--env-color-fg-default) calc(var(--env-table-of-contents-reach, 1) * 100%),
-    var(--env-table-of-contents-rest)
+    var(--env-color-fg-default) calc(var(--env-table-of-contents-reach, 0) * 100%),
+    var(--env-color-border-default)
   );
-}
-.env-table-of-contents .env-table-of-contents-link:hover::before {
-  --env-table-of-contents-mark: max(0.6, calc(0.25 + 0.75 * var(--env-table-of-contents-reach, 0)));
 }
 .env-table-of-contents .env-table-of-contents-link[data-passed],
 .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
@@ -120,32 +105,17 @@
   color: var(--env-color-fg-default);
 }
 
-/* Motion: only without a reduced-motion preference; otherwise the dashes follow the scroll at once. */
-@media (prefers-reduced-motion: no-preference) {
-  /* The dashes follow the scroll every frame; a short ease lets a mouse wheel's steps glide
-     instead of jumping. */
-  .env-table-of-contents-link::before {
-    transition:
-      scale var(--env-motion-duration-fast) var(--env-motion-ease-standard),
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease-standard);
-  }
-}
-
-/* Forced colors: the system paints the links, so the current one takes its selection color and
-   the dashes its text and gray. */
+/* Forced colors: the system paints the links, so the current one takes its selection color, and
+   the shape its text color, its width still marking the place. */
 @media (forced-colors: active) {
   .env-table-of-contents-link[aria-current='location'] {
     forced-color-adjust: none;
     color: Highlight;
   }
-  .env-table-of-contents-link::before {
+  .env-table-of-contents-wave {
     forced-color-adjust: none;
-    background: GrayText;
   }
-  .env-table-of-contents-link[data-passed]::before {
-    background: CanvasText;
-  }
-  .env-table-of-contents-link[aria-current='location']::before {
-    background: Highlight;
+  .env-table-of-contents-wave path {
+    fill: CanvasText;
   }
 }

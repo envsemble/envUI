@@ -1,5 +1,5 @@
 // TableOfContents: the outline it builds from headings, the current section it finds from where
-// the page has scrolled, and its server markup, which lists
+// the page has scrolled, the shape that marks the reader's place, and its server markup, which lists
 // the sections given as items and marks none until the page hydrates.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -17,6 +17,7 @@ await build({
     contents: [
       "export { TableOfContents } from './packages/ui/src/navigation/TableOfContents.tsx';",
       "export * from './packages/ui/src/navigation/internal/contentsOutline.ts';",
+      "export * from './packages/ui/src/navigation/internal/contentsWave.ts';",
       "export { EnvUIProvider } from './packages/ui/src/foundations/EnvUIProvider.tsx';",
     ].join('\n'),
     resolveDir: repository,
@@ -30,8 +31,19 @@ await build({
   outfile: output,
   logLevel: 'error',
 });
-const { TableOfContents, EnvUIProvider, outline, flatten, slug, uniqueId, currentSection } =
-  await import(pathToFileURL(output).href);
+const {
+  TableOfContents,
+  EnvUIProvider,
+  outline,
+  flatten,
+  slug,
+  uniqueId,
+  currentSection,
+  swellAt,
+  wavePath,
+  wavePlace,
+  waveThin,
+} = await import(pathToFileURL(output).href);
 
 test('headings nest under the last heading above them of a lower level', () => {
   const items = outline([
@@ -155,4 +167,39 @@ test('without items, the server renders the landmark hidden, named in the provid
     /<nav aria-label="Auf dieser Seite" class="env-table-of-contents" hidden="">/,
   );
   assert.doesNotMatch(markup, /<a /);
+});
+
+test('the shape stays on the current entry, then glides on to the next as it nears', () => {
+  assert.equal(wavePlace(2), 2);
+  assert.equal(wavePlace(2.4), 2);
+  assert.equal(wavePlace(2.75), 2.5);
+  assert.ok(wavePlace(2.9) > 2.8 && wavePlace(2.9) < 3);
+  assert.equal(wavePlace(3), 3);
+});
+
+test("the shape swells at the reader's place, half one entry away, and none three away", () => {
+  assert.equal(swellAt(4, 4, []), 1);
+  assert.ok(Math.abs(swellAt(5, 4, []) - 0.5) < 0.01);
+  assert.ok(swellAt(6, 4, []) < 0.1);
+  assert.equal(swellAt(7, 4, []), 0);
+  assert.equal(swellAt(1, 4, []), 0);
+  // The entry under the pointer swells it a little, by how far its swell has grown.
+  assert.ok(swellAt(0, 4, [1]) > 0.3 && swellAt(0, 4, [1]) < 0.5);
+  assert.ok(swellAt(0, 4, [0.5]) < swellAt(0, 4, [1]));
+  assert.equal(swellAt(0, null, []), 0);
+});
+
+test("the shape's outline is widest beside the reader's place, thin away, with round ends", () => {
+  const layout = { anchors: [10, 40, 70, 100, 130, 160], top: 4, bottom: 166, full: 12 };
+  const path = wavePath(layout, 2, []);
+  const edge = [...path.matchAll(/L([\d.]+) ([\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]);
+  const right = edge.slice(0, edge.length / 2);
+  const widest = Math.max(...right.map(([x]) => x));
+  assert.equal(widest, 12);
+  assert.ok(Math.abs(right.find(([x]) => x === widest)[1] - 70) <= 1);
+  // Three entries away, as thin as it gets: a fifth of its fullest, about the middle.
+  assert.equal(Math.min(...right.map(([x]) => x)), 6 + (12 * waveThin) / 2);
+  assert.equal((path.match(/A/g) ?? []).length, 2);
+  assert.match(path, /^M.*Z$/);
+  assert.equal(wavePath({ ...layout, anchors: [] }, 0, []), '');
 });

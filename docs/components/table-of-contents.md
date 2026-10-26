@@ -69,20 +69,23 @@ A section need not be a heading: name any part of the page, such as a card or a 
 ```
 
 1. **Contents** (`env-table-of-contents`)
-2. **Link** (`env-table-of-contents-link`)
-3. **Current section** (`env-table-of-contents-link[aria-current='location']`)
+2. **Reader's place** (`env-table-of-contents-wave`)
+3. **Link** (`env-table-of-contents-link`)
+4. **Current section** (`env-table-of-contents-link[aria-current='location']`)
 
-Not shown: the sections before the current one, whose dashes are darker.
+Not shown: the sections before the current one, beside a darker line.
 
 ## Behaviour
 
 ### The reader's place
 
-A short dash before each section, like a ruler, marks where the reader is.
+One shape down the side of the list marks where the reader is, like a brush stroke.
 
-- The dashes swell in a smooth wave around the reader's place as the page scrolls.
-- The current section's dash is the longest and darkest, in the text color, the next ones growing as the reader nears them, and the one under the pointer longer too.
-- Sections not yet reached are quieter, so the list reads as how far the reader has come.
+- It is widest beside the current section, in the text color, and runs thin and quieter a few sections away.
+- It moves with the page as it scrolls, resting on each section and gliding on to the next as the reader nears it.
+- It moves at once, without gliding, where reduced motion is preferred.
+- Its line is darker beside the sections passed than beside those still to come, whose labels are quieter too, so the list reads as how far the reader has come.
+- The section under the pointer swells it a little.
 
 <!-- specimen: ReadersPlace -->
 
@@ -92,7 +95,7 @@ A link scrolls its section to the top, below anything that stays there, such as 
 
 ### Adapting to width
 
-Long labels wrap onto more lines, each dash beside its label's first line.
+Long labels wrap onto more lines, and the shape runs beside all of them.
 
 ```tsx figure=LongLabels widths="12 20"
 
@@ -142,7 +145,7 @@ Use the headings' own words, or a short name a reader would find on the page.
 - A `nav` landmark named On this page, from `messages.tableOfContents`, around nested ordered lists of links.
 - `aria-current="location"` on the link of the section the reader is in.
 - Links that scroll smoothly, or at once where reduced motion is preferred, add the section to the address and move focus to it, so reading and the keyboard go on from there.
-- Dashes drawn by the style sheet alone, which assistive technology doesn't read.
+- A shape hidden from assistive technology, which reads the current link instead; in forced colors it takes the system's text color, its width still marking the place.
 
 ### You provide
 
@@ -179,13 +182,19 @@ Each item has the `id` of the element it leads to, any element with an id, its `
 The current section is the last one whose start, less its scroll margin, has passed a line a quarter of the way down the area that scrolls, below its scroll padding; before the first has, it is the first.
 
 - Sections too near the end of the page to reach the line share the scrolling left after the last one that does, evenly, so each becomes current in turn and the last one at the very end.
-- It follows whichever area scrolls the sections, the window or an element.
+- It follows whichever area scrolls the sections, the window or an element, measured in that area's own pixels, also inside a transformed or zoomed container, such as a scaled preview.
 - A link pressed keeps its section current until the reader scrolls again, also where the page can't scroll it to the top.
 
 ### Composition
 
-The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter. Each link's dash is its `::before`, which grows and shrinks as the current section moves unless reduced motion is preferred. Its name comes from EnvUIProvider's `messages.tableOfContents`.
+The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter. Its name comes from EnvUIProvider's `messages.tableOfContents`.
+
+The reader's place is `env-table-of-contents-wave`, an SVG hidden from assistive technology in the body's start column, `--env-table-of-contents-stroke` wide at its fullest, `--env-space-3` by default, and a fifth of that elsewhere. The component draws its outline every frame the place moves, without rendering again, from the links' layout positions.
+
+- Its color is `--env-color-fg-default` at the reader's place, blending into `--env-color-border-default` beside the sections passed and `--env-color-border-muted` beside those to come.
+- It glides after the scroll with a short ease, at once under reduced motion; in forced colors it is `CanvasText`.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: The reader's place is one shape down the side of the list, like a brush stroke, widest and in the text color beside the current section and running thin a few sections away, instead of a dash before each section. Inside a transformed or zoomed container, the current section is measured in the scrolling area's own pixels.
 - **1.0.0**: TableOfContents: the page's headings or sections of your own, nested, with the current section marked as the reader scrolls.

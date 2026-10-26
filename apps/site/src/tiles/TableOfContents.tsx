@@ -1,5 +1,4 @@
 import { useEffect, useId, useRef, type MouseEvent } from 'react';
-import { createPortal } from 'react-dom';
 import { TableOfContents } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../previews/Motion';
 
@@ -35,9 +34,9 @@ const script: PointerStep[] = [
 
 /**
  * A guide's contents, its reader at Install. The guide itself is out of sight: its sections scroll
- * in a view of their own outside the tile, which the contents follow as it scrolls, so the marks
- * glide with the reader's place as they do on a page, and a press on a link scrolls that view
- * rather than the gallery.
+ * in a hidden view of their own behind the contents, which the contents follow as it scrolls, so
+ * the reader's place glides as it does on a page, and a press on a link scrolls that view rather
+ * than the gallery.
  */
 export default function TableOfContentsTile() {
   const id = useId();
@@ -79,7 +78,27 @@ export default function TableOfContentsTile() {
   };
   const sections = ['install', 'configure', 'domains', 'deploy'];
   return (
-    <div onClickCapture={go}>
+    <div onClickCapture={go} style={{ position: 'relative' }}>
+      <div
+        ref={scroller}
+        aria-hidden
+        style={{
+          position: 'absolute',
+          insetBlockStart: 0,
+          insetInlineStart: 0,
+          inlineSize: '100%',
+          blockSize: view,
+          overflowY: 'auto',
+          visibility: 'hidden',
+          pointerEvents: 'none',
+        }}
+      >
+        <div style={{ paddingBlock: `${view / 4}px ${view}px` }}>
+          {sections.map((name) => (
+            <div key={name} id={section(name)} style={{ blockSize: view }} />
+          ))}
+        </div>
+      </div>
       <TableOfContents
         aria-label="Sections of the guide"
         style={{ inlineSize: 'max-content' }}
@@ -93,29 +112,6 @@ export default function TableOfContentsTile() {
           { id: section('deploy'), label: 'Deploy' },
         ]}
       />
-      {createPortal(
-        <div
-          ref={scroller}
-          aria-hidden
-          style={{
-            position: 'fixed',
-            insetInlineStart: '-100vw',
-            insetBlockStart: 0,
-            inlineSize: '10rem',
-            blockSize: view,
-            overflowY: 'auto',
-            visibility: 'hidden',
-            pointerEvents: 'none',
-          }}
-        >
-          <div style={{ paddingBlock: `${view / 4}px ${view}px` }}>
-            {sections.map((name) => (
-              <div key={name} id={section(name)} style={{ blockSize: view }} />
-            ))}
-          </div>
-        </div>,
-        document.body,
-      )}
     </div>
   );
 }

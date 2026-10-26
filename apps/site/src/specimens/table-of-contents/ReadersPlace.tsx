@@ -16,9 +16,9 @@ const entry = (index: number) =>
   `.env-table-of-contents-link:nth-child(${index} of .env-table-of-contents-link)`;
 
 /*
- * The reader scrolls the guide down a section at a time, to its end, the dashes swelling around
- * their place as they go; the pointer rests on a later section's entry, whose dash lengthens;
- * and the guide scrolls back to its start.
+ * The reader scrolls the guide down a section at a time, to its end, the shape beside the contents
+ * gliding with their place as they go; the pointer rests on a later section's entry, which swells
+ * it a little; and the guide scrolls back to its start.
  */
 const script: PointerStep[] = [
   { wait: 900 },
@@ -77,7 +77,7 @@ function Reading() {
   );
 }
 
-/** TableOfContents beside a guide as it scrolls: the dashes mark the reader's place. */
+/** TableOfContents beside a guide as it scrolls: the shape beside it marks the reader's place. */
 export default function ReadersPlace() {
   return (
     <Example size="content">

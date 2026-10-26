@@ -5018,7 +5018,7 @@
         },
         {
           "class": "env-table-of-contents-body",
-          "description": "Around the list."
+          "description": "Around the list and the shape beside it."
         },
         {
           "class": "env-table-of-contents-item",
@@ -5026,11 +5026,15 @@
         },
         {
           "class": "env-table-of-contents-link",
-          "description": "A section's link, its dot drawn before it."
+          "description": "A section's link."
         },
         {
           "class": "env-table-of-contents-list",
           "description": "A level of sections."
+        },
+        {
+          "class": "env-table-of-contents-wave",
+          "description": "The shape down the side of the list that marks the reader's place, widest beside it."
         }
       ],
       "states": [

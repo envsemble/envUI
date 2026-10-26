@@ -4,6 +4,30 @@ import { fixtureUrl } from './Servers';
 const url = `${fixtureUrl}/?fixture=table-of-contents`;
 const current = (contents: Locator) => contents.locator('[aria-current="location"]');
 
+/** The shape's width beside each entry's middle, in px, from the points its outline fills. */
+const widths = (contents: Locator) =>
+  contents.locator('svg').evaluate((svg) => {
+    const path = svg.querySelector('path')!;
+    const full = parseFloat(getComputedStyle(svg).width);
+    return Array.from(
+      svg.parentElement!.querySelectorAll<HTMLElement>('.env-table-of-contents-link'),
+      (link) => {
+        const y = link.offsetTop + link.offsetHeight / 2;
+        let filled = 0;
+        for (let x = 0.125; x < full; x += 0.25) {
+          if (path.isPointInFill(new DOMPoint(x, y))) filled += 0.25;
+        }
+        return filled;
+      },
+    );
+  });
+
+/** The entry the shape is widest beside. */
+const widest = async (contents: Locator) => {
+  const each = await widths(contents);
+  return each.indexOf(Math.max(...each));
+};
+
 test('lists the headings of its container, nested by level, with ids from their words', async ({
   page,
 }) => {
@@ -42,13 +66,8 @@ test(
     await expect(current(contents)).toHaveText('Last');
     await page.evaluate(() => window.scrollBy(0, -40));
     await expect(current(contents)).toHaveText('Short end');
-    // The sections before the current one are marked passed, and its dash, which grows by its scale,
-    // is the longest.
+    // The sections before the current one are marked passed.
     await expect(contents.locator('[data-passed]')).toHaveCount(4);
-    const dash = (link: Locator) =>
-      link.evaluate((element) => parseFloat(getComputedStyle(element, '::before').scale) || 1);
-    const passed = await dash(contents.locator('[data-passed]').first());
-    await expect.poll(() => dash(current(contents))).toBeGreaterThan(passed);
     // The current section is never set bolder than the rest, so no label rewraps as it moves.
     const weights = await contents
       .locator('.env-table-of-contents-link')
@@ -127,19 +146,27 @@ test('a smooth scroll to a section moves the marks through the sections on the w
     .evaluateAll((links) => links.map((link) => link.textContent ?? ''));
   await contents.getByRole('link', { name: 'Short end' }).click();
   // Sampled every frame until the page stops scrolling: the current section only ever moves on,
-  // in reading order, and the chosen one is current once it rests.
-  const seen = await page.evaluate(
+  // in reading order, the shape's widest point with it, never back up, and the chosen one is
+  // current once it rests.
+  const [seen, peaks] = await page.evaluate(
     () =>
-      new Promise<string[]>((resolve) => {
+      new Promise<[string[], number[]]>((resolve) => {
         const labels: string[] = [];
+        const peaks: number[] = [];
+        const path = document.querySelector('.env-table-of-contents path')!;
         let last = -1;
         let still = 0;
         const sample = () => {
           const label = document.querySelector('[aria-current="location"]')?.textContent ?? '';
           if (labels.at(-1) !== label) labels.push(label);
+          // The right edge's widest point, from the outline's first half.
+          const points = [...(path.getAttribute('d') ?? '').matchAll(/L([\d.]+) ([\d.]+)/g)];
+          const edge = points.slice(0, points.length / 2).map((point) => [+point[1]!, +point[2]!]);
+          const widest = Math.max(...edge.map(([x]) => x!));
+          peaks.push(edge.find(([x]) => x === widest)?.[1] ?? 0);
           still = window.scrollY === last ? still + 1 : 0;
           last = window.scrollY;
-          if (still > 30) resolve(labels);
+          if (still > 30) resolve([labels, peaks]);
           else requestAnimationFrame(sample);
         };
         sample();
@@ -147,5 +174,54 @@ test('a smooth scroll to a section moves the marks through the sections on the w
   );
   const indexes = seen.map((label) => order.indexOf(label));
   expect(indexes).toEqual([...indexes].sort((x, y) => x - y));
+  // Within the two pixels the outline is drawn at.
+  const back = peaks.filter((peak, index) => index > 0 && peak < peaks[index - 1]! - 2);
+  expect(back).toEqual([]);
+  expect(peaks.at(-1)).toBeGreaterThan(peaks[0]!);
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Short end');
+});
+
+test(
+  "one shape beside the list swells at the reader's place, and a little under the pointer",
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(url);
+    const contents = page.getByRole('navigation', { name: 'On this page' });
+    // Widest beside the current section, at the top of the page the first, running thin away
+    // from it; at once under reduced motion.
+    await expect.poll(() => widest(contents)).toBe(0);
+    await page
+      .locator('#configure')
+      .evaluate((heading) => heading.scrollIntoView({ block: 'start' }));
+    await expect(current(contents)).toHaveText('Configure');
+    await expect.poll(() => widest(contents)).toBe(2);
+    const each = await widths(contents);
+    expect(each[2]).toBeGreaterThan(each[5]! * 3);
+    expect(each[1]).toBeGreaterThan(each[0]!);
+    // The entry under the pointer swells it a little, less than the reader's place.
+    await contents.getByRole('link', { name: 'Last' }).hover();
+    await expect.poll(async () => (await widths(contents))[5]).toBeGreaterThan(each[5]! * 1.5);
+    expect((await widths(contents))[5]).toBeLessThan(each[2]!);
+    // Drawn by script, which assistive technology doesn't read.
+    await expect(contents.locator('svg')).toHaveAttribute('aria-hidden', 'true');
+    // In forced colors, in the system's text color.
+    await page.emulateMedia({ forcedColors: 'active' });
+    expect(
+      await contents.locator('path').evaluate((path) => getComputedStyle(path).fill),
+    ).not.toMatch(/url/);
+  },
+);
+
+test('inside a scaled box, the current section is measured in its own pixels', async ({ page }) => {
+  await page.goto(url);
+  const scaled = page.getByRole('navigation', { name: 'At half size' });
+  const box = page.getByTestId('scaled');
+  await expect(current(scaled)).toHaveText('Summary');
+  // Results reaches the reading line, a quarter down the box, once the box has scrolled 272px of
+  // its own: drawn at half size, it once counted as current at 222.
+  await box.evaluate((element) => element.scrollTo(0, 240));
+  await expect(current(scaled)).toHaveText('Summary');
+  await box.evaluate((element) => element.scrollTo(0, 280));
+  await expect(current(scaled)).toHaveText('Results');
 });
