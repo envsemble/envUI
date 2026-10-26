@@ -484,6 +484,35 @@
   }
 }
 
+/* On a phone the statuses go three to a row, their colors named in order above them. */
+@container (width < 32rem) {
+  .catalogue-palette-status {
+    grid-template-rows: none;
+  }
+  .catalogue-palette-parts {
+    display: flex;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    grid-row: auto;
+    gap: 0 var(--env-space-3);
+  }
+  .catalogue-palette-parts > h4 {
+    flex-basis: 100%;
+  }
+  .catalogue-palette-status > ul {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: none;
+    gap: var(--env-space-4);
+    margin-block-start: var(--env-space-3);
+  }
+  .catalogue-palette-status > ul > li {
+    grid-row: auto;
+    grid-template-rows: auto repeat(3, 2.25rem);
+  }
+}
+
 /* What each color means: a row for each tone, its name on its own soft fill, what it means, and
    the tone at work, a word in its text and on its solid fill; a hairline between the rows. */
 .catalogue-tones {
@@ -495,7 +524,7 @@
 }
 .catalogue-tones > li {
   display: grid;
-  grid-template-columns: 7rem minmax(0, 1fr) 15rem;
+  grid-template-columns: 7rem minmax(0, 1fr) 14rem;
   align-items: center;
   gap: var(--env-space-2) var(--env-space-5);
   padding-block: var(--env-space-3);
@@ -515,7 +544,7 @@
 }
 .catalogue-tone-at-work {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 8rem minmax(0, 1fr);
   align-items: center;
   gap: var(--env-space-3);
   font: var(--env-type-body-small);
@@ -532,7 +561,7 @@
   block-size: 1.125rem;
 }
 .catalogue-tone-at-work > .env-badge {
-  justify-self: end;
+  justify-self: start;
 }
 .catalogue-tone-at-work[data-tone='neutral'] .catalogue-tone-word {
   color: var(--env-color-fg-muted);

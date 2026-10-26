@@ -549,7 +549,7 @@ function BakingClass() {
           </Column>
         </Row>
         <Surface background="muted" padding={4} radius="sm" render={<Column gap={3} />}>
-          <Row gap={3} align="center" justify="between">
+          <Row gap={3} align="center" justify="between" wrap>
             <Text>Level</Text>
             <SegmentedControl
               aria-label="Level"
@@ -564,7 +564,7 @@ function BakingClass() {
           </Row>
           <Switch label="Borrow an apron" defaultChecked />
         </Surface>
-        <Row gap={2} align="center" justify="between">
+        <Row gap={2} align="center" justify="between" wrap>
           <Badge tone="accent">4 seats left</Badge>
           <Row gap={2}>
             <Button variant="secondary">Not now</Button>
