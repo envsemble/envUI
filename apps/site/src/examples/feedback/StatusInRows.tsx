@@ -32,33 +32,38 @@ export default function StatusInRows() {
   );
 }
 
+/** A time before now, as an ISO date, so the sample reads as live: minutes and days ago. */
+const minutes = (count: number) => count * 60_000;
+const hours = (count: number) => count * 3_600_000;
+const ago = (time: number) => new Date(Date.now() - time).toISOString();
+
 const projects: { id: string; name: string; owner: string; updated: string; status: Status }[] = [
   {
     id: 'website-refresh',
     name: 'Website refresh',
     owner: 'Alex Morgan',
-    updated: '2026-03-04T08:30:00Z',
+    updated: ago(minutes(12)),
     status: 'On track',
   },
   {
     id: 'mobile-release',
     name: 'Mobile release',
     owner: 'Jordan Kim',
-    updated: '2026-03-03T16:10:00Z',
+    updated: ago(minutes(50)),
     status: 'At risk',
   },
   {
     id: 'data-migration',
     name: 'Data migration',
     owner: 'Chen Wei',
-    updated: '2026-02-27T11:00:00Z',
+    updated: ago(hours(26)),
     status: 'Blocked',
   },
   {
     id: 'annual-review',
     name: 'Annual review',
     owner: 'Maria Garcia',
-    updated: '2026-02-20T09:45:00Z',
+    updated: ago(hours(24 * 5)),
     status: 'Done',
   },
 ];

@@ -40,7 +40,9 @@ composes:
   - Row
   - Text
 examples:
-  SaveConfirmation: overview
+  SaveConfirmation:
+    role: overview
+    motion: true
   SectionAlert: example
   BackgroundTask: example
   StatusInRows: example
@@ -68,7 +70,7 @@ An Alert that is there when the page loads describes it and offers the one thing
 
 When the export ends, a toast with Download reaches people wherever they are, and the page keeps a link to the file too.
 
-```tsx figure=BackgroundTask
+```tsx figure=BackgroundTask motion
 
 ```
 
