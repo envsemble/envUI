@@ -469,3 +469,19 @@
   inline-size: 24rem;
   max-inline-size: 100%;
 }
+
+/* The key cap naming each key the keyboard figure presses: pressed down a little as it comes. */
+.catalogue-key-cap {
+  animation: catalogue-key-press var(--env-motion-duration-slow) var(--env-motion-ease);
+}
+@keyframes catalogue-key-press {
+  from {
+    opacity: 0.4;
+    transform: translateY(0.125rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-key-cap {
+    animation: none;
+  }
+}
