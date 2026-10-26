@@ -176,7 +176,7 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 - **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a titled block between figures that should not share a row.
 - **A block beside its figure**: a `###` block of text, with no table or list at its start, followed by exactly one figure, sits beside that figure on a wide page, such as each kind of card under Variants. A figure that needs the room stays across the column with the flag [`wide`](#wide-figures).
 - **Check lists**: the catalogue shows a page's lists of what it is for as check lists. An item that ends with a component's name in parentheses, such as "(IconButton)", shows the name after a muted dot, linked to its page where that is another page.
-- **Related** ends the page, from the frontmatter's `avoidWhen`: a tile for each component or page an entry names, its lead example small and inert on its canvas, with its name and the entry's text below. The tiles render once the section nears the viewport. A page with an open anatomy figure, such as Dialog or Menu, is shown by that figure instead; a page without an example shows a page icon on the same stage. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three.
+- **Related** ends the page, from the frontmatter's `avoidWhen`: a tile for each component or page an entry names, its [tile](#tiles) on its canvas, with its name and the entry's text below. The tiles render once the section nears the viewport. A page without a tile shows its lead example, and one without an example a page icon on the same stage. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three.
 
 ## Layout: equal cells, spacing with rhythm
 
@@ -380,6 +380,23 @@ Some visual references are not examples: a matrix of every variant in every form
 - **Plain language too.** Its titles, captions and matrix headers name options in words, as its page's option table does, such as Small, Large or Step 1, never by their values or tokens. A catalogue browser test fails on a title that starts in lower case or is written as code.
 
 The visual baseline captures a page's specimens, and its first example when it has no specimen.
+
+### Animated specimens
+
+Where a section is about motion, such as a slider stretching past its ends or a reply arriving, its specimen can play it: the live component on a `MotionStage` (`apps/site/src/previews/MotionStage.tsx`), driven by a script of what a pointer no one sees does (`usePointer`) or by steps of its props (`useTimeline`), both in `apps/site/src/previews/Motion.tsx`.
+
+- **It loops**, ending where it began, and plays while it is in view; its pause button, at the stage's bottom end, holds it where it is, and the sidebar's pause holds every animation, the reader's choice kept with the display settings. Where reduced motion is preferred, it starts paused.
+- **The component's own behaviour.** The pointer hovers, presses, drags, clicks and types by the events a mouse and a keyboard send, so the component shows its own hover, drag and transitions; change props only where no person could, such as a reply arriving.
+- **One height throughout**, so the page around it never moves.
+
+## Tiles
+
+The galleries of components and patterns, and Related, show each page by a tile of its own: `apps/site/src/tiles/<Page>.tsx`, named after the page's id in PascalCase, with a default-exported component.
+
+- **The component alone, large and centred**, with as little else as it needs to be recognised: short labels, two or three items where a list is needed, no helper text. Ask whether it looks good and whether someone would know at once what it is.
+- **A still that is the animation's first frame.** On hover or keyboard focus the tile plays a short script of the component in use, as an animated specimen does, and the pointer leaving brings back its still. Write the script to end where it began.
+- **Its window.** A tile lays out in a window of 10 by 7.5 rem, drawn at one scale for every tile; a component that needs more room, or less, takes a window of its own in `tileWindows` (`apps/site/src/tiles/Tiles.ts`), large enough for what opens as it plays.
+- **A still with a popup open**, such as a menu, keeps it in state and puts it back with `usePointer`'s `onRest`, rather than the tile being drawn anew, which would bring it in again.
 
 ## Foundation pages
 
