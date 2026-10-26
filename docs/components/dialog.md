@@ -34,7 +34,9 @@ components:
   - Dialog
   - DialogClose
 examples:
-  ProjectDetails: overview
+  ProjectDetails:
+    role: overview
+    motion: true
   FindPlan:
     role: example
     caption: 'Near the top: the field stays put as the results grow.'
