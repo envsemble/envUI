@@ -384,6 +384,9 @@
       "env-kbd-part": "One key of a combination.",
       "env-kbd-separator": "The separator between two keys."
     },
+    "LineArt": {
+      "env-line-art": "The drawing: an SVG of hairlines that fills its container's box."
+    },
     "Link": {
       "env-link": "The link."
     },

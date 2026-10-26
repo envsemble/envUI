@@ -10,6 +10,7 @@ export type { PanesBehavior, PanesSplitAt } from './layout/Panes.js';
 export { readPanesSize } from './layout/panesSize.js';
 export * from './layout/Page.js';
 export * from './layout/PageHeader.js';
+export * from './layout/LineArt.js';
 export * from './navigation/TopBar.js';
 export * from './foundations/EnvUIProvider.js';
 export * from './foundations/PortalContainer.js';

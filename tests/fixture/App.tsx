@@ -70,6 +70,7 @@ import { ResizableDrawersFixture } from './ResizableDrawers.js';
 import { NestedDrawersFixture } from './NestedDrawers.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
+import { LineArtsFixture } from './LineArts.js';
 import { RatingsFixture } from './Ratings.js';
 import { DisclosuresFixture } from './Disclosures.js';
 import { AccordionsFixture } from './Accordions.js';
@@ -126,6 +127,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'nested-drawers': NestedDrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
+  'line-arts': LineArtsFixture,
   'page-headers': PageHeadersFixture,
   'description-lists': DescriptionListsFixture,
   'container-size': ContainerSizeFixture,
