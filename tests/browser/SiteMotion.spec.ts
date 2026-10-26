@@ -17,9 +17,9 @@ const tile = (page: Page, name: string) =>
 const switchOn = (tileOf: Locator) =>
   tileOf.locator('input').evaluate((input) => (input as HTMLInputElement).checked);
 
-/** What the Slider figure on its page shows: the value it is at. */
+/** What the first Slider figure on its page shows: the value it is at. */
 const figureValue = (page: Page) =>
-  page.locator('.catalogue-motion-stage .env-slider-value').textContent();
+  page.locator('.catalogue-motion-stage .env-slider-value').first().textContent();
 
 test('a tile plays its preview while the pointer is on it, and rests at its still after', async ({
   page,
@@ -44,10 +44,10 @@ test('an animated figure plays by itself, and its pause button holds it where it
   page,
 }) => {
   await page.goto(`${siteDevUrl}/components/slider`);
-  const stage = page.locator('.catalogue-motion-stage');
+  const stage = page.locator('.catalogue-motion-stage').first();
   await stage.scrollIntoViewIfNeeded();
-  // It moves on from its still, the value at 60, by itself.
-  await expect.poll(() => figureValue(page), { timeout: 4000 }).not.toBe('60');
+  // It moves on from its still, the value at 30, by itself.
+  await expect.poll(() => figureValue(page), { timeout: 4000 }).not.toBe('30');
   const pause = stage.getByRole('button', { name: /^Pause / });
   await pause.click();
   const held = await figureValue(page);
@@ -62,7 +62,7 @@ test("the sidebar's pause pauses every animation and is kept, and a figure's own
   page,
 }) => {
   await page.goto(`${siteDevUrl}/components/slider`);
-  const stage = page.locator('.catalogue-motion-stage');
+  const stage = page.locator('.catalogue-motion-stage').first();
   await stage.scrollIntoViewIfNeeded();
   await page.getByRole('button', { name: 'Pause animations' }).click();
   expect(await page.evaluate((key) => localStorage.getItem(key), displayStorageKeys.motion)).toBe(
@@ -91,11 +91,11 @@ test('a reader who prefers reduced motion starts with every animation paused', a
   const context = await browser.newContext({ reducedMotion: 'reduce' });
   const page = await context.newPage();
   await page.goto(`${siteDevUrl}/components/slider`);
-  const stage = page.locator('.catalogue-motion-stage');
+  const stage = page.locator('.catalogue-motion-stage').first();
   await stage.scrollIntoViewIfNeeded();
   await expect(page.getByRole('button', { name: 'Play animations' })).toBeVisible();
   await page.waitForTimeout(1500);
-  expect(await figureValue(page)).toBe('60');
+  expect(await figureValue(page)).toBe('30');
   await context.close();
 });
 
