@@ -122,10 +122,16 @@ test.describe('PortalContainer, contained', () => {
     await notice.hover();
     await page.waitForTimeout(1800);
     await expect(notice).toBeVisible();
-    // Once the pointer leaves, it goes, fading out before it is removed.
+    // Once the pointer leaves, it goes, taking its ending style before it is removed.
+    await layer.evaluate((element) => {
+      new MutationObserver((records) => {
+        if (records.some((record) => (record.target as Element).hasAttribute('data-ending-style')))
+          element.dataset.ended = '';
+      }).observe(element, { subtree: true, attributeFilter: ['data-ending-style'] });
+    });
     await page.mouse.move(1, 1);
-    await expect(notice).toHaveAttribute('data-ending-style', '', { timeout: 3000 });
     await expect(notice).toHaveCount(0);
+    await expect(layer).toHaveAttribute('data-ended', '');
   });
 
   test('F6 leaves the contained toasts alone @engines', async ({ page }) => {

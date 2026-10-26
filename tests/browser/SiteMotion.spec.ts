@@ -160,6 +160,7 @@ test("a figure's dialog opens live inside its stage, its scrim over the stage al
 }) => {
   await page.goto(`${siteDevUrl}/components/dialog`);
   const stage = figure(page, 'the dialog opening');
+  await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
   const before = (await stage.boundingBox())!;
   const scrolled = await pageScroll(page);
@@ -184,6 +185,7 @@ test("a figure's right click opens its context menu inside the stage, and the pa
 }) => {
   await page.goto(`${siteDevUrl}/components/menu`);
   const stage = figure(page, 'the menu opening on a right click');
+  await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
   const scrolled = await pageScroll(page);
   const menu = stage.locator('.env-menu');
@@ -202,6 +204,8 @@ test("a figure's wheel scrolls the box under the pointer smoothly and back, neve
 }) => {
   await page.goto(`${siteDevUrl}/components/table`);
   const stage = figure(page, 'the rows scrolling');
+  // Every figure above has loaded, so the page holds still.
+  await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
   const scrolled = await pageScroll(page);
   const samples = await stage.evaluate(
