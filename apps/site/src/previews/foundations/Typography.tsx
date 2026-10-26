@@ -182,9 +182,9 @@ function BookClub() {
 
 /** The text sizes the card steps through, then the compact scale, each with its label. */
 const textSteps: readonly { size: number; compact: boolean; label: string }[] = [
-  { size: 1, compact: false, label: 'Text size 100%' },
-  { size: 1.25, compact: false, label: 'Text size 125%' },
-  { size: 1.5, compact: false, label: 'Text size 150%' },
+  { size: 1, compact: false, label: 'Usual text size' },
+  { size: 1.25, compact: false, label: 'Larger text' },
+  { size: 1.5, compact: false, label: 'Larger still' },
   { size: 1, compact: true, label: 'Compact' },
 ];
 
@@ -235,8 +235,12 @@ function TextSizeFigure() {
  */
 function MeasureFigure() {
   return (
-    <Figure label="Lines a comfortable length" motion="the frame widening">
-      <WidthSweep widths={[20, 44]}>
+    <Figure
+      label="Lines a comfortable length"
+      motion="the frame widening"
+      className="catalogue-measure-stage"
+    >
+      <WidthSweep widths={[20, 44]} ruler={false}>
         <div className="catalogue-measure">
           <Column gap={2} className="catalogue-measure-text">
             <Text render={<p />} variant="title">

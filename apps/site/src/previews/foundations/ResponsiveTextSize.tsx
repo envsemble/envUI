@@ -37,7 +37,6 @@ function Profile() {
       />
       <DescriptionList.Root aria-label="Profile details">
         <DescriptionList.Item label="Team">Research</DescriptionList.Item>
-        <DescriptionList.Item label="Location">Lisbon</DescriptionList.Item>
       </DescriptionList.Root>
     </Surface>
   );
@@ -45,6 +44,9 @@ function Profile() {
 
 /** The text sizes the profile steps through. */
 const sizes = [1, 1.25, 2] as const;
+
+/** Each text size's name in the corner, in plain words. */
+const sizeNames = ['Usual text size', 'Larger text', 'Text twice the size'] as const;
 
 /** The frame's width, in rem: wide enough for the profile's header to spread out at 100%. */
 const frameWidth = 41;
@@ -80,7 +82,7 @@ function TextSizeSteps() {
   const [place, fit] = useFit();
   return (
     <div ref={place} className="catalogue-class-text-place">
-      <CornerLabel>Text size {sizes[step]! * 100}%</CornerLabel>
+      <CornerLabel>{sizeNames[step]}</CornerLabel>
       <div style={{ zoom: fit } as CSSProperties}>
         <StepStack
           className="catalogue-fixed-frame catalogue-class-text-frame"

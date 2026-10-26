@@ -78,19 +78,23 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
  * held where it is when paused. Place it in a MotionStage. With `at`, it sweeps by itself no
  * longer: it moves to the width at that index whenever `at` changes, for a figure that does more
  * at a width, such as opening a sheet at the narrow end, driven by a useTimeline step or a cue.
- * `classes` names the window class beside the width, for an example that changes at one.
+ * `classes` names the window class beside the width, for an example that changes at one;
+ * `ruler={false}` leaves the ruler out, for a figure whose point isn't the width in numbers, such as
+ * a foundation's, which shows no values.
  */
 export function WidthSweep({
   widths,
   at,
   hold = holdTime,
   classes = false,
+  ruler: showRuler = true,
   children,
 }: {
   widths: readonly number[];
   at?: number;
   hold?: number;
   classes?: boolean;
+  ruler?: boolean;
   children: ReactNode;
 }) {
   const { playing, rest } = usePlayback();
@@ -231,9 +235,11 @@ export function WidthSweep({
   return (
     <div ref={area} className="catalogue-width-sweep">
       <div ref={place} className="catalogue-width-sweep-place">
-        <div ref={ruler} className="catalogue-width-ruler" aria-hidden="true">
-          <span ref={reading} className="catalogue-width-ruler-reading" />
-        </div>
+        {showRuler && (
+          <div ref={ruler} className="catalogue-width-ruler" aria-hidden="true">
+            <span ref={reading} className="catalogue-width-ruler-reading" />
+          </div>
+        )}
         <div className="catalogue-width-sweep-room">
           <div ref={frame} className="catalogue-width-sweep-frame">
             {children}

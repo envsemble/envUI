@@ -427,6 +427,11 @@
 .catalogue-text-size-frame > * {
   align-self: center;
 }
+/* The sweep shows no ruler here, so its frame's outline takes the ruler's place above. */
+.catalogue-measure-stage .catalogue-width-sweep-place {
+  row-gap: 0;
+  padding-block-start: var(--env-space-2);
+}
 .catalogue-measure {
   font: var(--env-type-body);
   position: relative;
@@ -447,6 +452,7 @@
    middle of the place the largest keeps. */
 .catalogue-class-text-place {
   display: grid;
+  padding-block-start: var(--env-space-5);
   justify-items: center;
   inline-size: 100%;
 }
