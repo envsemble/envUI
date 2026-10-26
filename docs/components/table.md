@@ -62,7 +62,7 @@ examples:
 
 Density changes only the rows' padding; controls in cells keep the small height.
 
-```tsx figure=RowDensity
+```tsx figure=RowDensity motion
 
 ```
 
@@ -110,7 +110,7 @@ Not shown: a column's resize handle, and a stacked cell's label.
 
 A header can sort the rows by its column, and each sortable header shows the order.
 
-```tsx figure=SortableColumns
+```tsx figure=SortableColumns motion
 
 ```
 
@@ -126,7 +126,7 @@ A selected row takes the selection colors, and a checkbox labelled with the row'
 
 People can resize columns by dragging the boundary at the end of a header, or with the arrow keys. A double click restores the starting widths.
 
-```tsx figure=ResizableColumns
+```tsx figure=ResizableColumns motion
 
 ```
 
@@ -141,6 +141,8 @@ The header row can stay in view while the rows scroll beneath it, in a region of
 ### Loading
 
 While its rows load, a table shows as its own skeleton, as [Loading](../patterns/loading.md) shows.
+
+<!-- specimen: Loading -->
 
 ### Adapting to width
 

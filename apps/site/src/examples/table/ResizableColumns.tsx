@@ -4,7 +4,7 @@ import { Table } from '@envsemble/envui';
 const documents = [
   {
     id: 'plan',
-    name: 'Launch plan with timeline, owners and open questions for the spring release',
+    name: 'Launch plan with timeline, owners and risks',
     owner: 'Priya Shah',
     updated: 'Today',
     pages: 24,
