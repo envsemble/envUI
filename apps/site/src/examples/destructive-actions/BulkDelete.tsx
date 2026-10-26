@@ -6,7 +6,7 @@ const documentCount = (count: number) => (count === 1 ? '1 document' : `${count}
 
 export default function BulkDelete() {
   const [documents, setDocuments] = useState(initialDocuments);
-  const [selected, setSelected] = useState<string[]>(['notes', 'draft']);
+  const [selected, setSelected] = useState<string[]>([]);
   const [result, setResult] = useState('');
   const list = useRef<HTMLUListElement>(null);
   // Where focus goes as the dialog closes: back to its button, or to the list once the button has
@@ -23,7 +23,14 @@ export default function BulkDelete() {
   return (
     <Column gap={4}>
       {/* The bar shows the selection and what can be done with it; the button names the count. */}
-      <Row wrap align="center" justify="between" gap={3}>
+      {/* It keeps the height of its buttons, so the list stays where it is as they come and go. */}
+      <Row
+        wrap
+        align="center"
+        justify="between"
+        gap={3}
+        style={{ minBlockSize: 'var(--env-control-height-sm)' }}
+      >
         <Text role="status">{count ? `${count} selected` : result}</Text>
         {count > 0 && (
           <Row wrap gap={3}>
