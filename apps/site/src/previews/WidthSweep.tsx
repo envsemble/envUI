@@ -83,7 +83,8 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
  * held where it is when paused. Place it in a MotionStage. With `at`, it sweeps by itself no
  * longer: it moves to the width at that index whenever `at` changes, for a figure that does more
  * at a width, such as opening a sheet at the narrow end, driven by a useTimeline step or a cue.
- * `classes` names the window class beside the width, for an example that changes at one, and
+ * `classes` names the window class beside the width, for an example that changes at one, or in
+ * its place with `'only'`, on a page that shows no lengths, such as a foundation's; and
  * `fit` draws the frame smaller where it must, to 0.6, to reach its widest width on the stage.
  */
 export function WidthSweep({
@@ -97,7 +98,7 @@ export function WidthSweep({
   widths: readonly number[];
   at?: number;
   hold?: number;
-  classes?: boolean;
+  classes?: boolean | 'only';
   fit?: boolean;
   children: ReactNode;
 }) {
@@ -128,7 +129,9 @@ export function WidthSweep({
       // whole rem, which change calmly.
       const exact = stops.find((stop) => Math.abs(stop - width) < 0.01 && widths.includes(stop));
       const words = `${exact ?? Math.round(width)} rem`;
-      reading.current.textContent = classes ? `${words} · ${classNames[classOf(width)]}` : words;
+      const name = classNames[classOf(width)];
+      reading.current.textContent =
+        classes === 'only' ? name : classes ? `${words} · ${name}` : words;
     }
   };
   const drawRef = useRef(draw);

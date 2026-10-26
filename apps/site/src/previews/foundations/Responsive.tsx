@@ -44,15 +44,15 @@ function Profile() {
 }
 
 /**
- * The profile in one frame whose width sweeps from a narrow pane to room to spare and back, its
- * ruler naming the window class, slowly and held at each end; the legend's two entries, below it,
- * say what changes at each.
+ * The profile in one frame whose width sweeps from a narrow pane to room to spare and back, slowly
+ * and held at each end, its ruler naming the window class alone, as the page shows no lengths; the
+ * legend's two entries, below it, say what changes at each.
  */
 function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
   return (
     <Figure
       label="One profile, from a narrow pane to room to spare"
-      motion="the profile from 18 to 44 rem wide"
+      motion="the profile from a narrow pane to room to spare"
       legend={
         <div className="catalogue-width-legend">
           {legend.map((entry) => (
@@ -68,7 +68,7 @@ function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
         </div>
       }
     >
-      <WidthSweep widths={[18, 44]} hold={1600} classes>
+      <WidthSweep widths={[18, 44]} hold={1600} classes="only">
         <Profile />
       </WidthSweep>
     </Figure>
