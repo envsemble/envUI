@@ -102,7 +102,7 @@ The trail wraps onto more lines when it runs out of room.
 
 - Its chevrons mirror in right-to-left text.
 
-```tsx figure=WrappingTrail widths="14 36"
+```tsx figure=WrappingTrail widths="36 14" sweep
 
 ```
 

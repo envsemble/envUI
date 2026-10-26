@@ -80,7 +80,7 @@ A parent checks or clears all its children.
 
 The label wraps onto more lines, and the box stays centred beside it.
 
-```tsx figure=LongLabel widths="14 30"
+```tsx figure=LongLabel widths="30 14" sweep
 
 ```
 

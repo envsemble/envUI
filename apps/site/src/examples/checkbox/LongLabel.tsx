@@ -2,9 +2,6 @@ import { Checkbox } from '@envsemble/envui';
 
 export default function LongLabel() {
   return (
-    <Checkbox
-      label="Send a copy of every comment on plans I follow to my e-mail address"
-      defaultChecked
-    />
+    <Checkbox label="Send me an e-mail about every comment on plans I follow" defaultChecked />
   );
 }

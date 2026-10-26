@@ -124,7 +124,7 @@ Not shown: a count, and DiffStat's added and removed lines.
 
 A badge stays on one line and ends with an ellipsis where its container is narrower.
 
-```tsx figure=LongState widths="10 20"
+```tsx figure=LongState widths="20 10" sweep
 
 ```
 

@@ -62,7 +62,7 @@ A value outside the range shows as its nearest end.
 
 A meter fills its container. The label and the value wrap onto two lines where they don't fit.
 
-```tsx figure=LongLabel widths="12 24"
+```tsx figure=LongLabel widths="12 24" sweep
 
 ```
 

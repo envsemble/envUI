@@ -137,7 +137,7 @@ The button that opens it fills its container, such as the top of a drawer.
 - Keep its label short in a narrow sidebar.
 - Where even that doesn't fit, show the icon alone.
 
-```tsx figure=NarrowSidebar widths="11 18"
+```tsx figure=NarrowSidebar widths="18 11" sweep
 
 ```
 

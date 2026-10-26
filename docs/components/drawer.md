@@ -205,7 +205,7 @@ People can resize the drawer by its end edge, with the same grip as between [Pan
 
 The bar's destinations share its width equally, and their labels stay on one line.
 
-```tsx figure=SharedWidth widths="20 36"
+```tsx figure=SharedWidth widths="36 20" sweep
 
 ```
 

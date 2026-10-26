@@ -131,7 +131,7 @@ Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row
 
 Labels and descriptions wrap, and an action that no longer fits beside the text moves below it.
 
-```tsx figure=NarrowRows widths="16 32"
+```tsx figure=NarrowRows widths="32 16" sweep
 
 ```
 

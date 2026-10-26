@@ -98,7 +98,7 @@ A message can show that it is on its way, or that it wasn't sent.
 
 Your own bubble grows to three quarters of the list, and keeps a readable width in a narrow list.
 
-```tsx figure=BubbleWidth widths="20 40"
+```tsx figure=BubbleWidth widths="20 40" sweep
 
 ```
 

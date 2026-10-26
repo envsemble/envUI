@@ -140,7 +140,7 @@ A card fills its container.
 
 - In a narrow feature card, the button moves below the text.
 
-```tsx figure=InviteFeature widths="24 40"
+```tsx figure=InviteFeature widths="40 24" sweep
 
 ```
 

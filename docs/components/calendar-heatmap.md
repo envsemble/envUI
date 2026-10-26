@@ -90,7 +90,7 @@ The months, weekdays, dates and the legend follow the application's language, an
 
 The heatmap is never wider than its container: a narrow one scrolls the weeks, starting at the latest. On touch screens, days grow to fit a fingertip.
 
-```tsx figure=ScrollingWeeks widths="16 36"
+```tsx figure=ScrollingWeeks widths="36 16" sweep
 
 ```
 
