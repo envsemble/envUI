@@ -1,0 +1,121 @@
+import { useEffect, useId, useRef, type MouseEvent } from 'react';
+import { createPortal } from 'react-dom';
+import { TableOfContents } from '@envsemble/envui';
+import { usePointer, type PointerStep } from '../previews/Motion';
+
+/** How tall the unseen article's view and each of its sections are, in px. */
+const view = 100;
+
+/** Eases a scroll in and out. */
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+
+const entry = (name: string) => `.env-table-of-contents-link[href$="-${name}"]`;
+
+/*
+ * Configure chosen, the reader's place gliding down to it, then Deploy, through Domains, and
+ * Install again, back up the contents.
+ */
+const script: PointerStep[] = [
+  { wait: 300 },
+  { to: entry('configure') },
+  { wait: 400 },
+  { click: true },
+  { wait: 1100 },
+  { to: entry('deploy'), duration: 400 },
+  { wait: 200 },
+  { click: true },
+  { wait: 1100 },
+  { to: entry('install'), duration: 500 },
+  { wait: 200 },
+  { click: true },
+  { wait: 1100 },
+  { leave: true },
+  { wait: 400 },
+];
+
+/**
+ * A guide's contents, its reader at Install. The guide itself is out of sight: its sections scroll
+ * in a view of their own outside the tile, which the contents follow as it scrolls, so the marks
+ * glide with the reader's place as they do on a page, and a press on a link scrolls that view
+ * rather than the gallery.
+ */
+export default function TableOfContentsTile() {
+  const id = useId();
+  const scroller = useRef<HTMLDivElement>(null);
+  const glide = useRef(0);
+  useEffect(() => () => cancelAnimationFrame(glide.current), []);
+  // Stopped, the unseen article goes back to its top rather than the tile being drawn anew, which
+  // would grow the marks again from nothing as the contents measure it.
+  usePointer(script, {
+    onRest: () => {
+      cancelAnimationFrame(glide.current);
+      if (scroller.current) scroller.current.scrollTop = 0;
+    },
+  });
+  const section = (name: string) => `${id}-${name}`;
+  /** Scrolls the unseen article to a section, as a link on a page does, at a reader's pace. */
+  const go = (event: MouseEvent<HTMLElement>) => {
+    const target = (event.target as HTMLElement).closest('a');
+    const area = scroller.current;
+    if (!target || !area) return;
+    event.preventDefault();
+    const element = area.ownerDocument.getElementById(target.getAttribute('href')?.slice(1) ?? '');
+    if (!element) return;
+    cancelAnimationFrame(glide.current);
+    const from = area.scrollTop;
+    const to = element.offsetTop - view / 4;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      area.scrollTop = to;
+      return;
+    }
+    const duration = 300 + (Math.abs(to - from) / view) * 150;
+    const start = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      area.scrollTop = from + (to - from) * ease(progress);
+      if (progress < 1) glide.current = requestAnimationFrame(step);
+    };
+    glide.current = requestAnimationFrame(step);
+  };
+  const sections = ['install', 'configure', 'domains', 'deploy'];
+  return (
+    <div onClickCapture={go}>
+      <TableOfContents
+        aria-label="Sections of the guide"
+        style={{ inlineSize: 'max-content' }}
+        items={[
+          { id: section('install'), label: 'Install' },
+          {
+            id: section('configure'),
+            label: 'Configure',
+            children: [{ id: section('domains'), label: 'Domains' }],
+          },
+          { id: section('deploy'), label: 'Deploy' },
+        ]}
+      />
+      {createPortal(
+        <div
+          ref={scroller}
+          aria-hidden
+          style={{
+            position: 'fixed',
+            insetInlineStart: '-100vw',
+            insetBlockStart: 0,
+            inlineSize: '10rem',
+            blockSize: view,
+            overflowY: 'auto',
+            visibility: 'hidden',
+            pointerEvents: 'none',
+          }}
+        >
+          <div style={{ paddingBlock: `${view / 4}px ${view}px` }}>
+            {sections.map((name) => (
+              <div key={name} id={section(name)} style={{ blockSize: view }} />
+            ))}
+          </div>
+        </div>,
+        document.body,
+      )}
+    </div>
+  );
+}
