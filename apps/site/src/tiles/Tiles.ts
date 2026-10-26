@@ -29,7 +29,7 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   page: { width: 16, height: 12 },
   scaffold: { width: 17, height: 12.75 },
   panes: { width: 40, height: 30 },
-  'panel-dock': { width: 15, height: 11.25 },
+  'panel-dock': { width: 17, height: 12.75 },
   kbd: { width: 7, height: 5.25 },
   markdown: { width: 12, height: 9 },
   message: { width: 12, height: 9 },

@@ -1,25 +1,47 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
+import { useLayoutEffect, useRef, type CSSProperties, type RefObject } from 'react';
 
 /*
- * The layout tiles' shared pieces: the blocks that stand in for content, the frame that shows a
- * layout box's edges, and the glide that carries what a reflow moves, such as an item wrapping to
- * the next line, from where it was to where it lands, rather than jumping there.
+ * The layout tiles' shared pieces, drawn as a line drawing of a layout, as an architect's plan
+ * draws a room: the outlines that stand in for content, the outline of the layout box's edges, the
+ * faint outline of an area it sets aside, and the glide that carries what a reflow moves, such as
+ * an item wrapping to the next line, from where it was to where it lands, rather than jumping there.
  */
 
-/** A block standing in for a piece of content, in the accent, as the catalogue draws a measure. */
+/** A hairline in a control's border width, in a color of the theme. */
+const line = (color: string) => `var(--env-control-border-width) solid var(${color})`;
+
+/**
+ * A piece of content, drawn as its outline over the page's faint fill, so a block that glides past
+ * another passes in front of it rather than through it.
+ */
 export const block = (inlineSize: string, blockSize = '1.25rem'): CSSProperties => ({
+  boxSizing: 'border-box',
   inlineSize,
   blockSize,
   flex: 'none',
-  borderRadius: 'var(--env-radius-sm)',
-  background: 'var(--env-color-bg-accent-emphasis)',
+  border: line('--env-color-fg-muted'),
+  borderRadius: 'var(--env-radius-xs)',
+  background: 'var(--env-color-bg-page)',
 });
 
-/** A layout box's edges, which it doesn't paint: a dashed outline around what it lays out. */
+/**
+ * A layout box's edges, which it doesn't paint, outlined around what it lays out; its corners
+ * follow the blocks' around a padding of space-2.
+ */
 export const frame: CSSProperties = {
   boxSizing: 'border-box',
-  border: '0.0625rem dashed var(--env-color-border-default)',
+  border: line('--env-color-border-default'),
   borderRadius: 'var(--env-radius-md)',
+};
+
+/**
+ * A faint outline of an area a layout box sets aside, such as the content within its padding, as
+ * a drawing's lighter construction lines.
+ */
+export const guide: CSSProperties = {
+  boxSizing: 'border-box',
+  border: line('--env-color-border-muted'),
+  borderRadius: 'var(--env-radius-sm)',
 };
 
 /** The eased motion of what the frames' transitions change, such as a width or a gap. */
@@ -37,19 +59,52 @@ const sides = ['x', 'y', 'width', 'height'] as const;
 /** A change of a place, in layout px, between two frames that is a reflow rather than a motion. */
 const jump = 6;
 
+/** How much faster the axis that leads a move to another line springs than the other. */
+const lead = 1.5;
+
+/** How long, in ms, the other axis holds before it follows. */
+const lag = 140;
+
+/**
+ * A critically damped spring, stepped exactly over `time` s at rate `w`, from `offset` away from
+ * where it rests at `velocity`: x' = (x + (v + wx)t)e^-wt. It gathers speed and settles without
+ * overshooting, however its rest moves.
+ */
+function spring(offset: number, velocity: number, w: number, time: number) {
+  const decay = Math.exp(-w * time);
+  const pull = velocity + w * offset;
+  return [(offset + pull * time) * decay, (velocity - w * pull * time) * decay] as const;
+}
+
+/** How much faster an outline follows its box than the children glide. */
+const follow = 2;
+
 /**
  * Glides the children of a layout box through its reflows for `settle` ms after `key` changes: a
  * child that jumps, as when it wraps to the next line or the columns change, is drawn where it was
- * and springs to where it lands, gathering speed and settling without overshooting, `speed` its
- * rate, while motion that is already smooth, such as a gap or a width in transition, passes through
- * as it is.
+ * and springs to where it lands, `speed` its rate, while motion that is already smooth, such as a
+ * gap in transition, passes through as it is. A child moving to another line travels along the
+ * lower one, as a hand would move it clear of its neighbours: down first, then along, or along
+ * first, then up.
+ *
+ * Given an `outline` around the box, with only its padding and border between them and the box
+ * positioned, the hook sizes the outline: it springs to what the box takes, or the children's
+ * drawn places if they reach further, so it eases to a new size, never jumping, and a child that
+ * glides never stands out of it.
  */
 export function useReflow(
   box: RefObject<HTMLElement | null>,
   key: unknown,
-  { settle = 1800, speed = 13 }: { settle?: number; speed?: number } = {},
+  {
+    settle = 1800,
+    speed = 13,
+    outline,
+  }: { settle?: number; speed?: number; outline?: RefObject<HTMLElement | null> } = {},
 ) {
-  const places = useRef(new Map<Element, { laid: Place; offset: Place; velocity: Place }>());
+  const places = useRef(
+    new Map<Element, { laid: Place; offset: Place; velocity: Place; rate: Place; hold: Place }>(),
+  );
+  const drawn = useRef<{ width: number; height: number; across: number; down: number }>(null);
   useLayoutEffect(() => {
     const element = box.current;
     if (!element) return;
@@ -60,7 +115,6 @@ export function useReflow(
     const tick = (now: number) => {
       const time = Math.min(64, now - last) / 1000;
       last = now;
-      const decay = Math.exp(-speed * time);
       let moving = false;
       for (const child of element.children) {
         if (!(child instanceof HTMLElement)) continue;
@@ -73,17 +127,36 @@ export function useReflow(
         const place = known.get(child);
         if (!place) {
           const rest = { x: 0, y: 0, width: 0, height: 0 };
-          known.set(child, { laid, offset: { ...rest }, velocity: { ...rest } });
+          known.set(child, {
+            laid,
+            offset: { ...rest },
+            velocity: { ...rest },
+            rate: { x: speed, y: speed, width: speed, height: speed },
+            hold: { ...rest },
+          });
           continue;
         }
-        const { offset, velocity } = place;
+        const { offset, velocity, rate, hold } = place;
+        const across = laid.x - place.laid.x;
+        const down = laid.y - place.laid.y;
+        if (Math.abs(across) > jump && Math.abs(down) > jump) {
+          const [first, then] = down > 0 ? (['y', 'x'] as const) : (['x', 'y'] as const);
+          rate[first] = speed * lead;
+          rate[then] = speed;
+          hold[then] = now + lag;
+          hold[first] = 0;
+        } else if (Math.abs(across) > jump || Math.abs(down) > jump) {
+          rate.x = rate.y = speed;
+          hold.x = hold.y = 0;
+        }
         for (const side of sides) {
           const step = laid[side] - place.laid[side];
           if (Math.abs(step) > jump) offset[side] -= step;
-          // A critically damped spring, stepped exactly: x' = (x + (v + wx)t)e^-wt.
-          const lead = velocity[side] + speed * offset[side];
-          offset[side] = (offset[side] + lead * time) * decay;
-          velocity[side] = (velocity[side] - speed * lead * time) * decay;
+          if (now < hold[side]) {
+            moving = true;
+            continue;
+          }
+          [offset[side], velocity[side]] = spring(offset[side], velocity[side], rate[side], time);
           if (Math.abs(offset[side]) < 0.25 && Math.abs(velocity[side]) < 5) {
             offset[side] = 0;
             velocity[side] = 0;
@@ -98,29 +171,63 @@ export function useReflow(
               (laid.width + offset.width) / (laid.width || 1)
             }, ${(laid.height + offset.height) / (laid.height || 1)})`;
       }
+      const edges = outline?.current;
+      if (edges) {
+        // How far the children reach as drawn, and what lies around the box within the outline.
+        let right = 0;
+        let bottom = 0;
+        for (const [child, { laid, offset }] of known) {
+          if (child.parentElement !== element) continue;
+          right = Math.max(right, laid.x + offset.x + laid.width + offset.width);
+          bottom = Math.max(bottom, laid.y + offset.y + laid.height + offset.height);
+        }
+        const style = getComputedStyle(edges);
+        const around = (...sides: string[]) =>
+          sides.reduce((sum, side) => sum + parseFloat(style.getPropertyValue(side)), 0);
+        const aroundX = around(
+          'padding-left',
+          'padding-right',
+          'border-left-width',
+          'border-right-width',
+        );
+        const aroundY = around(
+          'padding-top',
+          'padding-bottom',
+          'border-top-width',
+          'border-bottom-width',
+        );
+        const reach = { width: right + aroundX, height: bottom + aroundY };
+        const rest = {
+          width: Math.max(element.offsetWidth + aroundX, reach.width),
+          height: Math.max(element.offsetHeight + aroundY, reach.height),
+        };
+        const size = (drawn.current ??= { ...rest, across: 0, down: 0 });
+        for (const [side, pace] of [
+          ['width', 'across'],
+          ['height', 'down'],
+        ] as const) {
+          const [offset, velocity] = spring(
+            size[side] - rest[side],
+            size[pace],
+            speed * follow,
+            time,
+          );
+          size[side] = rest[side] + offset;
+          size[pace] = velocity;
+          if (size[side] < reach[side]) size[side] = reach[side];
+          if (Math.abs(offset) < 0.1 && Math.abs(velocity) < 2) {
+            size[side] = rest[side];
+            size[pace] = 0;
+          } else moving = true;
+        }
+        edges.style.inlineSize = `${size.width}px`;
+        edges.style.blockSize = `${size.height}px`;
+      }
       if (now < end || moving) frame = requestAnimationFrame(tick);
     };
     // The first frame is measured before the change paints, so a jump the change itself makes,
     // such as a new alignment, is held where it was.
     tick(performance.now());
     return () => cancelAnimationFrame(frame);
-  }, [box, key, settle, speed]);
-}
-
-/**
- * The size of a box, in px, as it lays out now, for a frame around it that eases to it as a line
- * wraps or the columns change, rather than jumping.
- */
-export function useSize(box: RefObject<HTMLElement | null>) {
-  const [size, setSize] = useState<{ width: number; height: number }>();
-  useLayoutEffect(() => {
-    const element = box.current;
-    if (!element) return;
-    const observer = new ResizeObserver(() =>
-      setSize({ width: element.offsetWidth, height: element.offsetHeight }),
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [box]);
-  return size;
+  }, [box, key, settle, speed, outline]);
 }

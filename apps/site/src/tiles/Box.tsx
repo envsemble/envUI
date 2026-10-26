@@ -1,34 +1,22 @@
 import { Box, Column, type SpaceStep } from '@envsemble/envui';
 import { useTimeline } from '../previews/Motion';
-import { block, easing, frame } from './reflow';
+import { block, easing, frame, guide } from './reflow';
 
 /** The inset, step by step: a small one, a larger one, and back. */
 const paddings: SpaceStep[] = [2, 5];
 
-/** The inset, hatched, as a browser's inspector shows padding. */
-const hatched = {
-  ...frame,
-  background:
-    'repeating-linear-gradient(-45deg, var(--env-color-border-accent-muted) 0 0.0625rem, transparent 0.0625rem 0.3125rem)',
-  transition: `padding 700ms ${easing}`,
-};
-
-/** A box around a heading, a line and an action, whose inset, hatched, grows and shrinks again. */
+/**
+ * A box drawn in outline around its content, a heading, a line and an action within a faint
+ * outline, the inset between the two growing and shrinking again.
+ */
 export default function BoxTile() {
   const step = useTimeline([1100, 1800]);
   return (
-    <Box padding={paddings[step]} style={hatched}>
-      <Column
-        gap={2}
-        style={{
-          padding: '0.25rem',
-          borderRadius: 'var(--env-radius-xs)',
-          background: 'var(--env-color-bg-default)',
-        }}
-      >
-        <span style={block('3.5rem', '0.875rem')} />
-        <span style={block('5rem', '0.625rem')} />
-        <span style={block('2.25rem', '0.875rem')} />
+    <Box padding={paddings[step]} style={{ ...frame, transition: `padding 700ms ${easing}` }}>
+      <Column gap={2} style={{ ...guide, padding: 'var(--env-space-1)' }}>
+        <span style={block('3.5rem', '1rem')} />
+        <span style={block('5rem', '0.75rem')} />
+        <span style={block('2.25rem', '1rem')} />
       </Column>
     </Box>
   );

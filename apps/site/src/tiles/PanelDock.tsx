@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PanelDock, Surface, Text, type PanelDockPanel } from '@envsemble/envui';
+import { PanelDock, Text, type PanelDockPanel } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../previews/Motion';
 
 const minimize = '.env-panel-dock-panel[data-panel-id="notes"] [aria-label="Minimize"]';
@@ -11,11 +11,11 @@ const script: PointerStep[] = [
   { to: minimize },
   { wait: 300 },
   { click: true },
-  { wait: 900 },
+  { wait: 600 },
   { to: notesTab, duration: 450 },
-  { wait: 400 },
+  { wait: 300 },
   { click: true },
-  { wait: 900 },
+  { wait: 800 },
   { leave: true },
   { wait: 500 },
 ];
@@ -27,15 +27,25 @@ const start: PanelDockPanel[] = [
     mode: 'open',
     active: true,
     height: 168,
-    preferredWidth: 176,
-    minWidth: 176,
+    preferredWidth: 192,
+    minWidth: 192,
   },
   // After the notes, so its tab keeps its place at the end as the notes' tab comes and goes.
   { id: 'budget', title: 'Budget', mode: 'minimized' },
 ];
 
+/** The window the panels dock in, outlined, so the bottom edge they stand on shows. */
+const edges = {
+  position: 'relative',
+  inlineSize: '15.5rem',
+  blockSize: '12rem',
+  boxSizing: 'border-box',
+  border: '0.0625rem solid var(--env-color-border-muted)',
+  overflow: 'hidden',
+} as const;
+
 /**
- * A notes panel docked at the bottom of a region, with a budget minimized to a tab beside it.
+ * A notes panel docked at the bottom edge of a window, with a budget minimized to a tab beside it.
  * Stopped, it puts its panels back rather than being drawn anew, which would raise the notes in
  * again.
  */
@@ -43,11 +53,7 @@ export default function PanelDockTile() {
   const [panels, setPanels] = useState(start);
   usePointer(script, { onRest: () => setPanels(start) });
   return (
-    <Surface
-      background="muted"
-      padding={0}
-      style={{ position: 'relative', inlineSize: '14rem', blockSize: '12rem', overflow: 'hidden' }}
-    >
+    <div style={edges}>
       <PanelDock.Root
         panels={panels}
         stackBelow="10rem"
@@ -70,6 +76,6 @@ export default function PanelDockTile() {
           </>
         )}
       </PanelDock.Root>
-    </Surface>
+    </div>
   );
 }
