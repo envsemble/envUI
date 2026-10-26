@@ -14,6 +14,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { marked } from 'marked';
 import MiniSearch from 'minisearch';
 import { plainText } from '../docs/MarkdownHeadings.ts';
+import type { DocumentRecord } from '../docs/Read.ts';
+import type { PropsFile } from '../docs/Schema.ts';
 import { indexOptions, nameKey } from '../../apps/site/src/shared/SearchTerms.ts';
 import {
   exportSection,
@@ -22,6 +24,17 @@ import {
   tokenSection,
 } from '../../apps/site/src/shared/SearchAnchors.ts';
 
+/** The token list, packages/ui/src/generated/tokens.json, with each token's names before 1.0. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; the token build writes it
+export type TokenList = Record<string, any> & { formerNames?: Record<string, string[]> };
+
+/** What the search index is built from. */
+export interface SearchSources {
+  documents: readonly DocumentRecord[];
+  props: PropsFile;
+  tokens?: TokenList;
+}
+
 export const searchIndexFile = fileURLToPath(
   new URL('../../apps/site/src/generated/SearchIndex.json', import.meta.url),
 );
@@ -29,26 +42,40 @@ export const tokensFile = fileURLToPath(
   new URL('../../packages/ui/src/generated/tokens.json', import.meta.url),
 );
 
-/**
- * @typedef {'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page'} SearchKind
- * @typedef {{
- *   id: string;
- *   kind: SearchKind;
- *   title: string;
- *   detail: string;
- *   aliases: string;
- *   keywords: string;
- *   owner: string;
- *   text: string;
- *   page: string;
- *   area: 'catalogue' | 'docs';
- *   view?: 'props' | 'usage';
- *   section?: string;
- * }} SearchDocument
- */
+/** What a search result is. */
+export type SearchKind =
+  | 'component'
+  | 'export'
+  | 'prop'
+  | 'token'
+  | 'foundation'
+  | 'pattern'
+  | 'guide'
+  | 'page';
+
+/** A document of the search index: one result, with what it is found by and where it leads. */
+export interface SearchDocument {
+  id: string;
+  kind: SearchKind;
+  title: string;
+  detail: string;
+  aliases: string;
+  keywords: string;
+  owner: string;
+  text: string;
+  page: string;
+  area: 'catalogue' | 'docs';
+  view?: 'props' | 'usage';
+  section?: string;
+}
 
 /** Pages of the site that no file in docs/ writes, each in its area. */
-export const standalonePages = [
+export const standalonePages: {
+  page: string;
+  title: string;
+  area: 'catalogue' | 'docs';
+  aliases: string[];
+}[] = [
   {
     page: 'overview',
     title: 'Overview',
@@ -114,7 +141,7 @@ export {
   headingSlug,
 } from '../../apps/site/src/shared/SearchAnchors.ts';
 
-const kindOfGroup = (group) =>
+const kindOfGroup = (group: string): SearchKind =>
   group === 'Foundations'
     ? 'foundation'
     : group === 'Patterns'
@@ -124,7 +151,7 @@ const kindOfGroup = (group) =>
         : 'component';
 
 /** Every export a page documents, with namespaces expanded to their parts. */
-function documentedExports(names, props) {
+function documentedExports(names: readonly string[], props: PropsFile | undefined): string[] {
   return names.flatMap((name) => {
     const entry = props?.exports[name];
     if (!entry) return [];
@@ -132,17 +159,17 @@ function documentedExports(names, props) {
   });
 }
 
-const sentence = (text, length = 240) =>
+const sentence = (text: string, length = 240) =>
   text.length > length ? `${text.slice(0, length).replace(/\s+\S*$/, '')}…` : text;
 
 /**
  * The headed sections of a page's Markdown, in order, each with the id its rendered heading takes
  * and the Markdown under it up to the next heading, its code fences apart.
  */
-function sectionsOf(markdown) {
+function sectionsOf(markdown: string) {
   const slug = headingSlugger();
-  const sections = [];
-  let current;
+  const sections: { slug: string; prose: string; code: string }[] = [];
+  let current: { slug: string; prose: string; code: string } | undefined;
   for (const token of marked.lexer(markdown)) {
     if (token.type === 'heading') {
       current = { slug: slug(plainText(token.tokens)), prose: token.text, code: '' };
@@ -155,7 +182,7 @@ function sectionsOf(markdown) {
   return sections;
 }
 
-const mentions = (text, name) =>
+const mentions = (text: string, name: string) =>
   new RegExp(`(?<![\\w.])${name.replace(/[.$]/g, '\\$&')}(?![\\w])`).test(text);
 
 /**
@@ -163,7 +190,11 @@ const mentions = (text, name) =>
  * uses it, on its own page and then on the foundations, else the first that names it. Returns the
  * page's document and the section's id, or the page alone when no section names the export.
  */
-function placeOf(name, home, documents) {
+function placeOf(
+  name: string,
+  home: DocumentRecord,
+  documents: readonly DocumentRecord[],
+): { document: DocumentRecord; section?: string } {
   const foundations = documents.filter(
     (document) => document.group === 'Foundations' && document !== home,
   );
@@ -179,11 +210,11 @@ function placeOf(name, home, documents) {
  * The route parts of a document's place, in the Docs: a foundation's guide, or a guide, at its
  * section.
  */
-function placeRoute({ document, section }) {
+function placeRoute({ document, section }: { document: DocumentRecord; section?: string }) {
   return {
     page: document.id,
-    area: 'docs',
-    ...(document.group === 'Foundations' && { view: 'usage' }),
+    area: 'docs' as const,
+    ...(document.group === 'Foundations' && { view: 'usage' as const }),
     ...(section && { section }),
   };
 }
@@ -194,13 +225,15 @@ function placeRoute({ document, section }) {
  * props.json is found, as the page that documents it when it shares its name, and else as an export
  * of its own, at its props on a page with a Props view, or else at the section of the page that
  * shows it; an export that no page lists is placed where the documentation shows it.
- * @returns {SearchDocument[]}
  */
-export function searchDocuments({ documents, props, tokens }) {
-  /** @type {SearchDocument[]} */
-  const results = [];
+export function searchDocuments({
+  documents,
+  props,
+  tokens,
+}: SearchSources & { tokens: TokenList }): SearchDocument[] {
+  const results: SearchDocument[] = [];
   /** The page that lists each export, by its name. */
-  const homes = new Map();
+  const homes = new Map<string, DocumentRecord>();
   for (const document of documents) {
     if (unlistedPages.has(document.id)) continue;
     const kind = kindOfGroup(document.group);
@@ -250,14 +283,15 @@ export function searchDocuments({ documents, props, tokens }) {
     // A namespace is found as the page of its name, such as Menu; one documented on another page,
     // as an export that leads to its first part's props.
     if (entry.kind === 'namespace' && pages.has(name)) continue;
-    const home = homes.get(name) ?? setup;
+    const home = (homes.get(name) ?? setup)!;
     // Only a component or pattern page has a Props view with a place for each export and prop; on
     // another page, both lead to the section that shows the export.
     const where = home.sections ? undefined : placeOf(name, home, documents);
     const place = where && placeRoute(where);
     // The page a result opens, which its detail names.
     const destination = where?.document ?? home;
-    const own = (section) => place ?? { page: home.id, area: 'docs', view: 'props', section };
+    const own = (section: string) =>
+      place ?? { page: home.id, area: 'docs' as const, view: 'props' as const, section };
     if (!(homes.get(name)?.title === name && pages.has(name)))
       results.push({
         id: `export:${name}`,
@@ -308,10 +342,10 @@ export function searchDocuments({ documents, props, tokens }) {
 }
 
 /** The site's own pages, as search documents. */
-function standalonePageDocuments() {
+function standalonePageDocuments(): SearchDocument[] {
   return standalonePages.map(({ page, title, area, aliases }) => ({
     id: `page:${page}`,
-    kind: 'page',
+    kind: 'page' as const,
     title,
     detail: 'Page',
     aliases: aliases.join('\n'),
@@ -324,7 +358,7 @@ function standalonePageDocuments() {
 }
 
 /** The site's MiniSearch index, serialized, of the documentation and the site's own pages. */
-export function buildSearchIndex({ documents, props, tokens = readTokens() }) {
+export function buildSearchIndex({ documents, props, tokens = readTokens() }: SearchSources) {
   const index = new MiniSearch(indexOptions);
   index.addAll(
     [...standalonePageDocuments(), ...searchDocuments({ documents, props, tokens })].map(withNames),
@@ -337,7 +371,7 @@ export function buildSearchIndex({ documents, props, tokens = readTokens() }) {
  * each topic of a page's title, an export's name written out in words, its aliases, a prop as its export and name (Button variant), never its name alone, and a token as
  * its name too (color.fg.muted). A query that is one of them ranks the document first.
  */
-function withNames(document) {
+function withNames(document: SearchDocument) {
   // A foundation's guide in the Docs shares its page's title; the page in the catalogue takes the name.
   if (document.id.startsWith('guide:')) return { ...document, names: [] };
   const parted = !['export', 'prop', 'token'].includes(document.kind);
@@ -359,12 +393,12 @@ function withNames(document) {
  * The token list, with each token's names before 1.0 (formerNames, by its custom property) from the
  * token migration map beside it.
  */
-export function readTokens() {
+export function readTokens(): TokenList {
   const list = JSON.parse(readFileSync(tokensFile, 'utf8'));
   const migrationFile = fileURLToPath(new URL('token-migration.json', pathToFileURL(tokensFile)));
-  const formerNames = {};
+  const formerNames: Record<string, string[]> = {};
   if (existsSync(migrationFile))
-    for (const [name, entry] of Object.entries(
+    for (const [name, entry] of Object.entries<{ cssVariable?: string; kind: string }>(
       JSON.parse(readFileSync(migrationFile, 'utf8')).names,
     ))
       if (entry.cssVariable && (entry.kind === 'alias' || entry.kind === 'renamed'))
@@ -373,7 +407,7 @@ export function readTokens() {
 }
 
 /** Writes the site's index when it changed. */
-export function writeSearchIndex(sources) {
+export function writeSearchIndex(sources: SearchSources) {
   const json = buildSearchIndex(sources);
   mkdirSync(dirname(searchIndexFile), { recursive: true });
   if (!existsSync(searchIndexFile) || readFileSync(searchIndexFile, 'utf8') !== json)

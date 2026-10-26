@@ -28,12 +28,28 @@ export const codemodsMapFile = resolve(
 );
 export const migrationGuideFile = resolve(repositoryRoot, 'docs/migration.md');
 
+/** An entry of the token build's migration map: what a name of before became. */
+interface MigrationEntry {
+  kind: 'renamed' | 'alias' | 'fixed' | 'removed' | 'prefixed';
+  cssVariable?: string;
+  /** A fixed color's value, or its value in each theme. */
+  value?: string | Record<string, string>;
+  component?: string;
+  colorPropertyOf?: string;
+  note?: string;
+}
+
+/** packages/ui/src/generated/token-migration.json, which the token build writes. */
+export interface TokenMigration {
+  names: Record<string, MigrationEntry>;
+}
+
 const mapComment =
   'Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it: `to`, the 1.0 custom property, which v1-classes writes in its place (every token takes the --env- prefix, and a few names change beyond it), in a declaration only where no other name has the same `to` or it is the token’s own name, and reports otherwise; `value`, the color of a 0.7 fixed color that no token replaces, which v1-classes reports; or `removed`, with `to` what to use instead where there is one, which v1-classes also reports. A `note` says what changed beyond the name. `npm run tokens:build` writes this section from packages/ui/src/generated/token-migration.json.';
 
 /** The `tokens` section of the codemods' rename map, from the token build's migration map. */
-export function migrationMapSection(migration) {
-  const section = { $comment: mapComment };
+export function migrationMapSection(migration: TokenMigration) {
+  const section: Record<string, unknown> = { $comment: mapComment };
   for (const [name, entry] of Object.entries(migration.names))
     section[name] = {
       ...(entry.kind === 'removed'
@@ -52,7 +68,7 @@ export function migrationMapSection(migration) {
  * The text of the rename map's tokens fragment for `section`: one JSON object whose entries are each
  * written on one line, which Prettier keeps when it fits.
  */
-export function mapFragmentText(section) {
+export function mapFragmentText(section: Record<string, unknown>) {
   const entries = Object.entries(section).map(
     ([key, value]) => `  ${JSON.stringify(key)}: ${JSON.stringify(value)}`,
   );
@@ -67,31 +83,31 @@ const guideEnd = '<!-- token-migration:end -->';
  * with their replacements, the fixed colors, the removed names, and the names that only take the
  * prefix.
  */
-export function migrationGuideList(migration) {
-  const code = (name) => (name ? `\`${name}\`` : '—');
-  const text = (value) => (value ?? '').replaceAll('|', '\\|');
-  const table = (header, rows) =>
+export function migrationGuideList(migration: TokenMigration) {
+  const code = (name: string | undefined) => (name ? `\`${name}\`` : '—');
+  const text = (value: string | undefined) => (value ?? '').replaceAll('|', '\\|');
+  const table = (header: string[], rows: string[][]) =>
     [header, header.map(() => '---'), ...rows].map((cells) => `| ${cells.join(' | ')} |`);
   const entries = Object.entries(migration.names);
-  const of = (kind) => entries.filter(([, entry]) => entry.kind === kind);
-  const theme = (name) =>
+  const of = (kind: MigrationEntry['kind']) => entries.filter(([, entry]) => entry.kind === kind);
+  const theme = (name: string) =>
     name
       .replace(/^\w/, (letter) => letter.toUpperCase())
       .replace('-high-contrast', ', high contrast');
   /** A fixed value, or each value of a fixed color per theme, with the themes that take it. */
-  const valueOf = (value) =>
+  const valueOf = (value: MigrationEntry['value']): string =>
     typeof value === 'string'
       ? code(value)
-      : [...new Set(Object.values(value))]
+      : [...new Set(Object.values(value ?? {}))]
           .map(
             (each) =>
-              `${code(each)} (${Object.keys(value)
-                .filter((name) => value[name] === each)
+              `${code(each)} (${Object.keys(value ?? {})
+                .filter((name) => value?.[name] === each)
                 .map((name) => theme(name).toLowerCase())
                 .join('; ')})`,
           )
           .join(', ');
-  const blocks = [];
+  const blocks: (string | string[])[] = [];
   const renamed = of('renamed');
   if (renamed.length > 0)
     blocks.push(
@@ -144,13 +160,13 @@ export function migrationGuideList(migration) {
   const prefixed = of('prefixed');
   if (prefixed.length > 0)
     blocks.push(
-      `Every other name only takes the prefix, ${code(prefixed[0][0])} as ${code(prefixed[0][1].cssVariable)}: ${prefixed.map(([name]) => code(name)).join(', ')}.`,
+      `Every other name only takes the prefix, ${code(prefixed[0]![0])} as ${code(prefixed[0]![1].cssVariable)}: ${prefixed.map(([name]) => code(name)).join(', ')}.`,
     );
   return blocks.map((block) => (Array.isArray(block) ? block.join('\n') : block)).join('\n\n');
 }
 
 /** The migration guide's text with `list` between its token-migration markers. */
-export function withGuideList(text, list) {
+export function withGuideList(text: string, list: string) {
   const start = text.indexOf(guideStart);
   const startEnd = start === -1 ? -1 : text.indexOf('-->', start) + '-->'.length;
   const end = text.indexOf(guideEnd);
@@ -162,7 +178,7 @@ export function withGuideList(text, list) {
 }
 
 /** The codemods' rename map and the migration guide, with the token list of `migration`. */
-export async function migrationCopies(migration) {
+export async function migrationCopies(migration: TokenMigration) {
   const guide = await readFile(migrationGuideFile, 'utf8');
   return [
     { path: codemodsMapFile, contents: mapFragmentText(migrationMapSection(migration)) },
@@ -171,7 +187,7 @@ export async function migrationCopies(migration) {
 }
 
 /** `contents` as Prettier formats the file at `path`. */
-export async function formatted(path, contents) {
+export async function formatted(path: string, contents: string) {
   return format(contents, { ...(await resolveConfig(path)), filepath: path });
 }
 
@@ -185,6 +201,11 @@ export async function buildTokens({
   logger = new Logger({ level: 'warn' }),
   tokensDirectory,
   outDir,
+}: {
+  check?: boolean;
+  logger?: Logger;
+  tokensDirectory?: string | URL;
+  outDir?: string | URL;
 } = {}) {
   // A fresh config per build, so a running dev server reads the token files anew.
   const rawConfig = createConfig({ tokensDirectory, outDir });
@@ -201,11 +222,11 @@ export async function buildTokens({
   // The library's own tokens also bring the migration map's copies up to date.
   if (tokensDirectory === undefined && outDir === undefined) {
     const migration = outputs.find(({ path }) => path.endsWith('token-migration.json'));
-    outputs.push(...(await migrationCopies(JSON.parse(migration.contents))));
+    outputs.push(...(await migrationCopies(JSON.parse(String(migration!.contents)))));
   }
   const stale: string[] = [];
   for (const { path, contents } of outputs) {
-    const text = await formatted(path, contents);
+    const text = await formatted(path, String(contents));
     const existing = await readFile(path, 'utf8').catch((error) => {
       if (error.code === 'ENOENT') return null;
       throw error;

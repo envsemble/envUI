@@ -248,8 +248,8 @@ function createReader(checker) {
   };
 
   /** What makes a module a client module, as reasons; none for a module a server can render. */
-  return function clientReasons(sourceFile) {
-    const reasons = new Set();
+  return function clientReasons(sourceFile: ts.SourceFile): string[] {
+    const reasons = new Set<string>();
     const marked = commentsOf(sourceFile)
       .map((comment) => annotation.exec(comment))
       .find(Boolean);
@@ -321,7 +321,7 @@ function libraryProgram(paths) {
   );
   const program = ts.createProgram({
     rootNames: paths,
-    options: { ...config.options, noEmit: true },
+    options: { ...config!.options, noEmit: true },
   });
   return { program, checker: program.getTypeChecker() };
 }
@@ -354,7 +354,7 @@ export function clientReasonsOf(text, fileName = join(sourceDirectory, 'Example.
   );
   const program = ts.createProgram({
     rootNames: [path],
-    options: { ...config.options, noEmit: true },
+    options: { ...config!.options, noEmit: true },
     host,
   });
   const sourceFile = program.getSourceFiles().find((file) => resolve(file.fileName) === path);
@@ -371,7 +371,13 @@ export async function libraryModules() {
     .map((entry) => join(entry.parentPath, entry.name));
   const { program, checker } = libraryProgram(files);
   const read = createReader(checker);
-  const modules = [];
+  const modules: {
+    file: string;
+    path: string;
+    text: string;
+    reasons: string[];
+    client: boolean;
+  }[] = [];
   for (const path of files) {
     const file = relative(sourceDirectory, path).split('\\').join('/');
     const text = await readFile(path, 'utf8');
@@ -380,8 +386,8 @@ export async function libraryModules() {
       file,
       path,
       text,
-      reasons: read(sourceFile),
-      client: hasClientDirective(sourceFile),
+      reasons: read(sourceFile!),
+      client: hasClientDirective(sourceFile!),
     });
   }
   return modules.sort((a, b) => a.file.localeCompare(b.file));
