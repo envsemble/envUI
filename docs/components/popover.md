@@ -83,7 +83,7 @@ Popover takes focus as it opens, and also closes when focus leaves it.
 
 An action inside the popover closes it once its work is done, such as Rename.
 
-```tsx figure=RenameInPlace open
+```tsx figure=RenameInPlace motion
 
 ```
 
