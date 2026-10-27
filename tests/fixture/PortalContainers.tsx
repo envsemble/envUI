@@ -7,6 +7,7 @@ import {
   IconButton,
   Menu,
   Menubar,
+  Panes,
   PortalContainer,
   Theme,
   Toast,
@@ -39,7 +40,7 @@ function NotifyButton() {
  * Preview regions of a page, not inert, whose overlays render into a layer of each through a
  * contained PortalContainer, open as the page loads: a menu, a tooltip and a toast in one, a dialog
  * in another, a combobox's list in the third; a fourth holds a context menu, opened by right click,
- * and a fifth a menubar.
+ * a fifth a menubar, and a sixth supporting Panes too narrow for two panes, open as a sheet.
  * The page is taller than the window, so its scroll can be checked.
  */
 export function PortalContainersFixture() {
@@ -48,6 +49,8 @@ export function PortalContainersFixture() {
   const [comboboxLayer, setComboboxLayer] = useState<HTMLDivElement | null>(null);
   const [contextLayer, setContextLayer] = useState<HTMLDivElement | null>(null);
   const [menubarLayer, setMenubarLayer] = useState<HTMLDivElement | null>(null);
+  const [panesLayer, setPanesLayer] = useState<HTMLDivElement | null>(null);
+  const [panesOpen, setPanesOpen] = useState(true);
   const region = {
     position: 'relative',
     contain: 'layout',
@@ -122,6 +125,19 @@ export function PortalContainersFixture() {
           </Menubar.Root>
         </PortalContainer>
         <div ref={setMenubarLayer} data-testid="menubar-layer" />
+      </div>
+      <div data-testid="panes-preview" style={{ ...region, inlineSize: '24rem' }}>
+        <PortalContainer container={panesLayer} contained>
+          <Panes.Root behavior="supporting" open={panesOpen} onOpenChange={setPanesOpen}>
+            <Panes.Main label="Document">
+              <Button>In the document</Button>
+            </Panes.Main>
+            <Panes.Supporting label="Details">
+              <Button>Edit details</Button>
+            </Panes.Supporting>
+          </Panes.Root>
+        </PortalContainer>
+        <div ref={setPanesLayer} data-testid="panes-layer" />
       </div>
       {/* Taller than the window, so the page scrolls. */}
       <div style={{ blockSize: '150vh' }} />

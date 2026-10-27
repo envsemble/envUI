@@ -153,4 +153,20 @@ test.describe('PortalContainer, contained', () => {
     await expect(layer.getByRole('menu', { name: 'Edit' })).toBeVisible();
     await expect(layer.getByRole('menu', { name: 'File' })).toHaveCount(0);
   });
+
+  test('Panes open as a sheet in it leave the page in use', async ({ page }) => {
+    await page.goto(preview);
+    const sheet = page.getByTestId('panes-preview').getByRole('dialog', { name: 'Details' });
+    await expect(sheet).toBeVisible();
+    // Not modal: nothing on the page turns inert, focus stays out and Tab leaves the sheet.
+    await expect(sheet).not.toHaveAttribute('aria-modal');
+    expect(await page.evaluate(() => document.querySelectorAll('[inert]').length)).toBe(0);
+    expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+    await page.getByTestId('outside').focus();
+    await expect(page.getByTestId('outside')).toBeFocused();
+    await sheet.getByRole('button', { name: 'Edit details' }).focus();
+    await page.keyboard.press('Tab');
+    await expect(sheet.getByRole('button', { name: 'Edit details' })).not.toBeFocused();
+    await expect(sheet).toBeVisible();
+  });
 });

@@ -21,6 +21,7 @@ import { panes } from '../foundations/messages/panes.js';
 import { ArrowBack } from '../icons/ArrowBack.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
+import { usePortalContainer } from '../internal/PortalContainerContext.js';
 import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { setRef } from '../internal/setRef.js';
 import { useFormatters } from '../internal/useFormatters.js';
@@ -342,7 +343,9 @@ function Main({ label, className, ...props }: PaneProps) {
  * is: fixed to the window over a scrim, scrolling inside itself while the page stays. As a sheet
  * it is a modal dialog with a close button: everything else on the page is inert, focus moves into
  * it and Tab stays in it, and Escape, the close button or a press on the scrim closes it, which
- * returns focus to where it was.
+ * returns focus to where it was. In a contained PortalContainer, such as a preview on a page, the
+ * sheet belongs to the container: it is not modal, so the page stays in use and focus stays where
+ * it is.
  */
 function Supporting({
   label,
@@ -356,6 +359,7 @@ function Supporting({
 }: SupportingProps) {
   const { open, close, closeLabel, resizedId } = usePanes('Supporting');
   const messages = useMessages('panes', panes);
+  const { contained } = usePortalContainer();
   const pane = useRef<HTMLDivElement | null>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
   // Whether the pane is a sheet: CSS decides, positioning it over the main pane below splitAt. Read
@@ -376,6 +380,8 @@ function Supporting({
     if (element.parentElement) observer.observe(element.parentElement);
     return () => observer.disconnect();
   }, [open]);
+  // A sheet is modal, unless it belongs to a contained PortalContainer rather than the window.
+  const modal = sheet && !contained;
   // As a sheet, everything else on the page is inert, so aria-modal holds, and focus moves in; as it
   // closes, focus goes back to where it was. A sheet that becomes a pane beside the main one, as
   // the Panes widen, keeps focus where it is. A sheet fixed to the window keeps the page still.
@@ -383,7 +389,7 @@ function Supporting({
   openRef.current = open;
   useLayoutEffect(() => {
     const element = pane.current;
-    if (!sheet || !element) return;
+    if (!modal || !element) return;
     const document = element.ownerDocument;
     const active = document.activeElement;
     returnFocus.current = active instanceof HTMLElement ? active : null;
@@ -428,7 +434,7 @@ function Supporting({
       target.getBoundingClientRect();
       target.focus();
     };
-  }, [sheet]);
+  }, [modal]);
   return (
     <div
       tabIndex={-1}
@@ -439,7 +445,7 @@ function Supporting({
         setRef(ref, node);
       }}
       role={sheet ? 'dialog' : 'region'}
-      aria-modal={sheet || undefined}
+      aria-modal={modal || undefined}
       aria-label={label}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-panes-supporting', className)}
@@ -451,8 +457,8 @@ function Supporting({
           close();
           return;
         }
-        // Tab stays in the sheet, from its last stop to its first and back.
-        if (event.key !== 'Tab') return;
+        // Tab stays in a modal sheet, from its last stop to its first and back.
+        if (event.key !== 'Tab' || !modal) return;
         const stops = tabbables(event.currentTarget);
         const first = stops[0];
         const last = stops[stops.length - 1];
