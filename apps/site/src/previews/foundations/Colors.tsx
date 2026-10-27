@@ -11,18 +11,20 @@ import {
   Badge,
   Bar,
   Button,
+  Checkbox,
   Column,
-  Drawer,
-  IconButton,
   Meter,
   Progress,
+  Rail,
   Row,
+  SearchField,
   SegmentedControl,
   Surface,
   Switch,
+  Tabs,
   Text,
+  TextField,
   Theme,
-  Toolbar,
   useTheme,
   type BadgeTone,
   type BadgeVariant,
@@ -31,29 +33,15 @@ import {
   type ThemeValue,
 } from '@envsemble/envui';
 import { ColorSwatch } from '@envsemble/envui/color';
-import { Add } from '@envsemble/envui/icons/Add';
-import { AddPhotoAlternate } from '@envsemble/envui/icons/AddPhotoAlternate';
-import { Alarm } from '@envsemble/envui/icons/Alarm';
 import { Archive } from '@envsemble/envui/icons/Archive';
-import { Brush } from '@envsemble/envui/icons/Brush';
-import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
-import { Check } from '@envsemble/envui/icons/Check';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
-import { Close } from '@envsemble/envui/icons/Close';
-import { Crop } from '@envsemble/envui/icons/Crop';
-import { Description } from '@envsemble/envui/icons/Description';
 import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
-import { Favorite } from '@envsemble/envui/icons/Favorite';
+import { Group } from '@envsemble/envui/icons/Group';
 import { Info } from '@envsemble/envui/icons/Info';
+import { Luggage } from '@envsemble/envui/icons/Luggage';
 import { Map as MapIcon } from '@envsemble/envui/icons/Map';
-import { Mic } from '@envsemble/envui/icons/Mic';
-import { PersonAdd } from '@envsemble/envui/icons/PersonAdd';
 import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
-import { RotateRight } from '@envsemble/envui/icons/RotateRight';
-import { Search } from '@envsemble/envui/icons/Search';
-import { Share } from '@envsemble/envui/icons/Share';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
-import { Tune } from '@envsemble/envui/icons/Tune';
 import { Warning } from '@envsemble/envui/icons/Warning';
 import { useTimeline } from '../Motion';
 import type { FoundationFigure } from './FoundationFigures';
@@ -460,92 +448,94 @@ function StatusFigure() {
 }
 
 /**
- * A pastel color scheme of an application's own: the hue of its surfaces and main actions, and the
- * hue of its second accent, the Important fill, in OKLCH, in the legend's order. Each takes the
- * same grades in each theme, so the three are one family of schemes.
+ * A pastel color scheme of an application's own: the hue, in OKLCH, that tints its surfaces, text
+ * and edges and colors its accent, in the legend's order. Each takes the same grades in each theme,
+ * so the three are one family of schemes.
  */
-const schemes: readonly { hue: number; accent: number }[] = [
-  { hue: 300, accent: 350 },
-  { hue: 165, accent: 215 },
-  { hue: 48, accent: 10 },
-];
+const schemes: readonly { hue: number }[] = [{ hue: 300 }, { hue: 165 }, { hue: 48 }];
 
-/** A color in OKLCH: its lightness, chroma and hue. */
-const oklch = (lightness: number, chroma: number, hue: number) =>
-  `oklch(${lightness} ${chroma} ${hue})`;
+/** A color in OKLCH: its lightness, chroma and hue, and its opacity if it has one. */
+const oklch = (lightness: number, chroma: number, hue: number, alpha?: number) =>
+  `oklch(${lightness} ${chroma} ${hue}${alpha === undefined ? '' : ` / ${alpha}`})`;
 
 /**
  * The roles a scheme gives its area, with their hover and press, as an application gives an area
- * colors of its own (customizing.md's Recolor an area): pale tinted surfaces, mid-tone quiet
- * actions and selection, and a deep main action in the light theme; deep tinted surfaces and pale
- * actions in the dark. Its text and edges are tinted too, except at high contrast, where they keep
- * the theme's own, stronger colors.
+ * colors of its own (customizing.md's Recolor an area). It keeps envUI's own grades and only moves
+ * them to its hue: a pale tinted page and surfaces with a deep accent in the light theme, deep
+ * tinted ones with a pale accent in the dark; a tint of the accent for what is selected, with
+ * accent text on it; translucent tinted fills for quiet controls. At high contrast the accent goes
+ * a step further from the page, and text and edges keep the theme's own, stronger colors.
  */
-function schemeColors(
-  { hue, accent }: (typeof schemes)[number],
-  theme: ThemeValue,
-  high: boolean,
-): CSSProperties {
+function schemeColors({ hue }: (typeof schemes)[number], theme: ThemeValue, high: boolean) {
   const light = theme === 'light';
   const step = (lightness: number, by: number) => lightness + (light ? -by : by);
-  const tone = (role: string, lightness: number, chroma: number, at = hue) => ({
-    [`--env-color-${role}`]: oklch(lightness, chroma, at),
-    [`--env-color-${role}-hover`]: oklch(step(lightness, 0.035), chroma, at),
-    [`--env-color-${role}-pressed`]: oklch(step(lightness, 0.07), chroma, at),
-  });
-  const fills = light
-    ? {
-        '--env-color-bg-page': oklch(0.985, 0.012, hue),
-        '--env-color-bg-default': oklch(0.995, 0.006, hue),
-        '--env-color-bg-raised': oklch(0.995, 0.006, hue),
-        '--env-color-bg-muted': oklch(0.935, 0.034, hue),
-        ...tone('bg-brand-emphasis', 0.43, 0.11),
-        '--env-color-fg-on-emphasis': oklch(1, 0, 0),
-        ...tone('bg-important-strong', 0.86, 0.08, accent),
-        '--env-color-fg-on-strong': oklch(0.27, 0.07, accent),
-        ...tone('bg-neutral-muted', 0.88, 0.055),
-        '--env-color-bg-neutral-subtle-hover': oklch(0.89, 0.04, hue),
-        '--env-color-bg-neutral-subtle-pressed': oklch(0.86, 0.05, hue),
-        ...tone('bg-selected', 0.83, 0.075),
-        '--env-color-fg-on-selected': oklch(0.25, 0.07, hue),
-        '--env-color-bg-navigation-hover': oklch(0.9, 0.04, hue),
-        '--env-color-bg-navigation-pressed': oklch(0.87, 0.05, hue),
-        '--env-color-fg-accent': oklch(0.43, 0.11, hue),
-        '--env-color-border-focus': oklch(0.43, 0.11, hue),
-      }
-    : {
-        '--env-color-bg-page': oklch(0.19, 0.018, hue),
-        '--env-color-bg-default': oklch(0.23, 0.024, hue),
-        '--env-color-bg-raised': oklch(0.25, 0.026, hue),
-        '--env-color-bg-muted': oklch(0.26, 0.032, hue),
-        ...tone('bg-brand-emphasis', 0.84, 0.08),
-        '--env-color-fg-on-emphasis': oklch(0.22, 0.05, hue),
-        ...tone('bg-important-strong', 0.84, 0.08, accent),
-        '--env-color-fg-on-strong': oklch(0.22, 0.05, accent),
-        ...tone('bg-neutral-muted', 0.35, 0.05),
-        '--env-color-bg-neutral-subtle-hover': oklch(0.33, 0.04, hue),
-        '--env-color-bg-neutral-subtle-pressed': oklch(0.37, 0.045, hue),
-        ...tone('bg-selected', 0.42, 0.075),
-        '--env-color-fg-on-selected': oklch(0.95, 0.025, hue),
-        '--env-color-bg-navigation-hover': oklch(0.31, 0.035, hue),
-        '--env-color-bg-navigation-pressed': oklch(0.35, 0.04, hue),
-        '--env-color-fg-accent': oklch(0.84, 0.08, hue),
-        '--env-color-border-focus': oklch(0.84, 0.08, hue),
-      };
+  // A fill's hover and press: a step further from the page, or, for the accent, deeper in both
+  // themes, as envUI's own accent fills.
+  const tone = (role: string, lightness: number, chroma: number, deeper = false) => {
+    const at = (by: number) => (deeper ? lightness - by : step(lightness, by));
+    return {
+      [`--env-color-${role}`]: oklch(lightness, chroma, hue),
+      [`--env-color-${role}-hover`]: oklch(at(0.035), chroma, hue),
+      [`--env-color-${role}-pressed`]: oklch(at(0.07), chroma, hue),
+    };
+  };
+  // The accent: a deep color on light surfaces, a pale one on dark.
+  const accent = light ? (high ? 0.36 : 0.43) : high ? 0.9 : 0.84;
+  const chroma = light ? 0.11 : high ? 0.06 : 0.08;
+  // The ink a translucent fill is mixed from: dark on light surfaces, pale on dark.
+  const ink = (alpha: number) =>
+    light ? oklch(0.25, 0.04, hue, alpha) : oklch(0.94, 0.02, hue, alpha);
+  const fills = {
+    ...(light
+      ? {
+          '--env-color-bg-page': oklch(0.99, 0.008, hue),
+          '--env-color-bg-default': oklch(0.955, 0.024, hue),
+          '--env-color-bg-raised': oklch(0.955, 0.024, hue),
+          '--env-color-bg-muted': oklch(0.92, 0.032, hue),
+          '--env-color-fg-on-emphasis': oklch(1, 0, 0),
+          ...tone('bg-selected', 0.9, 0.05),
+          '--env-color-bg-navigation-hover': oklch(0.9, 0.04, hue),
+          '--env-color-bg-navigation-pressed': oklch(0.87, 0.05, hue),
+        }
+      : {
+          '--env-color-bg-page': oklch(0.19, 0.016, hue),
+          '--env-color-bg-default': oklch(0.235, 0.022, hue),
+          '--env-color-bg-raised': oklch(0.235, 0.022, hue),
+          '--env-color-bg-muted': oklch(0.275, 0.026, hue),
+          '--env-color-fg-on-emphasis': oklch(0.2, 0.04, hue),
+          ...tone('bg-selected', 0.34, 0.06),
+          '--env-color-bg-navigation-hover': oklch(0.32, 0.03, hue),
+          '--env-color-bg-navigation-pressed': oklch(0.36, 0.035, hue),
+        }),
+    ...tone('bg-brand-emphasis', accent, chroma, true),
+    ...tone('border-accent-emphasis', accent, chroma, true),
+    '--env-color-bg-accent-emphasis': oklch(accent, chroma, hue),
+    '--env-color-fg-accent': oklch(accent, chroma, hue),
+    '--env-color-fg-on-selected': oklch(step(accent, high ? 0.05 : 0.03), chroma, hue),
+    '--env-color-border-focus': oklch(accent, chroma, hue),
+    '--env-color-border-accent': oklch(accent, chroma, hue, 0.55),
+    '--env-color-bg-accent-muted': oklch(accent, chroma, hue, light ? 0.12 : 0.14),
+    '--env-color-bg-accent-badge': oklch(accent, chroma, hue, light ? 0.08 : 0.14),
+    '--env-color-bg-neutral-muted': ink(light ? 0.08 : 0.12),
+    '--env-color-bg-neutral-muted-hover': ink(light ? 0.14 : 0.19),
+    '--env-color-bg-neutral-muted-pressed': ink(light ? 0.2 : 0.26),
+    '--env-color-bg-neutral-subtle-hover': ink(0.08),
+    '--env-color-bg-neutral-subtle-pressed': ink(0.1),
+  };
   const lines = light
     ? {
         '--env-color-fg-default': oklch(0.24, 0.035, hue),
-        '--env-color-fg-control': oklch(0.27, 0.045, hue),
-        '--env-color-fg-muted': oklch(0.4, 0.04, hue),
-        '--env-color-border-default': oklch(0.55, 0.045, hue),
+        '--env-color-fg-control': oklch(0.3, 0.045, hue),
+        '--env-color-fg-muted': oklch(0.42, 0.04, hue),
+        '--env-color-border-default': oklch(0.58, 0.04, hue),
         '--env-color-border-muted': oklch(0.86, 0.03, hue),
       }
     : {
-        '--env-color-fg-default': oklch(0.95, 0.012, hue),
-        '--env-color-fg-control': oklch(0.92, 0.02, hue),
-        '--env-color-fg-muted': oklch(0.8, 0.03, hue),
-        '--env-color-border-default': oklch(0.62, 0.04, hue),
-        '--env-color-border-muted': oklch(0.34, 0.03, hue),
+        '--env-color-fg-default': oklch(0.94, 0.012, hue),
+        '--env-color-fg-control': oklch(0.92, 0.016, hue),
+        '--env-color-fg-muted': oklch(0.8, 0.025, hue),
+        '--env-color-border-default': oklch(0.62, 0.035, hue),
+        '--env-color-border-muted': oklch(0.4, 0.03, hue),
       };
   return (high ? fills : { ...fills, ...lines }) as CSSProperties;
 }
@@ -595,88 +585,70 @@ function SchemeArea({
 /** How long the components stay in each scheme, in ms. */
 const schemeStep = 2200;
 
-/** A tile of the canvas: a component or two on the scheme's filled surface. */
+/** A tile of the canvas: a component or two on a surface, as envUI draws it. */
 function Tile({ name, children }: { name: string; children: ReactNode }) {
   return (
-    <Surface background="muted" radius="xl" className="catalogue-scheme-tile" data-tile={name}>
+    <Surface padding={4} className="catalogue-scheme-tile" data-tile={name}>
       {children}
     </Surface>
   );
 }
 
 /**
- * The same components in a scheme of the application's own, filling the stage: its page's color
- * with tiles of its filled surface, each a component or two, as Material 3's showcases lay them
- * out: a column of quiet actions above the main one, a floating toolbar beside an important
- * action, a choice of answers, uploads under way, a switch, a round action, a photo editor's
- * toolbar, and the navigation peeking in at the end. It steps through the schemes, the one shown
- * named in the corner.
+ * The same components in a scheme of the application's own, filling the stage: a trip planner's
+ * page with surfaces for its tiles, each a component or two in its usual variant: a short form, tabs,
+ * a switch, a choice of answers, uploads under way, a search, and the navigation with a count. It
+ * steps through the schemes, the one shown named in the corner.
  */
 function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boolean }) {
   const page = useTheme();
   const scheme = useTimeline(schemes.map(() => schemeStep));
   const [answer, setAnswer] = useState('going');
-  const [place, setPlace] = useState('alarms');
+  const [place, setPlace] = useState('trips');
   const destination = (id: string) => ({ current: place === id, onSelect: () => setPlace(id) });
   const destinations: Destination[] = [
-    { label: 'Friends', icon: <Favorite />, ...destination('friends') },
-    { label: 'Alarms', icon: <Alarm />, ...destination('alarms') },
+    { label: 'Trips', icon: <Luggage />, ...destination('trips') },
     { label: 'Map', icon: <MapIcon />, ...destination('map') },
-  ];
-  const actions = [
-    <Button key="select" variant="secondary" startIcon={<CheckCircle />}>
-      Select
-    </Button>,
-    <Button key="add" variant="secondary" startIcon={<AddPhotoAlternate />}>
-      Add photos
-    </Button>,
-    <Button key="share" variant="secondary" startIcon={<Share />}>
-      Share album
-    </Button>,
-    <Button key="search" variant="secondary" startIcon={<Search />}>
-      Search
-    </Button>,
-    <IconButton key="new" variant="primary" size="lg" icon={<Add />} aria-label="New album" />,
+    { label: 'Friends', icon: <Group />, count: 2, ...destination('friends') },
   ];
   return (
     <SchemeArea scheme={scheme} theme={page.theme} className="catalogue-scheme-canvas">
       <CornerLabel>{names[scheme]}</CornerLabel>
       <div className="catalogue-scheme-tiles" data-narrow={narrow || undefined}>
-        <Tile name="actions">
-          {narrow ? (
-            <Row wrap gap={2} align="center" justify="center">
-              {actions}
-            </Row>
-          ) : (
-            <Column gap={2} align="end">
-              {actions}
+        <Tile name="form">
+          <Column gap={4}>
+            <TextField variant="floating" label="Trip name" defaultValue="Spring in Lisbon" />
+            <Column gap={2}>
+              <Checkbox label="Share with travelers" defaultChecked />
+              <Checkbox label="Save maps offline" />
             </Column>
-          )}
+            <Row gap={2} justify="end">
+              <Button variant="secondary">Cancel</Button>
+              <Button>Save</Button>
+            </Row>
+          </Column>
         </Tile>
-        <Tile name="toolbar">
-          <Row gap={2} align="center" justify="center">
-            <Surface
-              background="default"
-              padding={1}
-              radius="full"
-              render={<Toolbar.Root aria-label="Event" size="sm" />}
-            >
-              <Toolbar.Button icon={<Check />} label="Accept" />
-              <Toolbar.Button icon={<Favorite />} label="Favorite" />
-              <Toolbar.Button icon={<Description />} label="Notes" />
-              <Toolbar.Button icon={<CalendarMonth />} label="Calendar" />
-            </Surface>
-            <IconButton variant="primary" tone="accent" icon={<Close />} aria-label="Close" />
-          </Row>
+        <Tile name="tabs">
+          <Tabs
+            aria-label="Trip"
+            defaultValue="photos"
+            items={[
+              { value: 'days', button: <Button>Days</Button>, content: null },
+              { value: 'photos', button: <Button>Photos</Button>, content: null },
+              { value: 'budget', button: <Button>Budget</Button>, content: null },
+            ]}
+          />
+        </Tile>
+        <Tile name="switch">
+          <Switch label="Sync" defaultChecked />
         </Tile>
         <Tile name="choice">
           <SegmentedControl
-            aria-label="Going to the picnic"
-            size="sm"
+            aria-label="Going on the trip"
             value={answer}
             onValueChange={setAnswer}
             items={[
-              { value: 'going', label: 'Going' },
+              { value: 'going', label: 'Yes' },
               { value: 'maybe', label: 'Maybe' },
               { value: 'no', label: 'No' },
             ]}
@@ -688,45 +660,17 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
             <Progress label="Porto" value={6} max={20} valueText="6 of 20" />
           </Column>
         </Tile>
-        <div className="catalogue-scheme-pair">
-          <Tile name="switch">
-            <Switch aria-label="Sync" checked onCheckedChange={() => undefined} />
-          </Tile>
-          <Tile name="round">
-            <IconButton variant="primary" size="lg" icon={<Mic />} aria-label="Record" />
-          </Tile>
-        </div>
-        {/* A phone shows one toolbar, the first. */}
+        {/* A phone leaves the search out, as it shows the navigation as a bar. */}
         {!narrow && (
-          <Tile name="edit">
-            <Surface
-              background="default"
-              padding={1}
-              radius="full"
-              render={<Toolbar.Root aria-label="Edit photo" size="sm" />}
-            >
-              <Toolbar.Button icon={<Crop />} label="Crop" />
-              <Toolbar.Button icon={<Tune />} label="Adjust" />
-              <Toolbar.Button icon={<RotateRight />} label="Rotate" />
-              <Toolbar.Button icon={<Brush />} label="Draw" pressed />
-            </Surface>
+          <Tile name="search">
+            <SearchField variant="floating" label="Search photos" placeholder="Search" />
           </Tile>
         )}
         <Tile name="nav">
           {narrow ? (
-            <Bar aria-label="Alarm clock" destinations={destinations} />
+            <Bar aria-label="Trip" destinations={destinations} />
           ) : (
-            <Surface background="default" className="catalogue-scheme-drawer">
-              <Drawer
-                aria-label="Alarm clock"
-                header={
-                  <Button variant="primary" tone="accent" startIcon={<PersonAdd />}>
-                    Invite
-                  </Button>
-                }
-                destinations={destinations}
-              />
-            </Surface>
+            <Rail aria-label="Trip" destinations={destinations} />
           )}
         </Tile>
       </div>
