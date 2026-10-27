@@ -19,7 +19,10 @@ const popup = {
   whiteSpace: 'nowrap',
 } as CSSProperties;
 
-/** Every background, on the page and on a pane; Raised over a pane's content, as a popup sits. */
+/**
+ * Every background, on the page and on a pane; Recessed in the page, the only place it is deeper
+ * than what is around it; Raised over a pane's content, as a popup sits.
+ */
 export default function Backgrounds() {
   return (
     <Example size="collection">
@@ -36,6 +39,13 @@ export default function Backgrounds() {
             </Surface>
           </Specimen>
         ))}
+        <Specimen title="Recessed">
+          <Surface background="page" padding={3} radius="sm">
+            <Surface background="recessed" padding={4} radius="sm">
+              <Text>In the page</Text>
+            </Surface>
+          </Surface>
+        </Specimen>
         <Specimen title="Raised">
           <Surface background="raised" padding={4}>
             <Text>On the page</Text>
