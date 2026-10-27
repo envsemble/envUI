@@ -486,6 +486,11 @@
           "$value": "{contrast-high.color.avatar.fg.oat}"
         }
       }
+    },
+    "rating": {
+      "star": {
+        "$value": "{contrast-high.color.rating.star}"
+      }
     }
   },
   "elevation": {

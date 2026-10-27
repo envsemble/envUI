@@ -55,11 +55,14 @@ export function RichText({
         ),
         taskItem: ({ node, children: content }) => (
           <li data-type="taskItem" data-checked={Boolean(node.attrs.checked)}>
-            <Checkbox
-              checked={Boolean(node.attrs.checked)}
-              disabled
-              aria-label={node.textContent || messages.task}
-            />
+            {/* In a span, as in the editor, so a task's row is as tall here as there. */}
+            <span className="env-rich-text-task-check">
+              <Checkbox
+                checked={Boolean(node.attrs.checked)}
+                disabled
+                aria-label={node.textContent || messages.task}
+              />
+            </span>
             <div>{content}</div>
           </li>
         ),

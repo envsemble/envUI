@@ -56,13 +56,13 @@ examples:
 | Minimized | Setting a panel aside as a tab over the bottom edge, with its content kept and nothing moved. |
 | Maximized | Giving one panel the whole region, behind the open panels.                                    |
 
-```tsx figure=MaximizedPanel
+```tsx figure=MaximizedPanel motion
 
 ```
 
 ## Anatomy
 
-```tsx figure=PanelDockAnatomy width="41"
+```tsx figure=PanelDockAnatomy width="34"
 
 ```
 
@@ -88,7 +88,7 @@ Open panels take their preferred width and shrink to a minimum, then the row scr
 
 - The dock can instead minimize the panel used longest ago, and open it again once there is room.
 
-```tsx figure=MinimizeWhatDoesNotFit
+```tsx figure=MinimizeWhatDoesNotFit motion
 
 ```
 
@@ -104,7 +104,7 @@ Where the dock is narrow, such as on a phone, one panel at a time fills the regi
 
 Keep the tabs short, and one panel at the front.
 
-```tsx figure=ShortTabLabels
+```tsx figure=ShortTabLabels motion
 
 ```
 

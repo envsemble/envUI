@@ -1100,6 +1100,18 @@
           "$description": "The initials on the oat fill."
         }
       }
+    },
+    "rating": {
+      "$description": "Component tokens of ratings: the gold of their filled stars, set apart from the boundary grey of the empty ones.",
+      "star": {
+        "$description": "The filled stars and the filled half of a half star: a clear gold.",
+        "$value": "{palette.amber.25}",
+        "$extensions": {
+          "com.envsemble.envui": {
+            "component": "Rating"
+          }
+        }
+      }
     }
   }
 }

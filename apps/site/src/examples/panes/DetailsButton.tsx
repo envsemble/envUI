@@ -5,12 +5,14 @@ import { Info } from '@envsemble/envui/icons/Info';
 export default function DetailsButton() {
   const [open, setOpen] = useState(false);
   return (
-    // A narrow window: the details are a sheet, which the button in the main pane opens.
+    // Side by side from a medium width; narrower, the details are a sheet, which the button in
+    // the main pane opens.
     <Panes.Root
       behavior="supporting"
+      splitAt="medium"
       open={open}
       onOpenChange={setOpen}
-      style={{ blockSize: '12rem', inlineSize: 'min(100%, 20rem)' }}
+      style={{ blockSize: '12rem', inlineSize: '100%' }}
     >
       <Panes.Main label="Budget">
         <Column gap={3} padding={4} align="start">

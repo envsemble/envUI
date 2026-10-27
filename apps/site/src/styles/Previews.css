@@ -93,6 +93,16 @@
   padding: 1rem 0.75rem;
 }
 
+/* An editor in a run of states: as wide as its cell, its text at the start as in a form, and three
+   lines tall rather than its own ten rem, so the run stays short. */
+.catalogue-short-editor {
+  inline-size: 100%;
+  text-align: start;
+}
+.catalogue-short-editor .env-rich-text-document {
+  min-block-size: 4.5rem;
+}
+
 /* A Box's inset made visible on its animated figure (specimens/box): its edge dashed, as a width
    frame's is, and the inset easing from one step to the next. */
 .catalogue-inset-box {

@@ -3,18 +3,20 @@ import { Button, PanelDock, Surface, Text, type PanelDockPanel } from '@envsembl
 
 export default function PanelDockAnatomy() {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
-    { id: 'press', title: 'Press release', mode: 'open', active: true, height: 220 },
+    { id: 'press', title: 'Press release', mode: 'open', active: true, height: 200 },
     { id: 'budget', title: 'Budget', mode: 'minimized' },
   ]);
   return (
-    // The dock fills a positioned region with a height.
+    // The dock fills a positioned region with a height; a small one, which shows its panels side
+    // by side from 30 rem rather than 40.
     <Surface
       background="muted"
       padding={0}
-      style={{ position: 'relative', blockSize: '22rem', overflow: 'hidden' }}
+      style={{ position: 'relative', blockSize: '17rem', inlineSize: '34rem', overflow: 'hidden' }}
     >
       <PanelDock.Root
         panels={panels}
+        stackBelow="30rem"
         onModeChange={(id, mode) =>
           setPanels((current) =>
             current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),

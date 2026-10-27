@@ -29,7 +29,9 @@ avoidWhen:
 components:
   - Progress
 examples:
-  UploadingFile: overview
+  UploadingFile:
+    role: overview
+    motion: true
   SetupSteps: example
   ProgressAnatomy: anatomy
   PreparingExport: example
@@ -51,7 +53,7 @@ examples:
 
 The track can split into equal steps that fill in turn.
 
-```tsx figure=SetupSteps
+```tsx figure=SetupSteps motion
 
 ```
 
@@ -85,7 +87,7 @@ While the amount of work is unknown, the indicator sweeps along the track.
 
 Start with an unknown amount, show the share once it is known, and replace the bar with the result.
 
-```tsx figure=ExportMembers
+```tsx figure=ExportMembers motion
 
 ```
 
@@ -101,11 +103,11 @@ The bar fills its container. The label and the value wrap onto two lines where t
 
 One bar stands for one task.
 
-```tsx figure=OneBarForBatch
+```tsx figure=OneBarForBatch motion
 
 ```
 
-```tsx figure=BarPerFile
+```tsx figure=BarPerFile motion
 
 ```
 

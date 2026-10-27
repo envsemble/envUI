@@ -32,9 +32,11 @@ examples:
   SupportingPane:
     role: overview
     caption: A main pane and a supporting one.
+    motion: true
   ListAndDetail:
     role: overview
     caption: A list and its detail.
+    motion: true
   ResizableDetails: example
   PanesAnatomy: anatomy
   SupportingByWidth: example
@@ -65,7 +67,7 @@ The panes sit side by side once they are as wide as a medium, an expanded or a l
 
 People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys.
 
-```tsx figure=ResizableDetails widths="44"
+```tsx figure=ResizableDetails motion
 
 ```
 
@@ -80,8 +82,6 @@ People can resize the supporting pane or the list by the gap between the panes, 
 3. **Divider** (`env-panes-divider`)
 4. **Detail** (`env-panes-detail`)
 
-Not shown: the main and supporting panes, the supporting sheet's close button and scrim, the button that opens it, and the detail's back button.
-
 ## Behaviour
 
 ### Scrolling
@@ -95,11 +95,11 @@ The panes decide how they sit from their own width alone.
 - A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens.
 - In less room a list and its detail show one at a time, and a back button named after the list, here Team inbox, returns to it.
 
-```tsx figure=SupportingByWidth widths="24 44 54" sweep classes
+```tsx figure=SupportingByWidth motion
 
 ```
 
-```tsx figure=ListDetailByWidth widths="24 54" sweep classes
+```tsx figure=ListDetailByWidth widths="24 54" sweep classes fit
 
 ```
 
@@ -107,11 +107,11 @@ The panes decide how they sit from their own width alone.
 
 Whatever the room, people can reach both panes.
 
-```tsx figure=DetailsButton
+```tsx figure=DetailsButton wide motion
 
 ```
 
-```tsx figure=NoWayToDetails
+```tsx figure=NoWayToDetails wide motion
 
 ```
 

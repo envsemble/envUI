@@ -1713,6 +1713,17 @@ export const tokens = {
       'dark-high-contrast': '#424447',
     },
   },
+  /** The filled stars and the filled half of a half star: a clear gold. */
+  'color.rating.star': {
+    cssVariable: '--env-color-rating-star',
+    type: 'color',
+    values: {
+      light: '#dea846',
+      dark: '#ebb750',
+      'light-high-contrast': '#553200',
+      'dark-high-contrast': '#ffe8be',
+    },
+  },
   /** The soft highlight that sweeps across a skeleton's bars and shapes: lighter than their fill on every surface, the raised surface in the light theme and the default border's gray in the dark. */
   'color.skeleton.shine': {
     cssVariable: '--env-color-skeleton-shine',

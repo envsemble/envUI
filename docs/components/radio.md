@@ -85,7 +85,7 @@ Choosing an option clears the one chosen before. People can't clear a choice, on
 
 A required group with nothing chosen asks for a choice before the form is sent, and its error is tied to the group.
 
-```tsx figure=RequiredChoice
+```tsx figure=RequiredChoice motion
 
 ```
 

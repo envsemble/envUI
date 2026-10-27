@@ -259,6 +259,10 @@
   transform: translateX(-50%) scale(var(--catalogue-sweep-scale, 1));
   transform-origin: top center;
 }
+/* A frame of a width of its own, without its edge, for a figure whose point isn't the width. */
+.catalogue-width-sweep-frame[data-outline='none'] {
+  outline-color: transparent;
+}
 
 /* The ruler: a faint dimension line across the frame's outline, its ends marked, with the width
    in its middle in small muted figures that don't shift as they change. */

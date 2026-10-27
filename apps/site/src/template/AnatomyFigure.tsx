@@ -74,6 +74,13 @@ function spread(positions: number[], min: number, max: number) {
   return result;
 }
 
+/** Whether an element comes after text in its line, such as a time inside a sentence. */
+function followsText(element: Element) {
+  for (let node = element.previousSibling; node; node = node.previousSibling)
+    if (node.textContent?.trim()) return true;
+  return false;
+}
+
 /**
  * Places a numbered callout on each part found in the subject: on the side of the component the
  * part is nearest to, the root at the start, with a line to the part and its box outlined. In a
@@ -93,7 +100,7 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
       return [];
     }
     const box = element && boxOf(element, text, origin);
-    return box ? [{ number: index + 1, box }] : [];
+    return box ? [{ number: index + 1, box, inline: !!element && followsText(element) }] : [];
   });
   if (!found.length) return [];
   const outer: Box = {
@@ -137,7 +144,7 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
   // their callouts sit above and below it instead, in turn.
   const roots = found.filter(({ box }) => isRoot(box)).length;
   let stacked = 0;
-  const placed = found.map(({ number, box }) => {
+  const placed = found.map(({ number, box, inline }) => {
     const root = isRoot(box);
     if (root && roots > 1) {
       const side: Side = stacked++ % 2 ? 'bottom' : 'top';
@@ -154,10 +161,14 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
     ).filter(
       ([side], _, all) => !blocked(side, box) || all.every(([other]) => blocked(other, box)),
     );
+    // A root that follows text, such as a time in a sentence, takes its callout above it, clear of
+    // the words before it.
     let side: Side = root
-      ? rtl
-        ? 'right'
-        : 'left'
+      ? inline
+        ? 'top'
+        : rtl
+          ? 'right'
+          : 'left'
       : distances.reduce((best, entry) => (entry[1] < best[1] ? entry : best))[0];
     // A part that holds others called out, as a strip holds its tabs, sits below them where it is
     // as near below as above, so the callouts of a row of parts don't all crowd its top.
@@ -171,9 +182,9 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
     );
     const below = distances.find(([name]) => name === 'bottom');
     const above = distances.find(([name]) => name === 'top');
-    if (side === 'top' && holds && below && above && Math.abs(below[1] - above[1]) < 1)
+    if (side === 'top' && !root && holds && below && above && Math.abs(below[1] - above[1]) < 1)
       side = 'bottom';
-    return { number, box, root, side };
+    return { number, box, root: root && !inline, side };
   });
   const callouts: Callout[] = [];
   for (const side of ['top', 'bottom', 'left', 'right'] as const) {
