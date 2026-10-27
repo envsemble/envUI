@@ -43,9 +43,9 @@
   background: var(--env-color-bg-page);
 }
 
-/* The catalogue: on the default surface's fill with no edge, as the home page's hero is. Its text,
-   badges and buttons keep their contrast there as on any default surface (`surface` in
-   tests/contrast/Pairs.ts), in every theme. */
+/* The catalogue: on the default surface's fill with no edge. Its text, badges and buttons keep
+   their contrast there as on any default surface (`surface` in tests/contrast/Pairs.ts), in every
+   theme. */
 .site-banner[data-banner='catalogue'] {
   border: 0;
   background: var(--env-color-bg-default);
