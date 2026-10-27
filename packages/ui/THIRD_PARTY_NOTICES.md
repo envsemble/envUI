@@ -24,12 +24,14 @@ from the repository root to update the pinned official source, then run
 `node scripts/build/GenerateIcons.ts`. A sync without `--revision` restores the existing
 pin. No install lifecycle script downloads or selects a floating catalogue.
 
-## Inter
+## Geist
 
-The bundled Inter font is included locally by envUI.
-Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter).
+The bundled Geist font is included locally by envUI.
+Copyright (c) 2023 Vercel, in collaboration with basement.studio (https://github.com/vercel/geist-font).
 Licensed under the SIL Open Font License, Version 1.1. The complete license is
-included in `licenses/Inter-LICENSE.txt`.
+included in `licenses/Geist-LICENSE.txt`. The bundled file is Geist 1.802's
+variable face, subset to Latin, Latin-1 and Latin Extended-A with the weight
+axis limited to 400 to 700; it keeps the name Geist.
 
 ## Base UI
 

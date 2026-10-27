@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "font": {
-    "family": { "$type": "fontFamily", "$value": ["envUI Inter", "sans-serif"] },
+    "family": { "$type": "fontFamily", "$value": ["envUI Geist", "sans-serif"] },
     "size": {
       "$type": "dimension",
       "caption": {
