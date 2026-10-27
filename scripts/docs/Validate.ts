@@ -151,7 +151,7 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
             );
           if (caption !== undefined && (typeof caption !== 'string' || !caption.trim()))
             problems.push(`${key} gives ${name} an empty caption`);
-          if ((role === 'do' || role === 'dont') && !caption)
+          if ((role === 'do' || role === 'dont' || role === 'caution') && !caption)
             problems.push(`${key} gives the ${role} figure ${name} no caption, its rule`);
         }
     } else if (rule.type === 'statuses') {
@@ -320,6 +320,7 @@ const figureAttributes: Record<string, { allowed: string[]; required: string[] }
   },
   do: { allowed: ['open', 'stage', 'wide', 'motion'], required: ['caption'] },
   dont: { allowed: ['open', 'stage', 'wide', 'motion'], required: ['caption'] },
+  caution: { allowed: ['open', 'stage', 'wide', 'motion'], required: ['caption'] },
   anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width'], required: [] },
   variants: { allowed: ['stage'], required: [] },
 };
@@ -678,11 +679,13 @@ export function readPage(
             ? `Do: ${caption}`
             : role === 'dont'
               ? `Don't: ${caption}`
-              : role === 'anatomy'
-                ? `${document.title} anatomy`
-                : role === 'variants'
-                  ? `${document.title} variants`
-                  : (subheading ?? fileWords(name)),
+              : role === 'caution'
+                ? `Caution: ${caption}`
+                : role === 'anatomy'
+                  ? `${document.title} anatomy`
+                  : role === 'variants'
+                    ? `${document.title} variants`
+                    : (subheading ?? fileWords(name)),
         ...(role !== 'example' && { role: role as ExampleBlock['role'] }),
         ...(caption && { caption }),
       };

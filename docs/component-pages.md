@@ -82,7 +82,7 @@ examples: # Each example file once, by its name, with its role and, where it has
 ---
 ```
 
-- **`examples`** lists each example once. Its role is `overview`, shown side by side at the top of the page as its Overview and never placed in the body; `example`; `variants` and `anatomy`, with the legend that follows them; or `do` and `dont`, whose caption is their rule and so required.
+- **`examples`** lists each example once. Its role is `overview`, shown side by side at the top of the page as its Overview and never placed in the body; `example`; `variants` and `anatomy`, with the legend that follows them; or `do`, `dont` and `caution`, whose caption is their rule and so required.
 - **An overview's framing.** Nothing places an overview, so its entry says how it is framed, validated as a fence's attributes: `open: true` shows its overlays open, as on [HoverCard](components/hover-card.md), `stage: shaded` the deeper stage of a whole window, as on [Scaffold](components/scaffold.md), and `wide: true` a row of its own, as on [Markdown](components/markdown.md). Other roles take them on their fence. The package leaves them out.
 - **`statuses`** gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable; the catalogue shows it beside the page's.
 - **`avoidWhen`** is the page's one list of related components and pages, its **Related** section: each entry names an export in `use` or an indexed page in `see`, never both, with a line saying when to pick it instead. The catalogue links it to the page that documents it, and agents read it as "need this, use that". Name each export or page once, and not both an export and its page; the build fails on a relation named twice. An entry may name a member of the page's own family, such as Textarea on the TextField page. Relate only what a reader might pick instead: a page that is only used alongside, such as Accessibility or Icons, is linked from the sentence that needs it, if anywhere.
@@ -199,12 +199,12 @@ Material Design 3's component pages, such as [buttons](https://m3.material.io/co
 
 A figure is an [example file](#examples) listed in the frontmatter and placed with an empty fence that names it, ` ```tsx figure=Name `, anywhere in a section but Compose and the changelog. Its role and caption come from the frontmatter; its framing from the attributes after the name, written as `name="value"`, or `name=value` without spaces, and flags, such as `open`, as their name alone. A value can't hold a double quote, not even as `\"`, so quote with ' or “ ”.
 
-| Role         | Shows                                                                               | Attributes on its fence                                                |
-| ------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `example`    | The example, live on the stage, with its caption below.                             | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion` |
-| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`, `wide`, `motion`                                      |
-| `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width`                              |
-| `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                                                |
+| Role                    | Shows                                                                                                   | Attributes on its fence                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `example`               | The example, live on the stage, with its caption below.                                                 | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion` |
+| `do`, `dont`, `caution` | The example on a square stage joined to a green Do, red Don't or amber Caution bar, and its rule below. | `open`, `stage`, `wide`, `motion`                                      |
+| `anatomy`               | The example on the stage, with numbered callouts on its parts and the legend below.                     | `of`, `open`, `stage`, `enlarge`, `width`                              |
+| `variants`              | The example on the stage, with a callout naming each variant, and the legend below.                     | `stage`                                                                |
 
 Every figure sits on the same stage, centred horizontally and vertically, in the theme, contrast and scale the reader has chosen: a recessed canvas, a well a shade deeper than the page, with a surface's corners and no edge, so the example's own surfaces rise out of it and a reader can always tell an example from the page around it. Under forced colors the canvas takes a frame instead. A specimen sits on it too. The canvas is the catalogue's (`apps/site/src/styles/Stage.css`), not envUI's.
 
@@ -249,6 +249,9 @@ The flag `wide` keeps an example alone in its row, across the whole column, rath
 List a `do` and a `dont` example and place them one after the other, so they sit side by side; place two pairs one after the other, and they line up two to a row.
 
 Each sits on a square stage, never larger than about 23 rem, so a pair stays small beside the text, from the column's start; on a phone they stack, each as wide as the column. An example that needs more room than the square is drawn smaller to fit it, as a tile is, never cut off. A do or a don't may stand alone, with no counterpart, where only one side is worth a picture.
+
+- **Only what a picture shows best.** Picture a real, tempting mistake a competent designer might make, and its fix; leave out the obvious, such as unreadable text, and say a rule no picture shows in a titled block.
+- **A caution** (`caution`) is acceptable with care rather than a mistake: a choice with a cost, such as avatars without names where room is short. Its caption says the cost and, where there is one, what to prefer.
 
 - Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three.
 - A caption is the rule in a few plain words, such as "One primary button per group, at the end of its actions."; don't repeat it below.

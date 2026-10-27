@@ -50,7 +50,7 @@ export type DocumentationBlock =
       name: string;
       heading: string;
       /** A do or don't figure, an anatomy or a variants figure; a live example without it. */
-      role?: 'do' | 'dont' | 'anatomy' | 'variants';
+      role?: 'do' | 'dont' | 'caution' | 'anatomy' | 'variants';
       /** One sentence under the figure; a do or don't figure's verdict. */
       caption?: string;
       /** The widths, in rem, of the frames an example is shown in, one to a row. */

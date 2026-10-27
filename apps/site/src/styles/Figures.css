@@ -321,10 +321,10 @@
   }
 }
 
-/* A do or don't figure: the example on a square stage, a green or red bar, and one sentence. The
-   square is never larger than `--site-verdict-size`, so a pair side by side stays small beside the
-   text; alone, or in a narrow column, it starts where the text does. A `wide` figure, whose point
-   is a change across the column's width, spans the column instead. */
+/* A do, don't or caution figure: the example on a square stage, a green, red or amber bar, and
+   one sentence. The square is never larger than `--site-verdict-size`, so a pair side by side
+   stays small beside the text; alone, or in a narrow column, it starts where the text does. A
+   `wide` figure, whose point is a change across the column's width, spans the column instead. */
 .site-verdict {
   display: grid;
   align-content: start;
@@ -413,6 +413,12 @@
 
 .site-verdict[data-verdict='dont'] .site-verdict-bar {
   background: var(--env-color-bg-danger-strong);
+}
+
+/* A caution, acceptable with care: amber, with the text a warning badge's solid fill takes. */
+.site-verdict[data-verdict='caution'] .site-verdict-bar {
+  background: var(--env-color-bg-warning-emphasis);
+  color: var(--env-color-fg-on-emphasis);
 }
 
 .site-verdict-caption {

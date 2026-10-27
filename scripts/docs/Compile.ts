@@ -13,6 +13,9 @@ import {
 } from './Schema.ts';
 import { cell, fenceFor } from './Validate.ts';
 
+/** How the package names a do, a don't or a caution figure in a run of figures. */
+const verdictWords: Record<string, string> = { do: 'do', dont: "don't", caution: 'caution' };
+
 /** Every runtime export a page documents, with namespaces expanded to their parts. */
 export function documentedExports(names, props) {
   return names.flatMap((name) => {
@@ -186,9 +189,9 @@ function compilePage(document, { props, examples, title }) {
         const table = next?.kind === 'markdown' && next.markdown.trimStart().startsWith('|');
         if (block.legend && !table) text += `\n${legendLines(block.legend)}\n\n`;
       } else if (block.kind === 'example')
-        // A do or a don't says so; its rule is its caption, in the frontmatter.
+        // A do, a don't or a caution says so; its rule is its caption, in the frontmatter.
         run.push(
-          block.role ? `${block.name} (${block.role === 'dont' ? "don't" : 'do'})` : block.name,
+          block.role ? `${block.name} (${verdictWords[block.role] ?? block.role})` : block.name,
         );
     }
     flush();

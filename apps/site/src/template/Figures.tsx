@@ -9,6 +9,7 @@ import {
 import { Column, Theme, useTheme } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { Close } from '@envsemble/envui/icons/Close';
+import { Warning } from '@envsemble/envui/icons/Warning';
 import type { DocumentationBlock, DocumentationSection, StageFill } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../Reference';
@@ -38,9 +39,17 @@ function FoundationFigure({ page, block }: { page: Document; block: FoundationBl
   return <Render legend={block.legend ?? []} caption={block.caption} />;
 }
 
+/** The bar under a do, a don't or a caution: its word and its icon. */
+const verdicts = {
+  do: { label: 'Do', icon: <Check /> },
+  dont: { label: 'Don’t', icon: <Close /> },
+  caution: { label: 'Caution', icon: <Warning /> },
+};
+
 /**
- * A do or don't figure: the live example on a square stage with a green Do or red Don't bar and
- * its one sentence below, and the example's code under it. The example is drawn smaller where it
+ * A do, don't or caution figure: the live example on a square stage with a green Do, red Don't or
+ * amber Caution bar, a caution being acceptable with care rather than a mistake, and its one
+ * sentence below, and the example's code under it. The example is drawn smaller where it
  * needs more room than the square (useVerdictFit). With `motion`, its animated specimen of the same
  * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,
  * keeps a stage as wide as the column and as tall as its example. A foundation page's preview
@@ -57,7 +66,7 @@ export function VerdictFigure({
   children,
   stage,
 }: {
-  verdict: 'do' | 'dont';
+  verdict: 'do' | 'dont' | 'caution';
   caption: string;
   /** Whether the example's overlays are shown open, as a picture. */
   open?: boolean;
@@ -72,7 +81,7 @@ export function VerdictFigure({
   | { page?: never; name?: never; children: ReactNode }
 )) {
   const theme = useTheme();
-  const label = verdict === 'do' ? 'Do' : 'Don’t';
+  const { label, icon } = verdicts[verdict];
   const id = useId();
   const stageRef = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
@@ -117,7 +126,7 @@ export function VerdictFigure({
           </Column>
         )}
         <div className="site-verdict-bar env-connected-row" id={`${id}-verdict`}>
-          {verdict === 'do' ? <Check /> : <Close />}
+          {icon}
           <span>{label}</span>
         </div>
       </div>
@@ -143,7 +152,7 @@ function Figure({
   options?: OptionTable;
 }) {
   if (block.kind === 'figure') return <FoundationFigure page={page} block={block} />;
-  if (block.role === 'do' || block.role === 'dont')
+  if (block.role === 'do' || block.role === 'dont' || block.role === 'caution')
     return (
       <VerdictFigure
         page={page.id}
