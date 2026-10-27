@@ -60,9 +60,6 @@ examples:
   DisabledWithReason:
     role: do
     caption: Keep an unavailable item, disabled, with a description of why.
-  HiddenItem:
-    role: dont
-    caption: An item that disappears, so people wonder where it went.
 ---
 
 # Menu
@@ -139,10 +136,6 @@ A menu puts what people use most first, and keeps every item in its place.
 ```
 
 ```tsx figure=DisabledWithReason open
-
-```
-
-```tsx figure=HiddenItem open
 
 ```
 

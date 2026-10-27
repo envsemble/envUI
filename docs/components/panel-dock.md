@@ -41,9 +41,6 @@ examples:
   ShortTabLabels:
     role: do
     caption: A short tab label, with the full title as its tooltip.
-  LongTabLabels:
-    role: dont
-    caption: 'Long titles on the tabs: they truncate and crowd the strip.'
 ---
 
 # PanelDock
@@ -105,10 +102,6 @@ Where the dock is narrow, such as on a phone, one panel at a time fills the regi
 Keep the tabs short, and one panel at the front.
 
 ```tsx figure=ShortTabLabels motion
-
-```
-
-```tsx figure=LongTabLabels
 
 ```
 
