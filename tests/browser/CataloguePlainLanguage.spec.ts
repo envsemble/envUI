@@ -118,9 +118,11 @@ test('the foundation and pattern pages show no technical text, in their words or
     if (path.startsWith('foundations/')) {
       // A foundation's sections, from its Markdown.
       await expect(page.locator('.catalogue-topic, .site-figure-section').last()).toBeVisible();
-      // The marks of a figure are measured once it has laid out.
+      // The marks of a figure are measured once it has laid out: numbers, or tags of their own.
       if (await page.locator('.catalogue-marked').count())
-        await expect(page.locator('.site-anatomy-badge').first()).toBeVisible();
+        await expect(
+          page.locator('.site-anatomy-badge, .catalogue-marked-tag').first(),
+        ).toBeVisible();
       // Docs opens the foundation's page in the Docs, as it does for a component.
       await expect(
         page.locator('.site-page-header').getByRole('link', { name: 'Docs', exact: true }),

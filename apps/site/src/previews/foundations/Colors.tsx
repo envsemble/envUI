@@ -1,38 +1,52 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import {
   Badge,
   Bar,
   Button,
   Column,
+  Drawer,
   IconButton,
   Meter,
   Progress,
-  Rail,
   Row,
   SegmentedControl,
   Surface,
+  Switch,
   Text,
   Theme,
   Toolbar,
   useTheme,
   type BadgeTone,
+  type BadgeVariant,
   type Destination,
   type ThemeContrast,
   type ThemeValue,
 } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
-import { AddAPhoto } from '@envsemble/envui/icons/AddAPhoto';
 import { AddPhotoAlternate } from '@envsemble/envui/icons/AddPhotoAlternate';
+import { Alarm } from '@envsemble/envui/icons/Alarm';
 import { Archive } from '@envsemble/envui/icons/Archive';
+import { Brush } from '@envsemble/envui/icons/Brush';
+import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
+import { Check } from '@envsemble/envui/icons/Check';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
+import { Close } from '@envsemble/envui/icons/Close';
 import { Crop } from '@envsemble/envui/icons/Crop';
-import { Done } from '@envsemble/envui/icons/Done';
+import { Description } from '@envsemble/envui/icons/Description';
 import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
 import { Favorite } from '@envsemble/envui/icons/Favorite';
-import { Group } from '@envsemble/envui/icons/Group';
 import { Info } from '@envsemble/envui/icons/Info';
-import { PhotoAlbum } from '@envsemble/envui/icons/PhotoAlbum';
-import { PhotoLibrary } from '@envsemble/envui/icons/PhotoLibrary';
+import { Map as MapIcon } from '@envsemble/envui/icons/Map';
+import { Mic } from '@envsemble/envui/icons/Mic';
+import { PersonAdd } from '@envsemble/envui/icons/PersonAdd';
 import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
 import { RotateRight } from '@envsemble/envui/icons/RotateRight';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -43,7 +57,7 @@ import { Warning } from '@envsemble/envui/icons/Warning';
 import { useTimeline } from '../Motion';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
-import { CornerLabel, StepStack } from './Steps';
+import { CornerLabel } from './Steps';
 import { Figure } from './Topic';
 import type { LegendEntry } from './Topic';
 
@@ -60,7 +74,7 @@ interface FigureWords {
 
 /**
  * The color of each role, in the legend's order: the page, a surface, a filled card, text,
- * supporting text, the accent and a status's soft fill.
+ * supporting text and the accent.
  */
 const roleColors: readonly string[] = [
   'bg-page',
@@ -69,14 +83,26 @@ const roleColors: readonly string[] = [
   'fg-default',
   'fg-muted',
   'bg-brand-emphasis',
-  'bg-success-muted',
 ];
 
+/** A role's tag: its number, as an anatomy figure's, and a swatch of its color beside it. */
+function RoleTag({ number }: { number: number }) {
+  return (
+    <span className="catalogue-role-tag" aria-hidden="true">
+      <span className="site-anatomy-number">{number}</span>
+      <span
+        className="catalogue-role-dot"
+        style={{ background: `var(--env-color-${roleColors[number - 1] ?? 'bg-page'})` }}
+      />
+    </span>
+  );
+}
+
 /**
- * A small screen with a numbered callout on each part that takes a role, as an anatomy figure's
- * are: the page, a surface on it, a filled card inside, text, supporting text, the accent and a
- * status. Its legend is an anatomy figure's, each number's tag carrying a dot of the role's color
- * in the reader's theme.
+ * A small screen with a callout on each part that takes a role, as an anatomy figure's: the page,
+ * a surface on it, a filled card inside, text, supporting text and the accent. Each callout, and
+ * its entry in the legend, is the role's number with a swatch of its color in the reader's theme,
+ * so a part, its color and its name read as one.
  */
 function RolesFigure({ legend }: FigureWords) {
   return (
@@ -87,13 +113,7 @@ function RolesFigure({ legend }: FigureWords) {
         <ol className="site-anatomy-legend catalogue-topic-legend">
           {legend.map((entry, index) => (
             <li key={entry.name}>
-              <span className="site-anatomy-number catalogue-role-tag" aria-hidden="true">
-                {index + 1}
-                <span
-                  className="catalogue-role-dot"
-                  style={{ background: `var(--env-color-${roleColors[index] ?? 'bg-page'})` }}
-                />
-              </span>
+              <RoleTag number={index + 1} />
               <div>
                 <Text render={<p />} className="catalogue-topic-legend-name">
                   {entry.name}
@@ -107,7 +127,7 @@ function RolesFigure({ legend }: FigureWords) {
         </ol>
       }
     >
-      <MarkedSubject>
+      <MarkedSubject oneSide tag={(number) => <RoleTag number={number} />}>
         <Surface
           background="page"
           padding={5}
@@ -122,14 +142,9 @@ function RolesFigure({ legend }: FigureWords) {
             data-catalogue-mark="2"
             render={<Column gap={5} />}
           >
-            <Column gap={1} align="start">
-              <Text render={<p />} variant="title" data-catalogue-mark="4">
-                Quarterly report
-              </Text>
-              <Text emphasis="muted" data-catalogue-mark="5">
-                Updated today by Priya Shah
-              </Text>
-            </Column>
+            <Text render={<p />} variant="title" data-catalogue-mark="4">
+              Quarterly report
+            </Text>
             <Surface
               background="muted"
               padding={4}
@@ -138,14 +153,13 @@ function RolesFigure({ legend }: FigureWords) {
               render={<Column gap={1} />}
             >
               <Text render={<p />} variant="title">
-                Budget
+                £34,000
               </Text>
-              <Text emphasis="muted">Within the plan for this quarter</Text>
+              <Text emphasis="muted" data-catalogue-mark="5">
+                Spent of £50,000
+              </Text>
             </Surface>
-            <Row justify="between" align="center" gap={3}>
-              <Badge tone="success" data-catalogue-mark="7">
-                On track
-              </Badge>
+            <Row justify="end">
               <Button data-catalogue-mark="6">Share</Button>
             </Row>
           </Surface>
@@ -207,7 +221,15 @@ function SwatchesFigure({ legend }: FigureWords) {
               <ul className="catalogue-role-swatches" aria-label={title}>
                 {roles.map((colors, index) => (
                   <li key={colors.join()}>
-                    <span className="catalogue-role-swatch" aria-hidden="true">
+                    <span
+                      className="catalogue-role-swatch"
+                      aria-hidden="true"
+                      style={
+                        {
+                          '--catalogue-card-fill': `var(--env-color-${colors.at(-1)})`,
+                        } as CSSProperties
+                      }
+                    >
                       {colors.map((color) => (
                         <span key={color} style={{ background: `var(--env-color-${color})` }} />
                       ))}
@@ -234,17 +256,23 @@ const themes: readonly { theme: ThemeValue; contrast: ThemeContrast }[] = [
   { theme: 'dark', contrast: 'high' },
 ];
 
-/** Whether the figure is narrower than a width in rem, by the width of its element. */
+/**
+ * Whether the figure is narrower than a width in rem, by the width of its element: measured before
+ * the figure is first painted, so it never shows its wide layout on a phone for a moment, which
+ * its stage would keep the height of.
+ */
 function useNarrow(width: number) {
   const ref = useRef<HTMLDivElement>(null);
   const [narrow, setNarrow] = useState(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const element = ref.current;
     if (!element) return;
-    const observer = new ResizeObserver(([entry]) => {
+    const measure = (inline: number) => {
       const rem = parseFloat(getComputedStyle(element).fontSize) || 16;
-      setNarrow((entry?.contentRect.width ?? 0) < width * rem);
-    });
+      setNarrow(inline < width * rem);
+    };
+    measure(element.getBoundingClientRect().width);
+    const observer = new ResizeObserver(([entry]) => measure(entry?.contentRect.width ?? 0));
     observer.observe(element);
     return () => observer.disconnect();
   }, [width]);
@@ -252,7 +280,7 @@ function useNarrow(width: number) {
 }
 
 /** How long the screen stays in each theme, in ms. */
-const themeStep = 2200;
+const themeStep = 2600;
 
 /**
  * One screen in each theme in turn, in the legend's order, each theme beside its high contrast,
@@ -301,29 +329,33 @@ function ThemesFigure({ legend }: FigureWords) {
 }
 
 /**
- * Each tone, in the legend's order, as the components paint it: its soft fill, as a badge's, and
- * its solid fill, from Badge's tones; and Info, which only alerts and toasts take, from the accent
- * tint of an alert and the strong fill of a toast. A word in the tone's text, with an icon, and on
- * its solid fill shows it at work.
+ * Each tone, in the legend's order, as a badge paints it, with a word in the tone and its icon:
+ * Badge's tones, and Info, which only alerts and toasts take, in their colors: the accent tint of
+ * an alert, soft; the strong fill of a toast, solid; the accent's edge, outlined.
  */
 const tones: readonly {
   badge?: BadgeTone;
-  soft?: CSSProperties;
-  solid?: CSSProperties;
+  own?: Record<BadgeVariant, CSSProperties>;
   icon: ReactNode;
   word: string;
 }[] = [
   { badge: 'neutral', icon: <Archive />, word: 'Archived' },
   { badge: 'accent', icon: <RadioButtonChecked />, word: 'Current' },
   {
-    soft: {
-      '--env-badge-container': 'var(--env-color-bg-accent-muted)',
-      '--env-badge-content': 'var(--env-color-fg-accent)',
-    } as CSSProperties,
-    solid: {
-      '--env-badge-container': 'var(--env-color-bg-info-strong)',
-      '--env-badge-content': 'var(--env-color-fg-on-strong)',
-    } as CSSProperties,
+    own: {
+      soft: {
+        '--env-badge-container': 'var(--env-color-bg-accent-muted)',
+        '--env-badge-content': 'var(--env-color-fg-accent)',
+      } as CSSProperties,
+      solid: {
+        '--env-badge-container': 'var(--env-color-bg-info-strong)',
+        '--env-badge-content': 'var(--env-color-fg-on-strong)',
+      } as CSSProperties,
+      outline: {
+        '--env-badge-content': 'var(--env-color-fg-accent)',
+        '--env-badge-outline': 'var(--env-color-border-accent)',
+      } as CSSProperties,
+    },
     icon: <Info />,
     word: 'Tip',
   },
@@ -333,64 +365,89 @@ const tones: readonly {
   { badge: 'done', icon: <TaskAlt />, word: 'Completed' },
 ];
 
-/** How long the card stays in each tone, in ms. */
-const toneStep = 1800;
+/** Badge's variants, each with its name in the corner, in the order the figure shows them. */
+const badgeVariants: readonly { variant: BadgeVariant; name: string }[] = [
+  { variant: 'soft', name: 'Soft' },
+  { variant: 'solid', name: 'Solid' },
+  { variant: 'outline', name: 'Outline' },
+];
+
+/** How long the badges stay in each variant, in ms. */
+const variantStep = 2000;
 
 /**
- * One card in each tone in turn, in the legend's order, the tone named in the corner: a word in
- * the tone's text color with its icon, what the tone means, and the tone's soft and solid badges.
- * The cards are stacked in one place, so the figure keeps the height of the tallest.
+ * Every tone's badge side by side, in the legend's order, all in one variant at a time: soft,
+ * solid, then outlined, the variant named in the corner. The badges ease from one to the next
+ * together, at one size, so nothing moves.
  */
-function StatusSteps({ legend }: FigureWords) {
-  const step = useTimeline(legend.map(() => toneStep));
+function StatusSteps() {
+  const step = useTimeline(badgeVariants.map(() => variantStep));
+  const { variant, name } = badgeVariants[step] ?? badgeVariants[0]!;
   return (
     <>
-      <CornerLabel>{legend[step]?.name}</CornerLabel>
-      <StepStack
-        className="catalogue-tone-steps"
-        count={legend.length}
-        at={step}
-        render={(index) => {
-          const tone = tones[index] ?? tones[0]!;
-          return (
-            <Surface
-              background="default"
-              padding={6}
-              radius="xl"
-              className="catalogue-tone-card"
-              data-tone={tone.badge ?? 'info'}
-              render={<Column gap={4} />}
+      <CornerLabel>{name}</CornerLabel>
+      <div className="catalogue-tone-badges">
+        {tones.map((tone, index) => (
+          <Fragment key={tone.word}>
+            {index === 4 && <span className="catalogue-tone-break" />}
+            <Badge
+              tone={tone.badge ?? 'accent'}
+              variant={variant}
+              icon={tone.icon}
+              style={tone.own?.[variant]}
             >
-              <Column gap={2}>
-                <span className="catalogue-tone-word">
-                  {tone.icon}
-                  {tone.word}
-                </span>
-                <Text render={<p />} emphasis="muted">
-                  {legend[index]?.text}
-                </Text>
-              </Column>
-              <Row gap={3} wrap>
-                <Badge tone={tone.badge ?? 'accent'} style={tone.soft}>
-                  {tone.word}
-                </Badge>
-                <Badge tone={tone.badge ?? 'accent'} variant="solid" style={tone.solid}>
-                  {tone.word}
-                </Badge>
-              </Row>
-            </Surface>
-          );
-        }}
-      />
+              {tone.word}
+            </Badge>
+          </Fragment>
+        ))}
+      </div>
     </>
   );
 }
 
-/** The card in each tone, on an animated figure. */
+/** The class of each tone's color in the legend, in the legend's order. */
+const toneColors: readonly string[] = [
+  'neutral',
+  'accent',
+  'info',
+  'success',
+  'warning',
+  'danger',
+  'done',
+];
+
+/**
+ * Every tone's badge in each of Badge's variants in turn, on an animated figure, and the legend
+ * under it: each tone's name after a dot in its color, and what it means.
+ */
 function StatusFigure({ legend }: FigureWords) {
   return (
-    <Figure label="What each color means" motion="the card in each tone">
-      <StatusSteps legend={legend} />
+    <Figure
+      label="What each color means"
+      motion="the badges in each variant"
+      legend={
+        <ul className="site-anatomy-legend catalogue-topic-legend catalogue-tone-legend">
+          {legend.map((entry, index) => (
+            <li key={entry.name}>
+              <span
+                className="catalogue-tone-dot"
+                data-tone={toneColors[index]}
+                aria-hidden="true"
+              />
+              <div>
+                <Text render={<p />} className="catalogue-topic-legend-name">
+                  {entry.name}
+                </Text>
+                <Text render={<p />} variant="body-sm" emphasis="muted">
+                  {entry.text}
+                </Text>
+              </div>
+            </li>
+          ))}
+        </ul>
+      }
+    >
+      <StatusSteps />
     </Figure>
   );
 }
@@ -529,25 +586,35 @@ function SchemeArea({
 }
 
 /** How long the components stay in each scheme, in ms. */
-const schemeStep = 1700;
+const schemeStep = 2400;
+
+/** A tile of the canvas: a component or two on the scheme's filled surface. */
+function Tile({ name, children }: { name: string; children: ReactNode }) {
+  return (
+    <Surface background="muted" radius="xl" className="catalogue-scheme-tile" data-tile={name}>
+      {children}
+    </Surface>
+  );
+}
 
 /**
- * The same components in a scheme of the application's own, each on a tile of the scheme's filled
- * surface, as one canvas: a column of quiet actions above the main one, a photo's toolbar beside
- * its save action, a choice of view, two uploads and, in the other theme, the navigation. It
- * steps through the schemes, the one shown named in the corner.
+ * The same components in a scheme of the application's own, filling the stage: its page's color
+ * with tiles of its filled surface, each a component or two, as Material 3's showcases lay them
+ * out: a column of quiet actions above the main one, a floating toolbar beside an important
+ * action, a choice of answers, uploads under way, a switch, a round action, a photo editor's
+ * toolbar, and the navigation peeking in at the end. It steps through the schemes, the one shown
+ * named in the corner.
  */
 function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boolean }) {
   const page = useTheme();
-  const other: ThemeValue = page.theme === 'dark' ? 'light' : 'dark';
   const scheme = useTimeline(schemes.map(() => schemeStep));
-  const [period, setPeriod] = useState('month');
-  const [place, setPlace] = useState('photos');
+  const [answer, setAnswer] = useState('going');
+  const [place, setPlace] = useState('alarms');
   const destination = (id: string) => ({ current: place === id, onSelect: () => setPlace(id) });
   const destinations: Destination[] = [
-    { label: 'Photos', icon: <PhotoLibrary />, ...destination('photos') },
-    { label: 'Albums', icon: <PhotoAlbum />, ...destination('albums') },
-    { label: 'Shared', icon: <Group />, ...destination('shared') },
+    { label: 'Friends', icon: <Favorite />, ...destination('friends') },
+    { label: 'Alarms', icon: <Alarm />, ...destination('alarms') },
+    { label: 'Map', icon: <MapIcon />, ...destination('map') },
   ];
   const actions = [
     <Button key="select" variant="secondary" startIcon={<CheckCircle />}>
@@ -557,7 +624,7 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
       Add photos
     </Button>,
     <Button key="share" variant="secondary" startIcon={<Share />}>
-      Share
+      Share album
     </Button>,
     <Button key="search" variant="secondary" startIcon={<Search />}>
       Search
@@ -565,119 +632,120 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
     <IconButton key="new" variant="primary" size="lg" icon={<Add />} aria-label="New album" />,
   ];
   return (
-    <>
+    <SchemeArea scheme={scheme} theme={page.theme} className="catalogue-scheme-canvas">
       <CornerLabel>{names[scheme]}</CornerLabel>
-      <SchemeArea scheme={scheme} theme={page.theme} className="catalogue-scheme-canvas">
-        <div className="catalogue-scheme-tiles" data-narrow={narrow || undefined}>
-          <Surface
-            background="muted"
-            radius="xl"
-            className="catalogue-scheme-tile"
-            data-tile="menu"
-          >
-            {narrow ? (
-              <Row wrap gap={2} align="center" justify="center">
-                {actions}
-              </Row>
-            ) : (
-              <Column gap={2} align="end">
-                {actions}
-              </Column>
-            )}
-          </Surface>
-          <Surface
-            background="muted"
-            radius="xl"
-            className="catalogue-scheme-tile"
-            data-tile="toolbar"
-          >
-            <Row gap={2} align="center" justify="center">
-              <Surface
-                background="default"
-                padding={1}
-                radius="full"
-                render={<Toolbar.Root aria-label="Edit photo" size="sm" />}
-              >
-                <Toolbar.Button icon={<Crop />} label="Crop" />
-                <Toolbar.Button icon={<Tune />} label="Adjust" />
-                <Toolbar.Button icon={<RotateRight />} label="Rotate" />
-                <Toolbar.Button icon={<Favorite />} label="Favorite" pressed />
-              </Surface>
-              <IconButton variant="primary" tone="accent" icon={<Done />} aria-label="Save" />
+      <div className="catalogue-scheme-tiles" data-narrow={narrow || undefined}>
+        <Tile name="actions">
+          {narrow ? (
+            <Row wrap gap={2} align="center" justify="center">
+              {actions}
             </Row>
-          </Surface>
-          <Surface
-            background="muted"
-            radius="xl"
-            className="catalogue-scheme-tile"
-            data-tile="choice"
-          >
-            <SegmentedControl
-              aria-label="Group photos by"
-              size="sm"
-              value={period}
-              onValueChange={setPeriod}
-              items={[
-                { value: 'day', label: 'Day' },
-                { value: 'month', label: 'Month' },
-                { value: 'year', label: 'Year' },
-              ]}
-            />
-          </Surface>
-          <Surface
-            background="muted"
-            radius="xl"
-            className="catalogue-scheme-tile"
-            data-tile="progress"
-            render={<Column gap={3} />}
-          >
+          ) : (
+            <Column gap={2} align="end">
+              {actions}
+            </Column>
+          )}
+        </Tile>
+        <Tile name="toolbar">
+          <Row gap={2} align="center" justify="center">
+            <Surface
+              background="default"
+              padding={1}
+              radius="full"
+              render={<Toolbar.Root aria-label="Event" size="sm" />}
+            >
+              <Toolbar.Button icon={<Check />} label="Accept" />
+              <Toolbar.Button icon={<Favorite />} label="Favorite" />
+              <Toolbar.Button icon={<Description />} label="Notes" />
+              <Toolbar.Button icon={<CalendarMonth />} label="Calendar" />
+            </Surface>
+            <IconButton variant="primary" tone="accent" icon={<Close />} aria-label="Close" />
+          </Row>
+        </Tile>
+        <Tile name="choice">
+          <SegmentedControl
+            aria-label="Going to the picnic"
+            size="sm"
+            value={answer}
+            onValueChange={setAnswer}
+            items={[
+              { value: 'going', label: 'Going' },
+              { value: 'maybe', label: 'Maybe' },
+              { value: 'no', label: 'No' },
+            ]}
+          />
+        </Tile>
+        <Tile name="progress">
+          <Column gap={3}>
             <Progress label="Lisbon" value={18} max={24} valueText="18 of 24" />
             <Progress label="Porto" value={6} max={20} valueText="6 of 20" />
-          </Surface>
-          <SchemeArea
-            scheme={scheme}
-            theme={other}
-            className="catalogue-scheme-tile catalogue-scheme-other"
-          >
-            {narrow ? (
-              <Bar aria-label="Photos" background="page" destinations={destinations} />
-            ) : (
-              <Rail
-                aria-label="Photos"
-                background="page"
+          </Column>
+        </Tile>
+        <div className="catalogue-scheme-pair">
+          <Tile name="switch">
+            <Switch aria-label="Sync" checked onCheckedChange={() => undefined} />
+          </Tile>
+          <Tile name="round">
+            <IconButton variant="primary" size="lg" icon={<Mic />} aria-label="Record" />
+          </Tile>
+        </div>
+        {/* A phone shows one toolbar, the first. */}
+        {!narrow && (
+          <Tile name="edit">
+            <Surface
+              background="default"
+              padding={1}
+              radius="full"
+              render={<Toolbar.Root aria-label="Edit photo" size="sm" />}
+            >
+              <Toolbar.Button icon={<Crop />} label="Crop" />
+              <Toolbar.Button icon={<Tune />} label="Adjust" />
+              <Toolbar.Button icon={<RotateRight />} label="Rotate" />
+              <Toolbar.Button icon={<Brush />} label="Draw" pressed />
+            </Surface>
+          </Tile>
+        )}
+        <Tile name="nav">
+          {narrow ? (
+            <Bar aria-label="Alarm clock" destinations={destinations} />
+          ) : (
+            <Surface background="default" className="catalogue-scheme-drawer">
+              <Drawer
+                aria-label="Alarm clock"
                 header={
-                  <IconButton
-                    variant="primary"
-                    tone="accent"
-                    icon={<AddAPhoto />}
-                    aria-label="Take a photo"
-                  />
+                  <Button variant="primary" tone="accent" startIcon={<PersonAdd />}>
+                    Invite
+                  </Button>
                 }
                 destinations={destinations}
               />
-            )}
-          </SchemeArea>
-        </div>
-      </SchemeArea>
-    </>
+            </Surface>
+          )}
+        </Tile>
+      </div>
+    </SchemeArea>
   );
 }
 
 /** The same components in each of a few pastel schemes of an application's own, chosen in turn. */
 function OwnColorsFigure({ legend }: FigureWords) {
   return (
-    <Figure label="Your own colors" motion="the components in each color scheme">
+    <Figure
+      label="Your own colors"
+      motion="the components in each color scheme"
+      className="catalogue-scheme-stage"
+    >
       <SchemeSteps names={legend.map((entry) => entry.name)} />
     </Figure>
   );
 }
 
-/** The narrowest the figure shows the canvas three across in, in rem. */
-const schemesWidth = 30;
+/** The narrowest the figure shows its tiles three across in, in rem. */
+const schemesWidth = 38;
 
 /**
- * The canvas at the figure's width: on a narrower one, as on a phone, the quiet actions wrap in a
- * row, and the navigation is a bar, as an application shows it there.
+ * The canvas at the figure's width: on a narrower one, as on a phone, the tiles one under another,
+ * the quiet actions in a row, and the navigation a bar, as an application shows it there.
  */
 function SchemeSteps({ names }: { names: readonly string[] }) {
   const [ref, narrow] = useNarrow(schemesWidth);
@@ -693,6 +761,6 @@ export const colorsFigures: Record<string, FoundationFigure> = {
   Roles: { render: RolesFigure, wide: true },
   Swatches: { render: SwatchesFigure, wide: true },
   Themes: { render: ThemesFigure },
-  Status: { render: StatusFigure },
+  Status: { render: StatusFigure, wide: true },
   OwnColors: { render: OwnColorsFigure, wide: true },
 };

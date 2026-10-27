@@ -21,7 +21,8 @@
 .site-page-banner[data-banner='catalogue'],
 .catalogue-overview-hero,
 .catalogue-explore-grid > .env-card,
-.site-page-navigation .env-pager-link {
+.site-page-navigation .env-pager-link,
+.catalogue-role-swatch {
   --catalogue-card-shadow: 0 0.5rem 1.5rem
     oklch(
       from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /

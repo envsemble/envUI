@@ -303,33 +303,51 @@
   inline-size: min(22rem, 100%);
 }
 
-/* Colors are roles: a small screen with an anatomy figure's callouts, and its legend's tags each
-   carrying a dot of the role's color, edged in the tag's ink so every role shows on it. */
+/* Colors are roles: a small screen with an anatomy figure's callouts, each callout and legend
+   entry a role's tag, its number beside a swatch of its color. */
+.catalogue-roles-stage .catalogue-marked-subject {
+  inline-size: min(100%, 24rem);
+}
 .catalogue-roles {
-  inline-size: min(24rem, 100%);
+  inline-size: 100%;
 }
-/* Room on both sides for the callouts, which sit outside the screen, on a phone too. */
+/* The tags in one column at the screen's end, outside it, the two centred together, on a phone
+   too. */
 .catalogue-marked-stage.catalogue-roles-stage {
-  padding-inline: 3rem;
+  padding-inline: var(--env-space-5);
 }
-.site-anatomy-number.catalogue-role-tag {
-  align-items: center;
+.catalogue-roles-stage .catalogue-marked {
+  padding-inline-end: 4.5rem;
+}
+.catalogue-role-tag {
   display: inline-flex;
-  gap: var(--env-space-2);
-  inline-size: auto;
-  padding-inline: var(--env-space-2);
+  align-items: center;
+  gap: var(--env-space-1);
 }
+.catalogue-marked-tag {
+  position: absolute;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+.catalogue-marked-tag[data-side='start'] {
+  translate: -100% -50%;
+}
+.catalogue-marked-tag[data-side='start'] > .catalogue-role-tag {
+  flex-direction: row-reverse;
+}
+/* A swatch the size of a number's badge, with an edge in the edge color so a swatch in the page's
+   or the text's color still shows beside it. */
 .catalogue-role-dot {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
   box-sizing: border-box;
-  inline-size: 0.75rem;
-  block-size: 0.75rem;
-  border: 0.0625rem solid var(--env-color-bg-page);
+  border: 0.0625rem solid var(--env-color-border-default);
   border-radius: var(--env-radius-full);
 }
 
 /* The color roles as swatches, on the page: four even columns of six, two on a narrower page and
-   one on a phone. Each column is one continuous strip of square-cornered swatches, three bands for
-   a status, with each name beside its swatch. */
+   one on a phone. Each swatch is a small card of its color, three bands for a status, with its
+   name beside it. */
 .catalogue-role-groups {
   container-type: inline-size;
 }
@@ -358,6 +376,7 @@
 }
 .catalogue-role-swatches {
   display: grid;
+  gap: var(--env-space-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -368,55 +387,97 @@
   column-gap: var(--env-space-3);
   align-items: center;
 }
-/* Every swatch has a hairline edge, so a white one shows on the white page; one hairline between
-   two swatches, and the strip's last closes it. */
+/* No outline: each swatch lifts off the page by the catalogue's soft shadow, which takes its color
+   from the swatch's (Stage.css), and a swatch in the page's own color, or close to it, still reads
+   as one by a faint inner edge in the text color, which a colored swatch hides. */
 .catalogue-role-swatch {
+  position: relative;
   display: flex;
-  box-sizing: border-box;
-  block-size: 2.25rem;
-  border: 0.0625rem solid var(--env-color-border-muted);
-  border-block-end-width: 0;
+  overflow: clip;
+  block-size: 2rem;
+  border-radius: var(--env-radius-sm);
+  box-shadow: var(--catalogue-card-shadow);
 }
-.catalogue-role-swatches > li:last-child > .catalogue-role-swatch {
-  border-block-end-width: 0.0625rem;
+.catalogue-role-swatch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 0.0625rem color-mix(in oklch, var(--env-color-fg-default) 9%, transparent);
+  pointer-events: none;
 }
 .catalogue-role-swatch > span {
   flex: 1;
 }
+/* At high contrast the inner edge is stronger, as every edge is; in forced colors, which draw no
+   shadows and fill every swatch with the canvas, a swatch keeps a frame. */
+:where([data-env-contrast='high']) .catalogue-role-swatch::after {
+  box-shadow: inset 0 0 0 0.0625rem
+    color-mix(in oklch, var(--env-color-fg-default) 30%, transparent);
+}
+@media (forced-colors: active) {
+  .catalogue-role-swatch {
+    border: 0.0625rem solid CanvasText;
+  }
+}
 
-/* What each color means: a card in each tone, at a card's width, a word in the tone's text color
-   with its icon, larger than body text, what the tone means, and its badges. */
-.catalogue-tone-steps {
-  inline-size: min(100%, 26rem);
+/* What each color means: every tone's badge side by side, a size larger than in a list so the
+   tones read across the stage, wrapping into centred rows on a phone. As the variant changes, every
+   badge eases into it together, at one size. */
+.catalogue-tone-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--env-space-3);
+  padding-block: var(--env-space-4);
+  zoom: 1.125;
 }
-.catalogue-tone-word {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-2);
-  font: var(--env-type-title);
+/* Where the seven don't fit in one row but four do, they break after the fourth, four over three,
+   rather than leaving one on a row of its own. */
+@container (30rem <= width < 46rem) {
+  .catalogue-tone-break {
+    flex-basis: 100%;
+  }
 }
-.catalogue-tone-word > svg {
-  flex: none;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-tone-badges > .env-badge {
+    transition-property: background-color, border-color, color;
+    transition-duration: calc(2.5 * var(--env-motion-duration-slow));
+    transition-timing-function: var(--env-motion-ease);
+  }
 }
-.catalogue-tone-card[data-tone='neutral'] .catalogue-tone-word {
-  color: var(--env-color-fg-muted);
+/* Its legend: each tone's name after a dot in the tone's color, two columns where they fit. */
+.site-anatomy-legend.catalogue-tone-legend {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: var(--env-space-4) var(--env-space-6);
 }
-.catalogue-tone-card:is([data-tone='accent'], [data-tone='info']) .catalogue-tone-word {
-  color: var(--env-color-fg-accent);
+.site-anatomy-legend.catalogue-tone-legend > li {
+  gap: var(--env-space-3);
 }
-.catalogue-tone-card[data-tone='success'] .catalogue-tone-word {
-  color: var(--env-color-fg-success);
+.catalogue-tone-dot {
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  margin-block-start: 0.375rem;
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-fg-muted);
 }
-.catalogue-tone-card[data-tone='warning'] .catalogue-tone-word {
-  color: var(--env-color-fg-warning);
+.catalogue-tone-dot:is([data-tone='accent'], [data-tone='info']) {
+  background: var(--env-color-fg-accent);
 }
-.catalogue-tone-card[data-tone='danger'] .catalogue-tone-word {
-  color: var(--env-color-fg-danger);
+.catalogue-tone-dot[data-tone='info'] {
+  background: var(--env-color-bg-info-strong);
 }
-.catalogue-tone-card[data-tone='done'] .catalogue-tone-word {
-  color: var(--env-color-fg-done);
+.catalogue-tone-dot[data-tone='success'] {
+  background: var(--env-color-fg-success);
+}
+.catalogue-tone-dot[data-tone='warning'] {
+  background: var(--env-color-fg-warning);
+}
+.catalogue-tone-dot[data-tone='danger'] {
+  background: var(--env-color-fg-danger);
+}
+.catalogue-tone-dot[data-tone='done'] {
+  background: var(--env-color-fg-done);
 }
 
 /* A shape's name and meaning sit right under its stage, in the run's second row. */
@@ -440,72 +501,112 @@
   border-radius: var(--env-radius-xl);
 }
 
-/* Your own colors: one canvas in a scheme of its own, its page's color with a surface's corners,
-   holding tiles of its filled surface, each one component, as Material 3's showcases do: three
-   across, the quiet actions and the navigation running down every row; on a narrower figure, as on
-   a phone, one under another, the navigation a bar at the foot. The navigation's tile is in the
-   other theme, its own page's color. */
+/* Your own colors: the one figure whose whole stage takes a scheme of its own. The stage has no
+   padding of its own; the canvas fills it, edge to edge, in the scheme's page color, holding tiles
+   of its filled surface, each one component or two, as Material 3's showcases do: six columns,
+   the quiet actions down the start, the navigation peeking in at the end, the rest between; on a
+   narrower figure, as on a phone, one under another, the navigation a bar at the foot. */
+.site-foundation-stage.catalogue-scheme-stage {
+  align-content: stretch;
+  padding: 0;
+}
+/* The canvas fills the stage however tall it has grown (MotionStage keeps the tallest height). */
+.site-topic-figure > .catalogue-scheme-stage > .catalogue-motion-subject,
+.catalogue-scheme-steps {
+  display: grid;
+  place-items: stretch;
+}
 .catalogue-scheme-canvas {
   box-sizing: border-box;
-  inline-size: min(100%, 44rem);
-  padding: var(--env-space-3);
-  border-radius: var(--env-radius-xl);
+  inline-size: 100%;
+  padding: var(--env-space-8) var(--env-space-6);
+  background-color: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
 }
 .catalogue-scheme-tiles {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
   grid-template-areas:
-    'menu toolbar other'
-    'menu choice other'
-    'menu progress other';
+    'actions toolbar pair'
+    'actions choice nav'
+    'edit progress nav';
   gap: var(--env-space-3);
+  inline-size: min(100%, 52rem);
+  margin-inline: auto;
 }
 .catalogue-scheme-tiles[data-narrow] {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
-    'menu'
+    'actions'
     'toolbar'
     'choice'
     'progress'
-    'other';
+    'pair'
+    'nav';
+}
+.catalogue-scheme-pair {
+  grid-area: pair;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--env-space-3);
 }
 .catalogue-scheme-tile {
   display: grid;
   place-items: center;
   box-sizing: border-box;
   min-inline-size: 0;
+  min-block-size: 5rem;
   padding: var(--env-space-4);
   border-radius: var(--env-radius-xl);
 }
-.catalogue-scheme-tile[data-tile='menu'] {
-  grid-area: menu;
+.catalogue-scheme-tile[data-tile='actions'] {
+  grid-area: actions;
 }
 .catalogue-scheme-tile[data-tile='toolbar'] {
   grid-area: toolbar;
 }
 .catalogue-scheme-tile[data-tile='choice'] {
   grid-area: choice;
+  padding-inline: var(--env-space-2);
 }
 .catalogue-scheme-tile[data-tile='progress'] {
   grid-area: progress;
-  place-items: stretch;
-  align-content: center;
+  place-items: center stretch;
 }
-.catalogue-scheme-other {
-  grid-area: other;
-  padding: var(--env-space-2) var(--env-space-3);
+.catalogue-scheme-tile[data-tile='edit'] {
+  grid-area: edit;
 }
-.catalogue-scheme-tiles[data-narrow] > .catalogue-scheme-other {
+/* The navigation peeks in from the tile's bottom end, cut off by its corners, as a drawer opening. */
+.catalogue-scheme-tile[data-tile='nav'] {
+  grid-area: nav;
+  place-items: start stretch;
+  overflow: clip;
+  padding: var(--env-space-5) 0 0 var(--env-space-4);
+}
+.catalogue-scheme-tiles[data-narrow] > .catalogue-scheme-tile[data-tile='nav'] {
+  min-block-size: 0;
   place-items: stretch;
   padding: var(--env-space-2);
 }
-/* While a scheme eases in, every part's colors fade at the pace of the theme's fade
-   (ThemeFade.css), parts with transitions of their own too, such as a progress bar's indicator and
-   a button's fill, so the canvas changes as one. */
+.catalogue-scheme-drawer {
+  overflow: clip;
+  inline-size: 14rem;
+  block-size: 100%;
+  border-start-start-radius: var(--env-radius-xl);
+}
+.catalogue-scheme-drawer > * {
+  block-size: 100%;
+}
+/* While a scheme eases in, every part's colors fade slowly together, parts with transitions of
+   their own too, such as a progress bar's indicator and a button's fill, so the canvas changes as
+   one and never flashes: the theme screen above it too. */
 @media (prefers-reduced-motion: no-preference) {
-  .catalogue-scheme-tiles :is(*, ::before, ::after) {
+  .catalogue-scheme-canvas,
+  .catalogue-scheme-canvas :is(*, ::before, ::after),
+  .catalogue-theme-screen,
+  .catalogue-theme-screen :is(*, ::before, ::after) {
     transition-property: background-color, border-color, color, outline-color, fill, stroke;
-    transition-duration: calc(1.5 * var(--env-motion-duration-slow));
+    transition-duration: calc(5 * var(--env-motion-duration-slow));
     transition-timing-function: var(--env-motion-ease);
   }
 }
