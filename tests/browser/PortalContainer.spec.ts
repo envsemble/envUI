@@ -141,4 +141,16 @@ test.describe('PortalContainer, contained', () => {
     await page.keyboard.press('F6');
     await expect(page.getByTestId('outside')).toBeFocused();
   });
+
+  test('a menubar switches menus in it, one open at a time', async ({ page }) => {
+    await page.goto(preview);
+    const layer = page.getByTestId('menubar-layer');
+    const bar = page.getByRole('menubar', { name: 'Application menu' });
+    await bar.getByRole('menuitem', { name: 'File' }).click();
+    await expect(layer.getByRole('menu', { name: 'File' })).toBeVisible();
+    // Another menu opening in its place closes it, though the press came from outside the layer.
+    await bar.getByRole('menuitem', { name: 'Edit' }).hover();
+    await expect(layer.getByRole('menu', { name: 'Edit' })).toBeVisible();
+    await expect(layer.getByRole('menu', { name: 'File' })).toHaveCount(0);
+  });
 });

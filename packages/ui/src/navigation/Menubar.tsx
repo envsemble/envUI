@@ -441,9 +441,12 @@ function Menu({
       onOpenChange={(next, details) => {
         // Base UI checks where focus went a moment after it leaves the trigger. When that check runs
         // late, focus may already be in one of the menu's own submenus, so the menu stays open.
+        // Another menu of the menubar opening in its place closes it, in a contained
+        // PortalContainer too, where a close from outside the container is kept from it.
         if (
           (!next && details.reason === 'trigger-focus' && focusInSubmenu()) ||
-          keepsOpen(portal, next, details, trigger.current)
+          (!switchingReasons.has(details.reason) &&
+            keepsOpen(portal, next, details, trigger.current))
         ) {
           details.cancel();
           return;

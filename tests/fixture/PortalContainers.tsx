@@ -6,6 +6,7 @@ import {
   Dialog,
   IconButton,
   Menu,
+  Menubar,
   PortalContainer,
   Theme,
   Toast,
@@ -37,7 +38,8 @@ function NotifyButton() {
 /**
  * Preview regions of a page, not inert, whose overlays render into a layer of each through a
  * contained PortalContainer, open as the page loads: a menu, a tooltip and a toast in one, a dialog
- * in another, a combobox's list in the third; a fourth holds a context menu, opened by right click.
+ * in another, a combobox's list in the third; a fourth holds a context menu, opened by right click,
+ * and a fifth a menubar.
  * The page is taller than the window, so its scroll can be checked.
  */
 export function PortalContainersFixture() {
@@ -45,6 +47,7 @@ export function PortalContainersFixture() {
   const [dialogLayer, setDialogLayer] = useState<HTMLDivElement | null>(null);
   const [comboboxLayer, setComboboxLayer] = useState<HTMLDivElement | null>(null);
   const [contextLayer, setContextLayer] = useState<HTMLDivElement | null>(null);
+  const [menubarLayer, setMenubarLayer] = useState<HTMLDivElement | null>(null);
   const region = {
     position: 'relative',
     contain: 'layout',
@@ -106,6 +109,19 @@ export function PortalContainersFixture() {
           </ContextMenu>
         </PortalContainer>
         <div ref={setContextLayer} data-testid="context-layer" />
+      </div>
+      <div data-testid="menubar-preview" style={region}>
+        <PortalContainer container={menubarLayer} contained>
+          <Menubar.Root aria-label="Application menu">
+            <Menubar.Menu label="File">
+              <Menu.Item>New note</Menu.Item>
+            </Menubar.Menu>
+            <Menubar.Menu label="Edit">
+              <Menu.Item>Copy</Menu.Item>
+            </Menubar.Menu>
+          </Menubar.Root>
+        </PortalContainer>
+        <div ref={setMenubarLayer} data-testid="menubar-layer" />
       </div>
       {/* Taller than the window, so the page scrolls. */}
       <div style={{ blockSize: '150vh' }} />
