@@ -1,17 +1,15 @@
 import { Button, Card } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
 
-/** In the shape of what is coming: a card loading, its content arriving, and loading again. */
-const steps = [1300, 2600];
-
-/** A card as a skeleton while it loads, then its content. */
+/**
+ * In the shape of what is coming: a card that stays loading, over a placeholder item, its title and
+ * its line given as undefined, so its skeleton draws a bar for each, their own shimmer playing.
+ */
 export default function LoadingTile() {
-  const loaded = useTimeline(steps) === 1;
   return (
     <Card
-      skeleton={!loaded}
-      title={loaded ? 'Northwind launch' : undefined}
-      description={loaded ? 'Pricing and the press kit.' : undefined}
+      skeleton
+      title={undefined}
+      description={undefined}
       actions={<Button>Open</Button>}
       style={{ inlineSize: '15rem' }}
     />
