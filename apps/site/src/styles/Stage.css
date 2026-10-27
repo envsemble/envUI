@@ -64,7 +64,8 @@
 .site-anatomy-stage,
 .catalogue-related-stage,
 .site-foundation-stage[data-figure='example'],
-.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
+.site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
+.catalogue-showcase-card {
   /* contrast: catalogue-canvas */
   --catalogue-card-fill: light-dark(
     oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.035) c h),
@@ -76,11 +77,10 @@
 }
 
 /* The site's own cards lift off the page as its canvases do, each by its own fill: a catalogue
-   page's banner, and the Overview's hero, its showcase's cards and its cards; the pager at a page's
-   foot, smaller, half as much. */
+   page's banner, and the Overview's hero and its cards; the pager at a page's foot, smaller, half as
+   much. */
 .site-page-banner[data-banner='catalogue'],
 .catalogue-overview-hero,
-.catalogue-showcase-card,
 .catalogue-explore-grid > .env-card {
   --catalogue-card-fill: var(--env-surface-color);
   box-shadow: var(--catalogue-card-shadow);
