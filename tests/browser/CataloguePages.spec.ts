@@ -635,7 +635,7 @@ test('figures with open overlays keep them in their stages, inert, and leave the
   await expect.poll(() => scroller.evaluate((element) => element.scrollTop)).not.toBe(before);
 });
 
-test('F6 on the Toast page reaches a notification raised there, past the figures @engines', async ({
+test("F6 passes the figures' notifications and reaches one a live example raises @engines", async ({
   page,
 }) => {
   await page.goto(`${siteDevUrl}/components/toast`);
@@ -649,8 +649,10 @@ test('F6 on the Toast page reaches a notification raised there, past the figures
   );
   await page.keyboard.press('F6');
   await expect(page.locator('body')).toHaveAttribute('data-f6-prevented', 'false');
-  // The overview plays its Save changes in a figure; the export example raises a live notice.
-  await page.getByRole('button', { name: 'Export members' }).first().click();
+  // The Toast page's figures all play or show their notices as pictures; Settings' overview is
+  // live, and its directory switch raises a live notice.
+  await page.goto(`${siteDevUrl}/patterns/settings`);
+  await page.getByRole('switch', { name: 'Show me in the directory' }).first().click();
   const live = page
     .locator(
       '.env-toast-viewport:not(:is(.catalogue-open-example, .catalogue-motion-subject) .env-toast-viewport)',

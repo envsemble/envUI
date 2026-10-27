@@ -161,6 +161,8 @@ Not shown: the suffix, the error and a text area's resize edge.
 
 The label rests in an empty field and floats into the outline on focus or with a value.
 
+<!-- specimen: LabelFloats -->
+
 <!-- specimen: States -->
 
 ### Show an error
@@ -170,7 +172,7 @@ An error marks the field invalid and shows under its description. Say how to cor
 - Check on leaving the field and on submit, never while people type.
 - Clear the error as soon as the value fits.
 
-```tsx figure=Validation
+```tsx figure=Validation motion
 
 ```
 
@@ -180,11 +182,13 @@ A search field's clear button and <kbd>Esc</kbd> empty the query.
 
 - Its label is for assistive technology, unless it is set to show.
 
+<!-- specimen: ClearingTheQuery -->
+
 ### Textarea sizing
 
 A text area keeps its height and scrolls, and people resize it by its bottom edge, by dragging or with the arrow keys. It can grow with its text instead.
 
-```tsx figure=TextareaSizing
+```tsx figure=TextareaSizing motion
 
 ```
 

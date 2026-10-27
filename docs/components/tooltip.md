@@ -28,7 +28,9 @@ avoidWhen:
 components:
   - Tooltip
 examples:
-  IconActions: overview
+  IconActions:
+    role: overview
+    motion: true
   RailOfIcons:
     role: example
     caption: Beside a rail of icons, toward the content.
@@ -64,7 +66,7 @@ Where the window has no room, a tooltip flips to the other side.
 | Bottom | Controls at the top of a window or a pane, such as a toolbar. |
 | Beside | A vertical rail, toward the content, in either direction.     |
 
-```tsx figure=RailOfIcons
+```tsx figure=RailOfIcons open
 
 ```
 
@@ -87,7 +89,7 @@ A tooltip can name the button that opens a menu, a popover, a dialog or a sheet.
 
 - It stays closed while what it opens is open.
 
-```tsx figure=MenuTrigger
+```tsx figure=MenuTrigger motion
 
 ```
 
@@ -95,7 +97,7 @@ A tooltip can name the button that opens a menu, a popover, a dialog or a sheet.
 
 Write the shortcut after the control's name, such as Bold (<kbd>Ctrl</kbd>+<kbd>B</kbd>).
 
-```tsx figure=ShortcutHints
+```tsx figure=ShortcutHints open
 
 ```
 
@@ -103,7 +105,7 @@ Write the shortcut after the control's name, such as Bold (<kbd>Ctrl</kbd>+<kbd>
 
 Text that isn't a control, such as an abbreviation, takes a quiet underline of round, well-spaced dots that says it shows more on hover or focus. It takes keyboard focus, so the keyboard opens the tooltip too.
 
-```tsx figure=TextAbbreviation
+```tsx figure=TextAbbreviation motion
 
 ```
 

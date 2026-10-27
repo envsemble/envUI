@@ -5,11 +5,12 @@ import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
 
 export default function ViewControls() {
   return (
-    // A pill surface floats the toolbar over a diagram; its buttons take the small size.
+    // A pill surface floats the toolbar over a diagram; its buttons take the small size, and
+    // their names show at once, for people who scan the icons by pointing at them.
     <Surface
       padding={1}
       radius="full"
-      render={<Toolbar.Root aria-label="Diagram view" size="sm" />}
+      render={<Toolbar.Root aria-label="Diagram view" size="sm" tooltipDelay={0} />}
       style={{ inlineSize: 'fit-content' }}
     >
       <Toolbar.Button icon={<ZoomOut />} label="Zoom out" shortcut="Ctrl+-" />

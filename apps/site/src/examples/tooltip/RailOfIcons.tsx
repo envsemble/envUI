@@ -12,11 +12,17 @@ const tools = [
 ];
 
 export default function RailOfIcons() {
+  // Shown open in the docs on Search files; without defaultOpen, it opens on hover and focus.
   return (
     <Column gap={1} align="start">
       {tools.map(({ label, icon }) => (
         // inline-end opens beside the rail, toward the content, in either text direction.
-        <Tooltip key={label} content={label} side="inline-end">
+        <Tooltip
+          key={label}
+          content={label}
+          side="inline-end"
+          defaultOpen={label === 'Search files'}
+        >
           <IconButton icon={icon} aria-label={label} variant="ghost" />
         </Tooltip>
       ))}

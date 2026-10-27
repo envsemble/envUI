@@ -63,7 +63,7 @@ examples:
 | Info    | Something worth noticing that needs no action.         |
 | Danger  | An action that failed.                                 |
 
-```tsx figure=Tones
+```tsx figure=Tones open
 
 ```
 
@@ -76,7 +76,7 @@ Past a limit, older notifications wait behind a count, and danger notifications 
 | Bottom end | Most applications, at the bottom corner at the end of the line. The default. |
 | Top center | An application whose bottom corner is taken.                                 |
 
-```tsx figure=TopCenter
+```tsx figure=TopCenter motion
 
 ```
 
@@ -104,7 +104,7 @@ Its timer pauses while the pointer rests on it or it has focus.
 
 A notification with an action stays until its action has run or people dismiss it.
 
-```tsx figure=UndoArchive
+```tsx figure=UndoArchive motion
 
 ```
 
@@ -112,7 +112,7 @@ A notification with an action stays until its action has run or people dismiss i
 
 A danger notification stays until it is dismissed, and is announced at once.
 
-```tsx figure=RetryAfterError
+```tsx figure=RetryAfterError motion
 
 ```
 
@@ -120,7 +120,7 @@ A danger notification stays until it is dismissed, and is announced at once.
 
 A notification can stay until people dismiss it.
 
-```tsx figure=ExportReady
+```tsx figure=ExportReady motion
 
 ```
 

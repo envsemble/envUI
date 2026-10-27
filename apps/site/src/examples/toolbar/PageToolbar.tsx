@@ -14,7 +14,7 @@ export default function PageToolbar() {
         // control is a tab stop. The primary action sits at the end.
         <Row wrap align="center" justify="between" gap={3}>
           <Row wrap align="center" gap={3}>
-            <SearchField label="Search tasks" />
+            <SearchField label="Search tasks" placeholder="Search tasks" />
             <SegmentedControl
               aria-label="Status"
               value={status}

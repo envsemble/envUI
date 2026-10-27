@@ -54,7 +54,7 @@ The bar can be the window's own title bar in an installed web app: empty space d
 
 - It then spans the whole Scaffold.
 
-```tsx figure=TitleBar
+```tsx figure=TitleBar widths="40"
 
 ```
 
