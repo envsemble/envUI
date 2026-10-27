@@ -181,12 +181,12 @@ test('the shape stays on the current entry, then glides on to the next as it nea
   assert.equal(wavePlace(3), 3);
 });
 
-test("the shape swells at the reader's place, half 1.4 entries away, and none four away", () => {
+test("the shape swells at the reader's place, half 0.9 entries away, and none two and a half away", () => {
   assert.equal(swellAt(4, 4, []), 1);
-  assert.ok(Math.abs(swellAt(5.4, 4, []) - 0.5) < 0.01);
-  assert.ok(swellAt(5, 4, []) > 0.7);
-  assert.ok(swellAt(7, 4, []) < 0.02);
-  assert.equal(swellAt(8, 4, []), 0);
+  assert.ok(Math.abs(swellAt(4.9, 4, []) - 0.5) < 0.01);
+  assert.ok(swellAt(4.5, 4, []) > 0.85);
+  assert.ok(swellAt(6, 4, []) < 0.02);
+  assert.equal(swellAt(6.5, 4, []), 0);
   assert.equal(swellAt(0, 4, []), 0);
   // The entry under the pointer swells it a little, by how far its swell has grown.
   assert.ok(swellAt(0, 4, [1]) > 0.3 && swellAt(0, 4, [1]) < 0.5);
@@ -195,7 +195,7 @@ test("the shape swells at the reader's place, half 1.4 entries away, and none fo
   // In a short list, the bulge is shorter, so the thin stroke still shows.
   assert.equal(waveReach(12), 1);
   assert.equal(waveReach(3), 0.5);
-  assert.ok(swellAt(5.4, 4, [], undefined, 0.5) < 0.2);
+  assert.ok(swellAt(4.9, 4, [], undefined, 0.5) < 0.2);
 });
 
 test('moving, the bulge leans back and stretches; landing, it squashes a little past its fullest', () => {

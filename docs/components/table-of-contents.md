@@ -173,9 +173,9 @@ The current section is the last one whose start, less its scroll margin, has pas
 
 The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter. Its name comes from EnvUIProvider's `messages.tableOfContents`.
 
-The reader's place is `env-table-of-contents-wave`, an SVG hidden from assistive technology in the body's start column, `--env-table-of-contents-stroke` wide at its fullest, `--env-space-4` and half `--env-space-1` by default, and a tenth of that elsewhere. The component draws its outline every frame the place moves, without rendering again, from the links' layout positions.
+The reader's place is `env-table-of-contents-wave`, an SVG hidden from assistive technology in the body's start column, `--env-table-of-contents-stroke` wide at its fullest, `--env-space-5` by default, and a tenth of that elsewhere. The component draws its outline every frame the place moves, without rendering again, from the links' layout positions.
 
-- It is one path in `--env-color-bg-neutral-muted`, bulging over about three entries either side of the place, fewer in a list of under seven. In right-to-left text, its straight edge is on the right.
+- It is one path in `--env-color-bg-neutral-muted`, a round bulb over about two entries either side of the place, fewer in a list of under seven. In right-to-left text, its straight edge is on the right.
 - It follows the scroll on a spring, and two more springs stretch it and lean it back with its speed, so it wobbles once as it lands; no frame is drawn once they rest. At once under reduced motion; in forced colors it is `CanvasText`.
 
 ## Changelog

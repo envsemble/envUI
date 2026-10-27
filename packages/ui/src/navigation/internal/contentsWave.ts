@@ -5,12 +5,12 @@
  * settles with a short wobble when it arrives: three springs, stepped every frame it moves.
  */
 
-/** How many entries away from the reader's place the shape still swells: four. */
-export const waveSpread = 4;
+/** How many entries away from the reader's place the shape still swells: two and a half. */
+export const waveSpread = 2.5;
 /** How round the bulge is: above 2, fuller at its middle and quicker at its foot than a bell. */
-const waveRound = 2.6;
-/** How quickly the swell falls away: to half 1.4 entries from the reader's place. */
-const waveFall = 1.4 / Math.LN2 ** (1 / waveRound);
+const waveRound = 3;
+/** How quickly the swell falls away: to half 0.9 entries from the reader's place. */
+const waveFall = 0.9 / Math.LN2 ** (1 / waveRound);
 /** How thin the shape runs away from the reader's place, as a share of its fullest. */
 export const waveThin = 0.1;
 /** How far the entry under the pointer swells the shape, as a share of the reader's place. */
@@ -101,9 +101,10 @@ export function entryAt(anchors: readonly number[], y: number): number {
 
 /**
  * How far the shape swells at a fractional entry index, from 0 to 1, or a little more where it
- * lands: 1 at the reader's place, half 1.4 entries away and nothing four away, drawn out
- * and in by its motion, and shorter by `reach` in a short list; with a smaller swell at each entry under the pointer, by how far its own
- * has grown (`hovers`, from 0 to 1 per entry). Without a place, only those.
+ * lands: 1 at the reader's place, half 0.9 entries away and nothing two and a half away, drawn out
+ * and in by its motion, and shorter by `reach` in a short list; with a smaller swell at each entry
+ * under the pointer, by how far its own has grown (`hovers`, from 0 to 1 per entry), which merges
+ * with the bulge where they meet. Without a place, only those.
  */
 export function swellAt(
   index: number,
@@ -121,7 +122,10 @@ export function swellAt(
   for (let entry = 0; entry < hovers.length; entry += 1) {
     const amount = hovers[entry]!;
     if (amount <= 0) continue;
-    swell = Math.max(swell, amount * hoverSwell * bell((index - entry) / hoverSpread));
+    // Blended, not the larger of the two: where a hovered entry's swell meets the bulge they merge
+    // into one shape, with no dip between them, as two drops run together.
+    const hover = amount * hoverSwell * bell((index - entry) / hoverSpread);
+    swell = swell + hover - Math.min(1, swell) * hover;
   }
   return swell;
 }
