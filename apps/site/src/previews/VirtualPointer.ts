@@ -13,6 +13,13 @@
 
 import { PointerSelection } from './VirtualSelection';
 
+/** A file the pointer carries in, as from the desktop: its name, its type and its size in bytes. */
+export interface CarriedFile {
+  name: string;
+  type: string;
+  size?: number;
+}
+
 /** A point of the pointer's, in the viewport's coordinates. */
 interface Point {
   x: number;
@@ -291,10 +298,14 @@ export class VirtualPointer {
   /** A file the pointer carries in from outside, as a drag from the desktop does. */
   private carried: DataTransfer | null = null;
 
-  /** Picks up a file, as a person drags one in from the desktop: its moves are a drag now. */
-  carry(name: string, type: string) {
+  /**
+   * Picks up files, as a person drags them in from the desktop: its moves are a drag now. Each is
+   * as large as its `size` in bytes, or a few bytes.
+   */
+  carry(files: readonly CarriedFile[]) {
     this.carried = new DataTransfer();
-    this.carried.items.add(new File(['envUI'], name, { type }));
+    for (const { name, type, size } of files)
+      this.carried.items.add(new File([size ? new Uint8Array(size) : 'envUI'], name, { type }));
   }
 
   private sendDrag(target: Element, type: string) {

@@ -52,7 +52,9 @@ export default function SearchAndFilters() {
             <SearchField
               ref={search}
               label="Search projects"
+              placeholder="Search projects"
               size="sm"
+              style={{ inlineSize: '12rem' }}
               value={query}
               onValueChange={setQuery}
             />
@@ -140,7 +142,7 @@ const tones = { active: 'success', paused: 'warning', done: 'neutral' } as const
 const projects: { name: string; owner: string; status: Status }[] = [
   { name: 'Website refresh', owner: 'Priya Shah', status: 'active' },
   { name: 'Quarterly report', owner: 'Sam Lee', status: 'active' },
-  { name: 'Onboarding guide', owner: 'Alex Morgan', status: 'paused' },
+  { name: 'Web analytics', owner: 'Alex Morgan', status: 'paused' },
   { name: 'Mobile release', owner: 'Priya Shah', status: 'active' },
   { name: 'Data migration', owner: 'Sam Lee', status: 'done' },
   { name: 'Annual review', owner: 'Alex Morgan', status: 'done' },

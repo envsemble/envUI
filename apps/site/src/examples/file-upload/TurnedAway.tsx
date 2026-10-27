@@ -4,11 +4,8 @@ import { Column, DropZone, List } from '@envsemble/envui';
 const limit = 10 * 1024 * 1024;
 
 export default function TurnedAway() {
-  const [taken, setTaken] = useState(['annual-review.pdf']);
-  // Shown after a spreadsheet was dropped on a zone for PDFs and images.
-  const [error, setError] = useState<string | undefined>(
-    "budget-2026.xlsx isn't a PDF or an image.",
-  );
+  const [taken, setTaken] = useState(['team-photo.jpg']);
+  const [error, setError] = useState<string>();
   // A drop of both kinds reports the files turned away first, then the files taken.
   const refused = useRef<string>(undefined);
 
@@ -17,7 +14,7 @@ export default function TurnedAway() {
     <Column gap={4} style={{ inlineSize: 'min(100%, 26rem)' }}>
       <DropZone
         multiple
-        label="Add receipts"
+        label="Add documents"
         description="PDF or images, up to 10 MB each"
         accept="application/pdf,.pdf,image/*"
         error={error}
@@ -33,7 +30,7 @@ export default function TurnedAway() {
           setTaken((current) => [...current, ...fit]);
         }}
       />
-      <List.Root aria-label="Receipts">
+      <List.Root aria-label="Documents">
         {taken.map((name, index) => (
           <List.Item key={`${index}-${name}`} label={name} />
         ))}

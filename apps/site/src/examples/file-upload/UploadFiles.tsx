@@ -13,18 +13,15 @@ const limit = 10 * 1024 * 1024;
 
 const size = (bytes: number) =>
   bytes < 1024 * 1024
-    ? `${Math.max(1, Math.round(bytes / 1024))} KB`
+    ? `${bytes === 0 ? 0 : Math.max(1, Math.round(bytes / 1024))} KB`
     : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 
 function Uploads() {
   const toast = useToast();
-  const [uploads, setUploads] = useState<Upload[]>([
-    { id: 1, name: 'annual-review.pdf', size: 2_516_582, sent: 2_516_582, state: 'done' },
-    // Shown after the connection dropped part way.
-    { id: 2, name: 'team-photo.jpg', size: 1_153_434, sent: 400_000, state: 'failed' },
-  ]);
+  const [uploads, setUploads] = useState<Upload[]>([]);
   const [error, setError] = useState<string>();
   const timers = useRef(new Map<number, number>());
+  const attempts = useRef(0);
   useEffect(() => {
     const running = timers.current;
     return () => running.forEach((timer) => window.clearInterval(timer));
@@ -45,17 +42,23 @@ function Uploads() {
 
   function start(id: number) {
     change(id, () => ({ state: 'uploading', sent: 0 }));
-    // A timer stands in for the upload, reporting what has been sent.
+    // A timer stands in for the upload, reporting what has been sent, about 1 MB a second. Every
+    // other upload drops part way, as on an unsteady connection, to show a failure.
+    const drops = attempts.current++ % 2 === 1;
     timers.current.set(
       id,
       window.setInterval(() => {
         change(id, ({ sent, size }) => {
-          const next = Math.min(size, sent + size / 6);
+          const next = Math.min(size, sent + 300_000);
+          if (drops && next > size * 0.6) {
+            window.clearInterval(timers.current.get(id));
+            return { state: 'failed' };
+          }
           if (next < size) return { sent: next };
           window.clearInterval(timers.current.get(id));
           return { sent: size, state: 'done' };
         });
-      }, 300),
+      }, 250),
     );
   }
 
@@ -165,7 +168,8 @@ function Uploads() {
         {uploads.length === 0 && <List.Item label="No files yet." />}
       </List.Root>
       <Text variant="caption" emphasis="muted" role="status">
-        {`${done} of ${uploads.length} uploaded${failed > 0 ? `, ${failed} failed` : ''}.`}
+        {uploads.length > 0 &&
+          `${done} of ${uploads.length} uploaded${failed > 0 ? `, ${failed} failed` : ''}.`}
       </Text>
     </Column>
   );

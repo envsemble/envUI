@@ -54,13 +54,14 @@ export default function GroupColumns() {
       <KeyFigure
         label="Active projects"
         value="128"
-        trend={{ icon: <TrendingUp />, label: '+12% from last month', tone: 'success' }}
+        trend={{ icon: <TrendingUp />, label: '+12%', tone: 'success' }}
         description="Last 30 days"
       />
       <KeyFigure
         label="Tasks done"
         value="1,284"
-        trend={{ icon: <TrendingUp />, label: '+86 this week', tone: 'success' }}
+        trend={{ icon: <TrendingUp />, label: '+86', tone: 'success' }}
+        description="This week"
       />
       <KeyFigure
         label="Lead time"

@@ -37,7 +37,9 @@ composes:
   - Row
   - Text
 examples:
-  UploadFiles: overview
+  UploadFiles:
+    role: overview
+    motion: true
   AttachInForm: example
   FileUploadAnatomy: anatomy
   TurnedAway: example
@@ -59,7 +61,7 @@ examples:
 
 The files upload while people fill in the rest. A send waits for any still going up, then goes with them.
 
-```tsx figure=AttachInForm
+```tsx figure=AttachInForm motion
 
 ```
 
@@ -90,7 +92,7 @@ Each file uploads as soon as it is added, in its own row of a [list](../componen
 
 A file of the wrong kind or too large never joins the list. The zone says which file and why, and takes the others.
 
-```tsx figure=TurnedAway
+```tsx figure=TurnedAway motion
 
 ```
 
@@ -98,7 +100,7 @@ A file of the wrong kind or too large never joins the list. The zone says which 
 
 The file keeps its row, with what went wrong and Try again, which starts it over. The other files go on uploading.
 
-```tsx figure=FailedUpload
+```tsx figure=FailedUpload motion
 
 ```
 
@@ -106,7 +108,7 @@ The file keeps its row, with what went wrong and Try again, which starts it over
 
 Remove takes the file out of the list at once and stops its upload, and a [toast](../components/toast.md) offers Undo, as [destructive actions](destructive-actions.md) describe.
 
-```tsx figure=RemoveWithUndo
+```tsx figure=RemoveWithUndo motion
 
 ```
 
@@ -114,11 +116,11 @@ Remove takes the file out of the list at once and stops its upload, and a [toast
 
 People can keep adding files while others upload, and see each one's state in its row.
 
-```tsx figure=ZoneStaysReady
+```tsx figure=ZoneStaysReady motion
 
 ```
 
-```tsx figure=ZoneBusyWhileUploading
+```tsx figure=ZoneBusyWhileUploading motion
 
 ```
 
@@ -198,7 +200,7 @@ function upload(file: File, onProgress: (sent: number) => void, signal: AbortSig
 ```tsx
 <DropZone
   multiple
-  label="Add receipts"
+  label="Add documents"
   description="PDF or images, up to 10 MB each"
   accept="application/pdf,.pdf,image/*"
   error={error}

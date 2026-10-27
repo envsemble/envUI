@@ -16,7 +16,7 @@ function validate(values: Values) {
 
 export default function ErrorSummary() {
   const id = useId();
-  const [values, setValues] = useState<Values>({ name: '', email: 'sam.lee@', team: '' });
+  const [values, setValues] = useState<Values>({ name: 'Sam Lee', email: 'sam.lee@', team: '' });
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [submitted, setSubmitted] = useState(false);
   const [saved, setSaved] = useState('');
