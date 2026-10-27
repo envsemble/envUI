@@ -346,26 +346,20 @@ test('a component page groups its sections into three, all on the page', async (
   await expect.poll(columns).toEqual({ columns: 1, tops: 6 });
 });
 
-test("the overview's hero says what envUI is, leads to the components and the Docs, and shows the package's version", async ({
+test("the overview's hero says what envUI is and shows the package's version, leaving the way on to the navigation", async ({
   page,
 }) => {
   await page.goto(`${siteDevUrl}/`);
   const hero = page.locator('.catalogue-overview-hero');
   await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(hero.locator('.catalogue-overview-lede')).toContainText('A React design system');
-  // The version is packages/ui/package.json's, as a quiet badge rather than a link, beside the
-  // catalogue's counts.
-  const versionLine = hero.locator('.catalogue-overview-version');
-  await expect(versionLine).toHaveText(`v${version}`);
-  await expect(versionLine.getByRole('link')).toHaveCount(0);
+  // The version is packages/ui/package.json's, as quiet text, beside the catalogue's counts.
+  await expect(hero.locator('.catalogue-overview-version')).toHaveText(`v${version}`);
   await expect(hero.locator('.catalogue-overview-facts')).toContainText(
     `${references.filter(({ id }) => id !== 'field').length} components`,
   );
-  await expect(hero.getByRole('link')).toHaveText(['Browse components', 'Read the Docs']);
-  await expect(hero.getByRole('link', { name: 'Read the Docs', exact: true })).toHaveAttribute(
-    'href',
-    '/docs',
-  );
+  // The sidebar, the Docs link above and the Explore cards lead on; the hero repeats none of them.
+  await expect(hero.getByRole('link')).toHaveCount(0);
 });
 
 test("a catalogue page's banner reads from the start under its breadcrumbs, its picture hidden", async ({

@@ -11,18 +11,6 @@
   padding-block-start: var(--env-space-5);
   text-align: center;
 }
-.catalogue-overview-hero {
-  text-align: center;
-}
-.catalogue-overview-title {
-  inline-size: min(20rem, 100%);
-}
-.catalogue-overview-logo {
-  display: block;
-  width: 100%;
-  height: auto;
-  color: var(--env-color-fg-control);
-}
 .catalogue-catalogue-content {
   height: 100%;
   text-align: center;
@@ -41,23 +29,55 @@
 .catalogue-explore-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
 }
-/* The wordmark and what envUI is under it, as wide as the hero, so the wordmark takes its own
-   width; the line keeps to a measure that breaks it into two balanced lines. */
-.catalogue-overview-brand {
-  inline-size: 100%;
+/* The home page's hero: no card of its own, it stands on the page above the showcase, which it
+   introduces, so the two read as one picture. The lockup, small, names the page; the line under
+   it, the largest text on the page, says what envUI is; the facts under that are quiet. */
+.catalogue-overview-header {
+  margin-block-end: 0;
+}
+.catalogue-overview-hero {
+  padding-block: clamp(var(--env-space-6), 6cqi, var(--env-space-9)) 0;
+  text-align: center;
+}
+.catalogue-overview-title {
+  margin: 0 0 var(--env-space-2);
+  line-height: 0;
+}
+.catalogue-overview-logo {
+  display: block;
+  inline-size: auto;
+  block-size: clamp(1.75rem, calc(1rem + 1.5cqi), 2.25rem);
+  color: var(--env-color-fg-default);
 }
 .catalogue-overview-lede {
-  max-inline-size: 34rem;
+  max-inline-size: 20ch;
   margin: 0;
+  color: var(--env-color-fg-default);
+  font-size: clamp(2rem, calc(1rem + 3cqi), 3.25rem);
+  font-weight: var(--env-font-weight-medium);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
-/* The facts under the hero's buttons: the version as a quiet badge, then the counts in one line, a
-   middle dot between them. In a narrow hero the counts go under the version and stay one line. */
+/* The version, then the counts, a middle dot between each; in a narrow hero the counts go under
+   the version, each line whole. */
 .catalogue-overview-facts {
+  margin: 0;
   font-variant-numeric: tabular-nums;
+}
+.catalogue-overview-version,
+.catalogue-overview-counts > * {
   white-space: nowrap;
 }
-.catalogue-overview-facts span > * + *::before {
+:is(.catalogue-overview-counts, .catalogue-overview-counts > * + *)::before {
   margin-inline: var(--env-space-2);
   content: '·';
+}
+@container site-page-header (width < 30rem) {
+  .catalogue-overview-counts {
+    display: block;
+  }
+  .catalogue-overview-counts::before {
+    content: none;
+  }
 }

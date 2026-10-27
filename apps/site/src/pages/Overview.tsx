@@ -1,11 +1,10 @@
-import { Badge, Button, Card, Column, Row, Surface, Text } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/icons/Code';
+import { Card, Column, Text } from '@envsemble/envui';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
-import { docsRoute, routeHref } from '../navigation/Address';
+import { routeHref } from '../navigation/Address';
 import { pagesOf, sectionHome } from '../navigation/SiteRoutes';
 import { OverviewShowcase } from './OverviewShowcase';
 
@@ -43,49 +42,35 @@ const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => (
   count: pagesOf('catalogue').filter((page) => page.kind === kind).length,
 }));
 
-/** The catalogue's home: what envUI is, and the way to its components, patterns and Docs. */
+/**
+ * The catalogue's home: what envUI is, a hand of cards built with it, and the way to its
+ * foundations, components and patterns. The hero leads nowhere itself: the navigation beside and
+ * above it, and the Explore cards, do.
+ */
 export function Overview() {
   return (
     <>
-      <header className="site-page-header">
-        <Surface
-          background="default"
-          padding={6}
-          render={<Column gap={6} align="center" />}
-          className="catalogue-overview-hero"
-        >
-          {/* The wordmark, and what envUI is in one line under it. */}
-          <Column gap={4} align="center" className="catalogue-overview-brand">
-            <Text render={<h1 />} aria-label="envUI" className="catalogue-overview-title">
-              <EnvUILogo className="catalogue-overview-logo" />
-            </Text>
-            <Text variant="title" emphasis="muted" className="catalogue-overview-lede">
-              A React design system: components, patterns and the foundations they share, ready for
-              light, dark and high contrast.
-            </Text>
-          </Column>
-          {/* The two ways on: into the components to see them, or into the Docs to build. */}
-          <Row gap={3} wrap justify="center">
-            <Button href={routeHref('components')} startIcon={<Widgets />}>
-              Browse components
-            </Button>
-            <Button variant="secondary" href={routeHref(docsRoute)} startIcon={<Code />}>
-              Read the Docs
-            </Button>
-          </Row>
-          {/* Quiet facts under them: the package's version, read from packages/ui/package.json,
-              and how much the catalogue shows. */}
-          <Row gap={3} wrap justify="center" align="center" className="catalogue-overview-facts">
-            <Badge className="catalogue-overview-version">v{version}</Badge>
-            <Text variant="caption" emphasis="muted" render={<span />}>
+      <header className="site-page-header catalogue-overview-header">
+        <Column gap={5} align="center" className="catalogue-overview-hero">
+          <Text render={<h1 />} aria-label="envUI" className="catalogue-overview-title">
+            <EnvUILogo className="catalogue-overview-logo" />
+          </Text>
+          <Text variant="display" className="catalogue-overview-lede">
+            A React design system for clear, accessible interfaces.
+          </Text>
+          {/* Quiet facts under it: the package's version, read from packages/ui/package.json, and
+              how much the catalogue shows. */}
+          <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
+            <span className="catalogue-overview-version">v{version}</span>
+            <span className="catalogue-overview-counts">
               {counts.map(({ kind, count }) => (
                 <span key={kind}>
                   {count} {kind}s
                 </span>
               ))}
-            </Text>
-          </Row>
-        </Surface>
+            </span>
+          </Text>
+        </Column>
       </header>
       <OverviewShowcase />
       <Column gap={8} className="site-article catalogue-overview">

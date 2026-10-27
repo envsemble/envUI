@@ -19,7 +19,6 @@
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-showcase-card,
 .site-page-banner[data-banner='catalogue'],
-.catalogue-overview-hero,
 .catalogue-explore-grid > .env-card,
 .site-page-navigation .env-pager-link,
 .catalogue-role-swatch {
@@ -83,10 +82,9 @@
 }
 
 /* The site's own cards lift off the page as its canvases do, each by its own fill: a catalogue
-   page's banner, and the Overview's hero and its cards; the pager at a page's foot, smaller, half as
+   page's banner, and the Overview's cards; the pager at a page's foot, smaller, half as
    much. */
 .site-page-banner[data-banner='catalogue'],
-.catalogue-overview-hero,
 .catalogue-explore-grid > .env-card {
   --catalogue-card-fill: var(--env-surface-color);
   box-shadow: var(--catalogue-card-shadow);
