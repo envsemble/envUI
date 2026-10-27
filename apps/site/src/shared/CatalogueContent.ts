@@ -57,10 +57,14 @@ const headingOf = (chunk: string) => /^#{2,3} (.*)/.exec(chunk)?.[1].trim();
 const isProvides = (chunk: string) =>
   (Object.values(providesHeadings) as string[]).includes(headingOf(chunk) ?? '');
 
-/** A section's Markdown without what envUI and the application provide. */
+/**
+ * A section's Markdown without what envUI and the application provide, and without the heading
+ * of its keyboard table, which is all the section then holds and says what it is.
+ */
 export function withoutProvides(markdown: string): string {
   return subsections(markdown)
     .filter((chunk) => !isProvides(chunk))
+    .map((chunk) => chunk.replace(/^### Keyboard\n+/, ''))
     .join('')
     .replace(/\n+$/, '\n');
 }

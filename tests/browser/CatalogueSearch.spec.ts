@@ -149,15 +149,15 @@ test.describe('search', () => {
 
   test('a link to a heading opens the page that shows it', async ({ page }) => {
     // A component's page shows every heading, also for a link to an old view.
-    const route = routeOfDocument('dialog', { section: 'keyboard' });
-    expect(route).toBe('components/dialog?section=keyboard');
-    expect(normalizeRoute('components/dialog?section=keyboard')).toBe(route);
-    expect(normalizeRoute('components/dialog/accessibility?section=keyboard')).toBe(route);
+    const route = routeOfDocument('dialog', { section: 'pending-work' });
+    expect(route).toBe('components/dialog?section=pending-work');
+    expect(normalizeRoute('components/dialog?section=pending-work')).toBe(route);
+    expect(normalizeRoute('components/dialog/accessibility?section=pending-work')).toBe(route);
     expect(normalizeRoute('components/button/accessibility?section=keyboard')).toBe(
       'components/button?section=keyboard',
     );
-    await openCatalogue(page, `${siteDevUrl}/components/dialog/accessibility#keyboard`);
-    const heading = page.getByRole('heading', { name: 'Keyboard', exact: true });
+    await openCatalogue(page, `${siteDevUrl}/components/dialog/accessibility#pending-work`);
+    const heading = page.getByRole('heading', { name: 'Pending work', exact: true });
     await expect(heading).toBeInViewport();
     await expect(heading).toBeFocused();
   });
