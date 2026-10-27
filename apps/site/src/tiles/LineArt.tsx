@@ -12,9 +12,13 @@ const durations = [600, 6500];
 export default function LineArtTile() {
   const step = useTimeline(durations);
   return (
-    // Across the tile, at the drawing's own proportions, so it shows whole.
-    <div style={{ inlineSize: '10rem', aspectRatio: '480 / 330' }}>
-      <LineArt drawing="golden-section" motion={step === 1 ? 'play' : undefined} />
+    // Across the tile, framed closely on the golden rectangle, so it shows whole and centred.
+    <div style={{ inlineSize: '10rem', aspectRatio: '447 / 280' }}>
+      <LineArt
+        drawing="golden-section"
+        viewBox="24 25 447 280"
+        motion={step === 1 ? 'play' : undefined}
+      />
     </div>
   );
 }

@@ -16,13 +16,10 @@ import {
  * where it lands, rather than jumping there.
  */
 
-/**
- * A line of the drawing: a hairline at any scale, unfilled, in the muted edge color; in the dark
- * themes in the muted fill, a step dimmer, as faint on their deeper canvas as in the light ones.
- */
+/** A line of the drawing: a hairline at any scale, unfilled, in the muted edge color, as LineArt's. */
 const hairline: CSSProperties = {
   fill: 'none',
-  stroke: 'light-dark(var(--env-color-border-muted), var(--env-color-bg-muted))',
+  stroke: 'var(--env-color-border-muted)',
   strokeWidth: 1,
   vectorEffect: 'non-scaling-stroke',
 };

@@ -31,6 +31,11 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   panes: { width: 40, height: 30 },
   'panel-dock': { width: 17, height: 12.75 },
   kbd: { width: 7, height: 5.25 },
+  // The layout drawings, each drawn about as large as LineArt's, whose lines they share.
+  box: { width: 8.7, height: 6.525 },
+  row: { width: 8.4, height: 6.3 },
+  column: { width: 9.5, height: 7.125 },
+  grid: { width: 8.25, height: 6.1875 },
   markdown: { width: 12, height: 9 },
   message: { width: 12, height: 9 },
   code: { width: 12, height: 9 },
