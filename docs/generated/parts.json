@@ -4582,6 +4582,10 @@
           "description": "The backdrop behind a modal sheet."
         },
         {
+          "class": "env-sheet-body",
+          "description": "The sheet's content, which scrolls between the heading and the actions."
+        },
+        {
           "class": "env-sheet-resize-handle",
           "description": "The handle on a resizable side sheet's inner edge, a separator that resizes it."
         },

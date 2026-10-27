@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   Badge,
   Button,
@@ -265,43 +265,105 @@ const themes: readonly { theme: ThemeValue; contrast: ThemeContrast }[] = [
   { theme: 'dark', contrast: 'high' },
 ];
 
-/** A segment of the theme control, by its place from 1. */
-const segment = (index: number) =>
-  `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
+/** A segment of a theme control, by its place from 1. */
+const segment = (index: number, control = 'catalogue-theme-pick') =>
+  `.${control} .env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
+
+/** The pointer's choice of a segment, a little after it comes there. */
+const choose = (target: string, duration = 500): PointerStep[] => [
+  { wait: 3300 },
+  { to: target, duration },
+  { wait: 200 },
+  { click: true },
+];
 
 /*
  * The pointer chooses each theme in turn, about two and a half seconds apart, and Light again,
- * then leaves: the loop starts again from Light.
+ * then leaves: the loop starts again from Light. On one control of the four, in the legend's
+ * order; where those don't fit, as on a phone, on a control of the theme and one of the contrast:
+ * Dark, then high contrast, then Light, then standard contrast again.
  */
-const themeScript: PointerStep[] = [
-  { wait: 1500 },
-  { to: segment(2) },
-  { wait: 300 },
-  { click: true },
-  ...[3, 4, 1].flatMap((index): PointerStep[] => [
-    { wait: 3300 },
-    { to: segment(index), duration: index === 1 ? 700 : 500 },
-    { wait: 200 },
+const themeScripts: Record<'four' | 'pair', PointerStep[]> = {
+  four: [
+    { wait: 1500 },
+    { to: segment(2) },
+    { wait: 300 },
     { click: true },
-  ]),
-  { wait: 3300 },
-  { leave: true },
-];
+    ...choose(segment(3)),
+    ...choose(segment(4)),
+    ...choose(segment(1), 700),
+    { wait: 3300 },
+    { leave: true },
+  ],
+  pair: [
+    { wait: 1500 },
+    { to: segment(2) },
+    { wait: 300 },
+    { click: true },
+    ...choose(segment(2, 'catalogue-contrast-pick')),
+    ...choose(segment(1)),
+    ...choose(segment(1, 'catalogue-contrast-pick')),
+    { wait: 3300 },
+    { leave: true },
+  ],
+};
+
+/** The narrowest the figure shows the control of the four in, in rem. */
+const fourWidth = 30;
+
+/**
+ * Whether the figure is narrower than the control of the four needs, by the width of its element.
+ */
+function useNarrow() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const rem = parseFloat(getComputedStyle(element).fontSize) || 16;
+      setNarrow((entry?.contentRect.width ?? 0) < fourWidth * rem);
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return [ref, narrow] as const;
+}
 
 /**
  * One screen above a control of the four themes, each chosen in turn by the pointer: the screen
- * eases into each, its page, surface, filled card, text, meter, badge and buttons alike.
+ * eases into each, its page, surface, filled card, text, meter, badge and buttons alike. Where the
+ * four don't fit, the control is two: the theme, and the contrast.
  */
 function ThemeSteps({ names }: { names: readonly string[] }) {
-  const [chosen, setChosen] = useState('0');
-  usePointer(themeScript);
-  const { theme, contrast } = themes[Number(chosen)]!;
+  const [ref, narrow] = useNarrow();
   return (
-    <Column gap={5} align="center" className="catalogue-theme-steps">
+    <div ref={ref} className="catalogue-theme-steps">
+      <ThemeChoice key={narrow ? 'pair' : 'four'} names={names} pair={narrow} />
+    </div>
+  );
+}
+
+/** The screen in the chosen theme, and the control or controls the pointer chooses it on. */
+function ThemeChoice({ names, pair }: { names: readonly string[]; pair: boolean }) {
+  const [chosen, setChosen] = useState('0');
+  usePointer(themeScripts[pair ? 'pair' : 'four']);
+  const { theme, contrast } = themes[Number(chosen)]!;
+  const pick = (next: Partial<(typeof themes)[number]>) =>
+    setChosen(
+      String(
+        themes.findIndex(
+          (item) =>
+            item.theme === (next.theme ?? theme) && item.contrast === (next.contrast ?? contrast),
+        ),
+      ),
+    );
+  return (
+    <Column gap={5} align="center">
       <Theme theme={theme} contrast={contrast} className="catalogue-theme-screen">
         <Surface background="page" padding={4} radius="xl">
           <Surface background="default" padding={5} radius="xl" render={<Column gap={4} />}>
-            <Row justify="between" align="start" gap={3}>
+            <Row wrap justify="between" align="start" gap={3}>
               <Column gap={1}>
                 <Text render={<p />} variant="title">
                   Quarterly report
@@ -320,13 +382,41 @@ function ThemeSteps({ names }: { names: readonly string[] }) {
           </Surface>
         </Surface>
       </Theme>
-      <SegmentedControl
-        aria-label="Theme"
-        size="sm"
-        value={chosen}
-        onValueChange={setChosen}
-        items={names.map((name, index) => ({ value: String(index), label: name }))}
-      />
+      {pair ? (
+        <Row wrap justify="center" gap={3}>
+          <SegmentedControl
+            aria-label="Theme"
+            size="sm"
+            className="catalogue-theme-pick"
+            value={theme}
+            onValueChange={(next) => pick({ theme: next as ThemeValue })}
+            items={[
+              { value: 'light', label: names[0] },
+              { value: 'dark', label: names[1] },
+            ]}
+          />
+          <SegmentedControl
+            aria-label="Contrast"
+            size="sm"
+            className="catalogue-contrast-pick"
+            value={contrast}
+            onValueChange={(next) => pick({ contrast: next as ThemeContrast })}
+            items={[
+              { value: 'standard', label: 'Standard' },
+              { value: 'high', label: 'High contrast' },
+            ]}
+          />
+        </Row>
+      ) : (
+        <SegmentedControl
+          aria-label="Theme"
+          size="sm"
+          className="catalogue-theme-pick"
+          value={chosen}
+          onValueChange={setChosen}
+          items={names.map((name, index) => ({ value: String(index), label: name }))}
+        />
+      )}
     </Column>
   );
 }

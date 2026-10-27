@@ -601,6 +601,11 @@
   inline-size: 100%;
 }
 
+/* The themes figure takes its stage's width, which says whether its control of the four fits. */
+.catalogue-theme-steps {
+  inline-size: 100%;
+}
+
 /* The screen of the themes figure, at a card's width, above its control, with its page's corners. */
 .catalogue-theme-screen {
   inline-size: min(100%, 25rem);

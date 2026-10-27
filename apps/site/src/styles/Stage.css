@@ -473,13 +473,23 @@
   contain: layout;
   overflow: clip;
   overflow-anchor: none;
+  /* One column, the stage's width, which what it shows never widens. */
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .catalogue-motion-subject {
   isolation: isolate;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
   inline-size: 100%;
+}
+
+/* What it shows keeps to the stage's width, as wide as its content up to that, so in a narrow
+   window a table scrolls, text wraps and a row of parts lays out narrower, rather than being cut
+   off at both edges. */
+.catalogue-motion-subject > :not(.catalogue-overlay-layer) {
+  max-inline-size: 100%;
 }
 
 /* Its own size, square, which a stage's rule for its content would otherwise take, as on a
@@ -506,9 +516,12 @@
 }
 
 /* Notifications at a figure's bottom end arrive beside its pause button, which keeps that corner,
-   as an application's would beside a control fixed there. */
+   as an application's would beside a control fixed there, and keep to the room left beside it, so
+   a long one wraps rather than reaching past the stage's start in a narrow window. */
 .catalogue-motion-subject .env-toast-viewport[data-placement='bottom-end'] {
-  inset-inline-end: calc(2 * var(--env-space-2) + var(--env-control-height-sm));
+  --catalogue-toast-end: calc(2 * var(--env-space-2) + var(--env-control-height-sm));
+  inset-inline-end: var(--catalogue-toast-end);
+  max-inline-size: calc(100% - var(--env-space-4) - var(--catalogue-toast-end));
 }
 
 /* Forced colors paint the canvas in Canvas, like the page: a frame keeps each example apart. A

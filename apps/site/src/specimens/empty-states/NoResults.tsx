@@ -1,6 +1,6 @@
 import NoResults from '../../examples/empty-states/NoResults';
 import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage, roomFor } from '../../previews/MotionStage';
 
 const search = 'input[type="search"]';
 
@@ -29,7 +29,12 @@ function Searching() {
   return (
     // As tall as the whole list, so the toolbar keeps its place as the list empties.
     <div
-      style={{ display: 'grid', alignContent: 'start', inlineSize: '100%', minBlockSize: '26rem' }}
+      style={{
+        display: 'grid',
+        alignContent: 'start',
+        inlineSize: '100%',
+        minBlockSize: roomFor(26, 28.5, 25.5),
+      }}
     >
       <NoResults />
     </div>
