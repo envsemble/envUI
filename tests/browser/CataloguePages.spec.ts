@@ -122,7 +122,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
     };
   });
   expect(corners).toEqual({ outer: true, inner: true, larger: true });
-  // When to use is a check list, a guidance list, where a component named at an item's end
+  // When to use is a guidance list, marked with sparks, where a component named at an item's end
   // follows it after a muted dot: the Button family's own page, so not a link.
   const useWhen = page.locator('.site-when .site-guidance li');
   await expect(useWhen.nth(2)).toHaveText(

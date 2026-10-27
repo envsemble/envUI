@@ -175,7 +175,7 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 
 - **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a titled block between figures that should not share a row.
 - **A block beside its figure**: a `###` block of text, with no table or list at its start, followed by exactly one figure, sits beside that figure on a wide page, such as each kind of card under Variants. A figure that needs the room stays across the column with the flag [`wide`](#wide-figures).
-- **Check lists**: the catalogue shows a page's lists of what it is for as check lists. An item that ends with a component's name in parentheses, such as "(IconButton)", shows the name after a muted dot, linked to its page where that is another page.
+- **Spark lists**: the catalogue marks a page's lists of what it is for with a small four-pointed spark instead of a dot. An item that ends with a component's name in parentheses, such as "(IconButton)", shows the name after a muted dot, linked to its page where that is another page.
 - **Related** ends the page, from the frontmatter's `avoidWhen`: a tile for each component or page an entry names, its [tile](#tiles) on its canvas, with its name and the entry's text below. The tiles render once the section nears the viewport. A page without a tile shows its lead example, and one without an example a page icon on the same stage. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three.
 
 ## Layout: equal cells, spacing with rhythm
