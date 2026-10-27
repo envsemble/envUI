@@ -48,8 +48,8 @@ examples:
     role: do
     caption: The name beside the avatar, wherever there is room.
   AvatarsAlone:
-    role: dont
-    caption: 'Avatars alone: people must hover each one to learn who it is.'
+    role: caution
+    caption: 'Avatars alone, where room is short: people hover each one to learn who it is.'
 ---
 
 # Avatar
