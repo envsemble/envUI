@@ -1,5 +1,5 @@
-/* A theme switching inside an animated figure eases rather than snaps, such as the Colors page's
-   screen stepping through the themes: in a nested theme in a figure that plays, every part's
+/* A theme switching inside an animated figure eases rather than snaps, such as the account menu's
+   theme changing (the Colors page's figures cut instead, Foundations.css): in a nested theme in a figure that plays, every part's
    colors, fills and edges transition briefly. The figure's nested theme only, not the page's or an
    example stage's, which follow the reader's choice at once, as the page does. Below envUI's
    component layer, so a part with transitions of its own, such as a button's, keeps them. The
