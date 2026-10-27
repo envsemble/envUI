@@ -2,7 +2,6 @@
   "components/breadcrumbs": {
     "light": {
       "landmark-unique": {
-        "article :: nav.env-breadcrumbs": 1,
         "header :: nav.env-breadcrumbs.site-page-banner-breadcrumbs": 1
       }
     }
@@ -10,8 +9,7 @@
   "components/drawer": {
     "light": {
       "landmark-unique": {
-        "article :: nav.env-bar": 1,
-        "article :: nav.env-drawer": 2
+        "article :: nav.env-drawer": 1
       }
     }
   },
@@ -26,78 +24,6 @@
     "light": {
       "landmark-unique": {
         "header :: nav.env-breadcrumbs.site-page-banner-breadcrumbs": 1
-      }
-    }
-  },
-  "components/pager": {
-    "light": {
-      "landmark-unique": {
-        "article :: nav.env-pager": 1
-      }
-    }
-  },
-  "components/pagination": {
-    "light": {
-      "landmark-unique": {
-        "article :: nav.env-pagination": 1
-      }
-    }
-  },
-  "components/panel-dock": {
-    "light": {
-      "landmark-unique": {
-        "article :: section.env-panel-dock-panel": 1
-      }
-    }
-  },
-  "components/panes": {
-    "light": {
-      "landmark-unique": {
-        "article :: div.env-panes-list": 1,
-        "article :: div.env-panes-main": 1
-      }
-    }
-  },
-  "components/rich-text": {
-    "light": {
-      "target-size": {
-        "article :: input.env-checkbox-input": 2
-      }
-    }
-  },
-  "components/scaffold": {
-    "light": {
-      "landmark-unique": {
-        "article :: nav.env-bar": 1
-      }
-    }
-  },
-  "components/table": {
-    "dark": {
-      "landmark-unique": {
-        "article :: div.env-table-region": 1
-      }
-    },
-    "dark-hc": {
-      "landmark-unique": {
-        "article :: div.env-table-region": 1
-      }
-    },
-    "light": {
-      "landmark-unique": {
-        "article :: div.env-table-region": 1
-      }
-    },
-    "light-hc": {
-      "landmark-unique": {
-        "article :: div.env-table-region": 1
-      }
-    }
-  },
-  "components/table-of-contents": {
-    "light": {
-      "landmark-unique": {
-        "article :: nav.env-table-of-contents": 1
       }
     }
   },
