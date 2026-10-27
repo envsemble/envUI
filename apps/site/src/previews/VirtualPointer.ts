@@ -402,6 +402,13 @@ export class VirtualPointer {
    * starts a selection that a drag extends, and leaves what was selected unselected.
    */
   press(button: 0 | 2 = 0) {
+    // What was under the pointer may have been replaced since it came to rest, as a button's icon
+    // is by its spinner and back: a press goes to what is there now, as a mouse's does.
+    if (this.at && this.over[0] && !this.over[0].isConnected) {
+      const at = this.at;
+      this.at = null;
+      this.moveTo(at);
+    }
     const target = this.over[0];
     if (!target || this.buttons) return;
     pressing = this.id;
