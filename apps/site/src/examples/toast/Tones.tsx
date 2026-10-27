@@ -1,4 +1,5 @@
-import { Button, Toast, useToast, type ToastNotification, Row } from '@envsemble/envui';
+import { useEffect } from 'react';
+import { Toast, useToast, type ToastNotification } from '@envsemble/envui';
 
 const notifications: ToastNotification[] = [
   { tone: 'neutral', message: 'Files archived.' },
@@ -11,27 +12,23 @@ const notifications: ToastNotification[] = [
   },
 ];
 
-function ToneButtons() {
+function EachTone() {
   const toast = useToast();
-  return (
-    <Row wrap align="center" gap={4}>
-      {notifications.map((notification) => (
-        <Button
-          key={notification.tone}
-          variant="secondary"
-          onClick={() => toast.show(notification)}
-        >
-          Show {notification.tone}
-        </Button>
-      ))}
-    </Row>
-  );
+  // Shown at once in the docs, one of each tone, and kept; an application shows each with
+  // toast.show after what it reports.
+  useEffect(() => {
+    const ids = notifications.map((notification) =>
+      toast.show({ ...notification, duration: Infinity }),
+    );
+    return () => ids.forEach((id) => toast.dismiss(id));
+  }, [toast]);
+  return null;
 }
 
 export default function Tones() {
   return (
-    <Toast.Provider>
-      <ToneButtons />
+    <Toast.Provider visibleLimit={4}>
+      <EachTone />
     </Toast.Provider>
   );
 }

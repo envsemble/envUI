@@ -10,11 +10,17 @@ function ExportButton() {
     // The export runs on a server; a timer stands in for it here.
     window.setTimeout(() => {
       setExporting(false);
-      toast.show({
+      const id = toast.show({
         tone: 'info',
-        message: 'Your export is ready: members.csv is in Downloads.',
-        // People may be elsewhere when it ends, so it stays until they dismiss it.
-        duration: Infinity,
+        message: 'Export ready: members.csv',
+        // An action keeps it until people dismiss it: they may be elsewhere when it ends.
+        action: {
+          label: 'Download',
+          onClick: () => {
+            // The application downloads the file here.
+            toast.dismiss(id);
+          },
+        },
       });
     }, 2000);
   };
