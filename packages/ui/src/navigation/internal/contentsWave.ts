@@ -1,18 +1,22 @@
 /**
- * The shape beside the contents that marks the reader's place: one stroke down the list, at its
- * fullest at the reader's place and running thin a few entries away, like a brush's.
+ * The shape beside the contents that marks the reader's place: one stroke down the list, swelling
+ * into a broad bulge at the reader's place and running thin a few entries away, like a brush's.
+ * As the place moves, the bulge stretches along the way it travels, leaning back like a drop, and
+ * settles with a short wobble when it arrives: three springs, stepped every frame it moves.
  */
 
-/** How many entries away from the reader's place the shape still swells: three. */
-export const waveSpread = 3;
-/** How quickly the swell falls away: to half one entry from the reader's place, a sixteenth two. */
-const waveFall = 1 / Math.sqrt(Math.LN2);
+/** How many entries away from the reader's place the shape still swells: four. */
+export const waveSpread = 4;
+/** How round the bulge is: above 2, fuller at its middle and quicker at its foot than a bell. */
+const waveRound = 2.6;
+/** How quickly the swell falls away: to half 1.4 entries from the reader's place. */
+const waveFall = 1.4 / Math.LN2 ** (1 / waveRound);
 /** How thin the shape runs away from the reader's place, as a share of its fullest. */
-export const waveThin = 0.2;
+export const waveThin = 0.1;
 /** How far the entry under the pointer swells the shape, as a share of the reader's place. */
-export const hoverSwell = 0.45;
+export const hoverSwell = 0.4;
 /** How many entries away from the one under the pointer its swell reaches. */
-const hoverSpread = 1;
+const hoverSpread = 1.25;
 /** How finely the shape's edges are drawn, in px. */
 const step = 2;
 
@@ -28,17 +32,56 @@ export interface WaveLayout {
   full: number;
 }
 
+/**
+ * How the bulge is deformed as it moves, each from 0 at rest. `lean`, from -1 to 1, draws out its
+ * upper side and draws in its lower one as it moves down, the other way as it moves up. `stretch`
+ * makes it taller and thinner above 0, shorter and fuller below: squashed as it lands.
+ */
+export interface WaveMotion {
+  lean: number;
+  stretch: number;
+}
+
+const still: WaveMotion = { lean: 0, stretch: 0 };
+
 /** A smooth bell: 1 at 0, easing to 0 at 1 and beyond, either way. */
 export function bell(distance: number): number {
   const d = Math.min(1, Math.abs(distance));
   return Math.cos((d * Math.PI) / 2) ** 2;
 }
 
-/** The swell around the reader's place: a Gaussian bell that ends at the spread. */
-const edge = Math.exp(-((waveSpread / waveFall) ** 2));
+/** The swell around the reader's place: a rounded bell that ends at the spread. */
+const edge = Math.exp(-((waveSpread / waveFall) ** waveRound));
 function swellAround(distance: number): number {
-  const fall = Math.exp(-((distance / waveFall) ** 2));
+  const fall = Math.exp(-(Math.abs(distance / waveFall) ** waveRound));
   return Math.max(0, (fall - edge) / (1 - edge));
+}
+
+/** How much a lean draws out the trailing side, and a stretch the bulge's height and width. */
+const leanReach = 0.35;
+const stretchReach = 0.3;
+const stretchThin = 0.3;
+
+/**
+ * How tall the bulge is on each side of the reader's place, as a share of its height at rest, and
+ * how wide at its fullest, for its motion.
+ */
+function deform({ lean, stretch }: WaveMotion) {
+  const tall = Math.max(0.6, 1 + stretch * stretchReach);
+  return {
+    above: tall * Math.max(0.5, 1 + lean * leanReach),
+    below: tall * Math.max(0.5, 1 - lean * leanReach),
+    // Squashed, it grows a little past its fullest, into the gap before the labels.
+    across: Math.min(1.08, Math.max(0.6, 1 - stretch * stretchThin)),
+  };
+}
+
+/**
+ * How tall the bulge is in a list of so many entries, as a share of its height in a long one: in a
+ * short list, shorter, so the thin stroke still runs beside some of it.
+ */
+export function waveReach(count: number): number {
+  return Math.min(1, Math.max(0.5, (count - 1) / 6));
 }
 
 /**
@@ -57,12 +100,24 @@ export function entryAt(anchors: readonly number[], y: number): number {
 }
 
 /**
- * How far the shape swells at a fractional entry index, from 0 to 1: 1 at the reader's place, half
- * one entry away and nothing three away; with a smaller swell at each entry under the pointer, by
- * how far its own has grown (`hovers`, from 0 to 1 per entry). Without a place, only those.
+ * How far the shape swells at a fractional entry index, from 0 to 1, or a little more where it
+ * lands: 1 at the reader's place, half 1.4 entries away and nothing four away, drawn out
+ * and in by its motion, and shorter by `reach` in a short list; with a smaller swell at each entry under the pointer, by how far its own
+ * has grown (`hovers`, from 0 to 1 per entry). Without a place, only those.
  */
-export function swellAt(index: number, place: number | null, hovers: readonly number[]): number {
-  let swell = place === null ? 0 : swellAround(index - place);
+export function swellAt(
+  index: number,
+  place: number | null,
+  hovers: readonly number[],
+  motion: WaveMotion = still,
+  reach = 1,
+): number {
+  let swell = 0;
+  if (place !== null) {
+    const { above, below, across } = deform(motion);
+    const distance = index - place;
+    swell = across * swellAround(distance / ((distance < 0 ? above : below) * reach));
+  }
   for (let entry = 0; entry < hovers.length; entry += 1) {
     const amount = hovers[entry]!;
     if (amount <= 0) continue;
@@ -85,6 +140,42 @@ export function wavePlace(position: number): number {
   return index + progress * progress * (3 - 2 * progress);
 }
 
+/** A value on a spring and how fast it moves, per second. */
+export interface Spring {
+  value: number;
+  velocity: number;
+}
+
+/**
+ * Moves a spring toward its target over `elapsed` seconds, in small steps so a long frame stays
+ * steady: `frequency` in radians per second, `damping` 1 for no overshoot, less for a wobble, and
+ * `push` a steady force on it over the time, per second squared, such as its carrier's inertia.
+ */
+export function springStep(
+  spring: Spring,
+  target: number,
+  frequency: number,
+  damping: number,
+  elapsed: number,
+  { push = 0 }: { push?: number } = {},
+): void {
+  const steps = Math.max(1, Math.ceil(elapsed / 0.004));
+  const dt = elapsed / steps;
+  for (let index = 0; index < steps; index += 1) {
+    const pull =
+      frequency * frequency * (target - spring.value) -
+      2 * damping * frequency * spring.velocity +
+      push;
+    spring.velocity += pull * dt;
+    spring.value += spring.velocity * dt;
+  }
+}
+
+/** Whether a spring has come to rest on its target, within `near`. */
+export function springAtRest(spring: Spring, target: number, near: number): boolean {
+  return Math.abs(target - spring.value) < near && Math.abs(spring.velocity) < near * 10;
+}
+
 const round = (value: number) => Math.round(value * 100) / 100;
 
 /**
@@ -96,11 +187,13 @@ export function wavePath(
   layout: WaveLayout,
   place: number | null,
   hovers: readonly number[],
+  motion: WaveMotion = still,
 ): string {
   const { anchors, top, bottom, full } = layout;
   if (anchors.length === 0 || !(bottom > top) || !(full > 0)) return '';
+  const reach = waveReach(anchors.length);
   const width = (y: number) => {
-    const swell = swellAt(entryAt(anchors, y), place, hovers);
+    const swell = swellAt(entryAt(anchors, y), place, hovers, motion, reach);
     return full * (waveThin + (1 - waveThin) * swell);
   };
   // The ends are round, as wide as the shape there, and never overlap.
@@ -129,16 +222,4 @@ export function wavePath(
     `A${round(endRadius)} ${round(endRadius)} 0 0 1 ${point(0, to)}` +
     'Z'
   );
-}
-
-/**
- * The height of a fractional entry index, between two entries' middles in proportion: where the
- * shape changes from the passed sections' color to the coming ones', at its swell's apex.
- */
-export function heightAt(anchors: readonly number[], index: number): number {
-  if (anchors.length === 0) return 0;
-  const below = Math.max(0, Math.min(anchors.length - 1, Math.floor(index)));
-  const above = Math.min(anchors.length - 1, below + 1);
-  const share = Math.max(0, Math.min(1, index - below));
-  return anchors[below]! + (anchors[above]! - anchors[below]!) * share;
 }
