@@ -30,7 +30,7 @@ function Saving() {
   return (
     // As tall as the form with its status, so the button keeps its place as the status comes.
     <div
-      style={{ display: 'grid', alignContent: 'start', inlineSize: '100%', minBlockSize: '9.5rem' }}
+      style={{ display: 'grid', alignContent: 'start', inlineSize: '100%', minBlockSize: '10rem' }}
     >
       <Renew round={round}>
         <PendingButton />
