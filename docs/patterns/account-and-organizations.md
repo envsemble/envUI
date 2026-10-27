@@ -49,16 +49,10 @@ examples:
   OrganizationSwitcherAnatomy: anatomy
   AvatarTrigger:
     role: do
-    caption: The person's own avatar, named by their name, at the end of the top bar.
+    caption: The person's own avatar, at the end of the top bar.
   GenericTrigger:
     role: dont
     caption: 'The same icon for everyone: nothing says who is signed in.'
-  CurrentName:
-    role: do
-    caption: The switcher names the active organization.
-  GenericLabel:
-    role: dont
-    caption: 'A generic label: nothing says where people are.'
 ---
 
 # Account and organizations
@@ -137,20 +131,13 @@ Both are a [Menu](../components/menu.md) behind a trigger in the frame, which sa
 
 ```
 
-```tsx figure=CurrentName
-
-```
-
-```tsx figure=GenericLabel
-
-```
-
 ### Content
 
 Use the person's and the organizations' own names, never generic ones.
 
 - Put the person's own name and email at the top, never "My account".
 - End with "Sign out", never "Log out".
+- Label the switcher with the active organization's name, never "Switch organization".
 - Write organization names as people wrote them, with the person's role, such as Admin.
 - Say "Create organization" in the words the application uses for one.
 
