@@ -6,9 +6,11 @@ import {
   Card,
   Checkbox,
   Column,
+  List,
   Meter,
   Progress,
   Row,
+  Surface,
   Switch,
   Text,
 } from '@envsemble/envui';
@@ -17,8 +19,8 @@ import {
 const team = [{ name: 'Alex Morgan' }, { name: 'Priya Shah' }, { name: 'Sam Lee' }];
 
 /** A card's name at its top, with a short note under it. */
-function CardHeader({ title, note }: { title: string; note: string }) {
-  return (
+function CardHeader({ title, note, end }: { title: string; note: string; end?: ReactNode }) {
+  const heading = (
     <Column gap={1}>
       <Text
         variant="body-sm"
@@ -30,6 +32,15 @@ function CardHeader({ title, note }: { title: string; note: string }) {
       </Text>
       <CardNote>{note}</CardNote>
     </Column>
+  );
+  // Something at the header's end, such as a status, beside the title.
+  return end ? (
+    <Row gap={2} align="start" justify="between">
+      {heading}
+      {end}
+    </Row>
+  ) : (
+    heading
   );
 }
 
@@ -80,11 +91,10 @@ const cards: {
     content: (
       <>
         <CardHeader title="Notifications" note="Sent by email" />
-        <Column gap={3} className="catalogue-showcase-body">
-          <Switch label="Mentions" defaultChecked />
-          <Switch label="Comments" defaultChecked />
-          <Switch label="Digest" />
-        </Column>
+        <List.Root aria-label="Notifications" className="catalogue-showcase-body">
+          <List.Item label="Mentions" action={<Switch aria-label="Mentions" defaultChecked />} />
+          <List.Item label="Comments" action={<Switch aria-label="Comments" defaultChecked />} />
+        </List.Root>
       </>
     ),
   },
@@ -97,10 +107,16 @@ const cards: {
     content: (
       <>
         <CardHeader title="Storage" note="Northwind team" />
-        <Column gap={3} className="catalogue-showcase-body">
+        <Surface
+          background="muted"
+          padding={4}
+          radius="sm"
+          className="catalogue-showcase-body"
+          render={<Column gap={3} />}
+        >
           <span className="catalogue-showcase-figure">7.2 GB</span>
           <Meter label="72% of 10 GB" value={7.2} max={10} />
-        </Column>
+        </Surface>
       </>
     ),
   },
@@ -132,13 +148,14 @@ const cards: {
     narrowPlace: 1,
     content: (
       <>
-        <CardHeader title="Website refresh" note="Due 12 March" />
+        <CardHeader
+          title="Website refresh"
+          note="Due 12 March"
+          end={<Badge tone="accent">In review</Badge>}
+        />
         <Column gap={4} className="catalogue-showcase-body">
           <Progress label="Tasks" value={18} max={24} valueText="18 of 24" />
-          <Row gap={2} align="center" justify="between">
-            <AvatarGroup people={team} size="md" />
-            <Badge tone="accent">In review</Badge>
-          </Row>
+          <AvatarGroup people={team} size="md" total={6} max={3} />
         </Column>
       </>
     ),
