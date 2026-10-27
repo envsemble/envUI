@@ -7,7 +7,7 @@
   /* How far each level sits in from the one above it, and the shape's width at its fullest, which
      is also its column's. */
   --env-table-of-contents-indent: var(--env-space-3);
-  --env-table-of-contents-stroke: calc((var(--env-space-4) + var(--env-space-5)) / 2);
+  --env-table-of-contents-stroke: calc(var(--env-space-4) + var(--env-space-1) / 2);
   min-inline-size: 0;
   font: var(--env-type-body-small);
 }
