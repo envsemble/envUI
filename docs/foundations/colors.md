@@ -22,9 +22,9 @@ avoidWhen:
   - text: Contrast, forced colors and what every component does for people.
     see: accessibility
 examples:
+  Themes: example
   Roles: example
   Swatches: example
-  Themes: example
   Status: example
   OwnColors: example
 ---
@@ -32,6 +32,21 @@ examples:
 # Colors & themes
 
 ## Options
+
+### Light, dark and high contrast
+
+Every screen comes in a light and a dark theme, and a high-contrast version of each, with stronger text and edges.
+
+- People choose, or the app follows their system, and every screen follows without changes.
+
+```tsx figure=Themes
+
+```
+
+1. **Light**
+2. **Light, high contrast**
+3. **Dark**
+4. **Dark, high contrast**
 
 ### Colors are roles
 
@@ -49,7 +64,6 @@ envUI never colors a screen by hand. Each part takes a role, such as the page, a
 4. **Text**: Headings and the main words.
 5. **Supporting text**: Details, captions and hints, a step quieter.
 6. **Accent**: The main action, links and what is selected.
-7. **Status**: Success, warning, danger and done, always with words.
 
 ### Every role in this theme
 
@@ -66,24 +80,9 @@ Each role in the theme you are reading in; a status shows its text, soft fill an
 3. **Actions and selection**: Accent, On the accent, Quiet action, Important, Selected, On the selected.
 4. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
 
-### Light, dark and high contrast
-
-Every role has a color in the light and the dark theme, and a high-contrast version of each, with stronger text and edges.
-
-- People choose, or the app follows their system, and every screen follows without changes.
-
-```tsx figure=Themes
-
-```
-
-1. **Light**
-2. **Light, high contrast**
-3. **Dark**
-4. **Dark, high contrast**
-
 ### What each color means
 
-A tone means the same on every component, on badges, alerts, buttons, toasts and charts alike.
+A tone means the same on every component, on badges, alerts, buttons, toasts and charts alike. A badge shows its tone soft, solid or outlined.
 
 ```tsx figure=Status
 
