@@ -300,6 +300,18 @@ export class PointerSelection {
     return { value: next, at };
   }
 
+  /**
+   * A field's own selection shown again as the field takes focus again, as a browser shows it,
+   * such as a word left selected while a menu's command ran.
+   */
+  reveal(field: Element) {
+    if (!field.matches(selectableFields)) return;
+    const { selectionStart: start, selectionEnd: end } = field as Field;
+    if (start === null || end === null || start === end) return;
+    this.selected = { field: field as Field, start, end };
+    this.paint();
+  }
+
   /** Where typing goes on in a field, after it typed over a selection there. */
   private caret: { field: Field; at: number } | null = null;
 

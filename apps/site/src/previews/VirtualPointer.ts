@@ -516,6 +516,7 @@ export class VirtualPointer {
     if (!element) return;
     mark(element, focusMark, true);
     for (const node of this.chain(element)) mark(node, focusWithinMark, true);
+    this.selection.reveal(element);
   }
 
   /**
