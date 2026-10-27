@@ -37,6 +37,8 @@ examples:
   EditDescription:
     role: overview
     caption: 'MarkdownEditor: a toolbar, and a preview of the text.'
+    motion: true
+    wide: true
   LinkPicker: example
   MarkdownEditorAnatomy: anatomy
   OpenInPanel: example
@@ -56,11 +58,13 @@ An editor keeps its height for a long document, or grows with its text for a sho
 | Fixed height        | A long document: the source keeps its height. The default. |
 | Grows with its text | A short description.                                       |
 
+<!-- specimen: EditorSizing -->
+
 ### Toolbar
 
 The toolbar holds the actions the text needs, as [RichText](rich-text.md#toolbar)'s does, and can offer a link picker of the application's own.
 
-```tsx figure=LinkPicker
+```tsx figure=LinkPicker motion
 
 ```
 
@@ -90,7 +94,7 @@ Common Markdown with tables, strikethrough, task lists, automatic links and foot
 
 Links can open the application's own way, such as in a panel, while clicks with a modifier key stay the browser's.
 
-```tsx figure=OpenInPanel
+```tsx figure=OpenInPanel motion
 
 ```
 
