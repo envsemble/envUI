@@ -112,7 +112,7 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
         );
       else
         for (const [name, entry] of Object.entries(value)) {
-          const { role, caption, open, stage, motion } =
+          const { role, caption, open, stage, motion, wide } =
             typeof entry === 'string' ? { role: entry } : (entry ?? {});
           if (!/^[A-Z][A-Za-z\d]*$/.test(name))
             problems.push(`${key} names ${name}; name an example by its PascalCase file name`);
@@ -128,11 +128,14 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
             problems.push(`${key} gives ${name} a field other than ${exampleFields.join(', ')}`);
           // An overview is framed here, since no fence places it; other figures on their fence.
           if (
-            (open !== undefined || stage !== undefined || motion !== undefined) &&
+            (open !== undefined ||
+              stage !== undefined ||
+              motion !== undefined ||
+              wide !== undefined) &&
             role !== 'overview'
           )
             problems.push(
-              `${key} gives ${name} open, stage or motion, which only an overview example takes here; write them on its fence`,
+              `${key} gives ${name} open, stage, motion or wide, which only an overview example takes here; write them on its fence`,
             );
           if (open !== undefined && open !== true)
             problems.push(`${key} gives ${name} open: ${open}; write open: true, or leave it out`);
@@ -140,6 +143,8 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
             problems.push(
               `${key} gives ${name} motion: ${motion}; write motion: true, or leave it out`,
             );
+          if (wide !== undefined && wide !== true)
+            problems.push(`${key} gives ${name} wide: ${wide}; write wide: true, or leave it out`);
           if (stage !== undefined && !stageFills.includes(stage))
             problems.push(
               `${key} gives ${name} stage: ${stage}; a stage takes ${stageFills.join(', ')}, or nothing for the stage in the page's color`,
@@ -818,7 +823,7 @@ export function readPage(
     title: 'Overview',
     blocks: [
       { kind: 'markdown', markdown: '## Overview\n\n' },
-      ...overviews.map(([name, { caption, open, stage, motion }], index) => ({
+      ...overviews.map(([name, { caption, open, stage, motion, wide }], index) => ({
         kind: foundation ? 'figure' : 'example',
         name,
         heading: index === 0 ? document.title : fileWords(name),
@@ -826,6 +831,7 @@ export function readPage(
         ...(open && { open: true }),
         ...(stage && { stage }),
         ...(motion && { motion: true }),
+        ...(wide && { wide: true }),
       })),
     ],
   };
