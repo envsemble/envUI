@@ -1,14 +1,13 @@
 /* TableOfContents: the page's sections as small links, nested by indent, with the reader's place
-   marked by one shape down the list beside them, like a brush stroke: at its fullest and in the
-   text color at the current section, running thin and quieter a few sections away, darker over the
-   sections the reader has passed, paler over those still to come; the labels of the passed and
+   marked by one shape down the list beside them, like a brush stroke in one quiet color: a broad
+   bulge at the current section, running thin a few sections away; the labels of the passed and
    current sections in the text color, never bolder, so no label rewraps as the reader moves, and
    those still to come quieter. */
 .env-table-of-contents {
   /* How far each level sits in from the one above it, and the shape's width at its fullest, which
      is also its column's. */
   --env-table-of-contents-indent: var(--env-space-3);
-  --env-table-of-contents-stroke: var(--env-space-3);
+  --env-table-of-contents-stroke: var(--env-space-5);
   min-inline-size: 0;
   font: var(--env-type-body-small);
 }
@@ -52,11 +51,9 @@
 }
 
 /* The shape, in the column at the list's start, the same beside every level, from the first
-   label's top to the last one's bottom, straight along the column's start and swelling toward its
-   end. The component draws its outline every frame the reader's place moves, twice, as a slider
-   draws its track and its fill over it: the fill ends at the swell's apex, so the sections passed,
-   above it, have both, and those still to come only the track. The one under the pointer swells
-   it a little. */
+   label's top to the last one's bottom, straight along the column's start and bulging toward its
+   end, never past the gap before the labels. The component draws its outline every frame the
+   reader's place moves. The section under the pointer swells it a little. */
 .env-table-of-contents-wave {
   position: absolute;
   inset-block: 0;
@@ -66,14 +63,8 @@
   overflow: visible;
   pointer-events: none;
 }
-.env-table-of-contents-wave path:first-of-type {
-  fill: var(--env-color-bg-neutral-muted);
-}
-.env-table-of-contents-wave stop {
-  stop-color: transparent;
-}
-.env-table-of-contents-wave stop[data-read] {
-  stop-color: var(--env-color-bg-neutral-subtle-pressed);
+.env-table-of-contents-wave path {
+  fill: var(--env-color-border-muted);
 }
 /* In right-to-left text, the straight edge is at the start, on the right. */
 .env-table-of-contents-wave:dir(rtl) {
@@ -114,10 +105,7 @@
   .env-table-of-contents-wave {
     forced-color-adjust: none;
   }
-  .env-table-of-contents-wave path:first-of-type {
-    fill: GrayText;
-  }
-  .env-table-of-contents-wave stop[data-read] {
-    stop-color: CanvasText;
+  .env-table-of-contents-wave path {
+    fill: CanvasText;
   }
 }

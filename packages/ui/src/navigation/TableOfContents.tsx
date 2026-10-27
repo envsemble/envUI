@@ -27,7 +27,14 @@ import {
   type SectionPosition,
   type TableOfContentsItem,
 } from './internal/contentsOutline.js';
-import { heightAt, wavePath, wavePlace, type WaveLayout } from './internal/contentsWave.js';
+import {
+  springAtRest,
+  springStep,
+  wavePath,
+  wavePlace,
+  type Spring,
+  type WaveLayout,
+} from './internal/contentsWave.js';
 
 export type { TableOfContentsItem } from './internal/contentsOutline.js';
 
@@ -189,8 +196,14 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
   );
 }
 
-/** How long the shape takes to catch up with the reader's place: its time constant, in ms. */
-const glide = 60;
+/**
+ * The springs the shape moves on, in radians a second: its place, quick and barely past its
+ * mark; its stretch and lean, a little looser, so it wobbles once as it lands; and the swell under
+ * the pointer, which pops a little past its size.
+ */
+const placeSpring = { frequency: 20, damping: 0.7 };
+const shapeSpring = { frequency: 18, damping: 0.4, inertia: 1.3 };
+const hoverSpring = { frequency: 26, damping: 0.55 };
 
 /**
  * Where the entries sit beside the shape, in layout pixels from the top of the list's box, which
@@ -299,66 +312,90 @@ export function TableOfContents({
       typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : null;
     let frame = 0;
 
-    // The shape: drawn every frame the reader's place moves, by writing its outline and its colors'
-    // reach directly, without rendering the list again. The drawn place glides after the measured
-    // one, so a mouse wheel's steps and a chosen section's jump glide rather than jump; at once
-    // where reduced motion is preferred.
+    // The shape: drawn every frame the reader's place moves, by writing its outline directly,
+    // without rendering the list again. The drawn place follows the measured one on a spring, so a
+    // mouse wheel's steps and a chosen section's jump travel rather than jump, and two more springs
+    // follow its motion: the bulge stretches and leans back as it travels, and wobbles once as it
+    // lands. No frame is drawn once all three rest. At once, without the wobble, where reduced
+    // motion is preferred.
     let layout: WaveLayout | null = null;
     let target: number | null = null;
-    let place: number | null = null;
+    const place: Spring = { value: 0, velocity: 0 };
+    let placed = false;
+    const lean: Spring = { value: 0, velocity: 0 };
+    const stretch: Spring = { value: 0, velocity: 0 };
     // How far each entry's swell under the pointer has grown, and the entry under it.
-    let hovers: number[] = [];
+    let hovers: Spring[] = [];
     let hovered = -1;
     let drawFrame = 0;
     let drawn = 0;
+    const rest = (spring: Spring, value: number) => {
+      spring.value = value;
+      spring.velocity = 0;
+    };
     const draw = (now: number) => {
       drawFrame = 0;
       const body = root.current;
-      const svg = shape.current;
-      if (!body || !svg) return;
+      const path = shape.current?.querySelector('path');
+      if (!body || !shape.current || !path) return;
       if (!layout) {
-        layout = measureWave(body, svg);
+        layout = measureWave(body, shape.current);
         if (!layout) return;
-        hovers = layout.anchors.map((_, index) => (index === hovered ? 1 : 0));
-        const height = body.offsetHeight || 1;
-        const gradient = svg.querySelector('linearGradient');
-        if (gradient && !gradient.id) {
-          // An id of its own on the page, which no other contents share, also in another root.
-          gradient.id = `env-table-of-contents-wave-${Math.random().toString(36).slice(2)}`;
-          svg.querySelector('path:last-of-type')?.setAttribute('fill', `url(#${gradient.id})`);
-        }
-        gradient?.setAttribute('y2', String(height));
+        hovers = layout.anchors.map((_, index) => ({
+          value: index === hovered ? 1 : 0,
+          velocity: 0,
+        }));
       }
       const instant = reducedMotion?.matches ?? false;
-      // A frame's time since the last drawn, or a frame's at the start of a move.
-      const elapsed = drawn === 0 ? 16 : Math.min(100, Math.max(0, now - drawn));
-      const ease = instant ? 1 : 1 - Math.exp(-elapsed / glide);
+      // A frame's time since the last drawn, in seconds, or a frame's at the start of a move.
+      const elapsed = drawn === 0 ? 1 / 60 : Math.min(0.05, Math.max(0, (now - drawn) / 1000));
       drawn = now;
       let moving = false;
-      if (target === null || place === null || instant) place = target;
-      else {
-        place += (target - place) * ease;
-        if (Math.abs(target - place) < 0.002) place = target;
-        else moving = true;
+      if (target === null || !placed || instant) {
+        // The first place, or none, or reduced motion: drawn where it is, at rest.
+        placed = target !== null;
+        rest(place, target ?? 0);
+        rest(lean, 0);
+        rest(stretch, 0);
+      } else {
+        const before = place.velocity;
+        springStep(place, target, placeSpring.frequency, placeSpring.damping, elapsed);
+        // The bulge, in entries a second: stretched out by its speed, and carried like a jelly,
+        // lagging behind as it sets off and running on past as it slows, before it springs back.
+        const speed = place.velocity;
+        const surge = elapsed > 0 ? Math.max(-400, Math.min(400, (speed - before) / elapsed)) : 0;
+        const leanTarget = Math.max(-0.4, Math.min(0.4, speed * 0.03));
+        const stretchTarget = Math.min(0.7, Math.abs(speed) * 0.05);
+        springStep(lean, leanTarget, shapeSpring.frequency, shapeSpring.damping, elapsed, {
+          push: surge * shapeSpring.inertia,
+        });
+        springStep(stretch, stretchTarget, shapeSpring.frequency, shapeSpring.damping, elapsed);
+        if (
+          springAtRest(place, target, 0.002) &&
+          springAtRest(lean, leanTarget, 0.002) &&
+          springAtRest(stretch, stretchTarget, 0.002)
+        ) {
+          rest(place, target);
+          rest(lean, 0);
+          rest(stretch, 0);
+        } else moving = true;
       }
-      hovers = hovers.map((amount, index) => {
+      hovers.forEach((swell, index) => {
         const goal = index === hovered ? 1 : 0;
-        const next = instant ? goal : amount + (goal - amount) * ease;
-        if (Math.abs(goal - next) < 0.005) return goal;
-        moving = true;
-        return next;
+        if (instant) rest(swell, goal);
+        else springStep(swell, goal, hoverSpring.frequency, hoverSpring.damping, elapsed);
+        if (springAtRest(swell, goal, 0.005)) rest(swell, goal);
+        else moving = true;
       });
-      const outline = wavePath(layout, place, hovers);
-      svg.querySelectorAll('path').forEach((path) => path.setAttribute('d', outline));
-      // The fill over the track ends at the swell's apex, as a slider's at its thumb: the passed
-      // sections above, the coming ones below. Without a place, all is still to come.
-      const apex =
-        place === null
-          ? '0'
-          : (heightAt(layout.anchors, place) / (body.offsetHeight || 1)).toFixed(4);
-      svg.querySelectorAll<SVGStopElement>('stop').forEach((stop) => {
-        if (stop.getAttribute('offset') !== apex) stop.setAttribute('offset', apex);
-      });
+      path.setAttribute(
+        'd',
+        wavePath(
+          layout,
+          placed ? place.value : null,
+          hovers.map((swell) => Math.max(0, swell.value)),
+          { lean: lean.value, stretch: stretch.value },
+        ),
+      );
       if (moving) drawFrame = requestAnimationFrame(draw);
       else drawn = 0;
     };
@@ -525,22 +562,13 @@ export function TableOfContents({
       hidden={items.length === 0 ? true : props.hidden}
     >
       <div className="env-table-of-contents-body" ref={root}>
-        {/* The reader's place: one shape down the list, drawn and colored by the effect above. */}
+        {/* The reader's place: one shape down the list, drawn by the effect above. */}
         <svg
           className="env-table-of-contents-wave"
           ref={shape}
           aria-hidden="true"
           focusable="false"
         >
-          <defs>
-            <linearGradient gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="0">
-              {/* The fill, then none, both at the apex: a hard edge. */}
-              <stop data-read="" />
-              <stop />
-            </linearGradient>
-          </defs>
-          {/* The track, the whole shape; the fill over it, down to the apex. */}
-          <path />
           <path />
         </svg>
         <List items={items} current={current} passed={passed} depth={0} onNavigate={navigate} />

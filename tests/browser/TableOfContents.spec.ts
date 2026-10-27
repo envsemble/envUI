@@ -179,6 +179,19 @@ test('a smooth scroll to a section moves the marks through the sections on the w
   expect(back).toEqual([]);
   expect(peaks.at(-1)).toBeGreaterThan(peaks[0]!);
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Short end');
+  // Once it has landed, it rests: no motion of its own while nothing moves.
+  const outline = () => contents.locator('path').getAttribute('d');
+  await expect
+    .poll(async () => {
+      const first = await outline();
+      await page.evaluate(() => new Promise((done) => setTimeout(done, 100)));
+      return first === (await outline());
+    })
+    .toBe(true);
+  // Still after longer than a landing's wobble lasts, about 400 ms.
+  const rested = await outline();
+  await page.evaluate(() => new Promise((done) => setTimeout(done, 400)));
+  expect(await outline()).toBe(rested);
 });
 
 test(
@@ -203,27 +216,15 @@ test(
     await contents.getByRole('link', { name: 'Last' }).hover();
     await expect.poll(async () => (await widths(contents))[5]).toBeGreaterThan(each[5]! * 1.5);
     expect((await widths(contents))[5]).toBeLessThan(each[2]!);
-    // A track, and a fill over it to the apex beside the current entry, as a slider's.
-    const stops = await contents.locator('stop').evaluateAll((all) =>
-      all.map((stop) => ({
-        offset: Number(stop.getAttribute('offset')),
-        color: getComputedStyle(stop).stopColor,
-      })),
-    );
-    expect(stops).toHaveLength(2);
-    expect(stops[0]!.offset).toBe(stops[1]!.offset);
-    expect(stops[1]!.color).toBe('rgba(0, 0, 0, 0)');
-    expect(stops[0]!.color).not.toBe(stops[1]!.color);
-    const apex = await contents.evaluate((nav) => {
-      const link = nav.querySelectorAll<HTMLElement>('.env-table-of-contents-link')[2]!;
-      return (link.offsetTop + link.offsetHeight / 2) / nav.querySelector('svg')!.clientHeight;
-    });
-    expect(Math.abs(stops[0]!.offset - apex)).toBeLessThan(0.02);
+    // One shape in one color, without a track or a fill: the labels alone tell the sections
+    // passed from those still to come.
+    await expect(contents.locator('svg path')).toHaveCount(1);
+    await expect(contents.locator('svg linearGradient, svg stop')).toHaveCount(0);
     // Drawn by script, which assistive technology doesn't read.
     await expect(contents.locator('svg')).toHaveAttribute('aria-hidden', 'true');
-    // In forced colors, the track in the system's gray text color.
-    const track = contents.locator('path').first();
-    const fill = () => track.evaluate((path) => getComputedStyle(path).fill);
+    // In forced colors, the shape in the system's text color.
+    const shape = contents.locator('path');
+    const fill = () => shape.evaluate((path) => getComputedStyle(path).fill);
     const before = await fill();
     await page.emulateMedia({ forcedColors: 'active' });
     expect(await fill()).not.toBe(before);
