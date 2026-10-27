@@ -483,33 +483,85 @@
   border-radius: var(--env-radius-xl);
 }
 
-/* Colors of its own: a card in a terracotta family of its own, its foot in the other theme. Its
-   theme boundaries paint no page of their own: the card's surface is its fill, with a surface's
-   corners. */
-.catalogue-bakery {
-  inline-size: min(100%, 26rem);
+/* Your own colors: one canvas in a scheme of its own, its page's color with a surface's corners,
+   holding tiles of its filled surface, each one component, as Material 3's showcases do: three
+   across, the quiet actions and the navigation running down both rows; on a narrower stage the
+   actions and the navigation side by side above the rest. The navigation's tile is in the other
+   theme, its own page's color. The scheme control sits below. */
+.catalogue-schemes {
+  inline-size: 100%;
+}
+.catalogue-scheme-canvas {
+  container-type: inline-size;
+  box-sizing: border-box;
+  inline-size: min(100%, 44rem);
+  padding: var(--env-space-3);
   border-radius: var(--env-radius-xl);
-  background: none;
 }
-.catalogue-bakery-foot {
-  background: none;
-}
-.catalogue-bakery-mark {
+.catalogue-scheme-tiles {
   display: grid;
-  flex: none;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'menu other'
+    'toolbar toolbar'
+    'choice choice'
+    'progress progress';
+  gap: var(--env-space-3);
+}
+@container (width >= 36rem) {
+  .catalogue-scheme-tiles {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) auto;
+    grid-template-areas:
+      'menu toolbar other'
+      'menu choice other'
+      'menu progress other';
+  }
+}
+.catalogue-scheme-tile {
+  display: grid;
   place-items: center;
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
-  border-radius: var(--env-radius-lg);
-  background: var(--env-color-bg-accent-badge);
-  color: var(--env-color-fg-accent);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--env-space-4);
+  border-radius: var(--env-radius-xl);
 }
-.catalogue-bakery-icon {
-  flex: none;
-  color: var(--env-color-fg-accent);
+.catalogue-scheme-tile[data-tile='menu'] {
+  grid-area: menu;
 }
-.catalogue-bakery-join {
+.catalogue-scheme-tile[data-tile='toolbar'] {
+  grid-area: toolbar;
+}
+.catalogue-scheme-tile[data-tile='choice'] {
+  grid-area: choice;
+}
+.catalogue-scheme-tile[data-tile='progress'] {
+  grid-area: progress;
+  place-items: stretch;
+  align-content: center;
+}
+.catalogue-scheme-other {
+  grid-area: other;
+  padding: var(--env-space-2) var(--env-space-3);
+}
+/* While a scheme eases in, every part's colors fade at the pace of the theme's fade
+   (ThemeFade.css), parts with transitions of their own too, such as a progress bar's indicator and
+   a button's fill, so the canvas changes as one. */
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-scheme-tiles[data-switching] :is(*, ::before, ::after) {
+    transition-property: background-color, border-color, color, outline-color, fill, stroke;
+    transition-duration: calc(1.5 * var(--env-motion-duration-slow));
+    transition-timing-function: var(--env-motion-ease);
+  }
+}
+/* Each scheme's hue on its segment of the control, with a hairline edge. */
+.catalogue-scheme-dot {
+  display: block;
   flex: none;
+  box-sizing: border-box;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-radius: var(--env-radius-full);
 }
 
 /* An animated figure's states stacked in one place (Steps.tsx): the place is as large as the

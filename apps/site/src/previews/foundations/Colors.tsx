@@ -3,26 +3,40 @@ import {
   Badge,
   Button,
   Column,
+  IconButton,
   Meter,
+  Progress,
+  Rail,
   Row,
   SegmentedControl,
   Surface,
-  Switch,
   Text,
   Theme,
+  Toolbar,
   useTheme,
   type BadgeTone,
   type ThemeContrast,
   type ThemeValue,
 } from '@envsemble/envui';
+import { Add } from '@envsemble/envui/icons/Add';
+import { AddAPhoto } from '@envsemble/envui/icons/AddAPhoto';
+import { AddPhotoAlternate } from '@envsemble/envui/icons/AddPhotoAlternate';
 import { Archive } from '@envsemble/envui/icons/Archive';
-import { BakeryDining } from '@envsemble/envui/icons/BakeryDining';
-import { Bedtime } from '@envsemble/envui/icons/Bedtime';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
+import { Crop } from '@envsemble/envui/icons/Crop';
+import { Done } from '@envsemble/envui/icons/Done';
 import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
+import { Favorite } from '@envsemble/envui/icons/Favorite';
+import { Group } from '@envsemble/envui/icons/Group';
 import { Info } from '@envsemble/envui/icons/Info';
+import { PhotoAlbum } from '@envsemble/envui/icons/PhotoAlbum';
+import { PhotoLibrary } from '@envsemble/envui/icons/PhotoLibrary';
 import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
+import { RotateRight } from '@envsemble/envui/icons/RotateRight';
+import { Search } from '@envsemble/envui/icons/Search';
+import { Share } from '@envsemble/envui/icons/Share';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
+import { Tune } from '@envsemble/envui/icons/Tune';
 import { Warning } from '@envsemble/envui/icons/Warning';
 import { usePointer, type PointerStep } from '../Motion';
 import type { FoundationFigure } from './FoundationFigures';
@@ -455,191 +469,330 @@ function StatusFigure({ legend }: FigureWords) {
 }
 
 /**
- * A terracotta family of its own, as an application gives an area of its own (customizing.md's
- * GreenArea does the same in green): the roles the card paints, with their hover and press, in
- * each theme. Warm cream surfaces with a deep terracotta action in the light theme; warm charcoal
- * with the same terracotta, a step deeper under the pointer, in the dark. At high contrast its
- * text and edges keep the theme's own, stronger colors.
+ * A pastel color scheme of an application's own: the hue of its surfaces and main actions, and the
+ * hue of its second accent, the Important fill, in OKLCH, in the legend's order. Each takes the
+ * same grades in each theme, so the three are one family of schemes.
  */
-const clay: Record<ThemeValue, { fills: CSSProperties; lines: CSSProperties }> = {
-  light: {
-    fills: {
-      '--env-color-bg-page': '#fbf8f5',
-      '--env-color-bg-default': '#f9f3ed',
-      '--env-color-bg-muted': '#f0e5da',
-      '--env-color-bg-brand-emphasis': '#9b4526',
-      '--env-color-bg-brand-emphasis-hover': '#883c20',
-      '--env-color-bg-brand-emphasis-pressed': '#76331b',
-      '--env-color-fg-on-emphasis': '#ffffff',
-      '--env-color-bg-neutral-muted': 'rgb(155 69 38 / 0.1)',
-      '--env-color-bg-neutral-muted-hover': 'rgb(155 69 38 / 0.16)',
-      '--env-color-bg-neutral-muted-pressed': 'rgb(155 69 38 / 0.23)',
-      '--env-color-bg-neutral-subtle-hover': 'rgb(155 69 38 / 0.07)',
-      '--env-color-bg-neutral-subtle-pressed': 'rgb(155 69 38 / 0.12)',
-      '--env-color-bg-selected': '#f1d9ca',
-      '--env-color-bg-selected-hover': '#ecd0be',
-      '--env-color-bg-selected-pressed': '#e6c6b2',
-      '--env-color-fg-on-selected': '#6b2d16',
-      '--env-color-fg-accent': '#9b4526',
-      '--env-color-bg-accent-badge': '#f3dfd2',
-      '--env-color-fg-control': '#4a2a1d',
-    } as CSSProperties,
-    lines: {
-      '--env-color-fg-muted': '#6b5a50',
-      '--env-color-border-default': '#9a877b',
-      '--env-color-border-muted': '#e4d6ca',
-    } as CSSProperties,
-  },
-  dark: {
-    fills: {
-      '--env-color-bg-page': '#171311',
-      '--env-color-bg-default': '#211b18',
-      '--env-color-bg-muted': '#2d2521',
-      '--env-color-bg-brand-emphasis': '#b4532f',
-      '--env-color-bg-brand-emphasis-hover': '#a44a29',
-      '--env-color-bg-brand-emphasis-pressed': '#934124',
-      '--env-color-fg-on-emphasis': '#ffffff',
-      '--env-color-bg-neutral-muted': 'rgb(232 170 140 / 0.12)',
-      '--env-color-bg-neutral-muted-hover': 'rgb(232 170 140 / 0.18)',
-      '--env-color-bg-neutral-muted-pressed': 'rgb(232 170 140 / 0.25)',
-      '--env-color-bg-neutral-subtle-hover': 'rgb(232 170 140 / 0.07)',
-      '--env-color-bg-neutral-subtle-pressed': 'rgb(232 170 140 / 0.12)',
-      '--env-color-bg-selected': '#4a2e23',
-      '--env-color-bg-selected-hover': '#533428',
-      '--env-color-bg-selected-pressed': '#5c3a2d',
-      '--env-color-fg-on-selected': '#f6d8c8',
-      '--env-color-fg-accent': '#e8aa8c',
-      '--env-color-bg-accent-badge': '#3e2a22',
-      '--env-color-fg-control': '#f1e3db',
-    } as CSSProperties,
-    lines: {
-      '--env-color-fg-muted': '#c0aea4',
-      '--env-color-border-default': '#8f7b70',
-      '--env-color-border-muted': '#3a302b',
-    } as CSSProperties,
-  },
-};
+const schemes: readonly { hue: number; accent: number }[] = [
+  { hue: 300, accent: 350 },
+  { hue: 165, accent: 215 },
+  { hue: 48, accent: 10 },
+];
 
-/** An area in the terracotta family, in a theme, at the reader's contrast. */
-function ClayArea({
+/** A color in OKLCH: its lightness, chroma and hue. */
+const oklch = (lightness: number, chroma: number, hue: number) =>
+  `oklch(${lightness} ${chroma} ${hue})`;
+
+/**
+ * The roles a scheme gives its area, with their hover and press, as an application gives an area
+ * colors of its own (customizing.md's Recolor an area): pale tinted surfaces, mid-tone quiet
+ * actions and selection, and a deep main action in the light theme; deep tinted surfaces and pale
+ * actions in the dark. Its text and edges are tinted too, except at high contrast, where they keep
+ * the theme's own, stronger colors.
+ */
+function schemeColors(
+  { hue, accent }: (typeof schemes)[number],
+  theme: ThemeValue,
+  high: boolean,
+): CSSProperties {
+  const light = theme === 'light';
+  const step = (lightness: number, by: number) => lightness + (light ? -by : by);
+  const tone = (role: string, lightness: number, chroma: number, at = hue) => ({
+    [`--env-color-${role}`]: oklch(lightness, chroma, at),
+    [`--env-color-${role}-hover`]: oklch(step(lightness, 0.035), chroma, at),
+    [`--env-color-${role}-pressed`]: oklch(step(lightness, 0.07), chroma, at),
+  });
+  const fills = light
+    ? {
+        '--env-color-bg-page': oklch(0.985, 0.012, hue),
+        '--env-color-bg-default': oklch(0.995, 0.006, hue),
+        '--env-color-bg-raised': oklch(0.995, 0.006, hue),
+        '--env-color-bg-muted': oklch(0.935, 0.034, hue),
+        ...tone('bg-brand-emphasis', 0.43, 0.11),
+        '--env-color-fg-on-emphasis': oklch(1, 0, 0),
+        ...tone('bg-important-strong', 0.86, 0.08, accent),
+        '--env-color-fg-on-strong': oklch(0.27, 0.07, accent),
+        ...tone('bg-neutral-muted', 0.88, 0.055),
+        '--env-color-bg-neutral-subtle-hover': oklch(0.89, 0.04, hue),
+        '--env-color-bg-neutral-subtle-pressed': oklch(0.86, 0.05, hue),
+        ...tone('bg-selected', 0.83, 0.075),
+        '--env-color-fg-on-selected': oklch(0.25, 0.07, hue),
+        '--env-color-bg-navigation-hover': oklch(0.9, 0.04, hue),
+        '--env-color-bg-navigation-pressed': oklch(0.87, 0.05, hue),
+        '--env-color-fg-accent': oklch(0.43, 0.11, hue),
+        '--env-color-border-focus': oklch(0.43, 0.11, hue),
+      }
+    : {
+        '--env-color-bg-page': oklch(0.19, 0.018, hue),
+        '--env-color-bg-default': oklch(0.23, 0.024, hue),
+        '--env-color-bg-raised': oklch(0.25, 0.026, hue),
+        '--env-color-bg-muted': oklch(0.26, 0.032, hue),
+        ...tone('bg-brand-emphasis', 0.84, 0.08),
+        '--env-color-fg-on-emphasis': oklch(0.22, 0.05, hue),
+        ...tone('bg-important-strong', 0.84, 0.08, accent),
+        '--env-color-fg-on-strong': oklch(0.22, 0.05, accent),
+        ...tone('bg-neutral-muted', 0.35, 0.05),
+        '--env-color-bg-neutral-subtle-hover': oklch(0.33, 0.04, hue),
+        '--env-color-bg-neutral-subtle-pressed': oklch(0.37, 0.045, hue),
+        ...tone('bg-selected', 0.42, 0.075),
+        '--env-color-fg-on-selected': oklch(0.95, 0.025, hue),
+        '--env-color-bg-navigation-hover': oklch(0.31, 0.035, hue),
+        '--env-color-bg-navigation-pressed': oklch(0.35, 0.04, hue),
+        '--env-color-fg-accent': oklch(0.84, 0.08, hue),
+        '--env-color-border-focus': oklch(0.84, 0.08, hue),
+      };
+  const lines = light
+    ? {
+        '--env-color-fg-default': oklch(0.24, 0.035, hue),
+        '--env-color-fg-control': oklch(0.27, 0.045, hue),
+        '--env-color-fg-muted': oklch(0.4, 0.04, hue),
+        '--env-color-border-default': oklch(0.55, 0.045, hue),
+        '--env-color-border-muted': oklch(0.86, 0.03, hue),
+      }
+    : {
+        '--env-color-fg-default': oklch(0.95, 0.012, hue),
+        '--env-color-fg-control': oklch(0.92, 0.02, hue),
+        '--env-color-fg-muted': oklch(0.8, 0.03, hue),
+        '--env-color-border-default': oklch(0.62, 0.04, hue),
+        '--env-color-border-muted': oklch(0.34, 0.03, hue),
+      };
+  return (high ? fills : { ...fills, ...lines }) as CSSProperties;
+}
+
+/**
+ * Whether a Theme of this contrast shows the high-contrast colors: `high`, or `system` while the
+ * system asks for more contrast, followed as it changes.
+ */
+function useHighContrast(contrast: ThemeContrast) {
+  const [system, setSystem] = useState(false);
+  useEffect(() => {
+    const query = matchMedia('(prefers-contrast: more)');
+    const change = () => setSystem(query.matches);
+    change();
+    query.addEventListener('change', change);
+    return () => query.removeEventListener('change', change);
+  }, []);
+  return contrast === 'high' || (contrast === 'system' && system);
+}
+
+/** An area in a scheme, in a theme, at the reader's contrast. */
+function SchemeArea({
+  scheme,
   theme,
   className,
   children,
 }: {
+  scheme: number;
   theme: ThemeValue;
   className?: string;
   children: ReactNode;
 }) {
   const { contrast } = useTheme();
-  const { fills, lines } = clay[theme];
+  const high = useHighContrast(contrast);
   return (
     <Theme
       theme={theme}
       contrast={contrast}
       className={className}
-      style={contrast === 'high' ? fills : { ...fills, ...lines }}
+      style={schemeColors(schemes[scheme] ?? schemes[0]!, theme, high)}
     >
       {children}
     </Theme>
   );
 }
 
+/** A segment of the scheme control, by its place from 1. */
+const schemeSegment = (index: number) => segment(index, 'catalogue-scheme-pick');
+
 /**
- * The pointer rests on the terracotta action, presses it, then turns the switch off and on again,
- * so the family's own hover, press and switch play; it leaves with the switch on, as it began.
+ * The pointer chooses each scheme in turn, and the components ease into it: in the second, it
+ * rests on the main action and presses it, so its hover and press show in the scheme's own colors;
+ * in the third, it rests on a quiet action. It chooses the first again and leaves, as it began.
  */
-const ownColorsScript: PointerStep[] = [
+const schemeScript: PointerStep[] = [
+  { wait: 1400 },
+  { to: schemeSegment(2) },
+  { wait: 200 },
+  { click: true },
   { wait: 900 },
-  { to: '.catalogue-bakery-book', x: 0.2, y: 0.8 },
-  { to: '.catalogue-bakery-book', x: 0.55, y: 0.5, duration: 450 },
-  { wait: 1100 },
+  { to: '.catalogue-scheme-fab', duration: 650 },
+  { wait: 600 },
   { press: true },
   { wait: 260 },
   { release: true },
+  { wait: 700 },
+  { to: schemeSegment(3), duration: 650 },
+  { wait: 200 },
+  { click: true },
   { wait: 900 },
-  { to: '.catalogue-bakery .env-switch-input', duration: 750 },
-  { wait: 500 },
-  { click: true },
-  { wait: 1500 },
-  { click: true },
+  { to: '.catalogue-scheme-share', duration: 600 },
   { wait: 1100 },
+  { to: schemeSegment(1), duration: 650 },
+  { wait: 200 },
+  { click: true },
+  { wait: 1800 },
   { leave: true },
-  { wait: 900 },
 ];
 
 /**
- * A card in a terracotta family of its own, a bread-baking class to book, with its choices in a
- * filled group and its foot, an evening class, in the other theme; the pointer plays its action
- * and its switch.
+ * The same components in a scheme of the application's own, each on a tile of the scheme's filled
+ * surface, as one canvas: a column of quiet actions above the main one, a photo's toolbar beside
+ * its save action, a choice of view, two uploads and, in the other theme, the navigation. Below
+ * it, a control of the schemes, which the pointer chooses in turn.
  */
-function BakingClass() {
+function SchemeChoice({ names }: { names: readonly string[] }) {
   const page = useTheme();
   const other: ThemeValue = page.theme === 'dark' ? 'light' : 'dark';
-  const [level, setLevel] = useState('first');
-  usePointer(ownColorsScript);
+  const [chosen, setChosen] = useState('0');
+  // While a new scheme eases in, every part's colors fade together, its own transitions included:
+  // the scheme and the fade change in one render.
+  const [switching, setSwitching] = useState(false);
+  useEffect(() => {
+    if (!switching) return;
+    const timer = setTimeout(() => setSwitching(false), 800);
+    return () => clearTimeout(timer);
+  }, [switching, chosen]);
+  const choose = (next: string) => {
+    setSwitching(true);
+    setChosen(next);
+  };
+  const [period, setPeriod] = useState('month');
+  const [place, setPlace] = useState('photos');
+  usePointer(schemeScript);
+  const scheme = Number(chosen);
+  const destination = (id: string) => ({ current: place === id, onSelect: () => setPlace(id) });
   return (
-    <ClayArea theme={page.theme} className="catalogue-bakery">
-      <Surface background="default" padding={5} radius="xl" render={<Column gap={4} />}>
-        <Row gap={3} align="start">
-          <span className="catalogue-bakery-mark" aria-hidden="true">
-            <BakeryDining width="1.5rem" height="1.5rem" />
-          </span>
-          <Column gap={1}>
-            <Text render={<p />} variant="title">
-              Sourdough for beginners
-            </Text>
-            <Text emphasis="muted">Saturday 10:00 · Mill Lane Bakery</Text>
-          </Column>
-        </Row>
-        <Surface background="muted" padding={4} radius="sm" render={<Column gap={3} />}>
-          <Row gap={3} align="center" justify="between" wrap>
-            <Text>Level</Text>
+    <Column gap={5} align="center" className="catalogue-schemes">
+      <SchemeArea scheme={scheme} theme={page.theme} className="catalogue-scheme-canvas">
+        <div className="catalogue-scheme-tiles" data-switching={switching || undefined}>
+          <Surface
+            background="muted"
+            radius="xl"
+            className="catalogue-scheme-tile"
+            data-tile="menu"
+          >
+            <Column gap={2} align="end">
+              <Button variant="secondary" startIcon={<CheckCircle />}>
+                Select
+              </Button>
+              <Button variant="secondary" startIcon={<AddPhotoAlternate />}>
+                Add photos
+              </Button>
+              <Button variant="secondary" startIcon={<Share />} className="catalogue-scheme-share">
+                Share
+              </Button>
+              <Button variant="secondary" startIcon={<Search />}>
+                Search
+              </Button>
+              <IconButton
+                variant="primary"
+                size="lg"
+                icon={<Add />}
+                aria-label="New album"
+                className="catalogue-scheme-fab"
+              />
+            </Column>
+          </Surface>
+          <Surface
+            background="muted"
+            radius="xl"
+            className="catalogue-scheme-tile"
+            data-tile="toolbar"
+          >
+            <Row gap={2} align="center" justify="center">
+              <Surface
+                background="default"
+                padding={1}
+                radius="full"
+                render={<Toolbar.Root aria-label="Edit photo" size="sm" />}
+              >
+                <Toolbar.Button icon={<Crop />} label="Crop" />
+                <Toolbar.Button icon={<Tune />} label="Adjust" />
+                <Toolbar.Button icon={<RotateRight />} label="Rotate" />
+                <Toolbar.Button icon={<Favorite />} label="Favorite" pressed />
+              </Surface>
+              <IconButton variant="primary" tone="accent" icon={<Done />} aria-label="Save" />
+            </Row>
+          </Surface>
+          <Surface
+            background="muted"
+            radius="xl"
+            className="catalogue-scheme-tile"
+            data-tile="choice"
+          >
             <SegmentedControl
-              aria-label="Level"
+              aria-label="Group photos by"
               size="sm"
-              value={level}
-              onValueChange={setLevel}
+              value={period}
+              onValueChange={setPeriod}
               items={[
-                { value: 'first', label: 'First loaf' },
-                { value: 'more', label: 'Improver' },
+                { value: 'day', label: 'Day' },
+                { value: 'month', label: 'Month' },
+                { value: 'year', label: 'Year' },
               ]}
             />
-          </Row>
-          <Switch label="Borrow an apron" defaultChecked />
-        </Surface>
-        <Row gap={2} align="center" justify="between" wrap>
-          <Badge tone="accent">4 seats left</Badge>
-          <Row gap={2}>
-            <Button variant="secondary">Not now</Button>
-            <Button className="catalogue-bakery-book">Book a seat</Button>
-          </Row>
-        </Row>
-        <ClayArea theme={other} className="catalogue-bakery-foot">
-          <Surface
-            background="default"
-            padding={3}
-            radius="sm"
-            render={<Row gap={3} align="center" justify="between" />}
-          >
-            <Row gap={2} align="center">
-              <Bedtime className="catalogue-bakery-icon" />
-              <Text>Pizza night · Thursday 19:00</Text>
-            </Row>
-            <Button size="sm" className="catalogue-bakery-join">
-              Join
-            </Button>
           </Surface>
-        </ClayArea>
-      </Surface>
-    </ClayArea>
+          <Surface
+            background="muted"
+            radius="xl"
+            className="catalogue-scheme-tile"
+            data-tile="progress"
+            render={<Column gap={3} />}
+          >
+            <Progress label="Lisbon" value={18} max={24} valueText="18 of 24" />
+            <Progress label="Porto" value={6} max={20} valueText="6 of 20" />
+          </Surface>
+          <SchemeArea
+            scheme={scheme}
+            theme={other}
+            className="catalogue-scheme-tile catalogue-scheme-other"
+          >
+            <Rail
+              aria-label="Photos"
+              background="page"
+              header={
+                <IconButton
+                  variant="primary"
+                  tone="accent"
+                  icon={<AddAPhoto />}
+                  aria-label="Take a photo"
+                />
+              }
+              destinations={[
+                { label: 'Photos', icon: <PhotoLibrary />, ...destination('photos') },
+                { label: 'Albums', icon: <PhotoAlbum />, ...destination('albums') },
+                { label: 'Shared', icon: <Group />, ...destination('shared') },
+              ]}
+            />
+          </SchemeArea>
+        </div>
+      </SchemeArea>
+      <SegmentedControl
+        aria-label="Color scheme"
+        size="sm"
+        className="catalogue-scheme-pick"
+        value={chosen}
+        onValueChange={choose}
+        items={names.map((name, index) => ({
+          value: String(index),
+          label: name,
+          icon: (
+            <span
+              className="catalogue-scheme-dot"
+              style={{ background: oklch(0.8, 0.09, schemes[index]?.hue ?? 0) }}
+            />
+          ),
+        }))}
+      />
+    </Column>
   );
 }
 
-/** A card in a color family of its own, with an area in the other theme, played by the pointer. */
-function OwnColorsFigure() {
+/** The same components in each of a few pastel schemes of an application's own, chosen in turn. */
+function OwnColorsFigure({ legend }: FigureWords) {
   return (
-    <Figure label="Colors of its own" motion="the card in its own colors">
-      <BakingClass />
+    <Figure label="Your own colors" motion="the components in each color scheme">
+      <SchemeChoice names={legend.map((entry) => entry.name)} />
     </Figure>
   );
 }
@@ -650,5 +803,5 @@ export const colorsFigures: Record<string, FoundationFigure> = {
   Swatches: { render: SwatchesFigure, wide: true },
   Themes: { render: ThemesFigure },
   Status: { render: StatusFigure, wide: true },
-  OwnColors: { render: OwnColorsFigure },
+  OwnColors: { render: OwnColorsFigure, wide: true },
 };
