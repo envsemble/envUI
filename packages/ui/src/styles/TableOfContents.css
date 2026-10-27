@@ -91,10 +91,10 @@
 .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
   color: var(--env-color-fg-default);
 }
-/* The section under the pointer takes the accent's text color, whether passed or to come, after
-   every rule above, which it outranks. */
+/* The section under the pointer takes muted text's hover color, a quiet gray between the passed
+   sections' and those to come, whichever it is: after every rule above, which it outranks. */
 .env-table-of-contents .env-table-of-contents-link:hover:is(*, [data-passed], [aria-current]) {
-  color: var(--env-color-fg-accent);
+  color: var(--env-color-fg-muted-hover);
 }
 
 /* Forced colors: the system paints the links, so the current one takes its selection color, and

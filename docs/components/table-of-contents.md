@@ -77,7 +77,7 @@ One shape down the side of the list bulges beside the section the reader is in, 
 
 - It travels to the next section with a little give: it stretches as it goes and settles with a short wobble, then stays still.
 - It moves at once, without the wobble, where reduced motion is preferred.
-- The section under the pointer swells it a little, and its label takes the accent color.
+- The section under the pointer swells it a little, and its label turns a quiet gray.
 
 <!-- specimen: ReadersPlace -->
 
