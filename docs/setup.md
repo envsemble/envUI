@@ -85,7 +85,7 @@ export function App() {
 }
 ```
 
-Import `@envsemble/envui/styles.css` once, in the client entry, and put the UI inside `Theme`: a theme attribute on the document alone gives no React context. The styles include Inter and sit in the `env` cascade layer, so the application's CSS outside layers overrides them without `!important`. Declare the order once, such as `@layer reset, env, app;`, with resets and element rules in a layer before `env`: an element rule outside layers, such as `button { border: 0 }`, restyles envUI's components too. [Cascade layers](migration.md#cascade-layers) shows how to override a token per theme, and [colors and themes](foundations/colors.md) nested themes, portals and high contrast.
+Import `@envsemble/envui/styles.css` once, in the client entry, and put the UI inside `Theme`: a theme attribute on the document alone gives no React context. The styles include Geist and sit in the `env` cascade layer, so the application's CSS outside layers overrides them without `!important`. Declare the order once, such as `@layer reset, env, app;`, with resets and element rules in a layer before `env`: an element rule outside layers, such as `button { border: 0 }`, restyles envUI's components too. [Cascade layers](migration.md#cascade-layers) shows how to override a token per theme, and [colors and themes](foundations/colors.md) nested themes, portals and high contrast.
 
 ### Theme preference
 
@@ -350,7 +350,7 @@ A server component passes a client component only serializable values, no functi
 - `@envsemble/envui/color` when the feature chooses or shows colors: [ColorPicker, ColorPickerButton and ColorSwatch](components/color-picker.md).
 - `@envsemble/envui/messages` for `defaultMessages`, envUI's English strings by namespace, for applications that extract or translate them.
 - `@envsemble/envui/dev` for [dev mode](dev-mode.md), in development only: load it with a dynamic `import()` behind a development check, so production builds contain none of it.
-- `@envsemble/envui/assets/*` for raw assets, such as the Inter font file.
+- `@envsemble/envui/assets/*` for raw assets, such as the Geist font file.
 
 The content, rich-text, diff and color entries need libraries that envUI doesn't list as dependencies, so an application that uses only the main entry never installs them. One that imports an entry installs its libraries, in these versions or later ones of the same major:
 

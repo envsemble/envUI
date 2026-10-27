@@ -216,7 +216,7 @@ test('a typography token builds, with a custom property for each part', async ()
   const list = JSON.parse(await readFile(join(directory, 'src/generated/tokens.json'), 'utf8'));
   const label = list.tokens.find((token) => token.id === 'text.label');
   assert.deepEqual(label.values.dark.resolved, {
-    'font-family': "'envUI Inter', sans-serif",
+    'font-family': "'envUI Geist', sans-serif",
     'font-size': '0.875rem',
     'font-weight': '400',
     'line-height': '1.4',

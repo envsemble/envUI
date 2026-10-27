@@ -57,10 +57,10 @@ export async function collectDependencyNotices(repositoryRoot) {
   return notices.join('\n\n');
 }
 
-/** Everything the catalogue bundles: the runtime dependencies, Inter and Material Symbols. */
+/** Everything the catalogue bundles: the runtime dependencies, Geist and Material Symbols. */
 export async function collectCatalogueNotices(repositoryRoot) {
   const notices = [await collectDependencyNotices(repositoryRoot)];
-  for (const name of ['Inter-LICENSE.txt', 'Material-Symbols-LICENSE.txt'])
+  for (const name of ['Geist-LICENSE.txt', 'Material-Symbols-LICENSE.txt'])
     notices.push(await readFile(resolve(repositoryRoot, 'packages/ui/licenses', name), 'utf8'));
   return notices.join('\n\n');
 }

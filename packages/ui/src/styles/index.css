@@ -93,12 +93,13 @@
 @import './CalendarHeatmap.css' layer(env.components);
 @import './Motion.css' layer(env.components);
 @import './Skeleton.css' layer(env.components);
-/* envUI's own Inter. Cascade layers order style rules; a font face is no style rule, so it stays
-   outside them, and an application's own face of this name replaces it. */
+/* envUI's own Geist: one variable face from regular (400) to bold (700). Cascade layers order style
+   rules; a font face is no style rule, so it stays outside them, and an application's own face of
+   this name replaces it. */
 @font-face {
-  font-family: 'envUI Inter';
-  src: url('../assets/fonts/Inter.woff2') format('woff2');
-  font-weight: 100 900;
+  font-family: 'envUI Geist';
+  src: url('../assets/fonts/Geist.woff2') format('woff2');
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
