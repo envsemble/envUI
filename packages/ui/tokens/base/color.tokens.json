@@ -18,6 +18,20 @@
           "$value": "{palette.neutral.8}"
         }
       },
+      "recessed": {
+        "$root": {
+          "$description": "A recessed surface, a shade deeper than the page in both themes: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background=\"recessed\". Everything measured on the page keeps its minimum on it.",
+          "$value": "{palette.neutral.3}"
+        },
+        "hover": {
+          "$description": "An interactive recessed surface under the pointer.",
+          "$value": "{palette.neutral.7}"
+        },
+        "pressed": {
+          "$description": "An interactive recessed surface while pressed.",
+          "$value": "{palette.neutral.10}"
+        }
+      },
       "default": {
         "$root": {
           "$description": "The default surface: Surface, navigation, standard menus.",

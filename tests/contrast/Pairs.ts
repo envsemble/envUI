@@ -71,6 +71,9 @@ const badgeTint = (tone: (typeof tones)[number]) =>
 
 // Surfaces, by role.
 const page = '--env-color-bg-page'; // the app frame, title bars, Surface background="page"
+const recessed = '--env-color-bg-recessed'; // a shade deeper than the page: Surface background="recessed", the catalogue's canvas
+const recessedHover = '--env-color-bg-recessed-hover';
+const recessedPressed = '--env-color-bg-recessed-pressed';
 const surface = '--env-color-bg-default'; // Surface's default, sidebars, standard menus
 const muted = '--env-color-bg-muted'; // Surface background="muted", cards, radio rows
 const raised = '--env-color-bg-raised'; // Surface background="raised", dialogs, tables, rows on a contrasting surface
@@ -621,6 +624,17 @@ const registry: readonly ContrastPair[] = merged([
     [muted],
     'The action strip of a card against the card, on its default muted surface',
   ),
+  // The recessed surface: a well a shade deeper than the page. Everything on the page is measured
+  // on it too, below; here its edge against the page and its states.
+  ...different(recessed, [page], 'A recessed surface against the page around it'),
+  ...text(
+    '--env-color-fg-default',
+    [recessedHover, recessedPressed],
+    'An interactive recessed surface, hovered and pressed',
+  ),
+  ...text('--env-color-fg-muted', [recessedHover, recessedPressed]),
+  ...different(recessedHover, [recessed], 'A recessed surface under the pointer'),
+  ...different(recessedPressed, [recessedHover], 'A recessed surface pressed'),
 
   // Status tones as text, on their tints, and as fills for labels.
   // The neutral tone is muted text on the neutral fill, which the pairs above already measure.
@@ -923,22 +937,22 @@ const registry: readonly ContrastPair[] = merged([
   // the label pairs of the primary, important and destructive fills measure, as text.
 ]);
 
+/** A pair painted on the page, painted on the recessed surface instead. */
+const onRecessed = (pair: ContrastPair): ContrastPair => ({
+  ...pair,
+  bg: [...pair.bg.slice(0, -1), recessed],
+  note: `On the recessed surface${pair.note ? `: ${pair.note}` : ''}`,
+});
+
+/** The pairs painted on the page, which a recessed surface holds too: all but its own edge. */
+const onPage = registry.filter((pair) => pair.bg.at(-1) === page && pair.fg !== recessed);
+
 /**
- * The catalogue shows envUI's examples on a recessed canvas, a shade deeper than the page
- * (apps/site/src/styles/Stage.css). What an example paints
- * on the page it paints on the canvas instead, so every pair measured on the page is measured on
- * the canvas too, held to the same requirement.
+ * What sits on the page can sit on a recessed surface, a shade deeper, such as the catalogue's
+ * canvas, where it shows every example: every pair measured on the page is measured on the recessed
+ * surface too, held to the same requirement.
  */
-export const pairs: readonly ContrastPair[] = [
-  ...registry,
-  ...registry
-    .filter((pair) => pair.bg.at(-1) === page)
-    .map((pair) => ({
-      ...pair,
-      bg: [...pair.bg.slice(0, -1), 'catalogue-canvas'],
-      note: `An example on the catalogue’s recessed canvas${pair.note ? `: ${pair.note}` : ''}`,
-    })),
-];
+export const pairs: readonly ContrastPair[] = merged([...registry, ...onPage.map(onRecessed)]);
 
 /**
  * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
@@ -2141,6 +2155,13 @@ const renamedTokenPairs: readonly (readonly [from: string, to: string])[] = [
  * is, or has since been dropped or renamed onward in turn.
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  // The catalogue's canvas is the recessed surface, a token now rather than a formula of its own.
+  ...onPage.map((pair) => ({
+    from: pairName({ ...pair, bg: [...pair.bg.slice(0, -1), 'catalogue-canvas'] }),
+    to: pairName(onRecessed(pair)),
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  })),
   {
     from: '--env-color-avatar-fg-teal on --env-color-avatar-bg-teal',
     to: '--env-color-avatar-fg-seafoam on --env-color-avatar-bg-seafoam',
@@ -2345,7 +2366,6 @@ export const derived: Readonly<Record<string, string>> = {
   'badge-outline-important': ofLabel(badgeOutline, '--env-color-fg-on-strong'),
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-accent) 30%, var(--env-color-bg-page))',
-  'catalogue-canvas': markedColor('apps/site/src/styles/Stage.css', 'catalogue-canvas'),
 };
 
 /** The CSS color a name in a pair stands for. */

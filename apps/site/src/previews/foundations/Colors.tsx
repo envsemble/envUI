@@ -203,12 +203,21 @@ function RolesFigure({ legend }: FigureWords) {
 const rolesWidth = 26;
 
 /**
- * The colors of each role, in four groups of six, in the legend's order: each group is a legend
- * entry, its name the group's and its text the names of its roles, separated by commas. A status
- * shows its three colors in one swatch: its text, its soft fill and its solid fill.
+ * The colors of each role, in four groups, seven surfaces and six of each other kind, in the
+ * legend's order: each group is a legend entry, its name the group's and its text the names of its
+ * roles, separated by commas. A status shows its three colors in one swatch: its text, its soft fill
+ * and its solid fill.
  */
 const roleGroups: readonly (readonly (readonly string[])[])[] = [
-  [['bg-page'], ['bg-default'], ['bg-muted'], ['bg-raised'], ['bg-field'], ['bg-overlay']],
+  [
+    ['bg-page'],
+    ['bg-recessed'],
+    ['bg-default'],
+    ['bg-muted'],
+    ['bg-raised'],
+    ['bg-field'],
+    ['bg-overlay'],
+  ],
   [
     ['fg-default'],
     ['fg-muted'],

@@ -69,7 +69,7 @@ A status shows its text, soft fill and solid fill. The Display menu switches the
 
 ```
 
-1. **Surfaces**: Page, Surface, Filled surface, Raised surface, Field, Backdrop.
+1. **Surfaces**: Page, Recessed surface, Surface, Filled surface, Raised surface, Field, Backdrop.
 2. **Text and lines**: Text, Supporting text, Link, Edges, Hairlines, Focus ring.
 3. **Actions and selection**: Accent, On the accent, Quiet action, Important, Selected, On the selected.
 4. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
@@ -147,6 +147,7 @@ function ThemeLabel() {
 The Design tokens page of the Docs lists every value in each theme, and this guide ends with the palette, which shows each role's value in the theme you are reading in and lets you try another.
 
 - **Page**: `--env-color-bg-page`, the document's background, behind everything.
+- **Recessed surface**: `--env-color-bg-recessed`, a well on the page a shade deeper than it, `background="recessed"`, such as the stage of a preview.
 - **Surface**: `--env-color-bg-default`: Surface's `background="default"`, panes, dialogs, menus and popups.
 - **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, and tab rails.
 - **Text**: `--env-color-fg-default`, Text's default, for headings and the main words.
@@ -183,7 +184,7 @@ Status icons, short status text and badges share these tokens, at least 4.5:1 on
 
 Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emphasis weakest first: `subtle`, `muted`, none, `emphasis` and `strong`. Every `fg-on-X` pairs with a `bg-X`, every state token has its resting token, and the contrast gate measures every pair a component paints, in all four themes.
 
-- **Backgrounds:** `bg-page`; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, `bg-field`, `bg-selected`; `bg-overlay`, the scrim behind dialogs.
+- **Backgrounds:** `bg-page`; `bg-recessed`, a shade deeper than the page; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, `bg-field`, `bg-selected`; `bg-overlay`, the scrim behind dialogs.
 - **Fills:** `bg-neutral-muted`, a translucent layer of the text color under secondary buttons, chips, switch tracks and skeletons; `bg-neutral-subtle`, the state layer of controls without a fill; `emphasis` and `strong` solid fills.
 - **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
 - **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
