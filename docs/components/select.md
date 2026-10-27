@@ -42,12 +42,6 @@ examples:
   SelectAnatomy: anatomy
   SelectListAnatomy: anatomy
   SettingRows: example
-  SensibleDefault:
-    role: do
-    caption: A default where one option suits most people.
-  NeedlessPlaceholder:
-    role: dont
-    caption: A placeholder that makes everyone choose what most would pick.
 ---
 
 # Select
@@ -118,13 +112,9 @@ A row's title names the select in it, so the select shows no label of its own.
 
 Start on the option most people want, and let choosing do nothing but set the value.
 
-```tsx figure=SensibleDefault
+### Defaults
 
-```
-
-```tsx figure=NeedlessPlaceholder
-
-```
+Choose a default where one option suits most people. A placeholder makes everyone choose, so keep it for a choice people must make themselves.
 
 ### Order
 

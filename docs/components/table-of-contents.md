@@ -42,12 +42,6 @@ examples:
   DeepOutline:
     role: dont
     caption: 'Every level of the page: the deepest ones crowd the column.'
-  OneLineLabels:
-    role: do
-    caption: 'Each section on one line: give the column the room its labels need, and keep headings short.'
-  WrappingLabels:
-    role: dont
-    caption: 'Labels squeezed onto two lines: the column reads as a wall of text, and the place is hard to follow.'
 ---
 
 # TableOfContents
@@ -110,14 +104,6 @@ Keep the contents short: two levels, each section on one line.
 
 ```
 
-```tsx figure=OneLineLabels
-
-```
-
-```tsx figure=WrappingLabels
-
-```
-
 ### Beside the content
 
 Place it in a column beside the content, at the top and staying in view as the page scrolls.
@@ -126,7 +112,7 @@ Place it in a column beside the content, at the top and staying in view as the p
 
 ### Labels
 
-Use the headings' own words, or a short name a reader would find on the page.
+Use the headings' own words, or a short name a reader would find on the page. Keep each on one line: give the column the room its labels need.
 
 ## Accessibility
 

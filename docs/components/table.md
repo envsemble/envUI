@@ -46,12 +46,6 @@ examples:
   NumbersUnaligned:
     role: dont
     caption: "Numbers aligned to the start: they can't be compared at a glance."
-  NamedStates:
-    role: do
-    caption: A Badge that names each state.
-  ColorOnly:
-    role: dont
-    caption: States told apart by color alone.
 ---
 
 # Table
@@ -167,13 +161,9 @@ Numbers line up and states have names, so rows compare at a glance.
 
 ```
 
-```tsx figure=NamedStates
+### States
 
-```
-
-```tsx figure=ColorOnly
-
-```
+Name each state in words, such as in a Badge, never by color alone.
 
 ### Names
 

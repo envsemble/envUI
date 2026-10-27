@@ -34,12 +34,6 @@ examples:
   SaveOnRelease: example
   SessionTimeout: example
   NarrowSlider: example
-  UsefulSteps:
-    role: do
-    caption: A step and a range that match the precision people need.
-  NeedlessPrecision:
-    role: dont
-    caption: 'Single minutes over a whole day: no value is easy to reach.'
 ---
 
 # Slider
@@ -130,13 +124,9 @@ A slider fills its container.
 
 Match the range and the step to the precision people need.
 
-```tsx figure=UsefulSteps
+### Range and step
 
-```
-
-```tsx figure=NeedlessPrecision
-
-```
+Offer only the values people need, such as 5 to 120 minutes in steps of 5. Single minutes over a whole day leave no value easy to reach.
 
 ### Show the effect
 
