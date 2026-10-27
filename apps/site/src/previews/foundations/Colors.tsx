@@ -280,12 +280,12 @@ function useNarrow(width: number) {
 }
 
 /** How long the screen stays in each theme, in ms. */
-const themeStep = 2600;
+const themeStep = 2000;
 
 /**
  * One screen in each theme in turn, in the legend's order, each theme beside its high contrast,
- * named in the corner: the screen eases into each, its page, surface, filled card, text, meter,
- * badge and buttons alike.
+ * named in the corner: the screen cuts to each, its page, surface, filled card, text, meter, badge
+ * and buttons at once.
  */
 function ThemeSteps({ names }: { names: readonly string[] }) {
   const step = useTimeline(themes.map(() => themeStep));
@@ -373,11 +373,11 @@ const badgeVariants: readonly { variant: BadgeVariant; name: string }[] = [
 ];
 
 /** How long the badges stay in each variant, in ms. */
-const variantStep = 2000;
+const variantStep = 1800;
 
 /**
  * Every tone's badge side by side, in the legend's order, all in one variant at a time: soft,
- * solid, then outlined, the variant named in the corner. The badges ease from one to the next
+ * solid, then outlined, the variant named in the corner. The badges cut from one to the next
  * together, at one size, so nothing moves.
  */
 function StatusSteps() {
@@ -586,7 +586,7 @@ function SchemeArea({
 }
 
 /** How long the components stay in each scheme, in ms. */
-const schemeStep = 2400;
+const schemeStep = 2200;
 
 /** A tile of the canvas: a component or two on the scheme's filled surface. */
 function Tile({ name, children }: { name: string; children: ReactNode }) {

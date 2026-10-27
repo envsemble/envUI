@@ -422,8 +422,7 @@
 }
 
 /* What each color means: every tone's badge side by side, a size larger than in a list so the
-   tones read across the stage, wrapping into centred rows on a phone. As the variant changes, every
-   badge eases into it together, at one size. */
+   tones read across the stage, wrapping into centred rows on a phone. */
 .catalogue-tone-badges {
   display: flex;
   flex-wrap: wrap;
@@ -437,13 +436,6 @@
 @container (30rem <= width < 46rem) {
   .catalogue-tone-break {
     flex-basis: 100%;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .catalogue-tone-badges > .env-badge {
-    transition-property: background-color, border-color, color;
-    transition-duration: calc(2.5 * var(--env-motion-duration-slow));
-    transition-timing-function: var(--env-motion-ease);
   }
 }
 /* Its legend: each tone's name after a dot in the tone's color, two columns where they fit. */
@@ -597,18 +589,15 @@
 .catalogue-scheme-drawer > * {
   block-size: 100%;
 }
-/* While a scheme eases in, every part's colors fade slowly together, parts with transitions of
-   their own too, such as a progress bar's indicator and a button's fill, so the canvas changes as
-   one and never flashes: the theme screen above it too. */
-@media (prefers-reduced-motion: no-preference) {
-  .catalogue-scheme-canvas,
-  .catalogue-scheme-canvas :is(*, ::before, ::after),
-  .catalogue-theme-screen,
-  .catalogue-theme-screen :is(*, ::before, ::after) {
-    transition-property: background-color, border-color, color, outline-color, fill, stroke;
-    transition-duration: calc(5 * var(--env-motion-duration-slow));
-    transition-timing-function: var(--env-motion-ease);
-  }
+/* The Colors page's three animated figures cut from one theme, variant or scheme to the next:
+   nothing eases, neither a figure's nested theme (ThemeFade.css) nor a part with transitions of its
+   own, such as a button's fill or a progress bar's indicator, so every part changes at once. */
+.catalogue-theme-screen,
+.catalogue-theme-screen :is(*, ::before, ::after),
+.catalogue-tone-badges :is(*, ::before, ::after),
+.catalogue-scheme-canvas,
+.catalogue-scheme-canvas :is(*, ::before, ::after) {
+  transition: none;
 }
 /* An animated figure's states stacked in one place (Steps.tsx): the place is as large as the
    largest, and only the current one shows, so the figure keeps one height. */
