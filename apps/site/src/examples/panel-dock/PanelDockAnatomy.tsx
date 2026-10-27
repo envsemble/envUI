@@ -12,7 +12,12 @@ export default function PanelDockAnatomy() {
     <Surface
       background="muted"
       padding={0}
-      style={{ position: 'relative', blockSize: '17rem', inlineSize: '34rem', overflow: 'hidden' }}
+      style={{
+        position: 'relative',
+        blockSize: '17rem',
+        inlineSize: 'min(100%, 34rem)',
+        overflow: 'hidden',
+      }}
     >
       <PanelDock.Root
         panels={panels}
