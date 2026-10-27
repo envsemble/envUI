@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 import { Component, Suspense, lazy, useEffect, type ComponentType, type ReactNode } from 'react';
-import { Column, ThemePreferenceProvider } from '@envsemble/envui';
+import { Column, Theme, ThemePreferenceProvider } from '@envsemble/envui';
 import { layout } from '@envsemble/envui/dev';
 // The catalogue's stage, so an example sits as its figure does: centred, kept to the stage's width,
 // and filling it where it takes its width from its container. Fixture.css takes away the stage's
@@ -18,6 +18,11 @@ const params = new URLSearchParams(window.location.search);
 const path = `../../apps/site/src/examples/${params.get('page')}/${params.get('name')}.tsx`;
 /** The example the address names, if there is one. */
 const Example = loaders[path] && lazy(loaders[path]);
+/**
+ * The theme `&theme=light` or `&theme=dark` asks for, for the visual baseline's open lists: the
+ * example then sits on the catalogue's canvas, padding and fill kept, on a page of that theme.
+ */
+const theme = (['light', 'dark'] as const).find((value) => value === params.get('theme'));
 
 /** Shows an example that throws as its error, which the spec reports. */
 class ExampleError extends Component<{ children: ReactNode }, { error?: Error }> {
@@ -48,7 +53,8 @@ function Rendered() {
  * &name=<Name>`, in the catalogue's stage, which is the `env-window` container. Its overlays open
  * into the document, as an application's do, so they are placed against the real window. Dev
  * mode's readout is `window.envui.layout`. A theme preference, which some examples read and set,
- * is the fixture's own, as the catalogue's is, and leaves the document alone.
+ * is the fixture's own, as the catalogue's is, and leaves the document alone. With `&theme=`, the
+ * visual baseline (tests/visual) opens the lists of examples the catalogue only plays.
  */
 export function LayoutCheckFixture() {
   useEffect(() => {
@@ -56,25 +62,34 @@ export function LayoutCheckFixture() {
     envui.layout = layout;
   }, []);
   if (!Example) return <pre data-example-error="">No example file {path}</pre>;
+  const stage = (
+    <Column
+      container="env-window"
+      gap={0}
+      className={theme ? 'site-live-example' : 'site-live-example fixture-layout-check'}
+      data-testid="layout-check-root"
+    >
+      <ExampleError>
+        <Suspense fallback={null}>
+          <Example />
+          <Rendered />
+        </Suspense>
+      </ExampleError>
+    </Column>
+  );
   return (
     <ThemePreferenceProvider
       applyToDocument={false}
       defaultPreference="light"
       storageKey="envui-layout-check-theme"
     >
-      <Column
-        container="env-window"
-        gap={0}
-        className="site-live-example fixture-layout-check"
-        data-testid="layout-check-root"
-      >
-        <ExampleError>
-          <Suspense fallback={null}>
-            <Example />
-            <Rendered />
-          </Suspense>
-        </ExampleError>
-      </Column>
+      {theme ? (
+        <Theme theme={theme} className="fixture-layout-check-page">
+          {stage}
+        </Theme>
+      ) : (
+        stage
+      )}
     </ThemePreferenceProvider>
   );
 }

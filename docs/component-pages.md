@@ -388,7 +388,7 @@ Some visual references are not examples: a matrix of every variant in every form
 - **Titled by the block before it.** Give it a `###` heading and its lead in the Markdown before it; the specimen itself takes no title there, and its parts' titles are `h4`.
 - **Plain language too.** Its titles, captions and matrix headers name options in words, as its page's option table does, such as Small, Large or Step 1, never by their values or tokens. A catalogue browser test fails on a title that starts in lower case or is written as code.
 
-The visual baseline captures a page's specimens, and its first example when it has no specimen.
+The visual baseline captures a page's specimens, and its first example when it has no specimen or only animated ones; an animated figure is captured as its still, the first frame of its loop.
 
 ### Animated specimens
 
