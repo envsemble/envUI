@@ -28,6 +28,7 @@ components:
 examples:
   StartTime:
     role: overview
+    motion: true
     caption: Where people write AM and PM, a third wheel holds them.
   Variants: variants
   TimePickerAnatomy: anatomy
@@ -95,7 +96,7 @@ Offer the times that can be booked: between an earliest and a latest time, on st
 
 - A value between the steps still shows, in its place.
 
-```tsx figure=OfficeHours
+```tsx figure=OfficeHours motion
 
 ```
 
