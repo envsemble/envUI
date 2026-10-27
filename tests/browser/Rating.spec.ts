@@ -1,5 +1,18 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from './Servers';
+
+/**
+ * A star's box and its half fill's, read in one layout: as the page's font loads, the number before
+ * the stars widens and moves them, so boxes read one after the other could straddle that move.
+ */
+const starAndHalf = (star: Locator) =>
+  star.evaluate((element) => {
+    const box = (part: Element) => {
+      const { x, width } = part.getBoundingClientRect();
+      return { x, width };
+    };
+    return [box(element), box(element.querySelector('.env-rating-star-half')!)] as const;
+  });
 
 test('a rating fills its stars to the value in half steps and is named once', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=ratings`);
@@ -14,12 +27,9 @@ test('a rating fills its stars to the value in half steps and is named once', as
     await expect(half.locator('.env-rating-star[data-fill="full"]')).toHaveCount(3);
     // The half star fills its start half in the stars' gold over the empty star.
     const halfStar = stars.nth(3);
-    const [starBox, fillBox] = await Promise.all([
-      halfStar.boundingBox(),
-      halfStar.locator('.env-rating-star-half').boundingBox(),
-    ]);
-    expect(Math.abs(fillBox!.width - starBox!.width / 2)).toBeLessThan(1);
-    expect(Math.abs(fillBox!.x - starBox!.x)).toBeLessThan(1);
+    const [starBox, fillBox] = await starAndHalf(halfStar);
+    expect(Math.abs(fillBox.width - starBox.width / 2)).toBeLessThan(1);
+    expect(Math.abs(fillBox.x - starBox.x)).toBeLessThan(1);
     const [full, empty, fill] = await half.evaluate((element) => {
       const color = (selector: string) => getComputedStyle(element.querySelector(selector)!).color;
       return [
@@ -39,11 +49,8 @@ test('a rating fills its stars to the value in half steps and is named once', as
     );
     // In right-to-left text the half star fills its right half.
     const rtlHalf = page.getByTestId(`rating-rtl-${theme}`).locator('.env-rating-star').nth(2);
-    const [rtlStar, rtlFill] = await Promise.all([
-      rtlHalf.boundingBox(),
-      rtlHalf.locator('.env-rating-star-half').boundingBox(),
-    ]);
-    expect(Math.abs(rtlFill!.x + rtlFill!.width - (rtlStar!.x + rtlStar!.width))).toBeLessThan(1);
+    const [rtlStar, rtlFill] = await starAndHalf(rtlHalf);
+    expect(Math.abs(rtlFill.x + rtlFill.width - (rtlStar.x + rtlStar.width))).toBeLessThan(1);
   }
 });
 
