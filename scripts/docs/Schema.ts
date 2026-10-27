@@ -127,6 +127,8 @@ export interface PageSectionDefinition {
   generated?: boolean;
   /** Its title on a foundation's page. */
   foundationTitle?: string;
+  /** The title it had before, which pages not yet rewritten in its new form still use. */
+  formerTitle?: string;
   required?: boolean;
 }
 
@@ -154,7 +156,9 @@ export const pageSections: readonly PageSectionDefinition[] = [
   { id: 'variants', title: 'Variants', foundationTitle: 'Options' },
   { id: 'anatomy', title: 'Anatomy' },
   { id: 'behaviour', title: 'Behaviour' },
-  { id: 'rules', title: 'Rules', required: true },
+  // Tips: a list of tips, each a "###" title, one line and at most one figure. Pages not yet
+  // rewritten as tips keep their Rules: a lead, do and don't pairs and titled blocks.
+  { id: 'rules', title: 'Tips', formerTitle: 'Rules', required: true },
   { id: 'accessibility', title: 'Accessibility' },
   { id: 'words', title: 'Words to use' },
   { id: 'code', title: 'Compose' },
