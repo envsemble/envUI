@@ -110,6 +110,7 @@ AvatarGroup rests as a compact pile, like stacked cards, with the count of the r
 
 - Hovering, tapping or focusing it spreads the avatars along a gentle arch, so each one shows.
 - It keeps the room its spread takes, so nothing around it moves.
+- A faint shadow under each avatar and under the count parts each from the one it lies on.
 
 ```tsx figure=ProjectMembers motion
 
@@ -246,10 +247,11 @@ The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-a
 
 ### Customize
 
-`--env-avatar-container` and `--env-avatar-content` set the colors of one avatar, its fill and its initials or figure, through `style` or CSS, in place of its hue. The hues are tokens, `--env-color-avatar-bg-{hue}`, `-fg-{hue}` and `-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-avatar-bg`, `-fg` and `-figure`. `--env-avatar-group-ring` sets the gap in a chosen avatar's ring for a group on a surface of the application's own, such as a row.
+`--env-avatar-container` and `--env-avatar-content` set the colors of one avatar, its fill and its initials or figure, through `style` or CSS, in place of its hue. The hues are tokens, `--env-color-avatar-bg-{hue}`, `-fg-{hue}` and `-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-avatar-bg`, `-fg` and `-figure`. `--env-avatar-group-ring` sets the gap in a chosen avatar's ring for a group on a surface of the application's own, such as a row, and the surface whose deeper shade colors the shadow under each avatar and the count. That faint shadow, 1 px down and 3 px soft, is envUI's one drop shadow; under forced colors there is none, and `box-shadow: none` on `.env-avatar` and `.env-avatar-group-overflow` removes it.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: An avatar and AvatarGroup's count cast a faint, small shadow in a deeper shade of the surface below, so the avatars of a group part from one another.
 - **1.0.0-prerelease.3**: AvatarGroup rests as a compact pile, like stacked cards, which is one pointer target: hover, a tap or keyboard focus spreads it, and its avatars take presses only once spread, in place of a looser rest that kept 1.5 rem of each pressable avatar uncovered. A tap spreads a group on touch screens too, marked with `data-spread`. The count is a rounded square the size of the avatars, at the bottom of the pile.
 - **1.0.0-prerelease.2**: The eight colors are a new pastel palette of tonal pairs: a soft fill with initials and a figure in a deep shade of the same hue, rather than white. The hues are named for their colors, in `hue`, `data-hue` and the tokens: `blue` is `powder`, `teal` `seafoam`, `green` `sage`, `amber` `butter`, `red` `blush`, `violet` `periwinkle`, `purple` `orchid` and `slate` `oat`; `v1-props` rewrites a literal `hue`. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover, with the count of the rest under the last avatar, and spreads along an arch under the pointer or with focus inside, within the room it keeps for the spread; `gather` sets where the avatars gather at rest. Avatars in a group and the count take no ring; `--env-avatar-ring` is gone, and `--env-avatar-group-ring` sets only the gap in a chosen avatar's ring.
 - **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.

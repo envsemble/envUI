@@ -9,7 +9,10 @@ import { build } from 'esbuild';
 // their edge and, for modals, the scrim. Rings drawn with box-shadow stay: focus rings and halos
 // (no offset, no blur), inset edges and selection bars, and a hairline line one pixel below or
 // beside a box. This test reads the shipped style sheet, dev mode's own and the catalogue's, and
-// rejects every other shadow, also one a custom property carries into box-shadow. The catalogue has
+// rejects every other shadow, also one a custom property carries into box-shadow. The library has
+// one exception, by request: the faint, small shadow under an avatar and an avatar group's count,
+// `--env-avatar-shadow` (Avatar.css), so stacked avatars part from one another; it is the only
+// custom property of envUI that is a shadow, and no token is one. The catalogue has
 // one exception, by request: the very faint shadow its example canvases, tiles and its own cards
 // take, `--catalogue-card-shadow`, and half of it for a small card, `--catalogue-card-shadow-subtle`, and a stronger one for cards laid over one another,
 // `--catalogue-card-shadow-raised`
@@ -149,9 +152,17 @@ function problems(sheets, { allowed = [] } = {}) {
   return [...new Set(found)];
 }
 
-test('no envUI style sheet draws a drop shadow; rings stay', async () => {
-  assert.deepEqual(problems([await shipped()]), [], 'The shipped style sheet');
-  assert.deepEqual(problems([await shipped(), await devMode()]), [], 'Dev mode’s style sheet');
+/** The library's one drop shadow: under avatars and an avatar group's count. */
+const avatarShadow = '--env-avatar-shadow';
+
+test('no envUI style sheet draws a drop shadow but the avatars’; rings stay', async () => {
+  const library = { allowed: [avatarShadow] };
+  assert.deepEqual(problems([await shipped()], library), [], 'The shipped style sheet');
+  assert.deepEqual(
+    problems([await shipped(), await devMode()], library),
+    [],
+    'Dev mode’s style sheet',
+  );
   assert.deepEqual(
     problems(await catalogue(), {
       allowed: [
@@ -165,12 +176,35 @@ test('no envUI style sheet draws a drop shadow; rings stay', async () => {
   );
 });
 
-test('no token or custom property is a shadow', async () => {
+test('no token or custom property is a shadow but the avatars’', async () => {
   const css = await shipped();
   const shadows = declarations(css)
     .map(([property]) => property)
     .filter((property) => /^--env-.*shadow$/.test(property));
-  assert.deepEqual([...new Set(shadows)], []);
+  assert.deepEqual([...new Set(shadows)], [avatarShadow]);
+});
+
+test('the avatars’ shadow is small, faint and follows the surface below', async () => {
+  const css = await shipped();
+  const values = declarations(css).filter(([property]) => property === avatarShadow);
+  assert.equal(values.length, 1, 'declared once');
+  const [[, value]] = values;
+  // A single layer, 1px down and blurred 3px, with no spread.
+  const [x, y, blur, ...rest] = split(value, /\s/);
+  assert.deepEqual([x, y, blur], ['0', '1px', '3px']);
+  assert.equal(rest.length, 1, 'no spread, one color');
+  // Its color is derived from the surface below, never a literal color.
+  assert.match(
+    rest[0],
+    /^oklch\(\s*from var\(--env-avatar-group-ring-color, var\(--env-surface-color, var\(--env-color-bg-page\)\)\)/,
+  );
+  // Only an avatar and the count use it.
+  const users = [
+    ...css
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .matchAll(/([^{}]+)\{[^}]*box-shadow:\s*var\(--env-avatar-shadow\)/g),
+  ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
+  assert.deepEqual(users, ['.env-avatar, .env-avatar-group-overflow']);
 });
 
 test('the check tells drop shadows from rings', () => {
