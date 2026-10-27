@@ -6,9 +6,9 @@ import {
   type ReactNode,
 } from 'react';
 import {
-  Column,
   LineArt,
   lineArtDrawings,
+  Surface,
   Text,
   Toolbar,
   type LineArtDrawing,
@@ -18,7 +18,7 @@ import { Draw } from '@envsemble/envui/icons/Draw';
 import { InkEraser } from '@envsemble/envui/icons/InkEraser';
 import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { Repeat } from '@envsemble/envui/icons/Repeat';
-import { SpecimenHeadingLevel } from '../../previews/Example';
+import { SpecimenGrid, SpecimenHeadingLevel } from '../../previews/Example';
 
 /** Each drawing's name, as people say it. */
 const names: Record<LineArtDrawing, string> = {
@@ -86,6 +86,24 @@ function sheetPlace(drawing: LineArtDrawing): CSSProperties {
 /** The card's room for the figure, inside its margin, which the sheet is measured against. */
 const room: CSSProperties = { position: 'absolute', inset: '12%', containerType: 'size' };
 
+/** A drawing's card: its shape, and its fill, a step lighter than the stage in every theme. */
+const card = {
+  position: 'relative',
+  overflow: 'hidden',
+  aspectRatio: '4 / 3',
+  '--env-surface-container-default':
+    'light-dark(var(--env-color-bg-page), var(--env-color-bg-default))',
+} as CSSProperties;
+
+/** A card's place in the gallery: its card, its name and its buttons, each a row of the gallery's. */
+const row: CSSProperties = {
+  display: 'grid',
+  gridRow: 'span 3',
+  gridTemplateRows: 'subgrid',
+  rowGap: 'var(--env-space-2)',
+  alignItems: 'start',
+};
+
 /** The motions people can play on a card, each a button of its toolbar. */
 const motions: { motion: LineArtMotion; label: string; icon: ReactNode }[] = [
   { motion: 'appear', label: 'Appear', icon: <Draw /> },
@@ -95,8 +113,8 @@ const motions: { motion: LineArtMotion; label: string; icon: ReactNode }[] = [
 ];
 
 /**
- * One drawing, whole and centred on the recessed canvas of a gallery's card, its name under it and
- * a toolbar that plays its motions. Each press plays its motion from the start; the drawing ends
+ * One drawing, whole and centred on a lighter card of its own, its name under it and the buttons
+ * that play its motions. Each press plays its motion from the start; the drawing ends
  * where the motion does, and a loop runs until its button is pressed again, then draws in and rests.
  */
 function DrawingCard({ drawing }: { drawing: LineArtDrawing }) {
@@ -128,11 +146,12 @@ function DrawingCard({ drawing }: { drawing: LineArtDrawing }) {
       setPlayed(({ turn }) => ({ turn }));
   };
   return (
-    <Column render={<li />} gap={3}>
-      <div
-        className="catalogue-related-stage catalogue-gallery-stage"
-        style={{ display: 'block', maxBlockSize: 'none' }}
-      >
+    // Three rows of the gallery's, so the names and the buttons line up across a row.
+    <li style={row}>
+      {/* A lighter card on the figure's stage: the page's own fill in the light themes, where the
+          stage is a shade deeper than the page, and a pane's in the dark ones, where the page is
+          barely lighter than the stage. */}
+      <Surface background="page" padding={0} style={card}>
         <div style={room}>
           <LineArt
             key={played.turn}
@@ -142,61 +161,59 @@ function DrawingCard({ drawing }: { drawing: LineArtDrawing }) {
             style={sheetPlace(drawing)}
           />
         </div>
-      </div>
-      <Column gap={1} align="start">
-        <Text render={<Heading />} variant="body-sm" emphasis="muted" style={{ margin: 0 }}>
-          {names[drawing]}
-        </Text>
-        <Toolbar.Root
-          aria-label={`${names[drawing]}, motions`}
-          size="sm"
-          // The first button's icon in line with the name, past the ghost button's own inset.
-          style={{
-            marginInlineStart:
-              'calc((var(--env-control-height-sm) - var(--env-control-icon-size)) / -2)',
-          }}
-        >
-          {motions.map(({ motion, label, icon }) => (
-            <Toolbar.Button
-              key={motion}
-              icon={icon}
-              label={label}
-              pressed={motion === 'loop' ? looping : undefined}
-              onClick={() => play(motion)}
-            />
-          ))}
-        </Toolbar.Root>
-      </Column>
-    </Column>
+      </Surface>
+      <Text render={<Heading />} variant="body-sm" emphasis="muted" style={{ margin: 0 }}>
+        {names[drawing]}
+      </Text>
+      {/* Small round filled buttons, as a figure's pause button is, spread across the card. */}
+      <Toolbar.Root
+        aria-label={`${names[drawing]}, motions`}
+        size="sm"
+        style={{ justifyContent: 'space-between', gap: 0 }}
+      >
+        {motions.map(({ motion, label, icon }) => (
+          <Toolbar.Button
+            key={motion}
+            variant="secondary"
+            icon={icon}
+            label={label}
+            pressed={motion === 'loop' ? looping : undefined}
+            onClick={() => play(motion)}
+          />
+        ))}
+      </Toolbar.Root>
+    </li>
   );
 }
 
 /**
- * The columns of the gallery: four across where four cards fit with room for their toolbars, else
+ * The columns of the gallery: four across where four cards fit with room for their buttons, else
  * two, so sixteen never leave one alone on a row.
  */
-const gap = 'var(--env-space-5)';
-const columns = `repeat(auto-fill, minmax(clamp(calc(25% - 0.75 * ${gap} - 0.01rem), (40rem - 100%) * 999, calc(50% - 0.5 * ${gap} - 0.01rem)), 1fr))`;
+const gap = 'var(--env-space-3)';
+const columns = `repeat(auto-fill, minmax(clamp(calc(25% - 0.75 * ${gap} - 0.01rem), (37rem - 100%) * 999, calc(50% - 0.5 * ${gap} - 0.01rem)), 1fr))`;
 
 /**
- * Every drawing as a card of a gallery, whole and centred on its canvas, with its name and a
- * toolbar that plays its motions there: in, out, in and out by turns, or played through.
+ * Every drawing on a card of its own, whole and centred, on one stage, with its name and the
+ * buttons that play its motions there: in, out, in and out by turns, or played through.
  */
 export default function Drawings() {
   return (
-    <ul
-      style={{
-        display: 'grid',
-        gridTemplateColumns: columns,
-        gap: `var(--env-space-7) ${gap}`,
-        margin: 0,
-        padding: 0,
-        listStyle: 'none',
-      }}
-    >
-      {lineArtDrawings.map((drawing) => (
-        <DrawingCard key={drawing} drawing={drawing} />
-      ))}
-    </ul>
+    <SpecimenGrid size="wide">
+      <ul
+        style={{
+          display: 'grid',
+          gridTemplateColumns: columns,
+          gap: `var(--env-space-6) ${gap}`,
+          margin: 0,
+          padding: 0,
+          listStyle: 'none',
+        }}
+      >
+        {lineArtDrawings.map((drawing) => (
+          <DrawingCard key={drawing} drawing={drawing} />
+        ))}
+      </ul>
+    </SpecimenGrid>
   );
 }
