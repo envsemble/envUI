@@ -16,7 +16,7 @@ export const waveThin = 0.1;
 /** How far the entry under the pointer swells the shape, as a share of the reader's place. */
 export const hoverSwell = 0.4;
 /** How many entries away from the one under the pointer its swell reaches. */
-const hoverSpread = 1.25;
+const hoverSpread = 0.8;
 /** How finely the shape's edges are drawn, in px. */
 const step = 2;
 
