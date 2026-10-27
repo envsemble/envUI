@@ -44,12 +44,6 @@ examples:
   RepeatsLabel:
     role: dont
     caption: A tooltip that repeats a visible label.
-  DisabledReason:
-    role: do
-    caption: Say why a control is disabled in the page too.
-  ReasonOnlyInTooltip:
-    role: dont
-    caption: The reason only in a tooltip, which touch screens never show.
 ---
 
 # Tooltip
@@ -121,17 +115,13 @@ A tooltip adds a name or a hint to something people can focus, and never holds t
 
 ```
 
-```tsx figure=DisabledReason open
-
-```
-
-```tsx figure=ReasonOnlyInTooltip open
-
-```
-
 ### Something to focus
 
 A tooltip belongs to something people can focus, such as a button, never to an icon alone.
+
+### Disabled controls
+
+Say why a control is disabled in the page, not only in its tooltip: touch screens never show one.
 
 ## Accessibility
 

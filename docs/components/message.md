@@ -45,7 +45,7 @@ examples:
     caption: Comments by others, each with its author, at full width.
   SelfForOthers:
     role: dont
-    caption: "Someone else's message in your bubble, to put them on a side: the bubble means you."
+    caption: "Someone else's message in your bubble: the bubble means you."
 ---
 
 # Message
