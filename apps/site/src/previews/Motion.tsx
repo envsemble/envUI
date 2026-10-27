@@ -222,14 +222,17 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  *   wasn't over the preview. Pressed, it drags; pressed on text, in a field or in content, the drag
  *   selects the text it crosses, as a mouse does, until a press elsewhere.
  * - `press`, `release`: its button; `click` presses and releases it a moment later, and
- *   `doubleClick` clicks twice, quickly, as a double click.
+ *   `doubleClick` clicks twice, quickly, as a double click; two clicks in quick succession on one
+ *   element are a double click too.
  * - `rightClick`: its secondary button pressed and released, which opens a context menu where it
  *   is, as a right click does.
  * - `leave`: it goes off the preview, releasing its button and any key held first.
  * - `cue`: a moment the preview acts on (usePointer's `onCue`), such as a notification arriving.
  * - `type`, text, `into` a selector of a field: typed a character at a time, `every` ms apart;
  *   `erase`, a count: as many characters deleted the same way.
- * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`.
+ * - `key`, such as `ArrowDown` or `Enter`: pressed on the field typed into, or on `on`. Tab
+ *   leaves the field typed into, which hears its blur; Enter in a single-line field submits its
+ *   form.
  * - `focus`, a selector: the keyboard's focus arrives on that element, as a Tab brings it, with
  *   its focus ring; keys then go to it, and where a key moves focus, as an arrow key along tabs
  *   does, it follows. `blur` takes it off the preview again.
@@ -241,6 +244,8 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  *   scroll, smoothly, over `duration` ms.
  * - `carry`, a file's name, `as` its type and `size` its bytes, or a list of files: the pointer
  *   picks them up, as from the desktop, so its moves drag them; `drop` drops them where it is.
+ *   Carry again before the drop for more files at once. An image (PNG, JPEG or WebP) without a
+ *   size is a small real picture.
  */
 export type PointerStep =
   | { wait: number }

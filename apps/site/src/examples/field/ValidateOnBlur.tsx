@@ -13,7 +13,7 @@ export default function ValidateOnBlur() {
       style={{ maxInlineSize: '24rem' }}
     >
       <Field.Label>Workspace address</Field.Label>
-      <Field.Control defaultValue="Northwind Team" />
+      <Field.Control />
       <Field.Description>example.com/your-address</Field.Description>
       <Field.Error />
     </Field.Root>

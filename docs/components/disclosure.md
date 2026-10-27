@@ -62,7 +62,7 @@ Finding text in a closed disclosure's details opens it, where the browser suppor
 
 Disclosures in a set can open one at a time, where the browser supports it.
 
-```tsx figure=FrequentQuestions
+```tsx figure=FrequentQuestions motion
 
 ```
 
@@ -70,7 +70,7 @@ Disclosures in a set can open one at a time, where the browser supports it.
 
 The application can open a disclosure itself, such as when a field inside has an error.
 
-```tsx figure=OpenOnError
+```tsx figure=OpenOnError motion
 
 ```
 

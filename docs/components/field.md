@@ -59,7 +59,7 @@ examples:
 
 A field can check its value with a check of the application's own, which returns an error message or nothing, on submit, on blur or as people type.
 
-```tsx figure=ValidateOnBlur
+```tsx figure=ValidateOnBlur motion
 
 ```
 
@@ -75,7 +75,7 @@ The control can be any control, which the label and the description then name an
 
 An error shows once people have had a chance to answer, and adds to the description.
 
-```tsx figure=ErrorAfterLeaving
+```tsx figure=ErrorAfterLeaving motion
 
 ```
 

@@ -14,9 +14,9 @@ export default function FindPlan() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [opened, setOpened] = useState('');
-  const matches = plans.filter((plan) =>
-    plan.name.toLowerCase().includes(query.trim().toLowerCase()),
-  );
+  const search = query.trim().toLowerCase();
+  // The results start once people type, and grow down below the field, which stays put.
+  const matches = search ? plans.filter((plan) => plan.name.toLowerCase().includes(search)) : [];
   return (
     <Column gap={4} align="start">
       <Dialog
@@ -34,7 +34,13 @@ export default function FindPlan() {
         title="Find a plan"
       >
         <Column gap={4}>
-          <SearchField label="Plan name" value={query} onValueChange={setQuery} />
+          <SearchField
+            variant="floating"
+            label="Plan name"
+            showLabel
+            value={query}
+            onValueChange={setQuery}
+          />
           {matches.length > 0 ? (
             <List.Root aria-label="Matching plans">
               {matches.map((plan) => (
@@ -58,7 +64,7 @@ export default function FindPlan() {
               ))}
             </List.Root>
           ) : (
-            <Text emphasis="muted">No plans match “{query.trim()}”.</Text>
+            search && <Text emphasis="muted">No plans match “{query.trim()}”.</Text>
           )}
         </Column>
       </Dialog>

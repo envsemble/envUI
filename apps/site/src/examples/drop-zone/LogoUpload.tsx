@@ -5,6 +5,7 @@ const twoMegabytes = 2 * 1024 * 1024;
 
 export default function LogoUpload() {
   const picker = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState<File | null>(null);
   const [logo, setLogo] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>();
   const [error, setError] = useState<string>();
@@ -17,21 +18,32 @@ export default function LogoUpload() {
     return () => URL.revokeObjectURL(url);
   }, [logo]);
 
+  // Uploading takes a moment; a timer stands in for it here.
+  useEffect(() => {
+    if (!uploading) return;
+    const timer = window.setTimeout(() => {
+      setLogo(uploading);
+      setUploading(null);
+    }, 1500);
+    return () => window.clearTimeout(timer);
+  }, [uploading]);
+
   return (
     // As wide as a form column.
     <Column gap={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <DropZone
         hidden={logo != null}
         inputRef={picker}
-        label="Drop a logo here, or browse"
-        description="PNG, JPG or WebP up to 2 MB"
+        label={uploading ? `Uploading ${uploading.name}` : 'Drop a logo here, or browse'}
+        description={uploading ? 'This takes a moment' : 'PNG, JPG or WebP up to 2 MB'}
         accept="image/png,image/jpeg,.webp"
+        pending={uploading != null}
         error={error}
         onDropAccepted={([file]) => {
           // The zone checks the type; the size is the application's to check.
           if (file.size > twoMegabytes) return setError('Choose an image up to 2 MB.');
           setError(undefined);
-          setLogo(file);
+          setUploading(file);
         }}
         onDropRejected={() => setError('Choose a PNG, JPG or WebP image.')}
       />

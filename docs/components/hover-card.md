@@ -73,11 +73,13 @@ The card opens below its trigger, centred on it, or on another side or lined up 
 
 The pointer can move from the trigger onto the card without closing it, and focus stays on the trigger.
 
+<!-- specimen: HoverAndFocus -->
+
 ### Text with more details
 
 Text that isn't a link can open a card too, with the dotted underline and the focus a [tooltip on text](tooltip.md#text) takes.
 
-```tsx figure=TextDetails
+```tsx figure=TextDetails motion
 
 ```
 

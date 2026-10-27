@@ -75,12 +75,16 @@ Several ways close a tab, and focus moves to the tab that becomes active.
 - Close in a tab's context menu, which can also offer Close all tabs.
 - On touch screens the close buttons always show.
 
+<!-- specimen: Closing -->
+
 ### Preview and reorder
 
 A preview tab shows its label in italics until a double click keeps it.
 
 - Where tabs can be put in order, a tab dragged with a mouse or pen shows where it will land.
 - The context menu then offers Move left and Move right.
+
+<!-- specimen: PreviewAndReorder -->
 
 ### Adapting to width
 

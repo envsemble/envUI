@@ -67,7 +67,7 @@ examples:
 | Centered     | Confirmations, short forms and details. The default.           |
 | Near the top | Search-like tasks, whose results grow down from a fixed field. |
 
-```tsx figure=FindPlan
+```tsx figure=FindPlan motion
 
 ```
 
@@ -80,7 +80,7 @@ Both narrow to fit the window.
 | Medium | Most dialogs. The default.            |
 | Large  | Tables, comparisons and longer forms. |
 
-```tsx figure=ReviewChanges
+```tsx figure=ReviewChanges motion
 
 ```
 
@@ -109,7 +109,7 @@ While its work runs, nothing closes the dialog and its close button is disabled.
 
 - Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.
 
-```tsx figure=RenameProject
+```tsx figure=RenameProject motion
 
 ```
 
@@ -117,7 +117,7 @@ While its work runs, nothing closes the dialog and its close button is disabled.
 
 Other buttons can close the dialog after doing their own work, such as Don’t save.
 
-```tsx figure=UnsavedChanges
+```tsx figure=UnsavedChanges motion
 
 ```
 

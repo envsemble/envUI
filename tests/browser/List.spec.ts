@@ -246,6 +246,16 @@ test.describe('List', () => {
     const avatar = (await people.locator('.env-avatar').boundingBox())!;
     const label = (await people.locator('.env-list-item-content').boundingBox())!;
     expect(avatar.x + avatar.width).toBeLessThanOrEqual(label.x);
+
+    // A button as the target keeps its label on one line where the row has room, rather than
+    // wrapping it to the width of a shorter description.
+    const plan = page.getByRole('list', { name: 'Plans' }).getByRole('button');
+    const lines = await plan.evaluate((element) => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return new Set([...range.getClientRects()].map((rect) => Math.round(rect.top))).size;
+    });
+    expect(lines).toBe(1);
   });
 
   test('in right-to-left text the handle leads at the right and the keys move the same way', async ({

@@ -187,6 +187,28 @@ const doubleClickTime = 500;
 const textFields =
   'input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"]), textarea, [contenteditable="true"]';
 
+/**
+ * A small picture for a carried image file, in its type where the browser can write it: a circle
+ * in the theme's brand color on its selected fill, as a person's logo or photo would show.
+ */
+function pictureOf(type: string, scope: Element) {
+  if (!/^image\/(png|jpeg|webp)$/.test(type)) return null;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 96;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+  const style = getComputedStyle(scope);
+  const color = (name: string, fallback: string) => style.getPropertyValue(name).trim() || fallback;
+  context.fillStyle = color('--env-color-bg-selected', '#dde3f0');
+  context.fillRect(0, 0, 96, 96);
+  context.fillStyle = color('--env-color-bg-brand-emphasis', '#3557c0');
+  context.beginPath();
+  context.arc(48, 48, 26, 0, 2 * Math.PI);
+  context.fill();
+  const [, data = ''] = canvas.toDataURL(type).split(',');
+  return Uint8Array.from(atob(data), (character) => character.charCodeAt(0));
+}
+
 /** A layer over a whole preview, which no pointer is over: it only holds the preview's popups. */
 const passThrough = '.catalogue-overlay-layer';
 
@@ -300,12 +322,18 @@ export class VirtualPointer {
 
   /**
    * Picks up files, as a person drags them in from the desktop: its moves are a drag now. Each is
-   * as large as its `size` in bytes, or a few bytes.
+   * as large as its `size` in bytes; without one, an image is a real picture, a mark in the theme's
+   * brand color, so a preview of it shows something, and anything else a few bytes. Picked up again
+   * before a drop, it carries them all together.
    */
   carry(files: readonly CarriedFile[]) {
-    this.carried = new DataTransfer();
+    this.carried ??= new DataTransfer();
     for (const { name, type, size } of files)
-      this.carried.items.add(new File([size ? new Uint8Array(size) : 'envUI'], name, { type }));
+      this.carried.items.add(
+        new File([size ? new Uint8Array(size) : (pictureOf(type, this.scope) ?? 'envUI')], name, {
+          type,
+        }),
+      );
   }
 
   private sendDrag(target: Element, type: string) {
@@ -590,10 +618,26 @@ export class VirtualPointer {
     if (element) events(element, false, from);
   }
 
-  /** Presses a key on an element of the preview, or on the field typed into or focused. */
+  /**
+   * Presses a key on an element of the preview, or on the field typed into or focused, with what a
+   * browser does for it there: Tab leaves the field typed into, which hears its blur, and Enter in
+   * a single-line field submits its form.
+   */
   key(key: string, selector?: string) {
     const target = this.keyTarget(selector);
-    target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
+    const allowed = target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
+    if (allowed && key === 'Tab' && target === this.focused) {
+      this.focus(null);
+      target.dispatchEvent(new FocusEvent('blur'));
+      target.dispatchEvent(new FocusEvent('focusout', { bubbles: true, composed: true }));
+    }
+    if (
+      allowed &&
+      key === 'Enter' &&
+      target instanceof HTMLInputElement &&
+      target.matches(textFields)
+    )
+      target.form?.requestSubmit();
     target.dispatchEvent(new KeyboardEvent('keyup', this.keyboard(key)));
   }
 

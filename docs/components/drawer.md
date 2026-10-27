@@ -165,7 +165,7 @@ The drawer, the rail and the bar take the same list of destinations, and [Scaffo
 - A group is a heading in the drawer only: the rail and the bar show its destinations one after another.
 - Nested sections are the drawer's too: the rail and the bar show the top level, and mark the destination whose section holds the current page.
 
-```tsx figure=OneListThreeForms
+```tsx figure=OneListThreeForms stage=shaded widths="54 44 24" sweep classes fit
 
 ```
 
@@ -176,7 +176,7 @@ A destination can hold others, such as the pages of a chapter: they sit under it
 - The section that holds the current page is open.
 - A section without a page of its own is only a heading.
 
-```tsx figure=NestedSections
+```tsx figure=NestedSections motion
 
 ```
 
@@ -184,7 +184,7 @@ A destination can hold others, such as the pages of a chapter: they sit under it
 
 Past five destinations, the bar's fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.
 
-```tsx figure=MoreDestinations
+```tsx figure=MoreDestinations motion
 
 ```
 
@@ -195,7 +195,7 @@ People can resize the drawer by its end edge, with the same grip as between [Pan
 - As it narrows, a label that no longer fits ends in an ellipsis and shows in full in a tooltip.
 - A group heading cut short shows its full text on hover.
 
-```tsx figure=ResizableDrawer
+```tsx figure=ResizableDrawer motion
 
 ```
 
