@@ -45,9 +45,14 @@ test('sixteen drawings, each named in kebab case and drawn in lines of its own',
   assert.equal(drawn.size, 16, 'no two drawings are the same');
 });
 
-test('it is hidden and sits at the end by default, covering its box', () => {
+test('it is hidden and sits at the end on its foot by default, covering its box', () => {
   const markup = renderToStaticMarkup(h(LineArt, { drawing: 'golden-section' }));
-  assert.match(markup, /^<svg viewBox="0 0 480 330" preserveAspectRatio="xMaxYMid slice"/);
+  // Its sheet moved so the golden rectangle reaches the box's end and foot.
+  assert.match(markup, /^<svg viewBox="-14 -30 480 330" preserveAspectRatio="xMaxYMax slice"/);
+  assert.match(
+    renderToStaticMarkup(h(LineArt, { drawing: 'monochord' })),
+    /^<svg viewBox="0 0 480 330"/,
+  );
   assert.match(markup, /aria-hidden="true"/);
   assert.doesNotMatch(markup, /role=|aria-label/);
   assert.match(markup, /class="env-line-art" data-drawing="golden-section" data-align="end"/);
@@ -56,11 +61,11 @@ test('it is hidden and sits at the end by default, covering its box', () => {
 test('it sits at the start or in the centre, and a label makes it an image', () => {
   assert.match(
     renderToStaticMarkup(h(LineArt, { drawing: 'monochord', align: 'start' })),
-    /preserveAspectRatio="xMinYMid slice"[^>]*data-align="start"/,
+    /preserveAspectRatio="xMinYMax slice"[^>]*data-align="start"/,
   );
   assert.match(
     renderToStaticMarkup(h(LineArt, { drawing: 'monochord', align: 'center' })),
-    /preserveAspectRatio="xMidYMid slice"/,
+    /preserveAspectRatio="xMidYMax slice"/,
   );
   const labelled = renderToStaticMarkup(
     h(LineArt, { drawing: 'pappus-chain', label: 'A chain of circles', className: 'hero' }),

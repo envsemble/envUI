@@ -3751,7 +3751,7 @@
     "LineArt": {
       "kind": "component",
       "source": "packages/ui/src/layout/LineArt.tsx",
-      "description": "A geometric drawing in hairlines that fills its container's box, for a banner's end, an empty state or the background of a header: its lines in the muted edge color in every theme, one device pixel wide at any size, and the system's gray text color in forced colors. It covers the box, cropped from its start by default, and is hidden from assistive technology unless a label makes it an image. With `motion`, its lines draw themselves in, out, or in and out again.",
+      "description": "A geometric drawing in hairlines that fills its container's box, for a banner's end, an empty state or the background of a header: its lines in the muted edge color in every theme, one device pixel wide at any size, and the system's gray text color in forced colors. It covers the box, resting on its foot and cropped from its start by default, and is hidden from assistive technology unless a label makes it an image. With `motion`, its lines draw themselves in, out, or in and out again.",
       "props": [
         {
           "name": "drawing",
@@ -3764,7 +3764,7 @@
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'end'",
-          "description": "Where the drawing sits in its box when the box's shape crops it: at the end, at the start or in the centre, flipped in right-to-left text, as the drawing itself is. It is cropped from the other side, or from both."
+          "description": "Where the drawing sits in its box when the box's shape crops it: at the end, at the start or in the centre, flipped in right-to-left text, as the drawing itself is. It is cropped from the other side, or from both, and always rests on the box's foot, cropped from its top."
         },
         {
           "name": "label",
