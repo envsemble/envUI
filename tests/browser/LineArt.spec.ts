@@ -71,11 +71,11 @@ test('it covers its box from where it sits, its lines hairlines in the muted edg
  */
 const offsets = (art: Locator) =>
   art.evaluate((svg) =>
-    [...svg.children].map(
-      (line) =>
-        Math.round(Number(getComputedStyle(line).getPropertyValue('--env-line-art-offset')) * 100) /
-        100,
-    ),
+    [...svg.children].map((line) => {
+      const style = getComputedStyle(line);
+      const offset = parseFloat(style.strokeDashoffset) / parseFloat(style.strokeDasharray);
+      return Math.round(offset * 100) / 100 || 0;
+    }),
   );
 
 /**
@@ -95,7 +95,7 @@ const holdAt = (art: Locator, time: number | 'end') =>
 const finish = (art: Locator) =>
   art.evaluate((svg) => svg.getAnimations({ subtree: true }).forEach((each) => each.finish()));
 
-// The motions are CSS animations of a registered custom property, which each engine runs.
+// The motions are CSS animations of the lines' dash offset, as drawn, which each engine runs.
 test(
   'its lines draw themselves in and out, a loop ending each turn where the next begins',
   { tag: '@engines' },
