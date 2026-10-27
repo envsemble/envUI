@@ -885,7 +885,8 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     `Unexpected icons in consumer bundle: ${iconInputs.join(', ')}`,
   );
   assert.match(iconInputs[0], /\/Home\.js$/);
-  assert.ok(result.bytes < 12000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
+  // Button keeps a label's words and a number in one run of text (textRuns), about 1.3 kB.
+  assert.ok(result.bytes < 12500, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
   assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
     result.emittedInputs.every(
