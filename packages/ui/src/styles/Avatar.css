@@ -61,14 +61,13 @@
   --env-avatar-container-default: var(--env-color-avatar-bg-oat);
   --env-avatar-content-default: var(--env-color-avatar-fg-oat);
 }
-/* A faint, small drop shadow under an avatar and under an avatar group's count, the one exception
-   to envUI's rule of no drop shadows: stacked in a group, each avatar parts from the one it lies on,
-   and a lone avatar sits on its surface. Its color is a deep shade of the surface below, the group's
-   ring color or the envUI surface it sits on, else the page, and stronger the darker that is, so it
-   reads as faintly on a dark surface as on a light one. A chosen avatar keeps its rings alone, and
-   under forced colors the system draws no shadow. */
-.env-avatar,
-.env-avatar-group-overflow {
+/* A faint, small drop shadow under an avatar, and under an avatar group's count (AvatarGroup.css),
+   the one exception to envUI's rule of no drop shadows: stacked in a group, each avatar parts from
+   the one it lies on, and a lone avatar sits on its surface. Its color is a deep shade of the
+   surface below, the group's ring color or the envUI surface it sits on, else the page, and
+   stronger the darker that is, so it reads as faintly on a dark surface as on a light one. A chosen
+   avatar keeps its rings alone, and under forced colors the system draws no shadow. */
+.env-avatar {
   --env-avatar-shadow: 0 1px 3px
     oklch(
       from var(--env-avatar-group-ring-color, var(--env-surface-color, var(--env-color-bg-page)))

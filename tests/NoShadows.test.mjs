@@ -186,9 +186,16 @@ test('no token or custom property is a shadow but the avatars’', async () => {
 
 test('the avatars’ shadow is small, faint and follows the surface below', async () => {
   const css = await shipped();
-  const values = declarations(css).filter(([property]) => property === avatarShadow);
-  assert.equal(values.length, 1, 'declared once');
-  const [[, value]] = values;
+  const values = [
+    ...new Set(
+      declarations(css)
+        .filter(([property]) => property === avatarShadow)
+        .map(([, value]) => value.replace(/\s+/g, ' ')),
+    ),
+  ];
+  // Avatar.css and AvatarGroup.css, for the count, declare the same shadow.
+  assert.equal(values.length, 1, 'one shadow');
+  const [value] = values;
   // A single layer, 1px down and blurred 3px, with no spread.
   const [x, y, blur, ...rest] = split(value, /\s/);
   assert.deepEqual([x, y, blur], ['0', '1px', '3px']);
@@ -204,7 +211,7 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .matchAll(/([^{}]+)\{[^}]*box-shadow:\s*var\(--env-avatar-shadow\)/g),
   ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
-  assert.deepEqual(users, ['.env-avatar, .env-avatar-group-overflow']);
+  assert.deepEqual(users, ['.env-avatar', '.env-avatar-group-overflow']);
 });
 
 test('the check tells drop shadows from rings', () => {
