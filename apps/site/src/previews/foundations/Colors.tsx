@@ -1,31 +1,48 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   Badge,
+  Bar,
   Button,
   Column,
+  IconButton,
   Meter,
+  Progress,
+  Rail,
   Row,
   SegmentedControl,
   Surface,
-  Switch,
   Text,
   Theme,
+  Toolbar,
   useTheme,
   type BadgeTone,
+  type Destination,
   type ThemeContrast,
   type ThemeValue,
 } from '@envsemble/envui';
+import { Add } from '@envsemble/envui/icons/Add';
+import { AddAPhoto } from '@envsemble/envui/icons/AddAPhoto';
+import { AddPhotoAlternate } from '@envsemble/envui/icons/AddPhotoAlternate';
 import { Archive } from '@envsemble/envui/icons/Archive';
-import { BakeryDining } from '@envsemble/envui/icons/BakeryDining';
-import { Bedtime } from '@envsemble/envui/icons/Bedtime';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
+import { Crop } from '@envsemble/envui/icons/Crop';
+import { Done } from '@envsemble/envui/icons/Done';
 import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
+import { Favorite } from '@envsemble/envui/icons/Favorite';
+import { Group } from '@envsemble/envui/icons/Group';
 import { Info } from '@envsemble/envui/icons/Info';
+import { PhotoAlbum } from '@envsemble/envui/icons/PhotoAlbum';
+import { PhotoLibrary } from '@envsemble/envui/icons/PhotoLibrary';
 import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
+import { RotateRight } from '@envsemble/envui/icons/RotateRight';
+import { Search } from '@envsemble/envui/icons/Search';
+import { Share } from '@envsemble/envui/icons/Share';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
+import { Tune } from '@envsemble/envui/icons/Tune';
 import { Warning } from '@envsemble/envui/icons/Warning';
 import { usePointer, type PointerStep } from '../Motion';
 import type { FoundationFigure } from './FoundationFigures';
+import { MarkedSubject } from './Marks';
 import { Figure } from './Topic';
 import type { LegendEntry } from './Topic';
 
@@ -40,189 +57,162 @@ interface FigureWords {
   legend: readonly LegendEntry[];
 }
 
-/** A numbered pin on a part of the roles screen: on a container's corner, or after a leaf part. */
-function Pin({ number, corner }: { number: number; corner?: 'start' | 'end' }) {
-  return (
-    <span
-      className="site-anatomy-number catalogue-role-pin"
-      data-corner={corner}
-      aria-hidden="true"
-    >
-      {number}
-    </span>
-  );
-}
-
 /**
- * The color of each role in the roles figure's key, in the legend's order, and the role its number
- * takes on it: a background carries the text, a text role the surface, the accent its own ink and
- * the status its tone over its tint.
+ * The color of each role, in the legend's order: the page, a surface, a filled card, text,
+ * supporting text, the accent and a status's soft fill.
  */
-const roleKey: readonly { fill: string; ink: string }[] = [
-  { fill: 'bg-page', ink: 'fg-default' },
-  { fill: 'bg-default', ink: 'fg-default' },
-  { fill: 'bg-muted', ink: 'fg-default' },
-  { fill: 'fg-default', ink: 'bg-default' },
-  { fill: 'fg-muted', ink: 'bg-default' },
-  { fill: 'bg-brand-emphasis', ink: 'fg-on-emphasis' },
-  { fill: 'bg-success-muted', ink: 'fg-success' },
+const roleColors: readonly string[] = [
+  'bg-page',
+  'bg-default',
+  'bg-muted',
+  'fg-default',
+  'fg-muted',
+  'bg-brand-emphasis',
+  'bg-success-muted',
 ];
 
 /**
- * A small screen with a numbered pin on each part that takes a role: the page, a surface on it, a
- * filled card inside, text, supporting text, the accent and a status. Beside it, or below it on a
- * narrower page, its key: each role's color in the reader's theme, with its number, name and use.
+ * A small screen with a numbered callout on each part that takes a role, as an anatomy figure's
+ * are: the page, a surface on it, a filled card inside, text, supporting text, the accent and a
+ * status. Its legend is an anatomy figure's, each number's tag carrying a dot of the role's color
+ * in the reader's theme.
  */
 function RolesFigure({ legend }: FigureWords) {
   return (
-    <div className="catalogue-roles-figure">
-      <Figure
-        label="The color roles of a screen"
-        className="catalogue-roles-stage"
-        legend={
-          <ol className="catalogue-role-key">
-            {legend.map((entry, index) => {
-              const { fill, ink } = roleKey[index] ?? roleKey[0]!;
-              return (
-                <li key={entry.name}>
-                  <span
-                    className="catalogue-role-key-swatch"
-                    style={{
-                      background: `var(--env-color-${fill})`,
-                      color: `var(--env-color-${ink})`,
-                    }}
-                    aria-hidden="true"
-                  >
-                    {index + 1}
-                  </span>
-                  <div>
-                    <Text render={<p />} className="catalogue-topic-legend-name">
-                      {entry.name}
-                    </Text>
-                    <Text render={<p />} variant="body-sm" emphasis="muted">
-                      {entry.text}
-                    </Text>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-        }
-      >
-        <div className="catalogue-roles-screen" inert>
-          <Surface background="page" padding={5} radius="xl" className="catalogue-role-part">
-            <Pin number={1} corner="start" />
-            <Surface
-              background="default"
-              padding={5}
-              radius="xl"
-              className="catalogue-role-part"
-              render={<Column gap={5} />}
-            >
-              <Pin number={2} corner="end" />
-              <Column gap={1} align="start">
-                <Row gap={2} align="center">
-                  <Text render={<p />} variant="title">
-                    Quarterly report
-                  </Text>
-                  <Pin number={4} />
-                </Row>
-                <Row gap={2} align="center">
-                  <Text emphasis="muted">Updated today by Priya Shah</Text>
-                  <Pin number={5} />
-                </Row>
-              </Column>
-              <Surface
-                background="muted"
-                padding={4}
-                radius="sm"
-                className="catalogue-role-part"
-                render={<Column gap={1} />}
-              >
-                <Pin number={3} corner="end" />
-                <Text render={<p />} variant="title">
-                  Budget
+    <Figure
+      label="The color roles of a screen"
+      className="catalogue-marked-stage catalogue-roles-stage"
+      legend={
+        <ol className="site-anatomy-legend catalogue-topic-legend">
+          {legend.map((entry, index) => (
+            <li key={entry.name}>
+              <span className="site-anatomy-number catalogue-role-tag" aria-hidden="true">
+                {index + 1}
+                <span
+                  className="catalogue-role-dot"
+                  style={{ background: `var(--env-color-${roleColors[index] ?? 'bg-page'})` }}
+                />
+              </span>
+              <div>
+                <Text render={<p />} className="catalogue-topic-legend-name">
+                  {entry.name}
                 </Text>
-                <Text emphasis="muted">Within the plan for this quarter</Text>
-              </Surface>
-              <Row justify="between" align="center" gap={3}>
-                <Row gap={2} align="center">
-                  <Badge tone="success">On track</Badge>
-                  <Pin number={7} />
-                </Row>
-                <Row gap={2} align="center">
-                  <Pin number={6} />
-                  <Button>Share</Button>
-                </Row>
-              </Row>
-            </Surface>
-          </Surface>
-        </div>
-      </Figure>
-    </div>
-  );
-}
-
-/**
- * The color of each role of a family, in the legend's order, and the three colors of each status:
- * its text, its soft fill and its solid fill.
- */
-const families: readonly (readonly string[])[] = [
-  ['bg-page', 'bg-default', 'bg-muted', 'bg-raised', 'bg-field', 'bg-overlay'],
-  ['fg-default', 'fg-muted', 'fg-link', 'fg-on-emphasis', 'fg-on-selected'],
-  ['border-default', 'border-muted', 'border-focus'],
-  ['bg-brand-emphasis', 'bg-neutral-muted', 'bg-important-strong', 'bg-selected'],
-];
-const statusColors: readonly (readonly string[])[] = [
-  ['fg-muted', 'bg-neutral-muted', 'bg-neutral-emphasis'],
-  ['fg-accent', 'bg-accent-badge', 'bg-accent-emphasis'],
-  ['fg-success', 'bg-success-muted', 'bg-success-emphasis'],
-  ['fg-warning', 'bg-warning-muted', 'bg-warning-emphasis'],
-  ['fg-danger', 'bg-danger-muted', 'bg-danger-emphasis'],
-  ['fg-done', 'bg-done-muted', 'bg-done-emphasis'],
-];
-
-/** The names a legend entry lists, "Page, Surface, Filled surface…", in order. */
-const listed = (text: string | undefined) =>
-  (text ?? '').replace(/\.$/, '').split(/,\s*/).filter(Boolean);
-
-/** A swatch of one color, or a status's three stacked, each with a hairline edge. */
-function Swatch({ colors }: { colors: readonly string[] }) {
-  return (
-    <span className="catalogue-role-swatch" aria-hidden="true">
-      {colors.map((color) => (
-        <span key={color} style={{ background: `var(--env-color-${color})` }} />
-      ))}
-    </span>
-  );
-}
-
-/**
- * Every role in the reader's theme, on the page: a row of swatches for each family, its name at
- * the start, on one grid of six columns; then the statuses on the same columns, one for each tone,
- * with a row for each of its colors.
- */
-function SwatchesFigure({ legend }: FigureWords) {
-  const status = legend[families.length];
-  const tones = listed(status?.text);
-  const parts = listed(legend[families.length + 1]?.text);
-  return (
-    <div className="catalogue-palette">
-      <div className="catalogue-palette-grid">
-        {families.map((colors, family) => {
-          const entry = legend[family];
-          const roles = listed(entry?.text);
-          return (
-            <section key={family} className="catalogue-palette-family">
-              <Text render={<h4 />} variant="title">
-                {entry?.name}
+                <Text render={<p />} variant="body-sm" emphasis="muted">
+                  {entry.text}
+                </Text>
+              </div>
+            </li>
+          ))}
+        </ol>
+      }
+    >
+      <MarkedSubject>
+        <Surface
+          background="page"
+          padding={5}
+          radius="xl"
+          data-catalogue-mark="1"
+          className="catalogue-roles"
+        >
+          <Surface
+            background="default"
+            padding={5}
+            radius="xl"
+            data-catalogue-mark="2"
+            render={<Column gap={5} />}
+          >
+            <Column gap={1} align="start">
+              <Text render={<p />} variant="title" data-catalogue-mark="4">
+                Quarterly report
               </Text>
-              <ul aria-label={entry?.name}>
-                {colors.map((color, index) => (
-                  <li key={color}>
-                    <Swatch colors={[color]} />
-                    <Text render={<span />} variant="body-sm">
-                      {roles[index]}
+              <Text emphasis="muted" data-catalogue-mark="5">
+                Updated today by Priya Shah
+              </Text>
+            </Column>
+            <Surface
+              background="muted"
+              padding={4}
+              radius="sm"
+              data-catalogue-mark="3"
+              render={<Column gap={1} />}
+            >
+              <Text render={<p />} variant="title">
+                Budget
+              </Text>
+              <Text emphasis="muted">Within the plan for this quarter</Text>
+            </Surface>
+            <Row justify="between" align="center" gap={3}>
+              <Badge tone="success" data-catalogue-mark="7">
+                On track
+              </Badge>
+              <Button data-catalogue-mark="6">Share</Button>
+            </Row>
+          </Surface>
+        </Surface>
+      </MarkedSubject>
+    </Figure>
+  );
+}
+
+/**
+ * The colors of each role, in four groups of six, in the legend's order: each group is a legend
+ * entry, its name the group's and its text the names of its roles, separated by commas. A status
+ * shows its three colors in one swatch: its text, its soft fill and its solid fill.
+ */
+const roleGroups: readonly (readonly (readonly string[])[])[] = [
+  [['bg-page'], ['bg-default'], ['bg-muted'], ['bg-raised'], ['bg-field'], ['bg-overlay']],
+  [
+    ['fg-default'],
+    ['fg-muted'],
+    ['fg-link'],
+    ['border-default'],
+    ['border-muted'],
+    ['border-focus'],
+  ],
+  [
+    ['bg-brand-emphasis'],
+    ['fg-on-emphasis'],
+    ['bg-neutral-muted'],
+    ['bg-important-strong'],
+    ['bg-selected'],
+    ['fg-on-selected'],
+  ],
+  [
+    ['fg-muted', 'bg-neutral-muted', 'bg-neutral-emphasis'],
+    ['fg-accent', 'bg-accent-badge', 'bg-accent-emphasis'],
+    ['fg-success', 'bg-success-muted', 'bg-success-emphasis'],
+    ['fg-warning', 'bg-warning-muted', 'bg-warning-emphasis'],
+    ['fg-danger', 'bg-danger-muted', 'bg-danger-emphasis'],
+    ['fg-done', 'bg-done-muted', 'bg-done-emphasis'],
+  ],
+];
+
+/** A role's name from a group's legend text, "Page, Surface, Filled surface…", by its place. */
+const roleName = (text: string | undefined, index: number) =>
+  (text ?? '').replace(/\.$/, '').split(/,\s*/)[index] ?? '';
+
+/** The roles in the reader's theme, each group a continuous strip of swatches: a specimen of the system. */
+function SwatchesFigure({ legend }: FigureWords) {
+  return (
+    <div className="catalogue-role-groups">
+      <div>
+        {roleGroups.map((roles, group) => {
+          const title = legend[group]?.name ?? '';
+          return (
+            <section key={group} className="catalogue-role-group">
+              <Text render={<h4 />} variant="title">
+                {title}
+              </Text>
+              <ul className="catalogue-role-swatches" aria-label={title}>
+                {roles.map((colors, index) => (
+                  <li key={colors.join()}>
+                    <span className="catalogue-role-swatch" aria-hidden="true">
+                      {colors.map((color) => (
+                        <span key={color} style={{ background: `var(--env-color-${color})` }} />
+                      ))}
+                    </span>
+                    <Text render={<span />} className="catalogue-topic-legend-name">
+                      {roleName(legend[group]?.text, index)}
                     </Text>
                   </li>
                 ))}
@@ -230,28 +220,6 @@ function SwatchesFigure({ legend }: FigureWords) {
             </section>
           );
         })}
-        <section className="catalogue-palette-family catalogue-palette-status">
-          <div className="catalogue-palette-parts">
-            <Text render={<h4 />} variant="title">
-              {status?.name}
-            </Text>
-            {parts.map((part) => (
-              <Text key={part} render={<span />} variant="body-sm" emphasis="muted">
-                {part}
-              </Text>
-            ))}
-          </div>
-          <ul aria-label={status?.name}>
-            {statusColors.map((colors, index) => (
-              <li key={colors[0]}>
-                <Text render={<span />} variant="body-sm">
-                  {tones[index]}
-                </Text>
-                <Swatch colors={colors} />
-              </li>
-            ))}
-          </ul>
-        </section>
       </div>
     </div>
   );
@@ -260,8 +228,8 @@ function SwatchesFigure({ legend }: FigureWords) {
 /** The theme and contrast of each sample, in the legend's order. */
 const themes: readonly { theme: ThemeValue; contrast: ThemeContrast }[] = [
   { theme: 'light', contrast: 'standard' },
-  { theme: 'dark', contrast: 'standard' },
   { theme: 'light', contrast: 'high' },
+  { theme: 'dark', contrast: 'standard' },
   { theme: 'dark', contrast: 'high' },
 ];
 
@@ -280,8 +248,9 @@ const choose = (target: string, duration = 500): PointerStep[] => [
 /*
  * The pointer chooses each theme in turn, about two and a half seconds apart, and Light again,
  * then leaves: the loop starts again from Light. On one control of the four, in the legend's
- * order; where those don't fit, as on a phone, on a control of the theme and one of the contrast:
- * Dark, then high contrast, then Light, then standard contrast again.
+ * order, each theme beside its high contrast; where those don't fit, as on a phone, on a control
+ * of the theme and one of the contrast, one press a step: high contrast, then Dark, then standard
+ * contrast, then Light again.
  */
 const themeScripts: Record<'four' | 'pair', PointerStep[]> = {
   four: [
@@ -297,12 +266,12 @@ const themeScripts: Record<'four' | 'pair', PointerStep[]> = {
   ],
   pair: [
     { wait: 1500 },
-    { to: segment(2) },
+    { to: segment(2, 'catalogue-contrast-pick') },
     { wait: 300 },
     { click: true },
-    ...choose(segment(2, 'catalogue-contrast-pick')),
-    ...choose(segment(1)),
+    ...choose(segment(2)),
     ...choose(segment(1, 'catalogue-contrast-pick')),
+    ...choose(segment(1)),
     { wait: 3300 },
     { leave: true },
   ],
@@ -312,9 +281,10 @@ const themeScripts: Record<'four' | 'pair', PointerStep[]> = {
 const fourWidth = 30;
 
 /**
- * Whether the figure is narrower than the control of the four needs, by the width of its element.
+ * Whether the figure is narrower than a width in rem, by default the width the control of the four
+ * needs, by the width of its element.
  */
-function useNarrow() {
+function useNarrow(width = fourWidth) {
   const ref = useRef<HTMLDivElement>(null);
   const [narrow, setNarrow] = useState(false);
   useEffect(() => {
@@ -322,11 +292,11 @@ function useNarrow() {
     if (!element) return;
     const observer = new ResizeObserver(([entry]) => {
       const rem = parseFloat(getComputedStyle(element).fontSize) || 16;
-      setNarrow((entry?.contentRect.width ?? 0) < fourWidth * rem);
+      setNarrow((entry?.contentRect.width ?? 0) < width * rem);
     });
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [width]);
   return [ref, narrow] as const;
 }
 
@@ -392,7 +362,7 @@ function ThemeChoice({ names, pair }: { names: readonly string[]; pair: boolean 
             onValueChange={(next) => pick({ theme: next as ThemeValue })}
             items={[
               { value: 'light', label: names[0] },
-              { value: 'dark', label: names[1] },
+              { value: 'dark', label: names[2] },
             ]}
           />
           <SegmentedControl
@@ -502,192 +472,372 @@ function StatusFigure({ legend }: FigureWords) {
 }
 
 /**
- * A terracotta family of its own, as an application gives an area of its own (customizing.md's
- * GreenArea does the same in green): the roles the card paints, with their hover and press, in
- * each theme. Warm cream surfaces with a deep terracotta action in the light theme; warm charcoal
- * with the same terracotta, a step deeper under the pointer, in the dark. At high contrast its
- * text and edges keep the theme's own, stronger colors.
+ * A pastel color scheme of an application's own: the hue of its surfaces and main actions, and the
+ * hue of its second accent, the Important fill, in OKLCH, in the legend's order. Each takes the
+ * same grades in each theme, so the three are one family of schemes.
  */
-const clay: Record<ThemeValue, { fills: CSSProperties; lines: CSSProperties }> = {
-  light: {
-    fills: {
-      '--env-color-bg-page': '#fbf8f5',
-      '--env-color-bg-default': '#f9f3ed',
-      '--env-color-bg-muted': '#f0e5da',
-      '--env-color-bg-brand-emphasis': '#9b4526',
-      '--env-color-bg-brand-emphasis-hover': '#883c20',
-      '--env-color-bg-brand-emphasis-pressed': '#76331b',
-      '--env-color-fg-on-emphasis': '#ffffff',
-      '--env-color-bg-neutral-muted': 'rgb(155 69 38 / 0.1)',
-      '--env-color-bg-neutral-muted-hover': 'rgb(155 69 38 / 0.16)',
-      '--env-color-bg-neutral-muted-pressed': 'rgb(155 69 38 / 0.23)',
-      '--env-color-bg-neutral-subtle-hover': 'rgb(155 69 38 / 0.07)',
-      '--env-color-bg-neutral-subtle-pressed': 'rgb(155 69 38 / 0.12)',
-      '--env-color-bg-selected': '#f1d9ca',
-      '--env-color-bg-selected-hover': '#ecd0be',
-      '--env-color-bg-selected-pressed': '#e6c6b2',
-      '--env-color-fg-on-selected': '#6b2d16',
-      '--env-color-fg-accent': '#9b4526',
-      '--env-color-bg-accent-badge': '#f3dfd2',
-      '--env-color-fg-control': '#4a2a1d',
-    } as CSSProperties,
-    lines: {
-      '--env-color-fg-muted': '#6b5a50',
-      '--env-color-border-default': '#9a877b',
-      '--env-color-border-muted': '#e4d6ca',
-    } as CSSProperties,
-  },
-  dark: {
-    fills: {
-      '--env-color-bg-page': '#171311',
-      '--env-color-bg-default': '#211b18',
-      '--env-color-bg-muted': '#2d2521',
-      '--env-color-bg-brand-emphasis': '#b4532f',
-      '--env-color-bg-brand-emphasis-hover': '#a44a29',
-      '--env-color-bg-brand-emphasis-pressed': '#934124',
-      '--env-color-fg-on-emphasis': '#ffffff',
-      '--env-color-bg-neutral-muted': 'rgb(232 170 140 / 0.12)',
-      '--env-color-bg-neutral-muted-hover': 'rgb(232 170 140 / 0.18)',
-      '--env-color-bg-neutral-muted-pressed': 'rgb(232 170 140 / 0.25)',
-      '--env-color-bg-neutral-subtle-hover': 'rgb(232 170 140 / 0.07)',
-      '--env-color-bg-neutral-subtle-pressed': 'rgb(232 170 140 / 0.12)',
-      '--env-color-bg-selected': '#4a2e23',
-      '--env-color-bg-selected-hover': '#533428',
-      '--env-color-bg-selected-pressed': '#5c3a2d',
-      '--env-color-fg-on-selected': '#f6d8c8',
-      '--env-color-fg-accent': '#e8aa8c',
-      '--env-color-bg-accent-badge': '#3e2a22',
-      '--env-color-fg-control': '#f1e3db',
-    } as CSSProperties,
-    lines: {
-      '--env-color-fg-muted': '#c0aea4',
-      '--env-color-border-default': '#8f7b70',
-      '--env-color-border-muted': '#3a302b',
-    } as CSSProperties,
-  },
-};
+const schemes: readonly { hue: number; accent: number }[] = [
+  { hue: 300, accent: 350 },
+  { hue: 165, accent: 215 },
+  { hue: 48, accent: 10 },
+];
 
-/** An area in the terracotta family, in a theme, at the reader's contrast. */
-function ClayArea({
+/** A color in OKLCH: its lightness, chroma and hue. */
+const oklch = (lightness: number, chroma: number, hue: number) =>
+  `oklch(${lightness} ${chroma} ${hue})`;
+
+/**
+ * The roles a scheme gives its area, with their hover and press, as an application gives an area
+ * colors of its own (customizing.md's Recolor an area): pale tinted surfaces, mid-tone quiet
+ * actions and selection, and a deep main action in the light theme; deep tinted surfaces and pale
+ * actions in the dark. Its text and edges are tinted too, except at high contrast, where they keep
+ * the theme's own, stronger colors.
+ */
+function schemeColors(
+  { hue, accent }: (typeof schemes)[number],
+  theme: ThemeValue,
+  high: boolean,
+): CSSProperties {
+  const light = theme === 'light';
+  const step = (lightness: number, by: number) => lightness + (light ? -by : by);
+  const tone = (role: string, lightness: number, chroma: number, at = hue) => ({
+    [`--env-color-${role}`]: oklch(lightness, chroma, at),
+    [`--env-color-${role}-hover`]: oklch(step(lightness, 0.035), chroma, at),
+    [`--env-color-${role}-pressed`]: oklch(step(lightness, 0.07), chroma, at),
+  });
+  const fills = light
+    ? {
+        '--env-color-bg-page': oklch(0.985, 0.012, hue),
+        '--env-color-bg-default': oklch(0.995, 0.006, hue),
+        '--env-color-bg-raised': oklch(0.995, 0.006, hue),
+        '--env-color-bg-muted': oklch(0.935, 0.034, hue),
+        ...tone('bg-brand-emphasis', 0.43, 0.11),
+        '--env-color-fg-on-emphasis': oklch(1, 0, 0),
+        ...tone('bg-important-strong', 0.86, 0.08, accent),
+        '--env-color-fg-on-strong': oklch(0.27, 0.07, accent),
+        ...tone('bg-neutral-muted', 0.88, 0.055),
+        '--env-color-bg-neutral-subtle-hover': oklch(0.89, 0.04, hue),
+        '--env-color-bg-neutral-subtle-pressed': oklch(0.86, 0.05, hue),
+        ...tone('bg-selected', 0.83, 0.075),
+        '--env-color-fg-on-selected': oklch(0.25, 0.07, hue),
+        '--env-color-bg-navigation-hover': oklch(0.9, 0.04, hue),
+        '--env-color-bg-navigation-pressed': oklch(0.87, 0.05, hue),
+        '--env-color-fg-accent': oklch(0.43, 0.11, hue),
+        '--env-color-border-focus': oklch(0.43, 0.11, hue),
+      }
+    : {
+        '--env-color-bg-page': oklch(0.19, 0.018, hue),
+        '--env-color-bg-default': oklch(0.23, 0.024, hue),
+        '--env-color-bg-raised': oklch(0.25, 0.026, hue),
+        '--env-color-bg-muted': oklch(0.26, 0.032, hue),
+        ...tone('bg-brand-emphasis', 0.84, 0.08),
+        '--env-color-fg-on-emphasis': oklch(0.22, 0.05, hue),
+        ...tone('bg-important-strong', 0.84, 0.08, accent),
+        '--env-color-fg-on-strong': oklch(0.22, 0.05, accent),
+        ...tone('bg-neutral-muted', 0.35, 0.05),
+        '--env-color-bg-neutral-subtle-hover': oklch(0.33, 0.04, hue),
+        '--env-color-bg-neutral-subtle-pressed': oklch(0.37, 0.045, hue),
+        ...tone('bg-selected', 0.42, 0.075),
+        '--env-color-fg-on-selected': oklch(0.95, 0.025, hue),
+        '--env-color-bg-navigation-hover': oklch(0.31, 0.035, hue),
+        '--env-color-bg-navigation-pressed': oklch(0.35, 0.04, hue),
+        '--env-color-fg-accent': oklch(0.84, 0.08, hue),
+        '--env-color-border-focus': oklch(0.84, 0.08, hue),
+      };
+  const lines = light
+    ? {
+        '--env-color-fg-default': oklch(0.24, 0.035, hue),
+        '--env-color-fg-control': oklch(0.27, 0.045, hue),
+        '--env-color-fg-muted': oklch(0.4, 0.04, hue),
+        '--env-color-border-default': oklch(0.55, 0.045, hue),
+        '--env-color-border-muted': oklch(0.86, 0.03, hue),
+      }
+    : {
+        '--env-color-fg-default': oklch(0.95, 0.012, hue),
+        '--env-color-fg-control': oklch(0.92, 0.02, hue),
+        '--env-color-fg-muted': oklch(0.8, 0.03, hue),
+        '--env-color-border-default': oklch(0.62, 0.04, hue),
+        '--env-color-border-muted': oklch(0.34, 0.03, hue),
+      };
+  return (high ? fills : { ...fills, ...lines }) as CSSProperties;
+}
+
+/**
+ * Whether a Theme of this contrast shows the high-contrast colors: `high`, or `system` while the
+ * system asks for more contrast, followed as it changes.
+ */
+function useHighContrast(contrast: ThemeContrast) {
+  const [system, setSystem] = useState(false);
+  useEffect(() => {
+    const query = matchMedia('(prefers-contrast: more)');
+    const change = () => setSystem(query.matches);
+    change();
+    query.addEventListener('change', change);
+    return () => query.removeEventListener('change', change);
+  }, []);
+  return contrast === 'high' || (contrast === 'system' && system);
+}
+
+/** An area in a scheme, in a theme, at the reader's contrast. */
+function SchemeArea({
+  scheme,
   theme,
   className,
   children,
 }: {
+  scheme: number;
   theme: ThemeValue;
   className?: string;
   children: ReactNode;
 }) {
   const { contrast } = useTheme();
-  const { fills, lines } = clay[theme];
+  const high = useHighContrast(contrast);
   return (
     <Theme
       theme={theme}
       contrast={contrast}
       className={className}
-      style={contrast === 'high' ? fills : { ...fills, ...lines }}
+      style={schemeColors(schemes[scheme] ?? schemes[0]!, theme, high)}
     >
       {children}
     </Theme>
   );
 }
 
+/** A segment of the scheme control, by its place from 1. */
+const schemeSegment = (index: number) => segment(index, 'catalogue-scheme-pick');
+
 /**
- * The pointer rests on the terracotta action, presses it, then turns the switch off and on again,
- * so the family's own hover, press and switch play; it leaves with the switch on, as it began.
+ * The pointer chooses each scheme in turn, and the components ease into it: in the second, it
+ * rests on the main action and presses it, so its hover and press show in the scheme's own colors;
+ * in the third, it rests on a quiet action. It chooses the first again and leaves, as it began.
  */
-const ownColorsScript: PointerStep[] = [
+const schemeScript: PointerStep[] = [
+  { wait: 1400 },
+  { to: schemeSegment(2) },
+  { wait: 200 },
+  { click: true },
   { wait: 900 },
-  { to: '.catalogue-bakery-book', x: 0.2, y: 0.8 },
-  { to: '.catalogue-bakery-book', x: 0.55, y: 0.5, duration: 450 },
-  { wait: 1100 },
+  { to: '.catalogue-scheme-fab', duration: 650 },
+  { wait: 600 },
   { press: true },
   { wait: 260 },
   { release: true },
+  { wait: 700 },
+  { to: schemeSegment(3), duration: 650 },
+  { wait: 200 },
+  { click: true },
   { wait: 900 },
-  { to: '.catalogue-bakery .env-switch-input', duration: 750 },
-  { wait: 500 },
-  { click: true },
-  { wait: 1500 },
-  { click: true },
+  { to: '.catalogue-scheme-share', duration: 600 },
   { wait: 1100 },
+  { to: schemeSegment(1), duration: 650 },
+  { wait: 200 },
+  { click: true },
+  { wait: 1800 },
   { leave: true },
-  { wait: 900 },
 ];
 
 /**
- * A card in a terracotta family of its own, a bread-baking class to book, with its choices in a
- * filled group and its foot, an evening class, in the other theme; the pointer plays its action
- * and its switch.
+ * The same components in a scheme of the application's own, each on a tile of the scheme's filled
+ * surface, as one canvas: a column of quiet actions above the main one, a photo's toolbar beside
+ * its save action, a choice of view, two uploads and, in the other theme, the navigation. Below
+ * it, a control of the schemes, which the pointer chooses in turn.
  */
-function BakingClass() {
+function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boolean }) {
   const page = useTheme();
   const other: ThemeValue = page.theme === 'dark' ? 'light' : 'dark';
-  const [level, setLevel] = useState('first');
-  usePointer(ownColorsScript);
+  const [chosen, setChosen] = useState('0');
+  // While a new scheme eases in, every part's colors fade together, its own transitions included:
+  // the scheme and the fade change in one render.
+  const [switching, setSwitching] = useState(false);
+  useEffect(() => {
+    if (!switching) return;
+    const timer = setTimeout(() => setSwitching(false), 800);
+    return () => clearTimeout(timer);
+  }, [switching, chosen]);
+  const choose = (next: string) => {
+    setSwitching(true);
+    setChosen(next);
+  };
+  const [period, setPeriod] = useState('month');
+  const [place, setPlace] = useState('photos');
+  usePointer(schemeScript);
+  const scheme = Number(chosen);
+  const destination = (id: string) => ({ current: place === id, onSelect: () => setPlace(id) });
+  const destinations: Destination[] = [
+    { label: 'Photos', icon: <PhotoLibrary />, ...destination('photos') },
+    { label: 'Albums', icon: <PhotoAlbum />, ...destination('albums') },
+    { label: 'Shared', icon: <Group />, ...destination('shared') },
+  ];
+  const actions = [
+    <Button key="select" variant="secondary" startIcon={<CheckCircle />}>
+      Select
+    </Button>,
+    <Button key="add" variant="secondary" startIcon={<AddPhotoAlternate />}>
+      Add photos
+    </Button>,
+    <Button
+      key="share"
+      variant="secondary"
+      startIcon={<Share />}
+      className="catalogue-scheme-share"
+    >
+      Share
+    </Button>,
+    <Button key="search" variant="secondary" startIcon={<Search />}>
+      Search
+    </Button>,
+    <IconButton
+      key="new"
+      variant="primary"
+      size="lg"
+      icon={<Add />}
+      aria-label="New album"
+      className="catalogue-scheme-fab"
+    />,
+  ];
   return (
-    <ClayArea theme={page.theme} className="catalogue-bakery">
-      <Surface background="default" padding={5} radius="xl" render={<Column gap={4} />}>
-        <Row gap={3} align="start">
-          <span className="catalogue-bakery-mark" aria-hidden="true">
-            <BakeryDining width="1.5rem" height="1.5rem" />
-          </span>
-          <Column gap={1}>
-            <Text render={<p />} variant="title">
-              Sourdough for beginners
-            </Text>
-            <Text emphasis="muted">Saturday 10:00 · Mill Lane Bakery</Text>
-          </Column>
-        </Row>
-        <Surface background="muted" padding={4} radius="sm" render={<Column gap={3} />}>
-          <Row gap={3} align="center" justify="between" wrap>
-            <Text>Level</Text>
+    <Column gap={5} align="center" className="catalogue-schemes">
+      <SchemeArea scheme={scheme} theme={page.theme} className="catalogue-scheme-canvas">
+        <div
+          className="catalogue-scheme-tiles"
+          data-narrow={narrow || undefined}
+          data-switching={switching || undefined}
+        >
+          <Surface
+            background="muted"
+            radius="xl"
+            className="catalogue-scheme-tile"
+            data-tile="menu"
+          >
+            {narrow ? (
+              <Row wrap gap={2} align="center" justify="center">
+                {actions}
+              </Row>
+            ) : (
+              <Column gap={2} align="end">
+                {actions}
+              </Column>
+            )}
+          </Surface>
+          <Surface
+            background="muted"
+            radius="xl"
+            className="catalogue-scheme-tile"
+            data-tile="toolbar"
+          >
+            <Row gap={2} align="center" justify="center">
+              <Surface
+                background="default"
+                padding={1}
+                radius="full"
+                render={<Toolbar.Root aria-label="Edit photo" size="sm" />}
+              >
+                <Toolbar.Button icon={<Crop />} label="Crop" />
+                <Toolbar.Button icon={<Tune />} label="Adjust" />
+                <Toolbar.Button icon={<RotateRight />} label="Rotate" />
+                <Toolbar.Button icon={<Favorite />} label="Favorite" pressed />
+              </Surface>
+              <IconButton variant="primary" tone="accent" icon={<Done />} aria-label="Save" />
+            </Row>
+          </Surface>
+          <Surface
+            background="muted"
+            radius="xl"
+            className="catalogue-scheme-tile"
+            data-tile="choice"
+          >
             <SegmentedControl
-              aria-label="Level"
+              aria-label="Group photos by"
               size="sm"
-              value={level}
-              onValueChange={setLevel}
+              value={period}
+              onValueChange={setPeriod}
               items={[
-                { value: 'first', label: 'First loaf' },
-                { value: 'more', label: 'Improver' },
+                { value: 'day', label: 'Day' },
+                { value: 'month', label: 'Month' },
+                { value: 'year', label: 'Year' },
               ]}
             />
-          </Row>
-          <Switch label="Borrow an apron" defaultChecked />
-        </Surface>
-        <Row gap={2} align="center" justify="between" wrap>
-          <Badge tone="accent">4 seats left</Badge>
-          <Row gap={2}>
-            <Button variant="secondary">Not now</Button>
-            <Button className="catalogue-bakery-book">Book a seat</Button>
-          </Row>
-        </Row>
-        <ClayArea theme={other} className="catalogue-bakery-foot">
-          <Surface
-            background="default"
-            padding={3}
-            radius="sm"
-            render={<Row gap={3} align="center" justify="between" />}
-          >
-            <Row gap={2} align="center">
-              <Bedtime className="catalogue-bakery-icon" />
-              <Text>Pizza night · Thursday 19:00</Text>
-            </Row>
-            <Button size="sm" className="catalogue-bakery-join">
-              Join
-            </Button>
           </Surface>
-        </ClayArea>
-      </Surface>
-    </ClayArea>
+          <Surface
+            background="muted"
+            radius="xl"
+            className="catalogue-scheme-tile"
+            data-tile="progress"
+            render={<Column gap={3} />}
+          >
+            <Progress label="Lisbon" value={18} max={24} valueText="18 of 24" />
+            <Progress label="Porto" value={6} max={20} valueText="6 of 20" />
+          </Surface>
+          <SchemeArea
+            scheme={scheme}
+            theme={other}
+            className="catalogue-scheme-tile catalogue-scheme-other"
+          >
+            {narrow ? (
+              <Bar aria-label="Photos" background="page" destinations={destinations} />
+            ) : (
+              <Rail
+                aria-label="Photos"
+                background="page"
+                header={
+                  <IconButton
+                    variant="primary"
+                    tone="accent"
+                    icon={<AddAPhoto />}
+                    aria-label="Take a photo"
+                  />
+                }
+                destinations={destinations}
+              />
+            )}
+          </SchemeArea>
+        </div>
+      </SchemeArea>
+      <SegmentedControl
+        aria-label="Color scheme"
+        size="sm"
+        className="catalogue-scheme-pick"
+        value={chosen}
+        onValueChange={choose}
+        items={names.map((name, index) => ({
+          value: String(index),
+          label: name,
+          // Each scheme's hue beside its name, where the control has room.
+          icon: narrow ? undefined : (
+            <span
+              className="catalogue-scheme-dot"
+              style={{ background: oklch(0.8, 0.09, schemes[index]?.hue ?? 0) }}
+            />
+          ),
+        }))}
+      />
+    </Column>
   );
 }
 
-/** A card in a color family of its own, with an area in the other theme, played by the pointer. */
-function OwnColorsFigure() {
+/** The same components in each of a few pastel schemes of an application's own, chosen in turn. */
+function OwnColorsFigure({ legend }: FigureWords) {
   return (
-    <Figure label="Colors of its own" motion="the card in its own colors">
-      <BakingClass />
+    <Figure label="Your own colors" motion="the components in each color scheme">
+      <SchemeSteps names={legend.map((entry) => entry.name)} />
     </Figure>
+  );
+}
+
+/** The narrowest the figure shows the canvas three across in, in rem. */
+const schemesWidth = 30;
+
+/**
+ * The canvas at the figure's width: on a narrower one, as on a phone, the quiet actions wrap in a
+ * row, and the navigation is a bar, as an application shows it there.
+ */
+function SchemeSteps({ names }: { names: readonly string[] }) {
+  const [ref, narrow] = useNarrow(schemesWidth);
+  return (
+    <div ref={ref} className="catalogue-theme-steps">
+      <SchemeChoice key={narrow ? 'narrow' : 'wide'} names={names} narrow={narrow} />
+    </div>
   );
 }
 
@@ -697,5 +847,5 @@ export const colorsFigures: Record<string, FoundationFigure> = {
   Swatches: { render: SwatchesFigure, wide: true },
   Themes: { render: ThemesFigure },
   Status: { render: StatusFigure, wide: true },
-  OwnColors: { render: OwnColorsFigure },
+  OwnColors: { render: OwnColorsFigure, wide: true },
 };

@@ -61,12 +61,10 @@ Each role in the theme you are reading in; a status shows its text, soft fill an
 
 ```
 
-1. **Backgrounds**: Page, Surface, Filled surface, Raised surface, Field, Backdrop.
-2. **Text**: Text, Supporting text, Link, On the accent, On the selected.
-3. **Edges**: Edges, Hairlines, Focus ring.
-4. **Accent and selection**: Accent, Quiet action, Important, Selected.
-5. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
-6. **Each status**: Text, Soft fill, Solid fill.
+1. **Surfaces**: Page, Surface, Filled surface, Raised surface, Field, Backdrop.
+2. **Text and lines**: Text, Supporting text, Link, Edges, Hairlines, Focus ring.
+3. **Actions and selection**: Accent, On the accent, Quiet action, Important, Selected, On the selected.
+4. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
 
 ### Light, dark and high contrast
 
@@ -79,8 +77,8 @@ Every role has a color in the light and the dark theme, and a high-contrast vers
 ```
 
 1. **Light**
-2. **Dark**
-3. **Light, high contrast**
+2. **Light, high contrast**
+3. **Dark**
 4. **Dark, high contrast**
 
 ### What each color means
@@ -99,16 +97,21 @@ A tone means the same on every component, on badges, alerts, buttons, toasts and
 6. **Danger**: Failed, or an action that destroys something.
 7. **Done**: Completed work.
 
-### Colors of its own
+### Your own colors
 
-Where a screen needs a color the roles don't give, most components, such as buttons, fields, cards, badges, alerts, menus and navigation, can take colors of their own, and one area can take the other theme.
+An area can take a color scheme of its own, such as a brand's, and every component in it follows.
 
-- An area in a color family of its own, such as a brand's terracotta, keeps the hover and press of its buttons and switches, made from its own colors.
-- An area in the other theme, such as a dark band on a light card, brings all its roles along.
+- Buttons, fields, cards, badges, alerts, menus and navigation take the scheme, and their hover and press come from its colors.
+- One component can also take colors of its own, for a color the roles don't give.
+- An area can take the other theme, such as a dark panel on a light page, and brings all its roles along.
 
 ```tsx figure=OwnColors
 
 ```
+
+1. **Lavender**
+2. **Mint**
+3. **Peach**
 
 ## Rules
 
@@ -127,6 +130,7 @@ Ask an agent for color in these words; envUI turns each into a role, so the resu
 | Success or warning | `tone` on Badge, Alert, Toast, Button and the components that take one: Badge takes neutral, accent, success, warning, danger and done; Alert info, success, warning and danger; Toast neutral, info, success and danger; Button neutral, accent and danger. In your own CSS, `--env-color-fg-{tone}` and their tints | A tone that says how something stands, with words or an icon.    |
 | A danger button    | `tone="danger"` on Button                                                                                                                                                                                                                                                                                             | A red action for deleting or anything that can’t be undone.      |
 | Its own color      | The component's color properties, such as `--env-button-container`; most components have them, listed on each one's page in the Docs under Color properties; see [Customize and extend](../customizing.md)                                                                                                            | One element in a color of its own, keeping its hover and press.  |
+| Its own scheme     | A nested `<Theme>` whose `style` sets the semantic tokens, such as `--env-color-bg-brand-emphasis` with its hover and pressed tokens, for each theme; see [Customize and extend](../customizing.md#recolor-an-area)                                                                                                   | An area in a color scheme of its own, such as a brand's.         |
 | A dark area        | A nested `<Theme theme="dark">`, or `light` on a dark page                                                                                                                                                                                                                                                            | One part of a light page in the dark theme, or the other way.    |
 | High contrast      | `contrast="high"` on Theme, or `system`, the default, which follows the reader's system                                                                                                                                                                                                                               | Stronger text and edges for people who need them, on every page. |
 

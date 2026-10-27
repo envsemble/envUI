@@ -303,214 +303,85 @@
   inline-size: min(22rem, 100%);
 }
 
-/* Colors are roles: a small screen on the stage, a numbered pin on each part that takes a role,
-   beside its key, which shows each role's color with its number; the key goes below the stage, two
-   to a row, on a narrower page. */
-.catalogue-roles-figure {
+/* Colors are roles: a small screen with an anatomy figure's callouts, and its legend's tags each
+   carrying a dot of the role's color, edged in the tag's ink so every role shows on it. */
+.catalogue-roles {
+  inline-size: min(24rem, 100%);
+}
+/* Room on both sides for the callouts, which sit outside the screen, on a phone too. */
+.catalogue-marked-stage.catalogue-roles-stage {
+  padding-inline: 3rem;
+}
+.site-anatomy-number.catalogue-role-tag {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--env-space-2);
+  inline-size: auto;
+  padding-inline: var(--env-space-2);
+}
+.catalogue-role-dot {
+  box-sizing: border-box;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border: 0.0625rem solid var(--env-color-bg-page);
+  border-radius: var(--env-radius-full);
+}
+
+/* The color roles as swatches, on the page: four even columns of six, two on a narrower page and
+   one on a phone. Each column is one continuous strip of square-cornered swatches, three bands for
+   a status, with each name beside its swatch. */
+.catalogue-role-groups {
   container-type: inline-size;
 }
-.catalogue-roles-figure > .site-topic-figure {
+.catalogue-role-groups > div {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--env-space-6);
 }
-@container (width >= 52rem) {
-  .catalogue-roles-figure > .site-topic-figure {
-    grid-template-columns: minmax(0, 1fr) minmax(16rem, 20rem);
-    align-items: stretch;
-    gap: var(--env-space-8);
+@container (width >= 30rem) {
+  .catalogue-role-groups > div {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
-.catalogue-roles-stage {
-  padding: var(--env-space-8) var(--env-space-7);
-}
-.catalogue-roles-screen {
-  inline-size: min(100%, 24rem);
-}
-.catalogue-role-part {
-  position: relative;
-}
-/* A pin sits on a container's top edge, half outside it, or after a leaf part in its row. */
-.catalogue-role-pin {
-  flex: none;
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
-  border-radius: var(--env-radius-full);
-  font: var(--env-type-caption);
-  font-weight: var(--env-font-weight-semibold);
-}
-.catalogue-role-pin[data-corner] {
-  position: absolute;
-  inset-block-start: 0;
-  translate: 0 -50%;
-}
-.catalogue-role-pin[data-corner='start'] {
-  inset-inline-start: var(--env-space-5);
-}
-.catalogue-role-pin[data-corner='end'] {
-  inset-inline-end: var(--env-space-5);
-}
-.catalogue-role-key {
-  display: grid;
-  align-content: center;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
-  gap: var(--env-space-4) var(--env-space-7);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-@container (width >= 52rem) {
-  .catalogue-role-key {
-    grid-template-columns: minmax(0, 1fr);
+@container (width >= 54rem) {
+  .catalogue-role-groups > div {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
-.catalogue-role-key > li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: var(--env-space-4);
-}
-.catalogue-role-key p {
-  margin: 0;
-}
-.catalogue-role-key-swatch {
-  display: grid;
-  place-items: center;
-  box-sizing: border-box;
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
-  border: 0.0625rem solid var(--env-color-border-muted);
-  border-radius: var(--env-radius-md);
-  font: var(--env-type-body-small);
-  font-weight: var(--env-font-weight-semibold);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Every role in this theme: the swatches on the page, each family a row on one grid of six columns,
-   its name at the start; the statuses on the same columns, each a strip of its three colors, with
-   the colors named at the start. On a narrow page each family's name goes above its row. */
-.catalogue-palette {
-  container-type: inline-size;
-}
-.catalogue-palette-grid {
-  --catalogue-palette-names: 7rem;
-  display: grid;
-  grid-template-columns: var(--catalogue-palette-names) repeat(6, minmax(0, 1fr));
-  gap: var(--env-space-6) var(--env-space-3);
-}
-@container (width >= 52rem) {
-  .catalogue-palette-grid {
-    --catalogue-palette-names: 10rem;
-    column-gap: var(--env-space-4);
-  }
-}
-.catalogue-palette-family {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
-  align-items: start;
-}
-.catalogue-palette-family :is(h4, ul) {
-  margin: 0;
-}
-.catalogue-palette-family > ul {
-  display: grid;
-  grid-column: 2 / -1;
-  grid-template-columns: subgrid;
-  padding: 0;
-  list-style: none;
-}
-.catalogue-palette-family > ul > li {
+.catalogue-role-group {
   display: grid;
   align-content: start;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
-  overflow-wrap: normal;
+  gap: var(--env-space-3);
 }
-/* Every swatch has a hairline edge, so a white one shows on the white page. */
-.catalogue-role-swatch {
+.catalogue-role-group > h4 {
+  margin: 0;
+}
+.catalogue-role-swatches {
   display: grid;
-  overflow: hidden;
-  box-sizing: border-box;
-  border: 0.0625rem solid var(--env-color-border-muted);
-  border-radius: var(--env-radius-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.catalogue-role-swatch > span {
-  block-size: 3rem;
-}
-/* A status's strip: its text, soft fill and solid fill, a hairline between each, on the rows its
-   colors are named on. */
-.catalogue-palette-status {
-  grid-template-rows: auto repeat(3, 2.25rem);
-}
-.catalogue-palette-parts {
+.catalogue-role-swatches > li {
   display: grid;
-  grid-row: span 4;
-  grid-template-rows: subgrid;
+  grid-template-columns: 3rem 1fr;
+  column-gap: var(--env-space-3);
   align-items: center;
 }
-.catalogue-palette-parts > h4 {
-  align-self: start;
+/* Every swatch has a hairline edge, so a white one shows on the white page; one hairline between
+   two swatches, and the strip's last closes it. */
+.catalogue-role-swatch {
+  display: flex;
+  box-sizing: border-box;
+  block-size: 2.25rem;
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-block-end-width: 0;
 }
-.catalogue-palette-status > ul {
-  grid-row: span 4;
-  grid-template-rows: subgrid;
+.catalogue-role-swatches > li:last-child > .catalogue-role-swatch {
+  border-block-end-width: 0.0625rem;
 }
-.catalogue-palette-status > ul > li {
-  grid-row: span 4;
-  grid-template-rows: subgrid;
-  gap: 0;
-}
-.catalogue-palette-status .catalogue-role-swatch {
-  grid-row: span 3;
-  grid-template-rows: subgrid;
-}
-.catalogue-palette-status .catalogue-role-swatch > span {
-  block-size: auto;
-}
-.catalogue-palette-status .catalogue-role-swatch > span + span {
-  border-block-start: 0.0625rem solid var(--env-color-border-muted);
-}
-@container (width < 40rem) {
-  .catalogue-palette-grid {
-    --catalogue-palette-names: max-content;
-  }
-  .catalogue-palette-family:not(.catalogue-palette-status) > h4 {
-    grid-column: 1 / -1;
-  }
-  .catalogue-palette-family:not(.catalogue-palette-status) > ul {
-    grid-column: 1 / -1;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--env-space-4);
-    margin-block-start: var(--env-space-3);
-  }
-}
-
-/* On a phone the statuses go three to a row, their colors named in order above them. */
-@container (width < 32rem) {
-  .catalogue-palette-status {
-    grid-template-rows: none;
-  }
-  .catalogue-palette-parts {
-    display: flex;
-    flex-wrap: wrap;
-    grid-column: 1 / -1;
-    grid-row: auto;
-    gap: 0 var(--env-space-3);
-  }
-  .catalogue-palette-parts > h4 {
-    flex-basis: 100%;
-  }
-  .catalogue-palette-status > ul {
-    grid-column: 1 / -1;
-    grid-row: auto;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: none;
-    gap: var(--env-space-4);
-    margin-block-start: var(--env-space-3);
-  }
-  .catalogue-palette-status > ul > li {
-    grid-row: auto;
-    grid-template-rows: auto repeat(3, 2.25rem);
-  }
+.catalogue-role-swatch > span {
+  flex: 1;
 }
 
 /* What each color means: a row for each tone, its name on its own soft fill, what it means, and
@@ -612,33 +483,87 @@
   border-radius: var(--env-radius-xl);
 }
 
-/* Colors of its own: a card in a terracotta family of its own, its foot in the other theme. Its
-   theme boundaries paint no page of their own: the card's surface is its fill, with a surface's
-   corners. */
-.catalogue-bakery {
-  inline-size: min(100%, 26rem);
+/* Your own colors: one canvas in a scheme of its own, its page's color with a surface's corners,
+   holding tiles of its filled surface, each one component, as Material 3's showcases do: three
+   across, the quiet actions and the navigation running down every row; on a narrower figure, as on
+   a phone, one under another, the navigation a bar at the foot. The navigation's tile is in the
+   other theme, its own page's color. The scheme control sits below. */
+.catalogue-schemes {
+  inline-size: 100%;
+}
+.catalogue-scheme-canvas {
+  box-sizing: border-box;
+  inline-size: min(100%, 44rem);
+  padding: var(--env-space-3);
   border-radius: var(--env-radius-xl);
-  background: none;
 }
-.catalogue-bakery-foot {
-  background: none;
-}
-.catalogue-bakery-mark {
+.catalogue-scheme-tiles {
   display: grid;
-  flex: none;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) auto;
+  grid-template-areas:
+    'menu toolbar other'
+    'menu choice other'
+    'menu progress other';
+  gap: var(--env-space-3);
+}
+.catalogue-scheme-tiles[data-narrow] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'menu'
+    'toolbar'
+    'choice'
+    'progress'
+    'other';
+}
+.catalogue-scheme-tile {
+  display: grid;
   place-items: center;
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
-  border-radius: var(--env-radius-lg);
-  background: var(--env-color-bg-accent-badge);
-  color: var(--env-color-fg-accent);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: var(--env-space-4);
+  border-radius: var(--env-radius-xl);
 }
-.catalogue-bakery-icon {
-  flex: none;
-  color: var(--env-color-fg-accent);
+.catalogue-scheme-tile[data-tile='menu'] {
+  grid-area: menu;
 }
-.catalogue-bakery-join {
+.catalogue-scheme-tile[data-tile='toolbar'] {
+  grid-area: toolbar;
+}
+.catalogue-scheme-tile[data-tile='choice'] {
+  grid-area: choice;
+}
+.catalogue-scheme-tile[data-tile='progress'] {
+  grid-area: progress;
+  place-items: stretch;
+  align-content: center;
+}
+.catalogue-scheme-other {
+  grid-area: other;
+  padding: var(--env-space-2) var(--env-space-3);
+}
+.catalogue-scheme-tiles[data-narrow] > .catalogue-scheme-other {
+  place-items: stretch;
+  padding: var(--env-space-2);
+}
+/* While a scheme eases in, every part's colors fade at the pace of the theme's fade
+   (ThemeFade.css), parts with transitions of their own too, such as a progress bar's indicator and
+   a button's fill, so the canvas changes as one. */
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-scheme-tiles[data-switching] :is(*, ::before, ::after) {
+    transition-property: background-color, border-color, color, outline-color, fill, stroke;
+    transition-duration: calc(1.5 * var(--env-motion-duration-slow));
+    transition-timing-function: var(--env-motion-ease);
+  }
+}
+/* Each scheme's hue on its segment of the control, with a hairline edge. */
+.catalogue-scheme-dot {
+  display: block;
   flex: none;
+  box-sizing: border-box;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-radius: var(--env-radius-full);
 }
 
 /* An animated figure's states stacked in one place (Steps.tsx): the place is as large as the
