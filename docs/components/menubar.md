@@ -26,7 +26,9 @@ avoidWhen:
 components:
   - Menubar
 examples:
-  NotesMenubar: overview
+  NotesMenubar:
+    role: overview
+    motion: true
   InTitleBar: example
   MenubarAnatomy: anatomy
 ---
@@ -60,12 +62,16 @@ The [app frame](../patterns/app-frame.md) pattern shows the whole title bar, in 
 
 Menubar returns focus to where it was, so Copy acts on the field people were in.
 
+<!-- specimen: AfterACommand -->
+
 ### Access keys
 
 A menubar can underline a letter of each menu's name while <kbd>Alt</kbd> is held.
 
 - <kbd>Alt</kbd> with the letter opens that menu.
 - One menubar per window has them.
+
+<!-- specimen: AccessKeys -->
 
 ## Rules
 
