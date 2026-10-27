@@ -174,7 +174,7 @@ export const lineArtShapes: Record<LineArtDrawing, ReactNode> = {
   // Gothic tracery: Equilateral arches in a row, each holding two arches of half its span and the circle that touches all three, set out with compasses.
   'gothic-tracery': (
     <>
-      <line x1="14" y1="204.1" x2="482" y2="204.1" />
+      <line x1="14" y1="204.1" x2="638" y2="204.1" />
       <path d="M14 204.1A208 208 0 0 1 118 24" />
       <path d="M118 24A208 208 0 0 1 222 204.1" />
       <path d="M14 204.1A104 104 0 0 1 66 114.1" />
@@ -202,6 +202,7 @@ export const lineArtShapes: Record<LineArtDrawing, ReactNode> = {
       <circle cx="534" cy="87.9" r="52" />
       <line x1="430" y1="204.1" x2="430" y2="332" />
       <line x1="534" y1="204.1" x2="534" y2="332" />
+      <line x1="638" y1="204.1" x2="638" y2="332" />
     </>
   ),
   // Quartered square: A square cut into quarters, the corner quarter cut again and on, each quarter left behind holding its circle on the diagonal.
@@ -395,7 +396,7 @@ export const lineArtOrder: Record<LineArtDrawing, readonly (readonly number[])[]
     [1, 2, 10, 11, 19, 20],
     [3, 4, 5, 6, 12, 13, 14, 15, 21, 22, 23, 24],
     [7, 16, 25],
-    [8, 9, 17, 18, 26, 27],
+    [8, 9, 17, 18, 26, 27, 28],
   ],
   // The square and its diagonal, then each quartering and the circle of the quarter left behind.
   'quartered-square': [
