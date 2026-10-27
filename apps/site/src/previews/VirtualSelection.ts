@@ -7,7 +7,10 @@
  *   copy of the field's text over it, transparent but the selected part, paints it in the
  *   selection's colours (`.catalogue-field-selection`, Stage.css);
  * - in content, it is a range in a highlight of the catalogue's (`::highlight(catalogue-selection)`),
- *   painted as a selection is.
+ *   painted as a selection is;
+ * - in a rich text editor (ProseMirror, through Tiptap), it is also the editor's own selection, set
+ *   through its state, so its toolbar shows what is on there and typing goes there; the highlight
+ *   then follows the editor's selection as its content changes, such as when the text is bolded.
  */
 
 /** A point in the viewport. */
@@ -21,6 +24,51 @@ const selectableFields =
   'input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"], [type="color"], [type="file"]), textarea';
 
 type Field = HTMLInputElement | HTMLTextAreaElement;
+
+/** A rich text editor's view, as ProseMirror gives it: its state, and how to change it. */
+interface EditorView {
+  state: {
+    selection: { from: number; to: number; empty: boolean };
+    tr: {
+      insertText(text: string, from: number, to: number): unknown;
+      delete(from: number, to: number): unknown;
+    };
+  };
+  dispatch(transaction: unknown): void;
+  posAtDOM(node: Node, offset: number): number;
+  domAtPos(position: number): { node: Node; offset: number };
+  someProp<T>(name: string, run: (handler: T) => unknown): unknown;
+  setProps(props: { handleScrollToSelection: () => boolean }): void;
+}
+
+/** The editor Tiptap keeps on its content element, as the pointer drives it. */
+export interface RichEditor {
+  view: EditorView;
+  commands: { setTextSelection(range: number | { from: number; to: number }): boolean };
+  on(event: 'transaction', listener: () => void): void;
+  off(event: 'transaction', listener: () => void): void;
+}
+
+/** The editors the pointer has used, kept from scrolling the page. */
+const steadied = new WeakSet<RichEditor>();
+
+/**
+ * The rich text editor a node is in, or its content element holds: Tiptap keeps the editor on the
+ * element ProseMirror edits. An editor the pointer uses no longer scrolls its selection into view,
+ * as a command does after it edits, since that would scroll the reader's page.
+ */
+export function editorOf(node: Node | null) {
+  const element = node instanceof Element ? node : (node?.parentElement ?? null);
+  const content =
+    element?.closest('.ProseMirror') ?? element?.querySelector('.ProseMirror') ?? null;
+  const editor = (content as (Element & { editor?: RichEditor }) | null)?.editor;
+  if (!editor?.view) return null;
+  if (!steadied.has(editor)) {
+    steadied.add(editor);
+    editor.view.setProps({ handleScrollToSelection: () => true });
+  }
+  return { editor, content: content as HTMLElement };
+}
 
 /** The name of the highlight that paints the selections in content. */
 const highlightName = 'catalogue-selection';
@@ -214,6 +262,8 @@ export class PointerSelection {
   private range: Range | null = null;
   /** The selected part of the field, while there is one, which typing replaces. */
   private selected: { field: Field; start: number; end: number } | null = null;
+  /** The rich text editor it selects in, and the listener that paints its selection. */
+  private editor: { editor: RichEditor; follow: () => void } | null = null;
 
   constructor(private readonly scope: Element) {}
 
@@ -236,6 +286,31 @@ export class PointerSelection {
     const parent = caret.node.parentElement;
     if (!parent || getComputedStyle(parent).userSelect === 'none') return;
     this.anchor = caret;
+    // In a rich text editor, the press puts the editor's caret there, and the editor's selection
+    // is painted from then on, as it changes.
+    const found = editorOf(caret.node);
+    if (!found) return;
+    const { editor } = found;
+    const follow = () => this.follow(editor);
+    editor.on('transaction', follow);
+    this.editor = { editor, follow };
+    editor.commands.setTextSelection(editor.view.posAtDOM(caret.node, caret.offset));
+  }
+
+  /** Paints a rich text editor's selection, where its text is now. */
+  private follow(editor: RichEditor) {
+    const shown = highlight();
+    if (this.range) shown?.delete(this.range);
+    this.range = null;
+    const { from, to, empty } = editor.view.state.selection;
+    if (empty) return;
+    const start = editor.view.domAtPos(from);
+    const end = editor.view.domAtPos(to);
+    const range = document.createRange();
+    range.setStart(start.node, start.offset);
+    range.setEnd(end.node, end.offset);
+    this.range = range;
+    shown?.add(range);
   }
 
   /** A drag on to a point: the selection runs from where the press was to there. */
@@ -260,6 +335,15 @@ export class PointerSelection {
       range.setStart(caret.node, caret.offset);
       range.setEnd(anchor.node, anchor.offset);
     } else range.setEnd(caret.node, caret.offset);
+    // In a rich text editor, the editor's selection, which paints itself as it changes.
+    const editor = this.editor?.editor;
+    if (editor) {
+      const { view } = editor;
+      const from = view.posAtDOM(range.startContainer, range.startOffset);
+      const to = view.posAtDOM(range.endContainer, range.endOffset);
+      editor.commands.setTextSelection({ from, to });
+      return;
+    }
     const shown = highlight();
     if (this.range) shown?.delete(this.range);
     this.range = range;
@@ -305,6 +389,8 @@ export class PointerSelection {
 
   /** Nothing is selected any more, as a press elsewhere or the preview's end leaves it. */
   clear() {
+    if (this.editor) this.editor.editor.off('transaction', this.editor.follow);
+    this.editor = null;
     this.field = null;
     this.anchor = null;
     this.selected = null;

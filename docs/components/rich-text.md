@@ -40,7 +40,9 @@ components:
   - RichTextEditor
   - createRichTextExtensions
 examples:
-  EditAndPreview: overview
+  EditAndPreview:
+    role: overview
+    motion: true
   RichTextAnatomy: anatomy
   SavedContent: example
   References: example
@@ -73,6 +75,8 @@ The toolbar shows the commands the content needs, in order, or none.
 - Undo and Redo, and Attach files, follow in groups of their own.
 - Formatting on at the caret, such as bold, shows as a pressed toggle.
 
+<!-- specimen: ToolbarState -->
+
 ## Anatomy
 
 ```tsx figure=RichTextAnatomy
@@ -102,7 +106,7 @@ RichText shows saved text again as it was written, also on a server, and opens i
 
 Typing a source's trigger, such as @, opens its suggestions, and the reference stays linked to what it names.
 
-```tsx figure=References
+```tsx figure=References motion
 
 ```
 
@@ -110,7 +114,7 @@ Typing a source's trigger, such as @, opens its suggestions, and the reference s
 
 Typing / offers blocks, such as headings and lists, then the application's own commands.
 
-```tsx figure=SlashCommands
+```tsx figure=SlashCommands motion
 
 ```
 
@@ -256,6 +260,7 @@ With `name`, a native form submits the Markdown through a hidden input, and `for
 
 ## Changelog
 
+- **1.0.0-prerelease.3**: A task's row in RichText is as tall as in the editor. The suggestions keep the active option in view as the arrow keys move past the list's edge, and close as focus leaves the editor rather than on any press on the page.
 - **1.0.0-prerelease.2**: The `underline` variant is gone; the `v1-props` codemod drops it for the default outline.
 - **1.0.0**: RichTextEditor takes the field vocabulary: `description` instead of `hint`, and the variants `outline`, `underline` and `ghost` instead of `outlined`, `plain` and `quiet`, which drew as outlined; the `v1-props` codemod writes them. The document sits in the field's box, with its border, its states and a disabled field whose label stays readable, and task items show envUI's checkboxes beside their text. The toolbar is the Toolbar MarkdownEditor shares, with tooltips, the link dialog is the shared one, and every word comes from EnvUIProvider's `messages`. Suggestions are rows of a listbox in the editor, above a Dialog it sits in, and close as focus leaves; a controlled editor raises no `flushSync` warning. The `./rich-text` entry is experimental.
 - **1.0.0**: Tiptap, marked, Shiki and the Pierre themes are no longer peer dependencies; applications that import the rich-text entry install them, as [Setup](../setup.md#public-entry-points) lists.

@@ -44,6 +44,11 @@
   min-inline-size: 0;
   flex: 1;
 }
+/* A task's text sits beside its checkbox, not below it: no space before it, so a task's row is as
+   tall in RichText as in the editor. */
+.env-rich-text :where(ul[data-type='taskList'] > li > div) {
+  margin-block-start: 0;
+}
 /* The editor's task item: its checkbox beside the item's text, as in RichText. */
 .env-rich-text-task {
   display: flex;

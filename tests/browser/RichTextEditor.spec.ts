@@ -206,10 +206,11 @@ test('a task item keeps its checkbox beside its text in the editor and in the vi
     .getByRole('textbox', { name: 'Rich source', exact: true });
   await replace(editor, '[ ] Review the outline');
   await expect(page.getByTestId('rich-text-source')).toHaveText('- [ ] Review the outline');
-  for (const item of [
+  const items = [
     editor.locator('ul[data-type="taskList"] > li'),
     page.getByTestId('rich-text-preview').locator('ul[data-type="taskList"] > li'),
-  ]) {
+  ];
+  for (const item of items) {
     const [checkbox, text] = await Promise.all([
       item.getByRole('checkbox').boundingBox(),
       item.getByText('Review the outline', { exact: true }).boundingBox(),
@@ -219,6 +220,9 @@ test('a task item keeps its checkbox beside its text in the editor and in the vi
       Math.abs(text!.y + text!.height / 2 - (checkbox!.y + checkbox!.height / 2)),
     ).toBeLessThan(8);
   }
+  // The task's row is as tall in the view as in the editor.
+  const [edited, shown] = await Promise.all(items.map((item) => item.boundingBox()));
+  expect(Math.abs(edited!.height - shown!.height)).toBeLessThan(1);
 });
 
 test(
@@ -350,6 +354,19 @@ test('slash commands execute standard Tiptap blocks and application actions', as
   await page.getByRole('option', { name: 'Host greeting', exact: true }).click();
   await expect(editor).toHaveText('Hello from host');
   await expect(page.getByRole('listbox')).toHaveCount(0);
+  // Up from the first block wraps to the last command, and the list scrolls to keep it in view.
+  await replace(editor, '/');
+  const list = page.locator('.env-rich-text-suggestions');
+  await expect(list.getByRole('option')).toHaveCount(8);
+  await editor.press('ArrowUp');
+  const last = list.getByRole('option', { name: 'Host greeting', exact: true });
+  await expect(last).toHaveAttribute('aria-selected', 'true');
+  await expect
+    .poll(async () => {
+      const [shown, option] = await Promise.all([list.boundingBox(), last.boundingBox()]);
+      return option!.y + option!.height <= shown!.y + shown!.height + 1;
+    })
+    .toBe(true);
 });
 
 test('async sources handle loading, stale resolutions, empty results, failures and cancellation', async ({

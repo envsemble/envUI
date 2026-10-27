@@ -11,7 +11,7 @@
  * browser keeps none for a pointer it didn't make.
  */
 
-import { PointerSelection } from './VirtualSelection';
+import { editorOf, PointerSelection } from './VirtualSelection';
 
 /** A point of the pointer's, in the viewport's coordinates. */
 interface Point {
@@ -410,10 +410,11 @@ export class VirtualPointer {
     const sent = this.send(target, 'pointerdown', { button });
     this.pressed = [...this.over];
     if (button === 0) for (const element of this.pressed) mark(element, pressMark, true);
-    // A press in a field focuses it, and anywhere else takes focus from the field. A button keeps
-    // no focus ring under a pointer, so it isn't marked.
+    // A press in a field focuses it, and anywhere else takes focus from the field, unless the page
+    // prevents it, as a formatting button does. A button keeps no focus ring under a pointer, so it
+    // isn't marked.
     if (keyboardFocused.has(this.scope)) this.keyboardFocus(null);
-    this.focus(target.closest(textFields));
+    if (sent) this.focus(target.closest(textFields));
     if (button === 2) {
       // As the secondary button goes down, the context menu is asked for where the pointer is.
       const point = this.at ?? { x: 0, y: 0 };
@@ -436,8 +437,10 @@ export class VirtualPointer {
       return;
     }
     this.selects = sent;
+    // A press whose default the page prevents, such as on a formatting button, leaves the
+    // selection as it was, as a browser does.
     if (sent && this.at) this.selection.begin(this.at, target);
-    else this.selection.clear();
+    else if (sent) this.selection.clear();
   }
 
   /** Releases the button: the press ends, and where it ends on what it began on, it clicks. */
@@ -511,6 +514,10 @@ export class VirtualPointer {
   type(selector: string, text: string | null) {
     const field = this.scope.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector);
     if (!field) return;
+    if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) {
+      this.typeInEditor(field, text);
+      return;
+    }
     this.focus(field);
     const keyboard = this.keyboard(text ?? 'Backspace');
     if (!field.dispatchEvent(new KeyboardEvent('keydown', keyboard))) return;
@@ -532,6 +539,32 @@ export class VirtualPointer {
       }),
     );
     field.dispatchEvent(new KeyboardEvent('keyup', keyboard));
+  }
+
+  /**
+   * Types into a rich text editor as a keyboard does: a key down, which the editor may take for
+   * itself, such as Backspace, else the text going in at its selection, as the editor takes typed
+   * text, so its input rules and suggestions see it, and the key up.
+   */
+  private typeInEditor(element: Element, text: string | null) {
+    const found = editorOf(element);
+    if (!found) return;
+    const { editor, content } = found;
+    this.focus(content);
+    const keyboard = this.keyboard(text ?? 'Backspace');
+    if (content.dispatchEvent(new KeyboardEvent('keydown', keyboard))) {
+      const { view } = editor;
+      const { from, to } = view.state.selection;
+      if (text === null) view.dispatch(view.state.tr.delete(from === to ? from - 1 : from, to));
+      else if (
+        !view.someProp<(view: unknown, from: number, to: number, text: string) => boolean>(
+          'handleTextInput',
+          (handle) => handle(view, from, to, text),
+        )
+      )
+        view.dispatch(view.state.tr.insertText(text, from, to));
+    }
+    content.dispatchEvent(new KeyboardEvent('keyup', keyboard));
   }
 
   /** A keyboard event's fields for a key, with the modifier keys held. */
@@ -582,7 +615,9 @@ export class VirtualPointer {
   /** Presses a key on an element of the preview, or on the field typed into or focused. */
   key(key: string, selector?: string) {
     const target = this.keyTarget(selector);
-    target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key)));
+    lendSelection(editorOf(target) ? this.scope : undefined, () =>
+      target.dispatchEvent(new KeyboardEvent('keydown', this.keyboard(key))),
+    );
     target.dispatchEvent(new KeyboardEvent('keyup', this.keyboard(key)));
   }
 
@@ -717,6 +752,30 @@ export class VirtualPointer {
     this.leave();
     this.selection.clear();
     captures.delete(this.id);
+  }
+}
+
+/**
+ * Runs what a key does in a rich text editor with the page's selection lent to the preview, at its
+ * start, outside the editor, so nothing takes focus, and then given back as the reader left it: a
+ * command that reads the page's selection, such as inserting a reference, finds one, as it would
+ * in a focused editor, though nothing in an inert preview holds the page's selection.
+ */
+function lendSelection(scope: Element | undefined, run: () => void) {
+  const selection = scope ? window.getSelection() : null;
+  if (!scope || !selection) return run();
+  const kept = Array.from({ length: selection.rangeCount }, (_, index) =>
+    selection.getRangeAt(index),
+  );
+  const range = document.createRange();
+  range.setStart(scope, 0);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  try {
+    run();
+  } finally {
+    selection.removeAllRanges();
+    for (const each of kept) selection.addRange(each);
   }
 }
 

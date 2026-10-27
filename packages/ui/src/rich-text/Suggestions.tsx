@@ -89,6 +89,22 @@ function SuggestionMenu({
         element.removeAttribute(name);
     };
   }, [id, activeDescendant, editor]);
+  // The active option stays in view as the arrows move it past the list's edge: the list scrolls,
+  // never the page, as focus stays in the document.
+  useEffect(() => {
+    if (!activeDescendant) return;
+    const option = editor.view.dom.ownerDocument.getElementById(activeDescendant);
+    const list = option?.closest<HTMLElement>('.env-rich-text-suggestions');
+    if (!option || !list) return;
+    const shown = list.getBoundingClientRect();
+    const box = option.getBoundingClientRect();
+    // In layout pixels, as the list may be drawn scaled.
+    const scale = shown.height / list.offsetHeight || 1;
+    const top = shown.top + list.clientTop * scale;
+    const bottom = top + list.clientHeight * scale;
+    if (box.top < top) list.scrollTop -= (top - box.top) / scale;
+    else if (box.bottom > bottom) list.scrollTop += (box.bottom - bottom) / scale;
+  }, [activeDescendant, editor]);
   useImperativeHandle(
     ref,
     () => ({
@@ -154,6 +170,9 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
     allowSpaces: source.allowSpaces,
     // Fixed, so that a scrolling container around the editor doesn't clip the list.
     floatingUi: { strategy: 'fixed' },
+    // The list closes as focus leaves the editor (its onBlur), which a press elsewhere does; a
+    // press that leaves focus in the editor, such as on a formatting button, keeps it open.
+    dismissOnOutsideClick: false,
     items: async (request) => {
       failed = false;
       try {
