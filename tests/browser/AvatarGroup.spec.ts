@@ -221,12 +221,12 @@ test('nothing rings the avatars or the count, which cast a faint shadow, and a c
           const chosen = group.querySelector('.env-avatar[data-selected]');
           return {
             group: group.getAttribute('data-testid'),
-            // Each casts one faint shadow, 1px down and 3px soft, and no ring.
+            // Each casts one faint shadow, 1px down and 2px soft, and no ring.
             ringed: [...group.querySelectorAll('.env-avatar:not([data-selected])')]
               .concat([...group.querySelectorAll('.env-avatar-group-overflow')])
               .some(
                 (element) =>
-                  !/^(?:rgba?|color|oklch|hsla?)\([^)]*\) 0px 1px 3px 0px$/.test(
+                  !/^(?:rgba?|color|oklch|hsla?)\([^)]*\) 0px 1px 2px 0px$/.test(
                     getComputedStyle(element).boxShadow,
                   ),
               ),
@@ -251,11 +251,11 @@ test('a group rests as a pile and keeps the spread row as its box', async ({ pag
   await page.goto(fixture);
   await page.mouse.move(0, 0);
   const scope = page.getByTestId('avatar-groups-light');
-  // Each 2 rem avatar starts about a third of its size after the one under it, later ones on top,
+  // Each 2 rem avatar starts about 0.6 of its size after the one under it, later ones on top,
   // and keeps its size.
   const decorative = await places(scope.getByTestId('decorative'));
   for (const [index, item] of decorative.slice(1, 3).entries())
-    expect(item.center - decorative[index]!.center).toBeLessThan(32 * 0.4);
+    expect(item.center - decorative[index]!.center).toBeLessThan(32 * 0.7);
   expect(decorative.map((item) => item.width)).toEqual([32, 32, 32, 32]);
   await page.addStyleTag({ content: uncovered });
   const coveredByNext = await scope
@@ -275,7 +275,7 @@ test('a group rests as a pile and keeps the spread row as its box', async ({ pag
   const back = rtl.map((item) => rtl[0]!.center - item.center);
   for (const [index, distance] of back.slice(1).entries())
     expect(distance).toBeGreaterThan(back[index]!);
-  expect(back[1]).toBeLessThan(32 * 0.4);
+  expect(back[1]).toBeLessThan(32 * 0.7);
   await expect(scope.getByTestId('rtl').locator('.env-avatar-group-overflow')).toHaveText('+2');
 
   // A narrow row overflows its label rather than squeezing or wrapping the group, which keeps the
@@ -312,12 +312,12 @@ test('a group rests bunched, and spreads along an arch under the pointer and wit
   const steps = (items: { center: number }[]) =>
     items.slice(1).map((item, index) => item.center - items[index]!.center);
   await page.mouse.move(0, 0);
-  // At rest the avatars lie in a pile, each starting less than half its size after the one under
+  // At rest the avatars lie in a pile, each starting about 0.6 of its size after the one under
   // it, a little off the line and turned by its place, the same on every load. The count shows,
   // upright and a quarter under the last avatar, its figures clear of it.
   const rest = await layout();
   const restSteps = steps(rest);
-  expect(restSteps.slice(0, -1).every((step) => step < 32 * 0.4)).toBe(true);
+  expect(restSteps.slice(0, -1).every((step) => step < 32 * 0.7)).toBe(true);
   // The last avatar's own small nudge moves it by up to a pixel.
   expect(Math.abs(restSteps.at(-1)! - (32 - 32 / 4))).toBeLessThan(1.5);
   expect(new Set(rest.slice(0, -1).map((item) => item.turn)).size).toBeGreaterThan(1);
@@ -455,7 +455,7 @@ test('on touch screens a tap spreads the pile, later taps press touch-sized avat
   // At rest it is a pile, and the pile is one target: a tap on it presses no one, and spreads it.
   const pile = await boxes(group);
   const rest = await places(group);
-  expect(rest[1]!.center - rest[0]!.center).toBeLessThan(32 * 0.4);
+  expect(rest[1]!.center - rest[0]!.center).toBeLessThan(32 * 0.7);
   expect(await hits(group)).toEqual([false, false, false, false, false]);
   const first = pile.at(-2)!;
   await page.touchscreen.tap(first.x + first.width / 2, first.top + 22);

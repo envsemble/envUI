@@ -196,9 +196,9 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
   // Avatar.css and AvatarGroup.css, for the count, declare the same shadow.
   assert.equal(values.length, 1, 'one shadow');
   const [value] = values;
-  // A single layer, 1px down and blurred 3px, with no spread.
+  // A single layer, 1px down and blurred 2px, with no spread.
   const [x, y, blur, ...rest] = split(value, /\s/);
-  assert.deepEqual([x, y, blur], ['0', '1px', '3px']);
+  assert.deepEqual([x, y, blur], ['0', '1px', '2px']);
   assert.equal(rest.length, 1, 'no spread, one color');
   // Its color is derived from the surface below, never a literal color.
   assert.match(

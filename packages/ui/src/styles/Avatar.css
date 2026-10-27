@@ -34,15 +34,16 @@
   user-select: none;
   /* A faint, small drop shadow under an avatar, and under an avatar group's count
      (AvatarGroup.css), the one exception to envUI's rule of no drop shadows: stacked in a group,
-     each avatar parts from the one it lies on, and a lone avatar sits on its surface. Its color is
+     each avatar parts from the one it lies on, and a lone avatar, a pastel fill or a light photo
+     keeps its circle on a surface of a near color, with no line drawn around it. Its color is
      a deep shade of the surface below, the group's ring color or the envUI surface it sits on, else
      the page, and stronger the darker that is, so it reads as faintly on a dark surface as on a
      light one. A chosen avatar keeps its rings alone, and under forced colors the system draws no
      shadow. */
-  --env-avatar-shadow: 0 1px 3px
+  --env-avatar-shadow: 0 1px 2px
     oklch(
       from var(--env-avatar-group-ring-color, var(--env-surface-color, var(--env-color-bg-page)))
-        calc(l * 0.3) calc(c * 0.5) h / calc(0.5 - l * 0.36)
+        calc(l * 0.3) calc(c * 0.5) h / calc(0.26 - l * 0.15)
     );
   box-shadow: var(--env-avatar-shadow);
 }
@@ -73,20 +74,6 @@
 .env-avatar[data-hue='oat'] {
   --env-avatar-container-default: var(--env-color-avatar-bg-oat);
   --env-avatar-content-default: var(--env-color-avatar-fg-oat);
-}
-/* A hairline just inside the edge, over the fill or the picture, so a pastel fill or a light photo
-   keeps its circle on a page of a near color. */
-.env-avatar::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: var(--env-z-raised);
-  border-radius: inherit;
-  /* The media edge drawn twice, about 10%, so it holds the circle at a glance and stays quiet. */
-  box-shadow:
-    inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media),
-    inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media);
-  pointer-events: none;
 }
 .env-avatar[data-size='sm'] {
   --env-avatar-size: 1.5rem;

@@ -15,7 +15,7 @@
   /* Spread, the gap between avatars; at rest, how far each avatar starts after the one under it,
      and how far the count lies under the last avatar. */
   --env-avatar-group-gap: calc(var(--env-avatar-group-size) * 0.15);
-  --env-avatar-group-pitch: calc(var(--env-avatar-group-size) * 0.34);
+  --env-avatar-group-pitch: calc(var(--env-avatar-group-size) * 0.6);
   --env-avatar-group-tuck: calc(var(--env-avatar-group-size) * 0.25);
   /* The room each avatar takes in the spread row: its size, or a pressable avatar's touch target. */
   --env-avatar-group-slot: var(--env-avatar-group-size);
@@ -270,10 +270,10 @@
   cursor: default;
   user-select: none;
   /* The avatars' faint shadow, as Avatar.css casts it, so the count parts from the surface too. */
-  --env-avatar-shadow: 0 1px 3px
+  --env-avatar-shadow: 0 1px 2px
     oklch(
       from var(--env-avatar-group-ring-color, var(--env-surface-color, var(--env-color-bg-page)))
-        calc(l * 0.3) calc(c * 0.5) h / calc(0.5 - l * 0.36)
+        calc(l * 0.3) calc(c * 0.5) h / calc(0.26 - l * 0.15)
     );
   box-shadow: var(--env-avatar-shadow);
 }
