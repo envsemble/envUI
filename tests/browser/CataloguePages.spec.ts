@@ -432,6 +432,12 @@ test("neighbouring catalogue pages' banners show different drawings, each page a
   }
   expect(new Set(shown.slice(0, 3)).size).toBe(3);
   expect(shown[3]).toBe(shown[0]);
+  // The page's banner in the Docs shows the same drawing as its banner in the catalogue.
+  await page.goto(`${siteDevUrl}/docs/${order[start]!.path}`);
+  await expect(page.locator('.site-page-banner .docs-banner-lines')).toHaveAttribute(
+    'data-drawing',
+    shown[0]!,
+  );
 });
 
 test('the Icons page credits Material Symbols with their license, and the footer does not', async ({
