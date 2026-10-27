@@ -429,19 +429,6 @@
     flex-basis: 100%;
   }
 }
-/* Its legend: each tone's name after a swatch of the tone's color, two columns where they fit. */
-.site-anatomy-legend.catalogue-tone-legend {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
-  gap: var(--env-space-4) var(--env-space-6);
-}
-.site-anatomy-legend.catalogue-tone-legend > li {
-  gap: var(--env-space-3);
-}
-/* The swatch, an icon's size, centred on the name's line. */
-.catalogue-tone-legend > li > .env-color-swatch {
-  margin-block-start: calc((1lh - 1rem) / 2);
-}
-
 /* A shape's name and meaning sit right under its stage, in the run's second row. */
 .site-figure-run > .site-topic-figure > figcaption {
   grid-row: 2;

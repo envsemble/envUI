@@ -373,7 +373,7 @@ function ThemesFigure({ legend }: FigureWords) {
 }
 
 /**
- * Each tone, in the legend's order, as a badge paints it, with a word in the tone and its icon:
+ * Each tone as a badge paints it, with a word in the tone and its icon:
  * Badge's tones, and Info, which only alerts and toasts take, in their colors: the accent tint of
  * an alert, soft; the strong fill of a toast, solid; the accent's edge, outlined.
  */
@@ -420,7 +420,7 @@ const badgeVariants: readonly { variant: BadgeVariant; name: string }[] = [
 const variantStep = 2000;
 
 /**
- * Every tone's badge side by side, in the legend's order, all in one variant at a time: soft,
+ * Every tone's badge side by side, all in one variant at a time: soft,
  * solid, then outlined, the variant named in the corner. The badges cut from one to the next
  * together, at one size, so nothing moves.
  */
@@ -449,46 +449,13 @@ function StatusSteps() {
   );
 }
 
-/** Each tone's color in the legend, in the legend's order: its text's, and Info's toast's fill. */
-const toneColors: readonly string[] = [
-  'fg-muted',
-  'fg-accent',
-  'bg-info-strong',
-  'fg-success',
-  'fg-warning',
-  'fg-danger',
-  'fg-done',
-];
-
 /**
- * Every tone's badge in each of Badge's variants in turn, on an animated figure, and the legend
- * under it: each tone's name after a swatch of its color, and what it means.
+ * Every tone's badge in each of Badge's variants in turn, on an animated figure: the badges' words
+ * and icons say what each tone is for, so it has no legend; the tones' meanings are in Compose.
  */
-function StatusFigure({ legend }: FigureWords) {
-  const [probe, colors] = useTokenColors(toneColors);
+function StatusFigure() {
   return (
-    <Figure
-      label="What each color means"
-      motion="the badges in each variant"
-      legend={
-        <ul className="site-anatomy-legend catalogue-topic-legend catalogue-tone-legend">
-          {legend.map((entry, index) => (
-            <li key={entry.name}>
-              <Swatch color={colors[index]} />
-              <div>
-                <Text render={<p />} className="catalogue-topic-legend-name">
-                  {entry.name}
-                </Text>
-                <Text render={<p />} variant="body-sm" emphasis="muted">
-                  {entry.text}
-                </Text>
-              </div>
-            </li>
-          ))}
-        </ul>
-      }
-    >
-      {probe}
+    <Figure label="What each color means" motion="the badges in each variant">
       <StatusSteps />
     </Figure>
   );
