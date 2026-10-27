@@ -29,6 +29,8 @@ function SettingsSection({
         {settings.map((setting) => (
           <List.Item
             key={setting.id}
+            // A switch is narrow: it keeps to the row's end, and the text wraps beside it.
+            style={{ flexWrap: 'nowrap' }}
             label={<span id={`${id}-${setting.id}-title`}>{setting.title}</span>}
             description={<span id={`${id}-${setting.id}-detail`}>{setting.detail}</span>}
             action={
@@ -38,6 +40,7 @@ function SettingsSection({
                 aria-describedby={`${id}-${setting.id}-detail`}
                 checked={values[setting.id]}
                 onCheckedChange={(on) => onChange(setting.id, on)}
+                style={{ flexShrink: 0 }}
               />
             }
           />
@@ -52,8 +55,8 @@ function NotificationSettings() {
   const [values, setValues] = useState<Record<string, boolean>>({
     comments: true,
     mentions: true,
-    summary: false,
-    directory: true,
+    summary: true,
+    directory: false,
   });
   const change = (id: string, on: boolean) => {
     // The change is saved as it is made; a request to the server would go here.

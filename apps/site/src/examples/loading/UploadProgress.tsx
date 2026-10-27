@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Progress, Column, Text } from '@envsemble/envui';
 
+// Each file's size, in MB, and how much of it the server receives in a moment.
 const files = [
-  { name: 'annual-review.pdf', size: 6 },
-  { name: 'data-migration-plan.xlsx', size: 3 },
+  { name: 'annual-review.pdf', size: 40, pace: 4 },
+  { name: 'data-migration-plan.xlsx', size: 12, pace: 2 },
 ];
 
 export default function UploadProgress() {
@@ -20,13 +21,13 @@ export default function UploadProgress() {
     timer.current = window.setInterval(() => {
       setSent((current) => {
         const next = (current ?? []).map((value, index) =>
-          Math.min(files[index].size, Math.round((value + 0.6) * 10) / 10),
+          Math.min(files[index].size, value + files[index].pace),
         );
         if (next.every((value, index) => value === files[index].size))
           window.clearInterval(timer.current);
         return next;
       });
-    }, 300);
+    }, 250);
   };
   return (
     <Column gap={5}>

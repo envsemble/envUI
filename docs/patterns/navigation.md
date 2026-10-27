@@ -55,6 +55,7 @@ examples:
   PrimaryNavigation:
     role: overview
     stage: shaded
+    motion: true
   Hierarchy: example
   ViewsOfOneThing: example
   ListAndDetail: example
@@ -83,7 +84,7 @@ The trail shows the levels above the page, each a link; the page itself is the l
 
 Tabs switch the views of one project in place. Its settings are another page, so they are a link in the header's actions.
 
-```tsx figure=ViewsOfOneThing
+```tsx figure=ViewsOfOneThing motion
 
 ```
 
@@ -91,7 +92,7 @@ Tabs switch the views of one project in place. Its settings are another page, so
 
 As narrow as a phone, the detail shows in place of the list, with a back button that names where it goes.
 
-```tsx figure=ListAndDetail
+```tsx figure=ListAndDetail motion
 
 ```
 

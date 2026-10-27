@@ -44,7 +44,9 @@ composes:
   - Row
   - Text
 examples:
-  AdvancedOptions: overview
+  AdvancedOptions:
+    role: overview
+    motion: true
   ShowMore: example
   DetailsInSheet: example
   OverflowActions: example
@@ -63,7 +65,7 @@ The button stays after the list and says what a press does.
 - It reads "Show all 12", then "Show fewer".
 - It tells assistive technology whether the whole list shows.
 
-```tsx figure=ShowMore
+```tsx figure=ShowMore motion
 
 ```
 
@@ -71,7 +73,7 @@ The button stays after the list and says what a press does.
 
 The list stays in place under the Sheet, so people continue from the row they opened.
 
-```tsx figure=DetailsInSheet
+```tsx figure=DetailsInSheet motion
 
 ```
 
@@ -79,7 +81,7 @@ The list stays in place under the Sheet, so people continue from the row they op
 
 Share and Edit stay visible; the rest wait in a [Menu](../components/menu.md) named More actions.
 
-```tsx figure=OverflowActions
+```tsx figure=OverflowActions motion
 
 ```
 
@@ -87,7 +89,7 @@ Share and Edit stay visible; the rest wait in a [Menu](../components/menu.md) na
 
 A help button opens a Popover with a short definition and a link.
 
-```tsx figure=ExplainATerm
+```tsx figure=ExplainATerm motion
 
 ```
 

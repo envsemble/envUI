@@ -44,7 +44,9 @@ composes:
   - Text
   - Avatar
 examples:
-  CardsLoading: overview
+  CardsLoading:
+    role: overview
+    motion: true
   SkeletonList: example
   SearchResultsLoading: example
   PendingButton: example
@@ -76,7 +78,7 @@ Where the shape is known, the page renders its own components as skeletons over 
 - Placeholder items give the components stand-ins to render.
 - Text that hasn't arrived shows as a bar the length of its text style.
 
-```tsx figure=SkeletonList
+```tsx figure=SkeletonList motion
 
 ```
 
@@ -92,7 +94,7 @@ A [Spinner](../components/spinner.md) says what is loading beside it.
 
 The [button](../components/button.md) that saves shows the work in progress.
 
-```tsx figure=PendingButton
+```tsx figure=PendingButton motion
 
 ```
 
@@ -100,7 +102,7 @@ The [button](../components/button.md) that saves shows the work in progress.
 
 [Progress](../components/progress.md) measures each file.
 
-```tsx figure=UploadProgress
+```tsx figure=UploadProgress motion
 
 ```
 
@@ -108,7 +110,7 @@ The [button](../components/button.md) that saves shows the work in progress.
 
 The [top bar](../components/top-bar.md)'s progress bar shows the next page is on its way.
 
-```tsx figure=PageProgress stage="shaded"
+```tsx figure=PageProgress stage="shaded" motion
 
 ```
 
@@ -131,6 +133,8 @@ Not shown: the inert content inside the root, which has no box of its own.
 ### When it shows
 
 Show the skeleton only once a load takes a noticeable moment, so quick loads never flash it.
+
+<!-- specimen: WhenItShows -->
 
 ### Highlight
 
@@ -156,19 +160,19 @@ Show what is coming in its place and shape where you can, and say only that some
 | A progress bar           | Work whose end can be measured, such as an upload.      |
 | The top bar's progress   | A whole page on its way.                                |
 
-```tsx figure=SkeletonInPlace
+```tsx figure=SkeletonInPlace motion
 
 ```
 
-```tsx figure=SpinnerInPlace
+```tsx figure=SpinnerInPlace motion
 
 ```
 
-```tsx figure=RefreshInPlace
+```tsx figure=RefreshInPlace motion
 
 ```
 
-```tsx figure=SkeletonOnRefresh
+```tsx figure=SkeletonOnRefresh motion
 
 ```
 
