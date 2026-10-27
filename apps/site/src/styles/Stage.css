@@ -75,7 +75,7 @@
   /* contrast: catalogue-canvas */
   --catalogue-card-fill: light-dark(
     oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.035) c h),
-    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.045) c h)
+    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.03) c h)
   );
   background-color: var(--catalogue-card-fill);
   /* Every canvas, an example's, a tile's or a card's, lifts off the page a little. */
