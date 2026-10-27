@@ -61,12 +61,10 @@ Each role in the theme you are reading in; a status shows its text, soft fill an
 
 ```
 
-1. **Backgrounds**: Page, Surface, Filled surface, Raised surface, Field, Backdrop.
-2. **Text**: Text, Supporting text, Link, On the accent, On the selected.
-3. **Edges**: Edges, Hairlines, Focus ring.
-4. **Accent and selection**: Accent, Quiet action, Important, Selected.
-5. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
-6. **Each status**: Text, Soft fill, Solid fill.
+1. **Surfaces**: Page, Surface, Filled surface, Raised surface, Field, Backdrop.
+2. **Text and lines**: Text, Supporting text, Link, Edges, Hairlines, Focus ring.
+3. **Actions and selection**: Accent, On the accent, Quiet action, Important, Selected, On the selected.
+4. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
 
 ### Light, dark and high contrast
 
@@ -79,8 +77,8 @@ Every role has a color in the light and the dark theme, and a high-contrast vers
 ```
 
 1. **Light**
-2. **Dark**
-3. **Light, high contrast**
+2. **Light, high contrast**
+3. **Dark**
 4. **Dark, high contrast**
 
 ### What each color means

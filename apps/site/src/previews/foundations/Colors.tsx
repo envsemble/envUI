@@ -26,6 +26,7 @@ import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { Warning } from '@envsemble/envui/icons/Warning';
 import { usePointer, type PointerStep } from '../Motion';
 import type { FoundationFigure } from './FoundationFigures';
+import { MarkedSubject } from './Marks';
 import { Figure } from './Topic';
 import type { LegendEntry } from './Topic';
 
@@ -40,189 +41,162 @@ interface FigureWords {
   legend: readonly LegendEntry[];
 }
 
-/** A numbered pin on a part of the roles screen: on a container's corner, or after a leaf part. */
-function Pin({ number, corner }: { number: number; corner?: 'start' | 'end' }) {
-  return (
-    <span
-      className="site-anatomy-number catalogue-role-pin"
-      data-corner={corner}
-      aria-hidden="true"
-    >
-      {number}
-    </span>
-  );
-}
-
 /**
- * The color of each role in the roles figure's key, in the legend's order, and the role its number
- * takes on it: a background carries the text, a text role the surface, the accent its own ink and
- * the status its tone over its tint.
+ * The color of each role, in the legend's order: the page, a surface, a filled card, text,
+ * supporting text, the accent and a status's soft fill.
  */
-const roleKey: readonly { fill: string; ink: string }[] = [
-  { fill: 'bg-page', ink: 'fg-default' },
-  { fill: 'bg-default', ink: 'fg-default' },
-  { fill: 'bg-muted', ink: 'fg-default' },
-  { fill: 'fg-default', ink: 'bg-default' },
-  { fill: 'fg-muted', ink: 'bg-default' },
-  { fill: 'bg-brand-emphasis', ink: 'fg-on-emphasis' },
-  { fill: 'bg-success-muted', ink: 'fg-success' },
+const roleColors: readonly string[] = [
+  'bg-page',
+  'bg-default',
+  'bg-muted',
+  'fg-default',
+  'fg-muted',
+  'bg-brand-emphasis',
+  'bg-success-muted',
 ];
 
 /**
- * A small screen with a numbered pin on each part that takes a role: the page, a surface on it, a
- * filled card inside, text, supporting text, the accent and a status. Beside it, or below it on a
- * narrower page, its key: each role's color in the reader's theme, with its number, name and use.
+ * A small screen with a numbered callout on each part that takes a role, as an anatomy figure's
+ * are: the page, a surface on it, a filled card inside, text, supporting text, the accent and a
+ * status. Its legend is an anatomy figure's, each number's tag carrying a dot of the role's color
+ * in the reader's theme.
  */
 function RolesFigure({ legend }: FigureWords) {
   return (
-    <div className="catalogue-roles-figure">
-      <Figure
-        label="The color roles of a screen"
-        className="catalogue-roles-stage"
-        legend={
-          <ol className="catalogue-role-key">
-            {legend.map((entry, index) => {
-              const { fill, ink } = roleKey[index] ?? roleKey[0]!;
-              return (
-                <li key={entry.name}>
-                  <span
-                    className="catalogue-role-key-swatch"
-                    style={{
-                      background: `var(--env-color-${fill})`,
-                      color: `var(--env-color-${ink})`,
-                    }}
-                    aria-hidden="true"
-                  >
-                    {index + 1}
-                  </span>
-                  <div>
-                    <Text render={<p />} className="catalogue-topic-legend-name">
-                      {entry.name}
-                    </Text>
-                    <Text render={<p />} variant="body-sm" emphasis="muted">
-                      {entry.text}
-                    </Text>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-        }
-      >
-        <div className="catalogue-roles-screen" inert>
-          <Surface background="page" padding={5} radius="xl" className="catalogue-role-part">
-            <Pin number={1} corner="start" />
-            <Surface
-              background="default"
-              padding={5}
-              radius="xl"
-              className="catalogue-role-part"
-              render={<Column gap={5} />}
-            >
-              <Pin number={2} corner="end" />
-              <Column gap={1} align="start">
-                <Row gap={2} align="center">
-                  <Text render={<p />} variant="title">
-                    Quarterly report
-                  </Text>
-                  <Pin number={4} />
-                </Row>
-                <Row gap={2} align="center">
-                  <Text emphasis="muted">Updated today by Priya Shah</Text>
-                  <Pin number={5} />
-                </Row>
-              </Column>
-              <Surface
-                background="muted"
-                padding={4}
-                radius="sm"
-                className="catalogue-role-part"
-                render={<Column gap={1} />}
-              >
-                <Pin number={3} corner="end" />
-                <Text render={<p />} variant="title">
-                  Budget
+    <Figure
+      label="The color roles of a screen"
+      className="catalogue-marked-stage catalogue-roles-stage"
+      legend={
+        <ol className="site-anatomy-legend catalogue-topic-legend">
+          {legend.map((entry, index) => (
+            <li key={entry.name}>
+              <span className="site-anatomy-number catalogue-role-tag" aria-hidden="true">
+                {index + 1}
+                <span
+                  className="catalogue-role-dot"
+                  style={{ background: `var(--env-color-${roleColors[index] ?? 'bg-page'})` }}
+                />
+              </span>
+              <div>
+                <Text render={<p />} className="catalogue-topic-legend-name">
+                  {entry.name}
                 </Text>
-                <Text emphasis="muted">Within the plan for this quarter</Text>
-              </Surface>
-              <Row justify="between" align="center" gap={3}>
-                <Row gap={2} align="center">
-                  <Badge tone="success">On track</Badge>
-                  <Pin number={7} />
-                </Row>
-                <Row gap={2} align="center">
-                  <Pin number={6} />
-                  <Button>Share</Button>
-                </Row>
-              </Row>
-            </Surface>
-          </Surface>
-        </div>
-      </Figure>
-    </div>
-  );
-}
-
-/**
- * The color of each role of a family, in the legend's order, and the three colors of each status:
- * its text, its soft fill and its solid fill.
- */
-const families: readonly (readonly string[])[] = [
-  ['bg-page', 'bg-default', 'bg-muted', 'bg-raised', 'bg-field', 'bg-overlay'],
-  ['fg-default', 'fg-muted', 'fg-link', 'fg-on-emphasis', 'fg-on-selected'],
-  ['border-default', 'border-muted', 'border-focus'],
-  ['bg-brand-emphasis', 'bg-neutral-muted', 'bg-important-strong', 'bg-selected'],
-];
-const statusColors: readonly (readonly string[])[] = [
-  ['fg-muted', 'bg-neutral-muted', 'bg-neutral-emphasis'],
-  ['fg-accent', 'bg-accent-badge', 'bg-accent-emphasis'],
-  ['fg-success', 'bg-success-muted', 'bg-success-emphasis'],
-  ['fg-warning', 'bg-warning-muted', 'bg-warning-emphasis'],
-  ['fg-danger', 'bg-danger-muted', 'bg-danger-emphasis'],
-  ['fg-done', 'bg-done-muted', 'bg-done-emphasis'],
-];
-
-/** The names a legend entry lists, "Page, Surface, Filled surface…", in order. */
-const listed = (text: string | undefined) =>
-  (text ?? '').replace(/\.$/, '').split(/,\s*/).filter(Boolean);
-
-/** A swatch of one color, or a status's three stacked, each with a hairline edge. */
-function Swatch({ colors }: { colors: readonly string[] }) {
-  return (
-    <span className="catalogue-role-swatch" aria-hidden="true">
-      {colors.map((color) => (
-        <span key={color} style={{ background: `var(--env-color-${color})` }} />
-      ))}
-    </span>
-  );
-}
-
-/**
- * Every role in the reader's theme, on the page: a row of swatches for each family, its name at
- * the start, on one grid of six columns; then the statuses on the same columns, one for each tone,
- * with a row for each of its colors.
- */
-function SwatchesFigure({ legend }: FigureWords) {
-  const status = legend[families.length];
-  const tones = listed(status?.text);
-  const parts = listed(legend[families.length + 1]?.text);
-  return (
-    <div className="catalogue-palette">
-      <div className="catalogue-palette-grid">
-        {families.map((colors, family) => {
-          const entry = legend[family];
-          const roles = listed(entry?.text);
-          return (
-            <section key={family} className="catalogue-palette-family">
-              <Text render={<h4 />} variant="title">
-                {entry?.name}
+                <Text render={<p />} variant="body-sm" emphasis="muted">
+                  {entry.text}
+                </Text>
+              </div>
+            </li>
+          ))}
+        </ol>
+      }
+    >
+      <MarkedSubject>
+        <Surface
+          background="page"
+          padding={5}
+          radius="xl"
+          data-catalogue-mark="1"
+          className="catalogue-roles"
+        >
+          <Surface
+            background="default"
+            padding={5}
+            radius="xl"
+            data-catalogue-mark="2"
+            render={<Column gap={5} />}
+          >
+            <Column gap={1} align="start">
+              <Text render={<p />} variant="title" data-catalogue-mark="4">
+                Quarterly report
               </Text>
-              <ul aria-label={entry?.name}>
-                {colors.map((color, index) => (
-                  <li key={color}>
-                    <Swatch colors={[color]} />
-                    <Text render={<span />} variant="body-sm">
-                      {roles[index]}
+              <Text emphasis="muted" data-catalogue-mark="5">
+                Updated today by Priya Shah
+              </Text>
+            </Column>
+            <Surface
+              background="muted"
+              padding={4}
+              radius="sm"
+              data-catalogue-mark="3"
+              render={<Column gap={1} />}
+            >
+              <Text render={<p />} variant="title">
+                Budget
+              </Text>
+              <Text emphasis="muted">Within the plan for this quarter</Text>
+            </Surface>
+            <Row justify="between" align="center" gap={3}>
+              <Badge tone="success" data-catalogue-mark="7">
+                On track
+              </Badge>
+              <Button data-catalogue-mark="6">Share</Button>
+            </Row>
+          </Surface>
+        </Surface>
+      </MarkedSubject>
+    </Figure>
+  );
+}
+
+/**
+ * The colors of each role, in four groups of six, in the legend's order: each group is a legend
+ * entry, its name the group's and its text the names of its roles, separated by commas. A status
+ * shows its three colors in one swatch: its text, its soft fill and its solid fill.
+ */
+const roleGroups: readonly (readonly (readonly string[])[])[] = [
+  [['bg-page'], ['bg-default'], ['bg-muted'], ['bg-raised'], ['bg-field'], ['bg-overlay']],
+  [
+    ['fg-default'],
+    ['fg-muted'],
+    ['fg-link'],
+    ['border-default'],
+    ['border-muted'],
+    ['border-focus'],
+  ],
+  [
+    ['bg-brand-emphasis'],
+    ['fg-on-emphasis'],
+    ['bg-neutral-muted'],
+    ['bg-important-strong'],
+    ['bg-selected'],
+    ['fg-on-selected'],
+  ],
+  [
+    ['fg-muted', 'bg-neutral-muted', 'bg-neutral-emphasis'],
+    ['fg-accent', 'bg-accent-badge', 'bg-accent-emphasis'],
+    ['fg-success', 'bg-success-muted', 'bg-success-emphasis'],
+    ['fg-warning', 'bg-warning-muted', 'bg-warning-emphasis'],
+    ['fg-danger', 'bg-danger-muted', 'bg-danger-emphasis'],
+    ['fg-done', 'bg-done-muted', 'bg-done-emphasis'],
+  ],
+];
+
+/** A role's name from a group's legend text, "Page, Surface, Filled surface…", by its place. */
+const roleName = (text: string | undefined, index: number) =>
+  (text ?? '').replace(/\.$/, '').split(/,\s*/)[index] ?? '';
+
+/** The roles in the reader's theme, each group a continuous strip of swatches: a specimen of the system. */
+function SwatchesFigure({ legend }: FigureWords) {
+  return (
+    <div className="catalogue-role-groups">
+      <div>
+        {roleGroups.map((roles, group) => {
+          const title = legend[group]?.name ?? '';
+          return (
+            <section key={group} className="catalogue-role-group">
+              <Text render={<h4 />} variant="title">
+                {title}
+              </Text>
+              <ul className="catalogue-role-swatches" aria-label={title}>
+                {roles.map((colors, index) => (
+                  <li key={colors.join()}>
+                    <span className="catalogue-role-swatch" aria-hidden="true">
+                      {colors.map((color) => (
+                        <span key={color} style={{ background: `var(--env-color-${color})` }} />
+                      ))}
+                    </span>
+                    <Text render={<span />} className="catalogue-topic-legend-name">
+                      {roleName(legend[group]?.text, index)}
                     </Text>
                   </li>
                 ))}
@@ -230,28 +204,6 @@ function SwatchesFigure({ legend }: FigureWords) {
             </section>
           );
         })}
-        <section className="catalogue-palette-family catalogue-palette-status">
-          <div className="catalogue-palette-parts">
-            <Text render={<h4 />} variant="title">
-              {status?.name}
-            </Text>
-            {parts.map((part) => (
-              <Text key={part} render={<span />} variant="body-sm" emphasis="muted">
-                {part}
-              </Text>
-            ))}
-          </div>
-          <ul aria-label={status?.name}>
-            {statusColors.map((colors, index) => (
-              <li key={colors[0]}>
-                <Text render={<span />} variant="body-sm">
-                  {tones[index]}
-                </Text>
-                <Swatch colors={colors} />
-              </li>
-            ))}
-          </ul>
-        </section>
       </div>
     </div>
   );
@@ -260,8 +212,8 @@ function SwatchesFigure({ legend }: FigureWords) {
 /** The theme and contrast of each sample, in the legend's order. */
 const themes: readonly { theme: ThemeValue; contrast: ThemeContrast }[] = [
   { theme: 'light', contrast: 'standard' },
-  { theme: 'dark', contrast: 'standard' },
   { theme: 'light', contrast: 'high' },
+  { theme: 'dark', contrast: 'standard' },
   { theme: 'dark', contrast: 'high' },
 ];
 
@@ -280,8 +232,9 @@ const choose = (target: string, duration = 500): PointerStep[] => [
 /*
  * The pointer chooses each theme in turn, about two and a half seconds apart, and Light again,
  * then leaves: the loop starts again from Light. On one control of the four, in the legend's
- * order; where those don't fit, as on a phone, on a control of the theme and one of the contrast:
- * Dark, then high contrast, then Light, then standard contrast again.
+ * order, each theme beside its high contrast; where those don't fit, as on a phone, on a control
+ * of the theme and one of the contrast, one press a step: high contrast, then Dark, then standard
+ * contrast, then Light again.
  */
 const themeScripts: Record<'four' | 'pair', PointerStep[]> = {
   four: [
@@ -297,12 +250,12 @@ const themeScripts: Record<'four' | 'pair', PointerStep[]> = {
   ],
   pair: [
     { wait: 1500 },
-    { to: segment(2) },
+    { to: segment(2, 'catalogue-contrast-pick') },
     { wait: 300 },
     { click: true },
-    ...choose(segment(2, 'catalogue-contrast-pick')),
-    ...choose(segment(1)),
+    ...choose(segment(2)),
     ...choose(segment(1, 'catalogue-contrast-pick')),
+    ...choose(segment(1)),
     { wait: 3300 },
     { leave: true },
   ],
@@ -392,7 +345,7 @@ function ThemeChoice({ names, pair }: { names: readonly string[]; pair: boolean 
             onValueChange={(next) => pick({ theme: next as ThemeValue })}
             items={[
               { value: 'light', label: names[0] },
-              { value: 'dark', label: names[1] },
+              { value: 'dark', label: names[2] },
             ]}
           />
           <SegmentedControl
