@@ -335,15 +335,6 @@
 .catalogue-marked-tag[data-side='start'] > .catalogue-role-tag {
   flex-direction: row-reverse;
 }
-/* A swatch the size of a number's badge, with an edge in the edge color so a swatch in the page's
-   or the text's color still shows beside it. */
-.catalogue-role-dot {
-  inline-size: 1.125rem;
-  block-size: 1.125rem;
-  box-sizing: border-box;
-  border: 0.0625rem solid var(--env-color-border-default);
-  border-radius: var(--env-radius-full);
-}
 
 /* The color roles as swatches, on the page: four even columns of six, two on a narrower page and
    one on a phone. Each swatch is a small card of its color, three bands for a status, with its
@@ -438,7 +429,7 @@
     flex-basis: 100%;
   }
 }
-/* Its legend: each tone's name after a dot in the tone's color, two columns where they fit. */
+/* Its legend: each tone's name after a swatch of the tone's color, two columns where they fit. */
 .site-anatomy-legend.catalogue-tone-legend {
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
   gap: var(--env-space-4) var(--env-space-6);
@@ -446,30 +437,9 @@
 .site-anatomy-legend.catalogue-tone-legend > li {
   gap: var(--env-space-3);
 }
-.catalogue-tone-dot {
-  inline-size: 0.75rem;
-  block-size: 0.75rem;
-  margin-block-start: 0.375rem;
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-fg-muted);
-}
-.catalogue-tone-dot:is([data-tone='accent'], [data-tone='info']) {
-  background: var(--env-color-fg-accent);
-}
-.catalogue-tone-dot[data-tone='info'] {
-  background: var(--env-color-bg-info-strong);
-}
-.catalogue-tone-dot[data-tone='success'] {
-  background: var(--env-color-fg-success);
-}
-.catalogue-tone-dot[data-tone='warning'] {
-  background: var(--env-color-fg-warning);
-}
-.catalogue-tone-dot[data-tone='danger'] {
-  background: var(--env-color-fg-danger);
-}
-.catalogue-tone-dot[data-tone='done'] {
-  background: var(--env-color-fg-done);
+/* The swatch, an icon's size, centred on the name's line. */
+.catalogue-tone-legend > li > .env-color-swatch {
+  margin-block-start: calc((1lh - 1rem) / 2);
 }
 
 /* A shape's name and meaning sit right under its stage, in the run's second row. */

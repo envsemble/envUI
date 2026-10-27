@@ -30,6 +30,7 @@ import {
   type ThemeContrast,
   type ThemeValue,
 } from '@envsemble/envui';
+import { ColorSwatch } from '@envsemble/envui/color';
 import { Add } from '@envsemble/envui/icons/Add';
 import { AddPhotoAlternate } from '@envsemble/envui/icons/AddPhotoAlternate';
 import { Alarm } from '@envsemble/envui/icons/Alarm';
@@ -85,15 +86,53 @@ const roleColors: readonly string[] = [
   'bg-brand-emphasis',
 ];
 
+/**
+ * The colors of envUI color tokens, such as `bg-page`, in the reader's theme and contrast, as CSS
+ * colors a ColorSwatch takes, such as rgb(250, 249, 247): ColorSwatch takes a color, not a custom
+ * property, so a hidden probe in the figure's theme takes each token as its color, and a pixel
+ * painted in that color gives it in sRGB, whatever the token's color space. Measured again when
+ * the theme or contrast changes, before the figure is painted; none until the probe is placed.
+ */
+function useTokenColors(tokens: readonly string[]) {
+  const probe = useRef<HTMLSpanElement>(null);
+  const { theme, contrast } = useTheme();
+  const high = useHighContrast(contrast);
+  const [colors, setColors] = useState<readonly string[]>([]);
+  useLayoutEffect(() => {
+    const element = probe.current;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 1;
+    const pixel = canvas.getContext('2d', { willReadFrequently: true });
+    if (!element || !pixel) return;
+    setColors(
+      tokens.map((token) => {
+        element.style.color = `var(--env-color-${token})`;
+        pixel.clearRect(0, 0, 1, 1);
+        pixel.fillStyle = getComputedStyle(element).color;
+        pixel.fillRect(0, 0, 1, 1);
+        const [red = 0, green = 0, blue = 0, alpha = 255] = pixel.getImageData(0, 0, 1, 1).data;
+        return `rgba(${red}, ${green}, ${blue}, ${Math.round((alpha / 255) * 100) / 100})`;
+      }),
+    );
+  }, [tokens, theme, contrast, high]);
+  const element = <span ref={probe} hidden style={{ transition: 'none' }} />;
+  return [element, colors] as const;
+}
+
+/**
+ * A swatch of a color beside its name, the name saying what it is: decorative, so a screen reader
+ * reads the name alone. Nothing until its color is measured.
+ */
+function Swatch({ color }: { color: string | undefined }) {
+  return color ? <ColorSwatch color={color} aria-hidden="true" /> : null;
+}
+
 /** A role's tag: its number, as an anatomy figure's, and a swatch of its color beside it. */
-function RoleTag({ number }: { number: number }) {
+function RoleTag({ number, color }: { number: number; color: string | undefined }) {
   return (
     <span className="catalogue-role-tag" aria-hidden="true">
       <span className="site-anatomy-number">{number}</span>
-      <span
-        className="catalogue-role-dot"
-        style={{ background: `var(--env-color-${roleColors[number - 1] ?? 'bg-page'})` }}
-      />
+      <Swatch color={color} />
     </span>
   );
 }
@@ -105,6 +144,7 @@ function RoleTag({ number }: { number: number }) {
  * so a part, its color and its name read as one.
  */
 function RolesFigure({ legend }: FigureWords) {
+  const [probe, colors] = useTokenColors(roleColors);
   return (
     <Figure
       label="The color roles of a screen"
@@ -113,7 +153,7 @@ function RolesFigure({ legend }: FigureWords) {
         <ol className="site-anatomy-legend catalogue-topic-legend">
           {legend.map((entry, index) => (
             <li key={entry.name}>
-              <RoleTag number={index + 1} />
+              <RoleTag number={index + 1} color={colors[index]} />
               <div>
                 <Text render={<p />} className="catalogue-topic-legend-name">
                   {entry.name}
@@ -127,7 +167,11 @@ function RolesFigure({ legend }: FigureWords) {
         </ol>
       }
     >
-      <MarkedSubject oneSide tag={(number) => <RoleTag number={number} />}>
+      {probe}
+      <MarkedSubject
+        oneSide
+        tag={(number) => <RoleTag number={number} color={colors[number - 1]} />}
+      >
         <Surface
           background="page"
           padding={5}
@@ -405,22 +449,23 @@ function StatusSteps() {
   );
 }
 
-/** The class of each tone's color in the legend, in the legend's order. */
+/** Each tone's color in the legend, in the legend's order: its text's, and Info's toast's fill. */
 const toneColors: readonly string[] = [
-  'neutral',
-  'accent',
-  'info',
-  'success',
-  'warning',
-  'danger',
-  'done',
+  'fg-muted',
+  'fg-accent',
+  'bg-info-strong',
+  'fg-success',
+  'fg-warning',
+  'fg-danger',
+  'fg-done',
 ];
 
 /**
  * Every tone's badge in each of Badge's variants in turn, on an animated figure, and the legend
- * under it: each tone's name after a dot in its color, and what it means.
+ * under it: each tone's name after a swatch of its color, and what it means.
  */
 function StatusFigure({ legend }: FigureWords) {
+  const [probe, colors] = useTokenColors(toneColors);
   return (
     <Figure
       label="What each color means"
@@ -429,11 +474,7 @@ function StatusFigure({ legend }: FigureWords) {
         <ul className="site-anatomy-legend catalogue-topic-legend catalogue-tone-legend">
           {legend.map((entry, index) => (
             <li key={entry.name}>
-              <span
-                className="catalogue-tone-dot"
-                data-tone={toneColors[index]}
-                aria-hidden="true"
-              />
+              <Swatch color={colors[index]} />
               <div>
                 <Text render={<p />} className="catalogue-topic-legend-name">
                   {entry.name}
@@ -447,6 +488,7 @@ function StatusFigure({ legend }: FigureWords) {
         </ul>
       }
     >
+      {probe}
       <StatusSteps />
     </Figure>
   );
