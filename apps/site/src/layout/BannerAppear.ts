@@ -3,7 +3,7 @@ import type { LineArtMotion } from '@envsemble/envui';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 
 /** Where the site keeps when each page's banner last drew itself in, by page. */
-const storageKey = 'envui-catalogue-banners-drawn';
+const storageKey = 'envui-site-banners-drawn';
 
 /** How long a page's banner stays whole after it has drawn itself in, before it draws again. */
 const grace = 30 * 60 * 1000;
