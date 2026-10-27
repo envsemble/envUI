@@ -34,7 +34,7 @@ The browser tests start or reuse the site (both its parts) on 8770 and the fixtu
 
 Every component, pattern and foundation page in `docs/` is one Markdown file that feeds the catalogue, the Docs and the agents' package. Write a new page, or change one, as [docs/component-pages.md](docs/component-pages.md) describes; the build fails on a page outside the structure.
 
-- **The structure.** Frontmatter that lists each example once, with its role and caption, then `## Variants` (`## Options` on a foundation), `## Anatomy`, `## Behaviour`, ending with `### Adapting to width`, `## Rules`, `## Accessibility`, `## Words to use`, `## Compose` and `## Changelog`, in that order. Figures are placed by name, as an empty ` ```tsx figure=Name ` fence.
+- **The structure.** Frontmatter that lists each example once, with its role and caption, then `## Variants` (`## Options` on a foundation), `## Anatomy`, `## Behaviour`, ending with `### Adapting to width`, `## Tips`, `## Accessibility`, `## Words to use`, `## Compose` and `## Changelog`, in that order. Figures are placed by name, as an empty ` ```tsx figure=Name ` fence.
 - **Rules, not essays.** Each block is a `###` heading, one short lead that says its point, then bullets, one fact each; a single extra point is a second sentence, never a lone bullet. Paragraphs stay under 240 characters. Shorten by form, never by dropping a fact.
 - **Plain words above Compose.** The sections the catalogue shows name no props, values, tokens or classes; Compose holds the code, the props and the values, so agents lose nothing.
 - **Model pages.** [Button](docs/components/button.md), [Form layout and validation](docs/patterns/forms.md) and [Spacing & density](docs/foundations/spacing.md).

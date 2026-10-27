@@ -67,7 +67,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
     'Variants',
     'Anatomy',
     'Behaviour',
-    'Rules',
+    'Tips',
     'Accessibility',
   ]);
   await expect(page.locator('.site-figures .env-message')).toHaveCount(0);
@@ -107,21 +107,27 @@ test('a component page shows plain sections, equal cells and the parts of its an
       );
   const sideBySide = await codeGaps();
   expect(new Set(sideBySide.map(({ top }) => top)).size).toBe(1);
-  // Do and don't figures carry their verdict and one sentence, with the code below.
-  const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
-  await expect(verdict.locator('.site-verdict-bar')).toHaveText('Do');
-  await expect(verdict.locator('details summary')).toHaveText('Code, OnePrimaryAction.tsx');
-  // Its stage and its bar are connected rows: large outer corners, small inner ones.
-  const corners = await verdict.evaluate((figure) => {
-    const stage = getComputedStyle(figure.querySelector('.site-verdict-stage')!);
-    const bar = getComputedStyle(figure.querySelector('.site-verdict-bar')!);
+  // Tips: a list in a centred column narrower than the page's, each a square picture with a check
+  // for a do or a cross for a don't, beside its title, its line and its Code.
+  const tip = page.locator('.catalogue-tip', { hasText: 'One main action per group' });
+  await expect(tip.locator('.catalogue-tip-verdict')).toHaveText('Do');
+  await expect(tip.locator('details summary')).toHaveText('Code, OnePrimaryAction.tsx');
+  await expect(
+    page
+      .locator('.catalogue-tip', { hasText: 'Explain instead of disabling' })
+      .locator('.catalogue-tip-verdict'),
+  ).toHaveText('Don’t');
+  const tipBoxes = await page.locator('.catalogue-tips').evaluate((list) => {
+    const box = list.getBoundingClientRect();
+    const column = list.parentElement!.getBoundingClientRect();
+    const picture = list.querySelector('.catalogue-tip-stage')!.getBoundingClientRect();
     return {
-      outer: stage.borderTopLeftRadius === bar.borderBottomLeftRadius,
-      inner: stage.borderBottomLeftRadius === bar.borderTopLeftRadius,
-      larger: parseFloat(stage.borderTopLeftRadius) > parseFloat(stage.borderBottomLeftRadius),
+      narrower: box.width < column.width,
+      centred: Math.abs(box.left - column.left - (column.right - box.right)) < 1,
+      square: Math.round(picture.width) === Math.round(picture.height),
     };
   });
-  expect(corners).toEqual({ outer: true, inner: true, larger: true });
+  expect(tipBoxes).toEqual({ narrower: true, centred: true, square: true });
   // When to use is a guidance list, marked with sparks, where a component named at an item's end
   // follows it after a muted dot: the Button family's own page, so not a link.
   const useWhen = page.locator('.site-when .site-guidance li');
@@ -200,6 +206,23 @@ test('a component page shows plain sections, equal cells and the parts of its an
   const column = await codeGaps();
   expect(new Set(column.map(({ gap }) => gap)).size).toBe(1);
   await expect(page.locator('.site-anatomy-legend > li')).toHaveCount(4);
+  // A page not yet rewritten as tips whose rules hold a specimen keeps its do and don't figures,
+  // which carry their verdict and one sentence, with the code below.
+  await page.goto(`${siteDevUrl}/components/alert`);
+  const verdict = page.locator('.site-verdict[data-verdict="do"]').first();
+  await expect(verdict.locator('.site-verdict-bar')).toHaveText('Do');
+  await expect(verdict.locator('details summary')).toHaveText(/^Code, /);
+  // Its stage and its bar are connected rows: large outer corners, small inner ones.
+  const corners = await verdict.evaluate((figure) => {
+    const stage = getComputedStyle(figure.querySelector('.site-verdict-stage')!);
+    const bar = getComputedStyle(figure.querySelector('.site-verdict-bar')!);
+    return {
+      outer: stage.borderTopLeftRadius === bar.borderBottomLeftRadius,
+      inner: stage.borderBottomLeftRadius === bar.borderTopLeftRadius,
+      larger: parseFloat(stage.borderTopLeftRadius) > parseFloat(stage.borderBottomLeftRadius),
+    };
+  });
+  expect(corners).toEqual({ outer: true, inner: true, larger: true });
 });
 
 test('every anatomy figure numbers each part its legend names', async ({ page }) => {

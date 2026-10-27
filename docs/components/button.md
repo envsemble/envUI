@@ -49,23 +49,10 @@ examples:
   ConnectedButtons:
     role: overview
     caption: 'ButtonGroup: related buttons joined in a row or a column.'
-  OnePrimaryAction:
-    role: do
-    caption: One primary button per group, at the end of its actions.
-  SeveralPrimaryActions:
-    role: dont
-    caption: 'Several primary buttons: none of them stands out.'
-  ExplainWhatIsMissing:
-    role: do
-    caption: Let people press it, then show what is missing.
-  DisabledUntilValid:
-    role: dont
-    caption: A disabled button that doesn’t say why.
-  SayWhatWillHappen: example
-  DismissTip: example
-  RemovePeople:
-    role: example
-    caption: Beside others like it, each button names what it removes.
+  OnePrimaryAction: do
+  SayWhatWillHappen: do
+  DisabledUntilValid: dont
+  RemovePeople: example
   ButtonAnatomy: anatomy
   Variants: variants
   QuietToolbar: example
@@ -189,44 +176,35 @@ Labels wrap, and icon-only buttons keep their size.
 
 ```
 
-## Rules
+## Tips
 
-A button says what will happen, and only the main action of a group stands out.
+### One main action per group
+
+Make only the main action primary, at the end of its group; the others stay quieter.
 
 ```tsx figure=OnePrimaryAction
 
 ```
 
-```tsx figure=SeveralPrimaryActions
+### Say what will happen
 
-```
-
-```tsx figure=ExplainWhatIsMissing motion
-
-```
-
-```tsx figure=DisabledUntilValid
-
-```
-
-### Labels
-
-Start with a verb and say what will happen, and when the outcome is known, put it in the label.
+Start with a verb, and once the outcome is known, put it in the label, such as Show 320 homes.
 
 ```tsx figure=SayWhatWillHappen motion
 
 ```
 
-### Close and remove
+### Explain instead of disabling
 
-An IconButton with the Close cross closes, dismisses or removes what it sits in.
+Let people press it, then point to what is missing: a disabled button can't say why.
 
-- Name it Close, in the application's language.
-- Where several sit together, name what each removes.
-
-```tsx figure=DismissTip
+```tsx figure=DisabledUntilValid
 
 ```
+
+### Say what each cross removes
+
+Side by side, each cross tells screen readers what it removes, such as Remove Sam Lee.
 
 ```tsx figure=RemovePeople
 
@@ -252,7 +230,7 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 
 ### You provide
 
-- An `aria-label` on every icon-only button and ButtonGroup.
+- An `aria-label` on every icon-only button and ButtonGroup: Close on a close button, in the application's language.
 - `type="submit"` on the button that submits a form.
 - Routing behind `href`, through `LinkProvider`.
 - Focus for after a confirmed action removes the button.
@@ -271,7 +249,7 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 <Button pending={saving} onClick={save}>Save changes</Button>
 ```
 
-A button without a `variant` or a `size` takes its container's, such as `ghost` in a Toolbar and `sm` in a table cell; an IconButton is otherwise `secondary`. With `href` it renders the router link from `LinkProvider`.
+An IconButton with the `Close` icon closes, dismisses or removes what it sits in. A button without a `variant` or a `size` takes its container's, such as `ghost` in a Toolbar and `sm` in a table cell; an IconButton is otherwise `secondary`. With `href` it renders the router link from `LinkProvider`.
 
 #### Confirm and copy
 

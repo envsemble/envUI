@@ -340,7 +340,7 @@ test('the build fails a page that is not in the one-file structure', async () =>
     // Sections: those the structure knows, once each, in its order, with Rules.
     await rejects(
       frontmatter + body.replace('## Variants', '## Usage'),
-      /"## Usage" is not a section of a component page \(Variants, Anatomy, Behaviour, Rules, Accessibility, Words to use, Compose, Changelog\)/,
+      /"## Usage" is not a section of a component page \(Variants, Anatomy, Behaviour, Tips, Accessibility, Words to use, Compose, Changelog\)/,
     );
     await rejects(frontmatter + body.replace('## Variants', '## Overview'), /is generated/);
     await rejects(frontmatter + body.replace('## Changelog', '## Props'), /is generated/);
@@ -359,7 +359,66 @@ test('the build fails a page that is not in the one-file structure', async () =>
     );
     await rejects(
       frontmatter + body.replace(/## Rules[\s\S]*?(?=## Accessibility)/, ''),
-      /"## Rules" is required/,
+      /"## Tips" is required/,
+    );
+    // Tips: each a "###" title, one line and at most one figure, which takes no caption.
+    const tipsPage = (tips) =>
+      frontmatter.replace(/ {2}Instant:\n[\s\S]*?(?=---)/, '  Instant: do\n  OnSubmit: dont\n') +
+      body.replace(/## Rules[\s\S]*?(?=## Accessibility)/, `## Tips\n\n${tips}\n`);
+    const fence = (name, attributes = '') => `\`\`\`tsx figure=${name}${attributes}\n\n\`\`\``;
+    const good = [
+      '### Apply at once',
+      'A switch applies as it turns.',
+      fence('Instant'),
+      '### Not in a form',
+      'A form that applies on submit takes a checkbox.',
+      fence('OnSubmit'),
+      '### Name the setting',
+      'Say what it turns on.',
+      '',
+    ].join('\n\n');
+    await writeFile(page, tipsPage(good));
+    const rules = read()
+      .find((document) => document.id === 'switch')
+      .sections.find((section) => section.id === 'rules');
+    assert.equal(rules.title, 'Tips');
+    assert.deepEqual(
+      rules.blocks.flatMap((block) => (block.kind === 'example' ? [block.heading] : [])),
+      ['Apply at once', 'Not in a form'],
+    );
+    await rejects(tipsPage(`A lead.\n\n${good}`), /"## Tips" holds tips only/);
+    await rejects(
+      tipsPage(`${good}\n- And more.\n`),
+      /the tip "### Name the setting" holds more than a line and a figure/,
+    );
+    await rejects(
+      tipsPage(good.replace(`${fence('Instant')}`, `${fence('Instant')}\n\n${fence('OnSubmit')}`)),
+      /the tip "### Apply at once" has a second figure/,
+    );
+    await rejects(
+      tipsPage(good.replace('A switch applies as it turns.\n\n', '')),
+      /the tip "### Apply at once" needs its one line before its figure/,
+    );
+    await rejects(
+      tipsPage(
+        good.replace('### Name the setting', '### Name the setting it turns on and off, in words'),
+      ),
+      /has a title of 46 characters/,
+    );
+    await rejects(
+      tipsPage(good.replace('### Name the setting', '### Name the setting.')),
+      /leave out its full stop/,
+    );
+    await rejects(
+      tipsPage(good.replace(fence('Instant'), fence('Instant', ' wide'))),
+      /figure Instant in a tip takes no wide/,
+    );
+    await rejects(
+      tipsPage(good).replace(
+        '  Instant: do',
+        '  Instant:\n    role: do\n    caption: Applies at once.',
+      ),
+      /figure Instant has a caption, but its tip's title and line say what it shows/,
     );
     await rejects(
       frontmatter + body.replace('# Switch\n\n', '# Switch\n\nAn intro.\n\n'),
@@ -405,7 +464,7 @@ test('the build fails a page that is not in the one-file structure', async () =>
         "    caption: Don't use a switch in a form that applies on submit.\n",
         '',
       ) + body,
-      /gives the dont figure OnSubmit no caption, its rule/,
+      /dont OnSubmit needs a caption, one sentence, its rule/,
     );
     await rejects(
       frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    width: 30') +
@@ -1251,12 +1310,7 @@ test('a page ships the whole file, in its order, with code once', () => {
   // The frontmatter lists every example once, with its role and caption, and what to use instead.
   assert.ok(hasLine(button, 'examples: # Each file is examples/button/<Name>.tsx.'));
   assert.ok(hasLine(button, '  CreateProject: overview'));
-  assert.ok(
-    hasLine(
-      button,
-      '  OnePrimaryAction: { role: do, caption: "One primary button per group, at the end of its actions." }',
-    ),
-  );
+  assert.ok(hasLine(button, '  OnePrimaryAction: do'));
   assert.ok(hasLine(button, 'avoidWhen:'));
   assert.ok(compiled.has('examples/button/CreateProject.tsx'));
   // The sections in the catalogue's order, the plain ones first and Compose last, then the props.
@@ -1265,18 +1319,14 @@ test('a page ships the whole file, in its order, with code once', () => {
     'Variants',
     'Anatomy',
     'Behaviour',
-    'Rules',
+    'Tips',
     'Accessibility',
     'Compose',
     'Props',
   ]);
-  // A run of figures is a line that names them; no figure's code ships in the page.
-  assert.ok(
-    hasLine(
-      button,
-      "Examples: OnePrimaryAction (do), SeveralPrimaryActions (don't), ExplainWhatIsMissing (do), DisabledUntilValid (don't).",
-    ),
-  );
+  // A figure is a line that names it, a tip's under its line; no figure's code ships in the page.
+  assert.ok(hasLine(button, "Example: DisabledUntilValid (don't)."));
+  assert.ok(hasLine(button, '### Explain instead of disabling'));
   assert.doesNotMatch(button, /^`{3,}tsx (?:figure|example|do|dont|anatomy|variants)=/m);
   assert.ok(hasLine(button, '1. **Container** (`env-button`)'));
   assert.ok(hasLine(button, '### You provide'));

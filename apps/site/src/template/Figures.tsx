@@ -14,6 +14,8 @@ import { InteractiveMark } from './InteractiveMark';
 import { Specimen, SpecimenRender } from './Specimen';
 import { VerdictMotion } from '../previews/MotionStage';
 import { foundationFigure } from '../previews/foundations/FoundationFigures';
+import { TipList, tipsOf } from './Tips';
+import { headingSlugger } from '../shared/SearchAnchors';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
@@ -262,6 +264,26 @@ export function FigureSection({
   const first = blocks[0];
   const [title, ...intro] = first?.kind === 'markdown' ? first.markdown.split('\n') : [''];
   if (first?.kind === 'markdown') blocks[0] = { kind: 'markdown', markdown: intro.join('\n') };
+  // Tips: a list of tips in a centred column, after the section's lead and `lead`.
+  const tips = section.id === 'rules' ? tipsOf(blocks) : undefined;
+  if (tips) {
+    const opening = leadParagraph(tips.lead);
+    return (
+      <section className="site-figure-section" data-section={section.id}>
+        {/* Titled Tips, at the anchor of the title it is written with: a page not yet rewritten as
+            tips keeps its links to #rules. */}
+        <div className="site-figure-section-heading">
+          <h2 id={headingSlugger()(title.replace(/^#+\s*/, ''))}>Tips</h2>
+        </div>
+        {opening && (
+          <Documentation markdown={opening[0]} path={reference.path} className="site-lead" />
+        )}
+        {lead}
+        {opening?.[1].trim() && <SiteMarkdown markdown={opening[1]} path={reference.path} />}
+        <TipList reference={reference} tips={tips.tips} />
+      </section>
+    );
+  }
   // An option table right after a variants figure is the figure's legend: each variant's name in
   // the tag its callout shows, followed by what it is for.
   const options = new Map<string, OptionTable>();
