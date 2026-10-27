@@ -85,8 +85,10 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
  * at a width, such as opening a sheet at the narrow end, driven by a useTimeline step or a cue.
  * `classes` names the window class beside the width, for an example that changes at one, or in
  * its place with `'only'`, on a page that shows no lengths, such as a foundation's; `fit` draws the
- * frame smaller where it must, to 0.6, to reach its widest width on the stage; and `ruler={false}`
- * leaves the ruler out, for a figure whose point isn't the width in numbers.
+ * frame smaller where it must, to 0.6, to reach its widest width on the stage; `ruler={false}`
+ * leaves the ruler out, for a figure whose point isn't the width in numbers; and `outline={false}`
+ * leaves the frame's dashed edge out too, for a figure that only needs a width of its own, drawn
+ * smaller on a narrower stage, such as a dock with room for two panels.
  */
 export function WidthSweep({
   widths,
@@ -95,6 +97,7 @@ export function WidthSweep({
   classes = false,
   fit = false,
   ruler: showRuler = true,
+  outline = true,
   children,
 }: {
   widths: readonly number[];
@@ -103,6 +106,7 @@ export function WidthSweep({
   classes?: boolean | 'only';
   fit?: boolean;
   ruler?: boolean;
+  outline?: boolean;
   children: ReactNode;
 }) {
   const { playing, rest } = usePlayback();
@@ -254,7 +258,11 @@ export function WidthSweep({
           </div>
         )}
         <div className="catalogue-width-sweep-room">
-          <div ref={frame} className="catalogue-width-sweep-frame">
+          <div
+            ref={frame}
+            className="catalogue-width-sweep-frame"
+            data-outline={outline ? undefined : 'none'}
+          >
             {children}
           </div>
         </div>

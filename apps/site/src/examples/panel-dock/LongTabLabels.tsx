@@ -11,7 +11,7 @@ export default function LongTabLabels() {
     <Surface
       background="muted"
       padding={0}
-      style={{ position: 'relative', blockSize: '8rem', overflow: 'hidden' }}
+      style={{ position: 'relative', blockSize: '3.25rem', overflow: 'hidden' }}
     >
       <PanelDock.Root
         panels={panels}
