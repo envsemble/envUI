@@ -384,82 +384,39 @@
   flex: 1;
 }
 
-/* What each color means: a row for each tone, its name on its own soft fill, what it means, and
-   the tone at work, a word in its text and on its solid fill; a hairline between the rows. */
-.catalogue-tones {
-  container-type: inline-size;
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.catalogue-tones > li {
-  display: grid;
-  grid-template-columns: 7rem minmax(0, 1fr) 14rem;
-  align-items: center;
-  gap: var(--env-space-2) var(--env-space-5);
-  padding-block: var(--env-space-3);
-  border-block-end: 0.0625rem solid var(--env-color-border-muted);
-}
-.catalogue-tones > li:first-child {
-  border-block-start: 0.0625rem solid var(--env-color-border-muted);
-}
-.catalogue-tone-name {
-  justify-self: start;
-  padding: var(--env-space-1) var(--env-space-3);
-  font: var(--env-type-body-small);
-  font-weight: var(--env-font-weight-medium);
-}
-.catalogue-tone-text {
-  margin: 0;
-}
-.catalogue-tone-at-work {
-  display: grid;
-  grid-template-columns: 8rem minmax(0, 1fr);
-  align-items: center;
-  gap: var(--env-space-3);
-  font: var(--env-type-body-small);
-  font-weight: var(--env-font-weight-medium);
+/* What each color means: a card in each tone, at a card's width, a word in the tone's text color
+   with its icon, larger than body text, what the tone means, and its badges. */
+.catalogue-tone-steps {
+  inline-size: min(100%, 26rem);
 }
 .catalogue-tone-word {
   display: inline-flex;
   align-items: center;
   gap: var(--env-space-2);
+  font: var(--env-type-title);
 }
 .catalogue-tone-word > svg {
   flex: none;
-  inline-size: 1.125rem;
-  block-size: 1.125rem;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
 }
-.catalogue-tone-at-work > .env-badge {
-  justify-self: start;
-}
-.catalogue-tone-at-work[data-tone='neutral'] .catalogue-tone-word {
+.catalogue-tone-card[data-tone='neutral'] .catalogue-tone-word {
   color: var(--env-color-fg-muted);
 }
-.catalogue-tone-at-work:is([data-tone='accent'], [data-tone='info']) .catalogue-tone-word {
+.catalogue-tone-card:is([data-tone='accent'], [data-tone='info']) .catalogue-tone-word {
   color: var(--env-color-fg-accent);
 }
-.catalogue-tone-at-work[data-tone='success'] .catalogue-tone-word {
+.catalogue-tone-card[data-tone='success'] .catalogue-tone-word {
   color: var(--env-color-fg-success);
 }
-.catalogue-tone-at-work[data-tone='warning'] .catalogue-tone-word {
+.catalogue-tone-card[data-tone='warning'] .catalogue-tone-word {
   color: var(--env-color-fg-warning);
 }
-.catalogue-tone-at-work[data-tone='danger'] .catalogue-tone-word {
+.catalogue-tone-card[data-tone='danger'] .catalogue-tone-word {
   color: var(--env-color-fg-danger);
 }
-.catalogue-tone-at-work[data-tone='done'] .catalogue-tone-word {
+.catalogue-tone-card[data-tone='done'] .catalogue-tone-word {
   color: var(--env-color-fg-done);
-}
-@container (width < 40rem) {
-  .catalogue-tones > li {
-    grid-template-columns: 6rem minmax(0, 1fr);
-  }
-  .catalogue-tone-at-work {
-    grid-column: 2;
-    justify-self: start;
-  }
 }
 
 /* A shape's name and meaning sit right under its stage, in the run's second row. */
@@ -472,12 +429,12 @@
   inline-size: 100%;
 }
 
-/* The themes figure takes its stage's width, which says whether its control of the four fits. */
-.catalogue-theme-steps {
+/* Your own colors takes its stage's width, which says whether its tiles fit three across. */
+.catalogue-scheme-steps {
   inline-size: 100%;
 }
 
-/* The screen of the themes figure, at a card's width, above its control, with its page's corners. */
+/* The screen of the themes figure, at a card's width, with its page's corners. */
 .catalogue-theme-screen {
   inline-size: min(100%, 25rem);
   border-radius: var(--env-radius-xl);
@@ -487,10 +444,7 @@
    holding tiles of its filled surface, each one component, as Material 3's showcases do: three
    across, the quiet actions and the navigation running down every row; on a narrower figure, as on
    a phone, one under another, the navigation a bar at the foot. The navigation's tile is in the
-   other theme, its own page's color. The scheme control sits below. */
-.catalogue-schemes {
-  inline-size: 100%;
-}
+   other theme, its own page's color. */
 .catalogue-scheme-canvas {
   box-sizing: border-box;
   inline-size: min(100%, 44rem);
@@ -549,23 +503,12 @@
    (ThemeFade.css), parts with transitions of their own too, such as a progress bar's indicator and
    a button's fill, so the canvas changes as one. */
 @media (prefers-reduced-motion: no-preference) {
-  .catalogue-scheme-tiles[data-switching] :is(*, ::before, ::after) {
+  .catalogue-scheme-tiles :is(*, ::before, ::after) {
     transition-property: background-color, border-color, color, outline-color, fill, stroke;
     transition-duration: calc(1.5 * var(--env-motion-duration-slow));
     transition-timing-function: var(--env-motion-ease);
   }
 }
-/* Each scheme's hue on its segment of the control, with a hairline edge. */
-.catalogue-scheme-dot {
-  display: block;
-  flex: none;
-  box-sizing: border-box;
-  inline-size: 0.75rem;
-  block-size: 0.75rem;
-  border: 0.0625rem solid var(--env-color-border-muted);
-  border-radius: var(--env-radius-full);
-}
-
 /* An animated figure's states stacked in one place (Steps.tsx): the place is as large as the
    largest, and only the current one shows, so the figure keeps one height. */
 .catalogue-step-stack {

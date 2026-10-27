@@ -40,9 +40,10 @@ import { Share } from '@envsemble/envui/icons/Share';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { Tune } from '@envsemble/envui/icons/Tune';
 import { Warning } from '@envsemble/envui/icons/Warning';
-import { usePointer, type PointerStep } from '../Motion';
+import { useTimeline } from '../Motion';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
+import { CornerLabel, StepStack } from './Steps';
 import { Figure } from './Topic';
 import type { LegendEntry } from './Topic';
 
@@ -233,58 +234,8 @@ const themes: readonly { theme: ThemeValue; contrast: ThemeContrast }[] = [
   { theme: 'dark', contrast: 'high' },
 ];
 
-/** A segment of a theme control, by its place from 1. */
-const segment = (index: number, control = 'catalogue-theme-pick') =>
-  `.${control} .env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
-
-/** The pointer's choice of a segment, a little after it comes there. */
-const choose = (target: string, duration = 500): PointerStep[] => [
-  { wait: 3300 },
-  { to: target, duration },
-  { wait: 200 },
-  { click: true },
-];
-
-/*
- * The pointer chooses each theme in turn, about two and a half seconds apart, and Light again,
- * then leaves: the loop starts again from Light. On one control of the four, in the legend's
- * order, each theme beside its high contrast; where those don't fit, as on a phone, on a control
- * of the theme and one of the contrast, one press a step: high contrast, then Dark, then standard
- * contrast, then Light again.
- */
-const themeScripts: Record<'four' | 'pair', PointerStep[]> = {
-  four: [
-    { wait: 1500 },
-    { to: segment(2) },
-    { wait: 300 },
-    { click: true },
-    ...choose(segment(3)),
-    ...choose(segment(4)),
-    ...choose(segment(1), 700),
-    { wait: 3300 },
-    { leave: true },
-  ],
-  pair: [
-    { wait: 1500 },
-    { to: segment(2, 'catalogue-contrast-pick') },
-    { wait: 300 },
-    { click: true },
-    ...choose(segment(2)),
-    ...choose(segment(1, 'catalogue-contrast-pick')),
-    ...choose(segment(1)),
-    { wait: 3300 },
-    { leave: true },
-  ],
-};
-
-/** The narrowest the figure shows the control of the four in, in rem. */
-const fourWidth = 30;
-
-/**
- * Whether the figure is narrower than a width in rem, by default the width the control of the four
- * needs, by the width of its element.
- */
-function useNarrow(width = fourWidth) {
+/** Whether the figure is narrower than a width in rem, by the width of its element. */
+function useNarrow(width: number) {
   const ref = useRef<HTMLDivElement>(null);
   const [narrow, setNarrow] = useState(false);
   useEffect(() => {
@@ -300,36 +251,20 @@ function useNarrow(width = fourWidth) {
   return [ref, narrow] as const;
 }
 
+/** How long the screen stays in each theme, in ms. */
+const themeStep = 2200;
+
 /**
- * One screen above a control of the four themes, each chosen in turn by the pointer: the screen
- * eases into each, its page, surface, filled card, text, meter, badge and buttons alike. Where the
- * four don't fit, the control is two: the theme, and the contrast.
+ * One screen in each theme in turn, in the legend's order, each theme beside its high contrast,
+ * named in the corner: the screen eases into each, its page, surface, filled card, text, meter,
+ * badge and buttons alike.
  */
 function ThemeSteps({ names }: { names: readonly string[] }) {
-  const [ref, narrow] = useNarrow();
+  const step = useTimeline(themes.map(() => themeStep));
+  const { theme, contrast } = themes[step] ?? themes[0]!;
   return (
-    <div ref={ref} className="catalogue-theme-steps">
-      <ThemeChoice key={narrow ? 'pair' : 'four'} names={names} pair={narrow} />
-    </div>
-  );
-}
-
-/** The screen in the chosen theme, and the control or controls the pointer chooses it on. */
-function ThemeChoice({ names, pair }: { names: readonly string[]; pair: boolean }) {
-  const [chosen, setChosen] = useState('0');
-  usePointer(themeScripts[pair ? 'pair' : 'four']);
-  const { theme, contrast } = themes[Number(chosen)]!;
-  const pick = (next: Partial<(typeof themes)[number]>) =>
-    setChosen(
-      String(
-        themes.findIndex(
-          (item) =>
-            item.theme === (next.theme ?? theme) && item.contrast === (next.contrast ?? contrast),
-        ),
-      ),
-    );
-  return (
-    <Column gap={5} align="center">
+    <>
+      <CornerLabel>{names[step]}</CornerLabel>
       <Theme theme={theme} contrast={contrast} className="catalogue-theme-screen">
         <Surface background="page" padding={4} radius="xl">
           <Surface background="default" padding={5} radius="xl" render={<Column gap={4} />}>
@@ -352,53 +287,14 @@ function ThemeChoice({ names, pair }: { names: readonly string[]; pair: boolean 
           </Surface>
         </Surface>
       </Theme>
-      {pair ? (
-        <Row wrap justify="center" gap={3}>
-          <SegmentedControl
-            aria-label="Theme"
-            size="sm"
-            className="catalogue-theme-pick"
-            value={theme}
-            onValueChange={(next) => pick({ theme: next as ThemeValue })}
-            items={[
-              { value: 'light', label: names[0] },
-              { value: 'dark', label: names[2] },
-            ]}
-          />
-          <SegmentedControl
-            aria-label="Contrast"
-            size="sm"
-            className="catalogue-contrast-pick"
-            value={contrast}
-            onValueChange={(next) => pick({ contrast: next as ThemeContrast })}
-            items={[
-              { value: 'standard', label: 'Standard' },
-              { value: 'high', label: 'High contrast' },
-            ]}
-          />
-        </Row>
-      ) : (
-        <SegmentedControl
-          aria-label="Theme"
-          size="sm"
-          className="catalogue-theme-pick"
-          value={chosen}
-          onValueChange={setChosen}
-          items={names.map((name, index) => ({ value: String(index), label: name }))}
-        />
-      )}
-    </Column>
+    </>
   );
 }
 
-/** One screen stepping through each theme and contrast, chosen on a control below it. */
+/** One screen stepping through each theme and contrast, the one shown named in the corner. */
 function ThemesFigure({ legend }: FigureWords) {
   return (
-    <Figure
-      label="One screen in each theme"
-      motion="the screen in each theme"
-      className="catalogue-themes-stage"
-    >
+    <Figure label="One screen in each theme" motion="the screen in each theme">
       <ThemeSteps names={legend.map((entry) => entry.name)} />
     </Figure>
   );
@@ -437,37 +333,65 @@ const tones: readonly {
   { badge: 'done', icon: <TaskAlt />, word: 'Completed' },
 ];
 
+/** How long the card stays in each tone, in ms. */
+const toneStep = 1800;
+
 /**
- * The tones as a list on the page, one row each: the tone's name on its own soft fill, what it
- * means, and the tone at work, a word in its text color and on its solid fill, so the tones compare
- * down the page.
+ * One card in each tone in turn, in the legend's order, the tone named in the corner: a word in
+ * the tone's text color with its icon, what the tone means, and the tone's soft and solid badges.
+ * The cards are stacked in one place, so the figure keeps the height of the tallest.
  */
+function StatusSteps({ legend }: FigureWords) {
+  const step = useTimeline(legend.map(() => toneStep));
+  return (
+    <>
+      <CornerLabel>{legend[step]?.name}</CornerLabel>
+      <StepStack
+        className="catalogue-tone-steps"
+        count={legend.length}
+        at={step}
+        render={(index) => {
+          const tone = tones[index] ?? tones[0]!;
+          return (
+            <Surface
+              background="default"
+              padding={6}
+              radius="xl"
+              className="catalogue-tone-card"
+              data-tone={tone.badge ?? 'info'}
+              render={<Column gap={4} />}
+            >
+              <Column gap={2}>
+                <span className="catalogue-tone-word">
+                  {tone.icon}
+                  {tone.word}
+                </span>
+                <Text render={<p />} emphasis="muted">
+                  {legend[index]?.text}
+                </Text>
+              </Column>
+              <Row gap={3} wrap>
+                <Badge tone={tone.badge ?? 'accent'} style={tone.soft}>
+                  {tone.word}
+                </Badge>
+                <Badge tone={tone.badge ?? 'accent'} variant="solid" style={tone.solid}>
+                  {tone.word}
+                </Badge>
+              </Row>
+            </Surface>
+          );
+        }}
+      />
+    </>
+  );
+}
+
+/** The card in each tone, on an animated figure. */
 function StatusFigure({ legend }: FigureWords) {
   return (
-    <ul className="catalogue-tones" aria-label="Each tone at work">
-      {legend.map((entry, index) => {
-        const tone = tones[index] ?? tones[0]!;
-        return (
-          <li key={entry.name}>
-            <Badge tone={tone.badge ?? 'accent'} style={tone.soft} className="catalogue-tone-name">
-              {entry.name}
-            </Badge>
-            <Text render={<p />} emphasis="muted" className="catalogue-tone-text">
-              {entry.text}
-            </Text>
-            <span className="catalogue-tone-at-work" data-tone={tone.badge ?? 'info'}>
-              <span className="catalogue-tone-word">
-                {tone.icon}
-                {tone.word}
-              </span>
-              <Badge tone={tone.badge ?? 'accent'} variant="solid" style={tone.solid}>
-                {tone.word}
-              </Badge>
-            </span>
-          </li>
-        );
-      })}
-    </ul>
+    <Figure label="What each color means" motion="the card in each tone">
+      <StatusSteps legend={legend} />
+    </Figure>
   );
 }
 
@@ -604,65 +528,21 @@ function SchemeArea({
   );
 }
 
-/** A segment of the scheme control, by its place from 1. */
-const schemeSegment = (index: number) => segment(index, 'catalogue-scheme-pick');
-
-/**
- * The pointer chooses each scheme in turn, and the components ease into it: in the second, it
- * rests on the main action and presses it, so its hover and press show in the scheme's own colors;
- * in the third, it rests on a quiet action. It chooses the first again and leaves, as it began.
- */
-const schemeScript: PointerStep[] = [
-  { wait: 1400 },
-  { to: schemeSegment(2) },
-  { wait: 200 },
-  { click: true },
-  { wait: 900 },
-  { to: '.catalogue-scheme-fab', duration: 650 },
-  { wait: 600 },
-  { press: true },
-  { wait: 260 },
-  { release: true },
-  { wait: 700 },
-  { to: schemeSegment(3), duration: 650 },
-  { wait: 200 },
-  { click: true },
-  { wait: 900 },
-  { to: '.catalogue-scheme-share', duration: 600 },
-  { wait: 1100 },
-  { to: schemeSegment(1), duration: 650 },
-  { wait: 200 },
-  { click: true },
-  { wait: 1800 },
-  { leave: true },
-];
+/** How long the components stay in each scheme, in ms. */
+const schemeStep = 1700;
 
 /**
  * The same components in a scheme of the application's own, each on a tile of the scheme's filled
  * surface, as one canvas: a column of quiet actions above the main one, a photo's toolbar beside
- * its save action, a choice of view, two uploads and, in the other theme, the navigation. Below
- * it, a control of the schemes, which the pointer chooses in turn.
+ * its save action, a choice of view, two uploads and, in the other theme, the navigation. It
+ * steps through the schemes, the one shown named in the corner.
  */
 function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boolean }) {
   const page = useTheme();
   const other: ThemeValue = page.theme === 'dark' ? 'light' : 'dark';
-  const [chosen, setChosen] = useState('0');
-  // While a new scheme eases in, every part's colors fade together, its own transitions included:
-  // the scheme and the fade change in one render.
-  const [switching, setSwitching] = useState(false);
-  useEffect(() => {
-    if (!switching) return;
-    const timer = setTimeout(() => setSwitching(false), 800);
-    return () => clearTimeout(timer);
-  }, [switching, chosen]);
-  const choose = (next: string) => {
-    setSwitching(true);
-    setChosen(next);
-  };
+  const scheme = useTimeline(schemes.map(() => schemeStep));
   const [period, setPeriod] = useState('month');
   const [place, setPlace] = useState('photos');
-  usePointer(schemeScript);
-  const scheme = Number(chosen);
   const destination = (id: string) => ({ current: place === id, onSelect: () => setPlace(id) });
   const destinations: Destination[] = [
     { label: 'Photos', icon: <PhotoLibrary />, ...destination('photos') },
@@ -676,34 +556,19 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
     <Button key="add" variant="secondary" startIcon={<AddPhotoAlternate />}>
       Add photos
     </Button>,
-    <Button
-      key="share"
-      variant="secondary"
-      startIcon={<Share />}
-      className="catalogue-scheme-share"
-    >
+    <Button key="share" variant="secondary" startIcon={<Share />}>
       Share
     </Button>,
     <Button key="search" variant="secondary" startIcon={<Search />}>
       Search
     </Button>,
-    <IconButton
-      key="new"
-      variant="primary"
-      size="lg"
-      icon={<Add />}
-      aria-label="New album"
-      className="catalogue-scheme-fab"
-    />,
+    <IconButton key="new" variant="primary" size="lg" icon={<Add />} aria-label="New album" />,
   ];
   return (
-    <Column gap={5} align="center" className="catalogue-schemes">
+    <>
+      <CornerLabel>{names[scheme]}</CornerLabel>
       <SchemeArea scheme={scheme} theme={page.theme} className="catalogue-scheme-canvas">
-        <div
-          className="catalogue-scheme-tiles"
-          data-narrow={narrow || undefined}
-          data-switching={switching || undefined}
-        >
+        <div className="catalogue-scheme-tiles" data-narrow={narrow || undefined}>
           <Surface
             background="muted"
             radius="xl"
@@ -794,25 +659,7 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
           </SchemeArea>
         </div>
       </SchemeArea>
-      <SegmentedControl
-        aria-label="Color scheme"
-        size="sm"
-        className="catalogue-scheme-pick"
-        value={chosen}
-        onValueChange={choose}
-        items={names.map((name, index) => ({
-          value: String(index),
-          label: name,
-          // Each scheme's hue beside its name, where the control has room.
-          icon: narrow ? undefined : (
-            <span
-              className="catalogue-scheme-dot"
-              style={{ background: oklch(0.8, 0.09, schemes[index]?.hue ?? 0) }}
-            />
-          ),
-        }))}
-      />
-    </Column>
+    </>
   );
 }
 
@@ -835,7 +682,7 @@ const schemesWidth = 30;
 function SchemeSteps({ names }: { names: readonly string[] }) {
   const [ref, narrow] = useNarrow(schemesWidth);
   return (
-    <div ref={ref} className="catalogue-theme-steps">
+    <div ref={ref} className="catalogue-scheme-steps">
       <SchemeChoice key={narrow ? 'narrow' : 'wide'} names={names} narrow={narrow} />
     </div>
   );
@@ -846,6 +693,6 @@ export const colorsFigures: Record<string, FoundationFigure> = {
   Roles: { render: RolesFigure, wide: true },
   Swatches: { render: SwatchesFigure, wide: true },
   Themes: { render: ThemesFigure },
-  Status: { render: StatusFigure, wide: true },
+  Status: { render: StatusFigure },
   OwnColors: { render: OwnColorsFigure, wide: true },
 };
