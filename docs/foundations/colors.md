@@ -54,12 +54,12 @@ Each part of a screen takes a role, never a color of its own; the theme gives ev
 
 ```
 
-1. **Page**: Behind everything.
-2. **Surface**: Panes, dialogs and menus.
-3. **Filled card**: A group inside a surface.
-4. **Text**: Headings and the main words.
-5. **Supporting text**: Details, captions and hints.
-6. **Accent**: The main action, links and what is selected.
+1. **Page**
+2. **Surface**
+3. **Filled card**
+4. **Text**
+5. **Supporting text**
+6. **Accent**
 
 ### Every role in this theme
 
@@ -81,14 +81,6 @@ A tone means the same on every component.
 ```tsx figure=Status
 
 ```
-
-1. **Neutral**: No particular state, and most actions.
-2. **Accent**: What is current or highlighted.
-3. **Info**: Something to know, neither good nor bad.
-4. **Success**: Healthy, ready or saved.
-5. **Warning**: Needs attention soon.
-6. **Danger**: Failed, or an action that destroys something.
-7. **Done**: Completed work.
 
 ### Your own colors
 
@@ -154,12 +146,12 @@ function ThemeLabel() {
 
 The Design tokens page of the Docs lists every value in each theme, and this guide ends with the palette, which shows each role's value in the theme you are reading in and lets you try another.
 
-- **Page**: `--env-color-bg-page`, the document's background.
-- **Surface**: `--env-color-bg-default`: Surface's `background="default"`, dialogs, menus and popups.
-- **Filled card**: `--env-color-bg-muted`: a Card's fill, `background="muted"`, and tab rails.
-- **Text**: `--env-color-fg-default`, Text's default.
-- **Supporting text**: `--env-color-fg-muted`: `emphasis="muted"` on Text, captions, hints and icons.
-- **Accent**: `--env-color-bg-brand-emphasis`, the primary button's fill; `--env-color-fg-accent` and `fg-link` in text.
+- **Page**: `--env-color-bg-page`, the document's background, behind everything.
+- **Surface**: `--env-color-bg-default`: Surface's `background="default"`, panes, dialogs, menus and popups.
+- **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, and tab rails.
+- **Text**: `--env-color-fg-default`, Text's default, for headings and the main words.
+- **Supporting text**: `--env-color-fg-muted`: `emphasis="muted"` on Text, details, captions, hints and icons.
+- **Accent**: `--env-color-bg-brand-emphasis`, the main action's fill; `--env-color-fg-accent` and `fg-link` in text, such as links and what is selected.
 - **Edges**: `--env-color-border-default`, the outline of fields and outline buttons.
 - **Selected**: `--env-color-bg-selected` with `--env-color-fg-on-selected`.
 
@@ -167,16 +159,17 @@ The Design tokens page of the Docs lists every value in each theme, and this gui
 
 Status icons, short status text and badges share these tokens, at least 4.5:1 on the page, surfaces and rows in both themes, and 7:1 at high contrast.
 
-| Token                            | Meaning                                         |
-| -------------------------------- | ----------------------------------------------- |
-| `--env-color-fg-muted`           | No particular state, such as archived           |
-| `--env-color-fg-accent`          | The current or highlighted state                |
-| `--env-color-fg-success`         | Healthy or ready                                |
-| `--env-color-fg-warning`         | Needs attention                                 |
-| `--env-color-fg-danger`          | Failed or destructive                           |
-| `--env-color-fg-done`            | Completed work                                  |
-| `--env-color-bg-{tone}-muted`    | The tone's tint behind badges and alerts        |
-| `--env-color-bg-{tone}-emphasis` | A solid fill in the tone, with `fg-on-emphasis` |
+| Token                            | Meaning                                                             |
+| -------------------------------- | ------------------------------------------------------------------- |
+| `--env-color-fg-muted`           | Neutral: no particular state, such as archived, and most actions    |
+| `--env-color-fg-accent`          | Accent: what is current or highlighted                              |
+| `--env-color-bg-info-strong`     | Info, an info toast's fill: something to know, neither good nor bad |
+| `--env-color-fg-success`         | Success: healthy, ready or saved                                    |
+| `--env-color-fg-warning`         | Warning: needs attention soon                                       |
+| `--env-color-fg-danger`          | Danger: failed, or an action that destroys something                |
+| `--env-color-fg-done`            | Done: completed work                                                |
+| `--env-color-bg-{tone}-muted`    | The tone's tint behind badges and alerts                            |
+| `--env-color-bg-{tone}-emphasis` | A solid fill in the tone, with `fg-on-emphasis`                     |
 
 ```css
 .work-status[data-status='blocked'] {

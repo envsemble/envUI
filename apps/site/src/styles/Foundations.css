@@ -303,37 +303,56 @@
   inline-size: min(22rem, 100%);
 }
 
-/* Colors are roles: a small screen with an anatomy figure's callouts, each callout and legend
-   entry a role's tag, its number beside a swatch of its color. */
-.catalogue-roles-stage .catalogue-marked-subject {
-  inline-size: min(100%, 24rem);
+/* Colors are roles: a small screen whose parts are named in one column at its end, each name
+   after a swatch of the role's color (Marks.tsx, named): the screen and the column centred
+   together, the names on the stage's flow so it is as wide as they need. */
+.catalogue-roles-frame {
+  inline-size: 100%;
 }
 .catalogue-roles {
   inline-size: 100%;
 }
-/* The tags in one column at the screen's end, outside it, the two centred together, on a phone
-   too. */
 .catalogue-marked-stage.catalogue-roles-stage {
   padding-inline: var(--env-space-5);
 }
-.catalogue-roles-stage .catalogue-marked {
-  padding-inline-end: 4.5rem;
+.catalogue-marked[data-named] {
+  grid-template-columns: minmax(0, 24rem) auto;
+  justify-content: center;
+  justify-items: stretch;
+  align-items: start;
 }
-.catalogue-role-tag {
+.site-anatomy-lines polyline {
+  fill: none;
+  stroke: var(--env-color-fg-muted);
+  stroke-width: 1px;
+}
+.catalogue-marked-names {
+  display: grid;
+  margin: 0;
+  margin-inline-start: var(--env-space-8);
+  padding: 0;
+  list-style: none;
+}
+.catalogue-marked-names > li {
+  position: relative;
+  grid-area: 1 / 1;
+  translate: 0 -50%;
+}
+.catalogue-role-name {
   display: inline-flex;
   align-items: center;
-  gap: var(--env-space-1);
+  gap: var(--env-space-2);
+  white-space: nowrap;
 }
-.catalogue-marked-tag {
-  position: absolute;
-  translate: 0 -50%;
-  pointer-events: none;
-}
-.catalogue-marked-tag[data-side='start'] {
-  translate: -100% -50%;
-}
-.catalogue-marked-tag[data-side='start'] > .catalogue-role-tag {
-  flex-direction: row-reverse;
+/* On a phone a name may wrap, after its swatch. */
+.catalogue-roles-frame[data-narrow] {
+  .catalogue-marked-names {
+    margin-inline-start: var(--env-space-6);
+  }
+  .catalogue-role-name {
+    max-inline-size: 7.5rem;
+    white-space: normal;
+  }
 }
 
 /* The color roles as swatches, on the page: four even columns of six, two on a narrower page and
@@ -429,19 +448,6 @@
     flex-basis: 100%;
   }
 }
-/* Its legend: each tone's name after a swatch of the tone's color, two columns where they fit. */
-.site-anatomy-legend.catalogue-tone-legend {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
-  gap: var(--env-space-4) var(--env-space-6);
-}
-.site-anatomy-legend.catalogue-tone-legend > li {
-  gap: var(--env-space-3);
-}
-/* The swatch, an icon's size, centred on the name's line. */
-.catalogue-tone-legend > li > .env-color-swatch {
-  margin-block-start: calc((1lh - 1rem) / 2);
-}
-
 /* A shape's name and meaning sit right under its stage, in the run's second row. */
 .site-figure-run > .site-topic-figure > figcaption {
   grid-row: 2;
