@@ -59,7 +59,7 @@ export function MotionStage({
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
-  useTallest(stage, height);
+  useTallest(stage, subject, height);
   const paused = own && own.over === motionPaused ? own.paused : motionPaused;
   const action = paused ? `Play ${label}` : `Pause ${label}`;
   return (
@@ -99,52 +99,60 @@ export function MotionStage({
 }
 
 /**
- * Keeps an animated figure's stage at the tallest height it has reached at its width, at least
- * `height`: what grows as the figure plays, such as a message that wraps or a list that gains a
- * row, then grows the stage once, and its loop back leaves the stage as it is, so the page below
- * stays put. At another width the stage measures afresh.
+ * Keeps an animated figure's stage at the tallest height its figure has reached at its width, at
+ * least `height`: what grows as the figure plays, such as a message that wraps or a list that gains
+ * a row, then grows the stage once, and its loop back leaves the stage as it is, so the page below
+ * stays put. At another width the stage measures afresh. It measures the figure, not the stage,
+ * whose own height the hold sets: Firefox lays a stage out a little taller than its min-height,
+ * which measured again would grow it without end.
  */
-function useTallest(stage: RefObject<HTMLDivElement | null>, height: string | undefined) {
+function useTallest(
+  stage: RefObject<HTMLDivElement | null>,
+  subject: HTMLDivElement | null,
+  height: string | undefined,
+) {
   useEffect(() => {
     const element = stage.current;
-    if (!element) return;
+    if (!element || !subject) return;
     const own = height ?? '';
     let width = -1;
-    // The tallest border box so far, and its min-height, which counts what the box's sizing
-    // counts: without its padding and borders, by default.
+    // The tallest the figure has been so far, its border box.
     let tallest = 0;
-    const hold = (border: number) => {
-      tallest = border;
-      if (!border) {
+    const hold = (figure: number) => {
+      tallest = figure;
+      if (!figure) {
         element.style.minBlockSize = own;
         return;
       }
+      // The stage's min-height counts what its sizing counts: its padding and borders too where
+      // it is sized by its border box.
       const style = getComputedStyle(element);
       const frame =
         style.boxSizing === 'border-box'
-          ? 0
-          : parseFloat(style.paddingBlockStart) +
+          ? parseFloat(style.paddingBlockStart) +
             parseFloat(style.paddingBlockEnd) +
             parseFloat(style.borderBlockStartWidth) +
-            parseFloat(style.borderBlockEndWidth);
-      element.style.minBlockSize = `max(${height ?? '0px'}, ${border - frame}px)`;
+            parseFloat(style.borderBlockEndWidth)
+          : 0;
+      element.style.minBlockSize = `max(${height ?? '0px'}, ${figure + frame}px)`;
     };
-    const observer = new ResizeObserver(([entry]) => {
-      const box = entry?.borderBoxSize[0];
-      if (!box) return;
-      if (Math.abs(box.inlineSize - width) > 0.5) {
+    const observer = new ResizeObserver(() => {
+      const stageWidth = element.getBoundingClientRect().width;
+      const figure = subject.getBoundingClientRect().height;
+      if (Math.abs(stageWidth - width) > 0.5) {
         // At a new width the figure lays out anew: it starts again from the height it has now.
-        width = box.inlineSize;
+        width = stageWidth;
         hold(0);
-        hold(element.getBoundingClientRect().height);
-      } else if (box.blockSize > tallest + 0.5) hold(box.blockSize);
+        hold(subject.getBoundingClientRect().height);
+      } else if (figure > tallest + 0.5) hold(figure);
     });
-    observer.observe(element, { box: 'border-box' });
+    observer.observe(element);
+    observer.observe(subject);
     return () => {
       observer.disconnect();
       element.style.minBlockSize = own;
     };
-  }, [stage, height]);
+  }, [stage, subject, height]);
 }
 
 /**
