@@ -96,6 +96,7 @@ A sheet has a dialog's surface, title, description and actions.
 
 - On a touch screen a swipe toward its edge closes it too.
 - A mouse or a pen never moves the sheet, and a drag inside it selects text.
+- In a sheet too short for all it holds, its content scrolls between the title and the actions, which stay in view.
 
 ### Inspector beside the page
 
@@ -234,7 +235,7 @@ The close button is an IconButton named by `closeLabel`, which `closeButton={fal
 
 ### Customize
 
-A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title, `env-dialog-title`, and the close button; the description, `env-dialog-description`; and the actions, `env-dialog-actions`. The panel is `env-sheet-popup`, the scrim behind a modal sheet `env-sheet-backdrop` and the handle on a resizable sheet's inner edge `env-sheet-resize-handle`, the same grip as Panes.Divider's.
+A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title, `env-dialog-title`, and the close button; the description, `env-dialog-description`; and the actions, `env-dialog-actions`. The panel is `env-sheet-popup`, its content, which scrolls between the heading and the actions, `env-sheet-body`, the scrim behind a modal sheet `env-sheet-backdrop` and the handle on a resizable sheet's inner edge `env-sheet-resize-handle`, the same grip as Panes.Divider's.
 
 ## Changelog
 

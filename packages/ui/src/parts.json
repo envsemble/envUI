@@ -668,6 +668,7 @@
     },
     "Sheet": {
       "env-sheet-popup": "The sheet.",
+      "env-sheet-body": "The sheet's content, which scrolls between the heading and the actions.",
       "env-sheet-backdrop": "The backdrop behind a modal sheet.",
       "env-sheet-viewport": "The viewport the sheet slides in from, at its edge.",
       "env-sheet-resize-handle": "The handle on a resizable side sheet's inner edge, a separator that resizes it."

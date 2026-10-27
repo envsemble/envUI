@@ -32,10 +32,33 @@
   --env-sheet-swipe-x: var(--drawer-swipe-movement-x, 0rem);
   --env-sheet-swipe-y: var(--drawer-swipe-movement-y, 0rem);
   box-sizing: border-box;
+  /* A column of its heading, body and actions, no taller than the sheet (below). */
+  display: flex;
+  flex-direction: column;
   max-block-size: none;
   outline: none;
   transform: translate(var(--env-sheet-swipe-x), var(--env-sheet-swipe-y));
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+/* Its heading, body and actions stack in a column no taller than the sheet: the body scrolls on its
+   own, so the heading and the actions stay in view in a sheet too short for all it holds. The body
+   reaches a little past the column on every side, into the gaps around it, so a focus ring at its
+   edge isn't cut off. */
+.env-sheet-popup > .env-dialog-content {
+  flex: 0 1 auto;
+  min-block-size: 0;
+}
+.env-sheet-popup > .env-dialog-content > :not(.env-sheet-body),
+.env-sheet-body > * {
+  flex-shrink: 0;
+}
+.env-sheet-body {
+  flex: 0 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: calc(-1 * var(--env-space-1));
+  padding: var(--env-space-1);
 }
 /* A side sheet: as tall as the window, and in a compact window as wide as it, with no border and
    clear of the safe areas on both sides, such as a phone's rounded corners in landscape. */
@@ -100,9 +123,8 @@
    width, but never wider than the window, with an edge on its inner side. Its content runs the
    sheet's full height and holds the resize handle (ResizeHandle.css), the same handle as between
    Panes: as wide as their gap, inside the inner edge over the padding, a grip at its middle and
-   never a line. It runs down the whole sheet and scrolls along with the content, so it stays as
-   tall as the sheet, and its grip sticks to the middle of the sheet's height as the content
-   scrolls. Under a coarse pointer it is as wide as the padding, a touch target that leaves the
+   never a line. It runs down the whole sheet, so it stays as tall as the sheet, and its grip sticks
+   to the middle of the sheet's height should the sheet itself scroll. Under a coarse pointer it is as wide as the padding, a touch target that leaves the
    content alone. */
 .env-sheet-popup[data-resizable]:is([data-side='start'], [data-side='end']) {
   --env-sheet-padding-inline: max(

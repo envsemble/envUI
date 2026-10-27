@@ -14,6 +14,7 @@ import {
   type ReactNode,
 } from 'react';
 import { IconButton } from '../actions/Button.js';
+import { Column } from '../foundations/Layout.js';
 import { Close } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
@@ -383,11 +384,17 @@ export function Sheet({
                       ) : undefined
                     }
                   />
-                  {children}
+                  {/* The body scrolls on its own, so the heading and the actions stay in view in
+                      a sheet too short for all it holds. */}
+                  {children != null && (
+                    <Column gap={5} className="env-sheet-body">
+                      {children}
+                    </Column>
+                  )}
                   {actions != null && <DialogActions>{actions}</DialogActions>}
                   {resizable && (
-                    // On the content, which runs the sheet's full height and scrolls with it, so
-                    // the handle stays as tall as the sheet; the handle reaches out to the edge.
+                    // On the content, which runs the sheet's full height, so the handle stays as
+                    // tall as the sheet; the handle reaches out to the edge.
                     // A drag on it resizes rather than swipes the sheet closed, by touch too.
                     <ResizeHandle
                       {...resize.handleProps}

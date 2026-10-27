@@ -65,14 +65,17 @@ body {
   padding: var(--env-space-4) var(--env-space-3);
 }
 /* In the sheet, the navigation fills the sheet's height, so the drawer keeps its top and foot in
-   view there too and scrolls its list. */
-.site-navigation-sheet {
-  display: flex;
-  flex-direction: column;
-}
-.site-navigation-sheet .env-dialog-content {
+   view there too and scrolls its list: the sheet's body, which would scroll, passes it the whole
+   height and scrolls nothing itself. */
+.site-navigation-sheet .env-dialog-content,
+.site-navigation-sheet .env-sheet-body {
   flex: 1;
   min-block-size: 0;
+}
+.site-navigation-sheet .env-sheet-body {
+  overflow: visible;
+  margin: 0;
+  padding: 0;
 }
 .site-navigation[data-in-sheet] {
   margin: calc(-1 * var(--env-space-4)) 0;
