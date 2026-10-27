@@ -635,9 +635,7 @@ test('figures with open overlays keep them in their stages, inert, and leave the
   await expect.poll(() => scroller.evaluate((element) => element.scrollTop)).not.toBe(before);
 });
 
-test("F6 passes the figures' notifications and reaches one a live example raises @engines", async ({
-  page,
-}) => {
+test("F6 passes the figures' notifications by, to the browser @engines", async ({ page }) => {
   await page.goto(`${siteDevUrl}/components/toast`);
   await expect(page.locator('.catalogue-open-example .env-toast').first()).toBeVisible();
   // While no notification of the page is open, F6 is the browser's: the figures' notices, which
@@ -649,16 +647,6 @@ test("F6 passes the figures' notifications and reaches one a live example raises
   );
   await page.keyboard.press('F6');
   await expect(page.locator('body')).toHaveAttribute('data-f6-prevented', 'false');
-  // The Toast page's figures all play or show their notices as pictures; Settings' overview is
-  // live, and its directory switch raises a live notice.
-  await page.goto(`${siteDevUrl}/patterns/settings`);
-  await page.getByRole('switch', { name: 'Show me in the directory' }).first().click();
-  const live = page
-    .locator(
-      '.env-toast-viewport:not(:is(.catalogue-open-example, .catalogue-motion-subject) .env-toast-viewport)',
-    )
-    .filter({ has: page.locator('.env-toast') });
-  await expect(live).toHaveCount(1);
-  await page.keyboard.press('F6');
-  await expect(live).toBeFocused();
+  // Every catalogue figure that raises a notice plays it or shows it as a picture, so none is
+  // live; F6 reaching a live notice is Toast's own (Toast.spec.ts).
 });
