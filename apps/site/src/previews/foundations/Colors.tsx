@@ -460,92 +460,94 @@ function StatusFigure() {
 }
 
 /**
- * A pastel color scheme of an application's own: the hue of its surfaces and main actions, and the
- * hue of its second accent, the Important fill, in OKLCH, in the legend's order. Each takes the
- * same grades in each theme, so the three are one family of schemes.
+ * A pastel color scheme of an application's own: the hue, in OKLCH, that tints its surfaces, text
+ * and edges and colors its accent, in the legend's order. Each takes the same grades in each theme,
+ * so the three are one family of schemes.
  */
-const schemes: readonly { hue: number; accent: number }[] = [
-  { hue: 300, accent: 350 },
-  { hue: 165, accent: 215 },
-  { hue: 48, accent: 10 },
-];
+const schemes: readonly { hue: number }[] = [{ hue: 300 }, { hue: 165 }, { hue: 48 }];
 
-/** A color in OKLCH: its lightness, chroma and hue. */
-const oklch = (lightness: number, chroma: number, hue: number) =>
-  `oklch(${lightness} ${chroma} ${hue})`;
+/** A color in OKLCH: its lightness, chroma and hue, and its opacity if it has one. */
+const oklch = (lightness: number, chroma: number, hue: number, alpha?: number) =>
+  `oklch(${lightness} ${chroma} ${hue}${alpha === undefined ? '' : ` / ${alpha}`})`;
 
 /**
  * The roles a scheme gives its area, with their hover and press, as an application gives an area
- * colors of its own (customizing.md's Recolor an area): pale tinted surfaces, mid-tone quiet
- * actions and selection, and a deep main action in the light theme; deep tinted surfaces and pale
- * actions in the dark. Its text and edges are tinted too, except at high contrast, where they keep
- * the theme's own, stronger colors.
+ * colors of its own (customizing.md's Recolor an area). It keeps envUI's own grades and only moves
+ * them to its hue: a pale tinted page and surfaces with a deep accent in the light theme, deep
+ * tinted ones with a pale accent in the dark; a tint of the accent for what is selected, with
+ * accent text on it; translucent tinted fills for quiet controls. At high contrast the accent goes
+ * a step further from the page, and text and edges keep the theme's own, stronger colors.
  */
-function schemeColors(
-  { hue, accent }: (typeof schemes)[number],
-  theme: ThemeValue,
-  high: boolean,
-): CSSProperties {
+function schemeColors({ hue }: (typeof schemes)[number], theme: ThemeValue, high: boolean) {
   const light = theme === 'light';
   const step = (lightness: number, by: number) => lightness + (light ? -by : by);
-  const tone = (role: string, lightness: number, chroma: number, at = hue) => ({
-    [`--env-color-${role}`]: oklch(lightness, chroma, at),
-    [`--env-color-${role}-hover`]: oklch(step(lightness, 0.035), chroma, at),
-    [`--env-color-${role}-pressed`]: oklch(step(lightness, 0.07), chroma, at),
-  });
-  const fills = light
-    ? {
-        '--env-color-bg-page': oklch(0.985, 0.012, hue),
-        '--env-color-bg-default': oklch(0.995, 0.006, hue),
-        '--env-color-bg-raised': oklch(0.995, 0.006, hue),
-        '--env-color-bg-muted': oklch(0.935, 0.034, hue),
-        ...tone('bg-brand-emphasis', 0.43, 0.11),
-        '--env-color-fg-on-emphasis': oklch(1, 0, 0),
-        ...tone('bg-important-strong', 0.86, 0.08, accent),
-        '--env-color-fg-on-strong': oklch(0.27, 0.07, accent),
-        ...tone('bg-neutral-muted', 0.88, 0.055),
-        '--env-color-bg-neutral-subtle-hover': oklch(0.89, 0.04, hue),
-        '--env-color-bg-neutral-subtle-pressed': oklch(0.86, 0.05, hue),
-        ...tone('bg-selected', 0.83, 0.075),
-        '--env-color-fg-on-selected': oklch(0.25, 0.07, hue),
-        '--env-color-bg-navigation-hover': oklch(0.9, 0.04, hue),
-        '--env-color-bg-navigation-pressed': oklch(0.87, 0.05, hue),
-        '--env-color-fg-accent': oklch(0.43, 0.11, hue),
-        '--env-color-border-focus': oklch(0.43, 0.11, hue),
-      }
-    : {
-        '--env-color-bg-page': oklch(0.19, 0.018, hue),
-        '--env-color-bg-default': oklch(0.23, 0.024, hue),
-        '--env-color-bg-raised': oklch(0.25, 0.026, hue),
-        '--env-color-bg-muted': oklch(0.26, 0.032, hue),
-        ...tone('bg-brand-emphasis', 0.84, 0.08),
-        '--env-color-fg-on-emphasis': oklch(0.22, 0.05, hue),
-        ...tone('bg-important-strong', 0.84, 0.08, accent),
-        '--env-color-fg-on-strong': oklch(0.22, 0.05, accent),
-        ...tone('bg-neutral-muted', 0.35, 0.05),
-        '--env-color-bg-neutral-subtle-hover': oklch(0.33, 0.04, hue),
-        '--env-color-bg-neutral-subtle-pressed': oklch(0.37, 0.045, hue),
-        ...tone('bg-selected', 0.42, 0.075),
-        '--env-color-fg-on-selected': oklch(0.95, 0.025, hue),
-        '--env-color-bg-navigation-hover': oklch(0.31, 0.035, hue),
-        '--env-color-bg-navigation-pressed': oklch(0.35, 0.04, hue),
-        '--env-color-fg-accent': oklch(0.84, 0.08, hue),
-        '--env-color-border-focus': oklch(0.84, 0.08, hue),
-      };
+  // A fill's hover and press: a step further from the page, or, for the accent, deeper in both
+  // themes, as envUI's own accent fills.
+  const tone = (role: string, lightness: number, chroma: number, deeper = false) => {
+    const at = (by: number) => (deeper ? lightness - by : step(lightness, by));
+    return {
+      [`--env-color-${role}`]: oklch(lightness, chroma, hue),
+      [`--env-color-${role}-hover`]: oklch(at(0.035), chroma, hue),
+      [`--env-color-${role}-pressed`]: oklch(at(0.07), chroma, hue),
+    };
+  };
+  // The accent: a deep color on light surfaces, a pale one on dark.
+  const accent = light ? (high ? 0.36 : 0.43) : high ? 0.9 : 0.84;
+  const chroma = light ? 0.11 : high ? 0.06 : 0.08;
+  // The ink a translucent fill is mixed from: dark on light surfaces, pale on dark.
+  const ink = (alpha: number) =>
+    light ? oklch(0.25, 0.04, hue, alpha) : oklch(0.94, 0.02, hue, alpha);
+  const fills = {
+    ...(light
+      ? {
+          '--env-color-bg-page': oklch(0.99, 0.008, hue),
+          '--env-color-bg-default': oklch(0.955, 0.024, hue),
+          '--env-color-bg-raised': oklch(0.955, 0.024, hue),
+          '--env-color-bg-muted': oklch(0.92, 0.032, hue),
+          '--env-color-fg-on-emphasis': oklch(1, 0, 0),
+          ...tone('bg-selected', 0.9, 0.05),
+          '--env-color-bg-navigation-hover': oklch(0.9, 0.04, hue),
+          '--env-color-bg-navigation-pressed': oklch(0.87, 0.05, hue),
+        }
+      : {
+          '--env-color-bg-page': oklch(0.19, 0.016, hue),
+          '--env-color-bg-default': oklch(0.235, 0.022, hue),
+          '--env-color-bg-raised': oklch(0.235, 0.022, hue),
+          '--env-color-bg-muted': oklch(0.275, 0.026, hue),
+          '--env-color-fg-on-emphasis': oklch(0.2, 0.04, hue),
+          ...tone('bg-selected', 0.34, 0.06),
+          '--env-color-bg-navigation-hover': oklch(0.32, 0.03, hue),
+          '--env-color-bg-navigation-pressed': oklch(0.36, 0.035, hue),
+        }),
+    ...tone('bg-brand-emphasis', accent, chroma, true),
+    ...tone('border-accent-emphasis', accent, chroma, true),
+    '--env-color-bg-accent-emphasis': oklch(accent, chroma, hue),
+    '--env-color-fg-accent': oklch(accent, chroma, hue),
+    '--env-color-fg-on-selected': oklch(step(accent, high ? 0.05 : 0.03), chroma, hue),
+    '--env-color-border-focus': oklch(accent, chroma, hue),
+    '--env-color-border-accent': oklch(accent, chroma, hue, 0.55),
+    '--env-color-bg-accent-muted': oklch(accent, chroma, hue, light ? 0.12 : 0.14),
+    '--env-color-bg-accent-badge': oklch(accent, chroma, hue, light ? 0.08 : 0.14),
+    '--env-color-bg-neutral-muted': ink(light ? 0.08 : 0.12),
+    '--env-color-bg-neutral-muted-hover': ink(light ? 0.14 : 0.19),
+    '--env-color-bg-neutral-muted-pressed': ink(light ? 0.2 : 0.26),
+    '--env-color-bg-neutral-subtle-hover': ink(0.08),
+    '--env-color-bg-neutral-subtle-pressed': ink(0.1),
+  };
   const lines = light
     ? {
         '--env-color-fg-default': oklch(0.24, 0.035, hue),
-        '--env-color-fg-control': oklch(0.27, 0.045, hue),
-        '--env-color-fg-muted': oklch(0.4, 0.04, hue),
-        '--env-color-border-default': oklch(0.55, 0.045, hue),
+        '--env-color-fg-control': oklch(0.3, 0.045, hue),
+        '--env-color-fg-muted': oklch(0.42, 0.04, hue),
+        '--env-color-border-default': oklch(0.58, 0.04, hue),
         '--env-color-border-muted': oklch(0.86, 0.03, hue),
       }
     : {
-        '--env-color-fg-default': oklch(0.95, 0.012, hue),
-        '--env-color-fg-control': oklch(0.92, 0.02, hue),
-        '--env-color-fg-muted': oklch(0.8, 0.03, hue),
-        '--env-color-border-default': oklch(0.62, 0.04, hue),
-        '--env-color-border-muted': oklch(0.34, 0.03, hue),
+        '--env-color-fg-default': oklch(0.94, 0.012, hue),
+        '--env-color-fg-control': oklch(0.92, 0.016, hue),
+        '--env-color-fg-muted': oklch(0.8, 0.025, hue),
+        '--env-color-border-default': oklch(0.62, 0.035, hue),
+        '--env-color-border-muted': oklch(0.4, 0.03, hue),
       };
   return (high ? fills : { ...fills, ...lines }) as CSSProperties;
 }
