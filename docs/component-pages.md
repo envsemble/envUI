@@ -202,7 +202,7 @@ A figure is an [example file](#examples) listed in the frontmatter and placed wi
 | Role         | Shows                                                                               | Attributes on its fence                                                |
 | ------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | `example`    | The example, live on the stage, with its caption below.                             | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion` |
-| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`, `motion`                                              |
+| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`, `wide`, `motion`                                      |
 | `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width`                              |
 | `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                                                |
 
@@ -251,6 +251,7 @@ List a `do` and a `dont` example and place them one after the other, so they sit
 - Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three.
 - A caption is the rule in a few plain words, such as "One primary button per group, at the end of its actions."; don't repeat it below.
 - Each is a whole example file an application could copy, the don't included. Avoid a don't that the accessibility scan would flag, such as a button inside a link; say that in a rule instead.
+- A pair that needs the column's width, such as panes that narrow from side by side, takes `wide` on both: the do stands above the don't, each across the column.
 - Rules that don't need a picture go below the pairs in [titled blocks](#text-in-titled-blocks).
 
 ### Anatomy figures

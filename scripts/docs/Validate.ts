@@ -313,8 +313,8 @@ const figureAttributes: Record<string, { allowed: string[]; required: string[] }
     allowed: ['widths', 'sweep', 'classes', 'fit', 'open', 'stage', 'wide', 'motion'],
     required: [],
   },
-  do: { allowed: ['open', 'stage', 'motion'], required: ['caption'] },
-  dont: { allowed: ['open', 'stage', 'motion'], required: ['caption'] },
+  do: { allowed: ['open', 'stage', 'wide', 'motion'], required: ['caption'] },
+  dont: { allowed: ['open', 'stage', 'wide', 'motion'], required: ['caption'] },
   anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width'], required: [] },
   variants: { allowed: ['stage'], required: [] },
 };
@@ -329,7 +329,8 @@ const stageFills = ['shaded'];
  * open on its stage, contained; `enlarge` shows an anatomy figure's subject half as large again
  * where its stage has room, so the callouts on its close-set parts don't crowd; and `wide` keeps an
  * example across the whole column, alone in its row, rather than beside the text before it, where
- * it needs the room, such as a popup open beside its trigger. With `widths`, `sweep` shows one
+ * it needs the room, such as a popup open beside its trigger, or a do and a don't one above the
+ * other. With `widths`, `sweep` shows one
  * frame whose width sweeps between them and back, `classes` names the window class on its ruler,
  * and `fit` draws the frame smaller where it must to reach its widest width on the stage; `motion`
  * plays the example in the catalogue: its animated specimen of the same name takes its place.
