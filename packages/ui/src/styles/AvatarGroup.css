@@ -269,6 +269,13 @@
   white-space: nowrap;
   cursor: default;
   user-select: none;
+  /* The avatars' faint shadow, as Avatar.css casts it, so the count parts from the surface too. */
+  --env-avatar-shadow: 0 1px 3px
+    oklch(
+      from var(--env-avatar-group-ring-color, var(--env-surface-color, var(--env-color-bg-page)))
+        calc(l * 0.3) calc(c * 0.5) h / calc(0.5 - l * 0.36)
+    );
+  box-shadow: var(--env-avatar-shadow);
 }
 .env-avatar-group[data-size='lg'] > .env-avatar-group-overflow {
   border-radius: var(--env-radius-md);

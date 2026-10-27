@@ -48,6 +48,11 @@
   --env-surface-hover: var(--env-color-bg-raised-hover);
   --env-surface-pressed: var(--env-color-bg-raised-pressed);
 }
+.env-surface:where([data-background='recessed']) {
+  --env-surface-container-default: var(--env-color-bg-recessed);
+  --env-surface-hover: var(--env-color-bg-recessed-hover);
+  --env-surface-pressed: var(--env-color-bg-recessed-pressed);
+}
 
 .env-surface:where([data-radius='sm']) {
   --env-surface-radius: var(--env-radius-sm);

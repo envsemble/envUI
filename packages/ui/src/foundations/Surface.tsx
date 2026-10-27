@@ -9,9 +9,10 @@ import { inSkeleton } from './inSkeleton.js';
 
 /**
  * A surface's fill: default, the background of panes and side regions; muted, the background of
- * rows; page, the page behind everything; raised, a block that stands out on a pane.
+ * rows; page, the page behind everything; raised, a block that stands out on a pane; recessed, a
+ * well a shade deeper than the page.
  */
-export type SurfaceBackground = 'default' | 'muted' | 'page' | 'raised';
+export type SurfaceBackground = 'default' | 'muted' | 'page' | 'raised' | 'recessed';
 
 /**
  * A surface's corner radius, named after the radius tokens: xl, the 1.75 rem corners of panes; sm,
@@ -22,7 +23,8 @@ export type SurfaceRadius = 'xl' | 'sm' | 'full' | 'none';
 export interface SurfaceAppearanceProps extends SkeletonProps {
   /**
    * The fill: default, the background of panes and side regions; muted, the background of rows;
-   * page, the page background; or raised, a block that stands out on a pane.
+   * page, the page background; raised, a block that stands out on a pane; or recessed, a well on
+   * the page, a shade deeper than it, that what it holds rises out of.
    * @default 'default'
    */
   background?: SurfaceBackground;

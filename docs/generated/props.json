@@ -7334,10 +7334,10 @@
       "props": [
         {
           "name": "background",
-          "type": "'default' | 'muted' | 'page' | 'raised'",
+          "type": "'default' | 'muted' | 'page' | 'raised' | 'recessed'",
           "required": false,
           "default": "'default'",
-          "description": "The fill: default, the background of panes and side regions; muted, the background of rows; page, the page background; or raised, a block that stands out on a pane."
+          "description": "The fill: default, the background of panes and side regions; muted, the background of rows; page, the page background; raised, a block that stands out on a pane; or recessed, a well on the page, a shade deeper than it, that what it holds rises out of."
         },
         {
           "name": "padding",

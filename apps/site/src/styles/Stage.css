@@ -61,10 +61,9 @@
   border-radius: var(--env-radius-surface);
 }
 
-/* The recessed canvas: the page's background, or `--catalogue-canvas-under`, a little deeper in
-   OKLCH lightness, more in the dark themes, high contrast included. The contrast gate measures
-   every pair an example paints on the page on the canvas too, reading the formula from here
-   (`catalogue-canvas` in tests/contrast/Pairs.ts). */
+/* The recessed canvas: envUI's recessed surface, `--env-color-bg-recessed`, a shade deeper than the
+   page in every theme. The contrast gate measures every pair an example paints on the page on it
+   too (tests/contrast/Pairs.ts). */
 .site-live-example,
 .site-verdict-stage,
 .site-anatomy-stage,
@@ -72,11 +71,7 @@
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-showcase-card {
-  /* contrast: catalogue-canvas */
-  --catalogue-card-fill: light-dark(
-    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.035) c h),
-    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.03) c h)
-  );
+  --catalogue-card-fill: var(--env-color-bg-recessed);
   background-color: var(--catalogue-card-fill);
   /* Every canvas, an example's, a tile's or a card's, lifts off the page a little. */
   box-shadow: var(--catalogue-card-shadow);
@@ -103,7 +98,7 @@
 
 /* A tile under the pointer, or with the keyboard on its link, as its picture comes alive
    (previews/Motion.tsx): its canvas a shade deeper in the light themes and a shade lighter in the
-   dark ones, eased, with no outline. */
+   dark ones, a fainter step than the recessed surface's own hover, eased, with no outline. */
 .catalogue-related-stage {
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
@@ -111,30 +106,31 @@
 @media (hover: hover) {
   :is(.catalogue-gallery-tile, .catalogue-related-tile):hover .catalogue-related-stage {
     background-color: light-dark(
-      oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.06) c h),
-      oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.02) c h)
+      oklch(from var(--catalogue-card-fill) calc(l - 0.03) c h),
+      oklch(from var(--catalogue-card-fill) calc(l + 0.01) c h)
     );
   }
 }
 
 :is(.catalogue-gallery-tile, .catalogue-related-tile):has(:focus-visible) .catalogue-related-stage {
   background-color: light-dark(
-    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.06) c h),
-    oklch(from var(--catalogue-canvas-under, var(--env-color-bg-page)) calc(l - 0.02) c h)
+    oklch(from var(--catalogue-card-fill) calc(l - 0.03) c h),
+    oklch(from var(--catalogue-card-fill) calc(l + 0.01) c h)
   );
 }
 
 /* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its
    navigation, top bar and body, whose edges must show on the canvas. In the dark themes the
-   canvas is already deeper than both, the navigation being lighter than the page. In the light
-   themes it is recessed from the navigation's fill instead, the darker of the window's two. */
+   recessed surface is already deeper than both, the navigation being lighter than the page. In the
+   light themes the canvas is recessed from the navigation's fill instead, the darker of the
+   window's two. */
 :is(
     .site-live-example,
     .site-verdict-stage,
     .site-anatomy-stage,
     .catalogue-related-stage
   )[data-stage='shaded'][data-env-theme='light'] {
-  --catalogue-canvas-under: var(--env-color-bg-default);
+  --catalogue-card-fill: oklch(from var(--env-color-bg-default) calc(l - 0.035) c h);
 }
 
 /* What the stage shows keeps to its width, however wide its content would be. */

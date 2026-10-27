@@ -38,12 +38,13 @@ examples:
 
 ### Backgrounds
 
-| Background | Use for                                         |
-| ---------- | ----------------------------------------------- |
-| Default    | Panes and side regions. The default.            |
-| Muted      | A block that stands apart on a pane, and rows.  |
-| Page       | A well inside a pane that returns to the page.  |
-| Raised     | Popups and overlays, in the default background. |
+| Background | Use for                                                                      |
+| ---------- | ---------------------------------------------------------------------------- |
+| Default    | Panes and side regions. The default.                                         |
+| Muted      | A block that stands apart on a pane, and rows.                               |
+| Page       | A well inside a pane that returns to the page.                               |
+| Raised     | Popups and overlays, in the default background.                              |
+| Recessed   | A well on the page that its content rises out of, such as a preview's stage. |
 
 <!-- specimen: Backgrounds -->
 
@@ -92,7 +93,7 @@ A Surface gives its content a `background`, an inset and corners.
 
 #### Backgrounds, corners and inset
 
-- `background` is `default`, the default, `muted`, `page` or `raised`, which matches `default`.
+- `background` is `default`, the default, `muted`, `page`, `raised`, which matches `default`, or `recessed`, a shade deeper than the page, for a well on it.
 - `radius` is `xl`, 1.75 rem and the default, `sm`, 0.5 rem, `full`, fully rounded ends, or `none`, square.
 - `padding` sets the inset as a step of the spacing scale, from `1`, 0.25 rem, to `9`, 4 rem, and `0` removes it; without it, the inset grows from 1.25 rem in narrow windows to 1.5 rem from 50 rem wide.
 
@@ -167,6 +168,7 @@ const { theme } = useTheme();
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `background="recessed"`, a well on the page a shade deeper than it, in `--env-color-bg-recessed`.
 - **1.0.0**: `skeleton`, with `placeholders()`, `isPlaceholder()` and `useSkeleton()`. `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
 - **0.5.0**: `density="compact"`, which gives the controls inside the compact height.
 - **0.4.0**: The inset is at least 1.25 rem.

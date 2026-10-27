@@ -69,7 +69,7 @@ A status shows its text, soft fill and solid fill. The Display menu switches the
 
 ```
 
-1. **Surfaces**: Page, Surface, Filled surface, Raised surface, Field, Backdrop.
+1. **Surfaces**: Page, Recessed surface, Surface, Filled surface, Raised surface, Field, Backdrop.
 2. **Text and lines**: Text, Supporting text, Link, Edges, Hairlines, Focus ring.
 3. **Actions and selection**: Accent, On the accent, Quiet action, Important, Selected, On the selected.
 4. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
@@ -147,6 +147,7 @@ function ThemeLabel() {
 The Design tokens page of the Docs lists every value in each theme, and this guide ends with the palette, which shows each role's value in the theme you are reading in and lets you try another.
 
 - **Page**: `--env-color-bg-page`, the document's background, behind everything.
+- **Recessed surface**: `--env-color-bg-recessed`, a well on the page a shade deeper than it, `background="recessed"`, such as the stage of a preview.
 - **Surface**: `--env-color-bg-default`: Surface's `background="default"`, panes, dialogs, menus and popups.
 - **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, and tab rails.
 - **Text**: `--env-color-fg-default`, Text's default, for headings and the main words.
@@ -183,7 +184,7 @@ Status icons, short status text and badges share these tokens, at least 4.5:1 on
 
 Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emphasis weakest first: `subtle`, `muted`, none, `emphasis` and `strong`. Every `fg-on-X` pairs with a `bg-X`, every state token has its resting token, and the contrast gate measures every pair a component paints, in all four themes.
 
-- **Backgrounds:** `bg-page`; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, `bg-field`, `bg-selected`; `bg-overlay`, the scrim behind dialogs.
+- **Backgrounds:** `bg-page`; `bg-recessed`, a shade deeper than the page; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, `bg-field`, `bg-selected`; `bg-overlay`, the scrim behind dialogs.
 - **Fills:** `bg-neutral-muted`, a translucent layer of the text color under secondary buttons, chips, switch tracks and skeletons; `bg-neutral-subtle`, the state layer of controls without a fill; `emphasis` and `strong` solid fills.
 - **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
 - **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
@@ -195,7 +196,7 @@ The colors come from an internal palette of ten hues, and the pastel hues of ava
 - **Hover and pressed** are tokens of their own, other grades of the same hue, so labels keep their contrast in every state. A component given colors of its own through its color properties draws its states as state layers instead: the content color over the container at `--env-state-hover-opacity`, `--env-state-focus-opacity` and `--env-state-pressed-opacity`.
 - **Selection** stays apart from every other item, at rest and under the pointer, and carries a second cue: its label color, a check or a bar.
 - **High contrast** moves text to 7:1 and boundaries, indicators and focus rings to 4.5:1. A nested Theme and envUI's popups take the contrast and theme of where they open.
-- **Elevation** 0–3 is an edge, not a shadow: envUI draws no shadows, so a floating layer separates by its background and its edge, and a modal by its scrim as well. Popups float at 2, dialogs, sheets and the command palette at 3.
+- **Elevation** 0–3 is an edge, not a shadow: envUI draws no shadows, so a floating layer separates by its background and its edge, and a modal by its scrim as well. The one exception is an avatar's faint shadow, which parts the avatars of a group. Popups float at 2, dialogs, sheets and the command palette at 3.
 - **Hairlines separate a list's items, never regions:** Markdown rules, menu separators, table rows and accordion items take a hairline across their container's full width, never inset from its edges. Regions, such as a top bar, a footer, a sticky header, a tab bar and two panes, separate by space and background instead; controls and floating layers keep their edges.
 - **Forced colors** take system colors, such as `Highlight` and `GrayText`, for every state a fill carried.
 

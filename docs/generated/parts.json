@@ -4820,7 +4820,8 @@
           "values": [
             "muted",
             "page",
-            "raised"
+            "raised",
+            "recessed"
           ],
           "parts": [
             "env-surface"

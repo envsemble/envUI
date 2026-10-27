@@ -15,6 +15,17 @@
           "$value": "{palette.neutral.80}"
         }
       },
+      "recessed": {
+        "$root": {
+          "$value": "{palette.neutral.94}"
+        },
+        "hover": {
+          "$value": "{palette.neutral.88}"
+        },
+        "pressed": {
+          "$value": "{palette.neutral.82}"
+        }
+      },
       "default": {
         "$root": {
           "$value": "{palette.neutral.88}"

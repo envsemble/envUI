@@ -7,6 +7,7 @@ export const colorGroups: [string, [string, string][]][] = [
     'Page & surfaces',
     [
       ['bg-page', 'Page background'],
+      ['bg-recessed', 'Recessed surfaces · preview stages'],
       ['bg-default', 'Pane surfaces · dialogs & menus'],
       ['bg-muted', 'Filled surfaces · cards & tab rails'],
       ['bg-raised', 'Alternate surfaces'],

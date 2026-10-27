@@ -94,6 +94,9 @@
   --env-color-bg-raised: #eff1f5;
   --env-color-bg-raised-hover: #e2e4e8;
   --env-color-bg-raised-pressed: #dbdde1;
+  --env-color-bg-recessed: #f3f5f9;
+  --env-color-bg-recessed-hover: #e5e7eb;
+  --env-color-bg-recessed-pressed: #dbdde1;
   --env-color-bg-selected: #dbe8fd;
   --env-color-bg-selected-hover: #d2e1fc;
   --env-color-bg-selected-pressed: #cddefc;
@@ -355,6 +358,9 @@
   --env-color-bg-raised: #28292b;
   --env-color-bg-raised-hover: #383a3d;
   --env-color-bg-raised-pressed: #424447;
+  --env-color-bg-recessed: #191a1b;
+  --env-color-bg-recessed-hover: #28292b;
+  --env-color-bg-recessed-pressed: #343638;
   --env-color-bg-selected: #293a55;
   --env-color-bg-selected-hover: #33445f;
   --env-color-bg-selected-pressed: #3c4e69;

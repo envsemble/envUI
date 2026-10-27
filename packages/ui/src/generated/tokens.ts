@@ -987,6 +987,39 @@ export const tokens = {
       'dark-high-contrast': '#383a3d',
     },
   },
+  /** A recessed surface, a shade deeper than the page in both themes: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background="recessed". Everything measured on the page keeps its minimum on it. */
+  'color.bg.recessed': {
+    cssVariable: '--env-color-bg-recessed',
+    type: 'color',
+    values: {
+      light: '#f3f5f9',
+      dark: '#191a1b',
+      'light-high-contrast': '#f3f5f9',
+      'dark-high-contrast': '#191a1b',
+    },
+  },
+  /** An interactive recessed surface under the pointer. */
+  'color.bg.recessed.hover': {
+    cssVariable: '--env-color-bg-recessed-hover',
+    type: 'color',
+    values: {
+      light: '#e5e7eb',
+      dark: '#28292b',
+      'light-high-contrast': '#e5e7eb',
+      'dark-high-contrast': '#28292b',
+    },
+  },
+  /** An interactive recessed surface while pressed. */
+  'color.bg.recessed.pressed': {
+    cssVariable: '--env-color-bg-recessed-pressed',
+    type: 'color',
+    values: {
+      light: '#dbdde1',
+      dark: '#343638',
+      'light-high-contrast': '#dbdde1',
+      'dark-high-contrast': '#343638',
+    },
+  },
   /** Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast. */
   'color.bg.selected': {
     cssVariable: '--env-color-bg-selected',

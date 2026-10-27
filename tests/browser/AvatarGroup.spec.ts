@@ -205,7 +205,7 @@ test('pressable avatars are buttons and links named after each person, with name
   await expect(page.locator('body')).toHaveAttribute('data-avatar-navigated-to', '/people/sam');
 });
 
-test('nothing rings the avatars or the count, and a chosen avatar’s gap takes the surface color', async ({
+test('nothing rings the avatars or the count, which cast a faint shadow, and a chosen avatar’s gap takes the surface color', async ({
   page,
 }) => {
   await page.goto(fixture);
@@ -221,9 +221,15 @@ test('nothing rings the avatars or the count, and a chosen avatar’s gap takes 
           const chosen = group.querySelector('.env-avatar[data-selected]');
           return {
             group: group.getAttribute('data-testid'),
+            // Each casts one faint shadow, 1px down and 3px soft, and no ring.
             ringed: [...group.querySelectorAll('.env-avatar:not([data-selected])')]
               .concat([...group.querySelectorAll('.env-avatar-group-overflow')])
-              .some((element) => getComputedStyle(element).boxShadow !== 'none'),
+              .some(
+                (element) =>
+                  !/^(?:rgba?|color|oklch|hsla?)\([^)]*\) 0px 1px 3px 0px$/.test(
+                    getComputedStyle(element).boxShadow,
+                  ),
+              ),
             // The chosen look: the gap in the surface color, then the accent ring.
             gap: chosen
               ? getComputedStyle(chosen).boxShadow.match(
