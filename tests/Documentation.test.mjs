@@ -1229,14 +1229,12 @@ test('Table ships each example once, by name in its frontmatter, its rules and l
   assert.ok(compiled.has('examples/table/ProjectStatus.tsx'));
   assert.doesNotMatch(table, /^`{3,}tsx (?:example|do|dont|anatomy|variants|figure)=/m);
   assert.match(table, /^`{3,}tsx source=ProjectStatus$/m);
+  assert.ok(hasLine(table, "Examples: NumbersAligned (do), NumbersUnaligned (don't)."));
   assert.ok(
     hasLine(
       table,
-      "Examples: NumbersAligned (do), NumbersUnaligned (don't), NamedStates (do), ColorOnly (don't).",
+      '  NumbersAligned: { role: do, caption: "Numbers aligned to the end, so the digits line up down the column." }',
     ),
-  );
-  assert.ok(
-    hasLine(table, '  ColorOnly: { role: dont, caption: "States told apart by color alone." }'),
   );
   assert.ok(hasLine(table, '1. **Region** (`env-table-region`)'));
   assert.ok(hasLine(table, 'Native props: `<table>`.'));

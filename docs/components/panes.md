@@ -43,7 +43,7 @@ examples:
   ListDetailByWidth: example
   DetailsButton:
     role: do
-    caption: A button in the main pane that opens the details where there is no room.
+    caption: A button that opens the details where there is no room.
   NoWayToDetails:
     role: dont
     caption: 'No button: in less room, the details can’t be reached.'

@@ -66,12 +66,6 @@ examples:
   Validation: example
   TextareaSizing: example
   LongAddress: example
-  ReadOnlyValue:
-    role: do
-    caption: Read-only for a value people can see and copy but not change.
-  DisabledValue:
-    role: dont
-    caption: "Disabled to show a fixed value: it can't be focused, copied or submitted."
   OutlineForm:
     role: do
     caption: Outline fields in a form, so people see where to type.
@@ -206,14 +200,6 @@ A field fills its container; set the width there.
 
 Fields show where to type, name their value, and say what they take.
 
-```tsx figure=ReadOnlyValue
-
-```
-
-```tsx figure=DisabledValue
-
-```
-
 ```tsx figure=OutlineForm
 
 ```
@@ -225,6 +211,10 @@ Fields show where to type, name their value, and say what they take.
 ### Kinds of value
 
 Say what kind of value each field takes, such as an e-mail address, so the browser can fill it in and show the right keyboard.
+
+### Read-only values
+
+Show a value people can't change as read-only, so they can still focus and copy it. A disabled field can't be focused, copied or submitted.
 
 ### Labels
 

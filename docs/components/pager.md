@@ -31,12 +31,6 @@ examples:
     role: overview
     caption: Each link shows its destination's title under the label Previous or Up next.
   ComposedParts: example
-  TitlesOnly:
-    role: do
-    caption: The destination's title, as its page heading reads.
-  DirectionInTitles:
-    role: dont
-    caption: 'Next or Back in the title: the label already says it.'
   PagerAnatomy: anatomy
   StepThroughAGuide: example
   LongTitles: example
@@ -91,13 +85,9 @@ The links sit side by side while they fit.
 
 A link names its destination by its title, in the order the navigation lists the pages.
 
-```tsx figure=TitlesOnly
+### Titles
 
-```
-
-```tsx figure=DirectionInTitles
-
-```
+Use the title as the page's heading reads it. Leave Next or Back out of it: the label already says the direction.
 
 ## Accessibility
 

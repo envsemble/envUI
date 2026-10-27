@@ -46,12 +46,6 @@ examples:
   SectionAlert: example
   BackgroundTask: example
   StatusInRows: example
-  StatusInWords:
-    role: do
-    caption: Each status in its own words, with the tone adding to them.
-  StatusInColor:
-    role: dont
-    caption: 'The same word in every tone: only the color tells them apart.'
 ---
 
 # Notifications and feedback
@@ -105,14 +99,6 @@ Each kind of message has its place.
 | A danger toast       | An action that failed where the page can't show it, with Try again.                 |
 | A confirmation       | A decision people must make, in a [ConfirmDialog](../components/confirm-dialog.md). |
 | A badge              | The state of a row, read with the row, in a [Badge](../components/badge.md).        |
-
-```tsx figure=StatusInWords
-
-```
-
-```tsx figure=StatusInColor
-
-```
 
 ### One message per event
 

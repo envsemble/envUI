@@ -35,9 +35,6 @@ examples:
   WhoRated:
     role: do
     caption: Say whose rating it is and how many people gave it.
-  UnsourcedStars:
-    role: dont
-    caption: "Stars with no source: people can't tell how much they count."
 ---
 
 # Rating
@@ -87,10 +84,6 @@ The name and the number follow the application's language, such as 4,5 in German
 A rating only shows a score people gave; to ask for one, use a separate input.
 
 ```tsx figure=WhoRated
-
-```
-
-```tsx figure=UnsourcedStars
 
 ```
 

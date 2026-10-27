@@ -38,7 +38,7 @@ examples:
   FormActions: overview
   WrappingActions:
     role: do
-    caption: A row that wraps, so an action that doesn't fit moves to the next line.
+    caption: A row that wraps, so an action that doesn't fit moves down.
   SqueezedActions:
     role: dont
     caption: 'No wrap in a narrow pane: the labels break inside their buttons.'

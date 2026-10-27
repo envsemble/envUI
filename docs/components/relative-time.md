@@ -39,9 +39,6 @@ examples:
   ExactDateNearby:
     role: do
     caption: Show the date where it matters, with the relative time beside it.
-  DateOnlyInTooltip:
-    role: dont
-    caption: 'The date only in the tooltip: keyboards and screen readers never reach it.'
 ---
 
 # RelativeTime
@@ -92,10 +89,6 @@ The text rounds to the nearest unit and stays a count: 1 day ago, never yesterda
 The words around a relative time say what happened, and the exact date shows where it matters.
 
 ```tsx figure=ExactDateNearby
-
-```
-
-```tsx figure=DateOnlyInTooltip
 
 ```
 

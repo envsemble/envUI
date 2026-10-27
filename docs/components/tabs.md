@@ -38,9 +38,6 @@ examples:
   ListBesideAHeading: example
   TabsAnatomy: anatomy
   ScrollingRail: example
-  RelatedViews:
-    role: do
-    caption: Tabs for views of one subject, in any order.
   StepsAsTabs:
     role: dont
     caption: 'Steps that go in order: nothing leads to the next one.'
@@ -118,10 +115,6 @@ Tabs keep their size: a rail with more tabs than fit scrolls sideways.
 ## Rules
 
 Tabs show views of one subject, one panel at a time.
-
-```tsx figure=RelatedViews
-
-```
 
 ```tsx figure=StepsAsTabs
 
