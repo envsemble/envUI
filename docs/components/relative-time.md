@@ -26,10 +26,13 @@ components:
   - RelativeTime
   - formatRelativeTime
 examples:
-  DraftSaved: overview
+  DraftSaved:
+    role: overview
+    motion: true
   PastAndComing:
     role: overview
     caption: Past moments read ago, coming ones in.
+    motion: true
   Formats: variants
   VersionLabels: example
   RelativeTimeAnatomy: anatomy

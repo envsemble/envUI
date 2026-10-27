@@ -6,7 +6,10 @@ export default function ExactDateNearby() {
   const date = new Intl.DateTimeFormat(undefined, { dateStyle: 'long' }).format(sentAt);
   return (
     <Text>
-      Invoice sent on {date} (<RelativeTime value={sentAt} tooltip={false} />)
+      Invoice sent on {date} {/* The relative time and its brackets stay on one line. */}
+      <span style={{ whiteSpace: 'nowrap' }}>
+        (<RelativeTime value={sentAt} tooltip={false} />)
+      </span>
     </Text>
   );
 }
