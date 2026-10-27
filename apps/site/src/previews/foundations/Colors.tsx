@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   Badge,
+  Bar,
   Button,
   Column,
   IconButton,
@@ -15,6 +16,7 @@ import {
   Toolbar,
   useTheme,
   type BadgeTone,
+  type Destination,
   type ThemeContrast,
   type ThemeValue,
 } from '@envsemble/envui';
@@ -279,9 +281,10 @@ const themeScripts: Record<'four' | 'pair', PointerStep[]> = {
 const fourWidth = 30;
 
 /**
- * Whether the figure is narrower than the control of the four needs, by the width of its element.
+ * Whether the figure is narrower than a width in rem, by default the width the control of the four
+ * needs, by the width of its element.
  */
-function useNarrow() {
+function useNarrow(width = fourWidth) {
   const ref = useRef<HTMLDivElement>(null);
   const [narrow, setNarrow] = useState(false);
   useEffect(() => {
@@ -289,11 +292,11 @@ function useNarrow() {
     if (!element) return;
     const observer = new ResizeObserver(([entry]) => {
       const rem = parseFloat(getComputedStyle(element).fontSize) || 16;
-      setNarrow((entry?.contentRect.width ?? 0) < fourWidth * rem);
+      setNarrow((entry?.contentRect.width ?? 0) < width * rem);
     });
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [width]);
   return [ref, narrow] as const;
 }
 
@@ -640,7 +643,7 @@ const schemeScript: PointerStep[] = [
  * its save action, a choice of view, two uploads and, in the other theme, the navigation. Below
  * it, a control of the schemes, which the pointer chooses in turn.
  */
-function SchemeChoice({ names }: { names: readonly string[] }) {
+function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boolean }) {
   const page = useTheme();
   const other: ThemeValue = page.theme === 'dark' ? 'light' : 'dark';
   const [chosen, setChosen] = useState('0');
@@ -661,37 +664,61 @@ function SchemeChoice({ names }: { names: readonly string[] }) {
   usePointer(schemeScript);
   const scheme = Number(chosen);
   const destination = (id: string) => ({ current: place === id, onSelect: () => setPlace(id) });
+  const destinations: Destination[] = [
+    { label: 'Photos', icon: <PhotoLibrary />, ...destination('photos') },
+    { label: 'Albums', icon: <PhotoAlbum />, ...destination('albums') },
+    { label: 'Shared', icon: <Group />, ...destination('shared') },
+  ];
+  const actions = [
+    <Button key="select" variant="secondary" startIcon={<CheckCircle />}>
+      Select
+    </Button>,
+    <Button key="add" variant="secondary" startIcon={<AddPhotoAlternate />}>
+      Add photos
+    </Button>,
+    <Button
+      key="share"
+      variant="secondary"
+      startIcon={<Share />}
+      className="catalogue-scheme-share"
+    >
+      Share
+    </Button>,
+    <Button key="search" variant="secondary" startIcon={<Search />}>
+      Search
+    </Button>,
+    <IconButton
+      key="new"
+      variant="primary"
+      size="lg"
+      icon={<Add />}
+      aria-label="New album"
+      className="catalogue-scheme-fab"
+    />,
+  ];
   return (
     <Column gap={5} align="center" className="catalogue-schemes">
       <SchemeArea scheme={scheme} theme={page.theme} className="catalogue-scheme-canvas">
-        <div className="catalogue-scheme-tiles" data-switching={switching || undefined}>
+        <div
+          className="catalogue-scheme-tiles"
+          data-narrow={narrow || undefined}
+          data-switching={switching || undefined}
+        >
           <Surface
             background="muted"
             radius="xl"
             className="catalogue-scheme-tile"
             data-tile="menu"
           >
-            <Column gap={2} align="end">
-              <Button variant="secondary" startIcon={<CheckCircle />}>
-                Select
-              </Button>
-              <Button variant="secondary" startIcon={<AddPhotoAlternate />}>
-                Add photos
-              </Button>
-              <Button variant="secondary" startIcon={<Share />} className="catalogue-scheme-share">
-                Share
-              </Button>
-              <Button variant="secondary" startIcon={<Search />}>
-                Search
-              </Button>
-              <IconButton
-                variant="primary"
-                size="lg"
-                icon={<Add />}
-                aria-label="New album"
-                className="catalogue-scheme-fab"
-              />
-            </Column>
+            {narrow ? (
+              <Row wrap gap={2} align="center" justify="center">
+                {actions}
+              </Row>
+            ) : (
+              <Column gap={2} align="end">
+                {actions}
+              </Column>
+            )}
           </Surface>
           <Surface
             background="muted"
@@ -747,23 +774,23 @@ function SchemeChoice({ names }: { names: readonly string[] }) {
             theme={other}
             className="catalogue-scheme-tile catalogue-scheme-other"
           >
-            <Rail
-              aria-label="Photos"
-              background="page"
-              header={
-                <IconButton
-                  variant="primary"
-                  tone="accent"
-                  icon={<AddAPhoto />}
-                  aria-label="Take a photo"
-                />
-              }
-              destinations={[
-                { label: 'Photos', icon: <PhotoLibrary />, ...destination('photos') },
-                { label: 'Albums', icon: <PhotoAlbum />, ...destination('albums') },
-                { label: 'Shared', icon: <Group />, ...destination('shared') },
-              ]}
-            />
+            {narrow ? (
+              <Bar aria-label="Photos" background="page" destinations={destinations} />
+            ) : (
+              <Rail
+                aria-label="Photos"
+                background="page"
+                header={
+                  <IconButton
+                    variant="primary"
+                    tone="accent"
+                    icon={<AddAPhoto />}
+                    aria-label="Take a photo"
+                  />
+                }
+                destinations={destinations}
+              />
+            )}
           </SchemeArea>
         </div>
       </SchemeArea>
@@ -776,7 +803,8 @@ function SchemeChoice({ names }: { names: readonly string[] }) {
         items={names.map((name, index) => ({
           value: String(index),
           label: name,
-          icon: (
+          // Each scheme's hue beside its name, where the control has room.
+          icon: narrow ? undefined : (
             <span
               className="catalogue-scheme-dot"
               style={{ background: oklch(0.8, 0.09, schemes[index]?.hue ?? 0) }}
@@ -792,8 +820,24 @@ function SchemeChoice({ names }: { names: readonly string[] }) {
 function OwnColorsFigure({ legend }: FigureWords) {
   return (
     <Figure label="Your own colors" motion="the components in each color scheme">
-      <SchemeChoice names={legend.map((entry) => entry.name)} />
+      <SchemeSteps names={legend.map((entry) => entry.name)} />
     </Figure>
+  );
+}
+
+/** The narrowest the figure shows the canvas three across in, in rem. */
+const schemesWidth = 30;
+
+/**
+ * The canvas at the figure's width: on a narrower one, as on a phone, the quiet actions wrap in a
+ * row, and the navigation is a bar, as an application shows it there.
+ */
+function SchemeSteps({ names }: { names: readonly string[] }) {
+  const [ref, narrow] = useNarrow(schemesWidth);
+  return (
+    <div ref={ref} className="catalogue-theme-steps">
+      <SchemeChoice key={narrow ? 'narrow' : 'wide'} names={names} narrow={narrow} />
+    </div>
   );
 }
 

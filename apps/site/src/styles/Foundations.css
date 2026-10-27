@@ -485,14 +485,13 @@
 
 /* Your own colors: one canvas in a scheme of its own, its page's color with a surface's corners,
    holding tiles of its filled surface, each one component, as Material 3's showcases do: three
-   across, the quiet actions and the navigation running down both rows; on a narrower stage the
-   actions and the navigation side by side above the rest. The navigation's tile is in the other
-   theme, its own page's color. The scheme control sits below. */
+   across, the quiet actions and the navigation running down every row; on a narrower figure, as on
+   a phone, one under another, the navigation a bar at the foot. The navigation's tile is in the
+   other theme, its own page's color. The scheme control sits below. */
 .catalogue-schemes {
   inline-size: 100%;
 }
 .catalogue-scheme-canvas {
-  container-type: inline-size;
   box-sizing: border-box;
   inline-size: min(100%, 44rem);
   padding: var(--env-space-3);
@@ -500,22 +499,21 @@
 }
 .catalogue-scheme-tiles {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) auto;
   grid-template-areas:
-    'menu other'
-    'toolbar toolbar'
-    'choice choice'
-    'progress progress';
+    'menu toolbar other'
+    'menu choice other'
+    'menu progress other';
   gap: var(--env-space-3);
 }
-@container (width >= 36rem) {
-  .catalogue-scheme-tiles {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) auto;
-    grid-template-areas:
-      'menu toolbar other'
-      'menu choice other'
-      'menu progress other';
-  }
+.catalogue-scheme-tiles[data-narrow] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'menu'
+    'toolbar'
+    'choice'
+    'progress'
+    'other';
 }
 .catalogue-scheme-tile {
   display: grid;
@@ -542,6 +540,10 @@
 .catalogue-scheme-other {
   grid-area: other;
   padding: var(--env-space-2) var(--env-space-3);
+}
+.catalogue-scheme-tiles[data-narrow] > .catalogue-scheme-other {
+  place-items: stretch;
+  padding: var(--env-space-2);
 }
 /* While a scheme eases in, every part's colors fade at the pace of the theme's fade
    (ThemeFade.css), parts with transitions of their own too, such as a progress bar's indicator and
