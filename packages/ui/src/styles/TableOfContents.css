@@ -42,9 +42,6 @@
   /* Long labels wrap, and a long word breaks rather than overflowing the column. */
   overflow-wrap: break-word;
 }
-.env-table-of-contents-link:hover {
-  color: var(--env-color-fg-muted-hover);
-}
 .env-table-of-contents-link:focus-visible {
   outline: 2px solid var(--env-color-border-focus);
   outline-offset: -2px;
@@ -93,6 +90,11 @@
 }
 .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
   color: var(--env-color-fg-default);
+}
+/* The section under the pointer takes the accent's text color, whether passed or to come, after
+   every rule above, which it outranks. */
+.env-table-of-contents .env-table-of-contents-link:hover:is(*, [data-passed], [aria-current]) {
+  color: var(--env-color-fg-accent);
 }
 
 /* Forced colors: the system paints the links, so the current one takes its selection color, and
