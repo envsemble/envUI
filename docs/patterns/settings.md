@@ -43,7 +43,9 @@ composes:
   - useToast
   - useThemePreference
 examples:
-  ImmediateToggles: overview
+  ImmediateToggles:
+    role: overview
+    motion: true
   SaveSection: example
   AppearanceChoice: example
   DangerZone: example
@@ -67,7 +69,7 @@ Settings that only make sense together wait for a Save button.
 - A [Badge](../components/badge.md) marks the section while it holds unsaved changes.
 - Cancel puts back what was saved.
 
-```tsx figure=SaveSection
+```tsx figure=SaveSection motion
 
 ```
 
@@ -75,7 +77,7 @@ Settings that only make sense together wait for a Save button.
 
 The theme applies at once. The [scale](../foundations/spacing.md), comfortable or compact, is one for the whole application: it never changes for one page or one section.
 
-```tsx figure=AppearanceChoice
+```tsx figure=AppearanceChoice motion
 
 ```
 
@@ -83,7 +85,7 @@ The theme applies at once. The [scale](../foundations/spacing.md), comfortable o
 
 The last section, apart from the rest, holds what deletes or ends the account or the workspace, confirmed as [destructive actions](destructive-actions.md) are.
 
-```tsx figure=DangerZone
+```tsx figure=DangerZone motion
 
 ```
 

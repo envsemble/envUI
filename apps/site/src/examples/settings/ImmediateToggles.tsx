@@ -52,8 +52,8 @@ function NotificationSettings() {
   const [values, setValues] = useState<Record<string, boolean>>({
     comments: true,
     mentions: true,
-    summary: false,
-    directory: true,
+    summary: true,
+    directory: false,
   });
   const change = (id: string, on: boolean) => {
     // The change is saved as it is made; a request to the server would go here.
