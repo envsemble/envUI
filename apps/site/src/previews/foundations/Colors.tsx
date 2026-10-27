@@ -127,91 +127,80 @@ function Swatch({ color }: { color: string | undefined }) {
   return color ? <ColorSwatch color={color} aria-hidden="true" /> : null;
 }
 
-/** A role's tag: its number, as an anatomy figure's, and a swatch of its color beside it. */
-function RoleTag({ number, color }: { number: number; color: string | undefined }) {
-  return (
-    <span className="catalogue-role-tag" aria-hidden="true">
-      <span className="site-anatomy-number">{number}</span>
-      <Swatch color={color} />
-    </span>
-  );
-}
-
 /**
- * A small screen with a callout on each part that takes a role, as an anatomy figure's: the page,
- * a surface on it, a filled card inside, text, supporting text and the accent. Each callout, and
- * its entry in the legend, is the role's number with a swatch of its color in the reader's theme,
- * so a part, its color and its name read as one.
+ * A small screen with a callout on each part that takes a role: the page, a surface on it, a
+ * filled card inside, text, supporting text and the accent. Each callout ends in a swatch of the
+ * role's color in the reader's theme and the role's name, in one column at the screen's end, so a
+ * part, its color and its name read as one, with no legend below.
  */
 function RolesFigure({ legend }: FigureWords) {
   const [probe, colors] = useTokenColors(roleColors);
+  const [frame, narrow] = useNarrow(rolesWidth);
+  // On a phone the screen takes less padding and the names may wrap, so both fit side by side.
+  const room = narrow
+    ? ({ page: 3, surface: 4, card: 3 } as const)
+    : ({ page: 5, surface: 5, card: 4 } as const);
   return (
     <Figure
       label="The color roles of a screen"
       className="catalogue-marked-stage catalogue-roles-stage"
-      legend={
-        <ol className="site-anatomy-legend catalogue-topic-legend">
-          {legend.map((entry, index) => (
-            <li key={entry.name}>
-              <RoleTag number={index + 1} color={colors[index]} />
-              <div>
-                <Text render={<p />} className="catalogue-topic-legend-name">
-                  {entry.name}
-                </Text>
-                <Text render={<p />} variant="body-sm" emphasis="muted">
-                  {entry.text}
-                </Text>
-              </div>
-            </li>
-          ))}
-        </ol>
-      }
     >
       {probe}
-      <MarkedSubject
-        oneSide
-        tag={(number) => <RoleTag number={number} color={colors[number - 1]} />}
-      >
-        <Surface
-          background="page"
-          padding={5}
-          radius="xl"
-          data-catalogue-mark="1"
-          className="catalogue-roles"
+      <div ref={frame} className="catalogue-roles-frame" data-narrow={narrow || undefined}>
+        <MarkedSubject
+          named={legend.map((entry, index) => (
+            <span key={entry.name} className="catalogue-role-name">
+              <Swatch color={colors[index]} />
+              <Text render={<span />} variant="body-sm">
+                {entry.name}
+              </Text>
+            </span>
+          ))}
         >
           <Surface
-            background="default"
-            padding={5}
+            background="page"
+            padding={room.page}
             radius="xl"
-            data-catalogue-mark="2"
-            render={<Column gap={5} />}
+            data-catalogue-mark="1"
+            className="catalogue-roles"
           >
-            <Text render={<p />} variant="title" data-catalogue-mark="4">
-              Quarterly report
-            </Text>
             <Surface
-              background="muted"
-              padding={4}
-              radius="sm"
-              data-catalogue-mark="3"
-              render={<Column gap={1} />}
+              background="default"
+              padding={room.surface}
+              radius="xl"
+              data-catalogue-mark="2"
+              render={<Column gap={5} />}
             >
-              <Text render={<p />} variant="title">
-                £34,000
+              <Text render={<p />} variant="title" data-catalogue-mark="4">
+                Quarterly report
               </Text>
-              <Text emphasis="muted" data-catalogue-mark="5">
-                Spent of £50,000
-              </Text>
+              <Surface
+                background="muted"
+                padding={room.card}
+                radius="sm"
+                data-catalogue-mark="3"
+                render={<Column gap={1} />}
+              >
+                <Text render={<p />} variant="title">
+                  £34,000
+                </Text>
+                <Text emphasis="muted" data-catalogue-mark="5">
+                  Spent of £50,000
+                </Text>
+              </Surface>
+              <Row justify="end">
+                <Button data-catalogue-mark="6">Share</Button>
+              </Row>
             </Surface>
-            <Row justify="end">
-              <Button data-catalogue-mark="6">Share</Button>
-            </Row>
           </Surface>
-        </Surface>
-      </MarkedSubject>
+        </MarkedSubject>
+      </div>
     </Figure>
   );
 }
+
+/** The narrowest the roles figure keeps its screen's full padding and its names on one line, in rem. */
+const rolesWidth = 26;
 
 /**
  * The colors of each role, in four groups of six, in the legend's order: each group is a legend
