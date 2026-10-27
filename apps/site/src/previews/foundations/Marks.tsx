@@ -39,7 +39,7 @@ function spread(positions: number[]) {
   return result;
 }
 
-function measure(stage: HTMLElement, subject: HTMLElement) {
+function measure(stage: HTMLElement, subject: HTMLElement, oneSide: boolean) {
   const origin = stage.getBoundingClientRect();
   const box = (element: Element): Rect => {
     const rect = element.getBoundingClientRect();
@@ -96,7 +96,7 @@ function measure(stage: HTMLElement, subject: HTMLElement) {
   const centre = bounds.x + bounds.width / 2;
   for (const element of subject.querySelectorAll<HTMLElement>('[data-catalogue-mark]')) {
     const rect = box(element);
-    const side = rect.x + rect.width / 2 < centre - 8 ? 'start' : 'end';
+    const side = !oneSide && rect.x + rect.width / 2 < centre - 8 ? 'start' : 'end';
     found.push({
       number: Number(element.dataset.catalogueMark),
       rect,
@@ -131,7 +131,20 @@ function measure(stage: HTMLElement, subject: HTMLElement) {
   return { marks, guides };
 }
 
-export function MarkedSubject({ children }: { children: ReactNode }) {
+/**
+ * `tag` draws each mark's callout in place of its number, such as the number with a swatch beside
+ * it: it sits past the end of its line, outside the subject, on its side. `oneSide` puts every
+ * callout on the end side, in one column.
+ */
+export function MarkedSubject({
+  children,
+  tag,
+  oneSide = false,
+}: {
+  children: ReactNode;
+  tag?: (number: number) => ReactNode;
+  oneSide?: boolean;
+}) {
   const stage = useRef<HTMLDivElement>(null);
   const subject = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<{ marks: Mark[]; guides: number[] }>({
@@ -146,7 +159,7 @@ export function MarkedSubject({ children }: { children: ReactNode }) {
     const update = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        const next = measure(stageElement, subjectElement);
+        const next = measure(stageElement, subjectElement, oneSide);
         setState((current) => (JSON.stringify(current) === JSON.stringify(next) ? current : next));
       });
     };
@@ -159,7 +172,7 @@ export function MarkedSubject({ children }: { children: ReactNode }) {
       cancelAnimationFrame(frame);
       resize.disconnect();
     };
-  }, []);
+  }, [oneSide]);
   return (
     <div ref={stage} className="catalogue-marked">
       <div ref={subject} className="catalogue-marked-subject" inert>
@@ -200,16 +213,28 @@ export function MarkedSubject({ children }: { children: ReactNode }) {
           </g>
         ))}
       </svg>
-      {state.marks.map(({ number, badge }, index) => (
-        <span
-          key={index}
-          className="site-anatomy-badge"
-          aria-hidden="true"
-          style={{ left: badge.x, top: badge.y }}
-        >
-          {number}
-        </span>
-      ))}
+      {state.marks.map(({ number, badge, side }, index) =>
+        tag ? (
+          <span
+            key={index}
+            className="catalogue-marked-tag"
+            data-side={side}
+            aria-hidden="true"
+            style={{ left: badge.x, top: badge.y }}
+          >
+            {tag(number)}
+          </span>
+        ) : (
+          <span
+            key={index}
+            className="site-anatomy-badge"
+            aria-hidden="true"
+            style={{ left: badge.x, top: badge.y }}
+          >
+            {number}
+          </span>
+        ),
+      )}
     </div>
   );
 }
