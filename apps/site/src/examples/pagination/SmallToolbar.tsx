@@ -12,7 +12,7 @@ export default function SmallToolbar() {
       style={{ inlineSize: 'min(100%, 32rem)' }}
       render={<Grid columns="minmax(0, 1fr) auto" align="center" gap={3} />}
     >
-      <SearchField label="Search invoices" size="sm" />
+      <SearchField label="Search invoices" placeholder="Search invoices" size="sm" />
       <Pagination
         aria-label="Invoice pages"
         page={page}

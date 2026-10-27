@@ -57,8 +57,6 @@ The buttons are secondary by default, or text for a quiet toolbar, in the contro
 3. **Previous** (`env-pagination-button`)
 4. **Next** (`env-pagination > env-pagination-button:last-child`)
 
-Not shown: the spinner while a page loads.
-
 ## Behaviour
 
 ### While a page loads
@@ -67,6 +65,8 @@ The button pressed shows a spinner and focus stays on it.
 
 - Both buttons ignore presses until the page is in.
 - At either end, the button with no page to go to stays focusable and unavailable.
+
+<!-- specimen: WhileAPageLoads -->
 
 ### Without a known total
 

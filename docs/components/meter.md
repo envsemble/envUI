@@ -70,11 +70,11 @@ A meter fills its container. The label and the value wrap onto two lines where t
 
 A meter has no warning color of its own, so say in text when a limit is reached.
 
-```tsx figure=PlanUsage
+```tsx figure=PlanUsage motion
 
 ```
 
-```tsx figure=FullWithoutWords
+```tsx figure=FullWithoutWords motion
 
 ```
 

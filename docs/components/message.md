@@ -86,7 +86,7 @@ A message can show that it is on its way, or that it wasn't sent.
 
 - Offer Try again beside one that failed.
 
-```tsx figure=DeliveryStatus
+```tsx figure=DeliveryStatus motion
 
 ```
 
