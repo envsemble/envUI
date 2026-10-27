@@ -151,6 +151,8 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
             );
           if (caption !== undefined && (typeof caption !== 'string' || !caption.trim()))
             problems.push(`${key} gives ${name} an empty caption`);
+          if ((role === 'do' || role === 'dont') && !caption)
+            problems.push(`${key} gives the ${role} figure ${name} no caption, its rule`);
         }
     } else if (rule.type === 'statuses') {
       const listed = Array.isArray(frontmatter.components) ? frontmatter.components : [];
@@ -339,14 +341,6 @@ const stageFills = ['shaded'];
  * plays the example in the catalogue: its animated specimen of the same name takes its place.
  */
 const figureFlags = new Set(['open', 'enlarge', 'wide', 'sweep', 'classes', 'fit', 'motion']);
-/** The title of the section of tips, which pages not yet rewritten as tips call Rules. */
-const tipsTitle = pageSections.find((section) => section.id === 'rules')!.title;
-/** The roles a tip's figure takes, and the attributes on its fence. */
-const tipRoles = ['do', 'dont', 'example'];
-const tipAttributes = ['open', 'stage', 'motion'];
-/** The longest a tip's title and its one line may be, in characters. */
-const tipTitleLength = 40;
-const tipLineLength = 140;
 /** A file name as words: ConnectedButtons is "Connected buttons". */
 const fileWords = (name: string) =>
   name
@@ -430,8 +424,6 @@ export function readPage(
   let legendOf: FigureBlock | ExampleBlock | undefined;
   /** The `###` subsections of Compose so far, by their index in codeSubsections. */
   const codeOrder: number[] = [];
-  /** The tip of Tips being read: its title, and whether its line and its figure came. */
-  let tip: { title: string; line: boolean; figure: boolean } | undefined;
   for (const token of tokens) {
     problems.push(...headingProblems(token));
     if (current?.id === 'code' && !(token.type === 'heading' && token.depth === 2)) {
@@ -480,9 +472,7 @@ export function readPage(
       continue;
     }
     if (token.type === 'heading' && token.depth === 2) {
-      const section = structure.find(
-        (item) => item.title === token.text || item.formerTitle === token.text,
-      );
+      const section = structure.find((item) => item.title === token.text);
       if (!section) {
         problems.push(
           `"## ${token.text}" is not a section of a ${kind} page (${structure
@@ -501,14 +491,10 @@ export function readPage(
         structure.indexOf(section) < structure.findIndex((item) => item.id === previous.id)
       )
         problems.push(`"## ${token.text}" must come before "## ${previous.title}"`);
-      if (tip && !tip.line) problems.push(`the tip "### ${tip.title}" needs one line under it`);
-      // A section keeps the title it is written with, such as Rules on a page not yet rewritten
-      // as tips.
-      current = { id: section.id, title: token.text, blocks: [], tokens: [] };
+      current = { id: section.id, title: section.title, blocks: [], tokens: [] };
       sections.push(current);
       subheading = undefined;
       legendOf = undefined;
-      tip = undefined;
     }
     if (!current) {
       if (token.type !== 'space') problems.push('content must follow a "##" section heading');
@@ -530,42 +516,6 @@ export function readPage(
         `${current.title} has a blockquote; write its text as a paragraph, or a rule as a do and don't pair`,
       );
     if (token.type === 'heading' && token.depth === 3) subheading = token.text;
-    if (current.title === tipsTitle && token.type !== 'heading') {
-      // Tips: each a "###" title, then one line, then at most one figure.
-      const figure = token.type === 'code' && /^tsx\s+figure=/.test(token.lang ?? '');
-      const where = tip ? `the tip "### ${tip.title}"` : `"## ${tipsTitle}"`;
-      if (!tip)
-        problems.push(
-          `"## ${tipsTitle}" holds tips only: start each with a "###" title, such as "### Pick a step people can hit"`,
-        );
-      else if (token.type === 'paragraph' && !tip.line) {
-        tip.line = true;
-        if (token.text.length > tipLineLength)
-          problems.push(
-            `${where} has a line of ${token.text.length} characters; keep it to one line, at most ${tipLineLength}`,
-          );
-      } else if (figure && tip.line && !tip.figure) tip.figure = true;
-      else if (figure)
-        problems.push(
-          tip.figure
-            ? `${where} has a second figure; a tip shows at most one, so give the other a tip of its own`
-            : `${where} needs its one line before its figure`,
-        );
-      else
-        problems.push(
-          `${where} holds more than a line and a figure; give another point a tip of its own, and leave the details to Compose`,
-        );
-    }
-    if (current.title === tipsTitle && token.type === 'heading' && token.depth === 3) {
-      if (tip && !tip.line) problems.push(`the tip "### ${tip.title}" needs one line under it`);
-      tip = { title: token.text, line: false, figure: false };
-      if (token.text.length > tipTitleLength)
-        problems.push(
-          `the tip "### ${token.text}" has a title of ${token.text.length} characters; say its advice in a few words, at most ${tipTitleLength}`,
-        );
-      if (/[.:;]$/.test(token.text))
-        problems.push(`the tip "### ${token.text}" is a title: leave out its full stop`);
-    }
     if (isPropsTable(token))
       problems.push(`${current.title} lists props in a table; the Props section is generated`);
     // An option table, whose last column is Use for, shows in the catalogue as a legend of tags.
@@ -713,28 +663,8 @@ export function readPage(
       }
       delete attributes.caption;
       if (listed.caption) attributes.caption = listed.caption;
-      const inTip = current!.title === tipsTitle;
-      if (inTip) {
-        // A tip's figure is its picture: its title and its line say what it shows.
-        if (!tipRoles.includes(role))
-          problems.push(
-            `figure ${name} is ${role === 'anatomy' || role === 'variants' ? `an ${role}` : role} figure; a tip shows a do, a don't or an example`,
-          );
-        if (listed.caption)
-          problems.push(
-            `figure ${name} has a caption, but its tip's title and line say what it shows; leave the caption out`,
-          );
-        for (const key of Object.keys(attributes))
-          if (!tipAttributes.includes(key))
-            problems.push(
-              `figure ${name} in a tip takes no ${key}; it is drawn small in a square, and takes ${tipAttributes.join(', ')}`,
-            );
-      } else
-        for (const key of figureAttributes[role].required)
-          if (!attributes[key])
-            problems.push(
-              `${role} ${name} needs a ${key}, one sentence${role === 'do' || role === 'dont' ? ', its rule' : ''}`,
-            );
+      for (const key of figureAttributes[role].required)
+        if (!attributes[key]) problems.push(`${role} ${name} needs a ${key}, one sentence`);
       if (!examples.has(name))
         problems.push(
           `figure ${name} has no file apps/site/src/examples/${document.id}/${name}.tsx`,
@@ -743,9 +673,8 @@ export function readPage(
       const block: ExampleBlock = {
         kind: 'example',
         name,
-        heading: inTip
-          ? (subheading ?? fileWords(name))
-          : role === 'do'
+        heading:
+          role === 'do'
             ? `Do: ${caption}`
             : role === 'dont'
               ? `Don't: ${caption}`
@@ -833,7 +762,6 @@ export function readPage(
     }
     appendMarkdown(token.raw);
   }
-  if (tip && !tip.line) problems.push(`the tip "### ${tip.title}" needs one line under it`);
   // An anatomy figure without a legend numbers the parts parts.json lists for its component; a
   // variants figure needs one, the names of its variants.
   for (const section of sections)

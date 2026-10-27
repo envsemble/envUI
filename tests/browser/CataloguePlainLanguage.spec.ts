@@ -73,7 +73,7 @@ const plainComponentPages = allPages.filter(
 const typographyPages = [
   'foundations/spacing',
   'foundations/typography',
-  'components/tooltip',
+  'components/button',
   'patterns/forms',
 ];
 

@@ -8,7 +8,7 @@ export default function NeedlessPrecision() {
       max={1440}
       defaultValue={437}
       formatValue={(value) => `${value} min`}
-      style={{ inlineSize: 'min(100%, 13rem)' }}
+      style={{ inlineSize: 'min(100%, 18rem)' }}
     />
   );
 }

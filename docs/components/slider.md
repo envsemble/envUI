@@ -34,8 +34,12 @@ examples:
   SaveOnRelease: example
   SessionTimeout: example
   NarrowSlider: example
-  NeedlessPrecision: dont
-  ShowTheEffect: do
+  UsefulSteps:
+    role: do
+    caption: A step and a range that match the precision people need.
+  NeedlessPrecision:
+    role: dont
+    caption: 'Single minutes over a whole day: no value is easy to reach.'
 ---
 
 # Slider
@@ -122,27 +126,25 @@ A slider fills its container.
 
 ```
 
-## Tips
+## Rules
 
-### Pick a step people can hit
+Match the range and the step to the precision people need.
 
-Match the step to the precision people need: single minutes over a day are hard to land on.
+```tsx figure=UsefulSteps
+
+```
 
 ```tsx figure=NeedlessPrecision
 
 ```
 
-### Show the effect as it changes
+### Show the effect
 
-Put what the value changes in view, so people can judge it while they drag.
+Show the effect where people can see it as the value changes.
 
-```tsx figure=ShowTheEffect motion
+### Labels
 
-```
-
-### Give the value its unit
-
-Show 30 min rather than 30; the same words are read aloud.
+Show the value with its unit, such as 30 minutes; the same text is announced.
 
 ## Accessibility
 

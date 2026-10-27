@@ -32,7 +32,7 @@ After the YAML frontmatter and the `# Title`, a page has these `##` sections in 
 | Variants (Options on a foundation) |                                | The variants figure and its option table, then the options in titled blocks, each beside its figure.                                          |
 | Anatomy                            |                                | The anatomy figure and its legend, and one sentence naming the parts the figure can't show.                                                   |
 | Behaviour                          |                                | States and what it does on its own, such as pending work or dismissing, in titled blocks, ending with `### Adapting to width`.                |
-| Tips                               | yes                            | Tips: each a `###` title, one line and at most one figure, as [Tips](#tips) describes.                                                        |
+| Rules                              | yes                            | A short lead, the do and don't figures, and titled blocks of rules, such as `### Labels`.                                                     |
 | Accessibility                      | on a component or pattern page | `### Keyboard`, a Key and Action table, or the focus and keys in a block of their own; then `### envUI provides` and `### You provide` lists. |
 | Words to use                       |                                | The phrases people ask for, as an option table; a column headed In code gives the props each phrase means.                                    |
 | Compose                            |                                | The developer part: [Compose](#compose-the-developer-part).                                                                                   |
@@ -40,8 +40,7 @@ After the YAML frontmatter and the `# Title`, a page has these `##` sections in 
 
 The build adds **Props**, generated from the TypeScript declarations, after Compose, and **Related**, from `avoidWhen`; don't write them, and don't list props anywhere, as [Props](#props) describes. It fails on:
 
-- a section the structure doesn't know, a section twice or out of this order, or no Tips;
-- a tip that is more than its title, one line and one figure, as [Tips](#tips) says;
+- a section the structure doesn't know, a section twice or out of this order, or no Rules;
 - a page of these kinds without `examples` in its frontmatter;
 - an example placed twice, placed but not listed, or listed and placed nowhere, but the overview's;
 - a component or pattern page without an overview example, or without Accessibility's two lists;
@@ -83,7 +82,7 @@ examples: # Each example file once, by its name, with its role and, where it has
 ---
 ```
 
-- **`examples`** lists each example once. Its role is `overview`, shown side by side at the top of the page as its Overview and never placed in the body; `example`; `variants` and `anatomy`, with the legend that follows them; or `do` and `dont`, a tip's picture of a recommended way or a mistake, which takes no caption; under a page's former Rules, a do's or don't's caption is its rule, and so required.
+- **`examples`** lists each example once. Its role is `overview`, shown side by side at the top of the page as its Overview and never placed in the body; `example`; `variants` and `anatomy`, with the legend that follows them; or `do` and `dont`, whose caption is their rule and so required.
 - **An overview's framing.** Nothing places an overview, so its entry says how it is framed, validated as a fence's attributes: `open: true` shows its overlays open, as on [HoverCard](components/hover-card.md), `stage: shaded` the deeper stage of a whole window, as on [Scaffold](components/scaffold.md), and `wide: true` a row of its own, as on [Markdown](components/markdown.md). Other roles take them on their fence. The package leaves them out.
 - **`statuses`** gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable; the catalogue shows it beside the page's.
 - **`avoidWhen`** is the page's one list of related components and pages, its **Related** section: each entry names an export in `use` or an indexed page in `see`, never both, with a line saying when to pick it instead. The catalogue links it to the page that documents it, and agents read it as "need this, use that". Name each export or page once, and not both an export and its page; the build fails on a relation named twice. An entry may name a member of the page's own family, such as Textarea on the TextField page. Relate only what a reader might pick instead: a page that is only used alongside, such as Accessibility or Icons, is linked from the sentence that needs it, if anywhere.
@@ -99,7 +98,7 @@ Register the page in [the index](index.md) under its group, with only its title 
 The catalogue shows the sections up to Words to use in three groups, far apart:
 
 1. What it is: Overview, Variants, Anatomy and Behaviour.
-2. Its Tips. They open with Use it when, the frontmatter's `useWhen`, in two columns where the list has more than three items and there is room, and, on a pattern, Built from.
+2. Its Rules. They open with Use it when, the frontmatter's `useWhen`, in two columns where the list has more than three items and there is room, and, on a pattern, Built from.
 3. Accessibility and Words to use, then Related.
 
 It leaves out Compose, the changelog, Accessibility's `### envUI provides` and `### You provide`, Accessibility where nothing else is in it, and every table column headed In code.
@@ -140,7 +139,7 @@ The catalogue is for people looking at envUI, often not developers: they look at
 
 Every piece of text in the catalogue belongs to a titled block: a heading and a short lead, with its rules and its figure where it has one, as Pending work and Confirm in place are written on [Button](components/button.md). A section's own heading titles the lead that opens it; any other text is a `###` block of its own.
 
-- **No loose sentences.** A paragraph after a figure, a legend or a list, with no heading between them, is loose, and so is one between two figures: give it a heading, or fold it into the block it belongs to. The one exception is the sentence right after an anatomy legend that names the parts the figure can't show.
+- **No loose sentences.** A paragraph after a figure, a do and don't pair, a legend or a list, with no heading between them, is loose, and so is one between two figures: give it a heading, or fold it into the block it belongs to. The one exception is the sentence right after an anatomy legend that names the parts the figure can't show.
 - **At most three short paragraphs to a block.** More are two blocks with headings of their own.
 - **envUI's type scale.** A section's lead is set a step larger, a block's heading is a title, its rules and supporting text are quieter, and a figure's caption is the small muted text under it, as the [typography](foundations/typography.md) foundation sets them. The catalogue styles them; don't fake a heading with bold text or HTML.
 
@@ -148,33 +147,33 @@ Every piece of text in the catalogue belongs to a titled block: a heading and a 
 
 ## Write little
 
-The docs are mainly visual. Let the figures, the tips' pictures and the anatomy teach, and write a lead and a few rules around them:
+The docs are mainly visual. Let the figures, the do and don't pairs and the anatomy teach, and write a lead and a few rules around them:
 
 - **Show, then say little.** Cut every sentence a figure already shows, such as what a variant looks like, its colors or its corners. Text beside a figure says what the figure can't, such as the rule it illustrates; the prop that makes it belongs in Compose.
-- **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section. Nor does a tip repeat a `useWhen` or `avoidWhen` entry, which Tips and Related show.
+- **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section. Nor does a rule repeat a `useWhen` or `avoidWhen` entry, which Rules and Related show.
 - **Leave out what is generated.** Each prop's values and defaults are in the props reference, and what the code does for itself, such as an exact delay or padding, needs no sentence unless a reader chooses it.
 
-| Information                                   | Its one place                                                                                              |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| What it is                                    | The frontmatter's `summary`, which the banner shows above the Overview.                                    |
-| What it looks like                            | The overview figures and the others, with no sentence describing them.                                     |
-| When to use it                                | The frontmatter's `useWhen`, which Tips opens with as Use it when.                                         |
-| What to use instead                           | The frontmatter's `avoidWhen`, which Related shows at the end of the page.                                 |
-| Variants, tones and sizes                     | Variants: a variants figure and one option table of the options in words and what each is for.             |
-| Its parts                                     | Anatomy: the legend, which the catalogue shows as names only; the class names are for Compose.             |
-| What it does on its own, such as pending      | Behaviour: a titled block beside its figure.                                                               |
-| How it adapts to width                        | Behaviour's last block, `### Adapting to width`, with an example at several widths.                        |
-| A judgment, such as one primary button        | Tips: a tip, with a picture of the do or the don't where one helps; never a `useWhen` or `avoidWhen` item. |
-| Advice no picture shows                       | Tips: a tip without a picture.                                                                             |
-| Keys, roles and what the application must add | Accessibility: keys in its Keyboard table, roles and what the application adds in its two lists.           |
-| The words people ask for                      | Words to use: an option table, with the props each phrase means under In code.                             |
-| How to use it in code                         | Compose: props and values, short code, how its parts compose, its color properties and tokens.             |
-| Props                                         | Generated on the component's page in the Docs; never in prose.                                             |
-| Releases                                      | Changelog.                                                                                                 |
+| Information                                   | Its one place                                                                                                  |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| What it is                                    | The frontmatter's `summary`, which the banner shows above the Overview.                                        |
+| What it looks like                            | The overview figures and the others, with no sentence describing them.                                         |
+| When to use it                                | The frontmatter's `useWhen`, which Rules opens with as Use it when.                                            |
+| What to use instead                           | The frontmatter's `avoidWhen`, which Related shows at the end of the page.                                     |
+| Variants, tones and sizes                     | Variants: a variants figure and one option table of the options in words and what each is for.                 |
+| Its parts                                     | Anatomy: the legend, which the catalogue shows as names only; the class names are for Compose.                 |
+| What it does on its own, such as pending      | Behaviour: a titled block beside its figure.                                                                   |
+| How it adapts to width                        | Behaviour's last block, `### Adapting to width`, with an example at several widths.                            |
+| A judgment, such as one primary button        | Rules: a do and don't pair whose captions are the rule. A pair never pictures a `useWhen` or `avoidWhen` item. |
+| Rules no picture shows                        | Rules: a titled block after the pairs.                                                                         |
+| Keys, roles and what the application must add | Accessibility: keys in its Keyboard table, roles and what the application adds in its two lists.               |
+| The words people ask for                      | Words to use: an option table, with the props each phrase means under In code.                                 |
+| How to use it in code                         | Compose: props and values, short code, how its parts compose, its color properties and tokens.                 |
+| Props                                         | Generated on the component's page in the Docs; never in prose.                                                 |
+| Releases                                      | Changelog.                                                                                                     |
 
-Choose the form that teaches each point best rather than a column of paragraphs: a live example for how it looks and behaves, a tip for a judgment, an anatomy figure for parts, an example at several widths for how it adapts, a table for values. The catalogue lays out some forms for you:
+Choose the form that teaches each point best rather than a column of paragraphs: a live example for how it looks and behaves, a do and don't pair for a judgment, an anatomy figure for parts, an example at several widths for how it adapts, a table for values. The catalogue lays out some forms for you:
 
-- **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as the members of a family. Put a titled block between figures that should not share a row.
+- **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a titled block between figures that should not share a row.
 - **A block beside its figure**: a `###` block of text, with no table or list at its start, followed by exactly one figure, sits beside that figure on a wide page, such as each kind of card under Variants. A figure that needs the room stays across the column with the flag [`wide`](#wide-figures).
 - **Spark lists**: the catalogue marks a page's lists of what it is for with a small four-pointed spark instead of a dot. An item that ends with a component's name in parentheses, such as "(IconButton)", shows the name after a muted dot, linked to its page where that is another page.
 - **Related** ends the page, from the frontmatter's `avoidWhen`: a tile for each component or page an entry names, its [tile](#tiles) on its canvas, with its name and the entry's text below. The tiles render once the section nears the viewport. A page without a tile shows its lead example, and one without an example a page icon on the same stage. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three.
@@ -184,7 +183,7 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 - **Cells that share a row are one size.** Figures side by side take equal widths, and their stages are as tall as the tallest, with their captions and Code toggles lined up across the row. Never put cells of different sizes side by side: an example at several widths shows one frame to a row, each centred on its own stage. A row of figures stays one column until all of them fit side by side, so no row is left with an orphan: an even run, do and don't pairs included, two to a row from 38 rem, and a run of three three across from 58 rem; write two or three figures in a row, or four as two pairs, and never five.
 - **Related things sit close, unrelated things apart.** A heading sits close to its first content, text close to the figure it introduces, and a figure's stage, caption and Code toggle close together. One block sits clearly apart from the last, one section further from the next in its group, and one group far further still, so a page reads as parts rather than one stream. The catalogue spaces them with the spacing tokens: 1 rem for what belongs together, 2.5 rem between blocks, 4 rem between the sections of a group, and 8 rem between groups. Section headings are larger than a block's.
 - **No separators.** Space, not lines, separates sections and blocks.
-- **One background.** Every group sits on the page's own background, Tips included, with no band or fill behind a group; space alone sets the groups apart.
+- **One background.** Every group sits on the page's own background, Rules included, with no band or fill behind a group; space alone sets the groups apart.
 - **One frame per figure.** A figure's stage is its only frame: never put it inside another framed or filled box, such as a Surface or Card around a specimen grid, or a stage inside a stage. A do or don't figure's stage and its bar are one figure: two blocks joined as envUI's connected rows (`env-connected-rows`), with the outer corners rounded large and the inner ones small. A tile of Related is its stage, with its name and line below it in no box. A catalogue browser test fails on a stage with a bordered, filled or shadowed ancestor in the article.
 
 ## Learn from Material's docs
@@ -203,7 +202,7 @@ A figure is an [example file](#examples) listed in the frontmatter and placed wi
 | Role         | Shows                                                                               | Attributes on its fence                                                |
 | ------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | `example`    | The example, live on the stage, with its caption below.                             | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion` |
-| `do`, `dont` | In a tip, the example small in a square with a green check or a red cross.          | `open`, `stage`, `motion`                                              |
+| `do`, `dont` | The example on the stage joined to a green Do or red Don't bar, and its rule below. | `open`, `stage`, `wide`, `motion`                                      |
 | `anatomy`    | The example on the stage, with numbered callouts on its parts and the legend below. | `of`, `open`, `stage`, `enlarge`, `width`                              |
 | `variants`   | The example on the stage, with a callout naming each variant, and the legend below. | `stage`                                                                |
 
@@ -245,25 +244,15 @@ An Adapting to width figure sweeps instead: `widths="30 16" sweep` shows the exa
 
 The flag `wide` keeps an example alone in its row, across the whole column, rather than beside the block before it or in a run of figures. Give it to a figure that needs the room, such as a popover open below its trigger, as Sides on [Popover](components/popover.md) is. A foundation's figure says so in its registration (`FoundationFigures.ts`).
 
-### Tips
+### Do and don't pairs
 
-`## Tips` is a list of short advice that makes a design better. The catalogue shows it in a centred column, each tip a small square picture, where it has one, beside its title and its line.
+List a `do` and a `dont` example and place them one after the other, so they sit side by side; place two pairs one after the other, and they line up two to a row.
 
-````md
-### Pick a step people can hit
-
-Match the step to the precision people need: single minutes over a day are hard to land on.
-
-```tsx figure=NeedlessPrecision
-
-```
-````
-
-- **A title, one line and at most one figure.** The title says the advice in a few words, at most 40 characters, with no full stop; the line, at most 140, says why or how. A second point is a tip of its own, and detail goes to Compose. The build checks it.
-- **Drop the obvious.** Keep a tip people would get wrong without it. Not every tip needs a picture, and a do needs no don't: show a don't only for a real, tempting mistake.
-- **A picture drawn small.** Its example is drawn smaller to fit the square, as a tile is, so keep it small: a field or two, or a short row of buttons. Its role sets its mark: `do` a green check, `dont` a red cross, and `example` none, for a picture of the situation rather than a verdict. It takes no caption, which the tip says, and only `open`, `stage` and `motion` on its fence.
-- **Animated pictures**, with `motion`, play their specimen in the square while in view, with a small pause button in its corner.
-- **Pages not yet rewritten** keep `## Rules`: a lead, do and don't pairs, whose captions are their rules, and titled blocks. The catalogue shows them as tips, each figure that follows another a tip of its own with its caption as its text, unless the section holds what a tip can't show, such as a table, a specimen or a `wide` or `widths` figure; such a section keeps its figures side by side and their Do and Don't bars.
+- Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three.
+- A caption is the rule in a few plain words, such as "One primary button per group, at the end of its actions."; don't repeat it below.
+- Each is a whole example file an application could copy, the don't included. Avoid a don't that the accessibility scan would flag, such as a button inside a link; say that in a rule instead.
+- A pair that needs the column's width, such as panes that narrow from side by side, takes `wide` on both: the do stands above the don't, each across the column.
+- Rules that don't need a picture go below the pairs in [titled blocks](#text-in-titled-blocks).
 
 ### Anatomy figures
 
@@ -410,7 +399,7 @@ Where a section is about motion, such as a slider stretching past its ends or a 
 - **One height throughout**, so the page around it never moves. The stage keeps the tallest height it has reached; a figure whose tallest state is taller on a narrow stage, as wrapped rows are, reserves it from the start with `roomFor` (in `MotionStage.tsx`).
 - **Its overlays open live in the stage**, as a tile's do: a menu, a dialog, a sheet or a tooltip renders into the stage's layer, contained, and the pointer uses it there; a dialog's scrim covers the stage, not the page. Give `MotionStage` a `height` that holds what opens. Notifications arrive at the stage's bottom end beside the pause button, stay while the pointer rests on them and leave with their motion.
 - **More than a hover and a press.** Besides moving, pressing, typing and keys, the pointer double-clicks (`doubleClick`), right-clicks (`rightClick`), holds a key such as <kbd>Alt</kbd> (`keyDown`, `keyUp`), turns the wheel over what it is on (`wheel`, in px, over a `duration`), brings the keyboard's focus to an element and takes it away (`focus`, `blur`), so arrow keys move it as they would, and selects text by pressing on it and dragging, in a field or in content. Keys it presses show as a key cap in the stage's corner (`PressedKeys`), and a loop that can't put its example back redraws it with a short fade (`Renew`).
-- **In place of an example.** An example the catalogue plays takes `motion`: on its fence, or as `motion: true` in an overview's entry. Its specimen of the same name, `apps/site/src/specimens/<page>/<Name>.tsx`, imports the example and plays it on a `MotionStage`, and the figure keeps the example's caption and code; a tip's picture plays it in its square. The Docs and the package keep the example.
+- **In place of an example.** An example the catalogue plays takes `motion`: on its fence, or as `motion: true` in an overview's entry. Its specimen of the same name, `apps/site/src/specimens/<page>/<Name>.tsx`, imports the example and plays it on a `MotionStage`, and the figure keeps the example's caption and code; a do or don't figure keeps its bar too. The Docs and the package keep the example.
 - **A do and a don't in step.** Where a pair plays one sequence side by side, such as a reply growing against a spinner, both specimens take their steps from `useSharedTimeline` with the same clock's name, so they stay in step.
 
 ## Tiles
@@ -426,7 +415,7 @@ The galleries of components and patterns, and Related, show each page by a tile 
 
 A foundation page, such as Spacing & density or Colors & themes, explains how envUI handles one subject across every component. Its reader wants to understand envUI well enough to ask an agent for what they want, such as "more room between these sections", "a quieter surface for this panel" or "tighter rows". Write it from that reader's side: after reading it, what do they understand, and which words can they now use?
 
-- **The same structure.** Its sections are a component's, with Options in place of Variants: its topics as titled blocks under Options and Behaviour, and its tips, Accessibility only where it has something to say, its Words to use, and its tokens and values under Compose.
+- **The same structure.** Its sections are a component's, with Options in place of Variants: its topics as titled blocks under Options, Behaviour and Rules, Accessibility only where it has something to say, its Words to use, and its tokens and values under Compose.
 - **How envUI handles it, in pictures.** Each block explains one idea, such as "space shows what belongs together" or "colors are roles", with a real envUI example, such as a small screen, a form or a toolbar, rather than a ladder of values. Where the idea is in the example's layout, mark it on the example, as Spacing & density numbers the space between groups, with a numbered legend below in plain words.
 - **Its figures are the catalogue's.** They are drawn in its preview in `apps/site/src/previews/foundations/`, which keeps only the figures, take their words from the legend after their fence, `1. **Name**: what it means`, and are registered by name in `FoundationFigures.ts`. They take no attributes on their fence, and the package ships their legends.
 - **Animated figures too.** Where a block is about a change, its figure plays as a component page's [animated specimen](#animated-specimens) does: `Figure` (`previews/foundations/Topic.tsx`) with `motion`, the words its pause button names, sets it on a `MotionStage`, driven by `usePointer`, `useTimeline` or `WidthSweep`. A nested `Theme` in an animated figure eases between themes, its colors cross-fading briefly, and snaps where reduced motion is preferred, as on Colors & themes, where the pointer chooses each theme on a control under one screen.
@@ -448,7 +437,7 @@ Native DOM props are summarised by element, so document only the props envUI dec
 ## Write a new page
 
 1. Read the component's source, its CSS for the part class names, its entry in `parts.json` and its browser tests in `tests/browser`.
-2. Write the example files: the overview, the variants and anatomy examples, the tips' pictures, and, where the component adapts, an example for `widths`. Keep specimens only where they show what code can't.
+2. Write the example files: the overview, the variants and anatomy examples, the do and don't pairs, and, where the component adapts, an example for `widths`. Keep specimens only where they show what code can't.
 3. Write the frontmatter, listing every example with its role and caption, then the sections in order, each block a lead and its rules, with the developer detail in Compose. Register the page in the index.
 4. Regenerate: `npm run docs:props && npm run docs:parts && node scripts/docs/GenerateDocumentation.ts`, then run `npm run check`.
 5. Look at the page in the catalogue and the Docs at a narrow and a wide width, in light and dark: cells that share a row of one size, the callouts on their parts, figures centred on their stages, open code across the column and nothing overflowing. Check the outline too: one `h2` per section and nothing else at that level.
