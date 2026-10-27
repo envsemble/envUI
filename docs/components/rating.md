@@ -29,7 +29,7 @@ examples:
   ReviewScore: overview
   Scales:
     role: example
-    caption: With the number, on scales of five and of ten stars.
+    caption: Stars only, with the number, and on a scale of ten stars.
   RatingAnatomy: anatomy
   ApplicationLabel: example
   WhoRated:
@@ -71,6 +71,8 @@ examples:
 ### Rounding
 
 The stars, the number and the name show the value to the nearest half star: 4.3 shows as 4.5. A value outside the scale shows as its nearest end.
+
+<!-- specimen: Rounding -->
 
 ### In another language
 
@@ -140,7 +142,11 @@ const messages = {
 
 The parts are the number, `env-rating-value`, and the stars, `env-rating-stars`, each an `env-rating-star` with `data-fill`, `full` or `half`, and a half star's filled half, `env-rating-star-half`. Say beside it whose rating it is and how many people gave it.
 
+### Customize
+
+`--env-color-rating-star` is the filled stars' gold, a token with a value for each theme and contrast; the empty stars take `--env-color-border-default`.
+
 ## Changelog
 
-- **1.0.0**: The shown number and the name follow the locale, and the name comes from `messages.rating.label`. Empty stars take the boundary color of controls, at least 3:1 against every surface.
+- **1.0.0**: The shown number and the name follow the locale, and the name comes from `messages.rating.label`. Empty stars take the boundary color of controls, at least 3:1 against every surface. Filled stars take a clear gold of their own, `--env-color-rating-star`, in place of the warning tone.
 - **0.7.0**: Rating, with half stars, `max`, `showValue` and `formatLabel`.

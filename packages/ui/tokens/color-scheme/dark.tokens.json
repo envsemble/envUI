@@ -753,6 +753,11 @@
           "$value": "{palette.oat.65}"
         }
       }
+    },
+    "rating": {
+      "star": {
+        "$value": "{palette.amber.20}"
+      }
     }
   },
   "elevation": {

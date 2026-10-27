@@ -651,6 +651,11 @@
             "$value": "{palette.oat.80}"
           }
         }
+      },
+      "rating": {
+        "star": {
+          "$value": "{palette.amber.80}"
+        }
       }
     }
   }

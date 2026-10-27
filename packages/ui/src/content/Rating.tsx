@@ -34,8 +34,8 @@ export interface RatingProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
 }
 
 /**
- * A read-only rating, such as a review score: stars filled to the value in half steps in the
- * warning tone, with an optional number before them, named once for assistive technology as an
+ * A read-only rating, such as a review score: stars filled to the value in half steps in their
+ * own gold, with an optional number before them, named once for assistive technology as an
  * image, such as "4.5 out of 5 stars". It shows a rating; it does not ask for one.
  */
 export function Rating({

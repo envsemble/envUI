@@ -160,6 +160,7 @@
   --env-color-list-item-bg: var(--env-color-bg-muted);
   --env-color-list-item-bg-hover: var(--env-color-bg-muted-hover);
   --env-color-list-item-bg-pressed: var(--env-color-bg-muted-pressed);
+  --env-color-rating-star: #dea846;
   --env-color-skeleton-shine: var(--env-color-bg-raised);
   --env-control-border-width: 1px;
   --env-control-font-size: var(--env-font-size-body);
@@ -420,6 +421,7 @@
   --env-color-list-item-bg: var(--env-color-bg-muted);
   --env-color-list-item-bg-hover: var(--env-color-bg-muted-hover);
   --env-color-list-item-bg-pressed: var(--env-color-bg-muted-pressed);
+  --env-color-rating-star: #ebb750;
   --env-color-skeleton-shine: var(--env-color-border-default);
   --env-elevation-1-border: #686b70;
   --env-elevation-2-border: #686b70;
@@ -556,6 +558,7 @@
   --env-color-list-item-bg: #eff1f5;
   --env-color-list-item-bg-hover: #e2e4e8;
   --env-color-list-item-bg-pressed: #dbdde1;
+  --env-color-rating-star: #553200;
   --env-elevation-1-border: var(--env-color-border-default);
   --env-elevation-2-border: var(--env-color-border-default);
   --env-elevation-3-border: #121315;
@@ -693,6 +696,7 @@
     --env-color-list-item-bg: #eff1f5;
     --env-color-list-item-bg-hover: #e2e4e8;
     --env-color-list-item-bg-pressed: #dbdde1;
+    --env-color-rating-star: #553200;
     --env-elevation-1-border: var(--env-color-border-default);
     --env-elevation-2-border: var(--env-color-border-default);
     --env-elevation-3-border: #121315;
@@ -831,6 +835,7 @@
   --env-color-list-item-bg: #343638;
   --env-color-list-item-bg-hover: #383a3d;
   --env-color-list-item-bg-pressed: #424447;
+  --env-color-rating-star: #ffe8be;
   --env-elevation-1-border: var(--env-color-border-default);
   --env-elevation-2-border: var(--env-color-border-default);
   --env-elevation-3-border: #a1a4a9;
@@ -968,6 +973,7 @@
     --env-color-list-item-bg: #343638;
     --env-color-list-item-bg-hover: #383a3d;
     --env-color-list-item-bg-pressed: #424447;
+    --env-color-rating-star: #ffe8be;
     --env-elevation-1-border: var(--env-color-border-default);
     --env-elevation-2-border: var(--env-color-border-default);
     --env-elevation-3-border: #a1a4a9;

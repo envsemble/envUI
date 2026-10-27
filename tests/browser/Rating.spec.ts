@@ -12,7 +12,7 @@ test('a rating fills its stars to the value in half steps and is named once', as
     const stars = half.locator('.env-rating-star');
     await expect(stars).toHaveCount(5);
     await expect(half.locator('.env-rating-star[data-fill="full"]')).toHaveCount(3);
-    // The half star fills its start half in the warning tone over the empty star.
+    // The half star fills its start half in the stars' gold over the empty star.
     const halfStar = stars.nth(3);
     const [starBox, fillBox] = await Promise.all([
       halfStar.boundingBox(),
