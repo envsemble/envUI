@@ -788,9 +788,9 @@ export function readPage(
   // shows; a component or pattern shows what it is with at least one, and says what envUI and the
   // application provide under Accessibility.
   const entries = Object.entries(catalog);
-  for (const [name, { role, open, stage, motion }] of entries) {
-    if (foundation && (open || stage || motion))
-      problems.push(`figure ${name} takes no open, stage or motion on a foundation page`);
+  for (const [name, { role, open, stage, motion, wide }] of entries) {
+    if (foundation && (open || stage || motion || wide))
+      problems.push(`figure ${name} takes no open, stage, motion or wide on a foundation page`);
     if (role !== 'overview' && !placed.has(name))
       problems.push(`example ${name} is listed in the frontmatter but placed nowhere`);
     if (!foundation && !examples.has(name))
