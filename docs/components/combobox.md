@@ -46,12 +46,6 @@ examples:
   ServerSearch: example
   RequiredInForm: example
   WrappingChips: example
-  ClearableOptional:
-    role: do
-    caption: A clear button where the value is optional.
-  StuckOptional:
-    role: dont
-    caption: An optional value that people can change but not remove.
   SmallToolbar: example
 ---
 
@@ -137,15 +131,11 @@ A field fills its container, and chips wrap onto more rows.
 
 ## Rules
 
-A combobox's value is always one of its options, and an optional value can be cleared.
+A combobox's value is always one of its options.
 
-```tsx figure=ClearableOptional
+### Optional values
 
-```
-
-```tsx figure=StuckOptional
-
-```
+Give an optional value a clear button, so people can remove it, not only change it.
 
 ### Options
 

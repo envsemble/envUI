@@ -33,12 +33,6 @@ examples:
   InsetRegion:
     role: overview
     motion: true
-  OneInset:
-    role: do
-    caption: One inset on the region, and a Column inside for the gaps.
-  BoxPerChild:
-    role: dont
-    caption: 'A padded box around each child: every gap is different.'
 ---
 
 # Box
@@ -47,13 +41,9 @@ examples:
 
 Box gives a region an inset and nothing else: like [Row](row.md), [Column](column.md) and [Grid](grid.md), it sizes to its content and never paints.
 
-```tsx figure=OneInset
+### One inset
 
-```
-
-```tsx figure=BoxPerChild
-
-```
+Pad the region once, and space what is inside it with a Column: a padded box around each child makes every gap different.
 
 ## Accessibility
 

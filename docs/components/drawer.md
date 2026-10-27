@@ -80,12 +80,6 @@ examples:
   MoreDestinations: example
   ResizableDrawer: example
   SharedWidth: example
-  GroupsTogether:
-    role: do
-    caption: A group's destinations next to each other.
-  GroupsApart:
-    role: dont
-    caption: 'A group split up: its heading shows twice.'
 ---
 
 # Drawer
@@ -211,14 +205,6 @@ The bar's destinations share its width equally, and their labels stay on one lin
 
 Mark where people are, keep groups together, and keep labels short.
 
-```tsx figure=GroupsTogether
-
-```
-
-```tsx figure=GroupsApart
-
-```
-
 ### The current destination
 
 Mark the one destination people are on, from the address they are at.
@@ -231,6 +217,7 @@ The drawer's and the rail's header holds the application's name, search or the m
 
 Give a section a page of its own where it has an overview to show.
 
+- Keep a group's destinations next to each other, under one heading.
 - Keep to two levels, three at most: a deeper outline belongs on the page itself.
 
 ### Labels

@@ -35,9 +35,6 @@ examples:
   OneAtTheEnd:
     role: do
     caption: One drawing at the banner's end, clear of its text.
-  BehindTheTitle:
-    role: dont
-    caption: 'A drawing behind the title: its lines cross the words.'
   AboveAnEmptyState:
     role: do
     caption: One drawing on a screen, such as above an empty state's message.
@@ -139,14 +136,6 @@ As its box narrows, the drawing keeps its end in view and gives up its start.
 
 A drawing is decoration: one to a screen, beside what people read, never behind it.
 
-```tsx figure=OneAtTheEnd
-
-```
-
-```tsx figure=BehindTheTitle
-
-```
-
 ```tsx figure=AboveAnEmptyState
 
 ```
@@ -168,6 +157,10 @@ A drawing doesn't say anything, so it never stands in for an image, a chart or a
 
 - Never put it behind text, a chart or controls that need their contrast.
 - Never recolor it to draw attention: its quiet line is the point.
+
+```tsx figure=OneAtTheEnd
+
+```
 
 ## Accessibility
 
