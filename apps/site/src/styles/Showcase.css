@@ -33,8 +33,9 @@
   scale: var(--catalogue-showcase-scale);
 }
 
-/* Each card turns about the one point below the fan by its place's angle, so the spacing and the
-   tilt step evenly. */
+/* Each card turns about the one point below the fan by its place's angle, then by a little turn
+   and lift of its own, so the fan looks laid by hand rather than ruled. A stronger shadow than a
+   canvas's sets each card off the one behind it. */
 .catalogue-showcase-card {
   --catalogue-showcase-at: var(--catalogue-showcase-place);
   position: absolute;
@@ -46,7 +47,11 @@
   block-size: var(--catalogue-showcase-card-height);
   overflow: hidden;
   transform-origin: 50% calc(100% + var(--catalogue-showcase-pivot));
-  rotate: calc(var(--catalogue-showcase-at) * var(--catalogue-showcase-step));
+  rotate: calc(
+    var(--catalogue-showcase-at) * var(--catalogue-showcase-step) +
+      var(--catalogue-showcase-tilt, 0deg)
+  );
+  translate: 0 var(--catalogue-showcase-lift, 0);
 }
 
 /* A narrower page draws the fan smaller, then keeps its front three cards. */

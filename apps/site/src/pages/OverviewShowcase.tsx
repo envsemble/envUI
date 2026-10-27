@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import {
   AnimatedNumber,
-  Avatar,
+  AvatarGroup,
   Badge,
   Card,
   Checkbox,
@@ -14,7 +14,7 @@ import {
 } from '@envsemble/envui';
 
 /** The people on the project card, by their initials. */
-const team = ['Alex Morgan', 'Priya Shah', 'Sam Lee'];
+const team = [{ name: 'Alex Morgan' }, { name: 'Priya Shah' }, { name: 'Sam Lee' }];
 
 /** A card's name at its top, with a short note under it. */
 function CardHeader({ title, note }: { title: string; note: string }) {
@@ -51,11 +51,16 @@ const cards: {
   id: string;
   place: number;
   narrowPlace?: number;
+  /** A slight turn and lift of its own, in degrees and rem: the fan stays an arch, laid by hand. */
+  tilt: number;
+  lift: number;
   content: ReactNode;
 }[] = [
   {
     id: 'checklist',
     place: -2,
+    tilt: 0.6,
+    lift: 0.25,
     content: (
       <>
         <CardHeader title="Mobile release" note="2 of 3 done" />
@@ -70,6 +75,8 @@ const cards: {
   {
     id: 'notifications',
     place: -1,
+    tilt: -0.4,
+    lift: -0.15,
     content: (
       <>
         <CardHeader title="Notifications" note="Sent by email" />
@@ -84,6 +91,8 @@ const cards: {
   {
     id: 'storage',
     place: 0,
+    tilt: 0.3,
+    lift: 0.1,
     narrowPlace: -1,
     content: (
       <>
@@ -98,6 +107,8 @@ const cards: {
   {
     id: 'figure',
     place: 1,
+    tilt: -0.6,
+    lift: -0.2,
     narrowPlace: 0,
     content: (
       <>
@@ -116,6 +127,8 @@ const cards: {
   {
     id: 'project',
     place: 2,
+    tilt: 0.4,
+    lift: 0.2,
     narrowPlace: 1,
     content: (
       <>
@@ -123,11 +136,7 @@ const cards: {
         <Column gap={4} className="catalogue-showcase-body">
           <Progress label="Tasks" value={18} max={24} valueText="18 of 24" />
           <Row gap={2} align="center" justify="between">
-            <Row gap={1}>
-              {team.map((name) => (
-                <Avatar key={name} name={name} fallback="initials" size="sm" hue="powder" />
-              ))}
-            </Row>
+            <AvatarGroup people={team} size="md" />
             <Badge tone="accent">In review</Badge>
           </Row>
         </Column>
@@ -155,6 +164,8 @@ export function OverviewShowcase() {
               {
                 '--catalogue-showcase-place': card.place,
                 '--catalogue-showcase-narrow-place': card.narrowPlace ?? 0,
+                '--catalogue-showcase-tilt': `${card.tilt}deg`,
+                '--catalogue-showcase-lift': `${card.lift}rem`,
               } as CSSProperties
             }
           >

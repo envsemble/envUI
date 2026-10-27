@@ -28,6 +28,12 @@
       from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
         calc(0.14 - l * 0.087)
     );
+  /* Stronger, for cards laid over one another, such as the Overview's showcase. */
+  --catalogue-card-shadow-raised: 0 0.75rem 2rem
+    oklch(
+      from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.3) calc(c * 0.5) h /
+        calc(0.34 - l * 0.22)
+    );
   /* Half as strong, for a small card such as the pager's at a page's foot. */
   --catalogue-card-shadow-subtle: 0 0.25rem 0.75rem
     oklch(
@@ -74,6 +80,11 @@
   background-color: var(--catalogue-card-fill);
   /* Every canvas, an example's, a tile's or a card's, lifts off the page a little. */
   box-shadow: var(--catalogue-card-shadow);
+}
+
+/* The Overview's showcase cards lie over one another: each takes the stronger shadow. */
+.catalogue-showcase-card {
+  box-shadow: var(--catalogue-card-shadow-raised);
 }
 
 /* The site's own cards lift off the page as its canvases do, each by its own fill: a catalogue
