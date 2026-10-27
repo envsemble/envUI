@@ -6,7 +6,16 @@ export default function States() {
   return (
     <Example size="wide">
       <MatrixScroll label="Radio states">
-        <table className="catalogue-matrix">
+        {/* Two columns don't fill the stage: the table takes its own width, centred. */}
+        <table
+          className="catalogue-matrix"
+          style={{ inlineSize: 'auto', minInlineSize: 0, marginInline: 'auto' }}
+        >
+          <colgroup>
+            <col />
+            <col style={{ inlineSize: '10rem' }} />
+            <col style={{ inlineSize: '10rem' }} />
+          </colgroup>
           <thead>
             <tr>
               <th scope="col">State</th>

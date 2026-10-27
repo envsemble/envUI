@@ -218,9 +218,10 @@
   }
 }
 
-/* A row of items centres them on the stage, also once it wraps, unless the example aligns it. */
+/* A row of items centres them on the stage, also once it wraps, unless the example aligns it or it
+   is a group of choices, whose options start under its label, as in a form. */
 :is(.site-live-example, .site-verdict-stage, .catalogue-related-canvas)
-  > [data-env-layout='row']:not([data-justify]) {
+  > [data-env-layout='row']:not([data-justify], fieldset) {
   justify-content: center;
 }
 
