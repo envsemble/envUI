@@ -84,7 +84,7 @@ function documentTitle(page: RoutePage | undefined, area: Area) {
  */
 const contentsHeading = (heading: HTMLElement) =>
   !heading.closest(
-    '.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-open-example, .catalogue-specimen, .env-dialog',
+    '.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-open-example, .catalogue-specimen, .catalogue-related-canvas, .env-dialog',
   ) &&
   !(
     heading.localName === 'h3' &&

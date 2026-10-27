@@ -232,7 +232,7 @@ function paints(element: Element, style: CSSStyleDeclaration) {
  * dialog's, counts only for what it holds; what is hidden, transparent or a visually hidden pixel
  * doesn't count.
  */
-function shownBoxes(canvas: HTMLElement) {
+export function shownBoxes(canvas: HTMLElement) {
   const frame = canvas.getBoundingClientRect();
   const scale = frame.width / canvas.offsetWidth || 1;
   const area = { width: canvas.offsetWidth, height: canvas.offsetHeight };

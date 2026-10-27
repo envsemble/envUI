@@ -1,0 +1,154 @@
+/* Tips (template/Tips.tsx): a list in a centred column, of moderate width, not across the page.
+   Each tip is a row: a small square picture on the start side, where it has one, the example drawn
+   smaller on the recessed canvas, and beside it the tip's title and its one line, with its Code
+   below. A tip without a picture lines its text up with the others'. */
+.catalogue-tips {
+  --catalogue-tip-size: 9rem;
+  display: grid;
+  gap: var(--env-space-6);
+  inline-size: 100%;
+  /* Narrower than the column it sits in, at any width but a phone's. */
+  max-inline-size: min(44rem, 90%);
+  margin: 0;
+  margin-inline: auto;
+  padding: 0;
+  list-style: none;
+}
+
+.catalogue-tip {
+  display: grid;
+  min-inline-size: 0;
+}
+
+.catalogue-tip-row {
+  display: grid;
+  grid-template-columns: var(--catalogue-tip-size) minmax(0, 1fr);
+  column-gap: var(--env-space-6);
+  align-items: center;
+}
+
+.catalogue-tip-text {
+  display: grid;
+  grid-column: 2;
+  justify-items: start;
+  gap: var(--env-space-2);
+  min-inline-size: 0;
+}
+
+.catalogue-tips[data-pictures='none'] .catalogue-tip-row {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.catalogue-tips[data-pictures='none'] .catalogue-tip-text {
+  grid-column: 1;
+}
+
+/* The title in a medium weight, and its line, in the quieter color, right under it. */
+:where(.catalogue-tip-text) .env-markdown > h3,
+.catalogue-tip-title {
+  margin: 0;
+  font: var(--env-font-weight-medium) var(--env-font-size-body) / 1.4 var(--env-font-family);
+  color: var(--env-color-fg-default);
+}
+
+:where(.catalogue-tip-text) .env-markdown > h3 + p {
+  margin-block-start: var(--env-space-1);
+}
+
+:where(.catalogue-tip-text .env-markdown) > :is(p, ul) {
+  --catalogue-measure: 60ch;
+}
+
+.catalogue-tip-caption {
+  font: var(--env-type-body-small);
+}
+
+/* The Code toggle, small and quiet, under the text. */
+.catalogue-tip-text > .site-live-example-code {
+  margin-block-start: var(--env-space-1);
+}
+
+.catalogue-tip > .site-code-slot:not(:empty) {
+  margin-block-start: var(--env-space-4);
+}
+
+/* The picture: a square of the recessed canvas, with a stage's corners, the example drawn smaller
+   to fit it (Related.css lays out its canvas). */
+.catalogue-tip-figure {
+  position: relative;
+  inline-size: var(--catalogue-tip-size);
+  aspect-ratio: 1;
+}
+
+.catalogue-related-stage.catalogue-tip-stage {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  aspect-ratio: auto;
+  max-block-size: none;
+}
+
+/* Laid out from the stage's top left corner, whatever the direction, which the fit's transform
+   counts from, at a width examples are written for; drawn smaller and centred by the fit, it eases
+   to a new fit once placed. */
+.catalogue-related-canvas.catalogue-tip-canvas {
+  top: 0;
+  right: auto;
+  bottom: auto;
+  left: 0;
+  inline-size: 22rem;
+}
+
+.catalogue-tip-canvas[data-settled] {
+  transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-tip-canvas[data-settled] {
+    transition: none;
+  }
+}
+
+/* A do takes a green check in its top start corner, a don't a red cross: icon-only chips in the
+   soft tones of a badge. */
+.catalogue-tip-verdict.env-badge {
+  position: absolute;
+  inset-block-start: var(--env-space-2);
+  inset-inline-start: var(--env-space-2);
+  gap: 0;
+  padding: 0.1875rem;
+  border-radius: var(--env-radius-sm);
+}
+
+.catalogue-tip-verdict.env-badge .env-icon {
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+}
+
+/* An animated picture's pause button, small, in the bottom end corner. */
+.catalogue-tip-pause.catalogue-motion-pause {
+  inset-block-end: var(--env-space-1);
+  inset-inline-end: var(--env-space-1);
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+.catalogue-tip-pause.catalogue-motion-pause .env-icon {
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+
+/* On a narrow page, the picture shrinks a little and stays square beside the text. */
+@container (width < 36rem) {
+  .catalogue-tips {
+    --catalogue-tip-size: 6.5rem;
+    max-inline-size: 100%;
+    gap: var(--env-space-5);
+  }
+
+  .catalogue-tip-row {
+    column-gap: var(--env-space-4);
+  }
+}

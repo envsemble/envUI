@@ -2,6 +2,7 @@ import {
   createContext,
   use,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ReactNode,
@@ -19,6 +20,51 @@ import { Playback, PreviewOverlays, useInView } from './Motion';
  * (VerdictFigure), joined to its Do or Don't bar.
  */
 export const VerdictMotion = createContext(false);
+
+/**
+ * Where an animated figure plays as a tip's picture (template/Tips.tsx): the tip's thumbnail is its
+ * stage, plays it and has its pause button, so the figure gives it only what the button names.
+ */
+export const TipMotion = createContext<((label: string) => void) | null>(null);
+
+/**
+ * Whether a figure is paused, and the toggle of its own pause button: the sidebar's pause pauses
+ * every figure, and a figure's own button overrides it for that figure, until the sidebar's
+ * changes or the page does.
+ */
+export function useFigurePause() {
+  const { motionPaused } = useDisplaySettings();
+  // The figure's own choice, and the sidebar's at the time, which it overrides only while that holds.
+  const [own, setOwn] = useState<{ paused: boolean; over: boolean } | null>(null);
+  const paused = own && own.over === motionPaused ? own.paused : motionPaused;
+  return [paused, () => setOwn({ paused: !paused, over: motionPaused })] as const;
+}
+
+/** A figure's small pause button, which plays it again once pressed again; `label` names it. */
+export function PauseButton({
+  paused,
+  label,
+  onToggle,
+  className = 'catalogue-motion-pause',
+}: {
+  paused: boolean;
+  label: string;
+  onToggle: () => void;
+  className?: string;
+}) {
+  const action = paused ? `Play ${label}` : `Pause ${label}`;
+  return (
+    <Tooltip content={action}>
+      <IconButton
+        size="sm"
+        className={className}
+        icon={paused ? <PlayArrow /> : <Pause />}
+        aria-label={action}
+        onClick={onToggle}
+      />
+    </Tooltip>
+  );
+}
 
 /**
  * The stage of an animated figure on a page, such as a slider stretching past its ends: the live
@@ -52,16 +98,16 @@ export function MotionStage({
   className?: string;
   stage?: StageFill;
 }) {
-  const { motionPaused } = useDisplaySettings();
   const verdict = use(VerdictMotion);
-  // The figure's own choice, and the sidebar's at the time, which it overrides only while that holds.
-  const [own, setOwn] = useState<{ paused: boolean; over: boolean } | null>(null);
+  const tip = use(TipMotion);
+  const [paused, togglePause] = useFigurePause();
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
   useTallest(stage, height);
-  const paused = own && own.over === motionPaused ? own.paused : motionPaused;
-  const action = paused ? `Play ${label}` : `Pause ${label}`;
+  useLayoutEffect(() => tip?.(label), [tip, label]);
+  // A tip's thumbnail is the stage: it plays the figure, which is its subject alone.
+  if (tip) return children;
   return (
     <div
       ref={stage}
@@ -85,15 +131,7 @@ export function MotionStage({
           <PreviewOverlays>{children}</PreviewOverlays>
         </Playback>
       </div>
-      <Tooltip content={action}>
-        <IconButton
-          size="sm"
-          className="catalogue-motion-pause"
-          icon={paused ? <PlayArrow /> : <Pause />}
-          aria-label={action}
-          onClick={() => setOwn({ paused: !paused, over: motionPaused })}
-        />
-      </Tooltip>
+      <PauseButton paused={paused} label={label} onToggle={togglePause} />
     </div>
   );
 }
