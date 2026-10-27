@@ -74,9 +74,9 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
     write: false,
   });
   let css = await readFile('packages/ui/dist/styles.css', 'utf8');
-  const font = await readFile('packages/ui/dist/assets/Inter.woff2');
+  const font = await readFile('packages/ui/dist/assets/Geist.woff2');
   css = css.replace(
-    /url\([^)]*Inter\.woff2[^)]*\)/g,
+    /url\([^)]*Geist\.woff2[^)]*\)/g,
     `url(data:font/woff2;base64,${font.toString('base64')})`,
   );
   const script = client.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');

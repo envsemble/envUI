@@ -64,7 +64,7 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
   ]);
   expect(errors).toEqual([]);
   expect(requests).toEqual([]);
-  expect(await page.evaluate(() => document.fonts.check('1rem "envUI Inter"'))).toBe(true);
+  expect(await page.evaluate(() => document.fonts.check('1rem "envUI Geist"'))).toBe(true);
 });
 
 test('single previews retain state when the theme changes', async ({ page }) => {

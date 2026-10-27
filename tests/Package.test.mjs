@@ -180,7 +180,7 @@ before(
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
       css: import.meta.resolve('@envsemble/envui/styles.css'),
-      font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2')
+      font: import.meta.resolve('@envsemble/envui/assets/Geist.woff2')
     }));
   `,
     );
@@ -199,7 +199,7 @@ after(async function removeConsumerFixture() {
 });
 
 test('the packed package ships no logos', () => {
-  assert.ok(packedFiles.includes('dist/assets/Inter.woff2'), 'The pack lists its files.');
+  assert.ok(packedFiles.includes('dist/assets/Geist.woff2'), 'The pack lists its files.');
   const images = packedFiles.filter((path) => /\.(?:svg|png|ico)$/i.test(path));
   // The README's captures of the catalogue and the Docs are the only images the package ships.
   assert.deepEqual(
@@ -757,7 +757,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     'No runtime lightness rule: every state color is a token the contrast gate can measure.',
   );
   assert.ok(
-    /@font-face\s*\{[^}]*font-family:\s*["']envUI Inter["']/.test(css),
+    /@font-face\s*\{[^}]*font-family:\s*["']envUI Geist["']/.test(css),
     'Missing owned font family.',
   );
   assert.ok(
@@ -805,7 +805,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   );
   for (const filename of [
     'Base-UI-LICENSE.txt',
-    'Inter-LICENSE.txt',
+    'Geist-LICENSE.txt',
     'Material-Symbols-LICENSE.txt',
   ]) {
     assert.ok((await readFile(join(installedDirectory, 'licenses', filename))).length > 0);

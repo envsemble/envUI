@@ -266,14 +266,14 @@ async function settle(page: Page) {
     .waitFor({ state: 'detached' });
   await page.evaluate(() => document.fonts.ready);
   await finishAnimations(page);
-  // envUI ships its own Inter; a fallback face would make every text specimen drift.
+  // envUI ships its own Geist; a fallback face would make every text specimen drift.
   expect(
     await page.evaluate(() =>
       [...document.fonts].some(
-        (font) => font.family.replace(/"/g, '') === 'envUI Inter' && font.status === 'loaded',
+        (font) => font.family.replace(/"/g, '') === 'envUI Geist' && font.status === 'loaded',
       ),
     ),
-    'envUI Inter is loaded',
+    'envUI Geist is loaded',
   ).toBe(true);
 }
 
@@ -545,7 +545,7 @@ test.describe('open lists', () => {
         await stageOf(page).and(page.locator('[data-rendered]')).waitFor();
         // A face loads when text first uses it, and an icon button's example shows none until its
         // popup opens.
-        await page.evaluate(() => document.fonts.load('1em "envUI Inter"'));
+        await page.evaluate(() => document.fonts.load('1em "envUI Geist"'));
         await settle(page);
         await page.mouse.move(0, 0);
         // A modal popup hides the rest of the page from role queries, so the trigger is held as
