@@ -180,7 +180,7 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 
 ## Layout: equal cells, spacing with rhythm
 
-- **Cells that share a row are one size.** Figures side by side take equal widths, and their stages are as tall as the tallest, with their captions and Code toggles lined up across the row. Never put cells of different sizes side by side: an example at several widths shows one frame to a row, each centred on its own stage. A row of figures stays one column until all of them fit side by side, so no row is left with an orphan: an even run, do and don't pairs included, two to a row from 38 rem, and a run of three three across from 58 rem; write two or three figures in a row, or four as two pairs, and never five.
+- **Cells that share a row are one size.** Figures side by side take equal widths, and their stages are as tall as the tallest, with their captions and Code toggles lined up across the row. Never put cells of different sizes side by side: an example at several widths shows one frame to a row, each centred on its own stage. A row of figures stays one column until all of them fit side by side, so no row is left with an orphan: an even run two to a row from 38 rem, and a run of three three across from 58 rem, or do and don't squares, which need less room, from 32 and 48 rem; write two or three figures in a row, or four as two pairs, and never five.
 - **Related things sit close, unrelated things apart.** A heading sits close to its first content, text close to the figure it introduces, and a figure's stage, caption and Code toggle close together. One block sits clearly apart from the last, one section further from the next in its group, and one group far further still, so a page reads as parts rather than one stream. The catalogue spaces them with the spacing tokens: 1 rem for what belongs together, 2.5 rem between blocks, 4 rem between the sections of a group, and 8 rem between groups. Section headings are larger than a block's.
 - **No separators.** Space, not lines, separates sections and blocks.
 - **One background.** Every group sits on the page's own background, Rules included, with no band or fill behind a group; space alone sets the groups apart.
@@ -248,10 +248,12 @@ The flag `wide` keeps an example alone in its row, across the whole column, rath
 
 List a `do` and a `dont` example and place them one after the other, so they sit side by side; place two pairs one after the other, and they line up two to a row.
 
+Each sits on a square stage, never larger than about 23 rem, so a pair stays small beside the text, from the column's start; on a phone they stack, each as wide as the column. An example that needs more room than the square is drawn smaller to fit it, as a tile is, never cut off. A do or a don't may stand alone, with no counterpart, where only one side is worth a picture.
+
 - Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three.
 - A caption is the rule in a few plain words, such as "One primary button per group, at the end of its actions."; don't repeat it below.
 - Each is a whole example file an application could copy, the don't included. Avoid a don't that the accessibility scan would flag, such as a button inside a link; say that in a rule instead.
-- A pair that needs the column's width, such as panes that narrow from side by side, takes `wide` on both: the do stands above the don't, each across the column.
+- A pair that needs the column's width, such as panes that narrow from side by side, takes `wide` on both: the do stands above the don't, each across the column on a stage as tall as its example rather than a square, which would draw it too small to read.
 - Rules that don't need a picture go below the pairs in [titled blocks](#text-in-titled-blocks).
 
 ### Anatomy figures

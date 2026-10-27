@@ -127,7 +127,7 @@
 }
 
 /* What the stage shows keeps to its width, however wide its content would be. */
-:is(.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-canvas) > * {
+:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-related-canvas) > * {
   max-inline-size: 100%;
 }
 
@@ -135,7 +135,7 @@
    `container` too), a strip of tabs, a window or a skeleton, has none of its own and would
    collapse if centred: an example that is or holds one fills the stage, unless it sets its
    width. */
-:is(.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-canvas)
+:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-related-canvas)
   > :where(
     .env-description-list[data-layout='auto'],
     .env-page,
@@ -163,7 +163,7 @@
 /* A Scaffold straight on an animated figure's stage stands in for a window there too. */
 .catalogue-motion-subject > .env-scaffold,
 /* A strip of document tabs lays out its bar straight on the stage, its root being contents. */
-:is(.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-canvas)
+:is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-related-canvas)
   > .env-document-tabs-root
   > .env-document-tabs-bar {
   inline-size: 100%;
@@ -173,7 +173,7 @@
    page's background. */
 :is(
     .site-live-example,
-    .site-verdict-stage,
+    .site-verdict-fit,
     .site-anatomy-subject,
     .catalogue-width-box,
     .catalogue-related-canvas,
@@ -221,7 +221,7 @@
 
 /* A row of items centres them on the stage, also once it wraps, unless the example aligns it or it
    is a group of choices, whose options start under its label, as in a form. */
-:is(.site-live-example, .site-verdict-stage, .catalogue-related-canvas)
+:is(.site-live-example, .site-verdict-fit, .catalogue-related-canvas)
   > [data-env-layout='row']:not([data-justify], fieldset) {
   justify-content: center;
 }

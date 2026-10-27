@@ -1,4 +1,11 @@
-import { Fragment, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import {
+  Fragment,
+  useId,
+  useRef,
+  useState,
+  type ComponentPropsWithoutRef,
+  type ReactNode,
+} from 'react';
 import { Column, Theme, useTheme } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { Close } from '@envsemble/envui/icons/Close';
@@ -14,6 +21,7 @@ import { InteractiveMark } from './InteractiveMark';
 import { Specimen, SpecimenRender } from './Specimen';
 import { VerdictMotion } from '../previews/MotionStage';
 import { foundationFigure } from '../previews/foundations/FoundationFigures';
+import { useVerdictFit } from './VerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
@@ -31,10 +39,12 @@ function FoundationFigure({ page, block }: { page: Document; block: FoundationBl
 }
 
 /**
- * A do or don't figure: the live example in a frame with a green Do or red Don't bar and its one
- * sentence below, and the example's code under it. With `motion`, its animated specimen of the same
- * name plays it on the stage. A foundation page's preview passes its sample as `children` instead,
- * which has no code of its own.
+ * A do or don't figure: the live example on a square stage with a green Do or red Don't bar and
+ * its one sentence below, and the example's code under it. The example is drawn smaller where it
+ * needs more room than the square (useVerdictFit). With `motion`, its animated specimen of the same
+ * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,
+ * keeps a stage as wide as the column and as tall as its example. A foundation page's preview
+ * passes its sample as `children` instead, which has no code of its own.
  */
 export function VerdictFigure({
   page,
@@ -43,6 +53,7 @@ export function VerdictFigure({
   caption,
   open = false,
   motion = false,
+  wide = false,
   children,
   stage,
 }: {
@@ -52,6 +63,8 @@ export function VerdictFigure({
   open?: boolean;
   /** Whether its animated specimen of the same name plays the example in place of the stage. */
   motion?: boolean;
+  /** Whether it keeps a stage as wide as the column, rather than a square. */
+  wide?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
 } & (
@@ -61,22 +74,27 @@ export function VerdictFigure({
   const theme = useTheme();
   const label = verdict === 'do' ? 'Do' : 'Don’t';
   const id = useId();
+  const stageRef = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+  useVerdictFit(stageRef, box, !wide && !(motion && page));
   return (
     // Named by its bar and its sentence, each read once.
     <figure
       className="site-verdict"
       data-verdict={verdict}
+      data-shape={wide ? 'wide' : 'square'}
       aria-labelledby={`${id}-verdict ${id}-caption`}
     >
       {/* The stage and the bar are two connected rows: envUI's connected-row parts give the outer
           corners the large radius and the inner ones the small radius. */}
       <div className="site-verdict-frame env-connected-rows">
         {motion && page ? (
-          <VerdictMotion value>
+          <VerdictMotion value={wide ? 'wide' : 'square'}>
             <SpecimenRender page={page} name={name ?? ''} />
           </VerdictMotion>
         ) : (
           <Column
+            ref={stageRef}
             render={<Theme {...theme} />}
             gap={0}
             className="site-verdict-stage env-connected-row"
@@ -84,15 +102,17 @@ export function VerdictFigure({
             data-stage={stage}
             {...keepLinksInPlace}
           >
-            {!page ? (
-              children
-            ) : open ? (
-              <OpenExample name={name ?? ''}>
+            <div ref={box} className="site-verdict-fit">
+              {!page ? (
+                children
+              ) : open ? (
+                <OpenExample name={name ?? ''}>
+                  <ExampleRender page={page} name={name ?? ''} />
+                </OpenExample>
+              ) : (
                 <ExampleRender page={page} name={name ?? ''} />
-              </OpenExample>
-            ) : (
-              <ExampleRender page={page} name={name ?? ''} />
-            )}
+              )}
+            </div>
             <InteractiveMark enabled={!open} />
           </Column>
         )}
@@ -132,6 +152,7 @@ function Figure({
         caption={block.caption ?? ''}
         open={block.open}
         motion={block.motion}
+        wide={block.wide}
         stage={block.stage}
       />
     );
