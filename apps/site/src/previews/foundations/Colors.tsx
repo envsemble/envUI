@@ -11,18 +11,20 @@ import {
   Badge,
   Bar,
   Button,
+  Checkbox,
   Column,
-  Drawer,
-  IconButton,
   Meter,
   Progress,
+  Rail,
   Row,
+  SearchField,
   SegmentedControl,
   Surface,
   Switch,
+  Tabs,
   Text,
+  TextField,
   Theme,
-  Toolbar,
   useTheme,
   type BadgeTone,
   type BadgeVariant,
@@ -31,29 +33,15 @@ import {
   type ThemeValue,
 } from '@envsemble/envui';
 import { ColorSwatch } from '@envsemble/envui/color';
-import { Add } from '@envsemble/envui/icons/Add';
-import { AddPhotoAlternate } from '@envsemble/envui/icons/AddPhotoAlternate';
-import { Alarm } from '@envsemble/envui/icons/Alarm';
 import { Archive } from '@envsemble/envui/icons/Archive';
-import { Brush } from '@envsemble/envui/icons/Brush';
-import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
-import { Check } from '@envsemble/envui/icons/Check';
 import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
-import { Close } from '@envsemble/envui/icons/Close';
-import { Crop } from '@envsemble/envui/icons/Crop';
-import { Description } from '@envsemble/envui/icons/Description';
 import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
-import { Favorite } from '@envsemble/envui/icons/Favorite';
+import { Group } from '@envsemble/envui/icons/Group';
 import { Info } from '@envsemble/envui/icons/Info';
+import { Luggage } from '@envsemble/envui/icons/Luggage';
 import { Map as MapIcon } from '@envsemble/envui/icons/Map';
-import { Mic } from '@envsemble/envui/icons/Mic';
-import { PersonAdd } from '@envsemble/envui/icons/PersonAdd';
 import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
-import { RotateRight } from '@envsemble/envui/icons/RotateRight';
-import { Search } from '@envsemble/envui/icons/Search';
-import { Share } from '@envsemble/envui/icons/Share';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
-import { Tune } from '@envsemble/envui/icons/Tune';
 import { Warning } from '@envsemble/envui/icons/Warning';
 import { useTimeline } from '../Motion';
 import type { FoundationFigure } from './FoundationFigures';
@@ -597,88 +585,70 @@ function SchemeArea({
 /** How long the components stay in each scheme, in ms. */
 const schemeStep = 2200;
 
-/** A tile of the canvas: a component or two on the scheme's filled surface. */
+/** A tile of the canvas: a component or two on a surface, as envUI draws it. */
 function Tile({ name, children }: { name: string; children: ReactNode }) {
   return (
-    <Surface background="muted" radius="xl" className="catalogue-scheme-tile" data-tile={name}>
+    <Surface padding={4} className="catalogue-scheme-tile" data-tile={name}>
       {children}
     </Surface>
   );
 }
 
 /**
- * The same components in a scheme of the application's own, filling the stage: its page's color
- * with tiles of its filled surface, each a component or two, as Material 3's showcases lay them
- * out: a column of quiet actions above the main one, a floating toolbar beside an important
- * action, a choice of answers, uploads under way, a switch, a round action, a photo editor's
- * toolbar, and the navigation peeking in at the end. It steps through the schemes, the one shown
- * named in the corner.
+ * The same components in a scheme of the application's own, filling the stage: a trip planner's
+ * page with surfaces for its tiles, each a component or two in its usual variant: a short form, tabs,
+ * a switch, a choice of answers, uploads under way, a search, and the navigation with a count. It
+ * steps through the schemes, the one shown named in the corner.
  */
 function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boolean }) {
   const page = useTheme();
   const scheme = useTimeline(schemes.map(() => schemeStep));
   const [answer, setAnswer] = useState('going');
-  const [place, setPlace] = useState('alarms');
+  const [place, setPlace] = useState('trips');
   const destination = (id: string) => ({ current: place === id, onSelect: () => setPlace(id) });
   const destinations: Destination[] = [
-    { label: 'Friends', icon: <Favorite />, ...destination('friends') },
-    { label: 'Alarms', icon: <Alarm />, ...destination('alarms') },
+    { label: 'Trips', icon: <Luggage />, ...destination('trips') },
     { label: 'Map', icon: <MapIcon />, ...destination('map') },
-  ];
-  const actions = [
-    <Button key="select" variant="secondary" startIcon={<CheckCircle />}>
-      Select
-    </Button>,
-    <Button key="add" variant="secondary" startIcon={<AddPhotoAlternate />}>
-      Add photos
-    </Button>,
-    <Button key="share" variant="secondary" startIcon={<Share />}>
-      Share album
-    </Button>,
-    <Button key="search" variant="secondary" startIcon={<Search />}>
-      Search
-    </Button>,
-    <IconButton key="new" variant="primary" size="lg" icon={<Add />} aria-label="New album" />,
+    { label: 'Friends', icon: <Group />, count: 2, ...destination('friends') },
   ];
   return (
     <SchemeArea scheme={scheme} theme={page.theme} className="catalogue-scheme-canvas">
       <CornerLabel>{names[scheme]}</CornerLabel>
       <div className="catalogue-scheme-tiles" data-narrow={narrow || undefined}>
-        <Tile name="actions">
-          {narrow ? (
-            <Row wrap gap={2} align="center" justify="center">
-              {actions}
-            </Row>
-          ) : (
-            <Column gap={2} align="end">
-              {actions}
+        <Tile name="form">
+          <Column gap={4}>
+            <TextField variant="floating" label="Trip name" defaultValue="Spring in Lisbon" />
+            <Column gap={2}>
+              <Checkbox label="Share with travelers" defaultChecked />
+              <Checkbox label="Save maps offline" />
             </Column>
-          )}
+            <Row gap={2} justify="end">
+              <Button variant="secondary">Cancel</Button>
+              <Button>Save</Button>
+            </Row>
+          </Column>
         </Tile>
-        <Tile name="toolbar">
-          <Row gap={2} align="center" justify="center">
-            <Surface
-              background="default"
-              padding={1}
-              radius="full"
-              render={<Toolbar.Root aria-label="Event" size="sm" />}
-            >
-              <Toolbar.Button icon={<Check />} label="Accept" />
-              <Toolbar.Button icon={<Favorite />} label="Favorite" />
-              <Toolbar.Button icon={<Description />} label="Notes" />
-              <Toolbar.Button icon={<CalendarMonth />} label="Calendar" />
-            </Surface>
-            <IconButton variant="primary" tone="accent" icon={<Close />} aria-label="Close" />
-          </Row>
+        <Tile name="tabs">
+          <Tabs
+            aria-label="Trip"
+            defaultValue="photos"
+            items={[
+              { value: 'days', button: <Button>Days</Button>, content: null },
+              { value: 'photos', button: <Button>Photos</Button>, content: null },
+              { value: 'budget', button: <Button>Budget</Button>, content: null },
+            ]}
+          />
+        </Tile>
+        <Tile name="switch">
+          <Switch label="Sync" defaultChecked />
         </Tile>
         <Tile name="choice">
           <SegmentedControl
-            aria-label="Going to the picnic"
-            size="sm"
+            aria-label="Going on the trip"
             value={answer}
             onValueChange={setAnswer}
             items={[
-              { value: 'going', label: 'Going' },
+              { value: 'going', label: 'Yes' },
               { value: 'maybe', label: 'Maybe' },
               { value: 'no', label: 'No' },
             ]}
@@ -690,45 +660,17 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
             <Progress label="Porto" value={6} max={20} valueText="6 of 20" />
           </Column>
         </Tile>
-        <div className="catalogue-scheme-pair">
-          <Tile name="switch">
-            <Switch aria-label="Sync" checked onCheckedChange={() => undefined} />
-          </Tile>
-          <Tile name="round">
-            <IconButton variant="primary" size="lg" icon={<Mic />} aria-label="Record" />
-          </Tile>
-        </div>
-        {/* A phone shows one toolbar, the first. */}
+        {/* A phone leaves the search out, as it shows the navigation as a bar. */}
         {!narrow && (
-          <Tile name="edit">
-            <Surface
-              background="default"
-              padding={1}
-              radius="full"
-              render={<Toolbar.Root aria-label="Edit photo" size="sm" />}
-            >
-              <Toolbar.Button icon={<Crop />} label="Crop" />
-              <Toolbar.Button icon={<Tune />} label="Adjust" />
-              <Toolbar.Button icon={<RotateRight />} label="Rotate" />
-              <Toolbar.Button icon={<Brush />} label="Draw" pressed />
-            </Surface>
+          <Tile name="search">
+            <SearchField variant="floating" label="Search photos" placeholder="Search" />
           </Tile>
         )}
         <Tile name="nav">
           {narrow ? (
-            <Bar aria-label="Alarm clock" destinations={destinations} />
+            <Bar aria-label="Trip" destinations={destinations} />
           ) : (
-            <Surface background="default" className="catalogue-scheme-drawer">
-              <Drawer
-                aria-label="Alarm clock"
-                header={
-                  <Button variant="primary" tone="accent" startIcon={<PersonAdd />}>
-                    Invite
-                  </Button>
-                }
-                destinations={destinations}
-              />
-            </Surface>
+            <Rail aria-label="Trip" destinations={destinations} />
           )}
         </Tile>
       </div>

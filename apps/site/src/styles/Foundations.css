@@ -470,10 +470,10 @@
 }
 
 /* Your own colors: the one figure whose whole stage takes a scheme of its own. The stage has no
-   padding of its own; the canvas fills it, edge to edge, in the scheme's page color, holding tiles
-   of its filled surface, each one component or two, as Material 3's showcases do: six columns,
-   the quiet actions down the start, the navigation peeking in at the end, the rest between; on a
-   narrower figure, as on a phone, one under another, the navigation a bar at the foot. */
+   padding of its own; the canvas fills it, edge to edge, in the scheme's page color, holding tiles,
+   envUI's surfaces with their own corners and padding, each one component or two: three columns,
+   the form down the start, the navigation down the end, the rest between; on a narrower figure,
+   as on a phone, one under another, the navigation a bar at the foot. */
 .site-foundation-stage.catalogue-scheme-stage {
   align-content: stretch;
   padding: 0;
@@ -493,11 +493,11 @@
 }
 .catalogue-scheme-tiles {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 0.75fr);
   grid-template-areas:
-    'actions toolbar pair'
-    'actions choice nav'
-    'edit progress nav';
+    'form tabs switch'
+    'form choice nav'
+    'search progress nav';
   gap: var(--env-space-3);
   inline-size: min(100%, 52rem);
   margin-inline: auto;
@@ -505,65 +505,40 @@
 .catalogue-scheme-tiles[data-narrow] {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
-    'actions'
-    'toolbar'
+    'form'
+    'tabs'
     'choice'
     'progress'
-    'pair'
+    'switch'
     'nav';
-}
-.catalogue-scheme-pair {
-  grid-area: pair;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--env-space-3);
 }
 .catalogue-scheme-tile {
   display: grid;
   place-items: center;
-  box-sizing: border-box;
-  min-inline-size: 0;
-  min-block-size: 5rem;
-  padding: var(--env-space-4);
-  border-radius: var(--env-radius-xl);
 }
-.catalogue-scheme-tile[data-tile='actions'] {
-  grid-area: actions;
+.catalogue-scheme-tile[data-tile='form'] {
+  grid-area: form;
+  place-items: center stretch;
 }
-.catalogue-scheme-tile[data-tile='toolbar'] {
-  grid-area: toolbar;
+.catalogue-scheme-tile[data-tile='tabs'] {
+  grid-area: tabs;
+}
+.catalogue-scheme-tile[data-tile='switch'] {
+  grid-area: switch;
 }
 .catalogue-scheme-tile[data-tile='choice'] {
   grid-area: choice;
-  padding-inline: var(--env-space-2);
 }
 .catalogue-scheme-tile[data-tile='progress'] {
   grid-area: progress;
   place-items: center stretch;
 }
-.catalogue-scheme-tile[data-tile='edit'] {
-  grid-area: edit;
+.catalogue-scheme-tile[data-tile='search'] {
+  grid-area: search;
+  place-items: center stretch;
 }
-/* The navigation peeks in from the tile's bottom end, cut off by its corners, as a drawer opening. */
 .catalogue-scheme-tile[data-tile='nav'] {
   grid-area: nav;
-  place-items: start stretch;
-  overflow: clip;
-  padding: var(--env-space-5) 0 0 var(--env-space-4);
-}
-.catalogue-scheme-tiles[data-narrow] > .catalogue-scheme-tile[data-tile='nav'] {
-  min-block-size: 0;
-  place-items: stretch;
-  padding: var(--env-space-2);
-}
-.catalogue-scheme-drawer {
-  overflow: clip;
-  inline-size: 14rem;
-  block-size: 100%;
-  border-start-start-radius: var(--env-radius-xl);
-}
-.catalogue-scheme-drawer > * {
-  block-size: 100%;
 }
 /* The Colors page's three animated figures cut from one theme, variant or scheme to the next:
    nothing eases, neither a figure's nested theme (ThemeFade.css) nor a part with transitions of its
