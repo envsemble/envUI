@@ -623,13 +623,13 @@
   overflow: clip;
 }
 .catalogue-measure-text {
-  max-inline-size: 56ch;
+  max-inline-size: 53ch;
 }
 .catalogue-measure::after {
   content: '';
   position: absolute;
   inset-block: 0;
-  inset-inline-start: 56ch;
+  inset-inline-start: 53ch;
   border-inline-start: 0.0625rem dashed var(--env-color-fg-accent);
 }
 

@@ -146,7 +146,7 @@ Ask an agent for text in these words; envUI turns each into a style, so the resu
 | A caption        | `variant="caption"`                                                           | A small, quiet note under a figure or a chart.                                               |
 | Quieter text     | `emphasis="muted"` on Text of any variant                                     | The same size in the quieter color of supporting text.                                       |
 | A lead           | The first paragraph as body in the default color; the detail after it muted   | The sentence or two that open a page or a section, in the main color, before quieter detail. |
-| Short paragraphs | A few lines each, with `max-inline-size: 56ch` on running text                | Running text in paragraphs of a few lines, each line a comfortable length.                   |
+| Short paragraphs | A few lines each, with `max-inline-size: 53ch` on running text                | Running text in paragraphs of a few lines, each line a comfortable length.                   |
 
 ## Compose
 
@@ -201,7 +201,7 @@ At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes 
 - Geist at regular (400) and medium (500), from `--env-font-weight-*`; semibold (600) only for the strongest emphasis in a small space, such as today in a calendar.
 - Text adds no outer spacing: a Column, a Row or the component around it owns the gaps.
 - Vary the text by its role rather than setting everything as body: open with what matters in the default color, and set supporting text, such as a description under a title, details and hints, `emphasis="muted"` or `body-sm`.
-- Keep running text to a readable measure, about 60–75 characters a line: give paragraphs and Markdown a `max-inline-size` of about `56ch`, since Text and Markdown fill their container. Write short paragraphs, one point each, a few lines long.
+- Keep running text to a readable measure, about 60–75 characters a line: give paragraphs and Markdown a `max-inline-size` of about `53ch`, since Text and Markdown fill their container. Write short paragraphs, one point each, a few lines long.
 - The 0.7 names are gone: page-heading is headline, section-heading is title, supporting is body-sm, `tone` is `emphasis` and `as` is `render`.
 
 #### Lists

@@ -12,8 +12,9 @@
 .catalogue-supporting,
 .site-figure-note,
 :where(.site-figures .env-markdown) > :is(p, ul, ol) {
-  /* The cap of a figure page's parts reads it (Previews.css). */
-  --catalogue-measure: 56ch;
+  /* The cap of a figure page's parts reads it (Previews.css). In Geist, whose zero is wide, 53ch
+     holds about 70 characters of text. */
+  --catalogue-measure: 53ch;
   max-inline-size: min(100%, var(--catalogue-measure));
   text-wrap: pretty;
 }
