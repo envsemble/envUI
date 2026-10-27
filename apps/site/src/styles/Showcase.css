@@ -1,7 +1,8 @@
 /* The Overview's showcase (OverviewShowcase.tsx): under the banner, with plenty of the page around
-   it, a still fan of square cards at uneven angles. The cards take the recessed canvas every example
-   sits on, with no edge; a very faint shadow (Stage.css) keeps their edges visible where they
-   overlap. On a narrower page the whole fan is drawn smaller. */
+   it, a still hand of cards fanned evenly from one point far below them, each overlapping the one
+   before it. The cards are envUI's own, on the site's card shadow (Stage.css), as the banner and
+   the Overview's cards are. On a narrower page the whole fan is drawn smaller, and on a narrow one
+   the back two cards go. */
 .catalogue-showcase {
   container-type: inline-size;
   display: grid;
@@ -12,53 +13,91 @@
 }
 
 .catalogue-showcase-stack {
-  --catalogue-showcase-card-size: 13rem;
+  --catalogue-showcase-card-width: 15rem;
+  --catalogue-showcase-card-height: 14rem;
+  /* The fan's angle from one card to the next, and how far below the cards it turns. */
+  --catalogue-showcase-step: 4deg;
+  --catalogue-showcase-pivot: 150rem;
+  --catalogue-showcase-width: 57rem;
+  --catalogue-showcase-height: 21rem;
+  --catalogue-showcase-scale: 1;
   position: relative;
-  inline-size: 42rem;
-  block-size: 21rem;
-  /* Centred on the page even where it is wider than the page, before it is drawn smaller. */
+  inline-size: var(--catalogue-showcase-width);
+  block-size: var(--catalogue-showcase-height);
+  /* Centred on the page even where it is wider than the page, before it is drawn smaller; drawn
+     smaller, it gives back the room it no longer takes. */
   justify-self: start;
-  margin-inline: calc((100cqi - 42rem) / 2);
+  margin-inline: calc((100cqi - var(--catalogue-showcase-width)) / 2);
+  margin-block-end: calc(var(--catalogue-showcase-height) * (var(--catalogue-showcase-scale) - 1));
   transform-origin: 50% 0;
+  scale: var(--catalogue-showcase-scale);
 }
 
-/* Each card from the fan's foot, at its own place and angle. */
+/* Each card turns about the one point below the fan by its place's angle, so the spacing and the
+   tilt step evenly. */
 .catalogue-showcase-card {
+  --catalogue-showcase-at: var(--catalogue-showcase-place);
   position: absolute;
-  inset-block-end: 0;
-  inset-inline-start: calc(50% - var(--catalogue-showcase-card-size) / 2);
+  /* Near the top, as the fan's ends hang lower. */
+  inset-block-start: 1rem;
+  inset-inline-start: calc(50% - var(--catalogue-showcase-card-width) / 2);
   box-sizing: border-box;
-  inline-size: var(--catalogue-showcase-card-size);
-  block-size: var(--catalogue-showcase-card-size);
-  padding: var(--env-space-5);
-  border-radius: var(--env-radius-xl);
-  /* Its fill and faint shadow are the recessed canvas every example sits on (Stage.css). */
-  transform-origin: 50% 100%;
-  transform: translate(var(--catalogue-showcase-fan-x), var(--catalogue-showcase-fan-y))
-    rotate(var(--catalogue-showcase-fan-rotate));
+  inline-size: var(--catalogue-showcase-card-width);
+  block-size: var(--catalogue-showcase-card-height);
+  overflow: hidden;
+  transform-origin: 50% calc(100% + var(--catalogue-showcase-pivot));
+  rotate: calc(var(--catalogue-showcase-at) * var(--catalogue-showcase-step));
 }
 
-/* A narrower page draws the fan smaller, giving back the room it no longer takes. */
+/* A narrower page draws the fan smaller, then keeps its front three cards. */
+@container (width < 58rem) {
+  .catalogue-showcase-stack {
+    --catalogue-showcase-scale: 0.8;
+  }
+}
 @container (width < 46rem) {
   .catalogue-showcase-stack {
-    margin-block-end: calc(21rem * -0.3);
-    scale: 0.7;
+    --catalogue-showcase-width: 37rem;
+    --catalogue-showcase-scale: 0.95;
+  }
+  .catalogue-showcase-card {
+    --catalogue-showcase-at: var(--catalogue-showcase-narrow-place);
+  }
+  .catalogue-showcase-card[data-narrow='hidden'] {
+    display: none;
   }
 }
-@container (width < 32rem) {
+@container (width < 38rem) {
   .catalogue-showcase-stack {
-    margin-block-end: calc(21rem * -0.5);
-    scale: 0.5;
+    --catalogue-showcase-scale: 0.75;
+  }
+}
+@container (width < 30rem) {
+  .catalogue-showcase-stack {
+    --catalogue-showcase-height: 18rem;
+    --catalogue-showcase-scale: 0.58;
   }
 }
 
-/* The key figure, large but within its square card. */
+/* The card's body, under its header, rests on the card's foot. */
+.catalogue-showcase-body {
+  margin-block-start: auto;
+}
+
+.catalogue-showcase-title {
+  font-weight: var(--env-font-weight-medium);
+}
+
+/* A card's key figure: large, in tabular figures, on one line. */
 .catalogue-showcase-figure {
-  font-size: 2rem;
+  font-size: 1.75rem;
+  font-weight: var(--env-font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
   line-height: 1.1;
   white-space: nowrap;
 }
 
 .catalogue-showcase-trend {
-  flex: none;
+  color: var(--env-color-fg-success);
 }
