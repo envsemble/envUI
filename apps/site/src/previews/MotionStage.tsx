@@ -11,14 +11,15 @@ import { IconButton, Tooltip } from '@envsemble/envui';
 import { Pause } from '@envsemble/envui/icons/Pause';
 import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '../DocumentationTypes';
+import { useVerdictFit } from '../template/VerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, PreviewOverlays, useInView } from './Motion';
 
 /**
  * Whether an animated figure plays a do or don't figure's example: its stage is then that figure's
- * (VerdictFigure), joined to its Do or Don't bar.
+ * (VerdictFigure), joined to its Do or Don't bar, a square, or with `wide`, as wide as the column.
  */
-export const VerdictMotion = createContext(false);
+export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
 
 /**
  * The stage of an animated figure on a page, such as a slider stretching past its ends: the live
@@ -59,7 +60,13 @@ export function MotionStage({
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
-  useTallest(stage, height);
+  // On a do or don't figure's square, the subject keeps its tallest height in a box drawn smaller
+  // where it needs more room than the square (useVerdictFit), rather than the stage growing.
+  const square = verdict === 'square';
+  const box = useRef<HTMLDivElement>(null);
+  const tallest = useRef<HTMLDivElement>(null);
+  useVerdictFit(stage, box, square);
+  useTallest(square ? tallest : stage, height);
   const paused = own && own.over === motionPaused ? own.paused : motionPaused;
   const action = paused ? `Play ${label}` : `Pause ${label}`;
   return (
@@ -78,13 +85,32 @@ export function MotionStage({
         .join(' ')}
       data-figure={foundation ? 'example' : undefined}
       data-stage={fill}
-      style={height ? { minBlockSize: height } : undefined}
+      style={height && !square ? { minBlockSize: height } : undefined}
     >
-      <div ref={setSubject} inert aria-hidden className="catalogue-motion-subject">
-        <Playback playing={inView && !paused} rest="hold" root={subject}>
-          <PreviewOverlays>{children}</PreviewOverlays>
-        </Playback>
-      </div>
+      {square ? (
+        <div ref={box} className="site-verdict-fit">
+          <div
+            ref={(element) => {
+              tallest.current = element;
+              setSubject(element);
+            }}
+            inert
+            aria-hidden
+            className="catalogue-motion-subject"
+            style={height ? { minBlockSize: height } : undefined}
+          >
+            <Playback playing={inView && !paused} rest="hold" root={subject}>
+              <PreviewOverlays>{children}</PreviewOverlays>
+            </Playback>
+          </div>
+        </div>
+      ) : (
+        <div ref={setSubject} inert aria-hidden className="catalogue-motion-subject">
+          <Playback playing={inView && !paused} rest="hold" root={subject}>
+            <PreviewOverlays>{children}</PreviewOverlays>
+          </Playback>
+        </div>
+      )}
       <Tooltip content={action}>
         <IconButton
           size="sm"

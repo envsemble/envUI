@@ -39,9 +39,6 @@ examples:
   NamedGroup:
     role: do
     caption: Name a group with a legend, so each choice reads in context.
-  UnnamedGroup:
-    role: dont
-    caption: 'Checkboxes with no name for the group: mentions of what?'
 ---
 
 # Checkbox
@@ -89,10 +86,6 @@ The label wraps onto more lines, and the box stays centred beside it.
 A checkbox says what it turns on, and a group of them has a name.
 
 ```tsx figure=NamedGroup
-
-```
-
-```tsx figure=UnnamedGroup
 
 ```
 

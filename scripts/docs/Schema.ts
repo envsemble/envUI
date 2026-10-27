@@ -171,6 +171,7 @@ export const exampleRoles: readonly string[] = [
   'anatomy',
   'do',
   'dont',
+  'caution',
 ];
 
 /**

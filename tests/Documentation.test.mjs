@@ -398,7 +398,7 @@ test('the build fails a page that is not in the one-file structure', async () =>
     // The frontmatter: an example's entry, a role and a caption, and on an overview its framing.
     await rejects(
       frontmatter.replace('  Parts: anatomy', '  Parts: legend') + body,
-      /gives Parts the role legend; one of overview, example, variants, anatomy, do, dont/,
+      /gives Parts the role legend; one of overview, example, variants, anatomy, do, dont, caution/,
     );
     await rejects(
       frontmatter.replace(
@@ -406,6 +406,14 @@ test('the build fails a page that is not in the one-file structure', async () =>
         '',
       ) + body,
       /gives the dont figure OnSubmit no caption, its rule/,
+    );
+    // A caution, acceptable with care, states its rule too.
+    await rejects(
+      frontmatter.replace(
+        "    role: dont\n    caption: Don't use a switch in a form that applies on submit.\n",
+        '    role: caution\n',
+      ) + body,
+      /gives the caution figure OnSubmit no caption, its rule/,
     );
     await rejects(
       frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    width: 30') +

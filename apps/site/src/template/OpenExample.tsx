@@ -20,16 +20,25 @@ const union = (boxes: Edges[]): Edges => ({
 
 /**
  * The box that places the figure's dialogs, sheets and toasts: the stage, or in an anatomy figure,
- * the room, which keeps them clear of the stage's padding, where the callouts go.
+ * the room, which keeps them clear of the stage's padding, where the callouts go, or on a do or
+ * don't figure's square, the box over it that is drawn smaller to fit it (VerdictFit.ts).
  */
 const stageOf = (element: HTMLElement) => {
   const room = element.closest<HTMLElement>('.catalogue-open-example');
   if (room && getComputedStyle(room).contain.includes('layout')) return room;
   return (
+    element.closest<HTMLElement>('.site-verdict[data-shape="square"] .site-verdict-fit') ??
     element.closest<HTMLElement>('.site-live-example, .site-verdict-stage, .site-anatomy-stage') ??
     element
   );
 };
+
+/**
+ * The scale a box is drawn at, such as a do or don't figure's box drawn smaller to fit its square:
+ * what the viewport measures, divided by it, is in the box's own px.
+ */
+const scaleOf = (element: HTMLElement) =>
+  (element.offsetWidth && element.getBoundingClientRect().width / element.offsetWidth) || 1;
 
 /**
  * The overlays in the layer: each outermost box that isn't a scrim or a positioner over the whole
@@ -37,7 +46,8 @@ const stageOf = (element: HTMLElement) => {
  */
 function overlays(layer: HTMLElement) {
   const stage = stageOf(layer);
-  const area = { width: stage.clientWidth, height: stage.clientHeight };
+  const scale = scaleOf(stage);
+  const area = { width: stage.clientWidth * scale, height: stage.clientHeight * scale };
   const found: HTMLElement[] = [];
   const visit = (element: Element) => {
     for (const child of element.children) {
@@ -117,7 +127,7 @@ function placement(overlay: HTMLElement, placer: HTMLElement | undefined, gaps: 
 function shortfall(overlay: HTMLElement, layer: HTMLElement, stage: HTMLElement, content: number) {
   const box = overlay.getBoundingClientRect();
   const area = stage.getBoundingClientRect();
-  const space = Math.max(gutter, parseFloat(getComputedStyle(stage).paddingTop));
+  const space = Math.max(gutter, parseFloat(getComputedStyle(stage).paddingTop)) * scaleOf(stage);
   const above = box.top - area.top;
   const below = area.bottom - box.bottom;
   const height = box.height + cutOff(overlay);
@@ -164,6 +174,9 @@ export function openerBox(subject: HTMLElement): Edges | undefined {
  */
 function fit(room: HTMLElement, layer: HTMLElement) {
   const style = getComputedStyle(room);
+  // What the viewport measures is drawn at the stage's scale; the room's padding and height are
+  // in its own px.
+  const scale = scaleOf(stageOf(room));
   const padding = {
     top: parseFloat(style.paddingTop),
     right: parseFloat(style.paddingRight),
@@ -183,10 +196,10 @@ function fit(room: HTMLElement, layer: HTMLElement) {
   if (content.length && anchored.length) {
     const own = union(content);
     const all = union(anchored);
-    next.top = Math.max(0, own.top - all.top);
-    next.right = Math.max(0, all.right - own.right);
-    next.bottom = Math.max(0, all.bottom - own.bottom);
-    next.left = Math.max(0, own.left - all.left);
+    next.top = Math.max(0, own.top - all.top) / scale;
+    next.right = Math.max(0, all.right - own.right) / scale;
+    next.bottom = Math.max(0, all.bottom - own.bottom) / scale;
+    next.left = Math.max(0, own.left - all.left) / scale;
   }
   // A popup is placed at whole pixels, and moving the room by a fraction of one can round it to
   // the next: padding that followed every such step would set it trembling, a pixel each frame.
@@ -196,7 +209,7 @@ function fit(room: HTMLElement, layer: HTMLElement) {
       room.style.setProperty(`padding-${side}`, `${next[side]}px`);
   // The room grows, or shrinks back, by what the stage lacks or has to spare.
   if (grow !== undefined && Math.abs(grow) > 0.5) {
-    const height = room.getBoundingClientRect().height + grow;
+    const height = (room.getBoundingClientRect().height + grow) / scale;
     const next = `${Math.max(0, Math.ceil(height))}px`;
     if (room.style.minBlockSize !== next) room.style.minBlockSize = next;
   } else if (grow === undefined && room.style.minBlockSize) room.style.minBlockSize = '';

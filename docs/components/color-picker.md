@@ -50,7 +50,7 @@ examples:
   FillWidth: example
   PickerButton:
     role: do
-    caption: "ColorPickerButton: the color's swatch and value, named after its label."
+    caption: The swatch and its value, named after the label.
   SwatchAlone:
     role: dont
     caption: A swatch alone, which hides the value and names no color.
