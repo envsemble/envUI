@@ -221,10 +221,18 @@ export class VirtualPointer {
     const elements = [...this.scope.querySelectorAll('*')].reverse();
     for (const element of elements) {
       if (element.matches(passThrough)) continue;
-      const box = element.getBoundingClientRect();
-      if (box.width < 1 || box.height < 1) continue;
-      if (point.x < box.left || point.x > box.right || point.y < box.top || point.y > box.bottom)
-        continue;
+      // An inline element wrapped over lines, such as a link, is only where its lines are, not
+      // across the box around them, which may hold another link.
+      const under = [...element.getClientRects()].some(
+        (box) =>
+          box.width >= 1 &&
+          box.height >= 1 &&
+          point.x >= box.left &&
+          point.x <= box.right &&
+          point.y >= box.top &&
+          point.y <= box.bottom,
+      );
+      if (!under) continue;
       const style = getComputedStyle(element);
       // What is clipped away whole, such as a screen reader's announcer, is no target.
       if (/^inset\((50|100)%/.test(style.clipPath)) continue;
