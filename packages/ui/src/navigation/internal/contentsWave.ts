@@ -58,9 +58,9 @@ function swellAround(distance: number): number {
 }
 
 /** How much a lean draws out the trailing side, and a stretch the bulge's height and width. */
-const leanReach = 0.35;
-const stretchReach = 0.3;
-const stretchThin = 0.3;
+const leanReach = 0.2;
+const stretchReach = 0.18;
+const stretchThin = 0.18;
 
 /**
  * How tall the bulge is on each side of the reader's place, as a share of its height at rest, and
@@ -72,7 +72,7 @@ function deform({ lean, stretch }: WaveMotion) {
     above: tall * Math.max(0.5, 1 + lean * leanReach),
     below: tall * Math.max(0.5, 1 - lean * leanReach),
     // Squashed, it grows a little past its fullest, into the gap before the labels.
-    across: Math.min(1.08, Math.max(0.6, 1 - stretch * stretchThin)),
+    across: Math.min(1.05, Math.max(0.6, 1 - stretch * stretchThin)),
   };
 }
 

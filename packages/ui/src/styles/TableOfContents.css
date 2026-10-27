@@ -7,7 +7,7 @@
   /* How far each level sits in from the one above it, and the shape's width at its fullest, which
      is also its column's. */
   --env-table-of-contents-indent: var(--env-space-3);
-  --env-table-of-contents-stroke: var(--env-space-5);
+  --env-table-of-contents-stroke: calc((var(--env-space-4) + var(--env-space-5)) / 2);
   min-inline-size: 0;
   font: var(--env-type-body-small);
 }
@@ -64,7 +64,7 @@
   pointer-events: none;
 }
 .env-table-of-contents-wave path {
-  fill: var(--env-color-border-muted);
+  fill: var(--env-color-bg-neutral-muted);
 }
 /* In right-to-left text, the straight edge is at the start, on the right. */
 .env-table-of-contents-wave:dir(rtl) {

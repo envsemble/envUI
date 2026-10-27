@@ -202,7 +202,7 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
  * the pointer, which pops a little past its size.
  */
 const placeSpring = { frequency: 20, damping: 0.7 };
-const shapeSpring = { frequency: 18, damping: 0.4, inertia: 1.3 };
+const shapeSpring = { frequency: 18, damping: 0.55, inertia: 1.3 };
 const hoverSpring = { frequency: 26, damping: 0.55 };
 
 /**

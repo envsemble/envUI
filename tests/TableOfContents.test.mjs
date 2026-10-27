@@ -208,7 +208,7 @@ test('moving, the bulge leans back and stretches; landing, it squashes a little 
   assert.ok(swellAt(4, 4, [], stretched) < 1);
   assert.ok(swellAt(6, 4, [], stretched) > swellAt(6, 4, []));
   const squashed = { lean: 0, stretch: -1 };
-  assert.ok(swellAt(4, 4, [], squashed) > 1 && swellAt(4, 4, [], squashed) <= 1.08);
+  assert.ok(swellAt(4, 4, [], squashed) > 1 && swellAt(4, 4, [], squashed) <= 1.05);
 });
 
 test('a spring overshoots a little when underdamped, never when critically damped, and rests', () => {
