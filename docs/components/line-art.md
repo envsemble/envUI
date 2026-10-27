@@ -92,7 +92,7 @@ The drawing has no box of its own: it fills the one it is given.
 
 ### Cropping and anchoring
 
-The drawing covers its box, so a box of another shape crops it from the side away from where it sits. A box wider than the drawing crops its top and bottom alike.
+The drawing covers its box, so a box of another shape crops it from the side away from where it sits. It always rests on the box's foot: a box wider than the drawing crops its top.
 
 ```tsx figure=WhereItSits
 

@@ -42,7 +42,7 @@ export interface LineArtProps extends Omit<ComponentPropsWithRef<'svg'>, 'childr
   /**
    * Where the drawing sits in its box when the box's shape crops it: at the end, at the start or
    * in the centre, flipped in right-to-left text, as the drawing itself is. It is cropped from the
-   * other side, or from both.
+   * other side, or from both, and always rests on the box's foot, cropped from its top.
    * @default 'end'
    */
   align?: 'start' | 'center' | 'end';
@@ -68,13 +68,26 @@ export interface LineArtProps extends Omit<ComponentPropsWithRef<'svg'>, 'childr
   onMotionEnd?: () => void;
 }
 
-const aspect = { start: 'xMinYMid', center: 'xMidYMid', end: 'xMaxYMid' } as const;
+const aspect = { start: 'xMinYMax', center: 'xMidYMax', end: 'xMaxYMax' } as const;
+
+/**
+ * Where a drawing's sheet starts, for the drawings whose lines stop short of its foot or its end:
+ * the sheet is moved so they reach both, and a drawing rests on its box's foot at every size with
+ * no strip of empty sheet below it or beside its end.
+ */
+const sheetOrigin: Partial<Record<LineArtDrawing, string>> = {
+  'pappus-chain': '0 -18',
+  'golden-section': '-14 -30',
+  'whirling-squares': '-7 -22',
+  'quartered-square': '-26 -24',
+  'ford-circles': '0 -18',
+};
 
 /**
  * A geometric drawing in hairlines that fills its container's box, for a banner's end, an empty
  * state or the background of a header: its lines in the muted edge color in every theme, one
  * device pixel wide at any size, and the system's gray text color in forced colors. It covers the
- * box, cropped from its start by default, and is hidden from assistive technology unless a label
+ * box, resting on its foot and cropped from its start by default, and is hidden from assistive technology unless a label
  * makes it an image. With `motion`, its lines draw themselves in, out, or in and out again.
  */
 export function LineArt({
@@ -87,7 +100,7 @@ export function LineArt({
   ...props
 }: LineArtProps) {
   const root = {
-    viewBox: '0 0 480 330',
+    viewBox: `${sheetOrigin[drawing] ?? '0 0'} 480 330`,
     preserveAspectRatio: `${aspect[align]} slice`,
     focusable: 'false',
     role: label ? 'img' : undefined,

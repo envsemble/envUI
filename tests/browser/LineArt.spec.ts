@@ -1,15 +1,15 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
-// LineArt: hairlines in the muted edge color that cover the box, cropped from the side away from
-// where the drawing sits, mirrored right to left, and the system's gray text in forced colors.
+// LineArt: hairlines in the muted edge color that cover the box, resting on its foot, cropped from
+// the side away from where the drawing sits, mirrored right to left, and the system's gray text in forced colors.
 
 /** The box of a drawing's outer rectangle, and of the drawing itself, in the page's pixels. */
 const boxes = (art: Locator) =>
   art.evaluate((svg) => {
     const box = svg.getBoundingClientRect();
     const sheet = svg.querySelector('rect')!.getBoundingClientRect();
-    return { box: { left: box.left, right: box.right }, sheet };
+    return { box: { left: box.left, right: box.right, bottom: box.bottom }, sheet };
   });
 
 test('it covers its box from where it sits, its lines hairlines in the muted edge color', async ({
@@ -33,17 +33,18 @@ test('it covers its box from where it sits, its lines hairlines in the muted edg
   });
   await expect(line).toHaveCSS('stroke', muted);
 
-  // The golden rectangle's end, 14 of the sheet's 480 from its edge, stays in view at the end;
-  // its start is cropped. At the start, the other way round; right to left, mirrored.
+  // The golden rectangle reaches the end and the foot of its box at the end; its start is cropped.
+  // At the start, the other way round, its start 43 of the sheet's 480 in; right to left, mirrored.
   const atEnd = await boxes(end);
   const scale = 192 / 330;
-  expect(Math.abs(atEnd.sheet.right - (atEnd.box.right - 14 * scale))).toBeLessThan(1);
+  expect(Math.abs(atEnd.sheet.right - atEnd.box.right)).toBeLessThan(1);
+  expect(Math.abs(atEnd.sheet.bottom - atEnd.box.bottom)).toBeLessThan(1);
   expect(atEnd.sheet.left).toBeLessThan(atEnd.box.left);
   const atStart = await boxes(page.getByTestId('start'));
-  expect(Math.abs(atStart.sheet.left - (atStart.box.left + 29.1 * scale))).toBeLessThan(1);
+  expect(Math.abs(atStart.sheet.left - (atStart.box.left + 43.1 * scale))).toBeLessThan(1);
   expect(atStart.sheet.right).toBeGreaterThan(atStart.box.right);
   const rtl = await boxes(page.getByTestId('rtl'));
-  expect(Math.abs(rtl.sheet.left - (rtl.box.left + 14 * scale))).toBeLessThan(1);
+  expect(Math.abs(rtl.sheet.left - rtl.box.left)).toBeLessThan(1);
   expect(rtl.sheet.right).toBeGreaterThan(rtl.box.right);
 
   // Decorative, it is hidden; a label makes it an image.
