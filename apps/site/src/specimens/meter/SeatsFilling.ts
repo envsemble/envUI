@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { createElement, useState, type ReactNode } from 'react';
 import { useSharedTimeline } from '../../previews/Motion';
 
 /*
@@ -22,19 +22,18 @@ export function useSeats() {
 export function Refilling({ step, children }: { step: number; children: ReactNode }) {
   const [round, setRound] = useState({ count: 0, step });
   if (round.step !== step) setRound({ count: round.count + (step === 0 ? 1 : 0), step });
-  return (
-    <div
-      style={{
+  // A module of helpers, so no JSX: the box fades, and its child is drawn anew each round.
+  return createElement(
+    'div',
+    {
+      style: {
         display: 'grid',
         justifyItems: 'center',
         inlineSize: '100%',
         opacity: step === fading ? 0 : 1,
         transition: 'opacity 200ms ease',
-      }}
-    >
-      <div key={round.count} style={{ display: 'contents' }}>
-        {children}
-      </div>
-    </div>
+      },
+    },
+    createElement('div', { key: round.count, style: { display: 'contents' } }, children),
   );
 }
