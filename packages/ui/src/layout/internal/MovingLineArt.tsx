@@ -79,7 +79,7 @@ export function MovingLineArt({
     if (!svg) return;
     const measure = () => {
       const scale = Math.max(svg.clientWidth / 480, svg.clientHeight / 330);
-      if (scale > 0) svg.style.setProperty('--env-line-art-scale', String(scale));
+      if (scale > 0) svg.style.setProperty('--env-line-art-scale', `${scale}px`);
     };
     measure();
     const resizes = new ResizeObserver(measure);

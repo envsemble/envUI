@@ -36,7 +36,7 @@
    screen), rather than a custom property it is computed from: Firefox doesn't redraw a line's dash
    from a custom property as it animates. */
 .env-line-art[data-motion] > * {
-  --env-line-art-dash: calc(var(--env-line-art-scale, 1) * 1px);
+  --env-line-art-dash: var(--env-line-art-scale);
   stroke-dasharray: var(--env-line-art-dash) var(--env-line-art-dash);
   stroke-dashoffset: 0;
   animation-duration: calc(var(--env-line-art-duration) / 2);
