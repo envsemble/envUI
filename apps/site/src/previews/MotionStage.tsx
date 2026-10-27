@@ -1,4 +1,12 @@
-import { createContext, use, useRef, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  use,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { IconButton, Tooltip } from '@envsemble/envui';
 import { Pause } from '@envsemble/envui/icons/Pause';
 import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
@@ -25,7 +33,9 @@ export const VerdictMotion = createContext(false);
  * Its overlays, such as a menu, a dialog or a tooltip, open live inside the stage, as a tile's do
  * (PreviewOverlays): a dialog's scrim covers the stage, not the page, and nothing leaves it.
  * `height`, a CSS length, keeps the stage as tall as what opens in it from the start, so the
- * figure keeps one height as it plays.
+ * figure keeps one height as it plays. Whatever the figure, the stage keeps the tallest height it
+ * has reached at its width (useTallest), so a figure that grows for a moment as it plays never
+ * shrinks back and moves the page below it on every loop.
  */
 export function MotionStage({
   label,
@@ -49,6 +59,7 @@ export function MotionStage({
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
+  useTallest(stage, height);
   const paused = own && own.over === motionPaused ? own.paused : motionPaused;
   const action = paused ? `Play ${label}` : `Pause ${label}`;
   return (
@@ -86,3 +97,63 @@ export function MotionStage({
     </div>
   );
 }
+
+/**
+ * Keeps an animated figure's stage at the tallest height it has reached at its width, at least
+ * `height`: what grows as the figure plays, such as a message that wraps or a list that gains a
+ * row, then grows the stage once, and its loop back leaves the stage as it is, so the page below
+ * stays put. At another width the stage measures afresh.
+ */
+function useTallest(stage: RefObject<HTMLDivElement | null>, height: string | undefined) {
+  useEffect(() => {
+    const element = stage.current;
+    if (!element) return;
+    const own = height ?? '';
+    let width = -1;
+    // The tallest border box so far, and its min-height, which counts what the box's sizing
+    // counts: without its padding and borders, by default.
+    let tallest = 0;
+    const hold = (border: number) => {
+      tallest = border;
+      if (!border) {
+        element.style.minBlockSize = own;
+        return;
+      }
+      const style = getComputedStyle(element);
+      const frame =
+        style.boxSizing === 'border-box'
+          ? 0
+          : parseFloat(style.paddingBlockStart) +
+            parseFloat(style.paddingBlockEnd) +
+            parseFloat(style.borderBlockStartWidth) +
+            parseFloat(style.borderBlockEndWidth);
+      element.style.minBlockSize = `max(${height ?? '0px'}, ${border - frame}px)`;
+    };
+    const observer = new ResizeObserver(([entry]) => {
+      const box = entry?.borderBoxSize[0];
+      if (!box) return;
+      if (Math.abs(box.inlineSize - width) > 0.5) {
+        // At a new width the figure lays out anew: it starts again from the height it has now.
+        width = box.inlineSize;
+        hold(0);
+        hold(element.getBoundingClientRect().height);
+      } else if (box.blockSize > tallest + 0.5) hold(box.blockSize);
+    });
+    observer.observe(element, { box: 'border-box' });
+    return () => {
+      observer.disconnect();
+      element.style.minBlockSize = own;
+    };
+  }, [stage, height]);
+}
+
+/**
+ * A figure's room for its tallest state, as a CSS length for its content's min-height: `wide`,
+ * and `narrow` where its stage is narrower than `below` (all in rem), where its rows wrap and
+ * stand taller. With it the stage is that tall from the start, rather than growing the first time
+ * the figure reaches that state (useTallest). A step of the stage's width, the container it lays
+ * out in: the difference is huge and positive below `below`, so `narrow` wins, and negative from
+ * it on, so `wide` does.
+ */
+export const roomFor = (wide: number, narrow: number, below: number) =>
+  `max(${wide}rem, min(${narrow}rem, (${below}rem - 100cqi) * 1000))`;

@@ -1,6 +1,6 @@
 import RowDensity from '../../examples/table/RowDensity';
 import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage, roomFor } from '../../previews/MotionStage';
 
 const option = (index: number) =>
   `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
@@ -36,7 +36,12 @@ function Choosing() {
   // In room for the largest rows, so the control above them stays where it is.
   return (
     <div
-      style={{ minBlockSize: '21rem', inlineSize: '100%', display: 'grid', alignContent: 'start' }}
+      style={{
+        minBlockSize: roomFor(22.5, 34.5, 29),
+        inlineSize: '100%',
+        display: 'grid',
+        alignContent: 'start',
+      }}
     >
       <RowDensity />
     </div>
