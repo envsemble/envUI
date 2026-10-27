@@ -99,7 +99,7 @@ Rows pack more or less tightly, from extra small to large, which changes only th
 
 A whole row can open what it names, through its one link, while its other controls stay pressable above it.
 
-```tsx figure=OpenFromRow
+```tsx figure=OpenFromRow motion
 
 ```
 
@@ -115,7 +115,7 @@ The row whose details show beside the list is marked as the current one.
 
 A checkbox at a row's start chooses it for an action on several rows at once.
 
-```tsx figure=CheckedRows
+```tsx figure=CheckedRows motion
 
 ```
 
@@ -123,7 +123,7 @@ A checkbox at a row's start chooses it for an action on several rows at once.
 
 Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys.
 
-```tsx figure=Reorder
+```tsx figure=Reorder motion
 
 ```
 
@@ -155,13 +155,13 @@ Keep the description to one fact that tells items apart, such as who changed it 
 
 ### Keyboard
 
-| Key                                                                      | Action                                                 |
-| ------------------------------------------------------------------------ | ------------------------------------------------------ |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                          | Moves through the handles, links and controls of rows. |
-| <kbd>Space</kbd>, <kbd>Enter</kbd> on a handle                           | Lifts the row, or drops a lifted row.                  |
-| <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>Home</kbd>, <kbd>End</kbd> while lifted | Moves the row one place, or to either end.             |
-| <kbd>Esc</kbd>, <kbd>Tab</kbd> while lifted                              | Puts the row back.                                     |
-| <kbd>Alt</kbd>+<kbd>↑</kbd>, <kbd>Alt</kbd>+<kbd>↓</kbd> on a row target | Moves the row one place at once.                       |
+| Key                                                         | Action                                                       |
+| ----------------------------------------------------------- | ------------------------------------------------------------ |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>             | Moves through the handles, links and controls of rows.       |
+| <kbd>Space</kbd>, <kbd>Enter</kbd>                          | On a handle, lifts the row, or drops a lifted row.           |
+| <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>Home</kbd>, <kbd>End</kbd> | While a row is lifted, moves it one place, or to either end. |
+| <kbd>Esc</kbd>, <kbd>Tab</kbd>                              | While a row is lifted, puts it back.                         |
+| <kbd>Alt</kbd>+<kbd>↑</kbd>, <kbd>Alt</kbd>+<kbd>↓</kbd>    | On a row's link or button, moves the row one place at once.  |
 
 ### envUI provides
 

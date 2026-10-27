@@ -65,7 +65,7 @@ examples:
 
 1. **Popup** (`env-month-picker-popup`)
 2. **Previous year** (`env-month-picker-previous`)
-3. **Year** (`env-month-picker-heading`)
+3. **Year** (`env-month-picker-heading::text`)
 4. **Next year** (`env-month-picker-next`)
 5. **Month** (`env-month-picker-month`)
 6. **Actions** (`env-date-picker-actions`)
@@ -76,11 +76,13 @@ examples:
 
 The month shows in the reader's language, and choosing one closes the popup.
 
+<!-- specimen: ChoosingAMonth -->
+
 ### Within a fiscal year
 
 Months outside the range a field allows are unavailable, and the year buttons stop at them.
 
-```tsx figure=FiscalYear
+```tsx figure=FiscalYear motion
 
 ```
 

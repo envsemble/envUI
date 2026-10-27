@@ -72,7 +72,7 @@ The previous and next links are parts of their own too, which make the same pair
 
 At either end of the sequence, leave out the missing destination: a single link stays centred.
 
-```tsx figure=StepThroughAGuide
+```tsx figure=StepThroughAGuide motion
 
 ```
 

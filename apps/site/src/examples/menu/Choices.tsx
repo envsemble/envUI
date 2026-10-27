@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Menu, Column, Text } from '@envsemble/envui';
+import { Button, Menu, Row, Text } from '@envsemble/envui';
 import { Visibility } from '@envsemble/envui/icons/Visibility';
 
 const sortLabels: Record<string, string> = {
@@ -13,7 +13,8 @@ export default function Choices() {
   const [hiddenFiles, setHiddenFiles] = useState(false);
   const [extensions, setExtensions] = useState(true);
   return (
-    <Column gap={4} align="start">
+    // The line beside the trigger stays in view while the menu is open below it.
+    <Row gap={4} align="center" wrap>
       <Menu.Root
         aria-label="View options"
         align="start"
@@ -43,6 +44,6 @@ export default function Choices() {
         {`Sorted by ${sortLabels[sort]}; hidden files ${hiddenFiles ? 'shown' : 'hidden'}; `}
         {`extensions ${extensions ? 'shown' : 'hidden'}.`}
       </Text>
-    </Column>
+    </Row>
   );
 }

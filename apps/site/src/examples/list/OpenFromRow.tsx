@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconButton, Link, List, Column, Text } from '@envsemble/envui';
+import { IconButton, Link, List, Column, Menu, Text } from '@envsemble/envui';
 import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 const plans = [
@@ -31,14 +31,22 @@ export default function OpenFromRow() {
             }
             description={updated}
             action={
-              <IconButton
-                variant="text"
-                icon={<MoreHoriz />}
-                aria-label={`More actions for ${name}`}
-                // The row's other controls stay above the link that covers the row.
-                style={{ position: 'relative' }}
-                onClick={() => setResult(`More actions for ${name}`)}
-              />
+              <Menu.Root
+                aria-label={`Actions for ${name}`}
+                trigger={
+                  <IconButton
+                    variant="text"
+                    icon={<MoreHoriz />}
+                    aria-label={`More actions for ${name}`}
+                    // The row's other controls stay above the link that covers the row.
+                    style={{ position: 'relative' }}
+                  />
+                }
+              >
+                <Menu.Item onClick={() => setResult(`Shared ${name}`)}>Share</Menu.Item>
+                <Menu.Item onClick={() => setResult(`Renamed ${name}`)}>Rename</Menu.Item>
+                <Menu.Item onClick={() => setResult(`Archived ${name}`)}>Archive</Menu.Item>
+              </Menu.Root>
             }
           />
         ))}

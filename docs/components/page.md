@@ -122,7 +122,7 @@ A header can stay at the top of the area that scrolls, under a Scaffold's top ba
 
 - What takes focus in the page keeps clear of it.
 
-```tsx figure=Sticky
+```tsx figure=Sticky motion
 
 ```
 

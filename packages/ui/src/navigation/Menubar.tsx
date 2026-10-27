@@ -174,6 +174,13 @@ function Root({
         }),
       );
     }
+    // A menubar in an inert region, such as the page behind a modal dialog, can't be used, so keys
+    // pressed outside that region don't reach it; keys from inside it, as a script may send them,
+    // do.
+    function reaches(event: KeyboardEvent) {
+      const region = menubar!.closest('[inert]');
+      return !region || (event.target instanceof Node && region.contains(event.target));
+    }
     function menuOpen() {
       return menubar!.querySelector('.env-menubar-trigger[aria-expanded="true"]') !== null;
     }
@@ -186,6 +193,7 @@ function Root({
       else (document.activeElement as HTMLElement | null)?.blur();
     }
     function onKeyDown(event: KeyboardEvent) {
+      if (!reaches(event)) return;
       if (event.key === 'Alt') {
         if (!event.repeat) altAlone = !event.ctrlKey && !event.metaKey && !event.shiftKey;
         if (altAlone) setAltHeld(true);
@@ -219,7 +227,7 @@ function Root({
       openMenu(trigger);
     }
     function onKeyUp(event: KeyboardEvent) {
-      if (event.key !== 'Alt') return;
+      if (event.key !== 'Alt' || !reaches(event)) return;
       setAltHeld(false);
       if (!altAlone) return;
       altAlone = false;
@@ -433,9 +441,12 @@ function Menu({
       onOpenChange={(next, details) => {
         // Base UI checks where focus went a moment after it leaves the trigger. When that check runs
         // late, focus may already be in one of the menu's own submenus, so the menu stays open.
+        // Another menu of the menubar opening in its place closes it, in a contained
+        // PortalContainer too, where a close from outside the container is kept from it.
         if (
           (!next && details.reason === 'trigger-focus' && focusInSubmenu()) ||
-          keepsOpen(portal, next, details, trigger.current)
+          (!switchingReasons.has(details.reason) &&
+            keepsOpen(portal, next, details, trigger.current))
         ) {
           details.cancel();
           return;
