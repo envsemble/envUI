@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Tree, type TreeItem, Badge } from '@envsemble/envui';
+import { Tree, type TreeItem, type TreeProps, Badge } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
@@ -24,7 +24,7 @@ const mailboxes: Mailbox[] = [
     depth: 1,
     label: 'Northwind',
     icon: <Folder />,
-    description: 'Shared',
+    description: 'Shared with 4',
     end: <Badge count={3} aria-label="3 unread" />,
   },
   { id: 'clients/example', parent: 'clients', depth: 1, label: 'Example Inc.', icon: <Folder /> },
@@ -39,7 +39,7 @@ const mailboxes: Mailbox[] = [
   },
 ];
 
-export default function RowDensity() {
+export default function RowDensity({ density = 'md' }: Pick<TreeProps<TreeItem>, 'density'>) {
   const [clientsOpen, setClientsOpen] = useState(true);
   const [selected, setSelected] = useState<string | null>('inbox');
   // A collapsed folder leaves its children out of the visible rows.
@@ -52,10 +52,10 @@ export default function RowDensity() {
   );
   return (
     // The tree fills its parent's height and scrolls itself.
-    <div style={{ blockSize: '15rem', inlineSize: 'min(100%, 20rem)' }}>
+    <div style={{ blockSize: '16.5rem', inlineSize: 'min(100%, 20rem)' }}>
       <Tree
         aria-label="Mailboxes"
-        density="md"
+        density={density}
         items={rows}
         value={selected}
         onAction={(row) => (row.expandable ? setClientsOpen(!row.expanded) : setSelected(row.id))}

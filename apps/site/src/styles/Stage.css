@@ -560,3 +560,18 @@
   color: HighlightText;
   background-color: Highlight;
 }
+
+/* A tree whose density steps in a figure (specimens/tree/RowDensity.tsx): its rows glide to their
+   new places, rather than jumping, as the density changes. Their height, which the tree measures,
+   changes at once. */
+.catalogue-density-steps .env-tree-item {
+  transition:
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    transform var(--env-motion-duration-medium) var(--env-motion-ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-density-steps .env-tree-item {
+    transition: none;
+  }
+}

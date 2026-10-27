@@ -33,7 +33,7 @@ examples:
   FileTree: overview
   RowDensity:
     role: example
-    caption: Medium, with counts at the end, a description and a disabled row.
+    caption: Counts at the end, a description and a disabled row, at each density.
   TreeAnatomy: anatomy
   ContextMenuActions: example
   NarrowTree: example
@@ -54,7 +54,7 @@ Density changes only the room around a row's text, never the text or the icons.
 | Medium      | Fewer rows with more room, such as mailboxes.         |
 | Large       | The most room, as tall as a touch target.             |
 
-```tsx figure=RowDensity
+```tsx figure=RowDensity motion
 
 ```
 
@@ -80,11 +80,13 @@ A click and <kbd>Space</kbd> preview a row, and a double click and <kbd>Enter</k
 
 - A disabled row can be reached with the keyboard, but doesn't open or expand.
 
+<!-- specimen: OpeningAndPreviewing -->
+
 ### Actions in a context menu
 
 A right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.
 
-```tsx figure=ContextMenuActions
+```tsx figure=ContextMenuActions motion
 
 ```
 
@@ -192,5 +194,5 @@ The tree renders only the rows in view, and is as tall as its parent: give the p
 
 ## Changelog
 
-- **1.0.0**: `selectedId` is `value` and `onOpen` is `onAction`, with `TreeActionOptions` (was `TreeOpenOptions`); a TreeItem's `detail` is `description` and its `trailing` is `end`. The context menu's default name comes from `messages.tree`, and the tree takes `ref` and `style`. A row's class is `env-tree-item` (was `env-tree-row`), and `env-tree-detail` and `-trailing` are `env-tree-description` and `-end`.
+- **1.0.0**: `selectedId` is `value` and `onOpen` is `onAction`, with `TreeActionOptions` (was `TreeOpenOptions`); a TreeItem's `detail` is `description` and its `trailing` is `end`. The context menu's default name comes from `messages.tree`, and the tree takes `ref` and `style`. A row's class is `env-tree-item` (was `env-tree-row`), and `env-tree-detail` and `-trailing` are `env-tree-description` and `-end`; a description keeps more room from its label.
 - **0.5.0**: Tree: a virtualized tree for thousands of rows, with keyboard navigation, type-ahead, preview and open callbacks, a context menu and two densities. Keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application.

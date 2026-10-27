@@ -103,7 +103,7 @@ export default function ContextMenuActions() {
         />
       </div>
       {/* The tree fills its parent's height and scrolls itself. */}
-      <div style={{ blockSize: '14rem' }}>
+      <div style={{ blockSize: '17rem' }}>
         <Tree
           aria-label="Project files"
           items={rows}

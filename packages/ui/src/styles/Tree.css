@@ -113,10 +113,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* The detail gives way to the label when space runs out. */
+/* The detail gives way to the label when space runs out. It keeps more room from the label than
+   the row's other parts, so it never reads as part of the name. */
 .env-tree-description {
   min-inline-size: 0;
   flex: 0 1000 auto;
+  margin-inline-start: var(--env-space-2);
   overflow: hidden;
   text-overflow: ellipsis;
   color: var(--env-color-fg-muted);
