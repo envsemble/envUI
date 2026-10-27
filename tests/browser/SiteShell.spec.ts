@@ -311,21 +311,21 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
         (item) => item.querySelector(':scope > a')?.textContent,
       ),
     );
-  // A component's page lists its sections, with the rules under Rules, and marks where the reader
+  // A component's page lists its sections, with its tips under Tips, and marks where the reader
   // is; a link scrolls to its section.
   await page.goto(`${siteDevUrl}/components/button`);
   await expect(contents).toBeVisible();
   await expect
     .poll(topLevel)
-    .toEqual(['Overview', 'Variants', 'Anatomy', 'Behaviour', 'Rules', 'Accessibility', 'Related']);
+    .toEqual(['Overview', 'Variants', 'Anatomy', 'Behaviour', 'Tips', 'Accessibility', 'Related']);
   const rules = contents.getByRole('listitem').filter({
-    has: page.getByRole('link', { name: 'Rules', exact: true }),
+    has: page.getByRole('link', { name: 'Tips', exact: true }),
   });
   await expect(rules.getByRole('link', { name: 'Use it when', exact: true })).toBeVisible();
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Overview');
-  await contents.getByRole('link', { name: 'Rules', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/components/button#rules`);
-  await expect(contents.locator('[aria-current="location"]')).toHaveText('Rules');
+  await contents.getByRole('link', { name: 'Tips', exact: true }).click();
+  await expect(page).toHaveURL(`${siteDevUrl}/components/button#tips`);
+  await expect(contents.locator('[aria-current="location"]')).toHaveText('Tips');
   // The banner, the page's column and the contents beside it are laid out as in the Docs: the
   // banner is its column less the gutters, level with the top of the contents, and the contents
   // take the rest of the pane, so a banner is as wide as the Docs' wherever the pane and the
@@ -378,14 +378,17 @@ test("a catalogue page's contents list none of its figures' headings, a do and d
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const contents = page.getByRole('navigation', { name: 'On this page' });
-  // Card's do and don't pairs hold cards with headings of their own.
+  // Card's do and don't pairs, shown as tips' pictures, hold cards with headings of their own.
   await page.goto(`${siteDevUrl}/components/card`);
-  await expect(contents.getByRole('link', { name: 'Rules', exact: true })).toBeVisible();
-  await expect(page.locator('.site-verdict-stage :is(h2, h3)').first()).toBeAttached();
+  await expect(contents.getByRole('link', { name: 'Tips', exact: true })).toBeVisible();
+  await page.locator('[data-section="rules"]').scrollIntoViewIfNeeded();
+  await expect(page.locator('.catalogue-tip-canvas :is(h2, h3)').first()).toBeAttached();
   const inFigures = await contents.evaluate((navigation) =>
     [...navigation.querySelectorAll('a[href^="#"]')].flatMap((link) => {
       const heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
-      return heading?.closest('.site-live-example, .site-verdict-stage, .site-anatomy-stage')
+      return heading?.closest(
+        '.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-related-canvas',
+      )
         ? [link.textContent]
         : [];
     }),
