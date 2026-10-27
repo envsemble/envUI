@@ -56,27 +56,9 @@ Each is a construction from geometry, drawn whole on a sheet a little wider than
 
 - They are interchangeable: choose by what looks right in the space, or vary them from screen to screen.
 - None of them means anything, so none of them suits a particular subject.
+- The buttons under each drawing play its motions there.
 
 <!-- specimen: Drawings -->
-
-| Drawing                  | What it draws                                                                                     | In code                  |
-| ------------------------ | ------------------------------------------------------------------------------------------------- | ------------------------ |
-| Golden section           | A golden rectangle cut into squares, each with its quarter arc, and the diagonals.                | `golden-section`         |
-| Square, circle, triangle | One square holding its circle, its triangle and its diagonals, its edges running on as a grid.    | `square-circle-triangle` |
-| Whirling squares         | Squares turning inwards, each one's corners a fifth of the way along the last one's sides.        | `whirling-squares`       |
-| Triangle and circles     | An equilateral triangle between its inner and outer circles, with its three axes.                 | `triangle-and-circles`   |
-| Ford circles             | A circle on a line at every fraction from a half to one, each touching its neighbours.            | `ford-circles`           |
-| Harmonic division        | A rectangle's diagonal, crossed by lines from its corner, cutting the width into halves and on.   | `harmonic-division`      |
-| Pappus chain             | Three half circles on one line, and a chain of circles each touching its neighbours and two arcs. | `pappus-chain`           |
-| Root rectangles          | Rectangles grown from a square, each from the last one's diagonal swung down to the base.         | `root-rectangles`        |
-| Sacred cut               | Arcs from a square's corners through its centre, their cuts running on as a grid of nine.         | `sacred-cut`             |
-| Gothic tracery           | Pointed arches in a row, each holding two smaller arches and the circle that touches all three.   | `gothic-tracery`         |
-| Quartered square         | A square quartered, its corner quarter quartered again and on, each quarter holding its circle.   | `quartered-square`       |
-| Graded quadtree          | A square quartered, and every quarter near one end quartered again, four times over.              | `graded-quadtree`        |
-| Monochord                | A string stopped for the octave, the fifth and the fourth, with an arc over each length.          | `monochord`              |
-| Logarithmic grid         | One decade of a slide rule's scale, both ways, with the diagonal where the scales agree.          | `logarithmic-grid`       |
-| Pointed arcade           | Pointed arches, each struck from where it springs, every span three fifths of the last.           | `pointed-arcade`         |
-| Root-two halving         | A rectangle halved, the half halved across and on round, with two diagonals crossing at the pole. | `root-two-halving`       |
 
 ## Anatomy
 
@@ -232,6 +214,27 @@ Ask for a drawing in these words.
 ```
 
 `align` is `end`, the default, `start` or `center`: where the drawing sits as its box crops it, as `preserveAspectRatio` with `slice` on a sheet of 480 by 330. Right to left, the drawing is mirrored. `label` makes it `role="img"`, named by the label; without one it is `aria-hidden`.
+
+#### The drawings
+
+| Drawing                  | In code                  |
+| ------------------------ | ------------------------ |
+| Golden section           | `golden-section`         |
+| Square, circle, triangle | `square-circle-triangle` |
+| Whirling squares         | `whirling-squares`       |
+| Triangle and circles     | `triangle-and-circles`   |
+| Ford circles             | `ford-circles`           |
+| Harmonic division        | `harmonic-division`      |
+| Pappus chain             | `pappus-chain`           |
+| Root rectangles          | `root-rectangles`        |
+| Sacred cut               | `sacred-cut`             |
+| Gothic tracery           | `gothic-tracery`         |
+| Quartered square         | `quartered-square`       |
+| Graded quadtree          | `graded-quadtree`        |
+| Monochord                | `monochord`              |
+| Logarithmic grid         | `logarithmic-grid`       |
+| Pointed arcade           | `pointed-arcade`         |
+| Root-two halving         | `root-two-halving`       |
 
 #### Motion
 
