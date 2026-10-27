@@ -396,7 +396,7 @@ test("a catalogue page's banner reads from the start under its breadcrumbs, its 
   expect(Math.abs(box!.x + box!.width - (bannerBox!.x + bannerBox!.width))).toBeLessThan(1);
   expect(box!.width).toBeCloseTo(Math.min(bannerBox!.width * 0.48, 42 * 16), 0);
   await expect(banner.locator('.catalogue-banner-motif')).toHaveCount(0);
-  // The few pages with a motif of their own, such as Colors & themes, draw it out of the
+  // The one page with a motif of its own, Colors & themes, draws it out of the
   // accessibility tree and the tab order.
   await page.goto(`${siteDevUrl}/foundations/colors`);
   const motif = page.locator('.site-page-banner .catalogue-banner-motif');
