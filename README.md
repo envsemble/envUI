@@ -23,11 +23,11 @@ _The catalogue: every component, pattern and foundation with live examples, and 
 
 ## What’s inside
 
-- **Foundations:** scoped light, dark and high-contrast themes, design tokens, Inter, typography, spacing and density, surfaces and layout primitives.
+- **Foundations:** scoped light, dark and high-contrast themes, design tokens, Geist, typography, spacing and density, surfaces and layout primitives.
 - **Everyday interactions:** actions, navigation, native form controls, selection, color picking, dialogs and toasts, with Base UI underpinning complex interactions.
 - **Patterns:** forms and validation, settings, app frames, conversations and more, each composed from the components.
 - **Content tools:** Markdown, code highlighting and Tiptap rich text on separate entry points.
-- **Local assets:** Inter and the official Material Symbols Rounded icons, with no font or icon CDN required.
+- **Local assets:** Geist and the official Material Symbols Rounded icons, with no font or icon CDN required.
 - **Dev mode:** a page's layout described and checked as text for agents, and taken apart in 3D for people, from its own entry point, `@envsemble/envui/dev`.
 - **A website in two parts:** the catalogue shows each component, pattern and foundation to people, and the Docs at `/docs` are the developer reference: setup, guides, props, part names and the changelog. Each page links to its counterpart in the other part.
 
