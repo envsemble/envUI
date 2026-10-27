@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSharedTimeline } from '../../previews/Motion';
 
 /*
@@ -12,7 +12,8 @@ const clock = 'loading-refresh';
 const hover = 'data-catalogue-hover';
 const pressed = 'data-catalogue-pressed';
 
-export function Refreshing({ children }: { children: ReactNode }) {
+/** The box to hold the example in, whose Refresh button the timeline presses. */
+export function useRefreshPress() {
   const step = useSharedTimeline(clock, steps);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -23,9 +24,5 @@ export function Refreshing({ children }: { children: ReactNode }) {
     // The press ends in a click as the button is let go.
     if (step === 3) button.click();
   }, [step]);
-  return (
-    <div ref={box} style={{ inlineSize: 'min(100%, 22rem)' }}>
-      {children}
-    </div>
-  );
+  return box;
 }
