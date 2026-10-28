@@ -60,12 +60,11 @@ npx @envsemble/envui-codemods@<version> v1-classes src
 
 The [migration guide](docs/migration.md), under "Upgrade from envUI 0.x to 1.0", explains each step, what the codemods leave to you and the renamed tokens.
 
-Import the stylesheet once at your application entry point, then compose public components:
+Compose public components; with a bundler, each brings its own styles:
 
 ```tsx
 import { Button, Card, Column, Text, Theme } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
-import '@envsemble/envui/styles.css';
 
 export function App() {
   return (
@@ -83,6 +82,8 @@ export function App() {
   );
 }
 ```
+
+Without a bundler, import `@envsemble/envui/styles.css` once at the entry point instead; [setup](docs/setup.md#styles-come-with-the-components) explains both.
 
 Native form behavior stays familiar. Render this inside your application’s theme:
 
@@ -111,7 +112,7 @@ export function ProjectForm() {
 | `@envsemble/envui/content`    | Markdown, code and Markdown editing |
 | `@envsemble/envui/rich-text`  | Rich-text rendering and editing     |
 | `@envsemble/envui/dev`        | Dev mode, in development only       |
-| `@envsemble/envui/styles.css` | Shared styles and local font        |
+| `@envsemble/envui/styles.css` | Every style, without a bundler      |
 
 ## Working with agents
 

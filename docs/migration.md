@@ -832,6 +832,7 @@ envUI's style sheet puts every rule in a cascade layer of `env`: `env.reset`, `e
   }
   ```
 
+- **Styles come with the components.** Each component's module imports its own style sheet, so a bundler loads the CSS of the components the application uses. Remove the `@envsemble/envui/styles.css` import when you use a bundler; keep it, and only it, without one. Loading both loads the styles twice. Declare the application's layer order in a style sheet imported before any component, as [setup](setup.md#styles-come-with-the-components) describes.
 - **`!important`.** An important declaration in a cascade layer beats every important declaration outside layers. envUI declares nothing `!important`, so an `!important` in the application's style sheets wins over envUI as any of its rules does.
 
 ### Tokens

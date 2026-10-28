@@ -163,7 +163,6 @@ Ask an agent for space, density and shape in these words; envUI turns each into 
 
 ```tsx
 import { Button, Column, Surface, Table, Text, TextField, Theme } from '@envsemble/envui';
-import '@envsemble/envui/styles.css';
 
 // Padding is inside the surface; gap is between its children.
 <Surface padding={5} render={<Column gap={4} />}>
