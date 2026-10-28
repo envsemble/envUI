@@ -38,14 +38,19 @@ examples:
   AboveAnEmptyState:
     role: do
     caption: One drawing on a screen, such as above an empty state's message.
-  OnEveryCard:
-    role: dont
-    caption: 'A drawing on every card: they repeat and compete with what the cards say.'
 ---
 
 # LineArt
 
 ## Variants
+
+### Motions
+
+A drawing can draw itself in, draw itself out, run in and out by turns, or play, its lines moving in the order it was constructed; every drawing takes as long.
+
+- Draw it in as it arrives and out as it leaves.
+- Run it in and out by turns while people wait.
+- Play it where it already shows, such as on hover: it never leaves the screen empty.
 
 ### Sixteen drawings
 
@@ -104,26 +109,6 @@ Its lines take the muted edge color in every theme, quiet on any surface, and st
 
 <!-- specimen: Themes -->
 
-### Appearing and disappearing
-
-A drawing can draw itself in, line by line, and draw itself out again, in the order it was constructed: the lines that frame it first, the finer divisions after.
-
-- Appearing goes from nothing to the whole drawing, and disappearing from the whole drawing to nothing.
-- One leads into the other, so they can run in turn for as long as the drawing shows.
-- Each drawing takes as long, however many lines it has.
-
-<!-- specimen: InAndOut -->
-
-### Playing
-
-A drawing can also play: each line runs out past its end and draws itself in again, one after another, and the drawing rests whole.
-
-- It never leaves the screen empty, so it suits a drawing that is already there, such as on hover.
-- Only the lines move: the drawing keeps its place and its size.
-- Where reduced motion is preferred, a drawing shows where its motion ends at once, and a playing or looping drawing stays still.
-
-<!-- specimen: Playing -->
-
 ### Adapting to width
 
 As its box narrows, the drawing keeps its end in view and gives up its start.
@@ -137,10 +122,6 @@ As its box narrows, the drawing keeps its end in view and gives up its start.
 A drawing is decoration: one to a screen, beside what people read, never behind it.
 
 ```tsx figure=AboveAnEmptyState
-
-```
-
-```tsx figure=OnEveryCard
 
 ```
 
@@ -172,6 +153,7 @@ Assistive technology skips a drawing. One that means something in its place take
 
 - `aria-hidden="true"` on the drawing, which takes no focus and no pointer.
 - With `label`, `role="img"` and `aria-label`, so it is read as an image of that name.
+- Where reduced motion is preferred, no motion: each shows where it ends at once, and a loop keeps the drawing whole.
 
 ### You provide
 
@@ -238,7 +220,7 @@ Ask for a drawing in these words.
 - `loop` draws them in, holds the drawing whole a moment, and draws them out, for as long as it is set; each turn begins where the last one ends, with nothing drawn.
 - `play` runs each line out past its end and draws it in again, the drawing whole throughout, and ends on the still.
 
-`onMotionEnd` is called once `appear`, `disappear` or `play` has finished, such as to unmount a drawing that has disappeared, or to play it again by setting `motion` to `undefined` and back. Where reduced motion is preferred, each shows where it ends at once and calls `onMotionEnd`, and `loop` keeps the drawing whole.
+`onMotionEnd` is called once `appear`, `disappear` or `play` has finished, such as to unmount a drawing that has disappeared, or to play it again by setting `motion` to `undefined` and back. Where reduced motion is preferred, it is called at once.
 
 ```tsx
 function EmptyStateArt({ leaving, onGone }: { leaving: boolean; onGone: () => void }) {
