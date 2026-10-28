@@ -12,6 +12,8 @@ import { ColorSwatch } from './ColorSwatch.js';
 import { ColorLocale, displayColor } from './internal/ColorLocale.js';
 import { formatColor, sameColor } from './internal/colorValue.js';
 import { useColorState, useFormResetOf } from './internal/useColorState.js';
+import '../styles/Base.css';
+import '../styles/ColorPicker.css';
 
 export interface ColorPickerButtonProps extends ColorPickerValueProps {
   /** The button's class, beside env-color-picker-button. */

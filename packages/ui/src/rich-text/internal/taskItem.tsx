@@ -11,6 +11,8 @@ import { Checkbox } from '../../forms/Checkbox.js';
 import { richText as richTextMessages } from '../../foundations/messages/richText.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { RichTextRenderingContext } from './Reference.js';
+import '../../styles/Base.css';
+import '../../styles/RichText.css';
 
 /**
  * A task item in the editor: envUI's Checkbox beside the item's text, named by the text, which

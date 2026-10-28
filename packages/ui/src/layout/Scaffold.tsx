@@ -17,6 +17,8 @@ import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
+import '../styles/Base.css';
+import '../styles/Scaffold.css';
 
 /**
  * One of the three ways an application's destinations show: a Bar at the bottom, a Rail at the

@@ -26,6 +26,8 @@ import { Grid } from '../foundations/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import '../styles/Base.css';
+import '../styles/Select.css';
 
 /** One option of a Select. */
 export interface SelectItem {

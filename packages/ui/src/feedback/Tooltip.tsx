@@ -32,6 +32,8 @@ import {
 import { accessibleName } from '../internal/accessibleName.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import '../styles/Base.css';
+import '../styles/Tooltip.css';
 
 /** The props of the control a Tooltip describes, as far as the tooltip reads them. */
 interface TriggerProps {

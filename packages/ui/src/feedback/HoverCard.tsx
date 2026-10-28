@@ -19,6 +19,8 @@ import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import '../styles/Base.css';
+import '../styles/Popover.css';
 
 /** Whether keyboard focus reaches a text trigger: it has a tabIndex of 0 or more. */
 function takesFocus(trigger: ReactElement) {

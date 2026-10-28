@@ -7,6 +7,8 @@ import { Grid, Row } from '../foundations/Layout.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
 import type { RangeBarProps } from './Meter.js';
+import '../styles/Base.css';
+import '../styles/Meter.css';
 
 export interface ProgressProps extends RangeBarProps {
   /**

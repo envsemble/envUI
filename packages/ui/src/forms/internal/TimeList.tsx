@@ -14,6 +14,9 @@ import {
   toUtcDate,
 } from '../../internal/calendarDays.js';
 import { TimeWheel, type Entry, type Part } from './TimeWheel.js';
+import '../../styles/Base.css';
+import '../../styles/TimeList.css';
+import '../../styles/DatePicker.css';
 
 export interface TimeListProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {

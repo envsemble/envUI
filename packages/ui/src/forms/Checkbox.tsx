@@ -9,6 +9,8 @@ import {
   type CheckboxState,
 } from './internal/useCheckedInput.js';
 import { Check } from '../icons/Check.js';
+import '../styles/Base.css';
+import '../styles/Checkbox.css';
 
 export type { CheckboxState } from './internal/useCheckedInput.js';
 export interface CheckboxProps extends CheckedProps<CheckboxState> {

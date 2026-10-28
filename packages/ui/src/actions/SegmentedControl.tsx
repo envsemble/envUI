@@ -18,6 +18,8 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/useDirection.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { Check } from '../icons/Check.js';
+import '../styles/Base.css';
+import '../styles/SegmentedControl.css';
 
 /** One item of a SegmentedControl. */
 export interface SegmentedControlItem {

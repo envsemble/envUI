@@ -36,6 +36,8 @@ import {
   type WaveLayout,
 } from './internal/contentsWave.js';
 import { prefersReducedMotion, reducedMotionQuery } from '../internal/reducedMotion.js';
+import '../styles/Base.css';
+import '../styles/TableOfContents.css';
 
 export type { TableOfContentsItem } from './internal/contentsOutline.js';
 

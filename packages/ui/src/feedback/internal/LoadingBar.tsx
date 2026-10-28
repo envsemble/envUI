@@ -4,6 +4,8 @@ import { useEffect, useReducer } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { common } from '../../foundations/messages/common.js';
+import '../../styles/Base.css';
+import '../../styles/LoadingBar.css';
 
 export interface LoadingBarProps {
   /** Shows progress while true; the bar then completes and fades out. */

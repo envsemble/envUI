@@ -21,6 +21,9 @@ import {
 } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ListReorderHandle, ReorderableList } from './internal/ReorderableList.js';
+import '../styles/Base.css';
+import '../styles/List.css';
+import '../styles/ConnectedRows.css';
 
 export interface RootProps extends ComponentPropsWithRef<'ul'>, SkeletonProps {
   /**

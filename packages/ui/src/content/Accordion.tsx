@@ -8,6 +8,8 @@ import { classNames } from '../internal/classNames.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import '../styles/Base.css';
+import '../styles/Accordion.css';
 
 /** The level of an accordion's headings, from h2 to h6. */
 export type AccordionHeadingLevel = 2 | 3 | 4 | 5 | 6;

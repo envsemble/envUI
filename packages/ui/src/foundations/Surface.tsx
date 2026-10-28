@@ -6,6 +6,7 @@ import { classNames } from '../internal/classNames.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import type { SpaceStep } from './Layout.js';
 import { inSkeleton } from './internal/inSkeleton.js';
+import '../styles/Base.css';
 
 /**
  * A surface's fill: default, the background of panes and side regions; muted, the background of

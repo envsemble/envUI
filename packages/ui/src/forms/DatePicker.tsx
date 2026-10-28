@@ -34,6 +34,8 @@ import {
   toUtcDate,
   type Weekday,
 } from '../internal/calendarDays.js';
+import '../styles/Base.css';
+import '../styles/DatePicker.css';
 
 export interface DatePickerProps
   extends Omit<

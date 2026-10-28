@@ -7,6 +7,8 @@ import { themeToggle } from './messages/themeToggle.js';
 import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';
 import { useThemePreference } from './ThemePreference.js';
+import '../styles/Base.css';
+import '../styles/ThemeToggle.css';
 
 export type ThemeToggleProps = (IconButtonProps extends infer Props
   ? Props extends unknown

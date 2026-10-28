@@ -6,6 +6,8 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { rating as ratingMessages } from '../foundations/messages/rating.js';
 import { Star } from '../icons/Star.js';
+import '../styles/Base.css';
+import '../styles/Rating.css';
 
 export interface RatingProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /**

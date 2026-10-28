@@ -28,6 +28,8 @@ import {
   keepsOpen,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
+import '../styles/Base.css';
+import '../styles/CommandPalette.css';
 
 export interface CommandPaletteItem {
   /** Stable identifier; options carry it as data-item-id. */

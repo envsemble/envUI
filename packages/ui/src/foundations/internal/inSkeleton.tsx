@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 import { SkeletonScope } from '../SkeletonScope.js';
+import '../../styles/Base.css';
+import '../../styles/Skeleton.css';
 
 /**
  * A component's content while it is a skeleton: in a SkeletonScope, which tells the components

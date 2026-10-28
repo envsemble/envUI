@@ -31,6 +31,8 @@ import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js'
 import { readPanesSize, writePanesSize } from './panesSize.js';
 import { Close } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/lengths.js';
+import '../styles/Base.css';
+import '../styles/Panes.css';
 
 /**
  * How Panes behaves below `splitAt`: supporting, a main pane with a supporting pane that becomes a

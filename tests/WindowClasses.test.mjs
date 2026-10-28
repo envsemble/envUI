@@ -15,6 +15,8 @@ await build({
   absWorkingDir: repository,
   entryPoints: ['packages/ui/src/foundations/windowClasses.ts'],
   bundle: true,
+  // The style sheets the modules import are the browser's concern.
+  loader: { '.css': 'empty' },
   platform: 'node',
   format: 'esm',
   outfile: output,

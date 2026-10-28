@@ -14,6 +14,8 @@ import { codeThemeStyle } from './internal/codeColors.js';
 import { useCodeContrast } from './internal/useCodeContrast.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
 import { tokenStyle } from './internal/codeTokenStyle.js';
+import '../styles/Base.css';
+import '../styles/Code.css';
 
 export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source, as one string; it is shown, highlighted and copied as it is. */

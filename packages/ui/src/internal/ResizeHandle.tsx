@@ -4,6 +4,8 @@ import { useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { classNames } from './classNames.js';
 import { setRef } from './setRef.js';
 import { useResize, type ResizeOptions } from './useResize.js';
+import '../styles/Base.css';
+import '../styles/ResizeHandle.css';
 
 export type ResizeHandleProps = ResizeOptions &
   Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'children'> & {

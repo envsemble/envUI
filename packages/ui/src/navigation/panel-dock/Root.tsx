@@ -42,6 +42,8 @@ import { PanelFrame } from './internal/PanelFrame.js';
 import { PanelTab } from './internal/PanelTab.js';
 import { useDockOverflow } from './internal/useDockOverflow.js';
 import { useStripWheel } from './internal/useStripWheel.js';
+import '../../styles/Base.css';
+import '../../styles/PanelDock.css';
 
 export type { PanelDockMode };
 

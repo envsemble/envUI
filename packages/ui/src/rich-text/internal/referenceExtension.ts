@@ -6,6 +6,8 @@ import Mention from '@tiptap/extension-mention';
 import { createReferenceNodeView } from './Reference.js';
 import { referenceFromAttributes } from './referenceAttributes.js';
 import type { RichTextRenderOptions } from '../types.js';
+import '../../styles/Base.css';
+import '../../styles/RichText.css';
 
 /** Use percent encoding inside Tiptap's shortcode utility so quotes/brackets roundtrip. */
 const referenceMarkdown = createInlineMarkdownSpec({

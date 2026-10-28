@@ -11,6 +11,8 @@ import { Column, Row, type SpaceStep } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 import { given, type SkeletonProps } from '../internal/skeleton.js';
+import '../styles/Base.css';
+import '../styles/Card.css';
 
 /**
  * A card's fill: muted, the standalone card fill; default, a quieter fill that groups content, as a

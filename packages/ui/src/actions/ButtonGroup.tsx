@@ -1,5 +1,7 @@
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
+import '../styles/Base.css';
+import '../styles/ButtonGroup.css';
 
 export interface ButtonGroupProps extends ComponentPropsWithRef<'div'> {
   /** A row of buttons, or a column in which every button is as wide as the group. */

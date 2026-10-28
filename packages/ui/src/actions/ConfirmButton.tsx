@@ -20,6 +20,8 @@ import { classNames } from '../internal/classNames.js';
 import { useButtonEmphasis } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { confirmButton } from '../foundations/messages/confirmButton.js';
+import '../styles/Base.css';
+import '../styles/Button.css';
 
 type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
   Omit<ComponentPropsWithRef<'button'>, 'onClick' | 'type'> & {

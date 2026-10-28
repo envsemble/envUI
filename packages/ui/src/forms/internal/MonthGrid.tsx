@@ -15,6 +15,8 @@ import {
   toUtcDate,
 } from '../../internal/calendarDays.js';
 import { isRightToLeft } from '../../internal/direction.js';
+import '../../styles/Base.css';
+import '../../styles/MonthPicker.css';
 
 /** The month of the grid that holds its tab stop, where focus goes as the popup opens. */
 export function monthGridActive(root: ParentNode | null | undefined): HTMLElement | null {

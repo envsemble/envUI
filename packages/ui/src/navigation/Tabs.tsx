@@ -10,6 +10,8 @@ import { Column, Grid, Row } from '../foundations/Layout.js';
 import { useDirectionScope } from '../internal/useDirection.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { Surface } from '../foundations/Surface.js';
+import '../styles/Base.css';
+import '../styles/Tabs.css';
 
 export interface TabsItem {
   /** Unique, stable identifier shared by the tab and its panel. */

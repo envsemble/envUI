@@ -38,6 +38,8 @@ import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { flattenItems, isGroup, standIn } from './internal/comboboxItems.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
+import '../styles/Base.css';
+import '../styles/Combobox.css';
 
 /** One option of a Combobox. */
 export interface ComboboxItem {

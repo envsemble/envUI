@@ -14,6 +14,8 @@ import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { Grid } from '../foundations/Layout.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
+import '../styles/Base.css';
+import '../styles/Popover.css';
 
 const parts = {
   Portal: BasePopover.Portal,

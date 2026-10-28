@@ -23,6 +23,8 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { TextareaControl } from './internal/TextareaControl.js';
+import '../styles/Base.css';
+import '../styles/Composer.css';
 
 interface ComposerOptions {
   /** The message text of a controlled composer. */

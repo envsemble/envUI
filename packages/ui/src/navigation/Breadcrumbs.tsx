@@ -18,6 +18,8 @@ import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
 import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
+import '../styles/Base.css';
+import '../styles/Breadcrumbs.css';
 
 export interface BreadcrumbItem {
   /**

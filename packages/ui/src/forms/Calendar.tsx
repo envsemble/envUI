@@ -32,6 +32,8 @@ import {
   type Weekday,
 } from '../internal/calendarDays.js';
 import { isRightToLeft } from '../internal/direction.js';
+import '../styles/Base.css';
+import '../styles/Calendar.css';
 
 export type { Weekday } from '../internal/calendarDays.js';
 

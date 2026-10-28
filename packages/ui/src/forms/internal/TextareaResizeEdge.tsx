@@ -5,6 +5,8 @@ import { useMessages } from '../../internal/EnvUIContext.js';
 import { useResize } from '../../internal/useResize.js';
 import { textarea as textareaMessages } from '../../foundations/messages/textarea.js';
 import type { TextareaControlProps } from './TextareaControl.js';
+import '../../styles/Base.css';
+import '../../styles/TextField.css';
 
 interface Metrics {
   height: number;

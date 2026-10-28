@@ -522,6 +522,7 @@ test('installDevMode() warns about parts in the wrong shape and installs all the
     absWorkingDir: repository,
     entryPoints: [join(repository, 'packages/ui/src/dev/install.tsx')],
     bundle: true,
+    loader: { '.css': 'empty' },
     platform: 'node',
     format: 'esm',
     jsx: 'automatic',

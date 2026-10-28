@@ -31,6 +31,8 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
+import '../styles/Base.css';
+import '../styles/Table.css';
 
 /** A table that stacks its rows names the role of each part, since display changes can drop them. */
 const TableStackContext = createContext(false);

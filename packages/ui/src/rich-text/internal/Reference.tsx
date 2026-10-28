@@ -6,6 +6,8 @@ import { Button } from '../../actions/Button.js';
 import { ActionElement } from '../../internal/ActionElement.js';
 import { referenceFromAttributes, safeRichTextUrl } from './referenceAttributes.js';
 import type { RichTextReference, RichTextRenderOptions } from '../types.js';
+import '../../styles/Base.css';
+import '../../styles/RichText.css';
 
 export const RichTextRenderingContext = createContext<
   (RichTextRenderOptions & { readOnly: boolean }) | null

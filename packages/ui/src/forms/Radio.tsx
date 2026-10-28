@@ -12,6 +12,9 @@ import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import '../styles/Base.css';
+import '../styles/Radio.css';
+import '../styles/ConnectedRows.css';
 
 interface RadioContextValue {
   value: string | undefined;

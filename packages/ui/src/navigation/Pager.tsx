@@ -8,6 +8,8 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 import { useLinkComponent } from '../internal/LinkComponentContext.js';
 import { useEnvUI, useMessages } from '../internal/EnvUIContext.js';
 import { pager } from '../foundations/messages/pager.js';
+import '../styles/Base.css';
+import '../styles/Pager.css';
 
 export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> {
   /** The destination; the link renders through the LinkProvider's link component. */

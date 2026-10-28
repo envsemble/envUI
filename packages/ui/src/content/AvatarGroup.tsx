@@ -17,6 +17,8 @@ import { setRef } from '../internal/setRef.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { avatarGroup as avatarGroupMessages } from '../foundations/messages/avatarGroup.js';
+import '../styles/Base.css';
+import '../styles/AvatarGroup.css';
 
 export interface AvatarGroupPerson {
   /** The person's name: the tooltip and accessible name of a pressable avatar, and the initials. */

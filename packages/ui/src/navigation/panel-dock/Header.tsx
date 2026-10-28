@@ -21,6 +21,8 @@ import { ControlDefaults } from '../../internal/ControlDefaults.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { PanelDockPanelContext } from './internal/PanelDockPanelContext.js';
+import '../../styles/Base.css';
+import '../../styles/PanelDock.css';
 
 export interface HeaderProps extends Omit<ComponentPropsWithRef<'header'>, 'title'> {
   /**

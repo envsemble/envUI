@@ -10,6 +10,8 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+import '../styles/Base.css';
+import '../styles/TopBar.css';
 
 export interface TopBarProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,

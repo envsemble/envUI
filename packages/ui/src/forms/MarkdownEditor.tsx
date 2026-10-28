@@ -26,6 +26,8 @@ import {
   type MarkdownLink,
   type MarkdownSelection,
 } from './internal/markdown/markdownFormatting.js';
+import '../styles/Base.css';
+import '../styles/MarkdownEditor.css';
 
 export type { MarkdownCommand, MarkdownLink } from './internal/markdown/markdownFormatting.js';
 export interface MarkdownLinkRequest {

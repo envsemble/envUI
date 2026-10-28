@@ -15,6 +15,8 @@ import type { ToastPlacement } from './toastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 import { Close } from '../../icons/Close.js';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
+import '../../styles/Base.css';
+import '../../styles/Toast.css';
 
 const glideId = 'env-toast-glide';
 const revealId = 'env-toast-reveal';

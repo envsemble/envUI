@@ -32,6 +32,8 @@ import {
   type DrawerDestination,
 } from './internal/Destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+import '../styles/Base.css';
+import '../styles/Drawer.css';
 
 /** The part classes of the drawer's destinations: a row of icon, label and count. */
 const drawerClasses: DestinationClasses = {

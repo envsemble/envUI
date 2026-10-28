@@ -15,6 +15,8 @@ import {
   type RelativeTimeOptions,
   type RelativeTimeValue,
 } from './formatRelativeTime.js';
+import '../styles/Base.css';
+import '../styles/RelativeTime.css';
 
 export interface RelativeTimeProps
   extends Omit<ComponentPropsWithRef<'time'>, 'children' | 'dateTime'>,

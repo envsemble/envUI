@@ -5,6 +5,8 @@ import { useColorSwatch } from '@react-aria/color';
 import { classNames } from '../internal/classNames.js';
 import { ColorLocale, displayColor } from './internal/ColorLocale.js';
 import { toColor, type ColorFormat, type ColorValue } from './internal/colorValue.js';
+import '../styles/Base.css';
+import '../styles/ColorSwatch.css';
 
 export interface ColorSwatchProps
   extends Omit<ComponentPropsWithRef<'span'>, 'children' | 'color'> {

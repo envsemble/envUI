@@ -28,7 +28,7 @@ await build({
   format: 'esm',
   packages: 'external',
   jsx: 'automatic',
-  loader: { '.svg': 'empty' },
+  loader: { '.svg': 'empty', '.css': 'empty' },
   outfile: output,
   logLevel: 'error',
 });

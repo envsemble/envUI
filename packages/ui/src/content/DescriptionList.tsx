@@ -1,6 +1,8 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import '../styles/Base.css';
+import '../styles/DescriptionList.css';
 
 export interface RootProps extends ComponentPropsWithRef<'dl'> {
   /**

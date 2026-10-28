@@ -25,6 +25,9 @@ import { useReorder, type Announcement, type ReorderHandlers } from './useReorde
 import type { RootProps } from '../List.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 import { reportInDevelopment } from '../../internal/developmentReport.js';
+import '../../styles/Base.css';
+import '../../styles/List.css';
+import '../../styles/ConnectedRows.css';
 
 /**
  * The client side of List, as ActionElement is Button's: List.Root and List.Item stay server
