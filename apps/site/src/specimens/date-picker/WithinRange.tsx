@@ -42,7 +42,7 @@ function Browsing() {
   return (
     // The field at the top of the room its calendar opens into, below it.
     <div
-      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', blockSize: '25rem' }}
+      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', blockSize: '26rem' }}
     >
       <WithinRange />
     </div>

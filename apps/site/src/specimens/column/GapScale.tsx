@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { Column, Row, Surface, Text, type SpaceStep } from '@envsemble/envui';
 import { Example } from '../../previews/Example';
 import { useTimeline } from '../../previews/Motion';
@@ -15,6 +16,16 @@ const sizes: Record<SpaceStep, string> = {
   8: '3 rem',
   9: '4 rem',
 };
+
+/**
+ * The two blocks' fill, set apart from the stage in every theme: the page's grey in the light
+ * themes, where the stage is lighter than the page and a row's white barely shows on it, and a
+ * row's in the dark ones.
+ */
+const block = {
+  '--env-surface-container-default':
+    'light-dark(var(--env-color-bg-page), var(--env-color-bg-muted))',
+} as CSSProperties;
 
 /** Up the scale a step at a time, from 1 to 9, and back down to 1. */
 const order: SpaceStep[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -40,10 +51,10 @@ function Stepping() {
           transition: 'gap var(--env-motion-duration-slow) var(--env-motion-ease)',
         }}
       >
-        <Surface background="muted" radius="sm" padding={2}>
+        <Surface radius="sm" padding={2} style={block}>
           <Text>First</Text>
         </Surface>
-        <Surface background="muted" radius="sm" padding={2}>
+        <Surface radius="sm" padding={2} style={block}>
           <Text>Second</Text>
         </Surface>
       </Column>

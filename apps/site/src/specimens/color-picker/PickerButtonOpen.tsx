@@ -1,6 +1,6 @@
 import { ColorPickerButton } from '@envsemble/envui/color';
 import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage, roomFor } from '../../previews/MotionStage';
 
 const button = '.env-color-picker-button';
 const hue = ".env-color-picker-slider[data-channel='hue']";
@@ -39,8 +39,9 @@ const script: PointerStep[] = [
 function Picking() {
   usePointer(script);
   return (
-    // Room below the button for the picker, which opens under it, so the stage keeps one height.
-    <div style={{ paddingBlockEnd: '20.5rem' }}>
+    // Room below the button for the picker, which opens under it, so the stage keeps one height;
+    // more on a narrow stage, where the picker stands taller.
+    <div style={{ paddingBlockEnd: roomFor(21.75, 23, 30) }}>
       <ColorPickerButton label="Label color" defaultValue="#2f6f62" />
     </div>
   );

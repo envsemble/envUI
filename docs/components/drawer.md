@@ -63,12 +63,16 @@ components:
   - Rail
   - Bar
 examples:
-  AppDestinations: overview
+  AppDestinations:
+    role: overview
+    stage: shaded
   TabletDestinations:
     role: overview
+    stage: shaded
     caption: 'Rail: each destination an icon above a short label, for a tablet.'
   PhoneDestinations:
     role: overview
+    stage: shaded
     caption: 'Bar: three to five destinations along the bottom of a phone.'
   GuideSections: example
   DrawerAnatomy: anatomy
@@ -99,13 +103,13 @@ Each form is a plain rectangle along the window's edge. On a surface it takes th
 
 A drawer's destinations can go without icons, such as the sections of a guide; the rail and the bar need them.
 
-```tsx figure=GuideSections
+```tsx figure=GuideSections stage=shaded
 
 ```
 
 ## Anatomy
 
-```tsx figure=DrawerAnatomy
+```tsx figure=DrawerAnatomy stage=shaded
 
 ```
 
@@ -118,7 +122,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 7. **Heading** (`env-drawer-heading`)
 8. **Footer** (`env-drawer-footer`, `footer`)
 
-```tsx figure=RailAnatomy
+```tsx figure=RailAnatomy stage=shaded
 
 ```
 
@@ -130,7 +134,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 6. **Label** (`env-rail-label`)
 7. **Footer** (`env-rail-footer`, `footer`)
 
-```tsx figure=BarAnatomy enlarge
+```tsx figure=BarAnatomy stage=shaded enlarge
 
 ```
 
@@ -140,7 +144,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 4. **Count** (`env-bar-count`, `count`)
 5. **Label** (`env-bar-text`)
 
-```tsx figure=SectionAnatomy
+```tsx figure=SectionAnatomy stage=shaded
 
 ```
 
@@ -170,7 +174,7 @@ A destination can hold others, such as the pages of a chapter: they sit under it
 - The section that holds the current page is open.
 - A section without a page of its own is only a heading.
 
-```tsx figure=NestedSections motion
+```tsx figure=NestedSections stage=shaded motion
 
 ```
 
@@ -178,7 +182,7 @@ A destination can hold others, such as the pages of a chapter: they sit under it
 
 Past five destinations, the bar's fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.
 
-```tsx figure=MoreDestinations motion
+```tsx figure=MoreDestinations stage=shaded motion
 
 ```
 
@@ -189,7 +193,7 @@ People can resize the drawer by its end edge, with the same grip as between [Pan
 - As it narrows, a label that no longer fits ends in an ellipsis and shows in full in a tooltip.
 - A group heading cut short shows its full text on hover.
 
-```tsx figure=ResizableDrawer motion
+```tsx figure=ResizableDrawer stage=shaded motion
 
 ```
 
@@ -197,7 +201,7 @@ People can resize the drawer by its end edge, with the same grip as between [Pan
 
 The bar's destinations share its width equally, and their labels stay on one line. A drawer or a rail in the sheet of a narrow window keeps its color, as a sheet is on the navigation's.
 
-```tsx figure=SharedWidth widths="36 20" sweep
+```tsx figure=SharedWidth stage=shaded widths="36 20" sweep
 
 ```
 
