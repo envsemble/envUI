@@ -62,6 +62,8 @@ export const aliases: Record<string, string[]> = {
   PanelTab: ['PanelDock'],
   dockLayout: ['PanelDock'],
   useEntrance: ['PanelDock'],
+  useDockOverflow: ['PanelDock'],
+  useStripWheel: ['PanelDock'],
   TopBar: ['Scaffold'],
   useScrollKeys: ['Scaffold'],
   Page: ['PageHeader'],
