@@ -61,3 +61,12 @@ html.env-theme > body {
     --env-theme-high-contrast: ;
   }
 }
+/* While a ThemePreferenceProvider switches the page's theme or contrast, nothing transitions: the
+   new colors show in the frame they change, not eased over the next ones. Important in the first of
+   envUI's layers that sets it, so no component's transition wins. */
+:root[data-env-theme-switching],
+:root[data-env-theme-switching] *,
+:root[data-env-theme-switching] ::before,
+:root[data-env-theme-switching] ::after {
+  transition: none !important;
+}
