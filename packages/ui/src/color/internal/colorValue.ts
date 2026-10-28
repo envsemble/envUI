@@ -6,7 +6,8 @@ export type ColorFormat = 'hex' | 'rgb' | 'hsl';
 /** A color as a CSS color string, such as #6750a4, or React Aria's Color. */
 export type ColorValue = string | Color;
 
-const black = parseColor('#000000');
+/** Black, parsed the first time a value is no color rather than as the module loads. */
+let black: Color | undefined;
 
 /**
  * CSS's space-separated rgb() and hsl(), such as rgb(103 80 164 / 50%), in the comma-separated
@@ -45,7 +46,8 @@ function parseColorValue(value: ColorValue): Color | undefined {
 
 /** A color from a string or a Color, black for one that is no color, opaque without alpha. */
 export function toColor(value: ColorValue | undefined, alpha: boolean): Color {
-  const color = (value === undefined ? undefined : parseColorValue(value)) ?? black;
+  const color =
+    (value === undefined ? undefined : parseColorValue(value)) ?? (black ??= parseColor('#000000'));
   return alpha || color.getChannelValue('alpha') === 1 ? color : color.withChannelValue('alpha', 1);
 }
 
