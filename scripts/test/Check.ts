@@ -50,6 +50,13 @@ if (!paths.length) {
 }
 
 const scope = selectScope(paths);
+// A list of changed files too long for one command line (Windows takes about 32,000 characters)
+// is checked as the whole repository instead, as a branch that moved many files needs anyway.
+const tooLong = (paths: readonly string[]) =>
+  paths.reduce((length, path) => length + path.length + 1, 0) > 24_000;
+if (tooLong(scope.lint)) scope.whole.lint = true;
+if (tooLong(scope.css)) scope.whole.css = true;
+if (tooLong(scope.format)) scope.whole.format = true;
 const { built: builtUnitTests, fast: fastUnitTests } = unitTestFiles();
 // A changed test of the build needs the build to run.
 if (paths.some((path) => builtUnitTests.includes(path))) scope.build.library = true;
