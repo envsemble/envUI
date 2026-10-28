@@ -1,9 +1,9 @@
 // The cascade-layer spec's page: envUI's style sheet, then an application's own CSS outside cascade
-// layers (layers.css), which must win over every rule of envUI's without !important.
+// layers (CascadeLayers.css), which must win over every rule of envUI's without !important.
 import { createRoot } from 'react-dom/client';
 import { Button, Checkbox, Link, Text, Theme } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
-import './layers.css';
+import './CascadeLayers.css';
 
 createRoot(document.getElementById('root')!).render(
   <Theme theme="light">

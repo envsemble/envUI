@@ -12,7 +12,7 @@ import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
 import { CardsFixture } from './Cards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
-import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
+import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditors.js';
 import { AdoptionFixture } from './Adoption.js';
 import { ScaffoldFixture, ScrollKeysFixture } from './Scaffolds.js';
 import { ScaffoldPanesFixture } from './ScaffoldPanes.js';
@@ -23,7 +23,7 @@ import { FieldsFixture } from './Fields.js';
 import { MarkdownFixture } from './Markdowns.js';
 import { MenusFixture } from './Menus.js';
 import { MenubarFixture } from './Menubars.js';
-import { TreeFixture } from './TreeView.js';
+import { TreeFixture } from './Trees.js';
 import {
   CompactTabsFixture,
   DocumentTabsFixture,
@@ -35,7 +35,7 @@ import {
   TabStatesFixture,
 } from './Tabs.js';
 import { CommandPaletteEmptyFixture, CommandPaletteFixture } from './Palette.js';
-import { SegmentedControlFixture } from './Segments.js';
+import { SegmentedControlFixture } from './SegmentedControls.js';
 import { BadgesFixture } from './Badges.js';
 import {
   DialogVariantsFixture,
