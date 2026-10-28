@@ -41,8 +41,6 @@ const resolveImport = (from, specifier) => {
 
 /** Each module's requests in source order, { module } or { sheet }; type-only ones are erased. */
 const requests = new Map();
-/** Where each module's last request of another module ends, and where its first style sheet's is. */
-const positions = new Map();
 for (const module of modules) {
   const text = readFileSync(join(sourceRoot, module), 'utf8');
   const file = ts.createSourceFile(module, text, ts.ScriptTarget.Latest, true);
