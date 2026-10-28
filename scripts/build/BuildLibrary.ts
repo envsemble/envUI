@@ -58,9 +58,12 @@ execFileSync(
 );
 // The generated token module is internal: no export reaches it, so it does not ship.
 await rm(resolve(outputDirectory, 'generated'), { recursive: true, force: true });
+// The style sheet ships without comments and whitespace, which only the sources need. Its rules and
+// values stay as written, in the same order and layers: custom properties keep their exact text.
 const stylesheetBuild = await build({
   entryPoints: [resolve(sourceDirectory, 'styles/index.css')],
   bundle: true,
+  minifyWhitespace: true,
   write: false,
   loader: { '.woff2': 'file', '.svg': 'file' },
   assetNames: 'assets/[name]',

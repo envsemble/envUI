@@ -12,6 +12,7 @@ import {
   duplicateTokens,
   migrationNames,
   overridingCustomProperties,
+  withoutRepeatedValues,
 } from '../packages/ui/terrazzo.config.mjs';
 import {
   buildTokens,
@@ -166,6 +167,48 @@ test('only a coarse pointer lets TokensHandwritten.css change a token', () => {
     declared(".env-theme[data-env-theme='dark'] { content: ';}'; --b: url(a;b); --c: 1 }"),
     ['--b', '--c'],
   );
+});
+
+test('a theme rule leaves out a value its element takes from the rules below anyway', () => {
+  const css = withoutRepeatedValues(`.env-theme {
+  --a: 1;
+  --b: 1;
+  --c: 1;
+}
+.env-theme[data-env-theme='dark'] {
+  --a: 1;
+  --b: 2;
+  --c: 2;
+}
+.env-theme[data-env-contrast='high'] {
+  --a: 1;
+  --b: 3;
+  --c: 1;
+}
+@media (prefers-contrast: more) {
+  .env-theme:not([data-env-contrast='standard']) {
+  --a: 1;
+  --b: 3;
+  --c: 1;
+}
+}
+.env-theme[data-env-theme='dark'][data-env-contrast='high'] {
+  --a: 1;
+  --b: 3;
+  --c: 2;
+}
+`);
+  const declared = (selector) =>
+    cssDeclarations(css)
+      .filter((declaration) => declaration.selector === selector)
+      .map(({ property, value }) => `${property}: ${value}`);
+  assert.deepEqual(declared('.env-theme'), ['--a: 1', '--b: 1', '--c: 1']);
+  assert.deepEqual(declared(".env-theme[data-env-theme='dark']"), ['--b: 2', '--c: 2']);
+  assert.deepEqual(declared(".env-theme[data-env-contrast='high']"), ['--b: 3']);
+  assert.deepEqual(declared(".env-theme:not([data-env-contrast='standard'])"), ['--b: 3']);
+  // Dark at high contrast takes --b from the light high-contrast rule, which comes later than the
+  // dark one, and --c from the dark rule, which the light high-contrast rule no longer covers.
+  assert.deepEqual(declared(".env-theme[data-env-theme='dark'][data-env-contrast='high']"), []);
 });
 
 test('a token that TokensHandwritten.css declares under another at-rule fails the build', async () => {
