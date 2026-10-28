@@ -44,7 +44,7 @@ import {
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import { computedDirection } from '../internal/direction.js';
-import { isDeveloping, reportOnce } from '../internal/developmentReport.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
 
 export interface SheetProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>,
@@ -198,10 +198,11 @@ const noSwipe = { 'data-base-ui-swipe-ignore': '' };
  * its width is a number of rem then, which it starts at.
  */
 function reportCssWidth(width: string) {
-  if (!isDeveloping()) return;
-  reportOnce(
-    `a resizable Sheet ignores width="${width}": its width is a number of rem. ` +
-      'Pass defaultWidth, or width as a number with onWidthChange, and minWidth and maxWidth.',
+  reportInDevelopment(
+    () =>
+      process.env.NODE_ENV !== 'production' &&
+      `a resizable Sheet ignores width="${width}": its width is a number of rem. ` +
+        'Pass defaultWidth, or width as a number with onWidthChange, and minWidth and maxWidth.',
     { level: 'warn', key: 'Sheet width' },
   );
 }
