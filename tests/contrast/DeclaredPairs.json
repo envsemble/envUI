@@ -4559,6 +4559,13 @@
         "high": 4.5
       }
     },
+    "--env-elevation-3-border on --env-color-bg-popup": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.6,
+        "high": 4.5
+      }
+    },
     "--env-elevation-3-border on --env-color-bg-raised": {
       "kind": "non-text",
       "minimum": {

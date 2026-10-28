@@ -5,15 +5,16 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 
-// envUI draws no drop shadows: dialogs, sheets, toasts and tooltips separate by their fill, their
-// edge and, for modals, the scrim. Rings drawn with box-shadow stay: focus rings and halos
+// envUI draws no drop shadows: sheets, toasts and tooltips separate by their fill, their edge and,
+// for modals, the scrim. Rings drawn with box-shadow stay: focus rings and halos
 // (no offset, no blur), inset edges and selection bars, and a hairline line one pixel below or
 // beside a box. This test reads the shipped style sheet, dev mode's own and the catalogue's, and
 // rejects every other shadow, also one a custom property carries into box-shadow. The library has
 // two exceptions, by request: the faint, small shadow under an avatar and an avatar group's count,
 // `--env-avatar-shadow` (Avatar.css), so stacked avatars part from one another; and the soft shadow
 // of the frosted popups, `--env-popup-shadow` (Popup.css), which keeps a translucent popup's edge
-// where it crosses an area of its own color, gone wherever the popup is solid. They are the only
+// where it crosses an area of its own color, gone wherever the popup is solid; dialogs, which take
+// the popups' fill, cast it too. They are the only
 // custom properties of envUI that are shadows, and no token is one. The catalogue has
 // one exception, by request: the very faint shadow its example canvases, tiles and its own cards
 // take, `--catalogue-card-shadow`, and half of it for a small card, `--catalogue-card-shadow-subtle`, and a stronger one for cards laid over one another,
@@ -222,6 +223,7 @@ test('the popups’ shadow is soft, follows the theme, goes where popups are sol
     '.env-command-palette',
     '.env-popup',
     '.env-rich-text-suggestions',
+    '.env-surface.env-dialog-popup',
   ]);
 });
 

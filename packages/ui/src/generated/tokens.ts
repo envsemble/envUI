@@ -954,7 +954,7 @@ export const tokens = {
       'dark-high-contrast': '#424447',
     },
   },
-  /** A raised surface: Surface background="raised", dialogs, rows on a contrasting surface, outlined buttons. */
+  /** A raised surface: Surface background="raised", rows on a contrasting surface, outlined buttons. */
   'color.bg.raised': {
     cssVariable: '--env-color-bg-raised',
     type: 'color',
@@ -1925,7 +1925,7 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  /** The edge of dialogs, sheets and the command palette, the same as level 2's; a modal's scrim sets it apart as well. */
+  /** The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's scrim sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill. */
   'elevation.3.border': {
     cssVariable: '--env-elevation-3-border',
     type: 'color',

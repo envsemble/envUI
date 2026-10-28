@@ -186,27 +186,33 @@ test('a panel across the whole width keeps clear of the safe areas on both sides
   }
 });
 
-test('dialogs are solid with an edge; the command palette and popovers share the frosted popup surface', async ({
+/** The computed look of a popup's or a dialog's surface. */
+const surface = (locator: import('@playwright/test').Locator) =>
+  locator.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      background: style.backgroundColor,
+      border: `${style.borderTopWidth} ${style.borderTopStyle} ${style.borderTopColor}`,
+      radius: style.borderTopLeftRadius,
+      shadow: style.boxShadow,
+      filter: style.backdropFilter,
+    };
+  });
+
+/** A color token resolved inside the first theme boundary of the page. */
+const token = (page: import('@playwright/test').Page, name: string) =>
+  page.locator('body').evaluate((body, name) => {
+    const probe = document.createElement('div');
+    probe.style.background = `var(${name})`;
+    (body.querySelector('.env-theme') ?? body).append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return color;
+  }, name);
+
+test('dialogs take the popups’ fill and shadow with no edge, solid over the scrim; the command palette and popovers are frosted', async ({
   page,
 }) => {
-  const surface = (locator: import('@playwright/test').Locator) =>
-    locator.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return {
-        background: style.backgroundColor,
-        border: `${style.borderTopWidth} ${style.borderTopStyle} ${style.borderTopColor}`,
-        radius: style.borderTopLeftRadius,
-        shadow: style.boxShadow,
-        filter: style.backdropFilter,
-      };
-    });
-  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
-  await page.getByRole('button', { name: 'Open wide dialog' }).click();
-  const dialog = await surface(page.getByRole('dialog', { name: 'Wide details' }));
-  expect(dialog.border).not.toMatch(/^0px/);
-  expect(dialog.background).toMatch(/^rgb\(/);
-  expect(dialog.shadow).toBe('none');
-
   await page.goto(`${fixtureUrl}/?fixture=popover`);
   await page.getByRole('button', { name: 'Details light' }).click();
   const popover = await surface(page.getByRole('dialog', { name: 'Document details' }));
@@ -215,12 +221,57 @@ test('dialogs are solid with an edge; the command palette and popovers share the
   expect(popover.border).toMatch(/rgba\(0, 0, 0, 0\)$/);
   expect(popover.shadow).not.toBe('none');
   expect(popover.filter).toMatch(/^blur\(/);
-  expect(popover.radius).toBe(dialog.radius);
 
   await page.goto(`${fixtureUrl}/?fixture=palette`);
   await page.getByRole('button', { name: 'Quick open light' }).focus();
   await page.keyboard.press('Enter');
   expect(await surface(page.getByRole('dialog', { name: 'Go to document' }))).toEqual(popover);
+
+  // A dialog: the popup color, solid, with the popups' shadow and corners and no visible edge.
+  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  await page.getByRole('button', { name: 'Open wide dialog' }).click();
+  const dialog = await surface(page.getByRole('dialog', { name: 'Wide details' }));
+  expect(dialog).toEqual({
+    ...popover,
+    background: await token(page, '--env-color-bg-popup'),
+    filter: 'none',
+  });
+});
+
+test('a dark dialog takes the dark popups’ fill, the default surface', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=forms`);
+  await page.getByRole('button', { name: 'Open dark dialog', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Dark theme dialog', exact: true });
+  const fill = await dialog.evaluate((element) => {
+    const probe = document.createElement('div');
+    probe.style.background = 'var(--env-color-bg-default)';
+    element.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return color;
+  });
+  const look = await surface(dialog);
+  expect(look.background).toBe(fill);
+  expect(look.border).toMatch(/rgba\(0, 0, 0, 0\)$/);
+  expect(look.shadow).not.toBe('none');
+});
+
+test('where popups are solid, a dialog is too: its edge returns and its shadow goes', async ({
+  page,
+}) => {
+  await page.emulateMedia({ contrast: 'more' });
+  await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
+  await page.getByRole('button', { name: 'Open wide dialog' }).click();
+  const dialog = await surface(page.getByRole('dialog', { name: 'Wide details' }));
+  // The solid popup's fill, no shadow or blur, and the dialog's level of edge, which is visible.
+  expect(dialog.background).toBe(await token(page, '--env-color-bg-popup'));
+  expect(dialog.shadow).toBe('none');
+  expect(dialog.filter).toBe('none');
+  expect(dialog.border).toMatch(/^1px solid /);
+  expect(dialog.border).not.toMatch(/rgba\(0, 0, 0, 0\)$/);
+  expect(dialog.border.replace(/^1px solid /, '')).toBe(
+    await token(page, '--env-elevation-3-border'),
+  );
 });
 
 test(

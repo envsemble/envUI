@@ -1,9 +1,8 @@
-/* Dialogs and sheets share one surface (DialogSurface): the popover's look at elevation 3, the
-   popup fill and the elevation edge over the scrim, with no shadow, plus text and action
-   geometry. Dialog adds its corners, widths, placements and motion; Sheet its edge geometry and
-   the navigation's fill, in Sheet.css. */
+/* Dialogs and sheets share one surface (DialogSurface): body text, the scrolling a dialog's content
+   needs and a border its owner colors. Dialog and ConfirmDialog are popups (below); Sheet adds its
+   edge geometry and the navigation's fill in Sheet.css. */
 .env-dialog-surface {
-  border: 0.0625rem solid var(--env-elevation-3-border);
+  border: var(--env-control-border-width) solid transparent;
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
   max-height: 100%;
@@ -12,8 +11,16 @@
   overflow-wrap: anywhere;
   pointer-events: auto;
 }
-.env-surface.env-dialog-surface {
-  --env-surface-color: var(--env-color-bg-popup);
+/* A dialog follows the popups' rules (Popup.css): their fill, their soft shadow and no edge, and its
+   header, content and actions part by space. Unlike a popup it isn't frosted: over its scrim, what
+   shows through would only grey the dialog and smudge it with the shapes the scrim dims. Where
+   popups are solid, at high contrast, with reduced transparency and under forced colors, it has no
+   shadow and its elevation edge returns. What it holds takes the fill as the color beneath it. */
+.env-surface.env-dialog-popup {
+  --env-surface-color: var(--env-popup-fill);
+  --env-dialog-edge: var(--env-popup-solid) var(--env-elevation-3-border);
+  border-color: var(--env-dialog-edge, transparent);
+  box-shadow: var(--env-popup-shadow);
 }
 .env-dialog-popup {
   /* The positioner's inline gutters, as the popup's margins: the positioner is the env-window
@@ -125,5 +132,12 @@
   .env-dialog-popup[data-ending-style] {
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease-exit);
+  }
+}
+
+/* Forced colors: the system replaces the edge's color, so the dialog keeps a visible one. */
+@media (forced-colors: active) {
+  .env-surface.env-dialog-popup {
+    border-color: CanvasText;
   }
 }
