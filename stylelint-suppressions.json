@@ -49,7 +49,7 @@
   },
   "packages/ui/src/styles/CommandPalette.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 7
+      "count": 5
     }
   },
   "packages/ui/src/styles/Composer.css": {

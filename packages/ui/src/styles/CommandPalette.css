@@ -50,22 +50,11 @@
     var(--env-color-bg-popup);
   --env-text-field-ghost-placeholder: var(--env-color-fg-muted);
   --env-text-field-ghost-edge: var(--env-popup-solid) var(--env-color-border-default);
-  flex: 0 0 auto;
-}
-.env-command-palette-search .env-text-field-control {
   /* Where the options' icons sit, inside the control's border. */
-  --env-command-palette-search-inset: calc(
+  --env-text-field-start-inset: calc(
     var(--env-popup-row-padding-inline) - var(--env-control-border-width)
   );
-}
-.env-command-palette-search .env-text-field-start {
-  inset-inline-start: var(--env-command-palette-search-inset);
-}
-.env-command-palette-search .env-text-field-control[data-start-icon] > .env-command-palette-input {
-  padding-inline: calc(
-      var(--env-command-palette-search-inset) + var(--env-control-icon-size) + var(--env-space-3)
-    )
-    var(--env-command-palette-search-inset);
+  flex: 0 0 auto;
 }
 .env-command-palette-list {
   /* The options' offset parent, so the highlight scrolls into view by their offsets. */
