@@ -1,5 +1,5 @@
-/* A row of a popup list (ListRow): an indicator, an icon, a label over its description, and content
-   or a shortcut at the end, on the element of the list's own item. Its states come from Base UI's
+/* A row of a popup list (ListRow): an icon, a label over its description, content or a shortcut,
+   and an indicator at the end, on the element of the list's own item. Its states come from Base UI's
    data-highlighted, data-selected and data-disabled. Rows are the md control height in body text,
    with corners concentric with the popup's (Popup.css); the highlight is the neutral fill over the
    frosted popup, and the chosen option takes the selection's fill and text. */
@@ -42,7 +42,7 @@
   opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
-/* The indicator keeps its slot whether or not the row is chosen, so the labels align. The icon's
+/* The indicator keeps its slot whether or not the row is chosen, so the rows' ends align. The icon's
    slot takes the hook --env-list-row-icon-size, which an owner whose rows lead with larger content,
    such as avatars, sets on its own element. */
 .env-list-row-indicator,
@@ -54,7 +54,9 @@
   block-size: var(--env-control-icon-size);
   --env-icon-size: var(--env-control-icon-size);
 }
+/* The indicator, a chosen option's check mark, ends the row, after its label and any end content. */
 .env-list-row-indicator {
+  order: 1;
   color: var(--env-color-bg-brand-emphasis);
 }
 .env-list-row[data-selected] .env-list-row-indicator {
