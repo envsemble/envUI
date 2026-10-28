@@ -33,7 +33,7 @@ components:
   - Markdown
   - MarkdownEditor
 examples:
-  ProjectNote: overview
+  WriteNote: overview
   EditDescription:
     role: overview
     caption: 'MarkdownEditor: a toolbar, and a preview of the text.'
@@ -43,6 +43,7 @@ examples:
   MarkdownEditorAnatomy: anatomy
   OpenInPanel: example
   CustomElements: example
+  ProjectNote: example
 ---
 
 # Markdown
@@ -89,6 +90,10 @@ A rendered document is a single part, in which each table scrolls in a region of
 Common Markdown with tables, strikethrough, task lists, automatic links and footnotes.
 
 - Raw HTML is ignored, except keys, which render as Kbd.
+
+```tsx figure=ProjectNote
+
+```
 
 ### Links
 
