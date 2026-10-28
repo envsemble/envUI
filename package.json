@@ -30,6 +30,7 @@
     "test:a11y:update": "npm run build:site && playwright test --project=a11y --update-snapshots=changed",
     "test:visual": "node scripts/test/VisualTests.ts",
     "test:visual:update": "node scripts/test/VisualTests.ts --update",
+    "measure:size": "node scripts/test/MeasureSize.ts",
     "lint": "eslint . --cache --cache-location .cache/eslint/",
     "lint:css": "stylelint \"packages/ui/src/**/*.css\" \"apps/site/src/**/*.css\"",
     "format": "prettier --write .",
