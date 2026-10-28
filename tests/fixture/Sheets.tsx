@@ -2,8 +2,8 @@ import { useRef, useState } from 'react';
 import {
   Button,
   DialogClose,
+  Drawer,
   Sheet,
-  Link,
   Column,
   Row,
   Text,
@@ -12,7 +12,8 @@ import {
 } from '@envsemble/envui';
 
 /**
- * Side sheets at both edges, named by a title or by aria-label, one whose first element is a field,
+ * Side sheets at both edges, named by a title or by aria-label, one holding a Drawer, one whose
+ * first element is a field,
  * one in right-to-left text, a bottom sheet, and two taller than the window.
  */
 export function SheetsFixture() {
@@ -38,12 +39,13 @@ export function SheetsFixture() {
           width="min(18rem, 100vw - 2rem)"
           trigger={<Button variant="secondary">Open navigation</Button>}
         >
-          <nav aria-label="Sections">
-            <Column gap={2}>
-              <Link href="#overview">Overview</Link>
-              <Link href="#people">People</Link>
-            </Column>
-          </nav>
+          <Drawer
+            aria-label="Sections"
+            destinations={[
+              { label: 'Overview', href: '#overview', current: true },
+              { label: 'People', href: '#people' },
+            ]}
+          />
         </Sheet>
         <Button variant="secondary" onClick={() => setOpen(true)}>
           Open controlled

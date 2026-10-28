@@ -263,6 +263,32 @@ test.describe('Sheet', () => {
     }
   });
 
+  test("a sheet that holds a Drawer takes the navigation's fill, not the popup's", async ({
+    page,
+  }) => {
+    await page.goto(sheets);
+    const fill = (locator: Locator) =>
+      locator.evaluate((element) => getComputedStyle(element).backgroundColor);
+    await page.getByRole('button', { name: 'Open filters' }).click();
+    const popup = await fill(page.getByRole('dialog', { name: 'Filters' }));
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Open navigation' }).click();
+    const sheet = page.getByRole('dialog', { name: 'Navigation' });
+    const drawer = sheet.getByRole('navigation', { name: 'Sections' });
+    // The drawer keeps the fill it has at the window's edge, and the sheet takes it.
+    const navigation = await drawer.evaluate((element) => {
+      const probe = document.createElement('div');
+      probe.style.background = 'var(--env-color-bg-default)';
+      element.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    });
+    expect(await fill(drawer)).toBe(navigation);
+    expect(await fill(sheet)).toBe(navigation);
+    expect(navigation).not.toBe(popup);
+  });
+
   test('a md side sheet takes the whole width of a compact window', async ({ page }) => {
     await page.setViewportSize({ width: 400, height: 700 });
     await page.goto(sheets);

@@ -88,7 +88,7 @@ examples:
 
 ### Backgrounds
 
-Each form is a plain rectangle along the window's edge. On a surface, such as a [Sheet](sheet.md), it takes that surface's color.
+Each form is a plain rectangle along the window's edge. On a surface, such as a Card, it takes that surface's color; a [Sheet](sheet.md) that holds it takes the drawer's instead, so it looks the same in a narrow window.
 
 | Background | Use for                                                          |
 | ---------- | ---------------------------------------------------------------- |
@@ -195,7 +195,7 @@ People can resize the drawer by its end edge, with the same grip as between [Pan
 
 ### Adapting to width
 
-The bar's destinations share its width equally, and their labels stay on one line.
+The bar's destinations share its width equally, and their labels stay on one line. A drawer or a rail in the sheet of a narrow window keeps its color: the sheet takes it, with its own edge and scrim.
 
 ```tsx figure=SharedWidth widths="36 20" sweep
 
@@ -336,6 +336,7 @@ The parts the anatomy doesn't show: a section's row, `env-drawer-branch-row`, an
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: A Sheet that holds a Drawer or a Rail takes the navigation's background, or the page's for `background="page"`, rather than the popup's, so the navigation keeps its color in the sheet of a narrow window.
 - **1.0.0-prerelease.4**: A destination's `children` nest under it: Drawer shows them indented, in a section that opens and closes with a chevron, open while it holds the current destination, whose links stay in the page, hidden until found. A section without `href` or `onSelect` is only its heading. `expanded`, `defaultExpanded` and `onExpandedChange` keep the open sections. Rail and Bar show the top level, and mark a destination whose section holds the current one.
 - **1.0.0-prerelease.3**: A resizable Drawer keeps each label and group heading on one line as it narrows: one that doesn't fit ends in an ellipsis, a label cut short shows in full in a tooltip, and a heading cut short gives its full text as its title. Bar and Rail are documented on this page, `drawer`, which their pages' addresses open.
 - **1.0.0-prerelease.2**: With `resizable`, people resize it by its end edge, between `minWidth` and `maxWidth` and never past half its container, from `defaultWidth`; `width` and `onWidthChange` keep it. The handle is `env-drawer-resize-handle`, the same grip as Panes.Divider's.

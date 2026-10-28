@@ -97,6 +97,7 @@ A sheet has a dialog's surface, title, description and actions.
 - On a touch screen a swipe toward its edge closes it too.
 - A mouse or a pen never moves the sheet, and a drag inside it selects text.
 - In a sheet too short for all it holds, its content scrolls between the title and the actions, which stay in view.
+- A sheet that holds a [Drawer](drawer.md) or a rail takes the navigation's color, so it looks as it does at the window's edge.
 
 ### Inspector beside the page
 
@@ -239,5 +240,6 @@ A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: A Sheet that holds a Drawer or a Rail takes the navigation's background rather than the popup's, so the navigation keeps its color in a narrow window.
 - **1.0.0-prerelease.2**: With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, from `defaultWidth`; `width` takes a number of rem, which `onWidthChange` keeps. The handle is `env-sheet-resize-handle`, the same grip as Panes.Divider's. Only a finger swipes a sheet closed; a mouse or a pen no longer moves it.
 - **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.

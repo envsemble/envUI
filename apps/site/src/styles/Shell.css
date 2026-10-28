@@ -46,7 +46,7 @@ body {
    between them, as tall as the window. The drawer keeps its top and foot in view and scrolls its
    list; the reader resizes it by its end edge, and the catalogue keeps the width it starts at and
    its bounds (SiteNavigation.tsx). In the sheet of a narrower window they take the
-   sheet's width and color. */
+   sheet's width, and the sheet takes their color. */
 .site-navigation {
   display: flex;
   align-items: stretch;
