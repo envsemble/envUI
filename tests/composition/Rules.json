@@ -414,6 +414,7 @@
           "forms/internal/PickerField.tsx",
           "forms/internal/PickerPopup.tsx",
           "forms/internal/TimeList.tsx",
+          "forms/internal/TimeWheel.tsx",
           "forms/internal/MonthGrid.tsx",
           "forms/TimePicker.tsx",
           "forms/MonthPicker.tsx"

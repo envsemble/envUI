@@ -89,6 +89,7 @@ export const aliases: Record<string, string[]> = {
   TimePicker: ['TimePicker', 'PickerPopup'],
   MonthPicker: ['MonthPicker', 'PickerPopup'],
   TimeList: ['DatePicker', 'TimePicker', 'ForcedColors'],
+  TimeWheel: ['DatePicker', 'TimePicker', 'ForcedColors'],
   MonthGrid: ['MonthPicker', 'ForcedColors'],
   Code: ['CodeBlock'],
   RichText: ['RichTextEditor'],
