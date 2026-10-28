@@ -48,6 +48,21 @@ test('lists the headings of its container, nested by level, with ids from their 
   await expect(top).toHaveText(['Introduction', 'Usage', 'Added later', 'Short end', 'Last']);
 });
 
+test('keeps its headings while a modal popup hides the page behind it', async ({ page }) => {
+  await page.goto(url);
+  const contents = page.getByRole('navigation', { name: 'On this page', includeHidden: true });
+  const top = contents.locator(':scope > div > ol > li > a');
+  await page.getByRole('button', { name: 'Open a dialog' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Add from a dialog' });
+  // The page behind the dialog is hidden while it is open; a heading added then still joins the
+  // list, and the list stays shown.
+  await dialog.getByRole('button', { name: 'Add a section' }).click();
+  await expect(top).toHaveText(['Introduction', 'Usage', 'Added later', 'Short end', 'Last']);
+  await expect(contents).toBeVisible();
+  await dialog.getByRole('button', { name: 'Close' }).click();
+  await expect(contents).toBeVisible();
+});
+
 test(
   'marks the section the reader is in as the page scrolls, the short last ones at the end',
   {

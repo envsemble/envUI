@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { TableOfContents } from '@envsemble/envui';
+import { Button, Dialog, TableOfContents } from '@envsemble/envui';
 
 const tall = { blockSize: '40rem', margin: 0 };
 const short = { blockSize: '3rem', margin: 0 };
@@ -7,7 +7,8 @@ const short = { blockSize: '3rem', margin: 0 };
 /**
  * A page under a sticky bar that reads its article's headings, h2 and h3, leaving out an example's
  * own heading and an h4; and sections of its own, cards in a box that scrolls, also in a box drawn
- * at half its size. Mounted with ?fixture=table-of-contents.
+ * at half its size; and a modal dialog that adds a section while the page behind it is hidden.
+ * Mounted with ?fixture=table-of-contents.
  */
 export function TableOfContentsFixture() {
   const article = useRef<HTMLElement>(null);
@@ -33,6 +34,12 @@ export function TableOfContentsFixture() {
         <button type="button" onClick={() => setRound((count) => count + 1)}>
           Render the review again
         </button>
+        <Dialog
+          title="Add from a dialog"
+          closeLabel="Close"
+          trigger={<Button>Open a dialog</Button>}
+          actions={<Button onClick={() => setExtra(true)}>Add a section</Button>}
+        />
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 14rem', gap: '2rem' }}>
         <article ref={article} className="toc-fixture-article">

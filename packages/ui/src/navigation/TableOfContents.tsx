@@ -102,7 +102,12 @@ function readHeadings(
   const entries: HeadingEntry[] = [];
   for (const heading of container.querySelectorAll<HTMLElement>(selector)) {
     if (own?.contains(heading)) continue;
-    if (heading.closest('[hidden], [inert], [aria-hidden="true"]')) continue;
+    // A heading the page hides is left out; one hidden only while a popup is open, which marks the
+    // rest of the page inert or aria-hidden for as long as it stays open, is not.
+    const hider = heading.closest('[hidden], [inert], [aria-hidden="true"]');
+    if (hider && (hider.hasAttribute('hidden') || !hider.closest('[data-base-ui-inert]'))) {
+      continue;
+    }
     if (filter && !filter(heading)) continue;
     const label = headingText(heading);
     if (!label) continue;
