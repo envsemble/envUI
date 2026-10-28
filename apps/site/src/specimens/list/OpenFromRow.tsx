@@ -37,7 +37,7 @@ function Pointing() {
 /** Recent plans: a row highlighted as a whole, and its More actions on its own, opening its menu. */
 export default function OpenFromRowMotion() {
   return (
-    <MotionStage label="a row and its action under the pointer" height="16rem">
+    <MotionStage label="a row and its action under the pointer" height="19.5rem">
       <Pointing />
     </MotionStage>
   );
