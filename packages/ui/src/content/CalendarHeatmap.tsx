@@ -22,6 +22,8 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters, type Formatters } from '../internal/useFormatters.js';
 import { calendarHeatmap as calendarHeatmapMessages } from '../foundations/messages/calendarHeatmap.js';
 import type { BadgeTone } from './Badge.js';
+import { isRightToLeft } from '../internal/direction.js';
+import { dayParts } from '../internal/calendarDays.js';
 
 export interface CalendarHeatmapDay {
   /** The day, as YYYY-MM-DD. */
@@ -127,21 +129,16 @@ function localeNames(formatters: Formatters) {
 /** Hover waits like Tooltip; moving between days while one is shown switches at once. */
 const hoverDelay = 400;
 
-/** Days count from 1970-01-01 in UTC, so daylight saving never shifts a week. */
+/**
+ * Days count from 1970-01-01 in UTC, so daylight saving never shifts a week. Unlike calendarDays'
+ * parseDay, this one lets an impossible date such as 2026-02-30 roll over into the next month, and
+ * reads years before 100 as 1900 onward, as Date.UTC does; dayKey writes a year before 1000 with
+ * fewer than four digits.
+ */
 function parseDay(date: string | undefined) {
   const match = date === undefined ? null : /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
   if (!match) return undefined;
   return Math.floor(Date.UTC(+match[1]!, +match[2]! - 1, +match[3]!) / dayMilliseconds);
-}
-
-function dayParts(day: number) {
-  const date = new Date(day * dayMilliseconds);
-  return {
-    year: date.getUTCFullYear(),
-    month: date.getUTCMonth(),
-    date: date.getUTCDate(),
-    weekday: date.getUTCDay(),
-  };
 }
 
 function dayKey(day: number) {
@@ -448,7 +445,7 @@ export function CalendarHeatmap({
 
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     if (event.altKey || event.metaKey) return;
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+    const rtl = isRightToLeft(event.currentTarget);
     const week = rtl ? -7 : 7;
     // As in a grid, Home and End move along the row, the same weekday in the first and the last
     // week; Page Up and Page Down along the column, to the week's first and last day; and Ctrl+Home

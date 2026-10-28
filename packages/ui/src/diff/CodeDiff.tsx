@@ -29,6 +29,7 @@ import { Refresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
+import { remPixels } from '../internal/lengths.js';
 
 export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source before the change. */
@@ -186,8 +187,7 @@ export function CodeDiff({
       setWide(false);
       return;
     }
-    const rem =
-      Number.parseFloat(getComputedStyle(root.ownerDocument.documentElement).fontSize) || 16;
+    const rem = remPixels(root);
     const style = getComputedStyle(root);
     setWide(
       root.clientWidth -

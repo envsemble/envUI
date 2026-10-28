@@ -21,6 +21,8 @@ import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { ContextMenu } from './ContextMenu.js';
+import { remPixels } from '../internal/lengths.js';
+import { isRightToLeft } from '../internal/direction.js';
 
 export interface TreeItem {
   /** Stable, unique identifier; rows carry it as data-id. */
@@ -225,10 +227,7 @@ export function Tree<T extends TreeItem>({
       // getBoundingClientRect would include. Rows are border-box with a fixed block size.
       const height = row ? parseFloat(getComputedStyle(row).blockSize) : 0;
       if (height) setRowHeight(height);
-      else {
-        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-        setRowHeight(rowRem[density] * rem);
-      }
+      else setRowHeight(rowRem[density] * remPixels());
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -326,7 +325,7 @@ export function Tree<T extends TreeItem>({
         break;
       case 'ArrowRight':
       case 'ArrowLeft': {
-        const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+        const rtl = isRightToLeft(event.currentTarget);
         const inward = (event.key === 'ArrowRight') !== rtl;
         if (inward) {
           if (activeItem.expandable && !activeItem.expanded) setExpanded(activeItem, true);

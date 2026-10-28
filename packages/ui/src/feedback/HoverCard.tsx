@@ -18,23 +18,12 @@ import { Grid } from '../foundations/Layout.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
+import { isDeveloping, reportOnce } from '../internal/developmentReport.js';
 
 /** Says what a HoverCard can't do while developing, once per message. */
 function warn(message: string) {
-  let developing = false;
-  try {
-    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
-    developing = process.env.NODE_ENV !== 'production';
-  } catch {
-    // No bundler defined process.env.NODE_ENV.
-  }
-  if (!developing || warned.has(message)) return;
-  warned.add(message);
-  // A development-only warning, as React warns of a prop it can't use.
-  // eslint-disable-next-line no-console
-  console.warn(`envUI: ${message}`);
+  if (isDeveloping()) reportOnce(message, { level: 'warn' });
 }
-const warned = new Set<string>();
 
 /** Whether keyboard focus reaches a text trigger: it has a tabIndex of 0 or more. */
 function takesFocus(trigger: ReactElement) {

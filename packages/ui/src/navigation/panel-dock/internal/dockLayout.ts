@@ -1,4 +1,5 @@
 import type { PanelDockPanel } from '../Root.js';
+import { isRightToLeft } from '../../../internal/direction.js';
 
 /** Where a panel shows: in the row, filling the region, or out of sight behind its tab. */
 export type Placement = 'row' | 'fill' | 'hidden';
@@ -279,7 +280,7 @@ export function isAtRowEnd(rowElement: HTMLElement) {
 
 export function scrollToRowEnd(rowElement: HTMLElement) {
   const end = rowElement.scrollWidth - rowElement.clientWidth;
-  rowElement.scrollLeft = getComputedStyle(rowElement).direction === 'rtl' ? -end : end;
+  rowElement.scrollLeft = isRightToLeft(rowElement) ? -end : end;
 }
 
 /** Scrolls the row, and only the row, so the frame shows between its padding edges. */

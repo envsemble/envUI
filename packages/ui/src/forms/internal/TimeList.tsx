@@ -21,7 +21,9 @@ import {
   now,
   roundToStep,
   toUtcDate,
-} from './calendarDays.js';
+} from '../../internal/calendarDays.js';
+import { prefersReducedMotion } from '../../internal/reducedMotion.js';
+import { isRightToLeft } from '../../internal/direction.js';
 
 export interface TimeListProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
@@ -254,9 +256,6 @@ function nearestAvailable(entries: Entry[], index: number, loop: boolean, direct
   return -1;
 }
 
-const reducedMotion = () =>
-  typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 /**
  * A wheel event of at least this many pixels is one notch of a mouse wheel, which turns the wheel
  * by one row; smaller ones, from a touchpad, turn it by as far as they scroll.
@@ -362,7 +361,7 @@ function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }:
     target.current = rowIndex;
     chosenAt.current = null;
     setCentred(rowIndex);
-    if (!smooth || reducedMotion()) {
+    if (!smooth || prefersReducedMotion()) {
       stopTurn(wheel);
       wheel.scrollTo({ top: topOf(wheel, rowIndex), behavior: 'instant' });
       return;
@@ -524,7 +523,7 @@ function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }:
     if (event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault();
-      const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+      const rtl = isRightToLeft(event.currentTarget);
       onSideways((event.key === 'ArrowRight') !== rtl ? 1 : -1);
       return;
     }

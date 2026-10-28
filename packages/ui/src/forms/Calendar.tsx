@@ -30,9 +30,10 @@ import {
   parseDay,
   toUtcDate,
   type Weekday,
-} from './internal/calendarDays.js';
+} from '../internal/calendarDays.js';
+import { isRightToLeft } from '../internal/direction.js';
 
-export type { Weekday } from './internal/calendarDays.js';
+export type { Weekday } from '../internal/calendarDays.js';
 
 export interface CalendarProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
@@ -174,7 +175,7 @@ export function Calendar({
 
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+    const rtl = isRightToLeft(event.currentTarget);
     const column = (dayParts(active).weekday - firstWeekday + 7) % 7;
     const moves: Record<string, number> = {
       ArrowLeft: active + (rtl ? 1 : -1),

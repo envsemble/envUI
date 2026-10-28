@@ -37,6 +37,7 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
+import { isRightToLeft } from '../internal/direction.js';
 
 interface TableColumns {
   widths: readonly number[];
@@ -533,7 +534,7 @@ function HeaderCell({
 }
 
 function inlineDirection(element: Element) {
-  return getComputedStyle(element).direction === 'rtl' ? -1 : 1;
+  return isRightToLeft(element) ? -1 : 1;
 }
 
 /** A separator at the inline end of a header cell that moves the boundary to the next column. */

@@ -33,7 +33,7 @@ import {
   parseTime,
   toUtcDate,
   type Weekday,
-} from './internal/calendarDays.js';
+} from '../internal/calendarDays.js';
 
 export interface DatePickerProps
   extends Omit<

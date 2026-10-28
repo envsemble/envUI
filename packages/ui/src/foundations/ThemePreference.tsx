@@ -29,6 +29,7 @@ import {
   ThemePreferenceContext,
   type ThemePreferenceValue,
 } from './internal/ThemePreferenceContext.js';
+import { reportOnce } from '../internal/developmentReport.js';
 
 const systemDarkQuery = '(prefers-color-scheme: dark)';
 
@@ -92,7 +93,6 @@ interface DocumentWrites {
  * more, a provider at system still leaves a contrast another of them wrote.
  */
 const documentProviders = new Map<symbol, DocumentWrites>();
-let warnedAboutProviders = false;
 
 /**
  * Removes the root's contrast when envUI wrote it, the page has not written over it since, and no
@@ -228,18 +228,10 @@ export function ThemePreferenceProvider({
   useEffect(() => {
     if (!applyToDocument) return;
     try {
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        documentProviders.size > 0 &&
-        !warnedAboutProviders
-      ) {
-        warnedAboutProviders = true;
-        // A development-only report, as React reports an invalid prop.
-        // eslint-disable-next-line no-console
-        console.error(
-          'envUI: more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
+      if (process.env.NODE_ENV !== 'production' && documentProviders.size > 0)
+        reportOnce(
+          'more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
         );
-      }
     } catch {
       // No bundler defined process.env.NODE_ENV: written as in Theme.
     }

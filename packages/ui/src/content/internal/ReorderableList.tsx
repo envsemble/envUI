@@ -24,6 +24,7 @@ import { useHydrated } from '../../internal/useHydrated.js';
 import { useReorder, type Announcement, type ReorderHandlers } from './useReorder.js';
 import type { RootProps } from '../List.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
+import { isDeveloping, reportOnce } from '../../internal/developmentReport.js';
 
 /**
  * The client side of List, as ActionElement is Button's: List.Root and List.Item stay server
@@ -95,28 +96,18 @@ export function ReorderableList({
   const instructions = `${useId()}-instructions`;
   const reorder = useMemo(() => ({ handlers, instructions }), [handlers, instructions]);
   // A row without a handle, such as one of a component that doesn't pass List.Root's props on to
-  // its List.Item, can't be moved: say so while developing. Written inline so bundlers replace
-  // process.env.NODE_ENV, as in Theme. Each list says so once.
-  const reported = useRef(false);
+  // its List.Item, can't be moved: say so while developing. Each list says so once.
   useLayoutEffect(() => {
-    let developing = false;
-    try {
-      developing = process.env.NODE_ENV !== 'production';
-    } catch {
-      // No bundler defined process.env.NODE_ENV.
-    }
     const list = element.current;
-    if (!developing || !list || reported.current) return;
+    if (!isDeveloping() || !list) return;
     const bare = Array.from(list.children).filter(
       (row) => row.tagName === 'LI' && !row.querySelector('.env-list-item-handle'),
     ).length;
     if (bare === 0) return;
-    reported.current = true;
-    // A development-only report, as React reports an invalid prop.
-    // eslint-disable-next-line no-console
-    console.error(
-      `envUI: ${bare} row${bare === 1 ? '' : 's'} of a List.Root with onReorder ${bare === 1 ? 'has' : 'have'} no drag handle. ` +
+    reportOnce(
+      `${bare} row${bare === 1 ? '' : 's'} of a List.Root with onReorder ${bare === 1 ? 'has' : 'have'} no drag handle. ` +
         'Render each row as a List.Item, and have a row component pass the props it does not use on to its List.Item.',
+      { key: instructions },
     );
   });
   const forward = useCallback(

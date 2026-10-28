@@ -45,6 +45,7 @@ import {
 } from './internal/dockLayout.js';
 import { PanelFrame } from './internal/PanelFrame.js';
 import { PanelTab } from './internal/PanelTab.js';
+import { isRightToLeft } from '../../internal/direction.js';
 
 export type { PanelDockMode };
 
@@ -707,7 +708,7 @@ export function Root<T extends PanelDockPanel>({
       if (event.deltaX !== 0 || event.deltaY === 0 || event.ctrlKey) return;
       const max = element.scrollWidth - element.clientWidth;
       if (max <= 0) return;
-      const direction = getComputedStyle(element).direction === 'rtl' ? -1 : 1;
+      const direction = isRightToLeft(element) ? -1 : 1;
       const position = element.scrollLeft * direction;
       const next = Math.min(max, Math.max(0, position + event.deltaY));
       if (next === position) return;

@@ -10,7 +10,7 @@ const repository = fileURLToPath(new URL('../', import.meta.url));
 const output = join(repository, '.cache/unit/CalendarDays.mjs');
 await build({
   absWorkingDir: repository,
-  entryPoints: [join(repository, 'packages/ui/src/forms/internal/calendarDays.ts')],
+  entryPoints: [join(repository, 'packages/ui/src/internal/calendarDays.ts')],
   bundle: true,
   platform: 'node',
   format: 'esm',

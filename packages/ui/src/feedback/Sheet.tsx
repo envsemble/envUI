@@ -43,6 +43,8 @@ import {
   keepsOpen,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
+import { computedDirection } from '../internal/direction.js';
+import { isDeveloping, reportOnce } from '../internal/developmentReport.js';
 
 export interface SheetProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>,
@@ -185,7 +187,7 @@ export type SheetSide = 'bottom' | 'start' | 'end';
 function readDirection(source: Element | null): Direction {
   if (typeof document === 'undefined') return 'ltr';
   const element = source ?? document.activeElement ?? document.documentElement;
-  return getComputedStyle(element).direction === 'rtl' ? 'rtl' : 'ltr';
+  return computedDirection(element);
 }
 
 /** Base UI's mark on an element that no swipe starts from: a drag on the handle resizes, by touch too. */
@@ -195,22 +197,12 @@ const noSwipe = { 'data-base-ui-swipe-ignore': '' };
  * Says while developing that a resizable side sheet ignores a CSS length as its width, once a page:
  * its width is a number of rem then, which it starts at.
  */
-let reportedCssWidth = false;
 function reportCssWidth(width: string) {
-  let developing = false;
-  try {
-    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
-    developing = process.env.NODE_ENV !== 'production';
-  } catch {
-    // No bundler defined process.env.NODE_ENV.
-  }
-  if (!developing || reportedCssWidth) return;
-  reportedCssWidth = true;
-  // A development-only warning, as React warns of a prop it can't use.
-  // eslint-disable-next-line no-console
-  console.warn(
-    `envUI: a resizable Sheet ignores width="${width}": its width is a number of rem. ` +
+  if (!isDeveloping()) return;
+  reportOnce(
+    `a resizable Sheet ignores width="${width}": its width is a number of rem. ` +
       'Pass defaultWidth, or width as a number with onWidthChange, and minWidth and maxWidth.',
+    { level: 'warn', key: 'Sheet width' },
   );
 }
 

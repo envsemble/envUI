@@ -3,7 +3,7 @@
 // it covers.
 
 import { layoutAttribute, overlaySelector } from '../measure.js';
-import { prefersReducedMotion } from './motion.js';
+import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 
 /**
  * Whether an element scrolls on the wheel's axis: 'room' where it can go further the wheel's way,

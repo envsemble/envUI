@@ -1,3 +1,4 @@
+import { roundToHundredth } from '../../internal/lengths.js';
 /**
  * The shape beside the contents that marks the reader's place: one stroke down the list, swelling
  * into a broad bulge at the reader's place and running thin a few entries away, like a brush's.
@@ -180,8 +181,6 @@ export function springAtRest(spring: Spring, target: number, near: number): bool
   return Math.abs(target - spring.value) < near && Math.abs(spring.velocity) < near * 10;
 }
 
-const round = (value: number) => Math.round(value * 100) / 100;
-
 /**
  * The radius of the round end at `end`, from which the shape runs `inward` (1 down, -1 up): the one
  * at which the shape, that far in, is as wide as the end, found by halving; at most `room`.
@@ -235,13 +234,13 @@ export function wavePath(
     else edge.push([at, across]);
     if (at === to) break;
   }
-  const point = (x: number, y: number) => `${round(x)} ${round(y)}`;
+  const point = (x: number, y: number) => `${roundToHundredth(x)} ${roundToHundredth(y)}`;
   const end = edge.map(([y, across]) => `L${point(across, y)}`).join('');
   return (
     `M${point(0, from)}` +
-    `A${round(startRadius)} ${round(startRadius)} 0 0 1 ${point(startRadius * 2, from)}` +
+    `A${roundToHundredth(startRadius)} ${roundToHundredth(startRadius)} 0 0 1 ${point(startRadius * 2, from)}` +
     end +
-    `A${round(endRadius)} ${round(endRadius)} 0 0 1 ${point(0, to)}` +
+    `A${roundToHundredth(endRadius)} ${roundToHundredth(endRadius)} 0 0 1 ${point(0, to)}` +
     'Z'
   );
 }

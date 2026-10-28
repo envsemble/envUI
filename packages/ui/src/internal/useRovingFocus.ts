@@ -8,6 +8,7 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { useEnvUI, type Direction } from './EnvUIContext.js';
+import { computedDirection } from './direction.js';
 
 export interface RovingOptions<Item> {
   /** The items, in the order they are laid out. */
@@ -164,10 +165,7 @@ export function useRovingFocus<Item>(options: RovingOptions<Item>) {
     const index = items.findIndex((item) => getKey(item) === stopKey);
     if (index === -1) return;
     // Left and Right follow the given direction, the provider's, or the one at the widget.
-    const direction =
-      options.dir ??
-      provided ??
-      (getComputedStyle(event.currentTarget).direction === 'rtl' ? 'rtl' : 'ltr');
+    const direction = options.dir ?? provided ?? computedDirection(event.currentTarget);
     const next = target(options, index, event, direction) ?? typeahead(event, index);
     if (next === undefined) return;
     event.preventDefault();

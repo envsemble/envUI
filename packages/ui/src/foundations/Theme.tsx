@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { outsideTheme } from './internal/outsideTheme.js';
+import { reportOnce } from '../internal/developmentReport.js';
 
 /** A color scheme. */
 export type ThemeValue = 'light' | 'dark';
@@ -57,9 +58,6 @@ export interface ThemeProps extends ComponentPropsWithRef<'div'> {
 
 const ThemeContext = createContext<ThemeContextValue>(outsideTheme);
 
-/** Invalid themes already warned about, so each is reported once. */
-const warnedThemes = new Set<string>();
-
 /** A theme as a warning shows it; JSON for an object, without throwing on any value. */
 function showTheme(theme: unknown): string {
   if (typeof theme !== 'object' || theme === null) return String(theme);
@@ -85,18 +83,16 @@ function showTheme(theme: unknown): string {
 }
 
 /**
- * In development, the report about a theme that is neither light nor dark, unless it was made
- * already. In JavaScript, 0.x's `<Theme theme={useTheme()}>` now passes `{ theme, contrast }`,
- * which would theme nothing.
+ * In development, the report about a theme that is neither light nor dark. In JavaScript, 0.x's
+ * `<Theme theme={useTheme()}>` now passes `{ theme, contrast }`, which would theme nothing.
  */
 function themeReport(theme: unknown): { shown: string; message: string } | undefined {
   if (theme === 'light' || theme === 'dark') return undefined;
   const shown = showTheme(theme);
-  if (warnedThemes.has(shown)) return undefined;
   return {
     shown,
     message:
-      `envUI: Theme takes a theme of "light" or "dark", not ${shown}.` +
+      `Theme takes a theme of "light" or "dark", not ${shown}.` +
       (typeof theme === 'object' && theme !== null
         ? ' useTheme() returns { theme, contrast }: write <Theme {...useTheme()}>.'
         : ''),
@@ -120,19 +116,14 @@ export function Theme({
   // undefined in a browser, so the check must not test it: where nothing replaced the expression,
   // as without a bundler, reading it throws and the warning stays silent. The report is built in
   // there, by code that doesn't throw; console.error, which a test may make throw, runs outside, and
-  // the theme counts as reported once it has run.
+  // the theme counts as reported once it has run, once for each theme shown.
   let report: ReturnType<typeof themeReport>;
   try {
     if (process.env.NODE_ENV !== 'production') report = themeReport(theme);
   } catch {
     // No bundler defined process.env.NODE_ENV.
   }
-  if (report) {
-    // A development-only report, as React reports an invalid prop.
-    // eslint-disable-next-line no-console
-    console.error(report.message);
-    warnedThemes.add(report.shown);
-  }
+  if (report) reportOnce(report.message, { key: `Theme ${report.shown}` });
   const inherited = useContext(ThemeContext);
   // The prop wins; without it, a data-env-contrast or data-env-scale written on the Theme counts,
   // so that the context its nested Themes and popups read agrees with the attribute.

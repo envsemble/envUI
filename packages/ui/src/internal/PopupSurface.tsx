@@ -26,6 +26,7 @@ import {
 } from './PortalContainerContext.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes } from './skeleton.js';
+import { computedDirection } from './direction.js';
 
 /** A side of the anchor; inline-start and inline-end follow the text direction. */
 export type PopupSide = 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';
@@ -146,7 +147,7 @@ function Directed({
       trigger?.current ??
       document.activeElement ??
       document.documentElement;
-    setRead(getComputedStyle(source).direction === 'rtl' ? 'rtl' : 'ltr');
+    setRead(computedDirection(source));
   }, [dir, provided, anchor, trigger]);
   const direction = dir ?? provided ?? read;
   // The provider is always there, so the popup isn't remounted once the direction is read: a

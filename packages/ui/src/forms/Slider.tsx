@@ -22,6 +22,7 @@ import { useDirectionScope } from '../internal/useDirection.js';
 import { FieldFrame } from './internal/FieldFrame.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { prefersReducedMotion } from '../internal/reducedMotion.js';
 
 export interface SliderProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
@@ -475,7 +476,7 @@ function followOverdrag(control: HTMLElement): () => void {
   };
   const down = (event: PointerEvent) => {
     if (drag || event.button !== 0 || !event.isPrimary) return;
-    if (view.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    if (prefersReducedMotion(view)) return;
     // The box as it would be unstretched, as a press can come while the slider still springs back:
     // its stretch so far, and the side it stretches from, give its length and where it starts.
     const now = Number.parseFloat(

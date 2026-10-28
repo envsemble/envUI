@@ -29,6 +29,7 @@ import {
   type TooltipSide,
 } from '../internal/TooltipPopup.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { isDeveloping, reportOnce } from '../internal/developmentReport.js';
 
 /** The props of the control a Tooltip describes, as far as the tooltip reads them. */
 interface TriggerProps {
@@ -215,20 +216,8 @@ const isExpanded = (props: TriggerProps) =>
 
 /** Says what a Tooltip can't do while developing, once per message, as React reports a prop. */
 function report(message: string) {
-  let developing = false;
-  try {
-    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
-    developing = process.env.NODE_ENV !== 'production';
-  } catch {
-    // No bundler defined process.env.NODE_ENV.
-  }
-  if (!developing || reported.has(message)) return;
-  reported.add(message);
-  // A development-only report, as React reports an invalid prop.
-  // eslint-disable-next-line no-console
-  console.error(`envUI: ${message}`);
+  if (isDeveloping()) reportOnce(message);
 }
-const reported = new Set<string>();
 
 /** A component's name for a report. */
 function typeName(type: unknown): string {

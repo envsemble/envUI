@@ -1,3 +1,4 @@
+import { roundToHundredth } from '../../internal/lengths.js';
 // Text that is there in a skeleton, such as a heading that doesn't wait for data, drawn as bars like
 // the rest: a rounded bar over each line of it, which shimmers with the other bars. CSS alone draws
 // such text as a line through it, square and in one color, which stays as the fallback until this
@@ -205,18 +206,17 @@ function draw(root: HTMLElement) {
       bottom = Math.max(bottom, bar.y + bar.height);
     }
   }
-  const round = (value: number) => Math.round(value * 100) / 100;
   const layers = joined.map(
     (bar) =>
-      `var(--env-skeleton-rect) ${round(bar.x - left)}px ${round(bar.y - top)}px / ${round(bar.width)}px ${round(bar.height)}px no-repeat`,
+      `var(--env-skeleton-rect) ${roundToHundredth(bar.x - left)}px ${roundToHundredth(bar.y - top)}px / ${roundToHundredth(bar.width)}px ${roundToHundredth(bar.height)}px no-repeat`,
   );
   const values: Record<string, string> = {
     '--env-skeleton-text-bars':
       layers.length > 0 ? layers.join(', ') : 'linear-gradient(transparent 0 0)',
-    '--env-skeleton-text-left': `${round(left)}px`,
-    '--env-skeleton-text-top': `${round(top)}px`,
-    '--env-skeleton-text-width': `${round(right - left)}px`,
-    '--env-skeleton-text-height': `${round(bottom - top)}px`,
+    '--env-skeleton-text-left': `${roundToHundredth(left)}px`,
+    '--env-skeleton-text-top': `${roundToHundredth(top)}px`,
+    '--env-skeleton-text-width': `${roundToHundredth(right - left)}px`,
+    '--env-skeleton-text-height': `${roundToHundredth(bottom - top)}px`,
   };
   for (const [property, value] of Object.entries(values))
     if (root.style.getPropertyValue(property) !== value) root.style.setProperty(property, value);

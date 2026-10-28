@@ -81,7 +81,7 @@ export const aliases: Record<string, string[]> = {
   MessageStrings: ['Messages'],
   Avatar: ['AvatarGroup'],
   Calendar: ['DatePicker'],
-  calendarDays: ['DatePicker', 'TimePicker', 'MonthPicker'],
+  calendarDays: ['DatePicker', 'TimePicker', 'MonthPicker', 'CalendarHeatmap'],
   PickerField: ['DatePicker', 'TimePicker', 'MonthPicker', 'PickerPopup'],
   PickerPopup: ['PickerPopup', 'DatePicker', 'TimePicker', 'MonthPicker'],
   PickerPopups: ['PickerPopup'],
