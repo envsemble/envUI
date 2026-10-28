@@ -7,7 +7,8 @@
 // Grade 0 is white and grade 100 black; grade 50 has 4.58:1 against both. A grade's band is the
 // luminance of `grade ± bandHalfWidth`, so even at its edges a difference of 40 grades gives at
 // least 3:1, 50 at least 4.5:1 and 70 at least 7:1, for any two hues. tests/Palette.test.mjs checks
-// those guarantees over the generated file.
+// those guarantees over the generated file. A hue may add in-between grades, such as gray's 2.75, in
+// narrower bands, keyed with `-` for the point (`gray.2-75`).
 //
 // Each hue keeps the hue and chroma of its seeds, which are today's colors: between two seeds both
 // are interpolated by grade, beyond the outermost seeds they hold. Chroma is reduced at constant
@@ -49,6 +50,21 @@ export const grades = [
 /** How far, in grades, a color's luminance may sit from its grade's exact value. */
 export const bandHalfWidth = 0.25;
 
+/**
+ * How far an in-between grade, such as 2.75, may sit from its exact value: a hue may add grades
+ * between the whole ones (`between`), with a band this narrow, so it keeps its place among them.
+ */
+export const betweenHalfWidth = 0.1;
+
+/**
+ * A grade's key in the palette: its number, an in-between grade's point written as `-` (2.75 as
+ * `2-75`), since a design token's name is kebab-case and holds no `.`.
+ */
+export const gradeKey = (grade: number) => String(grade).replace('.', '-');
+
+/** The grade a key in the palette names, `2-75` as 2.75. */
+export const keyGrade = (key: string) => Number(key.replace('-', '.'));
+
 /** The guarantees the grades give: a grade difference of at least `delta` gives at least `ratio`. */
 export const guarantees = [
   { delta: 40, ratio: 3 },
@@ -57,14 +73,20 @@ export const guarantees = [
 ];
 
 /**
- * The hues and their seeds, today's colors. A hue's seeds are ordered from light to dark; each
- * fixes the hue and chroma at its own grade.
+ * The hues and their seeds, mostly today's colors. A hue's seeds are ordered from light to dark;
+ * each fixes the hue and chroma at its own grade. `between` adds in-between grades to a hue.
  */
 export const hues = {
   neutral: {
     description:
       'The slightly blue-tinted gray of text, borders and surfaces in both themes, seeded from the light divider, the muted text and the dark pane, so dark surfaces keep less chroma, as dark grays read bluer.',
     seeds: ['#dadce0', '#5f6368', '#28292b'],
+  },
+  gray: {
+    description:
+      'The nearly neutral gray of the light theme’s text, edges and surfaces, after One UI’s greys, seeded from its background, secondary text and dark gray. Its in-between grades 2.5 and 2.75 lie between the light recessed surface and the panes: 2.75 is the popups’ fill.',
+    seeds: ['#f3f3f5', '#848487', '#252528'],
+    between: [2.5, 2.75],
   },
   blue: {
     description:
@@ -109,7 +131,16 @@ export const luminanceGrade = (luminance) => (100 * Math.log(1.05 / (luminance +
 export function gradeBand(grade) {
   if (grade === 0) return [1, 1];
   if (grade === 100) return [0, 0];
-  return [gradeLuminance(grade + bandHalfWidth), gradeLuminance(grade - bandHalfWidth)];
+  const half = Number.isInteger(grade) ? bandHalfWidth : betweenHalfWidth;
+  return [gradeLuminance(grade + half), gradeLuminance(grade - half)];
+}
+
+/** A hue's grades: every grade, with its in-between ones, white and black only in neutral. */
+export function hueGrades(name: string) {
+  const hue = hues[name];
+  return [...grades, ...('between' in hue ? hue.between : [])]
+    .filter((grade) => name === 'neutral' || (grade !== 0 && grade !== 100))
+    .sort((a, b) => a - b);
 }
 
 /** WCAG 2 contrast ratio of two relative luminances. */
@@ -200,12 +231,11 @@ export function generatePalette() {
       })
       .sort((a, b) => a.grade - b.grade);
     palette[name] = {};
-    for (const grade of grades) {
-      if (name !== 'neutral' && (grade === 0 || grade === 100)) continue;
+    for (const grade of hueGrades(name)) {
       const hex =
         grade === 0 ? '#ffffff' : grade === 100 ? '#000000' : solve(grade, seedAt(seeds, grade));
       const luminance = hexLuminance(hex);
-      palette[name][grade] = {
+      palette[name][gradeKey(grade)] = {
         hex,
         oklch: oklchComponents(hex),
         luminance,
@@ -228,8 +258,11 @@ export function paletteDocument(palette = generatePalette()) {
         'com.envsemble.envui': {
           bandHalfWidth,
           guarantees,
+          betweenHalfWidth,
           bands: Object.fromEntries(
-            grades.map((grade) => [grade, gradeBand(grade).map((value) => round(value, 5))]),
+            [...new Set(Object.keys(hues).flatMap(hueGrades))]
+              .sort((a, b) => a - b)
+              .map((grade) => [gradeKey(grade), gradeBand(grade).map((value) => round(value, 5))]),
           ),
         },
       },
