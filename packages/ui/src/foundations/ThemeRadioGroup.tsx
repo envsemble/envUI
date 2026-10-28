@@ -5,7 +5,7 @@ import * as Menu from '../navigation/Menu.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { themeToggle } from './messages/themeToggle.js';
 import { ThemePreferenceContext } from './internal/ThemePreferenceContext.js';
-import type { ThemePreference } from './ThemeBootstrap.js';
+import type { ThemePreference } from './themeBootstrap.js';
 import { Computer } from '../icons/Computer.js';
 import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';

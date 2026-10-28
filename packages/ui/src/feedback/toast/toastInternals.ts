@@ -1,5 +1,5 @@
 import type { Toast as BaseToast } from '@base-ui/react/toast';
-import type { ToastNotification, ToastPlacement, ToastTone } from './ToastTypes.js';
+import type { ToastNotification, ToastPlacement, ToastTone } from './toastTypes.js';
 
 export type ToastEntry = ToastNotification & {
   id: string;

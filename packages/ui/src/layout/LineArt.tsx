@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { lineArtShapes } from './internal/lineArtDrawings.js';
+import { lineArtShapes } from './internal/lineArtShapes.js';
 import { MovingLineArt } from './internal/MovingLineArt.js';
 
 /**
@@ -126,7 +126,7 @@ export function LineArt({
       data-drawing={drawing}
       data-align={align}
     >
-      {lineArtShapes[drawing]}
+      {lineArtShapes[drawing]?.shapes}
     </svg>
   );
 }

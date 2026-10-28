@@ -16,7 +16,7 @@ import {
   PanelDockPanelContext,
   type PanelDockMode,
   type PanelDockPanelContextValue,
-} from './PanelDockContext.js';
+} from './PanelDockPanelContext.js';
 import { pixels, type HeightBounds, type Placement } from './dockLayout.js';
 import type { PanelDockPanel } from '../Root.js';
 import { useEntrance } from './useEntrance.js';

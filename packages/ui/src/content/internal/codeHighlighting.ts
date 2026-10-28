@@ -13,8 +13,8 @@ import shell from '@shikijs/langs/shellscript';
 import yaml from '@shikijs/langs/yaml';
 import markdown from '@shikijs/langs/markdown';
 import ini from '@shikijs/langs/ini';
-import { codeThemeName } from './CodeColors.js';
-import { codeTheme } from './CodeThemes.js';
+import { codeThemeName } from './codeColors.js';
+import { codeTheme } from './codeThemes.js';
 
 export interface CodeTokenStyle {
   color?: string;

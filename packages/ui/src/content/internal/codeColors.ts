@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { ThemeValue } from '../../foundations/Theme.js';
-import { over } from './ReadableColors.js';
+import { over } from './readableColors.js';
 
 /** Whether code takes its standard colors or those of a high-contrast theme. */
 export type CodeContrast = 'standard' | 'high';

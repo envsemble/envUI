@@ -1,4 +1,4 @@
-import type { RichTextReference } from '../Types.js';
+import type { RichTextReference } from '../types.js';
 
 export function referenceFromAttributes(attributes: Record<string, unknown>): RichTextReference {
   return {

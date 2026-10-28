@@ -20,7 +20,7 @@ import { Grid, Row } from '../../foundations/Layout.js';
 import { ControlDefaults } from '../../internal/ControlDefaults.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
-import { PanelDockPanelContext } from './internal/PanelDockContext.js';
+import { PanelDockPanelContext } from './internal/PanelDockPanelContext.js';
 
 export interface HeaderProps extends Omit<ComponentPropsWithRef<'header'>, 'title'> {
   /**

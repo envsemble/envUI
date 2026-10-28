@@ -6,8 +6,8 @@ import {
   type ToastDelivery,
   type ToastEntry,
   type ToastTimer,
-} from './ToastInternals.js';
-import type { ToastNotification, ToastPlacement } from './ToastTypes.js';
+} from './toastInternals.js';
+import type { ToastNotification, ToastPlacement } from './toastTypes.js';
 
 /** Delivers notifications immediately and tracks pause-aware visible lifetimes. */
 export function useToastController(defaultPlacement: ToastPlacement) {

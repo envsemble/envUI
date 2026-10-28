@@ -19,7 +19,7 @@ import { setRef } from '../../internal/setRef.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { useStackedReport } from '../../internal/useStackedReport.js';
 import { panelDock as panelDockMessages } from '../../foundations/messages/panelDock.js';
-import type { PanelDockMode } from './internal/PanelDockContext.js';
+import type { PanelDockMode } from './internal/PanelDockPanelContext.js';
 import {
   clampRound,
   fitsInRow,

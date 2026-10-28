@@ -4,11 +4,11 @@ import { Toast as BaseToast } from '@base-ui/react/toast';
 import { withDisplayName } from '../../internal/withDisplayName.js';
 import { ToastRegion } from './ToastRegion.js';
 import { useToastController } from './useToastController.js';
-import { toastPlacements } from './ToastInternals.js';
-import type { ToastProviderProps } from './ToastTypes.js';
+import { toastPlacements } from './toastInternals.js';
+import type { ToastProviderProps } from './toastTypes.js';
 import { ToastManagerContext } from './useToast.js';
 
-export type { ToastProviderProps as ProviderProps } from './ToastTypes.js';
+export type { ToastProviderProps as ProviderProps } from './toastTypes.js';
 
 /**
  * Hosts the notifications that useToast shows: brief feedback at the edge of the window, announced

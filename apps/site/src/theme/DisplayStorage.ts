@@ -3,7 +3,7 @@ import {
   ownContrastSource,
   ownScaleSource,
   scaleSourceAttribute,
-} from '../../../../packages/ui/src/foundations/ThemeBootstrap.js';
+} from '../../../../packages/ui/src/foundations/themeBootstrap.js';
 
 /**
  * Where the site stores the reader's display settings in localStorage. vite.config.ts writes the

@@ -10,8 +10,8 @@ import { useMessages } from '../../internal/EnvUIContext.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { ToastBody } from './ToastBody.js';
 import type { ToastController } from './useToastController.js';
-import type { ToastEntry } from './ToastInternals.js';
-import type { ToastPlacement } from './ToastTypes.js';
+import type { ToastEntry } from './toastInternals.js';
+import type { ToastPlacement } from './toastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 import { Close } from '../../icons/Close.js';
 

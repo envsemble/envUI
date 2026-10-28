@@ -15,7 +15,7 @@ import { richText as richTextMessages } from '../../foundations/messages/richTex
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { Listbox } from './Listbox.js';
 import { useActiveDescendant } from '../../internal/useRovingFocus.js';
-import type { RichTextReference, RichTextReferenceSource } from '../Types.js';
+import type { RichTextReference, RichTextReferenceSource } from '../types.js';
 
 interface SuggestionItem {
   id: string;

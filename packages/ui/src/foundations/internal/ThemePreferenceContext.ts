@@ -2,7 +2,7 @@
 
 import { createContext } from 'react';
 import type { ThemeValue } from '../Theme.js';
-import type { ThemePreference } from '../ThemeBootstrap.js';
+import type { ThemePreference } from '../themeBootstrap.js';
 
 export interface ThemePreferenceValue {
   /** The stored choice. */

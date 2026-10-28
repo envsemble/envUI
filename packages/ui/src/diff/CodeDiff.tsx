@@ -16,8 +16,8 @@ import {
   codeThemeStyle,
   diffTintOpacity,
   type CodeContrast,
-} from '../content/internal/CodeColors.js';
-import { codeTheme, diffTintColors, type DiffTintColors } from '../content/internal/CodeThemes.js';
+} from '../content/internal/codeColors.js';
+import { codeTheme, diffTintColors, type DiffTintColors } from '../content/internal/codeThemes.js';
 import { useCodeContrast } from '../content/internal/useCodeContrast.js';
 import { Column } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { CodeToken } from './CodeHighlighting.js';
+import type { CodeToken } from './codeHighlighting.js';
 
 const languageAliases: Record<string, string> = {
   js: 'javascript',
@@ -45,7 +45,7 @@ export function useCodeHighlighting(source: string, language?: string, highContr
   useEffect(() => {
     if (!eligible || !resolvedLanguage) return;
     let current = true;
-    import('./CodeHighlighting.js')
+    import('./codeHighlighting.js')
       .then(({ highlightCode }) =>
         current ? highlightCode(source, resolvedLanguage, highContrast) : null,
       )

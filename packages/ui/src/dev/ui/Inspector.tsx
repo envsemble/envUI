@@ -27,7 +27,7 @@ import { conditionHolds, queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
 import { tokensUsedBy } from '../usedTokens.js';
 import { toRem, windowClassOf } from '../units.js';
-import { SidebarToggle, type Side } from './controls.js';
+import { SidebarToggle, type Side } from './Controls.js';
 import type { EditorTheme } from './editorTheme.js';
 import { sideWidths } from './sides.js';
 import type { LivePage } from './useLivePage.js';

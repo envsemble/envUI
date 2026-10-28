@@ -30,9 +30,9 @@ import {
   parseDay,
   toUtcDate,
   type Weekday,
-} from './internal/CalendarDays.js';
+} from './internal/calendarDays.js';
 
-export type { Weekday } from './internal/CalendarDays.js';
+export type { Weekday } from './internal/calendarDays.js';
 
 export interface CalendarProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {

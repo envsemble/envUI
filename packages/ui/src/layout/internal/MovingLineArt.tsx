@@ -14,7 +14,7 @@ import {
 } from 'react';
 import { setRef } from '../../internal/setRef.js';
 import type { LineArtDrawing, LineArtMotion } from '../LineArt.js';
-import { lineArtOrder, lineArtShapes } from './lineArtDrawings.js';
+import { lineArtShapes } from './lineArtShapes.js';
 
 /**
  * Each drawing's lines, ready to move: each set one long, so a dash of one is the whole line, and
@@ -29,12 +29,12 @@ const moving = new Map<
 function movingShapes(drawing: LineArtDrawing) {
   let found = moving.get(drawing);
   if (found) return found;
-  const beats = lineArtOrder[drawing];
+  const { shapes: fragment, order: beats } = lineArtShapes[drawing];
   const at: number[] = [];
   beats.forEach((lines, beat) => {
     for (const line of lines) at[line] = beats.length > 1 ? beat / (beats.length - 1) : 0;
   });
-  const drawn = (lineArtShapes[drawing] as ReactElement<{ children: ReactNode }>).props.children;
+  const drawn = (fragment as ReactElement<{ children: ReactNode }>).props.children;
   const shapes = Children.toArray(drawn).map((shape, index) =>
     cloneElement(shape as ReactElement<{ pathLength?: number; style?: CSSProperties }>, {
       pathLength: 1,

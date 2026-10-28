@@ -6,10 +6,10 @@ import { TableKit } from '@tiptap/extension-table';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Marked, type marked } from 'marked';
-import { safeRichTextUrl } from './internal/ReferenceAttributes.js';
-import { createReferenceExtension } from './internal/ReferenceExtension.js';
-import { createTaskItemNodeView } from './internal/TaskItem.js';
-import type { RichTextRenderOptions } from './Types.js';
+import { safeRichTextUrl } from './internal/referenceAttributes.js';
+import { createReferenceExtension } from './internal/referenceExtension.js';
+import { createTaskItemNodeView } from './internal/taskItem.js';
+import type { RichTextRenderOptions } from './types.js';
 
 /**
  * The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists,

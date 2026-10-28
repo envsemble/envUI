@@ -2,12 +2,12 @@
 
 import { useCallback, useLayoutEffect, useRef, useState, type ChangeEvent } from 'react';
 import { subscribeFormReset } from '../subscribeFormReset.js';
-import { readMarkdownSelection, type MarkdownSelection } from './MarkdownFormatting.js';
+import { readMarkdownSelection, type MarkdownSelection } from './markdownFormatting.js';
 import {
   createMarkdownHistory,
   moveMarkdownHistory,
   recordMarkdownEdit,
-} from './MarkdownHistory.js';
+} from './markdownHistory.js';
 
 export function useMarkdownEditing({
   value,

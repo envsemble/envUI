@@ -13,7 +13,7 @@ import {
   monthOfDay,
   now,
   toUtcDate,
-} from './CalendarDays.js';
+} from './calendarDays.js';
 
 /** The month of the grid that holds its tab stop, where focus goes as the popup opens. */
 export function monthGridActive(root: ParentNode | null | undefined): HTMLElement | null {

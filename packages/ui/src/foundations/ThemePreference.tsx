@@ -24,7 +24,7 @@ import {
   ownScaleSource,
   scaleSourceAttribute,
   type ThemePreference,
-} from './ThemeBootstrap.js';
+} from './themeBootstrap.js';
 import {
   ThemePreferenceContext,
   type ThemePreferenceValue,

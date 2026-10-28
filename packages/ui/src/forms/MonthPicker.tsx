@@ -17,7 +17,7 @@ import {
   now,
   parseMonth,
   toUtcDate,
-} from './internal/CalendarDays.js';
+} from './internal/calendarDays.js';
 
 export interface MonthPickerProps extends PickerFieldProps {
   /** The value: a month as YYYY-MM. null, or an empty string, for none. */

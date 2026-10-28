@@ -9,7 +9,7 @@ import { labelOf } from '../readout.js';
 import { round, toRem, windowClasses, windowClassOf } from '../units.js';
 
 /** The hovered node in a few lines: its name, size, level, container and problems. */
-export function HoverCard({
+export function NodeHoverCard({
   snapshot,
   node,
   problems,

@@ -10,7 +10,7 @@ import { editor as editorMessages } from '../foundations/messages/editor.js';
 import { linkDialog as linkDialogMessages } from '../foundations/messages/linkDialog.js';
 import { richText as richTextMessages } from '../foundations/messages/richText.js';
 import { EditorStatus } from '../forms/internal/EditorStatus.js';
-import { editorCommands } from '../forms/internal/EditorCommands.js';
+import { editorCommands } from '../forms/internal/editorCommands.js';
 import { EditorToolbar, keepEditorFocus } from '../forms/internal/EditorToolbar.js';
 import { FieldFrame, type FieldControlBoxProps } from '../forms/internal/FieldFrame.js';
 import { LinkDialog, type EditorLink } from '../forms/internal/LinkDialog.js';
@@ -18,17 +18,17 @@ import { useFieldMetadata } from '../forms/internal/useFieldMetadata.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { FileInput } from '../internal/FileInput.js';
-import { createRichTextExtensions } from './Extensions.js';
-import { createSuggestionOptions, referenceSuggestion } from './internal/Suggestions.js';
+import { createRichTextExtensions } from './extensions.js';
+import { createSuggestionOptions, referenceSuggestion } from './internal/suggestions.js';
 import {
   defaultRichTextCommands,
   richTextCommandActive,
   runRichTextCommand,
   slashCommandIds,
-} from './internal/Commands.js';
+} from './internal/commands.js';
 import { RichTextRenderingContext } from './internal/Reference.js';
-import { safeRichTextUrl } from './internal/ReferenceAttributes.js';
-import type { RichTextCommand, RichTextEditorProps, RichTextSlashCommand } from './Types.js';
+import { safeRichTextUrl } from './internal/referenceAttributes.js';
+import type { RichTextCommand, RichTextEditorProps, RichTextSlashCommand } from './types.js';
 
 const emptySources: NonNullable<RichTextEditorProps['references']> = [];
 const emptyExtensions: NonNullable<RichTextEditorProps['extensions']> = [];

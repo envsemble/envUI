@@ -12,7 +12,7 @@ import {
 // `vite build` makes the static site: separate files with content-hashed names that browsers keep
 // cached, the catalogue at the root and the Docs under /docs, both from one index.html.
 import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
-import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
+import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
 import {
   createDisplayBootstrapScript,
   createStorageMigrationScript,

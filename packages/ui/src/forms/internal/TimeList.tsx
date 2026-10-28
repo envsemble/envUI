@@ -21,7 +21,7 @@ import {
   now,
   roundToStep,
   toUtcDate,
-} from './CalendarDays.js';
+} from './calendarDays.js';
 
 export interface TimeListProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {

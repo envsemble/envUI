@@ -4,8 +4,8 @@ import { createContext, useContext } from 'react';
 import { NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from '@tiptap/react';
 import { Button } from '../../actions/Button.js';
 import { ActionElement } from '../../internal/ActionElement.js';
-import { referenceFromAttributes, safeRichTextUrl } from './ReferenceAttributes.js';
-import type { RichTextReference, RichTextRenderOptions } from '../Types.js';
+import { referenceFromAttributes, safeRichTextUrl } from './referenceAttributes.js';
+import type { RichTextReference, RichTextRenderOptions } from '../types.js';
 
 export const RichTextRenderingContext = createContext<
   (RichTextRenderOptions & { readOnly: boolean }) | null

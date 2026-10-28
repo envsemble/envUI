@@ -63,7 +63,7 @@ export * from './feedback/HoverCard.js';
 export { placeholders, isPlaceholder, type Placeholder } from './foundations/placeholders.js';
 export { useSkeleton } from './foundations/SkeletonScope.js';
 export * from './feedback/Spinner.js';
-export * as Toast from './feedback/toast/ToastProvider.js';
+export * as Toast from './feedback/toast/Toast.js';
 export { useToast } from './feedback/toast/useToast.js';
 export type {
   ToastTone,
@@ -71,7 +71,7 @@ export type {
   ToastAction,
   ToastNotification,
   ToastManager,
-} from './feedback/toast/ToastTypes.js';
+} from './feedback/toast/toastTypes.js';
 export * from './Icon.js';
 export {
   LinkProvider,
@@ -102,7 +102,7 @@ export {
   createThemeBootstrapScript,
   type ThemeBootstrapOptions,
   type ThemePreference,
-} from './foundations/ThemeBootstrap.js';
+} from './foundations/themeBootstrap.js';
 export * from './foundations/ThemeRadioGroup.js';
 export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';

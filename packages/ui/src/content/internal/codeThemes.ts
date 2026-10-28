@@ -9,13 +9,13 @@ import {
   codeThemeName,
   diffTintsOver,
   type CodeContrast,
-} from './CodeColors.js';
+} from './codeColors.js';
 import {
   contrastRatio,
   nearestColor,
   readableReplacements,
-  type Direction,
-} from './ReadableColors.js';
+  type LightnessDirection,
+} from './readableColors.js';
 
 /** The standard code themes, as Shiki ships them: github-light-default and the grey github-dark-dimmed. */
 const standard: Record<ThemeValue, ThemeRegistration> = {
@@ -50,7 +50,8 @@ async function shikiTheme(scheme: ThemeValue, contrast: CodeContrast) {
   return contrast === 'high' ? (await loadHighContrast())[scheme] : standard[scheme];
 }
 
-const direction = (scheme: ThemeValue): Direction => (scheme === 'light' ? 'darker' : 'lighter');
+const direction = (scheme: ThemeValue): LightnessDirection =>
+  scheme === 'light' ? 'darker' : 'lighter';
 
 /** Every text color a theme gives code: its foreground and each token rule's foreground. */
 function textColors(theme: ThemeRegistration) {

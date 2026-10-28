@@ -20,7 +20,7 @@ import {
   type SkeletonProps,
 } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { ListReorderHandle, ReorderableList } from './internal/ListBehavior.js';
+import { ListReorderHandle, ReorderableList } from './internal/ReorderableList.js';
 
 export interface RootProps extends ComponentPropsWithRef<'ul'>, SkeletonProps {
   /**

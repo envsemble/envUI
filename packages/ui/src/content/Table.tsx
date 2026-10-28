@@ -30,7 +30,7 @@ import {
   columnResizeStep,
   resizeColumns,
   sameWidths,
-} from './internal/TableColumns.js';
+} from './internal/tableColumns.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';

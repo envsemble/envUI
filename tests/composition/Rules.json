@@ -36,7 +36,7 @@
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeRadioGroup.tsx": "composites",
-      "navigation/panel-dock/internal/PanelDockContext.ts": "shell",
+      "navigation/panel-dock/internal/PanelDockPanelContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
       "actions/Button.tsx": "composites",
       "actions/internal/ButtonBase.tsx": "composites",
@@ -60,7 +60,7 @@
       "content/Disclosure.tsx": "base",
       "content/Kbd.tsx": "base",
       "content/List.tsx": "composites",
-      "content/internal/ListBehavior.tsx": "composites",
+      "content/internal/ReorderableList.tsx": "composites",
       "content/Markdown.tsx": "composites",
       "content/Message.tsx": "composites",
       "content/Rating.tsx": "base",
@@ -82,10 +82,10 @@
       "feedback/Tooltip.tsx": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
-      "feedback/toast/ToastInternals.ts": "composites",
-      "feedback/toast/ToastProvider.tsx": "composites",
+      "feedback/toast/toastInternals.ts": "composites",
+      "feedback/toast/Toast.tsx": "composites",
       "feedback/toast/ToastRegion.tsx": "composites",
-      "feedback/toast/ToastTypes.ts": "composites",
+      "feedback/toast/toastTypes.ts": "composites",
       "feedback/toast/useToast.ts": "composites",
       "feedback/toast/useToastController.ts": "composites",
       "forms/Calendar.tsx": "composites",
@@ -261,11 +261,11 @@
           "content/CodeBlock.tsx",
           "diff/CodeDiff.tsx",
           "diff/countDiffLines.ts",
-          "content/internal/CodeColors.ts",
-          "content/internal/CodeThemes.ts",
+          "content/internal/codeColors.ts",
+          "content/internal/codeThemes.ts",
           "content/internal/useCodeContrast.ts",
-          "content/internal/ReadableColors.ts",
-          "content/internal/CodeHighlighting.ts",
+          "content/internal/readableColors.ts",
+          "content/internal/codeHighlighting.ts",
           "content/internal/useCodeHighlighting.ts"
         ]
       },
@@ -279,7 +279,7 @@
         "modules": ["layout/internal/useScrollKeys.ts"]
       },
       "List": {
-        "modules": ["content/internal/ListBehavior.tsx"]
+        "modules": ["content/internal/ReorderableList.tsx"]
       },
       "Dialog": {
         "modules": ["feedback/internal/DialogParts.tsx", "feedback/ConfirmDialog.tsx"],
@@ -300,10 +300,10 @@
         "styles": ["Toast.css"],
         "modules": [
           "feedback/toast/ToastBody.tsx",
-          "feedback/toast/ToastInternals.ts",
-          "feedback/toast/ToastProvider.tsx",
+          "feedback/toast/toastInternals.ts",
+          "feedback/toast/Toast.tsx",
           "feedback/toast/ToastRegion.tsx",
-          "feedback/toast/ToastTypes.ts",
+          "feedback/toast/toastTypes.ts",
           "feedback/toast/useToast.ts",
           "feedback/toast/useToastController.ts"
         ]
@@ -331,8 +331,8 @@
       },
       "MarkdownEditor": {
         "modules": [
-          "forms/internal/markdown/MarkdownFormatting.ts",
-          "forms/internal/markdown/MarkdownHistory.ts",
+          "forms/internal/markdown/markdownFormatting.ts",
+          "forms/internal/markdown/markdownHistory.ts",
           "forms/internal/markdown/MarkdownPreview.tsx",
           "forms/internal/markdown/useMarkdownEditing.ts"
         ],
@@ -340,7 +340,7 @@
       },
       "Editor": {
         "modules": [
-          "forms/internal/EditorCommands.ts",
+          "forms/internal/editorCommands.ts",
           "forms/internal/EditorToolbar.tsx",
           "forms/internal/EditorStatus.tsx",
           "forms/internal/LinkDialog.tsx"
@@ -348,7 +348,7 @@
         "styles": ["Editor.css"]
       },
       "Theme": {
-        "modules": ["foundations/ThemeBootstrap.ts"],
+        "modules": ["foundations/themeBootstrap.ts"],
         "styles": ["Tokens.css", "TokensHandwritten.css"]
       },
       "ThemePreference": {
@@ -371,7 +371,7 @@
           "navigation/panel-dock/internal/PanelTab.tsx",
           "navigation/panel-dock/internal/dockLayout.ts",
           "navigation/panel-dock/internal/useEntrance.ts",
-          "navigation/panel-dock/internal/PanelDockContext.ts"
+          "navigation/panel-dock/internal/PanelDockPanelContext.ts"
         ]
       },
       "Tabs": {},
@@ -379,13 +379,13 @@
         "modules": [
           "rich-text/RichTextEditor.tsx",
           "rich-text/internal/Reference.tsx",
-          "rich-text/internal/ReferenceAttributes.ts",
-          "rich-text/internal/ReferenceExtension.ts",
-          "rich-text/internal/Suggestions.tsx",
-          "rich-text/internal/TaskItem.tsx",
-          "rich-text/internal/Commands.ts",
-          "rich-text/Extensions.ts",
-          "rich-text/Types.ts"
+          "rich-text/internal/referenceAttributes.ts",
+          "rich-text/internal/referenceExtension.ts",
+          "rich-text/internal/suggestions.tsx",
+          "rich-text/internal/taskItem.tsx",
+          "rich-text/internal/commands.ts",
+          "rich-text/extensions.ts",
+          "rich-text/types.ts"
         ]
       },
       "PopupSurface": {

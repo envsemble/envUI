@@ -10,10 +10,10 @@ import { Link } from '../actions/Link.js';
 import { Code } from '../content/Code.js';
 import { CodeBlock } from '../content/CodeBlock.js';
 import { Checkbox } from '../forms/Checkbox.js';
-import { createRichTextExtensions } from './Extensions.js';
+import { createRichTextExtensions } from './extensions.js';
 import { ReferenceContent } from './internal/Reference.js';
-import { referenceFromAttributes, safeRichTextUrl } from './internal/ReferenceAttributes.js';
-import type { RichTextProps } from './Types.js';
+import { referenceFromAttributes, safeRichTextUrl } from './internal/referenceAttributes.js';
+import type { RichTextProps } from './types.js';
 
 /**
  * Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it

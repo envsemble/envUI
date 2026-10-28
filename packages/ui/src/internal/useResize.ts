@@ -55,7 +55,7 @@ export interface ResizeOptions {
 }
 
 /** The props of a resize handle element, as useResize returns them. */
-export interface ResizeHandleProps {
+export interface ResizeHandleElementProps {
   role: 'separator';
   'aria-orientation': 'vertical' | 'horizontal';
   'aria-valuenow': number;
@@ -107,7 +107,7 @@ export function useResize({
   valueText,
   disabled = false,
 }: ResizeOptions): {
-  handleProps: ResizeHandleProps;
+  handleProps: ResizeHandleElementProps;
   dragging: boolean;
   /** Reads the room around the handle again, which the largest value it reports follows. */
   measure: (handle: HTMLElement) => void;

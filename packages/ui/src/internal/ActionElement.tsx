@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentPropsWithRef, MouseEvent } from 'react';
-import { useLinkComponent } from './LinkContext.js';
+import { useLinkComponent } from './LinkComponentContext.js';
 import {
   resolveEmphasis,
   useControlDefaults,

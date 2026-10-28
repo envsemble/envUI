@@ -6,7 +6,7 @@ import { editor as editorMessages } from '../../foundations/messages/editor.js';
 import { Redo } from '../../icons/Redo.js';
 import { Undo } from '../../icons/Undo.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
-import { editorCommandGroup, editorCommands, type EditorCommand } from './EditorCommands.js';
+import { editorCommandGroup, editorCommands, type EditorCommand } from './editorCommands.js';
 
 /** A press on a toolbar button keeps focus, and the selection, in the editor. */
 const keepFocus = (event: MouseEvent) => event.preventDefault();

@@ -1,4 +1,4 @@
-import type { MarkdownSelection } from './MarkdownFormatting.js';
+import type { MarkdownSelection } from './markdownFormatting.js';
 
 export interface MarkdownHistory {
   entries: MarkdownSelection[];

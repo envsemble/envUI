@@ -98,7 +98,7 @@ function colorDistance(a: string, b: string) {
 }
 
 /** Which way a color moves to stand out: darker on a light background, lighter on a dark one. */
-export type Direction = 'darker' | 'lighter';
+export type LightnessDirection = 'darker' | 'lighter';
 
 /**
  * The color closest to `color` that reaches `target` against every background: the same OKLCH hue,
@@ -109,7 +109,7 @@ function readableColor(
   color: string,
   backgrounds: readonly string[],
   target: number,
-  direction: Direction,
+  direction: LightnessDirection,
   beyond?: number,
 ) {
   const reachesTarget = (candidate: string) =>
@@ -143,7 +143,7 @@ function readableColor(
 export function nearestColor(
   color: string,
   accepts: (candidate: string) => boolean,
-  direction: Direction,
+  direction: LightnessDirection,
 ) {
   if (accepts(color)) return color;
   const [lightness, a, b] = toOklab(color);
@@ -172,7 +172,7 @@ export function readableReplacements(
   colors: readonly string[],
   backgrounds: readonly string[],
   target: number,
-  direction: Direction,
+  direction: LightnessDirection,
   minimumDistance = 0.02,
 ) {
   const originals = [...new Set(colors.map((color) => color.toLowerCase()))];
