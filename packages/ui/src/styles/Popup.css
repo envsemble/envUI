@@ -7,10 +7,14 @@
    crosses an area of its own color; there is no outline. These are the popups' own properties,
    which an application may set on a theme: how much of the fill covers what is behind
    (--env-popup-opacity), the blur (--env-popup-blur) and the shadow (--env-popup-shadow), envUI's
-   second drop shadow after the avatars'. The opacity is above the least that keeps muted text at
+   second drop shadow after the avatars'. The fill (--env-popup-fill, private) is the popup color,
+   --env-color-bg-popup, in light; in dark it is the default surface, --env-color-bg-default, darker
+   than the cards, tables and rows popups open over, so they part from them; solid popups keep the
+   popup color, as they part by their edge. The opacity is above the least that keeps muted text at
    4.5:1 over black (light) or white (dark) behind the popup. The command palette and rich text
    suggestions take the same look. */
 .env-theme {
+  --env-popup-fill: var(--env-color-bg-popup);
   --env-popup-opacity: 88%;
   --env-popup-blur: 1.375rem;
   /* A small contact layer and the soft shadow, in the text's color. */
@@ -34,6 +38,7 @@
   --env-popup-group-gap: calc(0.25 * var(--env-control-height-md));
 }
 .env-theme[data-env-theme='dark'] {
+  --env-popup-fill: var(--env-color-bg-default);
   --env-popup-opacity: 90%;
   /* In dark a deeper shade of the page, stronger, as a light shadow would not show. */
   --env-popup-shadow: 0 12px 32px -10px
@@ -42,6 +47,7 @@
 /* Solid: the fill covers what is behind, with no blur and no shadow, and the edge returns as the
    popup's boundary. */
 .env-theme[data-env-contrast='high'] {
+  --env-popup-fill: var(--env-color-bg-popup);
   --env-popup-opacity: 100%;
   --env-popup-blur: 0rem;
   --env-popup-shadow: none;
@@ -49,6 +55,7 @@
 }
 @media (prefers-contrast: more) {
   .env-theme:not([data-env-contrast='standard']) {
+    --env-popup-fill: var(--env-color-bg-popup);
     --env-popup-opacity: 100%;
     --env-popup-blur: 0rem;
     --env-popup-shadow: none;
@@ -58,6 +65,7 @@
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
   .env-theme,
   .env-theme[data-env-theme='dark'] {
+    --env-popup-fill: var(--env-color-bg-popup);
     --env-popup-opacity: 100%;
     --env-popup-blur: 0rem;
     --env-popup-shadow: none;
@@ -96,7 +104,7 @@
   overflow-y: auto;
   border: var(--env-control-border-width) solid var(--env-popup-edge, transparent);
   border-radius: var(--env-radius-surface);
-  background: color-mix(in srgb, var(--env-color-bg-popup) var(--env-popup-opacity), transparent);
+  background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
   box-shadow: var(--env-popup-shadow);
   -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
   backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);

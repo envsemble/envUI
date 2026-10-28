@@ -2340,6 +2340,13 @@
         "high": 7
       }
     },
+    "--env-color-fg-default on --env-color-bg-neutral-muted over popup-fill": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-default on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -3643,6 +3650,13 @@
       }
     },
     "--env-color-fg-muted on --env-color-bg-neutral-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-muted on --env-color-bg-neutral-muted over popup-fill": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,

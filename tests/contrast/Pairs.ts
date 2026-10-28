@@ -90,8 +90,10 @@ const layerHover = '--env-color-bg-neutral-subtle-hover';
 const layerPressed = '--env-color-bg-neutral-subtle-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
-// A frosted popup's fill, translucent (derived below), and the worst that can be behind it.
+// A frosted popup's fill, translucent (derived below), and the worst that can be behind it; and the
+// fill itself, opaque: the popup color in light and the default surface in dark (Popup.css).
 const frosted = 'popup-frosted';
+const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
 const frostedOverWorst = [
   '--env-color-fg-default',
@@ -562,10 +564,14 @@ const registry: readonly ContrastPair[] = merged([
   ]),
   ...text(
     '--env-color-fg-muted',
-    [[fill, popup]],
+    [[fill, popupFill]],
     'The command palette’s search placeholder, on its opaque pill',
   ),
-  ...text('--env-color-fg-default', [[fill, popup]], 'Text typed in the command palette’s search'),
+  ...text(
+    '--env-color-fg-default',
+    [[fill, popupFill]],
+    'Text typed in the command palette’s search',
+  ),
 
   // Choice controls.
   ...text(
@@ -2494,7 +2500,8 @@ export const derived: Readonly<Record<string, string>> = {
   // The frosted fill of popups (Popup.css), and the worst behind it: black under a light popup's
   // dark text, white under a dark popup's light text.
   'popup-frosted':
-    'color-mix(in srgb, var(--env-color-bg-popup) var(--env-popup-opacity), transparent)',
+    'color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent)',
+  'popup-fill': 'var(--env-popup-fill)',
   'popup-worst-backdrop': 'light-dark(#000, #fff)',
 };
 

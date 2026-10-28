@@ -27,7 +27,7 @@
   padding: calc(var(--env-radius-surface) - var(--env-popup-row-radius));
   border: var(--env-control-border-width) solid var(--env-command-palette-edge, transparent);
   border-radius: var(--env-radius-surface);
-  background: color-mix(in srgb, var(--env-color-bg-popup) var(--env-popup-opacity), transparent);
+  background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
   box-shadow: var(--env-popup-shadow);
   -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
   backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
@@ -52,7 +52,7 @@
      reaches the text typed in it. */
   background:
     linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
-    var(--env-color-bg-popup);
+    var(--env-popup-fill);
   box-shadow: inset 0 0 0 var(--env-control-border-width)
     var(--env-command-palette-search-edge, transparent);
 }

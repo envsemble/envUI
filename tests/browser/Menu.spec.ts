@@ -104,6 +104,44 @@ test.describe('Menus', () => {
     expect(action.height).toBeCloseTo(32, 0);
   });
 
+  test('in dark a frosted menu takes the default surface, and a solid one the popup color', async ({
+    page,
+  }) => {
+    await page.goto(menusFixture);
+    const open = async () => {
+      await page.getByTestId('menus-dark').getByRole('button', { name: 'View options' }).click();
+      const menu = page.getByRole('menu', { name: 'View options' });
+      await expect(menu).toBeVisible();
+      await settled(menu);
+      return menu;
+    };
+    let menu = await open();
+    const [surface, popup] = await tokenColors(menu, [
+      '--env-color-bg-default',
+      '--env-color-bg-popup',
+    ]);
+    expect(surface).toBe('rgb(40, 41, 43)');
+    expect((await popupSurface(menu)).background).toBe(
+      'color(srgb 0.156863 0.160784 0.168627 / 0.9)',
+    );
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    await page.emulateMedia({ contrast: 'more' });
+    menu = await open();
+    expect(popup).not.toBe(surface);
+    // Solid: the popup color itself, as the same mix resolves it.
+    const solid = await menu.evaluate((element) => {
+      const probe = document.createElement('div');
+      probe.style.backgroundColor =
+        'color-mix(in srgb, var(--env-color-bg-popup) 100%, transparent)';
+      element.append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    });
+    expect((await popupSurface(menu)).background).toBe(solid);
+  });
+
   for (const [why, setUp] of [
     ['high contrast', (page: Page) => page.emulateMedia({ contrast: 'more' })],
     [
