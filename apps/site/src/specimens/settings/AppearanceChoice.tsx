@@ -63,6 +63,7 @@ function Choosing() {
         storageKey={storageKey}
         defaultPreference="system"
         scale={scale}
+        className="catalogue-appearance-area"
       >
         <Surface background="default" padding={5} style={{ borderRadius: 'var(--env-radius-xl)' }}>
           <AppearanceChoice />
