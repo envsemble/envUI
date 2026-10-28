@@ -110,3 +110,28 @@
 .site-anatomy-subject .catalogue-force-handle .env-slider-thumb {
   opacity: 1;
 }
+/* An anatomy figure's Spinner held at one moment of its turn: a long arc round its top and start,
+   where the callouts meet it. */
+.site-anatomy-subject .catalogue-force-arc {
+  display: contents;
+}
+.site-anatomy-subject .catalogue-force-arc .env-spinner > svg {
+  animation: none;
+}
+.site-anatomy-subject .catalogue-force-arc .env-spinner-arc {
+  animation: none;
+  stroke-dasharray: 90 200;
+  stroke-dashoffset: -35;
+}
+/* An anatomy figure's AvatarGroup held spread, as under the pointer, and level, without the arch's
+   lift and turn: the avatars fill its room, so the group's callout meets the first of them. */
+.site-anatomy-subject .catalogue-force-spread {
+  display: contents;
+}
+.site-anatomy-subject .catalogue-force-spread .env-avatar-group {
+  --env-avatar-group-spread: 1;
+}
+.site-anatomy-subject .catalogue-force-spread .env-avatar-group > * {
+  --env-avatar-group-arc-lift: 0rem;
+  --env-avatar-group-arc-turn: 0deg;
+}

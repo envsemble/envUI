@@ -65,13 +65,14 @@ examples:
 
 1. **Dock** (`env-panel-dock`)
 2. **Panel** (`env-panel-dock-panel`)
-3. **Resize handle** (`env-panel-dock-resize`)
-4. **Header** (`env-panel-dock-header`)
-5. **Title** (`env-panel-dock-title`, `title`)
-6. **Meta** (`env-panel-dock-meta`, `meta`)
-7. **Actions** (`env-panel-dock-actions`, `actions`)
-8. **Window controls** (`env-panel-dock-controls`)
-9. **Tab** (`env-panel-dock-tab`)
+3. **Header** (`env-panel-dock-header`)
+4. **Title** (`env-panel-dock-title`, `title`)
+5. **Meta** (`env-panel-dock-meta`, `meta`)
+6. **Actions** (`env-panel-dock-actions`, `actions`)
+7. **Window controls** (`env-panel-dock-controls`)
+8. **Tab** (`env-panel-dock-tab`)
+
+Not shown: the resize handle, an invisible strip along an open panel's top edge.
 
 ## Behaviour
 

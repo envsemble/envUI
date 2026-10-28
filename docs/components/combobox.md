@@ -72,13 +72,14 @@ examples:
 ```
 
 1. **Field** (`env-combobox`)
-2. **Control** (`env-combobox-control`)
-3. **Chip** (`env-combobox-chip`)
-4. **Chip label** (`env-combobox-chip-label`)
-5. **Remove** (`env-combobox-chip-remove`)
-6. **Input** (`env-combobox-input`)
-7. **Clear** (`env-combobox-clear`, `clearable`)
-8. **Trigger** (`env-combobox-trigger`)
+2. **Chip** (`env-combobox-chip`)
+3. **Chip label** (`env-combobox-chip-label`)
+4. **Remove** (`env-combobox-chip-remove`)
+5. **Input** (`env-combobox-input`)
+6. **Clear** (`env-combobox-clear`, `clearable`)
+7. **Trigger** (`env-combobox-trigger`)
+
+Not shown: the control, which holds the chips, the input and the buttons, and takes the field's own box.
 
 ```tsx figure=ComboboxListAnatomy open
 

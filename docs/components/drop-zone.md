@@ -70,10 +70,11 @@ examples:
 ```
 
 1. **Drop zone** (`env-drop-zone`)
-2. **Target** (`env-drop-zone-target`)
-3. **Icon** (`env-drop-zone-icon`, `icon`)
-4. **Label** (`env-drop-zone-label`, `label`)
-5. **Description** (`env-drop-zone-description`, `description`)
+2. **Icon** (`env-drop-zone-icon`, `icon`)
+3. **Label** (`env-drop-zone-label`, `label`)
+4. **Description** (`env-drop-zone-description`, `description`)
+
+Not shown: the target people press, which takes the drop zone's own box.
 
 ## Behaviour
 
