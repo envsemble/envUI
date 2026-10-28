@@ -1,7 +1,4 @@
-const second = 1_000;
-const minute = 60 * second;
-const hour = 60 * minute;
-const day = 24 * hour;
+import { day, hour, minute, second } from '../../internal/durations.js';
 
 /** Each mounted RelativeTime: what to call on a tick, and the moment it shows. */
 const subscribers = new Map<() => void, number>();

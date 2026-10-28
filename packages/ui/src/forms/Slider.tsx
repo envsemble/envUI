@@ -400,9 +400,9 @@ function veilIndicatorUnderText(control: HTMLElement) {
  * The most a slider stretches, as a fraction of its length, and, so that a wide one stays calm, at
  * most half its height.
  */
-const STRETCH_MOST = 0.06;
+const stretchMost = 0.06;
 /** How readily the stretch gives at first: at a pointer's first pixels past the end, about half. */
-const STRETCH_GIVE = 0.55;
+const stretchGive = 0.55;
 
 /**
  * How far the slider stretches, in pixels, for a pointer this far past its end: a rubber band's
@@ -411,7 +411,7 @@ const STRETCH_GIVE = 0.55;
  */
 function rubberBand(past: number, reach: number): number {
   if (!(past > 0) || !(reach > 0)) return 0;
-  return reach * (1 - 1 / (1 + (STRETCH_GIVE * past) / reach));
+  return reach * (1 - 1 / (1 + (stretchGive * past) / reach));
 }
 
 /**
@@ -489,7 +489,7 @@ function followOverdrag(control: HTMLElement): () => void {
     if (!(width > 0)) return;
     const fromRight = control.style.getPropertyValue('--env-slider-stretch-origin') === 'right';
     const left = fromRight ? box.right - width : box.left;
-    const reach = Math.min(width * STRETCH_MOST, height / 2);
+    const reach = Math.min(width * stretchMost, height / 2);
     drag = { id: event.pointerId, left, right: left + width, width, reach };
     pointerX = event.clientX;
     listen();

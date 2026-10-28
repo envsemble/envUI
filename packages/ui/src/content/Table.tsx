@@ -170,6 +170,12 @@ function useStacked(
 }
 
 /**
+ * The region width below which a stacking table stacks. Not a window class: the region measures its
+ * own width, often narrower than the window's, and a wide table sets more with stackBelow.
+ */
+const defaultStackBelow = '36rem';
+
+/**
  * A semantic data table on a rounded surface, in a focusable region that scrolls sideways when the
  * columns do not fit.
  */
@@ -180,7 +186,7 @@ function Root({
   stickyHeader = false,
   regionClassName,
   narrowLayout = 'scroll',
-  stackBelow = '36rem',
+  stackBelow = defaultStackBelow,
   onStackedChange,
   columnWidths,
   defaultColumnWidths,

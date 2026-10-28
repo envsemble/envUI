@@ -17,7 +17,7 @@ import {
 } from 'react';
 import { Column } from '../foundations/Layout.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
-import { TooltipPopup } from '../internal/TooltipPopup.js';
+import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { containerWidth, useResizableWidth } from '../internal/useResizableWidth.js';
@@ -189,7 +189,7 @@ function DrawerControl({
   const item = as ? as(destinationItem) : destinationItem;
   return oneLine ? (
     <BaseTooltip.Root disabled={!cut}>
-      <BaseTooltip.Trigger delay={400} render={item} />
+      <BaseTooltip.Trigger delay={tooltipDelay} render={item} />
       {cut && <TooltipPopup content={destination.label} side="inline-end" />}
     </BaseTooltip.Root>
   ) : (

@@ -17,7 +17,7 @@ import { ChevronRight } from '../icons/ChevronRight.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
-import { TooltipPopup } from '../internal/TooltipPopup.js';
+import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 
 export interface BreadcrumbItem {
   /**
@@ -111,7 +111,7 @@ function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
   // The tooltip stays in place while the label fits, so the element and its focus are kept.
   return (
     <BaseTooltip.Root disabled={!truncated}>
-      <BaseTooltip.Trigger delay={400} render={crumb} />
+      <BaseTooltip.Trigger delay={tooltipDelay} render={crumb} />
       {truncated && <TooltipPopup content={item.label} side="bottom" />}
     </BaseTooltip.Root>
   );

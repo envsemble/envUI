@@ -125,7 +125,8 @@ const overscan = 8;
  * many as a tall pane shows, so the first paint is already full and measuring only adds rows.
  */
 const unmeasuredRows = 24;
-const typeAheadDelay = 600;
+/** How long typed letters keep adding up for typeahead, in milliseconds. */
+const typeaheadTimeout = 600;
 /** Each density's row height in rem in the comfortable scale, until a row can be measured. */
 const rowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.75 };
 
@@ -192,7 +193,7 @@ export function Tree<T extends TreeItem>({
   // Keyboard focus shows a ring on the active row; pointer focus does not.
   const [focusVisible, setFocusVisible] = useState(false);
   const pointerFocus = useRef(false);
-  const typeAhead = useRef({ text: '', time: 0 });
+  const typeahead = useRef({ text: '', time: 0 });
   // The last selection scrolled into view; a new selection is revealed once its row is visible.
   const revealedSelection = useRef<string | null>(null);
 
@@ -283,8 +284,8 @@ export function Tree<T extends TreeItem>({
 
   function findByText(key: string) {
     const now = performance.now();
-    const state = typeAhead.current;
-    state.text = now - state.time > typeAheadDelay ? key : state.text + key;
+    const state = typeahead.current;
+    state.text = now - state.time > typeaheadTimeout ? key : state.text + key;
     state.time = now;
     const query = state.text.toLocaleLowerCase();
     // A repeated first letter cycles through matches; longer text refines the current match.
@@ -348,8 +349,8 @@ export function Tree<T extends TreeItem>({
         break;
       case ' ': {
         // While typing ahead, a space belongs to the typed text.
-        const typing = performance.now() - typeAhead.current.time <= typeAheadDelay;
-        if (typing && typeAhead.current.text) {
+        const typing = performance.now() - typeahead.current.time <= typeaheadTimeout;
+        if (typing && typeahead.current.text) {
           const index = findByText(event.key);
           if (index !== -1) activate(index);
         } else open(activeItem, true);

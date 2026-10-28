@@ -57,8 +57,8 @@ interface Entry {
   keys: string[];
 }
 
-/** Typed keys run together while each follows the last within this many ms. */
-const typingPause = 1000;
+/** How long typed keys keep adding up for typeahead, in milliseconds. */
+const typeaheadTimeout = 1000;
 /** Page Up and Page Down step this many entries. */
 const pageRows = 5;
 
@@ -532,7 +532,7 @@ function TimeWheel({ ref, part, label, entries, current, onChoose, onSideways }:
       event.preventDefault();
       const key = event.key.toLocaleLowerCase();
       const at = event.timeStamp;
-      const text = at - typed.current.at < typingPause ? typed.current.text + key : key;
+      const text = at - typed.current.at < typeaheadTimeout ? typed.current.text + key : key;
       let index = matchTyped(text, entries);
       let kept = text;
       // Keys that name nothing start over from the last one.

@@ -1,7 +1,8 @@
+import { day as dayMilliseconds, minute } from './durations.js';
+
 /** A day of the week: 0 for Sunday through 6 for Saturday. */
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-const dayMilliseconds = 86_400_000;
 const minutesPerDay = 24 * 60;
 
 /**
@@ -180,7 +181,7 @@ export function clampMonth(month: number, min: number | undefined, max: number |
 
 /** Intl formatting of a day or a wall-clock moment: always in UTC, the zone the counts are in. */
 export function toUtcDate(day: number, minutes = 0) {
-  return new Date(day * dayMilliseconds + minutes * 60_000);
+  return new Date(day * dayMilliseconds + minutes * minute);
 }
 
 /**

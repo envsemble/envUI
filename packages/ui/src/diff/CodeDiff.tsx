@@ -76,8 +76,11 @@ function diffCSS({ addition, deletion }: DiffTintColors) {
 }`;
 }
 
-/** Side by side from this many rem of the diff's own width. */
-const SPLIT_FROM_REM = 56;
+/**
+ * Side by side from this many rem of the diff's own width. Not a window class: the diff measures
+ * its own width, not the window's.
+ */
+const splitFrom = 56;
 
 /** The names of the code themes for a contrast, light and dark, the ones code blocks take. */
 const diffThemeNames = (contrast: CodeContrast) => ({
@@ -193,11 +196,11 @@ export function CodeDiff({
       root.clientWidth -
         (Number.parseFloat(style.paddingLeft) || 0) -
         (Number.parseFloat(style.paddingRight) || 0) >=
-        SPLIT_FROM_REM * rem,
+        splitFrom * rem,
     );
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(([entry]) => {
-      if (entry) setWide(entry.contentRect.width >= SPLIT_FROM_REM * rem);
+      if (entry) setWide(entry.contentRect.width >= splitFrom * rem);
     });
     observer.observe(root);
     return () => observer.disconnect();

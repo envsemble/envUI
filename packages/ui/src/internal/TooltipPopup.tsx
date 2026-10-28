@@ -8,6 +8,12 @@ import { PopupSurface, type PopupSide, type PopupSurfaceProps } from './PopupSur
 export type TooltipSide = PopupSide;
 
 /** True inside a Tooltip, so controls that show their own tooltip leave it to the outer one. */
+/**
+ * Milliseconds the pointer rests on a control before its tooltip opens: Tooltip's default, which
+ * every control that shows its own name as a tooltip, and CalendarHeatmap's day details, wait too.
+ */
+export const tooltipDelay = 400;
+
 export const TooltipNestingContext = createContext(false);
 
 /**

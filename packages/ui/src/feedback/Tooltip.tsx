@@ -27,6 +27,7 @@ import {
   TooltipNestingContext,
   TooltipPopup,
   type TooltipSide,
+  tooltipDelay,
 } from '../internal/TooltipPopup.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { isDeveloping, reportOnce } from '../internal/developmentReport.js';
@@ -263,7 +264,7 @@ export function Tooltip(props: TooltipProps) {
     content,
     children,
     side = 'top',
-    delay = 400,
+    delay = tooltipDelay,
     defaultOpen = false,
     popupClassName,
     ...forwarded

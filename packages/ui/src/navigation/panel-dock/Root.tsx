@@ -191,6 +191,12 @@ const minHeightRem = 15;
 const answerTimeout = 5_000;
 
 /**
+ * The dock width below which one panel at a time fills it. Not a window class: the dock measures its
+ * own width, which a page beside it narrows.
+ */
+const defaultStackBelow = '40rem';
+
+/**
  * Panels docked to the bottom inline-end edge of a region, beside the page, for items people work
  * on alongside it, such as drafts and conversations: open panels side by side, one maximized panel
  * filling the region, and minimized panels as tabs. A panel's content stays mounted through every
@@ -203,7 +209,7 @@ export function Root<T extends PanelDockPanel>({
   onClose,
   onActivate,
   onHeightChange,
-  stackBelow = '40rem',
+  stackBelow = defaultStackBelow,
   onStackedChange,
   overflow = 'scroll',
   minimizedLabel,

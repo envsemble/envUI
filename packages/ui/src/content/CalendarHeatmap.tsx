@@ -15,7 +15,7 @@ import {
   type PointerEvent,
   type ReactNode,
 } from 'react';
-import { TooltipPopup } from '../internal/TooltipPopup.js';
+import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -24,6 +24,7 @@ import { calendarHeatmap as calendarHeatmapMessages } from '../foundations/messa
 import type { BadgeTone } from './Badge.js';
 import { isRightToLeft } from '../internal/direction.js';
 import { dayParts } from '../internal/calendarDays.js';
+import { day as dayMilliseconds } from '../internal/durations.js';
 
 export interface CalendarHeatmapDay {
   /** The day, as YYYY-MM-DD. */
@@ -114,8 +115,6 @@ export type CalendarHeatmapProps = CalendarHeatmapOptions &
     keyof CalendarHeatmapOptions | 'children' | 'aria-label' | 'aria-labelledby'
   >;
 
-const dayMilliseconds = 86_400_000;
-
 /** The locale's short month names, from January, and weekday names, from Sunday. */
 function localeNames(formatters: Formatters) {
   const month = formatters.dateTime({ month: 'short', timeZone: 'UTC' });
@@ -126,8 +125,6 @@ function localeNames(formatters: Formatters) {
     weekdays: Array.from({ length: 7 }, (_, index) => weekday.format(Date.UTC(2024, 0, 7 + index))),
   };
 }
-/** Hover waits like Tooltip; moving between days while one is shown switches at once. */
-const hoverDelay = 400;
 
 /**
  * Days count from 1970-01-01 in UTC, so daylight saving never shifts a week. Unlike calendarDays'
@@ -424,7 +421,7 @@ export function CalendarHeatmap({
     if (!cell) return;
     clearTimeout(hoverTimer.current);
     if (tip?.open) show(cell);
-    else hoverTimer.current = setTimeout(() => show(cell), hoverDelay);
+    else hoverTimer.current = setTimeout(() => show(cell), tooltipDelay);
   }
 
   function handleFocus(event: FocusEvent<HTMLTableElement>) {
