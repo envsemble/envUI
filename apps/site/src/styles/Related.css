@@ -142,6 +142,12 @@
   padding-block: var(--env-space-4);
 }
 
+/* A rich text editor in a tile holds a line: its document as tall as the line, rather than the room
+   a page leaves for writing, so the line is drawn large. */
+.catalogue-related-canvas[data-tile] .env-rich-text-document {
+  min-block-size: 0;
+}
+
 /* A picture of the overlay, without the scrim, which would fill the canvas. */
 .catalogue-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
   display: none;

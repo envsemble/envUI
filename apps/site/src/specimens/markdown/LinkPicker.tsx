@@ -5,8 +5,6 @@ import { MotionStage } from '../../previews/MotionStage';
 import { Renew } from '../../previews/Renew';
 
 const source = 'textarea.env-markdown-source';
-/** Where "launch plan" is in the notes, as fractions of the field's box. */
-const words = { start: 0.176, end: 0.341, y: 0.28 };
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item) .env-button`;
 
 /*
@@ -16,10 +14,10 @@ const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-i
  */
 const script: PointerStep[] = [
   { wait: 500 },
-  { to: source, x: words.start, y: words.y },
+  { to: source, text: 'launch plan', x: 0.05 },
   { wait: 300 },
   { press: true },
-  { to: source, x: words.end, y: words.y, duration: 450 },
+  { to: source, text: 'launch plan', x: 0.95, duration: 450 },
   { release: true },
   { wait: 450 },
   { to: '[aria-label="Insert link"]', duration: 500 },

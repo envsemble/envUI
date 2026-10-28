@@ -566,9 +566,11 @@
   color: HighlightText;
 }
 
+/* The copy lies over its field, and under what opens over the field, such as a menu or a dialog
+   and its scrim. */
 .catalogue-field-selection {
   position: absolute;
-  z-index: var(--env-z-tooltip);
+  z-index: var(--env-z-raised);
   overflow: hidden;
   margin: 0;
   color: transparent;
@@ -593,6 +595,13 @@
 .catalogue-field-selection span {
   color: HighlightText;
   background-color: Highlight;
+}
+
+/* A modal dialog or sheet takes focus from a field of the content under it, which then paints no
+   selection, as a browser paints none in a field without focus. */
+.catalogue-overlay-layer:has(.env-dialog-backdrop, .env-sheet-backdrop)
+  > .catalogue-field-selection {
+  visibility: hidden;
 }
 
 /* A tree whose density steps in a figure (specimens/tree/RowDensity.tsx): its rows glide to their

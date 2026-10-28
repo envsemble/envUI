@@ -272,6 +272,34 @@ async function withPointer<T>(page: Page, html: string, run: string): Promise<T>
   ) as Promise<T>;
 }
 
+test('a script finds a word by its text, in a field and in content, wherever it wraps', async ({
+  page,
+}) => {
+  const result = await withPointer<{ field: string; content: string; missing: boolean }>(
+    page,
+    '<textarea id="note" rows="3" style="width: 120px; font: 16px monospace; padding: 0; border: 0">Ask Sam Lee to review the copy.</textarea><p id="text" style="width: 120px; font: 16px monospace">See the launch plan first.</p>',
+    `
+      const module = '/src/previews/VirtualSelection.ts';
+      const { textPoint } = await import(/* @vite-ignore */ module);
+      const field = box.querySelector('#note');
+      const text = box.querySelector('#text');
+      // Drags from near the start of the text to near its end select it.
+      const drag = (element, words) => {
+        pointer.moveTo(textPoint(element, words, 0.1, 0.5));
+        pointer.press();
+        pointer.moveTo(textPoint(element, words, 0.9, 0.5));
+        pointer.release();
+      };
+      drag(field, 'review the');
+      const selected = field.value.slice(field.selectionStart, field.selectionEnd);
+      drag(text, 'launch plan');
+      const content = [...CSS.highlights.get('catalogue-selection')].map((range) => range.toString()).join('|');
+      return { field: selected, content, missing: textPoint(text, 'agenda', 0.5, 0.5) === null };
+    `,
+  );
+  expect(result).toEqual({ field: 'review the', content: 'launch plan', missing: true });
+});
+
 test('a right click asks for a context menu, clicks nothing, and holds the page while pressed', async ({
   page,
 }) => {
@@ -368,7 +396,7 @@ test('the wheel scrolls the box under the pointer, unless the element takes the 
   expect(result.taken).toBe(120);
 });
 
-test("a drag across text selects it, in a field and in content, and keeps the reader's own selection", async ({
+test("a drag across text selects whole words, in a field and in content, and keeps the reader's own selection", async ({
   page,
 }) => {
   const result = await withPointer<{
@@ -395,26 +423,26 @@ test("a drag across text selects it, in a field and in content, and keeps the re
         canvas.font = '16px monospace';
         return canvas.measureText('x').width;
       })();
-      // From before "report" to after it, in the field.
+      // From inside "report" to past the space after it, in the field: "report", without the space.
       const edge = field.getBoundingClientRect();
       const y = edge.top + edge.height / 2;
-      pointer.moveTo({ x: edge.left + 4 + character * 10.2, y });
+      pointer.moveTo({ x: edge.left + 4 + character * 11.6, y });
       pointer.press();
       pointer.moveTo({ x: edge.left + 4 + character * 13, y });
-      pointer.moveTo({ x: edge.left + 4 + character * 15.8, y });
+      pointer.moveTo({ x: edge.left + 4 + character * 16.8, y });
       pointer.release();
       const selected = [field.selectionStart, field.selectionEnd];
       const painted = document.querySelector('.catalogue-field-selection span')?.textContent ?? null;
       // Typing goes over the selection.
       for (const letter of 'summary') pointer.type('#name', letter);
       const typed = field.value;
-      // From the start of "refresh" to the end of "launch", in content.
+      // From inside "refresh" to inside "launch", in content: both words whole.
       const line = text.getBoundingClientRect();
       const middle = line.top + line.height / 2;
-      pointer.moveTo({ x: line.left + character * 8.2, y: middle });
+      pointer.moveTo({ x: line.left + character * 9.6, y: middle });
       pointer.press();
       pointer.moveTo({ x: line.left + character * 15, y: middle });
-      pointer.moveTo({ x: line.left + character * 21.8, y: middle });
+      pointer.moveTo({ x: line.left + character * 19.4, y: middle });
       pointer.release();
       const highlight = CSS.highlights.get('catalogue-selection');
       const content = [...highlight].map((range) => range.toString()).join('|');

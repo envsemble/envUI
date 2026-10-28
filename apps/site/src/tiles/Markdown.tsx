@@ -1,52 +1,88 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Markdown } from '@envsemble/envui/content';
-import { useTimeline } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../previews/Motion';
 
-const note = (link: string) => `### Release notes
+const word = '.md';
+/** The source as it is written, step by step: the word, wrapped once, and wrapped twice. */
+const sources = [word, `\\*${word}\\*`, `\\*\\*${word}\\*\\*`];
 
-- **Faster** search
-- New ${link}
-`;
-
-/** The last item's link, as its source is written. */
-const link = '[guide](/guide)';
+const text = '[data-view="source"] p';
 
 /*
- * The last item's link written again, as a note being edited: its source taken back to the word
- * before it, then typed again a character at a time, raw until its closing parenthesis turns it
- * into a link. Each step is the source of the link so far, and how long it shows.
+ * The word is selected as a person selects it, from just before it to its end, and wrapped in
+ * asterisks one pair at a time, as an editor wraps a selection when an asterisk is typed: it reads
+ * **.md**. The source then gives way to the word rendered, bold, and back to the word as it began.
  */
-const steps = [
-  { source: link, duration: 700 },
-  ...[...link].map((_, index) => ({
-    source: link.slice(0, link.length - 1 - index),
-    duration: index === link.length - 1 ? 450 : 35,
-  })),
-  ...[...link].map((_, index) => ({
-    source: link.slice(0, index + 1),
-    duration: index === link.length - 1 ? 1400 : 85,
-  })),
+const script: PointerStep[] = [
+  { wait: 300 },
+  { to: text, text: word, x: 0, duration: 0 },
+  { wait: 250 },
+  { press: true },
+  { to: text, text: word, x: 1, duration: 350 },
+  { release: true },
+  { leave: true },
+  { wait: 350 },
+  { cue: 'wrap' },
+  { wait: 260 },
+  { cue: 'wrap' },
+  { wait: 750 },
+  { cue: 'render' },
+  { wait: 1600 },
+  { cue: 'reset' },
+  { wait: 700 },
 ];
-const durations = steps.map(({ duration }) => duration);
 
 /**
- * A short note rendered from Markdown: a heading and a list, with bold text and a link. While its
- * source is raw, which runs wider, it keeps the still's width, so the note stays where it is.
+ * The source and the rendered word, one over the other, giving way to each other with a short
+ * fade; the one not shown lets the pointer through to the other.
+ */
+const layer = { gridArea: '1 / 1', transition: 'opacity 300ms ease' };
+
+/**
+ * The word `.md` written in Markdown: selected, wrapped in `**` and rendered bold, through the
+ * Markdown component in both views, one over the other, centred, so the word stays in place.
  */
 export default function MarkdownTile() {
-  const step = useTimeline(durations);
-  const root = useRef<HTMLDivElement>(null);
-  const width = useRef(0);
-  useLayoutEffect(() => {
-    if (step === 0 && root.current) width.current = root.current.offsetWidth;
+  const [wraps, setWraps] = useState(0);
+  const [rendered, setRendered] = useState(false);
+  const source = useRef<HTMLDivElement>(null);
+  usePointer(script, {
+    onCue: (cue) => {
+      if (cue === 'wrap') setWraps((count) => Math.min(count + 1, 2));
+      else if (cue === 'render') setRendered(true);
+      else {
+        setRendered(false);
+        setWraps(0);
+      }
+    },
   });
-  const raw = step !== 0 && width.current > 0;
+  // The word stays selected as the asterisks go round it, as an editor keeps a selection it wraps.
+  useLayoutEffect(() => {
+    const node = source.current?.querySelector('p')?.firstChild;
+    const highlights = typeof CSS !== 'undefined' && 'highlights' in CSS ? CSS.highlights : null;
+    const shown = highlights?.get('catalogue-selection');
+    if (!wraps || rendered || !node || !shown) return;
+    const range = document.createRange();
+    range.setStart(node, wraps);
+    range.setEnd(node, wraps + word.length);
+    shown.add(range);
+    return () => void shown.delete(range);
+  }, [wraps, rendered]);
   return (
-    <Markdown
-      ref={root}
-      style={raw ? { inlineSize: width.current, whiteSpace: 'nowrap' } : undefined}
-    >
-      {note(steps[step].source)}
-    </Markdown>
+    <div style={{ display: 'grid', justifyItems: 'center', textAlign: 'center' }}>
+      <Markdown
+        ref={source}
+        data-view="source"
+        style={{ ...layer, opacity: rendered ? 0 : 1, pointerEvents: rendered ? 'none' : 'auto' }}
+      >
+        {sources[wraps]!}
+      </Markdown>
+      <Markdown
+        aria-hidden={!rendered}
+        style={{ ...layer, opacity: rendered ? 1 : 0, pointerEvents: rendered ? 'auto' : 'none' }}
+      >
+        {`**${word}**`}
+      </Markdown>
+    </div>
   );
 }
