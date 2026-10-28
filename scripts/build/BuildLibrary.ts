@@ -121,10 +121,7 @@ for (const output of stylesheetBuilds.flatMap(({ outputFiles }) => outputFiles))
     output.path.endsWith('.css') &&
     !relative(resolve(outputDirectory, 'styles'), output.path).startsWith('..') &&
     !output.text.startsWith(minifiedLayerOrder);
-  await writeFile(
-    output.path,
-    ownSheet ? `${minifiedLayerOrder}${output.text}` : output.contents,
-  );
+  await writeFile(output.path, ownSheet ? `${minifiedLayerOrder}${output.text}` : output.contents);
 }
 // The package ships no logos: the brand artwork stays in the repository for the catalogue.
 await cp(resolve(repositoryRoot, 'assets/readme'), resolve(outputDirectory, 'assets/readme'), {

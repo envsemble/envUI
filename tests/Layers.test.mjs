@@ -68,8 +68,9 @@ test('the shipped style sheet puts every rule in a cascade layer of env, in orde
 });
 
 test('every style sheet is imported once and puts its rules in a layer of env', async () => {
-  const importsOf = async (file) =>
-    [...(await readFile(join(styles, file), 'utf8')).matchAll(/^@import '\.\/([\w.]+)'(.*);$/gm)];
+  const importsOf = async (file) => [
+    ...(await readFile(join(styles, file), 'utf8')).matchAll(/^@import '\.\/([\w.]+)'(.*);$/gm),
+  ];
   const index = await importsOf('index.css');
   const base = await importsOf('Base.css');
   // index.css starts with the base, which declares the layer order, and then takes every other
@@ -86,7 +87,10 @@ test('every style sheet is imported once and puts its rules in a layer of env', 
   for (const [, file, rest] of [...index, ...base]) {
     if (rest) {
       // The base's own parts, which nothing else loads, take their layer as Base.css imports them.
-      assert.ok(base.some(([, part]) => part === file), `${file} takes its layer from Base.css`);
+      assert.ok(
+        base.some(([, part]) => part === file),
+        `${file} takes its layer from Base.css`,
+      );
       assert.match(rest, layer, file);
       continue;
     }
