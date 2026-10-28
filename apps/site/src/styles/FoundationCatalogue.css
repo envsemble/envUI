@@ -65,6 +65,16 @@
   }
 }
 
+/* Held, a pane keeps its size, a shade deeper still: a link's press settles it slightly, which here
+   would bare the hairlines around it as a frame. */
+.catalogue-foundation-pane:active {
+  transform: none;
+  background-color: light-dark(
+    oklch(from var(--env-color-bg-recessed) calc(l - 0.05) c h),
+    oklch(from var(--env-color-bg-recessed) calc(l + 0.02) c h)
+  );
+}
+
 /* The keyboard on a pane rings the whole pane, inside the sheet's edge. */
 .catalogue-foundation-pane:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
