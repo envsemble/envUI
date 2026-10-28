@@ -1,5 +1,5 @@
 import { Switch } from '@envsemble/envui';
-import { Example, MatrixScroll } from '../../previews/Example';
+import { Example, MatrixScroll } from '../../figures/Example';
 
 /** Off and on, enabled and disabled. */
 export default function States() {

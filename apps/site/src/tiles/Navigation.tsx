@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Breadcrumbs, Column, Link, List, PageHeader } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const row = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) [data-row-target]`;

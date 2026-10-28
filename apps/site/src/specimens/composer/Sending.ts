@@ -1,5 +1,5 @@
 import { createElement, type ReactNode } from 'react';
-import type { PointerStep } from '../../previews/Motion';
+import type { PointerStep } from '../../motion/Motion';
 
 /*
  * The do and the don't of a composer while a send is in progress play on one timeline, side by
@@ -11,7 +11,7 @@ import type { PointerStep } from '../../previews/Motion';
 const field = '.env-composer-input';
 // A point beside the composer, on the room around it (Room): a press there takes focus from the
 // field.
-const away = { to: '[data-room]', x: 0.5, y: 0.08 } as const;
+const away = { to: '[data-catalogue-room]', x: 0.5, y: 0.08 } as const;
 
 const start: PointerStep[] = [
   { wait: 500 },
@@ -68,7 +68,7 @@ export function Room({ children }: { children: ReactNode }) {
   return createElement(
     'div',
     {
-      'data-room': '',
+      'data-catalogue-room': '',
       style: {
         display: 'grid',
         justifyItems: 'center',

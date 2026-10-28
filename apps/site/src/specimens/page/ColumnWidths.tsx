@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { Grid, Page, Surface, type PageWidth } from '@envsemble/envui';
-import { Example } from '../../previews/Example';
-import { useTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { useTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /** The window the page sits in, in rem: wider than the large column, so Full reads as wider. */
 const frame = { width: 88, height: 17 };

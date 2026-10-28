@@ -1,6 +1,6 @@
 import RowTrigger from '../../examples/account-and-organizations/RowTrigger';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer presses the row with Priya Shah's name, and the account menu opens above it. It

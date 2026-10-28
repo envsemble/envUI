@@ -1,6 +1,6 @@
 /* The page of all foundations (FoundationCatalogue.tsx): one sheet on the recessed canvas, a pane
    for each foundation meeting the others at hairlines, and the pictures in the panes
-   (previews/foundations/Glance.tsx), drawn in envUI's own tokens. */
+   (figures/foundations/Glance.tsx), drawn in envUI's own tokens. */
 
 /* The sheet lays out by the column it sits in. */
 .catalogue-overview:has(> .catalogue-foundation-sheet) {
@@ -148,13 +148,13 @@
 }
 
 .catalogue-glance-tone-chips > :nth-child(1) {
-  background: var(--muted);
+  background: var(--catalogue-tone-muted);
 }
 .catalogue-glance-tone-chips > :nth-child(2) {
-  background: var(--emphasis);
+  background: var(--catalogue-tone-emphasis);
 }
 .catalogue-glance-tone-chips > :nth-child(3) {
-  background: var(--strong);
+  background: var(--catalogue-tone-strong);
 }
 
 /* Type: the typeface's letters large, and each style's name in its own style. */

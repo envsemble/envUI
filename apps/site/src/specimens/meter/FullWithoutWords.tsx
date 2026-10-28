@@ -1,5 +1,5 @@
 import { Card, Meter } from '@envsemble/envui';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage } from '../../motion/MotionStage';
 import { Refilling, useSeats } from './SeatsFilling';
 
 function Filling() {

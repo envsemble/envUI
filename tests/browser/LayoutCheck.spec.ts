@@ -13,7 +13,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import type { LayoutProblem, ProblemRule } from '@envsemble/envui/dev';
 import { documents } from '../../apps/site/src/generated/Documentation';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** The widths of the completion check, in rem. */
 const widths = [22, 40, 60, 80] as const;

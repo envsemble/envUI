@@ -1,7 +1,7 @@
 import { Column, HoverCard, Link, Text } from '@envsemble/envui';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer rests on "roadmap", and the card opens after a moment. The pointer moves down onto

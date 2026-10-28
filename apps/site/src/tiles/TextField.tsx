@@ -1,5 +1,5 @@
 import { TextField } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const input = '.env-text-field-input';
 

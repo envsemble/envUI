@@ -16,7 +16,7 @@ export function motifOf(id: string | undefined): Motif | undefined {
 
 /** A piece's place in its motif's arrangement, which staggers its entrance, and its own values. */
 const piece = (n: number, values: Record<string, string | number> = {}) =>
-  ({ '--n': n, ...values }) as CSSProperties;
+  ({ '--catalogue-motif-place': n, ...values }) as CSSProperties;
 
 const tones = ['accent', 'success', 'warning', 'danger', 'done', 'neutral'] as const;
 
@@ -27,10 +27,10 @@ function Swatches() {
       key={tone}
       className="catalogue-motif-swatch"
       style={piece(n, {
-        '--turn': `${(n - (tones.length - 1) / 2) * 13}deg`,
-        '--muted': `var(--env-color-bg-${tone}-muted)`,
-        '--emphasis': `var(--env-color-bg-${tone}-emphasis)`,
-        '--strong':
+        '--catalogue-motif-turn': `${(n - (tones.length - 1) / 2) * 13}deg`,
+        '--catalogue-tone-muted': `var(--env-color-bg-${tone}-muted)`,
+        '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-emphasis)`,
+        '--catalogue-tone-strong':
           tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
       })}
     >

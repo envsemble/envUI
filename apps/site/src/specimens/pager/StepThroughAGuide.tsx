@@ -1,7 +1,7 @@
 import StepThroughAGuide from '../../examples/pager/StepThroughAGuide';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { keepLinksInPlace } from '../../template/LiveExample';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { keepLinksInPlace } from '../../figures/LiveExample';
 
 const next = '.env-pager-link-next';
 const previous = '.env-pager-link-previous';

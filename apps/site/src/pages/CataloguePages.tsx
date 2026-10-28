@@ -4,7 +4,6 @@ import { catalogueTrail } from '../navigation/CatalogueTrail';
 import type { RoutePage } from '../navigation/SiteRoutes';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
-import type { Reference } from '../Reference';
 import { Catalogue } from './Catalogue';
 import { FoundationCatalogue } from './FoundationCatalogue';
 import { PatternCatalogue } from './PatternCatalogue';
@@ -17,14 +16,13 @@ import { Documentation } from './Documentation';
  */
 export function ComponentPage({ page }: { page: RoutePage }) {
   const document = page.document!;
-  const reference = document as Reference;
   return (
     <>
       <PageHeader
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        subject={reference.id}
+        subject={document.id}
         meta={
           document.metadata && (
             <MetadataBadges metadata={document.metadata} plain>
@@ -80,21 +78,21 @@ const iconsCredit = [
  * words. Its page in the Docs, which Docs opens, holds the tokens and code behind them.
  */
 export function FoundationPage({ page }: { page: RoutePage }) {
-  const reference = page.document as Reference;
+  const document = page.document!;
   return (
     <>
       <PageHeader
         title={page.title}
         trail={catalogueTrail(page)}
         description={page.summary}
-        subject={reference.id}
+        subject={document.id}
         meta={<OtherPartButton page={page} />}
       />
       {/* A foundation is its Markdown, with its figures in place. */}
-      <TemplateContent document={page.document!} related={false} />
-      {reference.id === 'icons' && (
+      <TemplateContent document={document} related={false} />
+      {document.id === 'icons' && (
         <Column gap={4} className="site-article catalogue-foundation-notes catalogue-icons-credit">
-          <Documentation markdown={iconsCredit} path={reference.path} />
+          <Documentation markdown={iconsCredit} path={document.path} />
         </Column>
       )}
     </>

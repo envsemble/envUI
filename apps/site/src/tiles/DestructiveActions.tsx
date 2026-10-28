@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, List, PortalContainer, Toast, useToast } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
-import { usePointer, usePreviewLayer, type PointerStep } from '../previews/Motion';
+import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
 const projects = ['Launch plan', 'Annual report', 'Press kit'];
 

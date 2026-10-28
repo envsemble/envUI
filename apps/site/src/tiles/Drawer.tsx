@@ -3,7 +3,7 @@ import { Drawer, Text, type Destination } from '@envsemble/envui';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { Send } from '@envsemble/envui/icons/Send';
 import { Star } from '@envsemble/envui/icons/Star';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const item = (index: number) => `.env-drawer-list > li:nth-child(${index}) > .env-drawer-item`;
 

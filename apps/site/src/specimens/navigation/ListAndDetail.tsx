@@ -1,6 +1,6 @@
 import ListAndDetail from '../../examples/navigation/ListAndDetail';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 import { useStayOnPage } from './StayOnPage';
 
 const project = '.env-list-item:nth-child(1 of .env-list-item) a';

@@ -1,8 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteDevUrl } from './Servers';
-import { moduleFiles, requireSite, serveSite, siteUrl } from './HostedSite';
+import { siteDevUrl } from './helpers/Servers';
+import { moduleFiles, requireSite, serveSite, siteUrl } from './helpers/HostedSite';
 import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
-import { goTo } from './SiteSpecHelpers';
+import { goTo } from './helpers/SiteSpecHelpers';
 
 /**
  * Opens the overview of the hosted build, then the Button page with every file under /assets/ that

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import FullWidthScope from '../../examples/segmented-control/FullWidthScope';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
 
 /** The sweep's widths, in rem: the still, and the narrow end, where the labels are cut. */
 const widths = [26, 14];

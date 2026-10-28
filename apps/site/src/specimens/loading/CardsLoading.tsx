@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import CardsLoading from '../../examples/loading/CardsLoading';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 /*
  * The page opens anew each round: the cards show as their skeletons, the highlight sweeping

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import MenuOnPhones from '../../examples/app-frame/MenuOnPhones';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
-import { keepLinksInPlace } from '../../template/LiveExample';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
+import { keepLinksInPlace } from '../../figures/LiveExample';
 
 const menu = '[aria-label="Open the chapters"]';
 const chapter = (index: number, where: string) =>

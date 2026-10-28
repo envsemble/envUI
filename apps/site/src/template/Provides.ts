@@ -1,4 +1,4 @@
-import type { DocumentationSection } from '../DocumentationTypes';
+import type { DocumentationSection } from '../shared/DocumentationTypes';
 import { providesOf, catalogueMarkdown, withoutProvides } from '../shared/CatalogueContent';
 
 /**

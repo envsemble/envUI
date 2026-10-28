@@ -1,6 +1,6 @@
 import SortableColumns from '../../examples/table/SortableColumns';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /** A column's sort button, by the column's place: Name is 1, Modified 3. */
 const sort = (index: number) =>

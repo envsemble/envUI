@@ -1,3 +1,5 @@
+// The marks the library's theme bootstrap sets, which no entry exports, from its source module:
+// vite.config.ts runs this file in Node before anything is built (as it imports ThemeBootstrap.ts).
 import {
   contrastSourceAttribute,
   ownContrastSource,

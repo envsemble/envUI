@@ -1,8 +1,8 @@
 import { createContext, useContext, useMemo } from 'react';
 import { Link } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/content';
-import { documents, type Documentation as Document } from '../Reference';
-import { referencePages, routeOfDocument, unlistedDocuments } from '../navigation/SiteRoutes';
+import { documents, type Documentation as Document } from './PageModel';
+import { groupedPages, routeOfDocument, unlistedDocuments } from '../navigation/SiteRoutes';
 import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useSiteRoute';
 import { headingSlugger } from '../shared/SearchAnchors';
@@ -45,7 +45,7 @@ export function documentationHref(href: string, sourcePath: string) {
   if (unlistedDocuments.has(target.id) && target.id !== 'index')
     return `${repositoryFile(target.path)}${url.hash}`;
   const section = url.hash.length > 1 ? decodedFragment(url.hash) : undefined;
-  const page = referencePages.find((entry) => entry.reference.path === target.path);
+  const page = groupedPages.find((entry) => entry.document.path === target.path);
   const guide = page?.section === 'Foundations' && (section || inDocs(currentRoute()));
   const route = routeOfDocument(target.id, { view: guide ? 'usage' : undefined, section });
   return route ? routeHref(route) : href;
@@ -96,10 +96,10 @@ const trailingName = /\s*\(([A-Z][A-Za-z]*)\)\.?\s*$/;
 
 /** The page that documents a component, and so its address, where it has one in the catalogue. */
 const componentPage = (name: string) =>
-  referencePages.find(
+  groupedPages.find(
     (page) =>
       !page.path.startsWith('docs/') &&
-      (page.reference.metadata?.components ?? page.reference.components)?.includes(name),
+      (page.document.metadata?.components ?? page.document.components)?.includes(name),
   );
 
 /**
@@ -136,13 +136,13 @@ const componentNames =
         const page = match && componentPage(match[1]);
         if (end && text && match && (page || /[a-z][A-Z]/.test(match[1]))) {
           text.value = text.value!.slice(0, match.index);
-          const own = page && page.reference.path === path;
+          const own = page && page.document.path === path;
           const name: HastNode = {
             type: 'element',
             tagName: page && !own ? 'a' : 'span',
             properties:
               page && !own
-                ? { href: `../${page.reference.path}` }
+                ? { href: `../${page.document.path}` }
                 : { className: ['catalogue-list-name'] },
             children: [{ type: 'text', value: match[1] }],
           };
@@ -169,7 +169,7 @@ const rehypePlugins = [headingIds];
 /**
  * A page's Markdown, or a part of it such as one section, with its links resolved. `className`
  * gives it a role in the catalogue's type hierarchy, such as `site-lead` for a section's opening
- * paragraph (CatalogueText.css).
+ * paragraph (SiteText.css).
  */
 export function Documentation(
   props: ({ document: Document } | { markdown: string; path: string }) & { className?: string },

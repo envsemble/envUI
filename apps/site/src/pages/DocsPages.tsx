@@ -13,17 +13,17 @@ import {
 import { routeHref } from '../navigation/Address';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
-import { ExampleSource } from '../template/LiveExample';
+import { ExampleSource } from '../figures/LiveExample';
 import { partsOf } from '../template/Parts';
 import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
-import type { Documentation as Document, Reference } from '../Reference';
+import type { Documentation as Document } from './PageModel';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
-import { ColorPalette } from '../previews/foundations/ColorPalette';
-import { SpecimenHeadingLevel } from '../previews/Example';
+import { ColorPalette } from '../figures/foundations/ColorPalette';
+import { SpecimenHeadingLevel } from '../figures/Example';
 import { ReleaseNotes } from './ReleaseNotes';
 import { codeColumns, subsections } from '../shared/CatalogueContent';
 import { headingSlug } from '../shared/SearchAnchors';
@@ -491,7 +491,6 @@ function ColorProperties({ components }: { components: readonly string[] }) {
  */
 export function DocsReferencePage({ page }: { page: RoutePage }) {
   const document = page.document!;
-  const reference = document as Reference;
   const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
   const pattern = cataloguePage?.kind === 'pattern';
@@ -522,7 +521,7 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
             <Text render={<h2 />} variant="headline" id="props">
               Props
             </Text>
-            <PropsTables reference={reference} />
+            <PropsTables document={document} />
           </Column>
         )}
         <PartNames components={metadata?.components ?? []} />

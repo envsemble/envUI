@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Dialog, DialogClose, TextField } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** Renamed, which closes the dialog; opened again from its button, which it covers. */
 const script: PointerStep[] = [

@@ -1,0 +1,116 @@
+/* Do, don't and caution figures; the frame they share with other figures is in Figures.css. */
+
+/* A do, don't or caution figure: the example on a square stage, a green, red or amber bar, and
+   one sentence. The square is never larger than `--site-verdict-size`, so a pair side by side
+   stays small beside the text; alone, or in a narrow column, it starts where the text does. A
+   `wide` figure, whose point is a change across the column's width, spans the column instead. */
+.site-verdict {
+  display: grid;
+  align-content: start;
+  gap: var(--env-space-2);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.site-verdict[data-shape='square'] {
+  inline-size: min(100%, var(--site-verdict-size));
+}
+
+.site-verdict-frame {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  /* The stage and the bar are envUI's connected rows (env-connected-rows), which give the outer
+     corners the large radius and the inner corners where they meet the small one; the gap is the
+     one between a list's rows. */
+  gap: 0.125rem;
+}
+
+/* The stage is every stage's recessed canvas (Stage.css); its corners are the connected rows'. A
+   square clips what it holds, and its overlays open in the box over it (below). */
+.site-verdict-stage {
+  --site-verdict-inset: var(--env-space-6);
+}
+
+.site-verdict[data-shape='square'] .site-verdict-stage {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: clip;
+  contain: layout;
+}
+
+.site-verdict[data-shape='wide'] .site-verdict-stage {
+  min-block-size: 10rem;
+  padding: var(--env-space-7) var(--env-space-6);
+}
+
+/* The box the example lays out in, centred as on every stage. On a square it covers the stage,
+   its size set to what the example needs (VerdictFit.ts), and is drawn at the scale that fits it
+   into the square, from its top left corner; the transform makes it the containing block of what
+   opens in it, so a dialog's scrim covers the square. */
+.site-verdict-fit {
+  display: grid;
+  place-content: center stretch;
+  justify-items: center;
+  gap: var(--env-space-4);
+  min-inline-size: 0;
+  container-type: inline-size;
+}
+
+.site-verdict[data-shape='square'] .site-verdict-fit {
+  position: absolute;
+  inset-block-start: 0;
+  left: 0;
+  box-sizing: border-box;
+  inline-size: 100%;
+  /* Its width is what the example lays out in, wider than the stage where it is drawn smaller. */
+  max-inline-size: none;
+  min-block-size: 100%;
+  padding: var(--site-verdict-inset);
+  transform: scale(var(--site-verdict-scale, 1));
+  transform-origin: 0 0;
+}
+
+.site-verdict-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+  padding: var(--env-space-2) var(--env-space-4);
+  color: var(--env-color-fg-on-strong);
+  font: var(--env-type-body);
+  font-weight: var(--env-font-weight-medium);
+}
+
+.site-verdict-bar > svg {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.site-verdict[data-verdict='do'] .site-verdict-bar {
+  background: var(--env-color-bg-success-strong);
+}
+
+.site-verdict[data-verdict='dont'] .site-verdict-bar {
+  background: var(--env-color-bg-danger-strong);
+}
+
+/* A caution, acceptable with care: amber, with the text a warning badge's solid fill takes. */
+.site-verdict[data-verdict='caution'] .site-verdict-bar {
+  background: var(--env-color-bg-warning-emphasis);
+  color: var(--env-color-fg-on-emphasis);
+}
+
+.site-verdict-caption {
+  padding-inline: var(--env-space-2);
+  font: var(--env-type-body);
+}
+
+@container (width < 30rem) {
+  .site-verdict[data-shape='wide'] .site-verdict-stage {
+    padding: var(--env-space-6) var(--env-space-4);
+  }
+
+  .site-verdict-stage {
+    --site-verdict-inset: var(--env-space-4);
+  }
+}

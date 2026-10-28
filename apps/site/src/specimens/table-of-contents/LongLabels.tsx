@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import LongLabels from '../../examples/table-of-contents/LongLabels';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
 
 /** The sections the contents lead to, as the migration guide beside them holds them. */
 const sections = [

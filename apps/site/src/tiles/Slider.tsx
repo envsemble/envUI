@@ -1,5 +1,5 @@
 import { Slider } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const control = '.env-slider-control';
 

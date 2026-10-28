@@ -2,7 +2,7 @@ import { useState, type MouseEvent, type ReactNode } from 'react';
 import { Pager } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const pages = ['Overview', 'Install', 'Configure', 'Deploy', 'Monitor'];
 

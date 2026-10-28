@@ -1,5 +1,5 @@
 import SkeletonOnRefresh from '../../examples/loading/SkeletonOnRefresh';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage } from '../../motion/MotionStage';
 import { useRefreshPress } from './Refresh';
 
 function Refreshing() {

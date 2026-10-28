@@ -1,7 +1,7 @@
 import OneLine from '../../examples/breadcrumbs/OneLine';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /* The pointer rests on the current page, cut short, and its tooltip shows the whole name. */
 const script: PointerStep[] = [

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Column, PortalContainer, TextField, Toast, useToast } from '@envsemble/envui';
 import { Send } from '@envsemble/envui/icons/Send';
-import { usePointer, usePreviewLayer, type PointerStep } from '../previews/Motion';
+import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
 /** The invitation sent: the button works a moment, and a notification says how it went. */
 const script: PointerStep[] = [

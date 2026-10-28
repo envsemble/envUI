@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import NarrowFilters from '../../examples/filtering/NarrowFilters';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
 
 const filters = '.catalogue-width-sweep-frame .env-button[data-variant="secondary"]';
 const show = '.env-sheet-popup .env-button[data-variant="primary"]';

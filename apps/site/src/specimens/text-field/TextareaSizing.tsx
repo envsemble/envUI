@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import TextareaSizing from '../../examples/text-field/TextareaSizing';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const edge = '.env-textarea-resize-edge';
 const reply = 'textarea[name="reply"]';
 // The room the fields grow into, which stays where it is as they grow: the pointer drags by it.
-const room = '[data-sizing-room]';
+const room = '[data-catalogue-sizing-room]';
 
 /*
  * The pointer drags Description's bottom edge down, and the text area grows to show more of its
@@ -44,7 +44,7 @@ function Sizing() {
   return (
     // As tall as both fields once grown, so the figure keeps its height.
     <div
-      data-sizing-room=""
+      data-catalogue-sizing-room=""
       style={{ display: 'grid', alignContent: 'start', inlineSize: '100%', blockSize: '16rem' }}
     >
       <Renew round={round}>

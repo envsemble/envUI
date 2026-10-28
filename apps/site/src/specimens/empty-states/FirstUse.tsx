@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import FirstUse from '../../examples/empty-states/FirstUse';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 /*
  * The pointer presses Create project in the empty state: the first project takes the state's

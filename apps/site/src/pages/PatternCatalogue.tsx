@@ -1,5 +1,5 @@
 import { pagesOf } from '../navigation/SiteRoutes';
-import { Gallery } from '../template/Gallery';
+import { Gallery } from '../figures/Gallery';
 
 /**
  * Every pattern, a tile with its preview for each, in one gallery without group headings, in the

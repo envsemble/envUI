@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Button, ConfirmDialog } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /**
  * Confirmed, which waits for the action, pending, and closes; opened again from its button, which

@@ -1,7 +1,7 @@
 import FrequentQuestions from '../../examples/accordion/FrequentQuestions';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const question = (index: number) =>
   `.env-accordion-item:nth-child(${index} of .env-accordion-item) .env-accordion-trigger`;

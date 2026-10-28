@@ -1,11 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
-import { closePopup, openPopup, popupKinds } from './Popups';
+import { fixtureUrl } from './helpers/Servers';
+import { closePopup, openPopup, popupKinds } from './helpers/Popups';
 
 /**
  * Under forced colors the system replaces envUI's colors, drops shadows and paints no fills, so a
  * state shown by a fill alone would vanish. Each stateful component sets system colors for its
- * states instead (tests/fixture/forced-colors.tsx shows them side by side). This spec compares what
+ * states instead (tests/fixture/ForcedColors.tsx shows them side by side). This spec compares what
  * is painted for a state and for its rest, from computed styles: the colors, borders, outlines,
  * opacity and decoration of the element, its descendants and their ::before and ::after,
  * with a background in the canvas color counting as none, as it paints nothing on the canvas.
@@ -147,7 +147,7 @@ async function open(page: Page) {
   // today is a day of that month that is neither.
   await page.clock.install({ time: new Date('2026-10-16T12:00:00') });
   await page.emulateMedia({ forcedColors: 'active' });
-  await page.goto(`${fixtureUrl}/forced-colors.html`);
+  await page.goto(`${fixtureUrl}/ForcedColors.html`);
   await page.waitForSelector('body[data-styles-ready] .env-theme');
   expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
   // The menus held open move focus into their popup once they have opened; let them, or they take

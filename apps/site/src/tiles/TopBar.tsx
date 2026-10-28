@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AvatarButton, IconButton, TopBar } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const refresh = '.env-top-bar-actions .env-icon-button';
 

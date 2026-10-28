@@ -1,6 +1,6 @@
 import ProjectVisibility from '../../examples/select/ProjectVisibility';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const highlighted = '.env-select-item[data-highlighted]';
 const item = (index: number) => `.env-select-item:nth-child(${index} of .env-select-item)`;

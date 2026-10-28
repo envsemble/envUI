@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Checkbox, Column, DialogClose, Sheet } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** Applied, which closes the sheet toward its edge; opened again from its button. */
 const script: PointerStep[] = [

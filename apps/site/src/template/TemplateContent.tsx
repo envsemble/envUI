@@ -1,9 +1,9 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
 import { Documentation, GuidanceLists } from '../pages/Documentation';
-import type { Documentation as Document } from '../Reference';
-import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
-import { FigureSection } from './Figures';
+import type { Documentation as Document } from '../pages/PageModel';
+import type { DocumentationMetadata, DocumentationSection } from '../shared/DocumentationTypes';
+import { FigureSection } from '../figures/Figures';
 import { catalogueSection } from './Provides';
 import { docsOnlySections } from '../shared/CatalogueContent';
 import { Related } from './Related';
@@ -59,16 +59,16 @@ export function MetadataBadges({
 }
 
 /** One section of a page; Rules opens with when to use it, after its own lead. */
-function Section({ reference, section }: { reference: Document; section: DocumentationSection }) {
+function Section({ page, section }: { page: Document; section: DocumentationSection }) {
   return (
     <FigureSection
-      reference={reference}
+      page={page}
       section={section}
       leadAfter
       lead={
         section.id === 'rules' &&
-        (reference.metadata?.useWhen.length || reference.metadata?.composes?.length) ? (
-          <WhenToUse metadata={reference.metadata} path={reference.path} />
+        (page.metadata?.useWhen.length || page.metadata?.composes?.length) ? (
+          <WhenToUse metadata={page.metadata} path={page.path} />
         ) : undefined
       }
     />
@@ -104,12 +104,12 @@ function groupSections(sections: readonly DocumentationSection[]) {
  * Compose and the changelog are on the page in the Docs. A group without sections is left out.
  */
 function Sections({
-  reference,
+  page,
   sections,
   provides,
   related,
 }: {
-  reference: Document;
+  page: Document;
   sections: DocumentationSection[];
   provides: boolean;
   related: boolean;
@@ -117,16 +117,16 @@ function Sections({
   const shown = sections
     .filter((section) => !docsOnlySections.has(section.id))
     .flatMap((section) => (provides ? section : (catalogueSection(section) ?? [])));
-  const end = related &&
-    sections.some((section) => section.id === 'overview') &&
-    reference.metadata && <Related metadata={reference.metadata} path={reference.path} />;
+  const end = related && sections.some((section) => section.id === 'overview') && page.metadata && (
+    <Related metadata={page.metadata} path={page.path} />
+  );
   return (
     <div className="site-section-groups">
       {groupSections(shown).map((group, index) =>
         group.length ? (
           <div key={index} className="site-article site-template site-figures site-section-group">
             {group.map((section) => (
-              <Section key={section.id} reference={reference} section={section} />
+              <Section key={section.id} page={page} section={section} />
             ))}
           </div>
         ) : null,
@@ -158,7 +158,7 @@ export function TemplateContent({
   return (
     <GuidanceLists value>
       <Sections
-        reference={document}
+        page={document}
         sections={document.sections ?? []}
         provides={provides}
         related={related}

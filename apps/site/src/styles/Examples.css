@@ -1,0 +1,117 @@
+.catalogue-specimen-area {
+  padding: 2rem var(--site-gutter) 3rem;
+  container-type: inline-size;
+}
+.site-example {
+  --catalogue-example-width: 42rem;
+  inline-size: 100%;
+  margin: 0 0 var(--env-space-9);
+  min-width: 0;
+}
+/* Sections share the frame; only their actual specimens need a size limit, and running text its
+   measure, which it sets as --catalogue-measure (SiteText.css). */
+.site-example > :not(h2):not(.catalogue-caption) {
+  max-inline-size: min(100%, var(--catalogue-example-width), var(--catalogue-measure, 100%));
+}
+.site-example[data-size='compact'] {
+  --catalogue-example-width: 18rem;
+}
+.site-example[data-size='field'] {
+  --catalogue-example-width: 24rem;
+}
+.site-example[data-size='wide'],
+.site-example[data-size='collection'] {
+  --catalogue-example-width: 100%;
+}
+.catalogue-specimen-grid {
+  --catalogue-specimen-min: 18rem;
+  --catalogue-specimen-width: 24rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--catalogue-specimen-min)), 1fr));
+  gap: var(--env-space-7) var(--env-space-6);
+  align-items: start;
+  min-inline-size: 0;
+}
+.catalogue-specimen-grid[data-size='small'] {
+  --catalogue-specimen-min: 8rem;
+  --catalogue-specimen-width: 10rem;
+}
+.catalogue-specimen-grid[data-size='compact'] {
+  --catalogue-specimen-min: 12rem;
+  --catalogue-specimen-width: 18rem;
+}
+.catalogue-specimen-grid[data-size='card'] {
+  --catalogue-specimen-min: 22rem;
+  --catalogue-specimen-width: 28rem;
+}
+.catalogue-specimen-grid[data-size='wide'] {
+  --catalogue-specimen-min: 26rem;
+  --catalogue-specimen-width: 100%;
+}
+.catalogue-specimen-grid > * {
+  min-inline-size: 0;
+  max-inline-size: var(--catalogue-specimen-width);
+}
+.site-example:last-child {
+  margin-bottom: 0;
+}
+.catalogue-example-heading {
+  max-inline-size: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--env-space-4);
+  inline-size: fit-content;
+  min-block-size: var(--env-control-height);
+}
+:where(.site-example) p {
+  max-inline-size: 65ch;
+}
+.catalogue-matrix-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  border-radius: var(--env-radius-sm);
+}
+.catalogue-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 42rem;
+  text-align: left;
+}
+.catalogue-matrix th {
+  font: var(--env-type-body-small);
+  color: var(--env-color-fg-muted);
+  font-weight: var(--env-font-weight-regular);
+  padding: 0.5rem 0.75rem 1rem;
+  white-space: nowrap;
+}
+.catalogue-matrix tbody th {
+  text-transform: capitalize;
+  min-width: 6rem;
+}
+.catalogue-matrix td {
+  padding: 1rem 0.75rem;
+}
+
+/* An editor in a run of states: as wide as its cell, its text at the start as in a form, and three
+   lines tall rather than its own ten rem, so the run stays short. */
+.catalogue-short-editor {
+  inline-size: 100%;
+  text-align: start;
+}
+.catalogue-short-editor .env-rich-text-document {
+  min-block-size: 4.5rem;
+}
+
+/* A Box's inset made visible on its animated figure (specimens/box): its edge dashed, as a width
+   frame's is, and the inset easing from one step to the next. */
+.catalogue-inset-box {
+  outline: 0.0625rem dashed var(--env-color-border-default);
+  transition: padding var(--env-motion-duration-slow) var(--env-motion-ease);
+}
+
+/* The area of the Settings page's appearance figure (specimens/settings), which takes the theme
+   chosen in it: only its surface shows, rounded, without the page color square around it. */
+.catalogue-motion-subject .catalogue-appearance-area {
+  background: none;
+}

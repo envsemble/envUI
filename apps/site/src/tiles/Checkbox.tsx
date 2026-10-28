@@ -1,5 +1,5 @@
 import { Checkbox, Column } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const box = (index: number) =>
   `.env-checkbox:nth-child(${index} of .env-checkbox) .env-checkbox-input`;

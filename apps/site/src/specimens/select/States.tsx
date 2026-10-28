@@ -1,5 +1,5 @@
 import { Select } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 const ownerOptions = [
   { value: 'alex', label: 'Alex Morgan' },

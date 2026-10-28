@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import UnsavedChanges from '../../examples/dialog/UnsavedChanges';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 /*
  * The pointer presses Close editor: the dialog asks whether to save the changes. The pointer

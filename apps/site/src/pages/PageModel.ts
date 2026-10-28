@@ -1,0 +1,28 @@
+import { documents } from '../generated/Documentation';
+
+export { documents };
+export const componentGroups = [
+  'Actions',
+  'Forms & selection',
+  'Navigation',
+  'Data display',
+  'Text & content',
+  'Feedback',
+  'Overlays',
+  'App frame & layout',
+] as const;
+export type ComponentGroup = (typeof componentGroups)[number];
+/** The id of a component group's heading on the overview, such as components-app-frame-layout. */
+export const componentGroupId = (group: string) =>
+  `components-${group.toLowerCase().replace(/[^a-z]+/g, '-')}`;
+export type Documentation = (typeof documents)[number];
+/** A component's or foundation's page of docs/: its group is a component group or Foundations. */
+export type GroupedDocument = Omit<Documentation, 'group'> & {
+  group: ComponentGroup | 'Foundations';
+};
+export const foundations = documents.filter(
+  (document): document is GroupedDocument => document.group === 'Foundations',
+);
+export const componentDocuments = documents.filter((document): document is GroupedDocument =>
+  componentGroups.some((group) => group === document.group),
+);

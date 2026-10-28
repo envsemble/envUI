@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Column, Page, PageHeader, Text } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { useTimeline } from '../motion/Motion';
 
 const sections = ['Summary', 'Revenue', 'Costs'];
 

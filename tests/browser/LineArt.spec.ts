@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 // LineArt: hairlines in the muted edge color that cover the box, resting on its foot, cropped from
 // the side away from where the drawing sits, mirrored right to left, and the system's gray text in forced colors.

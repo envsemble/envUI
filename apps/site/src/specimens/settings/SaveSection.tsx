@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import SaveSection from '../../examples/settings/SaveSection';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const name = 'input[name="name"]';
 const cancel = 'button[type="submit"] + .env-button';

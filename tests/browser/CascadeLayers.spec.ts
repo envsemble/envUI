@@ -1,18 +1,18 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const adoption = `${fixtureUrl}/?fixture=adoption`;
 
 /**
  * The boundary between an application's CSS and envUI's. envUI's style sheet puts every rule in a cascade layer of env, so an application's CSS outside
- * cascade layers overrides it without !important or a heavier selector. tests/fixture/layers.css is
+ * cascade layers overrides it without !important or a heavier selector. tests/fixture/CascadeLayers.css is
  * such an application style sheet: each of its rules is less specific than envUI's rule for the
  * same element and state.
  */
 
 async function openLayers(page: Page) {
-  await page.goto(`${fixtureUrl}/layers.html`);
+  await page.goto(`${fixtureUrl}/CascadeLayers.html`);
   await page.waitForSelector('body[data-styles-ready] .env-button', { state: 'attached' });
 }
 

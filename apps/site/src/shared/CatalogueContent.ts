@@ -5,7 +5,7 @@
 // The site app renders the catalogue from these rules, and `npm test` checks its text against
 // them: no inline code outside the Code disclosures under its figures.
 import { marked, type Token, type Tokens } from 'marked';
-import type { AnatomyLegendItem, DocumentationSection } from '../DocumentationTypes.ts';
+import type { AnatomyLegendItem, DocumentationSection } from './DocumentationTypes.ts';
 
 /** A page as the catalogue's text rules read it: from docs/ as scripts read it, or as the site has it. */
 export interface CataloguePage {

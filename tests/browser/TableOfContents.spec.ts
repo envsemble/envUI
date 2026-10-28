@@ -1,5 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const url = `${fixtureUrl}/?fixture=table-of-contents`;
 const current = (contents: Locator) => contents.locator('[aria-current="location"]');

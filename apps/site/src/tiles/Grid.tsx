@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Grid } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
-import { easing, edges, gap, Item, Mark, useReflow } from './reflow';
+import { useTimeline } from '../motion/Motion';
+import { easing, edges, gap, Item, Mark, useReflow } from './Reflow';
 
 /** The columns, step by step: two, then four across. */
 const columns = [2, 4];

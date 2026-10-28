@@ -1,5 +1,5 @@
 import { Button, Tabs, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
 

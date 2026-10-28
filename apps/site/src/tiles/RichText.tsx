@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { RichTextEditor } from '@envsemble/envui/rich-text';
-import { usePointer, type PointerStep } from '../previews/Motion';
-import { Renew } from '../previews/Renew';
+import { usePointer, type PointerStep } from '../motion/Motion';
+import { Renew } from '../motion/Renew';
 
 const line = '.ProseMirror p';
 const bold = '[aria-label="Bold"]';

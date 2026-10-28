@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { Column } from '@envsemble/envui';
 import FrequentFirst from '../../examples/menu/FrequentFirst';
-import { MotionStage } from '../../previews/MotionStage';
-import { PressedKeys } from '../../previews/PressedKeys';
+import { MotionStage } from '../../motion/MotionStage';
+import { PressedKeys } from '../../motion/PressedKeys';
 import { useOpenedByKeyboard } from './OpenedByKeyboard';
 
 function Opening() {

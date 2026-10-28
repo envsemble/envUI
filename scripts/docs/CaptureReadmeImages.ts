@@ -9,9 +9,10 @@
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
+import { defaultPorts } from '../test/CheckoutMarker.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const site = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
+const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 /** The pages pictured: one of the catalogue and its counterpart in the Docs. */
 const pictures = [
   { part: 'catalogue', page: 'components/button' },

@@ -1,6 +1,6 @@
 import { test, expect, type JSHandle, type Locator, type Page } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const themes = ['light', 'dark'] as const;
 const pixel = Buffer.from(

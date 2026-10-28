@@ -1,6 +1,6 @@
 /**
  * Accessibility gate: axe scans every page of the catalogue and the Docs in light, and the theme
- * sample of samplePages (tests/browser/CatalogueThemes.ts) in dark and both high-contrast themes
+ * sample of samplePages (tests/browser/helpers/CatalogueThemes.ts) in dark and both high-contrast themes
  * too, and compares the violations with KnownViolations.json. A new violation fails, and so does a
  * listed one that no longer occurs, so the list only shrinks. Run `npm run test:a11y`; after fixing
  * violations, or when a reviewed change has to add one, rewrite the list with `npm run
@@ -16,14 +16,14 @@ import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync, readFileSync, rmdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { serveSite, siteBuilt, siteUrl } from '../browser/HostedSite';
+import { serveSite, siteBuilt, siteUrl } from '../browser/helpers/HostedSite';
 import {
   chooseScheme,
   emulateContrast,
   themesFor,
   type CatalogueTheme,
   type ThemeName,
-} from '../browser/CatalogueThemes';
+} from '../browser/helpers/CatalogueThemes';
 import { allPages } from '../../apps/site/src/navigation/SiteRoutes';
 
 /** light on every page, and dark, light-hc and dark-hc on the pages of samplePages. */
@@ -69,8 +69,13 @@ const routes = new Map<string, Set<string>>([
   ),
 ]);
 
+/** The note KnownViolations.json opens with: it is written, not edited. */
+const generatedNote =
+  'Written by tests/accessibility/Accessibility.spec.ts. After fixing violations, run npm run test:a11y:update; add to it only for a reviewed reason.';
+
 function readExceptions(): Violations {
-  return JSON.parse(readFileSync(exceptionsFile, 'utf8'));
+  const { $comment: _note, ...violations } = JSON.parse(readFileSync(exceptionsFile, 'utf8'));
+  return violations;
 }
 
 function sortKeys<T>(value: T): T {
@@ -104,7 +109,10 @@ function updateExceptions(change: (violations: Violations) => void) {
   try {
     const violations = readExceptions();
     change(violations);
-    writeFileSync(exceptionsFile, `${JSON.stringify(sortKeys(violations), null, 2)}\n`);
+    writeFileSync(
+      exceptionsFile,
+      `${JSON.stringify({ $comment: generatedNote, ...sortKeys(violations) }, null, 2)}\n`,
+    );
   } finally {
     rmdirSync(lock);
   }
@@ -228,7 +236,7 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
             ['.site-page-header, .site-page-banner, .catalogue-overview-hero', 'header'],
             ['.site-page-navigation', 'page navigation'],
             ['.site-article', 'article'],
-            ['.catalogue-preview', 'preview'],
+            ['.catalogue-specimen-area', 'specimen area'],
             ['#site-main', 'main'],
           ];
           return regions.find(([selector]) => element.closest(selector))?.[1] ?? 'page';

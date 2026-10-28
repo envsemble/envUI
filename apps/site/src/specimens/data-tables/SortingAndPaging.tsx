@@ -1,7 +1,7 @@
 import SortAndPaginate from '../../examples/data-tables/SortAndPaginate';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /** A column's sort button: Name is the first column, Updated the fourth. */
 const sort = (column: number) => `th:nth-child(${column}) .env-table-sort-button`;

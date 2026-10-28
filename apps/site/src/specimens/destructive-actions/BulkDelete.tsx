@@ -1,6 +1,6 @@
 import BulkDelete from '../../examples/destructive-actions/BulkDelete';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const tick = (row: number) => `.env-list-item:nth-child(${row} of .env-list-item) .env-checkbox`;
 const deleteButton = '.env-button[data-tone="danger"]';

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from './Servers';
+import { siteDevUrl } from './helpers/Servers';
 import { readMap } from '../../packages/codemods/src/map.mjs';
 import {
   allPages,
@@ -12,11 +12,11 @@ import {
   pagesOf,
   routeOfDocument,
 } from '../../apps/site/src/navigation/SiteRoutes';
-import { componentGroups } from '../../apps/site/src/Reference';
-import { goTo } from './SiteSpecHelpers';
-import { references } from '../../apps/site/src/Reference';
+import { componentGroups } from '../../apps/site/src/pages/PageModel';
+import { goTo } from './helpers/SiteSpecHelpers';
+import { componentDocuments } from '../../apps/site/src/pages/PageModel';
 
-const components = references.map(({ id }) => id);
+const components = componentDocuments.map(({ id }) => id);
 
 test('the 0.x routes of renamed pages open the pages under their new names', () => {
   const { docs } = readMap() as { docs: Record<string, string> };

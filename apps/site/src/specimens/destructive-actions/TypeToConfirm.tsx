@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import TypeToConfirm from '../../examples/destructive-actions/TypeToConfirm';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const field = '.env-text-field-input';
 const confirm = '.env-dialog-actions .env-button:last-child';

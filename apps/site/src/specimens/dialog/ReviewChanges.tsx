@@ -1,6 +1,6 @@
 import ReviewChanges from '../../examples/dialog/ReviewChanges';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage, roomFor } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage, roomFor } from '../../motion/MotionStage';
 
 /*
  * The pointer presses Review changes: the large dialog opens over the stage with its table of

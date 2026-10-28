@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import AllDone from '../../examples/empty-states/AllDone';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const approve = '.env-list-item:first-child .env-button';
 

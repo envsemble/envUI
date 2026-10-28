@@ -1,5 +1,5 @@
 import { Button, Row, Surface } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 const justifications = [
   { justify: 'start', title: 'At the start' },

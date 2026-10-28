@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Column, List, Panes, Surface, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const panes = '.env-panes';
 

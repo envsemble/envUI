@@ -1,8 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl as fixtureServer } from './Servers';
+import { fixtureUrl as fixtureServer } from './helpers/Servers';
 
-const fixtureUrl = `${fixtureServer}/rich-text.html`;
+const fixtureUrl = `${fixtureServer}/RichText.html`;
 const referenceId = 'record/"42"[a]';
 const referenceLabel = 'River [east] "quote", slash/ amp&!';
 

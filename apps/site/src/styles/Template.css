@@ -9,17 +9,13 @@
 
 /* Specimens inside an article share its gutter instead of adding their own, and the page's
    background: only their canvas is filled. */
-.site-article .catalogue-preview {
+.site-article .catalogue-specimen-area {
   padding: 0;
   background: none;
 }
 
-/* Props tables wrap code between words, so a column is never narrower than its longest word. */
-.catalogue-prop-code {
-  overflow-wrap: break-word;
-}
-
-/* The same for code in the guidance tables of a page. */
+/* Code in the guidance tables of a page wraps between words, so a column is never narrower than
+   its longest word. */
 .site-template .env-markdown-table code {
   overflow-wrap: break-word;
 }

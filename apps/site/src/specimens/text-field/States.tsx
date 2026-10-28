@@ -1,5 +1,5 @@
 import { TextField } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 /** Empty, filled, invalid, read-only and disabled fields, side by side. */
 export default function States() {

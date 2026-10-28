@@ -41,7 +41,21 @@ Every component, pattern and foundation page in `docs/` is one Markdown file tha
 
 ## Name things for where they belong
 
-The website (`apps/site`) has two parts. **site** names the whole website: its shell, build and hosting, and what both parts use. **catalogue** names the part at the root, for people looking at envUI. **docs** names the part under /docs, the developer reference. Identifiers, files, CSS classes (`site-`, `catalogue-`, `docs-`) and custom properties follow the same rule, by where they render, so a name says which part it touches.
+The website (`apps/site`) has two parts. **site** names the whole website: its shell, build and hosting, and what both parts use. **catalogue** names the part at the root, for people looking at envUI. **docs** names the part under /docs, the developer reference. Identifiers, files, CSS classes (`site-`, `catalogue-`, `docs-`) and custom properties follow the same rule, by where they render, so a name says which part it touches; Stylelint holds the site's CSS to it. A data attribute the site sets inside an example's subtree takes `data-catalogue-`.
+
+One word for each thing the site shows, and one folder in `apps/site/src` for each word:
+
+| Word          | Means                                                           | Where                                                |
+| ------------- | --------------------------------------------------------------- | ---------------------------------------------------- |
+| example       | A page's usage file, live with its code, placed by `figure=`    | `examples/<page>/`                                   |
+| specimen      | A picture of the catalogue's own, with no code                  | `specimens/<page>/`                                  |
+| tile          | A gallery's small live picture of a page                        | `tiles/`                                             |
+| figure        | The frame that shows an example or a specimen on a page         | `figures/`; a foundation's in `figures/foundations/` |
+| motion        | Scripted playback: the pointer no one sees, timelines, autoplay | `motion/`                                            |
+| documentation | The Markdown in `docs/` and the model generated from it         | `scripts/docs/`, `shared/DocumentationTypes.ts`      |
+| Docs          | The part under /docs, and nothing else                          | `docs-` classes, `Docs*` names                       |
+
+Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses.
 
 ## Everything else
 

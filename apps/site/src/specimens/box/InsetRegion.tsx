@@ -1,6 +1,6 @@
 import { Box, Button, Column, Text, type SpaceStep } from '@envsemble/envui';
-import { useTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { useTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /** The inset steps up from 4 to 8, down to none and back, a beat at each. */
 const insets: SpaceStep[] = [4, 8, 4, 0];

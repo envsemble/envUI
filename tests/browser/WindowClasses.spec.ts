@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 // The env-window container: the outermost theme boundary takes the width its context gives it,
 // so it never collapses where its parent sizes to content, nested boundaries are no containers,

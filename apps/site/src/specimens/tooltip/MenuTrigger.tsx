@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import MenuTrigger from '../../examples/tooltip/MenuTrigger';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { PressedKeys } from '../../previews/PressedKeys';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { PressedKeys } from '../../motion/PressedKeys';
 
 const more = '.env-icon-button[aria-label="More actions"]';
 

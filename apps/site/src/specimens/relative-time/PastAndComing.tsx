@@ -1,6 +1,6 @@
 import PastAndComing from '../../examples/relative-time/PastAndComing';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const time = (index: number) => `.env-text:nth-child(${index}) > .env-relative-time`;
 

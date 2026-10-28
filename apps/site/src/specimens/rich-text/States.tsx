@@ -1,5 +1,5 @@
 import { RichTextEditor } from '@envsemble/envui/rich-text';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 const notes = 'Send the **press kit** to Priya Shah by Friday.';
 

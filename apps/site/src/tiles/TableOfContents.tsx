@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, type MouseEvent } from 'react';
 import { TableOfContents } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** How tall the unseen article's view and each of its sections are, in px. */
 const view = 100;

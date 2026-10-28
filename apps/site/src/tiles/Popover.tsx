@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Popover, Text } from '@envsemble/envui';
 import { Info } from '@envsemble/envui/icons/Info';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const trigger = '.env-button[aria-haspopup]';
 

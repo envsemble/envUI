@@ -1,6 +1,6 @@
 import { Column, Grid, Link, Row, Text } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
-import { componentGroupId, componentGroups } from '../Reference';
+import { componentGroupId, componentGroups } from '../pages/PageModel';
 import { docsRoute, homeRoute, routeHref } from '../navigation/Address';
 import { routeOfDocument } from '../navigation/SiteRoutes';
 

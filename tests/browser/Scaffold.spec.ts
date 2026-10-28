@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const scaffold = (query = '') => `${fixtureUrl}/?fixture=scaffold${query}`;
 const scrollKeys = `${fixtureUrl}/?fixture=scroll-keys`;

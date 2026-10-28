@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import SupportingByWidth from '../../examples/panes/SupportingByWidth';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
 
 /** The frame's widths, in rem: compact, the still; medium; and expanded, side by side. */
 const widths = [24, 44, 54];

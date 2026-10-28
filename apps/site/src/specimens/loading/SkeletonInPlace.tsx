@@ -1,6 +1,6 @@
 import SkeletonInPlace from '../../examples/loading/SkeletonInPlace';
-import { useSharedTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { useSharedTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 import { members, membersClock, membersSteps } from './Members';
 
 function Loading() {

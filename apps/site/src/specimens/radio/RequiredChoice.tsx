@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import RequiredChoice from '../../examples/radio/RequiredChoice';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const exportButton = 'button[type="submit"]';
 

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 test('segmented controls choose one option with the pointer and arrow keys', async ({ page }) => {
   const errors: string[] = [];

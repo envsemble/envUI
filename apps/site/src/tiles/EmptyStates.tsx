@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Column, List, SearchField, Text } from '@envsemble/envui';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const projects = ['Northwind launch', 'Annual report', 'Pricing research'];
 

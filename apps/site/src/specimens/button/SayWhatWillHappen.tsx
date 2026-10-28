@@ -1,6 +1,6 @@
 import SayWhatWillHappen from '../../examples/button/SayWhatWillHappen';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const box = (index: number) =>
   `.env-checkbox:nth-child(${index} of .env-checkbox) .env-checkbox-box`;

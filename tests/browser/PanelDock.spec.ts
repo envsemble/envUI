@@ -1,6 +1,6 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { openServerMarkup } from './ServerMarkup';
-import { fixtureUrl } from './Servers';
+import { openServerMarkup } from './helpers/ServerMarkup';
+import { fixtureUrl } from './helpers/Servers';
 
 const dockFixture = `${fixtureUrl}/?fixture=panel-dock`;
 

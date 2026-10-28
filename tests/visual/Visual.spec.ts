@@ -24,7 +24,7 @@ import {
   type Page,
   type TestInfo,
 } from '@playwright/test';
-import { siteDevUrl, fixtureUrl } from '../browser/Servers';
+import { siteDevUrl, fixtureUrl } from '../browser/helpers/Servers';
 import {
   allThemes,
   chooseScheme,
@@ -32,8 +32,8 @@ import {
   themesFor,
   type CatalogueTheme,
   type ThemeName,
-} from '../browser/CatalogueThemes';
-import { referencePages } from '../../apps/site/src/navigation/SiteRoutes';
+} from '../browser/helpers/CatalogueThemes';
+import { groupedPages } from '../../apps/site/src/navigation/SiteRoutes';
 import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
 
 /**
@@ -392,14 +392,14 @@ function reconcile(testInfo: TestInfo, directory: string, recorded: string[], ta
 }
 
 test.describe('catalogue', () => {
-  for (const { path, reference } of referencePages) {
-    test(`${reference.title} (${path})`, async ({ page }, testInfo) => {
-      const directory = join(snapshots, 'catalogue', reference.id);
+  for (const { path, document: subject } of groupedPages) {
+    test(`${subject.title} (${path})`, async ({ page }, testInfo) => {
+      const directory = join(snapshots, 'catalogue', subject.id);
       const recorded = contents(directory);
       const taken = new Set<string>();
       const take = async (locator: Locator, file: string) => {
         taken.add(file);
-        await capture(locator, ['catalogue', reference.id, file]);
+        await capture(locator, ['catalogue', subject.id, file]);
       };
       // Each page shows its specimens, or its live examples, on one page: a foundation's visuals,
       // a component's figures, or Field's in the Docs.
@@ -421,7 +421,7 @@ test.describe('catalogue', () => {
         for (const view of visited) {
           await open(view);
           const examples = page.locator(
-            '.catalogue-preview .site-example:not(.site-example .site-example)',
+            '.catalogue-specimen-area .site-example:not(.site-example .site-example)',
           );
           for (const example of await examples.all()) {
             if (!(await example.isVisible())) continue;
@@ -431,7 +431,10 @@ test.describe('catalogue', () => {
               ':scope > :is(h2, h3), :scope > .catalogue-example-heading > :is(h2, h3)',
             );
             const specimen = await example.evaluate(
-              (element) => element.closest('[data-specimen]')?.getAttribute('data-specimen') ?? '',
+              (element) =>
+                element
+                  .closest('[data-catalogue-specimen]')
+                  ?.getAttribute('data-catalogue-specimen') ?? '',
             );
             const part = example.locator('summary, h3, h4').first();
             const title = (await own.count())
@@ -448,7 +451,7 @@ test.describe('catalogue', () => {
           // The forced hover, pressed, focus and disabled states of InteractionStates.ts, opened
           // where the catalogue keeps them in a closed disclosure.
           const states = page.locator(
-            '.catalogue-preview [role="region"][aria-label$="interaction states"]',
+            '.catalogue-specimen-area [role="region"][aria-label$="interaction states"]',
           );
           for (const matrix of await states.all()) {
             const label = ((await matrix.getAttribute('aria-label')) ?? '').replace(
@@ -509,7 +512,7 @@ test.describe('catalogue', () => {
         expect(
           matrices.sort(),
           `The ${theme.name} page shows the interaction states listed in stateMatrices`,
-        ).toEqual([...(stateMatrices[reference.id] ?? [])].sort());
+        ).toEqual([...(stateMatrices[subject.id] ?? [])].sort());
       }
       reconcile(testInfo, directory, recorded, taken);
     });
@@ -597,7 +600,7 @@ test.describe('open lists', () => {
 // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
 // eslint-disable-next-line no-empty-pattern
 test('every snapshot folder belongs to a catalogue page, a density section or an open list', async ({}, testInfo) => {
-  const pages = new Set(referencePages.map(({ reference }) => reference.id));
+  const pages = new Set(groupedPages.map(({ document }) => document.id));
   const density = new Set(densityShots.map(({ section, theme }) => `${theme}-${section}.png`));
   const open = new Set(
     openLists.flatMap((list) => list.themes.map((theme) => `${theme}-${list.name}.png`)),

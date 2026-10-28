@@ -1,5 +1,5 @@
 import { Radio, RadioGroup } from '@envsemble/envui';
-import { Example, MatrixScroll } from '../../previews/Example';
+import { Example, MatrixScroll } from '../../figures/Example';
 
 /** Unchosen and chosen, enabled and disabled. */
 export default function States() {

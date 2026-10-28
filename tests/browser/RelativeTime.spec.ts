@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const fixture = `${fixtureUrl}/?fixture=relative-times`;
 const opened = new Date('2026-10-14T09:00:00Z').getTime();

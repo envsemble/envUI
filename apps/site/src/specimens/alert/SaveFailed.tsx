@@ -1,6 +1,6 @@
 import SaveFailed from '../../examples/alert/SaveFailed';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer presses Save draft: it works a moment, the save fails, and the danger alert appears

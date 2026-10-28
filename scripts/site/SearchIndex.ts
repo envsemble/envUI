@@ -14,7 +14,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { marked } from 'marked';
 import MiniSearch from 'minisearch';
 import { plainText } from '../docs/MarkdownHeadings.ts';
-import type { DocumentRecord } from '../docs/Read.ts';
+import type { DocumentRecord } from '../docs/Reader.ts';
 import type { PropsFile } from '../docs/Schema.ts';
 import { indexOptions, nameKey } from '../../apps/site/src/shared/SearchTerms.ts';
 import {

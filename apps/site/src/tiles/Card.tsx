@@ -1,5 +1,5 @@
 import { Card, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** Hovered, the card takes its hover fill; pressed, it settles a little; let go, and left. */
 const script: PointerStep[] = [

@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** The inline end of the heading row and of its meta, in the row's own direction. */
 async function metaPlacement(card: Locator) {

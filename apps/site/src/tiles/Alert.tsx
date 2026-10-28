@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Alert } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** Dismissed with its cross; a moment later the application shows it again. */
 const script: PointerStep[] = [

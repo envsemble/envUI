@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import ImmediateToggles from '../../examples/settings/ImmediateToggles';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 /** A setting's switch, by the id of its row's title. */
 const setting = (id: string) => `.env-list-item:has([id$="-${id}-title"]) .env-switch`;

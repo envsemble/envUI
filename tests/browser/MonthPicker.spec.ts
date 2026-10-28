@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** Today is fixed, so this month is the same in every run. */
 const today = new Date('2026-10-14T10:00:00');

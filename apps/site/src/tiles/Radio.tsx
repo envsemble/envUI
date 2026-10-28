@@ -1,5 +1,5 @@
 import { Radio, RadioGroup } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const option = (index: number) => `.env-radio:nth-child(${index} of .env-radio) .env-radio-input`;
 

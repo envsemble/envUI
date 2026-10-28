@@ -1,6 +1,6 @@
 import LoadingPreview from '../../examples/spinner/LoadingPreview';
-import { useTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { useTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The preview's frame spins while the file renders, two seconds, and its first page takes the

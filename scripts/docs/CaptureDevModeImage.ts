@@ -1,6 +1,6 @@
 // Captures the pictures of dev mode, in the light and the dark theme, each in the site of that
 // theme, whose examples take its theme; dev mode takes the demo's. Each opens the real dev mode on
-// the demo application in the site and saves apps/site/src/demos/dev-mode/dev-mode-<name>-
+// the demo application in the site and saves apps/site/src/figures/dev-mode/dev-mode-<name>-
 // <theme>.webp at twice the CSS size:
 //
 // - 3d: the picture of the dev mode guide's demo, the view's planes alone, with the node tree, the
@@ -19,9 +19,10 @@ import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
+import { defaultPorts } from '../test/CheckoutMarker.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const site = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
+const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 const page = 'docs/dev-mode';
 /** The 3D picture's shape, width to height, as DevModeDemo.tsx declares it, and its margin in px. */
 const aspect = 16 / 10;
@@ -48,7 +49,7 @@ async function save(tab, png, name, theme) {
     },
     { data: png.toString('base64'), quality },
   );
-  const file = resolve(root, `apps/site/src/demos/dev-mode/dev-mode-${name}-${theme}.webp`);
+  const file = resolve(root, `apps/site/src/figures/dev-mode/dev-mode-${name}-${theme}.webp`);
   await writeFile(file, Buffer.from(webp, 'base64'));
   console.log(`Wrote ${file} (${Math.round((webp.length * 0.75) / 1024)} KB).`);
 }

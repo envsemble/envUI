@@ -1,8 +1,8 @@
 import { useRef, type MouseEvent } from 'react';
 import { Column, Row, Surface, TableOfContents, Text } from '@envsemble/envui';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /** The guide's sections, with ids of the figure's own, as a page holds them once. */
 const sections = [

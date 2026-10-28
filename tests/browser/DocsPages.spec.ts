@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from './Servers';
-import { chooseScheme } from './CatalogueThemes';
+import { siteDevUrl } from './helpers/Servers';
+import { chooseScheme } from './helpers/CatalogueThemes';
 import { readReleaseNotes } from '../../scripts/site/ReleaseNotes.ts';
 import { renderLlmsText, renderSkill } from '../../scripts/site/SiteAgentFiles.ts';
 import { allPages, pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
-import { version, goTo } from './SiteSpecHelpers';
+import { version, goTo } from './helpers/SiteSpecHelpers';
 
 test('a guide in the Docs renders shared Markdown and follows relative links', async ({ page }) => {
   await page.goto(`${siteDevUrl}/docs/customizing`);

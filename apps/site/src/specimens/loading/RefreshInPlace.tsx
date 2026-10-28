@@ -1,5 +1,5 @@
 import RefreshInPlace from '../../examples/loading/RefreshInPlace';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage } from '../../motion/MotionStage';
 import { useRefreshPress } from './Refresh';
 
 function Refreshing() {

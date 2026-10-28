@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 // Bar, Rail and Drawer over the same destinations, in tests/fixture/Navigation.tsx.
 

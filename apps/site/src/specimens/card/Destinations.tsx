@@ -1,6 +1,6 @@
 import Destinations from '../../examples/card/Destinations';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const card = (index: number) => `.env-card:nth-child(${index} of .env-card)`;
 

@@ -1,7 +1,7 @@
 import { DescriptionList } from '@envsemble/envui';
-import { useTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { CornerLabel } from '../../previews/foundations/Steps';
+import { useTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { CornerLabel } from '../../figures/foundations/Steps';
 
 const layouts = [
   { layout: 'auto', name: 'Automatic' },

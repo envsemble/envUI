@@ -1,7 +1,7 @@
 import DetailsButton from '../../examples/panes/DetailsButton';
-import { usePointer } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { usePointer } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
 import { opening, useNarrowing, widths } from './Details';
 
 /** The pointer that opens the details, from the start of its script each time it comes. */

@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const fixture = `${fixtureUrl}/?fixture=paginations`;
 

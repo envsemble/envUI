@@ -4,7 +4,7 @@ import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
 

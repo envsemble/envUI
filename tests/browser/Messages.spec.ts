@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 import { defaultMessages } from '../../packages/ui/src/foundations/messages/defaultMessages';
 
 // The pseudo-locale check: tests/fixture/MessageStrings.tsx renders the components whose strings come

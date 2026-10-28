@@ -13,8 +13,8 @@
 // authors.
 //
 // The work is in scripts/docs/: Schema.ts (the page kinds, sections, roles and frontmatter),
-// Validate.ts (a page read and checked), Read.ts (every page, its index and links) and
-// Compile.ts (the props tables and the Markdown the package ships). This file writes the
+// Validation.ts (a page read and checked), Reader.ts (every page, its index and links) and
+// Compiler.ts (the props tables and the Markdown the package ships). This file writes the
 // catalogue's data and runs as the command; it exports what the modules did as one file.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -23,8 +23,8 @@ import { headingsOf } from './MarkdownHeadings.ts';
 import { headingSlugger } from '../../apps/site/src/shared/SearchAnchors.ts';
 import { writeSearchIndex } from '../site/SearchIndex.ts';
 import { documentationDirectory, generatedFile, pageKindOf, readProps } from './Schema.ts';
-import { readDocumentation } from './Read.ts';
-import { documentedExports } from './Compile.ts';
+import { readDocumentation } from './Reader.ts';
+import { documentedExports } from './Compiler.ts';
 
 export {
   codeSubsections,
@@ -48,8 +48,8 @@ export {
   splitFrontmatter,
   statuses,
 } from './Schema.ts';
-export { fenceFor, isPropsTable, readPartNames } from './Validate.ts';
-export { readDocumentation } from './Read.ts';
+export { fenceFor, isPropsTable, readPartNames } from './Validation.ts';
+export { readDocumentation } from './Reader.ts';
 export {
   compileDocument,
   compileDocumentation,
@@ -58,7 +58,7 @@ export {
   packageDocumentation,
   propDescription,
   renderProps,
-} from './Compile.ts';
+} from './Compiler.ts';
 
 export function generateDocumentation() {
   const props = readProps();
@@ -106,7 +106,7 @@ export function generateDocumentation() {
       }),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../DocumentationTypes';\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../shared/DocumentationTypes';\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
   mkdirSync(dirname(generatedFile), { recursive: true });
   if (!existsSync(generatedFile) || readFileSync(generatedFile, 'utf8') !== source)
     writeFileSync(generatedFile, source);

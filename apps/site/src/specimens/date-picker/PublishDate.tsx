@@ -1,6 +1,6 @@
 import PublishDate from '../../examples/date-picker/PublishDate';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const field = '.env-date-picker-control';
 const day = (date: string) => `.env-calendar-day[data-date="${date}"]`;

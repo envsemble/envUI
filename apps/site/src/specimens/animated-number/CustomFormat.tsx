@@ -1,6 +1,6 @@
 import CustomFormat from '../../examples/animated-number/CustomFormat';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const option = (index: number) =>
   `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;

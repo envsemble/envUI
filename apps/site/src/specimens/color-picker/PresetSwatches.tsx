@@ -1,6 +1,6 @@
 import PresetSwatches from '../../examples/color-picker/PresetSwatches';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const swatch = (index: number) =>
   `.env-color-picker-swatch:nth-child(${index} of .env-color-picker-swatch)`;

@@ -1,6 +1,6 @@
 import AccountButton from '../../examples/avatar/AccountButton';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /* The pointer rests on the avatar: the name's tooltip appears, and goes as the pointer leaves. */
 const script: PointerStep[] = [

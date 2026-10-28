@@ -1,4 +1,4 @@
-import type { PointerStep } from '../../previews/Motion';
+import type { PointerStep } from '../../motion/Motion';
 
 /** The clock the do and the don't press Bold on together. */
 export const pressingClock = 'toolbar-bold-pressed';

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const preview = `${fixtureUrl}/?fixture=portal-containers`;
 

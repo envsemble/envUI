@@ -2,9 +2,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Column, Composer, Grid, Message, MessageList } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
 import { ArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const question = 'What is still open for the launch on Friday?';
 

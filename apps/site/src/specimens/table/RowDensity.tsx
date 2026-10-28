@@ -1,6 +1,6 @@
 import RowDensity from '../../examples/table/RowDensity';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage, roomFor } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage, roomFor } from '../../motion/MotionStage';
 
 const option = (index: number) =>
   `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;

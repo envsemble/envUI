@@ -1,6 +1,6 @@
 import ContextMenuForRows from '../../examples/menu/ContextMenuForRows';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item)`;
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;

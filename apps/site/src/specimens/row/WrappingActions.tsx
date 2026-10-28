@@ -1,6 +1,6 @@
 import WrappingActions from '../../examples/row/WrappingActions';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
 import { useNarrowing, widths } from './Narrowing';
 
 function Narrowed() {

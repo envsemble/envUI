@@ -1,7 +1,7 @@
 import { RichTextEditor } from '@envsemble/envui/rich-text';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const notes = 'Send the **press kit** to Priya Shah by Friday.';
 const document = '.ProseMirror';

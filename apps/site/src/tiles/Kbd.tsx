@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { Kbd } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { useTimeline } from '../motion/Motion';
 
 /**
  * The shortcut pressed as a hand presses it: Ctrl goes down, then K, and both come up. How many of

@@ -2,7 +2,7 @@ import { IconButton, Row, Tooltip } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
 import { Share } from '@envsemble/envui/icons/Share';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const button = (index: number) => `.env-icon-button:nth-child(${index} of .env-icon-button)`;
 

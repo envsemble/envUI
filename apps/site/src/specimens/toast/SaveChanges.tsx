@@ -1,6 +1,6 @@
 import SaveChanges from '../../examples/toast/SaveChanges';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer presses Save changes: the button works a moment, and a notification arrives at the

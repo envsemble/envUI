@@ -2,10 +2,10 @@ import {
   componentGroups,
   documents,
   foundations,
-  references,
+  componentDocuments,
   type Documentation,
-  type Reference,
-} from '../Reference';
+  type GroupedDocument,
+} from '../pages/PageModel';
 import { docsRoute, homeRoute, routeHref } from './Address';
 import { headingSlug } from '../shared/SearchAnchors';
 
@@ -66,8 +66,8 @@ export interface RoutePage {
  * A component or foundation page of docs/ with the page that shows it: the catalogue's, or for
  * Field, which has no page in the catalogue, its page in the Docs.
  */
-export interface ReferencePage {
-  reference: Reference;
+export interface GroupedPage {
+  document: GroupedDocument;
   section: 'Foundations' | 'Components';
   path: string;
 }
@@ -89,23 +89,23 @@ export const unlistedDocuments = new Set([
 ]);
 
 /** The component and foundation pages, each at the address of the page that shows it. */
-export const referencePages: ReferencePage[] = [
-  ...foundations.map((reference) => ({
-    reference,
+export const groupedPages: GroupedPage[] = [
+  ...foundations.map((document) => ({
+    document,
     section: 'Foundations' as const,
-    path: `foundations/${reference.id}`,
+    path: `foundations/${document.id}`,
   })),
-  ...references.map((reference) => ({
-    reference,
+  ...componentDocuments.map((document) => ({
+    document,
     section: 'Components' as const,
-    path: docsOnlyComponents.has(reference.id)
-      ? `docs/components/${reference.id}`
-      : `components/${reference.id}`,
+    path: docsOnlyComponents.has(document.id)
+      ? `docs/components/${document.id}`
+      : `components/${document.id}`,
   })),
 ];
 
 /** The address of a component or foundation page. */
-export const pageHref = (page: ReferencePage) => routeHref(page.path);
+export const pageHref = (page: GroupedPage) => routeHref(page.path);
 
 /**
  * The route of a component's page in the Docs: its guide to using it in code, then its props, part
@@ -142,17 +142,17 @@ const cataloguePages: RoutePage[] = [
     kind: 'foundations',
     summary: 'What every screen built with envUI shares, beneath its components.',
   },
-  ...referencePages
+  ...groupedPages
     .filter(({ section }) => section === 'Foundations')
     .map(
-      ({ reference, path }): RoutePage => ({
+      ({ document, path }): RoutePage => ({
         path,
-        title: reference.title,
+        title: document.title,
         area: 'catalogue',
         section: 'Foundations',
         kind: 'foundation',
-        summary: reference.summary,
-        document: reference as Documentation,
+        summary: document.summary,
+        document: document as Documentation,
       }),
     ),
   {
@@ -165,18 +165,18 @@ const cataloguePages: RoutePage[] = [
     summary: 'Every component of envUI, by what it is for.',
   },
   ...componentGroups.flatMap((group) =>
-    referencePages
-      .filter(({ reference, path }) => reference.group === group && !path.startsWith('docs/'))
+    groupedPages
+      .filter(({ document, path }) => document.group === group && !path.startsWith('docs/'))
       .map(
-        ({ reference, path }): RoutePage => ({
+        ({ document, path }): RoutePage => ({
           path,
-          title: reference.title,
+          title: document.title,
           area: 'catalogue',
           section: 'Components',
           group,
           kind: 'component',
-          summary: reference.summary,
-          document: reference as Documentation,
+          summary: document.summary,
+          document: document as Documentation,
         }),
       ),
   ),
@@ -252,7 +252,7 @@ const guidePages: RoutePage[] = guideDocuments
   .filter((document) => !startGuides.has(document.id))
   .map(guidePage);
 
-const field = references.find((reference) => docsOnlyComponents.has(reference.id));
+const field = componentDocuments.find((document) => docsOnlyComponents.has(document.id));
 
 const docsPages: RoutePage[] = [
   {
@@ -281,14 +281,14 @@ const docsPages: RoutePage[] = [
       ]
     : []),
   ...foundations.map(
-    (reference): RoutePage => ({
-      path: foundationDocsRoute(reference.id),
-      title: reference.title,
+    (document): RoutePage => ({
+      path: foundationDocsRoute(document.id),
+      title: document.title,
       area: 'docs',
       section: 'Foundations',
       kind: 'foundation-guide',
-      summary: reference.summary,
-      document: reference as Documentation,
+      summary: document.summary,
+      document: document as Documentation,
     }),
   ),
   {
@@ -301,18 +301,18 @@ const docsPages: RoutePage[] = [
       'Every token as a CSS custom property, with its value in each theme and scale, generated from the token source.',
   },
   ...componentGroups.flatMap((group) =>
-    references
-      .filter((reference) => reference.group === group && !docsOnlyComponents.has(reference.id))
+    componentDocuments
+      .filter((document) => document.group === group && !docsOnlyComponents.has(document.id))
       .map(
-        (reference): RoutePage => ({
-          path: componentDocsRoute(reference.id),
-          title: reference.title,
+        (document): RoutePage => ({
+          path: componentDocsRoute(document.id),
+          title: document.title,
           area: 'docs',
           section: 'Components',
           group,
           kind: 'reference',
-          summary: reference.summary,
-          document: reference as Documentation,
+          summary: document.summary,
+          document: document as Documentation,
         }),
       ),
   ),
@@ -460,7 +460,7 @@ export function docsTrail(page: RoutePage): TrailStep[] {
 }
 
 /** The component or foundation page of a document id, such as button. */
-const referencePageOf = (id: string) => referencePages.find((page) => page.reference.id === id);
+const groupedPageOf = (id: string) => groupedPages.find((page) => page.document.id === id);
 
 /**
  * The route of a page by its document id, such as `button`, or by a site page's, such as `tokens`,
@@ -472,13 +472,13 @@ export function routeOfDocument(
   { view, section }: { view?: string; section?: string } = {},
 ): string | undefined {
   const query = section ? `?${new URLSearchParams({ section })}` : '';
-  const reference = referencePageOf(id);
-  if (reference) {
-    if (reference.section === 'Foundations' && view === 'usage')
+  const grouped = groupedPageOf(id);
+  if (grouped) {
+    if (grouped.section === 'Foundations' && view === 'usage')
       return `${foundationDocsRoute(id)}${query}`;
-    if (reference.section === 'Components' && view === 'props')
+    if (grouped.section === 'Components' && view === 'props')
       return `${componentDocsRoute(id)}${query}`;
-    return `${reference.path}${query}`;
+    return `${grouped.path}${query}`;
   }
   if (view === 'props' && patternDocuments.some((document) => document.id === id))
     return `${patternDocsRoute(id)}${query}`;
@@ -665,16 +665,16 @@ export function normalizeRoute(route: string): string {
   // A page's views are gone: its props are on its page in the Docs, a foundation's guidance in its
   // guide there, and every other view is the catalogue's page.
   const [area, id, view] = path.split('/');
-  const reference = (area === 'components' || area === 'foundations') && referencePageOf(id ?? '');
-  if (!reference) return `${path}${rest()}`;
+  const grouped = (area === 'components' || area === 'foundations') && groupedPageOf(id ?? '');
+  if (!grouped) return `${path}${rest()}`;
   const toDocs =
-    reference.section === 'Components'
+    grouped.section === 'Components'
       ? view === 'props' || apiSection(section)
       : view === 'usage' &&
-        !(section && reference.reference.sections?.some((part) => part.anchors?.includes(section)));
+        !(section && grouped.document.sections?.some((part) => part.anchors?.includes(section)));
   return (
     routeOfDocument(id!, {
-      view: toDocs ? (reference.section === 'Components' ? 'props' : 'usage') : undefined,
+      view: toDocs ? (grouped.section === 'Components' ? 'props' : 'usage') : undefined,
     }) + rest()
   );
 }

@@ -48,10 +48,6 @@ export const aliases: Record<string, string[]> = {
   NestedDrawers: ['Navigation'],
   useResizableWidth: ['Navigation', 'Sheet'],
   Destinations: ['Navigation'],
-  Segments: ['SegmentedControl'],
-  TreeView: ['Tree'],
-  MarkdownEditing: ['MarkdownEditor'],
-  RichTextEditing: ['RichTextEditor'],
   ChoiceControls: ['Checkbox', 'Radio', 'Switch'],
   Toolbar: ['Primitives'],
   ResizeHandle: ['Primitives', 'Panes'],
@@ -112,9 +108,6 @@ export const aliases: Record<string, string[]> = {
   colorValue: ['ColorPicker'],
   useColorState: ['ColorPicker'],
   useEyeDropper: ['ColorPicker'],
-  contrast: ['Contrast'],
-  'forced-colors': ['ForcedColors'],
-  layers: ['CascadeLayers'],
   MotionStage: ['SiteMotion'],
   VirtualPointer: ['SiteMotion'],
   VirtualSelection: ['SiteMotion'],
@@ -168,7 +161,7 @@ export function specNeeds(name: string, root = repositoryRoot) {
   const source = read(root, specFile(name));
   return {
     // Opens the hosted build, which npm run build:site writes.
-    site: /from '\.\/HostedSite'/.test(source),
+    site: /from '\.\/helpers\/HostedSite'/.test(source),
     // Opens a page that the unit tests on the library build render.
     library: /\.cache\/Hydration\.html/.test(source),
     // Edits sources, so it runs alone once nothing else reads them.
@@ -198,10 +191,10 @@ export function specsFor(paths: readonly string[], root = repositoryRoot) {
   for (const path of paths) {
     let found = false;
     if (/^tests\/browser\/[^/]+\.spec\.ts$/.test(path)) found = add(baseName(path), 'changed spec');
-    else if (/^tests\/browser\/[^/]+\.ts$/.test(path)) {
+    else if (/^tests\/browser\/helpers\/[^/]+\.ts$/.test(path)) {
       const helper = baseName(path);
       const users = [...written].filter((spec) =>
-        new RegExp(`from '\\./${helper}'`).test(read(root, specFile(spec))),
+        new RegExp(`from '\\./helpers/${helper}'`).test(read(root, specFile(spec))),
       );
       helpers.set(path, users);
       if (users.length <= helperBudget)

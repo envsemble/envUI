@@ -1,5 +1,5 @@
 // The hosted site loads envUI's dev mode, `@envsemble/envui/dev`, on the Docs' dev mode page only:
-// that page's demo (apps/site/src/demos/dev-mode/DevModeDemo.tsx) imports it lazily, and no
+// that page's demo (apps/site/src/figures/dev-mode/DevModeDemo.tsx) imports it lazily, and no
 // other file holds any of it, not even the page's pictures of dev mode (DevModePictures.tsx).
 // FinalizeSite.ts checks the build with checkDevModeChunks before it turns Vite's manifest into
 // module-files.json.
@@ -10,7 +10,7 @@ import type { ViteManifest } from './SiteModuleFiles.ts';
 
 /** The dev entry and the demo that loads it, as Vite's manifest keys them. */
 export const devEntry = '../../packages/ui/src/dev.ts';
-export const devModeDemo = 'src/demos/dev-mode/DevModeDemo.tsx';
+export const devModeDemo = 'src/figures/dev-mode/DevModeDemo.tsx';
 /** Text only dev mode's own code holds: the attribute on the element its UI renders into. */
 export const devMarker = 'data-env-dev-host';
 

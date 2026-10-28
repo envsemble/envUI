@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from './Servers';
-import { chooseScheme } from './CatalogueThemes';
-import { documents, references } from '../../apps/site/src/Reference';
-import { version, goTo } from './SiteSpecHelpers';
+import { siteDevUrl } from './helpers/Servers';
+import { chooseScheme } from './helpers/CatalogueThemes';
+import { documents, componentDocuments } from '../../apps/site/src/pages/PageModel';
+import { version, goTo } from './helpers/SiteSpecHelpers';
 import { pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
 import { bannerDrawingIndex, bannerSubject } from '../../apps/site/src/layout/CatalogueBannerOrder';
 
@@ -356,7 +356,7 @@ test("the overview's hero says what envUI is and shows the package's version, le
   // The version is packages/ui/package.json's, as quiet text, beside the catalogue's counts.
   await expect(hero.locator('.catalogue-overview-version')).toHaveText(`v${version}`);
   await expect(hero.locator('.catalogue-overview-facts')).toContainText(
-    `${references.filter(({ id }) => id !== 'field').length} components`,
+    `${componentDocuments.filter(({ id }) => id !== 'field').length} components`,
   );
   // The sidebar, the Docs link above and the Explore cards lead on; the hero repeats none of them.
   await expect(hero.getByRole('link')).toHaveCount(0);
@@ -485,7 +485,10 @@ test('a Related tile of a page without an example shows its specimen', async ({ 
     'href',
     '/foundations/icons',
   );
-  await expect(tile.locator('.catalogue-related-stage')).toHaveAttribute('data-specimen', 'icons');
+  await expect(tile.locator('.catalogue-related-stage')).toHaveAttribute(
+    'data-catalogue-specimen',
+    'icons',
+  );
   await expect(tile.locator('.catalogue-related-canvas[data-fitted] svg')).toHaveCount(6);
   await expect(page.locator('.catalogue-related-placeholder')).toHaveCount(0);
 });
@@ -591,9 +594,9 @@ test('figures with open overlays keep them in their stages, inert, and leave the
   page,
 }) => {
   test.slow();
-  const pages = references
-    .filter((reference) =>
-      (reference.sections ?? []).some((section) =>
+  const pages = componentDocuments
+    .filter((document) =>
+      (document.sections ?? []).some((section) =>
         section.blocks.some((block) => block.kind === 'example' && block.open),
       ),
     )

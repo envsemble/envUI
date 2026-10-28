@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const affixes = `${fixtureUrl}/?fixture=affixes`;
 const adoption = `${fixtureUrl}/?fixture=adoption`;

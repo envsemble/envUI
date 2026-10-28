@@ -1,6 +1,6 @@
 import WithoutUrls from '../../examples/breadcrumbs/WithoutUrls';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const crumb = (index: number) =>
   `.env-breadcrumbs-item:nth-child(${index} of .env-breadcrumbs-item) > :first-child`;

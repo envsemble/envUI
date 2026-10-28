@@ -1,5 +1,5 @@
 import { Accordion } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const trigger = (index: number) => `.env-accordion-item:nth-child(${index}) .env-accordion-trigger`;
 

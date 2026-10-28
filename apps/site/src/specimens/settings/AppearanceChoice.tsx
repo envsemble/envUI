@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Surface, ThemePreferenceProvider, useTheme, type ThemeScale } from '@envsemble/envui';
 import AppearanceChoice from '../../examples/settings/AppearanceChoice';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /** Where the figure's own preference is kept, apart from the site's. */
 const storageKey = 'catalogue-appearance-figure';

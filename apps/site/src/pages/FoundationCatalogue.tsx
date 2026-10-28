@@ -2,7 +2,7 @@ import { Link, Text } from '@envsemble/envui';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { routeHref } from '../navigation/Address';
 import { pagesOf } from '../navigation/SiteRoutes';
-import { glancePictures } from '../previews/foundations/Glance';
+import { glancePictures } from '../figures/foundations/Glance';
 
 /** The foundations, the type first, across the sheet's top, then the rest in the catalogue's order. */
 const foundations = pagesOf('catalogue')

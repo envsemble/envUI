@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import StartTime from '../../examples/time-picker/StartTime';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { PressedKeys } from '../../previews/PressedKeys';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { PressedKeys } from '../../motion/PressedKeys';
+import { Renew } from '../../motion/Renew';
 
 const field = '.env-date-picker-control';
 const wheel = (part: string) => `.env-time-list-column[data-part="${part}"]`;

@@ -1,9 +1,9 @@
 import { use } from 'react';
 import { Column, Composer, Message, MessageList } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
-import { Example } from '../../previews/Example';
-import { useSharedTimeline } from '../../previews/Motion';
-import { MotionStage, VerdictMotion } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { useSharedTimeline } from '../../motion/Motion';
+import { MotionStage, VerdictMotion } from '../../motion/MotionStage';
 import { replyClock, replySteps, replyWords } from './Reply';
 
 const stop = () => undefined;

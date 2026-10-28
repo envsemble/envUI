@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Column, Surface, Text } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 const backgrounds = [
   { background: 'default', title: 'Default' },

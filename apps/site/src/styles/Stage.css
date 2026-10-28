@@ -17,7 +17,7 @@
 .catalogue-related-stage,
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
-.catalogue-showcase-card,
+.catalogue-fan-card,
 .site-page-banner[data-banner='catalogue'],
 .catalogue-explore-grid > .env-card,
 .site-page-navigation .env-pager-link,
@@ -27,7 +27,7 @@
       from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
         calc(0.14 - l * 0.087)
     );
-  /* Stronger, for cards laid over one another, such as the Overview's showcase. */
+  /* Stronger, for cards laid over one another, such as the Overview's fan of cards. */
   --catalogue-card-shadow-raised: 0 0.75rem 2rem
     oklch(
       from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.3) calc(c * 0.5) h /
@@ -70,15 +70,15 @@
 .catalogue-related-stage,
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
-.catalogue-showcase-card {
+.catalogue-fan-card {
   --catalogue-card-fill: var(--env-color-bg-recessed);
   background-color: var(--catalogue-card-fill);
   /* Every canvas, an example's, a tile's or a card's, lifts off the page a little. */
   box-shadow: var(--catalogue-card-shadow);
 }
 
-/* The Overview's showcase cards lie over one another: each takes the stronger shadow. */
-.catalogue-showcase-card {
+/* The cards of the Overview's fan lie over one another: each takes the stronger shadow. */
+.catalogue-fan-card {
   box-shadow: var(--catalogue-card-shadow-raised);
 }
 
@@ -96,7 +96,7 @@
 }
 
 /* A tile under the pointer, or with the keyboard on its link, as its picture comes alive
-   (previews/Motion.tsx): its canvas a shade deeper in the light themes and a shade lighter in the
+   (motion/Motion.tsx): its canvas a shade deeper in the light themes and a shade lighter in the
    dark ones, a fainter step than the recessed surface's own hover, eased, with no outline. */
 .catalogue-related-stage {
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
@@ -558,7 +558,7 @@
   }
 }
 
-/* Text the pointer no one sees selects by dragging (previews/VirtualSelection.ts), painted as the
+/* Text the pointer no one sees selects by dragging (motion/VirtualSelection.ts), painted as the
    browser paints a selection: in content, a highlight; in a field, which an inert preview can't
    focus, a copy of its text over it, transparent but its selected part. */
 ::highlight(catalogue-selection) {

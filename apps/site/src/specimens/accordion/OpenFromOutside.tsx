@@ -1,6 +1,6 @@
 import OpenFromOutside from '../../examples/accordion/OpenFromOutside';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const billing = '.env-accordion-item:nth-child(2 of .env-accordion-item) .env-accordion-trigger';
 

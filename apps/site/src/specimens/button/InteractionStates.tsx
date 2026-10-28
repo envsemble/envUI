@@ -1,6 +1,6 @@
-import { Example, MatrixScroll } from '../../previews/Example';
-import { controlStates } from '../../previews/InteractionStates';
-import { ButtonSample, buttonVariants, pairName } from '../../previews/ButtonSamples';
+import { Example, MatrixScroll } from '../../figures/Example';
+import { controlStates } from '../../figures/ControlStates';
+import { VariantButton, buttonVariants, pairName } from '../../figures/ButtonVariants';
 
 /** Each variant forced into its hover, pressed, focus and disabled looks. */
 export default function InteractionStates() {
@@ -26,7 +26,7 @@ export default function InteractionStates() {
                   <th scope="row">{pairName(example)}</th>
                   {controlStates.map((state) => (
                     <td key={state.title}>
-                      <ButtonSample
+                      <VariantButton
                         example={example}
                         form="label"
                         className={state.className}

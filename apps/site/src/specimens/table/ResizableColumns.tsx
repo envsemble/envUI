@@ -1,6 +1,6 @@
 import ResizableColumns from '../../examples/table/ResizableColumns';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const boundary = '.env-table-column-resize';
 
