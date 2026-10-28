@@ -33,7 +33,7 @@ import {
   type CatalogueTheme,
   type ThemeName,
 } from '../browser/CatalogueThemes';
-import { referencePages } from '../../apps/site/src/navigation/SiteRoutes';
+import { groupedPages } from '../../apps/site/src/navigation/SiteRoutes';
 import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
 
 /**
@@ -392,14 +392,14 @@ function reconcile(testInfo: TestInfo, directory: string, recorded: string[], ta
 }
 
 test.describe('catalogue', () => {
-  for (const { path, reference } of referencePages) {
-    test(`${reference.title} (${path})`, async ({ page }, testInfo) => {
-      const directory = join(snapshots, 'catalogue', reference.id);
+  for (const { path, document: subject } of groupedPages) {
+    test(`${subject.title} (${path})`, async ({ page }, testInfo) => {
+      const directory = join(snapshots, 'catalogue', subject.id);
       const recorded = contents(directory);
       const taken = new Set<string>();
       const take = async (locator: Locator, file: string) => {
         taken.add(file);
-        await capture(locator, ['catalogue', reference.id, file]);
+        await capture(locator, ['catalogue', subject.id, file]);
       };
       // Each page shows its specimens, or its live examples, on one page: a foundation's visuals,
       // a component's figures, or Field's in the Docs.
@@ -512,7 +512,7 @@ test.describe('catalogue', () => {
         expect(
           matrices.sort(),
           `The ${theme.name} page shows the interaction states listed in stateMatrices`,
-        ).toEqual([...(stateMatrices[reference.id] ?? [])].sort());
+        ).toEqual([...(stateMatrices[subject.id] ?? [])].sort());
       }
       reconcile(testInfo, directory, recorded, taken);
     });
@@ -600,7 +600,7 @@ test.describe('open lists', () => {
 // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
 // eslint-disable-next-line no-empty-pattern
 test('every snapshot folder belongs to a catalogue page, a density section or an open list', async ({}, testInfo) => {
-  const pages = new Set(referencePages.map(({ reference }) => reference.id));
+  const pages = new Set(groupedPages.map(({ document }) => document.id));
   const density = new Set(densityShots.map(({ section, theme }) => `${theme}-${section}.png`));
   const open = new Set(
     openLists.flatMap((list) => list.themes.map((theme) => `${theme}-${list.name}.png`)),
