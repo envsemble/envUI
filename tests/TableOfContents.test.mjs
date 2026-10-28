@@ -194,8 +194,8 @@ test("the shape swells at the reader's place, half 0.9 entries away, and none tw
   assert.equal(swellAt(0, null, []), 0);
   // In a short list, the bulge is shorter, so the thin stroke still shows.
   assert.equal(waveReach(12), 1);
-  assert.equal(waveReach(3), 0.85);
-  assert.ok(swellAt(4.9, 4, [], undefined, 0.85) < swellAt(4.9, 4, []));
+  assert.equal(waveReach(3), 0.5);
+  assert.ok(swellAt(4.9, 4, [], undefined, 0.5) < 0.2);
 });
 
 test('moving, the bulge leans back and stretches; landing, it squashes a little past its fullest', () => {

@@ -48,7 +48,7 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   pager: { width: 14, height: 10.5 },
   pagination: { width: 13, height: 9.75 },
   tree: { width: 13, height: 9.75 },
-  'table-of-contents': { width: 13, height: 9.75 },
+  'table-of-contents': { width: 11, height: 8.25 },
   'document-tabs': { width: 18, height: 13.5 },
   dialog: { width: 20, height: 15 },
   'confirm-dialog': { width: 16, height: 12 },
