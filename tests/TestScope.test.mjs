@@ -107,7 +107,7 @@ test('a changed spec runs itself, and a changed helper the specs that import it'
 });
 
 test('a module of the documentation generator runs the specs of the site', () => {
-  assert.ok([...selectScope(['scripts/docs/Validate.ts']).specs.keys()].includes('DocsPages'));
+  assert.ok([...selectScope(['scripts/docs/Validation.ts']).specs.keys()].includes('DocsPages'));
 });
 
 test('the site runs its specs and live development, with the builds they open', () => {

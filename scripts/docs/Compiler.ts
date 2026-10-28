@@ -1,6 +1,6 @@
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { readDocumentation, type DocumentRecord } from './Read.ts';
+import { readDocumentation, type DocumentRecord } from './Reader.ts';
 import {
   contributorPages,
   documentationDirectory,
@@ -11,7 +11,7 @@ import {
   readProps,
   type PropsFile,
 } from './Schema.ts';
-import { cell, fenceFor } from './Validate.ts';
+import { cell, fenceFor } from './Validation.ts';
 
 /** How the package names a do, a don't or a caution figure in a run of figures. */
 const verdictWords: Record<string, string> = { do: 'do', dont: "don't", caution: 'caution' };

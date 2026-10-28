@@ -28,7 +28,7 @@ import {
   validateFrontmatter,
   type PartNames,
   type ReadSection,
-} from './Validate.ts';
+} from './Validation.ts';
 
 /** A page of docs/ as readDocumentation reads it. */
 export interface DocumentRecord {
