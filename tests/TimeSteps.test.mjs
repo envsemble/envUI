@@ -1,4 +1,4 @@
-// forms/internal/CalendarDays: the minutes a time list offers, the entry typed keys name, and the
+// internal/calendarDays: the minutes a time list offers, the entry typed keys name, and the
 // YYYY-MM months of MonthPicker.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
