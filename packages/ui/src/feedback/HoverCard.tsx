@@ -18,12 +18,7 @@ import { Grid } from '../foundations/Layout.js';
 import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
-import { isDeveloping, reportOnce } from '../internal/developmentReport.js';
-
-/** Says what a HoverCard can't do while developing, once per message. */
-function warn(message: string) {
-  if (isDeveloping()) reportOnce(message, { level: 'warn' });
-}
+import { reportInDevelopment } from '../internal/developmentReport.js';
 
 /** Whether keyboard focus reaches a text trigger: it has a tabIndex of 0 or more. */
 function takesFocus(trigger: ReactElement) {
@@ -126,11 +121,15 @@ export function HoverCard({
     : trigger;
   const textTrigger = isValidElement(control) && isTextTrigger(control);
   // Text takes no focus of its own: without a tabIndex, the card's details are out of the
-  // keyboard's reach.
-  if (textTrigger && !takesFocus(control))
-    warn(
+  // keyboard's reach. Said while developing, once.
+  reportInDevelopment(
+    () =>
+      process.env.NODE_ENV !== 'production' &&
+      textTrigger &&
+      !takesFocus(control) &&
       'A HoverCard whose trigger is text needs tabIndex={0} on it, so keyboard focus opens the card too.',
-    );
+    { level: 'warn' },
+  );
   function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
     if (next === openRef.current) return;
     openRef.current = next;

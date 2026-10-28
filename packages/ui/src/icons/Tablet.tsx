@@ -5,7 +5,10 @@
 import { Icon, type MaterialSymbolProps } from '../Icon.js';
 import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
 
+/** The path both styles start with. */
+const start = "M120-160q-33 0-56.5-23.5T40-240v-480q0-33 23.5-56.5T120-800h720q33 0 56.5 23.5T920-720v480q0 33-23.5 56.5T840-160H120Zm";
+
 export function Tablet({ filled: requestedFill, ...props }: MaterialSymbolProps) {
   const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M120-160q-33 0-56.5-23.5T40-240v-480q0-33 23.5-56.5T120-800h720q33 0 56.5 23.5T920-720v480q0 33-23.5 56.5T840-160H120Zm120-80h480v-480H240v480Z" /> : <path d="M120-160q-33 0-56.5-23.5T40-240v-480q0-33 23.5-56.5T120-800h720q33 0 56.5 23.5T920-720v480q0 33-23.5 56.5T840-160H120Zm40-560h-40v480h40v-480Zm80 480h480v-480H240v480Zm560-480v480h40v-480h-40Zm0 0h40-40Zm-640 0h-40 40Z" />}</Icon>;
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "120-80h480v-480H240v480Z" : start + "40-560h-40v480h40v-480Zm80 480h480v-480H240v480Zm560-480v480h40v-480h-40Zm0 0h40-40Zm-640 0h-40 40Z"} /></Icon>;
 }

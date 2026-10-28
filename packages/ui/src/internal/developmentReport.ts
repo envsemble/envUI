@@ -2,17 +2,25 @@
 const reported = new Set<string>();
 
 /**
- * Whether the application is being developed. process.env.NODE_ENV is written inline so bundlers
- * replace it; `process` itself stays undefined in a browser, so where nothing replaced it, as
- * without a bundler, reading it throws and this is false. A report whose message a production build
- * should drop builds it behind the same check written at the call instead, as Theme does.
+ * Reports a mistake while the application is being developed, as reportOnce does. The call builds
+ * its message behind process.env.NODE_ENV, written inline so bundlers replace it and a production
+ * build drops the message and the work that finds the mistake:
+ * `reportInDevelopment(() => process.env.NODE_ENV !== 'production' && 'A Tooltip …')`. `process`
+ * itself stays undefined in a browser, so where nothing replaced the expression, as without a
+ * bundler, reading it throws and nothing is reported. The report runs outside that, so a console
+ * that throws, as a test's may, still throws.
  */
-export function isDeveloping() {
+export function reportInDevelopment(
+  message: () => string | false | undefined,
+  options?: Parameters<typeof reportOnce>[1],
+) {
+  let text: string | false | undefined;
   try {
-    return process.env.NODE_ENV !== 'production';
+    text = message();
   } catch {
-    return false;
+    return;
   }
+  if (text) reportOnce(text, options);
 }
 
 /**

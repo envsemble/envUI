@@ -6,10 +6,12 @@
 //
 // It builds the library first (npm run build:library); --no-build measures packages/ui/dist as it
 // is. Each bundle is made with esbuild as an application would: React external, CSS imports
-// external, and for "own code only" Base UI external too. It prints JSON.
+// external, and for "own code only" Base UI external too, split where the code imports a module
+// lazily. A bundle's sizes are what the page loads first, the entry and the chunks it imports;
+// `lazy` is what loads later, when the code asks for it. It prints JSON.
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 import { build, transform } from 'esbuild';
@@ -70,6 +72,8 @@ async function bundle(source: string, ownCode = false) {
     stdin: { contents: source, resolveDir: root, sourcefile: 'consumer.js' },
     bundle: true,
     write: false,
+    splitting: true,
+    outdir: resolve(root, '.cache/measure-size'),
     format: 'esm',
     platform: 'browser',
     minify: true,
@@ -85,16 +89,46 @@ async function bundle(source: string, ownCode = false) {
       ...(ownCode ? ['@base-ui/react', '@base-ui/react/*'] : []),
     ],
   });
-  const output = result.outputFiles[0]!;
-  // Where the bytes come from: envUI, Base UI, or the rest (Floating UI and small helpers).
+  const outputs = result.metafile.outputs;
+  const key = (path: string) => relative(root, path).replaceAll('\\', '/');
+  // What the page loads first: the entry and, transitively, the chunks it imports statically.
+  // A lazily imported module is an entry point of its own; the page's is the consumer's source.
+  const entry = Object.keys(outputs).find((path) => outputs[path]!.entryPoint === 'consumer.js')!;
+  const initial = new Set<string>();
+  const visit = (path: string) => {
+    if (initial.has(path)) return;
+    initial.add(path);
+    for (const { path: imported, kind } of outputs[path]!.imports)
+      if (kind === 'import-statement' && outputs[imported]) visit(imported);
+  };
+  visit(entry);
+  const contents = (paths: string[]) =>
+    Buffer.concat(
+      result.outputFiles
+        .filter((file) => paths.includes(key(file.path)))
+        .map((file) => Buffer.from(file.contents)),
+    );
+  const chunks = Object.keys(outputs).filter((path) => path.endsWith('.js'));
+  const lazy = chunks.filter((path) => !initial.has(path));
+  // Where the first load's bytes come from: envUI, Base UI, or the rest (Floating UI and helpers).
   const parts = { envUI: 0, baseUI: 0, other: 0 };
-  for (const [path, input] of Object.entries(Object.values(result.metafile.outputs)[0]!.inputs)) {
-    const file = path.replaceAll('\\', '/');
-    if (file.includes('@base-ui/')) parts.baseUI += input.bytesInOutput;
-    else if (file.includes('packages/ui/')) parts.envUI += input.bytesInOutput;
-    else parts.other += input.bytesInOutput;
-  }
-  return { ...sizes(output.contents), parts };
+  for (const path of initial)
+    for (const [input, { bytesInOutput }] of Object.entries(outputs[path]!.inputs)) {
+      const file = input.replaceAll('\\', '/');
+      if (file.includes('@base-ui/')) parts.baseUI += bytesInOutput;
+      else if (file.includes('packages/ui/')) parts.envUI += bytesInOutput;
+      else parts.other += bytesInOutput;
+    }
+  const lazyBytes = contents(lazy);
+  return {
+    ...sizes(contents([...initial])),
+    parts,
+    lazy: {
+      chunks: lazy.length,
+      minified: lazyBytes.length,
+      gzip: lazy.length > 0 ? gzipSync(lazyBytes, { level: 9 }).length : 0,
+    },
+  };
 }
 
 if (!process.argv.includes('--no-build'))

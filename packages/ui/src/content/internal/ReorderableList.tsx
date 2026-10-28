@@ -24,7 +24,7 @@ import { useHydrated } from '../../internal/useHydrated.js';
 import { useReorder, type Announcement, type ReorderHandlers } from './useReorder.js';
 import type { RootProps } from '../List.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
-import { isDeveloping, reportOnce } from '../../internal/developmentReport.js';
+import { reportInDevelopment } from '../../internal/developmentReport.js';
 
 /**
  * The client side of List, as ActionElement is Button's: List.Root and List.Item stay server
@@ -75,6 +75,18 @@ const labelOf = (row: HTMLElement) =>
   row.textContent?.trim() ??
   '';
 
+/** What a reorderable list says while developing when rows of it have no drag handle. */
+function rowsWithoutHandle(list: HTMLUListElement | null) {
+  const bare = Array.from(list?.children ?? []).filter(
+    (row) => row.tagName === 'LI' && !row.querySelector('.env-list-item-handle'),
+  ).length;
+  return (
+    bare > 0 &&
+    `${bare} row${bare === 1 ? '' : 's'} of a List.Root with onReorder ${bare === 1 ? 'has' : 'have'} no drag handle. ` +
+      'Render each row as a List.Item, and have a row component pass the props it does not use on to its List.Item.'
+  );
+}
+
 /**
  * List.Root with onReorder: the list, Alt+↑ and Alt+↓ on its rows' targets, the handles'
  * instructions and the announcements.
@@ -98,15 +110,8 @@ export function ReorderableList({
   // A row without a handle, such as one of a component that doesn't pass List.Root's props on to
   // its List.Item, can't be moved: say so while developing. Each list says so once.
   useLayoutEffect(() => {
-    const list = element.current;
-    if (!isDeveloping() || !list) return;
-    const bare = Array.from(list.children).filter(
-      (row) => row.tagName === 'LI' && !row.querySelector('.env-list-item-handle'),
-    ).length;
-    if (bare === 0) return;
-    reportOnce(
-      `${bare} row${bare === 1 ? '' : 's'} of a List.Root with onReorder ${bare === 1 ? 'has' : 'have'} no drag handle. ` +
-        'Render each row as a List.Item, and have a row component pass the props it does not use on to its List.Item.',
+    reportInDevelopment(
+      () => process.env.NODE_ENV !== 'production' && rowsWithoutHandle(element.current),
       { key: instructions },
     );
   });

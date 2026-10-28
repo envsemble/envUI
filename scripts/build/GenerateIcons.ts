@@ -68,6 +68,15 @@ function renderPaths(paths) {
     : `<>${paths.map((path) => `<path d=${JSON.stringify(path)} />`).join('')}</>`;
 }
 
+/** The start two single paths share, when it is long enough to be worth writing once. */
+function shareableStart(unfilled, filled) {
+  if (unfilled.length !== 1 || filled.length !== 1) return '';
+  const [a, b] = [unfilled[0], filled[0]];
+  let length = 0;
+  while (length < a.length && length < b.length && a[length] === b[length]) length += 1;
+  return length >= 64 ? a.slice(0, length) : '';
+}
+
 function renderIconModule(name, unfilled, filled) {
   const identicalPaths = JSON.stringify(unfilled.paths) === JSON.stringify(filled.paths);
   const identicalViewBox = unfilled.viewBox === filled.viewBox;
@@ -82,14 +91,24 @@ function renderIconModule(name, unfilled, filled) {
   const viewBox = identicalViewBox
     ? JSON.stringify(unfilled.viewBox)
     : `{filled ? ${JSON.stringify(filled.viewBox)} : ${JSON.stringify(unfilled.viewBox)}}`;
+  // Most symbols draw their two styles from one path whose start they share, such as a filled
+  // circle that the outlined style cuts a hole in: the shared start is written once.
+  const sharedStart = identicalPaths ? '' : shareableStart(unfilled.paths, filled.paths);
+  const sharedDeclaration = sharedStart
+    ? `\n/** The path both styles start with. */\nconst start = ${JSON.stringify(sharedStart)};\n`
+    : '';
+  const fromStart = (path) =>
+    path === sharedStart ? 'start' : `start + ${JSON.stringify(path.slice(sharedStart.length))}`;
   const paths = identicalPaths
     ? renderPaths(unfilled.paths)
-    : `{filled ? ${renderPaths(filled.paths)} : ${renderPaths(unfilled.paths)}}`;
+    : sharedStart
+      ? `<path d={filled ? ${fromStart(filled.paths[0])} : ${fromStart(unfilled.paths[0])}} />`
+      : `{filled ? ${renderPaths(filled.paths)} : ${renderPaths(unfilled.paths)}}`;
 
   // An icon that follows the selection's fill reads it from context, so it is a client module for
   // React Server Components; one without a filled variant renders on the server.
   const directive = hasFillVariant ? "'use client';\n\n" : '';
-  return `// Generated from Google Material Symbols (${manifest.upstream.revision}); Apache-2.0.\n// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.\n${directive}import { Icon, type MaterialSymbolProps } from '../Icon.js';\n${fillImport}\nexport function ${name}({ filled: ${fillParameter}, ...props }: MaterialSymbolProps) {\n${fillState}  return <Icon viewBox=${viewBox} {...props}>${paths}</Icon>;\n}\n`;
+  return `// Generated from Google Material Symbols (${manifest.upstream.revision}); Apache-2.0.\n// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.\n${directive}import { Icon, type MaterialSymbolProps } from '../Icon.js';\n${fillImport}${sharedDeclaration}\nexport function ${name}({ filled: ${fillParameter}, ...props }: MaterialSymbolProps) {\n${fillState}  return <Icon viewBox=${viewBox} {...props}>${paths}</Icon>;\n}\n`;
 }
 
 const generatedFiles = new Set(['index.ts', 'Typography.tsx']);

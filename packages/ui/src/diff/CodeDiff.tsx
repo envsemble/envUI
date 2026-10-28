@@ -17,7 +17,7 @@ import {
   diffTintOpacity,
   type CodeContrast,
 } from '../content/internal/codeColors.js';
-import { codeTheme, diffTintColors, type DiffTintColors } from '../content/internal/codeThemes.js';
+import type { DiffTintColors } from '../content/internal/codeThemes.js';
 import { useCodeContrast } from '../content/internal/useCodeContrast.js';
 import { Column } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
@@ -87,6 +87,12 @@ const diffThemeNames = (contrast: CodeContrast) => ({
   light: codeThemeName('light', contrast),
   dark: codeThemeName('dark', contrast),
 });
+/**
+ * The code themes and what is made of them, loaded with the highlighter rather than with the page:
+ * the Shiki themes they start from are large, and a diff waits for its highlighter anyway.
+ */
+const loadCodeThemes = () => import('../content/internal/codeThemes.js');
+
 let themesRegistered = false;
 /** Registers the code themes with Diffs once, under their names; each is built when Diffs asks. */
 function registerThemes() {
@@ -96,7 +102,7 @@ function registerThemes() {
     for (const scheme of ['light', 'dark'] as const)
       registerCustomTheme(
         codeThemeName(scheme, contrast),
-        async () => codeTheme(scheme, contrast) as never,
+        async () => (await loadCodeThemes()).codeTheme(scheme, contrast) as never,
       );
 }
 
@@ -168,7 +174,10 @@ export function CodeDiff({
 
   useEffect(() => {
     let active = true;
-    Promise.all([prepareHighlighter(lang, contrast), diffTintColors(theme, contrast)]).then(
+    Promise.all([
+      prepareHighlighter(lang, contrast),
+      loadCodeThemes().then(({ diffTintColors }) => diffTintColors(theme, contrast)),
+    ]).then(
       ([, colors]) => {
         if (active) setShown({ lang, theme, contrast, css: diffCSS(colors) });
       },

@@ -31,7 +31,7 @@ import {
 } from '../internal/TooltipPopup.js';
 import { accessibleName } from '../internal/accessibleName.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
-import { isDeveloping, reportOnce } from '../internal/developmentReport.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
 
 /** The props of the control a Tooltip describes, as far as the tooltip reads them. */
 interface TriggerProps {
@@ -155,11 +155,6 @@ const sameStandIn = (a: StandIn, b: StandIn) =>
 const isExpanded = (props: TriggerProps) =>
   props['aria-expanded'] === true || props['aria-expanded'] === 'true';
 
-/** Says what a Tooltip can't do while developing, once per message, as React reports a prop. */
-function report(message: string) {
-  if (isDeveloping()) reportOnce(message);
-}
-
 /** A component's name for a report. */
 function typeName(type: unknown): string {
   if (typeof type === 'string') return type;
@@ -212,9 +207,12 @@ export function Tooltip(props: TooltipProps) {
   const hoverCardTrigger = useContext(HoverCardTriggerContext);
   // Text, a Fragment or a list can't take the trigger's props and ref.
   if (!isValidElement(children) || children.type === Fragment) {
-    report(
-      'A Tooltip wraps one element that takes props and a ref, such as a Button or an IconButton; ' +
-        `it got ${isValidElement(children) ? 'a Fragment' : typeof children}, and shows no tooltip.`,
+    // Says what a Tooltip can't do while developing, once per message, as React reports a prop.
+    reportInDevelopment(
+      () =>
+        process.env.NODE_ENV !== 'production' &&
+        'A Tooltip wraps one element that takes props and a ref, such as a Button or an IconButton; ' +
+          `it got ${isValidElement(children) ? 'a Fragment' : typeof children}, and shows no tooltip.`,
     );
     return <>{children as ReactNode}</>;
   }
@@ -228,9 +226,11 @@ export function Tooltip(props: TooltipProps) {
   // A HoverCard's trigger opens the card on the same hover and focus, which the tooltip would
   // cover.
   if (hoverCardTrigger) {
-    report(
-      "A Tooltip around a HoverCard, or as a HoverCard's trigger, shows no tooltip: the card opens " +
-        'on the same hover and focus. Put what the tooltip says in the card.',
+    reportInDevelopment(
+      () =>
+        process.env.NODE_ENV !== 'production' &&
+        "A Tooltip around a HoverCard, or as a HoverCard's trigger, shows no tooltip: the card " +
+          'opens on the same hover and focus. Put what the tooltip says in the card.',
     );
     return (
       <HoverCardTriggerContext value={false}>
@@ -360,9 +360,11 @@ function TooltipTrigger({
   const childType = children.type;
   useLayoutEffect(() => {
     if (!isDisabled && !triggerRef.current)
-      report(
-        `A Tooltip's child, ${typeName(childType)}, doesn't pass the ref on to its element, so ` +
-          'no tooltip opens: have it take ref as a prop and give it to its element.',
+      reportInDevelopment(
+        () =>
+          process.env.NODE_ENV !== 'production' &&
+          `A Tooltip's child, ${typeName(childType)}, doesn't pass the ref on to its element, so ` +
+            'no tooltip opens: have it take ref as a prop and give it to its element.',
       );
   }, [isDisabled, childType]);
   const standsIn = isDisabled && stand.name !== undefined && stand.role !== undefined;

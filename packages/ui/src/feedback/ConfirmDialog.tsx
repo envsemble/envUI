@@ -29,7 +29,7 @@ import {
   DialogSurface,
   OverlayTheme,
 } from './internal/DialogParts.js';
-import { isDeveloping, reportOnce } from '../internal/developmentReport.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
 
 export interface ConfirmDialogProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'onError'> {
@@ -108,10 +108,12 @@ const report = (failure: unknown) => {
  * dialog's form: HTML has no nested forms, so its fields would submit the dialog's. Once a page.
  */
 function reportNestedForm(form: HTMLFormElement | null) {
-  if (!isDeveloping() || form?.querySelector('form') == null) return;
-  reportOnce(
-    "a ConfirmDialog's children hold a <form>, which nests inside the dialog's own form. " +
-      'ConfirmDialog confirms one action, with at most one field; use Dialog for a form of your own.',
+  reportInDevelopment(
+    () =>
+      process.env.NODE_ENV !== 'production' &&
+      form?.querySelector('form') != null &&
+      "a ConfirmDialog's children hold a <form>, which nests inside the dialog's own form. " +
+        'ConfirmDialog confirms one action, with at most one field; use Dialog for a form of your own.',
   );
 }
 

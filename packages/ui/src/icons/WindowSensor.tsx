@@ -5,7 +5,10 @@
 import { Icon, type MaterialSymbolProps } from '../Icon.js';
 import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
 
+/** The path both styles start with. */
+const start = "M880-600q-17 0-28.5-11.5T840-640v-160q0-17 11.5-28.5T880-840q17 0 28.5 11.5T920-800v160q0 17-11.5 28.5T880-600ZM120-200v-560q0-33 23.5-56.5T200-840h480q33 0 56.5 23.5T760-760v560q0 33-23.5 56.5T680-120H200q-33 0-56.5-23.5T120-200Zm";
+
 export function WindowSensor({ filled: requestedFill, ...props }: MaterialSymbolProps) {
   const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M880-600q-17 0-28.5-11.5T840-640v-160q0-17 11.5-28.5T880-840q17 0 28.5 11.5T920-800v160q0 17-11.5 28.5T880-600ZM120-200v-560q0-33 23.5-56.5T200-840h480q33 0 56.5 23.5T760-760v560q0 33-23.5 56.5T680-120H200q-33 0-56.5-23.5T120-200Zm120-320h160v-20q0-8 6-14t14-6h40q8 0 14 6t6 14v20h160v-200H240v200Zm0 280h400v-200H240v200Zm-40 40h480v-560H200v560Z" /> : <path d="M880-600q-17 0-28.5-11.5T840-640v-160q0-17 11.5-28.5T880-840q17 0 28.5 11.5T920-800v160q0 17-11.5 28.5T880-600ZM120-200v-560q0-33 23.5-56.5T200-840h480q33 0 56.5 23.5T760-760v560q0 33-23.5 56.5T680-120H200q-33 0-56.5-23.5T120-200Zm80-320h200v-20q0-8 6-14t14-6h40q8 0 14 6t6 14v20h200v-240H200v240Zm0 320h480v-240H200v240Zm0 0h480-480Z" />}</Icon>;
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "120-320h160v-20q0-8 6-14t14-6h40q8 0 14 6t6 14v20h160v-200H240v200Zm0 280h400v-200H240v200Zm-40 40h480v-560H200v560Z" : start + "80-320h200v-20q0-8 6-14t14-6h40q8 0 14 6t6 14v20h200v-240H200v240Zm0 320h480v-240H200v240Zm0 0h480-480Z"} /></Icon>;
 }

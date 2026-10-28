@@ -5,7 +5,10 @@
 import { Icon, type MaterialSymbolProps } from '../Icon.js';
 import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
 
+/** The path both styles start with. */
+const start = "M360-200v-80H227q-20 0-28-18t5-32l246-276q12-14 30-14t30 14l246 276q13 14 5 32t-28 18H600v80q0 17-11.5 28.5T560-160H400q-17 0-28.5-11.5T360-200Zm";
+
 export function ArrowShapeUpStack({ filled: requestedFill, ...props }: MaterialSymbolProps) {
   const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M360-200v-80H227q-20 0-28-18t5-32l246-276q12-14 30-14t30 14l246 276q13 14 5 32t-28 18H600v80q0 17-11.5 28.5T560-160H400q-17 0-28.5-11.5T360-200Zm120-520L279-493q-6 6-14 9.5t-16 3.5q-26 0-36.5-23t6.5-43l231-260q12-14 30-14t30 14l231 260q17 20 6.5 43T711-480q-8 0-16-3t-14-10L480-720Z" /> : <path d="M360-200v-80H227q-20 0-28-18t5-32l246-276q12-14 30-14t30 14l246 276q13 14 5 32t-28 18H600v80q0 17-11.5 28.5T560-160H400q-17 0-28.5-11.5T360-200Zm80-40h80v-80q0-17 11.5-28.5T560-360h62L480-520 338-360h62q17 0 28.5 11.5T440-320v80Zm40-480L279-493q-6 6-14 9.5t-16 3.5q-26 0-36.5-23t6.5-43l231-260q12-14 30-14t30 14l231 260q17 20 6.5 43T711-480q-8 0-16-3t-14-10L480-720Zm0 360Z" />}</Icon>;
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "120-520L279-493q-6 6-14 9.5t-16 3.5q-26 0-36.5-23t6.5-43l231-260q12-14 30-14t30 14l231 260q17 20 6.5 43T711-480q-8 0-16-3t-14-10L480-720Z" : start + "80-40h80v-80q0-17 11.5-28.5T560-360h62L480-520 338-360h62q17 0 28.5 11.5T440-320v80Zm40-480L279-493q-6 6-14 9.5t-16 3.5q-26 0-36.5-23t6.5-43l231-260q12-14 30-14t30 14l231 260q17 20 6.5 43T711-480q-8 0-16-3t-14-10L480-720Zm0 360Z"} /></Icon>;
 }

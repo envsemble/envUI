@@ -5,7 +5,10 @@
 import { Icon, type MaterialSymbolProps } from '../Icon.js';
 import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
 
+/** The path both styles start with. */
+const start = "M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm";
+
 export function Subheader({ filled: requestedFill, ...props }: MaterialSymbolProps) {
   const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm100-440h240q25 0 42.5-17.5T600-620q0-25-17.5-42.5T540-680H300q-25 0-42.5 17.5T240-620q0 25 17.5 42.5T300-560Z" /> : <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Zm100 200h240q25 0 42.5-17.5T600-620q0-25-17.5-42.5T540-680H300q-25 0-42.5 17.5T240-620q0 25 17.5 42.5T300-560Z" />}</Icon>;
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "100-440h240q25 0 42.5-17.5T600-620q0-25-17.5-42.5T540-680H300q-25 0-42.5 17.5T240-620q0 25 17.5 42.5T300-560Z" : start + "0-80h560v-560H200v560Zm0-560v560-560Zm100 200h240q25 0 42.5-17.5T600-620q0-25-17.5-42.5T540-680H300q-25 0-42.5 17.5T240-620q0 25 17.5 42.5T300-560Z"} /></Icon>;
 }

@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { common } from './messages/common.js';
-import { retainSkeletonText } from './internal/skeletonText.js';
 
 const SkeletonContext = createContext(false);
 
@@ -42,8 +41,17 @@ export function SkeletonScope({ skeleton, children }: { skeleton: boolean; child
   useEffect(() => {
     if (!skeleton) return;
     alignPulses();
-    // Text that is there draws as rounded, shimmering bars, as missing text does.
-    return retainSkeletonText();
+    // Text that is there draws as rounded, shimmering bars, as missing text does. The script that
+    // measures it loads only once a skeleton shows; until it runs, CSS draws the text's fallback.
+    let release: (() => void) | undefined;
+    let left = false;
+    void import('./internal/skeletonText.js').then(({ retainSkeletonText }) => {
+      if (!left) release = retainSkeletonText();
+    });
+    return () => {
+      left = true;
+      release?.();
+    };
   }, [skeleton]);
   return <SkeletonContext value={active}>{children}</SkeletonContext>;
 }
