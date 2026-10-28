@@ -100,7 +100,7 @@ An icon, a heading, a sentence and the one button that starts a feature.
 
 ### Backgrounds
 
-```tsx figure=Backgrounds
+```tsx figure=Backgrounds stage=shaded
 
 ```
 
