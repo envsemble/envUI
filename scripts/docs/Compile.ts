@@ -126,12 +126,21 @@ export function exampleSource(page, name, directory = examplesDirectory) {
 /**
  * The frontmatter of a page as it ships: as written, with each example once, by its role and
  * caption, under a comment that says where its file is; how the catalogue frames an overview is
- * left out. A foundation's figures are the catalogue's, with no file, and its legends say what
- * they show, so they are left out.
+ * left out. A foundation's figures are the catalogue's, and its legends say what they show, so
+ * only those with an example file, their code, are listed.
  */
 function shippedYaml(document) {
   const foundation = pageKindOf(document.path) === 'foundation';
-  const entries = foundation ? [] : Object.entries(examplesOf(document.frontmatter));
+  const coded = new Set(
+    (document.sections ?? []).flatMap((section) =>
+      section.blocks.flatMap((block) =>
+        block.kind === 'figure' && block.code ? [block.name] : [],
+      ),
+    ),
+  );
+  const entries = Object.entries(examplesOf(document.frontmatter)).filter(
+    ([name]) => !foundation || coded.has(name),
+  );
   const lines = entries.map(
     ([name, { role, caption }]) =>
       `  ${name}: ${caption ? `{ role: ${role}, caption: ${JSON.stringify(caption)} }` : role}`,
@@ -178,7 +187,9 @@ function compilePage(document, { props, examples, title }) {
         const fence = fenceFor(source);
         text += `${fence}tsx source=${block.name}\n${source}${fence}\n`;
       } else if (block.kind === 'figure') {
+        // A foundation's figure: its example file, where it has one, then its legend.
         flush();
+        if (block.code) text += `\nExample: ${block.name}.\n\n`;
         if (block.legend) text += `\n${legendLines(block.legend, true)}\n\n`;
       } else if (block.kind === 'example' && block.role === 'anatomy') {
         flush();
@@ -266,7 +277,7 @@ export function compileDocumentation(
   for (const document of documents)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
-        if (block.kind === 'example')
+        if (block.kind === 'example' || (block.kind === 'figure' && block.code))
           files.set(
             `examples/${document.id}/${block.name}.tsx`,
             exampleSource(document.id, block.name, examples),

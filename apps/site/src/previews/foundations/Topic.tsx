@@ -1,6 +1,7 @@
-import type { ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import { Column, Text } from '@envsemble/envui';
 import { InteractiveMark } from '../../template/InteractiveMark';
+import { ExampleCode } from '../../template/LiveExample';
 import { MotionStage } from '../MotionStage';
 
 /**
@@ -80,8 +81,15 @@ export function Block({
 }
 
 /**
+ * The example file whose source a foundation's figure shows as its code: the file of its name in
+ * apps/site/src/examples/<page>/, which the page that places the figure provides where it has one.
+ */
+export const FigureCode = createContext<{ page: string; name: string } | null>(null);
+
+/**
  * A figure that shows envUI at work: its content on the recessed canvas, marked when something in
- * it can be used, with its legend and caption below. `label` names it for assistive technology.
+ * it can be used, with its legend and caption below, and below them its code in a Code disclosure
+ * where it has an example file (FigureCode). `label` names it for assistive technology.
  * With `motion`, what its pause button names, it is an animated figure, as a component page's
  * animated specimen is: its content plays on a MotionStage (usePointer, useTimeline, WidthSweep),
  * a picture with a pause button.
@@ -101,6 +109,7 @@ export function Figure({
   className?: string;
   motion?: string;
 }) {
+  const code = useContext(FigureCode);
   return (
     <figure className="site-topic-figure" aria-label={label}>
       {motion ? (
@@ -122,6 +131,7 @@ export function Figure({
           {legend}
         </figcaption>
       )}
+      {code && <ExampleCode page={code.page} name={code.name} />}
     </figure>
   );
 }
