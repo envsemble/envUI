@@ -17,12 +17,12 @@ import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { PageFooter } from './layout/PageFooter';
 import { Overview } from './pages/Overview';
-import { FoundationsPage } from './pages/foundations/FoundationsPage';
 import {
   ComponentPage,
   ComponentsPage,
   PatternsPage,
   FoundationPage,
+  FoundationsPage,
   PatternPage,
 } from './pages/CataloguePages';
 import {

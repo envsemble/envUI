@@ -451,6 +451,30 @@ test('the Icons page credits Material Symbols with their license, and the footer
   await expect(page.locator('.site-footer')).not.toContainText('Material Symbols');
 });
 
+test('the page of all foundations is one sheet, each pane a single link to its foundation', async ({
+  page,
+}) => {
+  await page.goto(`${siteDevUrl}/foundations`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Foundations');
+  const panes = page.locator('.catalogue-foundation-sheet').getByRole('link');
+  const foundations = pagesOf('catalogue').filter((entry) => entry.kind === 'foundation');
+  await expect(panes).toHaveCount(foundations.length);
+  for (const foundation of foundations) {
+    // One link a pane, named by its heading, with nothing else to use inside it.
+    const pane = panes.filter({ has: page.getByRole('heading', { name: foundation.title }) });
+    await expect(pane).toHaveAccessibleName(foundation.title);
+    await expect(pane).toHaveAttribute('href', `/${foundation.path}`);
+    await expect(pane.locator('a, button, input, select, textarea, [tabindex]')).toHaveCount(0);
+  }
+  // The whole pane leads there, its picture as well as its name.
+  const icons = panes.filter({ has: page.getByRole('heading', { name: 'Icons' }) });
+  await expect(icons).toHaveCSS('cursor', 'pointer');
+  await icons.scrollIntoViewIfNeeded();
+  const box = (await icons.boundingBox())!;
+  await page.mouse.click(box.x + 8, box.y + box.height - 8);
+  await expect(page).toHaveURL(`${siteDevUrl}/foundations/icons`);
+});
+
 test('a Related tile of a page without an example shows its specimen', async ({ page }) => {
   // Icon is documented on the Icons foundation's page, which has no example: its tile links there
   // and shows a few of the icons, fitted to its stage as an example is.

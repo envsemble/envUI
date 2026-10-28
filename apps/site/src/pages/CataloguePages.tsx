@@ -6,6 +6,7 @@ import { OtherPartButton } from '../navigation/OtherPart';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import type { Reference } from '../Reference';
 import { Catalogue } from './Catalogue';
+import { FoundationCatalogue } from './FoundationCatalogue';
 import { PatternCatalogue } from './PatternCatalogue';
 import { Documentation } from './Documentation';
 
@@ -96,6 +97,23 @@ export function FoundationPage({ page }: { page: RoutePage }) {
           <Documentation markdown={iconsCredit} path={reference.path} />
         </Column>
       )}
+    </>
+  );
+}
+
+/** Every foundation at a glance, each a way to its page. */
+export function FoundationsPage({ page }: { page: RoutePage }) {
+  return (
+    <>
+      <PageHeader
+        title={page.title}
+        trail={catalogueTrail(page)}
+        description={page.summary}
+        subject="foundations"
+      />
+      <Column gap={7} className="site-article catalogue-overview">
+        <FoundationCatalogue />
+      </Column>
     </>
   );
 }

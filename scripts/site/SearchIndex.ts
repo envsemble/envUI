@@ -83,6 +83,12 @@ export const standalonePages: {
     aliases: ['home', 'introduction', 'catalogue'],
   },
   {
+    page: 'foundations',
+    title: 'Foundations',
+    area: 'catalogue',
+    aliases: ['all foundations', 'foundation list', 'design foundations', 'system at a glance'],
+  },
+  {
     page: 'components',
     title: 'Components',
     area: 'catalogue',

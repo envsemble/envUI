@@ -37,11 +37,24 @@ const sheet: CSSProperties = {
 /** A point within the drawing's box, each coordinate a length or a fraction of the box, such as 100%. */
 type Point = readonly [x: string, y: string];
 
-/** The drawing of a box's `lines`, each from one point to the next, or of its edges. */
-function drawing(lines: readonly (readonly [Point, Point])[] | 'edges'): ReactNode {
+/**
+ * The drawing of a box's `lines`, each from one point to the next, or of its edges, their corners
+ * rounded by `radius`, a length, where the box stands for something round, such as a button.
+ */
+function drawing(
+  lines: readonly (readonly [Point, Point])[] | 'edges',
+  radius?: string,
+): ReactNode {
   const shapes =
     lines === 'edges'
-      ? [createElement('rect', { key: 0, width: '100%', height: '100%', style: hairline })]
+      ? [
+          createElement('rect', {
+            key: 0,
+            width: '100%',
+            height: '100%',
+            style: radius ? { ...hairline, rx: radius, ry: radius } : hairline,
+          }),
+        ]
       : lines.map(([[x1, y1], [x2, y2]], index) =>
           createElement('line', { key: index, x1, y1, x2, y2, style: hairline }),
         );
@@ -49,14 +62,22 @@ function drawing(lines: readonly (readonly [Point, Point])[] | 'edges'): ReactNo
 }
 
 /** A layout box's edges, drawn over the positioned box that lays out the content. */
-export const edges = () => drawing('edges');
+export const edges = (radius?: string) => drawing('edges', radius);
 
-/** A piece of content, `width` by `height`, drawn as its outline. */
-export function Item({ width, height }: { width: string; height: string }) {
+/** A piece of content, `width` by `height`, drawn as its outline, its corners rounded by `radius`. */
+export function Item({
+  width,
+  height,
+  radius,
+}: {
+  width: string;
+  height: string;
+  radius?: string;
+}) {
   return createElement(
     'span',
     { style: { position: 'relative', flex: 'none', inlineSize: width, blockSize: height } },
-    edges(),
+    edges(radius),
   );
 }
 

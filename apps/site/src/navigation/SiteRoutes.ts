@@ -486,6 +486,7 @@ export function routeOfDocument(
   if (id === 'overview') return homeRoute;
   const own: Record<string, string> = {
     'get-started': 'docs/setup',
+    foundations: 'foundations',
     components: 'components',
     patterns: 'patterns',
     // Dev mode's page in the catalogue, folded into its guide in the Docs.
