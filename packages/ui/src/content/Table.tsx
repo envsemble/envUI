@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  memo,
   useCallback,
   useContext,
   useId,
@@ -561,7 +562,9 @@ const HeadPart = /* @__PURE__ */ withDisplayName(Head, 'Table.Head');
 const BodyPart = /* @__PURE__ */ withDisplayName(Body, 'Table.Body');
 const RowPart = /* @__PURE__ */ withDisplayName(Row, 'Table.Row');
 const HeaderCellPart = /* @__PURE__ */ withDisplayName(HeaderCell, 'Table.HeaderCell');
-const CellPart = /* @__PURE__ */ withDisplayName(Cell, 'Table.Cell');
+// A cell whose props are unchanged, such as one holding text, renders nothing again when its row
+// does: an application that renders its rows anew changes only the cells whose values changed.
+const CellPart = /* @__PURE__ */ withDisplayName(/* @__PURE__ */ memo(Cell), 'Table.Cell');
 export {
   RootPart as Root,
   HeadPart as Head,

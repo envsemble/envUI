@@ -4,7 +4,10 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useInsertionEffect,
+  useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   type ReactNode,
@@ -157,6 +160,9 @@ function readPageContrast(): Exclude<ThemeContrast, 'system'> | undefined {
 
 const onServer = () => undefined;
 
+/** On the root while a provider switches the page's colors: nothing transitions (Theme.css). */
+const switchingAttribute = 'data-env-theme-switching';
+
 function readSystemTheme(): ThemeValue {
   return typeof window !== 'undefined' && window.matchMedia?.(systemDarkQuery).matches
     ? 'dark'
@@ -218,8 +224,9 @@ export function ThemePreferenceProvider({
     return () => window.removeEventListener('storage', onStorage);
   }, [storageKey, defaultPreference]);
 
-  // One provider applies to the document; a second would write over the first's root theme.
-  useEffect(() => {
+  // One provider applies to the document; a second would write over the first's root theme. A
+  // layout effect, so it registers before the provider writes on the root below.
+  useLayoutEffect(() => {
     if (!applyToDocument) return;
     try {
       if (process.env.NODE_ENV !== 'production' && documentProviders.size > 0)
@@ -235,12 +242,14 @@ export function ThemePreferenceProvider({
     return () => {
       documentProviders.delete(provider);
       const root = document.documentElement;
+      root.removeAttribute(switchingAttribute);
       releaseContrast(root);
       releaseScale(root);
     };
   }, [applyToDocument, provider]);
 
-  useEffect(() => {
+  // Before the paint, so the root and the boundary take a theme in the same frame.
+  useLayoutEffect(() => {
     if (!applyToDocument) return;
     const root = document.documentElement;
     root.classList.add('env-theme');
@@ -271,6 +280,34 @@ export function ThemePreferenceProvider({
     ))
       browserTheme.content = canvas;
   }, [applyToDocument, theme, appliedContrast, ownScale, provider]);
+
+  // The page's new colors show at once rather than easing, each restyled every frame until done.
+  // Before the new theme is styled, the root stops transitions; once it is, they resume, and as
+  // the colors no longer change, none start. A provider that doesn't apply to the document, such as
+  // one in a figure, leaves its transitions to ease.
+  const colors = `${theme} ${contrast} ${appliedContrast}`;
+  const shownColors = useRef<string | undefined>(undefined);
+  useInsertionEffect(() => {
+    if (applyToDocument && shownColors.current !== undefined && shownColors.current !== colors)
+      document.documentElement.setAttribute(switchingAttribute, '');
+  }, [applyToDocument, colors]);
+  useLayoutEffect(() => {
+    shownColors.current = colors;
+    const root = document.documentElement;
+    if (!root.hasAttribute(switchingAttribute)) return;
+    // Reading a computed style brings the page's styles up to date, with the new colors.
+    void getComputedStyle(root).transitionProperty;
+    // After the frame that shows them, so that frame's style isn't worked out twice.
+    let timer = 0;
+    const frame = requestAnimationFrame(() => {
+      timer = window.setTimeout(() => root.removeAttribute(switchingAttribute));
+    });
+    // A switch before then removes it in its own time.
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+    };
+  }, [colors]);
 
   const setPreference = useCallback(
     (next: ThemePreference) => {

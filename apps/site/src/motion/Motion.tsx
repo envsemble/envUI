@@ -11,7 +11,7 @@ import {
   type RefObject,
 } from 'react';
 import { PortalContainer } from '@envsemble/envui';
-import { isVirtual, VirtualPointer } from './VirtualPointer';
+import { isVirtual, VirtualPointer, type Aimed } from './VirtualPointer';
 import {
   ease,
   firstWait,
@@ -19,6 +19,7 @@ import {
   positionAt,
   presentAt,
   waitPace,
+  type AimPoints,
   type PointerStep,
 } from './PointerPlan';
 
@@ -225,6 +226,59 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
   return playing || rest === 'hold' ? step : 0;
 }
 
+/** A playing pointer's frame: what it reads of the layout, then, in the next frame, what it does. */
+interface PointerFrame {
+  read: (now: number) => void;
+  write: () => void;
+}
+
+/**
+ * The frames of the pointers playing now, run together. Each moves in an animation frame, and
+ * reads where it goes next once the page has rendered that frame, when its layout is up to date:
+ * so no pointer's read lays the page out again, whatever moved in the frame, a pointer's events or
+ * a transition. The pointer acts on a layout a frame old, which no one sees.
+ */
+const pointerFrames = new Set<PointerFrame>();
+let pointerFramesRun = false;
+let afterFrame: MessagePort | null = null;
+
+function writePointerFrames() {
+  if (pointerFrames.size === 0) {
+    pointerFramesRun = false;
+    return;
+  }
+  // Posted first, so the reads come before any rendering that the moves below schedule.
+  afterFrame!.postMessage(undefined);
+  const frames = [...pointerFrames];
+  // A pointer whose preview stopped on another's move stops here too.
+  for (const frame of frames) if (pointerFrames.has(frame)) frame.write();
+}
+
+function readPointerFrames() {
+  if (pointerFrames.size === 0) {
+    pointerFramesRun = false;
+    return;
+  }
+  const now = performance.now();
+  for (const frame of pointerFrames) frame.read(now);
+  requestAnimationFrame(writePointerFrames);
+}
+
+/** Plays a pointer's frame with the others from the next frame on; returns its stop. */
+function joinPointerFrames(frame: PointerFrame) {
+  pointerFrames.add(frame);
+  if (!afterFrame) {
+    const channel = new MessageChannel();
+    channel.port1.onmessage = readPointerFrames;
+    afterFrame = channel.port2;
+  }
+  if (!pointerFramesRun) {
+    pointerFramesRun = true;
+    requestAnimationFrame(writePointerFrames);
+  }
+  return () => void pointerFrames.delete(frame);
+}
+
 /**
  * Plays a script of what the pointer no one sees does over the preview's live component, in a loop
  * while the preview plays: it hovers, presses, drags and releases it by the same events a mouse
@@ -283,14 +337,24 @@ export function usePointer(
     const scope = root;
     const current = (pointer.current ??= new VirtualPointer(scope));
     let last = performance.now();
-    let frame = 0;
+    /** The time the next frame moves the pointer to, and where that is, read after the last one. */
+    let next: number | null = null;
+    let aimed: { time: number; at: { x: number; y: number }; target: Aimed | null } | null = null;
+    /**
+     * Where the aims were when read. Something happening in the frame, such as a press, moves the
+     * pointer by them still: what it changed shows in the next frame's.
+     */
+    let known: AimPoints = new Map();
+    /** Whether something happened in this frame, which may have changed what the pointer is over. */
+    let acted = false;
     const together = clockName ? joinClock(clockName, 0) : null;
     /** Moves the pointer on to a time of the plan, sending what happens on the way. */
     const advance = (to: number, still = false) => {
       const { done } = clock.current;
       for (const happening of plan.happenings) {
         if (happening.time <= done || happening.time > to) continue;
-        const at = positionAt(scope, plan, happening.time);
+        const at = positionAt(scope, plan, happening.time, known);
+        acted = true;
         if (at && presentAt(plan, happening.time - 0.001)) current.moveTo(at);
         if (happening.kind === 'cue') {
           cueTo.current?.(happening.cue!);
@@ -331,8 +395,10 @@ export function usePointer(
       if (still) {
         // It stays where it is, whatever moves under it.
       } else if (presentAt(plan, to)) {
-        const at = positionAt(scope, plan, to);
-        if (at) current.moveTo(at);
+        const ready = aimed?.time === to ? aimed : null;
+        const at = ready ? ready.at : positionAt(scope, plan, to, known);
+        // What is under it, read with the aims, unless something happened since.
+        if (at) current.moveTo(at, acted ? null : ready?.target);
       } else if (current.present) current.leave();
       // The wheel turns where the pointer is now, eased in and out, as a hand's flick.
       for (const wheel of plan.wheels) {
@@ -344,10 +410,32 @@ export function usePointer(
       }
       clock.current.done = to;
     };
-    const tick = (now: number) => {
-      const state = clock.current;
-      const next = together ? together.time() % plan.length : state.time + (now - last);
+    /** Reads where the pointer goes in this frame: the time it moves to, and what is there. */
+    const read = (now: number) => {
+      next = together ? together.time() % plan.length : clock.current.time + (now - last);
       last = now;
+      aimed = null;
+      known = new Map();
+      const time = next >= plan.length ? next % plan.length : next;
+      // Where what happens on the way to it happens, through the end of the loop where it ends.
+      const { done, time: from } = clock.current;
+      const loops = next >= plan.length || next < from;
+      for (const happening of plan.happenings) {
+        const due = loops
+          ? happening.time > done || happening.time <= time
+          : happening.time > done && happening.time <= time;
+        if (due) positionAt(scope, plan, happening.time, known);
+      }
+      if (!presentAt(plan, time)) return;
+      const at = positionAt(scope, plan, time, known);
+      if (at) aimed = { time, at, target: current.aim(at) };
+    };
+    const write = () => {
+      const to = next;
+      if (to === null) return;
+      next = null;
+      const state = clock.current;
+      acted = false;
       // While another preview's pointer holds its button down, this one waits: a page has one
       // mouse, and a move without a button, on the document, would end the other's drag. A
       // script of keys alone, which never moves the pointer, goes on, and so does one where it
@@ -356,33 +444,27 @@ export function usePointer(
       let still = false;
       if (plan.moves.length > 0 && !current.resume()) {
         const quiet =
-          next < plan.length &&
-          !plan.moves.some((move) => move.start <= next && move.end >= state.time) &&
-          !plan.happenings.some(
-            (happening) => happening.time > state.time && happening.time <= next,
-          );
-        if (!quiet) {
-          frame = requestAnimationFrame(tick);
-          return;
-        }
+          to < plan.length &&
+          !plan.moves.some((move) => move.start <= to && move.end >= state.time) &&
+          !plan.happenings.some((happening) => happening.time > state.time && happening.time <= to);
+        if (!quiet) return;
         still = true;
       }
-      if (together && next < state.time) {
+      if (together && to < state.time) {
         advance(plan.length);
         state.done = -1;
       }
-      state.time = next;
+      state.time = to;
       if (state.time >= plan.length) {
         advance(plan.length);
         state.time %= plan.length;
         state.done = -1;
       }
       advance(state.time, still);
-      frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(tick);
+    const stop = joinPointerFrames({ read, write });
     return () => {
-      cancelAnimationFrame(frame);
+      stop();
       together?.leave();
       current.suspend();
     };

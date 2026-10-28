@@ -208,8 +208,21 @@ export function planOf(script: readonly PointerStep[]): Plan {
 /** Eases a move in and out, as a hand does. */
 export const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
+/**
+ * Where aims are in the viewport, as read once in a frame: a pointer reads them before it acts,
+ * and finds them here again until it does, rather than reading the layout its own moves changed.
+ */
+export type AimPoints = Map<Aim, { x: number; y: number } | null>;
+
 /** Where an aim is in the viewport now, or nothing where its element isn't shown. */
-function pointOf(scope: Element, aim: Aim) {
+function pointOf(scope: Element, aim: Aim, known?: AimPoints) {
+  if (known?.has(aim)) return known.get(aim)!;
+  const point = readPoint(scope, aim);
+  known?.set(aim, point);
+  return point;
+}
+
+function readPoint(scope: Element, aim: Aim) {
   const element = scope.querySelector(aim.selector);
   if (!element) return null;
   if (aim.text !== undefined) return textPoint(element, aim.text, aim.x, aim.y);
@@ -230,13 +243,16 @@ export function presentAt(plan: Plan, time: number) {
   return entered >= 0 && entered > left;
 }
 
-/** Where the pointer is at a time: along its move, or where its last move ended. */
-export function positionAt(scope: Element, plan: Plan, time: number) {
+/**
+ * Where the pointer is at a time: along its move, or where its last move ended. `known` holds the
+ * aims read already in this frame.
+ */
+export function positionAt(scope: Element, plan: Plan, time: number, known?: AimPoints) {
   const move = plan.moves.filter((item) => item.start <= time).at(-1);
   if (!move) return null;
-  const to = pointOf(scope, move.to);
+  const to = pointOf(scope, move.to, known);
   if (time >= move.end || !move.from) return to;
-  const from = pointOf(scope, move.from);
+  const from = pointOf(scope, move.from, known);
   if (!from || !to) return to;
   const progress = ease((time - move.start) / (move.end - move.start));
   return { x: from.x + (to.x - from.x) * progress, y: from.y + (to.y - from.y) * progress };
