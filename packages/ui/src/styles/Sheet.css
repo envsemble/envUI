@@ -53,6 +53,15 @@
 .env-sheet-body > * {
   flex-shrink: 0;
 }
+/* A side sheet runs the window's height, its actions at its foot, however little the body holds. */
+.env-sheet-popup:is([data-side='start'], [data-side='end']) > .env-dialog-content {
+  flex-grow: 1;
+}
+.env-sheet-popup:is([data-side='start'], [data-side='end'])
+  > .env-dialog-content
+  > .env-dialog-actions {
+  margin-block-start: auto;
+}
 .env-sheet-body {
   flex: 0 1 auto;
   min-block-size: 0;
