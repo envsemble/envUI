@@ -93,7 +93,7 @@ Each component's module imports its own style sheet, after the base every compon
 - **Without a bundler**, import `@envsemble/envui/styles.css` once, in the client entry: it holds every component's styles. Don't import it as well as the components' own: the styles would load twice.
 - **Your own layers.** envUI's styles load with the first component, wherever the bundler puts it. If the application declares cascade layers, declare the order in a style sheet the client entry imports before any component, so `env` takes its place in it.
 - **In Node**, as when a server renders or tests run without a bundler, the same modules load without their CSS: the package's style sheet imports resolve to an empty module under the `node` condition, and only a bundler, which sets the `module` condition, loads the CSS. Server-rendered pages get their CSS from the client bundle, or from the framework that collects it, as Next.js does.
-- **esbuild** keeps the style sheets of every module the entry reaches, even those its tree-shaking leaves out, so its CSS is about the size of `styles.css`. Vite, Rollup and webpack keep only those of the modules they keep.
+- **What a bundle keeps.** Vite and webpack keep the style sheets of the modules they keep. esbuild, Rollup's CSS plugins and Next.js with Turbopack, where a server component imports from envUI, keep those of every module the import reaches, about all of `styles.css`. Next.js with webpack keeps only what the page uses when `experimental.optimizePackageImports` lists `@envsemble/envui`.
 
 ### Theme preference
 
