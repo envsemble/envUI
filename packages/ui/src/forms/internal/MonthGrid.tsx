@@ -13,7 +13,8 @@ import {
   monthOfDay,
   now,
   toUtcDate,
-} from './CalendarDays.js';
+} from '../../internal/calendarDays.js';
+import { isRightToLeft } from '../../internal/direction.js';
 
 /** The month of the grid that holds its tab stop, where focus goes as the popup opens. */
 export function monthGridActive(root: ParentNode | null | undefined): HTMLElement | null {
@@ -97,7 +98,7 @@ export function MonthGrid({
 
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+    const rtl = isRightToLeft(event.currentTarget);
     const column = (active - first) % columns;
     const moves: Record<string, number> = {
       ArrowLeft: active + (rtl ? 1 : -1),

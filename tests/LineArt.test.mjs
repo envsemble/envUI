@@ -16,7 +16,7 @@ await build({
   stdin: {
     contents: [
       "export { LineArt, lineArtDrawings } from './packages/ui/src/layout/LineArt.tsx';",
-      "export { lineArtOrder } from './packages/ui/src/layout/internal/lineArtDrawings.tsx';",
+      "export { lineArtShapes } from './packages/ui/src/layout/internal/lineArtShapes.tsx';",
     ].join('\n'),
     resolveDir: repository,
     loader: 'ts',
@@ -29,7 +29,7 @@ await build({
   outfile: output,
   logLevel: 'error',
 });
-const { LineArt, lineArtDrawings, lineArtOrder } = await import(pathToFileURL(output).href);
+const { LineArt, lineArtDrawings, lineArtShapes } = await import(pathToFileURL(output).href);
 
 test('sixteen drawings, each named in kebab case and drawn in lines of its own', () => {
   assert.equal(lineArtDrawings.length, 16);
@@ -79,13 +79,13 @@ test("each drawing's order moves every one of its lines once, in beats", () => {
   for (const drawing of lineArtDrawings) {
     const markup = renderToStaticMarkup(h(LineArt, { drawing }));
     const count = (markup.match(/<(rect|circle|line|polygon|path) /g) ?? []).length;
-    const order = lineArtOrder[drawing].flat();
+    const order = lineArtShapes[drawing].order.flat();
     assert.deepEqual(
       [...order].sort((a, b) => a - b),
       Array.from({ length: count }, (_, index) => index),
       `${drawing} orders each of its ${count} lines once`,
     );
-    assert.ok(lineArtOrder[drawing].length >= 4, `${drawing} draws in at least four beats`);
+    assert.ok(lineArtShapes[drawing].order.length >= 4, `${drawing} draws in at least four beats`);
   }
 });
 

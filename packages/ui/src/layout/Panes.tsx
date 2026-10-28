@@ -26,10 +26,11 @@ import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { setRef } from '../internal/setRef.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { readPanesSize, writePanesSize } from './panesSize.js';
 import { Close } from '../icons/Close.js';
+import { remPixels, roundToHundredth } from '../internal/lengths.js';
 
 /**
  * How Panes behaves below `splitAt`: supporting, a main pane with a supporting pane that becomes a
@@ -185,7 +186,6 @@ function usePanes(part: string) {
 }
 
 /** Sizes are kept to a hundredth of a rem. */
-const round = (value: number) => Math.round(value * 100) / 100;
 
 /** Whether an element shows, as CSS decided: it has a box. */
 const shows = (element: HTMLElement | null) => element !== null && element.offsetParent !== null;
@@ -194,11 +194,10 @@ const shows = (element: HTMLElement | null) => element !== null && element.offse
 function roomFor(divider: HTMLElement) {
   const root = divider.parentElement;
   if (!root) return Infinity;
-  const rem =
-    Number.parseFloat(getComputedStyle(divider.ownerDocument.documentElement).fontSize) || 16;
+  const rem = remPixels(divider);
   const other =
     Number.parseFloat(getComputedStyle(root).getPropertyValue('--env-panes-other-min')) || 16;
-  return round((root.clientWidth - divider.offsetWidth) / rem - other);
+  return roundToHundredth((root.clientWidth - divider.offsetWidth) / rem - other);
 }
 
 /** What Tab reaches inside an element, in order. */
@@ -240,7 +239,7 @@ function Root({
   const min = Math.max(0, minSize);
   const max = Math.max(min, maxSize);
   const clamp = useCallback(
-    (value: number) => round(Math.min(max, Math.max(min, value))),
+    (value: number) => roundToHundredth(Math.min(max, Math.max(min, value))),
     [min, max],
   );
   // A size chosen by resizing or read from the cookie, or 'default' once a double click forgot it;
@@ -602,7 +601,7 @@ function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
       onChange={(value, { committed }) => change(value, committed)}
       valueText={(value) =>
         messages.size({
-          size: formatters.number({ maximumFractionDigits: 1 }).format(round(value)),
+          size: formatters.number({ maximumFractionDigits: 1 }).format(roundToHundredth(value)),
         })
       }
       label={label ?? messages.resize}

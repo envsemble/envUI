@@ -25,9 +25,9 @@ import {
   type MarkdownCommand,
   type MarkdownLink,
   type MarkdownSelection,
-} from './internal/markdown/MarkdownFormatting.js';
+} from './internal/markdown/markdownFormatting.js';
 
-export type { MarkdownCommand, MarkdownLink } from './internal/markdown/MarkdownFormatting.js';
+export type { MarkdownCommand, MarkdownLink } from './internal/markdown/markdownFormatting.js';
 export interface MarkdownLinkRequest {
   selectedText: string;
 }

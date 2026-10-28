@@ -28,10 +28,10 @@ import { Tune } from '../../icons/Tune.js';
 import { ViewInAr } from '../../icons/ViewInAr.js';
 import * as Menu from '../../navigation/Menu.js';
 import { angles, type Angle } from './camera.js';
-import { HintedIconButton, SidebarToggle, instant, type Side } from './controls.js';
+import { HintedIconButton, SidebarToggle, instant, type Side } from './Controls.js';
 import { deviceGroups } from './devices.js';
 import { realSize, type FrameSize } from './Frame.js';
-import { ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './icons.js';
+import { ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './Icons.js';
 
 /** What the planes show, which the Show dropdown sets. */
 export interface ShowOptions {

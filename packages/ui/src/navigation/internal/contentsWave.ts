@@ -1,3 +1,4 @@
+import { roundToHundredth } from '../../internal/lengths.js';
 /**
  * The shape beside the contents that marks the reader's place: one stroke down the list, swelling
  * into a broad bulge at the reader's place and running thin a few entries away, like a brush's.
@@ -6,7 +7,7 @@
  */
 
 /** How many entries away from the reader's place the shape still swells: two and a half. */
-export const waveSpread = 2.5;
+const waveSpread = 2.5;
 /** How round the bulge is: above 2, fuller at its middle and quicker at its foot than a bell. */
 const waveRound = 3;
 /** How quickly the swell falls away: to half 0.9 entries from the reader's place. */
@@ -14,7 +15,7 @@ const waveFall = 0.9 / Math.LN2 ** (1 / waveRound);
 /** How thin the shape runs away from the reader's place, as a share of its fullest. */
 export const waveThin = 0.1;
 /** How far the entry under the pointer swells the shape, as a share of the reader's place. */
-export const hoverSwell = 0.4;
+const hoverSwell = 0.4;
 /** How many entries away from the one under the pointer its swell reaches. */
 const hoverSpread = 0.8;
 /** How finely the shape's edges are drawn, in px. */
@@ -45,7 +46,7 @@ export interface WaveMotion {
 const still: WaveMotion = { lean: 0, stretch: 0 };
 
 /** A smooth bell: 1 at 0, easing to 0 at 1 and beyond, either way. */
-export function bell(distance: number): number {
+function bell(distance: number): number {
   const d = Math.min(1, Math.abs(distance));
   return Math.cos((d * Math.PI) / 2) ** 2;
 }
@@ -88,7 +89,7 @@ export function waveReach(count: number): number {
  * The entry at a height, as a fractional index: between two entries' middles in proportion, and
  * beyond the first and last at the spacing next to them.
  */
-export function entryAt(anchors: readonly number[], y: number): number {
+function entryAt(anchors: readonly number[], y: number): number {
   const count = anchors.length;
   if (count === 0) return 0;
   if (count === 1) return 0;
@@ -180,8 +181,6 @@ export function springAtRest(spring: Spring, target: number, near: number): bool
   return Math.abs(target - spring.value) < near && Math.abs(spring.velocity) < near * 10;
 }
 
-const round = (value: number) => Math.round(value * 100) / 100;
-
 /**
  * The radius of the round end at `end`, from which the shape runs `inward` (1 down, -1 up): the one
  * at which the shape, that far in, is as wide as the end, found by halving; at most `room`.
@@ -235,13 +234,13 @@ export function wavePath(
     else edge.push([at, across]);
     if (at === to) break;
   }
-  const point = (x: number, y: number) => `${round(x)} ${round(y)}`;
+  const point = (x: number, y: number) => `${roundToHundredth(x)} ${roundToHundredth(y)}`;
   const end = edge.map(([y, across]) => `L${point(across, y)}`).join('');
   return (
     `M${point(0, from)}` +
-    `A${round(startRadius)} ${round(startRadius)} 0 0 1 ${point(startRadius * 2, from)}` +
+    `A${roundToHundredth(startRadius)} ${roundToHundredth(startRadius)} 0 0 1 ${point(startRadius * 2, from)}` +
     end +
-    `A${round(endRadius)} ${round(endRadius)} 0 0 1 ${point(0, to)}` +
+    `A${roundToHundredth(endRadius)} ${roundToHundredth(endRadius)} 0 0 1 ${point(0, to)}` +
     'Z'
   );
 }

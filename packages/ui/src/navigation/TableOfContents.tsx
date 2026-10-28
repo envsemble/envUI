@@ -35,6 +35,7 @@ import {
   type Spring,
   type WaveLayout,
 } from './internal/contentsWave.js';
+import { prefersReducedMotion, reducedMotionQuery } from '../internal/reducedMotion.js';
 
 export type { TableOfContentsItem } from './internal/contentsOutline.js';
 
@@ -134,10 +135,6 @@ function scrollerOf(element: Element): HTMLElement | null {
     }
   }
   return null;
-}
-
-function prefersReducedMotion() {
-  return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 /** Moves focus to a section, which takes it from script alone when it takes none otherwise. */
@@ -313,8 +310,7 @@ export function TableOfContents({
     const sectionIds = ids.split('\n');
     const first = document.getElementById(sectionIds[0]!);
     const doc = first?.ownerDocument ?? document;
-    const reducedMotion =
-      typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : null;
+    const reducedMotion = reducedMotionQuery();
     let frame = 0;
 
     // The shape: drawn every frame the reader's place moves, by writing its outline directly,

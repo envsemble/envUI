@@ -3,20 +3,15 @@
 import { useCallback, useRef, useState, type MouseEvent } from 'react';
 import type { ResizeHandleProps } from './ResizeHandle.js';
 import { useFormatters } from './useFormatters.js';
-
-/** Widths are kept to a hundredth of a rem. */
-const round = (value: number) => Math.round(value * 100) / 100;
+import { remPixels, roundToHundredth } from './lengths.js';
 
 /** A number that is finite, else undefined. */
 const finite = (value: number | undefined) =>
   value !== undefined && Number.isFinite(value) ? value : undefined;
 
-/** The root's font size in pixels: what a rem is. */
-export const remPixels = (element: Element) =>
-  Number.parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
-
-/** An element's width in rem. */
-export const widthInRem = (element: Element) => round(element.clientWidth / remPixels(element));
+/** An element's width in rem, to a hundredth, as widths are kept. */
+export const widthInRem = (element: Element) =>
+  roundToHundredth(element.clientWidth / remPixels(element));
 
 /**
  * The width in rem of the nearest size container around an element, the one its cqi units measure,
@@ -64,7 +59,7 @@ export function useResizableWidth({
   const min = Math.max(0, minWidth);
   const max = Math.max(min, maxWidth);
   const clamp = useCallback(
-    (value: number) => round(Math.min(max, Math.max(min, value))),
+    (value: number) => roundToHundredth(Math.min(max, Math.max(min, value))),
     [min, max],
   );
   const [chosen, setChosen] = useState<number>();
@@ -100,7 +95,7 @@ export function useResizableWidth({
     largeStep: 5,
     onChange: (value: number, { committed }: { committed: boolean }) => change(value, committed),
     valueText: (value: number) =>
-      widthText(formatters.number({ maximumFractionDigits: 1 }).format(round(value))),
+      widthText(formatters.number({ maximumFractionDigits: 1 }).format(roundToHundredth(value))),
     onDoubleClick: (event: MouseEvent<HTMLDivElement>) => {
       if (!event.defaultPrevented) reset();
     },

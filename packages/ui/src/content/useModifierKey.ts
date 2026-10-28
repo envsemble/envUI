@@ -1,6 +1,6 @@
 'use client';
 
-import { useApplePlatform } from '../internal/useShortcut.js';
+import { useSyncExternalStore } from 'react';
 
 /** The platform's modifier for shortcuts such as ⌘K or Ctrl+K. */
 export interface ModifierKey {
@@ -13,6 +13,16 @@ export interface ModifierKey {
   label: '⌘' | 'Ctrl';
 }
 
+/** Whether the browser runs on an Apple platform, where the modifier is ⌘; false outside a browser. */
+function isApplePlatform() {
+  if (typeof navigator === 'undefined') return false;
+  const { userAgentData } = navigator as Navigator & { userAgentData?: { platform?: string } };
+  return /mac|iphone|ipad|ipod/i.test(userAgentData?.platform || navigator.platform || '');
+}
+
+const noSubscription = () => () => {};
+const notApple = () => false;
+
 const control: ModifierKey = { key: 'Control', label: 'Ctrl' };
 const meta: ModifierKey = { key: 'Meta', label: '⌘' };
 
@@ -21,5 +31,5 @@ const meta: ModifierKey = { key: 'Meta', label: '⌘' };
  * first render in the browser give Ctrl, so the markup hydrates; an Apple browser then renders ⌘.
  */
 export function useModifierKey(): ModifierKey {
-  return useApplePlatform() ? meta : control;
+  return useSyncExternalStore(noSubscription, isApplePlatform, notApple) ? meta : control;
 }

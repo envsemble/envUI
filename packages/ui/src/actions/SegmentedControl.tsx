@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
-import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
+import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/useDirection.js';
@@ -157,7 +157,7 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
   if (!fullWidth) return segment;
   return (
     <BaseTooltip.Root disabled={!cut}>
-      <BaseTooltip.Trigger delay={400} render={segment} />
+      <BaseTooltip.Trigger delay={tooltipDelay} render={segment} />
       {cut && <TooltipPopup content={item.label} side="top" />}
     </BaseTooltip.Root>
   );

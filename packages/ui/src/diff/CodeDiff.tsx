@@ -16,8 +16,8 @@ import {
   codeThemeStyle,
   diffTintOpacity,
   type CodeContrast,
-} from '../content/internal/CodeColors.js';
-import { codeTheme, diffTintColors, type DiffTintColors } from '../content/internal/CodeThemes.js';
+} from '../content/internal/codeColors.js';
+import { codeTheme, diffTintColors, type DiffTintColors } from '../content/internal/codeThemes.js';
 import { useCodeContrast } from '../content/internal/useCodeContrast.js';
 import { Column } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
@@ -29,6 +29,7 @@ import { Refresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
+import { remPixels } from '../internal/lengths.js';
 
 export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source before the change. */
@@ -75,8 +76,11 @@ function diffCSS({ addition, deletion }: DiffTintColors) {
 }`;
 }
 
-/** Side by side from this many rem of the diff's own width. */
-const SPLIT_FROM_REM = 56;
+/**
+ * Side by side from this many rem of the diff's own width. Not a window class: the diff measures
+ * its own width, not the window's.
+ */
+const splitFrom = 56;
 
 /** The names of the code themes for a contrast, light and dark, the ones code blocks take. */
 const diffThemeNames = (contrast: CodeContrast) => ({
@@ -186,18 +190,17 @@ export function CodeDiff({
       setWide(false);
       return;
     }
-    const rem =
-      Number.parseFloat(getComputedStyle(root.ownerDocument.documentElement).fontSize) || 16;
+    const rem = remPixels(root);
     const style = getComputedStyle(root);
     setWide(
       root.clientWidth -
         (Number.parseFloat(style.paddingLeft) || 0) -
         (Number.parseFloat(style.paddingRight) || 0) >=
-        SPLIT_FROM_REM * rem,
+        splitFrom * rem,
     );
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(([entry]) => {
-      if (entry) setWide(entry.contentRect.width >= SPLIT_FROM_REM * rem);
+      if (entry) setWide(entry.contentRect.width >= splitFrom * rem);
     });
     observer.observe(root);
     return () => observer.disconnect();

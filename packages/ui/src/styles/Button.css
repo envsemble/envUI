@@ -403,13 +403,13 @@
    Its own box is its hit area, so it never reaches over a neighbour, whatever the layout around
    it, and every control of a size grows alike, so the controls of a row still match. A control
    that sizes its parts itself, such as a tab rail or the actions inside a field, sets
-   --env-touch-height to 0rem and gives them a hit area inside its own box. A link-like text button
+   --env-button-touch-height to 0rem and gives them a hit area inside its own box. A link-like text button
    in running text keeps its size, and so does a button that already covers its row. */
 @media (pointer: coarse) {
   .env-button:not(.env-link, [data-row-target]) {
     --env-button-height: max(
       var(--env-control-height),
-      var(--env-touch-height, var(--env-control-height-touch))
+      var(--env-button-touch-height, var(--env-control-height-touch))
     );
     min-inline-size: var(--env-button-height);
   }
@@ -484,59 +484,14 @@
   margin: auto;
 }
 
-/* A person's avatar as a control. The halo is a state layer, so it shows on any surface. */
-.env-avatar-button {
-  flex: 0 0 auto;
-  inline-size: fit-content;
-  block-size: fit-content;
-  display: inline-grid;
-  place-items: center;
-  padding: var(--env-space-1);
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  cursor: pointer;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-avatar-button:hover:not(:disabled) {
-  background: var(--env-color-bg-neutral-subtle-hover);
-}
-/* The halo stays while the button's menu is open. */
-.env-avatar-button:is(:active, [aria-expanded='true']):not(:disabled) {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-}
-.env-avatar-button:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-.env-avatar-button:disabled {
-  opacity: var(--env-state-disabled-opacity);
-  cursor: default;
-}
-/* Under a coarse pointer the halo around a small avatar grows to the touch height. */
-@media (pointer: coarse) {
-  .env-avatar-button {
-    min-inline-size: var(--env-control-height-touch);
-    min-block-size: var(--env-control-height-touch);
-  }
-}
-.env-avatar-button-tooltip {
-  display: grid;
-}
-.env-avatar-button-tooltip > :last-child {
-  opacity: 0.8;
-}
-
 /* Motion: a button settles slightly while it is held. Only without a reduced-motion preference. */
 @media (prefers-reduced-motion: no-preference) {
-  .env-button,
-  .env-avatar-button {
+  .env-button {
     transition-property: background-color, color, border-color, transform;
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease);
   }
-  .env-button:active:not(:disabled):not([aria-disabled='true']),
-  .env-avatar-button:active:not(:disabled) {
+  .env-button:active:not(:disabled):not([aria-disabled='true']) {
     transform: scale(0.97);
   }
   /* A row target, stretched over its row or card by a pseudo-element, leaves the press to the row:

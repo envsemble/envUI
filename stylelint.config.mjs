@@ -135,9 +135,22 @@ export default {
   },
   overrides: [
     {
-      // Library components take sizes from tokens rather than literal rem values.
+      // Library components take sizes from tokens rather than literal rem values. Their classes are
+      // env-<component>-<part>, apart from the classes of the third-party markup they style (GFM's
+      // and TipTap's); their custom properties take the --env- prefix, apart from those Base UI sets
+      // on its parts, which they read.
       files: ['packages/ui/src/styles/**/*.css'],
-      rules: { 'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] } },
+      rules: {
+        'declaration-property-unit-disallowed-list': { '/^(?!--)/': ['rem'] },
+        'selector-class-pattern': [
+          '^(?:env(?:-[a-z0-9]+)+|ProseMirror(?:-[a-z]+)?|contains-task-list|task-list-item|footnotes|is-editor-empty|selectedCell|tableWrapper)$',
+          { message: (name) => `Class "${name}": library classes are env-<component>-<part>.` },
+        ],
+        'custom-property-pattern': [
+          '^(?:env(?:-[a-z0-9]+)+|accordion-panel-height|anchor-width|available-height|available-width|collapsible-panel-height|drawer-swipe-movement-[xy]|transform-origin)$',
+          { message: (name) => `Custom property "${name}": library properties are --env-….` },
+        ],
+      },
     },
     {
       // The token definitions, generated and hand-written: literal values belong here, in custom

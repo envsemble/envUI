@@ -83,7 +83,7 @@ interface StateRecord {
   path: string;
 }
 import { baseCandidates } from '../test/TestScope.ts';
-import type { PropsFile } from './Schema.ts';
+import { kebab, type PropsFile } from './Schema.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const libraryDirectory = resolve(root, 'packages/ui');
@@ -99,12 +99,6 @@ export const partsSchemaVersion = 1;
 
 const posix = (path: string) => path.split(sep).join('/');
 const repositoryPath = (file: string) => posix(relative(root, file));
-/** `AvatarGroup` is `avatar-group`, `CodeDiff` `code-diff`. */
-const kebab = (name: string) =>
-  name
-    .replace(/(?<=[a-z\d])(?=[A-Z])/g, '-')
-    .replace(/(?<=[A-Z])(?=[A-Z][a-z])/g, '-')
-    .toLowerCase();
 const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
 /**

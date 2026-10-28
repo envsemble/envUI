@@ -9,14 +9,8 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from 'react';
-import { classNames } from '../internal/classNames.js';
-import { outsideTheme } from '../internal/outsideTheme.js';
+import { outsideTheme } from './internal/outsideTheme.js';
 import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ThemeValue } from './Theme.js';
-import { IconButton, type IconButtonProps } from '../actions/Button.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { themeToggle } from './messages/themeToggle.js';
-import { DarkMode } from '../icons/DarkMode.js';
-import { LightMode } from '../icons/LightMode.js';
 import {
   contrastSourceAttribute,
   defaultThemeStorageKey,
@@ -24,8 +18,12 @@ import {
   ownScaleSource,
   scaleSourceAttribute,
   type ThemePreference,
-} from './ThemeBootstrap.js';
-import { ThemePreferenceContext, type ThemePreferenceValue } from './ThemePreferenceContext.js';
+} from './themeBootstrap.js';
+import {
+  ThemePreferenceContext,
+  type ThemePreferenceValue,
+} from './internal/ThemePreferenceContext.js';
+import { reportOnce } from '../internal/developmentReport.js';
 
 const systemDarkQuery = '(prefers-color-scheme: dark)';
 
@@ -89,7 +87,6 @@ interface DocumentWrites {
  * more, a provider at system still leaves a contrast another of them wrote.
  */
 const documentProviders = new Map<symbol, DocumentWrites>();
-let warnedAboutProviders = false;
 
 /**
  * Removes the root's contrast when envUI wrote it, the page has not written over it since, and no
@@ -225,18 +222,10 @@ export function ThemePreferenceProvider({
   useEffect(() => {
     if (!applyToDocument) return;
     try {
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        documentProviders.size > 0 &&
-        !warnedAboutProviders
-      ) {
-        warnedAboutProviders = true;
-        // A development-only report, as React reports an invalid prop.
-        // eslint-disable-next-line no-console
-        console.error(
-          'envUI: more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
+      if (process.env.NODE_ENV !== 'production' && documentProviders.size > 0)
+        reportOnce(
+          'more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
         );
-      }
     } catch {
       // No bundler defined process.env.NODE_ENV: written as in Theme.
     }
@@ -318,38 +307,4 @@ export function useThemePreference(): ThemePreferenceValue {
   const value = useContext(ThemePreferenceContext);
   if (!value) throw new Error('useThemePreference must be used inside ThemePreferenceProvider.');
   return value;
-}
-
-export type ThemeToggleProps = (IconButtonProps extends infer Props
-  ? Props extends unknown
-    ? Omit<Props, 'icon' | 'aria-label' | 'onClick'>
-    : never
-  : never) & {
-  /**
-   * The button's name; without it, Switch to dark theme or Switch to light theme, or
-   * EnvUIProvider's messages.themeToggle.
-   */
-  'aria-label'?: string;
-};
-
-/** Switches between the light and dark themes and stores the choice. */
-export function ThemeToggle({
-  title,
-  className,
-  'aria-label': ownLabel,
-  ...props
-}: ThemeToggleProps) {
-  const { theme, toggleTheme } = useThemePreference();
-  const messages = useMessages('themeToggle', themeToggle);
-  const label = ownLabel ?? (theme === 'light' ? messages.toDark : messages.toLight);
-  return (
-    <IconButton
-      {...(props as IconButtonProps)}
-      className={classNames('env-theme-toggle', className)}
-      icon={theme === 'light' ? <DarkMode /> : <LightMode />}
-      aria-label={label}
-      title={title ?? label}
-      onClick={toggleTheme}
-    />
-  );
 }

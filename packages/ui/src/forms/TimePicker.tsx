@@ -8,7 +8,7 @@ import { Button } from '../actions/Button.js';
 import { Schedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
-import { dateFormat, formatTime, now, parseTime, toUtcDate } from './internal/CalendarDays.js';
+import { dateFormat, formatTime, now, parseTime, toUtcDate } from '../internal/calendarDays.js';
 
 export interface TimePickerProps extends PickerFieldProps {
   /** The value: a time of day as HH:mm on the 24-hour clock. null, or an empty string, for none. */

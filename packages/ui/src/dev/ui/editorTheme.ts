@@ -8,7 +8,7 @@ export interface EditorTheme {
   contrast: 'standard' | 'high';
 }
 
-export const editorThemeKey = 'envui-dev-theme';
+const editorThemeKey = 'envui-dev-theme';
 
 const fallback: EditorTheme = { theme: 'page', contrast: 'standard' };
 

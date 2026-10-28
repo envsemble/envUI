@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import type { ControlSize } from './controlTypes.js';
+import { reportOnce } from './developmentReport.js';
 
 /** The emphasis of a button: its variant. */
 export type ControlVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'text';
@@ -68,12 +69,9 @@ const designedTones: Readonly<Record<ControlVariant, readonly ControlTone[]>> = 
 };
 
 /** Whether `variant` is designed in `tone`. */
-export function takesTone(variant: ControlVariant, tone: ControlTone) {
+function takesTone(variant: ControlVariant, tone: ControlTone) {
   return designedTones[variant].includes(tone);
 }
-
-/** The undesigned pairs already reported, so each is reported once. */
-const reportedPairs = new Set<string>();
 
 /**
  * The variant and tone a button renders in, by one rule:
@@ -97,23 +95,16 @@ export function resolveEmphasis(
     variant ??
     (containerVariant && takesTone(containerVariant, tone) ? containerVariant : fallbackVariant);
   if (takesTone(resolved, tone)) return { variant: resolved, tone };
-  const pair = `${resolved} ${tone}`;
-  let report = false;
+  let report: string | undefined;
   // Written inline so bundlers replace process.env.NODE_ENV, as in Theme: where nothing replaced
   // it, reading it throws and the report stays silent.
   try {
-    if (process.env.NODE_ENV !== 'production') report = !reportedPairs.has(pair);
+    if (process.env.NODE_ENV !== 'production')
+      report = `a ${resolved} button has no ${tone} tone, so it renders neutral. Primary buttons take neutral, accent or danger; outline, ghost and text buttons neutral or danger; secondary buttons neutral.`;
   } catch {
     // No bundler defined process.env.NODE_ENV.
   }
-  if (report) {
-    reportedPairs.add(pair);
-    // A development-only report, as React reports an invalid prop.
-    // eslint-disable-next-line no-console
-    console.error(
-      `envUI: a ${resolved} button has no ${tone} tone, so it renders neutral. Primary buttons take neutral, accent or danger; outline, ghost and text buttons neutral or danger; secondary buttons neutral.`,
-    );
-  }
+  if (report) reportOnce(report);
   return { variant: resolved, tone: 'neutral' };
 }
 

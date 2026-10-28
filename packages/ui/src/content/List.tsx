@@ -10,7 +10,7 @@ import {
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
-import { inSkeleton, inSkeletonList } from '../foundations/inSkeleton.js';
+import { inSkeleton, inSkeletonList } from '../foundations/internal/inSkeleton.js';
 import { SkeletonStatus } from '../foundations/SkeletonScope.js';
 import { Text } from '../foundations/Text.js';
 import {
@@ -20,7 +20,7 @@ import {
   type SkeletonProps,
 } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { ListReorderHandle, ReorderableList } from './internal/ListBehavior.js';
+import { ListReorderHandle, ReorderableList } from './internal/ReorderableList.js';
 
 export interface RootProps extends ComponentPropsWithRef<'ul'>, SkeletonProps {
   /**

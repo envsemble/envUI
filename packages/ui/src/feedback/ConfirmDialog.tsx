@@ -29,6 +29,7 @@ import {
   DialogSurface,
   OverlayTheme,
 } from './internal/DialogParts.js';
+import { isDeveloping, reportOnce } from '../internal/developmentReport.js';
 
 export interface ConfirmDialogProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'onError'> {
@@ -106,21 +107,10 @@ const report = (failure: unknown) => {
  * Says while developing that the children hold a form of their own, which would nest in the
  * dialog's form: HTML has no nested forms, so its fields would submit the dialog's. Once a page.
  */
-let reportedNestedForm = false;
 function reportNestedForm(form: HTMLFormElement | null) {
-  let developing = false;
-  try {
-    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
-    developing = process.env.NODE_ENV !== 'production';
-  } catch {
-    // No bundler defined process.env.NODE_ENV.
-  }
-  if (!developing || reportedNestedForm || form?.querySelector('form') == null) return;
-  reportedNestedForm = true;
-  // A development-only report, as React reports an invalid prop.
-  // eslint-disable-next-line no-console
-  console.error(
-    "envUI: a ConfirmDialog's children hold a <form>, which nests inside the dialog's own form. " +
+  if (!isDeveloping() || form?.querySelector('form') == null) return;
+  reportOnce(
+    "a ConfirmDialog's children hold a <form>, which nests inside the dialog's own form. " +
       'ConfirmDialog confirms one action, with at most one field; use Dialog for a form of your own.',
   );
 }

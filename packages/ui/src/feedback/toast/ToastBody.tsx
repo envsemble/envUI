@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { CheckCircle } from '../../icons/CheckCircle.js';
 import { Info } from '../../icons/Info.js';
 import { Warning } from '../../icons/Warning.js';
-import type { ToastTone } from './ToastTypes.js';
+import type { ToastTone } from './toastTypes.js';
 
 function StatusIcon({ tone }: { tone: ToastTone }) {
   if (tone === 'neutral') return null;

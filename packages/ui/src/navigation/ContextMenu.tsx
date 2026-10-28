@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { MenuPopup } from './internal/MenuPopup.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { isRightToLeft } from '../internal/direction.js';
 
 /** The Base UI parts of a context menu's popup. */
 const contextMenuParts = {
@@ -83,7 +84,7 @@ function elementAnchor(element: Element) {
   return {
     getBoundingClientRect: () => {
       const rect = element.getBoundingClientRect();
-      const rtl = getComputedStyle(element).direction === 'rtl';
+      const rtl = isRightToLeft(element);
       const inset = Math.min(rect.width / 2, 24);
       return DOMRect.fromRect({
         x: rtl ? rect.right - inset : rect.left + inset,

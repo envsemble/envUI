@@ -10,10 +10,11 @@ import { useMessages } from '../../internal/EnvUIContext.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { ToastBody } from './ToastBody.js';
 import type { ToastController } from './useToastController.js';
-import type { ToastEntry } from './ToastInternals.js';
-import type { ToastPlacement } from './ToastTypes.js';
+import type { ToastEntry } from './toastInternals.js';
+import type { ToastPlacement } from './toastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 import { Close } from '../../icons/Close.js';
+import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 
 const glideId = 'env-toast-glide';
 const revealId = 'env-toast-reveal';
@@ -191,7 +192,7 @@ export function ToastRegion({
     if (!element) return;
     // Without the Web Animations API, such as in jsdom, notices move without motion.
     const animates = typeof element.animate === 'function';
-    const glide = animates && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const glide = animates && !prefersReducedMotion();
     const leavingIds = new Set(
       toastStore.toasts
         .filter((toast) => toast.transitionStatus === 'ending')

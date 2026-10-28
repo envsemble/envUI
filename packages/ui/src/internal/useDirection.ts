@@ -12,6 +12,7 @@ import {
 import { flushSync } from 'react-dom';
 import { EnvUIContext, type Direction } from './EnvUIContext.js';
 import { setRef } from './setRef.js';
+import { computedDirection } from './direction.js';
 
 /**
  * The text direction for a component's keyboard and placement logic: the nearest EnvUIProvider's
@@ -32,7 +33,7 @@ export function useDirection(
   const read = useCallback(() => {
     const element = ref?.current;
     if (!element) return;
-    const next = getComputedStyle(element).direction === 'rtl' ? 'rtl' : 'ltr';
+    const next = computedDirection(element);
     setComputed((current) => (current === next ? current : next));
   }, [ref]);
   useLayoutEffect(() => {

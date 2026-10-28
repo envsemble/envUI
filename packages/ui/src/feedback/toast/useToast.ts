@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import type { ToastManager } from './ToastTypes.js';
+import type { ToastManager } from './toastTypes.js';
 
 /** The manager of the nearest Toast.Provider. */
 export const ToastManagerContext = createContext<ToastManager | null>(null);

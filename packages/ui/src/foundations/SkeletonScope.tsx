@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { common } from './messages/common.js';
-import { retainSkeletonText } from './skeletonText.js';
+import { retainSkeletonText } from './internal/skeletonText.js';
 
 const SkeletonContext = createContext(false);
 

@@ -2,15 +2,16 @@
 // as the browser's own smooth scrolling does, and how the panel keeps it from reaching the page
 // it covers.
 
-import { layoutAttribute, overlaySelector } from '../measure.js';
-import { prefersReducedMotion } from './motion.js';
+import { layoutAttribute } from '../measure.js';
+import { overlaySelector } from '../overlays.js';
+import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 
 /**
  * Whether an element scrolls on the wheel's axis: 'room' where it can go further the wheel's way,
  * 'end' where it is at its end that way, else null. The sizes are read first, so an element with
  * nothing to scroll costs no style lookup.
  */
-export function scrollsToward(element: Element, dx: number, dy: number): 'room' | 'end' | null {
+function scrollsToward(element: Element, dx: number, dy: number): 'room' | 'end' | null {
   const mostY = element.scrollHeight - element.clientHeight;
   const mostX = element.scrollWidth - element.clientWidth;
   if ((dy === 0 || mostY <= 1) && (dx === 0 || mostX <= 1)) return null;

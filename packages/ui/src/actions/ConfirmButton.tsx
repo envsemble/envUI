@@ -128,7 +128,7 @@ export function ConfirmButton({
         return;
       }
       // A double click arms the button only: the second press must be deliberate.
-      if (event.timeStamp - armedAt < DOUBLE_PRESS_GUARD_MS) return;
+      if (event.timeStamp - armedAt < doublePressGuard) return;
       setArmedAt(null);
       onConfirm();
     },
@@ -180,4 +180,5 @@ export function ConfirmButton({
   );
 }
 
-const DOUBLE_PRESS_GUARD_MS = 400;
+/** A press this soon after the one that armed the button, in milliseconds, is a double click. */
+const doublePressGuard = 400;

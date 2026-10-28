@@ -16,7 +16,7 @@ import { resizeRoot } from '../api.js';
 import { resolveRoot } from '../measure.js';
 import { Inspector, NodeTree } from './Inspector.js';
 import { realSize, type FrameSize } from './Frame.js';
-import type { Side } from './controls.js';
+import type { Side } from './Controls.js';
 import { loadEditorTheme, saveEditorTheme, type EditorTheme } from './editorTheme.js';
 import { containWheel } from './wheel.js';
 import { loadSides, saveSides, type Sides } from './sides.js';

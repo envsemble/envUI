@@ -5523,7 +5523,7 @@
     },
     "ThemeToggle": {
       "root": "env-theme-toggle",
-      "source": "packages/ui/src/foundations/ThemePreference.tsx",
+      "source": "packages/ui/src/foundations/ThemeToggle.tsx",
       "parts": [
         {
           "class": "env-theme-toggle",
@@ -5533,8 +5533,7 @@
       "states": [],
       "uses": [
         "Icon",
-        "IconButton",
-        "Theme"
+        "IconButton"
       ]
     },
     "TimePicker": {
@@ -5567,7 +5566,7 @@
     },
     "Toast": {
       "root": "env-toast",
-      "source": "packages/ui/src/feedback/toast/ToastProvider.tsx",
+      "source": "packages/ui/src/feedback/toast/Toast.tsx",
       "parts": [
         {
           "class": "env-toast",

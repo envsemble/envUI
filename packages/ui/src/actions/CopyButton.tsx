@@ -11,7 +11,7 @@ import {
 } from 'react';
 import type { IconButtonEmphasisProps } from './Button.js';
 import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
-import { TooltipNestingContext, TooltipPopup } from '../feedback/internal/TooltipPopup.js';
+import { TooltipNestingContext, TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { Check } from '../icons/Check.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
@@ -187,7 +187,7 @@ export function CopyButton({
           }}
         >
           <BaseTooltip.Trigger
-            delay={400}
+            delay={tooltipDelay}
             render={
               hoverTarget ? <span className="env-tooltip-disabled-target" tabIndex={0} /> : button
             }

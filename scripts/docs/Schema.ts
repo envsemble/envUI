@@ -328,6 +328,7 @@ export const otherFrontmatter = new Set(['components', 'aliases', 'exportAliases
 /** A page whose slug cannot follow its title until the component it documents is merged. */
 export const slugExceptions = new Set(['chips']);
 
+/** A name in kebab case: `AvatarGroup` is `avatar-group`, `CodeDiff` `code-diff`. */
 export const kebab = (name: string) =>
   name
     .replace(/([a-z\d])([A-Z])/g, '$1-$2')

@@ -15,7 +15,7 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // Node runs this file as it is, before anything is built: the package's entry,
 // @envsemble/envui/theme-bootstrap, is its build in dist/, which a checkout has only after
 // npm run build, so the library's source module is imported instead.
-import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
+import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
 import {
   createDisplayBootstrapScript,
   createStorageMigrationScript,

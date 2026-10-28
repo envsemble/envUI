@@ -9,6 +9,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useEnvUI } from './EnvUIContext.js';
+import { remPixels, roundToHundredth } from './lengths.js';
 
 export interface ResizeOptions {
   /**
@@ -55,7 +56,7 @@ export interface ResizeOptions {
 }
 
 /** The props of a resize handle element, as useResize returns them. */
-export interface ResizeHandleProps {
+export interface ResizeHandleElementProps {
   role: 'separator';
   'aria-orientation': 'vertical' | 'horizontal';
   'aria-valuenow': number;
@@ -107,7 +108,7 @@ export function useResize({
   valueText,
   disabled = false,
 }: ResizeOptions): {
-  handleProps: ResizeHandleProps;
+  handleProps: ResizeHandleElementProps;
   dragging: boolean;
   /** Reads the room around the handle again, which the largest value it reports follows. */
   measure: (handle: HTMLElement) => void;
@@ -160,12 +161,8 @@ export function useResize({
     const laid = parent ? (axis === 'inline' ? parent.offsetWidth : parent.offsetHeight) : 0;
     const layoutPerScreen = drawn > 0 && laid > 0 ? laid / drawn : 1;
     // A rem follows the root's font size, read as the drag starts.
-    const remPixels = () =>
-      Number.parseFloat(
-        getComputedStyle(event.currentTarget.ownerDocument.documentElement).fontSize,
-      ) || 16;
-    const perUnit =
-      unit === '%' ? (extent > 0 ? 100 / extent : 0) : unit === 'rem' ? 1 / remPixels() : 1;
+    const pixelsPerUnit = unit === 'rem' ? remPixels(event.currentTarget) : 1;
+    const perUnit = unit === '%' ? (extent > 0 ? 100 / extent : 0) : 1 / pixelsPerUnit;
     const perPixel = perUnit * layoutPerScreen;
     const upper = upperAt(event.currentTarget);
     measure(event.currentTarget);
@@ -233,7 +230,7 @@ export function useResize({
 
   // The values as the handle reports them: a size in rem keeps its fraction, as its text says it,
   // and the largest is what the room allows, with the size no larger.
-  const reported = unit === 'rem' ? (size: number) => Math.round(size * 100) / 100 : Math.round;
+  const reported = unit === 'rem' ? roundToHundredth : Math.round;
   const upper = Math.min(max, roomMax ?? max);
   const shown = Math.min(value, upper);
   return {

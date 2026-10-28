@@ -8,7 +8,7 @@ test('inactive preview avoids rendering and highlighting work while retaining cu
 }) => {
   let highlightingImports = 0;
   page.on('request', (request) => {
-    if (/\/CodeHighlighting\.(?:ts|js)(?:\?|$)/.test(request.url())) highlightingImports++;
+    if (/\/codeHighlighting\.(?:ts|js)(?:\?|$)/.test(request.url())) highlightingImports++;
   });
   await page.goto(fixtureUrl);
   const form = page.getByTestId('markdown-form');
@@ -150,7 +150,7 @@ for (const change of ['remove', 'replace'] as const) {
     const requested = new Promise<void>((resolve) => {
       notifyRequest = resolve;
     });
-    await page.route(/\/CodeHighlighting\.(?:ts|js)(?:\?|$)/, async (route) => {
+    await page.route(/\/codeHighlighting\.(?:ts|js)(?:\?|$)/, async (route) => {
       notifyRequest();
       await held;
       await route.fulfill({

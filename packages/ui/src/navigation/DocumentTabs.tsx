@@ -24,6 +24,7 @@ import { setRef } from '../internal/setRef.js';
 import { documentTabs } from '../foundations/messages/documentTabs.js';
 import { ContextMenu } from './ContextMenu.js';
 import * as Menu from './Menu.js';
+import { isRightToLeft } from '../internal/direction.js';
 
 export interface DocumentTab {
   /** Stable identifier; the tab carries it as data-tab-id. */
@@ -192,7 +193,7 @@ export function DocumentTabs({
       if (event.deltaX !== 0 || event.deltaY === 0 || event.ctrlKey) return;
       const max = strip.scrollWidth - strip.clientWidth;
       if (max <= 0) return;
-      const rtl = getComputedStyle(strip).direction === 'rtl';
+      const rtl = isRightToLeft(strip);
       const next = rtl
         ? Math.min(0, Math.max(-max, strip.scrollLeft - event.deltaY))
         : Math.min(max, Math.max(0, strip.scrollLeft + event.deltaY));
@@ -257,7 +258,7 @@ export function DocumentTabs({
       // The gap nearest the pointer: before the tab under it in that tab's starting half, after it
       // in the other, also beside the dragged tab itself; past the ends, the nearest tab counts.
       const current = latest.current.items;
-      const rtl = getComputedStyle(strip).direction === 'rtl';
+      const rtl = isRightToLeft(strip);
       let distance = Infinity;
       current.forEach((item, position) => {
         const tab = tabElement(item.id)?.parentElement;
@@ -324,7 +325,7 @@ export function DocumentTabs({
   /** The place a tab moves to, one to the left or right on screen, or -1 at the end. */
   function moveTarget(id: string, side: 'left' | 'right') {
     const index = items.findIndex((item) => item.id === id);
-    const rtl = list.current ? getComputedStyle(list.current).direction === 'rtl' : false;
+    const rtl = list.current ? isRightToLeft(list.current) : false;
     const target = index + ((side === 'right') !== rtl ? 1 : -1);
     return index < 0 || target < 0 || target >= items.length ? -1 : target;
   }
@@ -525,7 +526,7 @@ export function DocumentTabs({
 function scrollBeyond(strip: HTMLElement) {
   const max = strip.scrollWidth - strip.clientWidth;
   const scrolled = strip.scrollLeft;
-  const rtl = getComputedStyle(strip).direction === 'rtl';
+  const rtl = isRightToLeft(strip);
   const leftOver = rtl ? max + scrolled : scrolled;
   const rightOver = rtl ? -scrolled : max - scrolled;
   return { left: max > 1.5 && leftOver > 1.5, right: max > 1.5 && rightOver > 1.5 };

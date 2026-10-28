@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type RefObject } from 'react';
 import { useTheme } from '../../foundations/Theme.js';
-import type { CodeContrast } from './CodeColors.js';
+import type { CodeContrast } from './codeColors.js';
 
 /**
  * The contrast of the nearest Theme around an element, as the style sheet reads it: high where it

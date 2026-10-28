@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import type { CodeTokenStyle } from './CodeHighlighting.js';
+import type { CodeTokenStyle } from './codeHighlighting.js';
 
 /**
  * A token's style: its colors as custom properties, the standard one and the high-contrast one,

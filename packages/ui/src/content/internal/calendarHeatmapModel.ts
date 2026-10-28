@@ -1,0 +1,150 @@
+import type { Formatters } from '../../internal/useFormatters.js';
+import { dayParts } from '../../internal/calendarDays.js';
+import { day as dayMilliseconds } from '../../internal/durations.js';
+import type { CalendarHeatmapCell, CalendarHeatmapDay } from '../CalendarHeatmap.js';
+
+/** The locale's short month names, from January, and weekday names, from Sunday. */
+export function localeNames(formatters: Formatters) {
+  const month = formatters.dateTime({ month: 'short', timeZone: 'UTC' });
+  const weekday = formatters.dateTime({ weekday: 'short', timeZone: 'UTC' });
+  return {
+    months: Array.from({ length: 12 }, (_, index) => month.format(Date.UTC(2024, index, 1))),
+    // 7 January 2024 was a Sunday.
+    weekdays: Array.from({ length: 7 }, (_, index) => weekday.format(Date.UTC(2024, 0, 7 + index))),
+  };
+}
+
+/**
+ * Days count from 1970-01-01 in UTC, so daylight saving never shifts a week. Unlike calendarDays'
+ * parseDay, this one lets an impossible date such as 2026-02-30 roll over into the next month, and
+ * reads years before 100 as 1900 onward, as Date.UTC does; dayKey writes a year before 1000 with
+ * fewer than four digits.
+ */
+export function parseDay(date: string | undefined) {
+  const match = date === undefined ? null : /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  if (!match) return undefined;
+  return Math.floor(Date.UTC(+match[1]!, +match[2]! - 1, +match[3]!) / dayMilliseconds);
+}
+
+function dayKey(day: number) {
+  const { year, month, date } = dayParts(day);
+  return `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+}
+
+interface DayModel extends CalendarHeatmapCell {
+  day: number;
+  name: string;
+}
+
+export interface CalendarHeatmapModel {
+  start: number;
+  end: number;
+  /** The first day of the first week column. */
+  first: number;
+  weeks: number;
+  levelCount: number;
+  days: Map<number, DayModel>;
+  months: { column: number; span: number; label: string }[];
+}
+
+/**
+ * The strength of each color step, from 30% of the tone over the canvas to the full tone at the
+ * strongest step; with a single step above the empty one, that step is the tone.
+ */
+export function levelMix(level: number, levelCount: number) {
+  if (levelCount <= 2) return '100%';
+  return `${30 + (70 * (level - 1)) / (levelCount - 2)}%`;
+}
+
+interface ModelOptions {
+  data: readonly CalendarHeatmapDay[];
+  startDate: string | undefined;
+  endDate: string | undefined;
+  levels: number;
+  maxValue: number | undefined;
+  /** The thresholds joined by spaces, so that a new array with the same steps keeps the model. */
+  thresholdsKey: string | undefined;
+  weekStart: number;
+  formatValue: (value: number) => string;
+  formatDate: (date: string) => string;
+  monthLabels: readonly string[];
+}
+
+/** The days a CalendarHeatmap shows, each with its level and name, and the months above them. */
+export function calendarHeatmapModel({
+  data,
+  startDate,
+  endDate,
+  levels,
+  maxValue,
+  thresholdsKey,
+  weekStart,
+  formatValue,
+  formatDate,
+  monthLabels,
+}: ModelOptions): CalendarHeatmapModel {
+  const steps = thresholdsKey
+    ?.split(' ')
+    .filter(Boolean)
+    .map(Number)
+    .filter(Number.isFinite)
+    .sort((first, second) => first - second)
+    .slice(0, 9);
+  const values = new Map<number, CalendarHeatmapDay>();
+  for (const entry of data) {
+    const day = parseDay(entry.date);
+    if (day !== undefined) values.set(day, entry);
+  }
+  let earliest: number | undefined;
+  let latest: number | undefined;
+  for (const day of values.keys()) {
+    if (earliest === undefined || day < earliest) earliest = day;
+    if (latest === undefined || day > latest) latest = day;
+  }
+  const start = parseDay(startDate) ?? earliest;
+  const end = parseDay(endDate) ?? latest;
+  const levelCount = steps?.length
+    ? steps.length + 1
+    : Math.min(10, Math.max(2, Math.round(levels)));
+  if (start === undefined || end === undefined || end < start)
+    return { start: 0, end: -1, first: 0, weeks: 0, levelCount, days: new Map(), months: [] };
+  const offset = (day: number) => (dayParts(day).weekday - weekStart + 7) % 7;
+  const first = start - offset(start);
+  const weeks = (end - offset(end) - first) / 7 + 1;
+  let top = maxValue ?? 0;
+  if (maxValue === undefined)
+    for (const [day, entry] of values)
+      if (day >= start && day <= end) top = Math.max(top, entry.value);
+  const days = new Map<number, DayModel>();
+  // Each month is labelled above the week holding its first day, or above the first week.
+  const monthColumns = new Map<number, number>([[0, dayParts(start).month]]);
+  for (let day = start; day <= end; day += 1) {
+    const entry = values.get(day);
+    const value = entry?.value ?? 0;
+    // Explicit thresholds decide alone, also for values of 0 and below.
+    const level = steps?.length
+      ? steps.filter((step) => value >= step).length
+      : value > 0 && top > 0
+        ? Math.min(levelCount - 1, Math.max(1, Math.ceil((value / top) * (levelCount - 1))))
+        : 0;
+    const date = dayKey(day);
+    const valueText = entry?.label ?? formatValue(value);
+    days.set(day, {
+      day,
+      date,
+      value,
+      label: entry?.label,
+      level,
+      name: `${formatDate(date)}: ${valueText}`,
+    });
+    const parts = dayParts(day);
+    if (parts.date === 1) monthColumns.set(Math.floor((day - first) / 7), parts.month);
+  }
+  const columns = [...monthColumns.keys()].sort((a, b) => a - b);
+  const months = columns.map((column, index) => ({
+    column,
+    span: (columns[index + 1] ?? weeks) - column,
+    label: monthLabels[monthColumns.get(column)!] ?? '',
+  }));
+  return { start, end, first, weeks, levelCount, days, months };
+}

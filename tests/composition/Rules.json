@@ -35,8 +35,9 @@
       "MaterialSymbolState.tsx": "foundations",
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
+      "foundations/ThemeToggle.tsx": "composites",
       "foundations/ThemeRadioGroup.tsx": "composites",
-      "navigation/internal/PanelDockContext.ts": "shell",
+      "navigation/panel-dock/internal/PanelDockPanelContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
       "actions/Button.tsx": "composites",
       "actions/internal/ButtonBase.tsx": "composites",
@@ -52,6 +53,7 @@
       "content/AvatarGroup.tsx": "composites",
       "content/Badge.tsx": "base",
       "content/CalendarHeatmap.tsx": "composites",
+      "content/internal/calendarHeatmapModel.ts": "composites",
       "content/Card.tsx": "base",
       "content/Code.tsx": "base",
       "content/CodeBlock.tsx": "composites",
@@ -60,7 +62,7 @@
       "content/Disclosure.tsx": "base",
       "content/Kbd.tsx": "base",
       "content/List.tsx": "composites",
-      "content/internal/ListBehavior.tsx": "composites",
+      "content/internal/ReorderableList.tsx": "composites",
       "content/Markdown.tsx": "composites",
       "content/Message.tsx": "composites",
       "content/Rating.tsx": "base",
@@ -82,15 +84,17 @@
       "feedback/Tooltip.tsx": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
-      "feedback/toast/ToastInternals.ts": "composites",
-      "feedback/toast/ToastProvider.tsx": "composites",
+      "feedback/toast/toastInternals.ts": "composites",
+      "feedback/toast/Toast.tsx": "composites",
       "feedback/toast/ToastRegion.tsx": "composites",
-      "feedback/toast/ToastTypes.ts": "composites",
+      "feedback/toast/toastTypes.ts": "composites",
       "feedback/toast/useToast.ts": "composites",
       "feedback/toast/useToastController.ts": "composites",
       "forms/Calendar.tsx": "composites",
       "forms/Checkbox.tsx": "base",
       "forms/Combobox.tsx": "composites",
+      "forms/internal/ComboboxPopup.tsx": "composites",
+      "forms/internal/comboboxItems.ts": "composites",
       "forms/Composer.tsx": "composites",
       "forms/DatePicker.tsx": "composites",
       "forms/TimePicker.tsx": "composites",
@@ -125,6 +129,7 @@
       "navigation/TopBar.tsx": "composites",
       "navigation/Tree.tsx": "composites",
       "internal/PopupSurface.tsx": "foundations",
+      "internal/TooltipPopup.tsx": "base",
       "messages.ts": "entries"
     },
     "private": {
@@ -173,7 +178,7 @@
       "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
       "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "internal/FileInput.tsx": ["input"],
-      "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
+      "rich-text/internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
       "color/ColorPickerButton.tsx": ["button"],
       "color/internal/ColorArea.tsx": ["input"],
       "color/internal/ColorFields.tsx": ["input"],
@@ -240,9 +245,6 @@
         "classes": ["env-icon-button"],
         "modules": ["actions/internal/ButtonBase.tsx"]
       },
-      "AvatarButton": {
-        "styles": ["Button.css"]
-      },
       "ConfirmButton": {
         "styles": ["Button.css"]
       },
@@ -260,11 +262,11 @@
           "content/CodeBlock.tsx",
           "diff/CodeDiff.tsx",
           "diff/countDiffLines.ts",
-          "content/internal/CodeColors.ts",
-          "content/internal/CodeThemes.ts",
+          "content/internal/codeColors.ts",
+          "content/internal/codeThemes.ts",
           "content/internal/useCodeContrast.ts",
-          "content/internal/ReadableColors.ts",
-          "content/internal/CodeHighlighting.ts",
+          "content/internal/readableColors.ts",
+          "content/internal/codeHighlighting.ts",
           "content/internal/useCodeHighlighting.ts"
         ]
       },
@@ -278,7 +280,13 @@
         "modules": ["layout/internal/useScrollKeys.ts"]
       },
       "List": {
-        "modules": ["content/internal/ListBehavior.tsx"]
+        "modules": ["content/internal/ReorderableList.tsx"]
+      },
+      "Table": {
+        "modules": ["content/internal/ColumnResizeHandle.tsx"]
+      },
+      "Combobox": {
+        "modules": ["forms/internal/ComboboxPopup.tsx", "forms/internal/comboboxItems.ts"]
       },
       "Dialog": {
         "modules": ["feedback/internal/DialogParts.tsx", "feedback/ConfirmDialog.tsx"],
@@ -291,7 +299,7 @@
         "styles": ["Popover.css"]
       },
       "Tooltip": {
-        "modules": ["feedback/internal/TooltipPopup.tsx"],
+        "modules": ["internal/TooltipPopup.tsx"],
         "slots": ["env-tooltip-disabled-target"]
       },
       "Toast": {
@@ -299,10 +307,10 @@
         "styles": ["Toast.css"],
         "modules": [
           "feedback/toast/ToastBody.tsx",
-          "feedback/toast/ToastInternals.ts",
-          "feedback/toast/ToastProvider.tsx",
+          "feedback/toast/toastInternals.ts",
+          "feedback/toast/Toast.tsx",
           "feedback/toast/ToastRegion.tsx",
-          "feedback/toast/ToastTypes.ts",
+          "feedback/toast/toastTypes.ts",
           "feedback/toast/useToast.ts",
           "feedback/toast/useToastController.ts"
         ]
@@ -330,8 +338,8 @@
       },
       "MarkdownEditor": {
         "modules": [
-          "forms/internal/markdown/MarkdownFormatting.ts",
-          "forms/internal/markdown/MarkdownHistory.ts",
+          "forms/internal/markdown/markdownFormatting.ts",
+          "forms/internal/markdown/markdownHistory.ts",
           "forms/internal/markdown/MarkdownPreview.tsx",
           "forms/internal/markdown/useMarkdownEditing.ts"
         ],
@@ -339,7 +347,7 @@
       },
       "Editor": {
         "modules": [
-          "forms/internal/EditorCommands.ts",
+          "forms/internal/editorCommands.ts",
           "forms/internal/EditorToolbar.tsx",
           "forms/internal/EditorStatus.tsx",
           "forms/internal/LinkDialog.tsx"
@@ -347,13 +355,11 @@
         "styles": ["Editor.css"]
       },
       "Theme": {
-        "modules": ["foundations/ThemeBootstrap.ts"],
+        "modules": ["foundations/themeBootstrap.ts"],
         "styles": ["Tokens.css", "TokensHandwritten.css"]
       },
       "ThemePreference": {
-        "classes": ["env-theme-toggle"],
-        "styles": ["ThemeToggle.css"],
-        "modules": ["foundations/ThemePreferenceContext.ts"]
+        "modules": ["foundations/internal/ThemePreferenceContext.ts"]
       },
       "Breadcrumbs": {},
       "DocumentTabs": {},
@@ -365,26 +371,26 @@
       "PanelDock": {
         "modules": [
           "navigation/panel-dock/Root.tsx",
-          "navigation/panel-dock/PanelFrame.tsx",
+          "navigation/panel-dock/internal/PanelFrame.tsx",
           "navigation/panel-dock/Header.tsx",
-          "navigation/panel-dock/PanelTab.tsx",
-          "navigation/panel-dock/dockLayout.ts",
-          "navigation/panel-dock/useEntrance.ts",
-          "navigation/internal/PanelDockContext.ts"
+          "navigation/panel-dock/internal/PanelTab.tsx",
+          "navigation/panel-dock/internal/dockLayout.ts",
+          "navigation/panel-dock/internal/useEntrance.ts",
+          "navigation/panel-dock/internal/PanelDockPanelContext.ts"
         ]
       },
       "Tabs": {},
       "RichText": {
         "modules": [
           "rich-text/RichTextEditor.tsx",
-          "rich-text/Reference.tsx",
-          "rich-text/ReferenceAttributes.ts",
-          "rich-text/ReferenceExtension.ts",
-          "rich-text/Suggestions.tsx",
-          "rich-text/TaskItem.tsx",
-          "rich-text/Commands.ts",
-          "rich-text/Extensions.ts",
-          "rich-text/Types.ts"
+          "rich-text/internal/Reference.tsx",
+          "rich-text/internal/referenceAttributes.ts",
+          "rich-text/internal/referenceExtension.ts",
+          "rich-text/internal/suggestions.tsx",
+          "rich-text/internal/taskItem.tsx",
+          "rich-text/internal/commands.ts",
+          "rich-text/extensions.ts",
+          "rich-text/types.ts"
         ]
       },
       "PopupSurface": {
@@ -409,6 +415,7 @@
           "forms/internal/PickerField.tsx",
           "forms/internal/PickerPopup.tsx",
           "forms/internal/TimeList.tsx",
+          "forms/internal/TimeWheel.tsx",
           "forms/internal/MonthGrid.tsx",
           "forms/TimePicker.tsx",
           "forms/MonthPicker.tsx"

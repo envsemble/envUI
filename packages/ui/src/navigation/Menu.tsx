@@ -24,7 +24,7 @@ import {
 import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
-import { useLinkComponent } from '../internal/LinkContext.js';
+import { useLinkComponent } from '../internal/LinkComponentContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import { MenuPopup, menuPopupInlineInset, menuPopupInset } from './internal/MenuPopup.js';
 import { setRef } from '../internal/setRef.js';

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { reducedMotionQuery } from '../../internal/reducedMotion.js';
 
 /** Roles of widgets that handle the scrolling keys themselves. */
 const widgetRoles = [
@@ -159,7 +160,7 @@ export function useScrollKeys(root: HTMLElement | null, scroller: HTMLElement | 
 /** Scrolls the region with the keyboard until the returned function is called. */
 function listenForScrollKeys(root: HTMLElement, scroller: HTMLElement, view: Window) {
   const document = root.ownerDocument;
-  const reducedMotion = view.matchMedia('(prefers-reduced-motion: reduce)');
+  const reducedMotion = reducedMotionQuery(view);
   // Where the smooth scroll of the last key is heading. The next key continues from there, so
   // quick presses add up; the end of the scroll and any other input clear it.
   let destination: number | null = null;
@@ -222,7 +223,7 @@ function listenForScrollKeys(root: HTMLElement, scroller: HTMLElement, view: Win
           : 0
         : Math.min(Math.max(from + step.by, 0), end);
     // A held key repeats faster than a smooth scroll settles, so its repeats scroll at once.
-    const smooth = !event.repeat && !reducedMotion.matches;
+    const smooth = !event.repeat && !reducedMotion?.matches;
     destination = smooth && Math.abs(top - scroller.scrollTop) >= 1 ? top : null;
     scroller.scrollTo({ top, behavior: smooth ? 'smooth' : 'instant' });
   }

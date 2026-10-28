@@ -121,7 +121,7 @@ export function isLabelShown({ showLabel }: TextFieldDecorationProps) {
 }
 
 /** Whether a field is tall: its label sits above the value rather than at the control height. */
-export function isTallField(variant: TextFieldAppearanceProps['variant'], multiline = false) {
+function isTallField(variant: TextFieldAppearanceProps['variant'], multiline = false) {
   return multiline || variant === 'floating';
 }
 
