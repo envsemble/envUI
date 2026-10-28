@@ -7337,7 +7337,7 @@
           "type": "'default' | 'muted' | 'page' | 'raised' | 'recessed'",
           "required": false,
           "default": "'default'",
-          "description": "The fill: default, the background of panes and side regions; muted, the background of rows; page, the page background; raised, a block that stands out on a pane; or recessed, a well on the page, a shade deeper than it, that what it holds rises out of."
+          "description": "The fill: default, the background of panes and side regions; muted, the background of rows; page, the page background; raised, a block that stands out on a pane; or recessed, a well on the page that what it holds rises out of: a shade deeper than it in dark, and lighter than it and the panes in light."
         },
         {
           "name": "padding",
