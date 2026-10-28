@@ -558,7 +558,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 228 226 / 0.22)',
     },
   },
-  /** The default surface: Surface, navigation, standard menus. */
+  /** The default surface: Surface, navigation, sheets, standard menus. */
   'color.bg.default': {
     cssVariable: '--env-color-bg-default',
     type: 'color',

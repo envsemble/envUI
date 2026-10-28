@@ -263,30 +263,28 @@ test.describe('Sheet', () => {
     }
   });
 
-  test("a sheet that holds a Drawer takes the navigation's fill, not the popup's", async ({
+  test("a sheet is on the navigation's fill, and a Drawer in it keeps that fill", async ({
     page,
   }) => {
     await page.goto(sheets);
     const fill = (locator: Locator) =>
       locator.evaluate((element) => getComputedStyle(element).backgroundColor);
-    await page.getByRole('button', { name: 'Open filters' }).click();
-    const popup = await fill(page.getByRole('dialog', { name: 'Filters' }));
-    await page.keyboard.press('Escape');
-    await page.getByRole('button', { name: 'Open navigation' }).click();
-    const sheet = page.getByRole('dialog', { name: 'Navigation' });
-    const drawer = sheet.getByRole('navigation', { name: 'Sections' });
-    // The drawer keeps the fill it has at the window's edge, and the sheet takes it.
-    const navigation = await drawer.evaluate((element) => {
+    // The navigation's fill, the default surface, which a Drawer has at the window's edge.
+    const navigation = await page.locator('body').evaluate((body) => {
       const probe = document.createElement('div');
       probe.style.background = 'var(--env-color-bg-default)';
-      element.append(probe);
+      (body.querySelector('.env-theme') ?? body).append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();
       return color;
     });
-    expect(await fill(drawer)).toBe(navigation);
+    await page.getByRole('button', { name: 'Open filters' }).click();
+    expect(await fill(page.getByRole('dialog', { name: 'Filters' }))).toBe(navigation);
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Open navigation' }).click();
+    const sheet = page.getByRole('dialog', { name: 'Navigation' });
     expect(await fill(sheet)).toBe(navigation);
-    expect(navigation).not.toBe(popup);
+    expect(await fill(sheet.getByRole('navigation', { name: 'Sections' }))).toBe(navigation);
   });
 
   test('a md side sheet takes the whole width of a compact window', async ({ page }) => {

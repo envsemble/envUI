@@ -40,8 +40,8 @@ export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'
   /**
    * The rail's background, named as Surface's and Card's: default, the navigation's background,
    * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
-   * page. On a surface, such as a Card, both take the surface's color; a Sheet that holds it takes
-   * its background instead, so it keeps its color in a narrow window. Set it on its own, such as
+   * page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the
+   * navigation's background, so it keeps its color in a narrow window. Set it on its own, such as
    * a Rail with its background beside a TopBar with page.
    * @default 'default'
    */

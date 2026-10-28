@@ -75,8 +75,9 @@
 
 /* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
    while open, as wide as the panes and at most 85% of their height, over a scrim that closes it,
-   with its close button at the top end. Inside a Scaffold whose document scrolls, Scaffold.css
-   makes it the window's. */
+   with its close button at the top end. It is on a Sheet's fill, the navigation's, so a surface in
+   it, which it holds side by side, reads as the same panel; its edge and the scrim set it apart.
+   Inside a Scaffold whose document scrolls, Scaffold.css makes it the window's. */
 .env-panes-supporting {
   position: absolute;
   inset-inline: 0;
@@ -88,7 +89,7 @@
   border-block-end-width: 0;
   border-start-start-radius: var(--env-radius-surface);
   border-start-end-radius: var(--env-radius-surface);
-  background: var(--env-color-bg-raised);
+  background: var(--env-color-bg-default);
   overscroll-behavior: contain;
 }
 .env-panes[data-behavior='supporting'][data-open] > .env-panes-supporting {
@@ -102,7 +103,7 @@
   display: flex;
   justify-content: flex-end;
   padding: var(--env-space-2);
-  background: var(--env-color-bg-raised);
+  background: var(--env-color-bg-default);
 }
 .env-panes-scrim {
   display: none;

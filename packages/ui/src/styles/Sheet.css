@@ -1,8 +1,9 @@
-/* Sheet: a panel over the page at an edge of the window, on the dialog surface (DialogSurface). A
-   side sheet runs the full height at the start or the end edge, which follow the text direction; a
-   bottom sheet sits at the bottom edge, as tall as its content. Its widths follow the window
-   classes of the env-window container around it, compact first: a sheet that would leave only a
-   sliver of the page beside it takes the whole width, clear of the safe areas. */
+/* Sheet: a panel over the page at an edge of the window, on the dialog surface (DialogSurface) in
+   the navigation's fill (below). A side sheet runs the full height at the start or the end edge,
+   which follow the text direction; a bottom sheet sits at the bottom edge, as tall as its content.
+   Its widths follow the window classes of the env-window container around it, compact first: a
+   sheet that would leave only a sliver of the page beside it takes the whole width, clear of the
+   safe areas. */
 .env-sheet-viewport {
   box-sizing: border-box;
   position: fixed;
@@ -119,15 +120,12 @@
 .env-sheet-popup[data-side='start']:dir(rtl) {
   padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
 }
-/* A sheet that holds navigation, a Drawer or a Rail, takes the navigation's fill rather than the
-   popup's, so the navigation keeps its color in a narrow window, where it opens in the sheet, and in
-   a wide one, where it sits at the window's edge. The sheet keeps its edge and scrim. A Drawer or a
-   Rail on the page's background puts the sheet on it too. */
-.env-surface.env-sheet-popup:has(:is(.env-drawer, .env-rail)) {
+/* A sheet is on the navigation's fill, the default surface, rather than the popup's, in every
+   theme: navigation that opens in a sheet in a narrow window keeps the color it has at the window's
+   edge in a wide one, and a Drawer or a Rail in it takes the sheet's color as on any surface. Its
+   elevation edge and its scrim set it apart from the page. */
+.env-surface.env-dialog-surface.env-sheet-popup {
   --env-surface-color: var(--env-color-bg-default);
-}
-.env-surface.env-sheet-popup:has(:is(.env-drawer, .env-rail)[data-background='page']) {
-  --env-surface-color: var(--env-color-bg-page);
 }
 /* resizable: a side sheet as wide as --env-sheet-width, which the component sets, at every window
    width, but never wider than the window, with an edge on its inner side. Its content runs the
