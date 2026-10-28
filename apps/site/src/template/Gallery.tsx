@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Column, Link, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
 import type { RoutePage } from '../navigation/SiteRoutes';
+import { useAutoplay } from '../previews/Autoplay';
 import { usePlaying } from '../previews/Motion';
 import { previewOf, TilePreview, useNear, type Preview } from './Related';
 
@@ -23,19 +24,21 @@ export function galleryPreviewOf(page: RoutePage): Preview | undefined {
  * One page's tile: its preview on the recessed canvas, rendered once near the viewport, and its name
  * in small, quiet text, so the group headings lead. The name is a heading one level under the
  * gallery's group, or under the page's title where the gallery has no groups. The preview plays
- * while the pointer or the keyboard is on the tile.
+ * while the pointer or the keyboard is on the tile, and where the reader can't hover, while it is
+ * the tile in the middle of the viewport (Autoplay.ts).
  */
 function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   const tile = useRef<HTMLLIElement>(null);
   const near = useNear(tile);
   const [playing, playOn] = usePlaying();
+  const autoplay = useAutoplay(tile, playing);
   const Heading = level === 2 ? 'h2' : 'h3';
   return (
     <li ref={tile} className="catalogue-gallery-tile" {...playOn}>
       <TilePreview
         preview={galleryPreviewOf(page)}
         near={near}
-        playing={playing}
+        playing={playing || autoplay}
         className="catalogue-related-stage catalogue-gallery-stage"
         whole
       />

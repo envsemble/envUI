@@ -412,7 +412,7 @@ Where a section is about motion, such as a slider stretching past its ends or a 
 The galleries of components and patterns, and Related, show each page by a tile of its own: `apps/site/src/tiles/<Page>.tsx`, named after the page's id in PascalCase, with a default-exported component.
 
 - **The component alone, large and centred**, with as little else as it needs to be recognised: short labels, two or three items where a list is needed, no helper text. Ask whether it looks good and whether someone would know at once what it is.
-- **A still that is the animation's first frame.** On hover or keyboard focus the tile plays a short script of the component in use, as an animated specimen does, and the pointer leaving brings back its still. Write the script to end where it began.
+- **A still that is the animation's first frame.** On hover or keyboard focus the tile plays a short script of the component in use, as an animated specimen does, and the pointer leaving brings back its still. On a touch screen, the tile nearest the middle of the viewport plays once scrolling settles, one at a time (`previews/Autoplay.ts`). Write the script to end where it began.
 - **Its window.** A tile lays out in a window of 10 by 7.5 rem, drawn at one scale for every tile; a component that needs more room, or less, takes a window of its own in `tileWindows` (`apps/site/src/tiles/Tiles.ts`), large enough for what opens as it plays.
 - **A still with a popup open**, such as a menu, keeps it in state and puts it back with `usePointer`'s `onRest`, rather than the tile being drawn anew, which would bring it in again.
 
