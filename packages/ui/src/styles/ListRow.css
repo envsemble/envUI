@@ -88,7 +88,7 @@
   align-items: center;
   gap: var(--env-space-1);
   /* Keys, in the shortcut or at the end, are small muted chips on the neutral fill, with no edge,
-     as a menu's are. */
+     side by side, as a menu's are. */
   --env-kbd-size: calc(0.5 * var(--env-control-height-md));
   --env-kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
   --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
@@ -97,14 +97,17 @@
   --env-kbd-border: transparent;
   --env-kbd-border-end-width: var(--env-control-border-width);
   --env-kbd-font-size: var(--env-font-size-caption);
+  --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-control-height-md));
+  --env-kbd-separator-font: 0 / 1 var(--env-font-family);
 }
-/* On a highlighted row, where the chip lies on the highlight, its label takes the text color. */
+/* On a highlighted row, where the chip lies on the highlight, its label takes the text color, as
+   the muted one would fall below 4.5:1 there in dark. */
 .env-list-row:is([data-highlighted], [data-popup-open])
   :is(.env-list-row-end, .env-list-row-shortcut) {
   --env-kbd-fg: var(--env-color-fg-default);
 }
 .env-list-row-shortcut {
-  margin-inline-start: var(--env-space-3);
+  margin-inline-start: calc(0.4 * var(--env-control-height-md));
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
   white-space: nowrap;

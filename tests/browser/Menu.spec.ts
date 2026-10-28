@@ -546,6 +546,29 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
       .getByRole('menuitem', { name: 'Command palette' })
       .locator('.env-menu-item-shortcut kbd.env-kbd'),
   ).toHaveText(['Ctrl', 'Shift', 'P']);
+  // Side by side, as flat chips 3 px apart, the + between them read but not shown; the chords of
+  // a sequence stand further apart.
+  const spacing = (name: string) =>
+    menu
+      .getByRole('menuitem', { name })
+      .locator('.env-menu-item-shortcut')
+      .evaluate((shortcut) => {
+        const keys = [...shortcut.querySelectorAll('kbd.env-kbd')].map((key) =>
+          key.getBoundingClientRect(),
+        );
+        const separators = [...shortcut.querySelectorAll('.env-kbd-separator')];
+        return {
+          text: shortcut.textContent,
+          gaps: keys.slice(1).map((key, index) => Math.round(key.left - keys[index]!.right)),
+          shown: separators.some((separator) => separator.getBoundingClientRect().width > 6),
+        };
+      });
+  expect(await spacing('Command palette')).toEqual({
+    text: 'Ctrl+Shift+P',
+    gaps: [3, 3],
+    shown: false,
+  });
+  expect((await spacing('Keyboard shortcuts')).gaps).toEqual([3, 6, 3]);
   // The plus key keeps its name, and a sequence shows its keys without claiming a single shortcut.
   const zoom = menu.getByRole('menuitem', { name: 'Zoom in' });
   await expect(zoom).toHaveAttribute('aria-keyshortcuts', 'Control+Plus');

@@ -135,7 +135,7 @@
 /* The footer stands apart from the options by space, its small muted text and its keys, with no
    line. */
 .env-command-palette-footer {
-  /* Its keys are the rows' muted chips. */
+  /* Its keys are the rows' muted chips, side by side. */
   --env-kbd-size: calc(0.5 * var(--env-control-height-md));
   --env-kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
   --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
@@ -144,18 +144,23 @@
   --env-kbd-border: transparent;
   --env-kbd-border-end-width: var(--env-control-border-width);
   --env-kbd-font-size: var(--env-font-size-caption);
+  --env-kbd-separator-padding-inline: calc(0.0625 * var(--env-control-height-md));
+  --env-kbd-separator-font: 0 / 1 var(--env-font-family);
   flex: 0 0 auto;
   padding: var(--env-popup-group-gap) var(--env-popup-row-padding-inline)
     calc(0.1 * var(--env-control-height-md));
   gap: var(--env-space-1) var(--env-space-4);
   color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
+  font: var(--env-body-font-weight) var(--env-font-size-label-small) / 1.35 var(--env-font-family);
+}
+/* Each hint's keys stand as close to what they do as to one another. */
+.env-command-palette-hint {
+  gap: calc(0.125 * var(--env-control-height-md));
 }
 /* The application's own footer content flows as text after the hints. */
 .env-command-palette-footer-content {
   min-inline-size: 0;
 }
-/* Each hint is its keys followed by what they do. */
 @media (pointer: coarse) {
   .env-command-palette-item {
     min-block-size: var(--env-control-height-touch);
