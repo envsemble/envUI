@@ -96,3 +96,8 @@
 .catalogue-preview .catalogue-force-pressed .env-text-field {
   --env-text-field-outline: var(--env-color-border-accent-emphasis-pressed);
 }
+/* An anatomy figure's AnimatedNumber caught as its value rolls in: the value still below the line,
+   cut off where the number's window ends; unfaded, so it doesn't read as muted text. */
+.site-anatomy-subject .catalogue-force-rolling .env-animated-number-value {
+  transform: translateY(0.45em);
+}

@@ -441,6 +441,11 @@ test('the build fails a page that is not in the one-file structure', async () =>
         body.replace('figure=Narrow widths="16 30"', 'figure=Narrow motion widths="16 30"'),
       /example Narrow has motion but no specimen/,
     );
+    // An anatomy figure held in a moment needs its specimen of the same name too.
+    await rejects(
+      frontmatter + body.replace('figure=Parts\n', 'figure=Parts specimen\n'),
+      /anatomy Parts has specimen but no specimen apps\/site\/src\/specimens\/switch\/Parts\.tsx/,
+    );
     await rejects(
       frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    open: yes') +
         body,

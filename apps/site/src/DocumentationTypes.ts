@@ -85,6 +85,11 @@ export type DocumentationBlock =
        * name, which uses it as a person would (apps/site/src/specimens/<page>/<Name>.tsx).
        */
       motion?: boolean;
+      /**
+       * Whether an anatomy figure numbers the parts of its specimen of the same name, which holds
+       * the example in a moment its parts show apart (apps/site/src/specimens/<page>/<Name>.tsx).
+       */
+      specimen?: boolean;
       /** The stage's fill where the page's own would hide the subject: `raised` or `shaded`. */
       stage?: StageFill;
       /**
