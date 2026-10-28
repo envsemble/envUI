@@ -99,5 +99,14 @@
 /* An anatomy figure's AnimatedNumber caught as its value rolls in: the value still below the line,
    cut off where the number's window ends; unfaded, so it doesn't read as muted text. */
 .site-anatomy-subject .catalogue-force-rolling .env-animated-number-value {
+  /* stylelint-disable-next-line unit-disallowed-list -- as far as the roll moves it, in its text's em. */
   transform: translateY(0.45em);
+}
+/* An anatomy figure's Slider as under the pointer: its handle shows. The wrapper takes no room, so
+   the slider keeps its width on the stage. */
+.site-anatomy-subject .catalogue-force-handle {
+  display: contents;
+}
+.site-anatomy-subject .catalogue-force-handle .env-slider-thumb {
+  opacity: 1;
 }

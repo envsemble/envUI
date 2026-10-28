@@ -30,7 +30,9 @@ examples:
   LayerOpacity:
     role: overview
     caption: A field among fields, with its label inside at the start, its value at the end and a fill that shows it.
-  SliderAnatomy: anatomy
+  SliderAnatomy:
+    role: anatomy
+    caption: As under the pointer, which shows the handle.
   SaveOnRelease: example
   SessionTimeout: example
   NarrowSlider: example
@@ -40,7 +42,7 @@ examples:
 
 ## Anatomy
 
-```tsx figure=SliderAnatomy
+```tsx figure=SliderAnatomy specimen
 
 ```
 
