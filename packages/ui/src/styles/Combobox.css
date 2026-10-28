@@ -92,7 +92,10 @@
     block-size: var(--env-combobox-leading-size);
     color: var(--env-color-fg-muted);
   }
-  .env-combobox-leading > .env-avatar {
+  /* An avatar of the default size takes the slot's; one given a size keeps it. Between the two in
+     specificity, :not(env-none) being one type selector, which every element matches, so neither
+     depends on which style sheet a bundler puts first. */
+  :where(.env-combobox-leading) > .env-avatar:not(env-none) {
     --env-avatar-size: var(--env-combobox-leading-size);
   }
   .env-combobox-leading > svg,

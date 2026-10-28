@@ -14,7 +14,12 @@
      and a shape its component's own, such as a chip's, an avatar's round one or a card's surface
      radius. A soft highlight sweeps across every bar and shape, and fainter across the skeleton's own
      surfaces, in step across the page. A component
-     whose generic look isn't right, such as a chart's, gives its own in its style sheet. */
+     whose generic look isn't right, such as a chart's, gives its own in its style sheet.
+
+     These rules win their ties with the components' rules: last in styles.css, they did by order. A
+     bundler may put this style sheet before a component's, which its module imports later, so each
+     rule takes one type selector more, :not(env-none), which every element matches. It wins those
+     ties whatever the order, and still loses to a rule that outweighs it by more, as before. */
 
   /* Where the highlight is, along the window's width. The root animates it, and everything inside
      inherits the paint it sets. */
@@ -24,7 +29,7 @@
     initial-value: -50%;
   }
 
-  [data-env-skeleton] {
+  [data-env-skeleton]:not(env-none) {
     /* Out of sight at rest; the animation below moves it across. */
     --env-skeleton-sweep: -50%;
     --env-skeleton-fill: var(--env-color-bg-neutral-muted-hover);
@@ -76,10 +81,10 @@
      paint, masked to the bars. The script makes the root a containing block, and places and sizes the
      layer over the root's scrolled content, so a root that scrolls draws the bars past its box too;
      until it has, the layer covers the padding box. */
-  [data-env-skeleton][data-env-skeleton-text] {
+  [data-env-skeleton]:not(env-none)[data-env-skeleton-text] {
     --env-skeleton-color: transparent;
   }
-  [data-env-skeleton][data-env-skeleton-text]::after {
+  [data-env-skeleton]:not(env-none)[data-env-skeleton-text]::after {
     content: '';
     position: absolute;
     /* Physical, as the script measures it. */
@@ -112,7 +117,7 @@
 
   /* Underlines and other lines of the content's own aren't drawn. Missing text is a bar only where a
      part turns it on, not in what that part holds. */
-  [data-env-skeleton] * {
+  [data-env-skeleton]:not(env-none) * {
     --env-skeleton-placeholder: none;
     text-decoration-color: transparent;
   }
@@ -121,7 +126,7 @@
      component whose element isn't one of these, such as an avatar or a badge, gives its own shape the
      same way in its style sheet. A whole surface that is a link or a button, such as a card, marked
      data-interactive, stays a surface. */
-  [data-env-skeleton]
+  [data-env-skeleton]:not(env-none)
     :is(
       button,
       input,
@@ -150,7 +155,7 @@
     object-fit: none;
     object-position: -100vw 0;
   }
-  [data-env-skeleton]
+  [data-env-skeleton]:not(env-none)
     :is(
       button,
       input,
@@ -185,7 +190,7 @@
     inherits: true;
     initial-value: none;
   }
-  [data-env-skeleton] :empty::before {
+  [data-env-skeleton]:not(env-none) :empty::before {
     forced-color-adjust: none;
     content: '';
     display: var(--env-skeleton-placeholder);
@@ -206,7 +211,7 @@
      skeleton's in step, as the component aligns their start. With a reduced-motion preference it
      stays out of sight, and the bars and shapes keep their fill. */
   @media (prefers-reduced-motion: no-preference) {
-    [data-env-skeleton] {
+    [data-env-skeleton]:not(env-none) {
       animation: env-skeleton-shimmer 2s linear infinite;
     }
   }
@@ -222,7 +227,7 @@
 
   /* Forced colors: the bars and shapes take the system's gray text color. */
   @media (forced-colors: active) {
-    [data-env-skeleton] {
+    [data-env-skeleton]:not(env-none) {
       --env-skeleton-fill: GrayText;
       --env-skeleton-shine: GrayText;
     }

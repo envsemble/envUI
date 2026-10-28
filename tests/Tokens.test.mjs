@@ -471,6 +471,12 @@ const themeConditions = (selector) =>
 const subset = (small, large) => [...small].every((item) => large.has(item));
 
 /**
+ * A simple selector every element matches: `*`, and `:not(env-none)`, a type selector more that some
+ * rules take to win their ties whatever order a bundler puts the style sheets in.
+ */
+const matchesAll = (part) => part === '*' || part === ':not(env-none)';
+
+/**
  * The var() reads without a fallback in `styleSheets` (file name to CSS) that are not defined for
  * every element that reads them, as `--name in File.css: selector`. A read is defined when, under
  * the at-rules of the read (a declaration under `@media (pointer: coarse)` defines a read under
@@ -546,7 +552,7 @@ function undefinedReads({
         (selector) =>
           isCompound(selector) &&
           compounds.some((parts) =>
-            simpleSelectors(selector).every((part) => part === '*' || parts.has(part)),
+            simpleSelectors(selector).every((part) => matchesAll(part) || parts.has(part)),
           ),
       );
     const ownSheet = (declared) =>

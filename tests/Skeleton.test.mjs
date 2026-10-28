@@ -136,18 +136,19 @@ test('missing text renders empty where a skeleton shows a bar, and given slots r
 
 test('the style sheet draws text as bars, shapes and missing text, and keeps still on request', () => {
   const css = readFileSync(join(repository, 'packages/ui/src/styles/Skeleton.css'), 'utf8');
-  assert.match(css, /\[data-env-skeleton\] \{[^}]*text-decoration: line-through/);
+  assert.match(css, /\[data-env-skeleton\]:not\(env-none\) \{[^}]*text-decoration: line-through/);
   assert.match(css, /-webkit-text-fill-color: transparent/);
   // Missing text is a bar only in the parts that turn it on.
   assert.match(
     css,
-    /\[data-env-skeleton\] :empty::before \{[^}]*display: var\(--env-skeleton-placeholder\);/,
+    /\[data-env-skeleton\]:not\(env-none\) :empty::before \{[^}]*display: var\(--env-skeleton-placeholder\);/,
   );
   // The shimmer runs only without a reduced-motion preference.
   const motion = css.indexOf('@media (prefers-reduced-motion: no-preference)');
   assert.ok(motion > 0);
   assert.equal(css.indexOf('animation:'), css.indexOf('animation:', motion));
   const index = readFileSync(join(repository, 'packages/ui/src/styles/index.css'), 'utf8');
-  // Last among the components, so its rules follow theirs.
+  // Last among the components in styles.css, so its rules follow theirs; where a bundler puts it
+  // first, a type selector more wins the same ties.
   assert.match(index, /@import '\.\/Skeleton\.css';\n$/);
 });
