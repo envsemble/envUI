@@ -101,6 +101,13 @@
     "./assets/*": "./dist/assets/*",
     "./package.json": "./package.json"
   },
+  "imports": {
+    "#styles/*": {
+      "module": "./dist/styles/*",
+      "node": "./dist/styles/empty.js",
+      "default": "./dist/styles/*"
+    }
+  },
   "engines": {
     "node": "^22.13.0 || >=24"
   },

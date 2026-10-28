@@ -62,6 +62,21 @@ function run(script, args = [], cwd = consumerDirectory) {
   }
 }
 
+/** envUI's cascade layers, in their order. */
+const envLayers = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env.utilities'];
+
+/**
+ * The cascade layers a style sheet names, in the order they first appear, which is their order: a
+ * bundler may merge blocks of a layer or drop a statement that repeats an order already set.
+ */
+function layerOrder(css) {
+  const names = [];
+  for (const [, list] of css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/@layer\s+([^{;]+)[{;]/g))
+    for (const name of list.split(',').map((part) => part.trim()))
+      if (!names.includes(name)) names.push(name);
+  return names;
+}
+
 async function runConsumer(name, source) {
   const script = join(consumerDirectory, name);
   await writeFile(script, source);
@@ -95,6 +110,7 @@ before(
       '@types/react-dom',
       'typescript',
       'esbuild',
+      'vite',
     ]) {
       dependencies[name] = manifest.devDependencies[name];
     }
@@ -873,11 +889,13 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
       stdin: { contents: "export { Theme, Button, Icon } from '@envsemble/envui'; export { Home } from '@envsemble/envui/icons/Home';", resolveDir: process.cwd(), sourcefile: 'consumer.js' },
       bundle: true, write: false, format: 'esm', platform: 'browser', treeShaking: true,
       outfile: 'consumer.js', metafile: true, logLevel: 'silent',
+      loader: { '.woff2': 'file', '.svg': 'file' },
       external: ['react', 'react/*', 'react-dom', 'react-dom/*', '@base-ui/react', '@base-ui/react/*']
     });
-    const output = result.outputFiles[0];
-    const meta = Object.values(result.metafile.outputs)[0];
-    console.log(JSON.stringify({ code: output.text, bytes: output.contents.length,
+    const output = result.outputFiles.find((file) => file.path.endsWith('.js'));
+    const css = result.outputFiles.find((file) => file.path.endsWith('.css'));
+    const meta = Object.entries(result.metafile.outputs).find(([path]) => path.endsWith('consumer.js'))[1];
+    console.log(JSON.stringify({ code: output.text, bytes: output.contents.length, css: css.text,
       emittedInputs: Object.entries(meta.inputs).filter(([, value]) => value.bytesInOutput > 0).map(([path]) => path.replaceAll('\\\\', '/')) }));
   `,
   );
@@ -888,8 +906,10 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     `Unexpected icons in consumer bundle: ${iconInputs.join(', ')}`,
   );
   assert.match(iconInputs[0], /\/Home\.js$/);
-  // Button keeps a label's words and a number in one run of text (textRuns), about 1.3 kB.
-  assert.ok(result.bytes < 12500, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
+  // Button keeps a label's words and a number in one run of text (textRuns), about 1.3 kB. Without
+  // code splitting, esbuild wraps the base style sheet's import in a stub, as a module loaded on
+  // demand imports it too, about 0.3 kB.
+  assert.ok(result.bytes < 13000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
   assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
     result.emittedInputs.every(
@@ -905,6 +925,52 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     result.emittedInputs.every((path) => !path.includes('/src/')),
     'The release consumer must not resolve the development source condition.',
   );
+  // esbuild bundles the style sheets the modules import, the base first with the layer order. It
+  // keeps those of the modules it shakes out too, so the CSS isn't any smaller than styles.css.
+  assert.deepEqual(layerOrder(result.css), envLayers);
+  assert.match(result.css, /--env-color-bg-brand-emphasis-hover:/);
+  assert.match(result.css, /\.env-button\s*\{/);
+  assert.match(result.css, /@font-face\s*\{\s*font-family:\s*"?envUI Geist/);
+});
+
+test('a Vite application loads the style sheets of the components it uses, and renders on a server', async function () {
+  const result = await runConsumer(
+    'ViteConsumer.mjs',
+    `
+    import { build } from 'vite';
+    import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+    import { join } from 'node:path';
+    import { pathToFileURL } from 'node:url';
+    const root = join(process.cwd(), 'vite-app');
+    await mkdir(root, { recursive: true });
+    await writeFile(join(root, 'index.html'), '<div id="root"></div><script type="module" src="./main.js"></script>');
+    const app = "import { createElement as h } from 'react'; import { Theme, Button } from '@envsemble/envui'; export const App = () => h(Theme, null, h(Button, null, 'Save'));";
+    await writeFile(join(root, 'App.js'), app);
+    await writeFile(join(root, 'main.js'), "import { createElement as h } from 'react'; import { createRoot } from 'react-dom/client'; import { App } from './App.js'; createRoot(document.getElementById('root')).render(h(App));");
+    await writeFile(join(root, 'server.js'), "import { createElement as h } from 'react'; import { renderToString } from 'react-dom/server'; import { App } from './App.js'; export const render = () => renderToString(h(App));");
+    const quiet = { root, logLevel: 'silent', configFile: false };
+    await build({ ...quiet, build: { outDir: 'client' } });
+    const assets = join(root, 'client/assets');
+    const css = (await Promise.all((await readdir(assets)).filter((file) => file.endsWith('.css')).map((file) => readFile(join(assets, file), 'utf8')))).join('');
+    // The server build twice: envUI left to Node, as Vite does with dependencies by default, and
+    // bundled into the server's code.
+    const html = {};
+    for (const [name, noExternal] of [['external', []], ['bundled', ['@envsemble/envui']]]) {
+      await build({ ...quiet, ssr: { noExternal }, build: { ssr: 'server.js', outDir: 'server-' + name } });
+      const { render } = await import(pathToFileURL(join(root, 'server-' + name, 'server.js')).href);
+      html[name] = render();
+    }
+    console.log(JSON.stringify({ css, html }));
+  `,
+  );
+  // The client's CSS: the base, with the layer order first, and Button's, and no other component's.
+  assert.deepEqual(layerOrder(result.css), envLayers);
+  assert.match(result.css, /--env-color-bg-brand-emphasis-hover:/);
+  assert.match(result.css, /\.env-button\s*\{/);
+  assert.match(result.css, /@font-face\s*\{\s*font-family:\s*"?envUI Geist/);
+  for (const other of ['card', 'menu', 'text-field', 'dialog', 'tooltip', 'table', 'toast'])
+    assert.doesNotMatch(result.css, new RegExp(`\\.env-${other}\\b`), `${other}'s style sheet`);
+  for (const html of Object.values(result.html)) assert.match(html, /class="env-button"/);
 });
 
 test('packed rich text statically renders the shared Markdown schema and reference marks', async function () {
