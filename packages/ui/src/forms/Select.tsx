@@ -161,13 +161,6 @@ export function Select({
     if (value === undefined) setUncontrolledValue(nextValue);
     onValueChange?.(nextValue);
   }
-  function getPopupOffset() {
-    const trigger = triggerRef.current;
-    const ownerWindow = trigger?.ownerDocument.defaultView;
-    return trigger && ownerWindow
-      ? Number.parseFloat(ownerWindow.getComputedStyle(trigger).columnGap) || 0
-      : 0;
-  }
   return (
     <BaseSelect.Root<string>
       items={items}
@@ -244,7 +237,6 @@ export function Select({
           parts={popupParts}
           side="bottom"
           align="start"
-          sideOffset={getPopupOffset}
           trigger={triggerRef}
           className="env-select-popup"
           layout={<Grid padding={1} />}
