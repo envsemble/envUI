@@ -12,6 +12,7 @@ import {
 } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { isVirtual, VirtualPointer, type CarriedFile } from './VirtualPointer';
+import { textPoint } from './VirtualSelection';
 
 /*
  * The site's animated previews: a tile's, which plays while the pointer or the keyboard is on it,
@@ -220,7 +221,10 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  * - `to`, a selector of an element in the preview: it moves to a point of it, `x` and `y` as
  *   fractions of its box, the middle by default, over `duration` ms, or comes there at once if it
  *   wasn't over the preview. Pressed, it drags; pressed on text, in a field or in content, the drag
- *   selects the text it crosses, as a mouse does, until a press elsewhere.
+ *   selects the words it crosses, whole, as a person does, until a press elsewhere. With `text`, a
+ *   word or phrase in the element's text or value, it moves to that text: `x` is how far along it,
+ *   by its characters, and `y` how far down its line, so a script finds a word wherever the text
+ *   wraps, such as `{ to: field, text: 'launch plan', x: 0.1 }` then `x: 0.9` to select it.
  * - `press`, `release`: its button; `click` presses and releases it a moment later, and
  *   `doubleClick` clicks twice, quickly, as a double click; two clicks in quick succession on one
  *   element are a double click too.
@@ -249,7 +253,7 @@ export function useSharedTimeline(clock: string, durations: readonly number[]) {
  */
 export type PointerStep =
   | { wait: number }
-  | { to: string; x?: number; y?: number; duration?: number }
+  | { to: string; text?: string; x?: number; y?: number; duration?: number }
   | { press: true }
   | { release: true }
   | { click: true }
@@ -269,9 +273,10 @@ export type PointerStep =
   | { carry: readonly CarriedFile[] }
   | { drop: true };
 
-/** A point of an element of the preview, as fractions of its box. */
+/** A point of an element of the preview, as fractions of its box, or of a text in it. */
 interface Aim {
   selector: string;
+  text?: string;
   x: number;
   y: number;
 }
@@ -344,7 +349,7 @@ function planOf(script: readonly PointerStep[]): Plan {
     }
     acted = true;
     if ('to' in step) {
-      const to = { selector: step.to, x: step.x ?? 0.5, y: step.y ?? 0.5 };
+      const to = { selector: step.to, text: step.text, x: step.x ?? 0.5, y: step.y ?? 0.5 };
       const duration = (step.duration ?? 0) * movePace;
       plan.moves.push({ start: time, end: time + duration, from: at, to });
       at = to;
@@ -416,6 +421,7 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2
 function pointOf(scope: Element, aim: Aim) {
   const element = scope.querySelector(aim.selector);
   if (!element) return null;
+  if (aim.text !== undefined) return textPoint(element, aim.text, aim.x, aim.y);
   const box = element.getBoundingClientRect();
   return { x: box.left + box.width * aim.x, y: box.top + box.height * aim.y };
 }

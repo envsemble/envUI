@@ -249,10 +249,7 @@ function paintField(
     const holder = (field.offsetParent as HTMLElement | null) ?? scope;
     if (copy.parentElement !== holder) holder.append(copy);
   }
-  const style = getComputedStyle(field);
-  for (const property of copied) copy.style[property] = style[property];
-  copy.style.borderStyle = 'solid';
-  copy.style.borderColor = 'transparent';
+  shapeLike(copy, field);
   if (layer) {
     // In layout pixels, as the preview may be drawn scaled.
     const frame = layer.getBoundingClientRect();
@@ -264,6 +261,23 @@ function paintField(
     copy.style.left = `${field.offsetLeft}px`;
     copy.style.top = `${field.offsetTop}px`;
   }
+  const value = field.value;
+  const selected = document.createElement('span');
+  selected.textContent = value.slice(start, end);
+  (copy.firstElementChild as HTMLElement).replaceChildren(
+    value.slice(0, start),
+    selected,
+    value.slice(end) || '​',
+  );
+  return copy;
+}
+
+/** Gives a copy of a field's text the field's box, type and scroll, so its text lies on the field's. */
+function shapeLike(copy: HTMLElement, field: Field) {
+  const style = getComputedStyle(field);
+  for (const property of copied) copy.style[property] = style[property];
+  copy.style.borderStyle = 'solid';
+  copy.style.borderColor = 'transparent';
   copy.style.width = `${field.offsetWidth}px`;
   copy.style.height = `${field.offsetHeight}px`;
   const area = field instanceof HTMLTextAreaElement;
@@ -281,11 +295,65 @@ function paintField(
   lines.style.transform = area
     ? `translateY(${-field.scrollTop}px)`
     : `translateX(${-field.scrollLeft}px)`;
-  const value = field.value;
-  const selected = document.createElement('span');
-  selected.textContent = value.slice(start, end);
-  lines.replaceChildren(value.slice(0, start), selected, value.slice(end) || '​');
-  return copy;
+}
+
+/**
+ * Where a text is in an element's text, or in a field's value, for the pointer to go to: a point
+ * of the character `x` along it, by its characters, `y` down its line. Nothing where the text
+ * isn't there, such as before it is typed.
+ */
+export function textPoint(element: Element, text: string, x: number, y: number): Point | null {
+  const along = (start: number) =>
+    start + Math.min(text.length - 1, Math.max(0, Math.floor(x * text.length)));
+  const box = element.matches(selectableFields)
+    ? fieldCharacterBox(element as Field, text, along)
+    : contentCharacterBox(element, text, along);
+  return box && { x: box.left + box.width / 2, y: box.top + box.height * y };
+}
+
+/** The box of a character of a text in a field's value, measured on a hidden copy of its text. */
+function fieldCharacterBox(field: Field, text: string, along: (start: number) => number) {
+  const start = text ? field.value.indexOf(text) : -1;
+  if (start < 0) return null;
+  const index = along(start);
+  const copy = document.createElement('div');
+  copy.className = 'catalogue-field-selection';
+  copy.style.visibility = 'hidden';
+  const lines = document.createElement('div');
+  const character = document.createElement('span');
+  character.textContent = field.value.charAt(index);
+  lines.append(field.value.slice(0, index), character, field.value.slice(index + 1) || '​');
+  copy.append(lines);
+  const holder = (field.offsetParent as HTMLElement | null) ?? field.parentElement;
+  if (!holder) return null;
+  holder.append(copy);
+  shapeLike(copy, field);
+  copy.style.left = `${field.offsetLeft}px`;
+  copy.style.top = `${field.offsetTop}px`;
+  const box = character.getBoundingClientRect();
+  copy.remove();
+  return box;
+}
+
+/** The box of a character of a text in an element's text, across its text nodes. */
+function contentCharacterBox(element: Element, text: string, along: (start: number) => number) {
+  const nodes: Text[] = [];
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+  const whole = nodes.map((node) => node.data).join('');
+  const start = text ? whole.indexOf(text) : -1;
+  if (start < 0) return null;
+  let index = along(start);
+  for (const node of nodes) {
+    if (index < node.length) {
+      const range = document.createRange();
+      range.setStart(node, index);
+      range.setEnd(node, index + 1);
+      return range.getClientRects()[0] ?? range.getBoundingClientRect();
+    }
+    index -= node.length;
+  }
+  return null;
 }
 
 /**

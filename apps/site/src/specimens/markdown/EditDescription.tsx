@@ -6,8 +6,6 @@ import { Renew } from '../../previews/Renew';
 
 const source = 'textarea.env-markdown-source';
 const tab = (index: number) => `[role="tab"]:nth-child(${index} of [role="tab"])`;
-/** Where "review" is in the source once the line is typed, as fractions of the field's box. */
-const word = { start: 0.275, end: 0.368, y: 0.83 };
 
 /*
  * The pointer types a line into the description, selects "review" and presses Bold, which wraps it
@@ -21,10 +19,10 @@ const script: PointerStep[] = [
   { click: true },
   { type: '\n\nAsk Sam Lee to review the copy.', into: source, every: 85 },
   { wait: 500 },
-  { to: source, x: word.start, y: word.y, duration: 450 },
+  { to: source, text: 'review', x: 0.1, duration: 450 },
   { wait: 200 },
   { press: true },
-  { to: source, x: word.end, y: word.y, duration: 350 },
+  { to: source, text: 'review', x: 0.9, duration: 350 },
   { release: true },
   { wait: 450 },
   { to: '[aria-label="Bold"]', duration: 500 },

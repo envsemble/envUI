@@ -6,8 +6,6 @@ import { MotionStage } from '../../previews/MotionStage';
 import { Renew } from '../../previews/Renew';
 
 const note = 'textarea';
-/** Where "Friday" is in the note, as fractions of the field's box. */
-const word = { start: 0.461, end: 0.557, y: 0.22 };
 const edit = '.env-menubar-trigger:nth-child(2 of .env-menubar-trigger)';
 const copy = '.env-menu-item:nth-child(1 of .env-menu-item)';
 
@@ -18,10 +16,10 @@ const copy = '.env-menu-item:nth-child(1 of .env-menu-item)';
  */
 const script: PointerStep[] = [
   { wait: 500 },
-  { to: note, x: word.start, y: word.y },
+  { to: note, text: 'Friday', x: 0.1 },
   { wait: 250 },
   { press: true },
-  { to: note, x: word.end, y: word.y, duration: 400 },
+  { to: note, text: 'Friday', x: 0.9, duration: 400 },
   { release: true },
   { wait: 600 },
   { to: edit, x: 0.5, y: 0.6, duration: 500 },

@@ -272,6 +272,34 @@ async function withPointer<T>(page: Page, html: string, run: string): Promise<T>
   ) as Promise<T>;
 }
 
+test('a script finds a word by its text, in a field and in content, wherever it wraps', async ({
+  page,
+}) => {
+  const result = await withPointer<{ field: string; content: string; missing: boolean }>(
+    page,
+    '<textarea id="note" rows="3" style="width: 120px; font: 16px monospace; padding: 0; border: 0">Ask Sam Lee to review the copy.</textarea><p id="text" style="width: 120px; font: 16px monospace">See the launch plan first.</p>',
+    `
+      const module = '/src/previews/VirtualSelection.ts';
+      const { textPoint } = await import(/* @vite-ignore */ module);
+      const field = box.querySelector('#note');
+      const text = box.querySelector('#text');
+      // Drags from near the start of the text to near its end select it.
+      const drag = (element, words) => {
+        pointer.moveTo(textPoint(element, words, 0.1, 0.5));
+        pointer.press();
+        pointer.moveTo(textPoint(element, words, 0.9, 0.5));
+        pointer.release();
+      };
+      drag(field, 'review the');
+      const selected = field.value.slice(field.selectionStart, field.selectionEnd);
+      drag(text, 'launch plan');
+      const content = [...CSS.highlights.get('catalogue-selection')].map((range) => range.toString()).join('|');
+      return { field: selected, content, missing: textPoint(text, 'agenda', 0.5, 0.5) === null };
+    `,
+  );
+  expect(result).toEqual({ field: 'review the', content: 'launch plan', missing: true });
+});
+
 test('a right click asks for a context menu, clicks nothing, and holds the page while pressed', async ({
   page,
 }) => {
