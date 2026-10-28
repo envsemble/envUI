@@ -52,6 +52,7 @@
       "content/AvatarGroup.tsx": "composites",
       "content/Badge.tsx": "base",
       "content/CalendarHeatmap.tsx": "composites",
+      "content/internal/calendarHeatmapModel.ts": "composites",
       "content/Card.tsx": "base",
       "content/Code.tsx": "base",
       "content/CodeBlock.tsx": "composites",
