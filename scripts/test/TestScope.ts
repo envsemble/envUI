@@ -110,6 +110,7 @@ export const aliases: Record<string, string[]> = {
   AlertDismiss: ['Dialog'],
   Listbox: ['Forms', 'Combobox'],
   ListRow: ['List'],
+  ColumnResizeHandle: ['Table'],
   Palette: ['CommandPalette'],
   'rich-text': ['RichTextEditor'],
   color: ['ColorPicker'],

@@ -10,7 +10,6 @@ import {
   useState,
   type ComponentPropsWithRef,
   type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
@@ -23,32 +22,14 @@ import { useStackedReport } from '../internal/useStackedReport.js';
 import { ArrowDownward } from '../icons/ArrowDownward.js';
 import { ArrowUpward } from '../icons/ArrowUpward.js';
 import { UnfoldMore } from '../icons/UnfoldMore.js';
-import {
-  columnBounds,
-  columnMinimums,
-  columnResizeLargeStep,
-  columnResizeStep,
-  resizeColumns,
-  sameWidths,
-} from './internal/tableColumns.js';
+import { columnMinimums, sameWidths } from './internal/tableColumns.js';
+import { ColumnResizeHandle, type TableColumns } from './internal/ColumnResizeHandle.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
-import { isRightToLeft } from '../internal/direction.js';
-
-interface TableColumns {
-  widths: readonly number[];
-  minimums: readonly number[];
-  resizable: boolean;
-  /** The column whose resize handle is being dragged. */
-  resizing: number | null;
-  setResizing: (column: number | null) => void;
-  change: (widths: number[]) => void;
-  reset: () => void;
-}
 
 /** A table that stacks its rows names the role of each part, since display changes can drop them. */
 const TableStackContext = createContext(false);
@@ -536,108 +517,6 @@ function HeaderCell({
         </span>
       )}
     </th>
-  );
-}
-
-function inlineDirection(element: Element) {
-  return isRightToLeft(element) ? -1 : 1;
-}
-
-/** A separator at the inline end of a header cell that moves the boundary to the next column. */
-function ColumnResizeHandle({
-  column,
-  columns,
-  label,
-  labelledBy,
-}: {
-  column: number;
-  columns: TableColumns;
-  label?: string;
-  labelledBy: string;
-}) {
-  const { widths, minimums, change, reset, resizing, setResizing } = columns;
-  const drag = useRef<{
-    pointerId: number;
-    startX: number;
-    tableWidth: number;
-    widths: readonly number[];
-    direction: number;
-  } | null>(null);
-  const width = widths[column]!;
-  const { min, max } = columnBounds(widths, minimums, column);
-
-  function dragTo(event: ReactPointerEvent<HTMLDivElement>) {
-    const current = drag.current!;
-    const delta = ((event.clientX - current.startX) * current.direction * 100) / current.tableWidth;
-    change(resizeColumns(current.widths, minimums, column, delta));
-  }
-
-  function finish(event: ReactPointerEvent<HTMLDivElement>) {
-    const current = drag.current;
-    if (!current || current.pointerId !== event.pointerId) return;
-    if (event.type === 'pointerup') dragTo(event);
-    // A cancelled drag, such as one the browser took over for scrolling, returns to where it began.
-    else change([...current.widths]);
-    drag.current = null;
-    setResizing(null);
-    if (event.currentTarget.hasPointerCapture(event.pointerId))
-      event.currentTarget.releasePointerCapture(event.pointerId);
-  }
-
-  return (
-    <div
-      role="separator"
-      aria-orientation="vertical"
-      aria-label={label}
-      aria-labelledby={label === undefined ? labelledBy : undefined}
-      aria-valuenow={Math.round(width)}
-      aria-valuemin={Math.round(min)}
-      aria-valuemax={Math.round(max)}
-      aria-valuetext={`${Math.round(width)}%`}
-      tabIndex={0}
-      className="env-table-column-resize"
-      data-resizing={resizing === column ? '' : undefined}
-      onPointerDown={(event) => {
-        if (event.button !== 0) return;
-        const tableWidth = event.currentTarget.closest('table')?.getBoundingClientRect().width;
-        if (!tableWidth) return;
-        // Dragging selects no text and leaves focus where it is.
-        event.preventDefault();
-        event.currentTarget.setPointerCapture(event.pointerId);
-        drag.current = {
-          pointerId: event.pointerId,
-          startX: event.clientX,
-          tableWidth,
-          widths,
-          direction: inlineDirection(event.currentTarget),
-        };
-        setResizing(column);
-      }}
-      onPointerMove={(event) => {
-        if (drag.current?.pointerId === event.pointerId) dragTo(event);
-      }}
-      onPointerUp={finish}
-      onPointerCancel={finish}
-      onLostPointerCapture={(event) => {
-        if (drag.current?.pointerId !== event.pointerId) return;
-        drag.current = null;
-        setResizing(null);
-      }}
-      onDoubleClick={reset}
-      onKeyDown={(event) => {
-        if (event.altKey || event.ctrlKey || event.metaKey) return;
-        const step = event.shiftKey ? columnResizeLargeStep : columnResizeStep;
-        const direction = inlineDirection(event.currentTarget);
-        let next: number;
-        if (event.key === 'ArrowRight') next = Math.round(width + step * direction);
-        else if (event.key === 'ArrowLeft') next = Math.round(width - step * direction);
-        else if (event.key === 'Home') next = min;
-        else if (event.key === 'End') next = max;
-        else return;
-        event.preventDefault();
-        change(resizeColumns(widths, minimums, column, next - width));
-      }}
-    />
   );
 }
 
