@@ -1,5 +1,4 @@
 import { Column, TextField } from '@envsemble/envui';
-import { Sell } from '@envsemble/envui/icons/Sell';
 
 export default function PrefixAndSuffix() {
   return (
@@ -12,16 +11,6 @@ export default function PrefixAndSuffix() {
         defaultValue="quarterly-report"
       />
       <TextField label="Storage" name="storage" type="number" suffix="GB" defaultValue="20" />
-      <TextField
-        showLabel={false}
-        label="Price"
-        name="price"
-        inputMode="decimal"
-        placeholder="0.00"
-        prefix="€"
-        suffix="per month"
-        startIcon={<Sell />}
-      />
     </Column>
   );
 }
