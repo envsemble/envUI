@@ -57,7 +57,7 @@ examples:
     role: do
     caption: Each choice filters at once, and a count says how many match.
   WaitsForApply:
-    role: dont
+    role: caution
     caption: 'An Apply button for quick filters: nothing says what will match.'
 ---
 
