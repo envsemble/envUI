@@ -5,7 +5,10 @@
 import { Icon, type MaterialSymbolProps } from '../Icon.js';
 import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
 
+/** The path both styles start with. */
+const start = "M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-2";
+
 export function DockToBottom({ filled: requestedFill, ...props }: MaterialSymbolProps) {
   const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-280h560v-360H200v360Z" /> : <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-200v120h560v-120H200Zm0-80h560v-360H200v360Zm0 80v120-120Z" />}</Icon>;
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "80h560v-360H200v360Z" : start + "00v120h560v-120H200Zm0-80h560v-360H200v360Zm0 80v120-120Z"} /></Icon>;
 }
