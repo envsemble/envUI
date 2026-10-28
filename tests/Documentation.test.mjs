@@ -1290,9 +1290,14 @@ test('a page ships the whole file, in its order, with code once', () => {
   // A pattern's canonical example ships once, in full, in Compose.
   const forms = compiled.get('patterns/forms.md');
   assert.equal(forms.match(/^`{3,}tsx source=ErrorSummary$/gm)?.length, 1);
-  // A foundation's figures are the catalogue's: their legends ship, and the frontmatter lists none.
+  // A foundation's figures are the catalogue's: their legends ship, and the frontmatter lists only
+  // those with an example file, their code, which ships and is named before the legend.
   const spacing = compiled.get('foundations/spacing.md');
   assert.ok(spacing.includes('\n1. **Tight, inside a group**: '));
-  assert.doesNotMatch(spacing, /^examples:/m);
+  assert.ok(hasLine(spacing, 'examples: # Each file is examples/spacing/<Name>.tsx.'));
+  assert.ok(hasLine(spacing, '  Grouping: example'));
+  assert.ok(!hasLine(spacing, '  Shapes: example'));
+  assert.ok(spacing.includes('\nExample: Grouping.\n\n1. **Tight, inside a group**: '));
+  assert.ok(compiled.has('examples/spacing/Grouping.tsx'));
   assert.ok(spacing.includes('\n| More room between these | The next larger step'));
 });
