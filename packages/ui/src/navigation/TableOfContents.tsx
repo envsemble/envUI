@@ -287,9 +287,22 @@ export function TableOfContents({
       setReadItems(next);
     };
     read();
-    if (typeof MutationObserver === 'undefined') return;
+    if (typeof MutationObserver === 'undefined' || headingLevels.length === 0) return;
+    // Only a change to a heading, its text or the headings in what comes or goes, changes the
+    // contents; the rest of the page, such as an animated figure, changes nothing to read.
+    const headings = headingLevels.map((level) => `h${level}`).join(', ');
+    const holdsHeadings = (node: Node) =>
+      node.nodeType === Node.ELEMENT_NODE &&
+      ((node as Element).matches(headings) || (node as Element).querySelector(headings) !== null);
+    const changesHeadings = ({ target, addedNodes, removedNodes }: MutationRecord) =>
+      (target.nodeType === Node.ELEMENT_NODE ? (target as Element) : target.parentElement)?.closest(
+        headings,
+      ) ||
+      [...addedNodes].some(holdsHeadings) ||
+      [...removedNodes].some(holdsHeadings);
     let frame = 0;
-    const observer = new MutationObserver(() => {
+    const observer = new MutationObserver((records) => {
+      if (!records.some(changesHeadings)) return;
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(read);
     });
