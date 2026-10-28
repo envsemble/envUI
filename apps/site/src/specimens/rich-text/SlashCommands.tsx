@@ -46,7 +46,12 @@ function Inserting() {
   return (
     // As tall as the editor and its open menu, so the menu fits in the stage from the start.
     <div
-      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', minBlockSize: '24rem' }}
+      style={{
+        display: 'grid',
+        justifyItems: 'center',
+        inlineSize: '100%',
+        minBlockSize: '25.5rem',
+      }}
     >
       <div style={{ inlineSize: 'min(100%, 28rem)' }}>
         <SlashCommands key={round} />

@@ -186,7 +186,9 @@ test('a panel across the whole width keeps clear of the safe areas on both sides
   }
 });
 
-test('dialogs, the command palette and popovers share one raised surface', async ({ page }) => {
+test('dialogs are solid with an edge; the command palette and popovers share the frosted popup surface', async ({
+  page,
+}) => {
   const surface = (locator: import('@playwright/test').Locator) =>
     locator.evaluate((element) => {
       const style = getComputedStyle(element);
@@ -194,21 +196,31 @@ test('dialogs, the command palette and popovers share one raised surface', async
         background: style.backgroundColor,
         border: `${style.borderTopWidth} ${style.borderTopStyle} ${style.borderTopColor}`,
         radius: style.borderTopLeftRadius,
+        shadow: style.boxShadow,
+        filter: style.backdropFilter,
       };
     });
   await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
   await page.getByRole('button', { name: 'Open wide dialog' }).click();
   const dialog = await surface(page.getByRole('dialog', { name: 'Wide details' }));
   expect(dialog.border).not.toMatch(/^0px/);
+  expect(dialog.background).toMatch(/^rgb\(/);
+  expect(dialog.shadow).toBe('none');
 
   await page.goto(`${fixtureUrl}/?fixture=popover`);
   await page.getByRole('button', { name: 'Details light' }).click();
-  expect(await surface(page.getByRole('dialog', { name: 'Document details' }))).toEqual(dialog);
+  const popover = await surface(page.getByRole('dialog', { name: 'Document details' }));
+  // The popup color at 88 % in light, over a blur, with no visible edge and the popups' shadow.
+  expect(popover.background).toMatch(/\/ 0\.88\)$/);
+  expect(popover.border).toMatch(/rgba\(0, 0, 0, 0\)$/);
+  expect(popover.shadow).not.toBe('none');
+  expect(popover.filter).toMatch(/^blur\(/);
+  expect(popover.radius).toBe(dialog.radius);
 
   await page.goto(`${fixtureUrl}/?fixture=palette`);
   await page.getByRole('button', { name: 'Quick open light' }).focus();
   await page.keyboard.press('Enter');
-  expect(await surface(page.getByRole('dialog', { name: 'Go to document' }))).toEqual(dialog);
+  expect(await surface(page.getByRole('dialog', { name: 'Go to document' }))).toEqual(popover);
 });
 
 test(

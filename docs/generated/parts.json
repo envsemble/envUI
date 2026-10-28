@@ -6136,6 +6136,13 @@
           "parts": [
             "env-list-row"
           ]
+        },
+        {
+          "attribute": "data-selected",
+          "values": [],
+          "parts": [
+            "env-list-row"
+          ]
         }
       ],
       "usedBy": [

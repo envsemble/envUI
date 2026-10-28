@@ -18,7 +18,7 @@ export interface AlertProps
     SkeletonProps {
   /**
    * What the message means: info, success, warning or danger, for an error or a failure. Sets the
-   * tint, the border and the icon; info and success alerts are also status messages.
+   * tint, the title's and icon's color and the icon; info and success alerts are also status messages.
    * @default 'info'
    */
   tone?: AlertTone;

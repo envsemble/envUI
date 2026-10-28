@@ -48,7 +48,7 @@ function Browsing() {
 /** Sections opened and closed by their chevrons, by a pointer no one sees. */
 export default function NestedSectionsMotion() {
   return (
-    <MotionStage label="sections opening and closing">
+    <MotionStage label="sections opening and closing" stage="shaded">
       <Browsing />
     </MotionStage>
   );

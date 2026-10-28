@@ -109,3 +109,9 @@
   outline: 0.0625rem dashed var(--env-color-border-default);
   transition: padding var(--env-motion-duration-slow) var(--env-motion-ease);
 }
+
+/* The area of the Settings page's appearance figure (specimens/settings), which takes the theme
+   chosen in it: only its surface shows, rounded, without the page color square around it. */
+.catalogue-motion-subject .catalogue-appearance-area {
+  background: none;
+}

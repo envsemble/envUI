@@ -35,7 +35,7 @@ function Running() {
   usePointer(script);
   // The menu opens below its button: the two together sit in the middle of the stage.
   return (
-    <Column align="center" style={{ blockSize: '16.5rem' }}>
+    <Column align="center" style={{ blockSize: '18rem' }}>
       <IconsAndShortcuts />
     </Column>
   );

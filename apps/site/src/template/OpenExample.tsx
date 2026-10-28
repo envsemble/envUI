@@ -121,8 +121,10 @@ function placement(overlay: HTMLElement, placer: HTMLElement | undefined, gaps: 
  * How much taller the stage must grow for an overlay placed on it: room for its content, and the
  * stage's padding, at least a gutter, on each side of a centred one, or on the far side of one
  * placed at an edge, such as a palette near the top or a toast at the bottom, which keeps its own
- * gap there; a sheet as tall as the stage needs only its content. A toast, which covers no page,
- * leaves the room's content, centred, clear of it.
+ * gap there; a sheet as tall as the stage needs only its content. On that far side the box that
+ * places it may keep a gap of its own, such as a bottom sheet's room above it, which the stage
+ * makes room for too. A toast, which covers no page, leaves the room's content, centred, clear of
+ * it.
  */
 function shortfall(overlay: HTMLElement, layer: HTMLElement, stage: HTMLElement, content: number) {
   const box = overlay.getBoundingClientRect();
@@ -133,9 +135,12 @@ function shortfall(overlay: HTMLElement, layer: HTMLElement, stage: HTMLElement,
   const height = box.height + cutOff(overlay);
   const placer = placerOf(overlay, layer);
   const side = placement(overlay, placer, [above, below]);
+  const placerStyle = placer && getComputedStyle(placer);
+  const far = (gap: string | undefined) =>
+    Math.max(space, (parseFloat(gap ?? '') || 0) * scaleOf(stage));
   let needed = {
-    start: above + height + space,
-    end: space + height + below,
+    start: above + height + far(placerStyle?.paddingBottom),
+    end: far(placerStyle?.paddingTop) + height + below,
     center: height + 2 * space,
     stretch: height,
   }[side];

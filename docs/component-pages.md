@@ -206,7 +206,7 @@ A figure is an [example file](#examples) listed in the frontmatter and placed wi
 | `anatomy`               | The example on the stage, with numbered callouts on its parts and the legend below.                     | `of`, `open`, `stage`, `enlarge`, `width`                              |
 | `variants`              | The example on the stage, with a callout naming each variant, and the legend below.                     | `stage`                                                                |
 
-Every figure sits on the same stage, centred horizontally and vertically, in the theme, contrast and scale the reader has chosen: a recessed canvas, envUI's recessed surface (`--env-color-bg-recessed`), a well a shade deeper than the page, with a surface's corners and no edge, so the example's own surfaces rise out of it and a reader can always tell an example from the page around it. Under forced colors the canvas takes a frame instead. A specimen sits on it too. The canvas is the catalogue's (`apps/site/src/styles/Stage.css`), not envUI's.
+Every figure sits on the same stage, centred horizontally and vertically, in the theme, contrast and scale the reader has chosen: a recessed canvas, envUI's recessed surface (`--env-color-bg-recessed`), its well for a preview, with a surface's corners and no edge, so the example's own surfaces rise out of it and a reader can always tell an example from the page around it. Under forced colors the canvas takes a frame instead. A specimen sits on it too. The canvas is the catalogue's (`apps/site/src/styles/Stage.css`), not envUI's.
 
 - **Code under every figure.** The catalogue shows a closed Code toggle with the file's source and a copy button, so every figure can be copied as it is. Open code always spans the whole content column, and soft-wraps where the column is narrower than a 100-character line; keep example lines within the formatter's 100 characters.
 - **A caption is one sentence**, in the frontmatter.
@@ -214,9 +214,9 @@ Every figure sits on the same stage, centred horizontally and vertically, in the
 
 ### Stage fill
 
-The canvas is deeper than the page in every theme, so an open popup on it stands out as it does in an application, by its own fill and edge.
+The canvas is set apart from the page in every theme, deeper in dark and lighter in light, so an open popup on it stands out as it does in an application, by its own fill and edge.
 
-- `stage=shaded` is for a figure that shows a whole window, such as a Scaffold with its navigation, top bar and body, whose edges must show on the canvas. In the light themes it recesses the canvas from the navigation's fill instead of the page's; in the dark themes it changes nothing.
+- `stage=shaded` is for a figure that shows a whole window, such as a Scaffold with its navigation, top bar and body, whose edges must show on the canvas. In the light themes, where the recessed canvas is lighter than the window, it makes the canvas a shade deeper than the window's page; in the dark themes it changes nothing.
 - A Scaffold on the stage paints the page's background in its body. Don't draw a frame or an edge around the subject instead, and check the figure in light and dark.
 
 ### Open overlays

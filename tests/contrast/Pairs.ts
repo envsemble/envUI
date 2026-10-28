@@ -21,7 +21,7 @@
  *   and 3 at standard contrast and 7, 4.5 and 4.5 at high contrast for the ratios, ΔEOK 0.02 for a
  *   difference, and ΔEOK 0.03, 0.04 at high contrast, for a distinct pair.
  * - A pair that departs from those rules says why in its `rationale`: `contrast: 'high'` measures it
- *   only in the high-contrast themes, and `minimum` lowers its minimum at standard or high contrast. Pairs the gate no
+ *   only in the high-contrast themes, `contrast: 'standard'` only outside them, and `minimum` lowers its minimum at standard or high contrast. Pairs the gate no
  *   longer measures are listed in `dropped`, and pairs it measures under a new name in `renamed`,
  *   each with the reason, rather than disappearing. DeclaredPairs.json records what each pair is
  *   held to, and the gate fails on a pair held to less than it records unless `relaxed` lists the
@@ -39,7 +39,7 @@ export interface ContrastPair {
   bg: readonly string[];
   kind: ContrastKind;
   /** Measured only in the themes of this contrast; both when absent. */
-  contrast?: 'high';
+  contrast?: 'standard' | 'high';
   /** Minimums below the kind's, per contrast, for what WCAG doesn't require of this pair. */
   minimum?: { readonly standard?: number; readonly high?: number };
   /** Why the pair is scoped to one contrast or held to a lower minimum. */
@@ -90,6 +90,16 @@ const layerHover = '--env-color-bg-neutral-subtle-hover';
 const layerPressed = '--env-color-bg-neutral-subtle-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
+// A frosted popup's fill, translucent (derived below), and the worst that can be behind it.
+const frosted = 'popup-frosted';
+const worstBackdrop = 'popup-worst-backdrop';
+const frostedOverWorst = [
+  '--env-color-fg-default',
+  '--env-color-fg-muted',
+  '--env-color-fg-control',
+  '--env-color-fg-link',
+  '--env-color-fg-danger',
+] as const;
 // Component tokens that take a different role per theme.
 const row = '--env-color-list-item-bg'; // List rows: the muted surface in both themes
 const rowHover = '--env-color-list-item-bg-hover';
@@ -166,14 +176,17 @@ const toneOutline = {
 } as const;
 
 /**
- * The faint edge of an alert, its tone's text color at 28%. Decorative: the tint, the icon and the
- * text identify the alert, which takes no input. Held to 1.2:1, as a popup's edge is, and 1.5:1 in
- * high contrast, so it stays visible.
+ * An alert's fill: the tone's stronger tint, its subtle hover fill. At high contrast it takes the
+ * tone's softer tint, its muted fill, with an edge in the border color.
  */
-const alertEdge = {
-  minimum: { standard: 1.2, high: 1.5 },
+const alertFill = (tone: (typeof alertTones)[number]) => `--env-color-bg-${tone}-subtle-hover`;
+/** What an alert sits on: the page, a pane and a card. */
+const alertGrounds = [page, surface, muted] as const;
+/** The stronger tint of an alert or a soft badge, which high contrast replaces with the softer one. */
+const tonal = {
+  contrast: 'standard',
   rationale:
-    'Decorative: the tint, the icon and the text identify the alert, which takes no input, and WCAG 1.4.11 asks nothing of the edge. Held to 1.2:1, as a popup’s edge is, and 1.5:1 in high contrast, so it stays visible.',
+    'The tone’s stronger tint fills an alert and a soft badge only at standard contrast; at high contrast they take its softer tint, measured there.',
 } as const;
 
 /**
@@ -272,16 +285,23 @@ const registry: readonly ContrastPair[] = merged([
       '--env-color-fg-link-on-tint',
       '--env-color-fg-link-on-tint-hover',
       '--env-color-fg-link-on-tint-pressed',
-    ].flatMap((link) =>
-      text(
+    ].flatMap((link) => [
+      ...on(
+        'text',
+        link,
+        alertGrounds.map((ground) => [alertFill(tone), ground]),
+        `Links and text buttons in an alert, tone="${tone === 'danger' ? 'error' : tone}", at rest, hovered and pressed`,
+        tonal,
+      ),
+      ...text(
         link,
         [
           [`--env-color-bg-${tone}-muted`, page],
           [`--env-color-bg-${tone}-muted`, surface],
         ],
-        `Links and text buttons in an alert, tone="${tone === 'danger' ? 'error' : tone}", at rest, hovered and pressed`,
+        `Links and text buttons in an alert, tone="${tone === 'danger' ? 'error' : tone}", at rest, hovered and pressed, at high contrast`,
       ),
-    ),
+    ]),
   ),
   ...text(
     '--env-color-fg-muted-hover',
@@ -502,6 +522,51 @@ const registry: readonly ContrastPair[] = merged([
     popupEdge,
   ),
 
+  // Frosted popups: menus, Select and Combobox lists, popovers, hover cards, the pickers, rich text
+  // suggestions and the command palette let a little of what is behind them through. Text on the
+  // fill is held over the worst that can be behind, a black area in light and a white one in dark;
+  // the highlight, the key chips and the palette's search are held over what popups float over.
+  // At high contrast the fill is solid, so these measure the solid popup.
+  ...frostedOverWorst.flatMap((fg) =>
+    text(fg, [[frosted, worstBackdrop]], 'Text on a frosted popup, over the worst behind it'),
+  ),
+  ...nonText(
+    '--env-color-bg-brand-emphasis',
+    [[frosted, worstBackdrop]],
+    'Check marks in a menu, on a frosted popup over the worst behind it',
+  ),
+  ...[page, surface, muted].flatMap((behind) => [
+    ...text('--env-color-fg-default', [[fill, frosted, behind]], 'A highlighted row, a key chip'),
+    ...text(
+      '--env-color-fg-muted',
+      [[fill, frosted, behind]],
+      'A highlighted row’s description and icon, and keys as chips at rest',
+    ),
+    ...text(
+      '--env-color-fg-default',
+      [[fill, fill, frosted, behind]],
+      'Key chips on a highlighted row',
+    ),
+    ...text('--env-color-fg-default', [['--env-color-bg-neutral-muted-pressed', frosted, behind]]),
+    ...different(fill, [[frosted, behind]], 'A highlighted option or menu item on a frosted popup'),
+    ...distinct(
+      selected,
+      [[fill, frosted, behind]],
+      'The chosen option against a highlighted one on a frosted popup',
+    ),
+    ...focus(
+      '--env-color-border-focus',
+      [[fill, frosted, behind]],
+      'The inset ring of a highlighted row on a frosted popup',
+    ),
+  ]),
+  ...text(
+    '--env-color-fg-muted',
+    [[fill, popup]],
+    'The command palette’s search placeholder, on its opaque pill',
+  ),
+  ...text('--env-color-fg-default', [[fill, popup]], 'Text typed in the command palette’s search'),
+
   // Choice controls.
   ...text(
     '--env-color-fg-default',
@@ -668,7 +733,21 @@ const registry: readonly ContrastPair[] = merged([
             [badgeTint(tone), raised],
             [badgeTint(tone), popup],
           ],
-          'A soft badge on a row, a muted or raised surface or a popup',
+          'A soft badge at high contrast, on a row, a muted or raised surface or a popup',
+        )),
+    // A soft badge in a status tone takes the tone's stronger tint, its subtle hover fill, outside
+    // high contrast, wherever a badge sits.
+    ...(tone === 'neutral' || tone === 'done'
+      ? []
+      : on(
+          'text',
+          toneText(tone),
+          [page, surface, row, muted, raised, popup].map((ground) => [
+            `--env-color-bg-${tone}-subtle-hover`,
+            ground,
+          ]),
+          'A soft badge on the page, a pane, a row, a muted or raised surface or a popup',
+          tonal,
         )),
     ...text(
       '--env-color-fg-on-emphasis',
@@ -691,19 +770,57 @@ const registry: readonly ContrastPair[] = merged([
       'A diff stat’s additions and deletions on its fill',
     ),
   ),
+  // An alert: its message in the text color, its title and icon in the tone's, on its fill on the
+  // page, a pane and a card, and at high contrast on the tone's softer tint, which the tone's text
+  // pairs above measure on the page and a pane.
   ...alertTones.flatMap((tone) => [
+    ...on(
+      'text',
+      '--env-color-fg-default',
+      alertGrounds.map((ground) => [alertFill(tone), ground]),
+      `Alert tone="${tone}": the message`,
+      tonal,
+    ),
+    ...on(
+      'text',
+      toneText(tone),
+      alertGrounds.map((ground) => [alertFill(tone), ground]),
+      `Alert tone="${tone}": the title, and the icon held to the text minimum`,
+      tonal,
+    ),
     ...text(
       '--env-color-fg-default',
       [[`--env-color-bg-${tone}-muted`, page]],
-      `Alert tone="${tone}"`,
+      `Alert tone="${tone}" at high contrast: the message`,
     ),
+    // On a card at high contrast; a soft badge measures the other tones' text on their tint there.
+    ...text(
+      '--env-color-fg-default',
+      [[`--env-color-bg-${tone}-muted`, muted]],
+      `Alert tone="${tone}" on a card at high contrast: the message`,
+    ),
+    ...(tone === 'accent'
+      ? on(
+          'text',
+          toneText(tone),
+          [[`--env-color-bg-${tone}-muted`, muted]],
+          `Alert tone="${tone}" on a card at high contrast: the title and the icon`,
+          {
+            contrast: 'high',
+            rationale:
+              'The info alert takes this tint only at high contrast; outside it, its stronger tint, measured above.',
+          },
+        )
+      : []),
     ...nonText(
       toneText(tone),
       [
+        [`--env-color-bg-${tone}-subtle-hover`, alertFill(tone), page],
+        [`--env-color-bg-${tone}-subtle-pressed`, alertFill(tone), page],
         [`--env-color-bg-${tone}-subtle-hover`, `--env-color-bg-${tone}-muted`, page],
         [`--env-color-bg-${tone}-subtle-pressed`, `--env-color-bg-${tone}-muted`, page],
       ],
-      'The dismiss icon of an alert on hover and press',
+      'The dismiss icon of an alert on hover and press, on its fill and at high contrast on its softer tint',
     ),
   ]),
   ...tones.flatMap((tone) =>
@@ -712,14 +829,6 @@ const registry: readonly ContrastPair[] = merged([
       [page, surface, row],
       'The edge of an outlined badge',
       toneOutline,
-    ),
-  ),
-  ...alertTones.flatMap((tone) =>
-    nonText(
-      `--env-color-border-${tone}-muted`,
-      [page, surface],
-      `The edge of an alert, tone="${tone === 'danger' ? 'error' : tone}"`,
-      alertEdge,
     ),
   ),
   ...nonText(
@@ -961,6 +1070,15 @@ export const pairs: readonly ContrastPair[] = merged([...registry, ...onPage.map
  * `pairs` without an entry, and on a dropped pair that is still declared.
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
+  // Alerts have no edge outside high contrast, where the border color bounds them, measured as a
+  // boundary there.
+  ...(['accent', 'success', 'warning', 'danger'] as const).flatMap((tone) =>
+    ['--env-color-bg-page', '--env-color-bg-default', '--env-color-bg-recessed'].map((ground) => ({
+      pair: `--env-color-border-${tone}-muted on ${ground}`,
+      rationale:
+        'Alerts have no edge: the tone’s stronger tint, the icon and the title set them apart. At high contrast an edge in the border color bounds them, measured as the border color is.',
+    })),
+  ),
   {
     pair: '--env-color-avatar-fg on --env-color-avatar-bg-teal',
     rationale:
@@ -2162,6 +2280,13 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     rationale:
       'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
   })),
+  // The alerts' edges, since dropped, were renamed onto the recessed surface first.
+  ...(['accent', 'success', 'warning', 'danger'] as const).map((tone) => ({
+    from: `--env-color-border-${tone}-muted on catalogue-canvas`,
+    to: `--env-color-border-${tone}-muted on --env-color-bg-recessed`,
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  })),
   {
     from: '--env-color-avatar-fg-teal on --env-color-avatar-bg-teal',
     to: '--env-color-avatar-fg-seafoam on --env-color-avatar-bg-seafoam',
@@ -2366,6 +2491,11 @@ export const derived: Readonly<Record<string, string>> = {
   'badge-outline-important': ofLabel(badgeOutline, '--env-color-fg-on-strong'),
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-accent) 30%, var(--env-color-bg-page))',
+  // The frosted fill of popups (Popup.css), and the worst behind it: black under a light popup's
+  // dark text, white under a dark popup's light text.
+  'popup-frosted':
+    'color-mix(in srgb, var(--env-color-bg-popup) var(--env-popup-opacity), transparent)',
+  'popup-worst-backdrop': 'light-dark(#000, #fff)',
 };
 
 /** The CSS color a name in a pair stands for. */

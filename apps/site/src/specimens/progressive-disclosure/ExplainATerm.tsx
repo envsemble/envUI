@@ -27,7 +27,9 @@ const script: PointerStep[] = [
 function Explaining() {
   usePointer(script);
   return (
-    // The figure at the top, with room below it for the popover.
+    // The figure at the top, with room below it for the popover, and the figure and the popover
+    // that opens to its end centred together where the stage is wide enough, so the popover and
+    // its shadow stay clear of the stage's edge.
     <div
       style={{
         display: 'grid',
@@ -35,6 +37,8 @@ function Explaining() {
         justifyItems: 'center',
         inlineSize: '100%',
         minBlockSize: '15rem',
+        paddingInlineEnd: 'clamp(0rem, 100% - 26rem, 18rem)',
+        boxSizing: 'border-box',
       }}
     >
       <ExplainATerm />

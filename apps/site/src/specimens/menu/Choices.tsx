@@ -48,7 +48,7 @@ function Choosing() {
   // The menu opens below its trigger, in the room below. The line beside it grows as it changes:
   // the two start at the start of a box as wide as the longest line, so neither moves.
   return (
-    <Column style={{ blockSize: '19rem', inlineSize: 'min(100%, 33rem)' }}>
+    <Column style={{ blockSize: '20.5rem', inlineSize: 'min(100%, 33rem)' }}>
       <Choices />
     </Column>
   );

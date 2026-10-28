@@ -35,6 +35,11 @@
   justify-content: flex-start;
   text-align: start;
 }
+/* A swatch of the page's own color, such as the page's, takes a hairline so it shows on the page. */
+.docs-swatch[data-edge]:not(:focus-visible) {
+  outline: 1px solid var(--env-color-border-muted);
+  outline-offset: -1px;
+}
 .docs-palette-dialog {
   width: min(22rem, 100%);
 }

@@ -39,7 +39,7 @@ function Choosing() {
 /** The overview's select, opened, typed into and chosen from by a pointer no one sees. */
 export default function ProjectVisibilityMotion() {
   return (
-    <MotionStage label="typing in the open list to jump to an option" height="20rem">
+    <MotionStage label="typing in the open list to jump to an option" height="24rem">
       <Choosing />
     </MotionStage>
   );

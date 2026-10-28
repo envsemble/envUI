@@ -395,10 +395,11 @@ test('small fields line up with small buttons and open the one popup', async ({ 
         option: option.getBoundingClientRect().height,
       };
     });
-    expect(geometry.radius).toBeCloseTo(12, 0);
-    expect(geometry.padding).toBeCloseTo(4, 0);
-    // Options with a description take two lines; the row is at least the row height, 2.25 rem.
-    expect(geometry.option).toBeGreaterThanOrEqual(36);
+    // The frosted popup's corners, concentric with its rows through its inset (Popup.css).
+    expect(geometry.radius).toBeCloseTo(20, 0);
+    expect(geometry.padding).toBeCloseTo(6, 0);
+    // Options with a description take two lines; the row is at least the md control height, 2.5 rem.
+    expect(geometry.option).toBeGreaterThanOrEqual(40);
     await page.keyboard.press('Escape');
     await labels.click();
     const option = page.getByRole('option', { name: 'Accessibility', exact: true });
@@ -409,7 +410,7 @@ test('small fields line up with small buttons and open the one popup', async ({ 
       await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
       return element.querySelector('[aria-selected="true"]')!.getBoundingClientRect().height;
     });
-    expect(height).toBeCloseTo(36, 0);
+    expect(height).toBeCloseTo(40, 0);
     await page.keyboard.press('Escape');
   }
 });

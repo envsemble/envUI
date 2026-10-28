@@ -75,7 +75,7 @@ A medium side sheet takes the whole width of a compact window, and a large one o
 
 ## Anatomy
 
-```tsx figure=SheetAnatomy open
+```tsx figure=SheetAnatomy stage=shaded open
 
 ```
 
@@ -97,7 +97,7 @@ A sheet has a dialog's surface, title, description and actions.
 - On a touch screen a swipe toward its edge closes it too.
 - A mouse or a pen never moves the sheet, and a drag inside it selects text.
 - In a sheet too short for all it holds, its content scrolls between the title and the actions, which stay in view.
-- A sheet is on the navigation's color, so a [Drawer](drawer.md) in it looks as it does at the window's edge; its edge and the scrim set it apart.
+- A sheet is on the navigation's color, so a [Drawer](drawer.md) in it looks as it does at the window's edge; its fill and the scrim set it apart.
 
 ### Inspector beside the page
 
@@ -106,7 +106,7 @@ The page can stay usable beside the sheet.
 - The sheet then stays open while people choose another row.
 - When it closes, focus returns to the row it showed last.
 
-```tsx figure=InspectorPanel motion
+```tsx figure=InspectorPanel stage=shaded motion
 
 ```
 
@@ -240,6 +240,7 @@ A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: A Sheet has no edge line: its fill and its scrim set it apart, and its edge returns at high contrast.
 - **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, rather than the popup's, in every theme, so navigation that opens in it in a narrow window keeps its color.
 - **1.0.0-prerelease.2**: With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, from `defaultWidth`; `width` takes a number of rem, which `onWidthChange` keeps. The handle is `env-sheet-resize-handle`, the same grip as Panes.Divider's. Only a finger swipes a sheet closed; a mouse or a pen no longer moves it.
 - **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.

@@ -70,7 +70,7 @@ function Resizing() {
 /** A drawer resized by its end edge, by a pointer no one sees, its labels cut short as it narrows. */
 export default function ResizableDrawerMotion() {
   return (
-    <MotionStage label="the drawer resized by its edge" height="22rem">
+    <MotionStage label="the drawer resized by its edge" height="22rem" stage="shaded">
       <Resizing />
     </MotionStage>
   );

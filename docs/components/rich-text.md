@@ -258,8 +258,13 @@ With `name`, a native form submits the Markdown through a hidden input, and `for
 
 `extensions` adds Tiptap extensions to the schema the editor and RichText share, such as a custom mark, which must parse and write Markdown; pass the same ones to both. `createRichTextExtensions` returns that shared set, with `options.extensions` after it, for another Tiptap integration that needs the same schema. The toolbar is the Toolbar MarkdownEditor shares; the suggestions are `env-rich-text-suggestions`, and the status `env-editor-status`.
 
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
+
 ## Changelog
 
+- **1.0.0-prerelease.5**: Suggestions are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency, with the rows of Select's list.
 - **1.0.0-prerelease.3**: A task's row in RichText is as tall as in the editor. The suggestions keep the active option in view as the arrow keys move past the list's edge, and close as focus leaves the editor rather than on any press on the page.
 - **1.0.0-prerelease.2**: The `underline` variant is gone; the `v1-props` codemod drops it for the default outline.
 - **1.0.0**: RichTextEditor takes the field vocabulary: `description` instead of `hint`, and the variants `outline`, `underline` and `ghost` instead of `outlined`, `plain` and `quiet`, which drew as outlined; the `v1-props` codemod writes them. The document sits in the field's box, with its border, its states and a disabled field whose label stays readable, and task items show envUI's checkboxes beside their text. The toolbar is the Toolbar MarkdownEditor shares, with tooltips, the link dialog is the shared one, and every word comes from EnvUIProvider's `messages`. Suggestions are rows of a listbox in the editor, above a Dialog it sits in, and close as focus leaves; a controlled editor raises no `flushSync` warning. The `./rich-text` entry is experimental.

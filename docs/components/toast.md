@@ -221,10 +221,11 @@ The parts are each placement's region, `env-toast-viewport`, with `data-placemen
 
 ### Customize
 
-`--env-toast-container`, `--env-toast-content` and `--env-toast-outline` set the colors of one Toast, through `style` or CSS: the fill in place of the tone's, the message, icons and dismiss button, and the edge. The dismiss button's hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+`--env-toast-container`, `--env-toast-content` and `--env-toast-outline` set the colors of one Toast, through `style` or CSS: the fill in place of the tone's, the message, icons and dismiss button, and an edge, which it otherwise draws only at high contrast. The dismiss button's hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Changelog
 
+- **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem.
 - **1.0.0**: `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centred in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
 - **1.0.0**: `ToastProvider` is `Toast.Provider`, and `useToast` keeps its name. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `Toast.Provider`.
 - **0.5.0**: The hidden count is a counter badge. A dismissed notification steps out of the stack at once and fades where it was, and one revealed from the hidden ones fades in. The regions no longer throw where the Web Animations API is missing, such as in jsdom.

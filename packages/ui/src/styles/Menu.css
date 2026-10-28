@@ -1,7 +1,7 @@
-/* Menus are the desktop dropdown: a raised popup, a PopupSurface like Popover's and Select's, with
-   small corners and concentric rows of the scale's row height that highlight on hover and keyboard
-   focus, full-width hairline separators, small muted group labels, and shortcuts as small muted
-   keys at the end. env-popup gives the popup its fill, edge and motion. */
+/* Menus are the desktop dropdown: a frosted popup, a PopupSurface like Popover's and Select's, with
+   concentric rows of the md control height in body text that highlight on hover and keyboard
+   focus, groups and separators set apart by space alone, small muted group labels, and shortcuts as
+   small muted key chips at the end. env-popup gives the popup its fill, shadow and motion. */
 /* Color properties: an item's colors, which an application sets on one Menu.Item through style or
    its own CSS: its container, its text and its icon. They don't inherit. */
 @property --env-menu-item-container {
@@ -22,15 +22,16 @@
 }
 .env-menu {
   /* One leading slot holds a check mark or an icon. */
-  --env-menu-slot: calc(var(--env-control-icon-size) + var(--env-space-2));
+  --env-menu-slot: calc(var(--env-control-icon-size) + var(--env-popup-row-gap));
   --env-menu-leading: 0rem;
   inline-size: max-content;
   min-inline-size: min(12rem, var(--available-width, 100vw));
   /* From 12 rem up to 22 rem, and never wider than the room the positioner finds in the window. */
   max-inline-size: min(22rem, var(--available-width, calc(100vw - 2rem)));
-  /* Small corners, concentric with the rows inside. Menus float at elevation 2, PopupSurface's
-     default: the popup fill and a hairline edge. */
-  border-radius: calc(var(--env-radius-sm) + var(--env-space-1));
+  /* Corners concentric with the rows inside, through the popup's inset. Menus float at elevation
+     2, PopupSurface's default, whose edge shows only on a solid popup. */
+  padding: var(--env-popup-padding);
+  border-radius: var(--env-popup-radius);
 }
 /* Labels line up across rows: once a row has a leading check mark or icon, the others keep its place. */
 .env-menu:has(.env-menu-item > :is(.env-menu-item-check, .env-icon):first-child) {
@@ -43,13 +44,13 @@
 .env-menu-item {
   box-sizing: border-box;
   min-inline-size: 0;
-  border-radius: var(--env-radius-sm);
+  border-radius: var(--env-popup-row-radius);
   background: transparent;
   color: var(--env-color-fg-default);
-  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
+  font: var(--env-body-font-weight) var(--env-font-size-body) / 1.35 var(--env-font-family);
 }
 .env-menu-header {
-  padding: var(--env-space-3) var(--env-space-2);
+  padding: var(--env-space-3) var(--env-popup-row-padding-inline);
 }
 .env-menu-item {
   /* With no color property set, the designed fills below apply in every state. The custom fill is
@@ -71,10 +72,11 @@
   --env-menu-item-icon-color: var(--env-menu-item-icon, var(--env-color-fg-muted));
   display: flex;
   align-items: center;
-  gap: var(--env-space-2);
-  min-block-size: var(--env-row-height);
+  gap: var(--env-popup-row-gap);
+  min-block-size: var(--env-control-height-md);
   padding-block: var(--env-space-1);
-  padding-inline: calc(var(--env-space-2) + var(--env-menu-leading)) var(--env-space-2);
+  padding-inline: calc(var(--env-popup-row-padding-inline) + var(--env-menu-leading))
+    var(--env-popup-row-padding-inline);
   text-decoration: none;
   cursor: pointer;
   outline: none;
@@ -84,11 +86,13 @@
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-menu-item:has(> :is(.env-menu-item-check, .env-icon):first-child) {
-  padding-inline-start: calc(var(--env-space-2) + var(--env-menu-leading) - var(--env-menu-slot));
+  padding-inline-start: calc(
+    var(--env-popup-row-padding-inline) + var(--env-menu-leading) - var(--env-menu-slot)
+  );
 }
 .env-menu-item:has(> .env-menu-item-check + .env-icon) {
   padding-inline-start: calc(
-    var(--env-space-2) + var(--env-menu-leading) - 2 * var(--env-menu-slot)
+    var(--env-popup-row-padding-inline) + var(--env-menu-leading) - 2 * var(--env-menu-slot)
   );
 }
 .env-menu-item .env-icon {
@@ -110,7 +114,7 @@
 .env-menu-item-description {
   min-inline-size: 0;
   color: var(--env-color-fg-muted);
-  font: var(--env-body-font-weight) var(--env-font-size-caption) / 1.4 var(--env-font-family);
+  font: var(--env-body-font-weight) var(--env-font-size-label-small) / 1.35 var(--env-font-family);
   overflow-wrap: anywhere;
 }
 .env-menu-item-end {
@@ -119,14 +123,25 @@
   align-items: center;
   gap: var(--env-space-1);
 }
-/* Shortcut keys stay key caps, small enough to keep the row height, and muted like the hint they are:
-   the menu sets Kbd's custom properties on its own element. */
+/* Shortcut keys are small muted chips on the neutral fill, with no edge, muted like the hint they
+   are: the menu sets Kbd's custom properties on its own element. */
+.env-menu-item-end,
 .env-menu-item-shortcut {
-  --env-kbd-size: 1.125rem;
-  --env-kbd-padding-inline: 0.25rem;
-  --env-kbd-radius: 0.25rem;
+  --env-kbd-size: calc(0.5 * var(--env-control-height-md));
+  --env-kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
+  --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
   --env-kbd-fg: var(--env-color-fg-muted);
-  --env-kbd-font-size: 0.6875rem;
+  --env-kbd-bg: var(--env-color-bg-neutral-muted);
+  --env-kbd-border: transparent;
+  --env-kbd-border-end-width: var(--env-control-border-width);
+  --env-kbd-font-size: var(--env-font-size-caption);
+}
+/* On a highlighted row, where the chip lies on the highlight, its label takes the text color. */
+.env-menu-item:is([data-highlighted], [data-popup-open])
+  :is(.env-menu-item-end, .env-menu-item-shortcut) {
+  --env-kbd-fg: var(--env-color-fg-default);
+}
+.env-menu-item-shortcut {
   --env-kbd-separator-padding-inline: 0.125rem;
   --env-kbd-separator-font: 0.6875rem / 1 var(--env-font-family);
   flex: 0 0 auto;
@@ -155,7 +170,7 @@
 /* A row that opened a submenu stays highlighted while the submenu is open. */
 .env-menu-item:is([data-highlighted], [data-popup-open]) {
   --env-menu-item-layer: calc(var(--env-state-hover-opacity) * 100%);
-  background: var(--env-menu-item-custom-fill, var(--env-color-bg-popup-hover));
+  background: var(--env-menu-item-custom-fill, var(--env-color-bg-neutral-muted));
 }
 /* A submenu row ends in a chevron that points to the side the submenu opens on. */
 .env-menu-submenu-chevron:dir(rtl) {
@@ -163,7 +178,7 @@
 }
 .env-menu-item:active {
   --env-menu-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
-  background: var(--env-menu-item-custom-fill, var(--env-color-bg-popup-pressed));
+  background: var(--env-menu-item-custom-fill, var(--env-color-bg-neutral-muted-pressed));
 }
 .env-menu-item:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
@@ -173,23 +188,22 @@
   opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
-/* A separator is a hairline across the popup's whole width, edge to edge as a table's row lines,
-   reaching through the popup's padding (MenuPopup's padding={1}), with space above and below. */
+/* A separator is space as tall as the gap between groups, with no line: popups have no hairlines. */
 .env-menu-separator {
-  block-size: 0;
-  margin-block: var(--env-space-1);
-  margin-inline: calc(-1 * var(--env-space-1));
+  block-size: var(--env-popup-group-gap);
+  margin: 0;
   border: 0;
-  border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
 }
-/* A group is its own set of rows below a small muted heading. */
-.env-menu > .env-menu-group:not(:first-child),
-.env-menu > .env-skeleton-content > .env-menu-group:not(:first-child) {
-  margin-block-start: var(--env-space-1);
+/* A group is its own set of rows below a small muted heading, apart from the rows before it by
+   space; after a separator, the separator is that space. */
+.env-menu > .env-menu-group:not(:first-child, .env-menu-separator + *),
+.env-menu > .env-skeleton-content > .env-menu-group:not(:first-child, .env-menu-separator + *) {
+  margin-block-start: var(--env-popup-group-gap);
 }
 .env-menu-group-label {
-  padding-block: var(--env-space-1) 0.125rem;
-  padding-inline: calc(var(--env-space-2) + var(--env-menu-leading)) var(--env-space-2);
+  padding-block: var(--env-popup-padding) calc(0.1 * var(--env-control-height-md));
+  padding-inline: calc(var(--env-popup-row-padding-inline) + var(--env-menu-leading))
+    var(--env-popup-row-padding-inline);
   color: var(--env-color-fg-muted);
   font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
   overflow-wrap: anywhere;

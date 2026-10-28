@@ -40,7 +40,11 @@ function Inspecting() {
 /** People in a list, each shown in a sheet beside it as the pointer presses them. */
 export default function InspectorPanelMotion() {
   return (
-    <MotionStage label="the sheet showing each person beside the list" height="20rem">
+    <MotionStage
+      label="the sheet showing each person beside the list"
+      height="20rem"
+      stage="shaded"
+    >
       <Inspecting />
     </MotionStage>
   );

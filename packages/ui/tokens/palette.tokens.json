@@ -11,6 +11,7 @@
           { "delta": 50, "ratio": 4.5 },
           { "delta": 70, "ratio": 7 }
         ],
+        "betweenHalfWidth": 0.1,
         "bands": {
           "0": [1, 1],
           "2": [0.93048, 0.94552],
@@ -48,7 +49,9 @@
           "94": [0.00957, 0.01048],
           "96": [0.00605, 0.00691],
           "98": [0.00274, 0.00355],
-          "100": [0, 0]
+          "100": [0, 0],
+          "2-5": [0.92009, 0.92601],
+          "2-75": [0.91273, 0.91861]
         }
       }
     },
@@ -265,6 +268,240 @@
       },
       "100": { "$value": { "colorSpace": "oklch", "components": [0, 0, 0], "hex": "#000000" } },
       "$description": "The slightly blue-tinted gray of text, borders and surfaces in both themes, seeded from the light divider, the muted text and the dark pane, so dark surfaces keep less chroma, as dark grays read bluer."
+    },
+    "gray": {
+      "2": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9797, 0.0026, 286.35],
+          "hex": "#f8f8fa"
+        }
+      },
+      "3": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9677, 0.0027, 286.35],
+          "hex": "#f4f4f6"
+        }
+      },
+      "4": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9587, 0.0027, 286.35],
+          "hex": "#f1f1f3"
+        }
+      },
+      "6": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9376, 0.0027, 286.35],
+          "hex": "#eaeaec"
+        }
+      },
+      "7": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9285, 0.0027, 286.35],
+          "hex": "#e7e7e9"
+        }
+      },
+      "8": {
+        "$value": { "colorSpace": "oklch", "components": [0.9167, 0.004, 286.32], "hex": "#e3e3e6" }
+      },
+      "9": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9073, 0.0027, 286.35],
+          "hex": "#e0e0e2"
+        }
+      },
+      "10": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8981, 0.0027, 286.35],
+          "hex": "#dddddf"
+        }
+      },
+      "11": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8889, 0.0027, 286.34],
+          "hex": "#dadadc"
+        }
+      },
+      "12": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8797, 0.0027, 286.34],
+          "hex": "#d7d7d9"
+        }
+      },
+      "13": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8705, 0.0027, 286.34],
+          "hex": "#d4d4d6"
+        }
+      },
+      "14": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8613, 0.0027, 286.34],
+          "hex": "#d1d1d3"
+        }
+      },
+      "15": {
+        "$value": { "colorSpace": "oklch", "components": [0.852, 0.0027, 286.34], "hex": "#ceced0" }
+      },
+      "20": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8052, 0.0028, 286.34],
+          "hex": "#bfbfc1"
+        }
+      },
+      "25": {
+        "$value": { "colorSpace": "oklch", "components": [0.7613, 0.0042, 286.3], "hex": "#b1b1b4" }
+      },
+      "30": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.7196, 0.0043, 286.29],
+          "hex": "#a4a4a7"
+        }
+      },
+      "35": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.6773, 0.0044, 286.28],
+          "hex": "#97979a"
+        }
+      },
+      "40": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.6377, 0.0044, 286.27],
+          "hex": "#8b8b8e"
+        }
+      },
+      "45": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.6008, 0.0045, 286.26],
+          "hex": "#808083"
+        }
+      },
+      "50": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.5634, 0.0046, 286.25],
+          "hex": "#757578"
+        }
+      },
+      "55": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.5288, 0.0046, 286.24],
+          "hex": "#6b6b6e"
+        }
+      },
+      "60": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.4936, 0.0047, 286.23],
+          "hex": "#616164"
+        }
+      },
+      "65": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.4578, 0.0048, 286.21],
+          "hex": "#57575a"
+        }
+      },
+      "70": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.4213, 0.0049, 286.19],
+          "hex": "#4d4d50"
+        }
+      },
+      "75": {
+        "$value": { "colorSpace": "oklch", "components": [0.384, 0.005, 286.16], "hex": "#434346" }
+      },
+      "80": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3461, 0.0069, 286.03],
+          "hex": "#39393d"
+        }
+      },
+      "82": {
+        "$value": { "colorSpace": "oklch", "components": [0.3305, 0.007, 286.01], "hex": "#353539" }
+      },
+      "84": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3143, 0.0053, 286.09],
+          "hex": "#313134"
+        }
+      },
+      "86": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2983, 0.0054, 286.07],
+          "hex": "#2d2d30"
+        }
+      },
+      "88": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2821, 0.0054, 286.05],
+          "hex": "#29292c"
+        }
+      },
+      "90": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2615, 0.0055, 286.01],
+          "hex": "#242427"
+        }
+      },
+      "92": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2405, 0.0057, 285.97],
+          "hex": "#1f1f22"
+        }
+      },
+      "94": {
+        "$value": { "colorSpace": "oklch", "components": [0.2147, 0.0058, 285.9], "hex": "#19191c" }
+      },
+      "96": {
+        "$value": { "colorSpace": "oklch", "components": [0.1876, 0.004, 286.01], "hex": "#131315" }
+      },
+      "98": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.1462, 0.0064, 285.58],
+          "hex": "#0a0a0d"
+        }
+      },
+      "$description": "The nearly neutral gray of the light theme’s text, edges and surfaces, after One UI’s greys, seeded from its background, secondary text and dark gray. Its in-between grades 2.5 and 2.75 lie between the light recessed surface and the panes: 2.75 is the popups’ fill.",
+      "2-5": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9737, 0.0026, 286.35],
+          "hex": "#f6f6f8"
+        }
+      },
+      "2-75": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.9707, 0.0027, 286.35],
+          "hex": "#f5f5f7"
+        }
+      }
     },
     "blue": {
       "2": {

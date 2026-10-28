@@ -161,6 +161,11 @@ The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: 
 
 TimePicker shares DatePicker's field and its picker card, `env-picker-popup` with `env-date-picker-popup` and `env-time-picker-popup`: the wheels in its body, `env-picker-popup-body`, and Now and Clear in its footer, `env-picker-popup-footer` with `env-date-picker-actions`. The wheels are for hours, minutes and, on a 12-hour clock, the day period, each row an `env-time-list-row`, the chosen one with `data-centred`. `className` and `style` reach the root, and `ref` the field's button.
 
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
+
 ## Changelog
 
+- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency.
 - **1.0.0**: TimePicker, for a time of day chosen on wheels of hours, minutes and day periods on the locale's clock, with `minuteStep`, `min` and `max`.

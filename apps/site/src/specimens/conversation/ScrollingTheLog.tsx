@@ -101,6 +101,8 @@ function Log({ replying }: { replying: boolean }) {
               log.current?.scrollTo({ top: log.current.scrollHeight, behavior: 'smooth' })
             }
             style={{
+              // Over the log, whose list items are positioned and would otherwise paint above it.
+              position: 'relative',
               gridArea: '1 / 1',
               alignSelf: 'end',
               justifySelf: 'center',

@@ -120,12 +120,27 @@
 .env-sheet-popup[data-side='start']:dir(rtl) {
   padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
 }
-/* A sheet is on the navigation's fill, the default surface, rather than the popup's, in every
+/* A sheet is solid, on the navigation's fill, the default surface, rather than the popup's, in every
    theme: navigation that opens in a sheet in a narrow window keeps the color it has at the window's
    edge in a wide one, and a Drawer or a Rail in it takes the sheet's color as on any surface. Its
-   elevation edge and its scrim set it apart from the page. */
+   fill and its scrim set it apart from the page, with no edge; at high contrast its elevation edge
+   returns as its boundary. */
+.env-theme {
+  /* A switch, as Code.css's: invalid at standard contrast, empty at high contrast. */
+  --env-sheet-high-contrast: initial;
+}
+.env-theme[data-env-contrast='high'] {
+  --env-sheet-high-contrast: ;
+}
+@media (prefers-contrast: more) {
+  .env-theme:not([data-env-contrast='standard']) {
+    --env-sheet-high-contrast: ;
+  }
+}
 .env-sheet-viewport .env-sheet-popup {
   --env-surface-color: var(--env-color-bg-default);
+  --env-sheet-edge: var(--env-sheet-high-contrast) var(--env-elevation-3-border);
+  border-color: var(--env-sheet-edge, transparent);
 }
 /* resizable: a side sheet as wide as --env-sheet-width, which the component sets, at every window
    width, but never wider than the window, with an edge on its inner side. Its content runs the
@@ -219,5 +234,12 @@
   .env-sheet-popup[data-ending-style] {
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease-exit);
+  }
+}
+
+/* Forced colors: the system paints no fills, so the sheet keeps an edge on its inner sides. */
+@media (forced-colors: active) {
+  .env-sheet-viewport .env-sheet-popup {
+    border-color: CanvasText;
   }
 }
