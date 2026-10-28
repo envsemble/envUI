@@ -4104,6 +4104,20 @@
         "high": 7
       }
     },
+    "--env-color-fg-on-strong on tooltip-frosted over tooltip-worst-backdrop": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-on-strong on tooltip-key over tooltip-frosted over tooltip-worst-backdrop": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-success on --env-color-bg-default": {
       "kind": "text",
       "minimum": {

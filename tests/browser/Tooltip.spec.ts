@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 const tooltips = `${fixtureUrl}/?fixture=tooltips`;
@@ -239,23 +239,95 @@ test.describe('Tooltip', () => {
     },
   );
 
-  test('a Kbd in a tooltip takes key caps for its dark fill', async ({ page }) => {
+  test('a tooltip is frosted with flat key chips, and solid with its edge at high contrast', async ({
+    page,
+  }) => {
     await page.goto(tooltips);
-    await page.getByRole('button', { name: 'Save' }).hover();
-    // popupClassName reaches the popup.
-    const tooltip = page.locator('[role="tooltip"].fixture-shortcut-tooltip');
-    await expect(tooltip).toBeVisible();
-    const colors = await tooltip.evaluate((element) => {
-      const key = element.querySelector('.env-kbd')!;
-      return {
-        tooltip: getComputedStyle(element).color,
-        key: getComputedStyle(key).color,
-        keyFill: getComputedStyle(key).backgroundColor,
-      };
-    });
-    // The key's label is the tooltip's own light text, on no fill of its own.
-    expect(colors.key).toBe(colors.tooltip);
-    expect(colors.keyFill).toBe('rgba(0, 0, 0, 0)');
+    const open = async () => {
+      await page.getByRole('button', { name: 'Save' }).hover();
+      // popupClassName reaches the popup.
+      const tooltip = page.locator('[role="tooltip"].fixture-shortcut-tooltip');
+      await expect(tooltip).toBeVisible();
+      await expect
+        .poll(() => tooltip.evaluate((element) => element.getAnimations().length))
+        .toBe(0);
+      return tooltip;
+    };
+    const look = (tooltip: Locator) =>
+      tooltip.evaluate((element) => {
+        const style = getComputedStyle(element);
+        const key = element.querySelector('.env-kbd')!;
+        const keyStyle = getComputedStyle(key);
+        const separator = getComputedStyle(element.querySelector('.env-kbd-separator')!);
+        const [first, second] = [...element.querySelectorAll('.env-kbd')].map((part) =>
+          part.getBoundingClientRect(),
+        );
+        // The tooltip's strong fill, as the same mix resolves it at 82 % and solid.
+        const probe = document.createElement('div');
+        element.append(probe);
+        const mix = (share: number) => {
+          probe.style.backgroundColor = `color-mix(in srgb, var(--env-color-bg-neutral-strong) ${share}%, transparent)`;
+          return getComputedStyle(probe).backgroundColor;
+        };
+        const [frosted, solid] = [mix(82), mix(100)];
+        probe.style.backgroundColor = 'var(--env-color-border-neutral-strong)';
+        const edge = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return {
+          background: style.backgroundColor,
+          frosted,
+          solid,
+          edge,
+          borderColor: style.borderTopColor,
+          shadow: style.boxShadow,
+          filter: style.backdropFilter,
+          radius: Number.parseFloat(style.borderTopLeftRadius),
+          padding: [Number.parseFloat(style.paddingTop), Number.parseFloat(style.paddingLeft)],
+          color: style.color,
+          key: {
+            color: keyStyle.color,
+            fill: keyStyle.backgroundColor,
+            border: keyStyle.borderTopColor,
+            bottom: Number.parseFloat(keyStyle.borderBottomWidth),
+            top: Number.parseFloat(keyStyle.borderTopWidth),
+            height: Number.parseFloat(keyStyle.height),
+          },
+          separator: { size: Number.parseFloat(separator.fontSize), text: separator.content },
+          gap: second!.left - first!.right,
+        };
+      });
+
+    // Frosted: the strong fill at 82 % over the popups' blur, no edge, a soft shadow of its own.
+    let tooltip = await open();
+    const frosted = await look(tooltip);
+    expect(frosted.background).toBe(frosted.frosted);
+    expect(frosted.borderColor).toBe('rgba(0, 0, 0, 0)');
+    expect(frosted.shadow).not.toBe('none');
+    expect(frosted.filter).toBe('blur(22px) saturate(1.4)');
+    expect(frosted.radius).toBeCloseTo(12, 0);
+    expect(frosted.padding[0]).toBeCloseTo(6, 0);
+    expect(frosted.padding[1]).toBeCloseTo(10, 0);
+    // A key is a flat chip of the tooltip's light text over its fill: no edge, no heavier bottom,
+    // and the keys of a combination side by side, the + between them read but not shown.
+    expect(frosted.key.color).toBe(frosted.color);
+    expect(frosted.key.fill).not.toBe('rgba(0, 0, 0, 0)');
+    expect(frosted.key.border).toBe('rgba(0, 0, 0, 0)');
+    expect(frosted.key.bottom).toBe(frosted.key.top);
+    expect(frosted.key.height).toBeCloseTo(18, 0);
+    expect(frosted.separator.size).toBe(0);
+    expect(frosted.gap).toBeCloseTo(8, 0);
+    await expect(tooltip).toHaveText('Save Ctrl+S');
+
+    // At high contrast: solid, with its edge back, and no shadow or blur.
+    await page.mouse.move(1, 1);
+    await expect(tooltip).toBeHidden();
+    await page.emulateMedia({ contrast: 'more' });
+    tooltip = await open();
+    const solid = await look(tooltip);
+    expect(solid.background).toBe(solid.solid);
+    expect(solid.borderColor).toBe(solid.edge);
+    expect(solid.shadow).toBe('none');
+    expect(solid.filter).toBe('blur(0px) saturate(1.4)');
   });
 
   test('names an icon-only menu trigger, which keeps its menu, ARIA and focus', async ({

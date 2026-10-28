@@ -206,7 +206,7 @@ Every popup, a popover, a menu, a Select's or a Combobox's list, a picker, a hov
 - `--env-popup-blur`, 1.375 rem, the blur of what shows through, with a little more saturation.
 - `--env-popup-shadow`, a soft shadow in the text's color in light and a deeper shade of the page in dark: with the avatars', envUI's only shadow.
 
-At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow. Tooltips stay solid.
+At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow. Tooltips are frosted too, at `--env-tooltip-opacity` with a smaller `--env-tooltip-shadow`, as [Tooltip](tooltip.md#customize) describes.
 
 `className`, `style`, `ref` and data attributes reach the surface, `env-popover`, which has `data-width="lg"` when large and renders on PopupSurface in the trigger's text direction and theme. Its title is `env-popover-title`.
 

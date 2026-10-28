@@ -197,10 +197,10 @@ The colors come from an internal palette of eleven hues, and the pastel hues of 
 - **Selection** stays apart from every other item, at rest and under the pointer, and carries a second cue: its label color, a check or a bar.
 - **High contrast** moves text to 7:1 and boundaries, indicators and focus rings to 4.5:1. A nested Theme and envUI's popups take the contrast and theme of where they open.
 - **Elevation** 0–3 is an edge, not a shadow: a dialog separates by its background, its edge and, as a modal, its scrim. Popups float at 2, dialogs, sheets and the command palette at 3; a frosted popup and a sheet show their level's edge only where they are solid.
-- **Small popups are frosted:** menus, lists, popovers, pickers, hover cards and the command palette let a little of what is behind them through, blurred, with a soft shadow and no edge. At high contrast and with reduced transparency they are solid, with their edge.
-- **Shadows:** a popup's and an avatar's faint one, which parts the avatars of a group, are envUI's only shadows.
+- **Small popups are frosted:** menus, lists, popovers, pickers, hover cards, tooltips and the command palette let a little of what is behind them through, blurred, with a soft shadow and no edge; a tooltip's strong fill covers a little less and its shadow is smaller. At high contrast and with reduced transparency they are solid, with their edge.
+- **Shadows:** a popup's, a tooltip's and an avatar's faint one, which parts the avatars of a group, are envUI's only shadows.
 - **Sheets** keep the navigation's fill, so navigation that opens in one looks as it does at the window's edge, and have no edge but at high contrast.
-- **Hairlines separate a list's items, never regions:** Markdown rules, table rows and accordion items take a hairline across their container's full width, never inset from its edges. Regions, such as a top bar, a footer, a sticky header, a tab bar and two panes, separate by space and background instead; controls, dialogs and tooltips keep their edges. A popup has none: its groups part by space and a quiet label.
+- **Hairlines separate a list's items, never regions:** Markdown rules, table rows and accordion items take a hairline across their container's full width, never inset from its edges. Regions, such as a top bar, a footer, a sticky header, a tab bar and two panes, separate by space and background instead; controls and dialogs keep their edges. A popup has none: its groups part by space and a quiet label.
 - **Forced colors** take system colors, such as `Highlight` and `GrayText`, for every state a fill carried.
 
 #### Guidelines

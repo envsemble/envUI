@@ -21,6 +21,10 @@
   --env-popup-shadow:
     0 1px 3px oklch(from var(--env-color-fg-default) l c h / 0.1),
     0 10px 30px -10px oklch(from var(--env-color-fg-default) l c h / 0.32);
+  /* A tooltip's own (Tooltip.css): its strong fill covers a little less of what is behind, and its
+     shadow is smaller, as the tooltip is. */
+  --env-tooltip-opacity: 82%;
+  --env-tooltip-shadow: 0 6px 16px -6px oklch(from var(--env-color-fg-default) l c h / 0.3);
   /*
    * A switch for the solid popup of high contrast, reduced transparency and forced colors, as
    * Code.css's is: invalid while popups are frosted, empty while they are solid, so that a custom
@@ -43,6 +47,7 @@
   /* In dark a deeper shade of the page, stronger, as a light shadow would not show. */
   --env-popup-shadow: 0 12px 32px -10px
     oklch(from var(--env-color-bg-page) calc(l * 0.8) c h / 0.85);
+  --env-tooltip-shadow: 0 6px 16px -6px oklch(from var(--env-color-bg-page) calc(l * 0.8) c h / 0.8);
 }
 /* Solid: the fill covers what is behind, with no blur and no shadow, and the edge returns as the
    popup's boundary. */
@@ -51,6 +56,8 @@
   --env-popup-opacity: 100%;
   --env-popup-blur: 0rem;
   --env-popup-shadow: none;
+  --env-tooltip-opacity: 100%;
+  --env-tooltip-shadow: none;
   --env-popup-solid: ;
 }
 @media (prefers-contrast: more) {
@@ -59,6 +66,8 @@
     --env-popup-opacity: 100%;
     --env-popup-blur: 0rem;
     --env-popup-shadow: none;
+    --env-tooltip-opacity: 100%;
+    --env-tooltip-shadow: none;
     --env-popup-solid: ;
   }
 }
@@ -69,6 +78,8 @@
     --env-popup-opacity: 100%;
     --env-popup-blur: 0rem;
     --env-popup-shadow: none;
+    --env-tooltip-opacity: 100%;
+    --env-tooltip-shadow: none;
     --env-popup-solid: ;
   }
 }
