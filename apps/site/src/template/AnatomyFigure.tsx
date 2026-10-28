@@ -592,15 +592,17 @@ function AnatomyStage({
       <svg className="site-anatomy-lines" aria-hidden="true">
         {callouts.map(({ number, badge, anchor, box }) => (
           <g key={number}>
-            {box && (
-              <rect
-                className="site-anatomy-box"
-                x={box.x}
-                y={box.y}
-                width={box.width}
-                height={box.height}
-              />
-            )}
+            {box &&
+              ['site-anatomy-box-rim', 'site-anatomy-box'].map((className) => (
+                <rect
+                  key={className}
+                  className={className}
+                  x={box.x}
+                  y={box.y}
+                  width={box.width}
+                  height={box.height}
+                />
+              ))}
             <line x1={badge.x} y1={badge.y} x2={anchor.x} y2={anchor.y} />
             <circle cx={anchor.x} cy={anchor.y} r={3} />
           </g>

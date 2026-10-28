@@ -496,14 +496,21 @@
   stroke-width: 1px;
 }
 
-/* A part's box, dashed, with a faint rim in the page's color, so it still shows on a part of a
-   strong fill, such as a notification's. */
-.site-anatomy-box {
+/* A part's box, dashed, over a line in the canvas's color, which fills its gaps, so it still shows
+   on a part of a strong fill, such as a notification's, and is unchanged on the canvas. */
+.site-anatomy-box,
+.site-anatomy-box-rim {
   fill: none;
-  stroke: var(--env-color-fg-muted);
   stroke-width: 1px;
+}
+
+.site-anatomy-box {
+  stroke: var(--env-color-fg-muted);
   stroke-dasharray: 3 2;
-  filter: drop-shadow(0 0 1px var(--env-color-bg-page));
+}
+
+.site-anatomy-box-rim {
+  stroke: var(--catalogue-card-fill, var(--env-color-bg-recessed));
 }
 
 .site-anatomy-badge,
