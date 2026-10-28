@@ -7,13 +7,13 @@
       "list-item": {
         "bg": {
           "$root": {
-            "$value": "{palette.neutral.4}"
+            "$value": "{palette.neutral.0}"
           },
           "hover": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.4}"
           },
           "pressed": {
-            "$value": "{palette.neutral.10}"
+            "$value": "{palette.gray.8}"
           }
         }
       },
@@ -31,59 +31,65 @@
         },
         "navigation": {
           "hover": {
-            "$value": "{palette.neutral.13}"
+            "$value": "{palette.gray.13}"
           },
           "pressed": {
-            "$value": "{palette.neutral.15}"
+            "$value": "{palette.gray.15}"
           }
         },
         "page": {
+          "$root": {
+            "$value": "{palette.gray.4}"
+          },
           "hover": {
-            "$value": "{palette.neutral.4}"
+            "$value": "{palette.gray.8}"
           },
           "pressed": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.11}"
           }
         },
         "default": {
+          "$root": {
+            "$value": "{palette.gray.2}"
+          },
           "hover": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.6}"
           },
           "pressed": {
-            "$value": "{palette.neutral.10}"
+            "$value": "{palette.gray.9}"
           }
         },
         "muted": {
           "$root": {
-            "$value": "{palette.neutral.2}"
+            "$value": "{palette.neutral.0}"
           },
           "hover": {
-            "$value": "{palette.neutral.6}"
+            "$value": "{palette.gray.4}"
           },
           "pressed": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.8}"
           }
         },
         "raised": {
           "$root": {
-            "$value": "{palette.neutral.0}"
+            "$value": "{palette.gray.2}"
           },
           "hover": {
-            "$value": "{palette.neutral.4}"
+            "$value": "{palette.gray.6}"
           },
           "pressed": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.9}"
           }
         },
         "popup": {
           "$root": {
-            "$value": "{palette.neutral.0}"
+            "$value": "{palette.gray.2-75}"
           },
           "hover": {
-            "$value": "{palette.neutral.4}"
+            "$value": "{palette.gray.7}"
           },
           "pressed": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.10}"
           }
         },
         "neutral": {
@@ -92,7 +98,7 @@
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
                 "alpha": 0.06
               }
@@ -101,7 +107,7 @@
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
                 "alpha": 0.12
               }
@@ -110,21 +116,21 @@
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
                 "alpha": 0.18
               }
             }
           },
           "emphasis": {
-            "$value": "{palette.neutral.80}"
+            "$value": "{palette.gray.80}"
           },
           "subtle": {
             "hover": {
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
                 "alpha": 0.06
               }
@@ -133,7 +139,7 @@
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
                 "alpha": 0.08
               }
@@ -141,10 +147,10 @@
           },
           "strong": {
             "hover": {
-              "$value": "{palette.neutral.84}"
+              "$value": "{palette.gray.84}"
             },
             "pressed": {
-              "$value": "{palette.neutral.88}"
+              "$value": "{palette.gray.88}"
             }
           }
         },
@@ -378,25 +384,36 @@
               "$value": "{palette.purple.84}"
             }
           }
+        },
+        "recessed": {
+          "$root": {
+            "$value": "{palette.gray.2}"
+          },
+          "hover": {
+            "$value": "{palette.gray.6}"
+          },
+          "pressed": {
+            "$value": "{palette.gray.9}"
+          }
         }
       },
       "fg": {
         "default": {
-          "$value": "{palette.neutral.96}"
+          "$value": "{palette.gray.96}"
         },
         "muted": {
           "$root": {
-            "$value": "{palette.neutral.84}"
+            "$value": "{palette.gray.84}"
           },
           "hover": {
-            "$value": "{palette.neutral.88}"
+            "$value": "{palette.gray.88}"
           },
           "pressed": {
-            "$value": "{palette.neutral.92}"
+            "$value": "{palette.gray.92}"
           }
         },
         "control": {
-          "$value": "{palette.neutral.88}"
+          "$value": "{palette.gray.88}"
         },
         "link": {
           "$root": {
@@ -434,24 +451,24 @@
       "border": {
         "default": {
           "$root": {
-            "$value": "{palette.neutral.55}"
+            "$value": "{palette.gray.55}"
           },
           "hover": {
-            "$value": "{palette.neutral.60}"
+            "$value": "{palette.gray.60}"
           },
           "pressed": {
-            "$value": "{palette.neutral.65}"
+            "$value": "{palette.gray.65}"
           }
         },
         "muted": {
           "$root": {
-            "$value": "{palette.neutral.55}"
+            "$value": "{palette.gray.55}"
           },
           "hover": {
-            "$value": "{palette.neutral.60}"
+            "$value": "{palette.gray.60}"
           },
           "pressed": {
-            "$value": "{palette.neutral.65}"
+            "$value": "{palette.gray.65}"
           }
         },
         "accent": {
@@ -524,13 +541,13 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/neutral/84/$value/components"
+                "$ref": "#/palette/gray/84/$value/components"
               },
               "alpha": 0.55
             }
           },
           "strong": {
-            "$value": "{palette.neutral.84}"
+            "$value": "{palette.gray.84}"
           }
         },
         "success": {
@@ -581,7 +598,7 @@
         },
         "scrim": {
           "$description": "The edge of a dialog against the scrim: 4.5:1 against the gray of the page under the scrim, which only near-black reaches in light.",
-          "$value": "{palette.neutral.96}"
+          "$value": "{palette.gray.96}"
         },
         "info": {
           "strong": {
