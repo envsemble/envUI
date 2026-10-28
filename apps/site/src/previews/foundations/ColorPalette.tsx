@@ -10,6 +10,8 @@ interface MeasuredColor {
   hex: string;
   /** The label's ink: the variable of the one that reads best on the color. */
   ink: string;
+  /** Whether the color is so near the page's that the swatch needs an edge to show. */
+  edge: boolean;
 }
 
 /** The fixed inks of a swatch's label, in docs-swatch, and the pure ones for mid-tones. */
@@ -84,6 +86,7 @@ function ColorSwatch({
           // The name starts as the swatch reads, its value, so the visible text is in it.
           aria-label={`${value?.css ?? ''} ${label.toLowerCase()}: pick a color`.trim()}
           title="Choose a color"
+          data-edge={value?.edge || undefined}
           style={{
             background: `var(${colorVariable(token)})`,
             color: `var(${value?.ink ?? '--docs-ink-light'})`,
@@ -128,6 +131,9 @@ export function ColorPalette() {
       .createElement('canvas')
       .getContext('2d', { willReadFrequently: true })!;
     const measuredColors: Record<string, MeasuredColor> = {};
+    context.fillStyle = computedStyle.getPropertyValue('--env-color-bg-page');
+    context.fillRect(0, 0, 1, 1);
+    const page = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
     colorGroups.forEach(([, tokens]) =>
       tokens.forEach(([token]) => {
         const probe = document.createElement('span');
@@ -145,6 +151,7 @@ export function ColorPalette() {
           css: computedStyle.getPropertyValue(colorVariable(token)).trim(),
           hex: '#' + rgb.map((channel) => channel.toString(16).padStart(2, '0')).join(''),
           ink: inkFor(rgb, target),
+          edge: contrast(rgb, page) < 1.02,
         };
       }),
     );
