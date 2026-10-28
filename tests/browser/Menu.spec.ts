@@ -58,6 +58,8 @@ async function popupSurface(menu: Locator) {
     return {
       background: style.backgroundColor,
       borderColor: style.borderTopColor,
+      shadow: style.boxShadow,
+      filter: style.backdropFilter,
       borderWidth: Number.parseFloat(style.borderTopWidth),
       radius: Number.parseFloat(style.borderTopLeftRadius),
       padding: Number.parseFloat(style.paddingTop),
@@ -66,7 +68,7 @@ async function popupSurface(menu: Locator) {
 }
 
 test.describe('Menus', () => {
-  test('every menu has the same anatomy, and a compact region gives it 28 px rows', async ({
+  test('every menu has the same anatomy, and a compact region gives it 32 px rows', async ({
     page,
   }) => {
     await page.goto(menusFixture);
@@ -74,10 +76,18 @@ test.describe('Menus', () => {
     const menu = page.getByRole('menu', { name: 'View options' });
     await expect(menu).toBeVisible();
     await settled(menu);
+    // Frosted: the popup color at 88 % in light over a blur, no visible edge, a soft shadow.
     const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
-    expect((await popupSurface(menu)).background).toBe(popup);
+    expect(popup).toBe('rgb(255, 255, 255)');
+    const frosted = await popupSurface(menu);
+    expect(frosted.background).toBe('color(srgb 1 1 1 / 0.88)');
+    expect(frosted.borderColor).toBe('rgba(0, 0, 0, 0)');
+    expect(frosted.shadow).not.toBe('none');
+    expect(frosted.filter).toBe('blur(22px) saturate(1.4)');
+    expect(frosted.radius).toBeCloseTo(20, 0);
+    expect(frosted.padding).toBeCloseTo(6, 0);
     const row = (await menu.getByRole('menuitemradio', { name: 'Name' }).boundingBox())!;
-    expect(row.height).toBeCloseTo(36, 0);
+    expect(row.height).toBeCloseTo(40, 0);
     await page.keyboard.press('Escape');
     await page
       .getByTestId('menus-light')
@@ -87,12 +97,45 @@ test.describe('Menus', () => {
     await expect(actions).toBeVisible();
     await settled(actions);
     const surface = await popupSurface(actions);
-    expect(surface.radius).toBeCloseTo(10, 0);
+    expect(surface.radius).toBeCloseTo(16, 0);
     const action = (await actions
       .getByRole('menuitem', { name: 'Programmatic action' })
       .boundingBox())!;
-    expect(action.height).toBeCloseTo(28, 0);
+    expect(action.height).toBeCloseTo(32, 0);
   });
+
+  for (const [why, setUp] of [
+    ['high contrast', (page: Page) => page.emulateMedia({ contrast: 'more' })],
+    [
+      'reduced transparency',
+      async (page: Page) => {
+        const session = await page.context().newCDPSession(page);
+        await session.send('Emulation.setEmulatedMedia', {
+          features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }],
+        });
+      },
+    ],
+  ] as const)
+    test(`a menu is solid with its edge, no blur and no shadow under ${why}`, async ({ page }) => {
+      await setUp(page);
+      await page.goto(menusFixture);
+      await page.getByTestId('menus-light').getByRole('button', { name: 'View options' }).click();
+      const menu = page.getByRole('menu', { name: 'View options' });
+      await expect(menu).toBeVisible();
+      await settled(menu);
+      const [popup, edge] = await tokenColors(menu, [
+        '--env-color-bg-popup',
+        '--env-elevation-2-border',
+      ]);
+      const solid = await popupSurface(menu);
+      // Opaque: the popup color itself.
+      expect(popup).toBe('rgb(255, 255, 255)');
+      expect(solid.background).toBe('color(srgb 1 1 1)');
+      expect(solid.borderColor).toBe(edge);
+      expect(solid.borderWidth).toBe(1);
+      expect(solid.shadow).toBe('none');
+      expect(solid.filter).toBe('blur(0px) saturate(1.4)');
+    });
 });
 
 test.describe('Submenus', () => {
@@ -105,24 +148,16 @@ test.describe('Submenus', () => {
     return menu;
   }
 
-  test('a separator is a hairline across the popup from edge to edge', async ({ page }) => {
+  test('a separator is space as tall as the gap between groups, with no line', async ({ page }) => {
     const menu = await openCompactOptions(page);
     const separator = menu.getByRole('separator').first();
-    await expect(separator).toHaveCSS('border-top-width', '1px');
-    await expect(separator).toHaveCSS('border-top-style', 'solid');
-    // As wide as the popup inside its edge: no inset from its sides.
-    const [line, popup] = await separator.evaluate((element) => {
-      const own = element.getBoundingClientRect();
-      const surface = element.closest('.env-menu')!;
-      const box = surface.getBoundingClientRect();
-      const edge = surface.clientLeft;
-      return [
-        { left: own.left, width: own.width },
-        { left: box.left + edge, width: surface.clientWidth },
-      ];
-    });
-    expect(line.width).toBeCloseTo(popup.width, 0);
-    expect(line.left).toBeCloseTo(popup.left, 0);
+    await expect(separator).toHaveCSS('border-top-width', '0px');
+    // A quarter of a row's height, the md control height, as the space between groups.
+    const [height, row] = await separator.evaluate((element) => [
+      element.getBoundingClientRect().height,
+      element.closest('.env-menu')!.querySelector('.env-menu-item')!.getBoundingClientRect().height,
+    ]);
+    expect(height).toBeCloseTo(row / 4, 0);
   });
 
   test('a submenu opens beside its row on hover, with the rows of its menu', async ({ page }) => {
@@ -145,7 +180,7 @@ test.describe('Submenus', () => {
     expect(submenuBox!.x).toBeGreaterThanOrEqual(menuBox!.x + menuBox!.width);
     expect(submenuBox!.x).toBeLessThanOrEqual(menuBox!.x + menuBox!.width + 4);
     expect(Math.abs(firstBox!.y - rowBox!.y)).toBeLessThanOrEqual(1.5);
-    expect(firstBox!.height).toBeCloseTo(36, 0);
+    expect(firstBox!.height).toBeCloseTo(40, 0);
     // The submenu row stays highlighted while its submenu is open.
     const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
     expect(await recent.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(

@@ -18,17 +18,25 @@ function contrastRatio(first: string, second: string) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-/** The open Select list against the surface it opens over: its color and its border. */
+/**
+ * The open Select list against the surface it opens over: the popup's color, which it shows at
+ * nearly full strength over a blur, and its shadow.
+ */
 async function popupSeparation(page: Page, surfaceSelector: string) {
-  const [surface, popup, border] = await page.evaluate((selector) => {
+  const [surface, popup, shadow] = await page.evaluate((selector) => {
     const popupElement = document.querySelector('.env-select-popup')!;
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--env-color-bg-popup)';
+    popupElement.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
     return [
       getComputedStyle(document.querySelector(selector)!).backgroundColor,
-      getComputedStyle(popupElement).backgroundColor,
-      getComputedStyle(popupElement).borderTopWidth,
+      color,
+      getComputedStyle(popupElement).boxShadow,
     ];
   }, surfaceSelector);
-  return { contrast: contrastRatio(surface, popup), border: Number.parseFloat(border) };
+  return { contrast: contrastRatio(surface, popup), shadow };
 }
 
 test.beforeEach(async ({ page }) => {
@@ -361,7 +369,7 @@ test('Select triggers are button styles, and the open list stands apart from a p
   await expect(page.getByRole('option', { name: 'Boreal', exact: true })).toBeVisible();
   const separation = await popupSeparation(page, '[data-testid="select-pane"]');
   expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
-  expect(separation.border).toBeGreaterThan(0);
+  expect(separation.shadow).not.toBe('none');
   // The popup takes the surface corners, and its options the same corners inset by its padding.
   const corners = await page.locator('.env-select-popup').evaluate((popup) => {
     const option = popup.querySelector('.env-select-item')!;
@@ -373,8 +381,8 @@ test('Select triggers are button styles, and the open list stands apart from a p
       padding: Number.parseFloat(getComputedStyle(popup).paddingTop),
     };
   });
-  // The menus' popup: 0.75 rem corners, concentric with its rows'.
-  expect(corners.popup).toBeCloseTo(12, 0);
+  // The menus' frosted popup: 1.25 rem corners, concentric with its rows'.
+  expect(corners.popup).toBeCloseTo(20, 0);
   expect(Math.abs(corners.option - (corners.popup - corners.padding))).toBeLessThan(1);
   await page.getByRole('option', { name: 'Boreal', exact: true }).click();
   await expect(role).toHaveText('Boreal');
@@ -456,16 +464,18 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
       padding: Number.parseFloat(style.paddingTop),
     };
   });
-  expect(surface.background).toBe(surface.popupColor);
+  // The popup's color, frosted at 88 % in light; its edge is there, clear, for a solid popup.
+  expect(surface.popupColor).toBe('rgb(255, 255, 255)');
+  expect(surface.background).toBe('color(srgb 1 1 1 / 0.88)');
   expect(surface.border).toBeGreaterThanOrEqual(1);
-  expect(surface.radius).toBeCloseTo(12, 0);
-  expect(surface.padding).toBeCloseTo(4, 0);
+  expect(surface.radius).toBeCloseTo(20, 0);
+  expect(surface.padding).toBeCloseTo(6, 0);
   const starter = page.getByRole('option', { name: 'Starter', exact: true });
   const team = page.getByRole('option', { name: 'Team', exact: true });
   await expect(starter).toBeFocused();
   for (const option of [starter, team])
-    expect((await option.boundingBox())!.height).toBeCloseTo(36, 0);
-  // A check mark shows the selected option instead of a fill, and labels stay aligned.
+    expect((await option.boundingBox())!.height).toBeCloseTo(40, 0);
+  // The selection's fill and a check mark show the selected option, and labels stay aligned.
   await expect(starter.locator('.env-select-item-indicator svg')).toBeVisible();
   await expect(team.locator('.env-select-item-indicator svg')).toHaveCount(0);
   const textStart = (option: typeof starter) =>
@@ -473,10 +483,18 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   expect(await textStart(team)).toBeCloseTo(await textStart(starter), 0);
   await page.keyboard.press('ArrowDown');
   await expect(team).toBeFocused();
-  // The highlight fades out as rows' highlights do.
+  // The highlight fades out as rows' highlights do, leaving the selection's fill.
+  const [selectedFill] = await starter.evaluate((element) => {
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--env-color-bg-selected)';
+    element.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return [color];
+  });
   await expect
     .poll(() => starter.evaluate((element) => getComputedStyle(element).backgroundColor))
-    .toBe('rgba(0, 0, 0, 0)');
+    .toBe(selectedFill);
   await page.keyboard.press('Enter');
   await expect(list).toHaveCount(0);
   await expect(compact).toHaveText('Team');
