@@ -30,7 +30,7 @@ The agent reads the setup skill the site serves at `envui.envsemble.com/SKILL.md
 
 The pointer and the lint rules are recommended, and any step can be skipped. In an application with UI of its own, the agent changes none of it, and offers to plan a move to envUI with you after [the migration guide](migration.md).
 
-For anything else, `envui.envsemble.com/llms.txt` lists the pages of these Docs in the [llms.txt](https://llmstxt.org) format.
+An agent that arrives at the site rather than at a project finds `envui.envsemble.com/llms.txt`, in the [llms.txt](https://llmstxt.org) format: it says what envUI is and points to the setup skill and the documentation the installed package ships, and lists no pages of its own.
 
 ## The AGENTS.md pointer
 
