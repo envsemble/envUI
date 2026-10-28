@@ -4,7 +4,8 @@ import { routeHref } from '../navigation/Address';
 import type { RoutePage } from '../navigation/SiteRoutes';
 import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/Motion';
-import { previewOf, TilePreview, useNear, type Preview } from '../template/Related';
+import { TilePreview, useNear } from '../template/Related';
+import { previewOf, type Preview } from '../template/RelatedPages';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
 export interface GalleryGroup {

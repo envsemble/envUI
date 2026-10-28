@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { DocumentationMetadata } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
-import { pageOf } from './Related';
+import { pageOf } from './RelatedPages';
 
 /**
  * Component pages that paint nothing a reader sees, which Built from leaves out: the layout
