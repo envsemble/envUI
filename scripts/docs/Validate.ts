@@ -388,7 +388,7 @@ export function readPartNames(directory = documentationDirectory): PartNames {
  * sections pageSections knows, once each, in its order, with Rules; every example the frontmatter
  * lists placed once, but the overview's, which the generated Overview shows; and on a component or
  * a pattern, an overview example and Accessibility's lists. A foundation's figures are the
- * catalogue's (previews/foundations), not example files.
+ * catalogue's (previews/foundations); an example file there is the code of the figure of its name.
  */
 export function readPage(
   document: { id: string; path: string; title: string },
@@ -631,7 +631,7 @@ export function readPage(
         problems.push(`figure ${name} belongs in a section before the changelog`);
       if (foundation) {
         // A foundation's figure is the catalogue's own, from its page's preview, with the legend
-        // that follows it; it has no example file.
+        // that follows it; an example file of its name, where it has one, is its code.
         if (rest.trim()) problems.push(`figure ${name} takes no attributes on a foundation page`);
         const block: FigureBlock = {
           kind: 'figure',
@@ -639,6 +639,7 @@ export function readPage(
           heading: subheading ?? fileWords(name),
           role: listed.role,
           ...(listed.caption && { caption: listed.caption }),
+          ...(examples.has(name) && { code: true }),
         };
         blocks.push(block);
         legendOf = block;
@@ -806,6 +807,13 @@ export function readPage(
         `example ${name} has motion but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to play it`,
       );
   }
+  // A foundation's example file is the code of its figure of the same name.
+  if (foundation)
+    for (const name of examples)
+      if (!catalog[name])
+        problems.push(
+          `apps/site/src/examples/${document.id}/${name}.tsx is no figure's code: name it after the figure it shows`,
+        );
   if (!foundation) {
     if (!entries.some(([, { role }]) => role === 'overview'))
       problems.push('the frontmatter lists no overview example, which shows what it is');

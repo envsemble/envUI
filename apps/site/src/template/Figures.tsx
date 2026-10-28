@@ -1,6 +1,7 @@
 import {
   Fragment,
   useId,
+  useMemo,
   useRef,
   useState,
   type ComponentPropsWithoutRef,
@@ -22,6 +23,7 @@ import { InteractiveMark } from './InteractiveMark';
 import { Specimen, SpecimenRender } from './Specimen';
 import { VerdictMotion } from '../previews/MotionStage';
 import { foundationFigure } from '../previews/foundations/FoundationFigures';
+import { FigureCode } from '../previews/foundations/Topic';
 import { useVerdictFit } from './VerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -30,13 +32,21 @@ type FigureBlock = ExampleBlock | FoundationBlock;
 
 /**
  * A foundation's figure: the catalogue's own, from its page's preview,
- * with the legend its Markdown gives it.
+ * with the legend its Markdown gives it, and its code where it has an example file of its name.
  */
 function FoundationFigure({ page, block }: { page: Document; block: FoundationBlock }) {
   const figure = foundationFigure(page.id, block.name);
+  const code = useMemo(
+    () => (block.code ? { page: page.id, name: block.name } : null),
+    [block.code, block.name, page.id],
+  );
   if (!figure) return null;
   const Render = figure.render;
-  return <Render legend={block.legend ?? []} caption={block.caption} />;
+  return (
+    <FigureCode value={code}>
+      <Render legend={block.legend ?? []} caption={block.caption} />
+    </FigureCode>
+  );
 }
 
 /** The bar under a do, a don't or a caution: its word and its icon. */

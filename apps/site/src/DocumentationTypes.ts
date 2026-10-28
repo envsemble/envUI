@@ -105,6 +105,11 @@ export type DocumentationBlock =
       role?: string;
       caption?: string;
       legend?: { name: string; text: string }[];
+      /**
+       * Whether it has an example file of its name, apps/site/src/examples/<page>/<name>.tsx: the
+       * code an application writes for what it shows, under the figure in a Code disclosure.
+       */
+      code?: boolean;
     }
   /** A catalogue-only specimen in apps/site/src/specimens/<page>/<name>.tsx. */
   | { kind: 'specimen'; name: string }

@@ -151,11 +151,12 @@ function files(directory) {
 }
 
 test('every example file is referenced once, by its page, and imports only public modules', () => {
+  // A foundation's figure with an example file of its name shows it as its code.
   const referenced = new Map();
   for (const document of sectioned)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
-        if (block.kind === 'example') {
+        if (block.kind === 'example' || (block.kind === 'figure' && block.code)) {
           const key = `${document.id}/${block.name}`;
           referenced.set(key, (referenced.get(key) ?? 0) + 1);
         }
